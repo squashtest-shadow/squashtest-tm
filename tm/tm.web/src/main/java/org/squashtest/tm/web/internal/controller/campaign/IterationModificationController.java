@@ -50,7 +50,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
@@ -74,7 +74,7 @@ import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentT
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
+import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.jquery.TestSuiteModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
@@ -116,6 +116,7 @@ public class IterationModificationController {
 	private InternationalizationHelper messageSource;
 
 	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
+														.map		 ("entity-index", 	(String)null)		// index is a special case which means : no sorting.
 														.mapAttribute("project-name",	"name", 			Project.class)
 														.mapAttribute("reference", 		"reference", 		TestCase.class)
 														.mapAttribute("tc-name", 		"name", 			TestCase.class)
@@ -123,7 +124,9 @@ public class IterationModificationController {
 														.mapAttribute("dataset",		"name", 			Dataset.class)
 														.mapAttribute("status",			"executionStatus", 	IterationTestPlanItem.class)
 														.mapAttribute("assignee-login", "login", 			User.class)
-														.mapAttribute("last-exec-on",	"lastExecutedOn",	IterationTestPlanItem.class);
+														.mapAttribute("last-exec-on",	"lastExecutedOn",	IterationTestPlanItem.class)
+														.mapAttribute("exec-mode", 		"automatedTest", 	TestCase.class);
+														
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showIteration(Model model, @PathVariable long iterationId) {
@@ -400,9 +403,8 @@ public class IterationModificationController {
 	DataTableModel getTestPlanModel(@PathVariable long iterationId, final DataTableDrawParameters params,
 			final Locale locale) {
 
-		PagingAndSorting paging = new DataTableSorting(params, testPlanMapper);
-		PagedCollectionHolder<List<IterationTestPlanItem>> holder = iterationModService.findAssignedTestPlan(
-				iterationId, paging);
+		PagingAndMultiSorting paging = new DataTableMultiSorting(params, testPlanMapper);
+		PagedCollectionHolder<List<IterationTestPlanItem>> holder = iterationModService.findAssignedTestPlan(iterationId, paging);
 
 		return new IterationTestPlanTableModelHelper(messageSource, locale).buildDataModel(holder,
 				params.getsEcho());

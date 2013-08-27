@@ -23,8 +23,6 @@ package org.squashtest.tm.web.internal.model.datatable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.codehaus.jackson.annotate.JsonAnySetter;
-
 /**
  * Parameters of the draw request sent by a datatable.
  *
@@ -34,19 +32,24 @@ import org.codehaus.jackson.annotate.JsonAnySetter;
 // NOSONAR names have to match JSON structure  
 public class DataTableDrawParameters {
 	
-	private static final String M_DATA_PROP_PREFIX = "mDataProp_";
-	private static final int M_DATA_PROP_SUFFIX_INDEX = M_DATA_PROP_PREFIX.length() +1 ;
-	
+		
+	// the identifier of that particular ajax request
 	private String sEcho;
 	
+	// table columns definition
+	private Map<Integer, Object> mDataProp = new HashMap<Integer, Object>();
+	
+	// paging information
 	private int iDisplayStart;
 	private int iDisplayLength;
 	
-	private int iSortCol_0;
-	private String sSortDir_0;
+	// filtering information
 	private String sSearch;
-	private Map<Integer, Object> mDataProp = new HashMap<Integer, Object>();
-
+	
+	// sorting informations
+	private Map<Integer, Object> iSortCol = new HashMap<Integer, Object>();
+	private Map<Integer, Object> sSortDir = new HashMap<Integer, Object>();
+	private int iSortingCols;
 
 
 	public int getiDisplayStart() { // NOSONAR names have to match JSON structure
@@ -77,30 +80,32 @@ public class DataTableDrawParameters {
 	/** 
 	 * use #getsSortedAttribute_0() instead 
 	 */
-	@Deprecated
 	public int getiSortCol_0() { // NOSONAR names have to match JSON structure
-		return iSortCol_0;
+		return (Integer)iSortCol.get(0);
 	}
 
 	public void setiSortCol_0(int iSortCol_0) { // NOSONAR names have to match JSON structure
-		this.iSortCol_0 = iSortCol_0;
+		this.iSortCol.put(0, iSortCol_0);
 	}
 
 	
+	//legacy method
 	public String getsSortDir_0() { // NOSONAR names have to match JSON structure
-		return sSortDir_0;
+		return (String)sSortDir.get(0);
 	}
 	
+	//legacy method
 	public Object getsSortedAttribute_0(){
-		Object o = mDataProp.get(iSortCol_0);
+		Object o = mDataProp.get(getiSortCol_0());
 		if (o==null){
-			o = iSortCol_0;
+			o = getiSortCol_0();
 		}
 		return o;
 	}
 
+	//legacy method
 	public void setsSortDir_0(String sSortDir_0) { // NOSONAR names have to match JSON structure
-		this.sSortDir_0 = sSortDir_0;
+		this.sSortDir.put(0, sSortDir_0);
 	}
 
 	public String getsSearch() {
@@ -119,13 +124,29 @@ public class DataTableDrawParameters {
 		return mDataProp.get(index);
 	}
 	
-	@JsonAnySetter	
-	public void setUnknown(String unknownAttribute, Object value){
-		if (unknownAttribute.matches(M_DATA_PROP_PREFIX)){
-			Integer propIndex = Integer.valueOf(unknownAttribute.substring(M_DATA_PROP_SUFFIX_INDEX));
-			mDataProp.put(propIndex, value);
-		}
-//		else  f*** it 
+	public Map<Integer, Object> getiSortCol(){
+		return iSortCol;
 	}
+	
+	public Integer getiSortCol(Integer index){
+		return Integer.valueOf((String)iSortCol.get(index));
+	}
+	
+	public Map<Integer, Object> getsSortDir(){
+		return sSortDir;
+	}
+	
+	public String getsSortDir(Integer index){
+		return (String)sSortDir.get(index);
+	}
+	
+	public int getiSortingCols() {
+		return iSortingCols;
+	}
+
+	public void setiSortingCols(int iSortingCols) {
+		this.iSortingCols = iSortingCols;
+	}
+
 	
 }

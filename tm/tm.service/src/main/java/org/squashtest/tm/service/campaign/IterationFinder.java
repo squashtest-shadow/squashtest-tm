@@ -23,7 +23,8 @@ package org.squashtest.tm.service.campaign;
 import java.util.List;
 
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.Paging;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
@@ -53,6 +54,6 @@ public interface IterationFinder {
 	 * @param iterationId
 	 * @return the test plan of given iteration filtered by the current user
 	 */
-	PagedCollectionHolder<List<IterationTestPlanItem>> findAssignedTestPlan(long iterationId, Paging sorting);
+	PagedCollectionHolder<List<IterationTestPlanItem>> findAssignedTestPlan(long iterationId, PagingAndMultiSorting sorting);
 	
 }

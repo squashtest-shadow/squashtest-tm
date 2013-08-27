@@ -25,13 +25,19 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
+import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
+import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.Paging;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
@@ -39,6 +45,8 @@ import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
+import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 
 @Repository
@@ -146,36 +154,73 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 			}
 		});
 	}
-
+	
 	@Override
-	public List<IterationTestPlanItem> findTestPlan(final long iterationId, Paging sorting) {
-
-		final int firstIndex = sorting.getFirstItemIndex();
-		final int lastIndex = sorting.getFirstItemIndex() + sorting.getPageSize() - 1;
-
-		SetQueryParametersCallback callback = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameter("iterationId", iterationId);
-				query.setParameter("firstIndex", firstIndex);
-				query.setParameter("lastIndex", lastIndex);
-
-			}
-
-		};
-
-		return executeListNamedQuery("iteration.findTestPlanFiltered", callback);
-
+	public List<IterationTestPlanItem> findTestPlan(long iterationId,	PagingAndSorting sorting, Filtering filter) {
+		
+		Criteria criteria = _createPagedTestPlanCriteria(iterationId, sorting, filter);
+		
+		SortingUtils.addOrder(criteria, sorting);
+		
+		return collectFromMapList(criteria.list(), "IterationTestPlanItem");
 	}
 
 	@Override
-	public long countTestPlans(Long iterationId) {
-		return (Long) executeEntityNamedQuery("iteration.countTestPlans", idParameter(iterationId));
+	public List<IterationTestPlanItem> findTestPlan(final long iterationId, PagingAndMultiSorting sorting, Filtering filter) {
+
+		
+		Criteria criteria = _createPagedTestPlanCriteria(iterationId, sorting, filter);
+		
+		SortingUtils.addOrder(criteria, sorting);
+		
+		return collectFromMapList(criteria.list(), "IterationTestPlanItem");
+	}
+	
+	private Criteria _createPagedTestPlanCriteria(final long iterationId, Paging paging, Filtering filtering){
+		
+		Criteria criteria = currentSession().createCriteria (Iteration.class, "Iteration")
+											.createAlias	("Iteration.testPlans", "IterationTestPlanItem")
+											.createAlias	("Iteration.campaign.project", "Project")
+											.createAlias	("IterationTestPlanItem.referencedTestCase", "TestCase", JoinType.LEFT_OUTER_JOIN)
+											.createAlias	("IterationTestPlanItem.referencedDataset", "Dataset", JoinType.LEFT_OUTER_JOIN)
+											.createAlias	("IterationTestPlanItem.user", "User", JoinType.LEFT_OUTER_JOIN)
+											.add			(Restrictions.eq("Iteration.id", iterationId))
+											.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+											
+		
+		PagingUtils.addPaging(criteria, paging);
+		
+		if (filtering.isDefined()){
+			criteria.add(Restrictions.eq(filtering.getFilteredAttribute(), filtering.getFilter()));
+		}
+		
+		return criteria;
+	}
+
+	@Override
+	public long countTestPlans(Long iterationId, Filtering filtering) {
+		if (! filtering.isDefined()){
+			return (Long) executeEntityNamedQuery("iteration.countTestPlans", idParameter(iterationId));
+		}
+		else{
+			return (Long) executeEntityNamedQuery("iteration.countTestPlansFiltered", IdAndLoginParameter(iterationId, filtering.getFilter()));
+		}
 	}
 
 	private SetQueryParametersCallback idParameter(final long id) {
 		return new SetIdParameter("iterationId", id);
+	}
+	
+	
+	private SetQueryParametersCallback IdAndLoginParameter(final long id, final String login){
+		
+		return new SetQueryParametersCallback() {			
+			@Override
+			public void setQueryParameters(Query query) {
+				query.setParameter("iterationId", id);
+				query.setParameter("userLogin", login);
+			}			
+		};
 	}
 
 	@Override
@@ -215,7 +260,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 
 	private void fillStatusMapWithQueryResult(final long iterationId, Map<String, Integer> statusMap) {
 		// Add Total number of TestCases
-		Integer nbTestPlans = ((Long) countTestPlans(iterationId)).intValue();
+		Integer nbTestPlans = ((Long) countTestPlans(iterationId, DefaultFiltering.NO_FILTERING)).intValue();
 		statusMap.put(TestPlanStatistics.TOTAL_NUMBER_OF_TEST_CASE_KEY, nbTestPlans);
 
 		// Add number of testCase for each ExecutionStatus

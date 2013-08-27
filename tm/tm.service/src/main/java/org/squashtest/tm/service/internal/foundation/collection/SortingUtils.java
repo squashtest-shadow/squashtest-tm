@@ -23,8 +23,10 @@ package org.squashtest.tm.service.internal.foundation.collection;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
+import org.squashtest.tm.core.foundation.collection.MultiSorting;
 import org.squashtest.tm.core.foundation.collection.Sorting;
 
 /**
@@ -45,13 +47,21 @@ public final class SortingUtils {
 	 * @param sorting
 	 */
 	public static void addOrder(Criteria criteria, Sorting sorting) {
-		switch (sorting.getSortOrder()) {
-		case ASCENDING:
-			criteria.addOrder(Order.asc(sorting.getSortedAttribute()));
-			break;
-		case DESCENDING:
-			criteria.addOrder(Order.desc(sorting.getSortedAttribute()));
-			break;
+		if (! StringUtils.isBlank(sorting.getSortedAttribute())){
+			switch (sorting.getSortOrder()) {
+			case ASCENDING:
+				criteria.addOrder(Order.asc(sorting.getSortedAttribute()));
+				break;
+			case DESCENDING:
+				criteria.addOrder(Order.desc(sorting.getSortedAttribute()));
+				break;
+			}
+		}
+	}
+	
+	public static void addOrder(Criteria criteria, MultiSorting sorting){
+		for (Sorting sort : sorting.getSortings()){
+			addOrder(criteria, sort);
 		}
 	}
 	

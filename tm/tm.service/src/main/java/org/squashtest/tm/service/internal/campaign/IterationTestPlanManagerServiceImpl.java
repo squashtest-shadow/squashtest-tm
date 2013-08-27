@@ -36,6 +36,7 @@ import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
@@ -280,8 +281,8 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
 			+ OR_HAS_ROLE_ADMIN)
 	public PagedCollectionHolder<List<IterationTestPlanItem>> findTestPlan(long iterationId, PagingAndSorting filter) {
-		List<IterationTestPlanItem> testPlan = iterationDao.findTestPlan(iterationId, filter);
-		long count = iterationDao.countTestPlans(iterationId);
+		List<IterationTestPlanItem> testPlan = iterationDao.findTestPlan(iterationId, filter, DefaultFiltering.NO_FILTERING);
+		long count = iterationDao.countTestPlans(iterationId, DefaultFiltering.NO_FILTERING);
 		return new PagingBackedPagedCollectionHolder<List<IterationTestPlanItem>>(filter, count, testPlan);
 	}
 

@@ -948,6 +948,62 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			this.find('th.datatable-filterable').removeClass('datatable-filtered');
 		}
 	}
+	
+	
+	
+	function _configureToggableRows(){
+		
+		var toggleSettings = this.squashSettings.toggleRows || {};
+		var ppt;
+		var table = this;	
+		
+		for (selector in toggleSettings){
+			
+			// adds a draw callback. It will be then executed every time the table is reloaded 
+			this.drawcallbacks.push(function(){		
+				this.find(selector).each(function(idx,cell){
+					var link = table.addHLinkToCellText(cell, 'javascript:void(0)');
+					link.addClass('small-right-arrow');					
+				});
+			});
+			
+			// click handler (executed one time only).
+			var loader = toggleSettings[selector];
+			this.on('click', selector+'> a', function(){
+
+				var jqlink = $(this),
+					ltr = jqlink.parents('tr').get(0);
+				
+				if (! jqlink.hasClass('small-down-arrow')){
+					
+					var rowClass = ($(ltr).hasClass("odd")) ? "odd" : "even",
+						$ltr = $(ltr),
+						$newTr = $(table.fnOpen(ltr, "   ", ""));
+					
+					$newTr.addClass(rowClass);
+					
+					jqlink.removeClass('small-right-arrow').addClass('small-down-arrow');
+					
+					if (typeof loader === "string"){
+						// content loader assumed to be an url
+						$newTr.load(loader);	
+					}
+					else{
+						// content loader assumed to be a function. The (table, table,...) arguments is not a typo. 
+						loader.call(table, table, $ltr, $newTr);
+					}
+					
+				}
+				else{
+					table.fnClose(ltr);
+					jqlink.removeClass('small-down-arrow').addClass('small-right-arrow');
+				}
+				
+				
+			});
+			
+		}		
+	}
 
 	// ************************ functions used by the static functions
 	// *****************************
@@ -1052,75 +1108,31 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 
 	}
 
-	// ******** decorator
+	// ******** decorator ************************
 
 	function _fnRewriteData(aoData) {
-		var i = 0, length = aoData.length, regexp = /mDataProp_(\d+)/, match;
+		
+		var i = 0, 
+			length = aoData.length, 
+			match, 
+			dataprop_regexp = /mDataProp_(\d+)/,
+			sortcol_regexp = /iSortCol_(\d+)/,
+			sortdir_regexp = /sSortDir_(\d+)/;
 
 		for (i = 0; i < length; i++) {
-			match = aoData[i].name.match(regexp);
-			if (match != null) {
-				aoData[i].name = "mDataProp['" + match[1] + "']";
+
+			if ((match = aoData[i].name.match(dataprop_regexp)) !== null){
+				aoData[i].name = "mDataProp['" + match[1] + "']";		
+			}
+			else if ((match = aoData[i].name.match(sortcol_regexp)) !== null){
+				aoData[i].name = "iSortCol['" + match[1] + "']";
+			}
+			else if ((match = aoData[i].name.match(sortdir_regexp)) !== null){
+				aoData[i].name = "sSortDir['" + match[1] + "']";
 			}
 		}
 	}
-	
-	
-	function _configureToggableRows(){
-		
-		var toggleSettings = this.squashSettings.toggleRows || {};
-		var ppt;
-		var table = this;	
-		
-		for (selector in toggleSettings){
-			
-			// adds a draw callback. It will be then executed every time the table is reloaded 
-			this.drawcallbacks.push(function(){		
-				this.find(selector).each(function(idx,cell){
-					var link = table.addHLinkToCellText(cell, 'javascript:void(0)');
-					link.addClass('small-right-arrow');					
-				});
-			});
-			
-			// click handler (executed one time only).
-			var loader = toggleSettings[selector];
-			this.on('click', selector+'> a', function(){
 
-				var jqlink = $(this),
-					ltr = jqlink.parents('tr').get(0);
-				
-				if (! jqlink.hasClass('small-down-arrow')){
-					
-					var rowClass = ($(ltr).hasClass("odd")) ? "odd" : "even",
-						$ltr = $(ltr),
-						$newTr = $(table.fnOpen(ltr, "   ", ""));
-					
-					$newTr.addClass(rowClass);
-					
-					jqlink.removeClass('small-right-arrow').addClass('small-down-arrow');
-					
-					if (typeof loader === "string"){
-						// content loader assumed to be an url
-						$newTr.load(loader);	
-					}
-					else{
-						// content loader assumed to be a function. The (table, table,...) arguments is not a typo. 
-						loader.call(table, table, $ltr, $newTr);
-					}
-					
-				}
-				else{
-					table.fnClose(ltr);
-					jqlink.removeClass('small-down-arrow').addClass('small-right-arrow');
-				}
-				
-				
-			});
-			
-		}
-		
-		
-	}
 
 	/*******************************************************************************************************************
 	 * 

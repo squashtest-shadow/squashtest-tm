@@ -29,7 +29,7 @@ import org.squashtest.tm.core.foundation.collection.Paging;
  *
  */
 public class DataTablePaging implements Paging {
-	private final DataTableDrawParameters params;
+	protected final DataTableDrawParameters params;
 
 	public DataTablePaging(DataTableDrawParameters params) {
 		this.params = params;

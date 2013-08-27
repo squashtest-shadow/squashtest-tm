@@ -20,31 +20,47 @@
  */
 package org.squashtest.tm.web.internal.model.datatable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.DefaultSorting;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
+import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 
-public class DataTableSorting extends DataTablePaging implements PagingAndSorting {
+public class DataTableMultiSorting extends DataTablePaging implements PagingAndMultiSorting {
 	
 	protected final DatatableMapper mapper;
 
-	public DataTableSorting(@NotNull DataTableDrawParameters params, @NotNull DatatableMapper mapper){
+	public DataTableMultiSorting(@NotNull DataTableDrawParameters params, @NotNull DatatableMapper mapper){
 		super(params);
 		this.mapper=mapper;
 	}
-	
-	@Override
-	public String getSortedAttribute() {
-		return mapper.getMapping(params.getsSortedAttribute_0());
-	}
-
 
 	@Override
-	public SortOrder getSortOrder() {
-		return SortOrder.coerceFromCode(params.getsSortDir_0());
+	public List<Sorting> getSortings() {
+		
+		List<Sorting> sortings = new ArrayList<Sorting>(params.getiSortingCols());
+		
+		int sortedcol;
+		String sorteddir;
+		Object mappingKey;
+		String attribute;
+		
+		for (int i=0; i<params.getiSortingCols();i++){
+			sorteddir = params.getsSortDir(i);
+			sortedcol = params.getiSortCol(i);
+					
+			mappingKey = params.getmDataProp(sortedcol);
+			attribute = mapper.getMapping(mappingKey);
+			
+			sortings.add(new DefaultSorting(attribute, SortOrder.coerceFromCode(sorteddir)));
+		}
+		
+		return sortings;
 	}
-	
 
 }

@@ -253,7 +253,9 @@ define(['jquery', 'squash.translator', './exec-runner',
 				this.on('change', 'select', function(){
 					$(this).submit();
 				});
-			}	
+			}, 
+			
+			aaSorting : [[1, 'asc']]	//that's temporary, because the presort will soon be stored in a cookie
 		};
 		
 		var squashSettings = {

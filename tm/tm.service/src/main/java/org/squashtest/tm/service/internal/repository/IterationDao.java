@@ -22,7 +22,9 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
 
-import org.squashtest.tm.core.foundation.collection.Paging;
+import org.squashtest.tm.core.foundation.collection.Filtering;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
@@ -59,9 +61,11 @@ public interface IterationDao extends EntityDao<Iteration> {
 	 * @param sorting
 	 * @return
 	 */
-	List<IterationTestPlanItem> findTestPlan(long iterationId, Paging sorting);
+	List<IterationTestPlanItem> findTestPlan(long iterationId, PagingAndMultiSorting sorting, Filtering filtering);
 
-	long countTestPlans(Long iterationId);
+	List<IterationTestPlanItem> findTestPlan(long iterationId, PagingAndSorting sorting, Filtering filter);
+	
+	long countTestPlans(Long iterationId, Filtering filtering);
 
 	List<TestSuite> findAllTestSuites(long iterationId);
 

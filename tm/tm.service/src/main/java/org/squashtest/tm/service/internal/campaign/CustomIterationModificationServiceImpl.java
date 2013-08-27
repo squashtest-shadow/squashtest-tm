@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -38,8 +37,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
+import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
@@ -412,33 +414,23 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	 * @see org.squashtest.tm.service.campaign.CustomIterationModificationService#findAssignedTestPlan(long, Paging)
 	 */
 	@Override
-	public PagedCollectionHolder<List<IterationTestPlanItem>> findAssignedTestPlan(long iterationId, Paging sorting) {
-		String userLogin = getCurrentUserLogin();
-		List<IterationTestPlanItem> authorizedTestPlan = new ArrayList<IterationTestPlanItem>();
+	public PagedCollectionHolder<List<IterationTestPlanItem>> findAssignedTestPlan(long iterationId, PagingAndMultiSorting sorting) {
 
+		String userLogin = getCurrentUserLogin();		
 		Iteration iteration = iterationDao.findById(iterationId);
 		Long projectId = iteration.getProject().getId();
-
-		List<IterationTestPlanItem> testPlan = iterationDao.findTestPlan(iterationId, sorting);
-		long testPlanSize = iterationDao.countTestPlans(iterationId);
-
+		
+		//configure the filter, in case the test plan must be restricted to what the user can see.
+		Filtering filtering = DefaultFiltering.NO_FILTERING;
 		if (projectsPermissionFinder.isInPermissionGroup(userLogin, projectId, "squashtest.acl.group.tm.TestRunner")) {
-			for (IterationTestPlanItem item : testPlan) {
-				if (isAssignedToUser(item, userLogin)) {
-					authorizedTestPlan.add(item);
-				}
-			}
-		} else {
-			authorizedTestPlan = testPlan;
+			filtering = new DefaultFiltering("User.login", userLogin);
 		}
 
-		return new PagingBackedPagedCollectionHolder<List<IterationTestPlanItem>>(sorting, testPlanSize,
-				authorizedTestPlan);
-	}
+		
+		List<IterationTestPlanItem> testPlan = iterationDao.findTestPlan(iterationId, sorting, filtering);
+		long testPlanSize = iterationDao.countTestPlans(iterationId, filtering);
 
-	private boolean isAssignedToUser(IterationTestPlanItem testPlanItem, String userLogin) {
-		User testPlanUser = testPlanItem.getUser();
-		return testPlanUser != null && testPlanUser.loginIs(userLogin);
+		return new PagingBackedPagedCollectionHolder<List<IterationTestPlanItem>>(sorting, testPlanSize, testPlan);
 	}
 
 	private String getCurrentUserLogin() {
