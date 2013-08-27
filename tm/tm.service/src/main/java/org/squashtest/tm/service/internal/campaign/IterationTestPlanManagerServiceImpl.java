@@ -52,6 +52,7 @@ import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.CustomIterationModificationService;
+import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
@@ -280,10 +281,10 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
 			+ OR_HAS_ROLE_ADMIN)
-	public PagedCollectionHolder<List<IterationTestPlanItem>> findTestPlan(long iterationId, PagingAndSorting filter) {
-		List<IterationTestPlanItem> testPlan = iterationDao.findTestPlan(iterationId, filter, DefaultFiltering.NO_FILTERING);
+	public PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findTestPlan(long iterationId, PagingAndSorting filter) {
+		List<IndexedIterationTestPlanItem> testPlan = iterationDao.findTestPlan(iterationId, filter, DefaultFiltering.NO_FILTERING);
 		long count = iterationDao.countTestPlans(iterationId, DefaultFiltering.NO_FILTERING);
-		return new PagingBackedPagedCollectionHolder<List<IterationTestPlanItem>>(filter, count, testPlan);
+		return new PagingBackedPagedCollectionHolder<List<IndexedIterationTestPlanItem>>(filter, count, testPlan);
 	}
 
 	@Override

@@ -26,11 +26,12 @@ import java.util.Map;
 
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 
-class IterationTestPlanTableModelHelper extends DataTableModelBuilder<IterationTestPlanItem> {
+class IterationTestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTestPlanItem> {
 
 	private InternationalizationHelper messageSource;
 	private Locale locale;
@@ -41,8 +42,11 @@ class IterationTestPlanTableModelHelper extends DataTableModelBuilder<IterationT
 	}
 
 	@Override
-	public Map<String, Object> buildItemData(IterationTestPlanItem item) {
+	public Map<String, Object> buildItemData(IndexedIterationTestPlanItem indexedItem) {
 
+		Integer index = indexedItem.getIndex() + 1;
+		IterationTestPlanItem item = indexedItem.getItem();
+		
 		Map<String, Object> res = new HashMap<String, Object>();
 
 		String projectName;
@@ -91,7 +95,7 @@ class IterationTestPlanTableModelHelper extends DataTableModelBuilder<IterationT
 		}
 
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
-		res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
+		res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, index);
 		res.put("project-name", projectName);
 		res.put("reference", reference);
 		res.put("tc-id", tcId);

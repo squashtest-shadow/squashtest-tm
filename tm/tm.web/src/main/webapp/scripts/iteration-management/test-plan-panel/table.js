@@ -255,7 +255,7 @@ define(['jquery', 'squash.translator', './exec-runner',
 				});
 			}, 
 			
-			aaSorting : [[1, 'asc']]	//that's temporary, because the presort will soon be stored in a cookie
+			aaSorting : [[0, 'asc']]	//that's temporary, because the presort will soon be stored in a cookie
 		};
 		
 		var squashSettings = {

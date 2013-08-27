@@ -61,6 +61,7 @@ import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanFinder;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
@@ -116,7 +117,7 @@ public class IterationModificationController {
 	private InternationalizationHelper messageSource;
 
 	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
-														.map		 ("entity-index", 	(String)null)		// index is a special case which means : no sorting.
+														.map		 ("entity-index", 	"index(IterationTestPlanItem)")		// index is a special case which means : no sorting.
 														.mapAttribute("project-name",	"name", 			Project.class)
 														.mapAttribute("reference", 		"reference", 		TestCase.class)
 														.mapAttribute("tc-name", 		"name", 			TestCase.class)
@@ -404,7 +405,7 @@ public class IterationModificationController {
 			final Locale locale) {
 
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, testPlanMapper);
-		PagedCollectionHolder<List<IterationTestPlanItem>> holder = iterationModService.findAssignedTestPlan(iterationId, paging);
+		PagedCollectionHolder<List<IndexedIterationTestPlanItem>> holder = iterationModService.findAssignedTestPlan(iterationId, paging);
 
 		return new IterationTestPlanTableModelHelper(messageSource, locale).buildDataModel(holder,
 				params.getsEcho());

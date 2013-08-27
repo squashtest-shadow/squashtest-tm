@@ -58,6 +58,7 @@ import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.service.campaign.CustomIterationModificationService;
+import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
@@ -414,7 +415,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	 * @see org.squashtest.tm.service.campaign.CustomIterationModificationService#findAssignedTestPlan(long, Paging)
 	 */
 	@Override
-	public PagedCollectionHolder<List<IterationTestPlanItem>> findAssignedTestPlan(long iterationId, PagingAndMultiSorting sorting) {
+	public PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findAssignedTestPlan(long iterationId, PagingAndMultiSorting sorting) {
 
 		String userLogin = getCurrentUserLogin();		
 		Iteration iteration = iterationDao.findById(iterationId);
@@ -427,10 +428,10 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		}
 
 		
-		List<IterationTestPlanItem> testPlan = iterationDao.findTestPlan(iterationId, sorting, filtering);
+		List<IndexedIterationTestPlanItem> indexedItems = iterationDao.findTestPlan(iterationId, sorting, filtering);
 		long testPlanSize = iterationDao.countTestPlans(iterationId, filtering);
 
-		return new PagingBackedPagedCollectionHolder<List<IterationTestPlanItem>>(sorting, testPlanSize, testPlan);
+		return new PagingBackedPagedCollectionHolder<List<IndexedIterationTestPlanItem>>(sorting, testPlanSize, indexedItems);
 	}
 
 	private String getCurrentUserLogin() {
@@ -466,4 +467,5 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	public List<Iteration> findIterationContainingTestCase(long testCaseId) {
 		return iterationDao.findAllIterationContainingTestCase(testCaseId);
 	}
-}
+
+} 

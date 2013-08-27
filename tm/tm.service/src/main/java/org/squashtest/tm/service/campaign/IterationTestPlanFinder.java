@@ -35,7 +35,7 @@ import org.squashtest.tm.domain.users.User;
 public interface IterationTestPlanFinder {
 	
 	
-	PagedCollectionHolder<List<IterationTestPlanItem>> findTestPlan(long iterationId, PagingAndSorting filter);
+	PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findTestPlan(long iterationId, PagingAndSorting filter);
 	
 	IterationTestPlanItem findTestPlanItem(long itemTestPlanId);
 	

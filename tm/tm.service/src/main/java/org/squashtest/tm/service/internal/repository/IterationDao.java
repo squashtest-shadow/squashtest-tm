@@ -26,10 +26,10 @@ import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 
 public interface IterationDao extends EntityDao<Iteration> {
 
@@ -55,15 +55,24 @@ public interface IterationDao extends EntityDao<Iteration> {
 	List<Iteration> findAllIterationContainingTestCase(long testCaseId);
 	
 	/**
-	 * Returns the paged test plan of the given iteration
+	 * Returns the paged list of [index, IterationTestPlanItem]
 	 * 
 	 * @param iterationId
 	 * @param sorting
+	 * @param filtering
 	 * @return
 	 */
-	List<IterationTestPlanItem> findTestPlan(long iterationId, PagingAndMultiSorting sorting, Filtering filtering);
-
-	List<IterationTestPlanItem> findTestPlan(long iterationId, PagingAndSorting sorting, Filtering filter);
+	List<IndexedIterationTestPlanItem> findTestPlan(long iterationId, PagingAndMultiSorting sorting, Filtering filtering);
+	
+	/**
+	 * Returns the paged list of [index, IterationTestPlanItem]
+	 * 
+	 * @param iterationId
+	 * @param sorting
+	 * @param filtering
+	 * @return
+	 */
+	List<IndexedIterationTestPlanItem> findTestPlan(long iterationId, PagingAndSorting sorting, Filtering filter);
 	
 	long countTestPlans(Long iterationId, Filtering filtering);
 

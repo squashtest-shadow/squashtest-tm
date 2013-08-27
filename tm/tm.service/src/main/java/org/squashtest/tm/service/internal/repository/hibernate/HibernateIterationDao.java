@@ -20,24 +20,24 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
 import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
 import org.squashtest.tm.core.foundation.collection.Filtering;
-import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.SingleToMultiSortingAdapter;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
@@ -45,6 +45,7 @@ import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.IterationDao;
@@ -52,21 +53,34 @@ import org.squashtest.tm.service.internal.repository.IterationDao;
 @Repository
 public class HibernateIterationDao extends HibernateEntityDao<Iteration> implements IterationDao {
 
+	/*
+	 * Because it is impossible to sort over the indices of ordered collection in a criteria query 
+	 * we must then build an hql string which will let us do that. 
+	 */
+	private static final String HQL_INDEXED_TEST_PLAN = 
+			"select index(IterationTestPlanItem), IterationTestPlanItem "+
+			"from Iteration as Iteration inner join Iteration.testPlans as IterationTestPlanItem "+
+			"inner join Iteration.campaign.project as Project " + 
+			"left outer join IterationTestPlanItem.referencedTestCase as TestCase " +
+			"left outer join IterationTestPlanItem.referencedDataset as Dataset " +
+			"left outer join IterationTestPlanItem.user as User "+
+			"where Iteration.id = :iterationId ";
+	
 	@Override
 	public List<Iteration> findAllInitializedByCampaignId(long campaignId) {
 
-		return executeListNamedQuery("iterationDao.findAllInitializedByCampaignId", new SetIdParameter("campaignId",
-				campaignId));
+		return executeListNamedQuery("iterationDao.findAllInitializedByCampaignId", 
+									  new SetIdParameter("campaignId", campaignId));
 	}
 
 	@Override
 	public List<Iteration> findAllIterationContainingTestCase(long testCaseId) {
-		return executeListNamedQuery("iterationDao.findAllIterationContainingTestCase", new SetIdParameter("testCaseId",
-				testCaseId));
+		return executeListNamedQuery("iterationDao.findAllIterationContainingTestCase", 
+									  new SetIdParameter("testCaseId", testCaseId));
 	}
 	
 	/*
-	 * as long as the ordering of a collection is managed by @OrderColumn, but you can't explicitely reference the
+	 * as long as the ordering of a collection is managed by @OrderColumn, but you can't explicitly reference the
 	 * ordering column in the join table, initialize the collection itself is the only solution
 	 * 
 	 * (non-Javadoc)
@@ -156,45 +170,36 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	}
 	
 	@Override
-	public List<IterationTestPlanItem> findTestPlan(long iterationId,	PagingAndSorting sorting, Filtering filter) {
+	public List<IndexedIterationTestPlanItem> findTestPlan(long iterationId, PagingAndSorting sorting, Filtering filtering) {
 		
-		Criteria criteria = _createPagedTestPlanCriteria(iterationId, sorting, filter);
-		
-		SortingUtils.addOrder(criteria, sorting);
-		
-		return collectFromMapList(criteria.list(), "IterationTestPlanItem");
+		return findTestPlan(iterationId, new SingleToMultiSortingAdapter(sorting), filtering);
 	}
 
 	@Override
-	public List<IterationTestPlanItem> findTestPlan(final long iterationId, PagingAndMultiSorting sorting, Filtering filter) {
-
-		
-		Criteria criteria = _createPagedTestPlanCriteria(iterationId, sorting, filter);
-		
-		SortingUtils.addOrder(criteria, sorting);
-		
-		return collectFromMapList(criteria.list(), "IterationTestPlanItem");
-	}
+	public List<IndexedIterationTestPlanItem> findTestPlan(final long iterationId, PagingAndMultiSorting sorting, 
+			Filtering filtering) {
 	
-	private Criteria _createPagedTestPlanCriteria(final long iterationId, Paging paging, Filtering filtering){
+		StringBuilder hqlbuilder = new StringBuilder(HQL_INDEXED_TEST_PLAN);
 		
-		Criteria criteria = currentSession().createCriteria (Iteration.class, "Iteration")
-											.createAlias	("Iteration.testPlans", "IterationTestPlanItem")
-											.createAlias	("Iteration.campaign.project", "Project")
-											.createAlias	("IterationTestPlanItem.referencedTestCase", "TestCase", JoinType.LEFT_OUTER_JOIN)
-											.createAlias	("IterationTestPlanItem.referencedDataset", "Dataset", JoinType.LEFT_OUTER_JOIN)
-											.createAlias	("IterationTestPlanItem.user", "User", JoinType.LEFT_OUTER_JOIN)
-											.add			(Restrictions.eq("Iteration.id", iterationId))
-											.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
-											
-		
-		PagingUtils.addPaging(criteria, paging);
-		
+		//check if we want to filter on the user login
 		if (filtering.isDefined()){
-			criteria.add(Restrictions.eq(filtering.getFilteredAttribute(), filtering.getFilter()));
+			hqlbuilder.append("and User.login = :userLogin");
 		}
 		
-		return criteria;
+		SortingUtils.addOrder(hqlbuilder, sorting);
+		
+		Query query = currentSession().createQuery(hqlbuilder.toString());
+		
+		query.setParameter("iterationId", iterationId, LongType.INSTANCE);
+		
+		if (filtering.isDefined()){
+			query.setParameter("userLogin", filtering.getFilter(), StringType.INSTANCE);
+		}
+		
+		PagingUtils.addPaging(query, sorting);
+		
+		return buildIndexedItems(query.list());
+		
 	}
 
 	@Override
@@ -276,5 +281,17 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 		return (Long) executeEntityNamedQuery("iteration.countRunningOrDoneExecutions", idParameter(iterationId));
 	}
 
+	
+	private List<IndexedIterationTestPlanItem> buildIndexedItems(List<Object[]> tuples){
+		List<IndexedIterationTestPlanItem> indexedItems = new ArrayList<IndexedIterationTestPlanItem>(tuples.size());
+		
+		for (Object[] tuple : tuples){
+			Integer index = (Integer)tuple[0];
+			IterationTestPlanItem itpi = (IterationTestPlanItem) tuple[1];
+			indexedItems.add(new IndexedIterationTestPlanItem(index, itpi));
+		}
+		
+		return indexedItems;
+	}
 
 }

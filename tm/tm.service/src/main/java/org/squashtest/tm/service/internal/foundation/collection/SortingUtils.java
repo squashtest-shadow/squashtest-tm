@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.foundation.collection;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
@@ -36,10 +37,15 @@ import org.squashtest.tm.core.foundation.collection.Sorting;
  * 
  */
 public final class SortingUtils {
+	
+	private static final Pattern HQL_ORDER_PATTERN = Pattern.compile("order\\s+by\\s+\\S+\\s+(asc|desc)");
+	
 	private SortingUtils() {
 		super();
 	}
 
+	// ********************** for Criterias ************************
+	
 	/**
 	 * Adds sorting to a Criteria query.
 	 * 
@@ -64,13 +70,69 @@ public final class SortingUtils {
 			addOrder(criteria, sort);
 		}
 	}
-	
-	
+
 	public static void addOrders(Criteria criteria, Collection<Sorting> sortings){
 		Iterator<Sorting> iterator = sortings.iterator();
 		while(iterator.hasNext()){
 			Sorting next = iterator.next();
 			addOrder(criteria, next);			
+		}
+	}
+	
+	// ***************** for HQL **********************
+	
+	public static void addOrder(StringBuilder hqlbuilder, Sorting sorting){
+	
+		//escapes if nothing needs to be done
+		if (StringUtils.isBlank(sorting.getSortedAttribute())){
+			return;
+		}
+		
+		//handle possible multiple occurences of an order clause
+		handlePreviousOrderClauses(hqlbuilder);
+		
+		//now add the clause
+		hqlbuilder.append(sorting.getSortedAttribute())
+				  .append(" ")
+				  .append(sorting.getSortOrder().getCode());
+
+		
+	}
+	
+	//for the sake of optimization we won't simply loop over the method right above
+	public static void addOrder(StringBuilder hqlbuilder, MultiSorting sortings){
+		
+		//escapes if nothing needs to be done
+		if (sortings.getSortings().isEmpty()){
+			return;
+		}
+		
+		//handle possible multiple occurences of an order clause
+		handlePreviousOrderClauses(hqlbuilder);
+		
+		//now add the clauses
+		for (Iterator<Sorting> iter = sortings.getSortings().iterator(); iter.hasNext(); ){
+			Sorting sorting =  iter.next();
+			
+			hqlbuilder.append(sorting.getSortedAttribute())
+			  .append(" ")
+			  .append(sorting.getSortOrder().getCode())
+			  .append(" ");
+			
+			if (iter.hasNext()){
+				hqlbuilder.append(", ");
+			}
+		}
+		
+	}
+	
+	
+	private static void handlePreviousOrderClauses(StringBuilder hqlbuilder){
+		if (HQL_ORDER_PATTERN.matcher(hqlbuilder.toString()).find()){
+			hqlbuilder.append(", ");
+		}
+		else{
+			hqlbuilder.append("order by ");
 		}
 	}
 }
