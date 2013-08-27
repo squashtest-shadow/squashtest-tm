@@ -55,6 +55,11 @@
 <%-- ==================== THE TOOLBAR ==================== --%>
 
 <div class="toolbar">
+
+	<f:message var="tooltipSortmode" key="tooltips.TestPlanSortMode"/>
+	<f:message var="messageSortmode" key="message.TestPlanSortMode"/>
+	<span id="test-plan-sort-mode-message" class="not-displayed sort-mode-message" title="${tooltipSortmode}">${messageSortmode}</span>
+
 	<c:if test="${ linkable }">
 		<f:message var="associateLabel" 	key="label.Add" />
 		<f:message var="removeLabel" 		key="label.Remove" />

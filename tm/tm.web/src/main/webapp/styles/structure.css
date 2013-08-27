@@ -289,23 +289,35 @@ img.search-image {
 	top: -0.9cm;
 }
 
-div#requirement-search-pane {
+#requirement-search-pane {
 	padding: 1em 0 0;
 }
 
 
+#test-plan-sort-mode-message{
+	padding-right: 40px;
+	background: url('../images/icon_wizard.gif') no-repeat right center;
+	margin-right: 1em;
+	height: 20px;
+	vertical-align: middle;
+	font-size: 18px;
+	font-family: impact;
+	font-style: italic;
+	color: #D14719;	
+	cursor: help;
+}
 
-div#search-result a {
+#search-result a {
 	text-decoration: none;
 }
 
-input#search-button {
+#search-button {
 	height: 2em;
 	padding: 0;
 	width: 8em;
 }
 
-div#contextual-content {
+#contextual-content {
 	bottom: 0;
 	position: absolute;
 	right: 0;
@@ -318,7 +330,7 @@ div#contextual-content {
  *  this is a legacy of the pre-resizable panels (0.16.0 and before). 
  *  It disables the extra features defined above for the #contextual-content.
  */
-div#contextual-content.no-resizable-contextual-content {
+#contextual-content.no-resizable-contextual-content {
 	bottom: 0;
 	position: absolute;
 	right: 0;
@@ -329,17 +341,17 @@ div#contextual-content.no-resizable-contextual-content {
 }
 
 
-div#search-pane {
+#search-pane {
 	padding: 0;
 	padding-top: 1em;
 }
 
-table#user-list-table {
+#user-list-table {
 	margin-right: 10px;
 	margin-left: 10px;
 }
 
-div#user-info-pane {
+#user-info-pane {
 	bottom: 0;
 	left: 0px;
 	position: relative;
@@ -347,11 +359,11 @@ div#user-info-pane {
 	top: 0.6cm;
 }
 
-div#admin-link-pane {
+#admin-link-pane {
 	position: relative;
 }
 
-div#information-content {
+#information-content {
 	bottom: 0;
 	left: 0;
 	position: absolute;
