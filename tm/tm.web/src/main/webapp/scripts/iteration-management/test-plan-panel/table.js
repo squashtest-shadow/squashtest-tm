@@ -54,9 +54,9 @@
  * 
  */
 
-define(['jquery', 'squash.translator', './exec-runner', 
+define(['jquery', 'squash.translator', './exec-runner', './sortmode',
         'jquery.squash.datatables', 'jeditable', 'jquery.squash.buttonmenu'],
-        function($, translator, execrunner) {
+        function($, translator, execrunner, smode) {
 
 		
 	
@@ -249,13 +249,17 @@ define(['jquery', 'squash.translator', './exec-runner',
 			},
 				
 			fnDrawCallback : function(){
+				
 				// make all <select> elements autosubmit on selection change.
 				this.on('change', 'select', function(){
 					$(this).submit();
 				});
-			}, 
-			
-			aaSorting : [[0, 'asc']]	//that's temporary, because the presort will soon be stored in a cookie
+				
+				// update the sort mode
+				var settings = this.fnSettings();
+				var aaSorting = settings.aaSorting;				
+				this.data('sortmode').manageSortMode(aaSorting);
+			} 
 		};
 		
 		var squashSettings = {
@@ -345,9 +349,19 @@ define(['jquery', 'squash.translator', './exec-runner',
 	// **************** MAIN ****************
 	
 	return {
-		init : function(enhconf){			
-			var tableconf = createTableConfiguration(enhconf);			
-			$("#iteration-test-plans-table").squashTable(tableconf.tconf, tableconf.sconf);
+		init : function(enhconf){
+			
+			// basic init
+			var tableconf = createTableConfiguration(enhconf);		
+			var sortmode = smode.new({
+				key : 'iteration-test-plans-table-'+enhconf.basic.iterationId
+			});
+			tableconf.tconf.aaSorting = sortmode.getaaSorting();
+			
+			var table = $("#iteration-test-plans-table").squashTable(tableconf.tconf, tableconf.sconf);
+			table.data('sortmode', sortmode);
+
+			
 		}
 	};
 	

@@ -530,6 +530,7 @@ public class TestCaseModificationController {
 		List<CustomFieldValue> stepCufValues = helper.getCustomFieldValues();
 
 		TestStepsTableModelBuilder builder = new TestStepsTableModelBuilder(internationalizationHelper, locale);
+		builder.setCurrentIndex(1l);
 		builder.usingCustomFields(stepCufValues, cufDefinitions.size());
 		Collection<Object> stepsData = builder.buildRawModel(steps);
 		mav.addObject("stepsData", stepsData);

@@ -84,6 +84,10 @@ public abstract class DataTableModelBuilder<X> {
 		return currentIndex;
 	}
 
+	public void setCurrentIndex(long currentIndex) {
+		this.currentIndex = currentIndex;
+	}
+
 	protected abstract Object buildItemData(X item);
 
 }

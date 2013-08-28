@@ -81,7 +81,7 @@ public class DataTableDrawParameters {
 	 * use #getsSortedAttribute_0() instead 
 	 */
 	public int getiSortCol_0() { // NOSONAR names have to match JSON structure
-		return (Integer)iSortCol.get(0);
+		return Integer.valueOf((String)iSortCol.get(0));
 	}
 
 	public void setiSortCol_0(int iSortCol_0) { // NOSONAR names have to match JSON structure
