@@ -351,8 +351,7 @@ public class CampaignLibraryNavigationController extends
 			Iterator<Row> iterator = model.dataIterator();
 			while (iterator.hasNext()) {
 				Row datarow = iterator.next();
-				String cleanRowValue = HTMLCleanupUtils.htmlToText(datarow.toString()).replaceAll("\\n", " ")
-						.replaceAll("\\r", " ");
+				String cleanRowValue = HTMLCleanupUtils.htmlToText(datarow.toString()).replaceAll("\\n", "").replaceAll("\\r", "");
 				writer.write(cleanRowValue + "\n");
 			}
 

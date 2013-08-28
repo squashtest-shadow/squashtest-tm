@@ -334,7 +334,7 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 
 		// ******************************** data formatting ***************************
 
-		// returns the correct value if found, or "--" if not found
+		// returns the correct value if found, or "" if not found
 		private String getValue(Collection<CustomFieldValue> values, CustomField model) {
 
 			if(values != null){
@@ -345,7 +345,7 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 				}
 			}
 
-			return "--";
+			return "";
 		}
 
 		private int getNbIssues(IterationTestPlanItem itp) {
@@ -362,8 +362,12 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 
 
 		private String formatUser(User user) {
-			return (user == null) ? "--" : user.getLogin();
+			return (user == null) ? "" : user.getLogin();
 
+		}
+
+		private String formatLongText(String text) {
+			return (text == null) ? "" : text;
 		}
 
 		// ****************** iterator mechanics here ****************
