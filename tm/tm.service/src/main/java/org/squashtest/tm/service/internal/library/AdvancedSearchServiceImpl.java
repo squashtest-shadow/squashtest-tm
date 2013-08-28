@@ -35,6 +35,7 @@ import org.apache.lucene.document.DateTools;
 import org.hibernate.CacheMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.hibernate.search.batchindexing.MassIndexerProgressMonitor;
@@ -135,11 +136,11 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	@Override
 	public void indexTestCases(){
 		
-		Session session = sessionFactory.getCurrentSession();
+		Session session = sessionFactory.openSession();
  		
 		FullTextSession ftSession = Search.getFullTextSession(session);
-		
-		MassIndexerProgressMonitor monitor = new IndexingProgressMonitor();
+
+		MassIndexerProgressMonitor monitor = new AdvancedSearchIndexingMonitor();
 		
 		try {
 
@@ -159,6 +160,8 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		this.configurationService.updateConfiguration(TESTCASE_INDEXING_DATE_KEY, dateFormat.format(indexingDate));
 		String currentVersion = this.configurationService.findConfiguration(SQUASH_VERSION_KEY);
 		this.configurationService.updateConfiguration(TESTCASE_INDEXING_VERSION_KEY, currentVersion);
+		
+		session.close();
 	}
 		
 	@Override

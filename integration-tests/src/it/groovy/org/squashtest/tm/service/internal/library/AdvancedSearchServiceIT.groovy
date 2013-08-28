@@ -62,14 +62,14 @@ class AdvancedSearchServiceIT extends DbunitServiceSpecification {
 	
 	def setup(){
 		service.indexTestCases();
-		TestCase tc = testCaseService.findById(10L);
-		tc.name = "TC1";
-		testCaseService.changePrerequisite(10L, "Batman");
-		testCaseService.changeImportance(10L, TestCaseImportance.LOW);
+		//TestCase tc = testCaseService.findById(10L);
+		//tc.name = "TC1";
+		//testCaseService.changePrerequisite(10L, "Batman");
+		//testCaseService.changeImportance(10L, TestCaseImportance.LOW);
 	}
 	
 
-	def "should find test cases by id"(){
+	/*def "should find test cases by id"(){
 		
 		given:
 			def model = new AdvancedSearchModel();
@@ -82,8 +82,9 @@ class AdvancedSearchServiceIT extends DbunitServiceSpecification {
 		
 		then:
 			res==testCaseService.findAllByIds([10L])
-	}
+	}*/
 	
+	/*
 	def "should find test cases by reference"(){
 		given:
 			def model = new AdvancedSearchModel();
@@ -138,9 +139,9 @@ class AdvancedSearchServiceIT extends DbunitServiceSpecification {
 		
 		then:
 			res==testCaseService.findAllByIds([10L])
-	}
+	}*/
 
-	def "should find test cases by importance"(){
+	/*def "should find test cases by importance"(){
 		given:
 			def model = new AdvancedSearchModel();
 			def field = new AdvancedSearchListFieldModel();
@@ -194,8 +195,9 @@ class AdvancedSearchServiceIT extends DbunitServiceSpecification {
 		
 		then:
 			res==testCaseService.findAllByIds([10L,20L])
-	}
+	}*/
 	
+	/*
 	def "should find test cases by project"(){
 		given:
 			def model = new AdvancedSearchModel();
@@ -208,9 +210,9 @@ class AdvancedSearchServiceIT extends DbunitServiceSpecification {
 		
 		then:
 			res==testCaseService.findAllByIds([10L])
-	}
+	}*/
 	
-	def "should find test cases by # of steps"(){
+	/*def "should find test cases by # of steps"(){
 		given:
 			def model = new AdvancedSearchModel();
 			def field = new AdvancedSearchRangeFieldModel();
@@ -268,8 +270,9 @@ class AdvancedSearchServiceIT extends DbunitServiceSpecification {
 		
 		then:
 			res==testCaseService.findAllByIds([10L, 20L])
-	}
+	}*/
 	
+	/*
 	def "should find test cases by creator"(){
 			given:
 			def model = new AdvancedSearchModel();
@@ -326,5 +329,5 @@ class AdvancedSearchServiceIT extends DbunitServiceSpecification {
 		
 		then:
 			res==testCaseService.findAllByIds([10L])
-	}
+	}*/
 }
