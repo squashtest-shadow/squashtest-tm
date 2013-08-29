@@ -389,11 +389,11 @@
 	
 	require(["domReady", "require"], function(domReady, require){
 		domReady(function(){
-			require(["jquery", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", "workspace.contextual-content"], 
-					function($, contentHandlers, Frag, bugtracker, contextualContent){
+			require(["jquery", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", "workspace.contextual-content", "iteration-management"], 
+					function($, contentHandlers, Frag, bugtracker, contextualContent, itermanagement){
 
 				
-				// *********** name handler ***************
+				// *********** event handler ***************
 				
 				var nameHandler = contentHandlers.getSimpleNameHandler();
 				
@@ -401,6 +401,8 @@
 				nameHandler.nameDisplay = "#iteration-name";
 				
 				contextualContent.addListener(nameHandler);
+				
+				itermanagement.initEvents();
 				
 				//****** tabs configuration *******
 				

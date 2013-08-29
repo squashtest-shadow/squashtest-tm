@@ -54,12 +54,18 @@ define([ 'jquery', 'jqueryui' ], function($) {
 			/* ******************* private **************** */
 
 			var cleanContent = $.proxy(function() {
+				// notify the handlers that we're moving to another content
 				this.fire(null, {
 					evt_name : "contextualcontent.clear"
 				});
+				
+				// remove all previous handlers.
+				this.listeners = [];
+				this.off();
+				
+				// clean the content
 				_cleanPopups();
 				this.empty();
-				this.listeners = [];
 				if (this.onCleanContent !== null) {
 					this.onCleanContent();
 					this.onCleanContent = null;

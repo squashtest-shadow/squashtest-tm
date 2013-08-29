@@ -37,7 +37,7 @@ define(['jquery', 'workspace.contextual-content', 'jqueryui', 'jquery.squash.con
 				type : 'DELETE',
 				dataType : 'json'
 			}).done(function(data){
-				ctxt.trigger('context.content-updated', { newDates : data });
+				ctxt.trigger('context.content-modified', { newDates : data });
 			});				
 		});
 	}

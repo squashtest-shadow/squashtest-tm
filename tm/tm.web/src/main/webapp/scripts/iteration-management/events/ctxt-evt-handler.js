@@ -18,18 +18,32 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "./test-suite-menu/TestSuiteMenuMain", './test-plan-panel/main', './events/ctxt-evt-handler' ], function(TestSuiteMenuMain, testPlanPanel, evtHandler) {
 
+/*
+ * conf : {
+ * 	//no conf needed yet, but that may change later.
+ * }
+ * 
+ */
+define(['jquery', 'workspace.contextual-content' ], function($, ctxtContent) {
+
+	
 	return {
-		initTestSuiteMenu : TestSuiteMenuMain,
-		
-		initTestPlanPanel : function(conf){
-			testPlanPanel.init(conf);
-		},
-		
-		initEvents : function(conf){
-			evtHandler.init(conf);
-		}
-	};
+		init : function(conf){
+			
+			ctxtContent.on('context.content-modified', function(evt, args){	
+				
+				$("#iteration-test-plans-table").squashTable().refresh();           
+                refreshIterationInfos();
+                refreshStatistics();
+                if (args && args.newDates){
+	                actualStart.refreshAutoDate(args.newDates.newStartDate);
+	                actualEnd.refreshAutoDate(args.newDates.newEndDate);
+                }
+                
+			});		
+			
+		}		
+	}
 	
 });
