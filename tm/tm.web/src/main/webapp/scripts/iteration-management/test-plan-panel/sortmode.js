@@ -25,74 +25,93 @@
 
 /*
  * configuration : {
- * 	id : the id of the iteration 
+ * 	basic {
+ * 		iterationId : the id of the iteration
+ * 	}, 
+ * 	permissions : {
+ * 		reorderable : boolean, that tells whether the 'reorder' button is active.
+ * 	}
  * }
  * 
  */
 define(['jquery'], function($){
 	
 	
-	return {
-		
-		namespace : 'itp-sort-',
+	function SortMode(conf) {
 
-		DEFAULT_SORTING : [[0, 'asc']],
-		
-		//mock localStorage if the browser doesn't support it
-		
-		storage : localStorage || {
+		this.storage = localStorage || {
 			setItem : function(){},
 			getItem : function(){},
 			removeItem : function(){}
-		},
+		};
 		
+		// **************** configuration ******************
+		
+		this.reorderable = conf.permissions.reorderable || false;
+		
+		if (conf.basic.iterationId === undefined){
+			throw "sortmode : iteration id absent from the configuration";
+		}
+		
+		this.key = 'itp-sort-'+conf.basic.iterationId;
 		
 		// ******************* logic ***********************
 		
-		manage : function(id, newSorting){
+		this.resetTableOrder = function(table){
+			table.fnSettings().aaSorting = StaticSortMode.defaultSorting();
+			this._disableSortMode();
+		};
+		
+		this.manage = function(newSorting){
 			
 			if (this._isDefaultSorting(newSorting)){
 				this._disableSortMode();
-				this._deleteaaSorting(id);
+				this._deleteaaSorting();
 			}
 			else{
 				this._enableSortMode();
-				this._saveaaSorting(id, newSorting);
+				this._saveaaSorting(newSorting);
 			}
-		},
+		};
 
 		
-		_enableSortMode : function(){
+		this._enableSortMode = function(){
 			$("#test-plan-sort-mode-message").show();
 			$("#iteration-test-plans-table").find('.select-handle').removeClass('drag-handle');
-		},
+			if (this.reorderable){
+				$("#reorder-test-plan-button").squashButton('enable');
+			}
+		};
 		
-		_disableSortMode : function(){
+		this._disableSortMode = function(){
 			$("#test-plan-sort-mode-message").hide();
 			$("#iteration-test-plans-table").find('.select-handle').addClass('drag-handle');
-		},
+			
+			$("#reorder-test-plan-button").squashButton('disable');
+			
+		};
 
-		_isDefaultSorting : function(someSorting){
+		this._isDefaultSorting = function(someSorting){
+			var defaultSorting = StaticSortMode.defaultSorting();
 			return (someSorting.length === 1 &&
-					someSorting[0][0] === this.DEFAULT_SORTING[0][0] &&
-					someSorting[0][1] === this.DEFAULT_SORTING[0][1])
-		},
+					someSorting[0][0] === defaultSorting[0][0] &&
+					someSorting[0][1] === defaultSorting[0][1])
+		};
 		
 		
 		// ******************** I/O ******************** 
 		
-		loadaaSorting : function(id){
-			var key = this.namespace + id;
-			var sorting = this.storage.getItem(key);
+		this.loadaaSorting = function(){
+			var sorting = this.storage.getItem(this.key);
 			if (!! sorting){
 				return JSON.parse(sorting)
 			}
 			else{
-				return this.DEFAULT_SORTING;
+				return StaticSortMode.defaultSorting();
 			}
-		},
+		};
 		
-		_saveaaSorting : function(id, aaSorting){
+		this._saveaaSorting = function(aaSorting){
 			var trimedSorting = [],
 				_buf;
 			
@@ -101,15 +120,27 @@ define(['jquery'], function($){
 				trimedSorting.push( [_buf[0], _buf[1]] );
 			}
 			
-			var key = this.namespace + id;
-			this.storage.setItem(key, JSON.stringify(trimedSorting));
-		},
+			this.storage.setItem(this.key, JSON.stringify(trimedSorting));
+		};
 		
-		_deleteaaSorting : function(id){
-			var key = this.namespace + id;
-			this.storage.removeItem(key);
+		this._deleteaaSorting = function(){
+			this.storage.removeItem(this.key);
+		};
+		
+	};
+	
+	
+	var StaticSortMode = {
+		newInst : function (conf){
+			return new SortMode(conf);
+		},
+		defaultSorting : function(){
+			return [[0, 'asc']];
 		}
 		
-	}
+		
+	};
+	
+	return StaticSortMode;
 	
 });

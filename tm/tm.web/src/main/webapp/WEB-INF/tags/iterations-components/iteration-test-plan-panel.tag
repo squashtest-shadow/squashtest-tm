@@ -23,9 +23,10 @@
 <%@ tag body-content="empty" description="the test plan panel for an iteration"%>
 
 
-<%@ attribute name="linkable"  type="java.lang.Boolean" description="can the user link this iteration to test cases ?" %>
-<%@ attribute name="editable"  type="java.lang.Boolean" description="can the user modify the existing test plan items ?" %>
-<%@ attribute name="executable"type="java.lang.Boolean" description="can the user execute the test plan ?" %>
+<%@ attribute name="linkable"  	type="java.lang.Boolean" description="can the user link this iteration to test cases ?" %>
+<%@ attribute name="editable"  	type="java.lang.Boolean" description="can the user modify the existing test plan items ?" %>
+<%@ attribute name="executable"	type="java.lang.Boolean" description="can the user execute the test plan ?" %>
+<%@ attribute name="reorderable"type="java.lang.Boolean" description="can the user reorder the test plan en masse ?" %>
 
 <%@ attribute name="assignableUsers" type="java.lang.Object" description="a map of users paired by id -> login. The id must be a string."%>
 <%@ attribute name="iteration" type="java.lang.Object" description="the instance of iteration" %>
@@ -56,20 +57,28 @@
 
 <div class="toolbar">
 
-	<f:message var="tooltipSortmode" key="tooltips.TestPlanSortMode"/>
-	<f:message var="messageSortmode" key="message.TestPlanSortMode"/>
+	<f:message var="tooltipSortmode" 	key="tooltips.TestPlanSortMode"/>
+	<f:message var="messageSortmode"	key="message.TestPlanSortMode"/>
+	<f:message var="reorderLabel"		key="label.Reorder" />
+	<f:message var="reorderTooltip"		key="tooltips.ReorderTestPlan" />
+	<f:message var="associateLabel" 	key="label.Add" />
+	<f:message var="removeLabel" 		key="label.Remove" />
+	<f:message var="assignLabel"		key="label.Assign" />
+	<f:message var="manageTS" 			key='menu.test-suites.button.main' />
+	
+	
 	<span id="test-plan-sort-mode-message" class="not-displayed sort-mode-message" title="${tooltipSortmode}">${messageSortmode}</span>
 
 	<c:if test="${ linkable }">
-		<f:message var="associateLabel" 	key="label.Add" />
-		<f:message var="removeLabel" 		key="label.Remove" />
-		<f:message var="assignLabel"		key="label.Assign" />
-		<f:message var="manageTS" 			key='menu.test-suites.button.main' />
-		
-		<input id="navigate-test-plan-manager"	type="button" value="${associateLabel}" class="button" />
-		<input id="remove-test-plan-button" type="button" value="${removeLabel}" class="button" />
-		<input id="assign-users-button" 	type="button" value="${assignLabel}" class="button" />
-		<input id="manage-test-suites-menu" type="button" value="${manageTS}" class="button" />
+		<input id="navigate-test-plan-manager"	type="button" value="${associateLabel}" class="button" />	
+	</c:if>
+	<c:if test="${ reorderable }">
+		<input id="reorder-test-plan-button"	type="button" value="${reorderLabel}" 	class="button" title="${reorderTooltip}"/>
+	</c:if>
+	<c:if test="${ linkable }">
+		<input id="remove-test-plan-button" 	type="button" value="${removeLabel}"	class="button" />
+		<input id="assign-users-button" 		type="button" value="${assignLabel}" 	class="button" />
+		<input id="manage-test-suites-menu" 	type="button" value="${manageTS}" 		class="button" />
 	</c:if>
 </div>
 
@@ -147,6 +156,14 @@
 	</div>
 </div>
 
+<div id="iter-test-plan-reorder-dialog" class="not-displayed popup-dialog" title="${reorderLabel}" >
+	<span><f:message key="message.ReorderTestPlan"/></span>
+	<div class="popup-dialog-buttonpane"> 
+		<input type="button" value="${confirmLabel}"/> 
+		<input type="button" value="${cancelLabel}"/> 
+	</div>
+</div>
+
 </div>
 </div> <!-- /test plan panel end -->
 
@@ -158,7 +175,8 @@
 				permissions : {
 					linkable : ${linkable},
 					editable : ${editable},
-					executable : ${executable}
+					executable : ${executable},
+					reorderable : ${reorderable}
 				},
 				basic : {
 					iterationId : ${iteration.id},

@@ -85,6 +85,12 @@ define(['squash.translator', './table', './popups'], function(translator, table,
 				$("#iter-test-plan-batch-assign").formDialog('open');
 			});
 		}
+		
+		if (conf.permissions.reorderable){
+			$("#reorder-test-plan-button").on('click', function(){
+				$("#iter-test-plan-reorder-dialog").confirmDialog('open');
+			});
+		}
 	}
 	
 	return {

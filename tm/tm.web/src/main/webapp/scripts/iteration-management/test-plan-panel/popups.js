@@ -128,6 +128,28 @@ define(['jquery', 'workspace.contextual-content', 'jqueryui', 'jquery.squash.con
 		
 	}
 	
+	function _initReorderTestPlan(conf){
+		var dialog = $("#iter-test-plan-reorder-dialog");
+		
+		dialog.confirmDialog();
+		
+		dialog.on('confirmdialogconfirm', function(){
+			var table = $("#iteration-test-plans-table").squashTable();
+			var drawParameters = table.getAjaxParameters();
+			
+			var url = conf.urls.testplanUrl+'/order';
+			$.post(url, drawParameters, 'json')
+			.success(function(){
+				table.data('sortmode').resetTableOrder(table);
+				ctxt.trigger('context.content-modified');				
+			})
+		});
+		
+		dialog.on('confirmdialogcancel', function(){
+			$(this).confirmDialog('close');
+		});
+	}
+	
 	
 	return {
 		init : function(conf){
@@ -138,7 +160,9 @@ define(['jquery', 'workspace.contextual-content', 'jqueryui', 'jquery.squash.con
 				_initDeleteExecutionPopup(conf);
 				_initBatchAssignUsers(conf);
 			}
-			
+			if (conf.permissions.reorderable){
+				_initReorderTestPlan(conf);
+			}
 		}
 	};
 	

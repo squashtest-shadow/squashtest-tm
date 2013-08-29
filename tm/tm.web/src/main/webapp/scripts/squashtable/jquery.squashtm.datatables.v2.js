@@ -556,6 +556,17 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			return found;
 		});
 	}
+	
+	// reapped from the dataTable source : 
+	function _getAjaxParameters(){
+		var settings = this.fnSettings();
+		//gets the 'natural' parameters
+		var parameters = $.fn.dataTableExt.oApi._fnAjaxParameters(settings);
+		//process through callbacks chain
+		$.fn.dataTableExt.oApi._fnCallbackFire(settings, 'aoServerParams', null, [ parameters ]);
+		
+		return parameters;
+	}
 
 	function _addHLinkToCellText(td, url, isOpenInTab) {
 		var $td = $(td),
@@ -1234,6 +1245,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		this.restoreTableSelection = _restoreTableSelection;
 		this.getSelectedIds = _getSelectedIds;
 		this.getSelectedRows = _getSelectedRows;
+		this.getAjaxParameters = _getAjaxParameters;
 		this.getDataById = _getDataById;
 		this.addHLinkToCellText = _addHLinkToCellText;
 		this.selectRows = _selectRows;

@@ -330,7 +330,7 @@
 	<%-- ------------------ test plan ------------------------------ --%>
 	
 	<it:iteration-test-plan-panel iteration="${iteration}" assignableUsers="${assignableUsers}" 
-								  linkable="${linkable}"   editable="${writable}"  executable="${executable}"/>
+								  linkable="${linkable}"   editable="${writable}"  executable="${executable}" reorderable="${writable}"/>
 	
 	<%-- ------------------ /test plan ----------------------------- --%>
 		
@@ -402,6 +402,7 @@
 				
 				contextualContent.addListener(nameHandler);
 				
+				// todo : uniform the event handling.
 				itermanagement.initEvents();
 				
 				//****** tabs configuration *******

@@ -48,6 +48,7 @@ import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
+import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.jquery.TestPlanAssignableUser;
 import org.squashtest.tm.web.internal.model.json.JsonTestCase;
 import org.squashtest.tm.web.internal.model.json.JsonTestCaseBuilder;
@@ -136,6 +137,19 @@ public class IterationTestPlanManagerController {
 								@PathVariable("newIndex") int newIndex, @PathVariable("itemIds") List<Long> itemIds) {
 		iterationTestPlanManagerService.changeTestPlanPosition(iterationId, newIndex, itemIds);
 
+	}
+	
+	/**
+	 * Will reorder the test plan according to the current sorting instructions.
+	 * 
+	 * @param testPlanIds
+	 * @param iterationId
+	 * @return
+	 */
+	@RequestMapping(value = "/iterations/{iterationId}/test-plan/order", method = RequestMethod.POST)
+	@ResponseBody
+	public void reorderTestPlan(@PathVariable("iterationId") long iterationId, DataTableDrawParameters parameters){
+		// FIXME
 	}
 
 
