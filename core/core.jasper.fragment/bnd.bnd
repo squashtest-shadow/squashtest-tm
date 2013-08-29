@@ -1,0 +1,9 @@
+-include: pom.xml
+Fragment-Host: org.apache.jasper.glassfish
+Import-Package: \
+	javax.xml.parsers,\
+	javax.xml.transform,\
+	org.w3c.dom,\
+	org.w3c.dom.ls,\
+	org.xml.sax,\
+	org.xml.sax.helpers
