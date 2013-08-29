@@ -40,8 +40,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
-import org.squashtest.tm.core.foundation.collection.DefaultPaging;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.Pagings;
 import org.squashtest.tm.domain.project.AdministrableProject;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
@@ -80,13 +80,13 @@ public class ProjectAdministrationController {
 
 	@ModelAttribute("projectsPageSize")
 	public long populateProjectsPageSize() {
-		return DefaultPaging.FIRST_PAGE.getPageSize();
+		return Pagings.DEFAULT_PAGING.getPageSize();
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showProjects() {
 		ModelAndView mav = new ModelAndView("page/projects/show-projects");
-		mav.addObject("projects", projectFinder.findAllOrderedByName(DefaultPaging.FIRST_PAGE));
+		mav.addObject("projects", projectFinder.findAllOrderedByName(Pagings.DEFAULT_PAGING));
 		return mav;
 	}
 

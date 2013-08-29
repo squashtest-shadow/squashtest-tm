@@ -43,8 +43,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.squashtest.tm.core.foundation.collection.DefaultPaging;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.Pagings;
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldOption;
@@ -85,7 +85,7 @@ public class CustomFieldController {
 
 	@ModelAttribute("customFieldOptionsPageSize")
 	public long populateCustomFieldsPageSize() {
-		return DefaultPaging.FIRST_PAGE.getPageSize();
+		return Pagings.DEFAULT_PAGING.getPageSize();
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST)

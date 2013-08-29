@@ -20,48 +20,40 @@
  */
 package org.squashtest.tm.core.foundation.collection;
 
-/**
- * {@link Paging} of Squash TM default size.
- * 
- * @author Gregory Fouquet
- * 
- */
-public class DefaultPaging implements Paging {
-	/**
-	 * First page of default size.
-	 */
-	public static final Paging FIRST_PAGE = new DefaultPaging(0);
+import java.util.List;
 
-	private final int firstItemIndex;
+public class DelegatePagingAndMultiSorting implements PagingAndMultiSorting{
 
-	/**
-	 * @param firstItemIndex
-	 */
-	public DefaultPaging(int firstItemIndex) {
-		this.firstItemIndex = firstItemIndex;
+	private Paging paging;
+	private MultiSorting sorting;
+
+	
+	
+	public DelegatePagingAndMultiSorting(Paging paging, MultiSorting sorting) {
+		super();
+		this.paging = paging;
+		this.sorting = sorting;
 	}
 
-	/**
-	 * @see org.squashtest.tm.core.foundation.collection.Paging#getFirstItemIndex()
-	 */
 	@Override
 	public int getFirstItemIndex() {
-		return firstItemIndex;
+		return paging.getFirstItemIndex();
 	}
 
-	/**
-	 * (non-Javadoc)
-	 * 
-	 * @see org.squashtest.tm.core.foundation.collection.Paging#getPageSize()
-	 */
 	@Override
 	public int getPageSize() {
-		return 50;
-	}
-	
-	@Override
-	public boolean shouldDisplayAll() {
-		return false;
+		return paging.getPageSize();
 	}
 
+	@Override
+	public boolean shouldDisplayAll() {
+		return paging.shouldDisplayAll();
+	}
+
+	@Override
+	public List<Sorting> getSortings() {
+		return sorting.getSortings();
+	}
+	
+	
 }

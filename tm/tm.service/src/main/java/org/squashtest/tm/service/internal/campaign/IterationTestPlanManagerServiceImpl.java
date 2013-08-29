@@ -37,9 +37,15 @@ import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
+import org.squashtest.tm.core.foundation.collection.DelegatePagingAndMultiSorting;
+import org.squashtest.tm.core.foundation.collection.Filtering;
+import org.squashtest.tm.core.foundation.collection.MultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.Paging;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.Pagings;
 import org.squashtest.tm.domain.IdentifiersOrderComparator;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
@@ -63,7 +69,9 @@ import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.internal.testcase.TestCaseNodeWalker;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
+import org.squashtest.tm.service.project.ProjectsPermissionFinder;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService;
+import org.squashtest.tm.service.user.UserAccountService;
 
 @Service("squashtest.tm.service.IterationTestPlanManagerService")
 @Transactional
@@ -82,15 +90,22 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Inject
 	private IterationTestPlanDao iterationTestPlanDao;
-
+	
 	@Inject
 	private ObjectAclService aclService;
 
 	@Inject
 	private UserDao userDao;
+	
+
+	@Inject
+	private UserAccountService userService;
 
 	@Inject
 	private DatasetDao datasetDao;
+	
+	@Inject
+	private ProjectsPermissionFinder projectsPermissionFinder;
 
 	@Inject
 	@Qualifier("squashtest.tm.repository.TestCaseLibraryNodeDao")
@@ -116,6 +131,34 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	}
 
+	
+	
+	/**
+	 * 
+	 * @see org.squashtest.tm.service.campaign.CustomIterationModificationService#findAssignedTestPlan(long, Paging)
+	 */
+	@Override
+	public PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findAssignedTestPlan(long iterationId, PagingAndMultiSorting sorting) {
+
+		String userLogin = userService.findCurrentUser().getLogin();
+		Iteration iteration = iterationDao.findById(iterationId);
+		Long projectId = iteration.getProject().getId();
+		
+		//configure the filter, in case the test plan must be restricted to what the user can see.
+		Filtering filtering = DefaultFiltering.NO_FILTERING;
+		if (projectsPermissionFinder.isInPermissionGroup(userLogin, projectId, "squashtest.acl.group.tm.TestRunner")) {
+			filtering = new DefaultFiltering("User.login", userLogin);
+		}
+
+		
+		List<IndexedIterationTestPlanItem> indexedItems = iterationDao.findIndexedTestPlan(iterationId, sorting, filtering);
+		long testPlanSize = iterationDao.countTestPlans(iterationId, filtering);
+
+		return new PagingBackedPagedCollectionHolder<List<IndexedIterationTestPlanItem>>(sorting, testPlanSize, indexedItems);
+	}
+
+	
+	
 	/*
 	 * security note here : well what if we add test cases for which the user have no permissions on ? think of
 	 * something better.
@@ -192,6 +235,23 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		List<IterationTestPlanItem> items = iterationTestPlanDao.findAllByIds(itemIds);
 
 		iteration.moveTestPlans(newPosition, items);
+	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'WRITE') "
+			+ OR_HAS_ROLE_ADMIN)	
+	public void reorderTestPlan(long iterationId, MultiSorting newSorting) {
+		
+		Paging noPaging = Pagings.NO_PAGING;
+		PagingAndMultiSorting sorting = new DelegatePagingAndMultiSorting(noPaging, newSorting);
+		Filtering filtering = DefaultFiltering.NO_FILTERING;
+		
+		List<IterationTestPlanItem> items = iterationDao.findTestPlan(iterationId, sorting, filtering);
+		
+		Iteration iteration = iterationDao.findById(iterationId);
+		
+		iteration.getTestPlans().clear();
+		iteration.getTestPlans().addAll(items);
 	}
 	
 	
@@ -282,7 +342,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
 			+ OR_HAS_ROLE_ADMIN)
 	public PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findTestPlan(long iterationId, PagingAndSorting filter) {
-		List<IndexedIterationTestPlanItem> testPlan = iterationDao.findTestPlan(iterationId, filter, DefaultFiltering.NO_FILTERING);
+		List<IndexedIterationTestPlanItem> testPlan = iterationDao.findIndexedTestPlan(iterationId, filter, DefaultFiltering.NO_FILTERING);
 		long count = iterationDao.countTestPlans(iterationId, DefaultFiltering.NO_FILTERING);
 		return new PagingBackedPagedCollectionHolder<List<IndexedIterationTestPlanItem>>(filter, count, testPlan);
 	}

@@ -37,12 +37,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
-import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
-import org.squashtest.tm.core.foundation.collection.Filtering;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.Paging;
-import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
-import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.campaign.Iteration;
@@ -58,7 +52,6 @@ import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.service.campaign.CustomIterationModificationService;
-import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
@@ -73,12 +66,10 @@ import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 import org.squashtest.tm.service.internal.testautomation.service.InsecureTestAutomationManagementService;
-import org.squashtest.tm.service.project.ProjectsPermissionFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker;
-import org.squashtest.tm.service.user.UserAccountService;
 
 @Service("CustomIterationModificationService")
 @Transactional
@@ -113,10 +104,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToIterationStrategy")
 	private Provider<PasteStrategy<Iteration, TestSuite>> pasteToIterationStrategyProvider;
-	@Inject
-	private ProjectsPermissionFinder projectsPermissionFinder;
-	@Inject
-	private UserAccountService userService;
+
 	@Inject
 	private ObjectFactory<TreeNodeCopier> treeNodeCopierFactory;
 	@Inject
@@ -410,33 +398,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		return iterationDao.getIterationStatistics(iterationId);
 	}
 
-	/**
-	 * 
-	 * @see org.squashtest.tm.service.campaign.CustomIterationModificationService#findAssignedTestPlan(long, Paging)
-	 */
-	@Override
-	public PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findAssignedTestPlan(long iterationId, PagingAndMultiSorting sorting) {
 
-		String userLogin = getCurrentUserLogin();		
-		Iteration iteration = iterationDao.findById(iterationId);
-		Long projectId = iteration.getProject().getId();
-		
-		//configure the filter, in case the test plan must be restricted to what the user can see.
-		Filtering filtering = DefaultFiltering.NO_FILTERING;
-		if (projectsPermissionFinder.isInPermissionGroup(userLogin, projectId, "squashtest.acl.group.tm.TestRunner")) {
-			filtering = new DefaultFiltering("User.login", userLogin);
-		}
-
-		
-		List<IndexedIterationTestPlanItem> indexedItems = iterationDao.findTestPlan(iterationId, sorting, filtering);
-		long testPlanSize = iterationDao.countTestPlans(iterationId, filtering);
-
-		return new PagingBackedPagedCollectionHolder<List<IndexedIterationTestPlanItem>>(sorting, testPlanSize, indexedItems);
-	}
-
-	private String getCurrentUserLogin() {
-		return userService.findCurrentUser().getLogin();
-	}
 
 	@Override
 	public AutomatedSuite createAndStartAutomatedSuite(List<IterationTestPlanItem> testPlanItems) {

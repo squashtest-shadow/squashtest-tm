@@ -44,14 +44,6 @@ public interface IterationFinder {
 	List<Iteration> findIterationContainingTestCase(long testCaseId);
 	
 	TestPlanStatistics getIterationStatistics(long iterationId);
-	
-	/**
-	 * Returns an iteration filtered for a specific user. It returns an iteration
-	 * with a test plan containing only the items that are assigned to that user or
-	 * have been executed by that user.
-	 * @param iterationId
-	 * @return the test plan of given iteration filtered by the current user
-	 */
-	PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findAssignedTestPlan(long iterationId, PagingAndMultiSorting sorting);
+
 	
 }

@@ -24,6 +24,9 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.squashtest.tm.core.foundation.collection.MultiSorting;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
@@ -37,6 +40,17 @@ import org.squashtest.tm.domain.users.User;
  */
 public interface IterationTestPlanManagerService extends IterationTestPlanFinder {
 
+	
+	
+	/**
+	 * Returns an iteration filtered for a specific user. It returns an iteration
+	 * with a test plan containing only the items that are assigned to that user or
+	 * have been executed by that user.
+	 * @param iterationId
+	 * @return the test plan of given iteration filtered by the current user
+	 */
+	PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findAssignedTestPlan(long iterationId, PagingAndMultiSorting sorting);
+	
 	/**
 	 * Adds a list of test cases to an iteration.
 	 * 
@@ -55,6 +69,8 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	
 
 	void changeTestPlanPosition(long iterationId, int newPosition, List<Long> itemIds);
+	
+	void reorderTestPlan(long iterationId, MultiSorting newSorting);
 
 	/**
 	 * Removes a list of test cases from a campaign excepted the test plans which were executed

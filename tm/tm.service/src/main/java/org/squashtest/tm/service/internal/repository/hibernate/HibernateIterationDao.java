@@ -170,15 +170,27 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	}
 	
 	@Override
-	public List<IndexedIterationTestPlanItem> findTestPlan(long iterationId, PagingAndSorting sorting, Filtering filtering) {
+	public List<IterationTestPlanItem> findTestPlan(long iterationId, PagingAndMultiSorting sorting, Filtering filtering) {
+		List<Object[]> tuples = _findIndexedTestPlan(iterationId, sorting, filtering);
+		return buildItems(tuples);
+	}
+	
+	@Override
+	public List<IndexedIterationTestPlanItem> findIndexedTestPlan(long iterationId, PagingAndSorting sorting, Filtering filtering) {
 		
-		return findTestPlan(iterationId, new SingleToMultiSortingAdapter(sorting), filtering);
+		return findIndexedTestPlan(iterationId, new SingleToMultiSortingAdapter(sorting), filtering);
 	}
 
 	@Override
-	public List<IndexedIterationTestPlanItem> findTestPlan(final long iterationId, PagingAndMultiSorting sorting, 
+	public List<IndexedIterationTestPlanItem> findIndexedTestPlan(final long iterationId, PagingAndMultiSorting sorting, 
 			Filtering filtering) {
 	
+		List<Object[]> tuples = _findIndexedTestPlan(iterationId, sorting, filtering);
+		return buildIndexedItems(tuples);
+		
+	}
+	
+	private List<Object[]> _findIndexedTestPlan(final long iterationId, PagingAndMultiSorting sorting, Filtering filtering){
 		StringBuilder hqlbuilder = new StringBuilder(HQL_INDEXED_TEST_PLAN);
 		
 		//check if we want to filter on the user login
@@ -198,8 +210,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 		
 		PagingUtils.addPaging(query, sorting);
 		
-		return buildIndexedItems(query.list());
-		
+		return query.list();
 	}
 
 	@Override
@@ -281,6 +292,18 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 		return (Long) executeEntityNamedQuery("iteration.countRunningOrDoneExecutions", idParameter(iterationId));
 	}
 
+	
+	private List<IterationTestPlanItem> buildItems(List<Object[]> tuples){
+		
+		List<IterationTestPlanItem> items = new ArrayList<IterationTestPlanItem>(tuples.size());
+		
+		for (Object[] tuple : tuples){
+			IterationTestPlanItem itpi = (IterationTestPlanItem) tuple[1];
+			items.add(itpi);
+		}
+		
+		return items;
+	}
 	
 	private List<IndexedIterationTestPlanItem> buildIndexedItems(List<Object[]> tuples){
 		List<IndexedIterationTestPlanItem> indexedItems = new ArrayList<IndexedIterationTestPlanItem>(tuples.size());

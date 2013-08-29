@@ -33,10 +33,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.squashtest.tm.core.foundation.collection.DefaultPaging;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.Pagings;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
@@ -87,7 +87,7 @@ public class TestCaseExecutionsController {
 	 */
 	@RequestMapping( method = RequestMethod.GET, params = "tab")
 	public String getExecutionsTab(@PathVariable long testCaseId, Model model) {
-		Paging paging = DefaultPaging.FIRST_PAGE;
+		Paging paging = Pagings.DEFAULT_PAGING;
 
 		List<Execution> executions = executionFinder.findAllByTestCaseIdOrderByRunDate(testCaseId, paging);
 

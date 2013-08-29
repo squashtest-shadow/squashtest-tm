@@ -35,9 +35,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.squashtest.tm.core.foundation.collection.DefaultPaging;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.Pagings;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.service.customfield.CustomFieldManagerService;
@@ -83,7 +83,7 @@ public class CustomFieldAdministrationController {
 
 	@ModelAttribute("customFieldsPageSize")
 	public long populateCustomFieldsPageSize() {
-		return DefaultPaging.FIRST_PAGE.getPageSize();
+		return Pagings.DEFAULT_PAGING.getPageSize();
 	}
 
 	/**

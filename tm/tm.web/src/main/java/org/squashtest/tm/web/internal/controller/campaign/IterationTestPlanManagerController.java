@@ -37,22 +37,33 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.campaign.IterationFinder;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
 import org.squashtest.tm.web.internal.model.jquery.TestPlanAssignableUser;
 import org.squashtest.tm.web.internal.model.json.JsonTestCase;
 import org.squashtest.tm.web.internal.model.json.JsonTestCaseBuilder;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
+import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 /**
  * 
@@ -76,7 +87,20 @@ public class IterationTestPlanManagerController {
 	@Inject
 	private IterationFinder iterationFinder;
 
+	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
+															.map		 ("entity-index", 	"index(IterationTestPlanItem)")		// index is a special case which means : no sorting.
+															.mapAttribute("project-name",	"name", 			Project.class)
+															.mapAttribute("reference", 		"reference", 		TestCase.class)
+															.mapAttribute("tc-name", 		"name", 			TestCase.class)
+															.mapAttribute("importance",		"importance", 		TestCase.class)
+															.mapAttribute("dataset",		"name", 			Dataset.class)
+															.mapAttribute("status",			"executionStatus", 	IterationTestPlanItem.class)
+															.mapAttribute("assignee-login", "login", 			User.class)
+															.mapAttribute("last-exec-on",	"lastExecutedOn",	IterationTestPlanItem.class)
+															.mapAttribute("exec-mode", 		"automatedTest", 	TestCase.class);
 
+	
+	
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan-manager", method = RequestMethod.GET)
 	public ModelAndView showManager(@PathVariable long iterationId, @CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
 
@@ -93,6 +117,21 @@ public class IterationTestPlanManagerController {
 		return mav;
 	}
 
+	
+	@RequestMapping(value = "/iterations/{iterationId}/test-plan", params = RequestParams.S_ECHO_PARAM)
+	public @ResponseBody
+	DataTableModel getTestPlanModel(@PathVariable long iterationId, final DataTableDrawParameters params,
+			final Locale locale) {
+
+		PagingAndMultiSorting paging = new DataTableMultiSorting(params, testPlanMapper);
+		PagedCollectionHolder<List<IndexedIterationTestPlanItem>> holder = iterationTestPlanManagerService.findAssignedTestPlan(iterationId, paging);
+
+		return new IterationTestPlanTableModelHelper(messageSource, locale).buildDataModel(holder,
+				params.getsEcho());
+
+	}
+
+	
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan", method = RequestMethod.POST, params = TESTCASES_IDS_REQUEST_PARAM)
 	public @ResponseBody
 	void addTestCasesToIteration(@RequestParam(TESTCASES_IDS_REQUEST_PARAM) List<Long> testCasesIds,
@@ -142,14 +181,15 @@ public class IterationTestPlanManagerController {
 	/**
 	 * Will reorder the test plan according to the current sorting instructions.
 	 * 
-	 * @param testPlanIds
 	 * @param iterationId
 	 * @return
 	 */
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan/order", method = RequestMethod.POST)
 	@ResponseBody
 	public void reorderTestPlan(@PathVariable("iterationId") long iterationId, DataTableDrawParameters parameters){
-		// FIXME
+		
+		PagingAndMultiSorting sorting = new DataTableMultiSorting(parameters, testPlanMapper);
+		iterationTestPlanManagerService.reorderTestPlan(iterationId, sorting);
 	}
 
 
