@@ -56,10 +56,8 @@
 
 define(['jquery', 'squash.translator', './exec-runner', './sortmode',
         'jquery.squash.datatables', 'jeditable', 'jquery.squash.buttonmenu'],
-        function($, translator, execrunner, smode) {
+        function($, translator, execrunner, sortmode) {
 
-		
-	
 	
 	// ****************** TABLE CONFIGURATION **************
 	
@@ -257,12 +255,16 @@ define(['jquery', 'squash.translator', './exec-runner', './sortmode',
 				
 				// update the sort mode
 				var settings = this.fnSettings();
-				var aaSorting = settings.aaSorting;				
-				this.data('sortmode').manageSortMode(aaSorting);
+				var aaSorting = settings.aaSorting,
+					id = this.squashSettings.iterationId;
+				sortmode.manage(id, aaSorting);
 			} 
 		};
 		
 		var squashSettings = {
+			
+			iterationId : initconf.basic.iterationId,
+			
 			toggleRows : {				
 				'td.toggle-row' : function(table, jqold, jqnew){
 					
@@ -351,16 +353,10 @@ define(['jquery', 'squash.translator', './exec-runner', './sortmode',
 	return {
 		init : function(enhconf){
 			
-			// basic init
 			var tableconf = createTableConfiguration(enhconf);		
-			var sortmode = smode.new({
-				key : 'iteration-test-plans-table-'+enhconf.basic.iterationId
-			});
-			tableconf.tconf.aaSorting = sortmode.getaaSorting();
+			tableconf.tconf.aaSorting = sortmode.loadaaSorting(enhconf.basic.iterationId);
 			
 			var table = $("#iteration-test-plans-table").squashTable(tableconf.tconf, tableconf.sconf);
-			table.data('sortmode', sortmode);
-
 			
 		}
 	};

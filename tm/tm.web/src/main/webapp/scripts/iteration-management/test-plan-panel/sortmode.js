@@ -23,51 +23,76 @@
  * That object makes things according to the state of sorting of a datatable.
  */
 
-define(['jquery', 'jquery.cookie'], function($){
+/*
+ * configuration : {
+ * 	id : the id of the iteration 
+ * }
+ * 
+ */
+define(['jquery'], function($){
 	
 	
-	function SortMode(conf){
+	return {
 		
-		this.DEFAULT_SORTING = conf.default || [[0, 'asc']];
-		this.key = conf.key;
+		namespace : 'itp-sort-',
+
+		DEFAULT_SORTING : [[0, 'asc']],
 		
-		this.getaaSorting = function(){
-			var tablecookie = $.cookie(this.key);
-			if (!! tablecookie){
-				return JSON.parse(tablecookie)
+		//mock localStorage if the browser doesn't support it
+		
+		storage : localStorage || {
+			setItem : function(){},
+			getItem : function(){},
+			removeItem : function(){}
+		},
+		
+		
+		// ******************* logic ***********************
+		
+		manage : function(id, newSorting){
+			
+			if (this._isDefaultSorting(newSorting)){
+				this._disableSortMode();
+				this._deleteaaSorting(id);
+			}
+			else{
+				this._enableSortMode();
+				this._saveaaSorting(id, newSorting);
+			}
+		},
+
+		
+		_enableSortMode : function(){
+			$("#test-plan-sort-mode-message").show();
+			$("#iteration-test-plans-table").find('.select-handle').removeClass('drag-handle');
+		},
+		
+		_disableSortMode : function(){
+			$("#test-plan-sort-mode-message").hide();
+			$("#iteration-test-plans-table").find('.select-handle').addClass('drag-handle');
+		},
+
+		_isDefaultSorting : function(someSorting){
+			return (someSorting.length === 1 &&
+					someSorting[0][0] === this.DEFAULT_SORTING[0][0] &&
+					someSorting[0][1] === this.DEFAULT_SORTING[0][1])
+		},
+		
+		
+		// ******************** I/O ******************** 
+		
+		loadaaSorting : function(id){
+			var key = this.namespace + id;
+			var sorting = this.storage.getItem(key);
+			if (!! sorting){
+				return JSON.parse(sorting)
 			}
 			else{
 				return this.DEFAULT_SORTING;
 			}
-		};
+		},
 		
-		this.manageSortMode = function(newSorting){
-			if (this._isDefaultSorting(newSorting)){
-				this._disableSortMode();
-			}
-			else{
-				this._enableSortMode();
-			}
-			this.persistaaSorting(newSorting);
-		};
-		
-		this._isDefaultSorting = function(someSorting){
-			return (someSorting.length === 1 &&
-					someSorting[0][0] === this.DEFAULT_SORTING[0][0] &&
-					someSorting[0][1] === this.DEFAULT_SORTING[0][1])
-		};
-		
-		this._enableSortMode = function(){
-			$("#test-plan-sort-mode-message").show();
-			$("#iteration-test-plans-table").find('.select-handle').removeClass('drag-handle');
-		};
-		
-		this._disableSortMode = function(){
-			$("#test-plan-sort-mode-message").hide();
-			$("#iteration-test-plans-table").find('.select-handle').addClass('drag-handle');
-		};
-		
-		this.persistaaSorting = function(aaSorting){
+		_saveaaSorting : function(id, aaSorting){
 			var trimedSorting = [],
 				_buf;
 			
@@ -76,14 +101,15 @@ define(['jquery', 'jquery.cookie'], function($){
 				trimedSorting.push( [_buf[0], _buf[1]] );
 			}
 			
-			$.cookie(this.key, JSON.stringify(trimedSorting), { path : '/'});
+			var key = this.namespace + id;
+			this.storage.setItem(key, JSON.stringify(trimedSorting));
+		},
+		
+		_deleteaaSorting : function(id){
+			var key = this.namespace + id;
+			this.storage.removeItem(key);
 		}
-	}
-	
-	return {
-		new : function(conf){
-			return new SortMode(conf);
-		}
+		
 	}
 	
 });
