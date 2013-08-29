@@ -40,32 +40,23 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
-import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanFinder;
 import org.squashtest.tm.service.campaign.TestSuiteModificationService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
-import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.AutomatedSuiteOverview;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
-import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
-import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 @Controller
 @RequestMapping("/test-suites/{id}")
@@ -103,15 +94,7 @@ public class TestSuiteModificationController {
 	private InternationalizationHelper messageSource;
 
 	
-	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
-			.mapAttribute("project-name", NAME, Project.class)
-			.mapAttribute("tc-name", NAME, TestCase.class)
-			.mapAttribute("reference", "reference", TestCase.class)
-			.mapAttribute("importance", "importance", TestCase.class)
-			.mapAttribute("type", "executionMode", TestCase.class)
-			.mapAttribute("status", "executionStatus", IterationTestPlanItem.class)
-			.mapAttribute("last-exec-by", "lastExecutedBy", IterationTestPlanItem.class)
-			.mapAttribute("last-exec-on", "lastExecutedOn", IterationTestPlanItem.class);
+
 
 	// will return the fragment only
 	@RequestMapping(method = RequestMethod.GET)
@@ -212,35 +195,13 @@ public class TestSuiteModificationController {
 		return result;
 	}
 
-	/***
-	 * Method called when you drag a test case and change its position in the selected iteration
-	 * 
-	 * @param testPlanId
-	 *            : the iteration owning the moving test plan items
-	 * 
-	 * @param itemIds
-	 *            the ids of the items we are trying to move
-	 * 
-	 * @param newIndex
-	 *            the new position of the first of them
-	 */
-	@RequestMapping(value = "/test-case/move", method = RequestMethod.POST, params = { "newIndex", "itemIds[]" })
-	@ResponseBody
-	public void changeTestPlanIndex(@PathVariable("id") long testSuiteId, @RequestParam int newIndex,
-			@RequestParam("itemIds[]") List<Long> itemIds) {
-		service.changeTestPlanPosition(testSuiteId, newIndex, itemIds);
-		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace("test-suite " + testSuiteId + ": moving " + itemIds.size() + " test plan items  to "
-					+ newIndex);
-		}
-	}
 
-	@RequestMapping(value = "{iterationId}/test-case-executions/{iterationTestPlanItemId}", method = RequestMethod.GET)
-	public ModelAndView getExecutionsForTestPlan(@PathVariable long id, @PathVariable long iterationId,
-			@PathVariable long iterationTestPlanItemId) {
+
+	@RequestMapping(value = "/test-plan/{itemId}/executions", method = RequestMethod.GET)
+	public ModelAndView getExecutionsForTestPlan(@PathVariable("id") long id, @PathVariable("itemId") long iterationTestPlanItemId) {
 		TestSuite testSuite = service.findById(id);
-		List<Execution> executionList = iterationModService.findExecutionsByTestPlan(iterationId,
-				iterationTestPlanItemId);
+		Long iterationId = testSuite.getIteration().getId();
+		List<Execution> executionList = iterationModService.findExecutionsByTestPlan(iterationId, iterationTestPlanItemId);
 		// get the iteraction to check access rights
 		Iteration iter = iterationModService.findById(iterationId);
 		IterationTestPlanItem iterationTestPlanItem = iterationTestPlanFinder.findTestPlanItem(iterationTestPlanItemId);
@@ -258,18 +219,6 @@ public class TestSuiteModificationController {
 
 	}
 
-	@RequestMapping(value = "/test-plan/table", params = RequestParams.S_ECHO_PARAM)
-	public @ResponseBody
-	DataTableModel getTestPlanModel(@PathVariable long id, final DataTableDrawParameters params, final Locale locale) {
-
-		Paging paging = new DataTableSorting(params, testPlanMapper);
-
-		PagedCollectionHolder<List<IterationTestPlanItem>> holder = service.findTestSuiteTestPlan(id, paging);
-
-		return new TestSuiteViewTestPlanTableModelHelper(messageSource, locale).buildDataModel(holder,
-				params.getsEcho());
-
-	}
 
 	/* ************** execute auto *********************************** */
 

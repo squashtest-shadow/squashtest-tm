@@ -184,12 +184,12 @@ define([ "jquery", "workspace.contextual-content" , "jqueryui" ], function($, co
 		};
 
 		this.postBind = function(toSend) {
-			var url = this.baseUpdateUrl + "/test-cases";
+			var url = this.baseUpdateUrl + toSend['test-suites'].join(',') + "/test-plan/";
 
 			return $.ajax({
 				'url' : url,
 				type : 'POST',
-				data : toSend,
+				data :  { 'itemIds[]' : toSend['test-plan-items']},
 				dataType : 'json'
 			}).success(function(json) {
 				var evt = {

@@ -106,6 +106,10 @@
 		
 	</script>
 		
+		
+
+
+			
 	</jsp:attribute>
 	
 	<jsp:attribute name="titlePane">
@@ -164,11 +168,18 @@
 				<div style="clear:both;"></div>
 	
 			</div>
-			<div class="fragment-body">			
+			<div class="fragment-body">
 			
+			<c:if test="${ useIterationTable }">
 				<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ iterationUrl }" isContextual="false"/>
 				<aggr:iteration-test-plan-manager-table iteration="${iteration}"/>
-			
+			</c:if>
+			<c:if test="${ not useIterationTable }">
+			<c:url var="testSuiteUrl" value="/test-suites/${ testSuite.id }" />
+			<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ testSuiteUrl }" isContextual="false"/>
+				<aggr:decorate-test-suite-test-plan-manager-table testSuite="${testSuite}" />
+				<aggr:test-suite-test-plan-manager-table/>
+			</c:if>
 			</div>
 		</div>
 	</div>

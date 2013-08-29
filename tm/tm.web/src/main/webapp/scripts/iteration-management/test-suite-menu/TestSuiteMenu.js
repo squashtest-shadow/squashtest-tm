@@ -339,8 +339,8 @@ define([ "jquery", "jqueryui" ], function($) {
 					if (suiteIds.length < 1) {
 						$(settings.emptySuiteSelectionMessageSelector).openMessage();
 					} else {
-						toSend['test-suites[]'] = suiteIds;
-						toSend['test-cases[]'] = getDatatableSelected();
+						toSend['test-suites'] = suiteIds;
+						toSend['test-plan-items'] = getDatatableSelected();
 						self.model.postBind(toSend).success(function() {
 							self.menu.kill();
 						});

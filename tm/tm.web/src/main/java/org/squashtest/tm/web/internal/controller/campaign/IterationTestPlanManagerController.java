@@ -86,6 +86,10 @@ public class IterationTestPlanManagerController {
 
 	@Inject
 	private IterationFinder iterationFinder;
+	
+
+	@Inject
+	private Provider<JsonTestCaseBuilder> jsonTestCaseBuilder;
 
 	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
 															.map		 ("entity-index", 	"index(IterationTestPlanItem)")		// index is a special case which means : no sorting.
@@ -112,7 +116,6 @@ public class IterationTestPlanManagerController {
 		ModelAndView mav = new ModelAndView("page/iterations/show-iteration-test-plan-manager");
 		mav.addObject("iteration", iteration);
 		mav.addObject("baseURL", "/iterations/" + iterationId);
-		mav.addObject("useIterationTable", true);
 		mav.addObject("linkableLibrariesModel", linkableLibrariesModel);
 		return mav;
 	}
@@ -139,8 +142,6 @@ public class IterationTestPlanManagerController {
 		iterationTestPlanManagerService.addTestCasesToIteration(testCasesIds, iterationId);
 	}
 
-	@Inject
-	private Provider<JsonTestCaseBuilder> jsonTestCaseBuilder;
 
 	/**
 	 * Fetches and returns a list of json test cases from an iteration id

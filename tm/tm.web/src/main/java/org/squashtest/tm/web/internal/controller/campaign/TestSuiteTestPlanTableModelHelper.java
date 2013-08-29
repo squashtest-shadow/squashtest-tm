@@ -28,11 +28,11 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 
-class TestSuiteViewTestPlanTableModelHelper extends DataTableModelBuilder<IterationTestPlanItem> {
+class TestSuiteTestPlanTableModelHelper extends DataTableModelBuilder<IterationTestPlanItem> {
 	private InternationalizationHelper messageSource;
 	private Locale locale;
 
-	TestSuiteViewTestPlanTableModelHelper(InternationalizationHelper messageSource, Locale locale) {
+	TestSuiteTestPlanTableModelHelper(InternationalizationHelper messageSource, Locale locale) {
 		this.messageSource = messageSource;
 		this.locale = locale;
 	}
