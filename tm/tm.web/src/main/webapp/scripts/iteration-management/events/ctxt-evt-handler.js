@@ -21,7 +21,7 @@
 
 /*
  * conf : {
- * 	//no conf needed yet, but that may change later.
+ *	//no conf needed yet, but that may change later.
  * }
  * 
  */
@@ -44,6 +44,6 @@ define(['jquery', 'workspace.contextual-content' ], function($, ctxtContent) {
 			});		
 			
 		}		
-	}
+	};
 	
 });

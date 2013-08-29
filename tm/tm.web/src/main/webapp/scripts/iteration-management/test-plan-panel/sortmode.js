@@ -25,13 +25,13 @@
 
 /*
  * configuration : {
- * 	basic {
- * 		iterationId : the id of the iteration
- * 	}, 
- * 	permissions : {
- * 		reorderable : boolean, that tells whether the 'reorder' button is active.
- * 	}
- * }
+ *		basic {
+ *			iterationId : the id of the iteration
+ *		}, 
+ *		permissions : {
+ *			reorderable : boolean, that tells whether the 'reorder' button is active.
+ *		}
+ *	}
  * 
  */
 define(['jquery'], function($){
@@ -95,7 +95,7 @@ define(['jquery'], function($){
 			var defaultSorting = StaticSortMode.defaultSorting();
 			return (someSorting.length === 1 &&
 					someSorting[0][0] === defaultSorting[0][0] &&
-					someSorting[0][1] === defaultSorting[0][1])
+					someSorting[0][1] === defaultSorting[0][1]);
 		};
 		
 		
@@ -104,7 +104,7 @@ define(['jquery'], function($){
 		this.loadaaSorting = function(){
 			var sorting = this.storage.getItem(this.key);
 			if (!! sorting){
-				return JSON.parse(sorting)
+				return JSON.parse(sorting);
 			}
 			else{
 				return StaticSortMode.defaultSorting();
@@ -127,7 +127,7 @@ define(['jquery'], function($){
 			this.storage.removeItem(this.key);
 		};
 		
-	};
+	}
 	
 	
 	var StaticSortMode = {

@@ -142,7 +142,7 @@ define(['jquery', 'workspace.contextual-content', 'jqueryui', 'jquery.squash.con
 			.success(function(){
 				table.data('sortmode').resetTableOrder(table);
 				ctxt.trigger('context.content-modified');				
-			})
+			});
 		});
 		
 		dialog.on('confirmdialogcancel', function(){
