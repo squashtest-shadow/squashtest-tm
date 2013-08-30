@@ -51,7 +51,6 @@
       </resource>
     </resources>
 
-
     <!-- fetch the database generation module -->
     <plugins>
       <plugin>
@@ -166,6 +165,22 @@
                 </resource>
               </resources>
               <outputDirectory>${project.build.directory}/config</outputDirectory>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>copy-jetty-resources</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <resources>
+                <resource>
+                  <directory>src/main/resources/jettyhome</directory>
+                </resource>
+              </resources>
+              <outputDirectory>${project.build.directory}/jettyhome</outputDirectory>
             </configuration>
           </execution>
         </executions>
