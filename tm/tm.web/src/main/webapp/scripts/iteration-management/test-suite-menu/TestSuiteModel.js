@@ -184,7 +184,7 @@ define([ "jquery", "workspace.contextual-content" , "jqueryui" ], function($, co
 		};
 
 		this.postBind = function(toSend) {
-			var url = this.baseUpdateUrl + toSend['test-suites'].join(',') + "/test-plan/";
+			var url = this.baseUpdateUrl + '/' + toSend['test-suites'].join(',') + "/test-plan/";
 
 			return $.ajax({
 				'url' : url,

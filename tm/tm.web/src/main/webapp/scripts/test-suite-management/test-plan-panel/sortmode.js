@@ -26,7 +26,7 @@
 /*
  * configuration : {
  *		basic {
- *			iterationId : the id of the iteration
+ *			testsuiteId : the id of the testSuite
  *		}, 
  *		permissions : {
  *			reorderable : boolean, that tells whether the 'reorder' button is active.
@@ -49,11 +49,11 @@ define(['jquery'], function($){
 		
 		this.reorderable = conf.permissions.reorderable || false;
 		
-		if (conf.basic.testSuiteId === undefined){
-			throw "sortmode : iteration id absent from the configuration";
+		if (conf.basic.testsuiteId === undefined){
+			throw "sortmode : test suite id absent from the configuration";
 		}
 		
-		this.key = 'tstp-sort-'+conf.basic.testSuiteId;
+		this.key = 'tstp-sort-'+conf.basic.testsuiteId;
 		
 		// ******************* logic ***********************
 		

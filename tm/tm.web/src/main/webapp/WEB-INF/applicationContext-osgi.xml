@@ -309,6 +309,11 @@
 			<value>org.squashtest.tm.service.campaign.TestSuiteFinder</value>
 		</osgi:interfaces>
 	</osgi:reference>
+	
+	<osgi:reference id="squashtest.tm.service.TestSuiteTestPlanManagerService"
+		bean-name="squashtest.tm.service.TestSuiteTestPlanManagerService"
+		interface="org.squashtest.tm.service.campaign.TestSuiteTestPlanManagerService"
+		availability="mandatory"  />
 
 	<osgi:reference
 		id="squashtest.tm.service.testautomation.AutomatedExecutionManagerService"

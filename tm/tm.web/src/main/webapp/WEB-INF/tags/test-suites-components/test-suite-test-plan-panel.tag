@@ -124,8 +124,8 @@
 	<span data-def="state=empty-selec"><f:message key="message.EmptyTableSelection"/></span>
 	
 	<div class="popup-dialog-buttonpane"> 
-		<input type="button" value="${removeEverywhereLabel}" 	data-def="state=single-tp multiple-tp, mainbtn=single-tp multiple-tp, evt=confirmall"/>
 		<input type="button" value="${removeLabel}" 			data-def="state=single-tp multiple-tp, mainbtn=single-tp multiple-tp, evt=confirm"/> 
+		<input type="button" value="${removeEverywhereLabel}" 	data-def="state=single-tp multiple-tp, evt=confirmall"/>
 		<input type="button" value="${cancelLabel}" 			data-def="mainbtn=empty-selec, evt=cancel"/> 
 	</div>
 </div>

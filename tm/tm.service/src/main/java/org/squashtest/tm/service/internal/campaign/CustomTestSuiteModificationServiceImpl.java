@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.DuplicateNameException;
@@ -50,6 +51,8 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 	private static final String HAS_WRITE_PERMISSION_ID = "hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'WRITE') ";
 	private static final String HAS_EXECUTE_PERMISSION_ID = "hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'EXECUTE') ";
 	private static final String HAS_READ_PERMISSION_ID = "hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite','READ') ";
+	private static final String PERMISSION_EXECUTE_ITEM = "hasPermission(#testPlanItemId, 'org.squashtest.tm.domain.campaign.IterationTestPlanItem', 'EXECUTE') ";
+		
 	@Inject
 	private TestSuiteDao testSuiteDao;
 
@@ -94,6 +97,21 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 	public TestPlanStatistics findTestSuiteStatistics(long suiteId) {
 		return testSuiteDao.getTestSuiteStatistics(suiteId);
 	}
+	
+	
+	@Override
+	@PreAuthorize(PERMISSION_EXECUTE_ITEM + OR_HAS_ROLE_ADMIN)
+	public Execution addExecution(long testPlanItemId) {
+		return iterationService.addExecution(testPlanItemId);
+	}
+	
+	
+	@Override
+	@PreAuthorize(PERMISSION_EXECUTE_ITEM + OR_HAS_ROLE_ADMIN)
+	public Execution addAutomatedExecution(long testPlanItemId) {
+		return iterationService.addAutomatedExecution(testPlanItemId);
+	}
+
 
 	@Override
 	@PreAuthorize(HAS_EXECUTE_PERMISSION_ID + OR_HAS_ROLE_ADMIN)

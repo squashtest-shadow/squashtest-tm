@@ -28,7 +28,7 @@
  *			executable : boolean, can the content be executed ?	
  *		},
  *		basic : {
- *			iterationId : the id of the current iteration
+ *			testsuiteId : the id of the current testSuite
  *			assignableUsers : [ { 'id' : id, 'login' : login } ]
  *		},
  *		messages : {

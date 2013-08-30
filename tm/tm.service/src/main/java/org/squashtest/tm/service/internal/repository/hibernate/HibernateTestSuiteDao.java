@@ -262,7 +262,7 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 	@Override
 	public long countTestPlans(Long suiteId, Filtering filtering) {
 		if (! filtering.isDefined()){
-			return (Long) executeEntityNamedQuery("testSuite.countTestPlans", idParameter(suiteId));
+			return countTestPlanItems(suiteId);
 		}
 		else{
 			return (Long) executeEntityNamedQuery("testSuite.countTestPlansFiltered", IdAndLoginParameter(suiteId, filtering.getFilter()));

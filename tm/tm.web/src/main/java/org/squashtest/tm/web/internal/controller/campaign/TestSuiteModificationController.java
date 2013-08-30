@@ -22,6 +22,8 @@ package org.squashtest.tm.web.internal.controller.campaign;
 
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -76,8 +78,6 @@ public class TestSuiteModificationController {
 	@Inject
 	private TestSuiteModificationService service;
 
-
-
 	@Inject
 	private IterationTestPlanFinder iterationTestPlanFinder;
 
@@ -95,17 +95,17 @@ public class TestSuiteModificationController {
 
 	// will return the fragment only
 	@RequestMapping(method = RequestMethod.GET)
-	public String showTestSuite(Model model, @PathVariable long id) {
+	public String showTestSuite(Model model, @PathVariable("suiteId") long suiteId) {
 
-		populateTestSuiteModel(model, id);
+		populateTestSuiteModel(model, suiteId);
 		return "fragment/test-suites/edit-test-suite";
 	}
 
 	// will return the iteration in a full page
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
-	public String showTestSuiteInfo(Model model, @PathVariable long id) {
+	public String showTestSuiteInfo(Model model, @PathVariable("suiteId") long suiteId) {
 
-		populateTestSuiteModel(model, id);
+		populateTestSuiteModel(model, suiteId);
 		return "page/campaign-libraries/show-test-suite";
 	}
 	
@@ -127,7 +127,7 @@ public class TestSuiteModificationController {
 
 	
 	
-	private Map<String, String> getAssignableUsers(@PathVariable long testSuiteId){
+	private Map<String, String> getAssignableUsers(long testSuiteId){
 
 		Locale locale = LocaleContextHolder.getLocale();
 		TestSuite ts = service.findById(testSuiteId);
@@ -149,22 +149,22 @@ public class TestSuiteModificationController {
 
 
 	@RequestMapping(value = "/general", method = RequestMethod.GET)
-	public ModelAndView refreshGeneralInfos(@PathVariable long id) {
+	public ModelAndView refreshGeneralInfos(@PathVariable("suiteId") long suiteId) {
 
-		TestSuite testSuite = service.findById(id);
+		TestSuite testSuite = service.findById(suiteId);
 
 		ModelAndView mav = new ModelAndView("fragment/generics/general-information-fragment");
 
 		mav.addObject("auditableEntity", testSuite);
-		mav.addObject("entityContextUrl", "/test-suites/" + id);
+		mav.addObject("entityContextUrl", "/test-suites/" + suiteId);
 
 		return mav;
 	}
 
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
-	public ModelAndView refreshStats(@PathVariable long id) {
+	public ModelAndView refreshStats(@PathVariable("suiteId") long suiteId) {
 
-		TestPlanStatistics testSuiteStats = service.findTestSuiteStatistics(id);
+		TestPlanStatistics testSuiteStats = service.findTestSuiteStatistics(suiteId);
 
 		ModelAndView mav = new ModelAndView("fragment/generics/statistics-fragment");
 		mav.addObject("statisticsEntity", testSuiteStats);
@@ -173,13 +173,13 @@ public class TestSuiteModificationController {
 	}
 
 	@RequestMapping(value = "/exec-button", method = RequestMethod.GET)
-	public ModelAndView refreshExecButton(@PathVariable long id) {
+	public ModelAndView refreshExecButton(@PathVariable("suiteId") long suiteId) {
 
-		TestPlanStatistics testSuiteStats = service.findTestSuiteStatistics(id);
+		TestPlanStatistics testSuiteStats = service.findTestSuiteStatistics(suiteId);
 
 		ModelAndView mav = new ModelAndView("fragment/generics/test-suite-execution-button");
 
-		mav.addObject("testSuiteId", id);
+		mav.addObject("testSuiteId", suiteId);
 		mav.addObject("statisticsEntity", testSuiteStats);
 
 		return mav;
@@ -187,10 +187,10 @@ public class TestSuiteModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=test-suite-description", VALUE })
 	@ResponseBody
-	public String updateDescription(@RequestParam(VALUE) String newDescription, @PathVariable long id) {
+	public String updateDescription(@RequestParam(VALUE) String newDescription, @PathVariable("suiteId") long suiteId) {
 
-		service.changeDescription(id, newDescription);
-		LOGGER.trace("Test-suite " + id + ": updated description to " + newDescription);
+		service.changeDescription(suiteId, newDescription);
+		LOGGER.trace("Test-suite " + suiteId + ": updated description to " + newDescription);
 		return newDescription;
 
 	}
@@ -217,18 +217,18 @@ public class TestSuiteModificationController {
 	}
 
 
-
-	/* ************** execute auto *********************************** */
-
+	
+	// ****************** execution of the whole suite ****************************************
+	
 	@RequestMapping(method = RequestMethod.POST, params = { "id=execute-auto", "testPlanItemsIds[]" })
 	public @ResponseBody
-	AutomatedSuiteOverview executeSelectionAuto(@PathVariable long id,
+	AutomatedSuiteOverview executeSelectionAuto(@PathVariable("suiteId") long suiteId,
 			@RequestParam("testPlanItemsIds[]") List<Long> ids, Locale locale) {
 		
 
-		AutomatedSuite autoSuite = service.createAndStartAutomatedSuite(id, ids);
+		AutomatedSuite autoSuite = service.createAndStartAutomatedSuite(suiteId, ids);
 
-		LOGGER.debug("Test-Suite #" + id + " : execute selected test plans");
+		LOGGER.debug("Test-Suite #" + suiteId + " : execute selected test plans");
 
 		return AutomatedExecutionViewUtils.buildExecInfo(autoSuite, locale, messageSource);
 
@@ -236,17 +236,15 @@ public class TestSuiteModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=execute-auto", "!testPlanItemsIds[]" })
 	public @ResponseBody
-	AutomatedSuiteOverview executeAllAuto(@PathVariable long id, Locale locale) {
-		AutomatedSuite suite = service.createAndStartAutomatedSuite(id);
+	AutomatedSuiteOverview executeAllAuto(@PathVariable("suiteId") long suiteId, Locale locale) {
+		AutomatedSuite suite = service.createAndStartAutomatedSuite(suiteId);
 
-		LOGGER.debug("Test-Suite #" + id + " : execute all test plan auto");
+		LOGGER.debug("Test-Suite #" + suiteId + " : execute all test plan auto");
 
 		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
 
 	}
-
-	/* ************** /execute auto *********************************** */
-
+	
 	
 	// ******************** other stuffs ********************
 	

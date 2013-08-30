@@ -65,7 +65,7 @@ define(['jquery', 'workspace.contextual-content', 'jqueryui', 'jquery.squash.con
 			})
 			.done(function(unauthorized){
 				if (unauthorized){
-					squashtm.notification.showInfo(conf.unauthorizedTestplanRemoval);
+					squashtm.notification.showInfo(conf.messages.unauthorizedTestplanRemoval);
 				}
 				ctxt.trigger('context.content-modified');
 			});

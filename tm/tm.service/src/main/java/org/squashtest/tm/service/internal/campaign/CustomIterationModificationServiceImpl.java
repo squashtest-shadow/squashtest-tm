@@ -79,38 +79,38 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	private static final String OR_HAS_ROLE_ADMIN = "or hasRole('ROLE_ADMIN')";
 	private static final String PERMISSION_EXECUTE_ITERATION = "hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'EXECUTE') ";
 	private static final String PERMISSION_EXECUTE_ITEM = "hasPermission(#testPlanItemId, 'org.squashtest.tm.domain.campaign.IterationTestPlanItem', 'EXECUTE') ";
-	@Inject
-	private CampaignDao campaignDao;
-	@Inject
-	private IterationDao iterationDao;
-	@Inject
-	private TestSuiteDao suiteDao;
-	@Inject
-	private IterationTestPlanDao testPlanDao;
-	@Inject
-	private AutomatedSuiteDao autoSuiteDao;
-	@Inject
-	private ExecutionDao executionDao;
-	@Inject
-	private TestCaseCyclicCallChecker testCaseCyclicCallChecker;
-	@Inject
-	private CampaignNodeDeletionHandler deletionHandler;
-	@Inject
-	private PermissionEvaluationService permissionService;
-	@Inject
-	private PrivateCustomFieldValueService customFieldValueService;
-	@Inject
-	private PrivateDenormalizedFieldValueService denormalizedFieldValueService;
+	
+	@Inject	private CampaignDao campaignDao;
+	
+	@Inject	private IterationDao iterationDao;
+	
+	@Inject	private TestSuiteDao suiteDao;
+	
+	@Inject	private IterationTestPlanDao testPlanDao;
+	
+	@Inject	private AutomatedSuiteDao autoSuiteDao;
+	
+	@Inject	private ExecutionDao executionDao;
+	
+	@Inject	private TestCaseCyclicCallChecker testCaseCyclicCallChecker;
+	
+	@Inject	private CampaignNodeDeletionHandler deletionHandler;
+	
+	@Inject	private PermissionEvaluationService permissionService;
+	
+	@Inject	private PrivateCustomFieldValueService customFieldValueService;
+	
+	@Inject	private PrivateDenormalizedFieldValueService denormalizedFieldValueService;
+	
 	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToIterationStrategy")
 	private Provider<PasteStrategy<Iteration, TestSuite>> pasteToIterationStrategyProvider;
 
-	@Inject
-	private ObjectFactory<TreeNodeCopier> treeNodeCopierFactory;
-	@Inject
-	private IterationTestPlanManagerService iterationTestPlanManager;
-	@Inject 
-	private InsecureTestAutomationManagementService testAutomationService;
+	@Inject	private ObjectFactory<TreeNodeCopier> treeNodeCopierFactory;
+	
+	@Inject	private IterationTestPlanManagerService iterationTestPlanManager;
+	
+	@Inject private InsecureTestAutomationManagementService testAutomationService;
 	
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE') "

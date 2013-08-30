@@ -62,9 +62,9 @@ define(['squash.translator', './table', './popups'], function(translator, table,
 		});
 		
 		conf.urls = {
-			 testplanUrl : baseURL + '/test-suites/'+conf.basic.testSuiteId+'/test-plan/',
+			 testplanUrl : baseURL + '/test-suites/'+conf.basic.testsuiteId+'/test-plan/',
 			 executionsUrl : baseURL + '/executions/',
-			 testplanManagerUrl : baseURL + '/iterations/' + conf.basic.testSuiteId +'/test-plan-manager'
+			 testplanManagerUrl : baseURL + '/iterations/' + conf.basic.testsuiteId +'/test-plan-manager'
 		};
 		
 		return conf;

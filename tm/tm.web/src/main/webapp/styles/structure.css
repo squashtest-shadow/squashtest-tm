@@ -432,12 +432,12 @@ div.snap-right>a.button.test-step-toolbar-button>span {
 	overflow : hidden;
 }
 
-body#ieo-body {
+#ieo-body {
 	overflow-y: hidden;
 }
 
-div#ieo-control {
-	width: 500px;
+#ieo-control {
+	width: 550px;
 	height: 55px;
 	position: absolute;
 	z-index: 5;

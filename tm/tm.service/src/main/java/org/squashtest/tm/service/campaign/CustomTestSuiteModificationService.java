@@ -28,6 +28,7 @@ import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.exception.DuplicateNameException;
 /**
@@ -56,6 +57,11 @@ public interface CustomTestSuiteModificationService extends TestSuiteFinder{
 	 * @param suiteId
 	 */
 	TestPlanStatistics findTestSuiteStatistics(long suiteId);
+	
+	
+	Execution addExecution(long testPlanItemId);
+
+	Execution addAutomatedExecution(long testPlanItemId);
 	
 
 	/**

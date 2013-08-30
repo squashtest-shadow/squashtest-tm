@@ -113,7 +113,6 @@
 		
 		@NamedQuery(name = "testSuite.findAllByIterationId", query = "select ts from TestSuite ts join ts.iteration i where i.id = ?"),
 		@NamedQuery(name = "testSuite.findLaunchableTestPlan", query = "select tp from TestSuite ts join ts.testPlan tp join tp.testSuites tss where ts.id = ? and ? = tss.id and ((tp.referencedTestCase is not null) or (tp.executions is not empty)) order by index(tp)"),
-		@NamedQuery(name = "testSuite.countTestPlans", query = "select count(tps) from TestSuite ts join ts.testPlan tps where ts.id = :suiteId"),
 		@NamedQuery(name = "testSuite.countTestPlansFiltered", query = "select count(tps) from TestSuite ts join ts.testPlan tps where ts.id = :suiteId and tps.user.login = :userLogin"),
 		
 		//TestCase

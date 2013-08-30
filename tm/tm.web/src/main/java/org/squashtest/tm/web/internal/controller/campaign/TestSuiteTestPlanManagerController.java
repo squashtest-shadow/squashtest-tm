@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,13 +43,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
@@ -56,12 +57,13 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.campaign.IterationFinder;
-import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.campaign.TestSuiteModificationService;
 import org.squashtest.tm.service.campaign.TestSuiteTestPlanManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
+import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.AutomatedSuiteOverview;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
@@ -69,7 +71,6 @@ import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
-import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jquery.TestPlanAssignableUser;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
@@ -158,7 +159,7 @@ public class TestSuiteTestPlanManagerController {
 	DataTableModel getTestPlanModel(@PathVariable("suiteId") long suiteId, final DataTableDrawParameters params, final Locale locale) {
 		
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, testPlanMapper);
-		PagedCollectionHolder<List<IndexedIterationTestPlanItem>> holder = iterationTestPlanManagerService.findAssignedTestPlan(suiteId, paging);
+		PagedCollectionHolder<List<IndexedIterationTestPlanItem>> holder = testSuiteTestPlanManagerService.findAssignedTestPlan(suiteId, paging);
 
 		return new TestPlanTableModelHelper(messageSource, locale).buildDataModel(holder,
 				params.getsEcho());
@@ -246,7 +247,7 @@ public class TestSuiteTestPlanManagerController {
 
 	@RequestMapping(value = "/test-suites/{suiteIds}/test-plan", method = RequestMethod.POST, params = { "itemIds[]"})
 	public @ResponseBody
-	Map<String, List<Long>> bindTestPlan(@RequestParam("itemIds") List<Long> itpIds,
+	Map<String, List<Long>> bindTestPlan(@RequestParam("itemIds[]") List<Long> itpIds,
 			@PathVariable("suiteIds") List<Long> suitesIds) {
 		
 		testSuiteTestPlanManagerService.bindTestPlanToMultipleSuites(suitesIds, itpIds);
@@ -256,8 +257,20 @@ public class TestSuiteTestPlanManagerController {
 	}
 
 
+	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{testPlanId}", method = RequestMethod.POST, params = {"status"})
+	public @ResponseBody
+	String setTestPlanItemStatus(@PathVariable("testPlanId") long testPlanId, 
+										  @PathVariable("suiteId") long suiteId,
+										  @RequestParam("status") String status) {
+		iterationTestPlanManagerService.assignExecutionStatusToTestPlanItem(testPlanId, status);
+		return status;
+	}
 
-	@RequestMapping(value = "/test-plan/{itemId}/executions", method = RequestMethod.GET)
+
+	
+
+
+	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{itemId}/executions", method = RequestMethod.GET)
 	public ModelAndView getExecutionsForTestPlan(@PathVariable("suiteId") long suiteId, @PathVariable("itemId") long itemId) {
 		
 		TestSuite testSuite = service.findById(suiteId);
@@ -278,6 +291,39 @@ public class TestSuiteTestPlanManagerController {
 		mav.addObject(TEST_SUITE, testSuite);
 
 		return mav;
+
+	}
+
+	
+	
+	// ************* execution *****************************************
+	
+	// returns the ID of the newly created execution
+	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{itemId}/executions/new", method = RequestMethod.POST, params = { "mode=manual" })
+	public @ResponseBody
+	String addManualExecution(@PathVariable("suiteId") long suiteId, @PathVariable("itemId") long itemId) {
+
+		TestSuite testSuite = service.findById(suiteId);
+		Long iterationId = testSuite.getIteration().getId();
+		
+		service.addExecution(itemId);
+		List<Execution> executionList = iterationFinder.findExecutionsByTestPlan(iterationId, itemId);
+
+		return executionList.get(executionList.size() - 1).getId().toString();
+
+	}
+
+	
+
+	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{testPlanId}/executions/new", method = RequestMethod.POST, params = { "mode=auto" })
+	public @ResponseBody
+	AutomatedSuiteOverview addAutoExecution(@PathVariable("suiteId") long suiteId, @PathVariable("itemId") long itemId, Locale locale) {
+		List<Long> testPlanIds = new ArrayList<Long>(1);
+		testPlanIds.add(itemId);
+
+		AutomatedSuite suite = service.createAndStartAutomatedSuite(itemId, testPlanIds);
+
+		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
 
 	}
 
