@@ -36,7 +36,7 @@
 		<to>/images/nullpx</to>
 	</rule>
 	<rule>
-		<from>/styles-${project.version}/**</from>
+		<from>/styles-@project.version@/**</from>
 		<to>/styles/$1</to>
 	</rule>
 	<rule>
