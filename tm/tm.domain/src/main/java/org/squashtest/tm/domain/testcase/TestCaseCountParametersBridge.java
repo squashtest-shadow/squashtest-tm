@@ -21,9 +21,6 @@
 package org.squashtest.tm.domain.testcase;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
 import org.hibernate.search.bridge.StringBridge;
 
 public class TestCaseCountParametersBridge implements StringBridge {

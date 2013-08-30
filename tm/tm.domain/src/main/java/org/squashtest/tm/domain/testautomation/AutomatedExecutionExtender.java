@@ -37,7 +37,6 @@ import javax.persistence.OneToOne;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
-import org.squashtest.tm.security.annotation.InheritsAcls;
 
 /**
  * this was meant to be a subclass of Execution; that's what the business says. But Hibernate says that doing so would

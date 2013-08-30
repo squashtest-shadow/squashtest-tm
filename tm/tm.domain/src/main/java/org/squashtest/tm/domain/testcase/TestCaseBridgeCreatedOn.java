@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.domain.testcase;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import org.apache.lucene.document.Document;

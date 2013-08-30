@@ -20,9 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
@@ -35,7 +32,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.service.library.FolderModificationService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
-import org.squashtest.tm.service.testcase.TestCaseStatisticsBundle;
 import org.squashtest.tm.web.internal.controller.generic.FolderModificationController;
 
 @Controller

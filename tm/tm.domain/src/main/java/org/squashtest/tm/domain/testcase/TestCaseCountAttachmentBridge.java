@@ -20,10 +20,7 @@
  */
 package org.squashtest.tm.domain.testcase;
 
-import java.util.List;
-
 import org.hibernate.search.bridge.StringBridge;
-import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 
 public class TestCaseCountAttachmentBridge implements StringBridge {

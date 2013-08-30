@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -34,7 +32,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
-import org.squashtest.tm.service.testcase.TestCaseStatisticsBundle;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 
 @Controller

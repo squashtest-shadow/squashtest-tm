@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.domain.testcase;
 
-import java.util.List;
 import java.util.Set;
 
 import org.hibernate.search.bridge.StringBridge;

@@ -32,8 +32,6 @@ import javax.persistence.InheritanceType;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
 import org.squashtest.tm.domain.SelfClassAware;
 import org.squashtest.tm.domain.attachment.Attachment;

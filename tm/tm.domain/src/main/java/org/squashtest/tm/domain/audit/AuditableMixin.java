@@ -22,10 +22,6 @@ package org.squashtest.tm.domain.audit;
 
 import java.util.Date;
 
-import org.hibernate.search.annotations.DateBridge;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Resolution;
-
 /**
  * Defines interface for @Auditable entities. Any @Auditable entity will be modified to implement this interface.
  * 

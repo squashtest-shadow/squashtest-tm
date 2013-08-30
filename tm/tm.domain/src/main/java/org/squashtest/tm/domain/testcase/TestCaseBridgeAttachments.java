@@ -22,19 +22,44 @@ package org.squashtest.tm.domain.testcase;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.search.bridge.FieldBridge;
 import org.hibernate.search.bridge.LuceneOptions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
+
+@Configurable
 public class TestCaseBridgeAttachments implements FieldBridge{
+
+	@Autowired
+	private SessionFactory sessionFactory;
+    
+	public SessionFactory getSessionFactory() {
+		return sessionFactory;
+	}
+
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
 
 	@Override
 	public void set(String name, Object value, Document document, LuceneOptions luceneOptions) {
-		
+
 		TestCase testcase = (TestCase) value;
+		
+		Session session = sessionFactory.openSession();
+		Transaction tx = session.beginTransaction();
 		
 		Field field = new Field(name, String.valueOf(testcase.getAttachmentList().size()), luceneOptions.getStore(),
 	    luceneOptions.getIndex(), luceneOptions.getTermVector() );
 	    field.setBoost( luceneOptions.getBoost());
 	    document.add(field);
+
+	    tx.commit();
+	    session.close();
 	}
 }
