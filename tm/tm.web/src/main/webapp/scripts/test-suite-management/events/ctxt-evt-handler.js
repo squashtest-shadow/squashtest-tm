@@ -33,13 +33,11 @@ define(['jquery', 'workspace.contextual-content' ], function($, ctxtContent) {
 			
 			ctxtContent.on('context.content-modified', function(evt, args){	
 				
-				$("#iteration-test-plans-table").squashTable().refresh();           
-                refreshIterationInfos();
-                refreshStatistics();
-                if (args && args.newDates){
-	                actualStart.refreshAutoDate(args.newDates.newStartDate);
-	                actualEnd.refreshAutoDate(args.newDates.newEndDate);
-                }
+				var table = $('#test-suite-test-plans-table').squashTable().refresh();		
+				
+				refreshExecButtons();			
+				refreshStatistics();	
+				refreshTestSuiteInfos();	
                 
 			});		
 			

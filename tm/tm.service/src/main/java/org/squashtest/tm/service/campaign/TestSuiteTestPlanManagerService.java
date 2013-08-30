@@ -23,8 +23,10 @@ package org.squashtest.tm.service.campaign;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.foundation.collection.MultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 
@@ -43,9 +45,82 @@ public interface TestSuiteTestPlanManagerService {
 	 */
 	@Transactional(readOnly = true)
 	TestSuite findTestSuite(long testSuiteId);
+	
 
+	/**
+	 * Returns a suite test plan filtered for a specific user. It returns an collection of 
+	 * items only the items that are assigned to that user or
+	 * have been executed by that user.
+	 * @param suiteId
+	 * @return the test plan of given iteration filtered by the current user
+	 */
 	@Transactional(readOnly = true)
-	PagedCollectionHolder<List<IterationTestPlanItem>> findTestPlan(long testSuiteId, Paging paging);
+	PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findAssignedTestPlan(long suiteId, PagingAndMultiSorting sorting);
+	
+	
+	
+	void changeTestPlanPosition(long testSuiteId, int newIndex, List<Long>itemIds);
+	
+	
+	void reorderTestPlan(long iterationId, MultiSorting newSorting);
+	
+	/**
+	 * <p>That method will attach several {@link IterationTestPlanItem} to the given TestSuite. As usual, they
+	 * are identified using their Ids.</p>
+	 * 
+	 * <p>The implementation must also check that all these entities all belong to the same iteration or throw an unchecked exception
+	 * if not. TODO : define that exception.</p> 
+	 * 
+	 * @param suiteId
+	 * @param itemTestPlanIds
+	 */
+	void bindTestPlan(long suiteId, List<Long> itemTestPlanIds);
+
+	/**
+	 * <p>That method will attach several {@link IterationTestPlanItem} to several TestSuite. As usual, they
+	 * are identified using their Ids.</p>
+	 * 
+	 * <p>The implementation must also check that all these entities all belong to the same iteration or throw an unchecked exception
+	 * if not. TODO : define that exception.</p> 
+	 * 
+	 * @param suiteIds
+	 * @param itemTestPlanIds
+	 */
+	void bindTestPlanToMultipleSuites(List<Long> suiteIds, List<Long> itemTestPlanIds);
+	
+	/**
+	 * <p>That method will attach several {@link IterationTestPlanItem} to the given TestSuite. They
+	 * are identified using their Objects.</p>
+	 * 
+	 * <p>These entities all belong to the same iteration since they have previously been attached to it.</p> 
+	 * 
+	 * @param testSuite
+	 * @param itemTestPlans
+	 */
+	void bindTestPlanObj(TestSuite testSuite, List<IterationTestPlanItem> itemTestPlans);
+
+	/**
+	 * <p>That method will attach several {@link IterationTestPlanItem} to the given TestSuites. They
+	 * are identified using their Objects.</p>
+	 * 
+	 * <p>These entities all belong to the same iteration since they have previously been attached to it.</p> 
+	 * 
+	 * @param testSuites
+	 * @param itemTestPlans
+	 */
+	void bindTestPlanToMultipleSuitesObj(List<TestSuite> testSuites, List<IterationTestPlanItem> itemTestPlans);
+
+	/**
+	 * <p>That method will detach several {@link IterationTestPlanItem} from the given TestSuite. They
+	 * are identified using their Objects.</p>
+	 * 
+	 * <p>These entities all belong to the same iteration since they have previously been attached to it.</p> 
+	 * 
+	 * @param testSuite
+	 * @param itemTestPlans
+	 */
+	void unbindTestPlanObj(TestSuite testSuite, List<IterationTestPlanItem> itemTestPlans);
+
 
 	void addTestCasesToIterationAndTestSuite(List<Long> testCaseIds, long suiteId);
 
@@ -53,4 +128,5 @@ public interface TestSuiteTestPlanManagerService {
 
 	boolean detachTestPlanFromTestSuiteAndRemoveFromIteration(List<Long> testPlanIds, long suiteId);
 
+	
 }

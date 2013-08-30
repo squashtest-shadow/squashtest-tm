@@ -129,7 +129,7 @@ public class IterationTestPlanManagerController {
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, testPlanMapper);
 		PagedCollectionHolder<List<IndexedIterationTestPlanItem>> holder = iterationTestPlanManagerService.findAssignedTestPlan(iterationId, paging);
 
-		return new IterationTestPlanTableModelHelper(messageSource, locale).buildDataModel(holder,
+		return new TestPlanTableModelHelper(messageSource, locale).buildDataModel(holder,
 				params.getsEcho());
 
 	}

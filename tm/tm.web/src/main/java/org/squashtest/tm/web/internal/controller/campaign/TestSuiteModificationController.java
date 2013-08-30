@@ -22,7 +22,10 @@ package org.squashtest.tm.web.internal.controller.campaign;
 
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -32,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,6 +50,7 @@ import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
+import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanFinder;
 import org.squashtest.tm.service.campaign.TestSuiteModificationService;
@@ -59,7 +64,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 
 @Controller
-@RequestMapping("/test-suites/{id}")
+@RequestMapping("/test-suites/{suiteId}")
 public class TestSuiteModificationController {
 	
 
@@ -71,18 +76,10 @@ public class TestSuiteModificationController {
 	@Inject
 	private TestSuiteModificationService service;
 
-	// TODO : move to TestSuiteModificationService everything handled here bu the other services. In order to remove
-	// those
-	// extra services.
 
-	@Inject
-	private IterationModificationService iterationModService;
 
 	@Inject
 	private IterationTestPlanFinder iterationTestPlanFinder;
-
-	@Inject
-	private PermissionEvaluationService permissionService;
 
 	@Inject
 	private CustomFieldValueFinderService cufValueService;
@@ -118,12 +115,36 @@ public class TestSuiteModificationController {
 		TestPlanStatistics testSuiteStats = service.findTestSuiteStatistics(testSuiteId);
 		boolean hasCUF = cufValueService.hasCustomFields(testSuite);
 		DataTableModel attachmentsModel = attachmentsHelper.findPagedAttachments(testSuite);
+		Map<String, String> assignableUsers = getAssignableUsers(testSuiteId);
 		
 		model.addAttribute(TEST_SUITE, testSuite);
 		model.addAttribute("statistics", testSuiteStats);
 		model.addAttribute("hasCUF", hasCUF);
 		model.addAttribute("attachmentsModel", attachmentsModel);
+		model.addAttribute("assignableUsers", assignableUsers);
 		
+	}
+
+	
+	
+	private Map<String, String> getAssignableUsers(@PathVariable long testSuiteId){
+
+		Locale locale = LocaleContextHolder.getLocale();
+		TestSuite ts = service.findById(testSuiteId);
+		
+		List<User> usersList = iterationTestPlanFinder.findAssignableUserForTestPlan(ts.getIteration().getId());
+		Collections.sort(usersList, new UserLoginComparator());
+
+		String unassignedLabel = messageSource.internationalize("label.Unassigned", locale);
+
+		Map<String, String> jsonUsers = new LinkedHashMap<String, String>(usersList.size());
+		
+		jsonUsers.put(User.NO_USER_ID.toString(), unassignedLabel);
+		for (User user : usersList){
+			jsonUsers.put(user.getId().toString(), user.getLogin());
+		}
+		
+		return jsonUsers;
 	}
 
 
@@ -184,40 +205,17 @@ public class TestSuiteModificationController {
 
 	}
 
-	// that method is useful too so don't remove it !
+	// that method is redundant but don't remove it yet.
 	@RequestMapping(value = "/rename", method = RequestMethod.POST, params = NAME)
 	public @ResponseBody
-	Map<String, String> renameTestSuite(@PathVariable("id") Long id, @RequestParam(NAME) String name) {
-		service.rename(id, name);
+	Map<String, String> renameTestSuite(@PathVariable("suiteId") Long suiteId, @RequestParam(NAME) String name) {
+		service.rename(suiteId, name);
 		Map<String, String> result = new HashMap<String, String>();
-		result.put("id", id.toString());
+		result.put("id", suiteId.toString());
 		result.put(NAME, name);
 		return result;
 	}
 
-
-
-	@RequestMapping(value = "/test-plan/{itemId}/executions", method = RequestMethod.GET)
-	public ModelAndView getExecutionsForTestPlan(@PathVariable("id") long id, @PathVariable("itemId") long iterationTestPlanItemId) {
-		TestSuite testSuite = service.findById(id);
-		Long iterationId = testSuite.getIteration().getId();
-		List<Execution> executionList = iterationModService.findExecutionsByTestPlan(iterationId, iterationTestPlanItemId);
-		// get the iteraction to check access rights
-		Iteration iter = iterationModService.findById(iterationId);
-		IterationTestPlanItem iterationTestPlanItem = iterationTestPlanFinder.findTestPlanItem(iterationTestPlanItemId);
-		boolean editable = permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", iter);
-
-		ModelAndView mav = new ModelAndView("fragment/test-suites/test-suite-test-plan-row");
-
-		mav.addObject("editableIteration", editable);
-		mav.addObject("testPlanItem", iterationTestPlanItem);
-		mav.addObject("iterationId", iterationId);
-		mav.addObject("executions", executionList);
-		mav.addObject(TEST_SUITE, testSuite);
-
-		return mav;
-
-	}
 
 
 	/* ************** execute auto *********************************** */
@@ -249,4 +247,17 @@ public class TestSuiteModificationController {
 
 	/* ************** /execute auto *********************************** */
 
+	
+	// ******************** other stuffs ********************
+	
+	
+	private static final class UserLoginComparator implements Comparator<User>{
+		@Override
+		public int compare(User u1, User u2) {
+			return u1.getLogin().compareTo(u2.getLogin());
+		}
+		
+	}
+	
+	
 }

@@ -46,7 +46,7 @@ define(['jquery' ], function($) {
 	function _runInOER(url){
 		
 		$('body form#start-optimized-form').remove();
-		$('body').append('<form id="start-optimized-form" action="'+url+'?optimized=true&suitemode=false" method="post" name="execute-test-case-form" target="optimized-execution-runner" class="not-displayed"> <input type="submit" value="true" name="optimized" id="start-optimized-button" /><input type="button" value="false" name="suitemode"  /></form>');
+		$('body').append('<form id="start-optimized-form" action="'+url+'?optimized=true&suitemode=true" method="post" name="execute-test-case-form" target="optimized-execution-runner" class="not-displayed"> <input type="submit" value="true" name="optimized" id="start-optimized-button" /><input type="button" value="true" name="suitemode"  /></form>');
 		
 		$('#start-optimized-button').trigger('click');
 	}

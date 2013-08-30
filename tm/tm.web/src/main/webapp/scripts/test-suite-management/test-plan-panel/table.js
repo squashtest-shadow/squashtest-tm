@@ -202,7 +202,7 @@ define(['jquery', 'squash.translator', './exec-runner', './sortmode',
 			
 			automatedHandler : function(){
 				var row = $(this).parents('tr').get(0),
-					table = $("#iteration-test-plans-table").squashTable(),
+					table = $("#test-suite-test-plans-table").squashTable(),
 					data = table.fnGetData(row),
 					tpid = data['entity-id'],
 					newurl = initconf.urls.testplanUrl + tpid + '/executions/new';
@@ -332,7 +332,7 @@ define(['jquery', 'squash.translator', './exec-runner', './sortmode',
 				var ids = dropData.itemIds.join(',');
 				var url	= initconf.urls.testplanUrl + '/' + ids + '/position/' + dropData.newIndex;			
 				$.post(url, function(){
-					$("#iteration-test-plans-table").squashTable().refresh();
+					$("#test-suite-test-plans-table").squashTable().refresh();
 				});
 			};
 			
@@ -356,7 +356,7 @@ define(['jquery', 'squash.translator', './exec-runner', './sortmode',
 			var sortmode = smode.newInst(enhconf);
 			tableconf.tconf.aaSorting = sortmode.loadaaSorting();
 			
-			var table = $("#iteration-test-plans-table").squashTable(tableconf.tconf, tableconf.sconf);
+			var table = $("#test-suite-test-plans-table").squashTable(tableconf.tconf, tableconf.sconf);
 			table.data('sortmode', sortmode);
 			
 		}

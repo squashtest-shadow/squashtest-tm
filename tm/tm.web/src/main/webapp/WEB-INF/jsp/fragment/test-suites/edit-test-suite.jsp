@@ -21,21 +21,18 @@
 
 --%>
 <?xml version="1.0" encoding="utf-8" ?>
-<%@ page language="java" contentType="text/html; charset=utf-8"
-	pageEncoding="utf-8"%>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
-<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
-<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables"%>
-<%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
+<%@ taglib prefix="ts" tagdir="/WEB-INF/tags/test-suites-components"%>
 
 <f:message var="squashlocale" key="squashtm.locale" />
-
 
 <comp:datepicker-manager locale="${squashlocale}" />
 
@@ -56,55 +53,18 @@
 	<s:param name="testSuiteId" value="${testSuite.id}" />
 </s:url>
 
-
-
 <s:url var="testSuiteStatisticsUrl"
 	value="/test-suites/{testSuiteId}/statistics">
 	<s:param name="testSuiteId" value="${testSuite.id}" />
 </s:url>
 
-
-<s:url var="batchAssignableUsersUrl"
-	value="/test-suites/{testSuiteId}/{iterationId}/batch-assignable-user">
-	<s:param name="testSuiteId" value="${testSuite.id}" />
-	<s:param name="iterationId" value="${testSuite.iteration.id}" />
+<s:url var="btEntityUrl" value="/bugtracker/test-suite/{suiteId}">
+	<s:param name="suiteId" value="${testSuite.id}" />
 </s:url>
-
-<s:url var="assignTestCasesUrl"
-	value="/test-suites/{testSuiteId}/{iterationId}/batch-assign-user">
-	<s:param name="testSuiteId" value="${testSuite.id}" />
-	<s:param name="iterationId" value="${testSuite.iteration.id}" />
-</s:url>
-
-<s:url var="testPlanManagerUrl"
-	value="/test-suites/{testSuiteId}/{iterationId}/test-plan-manager">
-	<s:param name="testSuiteId" value="${testSuite.id}" />
-	<s:param name="iterationId" value="${testSuite.iteration.id}" />
-</s:url>
-
-
-<s:url var="testCaseExecutionsUrl"
-	value="/test-suites/{testSuiteId}/{iterationId}/test-case-executions/">
-	<s:param name="testSuiteId" value="${testSuite.id}" />
-	<s:param name="iterationId" value="${testSuite.iteration.id}" />
-</s:url>
-
-
-<s:url var="confirmDeletionUrl"
-	value="/iterations/{iterationId}/test-suites/delete">
-	<s:param name="iterationId" value="${testSuite.iteration.id}" />
-</s:url>
-<s:url var="btEntityUrl" value="/bugtracker/test-suite/{id}">
-	<s:param name="id" value="${testSuite.id}" />
-</s:url>
-
-
 
 <s:url var="testSuiteExecButtonsUrl" value="/test-suites/{testSuiteId}/exec-button">
 	<s:param name="testSuiteId" value="${testSuite.id}" />
 </s:url>
-
-
 
 <c:url var="customFieldsValuesURL" value="/custom-fields/values" />
 
@@ -117,7 +77,11 @@
 <c:set var="servContext" value="${ pageContext.servletContext.contextPath }"/>
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
-
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE"
+	domainObject="${ testSuite }">
+	<c:set var="writable" value="${ true }" />
+	<c:set var="moreThanReadOnly" value="${ true }" />
+</authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="SMALL_EDIT"
 	domainObject="${ testSuite }">
 	<c:set var="smallEditable" value="${ true }" />
@@ -148,26 +112,6 @@
 
 <script type="text/javascript">
 
-	var identity = { obj_id : ${testSuite.id}, obj_restype : "test-suites"  };
-	
-	
-	require(["domReady", "require"], function(domReady, require){
-		domReady(function(){
-			require(["jquery", "contextual-content-handlers", "workspace.contextual-content"], function($, contentHandlers, contextualContent){
-	
-				var nameHandler = contentHandlers.getSimpleNameHandler();
-				
-				nameHandler.identity = identity;
-				nameHandler.nameDisplay = "#test-suite-name";
-				
-				contextualContent.addListener(nameHandler);
-
-				
-			});
-		});
-	});
-	
-	
 	function renameTestSuiteSuccess(data){
 		var evt = new EventRename(identity, data.newName);
 		squashtm.workspace.contextualContent.fire(null, evt);		
@@ -234,15 +178,6 @@
 	}
 
 
-	function refreshTestSuiteView(){
-		var table = $('#test-suite-test-plans-table').squashTable();		
-		table.refresh();	
-		
-		refreshExecButtons();			
-		refreshStatistics();	
-		refreshTestSuiteInfos();			
-	}
-	
 </script>
 
 <div
@@ -265,10 +200,12 @@
 				<f:message var="label" key="dialog.testsuites.rename.title" />
 				'${ label }': function() {
 					var url = "${ testSuiteUrl }";
-					<jq:ajaxcall url="url" dataType="json" httpMethod="POST"
-					useData="true" successHandler="renameTestSuiteSuccess">				
-						<jq:params-bindings newName="#rename-test-suite-name" />
-					</jq:ajaxcall>					
+					$.ajax({
+						url : url, 
+						dataType : 'json', 
+						type : 'POST',
+						data : { newName : $("#rename-test-suite-name").val() }
+					});				
 				},			
 				<pop:cancel-button />
 			</jsp:attribute>
@@ -340,7 +277,7 @@
 		<li><a href="#tabs-1"><f:message key="tabs.label.information" />
 		</a>
 		</li>
-		<li><a href="#tabs-2"><f:message key="tabs.label.test-plan" />
+		<li><a href="#test-suite-test-plans-panel"><f:message key="tabs.label.test-plan" />
 		</a>
 		</li>
 		<li><a href="#tabs-3"><f:message key="label.Attachments" />
@@ -384,110 +321,15 @@
 		<comp:statistics-panel statisticsEntity="${ statistics }" statisticsUrl="${ testSuiteStatisticsUrl }"/>
 		
 	</div>
-	<div id="tabs-2" class="table-tab">
-		<%-- ------------------ test plan ------------------------------ --%>
-
-
-
-		<div class="toolbar">
-			<c:if test="${ linkable }">
-				<f:message var="associateLabel"
-					key="label.Add" />
-				<f:message var="removeLabel"
-					key="label.Remove" />
-				<f:message var="assignLabel"
-					key="label.Assign" />
-				<input id="test-case-button" type="button" value="${associateLabel}"
-					class="button" />
-				<input id="remove-test-suite-test-case-button" type="button"
-					value="${removeLabel}" class="button" />
-				<input id="assign-test-case-button" type="button"
-					value="${assignLabel}" class="button" />
-
-			</c:if>
-		</div>
-
-		<div class="table-tab-wrap">
-
-			<aggr:decorate-test-suite-test-plan-table
-				editable="${ linkable }"
-				executable="${ executable }"
-				testSuite="${testSuite}"
-			/>
-		</div>
-
-
-		<%--------------------------- Deletion confirmation popup for Test plan section ------------------------------------%>
-
-		<pop:popup id="delete-test-suite-multiple-test-plan-dialog"
-			openedBy="remove-test-suite-test-case-button"
-			titleKey="dialog.remove-testcase-testsuite-associations.title" isContextual="true"  >
-			<jsp:attribute name="buttons">
-		<f:message var="labelDelete" key="label.Yes" />
-				'${ labelDelete }' : function() {
-            $this = $(this);						
-						$this.data("answer","delete");
-						$this.dialog("close");
-				},
-				
-		<f:message var="labelDetach" key="label.No" />
-				'${ labelDetach }' : function(){
-            $this = $(this);            
-						$this.data("answer","detach");
-						$this.dialog("close");
-				},
-				
-		<pop:cancel-button />
-	</jsp:attribute>
-			<jsp:attribute name="body">
-		<f:message var="emptyMessage"
-					key="message.EmptyTableSelection" />			
-		<script type="text/javascript">
-				$("#delete-test-suite-multiple-test-plan-dialog").bind( "dialogopen", function(event, ui){
-					var table = $( '#test-suite-test-plans-table' ).squashTable();
-					var ids = table.getSelectedIds();
 	
-					if (ids.length == 0) {
-						$.squash.openMessage("<f:message key='popup.title.error' />", "${emptyMessage}");
-						$(this).dialog('close');
-					}
-					
-				});
-			</script>
-		<f:message key="dialog.remove-testcase-testsuite-associations.message" />
-	</jsp:attribute>
-		</pop:popup>
+		<%-- ------------------ test plan ------------------------------ --%>
+	
 
-		<%--- the openedBy attribute here is irrelevant and is just a dummy --%>
-		<pop:popup id="delete-test-suite-single-test-plan-dialog"
-			openedBy="test-suite-test-plans-table .delete-test-suite-test-plan-button"
-			titleKey="dialog.remove-testcase-testsuite-association.title" isContextual="true">
-			<jsp:attribute name="buttons">
-		<f:message var="labelDelete" key="label.Yes" />
-				'${ labelDelete }' : function(){
-            $this = $(this);
-						$this.data("answer","delete");
-						$this.dialog("close");
-				},
-				
-		<f:message var="labelDetach" key="label.No" />
-				'${ labelDetach }' : function(){
-            $this = $(this);
-						$this.data("answer","detach");
-						$this.dialog("close");
-				},
-				
-		<pop:cancel-button />
-	</jsp:attribute>
-			<jsp:attribute name="body">
-		<f:message key="dialog.remove-testcase-testsuite-association.message" />
-	</jsp:attribute>
-		</pop:popup>
+	<ts:test-suite-test-plan-panel assignableUsers="${assignableUsers}" testSuite="${testSuite}"
+									editable="${writable}" executable="${executable}" linkable="${linkable}" reorderable="${writable}"	/>
 
-		<%-- ------------------------- /Deletion confirmation popup for Test plan section --------------------------------- --%>
-	</div>
 
-	<%------------------------------ Attachments bloc ------------------------------------------- --%>
+		<%------------------------------ Attachments bloc ------------------------------------------- --%>
 	
 	<at:attachment-tab tabId="tabs-3" entity="${ testSuite }"	editable="${ executable }" tableModel="${attachmentsModel}"/>
 	
@@ -520,61 +362,8 @@
 		</script>
 	</c:if>
 
-	<%--------------------------- Assign User popup -------------------------------------%>
-	<pop:popup id="batch-assign-test-case"
-		titleKey="label.AssignUser" isContextual="true"
-		openedBy="assign-test-case-button" closeOnSuccess="false">
-
-		<jsp:attribute name="buttons">
-		
-			<f:message var="label" key="label.Assign" />
-			'${ label }': function() {
-				var url = "${assignTestCasesUrl}";
-				var table = $( '#test-suite-test-plans-table' ).squashTable();
-				var ids = table.getSelectedIds();
-		
-				var user = $(".comboLogin").val();
-			
-				$.post(url, { testPlanIds: ids, userId: user}, function(){
-					table.refresh();
-					$("#batch-assign-test-case").dialog('close');
-				});
-				
-			},
-			<pop:cancel-button />
-		</jsp:attribute>
-		<jsp:attribute name="body">
-			<f:message var="confirmMessage"
-				key="message.AssignTestCaseToUser" />
-			<script type="text/javascript">
-				$("#batch-assign-test-case").bind( "dialogopen", function(event, ui){
-					var table = $( '#test-suite-test-plans-table' ).squashTable();
-					var ids = table.getSelectedIds();
-
-					if (ids.length > 0) {
-						var comboBox = $.get("${batchAssignableUsersUrl}", false, function(){
-							$("#comboBox-div").html("${confirmMessage}");
-							$("#comboBox-div").append(comboBox.responseText);
-							$("#comboBox-div").show();
-						});
-					}
-					else {
-						$.squash.openMessage("<f:message key='popup.title.error' />", "${emptyMessage}");
-						$(this).dialog('close');
-					}
-					
-				});
-			</script>
-			<div id="comboBox-div">
-			</div>
-		</jsp:attribute>
-	</pop:popup>
 </div>
-<script type="text/javascript">
-	$(function(){
-		$('#test-case-button').click(function(){ document.location.href = "${testPlanManagerUrl}" ; });	
-	});
-</script>
+
 <%------------------------------------------automated suite overview --------------------------------------------%>
 <c:if test="${ testSuite.iteration.project.testAutomationEnabled }">
 	<comp:automated-suite-overview-popup />
@@ -586,7 +375,7 @@
 <%------------------------------ /bugs section -------------------------------%>
 
 <c:if test="${ creatable }">
-	<div id="confirm-duplicate-test-suite-dialog" class="not-displayed popup-dialog" title="<f:message key="title.DupliateTestSuite" />">
+	<div id="confirm-duplicate-test-suite-dialog" class="not-displayed popup-dialog" title="<f:message key="title.DuplicateTestSuite" />">
 		<strong><f:message key="message.DuplicateTestSuite" /> "${testSuite.name}" ?</strong>
 		<input:ok />
 		<input:cancel />
@@ -612,10 +401,23 @@
  <f:message key="tabs.label.issues" var="tabIssueLabel"/>
 <script>
 
+	var identity = { obj_id : ${testSuite.id}, obj_restype : "test-suites"  };
 
 	require(["domReady", "require"], function(domReady, require){
 		domReady(function(){	
-			require(["jquery", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker"], function($, contentHandlers, Frag, bugtracker){
+			require(["jquery", "workspace.contextual-content", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", "test-suite-management"], 
+					function($, ctxt, contentHandlers, Frag, bugtracker, tsmanagement){
+				
+				
+				var nameHandler = contentHandlers.getSimpleNameHandler();
+				
+				nameHandler.identity = identity;
+				nameHandler.nameDisplay = "#test-suite-name";
+				
+				ctxt.addListener(nameHandler);
+
+				// todo : uniform the event handling.
+				tsmanagement.initEvents();
 				
 				//****** tabs configuration *******
 				
@@ -640,13 +442,9 @@
 		    	
 		    	
 			 	squashtm.execution = squashtm.execution || {};
-			 	squashtm.execution.refresh = $.proxy(function(){
-			 		$("#test-suite-test-plans-table").squashTable().refresh();
-			 		// refreshTestSuiteInfo
-			 		$('#general-informations-panel').load('${testSuiteInfoUrl}');
-			 		// refreshExecButtons()
-					$('#test-suite-execution-button').load('${ testSuiteExecButtonsUrl }');
-			 	}, window);
+			 	squashtm.execution.refresh = function(){
+			 		ctxt.trigger('context.content-modified');
+			 	};
 			});
 		});
 	});

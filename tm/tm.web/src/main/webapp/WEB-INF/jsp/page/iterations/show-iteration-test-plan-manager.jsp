@@ -114,14 +114,7 @@
 	</jsp:attribute>	
 	
 	<jsp:attribute name="subPageTitle">
-		<c:choose>
-			<c:when test="${ testSuite != null}">
-				<h2>${testSuite.name}&nbsp;:&nbsp;<f:message key="squashtm.library.verifying-test-cases.title" /></h2>
-			</c:when>
-			<c:otherwise>
-				<h2>${iteration.name}&nbsp;:&nbsp;<f:message key="squashtm.library.verifying-test-cases.title" /></h2>
-			</c:otherwise>
-		</c:choose>
+		<h2>${iteration.name}&nbsp;:&nbsp;<f:message key="squashtm.library.verifying-test-cases.title" /></h2>
 	</jsp:attribute>
 	
 	<jsp:attribute name="subPageButtons">

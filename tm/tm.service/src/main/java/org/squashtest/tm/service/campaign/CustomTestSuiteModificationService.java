@@ -48,70 +48,7 @@ public interface CustomTestSuiteModificationService extends TestSuiteFinder{
 	void rename(long suiteId, String newName) throws DuplicateNameException;
 	
 	
-	/**
-	 * <p>That method will attach several {@link IterationTestPlanItem} to the given TestSuite. As usual, they
-	 * are identified using their Ids.</p>
-	 * 
-	 * <p>The implementation must also check that all these entities all belong to the same iteration or throw an unchecked exception
-	 * if not. TODO : define that exception.</p> 
-	 * 
-	 * @param suiteId
-	 * @param itemTestPlanIds
-	 */
-	void bindTestPlan(long suiteId, List<Long> itemTestPlanIds);
 
-	/**
-	 * <p>That method will attach several {@link IterationTestPlanItem} to several TestSuite. As usual, they
-	 * are identified using their Ids.</p>
-	 * 
-	 * <p>The implementation must also check that all these entities all belong to the same iteration or throw an unchecked exception
-	 * if not. TODO : define that exception.</p> 
-	 * 
-	 * @param suiteIds
-	 * @param itemTestPlanIds
-	 */
-	void bindTestPlanToMultipleSuites(List<Long> suiteIds, List<Long> itemTestPlanIds);
-	
-	/**
-	 * <p>That method will attach several {@link IterationTestPlanItem} to the given TestSuite. They
-	 * are identified using their Objects.</p>
-	 * 
-	 * <p>These entities all belong to the same iteration since they have previously been attached to it.</p> 
-	 * 
-	 * @param testSuite
-	 * @param itemTestPlans
-	 */
-	void bindTestPlanObj(TestSuite testSuite, List<IterationTestPlanItem> itemTestPlans);
-
-	/**
-	 * <p>That method will attach several {@link IterationTestPlanItem} to the given TestSuites. They
-	 * are identified using their Objects.</p>
-	 * 
-	 * <p>These entities all belong to the same iteration since they have previously been attached to it.</p> 
-	 * 
-	 * @param testSuites
-	 * @param itemTestPlans
-	 */
-	void bindTestPlanToMultipleSuitesObj(List<TestSuite> testSuites, List<IterationTestPlanItem> itemTestPlans);
-
-	/**
-	 * <p>That method will detach several {@link IterationTestPlanItem} from the given TestSuite. They
-	 * are identified using their Objects.</p>
-	 * 
-	 * <p>These entities all belong to the same iteration since they have previously been attached to it.</p> 
-	 * 
-	 * @param testSuite
-	 * @param itemTestPlans
-	 */
-	void unbindTestPlanObj(TestSuite testSuite, List<IterationTestPlanItem> itemTestPlans);
-	
-	/**
-	 * <p>That method will retrieve the test plan items attached to a given test suite.</p>
-	 * 
-	 * @param suiteId
-	 * @param paging
-	 */
-	PagedCollectionHolder<List<IterationTestPlanItem>> findTestSuiteTestPlan(long suiteId, Paging paging);
 	
 	/**
 	 * <p>That method will retrieve the data and fill the testSuiteStatistics DTO.</p>
@@ -119,10 +56,6 @@ public interface CustomTestSuiteModificationService extends TestSuiteFinder{
 	 * @param suiteId
 	 */
 	TestPlanStatistics findTestSuiteStatistics(long suiteId);
-	
-	
-	
-	void changeTestPlanPosition(long testSuiteId, int newIndex, List<Long>itemIds);
 	
 
 	/**

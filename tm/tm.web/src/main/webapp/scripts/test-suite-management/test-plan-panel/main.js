@@ -62,9 +62,9 @@ define(['squash.translator', './table', './popups'], function(translator, table,
 		});
 		
 		conf.urls = {
-			 testplanUrl : baseURL + '/iterations/'+conf.basic.iterationId+'/test-plan/',
+			 testplanUrl : baseURL + '/test-suites/'+conf.basic.testSuiteId+'/test-plan/',
 			 executionsUrl : baseURL + '/executions/',
-			 testplanManagerUrl : baseURL + '/iterations/' + conf.basic.iterationId +'/test-plan-manager'
+			 testplanManagerUrl : baseURL + '/iterations/' + conf.basic.testSuiteId +'/test-plan-manager'
 		};
 		
 		return conf;
@@ -76,19 +76,19 @@ define(['squash.translator', './table', './popups'], function(translator, table,
 				document.location.href = conf.urls.testplanManagerUrl;
 			});
 			$("#remove-test-plan-button").on('click', function(){
-				$("#iter-test-plan-delete-dialog").formDialog('open');
+				$("#ts-test-plan-delete-dialog").formDialog('open');
 			});
 		}
 		
 		if (conf.permissions.editable){
 			$("#assign-users-button").on('click', function(){
-				$("#iter-test-plan-batch-assign").formDialog('open');
+				$("#ts-test-plan-batch-assign").formDialog('open');
 			});
 		}
 		
 		if (conf.permissions.reorderable){
 			$("#reorder-test-plan-button").on('click', function(){
-				$("#iter-test-plan-reorder-dialog").confirmDialog('open');
+				$("#ts-test-plan-reorder-dialog").confirmDialog('open');
 			});
 		}
 	}

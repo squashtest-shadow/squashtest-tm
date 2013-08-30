@@ -28,9 +28,6 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.Paging;
-import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
@@ -51,8 +48,6 @@ import org.squashtest.tm.service.user.UserAccountService;
 public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteModificationService {
 	private static final String OR_HAS_ROLE_ADMIN = "or hasRole('ROLE_ADMIN')";
 	private static final String HAS_WRITE_PERMISSION_ID = "hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'WRITE') ";
-	private static final String HAS_LINK_PERMISSION_ID = "hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'LINK') ";
-	private static final String HAS_LINK_PERMISSION_OBJECT = "hasPermission(#testSuite, 'LINK') ";
 	private static final String HAS_EXECUTE_PERMISSION_ID = "hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'EXECUTE') ";
 	private static final String HAS_READ_PERMISSION_ID = "hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite','READ') ";
 	@Inject
@@ -73,18 +68,12 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 	@Inject
 	private ProjectsPermissionFinder projectsPermissionFinder;
 
-	@Inject
-	private UserAccountService userService;
 
 	@Inject
 	private InsecureTestAutomationManagementService testAutomationService;
 	
 	@Inject
 	private IterationTestPlanManager iterationTestPlanManager;
-
-	public void setUserAccountService(UserAccountService service) {
-		this.userService = service;
-	}
 
 	@Override
 	@PreAuthorize(HAS_WRITE_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
@@ -93,45 +82,6 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 		suite.rename(newName);
 	}
 
-	@Override
-	@PreAuthorize(HAS_LINK_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
-	public void bindTestPlan(long suiteId, List<Long> itemTestPlanIds) {
-		// that implementation relies on how the TestSuite will do the job (regarding the checks on whether the itps
-		// belong to the
-		// same iteration of not
-		TestSuite suite = testSuiteDao.findById(suiteId);
-		suite.bindTestPlanItemsById(itemTestPlanIds);
-	}
-
-	@Override()
-	public void bindTestPlanToMultipleSuites(List<Long> suiteIds, List<Long> itemTestPlanIds) {
-
-		for (Long id : suiteIds) {
-			bindTestPlan(id, itemTestPlanIds);
-		}
-	}
-
-	@Override
-	@PreAuthorize(HAS_LINK_PERMISSION_OBJECT + OR_HAS_ROLE_ADMIN)
-	public void bindTestPlanObj(TestSuite testSuite, List<IterationTestPlanItem> itemTestPlans) {
-		// the test plans have already been associated to the Iteration
-		testSuite.bindTestPlanItems(itemTestPlans);
-	}
-
-	@Override()
-	public void bindTestPlanToMultipleSuitesObj(List<TestSuite> testSuites, List<IterationTestPlanItem> itemTestPlans) {
-
-		for (TestSuite suite : testSuites) {
-			bindTestPlanObj(suite, itemTestPlans);
-		}
-	}
-
-	@Override
-	@PreAuthorize(HAS_LINK_PERMISSION_OBJECT + OR_HAS_ROLE_ADMIN)
-	public void unbindTestPlanObj(TestSuite testSuite, List<IterationTestPlanItem> itemTestPlans) {
-		// the test plans have already been associated to the Iteration
-		testSuite.unBindTestPlan(itemTestPlans);
-	}
 
 	@Override
 	@PreAuthorize(HAS_READ_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
@@ -141,35 +91,8 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 
 	@Override
 	@PreAuthorize(HAS_READ_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
-	public PagedCollectionHolder<List<IterationTestPlanItem>> findTestSuiteTestPlan(long suiteId, Paging paging) {
-
-		List<IterationTestPlanItem> testPlan = testSuiteDao.findAllTestPlanItemsPaged(suiteId, paging);
-
-		Long projectId = testSuiteDao.findById(suiteId).getProject().getId();
-		String userLogin = userService.findCurrentUser().getLogin();
-
-		List<IterationTestPlanItem> filteredTestPlan = this.filterTestSuiteByUser(testPlan, userLogin, projectId);
-
-		long count = testSuiteDao.countTestPlanItems(suiteId);
-
-		return new PagingBackedPagedCollectionHolder<List<IterationTestPlanItem>>(paging, count, filteredTestPlan);
-	}
-
-	@Override
-	@PreAuthorize(HAS_READ_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
 	public TestPlanStatistics findTestSuiteStatistics(long suiteId) {
 		return testSuiteDao.getTestSuiteStatistics(suiteId);
-	}
-
-	@Override
-	@PreAuthorize(HAS_LINK_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
-	public void changeTestPlanPosition(long suiteId, int newIndex, List<Long> itemIds) {
-
-		TestSuite suite = testSuiteDao.findById(suiteId);
-
-		List<IterationTestPlanItem> items = testSuiteDao.findTestPlanPartition(suiteId, itemIds);
-
-		suite.reorderTestPlan(newIndex, items);
 	}
 
 	@Override

@@ -23,7 +23,7 @@ define(['jquery', 'workspace.contextual-content', 'jqueryui', 'jquery.squash.con
 
 	function _initDeleteExecutionPopup(conf){
 		
-		var deleteExecutionDialog = $("#iter-test-plan-delete-execution-dialog");
+		var deleteExecutionDialog = $("#ts-test-plan-delete-execution-dialog");
 		
 		deleteExecutionDialog.confirmDialog();
 		
@@ -45,25 +45,18 @@ define(['jquery', 'workspace.contextual-content', 'jqueryui', 'jquery.squash.con
 	
 	function _initDeleteItemTestplan(conf){
 		
-		var deleteItemTestplanDialog = $("#iter-test-plan-delete-dialog");
+		var deleteItemTestplanDialog = $("#ts-test-plan-delete-dialog");
 		
 		deleteItemTestplanDialog.formDialog();
-		
-		deleteItemTestplanDialog.on('formdialogopen', function(){
-			var selIds = $("#iteration-test-plans-table").squashTable().getSelectedIds();
+	
+		function postDelete(shouldRemoveAll){
 			
-			switch (selIds.length){			
-				case 0 : $(this).formDialog('setState','empty-selec'); break;
-				case 1 : $(this).formDialog('setState','single-tp'); break;
-				default : $(this).formDialog('setState','multiple-tp'); break;					
-			}
-			
-		});
-		
-		deleteItemTestplanDialog.on('formdialogconfirm', function(){
-			var table = $("#iteration-test-plans-table").squashTable();
+			var table = $("#test-suite-test-plans-table").squashTable();
 			var ids = table.getSelectedIds();
 			var url = conf.urls.testplanUrl + ids.join(',');
+			if (! shouldRemoveAll){
+				url+="?detach=true";
+			}
 			
 			$.ajax({
 				url : url,
@@ -78,6 +71,25 @@ define(['jquery', 'workspace.contextual-content', 'jqueryui', 'jquery.squash.con
 			});
 			
 			$(this).formDialog('close');
+		}
+		
+		deleteItemTestplanDialog.on('formdialogopen', function(){
+			var selIds = $("#test-suite-test-plans-table").squashTable().getSelectedIds();
+			
+			switch (selIds.length){			
+				case 0 : $(this).formDialog('setState','empty-selec'); break;
+				case 1 : $(this).formDialog('setState','single-tp'); break;
+				default : $(this).formDialog('setState','multiple-tp'); break;					
+			}
+			
+		});
+		
+		deleteItemTestplanDialog.on('formdialogconfirmall', function(){
+			postDelete.call(this, true);			
+		});
+		
+		deleteItemTestplanDialog.on('formdialogconfirm', function(){
+			postDelete.call(this, false);			
 		});
 		
 		deleteItemTestplanDialog.on('formdialogcancel', function(){
@@ -88,12 +100,12 @@ define(['jquery', 'workspace.contextual-content', 'jqueryui', 'jquery.squash.con
 	
 	function _initBatchAssignUsers(conf){
 		
-		var batchAssignUsersDialog = $("#iter-test-plan-batch-assign");
+		var batchAssignUsersDialog = $("#ts-test-plan-batch-assign");
 		
 		batchAssignUsersDialog.formDialog();
 		
 		batchAssignUsersDialog.on('formdialogopen', function(){
-			var selIds = $("#iteration-test-plans-table").squashTable().getSelectedIds();
+			var selIds = $("#test-suite-test-plans-table").squashTable().getSelectedIds();
 			
 			if (selIds.length === 0){			
 				$(this).formDialog('setState','empty-selec');
@@ -106,7 +118,7 @@ define(['jquery', 'workspace.contextual-content', 'jqueryui', 'jquery.squash.con
 		
 		batchAssignUsersDialog.on('formdialogconfirm', function(){
 			
-			var table = $("#iteration-test-plans-table").squashTable(),
+			var table = $("#test-suite-test-plans-table").squashTable(),
 				select = $('.batch-select', this);
 			
 			var rowIds = table.getSelectedIds(),
@@ -129,12 +141,12 @@ define(['jquery', 'workspace.contextual-content', 'jqueryui', 'jquery.squash.con
 	}
 	
 	function _initReorderTestPlan(conf){
-		var dialog = $("#iter-test-plan-reorder-dialog");
+		var dialog = $("#ts-test-plan-reorder-dialog");
 		
 		dialog.confirmDialog();
 		
 		dialog.on('confirmdialogconfirm', function(){
-			var table = $("#iteration-test-plans-table").squashTable();
+			var table = $("#test-suite-test-plans-table").squashTable();
 			var drawParameters = table.getAjaxParameters();
 			
 			var url = conf.urls.testplanUrl+'/order';

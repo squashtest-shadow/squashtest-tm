@@ -32,7 +32,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
 <c:url var="backUrl" value="/campaign-workspace/" />
-<c:url var="testPlanUrl" value="/iterations/${iteration.id}/test-plan/" />
+<c:url var="testPlanUrl" value="/test-suites/${testSuite.id}/test-plan/" />
 
 <f:message var="unauthorizedDeletion" key="dialog.remove-testcase-association.unauthorized-deletion.message"  />
 <%-- TODO : why is that no tree-picker-layout like the rest of association interface  ? --%>
@@ -118,14 +118,7 @@
 	</jsp:attribute>	
 	
 	<jsp:attribute name="subPageTitle">
-		<c:choose>
-			<c:when test="${ testSuite != null}">
-				<h2>${testSuite.name}&nbsp;:&nbsp;<f:message key="squashtm.library.verifying-test-cases.title" /></h2>
-			</c:when>
-			<c:otherwise>
-				<h2>${iteration.name}&nbsp;:&nbsp;<f:message key="squashtm.library.verifying-test-cases.title" /></h2>
-			</c:otherwise>
-		</c:choose>
+		<h2>${testSuite.name}&nbsp;:&nbsp;<f:message key="squashtm.library.verifying-test-cases.title" /></h2>
 	</jsp:attribute>
 	
 	<jsp:attribute name="subPageButtons">
@@ -169,17 +162,9 @@
 	
 			</div>
 			<div class="fragment-body">
-			
-			<c:if test="${ useIterationTable }">
-				<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ iterationUrl }" isContextual="false"/>
-				<aggr:iteration-test-plan-manager-table iteration="${iteration}"/>
-			</c:if>
-			<c:if test="${ not useIterationTable }">
-			<c:url var="testSuiteUrl" value="/test-suites/${ testSuite.id }" />
-			<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ testSuiteUrl }" isContextual="false"/>
-				<aggr:decorate-test-suite-test-plan-manager-table testSuite="${testSuite}" />
-				<aggr:test-suite-test-plan-manager-table/>
-			</c:if>
+				<c:url var="testSuiteUrl" value="/test-suites/${ testSuite.id }" />
+				<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ testSuiteUrl }" isContextual="false"/>
+				<aggr:test-suite-test-plan-manager-table testSuite="${testSuite}" />
 			</div>
 		</div>
 	</div>

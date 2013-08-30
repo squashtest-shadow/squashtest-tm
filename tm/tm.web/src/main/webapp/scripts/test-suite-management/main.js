@@ -18,10 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "./test-suite-menu/TestSuiteMenuMain", './test-plan-panel/main', './events/ctxt-evt-handler' ], function(TestSuiteMenuMain, testPlanPanel, evtHandler) {
+define([ './test-plan-panel/main', './events/ctxt-evt-handler' ], function(testPlanPanel, evtHandler) {
 
 	return {
-		initTestSuiteMenu : TestSuiteMenuMain,
 		
 		initTestPlanPanel : function(conf){
 			testPlanPanel.init(conf);
