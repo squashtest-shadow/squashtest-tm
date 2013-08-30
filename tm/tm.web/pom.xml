@@ -15,7 +15,7 @@
 
   <properties>
     <bundle.contextPath>squash</bundle.contextPath>
-    <logger.urlRewriteFilter>DEBUG</logger.urlRewriteFilter>
+    <logger.urlRewriteFilter>INFO</logger.urlRewriteFilter>
     <project.stage>RELEASE</project.stage> <!-- overridable by activating the profile development -->
     <spring.version.range>[3,4)</spring.version.range>
     <springdm.version.range>[2,3)</springdm.version.range>
@@ -708,6 +708,7 @@
       </activation>
       <properties>
         <project.stage>DEV</project.stage>
+        <logger.urlRewriteFilter>DEBUG</logger.urlRewriteFilter>
       </properties>
     </profile>
 
