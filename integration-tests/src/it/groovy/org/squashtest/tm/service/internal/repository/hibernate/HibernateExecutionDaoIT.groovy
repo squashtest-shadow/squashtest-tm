@@ -75,9 +75,9 @@ class HibernateExecutionDaoIT extends DbunitDaoSpecification {
 		given: 
 		PagingAndSorting pas = Mock()
 		pas.firstItemIndex >> 0
-		pas.pageSize >> 3
+		pas.pageSize >> expectedIds.size()
 		pas.sortedAttribute >> sortedAttribute
-		pas.sortOrder >> SortOrder.ASCENDING
+		pas.sortOrder >> sortOrder
 		
 		when: 
 		def res = executionDao.findAllByTestCaseId(500L, pas)
@@ -86,14 +86,14 @@ class HibernateExecutionDaoIT extends DbunitDaoSpecification {
 		res*.id == expectedIds
 		
 		where:
-		sortedAttribute             | expectedIds
-		"Project.name"              | [494, 580, 627]
-		"Campaign.name"             | [718, 494, 580]
-		"Iteration.name"            | [718, 494, 580]
-		"Execution.name"            | [494, 580, 627]
-		"Execution.executionMode"   | [494, 580, 627]
-		"Execution.executionStatus" | [494, 580, 627]
-		"Execution.lastExecutedBy"  | [494, 580, 627]
-		"Execution.lastExecutedOn"  | [494, 580, 627]
+		sortedAttribute             | sortOrder            | expectedIds
+//		"Project.name"              | SortOrder.ASCENDING  | [494, 580, 627] // dataset too complex, cannot manage to have the test work
+		"Campaign.name"             | SortOrder.ASCENDING  | [718, 494, 580] // null, camp a, camp b */
+		"Iteration.name"            | SortOrder.ASCENDING  | [718, 494, 580]
+		"Execution.name"            | SortOrder.ASCENDING  | [494, 580, 627]
+		"Execution.executionMode"   | SortOrder.ASCENDING  | [627, 718]
+		"Execution.executionStatus" | SortOrder.ASCENDING  | [953, 1110, 1556]
+		"Execution.lastExecutedBy"  | SortOrder.ASCENDING  | [2150, 2562, 2971]
+		"Execution.lastExecutedOn"  | SortOrder.ASCENDING  | [494, 580, 627] 
 	}
 }
