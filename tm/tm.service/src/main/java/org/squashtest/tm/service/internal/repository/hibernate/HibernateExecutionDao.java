@@ -30,6 +30,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -201,16 +202,13 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	@Override
 	public List<Execution> findAllByTestCaseId(long testCaseId, PagingAndSorting pas) {
 		Criteria crit = currentSession().createCriteria(Execution.class, "Execution");
-		crit.createAlias("testPlan.iteration", "Iteration", Criteria.LEFT_JOIN);
-		crit.createAlias("Iteration.campaign", "Campaign", Criteria.LEFT_JOIN);
-		crit.createAlias("Campaign.project", "Project", Criteria.LEFT_JOIN);
-		crit.createAlias("referencedTestCase", "TestCase", Criteria.LEFT_JOIN);
-		crit.createAlias("testPlan.testSuites", "TestSuite", Criteria.LEFT_JOIN);
+		crit.createAlias("testPlan.iteration", "Iteration", JoinType.LEFT_OUTER_JOIN);
+		crit.createAlias("Iteration.campaign", "Campaign", JoinType.LEFT_OUTER_JOIN);
+		crit.createAlias("Campaign.project", "Project", JoinType.LEFT_OUTER_JOIN);
+		crit.createAlias("referencedTestCase", "TestCase", JoinType.LEFT_OUTER_JOIN);
+		crit.createAlias("testPlan.testSuites", "TestSuite", JoinType.LEFT_OUTER_JOIN);
 
 		crit.add(Restrictions.eq("TestCase.id", Long.valueOf(testCaseId)));
-		
-//		crit.setFetchMode("TestCase.testAutomationTest", FetchMode.JOIN);
-//		crit.setFetchMode("testPlan.referencedTestCase.testAutomationTest", FetchMode.JOIN);
 		
 		crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
