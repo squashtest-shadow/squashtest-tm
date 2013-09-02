@@ -341,7 +341,7 @@
 		<it:test-suite-managment suiteList="${iteration.testSuites}"
 			popupOpener="manage-test-suites-button" creatable="${ creatable }"
 			deletable="${ deletable }" popupId="manage-test-suites-popup"
-			menuId="manage-test-suites-menu" testSuitesUrl="${testSuitesUrl}"
+			menuId="manage-test-suites-buttonmenu" testSuitesUrl="${testSuitesUrl}"
 			datatableId="iteration-test-plans-table"
 			emptySelectionMessageId="test-plan-empty-sel-msg" />
 

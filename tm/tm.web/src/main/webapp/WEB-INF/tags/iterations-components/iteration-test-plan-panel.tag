@@ -48,6 +48,7 @@
 <f:message var="confirmLabel"	key="label.Confirm"/>
 <f:message var="cancelLabel"	key="label.Cancel"/>
 <f:message var="assignLabel"	key="label.Assign" />
+<f:message var="okLabel"		key="label.Ok" />
 
 
 
@@ -76,9 +77,22 @@
 		<input id="reorder-test-plan-button"	type="button" value="${reorderLabel}" 	class="button" title="${reorderTooltip}"/>
 	</c:if>
 	<c:if test="${ linkable }">
-		<input id="remove-test-plan-button" 	type="button" value="${removeLabel}"	class="button" />
-		<input id="assign-users-button" 		type="button" value="${assignLabel}" 	class="button" />
-		<input id="manage-test-suites-menu" 	type="button" value="${manageTS}" 		class="button" />
+		<input id="remove-test-plan-button" 		type="button" value="${removeLabel}"	class="button" />
+		<input id="assign-users-button" 			type="button" value="${assignLabel}" 	class="button" />
+		<input id="manage-test-suites-buttonmenu" 	type="button" value="${manageTS}" 		class="buttonmenu" />
+		<ul id="manage-test-suites-menu" class="not-displayed">
+			<!-- no item at first, will be popuplated by javascript -->
+			<li class="suite-manager-controls suite-manager-newsection">
+				<input type="text" id="suite-manager-menu-input"/>
+				<input type="button" id="suite-manager-menu-button" class="button"/>
+			</li>
+			<li class="suite-manager-buttonpane suite-manager-newsection">
+				<div class="snap-right">
+					<input type="button" id="suite-manager-menu-ok-button" 		role="button" class="button" value="${okLabel}"/>
+					<input type="button" id="suite-manager-menu-cancel-button"	role="button" class="button" value="${cancelLabel}" />
+				</div>
+			</li>
+		</ul>
 	</c:if>
 </div>
 

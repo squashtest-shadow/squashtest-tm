@@ -49,7 +49,7 @@ label.afterDisabled:after, input + label:after {
 	content: "";
 }
 
-div#navigation {
+#navigation {
 	position: fixed;
 	min-height: 100%;
 	width: 1cm;
@@ -57,7 +57,7 @@ div#navigation {
 	margin-right: 0.4cm;
 }
 
-div#workspace {
+#workspace {
 	bottom: 0.2cm;
 	left: 1.4cm;
 	position: absolute;
@@ -65,16 +65,16 @@ div#workspace {
 	top: 0;
 }
 
-div#workspace-title h2 {
+#workspace-title h2 {
 	color: slategray;
 	font-style: italic;
 	margin-bottom: 0.0em;
 	margin-top: 0.0em;
 }
-div#workspace-title h2.admin{
+#workspace-title h2.admin{
 	color:red;
 }
-div#user-workspace-title h2 {
+#user-workspace-title h2 {
 	color: slategray;
 	font-style: italic;
 	margin-bottom: 0.0em;
@@ -82,7 +82,7 @@ div#user-workspace-title h2 {
 	margin-left: 1.3cm;
 }
 
-div#tree-pane {
+#tree-pane {
 	bottom: 0.1cm;
 	float: left;
 	position: absolute;
@@ -93,7 +93,7 @@ div#tree-pane {
 }
 
 
-div#tabbed-pane {
+#tabbed-pane {
 	bottom: 0px;
 	margin-right: 0.5em;
 	position: absolute;
@@ -102,13 +102,13 @@ div#tabbed-pane {
 	right:0px;
 }
 
-div#slider {
+#slider {
 	position: absolute;
 	width: 95%;
 	margin-left: 5px;
 }
 
-div#tabbed-pane .tab {
+#tabbed-pane .tab {
 	font-size: 10px;
 }
 
@@ -124,7 +124,7 @@ ul.ui-tabs-nav li.ui-state-default.ui-corner-top.ui-state-hover {
 		repeat-x scroll 50% 50% #2B2B2B;
 }
 
-div#tabbed-pane>ul,div.fragment-tabs>ul {
+#tabbed-pane>ul,div.fragment-tabs>ul {
 	border: 0;
 	background: none;
 }
@@ -1326,3 +1326,10 @@ div.admin-message-page-content{
 }
 
 /* ----------------  /index administration view  -----------*/
+
+/* ---------------- test suites management -----------------*/
+
+.suite-manager-newsection{
+	border-top: 2px solid gray;
+	padding-top: 0.5em;
+}

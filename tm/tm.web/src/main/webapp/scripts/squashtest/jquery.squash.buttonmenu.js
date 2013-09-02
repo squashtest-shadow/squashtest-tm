@@ -30,9 +30,9 @@
  *			zindex : a user-defined z-index value, 
  *					to make sure your menu will be displayed above any other elements.
  *					default is 3000,
- *			anchor : one of ["left", "right"]. Default is "left" : this means that the menu is anchored to the button via its top-left corner. 
- *						When set to "right", it would be the top-right. 
- *		}
+ *		},
+ *		anchor : one of ["left", "right"]. Default is "left" : this means that the menu is anchored to the button via its top-left corner. 
+ *				When set to "right", it would be the top-right. 
  *	}
  * 
  *	@author bsiri

@@ -140,7 +140,6 @@ $(function(){
 		var menuSettings = {
 				instanceSelector : "#${menuId}",
 				datatableSelector : "#${datatableId}",
-				isContextual : true,
 				emptySelectionMessageSelector: "#${ emptySelectionMessageId }",
 				emptySuiteSelectionMessageSelector: "#suite-menu-empty-selection-popup",
 			};

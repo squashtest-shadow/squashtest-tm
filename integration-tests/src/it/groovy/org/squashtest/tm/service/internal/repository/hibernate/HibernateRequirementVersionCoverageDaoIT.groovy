@@ -95,7 +95,7 @@ class HibernateRequirementVersionCoverageDaoIT extends DbunitDaoSpecification {
 		reqs.collect { it.id } == [20L]
 	}
 	
-	@Unroll
+	@Unroll("should find paged list for test-step sorted by #sortAttr")
 	@DataSet("HibernateRequirementVersionCoverageDaoIT.should find paged list for test-step.xml")
 	def "should find #expected steps for page[#start, #pageSize] and sorting[#sortAttr, #sortOrder]"() {
 		PagingAndSorting paging = Mock()
