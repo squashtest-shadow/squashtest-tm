@@ -89,7 +89,6 @@
       <groupId>org.squashtest.tm</groupId>
       <artifactId>core.aspect</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
     </dependency>
 		<!--======= /SQUASHTEST MODULES ======== -->
 
