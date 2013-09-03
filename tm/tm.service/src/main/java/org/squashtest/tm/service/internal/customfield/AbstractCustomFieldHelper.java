@@ -126,7 +126,6 @@ public abstract class AbstractCustomFieldHelper<X extends BoundEntity> implement
 		}
 
 		return customFields;
-
 	}
 
 	@Override

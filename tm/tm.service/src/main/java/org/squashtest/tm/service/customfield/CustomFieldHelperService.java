@@ -23,9 +23,11 @@ package org.squashtest.tm.service.customfield;
 import java.util.List;
 
 import org.squashtest.tm.domain.customfield.BoundEntity;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.service.internal.customfield.DenormalizedFieldHelper;
 
 public interface CustomFieldHelperService {
 
@@ -44,4 +46,7 @@ public interface CustomFieldHelperService {
 	 */
 	CustomFieldHelper<ActionTestStep> newStepsHelper(List<TestStep> steps, Project project);
 
+	<X extends DenormalizedFieldHolder> DenormalizedFieldHelper<X> newDenormalizedHelper(X entity);
+
+	<X extends DenormalizedFieldHolder> DenormalizedFieldHelper<X> newDenormalizedHelper(List<X> entities);
 }
