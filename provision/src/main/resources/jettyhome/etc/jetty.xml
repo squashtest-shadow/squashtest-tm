@@ -89,13 +89,11 @@
   <New id="ServerLog" class="java.io.PrintStream">
     <Arg>
       <New class="org.eclipse.jetty.util.RolloverFileOutputStream">
-        <Arg><Property name="jetty.logs" default="./logs" />/yyyy_mm_dd.stderrout.log</Arg>
+        <Arg><Property name="jetty.logs" default="./logs" />/jetty.stderrout.log</Arg>
         <Arg type="boolean">false</Arg>
         <Arg type="int">90</Arg>
         <Arg>
-          <Call class="java.util.TimeZone" name="getTimeZone">
-            <Arg>GMT</Arg>
-          </Call>
+          <Call class="java.util.TimeZone" name="getTimeZone"><Arg>GMT</Arg></Call>
         </Arg>
         <Get id="ServerLogName" name="datedFilename" />
       </New>
@@ -103,20 +101,13 @@
   </New>
 
   <Call class="org.eclipse.jetty.util.log.Log" name="info">
-    <Arg>
-      Redirecting stderr/stdout to
-      <Ref id="ServerLogName" />
-    </Arg>
+    <Arg>Redirecting stderr/stdout to<Ref id="ServerLogName" /></Arg>
   </Call>
   <Call class="java.lang.System" name="setErr">
-    <Arg>
-      <Ref id="ServerLog" />
-    </Arg>
+    <Arg><Ref id="ServerLog" /></Arg>
   </Call>
   <Call class="java.lang.System" name="setOut">
-    <Arg>
-      <Ref id="ServerLog" />
-    </Arg>
+    <Arg><Ref id="ServerLog" /></Arg>
   </Call>
     
 
@@ -130,7 +121,7 @@
           <Set name="requestLog">
         <!-- Use AsyncNCSARequestLog for improved request latency -->
             <New id="RequestLogImpl" class="org.eclipse.jetty.server.NCSARequestLog">
-              <Set name="filename"><Property name="jetty.logs" default="./logs" />/yyyy_mm_dd.request.log</Set>
+              <Set name="filename"><Property name="jetty.logs" default="./logs" />/jetty.request.log</Set>
               <Set name="filenameDateFormat">yyyy_MM_dd</Set>
               <Set name="retainDays">90</Set>
               <Set name="append">true</Set>
