@@ -25,38 +25,36 @@ import java.util.Map;
 
 /**
  * Parameters of the draw request sent by a datatable.
- *
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
-// NOSONAR names have to match JSON structure  
+// IGNOREVIOLATIONS:START 
 public class DataTableDrawParameters {
-	
-		
+
 	// the identifier of that particular ajax request
 	private String sEcho;
-	
+
 	// table columns definition
 	private Map<Integer, Object> mDataProp = new HashMap<Integer, Object>();
-	
+
 	// paging information
 	private int iDisplayStart;
 	private int iDisplayLength;
-	
+
 	// filtering information
 	private String sSearch;
-	
+
 	// sorting informations
 	private Map<Integer, Object> iSortCol = new HashMap<Integer, Object>();
 	private Map<Integer, Object> sSortDir = new HashMap<Integer, Object>();
 	private int iSortingCols;
 
-
-	public int getiDisplayStart() { // NOSONAR names have to match JSON structure
+	public int getiDisplayStart() {
 		return iDisplayStart;
 	}
 
-	public void setiDisplayStart(int iDisplayStart) { // NOSONAR names have to match JSON structure
+	public void setiDisplayStart(int iDisplayStart) {
 		this.iDisplayStart = iDisplayStart;
 	}
 
@@ -64,47 +62,55 @@ public class DataTableDrawParameters {
 		return iDisplayLength;
 	}
 
-	public void setiDisplayLength(int iDisplayLength) { // NOSONAR names have to match JSON structure
+	public void setiDisplayLength(int iDisplayLength) {
 		this.iDisplayLength = iDisplayLength;
 	}
 
-	public String getsEcho() { // NOSONAR names have to match JSON structure
+	public String getsEcho() {
 		return sEcho;
 	}
 
-	public void setsEcho(String sEcho) { // NOSONAR names have to match JSON structure
+	public void setsEcho(String sEcho) {
 		this.sEcho = sEcho;
 	}
-	
-	
-	/** 
-	 * use #getsSortedAttribute_0() instead 
+
+	/**
+	 * use #getsSortedAttribute_0() instead
 	 */
-	public int getiSortCol_0() { // NOSONAR names have to match JSON structure
-		return Integer.valueOf((String)iSortCol.get(0));
+	public int getiSortCol_0() {
+		// Buggy 36984c995ed1 assumed iSortCol was a String. As I'm clueless, I'm extra-cautious
+		Object sort0 = iSortCol.get(0);
+		
+		if (sort0 instanceof Number) {
+			return ((Number) sort0).intValue();
+		}
+		if (sort0 instanceof String) {
+			return Integer.valueOf((String) sort0);
+		}
+		throw new IllegalStateException("Value '" + sort0 + "' should either be a Number or a String but we got a "
+				+ sort0.getClass().getName() + " instead. Maybe datatable config is wrong ?");
 	}
 
-	public void setiSortCol_0(int iSortCol_0) { // NOSONAR names have to match JSON structure
+	public void setiSortCol_0(int iSortCol_0) {
 		this.iSortCol.put(0, iSortCol_0);
 	}
 
-	
-	//legacy method
-	public String getsSortDir_0() { // NOSONAR names have to match JSON structure
-		return (String)sSortDir.get(0);
+	// legacy method
+	public String getsSortDir_0() {
+		return (String) sSortDir.get(0);
 	}
-	
-	//legacy method
-	public Object getsSortedAttribute_0(){
+
+	// legacy method
+	public Object getsSortedAttribute_0() {
 		Object o = mDataProp.get(getiSortCol_0());
-		if (o==null){
+		if (o == null) {
 			o = getiSortCol_0();
 		}
 		return o;
 	}
 
-	//legacy method
-	public void setsSortDir_0(String sSortDir_0) { // NOSONAR names have to match JSON structure
+	// legacy method
+	public void setsSortDir_0(String sSortDir_0) {
 		this.sSortDir.put(0, sSortDir_0);
 	}
 
@@ -115,31 +121,31 @@ public class DataTableDrawParameters {
 	public void setsSearch(String sSearch) {
 		this.sSearch = sSearch;
 	}
-	
-	public Map<Integer, Object> getmDataProp(){
+
+	public Map<Integer, Object> getmDataProp() {
 		return mDataProp;
 	}
-	
-	public Object getmDataProp(Integer index){
+
+	public Object getmDataProp(Integer index) {
 		return mDataProp.get(index);
 	}
-	
-	public Map<Integer, Object> getiSortCol(){
+
+	public Map<Integer, Object> getiSortCol() {
 		return iSortCol;
 	}
-	
-	public Integer getiSortCol(Integer index){
-		return Integer.valueOf((String)iSortCol.get(index));
+
+	public Integer getiSortCol(Integer index) {
+		return Integer.valueOf((String) iSortCol.get(index));
 	}
-	
-	public Map<Integer, Object> getsSortDir(){
+
+	public Map<Integer, Object> getsSortDir() {
 		return sSortDir;
 	}
-	
-	public String getsSortDir(Integer index){
-		return (String)sSortDir.get(index);
+
+	public String getsSortDir(Integer index) {
+		return (String) sSortDir.get(index);
 	}
-	
+
 	public int getiSortingCols() {
 		return iSortingCols;
 	}
@@ -148,5 +154,5 @@ public class DataTableDrawParameters {
 		this.iSortingCols = iSortingCols;
 	}
 
-	
 }
+// IGNOREVIOLATIONS:END 

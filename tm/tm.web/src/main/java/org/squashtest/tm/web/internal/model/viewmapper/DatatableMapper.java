@@ -66,8 +66,6 @@ public interface DatatableMapper<KEY> {
 	 */
 	public String getMapping(KEY key);
 	
-	
-	
 	public static interface Mapping{
 		
 		public String getMapping();

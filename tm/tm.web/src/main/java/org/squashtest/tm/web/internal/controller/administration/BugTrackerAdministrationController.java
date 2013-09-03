@@ -60,7 +60,7 @@ public class BugTrackerAdministrationController {
 
 
 /* remember that the indexes here are supposed to match the visible columns in the bugtracker view */
-	private DatatableMapper<Integer> bugtrackerMapper=new IndexBasedMapper(6)
+	private DatatableMapper<Integer> bugtrackerMapper=new IndexBasedMapper()
 										.mapAttribute(2, "name", BugTracker.class)
 										.mapAttribute(3, "kind", BugTracker.class)
 										.mapAttribute(4, "url", BugTracker.class)

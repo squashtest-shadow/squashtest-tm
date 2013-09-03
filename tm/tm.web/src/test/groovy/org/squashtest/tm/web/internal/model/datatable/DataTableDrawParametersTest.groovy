@@ -18,36 +18,37 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.model.datatable;
 
-import javax.validation.constraints.NotNull;
+package org.squashtest.tm.web.internal.model.datatable
 
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.SortOrder;
-import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
+import spock.lang.Specification
 
-public class DataTableSorting extends DataTablePaging implements PagingAndSorting {
-	
-	// FIXME DatatableMapper<String>
-	private final DatatableMapper mapper;
+/**
+  * @author Gregory Fouquet
+ *
+ */
+class DataTableDrawParametersTest extends Specification {
 
-	
-	// FIXME DatatableMapper<String>
-	public DataTableSorting(@NotNull DataTableDrawParameters params, @NotNull DatatableMapper mapper){
-		super(params);
-		this.mapper=mapper;
+	def "getiSortCol_0 should not blow up my face as per changeset 36984c995ed1"() {
+		given: 
+		DataTableDrawParameters params = new DataTableDrawParameters()
+		params.setiSortCol_0(1)
+		
+		when:
+		params.getiSortCol_0()
+		
+		then:
+		notThrown ClassCastException 
 	}
-	
-	@Override
-	public String getSortedAttribute() {
-		return mapper.getMapping(params.getsSortedAttribute_0());
+	def "getsSortedAttribute_0 should not blow up my face as per changeset 36984c995ed1"() {
+		given: 
+		DataTableDrawParameters params = new DataTableDrawParameters()
+		params.setiSortCol_0(1)
+		
+		when:
+		params.getsSortedAttribute_0()
+		
+		then:
+		notThrown ClassCastException 
 	}
-
-
-	@Override
-	public SortOrder getSortOrder() {
-		return SortOrder.coerceFromCode(params.getsSortDir_0());
-	}
-	
-
 }
