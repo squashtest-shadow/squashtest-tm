@@ -54,7 +54,10 @@ import org.squashtest.tm.domain.customfield.RenderingLocation;
 @NamedQueries(value = {
 		@NamedQuery(name = "DenormalizedFieldValue.deleteAllForEntity", query = "delete DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId = :entityId and dfv.denormalizedFieldHolderType = :entityType"),
 		@NamedQuery(name = "DenormalizedFieldValue.findDFVForEntity", query = "from DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId = :entityId and dfv.denormalizedFieldHolderType = :entityType order by dfv.position"),
-		@NamedQuery(name = "DenormalizedFieldValue.findDFVForEntityAndRenderingLocation", query = "select dfv from DenormalizedFieldValue dfv join dfv.renderingLocations rl where dfv.denormalizedFieldHolderId = :entityId and dfv.denormalizedFieldHolderType = :entityType and rl = :renderingLocation order by dfv.position") })
+		@NamedQuery(name = "DenormalizedFieldValue.findDFVForEntityAndRenderingLocation", query = "select dfv from DenormalizedFieldValue dfv join dfv.renderingLocations rl where dfv.denormalizedFieldHolderId = :entityId and dfv.denormalizedFieldHolderType = :entityType and rl = :renderingLocation order by dfv.position"),
+		@NamedQuery(name = "DenormalizedFieldValue.findDFVForEntities", query = "select dfv from DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId in (:entityIds) and dfv.denormalizedFieldHolderType = :entityType order by dfv.position"),
+		@NamedQuery(name = "DenormalizedFieldValue.findDFVForEntitiesAndLocations", query = "select dfv from DenormalizedFieldValue dfv join dfv.renderingLocations rl where dfv.denormalizedFieldHolderId in (:entityIds) and dfv.denormalizedFieldHolderType = :entityType and rl in (:locations) order by dfv.position") 
+		})
 @Entity
 public class DenormalizedFieldValue {
 

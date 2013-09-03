@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionStepCollector;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
@@ -35,6 +36,7 @@ import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
 import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
+import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueFinder;
 
 /**
  * Read the definition of {@link Helper} instead
@@ -52,6 +54,9 @@ public class CustomFieldHelperServiceImpl implements CustomFieldHelperService {
 
 	@Inject
 	private CustomFieldValueManagerService cufValuesService;
+	
+	@Inject 
+	private DenormalizedFieldValueFinder denormalizedFinder;
 
 	/*
 	 * (non-Javadoc)
@@ -88,6 +93,20 @@ public class CustomFieldHelperServiceImpl implements CustomFieldHelperService {
 		CustomFieldHelperImpl<X> helper = new CustomFieldHelperImpl<X>(entities);
 		helper.setCufBindingService(cufBindingService);
 		helper.setCufValuesService(cufValuesService);
+		return helper;
+	}
+	
+	@Override
+	public <X extends DenormalizedFieldHolder> DenormalizedFieldHelper<X> newDenormalizedHelper(X entity) {
+		DenormalizedFieldHelper<X> helper = new DenormalizedFieldHelper<X>(entity);
+		helper.setDenormalizedFieldValueFinder(denormalizedFinder);
+		return helper;
+	}
+
+	@Override
+	public <X extends DenormalizedFieldHolder> DenormalizedFieldHelper<X> newDenormalizedHelper(List<X> entities) {
+		DenormalizedFieldHelper<X> helper = new DenormalizedFieldHelper<X>(entities);
+		helper.setDenormalizedFieldValueFinder(denormalizedFinder);
 		return helper;
 	}
 

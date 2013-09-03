@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
@@ -80,5 +81,14 @@ public interface DenormalizedFieldValueDao {
 			@QueryParam("entityId") long denormalizedFieldHolderId,
 			@QueryParam("entityType") DenormalizedFieldHolderType denormalizedFieldHolderType,
 			@QueryParam("renderingLocation") RenderingLocation renderingLocation);
+	
+	
+	List<DenormalizedFieldValue> findDFVForEntities(@QueryParam("entityType") DenormalizedFieldHolderType type, @QueryParam("entityIds") Collection<Long> entities);
+	
+
+	List<DenormalizedFieldValue> findDFVForEntitiesAndLocations(
+								@QueryParam("entityType") DenormalizedFieldHolderType denormalizedFieldHolderType,
+								@QueryParam("entityIds") Collection<Long> entities, 
+								@QueryParam("locations") Collection<RenderingLocation> locations);
 
 }
