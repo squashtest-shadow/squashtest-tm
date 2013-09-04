@@ -272,7 +272,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 
 		// execution steps custom fields
 		for (CustomField cufModel : esCUFModel){
-			headerCells.add(new CellImpl("STEP_CUF" + cufModel.getCode()));
+			headerCells.add(new CellImpl("STEP_CUF_" + cufModel.getCode()));
 		}
 		
 		return new RowImpl(headerCells);
