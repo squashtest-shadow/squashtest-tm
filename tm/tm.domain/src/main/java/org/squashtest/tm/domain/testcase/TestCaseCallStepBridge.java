@@ -22,18 +22,20 @@ package org.squashtest.tm.domain.testcase;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.bridge.FieldBridge;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-
+import org.squashtest.tm.domain.campaign.Iteration;
 
 @Configurable
-public class TestCaseBridgeAttachments implements FieldBridge{
+public class TestCaseCallStepBridge implements FieldBridge{
+
 
 	@Autowired
 	private SessionFactory sessionFactory;
@@ -45,7 +47,7 @@ public class TestCaseBridgeAttachments implements FieldBridge{
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
-
+	
 	@Override
 	public void set(String name, Object value, Document document, LuceneOptions luceneOptions) {
 
@@ -54,7 +56,9 @@ public class TestCaseBridgeAttachments implements FieldBridge{
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
 		
-		Field field = new Field(name, String.valueOf(testcase.getAttachmentList().size()), luceneOptions.getStore(),
+		Integer numberOfCalledTestCases = findNumberOfCalledTestCases(testcase.getId());
+		
+		Field field = new Field(name, String.valueOf(numberOfCalledTestCases), luceneOptions.getStore(),
 	    luceneOptions.getIndex(), luceneOptions.getTermVector() );
 	    field.setBoost( luceneOptions.getBoost());
 	    document.add(field);
@@ -62,4 +66,24 @@ public class TestCaseBridgeAttachments implements FieldBridge{
 	    tx.commit();
 	    session.close();
 	}
+
+	private Integer findNumberOfCalledTestCases(Long id) {
+
+		
+		Session session = sessionFactory.openSession();
+		Transaction tx = session.beginTransaction();
+		
+		Integer numberOfCalledTestCases = (Integer) session.createCriteria(TestCase.class)
+			.add(Restrictions.eq("id", id))
+			.createCriteria("steps")
+			.createCriteria("calledTestCase")
+			.setProjection(Projections.rowCount())
+			.uniqueResult();
+
+	    tx.commit();
+	    session.close();
+	    
+	    return numberOfCalledTestCases;
+	}
+
 }

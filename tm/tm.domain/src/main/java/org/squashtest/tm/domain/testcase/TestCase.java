@@ -78,11 +78,36 @@ import org.hibernate.search.annotations.Store;
 @Entity
 @Indexed
 @ClassBridges({
-		/*@ClassBridge(
+		@ClassBridge(
 			name="attachments",
 			store=Store.YES,
-			impl=TestCaseBridgeAttachments.class
-		),*/
+			impl=TestCaseAttachmentBridge.class
+		),
+		@ClassBridge(
+				name="callsteps",
+				store=Store.YES,
+				impl=TestCaseCallStepBridge.class
+		),
+		@ClassBridge(
+				name="iterations",
+				store=Store.YES,
+				impl=TestCaseIterationBridge.class
+		),
+		@ClassBridge(
+				name="executions",
+				store=Store.YES,
+				impl=TestCaseExecutionBridge.class
+		),
+		@ClassBridge(
+				name="issues",
+				store=Store.YES,
+				impl=TestCaseIssueBridge.class
+		),
+		@ClassBridge(
+				name="cufs",
+				store=Store.YES,
+				impl=TestCaseCUFBridge.class
+		),
 		@ClassBridge(
 			name="createdBy",
 			store=Store.YES,
