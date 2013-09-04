@@ -103,7 +103,9 @@ public class BugTrackerAdministrationController {
 		PagedCollectionHolder<List<BugTracker>> holder = bugTrackerManagerService.findSortedBugtrackers(filter);
 
 
-		return new BugtrackerDataTableModelHelper(messageSource).buildDataModel(holder,  params.getsEcho(), locale);
+		BugtrackerDataTableModelHelper helper = new BugtrackerDataTableModelHelper(messageSource);
+		helper.setLocale(locale);
+		return helper.buildDataModel(holder,  params.getsEcho());
 
 	}
 
@@ -112,8 +114,5 @@ public class BugTrackerAdministrationController {
 	private PagingAndSorting createPaging(final DataTableDrawParameters params, final DatatableMapper<?> mapper) {
 		return new DataTableSorting(params, mapper);
 	}
-
-
-
 
 }

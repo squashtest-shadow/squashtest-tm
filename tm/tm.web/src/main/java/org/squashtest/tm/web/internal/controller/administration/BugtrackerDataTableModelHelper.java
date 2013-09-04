@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
@@ -40,9 +40,9 @@ public class BugtrackerDataTableModelHelper extends DataTableModelBuilder<BugTra
 		this.messageSource = messageSource;
 	}
 	
-	public DataTableModel buildDataModel(PagedCollectionHolder<List<BugTracker>> holder, String sEcho, Locale locale) {
+	public DataTableModel buildDataModel(FilteredCollectionHolder<List<BugTracker>> holder, int startIndex, String sEcho, Locale locale) {
 		this.setLocale(locale);
-		return buildDataModel(holder, sEcho, locale);
+		return buildDataModel(holder, startIndex, sEcho);
 	}
 	
 	@Override
