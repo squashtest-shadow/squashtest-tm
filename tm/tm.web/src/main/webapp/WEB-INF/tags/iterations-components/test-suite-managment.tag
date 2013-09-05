@@ -116,7 +116,7 @@ $(function(){
 		var tableListener = {
 				update : function(evt){
 					//"add" is none of our business.
-					if ((evt===undefined) || (evt.evt_name=="remove") || (evt.evt_name=="rename") || (evt.evt_name =="bind")){
+					if ((evt===undefined) || (evt.evt_name=="node.remove") || (evt.evt_name=="node.rename") || (evt.evt_name =="node.bind")){
 						$('#iteration-test-plans-table').squashTable().refresh();	
 					}
 				}

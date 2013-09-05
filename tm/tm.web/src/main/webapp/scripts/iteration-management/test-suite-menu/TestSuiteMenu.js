@@ -44,15 +44,14 @@ define([ "jquery", "jqueryui", "jquery.squash.buttonmenu" ], function($) {
 	function initWidgets() {
 
 		$("#manage-test-suites-buttonmenu").buttonmenu({
-			menu : {
-				anchor : 'right'
-			}
+			anchor : 'right',
+			'no-auto-hide' : true
 		});
 		
 		
 		$("#suite-manager-menu-ok-button, #suite-manager-menu-cancel-button").button();	
 		
-		$("#suite-manager-menu-button").button({
+		$("#suite-manager-menu-button").squashButton({
 			'text' : false,
 			icons : {
 				primary : 'ui-icon-circle-plus'
@@ -99,14 +98,6 @@ define([ "jquery", "jqueryui", "jquery.squash.buttonmenu" ], function($) {
 			}
 		};
 
-		var getItemDomId = function(elt) {
-			if (elt.firstElementChild !== undefined) {
-				return elt.firstElementChild.getAttribute('data-suite-id');
-			} else {
-				return elt.firstChild.getAttribute('data-suite-id');
-			}
-		};
-
 		var getSpanDomId = function(elt) {
 			return elt.getAttribute('value');
 		};
@@ -131,8 +122,8 @@ define([ "jquery", "jqueryui", "jquery.squash.buttonmenu" ], function($) {
 
 			// sort new content
 			var sorted = items.sort(function(a, b) {
-				var textA = getItemDomText(a);
-				var textB = getItemDomText(b);
+				var textA = getItemDomText(a.get(0));
+				var textB = getItemDomText(b.get(0));
 				return (textA < textB) ? -1 : 1;
 			});
 			
@@ -189,10 +180,10 @@ define([ "jquery", "jqueryui", "jquery.squash.buttonmenu" ], function($) {
 		this.update = function(evt) {
 			// the only event ignored is "bind"
 			var wasOpen;
-			if ((evt === undefined) || (evt.evt_name == "rename") || (evt.evt_name == "remove") ||
-					(evt.evt_name == "refresh")) {
+			if ((evt === undefined) || (evt.evt_name == "node.rename") || (evt.evt_name == "node.remove") ||
+					(evt.evt_name == "node.refresh")) {
 				initializeContent();
-			} else if (evt.evt_name == "add") {
+			} else if (evt.evt_name == "node.add") {
 				addSuiteToMenuContent(evt);
 			}
 		};

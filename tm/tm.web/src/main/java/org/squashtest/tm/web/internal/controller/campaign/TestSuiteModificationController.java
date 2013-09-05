@@ -197,10 +197,10 @@ public class TestSuiteModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	@ResponseBody
-	public Object rename(HttpServletResponse response, @RequestParam("newName") String newName, @PathVariable long id) {
+	public Object rename(HttpServletResponse response, @RequestParam("newName") String newName, @PathVariable("suiteId") long suiteId) {
 
-		LOGGER.info("TestSuiteModificationController : renaming " + id + " as " + newName);
-		service.rename(id, newName);
+		LOGGER.info("TestSuiteModificationController : renaming " + suiteId + " as " + newName);
+		service.rename(suiteId, newName);
 		return new RenameModel(newName);
 
 	}

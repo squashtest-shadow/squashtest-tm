@@ -66,9 +66,10 @@ define([ "jquery", "workspace.contextual-content" , "jqueryui" ], function($, co
 			}
 		}, self);
 
-		var removeSuites = $.proxy(function(list) {
-			for ( var i in list) {
-				var index = indexById(list[i]);
+		var removeSuites = $.proxy(function(commands) {
+			var removed = commands.removed;			
+			for ( var i=0,len=removed.length; i<len; i++ ) {
+				var index = indexById(removed[i].resid);
 				if (index != -1) {
 					this.data.splice(index, 1);
 				}
@@ -132,7 +133,7 @@ define([ "jquery", "workspace.contextual-content" , "jqueryui" ], function($, co
 			}).success(function(json) {
 				self.data.push(json);
 				var evt = {
-					evt_name : "add",
+					evt_name : "node.add",
 					newSuite : json
 				};
 				notifyListeners(evt);
@@ -152,7 +153,7 @@ define([ "jquery", "workspace.contextual-content" , "jqueryui" ], function($, co
 			}).success(function(json) {
 				renameSuite(json);
 				var evt = {
-					evt_name : "rename",
+					evt_name : "node.rename",
 					evt_target : {
 						obj_id : toSend.id,
 						obj_restype : "test-suites"
@@ -176,7 +177,7 @@ define([ "jquery", "workspace.contextual-content" , "jqueryui" ], function($, co
 			}).success(function(json) {
 				removeSuites(json);
 				var evt = {
-					evt_name : "remove"
+					evt_name : "node.remove"
 				};
 				notifyListeners(evt);
 				notifyContextualContent(evt);
@@ -193,7 +194,7 @@ define([ "jquery", "workspace.contextual-content" , "jqueryui" ], function($, co
 				dataType : 'json'
 			}).success(function(json) {
 				var evt = {
-					evt_name : "bind"
+					evt_name : "node.bind"
 				};
 				notifyListeners(evt);
 				notifyContextualContent(evt);
@@ -203,7 +204,7 @@ define([ "jquery", "workspace.contextual-content" , "jqueryui" ], function($, co
 		this.getModel = function() {
 			_getModel().success(function() {
 				notifyListeners({
-					evt_name : "refresh"
+					evt_name : "node.refresh"
 				});
 			});
 		};

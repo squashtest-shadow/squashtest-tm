@@ -32,8 +32,18 @@
  *					default is 3000,
  *		},
  *		anchor : one of ["left", "right"]. Default is "left" : this means that the menu is anchored to the button via its top-left corner. 
- *				When set to "right", it would be the top-right. 
+ *				When set to "right", it would be the top-right,
+ *		'no-auto-hide' : default is false. If true,  the menu will not automatically hide when an element is clicked (see behaviour below)
  *	}
+ * 
+ * Behaviour : 
+ * 
+ * - When the button is clicked, the menu will be toggled on/off.
+ * - When a <li> element of the menu is clicked, the menu will be toggled off (closed) automatically 
+ * - This <li> default behaviour can be overriden in two ways :
+ *		1/ the element <li> has a css class 'no-auto-hide'
+ *		3/ the global flag 'no-auto-hide' is true.
+ * 
  * 
  *	@author bsiri
  * 
@@ -49,6 +59,7 @@ define([ 'jquery', 'jqueryui' ], function($) {
 				zindex : 3000
 			},
 			anchor : "left",
+			'no-auto-hide' : false,
 			_firstInvokation : true
 		},
 
@@ -104,6 +115,7 @@ define([ 'jquery', 'jqueryui' ], function($) {
 		_menuCssTweak : function(menu) {
 			menu.hide();
 			menu.removeClass('not-displayed');
+			menu.addClass('squash-buttonmenu');
 			menu.css('position', 'absolute');
 			menu.css('overflow', 'hidden');
 			menu.css('white-space', 'nowrap');
@@ -114,14 +126,27 @@ define([ 'jquery', 'jqueryui' ], function($) {
 		},
 
 		_bindLi : function(menu) {
+			var settings = this.options;
 			menu.on('click', 'li', function(evt) {
-				if ($(this).hasClass('ui-state-disabled')) {
+				var $li = $(this),
+					shouldPropagate = true;
+				
+				// 1/ the item is disabled : we won't process any click event further.
+				if ($li.hasClass('ui-state-disabled')) {
 					evt.stopImmediatePropagation();
-					return false;
-				} else {
-					menu.hide();
-					return true;
+					shouldPropagate = false;
+				} 
+				// 2/ the item is enabled but we don't want the menu to hide on click : just let the event go.
+				else if ($li.hasClass('no-auto-hide') || settings['no-auto-hide']){
+					shouldPropagate = true;
 				}
+				// 3/ default behaviour : hide the menu, let go the event.
+				else{
+					menu.hide();
+					shouldPropagate = true;
+				}
+
+				return shouldPropagate;
 			});
 		}
 

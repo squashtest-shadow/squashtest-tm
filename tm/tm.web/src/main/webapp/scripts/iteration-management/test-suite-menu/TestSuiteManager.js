@@ -231,8 +231,8 @@ define([ "jquery", "jqueryui" ], function($) {
 		this.update = function(evt) {
 
 			// the only evt ignored is "bind"
-			if ((evt === undefined) || (evt.evt_name == "add") || (evt.evt_name == "rename") ||
-					(evt.evt_name == "remove") || (evt.evt_name == "refresh")) {
+			if ((evt === undefined) || (evt.evt_name == "node.add") || (evt.evt_name == "node.rename") ||
+					(evt.evt_name == "node.remove") || (evt.evt_name == "node.refresh")) {
 
 				// save state
 				var selected = this.getSelectedIds();

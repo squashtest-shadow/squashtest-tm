@@ -113,7 +113,7 @@ requirejs.config({
 				"jquery.tagit" : "jquery/tag-it.min",		
 				"jquery.squash.tagit" : "squashtest/jquery.squash.tagit",
 				"jquery.squash.add-attachment-popup" : "squashtest/add-attachment-popup",
-				"jquery.squash.buttonmenu" : "squashtest/jquery.squash.buttonmenu",
+				"jquery.squash.buttonmenu" : "http://localhost/scripts/scripts/squashtest/jquery.squash.buttonmenu",
 				"jquery.squash.formdialog" : "squashtest/jquery.squash.formdialog",
 				"squash.attributeparser" : 'squash/squash.attributeparser',
 				"squash.configmanager" : 'squash/squash.configmanager',

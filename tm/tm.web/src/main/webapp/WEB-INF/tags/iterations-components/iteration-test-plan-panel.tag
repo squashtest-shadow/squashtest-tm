@@ -42,7 +42,6 @@
 	<s:param name="iterId" value="${iteration.id}"/>
 </s:url>
 
-
 <f:message var="cannotCreateExecutionException" key="squashtm.action.exception.cannotcreateexecution.label" />
 <f:message var="unauthorizedDeletion" key="dialog.remove-testcase-association.unauthorized-deletion.message" />
 <f:message var="confirmLabel"	key="label.Confirm"/>
@@ -79,24 +78,48 @@
 	<c:if test="${ linkable }">
 		<input id="remove-test-plan-button" 		type="button" value="${removeLabel}"	class="button" />
 		<input id="assign-users-button" 			type="button" value="${assignLabel}" 	class="button" />
+		
+		
 		<input id="manage-test-suites-buttonmenu" 	type="button" value="${manageTS}" 		class="buttonmenu" />
 		<ul id="manage-test-suites-menu" class="not-displayed">
-			<!-- no item at first, will be popuplated by javascript -->
-			<li class="suite-manager-controls suite-manager-newsection">
+			
+			<li class="suite-manager-controls suite-manager-newsection ui-menu-item">
 				<input type="text" id="suite-manager-menu-input"/>
-				<input type="button" id="suite-manager-menu-button" class="button"/>
+				<button id="suite-manager-menu-button" class="button"><f:message key="label.create"/></button>
 			</li>
-			<li class="suite-manager-buttonpane suite-manager-newsection">
+			
+			<li class="suite-manager-buttonpane suite-manager-newsection ui-menu-item">
 				<div class="snap-right">
 					<input type="button" id="suite-manager-menu-ok-button" 		role="button" class="button" value="${okLabel}"/>
 					<input type="button" id="suite-manager-menu-cancel-button"	role="button" class="button" value="${cancelLabel}" />
 				</div>
-			</li>
+			</li> 		 
 		</ul>
+		
 	</c:if>
 </div>
 
 <%-- ===================== THE TABLE ===================== --%>
+<%-- 
+<div>
+	<input id="manage-test-suites-buttonmenu" 	type="button" value="${manageTS}" 		class="buttonmenu" />
+	<ul id="manage-test-suites-menu" class="not-displayed">
+		<!-- no item at first, will be popuplated by javascript -->
+		
+		<li class="suite-manager-controls suite-manager-newsection ui-menu-item">
+			<input type="text" id="suite-manager-menu-input"/>
+			<input type="button" id="suite-manager-menu-button" class="button"/>
+		</li>
+		<li class="suite-manager-buttonpane suite-manager-newsection ui-menu-item">
+			<div class="snap-right">
+				<input type="button" id="suite-manager-menu-ok-button" 		role="button" class="button" value="${okLabel}"/>
+				<input type="button" id="suite-manager-menu-cancel-button"	role="button" class="button" value="${cancelLabel}" />
+			</div>
+		</li> 		 
+	</ul>
+</div>
+--%>
+
 <div class="table-tab-wrap">
 <c:if test="${editable}">
 	<c:set var="deleteBtnClause" value=", delete-button=#iter-test-plan-delete-dialog"/>

@@ -878,6 +878,15 @@ predefined for future evolutions :
 	font-size: 1.5em;
 }
 
+/****************************************
+ some fixes for the buttonmenu
+****************************************/
+
+.squash-buttonmenu span.ui-button-icon-primary {
+	top: 50%;
+	left: 50%;
+}
+
 /*****************************************
  * various icons
  ****************************************/

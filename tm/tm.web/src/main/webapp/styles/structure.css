@@ -1329,7 +1329,13 @@ div.admin-message-page-content{
 
 /* ---------------- test suites management -----------------*/
 
-.suite-manager-newsection{
-	border-top: 2px solid gray;
+#manage-test-suites-menu{
+	text-align : left;
+	font-size : 12px;	
+}
+
+#manage-test-suites-menu > .suite-manager-newsection{
+	border-top: 1px solid black;
 	padding-top: 0.5em;
+	padding-bottom : 0.5em;
 }

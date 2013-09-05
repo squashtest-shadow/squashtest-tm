@@ -64,6 +64,7 @@ define([ 'jquery', 'tree' ], function($, tree) {
 				updateEventPaste(event, otree);
 				break;
 			case "rename":
+			case "node.rename" :
 				updateEventRename(event, otree);
 				break;
 			case "update-reference":
