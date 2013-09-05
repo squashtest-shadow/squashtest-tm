@@ -1133,13 +1133,13 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		for (i = 0; i < length; i++) {
 
 			if ((match = aoData[i].name.match(dataprop_regexp)) !== null){
-				aoData[i].name = "mDataProp['" + match[1] + "']";		
+				aoData[i].name = "mDataProp[" + match[1] + "]";		
 			}
 			else if ((match = aoData[i].name.match(sortcol_regexp)) !== null){
-				aoData[i].name = "iSortCol['" + match[1] + "']";
+				aoData[i].name = "iSortCol[" + match[1] + "]";
 			}
 			else if ((match = aoData[i].name.match(sortdir_regexp)) !== null){
-				aoData[i].name = "sSortDir['" + match[1] + "']";
+				aoData[i].name = "sSortDir[" + match[1] + "]";
 			}
 		}
 	}

@@ -46,8 +46,8 @@ public class DataTableDrawParameters {
 	private String sSearch;
 
 	// sorting informations
-	private Map<Integer, Object> iSortCol = new HashMap<Integer, Object>();
-	private Map<Integer, Object> sSortDir = new HashMap<Integer, Object>();
+	private Map<Integer, Integer> iSortCol = new HashMap<Integer, Integer>();
+	private Map<Integer, String> sSortDir = new HashMap<Integer, String>();
 	private int iSortingCols;
 
 	public int getiDisplayStart() {
@@ -79,7 +79,7 @@ public class DataTableDrawParameters {
 	 */
 	public int getiSortCol_0() {
 		// Buggy 36984c995ed1 assumed iSortCol was a String. As I'm clueless, I'm extra-cautious
-		Object sort0 = iSortCol.get(0);
+		/*Object sort0 = iSortCol.get(0);
 		
 		if (sort0 instanceof Number) {
 			return ((Number) sort0).intValue();
@@ -88,7 +88,12 @@ public class DataTableDrawParameters {
 			return Integer.valueOf((String) sort0);
 		}
 		throw new IllegalStateException("Value '" + sort0 + "' should either be a Number or a String but we got a "
-				+ sort0.getClass().getName() + " instead. Maybe datatable config is wrong ?");
+				+ sort0.getClass().getName() + " instead. Maybe datatable config is wrong ?");*/
+		
+		/*
+		 *  Buggy 36984c995ed1 : fixed the underlying cause
+		 */
+		return iSortCol.get(0);
 	}
 
 	public void setiSortCol_0(int iSortCol_0) {
@@ -97,7 +102,7 @@ public class DataTableDrawParameters {
 
 	// legacy method
 	public String getsSortDir_0() {
-		return (String) sSortDir.get(0);
+		return sSortDir.get(0);
 	}
 
 	// legacy method
@@ -130,20 +135,20 @@ public class DataTableDrawParameters {
 		return mDataProp.get(index);
 	}
 
-	public Map<Integer, Object> getiSortCol() {
+	public Map<Integer, Integer> getiSortCol() {
 		return iSortCol;
 	}
 
 	public Integer getiSortCol(Integer index) {
-		return Integer.valueOf((String) iSortCol.get(index));
+		return iSortCol.get(index);
 	}
 
-	public Map<Integer, Object> getsSortDir() {
+	public Map<Integer, String> getsSortDir() {
 		return sSortDir;
 	}
 
 	public String getsSortDir(Integer index) {
-		return (String) sSortDir.get(index);
+		return sSortDir.get(index);
 	}
 
 	public int getiSortingCols() {
