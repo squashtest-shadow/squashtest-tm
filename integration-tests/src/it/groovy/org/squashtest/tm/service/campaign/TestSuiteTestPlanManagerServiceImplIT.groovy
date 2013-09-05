@@ -29,6 +29,7 @@ import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.TestSuite
 import org.squashtest.tm.service.DbunitServiceSpecification;
 import org.squashtest.tm.service.campaign.TestSuiteTestPlanManagerService
+import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao
 import org.unitils.dbunit.annotation.DataSet
 
@@ -44,6 +45,9 @@ class TestSuiteTestPlanManagerServiceImplIT extends DbunitServiceSpecification {
 
 	@Inject
 	private TestSuiteDao testSuiteDao;
+	
+	@Inject
+	private IterationDao iterationDao
 	
 	Paging paging = Mock()
 	
@@ -98,5 +102,101 @@ class TestSuiteTestPlanManagerServiceImplIT extends DbunitServiceSpecification {
 		then :
 			testSuiteDao.findAllTestPlanItemsPaged(testSuiteId, paging).size()==2
 			iter.getTestPlans().size()==2
+	}
+	
+	
+	@DataSet("TestSuiteTestPlanManager.should add one test plan item to two test suites.xml")
+	def "should add one test plan item to two test suites"(){
+		
+		given:
+		
+		long testSuiteId1 = 1L
+		long testSuiteId2 = 2L
+		long itemId = 1L
+		 
+		when:
+		
+		List<Long> testSuiteIds = new ArrayList<Long>();
+		testSuiteIds.add(testSuiteId1);
+		testSuiteIds.add(testSuiteId2);
+		
+		List<Long> itemIds = new ArrayList<Long>();
+		itemIds.add(itemId);
+		
+		service.bindTestPlanToMultipleSuites(testSuiteIds, itemIds);
+		
+		then:
+		
+		TestSuite suite1 = testSuiteDao.findById(1L);
+		suite1.getTestPlan().size() == 1;
+		
+		TestSuite suite2 = testSuiteDao.findById(2L);
+		suite2.getTestPlan().size() == 1;
+	}
+	
+	@DataSet("TestSuiteTestPlanManager.should add two test plan items to two test suites.xml")
+	def "should add two test plan item to two test suites"(){
+		
+		given:
+		
+		long testSuiteId1 = 1L
+		long testSuiteId2 = 2L
+		long itemId1 = 1L
+		long itemId2 = 2L
+		
+		when:
+		
+		List<Long> testSuiteIds = new ArrayList<Long>();
+		testSuiteIds.add(testSuiteId1);
+		testSuiteIds.add(testSuiteId2);
+		
+		List<Long> itemIds = new ArrayList<Long>();
+		itemIds.add(itemId1);
+		itemIds.add(itemId2);
+		
+		service.bindTestPlanToMultipleSuites(testSuiteIds, itemIds);
+		
+		then:
+		
+		TestSuite suite1 = testSuiteDao.findById(1L);
+		suite1.getTestPlan().size() == 2;
+		
+		TestSuite suite2 = testSuiteDao.findById(2L);
+		suite2.getTestPlan().size() == 2;
+	}
+	
+	@DataSet("TestSuiteTestPlanManager.should add two test plan items to two test suites with test plan items.xml")
+	def "should add two test plan item to two test suites with test plan items"(){
+		
+		given:
+		
+		long testSuiteId1 = 1L
+		long testSuiteId2 = 2L
+		long itemId1 = 1L
+		long itemId2 = 2L
+
+		when:
+		
+		List<Long> testSuiteIds = new ArrayList<Long>();
+		testSuiteIds.add(testSuiteId1);
+		testSuiteIds.add(testSuiteId2);
+		
+		List<Long> itemIds = new ArrayList<Long>();
+		itemIds.add(itemId1);
+		itemIds.add(itemId2);
+		
+		service.bindTestPlanToMultipleSuites(testSuiteIds, itemIds);
+		
+		then:
+		
+		TestSuite suite1 = testSuiteDao.findById(1L);
+		suite1.getTestPlan().size() == 3;
+		
+		TestSuite suite2 = testSuiteDao.findById(2L);
+		suite2.getTestPlan().size() == 3;
+		
+		Iteration iteration = iterationDao.findById(1L);
+		iteration.getTestPlans().size() == 4;
+		iteration.getTestSuites().size() == 2;
 	}
 }
