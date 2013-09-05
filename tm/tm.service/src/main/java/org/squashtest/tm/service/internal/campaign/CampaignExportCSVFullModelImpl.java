@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.CampaignExportCSVModel;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.customfield.CustomField;
@@ -56,7 +57,7 @@ import org.squashtest.tm.service.internal.customfield.DenormalizedFieldHelper;
  * TODO :
  * 
  * omg the amount of data processed here can become huge quickly and holding the whole model in memory might not be workable anymore in the future.
- * I suggest a more low level implementation usingspecific services, instead of being lazy like here :
+ * I suggest a more low level implementation using specific services, instead of being lazy like here :
  * 
  * - using hibernate cursors to maintain the size of the cache to an acceptable level, 
  * - iterate over the execution steps directly instead of the clumsy iterator mechanics, 
