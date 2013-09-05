@@ -90,7 +90,11 @@ public abstract class DataTableModelBuilder<X> {
 		return model;
 	}
 
-	private DataTableModel createModelFromItems(String sEcho, Collection<X> pagedItems) {
+	public Collection<Object> buildRawModel(Collection<X> pagedItems, int startIndex) {
+		currentIndex = startIndex;
+		return buildRawModel(pagedItems);
+	}
+		private DataTableModel createModelFromItems(String sEcho, Collection<X> pagedItems) {
 		DataTableModel model = new DataTableModel(sEcho);
 
 		for (X item : pagedItems) {
@@ -102,6 +106,10 @@ public abstract class DataTableModelBuilder<X> {
 
 	protected final long getCurrentIndex() {
 		return currentIndex;
+	}
+
+	private void setCurrentIndex(int i) { // NOSONAR it is here on purpose
+		// NOOP - No fiddling with the current index !
 	}
 
 	protected abstract Object buildItemData(X item);

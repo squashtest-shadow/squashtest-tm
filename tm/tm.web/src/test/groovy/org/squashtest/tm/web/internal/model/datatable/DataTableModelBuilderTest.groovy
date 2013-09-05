@@ -21,6 +21,8 @@
 
 package org.squashtest.tm.web.internal.model.datatable
 
+import net.sf.cglib.reflect.FastClassEmitter.GetIndexCallback;
+
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
@@ -94,17 +96,16 @@ class DataTableModelBuilderTest extends Specification {
 	}
 
 	DataTableModelBuilder<Requirement> requirementTableModelBuilder() {
-		[
-			buildItemData: { item ->
-				[
-					item.getId(),
-					1,
-					item.getProject().getName(),
-					item.getName(),
-					"" ] as Object[];
-			}
-
-		] as DataTableModelBuilder<Requirement>;
+		return new DataTableModelBuilder() {
+					protected Object buildItemData(Object item) {
+						[
+							item.getId(),
+							getCurrentIndex(),
+							item.getProject().getName(),
+							item.getName(),
+							"" ] as Object[]
+					}
+				}
 	}
 
 	def "should build verified requirements model from 1 row of 5 from paged collection holder"() {
@@ -146,9 +147,6 @@ class DataTableModelBuilderTest extends Specification {
 		def holder = pagedCollectionHolder([req])
 
 		when:
-
-		//well, groovy
-
 		def helper = requirementTableModelBuilder()
 
 
@@ -159,6 +157,51 @@ class DataTableModelBuilderTest extends Specification {
 			[
 				15,
 				1,
+				"bar",
+				"foo",
+				""
+			]
+		]
+	}
+
+	def "should build raw model from 1 row of 5 from collection"() {
+		given:
+		Requirement req = requirement()
+
+
+		when:
+		def helper = requirementTableModelBuilder()
+
+
+		def res = helper.buildRawModel([req])
+
+		then:
+		res == [
+			[
+				15,
+				0,
+				"bar",
+				"foo",
+				""
+			]
+		]
+	}
+
+	def "should build raw model from 1 row of 5 from collection with start index "() {
+		given:
+		Requirement req = requirement()
+
+
+		when:
+		def helper = requirementTableModelBuilder()
+
+		def res = helper.buildRawModel([req], 20)
+
+		then:
+		res == [
+			[
+				15,
+				20,
 				"bar",
 				"foo",
 				""

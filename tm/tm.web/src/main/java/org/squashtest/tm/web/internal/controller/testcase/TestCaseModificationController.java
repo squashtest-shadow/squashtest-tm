@@ -531,7 +531,7 @@ public class TestCaseModificationController {
 
 		TestStepsTableModelBuilder builder = new TestStepsTableModelBuilder(internationalizationHelper, locale);
 		builder.usingCustomFields(stepCufValues, cufDefinitions.size());
-		Collection<Object> stepsData = builder.buildRawModel(steps);
+		Collection<Object> stepsData = builder.buildRawModel(steps, 1);
 		mav.addObject("stepsData", stepsData);
 		mav.addObject("cufDefinitions", cufDefinitions);
 

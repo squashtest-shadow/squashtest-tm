@@ -108,7 +108,5 @@ class TestStepsTableModelBuilderTest extends Specification {
 			"empty-delete-holder":null, 
 			"step-action":"Call : callee"
 			]
-		
-		
 	}
 }
