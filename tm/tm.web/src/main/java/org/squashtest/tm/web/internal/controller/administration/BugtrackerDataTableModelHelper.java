@@ -20,53 +20,36 @@
  */
 package org.squashtest.tm.web.internal.controller.administration;
 
-import java.util.List;
 import java.util.Locale;
 
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 
-public class BugtrackerDataTableModelHelper extends DataTableModelBuilder<BugTracker>{
-
+public class BugtrackerDataTableModelHelper extends DataTableModelBuilder<BugTracker> {
 
 	private InternationalizationHelper messageSource;
-	
+
 	private Locale locale;
 
-	public BugtrackerDataTableModelHelper(InternationalizationHelper messageSource){
+	public BugtrackerDataTableModelHelper(InternationalizationHelper messageSource) {
 		this.messageSource = messageSource;
 	}
-	
-	public DataTableModel buildDataModel(FilteredCollectionHolder<List<BugTracker>> holder, int startIndex, String sEcho, Locale locale) {
-		this.setLocale(locale);
-		return buildDataModel(holder, startIndex, sEcho);
-	}
-	
+
 	@Override
 	public Object[] buildItemData(BugTracker item) {
 
-			String isIframeFriendlyStringValue = "";
-			
-			if(item.isIframeFriendly()){
-				isIframeFriendlyStringValue = messageSource.internationalize("squashtm.truefalse.true", locale);
-			}
-			else{
-				isIframeFriendlyStringValue = messageSource.internationalize("squashtm.truefalse.false", locale);
-			}
-			
-			return new Object[]{
-				item.getId(),
-				getCurrentIndex(),
-				item.getName(),
-				item.getKind(),
-				item.getUrl(),
-				isIframeFriendlyStringValue
-		};
+		String isIframeFriendlyStringValue = "";
+
+		if (item.isIframeFriendly()) {
+			isIframeFriendlyStringValue = messageSource.internationalize("squashtm.truefalse.true", locale);
+		} else {
+			isIframeFriendlyStringValue = messageSource.internationalize("squashtm.truefalse.false", locale);
+		}
+
+		return new Object[] { item.getId(), getCurrentIndex(), item.getName(), item.getKind(), item.getUrl(),
+				isIframeFriendlyStringValue };
 	}
-	
 
 	public Locale getLocale() {
 		return locale;

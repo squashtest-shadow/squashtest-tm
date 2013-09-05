@@ -26,7 +26,6 @@ import net.sf.cglib.reflect.FastClassEmitter.GetIndexCallback;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
-import org.squashtest.tm.service.foundation.collection.FilteredCollectionHolder;
 
 import spock.lang.Specification
 import spock.lang.Unroll;
@@ -36,36 +35,6 @@ import spock.lang.Unroll;
  *
  */
 class DataTableModelBuilderTest extends Specification {
-	def "should build verified requirements model from 1 row of 5"() {
-		given:
-		Requirement req = requirement()
-
-		and:
-		def holder = filteredCollectionHolder([req])
-
-		when:
-
-		//well, groovy
-
-		def helper = requirementTableModelBuilder()
-
-
-		def res = helper.buildDataModel(holder, 1,"echo");
-
-		then:
-		res.sEcho == "echo"
-		res.iTotalDisplayRecords == 5
-		res.iTotalRecords == 5
-		res.aaData == [
-			[
-				15,
-				1,
-				"bar",
-				"foo",
-				""
-			]
-		]
-	}
 
 	def requirement() {
 		Requirement req = Mock()
@@ -77,14 +46,6 @@ class DataTableModelBuilderTest extends Specification {
 		project.name >> "bar"
 
 		return req
-	}
-
-	def filteredCollectionHolder(def paged) {
-		FilteredCollectionHolder<List<Requirement>> holder = Mock()
-		holder.filteredCollection >> paged
-		holder.unfilteredResultCount >> 5
-
-		return holder
 	}
 
 	def pagedCollectionHolder(def paged) {
