@@ -53,7 +53,7 @@ public class TestCaseExecutionBridge implements FieldBridge{
 
 		TestCase testcase = (TestCase) value;
 
-		Integer numberOfExecutions = findNumberOfExecutions(testcase.getId());
+		Long numberOfExecutions = findNumberOfExecutions(testcase.getId());
 		
 		Field field = new Field(name, String.valueOf(numberOfExecutions), luceneOptions.getStore(),
 	    luceneOptions.getIndex(), luceneOptions.getTermVector() );
@@ -62,13 +62,13 @@ public class TestCaseExecutionBridge implements FieldBridge{
 		
 	}
 
-	private Integer findNumberOfExecutions(Long id) {
+	private Long findNumberOfExecutions(Long id) {
 	
 		
 		Session session = getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
 		
-		Integer numberOfExecutions = (Integer) session.createCriteria(Execution.class)
+		Long numberOfExecutions = (Long) session.createCriteria(Execution.class)
 			.createCriteria("referencedTestCase")
 			.add(Restrictions.eq("id", id))
 			.setProjection(Projections.rowCount())

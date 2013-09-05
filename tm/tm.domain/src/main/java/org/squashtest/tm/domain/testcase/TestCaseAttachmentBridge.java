@@ -58,7 +58,7 @@ public class TestCaseAttachmentBridge implements FieldBridge{
 		Transaction tx = session.beginTransaction();
 		
 		testcase = (TestCase) session.createCriteria(TestCase.class)
-				.add(Restrictions.eq("id", testcase.getId()));
+				.add(Restrictions.eq("id", testcase.getId())).uniqueResult();
 		
 		Field field = new Field(name, String.valueOf(testcase.getAttachmentList().size()), luceneOptions.getStore(),
 	    luceneOptions.getIndex(), luceneOptions.getTermVector() );

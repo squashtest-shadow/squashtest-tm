@@ -52,7 +52,7 @@ public class TestCaseCallStepBridge implements FieldBridge{
 
 		TestCase testcase = (TestCase) value;
 
-		Integer numberOfCalledTestCases = findNumberOfCalledTestCases(testcase.getId());
+		Long numberOfCalledTestCases = findNumberOfCalledTestCases(testcase.getId());
 		
 		Field field = new Field(name, String.valueOf(numberOfCalledTestCases), luceneOptions.getStore(),
 	    luceneOptions.getIndex(), luceneOptions.getTermVector() );
@@ -60,13 +60,13 @@ public class TestCaseCallStepBridge implements FieldBridge{
 	    document.add(field);
 	}
 
-	private Integer findNumberOfCalledTestCases(Long id) {
+	private Long findNumberOfCalledTestCases(Long id) {
 
 		
 		Session session = getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
 		
-		Integer numberOfCalledTestCases = (Integer) session.createCriteria(TestCase.class)
+		Long numberOfCalledTestCases = (Long) session.createCriteria(TestCase.class)
 			.add(Restrictions.eq("id", id))
 			.createCriteria("steps")
 			.createCriteria("calledTestCase")

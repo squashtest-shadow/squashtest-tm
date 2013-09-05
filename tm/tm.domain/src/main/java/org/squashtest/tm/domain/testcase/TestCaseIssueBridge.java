@@ -53,7 +53,7 @@ public class TestCaseIssueBridge implements FieldBridge{
 
 		TestCase testcase = (TestCase) value;
 		
-		Integer numberOfIssues = findNumberOfIssues(testcase.getId());
+		Long numberOfIssues = findNumberOfIssues(testcase.getId());
 		
 		Field field = new Field(name, String.valueOf(numberOfIssues), luceneOptions.getStore(),
 	    luceneOptions.getIndex(), luceneOptions.getTermVector() );
@@ -63,15 +63,14 @@ public class TestCaseIssueBridge implements FieldBridge{
 
 	}
 
-	private Integer findNumberOfIssues(Long id) {
+	private Long findNumberOfIssues(Long id) {
 
 		
 		Session session = getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
 		
-		Integer numberOfIssues = (Integer) session.createCriteria(Execution.class)
-			.createCriteria("referencedTestCase")
-			.add(Restrictions.eq("id", id))
+		Long numberOfIssues = (Long) session.createCriteria(Execution.class)
+			.add(Restrictions.eq("referencedTestCase.id", id))
 			.createCriteria("issueList")
 			.createCriteria("issues")
 			.setProjection(Projections.rowCount())

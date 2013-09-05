@@ -53,7 +53,7 @@ public class TestCaseIterationBridge implements FieldBridge{
 
 		TestCase testcase = (TestCase) value;
 		
-		Integer numberOfIterations = findNumberOfIterations(testcase.getId());
+		Long numberOfIterations = findNumberOfIterations(testcase.getId());
 		
 		Field field = new Field(name, String.valueOf(numberOfIterations), luceneOptions.getStore(),
 	    luceneOptions.getIndex(), luceneOptions.getTermVector() );
@@ -62,13 +62,13 @@ public class TestCaseIterationBridge implements FieldBridge{
 
 	}
 
-	private Integer findNumberOfIterations(Long id) {
+	private Long findNumberOfIterations(Long id) {
 
 		
 		Session session = getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
 		
-		Integer numberOfIterations = (Integer) session.createCriteria(Iteration.class)
+		Long numberOfIterations = (Long) session.createCriteria(Iteration.class)
 			.createCriteria("testPlans")
 			.createCriteria("referencedTestCase")
 			.add(Restrictions.eq("id", id))
