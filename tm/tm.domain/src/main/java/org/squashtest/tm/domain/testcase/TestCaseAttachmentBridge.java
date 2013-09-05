@@ -26,6 +26,7 @@ import org.apache.lucene.document.Field;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.bridge.FieldBridge;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,9 @@ public class TestCaseAttachmentBridge implements FieldBridge{
 		
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
+		
+		testcase = (TestCase) session.createCriteria(TestCase.class)
+				.add(Restrictions.eq("id", testcase.getId()));
 		
 		Field field = new Field(name, String.valueOf(testcase.getAttachmentList().size()), luceneOptions.getStore(),
 	    luceneOptions.getIndex(), luceneOptions.getTermVector() );

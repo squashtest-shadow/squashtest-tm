@@ -27,6 +27,7 @@ public class TestCaseCountParametersBridge implements StringBridge {
 
 	@Override
 	public String objectToString(Object value) {
+		@SuppressWarnings("unchecked")
 		Collection<Object> parameters = (Collection<Object>) value;
 		return Integer.toString(parameters.size());
 	}

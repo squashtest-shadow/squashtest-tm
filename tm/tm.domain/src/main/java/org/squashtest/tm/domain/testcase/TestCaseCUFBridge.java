@@ -32,7 +32,6 @@ import org.hibernate.search.bridge.FieldBridge;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 
 @Configurable
@@ -58,6 +57,7 @@ public class TestCaseCUFBridge implements FieldBridge {
 		Session session = sessionFactory.openSession();
 		Transaction tx = session.beginTransaction();
 
+		@SuppressWarnings("unchecked")
 		List<CustomFieldValue> cufValues = (List<CustomFieldValue>) session
 				.createCriteria(CustomFieldValue.class)
 				.add(Restrictions.eq("boundEntityId", testcase.getId()))

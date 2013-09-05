@@ -31,7 +31,6 @@ import org.hibernate.search.bridge.FieldBridge;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.squashtest.tm.domain.campaign.Iteration;
 
 @Configurable
 public class TestCaseCallStepBridge implements FieldBridge{
@@ -52,19 +51,13 @@ public class TestCaseCallStepBridge implements FieldBridge{
 	public void set(String name, Object value, Document document, LuceneOptions luceneOptions) {
 
 		TestCase testcase = (TestCase) value;
-		
-		Session session = sessionFactory.openSession();
-		Transaction tx = session.beginTransaction();
-		
+
 		Integer numberOfCalledTestCases = findNumberOfCalledTestCases(testcase.getId());
 		
 		Field field = new Field(name, String.valueOf(numberOfCalledTestCases), luceneOptions.getStore(),
 	    luceneOptions.getIndex(), luceneOptions.getTermVector() );
 	    field.setBoost( luceneOptions.getBoost());
 	    document.add(field);
-
-	    tx.commit();
-	    session.close();
 	}
 
 	private Integer findNumberOfCalledTestCases(Long id) {

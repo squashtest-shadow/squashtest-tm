@@ -28,6 +28,7 @@ public class TestCaseCountDatasetsBridge implements StringBridge {
 
 	@Override
 	public String objectToString(Object value) {
+		@SuppressWarnings("unchecked")
 		Set<Dataset> datasets = (Set<Dataset>) value;
 		return Integer.toString(datasets.size());
 	}

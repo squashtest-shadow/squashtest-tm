@@ -52,19 +52,13 @@ public class TestCaseExecutionBridge implements FieldBridge{
 	public void set(String name, Object value, Document document, LuceneOptions luceneOptions) {
 
 		TestCase testcase = (TestCase) value;
-		
-		Session session = sessionFactory.openSession();
-		Transaction tx = session.beginTransaction();
-		
+
 		Integer numberOfExecutions = findNumberOfExecutions(testcase.getId());
 		
 		Field field = new Field(name, String.valueOf(numberOfExecutions), luceneOptions.getStore(),
 	    luceneOptions.getIndex(), luceneOptions.getTermVector() );
 	    field.setBoost( luceneOptions.getBoost());
 	    document.add(field);
-
-	    tx.commit();
-	    session.close();
 		
 	}
 
