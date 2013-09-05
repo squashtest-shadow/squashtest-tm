@@ -22,6 +22,8 @@ package org.squashtest.tm.domain.testcase;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.hibernate.Session;
@@ -30,6 +32,7 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.bridge.FieldBridge;
 import org.hibernate.search.bridge.LuceneOptions;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
@@ -37,15 +40,13 @@ import org.squashtest.tm.domain.customfield.CustomFieldValue;
 @Configurable
 public class TestCaseCUFBridge implements FieldBridge {
 
-	@Autowired
-	private SessionFactory sessionFactory;
+	@Inject
+	private BeanFactory beanFactory;
 
-	public SessionFactory getSessionFactory() {
-		return sessionFactory;
-	}
-
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
+	private SessionFactory getSessionFactory() {
+	// We cannot inject the SessionFactory because it creates a cyclic dependency injection problem :
+	// SessionFactory -> Hibernate Search -> this bridge -> SessionFactory
+		return beanFactory.getBean(SessionFactory.class);
 	}
 
 	@Override
@@ -54,7 +55,7 @@ public class TestCaseCUFBridge implements FieldBridge {
 
 		TestCase testcase = (TestCase) value;
 
-		Session session = sessionFactory.openSession();
+		Session session = getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
 
 		@SuppressWarnings("unchecked")

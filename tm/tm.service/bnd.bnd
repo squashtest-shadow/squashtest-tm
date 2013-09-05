@@ -1,5 +1,6 @@
 -include: pom.xml
 -nouses: true
+DynamicImport-Package: *
 Import-Package: com.mysql.jdbc;resolution:=optional,\
 	!org.squashtest.tm.service.security.acls,\
 	org.squashtest.tm.aspect.validation,\
@@ -21,11 +22,13 @@ Import-Package: com.mysql.jdbc;resolution:=optional,\
 	org.hibernate.dialect,\
 	org.hibernate.integrator.spi,\
 	org.hibernate.proxy,\
+	org.aspectj.lang,\
 	org.hibernate.validator,\
 	org.hibernate.search.hcore.impl, \
 	org.springframework.aop,\
 	org.springframework.aop.aspectj.autoproxy,\
 	org.springframework.aop.framework,\
+    org.springframework.beans.factory.aspectj,\
 	org.springframework.core.task,\
 	org.springframework.scheduling,\
 	*

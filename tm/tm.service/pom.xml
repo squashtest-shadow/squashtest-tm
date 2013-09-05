@@ -136,6 +136,11 @@
       <groupId>org.springframework</groupId>
       <artifactId>org.springframework.jdbc</artifactId>
     </dependency>
+    <!-- For @COnfigurable, not sure we need it in this module -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>org.springframework.aspects</artifactId>
+    </dependency>
 		<!-- ====== /SPRING FRAMEWORK ====== -->
 
 		<!-- ====== SPRING INTEGRATION TEST SUPPORT ====== -->
@@ -285,7 +290,6 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>aspectj-maven-plugin</artifactId>
-        <version>1.4</version><!--$NO-MVN-MAN-VER$-->
         <configuration>
           <showWeaveInfo>${verbose.compiler}</showWeaveInfo>
           <source>${jdk.version}</source>
@@ -295,6 +299,11 @@
             <aspectLibrary>
               <groupId>org.squashtest.tm</groupId>
               <artifactId>core.aspect</artifactId>
+            </aspectLibrary>
+            <aspectLibrary>
+            <!-- For @Configurable. Not sure we need it in this module -->
+              <groupId>org.springframework</groupId>
+              <artifactId>org.springframework.aspects</artifactId>
             </aspectLibrary>
           </aspectLibraries>
         </configuration>

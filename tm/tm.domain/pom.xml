@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>squashtest-csp-tm</artifactId>
@@ -13,13 +14,11 @@
   <packaging>bundle</packaging>
 
   <properties>
-        <!-- Default jacoco dont record any coverage data -->
+		<!-- Default jacoco dont record any coverage data -->
     <sonar.java.coveragePlugin>cobertura</sonar.java.coveragePlugin>
   </properties>
 
   <dependencies>
-
-
     <dependency>
       <groupId>org.squashtest.tm</groupId>
       <artifactId>core.foundation</artifactId>
@@ -66,12 +65,10 @@
       <scope>test</scope>
     </dependency>
 
-
     <dependency>
       <groupId>org.squashtest.tm</groupId>
       <artifactId>core.aspect</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -81,14 +78,34 @@
 
     <dependency>
       <groupId>org.springframework</groupId>
+      <artifactId>org.springframework.beans</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
       <artifactId>org.springframework.test</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>org.springframework.transaction</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>org.springframework.aop</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>org.springframework.aspects</artifactId>
     </dependency>
 
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>org.squashtest.org.hibernate.search</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>javax.validation</groupId>
       <artifactId>com.springsource.javax.validation</artifactId>
@@ -127,8 +144,6 @@
     <testSourceDirectory>src/test/groovy</testSourceDirectory>
 
     <plugins>
-
-
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
@@ -150,8 +165,6 @@
         </executions>
       </plugin>
 
-
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -170,7 +183,6 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>aspectj-maven-plugin</artifactId>
-        <version>1.4</version><!--$NO-MVN-MAN-VER$-->
         <configuration>
           <showWeaveInfo>${verbose.compiler}</showWeaveInfo>
           <source>${jdk.version}</source>
@@ -180,6 +192,10 @@
             <aspectLibrary>
               <groupId>org.squashtest.tm</groupId>
               <artifactId>core.aspect</artifactId>
+            </aspectLibrary>
+            <aspectLibrary>
+              <groupId>org.springframework</groupId>
+              <artifactId>org.springframework.aspects</artifactId>
             </aspectLibrary>
           </aspectLibraries>
         </configuration>
@@ -196,13 +212,10 @@
         </configuration>
       </plugin>
 
-
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
       </plugin>
-
     </plugins>
 
   </build>

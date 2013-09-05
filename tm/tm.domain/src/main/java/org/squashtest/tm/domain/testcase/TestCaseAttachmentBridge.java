@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.domain.testcase;
 
+import javax.inject.Inject;
+
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 
@@ -29,6 +31,7 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.bridge.FieldBridge;
 import org.hibernate.search.bridge.LuceneOptions;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -36,23 +39,22 @@ import org.springframework.beans.factory.annotation.Configurable;
 @Configurable
 public class TestCaseAttachmentBridge implements FieldBridge{
 
-	@Autowired
-	private SessionFactory sessionFactory;
-    
-	public SessionFactory getSessionFactory() {
-		return sessionFactory;
+	@Inject
+	private BeanFactory beanFactory;
+
+	private SessionFactory getSessionFactory() {
+	// We cannot inject the SessionFactory because it creates a cyclic dependency injection problem :
+	// SessionFactory -> Hibernate Search -> this bridge -> SessionFactory
+		return beanFactory.getBean(SessionFactory.class);
 	}
 
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
 
 	@Override
 	public void set(String name, Object value, Document document, LuceneOptions luceneOptions) {
 
 		TestCase testcase = (TestCase) value;
 		
-		Session session = sessionFactory.openSession();
+		Session session = getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
 		
 		testcase = (TestCase) session.createCriteria(TestCase.class)
