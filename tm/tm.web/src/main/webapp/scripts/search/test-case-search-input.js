@@ -65,7 +65,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 							}
 							for(i=0; i<val.fields.length; i++){
 								if(val.fields[i].inputType == "textfield"){
-									self.makeTextField(tableid, val.fields[i].id, val.fields[i].title, searchModel[val.fields[i].id]);
+									self.makeTextField(tableid, val.fields[i].id, val.fields[i].title, searchModel[val.fields[i].id], val.fields[i].ignoreBridge);
 								} else if (val.fields[i].inputType == "textarea"){
 									self.makeTextArea(tableid, val.fields[i].id, val.fields[i].title, searchModel[val.fields[i].id]);
 								} else if (val.fields[i].inputType == "multiselect"){
@@ -149,7 +149,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 			
 		},
 			
-		makeTextField : function(tableId, textFieldId, textFieldTitle, enteredValue) {
+		makeTextField : function(tableId, textFieldId, textFieldTitle, enteredValue, ignoreBridge) {
 			
 			var title = textFieldTitle;
 			var source = $("#textfield-template").html();
@@ -159,7 +159,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 			var html = template(context);
 			$("#"+tableId).append(html);
 			var escapedId = textFieldId.replace(".", "\\.");
-			$("#"+escapedId).searchTextFieldWidget();
+			$("#"+escapedId).searchTextFieldWidget({"ignoreBridge" : ignoreBridge});
 			$("#"+escapedId).append($("#"+escapedId).searchTextFieldWidget('createDom', "F"+textFieldId));
 			$("#"+escapedId).searchTextFieldWidget('fieldvalue', enteredValue);
 		},

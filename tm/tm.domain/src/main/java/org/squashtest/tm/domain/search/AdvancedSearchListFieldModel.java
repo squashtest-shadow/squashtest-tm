@@ -29,6 +29,8 @@ public class AdvancedSearchListFieldModel implements AdvancedSearchFieldModel{
 	
 	private List<String> values = new ArrayList<String>();
 	
+	private boolean ignoreBridge = false;
+	
 	public AdvancedSearchListFieldModel(){
 		
 	}
@@ -44,6 +46,11 @@ public class AdvancedSearchListFieldModel implements AdvancedSearchFieldModel{
 
 	public void setValues(List<String> values) {
 		this.values = values;
+	}
+
+	@Override
+	public boolean isIgnoreBridge() {
+		return this.ignoreBridge;
 	}
 	
 }

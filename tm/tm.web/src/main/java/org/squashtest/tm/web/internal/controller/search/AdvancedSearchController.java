@@ -468,6 +468,7 @@ public class AdvancedSearchController {
 		model.setInputType(DATE);
 		model.setTitle(customField.getLabel());
 		model.setId(customField.getCode());
+		model.setIgnoreBridge(true);
 		return model;
 	}
 
@@ -476,15 +477,14 @@ public class AdvancedSearchController {
 
 		List<SearchInputPossibleValueModel> possibleValues = new ArrayList<SearchInputPossibleValueModel>();
 		
-		possibleValues.add(new SearchInputPossibleValueModel(messageSource.internationalize("search.testcase.choose.label",locale), "ALL"));
-		possibleValues.add(new SearchInputPossibleValueModel(messageSource.internationalize("squashtm.yesno.true",locale), "TRUE"));
-		possibleValues.add(new SearchInputPossibleValueModel(messageSource.internationalize("squashtm.yesno.false",locale), "FALSE"));
+		possibleValues.add(new SearchInputPossibleValueModel(messageSource.internationalize("squashtm.yesno.true",locale), "true"));
+		possibleValues.add(new SearchInputPossibleValueModel(messageSource.internationalize("squashtm.yesno.false",locale), "false"));
 		
 		model.setPossibleValues(possibleValues);
 		model.setInputType(MULTISELECT);
 		model.setTitle(customField.getLabel());
 		model.setId(customField.getCode());
-		
+		model.setIgnoreBridge(true);
 		return model;
 	}
 	
@@ -493,6 +493,7 @@ public class AdvancedSearchController {
 		model.setInputType(TEXTFIELD);
 		model.setTitle(customField.getLabel());
 		model.setId(customField.getCode());
+		model.setIgnoreBridge(true);
 		return model;
 	}
 	private SearchInputFieldModel convertToSearchInputFieldModel(SingleSelectField selectField){
@@ -505,6 +506,7 @@ public class AdvancedSearchController {
 		model.setTitle(selectField.getLabel());
 		model.setPossibleValues(possibleValues);
 		model.setId(selectField.getCode());
+		model.setIgnoreBridge(true);
 		return model;
 	}
 }

@@ -20,12 +20,16 @@
  */
 package org.squashtest.tm.domain.testcase;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -37,6 +41,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.InputType;
+import org.squashtest.tm.domain.customfield.SingleSelectField;
 
 @Configurable
 public class TestCaseCUFBridge implements FieldBridge {
@@ -44,6 +50,9 @@ public class TestCaseCUFBridge implements FieldBridge {
 	@Inject
 	private BeanFactory beanFactory;
 
+	private SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+	
 	private SessionFactory getSessionFactory() {
 	// We cannot inject the SessionFactory because it creates a cyclic dependency injection problem :
 	// SessionFactory -> Hibernate Search -> this bridge -> SessionFactory
@@ -56,8 +65,18 @@ public class TestCaseCUFBridge implements FieldBridge {
 
 		TestCase testcase = (TestCase) value;
 
-		Session session = getSessionFactory().openSession();
-		Transaction tx = session.beginTransaction();
+		Session currentSession = null;
+		Session session = null;
+		Transaction tx = null;
+		
+		try{
+			currentSession = getSessionFactory().getCurrentSession();
+			session = currentSession;
+		}catch(HibernateException ex){
+			session = getSessionFactory().openSession();
+			tx = session.beginTransaction();
+		}finally{
+			
 
 		@SuppressWarnings("unchecked")
 		List<CustomFieldValue> cufValues = (List<CustomFieldValue>) session
@@ -66,16 +85,50 @@ public class TestCaseCUFBridge implements FieldBridge {
 				.add(Restrictions.eq("boundEntityType", BindableEntity.TEST_CASE)).list();
 
 		for (CustomFieldValue cufValue : cufValues) {
-			String code = cufValue.getBinding().getCustomField().getCode();
-			Field field = new Field(code, cufValue.getValue(),
-					luceneOptions.getStore(), luceneOptions.getIndex(),
-					luceneOptions.getTermVector());
-			field.setBoost(luceneOptions.getBoost());
-			document.add(field);
+			
+			InputType inputType = cufValue.getBinding().getCustomField().getInputType();
+			
+			if(org.squashtest.tm.domain.customfield.InputType.DROPDOWN_LIST.equals(inputType)){
+				String code = cufValue.getBinding().getCustomField().getCode();
+				Field field = new Field(code, cufValue.getValue(),
+						luceneOptions.getStore(), luceneOptions.getIndex(),
+						luceneOptions.getTermVector());
+				field.setBoost(luceneOptions.getBoost());
+				document.add(field);				
+			} else if(org.squashtest.tm.domain.customfield.InputType.PLAIN_TEXT.equals(inputType)){
+				String code = cufValue.getBinding().getCustomField().getCode();
+				Field field = new Field(code, cufValue.getValue(),
+						luceneOptions.getStore(), luceneOptions.getIndex(),
+						luceneOptions.getTermVector());
+				field.setBoost(luceneOptions.getBoost());
+				document.add(field);
+			} else if(org.squashtest.tm.domain.customfield.InputType.CHECKBOX.equals(inputType)){
+				String code = cufValue.getBinding().getCustomField().getCode();
+				Field field = new Field(code, cufValue.getValue(),
+						luceneOptions.getStore(), luceneOptions.getIndex(),
+						luceneOptions.getTermVector());
+				field.setBoost(luceneOptions.getBoost());
+				document.add(field);
+			} else if(org.squashtest.tm.domain.customfield.InputType.DATE_PICKER.equals(inputType)){
+				String code = cufValue.getBinding().getCustomField().getCode();
+				Date inputDate = null;
+				try {
+					inputDate = inputFormat.parse(cufValue.getValue());
+					Field field = new Field(code, dateFormat.format(inputDate), luceneOptions.getStore(),
+						    luceneOptions.getIndex(), luceneOptions.getTermVector() );
+						    field.setBoost( luceneOptions.getBoost());
+						    document.add(field);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 
-		tx.commit();
-		session.close();
+	    if(currentSession == null){
+		    tx.commit();
+		    session.close();
+	    }
+		}
 	}
 
 }

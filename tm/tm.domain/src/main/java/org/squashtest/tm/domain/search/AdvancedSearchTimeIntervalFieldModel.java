@@ -30,6 +30,8 @@ public class AdvancedSearchTimeIntervalFieldModel implements AdvancedSearchField
 	
 	private Date endDate;
 
+	private boolean ignoreBridge = false;
+	
 	@Override
 	public String getType() {
 		return this.type;
@@ -53,5 +55,10 @@ public class AdvancedSearchTimeIntervalFieldModel implements AdvancedSearchField
 
 	public void setType(String type) {
 		this.type = type;
+	}
+	
+	@Override
+	public boolean isIgnoreBridge() {
+		return this.ignoreBridge;
 	}
 }

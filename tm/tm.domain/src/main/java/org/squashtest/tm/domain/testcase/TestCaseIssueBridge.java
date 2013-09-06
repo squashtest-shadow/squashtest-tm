@@ -24,6 +24,7 @@ import javax.inject.Inject;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -65,20 +66,31 @@ public class TestCaseIssueBridge implements FieldBridge{
 
 	private Long findNumberOfIssues(Long id) {
 
+		Session currentSession = null;
+		Session session = null;
+		Transaction tx = null;
+		Long numberOfIssues = 0L;
 		
-		Session session = getSessionFactory().openSession();
-		Transaction tx = session.beginTransaction();
+		try{
+			currentSession = getSessionFactory().getCurrentSession();
+			session = currentSession;
+		}catch(HibernateException ex){
+			session = getSessionFactory().openSession();
+			tx = session.beginTransaction();
+		}finally{
 		
-		Long numberOfIssues = (Long) session.createCriteria(Execution.class)
+		 numberOfIssues = (Long) session.createCriteria(Execution.class)
 			.add(Restrictions.eq("referencedTestCase.id", id))
 			.createCriteria("issueList")
 			.createCriteria("issues")
 			.setProjection(Projections.rowCount())
 			.uniqueResult();
 
-	    tx.commit();
-	    session.close();
-	    
+	    if(currentSession == null){
+		    tx.commit();
+		    session.close();
+	    }
+		}
 	    return numberOfIssues;
 	}
 

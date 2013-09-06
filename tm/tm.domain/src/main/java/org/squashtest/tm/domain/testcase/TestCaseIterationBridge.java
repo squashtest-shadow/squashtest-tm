@@ -24,6 +24,7 @@ import javax.inject.Inject;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -64,20 +65,30 @@ public class TestCaseIterationBridge implements FieldBridge{
 
 	private Long findNumberOfIterations(Long id) {
 
+		Session currentSession = null;
+		Session session = null;
+		Transaction tx = null;
+		Long numberOfIterations = 0L;
+		try{
+			currentSession = getSessionFactory().getCurrentSession();
+			session = currentSession;
+		}catch(HibernateException ex){
+			session = getSessionFactory().openSession();
+			tx = session.beginTransaction();
+		}finally{
 		
-		Session session = getSessionFactory().openSession();
-		Transaction tx = session.beginTransaction();
-		
-		Long numberOfIterations = (Long) session.createCriteria(Iteration.class)
+		numberOfIterations = (Long) session.createCriteria(Iteration.class)
 			.createCriteria("testPlans")
 			.createCriteria("referencedTestCase")
 			.add(Restrictions.eq("id", id))
 			.setProjection(Projections.rowCount())
 			.uniqueResult();
-
-	    tx.commit();
-	    session.close();
 	    
+	    if(currentSession == null){
+		    tx.commit();
+		    session.close();
+	    }
+		}
 	    return numberOfIterations;
 	}
 

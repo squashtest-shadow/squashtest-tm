@@ -24,12 +24,14 @@ define(["jquery", "jqueryui"], function($){
 	var searchwidget = $.widget("search.searchTextAreaWidget", {
 		
 		options : {
-
+			ignoreBridge : false
 		},
 		
 		_create : function(){
 			this._super();
 		},
+		
+		
 		
 		fieldvalue : function(value){
 			
@@ -37,7 +39,8 @@ define(["jquery", "jqueryui"], function($){
 			var text = $(this.element.children()[0]).val();
 			var id = $(this.element).attr("id");
 			return {"type" : "TEXT",
-					                 "value" : text};
+					"value" : text,
+					"ignoreBridge" : this.options.ignoreBridge};
 		} else {
 			$(this.element.children()[0]).val(value.value);
 		}

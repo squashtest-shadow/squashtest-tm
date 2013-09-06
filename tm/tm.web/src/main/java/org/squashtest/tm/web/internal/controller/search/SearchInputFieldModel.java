@@ -31,6 +31,8 @@ public class SearchInputFieldModel {
 	
 	private String id;
 
+	private boolean ignoreBridge = false;
+	
 	private List<SearchInputPossibleValueModel> possibleValues = new ArrayList<SearchInputPossibleValueModel>();
 	
 	public SearchInputFieldModel(){
@@ -85,5 +87,13 @@ public class SearchInputFieldModel {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public boolean isIgnoreBridge() {
+		return ignoreBridge;
+	}
+
+	public void setIgnoreBridge(boolean ignoreBridge) {
+		this.ignoreBridge = ignoreBridge;
 	}
 }

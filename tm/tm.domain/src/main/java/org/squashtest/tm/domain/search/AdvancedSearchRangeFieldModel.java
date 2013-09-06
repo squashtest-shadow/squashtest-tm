@@ -28,6 +28,8 @@ public class AdvancedSearchRangeFieldModel implements AdvancedSearchFieldModel{
 	
 	private Integer maxValue;
 
+	private boolean ignoreBridge = false;
+	
 	@Override
 	public String getType() {
 		return this.type;
@@ -47,5 +49,10 @@ public class AdvancedSearchRangeFieldModel implements AdvancedSearchFieldModel{
 
 	public void setMaxValue(Integer maxValue) {
 		this.maxValue = maxValue;
+	}
+	
+	@Override
+	public boolean isIgnoreBridge() {
+		return this.ignoreBridge;
 	}
 }

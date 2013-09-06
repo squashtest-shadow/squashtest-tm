@@ -43,5 +43,7 @@ public interface AdvancedSearchFieldModel {
 	static final String RANGE = "RANGE";
 	
 	String getType();
+	
+	boolean isIgnoreBridge();
 
 }

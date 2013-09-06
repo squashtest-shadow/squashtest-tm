@@ -30,6 +30,8 @@ public class AdvancedSearchSingleFieldModel implements AdvancedSearchFieldModel{
 		return value;
 	}
 
+	private boolean ignoreBridge = false;
+	
 	@Override
 	public String getType() {
 		return type;
@@ -43,5 +45,8 @@ public class AdvancedSearchSingleFieldModel implements AdvancedSearchFieldModel{
 		this.value = value;
 	}
 	
-	
+	@Override
+	public boolean isIgnoreBridge() {
+		return this.ignoreBridge;
+	}
 }

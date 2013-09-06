@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -53,19 +54,30 @@ public class TestCaseAttachmentBridge implements FieldBridge{
 	public void set(String name, Object value, Document document, LuceneOptions luceneOptions) {
 
 		TestCase testcase = (TestCase) value;
+		Session currentSession = null;
+		Session session = null;
+		Transaction tx = null;
 		
-		Session session = getSessionFactory().openSession();
-		Transaction tx = session.beginTransaction();
-		
-		testcase = (TestCase) session.createCriteria(TestCase.class)
-				.add(Restrictions.eq("id", testcase.getId())).uniqueResult();
-		
-		Field field = new Field(name, String.valueOf(testcase.getAttachmentList().size()), luceneOptions.getStore(),
-	    luceneOptions.getIndex(), luceneOptions.getTermVector() );
-	    field.setBoost( luceneOptions.getBoost());
-	    document.add(field);
+		try{
+			currentSession = getSessionFactory().getCurrentSession();
+			session = currentSession;
+		}catch(HibernateException ex){
+			session = getSessionFactory().openSession();
+			tx = session.beginTransaction();
+		}finally{
 
-	    tx.commit();
-	    session.close();
+			testcase = (TestCase) session.createCriteria(TestCase.class)
+					.add(Restrictions.eq("id", testcase.getId())).uniqueResult();
+			
+			Field field = new Field(name, String.valueOf(testcase.getAttachmentList().size()), luceneOptions.getStore(),
+		    luceneOptions.getIndex(), luceneOptions.getTermVector() );
+		    field.setBoost( luceneOptions.getBoost());
+		    document.add(field);
+	
+		    if(currentSession == null){
+			    tx.commit();
+			    session.close();
+		    }
+		}
 	}
 }

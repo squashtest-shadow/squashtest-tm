@@ -30,7 +30,7 @@ import org.squashtest.tm.domain.audit.AuditableMixin;
 
 public class TestCaseBridgeModifiedOn implements FieldBridge{
 
-	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 	
 	@Override
 	public void set(String name, Object value, Document document, LuceneOptions luceneOptions) {

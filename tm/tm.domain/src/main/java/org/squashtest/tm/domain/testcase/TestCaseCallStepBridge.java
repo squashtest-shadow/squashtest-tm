@@ -24,6 +24,7 @@ import javax.inject.Inject;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -36,47 +37,63 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 @Configurable
-public class TestCaseCallStepBridge implements FieldBridge{
+public class TestCaseCallStepBridge implements FieldBridge {
 
 	@Inject
 	private BeanFactory beanFactory;
 
 	private SessionFactory getSessionFactory() {
-	// We cannot inject the SessionFactory because it creates a cyclic dependency injection problem :
-	// SessionFactory -> Hibernate Search -> this bridge -> SessionFactory
+		// We cannot inject the SessionFactory because it creates a cyclic
+		// dependency injection problem :
+		// SessionFactory -> Hibernate Search -> this bridge -> SessionFactory
 		return beanFactory.getBean(SessionFactory.class);
 	}
 
 	@Override
-	public void set(String name, Object value, Document document, LuceneOptions luceneOptions) {
+	public void set(String name, Object value, Document document,
+			LuceneOptions luceneOptions) {
 
 		TestCase testcase = (TestCase) value;
 
-		Long numberOfCalledTestCases = findNumberOfCalledTestCases(testcase.getId());
-		
-		Field field = new Field(name, String.valueOf(numberOfCalledTestCases), luceneOptions.getStore(),
-	    luceneOptions.getIndex(), luceneOptions.getTermVector() );
-	    field.setBoost( luceneOptions.getBoost());
-	    document.add(field);
+		Long numberOfCalledTestCases = findNumberOfCalledTestCases(testcase
+				.getId());
+
+		Field field = new Field(name, String.valueOf(numberOfCalledTestCases),
+				luceneOptions.getStore(), luceneOptions.getIndex(),
+				luceneOptions.getTermVector());
+		field.setBoost(luceneOptions.getBoost());
+		document.add(field);
 	}
 
 	private Long findNumberOfCalledTestCases(Long id) {
 
-		
-		Session session = getSessionFactory().openSession();
-		Transaction tx = session.beginTransaction();
-		
-		Long numberOfCalledTestCases = (Long) session.createCriteria(TestCase.class)
-			.add(Restrictions.eq("id", id))
-			.createCriteria("steps")
-			.createCriteria("calledTestCase")
-			.setProjection(Projections.rowCount())
-			.uniqueResult();
+		Session currentSession = null;
+		Session session = null;
+		Transaction tx = null;
+		Long numberOfCalledTestCases = 0L;
 
-	    tx.commit();
-	    session.close();
-	    
-	    return numberOfCalledTestCases;
+		try {
+			currentSession = getSessionFactory().getCurrentSession();
+			session = currentSession;
+		} catch (HibernateException ex) {
+			session = getSessionFactory().openSession();
+			tx = session.beginTransaction();
+		} finally {
+
+			numberOfCalledTestCases = (Long) session
+					.createCriteria(TestCase.class)
+					.add(Restrictions.eq("id", id)).createCriteria("steps")
+					.createCriteria("calledTestCase")
+					.setProjection(Projections.rowCount()).uniqueResult();
+
+			if (currentSession == null) {
+				tx.commit();
+				session.close();
+			}
+		}
+
+		return numberOfCalledTestCases;
+
 	}
 
 }

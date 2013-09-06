@@ -26,18 +26,28 @@ import org.hibernate.search.bridge.FieldBridge;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 
-public class TestCaseBridgeModifiedBy implements FieldBridge{
-	
+public class TestCaseBridgeModifiedBy implements FieldBridge {
+
 	@Override
-	public void set(String name, Object value, Document document, LuceneOptions luceneOptions) {
-		
+	public void set(String name, Object value, Document document,
+			LuceneOptions luceneOptions) {
+
 		AuditableMixin audit = ((AuditableMixin) value);
-		
-		if(audit.getLastModifiedBy() != null){
-			Field field = new Field(name, audit.getLastModifiedBy(), luceneOptions.getStore(),
-		    luceneOptions.getIndex(), luceneOptions.getTermVector() );
-		    field.setBoost( luceneOptions.getBoost());
-		    document.add(field);
+
+		if (audit.getLastModifiedBy() != null) {
+			if ("".equals(audit.getLastModifiedBy().trim())) {
+				Field field = new Field(name, "$NO_USER",
+						luceneOptions.getStore(), luceneOptions.getIndex(),
+						luceneOptions.getTermVector());
+				field.setBoost(luceneOptions.getBoost());
+				document.add(field);
+			} else {
+				Field field = new Field(name, audit.getLastModifiedBy(),
+						luceneOptions.getStore(), luceneOptions.getIndex(),
+						luceneOptions.getTermVector());
+				field.setBoost(luceneOptions.getBoost());
+				document.add(field);
+			}
 		}
 	}
 }
