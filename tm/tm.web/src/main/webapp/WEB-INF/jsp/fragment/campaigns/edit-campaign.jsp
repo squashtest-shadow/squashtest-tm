@@ -68,6 +68,11 @@
 <c:url var="customFieldsValuesURL" value="/custom-fields/values" />
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE"
+	domainObject="${ campaign }">
+	<c:set var="writable" value="${ true }" />
+	<c:set var="moreThanReadOnly" value="${ true }" />
+</authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH" domainObject="${ campaign }">
 	<c:set var="attachable" value="${ true }" />
 	<c:set var="moreThanReadOnly" value="${ true }" />
@@ -82,6 +87,10 @@
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE" domainObject="${ campaign }">
 	<c:set var="creatable" value="${true }" />
+	<c:set var="moreThanReadOnly" value="${ true }" />
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK"	domainObject="${ campaign }">
+	<c:set var="linkable" value="${ true }" />
 	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK"	domainObject="${ campaign }">
@@ -313,15 +322,19 @@
 		</script>
 
 		<div class="toolbar">
+			<f:message var="associateLabel"	key="label.Add" />
+			<f:message var="removeLabel" key="label.Remove" />
+			<f:message var="assignLabel" key="label.Assign" />			
+			<f:message var="reorderLabel" key="label.Reorder" />
+			<f:message var="reorderTooltip"	 key="tooltips.ReorderTestPlan" />
+			
 			<c:if test="${ linkable }">
-				<f:message var="associateLabel"
-					key="label.Add" />
-				<f:message var="removeLabel"
-					key="label.Remove" />
-				<f:message var="assignLabel"
-					key="label.Assign" />
-				<input id="test-case-button" type="button" value="${associateLabel}"
-					class="button" />
+				<input id="test-case-button" type="button" value="${associateLabel}" class="button" />
+			</c:if>
+			<c:if test="${ writable }">
+				<input id="reorder-test-plan-button"	type="button" value="${reorderLabel}" 	class="button" title="${reorderTooltip}"/>
+			</c:if>
+			<c:if test="${ linkable }">
 				<input id="remove-test-case-button" type="button"
 					value="${removeLabel}" class="button" />
 				<input id="assign-test-case-button" type="button"
@@ -332,8 +345,10 @@
 			<camp:campaign-test-plan-table
 				batchRemoveButtonId="remove-test-case-button"
 				editable="${ linkable }" assignableUsersUrl="${assignableUsersUrl}"
+				reorderable="${writable}"
 				campaignUrl="${ campaignUrl }"
-				testCaseMultipleRemovalPopupId="delete-multiple-test-cases-dialog" />
+				testCaseMultipleRemovalPopupId="delete-multiple-test-cases-dialog" 
+				campaign="${campaign}"/>
 		</div>
 
 

@@ -20,20 +20,26 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ tag body-content="empty" description="inserts the html table of test cases" %>
-<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ tag body-content="empty" description="jqueryfies a campaign test case table" %>
+<%@ attribute name="campaignUrl" required="true" description="the url to the campaign that hold all of these test cases" %>
+<%@ attribute name="batchRemoveButtonId" required="true" description="html id of button for batch removal of test cases" %>
+<%@ attribute name="editable" type="java.lang.Boolean" description="Right to edit content. Default to false." %>
+
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
+<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
+<c:url  var="testCaseDetailsBaseUrl" value="/test-cases" /> 
 <table id="test-cases-table">
 	<thead>
 		<tr>
-			<th>Item Id</th>
 			<th>#</th>
 			<th><f:message key="label.project" /></th>
 			<th><f:message key="label.Reference"/></th>
 			<th><f:message key="test-case.name.label" /></th>
 			<th><f:message key="test-case.importance.combo.label" /></th>
 			<th><f:message key="label.Mode" /></th>
-			<th>&nbsp;</th>				
-			<th>TC Id</th>				
+			<th>&nbsp;</th>					
 		</tr>
 	</thead>
 	<tbody><%-- Will be populated through ajax --%></tbody>
@@ -41,3 +47,93 @@
 	<div id="test-case-row-buttons" class="not-displayed">
 	<a id="delete-test-case-button" href="javascript:void(0)" class="delete-test-case-button"><f:message key="test-case.verified_requirement_item.remove.button.label" /></a>
 </div> 
+<script type="text/javascript">
+
+	function refreshTestPlan() {
+		var table = $('#test-cases-table').dataTable();
+		saveTableSelection(table, rowDataToItemId);
+		table.fnDraw(false);
+	}
+	
+	function refreshTestPlanWithoutSelection(){
+		var table = $('#test-cases-table').dataTable();
+		table.fnDraw(false);
+	}
+
+	function testPlanDrawCallback() {
+		<c:if test="${ editable }">
+		decorateDeleteButtons($('.delete-test-case-button', this));
+		</c:if>
+		restoreTableSelection(this, rowDataToItemId);
+	}
+
+	function rowDataToItemId(rowData) {
+		return rowData[0];	
+	}
+
+	function rowDataToTestCaseId(rowData) {
+		return rowData[8];	
+	}
+
+	function addIdToTr(nRow, aData){
+		$(nRow).attr("id", "test-plan-item:" + rowDataToItemId(aData));
+	}
+	
+	function testPlanTableRowCallback(row, data, displayIndex) {
+		addIdToTr(row, data);
+		<c:if test="${ editable }">
+		addDeleteButtonToRow(row, rowDataToItemId(data), 'delete-test-case-button');
+		</c:if>
+		addClickHandlerToSelectHandle(row, $("#test-cases-table"));
+		addHLinkToTestCaseName(row, data);
+		return row;
+	}
+	
+	function trToItemId(element) {
+		var elementId = element.id;
+		return elementId.substr(elementId.indexOf(":") + 1);
+	}
+	
+	function addHLinkToTestCaseName(row, data) {
+		var url= '${ testCaseDetailsBaseUrl }/' + rowDataToTestCaseId(data) + '/info';			
+		addHLinkToCellText($( 'td:eq(3)', row ), url);
+	}	
+	
+	
+	$(function() {
+		<%-- single test-case removal --%>
+		$('#test-cases-table .delete-test-case-button').die('click');
+		
+		$('#test-cases-table .delete-test-case-button').live('click', function() {
+			$.ajax({
+				type : 'delete',
+				url : '${ campaignUrl }/test-plan/' + trToItemId(this),
+				dataType : 'json',
+				success : refreshTestPlan		
+			});
+			return false; //return false to prevent navigation in page (# appears at the end of the URL)
+		});
+		<%-- selected test-case removal --%>
+		$( '#${ batchRemoveButtonId }' ).click(function() {
+			var table = $( '#test-cases-table' ).dataTable();
+			var ids = getIdsOfSelectedTableRows(table, rowDataToItemId);
+			
+			if (ids.length > 0) {
+				$.post('${ campaignUrl }/test-plan', { action: 'remove', itemIds: ids }, refreshTestPlan);
+			}
+		});
+	});
+	
+</script>
+
+<comp:decorate-ajax-table url="${ campaignUrl }/test-plan/manager/table" tableId="test-cases-table" paginate="true">
+	<jsp:attribute name="drawCallback">testPlanDrawCallback</jsp:attribute>
+	<jsp:attribute name="rowCallback">testPlanTableRowCallback</jsp:attribute>
+	<jsp:attribute name="columnDefs">
+		<dt:column-definition targets="0" visible="false" />
+		<dt:column-definition targets="1" sortable="false" cssClass="select-handle centered" width="2em"/>
+		<dt:column-definition targets="2,3,4,5,6" sortable="false" />
+		<dt:column-definition targets="7" sortable="false" width="2em" cssClass="centered"/>
+		<dt:column-definition targets="8" visible="false" lastDef="true" />
+	</jsp:attribute>
+</comp:decorate-ajax-table>

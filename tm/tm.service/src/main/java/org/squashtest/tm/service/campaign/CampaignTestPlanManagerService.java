@@ -23,6 +23,9 @@ package org.squashtest.tm.service.campaign;
 import java.util.List;
 
 import org.squashtest.tm.core.foundation.collection.MultiSorting;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
@@ -47,6 +50,16 @@ public interface CampaignTestPlanManagerService {
 	 */
 	List<TestCaseLibrary> findLinkableTestCaseLibraries();
 
+	
+
+
+	PagedCollectionHolder<List<CampaignTestPlanItem>> findTestPlanByCampaignId(long campaignId,
+			PagingAndSorting filter);
+	
+	PagedCollectionHolder<List<IndexedCampaignTestPlanItem>> findTestPlan(long campaignId, PagingAndMultiSorting sorting);
+
+	
+	
 	/**
 	 * Adds a list of test cases to a campaign.
 	 * 
@@ -62,6 +75,10 @@ public interface CampaignTestPlanManagerService {
 	 * @param campaignId
 	 */
 	List<User> findAssignableUserForTestPlan(long campaignId);
+	
+	
+	
+	
 
 	/**
 	 * Assign a user to the given test plan items

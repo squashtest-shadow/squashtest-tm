@@ -69,22 +69,6 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 	}
 
 	@Override
-	public PagedCollectionHolder<List<CampaignTestPlanItem>> findTestPlanByCampaignId(long campaignId,	PagingAndSorting filter) {
-		List<CampaignTestPlanItem> tcs = campaignDao.findAllTestPlanByIdFiltered(campaignId, filter);
-		long count = campaignDao.countTestPlanById(campaignId);
-		return new PagingBackedPagedCollectionHolder<List<CampaignTestPlanItem>>(filter, count, tcs);
-	}
-	
-	@Override
-	public PagedCollectionHolder<List<IndexedCampaignTestPlanItem>> findTestPlan(long campaignId, PagingAndMultiSorting sorting) {
-		
-		List<IndexedCampaignTestPlanItem> indexedItems = campaignDao.findIndexedTestPlan(campaignId, sorting);
-		long testPlanSize = campaignDao.countTestPlanById(campaignId);
-
-		return new PagingBackedPagedCollectionHolder<List<IndexedCampaignTestPlanItem>>(sorting, testPlanSize, indexedItems);
-	}
-
-	@Override
 	public TestPlanStatistics findCampaignStatistics(long campaignId) {
 		return campaignDao.findCampaignStatistics(campaignId);
 	}

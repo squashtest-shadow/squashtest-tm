@@ -23,10 +23,8 @@ package org.squashtest.tm.web.internal.controller.campaign;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
@@ -43,12 +41,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.domain.campaign.Campaign;
-import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
-import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.CampaignModificationService;
 import org.squashtest.tm.service.campaign.IndexedCampaignTestPlanItem;
@@ -59,8 +54,6 @@ import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentT
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
@@ -90,17 +83,6 @@ public class CampaignModificationController {
 	
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentHelper;
-
-
-	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
-			.map		 ("entity-index", 	"index(CampaignTestPlanItem)")
-			.mapAttribute("project-name", 	"name", 			Project.class)
-			.mapAttribute("reference", 		"reference", 		TestCase.class)
-			.mapAttribute("tc-name", 		"name", 			TestCase.class)
-			.mapAttribute("assigned-user", 	"login", 			User.class)
-			.mapAttribute("importance",		"importance", 		TestCase.class)
-			.mapAttribute("exec-mode", 		"automatedTest", 	TestCase.class);
-
 
 
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
@@ -299,102 +281,5 @@ public class CampaignModificationController {
 
 	}
 
-
-
-	// ****************************** Test Plan **********************************
-
-	@RequestMapping(value = "/test-plan/table", params = RequestParams.S_ECHO_PARAM)
-	public @ResponseBody
-	DataTableModel getTestCasesTableModel(@PathVariable("campaignId") long campaignId,
-			final DataTableDrawParameters params, final Locale locale) {
-		DataTableMultiSorting filter = createCollectionSorting(params, testPlanMapper);
-
-		PagedCollectionHolder<List<IndexedCampaignTestPlanItem>> holder = campaignModService.findTestPlan(campaignId, filter);
-
-		return new TestCaseTableModelHelper(locale).buildDataModel(holder, 	params.getsEcho());
-	}
-
-	@RequestMapping(value = "/test-plan/manager/table", params = RequestParams.S_ECHO_PARAM)
-	public @ResponseBody
-	DataTableModel getLinkableTestCasesTableModel(@PathVariable("campaignId") long campaignId,
-			final DataTableDrawParameters params, final Locale locale) {
-		DataTableMultiSorting filter = createCollectionSorting(params, testPlanMapper);
-
-		PagedCollectionHolder<List<IndexedCampaignTestPlanItem>> holder = campaignModService.findTest(campaignId, filter);
-
-		return new TestPlanManagerTableHelper(locale).buildDataModel(holder, params.getsEcho());
-	}
-
-	private DataTableMultiSorting createCollectionSorting(final DataTableDrawParameters params, DatatableMapper mapper) {
-		return new DataTableMultiSorting(params, mapper);
-	}
-
-	/* ************************************** formatting code ****************************** */
-
-	private String formatExecutionMode(TestCaseExecutionMode mode, Locale locale) {
-		return messageSource.internationalize(mode, locale);
-	}
-
-	private String formatNoData(Locale locale) {
-		return messageSource.noData(locale);
-	}
-
-	private String formatImportance(TestCaseImportance importance, Locale locale) {
-		return messageSource.internationalize(importance, locale);
-	}
-
-	private final class TestCaseTableModelHelper extends DataTableModelBuilder<IndexedCampaignTestPlanItem> {
-
-		private Locale locale;
-
-		private TestCaseTableModelHelper(Locale locale) {
-			this.locale = locale;
-		}
-
-		public Map<String, Object> buildItemData(IndexedCampaignTestPlanItem indexedItem) {
-
-			Integer index = indexedItem.getIndex() + 1;
-			CampaignTestPlanItem item = indexedItem.getItem();
-			
-			Map<String, Object> result = new HashMap<String, Object>();
-
-			TestCase testCase = item.getReferencedTestCase();
-			String user = (item.getUser() != null) ? item.getUser().getLogin() : formatNoData(locale);
-			Long assigneeId = (item.getUser() != null) ? item.getUser().getId() : User.NO_USER_ID;
-
-			result.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
-			result.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, index);
-			result.put("project-name", testCase.getProject().getName());
-			result.put("reference", testCase.getReference());
-			result.put("tc-name", testCase.getName());
-			result.put("assigned-user", user);
-			result.put("assigned-to", assigneeId);
-			result.put("importance", formatImportance(testCase.getImportance(), locale));
-			result.put("exec-mode", formatExecutionMode(testCase.getExecutionMode(), locale));
-			result.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
-			result.put("tc-id", testCase.getId());
-
-			return result;
-
-		}
-
-	}
-
-	private final class TestPlanManagerTableHelper extends DataTableModelBuilder<CampaignTestPlanItem> {
-		private Locale locale;
-
-		private TestPlanManagerTableHelper(Locale locale) {
-			this.locale = locale;
-		}
-
-		@Override
-		public Object[] buildItemData(CampaignTestPlanItem item) {
-			TestCase testCase = item.getReferencedTestCase();
-			return new Object[] { item.getId(), getCurrentIndex(), testCase.getProject().getName(),
-					testCase.getReference(), testCase.getName(), formatImportance(testCase.getImportance(), locale),
-					formatExecutionMode(testCase.getExecutionMode(), locale), "", testCase.getId() };
-		}
-
-	}
 
 }

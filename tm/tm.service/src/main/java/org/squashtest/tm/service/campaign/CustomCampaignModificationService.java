@@ -20,25 +20,13 @@
  */
 package org.squashtest.tm.service.campaign;
 
-import java.util.List;
-
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 
 @Transactional
 public interface CustomCampaignModificationService {
 
 	void rename(long campaignId, String newName);
-
-
-	PagedCollectionHolder<List<CampaignTestPlanItem>> findTestPlanByCampaignId(long campaignId,
-			PagingAndSorting filter);
-	
-	PagedCollectionHolder<List<IndexedCampaignTestPlanItem>> findTestPlan(long campaignId, PagingAndMultiSorting sorting);
 
 	
 	/**

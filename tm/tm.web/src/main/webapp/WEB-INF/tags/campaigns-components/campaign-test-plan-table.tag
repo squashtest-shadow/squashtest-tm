@@ -23,28 +23,32 @@
 <%@ tag body-content="empty" description="jqueryfies a campaign test case table" %>
 <%@ attribute name="batchRemoveButtonId" required="true" description="html id of button for batch removal of test cases" %>
 <%@ attribute name="editable" type="java.lang.Boolean" description="Right to edit content. Default to false." %>
+<%@ attribute name="editable" type="java.lang.Boolean" description="Right to reorder the test plan. Default to false." %>
 <%@ attribute name="assignableUsersUrl" required="true" description="URL to manipulate user of the test-cases" %>
 <%@ attribute name="campaignUrl" required="true" description="the url to the campaign that hold all of these test cases" %>
 <%@ attribute name="testCaseMultipleRemovalPopupId" required="true" description="html id of the multiple test-case removal popup" %>
+<%@ attribute name="campaign" required="true" type="java.lang.Object" description="the instance of the campaign"%>
 
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
-<c:url var="testCaseDetailsBaseUrl" value="/test-cases" />
+<c:url var="testCaseUrl" value="/test-cases/{tc-id}/info" />
+<c:url var="tablemodel" value="${campaignUrl}/test-plan/table" />
+<c:url var="dtMessagesUrl" value="/datatables/messages" />
 
-<table id="test-cases-table">
+<table id="test-cases-table" data-def="ajaxsource=${tablemodel}, language=${dtMessagesUrl}, hover">
 	<thead>
 		<tr>
-			<th>#</th>
-			<th><f:message key="label.project" /></th>
-			<th><f:message key="label.Reference"/></th>
-			<th><f:message key="test-case.name.label" /></th>
-			<th><f:message key="test-case.user.combo.label" /></th>
-			<th><f:message key="test-case.importance.combo.label" /></th>
-			<th><f:message key="label.Mode" /></th>
-			<th>&nbsp;</th>				
+			<th data-def="map=entity-index, select, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>
+			<th data-def="map=project-name, sortable"><f:message key="label.project" /></th>
+			<th data-def="map=reference, sortable"><f:message key="label.Reference"/></th>
+			<th data-def="map=tc-name, sortable, link=${testCaseUrl}"><f:message key="test-case.name.label" /></th>
+			<th data-def="map=assigned-user, sortable, sWidth=10%"><f:message key="test-case.user.combo.label" /></th>
+			<th data-def="map=importance, sortable"><f:message key="test-case.importance.combo.label" /></th>
+			<th data-def="map=exec-mode, sortable"><f:message key="label.Mode" /></th>
+			<th data-def="map=empty-delete-holder, centered, sWidth=2em, sClass=delete-button">&nbsp;</th>				
 		</tr>
 	</thead>
 	<tbody><%-- Will be populated through ajax --%></tbody>
@@ -67,33 +71,16 @@
 		table.deselectRows();
 	}
 
-	function rowDataToItemId(rowData) {
-		return rowData['entity-id'];	
-	}
-
-	function rowDataToItemIndex(rowData){
-		return rowData['entity-index'];
-	}
-
-	function rowDataToTestCaseId(rowData){
-		return rowData['tc-id'];
-	}
-
-	function addIdtoTestCaseRow(nRow, aData){
-		$(nRow).attr("id", "test-plan-item:" + rowDataToItemId(aData));
-	}
-	
-	function testPlanRowCallback(row, data, displayIndex) {
-		addIdtoTestCaseRow(row, data);
-		addHLinkToTestCaseName(row, data);
-		return row;
-	}
-	
 
 	function testPlanDrawCallback() {
 		<c:if test="${ editable }">
 		addLoginListToTestPlan();
 		</c:if>
+		
+		//sort mode
+		var settings = this.fnSettings();
+		var aaSorting = settings.aaSorting;		
+		this.data('sortmode').manage(aaSorting);
 	}
 	
 	<c:if test="${ editable }">
@@ -116,16 +103,10 @@
 
 	}
 	</c:if>
-	
 
 	
-	function addHLinkToTestCaseName(row, data) {
-		var url= '${ testCaseDetailsBaseUrl }/' + rowDataToTestCaseId(data) + '/info';			
-		addHLinkToCellText($( 'td:eq(3)', row ), url);
-	}	
-	
     require([ "common" ], function () {
-    	  require([ "jquery", "domReady", "jqueryui", "jquery.squash.datatables" ], function ($, domReady) {
+    	  require([ "jquery", "domReady", "http://localhost/scripts/scripts/campaigns-management/test-plan-panel/sortmode", "jqueryui", "jquery.squash.datatables" ], function ($, domReady, smode) {
     	    <c:if test="${ editable }">
     	    $.fn.loginCombo = function(assignableList){
     	    	
@@ -184,8 +165,8 @@
 						return;
 					}
 					
-					var table = $( '#test-cases-table' ).dataTable();
-					var ids = getIdsOfSelectedTableRows(table, rowDataToItemId);
+					var table = $( '#test-cases-table' )squashTable();
+					var ids = table.getSelectedIds();
 					
 					if (ids.length > 0) {
 						$.ajax({
@@ -203,38 +184,12 @@
 				
 				
 				var tableSettings = {
-					"oLanguage":{
-						"sLengthMenu": '<f:message key="generics.datatable.lengthMenu" />',
-						"sZeroRecords": '<f:message key="generics.datatable.zeroRecords" />',
-						"sInfo": '<f:message key="generics.datatable.info" />',
-						"sInfoEmpty": '<f:message key="generics.datatable.infoEmpty" />',
-						"sInfoFiltered": '<f:message key="generics.datatable.infoFiltered" />',
-						"oPaginate":{
-							"sFirst":    '<f:message key="generics.datatable.paginate.first" />',
-							"sPrevious": '<f:message key="generics.datatable.paginate.previous" />',
-							"sNext":     '<f:message key="generics.datatable.paginate.next" />',
-							"sLast":     '<f:message key="generics.datatable.paginate.last" />'
-						}
-					},				
-					"sAjaxSource" : "${ campaignUrl }/test-plan/table", 
 					"aLengthMenu" : [[10, 25, 50, 100, -1], [10, 25, 50, 100, '<f:message key="label.All"/>']],
-					"fnRowCallback" : testPlanRowCallback,
-					"fnDrawCallback" : testPlanDrawCallback,
-					"aoColumnDefs": [
-						{'bSortable': true,  'aTargets': [0], 'mDataProp' : 'entity-index', 'sWidth' : '2.5em', 'sClass': 'centered ui-state-default drag-handle select-handle'},
-						{'bSortable': true,  'aTargets': [1], 'mDataProp' : 'project-name'},
-						{'bSortable': true,  'aTargets': [2], 'mDataProp' : 'reference'},
-						{'bSortable': true,  'aTargets': [3], 'mDataProp' : 'tc-name'},
-						{'bSortable': true,  'aTargets': [4], 'mDataProp' : 'assigned-user', 'sClass' : 'assignable-combo'},
-						{'bSortable': true,  'aTargets': [5], 'mDataProp' : 'importance'},
-						{'bSortable': true,  'aTargets': [6], 'mDataProp' : 'exec-mode'},
-						{'bSortable': false, 'aTargets': [7], 'mDataProp' : 'empty-delete-holder', 'sWidth': '2em', 'sClass': 'centered delete-button'}
-					]
+					"fnDrawCallback" : testPlanDrawCallback
 				};		
 			
 				var squashSettings = {
 						
-					enableHover : true,
 					confirmPopup : {
 						oklabel : '<f:message key="label.Yes" />',
 						cancellabel : '<f:message key="label.Cancel" />'
@@ -247,6 +202,16 @@
 						}
 					}
 				};
+				
+				var sortmode = smode.newInst({
+					basic : {
+						campaignId : ${campaign.id}
+					},
+					permissions : {
+						reorderable : ${editable}
+					}
+				});
+				tableSettings.aaSorting = sortmode.loadaaSorting();
 				
 				<c:if test="${editable}">
 				squashSettings.enableDnD = true;
@@ -262,8 +227,10 @@
 						
 				};
 				</c:if>
-						
-				$("#test-cases-table").squashTable(tableSettings, squashSettings);		
+				
+				var table = $("#test-cases-table");
+				table.squashTable(tableSettings, squashSettings);
+				table.data('sortmode', sortmode);
 		
 			});
     	  });

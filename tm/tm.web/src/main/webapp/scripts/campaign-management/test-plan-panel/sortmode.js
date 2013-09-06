@@ -26,7 +26,7 @@
 /*
  * configuration : {
  *		basic {
- *			iterationId : the id of the iteration
+ *			campaignId : the id of the iteration
  *		}, 
  *		permissions : {
  *			reorderable : boolean, that tells whether the 'reorder' button is active.
@@ -49,11 +49,11 @@ define(['jquery'], function($){
 		
 		this.reorderable = conf.permissions.reorderable || false;
 		
-		if (conf.basic.iterationId === undefined){
-			throw "sortmode : iteration id absent from the configuration";
+		if (conf.basic.campaignId === undefined){
+			throw "sortmode : campaign id absent from the configuration";
 		}
 		
-		this.key = 'camp-sort-'+conf.basic.iterationId;
+		this.key = 'camp-sort-'+conf.basic.campaignId;
 		
 		// ******************* logic ***********************
 		
@@ -76,16 +76,14 @@ define(['jquery'], function($){
 
 		
 		this._enableSortMode = function(){
-			$("#test-plan-sort-mode-message").show();
-			$("#iteration-test-plans-table").find('.select-handle').removeClass('drag-handle');
+			$("#test-cases-table").find('.select-handle').removeClass('drag-handle');
 			if (this.reorderable){
 				$("#reorder-test-plan-button").squashButton('enable');
 			}
 		};
 		
 		this._disableSortMode = function(){
-			$("#test-plan-sort-mode-message").hide();
-			$("#iteration-test-plans-table").find('.select-handle').addClass('drag-handle');
+			$("#test-cases-table").find('.select-handle').addClass('drag-handle');
 			
 			$("#reorder-test-plan-button").squashButton('disable');
 			

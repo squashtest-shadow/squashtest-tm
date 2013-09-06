@@ -37,8 +37,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.DelegatePagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.MultiSorting;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Pagings;
 import org.squashtest.tm.domain.IdentifiersOrderComparator;
 import org.squashtest.tm.domain.campaign.Campaign;
@@ -49,6 +52,7 @@ import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService;
+import org.squashtest.tm.service.campaign.IndexedCampaignTestPlanItem;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
 import org.squashtest.tm.service.internal.repository.CampaignTestPlanItemDao;
@@ -74,6 +78,8 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	
 	private static final String CAN_REORDER_TEST_PLAN	= "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'WRITE') or hasRole('ROLE_ADMIN')"; 
 
+	private static final String CAN_READ_TEST_PLAN	=	"hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' ,'READ') or hasRole('ROLE_ADMIN')";
+	
 	@Inject
 	private TestCaseLibraryDao testCaseLibraryDao;
 
@@ -125,6 +131,26 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 				.findAll();
 
 	}
+	
+
+	@Override
+	@PreAuthorize(CAN_READ_TEST_PLAN)
+	public PagedCollectionHolder<List<CampaignTestPlanItem>> findTestPlanByCampaignId(long campaignId,	PagingAndSorting filter) {
+		List<CampaignTestPlanItem> tcs = campaignDao.findAllTestPlanByIdFiltered(campaignId, filter);
+		long count = campaignDao.countTestPlanById(campaignId);
+		return new PagingBackedPagedCollectionHolder<List<CampaignTestPlanItem>>(filter, count, tcs);
+	}
+	
+	@Override
+	@PreAuthorize(CAN_READ_TEST_PLAN)
+	public PagedCollectionHolder<List<IndexedCampaignTestPlanItem>> findTestPlan(long campaignId, PagingAndMultiSorting sorting) {
+		
+		List<IndexedCampaignTestPlanItem> indexedItems = campaignDao.findIndexedTestPlan(campaignId, sorting);
+		long testPlanSize = campaignDao.countTestPlanById(campaignId);
+
+		return new PagingBackedPagedCollectionHolder<List<IndexedCampaignTestPlanItem>>(sorting, testPlanSize, indexedItems);
+	}
+
 
 	@Override
 	@PreAuthorize(CAN_LINK_CAMPAIGN_BY_ID)

@@ -29,7 +29,6 @@ import javax.inject.Named;
 import javax.inject.Provider;
 
 import org.apache.commons.collections.MultiMap;
-import org.springframework.context.MessageSource;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -39,16 +38,27 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService;
+import org.squashtest.tm.service.campaign.IndexedCampaignTestPlanItem;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
+import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
 import org.squashtest.tm.web.internal.model.jquery.TestPlanAssignableUser;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
+import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 /**
  * @author Agnes Durand
@@ -64,16 +74,24 @@ public class CampaignTestPlanManagerController {
 	@Named("testCase.driveNodeBuilder")
 	private Provider<DriveNodeBuilder<TestCaseLibraryNode>> driveNodeBuilder; 
 
-	private CampaignTestPlanManagerService testPlanManager;
-	
+	@Inject
+	private CampaignTestPlanManagerService testPlanManager;	
 
 	@Inject
-	private MessageSource messageSource;
+	private InternationalizationHelper messageSource;
+	
 
-	@ServiceReference
-	public void setTestPlanManager(CampaignTestPlanManagerService campaignTestPlanManagerService) {
-		this.testPlanManager = campaignTestPlanManagerService;
-	}
+
+	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
+			.map		 ("entity-index", 	"index(CampaignTestPlanItem)")
+			.mapAttribute("project-name", 	"name", 			Project.class)
+			.mapAttribute("reference", 		"reference", 		TestCase.class)
+			.mapAttribute("tc-name", 		"name", 			TestCase.class)
+			.mapAttribute("assigned-user", 	"login", 			User.class)
+			.mapAttribute("importance",		"importance", 		TestCase.class)
+			.mapAttribute("exec-mode", 		"automatedTest", 	TestCase.class);
+
+
 
 	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/manager", method = RequestMethod.GET)
 	public ModelAndView showManager(@PathVariable long campaignId, @CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
@@ -88,6 +106,19 @@ public class CampaignTestPlanManagerController {
 		mav.addObject("linkableLibrariesModel", linkableLibrariesModel);
 		return mav;
 	}
+	
+
+	@RequestMapping(value = "campaigns/{campaignId}/test-plan/table", params = RequestParams.S_ECHO_PARAM)
+	public @ResponseBody
+	DataTableModel getTestCasesTableModel(@PathVariable("campaignId") long campaignId,
+			final DataTableDrawParameters params, final Locale locale) {
+		DataTableMultiSorting filter = new DataTableMultiSorting(params, testPlanMapper);
+
+		PagedCollectionHolder<List<IndexedCampaignTestPlanItem>> holder = testPlanManager.findTestPlan(campaignId, filter);
+
+		return new CampaignTestPlanTableModelHelper(messageSource, locale).buildDataModel(holder, 	params.getsEcho());
+	}
+
 
 	@RequestMapping(value = "/campaigns/{campaignId}/test-plan", method = RequestMethod.POST, 
 			params = TESTCASES_IDS_REQUEST_PARAM)

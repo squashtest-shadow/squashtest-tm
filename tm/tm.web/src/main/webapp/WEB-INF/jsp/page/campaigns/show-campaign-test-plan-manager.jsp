@@ -47,7 +47,7 @@
 	<jsp:attribute name="head">
 		<comp:sq-css name="squash.purple.css" />
 
-		<aggr:decorate-campaign-test-plan-manager-table campaignUrl="${ campaignUrl }" 
+		<aggr:campaign-test-plan-manager-table campaignUrl="${ campaignUrl }" 
 			batchRemoveButtonId="remove-items-button" editable="${editable}"/>
 		
 		<script type="text/javascript">
