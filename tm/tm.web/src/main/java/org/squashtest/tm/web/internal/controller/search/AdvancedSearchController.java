@@ -455,11 +455,22 @@ public class AdvancedSearchController {
 				model.getFields().add(convertToSearchInputFieldModel(customField));
 			} else if(org.squashtest.tm.domain.customfield.InputType.CHECKBOX.equals(customField.getInputType())){
 				model.getFields().add(createCheckBoxField(customField, locale));
+			} else if(org.squashtest.tm.domain.customfield.InputType.DATE_PICKER.equals(customField.getInputType())){
+				model.getFields().add(createDatePickerField(customField,locale));
 			}
 		}
 		return model;
 	}
 	
+	private SearchInputFieldModel createDatePickerField(CustomField customField, Locale locale) {
+
+		SearchInputFieldModel model = new SearchInputFieldModel();
+		model.setInputType(DATE);
+		model.setTitle(customField.getLabel());
+		model.setId(customField.getCode());
+		return model;
+	}
+
 	private SearchInputFieldModel createCheckBoxField(CustomField customField, Locale locale){
 		SearchInputFieldModel model = new SearchInputFieldModel();
 

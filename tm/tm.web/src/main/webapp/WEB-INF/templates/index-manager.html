@@ -124,15 +124,16 @@
 				<div class="fragment-body unstyled">
 
 					<div align="center">
-						<div th:if="${indexedOnPreviousVersion}" th:text="#{search.index.newversion.message}"
-							class="index-inline-left-block index-warning"></div>
+						<div class="index-inline-left-block index-warning">
+						   	<span th:if="${indexedOnPreviousVersion}" th:text="#{search.index.newversion.message}"></span>
+						</div>
 						<div class="index-inline-right-block" align="right">
 							<input type="button" th:value="#{ search.index.indexall.label }"
 								value="Tout Indexer" id="index-all-button" class="button snap-right ui-button ui-widget ui-state-default ui-corner-all" />
 						</div>
 					</div>
 					<div align="center">
-						<div>
+						<!--  <div>
 							<div class="index-inline-center-block">
 								<div class="index-block-title" th:text="#{search.index.requirement.label}"></div>
 								<div class="index-info-line">
@@ -181,7 +182,7 @@
 								</div>
 								<div class="index-warning" th:text="#{search.index.running.label}"></div>
 							</div>
-						</div>
+						</div>-->
 
 						<div align="center">
 							<div class="index-inline-left-block" align="left">

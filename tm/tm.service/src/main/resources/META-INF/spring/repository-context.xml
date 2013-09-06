@@ -45,7 +45,7 @@
     <property name="dataSource" ref="squashtest.core.persistence.jdbc.DataSource" />
     <property name="annotatedPackages">
       <list>
-        <value>org.squashtest.tm.service.internal.repository.hibeexrnate</value>
+        <value>org.squashtest.tm.service.internal.repository.hibernate</value>
         <value>org.squashtest.tm.service.internal.hibernate</value>
         <value>org.squashtest.tm.infrastructure.hibernate</value>
       </list>
