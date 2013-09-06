@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "jqueryui", "jquery.squash.buttonmenu" ], function($) {
+define([ "jquery", "jqueryui"], function($) {
 
 	function TestSuiteMenuCheckedSuites() {
 		var checkedIds = [];
@@ -40,14 +40,13 @@ define([ "jquery", "jqueryui", "jquery.squash.buttonmenu" ], function($) {
 
 		};
 	}
-
+	
 	function initWidgets() {
-
+		
 		$("#manage-test-suites-buttonmenu").buttonmenu({
 			anchor : 'right',
 			'no-auto-hide' : true
 		});
-		
 		
 		$("#suite-manager-menu-ok-button, #suite-manager-menu-cancel-button").button();	
 		
@@ -141,7 +140,7 @@ define([ "jquery", "jqueryui", "jquery.squash.buttonmenu" ], function($) {
 
 
 		var getDatatableSelected = $.proxy(function() {
-			return $(this.datatableSelector).squashTable();
+			return $(this.datatableSelector).squashTable().getSelectedIds();
 		}, this);
 		
 
@@ -178,8 +177,6 @@ define([ "jquery", "jqueryui", "jquery.squash.buttonmenu" ], function($) {
 		 */
 
 		this.update = function(evt) {
-			// the only event ignored is "bind"
-			var wasOpen;
 			if ((evt === undefined) || (evt.evt_name == "node.rename") || (evt.evt_name == "node.remove") ||
 					(evt.evt_name == "node.refresh")) {
 				initializeContent();
@@ -194,8 +191,8 @@ define([ "jquery", "jqueryui", "jquery.squash.buttonmenu" ], function($) {
 			this.checkedSuites.add(evt.newSuite.id);
 			var item = makeItem(evt.newSuite);
 			item.find("input").attr("checked", "checked");
-			$(item).attr("checked", "checked");
-			this.menu.find('li.suite-item').last().after(item);
+			item.attr("checked", "checked");
+			this.menu.find('.suite-manager-controls').before(item);
 		}, this);
 
 		var addSuite = $.proxy(function() {
@@ -204,18 +201,13 @@ define([ "jquery", "jqueryui", "jquery.squash.buttonmenu" ], function($) {
 			this.model.postNew(name).error(displayAddSuiteError);
 		}, this);
 
-		var stopEventPropagation = $.proxy(function() {
-			var container = this.menu;
-			container.on('click', 'div, ul, li,  label', function(evt) {
-				evt.stopImmediatePropagation();
-			});
-		}, this);
-
+		
+		// -------- binding -------------
+		
+		
 		var bindCheckboxes = $.proxy(function(evt) {
 			var self = this;
-			var container = this.menu;
-			container.delegate('input:checkbox', 'change', function(evt) {
-				evt.stopImmediatePropagation();
+			this.menu.delegate('input:checkbox', 'change', function(evt) {
 				var checkbx = $(evt.currentTarget);
 				if (checkbx.is(":checked")) {
 					self.checkedSuites.add(checkbx.data('suite-id'));
@@ -229,7 +221,6 @@ define([ "jquery", "jqueryui", "jquery.squash.buttonmenu" ], function($) {
 		var bindOkButton = $.proxy(function() {
 			var self = this;
 			$('#suite-manager-menu-ok-button').on('click', function(evt) {
-				evt.stopImmediatePropagation();
 				if (!getDatatableSelected().length) {
 					$(settings.emptySelectionMessageSelector).openMessage();
 				} else {
@@ -251,44 +242,48 @@ define([ "jquery", "jqueryui", "jquery.squash.buttonmenu" ], function($) {
 		var bindCancelButton = $.proxy(function() {
 			var self = this;
 			$('#suite-manager-menu-cancel-button').on('click', function(evt) {
-				evt.stopImmediatePropagation();
 				self.menu.hide();
 			});
 		}, this);
 
-		var showMenuHandler = $.proxy(function() {
-			if (!getDatatableSelected().length) {
-				this.menu.hide();
-				$(settings.emptySelectionMessageSelector).openMessage();
-			}
-
-			getCheckboxes().prop('checked', false); // reset the
-			// checkboxes
-			this.checkedSuites.reset(); // reset the model
-			$("#suite-manager-menu-input").val(""); // reset the input field
-		}, this);
 
 		var bindAddButton = $.proxy(function() {
 			$('#suite-manager-menu-button').on('click', function(evt) {
-				evt.stopImmediatePropagation();
 				addSuite();
 			});
 		}, this);
 
 		var bindInput = $.proxy(function() {
-			$('#suite-manager-menu-input').on('click', function(evt) {
-				evt.stopImmediatePropagation();
-			});
-			$('#suite-manager-menu-input').on('keypress', function(evt) {
-				evt.stopImmediatePropagation();
+			var input = $('#suite-manager-menu-input');
+			input.on('keydown', function(evt) {
+				if (evt.which == '8'){
+					evt.stopImmediatePropagation();//backspace will nagivate to previous page if not canceled here
+				}
 				if (evt.which == '13') {
 					addSuite();
+					input.val('');
 				}
 			});
 		}, this);
 
+		
+
+		var bindShowMenuButton = $.proxy(function() {
+			var self = this;
+			$("#manage-test-suites-buttonmenu").on('click', function(evt){
+				if (!getDatatableSelected().length) {
+					self.menu.hide();
+					evt.stopImmediatePropagation();
+					$(settings.emptySelectionMessageSelector).openMessage();
+				}
+				getCheckboxes().prop('checked', false); // reset the checkboxes
+				self.checkedSuites.reset(); // reset the model
+				$("#suite-manager-menu-input").val(""); // reset the input field
+			})
+		}, this);
+		
 		var initHandlerBinding = $.proxy(function() {
-			stopEventPropagation();
+			bindShowMenuButton();
 			bindAddButton();
 			bindInput();
 			bindOkButton();

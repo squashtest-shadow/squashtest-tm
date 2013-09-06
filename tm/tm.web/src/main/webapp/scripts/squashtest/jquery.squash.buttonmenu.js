@@ -20,17 +20,15 @@
  */
 /*
  *	this combines a jquery button and a jquery menu. The DOM of the button of that of the menu must be adjacent. The button is the main
- *  object. The configuration trivial :
+ *  object. The configuration is :
  *  
  *  conf : {
  *		preskinned : if true, will not alter the look of the button.
  *		button : { button configuration },
- *		menu : {  
- *			//every valid menu options,
- *			zindex : a user-defined z-index value, 
- *					to make sure your menu will be displayed above any other elements.
+ *		menu : {  menu configuration },
+ *		zindex : a user-defined z-index value, to make sure your menu will be displayed above any other elements.
  *					default is 3000,
- *		},
+ *		blur : 'hide' or another custom function that will receive no args. Default is undefined (nothing).
  *		anchor : one of ["left", "right"]. Default is "left" : this means that the menu is anchored to the button via its top-left corner. 
  *				When set to "right", it would be the top-right,
  *		'no-auto-hide' : default is false. If true,  the menu will not automatically hide when an element is clicked (see behaviour below)
@@ -84,9 +82,10 @@ define([ 'jquery', 'jqueryui' ], function($) {
 				}
 			});
 
-			menu.on('blur', function() {
-				menu.hide();
-			});
+			if (settings.blur!==undefined){				
+				var cllbk = (settings.blur === 'hide') ? function(){menu.hide();} : settings.blur;				
+				menu.on('blur', cllbk);
+			}
 
 			
 

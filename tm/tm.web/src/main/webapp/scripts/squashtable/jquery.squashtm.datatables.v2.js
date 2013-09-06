@@ -478,15 +478,15 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 	 */
 	function _saveTableSelection() {
 		var selectedIds = _getSelectedIds.call(this);
-		this.attr('selectedIds', selectedIds);
+		this.data('selectedIds', selectedIds);
 	}
 
 	function _restoreTableSelection() {
-		var selectedIds = this.attr('selectedIds');
+		var selectedIds = this.data('selectedIds');
 		if ((selectedIds instanceof Array) && (selectedIds.length > 0)) {
 			_selectRows.call(this, selectedIds);
 		}
-		this.removeAttr('selectedIds');
+		
 	}
 
 	/* private */function _selectRows(ids) {
@@ -1269,6 +1269,12 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		this.refresh = function() {
 			this.fnDraw(false);
 		};
+		
+		this.refreshRestore = function(){
+			this.saveTableSelection();
+			this.refresh();
+			this.restoreTableSelection();
+		}
 
 		// ************** function overrides
 		// *********************************************
