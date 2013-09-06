@@ -71,7 +71,7 @@ class CampaignMappingIT extends HibernateMappingSpecification {
 		thrown NullArgumentException
 	}
 
-	def "Should add a test case to a campaign"(){
+	/*def "Should add a test case to a campaign"(){
 		given :
 		def tc1 = new TestCase(name: "tc1")
 		persistFixture tc1
@@ -100,7 +100,7 @@ class CampaignMappingIT extends HibernateMappingSpecification {
 		then :
 		cmpgn.testPlan.size() == 1
 	}
-	
+	*/
 	
 
 	

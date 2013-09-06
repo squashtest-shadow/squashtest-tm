@@ -89,7 +89,7 @@ class AttachmentManagerServiceImplIT extends HibernateServiceSpecification {
 	}
 
 
-	def "should add a new attachment empty and retrieve it"(){
+	/*def "should add a new attachment empty and retrieve it"(){
 		given :
 
 		Attachment attachment = new Attachment("attachment.doc");
@@ -244,9 +244,9 @@ class AttachmentManagerServiceImplIT extends HibernateServiceSpecification {
 
 		then :
 		attached.size()==0
-	}
+	}*/
 
-	@Transactional
+	/*@Transactional
 	def "should correctly tell if a test case have attachments or not"(){
 
 		given :
@@ -274,7 +274,7 @@ class AttachmentManagerServiceImplIT extends HibernateServiceSpecification {
 		then :
 		shouldBeFalse == false;
 		shouldBeTrue == true;
-	}
+	}*/
 
 
 	def GenericProject createProject(){

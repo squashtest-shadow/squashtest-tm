@@ -42,7 +42,7 @@ class RequirementVersionCoverageMappingIT extends HibernateMappingSpecification 
 
 
 
-	def "should add a Requirement Version verified by a TestCase"() {
+	/*def "should add a Requirement Version verified by a TestCase"() {
 		given:
 		TestCase tc = new TestCase(name: "link")
 		persistFixture tc
@@ -66,6 +66,6 @@ class RequirementVersionCoverageMappingIT extends HibernateMappingSpecification 
 
 		cleanup:
 		deleteFixture r, tc
-	}
+	}*/
 
 }

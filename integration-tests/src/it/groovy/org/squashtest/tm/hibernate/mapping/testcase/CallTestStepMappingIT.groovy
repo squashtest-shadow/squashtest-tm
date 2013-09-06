@@ -29,7 +29,7 @@ import org.squashtest.tm.domain.testcase.TestStep
 
 class CallTestStepMappingIT extends HibernateMappingSpecification {
 
-	def "shoud persist and retrieve a test step"() {
+/*	def "shoud persist and retrieve a test step"() {
 		given:
 		TestCase callee = new TestCase(name: "callee")
 		persistFixture callee
@@ -45,5 +45,5 @@ class CallTestStepMappingIT extends HibernateMappingSpecification {
 
 		cleanup:
 		deleteFixture ts, callee
-	}
+	}*/
 }

@@ -51,7 +51,7 @@ class RequirementImporterIT_Disabled extends DbunitServiceSpecification {
 	
 	
 	
-	@DataSet("RequirementImporterIT.setup.xml")
+	/*@DataSet("RequirementImporterIT.setup.xml")
 	def "should import a hierarchy in an empty library"(){
 		
 		given :
@@ -81,7 +81,7 @@ class RequirementImporterIT_Disabled extends DbunitServiceSpecification {
 //			def fuelFuseeContentNames = confContent.findAll{it instanceof TestCaseFolder }*.content.flatten()*.name as Set
 //			fuelFuseeContentNames == ["cas limite - fuite de carburant", "remplissage de la soute", "vérification des citernes", "activer robot étage 1", 
 //									"activer robot étage 2", "activer robot étage 3", "cas limite - blocage robot", "vérifier l'erreur d'alignement"] as Set
-	}
+	}*/
 	
 	
 	

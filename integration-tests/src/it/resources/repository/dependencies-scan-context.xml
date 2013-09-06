@@ -31,6 +31,7 @@
 	<context:component-scan base-package="org.squashtest.tm.service.internal.repository" />
 	<context:component-scan base-package="org.squashtest.tm.service.internal.api" />
 <bean class="org.squashtest.tm.service.security.StubUserContextService" />
- 
 
+<bean name="org.springframework.context.config.internalBeanConfigurerAspect" class="java.lang.Object" />
+ 
 </beans>

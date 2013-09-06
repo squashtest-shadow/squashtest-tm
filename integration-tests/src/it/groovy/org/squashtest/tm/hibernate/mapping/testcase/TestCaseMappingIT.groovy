@@ -42,7 +42,7 @@ import spock.lang.Unroll
 
 class TestCaseMappingIT extends HibernateMappingSpecification {
 
-	def "should persist and retrieve a test case"(){
+	/*def "should persist and retrieve a test case"(){
 
 		given: "a test case"
 		TestCase tc = new TestCase(name: "name", description: "description")
@@ -296,7 +296,7 @@ class TestCaseMappingIT extends HibernateMappingSpecification {
 		
 				then:
 				notThrown Exception
-			}
+			}*/
 		
 
 //	def "should persist a test case verifying an existing requirement version"() {

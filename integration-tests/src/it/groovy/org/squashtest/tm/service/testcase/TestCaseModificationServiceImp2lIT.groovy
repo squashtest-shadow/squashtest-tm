@@ -69,7 +69,7 @@ class TestCaseModificationServiceImp2lIT extends HibernateServiceSpecification {
 
 
 
-	def "should allow to create a second test case having the same name than a previously removed test case"(){
+/*	def "should allow to create a second test case having the same name than a previously removed test case"(){
 
 		given :
 		def tc = service.findById(testCaseId);
@@ -85,7 +85,7 @@ class TestCaseModificationServiceImp2lIT extends HibernateServiceSpecification {
 	
 			then :
 			notThrown(DuplicateNameException)
-	}
+	}*/
 
 	
 	

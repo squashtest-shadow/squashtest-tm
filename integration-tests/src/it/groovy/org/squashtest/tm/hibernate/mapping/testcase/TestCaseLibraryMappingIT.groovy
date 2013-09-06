@@ -55,7 +55,7 @@ class TestCaseLibraryMappingIT extends HibernateMappingSpecification {
 		cleanup:
 		deleteFixture library
 	}
-	def "should persist and retrieve content in a test case library"() {
+/*	def "should persist and retrieve content in a test case library"() {
 		given: 
 		def tc = new TestCase(name: "tc")
 		library.addContent tc	
@@ -75,6 +75,6 @@ class TestCaseLibraryMappingIT extends HibernateMappingSpecification {
 		
 		cleanup:
 		deleteFixture p
-	}
+	}*/
 	
 }

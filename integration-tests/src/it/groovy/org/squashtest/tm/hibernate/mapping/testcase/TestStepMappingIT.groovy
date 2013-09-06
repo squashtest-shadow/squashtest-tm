@@ -48,7 +48,7 @@ class TestStepMappingIT extends HibernateMappingSpecification {
 		deleteFixture ts
 	}
 
-	def "should cascade step persistence from test case"() {
+	/*def "should cascade step persistence from test case"() {
 		given:
 		TestCase tc = new TestCase(name: "foo")
 		ActionTestStep s = new ActionTestStep(action: "do something")
@@ -73,5 +73,5 @@ class TestStepMappingIT extends HibernateMappingSpecification {
 
 		cleanup:
 		deleteFixture tc, s
-	}
+	}*/
 }

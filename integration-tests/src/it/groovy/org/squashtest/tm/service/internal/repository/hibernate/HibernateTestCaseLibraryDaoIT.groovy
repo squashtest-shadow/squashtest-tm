@@ -39,7 +39,8 @@ import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao
 class HibernateTestCaseLibraryDaoIT extends HibernateDaoSpecification {
 	@Inject TestCaseLibraryDao dao
 
-	def "should find root content of test case library"() {
+	
+/*	def "should find root content of test case library"() {
 		setup:
 		TestCaseLibrary lib  = new TestCaseLibrary();
 		Project p = new Project(name: "p")
@@ -60,10 +61,7 @@ class HibernateTestCaseLibraryDaoIT extends HibernateDaoSpecification {
 		then:
 		content.size() == 2
 		(content.collect { it.name }).containsAll(["tc", "f"])
-
-//		cleanup:
-//		deleteFixture lib
-	}
+	}*/
 
 	def "should find library by id"() {
 		setup:
