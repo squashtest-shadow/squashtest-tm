@@ -47,9 +47,6 @@
 	<jsp:attribute name="head">
 		<comp:sq-css name="squash.purple.css" />
 
-		<aggr:campaign-test-plan-manager-table campaignUrl="${ campaignUrl }" 
-			batchRemoveButtonId="remove-items-button" editable="${editable}"/>
-		
 		<script type="text/javascript">
 			
 			//todo : get that wtf thing straight. 
@@ -88,7 +85,10 @@
 					var tree = $( '#linkable-test-cases-tree' );
 					var ids = getTestCasesIds();
 					if (ids.length > 0) {
-						$.post('<c:url value="/campaigns/${ campaign.id }/test-plan" />', { testCasesIds: ids }, refreshTestPlan);
+						$.post('<c:url value="/campaigns/${ campaign.id }/test-plan" />', { testCasesIds: ids })
+						.done(function(){
+							$("#test-cases-table").squashTable().refresh();
+						});
 					}
 					tree.jstree('deselect_all'); //todo : each panel should define that method too.
 					firstIndex = null;
@@ -123,7 +123,12 @@
 	</jsp:attribute>	
 	<jsp:attribute name="tablePane">
 		<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ campaignUrl }" isContextual="false"/>
-		<aggr:campaign-test-plan-manager-table />
+		
+		<aggr:campaign-test-plan-manager-table 
+			campaignUrl="${ campaignUrl }" 
+			batchRemoveButtonId="remove-items-button" 
+			editable="${editable}"/>
+		
 	</jsp:attribute>
 </layout:tree-picker-layout>
 

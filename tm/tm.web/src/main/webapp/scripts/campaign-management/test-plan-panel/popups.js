@@ -18,11 +18,37 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['./test-plan-panel/main'  ], function(testPlanPanel) {
+define(['jquery', 'jquery.squash.confirmdialog' ], function($) {
+
+	function _initReorderTestPlan(conf){
+		var dialog = $("#camp-test-plan-reorder-dialog");
+		
+		dialog.confirmDialog();
+		
+		dialog.on('confirmdialogconfirm', function(){
+			var table = $("#test-cases-table").squashTable();
+			var drawParameters = table.getAjaxParameters();
+			
+			var url = conf.urls.testplanUrl+'/order';
+			$.post(url, drawParameters, 'json')
+			.success(function(){
+				table.data('sortmode').resetTableOrder(table);
+				table.refresh();			
+			});
+		});
+		
+		dialog.on('confirmdialogcancel', function(){
+			$(this).confirmDialog('close');
+		});
+	}
+	
 	
 	return {
-		initTestPlanPanel : function(conf){
-			testPlanPanel.init(conf);
-		}		
+		init : function(conf){
+			if (conf.permissions.reorderable){
+				_initReorderTestPlan(conf);
+			}
+		}
 	};
+	
 });

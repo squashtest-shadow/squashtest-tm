@@ -371,9 +371,7 @@
 					key="message.EmptyTableSelection" />			
 		<script type="text/javascript">
 				$("#delete-multiple-test-cases-dialog").bind( "dialogopen", function(event, ui){
-					var table = $( '#test-cases-table' ).dataTable();
-					var ids = getIdsOfSelectedTableRows(table, rowDataToItemId);
-	
+					var ids = $( '#test-cases-table' ).squashTable().getSelectedIds();
 					if (ids.length == 0) {
 						$.squash.openMessage("<f:message key='popup.title.error' />", "${emptyMessage}");
 						$(this).dialog('close');
@@ -418,13 +416,13 @@
 			<f:message var="label" key="label.AssignUser" />
 			'${ label }': function() {
 				var url = "${ assignTestCasesUrl }";
-				var table = $( '#test-cases-table' ).dataTable();
-				var ids = getIdsOfSelectedTableRows(table, rowDataToItemId);
-				
+				var table = $( '#test-cases-table' ).squashTable();
+				var ids = table.getSelectedIds();
+
 				var user = $(".batch-select", this).val();
 			
 				$.post(url, { itemIds: ids, userId: user}, function(){
-					refreshTestPlanWithoutSelection();
+					table.refresh();
 					$("#batch-assign-test-case").dialog('close');
 				});
 				
@@ -436,8 +434,8 @@
 			key="message.EmptyTableSelection" />
 			<script type="text/javascript">
 				$("#batch-assign-test-case").bind("dialogopen",function(event, ui) {
-						var table = $('#test-cases-table').dataTable();
-						var ids = getIdsOfSelectedTableRows(table,rowDataToItemId);
+						var table = $('#test-cases-table').squashTable();
+						var ids = table.getSelectedIds();
 						if (ids.length > 0) {
 							var pop = this;
 							$.get("${assignableUsersUrl}","json")

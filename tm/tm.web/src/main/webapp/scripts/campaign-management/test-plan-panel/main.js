@@ -18,8 +18,62 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ ], function() {
 
-	throw "campaign-management > test-plan-panel : this js module is a dummy, no code here until the campaign is refactored.";
+/*
+ * accepts as basic configuration : 
+ * {
+ * 	basic : {
+ * 		campaignId : the id of the campaign
+ * 	},
+ * 	permissions : {
+ * 		reorderable : can the test plan be reordered by the user ?
+ * 		editable : is the test plan editable by the user ?
+ * 	},
+ * 	messages : {
+ * 		allLabel : a label that means 'all' in the current locale
+ * 	}
+ * 
+ * }
+ * 
+ * Note that this code is incomplete, see for instance the iteration-management for an example of what we 
+ * are aiming to. 
+ * 
+ */
+
+define(['./table', './popups' ], function(table, popups) {
+
+	function enhanceConfiguration(origconf){
+		
+		var conf = $.extend({}, origconf);
+		
+		var baseURL = squashtm.app.contextRoot;
+		
+		conf.urls = {
+			testplanUrl : baseURL + '/campaigns/'+conf.basic.campaignId+'/test-plan'
+		};
+		
+		return conf;
+		
+	}
+	
+	function _bindButtons(conf){
+		if (conf.permissions.reorderable){
+			$("#reorder-test-plan-button").on('click', function(){
+				$("#camp-test-plan-reorder-dialog").confirmDialog('open');
+			});
+		}			
+	}
+	
+	return {	
+		init : function(origconf){			
+			var conf = enhanceConfiguration(origconf);
 			
+			table.init(conf);
+			popups.init(conf);
+			
+			_bindButtons(conf);
+		}
+	}
+	
+	
 });

@@ -44,6 +44,12 @@ requirejs.config({
 					main : 'main',
 					location : 'http://localhost/scripts/scripts/test-suite-management'
 				},*/
+				"campaign-management",
+				/*{
+					main : 'main',
+					name : 'campaign-management',
+					location : 'http://localhost/scripts/scripts/campaign-management'
+				},*/
 				"issue-tables",
 				'tree',
 				'tc-workspace',

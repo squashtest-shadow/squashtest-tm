@@ -29,111 +29,49 @@
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-<c:url  var="testCaseDetailsBaseUrl" value="/test-cases" /> 
-<table id="test-cases-table">
+<c:url var="testCaseUrl" value="/test-cases/{tc-id}/info" />
+<c:url var="dtMessagesUrl" value="/datatables/messages" />
+
+<%-- be careful that the variable below is a 'var', not a 'url'. It's so because 'campaignUrl' is already an URL. Just another detail to get straight one day... --%>
+<c:set var="tablemodel" value="${campaignUrl}/test-plan/table" />
+
+<table id="test-cases-table" data-def="ajaxsource=${tablemodel}, language=${dtMessagesUrl}, hover">
 	<thead>
 		<tr>
-			<th>#</th>
-			<th><f:message key="label.project" /></th>
-			<th><f:message key="label.Reference"/></th>
-			<th><f:message key="test-case.name.label" /></th>
-			<th><f:message key="test-case.importance.combo.label" /></th>
-			<th><f:message key="label.Mode" /></th>
-			<th>&nbsp;</th>					
+			<th data-def="map=entity-index, select,center">#</th>
+			<th data-def="map=project-name"><f:message key="label.project" /></th>
+			<th data-def="map=reference"><f:message key="label.Reference"/></th>
+			<th data-def="map=tc-name, link=${testCaseUrl}"><f:message key="test-case.name.label" /></th>
+			<th data-def="map=assigned-user, sWidth=10%"><f:message key="test-case.user.combo.label" /></th>
+			<th data-def="map=importance"><f:message key="test-case.importance.combo.label" /></th>
+			<th data-def="map=exec-mode"><f:message key="label.Mode" /></th>
 		</tr>
 	</thead>
 	<tbody><%-- Will be populated through ajax --%></tbody>
 </table>
-	<div id="test-case-row-buttons" class="not-displayed">
+<div id="test-case-row-buttons" class="not-displayed">
 	<a id="delete-test-case-button" href="javascript:void(0)" class="delete-test-case-button"><f:message key="test-case.verified_requirement_item.remove.button.label" /></a>
 </div> 
 <script type="text/javascript">
 
-	function refreshTestPlan() {
-		var table = $('#test-cases-table').dataTable();
-		saveTableSelection(table, rowDataToItemId);
-		table.fnDraw(false);
-	}
-	
-	function refreshTestPlanWithoutSelection(){
-		var table = $('#test-cases-table').dataTable();
-		table.fnDraw(false);
-	}
-
-	function testPlanDrawCallback() {
-		<c:if test="${ editable }">
-		decorateDeleteButtons($('.delete-test-case-button', this));
-		</c:if>
-		restoreTableSelection(this, rowDataToItemId);
-	}
-
-	function rowDataToItemId(rowData) {
-		return rowData[0];	
-	}
-
-	function rowDataToTestCaseId(rowData) {
-		return rowData[8];	
-	}
-
-	function addIdToTr(nRow, aData){
-		$(nRow).attr("id", "test-plan-item:" + rowDataToItemId(aData));
-	}
-	
-	function testPlanTableRowCallback(row, data, displayIndex) {
-		addIdToTr(row, data);
-		<c:if test="${ editable }">
-		addDeleteButtonToRow(row, rowDataToItemId(data), 'delete-test-case-button');
-		</c:if>
-		addClickHandlerToSelectHandle(row, $("#test-cases-table"));
-		addHLinkToTestCaseName(row, data);
-		return row;
-	}
-	
-	function trToItemId(element) {
-		var elementId = element.id;
-		return elementId.substr(elementId.indexOf(":") + 1);
-	}
-	
-	function addHLinkToTestCaseName(row, data) {
-		var url= '${ testCaseDetailsBaseUrl }/' + rowDataToTestCaseId(data) + '/info';			
-		addHLinkToCellText($( 'td:eq(3)', row ), url);
-	}	
-	
-	
 	$(function() {
-		<%-- single test-case removal --%>
-		$('#test-cases-table .delete-test-case-button').die('click');
+	
 		
-		$('#test-cases-table .delete-test-case-button').live('click', function() {
-			$.ajax({
-				type : 'delete',
-				url : '${ campaignUrl }/test-plan/' + trToItemId(this),
-				dataType : 'json',
-				success : refreshTestPlan		
-			});
-			return false; //return false to prevent navigation in page (# appears at the end of the URL)
-		});
+		 $( '#test-cases-table' ).squashTable({}, {});
+		
 		<%-- selected test-case removal --%>
 		$( '#${ batchRemoveButtonId }' ).click(function() {
-			var table = $( '#test-cases-table' ).dataTable();
-			var ids = getIdsOfSelectedTableRows(table, rowDataToItemId);
+			var table = $( '#test-cases-table' ).squashTable();
+			var ids = table.getSelectedIds();
 			
 			if (ids.length > 0) {
-				$.post('${ campaignUrl }/test-plan', { action: 'remove', itemIds: ids }, refreshTestPlan);
+				$.post('${ campaignUrl }/test-plan', { action: 'remove', itemIds: ids })
+				.done(function(){
+					table.refresh();
+				})
 			}
 		});
 	});
 	
 </script>
 
-<comp:decorate-ajax-table url="${ campaignUrl }/test-plan/manager/table" tableId="test-cases-table" paginate="true">
-	<jsp:attribute name="drawCallback">testPlanDrawCallback</jsp:attribute>
-	<jsp:attribute name="rowCallback">testPlanTableRowCallback</jsp:attribute>
-	<jsp:attribute name="columnDefs">
-		<dt:column-definition targets="0" visible="false" />
-		<dt:column-definition targets="1" sortable="false" cssClass="select-handle centered" width="2em"/>
-		<dt:column-definition targets="2,3,4,5,6" sortable="false" />
-		<dt:column-definition targets="7" sortable="false" width="2em" cssClass="centered"/>
-		<dt:column-definition targets="8" visible="false" lastDef="true" />
-	</jsp:attribute>
-</comp:decorate-ajax-table>

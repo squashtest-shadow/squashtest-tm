@@ -29,7 +29,6 @@ import javax.inject.Named;
 import javax.inject.Provider;
 
 import org.apache.commons.collections.MultiMap;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,6 +38,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -186,12 +186,27 @@ public class CampaignTestPlanManagerController {
 		testPlanManager.assignUserToTestPlanItems(itemsIds, campaignId, userId);
 	}
 
-	@RequestMapping(value = "/campaigns/{campaignId}/test-case/move", method = RequestMethod.POST, 
+	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/move", method = RequestMethod.POST, 
 			params = {ITEMS_IDS_REQUEST_PARAM, "newIndex" })
 	@ResponseBody
 	public void moveTestPlanItems(@PathVariable long campaignId, @RequestParam("newIndex") int newIndex,
 			@RequestParam(ITEMS_IDS_REQUEST_PARAM) List<Long> itemsIds) {
 		testPlanManager.moveTestPlanItems(campaignId, newIndex, itemsIds);
+	}
+	
+	
+	/**
+	 * Will reorder the test plan according to the current sorting instructions.
+	 * 
+	 * @param iterationId
+	 * @return
+	 */
+	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/order", method = RequestMethod.POST)
+	@ResponseBody
+	public void reorderTestPlan(@PathVariable("campaignId") long campaignId, DataTableDrawParameters parameters){
+		
+		PagingAndMultiSorting sorting = new DataTableMultiSorting(parameters, testPlanMapper);
+		testPlanManager.reorderTestPlan(campaignId, sorting);
 	}
 	
 	private String formatUnassigned(Locale locale){

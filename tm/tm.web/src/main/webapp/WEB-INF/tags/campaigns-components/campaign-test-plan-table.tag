@@ -23,7 +23,7 @@
 <%@ tag body-content="empty" description="jqueryfies a campaign test case table" %>
 <%@ attribute name="batchRemoveButtonId" required="true" description="html id of button for batch removal of test cases" %>
 <%@ attribute name="editable" type="java.lang.Boolean" description="Right to edit content. Default to false." %>
-<%@ attribute name="editable" type="java.lang.Boolean" description="Right to reorder the test plan. Default to false." %>
+<%@ attribute name="reorderable" type="java.lang.Boolean" description="Right to reorder the test plan. Default to false." %>
 <%@ attribute name="assignableUsersUrl" required="true" description="URL to manipulate user of the test-cases" %>
 <%@ attribute name="campaignUrl" required="true" description="the url to the campaign that hold all of these test cases" %>
 <%@ attribute name="testCaseMultipleRemovalPopupId" required="true" description="html id of the multiple test-case removal popup" %>
@@ -35,9 +35,18 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <c:url var="testCaseUrl" value="/test-cases/{tc-id}/info" />
-<c:url var="tablemodel" value="${campaignUrl}/test-plan/table" />
 <c:url var="dtMessagesUrl" value="/datatables/messages" />
 
+<f:message var="confirmLabel"	key="label.Confirm"/>
+<f:message var="cancelLabel"	key="label.Cancel"/>
+<f:message var="reorderLabel"	key="label.Reorder" />
+
+<%-- be careful that the variable below is a 'var', not a 'url'. It's so because 'campaignUrl' is already an URL. Just another detail to get straight one day... --%>
+<c:set var="tablemodel" value="${campaignUrl}/test-plan/table" />
+
+<c:if test="${editable}">
+	<c:set var="deleteBtnClause" value=", delete-button=#delete-multiple-test-cases-dialog"/>
+</c:if>
 <table id="test-cases-table" data-def="ajaxsource=${tablemodel}, language=${dtMessagesUrl}, hover">
 	<thead>
 		<tr>
@@ -48,15 +57,23 @@
 			<th data-def="map=assigned-user, sortable, sWidth=10%"><f:message key="test-case.user.combo.label" /></th>
 			<th data-def="map=importance, sortable"><f:message key="test-case.importance.combo.label" /></th>
 			<th data-def="map=exec-mode, sortable"><f:message key="label.Mode" /></th>
-			<th data-def="map=empty-delete-holder, centered, sWidth=2em, sClass=delete-button">&nbsp;</th>				
+			<th data-def="map=empty-delete-holder ${deleteBtnClause}">&nbsp;</th>				
 		</tr>
 	</thead>
 	<tbody><%-- Will be populated through ajax --%></tbody>
 </table>
-	<div id="test-case-row-buttons" class="not-displayed">
+<div id="test-case-row-buttons" class="not-displayed">
 	<a id="delete-test-case-button" href="javascript:void(0)" class="delete-test-case-button"><f:message key="test-case.verified_requirement_item.remove.button.label" /></a>
 </div> 
 
+
+<div id="camp-test-plan-reorder-dialog" class="not-displayed popup-dialog" title="${reorderLabel}" >
+	<span><f:message key="message.ReorderTestPlan"/></span>
+	<div class="popup-dialog-buttonpane"> 
+		<input type="button" value="${confirmLabel}"/> 
+		<input type="button" value="${cancelLabel}"/> 
+	</div>
+</div>
 
 <script type="text/javascript">
 
@@ -69,18 +86,6 @@
 		var table = $('#test-cases-table').squashTable();
 		table.refresh();
 		table.deselectRows();
-	}
-
-
-	function testPlanDrawCallback() {
-		<c:if test="${ editable }">
-		addLoginListToTestPlan();
-		</c:if>
-		
-		//sort mode
-		var settings = this.fnSettings();
-		var aaSorting = settings.aaSorting;		
-		this.data('sortmode').manage(aaSorting);
 	}
 	
 	<c:if test="${ editable }">
@@ -106,7 +111,9 @@
 
 	
     require([ "common" ], function () {
-    	  require([ "jquery", "domReady", "http://localhost/scripts/scripts/campaigns-management/test-plan-panel/sortmode", "jqueryui", "jquery.squash.datatables" ], function ($, domReady, smode) {
+    	  require([ "jquery", "domReady", 
+    	            "campaign-management", 
+    	            "jqueryui", "jquery.squash.datatables" ], function ($, domReady, manager) {
     	    <c:if test="${ editable }">
     	    $.fn.loginCombo = function(assignableList){
     	    	
@@ -165,7 +172,7 @@
 						return;
 					}
 					
-					var table = $( '#test-cases-table' )squashTable();
+					var table = $( '#test-cases-table' ).squashTable();
 					var ids = table.getSelectedIds();
 					
 					if (ids.length > 0) {
@@ -180,57 +187,23 @@
 				});
 		
 				
-				/* **************************** datatable settings ******************* */
-				
-				
-				var tableSettings = {
-					"aLengthMenu" : [[10, 25, 50, 100, -1], [10, 25, 50, 100, '<f:message key="label.All"/>']],
-					"fnDrawCallback" : testPlanDrawCallback
-				};		
-			
-				var squashSettings = {
-						
-					confirmPopup : {
-						oklabel : '<f:message key="label.Yes" />',
-						cancellabel : '<f:message key="label.Cancel" />'
-					},
-					functions : {
-						dropHandler : function(dropData){
-							$.post('${ campaignUrl }/test-case/move',dropData, function(){
-								$("#test-cases-table").squashTable().refresh();
-							});
-						}
-					}
-				};
-				
-				var sortmode = smode.newInst({
-					basic : {
-						campaignId : ${campaign.id}
+				/* **************************** partial main stub ******************* */
+
+				var mainconf = {
+					basic :{
+						campaignId : ${campaign.id}	
 					},
 					permissions : {
-						reorderable : ${editable}
+						editable : ${editable},
+						reorderable : ${reorderable},
+					},
+					messages : {
+						allLabel : '<f:message key="label.All"/>'
 					}
-				});
-				tableSettings.aaSorting = sortmode.loadaaSorting();
-				
-				<c:if test="${editable}">
-				squashSettings.enableDnD = true;
-		
-				squashSettings.deleteButtons = {
-					
-					url : "${campaignUrl}/test-plan/{entity-id}",
-					popupmessage : '<f:message key="dialog.remove-testcase-association.message" />',
-					tooltip : '<f:message key="test-case.verified_requirement_item.remove.button.label" />',
-					success : function(data) {
-						refreshTestPlan();				
-					}
-						
 				};
-				</c:if>
 				
-				var table = $("#test-cases-table");
-				table.squashTable(tableSettings, squashSettings);
-				table.data('sortmode', sortmode);
+				manager.initTestPlanPanel(mainconf);
+				
 		
 			});
     	  });
