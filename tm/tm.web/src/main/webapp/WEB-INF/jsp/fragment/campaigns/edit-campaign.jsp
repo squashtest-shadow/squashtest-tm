@@ -345,7 +345,7 @@
 			<camp:campaign-test-plan-table
 				batchRemoveButtonId="remove-test-case-button"
 				editable="${ linkable }" assignableUsersUrl="${assignableUsersUrl}"
-				reorderable="${writable}"
+				reorderable="${linkable}"
 				campaignUrl="${ campaignUrl }"
 				testCaseMultipleRemovalPopupId="delete-multiple-test-cases-dialog" 
 				campaign="${campaign}"/>

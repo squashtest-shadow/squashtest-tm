@@ -26,6 +26,7 @@
  *		permissions : {
  *			editable : boolean, is the table content editable ?
  *			executable : boolean, can the content be executed ?	
+ *			reorderable : boolean, can the user reorder the content ?
  *		},
  *		basic : {
  *			iterationId : the id of the current iteration
@@ -324,7 +325,7 @@ define(['jquery', 'squash.translator', './exec-runner', './sortmode',
 		
 		//more conf if editable
 		
-		if (initconf.permissions.editable){
+		if (initconf.permissions.reorderable){
 			
 			squashSettings.enableDnD = true;
 			squashSettings.functions = {};

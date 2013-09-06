@@ -324,7 +324,7 @@ define(['jquery', 'squash.translator', './exec-runner', './sortmode',
 		
 		//more conf if editable
 		
-		if (initconf.permissions.editable){
+		if (initconf.permissions.reorderable){
 			
 			squashSettings.enableDnD = true;
 			squashSettings.functions = {};

@@ -326,7 +326,7 @@
 	
 
 	<ts:test-suite-test-plan-panel assignableUsers="${assignableUsers}" testSuite="${testSuite}"
-									editable="${writable}" executable="${executable}" linkable="${linkable}" reorderable="${writable}"	/>
+									editable="${writable}" executable="${executable}" linkable="${linkable}" reorderable="${linkable}"	/>
 
 
 		<%------------------------------ Attachments bloc ------------------------------------------- --%>

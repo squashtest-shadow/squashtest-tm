@@ -76,7 +76,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	 */
 	private static final String CAN_LINK_CAMPAIGN_BY_ID = "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'LINK') or hasRole('ROLE_ADMIN')";
 	
-	private static final String CAN_REORDER_TEST_PLAN	= "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'WRITE') or hasRole('ROLE_ADMIN')"; 
+	private static final String CAN_REORDER_TEST_PLAN	= "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'LINK') or hasRole('ROLE_ADMIN')"; 
 
 	private static final String CAN_READ_TEST_PLAN	=	"hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' ,'READ') or hasRole('ROLE_ADMIN')";
 	

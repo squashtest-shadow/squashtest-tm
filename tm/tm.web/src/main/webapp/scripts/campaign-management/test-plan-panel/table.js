@@ -70,7 +70,7 @@ define(['jquery', './sortmode', 'jquery.squash.datatables', 'jeditable', 'jquery
 		
 		var squashSettings = {};
 
-		if (conf.permissions.editable){
+		if (conf.permissions.reorderable){
 			squashSettings.enableDnD = true;
 			squashSettings.functions = {
 				dropHandler : function(dropData){

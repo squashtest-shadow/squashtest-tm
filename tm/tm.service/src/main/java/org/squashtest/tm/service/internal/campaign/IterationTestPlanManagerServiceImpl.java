@@ -238,7 +238,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	}
 	
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'WRITE') "
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'LINK') "
 			+ OR_HAS_ROLE_ADMIN)	
 	public void reorderTestPlan(long iterationId, MultiSorting newSorting) {
 		

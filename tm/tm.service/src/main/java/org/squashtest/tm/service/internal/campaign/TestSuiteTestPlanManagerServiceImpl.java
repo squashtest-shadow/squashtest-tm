@@ -151,7 +151,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	}
 	
 	@Override
-	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'WRITE') "
+	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'LINK') "
 			+ OR_HAS_ROLE_ADMIN)	
 	public void reorderTestPlan(long suiteId, MultiSorting newSorting) {
 		
