@@ -241,7 +241,7 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 		
 		//check if we want to filter on the user login
 		if (filtering.isDefined()){
-			hqlbuilder.append("and User.login = :userLogin");
+			hqlbuilder.append("and User.login = :userLogin ");
 		}
 		
 		SortingUtils.addOrder(hqlbuilder, sorting);

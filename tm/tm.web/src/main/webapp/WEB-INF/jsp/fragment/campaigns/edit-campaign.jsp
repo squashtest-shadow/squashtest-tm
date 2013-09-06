@@ -24,11 +24,10 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates"%>
+<%@ taglib prefix="camp" tagdir="/WEB-INF/tags/campaigns-components"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
@@ -40,6 +39,7 @@
 
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
 <c:url var="campaignUrl" value="/campaigns/${campaign.id}" />
+
 <s:url var="campaignInfoUrl" value="/campaigns/{campId}/general">
 	<s:param name="campId" value="${campaign.id}" />
 </s:url>
@@ -113,10 +113,12 @@
 				<f:message var="label" key="dialog.rename-campaign.title" />
 				'${ label }': function() {
 					var url = "${ campaignUrl }";
-					<jq:ajaxcall url="url" dataType="json" httpMethod="POST"
-					useData="true" successHandler="renameCampaignSuccess">				
-						<jq:params-bindings newName="#rename-campaign-name" />
-					</jq:ajaxcall>					
+					$.ajax({
+						url : url,
+						dataType : 'json', 
+						type : 'post', 
+						data : { newName : $("#rename-campaign-name").val() }
+					}).done(renameCampaignSuccess);
 				},			
 				<pop:cancel-button />
 			</jsp:attribute>
@@ -327,12 +329,11 @@
 			</c:if>
 		</div>
 		<div class="table-tab-wrap">
-			<aggr:decorate-campaign-test-plan-table
+			<camp:campaign-test-plan-table
 				batchRemoveButtonId="remove-test-case-button"
 				editable="${ linkable }" assignableUsersUrl="${assignableUsersUrl}"
 				campaignUrl="${ campaignUrl }"
 				testCaseMultipleRemovalPopupId="delete-multiple-test-cases-dialog" />
-			<aggr:campaign-test-plan-table />
 		</div>
 
 
@@ -517,10 +518,4 @@
 	}
 </script>
 
-
-
 <comp:decorate-buttons />
-
-
-
-

@@ -28,15 +28,21 @@ import javax.inject.Named;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
+import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
+import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.service.campaign.CustomCampaignModificationService;
+import org.squashtest.tm.service.campaign.IndexedCampaignTestPlanItem;
+import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.internal.library.NodeManagementService;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
 
@@ -63,11 +69,19 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 	}
 
 	@Override
-	public PagedCollectionHolder<List<CampaignTestPlanItem>> findTestPlanByCampaignId(long campaignId,
-			PagingAndSorting filter) {
+	public PagedCollectionHolder<List<CampaignTestPlanItem>> findTestPlanByCampaignId(long campaignId,	PagingAndSorting filter) {
 		List<CampaignTestPlanItem> tcs = campaignDao.findAllTestPlanByIdFiltered(campaignId, filter);
 		long count = campaignDao.countTestPlanById(campaignId);
 		return new PagingBackedPagedCollectionHolder<List<CampaignTestPlanItem>>(filter, count, tcs);
+	}
+	
+	@Override
+	public PagedCollectionHolder<List<IndexedCampaignTestPlanItem>> findTestPlan(long campaignId, PagingAndMultiSorting sorting) {
+		
+		List<IndexedCampaignTestPlanItem> indexedItems = campaignDao.findIndexedTestPlan(campaignId, sorting);
+		long testPlanSize = campaignDao.countTestPlanById(campaignId);
+
+		return new PagingBackedPagedCollectionHolder<List<IndexedCampaignTestPlanItem>>(sorting, testPlanSize, indexedItems);
 	}
 
 	@Override

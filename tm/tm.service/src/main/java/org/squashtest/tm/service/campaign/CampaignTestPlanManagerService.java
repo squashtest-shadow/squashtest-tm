@@ -22,6 +22,7 @@ package org.squashtest.tm.service.campaign;
 
 import java.util.List;
 
+import org.squashtest.tm.core.foundation.collection.MultiSorting;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
@@ -96,6 +97,9 @@ public interface CampaignTestPlanManagerService {
 	 *            the ids of the items we want to move.
 	 */
 	void moveTestPlanItems(long campaignId, int targetIndex, List<Long> itemIds);
+	
+	
+	void reorderTestPlan(long campaignId, MultiSorting newSorting);
 
 	/**
 	 * @param campaignId

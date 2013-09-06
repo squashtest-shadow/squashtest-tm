@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,14 +31,22 @@ import org.hibernate.Query;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
+import org.squashtest.tm.core.foundation.collection.Filtering;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.SingleToMultiSortingAdapter;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.service.campaign.IndexedCampaignTestPlanItem;
+import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
+import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
+import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
 
 @Repository
@@ -46,6 +55,20 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 	private static final String CAMPAIGN_ID_PARAM_NAME = "campaignId";
 	private static final String CONTAINER_ID = "containerId";
 
+	
+	/*
+	 * Because it is impossible to sort over the indices of ordered collection in a criteria query 
+	 * we must then build an hql string which will let us do that. 
+	 */
+	private static final String HQL_INDEXED_TEST_PLAN = 
+			"select index(CampaignTestPlanItem), CampaignTestPlanItem "+
+			"from Campaign as Campaign inner join Campaign.testPlan as CampaignTestPlanItem "+
+			"inner join Campaign.project as Project " + 
+			"left outer join CampaignTestPlanItem.referencedTestCase as TestCase " +
+			"left outer join CampaignTestPlanItem.user as User "+
+			"where Campaign.id = :campaignId ";
+	
+	
 	@Override
 	public Campaign findByIdWithInitializedIterations(long campaignId) {
 		Campaign c = findById(campaignId);
@@ -65,11 +88,41 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 
 		};
 		
-
 		return executeListNamedQuery("campaign.findTestPlanFiltered", callback, filter);
 
 	}
+	
+	@Override
+	public List<CampaignTestPlanItem> findTestPlan(long campaignId, PagingAndMultiSorting sorting) {
+		List<Object[]> tuples = _findIndexedTestPlan(campaignId, sorting);
+		return buildItems(tuples);
+	}
 
+	@Override
+	public List<IndexedCampaignTestPlanItem> findIndexedTestPlan(long campaignId, PagingAndMultiSorting sorting) {
+		List<Object[]> tuples = _findIndexedTestPlan(campaignId, sorting);
+		return buildIndexedItems(tuples);
+	}
+
+	@Override
+	public List<IndexedCampaignTestPlanItem> findIndexedTestPlan(long campaignId, PagingAndSorting sorting) {
+		return findIndexedTestPlan(campaignId, new SingleToMultiSortingAdapter(sorting));
+	}
+	
+	private List<Object[]> _findIndexedTestPlan(final long campaignId, PagingAndMultiSorting sorting){
+		StringBuilder hqlbuilder = new StringBuilder(HQL_INDEXED_TEST_PLAN);
+
+		SortingUtils.addOrder(hqlbuilder, sorting);
+		
+		Query query = currentSession().createQuery(hqlbuilder.toString());
+		
+		query.setParameter("campaignId", campaignId, LongType.INSTANCE);
+		
+		PagingUtils.addPaging(query, sorting);
+		
+		return query.list();
+	}
+	
 	@Override
 	public long countTestPlanById(long campaignId) {
 		return (Long) executeEntityNamedQuery("campaign.countTestCasesById", idParameter(campaignId));
@@ -142,26 +195,52 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 		}
 
 		
-		private void fillStatusMapWithQueryResult(final long campaignId, Map<String, Integer> statusMap) {
-			//Add Total number of TestCases
-			Integer nbTestPlans = countIterationsTestPlanItems(campaignId).intValue();
-			statusMap.put(TestPlanStatistics.TOTAL_NUMBER_OF_TEST_CASE_KEY, nbTestPlans);
-			
-			//Add number of testCase for each ExecutionStatus
-			SetQueryParametersCallback newCallBack = idParameter(campaignId);
-			List<Object[]> result = executeListNamedQuery("campaign.countStatuses", newCallBack);
-			for (Object[] objTab : result) {
-				statusMap.put(((ExecutionStatus) objTab[0]).name(), ((Long) objTab[1]).intValue());
-			}
+	private void fillStatusMapWithQueryResult(final long campaignId, Map<String, Integer> statusMap) {
+		//Add Total number of TestCases
+		Integer nbTestPlans = countIterationsTestPlanItems(campaignId).intValue();
+		statusMap.put(TestPlanStatistics.TOTAL_NUMBER_OF_TEST_CASE_KEY, nbTestPlans);
+		
+		//Add number of testCase for each ExecutionStatus
+		SetQueryParametersCallback newCallBack = idParameter(campaignId);
+		List<Object[]> result = executeListNamedQuery("campaign.countStatuses", newCallBack);
+		for (Object[] objTab : result) {
+			statusMap.put(((ExecutionStatus) objTab[0]).name(), ((Long) objTab[1]).intValue());
 		}
+	}
 
-		private Long countIterationsTestPlanItems(long campaignId) {
-			SetQueryParametersCallback callback = idParameter(campaignId);
-			return (Long) executeEntityNamedQuery("campaign.countIterationsTestPlanItems", callback);
-		}
+	private Long countIterationsTestPlanItems(long campaignId) {
+		SetQueryParametersCallback callback = idParameter(campaignId);
+		return (Long) executeEntityNamedQuery("campaign.countIterationsTestPlanItems", callback);
+	}
 
 	@Override
 	public long countRunningOrDoneExecutions(long campaignId){
 		return (Long) executeEntityNamedQuery("campaign.countRunningOrDoneExecutions", idParameter(campaignId));
+	}
+
+	// ******************** utils ***************************
+	
+	private List<CampaignTestPlanItem> buildItems(List<Object[]> tuples){
+		
+		List<CampaignTestPlanItem> items = new ArrayList<CampaignTestPlanItem>(tuples.size());
+		
+		for (Object[] tuple : tuples){
+			CampaignTestPlanItem ctpi = (CampaignTestPlanItem) tuple[1];
+			items.add(ctpi);
+		}
+		
+		return items;
+	}
+	
+	private List<IndexedCampaignTestPlanItem> buildIndexedItems(List<Object[]> tuples){
+		List<IndexedCampaignTestPlanItem> indexedItems = new ArrayList<IndexedCampaignTestPlanItem>(tuples.size());
+		
+		for (Object[] tuple : tuples){
+			Integer index = (Integer)tuple[0];
+			CampaignTestPlanItem ctpi = (CampaignTestPlanItem) tuple[1];
+			indexedItems.add(new IndexedCampaignTestPlanItem(index, ctpi));
+		}
+		
+		return indexedItems;
 	}
 }

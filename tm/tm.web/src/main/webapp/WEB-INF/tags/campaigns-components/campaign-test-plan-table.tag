@@ -34,6 +34,26 @@
 
 <c:url var="testCaseDetailsBaseUrl" value="/test-cases" />
 
+<table id="test-cases-table">
+	<thead>
+		<tr>
+			<th>#</th>
+			<th><f:message key="label.project" /></th>
+			<th><f:message key="label.Reference"/></th>
+			<th><f:message key="test-case.name.label" /></th>
+			<th><f:message key="test-case.user.combo.label" /></th>
+			<th><f:message key="test-case.importance.combo.label" /></th>
+			<th><f:message key="label.Mode" /></th>
+			<th>&nbsp;</th>				
+		</tr>
+	</thead>
+	<tbody><%-- Will be populated through ajax --%></tbody>
+</table>
+	<div id="test-case-row-buttons" class="not-displayed">
+	<a id="delete-test-case-button" href="javascript:void(0)" class="delete-test-case-button"><f:message key="test-case.verified_requirement_item.remove.button.label" /></a>
+</div> 
+
+
 <script type="text/javascript">
 
 
@@ -201,17 +221,14 @@
 					"fnRowCallback" : testPlanRowCallback,
 					"fnDrawCallback" : testPlanDrawCallback,
 					"aoColumnDefs": [
-						{'bSortable': false, 'bVisible': false, 'aTargets': [0], 'mDataProp' : 'entity-id'},
-						{'bSortable': false, 'sWidth' : '2em', 'sClass': 'centered ui-state-default drag-handle select-handle', 'aTargets': [1], 'mDataProp' : 'entity-index'},
-						{'bSortable': false, 'aTargets': [2], 'mDataProp' : 'project-name'},
-						{'bSortable': false, 'aTargets': [3], 'mDataProp' : 'reference'},
-						{'bSortable': false, 'aTargets': [4], 'mDataProp' : 'tc-name'},
-						{'bSortable': false, 'aTargets': [5], 'sClass' : 'assignable-combo', 'mDataProp' : 'assigned-user'},
-						{'bSortable': false, 'bVisible' : false, 'sWidth': '10%', 'aTargets': [6], 'mDataProp' : 'assigned-to'},
-						{'bSortable': false, 'aTargets': [7], 'mDataProp' : 'importance'},
-						{'bSortable': false, 'aTargets': [8], 'mDataProp' : 'exec-mode'},
-						{'bSortable': false, 'sWidth': '2em', 'sClass': 'centered delete-button', 'aTargets': [9], 'mDataProp' : 'empty-delete-holder'},
-						{'bSortable': false, 'bVisible' : false, 'aTargets': [10], 'mDataProp' : 'tc-id'},
+						{'bSortable': true,  'aTargets': [0], 'mDataProp' : 'entity-index', 'sWidth' : '2.5em', 'sClass': 'centered ui-state-default drag-handle select-handle'},
+						{'bSortable': true,  'aTargets': [1], 'mDataProp' : 'project-name'},
+						{'bSortable': true,  'aTargets': [2], 'mDataProp' : 'reference'},
+						{'bSortable': true,  'aTargets': [3], 'mDataProp' : 'tc-name'},
+						{'bSortable': true,  'aTargets': [4], 'mDataProp' : 'assigned-user', 'sClass' : 'assignable-combo'},
+						{'bSortable': true,  'aTargets': [5], 'mDataProp' : 'importance'},
+						{'bSortable': true,  'aTargets': [6], 'mDataProp' : 'exec-mode'},
+						{'bSortable': false, 'aTargets': [7], 'mDataProp' : 'empty-delete-holder', 'sWidth': '2em', 'sClass': 'centered delete-button'}
 					]
 				};		
 			

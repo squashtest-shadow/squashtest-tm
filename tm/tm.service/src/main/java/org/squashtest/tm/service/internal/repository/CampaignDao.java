@@ -22,12 +22,15 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
 
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.service.campaign.IndexedCampaignTestPlanItem;
+import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 
 public interface CampaignDao extends EntityDao<Campaign> {
 
@@ -35,16 +38,39 @@ public interface CampaignDao extends EntityDao<Campaign> {
 
 	List<CampaignTestPlanItem> findAllTestPlanByIdFiltered(long campaignId, PagingAndSorting filter);
 	
+	
+	List<CampaignTestPlanItem> findTestPlan(long campaignId, PagingAndMultiSorting sorting);
+	
+	
+	/**
+	 * Returns the paged list of [index, CampaignTestPlanItem] wrapped in an {@link IndexedIterationTestPlanItem}
+	 * 
+	 * @param campaignId
+	 * @param sorting
+	 * @return
+	 */
+	List<IndexedCampaignTestPlanItem> findIndexedTestPlan(long campaignId, PagingAndMultiSorting sorting);
+	
+	/**
+	 * Returns the paged list of [index, CampaignTestPlanItem] wrapped in an {@link IndexedIterationTestPlanItem}
+	 * 
+	 * @param campaignId
+	 * @param sorting
+	 * @return
+	 */
+	List<IndexedCampaignTestPlanItem> findIndexedTestPlan(long campaignId, PagingAndSorting sorting);
+	
+	
 	long countTestPlanById(long campaignId);
 
 	List<String> findNamesInFolderStartingWith(long folderId, String nameStart);
 
 	List<String> findNamesInLibraryStartingWith(long libraryId, String nameStart);
 
-	List<String> findNamesInCampaignStartingWith(long campaignId,
-			String nameStart);
+	List<String> findNamesInCampaignStartingWith(long campaignId, String nameStart);
 	
 	List<String> findAllNamesInCampaign(long campaignId);
+	
 	
 	/**
 	 * Finds all {@link CampaignLibraryNode} which name contains the given token.

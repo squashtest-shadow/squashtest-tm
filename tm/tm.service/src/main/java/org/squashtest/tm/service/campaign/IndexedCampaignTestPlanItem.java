@@ -20,34 +20,39 @@
  */
 package org.squashtest.tm.service.campaign;
 
-import java.util.List;
-
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
-import org.squashtest.tm.domain.campaign.TestPlanStatistics;
-
-@Transactional
-public interface CustomCampaignModificationService {
-
-	void rename(long campaignId, String newName);
 
 
-	PagedCollectionHolder<List<CampaignTestPlanItem>> findTestPlanByCampaignId(long campaignId,
-			PagingAndSorting filter);
+/**
+ * This class pairs an Iteration with an index. The index depends on the collection the IterationTestPlanItem was 
+ * accessed from (the test plan of the iteration it belongs to, or of several test suites).
+ * 
+ *  Without context the index is meaningless so be sure to keep track of how you acquired instances of theses.
+ * 
+ * @author bsiri
+ *
+ */
+public class IndexedCampaignTestPlanItem {
+
+	private final Integer index;
 	
-	PagedCollectionHolder<List<IndexedCampaignTestPlanItem>> findTestPlan(long campaignId, PagingAndMultiSorting sorting);
+	private final CampaignTestPlanItem item;
 
 	
-	/**
-	 * 
-	 * @param campaignId the id of the concerned campaign
-	 * @return the computed {@link TestPlanStatistics} out of each test-plan-item of each campaign's iteration
-	 */
-	TestPlanStatistics findCampaignStatistics(long campaignId);
-	
-	
+	public IndexedCampaignTestPlanItem(Integer index, CampaignTestPlanItem item) {
+		super();
+		this.index = index;
+		this.item = item;
+	}
 
+	public Integer getIndex() {
+		return index;
+	}
+
+	public CampaignTestPlanItem getItem() {
+		return item;
+	}
+	
+	
+	
 }

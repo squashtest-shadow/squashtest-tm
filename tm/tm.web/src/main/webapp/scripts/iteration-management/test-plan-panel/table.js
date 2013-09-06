@@ -95,7 +95,7 @@ define(['jquery', 'squash.translator', './exec-runner', './sortmode',
 
 	function _rowCallbackWriteFeatures($row, data, _conf){
 		
-		// execution status (edit)
+		// execution status (edit). Note : the children().first() thing will return the span element.
 		var statusurl = _conf.testplanUrl + data['entity-id']; 
 		$row.find('.status-combo').children().first().editable( statusurl, {
 			type : 'select',
@@ -105,7 +105,7 @@ define(['jquery', 'squash.translator', './exec-runner', './sortmode',
 			callback : _conf.submitStatusClbk
 		});
 		
-		// assignee (edit)
+		// assignee (edit). Note : the children().first() thing will return the span element.
 		var assigneeurl = _conf.testplanUrl + data['entity-id'];		
 		$row.find('.assignee-combo').children().first().editable(assigneeurl,{
 			type : 'select',

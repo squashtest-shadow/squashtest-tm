@@ -42,7 +42,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
@@ -52,6 +51,7 @@ import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.CampaignModificationService;
+import org.squashtest.tm.service.campaign.IndexedCampaignTestPlanItem;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -61,10 +61,10 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
-import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
+import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
-import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 import org.squashtest.tm.web.internal.util.DateUtils;
 
 @Controller
@@ -91,17 +91,15 @@ public class CampaignModificationController {
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentHelper;
 
-	/*
-	 * //TODO since this controller may return two different models of different datatables (the one in the campaign and
-	 * the one in the association interface) they should be addressed by two distinct DataTableMappers, especially
-	 * because their configuration and content are different !
-	 */
-	private final DatatableMapper<Integer> testPlanMapper = new IndexBasedMapper(8)
-			.mapAttribute(2, "name", Project.class)
-			.mapAttribute(3, "name", Project.class)
-			.mapAttribute(4, "name", TestCase.class)
-			.mapAttribute(6, "importance", TestCase.class)
-			.mapAttribute(7, "executionMode", TestCase.class);
+
+	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
+			.map		 ("entity-index", 	"index(CampaignTestPlanItem)")
+			.mapAttribute("project-name", 	"name", 			Project.class)
+			.mapAttribute("reference", 		"reference", 		TestCase.class)
+			.mapAttribute("tc-name", 		"name", 			TestCase.class)
+			.mapAttribute("assigned-user", 	"login", 			User.class)
+			.mapAttribute("importance",		"importance", 		TestCase.class)
+			.mapAttribute("exec-mode", 		"automatedTest", 	TestCase.class);
 
 
 
@@ -309,9 +307,9 @@ public class CampaignModificationController {
 	public @ResponseBody
 	DataTableModel getTestCasesTableModel(@PathVariable("campaignId") long campaignId,
 			final DataTableDrawParameters params, final Locale locale) {
-		PagingAndSorting filter = createCollectionSorting(params, testPlanMapper);
+		DataTableMultiSorting filter = createCollectionSorting(params, testPlanMapper);
 
-		PagedCollectionHolder<List<CampaignTestPlanItem>> holder = campaignModService.findTestPlanByCampaignId(campaignId, filter);
+		PagedCollectionHolder<List<IndexedCampaignTestPlanItem>> holder = campaignModService.findTestPlan(campaignId, filter);
 
 		return new TestCaseTableModelHelper(locale).buildDataModel(holder, 	params.getsEcho());
 	}
@@ -320,16 +318,15 @@ public class CampaignModificationController {
 	public @ResponseBody
 	DataTableModel getLinkableTestCasesTableModel(@PathVariable("campaignId") long campaignId,
 			final DataTableDrawParameters params, final Locale locale) {
-		PagingAndSorting filter = createCollectionSorting(params, testPlanMapper);
+		DataTableMultiSorting filter = createCollectionSorting(params, testPlanMapper);
 
-		PagedCollectionHolder<List<CampaignTestPlanItem>> holder = campaignModService.findTestPlanByCampaignId(
-				campaignId, filter);
+		PagedCollectionHolder<List<IndexedCampaignTestPlanItem>> holder = campaignModService.findTest(campaignId, filter);
 
 		return new TestPlanManagerTableHelper(locale).buildDataModel(holder, params.getsEcho());
 	}
 
-	private PagingAndSorting createCollectionSorting(final DataTableDrawParameters params, DatatableMapper mapper) {
-		return new DataTableSorting(params, mapper);
+	private DataTableMultiSorting createCollectionSorting(final DataTableDrawParameters params, DatatableMapper mapper) {
+		return new DataTableMultiSorting(params, mapper);
 	}
 
 	/* ************************************** formatting code ****************************** */
@@ -346,7 +343,7 @@ public class CampaignModificationController {
 		return messageSource.internationalize(importance, locale);
 	}
 
-	private final class TestCaseTableModelHelper extends DataTableModelBuilder<CampaignTestPlanItem> {
+	private final class TestCaseTableModelHelper extends DataTableModelBuilder<IndexedCampaignTestPlanItem> {
 
 		private Locale locale;
 
@@ -354,8 +351,11 @@ public class CampaignModificationController {
 			this.locale = locale;
 		}
 
-		public Map<String, Object> buildItemData(CampaignTestPlanItem item) {
+		public Map<String, Object> buildItemData(IndexedCampaignTestPlanItem indexedItem) {
 
+			Integer index = indexedItem.getIndex() + 1;
+			CampaignTestPlanItem item = indexedItem.getItem();
+			
 			Map<String, Object> result = new HashMap<String, Object>();
 
 			TestCase testCase = item.getReferencedTestCase();
@@ -363,7 +363,7 @@ public class CampaignModificationController {
 			Long assigneeId = (item.getUser() != null) ? item.getUser().getId() : User.NO_USER_ID;
 
 			result.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
-			result.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
+			result.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, index);
 			result.put("project-name", testCase.getProject().getName());
 			result.put("reference", testCase.getReference());
 			result.put("tc-name", testCase.getName());

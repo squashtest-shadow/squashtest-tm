@@ -195,7 +195,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 		
 		//check if we want to filter on the user login
 		if (filtering.isDefined()){
-			hqlbuilder.append("and User.login = :userLogin");
+			hqlbuilder.append("and User.login = :userLogin ");
 		}
 		
 		SortingUtils.addOrder(hqlbuilder, sorting);
