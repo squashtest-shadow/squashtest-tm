@@ -279,7 +279,7 @@ define([ "jquery", "jqueryui"], function($) {
 				getCheckboxes().prop('checked', false); // reset the checkboxes
 				self.checkedSuites.reset(); // reset the model
 				$("#suite-manager-menu-input").val(""); // reset the input field
-			})
+			});
 		}, this);
 		
 		var initHandlerBinding = $.proxy(function() {
