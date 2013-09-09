@@ -55,17 +55,15 @@
 	
 	<c:if test="${ not empty wizards }">
 	<div id="wizard-tree-pane" class="button-group">
-		<a id="wizard-tree-button" class="not-displayed" href="JavaScript:void(0);" data-icon="ui-icon-star" data-text="false"><f:message key="label.wizards" />...</a>
-		<script id="ws-wizard-tree-menu-template" type="text/x-handlebars-template">
-		<div id="ws-wizard-tree-menu"> 
-			<ul>
-				{{#each wizards}}
-				<li><a id="{{this.name}}" class="menu-disabled" href="javascript:void(0)" title="{{this.tooltip}}">{{this.label}}...</a></li>
-				{{/each}}
-			</ul>
-		</div>
+		<a id="wizard-tree-button" class="not-displayed buttonmenu" href="JavaScript:void(0);" data-icon="ui-icon-star" data-text="false"><f:message key="label.wizards" />...</a>
+		<script id="ws-wizard-tree-menu-template" type="text/x-handlebars-template">		
+		<ul id="ws-wizard-tree-menu">
+			{{#each wizards}}
+			<li id="{{this.name}}" class="ui-state-disabled"><a href="javascript:void(0)" title="{{this.tooltip}}">{{this.label}}...</a></li>
+			{{/each}}
+		</ul>	
 	</script>
-		<script id="start-ws-wizard-form-template" type="text/x-handlebars-template">
+	<script id="start-ws-wizard-form-template" type="text/x-handlebars-template">
 		<form id="start-ws-wizard-form" action="{{url}}" method="post"> 
 			{{#each nodes}}
 			<input type="hidden" name="{{this.type}}" value="{{this.id}}" />
@@ -75,7 +73,7 @@
 		<div id="start-ws-wizard-container" class="not-displayed">
 		</div>
 	</div>
-	</c:if>		
+	</c:if>	
 	
 	<div class="button-group">
 		<a id="delete-node-tree-button" href="JavaScript:void(0);"><f:message key="tree.button.delete.label" />...</a>

@@ -26,44 +26,40 @@ define([ "jquery", "backbone", "handlebars", "underscore", "jqueryui", "jquery.s
 	var View = Backbone.View.extend({
 		el : "#wizard-tree-pane",
 
+		events : {
+			"click #ws-wizard-tree-menu li" : "_onMenuClicked"
+		},
+		
+		
 		initialize : function() {
-			var enabled = this.collection && (this.collection.length > 0);
-
+		
 			_.each(this.collection, function(wiz) {
 				// better when no dots in html ids
 				wiz.name = wiz.id.replace(/\./g, "-");
 			});
-
-			this.menu = this.$("#wizard-tree-button").squashButton({
-				disabled : !enabled
-			});
+			
+			this.menu = this.$("#wizard-tree-button");
 			this.formContainer = this.$("#start-ws-wizard-container");
-
+			
 			this.render();
 
-			// in a perfect world, we would write $("container").on("click",
-			// "a", ...) but menu breaks event bubbling
-			$("#ws-wizard-tree-menu a").on("click", $.proxy(this._onMenuClicked, this));
 		},
 
 		render : function() {
-			if (this.collection.length > 0) {
-				var source = this.$("#ws-wizard-tree-menu-template").html();
-				var template = Handlebars.compile(source);
-
-				var options = {
-					html : template({
-						wizards : this.collection
-					}),
-					params : {}
-				};
-
-				_.each(this.collection, function(wiz) {
-					options.params[wiz.name] = "#" + wiz.name;
-				});
-
-				this.menu.treeMenu(options);
+			
+			var source = this.$("#ws-wizard-tree-menu-template").html();
+			var template = Handlebars.compile(source);
+			
+			this.$("#wizard-tree-button").after(template({
+				wizards : this.collection
+			}));
+			
+			this.menu.buttonmenu();
+			
+			if (this.collection.length == 0){
+				this.menu.buttonmenu("disable");
 			}
+			
 
 			return this;
 		},
@@ -96,11 +92,10 @@ define([ "jquery", "backbone", "handlebars", "underscore", "jqueryui", "jquery.s
 						self._checkWizardActivation(selectedNodes, wizard);
 
 				if (enabled) {
-					self.menu.buttons[wizard.name].enable();
+					self.$('#'+wizard.name).removeClass('ui-state-disabled');
 
 				} else {
-					self.menu.buttons[wizard.name].disable();
-
+					self.$('#'+wizard.name).addClass('ui-state-disabled');
 				}
 			};
 		},
@@ -156,7 +151,7 @@ define([ "jquery", "backbone", "handlebars", "underscore", "jqueryui", "jquery.s
 		 */
 		_onMenuClicked : function(event, data) {
 			var wizard = _.find(this.collection, function(wizard) {
-				return wizard.name === event.target.id;
+				return wizard.name === event.currentTarget.id;
 			});
 
 			var postData = {

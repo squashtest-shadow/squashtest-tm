@@ -19,10 +19,20 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(['tree', './tc-treemenu', './popups/init-all', './init-actions'], function(tree, treemenu, popups, actions) {
+define(['tree', './tc-treemenu', './popups/init-all', './init-actions', 'squash/squashtm.tree-page-resizer'], 
+		function(tree, treemenu, popups, actions, resizer) {
 
 	
+	function initResizer(){
+		var conf = {
+			leftSelector : "#tree-panel-left",
+			rightSelector : "#contextual-content"
+		};
+		resizer.init(conf);
+	}
+	
 	function init(settings){
+		initResizer();
 		tree.initWorkspaceTree(settings.tree);
 		treemenu.init();	
 		popups.init();

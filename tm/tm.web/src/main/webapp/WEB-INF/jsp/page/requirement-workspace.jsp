@@ -76,7 +76,7 @@
 		
 			$(function(){
 				require( ["common"], function(){
-					require(['req-workspace', "requirement-workspace"], function(initWkp) {
+					require(['req-workspace'], function(initWkp) {
 						initWkp.init(conf);						
 					});
 				});						

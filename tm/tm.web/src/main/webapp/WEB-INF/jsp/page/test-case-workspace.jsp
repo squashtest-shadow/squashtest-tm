@@ -76,7 +76,7 @@
 		
 			$(function(){
 				require( ["common"], function(){
-					require(['tc-workspace', "test-case-workspace"], function(initWkp) {
+					require(['tc-workspace'], function(initWkp) {
 						initWkp.init(conf);						
 					});
 				});						

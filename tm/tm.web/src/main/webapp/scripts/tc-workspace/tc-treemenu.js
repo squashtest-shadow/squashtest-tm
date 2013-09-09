@@ -21,8 +21,9 @@
 
 
 define(['jquery', './utils', './permissions-rules',
+        'workspace/WorkspaceWizardMenu',
         'jquery.squash.buttonmenu', 
-        'jquery.squash.squashbutton',], function($, utils, permissions){
+        'jquery.squash.squashbutton',], function($, utils, permissions, WizardMenu){
 	
 
 	function createWidgets(){
@@ -140,9 +141,36 @@ define(['jquery', './utils', './permissions-rules',
 	}
 	
 	
+	// the wizard menu is a bit different from the rest, hence the init code
+	// is put appart
+	function createWizardMenu(){
+
+		var wizards = squashtm.app.testCaseWorkspace.wizards;
+		
+		if (!!wizards && wizards.length>0){
+			
+			var wmenu = new WizardMenu({
+				collection : wizards
+			});
+			
+			var tree = $("#tree");
+			
+			//state init
+			wmenu.refreshSelection(tree.jstree("get_selected"));
+			
+			//evt binding
+			tree.on('select_node.jstree deselect_node.jstree deselect_all.jstree', function(evt, data){
+				wmenu.refreshSelection(data.inst.get_selected());
+			});
+		}
+		
+	}
+	
+	
 	function init(){		
 		createWidgets();
-		bindTreeEvents();			
+		bindTreeEvents();		
+		createWizardMenu();			
 	}
 	
 	

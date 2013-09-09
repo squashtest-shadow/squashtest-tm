@@ -32,24 +32,9 @@ requirejs.config({
 				"users-manager",
 				"bugtracker",
 				"file-upload",
-				"iteration-management",				
-				/*{
-					name : 'iteration-management',
-					main : 'main',
-					location : 'http://localhost/scripts/scripts/iteration-management'
-				},*/
+				"iteration-management",	
 				"test-suite-management",
-				/*{
-					name : 'test-suite-management',
-					main : 'main',
-					location : 'http://localhost/scripts/scripts/test-suite-management'
-				},*/
 				"campaign-management",
-				/*{
-					main : 'main',
-					name : 'campaign-management',
-					location : 'http://localhost/scripts/scripts/campaign-management'
-				},*/
 				"issue-tables",
 				'tree',
 				'tc-workspace',

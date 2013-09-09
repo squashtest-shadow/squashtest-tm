@@ -47,7 +47,7 @@
  * 
  */
 
-define([ 'jquery', 'jqueryui' ], function($) {
+define([ 'jquery', 'jqueryui', 'jquery.squash.squashbutton' ], function($) {
 
 	$.widget('squash.buttonmenu', {
 		options : {
@@ -71,7 +71,7 @@ define([ 'jquery', 'jqueryui' ], function($) {
 			this._bindLi(menu);
 
 			if (! settings.preskinned){
-				button.button(settings.button);
+				button.squashButton(settings.button);
 			}
 			menu.menu(settings.menu);
 
@@ -86,11 +86,16 @@ define([ 'jquery', 'jqueryui' ], function($) {
 				var cllbk = (settings.blur === 'hide') ? function(){menu.hide();} : settings.blur;				
 				menu.on('blur', cllbk);
 			}
-
-			
-
 			
 			return this;
+		},
+		
+		enable : function(){
+			this.element.squashButton('enable');
+		},
+		
+		disable : function(){
+			this.element.squashButton('disable');
 		},
 		
 		/* 
