@@ -37,12 +37,11 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.bridge.FieldBridge;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.InputType;
-import org.squashtest.tm.domain.customfield.SingleSelectField;
+
 
 @Configurable
 public class TestCaseCUFBridge implements FieldBridge {
@@ -88,28 +87,7 @@ public class TestCaseCUFBridge implements FieldBridge {
 			
 			InputType inputType = cufValue.getBinding().getCustomField().getInputType();
 			
-			if(org.squashtest.tm.domain.customfield.InputType.DROPDOWN_LIST.equals(inputType)){
-				String code = cufValue.getBinding().getCustomField().getCode();
-				Field field = new Field(code, cufValue.getValue(),
-						luceneOptions.getStore(), luceneOptions.getIndex(),
-						luceneOptions.getTermVector());
-				field.setBoost(luceneOptions.getBoost());
-				document.add(field);				
-			} else if(org.squashtest.tm.domain.customfield.InputType.PLAIN_TEXT.equals(inputType)){
-				String code = cufValue.getBinding().getCustomField().getCode();
-				Field field = new Field(code, cufValue.getValue(),
-						luceneOptions.getStore(), luceneOptions.getIndex(),
-						luceneOptions.getTermVector());
-				field.setBoost(luceneOptions.getBoost());
-				document.add(field);
-			} else if(org.squashtest.tm.domain.customfield.InputType.CHECKBOX.equals(inputType)){
-				String code = cufValue.getBinding().getCustomField().getCode();
-				Field field = new Field(code, cufValue.getValue(),
-						luceneOptions.getStore(), luceneOptions.getIndex(),
-						luceneOptions.getTermVector());
-				field.setBoost(luceneOptions.getBoost());
-				document.add(field);
-			} else if(org.squashtest.tm.domain.customfield.InputType.DATE_PICKER.equals(inputType)){
+			if(org.squashtest.tm.domain.customfield.InputType.DATE_PICKER.equals(inputType)){
 				String code = cufValue.getBinding().getCustomField().getCode();
 				Date inputDate = null;
 				try {
@@ -121,7 +99,15 @@ public class TestCaseCUFBridge implements FieldBridge {
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
-			}
+			} else {
+
+				String code = cufValue.getBinding().getCustomField().getCode();
+				Field field = new Field(code, cufValue.getValue(),
+						luceneOptions.getStore(), luceneOptions.getIndex(),
+						luceneOptions.getTermVector());
+				field.setBoost(luceneOptions.getBoost());
+				document.add(field);				
+			} 
 		}
 
 	    if(currentSession == null){
