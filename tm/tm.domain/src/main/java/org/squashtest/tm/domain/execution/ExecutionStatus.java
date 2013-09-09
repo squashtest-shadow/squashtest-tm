@@ -98,11 +98,13 @@ import org.squashtest.tm.core.foundation.i18n.Internationalizable;
  */
 public enum ExecutionStatus implements Internationalizable {
 	
+
+	
 	
 	UNTESTABLE() {
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
-			return needsComputation;
+			return needsComputation();
 		}
 		
 		@Override
@@ -161,7 +163,7 @@ public enum ExecutionStatus implements Internationalizable {
 			} else if (formerStepStatus == ExecutionStatus.RUNNING && formerExecutionStatus == ExecutionStatus.READY) {
 				newStatus = ExecutionStatus.RUNNING;
 			} else {
-				newStatus = needsComputation;
+				newStatus = needsComputation();
 			}
 
 			return newStatus;
@@ -189,7 +191,7 @@ public enum ExecutionStatus implements Internationalizable {
 			} else if (formerExecutionStatus == ExecutionStatus.READY) {
 				newStatus = ExecutionStatus.READY;
 			} else if (formerExecutionStatus == ExecutionStatus.RUNNING) {
-				newStatus = needsComputation;
+				newStatus = needsComputation();
 			} else {
 				newStatus = ExecutionStatus.RUNNING;
 			}
@@ -216,7 +218,7 @@ public enum ExecutionStatus implements Internationalizable {
 			if (formerExecutionStatus == ExecutionStatus.FAILURE) {
 				newStatus = ExecutionStatus.FAILURE;
 			} else {
-				newStatus = needsComputation;
+				newStatus = needsComputation();
 			}
 
 			return newStatus;
@@ -279,14 +281,7 @@ public enum ExecutionStatus implements Internationalizable {
 
 	private static final String I18N_KEY_ROOT = "execution.execution-status.";
 
-	/*
-	 * those fields exists only for code semantics since this class is a complete mess. It's for the same purpose than a
-	 * #define in C
-	 */
-	protected static ExecutionStatus isAmbiguous = null;
-	protected static ExecutionStatus needsComputation = null;
 
-	
 	private static final Set<ExecutionStatus> CANONICAL_STATUSES;
 	private static final Set<ExecutionStatus> TERMINAL_STATUSES;
 	private static final Set<ExecutionStatus> NON_TERMINAL_STATUSES;
@@ -321,6 +316,29 @@ public enum ExecutionStatus implements Internationalizable {
 		NON_TERMINAL_STATUSES = Collections.unmodifiableSet(nonTerms);
 		
 	}
+	
+	// **************************** SURROGATES SPECIAL, INNER VALUES OF EXECUTION STATUS *******************
+	// the following methods exists to wrap 'null' values with semantic. We need to, because 'null' might mean 
+	// different things depending on the context : 'is ambiguous' and 'needs computation'. 
+	// some private static final Object isAmbiguous, needsComputation would have been nicer but impracticable here 
+	// in the context of an enum.
+	
+	protected ExecutionStatus isAmbiguous(){
+		return null;
+	}
+	
+	protected boolean isAmbiguous(ExecutionStatus status){
+		return status == null;
+	}
+	
+	protected ExecutionStatus needsComputation(){
+		return null;
+	}
+	
+	protected boolean needsComputation(ExecutionStatus status){
+		return status == null;
+	}
+	
 	
 
 	/* *************************** abstract methods ********************************* */
@@ -413,7 +431,7 @@ public enum ExecutionStatus implements Internationalizable {
 		// first pass : trivial deductions
 		ExecutionStatus deductedStatus = trivialDeductions(formerExecutionStatus, formerStepStatus);
 
-		if (! deductedStatus.equals(isAmbiguous)) {
+		if (! isAmbiguous(deductedStatus)) {
 			newStatus = deductedStatus;
 		}
 
@@ -490,7 +508,7 @@ public enum ExecutionStatus implements Internationalizable {
 		else if (wontUnlockBloquedExecution(formerExecutionStatus, formerStepStatus)) {
 			newStatus = ExecutionStatus.BLOCKED;
 		} else {
-			newStatus = isAmbiguous;
+			newStatus = isAmbiguous();
 		}
 
 		return newStatus;
@@ -553,6 +571,7 @@ public enum ExecutionStatus implements Internationalizable {
 			ExecutionStatus formerStepStatus) {
 		return (formerExecutionStatus.equals(formerStepStatus));
 	}
+
 
 
 }
