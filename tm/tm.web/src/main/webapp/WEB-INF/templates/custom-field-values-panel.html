@@ -154,15 +154,14 @@
 					widgets.parent('div').addClass("editable");
 
 					var count = widgets.length;
-
 					for ( var i = 0; i < count; i++) {
 						var widget = widgets.eq(i);
 						var conf = settings[i];
-
 						//non-jeditable inputs
 						if (conf.type === 'checkbox') {
+							var checkbox_conf = conf;
 							widget.change(function() {
-								postFunction(this.checked, conf);
+								postFunction(this.checked, checkbox_conf);
 							});
 						}
 						//jeditable inputs
