@@ -518,9 +518,8 @@ public class TestCaseModificationController {
 		mav.addObject("execs", executions);
 
 		// =================STEPS
-		// FIXME loads all steps colletion, fetch paged sublist instead
-		// FIXME souldn't we load all the steps BTW ?
-		List<TestStep> steps = testCase.getSteps().subList(0, Math.min(10, testCase.getSteps().size()));
+
+		List<TestStep> steps = testCaseModificationService.findStepsByTestCaseId(testCaseId);
 
 		// the custom fields definitions
 		CustomFieldHelper<ActionTestStep> helper = cufHelperService.newStepsHelper(steps, testCase.getProject())
