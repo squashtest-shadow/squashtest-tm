@@ -33,7 +33,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.bridge.FieldBridge;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 @Configurable
@@ -81,13 +80,13 @@ public class TestCaseCallStepBridge implements FieldBridge {
 		} finally {
 
 			numberOfCalledTestCases = (Long) session
-					.createCriteria(TestCase.class)
+					.createCriteria(TestCase.class) //NOSONAR session is never null
 					.add(Restrictions.eq("id", id)).createCriteria("steps")
 					.createCriteria("calledTestCase")
-					.setProjection(Projections.rowCount()).uniqueResult();
+					.setProjection(Projections.rowCount()).uniqueResult(); 
 
 			if (currentSession == null) {
-				tx.commit();
+				tx.commit(); //NOSONAR the test above prevents null point exception from happening
 				session.close();
 			}
 		}

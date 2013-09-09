@@ -33,7 +33,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.bridge.FieldBridge;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 
@@ -66,8 +65,7 @@ public class TestCaseAttachmentBridge implements FieldBridge{
 			tx = session.beginTransaction();
 		}finally{
 
-			testcase = (TestCase) session.createCriteria(TestCase.class)
-					.add(Restrictions.eq("id", testcase.getId())).uniqueResult();
+			testcase = (TestCase) session.createCriteria(TestCase.class).add(Restrictions.eq("id", testcase.getId())).uniqueResult(); //NOSONAR session is never null
 			
 			Field field = new Field(name, String.valueOf(testcase.getAttachmentList().size()), luceneOptions.getStore(),
 		    luceneOptions.getIndex(), luceneOptions.getTermVector() );
@@ -75,7 +73,7 @@ public class TestCaseAttachmentBridge implements FieldBridge{
 		    document.add(field);
 	
 		    if(currentSession == null){
-			    tx.commit();
+			    tx.commit(); //NOSONAR the test above prevents null point exception from happening
 			    session.close();
 		    }
 		}

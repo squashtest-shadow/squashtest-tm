@@ -33,7 +33,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.bridge.FieldBridge;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.squashtest.tm.domain.execution.Execution;
 
@@ -78,14 +77,14 @@ public class TestCaseExecutionBridge implements FieldBridge{
 			tx = session.beginTransaction();
 		}finally{
 		
-		numberOfExecutions = (Long) session.createCriteria(Execution.class)
-			.createCriteria("referencedTestCase")
+		numberOfExecutions = (Long) session.createCriteria(Execution.class) //NOSONAR session is never null
+			.createCriteria("referencedTestCase") 
 			.add(Restrictions.eq("id", id))
 			.setProjection(Projections.rowCount())
 			.uniqueResult();
 	    
 	    if(currentSession == null){
-		    tx.commit();
+		    tx.commit(); //NOSONAR the test above prevents null point exception from happening
 		    session.close();
 	    }
 		}

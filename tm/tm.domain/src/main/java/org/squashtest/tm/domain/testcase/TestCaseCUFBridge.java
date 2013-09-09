@@ -79,7 +79,7 @@ public class TestCaseCUFBridge implements FieldBridge {
 
 		@SuppressWarnings("unchecked")
 		List<CustomFieldValue> cufValues = (List<CustomFieldValue>) session
-				.createCriteria(CustomFieldValue.class)
+				.createCriteria(CustomFieldValue.class) //NOSONAR session is never null
 				.add(Restrictions.eq("boundEntityId", testcase.getId()))
 				.add(Restrictions.eq("boundEntityType", BindableEntity.TEST_CASE)).list();
 
@@ -111,7 +111,7 @@ public class TestCaseCUFBridge implements FieldBridge {
 		}
 
 	    if(currentSession == null){
-		    tx.commit();
+		    tx.commit(); //NOSONAR the test above prevents null point exception from happening
 		    session.close();
 	    }
 		}

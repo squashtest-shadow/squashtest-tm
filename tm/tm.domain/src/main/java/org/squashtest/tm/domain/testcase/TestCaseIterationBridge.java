@@ -33,7 +33,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.bridge.FieldBridge;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.squashtest.tm.domain.campaign.Iteration;
 
@@ -77,7 +76,7 @@ public class TestCaseIterationBridge implements FieldBridge{
 			tx = session.beginTransaction();
 		}finally{
 		
-		numberOfIterations = (Long) session.createCriteria(Iteration.class)
+		numberOfIterations = (Long) session.createCriteria(Iteration.class) //NOSONAR session is never null
 			.createCriteria("testPlans")
 			.createCriteria("referencedTestCase")
 			.add(Restrictions.eq("id", id))
@@ -85,7 +84,7 @@ public class TestCaseIterationBridge implements FieldBridge{
 			.uniqueResult();
 	    
 	    if(currentSession == null){
-		    tx.commit();
+		    tx.commit(); //NOSONAR the test above prevents null point exception from happening
 		    session.close();
 	    }
 		}
