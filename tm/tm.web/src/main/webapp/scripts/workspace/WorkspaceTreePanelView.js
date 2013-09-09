@@ -22,7 +22,7 @@
  * This is a template for a backbone module
  */
 define(
-		[ "jquery", "backbone", "handlebars", "workspace/WorkspaceWizardMenu", "tree" ],
+		[ "jquery", "backbone", "handlebars", "http://localhost/scripts/scripts/workspace/WorkspaceWizardMenu.js", "tree" ],
 		function($, Backbone, Handlebars, WorkspaceWizardMenu, zetree) {
 			var View = Backbone.View
 					.extend({
