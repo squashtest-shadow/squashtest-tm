@@ -100,22 +100,24 @@
     <property name="viewNames" value="*.html" />
   </bean>
 
-	<!-- static resources (optimized headers) -->
-  <mvc:resources location="/images/" mapping="/images/**" />
-  <mvc:resources location="/scripts/" mapping="/scripts/**" />
-  <mvc:resources location="/styles/" mapping="/styles/**" />
+  <!-- static resources (optimized headers) -->
+  <!-- Placeholders below are interpolated by maven. The @placeholder@ syntax would be clearer but it does not work in this file -->
+  <mvc:resources location="/images/" mapping="/images/**" cache-period="${client.cache.max.age}"/>
+  <mvc:resources location="/scripts/" mapping="/scripts/**" cache-period="${client.cache.max.age}"/>
+  <mvc:resources location="/styles/" mapping="/styles/**" cache-period="${client.cache.max.age}"/>
+  <mvc:resources location="/styles/" mapping="/styles-*/**" cache-period="${client.cache.max.age}"/>
 
   <mvc:interceptors>
     <bean class="org.springframework.orm.hibernate4.support.OpenSessionInViewInterceptor">
       <property name="sessionFactory" ref="squashtest.tm.persistence.hibernate.SessionFactory" />
     </bean>
 
-    <bean class="org.springframework.web.servlet.mvc.WebContentInterceptor">
+<!--     <bean class="org.springframework.web.servlet.mvc.WebContentInterceptor">
       <property name="cacheSeconds" value="0" />
       <property name="useExpiresHeader" value="true" />
       <property name="useCacheControlHeader" value="true" />
       <property name="useCacheControlNoStore" value="true" />
-    </bean>
+    </bean> -->
 
     <bean class="org.springframework.web.context.request.Log4jNestedDiagnosticContextInterceptor">
       <property name="includeClientInfo" value="true" />

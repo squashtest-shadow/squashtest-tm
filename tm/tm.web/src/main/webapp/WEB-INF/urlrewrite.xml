@@ -36,6 +36,7 @@
 		<to>/images/nullpx</to>
 	</rule>
 	<rule>
+  <!-- below is a maven placeholder -->
 		<from>/styles-@project.version@/**</from>
 		<to>/styles/$1</to>
 	</rule>

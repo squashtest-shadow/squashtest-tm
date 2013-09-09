@@ -28,6 +28,10 @@
 
     <!-- Default jacoco dont record any coverage data -->
     <sonar.java.coveragePlugin>cobertura</sonar.java.coveragePlugin>
+    <is.dev.stage>false</is.dev.stage>
+    
+    <!-- google says static resources should be cached 1 week -->
+    <client.cache.max.age>604800</client.cache.max.age>
   </properties>
 
   <dependencies>
@@ -366,22 +370,6 @@
       <artifactId>org.springframework.test</artifactId>
     </dependency>
     <!-- ====== /SPRING INTEGRATION TEST SUPPORT ====== -->
-<!--  REMOVE -->
-   <!--    <dependency>
-      <groupId>org.eclipse.jetty.osgi</groupId>
-      <artifactId>jetty-osgi-boot</artifactId>
-      <version> 8.1.12.v20130726</version>
-    </dependency>
-      <dependency>
-      <groupId>org.eclipse.jetty.osgi</groupId>
-      <artifactId>jetty-osgi-boot-jsp</artifactId>
-      <version> 8.1.12.v20130726</version>
-    </dependency> -->
-<!-- <dependency>
-            <groupId>org.eclipse.jetty.orbit</groupId>
-            <artifactId>javax.annotation</artifactId>
-            <version>1.1.0.v201108011116</version>
-</dependency>   -->
   </dependencies>
   <build>
     <resources>
@@ -473,7 +461,9 @@
               <directory>src/main/webapp/WEB-INF</directory>
               <includes>
                 <include>urlrewrite.xml</include>
-              </includes>
+                <include>webdefault.xml</include>
+                 <include>squash-tm-servlet.xml</include>
+               </includes>
               <filtering>true</filtering>
               <targetPath>WEB-INF</targetPath>
             </resource>
@@ -709,6 +699,7 @@
       <properties>
         <project.stage>DEV</project.stage>
         <logger.urlRewriteFilter>DEBUG</logger.urlRewriteFilter>
+        <is.dev.stage>true</is.dev.stage>
       </properties>
     </profile>
 

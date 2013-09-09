@@ -93,3 +93,6 @@ Web-ContextPath: ${bundle.contextPath}
 # NOTE : separator HAS to be ", "
 Require-TldBundle: org.springframework.web.servlet, \
 	org.springframework.security.taglibs
+# Path for Jetty servlet configuration. 
+# Did not manage to have it read from the standard jetty.home/etc/webdefault.xml
+Jetty-defaultWebXmlFilePath: WEB-INF/webdefault.xml
