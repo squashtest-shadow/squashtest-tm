@@ -490,7 +490,7 @@
             </goals>
             <configuration>
               <!-- dont break line or add spaces or maven will scream in horror -->
-              <targetGroups>squash.core,squash.blue,squash.green,squash.grey,squash.purple,squash.wine,squash.blue.green,squash.green.blue,squash.tree,squash.core.override,squash.subpage.override</targetGroups>
+              <targetGroups>squash.core,squash.blue,squash.green,squash.grey,squash.purple,squash.wine,squash.blue.green,squash.green.blue,squash.tree,squash.core.override,squash.subpage.override,squash.print</targetGroups>
               <minimize>true</minimize>
               <cssDestinationFolder>${wro4j.css.outputDirectory}</cssDestinationFolder>
               <!-- ConfigurableWroManagerFactory is configured (d'uh) through wro.properties -->
