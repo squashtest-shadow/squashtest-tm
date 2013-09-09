@@ -76,14 +76,14 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 @RequestMapping("/advanced-search")
 public class AdvancedSearchController {
 
-	private static String TEXTFIELD = "textfield";
-	private static String TEXTAREA = "textarea";
-	private static String RANGE = "range";
-	private static String EXISTS = "exists";
-	private static String DATE = "date";
-	private static String MULTISELECT = "multiselect";
-	private static String ATLEASTONE = "1";
-	private static String NONE = "0";
+	private static final String TEXTFIELD = "textfield";
+	private static final String TEXTAREA = "textarea";
+	private static final String RANGE = "range";
+	private static final String EXISTS = "exists";
+	private static final String DATE = "date";
+	private static final String MULTISELECT = "multiselect";
+	private static final String ATLEASTONE = "1";
+	private static final String NONE = "0";
 	
 	@Inject
 	private CustomCustomFieldManagerService customFieldManager;
@@ -456,13 +456,13 @@ public class AdvancedSearchController {
 			} else if(org.squashtest.tm.domain.customfield.InputType.CHECKBOX.equals(customField.getInputType())){
 				model.getFields().add(createCheckBoxField(customField, locale));
 			} else if(org.squashtest.tm.domain.customfield.InputType.DATE_PICKER.equals(customField.getInputType())){
-				model.getFields().add(createDatePickerField(customField,locale));
+				model.getFields().add(createDatePickerField(customField));
 			}
 		}
 		return model;
 	}
 	
-	private SearchInputFieldModel createDatePickerField(CustomField customField, Locale locale) {
+	private SearchInputFieldModel createDatePickerField(CustomField customField) {
 
 		SearchInputFieldModel model = new SearchInputFieldModel();
 		model.setInputType(DATE);
