@@ -116,6 +116,7 @@
 
 .sub-page-title{
 	float:left;
+	max-width : 80%;
 }
 
 .sub-page-title h2 {
