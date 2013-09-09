@@ -413,7 +413,7 @@ public enum ExecutionStatus implements Internationalizable {
 		// first pass : trivial deductions
 		ExecutionStatus deductedStatus = trivialDeductions(formerExecutionStatus, formerStepStatus);
 
-		if (deductedStatus != isAmbiguous) {
+		if (! deductedStatus.equals(isAmbiguous)) {
 			newStatus = deductedStatus;
 		}
 
@@ -551,7 +551,7 @@ public enum ExecutionStatus implements Internationalizable {
 	// we then now the new exec status must then be recomputed.
 	protected boolean couldHaveSetExecStatusAlone(ExecutionStatus formerExecutionStatus,
 			ExecutionStatus formerStepStatus) {
-		return (formerExecutionStatus == formerStepStatus);
+		return (formerExecutionStatus.equals(formerStepStatus));
 	}
 
 

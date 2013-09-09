@@ -75,6 +75,10 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 public class RequirementLibraryNavigationController extends
 		LibraryNavigationController<RequirementLibrary, RequirementFolder, RequirementLibraryNode> {
 
+	private static final String MODEL_ATTRIBUTE_ADD_REQUIREMENT = "add-requirement";
+
+	private static final String JASPER_EXPORT_FILE = "/WEB-INF/reports/requirement-export.jasper";
+	
 	@Inject
 	@Named("requirement.driveNodeBuilder")
 	private Provider<DriveNodeBuilder<RequirementLibraryNode>> driveNodeBuilder;
@@ -84,9 +88,8 @@ public class RequirementLibraryNavigationController extends
 	@Inject
 	private RequirementLibraryNavigationService requirementLibraryNavigationService;
 
-	private static final String JASPER_EXPORT_FILE = "/WEB-INF/reports/requirement-export.jasper";
 
-	@InitBinder("add-requirement")
+	@InitBinder(MODEL_ATTRIBUTE_ADD_REQUIREMENT)
 	public void addRequirementBinder(WebDataBinder binder) {
 		NewRequirementVersionDaoValidator validator = new NewRequirementVersionDaoValidator();
 		validator.setMessageSource(getMessageSource());
@@ -97,7 +100,7 @@ public class RequirementLibraryNavigationController extends
 	@ResponseStatus(HttpStatus.CREATED)
 	public @ResponseBody
 	JsTreeNode addNewRequirementToLibraryRootContent(@PathVariable long libraryId,
-			@Valid @ModelAttribute("add-requirement") NewRequirementVersionDto firstVersion) {
+			@Valid @ModelAttribute(MODEL_ATTRIBUTE_ADD_REQUIREMENT) NewRequirementVersionDto firstVersion) {
 
 		Requirement req = requirementLibraryNavigationService.addRequirementToRequirementLibrary(libraryId,
 				firstVersion);
@@ -109,7 +112,7 @@ public class RequirementLibraryNavigationController extends
 	@RequestMapping(value = "/folders/{folderId}/content/new-requirement", method = RequestMethod.POST)
 	public @ResponseBody
 	JsTreeNode addNewRequirementToFolderContent(@PathVariable long folderId,
-			@Valid @ModelAttribute("add-requirement") NewRequirementVersionDto firstVersion) {
+			@Valid @ModelAttribute(MODEL_ATTRIBUTE_ADD_REQUIREMENT) NewRequirementVersionDto firstVersion) {
 
 		Requirement req = requirementLibraryNavigationService.addRequirementToRequirementFolder(folderId, firstVersion);
 
@@ -120,7 +123,7 @@ public class RequirementLibraryNavigationController extends
 	@RequestMapping(value = "/requirements/{requirementId}/content/new-requirement", method = RequestMethod.POST)
 	public @ResponseBody
 	JsTreeNode addNewRequirementToRequirementContent(@PathVariable("requirementId") long requirementId,
-			@Valid @ModelAttribute("add-requirement") NewRequirementVersionDto firstVersion) {
+			@Valid @ModelAttribute(MODEL_ATTRIBUTE_ADD_REQUIREMENT) NewRequirementVersionDto firstVersion) {
 
 		Requirement req = requirementLibraryNavigationService.addRequirementToRequirement(requirementId, firstVersion);
 

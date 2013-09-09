@@ -29,6 +29,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -135,7 +136,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 		User user = userDao.findById(userId);
 		//filtering out deactivated users
 		if(user.getActive() == false){
-			user = null;
+			throw new AccessDeniedException("access is denied");
 		}
 		boolean hasAuth = adminAuthentService.userExists(user.getLogin());
 		return new AuthenticatedUser(user, hasAuth);

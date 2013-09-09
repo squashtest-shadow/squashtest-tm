@@ -71,8 +71,9 @@ public abstract class NodeData<KEY_TYPE> {
 		}
 		return true;
 	}
+	
 
-	public final boolean equals(NodeData<KEY_TYPE> otherData) {
+	public final boolean equals(NodeData<KEY_TYPE> otherData) {	//NOSONAR : there COULD be some bugs but for now it's ok
 		if (otherData == null) {
 			return false;
 		}

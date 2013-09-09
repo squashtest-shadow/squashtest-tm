@@ -96,7 +96,7 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 		
 		Dataset dataset = this.datasetDao.findById(datasetId);
 		Dataset sameName = datasetDao.findDatasetByTestCaseAndByName(dataset.getTestCase().getId(), dataset.getName());
-		if(sameName != null && sameName.getId() != dataset.getId()){
+		if(sameName != null && (! sameName.getId().equals(dataset.getId()))){
 			throw new DuplicateNameException(dataset.getName(), newName);
 		} else {
 			dataset.setName(newName);

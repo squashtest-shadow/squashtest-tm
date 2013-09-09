@@ -204,30 +204,38 @@ public class ArbitraryQueryHandler<ENTITY> implements DynamicComponentInvocation
 
 	private Object executeQuery(Method method, Query query) {
 
+		Object result;
+		
 		Class<?> returnType = method.getReturnType();
 
 		if (isVoid(returnType)) {
 			query.executeUpdate();
-			return null;
+			result = null;
 		} else if (isCollectionType(returnType)) {
-			return query.list();
+			result =  query.list();
 		} else {
-			return query.uniqueResult();
+			result = query.uniqueResult();
 		}
+		
+		return result;
 
 	}
 
 	private Object abortQuery(Method method) {
 
+		Object result;
+		
 		Class<?> returnType = method.getReturnType();
 
 		if (isCollectionType(returnType)) {
-			return Collections.emptyList();
+			result = Collections.emptyList();
 		} else if (returnType.isPrimitive()) {
-			return newPrimitiveZero(returnType);
+			result = newPrimitiveZero(returnType);
 		} else {
-			return null;
+			result = null;
 		}
+		
+		return result;
 	}
 
 	private void processPaging(Query query, Object arg) {

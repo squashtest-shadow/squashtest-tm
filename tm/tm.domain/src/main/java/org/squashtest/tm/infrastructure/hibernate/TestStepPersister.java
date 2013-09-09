@@ -294,13 +294,13 @@ public class TestStepPersister extends JoinedSubclassEntityPersister {
 	// **************************** init **************************
 	
 	private void init(PersistentClass persistentClass, SessionFactoryImplementor factory){
-		_createTableNamePattern(persistentClass, factory);
-		_createColumnName(factory);
+		createTableNamePattern(persistentClass, factory);
+		createColumnName(factory);
 		
 	}
 	
 	
-	private void _createTableNamePattern(PersistentClass persistentClass, SessionFactoryImplementor factory){
+	private void createTableNamePattern(PersistentClass persistentClass, SessionFactoryImplementor factory){
 		Iterator joinIter = persistentClass.getJoinClosureIterator(); 
 		while (joinIter.hasNext()){
 			Table tab = ((Join) joinIter.next()).getTable();
@@ -315,7 +315,7 @@ public class TestStepPersister extends JoinedSubclassEntityPersister {
 	}
 	
 	
-	private void _createColumnName(SessionFactoryImplementor factory){
+	private void createColumnName(SessionFactoryImplementor factory){
 		Column column = new Column(NONFORMATTED_COLUMN_NAME);
 		formattedColumnName[0] = column.getQuotedName(factory.getDialect());
 	}

@@ -31,6 +31,7 @@ import javax.inject.Inject;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
+import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.execution.Execution;
@@ -108,10 +109,14 @@ public class ExecutionRunnerControllerHelper {
 
 		Set<ExecutionStatus> statusSet = Collections.emptySet();
 		List<DenormalizedFieldValue> denormalizedFieldValues = Collections.emptyList();
+		Set<Attachment> attachments = Collections.emptySet();
+		
+		//TODO : check why we could want to process that page while part of the model is null (it should fail earlier when the DB cannot find this step)
 		if (executionStep != null) {
 			stepOrder = executionStep.getExecutionStepOrder();
 			statusSet = executionStep.getLegalStatusSet();
 			denormalizedFieldValues = denormalizedFieldValueFinder.findAllForEntity(executionStep);
+			attachments = attachmentHelper.findAttachments(executionStep);
 		}
 
 		model.addAttribute("execution", execution);
@@ -120,7 +125,7 @@ public class ExecutionRunnerControllerHelper {
 		model.addAttribute("totalSteps", total);
 		model.addAttribute("executionStatus", statusSet);
 		model.addAttribute("hasNextStep", stepOrder != (total - 1));
-		model.addAttribute("attachments", attachmentHelper.findAttachments(executionStep));
+		model.addAttribute("attachments", attachments);
 
 		addCurrentStepUrl(execution.getId(), model);
 	}

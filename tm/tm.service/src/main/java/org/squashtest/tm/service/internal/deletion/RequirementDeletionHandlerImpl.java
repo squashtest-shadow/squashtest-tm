@@ -117,11 +117,11 @@ public class RequirementDeletionHandlerImpl extends
 		List<Long>[] separatedIds = deletionDao.separateFolderFromRequirementIds(targetIds);
 		
 		//the folderIds are treated as usual.
-		OperationReport deletedFolders = _deleteFolderContent(separatedIds[0]);
+		OperationReport deletedFolders = deleteFolderContent(separatedIds[0]);
 		globalReport.mergeWith(deletedFolders);
 		
 		//the requirements gets a special treatment.
-		OperationReport rewiredRequirements = _rewireChildrenRequirements(separatedIds[1]);
+		OperationReport rewiredRequirements = rewireChildrenRequirements(separatedIds[1]);
 		globalReport.mergeWith(rewiredRequirements);
 		
 		OperationReport deletedRequirements = batchDeleteNodes(separatedIds[1]);
@@ -131,7 +131,7 @@ public class RequirementDeletionHandlerImpl extends
 	}
 	
 	
-	private OperationReport _deleteFolderContent(List<Long> folderIds){
+	private OperationReport deleteFolderContent(List<Long> folderIds){
 		if (! folderIds.isEmpty()){
 			OperationReport report = super.deleteNodes(folderIds);	// in that case, business as usual
 			deletionDao.flush();
@@ -144,7 +144,7 @@ public class RequirementDeletionHandlerImpl extends
 	
 	
 	//todo : send back an object that describes which requirements where rebound to which entities, and how they were renamed if so.
-	private OperationReport _rewireChildrenRequirements(List<Long> requirements){
+	private OperationReport rewireChildrenRequirements(List<Long> requirements){
 		
 		if (! requirements.isEmpty()){
 			OperationReport rewireReport = new OperationReport();
@@ -156,7 +156,7 @@ public class RequirementDeletionHandlerImpl extends
 				NodeContainer<Requirement> parent = (NodeContainer<Requirement>)pair[0];
 				Requirement requirement = (Requirement) pair[1];
 	
-				_renameContentIfNeededThenAttach(parent, requirement, rewireReport);
+				renameContentIfNeededThenAttach(parent, requirement, rewireReport);
 				
 			}
 			
@@ -216,7 +216,7 @@ public class RequirementDeletionHandlerImpl extends
 	
 	
 	
-	private void _renameContentIfNeededThenAttach(NodeContainer<Requirement> parent, Requirement toBeDeleted, OperationReport report){
+	private void renameContentIfNeededThenAttach(NodeContainer<Requirement> parent, Requirement toBeDeleted, OperationReport report){
 		
 		//abort if no operation is necessary.
 		if (toBeDeleted.getContent().isEmpty()){

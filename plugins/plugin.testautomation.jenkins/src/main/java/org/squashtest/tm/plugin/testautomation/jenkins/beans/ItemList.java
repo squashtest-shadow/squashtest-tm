@@ -36,19 +36,25 @@ public class ItemList {
 		this.items = Arrays.copyOf(items, items.length);
 	}
 
+	
 	public Item findQueuedBuildByExtId(String projectName, String extId){
 		
-		if (items == null) return null;
+		Item result = null;
 		
-		for (Item item : items){
-			
-			if (item == null) continue;
-			
-			if (item.representsProjectWithExtId(projectName, extId)){
-				return item;
+		// defensive check, probably useless if the json deserializer does the job correctly
+		if (items != null){
+			for (Item item : items){
+				
+				if (item == null) continue;
+				
+				if (item.representsProjectWithExtId(projectName, extId)){
+					result = item;
+					break;
+				}
 			}
 		}
-		return null;
+		
+		return result;
 	}
 	
 	public Item findQueuedBuildById(String projectName, int id){

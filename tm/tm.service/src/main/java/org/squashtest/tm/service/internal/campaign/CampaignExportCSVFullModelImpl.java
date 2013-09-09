@@ -608,22 +608,21 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 			do{
 				// test if we must move to the next test case
 				if (execStep == null && actionTestStep == null){
-					_nextTCSucc = _moveToNextTestCase();
+					_nextTCSucc = moveToNextTestCase();
 					if (! _nextTCSucc) {
 						//that was the last test case and we cannot iterate further more : we break the loop forcibly
 						_globalHasNext = false;
 						return;	
 					}else{
-						_reset_cached_itpcell();
-						_resetStepIndex();
-						_resetActionTestStepIndex();
+						reset_cached_itpcell();
+						resetStepIndex();
+						resetActionTestStepIndex();
 					}
 				}
 				
 				// find a suitable execution step
-				List<ExecutionStep> steps = new ArrayList<ExecutionStep>();
 				if(itp.getLatestExecution() != null){
-					steps = itp.getLatestExecution().getSteps();
+					List<ExecutionStep> steps = itp.getLatestExecution().getSteps();
 					
 					int stepsSize = steps.size();
 					stepIndex++;
@@ -713,7 +712,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 		}
 		
 		
-		private boolean _moveToNextTestCase(){
+		private boolean moveToNextTestCase(){
 			
 			boolean foundNextTC = false;
 			boolean _nextIterSucc;
@@ -721,11 +720,11 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 			do{
 				// test if we must move to the next iteration
 				if (itp == null){
-					_nextIterSucc = _moveToNextIteration();
+					_nextIterSucc = moveToNextIteration();
 					if (! _nextIterSucc) {
 						return false;	
 					}else{
-						_resetTCIndex();
+						resetTCIndex();
 					}
 				}
 				
@@ -753,7 +752,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 			return foundNextTC;
 		}
 		
-		private boolean _moveToNextIteration(){
+		private boolean moveToNextIteration(){
 			
 			boolean foundIter=false;
 			iterIndex++;
@@ -771,19 +770,19 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 		}
 
 		
-		private void _resetStepIndex(){
+		private void resetStepIndex(){
 			stepIndex = -1;
 		}
 
-		private void _resetActionTestStepIndex(){
+		private void resetActionTestStepIndex(){
 			actionTestStepIndex = -1;
 		}
 		
-		private void _resetTCIndex(){
+		private void resetTCIndex(){
 			itpIndex = -1;
 		}
 		
-		private void _reset_cached_itpcell(){
+		private void reset_cached_itpcell(){
 			_cached_itpcell_fixed.clear();
 			_cached_itpcell_cuf.clear();
 			_cached_itpcell_ready=false;

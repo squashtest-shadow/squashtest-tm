@@ -182,7 +182,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 		TestByProjectSorter sorter = new TestByProjectSorter(tests);
 		
 		while(sorter.hasNext()){
-			_startTestExecution(sorter.getNext(), reference);
+			startTestExecution(sorter.getNext(), reference);
 		}
 	
 	}
@@ -198,7 +198,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 		TestByProjectSorter sorter = new TestByProjectSorter(tests);
 		
 		while(sorter.hasNext()){
-			_startTestExecution(sorter.getNext(), reference, callbackService);
+			startTestExecution(sorter.getNext(), reference, callbackService);
 		}
 		
 	}
@@ -222,9 +222,9 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 			
 			try{
 			
-				Integer buildID = _optimisticGetBuildID(content.getProject(), reference);
+				Integer buildID = optimisticGetBuildID(content.getProject(), reference);
 			
-				_createAndAddURLs(resultMap, content, buildID);
+				createAndAddURLs(resultMap, content, buildID);
 			}
 			catch(TestAutomationException ex){
 				if (LOGGER.isErrorEnabled()){
@@ -243,7 +243,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 	
 	// ****************** private, second layer method *********************
 	
-	private void _startTestExecution(TestAutomationProjectContent content, String externalID){
+	private void startTestExecution(TestAutomationProjectContent content, String externalID){
 		
 		TestAutomationProject project = content.getProject();
 		
@@ -260,7 +260,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 		
 	}
 	
-	private void _startTestExecution(TestAutomationProjectContent content, String externalID, TestAutomationCallbackService service){
+	private void startTestExecution(TestAutomationProjectContent content, String externalID, TestAutomationCallbackService service){
 		
 		TestAutomationProject project = content.getProject();
 		
@@ -285,7 +285,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 	 * that method is said optimistic because it will attempt to get the buildID of a given build without certainty of its existence 
 	 * (the lack of which is likely to bring the process to a disappointing conclusion).
 	 */
-	private Integer _optimisticGetBuildID(TestAutomationProject project, String externalID){
+	private Integer optimisticGetBuildID(TestAutomationProject project, String externalID){
 		
 		HttpClient client = clientProvider.getClientFor(project.getServer());		
 		GetMethod method = requestFactory.newGetBuildsForProject(project);
@@ -304,7 +304,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 	}
 	
 	
-	private void _createAndAddURLs(Map<AutomatedTest, URL> allURLs, TestAutomationProjectContent content, Integer buildID){
+	private void createAndAddURLs(Map<AutomatedTest, URL> allURLs, TestAutomationProjectContent content, Integer buildID){
 		
 		for (AutomatedTest test : content.getTests()){
 			
@@ -356,7 +356,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 			
 			Integer buildID = step.getBuildID();
 			
-			_createAndAddURLs(resultUrlPerTest, content, buildID);
+			createAndAddURLs(resultUrlPerTest, content, buildID);
 			
 			Iterator<Map.Entry<AutomatedTest, URL>> iterator = resultUrlPerTest.entrySet().iterator();
 			
