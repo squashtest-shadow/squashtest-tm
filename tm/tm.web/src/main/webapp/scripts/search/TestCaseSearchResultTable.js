@@ -23,8 +23,11 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 
 	var TestCaseSearchResultTable = Backbone.View.extend({
 		el : "#test-case-search-result-table",
-		initialize : function(model) {
+		initialize : function(model, isAssociation, associateType, associateId) {
 			this.model = model;
+			this.isAssociation = isAssociation;
+			this.associateType = associateType;
+			this.associateId = associateId;
 			this.addSelectEditableToImportance = $.proxy(this._addSelectEditableToImportance, this);
 			this.addSimpleEditableToReference = $.proxy(this._addSimpleEditableToReference, this);
 			this.addSimpleEditableToLabel = $.proxy(this._addSimpleEditableToLabel, this);
@@ -36,99 +39,210 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 			this.findTreeBreadcrumbToNode =  $.proxy(this._findTreeBreadcrumbToNode, this);
 			this.getTableRowId = $.proxy(this._getTableRowId, this);
 			this.tableRowCallback = $.proxy(this._tableRowCallback, this);
-			var self = this, tableConf = {
-				"oLanguage" : {
-					"sUrl" : squashtm.app.contextRoot + "/datatables/messages"
-				},
-			    "bServerSide": true,  
-			    "bProcessing": true,  
-				"sAjaxSource" : squashtm.app.contextRoot + "/advanced-search/table",
-				 "fnServerParams": function ( aoData )   
-				    {  
-				        aoData.push( { "name": "model", "value": JSON.stringify(model) } );  
-				    }, 
-				"sServerMethod": "POST",
-				"bDeferRender" : true,
-				"bFilter" : false,
-				"fnRowCallback" : this.tableRowCallback,
-				"fnDrawCallback" : this.tableDrawCallback,
-				"aaSorting" : [ [ 2, "asc" ] ],
-				"aoColumnDefs" : [ {
-					"bSortable" : false,
-					"aTargets" : [ 0 ],
-					"mDataProp" : "entity-index",
-					"sClass" : "select-handle centered"
-				}, {
-					"aTargets" : [ 1 ],
-					"mDataProp" : "project-name",
-					"bSortable" : true
-				}, {		
-					"aTargets" : [ 2 ],
-					"mDataProp" : "test-case-id",
-					"bSortable" : true
-				}, {
-					"aTargets" : [ 3 ],
-					"mDataProp" : "test-case-ref",
-					"bSortable" : true,
-					"sClass" : "editable_ref"
-				}, {
-					"aTargets" : [ 4 ],
-					"mDataProp" : "test-case-label",
-					"bSortable" : true,
-					"sClass" : "editable_label"
-				}, {
-					"aTargets" : [ 5 ],
-					"mDataProp" : "test-case-weight",
-					"bSortable" : true,
-					"sClass" : "editable_imp"
-				}, {
-					"aTargets" : [ 6 ],
-					"mDataProp" : "test-case-requirement-nb",
-					"bSortable" : true
-				}, {
-					"aTargets" : [ 7 ],
-					"mDataProp" : "test-case-teststep-nb",
-					"bSortable" : true
-				}, {
-					"aTargets" : [ 8 ],
-					"mDataProp" : "test-case-iteration-nb",
-					"bSortable" : true
-				}, {
-					"aTargets" : [ 9 ],
-					"mDataProp" : "test-case-attachment-nb",
-					"bSortable" : true
-				}, {
-					"aTargets" : [ 10 ],
-					"mDataProp" : "test-case-created-by",
-					"bSortable" : true
-				}, {
-					"aTargets" : [ 11 ],
-					"mDataProp" : "test-case-modified-by",
-					"bSortable" : true
-				}, {
-					"aTargets" : [ 12 ],
-					"mDataProp" : "empty-openinterface2-holder",
-					"sClass" : "centered search-open-interface2",
-					"sWidth" : "2em",
-					"bSortable" : false
-				}, {
-					"aTargets" : [ 13 ],
-					"mDataProp" : "empty-opentree-holder",
-					"sClass" : "centered search-open-tree",
-					"sWidth" : "2em",
-					"bSortable" : false
-				}, {
-					"aTargets" : [ 14 ],
-					"mDataProp" : "editable",
-					"bVisible" : false,
-					"bSortable" : false
-				} ],
-				"sDom" : 'ft<"dataTables_footer"lirp>'
-			}, squashConf = {
-				enableHover : true
-			};
+			this.addAssociationCheckboxes  = $.proxy(this._addAssociationCheckboxes, this);
+			
+			var self;
+			
+			if(isAssociation){
+				
+				self = this, tableConf = {
+						"oLanguage" : {
+							"sUrl" : squashtm.app.contextRoot + "/datatables/messages"
+						},
+					    "bServerSide": true,  
+					    "bProcessing": true,  
+						"sAjaxSource" : squashtm.app.contextRoot + "/advanced-search/table",
+						 "fnServerParams": function ( aoData )   
+						    {  
+						        aoData.push( { "name": "model", "value": JSON.stringify(model) } );  
+						        aoData.push( { "name": "associateResultWithType", "value": associateType } );  
+						        aoData.push( { "name": "id", "value":  associateId } );  
+						    }, 
+						"sServerMethod": "POST",
+						"bDeferRender" : true,
+						"bFilter" : false,
+						"fnRowCallback" : this.tableRowCallback,
+						"fnDrawCallback" : this.tableDrawCallback,
+						"aaSorting" : [ [ 3, "asc" ] ],
+						"aoColumnDefs" : [ {
+							"bSortable" : false,
+							"aTargets" : [ 0 ],
+							"mDataProp" : "empty-associationcheckbox-holder",
+							"sClass" : "centered association-checkbox",
+							"sWidth" : "2em"
+						}, {
+							"bSortable" : false,
+							"aTargets" : [ 1 ],
+							"mDataProp" : "entity-index",
+							"sClass" : "select-handle centered"
+						}, {
+							"aTargets" : [ 2 ],
+							"mDataProp" : "project-name",
+							"bSortable" : true
+						}, {		
+							"aTargets" : [ 3 ],
+							"mDataProp" : "test-case-id",
+							"bSortable" : true
+						}, {
+							"aTargets" : [ 4 ],
+							"mDataProp" : "test-case-ref",
+							"bSortable" : true,
+							"sClass" : "editable_ref"
+						}, {
+							"aTargets" : [ 5 ],
+							"mDataProp" : "test-case-label",
+							"bSortable" : true,
+							"sClass" : "editable_label"
+						}, {
+							"aTargets" : [ 6 ],
+							"mDataProp" : "test-case-weight",
+							"bSortable" : true,
+							"sClass" : "editable_imp"
+						}, {
+							"aTargets" : [ 7 ],
+							"mDataProp" : "test-case-requirement-nb",
+							"bSortable" : true
+						}, {
+							"aTargets" : [ 8 ],
+							"mDataProp" : "test-case-teststep-nb",
+							"bSortable" : true
+						}, {
+							"aTargets" : [ 9 ],
+							"mDataProp" : "test-case-iteration-nb",
+							"bSortable" : true
+						}, {
+							"aTargets" : [ 10 ],
+							"mDataProp" : "test-case-attachment-nb",
+							"bSortable" : true
+						}, {
+							"aTargets" : [ 11 ],
+							"mDataProp" : "test-case-created-by",
+							"bSortable" : true
+						}, {
+							"aTargets" : [ 12 ],
+							"mDataProp" : "test-case-modified-by",
+							"bSortable" : true
+						}, {
+							"aTargets" : [ 13 ],
+							"mDataProp" : "empty-openinterface2-holder",
+							"sClass" : "centered search-open-interface2",
+							"sWidth" : "2em",
+							"bSortable" : false
+						}, {
+							"aTargets" : [ 14 ],
+							"mDataProp" : "empty-opentree-holder",
+							"sClass" : "centered search-open-tree",
+							"sWidth" : "2em",
+							"bSortable" : false
+						}, {
+							"aTargets" : [ 15 ],
+							"mDataProp" : "editable",
+							"bVisible" : false,
+							"bSortable" : false
+						} ],
+						"sDom" : 'ft<"dataTables_footer"lirp>'
+					}, squashConf = {
+						enableHover : true
+					};
+				
+				this.$el.squashTable(tableConf, squashConf);
+			} else {
+				self = this, tableConf = {
+						"oLanguage" : {
+							"sUrl" : squashtm.app.contextRoot + "/datatables/messages"
+						},
+					    "bServerSide": true,  
+					    "bProcessing": true,  
+						"sAjaxSource" : squashtm.app.contextRoot + "/advanced-search/table",
+						 "fnServerParams": function ( aoData )   
+						    {  
+						        aoData.push( { "name": "model", "value": JSON.stringify(model) } );  
+						    }, 
+						"sServerMethod": "POST",
+						"bDeferRender" : true,
+						"bFilter" : false,
+						"fnRowCallback" : this.tableRowCallback,
+						"fnDrawCallback" : this.tableDrawCallback,
+						"aaSorting" : [ [ 2, "asc" ] ],
+						"aoColumnDefs" : [ {
+							"bSortable" : false,
+							"aTargets" : [ 0 ],
+							"mDataProp" : "entity-index",
+							"sClass" : "select-handle centered"
+						}, {
+							"aTargets" : [ 1 ],
+							"mDataProp" : "project-name",
+							"bSortable" : true
+						}, {		
+							"aTargets" : [ 2 ],
+							"mDataProp" : "test-case-id",
+							"bSortable" : true
+						}, {
+							"aTargets" : [ 3 ],
+							"mDataProp" : "test-case-ref",
+							"bSortable" : true,
+							"sClass" : "editable_ref"
+						}, {
+							"aTargets" : [ 4 ],
+							"mDataProp" : "test-case-label",
+							"bSortable" : true,
+							"sClass" : "editable_label"
+						}, {
+							"aTargets" : [ 5 ],
+							"mDataProp" : "test-case-weight",
+							"bSortable" : true,
+							"sClass" : "editable_imp"
+						}, {
+							"aTargets" : [ 6 ],
+							"mDataProp" : "test-case-requirement-nb",
+							"bSortable" : true
+						}, {
+							"aTargets" : [ 7 ],
+							"mDataProp" : "test-case-teststep-nb",
+							"bSortable" : true
+						}, {
+							"aTargets" : [ 8 ],
+							"mDataProp" : "test-case-iteration-nb",
+							"bSortable" : true
+						}, {
+							"aTargets" : [ 9 ],
+							"mDataProp" : "test-case-attachment-nb",
+							"bSortable" : true
+						}, {
+							"aTargets" : [ 10 ],
+							"mDataProp" : "test-case-created-by",
+							"bSortable" : true
+						}, {
+							"aTargets" : [ 11 ],
+							"mDataProp" : "test-case-modified-by",
+							"bSortable" : true
+						}, {
+							"aTargets" : [ 12 ],
+							"mDataProp" : "empty-openinterface2-holder",
+							"sClass" : "centered search-open-interface2",
+							"sWidth" : "2em",
+							"bSortable" : false
+						}, {
+							"aTargets" : [ 13 ],
+							"mDataProp" : "empty-opentree-holder",
+							"sClass" : "centered search-open-tree",
+							"sWidth" : "2em",
+							"bSortable" : false
+						}, {
+							"aTargets" : [ 14 ],
+							"mDataProp" : "editable",
+							"bVisible" : false,
+							"bSortable" : false
+						} ],
+						"sDom" : 'ft<"dataTables_footer"lirp>'
+					}, squashConf = {
+						enableHover : true
+					};
+				
+				this.$el.squashTable(tableConf, squashConf);
+			}
+			
 
-			this.$el.squashTable(tableConf, squashConf);
 		},
 
 		_getTableRowId : function(rowData) {
@@ -177,6 +291,10 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 			});
 		},
 		
+		_addAssociationCheckboxes : function(row, data) {
+			$(".association-checkbox", row).html("<input type='checkbox'/>");
+		},
+		
 		_addSimpleEditableToLabel : function(row, data) {
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
@@ -196,9 +314,13 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 				this.addSimpleEditableToLabel(row,data);
 				this.addSelectEditableToImportance(row,data);
 			}
-			
+	
 			this.addInterfaceLevel2Link(row,data);
 			this.addTreeLink(row,data);
+			
+			if(this.isAssociation){
+				this.addAssociationCheckboxes(row, data);
+			}
 		},
 
 		_tableDrawCallback : function() {

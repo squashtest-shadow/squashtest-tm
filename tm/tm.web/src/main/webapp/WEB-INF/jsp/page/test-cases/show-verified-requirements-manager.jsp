@@ -116,7 +116,7 @@
 	</jsp:attribute>
 	
 	<jsp:attribute name="tree">
-		<tree:linkables-tree workspaceType="requirement" id="linkable-requirements-tree" rootModel="${ linkableLibrariesModel }"/>
+		<tree:linkables-tree workspaceType="requirement" elementType="testcase" elementId="${ testCase.id }" id="linkable-requirements-tree" rootModel="${ linkableLibrariesModel }"/>
 	</jsp:attribute>
 	
 	<jsp:attribute name="tableTitlePane">		

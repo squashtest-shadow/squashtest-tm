@@ -35,17 +35,111 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			this.getIdsOfSelectedTableRowList =  $.proxy(this._getIdsOfSelectedTableRowList, this);
 			this.updateDisplayedImportance =  $.proxy(this._updateDisplayedImportance, this);
 			var model = JSON.parse($("#searchModel").text());
+			this.isAssociation = !!$("#associationType").length;
+			if(this.isAssociation){
+				this.associationType = $("#associationType").text();
+				this.associationId = $("#associationId").text();
+			}
 			this.model = model;
-			new TestCaseSearchResultTable(model);
+			new TestCaseSearchResultTable(model, this.isAssociation, this.associationType, this.associationId);
 		},
 
 		events : {
 			"click #export-search-result-button" : "exportResults",
 			"click #modify-search-result-button" : "editResults",
 			"click #new-search-button" : "newSearch",
-			"click #modify-search-button" : "modifySearch"	
+			"click #modify-search-button" : "modifySearch",
+			"click #associate-selection-button" : "associateSelection",
+			"click #select-all-button" : "selectAllForAssocation",
+			"click #associate-all-button" : "associateAll"
 		},
 
+		
+		
+		associateSelection : function(){
+			var table = $('#test-case-search-result-table').dataTable();
+			var rows = table.fnGetNodes();
+			var associationId = this.associationId;
+			var ids = [];
+			$(rows).each(function(index, row) {
+				if($("input[type=checkbox]", row).is(":checked")){
+					//associate
+					var id = $(".testcaseid", row).text();
+					ids.push(id);
+				}
+			});
+			
+			if("requirement" === this.associationType){
+				
+				var st = "";
+				var i;
+				
+				for(i=0; i<ids.length; i++){
+					if(i+1 == ids.length){
+						st = st+ids[i];
+					} else {
+						st = st+ids[i]+",";
+					}
+				}
+				
+
+				
+				$.ajax({
+					type: "POST",
+					url : squashtm.app.contextRoot + "/requirement-versions/" + associationId + "/verifying-test-cases/"+st
+				}).done(function() {
+					document.location.href = squashtm.app.contextRoot + "/requirement-versions/" + associationId + "/verifying-test-cases/manager";
+				});
+				
+			} else if ("campaign" === this.associationType){
+				
+				
+				$.ajax({
+					type: "POST",
+					url : squashtm.app.contextRoot + "/campaigns/" + associationId + "/test-plan",
+					data : { "testCasesIds[]" : ids }
+				}).done(function() {
+					document.location.href = squashtm.app.contextRoot + "/campaigns/" + associationId + "/test-plan/manager";				
+				});
+					
+			} else if ("iteration" === this.associationType){
+
+				
+				$.ajax({
+					type: "POST",
+					url : squashtm.app.contextRoot + "/iterations/" + associationId + "/test-plan",
+					data : { "testCasesIds[]" : ids }
+				}).done(function() {
+					document.location.href = squashtm.app.contextRoot + "/iterations/" + associationId + "/test-plan-manager";				
+				});
+				
+			} else if ("testsuite" === this.associationType){
+
+				
+				$.ajax({
+					type: "POST",
+					url : squashtm.app.contextRoot + "/test-suites/" + associationId + "/test-plan",
+					data: { "testCasesIds[]" : ids }
+				}).done(function() {
+					document.location.href = squashtm.app.contextRoot + "/test-suites/" + associationId + "/test-plan-manager";					
+				});
+				
+			}
+		},
+		
+		selectAllForAssocation : function(){
+			var table = $('#test-case-search-result-table').dataTable();
+			var rows = table.fnGetNodes();
+			$(rows).each(function(index, row) {
+				$("input[type=checkbox]", row).attr('checked', true);
+			});
+		},
+		
+		associateAll : function(){
+			this.selectAllForAssocation();
+			this.associateSelection();
+		},
+		
 		modifySearch : function(){
 			this.post(squashtm.app.contextRoot + "/advanced-search?testcase", {
 				searchModel : JSON.stringify(this.model)
@@ -69,7 +163,12 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		},
 		
 		newSearch : function(){
-			document.location.href= squashtm.app.contextRoot +"/advanced-search?testcase";
+			
+			if(this.isAssociation){
+				document.location.href= squashtm.app.contextRoot +"/advanced-search?testcase&id="+this.associationId+"&associateResultWithType="+this.associationType;
+			} else {
+				document.location.href= squashtm.app.contextRoot +"/advanced-search?testcase";
+			}
 		},
 		
 		exportResults : function(){

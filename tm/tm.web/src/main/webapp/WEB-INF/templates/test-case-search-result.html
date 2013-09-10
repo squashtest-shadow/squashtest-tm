@@ -142,11 +142,25 @@
 							th:value="#{label.Export}" id="export-search-result-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
 							role="button" aria-disabled="false" />
+						<input type="button" th:if="${associateResult}"
+							th:value="#{label.AssociateSelection}" id="associate-selection-button"
+							class="button ui-button ui-widget ui-state-default ui-corner-all"
+							role="button" aria-disabled="false" />
+						<input type="button" th:if="${associateResult}"
+							th:value="#{label.SelectAllForSelection}" id="select-all-button"
+							class="button ui-button ui-widget ui-state-default ui-corner-all"
+							role="button" aria-disabled="false" />
+						<input type="button" th:if="${associateResult}"
+							th:value="#{label.AssociateAll}" id="associate-all-button"
+							class="button ui-button ui-widget ui-state-default ui-corner-all"
+							role="button" aria-disabled="false" />
 					</div>
 					<div style="clear: both;"></div>
 				</div>
 				
 				<div id="searchModel" class="not-displayed" th:text="${searchModel}"></div>
+				<div th:if="${associateResult}" id="associationType" class="not-displayed" th:text="${associateResultWithType}"></div>
+				<div th:if="${associateResult}" id="associationId" class="not-displayed" th:text="${associateId}"></div>
 				
 				<div id="search-results" class="toggle-panel">
 					<div id="search-results-panel" class="toggle-panel-main">
@@ -154,6 +168,7 @@
 							th:attr="data-def='filter, hover, datakeys-id=test-case-id'">
 							<thead>
 								<tr>
+									<th th:if="${associateResult}" th:attr="data-def='map=empty-associationcheckbox-holder'"></th>
 									<th th:attr="data-def='select, map=user-index'">#</th>
 									<th th:attr="data-def='map=project-name'"
 										th:text="#{label.project}">project name</th>

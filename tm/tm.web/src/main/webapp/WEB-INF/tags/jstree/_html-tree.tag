@@ -37,4 +37,5 @@
 <div  class="tree-filter-reminder-div">
 	<span class="not-displayed"><f:message key="tabbed_panel.tree.pane.filter.enabled.label"/></span>
 </div>
+
 <div id="${ treeId }" class="tree" data-importable="${ importable }"></div>

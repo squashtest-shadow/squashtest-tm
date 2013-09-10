@@ -230,11 +230,26 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 		},
 		
 		showResults : function() {
-			this.extractSearchModel();
 			
-			this.post(squashtm.app.contextRoot + "/advanced-search/results?testcase", {
-				searchModel : JSON.stringify(this.model)
-			});	
+			this.extractSearchModel();
+
+			if(!!$("#associationType").length){
+				
+				var associateResultWithType = $("#associationType").text();
+				var id = $("#associationId").text();
+				
+				this.post(squashtm.app.contextRoot + "/advanced-search/results?testcase", {
+					searchModel : JSON.stringify(this.model),
+					associateResultWithType : associateResultWithType,
+					id : id
+				});	
+				
+				
+			} else {
+				this.post(squashtm.app.contextRoot + "/advanced-search/results?testcase", {
+					searchModel : JSON.stringify(this.model)
+				});	
+			}
 		},
 
 		makeTogglePanel : function(id, key, open) {

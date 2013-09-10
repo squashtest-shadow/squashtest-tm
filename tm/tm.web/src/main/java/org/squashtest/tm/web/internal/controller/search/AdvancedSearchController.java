@@ -134,25 +134,69 @@ public class AdvancedSearchController {
 
 
 	@RequestMapping( method = RequestMethod.GET, params = "testcase")
-	public String getTestCaseSearchTab(Model model) {
+	public String getTestCaseSearchTab(Model model, @RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
+		
+		if(associateResultWithType != null && !"".equals(associateResultWithType.trim())){
+			model.addAttribute("associateResult", true);
+			model.addAttribute("associateResultWithType", associateResultWithType);
+			model.addAttribute("associateId", id);
+		} else {
+			model.addAttribute("associateResult", false);
+		}
+		
 		return "test-case-search-input.html";
 	}
-
+	
 	@RequestMapping( method = RequestMethod.POST, params = "testcase")
-	public String getTestCaseSearchTab(Model model,  @RequestParam String searchModel) {
+	public String getTestCaseSearchTab(Model model,  @RequestParam String searchModel,
+			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
+		
+		if(associateResultWithType != null && !"".equals(associateResultWithType.trim())){
+			model.addAttribute("associateResult", true);
+			model.addAttribute("associateResultWithType", associateResultWithType);
+			model.addAttribute("associateId", id);
+		} else {
+			model.addAttribute("associateResult", false);
+		}
+		
 		model.addAttribute("searchModel", searchModel);
+		
 		return "test-case-search-input.html";
 	}
 	
 	@RequestMapping(value = "/results", method = RequestMethod.POST, params = "testcase")
-	public String getTestCaseSearchResultPage(Model model, @RequestParam String searchModel) {
+	public String getTestCaseSearchResultPage(Model model, @RequestParam String searchModel,
+			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
+		
+		if(associateResultWithType != null && !"".equals(associateResultWithType.trim())){
+			model.addAttribute("associateResult", true);
+			model.addAttribute("associateResultWithType", associateResultWithType);
+			model.addAttribute("associateId", id);
+		} else {
+			model.addAttribute("associateResult", false);
+		}
+		
 		model.addAttribute("searchModel", searchModel);
+		
 		return "test-case-search-result.html";
 	} 
 	
+	private boolean isInAssociationContext(String associateResultWithType){
+
+		boolean isInAssociationContext = false;
+		
+		if(associateResultWithType!= null){
+			isInAssociationContext = true;
+		}
+		
+		return isInAssociationContext;
+	}
+	
+	
 	@RequestMapping(value = "/table", method = RequestMethod.POST, params =  { "model", RequestParams.S_ECHO_PARAM})
 	@ResponseBody
-	public DataTableModel getTableModel(final DataTableDrawParameters params, final Locale locale, @RequestParam(value = "model") String model) throws JsonParseException, JsonMappingException, IOException {
+	public DataTableModel getTableModel(final DataTableDrawParameters params, final Locale locale, @RequestParam(value = "model") String model,
+			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) throws JsonParseException, JsonMappingException, IOException {
 
 		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);
 
@@ -160,7 +204,9 @@ public class AdvancedSearchController {
 
 		PagedCollectionHolder<List<TestCase>> holder = advancedSearchService.searchForTestCases(searchModel, paging);
 
-		return new TestCaseSearchResultDataTableModelHelper(locale, messageSource, permissionService, iterationService).buildDataModel(holder, params.getsEcho());
+		boolean isInAssociationContext = isInAssociationContext(associateResultWithType);
+		
+		return new TestCaseSearchResultDataTableModelHelper(locale, messageSource, permissionService, iterationService, isInAssociationContext).buildDataModel(holder, params.getsEcho());
 	}
 	
 	private SearchInputPanelModel createGeneralInfoPanel(Locale locale){
@@ -400,12 +446,14 @@ public class AdvancedSearchController {
 		private Locale locale;
 		private PermissionEvaluationService permissionService;
 		private IterationModificationService iterationService;
+		private boolean isInAssociationContext;
 		
-		private TestCaseSearchResultDataTableModelHelper(Locale locale, InternationalizationHelper messageSource, PermissionEvaluationService permissionService, IterationModificationService iterationService) {
+		private TestCaseSearchResultDataTableModelHelper(Locale locale, InternationalizationHelper messageSource, PermissionEvaluationService permissionService, IterationModificationService iterationService, boolean isInAssociationContext) {
 			this.locale = locale;
 			this.messageSource = messageSource;
 			this.permissionService = permissionService;
 			this.iterationService = iterationService;
+			this.isInAssociationContext = isInAssociationContext;
 		}
 
 		private String formatImportance(TestCaseImportance importance, Locale locale) {
@@ -416,11 +464,18 @@ public class AdvancedSearchController {
 			return permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", item);
 		}
 		
+		private boolean isInAssociationContext(){
+			return this.isInAssociationContext;
+		}
+		
 		@Override
 		public Map<String, Object> buildItemData(TestCase item) {
 			final AuditableMixin auditable = (AuditableMixin) item;
 			Map<String, Object> res = new HashMap<String, Object>();
 			res.put("project-name", item.getProject().getName());
+			if(isInAssociationContext()){
+				res.put("empty-associationcheckbox-holder", " ");
+			}
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 			res.put("test-case-id", item.getId());
 			res.put("test-case-ref", item.getReference());

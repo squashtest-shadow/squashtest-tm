@@ -25,10 +25,23 @@
 
 <%@ attribute name="workspaceType" required="false" description="if set, will override the default icons"%>
 
+<%@ attribute name="elementType" required="false" description="provides context for advanced research"%>
+<%@ attribute name="elementId" required="false" description="provides context for advanced research"%>
+
+
 
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 <%@ taglib prefix="tree" tagdir="/WEB-INF/tags/jstree" %>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
+<div id="tree_element_menu" class="tree-top-toolbar">
+	<div class="button-group">
+		<a id="search-tree-button" href="JavaScript:void(0);" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only" role="button" aria-disabled="false" title="<f:message key='tree.button.search.label' />...">
+			<span class="ui-button-icon-primary ui-icon ui-icon-search"></span>
+			<span class="ui-button-text"><f:message key="tree.button.search.label" />...</span>
+		</a>
+	</div>
+</div>
 
 <tree:_html-tree treeId="${ id }" />
 <script type="text/javascript">
@@ -42,7 +55,11 @@
 	$(function(){
 		require( ["tree"], function(initTree){
 			initTree.initLinkableTree(conf);				
-		});				
+		});		
+		
+		$("#search-tree-button").on('click', function(){
+			document.location.href = squashtm.app.contextRoot + "/advanced-search?testcase&id=${elementId}&associateResultWithType=${elementType}";
+		});
 	});
 	
 </script>
