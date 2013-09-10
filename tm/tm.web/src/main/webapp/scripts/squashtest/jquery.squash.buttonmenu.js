@@ -60,25 +60,49 @@ define([ 'jquery', 'jqueryui', 'jquery.squash.squashbutton' ], function($) {
 			'no-auto-hide' : false,
 			_firstInvokation : true
 		},
+		
+		//will wrap both elements in an enclosing div, that will help adjust their relative positionning later.
+		_createStructure : function(){
+			
+			var btn = this.element,
+				components = btn.add(btn.next());
+			
+			//respect the basic display mode that the button originally had
+			var display = btn.css('display')
+			var position = btn.css('position');
+			var div = $('<div/>',{
+				style : "display:"+display+"; position:"+position+";"
+			});
+			
+			components.wrapAll(div);
+			
+		},
 
 		_create : function() {
 			
+			var self = this;
 			var settings = this.options;
+
 			var button = this.element;
 			var menu = button.next();
 
-			this._menuCssTweak(menu);
-			this._bindLi(menu);
+			// basics
+			this._createStructure();			
+			this._menuCssTweak();
+			this._bindLi();
 
+			// jqueryfication
 			if (! settings.preskinned){
 				button.squashButton(settings.button);
 			}
+			
 			menu.menu(settings.menu);
 
+			// events
 			button.on('click', function() {
 				menu.toggle();
-				if (! settings._firstInvokation){
-					this._fixRender(menu);
+				if (settings._firstInvokation){
+					self._fixRender(menu);
 				}
 			});
 
@@ -116,7 +140,8 @@ define([ 'jquery', 'jqueryui', 'jquery.squash.squashbutton' ], function($) {
 			settings._firstInvokation = false;			
 		},
 
-		_menuCssTweak : function(menu) {
+		_menuCssTweak : function() {
+			var menu = this.element.next();
 			menu.hide();
 			menu.removeClass('not-displayed');
 			menu.addClass('squash-buttonmenu');
@@ -129,8 +154,10 @@ define([ 'jquery', 'jqueryui', 'jquery.squash.squashbutton' ], function($) {
 			}
 		},
 
-		_bindLi : function(menu) {
-			var settings = this.options;
+		_bindLi : function() {
+			var settings = this.options,
+				menu = this.element.next();
+			
 			menu.on('click', 'li', function(evt) {
 				var $li = $(this),
 					shouldPropagate = true;

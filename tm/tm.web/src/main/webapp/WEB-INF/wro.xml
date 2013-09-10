@@ -69,7 +69,6 @@
     <!-- squashtree is loaded through ajax by jstree
     <css>/styles/squashtree.css</css> 
     -->
-    <css>/styles/squashtm.fg.menu.css</css>
   </group>
   
   <!-- These groups produce squash's various themed css -->

@@ -54,7 +54,8 @@ label.afterDisabled:after, input + label:after {
 	min-height: 100%;
 	width: 1cm;
 	background: url("../images/fond_nav.gif") repeat-y scroll 0 0 #393834;
-	margin-right: 0.4cm;
+	margin-right: 0.4cm;	
+	z-index : 2;	/* this ensures that menus from this sidebar are displayed over the rest (which have lesser z-index)*/
 }
 
 #workspace {
@@ -473,21 +474,21 @@ html.execute-html body.ieo-body {
 /* -------------------------------------------*/
 /* ---------->>> NAVIGATION DIV <<<-----------*/
 /* -------------------------------------------*/
-div#test_mgt_nav {
+#test_mgt_nav {
 	height: 60%;
 	width: 100%;
 	text-align: center;
 	margin-top: 5px;
 }
 
-div#admin_nav {
+#admin_nav {
 	bottom: 0%;
 	height: 20%;
 	left: 0%;
 	width: 100%;
 }
 
-div#navigation .nav_btn>img {
+#navigation .nav_btn>img {
 	width: 30px;
 	border-width: 0;
 	border-style: none;
@@ -498,7 +499,7 @@ div#navigation .nav_btn>img {
 	margin-bottom: 0.5em;
 }
 
-div#nav_logo {
+#nav_logo {
 	bottom: 1em;
 	height: auto;
 	position: absolute;

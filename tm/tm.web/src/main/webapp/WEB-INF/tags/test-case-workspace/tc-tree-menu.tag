@@ -55,7 +55,7 @@
 	
 	<c:if test="${ not empty wizards }">
 	<div id="wizard-tree-pane" class="button-group">
-		<a id="wizard-tree-button" class="not-displayed buttonmenu" href="JavaScript:void(0);" data-icon="ui-icon-star" data-text="false"><f:message key="label.wizards" />...</a>
+		<a id="wizard-tree-button" class="buttonmenu" href="JavaScript:void(0);" data-icon="ui-icon-star" data-text="false"><f:message key="label.wizards" />...</a>
 		<script id="ws-wizard-tree-menu-template" type="text/x-handlebars-template">		
 		<ul id="ws-wizard-tree-menu">
 			{{#each wizards}}

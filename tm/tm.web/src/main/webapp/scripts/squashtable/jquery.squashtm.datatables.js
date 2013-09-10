@@ -447,7 +447,7 @@ function memorizeLastSelectedRow(row, table) {
  */
 function saveTableSelection(dataTable, getRowIdCallback) {
 	var selectedIds = getIdsOfSelectedTableRows(dataTable, getRowIdCallback);
-	dataTable.attr('selectedIds', selectedIds);
+	dataTable.data('selectedIds', selectedIds);
 }
 
 /**
@@ -520,11 +520,11 @@ function getIdsOfSelectedAssociationTableRows(dataTable, getRowIdCallback) {
 }
 
 function restoreTableSelection(dataTable, getRowIdCallback) {
-	var selectedIds = dataTable.attr('selectedIds');
-	if (selectedIds !== null) {
+	var selectedIds = dataTable.data('selectedIds');
+	if (!!selectedIds) {
 		selectTableRowsOfIds(dataTable, selectedIds, getRowIdCallback);
 	}
-	dataTable.removeAttr('selectedIds');
+	dataTable.data('selectedIds', null);
 }
 
 /* private */

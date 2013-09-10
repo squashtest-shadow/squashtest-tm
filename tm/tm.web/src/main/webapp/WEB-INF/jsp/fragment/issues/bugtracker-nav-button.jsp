@@ -28,42 +28,36 @@
 
 
 <fmt:message var="bTitle" key="workspace.bugtracker.button.label" />
-<a id="bugtracker-link" class="nav_btn" href="#bugtrackers"><img
+<a id="bugtracker-link" class="nav_btn nuttonmenu" >
+	<img
 	src="${ pageContext.servletContext.contextPath }/images/Button_Nav_Bugtracker_off.png"
-	alt="${ bTitle }" title="${ bTitle }" border="0" /> </a>
-	
-	
-<div id="bugtrackers" style="display: none">
-	<ul>
-		<c:forEach var="bugtracker" items="${bugtrackers}">
-			<li>
-				<c:choose>
-					<c:when test="${ bugtracker.iframeFriendly }">
-					<s:url var="workspaceUrl" value="/bugtracker/{bugtrackerId}/workspace">
-						<s:param name="bugtrackerId" value="${bugtracker.id}" />
-					</s:url>
-						<a id="bugtracker-${bugtracker.id }" href="${ workspaceUrl }" >${bugtracker.name}</a>
-					</c:when>
-					<c:otherwise>
-						<a id="bugtracker-${bugtracker.id }" href="javascript:open${bugtracker.id }()"  >${bugtracker.name}</a>
-						<script>function open${bugtracker.id}(){
-							window.open("${ bugtracker.URL }", "_newtab");
-						}</script>
-					</c:otherwise>
-				</c:choose>
-			</li>
-		</c:forEach>
-	</ul>
-</div>
+	alt="${ bTitle }" title="${ bTitle }" border="0" /> 
+</a>
+
+<ul class="not-displayed width:130px;">
+	<c:forEach var="bugtracker" items="${bugtrackers}">
+		<li>
+			<c:choose>
+				<c:when test="${ bugtracker.iframeFriendly }">
+				<s:url var="workspaceUrl" value="/bugtracker/{bugtrackerId}/workspace">
+					<s:param name="bugtrackerId" value="${bugtracker.id}" />
+				</s:url>
+					<a id="bugtracker-${bugtracker.id }" href="${ workspaceUrl }" >${bugtracker.name}</a>
+				</c:when>
+				<c:otherwise>
+					<a id="bugtracker-${bugtracker.id }" href="javascript:open${bugtracker.id }()"  >${bugtracker.name}</a>
+					<script>function open${bugtracker.id}(){
+						window.open("${ bugtracker.URL }", "_newtab");
+					}</script>
+				</c:otherwise>
+			</c:choose>
+		</li>
+	</c:forEach>
+</ul>
 <script>
 require([ "common" ], function() {
-	require([ "domReady","jquery", "jquery.squash.fg.menu" ], function(domReady,$) {
-				$("#bugtracker-link").fgmenu({
-					content : $('#bugtracker-link').next().html(),
-					showSpeed : 0,
-					width : 130
-				});
-
-			});
+	require([ "domReady","jquery", "jquery.squash.buttonmenu" ], function(domReady,$) {
+		$("#bugtracker-link").buttonmenu({preskinned:true});
+	});
 });
 		</script>

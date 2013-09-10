@@ -84,7 +84,6 @@ requirejs.config({
 				"jquery.squash.confirmdialog" : "squashtest/jquery.squash.confirmdialog",
 				"jquery.squash.oneshotdialog" : "squashtest/jquery.squashtm.oneshotdialog",
 				"workspace.contextual-content" : "workspace/workspace.contextual-content",	
-				"jquery.squash.fg.menu" : "squashtest/jquery.squashtm.fg.menu",
 				"jquery.squash.squashbutton" : "squashtest/jquery.squash.squashbutton",
 				"jquery.squash.jeditable" : "squashtest/jquery.squashtm.jeditable.ext",
 				"jquery.squash.projectpicker" : "squash/jquery.squashtm.projectpicker",
@@ -180,10 +179,6 @@ requirejs.config({
 				"jquery.squash.oneshotdialog" : {
 					deps : [ "jquery", "jqueryui" ],
 					exports : "jquerySquashOneShotConfirm"
-				},
-				"jquery.squash.fg.menu" : {
-					deps : [ "jquery", "jqueryui" ],
-					exports : "jquerySquashtmFgMenu"
 				},
 				"jquery.squash.jeditable" : {
 					deps : [ "jquery", "jeditable", "jeditable.ckeditor" ],

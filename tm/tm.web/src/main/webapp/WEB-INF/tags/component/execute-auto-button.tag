@@ -83,35 +83,30 @@
 	 --%>
 	 <f:message var="autoExecLabel" key="iteration.suite.execution.auto.label"/>
 	<input id="execute-auto-button" class="button run-menu" type="button" value="${autoExecLabel}" />
-	<div id="execute-auto" style="display: none">
-		<ul>
-			<li><a class="execute-all" href="javascript:void(0)"><f:message
-						key="iteration.suite.execution.auto.all.label" /> </a></li>
-			<li><a class="execute-selection" href="javascript:void(0)"><f:message
-						key='iteration.suite.execution.auto.selection.label' /> </a></li>
-		</ul>
-	</div>
+	<ul class="not-displayed">
+		<li>
+			<a id="execute-auto-execute-all" href="javascript:void(0)">
+				<f:message	key="iteration.suite.execution.auto.all.label" /> 
+			</a>
+		</li>
+		<li>
+			<a class="execute-auto-execute-selection" href="javascript:void(0)">
+				<f:message	key='iteration.suite.execution.auto.selection.label' /> 
+			</a>
+		</li>
+	</ul>
+	
 
 	<script>
+	
 		$(function() {
-			$("#execute-auto-button").fgmenu({
-				content : $('#execute-auto').html(),
-				showSpeed : 0,
-				width : 130
-			});
+			require(['jquery', 'jquery.squash.buttonmenu'], function($){
+				
+				$("#execute-auto-button").buttonmenu();
 
-			var executeAutoMenu = allUIMenus[allUIMenus.length - 1];
-
-			executeAutoMenu.chooseItem = function(item) {
-
-				if ($(item).hasClass('execute-all')) {
-					executeAll();
-				} else {
-					if ($(item).hasClass('execute-selection')) {
-						executeSelection();
-					}
-				}
-			};
+				$("#execute-auto-execute-all").on('click', executeAll);
+				$("#execute-auto-execute-selection").on('click', executeSelection);
+			});			
 		});
 	</script>
 </div>
