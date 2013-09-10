@@ -537,15 +537,7 @@ function selectTableRowsOfIds(dataTable, ids, getRowIdCallback) {
 		var rId = getRowIdCallback(data);
 		return $.inArray(rId, ids) != -1;
 	}).addClass('ui-state-row-selected');
-	
-	
-	$(rows).each(function(index, row) {
-		var data = dataTable.fnGetData(row);
-		var rowId = getRowIdCallback(data);
-		if ($.inArray(rowId, ids)) {
-			$(row).addClass('ui-state-row-selected');
-		}
-	});
+
 }
 function addHLinkToCellText(td, url, isOpenInTab) {
 
