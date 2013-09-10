@@ -43,7 +43,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.Identified;
@@ -85,6 +88,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 
 	@NotBlank
 	@Size(min = 0, max = 255)
+	@Field(analyze=Analyze.NO, store=Store.YES)
 	private String name;
 
 	private boolean active = true;

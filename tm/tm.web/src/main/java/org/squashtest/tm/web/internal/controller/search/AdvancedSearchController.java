@@ -119,18 +119,19 @@ public class AdvancedSearchController {
 		this.projectFilterService = service;
 	}
 
+	//These are used by Lucene - Thus the columns are mapped to index properties rather than class properties
 	private DatatableMapper<String> testCaseSearchResultMapper = new NameBasedMapper(11)
 	.mapAttribute("project-name", "name", Project.class)
 	.mapAttribute("test-case-id", "id", TestCase.class)	
 	.mapAttribute("test-case-ref", "reference", TestCase.class)	
 	.mapAttribute("test-case-label", "label", TestCase.class)
 	.mapAttribute("test-case-weight", "importance", TestCase.class)	
-	//.mapAttribute(TestCase.class, "verifiedRequirementVersions.size", Long.class, "test-case-requirement-nb")
-	//.mapAttribute(TestCase.class, "steps.size", Long.class, "test-case-teststep-nb")
-	//.mapAttribute(TestCase.class, "weight", Long.class, "test-case-iteration-nb")
-	//.mapAttribute(TestCase.class, "allAttachments.size", Long.class, "test-case-attachment-nb")	
-	.mapAttribute("test-case-created-by", "audit.createdBy", TestCase.class)
-	.mapAttribute("test-case-modified-by", "audit.lastModifiedBy", TestCase.class);
+	.mapAttribute("test-case-requirement-nb", "requirements", TestCase.class)
+	.mapAttribute("test-case-teststep-nb", "steps", TestCase.class)
+	.mapAttribute("test-case-iteration-nb", "iterations", TestCase.class)
+	.mapAttribute("test-case-attachment-nb", "attachments", TestCase.class)	
+	.mapAttribute("test-case-created-by", "createdBy", TestCase.class)
+	.mapAttribute("test-case-modified-by", "modifiedBy", TestCase.class);
 
 
 	@RequestMapping( method = RequestMethod.GET, params = "testcase")

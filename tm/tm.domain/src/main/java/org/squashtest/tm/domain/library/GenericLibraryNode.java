@@ -29,8 +29,11 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.Size;
 
+import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Fields;
 import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
@@ -50,7 +53,10 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 	private Project project;
 
 	@NotBlank
-	@Field
+	@Fields({
+		@Field,
+		@Field(name="label", analyze=Analyze.NO, store=Store.YES)
+	})
 	@Size(min = 0, max = 255)
 	private String name;
 
@@ -60,8 +66,6 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "ATTACHMENT_LIST_ID", updatable = false)
-	//@Field
-	//@FieldBridge(impl = TestCaseCountAttachmentBridge.class)
 	private final AttachmentList attachmentList = new AttachmentList();
 
 	public GenericLibraryNode() {

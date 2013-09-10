@@ -32,6 +32,8 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.apache.lucene.document.DateTools;
+import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.SortField;
 import org.hibernate.CacheMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -46,6 +48,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.library.IndexModel;
@@ -450,6 +453,27 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	}
 
+	private org.apache.lucene.search.Sort getSort(String fieldName, SortOrder sortOrder){
+		
+		boolean isReverse = true;
+		
+		if(SortOrder.ASCENDING.equals(sortOrder)){
+			isReverse = false;
+		}
+		
+		org.apache.lucene.search.Sort sort = new Sort(new SortField("id", SortField.LONG, isReverse));
+		
+		if(fieldName.startsWith("TestCase.")){
+			fieldName = fieldName.replaceFirst("TestCase.", "");
+		} else if(fieldName.startsWith("Project.")){
+			fieldName = fieldName.replaceFirst("Project.", "project.");
+		}
+		
+		sort = new Sort(new SortField(fieldName, SortField.STRING, isReverse));
+		
+		return sort;
+	}
+	
 	@Override
 	public PagedCollectionHolder<List<TestCase>> searchForTestCases(
 			AdvancedSearchModel model, PagingAndSorting sorting) {
@@ -463,13 +487,18 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 		org.apache.lucene.search.Query luceneQuery = buildLuceneQuery(qb, model);
 
+		
+		org.apache.lucene.search.Sort sort = getSort(sorting.getSortedAttribute(), sorting.getSortOrder());
+		
 		org.hibernate.Query hibQuery = ftSession.createFullTextQuery(
-				luceneQuery, TestCase.class);
-
-		List result = hibQuery.setFirstResult(sorting.getFirstItemIndex())
-				.setMaxResults(sorting.getPageSize()).list();
+				luceneQuery, TestCase.class).setSort(sort);
 
 		int countAll = hibQuery.list().size();
+		
+		
+		
+		List result = hibQuery.setFirstResult(sorting.getFirstItemIndex())
+				.setMaxResults(sorting.getPageSize()).list();
 
 		return new PagingBackedPagedCollectionHolder<List<TestCase>>(sorting,
 				countAll, result);
