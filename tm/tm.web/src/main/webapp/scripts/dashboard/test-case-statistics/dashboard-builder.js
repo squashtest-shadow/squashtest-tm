@@ -121,7 +121,7 @@ define(["jquery", 'squash.attributeparser',
 				new SizePie({
 					el : master.find('#dashboard-item-test-case-size').get(0),
 					model : bbModel
-				}),
+				})
 			
 			];
 			

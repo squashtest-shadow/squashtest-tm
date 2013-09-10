@@ -113,7 +113,7 @@ requirejs.config({
 					exports : "CKEDITOR"
 				},
 				"jquery.ckeditor" : {
-					deps : [ "jquery", "jqueryui", "ckeditor", "jquery.dialog-patch" ],
+					deps : [ "jquery", "jqueryui", "jquery.dialog-patch" , "ckeditor"],
 					exports : "jqueryCkeditor"
 				},
 				"jeditable" : {

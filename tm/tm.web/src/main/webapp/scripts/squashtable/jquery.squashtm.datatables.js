@@ -530,11 +530,19 @@ function restoreTableSelection(dataTable, getRowIdCallback) {
 /* private */
 function selectTableRowsOfIds(dataTable, ids, getRowIdCallback) {
 	var rows = dataTable.fnGetNodes();
-
+	
+	var self = this;
+	$(rows).filter(function() {
+		var data = dataTable.fnGetData(this);
+		var rId = getRowIdCallback(data);
+		return $.inArray(rId, ids) != -1;
+	}).addClass('ui-state-row-selected');
+	
+	
 	$(rows).each(function(index, row) {
 		var data = dataTable.fnGetData(row);
 		var rowId = getRowIdCallback(data);
-		if (ids.indexOf(rowId) >= 0) {
+		if ($.inArray(rowId, ids)) {
 			$(row).addClass('ui-state-row-selected');
 		}
 	});

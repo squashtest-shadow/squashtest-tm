@@ -156,6 +156,10 @@ define(["jquery", "backbone", "underscore", './model-cache', "tree", "workspace.
 				options.data = this._treeParams();
 			};
 			
+			// last, include a timestamp to prevent aggressive caching from IE
+			options.data = options.data || {};
+			options.data._time = new Date().getTime();
+			
 			return Backbone.Model.prototype.sync.call(this, method, model, options);
 		},
 		
