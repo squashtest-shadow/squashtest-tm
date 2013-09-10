@@ -68,7 +68,7 @@ define([ 'jquery', 'jqueryui', 'jquery.squash.squashbutton' ], function($) {
 				components = btn.add(btn.next());
 			
 			//respect the basic display mode that the button originally had
-			var display = btn.css('display')
+			var display = btn.css('display');
 			var position = btn.css('position');
 			var div = $('<div/>',{
 				style : "display:"+display+"; position:"+position+";"
