@@ -645,23 +645,22 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	/**
 	 * will update acual end and start dates if are auto and if they were driven by the execution last-executed on
 	 * 
-	 * @param execution
 	 */
-	public void updateAutoDatesAfterExecutionDetach(IterationTestPlanItem iterationTestPlanItem, Execution execution) {
+	public void updateAutoDatesAfterExecutionDetach(IterationTestPlanItem iterationTestPlanItem) {
 
-		updateAutoEndDateAfterExecutionDetach(iterationTestPlanItem, execution);
-		updateStartAutoDateAfterExecutionDetach(execution);
+		updateAutoEndDateAfterExecutionDetach(iterationTestPlanItem);
+		updateStartAutoDateAfterExecutionDetach();
 
 	}
 
-	private void updateStartAutoDateAfterExecutionDetach(Execution execution) {
+	private void updateStartAutoDateAfterExecutionDetach() {
 		if (this.isActualStartAuto()) {
 			autoSetActualStartDate();
 		}
 
 	}
 
-	private void updateAutoEndDateAfterExecutionDetach(IterationTestPlanItem iterationTestPlanItem, Execution execution) {
+	private void updateAutoEndDateAfterExecutionDetach(IterationTestPlanItem iterationTestPlanItem) {
 		if (this.isActualEndAuto()) {
 			if (!iterationTestPlanItem.getExecutionStatus().isTerminatedStatus()) {
 				this.setActualEndDate(null);

@@ -319,7 +319,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 			Iteration iter = this.getIteration();
 
 			if (iter != null) {
-				iter.updateAutoDatesAfterExecutionDetach(this, execution);
+				iter.updateAutoDatesAfterExecutionDetach(this);
 			}
 		}
 
