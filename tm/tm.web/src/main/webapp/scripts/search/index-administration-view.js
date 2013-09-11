@@ -42,6 +42,8 @@ define([ "jquery", "backbone", "underscore"], function($, Backbone, _) {
 				  type: "POST",
 				  url: squashtm.app.contextRoot + "advanced-search/index-all",
 				  data: "nodata"
+			}).success(function(){
+				$("#should-reindex-message").addClass("not-displayed");
 			});
 		},
 		
