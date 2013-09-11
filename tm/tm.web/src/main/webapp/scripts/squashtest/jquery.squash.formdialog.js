@@ -225,8 +225,11 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui' 
 		},
 
 		cleanup : function() {
-			this.element.find(':input,textarea,.error-message').each(function() {
+			this.element.find(':input,textarea').each(function() {
 				$(this).val('');
+			});
+			this.element.find('.error-message').each(function(){
+				$(this).text('');
 			});
 		},
 

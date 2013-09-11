@@ -47,7 +47,7 @@ define(['jquery', 'tree', 'workspace.contextual-content', '../permissions-rules'
 			var url = node.getResourceUrl();
 			var name = dialog.find("#rename-tree-node-text").val();
 			
-			$.post(url, {newName : name}, 'json')
+			$.post(url, {newName : name}, null, 'json')
 			.done(function(){
 				var event = new EventRename(
 					new SquashEventObject(node.getResId(), node.getResType()),

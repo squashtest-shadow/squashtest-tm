@@ -43,7 +43,7 @@ define([ "jquery" ], function($) {
 		 */
 		var setState = function(state, messageKey) {
 			var message = messageKey;
-			if (squashtm.app.messages !== null) {
+			if (!! squashtm.app.messages) {
 				message = squashtm.app.messages[messageKey] || messageKey;
 			}
 
