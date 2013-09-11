@@ -43,7 +43,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 		};
 		
 		this.canCreateCampaign = function(nodes){
-			return nodes.filter(':creatable').filter(':folder, :campaign').length === 1;
+			return nodes.filter(':creatable').filter(':folder, :library, :campaign').length === 1;
 		};
 		
 		this.canCreateIteration = function(nodes){
