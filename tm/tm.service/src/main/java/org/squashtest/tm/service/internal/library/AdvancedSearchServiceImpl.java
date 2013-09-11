@@ -54,6 +54,7 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.library.IndexModel;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoring;
 import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.search.AdvancedSearchRangeFieldModel;
@@ -98,6 +99,8 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	@Inject
 	private ConfigurationService configurationService;
 
+	private AdvancedSearchIndexMonitoring advancedSearchIndexMonitoring;
+	
 	private final static String REQUIREMENT_INDEXING_DATE_KEY = "lastindexing.requirement.date";
 	private final static String TESTCASE_INDEXING_DATE_KEY = "lastindexing.testcase.date";
 	private final static String CAMPAIGN_INDEXING_DATE_KEY = "lastindexing.campaign.date";

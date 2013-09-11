@@ -21,37 +21,40 @@
 package org.squashtest.tm.service.internal.library;
 
 import org.hibernate.search.batchindexing.MassIndexerProgressMonitor;
+import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoring;
+
 
 public class AdvancedSearchIndexingMonitor implements MassIndexerProgressMonitor {
 
+	AdvancedSearchIndexMonitoring advancedSearchIndexMonitoring;
+	
+	public AdvancedSearchIndexingMonitor(){
+		AdvancedSearchIndexMonitoring.reset();
+	}
+	
 	@Override
 	public void documentsAdded(long arg0) {
-		// TODO Auto-generated method stub
-		
+		AdvancedSearchIndexMonitoring.setDocumentsAdded(arg0);	
 	}
 
 	@Override
 	public void addToTotalCount(long arg0) {
-		// TODO Auto-generated method stub
-		
+		AdvancedSearchIndexMonitoring.setAddToTotalCount(arg0);	
 	}
 
 	@Override
 	public void documentsBuilt(int arg0) {
-		// TODO Auto-generated method stub
-		
+		AdvancedSearchIndexMonitoring.setDocumentsBuilt(arg0);	
 	}
 
 	@Override
 	public void entitiesLoaded(int arg0) {
-		// TODO Auto-generated method stub
-		
+		AdvancedSearchIndexMonitoring.setEntitiesLoaded(arg0);	
 	}
 
 	@Override
 	public void indexingCompleted() {
-		// TODO Auto-generated method stub
-		
+		AdvancedSearchIndexMonitoring.setIndexingOver(true);
 	}
 
 }

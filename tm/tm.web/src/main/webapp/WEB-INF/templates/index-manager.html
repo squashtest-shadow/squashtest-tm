@@ -126,6 +126,8 @@
 					<div align="center">
 						<div class="index-inline-left-block index-warning">
 						   	<span th:if="${indexedOnPreviousVersion}" th:text="#{search.index.newversion.message}"></span>
+						   	<span id="monitor-percentage" class="not-displayed"></span>
+						   	<span id="monitor-message" class="not-displayed" th:text="#{search.index.monitor.message}"></span> 
 						</div>
 						<div class="index-inline-right-block" align="right">
 							<input type="button" th:value="#{ search.index.indexall.label }"

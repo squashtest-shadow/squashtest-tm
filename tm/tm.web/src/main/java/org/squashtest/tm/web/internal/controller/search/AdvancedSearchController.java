@@ -49,6 +49,7 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoring;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;

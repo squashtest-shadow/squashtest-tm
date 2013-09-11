@@ -74,6 +74,10 @@ define([ "jquery", "backbone", "underscore"], function($, Backbone, _) {
 				  type: "GET",
 				  url: squashtm.app.contextRoot + "advanced-search/refresh",
 				  data: "nodata"
+			}).success(function(val){
+				$("#monitor-percentage").html(val);
+				$("#monitor-percentage").removeClass("not-displayed");
+				$("#monitor-message").removeClass("not-displayed");
 			});
 		}
 	});

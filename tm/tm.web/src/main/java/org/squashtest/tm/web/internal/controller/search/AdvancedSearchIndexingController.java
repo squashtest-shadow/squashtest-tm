@@ -26,6 +26,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoring;
 import org.squashtest.tm.service.library.AdvancedSearchService;
 
 @Controller
@@ -35,6 +36,8 @@ public class AdvancedSearchIndexingController {
 	@Inject
 	private AdvancedSearchService advancedSearchService;
 
+	private AdvancedSearchIndexMonitoring advancedSearchIndexMonitoring;
+	
 	@RequestMapping(value = "/index-all", method = RequestMethod.POST)
 	@ResponseBody
 	public void indexAll(){
@@ -63,6 +66,7 @@ public class AdvancedSearchIndexingController {
 
 	@RequestMapping(value = "/refresh", method = RequestMethod.GET)
 	@ResponseBody
-	public void refreshIndexPage(){
+	public float refreshIndexPage(){
+		return AdvancedSearchIndexMonitoring.getProgressPercentage()*100;
 	} 	
 }
