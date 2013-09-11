@@ -20,8 +20,7 @@
  */
 package org.squashtest.tm.service.internal.library;
 
-import javax.annotation.PostConstruct;
-
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,27 +44,28 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
  */
 @Transactional
 public class GenericFolderModificationService<FOLDER extends Folder<NODE>, NODE extends LibraryNode> implements
-		FolderModificationService<FOLDER> {
+		FolderModificationService<FOLDER>, InitializingBean {
 
 	private PermissionEvaluationService permissionService;
 
-	@PostConstruct
-	public void postConstruct() {
-		delegate.setPermissionService(permissionService);
-	}
 
 	private final GenericNodeManagementService<FOLDER, NODE, FOLDER> delegate = new GenericNodeManagementService<FOLDER, NODE, FOLDER>();
 	
 	private FolderDao<FOLDER, NODE> folderDao;
 	private LibraryDao<Library<NODE>, NODE> libraryDao;
 
-	@PostConstruct
-	protected void initializeDelegate() {
+	
+	
+	//[Issue 2735] it seems that the @PostConstruct annotation is no longer processed. We must have fiddled with Spring too much.
+	// This class now implements InitializingBean as a workaround but the root cause is still there.
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		delegate.setPermissionService(permissionService);
 		delegate.setNodeDao(folderDao);
 		delegate.setFolderDao(folderDao);
 		delegate.setLibraryDao(libraryDao);
 	}
-
+	
 	@Transactional(readOnly = true)
 	@Override
 	@PostAuthorize("hasPermission(returnObject, 'READ') or hasRole('ROLE_ADMIN')")
