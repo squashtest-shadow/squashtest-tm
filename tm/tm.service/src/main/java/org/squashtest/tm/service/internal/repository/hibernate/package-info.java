@@ -284,7 +284,7 @@
 		
 		//CustomFieldBinding
 		@NamedQuery(name = "CustomFieldBinding.findAllByIds", query = "select cfb from CustomFieldBinding cfb where cfb.id in (:cfbIds) group by cfb.boundEntity, cfb.boundProject order by cfb.position asc"),
-		@NamedQuery(name = "CustomFieldBinding.findAllForGenericProject", query = "select cfb from CustomFieldBinding cfb join cfb.boundProject bp where bp.id = ? group by cfb.boundEntity order by cfb.position asc"),
+		@NamedQuery(name = "CustomFieldBinding.findAllForGenericProject", query = "select cfb from CustomFieldBinding cfb join cfb.boundProject bp where bp.id = ? group by cfb.boundEntity, cfb.id order by cfb.position asc"),
 		@NamedQuery(name = "CustomFieldBinding.findAllForProjectAndEntity", query = "select cfb from CustomFieldBinding cfb join cfb.boundProject bp where bp.id = ? and cfb.boundEntity = ? order by cfb.position asc"),
 		@NamedQuery(name = "CustomFieldBinding.countAllForProjectAndEntity", query = "select count(cfb) from CustomFieldBinding cfb where cfb.boundProject.id = ? and cfb.boundEntity = ?"),
 		@NamedQuery(name = "CustomFieldBinding.findAllForCustomField", query = "select cfb from CustomFieldBinding cfb where cfb.customField.id = ? order by cfb.position asc"),
