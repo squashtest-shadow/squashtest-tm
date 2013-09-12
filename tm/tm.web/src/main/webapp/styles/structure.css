@@ -163,19 +163,18 @@ div.fragment-tabs>div {
 	padding: 0;
 }
 
-/* div.fragment-tabs>div.table-tab> *//*2013/03/14 if no incidence after 3 month you can remove this comment*/
 div.toolbar {
 	font-size: 0.8em;
 	position: relative;
 	text-align: right;
 }
 
-/* div.fragment-tabs>div.table-tab> */ /*2013/03/14 if no incidence after 3 month you can remove this comment*/
 div.toolbar span.group {
 	margin-left: 20px;
 }
 
-div.fragment-tabs>div.table-tab>div.table-tab-wrap {
+/* div.fragment-tabs>div.table-tab>div.table-tab-wrap *//*2013/03/14 if no incidence after 3 month you can remove this comment*/
+div.table-tab-wrap{
 	position: absolute;
 	width: 100%;
 	bottom: 20px;
@@ -183,13 +182,14 @@ div.fragment-tabs>div.table-tab>div.table-tab-wrap {
 	overflow: auto;
 }
 
-div.fragment-tabs>div.table-tab>div.table-tab-wrap .dataTables_footer {
+/* div.fragment-tabs>div.table-tab>div.table-tab-wrap .dataTables_footer*//*2013/03/14 if no incidence after 3 month you can remove this comment*/
+div.table-tab-wrap .dataTables_footer{
 	bottom: 15px;
 	position: fixed;
 }
 
-div.sub-page  div.fragment-tabs>div.table-tab>div.table-tab-wrap .dataTables_footer
-	{
+/*div.sub-page  div.fragment-tabs>div.table-tab>div.table-tab-wrap .dataTables_footer *//*2013/03/14 if no incidence after 3 month you can remove this comment*/
+div.sub-page div.table-tab-wrap .dataTables_footer{
 	bottom: 1.8cm;
 	position: fixed;
 }

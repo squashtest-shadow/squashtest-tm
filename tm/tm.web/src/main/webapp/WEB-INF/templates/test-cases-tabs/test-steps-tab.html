@@ -86,26 +86,28 @@
 
 
 	<!-- ==================== table definition =================== -->
-	<table id="test-steps-table" class="unstyled-table">
-		<thead>
-			<tr>
-				<th class="not-displayed">id (masked)</th>
-				<th>#</th>
-				<th th:text="#{table.column-header.has-attachment.label}">0</th>				
-				<th th:text="#{label.requirement.short}"> </th> <!-- requirements -->
-				<th th:text="#{label.Actions}">Actions</th>
-				<th th:text="#{label.ExpectedResults}">Expected results</th>
-				<th>nbAttach(masked)</th>
-				<th>stepNature(masked)</th>
-				<th>calledStepId(masked)</th>
-				<th> </th> <!-- browse -->
-				<th> </th> <!-- delete -->
-			</tr>
-		</thead>
-		<tbody>
-      <!-- eager-loaded through data property of table -->
-		</tbody>
-	</table>
+	<div class="table-tab-wrap" >
+		<table id="test-steps-table" class="unstyled-table">
+			<thead>
+				<tr>
+					<th class="not-displayed">id (masked)</th>
+					<th>#</th>
+					<th th:text="#{table.column-header.has-attachment.label}">0</th>				
+					<th th:text="#{label.requirement.short}"> </th> <!-- requirements -->
+					<th th:text="#{label.Actions}">Actions</th>
+					<th th:text="#{label.ExpectedResults}">Expected results</th>
+					<th>nbAttach(masked)</th>
+					<th>stepNature(masked)</th>
+					<th>calledStepId(masked)</th>
+					<th> </th> <!-- browse -->
+					<th> </th> <!-- delete -->
+				</tr>
+			</thead>
+			<tbody>
+	      <!-- eager-loaded through data property of table -->
+			</tbody>
+		</table>
+	</div>
 
 	<!-- ==================== /table definition =================== -->
 	
