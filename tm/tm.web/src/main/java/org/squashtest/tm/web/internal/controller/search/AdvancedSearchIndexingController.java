@@ -64,7 +64,11 @@ public class AdvancedSearchIndexingController {
 
 	@RequestMapping(value = "/refresh", method = RequestMethod.GET)
 	@ResponseBody
-	public double refreshIndexPage(){
-		return AdvancedSearchIndexMonitoring.getProgressPercentage()*100;
+	public IndexingProgressModel refreshIndexPage(){
+		IndexingProgressModel model = new IndexingProgressModel();
+		model.setTotalEntities(AdvancedSearchIndexMonitoring.getAddToTotalCount());
+		model.setWrittenEntities(AdvancedSearchIndexMonitoring.getDocumentsBuilt());
+		model.setProgressPercentage(AdvancedSearchIndexMonitoring.getProgressPercentage()*100);
+		return model;
 	} 	
 }

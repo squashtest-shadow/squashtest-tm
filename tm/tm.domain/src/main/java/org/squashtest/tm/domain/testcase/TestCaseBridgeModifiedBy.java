@@ -34,8 +34,7 @@ public class TestCaseBridgeModifiedBy implements FieldBridge {
 
 		AuditableMixin audit = ((AuditableMixin) value);
 
-		if (audit.getLastModifiedBy() != null) {
-			if ("".equals(audit.getLastModifiedBy().trim())) {
+			if (audit.getLastModifiedBy() == null || "".equals(audit.getLastModifiedBy().trim())) {
 				Field field = new Field(name, "$NO_USER",
 						luceneOptions.getStore(), luceneOptions.getIndex(),
 						luceneOptions.getTermVector());
@@ -48,6 +47,5 @@ public class TestCaseBridgeModifiedBy implements FieldBridge {
 				field.setBoost(luceneOptions.getBoost());
 				document.add(field);
 			}
-		}
 	}
 }

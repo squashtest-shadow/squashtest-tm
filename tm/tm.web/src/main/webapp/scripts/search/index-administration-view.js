@@ -76,8 +76,8 @@ define([ "jquery", "backbone", "underscore"], function($, Backbone, _) {
 				  type: "GET",
 				  url: squashtm.app.contextRoot + "advanced-search/refresh",
 				  data: "nodata"
-			}).success(function(val){
-				$("#monitor-percentage").html(val);
+			}).success(function(json){	
+				$("#monitor-percentage").html(json.writtenEntities+" / "+json.totalEntities+" ("+json.progressPercentage+"%) ");
 				$("#monitor-percentage").removeClass("not-displayed");
 				$("#monitor-message").removeClass("not-displayed");
 			});
