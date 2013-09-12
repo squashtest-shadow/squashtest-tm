@@ -36,8 +36,6 @@ public class AdvancedSearchIndexingController {
 	@Inject
 	private AdvancedSearchService advancedSearchService;
 
-	private AdvancedSearchIndexMonitoring advancedSearchIndexMonitoring;
-	
 	@RequestMapping(value = "/index-all", method = RequestMethod.POST)
 	@ResponseBody
 	public void indexAll(){
@@ -66,7 +64,7 @@ public class AdvancedSearchIndexingController {
 
 	@RequestMapping(value = "/refresh", method = RequestMethod.GET)
 	@ResponseBody
-	public float refreshIndexPage(){
+	public double refreshIndexPage(){
 		return AdvancedSearchIndexMonitoring.getProgressPercentage()*100;
 	} 	
 }

@@ -26,8 +26,6 @@ import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoring;
 
 public class AdvancedSearchIndexingMonitor implements MassIndexerProgressMonitor {
 
-	AdvancedSearchIndexMonitoring advancedSearchIndexMonitoring;
-	
 	public AdvancedSearchIndexingMonitor(){
 		AdvancedSearchIndexMonitoring.reset();
 	}

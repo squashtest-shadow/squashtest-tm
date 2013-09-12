@@ -27,7 +27,11 @@ public class AdvancedSearchIndexMonitoring {
 	private static long addToTotalCount = 0L;
 	private static int documentsBuilt = 0;
 	private static int entitiesLoaded = 0;
-	private static float progressPercentage = 0;
+	private static double progressPercentage = 0;
+	
+	private AdvancedSearchIndexMonitoring(){
+		
+	}
 	
 	public static void reset(){
 		AdvancedSearchIndexMonitoring.isIndexingOver = false;
@@ -78,8 +82,8 @@ public class AdvancedSearchIndexMonitoring {
 		AdvancedSearchIndexMonitoring.entitiesLoaded += entitiesLoaded;
 	}
 
-	public static float getProgressPercentage() {
-		AdvancedSearchIndexMonitoring.progressPercentage = new Float(AdvancedSearchIndexMonitoring.documentsBuilt) / new Float(AdvancedSearchIndexMonitoring.addToTotalCount);
+	public static double getProgressPercentage() {
+		AdvancedSearchIndexMonitoring.progressPercentage = (double) AdvancedSearchIndexMonitoring.documentsBuilt / (double) AdvancedSearchIndexMonitoring.addToTotalCount;
 		return AdvancedSearchIndexMonitoring.progressPercentage;
 	}
 
