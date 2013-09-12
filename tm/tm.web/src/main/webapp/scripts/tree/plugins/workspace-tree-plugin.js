@@ -508,7 +508,7 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 					
 					// third, the nodes that were deleted.
 					var removed = commandObject.removed;
-					if (removed !== null && removed !== undefined &&  removed instanceof Array){
+					if (removed !== null && removed !== undefined &&  removed instanceof Array && removed.length>0){
 						this.findNodes(removed).removeMe();
 					}
 				}
