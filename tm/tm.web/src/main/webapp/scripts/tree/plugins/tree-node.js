@@ -420,6 +420,7 @@ define(['jquery'], function($){
 		//TODO : this test relates to the configuration of the "types" plugin of their instance of jstree.
 		this.acceptsAsContent = function(nodes) {
 			
+			// reject if this node cannot have children anyhow			
 			if (! this.canContainNodes()){
 				return false;
 			}

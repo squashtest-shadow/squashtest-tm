@@ -36,7 +36,7 @@
  * differenciate a leaf from the rest.
  * 
  * The present function will identify the hovered node and return the following marker position : - for leaves -> no
- * modification - for folders, libraries -> force 'inside'.
+ * modification - for folders, libraries, other nodes that can contain nodes -> force 'inside'.
  * 
  */
 
@@ -53,6 +53,8 @@ define(['jquery'], function($){
 			if (overridenM === undefined) {
 				overridenM = $("div#jstree-marker");
 			}
+			
+			if(!this.data.dnd.prepared) { return; }
 
 			var o = [ "before", "inside", "after" ], r = false, rtl = this._get_settings().core.rtl, pos;
 

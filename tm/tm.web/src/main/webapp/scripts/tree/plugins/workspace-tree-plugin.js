@@ -130,6 +130,12 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 	 */
 	function check_move() {
 		
+		// apply the basic rules
+		if (! this.__call_old()){
+			return false;
+		}
+		
+		//now apply our own.
 		var rules = this._getRules();
 		
 		try{
