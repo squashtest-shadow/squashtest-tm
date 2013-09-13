@@ -36,9 +36,9 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 
 		changePermission : function(event) {
 
-			var self = event.target;
-			var permission_id = $("option:selected", self).attr('id');
-			var project_id = $(self).attr('id').replace("permission-list-", "");
+			var select = $(event.target);
+			var permission_id = select.val();
+			var project_id = select.attr('id').replace("permission-list-", "");
 
 			$.ajax({
 				type : 'POST',
@@ -60,35 +60,14 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 			};
 			this.$("#project-permission-panel").togglePanel(infoSettings);
 		},
-		decorateRow : function(self) {
-			return function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-				$.ajax({
-					url : teamMod.permission.url.popup,
-					dataType : 'json'
-				}).success(
-						function(json) {
-							var permission = aData["permission-simplename"];
-							var cell = $(nRow.children[2]);
-							cell.html("<select class='permission-list' id='permission-list-" + aData["project-id"] +
-									"'></select>");
-							var selected = "";
-							for ( var i = 0; i < json.permissionList.length; i++) {
-								var text = json.permissionList[i].displayName;
-								var value = json.permissionList[i].id;
-								var option = new Option(text, value);
-								option.id = json.permissionList[i].qualifiedName;
-								$("select", cell).append(option);
-								if (json.permissionList[i].simpleName === permission) {
-									$("select", cell).val(json.permissionList[i].id);
-								}
-							}
-
-						});
-			};
-		},
 		configureTable : function() {
 			$("#permission-table").squashTable({
-				"fnRowCallback" : this.decorateRow(this)
+				"fnRowCallback" : function(nRow, data){
+					var select = $("#permission-table-templates select").clone();
+					select.attr('id', 'permission-list-' + data["project-id"]);
+					select.val(data['permission-name']);
+					$('.permission-select', nRow).empty().append(select);
+				}
 			}, {});
 		},
 		configurePopups : function() {

@@ -66,12 +66,12 @@ public abstract class PartyControllerSupport {
 	public void setProjectsPermissionManagementService(ProjectsPermissionManagementService permissionService) {
 		this.permissionService = permissionService;
 	}
-
-	protected Map<String, Object> createPermissionPopupModel(long partyId) {
+	
+	
+	protected List<PermissionGroupModel> getPermissionGroupModels(long partyId){
 		Locale locale = LocaleContextHolder.getLocale();
-		List<PermissionGroup> permissionList = permissionService.findAllPossiblePermission();
-		List<GenericProject> projectList = permissionService.findProjectWithoutPermissionByParty(partyId);
 
+		List<PermissionGroup> permissionList = permissionService.findAllPossiblePermission();
 		List<PermissionGroupModel> permissionGroupModelList = new ArrayList<PermissionGroupModel>();
 		if (permissionList != null) {
 			for (PermissionGroup permission : permissionList) {
@@ -82,6 +82,14 @@ public abstract class PartyControllerSupport {
 
 			}
 		}
+		
+		return permissionGroupModelList;
+	}
+	
+
+	protected List<ProjectModel> getProjectModels(long partyId){
+		
+		List<GenericProject> projectList = permissionService.findProjectWithoutPermissionByParty(partyId);
 
 		List<ProjectModel> projectModelList = new ArrayList<ProjectModel>();
 		if (projectList != null) {
@@ -90,33 +98,40 @@ public abstract class PartyControllerSupport {
 			}
 		}
 
+		return projectModelList;
+	}
+
+	
+	protected Map<String, Object> createPermissionPopupModel(long partyId) {				
+
+		List<ProjectModel> projectModelList = getProjectModels(partyId);
+		List<PermissionGroupModel> permissionGroupModelList = getPermissionGroupModels(partyId);
+		
 		Map<String, Object> res = new HashMap<String, Object>();
+		
 		res.put("myprojectList", projectModelList);
 		res.put("permissionList", permissionGroupModelList);
 
 		return res;
 	}
+	
 
 	protected DataTableModel createPermissionTableModel(long userId, PagingAndSorting paging, Filtering filtering,
 			String secho) {
 		Locale locale = LocaleContextHolder.getLocale();
 		PagedCollectionHolder<List<ProjectPermission>> holder = permissionService.findProjectPermissionByParty(userId,
 				paging, filtering);
-		List<PermissionGroup> permissionList = permissionService.findAllPossiblePermission();
-		return new PermissionTableModelHelper(locale, messageSource, permissionList).buildDataModel(holder, secho);
+		return new PermissionTableModelHelper(locale, messageSource).buildDataModel(holder, secho);
 	}
 
 	protected static final class PermissionTableModelHelper extends DataTableModelBuilder<ProjectPermission> {
 
-		private List<PermissionGroup> permissionList;
 		private MessageSource messageSource;
 		private Locale locale;
 
-		private PermissionTableModelHelper(Locale locale, MessageSource messageSource,
-				List<PermissionGroup> permissionList) {
+		private PermissionTableModelHelper(Locale locale, MessageSource messageSource) {
 			this.locale = locale;
 			this.messageSource = messageSource;
-			this.permissionList = permissionList;
 		}
 
 		@Override
@@ -131,7 +146,6 @@ public abstract class PartyControllerSupport {
 			res.put("permission-displayname",
 					messageSource.getMessage("user.project-rights." + item.getPermissionGroup().getSimpleName()
 							+ ".label", null, locale));
-			res.put("permission-list", permissionList);
 			res.put("empty-delete-holder", null);
 			res.put("empty-permission-list-holder", null);
 			return res;

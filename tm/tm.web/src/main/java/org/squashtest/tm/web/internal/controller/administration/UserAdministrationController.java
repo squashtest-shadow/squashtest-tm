@@ -59,7 +59,9 @@ import org.squashtest.tm.domain.users.UsersGroup;
 import org.squashtest.tm.service.user.AdministrationService;
 import org.squashtest.tm.service.user.TeamFinderService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.controller.project.ProjectModel;
 import org.squashtest.tm.web.internal.controller.users.PartyControllerSupport;
+import org.squashtest.tm.web.internal.controller.users.PermissionGroupModel;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
@@ -92,20 +94,20 @@ public class UserAdministrationController extends PartyControllerSupport {
 	private AuthenticationProviderContext authenticationProviderContext;
 
 	private DatatableMapper<String> userMapper = new NameBasedMapper(10)
-			.map("user-id", "id")
-			.map("user-login", "login")
-			.map("user-group", "group")
-			.map("user-firstname", "firstName")
-			.map("user-lastname", "lastName")
-			.map("user-email", "email")
-			.map("user-created-on", "audit.createdOn")
-			.map("user-created-by", "audit.createdBy")
-			.map("user-modified-on", "audit.lastModifiedOn")
-			.map("user-modified-by", "audit.lastModifiedBy");
+													.map("user-id", "id")
+													.map("user-login", "login")
+													.map("user-group", "group")
+													.map("user-firstname", "firstName")
+													.map("user-lastname", "lastName")
+													.map("user-email", "email")
+													.map("user-created-on", "audit.createdOn")
+													.map("user-created-by", "audit.createdBy")
+													.map("user-modified-on", "audit.lastModifiedOn")
+													.map("user-modified-by", "audit.lastModifiedBy");
 
-	private DatatableMapper<String> permissionMapper = new NameBasedMapper(2).mapAttribute("project-name",
-			"project.name", ProjectPermission.class).mapAttribute("permission-name",
-			"permissionGroup.qualifiedName", ProjectPermission.class);
+	private DatatableMapper<String> permissionMapper = new NameBasedMapper(2)
+													.mapAttribute("project-name","project.name", ProjectPermission.class)
+													.mapAttribute("permission-name","permissionGroup.qualifiedName", ProjectPermission.class);
 
 	@ServiceReference
 	public void setAdministrationService(AdministrationService adminService) {
@@ -201,20 +203,23 @@ public class UserAdministrationController extends PartyControllerSupport {
 	 * @param userId
 	 */
 	@RequestMapping(value = USER_URL + "/info", method = RequestMethod.GET)
-	public String getUserInfos(@PathVariable long userId, Model model) {
+	public String getUserInfos(@PathVariable("userId") long userId, Model model) {
 		User user = adminService.findUserById(userId);
 		List<UsersGroup> usersGroupList = adminService.findAllUsersGroupOrderedByQualifiedName();
 
 		List<?> permissionModel = createPermissionTableModel(userId, new DefaultPagingAndSorting(),
 				DefaultFiltering.NO_FILTERING, "").getAaData();
-		model.addAttribute("permissions", permissionModel);
 
-		Map<String, Object> permissionPopupModel = getPermissionPopup(userId);
-		model.addAttribute("permissionList", permissionPopupModel.get("permissionList"));
-		model.addAttribute("projectList", permissionPopupModel.get("projectList"));
+		
+		List<PermissionGroupModel> pgm = getPermissionGroupModels(userId);
+		List<ProjectModel> pm = getProjectModels(userId);
 
 		model.addAttribute("usersGroupList", usersGroupList);
 		model.addAttribute("user", user);
+		model.addAttribute("permissionList", pgm);
+		model.addAttribute("myprojectList", pm);
+		model.addAttribute("permissions", permissionModel);
+
 
 		return "user-modification.html";
 	}
@@ -285,8 +290,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 	}
 
 	@RequestMapping(value = USER_URL + "/permission-popup", method = RequestMethod.GET)
-	public @ResponseBody
-	Map<String, Object> getPermissionPopup(@PathVariable long userId) {
+	public @ResponseBody Map<String, Object> getPermissionPopup(@PathVariable("userId") long userId) {
 		return createPermissionPopupModel(userId);
 	}
 

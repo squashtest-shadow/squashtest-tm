@@ -59,6 +59,7 @@ import org.squashtest.tm.service.user.TeamFinderService;
 import org.squashtest.tm.service.user.TeamModificationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.administration.UserModel;
+import org.squashtest.tm.web.internal.controller.project.ProjectModel;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
@@ -162,19 +163,21 @@ public class TeamController extends PartyControllerSupport {
 			throw new AccessDeniedException("Access is denied");
 		}
 		Team team = service.findById(teamId);
-		model.addAttribute("team", team);
-
 		List<?> permissionModel = createPermissionTableModel(teamId, new DefaultPagingAndSorting(),
 				DefaultFiltering.NO_FILTERING, "").getAaData();
-		model.addAttribute("permissions", permissionModel);
 
 		List<?> userModel = createMembersTableModel(teamId, new DefaultPagingAndSorting(),
 				DefaultFiltering.NO_FILTERING, "").getAaData();
-		model.addAttribute("users", userModel);
 
-		Map<String, Object> permissionPopupModel = getPermissionPopup(teamId);
-		model.addAttribute("permissionList", permissionPopupModel.get("permissionList"));
-		model.addAttribute("myprojectList", permissionPopupModel.get("myprojectList"));
+		List<PermissionGroupModel> pgm = getPermissionGroupModels(teamId);
+		List<ProjectModel> pm = getProjectModels(teamId);
+		
+
+		model.addAttribute("team", team);
+		model.addAttribute("users", userModel);
+		model.addAttribute("permissionList", pgm);
+		model.addAttribute("myprojectList", pm);
+		model.addAttribute("permissions", permissionModel);
 
 		return "team-modification.html";
 	}
