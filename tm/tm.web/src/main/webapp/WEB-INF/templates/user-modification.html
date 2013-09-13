@@ -234,11 +234,9 @@
 							</span>
 							<div id="project-permission-panel" class="toggle-panel-main">
 								<table id="permission-table"
-									th:attr="data-def='filter, hover,  datakeys-id=project-id ,ajaxsource='+@{/administration/users/__${user.id}__/permissions}+',language='+@{/datatables/messages}">
+									th:attr="data-def='filter, hover,pre-sort=1-asc, datakeys-id=project-id ,ajaxsource='+@{/administration/users/__${user.id}__/permissions}+',language='+@{/datatables/messages}">
 									<thead>
 										<tr>
-											<th th:attr="data-def='invisible, map=project-id'">user-id</th>
-
 											<th th:attr="data-def='select, map=project-index'">#</th>
 
 											<th th:attr="data-def='sortable, map=project-name, filter, link='+@{/administration/projects/{project-id}/info}"
@@ -268,11 +266,9 @@
 							<div id="teams-panel" class="toggle-panel-main">
 
 								<table id="teams-table"
-									th:attr="data-def='filter, hover,datakeys-id=team-id ,ajaxsource=' + @{/users/__${user.id}__/teams} + ',language=' + @{/datatables/messages}">
+									th:attr="data-def='filter, pre-sort=1-asc hover,datakeys-id=team-id ,ajaxsource=' + @{/users/__${user.id}__/teams} + ',language=' + @{/datatables/messages}">
 									<thead>
 										<tr>
-											<th th:attr="data-def='invisible, map=team-id'">team-id</th>
-
 											<th th:attr="data-def='select, map=team-index'">#</th>
 
 											<th

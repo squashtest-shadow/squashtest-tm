@@ -280,7 +280,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 
 	@RequestMapping(value = USER_URL + "/remove-permission", method = RequestMethod.POST)
 	public @ResponseBody
-	void removePermission(@RequestParam("project") long projectId, @PathVariable long userId) {
+	void removePermission(@RequestParam("project") long projectId, @PathVariable("userId") long userId) {
 		permissionService.removeProjectPermission(userId, projectId);
 	}
 

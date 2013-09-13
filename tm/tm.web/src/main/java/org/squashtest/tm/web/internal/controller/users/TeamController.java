@@ -89,21 +89,21 @@ public class TeamController extends PartyControllerSupport {
 	private static final String TEAM_ID_URL = "/{teamId}";
 
 	private DatatableMapper<String> teamsMapper = new NameBasedMapper(9)
-			.mapAttribute("name", "name", Team.class)
-			.mapAttribute("description", "description", Team.class)
-			.mapAttribute("nb-associated-users", "size", Team.class)
-			// WARNING : the 'size' attribute doesn't actually exist. It's a trick, see
-			// HibernateTeamDao#findSortedTeams. see #1968
-			.mapAttribute("created-on", "audit.createdOn", Team.class)
-			.mapAttribute("created-by", "audit.createdBy", Team.class)
-			.mapAttribute("last-mod-on", "audit.lastModifiedOn", Team.class)
-			.mapAttribute("last-mod-by", "audit.lastModifiedBy", Team.class);
+														.mapAttribute("name", "name", Team.class)
+														.mapAttribute("description", "description", Team.class)
+														.mapAttribute("nb-associated-users", "size", Team.class)
+														// WARNING : the 'size' attribute doesn't actually exist. It's a trick, see
+														// HibernateTeamDao#findSortedTeams. see #1968
+														.mapAttribute("created-on", "audit.createdOn", Team.class)
+														.mapAttribute("created-by", "audit.createdBy", Team.class)
+														.mapAttribute("last-mod-on", "audit.lastModifiedOn", Team.class)
+														.mapAttribute("last-mod-by", "audit.lastModifiedBy", Team.class);
 
 	private DatatableMapper<String> membersMapper = new NameBasedMapper(1).map("user-name", "firstName");
 
-	private DatatableMapper<String> permissionMapper = new NameBasedMapper(2).mapAttribute("project-name",
-			"project.name", ProjectPermission.class).mapAttribute("permission-name",
-			"permissionGroup.qualifiedName", ProjectPermission.class);
+	private DatatableMapper<String> permissionMapper = new NameBasedMapper(2)
+														.mapAttribute("project-name", "project.name", ProjectPermission.class)
+														.mapAttribute("permission-name", "permissionGroup.qualifiedName", ProjectPermission.class);
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TeamController.class);
 
