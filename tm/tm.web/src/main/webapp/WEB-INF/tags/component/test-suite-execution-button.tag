@@ -52,10 +52,10 @@
 		<input type="button" id="start-resume-button" class="button run-menu" value="${startResumeLabel}"/>		
 		<ul class="not-displayed">
 			<li>
-				<a id="start-suite-optimized-button" href="javascript:void(0)"><f:message key="test-suite.execution.optimized.label" /> </a>
+				<a id="start-suite-optimized-button" ><f:message key="test-suite.execution.optimized.label" /> </a>
 			</li>
 			<li>
-				<a id="start-suite-classic-button" href="javascript:void(0)"><f:message key='test-suite.execution.classic.label' /> </a>
+				<a id="start-suite-classic-button" ><f:message key='test-suite.execution.classic.label' /> </a>
 			</li>
 		</ul>
 	
@@ -73,10 +73,10 @@
 		<input type="button" id="restart-button" class="button run-menu" value="${restartSuiteButton}"/>		
 		<ul class="not-displayed">
 			<li>
-				<a id="restart-suite-optimized-button" class="exec" href="javascript:void(0)"><f:message key="test-suite.execution.optimized.label" /> </a>
+				<a id="restart-suite-optimized-button" class="exec" ><f:message key="test-suite.execution.optimized.label" /> </a>
 			</li>
 			<li>
-				<a id="restart-suite-classic-button" href="javascript:void(0)"><f:message key='test-suite.execution.classic.label' /> </a>
+				<a id="restart-suite-classic-button" ><f:message key='test-suite.execution.classic.label' /> </a>
 			</li>
 		</ul>
 		

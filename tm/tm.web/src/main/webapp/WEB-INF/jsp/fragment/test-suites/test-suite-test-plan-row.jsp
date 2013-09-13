@@ -83,7 +83,7 @@
 				</td>
 				<td style="width: 2em;"><!-- todo : run the execution button --></td>
 				<td style="width: 2em;" class="centered"><authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
-						<a id="delete-execution-table-button-${execution.id}" href="javascript:void(0)"
+						<a id="delete-execution-table-button-${execution.id}" 
 							class="delete-execution-table-button" title='<f:message key="label.removeExecution"/>' ></a>
 					</authz:authorized>
 				</td>
@@ -95,12 +95,12 @@
 		<c:if test="${ executable }">
 			<tr>
 				<td colspan="12" style="text-align: left;"> 
-					<a id="new-exec-${testPlanItem.id}" style="font-size:0.8em;" class="button new-exec" href="javascript:void(0)" data-new-exec="${newExecutionUrl}">
+					<a id="new-exec-${testPlanItem.id}" style="font-size:0.8em;" class="button new-exec"  data-new-exec="${newExecutionUrl}">
 						<f:message key="execution.iteration-test-plan-row.new" /> 
 					</a> 
 								
 					<c:if test="${ testPlanItem.project.testAutomationEnabled && testPlanItem.referencedTestCase.automated}"> 
-							<a	class="button new-auto-exec" style="font-size:0.8em;" id="new-auto-exec-${testPlanItem.id}"	href="javascript:void(0)" data-new-exec="${newExecutionUrl}">
+							<a	class="button new-auto-exec" style="font-size:0.8em;" id="new-auto-exec-${testPlanItem.id}"	 data-new-exec="${newExecutionUrl}">
 								<f:message	key="execution.iteration-test-plan-row.new.auto" />
 							</a>
 					</c:if>

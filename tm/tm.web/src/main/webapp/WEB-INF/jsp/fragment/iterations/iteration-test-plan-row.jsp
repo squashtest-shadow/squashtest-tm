@@ -96,7 +96,7 @@
 				<td style="width: 1.5em;" class="centered">
 					<authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
 					<f:message var="labelRemoveExec" key="label.removeExecution"/>
-					<a id="delete-execution-table-button-${execution.id}" href="javascript:void(0)" class="delete-execution-table-button" title="${labelRemoveExec}"></a>
+					<a id="delete-execution-table-button-${execution.id}"  class="delete-execution-table-button" title="${labelRemoveExec}"></a>
 					</authz:authorized>
 				</td>
 			</tr>
@@ -105,11 +105,11 @@
 			<tr>
 				<td colspan="13" style="text-align: left;">
 					<strong>
-						<a class="button new-exec" style="font-size:0.8em;" id="new-exec-${ testPlanItem.id }" href="javascript:void(0)" data-new-exec="${ newExecutionUrl }">
+						<a class="button new-exec" style="font-size:0.8em;" id="new-exec-${ testPlanItem.id }"  data-new-exec="${ newExecutionUrl }">
 							<f:message key="execution.iteration-test-plan-row.new" />
 						</a> 
 						<c:if test="${testPlanItem.referencedTestCase.automated}"> 
-						<a	class="button new-auto-exec" style="font-size:0.8em;" id="new-auto-exec-${ testPlanItem.id }" href="javascript:void(0)" data-new-exec="${ newExecutionUrl }">
+						<a	class="button new-auto-exec" style="font-size:0.8em;" id="new-auto-exec-${ testPlanItem.id }"  data-new-exec="${ newExecutionUrl }">
 							<f:message key="execution.iteration-test-plan-row.new.auto" />
 						</a>
 						</c:if>

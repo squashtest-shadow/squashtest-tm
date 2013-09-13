@@ -59,7 +59,7 @@
 				<h2>
 					<label for="bugtracker-name-header"><f:message
 							key="label.Bugtracker" />
-					</label><a id="bugtracker-name-header" href="javascript:void(0);"><c:out
+					</label><a id="bugtracker-name-header" ><c:out
 							value="${ bugtracker.name }" escapeXml="true" />
 					</a>
 				</h2>

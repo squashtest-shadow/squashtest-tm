@@ -148,8 +148,8 @@
 <div id="shortcut-exec-menu-template" class="not-displayed">
 		<div class="buttonmenu execute-arrow cursor-pointer"></div> 
 		<ul style="display:none">
-			<li><a data-tpid="#placeholder-tpid#" class="run-menu-item run-popup" href="javascript:void(0)"><f:message key="test-suite.execution.classic.label"/></a></li>
-			<li><a data-tpid="#placeholder-tpid#" class="run-menu-item run-oer" href="javascript:void(0)"><f:message key="test-suite.execution.optimized.label"/></a></li>
+			<li><a data-tpid="#placeholder-tpid#" class="run-menu-item run-popup" ><f:message key="test-suite.execution.classic.label"/></a></li>
+			<li><a data-tpid="#placeholder-tpid#" class="run-menu-item run-oer" ><f:message key="test-suite.execution.optimized.label"/></a></li>
 		</ul>
 </div>
 

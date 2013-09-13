@@ -45,7 +45,7 @@
 			var titlepanel = $('<div/>', {
 				'style' : "overflow:hidden;"
 			});
-			var snapleft = $('<div class="snap-left"><a class="tg-link" href="javascript:void(0)"></a></div>');
+			var snapleft = $('<div class="snap-left"><a class="tg-link" ></a></div>');
 			var snapright = $('<div/>', {
 				'class' : "snap-right"
 			});

@@ -93,7 +93,7 @@
 					<label for="project-name-header">
             <f:message key="${ adminproject.template ? 'label.projectTemplate' : 'label.project' }" />
 					</label>
-          <a id="project-name-header" href="javascript:void(0);">
+          <a id="project-name-header" >
             <c:out value="${ adminproject.project.name }" escapeXml="true" />
 					</a>
 				</h2>

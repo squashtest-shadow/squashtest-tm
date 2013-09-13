@@ -36,7 +36,7 @@
 
 <div id="tree_element_menu" class="tree-top-toolbar">
 	<div class="button-group">
-		<a id="search-tree-button" href="JavaScript:void(0);" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only" role="button" aria-disabled="false" title="<f:message key='tree.button.search.label' />...">
+		<a id="search-tree-button"  class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only" role="button" aria-disabled="false" title="<f:message key='tree.button.search.label' />...">
 			<span class="ui-button-icon-primary ui-icon ui-icon-search"></span>
 			<span class="ui-button-text"><f:message key="tree.button.search.label" />...</span>
 		</a>

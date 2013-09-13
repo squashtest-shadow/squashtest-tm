@@ -41,13 +41,13 @@
 		<c:if test="${adminproject.project.active}">
 			<span class="projectActive">${active} </span>
 			<sec:authorize access=" hasRole('ROLE_ADMIN')">
-				<a id="activateProject" href="javascript:void(0);">[${inactivate}]</a>
+				<a id="activateProject" >[${inactivate}]</a>
 			</sec:authorize>
 		</c:if>
 		<c:if test="${!adminproject.project.active}">
 			<span class="projectInactive">${inactive} </span>
 			<sec:authorize access=" hasRole('ROLE_ADMIN')">
-				<a id="activateProject" href="javascript:void(0);">[${activate}]</a>
+				<a id="activateProject" >[${activate}]</a>
 			</sec:authorize>
 		</c:if>
 	</div>

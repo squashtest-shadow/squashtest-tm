@@ -720,7 +720,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 								template = '<input class="tableButton" title="' + button.tooltip +
 										'" type="image" src="' + button.image + '">';
 							} else if (button.uiIcon) {
-								template = '<a href="javascript:void(0)" class="tableButton" title="' + button.tooltip +
+								template = '<a  class="tableButton" title="' + button.tooltip +
 										'" />';
 							}
 							var cells = $(button.tdSelector, self);
@@ -762,7 +762,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		if (!deleteConf) {
 			return;
 		}
-		var template = '<a href="javascript:void(0)">' + deleteConf.tooltip + '</a>';
+		var template = '<a >' + deleteConf.tooltip + '</a>';
 
 		var cells = $('td.delete-button', this);
 		cells.html(template);

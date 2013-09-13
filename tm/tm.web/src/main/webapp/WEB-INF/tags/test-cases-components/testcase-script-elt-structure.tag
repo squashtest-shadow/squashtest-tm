@@ -44,14 +44,14 @@
 	<div class="display-table-cell">
 	<c:choose >
 		<c:when test="${testCase.automatedTest != null}">
-			<a id="ta-picker-link" href="javascript:void(0);"><c:out value="${testCase.automatedTest.fullName}"/></a>
-			<c:if test="${ canModify }"><a id="remove-ta-link"  class="actionLink" href="javascript:void(0);">[<f:message key="label.Remove"/>]</a></c:if>
+			<a id="ta-picker-link" ><c:out value="${testCase.automatedTest.fullName}"/></a>
+			<c:if test="${ canModify }"><a id="remove-ta-link"  class="actionLink" >[<f:message key="label.Remove"/>]</a></c:if>
 		</c:when>
 		<c:otherwise>
 			<c:choose>
 				<c:when test="${ canModify }">
-					<a id="ta-picker-link" href="javascript:void(0);"><f:message key="label.dot.pick"/></a>
-					<a id="remove-ta-link" class="actionLink" href="javascript:void(0);" style="display:none">[<f:message key="label.Remove"/>]</a>
+					<a id="ta-picker-link" ><f:message key="label.dot.pick"/></a>
+					<a id="remove-ta-link" class="actionLink"  style="display:none">[<f:message key="label.Remove"/>]</a>
 				</c:when>
 				<c:otherwise>
 					<f:message key="label.none"/>

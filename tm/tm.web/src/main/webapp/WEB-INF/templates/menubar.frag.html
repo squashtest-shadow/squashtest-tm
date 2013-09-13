@@ -31,7 +31,7 @@
 	<div class="main-menubar" th:fragment="menubar">
 		<div>
 			<input type="checkbox" id="menu-toggle-filter-ckbox"></input>
-			<a id="menu-project-filter-link" href="javascript:void(0)" >Inactif</a> 
+			<a id="menu-project-filter-link" >Inactif</a> 
 		</div>
 		<div th:if="${sec.hasRole('ROLE_TM_PROJECT_MANAGER')} or ${sec.hasRole('ROLE_ADMIN')}">
 			<a id="menu-administration-link" 
@@ -56,13 +56,13 @@
 			</div>
 			<div id="dialog-settings-filter-maincontent not-displayed">			
 				<div id="dialog-settings-filter-controls" class="project-filter-controls">
-					<a id="dialog-settings-filter-selectall" href="javascript:void(0)" th:text="#{dialog.settings.filter.controls.selectall}" class="project-picker-selall">
+					<a id="dialog-settings-filter-selectall"  th:text="#{dialog.settings.filter.controls.selectall}" class="project-picker-selall">
 						Select all
 					</a>
-					<a id="dialog-settings-filter-deselectall" href="javascript:void(0)" th:text="#{dialog.settings.filter.controls.deselectall}" class="project-picker-deselall">
+					<a id="dialog-settings-filter-deselectall"  th:text="#{dialog.settings.filter.controls.deselectall}" class="project-picker-deselall">
 						Unselect all
 					</a>
-					<a id="dialog-settings-filter-invertselect" href="javascript:void(0)" th:text="#{dialog.settings.filter.controls.invertselect}" class="project-picker-invsel">
+					<a id="dialog-settings-filter-invertselect"  th:text="#{dialog.settings.filter.controls.invertselect}" class="project-picker-invsel">
 						Invert sel
 					</a>				
 				</div>	
@@ -87,7 +87,7 @@
           <span th:text="#{squashtm.processing}">En cours...</span>
         </div>
         <div id="generic-error-notification-area" class="ui-state-error ui-corner-all snap-right not-displayed">
-          <span class="ui-icon ui-icon-alert icon"></span><span th:text="#{error.generic.label}">WTF ?!</span> &nbsp;(<a href="javascript:void(0)" id="show-generic-error-details" th:text="#{error.generic.button.details.label}">Details</a>)
+          <span class="ui-icon ui-icon-alert icon"></span><span th:text="#{error.generic.label}">WTF ?!</span> &nbsp;(<a  id="show-generic-error-details" th:text="#{error.generic.button.details.label}">Details</a>)
         </div>
       </div>
 </body>

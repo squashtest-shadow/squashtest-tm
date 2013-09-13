@@ -85,12 +85,12 @@
 	<input id="execute-auto-button" class="button run-menu" type="button" value="${autoExecLabel}" />
 	<ul class="not-displayed">
 		<li>
-			<a id="execute-auto-execute-all" href="javascript:void(0)">
+			<a id="execute-auto-execute-all" >
 				<f:message	key="iteration.suite.execution.auto.all.label" /> 
 			</a>
 		</li>
 		<li>
-			<a class="execute-auto-execute-selection" href="javascript:void(0)">
+			<a class="execute-auto-execute-selection" >
 				<f:message	key='iteration.suite.execution.auto.selection.label' /> 
 			</a>
 		</li>

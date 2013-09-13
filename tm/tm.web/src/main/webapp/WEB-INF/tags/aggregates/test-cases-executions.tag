@@ -30,7 +30,7 @@
 	<c:forEach var="exec" items="${executionList}">
 		<tr>
 			<td class="not-displayed">${exec.id}</td>
-			<td><a href="javascript:void(0)">${exec.name}</a></td>
+			<td><a >${exec.name}</a></td>
 			<td>${exec.executionStatus}</td>
 		</tr>
 	</c:forEach>

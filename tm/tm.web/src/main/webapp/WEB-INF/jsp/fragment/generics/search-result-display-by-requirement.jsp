@@ -76,7 +76,7 @@
 			<c:when test="${object.class.simpleName == icon}">
 						<td class = "objectId"> ${object.id}</td>
 						<td id="searchnode-${object.class.simpleName}-${object.id}" class="non-tree requirement-${object.criticality}" style="border: none;">
-							<a href="javascript:void(0)" style="text-decoration: none; border: none;">
+							<a  style="text-decoration: none; border: none;">
 								<img class="search-image" src="${servContext}/images/Icon_Tree_TestCase.png"/>
 								<span class="search-text">${object.reference}-${object.name}</span>
 							</a>
@@ -94,7 +94,7 @@
 			<c:when test="${object.class.simpleName== 'Iteration'}">
 				<td class = "objectId"> ${object.id}</td>
 				<td id="searchnode-${object.class.simpleName}-${object.id}" class="non-tree" style="border: none;">
-					<a href="javascript:void(0)" style="text-decoration: none; border: none;">
+					<a  style="text-decoration: none; border: none;">
 						<img class="search-image" src="${servContext}/images/Icon_Tree_Iteration.png"/>
 						<span class="search-text">${object.name}</span>
 					</a>
@@ -103,7 +103,7 @@
 			<c:otherwise>
 				<td class = "objectId"> ${object.id}</td>
 				<td id="searchnode-${object.class.simpleName}-${object.id}" class="non-tree" style="border: none;">
-					<a href="javascript:void(0)" style="text-decoration: none; border: none;"> 
+					<a  style="text-decoration: none; border: none;"> 
 						<img class="search-image" src="${servContext}/images/Icon_Tree_Folder.png"/>
 						<span class="search-text">${object.name}</span>
 					</a>

@@ -187,8 +187,8 @@
                   <div class="display-table-row" th:unless="${authenticationProvider.managedPassword}">
                     <label for="reset-password-button" th:text="#{label.password}">Password</label>
                     <div class="display-table-cell">
-                      <a href="javascript:void(0)" id="reset-password-button" th:text="#{user.button.reset.password}" th:class="${ !user.hasAuthentication } ? 'not-displayed'">Reset</a>
-                      <a href="javascript:void(0)" id="create-auth-button" th:text="#{label.createPassword}" th:class="${ user.hasAuthentication } ? 'not-displayed'">Create authentication</a>
+                      <a  id="reset-password-button" th:text="#{user.button.reset.password}" th:class="${ !user.hasAuthentication } ? 'not-displayed'">Reset</a>
+                      <a  id="create-auth-button" th:text="#{label.createPassword}" th:class="${ user.hasAuthentication } ? 'not-displayed'">Create authentication</a>
                     </div>
                   </div>
                   <div class="display-table-row" th:if="${authenticationProvider.managedPassword}">
