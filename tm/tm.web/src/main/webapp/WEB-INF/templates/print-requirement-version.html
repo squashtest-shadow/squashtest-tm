@@ -96,7 +96,7 @@
 					<label class="display-table-cell"
 						for="requirement-version-reference" th:text="#{ label.reference }">Reference</label>
 					<div class="display-table-cell" id="requirement-version-reference"
-						th:text="${ requirementVersion.requirement.id }">1</div>
+						th:text="${ requirementVersion.reference }">1</div>
 				</div>
 
 				<div class="display-table-row">
@@ -230,9 +230,9 @@
 			<tbody>
 				<tr
 					th:each="atdata, iterStat: ${auditTrailDatas}" th:object="${atdata}">
-					<td th:text="*{[0]}">20/10/2013</td>
-					<td th:text="*{[1]}">admin</td>
-					<td sq:unsafe-html="*{[2]}">Creation</td>					
+					<td th:text="*{['event-date']}">20/10/2013</td>
+					<td th:text="*{['event-author']}">admin</td>
+					<td sq:unsafe-html="*{['event-message']}">Creation</td>
 				</tr>
 			</tbody>
 		</table>
