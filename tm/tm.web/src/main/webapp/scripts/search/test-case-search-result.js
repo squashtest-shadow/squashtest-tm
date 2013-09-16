@@ -172,7 +172,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		},
 		
 		exportResults : function(){
-			document.location.href= squashtm.app.contextRoot +"/advanced-search?export=csv";
+			document.location.href= squashtm.app.contextRoot +"/advanced-search?export=csv&searchModel="+JSON.stringify(this.model);
 		},
 		
 		editResults : function(){

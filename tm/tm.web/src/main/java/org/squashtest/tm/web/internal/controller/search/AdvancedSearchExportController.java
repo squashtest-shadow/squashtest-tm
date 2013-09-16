@@ -29,10 +29,13 @@ import java.util.Iterator;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.testcase.TestCaseSearchExportCSVModel;
 import org.squashtest.tm.domain.testcase.TestCaseSearchExportCSVModel.Row;
 import org.squashtest.tm.service.library.AdvancedSearchService;
@@ -45,11 +48,13 @@ public class AdvancedSearchExportController {
 	@Inject
 	private AdvancedSearchService advancedSearchService;
 
-	@RequestMapping(method = RequestMethod.GET, params = "export=csv")
+	@RequestMapping(method = RequestMethod.GET, params = {"searchModel", "export=csv"})
 	public @ResponseBody
-	void exportCampaign(HttpServletResponse response) throws IOException {
+	void exportTestCaseAdvancedSearchResult(HttpServletResponse response, @RequestParam(value = "searchModel") String searchModel) throws IOException {
 
-		TestCaseSearchExportCSVModel model = advancedSearchService.exportTestCaseSearchToCSV();
+		AdvancedSearchModel parsedSearchModel = new ObjectMapper().readValue(searchModel, AdvancedSearchModel.class);
+		
+		TestCaseSearchExportCSVModel model = advancedSearchService.exportTestCaseSearchToCSV(parsedSearchModel);
 
 		// prepare the response
 		response.setContentType("application/octet-stream");

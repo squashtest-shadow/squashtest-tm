@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseSearchExportCSVModel;
+import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 
 @Component
@@ -129,8 +130,8 @@ public class TestCaseSearchExportCSVModelImpl implements TestCaseSearchExportCSV
 			dataCells.add(new CellImpl(Integer.toString(testCase.getSteps().size())));
 			dataCells.add(new CellImpl(Integer.toString(iterationService.findIterationContainingTestCase(testCase.getId()).size())));
 			dataCells.add(new CellImpl(Integer.toString(testCase.getAllAttachments().size())));
-			dataCells.add(new CellImpl(auditable.getCreatedBy()));
-			dataCells.add(new CellImpl(auditable.getLastModifiedBy()));
+			dataCells.add(new CellImpl(formatUser(auditable.getCreatedBy())));
+			dataCells.add(new CellImpl(formatUser(auditable.getLastModifiedBy())));
 			
 			Row row = new RowImpl(dataCells);
 			rows.add(row);
@@ -138,6 +139,11 @@ public class TestCaseSearchExportCSVModelImpl implements TestCaseSearchExportCSV
 		
 		return rows.iterator();
 	}
+	
+	private String formatUser(String user) {
+		return (user == null) ? "" : user;
+	}
+	
 	
 	public static class CellImpl implements Cell {
 		private String value;

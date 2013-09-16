@@ -52,7 +52,7 @@ public interface AdvancedSearchService {
 	void updateIndexingDate();
 	
 	//Exporting
-	TestCaseSearchExportCSVModel exportTestCaseSearchToCSV();
+	TestCaseSearchExportCSVModel exportTestCaseSearchToCSV(AdvancedSearchModel model);
 
 	List<String> findAllUsersWhoModifiedTestCases();
 

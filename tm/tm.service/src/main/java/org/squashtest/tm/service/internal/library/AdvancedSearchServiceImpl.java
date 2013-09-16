@@ -502,12 +502,11 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 
 	@Override
-	public TestCaseSearchExportCSVModel exportTestCaseSearchToCSV() {
+	public TestCaseSearchExportCSVModel exportTestCaseSearchToCSV(AdvancedSearchModel searchModel) {
 
-		TestCaseSearchExportCSVModelImpl model = testCaseSearchExportCSVModelProvider
-				.get();
+		TestCaseSearchExportCSVModelImpl model = testCaseSearchExportCSVModelProvider.get();
 
-		List<TestCase> testCases = testCaseDao.findAll();
+		List<TestCase> testCases = this.searchForTestCases(searchModel);
 		model.setTestCases(testCases);
 		model.setIterationService(iterationService);
 		return model;
