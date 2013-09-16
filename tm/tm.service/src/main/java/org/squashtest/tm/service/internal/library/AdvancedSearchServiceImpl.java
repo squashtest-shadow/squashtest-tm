@@ -37,14 +37,11 @@ import org.apache.lucene.search.SortField;
 import org.hibernate.CacheMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.hibernate.search.batchindexing.MassIndexerProgressMonitor;
-import org.hibernate.search.jmx.IndexingProgressMonitor;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
@@ -54,7 +51,6 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.library.IndexModel;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
-import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoring;
 import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.search.AdvancedSearchRangeFieldModel;
@@ -72,7 +68,6 @@ import org.squashtest.tm.service.library.AdvancedSearchService;
 import org.squashtest.tm.service.project.ProjectManagerService;
 
 @Service("squashtest.tm.service.AdvancedSearchService")
-@Transactional(readOnly = true)
 public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	@Inject
@@ -98,21 +93,18 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	@Inject
 	private ConfigurationService configurationService;
-
-	private AdvancedSearchIndexMonitoring advancedSearchIndexMonitoring;
 	
-	private final static String REQUIREMENT_INDEXING_DATE_KEY = "lastindexing.requirement.date";
-	private final static String TESTCASE_INDEXING_DATE_KEY = "lastindexing.testcase.date";
-	private final static String CAMPAIGN_INDEXING_DATE_KEY = "lastindexing.campaign.date";
+	public final static String REQUIREMENT_INDEXING_DATE_KEY = "lastindexing.requirement.date";
+	public final static String TESTCASE_INDEXING_DATE_KEY = "lastindexing.testcase.date";
+	public final static String CAMPAIGN_INDEXING_DATE_KEY = "lastindexing.campaign.date";
 
-	private final static String REQUIREMENT_INDEXING_VERSION_KEY = "lastindexing.requirement.version";
-	private final static String TESTCASE_INDEXING_VERSION_KEY = "lastindexing.testcase.version";
-	private final static String CAMPAIGN_INDEXING_VERSION_KEY = "lastindexing.campaign.version";
+	public final static String REQUIREMENT_INDEXING_VERSION_KEY = "lastindexing.requirement.version";
+	public final static String TESTCASE_INDEXING_VERSION_KEY = "lastindexing.testcase.version";
+	public final static String CAMPAIGN_INDEXING_VERSION_KEY = "lastindexing.campaign.version";
 
-	private final static String SQUASH_VERSION_KEY = "squashtest.tm.database.version";
+	public final static String SQUASH_VERSION_KEY = "squashtest.tm.database.version";
 
-	private SimpleDateFormat dateFormat = new SimpleDateFormat(
-			"yyyy/MM/dd hh:mm");
+	public SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm");
 
 	@Override
 	public IndexModel findIndexModel() {
@@ -144,14 +136,15 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return date;
 	}
 
+
+	
 	@Override
 	public void indexTestCases() {
 
-		Session session = sessionFactory.openSession();
-
+		Session session = sessionFactory.getCurrentSession();
 		FullTextSession ftSession = Search.getFullTextSession(session);
 
-		MassIndexerProgressMonitor monitor = new AdvancedSearchIndexingMonitor();
+		MassIndexerProgressMonitor monitor = new AdvancedSearchIndexingMonitor(TestCase.class, this.configurationService);
 
 		try {
 
@@ -162,7 +155,10 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		} catch (InterruptedException e) {
 
 		}
-
+	}
+	
+	@Override	
+	public void updateIndexingDate(){
 		Date indexingDate = new Date();
 		this.configurationService.updateConfiguration(
 				TESTCASE_INDEXING_DATE_KEY, dateFormat.format(indexingDate));
@@ -170,10 +166,8 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 				.findConfiguration(SQUASH_VERSION_KEY);
 		this.configurationService.updateConfiguration(
 				TESTCASE_INDEXING_VERSION_KEY, currentVersion);
-
-		session.close();
 	}
-
+	
 	@Override
 	public List<CustomField> findAllQueryableCustomFieldsByBoundEntityType(
 			BindableEntity entity) {

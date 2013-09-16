@@ -48,6 +48,8 @@ public interface AdvancedSearchService {
 	PagedCollectionHolder<List<TestCase>> searchForTestCases(AdvancedSearchModel model, PagingAndSorting sorting);
 	
 	List<TestCase> searchForTestCases(AdvancedSearchModel model);
+
+	void updateIndexingDate();
 	
 	//Exporting
 	TestCaseSearchExportCSVModel exportTestCaseSearchToCSV();
@@ -55,6 +57,7 @@ public interface AdvancedSearchService {
 	List<String> findAllUsersWhoModifiedTestCases();
 
 	List<String> findAllUsersWhoCreatedTestCases();
+
 
 
 }

@@ -20,14 +20,26 @@
  */
 package org.squashtest.tm.service.internal.library;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.hibernate.search.batchindexing.MassIndexerProgressMonitor;
 import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoring;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.service.configuration.ConfigurationService;
 
 
 public class AdvancedSearchIndexingMonitor implements MassIndexerProgressMonitor {
 
-	public AdvancedSearchIndexingMonitor(){
+	private ConfigurationService configurationService;
+	private Class indexedDomain;
+	
+	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm");
+
+	public AdvancedSearchIndexingMonitor(Class clazz, ConfigurationService configurationService){
 		AdvancedSearchIndexMonitoring.reset();
+		this.configurationService = configurationService;
+		this.indexedDomain = clazz;
 	}
 	
 	@Override
@@ -53,6 +65,17 @@ public class AdvancedSearchIndexingMonitor implements MassIndexerProgressMonitor
 	@Override
 	public void indexingCompleted() {
 		AdvancedSearchIndexMonitoring.setIndexingOver(true);
+		
+		if(this.indexedDomain.equals(TestCase.class)){
+			this.updateTestCaseIndexingDateAndVersion();
+		}
+
 	}
 
+	private void updateTestCaseIndexingDateAndVersion(){
+		Date indexingDate = new Date();
+		this.configurationService.updateConfiguration(AdvancedSearchServiceImpl.TESTCASE_INDEXING_DATE_KEY, dateFormat.format(indexingDate));
+		String currentVersion = this.configurationService.findConfiguration(AdvancedSearchServiceImpl.SQUASH_VERSION_KEY);
+		this.configurationService.updateConfiguration(AdvancedSearchServiceImpl.TESTCASE_INDEXING_VERSION_KEY, currentVersion);
+	}
 }
