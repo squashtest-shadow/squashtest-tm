@@ -31,20 +31,20 @@ import org.squashtest.tm.domain.requirement.RequirementStatus;
 @Transactional
 @DynamicManager(name = "squashtest.tm.service.RequirementModificationService", entity = Requirement.class)
 public interface RequirementModificationService extends CustomRequirementModificationService {
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.requirement.Requirement','SMALL_EDIT') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.requirement.Requirement','WRITE') or hasRole('ROLE_ADMIN')")
 	void changeDescription(long requirementId, String newDescription);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.requirement.Requirement', 'SMALL_EDIT') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.requirement.Requirement', 'WRITE') or hasRole('ROLE_ADMIN')")
 	void changeReference(long requirementId, String reference);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.requirement.Requirement', 'SMALL_EDIT') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.requirement.Requirement', 'WRITE') or hasRole('ROLE_ADMIN')")
 	void changeStatus(long requirementId, RequirementStatus status);
 
 	@Transactional(readOnly = true)
 	@PostAuthorize("hasPermission(returnObject,'READ') or hasRole('ROLE_ADMIN')")
 	Requirement findById(long reqId);
 	
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.requirement.Requirement', 'SMALL_EDIT') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.requirement.Requirement', 'WRITE') or hasRole('ROLE_ADMIN')")
 	void changeCategory(long requirementId, RequirementCategory category);
 
 }

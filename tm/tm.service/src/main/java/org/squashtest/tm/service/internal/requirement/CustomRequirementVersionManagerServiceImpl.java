@@ -51,7 +51,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	 *      org.squashtest.tm.domain.requirement.RequirementCriticality)
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'SMALL_EDIT') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void changeCriticality(long requirementVersionId, RequirementCriticality criticality) {
 		RequirementVersion requirementVersion = requirementVersionDao.findById(requirementVersionId);
 		// FIXME should send event to test cases

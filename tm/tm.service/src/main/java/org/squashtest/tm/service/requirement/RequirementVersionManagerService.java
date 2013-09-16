@@ -43,19 +43,19 @@ public interface RequirementVersionManagerService extends CustomRequirementVersi
 	@PostAuthorize("hasPermission(returnObject,'READ') or hasRole('ROLE_ADMIN')")
 	RequirementVersion findById(long requirementVersionId);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.requirement.RequirementVersion','SMALL_EDIT') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.requirement.RequirementVersion','WRITE') or hasRole('ROLE_ADMIN')")
 	void changeDescription(long requirementId, @NotNull String newDescription);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'SMALL_EDIT') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
 	void changeReference(long requirementVersionId, @NotNull String reference);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'SMALL_EDIT') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
 	void changeStatus(long requirementVersionId, @NotNull RequirementStatus status);
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'SMALL_EDIT') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
 	void changeName(long requirementVersionId, String newName);
 	
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'SMALL_EDIT') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
 	void changeCategory(long requirementVersionId, RequirementCategory category);
 
 

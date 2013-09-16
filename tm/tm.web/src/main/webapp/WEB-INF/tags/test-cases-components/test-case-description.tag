@@ -29,7 +29,6 @@
 
 
 <%@ attribute name="testCase" required="true" type="java.lang.Object"  description="the testcase" %>
-<%@ attribute name="smallEditable"  required="true" type="java.lang.Boolean"  description="if the user has small edit permission on this test case" %>
 <%@ attribute name="writable"  required="true" type="java.lang.Boolean"  description="if the user has write permission on this test case" %>
 <%@ attribute name="testCaseImportanceComboJson"  required="true" type="java.lang.Object"  description="the json formatted list of importances" %>
 <%@ attribute name="testCaseNatureComboJson"  required="true" type="java.lang.Object"  description="the json formatted list of natures" %>
@@ -42,7 +41,7 @@
 <c:url var="importanceAutoUrl" 				value="/test-cases/${testCase.id}/importanceAuto"/>
 
 
-<c:if test="${ smallEditable }">
+<c:if test="${ writable }">
 <comp:rich-jeditable   targetUrl="${ testCaseUrl }" 
 					   componentId="test-case-description" />
 
@@ -96,7 +95,7 @@
 			<label for="test-case-importance" class="display-table-cell"><f:message key="test-case.importance.combo.label" /></label>
 			<div class="display-table-cell">
 				<span id="test-case-importance">${testCaseImportanceLabel}</span>
-				<c:if test="${ smallEditable }">
+				<c:if test="${ writable }">
 				<comp:select-jeditable-auto
 						associatedSelectJeditableId="test-case-importance"
 						url="${ importanceAutoUrl }"

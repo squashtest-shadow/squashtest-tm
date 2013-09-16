@@ -31,7 +31,6 @@ public enum Permission {
 	CREATE("creatable"), 
 	DELETE("deletable"),
 	ADMIN("administrable"), 
-	SMALL_EDIT("smallEdit"), 
 	EXECUTE("executable"), 
 	MANAGEMENT("manageable"), 
 	LINK("linkable"), 

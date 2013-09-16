@@ -31,28 +31,28 @@ import org.squashtest.tm.domain.campaign.Iteration;
 @DynamicManager(name = "squashtest.tm.service.IterationModificationService", entity = Iteration.class)
 public interface IterationModificationService extends CustomIterationModificationService {
 
-	final String SMALLEDIT_ITERATION_OR_ADMIN = "hasPermission(#arg0, 'org.squashtest.tm.domain.campaign.Iteration', 'SMALL_EDIT') "
+	final String WRITE_ITERATION_OR_ADMIN = "hasPermission(#arg0, 'org.squashtest.tm.domain.campaign.Iteration', 'WRITE') "
 			+ "or hasRole('ROLE_ADMIN')";
 
-	@PreAuthorize(SMALLEDIT_ITERATION_OR_ADMIN)
+	@PreAuthorize(WRITE_ITERATION_OR_ADMIN)
 	void changeDescription(long iterationId, String newDescription);
 
-	@PreAuthorize(SMALLEDIT_ITERATION_OR_ADMIN)
+	@PreAuthorize(WRITE_ITERATION_OR_ADMIN)
 	void changeScheduledStartDate(long iterationId, Date scheduledStart);
 
-	@PreAuthorize(SMALLEDIT_ITERATION_OR_ADMIN)
+	@PreAuthorize(WRITE_ITERATION_OR_ADMIN)
 	void changeScheduledEndDate(long iterationId, Date scheduledEnd);
 
-	@PreAuthorize(SMALLEDIT_ITERATION_OR_ADMIN)
+	@PreAuthorize(WRITE_ITERATION_OR_ADMIN)
 	void changeActualStartDate(long iterationId, Date actualStart);
 
-	@PreAuthorize(SMALLEDIT_ITERATION_OR_ADMIN)
+	@PreAuthorize(WRITE_ITERATION_OR_ADMIN)
 	void changeActualEndDate(long iterationId, Date actualEnd);
 
-	@PreAuthorize(SMALLEDIT_ITERATION_OR_ADMIN)
+	@PreAuthorize(WRITE_ITERATION_OR_ADMIN)
 	void changeActualStartAuto(long iterationId, boolean isAuto);
 
-	@PreAuthorize(SMALLEDIT_ITERATION_OR_ADMIN)
+	@PreAuthorize(WRITE_ITERATION_OR_ADMIN)
 	void changeActualEndAuto(long iterationId, boolean isAuto);
 
 

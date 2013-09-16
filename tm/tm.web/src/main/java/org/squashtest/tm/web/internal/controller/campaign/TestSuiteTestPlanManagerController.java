@@ -130,7 +130,7 @@ public class TestSuiteTestPlanManagerController {
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan-manager", method = RequestMethod.GET)
 	public ModelAndView showManager(@PathVariable("suiteId") long suiteId, @CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
 
-
+		LOGGER.info("show test suite test plan manager for test suite #{}", suiteId);
 		TestSuite testSuite = testSuiteTestPlanManagerService.findTestSuite(suiteId);
 
 		List<TestCaseLibrary> linkableLibraries = iterationTestPlanManagerService.findLinkableTestCaseLibraries();
@@ -157,7 +157,7 @@ public class TestSuiteTestPlanManagerController {
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan", params = RequestParams.S_ECHO_PARAM)
 	public @ResponseBody
 	DataTableModel getTestPlanModel(@PathVariable("suiteId") long suiteId, final DataTableDrawParameters params, final Locale locale) {
-		
+			
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, testPlanMapper);
 		PagedCollectionHolder<List<IndexedIterationTestPlanItem>> holder = testSuiteTestPlanManagerService.findAssignedTestPlan(suiteId, paging);
 
@@ -302,7 +302,7 @@ public class TestSuiteTestPlanManagerController {
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{itemId}/executions/new", method = RequestMethod.POST, params = { "mode=manual" })
 	public @ResponseBody
 	String addManualExecution(@PathVariable("suiteId") long suiteId, @PathVariable("itemId") long itemId) {
-
+LOOGER.info("add manual execution to item #{}", itemId);
 		TestSuite testSuite = service.findById(suiteId);
 		Long iterationId = testSuite.getIteration().getId();
 		
@@ -318,6 +318,7 @@ public class TestSuiteTestPlanManagerController {
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{testPlanId}/executions/new", method = RequestMethod.POST, params = { "mode=auto" })
 	public @ResponseBody
 	AutomatedSuiteOverview addAutoExecution(@PathVariable("suiteId") long suiteId, @PathVariable("itemId") long itemId, Locale locale) {
+		LOGGER.info("add automated execution to item #{}", itemId);
 		List<Long> testPlanIds = new ArrayList<Long>(1);
 		testPlanIds.add(itemId);
 

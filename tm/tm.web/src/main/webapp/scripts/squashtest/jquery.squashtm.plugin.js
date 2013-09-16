@@ -63,7 +63,7 @@ var squashtm = squashtm || {};
 		},
 		// ****************** /legacy *****************
 		editable : function(a) {
-			return $(a).attr('smallEdit') === 'true';
+			return $(a).attr('editable') === 'true';
 		},
 		creatable : function(a) {
 			return $(a).attr('creatable') === 'true';

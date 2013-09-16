@@ -28,7 +28,7 @@
 
 
 <%@ attribute name="testCase" required="true" type="java.lang.Object"  description="the testcase" %>
-<%@ attribute name="smallEditable"  required="true" type="java.lang.Boolean"  description="if the user has small edit permission on this test case" %>
+<%@ attribute name="writable"  required="true" type="java.lang.Boolean"  description="if the user has write permission on this test case" %>
 <%@ attribute name="deletable"  required="true" type="java.lang.Boolean"  description="if the user has deletion permission on this test case" %>
 <%@ attribute name="moreThanReadOnly"  required="true" type="java.lang.Boolean"  description="if the user has more than read only permission on this test case" %>
 <%@ attribute name="isInfoPage"  required="true" type="java.lang.Boolean"  description="a parameter set in the context when this template is to be displayed in an info page." %>
@@ -46,7 +46,7 @@
 	</div>
 
 	<div class="toolbar-button-panel">
-	<c:if test="${ smallEditable }">
+	<c:if test="${ writable }">
 		<input type="button" value="<f:message key='test-case.button.rename.label' />"
 				id="rename-test-case-button" class="button" />
 	</c:if>

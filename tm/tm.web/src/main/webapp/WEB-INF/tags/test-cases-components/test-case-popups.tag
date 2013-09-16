@@ -28,7 +28,7 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 
 <%@ attribute name="testCase" required="true" type="java.lang.Object"  description="the testcase" %>
-<%@ attribute name="smallEditable"  required="true" type="java.lang.Boolean"  description="if the user has small edit permission on this test case" %>
+<%@ attribute name="writable"  required="true" type="java.lang.Boolean"  description="if the user has write permission on this test case" %>
 <%@ attribute name="deletable"  required="true" type="java.lang.Boolean"  description="if the user has deletion permission on this test case" %>
 
 
@@ -37,7 +37,7 @@
 
 <%---------------------------- Rename test case popup ------------------------------%>
 
-<c:if test="${ smallEditable }">
+<c:if test="${ writable }">
 	<pop:popup id="rename-test-case-dialog"
 		titleKey="dialog.rename-test-case.title" isContextual="true"
 		openedBy="rename-test-case-button">

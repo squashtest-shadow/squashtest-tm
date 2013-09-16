@@ -62,7 +62,7 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' ,'SMALL_EDIT') "
+	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' ,'WRITE') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public void rename(long campaignId, String newName) {
 		campaignManagementService.renameNode(campaignId, newName);

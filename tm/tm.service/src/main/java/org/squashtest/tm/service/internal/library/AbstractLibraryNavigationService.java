@@ -183,7 +183,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		// fetch
 		FOLDER folder = getFolderDao().findById(folderId);
 		// check
-		checkPermission(new SecurityCheckableObject(folder, "SMALL_EDIT"));
+		checkPermission(new SecurityCheckableObject(folder, "WRITE"));
 
 		// proceed
 		LIBRARY library = getLibraryDao().findByRootContent((NODE) folder);

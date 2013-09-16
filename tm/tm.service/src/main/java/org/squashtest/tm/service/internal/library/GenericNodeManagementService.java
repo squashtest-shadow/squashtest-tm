@@ -107,14 +107,14 @@ public class GenericNodeManagementService<MANAGED extends LibraryNode, NODE exte
 	}
 
 	/**
-	 * check if the current user context has SMALL_EDIT permission on the node.
+	 * check if the current user context has WRITE permission on the node.
 	 * 
 	 * @param nodeId
 	 * @return
 	 */
-	private MANAGED checkSmallEditableNode(long nodeId) {
+	private MANAGED checkWritableNode(long nodeId) {
 		MANAGED node = nodeDao.findById(nodeId);
-		checkPermission(new SecurityCheckableObject(node, "SMALL_EDIT"));
+		checkPermission(new SecurityCheckableObject(node, "WRITE"));
 		return node;
 	}
 
@@ -125,7 +125,7 @@ public class GenericNodeManagementService<MANAGED extends LibraryNode, NODE exte
 	 */
 	@Override
 	public final void renameNode(long nodeId, String newName) throws DuplicateNameException {
-		MANAGED node = checkSmallEditableNode(nodeId);
+		MANAGED node = checkWritableNode(nodeId);
 
 		// proceed
 		renameNode(newName, node);
@@ -139,7 +139,7 @@ public class GenericNodeManagementService<MANAGED extends LibraryNode, NODE exte
 
 	@Override
 	public final void updateNodeDescription(long nodeId, String newDescription) {
-		MANAGED node = checkSmallEditableNode(nodeId);
+		MANAGED node = checkWritableNode(nodeId);
 
 		// proceed
 		node.setDescription(newDescription);

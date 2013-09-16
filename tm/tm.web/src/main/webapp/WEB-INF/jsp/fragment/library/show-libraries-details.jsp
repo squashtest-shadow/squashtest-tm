@@ -34,7 +34,7 @@
 
 <c:if test="${empty editable}">
 	<c:set var="editable" value="${ false }" /> 
-	<authz:authorized hasRole="ROLE_ADMIN" hasPermission="SMALL_EDIT" domainObject="${ library }">
+	<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ library }">
 		<c:set var="editable" value="${ true }" /> 
 	</authz:authorized>
 </c:if>

@@ -82,11 +82,7 @@
 	<c:set var="writable" value="${ true }" />
 	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="SMALL_EDIT"
-	domainObject="${ testSuite }">
-	<c:set var="smallEditable" value="${ true }" />
-	<c:set var="moreThanReadOnly" value="${ true }" />
-</authz:authorized>
+
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE"
 	domainObject="${ testSuite }">
 	<c:set var="deletable" value="${true }" />
@@ -191,7 +187,7 @@
 	</div>
 
 	<div style="clear: both;"></div>
-	<c:if test="${ smallEditable }">
+	<c:if test="${ writable }">
 		<pop:popup id="rename-test-suite-dialog"
 			titleKey="dialog.testsuites.rename.title" isContextual="true"
 			openedBy="rename-test-suite-button">
@@ -244,7 +240,7 @@
 			<comp:execute-auto-button url="${ testSuiteUrl }" testPlanTableId="test-suite-test-plans-table"/>
 			</c:if>
 		</c:if>
-		<c:if test="${ smallEditable }">
+		<c:if test="${ writable }">
 			<input type="button"
 				value="<f:message key='test-suite.button.rename.label' />"
 				id="rename-test-suite-button" class="button"
@@ -288,7 +284,7 @@
 		</li>
 	</ul>
 	<div id="tabs-1">
-		<c:if test="${ smallEditable }">
+		<c:if test="${ writable }">
 			<comp:rich-jeditable targetUrl="${ testSuiteUrl }"
 				componentId="test-suite-description"
 				submitCallback="refreshTestSuiteInfos" />

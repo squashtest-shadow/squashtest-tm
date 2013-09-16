@@ -29,7 +29,7 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 @DynamicManager(name="squashtest.tm.service.TestSuiteModificationService", entity = TestSuite.class)
 public interface TestSuiteModificationService extends CustomTestSuiteModificationService {
 
-	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.campaign.TestSuite', 'SMALL_EDIT') "
+	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.campaign.TestSuite', 'WRITE') "
 			+ "or hasRole('ROLE_ADMIN')")
 	void changeDescription(long id, String newDescription);
 }

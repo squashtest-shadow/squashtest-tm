@@ -35,24 +35,24 @@ public interface TestCaseModificationService extends CustomTestCaseModificationS
 	/**
 	 * 
 	 */
-	public static final String TEST_CASE_IS_SMALL_EDITABLE = "hasPermission(#arg0, 'org.squashtest.tm.domain.testcase.TestCase' , 'SMALL_EDIT') or hasRole('ROLE_ADMIN')";
+	public static final String TEST_CASE_IS_WRITABLE = "hasPermission(#arg0, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')";
 
-	@PreAuthorize(TEST_CASE_IS_SMALL_EDITABLE)
+	@PreAuthorize(TEST_CASE_IS_WRITABLE)
 	void changeDescription(long testCaseId, String newDescription);
 	
-	@PreAuthorize(TEST_CASE_IS_SMALL_EDITABLE)
+	@PreAuthorize(TEST_CASE_IS_WRITABLE)
 	void changeReference(long testCaseId, String reference);
 	
-	@PreAuthorize(TEST_CASE_IS_SMALL_EDITABLE)
+	@PreAuthorize(TEST_CASE_IS_WRITABLE)
 	void changeImportance(long testCaseId, TestCaseImportance importance);
 
-	@PreAuthorize(TEST_CASE_IS_SMALL_EDITABLE)
+	@PreAuthorize(TEST_CASE_IS_WRITABLE)
 	void changeNature(long testCaseId, TestCaseNature nature);
 
-	@PreAuthorize(TEST_CASE_IS_SMALL_EDITABLE)
+	@PreAuthorize(TEST_CASE_IS_WRITABLE)
 	void changeType(long testCaseId, TestCaseType type);
 
-	@PreAuthorize(TEST_CASE_IS_SMALL_EDITABLE)
+	@PreAuthorize(TEST_CASE_IS_WRITABLE)
 	void changeStatus(long testCaseId, TestCaseStatus status);
 	
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')")

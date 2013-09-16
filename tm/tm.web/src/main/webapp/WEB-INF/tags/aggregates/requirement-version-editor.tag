@@ -59,8 +59,8 @@
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH" domainObject="${ requirementVersion }">
 	<c:set var="attachable" value="${ requirementVersion.modifiable }" />
 </authz:authorized>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="SMALL_EDIT" domainObject="${ requirementVersion }">
-	<c:set var="smallEditable" value="${ requirementVersion.modifiable }" />
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirementVersion }">
+	<c:set var="writable" value="${ requirementVersion.modifiable }" />
 	<c:set var="editableStatus" value="${ requirementVersion.status.allowsStatusUpdate }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK" domainObject="${ requirementVersion }">
@@ -93,7 +93,7 @@
 		<comp:general-information-panel auditableEntity="${ requirementVersion }" entityUrl="${ requirementUrl }" />
 	</div>
 
-	<c:if test="${ smallEditable }">
+	<c:if test="${ writable }">
 		<div class="toolbar-button-panel">
 			<input type="button" value='<f:message key="requirement.button.rename.label" />' id="rename-requirement-button" class="button"/>
 			<input type="button" value="<f:message key='label.print'/>" id="print-requirement-version-button" class="button"/>
@@ -118,7 +118,7 @@
 	</ul>
 <%-- --------------------------------------------- tab1 Information----------------------------------------------%>
 	<div id="tabs-1">
-	<c:if test="${ smallEditable }">
+	<c:if test="${ writable }">
 		<comp:rich-jeditable targetUrl="${ requirementUrl }" componentId="requirement-description" />
 		<%-- make requirement-reference editable --%>
 		<%-- TODO put at end of page, maybe componentize --%>
@@ -146,7 +146,7 @@
 					<div>
 						<div id="requirement-criticality">
 							<c:choose>
-								<c:when test="${ smallEditable }">
+								<c:when test="${ writable }">
 									<comp:level-message level="${ requirementVersion.criticality }"/>
 									<comp:select-jeditable componentId="requirement-criticality" jsonData="${ jsonCriticalities }" targetUrl="${ requirementUrl }" />
 								</c:when>
@@ -162,7 +162,7 @@
 					<div>
 						<div id="requirement-category">
 							<c:choose>
-								<c:when test="${ smallEditable }">
+								<c:when test="${ writable }">
 									<s:message code="${ requirementVersion.category.i18nKey }" htmlEscape="true" />
 									<comp:select-jeditable componentId="requirement-category" jsonData="${ jsonCategories }" targetUrl="${ requirementUrl }" />
 								</c:when>
@@ -412,7 +412,7 @@
 		});
 	});
 
-	<c:if test="${ smallEditable }">
+	<c:if test="${ writable }">
 	function renameRequirementSuccess(data){
 		var evt = new EventRename(identity, $('#rename-requirement-input').val());
 		squashtm.workspace.contextualContent.fire(null, evt);

@@ -61,11 +61,7 @@
 	<c:set var="attachable" value="${ true }" />
 	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="SMALL_EDIT"
-	domainObject="${ testCase }">
-	<c:set var="smallEditable" value="${true }" />
-	<c:set var="moreThanReadOnly" value="${ true }" />
-</authz:authorized>
+
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE"
 	domainObject="${ testCase }">
 	<c:set var="deletable" value="${true }" />
@@ -91,7 +87,7 @@
 <%---------------------------- Test Case Informations ------------------------------%>
 
 <tc:test-case-toolbar testCase="${testCase}" isInfoPage="${param.isInfoPage}" otherViewers="${otherViewers}"   
-					  moreThanReadOnly="${moreThanReadOnly}"  smallEditable="${smallEditable}" deletable="${deletable}" />
+					  moreThanReadOnly="${moreThanReadOnly}"  writable="${writable}" deletable="${deletable}" />
 
 <%-- --------------------------------------- Test Case body --------------------------------------- --%>
 
@@ -131,8 +127,7 @@
 									testCaseImportanceComboJson="${testCaseImportanceComboJson}" 
 									testCaseTypeComboJson="${testCaseTypeComboJson}"
 									testCaseTypeStatusJson="${testCaseTypeStatusJson}"
-									writable="${writable}"
-									smallEditable="${smallEditable}"/>
+									writable="${writable}"/>
 		
 
 		<%----------------------------------- Prerequisites -----------------------------------------------%>
@@ -172,7 +167,7 @@
 
 <%-- ===================================== popups =============================== --%>
 
-<tc:test-case-popups testCase="${testCase}" smallEditable="${smallEditable}" deletable="${deletable}" />
+<tc:test-case-popups testCase="${testCase}" writable="${writable}" deletable="${deletable}" />
 
 <%-- ===================================== /popups =============================== --%>
 		

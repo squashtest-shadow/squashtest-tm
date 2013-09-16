@@ -194,7 +194,7 @@ define(['jquery'], function($){
 		};
 
 		this.isEditable = function() {
-			return this.reference.attr('smallEdit') === "true";
+			return this.reference.attr('editable') === "true";
 		};
 
 		this.isCreatable = function() {
@@ -212,7 +212,6 @@ define(['jquery'], function($){
 			// binds a permission to its quality,
 			var qualities = {
 				READ : "readable",
-				SMALL_EDIT : "smallEdit",
 				WRITE : "editable",
 				CREATE : "creatable",
 				DELETE : "deletable",
