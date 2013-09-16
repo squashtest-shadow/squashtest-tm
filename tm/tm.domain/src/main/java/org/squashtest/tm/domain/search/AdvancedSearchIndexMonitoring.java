@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.domain.search;
 
-public class AdvancedSearchIndexMonitoring {
+public final class AdvancedSearchIndexMonitoring {
 
 	private static boolean isIndexingOver = false;
 	private static long documentsAdded = 0L;
@@ -28,12 +28,12 @@ public class AdvancedSearchIndexMonitoring {
 	private static int documentsBuilt = 0;
 	private static int entitiesLoaded = 0;
 	private static double progressPercentage = 0;
-	
-	private AdvancedSearchIndexMonitoring(){
-		
+
+	private AdvancedSearchIndexMonitoring() {
+		super();
 	}
-	
-	public static void reset(){
+
+	public static void reset() {
 		AdvancedSearchIndexMonitoring.isIndexingOver = false;
 		AdvancedSearchIndexMonitoring.documentsAdded = 0L;
 		AdvancedSearchIndexMonitoring.addToTotalCount = 0L;
@@ -41,7 +41,7 @@ public class AdvancedSearchIndexMonitoring {
 		AdvancedSearchIndexMonitoring.entitiesLoaded = 0;
 		AdvancedSearchIndexMonitoring.setProgressPercentage(0);
 	}
-	
+
 	public static boolean isIndexingOver() {
 		return isIndexingOver;
 	}
@@ -83,7 +83,8 @@ public class AdvancedSearchIndexMonitoring {
 	}
 
 	public static double getProgressPercentage() {
-		AdvancedSearchIndexMonitoring.progressPercentage = (double) AdvancedSearchIndexMonitoring.documentsBuilt / (double) AdvancedSearchIndexMonitoring.addToTotalCount;
+		AdvancedSearchIndexMonitoring.progressPercentage = (double) AdvancedSearchIndexMonitoring.documentsBuilt
+				/ (double) AdvancedSearchIndexMonitoring.addToTotalCount;
 		return AdvancedSearchIndexMonitoring.progressPercentage;
 	}
 
