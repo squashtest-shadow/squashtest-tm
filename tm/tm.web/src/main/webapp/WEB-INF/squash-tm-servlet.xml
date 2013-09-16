@@ -32,7 +32,7 @@
 
 	<!-- Scans the classpath of this application for @Components to deploy as 
 		beans -->
-  <context:component-scan base-package="org.squashtest.tm" >
+  <context:component-scan base-package="org.squashtest.tm">
     <context:exclude-filter type="annotation" expression="org.springframework.context.annotation.Configuration" />
     <context:exclude-filter type="annotation" expression="org.squashtest.tm.web.internal.annotation.ApplicationComponent" />
   </context:component-scan>
@@ -102,22 +102,27 @@
 
   <!-- static resources (optimized headers) -->
   <!-- Placeholders below are interpolated by maven. The @placeholder@ syntax would be clearer but it does not work in this file -->
-  <mvc:resources location="/images/" mapping="/images/**" cache-period="${client.cache.max.age}"/>
-  <mvc:resources location="/scripts/" mapping="/scripts/**" cache-period="${client.cache.max.age}"/>
-  <mvc:resources location="/styles/" mapping="/styles/**" cache-period="${client.cache.max.age}"/>
-  <mvc:resources location="/styles/" mapping="/styles-*/**" cache-period="${client.cache.max.age}"/>
+  <mvc:resources location="/images/" mapping="/images/**" cache-period="${client.cache.max.age}" />
+  <mvc:resources location="/scripts/" mapping="/scripts/**" cache-period="${client.cache.max.age}" />
+  <mvc:resources location="/styles/" mapping="/styles/**" cache-period="${client.cache.max.age}" />
+  <mvc:resources location="/styles/" mapping="/styles-*/**" cache-period="${client.cache.max.age}" />
 
   <mvc:interceptors>
     <bean class="org.springframework.orm.hibernate4.support.OpenSessionInViewInterceptor">
       <property name="sessionFactory" ref="squashtest.tm.persistence.hibernate.SessionFactory" />
     </bean>
 
-<!--     <bean class="org.springframework.web.servlet.mvc.WebContentInterceptor">
-      <property name="cacheSeconds" value="0" />
-      <property name="useExpiresHeader" value="true" />
-      <property name="useCacheControlHeader" value="true" />
-      <property name="useCacheControlNoStore" value="true" />
-    </bean> -->
+    <bean class="org.squashtest.tm.web.internal.interceptor.ExcludeRequestInterceptorWrapper">
+      <constructor-arg>
+        <bean class="org.springframework.web.servlet.mvc.WebContentInterceptor">
+          <property name="cacheSeconds" value="0" />
+          <property name="useExpiresHeader" value="true" />
+          <property name="useCacheControlHeader" value="true" />
+          <property name="useCacheControlNoStore" value="true" />
+        </bean>
+      </constructor-arg>
+      <property name="excludedExtensions" value="jpg, jpeg, png, gif, js, css, map" />
+    </bean>
 
     <bean class="org.springframework.web.context.request.Log4jNestedDiagnosticContextInterceptor">
       <property name="includeClientInfo" value="true" />
@@ -172,16 +177,17 @@
     <constructor-arg ref="squashtest.core.security.PermissionEvaluationService" />
     <constructor-arg ref="testCaseLibraryTreeNodeBuilder.provider" />
   </bean>
-  
+
   <bean id="requirementLibraryTreeNodeBuilder.provider" class="org.springframework.beans.factory.config.ProviderCreatingFactoryBean">
     <property name="targetBeanName" value="requirementLibraryTreeNodeBuilder" />
   </bean>
 
-  <bean id="requirement.driveNodeBuilder" class="org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder" scope="prototype">
+  <bean id="requirement.driveNodeBuilder" class="org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder"
+    scope="prototype">
     <constructor-arg ref="squashtest.core.security.PermissionEvaluationService" />
     <constructor-arg ref="requirementLibraryTreeNodeBuilder.provider" />
   </bean>
-  
+
   <bean id="campaignLibraryTreeNodeBuilder.provider" class="org.springframework.beans.factory.config.ProviderCreatingFactoryBean">
     <property name="targetBeanName" value="campaignLibraryTreeNodeBuilder" />
   </bean>
@@ -193,9 +199,10 @@
   <!--  DRIVE NODE BUILDERS -->
 
   <beans profile="eclipse">
-    <context:component-scan base-package="target/classes/org.squashtest.tm" >
+    <context:component-scan base-package="target/classes/org.squashtest.tm">
       <context:exclude-filter type="annotation" expression="org.springframework.context.annotation.Configuration" />
-      <context:exclude-filter type="annotation" expression="org.squashtest.tm.web.internal.annotation.ApplicationComponent" />
+      <context:exclude-filter type="annotation"
+        expression="org.squashtest.tm.web.internal.annotation.ApplicationComponent" />
     </context:component-scan>
   </beans>
 </beans>
