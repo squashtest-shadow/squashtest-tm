@@ -48,24 +48,22 @@ public class GenericFolderModificationService<FOLDER extends Folder<NODE>, NODE 
 
 	private PermissionEvaluationService permissionService;
 
-
 	private final GenericNodeManagementService<FOLDER, NODE, FOLDER> delegate = new GenericNodeManagementService<FOLDER, NODE, FOLDER>();
-	
+
 	private FolderDao<FOLDER, NODE> folderDao;
 	private LibraryDao<Library<NODE>, NODE> libraryDao;
 
-	
-	
-	//[Issue 2735] it seems that the @PostConstruct annotation is no longer processed. We must have fiddled with Spring too much.
+	// [Issue 2735] it seems that the @PostConstruct annotation is no longer processed. We must have fiddled with Spring
+	// too much.
 	// This class now implements InitializingBean as a workaround but the root cause is still there.
 	@Override
-	public void afterPropertiesSet() throws Exception {
+	public void afterPropertiesSet() {
 		delegate.setPermissionService(permissionService);
 		delegate.setNodeDao(folderDao);
 		delegate.setFolderDao(folderDao);
 		delegate.setLibraryDao(libraryDao);
 	}
-	
+
 	@Transactional(readOnly = true)
 	@Override
 	@PostAuthorize("hasPermission(returnObject, 'READ') or hasRole('ROLE_ADMIN')")
@@ -77,6 +75,7 @@ public class GenericFolderModificationService<FOLDER extends Folder<NODE>, NODE 
 		this.folderDao = folderDao;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public final void removeFolder(long folderId) {
 		// check
@@ -85,6 +84,7 @@ public class GenericFolderModificationService<FOLDER extends Folder<NODE>, NODE 
 		delegate.removeNode(folderId);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public final void renameFolder(long folderId, String newName) {
 		// check
@@ -93,6 +93,7 @@ public class GenericFolderModificationService<FOLDER extends Folder<NODE>, NODE 
 		delegate.renameNode(folderId, newName);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public final void updateFolderDescription(long folderId, String newDescription) {
 		// check
@@ -164,7 +165,8 @@ public class GenericFolderModificationService<FOLDER extends Folder<NODE>, NODE 
 	}
 
 	/**
-	 * @param permissionService the permissionService to set
+	 * @param permissionService
+	 *            the permissionService to set
 	 */
 	public void setPermissionService(PermissionEvaluationService permissionService) {
 		this.permissionService = permissionService;
