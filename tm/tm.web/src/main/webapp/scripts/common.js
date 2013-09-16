@@ -86,6 +86,7 @@ requirejs.config({
 				"workspace.contextual-content" : "workspace/workspace.contextual-content",	
 				"jquery.squash.squashbutton" : "squashtest/jquery.squash.squashbutton",
 				"jquery.squash.jeditable" : "squashtest/jquery.squashtm.jeditable.ext",
+				"jquery.squash.jeditable.custom" : "squashtest/jquery.squash.jeditable.custom",
 				"jquery.squash.projectpicker" : "squash/jquery.squashtm.projectpicker",
 				"jquery.cookie" : "jquery/jquery.cookie",
 				"squash.bugtrackerMenu" : "squashtest/classes/BugTrackerMenu",
