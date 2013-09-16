@@ -51,8 +51,8 @@ public class Parameter implements Identified {
 
 	private static final String PARAM_REGEXP = "[A-Za-z0-9_-]+";
 	public static final String NAME_REGEXP = "^" + PARAM_REGEXP + "$";
-	public static final int MIN_CODE_SIZE = 1;
-	public static final int MAX_CODE_SIZE = 255;
+	public static final int MIN_NAME_SIZE = 1;
+	public static final int MAX_NAME_SIZE = 255;
 
 	public static final String USAGE_PREFIX = "${";
 	public static final String USAGE_SUFFIX = "}";
@@ -66,7 +66,7 @@ public class Parameter implements Identified {
 
 	@NotBlank
 	@Pattern(regexp = NAME_REGEXP)
-	@Size(min = MIN_CODE_SIZE, max = MAX_CODE_SIZE)
+	@Size(min = MIN_NAME_SIZE, max = MAX_NAME_SIZE)
 	private String name;
 
 	@Lob

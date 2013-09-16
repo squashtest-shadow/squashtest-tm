@@ -36,6 +36,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.audit.AuditableMixin;
@@ -70,6 +71,7 @@ public class RequirementVersion extends Resource implements BoundEntity{
 	 * The requirement reference. It should usually be set by the Requirement.
 	 */
 	@NotNull
+	@Size(min = 0, max = 50)
 	private String reference = "";
 
 	@NotNull

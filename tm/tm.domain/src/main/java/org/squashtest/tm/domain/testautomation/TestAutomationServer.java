@@ -28,6 +28,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.validation.constraints.Size;
 
 
 /**
@@ -62,13 +63,13 @@ public class TestAutomationServer {
 	 * This is the url where to reach the server. 
 	 */
 	@Column
-	private URL baseURL;
-	
+	private URL baseURL ;
 	
 	/**
 	 * The login that the TM server should use when dealing with the remote TA server.
 	 */
 	@Column
+	@Size(min = 0, max = 50)
 	private String login;
 	
 	
@@ -77,6 +78,7 @@ public class TestAutomationServer {
 	 */
 	//TODO : eeer... clear password in the database ? 
 	@Column
+	@Size(min = 0, max = 255)
 	private String password;
 	
 	
@@ -84,6 +86,7 @@ public class TestAutomationServer {
 	 * The kind of the remote TA server. It'll help selecting the correct connector. Default is {@link #DEFAULT_KIND}
 	 */
 	@Column
+	@Size(min = 0, max = 30)
 	private String kind = DEFAULT_KIND;
 	
 	

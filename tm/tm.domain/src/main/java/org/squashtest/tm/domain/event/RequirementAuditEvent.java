@@ -33,6 +33,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 
@@ -56,6 +57,7 @@ public abstract class RequirementAuditEvent {
 	private Date date;
 	
 	@NotNull
+	@Size(min = 0, max = 255)
 	private String author;
 
 

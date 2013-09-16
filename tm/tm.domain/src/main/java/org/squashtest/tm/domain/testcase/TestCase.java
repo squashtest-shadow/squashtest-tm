@@ -46,6 +46,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.OrderColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -144,6 +145,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	@NotNull
 	@Field
+	@Size(min = 0, max = 50)
 	private String reference = "";
 
 	@Lob

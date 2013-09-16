@@ -91,7 +91,8 @@ public class DenormalizedFieldValue {
 	private String label = "";
 
 	private int position;
-
+	
+	@Size(min = 0, max = 255)
 	private String value;
 
 	@ElementCollection

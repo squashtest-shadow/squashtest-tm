@@ -34,6 +34,7 @@ import org.hibernate.validator.constraints.NotBlank;
 @Embeddable
 public class CustomFieldOption {
 	@NotBlank
+	@Size(min = 0, max = 255)
 	private String label;
 	
 	@NotBlank

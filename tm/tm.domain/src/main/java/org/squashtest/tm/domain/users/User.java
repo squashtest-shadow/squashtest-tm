@@ -30,7 +30,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.constraints.NotBlank;
@@ -48,15 +50,19 @@ public class User extends Party {
 	public static final Long NO_USER_ID = 0L;
 
 	@NotNull
+	@Size(min = 0, max = 50)
 	private String firstName = "";
 
 	@NotBlank
+	@Size(min = 0, max = 50)
 	private String lastName;
 
 	@NotBlank
+	@Size(min = 0, max = 50)
 	private String login;
 
 	@NotNull
+	@Size(min = 0, max = 50)
 	private String email = "";
 
 	private Boolean active = true;

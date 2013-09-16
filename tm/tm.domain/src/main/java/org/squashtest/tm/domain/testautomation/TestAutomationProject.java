@@ -28,6 +28,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.validation.constraints.Size;
 
 /**
  * 
@@ -55,6 +56,7 @@ public class TestAutomationProject {
 	private Long id;
 	
 	@Column
+	@Size(min = 0, max = 50)
 	private String name;
 	
 	

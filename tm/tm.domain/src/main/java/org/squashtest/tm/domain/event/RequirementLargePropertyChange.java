@@ -26,6 +26,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Lob;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -60,6 +61,7 @@ public class RequirementLargePropertyChange extends RequirementAuditEvent implem
 	}
 
 	@NotNull
+	@Size(min = 0, max = 100)
 	private String propertyName;
 
 	@Lob

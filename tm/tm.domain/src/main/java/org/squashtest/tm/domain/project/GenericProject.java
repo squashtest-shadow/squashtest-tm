@@ -83,7 +83,8 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 
 	@Lob
 	private String description;
-
+	
+	@Size(min = 0, max = 255)
 	private String label;
 
 	@NotBlank

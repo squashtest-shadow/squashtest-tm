@@ -26,6 +26,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.Size;
 
 @Entity
 public class AutomatedTest {
@@ -39,6 +40,7 @@ public class AutomatedTest {
 	@JoinColumn(name="PROJECT_ID")
 	private TestAutomationProject project;
 	
+	@Size(min = 0, max = 255)
 	private String name;
 
 	public Long getId() {

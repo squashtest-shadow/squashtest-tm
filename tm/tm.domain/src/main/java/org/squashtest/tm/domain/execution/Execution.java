@@ -49,6 +49,7 @@ import javax.persistence.OrderColumn;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Formula;
 import org.hibernate.validator.constraints.NotBlank;
@@ -145,6 +146,7 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	private TestCaseStatus status = TestCaseStatus.WORK_IN_PROGRESS;
 	
 	@NotBlank
+	@Size(min = 0, max = 255)
 	private String name;
 
 	// TODO rename as testPlanItem

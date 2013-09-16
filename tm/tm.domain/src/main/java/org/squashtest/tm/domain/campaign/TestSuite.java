@@ -71,7 +71,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	private Long id;
 
 	@NotBlank
-	@Size(min = 0, max = 255)
+	@Size(min = 0, max = 100)
 	private String name;
 
 	@Lob

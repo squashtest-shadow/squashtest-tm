@@ -31,6 +31,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.Identified;
@@ -54,6 +55,7 @@ public abstract class Resource implements AttachmentHolder, Identified{
 	private Long id;
 
 	@NotBlank
+	@Size(min = 0, max = 255)
 	private String name;
 
 	@Lob

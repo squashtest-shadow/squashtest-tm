@@ -28,6 +28,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.squashtest.tm.domain.Identified;
 
@@ -48,6 +49,7 @@ public class DatasetParamValue implements Identified {
 	private Dataset dataset;
 
 	@NotNull
+	@Size(min = 0, max = 255)
 	private String paramValue = "";
 
 	public DatasetParamValue() {

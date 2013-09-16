@@ -31,6 +31,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.util.DateUtils;
@@ -59,6 +60,7 @@ public class CustomFieldValue implements Identified {
 	@JoinColumn(name="CFB_ID")
 	private CustomFieldBinding binding;
 		
+	@Size(min = 0, max = 255)
 	private String value;
 	
 	

@@ -23,6 +23,7 @@ package org.squashtest.tm.domain.event;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -56,10 +57,11 @@ public class RequirementPropertyChange extends RequirementAuditEvent implements 
 	}
 
 	@NotNull
+	@Size(min = 0, max = 100)
 	private String propertyName;
-
+	@Size(min = 0, max = 100)
 	private String oldValue;
-
+	@Size(min = 0, max = 100)
 	private String newValue;
 
 	public RequirementPropertyChange() {
