@@ -61,6 +61,11 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 @RequestMapping("/users")
 public class UserController {
 
+	/**
+	 * 
+	 */
+	private static final String USER_ID = "userId";
+
 	@Inject
 	private AdministrationService service;
 
@@ -74,7 +79,7 @@ public class UserController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
 	@RequestMapping(value = USER_ID_URL + "/general")
-	public String refreshGeneralInfos(@PathVariable("userId") long userId, Model model) {
+	public String refreshGeneralInfos(@PathVariable(USER_ID) long userId, Model model) {
 		LOGGER.info("Refresh infos for user #{}", userId);
 		User user = service.findUserById(userId);
 		model.addAttribute("auditableEntity", user);
@@ -85,7 +90,7 @@ public class UserController {
 
 	@RequestMapping(value = USER_ID_URL + "/teams", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
-	public DataTableModel getTeamsTableModel(DataTableDrawParameters params, @PathVariable("userId") long userId) {
+	public DataTableModel getTeamsTableModel(DataTableDrawParameters params, @PathVariable(USER_ID) long userId) {
 		LOGGER.info("Find associated teams table model for user #{}", userId);
 		PagingAndSorting paging = new DataTableSorting(params, teamsMapper);
 		Filtering filtering = new DataTableFiltering(params);
@@ -94,7 +99,7 @@ public class UserController {
 
 	@RequestMapping(value = USER_ID_URL + "/teams/{teamIds}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public void deassociateTeams(@PathVariable("userId") long userId, @PathVariable("teamIds") List<Long> teamIds) {
+	public void deassociateTeams(@PathVariable(USER_ID) long userId, @PathVariable("teamIds") List<Long> teamIds) {
 		LOGGER.info("Remove the user #{} from the given teams members.", userId);
 		service.deassociateTeams(userId, teamIds);
 	}
@@ -102,7 +107,7 @@ public class UserController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = USER_ID_URL + "/non-associated-teams", headers = "Accept=application/json")
 	@ResponseBody
-	public Collection<TeamModel> getNonAssociatedTeams(@PathVariable("userId") long userId) {
+	public Collection<TeamModel> getNonAssociatedTeams(@PathVariable(USER_ID) long userId) {
 		LOGGER.info("Find teams where user #{} is not a member.", userId);
 		List<Team> nonAssociatedTeams = service.findAllNonAssociatedTeams(userId);
 		return CollectionUtils.collect(nonAssociatedTeams, new TeamModelCreator());
@@ -110,7 +115,7 @@ public class UserController {
 
 	@RequestMapping(value = USER_ID_URL + "/teams/{ids}", method = RequestMethod.PUT)
 	@ResponseBody
-	public void associateToTeams(@PathVariable("userId") long userId, @PathVariable("ids") List<Long> teamIds) {
+	public void associateToTeams(@PathVariable(USER_ID) long userId, @PathVariable("ids") List<Long> teamIds) {
 		LOGGER.info("Add user #{} to given teams members.", userId);
 		service.associateToTeams(userId, teamIds);
 	}

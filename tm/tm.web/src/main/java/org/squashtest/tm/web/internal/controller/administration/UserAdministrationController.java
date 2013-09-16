@@ -76,6 +76,7 @@ import org.squashtest.tm.web.internal.security.authentication.AuthenticationProv
 @RequestMapping("/administration/users")
 public class UserAdministrationController extends PartyControllerSupport {
 
+	private static final String USER_ID = "userId";
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserAdministrationController.class);
 	private static final String USER_URL = "/{userId}";
 
@@ -93,21 +94,15 @@ public class UserAdministrationController extends PartyControllerSupport {
 	@Inject
 	private AuthenticationProviderContext authenticationProviderContext;
 
-	private DatatableMapper<String> userMapper = new NameBasedMapper(10)
-													.map("user-id", "id")
-													.map("user-login", "login")
-													.map("user-group", "group")
-													.map("user-firstname", "firstName")
-													.map("user-lastname", "lastName")
-													.map("user-email", "email")
-													.map("user-created-on", "audit.createdOn")
-													.map("user-created-by", "audit.createdBy")
-													.map("user-modified-on", "audit.lastModifiedOn")
-													.map("user-modified-by", "audit.lastModifiedBy");
+	private DatatableMapper<String> userMapper = new NameBasedMapper(10).map("user-id", "id")
+			.map("user-login", "login").map("user-group", "group").map("user-firstname", "firstName")
+			.map("user-lastname", "lastName").map("user-email", "email").map("user-created-on", "audit.createdOn")
+			.map("user-created-by", "audit.createdBy").map("user-modified-on", "audit.lastModifiedOn")
+			.map("user-modified-by", "audit.lastModifiedBy");
 
-	private DatatableMapper<String> permissionMapper = new NameBasedMapper(2)
-													.mapAttribute("project-name","project.name", ProjectPermission.class)
-													.mapAttribute("permission-name","permissionGroup.qualifiedName", ProjectPermission.class);
+	private DatatableMapper<String> permissionMapper = new NameBasedMapper(2).mapAttribute("project-name",
+			"project.name", ProjectPermission.class).mapAttribute("permission-name", "permissionGroup.qualifiedName",
+			ProjectPermission.class);
 
 	@ServiceReference
 	public void setAdministrationService(AdministrationService adminService) {
@@ -151,7 +146,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 	private DataTableModel getTableModel(PagingAndSorting sorting, Filtering filtering, String sEcho, Locale locale) {
 		PagedCollectionHolder<List<User>> holder = adminService.findAllActiveUsersFiltered(sorting, filtering);
 
-		return new UserDataTableModelBuilder(locale).buildDataModel(holder,  sEcho);
+		return new UserDataTableModelBuilder(locale).buildDataModel(holder, sEcho);
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "password")
@@ -203,14 +198,13 @@ public class UserAdministrationController extends PartyControllerSupport {
 	 * @param userId
 	 */
 	@RequestMapping(value = USER_URL + "/info", method = RequestMethod.GET)
-	public String getUserInfos(@PathVariable("userId") long userId, Model model) {
+	public String getUserInfos(@PathVariable(USER_ID) long userId, Model model) {
 		User user = adminService.findUserById(userId);
 		List<UsersGroup> usersGroupList = adminService.findAllUsersGroupOrderedByQualifiedName();
 
 		List<?> permissionModel = createPermissionTableModel(userId, new DefaultPagingAndSorting(),
 				DefaultFiltering.NO_FILTERING, "").getAaData();
 
-		
 		List<PermissionGroupModel> pgm = getPermissionGroupModels(userId);
 		List<ProjectModel> pm = getProjectModels(userId);
 
@@ -219,7 +213,6 @@ public class UserAdministrationController extends PartyControllerSupport {
 		model.addAttribute("permissionList", pgm);
 		model.addAttribute("myprojectList", pm);
 		model.addAttribute("permissions", permissionModel);
-
 
 		return "user-modification.html";
 	}
@@ -285,18 +278,19 @@ public class UserAdministrationController extends PartyControllerSupport {
 
 	@RequestMapping(value = USER_URL + "/remove-permission", method = RequestMethod.POST)
 	public @ResponseBody
-	void removePermission(@RequestParam("project") long projectId, @PathVariable("userId") long userId) {
+	void removePermission(@RequestParam("project") long projectId, @PathVariable(USER_ID) long userId) {
 		permissionService.removeProjectPermission(userId, projectId);
 	}
 
 	@RequestMapping(value = USER_URL + "/permission-popup", method = RequestMethod.GET)
-	public @ResponseBody Map<String, Object> getPermissionPopup(@PathVariable("userId") long userId) {
+	public @ResponseBody
+	Map<String, Object> getPermissionPopup(@PathVariable(USER_ID) long userId) {
 		return createPermissionPopupModel(userId);
 	}
 
 	@RequestMapping(value = USER_URL + "/permissions", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	public @ResponseBody
-	DataTableModel getPermissionTableModel(DataTableDrawParameters params, @PathVariable("userId") long userId) {
+	DataTableModel getPermissionTableModel(DataTableDrawParameters params, @PathVariable(USER_ID) long userId) {
 		PagingAndSorting paging = new DataTableSorting(params, permissionMapper);
 		Filtering filtering = new DataTableFiltering(params);
 		return createPermissionTableModel(userId, paging, filtering, params.getsEcho());
