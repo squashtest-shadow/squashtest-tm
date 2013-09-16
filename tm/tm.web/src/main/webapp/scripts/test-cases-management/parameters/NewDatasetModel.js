@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(
-		[ "jquery", "backbone", "app/util/StringUtil" ],
-		function($, Backbone, StringUtil) {
+		[ "jquery", "backbone", "underscore", "app/util/StringUtil" ],
+		function($, Backbone, _, StringUtil) {
 			function isBlank(val) {
 				return StringUtil.isBlank(val);
 			}
@@ -54,7 +54,7 @@ define(
 						
 						_paramValueChanged : function(id, value){
 							var paramValue = this.findParamValue(id);
-							paramValue[1] = value;
+							paramValue[1] = _.escape(value);
 						},
 						
 						_findParamValue : function(id){

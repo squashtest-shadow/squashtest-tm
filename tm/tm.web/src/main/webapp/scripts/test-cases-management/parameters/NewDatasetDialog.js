@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "app/lnf/Forms", "./NewDatasetModel", "jquery.squash.confirmdialog" ], function($,
-		Backbone, Forms, NewDatasetModel) {
+define([ "jquery", "backbone", "underscore", "app/lnf/Forms", "./NewDatasetModel", "jquery.squash.confirmdialog" ], function($,
+		Backbone, _, Forms, NewDatasetModel) {
 	var NewDatasetDialog = Backbone.View.extend({
 		el : "#add-dataset-dialog",
 		paramInputIdPrefix : "add-dataset-paramValue",
@@ -56,7 +56,7 @@ define([ "jquery", "backbone", "app/lnf/Forms", "./NewDatasetModel", "jquery.squ
 
 		changeStrProp : function(event) {
 			var textbox = event.target;
-			this.model.set(textbox.name, textbox.value);
+			this.model.set(textbox.name, _.escape(textbox.value));
 		},
 
 		changeParamProp : function(event) {
