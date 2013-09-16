@@ -125,23 +125,26 @@
     <div class="fragment-body">
 
      <div id="test-case-search-input-panel">
-				<div id="test-case-search-input-form-panel">
-		
-				<div id="test-case-search-input-form-panel-column1" align="center" class="search-input-column">
-					
-				</div>
+     
+     	<div id="test-case-search-toolbar">
+     		<input id="test-case-search-button" type="button" th:value="#{label.Search}" class="button ui-button ui-widget ui-state-default ui-corner-all"/> 
+     	</div>
+     
+		<div id="test-case-search-input-form-panel">
 				
-				<div id="test-case-search-input-form-panel-column2" align="center" class="search-input-column">
+			<div id="test-case-search-input-form-panel-column1" align="center" class="search-input-column">
 				
-				</div>
-				
-				<div id="test-case-search-input-form-panel-column3" align="center" class="search-input-column">
-					<div class="" align="right">
-						<input id="test-case-search-button" type="button" th:value="#{label.Search}" class="button ui-button ui-widget ui-state-default ui-corner-all"/> 
-					</div>	
-				</div>	
-							
-				<script id="toggle-panel-template" type="text/x-handlebars-template">
+			</div>
+			
+			<div id="test-case-search-input-form-panel-column2" align="center" class="search-input-column">
+			
+			</div>
+			
+			<div id="test-case-search-input-form-panel-column3" align="center" class="search-input-column">
+
+			</div>	
+						
+			<script id="toggle-panel-template" type="text/x-handlebars-template">
 				<div class="toggle-panel search-toggle-panel">
 					<span class="not-displayed toogle-panel-buttons"></span>
 					<div id="{{toggle-panel-id}}" class="description-panel toggle-panel-main">
@@ -149,30 +152,30 @@
 						</div>
 					</div>
 				</div>
-				</script>
-					
-				<script id="textfield-template" type="text/x-handlebars-template">
+			</script>
+				
+			<script id="textfield-template" type="text/x-handlebars-template">
 				<div class="display-table-row">
                   	<label for="{{text-field-id}}" class="display-table-cell">{{text-field-title}}</label>
                     <div id="{{text-field-id}}" class="search-input"/>
                 </div>
 				</script>
-				
-				<script id="textarea-template" type="text/x-handlebars-template">
+			
+			<script id="textarea-template" type="text/x-handlebars-template">
 				<div class="display-table-row">
                   	<label for="{{text-area-id}}" class="display-table-cell">{{text-area-title}}</label>
                     <div id="{{text-area-id}}" class="search-input"/>
                 </div>
 				</script>
-				
-				<script id="multiselect-template" type="text/x-handlebars-template">
+			
+			<script id="multiselect-template" type="text/x-handlebars-template">
 				<div class="display-table-row">
                   	<label for="{{multiselect-id}}" class="display-table-cell">{{multiselect-title}}</label>
                     <div id="{{multiselect-id}}" class="search-input"/>
                 </div>
 				</script>	
-				
-				<script id="date-template" type="text/x-handlebars-template">
+			
+			<script id="date-template" type="text/x-handlebars-template">
 				<div class="display-table-row">
                   	<label for="{{text-date-id}}" class="display-table-cell">{{text-date-title}}</label>
                     <div id="{{text-date-id}}" class="search-input" style="display:inline">
@@ -186,8 +189,8 @@
 					</div>
 				</div>
 				</script>
-				
-				<script id="range-template" type="text/x-handlebars-template">
+			
+			<script id="range-template" type="text/x-handlebars-template">
 				<div class="display-table-row">
 					<div id="{{text-range-id}}" class="search-input" style="display:inline">
 						<div class="search-line" data-widgetname="Range">
@@ -202,7 +205,7 @@
 				</div>
 				</script>
 
-				<script id="exists-template" type="text/x-handlebars-template">
+			<script id="exists-template" type="text/x-handlebars-template">
 				<div class="display-table-row">
 					<div id="{{text-exists-id}}" class="search-input" style="display:inline">
 						<div class="search-line" data-widgetname="Exists">
@@ -214,11 +217,11 @@
 				</div>
 				</script>
 								
-				</div>
+		</div>
 
-				<div id="searchModel" class="not-displayed" th:text="${searchModel}"></div>
-				<div th:if="${associateResult}" id="associationType" class="not-displayed" th:text="${associateResultWithType}"></div>
-				<div th:if="${associateResult}" id="associationId" class="not-displayed" th:text="${associateId}"></div>
+		<div id="searchModel" class="not-displayed" th:text="${searchModel}"></div>
+		<div th:if="${associateResult}" id="associationType" class="not-displayed" th:text="${associateResultWithType}"></div>
+		<div th:if="${associateResult}" id="associationId" class="not-displayed" th:text="${associateId}"></div>
       </div>
     </div>
     </div>	

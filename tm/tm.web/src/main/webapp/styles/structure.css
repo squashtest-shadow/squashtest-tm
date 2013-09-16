@@ -194,7 +194,7 @@ div.sub-page div.table-tab-wrap .dataTables_footer{
 	position: fixed;
 }
 
-div#tabbed-pane>ul {
+#tabbed-pane>ul {
 	position: relative;
 	top: -0.75cm;
 	padding: 0;
@@ -215,7 +215,8 @@ div#tabbed-pane>ul {
 
 .search-input-column {
 	display:inline-block;
-	width:30%;
+	width:33%;
+	min-width: 350px;
 	vertical-align:top;
 }
 
@@ -260,6 +261,11 @@ span.search-text {
 img.search-image {
 	vertical-align: bottom;
 	border: none;
+}
+
+#test-case-search-toolbar {
+	text-align : right;	
+	/* padding-right : 3%; */
 }
 
 #search-input {
