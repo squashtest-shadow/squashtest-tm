@@ -150,7 +150,7 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 		List<Long> projectIds = new ArrayList<Long>();
 		boolean runOnAllProjects = true;
 		if (this.getCriterions().get(PROJECT_IDS).getParameters() != null) {
-			runOnAllProjects = true;
+			runOnAllProjects = false;
 			// Put ids in a list
 			for (Object id : this.getCriterions().get(PROJECT_IDS).getParameters()) {
 				projectIds.add(Long.parseLong((String) id));
