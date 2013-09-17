@@ -93,12 +93,15 @@
 		<comp:general-information-panel auditableEntity="${ requirementVersion }" entityUrl="${ requirementUrl }" />
 	</div>
 
-	<c:if test="${ writable }">
-		<div class="toolbar-button-panel">
-			<input type="button" value='<f:message key="requirement.button.rename.label" />' id="rename-requirement-button" class="button"/>
-			<input type="button" value="<f:message key='label.print'/>" id="print-requirement-version-button" class="button"/>
-		</div>	
-	</c:if>
+
+	<div class="toolbar-button-panel">
+		<c:if test="${ writable }">
+			<input type="button" value='<f:message key="requirement.button.rename.label" />' id="rename-requirement-button" class="button" />
+		</c:if>
+		<input type="button" value="<f:message key='label.print'/>"
+			id="print-requirement-version-button" class="button" />
+	</div>
+
 
 	<div style="clear:both;"></div>			
 </div>
