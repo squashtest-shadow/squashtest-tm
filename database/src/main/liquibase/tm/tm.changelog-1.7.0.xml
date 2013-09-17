@@ -155,7 +155,7 @@
 			<where>
 				ACL_GROUP_ID = (select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.AdvanceTester')
 				and PERMISSION_MASK = 2
-				and CLASS_ID = (select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.campaign.CampaignLibrary')
+				and CLASS_ID = (select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.campaign.CampaignLibrary')
 			</where>
 		</delete>
 		<comment>remove permission CREATE to Advance tester on Campaign library</comment>
@@ -163,7 +163,7 @@
 			<where>
 				ACL_GROUP_ID = (select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.AdvanceTester')
 				and PERMISSION_MASK = 4
-				and CLASS_ID = (select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.campaign.CampaignLibrary')
+				and CLASS_ID = (select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.campaign.CampaignLibrary')
 			</where>
 		</delete>
 		<comment>remove permission DELETE to Advance tester on Campaign library</comment>
@@ -171,7 +171,7 @@
 			<where>
 				ACL_GROUP_ID = (select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.AdvanceTester')
 				and PERMISSION_MASK = 8
-				and CLASS_ID = (select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.campaign.CampaignLibrary')
+				and CLASS_ID = (select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.campaign.CampaignLibrary')
 			</where>
 		</delete>
 		<comment>remove permission LINK to Advance tester on Campaign library</comment>
@@ -179,7 +179,7 @@
 			<where>
 				ACL_GROUP_ID = (select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.AdvanceTester')
 				and PERMISSION_MASK = 256
-				and CLASS_ID = (select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.campaign.CampaignLibrary')
+				and CLASS_ID = (select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.campaign.CampaignLibrary')
 			</where>
 		</delete>
 		<comment>add permission EXPORT to Advance tester on Requirement library</comment>
