@@ -142,7 +142,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 			if(iterationDao.countRunningOrDoneExecutions(iteration.getId()) > 0){
 				
 				try{
-					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(iteration,"MANAGEMENT"));
+					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(iteration,"EXTENDED_DELETE"));
 				
 					//The user is allowed to delete the campaign but must be warned
 					report = new NotDeletableCampaignsPreviewReport();
