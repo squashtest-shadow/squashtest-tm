@@ -320,12 +320,8 @@ public class TestSuiteExecutionRunnerController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value = RequestMappingPattern.INDEXED_STEP, method = RequestMethod.GET, params = { "optimized=false" }/*
-																														 * ,
-																														 * headers
-																														 * =
-																														 * ACCEPT_HTML_HEADER
-																														 */)
+	//note : add to the mapping ', headers = ACCEPT_HTML_HEADER' if needed.
+	@RequestMapping(value = RequestMappingPattern.INDEXED_STEP, method = RequestMethod.GET, params = { "optimized=false" })
 	public String getClassicTestSuiteExecutionStepFragment(@PathVariable long testSuiteId,
 			@PathVariable long testPlanItemId, @PathVariable long executionId, @PathVariable int stepIndex, Model model) {
 
@@ -364,12 +360,8 @@ public class TestSuiteExecutionRunnerController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value = RequestMappingPattern.INDEXED_STEP, method = RequestMethod.GET, params = { "optimized=true" }/*
-																														 * ,
-																														 * headers
-																														 * =
-																														 * ACCEPT_HTML_HEADER
-																														 */)
+	//note : add to the mapping ', headers = ACCEPT_HTML_HEADER' if needed.
+	@RequestMapping(value = RequestMappingPattern.INDEXED_STEP, method = RequestMethod.GET, params = { "optimized=true" })
 	public String getOptimizedTestSuiteExecutionStepFragment(@PathVariable long testSuiteId,
 			@PathVariable long testPlanItemId, @PathVariable long executionId, @PathVariable int stepIndex, Model model) {
 

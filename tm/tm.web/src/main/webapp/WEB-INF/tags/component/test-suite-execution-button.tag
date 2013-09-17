@@ -126,7 +126,9 @@
 				// ****** start-resume menu ********
 				var startResumeBtn = $("#start-resume-button");
 				if (startResumeBtn.length>0){
-					$("#start-resume-button").buttonmenu();
+					$("#start-resume-button").buttonmenu({
+						anchor : 'right'
+					});
 					
 					$("#start-suite-optimized-button").on('click', function(){
 						checkTestSuiteExecutionDoable().done(optimizedExecution);					
@@ -141,7 +143,9 @@
 				// ******* restart menu *********
 				var restartBtn = $("#restart-button");
 				if (restartBtn.length>0){
-					restartBtn.buttonmenu();
+					restartBtn.buttonmenu({
+						anchor : 'right'
+					});
 		
 					var restartDialog = $("#confirm-restart-dialog");
 					
