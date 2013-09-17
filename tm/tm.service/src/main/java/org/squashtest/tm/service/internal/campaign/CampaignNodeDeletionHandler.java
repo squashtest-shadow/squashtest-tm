@@ -110,7 +110,13 @@ public interface CampaignNodeDeletionHandler extends NodeDeletionHandler<Campaig
 	 */
 	void deleteExecutions(List<Execution> executions);
 	
-
+	/**
+	 * that method should investigate the consequences of the deletion of the given test suites, and return a report
+	 * about what will happen.
+	 * 
+	 * @param targetIds
+	 * @return
+	 */
 	List<SuppressionPreviewReport> simulateSuiteDeletion(List<Long> targetIds);
 
 	/**

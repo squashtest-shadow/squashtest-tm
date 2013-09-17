@@ -96,8 +96,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 
 	@Override
 	public void removeFromCampaign(Iteration iteration) {
-		// TODO Auto-generated method stub
-
+		
 		Campaign campaign = findCampaignByIterationId(iteration.getId());
 
 		if (campaign == null) {

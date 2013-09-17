@@ -145,7 +145,13 @@ public interface CampaignLibraryNavigationService extends
 	 * @return
 	 */
 	OperationReport deleteIterations(List<Long> targetIds);
-
+	/**
+	 * that method should investigate the consequences of the deletion request of tes suites, and return a report about
+	 * what will happen.
+	 * 
+	 * @param targetIds
+	 * @return
+	 */
 	List<SuppressionPreviewReport> simulateSuiteDeletion(List<Long> targetIds);
 
 	/**
