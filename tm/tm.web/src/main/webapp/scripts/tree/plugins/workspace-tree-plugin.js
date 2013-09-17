@@ -486,7 +486,9 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 						var i=0, len = renamed.length;
 						for (var i=0; i<len; i++){
 							var node = this.findNodes(renamed[i].node);
-							node.setName(renamed[i].name);
+							if (node.length>0){
+								node.setName(renamed[i].name);
+							}
 						}
 					}
 					
@@ -501,7 +503,14 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 							var target = this.findNodes(movement.dest);
 							var children = this.findNodes(movement.moved);
 							
-							children.moveTo(target);
+							// if the children exist somewhere in the tree, move them
+							if (children.length>0){
+								children.moveTo(target);
+							}
+							// if they don't, but the target exist, reload it to make the children appear. 
+							else if (target.length>0){
+								target.refresh();
+							}
 							
 						}
 					}
@@ -509,7 +518,10 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 					// third, the nodes that were deleted.
 					var removed = commandObject.removed;
 					if (removed !== null && removed !== undefined &&  removed instanceof Array && removed.length>0){
-						this.findNodes(removed).removeMe();
+						var nodes = this.findNodes(removed);
+						if (nodes.length>0){
+							nodes.removeMe();
+						}
 					}
 				}
 			}

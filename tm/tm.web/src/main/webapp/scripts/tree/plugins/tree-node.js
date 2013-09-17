@@ -321,7 +321,12 @@ define(['jquery'], function($){
 
 		this.refresh = function() {
 			if (this.canContainNodes()){
-				this.tree.refresh(this);
+				if (this.isLoaded()){
+					this.tree.refresh(this);
+				}
+				else{
+					this.load();
+				}
 			}
 		};
 
@@ -361,8 +366,7 @@ define(['jquery'], function($){
 		
 		
 		/* Will move around the nodes without triggering events.
-		 * Moved nodes will be removed from their container
-		 * 
+		 * Moved nodes will be removed from their container.
 		 */
 		this.moveTo = function(target){
 			
