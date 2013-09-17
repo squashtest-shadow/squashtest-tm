@@ -103,16 +103,26 @@ define(['tree','./permissions-rules', 'workspace.contextual-content', 'squash.tr
 				copyIfOk(tree);
 			});
 			
-			tree.on('copy.squashtree', function(){
-				copyIfOk(tree);
+			// issue 2762 : the events 'copy.squashtree' and the native js event 'copy' (also triggered using ctrl+c) would both fire this 
+			// handler. Its a bug of jquery, fixed in 1.9.
+			// TODO : upgrade to jquery 1.9
+			tree.on('copy.squashtree', function(evt){
+				if (evt.namespace==='squashtree'){
+					copyIfOk(tree);
+				}
 			});
 			
 			$("#paste-node-tree-button").on('click', function(){
 				pasteIfOk(tree);
 			});			
 			
-			tree.on('paste.squashtree', function(){
-				pasteIfOk(tree);
+			// issue 2762 : the events 'paste.squashtree' and the native js event 'paste' (also triggered using ctrl+v) would both fire this 
+			// handler. Its a bug of jquery, fixed in 1.9
+			// TODO : upgrade to jquery 1.9
+			tree.on('paste.squashtree', function(evt){
+				if (evt.namespace === 'squashtree'){
+					pasteIfOk(tree);					
+				}
 			});
 			
 			// ***************** rename **********************
