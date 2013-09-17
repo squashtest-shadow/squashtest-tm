@@ -130,7 +130,7 @@ public class TestSuiteTestPlanManagerController {
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan-manager", method = RequestMethod.GET)
 	public ModelAndView showManager(@PathVariable("suiteId") long suiteId, @CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
 
-		LOGGER.info("show test suite test plan manager for test suite #{}", suiteId);
+		LOGGER.debug("show test suite test plan manager for test suite #{}", suiteId);
 		TestSuite testSuite = testSuiteTestPlanManagerService.findTestSuite(suiteId);
 
 		List<TestCaseLibrary> linkableLibraries = iterationTestPlanManagerService.findLinkableTestCaseLibraries();
@@ -249,7 +249,7 @@ public class TestSuiteTestPlanManagerController {
 	public @ResponseBody
 	Map<String, List<Long>> bindTestPlan(@RequestParam("itemIds[]") List<Long> itpIds,
 			@PathVariable("suiteIds") List<Long> suitesIds) {
-		
+		LOGGER.debug("bind test plan items to test suites");
 		testSuiteTestPlanManagerService.bindTestPlanToMultipleSuites(suitesIds, itpIds);
 		Map<String, List<Long>> result = new HashMap<String, List<Long>>();
 		result.put("ids", suitesIds);
@@ -260,8 +260,8 @@ public class TestSuiteTestPlanManagerController {
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{testPlanId}", method = RequestMethod.POST, params = {"status"})
 	public @ResponseBody
 	String setTestPlanItemStatus(@PathVariable("testPlanId") long testPlanId, 
-										  @PathVariable("suiteId") long suiteId,
 										  @RequestParam("status") String status) {
+		LOGGER.debug("change status test plan item #{} to {}", testPlanId, status);
 		iterationTestPlanManagerService.assignExecutionStatusToTestPlanItem(testPlanId, status);
 		return status;
 	}
@@ -272,7 +272,7 @@ public class TestSuiteTestPlanManagerController {
 
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{itemId}/executions", method = RequestMethod.GET)
 	public ModelAndView getExecutionsForTestPlan(@PathVariable("suiteId") long suiteId, @PathVariable("itemId") long itemId) {
-		
+		LOGGER.debug("find model and view for executions of test plan item  #{}", itemId);
 		TestSuite testSuite = service.findById(suiteId);
 		Long iterationId = testSuite.getIteration().getId();
 		List<Execution> executionList = iterationFinder.findExecutionsByTestPlan(iterationId, itemId);
@@ -302,7 +302,7 @@ public class TestSuiteTestPlanManagerController {
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{itemId}/executions/new", method = RequestMethod.POST, params = { "mode=manual" })
 	public @ResponseBody
 	String addManualExecution(@PathVariable("suiteId") long suiteId, @PathVariable("itemId") long itemId) {
-LOOGER.info("add manual execution to item #{}", itemId);
+		LOGGER.debug("add manual execution to item #{}", itemId);
 		TestSuite testSuite = service.findById(suiteId);
 		Long iterationId = testSuite.getIteration().getId();
 		
@@ -318,7 +318,7 @@ LOOGER.info("add manual execution to item #{}", itemId);
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{testPlanId}/executions/new", method = RequestMethod.POST, params = { "mode=auto" })
 	public @ResponseBody
 	AutomatedSuiteOverview addAutoExecution(@PathVariable("suiteId") long suiteId, @PathVariable("itemId") long itemId, Locale locale) {
-		LOGGER.info("add automated execution to item #{}", itemId);
+		LOGGER.debug("add automated execution to item #{}", itemId);
 		List<Long> testPlanIds = new ArrayList<Long>(1);
 		testPlanIds.add(itemId);
 
