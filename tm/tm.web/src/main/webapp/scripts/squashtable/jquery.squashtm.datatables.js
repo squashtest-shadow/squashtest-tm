@@ -85,7 +85,7 @@ var squashtm = squashtm || {};
 			nFirst.click(function() {
 				oSettings.oApi._fnPageChange(oSettings, "first");
 				fnCallbackDraw(oSettings);
-				nPageTxt.text(parseInt(oSettings._iDisplayEnd / oSettings._iDisplayLength, 10) + 1);
+				nPageTxt.text(parseInt((oSettings._iDisplayStart+oSettings._iDisplayLength) / oSettings._iDisplayLength, 10));
 			}).bind('selectstart', function() {
 				return false;
 			});
@@ -93,7 +93,7 @@ var squashtm = squashtm || {};
 			nPrevious.click(function() {
 				oSettings.oApi._fnPageChange(oSettings, "previous");
 				fnCallbackDraw(oSettings);
-				nPageTxt.text(parseInt(oSettings._iDisplayEnd / oSettings._iDisplayLength, 10) + 1);
+				nPageTxt.text(parseInt((oSettings._iDisplayStart+oSettings._iDisplayLength)/ oSettings._iDisplayLength, 10));
 			}).bind('selectstart', function() {
 				return false;
 			});
@@ -101,7 +101,7 @@ var squashtm = squashtm || {};
 			nNext.click(function() {
 				oSettings.oApi._fnPageChange(oSettings, "next");
 				fnCallbackDraw(oSettings);
-				nPageTxt.text(parseInt(oSettings._iDisplayEnd / oSettings._iDisplayLength, 10) + 1);
+				nPageTxt.text(parseInt((oSettings._iDisplayStart+oSettings._iDisplayLength) / oSettings._iDisplayLength, 10));
 			}).bind('selectstart', function() {
 				return false;
 			});
@@ -109,7 +109,7 @@ var squashtm = squashtm || {};
 			nLast.click(function() {
 				oSettings.oApi._fnPageChange(oSettings, "last");
 				fnCallbackDraw(oSettings);
-				nPageTxt.text(parseInt(oSettings._iDisplayEnd / oSettings._iDisplayLength, 10) + 1);
+				nPageTxt.text(parseInt((oSettings._iDisplayStart+oSettings._iDisplayLength) / oSettings._iDisplayLength, 10));
 			}).bind('selectstart', function() {
 				return false;
 			});
@@ -128,12 +128,14 @@ var squashtm = squashtm || {};
 
 			/* Loop over each instance of the pager */
 			var an = oSettings.aanFeatures.p;
+
 			for ( var i = 0, iLen = an.length; i < iLen; i++) {
 				// var buttons = an[i].getElementsByTagName('span');
 				var buttons = $(an[i]).find('span.paginate_button');
 				if (oSettings._iDisplayStart === 0) {
 					buttons.eq(0).button("option", "disabled", true);
 					buttons.eq(1).button("option", "disabled", true);
+					$($("span", an)[4]).text("1");
 				} else {
 					buttons.eq(0).button("option", "disabled", false);
 					buttons.eq(1).button("option", "disabled", false);
