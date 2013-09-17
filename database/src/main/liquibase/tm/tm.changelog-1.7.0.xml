@@ -132,11 +132,11 @@
 		</insert>
 	</changeSet>
 	<changeSet id="tm-1.7.0.feat-2648" author="mpagnon">
-	<comment>add permission EXTENDED_DELETE to Project Manager on Test-case library</comment>
+	<comment>add permission EXTENDED_DELETE to Project Manager on Campaign library</comment>
 		<insert tableName="ACL_GROUP_PERMISSION">
 			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.ProjectManager')" />
 			<column name="PERMISSION_MASK" value="2048" />
-			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.csp.tm.domain.campaign.CampaignLibrary')" />
+			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.campaign.CampaignLibrary')" />
 		</insert>
 		<comment>add permission EXPORT to Test Runner on Requirement library</comment>
 		<insert tableName="ACL_GROUP_PERMISSION">
