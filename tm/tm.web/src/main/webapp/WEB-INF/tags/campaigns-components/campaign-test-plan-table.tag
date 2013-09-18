@@ -57,7 +57,7 @@
 			<th data-def="map=assigned-user, sortable, sWidth=10%"><f:message key="test-case.user.combo.label" /></th>
 			<th data-def="map=importance, sortable"><f:message key="test-case.importance.combo.label" /></th>
 			<th data-def="map=exec-mode, sortable"><f:message key="label.Mode" /></th>
-			<th data-def="map=empty-delete-holder ${deleteBtnClause}">&nbsp;</th>				
+			<th data-def="map=empty-delete-holder${deleteBtnClause}">&nbsp;</th>				
 		</tr>
 	</thead>
 	<tbody><%-- Will be populated through ajax --%></tbody>

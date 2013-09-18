@@ -1026,7 +1026,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		var members = atom.split(/\s*=\s*/);
 		return {
 			name : members[0],
-			value : (members.length > 1) ? members[1] : 'true'
+			value : (members.length > 1) ? $.trim(members[1]) : 'true'
 		};
 	}
 

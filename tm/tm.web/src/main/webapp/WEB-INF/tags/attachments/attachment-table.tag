@@ -77,7 +77,7 @@
 			<th data-def="map=hyphenated-name, sortable, center, link=${baseURL}/download/{entity-id}"><f:message key="label.Name"/></th>	
 			<th data-def="map=size, center, sortable"><f:message key="label.SizeMb"/></th>
 			<th data-def="map=added-on, center, sortable"><f:message key="label.AddedOn"/></th>
-			<th data-def="map=empty-delete-holder ${btnDeleteClause}">&nbsp;</th> 
+			<th data-def="map=empty-delete-holder${btnDeleteClause}">&nbsp;</th> 
 		</tr>
 	</thead>
 	<tbody>
