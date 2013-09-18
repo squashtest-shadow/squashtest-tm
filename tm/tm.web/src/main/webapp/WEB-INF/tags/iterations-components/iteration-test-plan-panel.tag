@@ -139,7 +139,7 @@
 			<th data-def="map=assignee-login, sortable, sWidth=10%, sClass=assignee-combo"><f:message key="iteration.executions.table.column-header.user.label" /></th>
 			<th data-def="map=last-exec-on, sortable, sWidth=10%"><f:message key="iteration.executions.table.column-header.execution-date.label" /></th>
 			<th data-def="map=empty-execute-holder, narrow, center, sClass=execute-button">&nbsp;</th>	
-			<th data-def="map=empty-delete-holder ${deleteBtnClause}">&nbsp;</th>				
+			<th data-def="map=empty-delete-holder${deleteBtnClause}">&nbsp;</th>				
 		</tr>
 	</thead>
 	<tbody><%-- Will be populated through ajax --%></tbody>
