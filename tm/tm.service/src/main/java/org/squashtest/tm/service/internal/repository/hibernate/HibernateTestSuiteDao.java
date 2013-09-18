@@ -66,8 +66,8 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 	private static final String HQL_INDEXED_TEST_PLAN = 
 			"select index(IterationTestPlanItem), IterationTestPlanItem "+
 			"from TestSuite as TestSuite inner join TestSuite.testPlan as IterationTestPlanItem "+
-			"inner join TestSuite.iteration.campaign.project as Project " + 
 			"left outer join IterationTestPlanItem.referencedTestCase as TestCase " +
+			"left outer join TestCase.project as Project " + 
 			"left outer join IterationTestPlanItem.referencedDataset as Dataset " +
 			"left outer join IterationTestPlanItem.user as User "+
 			"where TestSuite.id = :suiteId ";

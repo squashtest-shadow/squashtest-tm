@@ -67,8 +67,8 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	private static final String HQL_INDEXED_TEST_PLAN = 
 			"select index(IterationTestPlanItem), IterationTestPlanItem "+
 			"from Iteration as Iteration inner join Iteration.testPlans as IterationTestPlanItem "+
-			"inner join Iteration.campaign.project as Project " + 
 			"left outer join IterationTestPlanItem.referencedTestCase as TestCase " +
+			"left outer join TestCase.project as Project " + 
 			"left outer join IterationTestPlanItem.referencedDataset as Dataset " +
 			"left outer join IterationTestPlanItem.user as User "+
 			"where Iteration.id = :iterationId ";

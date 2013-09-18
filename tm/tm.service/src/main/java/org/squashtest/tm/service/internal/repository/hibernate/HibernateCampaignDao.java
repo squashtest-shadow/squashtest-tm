@@ -72,8 +72,8 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 	private static final String HQL_INDEXED_TEST_PLAN = 
 			"select index(CampaignTestPlanItem), CampaignTestPlanItem "+
 			"from Campaign as Campaign inner join Campaign.testPlan as CampaignTestPlanItem "+
-			"inner join Campaign.project as Project " + 
 			"left outer join CampaignTestPlanItem.referencedTestCase as TestCase " +
+			"left outer join TestCase.project as Project " + 
 			"left outer join CampaignTestPlanItem.user as User "+
 			"where Campaign.id = :campaignId ";
 	
