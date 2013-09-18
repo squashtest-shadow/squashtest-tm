@@ -21,7 +21,9 @@
 package org.squashtest.tm.service.internal.repository.hibernate;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -33,10 +35,16 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
+import org.squashtest.tm.core.foundation.collection.DefaultSorting;
+import org.squashtest.tm.core.foundation.collection.DelegatePagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.Filtering;
+import org.squashtest.tm.core.foundation.collection.MultiSorting;
+import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.Pagings;
 import org.squashtest.tm.core.foundation.collection.SingleToMultiSortingAdapter;
+import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
@@ -48,6 +56,7 @@ import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
+import org.squashtest.tm.service.internal.repository.ImportanceSortHelper;
 
 @Repository
 public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implements CampaignDao {
@@ -112,7 +121,8 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 	private List<Object[]> _findIndexedTestPlan(final long campaignId, PagingAndMultiSorting sorting){
 		StringBuilder hqlbuilder = new StringBuilder(HQL_INDEXED_TEST_PLAN);
 
-		SortingUtils.addOrder(hqlbuilder, sorting);
+		ImportanceSortHelper helper = new ImportanceSortHelper();
+		SortingUtils.addOrder(hqlbuilder, helper.modifyImportanceSortInformation(sorting));
 		
 		Query query = currentSession().createQuery(hqlbuilder.toString());
 		
