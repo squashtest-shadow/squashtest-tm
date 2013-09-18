@@ -343,7 +343,12 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	}
 
 	public Project getProject() {
-		return iteration.getProject();
+		if(iteration != null){
+			return iteration.getProject();
+		}else if(!testSuites.isEmpty()){
+			return testSuites.get(0).getProject();
+		}
+		return null;
 	}
 
 	public User getUser() {

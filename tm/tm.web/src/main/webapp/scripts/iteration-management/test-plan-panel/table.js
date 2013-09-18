@@ -277,7 +277,8 @@ define(['jquery', 'squash.translator', './exec-runner', './sortmode',
 							newautoexecBtn = jqnew.find('.new-auto-exec').squashButton();
 						
 						// the delete buttons
-						if (initconf.permissions.editable){
+						if (initconf.permissions.executable){
+						
 							jqnew.find('.delete-execution-table-button').button({
 								text : false,
 								icons : {
@@ -289,10 +290,9 @@ define(['jquery', 'squash.translator', './exec-runner', './sortmode',
 								dialog.data('origin', this);
 								dialog.confirmDialog('open');
 							});
-						}
+						
 						
 						//the new execution buttons
-						if (initconf.permissions.executable){
 							
 							newexecBtn.click(function(){
 								var url = $(this).data('new-exec');

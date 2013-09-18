@@ -170,9 +170,11 @@ define(['jquery', 'workspace.contextual-content', 'jqueryui', 'jquery.squash.con
 			if (conf.permissions.linkable){
 				_initDeleteItemTestplan(conf);
 			}
-			if (conf.permissions.editable){
-				_initDeleteExecutionPopup(conf);
+			if (conf.permissions.editable){				
 				_initBatchAssignUsers(conf);
+			}
+			if(conf.permissions.executable){
+				_initDeleteExecutionPopup(conf);
 			}
 			if (conf.permissions.reorderable){
 				_initReorderTestPlan(conf);

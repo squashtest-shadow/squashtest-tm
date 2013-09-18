@@ -275,24 +275,22 @@ define(['jquery', 'squash.translator', './exec-runner', './sortmode',
 						var newexecBtn = jqnew.find('.new-exec').squashButton(),
 							newautoexecBtn = jqnew.find('.new-auto-exec').squashButton();
 						
-						// the delete buttons
-						if (initconf.permissions.editable){
+							// the delete buttons
+							if (initconf.permissions.executable){
 							jqnew.find('.delete-execution-table-button').button({
-								text : false,
-								icons : {
-									primary : "ui-icon-minus"
-								}
-							})
+									text : false,
+									icons : {
+										primary : "ui-icon-minus"
+									}
+								})
 							.on('click', function(){
-								var dialog = $("#iter-test-plan-delete-execution-dialog");
-								dialog.data('origin', this);
-								dialog.confirmDialog('open');
+									var dialog = $("#ts-test-plan-delete-execution-dialog");
+									dialog.data('origin', this);
+									dialog.confirmDialog('open');
 							});
-						}
-						
-						//the new execution buttons
-						if (initconf.permissions.executable){
 							
+							
+							//the new execution buttons
 							newexecBtn.click(function(){
 								var url = $(this).data('new-exec');
 								$.post(url, {mode : 'manual'}, 'json')
