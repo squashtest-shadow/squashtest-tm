@@ -43,6 +43,7 @@ import org.squashtest.tm.service.deletion.NodeMovement;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
+import org.squashtest.tm.service.internal.library.LibraryUtils;
 import org.squashtest.tm.service.internal.repository.FolderDao;
 import org.squashtest.tm.service.internal.repository.RequirementDao;
 import org.squashtest.tm.service.internal.repository.RequirementDeletionDao;
@@ -226,9 +227,8 @@ public class RequirementDeletionHandlerImpl extends
 			String name = child.getName();
 
 			while (!parent.isContentNameAvailable(name)) {
+				name = LibraryUtils.generateNonClashingName(name, parent.getContentNames());
 				needsRenaming = true;
-				Double random = Math.random() * 1000.0;
-				name = child.getName() + "-" + random.toString().substring(0, 3);
 			}
 
 			// log the renaming operation if happened.

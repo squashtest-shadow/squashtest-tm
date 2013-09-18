@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.library;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,35 +29,71 @@ import java.util.regex.Pattern;
 public final class LibraryUtils {
 	private static final String COPY_TOKEN = "-Copie";
 
-	private LibraryUtils(){
-		
+	private LibraryUtils() {
+
 	}
+
 	public static int generateUniqueCopyNumber(List<String> copiesNames, String sourceName, String copyToken) {
-
-		int lastCopy = 0;
 		// we want to match one or more digits following the first instance of substring -Copie
-		Pattern pattern = Pattern.compile(sourceName + copyToken + "(\\d+)");
-
-		for (String copyName : copiesNames) {
-
-			Matcher matcher = pattern.matcher(copyName);
-
-			if (matcher.find()) {
-
-				String copyNum = matcher.group(1);
-
-				if (lastCopy < Integer.parseInt(copyNum)) {
-					lastCopy = Integer.parseInt(copyNum);
-				}
-			}
-
-		}
-
-		return lastCopy + 1;
+		Pattern pattern = Pattern.compile(Pattern.quote(sourceName) + copyToken + "(\\d+)");
+		return computeNonClashingIndex(pattern, copiesNames);
 	}
-	
-	public static String generateUniqueCopyName(List<String> copiesNames, String sourceName){
+
+	public static String generateUniqueCopyName(List<String> copiesNames, String sourceName) {
 		int newCopyNumber = generateUniqueCopyNumber(copiesNames, sourceName, COPY_TOKEN);
 		return sourceName + COPY_TOKEN + newCopyNumber;
+	}
+
+	/**
+	 * Generates a non-clashing name for a "source" to be added amongst "siblings". The non-clashing name is either the
+	 * source (when no clash) or the source appended with "(n)"
+	 * 
+	 * @param source
+	 *            the non <code>null</code> source name.
+	 * @param siblings
+	 *            a non <code>null</code> collection of siblings of the source name
+	 * @return a non clashing name
+	 */
+	public static String generateNonClashingName(String source, Collection<String> siblings) {
+		if (noNameClash(source, siblings)) {
+			return source;
+		}
+
+		List<String> potentialClashes = filterPotentialClashes(source, siblings);
+		
+		Pattern p = Pattern.compile(Pattern.quote(source) + " \\((\\d+)\\)");
+		
+		int index = computeNonClashingIndex(p, potentialClashes);
+
+		return source + " (" + index + ")";
+	}
+
+	private static int computeNonClashingIndex(Pattern indexLookupPattern, Collection<String> potentialClashes) {
+		int maxIndex = 0;
+
+		for (String sibling : potentialClashes) {
+			Matcher m = indexLookupPattern.matcher(sibling);
+
+			if (m.find()) {
+				int siblingIndex = Integer.parseInt(m.group(1)); // regexp pattern ensures it always parses as int
+				maxIndex = Math.max(maxIndex, siblingIndex);
+			}
+		}
+		return ++maxIndex;
+	}
+
+	private static List<String> filterPotentialClashes(String source, Collection<String> siblings) {
+		List<String> potentialClashes = new ArrayList<String>(siblings.size());
+
+		for (String sibling : siblings) {
+			if (sibling.startsWith(source)) {
+				potentialClashes.add(sibling);
+			}
+		}
+		return potentialClashes;
+	}
+
+	private static boolean noNameClash(String name, Collection<String> siblings) {
+		return siblings.size() == 0 || !siblings.contains(name);
 	}
 }
