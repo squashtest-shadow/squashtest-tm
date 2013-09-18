@@ -32,6 +32,8 @@ import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Entity
 @NamedQueries(value = {
@@ -43,7 +45,16 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 				+"(select ei.id from IterationTestPlanItem itp join itp.testSuites ts join itp.executions e join e.issueList eil join eil.issues ei where :id in (select suites.id from itp.testSuites suites))"
 				+" or id.id in "
 				+"(select esi.id from IterationTestPlanItem itp join itp.testSuites ts join itp.executions e join e.steps es join es.issueList esil join esil.issues esi where :id in (select suites.id from itp.testSuites suites))"),
-
+		@NamedQuery(name="Issue.findExecution", query = "select exec " +
+				"from Execution exec join exec.issueList eil , Issue issue join issue.issueList iil " +
+				"where eil.id = iil.id " +
+				"and issue.id = :id "
+				),
+		@NamedQuery(name="Issue.findExecutionStep", query = "select execStep " +
+				"from ExecutionStep execStep join execStep.issueList esil , Issue issue join issue.issueList iil " +
+				"where esil.id = iil.id " +
+				"and issue.id = :id "
+				)
 })
 public class Issue {
 	@Id
@@ -81,7 +92,7 @@ public class Issue {
 	void setIssueList(IssueList issueList) {
 		this.issueList = issueList;
 	}
-
+	
 	public BugTracker getBugtracker() {
 		return bugtracker;
 	}
@@ -90,4 +101,5 @@ public class Issue {
 		this.bugtracker = bugtracker;
 	}
 
+	
 }

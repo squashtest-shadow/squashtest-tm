@@ -105,7 +105,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 			if(campaignDao.countRunningOrDoneExecutions(campaign.getId()) > 0){
 				
 				try{
-					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(campaign,"MANAGEMENT"));
+					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(campaign,"EXTENDED_DELETE"));
 					
 					//The user is allowed to delete the campaign but must be warned
 					report = new NotDeletableCampaignsPreviewReport();
@@ -191,7 +191,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 			if(campaignDao.countRunningOrDoneExecutions(campaign.getId()) > 0){
 				
 				try{
-					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(campaign,"MANAGEMENT"));	
+					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(campaign,"EXTENDED_DELETE"));	
 				}
 				catch(AccessDeniedException exception){
 					lockedNodes.add(campaign.getId());
@@ -270,7 +270,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 			if(iterationDao.countRunningOrDoneExecutions(iteration.getId()) > 0){
 				
 				try{
-					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(iteration,"MANAGEMENT"));
+					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(iteration,"EXTENDED_DELETE"));
 					iteration.getCampaign().removeIteration(iteration);
 					iterationsToBeDeleted.add(iteration);
 					deletedTargetIds.add(iteration.getId());

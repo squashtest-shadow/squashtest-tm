@@ -223,4 +223,28 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 		result.size() == 3;
 		result.collect({it.id}).containsAll([1L, 2L, 3L]);
 	}
+	
+	@DataSet("HibernateIssueDaoIT.xml")
+	def "should return execution as issue detector"(){
+		given :
+		def issueId = 7L
+
+		when : def result = issueDao.findIssueDetectorByIssue(issueId)
+
+		then :
+		result != null
+		result.issueListId == 400L
+	}
+	
+	@DataSet("HibernateIssueDaoIT.xml")
+	def "should return execution step as issue detector"(){
+		given :
+		def issueId = 5L
+
+		when : def result = issueDao.findIssueDetectorByIssue(issueId)
+
+		then :
+		result != null
+		result.issueListId == 2010L
+	}
 }

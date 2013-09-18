@@ -291,12 +291,11 @@ public interface BugTrackersLocalService {
 	/**
 	 * Will detach an existing issue from an issue detector
 	 * 
-	 * @param bugged
-	 * 			: the current issue holder
+	 * 
 	 * @param issueId
 	 * 			: the id of the issue in Squash TM
 	 */
-	void detachIssue(Long id);
+	void detachIssue(long id);
 
 
 	/**
@@ -330,5 +329,6 @@ public interface BugTrackersLocalService {
 	 * self-explanatory
 	 */
 	int findNumberOfIssueForExecutionStep(Long testStepId);
+
 
 }

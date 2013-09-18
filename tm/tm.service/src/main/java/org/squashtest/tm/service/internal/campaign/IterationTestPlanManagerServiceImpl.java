@@ -30,6 +30,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.acls.model.ObjectIdentity;
@@ -70,6 +71,9 @@ import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.internal.testcase.TestCaseNodeWalker;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.project.ProjectsPermissionFinder;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.security.PermissionsUtils;
+import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService;
 import org.squashtest.tm.service.user.UserAccountService;
 
@@ -106,6 +110,9 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	
 	@Inject
 	private ProjectsPermissionFinder projectsPermissionFinder;
+	@Inject
+	private PermissionEvaluationService permissionEvaluationService;
+	
 
 	@Inject
 	@Qualifier("squashtest.tm.repository.TestCaseLibraryNodeDao")
@@ -276,15 +283,36 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 		for (IterationTestPlanItem item : items) {
 			// We do not allow deletion if there are execution
-			if (item.getExecutions().isEmpty()) {
-				iteration.removeItemFromTestPlan(item);
-				iterationTestPlanDao.remove(item);
-			} else {
-				unauthorizedDeletion = true;
-			}
+			unauthorizedDeletion = removeTestPlanItemIfOkWithExecsAndRights(iteration, unauthorizedDeletion, item);
 		}
 
 		return unauthorizedDeletion;
+	}
+
+
+
+	private boolean removeTestPlanItemIfOkWithExecsAndRights(Iteration iteration, boolean unauthorizedDeletion,
+			IterationTestPlanItem item) {
+		if (item.getExecutions().isEmpty()) {
+			doRemoveTestPlanItemFromIteration(iteration, item);
+		} else {
+			try{
+				PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(item,"EXTENDED_DELETE"));		
+				doRemoveTestPlanItemFromIteration(iteration, item);
+			}
+			catch(AccessDeniedException exception){
+				unauthorizedDeletion = true;
+			}
+			
+		}
+		return unauthorizedDeletion;
+	}
+
+
+
+	private void doRemoveTestPlanItemFromIteration(Iteration iteration, IterationTestPlanItem item) {
+		iteration.removeItemFromTestPlan(item);
+		iterationTestPlanDao.remove(item);
 	}
 
 	@Override
@@ -293,15 +321,10 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	public boolean removeTestPlanFromIteration(long testPlanItemId) {
 		boolean unauthorizedDeletion = false;
 		IterationTestPlanItem item = iterationTestPlanDao.findById(testPlanItemId);
-		Iteration it = item.getIteration();
+		Iteration iteration = item.getIteration();
 
 		// We do not allow deletion if there are execution
-		if (item.getExecutions().isEmpty()) {
-			it.removeItemFromTestPlan(item);
-			iterationTestPlanDao.remove(item);
-		} else {
-			unauthorizedDeletion = true;
-		}
+		unauthorizedDeletion = removeTestPlanItemIfOkWithExecsAndRights(iteration, unauthorizedDeletion, item);
 
 		return unauthorizedDeletion;
 

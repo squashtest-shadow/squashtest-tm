@@ -37,6 +37,7 @@ import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.bugtracker.IssueList;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
+import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.IssueDao;
@@ -271,6 +272,16 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	@Override
 	public List<Issue> findAllForTestSuite(Long id) {
 		return executeListNamedQuery("Issue.findAllForTestSuite", new SetIdParameter("id", id));
+	}
+
+	@Override
+	public IssueDetector findIssueDetectorByIssue(long id) {
+		Execution exec = executeEntityNamedQuery("Issue.findExecution", new SetIdParameter("id", id));
+		if(exec != null ){
+			return exec	;
+		}else{
+			return executeEntityNamedQuery("Issue.findExecutionStep", new SetIdParameter("id", id));
+		}
 	}
 
 }

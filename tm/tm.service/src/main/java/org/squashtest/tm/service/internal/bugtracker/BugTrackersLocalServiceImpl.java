@@ -75,6 +75,9 @@ import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.security.PermissionsUtils;
+import org.squashtest.tm.service.security.SecurityCheckableObject;
 
 @Service("squashtest.tm.service.BugTrackersLocalService")
 public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
@@ -111,6 +114,9 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	@Inject
 	private ProjectDao projectDao;
+	
+	@Inject
+	private PermissionEvaluationService permissionEvaluationService;
 
 	@Override
 	public BugTrackerInterfaceDescriptor getInterfaceDescriptor(BugTracker bugTracker) {
@@ -239,10 +245,11 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		}
 	}
 
-	@Override
-	@PreAuthorize("hasPermission(#bugged, 'EXECUTE') or hasRole('ROLE_ADMIN')")
-	public void detachIssue(Long id) {
-
+	@Override	
+	public void detachIssue(long id) {
+		IssueDetector bugged = issueDao.findIssueDetectorByIssue(id);
+		
+		PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(bugged, "EXECUTE"));
 		Issue issue = issueDao.findById(id);
 		issueDao.remove(issue);
 	}
