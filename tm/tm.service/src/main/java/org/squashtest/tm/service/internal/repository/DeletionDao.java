@@ -39,6 +39,10 @@ public interface DeletionDao {
 	
 	
 	//because flushing is convenient sometimes.
+	/**
+	 *  @deprecated caller uses SF.currentSession.flush() instead
+	 */
+	@Deprecated
 	void flush();
 	
 }

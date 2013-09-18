@@ -53,25 +53,24 @@ import org.squashtest.tm.service.internal.requirement.RequirementNodeDeletionHan
 public class RequirementDeletionHandlerImpl extends
 		AbstractNodeDeletionHandler<RequirementLibraryNode, RequirementFolder> implements
 		RequirementNodeDeletionHandler {
-	
-	private static final Logger LOGGER  =  LoggerFactory.getLogger(RequirementDeletionHandlerImpl.class);
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementDeletionHandlerImpl.class);
 
 	@Inject
 	private RequirementFolderDao folderDao;
 
 	@Inject
 	private Provider<TestCaseImportanceManagerForRequirementDeletion> provider;
-	
+
 	@Inject
 	private RequirementDao requirementDao;
 
 	@Inject
 	private RequirementDeletionDao deletionDao;
-	
+
 	@Inject
 	private PrivateCustomFieldValueService customValueService;
-	
-	
+
 	@Override
 	protected FolderDao<RequirementFolder, RequirementLibraryNode> getFolderDao() {
 		return folderDao;
@@ -96,103 +95,93 @@ public class RequirementDeletionHandlerImpl extends
 		return lockedIds;
 	}
 
-	
 	/*
-	 * The following method is overridden from the abstract class because the business rule is special : 
-	 * for each node selected by the user :
-	 * - if it is a folder : proceed as usual,
-	 * - if it is a requirement : delete it and bind its children to its parent.
-	 *   
+	 * The following method is overridden from the abstract class because the business rule is special : for each node
+	 * selected by the user : - if it is a folder : proceed as usual, - if it is a requirement : delete it and bind its
+	 * children to its parent.
+	 * 
 	 * (non-Javadoc)
+	 * 
 	 * @see org.squashtest.tm.service.internal.deletion.AbstractNodeDeletionHandler#deleteNodes(java.util.List)
-	 * 
-	 * 
 	 */
 	@Override
-	public OperationReport deleteNodes(List<Long> targetIds){
-		
+	public OperationReport deleteNodes(List<Long> targetIds) {
+
 		OperationReport globalReport = new OperationReport();
-		
-			// first step : split the target ids into [folderIds, requirementIds].
+
+		// first step : split the target ids into [folderIds, requirementIds].
 		List<Long>[] separatedIds = deletionDao.separateFolderFromRequirementIds(targetIds);
-		
-		//the folderIds are treated as usual.
+
+		// the folderIds are treated as usual.
 		OperationReport deletedFolders = deleteFolderContent(separatedIds[0]);
 		globalReport.mergeWith(deletedFolders);
-		
-		//the requirements gets a special treatment.
+
+		// the requirements gets a special treatment.
 		OperationReport rewiredRequirements = rewireChildrenRequirements(separatedIds[1]);
 		globalReport.mergeWith(rewiredRequirements);
-		
+
 		OperationReport deletedRequirements = batchDeleteNodes(separatedIds[1]);
 		globalReport.mergeWith(deletedRequirements);
-		
+
 		return globalReport;
 	}
-	
-	
-	private OperationReport deleteFolderContent(List<Long> folderIds){
-		if (! folderIds.isEmpty()){
-			OperationReport report = super.deleteNodes(folderIds);	// in that case, business as usual
+
+	private OperationReport deleteFolderContent(List<Long> folderIds) {
+		if (!folderIds.isEmpty()) {
+			OperationReport report = super.deleteNodes(folderIds); // in that case, business as usual
 			deletionDao.flush();
 			return report;
-		}
-		else{
-			return new OperationReport();	//empty
+		} else {
+			return new OperationReport(); // empty
 		}
 	}
-	
-	
-	//todo : send back an object that describes which requirements where rebound to which entities, and how they were renamed if so.
-	private OperationReport rewireChildrenRequirements(List<Long> requirements){
-		
-		if (! requirements.isEmpty()){
+
+	// todo : send back an object that describes which requirements where rebound to which entities, and how they were
+	// renamed if so.
+	private OperationReport rewireChildrenRequirements(List<Long> requirements) {
+
+		if (!requirements.isEmpty()) {
 			OperationReport rewireReport = new OperationReport();
-			
+
 			List<Object[]> pairedParentChildren = requirementDao.findAllParentsOf(requirements);
-			
-			for (Object[] pair : pairedParentChildren){
-				
-				NodeContainer<Requirement> parent = (NodeContainer<Requirement>)pair[0];
+
+			for (Object[] pair : pairedParentChildren) {
+
+				NodeContainer<Requirement> parent = (NodeContainer<Requirement>) pair[0];
 				Requirement requirement = (Requirement) pair[1];
-	
+
 				renameContentIfNeededThenAttach(parent, requirement, rewireReport);
-				
+
 			}
-			
+
 			return rewireReport;
-		}
-		else{
+		} else {
 			return new OperationReport();
 		}
 	}
-	
-	
 
-	
 	// ****************************** atrocious boilerplate here ************************
-	
-	
+
 	/*
-	 * Removing a list of RequirementLibraryNodes means : - find all the attachment lists, - remove them, - remove
-	 * the nodes themselves
+	 * Removing a list of RequirementLibraryNodes means : - find all the attachment lists, - remove them, - remove the
+	 * nodes themselves
 	 */
 	@Override
 	protected OperationReport batchDeleteNodes(List<Long> ids) {
-		
+
 		OperationReport report = new OperationReport();
-		
+
 		if (!ids.isEmpty()) {
-			
+
 			List<Long>[] separatedIds = deletionDao.separateFolderFromRequirementIds(ids);
 
 			TestCaseImportanceManagerForRequirementDeletion testCaseImportanceManager = provider.get();
 			testCaseImportanceManager.prepareRequirementDeletion(ids);
 
-			//remove the custom fields	
+			// remove the custom fields
 			List<Long> allVersionIds = deletionDao.findVersionIds(ids);
 			customValueService.deleteAllCustomFieldValues(BindableEntity.REQUIREMENT_VERSION, allVersionIds);
-			
+
 			List<Long> requirementAttachmentIds = deletionDao.findRequirementAttachmentListIds(ids);
 
 			deletionDao.removeTestStepsCoverageByRequirementVersionIds(allVersionIds);
@@ -205,80 +194,84 @@ public class RequirementDeletionHandlerImpl extends
 			deletionDao.removeAttachmentsLists(requirementAttachmentIds);
 
 			testCaseImportanceManager.changeImportanceAfterRequirementDeletion();
-			
-			//fill the report
+
+			// fill the report
 			report.addRemoved(separatedIds[0], "folder");
 			report.addRemoved(separatedIds[1], "requirement");
 		}
-		
+
 		return report;
 	}
-	
-	
-	
-	private void renameContentIfNeededThenAttach(NodeContainer<Requirement> parent, Requirement toBeDeleted, OperationReport report){
-		
-		//abort if no operation is necessary.
-		if (toBeDeleted.getContent().isEmpty()){
+
+	private void renameContentIfNeededThenAttach(NodeContainer<Requirement> parent, Requirement toBeDeleted,
+			OperationReport report) {
+
+		// abort if no operation is necessary
+		if (toBeDeleted.getContent().isEmpty()) {
 			return;
 		}
-		
+
 		// init
 		Collection<Requirement> children = new ArrayList<Requirement>(toBeDeleted.getContent());
 		List<Node> movedNodesLog = new ArrayList<Node>(toBeDeleted.getContent().size());
-		
-		boolean needsRenaming = false;
-		
 
-		// renaming loop. Loop over each children, and for each of them ensure that they wont namecrash within their new parent. 
+		boolean needsRenaming = false;
+
+		// renaming loop. Loop over each children, and for each of them ensure that they wont namecrash within their new
+		// parent.
 		// Log all these operations in the report object.
-		for (Requirement child : children){
+		for (Requirement child : children) {
 
 			needsRenaming = false;
 			String name = child.getName();
-			
-			while(! parent.isContentNameAvailable(name)){
+
+			while (!parent.isContentNameAvailable(name)) {
 				needsRenaming = true;
-				Double random = Math.random()*1000.0;
-				name = child.getName()+"-"+random.toString().substring(0, 3);	
+				Double random = Math.random() * 1000.0;
+				name = child.getName() + "-" + random.toString().substring(0, 3);
 			}
-			
+
 			// log the renaming operation if happened.
-			if (needsRenaming){
+			if (needsRenaming) {
 				child.setName(name);
 				report.addRenamed("requirement", child.getId(), name);
 			}
-			
-			// log the movement operation. 
+
+			// log the movement operation.
 			movedNodesLog.add(new Node(child.getId(), "requirement"));
-			
 
 		}
 
-		//detach the children from their old parent.
+		// detach the children from their old parent.
 		toBeDeleted.getContent().clear();
-		
-		//flushing here ensures that the DB calls will be carried on in the proper order.
+
+		// flushing here ensures that the DB calls will be carried on in the proper order.
 		deletionDao.flush();
-		
+
 		// attach the children to their new parent.
 		// TODO : perhaps use the navigation service facilities instead? For now I believe it's fine enough.
-		for (Requirement child : children){
+		for (Requirement child : children) {
 			parent.addContent(child);
 		}
-		
-		//fill the report
+
+		// fill the report
 		NodeType type = new WhichNodeVisitor().getTypeOf(parent);
 		String strtype;
-		switch(type){
-			case REQUIREMENT_LIBRARY :	strtype = "drive"; break;
-			case REQUIREMENT_FOLDER : strtype = "folder"; break;
-			default : strtype = "requirement"; break;
+		switch (type) {
+		case REQUIREMENT_LIBRARY:
+			strtype = "drive";
+			break;
+		case REQUIREMENT_FOLDER:
+			strtype = "folder";
+			break;
+		default:
+			strtype = "requirement";
+			break;
 		}
-		
+
 		NodeMovement nodeMovement = new NodeMovement(new Node(parent.getId(), strtype), movedNodesLog);
 		report.addMoved(nodeMovement);
-		
+
 	}
 
 }
