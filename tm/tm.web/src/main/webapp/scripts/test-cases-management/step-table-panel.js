@@ -35,6 +35,7 @@
  * 
  *  permissions : {
  *      isWritable : says whether the table content or structure can be modified by the user
+ *      isLinkable : says whether the access to the requirement/test-step association page is accessible
  *      isAttachable : says if you can attach attachments to the steps 
  *  },
  * 
@@ -168,13 +169,19 @@ define([ "jquery", "squash.table-collapser", "custom-field-values", "squash.tran
 		// in order to enable/disable some features regarding the
 		// permissions, one have to tune the css classes of some
 		// columns.
-		var editActionClass = "", editResultClass = "", deleteClass = "", dragClass = "";
-
+		var editActionClass = "", editResultClass = "", deleteClass = "", dragClass = "", linkButtonClass = "", attachButtonClass = "";
+		
 		if (permissions.isWritable) {
 			editActionClass = "rich-edit-action";
 			editResultClass = "rich-edit-result";
 			deleteClass = "delete-button";
 			dragClass = "drag-handle";
+		}
+		if(!permissions.isLinkable){
+			linkButtonClass = "default-cursor";
+		}
+		if(!permissions.isAttachable){
+			attachButtonClass = "default-cursor";
 		}
 
 		// create the settings
@@ -205,14 +212,14 @@ define([ "jquery", "squash.table-collapser", "custom-field-values", "squash.tran
 				'bSortable' : false,
 				'aTargets' : [ 2 ],
 				'mDataProp' : 'attach-list-id',
-				'sClass' : 'centered has-attachment-cell',
+				'sClass' : 'centered has-attachment-cell '+ attachButtonClass,
 				'sWidth' : '2em'
 			}, {
 				'bVisible' : true,
 				'bSortable' : false,
 				'aTargets' : [ 3 ],
 				'mDataProp' : 'empty-requirements-holder',
-				'sClass' : 'centered requirements-button',
+				'sClass' : 'centered requirements-button '+ linkButtonClass,
 				'sWidth' : '2em'
 			}, {
 				'bVisible' : true,
@@ -319,10 +326,12 @@ define([ "jquery", "squash.table-collapser", "custom-field-values", "squash.tran
 					return data["step-type"] == "action";
 				},
 				onClick : function(table, cell) {
-					var row = cell.parentNode.parentNode;
-					var stepId = table.getODataId(row);
-					var url = urls.steps + stepId + "/verified-requirement-versions/manager";
-					document.location.href = url;
+					if (permissions.isLinkable){
+						var row = cell.parentNode.parentNode;
+						var stepId = table.getODataId(row);
+						var url = urls.steps + stepId + "/verified-requirement-versions/manager";
+						document.location.href = url;
+					}
 				}
 			} ]
 

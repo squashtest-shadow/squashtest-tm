@@ -36,6 +36,7 @@
 <div id="test-steps-tabs-panel" 
 	 class="table-tab" 
 	 th:with="isWritable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')') or #authorization.acl(testCase , 'WRITE')} , 
+	 		  isLinkable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')') or #authorization.acl(testCase , 'LINK')} , 
 			  isAttachable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')') or #authorization.acl(testCase , 'ATTACH')}">
 	
 	<!-- ==================== toolbar definition =================== -->
@@ -183,6 +184,7 @@
 					
 					permissions :{
 						isWritable : /*[[${isWritable}]]*/true,
+						isLinkable : /*[[${isLinkable}]]*/true,
 						isAttachable : /*[[${isAttachable}]]*/true
 					}					
 

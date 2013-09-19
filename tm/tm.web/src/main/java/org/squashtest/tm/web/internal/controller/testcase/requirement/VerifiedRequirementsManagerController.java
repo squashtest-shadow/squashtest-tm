@@ -36,6 +36,7 @@ import javax.inject.Named;
 import javax.inject.Provider;
 
 import org.apache.commons.collections.MultiMap;
+import org.jgroups.protocols.SCOPE;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -58,6 +59,9 @@ import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.security.PermissionsUtils;
+import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.service.testcase.TestStepModificationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -101,12 +105,15 @@ public class VerifiedRequirementsManagerController {
 	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
 	@Inject
 	private RequirementLibraryFinderService requirementLibraryFinder;
+	@Inject
+	private PermissionEvaluationService permissionService;
+	
 	private static final String NAME = "name";
 	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions/manager", method = RequestMethod.GET)
 	public String showTestCaseManager(@PathVariable long testCaseId, Model model, @CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
+		PermissionsUtils.checkPermission(permissionService, new SecurityCheckableObject(testCase, "LINK"));
 		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(openedNodes);
-		
 		model.addAttribute("testCase", testCase);
 		model.addAttribute("linkableLibrariesModel", linkableLibrariesModel);
 		
@@ -116,6 +123,8 @@ public class VerifiedRequirementsManagerController {
 	@RequestMapping(value = "/test-steps/{testStepId}/verified-requirement-versions/manager", method = RequestMethod.GET)
 	public String showTestStepManager(@PathVariable long testStepId, Model model, @CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
 		TestStep testStep = testStepService.findById(testStepId);
+		PermissionsUtils.checkPermission(permissionService, new SecurityCheckableObject(testStep, "LINK"));
+
 		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(openedNodes);
 		
 		model.addAttribute("testStep", testStep);
