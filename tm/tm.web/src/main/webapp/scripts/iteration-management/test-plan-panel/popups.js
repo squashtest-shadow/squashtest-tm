@@ -51,19 +51,7 @@ define(['jquery', 'workspace.contextual-content', 'jqueryui', 'jquery.squash.con
 		
 		deleteItemTestplanDialog.on('formdialogopen', function(){
 			
-			var selIds = [];
-			
-			if(event.target.id === "remove-test-plan-button"){
-				selIds = $("#iteration-test-plans-table").squashTable().getSelectedIds();
-			} 
-			
-			if($(event.target).hasClass("ui-icon-minus")){
-				var nLine = $(event.target.parentElement.parentElement.parentElement.childNodes[0]).text();
-				if(!!(nLine.trim())){
-					var index = parseInt(nLine.trim(), 10);
-					selIds.push($("#iteration-test-plans-table").squashTable().fnGetData()[index-1]["entity-id"]);
-				}
-			}
+			var selIds = $("#iteration-test-plans-table").squashTable().getSelectedIds();
 
 			switch (selIds.length){			
 				case 0 : $(this).formDialog('setState','empty-selec'); break;
@@ -71,12 +59,11 @@ define(['jquery', 'workspace.contextual-content', 'jqueryui', 'jquery.squash.con
 				default : $(this).formDialog('setState','multiple-tp'); break;					
 			}
 			
-			this.selIds = selIds;
 		});
 		
 		deleteItemTestplanDialog.on('formdialogconfirm', function(){
 			var table = $("#iteration-test-plans-table").squashTable();
-			var ids = this.selIds;
+			var ids = table.getSelectedIds();
 			var url = conf.urls.testplanUrl + ids.join(',');
 			
 			$.ajax({
