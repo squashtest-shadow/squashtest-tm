@@ -35,6 +35,7 @@
 <%@ attribute name="bugTrackerUrl" required="true" description="where the delete buttons send the delete instruction" %>
 <%@ attribute name="entityId" required="true" description="id of the current execution" %>
 <%@ attribute name="freeSettings" required="true" description="added settings to issue table" %>
+<%@ attribute name="executable" required="true" description="if the user has EXECUTE rights on the execution" %>
 <%-- 
 	columns are :
 	
@@ -63,7 +64,7 @@
 	function checkEmptyValues(row, data){
 		var assignee = data['assignee'];
 		var correctAssignee = (assignee!=="") ? assignee : "${interfaceDescriptor.tableNoAssigneeLabel}"; 
-		var td=$(row).find("td:eq(6)");
+		var td=$(row).find("td:eq(4)");
 		$(td).html(correctAssignee);
 	}
 	
@@ -95,6 +96,9 @@
 </script>
 	
 <c:url value='/datatables/messages' var="tableLangUrl" />
+<c:if test="${executable}">
+	<c:set var="deleteBtnClause" value=", sClass=delete-button"/>
+</c:if>
 <table id="issue-table" data-def="language=${tableLangUrl}, hover, ajaxsource=${dataUrl}">
 	<thead >
 		<tr>
@@ -104,7 +108,7 @@
 			<th data-def="map=status">${interfaceDescriptor.tableStatusHeader}</th>
 			<th data-def="map=assignee">${interfaceDescriptor.tableAssigneeHeader}</th>
 			<th data-def="map=owner">${interfaceDescriptor.tableReportedInHeader}</th>
-			<th data-def="map=empty-placeholder, narrow, center, sClass=delete-button"></th>
+			<th data-def="map=empty-delete-holder, narrow, center${deleteBtnClause}"></th>
 		</tr>
 	</thead>
 	<tbody><%-- Will be populated through ajax --%></tbody>

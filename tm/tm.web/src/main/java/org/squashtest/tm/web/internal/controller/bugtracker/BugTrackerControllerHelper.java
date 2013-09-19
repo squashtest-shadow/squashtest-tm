@@ -40,6 +40,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.web.internal.controller.campaign.TestSuiteHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 public final class BugTrackerControllerHelper {
@@ -346,7 +347,7 @@ public final class BugTrackerControllerHelper {
 			result.put("status", issue.getStatus().getName());
 			result.put("assignee", issue.getAssignee().getName());
 			result.put("owner", nameBuilder.buildName(ownership.getOwner()));
-			result.put("empty-placeholder", "");
+			result.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, "");
 			result.put("local-id", issue.getIssueId());
 
 			return result;
@@ -384,7 +385,7 @@ public final class BugTrackerControllerHelper {
 			result.put("remote-id", issue.getId());
 			result.put("summary", issue.getSummary());
 			result.put("priority", issue.getPriority().getName());
-			result.put("empty-placeholder", "");
+			result.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, "");
 			result.put("local-id", issue.getIssueId());
 
 			return result;

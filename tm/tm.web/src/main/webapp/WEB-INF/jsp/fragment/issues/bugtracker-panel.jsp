@@ -59,15 +59,15 @@
  
 <%-- ------------------- variables ----------------- --%>
 
-<c:set var="editable" value="${ false }" />
+<c:set var="executable" value="${ false }" />
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE"
 	domainObject="${ entity }">
-	<c:set var="editable" value="${ true }" />
+	<c:set var="executable" value="${ true }" />
 </authz:authorized>
 
 <c:if
 	test="${entityType == 'iteration'||entityType == 'test-suite'||entityType == 'campaign'||entityType == 'test-case'}">
-	<c:set var="editable" value="${false}" />
+	<c:set var="executable" value="${false}" />
 </c:if>
 
 <c:if test="${empty useParentContextPopup}"><c:set var="useParentContextPopup" value="${false}" /></c:if>
@@ -297,7 +297,7 @@
 	style="${panelStyle}">
 
 	<jsp:attribute name="panelButtons">
-		<c:if test="${ editable }">
+		<c:if test="${ executable }">
 				<f:message var="issueReportOpenButtonLabel"
 				key="issue.button.opendialog.label" />
 				<input type="button" class="button"
@@ -329,11 +329,11 @@
 			<c:choose>
 				<c:when test="${entityType == 'execution-step'}">
 					<is:issue-table-execstep dataUrl="${tableUrl}" bugTrackerUrl="${bugTrackerServiceUrl}" entityId="${entity.id}"
-						interfaceDescriptor="${interfaceDescriptor}" freeSettings="${ freeSettings }" />
+						interfaceDescriptor="${interfaceDescriptor}" freeSettings="${ freeSettings }" executable="${executable}"/>
 				</c:when>
 				<c:when test="${entityType == 'execution'}">
 					<is:issue-table-exec dataUrl="${tableUrl}" bugTrackerUrl="${bugTrackerServiceUrl}" entityId="${entity.id}"
-						interfaceDescriptor="${interfaceDescriptor}"  freeSettings="${ freeSettings }" />			
+						interfaceDescriptor="${interfaceDescriptor}"  freeSettings="${ freeSettings }" executable="${ executable }"/>			
 				</c:when>
 				
 				<c:when
@@ -350,7 +350,7 @@
 
 
 <%-------------------------------- add issue popup code -----------------------------------%>
-<c:if test="${editable and not useParentContextPopup}">
+<c:if test="${executable and not useParentContextPopup}">
 	<is:issue-add-popup id="issue-report-dialog"
 		interfaceDescriptor="${interfaceDescriptor}"  bugTrackerId="${bugTracker.id}"/>
 </c:if>
@@ -372,7 +372,7 @@ check that in the next <script></script> tags
 <script type="text/javascript">
 	$(function() {
 
-		<c:if test="${editable}">
+		<c:if test="${executable}">
 		$("#issue-report-dialog-openbutton").squashButton().click(function() {
 			$(this).removeClass("ui-state-focus ui-state-hover");
 			checkAndReportIssue( {reportUrl:"${entityUrl}/new-issue", callback:issueReportSuccess} );

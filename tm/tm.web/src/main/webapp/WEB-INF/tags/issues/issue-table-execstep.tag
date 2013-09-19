@@ -35,6 +35,7 @@
 <%@ attribute name="bugTrackerUrl" required="true" description="where the delete buttons send the delete instruction" %>
 <%@ attribute name="freeSettings" required="true" description="added settings to issue table" %>
 <%@ attribute name="entityId" required="true" description="id of the current execution step" %>
+<%@ attribute name="executable" required="true" description="if the user has EXECUTE rights on the execution" %>
 <%--
 
 	columns are :
@@ -48,13 +49,16 @@
  --%>
  
 <c:url var="tLanguageUrl" value="/datatables/messages"/>
+<c:if test="${executable}">
+	<c:set var="deleteBtnClause" value=", sClass=centered delete-button"/>
+</c:if>
 <table id="issue-table" data-def="ajaxsource=${dataUrl}, language=${tLanguageUrl}, pre-sort=1">
 	<thead>
 		<tr>
 			<th style="cursor:pointer" data-def="link={issue-url}, select, map=remote-id, sortable, narrow, sClass=id-header">${interfaceDescriptor.tableIssueIDHeader}</th>
 			<th data-def="map=summary">${interfaceDescriptor.tableSummaryHeader}</th>
 			<th data-def="map=priority">${interfaceDescriptor.tablePriorityHeader}</th>
-			<th data-def="narrow, map=empty-placeholder, sClass=centered delete-button"></th>
+			<th data-def="narrow, map=empty-delete-holder${ deleteBtnClause }"></th>
 		</tr>
 	</thead>
 	<tbody><%-- Will be populated through ajax --%></tbody>
