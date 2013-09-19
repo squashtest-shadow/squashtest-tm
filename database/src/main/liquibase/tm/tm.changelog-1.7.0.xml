@@ -188,6 +188,12 @@
 			<column name="PERMISSION_MASK" value="64" />
 			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.requirement.RequirementLibrary')" />
 		</insert>
+		<comment>add permission LINK to Advance tester on Requirement library</comment>
+		<insert tableName="ACL_GROUP_PERMISSION">
+			<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.AdvanceTester')" />
+			<column name="PERMISSION_MASK" value="256" />
+			<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.requirement.RequirementLibrary')" />
+		</insert>
 		<comment>remove permission ATTACH to Advance tester on Test-case library</comment>
 		<delete tableName="ACL_GROUP_PERMISSION">
 			<where>
