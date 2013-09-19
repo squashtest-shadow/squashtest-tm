@@ -66,28 +66,30 @@ define([ "jquery", "backbone", "underscore", "handlebars", "app/util/StringUtil"
 		},
 
 		_changeLinkState : function(evt) {
-			var target = $(evt.currentTarget);
-			var row = target.parents('tr:first').get(0);
-			var data = this.table.fnGetData(row);
-
-			var state = (data.verifiedByStep === "true" || data.verifiedByStep === true);
-			var newState = !state;
-			var id = data['entity-id'];
-			var ajaxUrl = VRTS.stepUrl + '/' + id;
-
-			var ajaxType = 'delete';
-			if (newState) {
-				ajaxType = 'post';
+			if (VRTS.linkable) {
+				var target = $(evt.currentTarget);
+				var row = target.parents('tr:first').get(0);
+				var data = this.table.fnGetData(row);
+	
+				var state = (data.verifiedByStep === "true" || data.verifiedByStep === true);
+				var newState = !state;
+				var id = data['entity-id'];
+				var ajaxUrl = VRTS.stepUrl + '/' + id;
+	
+				var ajaxType = 'delete';
+				if (newState) {
+					ajaxType = 'post';
+				}
+				$.ajax({
+					url : ajaxUrl,
+					type : ajaxType
+				}).success(function() {
+					data.verifiedByStep = newState; // should use a setter to be clean
+					target.toggleClass('ui-icon-link-dark-e-w').toggleClass('ui-icon-link-clear-e-w');
+				}).fail(function() {
+					// nothing, let the normal handler kick in
+				});
 			}
-			$.ajax({
-				url : ajaxUrl,
-				type : ajaxType
-			}).success(function() {
-				data.verifiedByStep = newState; // should use a setter to be clean
-				target.toggleClass('ui-icon-link-dark-e-w').toggleClass('ui-icon-link-clear-e-w');
-			}).fail(function() {
-				// nothing, let the normal handler kick in
-			});
 		},
 
 		_detachSelectedRequirements : function() {

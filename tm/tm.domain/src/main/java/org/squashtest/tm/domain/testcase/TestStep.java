@@ -37,6 +37,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.Persister;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.infrastructure.hibernate.TestStepPersister;
+import org.squashtest.tm.security.annotation.AclConstrainedObject;
 import org.squashtest.tm.security.annotation.InheritsAcls;
 
 
@@ -79,6 +80,14 @@ public abstract class TestStep {
 	
 	public TestCase getTestCase(){
 		return testCase;
+	}
+	
+	@AclConstrainedObject
+	public TestCaseLibrary getLibrary(){
+		if(testCase != null){
+			return (TestCaseLibrary) testCase.getLibrary();
+		}
+		return null;
 	}
 	
 	/**

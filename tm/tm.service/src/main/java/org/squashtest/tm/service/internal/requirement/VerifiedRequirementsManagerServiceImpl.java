@@ -59,6 +59,9 @@ import org.squashtest.tm.service.internal.repository.TestStepDao;
 import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.security.PermissionsUtils;
+import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 @Service("squashtest.tm.service.VerifiedRequirementsManagerService")
 @Transactional
@@ -90,6 +93,8 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	@Inject
 	@Qualifier("squashtest.tm.repository.RequirementLibraryNodeDao")
 	private LibraryNodeDao<RequirementLibraryNode> requirementLibraryNodeDao;
+	@Inject
+	private PermissionEvaluationService permissionService;
 
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -224,6 +229,7 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	}
 	
 	@Override
+	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.tm.domain.testcase.TestStep' , 'LINK') or hasRole('ROLE_ADMIN')")
 	public Collection<VerifiedRequirementException> addVerifiedRequirementsToTestStep(List<Long> requirementsIds,
 			long testStepId) {
 		List<RequirementVersion> requirementVersions = findRequirementVersions(requirementsIds);
@@ -234,6 +240,7 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 			Iterator<RequirementVersion> iterator = requirementVersions.iterator();
 			while (iterator.hasNext()) {
 				RequirementVersion requirementVersion = iterator.next();
+				PermissionsUtils.checkPermission(permissionService, new SecurityCheckableObject(requirementVersion, "LINK"));
 				try {
 					RequirementVersionCoverage coverage = requirementVersionCoverageDao.byRequirementVersionAndTestCase(requirementVersion.getId(), testCase.getId());
 					if(coverage == null){
