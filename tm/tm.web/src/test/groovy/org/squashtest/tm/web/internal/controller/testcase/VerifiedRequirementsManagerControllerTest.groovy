@@ -50,7 +50,8 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 	TestCaseModificationService testCaseFinder = Mock()
 	RequirementLibraryFinderService requirementLibraryFinder = Mock()
 	TestStepModificationService testStepService = Mock()
-
+	PermissionEvaluationService permissionService = Mock();
+	
 	def setup() {
 		controller.verifiedRequirementsManagerService = verifiedRequirementsManagerService
 		controller.driveNodeBuilder = driveNodeBuilder
@@ -58,6 +59,8 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 		controller.requirementLibraryFinder = requirementLibraryFinder
 		controller.testStepService = testStepService;
 		driveNodeBuilder.get() >> new DriveNodeBuilder(Mock(PermissionEvaluationService), null)
+		controller.permissionService = permissionService;
+		permissionService.hasRoleOrPermissionOnObject(_, _, _) >> true
 	}
 
 	def "should show test case manager page"() {
