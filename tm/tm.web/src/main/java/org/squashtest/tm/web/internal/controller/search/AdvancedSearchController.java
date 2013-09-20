@@ -594,6 +594,7 @@ public class AdvancedSearchController {
 		for (CustomFieldOption option : selectField.getOptions()) {
 			possibleValues.add(new SearchInputPossibleValueModel(option.getLabel(), option.getCode()));
 		}
+		possibleValues.add(new SearchInputPossibleValueModel("", ""));
 		SearchInputFieldModel model = new SearchInputFieldModel();
 		model.setInputType(MULTISELECT);
 		model.setTitle(selectField.getLabel());

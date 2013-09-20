@@ -154,6 +154,9 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 			CustomFieldValue value = binding.createNewValue();
 			value.setBoundEntity(entity);
 			customFieldValueDao.persist(value);
+			if(BindableEntity.TEST_CASE.equals(entity.getBoundEntityType())){
+				advancedSearchService.reindexTestCase(entity.getBoundEntityId());
+			}
 		}
 	}
 
@@ -166,6 +169,12 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	public void cascadeCustomFieldValuesDeletion(List<Long> customFieldBindingIds) {
 
 		List<CustomFieldValue> allValues = customFieldValueDao.findAllCustomValuesOfBindings(customFieldBindingIds);
+		for(CustomFieldValue value : allValues){
+			BoundEntity boundEntity = boundEntityDao.findBoundEntity(value);
+			if(BindableEntity.TEST_CASE.equals(boundEntity.getBoundEntityType())){
+				advancedSearchService.reindexTestCase(boundEntity.getBoundEntityId());
+			}
+		}
 		deleteCustomFieldValues(allValues);
 
 	}
@@ -180,6 +189,10 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 				CustomFieldValue value = binding.createNewValue();
 				value.setBoundEntity(entity);
 				customFieldValueDao.persist(value);
+				
+				if(BindableEntity.TEST_CASE.equals(entity.getBoundEntityType())){
+					advancedSearchService.reindexTestCase(entity.getBoundEntityId());
+				}
 			}
 		}
 

@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.CustomFieldOption;
@@ -44,6 +45,7 @@ import org.squashtest.tm.service.customfield.CustomFieldBindingModificationServi
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao;
+import org.squashtest.tm.service.library.AdvancedSearchService;
 
 /**
  * Implementations for (non dynamically generated) custom-field management services.
@@ -156,8 +158,8 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 
 	private void addDefaultValueToCustomFields(Long customFieldId,String defaulfValue){
 		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForCustomField(customFieldId);
-		for(CustomFieldBinding binding : bindings) {
-			 List<CustomFieldValue> values = customFieldValueDao.findAllCustomValuesOfBinding(binding.getId());
+		for(CustomFieldBinding binding : bindings) { 
+			List<CustomFieldValue> values = customFieldValueDao.findAllCustomValuesOfBinding(binding.getId());
 			 for(CustomFieldValue value : values) {
 				 if(value.getValue() == null || value.getValue().equals("")) {
 					 value.setValue(defaulfValue);

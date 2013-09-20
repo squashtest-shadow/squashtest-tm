@@ -260,7 +260,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		for (String value : values) {
 			
 			if("".equals(value.trim())){
-				value = "$NO_USER";
+				value = "$NO_VALUE";
 			}
 			
 			org.apache.lucene.search.Query query = qb

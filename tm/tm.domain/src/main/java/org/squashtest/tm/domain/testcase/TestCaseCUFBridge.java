@@ -99,6 +99,20 @@ public class TestCaseCUFBridge implements FieldBridge {
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
+			} else if(org.squashtest.tm.domain.customfield.InputType.DROPDOWN_LIST.equals(inputType)) {
+
+				String code = cufValue.getBinding().getCustomField().getCode();
+				String val = cufValue.getValue();
+				if("".equals(val)){
+					val = "$NO_VALUE";
+				}
+				
+				Field field = new Field(code, val,
+						luceneOptions.getStore(), luceneOptions.getIndex(),
+						luceneOptions.getTermVector());
+				field.setBoost(luceneOptions.getBoost());
+				document.add(field);		
+				
 			} else {
 
 				String code = cufValue.getBinding().getCustomField().getCode();
