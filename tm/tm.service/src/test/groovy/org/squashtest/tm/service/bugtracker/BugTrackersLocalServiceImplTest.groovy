@@ -31,7 +31,9 @@ import org.squashtest.tm.domain.bugtracker.IssueOwnership
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.service.internal.bugtracker.BugTrackersLocalServiceImpl
+import org.squashtest.tm.service.internal.library.AdvancedSearchServiceImpl
 import org.squashtest.tm.service.internal.repository.IssueDao
+import org.squashtest.tm.service.library.AdvancedSearchService;
 
 import spock.lang.Specification
 
@@ -39,7 +41,7 @@ class BugTrackersLocalServiceImplTest extends Specification {
 
 	IssueDao issueDao = Mock()
 	BugTrackersService remoteService = Mock()
-
+	AdvancedSearchService advancedSearchService = Mock();
 
 	BugTrackersLocalServiceImpl service = new BugTrackersLocalServiceImpl();
 
@@ -47,6 +49,7 @@ class BugTrackersLocalServiceImplTest extends Specification {
 	def setup(){
 		service.issueDao = issueDao;
 		service.remoteBugTrackersService = remoteService;
+		service.advancedSearchService = advancedSearchService;
 	}
 
 
@@ -104,12 +107,11 @@ class BugTrackersLocalServiceImplTest extends Specification {
 		execution.getIssueList()>> issueList
 		BTIssue issue = new BTIssue()
 
-
 		when :
-		BTIssue reissue = service.createIssue(execution, issue)
+	
+		BTIssue reissue = service.createRemoteIssue(execution, issue)
 
 		then :
-		1 * issueDao.persist(_)
 		reissue == btIssue
 	}
 

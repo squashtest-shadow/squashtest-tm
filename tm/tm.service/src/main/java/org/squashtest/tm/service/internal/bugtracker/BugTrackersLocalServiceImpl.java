@@ -149,18 +149,26 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		return checkBugTrackerStatus(project);
 	}
 
-	@Override
-	public RemoteIssue createIssue(IssueDetector entity, RemoteIssue btIssue) {
+	private RemoteIssue createRemoteIssue(IssueDetector entity, RemoteIssue btIssue) {
+		
 		BugTracker bugTracker = entity.getBugTracker();
 		String btName = bugTracker.getName();
 		btIssue.setBugtracker(btName);
 
 		RemoteIssue createdIssue = remoteBugTrackersService.createIssue(btIssue, bugTracker);
 		createdIssue.setBugtracker(btName);
+		
+		return createdIssue;
+	}
+	
+	@Override
+	public RemoteIssue createIssue(IssueDetector entity, RemoteIssue btIssue) {
 
+		RemoteIssue createdIssue = createRemoteIssue(entity, btIssue);
 		// if success we set the bug in Squash TM database
 		// a success being : we reach this code with no exceptions
-
+		BugTracker bugTracker = entity.getBugTracker();
+		
 		Issue sqIssue = new Issue();
 		sqIssue.setRemoteIssueId(createdIssue.getId());
 		sqIssue.setBugtracker(bugTracker);

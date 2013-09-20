@@ -44,7 +44,7 @@ import org.squashtest.tm.service.internal.repository.IterationTestPlanDao
 import org.squashtest.tm.service.internal.repository.IterationDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker
-
+import org.squashtest.tm.service.library.AdvancedSearchService
 
 class CustomIterationModificationServiceImplTest extends Specification {
 	CustomIterationModificationServiceImpl service = new CustomIterationModificationServiceImpl()
@@ -61,7 +61,8 @@ class CustomIterationModificationServiceImplTest extends Specification {
 	PrivateDenormalizedFieldValueService denormalizedFieldValueService = Mock();
 	
 	IterationTestPlanManagerService iterationTestPlanManager = Mock()
-
+	AdvancedSearchService advancedSearchService = Mock()
+	
 	def setup() {
 		service.executionDao = execDao
 		service.campaignDao = campaignDao
@@ -71,6 +72,7 @@ class CustomIterationModificationServiceImplTest extends Specification {
 		service.customFieldValueService = customFieldService
 		service.denormalizedFieldValueService = denormalizedFieldValueService
 		service.iterationTestPlanManager = iterationTestPlanManager
+		service.advancedSearchService = advancedSearchService
 	}
 
 	def "should add unparameterized iteration to campaign with test plan"() {

@@ -41,6 +41,7 @@ import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao
 import org.squashtest.tm.service.internal.testcase.TestCaseImportanceManagerServiceImpl
 import org.squashtest.tm.service.internal.testcase.VerifyingTestCaseManagerServiceImpl
+import org.squashtest.tm.service.library.AdvancedSearchService
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService
 
 import spock.lang.Specification
@@ -58,6 +59,7 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 	LibraryNodeDao<TestCaseLibraryNode> nodeDao = Mock()
 	TestCaseImportanceManagerServiceImpl testCaseImportanceServiceImpl = Mock()
 	RequirementVersionCoverageDao requirementVersionCoverageDao = Mock()
+	AdvancedSearchService advancedSearchService = Mock()
 
 	def setup() {
 		CollectionAssertions.declareContainsExactly()
@@ -70,6 +72,7 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 		service.testCaseLibraryNodeDao = testCaseLibraryNodeDao
 		service.testCaseImportanceManagerService = testCaseImportanceServiceImpl
 		service.requirementVersionCoverageDao = requirementVersionCoverageDao
+		service.advancedSearchService = advancedSearchService
 	}
 
 	def "should find libraries of linkable test Case"() {

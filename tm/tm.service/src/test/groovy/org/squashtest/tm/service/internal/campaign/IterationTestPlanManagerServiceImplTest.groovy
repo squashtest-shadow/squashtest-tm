@@ -34,6 +34,7 @@ import org.squashtest.tm.service.internal.repository.DatasetDao
 import org.squashtest.tm.service.internal.repository.IterationDao
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao
+import org.squashtest.tm.service.library.AdvancedSearchService
 
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -46,13 +47,14 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 	IterationDao iterDao = Mock()
 	IterationTestPlanDao itemDao = Mock()
 	DatasetDao datasetDao = Mock()
-
+	AdvancedSearchService advancedSearchService = Mock()
 
 	def setup(){
 		service.testCaseLibraryNodeDao = nodeDao;
 		service.iterationDao = iterDao;
 		service.iterationTestPlanDao = itemDao;
 		service.datasetDao = datasetDao;
+		service.advancedSearchService = advancedSearchService;
 	}
 
 
