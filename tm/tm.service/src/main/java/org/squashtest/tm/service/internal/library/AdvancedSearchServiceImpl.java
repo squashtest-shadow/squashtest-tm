@@ -136,7 +136,23 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return date;
 	}
 
+	@Override
+	public void reindexTestCase(Long testCaseId){
+		Session session = sessionFactory.getCurrentSession();
+		FullTextSession ftSession = Search.getFullTextSession(session);
+		Object testCase = ftSession.load(TestCase.class, testCaseId);
+		ftSession.index(testCase);
+	}
 
+	@Override
+	public void reindexTestCases(List<TestCase> testCaseList){
+		Session session = sessionFactory.getCurrentSession();
+		FullTextSession ftSession = Search.getFullTextSession(session);
+		
+		for(TestCase testcase : testCaseList){
+			 reindexTestCase(testcase.getId());
+		}
+	}
 	
 	@Override
 	public void indexTestCases() {

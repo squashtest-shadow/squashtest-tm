@@ -42,6 +42,7 @@ import org.squashtest.tm.service.internal.repository.BoundEntityDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao.CustomFieldValuesPair;
+import org.squashtest.tm.service.library.AdvancedSearchService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 @Service("squashtest.tm.service.CustomFieldValueManagerService")
@@ -59,6 +60,9 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 	@Inject
 	private PermissionEvaluationService permissionService;
+	
+	@Inject
+	private AdvancedSearchService advancedSearchService;
 
 	public void setPermissionService(PermissionEvaluationService permissionService) {
 		this.permissionService = permissionService;
@@ -232,12 +236,16 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		CustomFieldValue changedValue = customFieldValueDao.findById(customFieldValueId);
 
 		BoundEntity boundEntity = boundEntityDao.findBoundEntity(changedValue);
-
+	
 		if (!permissionService.hasMoreThanRead(boundEntity)) {
 			throw new AccessDeniedException("access is denied");
 		}
 
 		changedValue.setValue(newValue);
+		
+		if(BindableEntity.TEST_CASE.equals(boundEntity.getBoundEntityType())){
+			advancedSearchService.reindexTestCase(boundEntity.getBoundEntityId());
+		}
 	}
 
 	@Override

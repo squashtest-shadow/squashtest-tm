@@ -58,6 +58,10 @@ public interface AdvancedSearchService {
 
 	List<String> findAllUsersWhoCreatedTestCases();
 
+	void reindexTestCase(Long testCaseId);
+
+	void reindexTestCases(List<TestCase> testCaseList);
+
 
 
 }

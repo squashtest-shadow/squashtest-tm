@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -38,6 +39,8 @@ import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.bugtracker.IssueList;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.IssueDao;
@@ -282,6 +285,22 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 		}else{
 			return executeEntityNamedQuery("Issue.findExecutionStep", new SetIdParameter("id", id));
 		}
+	}
+
+	@Override
+	public TestCase findTestCaseRelatedToIssue(Long id) {
+		
+		TestCase testCase = null;
+		 
+		Execution exec = executeEntityNamedQuery("Issue.findExecution", new SetIdParameter("id", id));
+		if(exec != null ){
+			testCase = exec.getReferencedTestCase();
+		}else{
+			ExecutionStep step = executeEntityNamedQuery("Issue.findExecutionStep", new SetIdParameter("id", id));
+			testCase = step.getExecution().getReferencedTestCase();
+		}
+		
+		return testCase;
 	}
 
 }

@@ -66,6 +66,7 @@ import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 import org.squashtest.tm.service.internal.testautomation.service.InsecureTestAutomationManagementService;
+import org.squashtest.tm.service.library.AdvancedSearchService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
@@ -101,6 +102,8 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Inject	private PrivateCustomFieldValueService customFieldValueService;
 	
 	@Inject	private PrivateDenormalizedFieldValueService denormalizedFieldValueService;
+	
+	@Inject private AdvancedSearchService advancedSearchService;
 	
 	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToIterationStrategy")
@@ -340,7 +343,8 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		executionDao.persist(execution);
 		item.addExecution(execution);
 		createDenormalizedFieldsForExecutionAndExecutionSteps(execution);
-
+		advancedSearchService.reindexTestCase(item.getReferencedTestCase().getId());
+		
 		return execution;
 	}
 

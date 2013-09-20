@@ -63,6 +63,7 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.IssueAlreadyBoundException;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
@@ -75,6 +76,7 @@ import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
+import org.squashtest.tm.service.library.AdvancedSearchService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
@@ -114,6 +116,9 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	@Inject
 	private ProjectDao projectDao;
+	
+	@Inject
+	private AdvancedSearchService advancedSearchService;
 	
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
@@ -166,6 +171,9 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 		issueDao.persist(sqIssue);
 
+		TestCase testCase = this.findTestCaseRelatedToIssue(sqIssue.getId());
+		this.advancedSearchService.reindexTestCase(testCase.getId());
+		
 		return createdIssue;
 	}
 
@@ -241,8 +249,13 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 			issue.setRemoteIssueId(test.getId());
 			issueList.addIssue(issue);
 			issueDao.persist(issue);
+			
+			TestCase testCase = this.findTestCaseRelatedToIssue(issue.getId());
+			this.advancedSearchService.reindexTestCase(testCase.getId());
 
 		}
+		
+
 	}
 
 	@Override	
@@ -252,6 +265,8 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(bugged, "EXECUTE"));
 		Issue issue = issueDao.findById(id);
 		issueDao.remove(issue);
+		TestCase testCase = this.findTestCaseRelatedToIssue(issue.getId());
+		this.advancedSearchService.reindexTestCase(testCase.getId());
 	}
 
 	/* ------------------------ExecutionStep--------------------------------------- */
@@ -728,6 +743,11 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		List<Long> executionStepIds = IdentifiedUtil.extractIds(executionSteps);
 
 		return issueDao.countIssuesfromExecutionAndExecutionSteps(executionIds, executionStepIds);
+	}
+
+	@Override
+	public TestCase findTestCaseRelatedToIssue(Long issueId) {
+		return issueDao.findTestCaseRelatedToIssue(issueId);
 	}
 	
 }

@@ -37,6 +37,7 @@ import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
+import org.squashtest.tm.service.library.AdvancedSearchService;
 
 @Service("squashtest.tm.service.ExecutionModificationService")
 public class ExecutionModificationServiceImpl implements ExecutionModificationService {
@@ -50,6 +51,9 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	@Inject
 	private CampaignNodeDeletionHandler deletionHandler;
 
+	@Inject 
+	private AdvancedSearchService advancedSearchService;
+	
 	@Override
 	public Execution findAndInitExecution(Long executionId) {
 		return executionDao.findAndInit(executionId);
@@ -100,6 +104,7 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	// + "or hasRole('ROLE_ADMIN')")
 	public void deleteExecution(Execution execution) {
 		deletionHandler.deleteExecution(execution);
+		advancedSearchService.reindexTestCase(execution.getReferencedTestCase().getId());
 	}
 
 	@Override

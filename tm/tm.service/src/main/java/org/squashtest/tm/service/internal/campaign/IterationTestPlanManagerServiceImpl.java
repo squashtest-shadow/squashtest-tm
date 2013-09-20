@@ -69,6 +69,7 @@ import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.internal.testcase.TestCaseNodeWalker;
+import org.squashtest.tm.service.library.AdvancedSearchService;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.project.ProjectsPermissionFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -101,7 +102,9 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@Inject
 	private UserDao userDao;
 	
-
+	@Inject 
+	private AdvancedSearchService advancedSearchService;
+	
 	@Inject
 	private UserAccountService userService;
 
@@ -216,6 +219,8 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 			// TODO somewhat useless, above "if" branch could handle both cases
 			testPlan.add(IterationTestPlanItem.createUnparameterizedTestPlanItem(testCase));
 		}
+		
+		advancedSearchService.reindexTestCase(testCase.getId());
 	}
 
 	@Override
@@ -311,8 +316,10 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 
 	private void doRemoveTestPlanItemFromIteration(Iteration iteration, IterationTestPlanItem item) {
+		Long testCaseId = item.getReferencedTestCase().getId();
 		iteration.removeItemFromTestPlan(item);
 		iterationTestPlanDao.remove(item);
+		advancedSearchService.reindexTestCase(testCaseId);
 	}
 
 	@Override

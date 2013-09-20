@@ -39,6 +39,7 @@ import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.testcase.TestCase;
 
 @Transactional
 public interface BugTrackersLocalService {
@@ -330,5 +331,5 @@ public interface BugTrackersLocalService {
 	 */
 	int findNumberOfIssueForExecutionStep(Long testStepId);
 
-
+	TestCase findTestCaseRelatedToIssue(Long issueId);
 }

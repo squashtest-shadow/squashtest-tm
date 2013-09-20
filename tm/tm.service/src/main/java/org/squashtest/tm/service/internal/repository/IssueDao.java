@@ -27,6 +27,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.testcase.TestCase;
 
 public interface IssueDao extends EntityDao<Issue> {
 
@@ -120,5 +121,7 @@ public interface IssueDao extends EntityDao<Issue> {
 	 * @return the found IssueDetector or <code>null</code>.
 	 */
 	IssueDetector findIssueDetectorByIssue(long id);
+
+	TestCase findTestCaseRelatedToIssue(Long issueId);
 
 }

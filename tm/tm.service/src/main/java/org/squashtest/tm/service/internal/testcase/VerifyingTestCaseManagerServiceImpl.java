@@ -52,6 +52,7 @@ import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageD
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
+import org.squashtest.tm.service.library.AdvancedSearchService;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
@@ -70,7 +71,8 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	private TestCaseImportanceManagerService testCaseImportanceManagerService;
 	@Inject
 	private RequirementVersionCoverageDao requirementVersionCoverageDao;
-
+	@Inject
+	private AdvancedSearchService advancedSearchService;
 	@Inject
 	private ProjectFilterModificationService projectFilterModificationService;
 	@Inject
@@ -121,7 +123,7 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 			try {
 				RequirementVersionCoverage coverage = new RequirementVersionCoverage(requirementVersion, testCase);
 				requirementVersionCoverageDao.persist(coverage);
-
+				advancedSearchService.reindexTestCase(testCase.getId());
 			} catch (RequirementAlreadyVerifiedException ex) {
 				rejections.add(ex);
 				iterator.remove();
@@ -146,6 +148,9 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 				coverage.checkCanRemoveTestCaseFromRequirementVersion();
 				requirementVersionCoverageDao.delete(coverage);
 			}
+			
+			advancedSearchService.reindexTestCases(testCases);
+			
 			testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromReq(testCasesIds,
 					requirementVersionId);
 		}
