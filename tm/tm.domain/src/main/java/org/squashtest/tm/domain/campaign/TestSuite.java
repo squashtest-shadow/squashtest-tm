@@ -182,6 +182,16 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 
 		throw new EmptyTestSuiteTestPlanException(this);
 	}
+	
+	public IterationTestPlanItem getFirstTestPlanItem(String testerLogin) {
+		for (IterationTestPlanItem item : this.getTestPlan()) {
+			if(testerLogin == null || item.isAssignedToUser(testerLogin)){
+				return item;
+			}
+		}
+
+		throw new EmptyTestSuiteTestPlanException(this);
+	}
 
 	/**
 	 * Binds the test plan items to this test suite
@@ -302,6 +312,10 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	}
 
 	public boolean isLastExecutableTestPlanItem(long itemId) {
+		return isLastExecutableTestPlanItem(itemId, null);
+	}
+	
+	public boolean isLastExecutableTestPlanItem(long itemId, String userLogin) {
 		for (int i = testPlan.size() - 1; i >= 0; i--) {
 			IterationTestPlanItem item = testPlan.get(i);
 
@@ -311,7 +325,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 				testCase = item.getReferencedTestCase();
 			}
 
-			if (boundToThisSuite(item) && item.isExecutableThroughTestSuite() && testCaseHasSteps(testCase)) {
+			if (boundToThisSuite(item) && item.isExecutableThroughTestSuite() && testCaseHasSteps(testCase) && (userLogin == null || item.isAssignedToUser(userLogin))) {
 				return itemId == item.getId();
 			}
 		}
@@ -337,6 +351,27 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 
 		return false;
 	}
+	
+	/**
+	 * Determines if the item is the first of the test plan of the test suite
+	 * 
+	 * @param itemId
+	 *            : the id of the item to determine if it is the first executable test plan item
+	 * @param testerlogin
+	 *            : the id of the current user if he is a Test runner
+	 */
+	public boolean isFirstExecutableTestPlanItem(long itemId, String testerLogin) {
+
+		for (IterationTestPlanItem iterationTestPlanItem : this.testPlan) {
+			if ((testerLogin == null || iterationTestPlanItem.isAssignedToUser(testerLogin))
+					&& (boundToThisSuite(iterationTestPlanItem) && !iterationTestPlanItem.isTestCaseDeleted())) { // &&
+				// iterationTestPlanItem.isExecutableThroughTestSuite()
+				return itemId == iterationTestPlanItem.getId();
+			}
+		}
+
+		return false;
+	}
 
 	/**
 	 * finds next item (that last execution has unexecuted step) or (has no execution and is not test case deleted)
@@ -349,9 +384,25 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	 * @param testPlanItemId
 	 */
 	public IterationTestPlanItem findNextExecutableTestPlanItem(long testPlanItemId) {
+		return findNextExecutableTestPlanItem(testPlanItemId, null);
+
+	}
+	
+	/**
+	 * finds next item (that last execution has unexecuted step) or (has no execution and is not test case deleted) and that is assigned to the current user if he is a tester.<br>
+	 * <em>NB: can return item linked to test-case with no step</em>
+	 * 
+	 * @throws TestPlanItemNotExecutableException
+	 *             if no item is found
+	 * @throws IllegalArgumentException
+	 *             if id does not correspond to an item of the test suite
+	 * @param testPlanItemId
+	 * @param testerLogin : the login of the connected user if he is a Test Runner
+	 */
+	public IterationTestPlanItem findNextExecutableTestPlanItem(long testPlanItemId, String testerLogin) {
 		List<IterationTestPlanItem> remaining = getRemainingPlanById(testPlanItemId);
 		for (IterationTestPlanItem item : remaining) {
-			if (item.isExecutableThroughTestSuite()) {
+			if ((testerLogin == null || item.isAssignedToUser(testerLogin)) && (item.isExecutableThroughTestSuite())) {
 				return item;
 			}
 		}
@@ -366,14 +417,24 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	 * @return
 	 */
 	public IterationTestPlanItem findFirstExecutableTestPlanItem() {
-		IterationTestPlanItem firstTestPlanItem = getFirstTestPlanItem();
+		return findFirstExecutableTestPlanItem(null);
+	}
+	
+	/**
+	 * @throws {@link TestPlanItemNotExecutableException}
+	 * @throws {@link EmptyTestSuiteTestPlanException}
+	 * @return
+	 */
+	public IterationTestPlanItem findFirstExecutableTestPlanItem(String testerLogin) {
+		IterationTestPlanItem firstTestPlanItem = getFirstTestPlanItem(testerLogin);
 		if (firstTestPlanItem.isExecutableThroughTestSuite()) {
 			return firstTestPlanItem;
 		} else {
-			return findNextExecutableTestPlanItem(firstTestPlanItem.getId());
+			return findNextExecutableTestPlanItem(firstTestPlanItem.getId(), testerLogin);
 		}
 
 	}
+	
 
 	private List<IterationTestPlanItem> getRemainingPlanById(long testPlanItemId) {
 		for (int i = 0; i < testPlan.size(); i++) {
@@ -419,4 +480,6 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	public void setTestPlan(List<IterationTestPlanItem> testPlan) {
 		this.testPlan = testPlan;
 	}
+
+	
 }

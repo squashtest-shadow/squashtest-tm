@@ -52,21 +52,17 @@ import org.squashtest.tm.service.internal.repository.CustomTestSuiteDao;
 @Repository("CustomTestSuiteDao")
 public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> implements CustomTestSuiteDao {
 
-	
 	/*
-	 * Because it is impossible to sort over the indices of ordered collection in a criteria query 
-	 * we must then build an hql string which will let us do that. 
+	 * Because it is impossible to sort over the indices of ordered collection in a criteria query we must then build an
+	 * hql string which will let us do that.
 	 */
-	private static final String HQL_INDEXED_TEST_PLAN = 
-			"select index(IterationTestPlanItem), IterationTestPlanItem "+
-			"from TestSuite as TestSuite inner join TestSuite.testPlan as IterationTestPlanItem "+
-			"left outer join IterationTestPlanItem.referencedTestCase as TestCase " +
-			"left outer join TestCase.project as Project " + 
-			"left outer join IterationTestPlanItem.referencedDataset as Dataset " +
-			"left outer join IterationTestPlanItem.user as User "+
-			"where TestSuite.id = :suiteId ";
-	
-	
+	private static final String HQL_INDEXED_TEST_PLAN = "select index(IterationTestPlanItem), IterationTestPlanItem "
+			+ "from TestSuite as TestSuite inner join TestSuite.testPlan as IterationTestPlanItem "
+			+ "left outer join IterationTestPlanItem.referencedTestCase as TestCase "
+			+ "left outer join TestCase.project as Project "
+			+ "left outer join IterationTestPlanItem.referencedDataset as Dataset "
+			+ "left outer join IterationTestPlanItem.user as User " + "where TestSuite.id = :suiteId ";
+
 	@Override
 	public List<TestSuite> findAllByIterationId(final long iterationId) {
 
@@ -114,9 +110,12 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 		return (Long) executeEntityNamedQuery("TestSuite.countTestPlanItems", idParameter(testSuiteId));
 	}
 
+	private Long countTestPlanItems(long testSuiteId, String userLogin) {
+		return (Long) executeEntityNamedQuery("TestSuite.countTestPlanItemsForUsers", idLoginParameter(testSuiteId, userLogin));
+	}
+
 	@Override
 	public TestPlanStatistics getTestSuiteStatistics(final long testSuiteId) {
-
 		Map<String, Integer> statusMap = new HashMap<String, Integer>();
 
 		fillStatusMapWithQueryResult(testSuiteId, statusMap);
@@ -124,31 +123,72 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 		return new TestPlanStatistics(statusMap);
 	}
 
-	
+	@Override
+	public TestPlanStatistics getTestSuiteStatistics(long testSuiteId, String userLogin) {
+		Map<String, Integer> statusMap = new HashMap<String, Integer>();
+
+		fillStatusMapWithQueryResult(testSuiteId, statusMap, userLogin);
+
+		return new TestPlanStatistics(statusMap);
+	}
+
 	private void fillStatusMapWithQueryResult(final long testSuiteId, Map<String, Integer> statusMap) {
-		//Add Total number of TestCases
+		// Add Total number of TestCases
 		Integer nbTestPlans = countTestPlanItems(testSuiteId).intValue();
 		statusMap.put(TestPlanStatistics.TOTAL_NUMBER_OF_TEST_CASE_KEY, nbTestPlans);
-		
-		//Add number of testCase for each ExecutionStatus
+
+		// Add number of testCase for each ExecutionStatus
 		SetQueryParametersCallback newCallBack = new IdId2ParameterCallback(testSuiteId);
 		List<Object[]> result = executeListNamedQuery("testSuite.countStatuses", newCallBack);
 		for (Object[] objTab : result) {
 			statusMap.put(((ExecutionStatus) objTab[0]).name(), ((Long) objTab[1]).intValue());
 		}
 	}
-	
+
+	private void fillStatusMapWithQueryResult(final long testSuiteId, Map<String, Integer> statusMap, String userLogin) {
+		// Add Total number of TestCases
+		Integer nbTestPlans = countTestPlanItems(testSuiteId, userLogin).intValue();
+		statusMap.put(TestPlanStatistics.TOTAL_NUMBER_OF_TEST_CASE_KEY, nbTestPlans);
+
+		// Add number of testCase for each ExecutionStatus
+		SetQueryParametersCallback newCallBack = new IdId2LoginParameterCallback(testSuiteId, userLogin);
+		List<Object[]> result = executeListNamedQuery("testSuite.countStatusesForUser", newCallBack);
+		for (Object[] objTab : result) {
+			statusMap.put(((ExecutionStatus) objTab[0]).name(), ((Long) objTab[1]).intValue());
+		}
+	}
+
 	private static class IdId2ParameterCallback implements SetQueryParametersCallback {
 		private long id;
+
 		public IdId2ParameterCallback(long id) {
 			this.id = id;
 		}
+
 		@Override
 		public void setQueryParameters(Query query) {
 			query.setLong("id", id);
 			query.setLong("id2", id);
 		}
 	}
+	
+	private static class IdId2LoginParameterCallback implements SetQueryParametersCallback {
+		private long id;
+		private String login;
+
+		public IdId2LoginParameterCallback(long id, String login) {
+			this.id = id;
+			this.login = login;
+		}
+
+		@Override
+		public void setQueryParameters(Query query) {
+			query.setLong("id", id);
+			query.setLong("id2", id);
+			query.setParameter("login", login);
+		}
+	}
+
 
 	@Override
 	public List<IterationTestPlanItem> findTestPlanPartition(final long testSuiteId, final List<Long> testPlanItemIds) {
@@ -175,15 +215,27 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 		};
 		return newCallBack;
 	}
-	
-	private SetQueryParametersCallback IdAndLoginParameter(final long id, final String login){
-		
-		return new SetQueryParametersCallback() {			
+
+	private SetQueryParametersCallback idLoginParameter(final long id, final String login) {
+		SetQueryParametersCallback newCallBack = new SetQueryParametersCallback() {
+
+			@Override
+			public void setQueryParameters(Query query) {
+				query.setLong("id", id);
+				query.setParameter("login", login);
+			}
+		};
+		return newCallBack;
+	}
+
+	private SetQueryParametersCallback IdAndLoginParameter(final long id, final String login) {
+
+		return new SetQueryParametersCallback() {
 			@Override
 			public void setQueryParameters(Query query) {
 				query.setParameter("suiteId", id);
 				query.setParameter("userLogin", login);
-			}			
+			}
 		};
 	}
 
@@ -195,9 +247,9 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 
 	@Override
 	public List<IterationTestPlanItem> findAllTestPlanItemsPaged(final long testSuiteId, Paging paging) {
-		
+
 		final int firstIndex = paging.getFirstItemIndex();
-		final int lastIndex =  paging.getFirstItemIndex() +  paging.getPageSize() - 1;
+		final int lastIndex = paging.getFirstItemIndex() + paging.getPageSize() - 1;
 
 		SetQueryParametersCallback callback = new SetQueryParametersCallback() {
 
@@ -215,90 +267,94 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 		return executeListNamedQuery("testSuite.findTestPlanFiltered", callback);
 
 	}
-	
+
 	@Override
 	public List<IterationTestPlanItem> findTestPlan(long suiteId, PagingAndMultiSorting sorting, Filtering filtering) {
 		List<Object[]> tuples = _findIndexedTestPlan(suiteId, sorting, filtering);
 		return buildItems(tuples);
 	}
-	
+
 	@Override
-	public List<IndexedIterationTestPlanItem> findIndexedTestPlan(long suiteId, PagingAndSorting sorting, Filtering filtering) {
-		
+	public List<IndexedIterationTestPlanItem> findIndexedTestPlan(long suiteId, PagingAndSorting sorting,
+			Filtering filtering) {
+
 		return findIndexedTestPlan(suiteId, new SingleToMultiSortingAdapter(sorting), filtering);
 	}
 
 	@Override
-	public List<IndexedIterationTestPlanItem> findIndexedTestPlan(final long suiteId, PagingAndMultiSorting sorting, 
+	public List<IndexedIterationTestPlanItem> findIndexedTestPlan(final long suiteId, PagingAndMultiSorting sorting,
 			Filtering filtering) {
-	
+
 		List<Object[]> tuples = _findIndexedTestPlan(suiteId, sorting, filtering);
 		return buildIndexedItems(tuples);
-		
+
 	}
-	
-	private List<Object[]> _findIndexedTestPlan(final long suiteId, PagingAndMultiSorting sorting, Filtering filtering){
+
+	private List<Object[]> _findIndexedTestPlan(final long suiteId, PagingAndMultiSorting sorting, Filtering filtering) {
 		StringBuilder hqlbuilder = new StringBuilder(HQL_INDEXED_TEST_PLAN);
-		
-		//check if we want to filter on the user login
-		if (filtering.isDefined()){
+
+		// check if we want to filter on the user login
+		if (filtering.isDefined()) {
 			hqlbuilder.append("and User.login = :userLogin ");
 		}
-		
+
 		// tune the sorting to make hql happy
-		LevelImplementorSorter wrapper= new LevelImplementorSorter(sorting);
+		LevelImplementorSorter wrapper = new LevelImplementorSorter(sorting);
 		wrapper.map("TestCase.importance", TestCaseImportance.class);
 		wrapper.map("IterationTestPlanItem.executionStatus", ExecutionStatus.class);
-		
+
 		SortingUtils.addOrder(hqlbuilder, wrapper);
-		
+
 		Query query = currentSession().createQuery(hqlbuilder.toString());
-		
+
 		query.setParameter("suiteId", suiteId, LongType.INSTANCE);
-		
-		if (filtering.isDefined()){
+
+		if (filtering.isDefined()) {
 			query.setParameter("userLogin", filtering.getFilter(), StringType.INSTANCE);
 		}
-		
+
 		PagingUtils.addPaging(query, sorting);
-		
+
 		return query.list();
 	}
 
 	@Override
 	public long countTestPlans(Long suiteId, Filtering filtering) {
-		if (! filtering.isDefined()){
+		if (!filtering.isDefined()) {
 			return countTestPlanItems(suiteId);
-		}
-		else{
-			return (Long) executeEntityNamedQuery("testSuite.countTestPlansFiltered", IdAndLoginParameter(suiteId, filtering.getFilter()));
+		} else {
+			return (Long) executeEntityNamedQuery("testSuite.countTestPlansFiltered",
+					IdAndLoginParameter(suiteId, filtering.getFilter()));
 		}
 	}
 	
-	
+	@Override
+	public long findProjectIdBySuiteId(long suiteId) {
+		return (Long) executeEntityNamedQuery("testSuite.findProjectIdBySuiteId", idParameter(suiteId));
+	}
 	// ************************ utils ********************
-	
-	private List<IterationTestPlanItem> buildItems(List<Object[]> tuples){
-		
+
+	private List<IterationTestPlanItem> buildItems(List<Object[]> tuples) {
+
 		List<IterationTestPlanItem> items = new ArrayList<IterationTestPlanItem>(tuples.size());
-		
-		for (Object[] tuple : tuples){
+
+		for (Object[] tuple : tuples) {
 			IterationTestPlanItem itpi = (IterationTestPlanItem) tuple[1];
 			items.add(itpi);
 		}
-		
+
 		return items;
 	}
-	
-	private List<IndexedIterationTestPlanItem> buildIndexedItems(List<Object[]> tuples){
+
+	private List<IndexedIterationTestPlanItem> buildIndexedItems(List<Object[]> tuples) {
 		List<IndexedIterationTestPlanItem> indexedItems = new ArrayList<IndexedIterationTestPlanItem>(tuples.size());
-		
-		for (Object[] tuple : tuples){
-			Integer index = (Integer)tuple[0];
+
+		for (Object[] tuple : tuples) {
+			Integer index = (Integer) tuple[0];
 			IterationTestPlanItem itpi = (IterationTestPlanItem) tuple[1];
 			indexedItems.add(new IndexedIterationTestPlanItem(index, itpi));
 		}
-		
+
 		return indexedItems;
 	}
 

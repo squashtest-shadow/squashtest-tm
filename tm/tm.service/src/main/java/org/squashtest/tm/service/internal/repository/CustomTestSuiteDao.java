@@ -47,7 +47,9 @@ public interface CustomTestSuiteDao extends EntityDao<TestSuite>{
 	 */
 	List<IterationTestPlanItem> findLaunchableTestPlan(long testSuiteId);
 
-	TestPlanStatistics getTestSuiteStatistics(long testSuitId);
+	TestPlanStatistics getTestSuiteStatistics(long testSuitId);	
+
+	TestPlanStatistics getTestSuiteStatistics(long suiteId, String userLogin);
 
 	List<IterationTestPlanItem> findTestPlanPartition(long testSuiteId,
 			List<Long> testPlanItemIds);
@@ -80,8 +82,8 @@ public interface CustomTestSuiteDao extends EntityDao<TestSuite>{
 	 * @return
 	 */
 	List<IndexedIterationTestPlanItem> findIndexedTestPlan(long suiteId, PagingAndSorting sorting, Filtering filter);
-	
-
-	
+		
 	long countTestPlans(Long suiteId, Filtering filtering);
+	
+	long findProjectIdBySuiteId(long suiteId);
 }
