@@ -172,8 +172,7 @@
 						return;
 					}
 					
-					var table = $( '#test-cases-table' ).squashTable();
-					var ids = table.getSelectedIds();
+					var ids = this.selIds;
 					
 					if (ids.length > 0) {
 						$.ajax({

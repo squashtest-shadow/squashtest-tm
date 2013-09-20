@@ -793,7 +793,10 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			if (conf.delegate !== undefined) {
 				// the following trick will open a dialog instance regardless of the actual 
 				// implementation used (the original jquery dialog or one of ours).
-				var _data = $(conf.delegate).data();
+				var _delegate = $(conf.delegate);
+				var _rowid = self.getODataId(jqRow.get(0));
+				_delegate.data('entity-id', _rowid);
+				var _data = _delegate.data();
 				for (var _ppt in _data){
 					var _widg = _data[_ppt];
 					if (_widg.uiDialog !== undefined && _widg.open !== undefined){

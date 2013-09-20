@@ -50,20 +50,32 @@ define(['jquery', 'workspace.contextual-content', 'jqueryui', 'jquery.squash.con
 		deleteItemTestplanDialog.formDialog();
 		
 		deleteItemTestplanDialog.on('formdialogopen', function(){
-			
-			var selIds = $("#iteration-test-plans-table").squashTable().getSelectedIds();
 
+			var entityId = $("#iter-test-plan-delete-dialog").data("entity-id");
+			$("#iter-test-plan-delete-dialog").data("entity-id", null);
+			
+			var selIds = [];
+						
+			if(!entityId){
+				selIds = $("#iteration-test-plans-table").squashTable().getSelectedIds();
+			} 
+						
+			if(!!entityId){
+				selIds.push(entityId);
+			}
+			
 			switch (selIds.length){			
 				case 0 : $(this).formDialog('setState','empty-selec'); break;
 				case 1 : $(this).formDialog('setState','single-tp'); break;
 				default : $(this).formDialog('setState','multiple-tp'); break;					
 			}
 			
+			this.selIds = selIds;
 		});
 		
 		deleteItemTestplanDialog.on('formdialogconfirm', function(){
 			var table = $("#iteration-test-plans-table").squashTable();
-			var ids = table.getSelectedIds();
+			var ids = this.selIds;
 			var url = conf.urls.testplanUrl + ids.join(',');
 			
 			$.ajax({

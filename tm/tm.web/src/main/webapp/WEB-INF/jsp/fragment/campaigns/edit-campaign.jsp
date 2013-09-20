@@ -361,19 +361,31 @@
 						$("#delete-multiple-test-cases-dialog").dialog("close");
 				},
 				
-		<pop:cancel-button />
+		<pop:cancel-button /> 
 	</jsp:attribute>
 			<jsp:attribute name="body">
 			<f:message var="emptyMessage"
 					key="message.EmptyTableSelection" />			
 		<script type="text/javascript">
 				$("#delete-multiple-test-cases-dialog").bind( "dialogopen", function(event, ui){
-					var ids = $( '#test-cases-table' ).squashTable().getSelectedIds();
+					var _id =  $("#delete-multiple-test-cases-dialog").data("entity-id");
+					
+					var ids = [];
+					
+					if(!_id){
+						ids = $( '#test-cases-table' ).squashTable().getSelectedIds();
+					} else {
+						ids.push(_id);
+					}
+				
+					$("#delete-multiple-test-cases-dialog").data("entity-id", null);
+					
 					if (ids.length == 0) {
 						$.squash.openMessage("<f:message key='popup.title.error' />", "${emptyMessage}");
 						$(this).dialog('close');
 					}
 					
+					 this.selIds = ids;
 				});
 			</script>
 		<f:message key="dialog.remove-testcase-associations.message" />

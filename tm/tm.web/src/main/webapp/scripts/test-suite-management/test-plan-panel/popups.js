@@ -50,10 +50,10 @@ define(['jquery', 'workspace.contextual-content', 'jqueryui', 'jquery.squash.con
 		deleteItemTestplanDialog.formDialog();
 	
 		function postDelete(shouldRemoveAll){
-			
-			var table = $("#test-suite-test-plans-table").squashTable();
-			var ids = table.getSelectedIds();
-			var url = conf.urls.testplanUrl + ids.join(',');
+
+			var selIds = this.selIds;
+	
+			var url = conf.urls.testplanUrl + selIds.join(',');
 			if (! shouldRemoveAll){
 				url+="?detach=true";
 			}
@@ -74,7 +74,19 @@ define(['jquery', 'workspace.contextual-content', 'jqueryui', 'jquery.squash.con
 		}
 		
 		deleteItemTestplanDialog.on('formdialogopen', function(){
-			var selIds = $("#test-suite-test-plans-table").squashTable().getSelectedIds();
+			
+			var entityId = $("#ts-test-plan-delete-dialog").data("entity-id");
+			$("#ts-test-plan-delete-dialog").data("entity-id", null);
+			
+			var selIds = [];
+			
+			if(!entityId){
+				selIds = $("#test-suite-test-plans-table").squashTable().getSelectedIds();
+			} 
+					
+			if(!!entityId){
+				selIds.push(entityId);
+			}
 			
 			switch (selIds.length){			
 				case 0 : $(this).formDialog('setState','empty-selec'); break;
@@ -82,6 +94,7 @@ define(['jquery', 'workspace.contextual-content', 'jqueryui', 'jquery.squash.con
 				default : $(this).formDialog('setState','multiple-tp'); break;					
 			}
 			
+			this.selIds = selIds;
 		});
 		
 		deleteItemTestplanDialog.on('formdialogconfirmall', function(){
