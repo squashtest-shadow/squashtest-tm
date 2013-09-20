@@ -30,9 +30,11 @@
 <%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+
+<c:url var="backUrl" value="/campaign-workspace/" />
 <c:url var="treeBaseUrl" value="/test-case-browser"/>
 <c:url var="campaignUrl" value="/campaigns/${ campaign.id }" />
-
+<c:url var="campaignTestPlanUrl" value="/campaigns/${ campaign.id }/info" />
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <c:set var="editable" value="${ false }" /> 
@@ -104,7 +106,7 @@
 	
 	<jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back" />
-		<input type="button" class="button" value="${backButtonLabel}" onClick="history.back();"/>	
+		<input type="button" class="button" value="${backButtonLabel}" onClick="document.location.href='${backUrl}'"/>	
 	</jsp:attribute>	
 	
 	

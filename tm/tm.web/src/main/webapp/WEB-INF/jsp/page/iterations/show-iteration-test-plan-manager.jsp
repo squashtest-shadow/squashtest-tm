@@ -33,6 +33,7 @@
 
 <c:url var="backUrl" value="/campaign-workspace/" />
 <c:url var="testPlanUrl" value="/iterations/${iteration.id}/test-plan/" />
+<c:url var="iterationTestPlanUrl" value="/iterations/${iteration.id}/info" />
 
 <f:message var="unauthorizedDeletion" key="dialog.remove-testcase-association.unauthorized-deletion.message"  />
 <%-- TODO : why is that no tree-picker-layout like the rest of association interface  ? --%>
@@ -119,7 +120,7 @@
 	
 	<jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back" />
-		<input type="button" class="button" value="${backButtonLabel}" onClick="history.back();"/>	
+		<input type="button" class="button" value="${backButtonLabel}" onClick="document.location.href='${backUrl}'"/>	
 	</jsp:attribute>		
 	
 
