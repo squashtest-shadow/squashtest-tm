@@ -348,11 +348,9 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	}
 	
 	@Override
-	public boolean isInPermissionGroup(long partyId, Long projectId, String permissionGroup){
-		
-		
+	public boolean isInPermissionGroup(long partyId, Long projectId, String permissionGroup){		
 		boolean isInGroup = false;
-		List<PartyProjectPermissionsBean> permissions = findPartyPermissionsBeanByProject(projectId);	
+		List<PartyProjectPermissionsBean> permissions = findPartyPermissionsBeanByProject(projectId);
 		for(PartyProjectPermissionsBean permission : permissions){
 			if(permission.getParty().getId() == partyId){
 				if(permission.getPermissionGroup().getQualifiedName().equals(permissionGroup)){

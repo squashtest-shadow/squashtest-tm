@@ -155,4 +155,16 @@ class HibernateTestSuiteDaoIT extends DbunitDaoSpecification {
 			stats2.getStatus() == TestPlanStatus.RUNNING
 	}
 	
+	@DataSet ("HibernateTestSuiteDaoIT.should find project id.xml")
+	def "should find project id"(){
+		given : 
+		def suiteid = 20L
+		
+		when :
+		def projectId = testSuiteDao.findProjectIdBySuiteId(suiteid);
+		
+		then :
+		projectId == 2L;
+	}
+	
 }

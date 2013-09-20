@@ -41,7 +41,7 @@ class TestSuiteExecutionProcessingServiceImplIT extends DbunitServiceSpecificati
 	@Inject
 	private TestSuiteExecutionProcessingService service
 
-	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should not find exec step because test plan empty.xml")
+	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should not find exec step cause no item.xml")
 	def "should try to start and not find execution because test plan empty"(){
 		given :
 		long testSuiteId = 1L
@@ -52,7 +52,20 @@ class TestSuiteExecutionProcessingServiceImplIT extends DbunitServiceSpecificati
 		then :
 		thrown EmptyTestSuiteTestPlanException
 	}
-	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should not find exec step because all execs terminated.xml")
+	
+	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should not find exec step cause no item for tester.xml")
+	def "should try to start and not find execution because test plan empty for tester"(){
+		given : 
+		def testSuiteId = 1L
+		
+		when: 
+		Execution execution = service.startResume(testSuiteId)
+		
+		then:
+		thrown EmptyTestSuiteTestPlanException
+	}
+	
+	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should not find exec step cause all term.xml")
 	def "should try to resume and not find execution because all terminated"(){
 		given :
 		long testSuiteId = 1L
@@ -63,7 +76,20 @@ class TestSuiteExecutionProcessingServiceImplIT extends DbunitServiceSpecificati
 		then :
 		thrown TestPlanItemNotExecutableException
 	}
-	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should not find exec step because all execs have no step.xml")
+	
+	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should not find exec step cause all term for tester.xml")
+	def "should try to resume and not find execution because all terminated for tester"(){
+		given :
+		long testSuiteId = 1L
+
+		when :
+		Execution execution = service.startResume(testSuiteId)
+		
+		then :
+		thrown TestPlanItemNotExecutableException
+	}
+	
+	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should not find exec step cause no step.xml")
 	def "should try to resume and not find execution because all have no step"(){
 		given :
 		long testSuiteId = 1L
@@ -74,6 +100,19 @@ class TestSuiteExecutionProcessingServiceImplIT extends DbunitServiceSpecificati
 		then :
 		thrown TestPlanItemNotExecutableException
 	}
+	
+	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should not find exec step cause no step for tester.xml")
+	def "should try to resume and not find execution because all have no step for tester"(){
+		given :
+		long testSuiteId = 1L
+
+		when :
+		Execution execution = service.startResume(testSuiteId)
+
+		then :
+		thrown TestPlanItemNotExecutableException
+	}
+	
 	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should find exec step through new exec.xml")
 	def "should try to resume and create new execution"(){
 		given :
@@ -86,6 +125,7 @@ class TestSuiteExecutionProcessingServiceImplIT extends DbunitServiceSpecificati
 		execution != null
 		execution.findFirstUnexecutedStep().action == "lipsum4"
 	}
+	
 	@DataSet("TestSuiteExecutionProcessingServiceImplIT.should find exec step through old exec.xml")
 	def "should try to resume and find old execution"(){
 		given :
@@ -98,6 +138,7 @@ class TestSuiteExecutionProcessingServiceImplIT extends DbunitServiceSpecificati
 		execution != null
 		execution.findFirstUnexecutedStep().getId() == 5
 	}
+	
 	
 	
 }

@@ -77,6 +77,9 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 	
 	@Inject
 	private IterationTestPlanManager iterationTestPlanManager;
+	
+	@Inject
+	private UserAccountService userService;
 
 	@Override
 	@PreAuthorize(HAS_WRITE_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
@@ -95,6 +98,12 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 	@Override
 	@PreAuthorize(HAS_READ_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
 	public TestPlanStatistics findTestSuiteStatistics(long suiteId) {
+		long projectId = testSuiteDao.findProjectIdBySuiteId(suiteId); 
+		String userLogin = userService.findCurrentUser().getLogin();
+				if (projectsPermissionFinder.isInPermissionGroup(userLogin, projectId,
+						"squashtest.acl.group.tm.TestRunner")) {
+				return testSuiteDao.getTestSuiteStatistics(suiteId, userLogin);
+				}
 		return testSuiteDao.getTestSuiteStatistics(suiteId);
 	}
 	

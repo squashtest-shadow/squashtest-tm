@@ -22,13 +22,19 @@ package org.squashtest.tm.service.internal.campaign
 
 import static org.junit.Assert.*
 
+import javax.inject.Inject;
+
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.campaign.TestSuite
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStep
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.internal.campaign.IterationTestPlanManager
 import org.squashtest.tm.service.internal.campaign.TestSuiteExecutionProcessingServiceImpl;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao
+import org.squashtest.tm.service.project.ProjectsPermissionFinder;
+import org.squashtest.tm.service.user.UserAccountService;
 
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -37,19 +43,30 @@ class TestSuiteExecutionProcessingServiceImplTest  extends Specification {
 	TestSuiteExecutionProcessingServiceImpl manager = new TestSuiteExecutionProcessingServiceImpl()
 	TestSuiteDao testSuiteDao = Mock()
 	IterationTestPlanManager testPlanManager = Mock()
+	UserAccountService userService = Mock()
+	ProjectsPermissionFinder projectsPermissionFinder = Mock()
 
 	def setup() {
 		manager.suiteDao = testSuiteDao
 		manager.testPlanManager = testPlanManager
+		manager.userService = userService
+		manager.projectsPermissionFinder = projectsPermissionFinder
+		User user = Mock()
+		user.getLogin() >> "admin"
+		userService.findCurrentUser() >> user
+		projectsPermissionFinder.isInPermissionGroup(_,_,"squashtest.acl.group.tm.TestRunner") >> false
 	}
 
 	def "should start new execution of test suite"() {
 		given:
 		TestSuite suite = Mock()
+		Project project = Mock()
+		suite.getProject() >> project
+		project.getId() >> 1L
 		IterationTestPlanItem item = Mock()
 		item.isTestCaseDeleted()>>false
 		item.isExecutableThroughTestSuite()>>true
-		suite.findFirstExecutableTestPlanItem()>>item
+		suite.findFirstExecutableTestPlanItem(_)>>item
 		item.getExecutions()>> []
 		and:
 		testSuiteDao.findById(10) >> suite
@@ -71,10 +88,13 @@ class TestSuiteExecutionProcessingServiceImplTest  extends Specification {
 	def "should have more test cases in test plan"() {
 		given:
 		TestSuite testSuite = Mock()
+		Project project = Mock()
+		testSuite.getProject() >> project
+		project.getId()>>1L
 		testSuiteDao.findById(10) >> testSuite
 
 		and:
-		testSuite.isLastExecutableTestPlanItem(20) >> lastExecutable
+		testSuite.isLastExecutableTestPlanItem(20, _) >> lastExecutable
 
 
 		when:
@@ -92,8 +112,11 @@ class TestSuiteExecutionProcessingServiceImplTest  extends Specification {
 	def "should start next execution of test suite"() {
 		given:
 		TestSuite suite = Mock()
+		Project project = Mock()
+		suite.getProject() >> project
+		project.getId() >> 1L
 		IterationTestPlanItem nextItem = Mock()
-		suite.findNextExecutableTestPlanItem(100)>>nextItem
+		suite.findNextExecutableTestPlanItem(100, _)>>nextItem
 		nextItem.isExecutableThroughTestSuite()>>true
 
 		and:

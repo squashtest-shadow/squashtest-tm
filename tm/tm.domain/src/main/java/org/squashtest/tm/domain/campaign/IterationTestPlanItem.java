@@ -360,6 +360,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	}
 
 	public boolean isExecutableThroughIteration() {
+		//XX check if tester is assigned
 		return !isTestCaseDeleted();
 	}
 
@@ -368,6 +369,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	 *         testCase).
 	 */
 	public boolean isExecutableThroughTestSuite() {
+		//XXX check if tester is assigned 
 		if (executions.isEmpty()) {
 			return !this.isTestCaseDeleted();
 		} else {
@@ -513,5 +515,14 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	 */
 	public static IterationTestPlanItem createUnparameterizedTestPlanItem(TestCase testCase) {
 		return new IterationTestPlanItem(testCase);
+	}
+
+	/**
+	 * Return true if the item is assigned to the given user.
+	 * @param userLogin : the login of the concerned user (may not be null)
+	 * @return true if the assigned user is not <code>null</code> and matches the given login.
+	 */
+	public boolean isAssignedToUser(@NotNull String userLogin) {
+		return this.user != null && this.user.getLogin().equals(userLogin);
 	}
 }
