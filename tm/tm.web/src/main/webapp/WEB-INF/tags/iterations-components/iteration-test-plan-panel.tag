@@ -137,7 +137,7 @@
 			<th data-def="map=tc-name, sortable, sClass=toggle-row"><f:message key="iteration.executions.table.column-header.test-case.label" /></th>
 			<th data-def="map=importance, sortable"><f:message key="iteration.executions.table.column-header.importance.label" /></th>
 			<th data-def="map=dataset, sortable, sWidth=10%"><f:message key="label.Dataset" /></th>
-			<th data-def="map=suite, sWidth=10%"><f:message key="iteration.executions.table.column-header.suite.label" /></th>
+			<th data-def="map=suite, sortable, sWidth=10%"><f:message key="iteration.executions.table.column-header.suite.label" /></th>
 			<th data-def="map=status, sortable, sWidth=10%, sClass=has-status status-combo"><f:message key="iteration.executions.table.column-header.status.label" /></th>
 			<th data-def="map=assignee-login, sortable, sWidth=10%, sClass=assignee-combo"><f:message key="iteration.executions.table.column-header.user.label" /></th>
 			<th data-def="map=last-exec-on, sortable, sWidth=10%"><f:message key="iteration.executions.table.column-header.execution-date.label" /></th>

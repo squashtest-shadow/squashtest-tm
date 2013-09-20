@@ -59,13 +59,15 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	 * we must then build an hql string which will let us do that. 
 	 */
 	private static final String HQL_INDEXED_TEST_PLAN = 
-			"select index(IterationTestPlanItem), IterationTestPlanItem "+
+			"select index(IterationTestPlanItem), IterationTestPlanItem, group_concat(TestSuite.name, 'order by', TestSuite.name) as suitenames "+
 			"from Iteration as Iteration inner join Iteration.testPlans as IterationTestPlanItem "+
 			"left outer join IterationTestPlanItem.referencedTestCase as TestCase " +
 			"left outer join TestCase.project as Project " + 
 			"left outer join IterationTestPlanItem.referencedDataset as Dataset " +
 			"left outer join IterationTestPlanItem.user as User "+
-			"where Iteration.id = :iterationId ";
+			"left outer join IterationTestPlanItem.testSuites as TestSuite "+
+			"where Iteration.id = :iterationId "+
+			"group by index(IterationTestPlanItem), IterationTestPlanItem.id ";
 	
 
 	

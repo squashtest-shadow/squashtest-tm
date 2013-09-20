@@ -58,7 +58,8 @@ public class RicherDialectSessionFactoryBean extends LocalSessionFactoryBean {
 		
 		// add the support for group concat
 		Configuration config = getConfiguration();
-		config.addSqlFunction("group_concat", new StandardSQLFunction("group_concat", new StringType()));
+		config.addSqlFunction("group_concat", new GroupConcatFunction("group_concat", new StringType()));
+		
 		
 		// resume normal session factory initialization
 		return super.buildSessionFactory(sfb);
@@ -86,6 +87,7 @@ public class RicherDialectSessionFactoryBean extends LocalSessionFactoryBean {
 											   "(see xml configuration)");
 		}
 	}
+	
 
 	
 }

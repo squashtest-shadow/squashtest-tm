@@ -101,8 +101,8 @@ public class IterationTestPlanManagerController {
 															.mapAttribute("status",			"executionStatus", 	IterationTestPlanItem.class)
 															.mapAttribute("assignee-login", "login", 			User.class)
 															.mapAttribute("last-exec-on",	"lastExecutedOn",	IterationTestPlanItem.class)
-															.mapAttribute("exec-mode", 		"automatedTest", 	TestCase.class);
-
+															.mapAttribute("exec-mode", 		"automatedTest", 	TestCase.class)
+															.map		 ("suite", 			"suitenames");
 	
 	
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan-manager", method = RequestMethod.GET)

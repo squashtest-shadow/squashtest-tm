@@ -74,25 +74,8 @@ public class DataTableDrawParameters {
 		this.sEcho = sEcho;
 	}
 
-	/**
-	 * use #getsSortedAttribute_0() instead
-	 */
+
 	public int getiSortCol_0() {
-		// Buggy 36984c995ed1 assumed iSortCol was a String. As I'm clueless, I'm extra-cautious
-		/*Object sort0 = iSortCol.get(0);
-		
-		if (sort0 instanceof Number) {
-			return ((Number) sort0).intValue();
-		}
-		if (sort0 instanceof String) {
-			return Integer.valueOf((String) sort0);
-		}
-		throw new IllegalStateException("Value '" + sort0 + "' should either be a Number or a String but we got a "
-				+ sort0.getClass().getName() + " instead. Maybe datatable config is wrong ?");*/
-		
-		/*
-		 *  Buggy 36984c995ed1 : fixed the underlying cause
-		 */
 		return iSortCol.get(0);
 	}
 
