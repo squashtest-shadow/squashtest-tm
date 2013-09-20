@@ -22,7 +22,6 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -35,15 +34,10 @@ import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
-import org.squashtest.tm.core.foundation.collection.DefaultSorting;
-import org.squashtest.tm.core.foundation.collection.DelegatePagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.Filtering;
-import org.squashtest.tm.core.foundation.collection.MultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.Pagings;
 import org.squashtest.tm.core.foundation.collection.SingleToMultiSortingAdapter;
-import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
@@ -72,6 +66,8 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 			"left outer join IterationTestPlanItem.referencedDataset as Dataset " +
 			"left outer join IterationTestPlanItem.user as User "+
 			"where Iteration.id = :iterationId ";
+	
+
 	
 	@Override
 	public List<Iteration> findAllInitializedByCampaignId(long campaignId) {
@@ -175,61 +171,6 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 		});
 	}
 	
-	@Override
-	public List<IterationTestPlanItem> findTestPlan(long iterationId, PagingAndMultiSorting sorting, Filtering filtering) {
-		List<Object[]> tuples = _findIndexedTestPlan(iterationId, sorting, filtering);
-		return buildItems(tuples);
-	}
-	
-	@Override
-	public List<IndexedIterationTestPlanItem> findIndexedTestPlan(long iterationId, PagingAndSorting sorting, Filtering filtering) {
-		
-		return findIndexedTestPlan(iterationId, new SingleToMultiSortingAdapter(sorting), filtering);
-	}
-
-	@Override
-	public List<IndexedIterationTestPlanItem> findIndexedTestPlan(final long iterationId, PagingAndMultiSorting sorting, 
-			Filtering filtering) {
-	
-		List<Object[]> tuples = _findIndexedTestPlan(iterationId, sorting, filtering);
-		return buildIndexedItems(tuples);
-		
-	}
-	
-	private List<Object[]> _findIndexedTestPlan(final long iterationId, PagingAndMultiSorting sorting, Filtering filtering){
-		StringBuilder hqlbuilder = new StringBuilder(HQL_INDEXED_TEST_PLAN);
-		
-		//check if we want to filter on the user login
-		if (filtering.isDefined()){
-			hqlbuilder.append("and User.login = :userLogin ");
-		}
-		
-		ImportanceSortHelper helper = new ImportanceSortHelper();
-		SortingUtils.addOrder(hqlbuilder, helper.modifyImportanceSortInformation(sorting));
-		
-		Query query = currentSession().createQuery(hqlbuilder.toString());
-		
-		query.setParameter("iterationId", iterationId, LongType.INSTANCE);
-		
-		if (filtering.isDefined()){
-			query.setParameter("userLogin", filtering.getFilter(), StringType.INSTANCE);
-		}
-		
-		PagingUtils.addPaging(query, sorting);
-		
-		return query.list();
-	}
-
-	@Override
-	public long countTestPlans(Long iterationId, Filtering filtering) {
-		if (! filtering.isDefined()){
-			return (Long) executeEntityNamedQuery("iteration.countTestPlans", idParameter(iterationId));
-		}
-		else{
-			return (Long) executeEntityNamedQuery("iteration.countTestPlansFiltered", IdAndLoginParameter(iterationId, filtering.getFilter()));
-		}
-	}
-
 	private SetQueryParametersCallback idParameter(final long id) {
 		return new SetIdParameter("iterationId", id);
 	}
@@ -298,10 +239,18 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	public long countRunningOrDoneExecutions(long iterationId) {
 		return (Long) executeEntityNamedQuery("iteration.countRunningOrDoneExecutions", idParameter(iterationId));
 	}
-
 	
-	private List<IterationTestPlanItem> buildItems(List<Object[]> tuples){
+	
+	// **************************** TEST PLAN ******************************
+	
+
+	@Override
+	public List<IterationTestPlanItem> findTestPlan(long iterationId, PagingAndMultiSorting sorting, Filtering filtering) {
 		
+		/* get the data */
+		List<Object[]> tuples = findIndexedTestPlanDispatch(iterationId, sorting, filtering);
+		
+		/* filter them */
 		List<IterationTestPlanItem> items = new ArrayList<IterationTestPlanItem>(tuples.size());
 		
 		for (Object[] tuple : tuples){
@@ -312,7 +261,19 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 		return items;
 	}
 	
-	private List<IndexedIterationTestPlanItem> buildIndexedItems(List<Object[]> tuples){
+	@Override
+	public List<IndexedIterationTestPlanItem> findIndexedTestPlan(long iterationId, PagingAndSorting sorting, Filtering filtering) {		
+		return findIndexedTestPlan(iterationId, new SingleToMultiSortingAdapter(sorting), filtering);
+	}
+
+	@Override
+	public List<IndexedIterationTestPlanItem> findIndexedTestPlan(final long iterationId, PagingAndMultiSorting sorting, 
+			Filtering filtering) {
+	
+		/* get the data */
+		List<Object[]> tuples = findIndexedTestPlanDispatch(iterationId, sorting, filtering);
+		
+		/* format them*/
 		List<IndexedIterationTestPlanItem> indexedItems = new ArrayList<IndexedIterationTestPlanItem>(tuples.size());
 		
 		for (Object[] tuple : tuples){
@@ -322,6 +283,50 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 		}
 		
 		return indexedItems;
+		
 	}
+	
+	
+	// this method will use one or another strategy to fetch its data depending on what the user is requesting. 
+	private List<Object[]> findIndexedTestPlanDispatch(final long iterationId, PagingAndMultiSorting sorting, Filtering filtering){
+		
+		StringBuilder hqlbuilder = new StringBuilder(HQL_INDEXED_TEST_PLAN);
+		
+		//check if we want to filter on the user login
+		if (filtering.isDefined()){
+			hqlbuilder.append("and User.login = :userLogin ");
+		}
+		
+		ImportanceSortHelper helper = new ImportanceSortHelper();
+		SortingUtils.addOrder(hqlbuilder, helper.modifyImportanceSortInformation(sorting));
+		
+		Query query = currentSession().createQuery(hqlbuilder.toString());
+		
+		query.setParameter("iterationId", iterationId, LongType.INSTANCE);
+		
+		if (filtering.isDefined()){
+			query.setParameter("userLogin", filtering.getFilter(), StringType.INSTANCE);
+		}
+		
+		PagingUtils.addPaging(query, sorting);
+		
+		return query.list();
+	}
+
+
+
+	@Override
+	public long countTestPlans(Long iterationId, Filtering filtering) {
+		if (! filtering.isDefined()){
+			return (Long) executeEntityNamedQuery("iteration.countTestPlans", idParameter(iterationId));
+		}
+		else{
+			return (Long) executeEntityNamedQuery("iteration.countTestPlansFiltered", IdAndLoginParameter(iterationId, filtering.getFilter()));
+		}
+	}
+	
+
+	
+
 
 }
