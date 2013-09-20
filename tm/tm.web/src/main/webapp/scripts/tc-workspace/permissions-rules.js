@@ -97,7 +97,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 		};
 		
 		this.canExport = function(nodes){
-			return true;
+			return (nodes.filter(':exportable').length == nodes.length) && (nodes.length>0);
 		};
 
 		this.canSearch = function(nodes){

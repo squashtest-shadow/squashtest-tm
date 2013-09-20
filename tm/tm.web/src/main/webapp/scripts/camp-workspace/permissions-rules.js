@@ -51,7 +51,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 		};
 		
 		this.canExport = function(nodes){
-			return (nodes.length === 1 && nodes.is(':campaign'));
+			return 	(nodes.filter(':exportable').length == nodes.length) && (nodes.length === 1 && nodes.is(':campaign'));
 		},
 		
 		

@@ -204,6 +204,10 @@ define(['jquery'], function($){
 		this.isDeletable = function() {
 			return this.reference.attr('deletable') === "true";
 		};
+		
+		this.isExportable = function() {
+			return this.reference.attr('exportable') === "true";
+		};
 
 		/**
 		 * Checks if some permission is authorized for this node.
@@ -215,7 +219,8 @@ define(['jquery'], function($){
 				WRITE : "editable",
 				CREATE : "creatable",
 				DELETE : "deletable",
-				EXECUTE : "executable"
+				EXECUTE : "executable",
+				EXPORT : "exportable",
 			};
 
 			if (permission === "ANY") {

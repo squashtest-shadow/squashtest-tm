@@ -70,6 +70,9 @@ var squashtm = squashtm || {};
 		},
 		deletable : function(a) {
 			return $(a).attr('deletable') === 'true';
+		},
+		exportable : function(a){
+			return $(a).attr('exportable') === 'true';
 		}
 	});
 

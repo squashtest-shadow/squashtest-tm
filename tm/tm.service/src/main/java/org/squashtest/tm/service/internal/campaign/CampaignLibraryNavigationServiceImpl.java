@@ -320,7 +320,7 @@ public class CampaignLibraryNavigationServiceImpl extends
 
 	
 	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' ,'READ') or hasRole('ROLE_ADMIN')")	
+	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' ,'EXPORT') or hasRole('ROLE_ADMIN')")
 	public CampaignExportCSVModel exportCampaignToCSV(Long campaignId, String exportType) {
 		
 		Campaign campaign = campaignDao.findById(campaignId);

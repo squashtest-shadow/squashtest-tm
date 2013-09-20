@@ -24,7 +24,7 @@ import static org.squashtest.tm.api.security.acls.Permission.CREATE;
 import static org.squashtest.tm.api.security.acls.Permission.DELETE;
 import static org.squashtest.tm.api.security.acls.Permission.EXECUTE;
 import static org.squashtest.tm.api.security.acls.Permission.WRITE;
-
+import static org.squashtest.tm.api.security.acls.Permission.EXPORT;
 import java.util.Collection;
 
 import org.apache.commons.collections.MultiMap;
@@ -44,7 +44,7 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 public abstract class GenericJsTreeNodeBuilder<MODEL extends Identified, BUILDER extends JsTreeNodeBuilder<MODEL, BUILDER>>
 		implements JsTreeNodeBuilder<MODEL, BUILDER> {
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";
-	private static final Permission[] NODE_PERMISSIONS = { WRITE, CREATE, DELETE, EXECUTE };
+	private static final Permission[] NODE_PERMISSIONS = { WRITE, CREATE, DELETE, EXECUTE, EXPORT };
 
 	protected final PermissionEvaluationService permissionEvaluationService;
 	/**

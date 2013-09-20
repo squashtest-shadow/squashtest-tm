@@ -63,6 +63,7 @@ import org.squashtest.tm.service.internal.repository.RequirementLibraryDao;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
+import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 
 @SuppressWarnings("rawtypes")
@@ -307,15 +308,17 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ExportRequirementData> findRequirementsToExportFromLibrary(List<Long> libraryIds) {
+		PermissionsUtils.checkPermission(permissionService, libraryIds, "EXPORT", RequirementLibrary.class.getName());
 		return (List<ExportRequirementData>) setFullFolderPath(requirementDao
 				.findRequirementToExportFromLibrary(libraryIds));
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ExportRequirementData> findRequirementsToExportFromNodes(List<Long> folderIds) {
+	public List<ExportRequirementData> findRequirementsToExportFromNodes(List<Long> nodesIds) {
+		PermissionsUtils.checkPermission(permissionService, nodesIds, "EXPORT", RequirementLibraryNode.class.getName());
 		return (List<ExportRequirementData>) setFullFolderPath(requirementDao
-				.findRequirementToExportFromNodes(folderIds));
+				.findRequirementToExportFromNodes(nodesIds));
 	}
 	
 	@Override

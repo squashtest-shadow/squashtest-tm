@@ -55,6 +55,7 @@ import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
+import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.testcase.TestCaseStatisticsBundle;
@@ -253,6 +254,7 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ExportTestCaseData> findTestCasesToExportFromLibrary(List<Long> ids) {
+		PermissionsUtils.checkPermission(permissionService, ids, "EXPORT", TestCaseLibrary.class.getName());
 		List<ExportTestCaseData> testCases = testCaseDao.findTestCaseToExportFromLibrary(ids);
 		return (List<ExportTestCaseData>) setFullFolderPath(testCases);
 	}
@@ -260,6 +262,7 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ExportTestCaseData> findTestCasesToExportFromNodes(List<Long> nodesIds) {
+		PermissionsUtils.checkPermission(permissionService, nodesIds, "EXPORT", TestCaseLibraryNode.class.getName());
 		List<ExportTestCaseData> testCases = testCaseDao.findTestCaseToExportFromNodes(nodesIds);
 		return (List<ExportTestCaseData>) setFullFolderPath(testCases);
 	}

@@ -32,6 +32,7 @@ public enum Permission {
 	DELETE("deletable"),
 	ADMIN("administrable"), 
 	EXECUTE("executable"), 
+	EXPORT("exportable"),
 	MANAGEMENT("manageable"), 
 	LINK("linkable"), 
 	IMPORT("importable"), 
