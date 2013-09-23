@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.squashtest.tm.domain.campaign.TestSuite;
@@ -36,19 +39,28 @@ public final class TestSuiteHelper {
 		super();
 	}
 
-	public static String buildEllipsedSuiteNameList(List<TestSuite> suites, int maxLength) {
-		if (suites.isEmpty()) {
+	public static String buildEllipsedSuiteNameList(List<TestSuite> unsortedSuites, int maxLength) {
+		
+		List<TestSuite> sortedSuites = new ArrayList<TestSuite>(unsortedSuites);
+		Collections.sort(sortedSuites, new Comparator<TestSuite>(){
+			@Override
+			public int compare(TestSuite o1, TestSuite o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
+		
+		if (sortedSuites.isEmpty()) {
 			return "";
 		}
 
 		StringBuilder testSuiteNames = new StringBuilder();
-		if (!suites.isEmpty()) {
+		if (!sortedSuites.isEmpty()) {
 			int i = 0;
-			while (i < suites.size() - 1) {
-				testSuiteNames.append(suites.get(i).getName().replace("<", "&lt;").replace(">", "&gt;")).append(", ");
+			while (i < sortedSuites.size() - 1) {
+				testSuiteNames.append(sortedSuites.get(i).getName().replace("<", "&lt;").replace(">", "&gt;")).append(", ");
 				i++;
 			}
-			testSuiteNames.append(suites.get(i).getName().replace("<", "&lt;").replace(">", "&gt;"));
+			testSuiteNames.append(sortedSuites.get(i).getName().replace("<", "&lt;").replace(">", "&gt;"));
 		}
 
 		return ellipseString(testSuiteNames, maxLength);
@@ -64,4 +76,5 @@ public final class TestSuiteHelper {
 		}
 		return res;
 	}
+	
 }
