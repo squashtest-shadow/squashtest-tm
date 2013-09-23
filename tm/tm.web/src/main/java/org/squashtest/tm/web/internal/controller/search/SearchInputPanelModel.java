@@ -30,6 +30,7 @@ public class SearchInputPanelModel {
 	private boolean open;
 	private String id;
 	private String location;
+	private List<String> cssClasses = new ArrayList<String>();
 	
 	public SearchInputPanelModel(){
 		
@@ -86,5 +87,17 @@ public class SearchInputPanelModel {
 
 	public void setLocation(String location) {
 		this.location = location;
+	}
+
+	public List<String> getCssClasses() {
+		return cssClasses;
+	}
+
+	public void setCssClasses(List<String> cssClasses) {
+		this.cssClasses = cssClasses;
+	}
+	
+	public void addCssClass(String cssClass){
+		this.cssClasses.add(cssClass);
 	}
 }

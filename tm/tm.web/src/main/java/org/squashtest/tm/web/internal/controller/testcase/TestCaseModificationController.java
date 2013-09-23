@@ -250,14 +250,20 @@ public class TestCaseModificationController {
 		return importanceComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
 
-	private String buildNatureComboData(Locale locale) {
+	@RequestMapping(value = "/nature-combo-data", method = RequestMethod.GET)
+	@ResponseBody
+	public String buildNatureComboData(Locale locale) {
 		return natureComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
 
-	private String buildTypeComboData(Locale locale) {
+	@RequestMapping(value = "/type-combo-data", method = RequestMethod.GET)
+	@ResponseBody
+	public String buildTypeComboData(Locale locale) {
 		return typeComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
 
+	@RequestMapping(value = "/status-combo-data", method = RequestMethod.GET)
+	@ResponseBody
 	private String buildStatusComboData(Locale locale) {
 		return statusComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}

@@ -80,7 +80,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 									self.makeCheckboxField(tableid, val.fields[i].id, val.fields[i].title, val.fields[i].possibleValues, searchModel[val.fields[i].id]);
 								} 
 							}
-							self.makeTogglePanel(val.id+"-panel-id",val.title,val.open);
+							self.makeTogglePanel(val.id+"-panel-id",val.title,val.open,val.cssClasses);
 						}
 					});
 				});
@@ -253,7 +253,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 			}
 		},
 
-		makeTogglePanel : function(id, key, open) {
+		makeTogglePanel : function(id, key, open, css) {
 			var title = key;
 			
 			var infoSettings = {
@@ -262,6 +262,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 				cssClasses : ""
 			};
 			this.$("#"+id).togglePanel(infoSettings);
+			$("a", $("#"+id).parent()).removeClass("tg-link").addClass(css.toString());
 		}
 
 	});

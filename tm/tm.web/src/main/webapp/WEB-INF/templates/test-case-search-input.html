@@ -110,7 +110,8 @@
 			<div id="sub-page-header" class="sub-page-header shadow ui-corner-all">
 			
 				<div id="sub-page-title" class="sub-page-title">
-					  <h2 th:text="#{tabbed_panel.search.pane.label}">Recherche de cas de test</h2> 
+					<h2 th:if="!${associateResult}" th:text="#{tabbed_panel.search.pane.new.label}">Recherche de cas de test</h2> 
+					<h2 th:if="${associateResult}" th:text="#{tabbed_panel.search.pane.assoc.label}">Recherche de cas de test</h2> 
 				</div>
 				
 				<div id="sub-page-buttons" class="sub-page-buttons">
@@ -122,11 +123,11 @@
 			</div>
 			
 			<div id="sub-page-content" class="sub-page-content shadow ui-corner-all">
-    <div class="fragment-body">
+    <div class="fragment-body-without-upper-margin">
 
-     <div id="test-case-search-input-panel">
+     <div id="test-case-search-input-panel" class="search-panel-wrap">
      
-     	<div id="test-case-search-toolbar">
+     	<div id="test-case-search-toolbar" class="search-panel-footer">
      		<input id="test-case-search-button" type="button" th:value="#{label.Search}" class="button ui-button ui-widget ui-state-default ui-corner-all"/> 
      	</div>
      
@@ -174,17 +175,25 @@
                     <div id="{{multiselect-id}}" class="search-input"/>
                 </div>
 				</script>	
-			
+				
 			<script id="date-template" type="text/x-handlebars-template">
 				<div class="display-table-row">
                   	<label for="{{text-date-id}}" class="display-table-cell">{{text-date-title}}</label>
-                    <div id="{{text-date-id}}" class="search-input" style="display:inline">
+                    <div id="{{text-date-id}}" class="search-input" style="display:inline-block">
 						<div class="search-line" data-widgetname="Date">
-						<input type="checkbox"></input>
-						<span th:text="#{search.testcase.betweenDate.label}"></span>
-						<input class="date-search-input" type="text"></input>
-						<span th:text="#{search.testcase.andDate.label}"></span>
-						<input class="date-search-input" type="text"></input>
+						<table>
+						<tr>
+                        	<td style="text-align:right;">
+								<input type="checkbox"></input>
+								<span th:text="#{search.testcase.betweenDate.label}"></span>
+							</td>
+							<td><input class="date-search-input" type="text"></input></td>
+						</tr>
+						<tr>
+							<td style="text-align:right;"><span th:text="#{search.testcase.andDate.label}"></span></td>
+							<td><input class="date-search-input" type="text"></input></td>
+						</tr>
+						</table>
 						</div>
 					</div>
 				</div>

@@ -664,6 +664,39 @@ span.span-green {
 }
 
 /*******************************
+	search icon
+********************************/
+
+.search-icon-information {
+	background: transparent url("../images/Search_Information.png") no-repeat center left;
+	padding-left: 20px;
+}
+.search-icon-attributes {
+	background: transparent url("../images/Search_Attributes.png") no-repeat center left;
+	padding-left: 20px;
+}
+.search-icon-perimeter {
+	background: transparent url("../images/Search_Perimeter.png") no-repeat center left;
+	padding-left: 20px;
+}
+.search-icon-associations  {
+	background: transparent url("../images/Search_Associations.png") no-repeat center left;
+	padding-left: 20px;
+}
+.search-icon-content {
+	background: transparent url("../images/Search_Content.png") no-repeat center left;
+	padding-left: 20px;
+}
+.search-icon-history  {
+	background: transparent url("../images/Search_History.png") no-repeat center left;
+	padding-left: 20px;
+}
+.search-icon-cuf {
+	background: transparent url("../images/Search_CUF.png") no-repeat center left;
+	padding-left: 20px;
+}
+
+/*******************************
 	search table icons - adds background icon  
 ********************************/
 .search-open-tree {

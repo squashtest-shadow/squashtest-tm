@@ -29,6 +29,9 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 			this.associateType = associateType;
 			this.associateId = associateId;
 			this.addSelectEditableToImportance = $.proxy(this._addSelectEditableToImportance, this);
+			this.addSelectEditableToNature = $.proxy(this._addSelectEditableToNature, this);
+			this.addSelectEditableToType = $.proxy(this._addSelectEditableToType, this);
+			this.addSelectEditableToStatus = $.proxy(this._addSelectEditableToStatus, this);
 			this.addSimpleEditableToReference = $.proxy(this._addSimpleEditableToReference, this);
 			this.addSimpleEditableToLabel = $.proxy(this._addSimpleEditableToLabel, this);
 			this.addInterfaceLevel2Link = $.proxy(this._addInterfaceLevel2Link, this);
@@ -63,79 +66,86 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 						"bFilter" : false,
 						"fnRowCallback" : this.tableRowCallback,
 						"fnDrawCallback" : this.tableDrawCallback,
-						"aaSorting" : [ [ 3, "asc" ] ],
+						"aaSorting" : [ [ 2, "asc" ] ],
 						"aoColumnDefs" : [ {
 							"bSortable" : false,
 							"aTargets" : [ 0 ],
-							"mDataProp" : "empty-associationcheckbox-holder",
-							"sClass" : "centered association-checkbox",
-							"sWidth" : "2em"
-						}, {
-							"bSortable" : false,
-							"aTargets" : [ 1 ],
 							"mDataProp" : "entity-index",
 							"sClass" : "select-handle centered"
 						}, {
-							"aTargets" : [ 2 ],
+							"aTargets" : [ 1 ],
 							"mDataProp" : "project-name",
 							"bSortable" : true
 						}, {		
-							"aTargets" : [ 3 ],
+							"aTargets" : [ 2 ],
 							"mDataProp" : "test-case-id",
-							"bSortable" : true
+							"bSortable" : true,
+							"sClass" : "centered"
 						}, {
-							"aTargets" : [ 4 ],
+							"aTargets" : [ 3 ],
 							"mDataProp" : "test-case-ref",
 							"bSortable" : true,
 							"sClass" : "editable_ref"
 						}, {
-							"aTargets" : [ 5 ],
+							"aTargets" : [ 4 ],
 							"mDataProp" : "test-case-label",
 							"bSortable" : true,
 							"sClass" : "editable_label"
 						}, {
-							"aTargets" : [ 6 ],
+							"aTargets" : [ 5 ],
 							"mDataProp" : "test-case-weight",
 							"bSortable" : true,
-							"sClass" : "editable_imp"
+							"sClass" : "editable_importance"
+						}, {
+							"aTargets" : [ 6 ],
+							"mDataProp" : "test-case-nature",
+							"bSortable" : true,
+							"sClass" : "editable_nature"
 						}, {
 							"aTargets" : [ 7 ],
-							"mDataProp" : "test-case-requirement-nb",
-							"bSortable" : true
+							"mDataProp" : "test-case-type",
+							"bSortable" : true,
+							"sClass" : "editable_type"
 						}, {
 							"aTargets" : [ 8 ],
-							"mDataProp" : "test-case-teststep-nb",
-							"bSortable" : true
+							"mDataProp" : "test-case-status",
+							"bSortable" : true,
+							"sClass" : "editable_status"
 						}, {
 							"aTargets" : [ 9 ],
-							"mDataProp" : "test-case-iteration-nb",
-							"bSortable" : true
+							"mDataProp" : "test-case-requirement-nb",
+							"bSortable" : true,
+							"sClass" : "centered"
 						}, {
 							"aTargets" : [ 10 ],
+							"mDataProp" : "test-case-teststep-nb",
+							"bSortable" : true,
+							"sClass" : "centered"
+						}, {
+							"aTargets" : [ 11 ],
+							"mDataProp" : "test-case-iteration-nb",
+							"bSortable" : true,
+							"sClass" : "centered"
+						}, {
+							"aTargets" : [ 12 ],
 							"mDataProp" : "test-case-attachment-nb",
 							"bSortable" : true
 						}, {
-							"aTargets" : [ 11 ],
+							"aTargets" : [ 13 ],
 							"mDataProp" : "test-case-created-by",
 							"bSortable" : true
 						}, {
-							"aTargets" : [ 12 ],
+							"aTargets" : [ 14 ],
 							"mDataProp" : "test-case-modified-by",
 							"bSortable" : true
 						}, {
-							"aTargets" : [ 13 ],
+							"aTargets" : [ 15 ],
 							"mDataProp" : "empty-openinterface2-holder",
 							"sClass" : "centered search-open-interface2",
 							"sWidth" : "2em",
 							"bSortable" : false
 						}, {
-							"aTargets" : [ 14 ],
-							"mDataProp" : "empty-opentree-holder",
-							"sClass" : "centered search-open-tree",
-							"sWidth" : "2em",
-							"bSortable" : false
-						}, {
-							"aTargets" : [ 15 ],
+							"aTargets" : [ 16 ],
 							"mDataProp" : "editable",
 							"bVisible" : false,
 							"bSortable" : false
@@ -176,7 +186,8 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 						}, {		
 							"aTargets" : [ 2 ],
 							"mDataProp" : "test-case-id",
-							"bSortable" : true
+							"bSortable" : true,
+							"sClass" : "centered"
 						}, {
 							"aTargets" : [ 3 ],
 							"mDataProp" : "test-case-ref",
@@ -191,45 +202,64 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 							"aTargets" : [ 5 ],
 							"mDataProp" : "test-case-weight",
 							"bSortable" : true,
-							"sClass" : "editable_imp"
+							"sClass" : "editable_importance"
 						}, {
 							"aTargets" : [ 6 ],
-							"mDataProp" : "test-case-requirement-nb",
-							"bSortable" : true
+							"mDataProp" : "test-case-nature",
+							"bSortable" : true,
+							"sClass" : "editable_nature"
 						}, {
 							"aTargets" : [ 7 ],
-							"mDataProp" : "test-case-teststep-nb",
-							"bSortable" : true
+							"mDataProp" : "test-case-type",
+							"bSortable" : true,
+							"sClass" : "editable_type"
 						}, {
 							"aTargets" : [ 8 ],
-							"mDataProp" : "test-case-iteration-nb",
-							"bSortable" : true
+							"mDataProp" : "test-case-status",
+							"bSortable" : true,
+							"sClass" : "editable_status"
 						}, {
 							"aTargets" : [ 9 ],
-							"mDataProp" : "test-case-attachment-nb",
-							"bSortable" : true
+							"mDataProp" : "test-case-requirement-nb",
+							"bSortable" : true,
+							"sClass" : "centered"
 						}, {
 							"aTargets" : [ 10 ],
+							"mDataProp" : "test-case-teststep-nb",
+							"bSortable" : true,
+							"sClass" : "centered"
+						}, {
+							"aTargets" : [ 11 ],
+							"mDataProp" : "test-case-iteration-nb",
+							"bSortable" : true,
+							"sClass" : "centered"
+						}, {
+							"aTargets" : [ 12 ],
+							"mDataProp" : "test-case-attachment-nb",
+							"bSortable" : true,
+							"sClass" : "centered"
+						}, {
+							"aTargets" : [ 13 ],
 							"mDataProp" : "test-case-created-by",
 							"bSortable" : true
 						}, {
-							"aTargets" : [ 11 ],
+							"aTargets" : [ 14 ],
 							"mDataProp" : "test-case-modified-by",
 							"bSortable" : true
 						}, {
-							"aTargets" : [ 12 ],
+							"aTargets" : [ 15 ],
 							"mDataProp" : "empty-openinterface2-holder",
 							"sClass" : "centered search-open-interface2",
 							"sWidth" : "2em",
 							"bSortable" : false
 						}, {
-							"aTargets" : [ 13 ],
+							"aTargets" : [ 16 ],
 							"mDataProp" : "empty-opentree-holder",
 							"sClass" : "centered search-open-tree",
 							"sWidth" : "2em",
 							"bSortable" : false
 						}, {
-							"aTargets" : [ 14 ],
+							"aTargets" : [ 17 ],
 							"mDataProp" : "editable",
 							"bVisible" : false,
 							"bSortable" : false
@@ -255,7 +285,7 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 			var urlGET = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"] + "/importance-combo-data";
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
-			$('.editable_imp', row).editable(
+			$('.editable_importance', row).editable(
 					function(value, settings) {
 						var innerPOSTData;
 						$.post(urlPOST, {
@@ -278,11 +308,101 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 					});
 		},
 		
+		_addSelectEditableToNature : function(row, data) {
+			var self = this;
+			var urlPOST = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
+			var urlGET = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"] + "/nature-combo-data";
+			var ok = translator.get("rich-edit.button.ok.label");
+			var cancel = translator.get("label.Cancel");
+			$('.editable_nature', row).editable(
+					function(value, settings) {
+						var innerPOSTData;
+						$.post(urlPOST, {
+							value : value,
+							id : "test-case-nature"	
+						}, function(data) {
+							innerPOSTData = data;
+							self.refresh();
+						});
+						return (innerPOSTData);
+					}, {
+						type : 'select',
+						submit : ok,
+						cancel : cancel,
+						onblur : function() {
+						},
+						loadurl : urlGET,
+						onsubmit : function() {
+						}
+					});
+		},
+		
+		_addSelectEditableToType : function(row, data) {
+			var self = this;
+			var urlPOST = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
+			var urlGET = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"] + "/type-combo-data";
+			var ok = translator.get("rich-edit.button.ok.label");
+			var cancel = translator.get("label.Cancel");
+			$('.editable_type', row).editable(
+					function(value, settings) {
+						var innerPOSTData;
+						$.post(urlPOST, {
+							value : value,
+							id : "test-case-type"	
+						}, function(data) {
+							innerPOSTData = data;
+							self.refresh();
+						});
+						return (innerPOSTData);
+					}, {
+						type : 'select',
+						submit : ok,
+						cancel : cancel,
+						onblur : function() {
+						},
+						loadurl : urlGET,
+						onsubmit : function() {
+						}
+					});
+		},
+		
+		_addSelectEditableToStatus : function(row, data) {
+			var self = this;
+			var urlPOST = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
+			var urlGET = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"] + "/status-combo-data";
+			var ok = translator.get("rich-edit.button.ok.label");
+			var cancel = translator.get("label.Cancel");
+			$('.editable_status', row).editable(
+					function(value, settings) {
+						var innerPOSTData;
+						$.post(urlPOST, {
+							value : value,
+							id : "test-case-status"	
+						}, function(data) {
+							innerPOSTData = data;
+							self.refresh();
+						});
+						return (innerPOSTData);
+					}, {
+						type : 'select',
+						submit : ok,
+						cancel : cancel,
+						onblur : function() {
+						},
+						loadurl : urlGET,
+						onsubmit : function() {
+						}
+					});
+		},
+		
 		_addSimpleEditableToReference : function(row, data) {
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
+			var placeholder = translator.get("rich-edit.placeholder");
 			var url = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
+			
 			$(".editable_ref", row).editable(url,{
+				"placeholder" : placeholder,
 				"submit" : ok,
 				"cancel" : cancel,
 				"submitdata" : function(value, settings) {
@@ -290,7 +410,7 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 				}
 			});
 		},
-		
+
 		_addAssociationCheckboxes : function(row, data) {
 			$(".association-checkbox", row).html("<input type='checkbox'/>");
 		},
@@ -298,8 +418,10 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 		_addSimpleEditableToLabel : function(row, data) {
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
+			var placeholder = translator.get("rich-edit.placeholder");
 			var url = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
 			$(".editable_label", row).editable(url,{
+				"placeholder" : placeholder,
 				"submit" : ok,
 				"cancel" : cancel,	
 				"submitdata" : function(value, settings) {
@@ -313,6 +435,9 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 				this.addSimpleEditableToReference(row,data);
 				this.addSimpleEditableToLabel(row,data);
 				this.addSelectEditableToImportance(row,data);
+				this.addSelectEditableToNature(row,data);
+				this.addSelectEditableToStatus(row,data);
+				this.addSelectEditableToType(row,data);
 			}
 	
 			this.addInterfaceLevel2Link(row,data);
@@ -341,9 +466,7 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 			$(".search-open-tree", row)
 					.click(
 							function() {
-								$("#tree-panel-left").show();
-								$("#contextual-content").removeAttr("style"); 
-								$("#tabbed-pane").tabs('select', 0);
+								window.location = squashtm.app.contextRoot + "/test-case-workspace";
 								var jqTree=$("#tree");
 								var treeNodeName = "TestCase-" + id;
 								self.findTreeBreadcrumbToNode(treeNodeName, squashtm.app.contextRoot + "/search/test-cases/breadcrumb" ).done(function(data){self.openBreadCrumb(data, jqTree);});

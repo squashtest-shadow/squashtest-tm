@@ -42,3 +42,30 @@ html, body{
 div.main-menubar a {
 	color: lightgray;
 }
+
+#test-case-search-input-form-panel-column1 div.search-toggle-panel {
+	padding-bottom : 10px;
+}
+
+#test-case-search-input-form-panel-column1 div.search-toggle-panel:last-child {
+	padding-bottom : 0px;
+}
+
+
+#test-case-search-input-form-panel-column2 div.search-toggle-panel {
+	padding-bottom : 46px;
+}
+
+
+#test-case-search-input-form-panel-column2 div.search-toggle-panel:last-child {
+	padding-bottom : 0px;
+}
+
+#test-case-search-input-form-panel-column3 div.search-toggle-panel {
+	padding-bottom : 10px;
+}
+
+
+#test-case-search-input-form-panel-column3 div.search-toggle-panel:last-child {
+	padding-bottom : 0px;
+}

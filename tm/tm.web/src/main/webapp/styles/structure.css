@@ -173,6 +173,26 @@ div.toolbar span.group {
 	margin-left: 20px;
 }
 
+div.search-panel-wrap{
+	position: absolute;
+	width: 100%;
+	bottom: 31px;
+	top: 7px;
+	overflow: auto;
+}
+
+div.search-panel-wrap .search-panel-footer{
+	bottom: 15px;
+	position: fixed;
+}
+
+div.sub-page div.search-panel-wrap .search-panel-footer{
+	bottom: 1.8cm;
+	position: fixed;
+	right: 127px;
+}
+
+
 /* div.fragment-tabs>div.table-tab>div.table-tab-wrap *//*2013/03/14 if no incidence after 3 month you can remove this comment*/
 div.table-tab-wrap{
 	position: absolute;
@@ -795,6 +815,19 @@ div#contextual-content>div:first-child h2,.fragment-header h2 {
 	width: 100%;
 }
 
+.fragment-body-without-upper-margin {
+	bottom: 0;
+	left: auto;
+	overflow-x: hidden;
+	/* Important for IE8 */
+	overflow-y: auto;
+	/* End Important for IE8 */
+	position: absolute;
+	right: inherit;
+	top: 0.1cm;
+	width: 100%;
+}
+
 .fragment-body>div,.fragment-body-component {
 	margin-top: 10px;
 	margin-bottom: 10px;
@@ -996,6 +1029,11 @@ td.button-cell, th.button-cell, td.icon-cell, th.icon-cell {
 	padding-left: 10px;
 	padding-right: 10px;
 }
+
+.display-table-cell{
+	vertical-align: top;
+}
+
 .display-table-cell input[type=checkbox],.display-table>div>div input[type=checkbox] ,.display-table>div>label,.display-table>div>span,.display-table>div>select
 div#project-description-table .projectInactive {
 	margin:0;

@@ -27,13 +27,13 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 	var TestCaseSearchInputPanel = Backbone.View.extend({
 
 		expanded : false,
-		el : "#test-case-search-results",
+		el : "#sub-page",
 
 		initialize : function() {
 			self = this;
 			this.configureModifyResultsDialog();
 			this.getIdsOfSelectedTableRowList =  $.proxy(this._getIdsOfSelectedTableRowList, this);
-			this.updateDisplayedImportance =  $.proxy(this._updateDisplayedImportance, this);
+			this.updateDisplayedValueInColumn =  $.proxy(this._updateDisplayedValueInColumn, this);
 			var model = JSON.parse($("#searchModel").text());
 			this.isAssociation = !!$("#associationType").length;
 			if(this.isAssociation){
@@ -51,24 +51,17 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			"click #modify-search-button" : "modifySearch",
 			"click #associate-selection-button" : "associateSelection",
 			"click #select-all-button" : "selectAllForAssocation",
-			"click #associate-all-button" : "associateAll"
+			"click #associate-all-button" : "associateAll",
+			"click #deselect-all-button" : "deselectAll"
 		},
 
 		
 		
 		associateSelection : function(){
 			var table = $('#test-case-search-result-table').dataTable();
-			var rows = table.fnGetNodes();
-			var associationId = this.associationId;
-			var ids = [];
-			$(rows).each(function(index, row) {
-				if($("input[type=checkbox]", row).is(":checked")){
-					//associate
-					var id = $(".testcaseid", row).text();
-					ids.push(id);
-				}
-			});
-			
+			var ids = table.squashTable().getSelectedIds();
+			var id = this.associationId;
+				
 			if("requirement" === this.associationType){
 				
 				var st = "";
@@ -86,9 +79,9 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 				
 				$.ajax({
 					type: "POST",
-					url : squashtm.app.contextRoot + "/requirement-versions/" + associationId + "/verifying-test-cases/"+st
+					url : squashtm.app.contextRoot + "/requirement-versions/" + id + "/verifying-test-cases/"+st
 				}).done(function() {
-					document.location.href = squashtm.app.contextRoot + "/requirement-versions/" + associationId + "/verifying-test-cases/manager";
+					document.location.href = squashtm.app.contextRoot + "/requirement-versions/" + id + "/verifying-test-cases/manager";
 				});
 				
 			} else if ("campaign" === this.associationType){
@@ -96,10 +89,10 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 				
 				$.ajax({
 					type: "POST",
-					url : squashtm.app.contextRoot + "/campaigns/" + associationId + "/test-plan",
+					url : squashtm.app.contextRoot + "/campaigns/" + id + "/test-plan",
 					data : { "testCasesIds[]" : ids }
 				}).done(function() {
-					document.location.href = squashtm.app.contextRoot + "/campaigns/" + associationId + "/test-plan/manager";				
+					document.location.href = squashtm.app.contextRoot + "/campaigns/" + id + "/test-plan/manager";				
 				});
 					
 			} else if ("iteration" === this.associationType){
@@ -107,10 +100,10 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 				
 				$.ajax({
 					type: "POST",
-					url : squashtm.app.contextRoot + "/iterations/" + associationId + "/test-plan",
+					url : squashtm.app.contextRoot + "/iterations/" + id + "/test-plan",
 					data : { "testCasesIds[]" : ids }
 				}).done(function() {
-					document.location.href = squashtm.app.contextRoot + "/iterations/" + associationId + "/test-plan-manager";				
+					document.location.href = squashtm.app.contextRoot + "/iterations/" + id + "/test-plan-manager";				
 				});
 				
 			} else if ("testsuite" === this.associationType){
@@ -118,10 +111,10 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 				
 				$.ajax({
 					type: "POST",
-					url : squashtm.app.contextRoot + "/test-suites/" + associationId + "/test-plan",
+					url : squashtm.app.contextRoot + "/test-suites/" + id + "/test-plan",
 					data: { "testCasesIds[]" : ids }
 				}).done(function() {
-					document.location.href = squashtm.app.contextRoot + "/test-suites/" + associationId + "/test-plan-manager";					
+					document.location.href = squashtm.app.contextRoot + "/test-suites/" + id + "/test-plan-manager";					
 				});
 				
 			}
@@ -130,9 +123,17 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		selectAllForAssocation : function(){
 			var table = $('#test-case-search-result-table').dataTable();
 			var rows = table.fnGetNodes();
+			var ids = [];
 			$(rows).each(function(index, row) {
-				$("input[type=checkbox]", row).attr('checked', true);
+				ids.push(parseInt($($("td", row)[2]).text(),10));
 			});
+			
+			table.squashTable().selectRows(ids);
+		},
+		
+		deselectAll : function(){
+			var table = $('#test-case-search-result-table').dataTable();
+			table.squashTable().deselectRows();
 		},
 		
 		associateAll : function(){
@@ -193,37 +194,77 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			return ids;
 		},
 		
-		_updateDisplayedImportance : function(dataTable) {
+		_updateDisplayedValueInColumn : function(dataTable, column) {
 			var rows = dataTable.fnGetNodes();
-			var ids = [];
 			
 			$( rows ).each(function(index, row) {
 				if ($( row ).attr('class').search('selected') != -1) {
-					var value = $("#importance-combo").find('option:selected').text().split("-")[1];
-					$(".editable_imp", row).text(value);
+					var value = $("#"+column+"-combo").find('option:selected').text();
+					$(".editable_"+column, row).text(value);
 				}
 			});
-			
-			return ids;
+
 		},
-		
+				
 		configureModifyResultsDialog : function() {
 			var addModifyResultDialog = $("#modify-search-result-dialog").confirmDialog();
-			
-			var cell = $("#importance-combo");
-			cell.html("<select></select>");
 			
 			$.ajax({
 				url : squashtm.app.contextRoot + "/test-cases/importance-combo-data",
 				dataType : 'json'
 			}).success(function(json) {
+				var importance_cell = $("#importance-combo");
+				importance_cell.html("<select></select>");
 				 $.each(json, function(key, value){ 
 					var option = new Option(value, key);
 					$(option).html(value);
-					$("select", cell).append(option);
+					$("select", importance_cell).append(option);
 				 });
 			});
-	
+			
+
+
+			$.ajax({
+				url : squashtm.app.contextRoot + "/test-cases/status-combo-data",
+				dataType : 'json'
+			}).success(function(json) {
+				status_cell = $("#status-combo");
+				status_cell.html("<select></select>");
+				 $.each(json, function(key, value){ 
+					var option = new Option(value, key);
+					$(option).html(value);
+					$("select", status_cell).append(option);
+				 });
+			});
+			
+
+			
+			$.ajax({
+				url : squashtm.app.contextRoot + "/test-cases/type-combo-data",
+				dataType : 'json'
+			}).success(function(json) {
+				type_cell = $("#type-combo");
+				type_cell.html("<select></select>");
+				 $.each(json, function(key, value){ 
+					var option = new Option(value, key);
+					$(option).html(value);
+					$("select", type_cell).append(option);
+				 });
+			});
+					
+			$.ajax({
+				url : squashtm.app.contextRoot + "/test-cases/nature-combo-data",
+				dataType : 'json'
+			}).success(function(json) {
+				nature_cell = $("#nature-combo");
+				nature_cell.html("<select></select>");
+				 $.each(json, function(key, value){ 
+					var option = new Option(value, key);
+					$(option).html(value);
+					$("select", nature_cell).append(option);
+				 });
+			});
+			
 			addModifyResultDialog.on("confirmdialogvalidate",
 					function() {
 						
@@ -233,15 +274,22 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 					function() {
 						var table = $('#test-case-search-result-table').dataTable();
 						var ids = self.getIdsOfSelectedTableRowList(table);
-						self.updateDisplayedImportance(table);
-						var value = $("#importance-combo").find('option:selected').val();
-						var i;
-						for(i=0; i<ids.length; i++){
-							var urlPOST = squashtm.app.contextRoot + "/test-cases/" + ids[i];
-							$.post(urlPOST, {
-								value : value,
-								id : "test-case-importance"	
-							});
+						var columns = ["importance","status","type","nature"];
+						var index = 0;
+						
+						for(index=0; index<columns.length; index++){
+							if($("#"+columns[index]+"-checkbox").prop('checked')){
+								self.updateDisplayedValueInColumn(table, columns[index]);
+								var value = $("#"+columns[index]+"-combo").find('option:selected').val();
+								var i;
+								for(i=0; i<ids.length; i++){
+									var urlPOST = squashtm.app.contextRoot + "/test-cases/" + ids[i];
+									$.post(urlPOST, {
+										value : value,
+										id : "test-case-"+columns[index]	
+									});
+								}
+							}
 						}
 					});
 			

@@ -35,9 +35,9 @@ define(["jquery", "squash.translator", "datepicker/require.jquery.squash.datepic
 		fieldvalue : function(value){
 			
 			if(!value){
-			var checked = $($(this.element.children()[0]).children()[0]).prop('checked');
-			var startDate = $($(this.element.children()[0]).children()[2]).datepicker('getDate');
-			var endDate = $($(this.element.children()[0]).children()[4]).datepicker('getDate');
+			var checked = $($("input",$($(this.element.children()[0])))[0]).prop("checked");
+			var startDate = $($("input",$($(this.element.children()[0])))[1]).datepicker('getDate');
+			var endDate = $($("input",$($(this.element.children()[0])))[2]).datepicker('getDate');
 			var id = $(this.element).attr("id");
 			if(checked){
 				
@@ -52,9 +52,9 @@ define(["jquery", "squash.translator", "datepicker/require.jquery.squash.datepic
 					return null;
 				}
 			} else {
-				$($(this.element.children()[0]).children()[0]).attr('checked', 'checked');
-				$($(this.element.children()[0]).children()[2]).datepicker('setDate', new Date(value.startDate));
-				$($(this.element.children()[0]).children()[4]).datepicker('setDate', new Date(value.endDate));
+				$($("input",$($(this.element.children()[0])))[0]).attr('checked', 'checked');
+				$($("input",$($(this.element.children()[0])))[1]).datepicker('setDate', new Date(value.startDate));
+				$($("input",$($(this.element.children()[0])))[2]).datepicker('setDate', new Date(value.endDate));
 			}
 		}, 
 		
@@ -72,8 +72,8 @@ define(["jquery", "squash.translator", "datepicker/require.jquery.squash.datepic
 				
 			var pickerconf = $.extend(true, {}, language, {dateFormat : message.format});
 				
-			$($(this.element.children()[0]).children()[2]).datepicker(pickerconf);
-			$($(this.element.children()[0]).children()[4]).datepicker(pickerconf);	
+			$($("input",$($(this.element.children()[0])))[1]).datepicker(pickerconf);
+			$($("input",$($(this.element.children()[0])))[2]).datepicker(pickerconf);	
 		}
 	 });
 	return searchwidget;

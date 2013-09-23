@@ -26,8 +26,10 @@ define([ "jquery", "backbone", "underscore", "jquery.squash.confirmdialog"], fun
 		el : "#index-administration-content",
 
 		initialize : function() {
-			this.confirmIndexAll = $.proxy(this._confirmIndexAll, this);			
+			this.confirmIndexAll = $.proxy(this._confirmIndexAll, this);	
 			this.configurePopups.call(this);
+			$("#refresh-index-button").attr("disabled", "disabled");
+
 		},
 
 		events : {
@@ -54,7 +56,9 @@ define([ "jquery", "backbone", "underscore", "jquery.squash.confirmdialog"], fun
 				  url: squashtm.app.contextRoot + "advanced-search/index-all",
 				  data: "nodata"
 			}).success(function(){
+				$("#index-all-button").attr("disabled", "disabled");
 				$("#should-reindex-message").addClass("not-displayed");
+				$("#refresh-index-button").removeAttr("disabled");    
 			});
 		},
 		

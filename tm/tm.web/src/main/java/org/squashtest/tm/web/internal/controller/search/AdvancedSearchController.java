@@ -53,6 +53,9 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.testcase.TestCaseNature;
+import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.domain.testcase.TestCaseType;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.customfield.CustomCustomFieldManagerService;
 import org.squashtest.tm.service.library.AdvancedSearchService;
@@ -126,6 +129,9 @@ public class AdvancedSearchController {
 			.mapAttribute("test-case-ref", "reference", TestCase.class)
 			.mapAttribute("test-case-label", "label", TestCase.class)
 			.mapAttribute("test-case-weight", "importance", TestCase.class)
+			.mapAttribute("test-case-nature", "nature", TestCase.class)
+			.mapAttribute("test-case-type", "type", TestCase.class)
+			.mapAttribute("test-case-status", "status", TestCase.class)
 			.mapAttribute("test-case-requirement-nb", "requirements", TestCase.class)
 			.mapAttribute("test-case-teststep-nb", "steps", TestCase.class)
 			.mapAttribute("test-case-iteration-nb", "iterations", TestCase.class)
@@ -206,6 +212,7 @@ public class AdvancedSearchController {
 		panel.setOpen(true);
 		panel.setId("general-information");
 		panel.setLocation("column1");
+		panel.addCssClass("search-icon-information");
 
 		SearchInputFieldModel idField = new SearchInputFieldModel("id", messageSource.internationalize("label.id",
 				locale), TEXTFIELD);
@@ -232,7 +239,8 @@ public class AdvancedSearchController {
 		panel.setOpen(true);
 		panel.setId("attributes");
 		panel.setLocation("column1");
-
+		panel.addCssClass("search-icon-attributes");
+		
 		SearchInputFieldModel importanceField = new SearchInputFieldModel("importance", messageSource.internationalize(
 				"test-case.importance.label", locale), MULTISELECT);
 		panel.addField(importanceField);
@@ -291,7 +299,8 @@ public class AdvancedSearchController {
 		panel.setOpen(true);
 		panel.setId("association");
 		panel.setLocation("column2");
-
+		panel.addCssClass("search-icon-associations");
+		
 		SearchInputFieldModel requirementsField = new SearchInputFieldModel("requirements",
 				messageSource.internationalize("search.testcase.association.requirement.label", locale), RANGE);
 		panel.addField(requirementsField);
@@ -328,7 +337,8 @@ public class AdvancedSearchController {
 		panel.setOpen(true);
 		panel.setId("perimeter");
 		panel.setLocation("column2");
-
+		panel.addCssClass("search-icon-perimeter");
+		
 		SearchInputFieldModel projectField = new SearchInputFieldModel("project.id", messageSource.internationalize(
 				"search.testcase.perimeter.field.title", locale), MULTISELECT);
 		panel.addField(projectField);
@@ -350,7 +360,8 @@ public class AdvancedSearchController {
 		panel.setOpen(true);
 		panel.setId("content");
 		panel.setLocation("column2");
-
+		panel.addCssClass("search-icon-content");
+		
 		SearchInputFieldModel teststepField = new SearchInputFieldModel("steps", messageSource.internationalize(
 				"search.testcase.content.teststep.label", locale), RANGE);
 		panel.addField(teststepField);
@@ -401,7 +412,8 @@ public class AdvancedSearchController {
 		panel.setOpen(true);
 		panel.setId("history");
 		panel.setLocation("column3");
-
+		panel.addCssClass("search-icon-history");
+		
 		SearchInputFieldModel createdByField = new SearchInputFieldModel("createdBy", messageSource.internationalize(
 				"search.testcase.history.createdBy.label", locale), MULTISELECT);
 		panel.addField(createdByField);
@@ -421,9 +433,14 @@ public class AdvancedSearchController {
 
 		users = advancedSearchService.findAllUsersWhoModifiedTestCases();
 		for (String user : users) {
-			modifiedByField.addPossibleValue(new SearchInputPossibleValueModel(user, user));
+			if(user == null || "".equals(user.trim())){
+				modifiedByField.addPossibleValue(new SearchInputPossibleValueModel(messageSource.internationalize(
+						"label.NeverModified", locale), ""));
+			} else {
+				modifiedByField.addPossibleValue(new SearchInputPossibleValueModel(user, user));
+			}
 		}
-
+		
 		SearchInputFieldModel modifiedOnField = new SearchInputFieldModel("modifiedOn", messageSource.internationalize(
 				"search.testcase.history.modifiedOn.label", locale), DATE);
 		panel.addField(modifiedOnField);
@@ -438,6 +455,7 @@ public class AdvancedSearchController {
 		panel.setOpen(true);
 		panel.setId("cuf");
 		panel.setLocation("column3");
+		panel.addCssClass("search-icon-cuf");
 		return panel;
 	}
 
@@ -489,9 +507,21 @@ public class AdvancedSearchController {
 		}
 
 		private String formatImportance(TestCaseImportance importance, Locale locale) {
-			return messageSource.internationalize(importance, locale);
+			
+			return importance.getLevel()+"-"+messageSource.internationalize(importance, locale);
+		}
+		
+		private String formatStatus(TestCaseStatus status, Locale locale) {
+			return status.getLevel()+"-"+messageSource.internationalize(status, locale);
 		}
 
+		private String formatNature(TestCaseNature nature, Locale locale) {
+			return messageSource.internationalize(nature, locale);
+		}
+		
+		private String formatType(TestCaseType type, Locale locale) {
+			return messageSource.internationalize(type, locale);
+		}
 		private boolean isTestCaseEditable(TestCase item) {
 			return permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", item);
 		}
@@ -514,18 +544,28 @@ public class AdvancedSearchController {
 			res.put("test-case-label", item.getName());
 			res.put("editable", isTestCaseEditable(item));
 			res.put("test-case-weight", formatImportance(item.getImportance(), locale));
+			res.put("test-case-nature", formatNature(item.getNature(), locale));
+			res.put("test-case-type", formatType(item.getType(), locale));
+			res.put("test-case-status", formatStatus(item.getStatus(), locale));
 			res.put("test-case-requirement-nb", item.getVerifiedRequirementVersions().size());
 			res.put("test-case-teststep-nb", item.getSteps().size());
 			res.put("test-case-iteration-nb", iterationService.findIterationContainingTestCase(item.getId()).size());
 			res.put("test-case-attachment-nb", item.getAllAttachments().size());
-			res.put("test-case-created-by", auditable.getCreatedBy());
-			res.put("test-case-modified-by", auditable.getLastModifiedBy());
+			res.put("test-case-created-by", formatUsername(auditable.getCreatedBy()));
+			res.put("test-case-modified-by", formatUsername(auditable.getLastModifiedBy()));
 			res.put("empty-openinterface2-holder", " ");
 			res.put("empty-opentree-holder", " ");
 			return res;
 		}
 	}
 
+	private static String formatUsername(String username){
+		if(username == null || "".equals(username.trim())){
+			return "-";
+		}
+		return username;
+	}
+	
 	public SearchInputPanelModel getCustomFielModel(Locale locale) {
 		List<CustomField> customFields = advancedSearchService
 				.findAllQueryableCustomFieldsByBoundEntityType(BindableEntity.TEST_CASE);
@@ -537,7 +577,7 @@ public class AdvancedSearchController {
 		for (CustomField customField : customFields) {
 			if (org.squashtest.tm.domain.customfield.InputType.DROPDOWN_LIST.equals(customField.getInputType())) {
 				SingleSelectField selectField = customFieldManager.findSingleSelectFieldById(customField.getId());
-				model.getFields().add(convertToSearchInputFieldModel(selectField));
+				model.getFields().add(convertToSearchInputFieldModel(selectField, locale));
 				
 			} else if (org.squashtest.tm.domain.customfield.InputType.PLAIN_TEXT.equals(customField.getInputType())) {
 				model.getFields().add(convertToSearchInputFieldModel(customField));
@@ -589,12 +629,12 @@ public class AdvancedSearchController {
 		return model;
 	}
 
-	private SearchInputFieldModel convertToSearchInputFieldModel(SingleSelectField selectField) {
+	private SearchInputFieldModel convertToSearchInputFieldModel(SingleSelectField selectField, Locale locale) {
 		List<SearchInputPossibleValueModel> possibleValues = new ArrayList<SearchInputPossibleValueModel>();
+		possibleValues.add(new SearchInputPossibleValueModel(messageSource.internationalize("label.Empty", locale), ""));
 		for (CustomFieldOption option : selectField.getOptions()) {
 			possibleValues.add(new SearchInputPossibleValueModel(option.getLabel(), option.getCode()));
 		}
-		possibleValues.add(new SearchInputPossibleValueModel("", ""));
 		SearchInputFieldModel model = new SearchInputFieldModel();
 		model.setInputType(MULTISELECT);
 		model.setTitle(selectField.getLabel());

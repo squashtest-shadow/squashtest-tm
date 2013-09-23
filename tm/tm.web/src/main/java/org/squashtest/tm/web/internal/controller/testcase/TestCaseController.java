@@ -64,6 +64,15 @@ public class TestCaseController {
 
 	@Inject
 	private Provider<TestCaseImportanceJeditableComboDataBuilder> importanceComboBuilderProvider;
+
+	@Inject
+	private Provider<TestCaseNatureJeditableComboDataBuilder> natureComboBuilderProvider;
+	
+	@Inject
+	private Provider<TestCaseStatusJeditableComboDataBuilder> statusComboBuilderProvider;
+	
+	@Inject
+	private Provider<TestCaseTypeJeditableComboDataBuilder> typeComboBuilderProvider;
 	/**
 	 * Fetches and returns a list of json test cases from their ids
 	 * 
@@ -122,4 +131,21 @@ public class TestCaseController {
 		return importanceComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
 
+	@RequestMapping(value = "/status-combo-data", method = RequestMethod.GET)
+	@ResponseBody
+	public String buildStatusComboData(Locale locale) {
+		return statusComboBuilderProvider.get().useLocale(locale).buildMarshalled();
+	}
+	
+	@RequestMapping(value = "/type-combo-data", method = RequestMethod.GET)
+	@ResponseBody
+	public String buildTypeComboData(Locale locale) {
+		return typeComboBuilderProvider.get().useLocale(locale).buildMarshalled();
+	}
+	
+	@RequestMapping(value = "/nature-combo-data", method = RequestMethod.GET)
+	@ResponseBody
+	public String buildNatureComboData(Locale locale) {
+		return natureComboBuilderProvider.get().useLocale(locale).buildMarshalled();
+	}
 }
