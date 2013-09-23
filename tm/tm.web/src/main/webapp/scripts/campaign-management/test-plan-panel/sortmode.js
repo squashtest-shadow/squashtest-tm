@@ -76,6 +76,7 @@ define(['jquery'], function($){
 
 		
 		this._enableSortMode = function(){
+			$("#test-plan-sort-mode-message").show();
 			$("#test-cases-table").find('.select-handle').removeClass('drag-handle');
 			if (this.reorderable){
 				$("#reorder-test-plan-button").squashButton('enable');
@@ -83,6 +84,7 @@ define(['jquery'], function($){
 		};
 		
 		this._disableSortMode = function(){
+			$("#test-plan-sort-mode-message").hide();
 			$("#test-cases-table").find('.select-handle').addClass('drag-handle');
 			
 			$("#reorder-test-plan-button").squashButton('disable');

@@ -319,17 +319,23 @@
 		</script>
 
 		<div class="toolbar">
+			<f:message var="tooltipSortmode" 		key="tooltips.TestPlanSortMode"/>
+			<f:message var="messageSortmode"		key="message.TestPlanSortMode"/>
 			<f:message var="associateLabel"	key="label.Add" />
 			<f:message var="removeLabel" key="label.Remove" />
 			<f:message var="assignLabel" key="label.Assign" />			
 			<f:message var="reorderLabel" key="label.Reorder" />
 			<f:message var="reorderTooltip"	 key="tooltips.ReorderTestPlan" />
 			
+			<c:if test="${ writable }">
+				<div class="left-buttons">
+				<input id="reorder-test-plan-button"	type="button" value="${reorderLabel}" 	class="button" title="${reorderTooltip}"/>
+				<span id="test-plan-sort-mode-message" class="not-displayed sort-mode-message" title="${tooltipSortmode}">${messageSortmode}</span>
+				</div>
+			</c:if>
+			
 			<c:if test="${ linkable }">
 				<input id="test-case-button" type="button" value="${associateLabel}" class="button" />
-			</c:if>
-			<c:if test="${ writable }">
-				<input id="reorder-test-plan-button"	type="button" value="${reorderLabel}" 	class="button" title="${reorderTooltip}"/>
 			</c:if>
 			<c:if test="${ linkable }">
 				<input id="remove-test-case-button" type="button"

@@ -66,14 +66,15 @@
 	<f:message var="assignLabel"			key="label.Assign" />
 	<f:message var="removeEverywhereLabel" 	key="label.RemoveTSAndIT" />
 	
-	
-	<span id="test-plan-sort-mode-message" class="not-displayed sort-mode-message" title="${tooltipSortmode}">${messageSortmode}</span>
+	<c:if test="${ reorderable }">
+		<div class="left-buttons">
+		<input id="reorder-test-plan-button"	type="button" value="${reorderLabel}" 	class="button" title="${reorderTooltip}"/>
+		<span id="test-plan-sort-mode-message" class="not-displayed sort-mode-message" title="${tooltipSortmode}">${messageSortmode}</span>
+	</div>
+	</c:if>
 
 	<c:if test="${ linkable }">
 		<input id="navigate-test-plan-manager"	type="button" value="${associateLabel}" class="button" />	
-	</c:if>
-	<c:if test="${ reorderable }">
-		<input id="reorder-test-plan-button"	type="button" value="${reorderLabel}" 	class="button" title="${reorderTooltip}"/>
 	</c:if>
 	<c:if test="${ linkable }">
 		<input id="remove-test-plan-button" 	type="button" value="${removeLabel}"	class="button" />

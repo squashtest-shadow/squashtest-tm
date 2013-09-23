@@ -324,15 +324,9 @@ img.search-image {
 
 
 #test-plan-sort-mode-message{
-	padding-right: 40px;
-	background: url('../images/icon_wizard.gif') no-repeat right center;
 	margin-right: 1em;
-	height: 20px;
 	vertical-align: middle;
-	font-size: 18px;
-	font-family: impact;
-	font-style: italic;
-	color: #D14719;	
+	color: red;	
 	cursor: help;
 }
 
