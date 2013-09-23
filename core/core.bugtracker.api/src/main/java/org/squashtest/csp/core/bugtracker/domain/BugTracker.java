@@ -68,6 +68,7 @@ public class BugTracker  {
 	private String name;
 	
 	@NotBlank
+	@org.hibernate.validator.constraints.URL
 	@Size(min = 0, max = 255)
 	private String url;
 	
