@@ -37,10 +37,12 @@ import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentContent;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
 import org.squashtest.tm.service.internal.repository.AttachmentContentDao;
 import org.squashtest.tm.service.internal.repository.AttachmentDao;
 import org.squashtest.tm.service.internal.repository.AttachmentListDao;
+import org.squashtest.tm.service.library.AdvancedSearchService;
 
 /*
  * FIXME !
@@ -66,6 +68,9 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 
 	@Inject
 	private AttachmentListDao attachmentListDao;
+	
+	@Inject
+	private AdvancedSearchService advancedSearchService; 
 
 	@Override
 	public Long addAttachment(Long attachmentListId, Attachment attachment) {
@@ -79,8 +84,14 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 		if (content != null) {
 			contentDao.persist(content);
 		}
-
+		
 		attachmentDao.persist(attachment);
+		
+		TestCase testCase = attachmentListDao.findAssociatedTestCaseIfExists(attachmentListId);
+		if(testCase != null){
+			this.advancedSearchService.reindexTestCase(testCase.getId());
+		}
+		
 		return attachment.getId();
 	}
 
@@ -123,6 +134,12 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 
 		list.removeAttachment(attachment);
 		attachmentDao.removeAttachment(attachment.getId());
+		
+		TestCase testCase = attachmentListDao.findAssociatedTestCaseIfExists(attachmentListId);
+		if(testCase != null){
+			this.advancedSearchService.reindexTestCase(testCase.getId());
+		}
+		
 	}
 
 	@Override
@@ -147,6 +164,12 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 				break;
 			}
 		}
+		
+		TestCase testCase = attachmentListDao.findAssociatedTestCaseIfExists(attachmentListId);
+		if(testCase != null){
+			this.advancedSearchService.reindexTestCase(testCase.getId());
+		}
+		
 	}
 
 	@Override

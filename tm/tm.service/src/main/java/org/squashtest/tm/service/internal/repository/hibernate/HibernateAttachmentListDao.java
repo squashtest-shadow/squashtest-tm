@@ -20,13 +20,23 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.attachment.AttachmentList;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.repository.AttachmentListDao;
 
 @Repository
-public class HibernateAttachmentListDao extends
-		HibernateEntityDao<AttachmentList> implements AttachmentListDao {
+public class HibernateAttachmentListDao extends HibernateEntityDao<AttachmentList> implements AttachmentListDao {
 
+	@Override
+	public TestCase findAssociatedTestCaseIfExists(Long attachmentListId) {
 
+		TestCase testCase = (TestCase) currentSession().createCriteria(TestCase.class)
+				.createCriteria("attachmentList")
+				.add(Restrictions.eq("id",attachmentListId))
+				.uniqueResult();
+		
+		return testCase;
+	}
 }
