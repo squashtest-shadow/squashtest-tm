@@ -203,7 +203,8 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 			for(i=0; i<fields.length; i++){
 				var type = $($(fields[i]).children()[0]).attr("data-widgetname");
 				var key = $(fields[i]).attr("id");
-				var field = $("#"+$(fields[i]).attr("id")).data("search"+type+"Widget");
+				var escapedKey = key.replace(".", "\\.");
+				var field = $("#"+escapedKey).data("search"+type+"Widget");
 				if(field && !!field.fieldvalue()){
 					var value = field.fieldvalue();
 					var jsonKey  = key;
