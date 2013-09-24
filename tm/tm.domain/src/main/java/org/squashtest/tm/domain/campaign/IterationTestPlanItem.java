@@ -283,7 +283,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 		if (referencedTestCase == null) {
 			return false;
 		}
-		return referencedTestCase.isAutomated();
+		return referencedTestCase.isAutomated() && getProject() != null && getProject().isTestAutomationEnabled();
 	}
 
 	private void resetIterationDates() {

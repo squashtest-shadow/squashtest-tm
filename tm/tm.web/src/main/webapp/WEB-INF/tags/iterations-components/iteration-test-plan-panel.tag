@@ -68,7 +68,7 @@
 	<f:message var="tooltipAddTPI"      key="tooltips.AddTPIToTP"/>
 	<f:message var="tooltipRemoveTPI"   key="tooltips.RemoveTPIFromTP"/>
 	<f:message var="tooltipAssign"      key="tooltips.AssignUserToTPI"/>
-	<f:message var="tooltipAddSuite"    key="tooltip.AddTSToTPI"/>
+	<f:message var="tooltipAddSuite"    key="tooltips.AddTSToTPI"/>
 	
 	<c:if test="${ reorderable }">
 		<span class="group left-buttons">
@@ -134,7 +134,11 @@
 		<tr>
 			<th data-def="map=entity-index, select, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>
 			<th data-def="map=project-name, sortable"><f:message key="label.project" /></th>
-			<th data-def="map=exec-mode, sortable, narrow, sClass=exec-mode">&nbsp;</th><%-- exec mode icon --%>
+			<%-- exec mode icon --%>
+			<c:if test="${ testSuite.project.testAutomationEnabled }">
+				<th data-def="map=exec-mode, sortable, narrow, sClass=exec-mode">&nbsp;</th>
+			</c:if>
+			<%-- exec mode icon --%>
 			<th data-def="map=reference, sortable"><f:message key="label.Reference"/></th>
 			<th data-def="map=tc-name, sortable, sClass=toggle-row"><f:message key="iteration.executions.table.column-header.test-case.label" /></th>
 			<th data-def="map=importance, sortable"><f:message key="iteration.executions.table.column-header.importance.label" /></th>

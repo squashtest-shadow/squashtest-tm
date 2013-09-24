@@ -99,7 +99,7 @@
 						<f:message key="execution.iteration-test-plan-row.new" /> 
 					</a> 
 								
-					<c:if test="${ testPlanItem.project.testAutomationEnabled && testPlanItem.referencedTestCase.automated}"> 
+					<c:if test="${ testPlanItem.automated}"> 
 							<a	class="button new-auto-exec" style="font-size:0.8em;" id="new-auto-exec-${testPlanItem.id}"	 data-new-exec="${newExecutionUrl}">
 								<f:message	key="execution.iteration-test-plan-row.new.auto" />
 							</a>

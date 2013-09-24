@@ -111,7 +111,10 @@
 						data-def="map=entity-index, select, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>
 					<th data-def="map=project-name, sortable"><f:message
 							key="label.project" /></th>
+					<%-- exec mode icon --%>
+					<c:if test="${ testSuite.project.testAutomationEnabled }">
 					<th data-def="map=exec-mode, sortable, narrow, sClass=exec-mode">&nbsp;</th>
+					</c:if>
 					<%-- exec mode icon --%>
 					<th data-def="map=reference, sortable"><f:message
 							key="label.Reference" /></th>

@@ -108,7 +108,7 @@
 						<a class="button new-exec" style="font-size:0.8em;" id="new-exec-${ testPlanItem.id }"  data-new-exec="${ newExecutionUrl }">
 							<f:message key="execution.iteration-test-plan-row.new" />
 						</a> 
-						<c:if test="${testPlanItem.referencedTestCase.automated}"> 
+						<c:if test="${testPlanItem.automated}"> 
 						<a	class="button new-auto-exec" style="font-size:0.8em;" id="new-auto-exec-${ testPlanItem.id }"  data-new-exec="${ newExecutionUrl }">
 							<f:message key="execution.iteration-test-plan-row.new.auto" />
 						</a>
