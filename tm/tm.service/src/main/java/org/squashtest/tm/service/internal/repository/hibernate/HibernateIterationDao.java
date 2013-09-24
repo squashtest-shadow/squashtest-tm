@@ -45,10 +45,10 @@ import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
-import org.squashtest.tm.service.internal.repository.ImportanceSortHelper;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 
 @Repository
@@ -294,13 +294,17 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 		
 		StringBuilder hqlbuilder = new StringBuilder(HQL_INDEXED_TEST_PLAN);
 		
-		//check if we want to filter on the user login
+		// check if we want to filter on the user login
 		if (filtering.isDefined()){
 			hqlbuilder.append("and User.login = :userLogin ");
 		}
 		
-		ImportanceSortHelper helper = new ImportanceSortHelper();
-		SortingUtils.addOrder(hqlbuilder, helper.modifyImportanceSortInformation(sorting));
+		// tune the sorting to make hql happy
+		LevelImplementorSorter wrapper= new LevelImplementorSorter(sorting);
+		wrapper.map("TestCase.importance", TestCaseImportance.class);
+		wrapper.map("IterationTestPlanItem.executionStatus", ExecutionStatus.class);
+		
+		SortingUtils.addOrder(hqlbuilder, wrapper);
 		
 		Query query = currentSession().createQuery(hqlbuilder.toString());
 		

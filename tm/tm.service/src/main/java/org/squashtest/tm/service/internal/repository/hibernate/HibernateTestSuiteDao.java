@@ -45,11 +45,11 @@ import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomTestSuiteDao;
-import org.squashtest.tm.service.internal.repository.ImportanceSortHelper;
 
 /*
  * todo : make it a dynamic call
@@ -251,8 +251,10 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 			hqlbuilder.append("and User.login = :userLogin ");
 		}
 		
-		ImportanceSortHelper helper = new ImportanceSortHelper();
-		SortingUtils.addOrder(hqlbuilder, helper.modifyImportanceSortInformation(sorting));
+		// tune the sorting to make hql happy
+		LevelImplementorSorter wrapper= new LevelImplementorSorter(sorting);
+		wrapper.map("TestCase.importance", TestCaseImportance.class);
+		wrapper.map("IterationTestPlanItem.executionStatus", ExecutionStatus.class);
 		
 		Query query = currentSession().createQuery(hqlbuilder.toString());
 		

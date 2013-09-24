@@ -91,12 +91,14 @@ class IterationTestPlanManagerServiceIT extends DbunitServiceSpecification {
 		
 		where :
 		
-		attributes										|	expectedItemIds
-		"TestCase.name asc"								|	[280, 277, 276, 275, 274, 279, 278, 269, 268, 267, 266, 273, 272, 271, 270]
-		"suitenames asc"								|	[[266, 269, 272, 275], [267, 276, 278], 277, 268, [270, 273], [274, 279], [271, 280]]
-		"TestCase.importance asc"						|	[[266, 272, 275, 277], [269, 273, 280], [268, 270, 276, 278], [267, 271, 274, 279]]
-		"suitenames desc, TestCase.importance asc"		|	[280, 271, [274, 279], 273, 270, 268, 277, [276, 278], 267, [266, 272, 275], 269]
-		"TestCase.importance asc, TestCase.name desc"	|	[272, 266, 275, 277, 273, 269, 280, 270, 268, 278, 276, 271, 267, 279, 274]
+		attributes																|	expectedItemIds
+		"TestCase.name asc"														|	[280, 277, 276, 275, 274, 279, 278, 269, 268, 267, 266, 273, 272, 271, 270]
+		"suitenames asc"														|	[[266, 269, 272, 275], [267, 276, 278], 277, 268, [270, 273], [274, 279], [271, 280]]
+		"TestCase.importance asc"												|	[[266, 272, 275, 277], [269, 273, 280], [268, 270, 276, 278], [267, 271, 274, 279]]
+		"IterationTestPlanItem.executionStatus asc"								|	[270, [266, 271, 273, 274, 280], [267, 272, 279], [268, 275, 277], [269, 276, 278]]
+		"suitenames desc, TestCase.importance asc"								|	[280, 271, [274, 279], 273, 270, 268, 277, [276, 278], 267, [266, 272, 275], 269]
+		"TestCase.importance asc, TestCase.name desc"							|	[272, 266, 275, 277, 273, 269, 280, 270, 268, 278, 276, 271, 267, 279, 274]
+		"TestCase.importance asc, IterationTestPlanItem.executionStatus desc"	|	[[275, 277], 272, 266, 269, [273, 280], [276, 278], 268, 270, [267, 279], [271, 274]]
 	}
 	
 

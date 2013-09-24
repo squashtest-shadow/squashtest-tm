@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
+import org.squashtest.tm.domain.Level;
 
 /**
  *
@@ -96,12 +97,10 @@ import org.squashtest.tm.core.foundation.i18n.Internationalizable;
  * 
  * 
  */
-public enum ExecutionStatus implements Internationalizable {
+public enum ExecutionStatus implements Internationalizable, Level {
 	
 
-	
-	
-	UNTESTABLE() {
+	UNTESTABLE(8) {
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 			return needsComputation();
@@ -118,7 +117,7 @@ public enum ExecutionStatus implements Internationalizable {
 		}
 	},
 	
-	BLOCKED() {
+	BLOCKED(6) {
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 			return ExecutionStatus.BLOCKED;
@@ -135,7 +134,7 @@ public enum ExecutionStatus implements Internationalizable {
 		}
 	},
 
-	FAILURE() {
+	FAILURE(5) {
 		@Override
 		// the case 'former exec status blocked' is already ruled out in the trivialDeductions
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
@@ -153,7 +152,7 @@ public enum ExecutionStatus implements Internationalizable {
 		}
 	},
 
-	SUCCESS() {
+	SUCCESS(3) {
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 			ExecutionStatus newStatus;
@@ -180,7 +179,7 @@ public enum ExecutionStatus implements Internationalizable {
 		}
 	},
 
-	RUNNING() {
+	RUNNING(2) {
 		
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
@@ -209,7 +208,7 @@ public enum ExecutionStatus implements Internationalizable {
 		}
 	},
 
-	READY() {
+	READY(1) {
 		
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
@@ -235,7 +234,7 @@ public enum ExecutionStatus implements Internationalizable {
 		}
 	},
 	
-	WARNING(){
+	WARNING(4){
 		//supposed to never happen because this operation requires canonical statuses and TA_WARNING is not one of them.
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus,ExecutionStatus formerStepStatus) {
@@ -255,7 +254,7 @@ public enum ExecutionStatus implements Internationalizable {
 		}
 	},
 	
-	ERROR(){
+	ERROR(7){
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 			throw new UnsupportedOperationException("ExecutionStatus.TA_ERROR#resolveStatus(...) should never have been invoked. That exception cleary results from faulty logic. If you read this message please "+
@@ -286,6 +285,7 @@ public enum ExecutionStatus implements Internationalizable {
 	private static final Set<ExecutionStatus> TERMINAL_STATUSES;
 	private static final Set<ExecutionStatus> NON_TERMINAL_STATUSES;
 	
+	private final int level;
 	
 	static{
 		
@@ -315,6 +315,10 @@ public enum ExecutionStatus implements Internationalizable {
 		
 		NON_TERMINAL_STATUSES = Collections.unmodifiableSet(nonTerms);
 		
+	}
+	
+	private ExecutionStatus(int level){
+		this.level = level;
 	}
 	
 	// **************************** SURROGATES SPECIAL, INNER VALUES OF EXECUTION STATUS *******************
@@ -350,7 +354,7 @@ public enum ExecutionStatus implements Internationalizable {
 	
 	public abstract ExecutionStatus getCanonicalStatus();
 	
-	
+
 	/* **************************** static methods ***************************** */
 
 	public static List<ExecutionStatus> toCanonicalStatusList(List<ExecutionStatus> nonCanonical){
@@ -375,6 +379,9 @@ public enum ExecutionStatus implements Internationalizable {
 	
 	/* **************************** public instance methods ***************************** */
 
+	public int getLevel(){
+		return level;
+	}
 
 
 	/***

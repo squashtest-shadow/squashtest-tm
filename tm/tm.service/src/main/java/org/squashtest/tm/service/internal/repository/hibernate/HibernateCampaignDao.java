@@ -51,12 +51,12 @@ import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.campaign.IndexedCampaignTestPlanItem;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
-import org.squashtest.tm.service.internal.repository.ImportanceSortHelper;
 
 @Repository
 public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implements CampaignDao {
@@ -119,10 +119,12 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 	}
 	
 	private List<Object[]> _findIndexedTestPlan(final long campaignId, PagingAndMultiSorting sorting){
+		
 		StringBuilder hqlbuilder = new StringBuilder(HQL_INDEXED_TEST_PLAN);
 
-		ImportanceSortHelper helper = new ImportanceSortHelper();
-		SortingUtils.addOrder(hqlbuilder, helper.modifyImportanceSortInformation(sorting));
+		// tune the sorting to make hql happy
+		LevelImplementorSorter wrapper= new LevelImplementorSorter(sorting);
+		wrapper.map("TestCase.importance", TestCaseImportance.class);
 		
 		Query query = currentSession().createQuery(hqlbuilder.toString());
 		
