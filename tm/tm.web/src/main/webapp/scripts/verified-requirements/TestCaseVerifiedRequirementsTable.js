@@ -45,7 +45,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 						return verified && VRTS.linkable;
 					},
 					tdSelector : "td.delete-button",
-					uiIcon : "ui-icon-minus",
+					uiIcon : "ui-icon-trash",
 					onClick : self.removeRowRequirementVersion
 				} ]
 			};

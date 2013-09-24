@@ -282,7 +282,7 @@ define(['jquery', 'squash.translator', './exec-runner', './sortmode',
 							jqnew.find('.delete-execution-table-button').button({
 								text : false,
 								icons : {
-									primary : "ui-icon-minus"
+									primary : "ui-icon-trash"
 								}
 							})
 							.on('click', function(){

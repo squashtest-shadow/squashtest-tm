@@ -769,7 +769,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		cells.find('a').button({
 			text : false,
 			icons : {
-				primary : "ui-icon-minus"
+				primary : "ui-icon-trash"
 			}
 		});
 

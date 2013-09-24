@@ -343,7 +343,7 @@ function decorateDeleteButtons(buttons) {
 	buttons.button({
 		text : false,
 		icons : {
-			primary : "ui-icon-minus"
+			primary : "ui-icon-trash"
 		}
 	});
 }

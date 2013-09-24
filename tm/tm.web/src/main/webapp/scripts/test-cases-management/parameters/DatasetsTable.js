@@ -74,7 +74,7 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/util/StringUtil
 								tooltip : self.settings.language.remove,
 								cssClass : "",
 								tdSelector : "td.delete-button",
-								uiIcon : "ui-icon-minus",
+								uiIcon : "ui-icon-trash",
 								onClick : this.removeRowDataset
 							} ]
 						};

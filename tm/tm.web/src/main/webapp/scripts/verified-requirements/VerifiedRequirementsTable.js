@@ -64,7 +64,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 					tooltip : VRTS.messages.remove,
 					cssClass : "",
 					tdSelector : "td.delete-button",
-					uiIcon : "ui-icon-minus",
+					uiIcon : "ui-icon-trash",
 					onClick : this.removeRowRequirementVersion
 				} ];
 			}
