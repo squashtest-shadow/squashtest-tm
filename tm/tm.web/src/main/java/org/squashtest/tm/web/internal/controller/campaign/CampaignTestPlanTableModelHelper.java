@@ -59,11 +59,12 @@ final class CampaignTestPlanTableModelHelper extends DataTableModelBuilder<Index
 		TestCase testCase = item.getReferencedTestCase();
 		String user = (item.getUser() != null) ? item.getUser().getLogin() : formatNoData(locale);
 		Long assigneeId = (item.getUser() != null) ? item.getUser().getId() : User.NO_USER_ID;
-
+		String reference = (testCase.getReference().isEmpty()) ? formatNoData(locale) : testCase.getReference();
+		
 		result.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 		result.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, index);
 		result.put("project-name", testCase.getProject().getName());
-		result.put("reference", testCase.getReference());
+		result.put("reference", reference);
 		result.put("tc-name", testCase.getName());
 		result.put("assigned-user", user);
 		result.put("assigned-to", assigneeId);

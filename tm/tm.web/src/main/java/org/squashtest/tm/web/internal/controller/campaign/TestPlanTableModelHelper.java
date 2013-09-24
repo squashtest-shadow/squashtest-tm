@@ -78,7 +78,11 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 			projectName = item.getReferencedTestCase().getProject().getName();
 			testCaseName = item.getReferencedTestCase().getName();
 			tcId = item.getReferencedTestCase().getId();
-			reference = item.getReferencedTestCase().getReference();
+			if(item.getReferencedTestCase().getReference().isEmpty()){
+				reference = formatNoData(locale);
+			}else{
+				reference = item.getReferencedTestCase().getReference();
+			}
 			importance = messageSource.internationalize(item.getReferencedTestCase().getImportance(), locale);
 		}
 
@@ -89,7 +93,7 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 		}
 
 		if (item.getTestSuites().isEmpty()) {
-			testSuiteNameList = formatNone(locale);
+			testSuiteNameList = formatNoData(locale);
 		} else {
 			testSuiteNameList = TestSuiteHelper.buildEllipsedSuiteNameList(item.getTestSuites(), 20);
 		}
@@ -129,7 +133,4 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 		return messageSource.itemDeleted(locale);
 	}
 
-	private String formatNone(Locale locale) {
-		return messageSource.internationalize("squashtm.none.f", locale);
-	}
 }
