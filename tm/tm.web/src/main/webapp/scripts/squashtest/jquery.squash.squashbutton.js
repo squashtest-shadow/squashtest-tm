@@ -70,7 +70,7 @@
 	 */
 	$.extend($.squash, {
 		decorateButtons : function() {
-			$("a.button, input:submit.button, input:button.button")
+			$("a.button, input:submit.button, input:button.button, button.button")
 					.squashButton();
 		}
 	});
@@ -81,7 +81,7 @@
 	 */
 	$.fn.extend({
 		decorateButtons : function() {
-			$(this).find("a.button, input:submit.button, input:button.button")
+			$(this).find("a.button, input:submit.button, input:button.button, button.button")
 					.squashButton();
 		}
 	});

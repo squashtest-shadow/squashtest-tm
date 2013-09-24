@@ -390,14 +390,7 @@ define([ "jquery", "squash.table-collapser", "custom-field-values", "squash.tran
 	// ************************************ toolbar utility functions
 	// *************************
 
-	function decorateStepTableButton(selector, cssclass) {
-		$(selector).button({
-			icons : {
-				primary : cssclass
-			}
-		});
-	}
-
+	
 	// *************************** add step popup
 	// ***************************
 
@@ -434,8 +427,7 @@ define([ "jquery", "squash.table-collapser", "custom-field-values", "squash.tran
 
 	function initAddTestStepDialog(language, urls) {
 
-		decorateStepTableButton("#add-test-step-button", "ui-icon-plusthick");
-
+		
 		function postStep(data) {
 			return $.ajax({
 				url : urls.addStep,
@@ -507,9 +499,7 @@ define([ "jquery", "squash.table-collapser", "custom-field-values", "squash.tran
 
 		var table = $("#test-steps-table").squashTable();
 
-		decorateStepTableButton("#copy-step", "ui-icon-clipboard");
-		decorateStepTableButton("#paste-step", "ui-icon-copy");
-
+		
 		$("#copy-step").bind('click', function() {
 			var stepIds = table.getSelectedIds();
 			if (!stepIds.length) {
@@ -581,8 +571,7 @@ define([ "jquery", "squash.table-collapser", "custom-field-values", "squash.tran
 
 	function initDeleteAllStepsButtons(language, urls) {
 
-		decorateStepTableButton("#delete-all-steps-button", "ui-icon-minusthick");
-
+	
 		$("#delete-all-steps-button").bind(
 				'click',
 				function() {
@@ -609,8 +598,7 @@ define([ "jquery", "squash.table-collapser", "custom-field-values", "squash.tran
 
 	function initCallStepButton(urls) {
 
-		decorateStepTableButton("#add-call-step-button", "ui-icon-arrowthickstop-1-e");
-
+	
 		$("#add-call-step-button").click(function() {
 			var url = document.URL;
 			$.cookie('call-step-manager-referer', url, {
@@ -674,8 +662,7 @@ define([ "jquery", "squash.table-collapser", "custom-field-values", "squash.tran
 
 	function initCollapser(language, urls, isWritable) {
 
-		decorateStepTableButton("#collapse-steps-button", "ui-icon-zoomout");
-
+	
 		var collapser;
 
 		var collapseButton = $('#collapse-steps-button');
@@ -693,19 +680,19 @@ define([ "jquery", "squash.table-collapser", "custom-field-values", "squash.tran
 		// button handlers
 
 		var buttonOpenHandler = $.proxy(function() {
-			this.button('option', 'icons', {
+			this.squashButton('option', 'icons', {
 				primary : 'ui-icon-zoomout'
 			});
 			this.attr('title', language.btnCollapse);
-			this.button('option', 'label', language.btnCollapse);
+			this.squashButton('option', 'label', language.btnCollapse);
 		}, collapseButton);
 
 		var buttonCloseHandler = $.proxy(function() {
-			$this.button('option', 'icons', {
+			$this.squashButton('option', 'icons', {
 				primary : 'ui-icon-zoomin'
 			});
 			$this.attr('title', language.btnExpand);
-			$this.button('option', 'label', language.btnExpand);
+			$this.squashButton('option', 'label', language.btnExpand);
 
 		}, collapseButton);
 
@@ -742,7 +729,8 @@ define([ "jquery", "squash.table-collapser", "custom-field-values", "squash.tran
 	// *********************************
 
 	function init(settings) {
-
+		$.squash.decorateButtons();
+		
 		var language = settings.language;
 		var urls = makeTableUrls(settings);
 		var permissions = settings.permissions;

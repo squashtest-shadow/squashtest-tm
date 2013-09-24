@@ -43,25 +43,25 @@
 	<div class="toolbar">
 
 		<span class="group"><button id="collapse-steps-button"
-				class="button test-step-toolbar-button" href="#" th:text="#{test-case.step.button.collapse.label}">collapse</button>
+				class="button test-step-toolbar-button" data-icon="ui-icon-zoomout"  th:text="#{test-case.step.button.collapse.label}">collapse</button>
 		</span>
 		
 		<span class="group" th:if="${isWritable}">
 			<button id="add-test-step-button"
-				    class="test-step-toolbar-button" 
-				    href="#"
+					data-icon="ui-icon-plusthick"
+				    class="button test-step-toolbar-button" 				    
 				    th:text="#{test-case.step.button.add.label}">
 				    add a step
 			</button>
 			<button id="delete-all-steps-button"
-				     class="test-step-toolbar-button" 
-				     href="#"
+					data-icon="ui-icon-trash"
+				     class="button test-step-toolbar-button" 				     
 				     th:text="#{test-case.step.button.remove.label}">
 					 remove selected steps
 			</button>
 			<button id="add-call-step-button" 
-					class="test-step-toolbar-button"
-					href="#" 
+					data-icon="ui-icon-arrowthickstop-1-e"
+					class="button test-step-toolbar-button"					
 					th:text="#{test-case.step.button.call.label}">
 					call a test case
 			</button> 
@@ -69,14 +69,14 @@
 		
 		<span class="group" th:if="${isWritable}">
 			<button id="copy-step"
-					class="test-step-toolbar-button" 
-					href="#"
+					data-icon="ui-icon-clipboard"
+					class="button test-step-toolbar-button" 
 					th:text="#{test-case.step.button.copy.label}">
 					copy step(s)
 			</button>
 			<button id="paste-step" 
-					class="test-step-toolbar-button" 
-					href="#"
+					data-icon="ui-icon-copy"
+					class="button test-step-toolbar-button" 
 					th:text="#{test-case.step.button.paste.label}">
 					paste step(s)
 			</button> 

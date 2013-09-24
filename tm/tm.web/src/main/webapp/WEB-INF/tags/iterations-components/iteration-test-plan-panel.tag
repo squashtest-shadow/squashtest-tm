@@ -65,40 +65,42 @@
 	<f:message var="removeLabel" 		key="label.Remove" />
 	<f:message var="assignLabel"		key="label.Assign" />
 	<f:message var="manageTS" 			key='menu.test-suites.button.main' />
+	<f:message var="tooltipAddTPI"      key="tooltips.AddTPIToTP"/>
+	<f:message var="tooltipRemoveTPI"   key="tooltips.RemoveTPIFromTP"/>
+	<f:message var="tooltipAssign"      key="tooltips.AssignUserToTPI"/>
+	<f:message var="tooltipAddSuite"    key="tooltip.AddTSToTPI"/>
 	
 	<c:if test="${ reorderable }">
-		<div class="left-buttons">
-		<input id="reorder-test-plan-button"	type="button" value="${reorderLabel}" 	class="button" title="${reorderTooltip}"/>
+		<span class="group left-buttons">
+		<button id="reorder-test-plan-button" class="button" title="${reorderTooltip}" data-icon="ui-icon-refresh">${reorderLabel}</button>
 		<span id="test-plan-sort-mode-message" class="not-displayed sort-mode-message" title="${tooltipSortmode}">${messageSortmode}</span>
-		</div>
+		</span>
 	</c:if>
 	
 	
-	<c:if test="${ linkable }">
-		<input id="navigate-test-plan-manager"	type="button" value="${associateLabel}" class="button" />	
-	</c:if>
-	
-	<c:if test="${ linkable }">
-		<input id="remove-test-plan-button" 		type="button" value="${removeLabel}"	class="button" />
-		<input id="assign-users-button" 			type="button" value="${assignLabel}" 	class="button" />
-		
-		
-		<input id="manage-test-suites-buttonmenu" 	type="button" value="${manageTS}" 		class="buttonmenu" />
+	<c:if test="${ linkable }">		
+		<button id="manage-test-suites-buttonmenu" 	data-icon="ui-icon-tag" 	title="${tooltipAddSuite}"	class="buttonmenu" >${manageTS}</button>
 		<ul id="manage-test-suites-menu" class="not-displayed">
 			
 			<li class="suite-manager-controls suite-manager-newsection ui-menu-item">
-				<input type="text" id="suite-manager-menu-input"/>
+				<input type="text" id="suite-manager-menu-input" />
 				<button id="suite-manager-menu-button" class="button"><f:message key="label.create"/></button>
 			</li>
 			
 			<li class="suite-manager-buttonpane suite-manager-newsection ui-menu-item">
 				<div class="snap-right">
-					<input type="button" id="suite-manager-menu-ok-button" 		role="button" class="button" value="${okLabel}"/>
+					<input type="button" id="suite-manager-menu-ok-button" 		role="button" class="button" value="${okLabel}" />
 					<input type="button" id="suite-manager-menu-cancel-button"	role="button" class="button" value="${cancelLabel}" />
 				</div>
 			</li> 		 
 		</ul>
-		
+		<span class="group">
+		<button id="assign-users-button" data-icon="ui-icon-person" class="button" title="${tooltipAssign}" >${assignLabel}</button>
+		</span>
+		<span class="group">
+		<button id="navigate-test-plan-manager"	data-icon="ui-icon-plusthick" class="button" title="${tooltipAddTPI}">${associateLabel}</button>
+		<button id="remove-test-plan-button" data-icon="ui-icon-trash" class="button" title="${tooltipRemoveTPI}" >${removeLabel}</button>
+		</span>
 	</c:if>
 </div>
 

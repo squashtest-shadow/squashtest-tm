@@ -159,6 +159,7 @@
 	
 		
 		<c:if test="${ writable }">
+		
 			<input type="button"
 				value='<f:message key="label.Rename" />'
 				id="rename-campaign-button" />
@@ -304,10 +305,11 @@
 			require([ "jquery", "domReady", "jqueryui" ], function ($, domReady) {
 				/* simple initialization for simple components */
 				domReady(function() {
-					$("#test-case-button").button().click(function() {
-						document.location.href = "${testCaseManagerUrl}";
+					
+					$("#test-case-button").bind("click", function(){
+						document.location.href = "${testCaseManagerUrl}";						
 					});
-					$("#remove-test-case-button").button();
+					
 					
 					<c:if test="${hasCUF}">
 					<%-- loading the custom field panel --%>
@@ -319,29 +321,32 @@
 		</script>
 
 		<div class="toolbar">
-			<f:message var="tooltipSortmode" 		key="tooltips.TestPlanSortMode"/>
-			<f:message var="messageSortmode"		key="message.TestPlanSortMode"/>
-			<f:message var="associateLabel"	key="label.Add" />
+			<f:message var="tooltipSortmode" key="tooltips.TestPlanSortMode" />
+			<f:message var="messageSortmode" key="message.TestPlanSortMode" />
+			<f:message var="associateLabel" key="label.Add" />
 			<f:message var="removeLabel" key="label.Remove" />
-			<f:message var="assignLabel" key="label.Assign" />			
+			<f:message var="assignLabel" key="label.Assign" />
 			<f:message var="reorderLabel" key="label.Reorder" />
-			<f:message var="reorderTooltip"	 key="tooltips.ReorderTestPlan" />
-			
+			<f:message var="reorderTooltip" key="tooltips.ReorderTestPlan" />
+			<f:message var="tooltipAddTPI" key="tooltips.AddTPIToTP" />
+			<f:message var="tooltipRemoveTPI" key="tooltips.RemoveTPIFromTP" />
+			<f:message var="tooltipAssign" key="tooltips.AssignUserToTPI" />
+
 			<c:if test="${ writable }">
-				<div class="left-buttons">
-				<input id="reorder-test-plan-button"	type="button" value="${reorderLabel}" 	class="button" title="${reorderTooltip}"/>
+				<span class="group left-buttons">
+				<button id="reorder-test-plan-button" class="button" data-icon="ui-icon-refresh" title="${reorderTooltip}">${reorderLabel}</button>
 				<span id="test-plan-sort-mode-message" class="not-displayed sort-mode-message" title="${tooltipSortmode}">${messageSortmode}</span>
-				</div>
+				</span>
 			</c:if>
 			
 			<c:if test="${ linkable }">
-				<input id="test-case-button" type="button" value="${associateLabel}" class="button" />
-			</c:if>
-			<c:if test="${ linkable }">
-				<input id="remove-test-case-button" type="button"
-					value="${removeLabel}" class="button" />
-				<input id="assign-test-case-button" type="button"
-					value="${assignLabel}" class="button" />
+			<span class="group">
+				<button id="assign-test-case-button" class="button" data-icon="ui-icon-person" title="${tooltipAssign}" >${assignLabel}</button>
+			</span>
+			<span class="group">
+				<button id="test-case-button" class="button" data-icon="ui-icon-plusthick" title="${tooltipAddTPI}">${associateLabel}</button>
+				<button id="remove-test-case-button" class="button" data-icon="ui-icon-trash" title="${tooltipRemoveTPI}">${removeLabel}</button>
+			</span>
 			</c:if>
 		</div>
 		<div class="table-tab-wrap">
