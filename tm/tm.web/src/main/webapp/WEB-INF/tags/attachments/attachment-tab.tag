@@ -43,7 +43,7 @@
 			<input id="add-attachment-button" type="button" value="${uploadAttachment}" class="button"/>
 			<f:message var="renameAttachment" key="label.Rename" />
 			<input type="button" value="${renameAttachment}" id="rename-attachment-button" class="button" />
-			<f:message var="removeAttachment" key="label.Remove" />
+			<f:message var="removeAttachment" key="label.Delete" />
 			<input type="button" value="${removeAttachment}" id="delete-attachment-button" class="button" />
 	</c:if>
 	</div>

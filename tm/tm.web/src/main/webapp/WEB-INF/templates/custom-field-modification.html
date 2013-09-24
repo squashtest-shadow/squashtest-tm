@@ -156,7 +156,7 @@
             <div id="cuf-toolbar" class="toolbar-class ui-corner-all ">
               <div class="toolbar-button-panel">
                 <input type="button" th:value="#{ label.Rename }" value="Rename" id="rename-cuf-button" class="button" />
-                <input type="button" th:value="#{ label.Remove }" value="Remove" id="delete-cuf-button" class="button" />
+                <input type="button" th:value="#{ label.Delete }" value="Delete" id="delete-cuf-button" class="button" />
               </div>
             </div>
             <br /> <br />
@@ -259,7 +259,7 @@
           </div>
 
           <div id="delete-warning-pane" class="not-displayed popup-dialog" title="Delete"
-            th:title="#{label.Remove}">
+            th:title="#{label.Delete}">
             <div class="alert">
               <span th:text="#{message.customField.remove}">Do you wanna remove custom field ?</span>
             </div>

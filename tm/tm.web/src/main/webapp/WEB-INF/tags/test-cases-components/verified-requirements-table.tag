@@ -86,7 +86,7 @@
 				messages : {
 					cancel : "<f:message key='label.Cancel' />",
 					ok : "<f:message key='rich-edit.button.ok.label' />",
-					remove : "<f:message key='label.Remove'/>",
+					remove : "<f:message key='label.Delete'/>",
 				},
 			};
 		</script>

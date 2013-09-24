@@ -168,7 +168,7 @@
 		
 		<c:if test="${ deletable }">
 			<input type="button"
-				value='<f:message key="label.Remove" />'
+				value='<f:message key="label.Delete" />'
 				id="delete-campaign-button" />
 		</c:if>
 	</div>

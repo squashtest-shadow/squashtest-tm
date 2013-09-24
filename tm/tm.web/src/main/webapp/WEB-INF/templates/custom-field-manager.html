@@ -39,7 +39,7 @@
   			ajaxSource : /*[[ @{/administration/custom-fields} ]]*/"http://localhost:8080/squash/administration/custom-fields",
   			confirmLabel: /*[[ #{label.Confirm} ]]*/ 'Confirmer',
 			cancelLabel: /*[[ #{label.Cancel} ]]*/ 'Annuler',
-			deleteTooltip: /*[[ #{label.Remove} ]]*/ 'Remove',
+			deleteTooltip: /*[[ #{label.Delete} ]]*/ 'Delete',
 			deleteConfirmMessage : /*[[ #{message.customField.remove} ]]*/ 'Remove',
 			customFieldUrl : /*[[ @{/custom-fields} ]]*/ "http://localhost:8080/squash/custom-fields",
   		},
@@ -289,7 +289,7 @@
       	</script>
       	
         <script id="remove-cell-tpl" type="text/x-handlebars-template" th:inline="text">
-				<a  data-value="{{option}}" th:text="#{label.Remove}">Remove</a>
+				<a  data-value="{{option}}" th:text="#{label.Delete}">Delete</a>
 			</script>
 
         <script id="default-cell-tpl" type="text/x-handlebars-template" th:inline="text">
