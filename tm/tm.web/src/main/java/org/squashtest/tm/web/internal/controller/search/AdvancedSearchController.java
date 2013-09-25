@@ -247,10 +247,12 @@ public class AdvancedSearchController {
 
 		Map<String, String> map = importanceComboBuilderProvider.get().useLocale(locale).buildMap();
 
+		int i=1;
 		for (Entry<String, String> entry : map.entrySet()) {
 			SearchInputPossibleValueModel importanceOption = new SearchInputPossibleValueModel(entry.getValue(),
-					entry.getKey());
+					i+"-"+entry.getKey());
 			importanceField.addPossibleValue(importanceOption);
+			i++;
 		}
 
 		SearchInputFieldModel natureField = new SearchInputFieldModel("nature", messageSource.internationalize(
@@ -283,10 +285,12 @@ public class AdvancedSearchController {
 
 		map = statusComboBuilderProvider.get().useLocale(locale).buildMap();
 
+		int j=1;
 		for (Entry<String, String> entry : map.entrySet()) {
 			SearchInputPossibleValueModel statusOption = new SearchInputPossibleValueModel(entry.getValue(),
-					entry.getKey());
+					j+"-"+entry.getKey());
 			statusField.addPossibleValue(statusOption);
+			j++;
 		}
 		return panel;
 	}
