@@ -24,12 +24,14 @@
 <%@ attribute name="campaignUrl" required="true" description="the url to the campaign that hold all of these test cases" %>
 <%@ attribute name="batchRemoveButtonId" required="true" description="html id of button for batch removal of test cases" %>
 <%@ attribute name="editable" type="java.lang.Boolean" description="Right to edit content. Default to false." %>
+<%@ attribute name="campaign" type="java.lang.Object" description="The campaign." %>
 
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <c:url var="testCaseUrl" value="/test-cases/{tc-id}/info" />
+<c:url var="testplanUrl"  value="/campaigns/${campaign.id}/test-plan" />
 <c:url var="dtMessagesUrl" value="/datatables/messages" />
 
 <%-- be careful that the variable below is a 'var', not a 'url'. It's so because 'campaignUrl' is already an URL. Just another detail to get straight one day... --%>
@@ -38,7 +40,7 @@
 <table id="test-cases-table" data-def="ajaxsource=${tablemodel}, language=${dtMessagesUrl}, hover">
 	<thead>
 		<tr>
-			<th data-def="map=entity-index, select,center">#</th>
+			<th data-def="map=entity-index, select,center, sClass=drag-handle">#</th>
 			<th data-def="map=project-name"><f:message key="label.project" /></th>
 			<th data-def="map=reference"><f:message key="label.Reference"/></th>
 			<th data-def="map=tc-name, link=${testCaseUrl}"><f:message key="test-case.name.label" /></th>
@@ -55,9 +57,21 @@
 <script type="text/javascript">
 
 	$(function() {
-	
+			
+		 var squashSettings = {
+			enableDnD : true,
+			functions : {
+				dropHandler : function(dropData){
+					var ids = dropData.itemIds.join(',');
+					var url	= "${testplanUrl}/" + ids + '/position/' + dropData.newIndex;		
+					$.post(url, function(){
+						$("#test-cases-table").squashTable().refresh();
+					});
+				}
+			}
+		}
 		
-		 $( '#test-cases-table' ).squashTable({}, {});
+		$("#test-cases-table").squashTable({}, squashSettings);
 		
 		<%-- selected test-case removal --%>
 		$( '#${ batchRemoveButtonId }' ).click(function() {

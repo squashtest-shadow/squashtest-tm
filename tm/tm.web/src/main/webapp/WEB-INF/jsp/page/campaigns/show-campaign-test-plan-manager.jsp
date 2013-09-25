@@ -129,7 +129,8 @@
 		<aggr:campaign-test-plan-manager-table 
 			campaignUrl="${ campaignUrl }" 
 			batchRemoveButtonId="remove-items-button" 
-			editable="${editable}"/>
+			editable="${editable}"
+			campaign="${campaign}"/>
 		
 	</jsp:attribute>
 </layout:tree-picker-layout>

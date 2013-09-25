@@ -186,12 +186,10 @@ public class CampaignTestPlanManagerController {
 		testPlanManager.assignUserToTestPlanItems(itemsIds, campaignId, userId);
 	}
 
-	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/move", method = RequestMethod.POST, 
-			params = {ITEMS_IDS_REQUEST_PARAM, "newIndex" })
+	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/{itemIds}/position/{newIndex}", method = RequestMethod.POST)
 	@ResponseBody
-	public void moveTestPlanItems(@PathVariable long campaignId, @RequestParam("newIndex") int newIndex,
-			@RequestParam(ITEMS_IDS_REQUEST_PARAM) List<Long> itemsIds) {
-		testPlanManager.moveTestPlanItems(campaignId, newIndex, itemsIds);
+	public void moveTestPlanItems(@PathVariable("campaignId") long campaignId, @PathVariable("newIndex") int newIndex, @PathVariable("itemIds") List<Long> itemIds) {
+		testPlanManager.moveTestPlanItems(campaignId, newIndex, itemIds);
 	}
 	
 	

@@ -126,6 +126,8 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 		LevelImplementorSorter wrapper= new LevelImplementorSorter(sorting);
 		wrapper.map("TestCase.importance", TestCaseImportance.class);
 		
+		SortingUtils.addOrder(hqlbuilder, wrapper);
+		
 		Query query = currentSession().createQuery(hqlbuilder.toString());
 		
 		query.setParameter("campaignId", campaignId, LongType.INSTANCE);

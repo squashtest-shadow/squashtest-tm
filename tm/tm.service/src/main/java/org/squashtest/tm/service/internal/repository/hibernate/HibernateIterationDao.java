@@ -250,7 +250,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	public List<IterationTestPlanItem> findTestPlan(long iterationId, PagingAndMultiSorting sorting, Filtering filtering) {
 		
 		/* get the data */
-		List<Object[]> tuples = findIndexedTestPlanDispatch(iterationId, sorting, filtering);
+		List<Object[]> tuples = findIndexedTestPlanData(iterationId, sorting, filtering);
 		
 		/* filter them */
 		List<IterationTestPlanItem> items = new ArrayList<IterationTestPlanItem>(tuples.size());
@@ -273,7 +273,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 			Filtering filtering) {
 	
 		/* get the data */
-		List<Object[]> tuples = findIndexedTestPlanDispatch(iterationId, sorting, filtering);
+		List<Object[]> tuples = findIndexedTestPlanData(iterationId, sorting, filtering);
 		
 		/* format them*/
 		List<IndexedIterationTestPlanItem> indexedItems = new ArrayList<IndexedIterationTestPlanItem>(tuples.size());
@@ -290,7 +290,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	
 	
 	// this method will use one or another strategy to fetch its data depending on what the user is requesting. 
-	private List<Object[]> findIndexedTestPlanDispatch(final long iterationId, PagingAndMultiSorting sorting, Filtering filtering){
+	private List<Object[]> findIndexedTestPlanData(final long iterationId, PagingAndMultiSorting sorting, Filtering filtering){
 		
 		StringBuilder hqlbuilder = new StringBuilder(HQL_INDEXED_TEST_PLAN);
 		

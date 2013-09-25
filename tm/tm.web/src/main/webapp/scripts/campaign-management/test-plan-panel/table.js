@@ -74,8 +74,9 @@ define(['jquery', './sortmode', 'jquery.squash.datatables', 'jeditable'],
 			squashSettings.enableDnD = true;
 			squashSettings.functions = {
 				dropHandler : function(dropData){
-					$.post(conf.urls.testplanUrl+'/move', dropData)
-					.done(function(){
+					var ids = dropData.itemIds.join(',');
+					var url	= conf.urls.testplanUrl + '/' + ids + '/position/' + dropData.newIndex;			
+					$.post(url, function(){
 						$("#test-cases-table").squashTable().refresh();
 					});
 						

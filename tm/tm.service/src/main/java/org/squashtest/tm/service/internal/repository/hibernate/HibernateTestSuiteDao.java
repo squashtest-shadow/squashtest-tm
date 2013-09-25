@@ -256,6 +256,8 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 		wrapper.map("TestCase.importance", TestCaseImportance.class);
 		wrapper.map("IterationTestPlanItem.executionStatus", ExecutionStatus.class);
 		
+		SortingUtils.addOrder(hqlbuilder, wrapper);
+		
 		Query query = currentSession().createQuery(hqlbuilder.toString());
 		
 		query.setParameter("suiteId", suiteId, LongType.INSTANCE);
