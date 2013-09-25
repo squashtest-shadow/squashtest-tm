@@ -202,5 +202,16 @@
 			</div>
 		</div>
 	</div>
+	<div id="confirm-index-all-dialog" class="popup-dialog not-displayed"
+			th:title="#{label.Confirm}">
+			<div th:text="#{message.search.indexAll.warning}"></div>
+			<div class="popup-dialog-buttonpane">
+				<input class="confirm" type="button" value="confirm"
+					th:value="#{label.Confirm}" /> <input class="cancel" type="button"
+					value="cancel" th:value="#{label.Cancel}" />
+			</div>
+		</div>
+	
+	
 </body>
 </html>

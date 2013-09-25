@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore"], function($, Backbone, _) {
+define([ "jquery", "backbone", "underscore", "jquery.squash.confirmdialog"], function($, Backbone, _) {
 
 
 	var IndexAdministrationView = Backbone.View.extend({
@@ -26,18 +26,29 @@ define([ "jquery", "backbone", "underscore"], function($, Backbone, _) {
 		el : "#index-administration-content",
 
 		initialize : function() {
-
+			this.confirmIndexAll = $.proxy(this._confirmIndexAll, this);			
+			this.configurePopups.call(this);
 		},
 
 		events : {
-			"click #index-all-button" : "indexAll",
+			"click #index-all-button" : "confirmIndexAll",
 			"click #requirement-index-button" : "indexRequirements",
 			"click #testcase-index-button" : "indexTestcases",
 			"click #campaign-index-button" : "indexCampaigns",
 			"click #refresh-index-button" : "refreshPage"
 		},
 		
+		configurePopups : function(){
+			this.confirmIndexAllDialog = $("#confirm-index-all-dialog").confirmDialog();
+			this.confirmIndexAllDialog.on("confirmdialogconfirm", $.proxy(this.indexAll, this));
+		},
+		
+		_confirmIndexAll : function(){
+			this.confirmIndexAllDialog.confirmDialog("open");
+		},
+		
 		indexAll : function(){
+			
 			$.ajax({
 				  type: "POST",
 				  url: squashtm.app.contextRoot + "advanced-search/index-all",
