@@ -138,17 +138,17 @@ define(['tree','./permissions-rules', 'workspace.contextual-content', 'squash.tr
 			
 			// ****************** exports *********************
 			
-			$("#tree-import-menu").bind("click", "#export-L-tree-button", function(){				
+			$("#tree-import-menu").on("click", "#export-L-tree-button", function(){				
 				var nodeId = tree.jstree("get_selected").attr("resid");				
 				document.location.href= squashtm.app.contextRoot+"/campaign-browser/export-campaign/"+nodeId+"?export=csv&exportType=L";
 			});
 			
-			$("#tree-import-menu").bind("click", "#export-S-tree-button", function(){				
+			$("#tree-import-menu").on("click", "#export-S-tree-button", function(){				
 				var nodeId = tree.jstree("get_selected").attr("resid");				
 				document.location.href= squashtm.app.contextRoot+"/campaign-browser/export-campaign/"+nodeId+"?export=csv&exportType=S";
 			});
 			
-			$("#tree-import-menu").bind("click", "#export-F-tree-button", function(){				
+			$("#tree-import-menu").on("click", "#export-F-tree-button", function(){				
 				var nodeId = tree.jstree("get_selected").attr("resid");				
 				document.location.href=  squashtm.app.contextRoot+"/campaign-browser/export-campaign/"+nodeId+"?export=csv&exportType=F";
 			});		
