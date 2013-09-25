@@ -115,12 +115,17 @@ define([ 'jquery', 'jqueryui', 'jquery.squash.squashbutton' ], function($) {
 
 			// events
 			button.on('click', function() {
-				menu.hasClass('buttonmenu-open') ? 
-						self.close() : self.open();
+				if (menu.hasClass('buttonmenu-open')){
+					self.close();
+				} 
+				else{
+					self.open();
+				}
 						
 				if (settings._firstInvokation){
 					self._fixRender(menu);
-				};
+				}
+				
 				return false;
 			});
 	
