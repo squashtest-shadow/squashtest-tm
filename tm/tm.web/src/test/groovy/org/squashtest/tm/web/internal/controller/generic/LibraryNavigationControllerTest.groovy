@@ -189,6 +189,10 @@ class DummyLibrary implements Library<DummyNode> {
 		return null;
 	}
 	@Override
+	Collection getOrderedContent(){
+		return null;
+	}
+	@Override
 	public Project getProject() {
 		return null
 	}
