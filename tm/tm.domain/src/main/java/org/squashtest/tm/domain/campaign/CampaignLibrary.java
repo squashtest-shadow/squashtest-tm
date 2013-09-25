@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.campaign;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -147,5 +148,10 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 	public void accept(NodeContainerVisitor visitor) {
 		visitor.visit(this);
 		
+	}
+
+	@Override
+	public Collection<CampaignLibraryNode> getOrderedContent() {
+		return rootContent;
 	}
 }

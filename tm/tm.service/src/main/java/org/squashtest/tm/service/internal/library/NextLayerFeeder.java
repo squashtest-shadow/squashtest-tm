@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -125,7 +126,7 @@ public class NextLayerFeeder implements NodeVisitor  {
 	@SuppressWarnings("unchecked")
 		private void saveNextToCopy(NodeContainer<? extends TreeNode> source, NodeContainer<? extends TreeNode> destination) {
 			if (source.hasContent()) {
-				Set<TreeNode> sourceContent = new HashSet<TreeNode>(source.getContent()); 
+				Collection<TreeNode> sourceContent = (Collection<TreeNode>) source.getOrderedContent();
 				sourceContent.removeAll(outputList);
 				nextLayer.put((NodeContainer<TreeNode>) destination, sourceContent);
 			}

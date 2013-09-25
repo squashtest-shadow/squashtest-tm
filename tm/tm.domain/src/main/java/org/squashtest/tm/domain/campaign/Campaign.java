@@ -410,6 +410,11 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	}
 	
 	@Override
+	public List<Iteration> getOrderedContent(){
+		return getIterations();
+	}
+	
+	@Override
 	public boolean hasContent(){
 		return !getContent().isEmpty();
 	}

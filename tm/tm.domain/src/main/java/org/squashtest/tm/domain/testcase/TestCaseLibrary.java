@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.testcase;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -133,6 +134,10 @@ public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> {
 	public void accept(NodeContainerVisitor visitor) {
 		visitor.visit(this);
 		
+	}
+	@Override
+	public Collection<TestCaseLibraryNode> getOrderedContent() {
+		return rootContent;
 	}
 
 }

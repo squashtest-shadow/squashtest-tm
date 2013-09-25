@@ -117,7 +117,7 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 				
 				List<JsTreeNode> children = new JsTreeNodeListBuilder<TestCaseLibraryNode>(childrenBuilder)
 						.expand(getExpansionCandidates())
-						.setModel(visited.getContent())
+						.setModel(visited.getOrderedContent())
 						.build();
 
 				builtNode.setChildren(children);
@@ -149,5 +149,6 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 	protected void doAddChildren(JsTreeNode node, TestCaseLibraryNode model) {
 		model.accept(new ChildrenPopulator(node));
 	}
+
 
 }

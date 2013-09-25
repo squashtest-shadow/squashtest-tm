@@ -44,7 +44,7 @@ class IterationNodeBuilderTest extends Specification {
 
 
 		when:
-		def res = builder.setModel(iter).setIterationIndex(4).build();
+		def res = builder.setModel(iter).setIndex(4).build();
 
 		then:
 		res.attr['rel'] == "iteration"

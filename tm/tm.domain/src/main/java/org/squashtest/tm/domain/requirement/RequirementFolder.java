@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.requirement;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -160,6 +161,10 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 	@Override
 	public List<String> getContentNames() {
 		return folderSupport.getContentNames();
+	}
+	@Override
+	public Collection<RequirementLibraryNode> getOrderedContent() {
+		return content;
 	}
 
 }

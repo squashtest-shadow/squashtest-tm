@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.testcase;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -123,6 +124,11 @@ public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCa
 	@Override
 	public List<String> getContentNames() {
 		return folderSupport.getContentNames();
+	}
+
+	@Override
+	public Collection<TestCaseLibraryNode> getOrderedContent() {
+		return content;
 	}
 	
 }

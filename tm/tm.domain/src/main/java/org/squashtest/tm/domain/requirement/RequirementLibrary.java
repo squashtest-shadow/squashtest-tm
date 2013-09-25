@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.requirement;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -145,6 +146,11 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 	public void accept(NodeContainerVisitor visitor) {
 		visitor.visit(this);
 		
+	}
+
+	@Override
+	public Collection<RequirementLibraryNode> getOrderedContent() {
+		return rootContent;
 	}
 
 }

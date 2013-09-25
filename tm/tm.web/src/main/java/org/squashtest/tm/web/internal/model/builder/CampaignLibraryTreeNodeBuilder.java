@@ -100,7 +100,7 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 
 				List<JsTreeNode> children = new JsTreeNodeListBuilder<Iteration>(childrenBuilder)
 						.expand(getExpansionCandidates())
-						.setModel(visited.getContent())
+						.setModel(visited.getOrderedContent())
 						.build();
 
 				builtNode.setChildren(children);
@@ -120,7 +120,7 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 
 				List<JsTreeNode> children = new JsTreeNodeListBuilder<CampaignLibraryNode>(childrenBuilder)
 						.expand(getExpansionCandidates())
-						.setModel(visited.getContent())
+						.setModel(visited.getOrderedContent())
 						.build();
 
 				builtNode.setChildren(children);

@@ -59,4 +59,5 @@ class DummyBuilder extends GenericJsTreeNodeBuilder<String, DummyBuilder> {
 		// TODO Auto-generated method stub
 		
 	}
+
 }

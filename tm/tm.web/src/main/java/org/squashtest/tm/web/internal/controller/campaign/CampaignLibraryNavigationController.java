@@ -178,7 +178,7 @@ public class CampaignLibraryNavigationController extends
 	}
 
 	private JsTreeNode createIterationTreeNode(Iteration iteration, int iterationIndex) {
-		return iterationNodeBuilder.get().setModel(iteration).setIterationIndex(iterationIndex).build();
+		return iterationNodeBuilder.get().setModel(iteration).setIndex(iterationIndex).build();
 	}
 
 	private JsTreeNode createTestSuiteTreeNode(TestSuite testSuite) {
@@ -304,14 +304,14 @@ public class CampaignLibraryNavigationController extends
 		return campaignLibraryNavigationService.deleteSuites(suiteIds);
 	}
 
-	@RequestMapping(value = "/campaigns/{campaignId}/iterations/new", method = RequestMethod.POST, params = { "nodeIds[]", "next-iteration-number" })
+	@RequestMapping(value = "/campaigns/{campaignId}/iterations/new", method = RequestMethod.POST, params = { "nodeIds[]", "next-iteration-index" })
 	public @ResponseBody
 	List<JsTreeNode> copyIterations(@RequestParam("nodeIds[]") Long[] nodeIds,
-			@PathVariable("campaignId") long campaignId, @RequestParam("next-iteration-number") int nextIterationNumber) {
+			@PathVariable("campaignId") long campaignId, @RequestParam("next-iteration-index") int nextIterationIndex) {
 
 		List<Iteration> iterationsList;
 		iterationsList = campaignLibraryNavigationService.copyIterationsToCampaign(campaignId, nodeIds);
-		return createCopiedIterationsModel(iterationsList, nextIterationNumber);
+		return createCopiedIterationsModel(iterationsList, nextIterationIndex);
 	}
 
 	@RequestMapping(value = "/iterations/{iterationId}/test-suites/new", method = RequestMethod.POST, params = { "nodeIds[]" })

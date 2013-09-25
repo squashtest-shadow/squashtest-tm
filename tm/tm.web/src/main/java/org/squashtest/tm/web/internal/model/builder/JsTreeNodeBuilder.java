@@ -61,5 +61,12 @@ public interface JsTreeNodeBuilder<MODEL extends Identified, BUILDER extends JsT
 	 * @return
 	 */
 	BUILDER expand(MultiMap expansionCandidates);
+	
+	/**
+	 * Will set the 'index' property of the builder.
+	 * @param index
+	 * @return this JsTreeNodeBuilder
+	 */
+	BUILDER setIndex(int index);
 
 }

@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.campaign;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -116,6 +117,13 @@ public class CampaignFolder extends CampaignLibraryNode implements Folder<Campai
 	public List<String> getContentNames() {
 		return folderSupport.getContentNames();
 	}
+
+	@Override
+	public Collection<CampaignLibraryNode> getOrderedContent() {
+		return content;
+	}
+
+	
 	
 	
 	

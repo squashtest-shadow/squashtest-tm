@@ -79,4 +79,6 @@ public class TestSuiteNodeBuilder extends GenericJsTreeNodeBuilder<TestSuite, Te
 		// Test suite ain't got no children
 	}
 
+	
+
 }

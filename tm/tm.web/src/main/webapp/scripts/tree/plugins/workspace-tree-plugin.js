@@ -328,7 +328,7 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 		
 		//special delivery for pasting iterations to campaigns
 		if (target.is(':campaign')){
-			params['next-iteration-number'] = (target.getChildren().length + 1);
+			params['next-iteration-index'] = (target.getChildren().length);
 		}
 		
 		$.when(tree.open_node(target)).then(function() {

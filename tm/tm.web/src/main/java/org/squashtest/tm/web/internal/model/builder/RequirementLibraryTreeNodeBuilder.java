@@ -108,7 +108,7 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 			builtNode.setState(State.open);
 			
 			RequirementLibraryTreeNodeBuilder childrenBuilder = new RequirementLibraryTreeNodeBuilder(permissionEvaluationService);
-			Collection<RequirementLibraryNode<?>> content = (Collection<RequirementLibraryNode<?>>) container.getContent();
+			Collection<RequirementLibraryNode<?>> content = (Collection<RequirementLibraryNode<?>>) container.getOrderedContent();
 			
 			List<JsTreeNode> children = new JsTreeNodeListBuilder<RequirementLibraryNode<?>>(childrenBuilder)
 					.expand(getExpansionCandidates())
@@ -118,5 +118,6 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 			builtNode.setChildren(children);
 		}
 	}
+
 
 }

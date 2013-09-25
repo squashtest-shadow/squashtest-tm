@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.library;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -47,6 +48,12 @@ public interface NodeContainer<NODE extends TreeNode> extends Identified{
 	boolean isContentNameAvailable(String name);
 	
 	Set<NODE> getContent();
+	
+	/**
+	 * Will return the ordered (if order there is) content nodes.
+	 * @return
+	 */
+	Collection<NODE> getOrderedContent();
 	
 	boolean hasContent();
 	

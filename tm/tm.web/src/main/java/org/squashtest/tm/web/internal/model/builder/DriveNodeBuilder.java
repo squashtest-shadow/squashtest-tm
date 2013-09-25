@@ -82,7 +82,7 @@ public class DriveNodeBuilder<LN extends LibraryNode> extends
 
 			List<JsTreeNode> children = new JsTreeNodeListBuilder<LN>(childrenBuilderProvider.get())
 				.expand(getExpansionCandidates())
-				.setModel(model.getContent())
+				.setModel(model.getOrderedContent())
 				.build();
 
 			node.setChildren(children);

@@ -142,6 +142,7 @@ class DummyFolder  extends DummyNode  implements Folder<DummyNode>{
 	@Override
 	public boolean isContentNameAvailable(String name) {}
 	Set getContent() {}
+	Collection getOrderedContent() {}
 	@Override
 	void addContent(LibraryNode node) {}
 	 void accept(NodeContainerVisitor visitor) {}

@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.campaign;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -715,6 +716,13 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 		return getTestSuites();
 	}
 
+	@Override
+	public Collection<TestSuite> getOrderedContent() {
+		return getTestSuites();
+	}
+
+	
+	
 	/**
 	 * @return true if there are test suites
 	 * @see org.squashtest.tm.domain.library.NodeContainer#hasContent()
@@ -739,4 +747,5 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 		return testSuitesNames;
 	}
 
+	
 }

@@ -47,6 +47,8 @@ public abstract class GenericJsTreeNodeBuilder<MODEL extends Identified, BUILDER
 	private static final Permission[] NODE_PERMISSIONS = { WRITE, CREATE, DELETE, EXECUTE, EXPORT };
 
 	protected final PermissionEvaluationService permissionEvaluationService;
+
+	protected int index;
 	/**
 	 * What is currently used to produce a {@link JsTreeNode}
 	 */
@@ -109,12 +111,12 @@ public abstract class GenericJsTreeNodeBuilder<MODEL extends Identified, BUILDER
 	@SuppressWarnings("rawtypes")
 	private String modelShortClassName() {
 		String className;
-		
+
 		if (model instanceof NodeContainer) {
 			NodeClassNameReader classNameReader = new NodeClassNameReader();
 			((NodeContainer) model).accept(classNameReader);
 			className = classNameReader.getSimpleName();
-			
+
 		} else if (model instanceof TreeNode) {
 			NodeClassNameReader classNameReader = new NodeClassNameReader();
 			((TreeNode) model).accept(classNameReader);
@@ -173,4 +175,10 @@ public abstract class GenericJsTreeNodeBuilder<MODEL extends Identified, BUILDER
 		return permissionEvaluationService;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public BUILDER setIndex(int index) {
+		this.index = index;
+		return (BUILDER) this;
+	}
 }

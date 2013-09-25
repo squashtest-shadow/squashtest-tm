@@ -35,7 +35,7 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
 @Component
 @Scope("prototype")
 public class IterationNodeBuilder extends GenericJsTreeNodeBuilder<Iteration, IterationNodeBuilder> {
-	private int iterationIndex;
+	
 
 	@Inject
 	public IterationNodeBuilder(PermissionEvaluationService permissionEvaluationService) {
@@ -54,18 +54,13 @@ public class IterationNodeBuilder extends GenericJsTreeNodeBuilder<Iteration, It
 		node.addAttr("resType", "iterations");
 		node.setState(model.hasTestSuites() ? State.closed  : State.leaf);
 		node.setTitle(createTitle(model));
-		node.addAttr("iterationIndex", Integer.toString(iterationIndex + 1));
+		node.addAttr("iterationIndex", Integer.toString(index + 1));
 		node.addAttr("name", model.getName());
 		node.addAttr("id", model.getClass().getSimpleName() + '-' + model.getId());
 	}
 
 	private String createTitle(Iteration model) {
-		return (iterationIndex + 1) + " - " + model.getName();
-	}
-
-	public final IterationNodeBuilder setIterationIndex(int index) {
-		this.iterationIndex = index;
-		return this;
+		return (index + 1) + " - " + model.getName();
 	}
 
 	/**
@@ -80,7 +75,7 @@ public class IterationNodeBuilder extends GenericJsTreeNodeBuilder<Iteration, It
 			
 			List<JsTreeNode> children = new JsTreeNodeListBuilder<TestSuite>(childrenBuilder)
 				.expand(getExpansionCandidates())
-				.setModel(model.getContent())
+				.setModel(model.getOrderedContent())
 				.build();
 
 			node.setChildren(children);

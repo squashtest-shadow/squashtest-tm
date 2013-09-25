@@ -24,6 +24,7 @@ import static org.squashtest.tm.domain.requirement.RequirementStatus.APPROVED;
 import static org.squashtest.tm.domain.requirement.RequirementStatus.OBSOLETE;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -390,6 +391,11 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	public Set<Requirement> getContent() {
 		return children;
 	}
+	
+	@Override
+	public Collection<Requirement> getOrderedContent() {
+		return children;
+	}
 
 	@Override
 	public boolean hasContent() {
@@ -415,6 +421,8 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	public void accept(NodeContainerVisitor visitor) {
 		visitor.visit(this);
 	}
+
+	
 	
 	
 }

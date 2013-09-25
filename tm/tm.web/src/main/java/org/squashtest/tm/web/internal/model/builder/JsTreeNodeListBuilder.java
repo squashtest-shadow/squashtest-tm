@@ -57,9 +57,11 @@ public class JsTreeNodeListBuilder<ITEM> {
 		if (expansionCandidates == null) {
 			expansionCandidates = new MultiValueMap();
 		}
-
+		
+		int index = 0;
 		for (ITEM item : model) {
-			nodes.add(nodeBuilder.expand(expansionCandidates).setModel(item).build());
+			nodes.add(nodeBuilder.setIndex(index).expand(expansionCandidates).setModel(item).build());
+			index ++;
 		}
 
 		return nodes;
