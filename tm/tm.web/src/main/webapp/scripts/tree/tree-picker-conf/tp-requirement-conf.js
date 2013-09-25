@@ -37,10 +37,7 @@ define(function(){
 					"remove" : false,
 					"types" : {
 						"requirement" : {
-							"valid_children" : ['requirement'],
-							"icon" : {
-								"image" : baseURL+'/images/Icon_Tree_Requirement.png'
-							}
+							"valid_children" : ['requirement']
 						},
 						"folder" : {
 							"valid_children" : [ "requirement", "folder" ],
