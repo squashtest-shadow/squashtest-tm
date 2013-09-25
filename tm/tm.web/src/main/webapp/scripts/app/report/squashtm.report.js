@@ -36,7 +36,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "jqueryui",
 			var config = {
 				contextPath : "",
 				dateFormat : "dd/mm/yy",
-				noDateLabel : "---",
+				noDateLabel : "-",
 				okLabel : "OK",
 				cancelLabel : "Cancel"
 			};
