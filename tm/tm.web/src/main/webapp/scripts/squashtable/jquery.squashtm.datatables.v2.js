@@ -337,14 +337,14 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 
 			},
 
-			onDrop : function(table, rows) { // again, that is now a jQuery
-				// object
-
+			onDrop : function(table, rows) { // again, that is now a jQuery object
+				
 				var newInd = rows.get(0).rowIndex - 1;
 				var oldInd = self.data("previousRank");
 				var offset = self.data("offset");
 				if (newInd != oldInd) {
-
+				
+					// prepare the drop now
 					var ids = [];
 					rows.each(function(i, e) {
 						var id = self.getODataId(e);
@@ -1279,13 +1279,12 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			this.restoreTableSelection();
 		}
 
-		// ************** function overrides
-		// *********************************************
+		// ************** function overrides *********************************************
 
 		if (squashEffective.functions) {
 			$.extend(this, squashEffective.functions);
 		}
-
+		
 		// ************** other preprocessings ****************
 
 		if (squashEffective.fixObjectDOMInit) {
@@ -1297,22 +1296,19 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		}
 
 		/*
-		 * ************* prepare a custom rowcallback and drawcallback if needed * ********
+		 * ************* prepare custom callbacks if needed * ********
 		 */
-
-		// pre draw callback
-		var userPreDrawCallback = datatableEffective.fnPreDrawCallback;
-
-		var customPreDrawCallback = function(oSettings) {
-			if (userPreDrawCallback) {
-				userPreDrawCallback.call(this, oSettings);
-			}
+		
+		// --------------- serverparams : we mainly use it to save the table selection --------
+		var oldFnServParam = datatableEffective.fnServerParams;
+		datatableEffective.fnServerParams = function(aoData){
 			_saveTableSelection.call(this);
-		};
+			if (!! oldFnServParam){
+				oldFnServParam.call(this, aoData);
+			}
+		}
 
-		datatableEffective.fnPreDrawCallback = customPreDrawCallback;
-
-		//****************** draw callback *****************
+		//----------------- draw callback ------------------------
 		
 		var aDrawCallbacks = this.drawcallbacks;
 		
@@ -1369,7 +1365,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		/* ************* now call the base plugin ***************** */
 
 		this.dataTable(datatableEffective);
-
+		
 		/* ****** last : event binding ***** */
 
 		_bindClickHandlerToSelectHandle.call(this);
