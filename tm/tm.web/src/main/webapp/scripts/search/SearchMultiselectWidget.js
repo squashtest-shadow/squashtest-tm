@@ -40,8 +40,10 @@ define(["jquery", "jqueryui"], function($){
 					"values" : text};
 			} else {
 				$("option", $(this.element.children()[0])).removeAttr("selected");
-				for (var i=0, len = value.values.length; i<len;i++){
-					$("option[value='"+value.values[i]+"']", $(this.element.children()[0])).attr("selected", "selected");
+				if (!!value.values){
+					for (var i=0, len = value.values.length; i<len;i++){
+						$("option[value='"+value.values[i]+"']", $(this.element.children()[0])).attr("selected", "selected");
+					}
 				}
 			}
 		}, 
