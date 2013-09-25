@@ -85,15 +85,15 @@ define(['tree','./permissions-rules', 'workspace.contextual-content', 'squash.tr
 			
 			// ************* creation ***************
 			
-			$("#new-folder-tree-button").on('click', function(){
+			$("#tree-create-menu").on('click', "#new-folder-tree-button", function(){
 				$("#add-folder-dialog").formDialog('open');
 			});
 			
-			$("#new-campaign-tree-button").on('click', function(){
+			$("#tree-create-menu").on('click', "#new-campaign-tree-button", function(){
 				$("#add-campaign-dialog").formDialog('open');
 			});
 			
-			$("#new-iteration-tree-button").on('click', function(){
+			$("#tree-create-menu").on('click', "#new-iteration-tree-button", function(){
 				$("#add-iteration-dialog").formDialog('open');
 			});
 						
@@ -138,17 +138,17 @@ define(['tree','./permissions-rules', 'workspace.contextual-content', 'squash.tr
 			
 			// ****************** exports *********************
 			
-			$("#export-L-tree-button").bind("click", function(){				
+			$("#tree-import-menu").bind("click", "#export-L-tree-button", function(){				
 				var nodeId = tree.jstree("get_selected").attr("resid");				
 				document.location.href= squashtm.app.contextRoot+"/campaign-browser/export-campaign/"+nodeId+"?export=csv&exportType=L";
 			});
 			
-			$("#export-S-tree-button").bind("click", function(){				
+			$("#tree-import-menu").bind("click", "#export-S-tree-button", function(){				
 				var nodeId = tree.jstree("get_selected").attr("resid");				
 				document.location.href= squashtm.app.contextRoot+"/campaign-browser/export-campaign/"+nodeId+"?export=csv&exportType=S";
 			});
 			
-			$("#export-F-tree-button").bind("click", function(){				
+			$("#tree-import-menu").bind("click", "#export-F-tree-button", function(){				
 				var nodeId = tree.jstree("get_selected").attr("resid");				
 				document.location.href=  squashtm.app.contextRoot+"/campaign-browser/export-campaign/"+nodeId+"?export=csv&exportType=F";
 			});		

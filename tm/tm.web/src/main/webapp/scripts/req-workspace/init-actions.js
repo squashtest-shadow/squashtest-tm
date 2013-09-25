@@ -83,11 +83,11 @@ define(['tree','./permissions-rules', 'workspace.contextual-content', 'squash.tr
 			
 			// ************* creation ***************
 			
-			$("#new-folder-tree-button").on('click', function(){
+			$("#tree-create-menu").on('click', "#new-folder-tree-button", function(){
 				$("#add-folder-dialog").formDialog('open');
 			});
 			
-			$("#new-requirement-tree-button").on('click', function(){
+			$("#tree-create-menu").on('click', "#new-requirement-tree-button", function(){
 				$("#add-requirement-dialog").formDialog('open');
 			});
 			
@@ -132,19 +132,19 @@ define(['tree','./permissions-rules', 'workspace.contextual-content', 'squash.tr
 			
 			// ****************** import req ******************
 			
-			$("#import-excel-tree-button").on('click', function(){
+			$("#tree-import-menu").on('click', "#import-excel-tree-button", function(){
 				$("#import-excel-dialog").reqimportDialog('open');
 			});
 			
 			// **************** import links *****************
 			
-			$("#import-links-excel-tree-button").on('click', function(){
+			$("#tree-import-menu").on('click', "#import-links-excel-tree-button", function(){
 				$("#import-links-excel-dialog").linksimportDialog('open');
 			});
 			
 			// ******************* export ********************
 			
-			$("#export-tree-button").on('click', function(){
+			$("#tree-import-menu").on('click', "#export-tree-button", function(){
 				$("#export-requirement-dialog").exportDialog('open');
 			});
 			

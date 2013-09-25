@@ -28,7 +28,7 @@
  *		menu : {  menu configuration },
  *		zindex : a user-defined z-index value, to make sure your menu will be displayed above any other elements.
  *					default is 3000,
- *		blur : 'hide' or another custom function that will receive no args. Default is undefined (nothing).
+ *		blur : 'hide', 'nothing' or another custom function that will receive no args. Default is 'hide'.
  *		anchor : one of ["left", "right"]. Default is "left" : this means that the menu is anchored to the button via its top-left corner. 
  *				When set to "right", it would be the top-right,
  *		'no-auto-hide' : default is false. If true,  the menu will not automatically hide when an element is clicked (see behaviour below)
@@ -49,6 +49,15 @@
 
 define([ 'jquery', 'jqueryui', 'jquery.squash.squashbutton' ], function($) {
 
+	// prevent double loading
+	if (!! $.squash.buttonmenu){
+		return;
+	}
+
+	function preventIfDisabled(){
+		return $(this).hasClass('ui-state-disabled');
+	}
+	
 	$.widget('squash.buttonmenu', {
 		options : {
 			preskinned : false,
@@ -56,8 +65,11 @@ define([ 'jquery', 'jqueryui', 'jquery.squash.squashbutton' ], function($) {
 			menu : {
 				zindex : 3000
 			},
+			blur : 'hide',
 			anchor : "left",
 			'no-auto-hide' : false,
+			
+			// private
 			_firstInvokation : true
 		},
 		
@@ -65,13 +77,16 @@ define([ 'jquery', 'jqueryui', 'jquery.squash.squashbutton' ], function($) {
 		_createStructure : function(){
 			
 			var btn = this.element,
-				components = btn.add(btn.next());
+				menu = this.element.next(),
+				components = btn.add(menu);
 			
-			//respect the basic display mode that the button originally had
-			var display = btn.css('display');
-			var position = btn.css('position');
+			btn.addClass('buttonmenu-button');
+			menu.addClass('buttonmenu-menu');
+			
+			
 			var div = $('<div/>',{
-				style : "display:"+display+"; position:"+position+";"
+				style : "display:inline-block; position:relative;",
+				'class' : 'buttonmenu-wrapper'
 			});
 			
 			components.wrapAll(div);
@@ -100,26 +115,53 @@ define([ 'jquery', 'jqueryui', 'jquery.squash.squashbutton' ], function($) {
 
 			// events
 			button.on('click', function() {
-				menu.toggle();
+				menu.hasClass('buttonmenu-open') ? 
+						self.close() : self.open();
+						
 				if (settings._firstInvokation){
 					self._fixRender(menu);
-				}
+				};
+				return false;
 			});
-
-			if (settings.blur!==undefined){				
-				var cllbk = (settings.blur === 'hide') ? function(){menu.hide();} : settings.blur;				
-				menu.on('blur', cllbk);
-			}
+	
 			
 			return this;
 		},
 		
+		blur : function(evt){
+			var blurhandler = this.options.blur;
+			if (blurhandler==='hide'){				
+				this.close();				
+			}
+			else if ($.isFunction(blurhandler)){
+				try{
+					blurhandler.call(this, evt);
+				}
+				catch(wtf){
+					if (console && console.log){
+						console.log('buttonmenu : problem while bluring menu '+this.selector);
+					}
+				}
+			}
+		},
+
 		enable : function(){
 			this.element.squashButton('enable');
 		},
 		
-		disable : function(){
+		disable : function(selector){
+			this.close();
 			this.element.squashButton('disable');
+		},
+				
+		open : function(){
+			this.element.next().addClass('buttonmenu-open').show();
+			$.squash.buttonmenu._opened[this.uuid] = this;
+		},
+		
+		close : function(){
+			this.element.next().removeClass('buttonmenu-open').hide();
+			delete $.squash.buttonmenu._opened[this.uuid];
 		},
 		
 		/* 
@@ -155,32 +197,54 @@ define([ 'jquery', 'jqueryui', 'jquery.squash.squashbutton' ], function($) {
 		},
 
 		_bindLi : function() {
-			var settings = this.options,
+			var self = this,
+				settings = this.options,
 				menu = this.element.next();
 			
 			menu.on('click', 'li', function(evt) {
-				var $li = $(this),
-					shouldPropagate = true;
+				var $li = $(this);				
 				
-				// 1/ the item is disabled : we won't process any click event further.
-				if ($li.hasClass('ui-state-disabled')) {
+				// item disabled ? event prevented !
+				if ($li.hasClass('ui-state-disabled')){
 					evt.stopImmediatePropagation();
-					shouldPropagate = false;
-				} 
-				// 2/ the item is enabled but we don't want the menu to hide on click : just let the event go.
-				else if ($li.hasClass('no-auto-hide') || settings['no-auto-hide']){
-					shouldPropagate = true;
+					return false;
 				}
-				// 3/ default behaviour : hide the menu, let go the event.
-				else{
-					menu.hide();
-					shouldPropagate = true;
+				
+				// if no policy was set to prevent the menu from closing, let the menu close 
+				else if (! ($li.hasClass('no-auto-hide') || settings['no-auto-hide'])){
+					self.close();
 				}
-
-				return shouldPropagate;
 			});
+			
+
+		},
+		
+		_destroy : function(){
+			delete $.squash.buttonmenu._opened[this.uuid];
+			this.element.squashButton('destroy');
+			this.element.next().menu('destroy');
+			this._super();
 		}
 
+	});
+	
+	
+	// other settings
+	$.squash.buttonmenu._opened = {};
+
+	$(document).on('click', function(evt){
+		var instances = $.squash.buttonmenu._opened;
+		
+		// find out if the event originated from within the menu
+		var possiblemenu = $(evt.target).parents('div.buttonmenu-wrapper').find('.buttonmenu-button').data('squashButtonmenu');
+		
+		for (var id in instances){
+			var inst = instances[id];
+			// blur that menu if the event is not originated from within it
+			if (inst !== possiblemenu){
+				inst.blur.call(inst, evt);
+			}
+		}		
 	});
 
 });

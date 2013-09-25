@@ -58,7 +58,7 @@ define([ "jquery", "jqueryui"], function($) {
 		});
 		
 
-		this.buttonMenu = $("#manage-test-suites-buttonmenu");
+		this.menucontrol = $("#manage-test-suites-buttonmenu");
 		this.menu = $("#manage-test-suites-menu");
 	}
 
@@ -232,7 +232,7 @@ define([ "jquery", "jqueryui"], function($) {
 						toSend['test-suites'] = suiteIds;
 						toSend['test-plan-items'] = getDatatableSelected();
 						self.model.postBind(toSend).success(function() {
-							self.menu.hide();
+							self.menucontrol.buttonmenu('close');
 						});
 					}
 				}
@@ -242,7 +242,7 @@ define([ "jquery", "jqueryui"], function($) {
 		var bindCancelButton = $.proxy(function() {
 			var self = this;
 			$('#suite-manager-menu-cancel-button').on('click', function(evt) {
-				self.menu.hide();
+				self.menucontrol.buttonmenu('close');
 			});
 		}, this);
 
@@ -272,7 +272,7 @@ define([ "jquery", "jqueryui"], function($) {
 			var self = this;
 			$("#manage-test-suites-buttonmenu").on('click', function(evt){
 				if (!getDatatableSelected().length) {
-					self.menu.hide();
+					self.menucontrol.buttonmenu('close');
 					evt.stopImmediatePropagation();
 					$(settings.emptySelectionMessageSelector).openMessage();
 				}
