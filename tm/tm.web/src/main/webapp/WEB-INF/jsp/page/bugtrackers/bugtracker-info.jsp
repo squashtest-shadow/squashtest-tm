@@ -103,7 +103,6 @@
 							<f:message key="label.Url" />
 							</label>
 							<div class="display-table-cell" id="bugtracker-url">${ bugtracker.url }</div>
-							<span class="error-message url-error"></span>
 							<comp:simple-jeditable targetUrl="${ bugtrackerUrl }" componentId="bugtracker-url" submitCallback="changeBugTrackerUrlCallback"/>
 							
 						</div>

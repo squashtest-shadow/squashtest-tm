@@ -54,7 +54,16 @@
 			onblur : function(){},											//this disable the onBlur handler, which would close the jeditable 
 																			//when clicking in the rich editor (since it considers the click as			
 																			//out of the editing zone)
-			
+			onerror : function(settings, self, xhr){//this = form
+				var spanError = $("<span/>" ,{					
+					'class':'error-message'
+				}); 
+				self.reset();
+				self.click();
+				$(self).append(spanError);				
+				xhr.label = spanError;
+				$(spanError).on("mouseover",function(){ spanError.fadeOut('slow').remove(); });
+			},
 			<c:if test="${ not empty submitCallback }">
 			callback : function(value, settings){
 				${submitCallback}(value, settings);
