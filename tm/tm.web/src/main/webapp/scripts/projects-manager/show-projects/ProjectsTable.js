@@ -56,7 +56,7 @@ define([ "jquery", "backbone", "squash.datatables", "jquery.squash.datatables", 
 				"fnRowCallback" : this.projectTableRowCallback,
 				"fnDrawCallback" : this.tableDrawCallback,
 				"aaSorting" : [ [ 2, "asc" ] ],
-				"sDom" : 'ft<"dataTables_footer"lirp>',
+				"sDom" : 'ft<"dataTables_footer"lp>',
 				"aoColumnDefs" : [ {
 					"bVisible" : false,
 					"aTargets" : [ 0 ],

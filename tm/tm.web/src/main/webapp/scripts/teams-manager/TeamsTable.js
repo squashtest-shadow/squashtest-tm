@@ -90,7 +90,7 @@ define([ "jquery", "backbone", "squash.datatables", "jquery.squash.datatables", 
 					"sWidth" : "2em",
 					"bSortable" : false
 				} ],
-				"sDom" : 'ft<"dataTables_footer"lirp>'
+				"sDom" : 'ft<"dataTables_footer"lp>'
 			}, squashConf = {
 				enableHover : true,
 				bindLinks : {

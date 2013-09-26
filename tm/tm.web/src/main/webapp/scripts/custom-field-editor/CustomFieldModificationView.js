@@ -487,12 +487,11 @@ define(
 												"bPaginate" : true,
 												"sPaginationType" : "squash",
 												"iDisplayLength" : cfMod.optionsTable.displayLength,
-												"bProcessing" : true,
 												"bServerSide" : true,
 												"sAjaxSource" : cfMod.optionsTable.ajaxSource,
 												"bDeferRender" : true,
 												"bRetrieve" : true,
-												"sDom" : 't<"dataTables_footer"lirp>',
+												"sDom" : 't<"dataTables_footer"lp>',
 												"iDeferLoading" : 0,
 												"fnRowCallback" : function() {
 												},

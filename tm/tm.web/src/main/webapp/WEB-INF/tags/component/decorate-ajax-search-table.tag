@@ -52,7 +52,6 @@
 			"bJQueryUI": true,
 			"bAutoWidth": false,
 			"bFilter": false,
-			"bProcessing": true,
 			"bPaginate": ${ not empty paginate and paginate },
 			"sPaginationType": "full_numbers",
 <c:if test="${ not empty rowCallback }">"fnRowCallback": <jsp:invoke fragment="rowCallback"/>,</c:if>

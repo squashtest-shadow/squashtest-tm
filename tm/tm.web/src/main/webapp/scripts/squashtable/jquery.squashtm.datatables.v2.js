@@ -1436,7 +1436,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 				'filter' : function(conf, assignation) {
 					var cnf = conf.table;
 					cnf.bFilter = assignation.value;
-					cnf.sDom = 'ft<"dataTables_footer"lirp>';
+					cnf.sDom = 'ft<"dataTables_footer"lp>';
 				},
 				'language' : function(conf, assignation) {
 					conf.table.oLanguage = conf.table.oLanguage || {};

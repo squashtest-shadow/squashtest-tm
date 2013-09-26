@@ -161,10 +161,9 @@ var squashtm = squashtm || {};
 		"bPaginate" : true,
 		"sPaginationType" : "squash",
 		"iDisplayLength" : 50,
-		"bProcessing" : true,
 		"bServerSide" : true,
 		"bRetrieve" : true,
-		"sDom" : 't<"dataTables_footer"lirp>'
+		"sDom" : 't<"dataTables_footer"lp>'
 	};
 
 	squashtm.datatable = squashtm.datatable || {};

@@ -50,39 +50,35 @@ div.dataTables_wrapper label.ui-icon {
 	margin-left: 8px;
 }
 
-div.dataTables_length label{
-	font-size : 100%;
-	font-style : normal;		
-}
+
+/**
+ * DATATABLE FOOTER
+ */
 
 div.dataTables_footer{
 	color : #555555;
 	font-style : normal;
-		
+	font-size : 10px;
+	height : 24px;
+	line-height : 24px;
+}
+
+div.dataTables_footer > div {
+	margin-right : 2em;
+	height : 100%;
+	float : left;
+}
+
+div.dataTables_footer select{
+	font-size : 1em;
 }
 
 
-div.dataTables_length  {
-	float:left;
-	font-size:0.8em;
-	margin-right:2em;
-}
+/** pagination got special overrides */
 
-div.dataTables_info, div.dataTables_processing{
-	display:none;
-	font-size : 0.8em;
-	margin-right:2em;
-	margin-top:0.2em;	
-}
-
-
-
-div.dataTables_paginate{
+div.dataTables_footer > div.dataTables_paginate{
 	float:right;
-	text-align:right;
-	font-size:10px;
 }
-
 
 .dataTables_paginate span {
 	margin-left:1px;
@@ -95,25 +91,26 @@ div.dataTables_paginate{
 
 .dataTables_paginate span.paginate_button{
 	border:1px solid transparent;
-        background:none;
-        color  : black;
-        padding :0px !important;
+    background:none;
+    color  : black;
+    padding :0px !important;
 	cursor:pointer;
 }
 .dataTables_paginate span.paginate_button:HOVER{
-	border:1px solid black;
-	cursor:pointer;
+	border-color:black;
 }
+
 .dataTables_paginate span.paginate_button .ui-button-text{
     padding : 0px;
-padding-left : 2px;
-padding-right : 2px;
+	padding-left : 2px;
+	padding-right : 2px;
 }
+
+
 /* that one override the css for the <th> sorting icon class. It actually calls the jquery.blue.css icon sheet*/
 div.DataTables_sort_wrapper > span.ui-icon{
 	float:right;	
-	background-image:url("jquery/ui/images/ui-icons_a8a8a8_256x240.png");
-	
+	background-image:url("jquery/ui/images/ui-icons_a8a8a8_256x240.png");	
 }
 
 td.has-attachment-cell > a, td.bugged-cell > span {

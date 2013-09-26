@@ -101,12 +101,11 @@ define([ "jquery", "jquery.squash.datatables" ], function($) {
 			"iDisplayLength" : 25,
 			"fnDrawCallback" : drawCallback,
 			"iDeferLoading" : userPermissions.length,
-			"bProcessing" : true,
 			"bServerSide" : true,
 			"sAjaxSource" : squashtm.app.contextRoot + "/generic-projects/" + settings.basic.projectId +
 					"/party-permissions",
 			"aaData" : userPermissions,
-			"sDom" : 'ft<"dataTables_footer"lirp>',
+			"sDom" : 'ft<"dataTables_footer"lp>',
 			"aaSorting" : [ [ 1, 'asc' ] ],
 			"aoColumnDefs" : [ {
 				'bSortable' : false,

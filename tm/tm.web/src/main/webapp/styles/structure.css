@@ -193,7 +193,7 @@ div.sub-page div.search-panel-wrap .search-panel-footer{
 }
 
 
-/* div.fragment-tabs>div.table-tab>div.table-tab-wrap *//*2013/03/14 if no incidence after 3 month you can remove this comment*/
+
 div.table-tab-wrap{
 	position: absolute;
 	width: 100%;
@@ -202,13 +202,13 @@ div.table-tab-wrap{
 	overflow: auto;
 }
 
-/* div.fragment-tabs>div.table-tab>div.table-tab-wrap .dataTables_footer*//*2013/03/14 if no incidence after 3 month you can remove this comment*/
+
 div.table-tab-wrap .dataTables_footer{
 	bottom: 15px;
 	position: fixed;
 }
 
-/*div.sub-page  div.fragment-tabs>div.table-tab>div.table-tab-wrap .dataTables_footer *//*2013/03/14 if no incidence after 3 month you can remove this comment*/
+
 div.sub-page div.table-tab-wrap .dataTables_footer{
 	bottom: 1.8cm;
 	position: fixed;

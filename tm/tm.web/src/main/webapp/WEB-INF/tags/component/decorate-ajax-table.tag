@@ -52,7 +52,6 @@
 			"bPaginate": ${ not empty paginate and paginate },
 			"sPaginationType": "squash",
 			"iDisplayLength": ${ displayLength },
-			"bProcessing": true,
 			"bServerSide": true,
 			"sAjaxSource": '${ url }',
 			
@@ -70,7 +69,7 @@
 			<c:if test="${ not empty rowCallback }">"fnRowCallback": <jsp:invoke fragment="rowCallback"/>,</c:if>
 			<c:if test="${ not empty drawCallback }">"fnDrawCallback" : <jsp:invoke fragment="drawCallback"/>,</c:if>				
 			<c:if test="${ not empty freeSettings}"><jsp:invoke fragment="freeSettings"/>,</c:if>
-			"sDom" : 't<"dataTables_footer"lirp>',
+			"sDom" : 't<"dataTables_footer"lp>',
 			"aoColumnDefs": [
 				<jsp:invoke fragment="columnDefs" />
 			] 

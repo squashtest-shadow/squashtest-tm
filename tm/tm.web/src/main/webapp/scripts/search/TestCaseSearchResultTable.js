@@ -53,7 +53,6 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 							"sUrl" : squashtm.app.contextRoot + "/datatables/messages"
 						},
 					    "bServerSide": true,  
-					    "bProcessing": true,  
 						"sAjaxSource" : squashtm.app.contextRoot + "/advanced-search/table",
 						 "fnServerParams": function ( aoData )   
 						    {  
@@ -150,7 +149,7 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 							"bVisible" : false,
 							"bSortable" : false
 						} ],
-						"sDom" : 'ft<"dataTables_footer"lirp>'
+						"sDom" : 'ft<"dataTables_footer"lip>'
 					}, squashConf = {
 						enableHover : true
 					};
@@ -162,7 +161,6 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 							"sUrl" : squashtm.app.contextRoot + "/datatables/messages"
 						},
 					    "bServerSide": true,  
-					    "bProcessing": true,  
 						"sAjaxSource" : squashtm.app.contextRoot + "/advanced-search/table",
 						 "fnServerParams": function ( aoData )   
 						    {  
@@ -264,7 +262,7 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 							"bVisible" : false,
 							"bSortable" : false
 						} ],
-						"sDom" : 'ft<"dataTables_footer"lirp>'
+						"sDom" : 'ft<"dataTables_footer"lip>'
 					}, squashConf = {
 						enableHover : true
 					};

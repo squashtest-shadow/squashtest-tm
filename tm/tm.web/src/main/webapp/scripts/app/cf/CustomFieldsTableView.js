@@ -47,12 +47,11 @@ define(
 												"bPaginate" : true,
 												"sPaginationType" : "squash",
 												"iDisplayLength" : cfTable.displayLength,
-												"bProcessing" : true,
 												"bServerSide" : true,
 												"sAjaxSource" : cfTable.ajaxSource,
 												"bDeferRender" : true,
 												"bRetrieve" : true,
-												"sDom" : 't<"dataTables_footer"lirp>',
+												"sDom" : 't<"dataTables_footer"lp>',
 												"iDeferLoading" : 0,
 												"aaSorting" : [ [ 2, "asc" ] ],
 												"fnRowCallback" : function() {

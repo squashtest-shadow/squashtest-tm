@@ -157,11 +157,10 @@ define([ "jquery", "jquery.squash.datatables" ], function($) {
 			"sPaginationType" : "squash",
 			"iDisplayLength" : 10,
 			"iDeferLoading" : settings.data.tableData.length,
-			"bProcessing" : true,
 			"bServerSide" : true,
 			"sAjaxSource" : settings.urls.baseUrl + '/table',
 			"aaData" : settings.data.tableData,
-			"sDom" : 'ft<"dataTables_footer"lirp>',
+			"sDom" : 'ft<"dataTables_footer"lp>',
 			"aoColumnDefs" : [ {
 				'bVisible' : false,
 				'bSortable' : false,
