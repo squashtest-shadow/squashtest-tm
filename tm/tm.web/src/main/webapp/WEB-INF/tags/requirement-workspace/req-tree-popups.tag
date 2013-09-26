@@ -57,12 +57,6 @@
 <f:message var="dateexportFormat"		key="export.dateformat"/>
 <f:message var="exportnamePrefix" 		key="label.lower.dash.exportRequirements" />
 
-<f:message var="deleteMessagePrefix"	key="dialog.label.delete-node.label.start" />
-<f:message var="deleteMessageVariable"  key="dialog.label.delete-nodes.requirements.label"/>
-<f:message var="deleteMessageSuffix"	key="dialog.label.delete-node.label.end"/>
-<f:message var="deleteMessageNoUndo"	key="dialog.label.delete-node.label.cantbeundone" />
-<f:message var="deleteMessageConfirm"	key="dialog.label.delete-node.label.confirm" />
-
 
 <div id="treepopups-definition" class="not-displayed">
 
@@ -174,9 +168,11 @@
 			</div>
 			<div class="display-table-cell">
 				<p>
-					<c:out value="${deleteMessagePrefix}"/>
-					<span class='red-warning-message'><c:out value="${deleteMessageVariable}" /></span> 
-					<c:out value="${deleteMessageSuffix}" />
+					<f:message key="dialog.label.delete-node.label.start" />
+					<span class='red-warning-message'>
+						<f:message key="dialog.label.delete-nodes.requirements.label"/>
+					</span> 
+					<f:message key="dialog.label.delete-node.label.end"/>
 				</p>
 				
 				<div class="not-displayed delete-node-dialog-details">
@@ -186,8 +182,12 @@
 				</div>
 				
 				<p>
-					<span><c:out value="${deleteMessageNoUndo}"/></span>				
-					<span class='bold-warning-message'><c:out value="${deleteMessageConfirm}"/></span>				
+					<span>
+						<f:message key="dialog.label.delete-node.label.cantbeundone" />
+					</span>				
+					<span class='bold-warning-message'>
+						<f:message key="dialog.label.delete-node.label.confirm" />
+					</span>				
 				</p>				
 				
 			</div>
