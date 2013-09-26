@@ -581,9 +581,4 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 		return qualifiedClassNameList;
 	}
 
-
-
-
-
-
 }
