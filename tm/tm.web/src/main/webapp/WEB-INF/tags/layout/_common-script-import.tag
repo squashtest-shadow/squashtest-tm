@@ -58,6 +58,7 @@ require.baseUrl = "${pageContext.servletContext.contextPath}/scripts";
 	// -------------------- Waiting for better handle of locale in .js---------------------------------------------
 	squashtm.message = squashtm.message || {};
 	squashtm.message.cancel = "<f:message key='label.Cancel'/>";
+	squashtm.message.placeholder = "<f:message key='rich-edit.placeholder'/>";
 	squashtm.message.confirm = "<f:message key='label.Confirm'/>";		
 	squashtm.message.intoTitle = "<f:message key='popup.title.info'/>";		
 	squashtm.message.errorTitle = "<f:message key='popup.title.error'/>";	

@@ -83,7 +83,14 @@ define(
 				return {
 					width : '100%',
 					submit : squashtm.message.confirm,
-					cancel : squashtm.message.cancel
+					cancel : squashtm.message.cancel,
+					maxlength : 255,
+					cols : 80,
+					max_size : 20,
+					onblur : function() {
+					},
+					placeholder : squashtm.message.placeholder,
+					
 				};
 
 			}
