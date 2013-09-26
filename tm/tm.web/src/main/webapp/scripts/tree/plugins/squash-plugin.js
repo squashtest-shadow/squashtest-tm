@@ -20,7 +20,7 @@
  */
 
 
-define(['jquery', 'jstree', './tree-node'], function($){
+define(['jquery', 'jstree', './tree-node', 'jquery.squash'], function($){
 	
 	
 	
