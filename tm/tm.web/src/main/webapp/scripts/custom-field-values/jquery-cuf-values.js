@@ -89,7 +89,7 @@ define(
 					max_size : 20,
 					onblur : function() {
 					},
-					placeholder : squashtm.message.placeholder,
+					placeholder : squashtm.message.placeholder
 					
 				};
 
