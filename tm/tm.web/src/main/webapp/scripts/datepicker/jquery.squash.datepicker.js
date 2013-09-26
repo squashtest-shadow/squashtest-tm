@@ -198,7 +198,7 @@ function dp_setDate(iDate) {
 		$(datelabel).html(stringdate);
 	} else {
 		$(datepick).datepicker("setDate", null);
-		$(datelabel).html("----");
+		$(datelabel).html("-");
 	}
 
 }
