@@ -550,13 +550,16 @@
 			</td>
 		</tr>
 		</c:if>
+		
+		<c:if test="${!((workspace eq 'test-case' || linkable eq 'test-case' )&& linkable != 'requirement')}">		
 		<tr>
 			<td><span class="gray-text"> <f:message	key="label.Name" /> </span> : 
 			<input id="searchName" type="text"
 				class="std-height snap-right" style="width: 66%; margin-left: 2em;" />
 			</td>
 		</tr>
-
+		</c:if>
+		
 		<c:if test="${(workspace eq 'requirement' && empty linkable) || (linkable eq 'requirement')}">
 				<tr>
 					<td>
@@ -639,235 +642,11 @@
 		</c:if>
 
 
-		<c:if
-			test="${((workspace eq 'test-case' || linkable eq 'test-case' )&& linkable != 'requirement')}">
-			<tr>
-				<td>
-					<div class="search-panel-tc-importance">
-						<div class="caption">
-							<span class="gray-text"><f:message
-									key="search.test-case.importance.filter" /> </span>
-						</div>
-						<div class="options">
-							<table>
-								<tr>
-									<td>
-										<div class="search-tc-importance-1">
-											<input type="checkbox" id="importance-1" data-value="LOW" checked="checked"/><span><f:message
-													key="test-case.importance.LOW" /> </span>
-										</div>
-									</td>
-									<td>
-										<div class="search-tc-importance-2">
-											<input type="checkbox" id="importance-2" data-value="MEDIUM" checked="checked"/><span><f:message
-													key="test-case.importance.MEDIUM" /> </span>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<div class="search-tc-importance-3">
-											<input type="checkbox" id="importance-3" data-value="HIGH" checked="checked"/><span><f:message
-													key="test-case.importance.HIGH" /> </span>
-										</div>
-									</td>
-									<td>
-										<div class="search-tc-importance-4">
-											<input type="checkbox" id="importance-4" data-value="VERY_HIGH" checked="checked"/><span><f:message
-													key="test-case.importance.VERY_HIGH" /> </span>
-										</div>
-									</td>
-								</tr>
-							</table>
-						</div>
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<div class="search-panel-tc-nature">
-						<div class="caption">
-							<span class="gray-text"><f:message
-									key="search.test-case.nature.filter" /> </span>
-						</div>
-						<div class="options">
-							<table>
-								<tr>
-									<td>
-										<div class="search-tc-nature-1">
-											<input type="checkbox" id="nature-1" data-value="FUNCTIONAL_TESTING" checked="checked"/><span><f:message
-													key="test-case.nature.FUNCTIONAL_TESTING" /> </span>
-										</div>
-									</td>
-									<td>
-										<div class="search-tc-nature-2">
-											<input type="checkbox" id="nature-2" data-value="BUSINESS_TESTING" checked="checked"/><span><f:message
-													key="test-case.nature.BUSINESS_TESTING" /> </span>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<div class="search-tc-nature-3">
-											<input type="checkbox" id="nature-3" data-value="USER_TESTING" checked="checked"/><span><f:message
-													key="test-case.nature.USER_TESTING" /> </span>
-										</div>
-									</td>
-									<td>
-										<div class="search-tc-nature-4">
-											<input type="checkbox" id="nature-4" data-value="NON_FUNCTIONAL_TESTING" checked="checked"/><span><f:message
-													key="test-case.nature.NON_FUNCTIONAL_TESTING" /> </span>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<div class="search-tc-nature-5">
-											<input type="checkbox" id="nature-5" data-value="PERFORMANCE_TESTING" checked="checked"/><span><f:message
-													key="test-case.nature.PERFORMANCE_TESTING" /> </span>
-										</div>
-									</td>
-									<td>
-										<div class="search-tc-nature-6">
-											<input type="checkbox" id="nature-6" data-value="SECURITY_TESTING" checked="checked"/><span><f:message
-													key="test-case.nature.SECURITY_TESTING" /> </span>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<div class="search-tc-nature-7">
-											<input type="checkbox" id="nature-7" data-value="ATDD" checked="checked"/><span><f:message
-													key="test-case.nature.ATDD" /> </span>
-										</div>
-									</td>
-									<td>
-										<div class="search-tc-nature-8">
-											<input type="checkbox" id="nature-8" data-value="UNDEFINED" checked="checked"/><span><f:message
-													key="test-case.nature.UNDEFINED" /> </span>
-										</div>
-									</td>
-								</tr>
-							</table>
-						</div>
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<div class="search-panel-tc-type">
-						<div class="caption">
-							<span class="gray-text"><f:message
-									key="search.test-case.type.filter" /> </span>
-						</div>
-						<div class="options">
-							<table>
-								<tr>
-									<td>
-										<div class="search-tc-type-1">
-											<input type="checkbox" id="type-1" data-value="COMPLIANCE_TESTING" checked="checked"/><span><f:message
-													key="test-case.type.COMPLIANCE_TESTING" /> </span>
-										</div>
-									</td>
-									<td>
-										<div class="search-tc-type-2">
-											<input type="checkbox" id="type-2" data-value="CORRECTION_TESTING" checked="checked"/><span><f:message
-													key="test-case.type.CORRECTION_TESTING" /> </span>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<div class="search-tc-type-3">
-											<input type="checkbox" id="type-3" data-value="EVOLUTION_TESTING" checked="checked"/><span><f:message
-													key="test-case.type.EVOLUTION_TESTING" /> </span>
-										</div>
-									</td>
-									<td>
-										<div class="search-tc-type-4">
-											<input type="checkbox" id="type-4" data-value="REGRESSION_TESTING" checked="checked"/><span><f:message
-													key="test-case.type.REGRESSION_TESTING" /> </span>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<div class="search-tc-type-5">
-											<input type="checkbox" id="type-5" data-value="END_TO_END_TESTING" checked="checked"/><span><f:message
-													key="test-case.type.END_TO_END_TESTING" /> </span>
-										</div>
-									</td>
-									<td>
-										<div class="search-tc-type-6">
-											<input type="checkbox" id="type-6" data-value="PARTNER_TESTING" checked="checked"/><span><f:message
-													key="test-case.type.PARTNER_TESTING" /> </span>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<div class="search-tc-type-7">
-											<input type="checkbox" id="type-7" data-value="UNDEFINED" checked="checked"/><span><f:message
-													key="test-case.type.UNDEFINED" /> </span>
-										</div>
-									</td>
-								</tr>
-							</table>
-						</div>
-					</div>
-				</td>
-			</tr>
-			<tr>
-			<td>
-				<div class="search-panel-tc-status">
-						<div class="caption">
-							<span class="gray-text"><f:message
-									key="search.test-case.status.filter" /> </span>
-						</div>
-						<div class="options">
-							<table>
-								<tr>
-									<td>
-										<div class="search-tc-status-1">
-											<input type="checkbox" id="status-1" data-value="WORK_IN_PROGRESS" checked="checked"/><span><f:message
-													key="test-case.status.WORK_IN_PROGRESS" /> </span>
-										</div>
-									</td>
-									<td>
-										<div class="search-tc-status-2">
-											<input type="checkbox" id="status-2" data-value="UNDER_REVIEW" checked="checked"/><span><f:message
-													key="test-case.status.UNDER_REVIEW" /> </span>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<div class="search-tc-status-3">
-											<input type="checkbox" id="status-3" data-value="APPROVED" checked="checked"/><span><f:message
-													key="test-case.status.APPROVED" /> </span>
-										</div>
-									</td>
-									<td>
-										<div class="search-tc-status-4">
-											<input type="checkbox" id="status-4" data-value="OBSOLETE" checked="checked"/><span><f:message
-													key="test-case.status.OBSOLETE" /> </span>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<div class="search-tc-status-5">
-											<input type="checkbox" id="status-5" data-value="TO_BE_UPDATED" checked="checked"/><span><f:message
-													key="test-case.status.TO_BE_UPDATED" /> </span>
-										</div>
-									</td>
-								</tr>
-							</table>
-						</div>
-					</div>
-				</td>
-			</tr>
+		<c:if test="${((workspace eq 'test-case' || linkable eq 'test-case' )&& linkable != 'requirement')}">
+			<a id="search-tree-button-old" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only" role="button" aria-disabled="false" title="Rechercher..."><span class="ui-button-icon-primary ui-icon ui-icon-search"></span><span class="ui-button-text">Rechercher...</span></a>
 		</c:if>
+
+		<c:if test="${!((workspace eq 'test-case' || linkable eq 'test-case' )&& linkable != 'requirement')}">
 
 		<tr>
 			<td><input type="checkbox" id="project-view" /> <span
@@ -880,7 +659,7 @@
 				id="search-button" value="${ searchLabel }" />
 			</td>
 		</tr>
-
+		</c:if>
 
 		<c:if test="${(workspace eq 'requirement' && empty linkable) || (linkable eq 'requirement')}">
 				<tr>

@@ -60,6 +60,10 @@
 		$("#search-tree-button").on('click', function(){
 			document.location.href = squashtm.app.contextRoot + "/advanced-search?testcase&id=${elementId}&associateResultWithType=${elementType}";
 		});
+
+		$("#search-tree-button-old").on('click', function(){
+			document.location.href = squashtm.app.contextRoot + "/advanced-search?testcase&id=${elementId}&associateResultWithType=${elementType}";
+		});
 	});
 	
 </script>
