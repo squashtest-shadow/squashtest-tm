@@ -82,8 +82,21 @@
     </property>
   </bean>
 
+  <bean id="squash.security.authenticationProvider.internal" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+    <property name="userDetailsService" ref="squashtest.core.security.JdbcUserDetailsManager" />
+
+    <property name="passwordEncoder">
+      <bean class="org.springframework.security.authentication.encoding.ShaPasswordEncoder" />
+    </property>
+  </bean>
+
 <!--  vient de core.web -->
   <bean id="squashtest.core.security.JdbcUserDetailsManager" class="org.squashtest.tm.service.internal.security.SquashUserDetailsManager">
+    <property name="authenticationManager">
+      <bean class="org.squashtest.tm.service.security.AuthenticationManagerDelegator">
+        <constructor-arg name="authProviderBean" value="squash.security.authenticationProvider.internal" />
+      </bean>
+    </property> 
 
     <property name="dataSource" ref="squashtest.core.persistence.jdbc.DataSource" />
 

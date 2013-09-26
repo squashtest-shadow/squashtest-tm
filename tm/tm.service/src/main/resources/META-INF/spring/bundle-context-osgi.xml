@@ -127,16 +127,16 @@
       <value>org.squashtest.tm.service.testcase.TestStepModificationService</value>
     </osgi:interfaces>
   </osgi:service>
-  
+
   <osgi:service ref="squashtest.tm.service.ParameterModificationService">
     <osgi:interfaces>
       <value>org.squashtest.tm.service.testcase.ParameterModificationService</value>
       <value>org.squashtest.tm.service.testcase.ParameterFinder</value>
     </osgi:interfaces>
   </osgi:service>
-  
-  <osgi:service ref="squashtest.tm.service.DatasetModificationService" interface="org.squashtest.tm.service.testcase.DatasetModificationService"/>
-  
+
+  <osgi:service ref="squashtest.tm.service.DatasetModificationService" interface="org.squashtest.tm.service.testcase.DatasetModificationService" />
+
   <osgi:service ref="squashtest.tm.service.TestCaseLibraryNavigationService">
     <osgi:interfaces>
       <value>org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService</value>
@@ -204,11 +204,11 @@
   </osgi:service>
 
   <osgi:service ref="squashtest.tm.service.AttachmentManagerService">
-  	<osgi:interfaces>
-  		<value>org.squashtest.tm.service.attachment.AttachmentManagerService</value>
-  		<value>org.squashtest.tm.service.attachment.AttachmentFinderService</value>
-  	</osgi:interfaces>
-  </osgi:service> 
+    <osgi:interfaces>
+      <value>org.squashtest.tm.service.attachment.AttachmentManagerService</value>
+      <value>org.squashtest.tm.service.attachment.AttachmentFinderService</value>
+    </osgi:interfaces>
+  </osgi:service>
 
   <osgi:service ref="squashtest.tm.service.TestCasesWorkspaceService" interface="org.squashtest.tm.service.library.WorkspaceService" />
 
@@ -241,16 +241,14 @@
     </osgi:interfaces>
   </osgi:service>
 
-	<osgi:service ref="squashtest.tm.service.TeamModificationService">
-		<osgi:interfaces>
-			<value>org.squashtest.tm.service.user.TeamModificationService</value>
-			<value>org.squashtest.tm.service.user.TeamFinderService</value>
-		</osgi:interfaces>
-	</osgi:service>
+  <osgi:service ref="squashtest.tm.service.TeamModificationService">
+    <osgi:interfaces>
+      <value>org.squashtest.tm.service.user.TeamModificationService</value>
+      <value>org.squashtest.tm.service.user.TeamFinderService</value>
+    </osgi:interfaces>
+  </osgi:service>
 
-	<osgi:service
-		ref="squashtest.tm.service.audit.RequirementAuditTrailService"
-		interface="org.squashtest.tm.service.audit.RequirementAuditTrailService" />
+  <osgi:service ref="squashtest.tm.service.audit.RequirementAuditTrailService" interface="org.squashtest.tm.service.audit.RequirementAuditTrailService" />
 
   <osgi:service ref="squashtest.tm.service.RequirementVersionManagerService" interface="org.squashtest.tm.service.requirement.RequirementVersionManagerService" />
 
@@ -268,14 +266,14 @@
   <osgi:service ref="squashtest.tm.service.testautomation.AutomatedExecutionManagerService" interface="org.squashtest.tm.service.testautomation.AutomatedExecutionManagerService" />
 
   <osgi:service ref="squashtest.tm.service.ParameterModificationService">
-   	<osgi:interfaces>
+    <osgi:interfaces>
       <value>org.squashtest.tm.service.testcase.ParameterFinder</value>
       <value>org.squashtest.tm.service.testcase.ParameterModificationService</value>
     </osgi:interfaces>
   </osgi:service>
 
- <osgi:service ref="squashtest.tm.service.DatasetModificationService">
-   	<osgi:interfaces>
+  <osgi:service ref="squashtest.tm.service.DatasetModificationService">
+    <osgi:interfaces>
       <value>org.squashtest.tm.service.testcase.DatasetModificationService</value>
     </osgi:interfaces>
   </osgi:service>
@@ -301,13 +299,12 @@
       <value>org.squashtest.tm.service.customfield.CustomFieldValueManagerService</value>
     </osgi:interfaces>
   </osgi:service>
-  
-  <osgi:service ref="squashtest.tm.service.CustomFieldHelperService" interface="org.squashtest.tm.service.customfield.CustomFieldHelperService" />
-  
-  
 
-	<osgi:service ref="squashtest.tm.service.DenormalizedFieldValueFinder"
-		interface="org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueFinder" />
+  <osgi:service ref="squashtest.tm.service.CustomFieldHelperService" interface="org.squashtest.tm.service.customfield.CustomFieldHelperService" />
+
+
+
+  <osgi:service ref="squashtest.tm.service.DenormalizedFieldValueFinder" interface="org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueFinder" />
 
 
   <!-- ====== SERVICES CONSUMED BY THIS BUNDLE ====== -->
@@ -329,14 +326,22 @@
     </osgi:interfaces>
   </osgi:service>
 
+  <osgi:service ref="squash.security.authenticationProvider.internal">
+    <osgi:interfaces>
+      <value>org.springframework.security.authentication.AuthenticationProvider</value>
+    </osgi:interfaces>
+  </osgi:service>
+
 <!-- Bugtracker co,nnectors registry -->
-  <osgi:list id="bugtracker.plugins.registry" interface="org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider" cardinality="0..N">
-    <osgi:listener ref="squashtest.core.bugtracker.BugTrackerConnectorFactory"
-             bind-method="registerProvider" unbind-method="unregisterProvider" />
+  <osgi:list id="bugtracker.plugins.registry" interface="org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider"
+    cardinality="0..N">
+    <osgi:listener ref="squashtest.core.bugtracker.BugTrackerConnectorFactory" bind-method="registerProvider"
+      unbind-method="unregisterProvider" />
   </osgi:list>
-   <osgi:list id="bugtracker.advancedplugins.registry" interface="org.squashtest.csp.core.bugtracker.spi.AdvancedBugTrackerConnectorProvider" cardinality="0..N">
-    <osgi:listener ref="squashtest.core.bugtracker.BugTrackerConnectorFactory"
-             bind-method="registerAdvancedProvider" unbind-method="unregisterAdvancedProvider" />
-  </osgi:list> 
+  <osgi:list id="bugtracker.advancedplugins.registry" interface="org.squashtest.csp.core.bugtracker.spi.AdvancedBugTrackerConnectorProvider"
+    cardinality="0..N">
+    <osgi:listener ref="squashtest.core.bugtracker.BugTrackerConnectorFactory" bind-method="registerAdvancedProvider"
+      unbind-method="unregisterAdvancedProvider" />
+  </osgi:list>
 
 </beans>
