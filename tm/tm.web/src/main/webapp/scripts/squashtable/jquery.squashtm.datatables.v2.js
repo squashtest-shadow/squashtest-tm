@@ -1193,10 +1193,14 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 
 	$.fn.squashTable = function(datatableSettings, squashSettings) {
 
-		/*
-		 * are we in retrieve mode or init mode ? the answer is simple : no param means retrieve mode. Note that the key
-		 * is the dome element.
-		 */
+		/* *************************************************************
+		 * 
+		 * 0 - Getter ?
+		 * 
+		 * are we in retrieve mode or init mode ? the answer is simple : no 
+		 * param means retrieve mode. Note that the key is the dome element.
+		 *
+		 * *********************************************************** */
 
 		if (arguments.length === 0) {
 			//first, let's try to see if this selector is actually the key of this table in the hash 
@@ -1217,31 +1221,108 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			}
 		}
 
-		/*
-		 * else we will initialize a new instance.
-		 */
+		/* *************************************************************
+		 * 
+		 * 0 - Constructor ?
+		 * 
+		 * If the function was not invoked as a getter for an existing
+		 * instance, then we will create a new one with the supplied 
+		 * arguments.
+		 * 
+		 ***************************************************************/
 
 		var self = this;
 
-		// first we parse the dom, looking for informations in the dom
+
+		
+		/* ******************************************************************
+		 * 1 - Settings augmentation
+		 * 
+		 * Here we we tune some more the datatable configuration by preconfiguring 
+		 * some callbacks. Those callbacks may also have been configured by the 
+		 * user, so we will wrap our own definition around those instead of bluntly 
+		 * overriding them.  
+		 * 
+		 * **************************************************************** */
+		
+		// ---------- merge programmatic and DOM-based configuration --------
+		
 		var domConf = $.fn.squashTable.configurator.fromDOM(this);
 
 		var datatableEffective = $.extend(true, {}, datatableDefaults, domConf.table, datatableSettings);
 		var squashEffective = $.extend(true, {}, squashDefaults, domConf.squash, squashSettings);
 
-		
-		/* ************** internal properties ******************** */
 
 		this.drawcallbacks = [];
 		this.rowcalbacks = [];
 		
-		
-		
-		/* ************** squash init first *********************** */
-
-		
-		// save the settings in that instance
+			
 		this.squashSettings = squashEffective;
+		
+		
+		// ---------- serverparams (1) : a good time to save the table selection --------
+		
+		var oldFnServParam = datatableEffective.fnServerParams;
+		datatableEffective.fnServerParams = function(aoData){
+			_saveTableSelection.call(this);
+			if (!! oldFnServParam){
+				oldFnServParam.call(this, aoData);
+			}
+		}
+		
+		// --------------- serverparams (2) : actually rewrite the data --------
+		
+		$.fn.squashTable.decorator.rewriteSentData(datatableEffective);
+		
+		// ---------------- init complete callback ----------------		
+		
+		var userInitCompleteCallback = datatableEffective.fnInitComplete;
+		datatableEffective.fnInitComplete = function(oSettings) {
+			if (userInitCompleteCallback) {
+				userInitCompleteCallback.call(this, oSettings);
+			}
+			// sets the table visible if it was hidden
+			self.removeClass("unstyled-table");
+		};
+
+		//----------------- draw callback ------------------------
+		
+		var aDrawCallbacks = this.drawcallbacks;
+		
+		aDrawCallbacks.push(_attachButtonsCallback);
+		aDrawCallbacks.push(_configureRichEditables);
+		aDrawCallbacks.push(_configureExecutionStatus);
+		aDrawCallbacks.push(_configureButtons);
+		aDrawCallbacks.push(_configureDeleteButtons);
+		aDrawCallbacks.push(_configureLinks);
+		aDrawCallbacks.push(_enableTableDragAndDrop);
+		aDrawCallbacks.push(_restoreTableSelection);
+		aDrawCallbacks.push(_applyFilteredStyle);
+		
+		
+		var userDrawCallback = datatableEffective.fnDrawCallback;
+
+		datatableEffective.fnDrawCallback = function(oSettings) {
+			
+			if (userDrawCallback) {
+				userDrawCallback.call(this, oSettings);
+			}
+			
+			var i=0, len = this.drawcallbacks.length;
+			for (i=0; i<len; i++){
+				this.drawcallbacks[i].call(this);
+			}
+
+		};
+		
+		
+		
+		/* *****************************************************
+		 * 
+		 * 2 - public methods definition		 
+		 * 
+		 ***************************************************** */
+		
 		this.dropHandler = _dropHandler;
 		this.getODataId = _getODataId;
 		this.saveTableSelection = _saveTableSelection;
@@ -1279,13 +1360,12 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			this.restoreTableSelection();
 		}
 
-		// ************** function overrides *********************************************
+		
 
 		if (squashEffective.functions) {
 			$.extend(this, squashEffective.functions);
 		}
 		
-		// ************** other preprocessings ****************
 
 		if (squashEffective.fixObjectDOMInit) {
 			_fix_mDataProp(datatableEffective);
@@ -1295,78 +1375,22 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 			_configureToggableRows.call(this);
 		}
 
-		/*
-		 * ************* prepare custom callbacks if needed * ********
-		 */
 		
-		// --------------- serverparams : we mainly use it to save the table selection --------
-		var oldFnServParam = datatableEffective.fnServerParams;
-		datatableEffective.fnServerParams = function(aoData){
-			_saveTableSelection.call(this);
-			if (!! oldFnServParam){
-				oldFnServParam.call(this, aoData);
-			}
-		}
+		/* **********************************************************
+		 * 
+		 * 3 - Final leg : creation and events
+		 *  
+		 ********************************************************** */
 
-		//----------------- draw callback ------------------------
-		
-		var aDrawCallbacks = this.drawcallbacks;
-		
-		aDrawCallbacks.push(_attachButtonsCallback);
-		aDrawCallbacks.push(_configureRichEditables);
-		aDrawCallbacks.push(_configureExecutionStatus);
-		aDrawCallbacks.push(_configureButtons);
-		aDrawCallbacks.push(_configureDeleteButtons);
-		aDrawCallbacks.push(_configureLinks);
-		aDrawCallbacks.push(_enableTableDragAndDrop);
-		aDrawCallbacks.push(_restoreTableSelection);
-		aDrawCallbacks.push(_applyFilteredStyle);
-		
-		
-		var userDrawCallback = datatableEffective.fnDrawCallback;
-
-		var customDrawCallback = function(oSettings) {
-			
-			if (userDrawCallback) {
-				userDrawCallback.call(this, oSettings);
-			}
-			
-			var i=0, len = this.drawcallbacks.length;
-			for (i=0; i<len; i++){
-				this.drawcallbacks[i].call(this);
-			}
-
-		};
-
-		datatableEffective.fnDrawCallback = customDrawCallback;
-
-		// ***************** init complete callback ***************
-		
-		var userInitCompleteCallback = datatableEffective.fnInitCompleteCallback;
-
-		var customInitCompleteCallback = function(oSettings) {
-			if (userInitCompleteCallback) {
-				userInitCompleteCallback.call(this, oSettings);
-			}
-			// sets the table visible if it was hidden
-			self.removeClass("unstyled-table");
-		};
-
-		datatableEffective.fnInitComplete = customInitCompleteCallback;
-
-		/* ********************* rewrite the data ***************** */
-
-		$.fn.squashTable.decorator.rewriteSentData(datatableEffective);
-
-		/* **************** store the new instance ***************** */
+		// ---------------- store the new instance ---------------------
 
 		$.fn.squashTable.instances[this.selector] = this;
 
-		/* ************* now call the base plugin ***************** */
+		// ---------------- now call the base plugin -------------------
 
 		this.dataTable(datatableEffective);
 		
-		/* ****** last : event binding ***** */
+		// ---------------- event binding ------------------------------
 
 		_bindClickHandlerToSelectHandle.call(this);
 
@@ -1389,8 +1413,7 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 
 	$.fn.squashTable.instances = existingInstances || {}; // end of the hack
 
-	// ****************************** static methods
-	// ********************************************
+	// *********************** static methods ***************************
 
 	$.fn.squashTable.configurator = {
 
