@@ -36,7 +36,6 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 			this.addSimpleEditableToLabel = $.proxy(this._addSimpleEditableToLabel, this);
 			this.addInterfaceLevel2Link = $.proxy(this._addInterfaceLevel2Link, this);
 			this.addTreeLink = $.proxy(this._addTreeLink, this);
-			this.tableDrawCallback = $.proxy(this._tableDrawCallback, this);
 			this.openBreadCrumb =  $.proxy(this._openBreadCrumb, this);
 			this.openFoldersUntillEnd = $.proxy(this._openFoldersUntillEnd, this);
 			this.findTreeBreadcrumbToNode =  $.proxy(this._findTreeBreadcrumbToNode, this);
@@ -444,10 +443,6 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 			if(this.isAssociation){
 				this.addAssociationCheckboxes(row, data);
 			}
-		},
-
-		_tableDrawCallback : function() {
-
 		},
 
 		_addInterfaceLevel2Link : function(row, data) {

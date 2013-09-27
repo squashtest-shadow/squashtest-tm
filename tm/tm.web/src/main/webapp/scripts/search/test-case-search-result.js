@@ -60,6 +60,11 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		associateSelection : function(){
 			var table = $('#test-case-search-result-table').dataTable();
 			var ids = table.squashTable().getSelectedIds();
+			if(ids.length == 0){
+				var noLineSelectedDialog = $("#no-selected-lines").messageDialog();
+				noLineSelectedDialog.messageDialog('open');
+				return;
+			}
 			var id = this.associationId;
 				
 			if("requirement" === this.associationType){
@@ -281,8 +286,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 							if($("#"+columns[index]+"-checkbox").prop('checked')){
 								self.updateDisplayedValueInColumn(table, columns[index]);
 								var value = $("#"+columns[index]+"-combo").find('option:selected').val();
-								var i;
-								for(i=0; i<ids.length; i++){
+								for(var i=0; i<ids.length; i++){
 									var urlPOST = squashtm.app.contextRoot + "/test-cases/" + ids[i];
 									$.post(urlPOST, {
 										value : value,
@@ -301,7 +305,6 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 							var noLineSelectedDialog = $("#no-selected-lines").messageDialog();
 							noLineSelectedDialog.messageDialog('open');
 							$(this).confirmDialog('close');
-						} else {
 						}
 					});
 
