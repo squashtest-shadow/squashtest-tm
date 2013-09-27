@@ -50,14 +50,14 @@
 <table id="test-cases-table" data-def="ajaxsource=${tablemodel}, language=${dtMessagesUrl}, hover">
 	<thead>
 		<tr>
-			<th data-def="map=entity-index, select, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>
-			<th data-def="map=project-name, sortable"><f:message key="label.project" /></th>
-			<th data-def="map=reference, sortable"><f:message key="label.Reference"/></th>
-			<th data-def="map=tc-name, sortable, link=${testCaseUrl}"><f:message key="test-case.name.label" /></th>
-			<th data-def="map=assigned-user, sortable, sWidth=10%"><f:message key="test-case.user.combo.label" /></th>
-			<th data-def="map=importance, sortable"><f:message key="test-case.importance.combo.label" /></th>
-			<th data-def="map=exec-mode, sortable"><f:message key="label.Mode" /></th>
-			<th data-def="map=empty-delete-holder${deleteBtnClause}">&nbsp;</th>				
+			<th class="no-user-select" data-def="map=entity-index, select, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>
+			<th class="no-user-select" data-def="map=project-name, sortable"><f:message key="label.project" /></th>
+			<th class="no-user-select" data-def="map=reference, sortable"><f:message key="label.Reference"/></th>
+			<th class="no-user-select" data-def="map=tc-name, sortable, link=${testCaseUrl}"><f:message key="test-case.name.label" /></th>
+			<th class="no-user-select" data-def="map=assigned-user, sortable, sWidth=10%"><f:message key="test-case.user.combo.label" /></th>
+			<th class="no-user-select" data-def="map=importance, sortable"><f:message key="test-case.importance.combo.label" /></th>
+			<th class="no-user-select" data-def="map=exec-mode, sortable"><f:message key="label.Mode" /></th>
+			<th class="no-user-select" data-def="map=empty-delete-holder${deleteBtnClause}">&nbsp;</th>				
 		</tr>
 	</thead>
 	<tbody><%-- Will be populated through ajax --%></tbody>

@@ -105,25 +105,6 @@
 </div>
 
 <%-- ===================== THE TABLE ===================== --%>
-<%-- 
-<div>
-	<input id="manage-test-suites-buttonmenu" 	type="button" value="${manageTS}" 		class="buttonmenu" />
-	<ul id="manage-test-suites-menu" class="not-displayed">
-		<!-- no item at first, will be popuplated by javascript -->
-		
-		<li class="suite-manager-controls suite-manager-newsection ui-menu-item">
-			<input type="text" id="suite-manager-menu-input"/>
-			<input type="button" id="suite-manager-menu-button" class="button"/>
-		</li>
-		<li class="suite-manager-buttonpane suite-manager-newsection ui-menu-item">
-			<div class="snap-right">
-				<input type="button" id="suite-manager-menu-ok-button" 		role="button" class="button" value="${okLabel}"/>
-				<input type="button" id="suite-manager-menu-cancel-button"	role="button" class="button" value="${cancelLabel}" />
-			</div>
-		</li> 		 
-	</ul>
-</div>
---%>
 
 <div class="table-tab-wrap">
 <c:if test="${editable}">
@@ -132,23 +113,23 @@
 <table id="iteration-test-plans-table" class="test-plan-table" data-def="language=${dtMessagesUrl}, ajaxsource=${tableModelUrl}, hover"  >
 	<thead>
 		<tr>
-			<th data-def="map=entity-index, select, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>
-			<th data-def="map=project-name, sortable"><f:message key="label.project" /></th>
+			<th class="no-user-select" data-def="map=entity-index, select, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>
+			<th class="no-user-select" data-def="map=project-name, sortable"><f:message key="label.project" /></th>
 			<%-- exec mode icon --%>
 			<c:if test="${ testSuite.project.testAutomationEnabled }">
-				<th data-def="map=exec-mode, sortable, narrow, sClass=exec-mode">&nbsp;</th>
+				<th class="no-user-select" data-def="map=exec-mode, sortable, narrow, sClass=exec-mode">&nbsp;</th>
 			</c:if>
 			<%-- exec mode icon --%>
-			<th data-def="map=reference, sortable"><f:message key="label.Reference"/></th>
-			<th data-def="map=tc-name, sortable, sClass=toggle-row"><f:message key="iteration.executions.table.column-header.test-case.label" /></th>
-			<th data-def="map=importance, sortable"><f:message key="iteration.executions.table.column-header.importance.label" /></th>
-			<th data-def="map=dataset, sortable, sWidth=10%"><f:message key="label.Dataset" /></th>
-			<th data-def="map=suite, sortable, sWidth=10%"><f:message key="iteration.executions.table.column-header.suite.label" /></th>
-			<th data-def="map=status, sortable, sWidth=10%, sClass=has-status status-combo"><f:message key="iteration.executions.table.column-header.status.label" /></th>
-			<th data-def="map=assignee-login, sortable, sWidth=10%, sClass=assignee-combo"><f:message key="iteration.executions.table.column-header.user.label" /></th>
-			<th data-def="map=last-exec-on, sortable, sWidth=10%"><f:message key="iteration.executions.table.column-header.execution-date.label" /></th>
-			<th data-def="map=empty-execute-holder, narrow, center, sClass=execute-button">&nbsp;</th>	
-			<th data-def="map=empty-delete-holder${deleteBtnClause}">&nbsp;</th>				
+			<th class="no-user-select" data-def="map=reference, sortable"><f:message key="label.Reference"/></th>
+			<th class="no-user-select" data-def="map=tc-name, sortable, sClass=toggle-row"><f:message key="iteration.executions.table.column-header.test-case.label" /></th>
+			<th class="no-user-select" data-def="map=importance, sortable"><f:message key="iteration.executions.table.column-header.importance.label" /></th>
+			<th class="no-user-select" data-def="map=dataset, sortable, sWidth=10%"><f:message key="label.Dataset" /></th>
+			<th class="no-user-select" data-def="map=suite, sortable, sWidth=10%"><f:message key="iteration.executions.table.column-header.suite.label" /></th>
+			<th class="no-user-select" data-def="map=status, sortable, sWidth=10%, sClass=has-status status-combo"><f:message key="iteration.executions.table.column-header.status.label" /></th>
+			<th class="no-user-select" data-def="map=assignee-login, sortable, sWidth=10%, sClass=assignee-combo"><f:message key="iteration.executions.table.column-header.user.label" /></th>
+			<th class="no-user-select" data-def="map=last-exec-on, sortable, sWidth=10%"><f:message key="iteration.executions.table.column-header.execution-date.label" /></th>
+			<th class="no-user-select" data-def="map=empty-execute-holder, narrow, center, sClass=execute-button">&nbsp;</th>	
+			<th class="no-user-select" data-def="map=empty-delete-holder${deleteBtnClause}">&nbsp;</th>				
 		</tr>
 	</thead>
 	<tbody><%-- Will be populated through ajax --%></tbody>
