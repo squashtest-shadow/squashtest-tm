@@ -184,8 +184,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Basic(optional=false)
-	//@Field(analyze=Analyze.NO, store=Store.YES)
-	@Field
+	@Field(analyze=Analyze.NO, store=Store.YES)
 	@FieldBridge(impl = TestCaseImportanceBridge.class)
 	private TestCaseImportance importance = LOW;
 
@@ -207,8 +206,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@Enumerated(EnumType.STRING)
 	@Basic(optional = false)
 	@Column(name = "TC_STATUS")
-	//@Field(analyze=Analyze.NO, store=Store.YES)
-	@Field
+	@Field(analyze=Analyze.NO, store=Store.YES)
 	@FieldBridge(impl = TestCaseStatusBridge.class)
 	private TestCaseStatus status = TestCaseStatus.WORK_IN_PROGRESS;
 
