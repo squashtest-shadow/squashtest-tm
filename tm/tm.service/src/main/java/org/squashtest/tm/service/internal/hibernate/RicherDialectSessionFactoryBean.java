@@ -26,8 +26,9 @@ import java.util.Properties;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.StringType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
 
@@ -38,6 +39,7 @@ import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
  *
  */
 public class RicherDialectSessionFactoryBean extends LocalSessionFactoryBean {
+	private static final Logger LOGGER = LoggerFactory.getLogger(RicherDialectSessionFactoryBean.class);
 
 	private static final String HIBERNATE_PROPERTIES_DIALECT = "hibernate.dialect";
 	
@@ -80,11 +82,16 @@ public class RicherDialectSessionFactoryBean extends LocalSessionFactoryBean {
 		}
 		
 		if (! supported){
-			throw new IllegalArgumentException("RicherDialectSessionFactory : selected hibernate Dialect '"+choosenDialect+
-											   "' is not reputed to support the sql function 'group_concat()'. If you "+
-											   "are sure that your dialect (and the underlying database) supports this function,"+
-											   " please add to RicherDialectSessionFactory.dalectsSupportingGroupConcat"+
-											   "(see xml configuration)");
+			LOGGER.warn("RicherDialectSessionFactory : selected hibernate Dialect '"+choosenDialect+
+					   "' is not reputed to support the sql function 'group_concat()'. If you "+
+					   "are sure that your dialect (and the underlying database) supports this function,"+
+					   " please add to RicherDialectSessionFactory.dalectsSupportingGroupConcat"+
+					   "(see xml configuration)");
+//			throw new IllegalArgumentException("RicherDialectSessionFactory : selected hibernate Dialect '"+choosenDialect+
+//											   "' is not reputed to support the sql function 'group_concat()'. If you "+
+//											   "are sure that your dialect (and the underlying database) supports this function,"+
+//											   " please add to RicherDialectSessionFactory.dalectsSupportingGroupConcat"+
+//											   "(see xml configuration)");
 		}
 	}
 	
