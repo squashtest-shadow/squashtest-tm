@@ -71,15 +71,13 @@
  * 
  */
 define(["jquery", "backbone", 'squash.attributeparser', "jqplot-pie", "jquery.throttle-debounce"], function($, Backbone, attrparser){
+
+	
 	
 	return Backbone.View.extend({
-
-		// Represents an empty serie. It contains only one value that cannot be 0. That way jqplot won't complain.
-		EMPTY_SERIE : [1],
 		
-		EMPTY_COLOR_SCHEME : ["#EEEEEE"],
-	
-		EMPTY_LABELS : ["0% (0)"],
+		// The color for '0%' charts
+		EMPTY_COLOR : ["#EEEEEE"],
 		
 		
 		// ************************* abstract methods *********************
@@ -99,7 +97,7 @@ define(["jquery", "backbone", 'squash.attributeparser', "jqplot-pie", "jquery.th
 			this._readDOM();
 			
 			//create. This may abort if the model is not available yet.
-			this._renderFirst();
+			this.render();
 			
 			//events
 			this._bindEvents();
@@ -150,31 +148,22 @@ define(["jquery", "backbone", 'squash.attributeparser', "jqplot-pie", "jquery.th
 
 
 		// ************************* rendering  ***********************
-		
-		_renderFirst : function(){
+
+		render : function(){
 			
 			if (! this.model.isAvailable()){
 				return;
 			};
-			
-			var serie = this.getSerieOrEmpty();			
-			var conf = this.getConf();			
-			var data = [serie];
-			
-			var viewId = this.$el.find('.dashboard-item-view').attr('id');
-			this.pie = $.jqplot(viewId, data, conf);
-		},
-		
-		render : function(){
 
-			if (this.pie === undefined){
-				this._renderFirst();
+			var pieserie = this.getData();
+			var conf = this.getConf(pieserie);		
+			
+			if (this.pie === undefined){	
+				var viewId = this.$el.find('.dashboard-item-view').attr('id');
+				this.pie = $.jqplot(viewId, pieserie.plotdata, conf);
 			}
-			else{			
-				var serie = this.getSerieOrEmpty();				
-				var conf = this.getConf();				
-				conf.data = [serie];
-				
+			else{
+				conf.data = pieserie.plotdata;
 				this.pie.replot(conf);
 			}
 
@@ -182,23 +171,26 @@ define(["jquery", "backbone", 'squash.attributeparser', "jqplot-pie", "jquery.th
 		
 		// ************************** configuration *************************
 
+		
+		// returns data that works, eliminating corner cases. 
+		getData : function(){
+			var serie = this.getSerie();
+			return new PieSerie(serie);			
+		},
 
-		getConf : function(aserie){
+
+		getConf : function(pieserie){
 			
-			var serie = aserie;
-			if (serie===undefined){
-				serie = this.getSerieOrEmpty();
-			};
+			var colorsAndLabels;
 			
-			var labels, colors;
-			
-			if (serie === this.EMPTY_SERIE){
-				labels = this.EMPTY_LABELS,
-				colors = this.EMPTY_COLOR_SCHEME;
+			if (pieserie.isEmpty){
+				colorsAndLabels = this._getEmptyConf(pieserie);
+			}
+			else if (pieserie.isFull){
+				colorsAndLabels = this._getFullConf(pieserie);
 			}
 			else{
-				labels = this._createLabels(serie),
-				colors = this.colorscheme;
+				colorsAndLabels = this._getNormalConf(pieserie);
 			}
 			
 			return {
@@ -206,7 +198,7 @@ define(["jquery", "backbone", 'squash.attributeparser', "jqplot-pie", "jquery.th
 					renderer : jQuery.jqplot.PieRenderer,
 					rendererOptions : {
 						showDataLabels : true,
-						dataLabels : labels,
+						dataLabels : colorsAndLabels.labels,
 						startAngle : -45,
 						shadowOffset : 0,
 						sliceMargin : 1.5
@@ -217,16 +209,37 @@ define(["jquery", "backbone", 'squash.attributeparser', "jqplot-pie", "jquery.th
 					drawBorder : false,
 					shadow : false
 				},
-				seriesColors : colors
+				seriesColors : colorsAndLabels.colors
 			}
 		},
 		
+		_getEmptyConf : function(pieserie){
+			return {
+				labels : ["0% (0)"],
+				colors :  this.EMPTY_COLOR
+			}
+		},
+		
+		_getFullConf : function(pieserie){
+			return {
+				labels : [ "100% ("+pieserie.total+")" ],
+				colors : [ this.colorscheme[pieserie.nonzeroindex]]			
+			}
+		},
+		
+		_getNormalConf : function(pieserie){
+			var labels = this._createLabels(pieserie);
+			return {
+				labels : labels,
+				colors : this.colorscheme
+			}
+		},
 		
 		_createLabels : function(serie){
 			
 			var total=0, 
 				labels = [];
-			
+				
 			for (var i=0, len=serie.length;i<len;i++){
 				total += serie[i];
 			};
@@ -240,27 +253,50 @@ define(["jquery", "backbone", 'squash.attributeparser', "jqplot-pie", "jquery.th
 			}
 			
 			return labels;
-		},
-						
+		}
+	});
+	
+	
+	/*
+	 * Some statistics on the serie to be plotted must be collected first, because there are some corner cases 
+	 * when the pie is only 1 slice (namely '0%' and '100%' charts).
+	 * 
+	 * The View object will use those meta informations to make jqplot behave properly when those corner cases are met.
+	 *  
+	 */
+	function PieSerie(serie){
 		
-		getSerieOrEmpty : function(){
-			//check that the sum is above 0
-			var serie = this.getSerie();
-			var sum = 0,				
-				i = 0,
-				len = serie.length;
-			for (i=0;i<len;i++){
-				sum+=serie[i];
-			}
-			
-			if (sum>0){
-				return serie;
-			}
-			else{
-				return this.EMPTY_SERIE;
+		var total=0,
+			nonzeroindex=-1,
+			nonzerocount=0,
+			length = serie.length,
+			_val;
+		
+		for (var i=0;i<length;i++){
+			_val = serie[i];
+			if (_val>0){
+				total += _val;
+				nonzerocount++;
+				nonzeroindex = i;
 			}
 		}
-
-	});
+		
+		// collect the stats
+		this.total = total;
+		this.isEmpty = (total===0);
+		this.isFull = (nonzerocount===1);
+		this.nonzeroindex = (this.isFull) ? nonzeroindex : -1;
+		
+		// plot data : special data for special cases, normal data in normal cases.
+		this.plotdata = (this.isEmpty || this.isFull) ? [[1]] : [ serie ];
+		
+		// push the data onto self
+		Array.prototype.push.apply(this, serie);
+		
+	}
+	
+	PieSerie.prototype = new Array();
+	
+	
 	
 });
