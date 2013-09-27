@@ -55,7 +55,7 @@
 
 				
 <table id="verifying-test-cases-table" class="unstyled-table" data-def="ajaxsource=${tableModelUrl}, deferloading=${model.iTotalRecords}, 
-												 language=${tableLanguageUrl}, datakeys-id=tc-id, hover, pre-sort=2,
+												 language=${tableLanguageUrl}, datakeys-id=tc-id, hover, pre-sort=2-asc,
 												 pagesize=10 ">
 	<thead>
 		<tr>
