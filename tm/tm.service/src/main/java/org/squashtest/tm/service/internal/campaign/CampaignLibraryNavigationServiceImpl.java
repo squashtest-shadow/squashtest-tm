@@ -347,10 +347,13 @@ public class CampaignLibraryNavigationServiceImpl extends
 	}
 
 	@Override
+	//Only functions for campaigns and campaign folders
+	//TODO make it work for iteration and test suites
 	public List<String> getParentNodesAsStringList(Long nodeId) {
 		List<Long> ids = campaignLibraryNodeDao.getParentsIds(nodeId);
 		
 		CampaignLibraryNode node = campaignLibraryNodeDao.findById(nodeId);
+		
 		Long librabryId = node.getLibrary().getId();
 		
 		List<String> parents = new ArrayList<String>();
