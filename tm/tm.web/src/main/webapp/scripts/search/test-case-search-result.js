@@ -60,7 +60,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		associateSelection : function(){
 			var table = $('#test-case-search-result-table').dataTable();
 			var ids = table.squashTable().getSelectedIds();
-			if(ids.length == 0){
+			if(ids.length === 0){
 				var noLineSelectedDialog = $("#no-selected-lines").messageDialog();
 				noLineSelectedDialog.messageDialog('open');
 				return;
