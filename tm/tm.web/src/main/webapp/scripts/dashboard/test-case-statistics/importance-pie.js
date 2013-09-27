@@ -24,7 +24,7 @@ define(["../basic-objects/pie-view"], function(PieView){
 		
 		getSerie : function(){
 			var stats = this.model.get('importanceStatistics');
-			return [ stats.veryHigh, stats.high, stats.medium , stats.low];
+			return [ stats.low, stats.medium, stats.high, stats.veryHigh ];
 		}
 	});
 	
