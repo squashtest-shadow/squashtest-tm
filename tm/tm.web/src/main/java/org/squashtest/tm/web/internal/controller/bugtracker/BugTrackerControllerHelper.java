@@ -497,7 +497,7 @@ public final class BugTrackerControllerHelper {
 	private static final class ExecutionModelOwnershipNamebuilder extends IssueOwnershipAbstractNameBuilder {
 		@Override
 		public String buildExecName(Execution bugged) {
-			return "";
+			return bugged.getName();
 		}
 
 		@Override
