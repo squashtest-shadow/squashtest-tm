@@ -63,7 +63,7 @@ class TestCasesWorkspaceControllerTest extends Specification {
 		def model = Mock(Model)
 		
 		when:
-		String view = controller.showWorkspace(model, Locale.getDefault(), [] as String[])
+		String view = controller.showWorkspace(model, Locale.getDefault(), [] as String[], null as Long)
 
 		then:
 		view == "page/test-case-workspace"

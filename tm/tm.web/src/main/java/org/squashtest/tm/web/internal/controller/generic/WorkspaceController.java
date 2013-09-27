@@ -35,11 +35,13 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.service.library.WorkspaceService;
+import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.web.internal.controller.campaign.MenuItem;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -64,11 +66,21 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale,
-			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
+			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
+			@RequestParam(value = "element_id", required = false) Long elementId) {
 		List<Library<LN>> libraries = getWorkspaceService().findAllLibraries();
-
-		MultiMap expansionCandidates = mapIdsByType(openedNodes);
-
+		String[] nodesToOpen = null;
+		
+		if(elementId == null){
+			nodesToOpen = openedNodes;	
+			model.addAttribute("selectedNode", "");
+		} else {
+			nodesToOpen = getNodeParentsInWorkspace(elementId);
+			model.addAttribute("selectedNode", getTreeElementIdInWorkspace(elementId));
+		}
+		
+		MultiMap expansionCandidates = mapIdsByType(nodesToOpen);
+		
 		DriveNodeBuilder<LN> nodeBuilder = driveNodeBuilderProvider().get();
 		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<Library<LN>>(nodeBuilder).expand(expansionCandidates)
 				.setModel(libraries).build();
@@ -102,6 +114,21 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	 */
 	protected abstract String getWorkspaceViewName();
 
+	
+	/**
+	 * Returns the list of parents of a node given the id of an element
+	 * @param elementId
+	 * @return
+	 */
+	protected abstract String[] getNodeParentsInWorkspace(Long elementId);
+	
+	/**
+	 * Returns the id of a node in the tree given the id of an element
+	 * @param elementId
+	 * @return
+	 */
+	protected abstract String getTreeElementIdInWorkspace(Long elementId);
+	
 	/**
 	 * Called when {@link #getWorkspaceViewName()} is invoked. This allows you to add anything you need to
 	 * thisworkspace's model. No need to supply the treenodes : they will be provided.

@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,8 @@ import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
+import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
@@ -341,6 +344,28 @@ public class CampaignLibraryNavigationServiceImpl extends
 		model.init();
 
 		return model;
+	}
+
+	@Override
+	public List<String> getParentNodesAsStringList(Long nodeId) {
+		List<Long> ids = campaignLibraryNodeDao.getParentsIds(nodeId);
+		
+		CampaignLibraryNode node = campaignLibraryNodeDao.findById(nodeId);
+		Long librabryId = node.getLibrary().getId();
+		
+		List<String> parents = new ArrayList<String>();
+		
+		parents.add("#CampaignLibrary-"+librabryId);
+
+		if(ids.size() > 1){
+			for(int i=0; i<ids.size()-1; i++){
+				long currentId = ids.get(i);
+				CampaignLibraryNode currentNode = campaignLibraryNodeDao.findById(currentId);
+				parents.add(currentNode.getClass().getSimpleName()+"-"+String.valueOf(currentId));
+			}
+		}
+		
+		return parents;
 	}
 	
 

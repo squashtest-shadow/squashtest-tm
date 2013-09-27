@@ -69,18 +69,19 @@
 				tree : {
 					model : ${ json:serialize(rootModel) },
 					workspace : "test-case",
-					treeselector : "#tree"
+					treeselector : "#tree",
+					selectedNode : "${selectedNode}"
 				}
-			}
-		
-		
+			};
+						
 			$(function(){
 				require( ["common"], function(){
 					require(['tc-workspace'], function(initWkp) {
-						initWkp.init(conf);						
+						initWkp.init(conf);		
 					});
 				});						
 			});
+			
 		</script>
 	
 	</jsp:attribute>

@@ -37,6 +37,8 @@ import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.requirement.RequirementCategory;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.service.library.WorkspaceService;
+import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
+import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.web.internal.controller.generic.WorkspaceController;
 import org.squashtest.tm.web.internal.helper.InternationalizableComparator;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
@@ -52,6 +54,11 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 	@Named("requirement.driveNodeBuilder")
 	private Provider<DriveNodeBuilder<RequirementLibraryNode<?>>> driveNodeBuilderProvider; 
 
+	
+	@Inject
+	private RequirementLibraryNavigationService requirementLibraryNavigationService;
+	
+	
 	@Override
 	protected WorkspaceService<Library<RequirementLibraryNode<?>>> getWorkspaceService() {
 		return workspaceService;
@@ -94,6 +101,17 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 	@Override
 	protected Provider<DriveNodeBuilder<RequirementLibraryNode<?>>> driveNodeBuilderProvider() {
 		return driveNodeBuilderProvider;
+	}
+
+	@Override
+	protected String[] getNodeParentsInWorkspace(Long elementId) {
+		List<String> parents = requirementLibraryNavigationService.getParentNodesAsStringList(elementId);
+		return parents.toArray(new String[parents.size()]); 
+	}
+
+	@Override
+	protected String getTreeElementIdInWorkspace(Long elementId) {
+		return "Requirement-"+elementId;
 	}
 	
 }

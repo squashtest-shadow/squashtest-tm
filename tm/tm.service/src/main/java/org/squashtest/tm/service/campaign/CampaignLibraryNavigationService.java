@@ -171,4 +171,6 @@ public interface CampaignLibraryNavigationService extends
 	 */
 	CampaignExportCSVModel exportCampaignToCSV(Long campaignId, String exportType);
 
+	List<String> getParentNodesAsStringList(Long elementId);
+
 }

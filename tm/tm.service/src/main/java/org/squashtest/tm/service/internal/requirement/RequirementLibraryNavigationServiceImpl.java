@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.requirement;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,6 +45,7 @@ import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.library.NameAlreadyExistsAtDestinationException;
 import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
@@ -364,6 +366,28 @@ public class RequirementLibraryNavigationServiceImpl extends
 			LOGGER.warn(e.getMessage());
 			throw new CopyPasteObsoleteException(e.getMessage(), e);
 		}
+	}
+
+	@Override
+	public List<String> getParentNodesAsStringList(Long nodeId) {
+		List<Long> ids = requirementLibraryNodeDao.getParentsIds(nodeId);
+		
+		RequirementLibraryNode node = requirementLibraryNodeDao.findById(nodeId);
+		Long librabryId = node.getLibrary().getId();
+		
+		List<String> parents = new ArrayList<String>();
+		
+		parents.add("#RequirementLibrary-"+librabryId);
+
+		if(ids.size() > 1){
+			for(int i=0; i<ids.size()-1; i++){
+				long currentId = ids.get(i);
+				RequirementLibraryNode currentNode = requirementLibraryNodeDao.findById(currentId);
+				parents.add(currentNode.getClass().getSimpleName()+"-"+String.valueOf(currentId));
+			}
+		}
+		
+		return parents;
 	}
 
 }

@@ -131,5 +131,6 @@ public interface TestCaseLibraryNavigationService extends
 	 */
 	List<ExportTestCaseData> findTestCasesToExportFromNodes(@NotNull List<Long> nodesIds);
 	
-
+	
+	List<String> getParentNodesAsStringList(Long nodeId);
 }

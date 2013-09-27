@@ -36,9 +36,6 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 			this.addSimpleEditableToLabel = $.proxy(this._addSimpleEditableToLabel, this);
 			this.addInterfaceLevel2Link = $.proxy(this._addInterfaceLevel2Link, this);
 			this.addTreeLink = $.proxy(this._addTreeLink, this);
-			this.openBreadCrumb =  $.proxy(this._openBreadCrumb, this);
-			this.openFoldersUntillEnd = $.proxy(this._openFoldersUntillEnd, this);
-			this.findTreeBreadcrumbToNode =  $.proxy(this._findTreeBreadcrumbToNode, this);
 			this.getTableRowId = $.proxy(this._getTableRowId, this);
 			this.tableRowCallback = $.proxy(this._tableRowCallback, this);
 			this.addAssociationCheckboxes  = $.proxy(this._addAssociationCheckboxes, this);
@@ -456,55 +453,11 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 		_addTreeLink : function(row, data){
 			var self = this;
 			var id = data["test-case-id"];
-			$(".search-open-tree", row)
-					.click(
-							function() {
-								window.location = squashtm.app.contextRoot + "/test-case-workspace";
-								var jqTree=$("#tree");
-								var treeNodeName = "TestCase-" + id;
-								self.findTreeBreadcrumbToNode(treeNodeName, squashtm.app.contextRoot + "/search/test-cases/breadcrumb" ).done(function(data){self.openBreadCrumb(data, jqTree);});
-							});
-		},
-			
-		_openBreadCrumb : function(treeNodesIds, jqTree){
-			var self = this;
-			var breadCrumbLength = treeNodesIds.length;
-			var libraryName = treeNodesIds[breadCrumbLength - 1];
-			jqTree.jstree("deselect_all");
-			var librayNode = jqTree.find("li[id=\'"+libraryName+"\']");
-			  var start = breadCrumbLength -2;
-			  jqTree.jstree("open_node",librayNode, function(){self.openFoldersUntillEnd(treeNodesIds,  jqTree, start);});
-		},
-		
-		_openFoldersUntillEnd : function(treeNodesIds,  jqTree, i){
-			var self = this; 
-			var treeNodeName;
-			var treeNode;
-			if ( i >= 1 ) {  
-				  treeNodeName = treeNodesIds[i];
-				  treeNode = jqTree.find("li[id=\'"+treeNodeName+"\']");
-				  i--;
-				  jqTree.jstree("open_node",treeNode, function(){self.openFoldersUntillEnd(treeNodesIds,  jqTree, i);});
-			}else{
-				  treeNodeName = treeNodesIds[i];
-				  treeNode = jqTree.find("li[id=\'"+treeNodeName+"\']");
-				  jqTree.jstree("deselect_all");
-				  jqTree.jstree("select_node",treeNode);
-			  }
-		},
-			
-		_findTreeBreadcrumbToNode : function(treeNodeName, url){
-			var dataB = {
-					'nodeName' : treeNodeName
-				};
-			return $.ajax({
-				'url' : url,
-				type : 'POST',
-				data : dataB,
-				dataType : 'json'
+			$(".search-open-tree", row).click(function(){
+				window.location = squashtm.app.contextRoot + "/test-case-workspace?element_id="+id;
 			});
 		},
-		
+				
 		refresh : function() {
 			this.$el.squashTable().fnDraw(false);
 		}

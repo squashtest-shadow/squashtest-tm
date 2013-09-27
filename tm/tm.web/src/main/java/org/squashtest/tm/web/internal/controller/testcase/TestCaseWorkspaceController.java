@@ -34,12 +34,17 @@ import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.library.WorkspaceService;
+import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.web.internal.controller.generic.WorkspaceController;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 
 @Controller
 @RequestMapping("/test-case-workspace")
 public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLibraryNode> {
+	
+	@Inject
+	private TestCaseLibraryNavigationService testCaseLibraryNavigationService;
+	
 	@Inject
 	@Named("squashtest.tm.service.TestCasesWorkspaceService")
 	private WorkspaceService<Library<TestCaseLibraryNode>> workspaceService;
@@ -79,4 +84,14 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 		return driveNodeBuilderProvider;
 	}
 
+	@Override
+	protected String[] getNodeParentsInWorkspace(Long elementId){
+		List<String> parents = testCaseLibraryNavigationService.getParentNodesAsStringList(elementId);
+		return parents.toArray(new String[parents.size()]); 
+	}
+	
+	@Override
+	protected String getTreeElementIdInWorkspace(Long elementId){
+		return "TestCase-"+elementId;
+	}
 }

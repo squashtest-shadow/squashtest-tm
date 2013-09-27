@@ -307,4 +307,24 @@ public class TestCaseLibraryNavigationServiceImpl extends
 		return effective;
 	}
 
+	@Override
+	public List<String> getParentNodesAsStringList(Long nodeId) {
+		List<Long> ids = testCaseLibraryNodeDao.getParentsIds(nodeId);
+		
+		TestCase tc = testCaseDao.findById(nodeId);
+		Long librabryId = tc.getLibrary().getId();
+		
+		List<String> parents = new ArrayList<String>();
+		
+		parents.add("#TestCaseLibrary-"+librabryId);
+
+		if(ids.size() > 1){
+			for(int i=0; i<ids.size()-1; i++){
+				parents.add("#TestCaseFolder-"+String.valueOf(ids.get(i)));
+			}
+		}
+		
+		return parents;
+	}
+
 }

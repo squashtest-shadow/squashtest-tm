@@ -88,5 +88,5 @@ public interface RequirementLibraryNavigationService extends
 	 */
 	ImportRequirementTestCaseLinksSummary importLinksExcel(InputStream stream);
 	
-
+	List<String> getParentNodesAsStringList(Long elementId);
 }

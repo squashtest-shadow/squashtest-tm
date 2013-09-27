@@ -69,7 +69,8 @@
 				tree : {
 					model : ${ json:serialize(rootModel) },
 					workspace : "campaign",
-					treeselector : "#tree"
+					treeselector : "#tree",
+					selectedNode : "${selectedNode}"
 				}
 			}
 		

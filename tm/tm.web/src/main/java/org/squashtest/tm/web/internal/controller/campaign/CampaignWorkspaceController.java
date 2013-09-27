@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.internal.controller.campaign;
 
 
+import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -33,13 +34,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.library.Library;
+import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.library.WorkspaceService;
+import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.web.internal.controller.generic.WorkspaceController;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 
 @Controller
 @RequestMapping("/campaign-workspace")
 public class CampaignWorkspaceController extends WorkspaceController<CampaignLibraryNode> {
+	
+	@Inject
+	private CampaignLibraryNavigationService campaignLibraryNavigationService;
+	
 	@Inject
 	@Named("squashtest.tm.service.CampaignsWorkspaceService")
 	private WorkspaceService<Library<CampaignLibraryNode>> workspaceService;
@@ -78,6 +85,17 @@ public class CampaignWorkspaceController extends WorkspaceController<CampaignLib
 	@Override
 	protected Provider<DriveNodeBuilder<CampaignLibraryNode>> driveNodeBuilderProvider() {
 		return driveNodeBuilderProvider;
+	}
+
+	@Override
+	protected String[] getNodeParentsInWorkspace(Long elementId) {
+		List<String> parents = campaignLibraryNavigationService.getParentNodesAsStringList(elementId);
+		return parents.toArray(new String[parents.size()]); 
+	}
+
+	@Override
+	protected String getTreeElementIdInWorkspace(Long elementId) {
+		return "Campaign-"+elementId;
 	}
 
 }
