@@ -308,7 +308,7 @@
     <dependency>
       <groupId>net.sourceforge.nekohtml</groupId>
       <artifactId>org.squashtest.net.sourceforge.nekohtml</artifactId>
-      <version>1.9.18.B-SNAPSHOT</version>
+      <version>1.9.18.B</version>
     </dependency>
     <!-- ====== /THYMELEAF ====== -->
 
