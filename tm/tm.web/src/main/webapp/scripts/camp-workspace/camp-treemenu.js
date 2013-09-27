@@ -98,7 +98,7 @@ define(['jquery', './utils', './permissions-rules',
 		$(btnselector).each(function(){
 			var $this = $(this);
 			buttons.push($this);
-		})
+		});
 		
 		decorateEnablingMethods(buttons);
 
@@ -165,10 +165,12 @@ define(['jquery', './utils', './permissions-rules',
 	
 	
 	
-	function init(){		
+	function init(){
 		createWidgets();
-		bindTreeEvents();	
-		createWizardMenu();	
+		bindTreeEvents();
+		createWizardMenu();
+
+		$("#tree_element_menu").removeClass("unstyled-pane");
 	}
 	
 	
@@ -177,6 +179,6 @@ define(['jquery', './utils', './permissions-rules',
 		
 		init : init
 		
-	}
+	};
 	
 });

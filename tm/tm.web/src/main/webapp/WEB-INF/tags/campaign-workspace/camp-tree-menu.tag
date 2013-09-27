@@ -25,7 +25,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 	
-<div id="tree_element_menu" class="tree-top-toolbar">
+<div id="tree_element_menu" class="tree-top-toolbar unstyled-pane">
 	<div class="button-group">
 		<a id="tree-create-button"  	class="buttonmenu"><f:message key="label.create"/>...</a>
 		<ul id="tree-create-menu" class="not-displayed">

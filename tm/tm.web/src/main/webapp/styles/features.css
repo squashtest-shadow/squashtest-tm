@@ -67,7 +67,13 @@ select option,select {
 	display: none;
 }
 
-.not-visible, .unstyled, .unstyled-table {
+/**
+ * .not-visible should be used when you want to hide something and it is not related to FOUC
+ * .unstyled is used by broken, auto-processed, FOUC prevention
+ * .unstyled-table is squash-flavored datatables FOUC prevention
+ * .unstyled-pane can be used for 'manual' fouc prevention on panels
+ */
+.not-visible, .unstyled, .unstyled-table, .unstyled-pane {
 	visibility: hidden;
 }
 
