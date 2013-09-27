@@ -30,7 +30,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		el : "#sub-page",
 
 		initialize : function() {
-			self = this;
+			var self = this;
 			this.configureModifyResultsDialog();
 			this.getIdsOfSelectedTableRowList =  $.proxy(this._getIdsOfSelectedTableRowList, this);
 			this.updateDisplayedValueInColumn =  $.proxy(this._updateDisplayedValueInColumn, this);
