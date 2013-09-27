@@ -440,7 +440,7 @@
 			language : {
 				ok : '<f:message key="label.Confirm"/>',
 				cancel : '<f:message key="label.Cancel"/>',
-				deleteMessage : '<f:message key="message.permissions.remove"/>',
+				deleteMessage : '<f:message key="message.permissions.remove.teamOrUser"/>',
 				deleteTooltip : '<f:message key="tooltips.permissions.remove"/>'
 			}
 		};

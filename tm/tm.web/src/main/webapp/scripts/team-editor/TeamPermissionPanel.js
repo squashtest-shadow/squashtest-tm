@@ -108,7 +108,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 		},
 
 		configureRemovePermissionDialog : function() {
-			this.confirmRemovePermissionDialog = $("#remove-permission-dialog").confirmDialog();
+			this.confirmRemovePermissionDialog = $("#remove-permission-dialog").confirmDialog({width: 300});
 			this.confirmRemovePermissionDialog.on("confirmdialogconfirm", $.proxy(this.removePermissions, this));
 		},
 
