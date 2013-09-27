@@ -173,7 +173,7 @@
     </init-param>
     <init-param>
       <param-name>useFileMappedBuffer</param-name>
-      <param-value>true</param-value>
+      <param-value>@is.war.deploy@</param-value>
     </init-param>  
     <init-param>
       <param-name>cacheControl</param-name>
