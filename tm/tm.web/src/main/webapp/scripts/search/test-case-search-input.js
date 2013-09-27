@@ -63,21 +63,24 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 							if($("#searchModel").text()){
 								searchModel = JSON.parse($("#searchModel").text()).fields;
 							}
+							
+							var field ;
 							for(i=0; i<val.fields.length; i++){
-								if(val.fields[i].inputType == "textfield"){
-									self.makeTextField(tableid, val.fields[i].id, val.fields[i].title, searchModel[val.fields[i].id], val.fields[i].ignoreBridge);
-								} else if (val.fields[i].inputType == "textarea"){
-									self.makeTextArea(tableid, val.fields[i].id, val.fields[i].title, searchModel[val.fields[i].id]);
-								} else if (val.fields[i].inputType == "multiselect"){
-									self.makeMultiselect(tableid, val.fields[i].id, val.fields[i].title, val.fields[i].possibleValues, searchModel[val.fields[i].id]);
-								} else if (val.fields[i].inputType == "range"){
-									self.makeRangeField(tableid, val.fields[i].id, val.fields[i].title, searchModel[val.fields[i].id]);
-								} else if (val.fields[i].inputType == "exists"){
-									self.makeExistsField(tableid, val.fields[i].id, val.fields[i].title, val.fields[i].possibleValues,searchModel[val.fields[i].id]);
-								} else if (val.fields[i].inputType == "date"){
-									self.makeDateField(tableid, val.fields[i].id, val.fields[i].title, searchModel[val.fields[i].id]);
-								} else if (val.fields[i].inputType == "checkbox"){
-									self.makeCheckboxField(tableid, val.fields[i].id, val.fields[i].title, val.fields[i].possibleValues, searchModel[val.fields[i].id]);
+								field = val.fields[i];
+								if(field.inputType == "textfield"){
+									self.makeTextField(tableid, field.id, field.title, searchModel[field.id], field.ignoreBridge);
+								} else if (field.inputType == "textarea"){
+									self.makeTextArea(tableid, field.id, field.title, searchModel[field.id]);
+								} else if (field.inputType == "multiselect"){
+									self.makeMultiselect(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
+								} else if (field.inputType == "range"){
+									self.makeRangeField(tableid, field.id, field.title, searchModel[field.id]);
+								} else if (field.inputType == "exists"){
+									self.makeExistsField(tableid, field.id, field.title, field.possibleValues,searchModel[field.id]);
+								} else if (field.inputType == "date"){
+									self.makeDateField(tableid, field.id, field.title, searchModel[field.id]);
+								} else if (field.inputType == "checkbox"){
+									self.makeCheckboxField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
 								} 
 							}
 							self.makeTogglePanel(val.id+"-panel-id",val.title,val.open,val.cssClasses);
