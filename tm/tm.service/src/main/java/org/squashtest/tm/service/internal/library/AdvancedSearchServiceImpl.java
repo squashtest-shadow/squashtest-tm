@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -189,7 +190,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	public List<CustomField> findAllQueryableCustomFieldsByBoundEntityType(
 			BindableEntity entity) {
 
-		Set<CustomField> result = new HashSet<CustomField>();
+		Set<CustomField> result = new LinkedHashSet<CustomField>();
 
 		List<Project> readableProjects = projectFinder.findAllReadable();
 		for (Project project : readableProjects) {
