@@ -225,7 +225,18 @@
 					</div>
 				</div>
 				</script>
-								
+			
+			<script id="combomultiselect-template" type="text/x-handlebars-template">
+				<div class="display-table-row">
+                  	<label for="{{combomultiselect-id}}" class="display-table-cell">{{combomultiselect-title}}</label>
+					<div id="{{combomultiselect-id}}" class="search-input">
+						<div class="search-line" data-widgetname="ComboMultiSelect">
+							<input type="checkbox" style="vertical-align:top; margin-top:6px"></input>
+							<select multiple="multiple" class="shorter-search-input"></select>	
+						</div>
+					</div>
+                </div>
+			</script>						
 		</div>
 
 		<div id="searchModel" class="not-displayed" th:text="${searchModel}"></div>

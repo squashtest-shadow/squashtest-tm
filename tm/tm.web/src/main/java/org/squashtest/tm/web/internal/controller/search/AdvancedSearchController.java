@@ -86,6 +86,7 @@ public class AdvancedSearchController {
 	private static final String EXISTS = "exists";
 	private static final String DATE = "date";
 	private static final String MULTISELECT = "multiselect";
+	private static final String COMBOMULTISELECT = "combomultiselect";
 	private static final String ATLEASTONE = "1";
 	private static final String NONE = "0";
 
@@ -617,7 +618,7 @@ public class AdvancedSearchController {
 				locale), "false"));
 
 		model.setPossibleValues(possibleValues);
-		model.setInputType(MULTISELECT);
+		model.setInputType(COMBOMULTISELECT);
 		model.setTitle(customField.getLabel());
 		model.setId(customField.getCode());
 		model.setIgnoreBridge(true);
@@ -640,7 +641,7 @@ public class AdvancedSearchController {
 			possibleValues.add(new SearchInputPossibleValueModel(option.getLabel(), option.getCode()));
 		}
 		SearchInputFieldModel model = new SearchInputFieldModel();
-		model.setInputType(MULTISELECT);
+		model.setInputType(COMBOMULTISELECT);
 		model.setTitle(selectField.getLabel());
 		model.setPossibleValues(possibleValues);
 		model.setId(selectField.getCode());

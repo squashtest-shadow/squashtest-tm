@@ -225,6 +225,10 @@ div.sub-page div.table-tab-wrap .dataTables_footer{
 	width: 200px;
 }
 
+.shorter-search-input {
+	width: 185px;
+}
+
 .small-search-input {
 	width: 50px;
 }

@@ -21,12 +21,12 @@
 define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 		"app/util/StringUtil", "./SearchTextfieldWidget", "./SearchTextareaWidget", 
 		"./SearchMultiselectWidget", "./SearchDateWidget", "./SearchRangeWidget", 
-		"./SearchExistsWidget", "./SearchCheckboxWidget", "jquery.squash",
-		"jqueryui", "jquery.squash.togglepanel", "jquery.squash.datatables",
+		"./SearchExistsWidget", "./SearchCheckboxWidget", "./SearchComboMultiselectWidget", 
+		"jquery.squash", "jqueryui", "jquery.squash.togglepanel", "jquery.squash.datatables",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
 		"jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, translator, _,
 		StringUtil, SearchTextfieldWidget, SearchTextareaWidget, SearchMultiselectWidget, 
-		SearchDateWidget, SearchRangeWidget, SearchExistsWidget, SearchCheckboxWidget) {
+		SearchDateWidget, SearchRangeWidget, SearchExistsWidget, SearchCheckboxWidget, SearchComboMultiselectWidget) {
 
 	var TestCaseSearchInputPanel = Backbone.View.extend({
 
@@ -73,6 +73,8 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 									self.makeTextArea(tableid, field.id, field.title, searchModel[field.id]);
 								} else if (field.inputType == "multiselect"){
 									self.makeMultiselect(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
+								} else if (field.inputType == "combomultiselect"){
+									self.makeComboMultiselect(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
 								} else if (field.inputType == "range"){
 									self.makeRangeField(tableid, field.id, field.title, searchModel[field.id]);
 								} else if (field.inputType == "exists"){
@@ -197,6 +199,20 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 			$("#"+escapedId).searchMultiSelectWidget('fieldvalue', enteredValue);
 		},
 			
+		makeComboMultiselect : function(tableId, textFieldId, textFieldTitle, options, enteredValue) {
+			
+			var title = textFieldTitle;
+			var source = $("#combomultiselect-template").html();
+			var template = Handlebars.compile(source);
+			var context = {"combomultiselect-id": textFieldId, 
+				           "combomultiselect-title": title};
+			var html = template(context);
+			$("#"+tableId).append(html);
+			var escapedId = textFieldId.replace(".", "\\.");
+			$("#"+escapedId).searchComboMultiSelectWidget();
+			$("#"+escapedId).searchComboMultiSelectWidget('createDom', "F"+textFieldId, options);
+			$("#"+escapedId).searchComboMultiSelectWidget('fieldvalue', enteredValue);
+		},
 		
 		extractSearchModel : function(){
 			var fields = $("div.search-input");
