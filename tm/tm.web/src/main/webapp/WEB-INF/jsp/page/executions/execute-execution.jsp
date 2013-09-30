@@ -387,7 +387,7 @@
 						<td class="centered not-displayed" id="execute-next-test-case-panel">
 							<form action="<c:url value='${ testPlanItemUrl }/next-execution/runner?optimized=false' />" method="post">
 								<f:message var="nextTestCaseTitle" key="execute.header.button.next-test-case.title" />
-								<button id="execute-next-test-case" name="classic" class="button" title="${ nextTestCaseTitle }">
+								<button id="execute-next-test-case" name="classic"  title="${ nextTestCaseTitle }">
 									${ nextTestCaseTitle }
 								</button>
 							</form>
