@@ -122,6 +122,6 @@ public interface IssueDao extends EntityDao<Issue> {
 	 */
 	IssueDetector findIssueDetectorByIssue(long id);
 
-	TestCase findTestCaseRelatedToIssue(Long issueId);
+	TestCase findTestCaseRelatedToIssue(long issueId);
 
 }

@@ -46,14 +46,12 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 				+" or id.id in "
 				+"(select esi.id from IterationTestPlanItem itp join itp.testSuites ts join itp.executions e join e.steps es join es.issueList esil join esil.issues esi where :id in (select suites.id from itp.testSuites suites))"),
 		@NamedQuery(name="Issue.findExecution", query = "select exec " +
-				"from Execution exec join exec.issueList eil , Issue issue join issue.issueList iil " +
-				"where eil.id = iil.id " +
-				"and issue.id = :id "
+				"from Execution exec join exec.issueList eil join eil.issues issue " +
+				"where issue.id = :id "
 				),
 		@NamedQuery(name="Issue.findExecutionStep", query = "select execStep " +
-				"from ExecutionStep execStep join execStep.issueList esil , Issue issue join issue.issueList iil " +
-				"where esil.id = iil.id " +
-				"and issue.id = :id "
+				"from ExecutionStep execStep join execStep.issueList esil join esil.issues issue " +
+				"where  issue.id = :id "
 				)
 })
 public class Issue {

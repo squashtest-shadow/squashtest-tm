@@ -288,7 +288,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	}
 
 	@Override
-	public TestCase findTestCaseRelatedToIssue(Long id) {
+	public TestCase findTestCaseRelatedToIssue(long id) {
 		
 		TestCase testCase = null;
 		 
@@ -297,7 +297,9 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 			testCase = exec.getReferencedTestCase();
 		}else{
 			ExecutionStep step = executeEntityNamedQuery("Issue.findExecutionStep", new SetIdParameter("id", id));
-			testCase = step.getExecution().getReferencedTestCase();
+			if(step != null && step.getExecution() != null){
+				testCase = step.getExecution().getReferencedTestCase();
+			}
 		}
 		
 		return testCase;

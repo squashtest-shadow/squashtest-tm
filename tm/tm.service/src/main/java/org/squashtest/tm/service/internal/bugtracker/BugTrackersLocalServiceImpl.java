@@ -268,12 +268,12 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	@Override	
 	public void detachIssue(long id) {
-		IssueDetector bugged = issueDao.findIssueDetectorByIssue(id);
-		
+		IssueDetector bugged = issueDao.findIssueDetectorByIssue(id);		
 		PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(bugged, "EXECUTE"));
+		
 		Issue issue = issueDao.findById(id);
-		issueDao.remove(issue);
 		TestCase testCase = this.findTestCaseRelatedToIssue(issue.getId());
+		issueDao.remove(issue);
 		this.advancedSearchService.reindexTestCase(testCase.getId());
 	}
 
