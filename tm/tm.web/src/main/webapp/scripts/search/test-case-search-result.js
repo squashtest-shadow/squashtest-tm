@@ -30,7 +30,6 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		el : "#sub-page",
 
 		initialize : function() {
-			var self = this;
 			this.configureModifyResultsDialog();
 			this.getIdsOfSelectedTableRowList =  $.proxy(this._getIdsOfSelectedTableRowList, this);
 			this.updateDisplayedValueInColumn =  $.proxy(this._updateDisplayedValueInColumn, this);
@@ -212,6 +211,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		},
 				
 		configureModifyResultsDialog : function() {
+			var self = this;
 			var addModifyResultDialog = $("#modify-search-result-dialog").confirmDialog();
 			
 			$.ajax({
