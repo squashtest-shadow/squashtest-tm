@@ -57,7 +57,6 @@ import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.testcase.TestCaseType;
 import org.squashtest.tm.service.campaign.IterationModificationService;
-import org.squashtest.tm.service.customfield.CustomCustomFieldManagerService;
 import org.squashtest.tm.service.library.AdvancedSearchService;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -89,9 +88,6 @@ public class AdvancedSearchController {
 	private static final String COMBOMULTISELECT = "combomultiselect";
 	private static final String ATLEASTONE = "1";
 	private static final String NONE = "0";
-
-	@Inject
-	private CustomCustomFieldManagerService customFieldManager;
 
 	@Inject
 	private AdvancedSearchService advancedSearchService;
@@ -581,7 +577,7 @@ public class AdvancedSearchController {
 		SearchInputPanelModel model = new SearchInputPanelModel();
 		for (CustomField customField : customFields) {
 			if (org.squashtest.tm.domain.customfield.InputType.DROPDOWN_LIST.equals(customField.getInputType())) {
-				SingleSelectField selectField = customFieldManager.findSingleSelectFieldById(customField.getId());
+				SingleSelectField selectField = (SingleSelectField) customField;
 				model.getFields().add(convertToSearchInputFieldModel(selectField, locale));
 				
 			} else if (org.squashtest.tm.domain.customfield.InputType.PLAIN_TEXT.equals(customField.getInputType())) {
