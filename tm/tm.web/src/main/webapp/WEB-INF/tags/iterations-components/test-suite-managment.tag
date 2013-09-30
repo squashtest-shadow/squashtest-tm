@@ -21,7 +21,7 @@
 
 --%>
 <%@ tag description="managment of iteration test suites" body-content="empty" %>
-<%@ tag language="java" pageEncoding="ISO-8859-1"%>
+<%@ tag language="java" pageEncoding="utf-8"%>
 
 <%@ attribute name="popupId" required="true" description="the id of the managment popup. Just supply the name and it will be generated." %>
 <%@ attribute name="popupOpener" required="true" description="the id of the button that will open the popup. Must exist prior to the call to this tag." %>

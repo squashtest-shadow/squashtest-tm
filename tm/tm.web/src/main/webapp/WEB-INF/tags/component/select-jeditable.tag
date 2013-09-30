@@ -21,7 +21,7 @@
 
 --%>
 <%-- call rich-editable-init first --%>
-<%@ tag language="java" pageEncoding="ISO-8859-1"%>
+<%@ tag language="java" pageEncoding="utf-8"%>
 
 <%@ attribute name="targetUrl" required="false" description="URL where to post the informations. Either this, or 'targetFunction' must be defined." %>
 <%@ attribute name="targetFunction" required="false" description="a function that will post the informations. Either this, or 'targetUrl' must be defined." %>

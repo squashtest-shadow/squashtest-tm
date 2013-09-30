@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ tag language="java" pageEncoding="ISO-8859-1"%>
+<%@ tag language="java" pageEncoding="utf-8"%>
 
 <%@ attribute name="workspaceName" description="name of the workspace we are working in" %>
 <%@ attribute name="attachListId" type="java.lang.Object"  description="the entity to which we bind those attachments" %>

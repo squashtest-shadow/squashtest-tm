@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ tag language="java" pageEncoding="ISO-8859-1"%>
+<%@ tag language="java" pageEncoding="utf-8"%>
 
 <%@ attribute name="openedBy" required="true" description="the id of the clickable widget that will open the popup" %>
 <%@ attribute name="divId" required="true" description="the name you wish the popup to have"%>

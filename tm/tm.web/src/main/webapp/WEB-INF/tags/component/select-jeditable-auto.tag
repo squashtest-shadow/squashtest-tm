@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ tag language="java" pageEncoding="ISO-8859-1"%>
+<%@ tag language="java" pageEncoding="utf-8"%>
 
 <%@ attribute name="associatedSelectJeditableId" required="true"%>
 <%@ attribute name="isAuto" required="true"%>

@@ -26,7 +26,7 @@
 <%@ attribute name="failureCallback" required="false" description="if set, that handler will be called for abnormal terminations"%>
 <%@ attribute name="bugTrackerId" %>
 
-<%@ tag language="java" pageEncoding="ISO-8859-1"%>
+<%@ tag language="java" pageEncoding="utf-8"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>

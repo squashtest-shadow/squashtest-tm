@@ -24,16 +24,16 @@
 
 <c:choose>
 <c:when test="${initParam['stage'] == 'RELEASE'}">
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/lib/jquery/jquery-1.8.3.min.js"></script>
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/lib/jquery/jquery-ui-1.9.0.custom.min.js"></script>
+<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/lib/jquery/jquery-1.8.3.min.js"></script>
+<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/lib/jquery/jquery-ui-1.9.0.custom.min.js"></script>
 </c:when>
 <c:otherwise>
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/lib/jquery/jquery-1.8.3.js"></script>
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/lib/jquery/jquery-ui-1.9.0.custom.js"></script>
+<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/lib/jquery/jquery-1.8.3.js"></script>
+<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/lib/jquery/jquery-ui-1.9.0.custom.js"></script>
 </c:otherwise>
 </c:choose>
 
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.plugin.js"></script>
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squash.togglepanels.js"></script> 
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squash.messagedialog.js"></script>  
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squash.confirmdialog.js"></script>  
+<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.plugin.js"></script>
+<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squash.togglepanels.js"></script> 
+<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squash.messagedialog.js"></script>  
+<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squash.confirmdialog.js"></script>  

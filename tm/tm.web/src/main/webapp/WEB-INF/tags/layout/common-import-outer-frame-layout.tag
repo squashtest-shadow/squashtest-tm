@@ -106,6 +106,10 @@
     <script type="text/javascript">
     	$(function() {
     		$(".unstyled").fadeIn("fast", function() { $(this).removeClass("unstyled"); });
+
+    		$.ajaxSetup({
+    			scriptCharset : "utf-8"
+    			});
     	});
     </script>
 </html>

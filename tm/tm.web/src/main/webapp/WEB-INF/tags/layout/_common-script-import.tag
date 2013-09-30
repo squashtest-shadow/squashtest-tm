@@ -64,47 +64,47 @@ require.baseUrl = "${pageContext.servletContext.contextPath}/scripts";
 	squashtm.message.errorTitle = "<f:message key='popup.title.error'/>";	
 	
 </script>
-<script src="<c:url value='/scripts/require-min.js' />"></script>
-<script src="<c:url value='/scripts/common.js' />"></script>
+<script  charset="utf-8"src="<c:url value='/scripts/require-min.js' />"></script>
+<script  charset="utf-8"src="<c:url value='/scripts/common.js' />"></script>
 <jq:jquery-header />
 <ck:ckeditor-header />
 
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.popup-error.js" ></script>
+<script charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.popup-error.js" ></script>
 
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.oneshotdialog.js"></script>
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/KeyEventListener.js"></script>
+<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.oneshotdialog.js"></script>
+<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/KeyEventListener.js"></script>
 
 
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squash.squashbutton.js"></script>
+<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squash.squashbutton.js"></script>
 
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/Event.js"></script>
+<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/Event.js"></script>
 
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/StatusFactory.js"></script>
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/AutomatedSuiteOverview.js"></script>
+<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/StatusFactory.js"></script>
+<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/AutomatedSuiteOverview.js"></script>
 
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.form.js"></script>
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.cookie.js"></script>
+<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.form.js"></script>
+<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.cookie.js"></script>
 
 
 <!-- --------------------DataTables library imports. SHOULD BE IMPORTED BEFORE DATATABLE USAGE--------------------------------------------- -->
 
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/datatables/jquery.dataTables.js"></script>
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtable/jquery.squashtm.datatables.js"></script>
+<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/datatables/jquery.dataTables.js"></script>
+<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtable/jquery.squashtm.datatables.js"></script>
 <%-- transitional javascript --%>
 
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtable/jquery.squashtm.datatables.v2.js"></script>
+<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtable/jquery.squashtm.datatables.v2.js"></script>
 
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtable/jquery.squashtm.tableDnD.ext.js"></script> 
+<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtable/jquery.squashtm.tableDnD.ext.js"></script> 
 
 <!-- //end of datatable library imports -->
 
 <!-- -------------------- /DataTables library imports. SHOULD BE IMPORTED BEFORE DATATABLE USAGE--------------------------------------------- -->
 
 
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/ta-admin-panel.js"></script>
+<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/ta-admin-panel.js"></script>
   
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/ta-picker.js"></script>
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/TestAutomationRemover.js"></script>
+<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/ta-picker.js"></script>
+<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/TestAutomationRemover.js"></script>
 
 
 <script type="text/javascript">

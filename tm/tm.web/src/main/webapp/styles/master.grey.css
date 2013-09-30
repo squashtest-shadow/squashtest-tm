@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-@CHARSET "ISO-8859-1";
+@CHARSET "utf-8";
 
 @import url("tabbed-pane.grey.css");
 @import url("jquery/ui/jquery-ui-1.9.1.custom.grey.css");
