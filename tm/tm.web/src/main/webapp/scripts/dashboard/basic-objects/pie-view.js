@@ -70,7 +70,8 @@
  *	</div>
  * 
  */
-define(["jquery", "backbone", 'squash.attributeparser', "jqplot-pie", "jquery.throttle-debounce"], function($, Backbone, attrparser){
+define(["jquery", "backbone", "squash.attributeparser", "iesupport/am-I-ie8", "./ie8-special-pie-renderer", 
+        "jqplot-pie", "jquery.throttle-debounce"], function($, Backbone, attrparser, isIE8, specialHandler){
 
 	
 	
@@ -158,10 +159,16 @@ define(["jquery", "backbone", 'squash.attributeparser', "jqplot-pie", "jquery.th
 			var pieserie = this.getData();
 			var conf = this.getConf(pieserie);		
 			
-			if (this.pie === undefined){	
+			// IE8 needs a crutch
+			if (isIE8 && (pieserie.isEmpty || pieserie.isFull)){
+				specialHandler.render(conf, this.$el.find('.dashboard-item-view'));
+			}
+			
+			else if (this.pie === undefined){	
 				var viewId = this.$el.find('.dashboard-item-view').attr('id');
 				this.pie = $.jqplot(viewId, pieserie.plotdata, conf);
 			}
+			
 			else{
 				conf.data = pieserie.plotdata;
 				this.pie.replot(conf);
