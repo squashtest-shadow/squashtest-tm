@@ -25,18 +25,27 @@
  * means with a simple div, the proper background-color and a mask to make the div look round. 
  *
  * A proper jqplot plugin like jQuery.jqplot.IE8PieRenderer would have been better though.
+ * 
  *
  */
 
 
 define(['jquery'], function($){
+	
+	function getCenter(view){
+		return [ 
+		   view.width()/2,
+		   145				// instead of (300 /2 = 150). The center is a bit off.
+		];
+	}
 
 	function createImg(conf, view){
 	
 		var cst_minmargin = 33;
 		
-		var x_center = view.width() / 2,
-			y_center = 145;		// instead of (300 /2 = 150). The center is a bit off.
+		var center = getCenter(view),
+			x_center = center[0],
+			y_center = center[1];		
 		
 		var radius = Math.min(x_center - cst_minmargin, y_center - cst_minmargin);
 		
@@ -58,7 +67,33 @@ define(['jquery'], function($){
 		
 		img.css(css);
 		
-		return img;
+		view.append(img);
+	}
+	
+	// partly ripped from the jqplot PieRenderer
+	function createCaption(conf, view){
+		try{
+			var center = getCenter(view),
+			x_center = center[0],
+			y_center = center[1];	
+			
+			var label = conf.seriesDefaults.rendererOptions.dataLabels;
+			var elem = $('<div class="jqplot-pie-series jqplot-data-label" style="position:absolute;">' + label + '</div>');
+				
+			view.append(elem);
+			
+			// small css fix
+			var half_w_elem = elem.width()/2,
+				half_h_elem = elem.height()/2;
+			
+			elem.css({top : y_center - half_h_elem, left : x_center - half_w_elem});
+			
+		}
+		catch(exception){
+			if (console && console.log){
+				console.log("ie8-special-pie-renderer : unable to display caption because of exception : " + exception);
+			}
+		}
 	}
 	
 	return {
@@ -71,8 +106,8 @@ define(['jquery'], function($){
 		 */
 		render : function(conf, view){
 			view.empty();
-			var img = createImg(conf, view);
-			view.append(img);
+			createImg(conf, view);
+			createCaption(conf, view);
 		} 
 		
 		

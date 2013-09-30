@@ -874,6 +874,7 @@ predefined for future evolutions :
 }
 
 .dashboard-item-view {
+	position : relative;
 	height : 100%;
 	width : 63%;
 	float : left;
