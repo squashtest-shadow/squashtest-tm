@@ -194,7 +194,7 @@ define([ "jquery", "squash.table-collapser", "custom-field-values", "squash.tran
 			fnDrawCallback : stepsTableDrawCallback,
 			fnCreatedRow : stepsTableCreatedRowCallback,
 			iDeferLoading : settings.basic.totalRows,
-			iDisplayLength : 10,
+			iDisplayLength : 50,
 			aoColumnDefs : [ {
 				'bVisible' : false,
 				'bSortable' : false,

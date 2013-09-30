@@ -104,7 +104,7 @@ public class TestCaseTestStepsController {
 		// the main entities
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
 		// FIXME loads all steps, should perform a paged query !
-		List<TestStep> steps = testCase.getSteps().subList(0, Math.min(10, testCase.getSteps().size()));
+		List<TestStep> steps = testCase.getSteps().subList(0, Math.min(50, testCase.getSteps().size()));
 
 		// the custom fields definitions
 		CustomFieldHelper<ActionTestStep> helper = cufHelperService.newStepsHelper(steps, testCase.getProject())
