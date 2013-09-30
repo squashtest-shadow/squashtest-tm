@@ -77,7 +77,7 @@ data-def='hover,  datakeys-id=entity-id ,ajaxsource=${ stepVerifiedRequirementsU
 	<thead>
 		<tr>
 			<th data-def="select, map=entity-index">#</th>
-			<th data-def="sClass=link-checkbox, map=empty-link-checkbox" style="width:32px;">&nbsp;</th>
+			<th data-def="sClass=link-checkbox, map=empty-link-checkbox, narrow" style="width:32px;">&nbsp;</th>
 			<th data-def="sortable, map=project"><f:message key="label.project" /></th>
 			<th data-def="sortable, map=entity-id"><f:message key="report.requirementexport.id"/></th>
 			<th data-def="sortable, map=reference"><f:message key="label.Reference"/></th>
@@ -85,7 +85,7 @@ data-def='hover,  datakeys-id=entity-id ,ajaxsource=${ stepVerifiedRequirementsU
 			<th data-def="sClass=versionNumber, sortable, map=versionNumber"><f:message key="requirement-version.version-number.label" /></th>
 			<th data-def="sortable, map=criticality"><f:message key="requirement.criticality.label"/></th>
 			<th data-def="sortable, map=category"><f:message key="requirement.category.label"/></th>
-			<th data-def='sClass=delete-button, map=empty-delete-holder'>&nbsp;</th>
+			<th data-def='sClass=delete-button, map=empty-delete-holder, narrow'>&nbsp;</th>
 			<th data-def="invisible, map=status">status(masked)</th>
 			<th data-def='invisible, map=verifiedByStep'>verifiedByStep(masked)</th>
 		</tr>
