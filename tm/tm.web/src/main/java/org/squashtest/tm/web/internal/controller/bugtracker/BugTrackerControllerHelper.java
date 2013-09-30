@@ -291,19 +291,25 @@ public final class BugTrackerControllerHelper {
 		}
 
 		@Override
-		public Object[] buildItemData(IssueOwnership<RemoteIssueDecorator> ownership) {
+		public Map<String, Object> buildItemData(IssueOwnership<RemoteIssueDecorator> ownership) {
 			RemoteIssue issue = ownership.getIssue();
-			return new Object[] {
-					bugTrackersLocalService.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker()).toExternalForm()
-					, issue.getId()
-					, issue.getSummary()
-					, issue.getPriority().getName()
-					, issue.getStatus().getName()
-					, issue.getAssignee().getName()
-					, nameBuilder.buildName(ownership.getOwner())
-					, ownership.getExecution().getId() };
-				};
+			Map<String, Object> row = new HashMap<String, Object>(8);
+			
+			String url = bugTrackersLocalService.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker()).toExternalForm();
+			String issueOwner = nameBuilder.buildName(ownership.getOwner());
+			
+			row.put("url", url);
+			row.put("remote-id", issue.getId());
+			row.put("summary", issue.getSummary());
+			row.put("priority", issue.getPriority().getName());
+			row.put("status", issue.getStatus().getName());
+			row.put("assignee", issue.getAssignee().getName());
+			row.put("execution", issueOwner);
+			row.put("execution-id", ownership.getExecution().getId());
+			
+			return row;
 		}
+	}
 
 	/**
 	 * <p>
