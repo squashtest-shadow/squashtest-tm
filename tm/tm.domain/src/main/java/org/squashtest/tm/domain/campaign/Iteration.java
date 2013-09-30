@@ -619,7 +619,10 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 
 			for (IterationTestPlanItem iterationTestPlanItem : testSuiteTestPlan) {
 				int testPlanItemIndex = testPlanWithoutDeletedTestCases.indexOf(iterationTestPlanItem);
-				testPlanIndex.add(testPlanItemIndex);
+				
+				if (testPlanItemIndex > -1) {
+					testPlanIndex.add(testPlanItemIndex);
+				} // otherwise, test case was deleted
 			}
 
 			resultMap.put(testSuiteCopy, testPlanIndex);
