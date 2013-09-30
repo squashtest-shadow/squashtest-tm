@@ -20,7 +20,9 @@
  */
 package org.squashtest.tm.web.internal.controller.administration;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -37,18 +39,26 @@ public class BugtrackerDataTableModelHelper extends DataTableModelBuilder<BugTra
 	}
 
 	@Override
-	public Object[] buildItemData(BugTracker item) {
+	public Map<String, Object> buildItemData(BugTracker item) {
 
 		String isIframeFriendlyStringValue = "";
-
+		Map<String, Object> row = new HashMap<String, Object>(6);
+		
+		
 		if (item.isIframeFriendly()) {
 			isIframeFriendlyStringValue = messageSource.internationalize("squashtm.truefalse.true", locale);
 		} else {
 			isIframeFriendlyStringValue = messageSource.internationalize("squashtm.truefalse.false", locale);
 		}
-
-		return new Object[] { item.getId(), getCurrentIndex(), item.getName(), item.getKind(), item.getUrl(),
-				isIframeFriendlyStringValue };
+		
+		row.put("id", item.getId());
+		row.put("index", getCurrentIndex());
+		row.put("name", item.getName());
+		row.put("kind", item.getKind());
+		row.put("url", item.getUrl());
+		row.put("iframe-friendly", isIframeFriendlyStringValue);
+		
+		return row;
 	}
 
 	public Locale getLocale() {

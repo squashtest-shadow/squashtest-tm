@@ -46,7 +46,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
-import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 @Controller
 @RequestMapping("/administration/bugtrackers")
@@ -54,22 +54,19 @@ public class BugTrackerAdministrationController {
 
 	@Inject
 	private InternationalizationHelper messageSource;
+	@Inject
 	private BugTrackerManagerService bugTrackerManagerService;
 	private static final Logger LOGGER = LoggerFactory.getLogger(BugTrackerAdministrationController.class);
 
 
 
-/* remember that the indexes here are supposed to match the visible columns in the bugtracker view */
-	private DatatableMapper<Integer> bugtrackerMapper=new IndexBasedMapper()
-										.mapAttribute(2, "name", BugTracker.class)
-										.mapAttribute(3, "kind", BugTracker.class)
-										.mapAttribute(4, "url", BugTracker.class)
-										.mapAttribute(5, "iframeFriendly", BugTracker.class);
+	private DatatableMapper<String> bugtrackerMapper=new NameBasedMapper()
+										.mapAttribute("id", 	"id", BugTracker.class)
+										.mapAttribute("name", 	"name", BugTracker.class)
+										.mapAttribute("kind", 	"kind", BugTracker.class)
+										.mapAttribute("url", 	"url", BugTracker.class)
+										.mapAttribute("iframe-friendly", "iframeFriendly", BugTracker.class);
 
-	@ServiceReference
-	public void setBugtrackerManagerService(BugTrackerManagerService bugTrackerManagerService) {
-		this.bugTrackerManagerService = bugTrackerManagerService;
-	}
 
 
 	@RequestMapping(value = "/add", method = RequestMethod.POST)

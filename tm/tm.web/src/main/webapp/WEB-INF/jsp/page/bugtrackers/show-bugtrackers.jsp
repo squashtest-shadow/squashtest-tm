@@ -26,7 +26,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
-<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 
@@ -53,111 +52,47 @@
 		<c:url var="bugtrackersUrl" value="/administration/bugtrackers/list" />
 		<c:url var="addBugtrackerUrl" value="/administration/bugtrackers/add" />
 		<c:url var="bugtrackerDetailsBaseUrl" value="/bugtracker" />
-		
-		<script type="text/javascript">
-					$(function() {
-							$('#new-bugtracker-button').button();
-							
-					});
-					
-					function refreshBugTrackers() {
-						var table = $( '#bugtrackers-table' ).dataTable();
-						table.fnDraw(false);
-					}
-													
-					function tableDrawCallback() {
-						addHoverHandler(this);
-					}	
-					
-					function getBugtrackerTableRowId(rowData) {
-						return rowData[0];	
-					}
-					function addHLinkToBugtrackerName(row, data) {
-						var url= '${ bugtrackerDetailsBaseUrl }/' + getBugtrackerTableRowId(data) + '/info';			
-						addHLinkToCellText($( 'td:eq(1)', row ), url);
-					}	
-					function bugtrackerTableRowCallback(row, data, displayIndex){
-						addHLinkToBugtrackerName(row, data);
-						return row;
-					}
-					
-					function addHoverHandler(dataTable){
-						$( 'tbody tr', dataTable ).hover(
-							function() {
-								$( this ).addClass( 'ui-state-highlight' );
-							}, 
-							function() {
-								$( this ).removeClass( 'ui-state-highlight' );
-							} 
-						);
-					}		
-					
-					
-		</script>
+		<c:url var="dtMessagesUrl" value="/datatables/messages" />
+
 		
 		<%----------------------------------- BugTracker Table -----------------------------------------------%>
-		
-<!-- 
-	table structure (columns):
-	
-		* id (not shown)
-		* selecthandle
-		* name,
-		* kind,
-		* url,
-		* iframeFriendly
 
- -->
 
 <div class="fragment-body">
-				<input style="float: right;" type="button" value='<f:message key="label.AddBugtracker" />' id="new-bugtracker-button"/>
-				<div style="clear:both"></div>
-				<comp:decorate-ajax-table url="${ bugtrackersUrl }" tableId="bugtrackers-table" paginate="true">
-					<jsp:attribute name="drawCallback">tableDrawCallback</jsp:attribute>
-					<jsp:attribute name="initialSort">[[2,'asc']]</jsp:attribute>
-					<jsp:attribute name="rowCallback">bugtrackerTableRowCallback</jsp:attribute>
-					<jsp:attribute name="columnDefs">
-						<dt:column-definition targets="0" visible="false" />
-						<dt:column-definition targets="1" width="2em" cssClass="select-handle centered" sortable="false"/>
-						<dt:column-definition targets="2, 3, 4" sortable="true"/>
-						<dt:column-definition targets="5" sortable="false" lastDef="true"/>
-					</jsp:attribute>
-				</comp:decorate-ajax-table>
-				
-				<table id="bugtrackers-table">
-					<thead>
-						<tr>
-							<th>Id(not shown)</th> 
-							<th>#</th>
-							<th><f:message key="label.Name" /></th>
-							<th><f:message key="label.Kind" /></th>
-							<th><f:message key="label.Url" /></th>
-							<th><f:message key="label.lower.iframe" /></th>
-						</tr>
-					</thead>
-					<tbody><%-- Will be populated through ajax --%></tbody>
-				</table>
+	<input style="float: right;" type="button" value='<f:message key="label.AddBugtracker" />' id="new-bugtracker-button"/>
+	<div style="clear:both"></div>
+	
+	<table id="bugtrackers-table" data-def="ajaxsource=${bugtrackersUrl}, hover, language=${dtMessagesUrl}, pre-sort=1-asc">
+		<thead>
+			<tr>
+				<th data-def="map=index, select">#</th>
+				<th data-def="map=name, sortable, link=${bugtrackerDetailsBaseUrl}/{id}/info"><f:message key="label.Name" /></th>
+				<th data-def="map=kind, sortable"><f:message key="label.Kind" /></th>
+				<th data-def="map=url, sortable, link={url}"><f:message key="label.Url" /></th>
+				<th data-def="map=iframe-friendly"><f:message key="label.lower.iframe" /></th>
+			</tr>
+		</thead>
+		<tbody><%-- Will be populated through ajax --%></tbody>
+	</table>
 
 
 <pop:popup id="add-bugtracker-dialog" titleKey="dialog.new-bugtracker.title" openedBy="new-bugtracker-button">
 	<jsp:attribute name="buttons">
 		<f:message var="label1" key="label.Add" />
 			'${ label1 }': function() {
-					var url = "${ addBugtrackerUrl }";
-					<jq:ajaxcall url="url"
-					 dataType="json"
-					 httpMethod="POST"
-					 useData="true"
-					 successHandler="refreshBugTrackers">
-						{
-						name: $( '#add-bugtracker-name' ).val(),
-						url: $( '#add-bugtracker-url' ).val(),
-						kind: $( '#add-bugtracker-kind' ).val(),
-						iframeFriendly: $('#add-bugtracker-iframeFriendly').is(':checked')
-						
+					$.ajax({
+						url : "${addBugtrackerUrl}",
+						type : 'POST', 
+						dataType : 'json',
+						data : {
+							name: $( '#add-bugtracker-name' ).val(),
+							url: $( '#add-bugtracker-url' ).val(),
+							kind: $( '#add-bugtracker-kind' ).val(),
+							iframeFriendly: $('#add-bugtracker-iframeFriendly').is(':checked')							
 						}
-
-					</jq:ajaxcall>
+					}).done(function(){
+						$('#bugtrackers-table').squashTable().refresh();
+					});
 				},							
 		<pop:cancel-button />
 	</jsp:attribute>
@@ -196,6 +131,14 @@
 			</jsp:attribute>
 </pop:popup>
 
+		
+	<script type="text/javascript">
+		$(function() {				
+			$('#new-bugtracker-button').button();				
+			$("#bugtrackers-table").squashTable({},{});				
+				
+		});					
+	</script>
 </div>
 </jsp:attribute>
 </layout:info-page-layout>
