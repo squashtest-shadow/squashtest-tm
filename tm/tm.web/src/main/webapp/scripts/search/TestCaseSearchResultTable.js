@@ -279,25 +279,13 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 			var urlGET = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"] + "/importance-combo-data";
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
-			$('.editable_importance', row).editable(
-					function(value, settings) {
-						var innerPOSTData;
-						$.post(urlPOST, {
-							value : value,
-							id : "test-case-importance"	
-						}, function(data) {
-							innerPOSTData = data;
-							self.refresh();
-						});
-						return (innerPOSTData);
-					}, {
+			$('.editable_importance', row).editable(urlPOST, {
 						type : 'select',
 						submit : ok,
 						cancel : cancel,
-						onblur : function() {
-						},
 						loadurl : urlGET,
-						onsubmit : function() {
+						"submitdata" : function(value, settings) {
+							return {"id": "test-case-importance"};
 						}
 					});
 		},
@@ -308,27 +296,15 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 			var urlGET = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"] + "/nature-combo-data";
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
-			$('.editable_nature', row).editable(
-					function(value, settings) {
-						var innerPOSTData;
-						$.post(urlPOST, {
-							value : value,
-							id : "test-case-nature"	
-						}, function(data) {
-							innerPOSTData = data;
-							self.refresh();
-						});
-						return (innerPOSTData);
-					}, {
-						type : 'select',
-						submit : ok,
-						cancel : cancel,
-						onblur : function() {
-						},
-						loadurl : urlGET,
-						onsubmit : function() {
-						}
-					});
+			$('.editable_nature', row).editable(urlPOST, {
+				type : 'select',
+				submit : ok,
+				cancel : cancel,
+				loadurl : urlGET,
+				"submitdata" : function(value, settings) {
+					return {"id": "test-case-nature"};
+				}
+			});
 		},
 		
 		_addSelectEditableToType : function(row, data) {
@@ -337,27 +313,15 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 			var urlGET = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"] + "/type-combo-data";
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
-			$('.editable_type', row).editable(
-					function(value, settings) {
-						var innerPOSTData;
-						$.post(urlPOST, {
-							value : value,
-							id : "test-case-type"	
-						}, function(data) {
-							innerPOSTData = data;
-							self.refresh();
-						});
-						return (innerPOSTData);
-					}, {
-						type : 'select',
-						submit : ok,
-						cancel : cancel,
-						onblur : function() {
-						},
-						loadurl : urlGET,
-						onsubmit : function() {
-						}
-					});
+			$('.editable_type', row).editable(urlPOST, {
+				type : 'select',
+				submit : ok,
+				cancel : cancel,
+				loadurl : urlGET,
+				"submitdata" : function(value, settings) {
+					return {"id": "test-case-type"};
+				}
+			});
 		},
 		
 		_addSelectEditableToStatus : function(row, data) {
@@ -366,27 +330,15 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 			var urlGET = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"] + "/status-combo-data";
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
-			$('.editable_status', row).editable(
-					function(value, settings) {
-						var innerPOSTData;
-						$.post(urlPOST, {
-							value : value,
-							id : "test-case-status"	
-						}, function(data) {
-							innerPOSTData = data;
-							self.refresh();
-						});
-						return (innerPOSTData);
-					}, {
-						type : 'select',
-						submit : ok,
-						cancel : cancel,
-						onblur : function() {
-						},
-						loadurl : urlGET,
-						onsubmit : function() {
-						}
-					});
+			$('.editable_status', row).editable(urlPOST, {
+				type : 'select',
+				submit : ok,
+				cancel : cancel,
+				loadurl : urlGET,
+				"submitdata" : function(value, settings) {
+					return {"id": "test-case-status"};
+				}
+			});
 		},
 		
 		_addSimpleEditableToReference : function(row, data) {
