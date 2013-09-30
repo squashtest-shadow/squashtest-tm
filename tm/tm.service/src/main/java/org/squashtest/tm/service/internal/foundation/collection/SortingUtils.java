@@ -96,8 +96,10 @@ public final class SortingUtils {
 
 	}
 
-	public static void addOrder(String hql, Sorting sorting) {
-		addOrder(new StringBuilder(hql), sorting);
+	public static String addOrder(String hql, Sorting sorting) {
+		StringBuilder res = new StringBuilder(hql);
+		addOrder(res, sorting);
+		return res.toString();
 	}
 
 
@@ -126,15 +128,17 @@ public final class SortingUtils {
 
 	}
 
-	public static void addOrder(String hql, MultiSorting sorting) {
-		addOrder(new StringBuilder(hql), sorting);
+	public static String addOrder(String hql, MultiSorting sorting) {
+		StringBuilder res = new StringBuilder(hql);
+		addOrder(res, sorting);
+		return res.toString();
 	}
 
 	private static void handlePreviousOrderClauses(StringBuilder hqlbuilder) {
 		if (HQL_ORDER_PATTERN.matcher(hqlbuilder.toString()).find()) {
 			hqlbuilder.append(", ");
 		} else {
-			hqlbuilder.append("order by ");
+			hqlbuilder.append(" order by ");
 		}
 	}
 }

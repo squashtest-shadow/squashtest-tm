@@ -307,7 +307,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 		wrapper.map("TestCase.importance", TestCaseImportance.class);
 		wrapper.map("IterationTestPlanItem.executionStatus", ExecutionStatus.class);
 		
-		SortingUtils.addOrder(hql, wrapper);
+		hql = SortingUtils.addOrder(hql, wrapper);
 		
 		Query query = currentSession().createQuery(hql);
 		
