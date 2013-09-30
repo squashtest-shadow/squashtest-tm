@@ -104,11 +104,7 @@ data-def='hover,  datakeys-id=entity-id ,ajaxsource=${ verifiedRequirementsTable
 			<th data-def="sortable, map=criticality"><f:message key="requirement.criticality.label"/></th>
 			<th data-def="sortable, map=category"><f:message key="requirement.category.label"/></th>
 			<th data-def='map=verifyingSteps'><f:message key="label.test-step.short"/></th>
-			<th data-def='sClass=delete-button, map=empty-delete-holder'>&nbsp;</th>			
-			<th data-def="invisible, map=status">status(masked)</th>
-			<c:if test="${includeIndirectlyVerified }">
-				<th data-def="invisible, map=directlyVerified">isDirectlyVerified(masked)</th>
-			</c:if>
+			<th data-def='sClass=delete-button,narrow,  map=empty-delete-holder'>&nbsp;</th>
 		</tr>
 	</thead>
 	<tbody>
