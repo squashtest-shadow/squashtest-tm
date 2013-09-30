@@ -96,6 +96,11 @@ public final class SortingUtils {
 
 	}
 
+	public static void addOrder(String hql, Sorting sorting) {
+		addOrder(new StringBuilder(hql), sorting);
+	}
+
+
 	// for the sake of optimization we won't simply loop over the method right above
 	public static void addOrder(StringBuilder hqlbuilder, MultiSorting sortings) {
 
@@ -119,6 +124,10 @@ public final class SortingUtils {
 			}
 		}
 
+	}
+
+	public static void addOrder(String hql, MultiSorting sorting) {
+		addOrder(new StringBuilder(hql), sorting);
 	}
 
 	private static void handlePreviousOrderClauses(StringBuilder hqlbuilder) {

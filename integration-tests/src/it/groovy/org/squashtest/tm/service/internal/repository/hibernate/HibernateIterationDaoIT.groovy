@@ -23,32 +23,36 @@ package org.squashtest.tm.service.internal.repository.hibernate
 import javax.inject.Inject
 
 import org.apache.poi.hssf.record.formula.functions.T
+import org.hibernate.HibernateException;
+import org.squashtest.tm.core.foundation.collection.Filtering;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics
 import org.squashtest.tm.domain.campaign.TestPlanStatus
 import org.squashtest.tm.service.internal.repository.IterationDao
 import org.unitils.dbunit.annotation.DataSet
 
+import spock.lang.Unroll;
 import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
 class HibernateIterationDaoIT extends DbunitDaoSpecification {
 	@Inject IterationDao iterationDao
-	
+
 	@DataSet("HibernateIterationDaoIT.should return list of executions.xml")
 	def "should return list of executions"(){
 		when:
 		def result = iterationDao.findAllExecutionByIterationId (2l)
-		
+
 		then:
 		result.size() == 3
 		result.each {it.name == "iteration2-execution"}
 	}
-	
+
 	@DataSet("HibernateIterationDaoIT.should find iteration statistics.xml")
 	def "should find test suite statistics READY"(){
 		when:
 		TestPlanStatistics result = iterationDao.getIterationStatistics(1L)
-		
+
 		then:
 		result != null
 		result.nbBlocked == 0
@@ -62,5 +66,50 @@ class HibernateIterationDaoIT extends DbunitDaoSpecification {
 		result.nbFailure == 0
 		result.status == TestPlanStatus.READY
 	}
-	
-}	
+
+	@Unroll
+	@DataSet("HibernateIterationDaoIT.should find iteration statistics.xml")
+	def "[Issue 2828] should not break when looking up indexed test plan with filtering : #hasFiltering"() {
+		given:
+		PagingAndMultiSorting sorting = Mock()
+		sorting.getSortings() >> []
+		sorting.getFirstItemIndex() >> 0
+		sorting.getPageSize() >> 500
+		
+		and:
+		Filtering filtering = Mock()
+		filtering.isDefined() >> hasFiltering
+		 
+		when:
+		def res = iterationDao.findIndexedTestPlan(1L, sorting, filtering)
+		
+		then:
+		notThrown(HibernateException)
+		
+		where: 
+		hasFiltering << [true, false]
+	}
+
+	@Unroll
+	@DataSet("HibernateIterationDaoIT.should find iteration statistics.xml")
+	def "[Issue 2828] should not break when looking up test plan with filtering : #hasFiltering"() {
+		given:
+		PagingAndMultiSorting sorting = Mock()
+		sorting.getSortings() >> []
+		sorting.getFirstItemIndex() >> 0
+		sorting.getPageSize() >> 500
+		
+		and:
+		Filtering filtering = Mock()
+		filtering.isDefined() >> hasFiltering
+		 
+		when:
+		def res = iterationDao.findTestPlan(1L, sorting, filtering)
+		
+		then:
+		notThrown(HibernateException)
+		
+		where: 
+		hasFiltering << [true, false]
+	}
+}

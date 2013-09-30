@@ -58,7 +58,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	 * Because it is impossible to sort over the indices of ordered collection in a criteria query 
 	 * we must then build an hql string which will let us do that. 
 	 */
-	private static final String HQL_INDEXED_TEST_PLAN = 
+	private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE = 
 			"select index(IterationTestPlanItem), IterationTestPlanItem, group_concat(TestSuite.name, 'order by', TestSuite.name) as suitenames "+
 			"from Iteration as Iteration inner join Iteration.testPlans as IterationTestPlanItem "+
 			"left outer join IterationTestPlanItem.referencedTestCase as TestCase " +
@@ -66,11 +66,18 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 			"left outer join IterationTestPlanItem.referencedDataset as Dataset " +
 			"left outer join IterationTestPlanItem.user as User "+
 			"left outer join IterationTestPlanItem.testSuites as TestSuite "+
-			"where Iteration.id = :iterationId "+
+			"where Iteration.id = :iterationId {whereClause}"+
 			"group by index(IterationTestPlanItem), IterationTestPlanItem.id ";
 	
+	/**
+	 * HQL query which looks up the whole iteration test plan
+	 */
+	private final String hqlFullIndexedTestPlan = HQL_INDEXED_TEST_PLAN_TEMPLATE.replace("{whereClause}", "");
+	/**
+	 * HQL query which looks up the test plan assigned to a given user
+	 */
+	private final String hqlUserFilteredIndexedTestPlan = HQL_INDEXED_TEST_PLAN_TEMPLATE.replace("{whereClause}", "and User.login = :userLogin ");
 
-	
 	@Override
 	public List<Iteration> findAllInitializedByCampaignId(long campaignId) {
 
@@ -290,23 +297,19 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	
 	
 	// this method will use one or another strategy to fetch its data depending on what the user is requesting. 
+	@SuppressWarnings("unchecked")
 	private List<Object[]> findIndexedTestPlanData(final long iterationId, PagingAndMultiSorting sorting, Filtering filtering){
 		
-		StringBuilder hqlbuilder = new StringBuilder(HQL_INDEXED_TEST_PLAN);
-		
-		// check if we want to filter on the user login
-		if (filtering.isDefined()){
-			hqlbuilder.append("and User.login = :userLogin ");
-		}
-		
+		String hql = filtering.isDefined() ? hqlUserFilteredIndexedTestPlan : hqlFullIndexedTestPlan;
+				
 		// tune the sorting to make hql happy
 		LevelImplementorSorter wrapper= new LevelImplementorSorter(sorting);
 		wrapper.map("TestCase.importance", TestCaseImportance.class);
 		wrapper.map("IterationTestPlanItem.executionStatus", ExecutionStatus.class);
 		
-		SortingUtils.addOrder(hqlbuilder, wrapper);
+		SortingUtils.addOrder(hql, wrapper);
 		
-		Query query = currentSession().createQuery(hqlbuilder.toString());
+		Query query = currentSession().createQuery(hql);
 		
 		query.setParameter("iterationId", iterationId, LongType.INSTANCE);
 		
