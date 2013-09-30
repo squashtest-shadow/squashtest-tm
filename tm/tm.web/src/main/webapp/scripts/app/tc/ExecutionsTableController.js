@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "squash.datatables", "jqueryui" ],
+define([ "jquery", "jquery.squash.datatables", "jqueryui" ],
 		function($) {
 			function init() {
 				var execUrlRoot = squashtm.app.contextRoot + "/executions";
@@ -46,7 +46,7 @@ define([ "jquery", "squash.datatables", "jqueryui" ],
 
 				var conf = squashtm.app.testCaseExecutionsTable;
 
-				var table = $("#execs-table").dataTable({
+				var table = $("#execs-table").squashTable({
 					"oLanguage" : {
 						"sUrl" : conf.languageUrl
 					},

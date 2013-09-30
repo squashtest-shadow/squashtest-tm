@@ -35,69 +35,67 @@ define(
 							$(".button").button();
 							// this.el is decorated with an ajax sourced
 							// datatable
-							var config = $
-									.extend(
-											{
-												"oLanguage" : {
-													"sUrl" : cfTable.languageUrl
-												},
-												"bJQueryUI" : true,
-												"bAutoWidth" : false,
-												"bFilter" : false,
-												"bPaginate" : true,
-												"sPaginationType" : "squash",
-												"iDisplayLength" : cfTable.displayLength,
-												"bServerSide" : true,
-												"sAjaxSource" : cfTable.ajaxSource,
-												"bDeferRender" : true,
-												"bRetrieve" : true,
-												"sDom" : 't<"dataTables_footer"lp>',
-												"iDeferLoading" : 0,
-												"aaSorting" : [ [ 2, "asc" ] ],
-												"fnRowCallback" : function() {
-												},
-												"aoColumnDefs" : [
-														{
-															"bVisible" : false,
-															"aTargets" : [ 0 ],
-															"sClass" : "cf-id",
-															"mDataProp" : "entity-id"
-														},
-														{
-															'bSortable' : false,
-															'sClass' : 'centered ui-state-default drag-handle select-handle',
-															'aTargets' : [ 1 ],
-															'mDataProp' : 'entity-index'
-														},
-														{
-															"bSortable" : true,
-															"aTargets" : [ 2 ],
-															"mDataProp" : "name"
-														},
-														{
-															"bSortable" : true,
-															"aTargets" : [ 3 ],
-															"mDataProp" : "label"
-														},
-														{
-															"bVisible" : false,
-															"aTargets" : [ 4 ],
-															"sClass" : "raw-input-type",
-															"mDataProp" : "raw-input-type"
-														},
-														{
-															"bSortable" : true,
-															"aTargets" : [ 5 ],
-															"mDataProp" : "input-type"
-														},
-														{
-															'bSortable' : false,
-															'sWidth' : '2em',
-															'sClass' : 'delete-button',
-															'aTargets' : [ 6 ],
-															'mDataProp' : 'empty-delete-holder'
-														} ]
-											}, squashtm.datatable.defaults);
+							var config = $.extend({
+								"oLanguage" : {
+									"sUrl" : cfTable.languageUrl
+								},
+								"bJQueryUI" : true,
+								"bAutoWidth" : false,
+								"bFilter" : false,
+								"bPaginate" : true,
+								"sPaginationType" : "squash",
+								"iDisplayLength" : cfTable.displayLength,
+								"bServerSide" : true,
+								"sAjaxSource" : cfTable.ajaxSource,
+								"bDeferRender" : true,
+								"bRetrieve" : true,
+								"sDom" : 't<"dataTables_footer"lp>',
+								"iDeferLoading" : 0,
+								"aaSorting" : [ [ 2, "asc" ] ],
+								"fnRowCallback" : function() {
+								},
+								"aoColumnDefs" : [
+									{
+										"bVisible" : false,
+										"aTargets" : [ 0 ],
+										"sClass" : "cf-id",
+										"mDataProp" : "entity-id"
+									},
+									{
+										'bSortable' : false,
+										'sClass' : 'centered ui-state-default drag-handle select-handle',
+										'aTargets' : [ 1 ],
+										'mDataProp' : 'entity-index'
+									},
+									{
+										"bSortable" : true,
+										"aTargets" : [ 2 ],
+										"mDataProp" : "name"
+									},
+									{
+										"bSortable" : true,
+										"aTargets" : [ 3 ],
+										"mDataProp" : "label"
+									},
+									{
+										"bVisible" : false,
+										"aTargets" : [ 4 ],
+										"sClass" : "raw-input-type",
+										"mDataProp" : "raw-input-type"
+									},
+									{
+										"bSortable" : true,
+										"aTargets" : [ 5 ],
+										"mDataProp" : "input-type"
+									},
+									{
+										'bSortable' : false,
+										'sWidth' : '2em',
+										'sClass' : 'delete-button',
+										'aTargets' : [ 6 ],
+										'mDataProp' : 'empty-delete-holder'
+									} ]
+							}, squashtm.datatable.defaults);
 
 							var squashSettings = {
 								enableHover : true,
