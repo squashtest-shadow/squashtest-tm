@@ -116,10 +116,3 @@ require.baseUrl = "${pageContext.servletContext.contextPath}/scripts";
     });
   });
 </script>
-
-<script type="text/javascript">
-	$(function() {
-		enableTableRangeSelection();
-	});
-</script>
-

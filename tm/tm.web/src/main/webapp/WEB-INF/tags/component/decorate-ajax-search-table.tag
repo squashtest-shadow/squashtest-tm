@@ -64,7 +64,7 @@
 			] 
 		});
 		
-		bindHover(dataTable);
+		//bindHover(dataTable);
 	});
 	
 	

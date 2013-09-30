@@ -24,7 +24,12 @@ define([ "jquery", "squash.datatables", "datatables", "jqueryui" ], function($,
 	return {
 		defaults : squashtm.datatable.defaults,
 		deleteButton : function(button) {
-			decorateDeleteButtons($(button));
+			$(button).button({
+				text : false,
+				icons : {
+					primary : "ui-icon-trash"
+				}
+			});
 		}
 	};
 });

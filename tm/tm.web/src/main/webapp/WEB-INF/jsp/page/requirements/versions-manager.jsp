@@ -36,6 +36,10 @@
 	<s:param name="reqId" value="${requirement.id}" />
 </s:url>
 <c:set var="displayedVersions" value="10" />
+
+<c:url var="dtModel"	value='/requirements/${requirement.id}/versions/table' />
+<c:url var="dtMessages" value="/datatables/messages"/>
+
 <layout:common-import-outer-frame-layout highlightedWorkspace="requirement" titleKey="squashtm.library.requirement.title">
 	<jsp:attribute  name="head">	
 		<comp:sq-css name="squash.blue.css" />
@@ -45,50 +49,18 @@
 		<script type="text/javascript">
 
 			$(function() {
-				/* versions table decoration */
-				var getRowId = function(data) {
-					return data[0];
-				};
-				
-				var table = $( "#versions-table" ).dataTable({
-					"oLanguage": {
-						"sUrl": "<c:url value='/datatables/messages' />"
-					},
-					"bJQueryUI": true,
-					"bAutoWidth": false,
-					"bFilter": false,
-					"bPaginate": true,
-					"sPaginationType": "squash",
-					"iDisplayLength": ${ displayedVersions },
-					"bServerSide": true,
-					"sAjaxSource": "<c:url value='/requirements/${ requirement.id }/versions/table' />", 
-					"bRetrieve": true,				
-					"sDom": 't<"dataTables_footer"lp>',
- 					"iDeferLoading": ${ fn:length(versions) },
-			        "aaSorting": [[ 1, "desc" ]],
-			        "fnDrawCallback": function() { restoreTableSelection(this, getRowId); },
-					"aoColumnDefs": [ 
-						{ "bVisible": false, "aTargets": [0, 7] },
-						{ "bSortable": true, "aTargets": [1], "sClass": "select-handle centered", "sWidth": "6em" }, 
-						{ "bSortable": true, "aTargets": [2,3,4,5,6] } 
-					] 
-				});
+
+				var table = $("#versions-table").squashTable({}, {});			
 				
 				var showSelectedVersion = function(table) {
 					var rows = table.fnGetNodes();
-					var id;
-
-					$( rows ).each(function(index, row) {
-						if ($( row ).hasClass( 'ui-state-row-selected' )) {
-							var data = table.fnGetData( row );
-							id = getRowId( data );
-							return false; // breaks the iteration
-						}
-					});
-
-					var urlPattern = "<c:url value='/requirement-versions/selectedVersionId/editor-fragment' />";
+					var ids = table.getSelectedIds();
 					
-					squashtm.workspace.contextualContent.loadWith(urlPattern.replace("selectedVersionId", id));
+					if (ids.length>1){
+						var id = ids[0];
+						var urlPattern = "<c:url value='/requirement-versions/selectedVersionId/editor-fragment' />";						
+						squashtm.workspace.contextualContent.loadWith(urlPattern.replace("selectedVersionId", id));						
+					}
 				}
 				
 				$(".select-handle", table).live('click', function() {
@@ -98,18 +70,19 @@
 						row.addClass('ui-state-row-selected').removeClass('ui-state-highlight');
 						row.parent().find('.ui-state-row-selected').not(row).removeClass( 'ui-state-row-selected');
 						
-						saveTableSelection(table, getRowId);
 						showSelectedVersion(table);					
 					}
 				});
 				
-				/* refreshes table on ajax success */
+				/* refreshes table on ajax success for any actions in the editor below */
 				table.ajaxSuccess(function(event, xrh, settings) {
 					if (settings.type == 'POST' && settings.url.match(/requirement-versions\/\d+$/g)) {
-						saveTableSelection(table, getRowId);
-						table.fnDraw(false);
+						table.refresh();
 					}
 				});
+				
+				// select the currently selected version
+				table.
 			});
 		</script>
 	</jsp:attribute>
@@ -138,16 +111,17 @@
 			</div>
 			
 			<div id="sub-page-list-panel" class="sub-page-list-panel shadow ui-corner-all ui-helper-reset ui-widget ui-widget-content" >
-				<table id="versions-table" >
+				<table id="versions-table" data-def="ajaxsource=${dtModel}, language=${dtMessages}, hover, pre-sort=1-desc, deferLoading=${fn:length(versions)}">
 					<thead>
-						<th>Id</th>
-						<th><f:message key="requirement.versions.table.col-header.version-number" /></th>
-						<th><f:message key="requirement.versions.table.col-header.reference" /></th>
-						<th><f:message key="label.Name" /></th>
-						<th><f:message key="requirement.versions.table.col-header.status" /></th>
-						<th><f:message key="requirement.versions.table.col-header.criticality" /></th>
-						<th><f:message key="requirement.versions.table.col-header.category" /></th>
-						<th>Id</th>
+						<tr>
+							<th data-def="map=entity-id, invisible">Id</th>
+							<th data-def="map=version-number, select"><f:message key="requirement.versions.table.col-header.version-number" /></th>
+							<th data-def="map=reference"><f:message key="requirement.versions.table.col-header.reference" /></th>
+							<th data-def="map=name"><f:message key="label.Name" /></th>
+							<th data-def="map=status"><f:message key="requirement.versions.table.col-header.status" /></th>
+							<th data-def="map=criticality"><f:message key="requirement.versions.table.col-header.criticality" /></th>
+							<th data-def="map=category"><f:message key="requirement.versions.table.col-header.category" /></th>
+						</tr>
 					</thead>
 					<tbody >
 						<c:forEach var="version" items="${ versions }" end="${ displayedVersions - 1 }">
@@ -160,14 +134,13 @@
 								</c:otherwise>
 							</c:choose>
 							<tr class="${ rowClass }">
-								<td class="select-handle centered">${ version.id }</td>
+								<td>${ version.id }</td>
 								<td>${ version.versionNumber }</td>
 								<td>${ version.reference }</td>
 								<td>${ version.name }</td>
 								<td><comp:level-message level="${ version.status }" /></td>
 								<td><comp:level-message level="${ version.criticality }"/></td>
 								<td><s:message code="${ version.category.i18nKey }" htmlEscape="true" /></td>
-								<td>&nbsp;</td>
 							</tr>
 						</c:forEach>
 					</tbody>

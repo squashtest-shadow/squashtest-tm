@@ -200,10 +200,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 
 		_refresh : function() {
 			var self = this;
-			saveTableSelection(self.table, function(data) {
-				return data["entity-id"];
-			});
-			this.table.fnDraw(false);
+			this.table.refresh();
 			$("#" + VRTS.containerId).trigger("verifiedrequirementversions.refresh");
 		}
 

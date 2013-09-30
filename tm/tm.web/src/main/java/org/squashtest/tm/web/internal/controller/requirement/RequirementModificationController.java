@@ -23,6 +23,7 @@ package org.squashtest.tm.web.internal.controller.requirement;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -69,7 +70,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
-import org.squashtest.tm.web.internal.model.viewmapper.IndexBasedMapper;
+import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 @Controller
 @RequestMapping("/requirements/{requirementId}")
@@ -112,13 +113,13 @@ public class RequirementModificationController {
 	@Inject
 	private RequirementAuditTrailService auditTrailService;
 	
-	private final DatatableMapper<Integer> versionMapper = new IndexBasedMapper(7)
-														.mapAttribute(1, "versionNumber", RequirementVersion.class)
-														.mapAttribute(2, "reference", RequirementVersion.class)
-														.mapAttribute(3, "name", RequirementVersion.class)
-														.mapAttribute(4, "status", RequirementVersion.class)
-														.mapAttribute(5, "criticality", RequirementVersion.class)
-														.mapAttribute(6, "category", RequirementVersion.class);
+	private final DatatableMapper<String> versionMapper = new NameBasedMapper()
+														.mapAttribute("version-number", "versionNumber", RequirementVersion.class)
+														.mapAttribute("reference", "reference", RequirementVersion.class)
+														.mapAttribute("name", "name", RequirementVersion.class)
+														.mapAttribute("status", "status", RequirementVersion.class)
+														.mapAttribute("criticality", "criticality", RequirementVersion.class)
+														.mapAttribute("category", "category", RequirementVersion.class);
 
 
 
@@ -343,15 +344,20 @@ public class RequirementModificationController {
 		}
 
 		@Override
-		public Object[] buildItemData(RequirementVersion version) {
-			return new Object[] { version.getId(),
-					version.getVersionNumber(),
-					version.getReference(),
-					version.getName(), 
-					internationalize(version.getStatus(), locale, levelFormatterProvider), 
-					internationalize(version.getCriticality(), locale, levelFormatterProvider), 
-					formatCategory(version.getCategory(), locale, internationalizableFormatterProvider),
-					"" };
+		public Map<String, Object> buildItemData(RequirementVersion version) {
+			
+			Map<String, Object> row = new HashMap<String, Object>(7);
+			
+			row.put("entity-id", version.getId());
+			row.put("version-number", version.getVersionNumber());
+			row.put("reference", version.getReference());
+			row.put("name", version.getName());
+			row.put("status", internationalize(version.getStatus(), locale, levelFormatterProvider));
+			row.put("criticality", internationalize(version.getCriticality(), locale, levelFormatterProvider));
+			row.put("category", formatCategory(version.getCategory(), locale, internationalizableFormatterProvider));
+
+			return row;
+
 		}
 
 	}
