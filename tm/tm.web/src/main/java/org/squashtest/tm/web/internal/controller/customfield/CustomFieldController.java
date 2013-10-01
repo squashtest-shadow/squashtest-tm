@@ -43,6 +43,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Pagings;
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
@@ -145,7 +146,7 @@ public class CustomFieldController {
 	@ResponseBody
 	public String changeLabel(@PathVariable long customFieldId, @RequestParam(VALUE) String label) {
 		customFieldManager.changeLabel(customFieldId, label);
-		return label;
+		return HtmlUtils.htmlEscape(label);
 	}
 
 	/**

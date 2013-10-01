@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.service.testcase.DatasetModificationService;
 
@@ -67,7 +68,7 @@ public class DatasetController {
 	@ResponseBody
 	public String changeName(@PathVariable long datasetId, @RequestParam(VALUE) String value){
 		datasetModificationService.changeName(datasetId, value);
-		 return value;
+		 return  HtmlUtils.htmlEscape(value);
 	}
 	
 	

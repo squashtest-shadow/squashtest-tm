@@ -46,6 +46,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
@@ -293,7 +294,7 @@ public class TestCaseModificationController {
 			LOGGER.trace(TEST_CASE_ + testCaseId + ": updated reference to " + testCaseReference);
 		}
 
-		return testCaseReference;
+		return HtmlUtils.htmlEscape(testCaseReference);
 	}
 
 	@ResponseBody
