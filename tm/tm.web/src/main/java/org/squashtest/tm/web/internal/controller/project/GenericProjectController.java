@@ -46,6 +46,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.api.plugin.EntityReference;
 import org.squashtest.tm.api.plugin.EntityType;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
@@ -158,7 +159,7 @@ public class GenericProjectController {
 		if (LOGGER.isTraceEnabled()) {
 			LOGGER.trace("project " + projectId + ": updated label to " + projectLabel);
 		}
-		return projectLabel;
+		return HtmlUtils.htmlEscape(projectLabel);
 	}
 
 	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = { "newName" })

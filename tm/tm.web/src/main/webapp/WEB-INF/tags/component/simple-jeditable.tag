@@ -66,6 +66,7 @@
 			},
 			<c:if test="${ not empty submitCallback }">
 			callback : function(value, settings){
+				value = $("<span/>").html(value).text();
 				${submitCallback}(value, settings);
 			},
 			</c:if>
