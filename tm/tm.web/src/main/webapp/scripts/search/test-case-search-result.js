@@ -183,7 +183,23 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		editResults : function(){
 			this.addModifyResultDialog.confirmDialog("open");
 		},
-				
+		
+		
+		validateSelection : function(dataTable) {
+			var rows = dataTable.fnGetNodes();
+			$( rows ).each(function(index, row) {
+				if ($( row ).attr('class').search('selected') != -1) {
+					var data = dataTable.fnGetData(row);
+					if(!data["editable"]){
+						var noWritingRightsDialog = $("#warning-no-writing-rights").messageDialog();
+						noWritingRightsDialog.messageDialog('open');
+					}
+				}
+			});
+			
+			return ids;
+		},
+		
 		_getIdsOfSelectedTableRowList : function(dataTable) {
 			var rows = dataTable.fnGetNodes();
 			var ids = [];
@@ -191,7 +207,9 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			$( rows ).each(function(index, row) {
 				if ($( row ).attr('class').search('selected') != -1) {
 					var data = dataTable.fnGetData(row);
-					ids.push(data["test-case-id"]);
+					if(data["editable"]){
+						ids.push(data["test-case-id"]);
+					} 
 				}
 			});
 			
@@ -202,7 +220,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			var rows = dataTable.fnGetNodes();
 			
 			$( rows ).each(function(index, row) {
-				if ($( row ).attr('class').search('selected') != -1) {
+				if ($( row ).attr('class').search('selected') != -1  && dataTable.fnGetData(row)["editable"]) {
 					var value = $("#"+column+"-combo").find('option:selected').text();
 					$(".editable_"+column, row).text(value);
 				}
@@ -306,6 +324,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 							noLineSelectedDialog.messageDialog('open');
 							$(this).confirmDialog('close');
 						}
+						self.validateSelection(table);
 					});
 
 			addModifyResultDialog.activate = function(arg) {
