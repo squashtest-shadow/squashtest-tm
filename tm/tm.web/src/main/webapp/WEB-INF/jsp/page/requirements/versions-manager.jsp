@@ -50,21 +50,29 @@
 
 			$(function() {
 
-				var table = $("#versions-table").squashTable({}, {});			
+				var table = $("#versions-table").squashTable({
+					// select the initially selected version 
+					fnInitComplete : function(){
+						var row = this.fnGetNodes().filter(function(e){
+							return $('td:first-child', e).text() === '${selectedVersion.versionNumber}';
+						})[0];
+						$(row).addClass('ui-state-row-selected');
+					}
+				}, {});			
 				
 				var showSelectedVersion = function(table) {
-					var rows = table.fnGetNodes();
 					var ids = table.getSelectedIds();
 					
-					if (ids.length>1){
+					// the test is supposed to always hold true but if shoite happens better have it fail gracefully
+					if (ids.length>0){
 						var id = ids[0];
 						var urlPattern = "<c:url value='/requirement-versions/selectedVersionId/editor-fragment' />";						
 						squashtm.workspace.contextualContent.loadWith(urlPattern.replace("selectedVersionId", id));						
 					}
 				}
 				
-				$(".select-handle", table).live('click', function() {
-					var row = $( this.parentNode );
+				table.on('click', 'tbody tr', function() {
+					var row = $( this );
 					
 					if (!row.hasClass('ui-state-row-selected')) {
 						row.addClass('ui-state-row-selected').removeClass('ui-state-highlight');
@@ -80,9 +88,7 @@
 						table.refresh();
 					}
 				});
-				
-				// select the currently selected version
-				table.
+
 			});
 		</script>
 	</jsp:attribute>
@@ -125,15 +131,7 @@
 					</thead>
 					<tbody >
 						<c:forEach var="version" items="${ versions }" end="${ displayedVersions - 1 }">
-							<c:choose>
-								<c:when test="${ version.id eq selectedVersion.id }">
-									<c:set var="rowClass" value="ui-state-row-selected" />
-								</c:when>
-								<c:otherwise>
-									<c:set var="rowClass" value="" />
-								</c:otherwise>
-							</c:choose>
-							<tr class="${ rowClass }">
+							<tr style="mouse:pointer">
 								<td>${ version.id }</td>
 								<td>${ version.versionNumber }</td>
 								<td>${ version.reference }</td>
