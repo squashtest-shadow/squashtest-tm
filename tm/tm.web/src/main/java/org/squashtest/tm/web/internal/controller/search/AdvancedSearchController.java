@@ -608,9 +608,9 @@ public class AdvancedSearchController {
 
 		List<SearchInputPossibleValueModel> possibleValues = new ArrayList<SearchInputPossibleValueModel>();
 
-		possibleValues.add(new SearchInputPossibleValueModel(messageSource.internationalize("squashtm.yesno.true",
+		possibleValues.add(new SearchInputPossibleValueModel(messageSource.internationalize("label.True",
 				locale), "true"));
-		possibleValues.add(new SearchInputPossibleValueModel(messageSource.internationalize("squashtm.yesno.false",
+		possibleValues.add(new SearchInputPossibleValueModel(messageSource.internationalize("label.False",
 				locale), "false"));
 
 		model.setPossibleValues(possibleValues);
