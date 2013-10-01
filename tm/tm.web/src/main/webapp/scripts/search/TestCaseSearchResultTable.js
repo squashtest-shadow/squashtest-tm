@@ -69,78 +69,82 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 							"sClass" : "select-handle centered"
 						}, {
 							"aTargets" : [ 1 ],
+							"mDataProp" : "is-associated",
+							"bSortable" : false
+						}, {
+							"aTargets" : [ 2 ],
 							"mDataProp" : "project-name",
 							"bSortable" : true
 						}, {		
-							"aTargets" : [ 2 ],
+							"aTargets" : [ 3 ],
 							"mDataProp" : "test-case-id",
 							"bSortable" : true,
 							"sClass" : "centered"
 						}, {
-							"aTargets" : [ 3 ],
+							"aTargets" : [ 4 ],
 							"mDataProp" : "test-case-ref",
 							"bSortable" : true,
 							"sClass" : "editable_ref"
 						}, {
-							"aTargets" : [ 4 ],
+							"aTargets" : [ 5 ],
 							"mDataProp" : "test-case-label",
 							"bSortable" : true,
 							"sClass" : "editable_label"
 						}, {
-							"aTargets" : [ 5 ],
+							"aTargets" : [ 6 ],
 							"mDataProp" : "test-case-weight",
 							"bSortable" : true,
 							"sClass" : "editable_importance"
 						}, {
-							"aTargets" : [ 6 ],
+							"aTargets" : [ 7 ],
 							"mDataProp" : "test-case-nature",
 							"bSortable" : true,
 							"sClass" : "editable_nature"
 						}, {
-							"aTargets" : [ 7 ],
+							"aTargets" : [ 8 ],
 							"mDataProp" : "test-case-type",
 							"bSortable" : true,
 							"sClass" : "editable_type"
 						}, {
-							"aTargets" : [ 8 ],
+							"aTargets" : [ 9 ],
 							"mDataProp" : "test-case-status",
 							"bSortable" : true,
 							"sClass" : "editable_status"
 						}, {
-							"aTargets" : [ 9 ],
+							"aTargets" : [ 10 ],
 							"mDataProp" : "test-case-requirement-nb",
 							"bSortable" : true,
 							"sClass" : "centered"
 						}, {
-							"aTargets" : [ 10 ],
+							"aTargets" : [ 11 ],
 							"mDataProp" : "test-case-teststep-nb",
 							"bSortable" : true,
 							"sClass" : "centered"
 						}, {
-							"aTargets" : [ 11 ],
+							"aTargets" : [ 12 ],
 							"mDataProp" : "test-case-iteration-nb",
 							"bSortable" : true,
 							"sClass" : "centered"
 						}, {
-							"aTargets" : [ 12 ],
+							"aTargets" : [ 13 ],
 							"mDataProp" : "test-case-attachment-nb",
 							"bSortable" : true
 						}, {
-							"aTargets" : [ 13 ],
+							"aTargets" : [ 14 ],
 							"mDataProp" : "test-case-created-by",
 							"bSortable" : true
 						}, {
-							"aTargets" : [ 14 ],
+							"aTargets" : [ 15 ],
 							"mDataProp" : "test-case-modified-by",
 							"bSortable" : true
 						}, {
-							"aTargets" : [ 15 ],
+							"aTargets" : [ 16 ],
 							"mDataProp" : "empty-openinterface2-holder",
 							"sClass" : "centered search-open-interface2",
 							"sWidth" : "2em",
 							"bSortable" : false
 						}, {
-							"aTargets" : [ 16 ],
+							"aTargets" : [ 17 ],
 							"mDataProp" : "editable",
 							"bVisible" : false,
 							"bSortable" : false
