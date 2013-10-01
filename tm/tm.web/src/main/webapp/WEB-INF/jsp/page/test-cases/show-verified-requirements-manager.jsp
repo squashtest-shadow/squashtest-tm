@@ -57,7 +57,9 @@
 				}
 				if (selected == 1){
 					var table = $( '#search-result-datatable' ).dataTable();
-					tab = getIdsOfSelectedAssociationTableRows(table,  function(rowData){return rowData[0];});
+					tab = table.find('tbody tr.ui-state-row-selected').map(function(){
+						return table.fnGetData(this)[0];
+					}).get();
 				}
 				
 				return tab;

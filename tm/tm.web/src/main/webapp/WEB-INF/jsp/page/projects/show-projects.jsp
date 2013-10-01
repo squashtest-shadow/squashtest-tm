@@ -32,7 +32,12 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="pu" uri="http://org.squashtest.tm/taglib/project-utils" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
+
 <s:url var="administrationUrl" value="/administration" />
+<s:url var="dtModel" value="/generic-projects"/>
+<s:url var="dtLanguage"	value="/datatables/messages" />
+<s:url var="projectsInfo" value="/administration/projects/{project-id}/info" />
+
 <layout:info-page-layout titleKey="squashtm.project.title" isSubPaged="true">
 	<jsp:attribute  name="head">	
 		<comp:sq-css name="squash.grey.css" />
@@ -76,20 +81,22 @@
   <input id="new-project-from-template-button" class="snap-right" type="button" value="<f:message key='label.createFromATemplate'/>"/>
   </sec:authorize>
   <div style="clear:both"></div>
-  <table id="projects-table" class="unstyled-table">
+  <table id="projects-table" class="unstyled-table" data-def="ajaxsource=${dtModel}, hover, datakeys-id=project-id, 
+  															  language=${dtLanguage}, deferLoading=${fn:length(projects)},
+  															  filter, pre-sort=2-asc">
   	<thead>
   		<tr>
-  			<th>Id(not shown)</th> 
-  			<th class="button-cell">#</th>
-  			<th class="datatable-filterable"><f:message key="label.Name" /></th>
-	        <th>raw type (not shown)</th> 
-	        <th class="icon-cell">&nbsp;</th> 
-  			<th class="datatable-filterable"><f:message key="label.tag" /></th>
-  			<th><f:message key="label.active" /></th>
-  			<th><f:message key="label.CreatedOn" /></th>
-  			<th class="datatable-filterable"><f:message key="label.createdBy" /></th>
-  			<th><f:message key="label.modifiedOn" /></th>	
-  			<th class="datatable-filterable"><f:message key="label.modifiedBy" /></th>		
+  			<th data-def="map=project-id,invisible">Id(not shown)</th> 
+  			<th data-def="map=index, select, sClass=button-cell">#</th>
+  			<th data-def="map=name, sortable, link=${projectsInfo}" class="datatable-filterable"><f:message key="label.Name" /></th>
+	        <th data-def="map=raw-type, invisible">raw type (not shown)</th> 
+	        <th data-def="map=type, sClass=icon-cell type" >&nbsp;</th> 
+  			<th data-def="map=label, sortable" class="datatable-filterable"><f:message key="label.tag" /></th>
+  			<th data-def="map=active, invisible"><f:message key="label.active" /></th>
+  			<th data-def="map=created-on, sortable"><f:message key="label.CreatedOn" /></th>
+  			<th data-def="map=created-by, sortable" class="datatable-filterable"><f:message key="label.createdBy" /></th>
+  			<th data-def="map=last-mod-on, sortable"><f:message key="label.modifiedOn" /></th>	
+  			<th data-def="map=last-mod-by, sortable" class="datatable-filterable"><f:message key="label.modifiedBy" /></th>		
   		</tr>
   	</thead>
   	<tbody>

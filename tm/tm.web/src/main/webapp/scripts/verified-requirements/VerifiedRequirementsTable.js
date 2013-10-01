@@ -79,12 +79,11 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 		},
 
 		_requirementsTableDrawCallback : function() {
-			if (this.table) {// We do not restore table
+			if (this.table) {
+				// We do not restore table
 				// selection for first drawing
 				// on pre-filled tables.
-				restoreTableSelection(this.table, function(data) {
-					return data["entity-id"];
-				});
+				this.table.restoreTableSelection();
 			}
 		},
 

@@ -53,10 +53,10 @@
 				var table = $("#versions-table").squashTable({
 					// select the initially selected version 
 					fnInitComplete : function(){
-						var row = this.fnGetNodes().filter(function(e){
-							return $('td:first-child', e).text() === '${selectedVersion.versionNumber}';
-						})[0];
-						$(row).addClass('ui-state-row-selected');
+						table.find('tbody tr').filter(function(){ 
+							return $('td:first-child', this).text()==='${selectedVersion.versionNumber}';
+						})
+						.addClass('ui-state-row-selected');
 					}
 				}, {});			
 				
@@ -72,14 +72,12 @@
 				}
 				
 				table.on('click', 'tbody tr', function() {
-					var row = $( this );
 					
-					if (!row.hasClass('ui-state-row-selected')) {
-						row.addClass('ui-state-row-selected').removeClass('ui-state-highlight');
-						row.parent().find('.ui-state-row-selected').not(row).removeClass( 'ui-state-row-selected');
-						
-						showSelectedVersion(table);					
-					}
+					var row = $(this);					
+					table.deselectRows();
+					row.addClass('ui-state-row-selected');
+					showSelectedVersion(table);				
+					
 				});
 				
 				/* refreshes table on ajax success for any actions in the editor below */

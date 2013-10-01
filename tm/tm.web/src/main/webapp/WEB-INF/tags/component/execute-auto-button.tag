@@ -38,11 +38,9 @@
 	}
 
 	function executeSelection() {
-		var table = $('#${testPlanTableId}').dataTable();
-		var ids = getIdsOfSelectedTableRows(table, getTestPlansTableRowId);
+		var ids = $('#${testPlanTableId}').squashTable().getSelectedIds();
 		if (ids.length == 0) {
-			$.squash
-					.openMessage("<f:message key='popup.title.error' />",
+			$.squash.openMessage("<f:message key='popup.title.error' />",
 							"<f:message	key='message.EmptyTableSelection'/>");
 		} else {
 			executeAuto(ids);
@@ -73,14 +71,8 @@
 
 <!-- *************************/INITIALISATION*********************** -->
 <!-- *************************BUTTON*********************** -->
-<div id="iteration-suite-auto-execution-button"
-	style="display: inline-block;">
+<div id="iteration-suite-auto-execution-button" style="display: inline-block;">
 
-	<%--
-	<a tabindex="0" href="#execute-auto" class="button run-menu"
-		id="execute-auto-button" class="button"><f:message
-			key="iteration.suite.execution.auto.label" /> </a>
-	 --%>
 	 <f:message var="autoExecLabel" key="iteration.suite.execution.auto.label"/>
 	<input id="execute-auto-button" class="button run-menu" type="button" value="${autoExecLabel}" />
 	<ul class="not-displayed">
@@ -90,7 +82,7 @@
 			</a>
 		</li>
 		<li>
-			<a class="execute-auto-execute-selection" >
+			<a id="execute-auto-execute-selection" >
 				<f:message	key='iteration.suite.execution.auto.selection.label' /> 
 			</a>
 		</li>
