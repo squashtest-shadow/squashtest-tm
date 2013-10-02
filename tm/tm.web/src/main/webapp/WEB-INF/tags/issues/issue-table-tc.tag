@@ -66,7 +66,7 @@
 
 <script type="text/javascript">
 	$(function(){
-		require(["jquery.squash.datatables"], function(){
+		require(["squashtable"], function(){
 			$("#issue-table").squashTable({
 				fnRowCallback : function(row, data){
 					var correctAssignee = (data["assignee"]!=="") ? data["assignee"] : "${interfaceDescriptor.tableNoAssigneeLabel}";

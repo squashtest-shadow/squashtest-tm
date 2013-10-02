@@ -113,7 +113,7 @@
     require([ "common" ], function () {
     	  require([ "jquery", "domReady", 
     	            "campaign-management", 
-    	            "jqueryui", "jquery.squash.datatables" ], function ($, domReady, manager) {
+    	            "jqueryui", "squashtable" ], function ($, domReady, manager) {
     	    <c:if test="${ editable }">
     	    $.fn.loginCombo = function(assignableList){
     	    	

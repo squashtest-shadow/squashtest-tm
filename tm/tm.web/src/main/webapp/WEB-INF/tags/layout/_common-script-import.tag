@@ -90,12 +90,6 @@ require.baseUrl = "${pageContext.servletContext.contextPath}/scripts";
 
 <script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/datatables/jquery.dataTables.js"></script>
 
-<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtable/squashtable.defaults.js"></script>
-<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtable/squashtable.dnd.js"></script>
-<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtable/squashtable.pagination.js"></script>
-<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtable/squashtable.js"></script> 
-
-<!-- //end of datatable library imports -->
 
 <!-- -------------------- /DataTables library imports. SHOULD BE IMPORTED BEFORE DATATABLE USAGE--------------------------------------------- -->
 
@@ -107,7 +101,7 @@ require.baseUrl = "${pageContext.servletContext.contextPath}/scripts";
 
 
 <script type="text/javascript">
-  require([ "common" ], function() {
+  require([ "common", "squashtable" ], function() {	// temporary hack (I hope) : squashtable is required here to make it available globally even to non require-friendly code
     require([ "domReady", "app/ws/squashtm.workspace" ], function(domReady, WS) {
     	domReady(function() {
           WS.init("${ highlightedWorkspace }");

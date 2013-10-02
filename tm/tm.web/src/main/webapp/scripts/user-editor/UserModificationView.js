@@ -20,7 +20,7 @@
  */
 define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/util/StringUtil",
 		"./UserResetPasswordPopup", "./UserPermissionsPanel", "./UserTeamsPanel", "jquery.squash", "jqueryui",
-		"jquery.squash.togglepanel", "jquery.squash.datatables", "jquery.squash.oneshotdialog",
+		"jquery.squash.togglepanel", "squashtable", "jquery.squash.oneshotdialog",
 		"jquery.squash.messagedialog", "jquery.squash.confirmdialog", "jquery.squash.jeditable" ], function($, Backbone, _,
 		SimpleJEditable, StringUtil, UserResetPasswordPopup, UserPermissionsPanel, UserTeamsPanel) {
 	var UMod = squashtm.app.UMod;

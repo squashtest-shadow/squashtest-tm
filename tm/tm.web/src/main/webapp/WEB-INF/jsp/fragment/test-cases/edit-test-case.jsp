@@ -142,7 +142,7 @@
 
 		<%--------------------------- calling test case section ------------------------------------%>
 
-		<tc:calling-test-cases-panel testCase="${testCase}" model="${callingTestCasesModel}"/>
+		<tc:calling-test-cases-panel testCase="${testCase}"/>
 
 
 	</div>
@@ -160,7 +160,7 @@
 
 <%-- ===================================== INIT =============================== --%>
 
-<tc:test-case-main-js testCase="${testCase}" isInfoPage="${param.isInfoPage}" />
+<tc:test-case-main-js testCase="${testCase}" isInfoPage="${param.isInfoPage}" callingTestCasesModel="${callingTestCasesModel}"/>
 
 <%-- ===================================== /INIT =============================== --%>
 

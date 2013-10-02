@@ -133,11 +133,12 @@
 
 		
 	<script type="text/javascript">
-		$(function() {				
-			$('#new-bugtracker-button').button();				
-			$("#bugtrackers-table").squashTable({},{});				
-				
-		});					
+		$(function() {		
+			require(["jquery", "squashtable"], function($){					
+				$('#new-bugtracker-button').button();				
+				$("#bugtrackers-table").squashTable({},{});						
+			});				
+		});				
 	</script>
 </div>
 </jsp:attribute>

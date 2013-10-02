@@ -85,7 +85,7 @@
 				
 <script type="text/javascript">
 	$(function() {
-		require(["jquery.squash.datatables"], function(){
+		require(["squashtable"], function(){
 			var table =$("#verifying-test-cases-table").squashTable({
 				'aaData' : ${json:serialize(model.aaData)}
 			}, {});

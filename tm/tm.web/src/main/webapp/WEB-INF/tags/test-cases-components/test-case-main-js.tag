@@ -24,10 +24,12 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 
 
-<%@ attribute name="testCase"   required="true" type="java.lang.Object"   description="the testcase" %>
-<%@ attribute name="isInfoPage" required="true" type="java.lang.Boolean"  description="if this is displayed in an info page" %>
+<%@ attribute name="testCase"   			required="true" type="java.lang.Object" 	description="the testcase" %>
+<%@ attribute name="isInfoPage"				required="true" type="java.lang.Boolean" 	description="if this is displayed in an info page" %>
+<%@ attribute name="callingTestCasesModel" 	required="true" type="java.lang.Object"		description="the model for the calling test cases datatable"%>
 
 
 <c:url var="testCaseUrl" 	value="/test-cases/${testCase.id}"/>
@@ -99,7 +101,7 @@
 		
 					
 		//init the renaming listener
-		require(["jquery", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", "workspace.contextual-content", "jqueryui"], 
+		require(["jquery", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", "workspace.contextual-content", "jqueryui", "squashtable"], 
 				function($, contentHandlers, Frag, bugtracker, contextualContent){
 			
 			var identity = { obj_id : ${testCase.id}, obj_restype : "test-cases"  };
@@ -120,6 +122,14 @@
 			};
 			Frag.init(fragConf);
 			
+			// ******** calling test cases ***************************
+	
+			var callingTcConf = {
+				'aaData' : ${json:serialize(callingTestCasesModel.aaData)}
+			}
+			
+			var table = $("#calling-test-case-table").squashTable(callingTcConf, {});
+			
 			<c:if test="${testCase.project.bugtrackerConnected }">
 			// ********* bugtracker ************
 			bugtracker.btPanel.load({
@@ -127,6 +137,7 @@
 				label : "${tabIssueLabel}"
 			});
 			</c:if>
+			
 			
 			// ***** other events from the contextual content ********
 			contextualContent.addListener({

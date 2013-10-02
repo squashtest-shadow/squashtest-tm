@@ -405,7 +405,7 @@
 	$(function() {
 
 		require(["common"], function(){
-		 	require(["projects-manager", "jquery.squash.fragmenttabs", "project"], function(projectsManager, Frag){
+		 	require(["projects-manager", "jquery.squash.fragmenttabs", "project", "squashtable"], function(projectsManager, Frag){
 		 		init(projectsManager, Frag);	
 		 	});			
 		});

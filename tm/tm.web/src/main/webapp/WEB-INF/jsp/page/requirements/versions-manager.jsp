@@ -46,49 +46,6 @@
 		<%-- css override is needed in case of a sub page. --%>
 		<comp:sq-css name="squash.core.override.css" />
 		<comp:sq-css name="squash.subpage.override.css" />
-		<script type="text/javascript">
-
-			$(function() {
-
-				var table = $("#versions-table").squashTable({
-					// select the initially selected version 
-					fnInitComplete : function(){
-						table.find('tbody tr').filter(function(){ 
-							return $('td:first-child', this).text()==='${selectedVersion.versionNumber}';
-						})
-						.addClass('ui-state-row-selected');
-					}
-				}, {});			
-				
-				var showSelectedVersion = function(table) {
-					var ids = table.getSelectedIds();
-					
-					// the test is supposed to always hold true but if shoite happens better have it fail gracefully
-					if (ids.length>0){
-						var id = ids[0];
-						var urlPattern = "<c:url value='/requirement-versions/selectedVersionId/editor-fragment' />";						
-						squashtm.workspace.contextualContent.loadWith(urlPattern.replace("selectedVersionId", id));						
-					}
-				}
-				
-				table.on('click', 'tbody tr', function() {
-					
-					var row = $(this);					
-					table.deselectRows();
-					row.addClass('ui-state-row-selected');
-					showSelectedVersion(table);				
-					
-				});
-				
-				/* refreshes table on ajax success for any actions in the editor below */
-				table.ajaxSuccess(function(event, xrh, settings) {
-					if (settings.type == 'POST' && settings.url.match(/requirement-versions\/\d+$/g)) {
-						table.refresh();
-					}
-				});
-
-			});
-		</script>
 	</jsp:attribute>
 	
 	<jsp:attribute name="titlePane">
@@ -149,10 +106,47 @@
 											   jsonCategories="${ jsonCategories }" verifyingTestCaseModel="${verifyingTestCaseModel}"/>
 				</div>
 			</div>	
+			
+				
 			<script type="text/javascript">
 				$(function(){
-					require(['workspace.contextual-content'], function(){
-						//noop
+					require(['jquery', 'workspace.contextual-content', 'squashtable'], function($){
+						var table = $("#versions-table").squashTable({
+							// select the initially selected version 
+							fnInitComplete : function(){
+								table.find('tbody tr').filter(function(){ 
+									return $('td:first-child', this).text()==='${selectedVersion.versionNumber}';
+								})
+								.addClass('ui-state-row-selected');
+							}
+						}, {});			
+						
+						var showSelectedVersion = function(table) {
+							var ids = table.getSelectedIds();
+							
+							// the test is supposed to always hold true but if shoite happens better have it fail gracefully
+							if (ids.length>0){
+								var id = ids[0];
+								var urlPattern = "<c:url value='/requirement-versions/selectedVersionId/editor-fragment' />";						
+								squashtm.workspace.contextualContent.loadWith(urlPattern.replace("selectedVersionId", id));						
+							}
+						}
+						
+						table.on('click', 'tbody tr', function() {
+							
+							var row = $(this);					
+							table.deselectRows();
+							row.addClass('ui-state-row-selected');
+							showSelectedVersion(table);				
+							
+						});
+						
+						/* refreshes table on ajax success for any actions in the editor below */
+						table.ajaxSuccess(function(event, xrh, settings) {
+							if (settings.type == 'POST' && settings.url.match(/requirement-versions\/\d+$/g)) {
+								table.refresh();
+							}
+						});
 					});
 				});		
 			</script>

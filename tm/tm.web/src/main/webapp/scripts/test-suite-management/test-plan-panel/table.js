@@ -55,7 +55,7 @@
  */
 
 define(['jquery', 'squash.translator', './exec-runner', './sortmode',
-        'jquery.squash.datatables', 'jeditable', 'jquery.squash.buttonmenu'],
+        'squashtable', 'jeditable', 'jquery.squash.buttonmenu'],
         function($, translator, execrunner, smode) {
 
 	

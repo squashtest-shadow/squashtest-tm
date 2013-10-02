@@ -21,7 +21,7 @@
 define([ "jquery", "backbone", "underscore", "app/util/StringUtil", 
          "./VerifiedRequirementsTable",
          "jquery.squash",
-		"jqueryui", "jquery.squash.togglepanel", "jquery.squash.datatables", "jquery.squash.oneshotdialog",
+		"jqueryui", "jquery.squash.togglepanel", "squashtable", "jquery.squash.oneshotdialog",
 		"jquery.squash.messagedialog", "jquery.squash.confirmdialog" ], function($, Backbone, _, StringUtil,
 		VerifiedRequirementsTable) {
 	var VRTS = squashtm.app.verifiedRequirementsTableSettings;

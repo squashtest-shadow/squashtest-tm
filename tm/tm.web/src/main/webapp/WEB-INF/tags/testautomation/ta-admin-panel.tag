@@ -225,78 +225,81 @@
 <script type="text/javascript">
 	$(function(){
 		
-		//************************** manager setup ********************
-		
-		if (! squashtm.testautomation){
-			squashtm.testautomation = {};
-		}
-		
-		var managerSettings = {
-			selector : "#test-automation-management-panel .ta-main-div",
-			initiallyEnabled : ${project.testAutomationEnabled},
-			enableTAURL : "${enableTAURL}"
-		};
-		
-		squashtm.testautomation.projectmanager = new TestAutomationProjectManager(managerSettings);
-		
-		
-		var popupSettings = {
-			selector : "#ta-projectsblock-popup",
-			manager : squashtm.testautomation.projectmanager,
-			listProjectsURL : "${listRemoteProjectsURL}",
-			bindProjectsURL : "${localProjectsURL}"
-		}
-		
-		var projectAddPopup = new TestAutomationAddProjectPopup(popupSettings);
-		
-		//************************** table setup **********************
-		
-		var tableSettings = {
-				"oLanguage":{
-					"sLengthMenu": '<f:message key="generics.datatable.lengthMenu" />',
-					"sZeroRecords": '<f:message key="generics.datatable.zeroRecords" />',
-					"sInfo": '<f:message key="generics.datatable.info" />',
-					"sInfoEmpty": '<f:message key="generics.datatable.infoEmpty" />',
-					"sInfoFiltered": '<f:message key="generics.datatable.infoFiltered" />',
-					"oPaginate":{
-						"sFirst":    '<f:message key="generics.datatable.paginate.first" />',
-						"sPrevious": '<f:message key="generics.datatable.paginate.previous" />',
-						"sNext":     '<f:message key="generics.datatable.paginate.next" />',
-						"sLast":     '<f:message key="generics.datatable.paginate.last" />'
-					}
-				},
-				"iDeferLoading": ${fn:length(boundProjects)},
-				"sAjaxSource": "${localProjectsURL}", 
-				"aoColumnDefs":[
-					{'bSortable': false, 'bVisible': false, 'aTargets': [0], 'mDataProp' : 'entity-id'},
-					{'bSortable': false, 'bVisible': true,  'aTargets': [1], 'mDataProp' : 'entity-index', 'sClass' :'select-handle centered', 'sWidth' : '2em'},
-					{'bSortable': false, 'bVisible': true,  'aTargets': [2], 'mDataProp' : 'name'},
-					{'bSortable': false, 'bVisible': true,  'aTargets': [3], 'mDataProp' : 'server-url'},
-					{'bSortable': false, 'bVisible': true,  'aTargets': [4], 'mDataProp' : 'server-kind'},
-					{'bSortable': false, 'bVisible': true, 'aTargets': [5], 'mDataProp' : 'empty-delete-holder', 'sWidth': '2em', 'sClass': 'centered delete-button' }										
-				]
+		require(["jquery", "squashtable"], function($){
 
+			//************************** manager setup ********************
+			
+			if (! squashtm.testautomation){
+				squashtm.testautomation = {};
+			}
+			
+			var managerSettings = {
+				selector : "#test-automation-management-panel .ta-main-div",
+				initiallyEnabled : ${project.testAutomationEnabled},
+				enableTAURL : "${enableTAURL}"
 			};
-		
-		var squashSettings = {
-			enableHover : true,
-			confirmPopup : {
-				oklabel : '<f:message key="label.Yes" />',
-				cancellabel : '<f:message key="label.Cancel" />'
-			},
-			enableDnD : false,
-			deleteButtons : {
-				url : "${projectUrl}/test-automation-projects/{entity-id}",
-				popupmessage : '<f:message key="dialog.unbind-ta-project.message" />',
-				tooltip : '<f:message key="dialog.unbind-ta-project.tooltip" />',
-				success : function(){
-					$("#ta-projects-table").squashTable().refresh();
+			
+			squashtm.testautomation.projectmanager = new TestAutomationProjectManager(managerSettings);
+			
+			
+			var popupSettings = {
+				selector : "#ta-projectsblock-popup",
+				manager : squashtm.testautomation.projectmanager,
+				listProjectsURL : "${listRemoteProjectsURL}",
+				bindProjectsURL : "${localProjectsURL}"
+			}
+			
+			var projectAddPopup = new TestAutomationAddProjectPopup(popupSettings);
+			
+			//************************** table setup **********************
+			
+			var tableSettings = {
+					"oLanguage":{
+						"sLengthMenu": '<f:message key="generics.datatable.lengthMenu" />',
+						"sZeroRecords": '<f:message key="generics.datatable.zeroRecords" />',
+						"sInfo": '<f:message key="generics.datatable.info" />',
+						"sInfoEmpty": '<f:message key="generics.datatable.infoEmpty" />',
+						"sInfoFiltered": '<f:message key="generics.datatable.infoFiltered" />',
+						"oPaginate":{
+							"sFirst":    '<f:message key="generics.datatable.paginate.first" />',
+							"sPrevious": '<f:message key="generics.datatable.paginate.previous" />',
+							"sNext":     '<f:message key="generics.datatable.paginate.next" />',
+							"sLast":     '<f:message key="generics.datatable.paginate.last" />'
+						}
+					},
+					"iDeferLoading": ${fn:length(boundProjects)},
+					"sAjaxSource": "${localProjectsURL}", 
+					"aoColumnDefs":[
+						{'bSortable': false, 'bVisible': false, 'aTargets': [0], 'mDataProp' : 'entity-id'},
+						{'bSortable': false, 'bVisible': true,  'aTargets': [1], 'mDataProp' : 'entity-index', 'sClass' :'select-handle centered', 'sWidth' : '2em'},
+						{'bSortable': false, 'bVisible': true,  'aTargets': [2], 'mDataProp' : 'name'},
+						{'bSortable': false, 'bVisible': true,  'aTargets': [3], 'mDataProp' : 'server-url'},
+						{'bSortable': false, 'bVisible': true,  'aTargets': [4], 'mDataProp' : 'server-kind'},
+						{'bSortable': false, 'bVisible': true, 'aTargets': [5], 'mDataProp' : 'empty-delete-holder', 'sWidth': '2em', 'sClass': 'centered delete-button' }										
+					]
+	
+				};
+			
+			var squashSettings = {
+				enableHover : true,
+				confirmPopup : {
+					oklabel : '<f:message key="label.Yes" />',
+					cancellabel : '<f:message key="label.Cancel" />'
+				},
+				enableDnD : false,
+				deleteButtons : {
+					url : "${projectUrl}/test-automation-projects/{entity-id}",
+					popupmessage : '<f:message key="dialog.unbind-ta-project.message" />',
+					tooltip : '<f:message key="dialog.unbind-ta-project.tooltip" />',
+					success : function(){
+						$("#ta-projects-table").squashTable().refresh();
+					}
 				}
 			}
-		}
-		
-		$("#ta-projects-table").squashTable(tableSettings, squashSettings);
+			
+			$("#ta-projects-table").squashTable(tableSettings, squashSettings);
 
+		});
 		
 	});
 

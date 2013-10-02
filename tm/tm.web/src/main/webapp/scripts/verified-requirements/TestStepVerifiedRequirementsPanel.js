@@ -21,7 +21,7 @@
 define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		"./TestStepVerifiedRequirementsTable", 
 		"jquery.squash", "jqueryui",
-		"jquery.squash.togglepanel", "jquery.squash.datatables",
+		"jquery.squash.togglepanel", "squashtable",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
 		"jquery.squash.confirmdialog" ], function($, Backbone, _, StringUtil,
 		TestStepVerifiedRequirementsTable) {

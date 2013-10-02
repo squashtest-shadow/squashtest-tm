@@ -76,7 +76,7 @@
 			return row;
 		};
 		
-		require(["jquery.squash.datatables"], function(datatable){
+		require(["squashtable"], function(datatable){
 			$("#issue-table").squashTable(
 				{
 					'fnRowCallback' : issueTableRowCallback,

@@ -33,7 +33,7 @@
  * for cancel } }
  */
 
-define([ "jquery", "jquery.squash.datatables" ], function($) {
+define([ "jquery", "squashtable" ], function($) {
 
 	function cleanUp() {
 		$("#add-user-password").val('');

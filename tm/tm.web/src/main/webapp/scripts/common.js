@@ -32,6 +32,7 @@ requirejs.config({
 				"users-manager",
 				"bugtracker",
 				"file-upload",
+				"squashtable",
 				"iteration-management",	
 				"test-suite-management",
 				"campaign-management",
@@ -59,8 +60,6 @@ requirejs.config({
 				"jqueryui" : "lib/jquery/jquery-ui-1.9.0.custom.min",
 				"jquery.dialog-patch" : "jquery/jquery.dialog-patch",
 				"datatables" : "datatables/jquery.dataTables.min",
-				"squashtable" : "squashtable/squashtable",
-				"squashtable.collapser" : "squashtable/squashtable.collapser",
 				"handlebars" : "lib/handlebars/handlebars-1.0.0.rc3",
 				"underscore" : "lib/underscore/underscore-1.4.4-min",
 				"backbone" : "lib/backbone/backbone-1.0.0-min",
@@ -145,15 +144,6 @@ requirejs.config({
 				"jquery.throttle-debounce" : ['jquery'],
 				"jqueryui" : [ "jquery" ],
 				"datatables" : [ "jqueryui" ],
-				"squashtable" : {
-					deps : [ "datatables", 
-					         "squashtable/squashtable.defaults",
-					         "squashtable/squashtable.pagination",
-					         "squashtable/squashtable.dnd",
-					         "jquery.squash.oneshotdialog",
-					         "squashtest/classes/KeyEventListener" ],
-					exports : "$.fn.squashTable"
-				},
 				"jquery.squash" : {
 					deps : [ "jquery" ],
 					exports : "jquerySquashtm"

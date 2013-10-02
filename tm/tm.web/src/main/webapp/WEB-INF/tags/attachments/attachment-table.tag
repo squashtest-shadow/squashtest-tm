@@ -128,7 +128,7 @@
 	//init function
 	$(function() {
 				
-		require(["jquery", "jqueryui","jquery.squash.datatables", "jquery.squash.confirmdialog"], function($){
+		require(["jquery", "jqueryui","squashtable", "jquery.squash.confirmdialog"], function($){
 
 
 			//**********   table init ***********

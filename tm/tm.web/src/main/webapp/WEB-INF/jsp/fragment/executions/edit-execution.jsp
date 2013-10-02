@@ -339,7 +339,7 @@
 	<script type="text/javascript">
 	
 	$(function(){
-		require(["jquery.squash.datatables", "jquery.squash.jeditable"], function(){
+		require(["squashtable", "jquery.squash.jeditable"], function(){
 			
 			
 			// ************** execution table *********************

@@ -28,12 +28,10 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="input" tagdir="/WEB-INF/tags/input" %>
-<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 
 
 
 <%@ attribute name="testCase" required="true" type="java.lang.Object"  description="the testcase" %>
-<%@ attribute name="model" required="true" type="java.lang.Object"  description="the model for this table" %>
 
 
 
@@ -68,16 +66,3 @@
 
 
 </comp:toggle-panel>
-
-<script type="text/javascript">
-
-	$(function(){
-
-		var conf = {
-			'aaData' : ${json:serialize(model.aaData)}
-		}
-		
-		var table = $("#calling-test-case-table").squashTable(conf, {});
-		
-	});
-</script>
