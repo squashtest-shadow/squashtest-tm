@@ -20,7 +20,7 @@
  */
 define(
 		[ "jquery", "backbone", "app/cf/NewCustomFieldPanelView",
-				"app/cf/NewCustomFieldModel", "jquery.squash.datatables",
+				"app/cf/NewCustomFieldModel", "squashtable",
 				"jqueryui" ],
 		function($, Backbone, NewCustomFieldPanelView, NewCustomFieldModel) {
 			var cfTable = squashtm.app.cfTable;

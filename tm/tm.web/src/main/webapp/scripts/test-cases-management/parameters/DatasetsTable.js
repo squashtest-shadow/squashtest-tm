@@ -20,7 +20,7 @@
  */
 
 define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/util/StringUtil", "jquery.squash.confirmdialog",
-		"jquery.squash.messagedialog", "jquery.squash.datatables" ],
+		"jquery.squash.messagedialog", "squashtable" ],
 		function($, Backbone, SimpleJEditable, StringUtil) {
 			var DatasetsTable = Backbone.View.extend({
 

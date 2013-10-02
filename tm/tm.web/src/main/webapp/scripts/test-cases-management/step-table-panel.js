@@ -64,7 +64,7 @@
  * 
  */
 
-define([ "jquery", "squash.table-collapser", "custom-field-values", "squash.translator" ], function($, TableCollapser,
+define([ "jquery", "squashtable.collapser", "custom-field-values", "squash.translator" ], function($, TableCollapser,
 		cufValuesManager, translator) {
 
 	// ************************* configuration functions

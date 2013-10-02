@@ -35,7 +35,7 @@
  */
 
 define(
-		[ "jquery", "jquery.squash.datatables" ],
+		[ "jquery", "squashtable" ],
 		function($) {
 
 			return function(settings) {

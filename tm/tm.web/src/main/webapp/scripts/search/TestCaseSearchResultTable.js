@@ -18,8 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery.squash.datatables", "jqueryui", "jquery.squash.jeditable" ], function($, Backbone, translator,
-		SQDT) {
+define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "jquery.squash.jeditable" ], function($, Backbone, translator) {
 
 	var TestCaseSearchResultTable = Backbone.View.extend({
 		el : "#test-case-search-result-table",

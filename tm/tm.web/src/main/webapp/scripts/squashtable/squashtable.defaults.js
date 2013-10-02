@@ -18,18 +18,27 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "squashtable", "jqueryui" ], function($,
-		SD) {
-
-	return {
-		defaults : squashtm.datatable.defaults,
-		deleteButton : function(button) {
-			$(button).button({
-				text : false,
-				icons : {
-					primary : "ui-icon-trash"
-				}
-			});
-		}
+define(function(){
+	
+	squashtm = squashtm || {};
+	
+	// defines datatable defaults settings and puts them in the squash
+	// namespace.
+	var datatableDefaults = {
+		"bJQueryUI" : true,
+		"bAutoWidth" : false,
+		"bFilter" : false,
+		"bPaginate" : true,
+		"sPaginationType" : "squash",
+		"iDisplayLength" : 50,
+		"bServerSide" : true,
+		"bRetrieve" : true,
+		"sDom" : 't<"dataTables_footer"lp>'
 	};
+
+	squashtm.datatable = squashtm.datatable || {};
+	squashtm.datatable.defaults = datatableDefaults;
+	
+	
+	return squashtm.datatable.defaults;
 });

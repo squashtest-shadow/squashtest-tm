@@ -20,7 +20,7 @@
  */
 
 define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confirmdialog",
-		"jquery.squash.messagedialog", "jquery.squash.datatables" ], function($, Backbone, SimpleJEditable) {
+		"jquery.squash.messagedialog", "squashtable" ], function($, Backbone, SimpleJEditable) {
 	var ParametersTable = Backbone.View.extend({
 
 		el : "#parameters-table",

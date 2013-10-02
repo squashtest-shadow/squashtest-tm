@@ -266,6 +266,10 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 
 (function($) {
 
+	if (!! $.fn.squashTable ){
+		return ;
+	}
+	
 	/*******************************************************************************************************************
 	 * 
 	 * The following functions assume that the instance of the datatable is 'this'.
@@ -1534,5 +1538,17 @@ squashtm.keyEventListener = squashtm.keyEventListener || new KeyEventListener();
 		}
 
 	};
+	
+	
+	// ************** AMD definition ********************
+	
+	// finally exports it a an amd module, thanks to jQuery to show me how to 
+	// the dependencies arent explicited here, please refer to the shims in common.js  
+	if ( typeof define === "function" ) {
+		define( "squashtable", [], function () { 
+			return $.fn.squashTable; 
+		});
+	}
+	
 
 })(jQuery);

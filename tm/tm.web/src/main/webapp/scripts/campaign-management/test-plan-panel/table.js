@@ -48,7 +48,7 @@
  * 
  */
 
-define(['jquery', './sortmode', 'jquery.squash.datatables', 'jeditable'],
+define(['jquery', './sortmode', 'squashtable', 'jeditable'],
         function($, smode) {
 
 	function createTableConfiguration(conf){

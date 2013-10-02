@@ -89,12 +89,11 @@ require.baseUrl = "${pageContext.servletContext.contextPath}/scripts";
 <!-- --------------------DataTables library imports. SHOULD BE IMPORTED BEFORE DATATABLE USAGE--------------------------------------------- -->
 
 <script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/datatables/jquery.dataTables.js"></script>
-<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtable/jquery.squashtm.datatables.js"></script>
-<%-- transitional javascript --%>
 
-<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtable/jquery.squashtm.datatables.v2.js"></script>
-
-<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtable/jquery.squashtm.tableDnD.ext.js"></script> 
+<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtable/squashtable.defaults.js"></script>
+<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtable/squashtable.dnd.js"></script>
+<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtable/squashtable.pagination.js"></script>
+<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtable/squashtable.js"></script> 
 
 <!-- //end of datatable library imports -->
 

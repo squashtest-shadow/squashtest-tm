@@ -34,7 +34,7 @@
  *  
  *  @returns : the squashTable instance of this table.
  */
-define(["jquery", "jquery.squash.datatables"], function($){
+define(["jquery", "squashtable"], function($){
 	return function(oSettings){
 		var settings = $.extend({}, oSettings);	//local copy of the arguments
 		var tblSelector = settings.target;

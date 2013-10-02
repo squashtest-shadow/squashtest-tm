@@ -23,7 +23,7 @@ define(
 				"jeditable.simpleJEditable", "jeditable.selectJEditable",
 				"app/util/StringUtil", "jquery.squash", "jqueryui",
 				"jquery.squash.togglepanel", "jeditable.selectJEditable",
-				"jquery.squash.datatables", "jquery.squash.oneshotdialog",
+				"squashtable", "jquery.squash.oneshotdialog",
 				"jquery.squash.messagedialog", "jquery.squash.confirmdialog",
 				"jeditable.datepicker",
 				"datepicker/require.jquery.squash.datepicker-locales" ],

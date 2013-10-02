@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "./TeamPermissionPanel", "jquery.squash",
-		"jqueryui", "jquery.squash.togglepanel", "jquery.squash.datatables", "jquery.squash.oneshotdialog",
+		"jqueryui", "jquery.squash.togglepanel", "squashtable", "jquery.squash.oneshotdialog",
 		"jquery.squash.messagedialog", "jquery.squash.confirmdialog", "jquery.squash.jeditable" ], function($,
 		Backbone, _, StringUtil, TeamPermissionPanel) {
 	var teamMod = squashtm.app.teamMod;

@@ -59,8 +59,8 @@ requirejs.config({
 				"jqueryui" : "lib/jquery/jquery-ui-1.9.0.custom.min",
 				"jquery.dialog-patch" : "jquery/jquery.dialog-patch",
 				"datatables" : "datatables/jquery.dataTables.min",
-				"squash.datatables" : "squashtable/jquery.squashtm.datatables",
-				"jquery.squash.datatables" : "squashtable/jquery.squashtm.datatables.v2",
+				"squashtable" : "squashtable/squashtable",
+				"squashtable.collapser" : "squashtable/squashtable.collapser",
 				"handlebars" : "lib/handlebars/handlebars-1.0.0.rc3",
 				"underscore" : "lib/underscore/underscore-1.4.4-min",
 				"backbone" : "lib/backbone/backbone-1.0.0-min",
@@ -83,7 +83,6 @@ requirejs.config({
 				"jquery.squash.messagedialog" : "squashtest/jquery.squash.messagedialog",
 				"jquery.squash.confirmdialog" : "squashtest/jquery.squash.confirmdialog",
 				"jquery.squash.oneshotdialog" : "squashtest/jquery.squashtm.oneshotdialog",
-				"workspace.contextual-content" : "workspace/workspace.contextual-content",	
 				"jquery.squash.squashbutton" : "squashtest/jquery.squash.squashbutton",
 				"jquery.squash.jeditable" : "squashtest/jquery.squashtm.jeditable.ext",
 				"jquery.squash.projectpicker" : "squash/jquery.squashtm.projectpicker",
@@ -92,7 +91,6 @@ requirejs.config({
 				"squash.cssloader" : "squash/squash.cssloader",
 				"squash.translator" : "squash/squash.translator",
 				"squash.resizer" : "squash/squashtm.tree-page-resizer",
-				"squash.table-collapser" : "squashtable/jquery.squash.table-collapser",
 				"squash.session-pinger" : "squashtest/jquery.squash.session-pinger",
 				"jquery.tagit" : "jquery/tag-it.min",		
 				"jquery.squash.tagit" : "squashtest/jquery.squash.tagit",
@@ -104,6 +102,7 @@ requirejs.config({
 				"workspace.tree-node-copier" : "workspace/workspace.tree-node-copier",
 				"workspace.tree-event-handler" : "workspace/workspace.tree-event-handler",
 				"workspace.permissions-rules-broker" : "workspace/workspace.permissions-rules-broker",
+				"workspace.contextual-content" : "workspace/workspace.contextual-content",	
 				'jqplot' : 'lib/jqplot/jquery.jqplot.min',
 				'jqplot-pie' : 'lib/jqplot/plugins/jqplot.pieRenderer.min',
 				'excanvas' : 'lib/excanvas.min'
@@ -146,15 +145,14 @@ requirejs.config({
 				"jquery.throttle-debounce" : ['jquery'],
 				"jqueryui" : [ "jquery" ],
 				"datatables" : [ "jqueryui" ],
-				"squash.datatables" : {
-					deps : [ "datatables", "squashtable/jquery.squashtm.tableDnD.ext" ],
-					exports : "squashtm.datatables"
-				},
-				"jquery.squash.datatables" : {
-					deps : [ "datatables", "squash.datatables",
-							"squashtest/classes/KeyEventListener",
-							"jquery.squash.oneshotdialog" ],
-					exports : "squashtmDatatablesWidget"
+				"squashtable" : {
+					deps : [ "datatables", 
+					         "squashtable/squashtable.defaults",
+					         "squashtable/squashtable.pagination",
+					         "squashtable/squashtable.dnd",
+					         "jquery.squash.oneshotdialog",
+					         "squashtest/classes/KeyEventListener" ],
+					exports : "$.fn.squashTable"
 				},
 				"jquery.squash" : {
 					deps : [ "jquery" ],
