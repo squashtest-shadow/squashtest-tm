@@ -35,6 +35,7 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 			this.addSimpleEditableToReference = $.proxy(this._addSimpleEditableToReference, this);
 			this.addSimpleEditableToLabel = $.proxy(this._addSimpleEditableToLabel, this);
 			this.addInterfaceLevel2Link = $.proxy(this._addInterfaceLevel2Link, this);
+			this.addIconToAssociatedToColumn = $.proxy(this._addIconToAssociatedToColumn, this);
 			this.addTreeLink = $.proxy(this._addTreeLink, this);
 			this.getTableRowId = $.proxy(this._getTableRowId, this);
 			this.tableRowCallback = $.proxy(this._tableRowCallback, this);
@@ -69,8 +70,10 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 							"sClass" : "select-handle centered"
 						}, {
 							"aTargets" : [ 1 ],
-							"mDataProp" : "is-associated",
-							"bSortable" : false
+							"mDataProp" : "empty-is-associated-holder",
+							"bSortable" : false,
+							"sWidth" : "2em",
+							"sClass" : "is-associated"
 						}, {
 							"aTargets" : [ 2 ],
 							"mDataProp" : "project-name",
@@ -392,9 +395,9 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 	
 			this.addInterfaceLevel2Link(row,data);
 			this.addTreeLink(row,data);
-			
+	
 			if(this.isAssociation){
-				this.addAssociationCheckboxes(row, data);
+				this.addIconToAssociatedToColumn(row,data);
 			}
 		},
 
@@ -406,6 +409,19 @@ define([ "jquery", "backbone", "squash.translator", "squash.datatables", "jquery
 		},
 		
 
+		_addIconToAssociatedToColumn : function(row, data) {
+			
+			var associatedTo = data["is-associated"];
+			
+			if(associatedTo){
+				if(this.associateType == "requirement"){
+					$(".is-associated",row).addClass("associated-icon-requirement");
+				} else {
+					$(".is-associated",row).addClass("associated-icon-campaign");
+				}
+			}
+		},
+		
 		_addTreeLink : function(row, data){
 			var self = this;
 			var id = data["test-case-id"];

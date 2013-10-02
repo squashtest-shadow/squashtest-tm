@@ -696,6 +696,18 @@ span.span-green {
 	padding-left: 20px;
 }
 
+.associated-icon-requirement {
+	background: transparent url("../images/tick_blue.png") no-repeat center;
+}
+
+.associated-icon-testcase {
+	background: transparent url("../images/tick_green.png") no-repeat center;	
+}
+
+.associated-icon-campaign {
+	background: transparent url("../images/tick_purple.png") no-repeat center;	
+}
+
 /*******************************
 	search table icons - adds background icon  
 ********************************/

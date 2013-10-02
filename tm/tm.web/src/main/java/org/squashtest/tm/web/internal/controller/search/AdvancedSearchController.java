@@ -716,6 +716,7 @@ public class AdvancedSearchController {
 			Map<String, Object> res = new HashMap<String, Object>();
 			res.put("project-name", item.getProject().getName());
 			if (isInAssociationContext()) {
+				res.put("empty-is-associated-holder", " ");
 				res.put("is-associated",
 						associatedTestCaseIds.contains(item.getId()));
 			}
