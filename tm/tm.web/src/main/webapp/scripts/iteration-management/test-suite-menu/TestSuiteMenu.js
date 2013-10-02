@@ -18,27 +18,51 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "jqueryui"], function($) {
+define([ "jquery", "underscore", "jqueryui"], function($,_) {
 
-	function TestSuiteMenuCheckedSuites() {
+	function TestSuiteMenuNewStatuses() {
+		
+		var initiallyChecked = [];
 		var checkedIds = [];
-		this.get = function() {
+		var initiallyNotChecked = [];
+		var uncheckedIds = [];
+		
+		this.getChecked = function() {
 			return this.checkedIds;
 		};
-		this.reset = function() {
+		this.getUnchecked = function() {
+			return this.uncheckedIds;
+		};
+		this.reset = function(checked, notChecked) {
+			this.intiallyChecked = checked;
+			this.initiallyNotChecked = notChecked;
 			this.checkedIds = [];
+			this.uncheckedIds = [];
 		};
-		this.add = function(id) {
-			this.checkedIds.push(id);
-		};
-		this.remove = function(id) {
-
-			var index = jQuery.inArray(id, this.checkedIds);
-			if (index) {
-				this.checkedIds.splice(index, 1);
+		
+		this.change = function(id, checked) {
+			if(checked){
+				this.unChekedIds = _.reject(this.unChekedIds, function(unchekedId){
+				return unchekedId === id;
+				});				
+				if(!_.contains(this.initiallyChecked, id)){
+					this.checkedIds.push(id);
+				}
+			}else{
+				this.checkedIds = 	_.reject(this.checkedIds, function(checkedId){
+					return checkedId === id;
+					});	
+				if(!_.contains(this.initiallyNotChecked, id)){
+					this.uncheckedIds.push(id);
+				}
 			}
-
 		};
+		
+		this.add = function(id){
+			this.initiallyNotChecked.push(id);
+			this.checkedIds.push(id);
+		}
+		
 	}
 	
 	function initWidgets() {
@@ -75,13 +99,13 @@ define([ "jquery", "jqueryui"], function($) {
 			});
 			var checkbox = $("<input/>", {
 				'data-suite-id' : json.id,
-				'id' : 'menu-suite-#' + json.id,
+				'id' : 'menu-suite-' + json.id,
 				'type' : 'checkbox',
 				'name' : 'menu-suite-item'
 			});
 			node.append(checkbox);
 			var label = $("<label/>", {
-				'for' : 'menu-suite-#' + json.id,
+				'for' : 'menu-suite-' + json.id,
 				'class' : 'afterDisabled'
 			});
 			label.text(json.name);
@@ -129,21 +153,24 @@ define([ "jquery", "jqueryui"], function($) {
 			//append to the list
 			
 			this.menu.prepend(sorted);
-
-			this.checkedSuites.reset();
+			
+			
 
 		}, this);
 
 		var getCheckboxes = $.proxy(function() {
 			return this.menu.find('input[name="menu-suite-item"]');
 		}, this);
-
+		
+		var getCheckboxBySuiteId = $.proxy(function(id){
+			return this.menu.find('input#menu-suite-'+id);
+		}, this);
 
 		var getDatatableSelected = $.proxy(function() {
 			return $(this.datatableSelector).squashTable().getSelectedIds();
 		}, this);
 		
-
+		
 		var displayAddSuiteError = $.proxy(function(xhr, text) {
 			try {
 				var errContent = jQuery.parseJSON(xhr.responseText);
@@ -180,6 +207,7 @@ define([ "jquery", "jqueryui"], function($) {
 			if ((evt === undefined) || (evt.evt_name == "node.rename") || (evt.evt_name == "node.remove") ||
 					(evt.evt_name == "node.refresh")) {
 				initializeContent();
+				
 			} else if (evt.evt_name == "node.add") {
 				addSuiteToMenuContent(evt);
 			}
@@ -188,7 +216,7 @@ define([ "jquery", "jqueryui"], function($) {
 		/* *********************** handlers ***************** */
 
 		var addSuiteToMenuContent = $.proxy(function(evt) {
-			this.checkedSuites.add(evt.newSuite.id);
+			this.testSuiteNewStatuses.add(evt.newSuite.id);
 			var item = makeItem(evt.newSuite);
 			item.find("input").attr("checked", "checked");
 			item.attr("checked", "checked");
@@ -209,11 +237,7 @@ define([ "jquery", "jqueryui"], function($) {
 			var self = this;
 			this.menu.delegate('input:checkbox', 'change', function(evt) {
 				var checkbx = $(evt.currentTarget);
-				if (checkbx.is(":checked")) {
-					self.checkedSuites.add(checkbx.data('suite-id'));
-				} else {
-					self.checkedSuites.remove(checkbx.data('suite-id'));
-				}
+					self.testSuiteNewStatuses.change(checkbx.data('suite-id'), checkbx.is(":checked"));
 
 			});
 		}, this);
@@ -221,17 +245,21 @@ define([ "jquery", "jqueryui"], function($) {
 		var bindOkButton = $.proxy(function() {
 			var self = this;
 			$('#suite-manager-menu-ok-button').on('click', function(evt) {
-				if (!getDatatableSelected().length) {
+				if (!self.testPlanItemIds.length) {
 					$(settings.emptySelectionMessageSelector).openMessage();
 				} else {
 					var toSend = {};
-					var suiteIds = self.checkedSuites.get();
-					if (suiteIds.length < 1) {
+					var checkedSuiteIds = self.testSuiteNewStatuses.getChecked();
+					var uncheckedSuiteIds = self.testSuiteNewStatuses.getUnchecked();
+					if (uncheckedSuiteIds.length < 1 && checkedSuiteIds.length < 1) {
+						//TODO change message ??
 						$(settings.emptySuiteSelectionMessageSelector).openMessage();
 					} else {
-						toSend['test-suites'] = suiteIds;
-						toSend['test-plan-items'] = getDatatableSelected();
-						self.model.postBind(toSend).success(function() {
+						toSend['bound-test-suites'] = checkedSuiteIds;
+						toSend['unbound-test-suites'] = uncheckedSuiteIds;
+						toSend['test-plan-items'] = self.testPlanItemIds;
+						//TODO bind controller
+						self.model.postBindChanged(toSend).success(function() {
 							self.menucontrol.buttonmenu('close');
 						});
 					}
@@ -271,14 +299,57 @@ define([ "jquery", "jqueryui"], function($) {
 		var bindShowMenuButton = $.proxy(function() {
 			var self = this;
 			$("#manage-test-suites-buttonmenu").on('click', function(evt){
-				if (!getDatatableSelected().length) {
+				self.testPlanItemIds = getDatatableSelected();
+				if (!self.testPlanItemIds.length) {
+					// no item selected : close menu and warn
 					self.menucontrol.buttonmenu('close');
 					evt.stopImmediatePropagation();
 					$(settings.emptySelectionMessageSelector).openMessage();
+					
+				}else{		
+					//TODO init with rightfull datas
+					var suites = self.model.getData();
+					
+					//get item ids by suite id
+					var itemIdsBySuite = {};
+					_.each(suites, function(suite){
+						itemIdsBySuite[suite.id] = [];
+					});
+					
+					_.each(self.testPlanItemIds, function(itemId){ 
+						var itemSuiteIds =  $(self.datatableSelector).squashTable().getDataById(itemId)["suiteIds"];
+						_.each(itemSuiteIds, function(itemSuiteId){
+							itemIdsBySuite[itemSuiteId].push(itemId);
+						});
+					});
+					
+					//compute statuses and update checkboxes
+					var suiteStatuses = {};
+					var unboundIds = [];
+					var boundIds = [];
+					getCheckboxes().prop('indeterminate', false); // reset the checkboxes
+					_.each(itemIdsBySuite, function(itemIds, suiteId){
+						var status;
+						var checkbox = getCheckboxBySuiteId(suiteId);
+						if(itemIds.length == self.testPlanItemIds.length){
+							status = "checked";
+							boundIds.push(suiteId);
+							checkbox.prop('checked', true);
+						}else if(itemIds.length === 0 ){
+							status = "unchecked";
+							unboundIds.push(suiteId);
+							checkbox.prop('checked', false);
+						}else{
+							status = "undefined";
+							checkbox.prop("indeterminate", true);
+						}
+						suiteStatuses[suiteId] = status;						
+					})
+					
+					self.testSuiteNewStatuses.reset(boundIds, unboundIds); // reset the model
+					$("#suite-manager-menu-input").val(""); // reset the input field
 				}
-				getCheckboxes().prop('checked', false); // reset the checkboxes
-				self.checkedSuites.reset(); // reset the model
-				$("#suite-manager-menu-input").val(""); // reset the input field
+				
 			});
 		}, this);
 		
@@ -289,7 +360,6 @@ define([ "jquery", "jqueryui"], function($) {
 			bindOkButton();
 			bindCancelButton();
 			bindCheckboxes();
-
 		}, this);
 
 
@@ -300,7 +370,7 @@ define([ "jquery", "jqueryui"], function($) {
 		this.model.addListener(this);
 		
 		this.instance = $(settings.instanceSelector);		
-		this.checkedSuites = new TestSuiteMenuCheckedSuites();
+		this.testSuiteNewStatuses = new TestSuiteMenuNewStatuses();
 		
 		initWidgets.call(this);				
 		

@@ -117,6 +117,15 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 		testSuite.unBindTestPlan(itemTestPlans);
 	}
 	
+	@Override
+	public void unbindTestPlanToMultipleSuites(List<Long> unboundTestSuiteIds, List<Long> itpIds) {
+		List<TestSuite> unboundTestSuites = testSuiteDao.findAllByIds(unboundTestSuiteIds);
+		List<IterationTestPlanItem> iterationTestPlanItems = itemTestPlanDao.findAllByIds(itpIds);
+		for(TestSuite suite : unboundTestSuites){
+			unbindTestPlanObj(suite, iterationTestPlanItems);
+		}
+		
+	}
 
 
 	@Override

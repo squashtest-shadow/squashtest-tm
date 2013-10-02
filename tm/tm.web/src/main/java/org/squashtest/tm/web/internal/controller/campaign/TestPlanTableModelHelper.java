@@ -20,10 +20,13 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
@@ -48,26 +51,25 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 		IterationTestPlanItem item = indexedItem.getItem();
 		
 		Map<String, Object> res = new HashMap<String, Object>();
+		
+		//automation mode
+		final String automationMode = item.isAutomated() ? "A" : "M";
 
+		//assigne
+		User assignee = item.getUser();
+		Long assigneeId = User.NO_USER_ID;
+		String assigneeLogin = formatString(item.getLastExecutedBy(), locale);		
+		if  (assignee  != null) {
+			assigneeId = assignee.getId();
+			assigneeLogin = assignee.getLogin();
+		}
+		
+		//if test case deleted 
 		String projectName;
 		String testCaseName;
 		Long tcId;
 		String importance;
 		String reference;
-		String datasetName;
-		final String automationMode = item.isAutomated() ? "A" : "M";
-
-		String testSuiteNameList = "";
-		
-		User assignee = item.getUser();
-		Long assigneeId = User.NO_USER_ID;
-		String assigneeLogin = formatString(item.getLastExecutedBy(), locale);
-		
-		if  (assignee  != null) {
-			assigneeId = assignee.getId();
-			assigneeLogin = assignee.getLogin();
-		}
-
 		if (item.isTestCaseDeleted()) {
 			projectName = formatNoData(locale);
 			testCaseName = formatDeleted(locale);
@@ -85,18 +87,28 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 			}
 			importance = messageSource.internationalize(item.getReferencedTestCase().getImportance(), locale);
 		}
-
+		
+		
+		//dataset
+		String datasetName;
 		if (item.getReferencedDataset() == null) {
 			datasetName = formatNoData(locale);
 		} else {
 			datasetName = item.getReferencedDataset().getName();
 		}
-
+		// test suite name
+		String testSuiteNameList = "";
+		// test suite name
+		List<Long> testSuiteIdsList;
 		if (item.getTestSuites().isEmpty()) {
 			testSuiteNameList = formatNoData(locale);
+			testSuiteIdsList = Collections.emptyList();
 		} else {
 			testSuiteNameList = TestSuiteHelper.buildEllipsedSuiteNameList(item.getTestSuites(), 20);
+			testSuiteIdsList = IdentifiedUtil.extractIds(item.getTestSuites());
 		}
+		
+		
 
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, index);
@@ -106,6 +118,7 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 		res.put("tc-name", testCaseName);
 		res.put("importance", importance);
 		res.put("suite", testSuiteNameList);
+		res.put("suiteIds", testSuiteIdsList);
 		res.put("status",item.getExecutionStatus());
 		res.put("assignee-id", assigneeId);
 		res.put("assignee-login", assigneeLogin);

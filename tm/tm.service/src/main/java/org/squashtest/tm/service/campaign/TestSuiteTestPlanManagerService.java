@@ -119,13 +119,25 @@ public interface TestSuiteTestPlanManagerService {
 	 * @param itemTestPlans
 	 */
 	void unbindTestPlanObj(TestSuite testSuite, List<IterationTestPlanItem> itemTestPlans);
-
+	/**
+	 * <p>That method will detach several {@link IterationTestPlanItem} from the given TestSuites. They
+	 * are identified using their ids.</p>
+	 * 
+	 * <p>These entities all belong to the same iteration since they have previously been attached to it.</p> 
+	 * 
+	 * @param testSuite
+	 * @param itemTestPlans
+	 */
+	void unbindTestPlanToMultipleSuites(List<Long> unboundTestSuiteIds, List<Long> itpIds);
 
 	void addTestCasesToIterationAndTestSuite(List<Long> testCaseIds, long suiteId);
 
 	void detachTestPlanFromTestSuite(List<Long> testPlanIds, long suiteId);
 
 	boolean detachTestPlanFromTestSuiteAndRemoveFromIteration(List<Long> testPlanIds, long suiteId);
+
+
+	
 
 	
 }

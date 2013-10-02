@@ -48,7 +48,7 @@ define([ "jquery", "workspace.contextual-content" , "jqueryui" ], function($, co
 
 		/* ************** private ************* */
 
-		// we have to reimplement indexOf because IE8 doesn't support it
+		// we have to re-implement indexOf because IE8 doesn't support it
 		// returns -1 if not found
 		var indexById = $.proxy(function(id) {
 			for ( var i = 0; i < this.data.length; i++) {
@@ -97,16 +97,25 @@ define([ "jquery", "workspace.contextual-content" , "jqueryui" ], function($, co
 				this.contextualContent.fire(this, evt);
 			}
 		}, self);
-
+		
+		var notifyBind = $.proxy(function(){
+			var evt = {
+					evt_name : "node.bind"
+			};
+			notifyListeners(evt);
+			notifyContextualContent(evt);
+		})
 		/* ************** public interface (slave) **************** */
 
 		this.update = function(event) {
-			//the event 'contextualcontent.clear' means that the page will be flushed (and so will be this object)
+			// the event 'contextualcontent.clear' means that the page will be
+			// flushed (and so will be this object)
 			if (event.evt_name && event.evt_name == "contextualcontent.clear"){
 				return;
 			}
 			
-			// in any other case we refetch the data. Perhaps we will refine this
+			// in any other case we refetch the data. Perhaps we will refine
+			// this
 			// later.
 			this.getModel();
 		};
@@ -193,14 +202,23 @@ define([ "jquery", "workspace.contextual-content" , "jqueryui" ], function($, co
 				data :  { 'itemIds[]' : toSend['test-plan-items']},
 				dataType : 'json'
 			}).success(function(json) {
-				var evt = {
-					evt_name : "node.bind"
-				};
-				notifyListeners(evt);
-				notifyContextualContent(evt);
+				notifyBind();
 			});
 		};
-
+		
+		this.postBindChanged = function(toSend){
+			return $.ajax({
+				'url': this.baseUpdateUrl+"/test-plan/",
+				type : 'POST',
+				data : { 'itemIds[]' : toSend['test-plan-items'],
+					'boundSuiteIds[]' : toSend['bound-test-suites'],
+					'unboundSuiteIds[]' : toSend['unbound-test-suites']},
+				dataType : 'json'
+			}).success(function(json){
+				notifyBind();
+			})
+		}
+		
 		this.getModel = function() {
 			_getModel().success(function() {
 				notifyListeners({
