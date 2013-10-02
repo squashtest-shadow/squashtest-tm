@@ -50,19 +50,9 @@ public class RequirementCoverageByTestsQueryAdapter extends LegacyQueryAdapter<H
 	 */
 	@Override
 	protected void processNonStandardCriteria(Map<String, Criteria> criteria, HibernateReportQuery legacyQuery) {
-		Criteria selMode = criteria.get("selectionMode");
-
-		if ("EVERYTHING".equals(selMode.getValue())) {
-			setNoProjectIds(legacyQuery);
-		} else {
+		
 			Criteria idsCrit = criteria.get("projectIds");
 			legacyQuery.setCriterion(LEGACY_PROJECT_IDS, ((Collection<?>) idsCrit.getValue()).toArray());
-		}
-
-	}
-
-	private void setNoProjectIds(HibernateReportQuery legacyQuery) {
-		legacyQuery.setCriterion(LEGACY_PROJECT_IDS, (Object[]) null);
 	}
 
 	/**

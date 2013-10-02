@@ -69,8 +69,40 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		</property>
 		<property name="form">
 			<list>
+				<!-- campain selection mode (all / tree) -->
+				<bean class="org.squashtest.tm.api.report.form.ComplexSelector">
+					<property name="name" value="campaignSelectionMode" />
+					<property name="labelKey" value="report.criteria.panel.campaignlist.selection.label" />
+					<property name="options">
+						<list>
+							<bean class="org.squashtest.tm.api.report.form.OptionInput">
+								<property name="defaultSelected" value="true" />
+								<property name="labelKey" value="report.criteria.panel.campaignlist.selection.all.label" />
+								<property name="value" value="EVERYTHING" />
+							</bean>
+
+							<bean class="org.squashtest.tm.api.report.form.OptionInput">
+								<property name="labelKey" value="report.criteria.panel.campaignlist.selection.selected.label" />
+								<property name="value" value="TREE_PICKER" />
+								<property name="givesAccessTo" value="campaignIds" />
+								<property name="selector">
+									<bean class="org.squashtest.tm.api.report.form.TreePicker">
+										<property name="labelKey" value="report.criteria.panel.campaignlist.picker.label" />
+										<property name="name" value="campaignIds" />
+										<property name="pickedNodeType" value="CAMPAIGN" />
+									</bean>		
+								</property>
+							</bean>
+						</list>
+					</property>
+				</bean>
    				<!-- Scheduled start date picker -->
-				<bean class="org.squashtest.tm.api.report.form.DateInput">
+   				<bean class="org.squashtest.tm.api.report.form.DateInputBlock">
+   					<property name="name" value="dateInputBlock" />
+					<property name="labelKey" value="campaign.dateblock.label" />
+					<property name="dates">
+						<list>
+									<bean class="org.squashtest.tm.api.report.form.DateInput">
 					<property name="name" value="scheduledStart" />
 					<property name="labelKey" value="campaign.scheduledStart.label" />
 				</bean>
@@ -89,6 +121,11 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 					<property name="name" value="actualEnd" />
 					<property name="labelKey" value="campaign.actualEnd.label" />
 				</bean>
+						</list>
+					</property>
+   				</bean>
+   				
+	
 				<!-- campaign status dropdown -->
 				<bean class="org.squashtest.tm.api.report.form.DropdownList">
 					<property name="name" value="campaignStatus" />
@@ -109,32 +146,6 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 							</bean>
 						</list>
 					</property>
-				</bean>
-				<!-- campain selection mode (all / tree) -->
-				<bean class="org.squashtest.tm.api.report.form.RadioButtonsGroup">
-					<property name="name" value="campaignSelectionMode" />
-					<property name="labelKey" value="report.criteria.panel.campaignlist.selection.label" />
-					<property name="options">
-						<list>
-							<bean class="org.squashtest.tm.api.report.form.OptionInput">
-								<property name="defaultSelected" value="true" />
-								<property name="labelKey" value="report.criteria.panel.campaignlist.selection.all.label" />
-								<property name="value" value="EVERYTHING" />
-							</bean>
-
-							<bean class="org.squashtest.tm.api.report.form.OptionInput">
-								<property name="labelKey" value="report.criteria.panel.campaignlist.selection.selected.label" />
-								<property name="value" value="TREE_PICKER" />
-								<property name="givesAccessTo" value="campaignIds" />
-							</bean>
-						</list>
-					</property>
-				</bean>
-				<!-- campaign tree picker -->
-				<bean class="org.squashtest.tm.api.report.form.TreePicker">
-					<property name="labelKey" value="report.criteria.panel.campaignlist.picker.label" />
-					<property name="name" value="campaignIds" />
-					<property name="pickedNodeType" value="CAMPAIGN" />
 				</bean>
 			</list>
 		</property>
@@ -220,28 +231,19 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		</property>
 		<property name="form">
 			<list>
-				<bean class="org.squashtest.tm.api.report.form.RadioButtonsGroup">
-					<property name="name" value="selectionMode" />
+				<bean class="org.squashtest.tm.api.report.form.ProjectInputBlock">
+					<property name="name" value="perimeter" />
 					<property name="labelKey" value="report.coverage.criteria.selectionMode.label" />
-					<property name="options">
+					<property name="pickers">
 						<list>
-							<bean class="org.squashtest.tm.api.report.form.OptionInput">
-								<property name="value" value="EVERYTHING" />
-								<property name="defaultSelected" value="true" />
-								<property name="labelKey" value="report.coverage.criteria.selectionMode.everything.label" />
-							</bean>
-							<bean class="org.squashtest.tm.api.report.form.OptionInput">
-								<property name="value" value="PROJECT_PICKER" />
-								<property name="labelKey" value="report.coverage.criteria.selectionMode.projectPicker.label" />
-								<property name="givesAccessTo" value="projectIds" />
+							<bean class="org.squashtest.tm.api.report.form.ProjectPicker">
+								<property name="name" value="projectIds" />
+								<property name="labelKey" value="report.criteria.panel.projectlist.label" />
 							</bean>
 						</list>
 					</property>
 				</bean>
-				<bean class="org.squashtest.tm.api.report.form.ProjectPicker">
-					<property name="name" value="projectIds" />
-					<property name="labelKey" value="report.criteria.panel.projectlist.label" />
-				</bean>
+
 				<bean class="org.squashtest.tm.api.report.form.RadioButtonsGroup">
 					<property name="name" value="mode" />
 					<property name="labelKey" value="report.criteria.panel.requirement.version.label" />

@@ -28,10 +28,11 @@ var squashtm = squashtm || {};
  * 
  * @author Gregory Fouquet
  */
-define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "jqueryui",
-		"jeditable", "jeditable.datepicker", "jquery.squash",
-		"jquery.squash.projectpicker",
-		"datepicker/require.jquery.squash.datepicker-locales" ],
+define(
+		[ "jquery", "app/report/squashtm.reportworkspace", "tree", "jqueryui",
+				"jeditable", "jeditable.datepicker", "jquery.squash",
+				"jquery.squash.projectpicker", "jquery.cookie",
+				"datepicker/require.jquery.squash.datepicker-locales" ],
 		function($, RWS, treebuilder) {
 			var config = {
 				contextPath : "",
@@ -41,6 +42,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "jqueryui",
 				cancelLabel : "Cancel"
 			};
 
+			var preferences = null;
 			var formState = {};
 			var selectedTab = false;
 
@@ -124,7 +126,8 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "jqueryui",
 
 							givesAccessTo = (this.id).replace("-binder", "");
 
-							if (givesAccessTo !== undefined && givesAccessTo !== "none") {
+							if (givesAccessTo !== undefined
+									&& givesAccessTo !== "none") {
 								// find the right element and deactivate it
 								$("#" + givesAccessTo + "-open").attr(
 										"disabled", "disabled");
@@ -144,7 +147,9 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "jqueryui",
 					};
 				});
 
-				formState[dropdown.attr('name')] = state;
+				if (dropdown.attr('name')) {
+					formState[dropdown.attr('name')] = state;
+				}
 			}
 
 			function onTextBlurred() {
@@ -177,6 +182,36 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "jqueryui",
 				var dropdowns = panel.find('select');
 				dropdowns.change(onListItemSelected);
 				dropdowns.change();
+
+				if (preferences) {
+					$.each(dropdowns, function(index, dropdown) {
+										var name = dropdown.name;
+										var preferenceForName = preferences[name];
+										if (preferenceForName) {
+											$.each(preferenceForName, function(index,
+																	element) {
+																var value = element.value;
+																var options = $("option",dropdown);
+																$.each(options, function(index,option){
+																	if (option.value == value
+																			&& element.selected) {
+																		$(option)
+																				.attr(
+																						'selected',
+																						true);
+																	} else if (option.value == value
+																			&& !element.selected) {
+																		$(option)
+																				.attr(
+																						'selected',
+																						false);
+																	}
+																});
+															});
+										}
+									});
+					dropdowns.change();
+				}
 			}
 
 			function initTexts(panel) {
@@ -217,10 +252,31 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "jqueryui",
 					var date = self.innerText || config.noDateLabel;
 					onDatepickerChanged.apply(self, [ date ]);
 				});
+
+				if (preferences) {
+					$.each(datepickers, function(index, datepicker) {
+						var name = datepicker.id;
+						var preferenceForName = preferences[name];
+						if (preferenceForName && preferenceForName.value.length > 5) {
+							var date = $.datepicker.parseDate("yy-mm-dd", preferenceForName.value);
+							if(date){
+								$(datepicker).text($.datepicker.formatDate(config.dateFormat,date));
+								var postDate = $.datepicker.formatDate(postDateFormat, date);
+								formState[this.id] = {
+									value : postDate,
+									type : 'DATE'
+								};
+							}
+						}
+					});
+
+					datepickers.change();
+				}
 			}
 
 			function initRadios(panel) {
 				var radios = panel.find("input:radio");
+
 				radios.change(onGroupedRadiosChanged).each(
 						function() {
 							var option = this;
@@ -236,12 +292,44 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "jqueryui",
 								type : 'RADIO_BUTTONS_GROUP'
 							});
 
-							if (givesAccessTo !== undefined	&& givesAccessTo !== "none") {
+							if (givesAccessTo !== undefined
+									&& givesAccessTo !== "none") {
 								// find the right element and deactivate it
 								$("#" + givesAccessTo + "-open").attr(
 										"disabled", "disabled");
 							}
 						});
+
+				if (preferences) {
+					$.each(radios, function(index, radio) {
+						var name = radio.name;
+						var givesAccessTo = (radio.id).replace("-binder", "");
+						var preferenceForName = preferences[name];
+						if (preferenceForName) {
+							$.each(preferenceForName, function(index, element) {
+								var value = element.value;
+								if (radio.value == value && element.selected) {
+									$(radio).attr('checked', true);
+									$.each(formState[name], function(index, state) {
+										if(state.value == radio.value){
+											state.selected = true;
+											if (givesAccessTo !== undefined && givesAccessTo !== "none") {
+												$("#" + givesAccessTo + "-open").removeAttr("disabled");
+											}
+										}
+									});
+								} else if (radio.value == value && !element.selected){
+									$.each(formState[name], function(index, state) {
+										if(state.value == radio.value){
+											state.selected = false;
+											
+										}
+									});
+								}
+							});
+						}
+					});
+				}		
 			}
 
 			function initCheckboxes(panel) {
@@ -260,11 +348,49 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "jqueryui",
 				});
 				singleCheckboxes.change(onSingleCheckboxChanged);
 				singleCheckboxes.change();
+
+				if (preferences) {
+					$.each(groupedCheckboxes, function(index, checkbox) {
+						var name = checkbox.name;
+						var preferenceForName = preferences[name];
+						if (preferenceForName) {
+							$.each(preferenceForName,
+									function(index, element) {
+										var value = element.value;
+										if (checkbox.value == value
+												&& element.selected) {
+											$(checkbox).attr('checked', true);
+										}
+									});
+						}
+					});
+				
+					groupedCheckboxes.change();
+					
+					$.each(singleCheckboxes, function(index, checkbox) {
+						var name = checkbox.name;
+						var preferenceForName = preferences[name];
+						if (preferenceForName) {
+							$.each(preferenceForName,
+									function(index, element) {
+										var value = element.value;
+										if (checkbox.value == value
+												&& element.selected) {
+											$(checkbox).attr('checked', true);
+										}
+									});
+						}
+					});
+				
+					singleCheckboxes.change();
+				}
 			}
 
 			function buildViewUrl(index, format) {
 				// see [Issue 1205] for why "document.location.protocol"
-				return document.location.protocol + '//' + document.location.host + config.reportUrl + "/views/" + index + "/formats/" + format;
+				return document.location.protocol + '//'
+						+ document.location.host + config.reportUrl + "/views/"
+						+ index + "/formats/" + format;
 
 			}
 
@@ -280,24 +406,73 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "jqueryui",
 				});
 			}
 
+			function isPerimeterValid() {
+
+				var status = false;
+
+				$.each(formState, function(key, value) {
+
+					if (value[0]) {
+
+						if ("PROJECT_PICKER" == value[0].type) {
+							$.each(value, function(index, element) {
+								if (element.selected) {
+									status = true;
+								}
+							});
+						}
+
+						if ("RADIO_BUTTONS_GROUP" == value[0].type) {
+							$.each(value, function(index, element) {
+								if (element.selected
+										& element.value == "EVERYTHING") {
+									status = true;
+								}
+							});
+						}
+
+						if ("TREE_PICKER" == value[0].type) {
+							$.each(value, function(index, element) {
+								if (element.value) {
+									status = true;
+								}
+							});
+						}
+					}
+				});
+
+				return status;
+			}
+
 			function generateView() {
-				// collapses the form
-				$("#report-criteria-panel").togglePanel("closeContent");
-				// collapses the sidebar
-				RWS.setReportWorkspaceExpandState();
 
-				var tabPanel = $("#view-tabed-panel");
+				if (isPerimeterValid()) {
+					// stores preferences in browser datastore
+					$.cookie(config.reportUrl + "-prefs", JSON
+							.stringify(formState));
 
-				if (!selectedTab) {
-					tabPanel.tabs("option", "active", 0);
-					// tab is inited, we dont need collapsible anymore,
-					// otherwise click on active tab will trigger an event
-					tabPanel.tabs("option", "collapsible", false);
+					// collapses the form
+					$("#report-criteria-panel").togglePanel("closeContent");
+					// collapses the sidebar
+					RWS.setReportWorkspaceExpandState();
+
+					var tabPanel = $("#view-tabed-panel");
+
+					if (!selectedTab) {
+						tabPanel.tabs("option", "active", 0);
+						// tab is inited, we dont need collapsible anymore,
+						// otherwise click on active tab will trigger an event
+						tabPanel.tabs("option", "collapsible", false);
+					} else {
+						loadTab(selectedTab);
+					}
+
+					$("#view-tabed-panel:hidden").show('blind', {}, 500);
 				} else {
-					loadTab(selectedTab);
+					var invalidPerimeterDialog = $("#invalid-perimeter")
+							.messageDialog();
+					invalidPerimeterDialog.messageDialog('open');
 				}
-
-				$("#view-tabed-panel:hidden").show('blind', {}, 500);
 			}
 
 			function onViewTabSelected(event, ui) {
@@ -329,7 +504,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "jqueryui",
 				$("#view-tabed-panel").tabs({
 					active : false,
 					collapsible : true, // we need collapsible for first init of
-										// first tab
+					// first tab
 					activate : onViewTabSelected
 				});
 			}
@@ -376,14 +551,16 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "jqueryui",
 				var treeid = this.id;
 				var workspaceType = getWorkspaceType(tree);
 
-				$.get(config.contextPath + "/" + workspaceType + "-browser/drives", "linkables", "json")
-				.done(function(data) {
-					var settings = $.extend({}, config);
-					settings.workspace = workspaceType;
-					settings.model = data;
-					settings.treeselector = "#"+treeid;
-					treebuilder.initLinkableTree(settings);
-				});
+				$.get(
+						config.contextPath + "/" + workspaceType
+								+ "-browser/drives", "linkables", "json").done(
+						function(data) {
+							var settings = $.extend({}, config);
+							settings.workspace = workspaceType;
+							settings.model = data;
+							settings.treeselector = "#" + treeid;
+							treebuilder.initLinkableTree(settings);
+						});
 
 				setTreeState(tree, []);
 			}
@@ -421,7 +598,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "jqueryui",
 				});
 			}
 
-			function initTreePickers(panel, settings) {
+			function initTreePickers(panel) {
 				panel.find('.rpt-tree-crit-open').click(function() {
 					var dialogId = $(this).data('id-opened');
 					var treePickerPopup = $("#" + dialogId);
@@ -437,58 +614,97 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "jqueryui",
 
 				panel.find(".rpt-tree-crit-dialog").each(
 						initTreePickerDialogCallback);
+				
+				if(preferences){
+					
+					var pickers = panel.find('.rpt-tree-crit-open');
+					
+					$.each(pickers, function(index,picker){
+						var id = picker.id;
+						var real_id = id.substr(0,id.length-5);
+						formState[real_id] = preferences[real_id];
+					});
+				}
 			}
 
-			function onConfirmProjectPicker() {
+			function onProjectPickerChanged() {
 				var picker = $(this);
-				picker.projectPicker("close");
-				var projects = picker.projectPicker("data");
 
-				formState[this.id] = $.map(projects, function(item) {
+				var options = $("option", picker);
+
+				formState[this.id] = $.map(options, function(option) {
 					return {
-						value : item.id,
-						selected : item.selected,
+						value : option.value,
+						selected : option.selected,
 						type : "PROJECT_PICKER"
 					};
 				});
 			}
 
 			function initProjectPickerCallback() {
+
 				var picker = $(this);
+				var url = config.contextPath + "/projects?format=picker";
+				var formid = this.id;
 
-				picker.projectPicker({
-					url : config.contextPath + "/projects?format=picker",
-					ok : {
-						text : config.okLabel,
-						click : onConfirmProjectPicker
-					},
-					cancel : {
-						text : config.cancelLabel
-					},
-					loadOnce : true
-				});
+				// load options
+				$.getJSON(url).done(
+						function(data) {
+							$.each(data.projectData, function(index, value) {
+								picker.append("<option value='" + value[0]
+										+ "'>" + value[1] + "</option>");
+							});
 
-				formState[this.id] = [ {
-					value : 0,
-					selected : false,
-					type : "PROJECT_PICKER"
-				} ];
+							var options = $("option", picker);
+
+							formState[formid] = $.map(options,
+									function(option) {
+										return {
+											value : option.value,
+											selected : option.selected,
+											type : "PROJECT_PICKER"
+										};
+									});
+
+							if (preferences) {
+								var name = picker[0].id;
+								var preferenceForName = preferences[name];
+								options = $("option", picker[0]);
+
+								$.each(options, function(index, option) {
+									$.each(preferenceForName, function(index,
+											element) {
+										var value = element.value;
+										if (option.value == value
+												&& element.selected) {
+											$(option).attr("selected", true);
+										} else if (option.value == value
+												&& !element.selected) {
+											$(option).attr("selected", false);
+										}
+									});
+								});
+								
+								picker.change();
+							}
+						});
+
+				picker.change(onProjectPickerChanged);
+
 			}
 
 			function initProjectPickers(panel) {
-				panel.find(".rpt-projects-crit-open").click(function() {
-					var dialogId = $(this).data("id-opened");
-					$("#" + dialogId).projectPicker("open");
-				});
-
-				panel.find(".rpt-projects-crit-container").each(
-						initProjectPickerCallback);
+				panel.find(".rpt-projects-crit-container").each(initProjectPickerCallback);
 			}
 
+
 			function init(settings) {
+
 				resetState();
 				config = $.extend(config, settings);
-
+				//Get user preferences if they exist
+				preferences = JSON.parse($.cookie(config.reportUrl + "-prefs"));
+				
 				var panel = $("#report-criteria-panel");
 				panel.togglePanel({});
 

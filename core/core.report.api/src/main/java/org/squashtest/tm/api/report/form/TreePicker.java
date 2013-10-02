@@ -27,7 +27,7 @@ import org.springframework.util.Assert;
  * @author Gregory Fouquet
  * 
  */
-public class TreePicker extends BasicInput implements InitializingBean {
+public class TreePicker extends Picker implements InitializingBean{
 	private NodeType pickedNodeType;
 
 	/**

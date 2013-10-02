@@ -24,7 +24,7 @@ package org.squashtest.tm.api.report.form;
  * @author Gregory Fouquet
  *
  */
-public class ProjectPicker extends BasicInput {
+public class ProjectPicker extends Picker{
 
 	/**
 	 * @see org.squashtest.tm.api.report.form.Input#getType()

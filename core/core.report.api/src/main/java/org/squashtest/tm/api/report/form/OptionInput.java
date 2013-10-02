@@ -31,6 +31,7 @@ public class OptionInput extends Labelled {
 	private String value = "";
 	private boolean defaultSelected = false;
 	private String givesAccessTo = "none";
+	private Picker selector = null;
 	
 	/**
 	 * @param value
@@ -90,5 +91,13 @@ public class OptionInput extends Labelled {
 	 */
 	public boolean isDefaultSelected() {
 		return defaultSelected;
+	}
+
+	public Picker getSelector() {
+		return selector;
+	}
+
+	public void setSelector(Picker selector) {
+		this.selector = selector;
 	}
 }

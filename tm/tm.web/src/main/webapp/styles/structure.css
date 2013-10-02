@@ -772,6 +772,14 @@ div#search-result .library {
 }
 
 
+.report-selector{
+	display:inline;
+}
+
+#report-criteria-panel {
+	font-size:10pt;
+}
+
 .report-item {
 	padding-left: 2px;
 	padding-right: 2px;
