@@ -154,7 +154,7 @@
 				</td>
 				<td style="width:50px" class="centered not-displayed" id="execute-next-test-case-panel">
 					<f:message  var="nextTestCaseTitle" key="execute.header.button.next-test-case.title" />
-					<button id="execute-next-test-case" name="optimized" class="button" title="${ nextTestCaseTitle }">${ nextTestCaseTitle }</button>
+					<button id="execute-next-test-case" name="optimized" title="${ nextTestCaseTitle }">${ nextTestCaseTitle }</button>
 				</td>
 				<td><h3 id="ieo-execution-title" class="ellipsis" >${ executionStep.execution.name }</h3></td>
 			</tr>
