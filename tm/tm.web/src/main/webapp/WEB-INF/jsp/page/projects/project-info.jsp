@@ -204,7 +204,7 @@
 								</div>
 								<script>
 								function projectBugTrackerCallBack (value, settings) {
-									squashtm.bugtrackerMenu.updateBugTrackerMenu(false);
+									
 									<c:if test="${ ! adminproject.template }">
 										  if(value != "<f:message key='project.bugtracker.name.undefined'/>"){								        	 
 								        	 $("#project-bugtracker-project-name-row").show();

@@ -152,19 +152,15 @@ function clickBugTrackerIframeFriendly(){
 		},
 		dataType : "json",
 		url : "${ bugtrackerUrl }"
-	}).done(function(){
-			//Update navigation menu
-					squashtm.bugtrackerMenu.updateBugTrackerMenu(false);
-		});
+	});
  }
 
 function changeBugTrackerUrlCallback(){
-	squashtm.bugtrackerMenu.updateBugTrackerMenu(false);
+	
 }
 
 /* renaming success handler */
 function renameBugtrackerSuccess(data) {
-	squashtm.bugtrackerMenu.updateBugTrackerMenu(false);
 	$('#bugtracker-name-header').html(data.newName);
 	$('#rename-bugtracker-dialog').dialog('close');
 }

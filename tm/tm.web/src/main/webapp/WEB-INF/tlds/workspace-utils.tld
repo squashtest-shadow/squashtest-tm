@@ -1,4 +1,4 @@
-<%--
+<!--
 
         This file is part of the Squashtest platform.
         Copyright (C) 2010 - 2013 Henix, henix.fr
@@ -19,14 +19,16 @@
         You should have received a copy of the GNU Lesser General Public License
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
---%>
-<%@ tag body-content="empty" %>
-<%@ attribute name="resourceName" required="true" %>
-<%@ attribute name="imageName" required="true" %>
-<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<c:url var="workspaceUrl" value="/${ resourceName }-workspace/" />
-<fmt:message var="requirementsTitle" key="workspace.${ resourceName }.button.label" />
-<a id="${ resourceName }-link" class="nav_btn" href="${ workspaceUrl }">
-	<img src="${ pageContext.servletContext.contextPath }/images/${ imageName }" alt="${ requirementsTitle }" title="${ requirementsTitle }" border="0"/>
-</a>
+-->
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+	version="2.0">
+	<tlib-version>1.0</tlib-version>
+	<short-name>workspace-utils</short-name>
+	<uri>http://org.squashtest.tm/taglib/workspace-utils</uri>
+	<function>
+		<name>getVisibleBugtrackers</name>
+		<function-class>org.squashtest.tm.web.internal.helper.WorkspaceHelper</function-class>	
+		<function-signature>java.util.Collection getVisibleBugtrackers(javax.servlet.ServletContext)</function-signature>	
+	</function>
+</taglib>  

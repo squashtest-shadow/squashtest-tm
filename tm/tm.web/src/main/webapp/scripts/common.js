@@ -86,7 +86,6 @@ requirejs.config({
 				"jquery.squash.jeditable" : "squashtest/jquery.squashtm.jeditable.ext",
 				"jquery.squash.projectpicker" : "squash/jquery.squashtm.projectpicker",
 				"jquery.cookie" : "jquery/jquery.cookie",
-				"squash.bugtrackerMenu" : "squashtest/classes/BugTrackerMenu",
 				"squash.cssloader" : "squash/squash.cssloader",
 				"squash.translator" : "squash/squash.translator",
 				"squash.resizer" : "squash/squashtm.tree-page-resizer",

@@ -20,32 +20,53 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="lay" tagdir="/WEB-INF/tags/layout" %>
-<%@ attribute name="highlighted" %>
+
+<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="f"  uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="wu" uri="http://org.squashtest.tm/taglib/workspace-utils" %>
+
+
+<%@ attribute name="highlighted" description="which button should be highlithed"%>
+
 <%-- fix for the different library id names--%>
 
 <c:if test="${not empty library }">
-		<c:set var="libraryId" value="${library.id}" />
+	<c:set var="libraryId" value="${library.id}" />
 </c:if>
 
+<c:set var="rootctxt" value="${pageContext.servletContext.contextPath}"/>
+
+<f:message var="homeTitle" 	key="workspace.home.button.label"/>
+<f:message var="reqTitle" 	key="workspace.requirement.button.label"/>
+<f:message var="tcTitle" 	key="workspace.test-case.button.label"/>
+<f:message var="campTitle" 	key="workspace.campaign.button.label"/>
+<f:message var="bugTitle" 	key="workspace.bugtracker.button.label"/>
+<f:message var="repoTitle" 	key="workspace.report.button.label"/>
+
+<c:set var="visibleBugtrackers" value="${wu:getVisibleBugtrackers(pageContext.servletContext)}"/>
+<c:set var="btClass"			value="${empty visibleBugtrackers ? 'not-displayed' : ''}"/>
 
 <div id="navigation">
 	<div id="test_mgt_nav">
-		<lay:_workspace-button imageName="Button_Nav_Home_off.png" resourceName="home" />
-		<lay:_workspace-button imageName="Button_Nav_Requirement_off.png" resourceName="requirement" />
-		<lay:_workspace-button imageName="Button_Nav_TestCase_off.png" resourceName="test-case" />
-		<lay:_workspace-button imageName="Button_Nav_Campaign_off.png" resourceName="campaign" />
-		<lay:_workspace-button-bugtracker highlighted="${ not empty highlighted and highlighted == 'bugtracker' }"/>
-		<lay:_workspace-button imageName="Button_Nav_Reporting_off.png" resourceName="report" />
+		<a id="home-link" 		 	class="navigation-link navigation-home" 		href="${rootctxt}/home-workspace"			title="${homeTitle}"></a>
+		<a id="requirement-link" 	class="navigation-link navigation-requirement"	href="${rootctxt}/requirement-workspace"	title="${reqTitle}"></a>
+		<a id="test-case-link"	 	class="navigation-link navigation-test-case" 	href="${rootctxt}/test-case-workspace"		title="${tcTitle}"></a>
+		<a id="campaign-link"	 	class="navigation-link navigation-campaign" 	href="${rootctxt}/campaign-workspace"		title="${campTitle}"></a>
+		<a id="bugtracker-link"	 	class="navigation-link navigation-bugtracker" 	title="${bugTitle}"></a>
+		<ul class="not-displayed width:130px;">
+		<c:forEach var="bugtracker" items="${visibleBugtrackers}">
+			<li>
+				<c:url var="btUrl" 			value="${bugtracker.iframeFriendly ? '/bugtracker/'.concat(bugtracker.id.toString()).concat('/workspace') : bugtracker.URL}"/>
+				<c:set var="targetClause" 	value="${bugtracker.iframeFriendly ? 'target=\"_blank\"' : '' }"/>
+				<a id="bugtracker-${bugtracker.id }" href="${btUrl}" ${targetClause}>${bugtracker.name}</a>			
+			</li>
+		</c:forEach>
+		</ul>		
+		<a id="report-link"	 	class="navigation-link navigation-report" 			href="${rootctxt}/report-workspace"			title="${repoTitle}"></a>
 	</div>
 	
 	<div id="nav_logo">
 		<img src="${ pageContext.servletContext.contextPath }/images/logo_squash30.png" alt="logo_squash" style="width:30px;"/>
 	</div>
 </div>
-<%--
-<c:url var="navbarScript" value="/scripts/squash/squashtm.navbar.js" />
-<script type="text/javascript" src="${ navbarScript }"></script>
- --%>
+

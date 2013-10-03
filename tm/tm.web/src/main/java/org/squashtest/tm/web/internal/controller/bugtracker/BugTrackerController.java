@@ -174,6 +174,9 @@ public class BugTrackerController {
 	 * Navigation button * *
 	 * ***********************************************************************************************************
 	 */
+	/*
+	 * commented on 3th october 2013
+	 * 
 	@RequestMapping(value = "workspace-button", method = RequestMethod.GET)
 	public ModelAndView getNavButton(Locale locale) {
 		List<Project> projects = projectFinder.findAllReadable();
@@ -188,7 +191,7 @@ public class BugTrackerController {
 			mav.addObject("bugtrackers", readableBugTrackers);
 			return mav;
 		}
-	}
+	}*/
 
 	@RequestMapping(value = "{bugtrackerId}/workspace", method = RequestMethod.GET)
 	public ModelAndView showWorkspace(@PathVariable Long bugtrackerId) {

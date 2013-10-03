@@ -50,33 +50,6 @@ label.afterDisabled:after, input + label:after {
 }
 
 
-/**************************** navigation bar ************************/
-
-#navigation {
-	position: fixed;
-	min-height: 100%;
-	width: 1cm;
-	background: url("../images/fond_nav.gif") repeat-y scroll 0 0 #393834;
-	margin-right: 0.4cm;	
-	z-index : 2;	/* this ensures that menus from this sidebar are displayed over the rest (which have lesser z-index)*/
-}
-
-.navigation-link{
-	width : 30px;
-	height : 30px;
-	background-repeat : no-repeat
-}
-
-.navigation-bugtracker{
-	background-image: url(../images/Button_Nav_Bugtracker_off.png);
-}
-
-.navigation-bugtracker:hover{	
-	background-image: url(../images/Button_Nav_Bugtracker_on.png);
-}
-
-/**************************** end navigation bar ************************/
-
 #workspace {
 	bottom: 0.2cm;
 	left: 1.4cm;
@@ -517,6 +490,74 @@ html.execute-html body.ieo-body {
 /* -------------------------------------------*/
 /* ---------->>> NAVIGATION DIV <<<-----------*/
 /* -------------------------------------------*/
+
+#navigation {
+	position: fixed;
+	min-height: 100%;
+	width: 1cm;
+	background: url("../images/fond_nav.gif") repeat-y scroll 0 0 #393834;
+	margin-right: 0.4cm;	
+	z-index : 2;	/* this ensures that menus from this sidebar are displayed over the rest (which have lesser z-index)*/
+}
+
+.navigation-link{
+	width : 30px;
+	height : 30px;
+	display : block;
+	margin-left : auto;
+	margin-right : auto;
+	margin-bottom : 0.5em;
+	background-repeat : no-repeat
+}
+
+.navigation-home{
+	background-image: url(../images/Button_Nav_Home_off.png);
+}
+
+.navigation-home:hover, .navigation-home.navigation-selected{
+	background-image: url(../images/Button_Nav_Home_on.png);
+}
+
+.navigation-requirement{
+	background-image: url(../images/Button_Nav_Requirement_off.png);
+}
+
+.navigation-requirement:hover, .navigation-requirement.navigation-selected{
+	background-image: url(../images/Button_Nav_Requirement_on.png);
+}
+
+.navigation-test-case{
+	background-image: url(../images/Button_Nav_TestCase_off.png);
+}
+
+.navigation-test-case:hover, .navigation-test-case.navigation-selected{
+	background-image: url(../images/Button_Nav_TestCase_on.png);
+}
+
+.navigation-campaign{
+	background-image: url(../images/Button_Nav_Campaign_off.png);
+}
+
+.navigation-campaign:hover, .navigation-campaign.navigation-selected{
+	background-image: url(../images/Button_Nav_Campaign_on.png);
+}
+
+.navigation-bugtracker{
+	background-image: url(../images/Button_Nav_Bugtracker_off.png);
+}
+
+.navigation-bugtracker:hover, .navigation-bugtracker.navigation-selected{	
+	background-image: url(../images/Button_Nav_Bugtracker_on.png);
+}
+
+.navigation-report{
+	background-image: url(../images/Button_Nav_Reporting_off.png);
+}
+
+.navigation-report:hover, .navigation-report.navigation-selected{	
+	background-image: url(../images/Button_Nav_Reporting_on.png);
+}
+
 #test_mgt_nav {
 	height: 60%;
 	width: 100%;
@@ -524,23 +565,6 @@ html.execute-html body.ieo-body {
 	margin-top: 5px;
 }
 
-#admin_nav {
-	bottom: 0%;
-	height: 20%;
-	left: 0%;
-	width: 100%;
-}
-
-#navigation .nav_btn>img {
-	width: 30px;
-	border-width: 0;
-	border-style: none;
-}
-
-#test_mgt_nav .nav_btn>img {
-	height: 30px;
-	margin-bottom: 0.5em;
-}
 
 #nav_logo {
 	bottom: 1em;

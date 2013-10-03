@@ -22,6 +22,10 @@
  
  import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,12 +33,24 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.domain.IdentifiedUtil;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
+import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.user.AdministrationService;
 
 @Controller
 public class HomeController {
 	
 	private AdministrationService administrationService;
+	
+	@Inject
+	protected ProjectFinder projectFinder;
+	
+	@Inject
+	protected BugTrackerFinderService  bugtrackerService;
+
 	
 
 	@ServiceReference
@@ -45,8 +61,19 @@ public class HomeController {
 	@RequestMapping("/home-workspace")
 	public ModelAndView home() {
 		String welcomeMessage = administrationService.findWelcomeMessage();
+		
 		ModelAndView mav = new ModelAndView("page/home-workspace");
+
 		mav.addObject("welcomeMessage", welcomeMessage);
+		
+		// put the available bugtrackers too
+		List<Project> projects = projectFinder.findAllReadable();
+		List<Long> projectsIds = IdentifiedUtil.extractIds(projects);
+		List<BugTracker> visibleBugtrackers = bugtrackerService.findDistinctBugTrackersForProjects(projectsIds);
+
+		mav.addObject("visibleBugtrackers", visibleBugtrackers);
+		
+		
 		return mav;
 	}
 	

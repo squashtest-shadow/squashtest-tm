@@ -20,59 +20,14 @@
  */
 var squashtm = squashtm || {};
 
-define([ "jquery" ], function($) {
-	/*var highlightedButton = "";
-
-	function navLinkOn(linkName) {
-		var thisLink = $('#' + linkName);
-		var imgName = $(thisLink).find('img').attr("src");
-		if (imgName) {
-			imgName = imgName.replace("_off", "_on");
-			$(thisLink).find('img').attr("src", imgName);
-		}
-	}
-
-	function navLinkOff(linkName) {
-		var thisLink = $('#' + linkName);
-		var imgName = $(thisLink).find('img').attr("src");
-		if (imgName) {
-			imgName = imgName.replace("_on", "_off");
-			$(thisLink).find('img').attr("src", imgName);
-		}
-	}
-
-	function initHighlighted(linkName) {
-
-		// ** linkName is true if defined and not empty string 
-		if (linkName) {
-			highlightedButton = linkName + '-link';
-			navLinkOn(highlightedButton);
-		}
-	}*/
+define([ "jquery", "jquery.squash.buttonmenu" ], function($) {
 
 	squashtm.navbar = {
-	/*	initHighlighted : initHighlighted,
-		highlightOn : function(linkName) {
-			if (linkName !== highlightedButton) {
-				navLinkOn(linkName);
-			}
-		},
-		highlightOff : function(linkName) {
-			if (linkName !== highlightedButton) {
-				navLinkOff(linkName);
-			}
-		}*/
+		init : function(linkName) {
+			$("#"+linkName+"-link").addClass('navigation-selected');
+			$("#bugtracker-link").buttonmenu({preskinned:true});
+		}
 	};
-
-	/*$(function() {
-		$(".nav_btn").hover(function() {
-			var linkName = $(this).attr("id");
-			squashtm.navbar.highlightOn(linkName);
-		}, function() {
-			var linkName = $(this).attr("id");
-			squashtm.navbar.highlightOff(linkName);
-		});
-	});*/
 
 	return squashtm.navbar;
 });

@@ -20,16 +20,12 @@
  */
 define([ "jquery", "app/ws/squashtm.navbar", "app/ws/squashtm.projectfilter",
 		"app/ws/squashtm.menubar", "app/ws/squashtm.notification",
-		"squash.bugtrackerMenu", "squash.session-pinger"], function($, NavBar, ProjectFilter, MenuBar,
-		WTF, BTM, SSP) {
+		"squash.session-pinger"], function($, NavBar, ProjectFilter, MenuBar,
+		WTF, SSP) {
 	function init(highlightedWorkspace) {
 		/* navigation tag */
-		NavBar.initHighlighted(highlightedWorkspace);
-		squashtm.bugtrackerMenu = new BTM({
-			workspaceUrl : squashtm.app.contextRoot	+ "/bugtracker/workspace-button"
-		});
-		squashtm.bugtrackerMenu
-				.updateBugTrackerMenu(highlightedWorkspace == "bugtracker");
+		NavBar.init(highlightedWorkspace);
+
 
 		ProjectFilter.init(squashtm.app.projectFilterConf);
 		MenuBar.init(squashtm.app.menuBarConf);
