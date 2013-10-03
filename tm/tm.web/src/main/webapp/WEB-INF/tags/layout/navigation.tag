@@ -42,12 +42,12 @@
 
 <div id="navigation">
 	<div id="test_mgt_nav">
-		<a id="home-link" 		 	class="navigation-link navigation-home" 				href="${rootctxt}/home-workspace"			title="${homeTitle}"></a>
-		<a id="requirement-link" 	class="navigation-link navigation-requirement"			href="${rootctxt}/requirement-workspace"	title="${reqTitle}"></a>
-		<a id="test-case-link"	 	class="navigation-link navigation-test-case" 			href="${rootctxt}/test-case-workspace"		title="${tcTitle}"></a>
-		<a id="campaign-link"	 	class="navigation-link navigation-campaign ${hideClass}"href="${rootctxt}/campaign-workspace"		title="${campTitle}"></a>
+		<a id="home-link" 		 	class="navigation-link navigation-home" 		href="${rootctxt}/home-workspace"			title="${homeTitle}"></a>
+		<a id="requirement-link" 	class="navigation-link navigation-requirement"	href="${rootctxt}/requirement-workspace"	title="${reqTitle}"></a>
+		<a id="test-case-link"	 	class="navigation-link navigation-test-case" 	href="${rootctxt}/test-case-workspace"		title="${tcTitle}"></a>
+		<a id="campaign-link"	 	class="navigation-link navigation-campaign"		href="${rootctxt}/campaign-workspace"		title="${campTitle}"></a>
 		
-		<a id="bugtracker-link"	 	class="navigation-link navigation-bugtracker" 	title="${bugTitle}"></a>
+		<a id="bugtracker-link"	 	class="navigation-link navigation-bugtracker ${hideClass}" 	title="${bugTitle}"></a>
 		<ul class="not-displayed width:130px;">
 		<c:forEach var="bugtracker" items="${visibleBugtrackers}">
 			<li>
