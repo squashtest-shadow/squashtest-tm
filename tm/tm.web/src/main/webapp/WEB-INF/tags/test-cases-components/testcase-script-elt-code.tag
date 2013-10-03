@@ -63,7 +63,7 @@
 	<div class="ta-picker-structure-maindiv">
 	
 	 	<div class="structure-pleasewait" style="vertical-align:middle;">
- 			<div class="loading" style="display:inline"></div>
+ 			<div class="loading"></div>
 			<span style="font-size:1.5em;"><f:message key="squashtm.processing"/></span>
  		</div>
 	

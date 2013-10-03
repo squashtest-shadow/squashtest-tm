@@ -26,7 +26,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <div id="ajax-processing-indicator" class="ui-corner-all ${cssClass} not-processing">
-	<div class="loading" style="width=19px;height=19px;display:inline"></div>
+	<div class="small-loading" ></div>
 	<span><f:message key="squashtm.processing"/></span>
 </div>
 <div id="generic-error-notification-area" class="ui-state-error ui-corner-all ${ cssClass } not-displayed ">

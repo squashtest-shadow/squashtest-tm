@@ -1133,6 +1133,13 @@ div.information-panel p {
 
 /* ---------------------------------------------------------*/
 
+
+#login-form-button-pane {
+	text-align: center;
+	padding: 0.3em 0em 0.5em 0em;
+}
+
+
 .horizontal-logo{
 	background-image : url("../images/logo_squash30h.png") no-repeat;
 	width :  113px;
@@ -1140,13 +1147,8 @@ div.information-panel p {
 	display : inline;
 }
 
-#login-form-button-pane {
-	text-align: center;
-	padding: 0.3em 0em 0.5em 0em;
-}
-
 /* it was supposed to be a vertical align but that quick fix is just as fine.*/
-.nav-up-layout .snap-right img {
+.nav-up-layout .horizontal-logo {
 	margin-top: 4px;
 }
 
@@ -1247,35 +1249,37 @@ div.information-panel p {
     height: 100px;
     width: 100px;
     display : block;
+    margin-left	: auto;
+    margin-right : auto;
     background-repeat : no-repeat;
 }
 
 .admin-user-icon{
-	background-url :url(../images/Button_User.png);
+	background-image :url(../images/Button_User.png);
 }
 
 .admin-project-icon{
-	background-url :url(../images/Button_Project.png);
+	background-image :url(../images/Button_Project.png);
 }
 
 .admin-bugtracker-icon{
-	background-url :url(../images/Button_Bugtracker.png);
+	background-image :url(../images/Button_Bugtracker.png);
 }
 
 .admin-customfields-icon{
-	background-url :url(../images/Button_CUF.png);
+	background-image :url(../images/Button_CUF.png);
 }
 
 .admin-msglogin-icon{
-	background-url :url(../images/Button_MsgLogin.png);
+	background-image :url(../images/Button_MsgLogin.png);
 }
 
 .admin-msghome-icon{
-	background-url :url(../images/Button_MsgHome.png);
+	background-image :url(../images/Button_MsgHome.png);
 }
 
 .admin-index-icon{
-	background-url :url(../images/Button_Index.png);
+	background-image :url(../images/Button_Index.png);
 }
 
 
