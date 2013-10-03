@@ -255,13 +255,15 @@ define([ "jquery", "underscore", "jqueryui" ],function($, _) {
 							var toSend = {};
 							var checkedSuiteIds = self.testSuiteNewStatuses.getChecked();
 							var uncheckedSuiteIds = self.testSuiteNewStatuses.getUnchecked();
-							if (uncheckedSuiteIds.length > 0 && checkedSuiteIds.length > 0) {
+							if (uncheckedSuiteIds.length > 0 || checkedSuiteIds.length > 0) {
 								toSend['bound-test-suites'] = checkedSuiteIds;
 								toSend['unbound-test-suites'] = uncheckedSuiteIds;
 								toSend['test-plan-items'] = self.testPlanItemIds;
 								self.model.postBindChanged(toSend).success(function() {
 										self.menucontrol.buttonmenu('close');
 								});
+							}else{
+								self.menucontrol.buttonmenu('close');
 							}
 						}
 					});
@@ -286,7 +288,7 @@ define([ "jquery", "underscore", "jqueryui" ],function($, _) {
 			input.on('keydown', function(evt) {
 				if (evt.which == '8') {
 					evt.stopImmediatePropagation();
-					// backspace will nagivate to previous page if not canceled here
+					// backspace will navigate to previous page if not canceled here
 				}
 				if (evt.which == '13') {
 					addSuite();
