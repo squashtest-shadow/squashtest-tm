@@ -21,10 +21,7 @@
 package org.squashtest.tm.service.internal.library;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

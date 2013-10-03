@@ -24,7 +24,6 @@ import javax.inject.Inject;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

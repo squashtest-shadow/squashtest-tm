@@ -32,8 +32,6 @@ import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.domain.campaign.CampaignLibrary;
-import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Entity
 @NamedQueries(value = {

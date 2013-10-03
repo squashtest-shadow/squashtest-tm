@@ -23,8 +23,9 @@ package org.squashtest.tm.web.internal.model.builder;
 import static org.squashtest.tm.api.security.acls.Permission.CREATE;
 import static org.squashtest.tm.api.security.acls.Permission.DELETE;
 import static org.squashtest.tm.api.security.acls.Permission.EXECUTE;
-import static org.squashtest.tm.api.security.acls.Permission.WRITE;
 import static org.squashtest.tm.api.security.acls.Permission.EXPORT;
+import static org.squashtest.tm.api.security.acls.Permission.WRITE;
+
 import java.util.Collection;
 
 import org.apache.commons.collections.MultiMap;

@@ -43,7 +43,6 @@ import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 import org.squashtest.tm.service.internal.testautomation.service.InsecureTestAutomationManagementService;
 import org.squashtest.tm.service.project.ProjectsPermissionFinder;
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker;
-import org.squashtest.tm.service.user.UserAccountService;
 
 @Service("CustomTestSuiteModificationService")
 public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteModificationService {

@@ -36,7 +36,6 @@ import javax.inject.Named;
 import javax.inject.Provider;
 
 import org.apache.commons.collections.MultiMap;
-import org.jgroups.protocols.SCOPE;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

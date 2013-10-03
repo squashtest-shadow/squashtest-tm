@@ -208,7 +208,7 @@ public class CampaignTestPlanManagerController {
 	}
 	
 	private String formatUnassigned(Locale locale){
-		return messageSource.getMessage("label.Unassigned", null, locale);
+		return messageSource.internationalize("label.Unassigned", locale);
 	}
 	
 }
