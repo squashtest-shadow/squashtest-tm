@@ -28,43 +28,21 @@
 </head>
 <body>
 	<div id="workspace" th:fragment="navbar">
-		<div id="test_mgt_nav">
-			<a id="home-link" class="nav_btn" href="home-workspace.html" th:href="@{/home-workspace}">
-				<img src="../../images/Button_Nav_Home_off.png" 
-					th:src="@{/images/Button_Nav_Home_off.png}" 
-					th:alt="#{workspace.home.button.label}" 
-					th:title="#{workspace.home.button.label}" 
-				/>
-			</a>
-			<a id="requirement-link" class="nav_btn" href="requirement-workspace.html" th:href="@{/requirement-workspace}">
-				<img src="../../images/Button_Nav_Requirement_off.png" 
-					th:src="@{/images/Button_Nav_Requirement_off.png}" 
-					th:alt="#{workspace.requirement.button.label}" 
-					th:title="#{workspace.requirement.button.label}" 
-				/>
-			</a>
-			<a id="test-case-link" class="nav_btn" href="test-case-workspace.html" th:href="@{/test-case-workspace}">
-				<img src="../../images/Button_Nav_TestCase_off.png" 
-					th:src="@{/images/Button_Nav_TestCase_off.png}" 
-					th:alt="#{workspace.test-case.button.label}" 
-					th:title="#{workspace.test-case.button.label}" 
-				/>
-			</a>
-			<a id="campaign-link" class="nav_btn" href="campaign-workspace.html" th:href="@{/campaign-workspace}">
-				<img src="../../images/Button_Nav_Campaign_off.png" 
-					th:src="@{/images/Button_Nav_Campaign_off.png}" 
-					th:alt="#{workspace.campaign.button.label}" 
-					th:title="#{workspace.campaign.button.label}" 
-				/>
-			</a>
-			<div id="bugtracker-div" ></div>
-			<a id="report-link" class="nav_btn" href="report-workspace.html" th:href="@{/report-workspace}">
-				<img src="../../images/Button_Nav_Reporting_off.png" 
-					th:src="@{/images/Button_Nav_Reporting_off.png}" 
-					th:alt="#{workspace.report.button.label}" 
-					th:title="#{workspace.report.button.label}" 
-				/>
-			</a>
+		<div id="test_mgt_nav" th:with="bugtrackers = ${#workspace.visibleBugtrackers()}">
+			<a id="home-link" 			class="navigation-link navigation-home" 			href="home-workspace.html" th:href="@{/home-workspace}" th:title="#{workspace.home.button.label}"></a>
+			<a id="requirement-link" 	class="navigation-link navigation-requirement" 		href="requirement-workspace.html" th:href="@{/requirement-workspace}" th:title="#{workspace.requirement.button.label}"></a>
+			<a id="test-case-link" 		class="navigation-link navigation-test-case" 		href="test-case-workspace.html" th:href="@{/test-case-workspace}" th:title="#{workspace.test-case.button.label}" ></a>
+			<a id="campaign-link" 		class="navigation-link navigation-campaign" 		href="campaign-workspace.html" th:href="@{/campaign-workspace}" th:title="#{workspace.campaign.button.label}" ></a>
+			
+			<a id="bugtracker-link"	 	class="navigation-link navigation-bugtracker" 		th:classappend="${#lists.isEmpty(bugtrackers)} ? 'not-displayed'" th:title="#{workspace.bugtracker.button.label}"></a>
+			<ul class="not-displayed width:130px;">			
+				<li th:each="bugtracker : ${bugtrackers}" th:with="btUrl = ${bugtracker.iframeFriendly} ? @{'/bugtracker/12/workspace'} : ${bugtracker.URL},
+																   target = ${bugtracker.iframeFriendly} ? '_blank' : ''">
+					<a th:id="'bugtracker-'+${bugtracker.id}" href="${btUrl}" th:target="${target}" th:text="${bugtracker.name}">mantis</a>			
+				</li>			
+			</ul>					
+			
+			<a id="report-link" 		class="navigation-link navigation-report"  			href="report-workspace.html" th:href="@{/report-workspace}" th:title="#{workspace.report.button.label}" ></a>
 		</div>
 		
 		<div id="nav_logo" class="nav_btn">

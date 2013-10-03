@@ -28,12 +28,6 @@
 
 <%@ attribute name="highlighted" description="which button should be highlithed"%>
 
-<%-- fix for the different library id names--%>
-
-<c:if test="${not empty library }">
-	<c:set var="libraryId" value="${library.id}" />
-</c:if>
-
 <c:set var="rootctxt" value="${pageContext.servletContext.contextPath}"/>
 
 <f:message var="homeTitle" 	key="workspace.home.button.label"/>
@@ -44,14 +38,15 @@
 <f:message var="repoTitle" 	key="workspace.report.button.label"/>
 
 <c:set var="visibleBugtrackers" value="${wu:getVisibleBugtrackers(pageContext.servletContext)}"/>
-<c:set var="btClass"			value="${empty visibleBugtrackers ? 'not-displayed' : ''}"/>
+<c:set var="hideClass"			value="${empty visibleBugtrackers ? 'not-displayed' : ''}"/>
 
 <div id="navigation">
 	<div id="test_mgt_nav">
-		<a id="home-link" 		 	class="navigation-link navigation-home" 		href="${rootctxt}/home-workspace"			title="${homeTitle}"></a>
-		<a id="requirement-link" 	class="navigation-link navigation-requirement"	href="${rootctxt}/requirement-workspace"	title="${reqTitle}"></a>
-		<a id="test-case-link"	 	class="navigation-link navigation-test-case" 	href="${rootctxt}/test-case-workspace"		title="${tcTitle}"></a>
-		<a id="campaign-link"	 	class="navigation-link navigation-campaign" 	href="${rootctxt}/campaign-workspace"		title="${campTitle}"></a>
+		<a id="home-link" 		 	class="navigation-link navigation-home" 				href="${rootctxt}/home-workspace"			title="${homeTitle}"></a>
+		<a id="requirement-link" 	class="navigation-link navigation-requirement"			href="${rootctxt}/requirement-workspace"	title="${reqTitle}"></a>
+		<a id="test-case-link"	 	class="navigation-link navigation-test-case" 			href="${rootctxt}/test-case-workspace"		title="${tcTitle}"></a>
+		<a id="campaign-link"	 	class="navigation-link navigation-campaign ${hideClass}"href="${rootctxt}/campaign-workspace"		title="${campTitle}"></a>
+		
 		<a id="bugtracker-link"	 	class="navigation-link navigation-bugtracker" 	title="${bugTitle}"></a>
 		<ul class="not-displayed width:130px;">
 		<c:forEach var="bugtracker" items="${visibleBugtrackers}">
@@ -62,6 +57,7 @@
 			</li>
 		</c:forEach>
 		</ul>		
+		
 		<a id="report-link"	 	class="navigation-link navigation-report" 			href="${rootctxt}/report-workspace"			title="${repoTitle}"></a>
 	</div>
 	
