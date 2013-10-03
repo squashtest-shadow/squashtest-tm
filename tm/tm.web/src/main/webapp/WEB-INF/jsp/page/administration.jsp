@@ -57,31 +57,40 @@
 		<div id="admin-pane">
 			<div id="admin-link-pane">
 				<sec:authorize access=" hasRole('ROLE_ADMIN')">
-					<a href="${ usersUrl }" class="unstyledLink"><img id="user-admin"
-						src="${ pageContext.servletContext.contextPath }/images/Button_User.png" /><br/><span><f:message
-								key="label.userManagement" /></span></a>
+					<a href="${ usersUrl }" class="unstyledLink">
+						<span id="user-admin" class="admin-section-icon admin-user-icon"></span>
+						<span class="admin-section-label"><f:message key="label.userManagement" /></span>
+					</a>
 				</sec:authorize>
-				<a href="${ projectsUrl }" class="unstyledLink"><img id="project-admin"
-				src="${ pageContext.servletContext.contextPath }/images/Button_Project.png" /><br/><span><f:message
-						key="label.projectManagement" /></span></a>
-				<sec:authorize access=" hasRole('ROLE_ADMIN')">
-					<a href="${ bugtrackerUrl }" class="unstyledLink"><img id="bug-tracker-admin"
-						src="${ pageContext.servletContext.contextPath }/images/Button_Bugtracker.png" /><br/><span><f:message
-								key="label.bugtrackerManagement" /></span></a>
-					<a href="${ customFieldsUrl }" class="unstyledLink"><img id="custom-fields-admin"
-						src="${ pageContext.servletContext.contextPath }/images/Button_CUF.png" /><br/><span><f:message
-								key="label.customFieldsManagement" /></span></a>
-					<a href="${ loginUrl }" class="unstyledLink "><img id="login-message-admin"
-						src="${ pageContext.servletContext.contextPath }/images/Button_MsgLogin.png" /><span><f:message
-								key="label.consultModifyLoginMessage" /></span></a>
-					<a href="${ welcomeUrl }" class="unstyledLink "><img id="welcome-message-admin"
-						src="${ pageContext.servletContext.contextPath }/images/Button_MsgHome.png" /><span><f:message
-								key="label.consultModifyWelcomeMessage" /></span></a>
-					<a href="" class="unstyledLink"></a>
-					<a href="${ indexUrl }" class="unstyledLink"><img id="index-admin"
-						src="${ pageContext.servletContext.contextPath }/images/Button_Index.png" /><span><f:message
-								key="label.indexManagement" /></span></a>
-				</sec:authorize>
+				<a href="${ projectsUrl }" class="unstyledLink">
+					<span id="project-admin" class="admin-section-icon admin-project-icon"></span>
+					<span class="admin-section-label"><f:message key="label.projectManagement" /></span>
+				</a>
+				
+<sec:authorize access=" hasRole('ROLE_ADMIN')">
+				<a href="${ bugtrackerUrl }" class="unstyledLink">
+					<span id="bug-tracker-admin" class="admin-section-icon admin-bugtracker-icon"></span>
+					<span class="admin-section-label"><f:message key="label.bugtrackerManagement" /></span>
+				</a>
+				<a href="${ customFieldsUrl }" class="unstyledLink">
+					<span id="custom-fields-admin" class="admin-section-icon admin-customfield-icon" ></span>
+					<span class="admin-section-label"><f:message key="label.customFieldsManagement" /></span>
+				</a>
+				<a href="${ loginUrl }" class="unstyledLink ">
+					<span id="login-message-admin" class="admin-section-icon admin-msglogin-icon"></span>
+					<span class="admin-section-label"><f:message key="label.consultModifyLoginMessage" /></span>
+				</a>
+				<a href="${ welcomeUrl }" class="unstyledLink ">
+					<span id="welcome-message-admin" class="admin-section-icon admin-msghome-icon"></span>
+					<span class="admin-section-label"><f:message key="label.consultModifyWelcomeMessage" /></span>
+				</a>
+				<a href="" class="unstyledLink"></a>
+				<a href="${ indexUrl }" class="unstyledLink">
+					<span id="index-admin" class="admin-section-icon admin-index-icon"></span>
+					<span class="admin-section-label"><f:message key="label.indexManagement" /></span>
+				</a>
+</sec:authorize>
+
 			</div>
 			
 			<div id="admin-stats">

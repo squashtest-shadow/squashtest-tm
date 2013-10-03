@@ -155,8 +155,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "./TeamPermi
 				placeholder : teamMod.richEditPlaceHolder,
 				submit : teamMod.richEditsubmitLabel,
 				cancel : teamMod.cancelLabel,
-				indicator : '<img src="' + squashtm.app.contextRoot +
-						'/scripts/jquery/indicator.gif" alt="processing..." />'
+				indicator : '<div class="processing-indicator"/>'
 
 			};
 

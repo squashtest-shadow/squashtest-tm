@@ -83,7 +83,7 @@
       <!-- NOTIFICATION AREA FRAGMENT -->
       <div class="unstyled-notification-pane" th:fragment="notification">
         <div id="ajax-processing-indicator" class="ui-corner-all snap-right not-processing">
-          <img src="../../../../../../../tm/tm.web/src/main/webapp/images/ajax-loader.gif" width="19px" height="19px" alt="processing" th:alt="#{squashtm.processing}" th:src="@{/images/ajax-loader.gif}" /> 
+          <div class="loading" style="width=19px;height=19px;display:inline"></div>
           <span th:text="#{squashtm.processing}">En cours...</span>
         </div>
         <div id="generic-error-notification-area" class="ui-state-error ui-corner-all snap-right not-displayed">

@@ -68,10 +68,8 @@
 	<jsp:attribute name="body"> 
  	<div class="issue-report-dialog">
  		<div class="pleasewait" style="vertical-align: middle;">
- 			<img
-					src="${ pageContext.servletContext.contextPath }/images/ajax-loader.gif" />
-			<span style="font-size: 1.5em;"><f:message
-						key="squashtm.processing" /></span>
+ 			<div class="waiting-loading" ></div>
+			<span style="font-size: 1.5em;"><f:message	key="squashtm.processing" /></span>
  		</div>
 		
 	 	<div class="content">	

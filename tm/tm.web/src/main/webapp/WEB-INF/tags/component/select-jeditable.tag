@@ -56,7 +56,7 @@
 			<c:if test="${not empty jsonData}">data : JSON.stringify(${jsonData}),</c:if>
 			<c:if test="${not empty jsonUrl}">loadurl : '${jsonUrl}',</c:if>
 			<c:if test="${not empty onSubmit}">onsubmit : ${onSubmit},</c:if>
-			indicator : '<img src="${ pageContext.servletContext.contextPath }/scripts/jquery/indicator.gif" alt="processing..." />',
+			indicator : '<span class="processing-indicator" />'
 			
 		}).addClass("editable");
 	})

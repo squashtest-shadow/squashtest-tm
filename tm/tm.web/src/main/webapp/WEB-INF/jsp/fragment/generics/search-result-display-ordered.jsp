@@ -51,12 +51,11 @@
 						</c:if>
 						<td colspan="${colSpan}"
 							id="searchnode-${object.class.simpleName}Library-${object.project.id}"
-							class="searched-project non-tree" style="border: none;"><a
-							style="color: white; text-decoration: none; border: none;"
-							href="#"> <img class="search-image"
-								src="${servContext}/images/root.png"> <span
-									class="search-text">${object.project.name}</span>
-						</a>
+							class="searched-project non-tree" style="border: none;">
+							<a style="color: white; text-decoration: none; border: none;" href="#"> 
+								<span class="search-image icon-root"/>
+								<span class="search-text">${object.project.name}</span>
+							</a>
 						</td>
 						<c:choose>
 							<c:when test="${ icon == 'TestCase' }">
@@ -140,10 +139,10 @@
 							<td class="objectId">${object.id}</td>
 							<td id="searchnode-${object.class.simpleName}-${object.id}"
 								class="non-tree" style="border: none;"><a href="#"
-								style="text-decoration: none; border: none;"> <img
-									class="search-image"
-									src="${servContext}/images/Icon_Tree_Folder.png"> <span
-										class="search-text">${object.name}</span>
+								style="text-decoration: none; border: none;">
+									
+									<span class="search-image icon-folder"/> 
+									<span class="search-text">${object.name}</span>
 							</a>
 							</td>
 							<c:if test="${ icon == 'TestCase' }">

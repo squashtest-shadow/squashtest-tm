@@ -49,6 +49,9 @@ label.afterDisabled:after, input + label:after {
 	content: "";
 }
 
+
+/**************************** navigation bar ************************/
+
 #navigation {
 	position: fixed;
 	min-height: 100%;
@@ -57,6 +60,22 @@ label.afterDisabled:after, input + label:after {
 	margin-right: 0.4cm;	
 	z-index : 2;	/* this ensures that menus from this sidebar are displayed over the rest (which have lesser z-index)*/
 }
+
+.navigation-link{
+	width : 30px;
+	height : 30px;
+	background-repeat : no-repeat
+}
+
+.navigation-bugtracker{
+	background-image: url(../images/Button_Nav_Bugtracker_off.png);
+}
+
+.navigation-bugtracker:hover{	
+	background-image: url(../images/Button_Nav_Bugtracker_on.png);
+}
+
+/**************************** end navigation bar ************************/
 
 #workspace {
 	bottom: 0.2cm;
@@ -707,9 +726,6 @@ div#search-result .library {
 	width: auto;
 }
 
-.category-panel,.report-category {
-	
-}
 
 .report-item {
 	padding-left: 2px;
@@ -723,6 +739,30 @@ div#search-result .library {
 
 .report-item-icon {
 	float: left;
+	background-repeat : no-repeat;
+	width : 48px;
+	height : 48px;
+}
+
+
+.report-generic-icon{
+	background-image : url(../images/report_generic.png);
+}
+
+.report-quality-icon{
+	background-image : url(../images/report_quality.png);
+}
+
+.report-spreadsheet-icon{
+	bakground-image : url(../images/report_spreadsheet.png);
+}
+
+.report-time-icon{
+	bakground-image : url(../images/report_time.png);
+}
+
+.report-time-icon{
+	bakground-image : url(../images/report_word.png);
 }
 
 .report-item-text {
@@ -1068,6 +1108,14 @@ div.information-panel p {
 /* ------->>> PAGE LAYOUT WITH UP NAVIGATION BAR<<<---------*/
 
 /* ---------------------------------------------------------*/
+
+.horizontal-logo{
+	background-image : url("../images/logo_squash30h.png") no-repeat;
+	width :  113px;
+	height : 30px;
+	display : inline;
+}
+
 #login-form-button-pane {
 	text-align: center;
 	padding: 0.3em 0em 0.5em 0em;
@@ -1125,6 +1173,7 @@ div.information-panel p {
 /* ------------------>>> Tree Popups <<<--------------------*/
 /* ---------------------------------------------------------*/
 
+
 #delete-node-dialog .delete-node-dialog-warning{
 	vertical-align:middle;
 	background-image : url('../images/messagebox_confirm.png'); 
@@ -1165,16 +1214,48 @@ div.information-panel p {
 
 #admin-link-pane a {
 	display: inline-block;
-         width: 20%;
-         position:relative;
-             margin-top: 50px;
+    width: 20%;
+    position:relative;
+    margin-top: 50px;
 }
 
-#admin-link-pane img {
+#admin-link-pane span.admin-section-icon {
     height: 100px;
+    width: 100px;
+    display : block;
+    background-repeat : no-repeat;
 }
 
-#admin-link-pane  span {
+.admin-user-icon{
+	background-url :url(../images/Button_User.png);
+}
+
+.admin-project-icon{
+	background-url :url(../images/Button_Project.png);
+}
+
+.admin-bugtracker-icon{
+	background-url :url(../images/Button_Bugtracker.png);
+}
+
+.admin-customfields-icon{
+	background-url :url(../images/Button_CUF.png);
+}
+
+.admin-msglogin-icon{
+	background-url :url(../images/Button_MsgLogin.png);
+}
+
+.admin-msghome-icon{
+	background-url :url(../images/Button_MsgHome.png);
+}
+
+.admin-index-icon{
+	background-url :url(../images/Button_Index.png);
+}
+
+
+#admin-link-pane  span.admin-section-label {
 	position:absolute; 
 	z-index:5; 
 	top: 100px;

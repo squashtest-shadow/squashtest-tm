@@ -70,7 +70,7 @@
 				${submitCallback}(value, settings);
 			},
 			</c:if>
-			indicator : '<img src="${ pageContext.servletContext.contextPath }/scripts/jquery/indicator.gif" alt="processing..." />' 
+			indicator : '<span class="processing-indicator" />'
 			
 		}).addClass("editable");
 	})

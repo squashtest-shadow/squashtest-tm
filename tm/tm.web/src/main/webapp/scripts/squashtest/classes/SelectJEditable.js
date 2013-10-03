@@ -42,12 +42,12 @@ define([ "jquery", "jquery.squash.jeditable" ], function($) {
 			submit : language.okLabel,
 			cancel : language.cancelLabel,
 			onblur : function() {
-			},// this disable the onBlur handler, which would close the
-			// jeditable
-			// when clicking in the rich editor (since it considers the click as
-			// out of the editing zone)
-			indicator : '<img src="' + squashtm.app.contextRoot +
-					'scripts/jquery/indicator.gif" alt="processing..." />'
+				// this disable the onBlur handler, which would close the
+				// jeditable
+				// when clicking in the rich editor (since it considers the click as
+				// out of the editing zone)
+			},
+			indicator : '<div class="processing-indicator"/>'
 		};
 
 		var effectiveSettings = $.extend(true, {}, settings.jeditableSettings, defaultSettings);

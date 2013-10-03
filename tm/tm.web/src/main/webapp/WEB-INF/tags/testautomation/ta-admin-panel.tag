@@ -192,7 +192,7 @@
 	<jsp:attribute name="body">
 	
  		<div class="ta-projectsadd-pleasewait" style="vertical-align:middle;">
- 			<img src="${ pageContext.servletContext.contextPath }/images/ajax-loader.gif" />
+ 			<div class="loading" style="display:inline"></div>
 			<span style="font-size:1.5em;"><f:message key="squashtm.processing"/></span>
  		</div>
 	

@@ -106,7 +106,7 @@ function sendContextualDeletionSimulationRequest(jqDialog){
 			messages += "</ul>";
 		}	
 		
-		var dialogHtml = messages + "<table><tr><td><img src='${servContext}/images/messagebox_confirm.png'/></td><td><table><tr><td><span>${deleteMessageStart} <span class='red-warning-message'>${deleteMessage}</span> </span></td></tr><tr><td>${deleteMessageCantBeUndone}</td></tr><tr><td class='bold-warning-message'>${deleteMessageConfirm}</td></tr></table></td></tr></table>";
+		var dialogHtml = messages + "<table><tr><td><span class='delete-confirm'/></td><td><table><tr><td><span>${deleteMessageStart} <span class='red-warning-message'>${deleteMessage}</span> </span></td></tr><tr><td>${deleteMessageCantBeUndone}</td></tr><tr><td class='bold-warning-message'>${deleteMessageConfirm}</td></tr></table></td></tr></table>";
 		
 		jqDialog.html(dialogHtml);
 		

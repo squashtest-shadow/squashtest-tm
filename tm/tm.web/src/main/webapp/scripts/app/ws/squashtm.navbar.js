@@ -21,7 +21,7 @@
 var squashtm = squashtm || {};
 
 define([ "jquery" ], function($) {
-	var highlightedButton = "";
+	/*var highlightedButton = "";
 
 	function navLinkOn(linkName) {
 		var thisLink = $('#' + linkName);
@@ -43,15 +43,15 @@ define([ "jquery" ], function($) {
 
 	function initHighlighted(linkName) {
 
-		/** linkName is true if defined and not empty string */
+		// ** linkName is true if defined and not empty string 
 		if (linkName) {
 			highlightedButton = linkName + '-link';
 			navLinkOn(highlightedButton);
 		}
-	}
+	}*/
 
 	squashtm.navbar = {
-		initHighlighted : initHighlighted,
+	/*	initHighlighted : initHighlighted,
 		highlightOn : function(linkName) {
 			if (linkName !== highlightedButton) {
 				navLinkOn(linkName);
@@ -61,10 +61,10 @@ define([ "jquery" ], function($) {
 			if (linkName !== highlightedButton) {
 				navLinkOff(linkName);
 			}
-		}
+		}*/
 	};
 
-	$(function() {
+	/*$(function() {
 		$(".nav_btn").hover(function() {
 			var linkName = $(this).attr("id");
 			squashtm.navbar.highlightOn(linkName);
@@ -72,7 +72,7 @@ define([ "jquery" ], function($) {
 			var linkName = $(this).attr("id");
 			squashtm.navbar.highlightOff(linkName);
 		});
-	});
+	});*/
 
 	return squashtm.navbar;
 });

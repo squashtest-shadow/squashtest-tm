@@ -109,11 +109,11 @@
 							<c:when test="${'RequirementFolder' == object.class.simpleName}">
 								<td class="objectId">${object.id}</td>
 								<td id="searchnode-${object.class.simpleName}-${object.id}"
-									class="non-tree" style="border: none;"><a 
-									style="text-decoration: none; border: none;" > <img
-										class="search-image"
-										src="${servContext}/images/Icon_Tree_Folder.png" /> <span
-										class="search-text">${object.name}</span> </a>
+									class="non-tree" style="border: none;">
+									<a style="text-decoration: none; border: none;" > 
+										<span class="search-image icon-folder"/>
+										<spanclass="search-text">${object.name}</span>
+									</a>
 								</td>
 								<td></td>
 								<td></td>
@@ -157,11 +157,11 @@
 					<c:otherwise>
 					<td class="objectId">${object.id}</td>
 						<td id="searchnode-${object.class.simpleName}-${object.id}"
-							class="non-tree" style="border: none;"><a 
-							style="text-decoration: none; border: none;" > <img
-								class="search-image"
-								src="${servContext}/images/Icon_Tree_Folder.png" /> <span
-								class="search-text">${object.name}</span> </a>
+							class="non-tree" style="border: none;">
+							<a style="text-decoration: none; border: none;" > 
+								<span class="search-image icon-folder"/> 
+								<span class="search-text">${object.name}</span>
+							</a>
 						</td>
 						<c:if test="${ icon == 'TestCase' || icon == 'ExpandedTestCase'}">
 							<td>&nbsp;</td>

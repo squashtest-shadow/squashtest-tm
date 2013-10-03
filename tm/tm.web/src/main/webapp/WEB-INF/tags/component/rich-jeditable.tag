@@ -44,7 +44,7 @@
 			placeholder: '<f:message key="rich-edit.placeholder" />',
 			submit: '<f:message key="rich-edit.button.ok.label" />',
 			cancel: '<f:message key="label.Cancel" />',	
-			indicator : '<img src="${ pageContext.servletContext.contextPath }/scripts/jquery/indicator.gif" alt="processing..." />'
+			indicator : '<span class="processing-indicator" />'
 								
 		}
 		

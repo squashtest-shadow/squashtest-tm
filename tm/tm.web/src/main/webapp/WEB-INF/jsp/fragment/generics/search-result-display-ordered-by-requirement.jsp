@@ -52,7 +52,7 @@
 					<td> ${object.id}</td>
 					<td id="searchnode-${object.class.simpleName}Library-${object.project.id}" class="searched-project non-tree" style="border: none;" > 
 						<a style="color: white; text-decoration: none; border: none;" href="#">
-							<img class="search-image" src="${servContext}/images/root.png"/>
+							<span class="search-image icon-root"/>
 							<span class="search-text">${object.project.name}</span>
 						</a>
 					</td> 
@@ -74,7 +74,7 @@
 								<td class = "objectId"> ${object.id}</td>
 								<td id="searchnode-${object.class.simpleName}-${object.id}" class="non-tree requirement-${object.criticality}" style="border: none;">
 									<a href="#" style="text-decoration: none; border: none;">
-										<img class="search-image" src="${servContext}/images/Icon_Tree_TestCase.png"/>
+										<span class="search-image icon-test-case" />
 										<span class="search-text">${object.name}</span>
 									</a>
 								</td>
@@ -95,7 +95,7 @@
 					<td class = "objectId"> ${object.id}</td>
 					<td id="searchnode-${object.class.simpleName}-${object.id}" class="non-tree" style="border: none;"> 
 						<a href="#" style="text-decoration: none; border: none;">
-							<img class="search-image" src="${servContext}/images/Icon_Tree_Folder.png">
+							<span class="search-image icon-folder"/>
 							<span class="search-text">${object.name}</span>
 						</a>
 					</td>

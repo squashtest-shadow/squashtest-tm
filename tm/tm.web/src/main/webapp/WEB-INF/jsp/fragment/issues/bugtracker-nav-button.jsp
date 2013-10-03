@@ -28,11 +28,8 @@
 
 
 <fmt:message var="bTitle" key="workspace.bugtracker.button.label" />
-<a id="bugtracker-link" class="nav_btn nuttonmenu" >
-	<img
-	src="${ pageContext.servletContext.contextPath }/images/Button_Nav_Bugtracker_off.png"
-	alt="${ bTitle }" title="${ bTitle }" border="0" /> 
-</a>
+
+<a id="bugtracker-link" class="buttonmenu navigation-link navigation-bugtracker" title="${bTitle}" />
 
 <ul class="not-displayed width:130px;">
 	<c:forEach var="bugtracker" items="${bugtrackers}">

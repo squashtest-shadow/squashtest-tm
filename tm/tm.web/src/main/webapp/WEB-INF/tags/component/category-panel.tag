@@ -94,9 +94,7 @@
 						
 						<c:forEach var="report" items="${category.reportList}">
 							<div id="report-item-${report.id}" class="report-item">
-								<div class="report-item-icon">
-									<jq:report-type-image reportType="${report.reportType}"/>
-								</div> 
+								<div class="report-item-icon report-generic-icon"></div> 
 								<f:message var="reportTypeName" key="${report.reportType.resourceKeyName}"/>
 								<f:message var="reportName" key="${report.resourceKeyName}"/>
 								<f:message var="reportDescription" key="${report.resourceKeyDescription}"/>

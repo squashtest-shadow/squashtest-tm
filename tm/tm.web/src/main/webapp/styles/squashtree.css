@@ -43,12 +43,12 @@ li[editable="false"] a.jstree-clicked, li[rel="folder"][editable="false"] a.jstr
  * basic icons. The requirements aren't treated here because they're handled differently, see the bottom of this
  * file for more details.
  */
-li[rel="drive"] > a > .jstree-icon{ background-image: url("../images/root.png"); background-position:0 0;} /* default when nothing overrides it*/
-li[rel="folder"] > a > .jstree-icon{ background-image: url("../images/Icon_Tree_Folder.png");background-position:0 0;}
-li[rel="test-case"] > a > .jstree-icon{ background-image: url("../images/Icon_Tree_TestCase.png");background-position:0 0;}
-li[rel="campaign"] > a > .jstree-icon{ background-image: url("../images/Icon_Tree_Campaign.png");background-position:0 0;}
-li[rel="iteration"] > a > .jstree-icon{ background-image: url("../images/Icon_Tree_Iteration.png");background-position:0 0;}
-li[rel="test-suite"] > a > .jstree-icon{ background-image: url("../images/Icon_Tree_TestSuite.png");background-position:0 0;}
+li[rel="drive"] > a > .jstree-icon{ background-image: url("../images/root.png"); } /* default when nothing overrides it*/
+li[rel="folder"] > a > .jstree-icon{ background-image: url("../images/Icon_Tree_Folder.png");}
+li[rel="test-case"] > a > .jstree-icon{ background-image: url("../images/Icon_Tree_TestCase.png");}
+li[rel="campaign"] > a > .jstree-icon{ background-image: url("../images/Icon_Tree_Campaign.png");}
+li[rel="iteration"] > a > .jstree-icon{ background-image: url("../images/Icon_Tree_Iteration.png");}
+li[rel="test-suite"] > a > .jstree-icon{ background-image: url("../images/Icon_Tree_TestSuite.png");}
 
 
 

@@ -145,6 +145,10 @@ tr.nodrop td.drag-handle {
 	user-select: none;	
 }
 
+.loading{
+	background-image : url('../images/ajax-loader.gif');
+}
+
 .waiting-loading{
 	background-color: #EBEAE5;
 	background-image: url('../images/ajax-loader.gif');
@@ -153,6 +157,13 @@ tr.nodrop td.drag-handle {
 	min-height : 50px;
 	opacity: 0.2;	
 	filter: alpha(opacity=20);
+}
+
+.processing-indicator{
+	background-image: :url(../scripts/jquery/indicator.gif) no-repeat;
+	height : 16px;
+	width : 16px;
+	display : inline;
 }
 
 .minimal-height{
@@ -203,6 +214,40 @@ td.double-narrow{
 }
 
 
+/*********************** various icons *****************/
+
+.icon-test-case{
+	background : url(../images/Icon_Tree_TestCase.png) no-repeat;
+	width : 16px;
+	height : 16px;
+}
+
+
+.icon-iteration{
+	background : url(../images/Icon_Tree_Iteration.png) no-repeat;
+	width : 16px;
+	height : 16px;
+}
+
+.icon-folder{
+	background : url(../images/Icon_Tree_Folder.png) no-repeat;
+	width : 16px;
+	height : 16px;
+}
+
+.icon-root{
+	background : url(../images/root.png) no-repeat;
+	width : 16px;
+	height : 16px;	
+}
+
+
+.delete-confirm{
+	background-repear:no-repeat;
+	background-image:url(../images/messagebox_confirm.png);
+	width : 72px;
+	height : 64px;
+}
 
 .small-right-arrow{
 	background :url(../images/arrow_right.gif) no-repeat left center;

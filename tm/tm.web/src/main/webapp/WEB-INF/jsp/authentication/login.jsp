@@ -81,8 +81,8 @@
 			</div>
 			<div class="snap-right">
 				<div class="unstyled-notification-pane">
-							<layout:_ajax-notifications  cssClass="snap-right"/>
-				<img src="${ pageContext.servletContext.contextPath }/images/logo_squash30h.png" />
+					<layout:_ajax-notifications  cssClass="snap-right"/>
+					<div class="horizontal-logo" />
 				</div>
 			</div>
 		</div>
