@@ -56,10 +56,26 @@
 
 <script type="text/javascript">
 	
-
-	$(function() {
-		
-		$( '#remove-items-button' ).click(function() {
+	var squashSettings = {
+		enableDnD : true,
+		functions : {
+			dropHandler : function(dropData){
+				var ids = dropData.itemIds.join(',');
+				var url	= "${testplanUrl}/" + ids + '/position/' + dropData.newIndex;		
+				$.post(url, function(){
+					$("#test-plans-table").squashTable().refresh();
+				});
+			}
+		}
+	}
+	
+	
+	$(function() {		
+		require(["jquery", "squashtable"], function($){
+			
+			$("#test-plans-table").squashTable({}, squashSettings);
+			
+			$( '#remove-items-button' ).click(function() {
 				var table = $( '#test-plans-table' ).squashTable();
 				var ids = table.getSelectedIds(),
 					url = "${testplanUrl}/" + ids.join(',');
@@ -79,30 +95,8 @@
 					});
 				}
 				
-			});
-	
-	});
-
-
-	
-	$(function(){	
-
-		var squashSettings = {
-			enableDnD : true,
-			functions : {
-				dropHandler : function(dropData){
-					var ids = dropData.itemIds.join(',');
-					var url	= "${testplanUrl}/" + ids + '/position/' + dropData.newIndex;		
-					$.post(url, function(){
-						$("#test-plans-table").squashTable().refresh();
-					});
-				}
-			}
-		}
-		
-		$("#test-plans-table").squashTable({}, squashSettings);
-		
-		
+			});			
+		});
 	});
 	
 </script>

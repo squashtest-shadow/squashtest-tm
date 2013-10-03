@@ -73,7 +73,7 @@
 					<span class="admin-section-label"><f:message key="label.bugtrackerManagement" /></span>
 				</a>
 				<a href="${ customFieldsUrl }" class="unstyledLink">
-					<span id="custom-fields-admin" class="admin-section-icon admin-customfield-icon" ></span>
+					<span id="custom-fields-admin" class="admin-section-icon admin-customfields-icon" ></span>
 					<span class="admin-section-label"><f:message key="label.customFieldsManagement" /></span>
 				</a>
 				<a href="${ loginUrl }" class="unstyledLink ">

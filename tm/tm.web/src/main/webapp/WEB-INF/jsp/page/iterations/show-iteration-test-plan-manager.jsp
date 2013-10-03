@@ -45,11 +45,6 @@
 	<script type="text/javascript">
 		selection = [];
 		$(function(){
-			require(["common"], function(){
-				require(["app/ws/squashtm.navbar"], function(navbar) {
-  					navbar.highlightOn('campaign-link');
-				});
-			});	
 			
 			$( '#add-items-button' ).click(function() {
 				var tree = $( '#linkable-test-cases-tree' );

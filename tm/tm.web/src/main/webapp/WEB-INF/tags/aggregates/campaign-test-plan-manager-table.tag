@@ -57,35 +57,38 @@
 </div> 
 <script type="text/javascript">
 
-	$(function() {
-			
-		 var squashSettings = {
-			enableDnD : true,
-			functions : {
-				dropHandler : function(dropData){
-					var ids = dropData.itemIds.join(',');
-					var url	= "${testplanUrl}/" + ids + '/position/' + dropData.newIndex;		
-					$.post(url, function(){
-						$("#test-cases-table").squashTable().refresh();
-					});
-				}
+	var squashSettings = {
+		enableDnD : true,
+		functions : {
+			dropHandler : function(dropData){
+				var ids = dropData.itemIds.join(',');
+				var url	= "${testplanUrl}/" + ids + '/position/' + dropData.newIndex;		
+				$.post(url, function(){
+					$("#test-cases-table").squashTable().refresh();
+				});
 			}
 		}
-		
-		$("#test-cases-table").squashTable({}, squashSettings);
-		
-		<%-- selected test-case removal --%>
-		$( '#${ batchRemoveButtonId }' ).click(function() {
-			var table = $( '#test-cases-table' ).squashTable();
-			var ids = table.getSelectedIds();
+	}
+
+	$(function() {
+
+		require(["jquery","squashtable"], function($){
+			$("#test-cases-table").squashTable({}, squashSettings);
 			
-			if (ids.length > 0) {
-				$.post('${ campaignUrl }/test-plan', { action: 'remove', itemIds: ids })
-				.done(function(){
-					table.refresh();
-				})
-			}
-		});
+			<%-- selected test-case removal --%>
+			$( '#${ batchRemoveButtonId }' ).click(function() {
+				var table = $( '#test-cases-table' ).squashTable();
+				var ids = table.getSelectedIds();
+				
+				if (ids.length > 0) {
+					$.post('${ campaignUrl }/test-plan', { action: 'remove', itemIds: ids })
+					.done(function(){
+						table.refresh();
+					})
+				}
+			});
+			
+		})
 	});
 	
 </script>

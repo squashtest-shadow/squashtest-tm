@@ -565,13 +565,19 @@ html.execute-html body.ieo-body {
 	margin-top: 5px;
 }
 
+.vertical-logo{
+	background-image : url("../images/logo_squash30.png");
+	width:30px;
+	height:113px;
+	display : inline-block;
+}
+
 
 #nav_logo {
 	bottom: 1em;
-	height: auto;
 	position: absolute;
 	text-align: center;
-	width: inherit;
+	left : 4px;
 }
 
 /* ------------------------------------------*/
@@ -1141,10 +1147,10 @@ div.information-panel p {
 
 
 .horizontal-logo{
-	background-image : url("../images/logo_squash30h.png") no-repeat;
+	background-image : url("../images/logo_squash30h.png");
 	width :  113px;
 	height : 30px;
-	display : inline;
+	display : inline-block;
 }
 
 /* it was supposed to be a vertical align but that quick fix is just as fine.*/
