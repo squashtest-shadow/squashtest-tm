@@ -104,7 +104,7 @@ define([ "jquery", "workspace.contextual-content" , "jqueryui" ], function($, co
 			};
 			notifyListeners(evt);
 			notifyContextualContent(evt);
-		})
+		});
 		/* ************** public interface (slave) **************** */
 
 		this.update = function(event) {
@@ -216,8 +216,8 @@ define([ "jquery", "workspace.contextual-content" , "jqueryui" ], function($, co
 				dataType : 'json'
 			}).success(function(json){
 				notifyBind();
-			})
-		}
+			});
+		};
 		
 		this.getModel = function() {
 			_getModel().success(function() {
