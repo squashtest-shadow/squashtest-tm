@@ -202,8 +202,8 @@ class DynamicManagerFactoryBeanTest extends Specification{
 		def res = factory.object.findByNameAndSuperpower("summers", "optic blasts")
 
 		then:
-		1 * query.setParameter(0, "summers")
-		1 * query.setParameter(1, "optic blasts")
+		1 * query.setParameter("1", "summers")
+		1 * query.setParameter("2", "optic blasts")
 		res == entity
 	}
 
@@ -221,8 +221,8 @@ class DynamicManagerFactoryBeanTest extends Specification{
 		List res = factory.object.findAllByNameAndSuperpower("summers", "optic blasts")
 
 		then:
-		1 * query.setParameter(0, "summers")
-		1 * query.setParameter(1, "optic blasts")
+		1 * query.setParameter("1", "summers")
+		1 * query.setParameter("2", "optic blasts")
 		res == [entity]
 	}
 

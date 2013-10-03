@@ -74,7 +74,7 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 
 			@Override
 			public void setQueryParameters(Query query) {
-				query.setParameter(0, iterationId);
+				query.setParameter("1", iterationId);
 			}
 
 		});
@@ -86,8 +86,8 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 
 			@Override
 			public void setQueryParameters(Query query) {
-				query.setParameter(0, testSuiteId);
-				query.setParameter(1, testSuiteId);
+				query.setParameter("1", testSuiteId);
+				query.setParameter("2", testSuiteId);
 			}
 
 		});
@@ -170,7 +170,7 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 
 			@Override
 			public void setQueryParameters(Query query) {
-				query.setLong(0, id);
+				query.setLong("1", id);
 			}
 		};
 		return newCallBack;

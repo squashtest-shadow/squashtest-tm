@@ -158,8 +158,8 @@ class DynamicDaoFactoryBeanTest extends Specification {
 		def res = factory.object.findByNameAndSuperpower("summers", "optic blasts")
 
 		then:
-		1 * query.setParameter(0, "summers")
-		1 * query.setParameter(1, "optic blasts")
+		1 * query.setParameter("1", "summers")
+		1 * query.setParameter("2", "optic blasts")
 		res == entity
 	}
 
@@ -177,8 +177,8 @@ class DynamicDaoFactoryBeanTest extends Specification {
 		List res = factory.object.findAllByNameAndSuperpower("summers", "optic blasts")
 
 		then:
-		1 * query.setParameter(0, "summers")
-		1 * query.setParameter(1, "optic blasts")
+		1 * query.setParameter("1", "summers")
+		1 * query.setParameter("2", "optic blasts")
 		res == [entity]
 	}
 
@@ -238,7 +238,7 @@ class DynamicDaoFactoryBeanTest extends Specification {
 		def res = factory.object.findBySuperpowerPaged("master of magnetism", paging)
 
 		then:
-		1 * query.setParameter(0, "master of magnetism")
+		1 * query.setParameter("1", "master of magnetism")
 		1 * query.setFirstResult(10)
 		1 * query.setMaxResults(100)
 		res == entity

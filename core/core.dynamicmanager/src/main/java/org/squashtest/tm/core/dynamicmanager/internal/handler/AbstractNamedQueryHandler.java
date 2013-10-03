@@ -99,9 +99,10 @@ abstract class AbstractNamedQueryHandler<ENTITY> implements DynamicComponentInvo
 	private void processQueryParameters(Query query, Object[] args) {
 		int lastArgIndex = pagedQuery(args) ? args.length - 1 : args.length;
 
-		for (int i = 0; i < lastArgIndex; i++) {
+		for (int i = 0; i < lastArgIndex ; i++) {
 			Object arg = args[i];
-			query.setParameter(i, arg);
+			Integer j = i+1;
+			query.setParameter(j.toString(), arg);
 		}
 
 	}

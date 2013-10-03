@@ -52,7 +52,7 @@ import org.squashtest.tm.validation.constraint.HasDefaultAsRequired;
 
 @NamedQueries({ @NamedQuery(name = "CustomField.findAllOrderedByName", query = "from CustomField cf order by cf.name"),
 		@NamedQuery(name = "CustomField.countCustomFields", query = "select count(*) from CustomField"),
-		@NamedQuery(name = "CustomField.findByCode", query = "from CustomField where code = ?") })
+		@NamedQuery(name = "CustomField.findByCode", query = "from CustomField where code = ?1") })
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "FIELD_TYPE", discriminatorType = DiscriminatorType.STRING)
