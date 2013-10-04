@@ -23,58 +23,59 @@
 
 	squashtm.StatusFactory = squashtm.StatusFactory || function(conf) {
 
-		this.getHtmlFor = function(textStatus, status) {
+		this._conf = {};
+		//convert the status to lowercase
+		for (var status in conf){
+			this._conf[status.toLowerCase()] = conf[status];
+		}
+		
+		this.getHtmlFor = function(translatedTextStatus, status) {
 			var css;
 			if (!! status) {
-				css = "executions-status-" + status + "-icon";
+				css = "exec-status-" + status.toLowerCase();
 			} else {
-				css = lookupCss(textStatus);
+				css = this.lookupCss(translatedTextStatus);
 			}
-			return makeHtml(css, textStatus);
+			return makeHtml(css, translatedTextStatus);
 		};
 
-		function lookupCss(textStatus) {
-			var css;
+		this.lookupCss = function(translatedTextStatus) {
+			var css,
+				lowerCaseStatus = translatedTextStatus.toLowerCase(),
+				conf = this._conf;
 
-			switch (textStatus) {
+			
+			switch (lowerCaseStatus) {
 			case conf.blocked:
-			case conf.BLOCKED:
-				css = "executions-status-BLOQUED-icon";
+				css = "exec-status-blocked";
 				break;
 
 			case conf.failure:
-			case conf.FAILURE:
-				css = "executions-status-FAILURE-icon";
+				css = "exec-status-failure";
 				break;
 
 			case conf.success:
-			case conf.SUCCESS:
-				css = "executions-status-SUCCESS-icon";
+				css = "exec-status-success";
 				break;
 
 			case conf.running:
-			case conf.RUNNING:
-				css = "executions-status-RUNNING-icon";
+				css = "exec-status-running";
 				break;
 
 			case conf.ready:
-			case conf.READY:
-				css = "executions-status-READY-icon";
+				css = "exec-status-ready";
 				break;
 
 			case conf.error:
-			case conf.ERROR:
-				css = "executions-status-ERROR-icon";
+				css = "exec-status-error";
 				break;
 
 			case conf.warning:
-			case conf.WARNING:
-				css = "executions-status-WARNING-icon";
+				css = "exec-status-warning";
 				break;
 
 			case conf.untestable:
-			case conf.UNTESTABLE:
-				css = "executions-status-UNTESTABLE-icon";
+				css = "exec-status-untestable";
 				break;
 
 			default:
@@ -87,7 +88,7 @@
 		}
 
 		function makeHtml(cssClass, text) {
-			return '<span class="common-status-label ' + cssClass + '">' + text + '</span>';
+			return '<span class="exec-status-label ' + cssClass + '">' + text + '</span>';
 		}
 
 	};

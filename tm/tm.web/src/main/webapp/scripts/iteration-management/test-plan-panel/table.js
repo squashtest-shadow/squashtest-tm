@@ -168,7 +168,7 @@ define(['jquery', 'squash.translator', './exec-runner', './sortmode',
 			submitStatusClbk : function(value, settings) {
 				var $span = $(this),
 					statuses = JSON.parse(settings.data);
-				$span.attr('class', 'common-status-label executions-status-'+value+'-icon');
+				$span.attr('class', 'exec-status-label exec-status-'+value.toLowerCase());
 				$span.text( statuses[value] );
 			}, 
 			

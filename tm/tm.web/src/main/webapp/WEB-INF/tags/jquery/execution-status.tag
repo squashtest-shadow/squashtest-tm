@@ -23,8 +23,10 @@
 <%@ tag language="java" pageEncoding="utf-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn"uri="http://java.sun.com/jsp/jstl/functions"%>
+
 <%@ attribute name="status" type="java.lang.Enum"	description="execution status of the entity" %>
 
 <f:message var="entityStatus" key="${status.i18nKey}" />
-<c:set var="statusClass" value="exec-status-${status}" />
-<span style="white-space:nowrap; display:inline-block;" class="common-status-label ${statusClass}" >${entityStatus}</span>
+<c:set var="statusClass" value="exec-status-${fn:toLowerCase(status)}" />
+<span style="white-space:nowrap; display:inline-block;" class="exec-status-label ${statusClass}" >${entityStatus}</span>

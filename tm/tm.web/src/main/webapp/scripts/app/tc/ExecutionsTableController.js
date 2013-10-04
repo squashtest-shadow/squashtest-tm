@@ -102,7 +102,7 @@ define([ "jquery", "squashtable", "jqueryui" ],
 					}, {
 						"bSortable" : true,
 						"aTargets" : [ 8 ],
-						"sClass" : "exec-status",
+						"sClass" : "exec-status exec-status-label",
 						"mDataProp" : "exec-status"
 					}, {
 						"bSortable" : true,

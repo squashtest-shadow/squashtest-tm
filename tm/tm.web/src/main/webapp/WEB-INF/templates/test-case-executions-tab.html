@@ -84,7 +84,7 @@
   						<td th:text="#{*{executionMode.i18nKey}}">Mode ??</td>
   						<td th:text="*{testPlan.testSuiteNames}">Test Suite AA</td>
   						<td th:text="*{executionStatus}"  class="not-displayed raw-exec-status">BLOCKED</td>
-  						<td th:text="#{*{executionStatus.i18nKey}}" class="exec-status exec-status-blocked" th:class="*{'exec-status exec-status-' + #strings.toLowerCase(executionStatus)}">Status ??</td>
+  						<td th:text="#{*{executionStatus.i18nKey}}" class="exec-status exec-status-label exec-status-blocked" th:class="*{'exec-status exec-status-label exec-status-' + #strings.toLowerCase(executionStatus)}">Status ??</td>
   						<td th:text="*{lastExecutedBy}">Peter Parker</td>
   						<td th:text="*{lastExecutedOn == null ? #messages.msg('squashtm.nodata') : #dates.format(lastExecutedOn,#messages.msg('squashtm.dateformatShort'))}">01/02/2013</td>
   					</tr>
@@ -97,7 +97,7 @@
   						<td>Mode ??</td>
   						<td>Test Suite AA</td>
   						<td class="not-displayed raw-exec-status">RUNNING</td>
-  						<td class="exec-status exec-status-running">Status ??</td>
+  						<td class="exec-status exec-status-label exec-status-running">Status ??</td>
   						<td>Peter Parker</td>
   						<td>01/02/2013</td>
   					</tr>

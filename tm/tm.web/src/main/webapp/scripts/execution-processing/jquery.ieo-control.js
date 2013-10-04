@@ -84,28 +84,28 @@ define([ "jquery", "module", "jquery.cookie", "jqueryui" ], function($, module) 
 			this.getUntestableButton().button({
 				'text' : false,
 				'icons' : {
-					'primary' : 'execute-untestable'
+					'primary' : 'exec-status-untestable'
 				}
 			});
 
 			this.getBlockedButton().button({
 				'text' : false,
 				'icons' : {
-					'primary' : 'execute-blocked'
+					'primary' : 'exec-status-blocked'
 				}
 			});
 
 			this.getFailedButton().button({
 				'text' : false,
 				'icons' : {
-					'primary' : 'execute-failure'
+					'primary' : 'exec-status-failure'
 				}
 			});
 
 			this.getSuccessButton().button({
 				'text' : false,
 				'icons' : {
-					'primary' : 'execute-success'
+					'primary' : 'exec-status-success'
 				}
 			});
 

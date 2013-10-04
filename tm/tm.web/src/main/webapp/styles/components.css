@@ -136,31 +136,16 @@ table.datepicker-table td.datepicker-table-col {
 }
 
 /*******************************
-	information panel / description panel
+	exec statuses - adds background icon  
 ********************************/
 
-.execute-untestable {
-	background-image: url("../images/Icon_White.png") !important;
+.exec-status-option{
+	padding-left : 20px;
+	background-repeat : no-repeat;
+	background-color : transparent;	
 }
 
-.execute-blocked {
-	background-image: url("../images/Icon_Yellow.png") !important;
-}
-
-.execute-success {
-	background-image: url("../images/Icon_Green.png") !important;
-}
-
-.execute-failure {
-	background-image: url("../images/Icon_Red.png") !important;
-}
-
-.execute-stop {
-	background-image: url("../images/Button_Exec_stop.png") !important;
-}
-
-/** the following class is used in conjunction of one of the fifth images below : */
-.common-status-label {
+.exec-status-label {
 	padding-left: 26px;
 	display: block;
 	background-repeat: no-repeat;
@@ -168,37 +153,62 @@ table.datepicker-table td.datepicker-table-col {
 	line-height: 1.2;
 }
 
-.executions-status-BLOQUED-icon,  .executions-status-BLOCKED-icon{
-	background: url("../images/Icon_Yellow.png") no-repeat;
+
+.ui-button .ui-icon.exec-status-untestable,
+.exec-status-untestable{
+	background-image: url("../images/Icon_White.png");
+	background-repeat : no-repeat;
 }
 
-.executions-status-FAILURE-icon {
-	background: url("../images/Icon_Red.png") no-repeat;
+.ui-button .ui-icon.exec-status-blocked,
+.exec-status-blocked{
+	background-image: url("../images/Icon_Yellow.png");
+	background-repeat : no-repeat;
 }
 
-.executions-status-SUCCESS-icon {
-	background: url("../images/Icon_Green.png") no-repeat;
+.ui-button .ui-icon.exec-status-success,
+.exec-status-success{
+	background-image: url("../images/Icon_Green.png");
+	background-repeat : no-repeat;
 }
 
-.executions-status-UNTESTABLE-icon {
-	background: url("../images/Icon_White.png") no-repeat;
+.ui-button .ui-icon.exec-status-failure,
+.exec-status-failure {
+	background-image: url("../images/Icon_Red.png");
+	background-repeat : no-repeat;
 }
 
-.executions-status-RUNNING-icon {
-	background: url("../images/Icon_Blue.png") no-repeat;
+.ui-button .ui-icon.exec-status-running,
+.exec-status-running {
+	background: url("../images/Icon_Blue.png");
+	background-repeat : no-repeat;
 }
 
-.executions-status-READY-icon {
-	background: url("../images/Icon_Grey.png") no-repeat;
+.ui-button .ui-icon.exec-status-ready,
+.exec-status-ready {
+	background: url("../images/Icon_Grey.png");
+	background-repeat : no-repeat;
 }
 
-.executions-status-ERROR-icon {
-	background: url("../images/Icon_Yellow.png") no-repeat;
+.ui-button .ui-icon.exec-status-error,
+.exec-status-error {
+	background: url("../images/Icon_Yellow.png");
+	background-repeat : no-repeat;
 }
 
-.executions-status-WARNING-icon {
-	background: url("../images/Icon_Green.png") no-repeat;
+.ui-button .ui-icon.exec-status-warning,
+.exec-status-warning{
+	background: url("../images/Icon_Green.png");
+	background-repeat : no-repeat;
 }
+
+
+.ui-button .ui-icon.execute-stop {
+	background-image: url("../images/Button_Exec_stop.png");
+	background-repeat : no-repeat;
+}
+
+
 
 .manage-attachment-button {
 	border: 0 none;
@@ -626,41 +636,6 @@ span.span-green {
 
 #report-criteria-panel li {
 	list-style-type: none;
-}
-/*******************************
-	exec statuses - adds background icon  
-********************************/
-.exec-status-blocked, .exec-status-BLOCKED {
-	background: transparent url("../images/Icon_Yellow.png") no-repeat center left;
-	padding-left: 20px;
-}
-.exec-status-failure, .exec-status-FAILURE {
-	background: transparent url("../images/Icon_Red.png") no-repeat center left;
-	padding-left: 20px;
-}
-.exec-status-success, .exec-status-SUCCESS  {
-	background: transparent url("../images/Icon_Green.png") no-repeat center left;
-	padding-left: 20px;
-}
-.exec-status-untestable, .exec-status-UNTESTABLE  {
-	background: transparent url("../images/Icon_White.png") no-repeat center left;
-	padding-left: 20px;
-}
-.exec-status-running, .exec-status-RUNNING {
-	background: transparent url("../images/Icon_Blue.png") no-repeat center left;
-	padding-left: 20px;
-}
-.exec-status-ready, .exec-status-READY  {
-	background: transparent url("../images/Icon_Grey.png") no-repeat center left;
-	padding-left: 20px;
-}
-.exec-status-error, .exec-status-ERROR {
-	background: transparent url("../images/Icon_Yellow.png") no-repeat center left;
-	padding-left: 20px;
-}
-.exec-status-warning, .exec-status-WARNING  {
-	background: transparent url("../images/Icon_Green.png") no-repeat center left;
-	padding-left: 20px;
 }
 
 /*******************************

@@ -183,7 +183,7 @@
 					$("#execute-fail-button").button({
 						'text': false,
 						'icons' :{
-							'primary' : 'execute-failure'
+							'primary' : 'exec-status-failure'
 						}
 					}).click(function(){
 						$.post('${ executeStatus }', {
@@ -196,7 +196,7 @@
 					$("#execute-untestable-button").button({
 						'text': false,
 						'icons' :{
-							'primary' : 'execute-untestable'
+							'primary' : 'exec-status-untestable'
 						}
 					}).click(function(){
 						$.post('${ executeStatus }', {
@@ -209,7 +209,7 @@
 					$("#execute-blocked-button").button({
 						'text': false,
 						'icons' :{
-							'primary' : 'execute-blocked'
+							'primary' : 'exec-status-blocked'
 						}
 					}).click(function(){
 						$.post('${ executeStatus }', {
@@ -222,7 +222,7 @@
 					$("#execute-success-button").button({
 						'text' : false,
 						'icons' : {
-							'primary' : 'execute-success'
+							'primary' : 'exec-status-success'
 						}
 					}).click(function(){
 						$.post('${ executeStatus }', {
