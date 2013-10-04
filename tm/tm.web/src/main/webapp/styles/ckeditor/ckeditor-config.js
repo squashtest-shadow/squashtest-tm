@@ -9,6 +9,7 @@ CKEDITOR.editorConfig = function( config ){
 		['TextColor'],['Font'],['FontSize'],
 		['Scayt'],
 		['Table', 'Image'],
+		['Maximize']
 		];  
 	config.height = '10em';
 	config.resize_minHeight = 	175;
