@@ -225,29 +225,35 @@ td.double-narrow{
 
 /*********************** various icons *****************/
 
-.icon-test-case{
-	background : url(../images/Icon_Tree_TestCase.png) no-repeat;
+.icon-entity{
 	width : 16px;
 	height : 16px;
+	background-repeat : no-repeat;
+	display : inline-block;
 }
 
+.icon-test-case{
+	background-image : url(../images/Icon_Tree_TestCase.png);
+}
+
+.icon-requirement{
+	background-image : url(../images/Icon_Tree_Requirement.png);
+}
+
+.icon-campaign{
+	background-image : url(../images/Icon_Tree_Campaign.png);
+}
 
 .icon-iteration{
-	background : url(../images/Icon_Tree_Iteration.png) no-repeat;
-	width : 16px;
-	height : 16px;
+	background-image : url(../images/Icon_Tree_Iteration.png);
 }
 
 .icon-folder{
-	background : url(../images/Icon_Tree_Folder.png) no-repeat;
-	width : 16px;
-	height : 16px;
+	background-image : url(../images/Icon_Tree_Folder.png);
 }
 
 .icon-root{
-	background : url(../images/root.png) no-repeat;
-	width : 16px;
-	height : 16px;	
+	background-image : url(../images/root.png);
 }
 
 

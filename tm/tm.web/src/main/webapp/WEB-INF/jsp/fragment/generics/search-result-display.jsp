@@ -69,22 +69,7 @@
 	</comp:decorate-ajax-search-table>
 </c:if>
 <table id="search-result-datatable">
-<!-- 	<thead> -->
-<!-- 		<tr> -->
-<!-- 		<th>Id</th> -->
-<%-- 			<th><f:message key="${workspace}.header.title" />s</th> --%>
-<%-- 			<c:if test="${ icon == 'TestCase' || icon == 'ExpandedTestCase' }"> --%>
-<%-- 				<th><f:message key="test-case.importance.combo.label" /></th> --%>
-<%-- 			</c:if> --%>
-<%-- 			<c:if test="${ icon == 'Requirement' }"> --%>
-<%-- 				<th><f:message key="label.Reference" /></th> --%>
-<%-- 				<th><f:message key="search.criticality.label" /></th> --%>
-<%-- 				<th><f:message --%>
-<!-- 						key="label.project" /></th> -->
-<%-- 			</c:if> --%>
-			
-<!-- 		</tr> -->
-<!-- 	</thead> -->
+
 	<tbody>
 		<c:forEach var="object" items="${resultList}">
 
@@ -93,15 +78,13 @@
 					<c:when test="${'Requirement' == icon }">
 						<c:choose>
 							<c:when test="${'Requirement' == object.class.simpleName}">
-							<td class="objectId">${object.id}</td>
-							<td id="searchnode-${object.class.simpleName}-${object.id}"
+								<td class="objectId">${object.id}</td>
+								<td id="searchnode-${object.class.simpleName}-${object.id}"
 									class="non-tree requirement-${object.criticality}"
-									style="border: none;"><a 
-									style="text-decoration: none; border: none;" > <img
-										class="search-image"
-										src="${servContext}/images/Icon_Tree_${icon}.png" /> <span
-										class="search-text">${object.reference}-${object.name}</span>
-								</a></td>
+									style="border: none;">
+									<span class="icon-entity icon-requirement"></span> 
+									<span class="search-text">${object.reference}-${object.name}</span>
+								</td>
 								<td>${object.criticality}</td>
 								<td>${object.reference}</td>
 								<td>${object.name}</td>
@@ -109,11 +92,9 @@
 							<c:when test="${'RequirementFolder' == object.class.simpleName}">
 								<td class="objectId">${object.id}</td>
 								<td id="searchnode-${object.class.simpleName}-${object.id}"
-									class="non-tree" style="border: none;">
-									<a style="text-decoration: none; border: none;" > 
-										<span class="search-image icon-folder"/>
-										<spanclass="search-text">${object.name}</span>
-									</a>
+									class="non-tree" style="border: none;">									
+										<span class="icon-entity icon-folder"></span>
+										<span class="search-text">${object.name}</span>									
 								</td>
 								<td></td>
 								<td></td>
@@ -125,11 +106,9 @@
 						test="${object.class.simpleName == 'TestCase' || object.class.simpleName == 'ExpandedTestCase' }">
 						<td class="objectId">${object.id}</td>
 						<td id="searchnode-${object.class.simpleName}-${object.id}"
-							class="non-tree" style="border: none;"><a 
-							style="text-decoration: none; border: none;" > <img
-								class="search-image"
-								src="${servContext}/images/Icon_Tree_${icon}.png" /> <span
-								class="search-text">${object.name}</span> </a>
+							class="non-tree" style="border: none;">
+							<span class="icon-entity icon-test-case"></span> 
+							<span class="search-text">${object.name}</span>
 						</td>
 						<td><f:message key="${object.importance.i18nKey}" />
 						</td>
@@ -137,31 +116,26 @@
 					<c:when test="${object.class.simpleName== 'Campaign'}">
 					<td class="objectId">${object.id}</td>
 						<td id="searchnode-${object.class.simpleName}-${object.id}"
-							class="non-tree" style="border: none;"><a 
-							style="text-decoration: none; border: none;" > <img
-								class="search-image"
-								src="${servContext}/images/Icon_Tree_${icon}.png" /> <span
-								class="search-text">${object.name}</span> </a>
+							class="non-tree" style="border: none;">
+							<span class="icon-entity icon-campaign"></span> 
+							<span class="search-text">${object.name}</span> 
 						</td>
 					</c:when>
 					<c:when test="${object.class.simpleName== 'Iteration'}">
 					<td class="objectId">${object.id}</td>
 						<td id="searchnode-${object.class.simpleName}-${object.id}"
-							class="non-tree" style="border: none;"><a 
-							style="text-decoration: none; border: none;" > <img
-								class="search-image"
-								src="${servContext}/images/Icon_Tree_Iteration.png" /> <span
-								class="search-text">${object.name}</span> </a>
+							class="non-tree" style="border: none;">
+								<span class="icon-entity icon-iteration"></span> 
+								<span class="search-text">${object.name}</span> 
 						</td>
 					</c:when>
 					<c:otherwise>
 					<td class="objectId">${object.id}</td>
 						<td id="searchnode-${object.class.simpleName}-${object.id}"
-							class="non-tree" style="border: none;">
-							<a style="text-decoration: none; border: none;" > 
-								<span class="search-image icon-folder"/> 
-								<span class="search-text">${object.name}</span>
-							</a>
+							class="non-tree" style="border: none;">							
+							<span class="sicon-entity icon-folder"/> 
+							<span class="search-text">${object.name}</span>
+							
 						</td>
 						<c:if test="${ icon == 'TestCase' || icon == 'ExpandedTestCase'}">
 							<td>&nbsp;</td>

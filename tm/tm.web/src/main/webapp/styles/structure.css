@@ -184,6 +184,9 @@ div.sub-page div.search-panel-wrap .search-panel-footer{
 	right: 127px;
 }
 
+#search-result-datatable .search-items, #by-req-search-result-datatable .search-items{
+	cursor:default;
+}
 
 
 div.table-tab-wrap{
@@ -274,10 +277,6 @@ span.search-text {
 	background-position: top;
 }
 
-img.search-image {
-	vertical-align: bottom;
-	border: none;
-}
 
 #test-case-search-toolbar {
 	text-align : right;	
@@ -784,15 +783,15 @@ div#search-result .library {
 }
 
 .report-spreadsheet-icon{
-	bakground-image : url(../images/report_spreadsheet.png);
+	background-image : url(../images/report_spreadsheet.png);
 }
 
 .report-time-icon{
-	bakground-image : url(../images/report_time.png);
+	background-image : url(../images/report_time.png);
 }
 
-.report-time-icon{
-	bakground-image : url(../images/report_word.png);
+.report-word-icon{
+	background-image : url(../images/report_word.png);
 }
 
 .report-item-text {

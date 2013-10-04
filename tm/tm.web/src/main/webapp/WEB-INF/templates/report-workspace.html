@@ -90,9 +90,7 @@
 					<div th:each="rpt : ${reports.get(cat)}" th:id="${#ids.seq('report-item')}" 
 						data-href="sample-report/0" th:attr="data-href=@{'/reports/' + ${rpt.namespace} + '/' + ${rpt.index} + '/panel'}"
 						class="report-item">
-						<div class="report-item-icon">
-							<img src="../../../../../../../tm/tm.web/src/main/webapp/images/report_spreadsheet.png" th:src="@{${rpt.type.iconUri}}" alt="type" th:alt="#{${rpt.type.i18nKey}}" />
-						</div> 
+						<div class="report-item-icon" th:classappend="${rpt.type.iconClass}"></div> 
 						<div class="report-item-text">
 								<strong class="report-item-name">
 									<span th:text="${rpt.label}">Sample report</span>

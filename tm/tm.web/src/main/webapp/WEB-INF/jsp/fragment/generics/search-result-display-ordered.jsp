@@ -25,6 +25,9 @@
 		- search-result-display-by-requirement
 		- search-result-display-ordered-by-requirement
 		- search-result-display
+		
+	13/10/04 : that page is still there and I still hate it
+	
  --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
@@ -51,11 +54,10 @@
 						</c:if>
 						<td colspan="${colSpan}"
 							id="searchnode-${object.class.simpleName}Library-${object.project.id}"
-							class="searched-project non-tree" style="border: none;">
-							<a style="color: white; text-decoration: none; border: none;" href="#"> 
-								<span class="search-image icon-root"/>
+							class="searched-project non-tree" style="border: none;">							
+								<span class="icon-entity icon-root"/>
 								<span class="search-text">${object.project.name}</span>
-							</a>
+							
 						</td>
 						<c:choose>
 							<c:when test="${ icon == 'TestCase' }">
@@ -79,13 +81,10 @@
 					<c:when test="${ object.class.simpleName == 'Requirement' }">
 						<tr class=" requirement-${object.criticality}">
 							<td class="objectId">${object.id}</td>
-							<td id="searchnode-${object.class.simpleName}-${object.id}"
-								class="non-tree requirement-${object.criticality}"
-								style="border: none;"><a href="#"
-								style="text-decoration: none; border: none;"> <img
-									class="search-image"
-									src="${servContext}/images/Icon_Tree_${icon}.png" /> <span
-									class="search-text">${object.reference}-${object.name}</span> </a>
+							<td id="searchnode-${object.class.simpleName}-${object.id}"	
+								class="non-tree requirement-${object.criticality}" style="border: none;">							
+								<span class="icon-entity icon-requirement"></span> 
+								<span class="search-text">${object.reference}-${object.name}</span>
 							</td>
 							<td>${object.project.name }-${object.criticality}</td>
 							<td>${object.project.name }-${object.reference}</td>
@@ -97,11 +96,9 @@
 						<tr>
 							<td class="objectId">${object.id}</td>
 							<td id="searchnode-${object.class.simpleName}-${object.id}"
-								class="non-tree" style="border: none;"><a href="#"
-								style="text-decoration: none; border: none;"> <img
-									class="search-image"
-									src="${servContext}/images/Icon_Tree_${icon}.png" /> <span
-									class="search-text">${object.name}</span> </a>
+								class="non-tree" style="border: none;">
+									<span class="icon-entity icon-test-case"></span> 
+									<span class="search-text">${object.name}</span> 
 							</td>
 							<td><f:message key="${object.importance.i18nKey}" /></td>
 							<td>${object.project.name }-${object.name }</td>
@@ -111,11 +108,9 @@
 						<tr>
 							<td class="objectId">${object.id}</td>
 							<td id="searchnode-${object.class.simpleName}-${object.id}"
-								class="non-tree" style="border: none;"><a href="#"
-								style="text-decoration: none; border: none;"> <img
-									class="search-image"
-									src="${servContext}/images/Icon_Tree_${icon}.png" /> <span
-									class="search-text">${object.name}</span> </a>
+								class="non-tree" style="border: none;">
+									<span class="icon-entity icon-campaign"></span> 
+									<span class="search-text">${object.name}</span> 
 							</td>
 							<td>${object.project.name }-${object.name }</td>
 						</tr>
@@ -124,12 +119,9 @@
 						<tr>
 							<td class="objectId">${object.id}</td>
 							<td id="searchnode-${object.class.simpleName}-${object.id}"
-								class="non-tree" style="border: none;"><a href="#"
-								style="text-decoration: none; border: none;"> <img
-									class="search-image"
-									src="${servContext}/images/Icon_Tree_Iteration.png"> <span
-										class="search-text">${object.name}</span>
-							</a>
+								class="non-tree" style="border: none;">
+									<span class="icon-entity icon-iteration"></span> 
+									<span class="search-text">${object.name}</span> 
 							</td>
 							<td>${object.project.name }-${object.name }</td>
 						</tr>
@@ -138,12 +130,9 @@
 						<tr>
 							<td class="objectId">${object.id}</td>
 							<td id="searchnode-${object.class.simpleName}-${object.id}"
-								class="non-tree" style="border: none;"><a href="#"
-								style="text-decoration: none; border: none;">
-									
-									<span class="search-image icon-folder"/> 
-									<span class="search-text">${object.name}</span>
-							</a>
+								class="non-tree" style="border: none;">									
+								<span class="icon-entity icon-folder"/> 
+								<span class="search-text">${object.name}</span>							
 							</td>
 							<c:if test="${ icon == 'TestCase' }">
 								<td>---</td>

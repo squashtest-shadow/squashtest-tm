@@ -35,8 +35,8 @@ public enum StandardReportType implements Internationalizable {
 		}
 
 		@Override
-		public String getIconUri() {
-			return "/images/report_spreadsheet.png";
+		public String getIconClass() {
+			return "report-spreadsheet-icon";
 		}
 	},
 	GENERIC() {
@@ -46,8 +46,8 @@ public enum StandardReportType implements Internationalizable {
 		}
 
 		@Override
-		public String getIconUri() {
-			return "/images/report_generic.png";
+		public String getIconClass() {
+			return "report-generic-icon";
 		}
 	},
 	SPECIFICATION_BOOK(){
@@ -57,10 +57,10 @@ public enum StandardReportType implements Internationalizable {
 		}
 
 		@Override
-		public String getIconUri() {
-			return "/images/report_word.png";
+		public String getIconClass() {
+			return "report-word-icon";
 		}		
 	};
 
-	public abstract String getIconUri();
+	public abstract String getIconClass();
 }
