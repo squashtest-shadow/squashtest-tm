@@ -306,7 +306,7 @@
 			open="${hasCUF}">
 			<jsp:attribute name="body">
 				<div id="test-suite-custom-fields-content" class="display-table">
-				<div class="waiting-loading minimal-height"></div>
+				<div class="waiting-loading full-size-hack minimal-height"></div>
 				</div>
 			</jsp:attribute>
 		</comp:toggle-panel>

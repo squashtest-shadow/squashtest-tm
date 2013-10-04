@@ -231,7 +231,7 @@
 			titleKey="generics.customfieldvalues.title" isContextual="true"	open="${hasCUF}">
 			<jsp:attribute name="body">
 				<div id="campaign-custom-fields-content" class="display-table">
-				<div class="waiting-loading minimal-height"></div>
+				<div class="waiting-loading full-size-hack"></div>
 				</div>
 			</jsp:attribute>
 		</comp:toggle-panel>

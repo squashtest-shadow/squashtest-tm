@@ -157,11 +157,20 @@ tr.nodrop td.drag-handle {
 	width : 16px;
 }
 
+.full-size-hack{
+	position : absolute;
+	top : 0;
+	left : 0;
+	bottom : 0;
+	right : 0;
+}
+
 .waiting-loading{
 	background-color: #EBEAE5;
 	background-image: url('../images/ajax-loader.gif');
 	background-position: center center;
 	background-repeat: no-repeat;
+	background-size : 70px 70px;
 	min-height : 50px;
 	opacity: 0.2;	
 	filter: alpha(opacity=20);

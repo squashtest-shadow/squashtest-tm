@@ -67,21 +67,19 @@
  	</jsp:attribute>
 	<jsp:attribute name="body"> 
  	<div class="issue-report-dialog">
- 		<div class="pleasewait" style="vertical-align: middle;">
- 			<div class="waiting-loading" ></div>
-			<span style="font-size: 1.5em;"><f:message	key="squashtm.processing" /></span>
+ 	
+ 		<div class="pleasewait" >
+ 			<div class="waiting-loading full-size-hack centered" >
+ 				<div style="font-size: 1.5em; margin-top : 300px;"><f:message	key="squashtm.processing" /></div>
+ 			</div>			
  		</div>
 		
 	 	<div class="content">	
 	
-	 			<div class="issue-report-error">
-	 				<comp:error-message forField="bugtracker" />
-	 			</div>
-	 				 	
-	 	
+ 			<div class="issue-report-error">
+ 				<comp:error-message forField="bugtracker" />
+ 			</div>
 	 		<form>
-	 		
-	 		
 	 			<div class="attach-issue">
 	 				<span class="issue-radio">
 	 					<input type="radio" name="add-issue-mode" class="attach-radio"
@@ -96,17 +94,15 @@
 							value="${searchIssueLabel}" />
 	 			</div>
 	 		
-	 	
-	 			
 	 			<div class="issue-report-break">
 	 				
 	 			</div>
 	 			
 	 			<span class="issue-radio">
-	 				<input type="radio" class="report-radio" name="add-issue-mode"
-						value="report" />
-	 				<span class="issue-radio-label"><f:message
-								key="dialog.issue.radio.new.label" /></span>
+	 				<input type="radio" class="report-radio" name="add-issue-mode"	value="report" />
+	 				<span class="issue-radio-label">
+	 					<f:message key="dialog.issue.radio.new.label" />
+	 				</span>
 	 			 </span>
 	 			 
 	 			 <div class="issue-report-fields">

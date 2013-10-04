@@ -124,7 +124,7 @@
 
 <div id="delete-node-dialog" class="popup-dialog not-displayed" title="${deleteNodeTitle}">
 	
-	<div class="waiting-loading" data-def="state=pleasewait"></div>
+	<div class="waiting-loading full-size-hack" data-def="state=pleasewait"></div>
 	
 	<div class="not-displayed" data-def="state=confirm">
 	
