@@ -85,7 +85,7 @@
 			}
 
 			return css;
-		}
+		};
 
 		function makeHtml(cssClass, text) {
 			return '<span class="exec-status-label ' + cssClass + '">' + text + '</span>';
