@@ -316,10 +316,15 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 
 	private void doRemoveTestPlanItemFromIteration(Iteration iteration, IterationTestPlanItem item) {
-		Long testCaseId = item.getReferencedTestCase().getId();
+		TestCase testCase = item.getReferencedTestCase();
+		
 		iteration.removeItemFromTestPlan(item);
 		iterationTestPlanDao.remove(item);
-		advancedSearchService.reindexTestCase(testCaseId);
+		
+		// unless the test case was deleted, we need to reindex its statistics
+		if (testCase != null){
+			advancedSearchService.reindexTestCase(testCase.getId());					
+		}
 	}
 
 	@Override
