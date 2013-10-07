@@ -250,7 +250,10 @@
 								<li th:each="picker : *{pickers}">
 									<div th:if="'PROJECT_PICKER' == ${picker.type.name()}" th:object="${picker}" class="report-selector">
 										<label th:for="*{name}" th:text="*{label}">Projects</label>
-										<select th:id="*{name}" class="rpt-projects-crit-container" th:attr="data-id-opened=*{name}">
+										
+										<select th:if="${!projectMultiselect}" th:id="*{name}" class="rpt-projects-crit-container" th:attr="data-id-opened=*{name}">
+										</select>
+										<select th:if="${projectMultiselect}" multiple="multiple" th:id="*{name}" class="rpt-projects-crit-container" th:attr="data-id-opened=*{name}">
 										</select>
 									</div>
 								</li>
@@ -278,10 +281,10 @@
 									</div>
 									
 									<div th:if="${opt.selector} and 'PROJECT_PICKER' == ${opt.selector.type.name()}" th:object="${opt.selector}" class="report-selector">
-										<div th:if="'PROJECT_PICKER' == ${picker.type.name()}" th:object="${picker}" class="report-selector">
-											<select th:id="*{name}" class="rpt-projects-crit-container" th:attr="data-id-opened=*{name}">
+											<select th:if="${!projectMultiselect}" th:id="*{name}" class="rpt-projects-crit-container" th:attr="data-id-opened=*{name}">
 											</select>
-										</div>
+											<select th:if="${projectMultiselect}" multiple="multiple" th:id="*{name}" class="rpt-projects-crit-container" th:attr="data-id-opened=*{name}">
+											</select>
 									</div>
 								</li>
 							</ul>

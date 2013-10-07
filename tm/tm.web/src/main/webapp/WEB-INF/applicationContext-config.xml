@@ -35,9 +35,11 @@
       <array>
         <ref bean="squash.tm.auth.config" />
         <ref bean="squash.tm.uploadfilter.config" />
+        <ref bean="squash.tm.report.config" />
       </array>
     </property>
   </bean>
+  
 
   <!-- This placeholder configurer resolves all props from the above bean -->
   <context:property-placeholder properties-ref="squash.tm.config" />

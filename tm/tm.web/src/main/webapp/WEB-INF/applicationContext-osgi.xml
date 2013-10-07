@@ -408,6 +408,9 @@
 	<osgix:cm-properties id="squash.tm.uploadfilter.config"
 		persistent-id="org.squashtest.csp.tm.web.uploadfilter.config" />
 
+	<osgix:cm-properties id="squash.tm.report.config"
+		persistent-id="tm.report.config" />
+		
 	<!-- pretty much the same problem here. To be specific, that thing should 
 		be instanciated here in core.service. the reason is that due to the rigid 
 		configuration of Spring security, we had to declare it, along with the main 

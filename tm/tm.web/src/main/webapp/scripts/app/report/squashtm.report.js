@@ -651,8 +651,11 @@ define(
 				$.getJSON(url).done(
 						function(data) {
 							$.each(data.projectData, function(index, value) {
-								picker.append("<option value='" + value[0]
-										+ "'>" + value[1] + "</option>");
+								if(index === 0){
+									picker.append("<option selected='selected' value='" + value[0] + "'>" + value[1] + "</option>");
+								} else {
+									picker.append("<option value='" + value[0] + "'>" + value[1] + "</option>");
+								}
 							});
 
 							var options = $("option", picker);

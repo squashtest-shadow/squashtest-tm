@@ -29,6 +29,7 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,6 +56,10 @@ public class ReportController {
 	@Inject
 	private ReportsRegistry reportsRegistry;
 
+	@Inject
+	@Value("${tm.report.project.multiselect}")
+	private boolean projectMultiselect;
+
 	/**
 	 * Populates model and returns the fragment panel showing a report.
 	 * 
@@ -68,6 +73,7 @@ public class ReportController {
 	@RequestMapping(value = "/panel", method = RequestMethod.GET)
 	public String showReportPanel(@PathVariable String namespace, @PathVariable int index, Model model) {
 		populateModelWithReport(namespace, index, model);
+		model.addAttribute("projectMultiselect", projectMultiselect);
 		return "report-panel.html";
 	}
 
@@ -133,6 +139,14 @@ public class ReportController {
 			throws JsonParseException, JsonMappingException, IOException {
 		Map<String, Object> form = JsonHelper.deserialize(data);
 		return generateReportView(namespace, index, viewIndex, format, form);
+	}
+	
+	public boolean isProjectMultiselect() {
+		return projectMultiselect;
+	}
+
+	public void setProjectMultiselect(boolean projectMultiselect) {
+		this.projectMultiselect = projectMultiselect;
 	}
 
 }
