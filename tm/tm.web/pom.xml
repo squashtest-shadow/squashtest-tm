@@ -20,8 +20,11 @@
     <springdm.version.range>[2,3)</springdm.version.range>
     <thymeleaf.version>2.0.14.B</thymeleaf.version>
     <wro4j.version>1.6.3</wro4j.version>
+    <smartsprites.version>1.7</smartsprites.version>
     <thyleleaf.springsec.version>2.0.0</thyleleaf.springsec.version>
     <jasperreports.build.outputDirectory>${project.build.directory}/jasperreports/compiled</jasperreports.build.outputDirectory>
+    <smartsprites.inputDir>src/main/webapp/styles</smartsprites.inputDir>
+    <smartsprites.outputDir>${project.build.directory}/smartsprites/styles</smartsprites.outputDir>
     <wro4j.css.outputDirectory>${project.build.directory}/processed-css</wro4j.css.outputDirectory>
     <css.packageDirectory>styles</css.packageDirectory>
 
@@ -372,6 +375,8 @@
       <artifactId>org.springframework.test</artifactId>
     </dependency>
     <!-- ====== /SPRING INTEGRATION TEST SUPPORT ====== -->
+    
+
   </dependencies>
   <build>
     <resources>
@@ -478,6 +483,29 @@
           <attachClasses>true</attachClasses>
         </configuration>
       </plugin>
+
+	<plugin>
+		<groupId>net.jangaroo</groupId>
+		<artifactId>smartsprites-maven-plugin</artifactId>
+		<version>${smartsprites.version}</version>
+		
+		<configuration>
+			<rootDirPath>${smartsprites.inputDir}</rootDirPath>
+			<outputDirPath>${smartsprites.outputDir}</outputDirPath>
+		</configuration>
+		
+		<executions>
+			<execution>
+				<id>smartsprites</id>
+				<phase>process-sources</phase>
+				<goals>
+					<goal>createSprites</goal>
+				</goals>
+			</execution>
+		</executions>
+		
+	</plugin>
+            
 
       <plugin>
         <groupId>ro.isdc.wro4j</groupId>
