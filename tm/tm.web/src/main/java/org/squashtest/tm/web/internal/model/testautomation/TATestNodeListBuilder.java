@@ -101,7 +101,7 @@ public class TATestNodeListBuilder {
 		Attr attr = new Attr();
 		Data data = new Data();
 		
-		attr.setRel("file");
+		attr.setRel("ta-test");
 		attr.setRestype("ta-test");
 		attr.setName(name);
 		

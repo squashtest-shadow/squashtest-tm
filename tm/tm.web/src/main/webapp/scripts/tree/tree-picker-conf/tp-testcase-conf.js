@@ -37,22 +37,13 @@ define(function(){
 					"remove" : false,
 					"types" : {
 						"test-case" : {
-							"valid_children" : 'none',
-							"icon" : {
-								"image" : baseURL+'/images/Icon_Tree_TestCase.png'
-							}
+							"valid_children" : 'none'
 						},
 						"folder" : {
-							"valid_children" : [ "test-case", "folder" ],
-							"icon" : {
-								"image" : baseURL+'/images/Icon_Tree_Folder.png'
-							}
+							"valid_children" : [ "test-case", "folder" ]
 						},
 						"drive" : {
-							"valid_children" : [ "test-case", "folder" ],
-							"icon" : {
-								"image" : baseURL+'/images/root.png'
-							}
+							"valid_children" : [ "test-case", "folder" ]
 						}
 					}
 				}

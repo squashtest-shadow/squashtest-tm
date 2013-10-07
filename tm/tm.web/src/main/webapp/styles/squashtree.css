@@ -49,7 +49,19 @@ li[rel="test-case"] > a > .jstree-icon{ background-image: url("../images/Icon_Tr
 li[rel="campaign"] > a > .jstree-icon{ background-image: url("../images/Icon_Tree_Campaign.png");}
 li[rel="iteration"] > a > .jstree-icon{ background-image: url("../images/Icon_Tree_Iteration.png");}
 li[rel="test-suite"] > a > .jstree-icon{ background-image: url("../images/Icon_Tree_TestSuite.png");}
+li[rel="ta-test"] > a > .jstree-icon { background-image : url("../images/cog.png");}
 
+li[rel="requirement"][category="business"] > a > .jstree-icon { background-image: url(../images/Icon_Tree_Requirement_Business.png); } 
+li[rel="requirement"][category="ergonomic"] > a > .jstree-icon { background-image: url(../images/Icon_Tree_Requirement_Ergonomic.png); } 
+li[rel="requirement"][category="functional"] > a > .jstree-icon { background-image: url(../images/Icon_Tree_Requirement_Functional.png); } 
+li[rel="requirement"][category="non_functional"] > a > .jstree-icon { background-image: url(../images/Icon_Tree_Requirement_Non-functional.png); } 
+li[rel="requirement"][category="performance"] > a > .jstree-icon { background-image: url(../images/Icon_Tree_Requirement_Performance.png); } 
+li[rel="requirement"][category="security"] > a > .jstree-icon { background-image: url(../images/Icon_Tree_Requirement_Security.png); } 
+li[rel="requirement"][category="technical"] > a > .jstree-icon {background-image: url(../images/Icon_Tree_Requirement_Technic.png);} 
+li[rel="requirement"][category="test_requirement"] > a > .jstree-icon { background-image: url(../images/Icon_Tree_Requirement_Test-requirement.png); } 
+li[rel="requirement"][category="undefined"] > a > .jstree-icon { background-image: url(../images/Icon_Tree_Requirement_Undefined.png); } 
+li[rel="requirement"][category="use_case"] > a > .jstree-icon { background-image: url(../images/Icon_Tree_Requirement_Use-case.png); } 
+li[rel="requirement"][category="user_story"] > a > .jstree-icon { background-image: url(../images/Icon_Tree_Requirement_User-story.png); } 
 
 
 div#tree-pane li a.ui-state-default, div#tree-pane li a.ui-state-active{	 border: none;}
@@ -96,21 +108,5 @@ div#tree-pane li a.ui-state-default, div#tree-pane li a.ui-state-active{	 border
 #vakata-contextmenu.jstree-squashtest-context li.jstree-contextmenu-disabled a:hover { color:silver; background:transparent; border:0; padding:1px 4px; }
 #vakata-contextmenu.jstree-squashtest-context li.vakata-separator { background:white; border-top:1px solid #e0e0e0; margin:0; }
 #vakata-contextmenu.jstree-squashtest-context li ul { margin-left:-4px; }
-
-
-/******************************** requirement *********************************/
-
-li[rel="requirement"] > a > .jstree-icon {background-image: url("../images/tree-requirement-icons.png");}
-li[rel="requirement"][category="business"] > a > .jstree-icon { background-position: 0 0; width: 16px; height: 16px; } 
-li[rel="requirement"][category="ergonomic"] > a > .jstree-icon { background-position: 0 -66px; width: 16px; height: 16px; } 
-li[rel="requirement"][category="functional"] > a > .jstree-icon { background-position: 0 -132px; width: 16px; height: 16px; } 
-li[rel="requirement"][category="non_functional"] > a > .jstree-icon { background-position: 0 -198px; width: 16px; height: 16px; } 
-li[rel="requirement"][category="performance"] > a > .jstree-icon { background-position: 0 -264px; width: 16px; height: 16px; } 
-li[rel="requirement"][category="security"] > a > .jstree-icon { background-position: 0 -330px; width: 16px; height: 16px; } 
-li[rel="requirement"][category="technical"] > a > .jstree-icon { background-position: 0 -396px; width: 16px; height: 16px; } 
-li[rel="requirement"][category="test_requirement"] > a > .jstree-icon { background-position: 0 -462px; width: 16px; height: 16px; } 
-li[rel="requirement"][category="undefined"] > a > .jstree-icon { background-position: 0 -528px; width: 16px; height: 16px; } 
-li[rel="requirement"][category="use_case"] > a > .jstree-icon { background-position: 0 -594px; width: 16px; height: 16px; } 
-li[rel="requirement"][category="user_story"] > a > .jstree-icon { background-position: 0 -660px; width: 16px; height: 16px; } 
 
 

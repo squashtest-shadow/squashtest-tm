@@ -40,16 +40,10 @@ define(function(){
 							"valid_children" : ['requirement']
 						},
 						"folder" : {
-							"valid_children" : [ "requirement", "folder" ],
-							"icon" : {
-								"image" : baseURL+'/images/Icon_Tree_Folder.png'
-							}
+							"valid_children" : [ "requirement", "folder" ]
 						},
 						"drive" : {
-							"valid_children" : [ "requirement", "folder" ],
-							"icon" : {
-								"image" : baseURL+'/images/root.png'
-							}
+							"valid_children" : [ "requirement", "folder" ]
 						}
 					}
 				}

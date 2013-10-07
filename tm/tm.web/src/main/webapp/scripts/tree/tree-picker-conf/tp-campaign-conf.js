@@ -33,22 +33,13 @@ define(function(){
 					"valid_children" : [ "drive" ],
 					"types" : {										
 						"campaign" : {
-							"valid_children" : 'none',
-							"icon" : {
-								"image" : baseURL+'/images/Icon_Tree_Campaign.png'
-							}
+							"valid_children" : 'none'
 						},
 						"folder" : {
-							"valid_children" : [ "campaign", "folder" ],
-							"icon" : {
-								"image" : baseURL+'/images/Icon_Tree_Folder.png'
-							}
+							"valid_children" : [ "campaign", "folder" ]
 						},
 						"drive" : {
-							"valid_children" : [ "campaign", "folder" ],
-							"icon" : {
-								"image" : baseURL+'/images/root.png'
-							}
+							"valid_children" : [ "campaign", "folder" ]
 						}
 					}
 				}

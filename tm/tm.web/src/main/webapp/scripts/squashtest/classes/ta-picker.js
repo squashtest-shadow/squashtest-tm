@@ -99,12 +99,6 @@ function TestAutomationPicker(settings) {
 	};
 
 	var createTree = function() {
-		var icons = {
-			drive : baseURL + "/images/root.png",
-			folder : baseURL + "/images/Icon_Tree_Folder.png",
-			file : baseURL + "/images/cog.png",
-			mainstyle : baseURL + "/styles/squashtree.css"
-		};
 
 		tree.jstree({
 			"json_data" : {
@@ -114,23 +108,14 @@ function TestAutomationPicker(settings) {
 			"types" : {
 				"types" : {
 					"drive" : {
-						"valid_children" : [ "file", "folder" ],
-						"icon" : {
-							"image" : icons.drive
-						},
+						"valid_children" : [ "ta-test", "folder" ],
 						"select_node" : false
 					},
-					"file" : {
-						"valid_chidlren" : "none",
-						"icon" : {
-							"image" : icons.file
-						}
+					"ta-test" : {
+						"valid_chidlren" : "none"
 					},
 					"folder" : {
-						"valid_children" : [ "file", "folder" ],
-						"icon" : {
-							"image" : icons.folder
-						},
+						"valid_children" : [ "ta-test", "folder" ]
 						"select_node" : false
 					}
 				}
@@ -144,7 +129,7 @@ function TestAutomationPicker(settings) {
 				"theme" : "squashtest",
 				"dots" : true,
 				"icons" : true,
-				"url" : icons.mainstyle
+				"url" : baseURL + "/styles/squashtree.css"
 			},
 
 			"core" : {
