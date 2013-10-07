@@ -39,13 +39,13 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			return {
 				buttons : [ {
 					tooltip : VRTS.messages.remove,
-					cssClass : "",
 					condition : function(row, data) {
 						var verified = data.directlyVerified == "false" ? false : data.directlyVerified;
 						return verified && VRTS.linkable;
 					},
 					tdSelector : "td.delete-button",
 					uiIcon : "ui-icon-trash",
+					jquery : true,
 					onClick : self.removeRowRequirementVersion
 				} ]
 			};

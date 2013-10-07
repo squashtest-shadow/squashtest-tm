@@ -72,9 +72,9 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/util/StringUtil
 						self.squashSettings = {
 							buttons : [ {
 								tooltip : self.settings.language.remove,
-								cssClass : "",
 								tdSelector : "td.delete-button",
 								uiIcon : "ui-icon-trash",
+								jquery : true,								
 								onClick : this.removeRowDataset
 							} ]
 						};

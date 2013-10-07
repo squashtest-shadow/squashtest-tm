@@ -63,10 +63,6 @@ select option,select {
 	color: #888888;
 }
 
-.not-displayed {
-	display: none;
-}
-
 /**
  * .not-visible should be used when you want to hide something and it is not related to FOUC
  * .unstyled is used by broken, auto-processed, FOUC prevention
@@ -231,6 +227,42 @@ td.double-narrow{
 	margin-top : 1em;	
 }
 
+/** *********** display options ********** */
+
+
+.not-displayed {
+	display: none;
+}
+
+.display-table {
+	display: table;
+}
+
+.display-table-row,.display-table>div {
+	display: table-row;
+	height: auto;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	text-align: left;
+	line-height: 2;
+}
+
+.display-table-cell,.display-table>div>div,.display-table>div>label,.display-table>div>span,.display-table>div>select
+	{
+	display: table-cell;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.display-table-cell{
+	vertical-align: top;
+}
+
+.display-table-cell input[type=checkbox],.display-table>div>div input[type=checkbox] ,.display-table>div>label,.display-table>div>span,.display-table>div>select {
+	margin:0;
+}
+
+
 
 /*********************** various icons *****************/
 
@@ -247,6 +279,10 @@ td.double-narrow{
 
 .icon-requirement{
 	background-image : url(../images/Icon_Tree_Requirement.png);
+}
+
+.icon-requirement-off{
+	background-image : url(../images/Icon_Tree_Requirement_off.png);
 }
 
 .icon-campaign{
@@ -284,7 +320,9 @@ td.double-narrow{
 }
 
 .execute-arrow{
-	background : url(../images/execute.png) no-repeat center center;
+	background : url(../images/execute.png); 
+	background-repeat : no-repeat;
+	background-position : center center;
 	width : 20px;
 	height : 20px;
 }

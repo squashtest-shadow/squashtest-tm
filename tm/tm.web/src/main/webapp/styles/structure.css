@@ -1083,31 +1083,7 @@ td.button-cell, th.button-cell, td.icon-cell, th.icon-cell {
 	color: gray;
 }
 
-.display-table {
-	display: table;
-}
 
-.display-table-row,.display-table>div {
-	display: table-row;
-	height: auto;
-	padding-top: 5px;
-	padding-bottom: 5px;
-	text-align: left;
-	line-height: 2;
-}
-
-.display-table-cell,.display-table>div>div,.display-table>div>label,.display-table>div>span,.display-table>div>select
-	{
-	display: table-cell;
-	padding-left: 10px;
-	padding-right: 10px;
-}
-
-.display-table-cell{
-	vertical-align: top;
-}
-
-.display-table-cell input[type=checkbox],.display-table>div>div input[type=checkbox] ,.display-table>div>label,.display-table>div>span,.display-table>div>select
 div#project-description-table .projectInactive {
 	margin:0;
 }

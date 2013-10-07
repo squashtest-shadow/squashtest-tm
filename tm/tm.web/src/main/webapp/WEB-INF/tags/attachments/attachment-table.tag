@@ -68,7 +68,7 @@
 
 <%-- ==========================  datatable conf =================================================== --%>
 	
-<table id="attachment-detail-table" class="" data-def="ajaxsource=${attachmentDetailsUrl}, language=${datatableLanguage}, 
+<table id="attachment-detail-table" data-def="ajaxsource=${attachmentDetailsUrl}, language=${datatableLanguage}, 
 													   hover, pre-sort=1-asc 
 													   ${prefilledClause}" >
 	<thead>

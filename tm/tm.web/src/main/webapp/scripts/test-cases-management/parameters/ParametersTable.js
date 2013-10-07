@@ -57,9 +57,9 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confi
 				squashSettings = {
 					buttons : [ {
 						tooltip : self.settings.language.remove,
-						cssClass : "",
 						tdSelector : "td.delete-button",
 						uiIcon : "ui-icon-trash",
+						jquery : true,
 						onClick : this.removeRowParameter,
 						condition : function(row, data) {
 							return data["directly-associated"];

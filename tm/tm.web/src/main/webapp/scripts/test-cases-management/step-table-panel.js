@@ -125,9 +125,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		callRows.find('td.rich-edit-result').removeClass('rich-edit-result');
 		callRows.find('td.has-attachment-cell').removeClass('has-attachment-cell');
 		callRows.find('td.custom-field-value').removeClass(); // remove
-		// all
-		// the
-		// classes
+
 		callRows.find('td.called-tc-cell').next().remove().end().attr('colspan', 2);
 	}
 
@@ -302,9 +300,8 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 			buttons : [ {
 				tooltip : language.edit,
-				cssClass : "",
 				tdSelector : "td.browse-button",
-				image : "/squash/images/pencil.png",
+				uiIcon : "edit-pencil",
 				onClick : function(table, cell) {
 					var row = cell.parentNode.parentNode;
 					var stepId = table.getODataId(row);
@@ -314,13 +311,10 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 				}
 			}, {
 				tooltip : language.requirements,
-				cssClass : "",
 				tdSelector : "td.requirements-button",
-				image : function(row, data) {
-					if (data["has-requirements"]) {
-						return "/squash/images/Icon_Tree_Requirement.png";
-					}
-					return "/squash/images/Icon_Tree_Requirement_off.png";
+				'class' : 'icon-entity',
+				uiIcon : function(row, data) {
+					return (data["has-requirements"]) ? "icon-requirement" : "icon-requirement-off";
 				},
 				condition : function(row, data) {
 					return data["step-type"] == "action";

@@ -397,9 +397,8 @@
 			</c:if>
 			squashSettings.buttons = [
 					{ tooltip : "<f:message key='label.run'/>",
-						cssClass : "",
 						tdSelector : "td.run-step-button",
-						image : "/squash/images/execute.png",
+						uiIcon : "execute-arrow",
 						onClick : function(table, cell){
 							var executionId = "${execution.id}";
 							var row = cell.parentNode.parentNode; // hopefully, that's the
@@ -417,21 +416,21 @@
 						}
 					},
 					{ tooltip : "<f:message key='issue.button.opendialog.label' />",
-						cssClass : "",
 						tdSelector : "td.bug-button",
-						image : function(row, data){
-							if(data["bug-list"].length>0){
-								return squashtm.app.contextRoot+"/images/bug.png";
-								}else{return squashtm.app.contextRoot+"/images/add.png"}},
+						uiIcon : function(row, data){
+							return (data["bug-list"].length>0)? "has-bugs" : "table-cell-add";
+						},
 						onClick : function(table, cell){							
-							var row = cell.parentNode.parentNode; // hopefully, that's the
+							var row = btn.parentNode.parentNode; // hopefully, that's the
 							// 'tr' one
 							var executionStepId = table.getODataId(row);
 							checkAndReportIssue( {
 								reportUrl:squashtm.app.contextRoot+"/bugtracker/execution-step/"+executionStepId+"/new-issue", 
 								callback:function(json){
-									$(cell).attr("src",squashtm.app.contextRoot+"/images/bug.png");
-									issueReportSuccess(json);}
+									$(btn).removeClass('table-cell-add')
+											.addClass('has-bugs');
+									issueReportSuccess(json);
+								}
 							} );
 							
 						}

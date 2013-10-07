@@ -62,9 +62,9 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 			if (VRTS.linkable) {
 				settings.buttons = [ {
 					tooltip : VRTS.messages.remove,
-					cssClass : "",
 					tdSelector : "td.delete-button",
 					uiIcon : "ui-icon-trash",
+					jquery : true,
 					onClick : this.removeRowRequirementVersion
 				} ];
 			}

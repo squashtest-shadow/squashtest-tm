@@ -224,18 +224,16 @@
  * buttons = [
  *  { tooltip : "tooltip",
  * 
- * cssClass : "classa",
+ * class : "classa",
  * 
- * condition : function(row, data){return data["isThat"];};
+ * condition : true, false, function(row, data){return data["isThat"];};
  * 
  * disabled : true or function(row, data){return data["isThat"];};
  * 
  * tdSelector : "td.run-step-button",
  * 
- * image : "/squash/images/execute.png", or function(row, data){return "/squash/images/execute.png";},
- * 
  * onClick : function(table, cell){doThatWithTableAndCell(table, cell);} },
- *  { tooltip : "tooltip", cssClass : "classa", tdSelector : "td.run-step-button", onClick : function(table, cell){
+ *  { tooltip : "tooltip", class : "classa", tdSelector : "td.run-step-button", onClick : function(table, cell){
  * doThatWithTableAndCell(table, cell);} }];
  * 
  * 
@@ -243,21 +241,20 @@
  * 
  * .tooltip : the button's tooltip
  * 
- * .cssClass : some css class added to the input button
+ * .class : litteral or function(row, data). Define some css class added to the input button.
  * 
- * .condition : a function returning a boolean that says if the button is added to the row. if this property is not set
- * the button will be added everywhere
+ * .uiIcon : litteral or function(row, data) if the button is to be a jqueryUi icon, set this property to the wanted icon name. 
  * 
- * .disabled : a boolean or a function that return the boolean saying if the button needs to be disabled or not.
+ * .condition : boolean or function(row, data). Says if the button is added to the row. if this property is not set
+ * 				the button will be added everywhere
+ * 
+ * .disabled : a boolean or a function(row, data). Return the boolean saying if the button needs to be disabled or not.
  * 
  * .tdSelector : the css selector to use to retrieve the cells where to put the button
  * 
- * .image : if the button is to be an input of type"image" set this property to the wanted image's src can be also a
- * function that returns the src image.
+ * .jquery : boolean. Tells whether this button needs to turn in a jquery button or not. Default is false.  
  * 
- * .uiIcon : if the button is to be a jqueryUi icon, set this property to the wanted icon name
- * 
- * .onClick : a function that will be called with the parameters table and clicked td
+ * .onClick : a function(table, cell) that will be called with the parameters table and clicked td
  * 
  * 
  */
@@ -712,7 +709,7 @@ define(["jquery",
 			return;
 		}
 		$(buttons).each(function(i, button) {
-			self.delegate(button.tdSelector + " > .tableButton", "click", function() {
+			self.delegate(button.tdSelector + " > .table-button", "click", function() {
 				button.onClick(self, this);
 			});
 		});
@@ -721,52 +718,63 @@ define(["jquery",
 	function _configureButtons() {
 		var self = this;
 		var buttons = this.squashSettings.buttons;
+		
 		if (!buttons) {
 			return;
 		}
-		$(buttons)
-				.each(
-						function(i, button) {
-							var template = '<input  class="tableButton" title="' + button.tooltip +
-									'" type="button" />';
-							if (button.image && typeof button.image != "function") {
-								template = '<input class="tableButton" title="' + button.tooltip +
-										'" type="image" src="' + button.image + '">';
-							} else if (button.uiIcon) {
-								template = '<a  class="tableButton" title="' + button.tooltip +
-										'" />';
+		
+		for (var i=0, len=buttons.length; i<len; i++){
+			var button = buttons[i];
+			
+			var template = $("<a/>",{
+				'class' : 'table-button',
+				'title' : button.tooltip
+			});
+			
+			var cells = self.find(button.tdSelector);
+			
+			cells.each(function(i, cell) {
+				
+					var instance = template.clone(),
+						$cell = $(cell),
+						row = $cell.parent("tr")[0],
+						data = self.fnGetData(row);
+					
+					// should the button be displayed in the first place ?
+					var rendered = ($.isFunction(button.condition) ) ? button.condition(row, data) : button.condition;
+					if (rendered === false){
+						return "continue"; // returning whatever non-false means 'continue'
+					}
+					
+					// is the button disabled ? 
+					var disabled = ($.isFunction(button.disabled)) ? button.disabled(row, data) : button.disabled;  
+					if (disabled) {
+						template.prop('disabled', true);
+					}
+					
+					// additional classes ?
+					var classes = ($.isFunction(button.class)) ? button.class(row, data) : button.class;
+					instance.addClass(classes);
+					
+					// an icon maybe ? 
+					var icon = ($.isFunction(button.uiIcon)) ? button.uiIcon(row, data) : button.uiIcon;
+					
+					if (button.jquery){
+						instance.squashButton({
+							text : false,
+							icons : {
+								primary : icon
 							}
-							var cells = $(button.tdSelector, self);
-							$(cells)
-									.each(
-											function(i, cell) {
-												var row = $(cell).parent("tr")[0];
-												var data = self.fnGetData(row);
-												var disabled = '';
-												if (button.disabled &&
-														((typeof button.disabled == "function" && button.disabled(row,
-																data)) || button.disabled === true)) {
-													disabled = 'disabled="disabled"';
-												}
-												if (button.condition && button.condition(row, data) ||
-														!button.condition) {
-													if (button.image && typeof button.image == "function") {
-														template = '<input class="tableButton" title="' +
-																button.tooltip + '" type="image" src="' +
-																button.image(row, data) + '" ' + disabled + ' >';
-													}
-													$(cell).html(template);
-													if (button.uiIcon) {
-														$(cell).find('.tableButton').button({
-															text : false,
-															icons : {
-																primary : button.uiIcon
-															}
-														});
-													}
-												}
-											});
 						});
+					}
+					else{
+						instance.addClass(icon);
+					}
+					
+					//append 
+					$cell.empty().append(instance);
+				});
+		};
 
 	}
 

@@ -113,23 +113,39 @@ div.DataTables_sort_wrapper > span.ui-icon{
 	background-image:url("jquery/ui/images/ui-icons_a8a8a8_256x240.png");	
 }
 
-td.has-attachment-cell > a, td.bugged-cell > span {
-    display: block;
-    height: 16px;
-    margin: auto;
-    width: 16px;		
+
+td.has-attachment-cell > a,
+a.table-button{
+	display : block;
+	margin : auto;
 }
 
 a.manage-attachments{
 	background-image: url("../images/attach_2.png");	
+	width : 16px;
+	height : 16px;
 }
 
+a.edit-pencil{
+	background-image: url("../images/pencil.png");	
+	width : 16px;
+	height : 16px;	
+}
+
+
+.ui-button .ui-icon.table-cell-add,
+a.table-cell-add, 
 a.add-attachments{
-	background-image: url("../images/add.png");			
+	background-image: url("../images/add.png");
+	width : 16px;
+	height : 16px;				
 }
 
-.hasBugs {
+.has-bugs,
+.ui-button .ui-icon.has-bugs {
 	background-image: url("../images/bug.png");
+	width : 16px;
+	height : 16px;
 }
 
 div.dataTables_wrapper td a.delete-execution-table-button[role="button"] {
