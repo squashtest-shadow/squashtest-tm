@@ -106,15 +106,20 @@ label.afterDisabled:after, input + label:after {
 }
 
 ul.ui-tabs-nav li.ui-state-default.ui-corner-top {
-	background:
-		url("jquery/ui/images/ui-bg_glass_45_2b2b2b_1x400.png")
-		repeat-x scroll 50% 50% #2B2B2B;
+	background-image :url("jquery/ui/images/ui-bg_glass_45_2b2b2b_1x400.png");
+	background-repeat : repeat-x;
+	background-attachment : scroll; 
+	background-position :  50% 50%;
+	background-color : #2B2B2B;
 	border-color: #2E2E2E;
 }
 
 ul.ui-tabs-nav li.ui-state-default.ui-corner-top.ui-state-hover {
-	background: url("jquery/ui/images/ui-bg_glass_75_2b2b2b_1x400.png")
-		repeat-x scroll 50% 50% #2B2B2B;
+	background-image: url("jquery/ui/images/ui-bg_glass_75_2b2b2b_1x400.png");
+	background-repeat : repeat-x;
+	background-attachment : scroll;
+	background-position : 50% 50%;
+	background-color: #2B2B2B;
 }
 
 #tabbed-pane>ul,div.fragment-tabs>ul {
@@ -494,7 +499,11 @@ html.execute-html body.ieo-body {
 	position: fixed;
 	min-height: 100%;
 	width: 1cm;
-	background: url("../images/fond_nav.gif") repeat-y scroll 0 0 #393834;
+	background-image: url("../images/fond_nav.gif");
+	background-repeat : repeat-y;
+	background-attachment : scroll;
+	background-position :0 0;
+	background-color : #393834;
 	margin-right: 0.4cm;	
 	z-index : 2;	/* this ensures that menus from this sidebar are displayed over the rest (which have lesser z-index)*/
 }

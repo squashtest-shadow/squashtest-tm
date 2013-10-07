@@ -180,25 +180,25 @@ table.datepicker-table td.datepicker-table-col {
 
 .ui-button .ui-icon.exec-status-running,
 .exec-status-running {
-	background: url("../images/Icon_Blue.png");
+	background-image: url("../images/Icon_Blue.png");
 	background-repeat : no-repeat;
 }
 
 .ui-button .ui-icon.exec-status-ready,
 .exec-status-ready {
-	background: url("../images/Icon_Grey.png");
+	background-image: url("../images/Icon_Grey.png");
 	background-repeat : no-repeat;
 }
 
 .ui-button .ui-icon.exec-status-error,
 .exec-status-error {
-	background: url("../images/Icon_Yellow.png");
+	background-image: url("../images/Icon_Yellow.png");
 	background-repeat : no-repeat;
 }
 
 .ui-button .ui-icon.exec-status-warning,
 .exec-status-warning{
-	background: url("../images/Icon_Green.png");
+	background-image: url("../images/Icon_Green.png");
 	background-repeat : no-repeat;
 }
 
@@ -643,44 +643,74 @@ span.span-green {
 ********************************/
 
 .search-icon-information {
-	background: transparent url("../images/Search_Information.png") no-repeat center left;
+	background-image : url("../images/Search_Information.png");
+	background-color : transparent;
+	background-repeat : no-repeat;
+	background-position : center left;
 	padding-left: 20px;
 }
 .search-icon-attributes {
-	background: transparent url("../images/Search_Attributes.png") no-repeat center left;
+	background-image: url("../images/Search_Attributes.png");
+	background-color : transparent;
+	background-repeat : no-repeat;
+	background-position : center left;
 	padding-left: 20px;
 }
 .search-icon-perimeter {
-	background: transparent url("../images/Search_Perimeter.png") no-repeat center left;
+	background-image: url("../images/Search_Perimeter.png");
+	background-color : transparent;
+	background-repeat : no-repeat;
+	background-position : center left;
 	padding-left: 20px;
 }
 .search-icon-associations  {
-	background: transparent url("../images/Search_Associations.png") no-repeat center left;
+	background-image: url("../images/Search_Associations.png");
+	background-color : transparent;
+	background-repeat : no-repeat;
+	background-position : center left;
 	padding-left: 20px;
 }
 .search-icon-content {
-	background: transparent url("../images/Search_Content.png") no-repeat center left;
+	background-image: url("../images/Search_Content.png");
+	background-color : transparent;
+	background-repeat : no-repeat;
+	background-position : center left;
 	padding-left: 20px;
 }
 .search-icon-history  {
-	background: transparent url("../images/Search_History.png") no-repeat center left;
+	background-image: url("../images/Search_History.png");
+	background-color : transparent;
+	background-repeat : no-repeat;
+	background-position : center left;
 	padding-left: 20px;
 }
 .search-icon-cuf {
-	background: transparent url("../images/Search_CUF.png") no-repeat center left;
+	background-image: url("../images/Search_CUF.png");
+	background-color : transparent;
+	background-repeat : no-repeat;
+	background-position : center left;
 	padding-left: 20px;
 }
 
 .associated-icon-requirement {
-	background: transparent url("../images/tick_blue.png") no-repeat center;
+	background-image: url("../images/tick_blue.png");
+	background-color : transparent;
+	background-repeat : no-repeat;
+	background-position : center;
 }
 
 .associated-icon-testcase {
-	background: transparent url("../images/tick_green.png") no-repeat center;	
+	background-image: url("../images/tick_green.png");
+	background-color : transparent;
+	background-repeat : no-repeat;
+	background-position : center;	
 }
 
 .associated-icon-campaign {
-	background: transparent url("../images/tick_purple.png") no-repeat center;	
+	background-image: url("../images/tick_purple.png");
+	background-color : transparent;
+	background-repeat : no-repeat;
+	background-position : center;	
 }
 
 /*******************************
@@ -695,7 +725,7 @@ span.span-green {
 }
 
 .search-open-interface2 {
-	background: url("../images/pencil.png");
+	background-image: url("../images/pencil.png");
 	background-color : transparent;
 	background-repeat : no-repeat;
 	background-position : center;
@@ -727,7 +757,9 @@ span.span-green {
 	
 }
 .type-template {
-	background: url("../images/icon_template.png") no-repeat center center;
+	background-image: url("../images/icon_template.png");
+	background-repeat : no-repeat;
+	background-position : center center;
 }
 .type-project, .type-template {
 	color: transparent;

@@ -20,11 +20,19 @@
  */
  
 ul.ui-tabs-nav li.ui-state-default.ui-tabs-active{
-    background: url("jquery/ui/images/ui-bg_glass_45_808080_1x400.png") repeat-x scroll 50% 50% #808080;
+    background-image: url("jquery/ui/images/ui-bg_glass_45_808080_1x400.png");
+    background-repeat : repeat-x;
+    background-attachment : scroll;
+    background-position :50% 50%;
+    background-color: #808080;
     border-color: #999999;
 }
 
 ul.ui-tabs-nav li.ui-state-default.ui-tabs-active.ui-state-hover{
-    background: url("jquery/ui/images/ui-bg_glass_45_808080_1x400.png") repeat-x scroll 50% 50% #808080;
+    background-image: url("jquery/ui/images/ui-bg_glass_45_808080_1x400.png");
+    background-repeat : repeat-x;
+    background-attachment : scroll;
+    background-position :50% 50%;
+    background-color: #808080;
     border-color: #999999;
 }

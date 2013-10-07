@@ -81,7 +81,11 @@ div#tree-pane li a.ui-state-default, div#tree-pane li a.ui-state-active{	 border
 .jstree-squashtest .jstree-leaf > ins { background-position:-36px 0; }
 
 
-.jstree-squashtest a.jstree-loading .jstree-icon { background:url("../images/throbber.gif") center center no-repeat !important; }
+.jstree-squashtest a.jstree-loading .jstree-icon { 
+	background-image:url("../images/throbber.gif")  !important;
+	background-position :center center ;
+	background-repeat : no-repeat; 
+}
 
 .jstree-squashtest.jstree-focused { background:white; }
 
@@ -93,9 +97,23 @@ div#tree-pane li a.ui-state-default, div#tree-pane li a.ui-state-active{	 border
 .jstree-squashtest .jstree-no-icons a .jstree-icon { display:none; }
 
 #vakata-dragged.jstree-squashtest ins { background:transparent !important; }
-#vakata-dragged.jstree-squashtest .jstree-ok { background:url("../images/squashtree.png") -2px -53px no-repeat !important; }
-#vakata-dragged.jstree-squashtest .jstree-invalid { background:url("../images/squashtree.png") -18px -53px no-repeat !important; }
-#jstree-marker.jstree-squashtest { background:url("../images/squashtree.png") -41px -57px no-repeat !important; }
+#vakata-dragged.jstree-squashtest .jstree-ok { 
+	background-image: url("../images/squashtree.png") !important;
+	background-position : -2px -53px; 
+	background-repeat : no-repeat ; 
+
+}
+#vakata-dragged.jstree-squashtest .jstree-invalid { 
+	background-image :url("../images/squashtree.png") !important; 
+	background-position : -18px -53px ;
+	background-repeat : no-repeat ; 
+}
+
+#jstree-marker.jstree-squashtest { 
+	background-image:url("../images/squashtree.png") !important;
+	background-position : -41px -57px;
+	background-repeat : no-repeat ; 
+}
 
 .jstree-squashtest a.jstree-search { color:aqua; }
 

@@ -19,11 +19,19 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 ul.ui-tabs-nav li.ui-state-default.ui-tabs-active {
-	background: url("jquery/ui/images/ui-bg_glass_45_6eac2c_1x400.png") repeat-x scroll 50% 50% #6EAC2C;
+	background-image: url("jquery/ui/images/ui-bg_glass_45_6eac2c_1x400.png");
+    background-repeat : repeat-x;
+    background-attachment : scroll;
+    background-position :50% 50%;
+    background-color: #6EAC2C;
     border-color: #ACDD4A;
 }
 
 ul.ui-tabs-nav li.ui-state-default.ui-tabs-active.ui-state-hover{
-	background: url("jquery/ui/images/ui-bg_glass_45_6eac2c_1x400.png") repeat-x scroll 50% 50% #6EAC2C;
+	background-image: url("jquery/ui/images/ui-bg_glass_45_6eac2c_1x400.png");
+    background-repeat : repeat-x;
+    background-attachment : scroll;
+    background-position :50% 50%;
+    background-color: #6EAC2C;
     border-color: #ACDD4A;
 }

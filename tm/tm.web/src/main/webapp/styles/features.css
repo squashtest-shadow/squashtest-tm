@@ -310,17 +310,21 @@ td.double-narrow{
 }
 
 .small-right-arrow{
-	background :url(../images/arrow_right.gif) no-repeat left center;
+	background-image :url(../images/arrow_right.gif);
+	background-repeat : no-repeat;
+	background-position : left center;
 	padding-left : 10px;
 }
 
 .small-down-arrow{
-	background:url(../images/arrow_down.gif) no-repeat left center;
+	background-image:url(../images/arrow_down.gif);
+	background-repeat : no-repeat;
+	background-position : left center;
 	padding-left : 10px;
 }
 
 .execute-arrow{
-	background : url(../images/execute.png); 
+	background-image : url(../images/execute.png); 
 	background-repeat : no-repeat;
 	background-position : center center;
 	width : 20px;
