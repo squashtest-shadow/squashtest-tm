@@ -23,9 +23,12 @@
     <smartsprites.version>1.7</smartsprites.version>
     <thyleleaf.springsec.version>2.0.0</thyleleaf.springsec.version>
     <jasperreports.build.outputDirectory>${project.build.directory}/jasperreports/compiled</jasperreports.build.outputDirectory>
-    <smartsprites.inputDir>src/main/webapp/styles</smartsprites.inputDir>
-    <smartsprites.outputDir>${project.build.directory}/smartsprites/styles</smartsprites.outputDir>
+    <web.optimization.tempdir>${project.build.directory}/web-optimization</web.optimization.tempdir>  
+    <smartsprites.inputDir>${web.optimization.tempdir}/styles</smartsprites.inputDir>
+    <smartsprites.outputDir>${web.optimization.tempdir}</smartsprites.outputDir>
+    <wro4j.inputDir>${web.optimization.tempdir}</wro4j.inputDir>
     <wro4j.css.outputDirectory>${project.build.directory}/processed-css</wro4j.css.outputDirectory>
+    <sprites.packageDirectory>images</sprites.packageDirectory>
     <css.packageDirectory>styles</css.packageDirectory>
 
     <!-- Default jacoco dont record any coverage data -->
@@ -457,6 +460,10 @@
               <targetPath>WEB-INF/reports</targetPath>
             </resource>
             <resource>
+            	<directory>${web.optimization.tempdir}/images</directory>
+            	<targetPath>${sprites.packageDirectory}</targetPath>
+            </resource>
+            <resource>
               <directory>${wro4j.css.outputDirectory}</directory>
               <targetPath>${css.packageDirectory}</targetPath>
             </resource>
@@ -484,6 +491,36 @@
         </configuration>
       </plugin>
 
+	<!-- =========== web resources optimization (spritemap, css minification etc in that order) ============= -->
+
+	<plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>prepare-web-resources-optimization</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+
+            <configuration>
+              <outputDirectory>${web.optimization.tempdir}</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>src/main/webapp</directory>
+                  <includes>
+                  	<include>images/**</include>
+                  	<include>scripts/**</include>
+                  	<include>styles/**</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+      	</executions>     
+    </plugin>
+	
 	<plugin>
 		<groupId>net.jangaroo</groupId>
 		<artifactId>smartsprites-maven-plugin</artifactId>
@@ -491,7 +528,8 @@
 		
 		<configuration>
 			<rootDirPath>${smartsprites.inputDir}</rootDirPath>
-			<outputDirPath>${smartsprites.outputDir}</outputDirPath>
+			<outputDirPath>${smartsprites.outputDir}/styles</outputDirPath>
+			<cssFileSuffix>-sprites</cssFileSuffix>
 		</configuration>
 		
 		<executions>
@@ -521,8 +559,9 @@
             </goals>
             <configuration>
               <!-- dont break line or add spaces or maven will scream in horror -->
-              <targetGroups>squash.core,squash.blue,squash.green,squash.grey,squash.purple,squash.wine,squash.blue.green,squash.green.blue,squash.tree,squash.core.override,squash.subpage.override,squash.print</targetGroups>
+              <targetGroups>squash.core,squash.blue,squash.green,squash.grey,squash.purple,squash.wine,squash.blue.green,squash.green.blue,squash.tree,squash.core.override,squash.subpage.override,squash.print</targetGroups>              
               <minimize>true</minimize>
+              <contextFolder>${wro4j.inputDir}</contextFolder>
               <cssDestinationFolder>${wro4j.css.outputDirectory}</cssDestinationFolder>
               <!-- ConfigurableWroManagerFactory is configured (d'uh) through wro.properties -->
               <wroManagerFactory>ro.isdc.wro.maven.plugin.manager.factory.ConfigurableWroManagerFactory</wroManagerFactory>
@@ -769,6 +808,23 @@
               </execution>
 
               <execution>
+                <id>copy-images-to-web-inf</id>
+                <phase>process-resources</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+
+                <configuration>
+                  <outputDirectory>${sprites.packageDirectory}</outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>${web.optimization.tempdir}/images</directory>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+
+              <execution>
                 <id>copy-processed-css</id>
                 <phase>process-resources</phase>
                 <goals>
@@ -784,7 +840,11 @@
                   </resources>
                 </configuration>
               </execution>
+ 
+              
             </executions>
+            
+            
           </plugin>
         </plugins>
       </build>

@@ -26,6 +26,10 @@
   <group name="squash-js">
     <js>/scripts/app/**.js</js>
     <js>/scripts/bugtracker/**.js</js>
+    <js>/scripts/dashboard/**.js</js>
+    <js>/scripts/camp-workspace/**.js</js>
+    <js>/scripts/tc-workspace/**.js</js>
+    <js>/scripts/req-workspace/**.js</js>
     <js>/scripts/contextual-content-handlers/**.js</js>
     <js>/scripts/custom-field-binding/**.js</js>
     <js>/scripts/custom-field-editor/**.js</js>
@@ -96,7 +100,7 @@
   
   <!-- Groups of non concatenable css -->
   <group name="squash.tree">
-    <css>/styles/squashtree.css</css>
+ 	<css>/styles/squashtree-sprites.css</css>
   </group>
   <group name="squash.core.override">
     <css>/styles/structure.override.css</css>

@@ -95,7 +95,7 @@ define(function(){
 					"theme" : "squashtest",
 					"dots" : true,
 					"icons" : true,
-					"url" : baseURL+"/styles/squashtree.css"
+					"url" : baseURL+"/styles/squash.tree.css"
 				},
 				
 				"squash" : {

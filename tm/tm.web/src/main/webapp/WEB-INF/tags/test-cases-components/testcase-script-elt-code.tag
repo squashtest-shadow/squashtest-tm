@@ -63,8 +63,9 @@
 	<div class="ta-picker-structure-maindiv">
 	
 	 	<div class="structure-pleasewait" style="vertical-align:middle;">
- 			<div class="loading"></div>
-			<span style="font-size:1.5em;"><f:message key="squashtm.processing"/></span>
+ 			<div class="waiting-loading full-size-hack centered">
+ 				<div style="font-size:1.5em;margin-top:300px;"><f:message key="squashtm.processing"/></div>
+ 			</div>			
  		</div>
 	
 		<div class="structure-error">

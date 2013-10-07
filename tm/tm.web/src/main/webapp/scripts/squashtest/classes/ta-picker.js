@@ -115,7 +115,7 @@ function TestAutomationPicker(settings) {
 						"valid_chidlren" : "none"
 					},
 					"folder" : {
-						"valid_children" : [ "ta-test", "folder" ]
+						"valid_children" : [ "ta-test", "folder" ],
 						"select_node" : false
 					}
 				}
@@ -129,7 +129,7 @@ function TestAutomationPicker(settings) {
 				"theme" : "squashtest",
 				"dots" : true,
 				"icons" : true,
-				"url" : baseURL + "/styles/squashtree.css"
+				"url" : baseURL + "/styles/squash.tree.css"
 			},
 
 			"core" : {

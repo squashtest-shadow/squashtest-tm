@@ -135,8 +135,8 @@ div#tree-pane li a.ui-state-default, div#tree-pane li a.ui-state-active{	 border
 
 
 .jstree-squashtest a.jstree-loading .jstree-icon { 
-	background-image:url("../images/throbber.gif")  !important; /** sprite-ref: sprites; */
 	background-position :center center ;
+	background-image:url("../images/throbber.gif")  !important; /** sprite-ref: sprites; */
 	background-repeat : no-repeat; 
 }
 
