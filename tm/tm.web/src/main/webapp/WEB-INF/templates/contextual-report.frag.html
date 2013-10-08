@@ -93,11 +93,10 @@
 			<div id="outer-category-frame">
 				<div title="Cat 1" class="report-category">
 					<div data-href="sample-report/0" class="report-item">
-						<div class="report-item-icon report-spreadsheet-icon"></div> 
+						<div class="report-item-icon report-spreadsheet-icon"></div>
 						<div class="report-item-description">
-							<label><b>Sample report</b><br />
-							<b>(Sample type)</b></label><br /> <span>This report does this and
-								that</span>
+							<label><b>Sample report</b><br /> <b>(Sample type)</b></label><br />
+							<span>This report does this and that</span>
 						</div>
 						<div class="unsnap"></div>
 					</div>
@@ -209,241 +208,237 @@
 										<span class="project-name"></span>
 									</div>
 								</div>
-								<div>
-								<div>			
-									<div class="project-filter-controls">
-										<a  th:text="#{dialog.settings.filter.controls.selectall}" class="project-picker-selall">
-											Select all
-										</a>
-										<a  th:text="#{dialog.settings.filter.controls.deselectall}" class="project-picker-deselall">
-											Unselect all
-										</a>
-										<a  th:text="#{dialog.settings.filter.controls.invertselect}" class="project-picker-invsel">
-											Invert sel
-										</a>				
-									</div>	
-									<hr/>
-									<div class="project-filter-list"></div>
+								<label th:for="*{name} + '-open'" th:text="*{label}">Projects</label>
+								<input th:id="*{name} + '-open'" type="button"
+									class="button rpt-projects-crit-open"
+									th:value="#{report.form.project-picker.button.label}"
+									th:attr="data-id-opened=*{name}" />
+							</div>
+						</div>
+							<div th:case="'DATE_INPUT_BLOCK'">
+								<label th:text="*{label}">Radio buttons group</label>
+								<ul>
+									<li th:each="date : *{dates}"><label th:for="${date.name}"
+										th:text="${date.label}">Date criteria</label> <span
+										class="rpt-date-crit" th:id="${date.name}"
+										th:name="${date.name}" th:text="#{squashtm.nodata}"
+										data-locale="fr" th:attr="data-locale=#{squashtm.locale}">01-02-2012</span>
+									</li>
+								</ul>
+							</div>
+							<div th:case="'PROJECT_INPUT_BLOCK'">
+								<label th:text="*{label}">Radio buttons group</label>
+								<ul>
+									<li th:each="picker : *{pickers}">
+										<div th:if="'PROJECT_PICKER' == ${picker.type.name()}"
+											th:object="${picker}" class="report-selector">
+											<label th:for="*{name}" th:text="*{label}">Projects</label> <select
+												th:if="${!projectMultiselect}" th:id="*{name}"
+												class="rpt-projects-crit-container"
+												th:attr="data-id-opened=*{name}">
+											</select> <select th:if="${projectMultiselect}" multiple="multiple"
+												th:id="*{name}" class="rpt-projects-crit-container"
+												th:attr="data-id-opened=*{name}">
+											</select>
+										</div>
+									</li>
+								</ul>
+							</div>
+							<div th:case="'COMPLEX_SELECTOR'">
+								<label th:text="*{label}">Radio buttons group</label>
+								<ul>
+									<li th:each="opt : *{options}"
+										th:with="radioId = ${opt.givesAccessTo} + '-binder'"><input
+										id="radioId" name="rpt-radio-crit" type="radio"
+										th:value="${opt.value}" data-grouped="true" th:id="${radioId}"
+										th:name="${opt.name}" th:checked="${opt.defaultSelected}" />
+										<label for="radioId" th:for="${radioId}"
+										th:text="${opt.label}">Option</label>
+
+										<div
+											th:if="${opt.selector} and 'TREE_PICKER' == ${opt.selector.type.name()}"
+											th:object="${opt.selector}" class="report-selector">
+											<div th:id="*{name} + '-dialog'"
+												th:title="#{report.form.tree-picker.dialog.title}"
+												class="rpt-tree-crit-dialog popup-dialog is-contextual not-displayed">
+												<div th:id="*{name}"
+													class="rpt-tree-crit tree selection-tree"
+													th:attr="data-node-type=*{pickedNodeType}"></div>
+											</div>
+											<input th:id="*{name} + '-open'" type="button"
+												class="button rpt-tree-crit-open"
+												th:value="#{report.form.tree-picker.button.label}"
+												th:attr="data-id-opened=*{name} + '-dialog'" />
+										</div>
+
+										<div
+											th:if="${opt.selector} and 'PROJECT_PICKER' == ${opt.selector.type.name()}"
+											th:object="${opt.selector}" class="report-selector">
+											<select th:if="${!projectMultiselect}" th:id="*{name}"
+												class="rpt-projects-crit-container"
+												th:attr="data-id-opened=*{name}">
+											</select> <select th:if="${projectMultiselect}" multiple="multiple"
+												th:id="*{name}" class="rpt-projects-crit-container"
+												th:attr="data-id-opened=*{name}">
+											</select>
+										</div></li>
+								</ul>
+							</div>
+						</div>
+						<div th:remove="all">
+							<span> <label for="rpt-text-crit">Text criteria</label> <input
+								name="rpt-text-crit" type="text" value="" />
+							</span>
+						</div>
+						<div th:remove="all">
+							<span> <input name="rpt-chk-crit" type="checkbox"
+								value="chk-val" /> <label for="rpt-chk-crit">Checkbox
+									criteria</label>
+							</span>
+						</div>
+						<div th:remove="all">
+							<div>
+								<span>Radio buttons group</span>
+								<ul>
+									<li><input name="rpt-radio-crit" type="radio"
+										value="radio-val-0" data-grouped="true" /> <label
+										for="rpt-radio-crit">Option 0</label> <input
+										name="rpt-radio-crit" type="radio" value="radio-val-1"
+										data-grouped="true" /> <label for="rpt-radio-crit">Option
+											1</label></li>
+								</ul>
+							</div>
+						</div>
+						<div th:remove="all">
+							<div>
+								<span>Checkboxes group</span>
+								<ul>
+									<li><input name="rpt-cbxes-crit" type="checkbox"
+										value="cbxes-val-0" data-grouped="true" /> <label
+										for="rpt-cbxes-crit">Checkbox 0</label></li>
+									<li><input name="rpt-cbxes-crit" type="checkbox"
+										value="cbxes-val-1" data-grouped="true" /> <label
+										for="rpt-cbxes-crit">Checkbox 1</label></li>
+								</ul>
+							</div>
+						</div>
+						<div th:remove="all">
+							<div>
+								<label for="rpt-drop-crit">Dropdown list</label> <select
+									name="rpt-drop-crit" size="1">
+									<option>Option 0</option>
+									<option>Option 1</option>
+								</select>
+							</div>
+						</div>
+						<div th:remove="all">
+							<span> <span class="label">Date criteria</span> <span
+								class="rpt-date-crit" id="rpt-date-crit">---</span>
+
+							</span>
+						</div>
+						<div th:remove="all">
+							<div id="rpt-tree-crit-dialog" title="Nodes criteria"
+								class="rpt-tree-crit-dialog popup-dialog is-contextual not-displayed"
+								data-node-type="CAMPAIGN">
+								Nodes
+								<div id="rpt-tree-crit" class="rpt-tree-crit"
+									data-node-type="CAMPAIGN"></div>
+							</div>
+							<input type="button" class="button rpt-tree-crit-open"
+								value="Pick nodes" data-id-opened="rpt-tree-crit-dialog" />
+						</div>
+						<div th:remove="all">
+							<!-- PROJECT PICKER -->
+							<div id="rpt-projects-crit-dialog" title="Projects criteria"
+								class="rpt-projects-crit-container project-picker popup-dialog not-displayed">
+								<div class="project-item-template not-displayed">
+									<div class="project-item ">
+										<input type="checkbox" class="project-checkbox" /> <span
+											class="project-name"></span>
+									</div>
+								</div>
+								<div id="dialog-settings-filter-maincontent">
+									<div id="dialog-settings-filter-controls"
+										class="project-filter-controls">
+										<a id="dialog-settings-filter-selectall"
+											th:text="#{dialog.settings.filter.controls.selectall}"
+											class="project-picker-selall"> Select all </a> <a
+											id="dialog-settings-filter-deselectall"
+											th:text="#{dialog.settings.filter.controls.deselectall}"
+											class="project-picker-deselall"> Unselect all </a> <a
+											id="dialog-settings-filter-invertselect"
+											th:text="#{dialog.settings.filter.controls.invertselect}"
+											class="project-picker-invsel"> Invert sel </a>
+									</div>
+									<hr />
+									<div id="dialog-settings-filter-projectlist"
+										class="project-filter-list" th:remove="body">
+										<div class="project-item ">
+											<input type="checkbox" class="project-checkbox" /> <span
+												class="project-name">Projet 1</span>
+										</div>
+										<div class="project-item ">
+											<input type="checkbox" class="project-checkbox" /> <span
+												class="project-name">Projet 2</span>
+										</div>
+									</div>
 									<div style="clear: both; display: hidden;"></div>
 								</div>
 							</div>
-							<label th:for="*{name} + '-open'" th:text="*{label}">Projects</label>
-							<input th:id="*{name} + '-open'" type="button"
-								class="button rpt-projects-crit-open"
-								th:value="#{report.form.project-picker.button.label}"
-								th:attr="data-id-opened=*{name}" />
+							<input type="button" class="button rpt-projects-crit-open"
+								value="Pick projects" data-id-opened="rpt-projects-crit-dialog" />
 						</div>
-						<div th:case="'DATE_INPUT_BLOCK'">
-							<label th:text="*{label}">Radio buttons group</label>
-							<ul>
-								<li th:each="date : *{dates}">
-									<label th:for="${date.name}" th:text="${date.label}">Date criteria</label>
-									<span class="rpt-date-crit" th:id="${date.name}" th:name="${date.name}"
-									th:text="#{squashtm.nodata}" data-locale="fr"
-									th:attr="data-locale=#{squashtm.locale}">01-02-2012</span>
-								</li>
-							</ul>
-						</div>
-						<div th:case="'PROJECT_INPUT_BLOCK'">
-							<label th:text="*{label}">Radio buttons group</label>
-							<ul>
-								<li th:each="picker : *{pickers}">
-									<div th:if="'PROJECT_PICKER' == ${picker.type.name()}" th:object="${picker}" class="report-selector">
-										<label th:for="*{name}" th:text="*{label}">Projects</label>
-										
-										<select th:if="${!projectMultiselect}" th:id="*{name}" class="rpt-projects-crit-container" th:attr="data-id-opened=*{name}">
-										</select>
-										<select th:if="${projectMultiselect}" multiple="multiple" th:id="*{name}" class="rpt-projects-crit-container" th:attr="data-id-opened=*{name}">
-										</select>
-									</div>
-								</li>
-							</ul>
-						</div>
-						<div th:case="'COMPLEX_SELECTOR'">
-							<label th:text="*{label}">Radio buttons group</label>
-							<ul>
-								<li th:each="opt : *{options}" th:with="radioId = ${opt.givesAccessTo} + '-binder'">
-									<input id="radioId" name="rpt-radio-crit" type="radio" th:value="${opt.value}" data-grouped="true" th:id="${radioId}" th:name="${opt.name}" th:checked="${opt.defaultSelected}" /> 
-									<label for="radioId" th:for="${radioId}" th:text="${opt.label}">Option</label>
-									
-									<div th:if="${opt.selector} and 'TREE_PICKER' == ${opt.selector.type.name()}" th:object="${opt.selector}" class="report-selector">
-										<div th:id="*{name} + '-dialog'"
-											th:title="#{report.form.tree-picker.dialog.title}"
-											class="rpt-tree-crit-dialog popup-dialog is-contextual not-displayed">
-											<div th:id="*{name}"
-												class="rpt-tree-crit tree selection-tree"
-												th:attr="data-node-type=*{pickedNodeType}"></div>
-										</div>
-										<input th:id="*{name} + '-open'" type="button"
-											class="button rpt-tree-crit-open"
-											th:value="#{report.form.tree-picker.button.label}"
-											th:attr="data-id-opened=*{name} + '-dialog'" />
-									</div>
-									
-									<div th:if="${opt.selector} and 'PROJECT_PICKER' == ${opt.selector.type.name()}" th:object="${opt.selector}" class="report-selector">
-											<select th:if="${!projectMultiselect}" th:id="*{name}" class="rpt-projects-crit-container" th:attr="data-id-opened=*{name}">
-											</select>
-											<select th:if="${projectMultiselect}" multiple="multiple" th:id="*{name}" class="rpt-projects-crit-container" th:attr="data-id-opened=*{name}">
-											</select>
-									</div>
-								</li>
-							</ul>
-						</div>
+
+						<input type="button" class="button snap-right" id="generate-view"
+							value="Generate"
+							th:value="#{report.criteria.panel.button.generate.label}" />
+						<div class="unsnap"></div>
 					</div>
-					<div th:remove="all">
-						<span> <label for="rpt-text-crit">Text criteria</label> <input
-							name="rpt-text-crit" type="text" value="" />
-						</span>
+
+					<div id="invalid-perimeter" class="popup-dialog not-displayed"
+						th:title="#{popup.title.Info}">
+						<span th:text="#{message.invalidPerimeter}"></span>
 					</div>
-					<div th:remove="all">
-						<span> <input name="rpt-chk-crit" type="checkbox"
-							value="chk-val" /> <label for="rpt-chk-crit">Checkbox
-								criteria</label>
-						</span>
-					</div>
-					<div th:remove="all">
-						<div>
-							<span>Radio buttons group</span>
-							<ul>
-								<li><input name="rpt-radio-crit" type="radio"
-									value="radio-val-0" data-grouped="true" /> <label
-									for="rpt-radio-crit">Option 0</label> <input
-									name="rpt-radio-crit" type="radio" value="radio-val-1"
-									data-grouped="true" /> <label for="rpt-radio-crit">Option
-										1</label></li>
-							</ul>
-						</div>
-					</div>
-					<div th:remove="all">
-						<div>
-							<span>Checkboxes group</span>
-							<ul>
-								<li><input name="rpt-cbxes-crit" type="checkbox"
-									value="cbxes-val-0" data-grouped="true" /> <label
-									for="rpt-cbxes-crit">Checkbox 0</label></li>
-								<li><input name="rpt-cbxes-crit" type="checkbox"
-									value="cbxes-val-1" data-grouped="true" /> <label
-									for="rpt-cbxes-crit">Checkbox 1</label></li>
-							</ul>
-						</div>
-					</div>
-					<div th:remove="all">
-						<div>
-							<label for="rpt-drop-crit">Dropdown list</label> <select
-								name="rpt-drop-crit" size="1">
-								<option>Option 0</option>
-								<option>Option 1</option>
-							</select>
-						</div>
-					</div>
-					<div th:remove="all">
-						<span> <span class="label">Date criteria</span> <span
-							class="rpt-date-crit" id="rpt-date-crit">---</span>
-			
-						</span>
-					</div>
-					<div th:remove="all">
-						<div id="rpt-tree-crit-dialog" title="Nodes criteria"
-							class="rpt-tree-crit-dialog popup-dialog is-contextual not-displayed"
-							data-node-type="CAMPAIGN">
-							Nodes
-							<div id="rpt-tree-crit" class="rpt-tree-crit"
-								data-node-type="CAMPAIGN"></div>
-						</div>
-						<input type="button" class="button rpt-tree-crit-open"
-							value="Pick nodes" data-id-opened="rpt-tree-crit-dialog" />
-					</div>
-					<div th:remove="all">
-						<!-- PROJECT PICKER -->
-						<div id="rpt-projects-crit-dialog" title="Projects criteria"
-							class="rpt-projects-crit-container project-picker popup-dialog not-displayed">
-							<div class="project-item-template not-displayed">
-								<div class="project-item ">
-									<input type="checkbox" class="project-checkbox" /> <span
-										class="project-name"></span>
-								</div>
+
+					<div id="view-tabed-panel" class="not-displayed">
+						<ul>
+							<li th:each="view, it : ${report.views}"><a
+								href="#view-content-panel-sample-0"
+								th:href="'#view-content-panel-' + ${it.index}"
+								th:text="${view.label}">Sample view</a></li>
+							<li th:remove="all"><a href="#view-content-panel-sample-1">Sample
+									view 2</a></li>
+
+							<div id="view-formats-panel" class="snap-right">
+								<span th:text="#{report.view.panel.label.export.label}">Export</span>
+								<select id="view-format-cmb-0"
+									th:id="'view-format-cmb-' + ${it.index}"
+									th:each="view, it : ${report.views}"
+									class="not-displayed view-format-cmb">
+									<option th:each="format : ${view.formats}" th:text="${format}">pdf</option>
+								</select> <select id="view-format-cmb-1" th:remove="all"
+									class="not-displayed view-format-cmb">
+									<option>pdf</option>
+									<option>csv</option>
+								</select> <input type="button" class="button" id="export" value="Go!"
+									th:value="#{label.Export}" />
 							</div>
-							<div id="dialog-settings-filter-maincontent">
-								<div id="dialog-settings-filter-controls"
-									class="project-filter-controls">
-									<a id="dialog-settings-filter-selectall"
-										th:text="#{dialog.settings.filter.controls.selectall}"
-										class="project-picker-selall"> Select all </a> <a
-										id="dialog-settings-filter-deselectall"
-										th:text="#{dialog.settings.filter.controls.deselectall}"
-										class="project-picker-deselall"> Unselect all </a> <a
-										id="dialog-settings-filter-invertselect"
-										th:text="#{dialog.settings.filter.controls.invertselect}"
-										class="project-picker-invsel"> Invert sel </a>
-								</div>
-								<hr />
-								<div id="dialog-settings-filter-projectlist"
-									class="project-filter-list" th:remove="body">
-									<div class="project-item ">
-										<input type="checkbox" class="project-checkbox" /> <span
-											class="project-name">Projet 1</span>
-									</div>
-									<div class="project-item ">
-										<input type="checkbox" class="project-checkbox" /> <span
-											class="project-name">Projet 2</span>
-									</div>
-								</div>
-								<div style="clear: both; display: hidden;"></div>
-							</div>
-						</div>
-						<input type="button" class="button rpt-projects-crit-open"
-							value="Pick projects" data-id-opened="rpt-projects-crit-dialog" />
+						</ul>
+						<div th:each="view, it : ${report.views}"
+							class="view-content-panel" th:remove="body"
+							id="view-content-panel-sample-0"
+							th:id="'view-content-panel-' + ${it.index}"
+							style="overflow: scroll;">VIEW HERE</div>
+						<div th:remove="all" id="view-content-panel-sample-1"
+							style="overflow: scroll;">ANOTHER VIEW HERE</div>
 					</div>
-
-					<input type="button" class="button snap-right" id="generate-view"
-						value="Generate"
-						th:value="#{report.criteria.panel.button.generate.label}" />
-					<div class="unsnap"></div>
-				</div>
-
-				<div id="invalid-perimeter" class="popup-dialog not-displayed"
-					th:title="#{popup.title.Info}">
-					<span th:text="#{message.invalidPerimeter}"></span>
-				</div>
-				
-				<div id="view-tabed-panel" class="not-displayed">
-					<ul>
-						<li th:each="view, it : ${report.views}"><a
-							href="#view-content-panel-sample-0"
-							th:href="'#view-content-panel-' + ${it.index}"
-							th:text="${view.label}">Sample view</a></li>
-						<li th:remove="all"><a href="#view-content-panel-sample-1">Sample
-								view 2</a></li>
-
-						<div id="view-formats-panel" class="snap-right">
-							<span th:text="#{report.view.panel.label.export.label}">Export</span>
-							<select id="view-format-cmb-0"
-								th:id="'view-format-cmb-' + ${it.index}"
-								th:each="view, it : ${report.views}"
-								class="not-displayed view-format-cmb">
-								<option th:each="format : ${view.formats}" th:text="${format}">pdf</option>
-							</select> <select id="view-format-cmb-1" th:remove="all"
-								class="not-displayed view-format-cmb">
-								<option>pdf</option>
-								<option>csv</option>
-							</select> <input type="button" class="button" id="export" value="Go!"
-								th:value="#{label.Export}" />
-						</div>
-					</ul>
-					<div th:each="view, it : ${report.views}"
-						class="view-content-panel" th:remove="body"
-						id="view-content-panel-sample-0"
-						th:id="'view-content-panel-' + ${it.index}"
-						style="overflow: scroll;">VIEW HERE</div>
-					<div th:remove="all" id="view-content-panel-sample-1"
-						style="overflow: scroll;">ANOTHER VIEW HERE</div>
 				</div>
 			</div>
-		</div>
-		<!-- /REPORT FRAGMENT -->
-		<!-- SCRIPT FRAGMENT -->
-		<div th:fragment="script">
-			<script type="text/javascript" th:inline="javascript">
+			<!-- /REPORT FRAGMENT -->
+			<!-- SCRIPT FRAGMENT -->
+			<div th:fragment="script">
+				<script type="text/javascript" th:inline="javascript">
 		/* <![CDATA[ */
 				var squashtm = squashtm || {};
 				squashtm.app = squashtm.app || {};
@@ -463,9 +458,9 @@
 				
 	    	/* ]]> */
 		</script>
-			<script></script>
+				<script></script>
+			</div>
+			<!-- /SCRIPT FRAGMENT -->
 		</div>
-		<!-- /SCRIPT FRAGMENT -->
-	</div>
 </body>
 </html>
