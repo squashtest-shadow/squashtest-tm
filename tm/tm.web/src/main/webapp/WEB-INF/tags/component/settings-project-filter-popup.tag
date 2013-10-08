@@ -42,7 +42,7 @@
 <f:message var="deselectAllLabel" key="dialog.settings.filter.controls.deselectall" />
 <f:message var="invertselectLabel" key="dialog.settings.filter.controls.invertselect" />
 
-<div id="project-filter-popup" class="popup-dialog project-picker" title="<f:message key='dialog.settings.filter.title' />">
+<div id="project-filter-popup" class="popup-dialog project-picker" style="display:none" title="<f:message key='dialog.settings.filter.title' />">
 	<div class="project-item-template not-displayed">
 		<div class="project-item ">
 			<input type="checkbox" class="project-checkbox"/> <span class="project-name"></span>
@@ -63,20 +63,3 @@
 	</div>
 </div>
 
-<%-- 
-	code managing the initialization of the popup
- --%>
-<%-- 
-<c:url var="libUrl" value="/scripts/app/ws/squashtm.projectfilter.js" />
-<script type="text/javascript" src="${libUrl}"></script> 
-<script type="text/javascript">
-	var projectFilterConf = {
-			url: "${projectFilterUrl}",
-			title : '<f:message key="dialog.settings.filter.title" />',
-			confirmLabel: '<f:message key="label.Confirm" />',
-			cancelLabel: '<f:message key="label.Cancel"/>'
-	}
-		
-	squashtm.projectfilter.init(projectFilterConf);
-</script>
- --%>
