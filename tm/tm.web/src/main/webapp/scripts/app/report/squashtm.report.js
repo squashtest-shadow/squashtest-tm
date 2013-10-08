@@ -350,39 +350,30 @@ define(
 				singleCheckboxes.change();
 
 				if (preferences) {
-					$.each(groupedCheckboxes, function(index, checkbox) {
+					$.each(checkboxes, function(index, checkbox) {
 						var name = checkbox.name;
 						var preferenceForName = preferences[name];
 						if (preferenceForName) {
-							$.each(preferenceForName,
-									function(index, element) {
-										var value = element.value;
-										if (checkbox.value == value
-												&& element.selected) {
-											$(checkbox).attr('checked', true);
+							$.each(preferenceForName, function(index, element) {
+								var value = element.value;
+								if (checkbox.value == value && element.selected) {
+									$(checkbox).attr('checked', true);
+									$.each(formState[name], function(index, state) {
+										if(state.value == checkbox.value){
+											state.selected = true;
 										}
 									});
-						}
-					});
-				
-					groupedCheckboxes.change();
-					
-					$.each(singleCheckboxes, function(index, checkbox) {
-						var name = checkbox.name;
-						var preferenceForName = preferences[name];
-						if (preferenceForName) {
-							$.each(preferenceForName,
-									function(index, element) {
-										var value = element.value;
-										if (checkbox.value == value
-												&& element.selected) {
-											$(checkbox).attr('checked', true);
+								} else if (checkbox.value == value && !element.selected){
+									$.each(formState[name], function(index, state) {
+										if(state.value == checkbox.value){
+											state.selected = false;
+											
 										}
 									});
+								}
+							});
 						}
 					});
-				
-					singleCheckboxes.change();
 				}
 			}
 
