@@ -22,6 +22,13 @@
  * Datatables customization classes *
  ************************************/
 
+ /** 
+ * smartsprites directive :
+ */
+ 
+ /** sprite: sprites-icons; sprite-image: url('../images/sprites-icons.png'); sprite-layout: vertical */
+ 
+ 
 div.dataTables_wrapper div.ui-widget-header{
 	background-image: url("jquery/ui/images/ui-bg_highlight-soft_75_cccccc_1x100.png");
 	background-color : #CCCCCC;
@@ -125,13 +132,13 @@ a.table-button{
 }
 
 a.manage-attachments{
-	background-image: url("../images/attachment.png");	
+	background-image: url("../images/attachment.png");	/** sprite-ref: sprites-icons; */
 	width : 16px;
 	height : 16px;
 }
 
 a.edit-pencil{
-	background-image: url("../images/pencil.png");	
+	background-image: url("../images/pencil.png");	/** sprite-ref: sprites-icons; */
 	width : 16px;
 	height : 16px;	
 }
@@ -140,14 +147,14 @@ a.edit-pencil{
 .ui-button .ui-icon.table-cell-add,
 a.table-cell-add, 
 a.add-attachments{
-	background-image: url("../images/add.png");
+	background-image: url("../images/add.png");	/** sprite-ref: sprites-icons; */
 	width : 16px;
 	height : 16px;				
 }
 
 .has-bugs,
 .ui-button .ui-icon.has-bugs {
-	background-image: url("../images/bug.png");
+	background-image: url("../images/bug.png");	/** sprite-ref: sprites-icons; */
 	width : 16px;
 	height : 16px;
 }

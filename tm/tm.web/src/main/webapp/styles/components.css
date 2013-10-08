@@ -20,6 +20,12 @@
  */
 @CHARSET "utf-8";
 
+ /** 
+ * smartsprites directive :
+ */
+ 
+ /** sprite: sprites-icons; sprite-image: url('../images/sprites-icons.png'); sprite-layout: vertical */
+
 .popup-label-error {
 	font-size: 12px;
 	color: red;
@@ -156,55 +162,55 @@ table.datepicker-table td.datepicker-table-col {
 
 .ui-button .ui-icon.exec-status-untestable,
 .exec-status-untestable{
-	background-image: url("../images/Icon_White.png");
+	background-image: url("../images/Icon_White.png");  /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
 
 .ui-button .ui-icon.exec-status-blocked,
 .exec-status-blocked{
-	background-image: url("../images/Icon_Yellow.png");
+	background-image: url("../images/Icon_Yellow.png");  /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
 
 .ui-button .ui-icon.exec-status-success,
 .exec-status-success{
-	background-image: url("../images/Icon_Green.png");
+	background-image: url("../images/Icon_Green.png");  /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
 
 .ui-button .ui-icon.exec-status-failure,
 .exec-status-failure {
-	background-image: url("../images/Icon_Red.png");
+	background-image: url("../images/Icon_Red.png");  /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
 
 .ui-button .ui-icon.exec-status-running,
 .exec-status-running {
-	background-image: url("../images/Icon_Blue.png");
+	background-image: url("../images/Icon_Blue.png");  /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
 
 .ui-button .ui-icon.exec-status-ready,
 .exec-status-ready {
-	background-image: url("../images/Icon_Grey.png");
+	background-image: url("../images/Icon_Grey.png");  /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
 
 .ui-button .ui-icon.exec-status-error,
 .exec-status-error {
-	background-image: url("../images/Icon_Yellow.png");
+	background-image: url("../images/Icon_Yellow.png");  /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
 
 .ui-button .ui-icon.exec-status-warning,
 .exec-status-warning{
-	background-image: url("../images/Icon_Green.png");
+	background-image: url("../images/Icon_Green.png");  /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
 
 
 .ui-button .ui-icon.execute-stop {
-	background-image: url("../images/Button_Exec_stop.png");
+	background-image: url("../images/Button_Exec_stop.png");  /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
 
@@ -643,92 +649,92 @@ span.span-green {
 ********************************/
 
 .search-icon-information {
-	background-image : url("../images/Search_Information.png");
+	background-position : center left;
+	background-image : url("../images/Search_Information.png");  /** sprite-ref: sprites-icons; sprite-alignment: left; */
 	background-color : transparent;
 	background-repeat : no-repeat;
-	background-position : center left;
 	padding-left: 20px;
 }
 .search-icon-attributes {
-	background-image: url("../images/Search_Attributes.png");
+	background-position : center left;
+	background-image: url("../images/Search_Attributes.png");  /** sprite-ref: sprites-icons; sprite-alignment: left; */
 	background-color : transparent;
 	background-repeat : no-repeat;
-	background-position : center left;
 	padding-left: 20px;
 }
 .search-icon-perimeter {
-	background-image: url("../images/Search_Perimeter.png");
+	background-position : center left;
+	background-image: url("../images/Search_Perimeter.png");  /** sprite-ref: sprites-icons; sprite-alignment: left; */
 	background-color : transparent;
 	background-repeat : no-repeat;
-	background-position : center left;
 	padding-left: 20px;
 }
 .search-icon-associations  {
-	background-image: url("../images/Search_Associations.png");
+	background-position : center left;
+	background-image: url("../images/Search_Associations.png");  /** sprite-ref: sprites-icons; sprite-alignment: left; */
 	background-color : transparent;
 	background-repeat : no-repeat;
-	background-position : center left;
 	padding-left: 20px;
 }
 .search-icon-content {
-	background-image: url("../images/Search_Content.png");
+	background-position : center left;
+	background-image: url("../images/Search_Content.png");  /** sprite-ref: sprites-icons; sprite-alignment: left; */
 	background-color : transparent;
 	background-repeat : no-repeat;
-	background-position : center left;
 	padding-left: 20px;
 }
 .search-icon-history  {
-	background-image: url("../images/Search_History.png");
+	background-position : center left;
+	background-image: url("../images/Search_History.png");  /** sprite-ref: sprites-icons; sprite-alignment: left; */
 	background-color : transparent;
 	background-repeat : no-repeat;
-	background-position : center left;
 	padding-left: 20px;
 }
 .search-icon-cuf {
-	background-image: url("../images/Search_CUF.png");
+	background-position : center left;
+	background-image: url("../images/Search_CUF.png");  /** sprite-ref: sprites-icons; sprite-alignment: left; */
 	background-color : transparent;
 	background-repeat : no-repeat;
-	background-position : center left;
 	padding-left: 20px;
 }
 
 .associated-icon-requirement {
-	background-image: url("../images/tick_blue.png");
+	background-position : center;
+	background-image: url("../images/tick_blue.png");  /** sprite-ref: sprites-icons;  */
 	background-color : transparent;
 	background-repeat : no-repeat;
-	background-position : center;
 }
 
 .associated-icon-testcase {
-	background-image: url("../images/tick_green.png");
+	background-position : center;	
+	background-image: url("../images/tick_green.png");  /** sprite-ref: sprites-icons;  */
 	background-color : transparent;
 	background-repeat : no-repeat;
-	background-position : center;	
 }
 
 .associated-icon-campaign {
-	background-image: url("../images/tick_purple.png");
+	background-position : center;	
+	background-image: url("../images/tick_purple.png");  /** sprite-ref: sprites-icons;  */
 	background-color : transparent;
 	background-repeat : no-repeat;
-	background-position : center;	
 }
 
 /*******************************
 	search table icons - adds background icon  
 ********************************/
 .search-open-tree {
-	background-image : url("../images/folder_search.png");
+	background-position : center;
+	background-image : url("../images/folder_search.png"); /** sprite-ref: sprites-icons;  */
 	background-color : transparent;
 	background-repeat : no-repeat;
-	background-position : center;
 	padding-left: 20px;
 }
 
 .search-open-interface2 {
-	background-image: url("../images/pencil.png");
+	background-position : center;
+	background-image: url("../images/pencil.png"); /** sprite-ref: sprites-icons;  */
 	background-color : transparent;
 	background-repeat : no-repeat;
-	background-position : center;
 	padding-left: 20px;
 }
 
@@ -736,9 +742,9 @@ span.span-green {
  * test case / execution mode 
  *******************************/
 .exec-mode-automated {
-	background-image : url("../images/cog.png") ;
-	background-repeat : no-repeat;
 	background-position : center center;
+	background-image : url("../images/cog.png"); /** sprite-ref: sprites-icons;  */
+	background-repeat : no-repeat;
 }
 .exec-mode-manual {
 }
@@ -757,9 +763,9 @@ span.span-green {
 	
 }
 .type-template {
-	background-image: url("../images/icon_template.png");
-	background-repeat : no-repeat;
 	background-position : center center;
+	background-image: url("../images/icon_template.png"); /** sprite-ref: sprites-icons;  */
+	background-repeat : no-repeat;
 }
 .type-project, .type-template {
 	color: transparent;
@@ -952,23 +958,3 @@ predefined for future evolutions :
 	left: 50%;
 }
 
-/*****************************************
- * various icons
- ****************************************/
-.ui-icon-wizard {
-	background-image: url("../images/icon_wizard.gif") !important;
-	background-repeat: no-repeat;
-	background-size: 16px 16px;
-}
-
-.ui-icon-link-dark-e-w {
-	background-image: url("../images/link_on.png") !important;
-	background-repeat: no-repeat;
-	background-size: 16px 16px;
-}
-
-.ui-icon-link-clear-e-w {
-	background-image: url("../images/link_off.png") !important;
-	background-repeat: no-repeat;
-	background-size: 16px 16px;
-}

@@ -23,6 +23,13 @@
   * will be applied regardless of the business meaning of the component.  
   */ 
 
+/** 
+ * smartsprites directive :
+ */
+ 
+ /** sprite: sprites-icons; sprite-image: url('../images/sprites-icons.png'); sprite-layout: vertical */
+
+
 .linkWise:HOVER {
 	
     text-decoration: underline;
@@ -163,8 +170,8 @@ tr.nodrop td.drag-handle {
 
 .waiting-loading{
 	background-color: #EBEAE5;
-	background-image: url('../images/ajax-loader.gif');
 	background-position: center center;
+	background-image: url('../images/ajax-loader.gif');	
 	background-repeat: no-repeat;
 	background-size : 70px 70px;
 	min-height : 50px;
@@ -274,59 +281,67 @@ td.double-narrow{
 }
 
 .icon-test-case{
-	background-image : url(../images/Icon_Tree_TestCase.png);
+	background-image : url(../images/Icon_Tree_TestCase.png);	/** sprite-ref: sprites-icons; */
 }
 
 .icon-requirement{
-	background-image : url(../images/Icon_Tree_Requirement.png);
+	background-image : url(../images/Icon_Tree_Requirement.png);	/** sprite-ref: sprites-icons; */
 }
 
 .icon-requirement-off{
-	background-image : url(../images/Icon_Tree_Requirement_off.png);
+	background-image : url(../images/Icon_Tree_Requirement_off.png);	/** sprite-ref: sprites-icons; */
 }
 
 .icon-campaign{
-	background-image : url(../images/Icon_Tree_Campaign.png);
+	background-image : url(../images/Icon_Tree_Campaign.png);	/** sprite-ref: sprites-icons; */
 }
 
 .icon-iteration{
-	background-image : url(../images/Icon_Tree_Iteration.png);
+	background-image : url(../images/Icon_Tree_Iteration.png);	/** sprite-ref: sprites-icons; */
 }
 
 .icon-folder{
-	background-image : url(../images/Icon_Tree_Folder.png);
+	background-image : url(../images/Icon_Tree_Folder.png);	/** sprite-ref: sprites-icons; */
 }
 
 .icon-root{
-	background-image : url(../images/root.png);
+	background-image : url(../images/root.png);	/** sprite-ref: sprites-icons; */
 }
 
 
 .delete-confirm{
 	background-repear:no-repeat;
-	background-image:url(../images/messagebox_confirm.png);
+	background-image:url(../images/messagebox_confirm.png);	/** sprite-ref: sprites-icons; */
 	width : 72px;
 	height : 64px;
 }
 
-.small-right-arrow{
-	background-image :url(../images/arrow_right.gif);
-	background-repeat : no-repeat;
-	background-position : left center;
-	padding-left : 10px;
+.toggle-row-label{
+	padding-left: 10px; 
 }
 
 .small-down-arrow{
-	background-image:url(../images/arrow_down.gif);
-	background-repeat : no-repeat;
-	background-position : left center;
-	padding-left : 10px;
+	background-image:url(../images/arrow_down.png);	/** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;	
+	width: 7px;
+	height : 4px;
+	display : inline-block;
 }
 
-.execute-arrow{
-	background-image : url(../images/execute.png); 
+
+.small-right-arrow{
+	background-image :url(../images/arrow_right.png);	/** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
+	width: 7px;
+	height : 7px;
+	display : inline-block;
+}
+
+
+.execute-arrow{
 	background-position : center center;
+	background-image : url(../images/execute.png); 	/** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
 	width : 20px;
 	height : 20px;
 }

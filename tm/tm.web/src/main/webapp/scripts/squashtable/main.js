@@ -992,24 +992,28 @@ define(["jquery",
 		var ppt;
 		var table = this;	
 		
+		var template = $('<div><span class="small-right-arrow"></span></div>');
+		
 		for (selector in toggleSettings){
 			
 			// adds a draw callback. It will be then executed every time the table is reloaded 
 			this.drawcallbacks.push(function(){		
 				this.find(selector).each(function(idx,cell){
 					var link = table.addHLinkToCellText(cell, 'javascript:void(0)');
-					link.addClass('small-right-arrow');					
+					link.addClass('toggle-row-label');
+					template.clone().append(link).appendTo(cell);
 				});
 			});
 			
 			// click handler (executed one time only).
 			var loader = toggleSettings[selector];
-			this.on('click', selector+'> a', function(){
+			this.on('click', selector+'>div> a', function(){
 
 				var jqlink = $(this),
+					icon = jqlink.prev(),
 					ltr = jqlink.parents('tr').get(0);
 				
-				if (! jqlink.hasClass('small-down-arrow')){
+				if (! icon.hasClass('small-down-arrow')){
 					
 					var rowClass = ($(ltr).hasClass("odd")) ? "odd" : "even",
 						$ltr = $(ltr),
@@ -1017,7 +1021,7 @@ define(["jquery",
 					
 					$newTr.addClass(rowClass);
 					
-					jqlink.removeClass('small-right-arrow').addClass('small-down-arrow');
+					icon.removeClass('small-right-arrow').addClass('small-down-arrow');
 					
 					if (typeof loader === "string"){
 						// content loader assumed to be an url
@@ -1031,7 +1035,7 @@ define(["jquery",
 				}
 				else{
 					table.fnClose(ltr);
-					jqlink.removeClass('small-down-arrow').addClass('small-right-arrow');
+					icon.removeClass('small-down-arrow').addClass('small-right-arrow');
 				}
 				
 				

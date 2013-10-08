@@ -23,10 +23,10 @@
     <smartsprites.version>1.7</smartsprites.version>
     <thyleleaf.springsec.version>2.0.0</thyleleaf.springsec.version>
     <jasperreports.build.outputDirectory>${project.build.directory}/jasperreports/compiled</jasperreports.build.outputDirectory>
-    <web.optimization.tempdir>${project.build.directory}/web-optimization</web.optimization.tempdir>  
-    <smartsprites.inputDir>${web.optimization.tempdir}/styles</smartsprites.inputDir>
-    <smartsprites.outputDir>${web.optimization.tempdir}</smartsprites.outputDir>
-    <wro4j.inputDir>${web.optimization.tempdir}</wro4j.inputDir>
+    <smartprites-wro4j-exchangedir>${project.build.directory}/web-optimization</smartprites-wro4j-exchangedir>  
+    <smartsprites.inputDir>src/main/webapp/styles</smartsprites.inputDir>
+    <smartsprites.outputDir>${smartprites-wro4j-exchangedir}</smartsprites.outputDir>
+    <wro4j.inputDir>${smartprites-wro4j-exchangedir}</wro4j.inputDir>
     <wro4j.css.outputDirectory>${project.build.directory}/processed-css</wro4j.css.outputDirectory>
     <sprites.packageDirectory>images</sprites.packageDirectory>
     <css.packageDirectory>styles</css.packageDirectory>
@@ -460,7 +460,7 @@
               <targetPath>WEB-INF/reports</targetPath>
             </resource>
             <resource>
-            	<directory>${web.optimization.tempdir}/images</directory>
+            	<directory>${smartprites-wro4j-exchangedir}/images</directory>
             	<targetPath>${sprites.packageDirectory}</targetPath>
             </resource>
             <resource>
@@ -505,13 +505,12 @@
             </goals>
 
             <configuration>
-              <outputDirectory>${web.optimization.tempdir}</outputDirectory>
+              <outputDirectory>${smartprites-wro4j-exchangedir}</outputDirectory>
               <resources>
                 <resource>
                   <directory>src/main/webapp</directory>
                   <includes>
                   	<include>images/**</include>
-                  	<include>scripts/**</include>
                   	<include>styles/**</include>
                   </includes>
                 </resource>
@@ -529,7 +528,6 @@
 		<configuration>
 			<rootDirPath>${smartsprites.inputDir}</rootDirPath>
 			<outputDirPath>${smartsprites.outputDir}/styles</outputDirPath>
-			<cssFileSuffix>-sprites</cssFileSuffix>
 		</configuration>
 		
 		<executions>
@@ -818,7 +816,7 @@
                   <outputDirectory>${sprites.packageDirectory}</outputDirectory>
                   <resources>
                     <resource>
-                      <directory>${web.optimization.tempdir}/images</directory>
+                      <directory>${smartprites-wro4j-exchangedir}/images</directory>
                     </resource>
                   </resources>
                 </configuration>

@@ -100,7 +100,7 @@
   
   <!-- Groups of non concatenable css -->
   <group name="squash.tree">
- 	<css>/styles/squashtree-sprites.css</css>
+ 	<css>/styles/squashtree.css</css>
   </group>
   <group name="squash.core.override">
     <css>/styles/structure.override.css</css>
