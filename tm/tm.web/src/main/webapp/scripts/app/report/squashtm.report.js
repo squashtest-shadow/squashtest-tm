@@ -364,6 +364,7 @@ define(
 										}
 									});
 								} else if (checkbox.value == value && !element.selected){
+									$(checkbox).removeAttr('checked');
 									$.each(formState[name], function(index, state) {
 										if(state.value == checkbox.value){
 											state.selected = false;
