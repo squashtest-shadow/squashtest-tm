@@ -39,10 +39,10 @@ define(["jquery", "backbone"], function($, Backbone){
 			
 			if (! this.model.isAvailable()){
 				return;
-			};
+			}
 			
 			var stats = this.model.get('boundRequirementsStatistics');
-			var nbtc = stats.zeroRequirements + stats.oneRequirement + stats.manyRequirements
+			var nbtc = stats.zeroRequirements + stats.oneRequirement + stats.manyRequirements;
 			
 			var todisplay;
 			if (nbtc===0){

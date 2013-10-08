@@ -26,11 +26,11 @@ define(['tree','./permissions-rules', 'workspace.contextual-content', 'squash.tr
 	function showError(messageName){	
 		
 		var messages = translator.get({
-			'no-libraries-allowed' 	: 'tree.button.copy-node.error.nolibrary',
-			'not-unique' 			: 'tree.button.copy-node.error.notOneEditable',
-			'not-creatable' 		: 'tree.button.copy-node.error.notOneEditable',
-			'empty-selection' 		: 'tree.button.copy-node.error.nothing-to-paste',
-			'invalid-content' 		: 'tree.button.copy-node.error.pastenothere',
+			'no-libraries-allowed'	: 'tree.button.copy-node.error.nolibrary',
+			'not-unique'			: 'tree.button.copy-node.error.notOneEditable',
+			'not-creatable'			: 'tree.button.copy-node.error.notOneEditable',
+			'empty-selection'		: 'tree.button.copy-node.error.nothing-to-paste',
+			'invalid-content'		: 'tree.button.copy-node.error.pastenothere',
 			'not-deletable'			: 'dialog.label.delete-node.rejected',
 			'mixed-nodes-iteration-selection' : 'tree.button.copy-node.mixediteration',
 			'mixed-nodes-testsuite-selection' : 'tree.button.copy-node.mixedsuite'
@@ -164,6 +164,6 @@ define(['tree','./permissions-rules', 'workspace.contextual-content', 'squash.tr
 				$("#delete-node-dialog").delcampDialog('open');
 			});
 		}
-	}	
+	};	
 	
 });

@@ -47,7 +47,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 		};
 		
 		this.whyCantCopy = function(nodes){
-			if (nodes.length==0){
+			if (nodes.length===0){
 				return "empty-selection";
 			}
 			
@@ -62,7 +62,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 			
 			var nodes = copier.bufferedNodes(); 
 			
-			if (nodes.length==0){
+			if (nodes.length===0){
 				return "empty-selection";
 			}
 			
@@ -159,9 +159,9 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 			'export-tree-button' : this.canExport,
 			'delete-node-tree-button' : this.canDelete,
 			'search-tree-button' : this.canSearch
-		}
+		};
 
-	};
+	}
 	
 	
 });

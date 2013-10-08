@@ -46,8 +46,8 @@ define(["jquery", 'squash.attributeparser',
         "./importance-pie", 
         "./size-pie",
         "./toggle-panel"], 
-        function($, attrparser, ctxt, StatModel, cache, RefreshButton, Timestamp, Summary, 
-        		BoundReqPie, StatusPie, ImportancePie, SizePie, TogglePanel){
+        function($, attrparser, ctxt, StatModel, cache, RefreshButton, Timestamp, Summary,
+        BoundReqPie, StatusPie, ImportancePie, SizePie, TogglePanel){
 	
 	
 	return {
@@ -73,15 +73,14 @@ define(["jquery", 'squash.attributeparser',
 			
 			
 			//init the master view
-			switch (conf.rendering){
-				case "toggle-panel" : 
-					new TogglePanel({
-						el : master.find('.toggle-panel-main').get(0),
-						model : bbModel
-					});
-					break;
-					
-				default : throw "dashboard : no other rendering than 'toggle-panel' is supported at the moment";
+			if (conf.rendering === 'toggle-panel'){
+				new TogglePanel({
+					el : master.find('.toggle-panel-main').get(0),
+					model : bbModel
+				});
+			}
+			else{
+				throw "dashboard : no other rendering than 'toggle-panel' is supported at the moment";
 			}
 			
 			
@@ -140,6 +139,6 @@ define(["jquery", 'squash.attributeparser',
 			ctxt.on('contextualcontent.clear', removeOnClear);
 			
 		}		
-	}
+	};
 
 });

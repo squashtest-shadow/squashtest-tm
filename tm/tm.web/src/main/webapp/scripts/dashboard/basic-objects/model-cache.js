@@ -32,6 +32,6 @@ define(function(){
 		store : function(key, data){
 			squashtm.dashboard.cache[key] = data; 
 		}
-	}
+	};
 	
 });

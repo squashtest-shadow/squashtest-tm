@@ -35,7 +35,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 		
 		function allOrNone(nodes, type){
 			var filterLen = nodes.filter(':'+type).length;
-			return (filterLen == nodes.length) || (filterLen == 0);
+			return (filterLen == nodes.length) || (filterLen === 0);
 		}
 		
 		this.canCreateFolder = function(nodes){
@@ -51,7 +51,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 		};
 		
 		this.canExport = function(nodes){
-			return 	(nodes.filter(':exportable').length == nodes.length) && (nodes.length === 1 && nodes.is(':campaign'));
+			return (nodes.filter(':exportable').length == nodes.length) && (nodes.length === 1 && nodes.is(':campaign'));
 		},
 		
 		
@@ -60,12 +60,12 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 			return  (  nodes.length > 0) && 
 					(! nodes.is(':library')) && 
 					(  allOrNone(nodes, 'iteration')) &&
-					(  allOrNone(nodes, 'test-suite'))
+					(  allOrNone(nodes, 'test-suite'));
 			//the last ones reads 'either all nodes are iterations, either none of them are' (same for test suites)
 		};
 		
 		this.whyCantCopy = function(nodes){
-			if (nodes.length==0){
+			if (nodes.length===0){
 				return "empty-selection";
 			}
 			
@@ -89,7 +89,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 			
 			var nodes = copier.bufferedNodes(); 
 			
-			if (nodes.length==0){
+			if (nodes.length===0){
 				return "empty-selection";
 			}
 			
@@ -179,9 +179,9 @@ define(['jquery', 'workspace.tree-node-copier', 'tree'], function($, copier, tre
 			'export-L-tree-button' : this.canExport,
 			'export-S-tree-button' : this.canExport,
 			'export-F-tree-button' : this.canExport
-		}
+		};
 
-	};
+	}
 	
 	
 });

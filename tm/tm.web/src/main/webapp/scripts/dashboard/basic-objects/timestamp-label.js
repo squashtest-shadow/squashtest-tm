@@ -26,7 +26,7 @@ define(["jquery", "backbone", "lib/dateformat"], function($, Backbone){
 		initialize : function(){
 			// matches the following : 'blahb...{PICKME !}blablahblah...{PICKME TOO !}
 			// PICKME : dateformat, PICKME TOO = time format.
-			var expr = /.*?{(.*?)}.*?{(.*?)}.*/;	
+			var expr = /.*?\{(.*?)\}.*?\{(.*?)\}.*/;	
 			
 			var matched = expr.exec( this.$el.text() );
 			if (matched.length !== 3){
@@ -51,8 +51,8 @@ define(["jquery", "backbone", "lib/dateformat"], function($, Backbone){
 				var strdate = timestamp.format(this.dateformat);
 				var strtime = timestamp.format(this.timeformat);
 				
-				var txt = this.template.replace(/{.*?}/, '<span style="font-weight:bold">'+strdate+'</span>')
-										.replace(/{.*?}/, '<span style="font-weight:bold">'+strtime+'</span>');
+				var txt = this.template.replace(/\{.*?\}/, '<span style="font-weight:bold">'+strdate+'</span>')
+										.replace(/\{.*?\}/, '<span style="font-weight:bold">'+strtime+'</span>');
 				
 				this.$el.html(txt);
 				this.$el.show();

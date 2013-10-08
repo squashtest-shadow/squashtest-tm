@@ -80,6 +80,6 @@ define(['jquery', 'tree', 'custom-field-values', 'jquery.squash.formdialog'], fu
 	
 	return {
 		init : init
-	}
+	};
 
 });

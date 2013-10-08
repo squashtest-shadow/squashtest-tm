@@ -42,6 +42,6 @@ define(['tree', './camp-treemenu', './popups/init-all', './init-actions', 'squas
 	
 	return {
 		init : init
-	}
+	};
 	
 });

@@ -32,10 +32,10 @@ define(['jquery', 'tree', 'workspace/workspace.import-popup'], function($, zetre
 			$(".rejected-import", panel).text(json.rejected);
 			
 			var failSpan = $(".failures-import", panel).text(json.failures);
-			if (json.failures==0){ failSpan.removeClass("span-red"); }else{	failSpan.addClass("span-red"); }
+			if (json.failures===0){ failSpan.removeClass("span-red"); }else{	failSpan.addClass("span-red"); }
 			
 			//notes
-			if ((json.renamed==0) && (json.modified==0)){
+			if ((json.renamed===0) && (json.modified===0)){
 				$(".import-excel-dialog-note", panel).hide();
 			}else{
 				$(".import-excel-dialog-note", panel).show();
@@ -91,6 +91,6 @@ define(['jquery', 'tree', 'workspace/workspace.import-popup'], function($, zetre
 	
 	return {
 		init : init
-	}
+	};
 
 });

@@ -42,6 +42,6 @@ define(['./add-folder-popup', './add-requirement-popup' ,
 	
 	return {
 		init : init
-	}
+	};
 
 });

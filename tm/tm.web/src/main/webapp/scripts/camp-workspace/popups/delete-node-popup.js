@@ -54,7 +54,7 @@ define(['jquery', 'tree', '../permissions-rules', 'workspace/workspace.delnode-p
 					var nodes = n.treeNode();
 					var ids = $.map(nodes.get(), _collectId).join(',');
 					var rawUrl = nodes.getDeleteUrl();
-					var url = rawUrl.replace('\{nodeIds\}', ids) + '/deletion-simulation';
+					var url = rawUrl.replace('{nodeIds}', ids) + '/deletion-simulation';
 					aXhrs.push($.getJSON(url));
 				}
 				else{
@@ -105,6 +105,6 @@ define(['jquery', 'tree', '../permissions-rules', 'workspace/workspace.delnode-p
 	
 	return {
 		init : init
-	}
+	};
 
 });

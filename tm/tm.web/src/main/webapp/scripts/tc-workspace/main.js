@@ -42,6 +42,6 @@ define(['tree', './tc-treemenu', './popups/init-all', './init-actions', 'squash/
 	
 	return {
 		init : init
-	}
+	};
 	
 });

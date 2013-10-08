@@ -22,23 +22,23 @@
 
 /*
  * this.options : {
- *   url : 		the url where to fetch the data. Note that it may contain predefined query string arguments. 
- *   			NB : this is a native Backbone ctor parameter.
- * 	 model : 	a javascript object being the model. If left undefined, will attempt to read from the cache (if configured to do so). 
- * 				NB : this is a native Backbone ctor parameter.
- * 	 cacheKey : string. If defined, will use a cache. Contrary to what you might think, this will not shortcircuit ajax calls : we still want to 
- * 				update our data from the server on user request. This cache will be used when the model is initialized only : when no 'model' 
- * 				is supplied with the init options, it will attempt to lookup the cache instead. Besides this, whenever the model is updated after 
- * 				successful remote call the cache will be updated accordingly.
- * 	 includeTreeSelection : if defined and true, will include the node selected in the tree in the query string when fetching the model.
- * 	 syncmode : "passive" or "tree-listener". Default is "passive". See below for details.
- * }
- * 
+ *	url :		the url where to fetch the data. Note that it may contain predefined query string arguments. 
+ *				NB : this is a native Backbone ctor parameter.
+ *	model :		a javascript object being the model. If left undefined, will attempt to read from the cache (if configured to do so). 
+ *				NB : this is a native Backbone ctor parameter.
+ *	cacheKey : string. If defined, will use a cache. Contrary to what you might think, this will not shortcircuit ajax calls : we still want to 
+ *				update our data from the server on user request. This cache will be used when the model is initialized only : when no 'model' 
+ *				is supplied with the init options, it will attempt to lookup the cache instead. Besides this, whenever the model is updated after 
+ *				successful remote call the cache will be updated accordingly.
+ *	includeTreeSelection : if defined and true, will include the node selected in the tree in the query string when fetching the model.
+ *	syncmode : "passive" or "tree-listener". Default is "passive". See below for details.
+ *	}
+ *
  * ----
- * 
- * syncmode :
- * 	"passive" : the model will be synchronized only when requested to.  
- * 	"tree-listener" : Will listen to the tree and trigger synchronization everytime the node selection changes. Incidentally, will force 'includeTreeSelection' to true.
+ *
+ *	syncmode :
+ *	"passive" : the model will be synchronized only when requested to.  
+ *	"tree-listener" : Will listen to the tree and trigger synchronization everytime the node selection changes. Incidentally, will force 'includeTreeSelection' to true.
  */
 define(["jquery", "backbone", "underscore", './model-cache', "tree", "workspace.contextual-content", "jquery.throttle-debounce"], 
 		function($, Backbone, _, cache, zetree, ctxt){
@@ -49,7 +49,7 @@ define(["jquery", "backbone", "underscore", './model-cache', "tree", "workspace.
 			
 			if (options.url === undefined){
 				throw "dashboard : cannot initialize the model because no url was provided";
-			};
+			}
 
 			this.options = options;
 			this.tree = zetree.get();
@@ -72,12 +72,12 @@ define(["jquery", "backbone", "underscore", './model-cache', "tree", "workspace.
 			// fetch the model from the cache if no model is supplied.
 			if (attributes === undefined && this.options.cacheKey !==undefined){
 				attributes = cache.get(this.options.cacheKey);
-			};
+			}
 			
 			//if attributes is eventually defined but has no timestamp, add one.
 			if (!! attributes && attributes.timestamp===undefined){
 				attributes.timestamp = new Date();
-			};
+			}
 			
 			this.set(attributes);		
 			
@@ -88,7 +88,7 @@ define(["jquery", "backbone", "underscore", './model-cache', "tree", "workspace.
 			// force 'includeTreeSelection' if 'syncmode' is 'tree-listener'
 			if (this.options.syncmode==="tree-listener"){
 				this.options.includeTreeSelection = true;
-			};
+			}
 			
 		},
 		
@@ -125,7 +125,7 @@ define(["jquery", "backbone", "underscore", './model-cache', "tree", "workspace.
 			
 			if (method !== "read"){
 				return;	//this is a read-only operation
-			};
+			}
 			
 			/* 
 			 * override the success handler and automatically add the 
@@ -144,17 +144,17 @@ define(["jquery", "backbone", "underscore", './model-cache', "tree", "workspace.
 				
 				if (oldsuccess!==undefined){
 					oldsuccess.call(this, data, status, xhr);
-				};
+				}
 				
 				if (!! cacheKey){
 					cache.store(cacheKey, model.toJSON());
-				};
-			}
+				}
+			};
 			
 			// includes tree parameters if requested so
 			if (this.options.includeTreeSelection === true){
 				options.data = this._treeParams();
-			};
+			}
 			
 			// last, include a timestamp to prevent aggressive caching from IE
 			options.data = options.data || {};

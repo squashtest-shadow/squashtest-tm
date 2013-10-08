@@ -103,6 +103,6 @@ define(['jquery', 'tree', 'workspace.contextual-content',
 	
 	return {
 		init : init
-	}
+	};
 
 });

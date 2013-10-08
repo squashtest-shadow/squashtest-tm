@@ -28,7 +28,7 @@ define(['jquery'], function($){
 				icons : {
 					primary : css
 				}
-			}
+			};
 		}
-	}
+	};
 });

@@ -21,14 +21,14 @@
 
 
 /*
- * settings : {
- * 	  master : a css selector that identifies the whole section that need initialization,
- * 	  workspace : one of 'test-case', 'campaign', 'requirement' (can be read from dom)
- * 	  rendering : one of 'toggle-panel', 'plain'. This is a hint that tells how to render the dashboard container (can be read from dom),
- * 	  model : a javascript object, workspace-dependent, containing the data that will be plotted (optional, may be undefined)
- * 	  cacheKey : if defined, will use the model cache using the specified key.
- * 	  listeTree : if true, the model will listen to tree selection. 	  
- * }
+ *	settings : {
+ *		master : a css selector that identifies the whole section that need initialization,
+ *		workspace : one of 'test-case', 'campaign', 'requirement' (can be read from dom)
+ *		rendering : one of 'toggle-panel', 'plain'. This is a hint that tells how to render the dashboard container (can be read from dom),
+ *		model : a javascript object, workspace-dependent, containing the data that will be plotted (optional, may be undefined)
+ *		cacheKey : if defined, will use the model cache using the specified key.
+ *		listeTree : if true, the model will listen to tree selection.
+ *	}
  * 
  */
 
@@ -38,7 +38,7 @@ define(['require', 'iesupport/am-I-ie8'],function(require, isIE8){
 	
 	if (isIE8){
 		dependencies.push('excanvas');
-	};
+	}
 	
 	return {
 		
@@ -49,9 +49,11 @@ define(['require', 'iesupport/am-I-ie8'],function(require, isIE8){
 				var domconf = attrparser.parse(datadef);
 				var conf = $.extend(true, {}, domconf, settings);
 				
-				switch(conf.workspace){
-				case 'test-case' : tcBuilder.init(settings); break;
-				default : throw "dashboard : no other dashboard that test case dashboard is currently supported";
+				if(conf.workspace === 'test-case'){
+					tcBuilder.init(settings);
+				}
+				else{
+					throw "dashboard : no other dashboard that test case dashboard is currently supported";
 				}
 								
 			});

@@ -42,6 +42,6 @@ define(['jquery', 'tree', '../permissions-rules', 'workspace/workspace.delnode-p
 	
 	return {
 		init : init
-	}
+	};
 
 });

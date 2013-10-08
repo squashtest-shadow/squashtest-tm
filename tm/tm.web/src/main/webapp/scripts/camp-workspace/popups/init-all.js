@@ -36,6 +36,6 @@ define(['./add-folder-popup', './add-campaign-popup', './add-iteration-popup' , 
 	
 	return {
 		init : init
-	}
+	};
 
 });

@@ -42,6 +42,6 @@ define(['./add-folder-popup', './add-test-case-popup' ,
 	
 	return {
 		init : init
-	}
+	};
 
 });

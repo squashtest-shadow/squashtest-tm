@@ -68,6 +68,6 @@ define(['jquery', 'tree', 'workspace.contextual-content', '../permissions-rules'
 	
 	return {
 		init : init
-	}
+	};
 
 });
