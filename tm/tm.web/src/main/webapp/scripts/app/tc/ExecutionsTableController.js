@@ -33,8 +33,10 @@ define([ "jquery", "squashtable", "jqueryui" ],
 
 				function addStatusBall(row, data) {
 					var status = data["raw-exec-status"].toLowerCase();
-					row.find("td.exec-status")
-							.addClass("exec-status-" + status);
+					var $cell = row.find('td.exec-status');
+					var txt = $cell.text();
+					$cell.empty()
+						.append('<span class="exec-status-label exec-status-' + status + '">'+txt+'</span>');
 				}
 
 				function drawExecutionRow(nRow, aData, iDisplayIndex,
@@ -102,7 +104,7 @@ define([ "jquery", "squashtable", "jqueryui" ],
 					}, {
 						"bSortable" : true,
 						"aTargets" : [ 8 ],
-						"sClass" : "exec-status exec-status-label",
+						"sClass" : "exec-status",
 						"mDataProp" : "exec-status"
 					}, {
 						"bSortable" : true,

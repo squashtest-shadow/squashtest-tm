@@ -124,13 +124,13 @@
 
 <div id="delete-node-dialog" class="popup-dialog not-displayed" title="${deleteNodeTitle}">
 	
-	<div class="waiting-loading full-size-hack" data-def="state=pleasewait"></div>
+	<div class="waiting-loading full-size-hack centered" data-def="state=pleasewait"></div>
 	
 	<div class="not-displayed" data-def="state=confirm">
 	
 		<div class="display-table-row">
-			<div class="display-table-cell delete-node-dialog-warning">
-				<!-- content is empty on purpose, let it display a background image. -->
+			<div class="display-table-cell warning-cell">
+				<div class="delete-node-dialog-warning"></div>
 			</div>
 			<div class="display-table-cell">
 				<p>

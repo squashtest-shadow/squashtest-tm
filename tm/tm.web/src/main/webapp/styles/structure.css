@@ -1197,13 +1197,15 @@ div.information-panel p {
 /* ------------------>>> Tree Popups <<<--------------------*/
 /* ---------------------------------------------------------*/
 
+#delete-node-dialog .warning-cell{
+	vertical-align: middle;
+}
 
 #delete-node-dialog .delete-node-dialog-warning{
-	vertical-align:middle;
-	background-position : center center;
 	background-image : url('../images/messagebox_confirm.png');  /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
-	width : 60px;
+	width : 72px;
+	height : 64px;
 }
 
 #delete-node-dialog .delete-node-dialog-details{

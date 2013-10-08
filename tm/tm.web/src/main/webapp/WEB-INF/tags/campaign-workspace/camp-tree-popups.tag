@@ -148,8 +148,8 @@
 	<div class="not-displayed" data-def="state=confirm">
 	
 		<div class="display-table-row">
-			<div class="display-table-cell delete-node-dialog-warning">
-				<!-- content is empty on purpose, let it display a background image. -->
+			<div class="display-table-cell warning-cell">
+				<div class="delete-node-dialog-warning"></div>
 			</div>
 			<div class="display-table-cell">
 				<p>

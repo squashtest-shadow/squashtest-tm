@@ -72,10 +72,10 @@ define(['jquery', 'squash.translator', './exec-runner', './sortmode',
 		// execution mode icon
 		var $exectd = $row.find('.exec-mode').text('');
 		if ( data['exec-mode'] === "M"){
-			$exectd.addClass('exec-mode-manual').attr('title', '');
+			$exectd.append('<span class"exec-mode-icon exec-mode-manual"/>').attr('title', '');
 		}
 		else{
-			$exectd.addClass('exec-mode-automated').attr('title', _conf.autoexecutionTooltip);
+			$exectd.append('<span class="exec-mode-icon exec-mode-automated"/>').attr('title', _conf.autoexecutionTooltip);
 		}
 		
 		// execution status (read)

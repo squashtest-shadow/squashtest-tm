@@ -746,14 +746,16 @@ span.span-green {
 	background-image : url("../images/cog.png"); /** sprite-ref: sprites-icons;  */
 	background-repeat : no-repeat;
 }
+
 .exec-mode-manual {
 }
-.exec-mode.exec-mode-manual, .exec-mode.exec-mode-automated {
+
+.exec-mode-icon{
 	color: transparent;
 	overflow: hidden;
 	min-width: 16px;
 	min-height: 16px;
-	display: block;
+	display: inline-block;
 }
 
 /*******************************
