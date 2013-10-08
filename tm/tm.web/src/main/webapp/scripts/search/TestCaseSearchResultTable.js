@@ -404,7 +404,7 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 			var id = data["test-case-id"];
 			var $cell = $(".search-open-interface2-holder",row);
 			$cell.append('<span class="search-open-interface2"></span>')
-		    	.click(function(){
+			.click(function(){
 		        window.location = squashtm.app.contextRoot + "/test-cases/" + id + "/info";
 		    });
 		},
@@ -425,7 +425,7 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 		_addTreeLink : function(row, data){
 			var self = this;
 			var id = data["test-case-id"];
-			var $cell = $(".search-open-tree-holder", row)
+			var $cell = $(".search-open-tree-holder", row);
 			$cell.append('<span class="search-open-tree"></span>')
 				.click(function(){
 				window.location = squashtm.app.contextRoot + "/test-case-workspace?element_id="+id;
