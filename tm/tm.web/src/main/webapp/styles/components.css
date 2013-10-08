@@ -703,6 +703,9 @@ span.span-green {
 	background-image: url("../images/tick_blue.png");  /** sprite-ref: sprites-icons;  */
 	background-color : transparent;
 	background-repeat : no-repeat;
+	width : 16px;
+	height : 16px;
+	display : inline-block;
 }
 
 .associated-icon-testcase {
@@ -710,6 +713,9 @@ span.span-green {
 	background-image: url("../images/tick_green.png");  /** sprite-ref: sprites-icons;  */
 	background-color : transparent;
 	background-repeat : no-repeat;
+	width : 16px;
+	height : 16px;
+	display : inline-block;
 }
 
 .associated-icon-campaign {
@@ -717,6 +723,9 @@ span.span-green {
 	background-image: url("../images/tick_purple.png");  /** sprite-ref: sprites-icons;  */
 	background-color : transparent;
 	background-repeat : no-repeat;
+	width : 16px;
+	height : 16px;
+	display : inline-block;
 }
 
 /*******************************
@@ -727,15 +736,19 @@ span.span-green {
 	background-image : url("../images/folder_search.png"); /** sprite-ref: sprites-icons;  */
 	background-color : transparent;
 	background-repeat : no-repeat;
-	padding-left: 20px;
+	width : 16px;
+	height : 16px;
+	display : inline-block;
 }
 
-.search-open-interface2 {
+.search-open-interface2{
 	background-position : center;
 	background-image: url("../images/pencil.png"); /** sprite-ref: sprites-icons;  */
 	background-color : transparent;
 	background-repeat : no-repeat;
-	padding-left: 20px;
+	width : 16px;
+	height : 16px;
+	display : inline-block;
 }
 
 /*******************************
@@ -960,3 +973,29 @@ predefined for future evolutions :
 	left: 50%;
 }
 
+/*****************************************
+ * various icons
+ ****************************************/
+.ui-icon-wizard {
+	background-image: url("../images/icon_wizard.gif") !important; /** sprite-ref: sprites-icons; */
+	background-repeat: no-repeat;
+	width : 16px;
+	height : 16px;
+	display : inline-block;
+}
+
+.ui-icon-link-dark-e-w {
+	background-image: url("../images/link_on.png") !important; /** sprite-ref: sprites-icons; */
+	background-repeat: no-repeat;
+	width : 16px;
+	height : 16px;
+	display : inline-block;
+}
+
+.ui-icon-link-clear-e-w {
+	background-image: url("../images/link_off.png") !important; /** sprite-ref: sprites-icons; */
+	background-repeat: no-repeat;
+	width : 16px;
+	height : 16px;
+	display : inline-block;
+}

@@ -72,7 +72,7 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 							"mDataProp" : "empty-is-associated-holder",
 							"bSortable" : false,
 							"sWidth" : "2em",
-							"sClass" : "is-associated"
+							"sClass" : "is-associated centered"
 						}, {
 							"aTargets" : [ 2 ],
 							"mDataProp" : "project-name",
@@ -142,7 +142,7 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 						}, {
 							"aTargets" : [ 16 ],
 							"mDataProp" : "empty-openinterface2-holder",
-							"sClass" : "centered search-open-interface2",
+							"sClass" : "centered search-open-interface2-holder",
 							"sWidth" : "2em",
 							"bSortable" : false
 						}, {
@@ -249,13 +249,13 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 						}, {
 							"aTargets" : [ 15 ],
 							"mDataProp" : "empty-openinterface2-holder",
-							"sClass" : "centered search-open-interface2",
+							"sClass" : "centered search-open-interface2-holder",
 							"sWidth" : "2em",
 							"bSortable" : false
 						}, {
 							"aTargets" : [ 16 ],
 							"mDataProp" : "empty-opentree-holder",
-							"sClass" : "centered search-open-tree",
+							"sClass" : "centered search-open-tree-holder",
 							"sWidth" : "2em",
 							"bSortable" : false
 						}, {
@@ -391,7 +391,7 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 				this.addSelectEditableToStatus(row,data);
 				this.addSelectEditableToType(row,data);
 			}
-	
+
 			this.addInterfaceLevel2Link(row,data);
 			this.addTreeLink(row,data);
 	
@@ -402,21 +402,22 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 
 		_addInterfaceLevel2Link : function(row, data) {
 			var id = data["test-case-id"];
-		    $(".search-open-interface2",row).click(function(){
+			var $cell = $(".search-open-interface2-holder",row);
+			$cell.append('<span class="search-open-interface2"></span>')
+		    	.click(function(){
 		        window.location = squashtm.app.contextRoot + "/test-cases/" + id + "/info";
 		    });
 		},
 		
-
 		_addIconToAssociatedToColumn : function(row, data) {
 			
 			var associatedTo = data["is-associated"];
 			
 			if(associatedTo){
 				if(this.associateType == "requirement"){
-					$(".is-associated",row).addClass("associated-icon-requirement");
+					$(".is-associated",row).append('<span class="associated-icon-requirement"></span>');
 				} else {
-					$(".is-associated",row).addClass("associated-icon-campaign");
+					$(".is-associated",row).append('<span class="associated-icon-campaign"></span>');
 				}
 			}
 		},
@@ -424,7 +425,9 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 		_addTreeLink : function(row, data){
 			var self = this;
 			var id = data["test-case-id"];
-			$(".search-open-tree", row).click(function(){
+			var $cell = $(".search-open-tree-holder", row)
+			$cell.append('<span class="search-open-tree"></span>')
+				.click(function(){
 				window.location = squashtm.app.contextRoot + "/test-case-workspace?element_id="+id;
 			});
 		},
