@@ -99,7 +99,8 @@ define(function(){
 				},
 				
 				"squash" : {
-					rootUrl : baseURL
+					rootUrl : baseURL,
+					opened : (!!settings.selectedNode) ? [settings.selectedNode] : []
 				}
 				
 			};

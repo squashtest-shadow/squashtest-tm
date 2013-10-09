@@ -96,6 +96,7 @@ define(['jquery', 'jstree', './tree-node', 'jquery.squash'], function($){
 				var tree = this;
 				var s = this._get_settings().squash;
 				tree.data.squash.timeout = s.timeout;
+				tree.data.squash.opened = s.opened || [];	
 				tree.data.squash.isie = false;
 				tree.data.squash.rootUrl = (s.rootUrl === undefined) ? '' : s.rootUrl;
 				var container = this.get_container();
@@ -128,6 +129,12 @@ define(['jquery', 'jstree', './tree-node', 'jquery.squash'], function($){
 					return false; // returns false to prevent navigation in page (# appears at the end of the URL) 
 				});
 	
+				
+				// ripped from the 'cookie' plugin : override the initially selected nodes.
+				if (!! tree.data.squash.opened && tree.data.squash.opened.length >0){
+					this.data.ui.to_select = tree.data.squash.opened;
+				}
+				
 				/*
 				 * CSS style now. that section is copied/pasted from the original themeroller plugin, kudos mate.
 				 * 
@@ -143,10 +150,11 @@ define(['jquery', 'jstree', './tree-node', 'jquery.squash'], function($){
 					return true;
 	
 				}, this)).bind("deselect_node.jstree deselect_all.jstree",$.proxy(function(e, data) {
-							this.get_container().find("." + s.item_a).removeClass(s.item_a).end().find(".jstree-clicked").addClass(
-									s.item_a);
-							return true;
-						}, this));
+					this.get_container().find("." + s.item_a).removeClass(s.item_a).end().find(".jstree-clicked").addClass(
+							s.item_a);
+					return true;
+				}, this));
+				
 			},
 			_fn : {
 
