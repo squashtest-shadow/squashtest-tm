@@ -231,9 +231,6 @@ that page won't be editable if
 		<c:if test="${ writable }">
 			<input type="button" value='<f:message key="requirement.button.rename.label" />' id="rename-requirement-button" class="button"/> 
 		</c:if>
-		<c:if test="${deletable }">
-				<input type="button" value='<f:message key="requirement.button.remove.label" />' id="delete-requirement-button" class="button"/>	
-		</c:if>	
 		<c:if test="${ creatable }">
 			<input type="button" value='<f:message key="requirement.button.new-version.label" />' id="new-version-button" class="button"/>		
 		</c:if>
@@ -443,11 +440,7 @@ that page won't be editable if
 		});
 	</script>		
 	</c:if>	
-<%--------------------------- Deletion confirmation popup -------------------------------------%>
-	<c:if test="${deletable}">
-	<comp:delete-contextual-node-dialog 
-			itemId="${requirement.id}" successCallback="deleteRequirementSuccess" openedBy="delete-requirement-button" titleKey="dialog.delete-requirement.title"/>
-	</c:if>
+
 <%------------------------------- confirm new status if set to obsolete popup---------------------%>
 	<c:if test="${status_editable}">
 	<pop:popup id="requirement-status-confirm-dialog" closeOnSuccess="false" titleKey="dialog.requirement.status.confirm.title" isContextual="true" >
@@ -461,7 +454,7 @@ that page won't be editable if
 					var form = jqDiag.data('callMeBack');
 					form.submit();
 				},
-				
+
 				'${ cancelLabel }': function() {
 					var jqDiag = $(this);
 					jqDiag.dialog( 'close' );
@@ -515,22 +508,7 @@ that page won't be editable if
 	});
 	
 	
-		
-	<c:if test="${deletable}">
-	/* deletion success handler */
-	function deleteRequirementSuccess(){		
-		<c:choose>
-		<%-- case one : we were in a sub page context. We need to navigate back to the workspace. --%>
-		<c:when test="${param.isInfoPage}" >		
-		document.location.href="${workspaceUrl}" ;
-		</c:when>
-		<%-- case two : we were already in the workspace. we simply reload it (todo : make something better). --%>
-		<c:otherwise>
-		location.reload(true);
-		</c:otherwise>
-		</c:choose>				
-	}
-	</c:if>
+
 		
 </script>
 <%-- -----------------------------------/ SCRIPT ----------------------------------------------%>

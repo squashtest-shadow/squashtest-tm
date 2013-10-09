@@ -165,12 +165,6 @@
 				id="rename-campaign-button" />
 		</c:if>
 
-		
-		<c:if test="${ deletable }">
-			<input type="button"
-				value='<f:message key="label.Delete" />'
-				id="delete-campaign-button" />
-		</c:if>
 	</div>
 	<div style="clear: both;"></div>
 	<c:if test="${ moreThanReadOnly }">
@@ -412,17 +406,7 @@
 	
 
 </div>
-<%--------------------------- Deletion confirmation popup -------------------------------------%>
-<c:if test="${ deletable }">
 
-
-	<comp:delete-contextual-node-dialog
-		itemId="${campaign.id}"
-		successCallback="deleteCampaignSuccess"
-		openedBy="delete-campaign-button"
-		titleKey="dialog.delete-campaign.title" />
-
-</c:if>
 
 
 <%--------------------------- Assign User popup -------------------------------------%>
@@ -493,7 +477,6 @@
 			require(["jquery", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", 'workspace.contextual-content', "jqueryui"], 
 					function($, contentHandlers, Frag, bugtracker, contextualContent){
 				
-				$('#delete-campaign-button').button();
 				$('#rename-campaign-button').button();
 				
 				var nameHandler = contentHandlers.getSimpleNameHandler();
@@ -527,28 +510,6 @@
 		squashtm.workspace.contextualContent.fire(null, evt);		
 	};					
 	
-
-
-
-	/* deletion success handler */
-	function deleteCampaignSuccess() {
-		<c:choose>
-		<%-- case one : we were in a sub page context. We need to navigate back to the workspace. --%>
-		<c:when test="${param.isInfoPage}" >
-		document.location.href = "${workspaceUrl}";
-		</c:when>
-		<%-- case two : we were already in the workspace. we simply reload it (todo : make something better). --%>
-		<c:otherwise>
-		location.reload(true);
-		</c:otherwise>
-		</c:choose>
-	}
-
-	/* deletion failure handler */
-	function deleteCampaignFailure(xhr) {
-		$.squash.openMessage("<f:message key='popup.title.error' />",
-				xhr.statusText);
-	}
 </script>
 
 <comp:decorate-buttons />

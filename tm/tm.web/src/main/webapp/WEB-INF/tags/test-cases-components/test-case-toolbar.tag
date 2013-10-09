@@ -50,10 +50,6 @@
 		<input type="button" value="<f:message key='test-case.button.rename.label' />"
 				id="rename-test-case-button" class="button" />
 	</c:if>
-	<c:if test="${ deletable }">
-		<input type="button" value="<f:message key='test-case.button.remove.label' />"
-				id="delete-test-case-button" class="button" />
-	</c:if>
 		<input type="button" value="<f:message key='label.print'/>" id="print-test-case-button" class="button"/>
 	</div>
 	<div style="clear: both;"></div>

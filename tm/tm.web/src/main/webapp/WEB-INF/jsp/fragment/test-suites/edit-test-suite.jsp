@@ -149,30 +149,10 @@
 		
 	}
 
-
-	/* deletion success handler */
-	function deleteTestSuiteSuccess(){		
-		<c:choose>
-		<%-- case one : we were in a sub page context. We need to navigate back to the workspace. --%>
-		<c:when test="${param.isInfoPage}" >		
-			document.location.href="${workspaceUrl}" ;
-		</c:when>
-		<%-- case two : we were already in the workspace. we simply reload it (todo : make something better). --%>
-		<c:otherwise>
-		location.reload(true);
-		</c:otherwise>
-		</c:choose>		
-	}
-	/* deletion failure handler */
-	function deleteTestSuiteFailure(xhr){
-		oneShotDialog("<f:message key='popup.title.error' />", xhr.statusText);
-	}
 	
-
 	function refreshExecButtons(){
 		$('#test-suite-execution-button').load('${ testSuiteExecButtonsUrl }');
 	}
-
 
 </script>
 
@@ -244,12 +224,6 @@
 			<input type="button"
 				value="<f:message key='test-suite.button.rename.label' />"
 				id="rename-test-suite-button" class="button"
-				style="display: inline-block;" />
-		</c:if>
-		<c:if test="${ deletable }">
-			<input type="button"
-				value="<f:message key='test-suite.button.remove.label' />"
-				id="delete-test-suite-button" class="button"
 				style="display: inline-block;" />
 		</c:if>
 		<c:if test="${ creatable }">
@@ -329,34 +303,6 @@
 	
 	<at:attachment-tab tabId="tabs-3" entity="${ testSuite }"	editable="${ executable }" tableModel="${attachmentsModel}"/>
 	
-	
-	<%-- ---------------------deletion popup------------------------------ --%>
-	<c:if test="${ deletable }">
-		<script>
-		var testSuiteId = ${testSuite.id};
-		$(function(){
-			$('#delete-test-suite-button').click(function(){
-				oneShotConfirm("<f:message key='dialog.delete-test-suite.title' />", 
-						"<table><tr><td><span class='delete-confirm'/></td><td><table><tr><td><span>${deleteMessageStart} <span class='red-warning-message'>${deleteMessage}</span> ${deleteMessageEnd}</span></td></tr><tr><td>${deleteMessageCantBeUndone}</td></tr><tr><td class='bold-warning-message'>${deleteMessageConfirm}</td></tr></table></td></tr></table>",
-						"<f:message key='label.Confirm' />",  
-						"<f:message key='label.Cancel' />",
-						'500px').done(function(){confirmTestSuiteDeletion()
-							.done(deleteTestSuiteSuccess)
-							.fail(deleteTestSuiteFailure)});
-			});
-		});
-		
-		function confirmTestSuiteDeletion(){
-			return $.ajax({
-				'url' : '${confirmDeletionUrl}',
-				type : 'POST',
-				data : {"ids[]":[testSuiteId]},
-				dataType : 'json'
-			});
-		}
-		
-		</script>
-	</c:if>
 
 </div>
 

@@ -195,11 +195,6 @@
 				value='<f:message key="iteration.button.rename.label" />'
 				id="rename-iteration-button" class="button" />
 		</c:if>
-		<c:if test="${ deletable }">
-			<input type="button"
-				value='<f:message key="iteration.button.remove.label" />'
-				id="delete-iteration-button" class="button" />
-		</c:if>
 		
 	</div>
 	<div style="clear: both;"></div>
@@ -355,16 +350,7 @@
 	<at:attachment-tab tabId="tabs-3" entity="${ iteration }"	editable="${ attachable }"  tableModel="${attachmentsModel}"/>
 
 
-	<%-- ---------------------deletion popup------------------------------ --%>
-	<c:if test="${ deletable }">
-	
-		<comp:delete-contextual-node-dialog
-		itemId="${iteration.id}"		
-		successCallback="deleteIterationSuccess"
-		openedBy="delete-iteration-button"
-		titleKey="dialog.delete-iteration.title" />
-	
-	</c:if>
+
 
 </div>
 <%------------------------------------------automated suite overview --------------------------------------------%>
@@ -439,28 +425,7 @@
 		squashtm.workspace.contextualContent.fire(null, evt);		
 		refreshIterationInfos();
 	}
-
-
-
-	/* deletion success handler */
-	function deleteIterationSuccess() {
-		<c:choose>
-		<%-- case one : we were in a sub page context. We need to navigate back to the workspace. --%>
-		<c:when test="${param.isInfoPage}" >
-		document.location.href = "${workspaceUrl}";
-		</c:when>
-		<%-- case two : we were already in the workspace. we simply reload it (todo : make something better). --%>
-		<c:otherwise>
-		location.reload(true);
-		</c:otherwise>
-		</c:choose>
-	}
-
-	/* deletion failure handler */
-	function deleteIterationFailure(xhr) {
-		$.squash.openMessage("<f:message key='popup.title.error' />",xhr.statusText);
-	}
-		
+	
 </script>
 
 

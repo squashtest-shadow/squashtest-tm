@@ -61,22 +61,6 @@
 		});
 	}
 	
-		
-	function deleteTestCaseSuccess() {
-		<c:choose>
-			<%-- case one : we were in a sub page context. We need to navigate back to the workspace. --%>
-			<c:when test="${isInfoPage}" >		
-				document.location.href="${workspaceUrl}" ;
-			</c:when>
-			<%-- case two : we were already in the workspace. we simply reload it (todo : make something better). --%>
-			<c:otherwise>
-				location.reload(true);
-			</c:otherwise>
-		</c:choose>		
-	}
-	
-
-
 	function renameTestCaseSuccess(data){
 		var identity = { obj_id : ${testCase.id}, obj_restype : "test-cases"  };
 		var evt = new EventRename(identity, data.newName);
@@ -169,7 +153,6 @@
 		//************** other *************
 		
 		$("#rename-test-case-button").squashButton();
-		$("#delete-test-case-button").squashButton();
 		$("#print-test-case-button").squashButton();
 
 		$("#print-test-case-button").click(function(){

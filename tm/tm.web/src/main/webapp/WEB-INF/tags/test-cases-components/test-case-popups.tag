@@ -72,14 +72,3 @@
 	</pop:popup>
 </c:if>
 
-<%--------------------------- Deletion confirmation popup -------------------------------------%>
-
-<c:if test="${ deletable }">
-
-	<comp:delete-contextual-node-dialog
-		itemId="${testCase.id}"
-		successCallback="deleteTestCaseSuccess"
-		openedBy="delete-test-case-button"
-		titleKey="dialog.delete-test-case.title" />
-
-</c:if>
