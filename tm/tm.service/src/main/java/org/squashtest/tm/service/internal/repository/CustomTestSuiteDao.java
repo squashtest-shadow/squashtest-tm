@@ -32,7 +32,7 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 
-public interface CustomTestSuiteDao extends EntityDao<TestSuite>{
+public interface CustomTestSuiteDao extends EntityDao<TestSuite> {
 
 	List<TestSuite> findAllByIterationId(long iterationId);
 
@@ -47,22 +47,38 @@ public interface CustomTestSuiteDao extends EntityDao<TestSuite>{
 	 */
 	List<IterationTestPlanItem> findLaunchableTestPlan(long testSuiteId);
 
-	TestPlanStatistics getTestSuiteStatistics(long testSuitId);	
+	/**
+	 * Will fill a {@link TestPlanStatistics} bean with infos taken from the test plan of the {@link TestSuite} matching
+	 * the given id.
+	 * 
+	 * @param testSuitId
+	 *            : the id of the concerned {@link TestSuite}
+	 * @return the filled {@link TestPlanStatistics} bean
+	 */
+	TestPlanStatistics getTestSuiteStatistics(long testSuitId);
 
+	/**
+	 * Will fill a {@link TestPlanStatistics} bean with the infos taken from the test plan of the {@link TestSuite}
+	 * matching the given id. But the infos will be taken only from the {@link IterationTestPlanItem} that are assigned
+	 * to the user matching the given login.
+	 * 
+	 * @param suiteId
+	 *            : the id of the concerned {@link TestSuite}
+	 * @param userLogin
+	 *            : the login of the user we want the {@link IterationTestPlanItem} to be assigned to
+	 * @return the fielled {@link TestPlanStatistics} bean
+	 */
 	TestPlanStatistics getTestSuiteStatistics(long suiteId, String userLogin);
 
-	List<IterationTestPlanItem> findTestPlanPartition(long testSuiteId,
-			List<Long> testPlanItemIds);
-	
+	List<IterationTestPlanItem> findTestPlanPartition(long testSuiteId, List<Long> testPlanItemIds);
+
 	List<Execution> findAllExecutionByTestSuite(long testSuiteId);
-	
+
 	@Deprecated
 	List<IterationTestPlanItem> findAllTestPlanItemsPaged(long testSuiteId, Paging paging);
-	
-	
+
 	List<IterationTestPlanItem> findTestPlan(long suiteId, PagingAndMultiSorting sorting, Filtering filter);
-	
-	
+
 	/**
 	 * Returns the paged list of [index, IterationTestPlanItem] wrapped in an {@link IndexedIterationTestPlanItem}
 	 * 
@@ -71,8 +87,9 @@ public interface CustomTestSuiteDao extends EntityDao<TestSuite>{
 	 * @param filtering
 	 * @return
 	 */
-	List<IndexedIterationTestPlanItem> findIndexedTestPlan(long suiteId, PagingAndMultiSorting sorting, Filtering filtering);
-	
+	List<IndexedIterationTestPlanItem> findIndexedTestPlan(long suiteId, PagingAndMultiSorting sorting,
+			Filtering filtering);
+
 	/**
 	 * Returns the paged list of [index, IterationTestPlanItem] wrapped in an {@link IndexedIterationTestPlanItem}
 	 * 
@@ -82,8 +99,8 @@ public interface CustomTestSuiteDao extends EntityDao<TestSuite>{
 	 * @return
 	 */
 	List<IndexedIterationTestPlanItem> findIndexedTestPlan(long suiteId, PagingAndSorting sorting, Filtering filter);
-		
+
 	long countTestPlans(Long suiteId, Filtering filtering);
-	
+
 	long findProjectIdBySuiteId(long suiteId);
 }

@@ -111,52 +111,44 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 	}
 
 	private Long countTestPlanItems(long testSuiteId, String userLogin) {
-		return (Long) executeEntityNamedQuery("TestSuite.countTestPlanItemsForUsers", idLoginParameter(testSuiteId, userLogin));
+		return (Long) executeEntityNamedQuery("TestSuite.countTestPlanItemsForUsers",
+				idLoginParameter(testSuiteId, userLogin));
 	}
 
 	@Override
 	public TestPlanStatistics getTestSuiteStatistics(final long testSuiteId) {
-		Map<String, Integer> statusMap = new HashMap<String, Integer>();
-
-		fillStatusMapWithQueryResult(testSuiteId, statusMap);
-
-		return new TestPlanStatistics(statusMap);
-	}
-
-	@Override
-	public TestPlanStatistics getTestSuiteStatistics(long testSuiteId, String userLogin) {
-		Map<String, Integer> statusMap = new HashMap<String, Integer>();
-
-		fillStatusMapWithQueryResult(testSuiteId, statusMap, userLogin);
-
-		return new TestPlanStatistics(statusMap);
-	}
-
-	private void fillStatusMapWithQueryResult(final long testSuiteId, Map<String, Integer> statusMap) {
 		// Add Total number of TestCases
 		Integer nbTestPlans = countTestPlanItems(testSuiteId).intValue();
-		statusMap.put(TestPlanStatistics.TOTAL_NUMBER_OF_TEST_CASE_KEY, nbTestPlans);
 
 		// Add number of testCase for each ExecutionStatus
 		SetQueryParametersCallback newCallBack = new IdId2ParameterCallback(testSuiteId);
 		List<Object[]> result = executeListNamedQuery("testSuite.countStatuses", newCallBack);
-		for (Object[] objTab : result) {
-			statusMap.put(((ExecutionStatus) objTab[0]).name(), ((Long) objTab[1]).intValue());
-		}
+
+		return fillTestPlanStatistics(nbTestPlans, result);
 	}
 
-	private void fillStatusMapWithQueryResult(final long testSuiteId, Map<String, Integer> statusMap, String userLogin) {
+
+	@Override
+	public TestPlanStatistics getTestSuiteStatistics(long testSuiteId, String userLogin) {
 		// Add Total number of TestCases
 		Integer nbTestPlans = countTestPlanItems(testSuiteId, userLogin).intValue();
-		statusMap.put(TestPlanStatistics.TOTAL_NUMBER_OF_TEST_CASE_KEY, nbTestPlans);
 
 		// Add number of testCase for each ExecutionStatus
 		SetQueryParametersCallback newCallBack = new IdId2LoginParameterCallback(testSuiteId, userLogin);
 		List<Object[]> result = executeListNamedQuery("testSuite.countStatusesForUser", newCallBack);
-		for (Object[] objTab : result) {
+		
+		return fillTestPlanStatistics(nbTestPlans, result);
+	}
+
+	private TestPlanStatistics fillTestPlanStatistics(Integer nbTestPlans, List<Object[]> queryResult) {
+		Map<String, Integer> statusMap = new HashMap<String, Integer>();
+		statusMap.put(TestPlanStatistics.TOTAL_NUMBER_OF_TEST_CASE_KEY, nbTestPlans);
+		for (Object[] objTab : queryResult) {
 			statusMap.put(((ExecutionStatus) objTab[0]).name(), ((Long) objTab[1]).intValue());
 		}
+		return new TestPlanStatistics(statusMap);
 	}
+	
 
 	private static class IdId2ParameterCallback implements SetQueryParametersCallback {
 		private long id;
@@ -171,7 +163,7 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 			query.setLong("id2", id);
 		}
 	}
-	
+
 	private static class IdId2LoginParameterCallback implements SetQueryParametersCallback {
 		private long id;
 		private String login;
@@ -188,7 +180,6 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 			query.setParameter("login", login);
 		}
 	}
-
 
 	@Override
 	public List<IterationTestPlanItem> findTestPlanPartition(final long testSuiteId, final List<Long> testPlanItemIds) {
@@ -327,11 +318,12 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 					IdAndLoginParameter(suiteId, filtering.getFilter()));
 		}
 	}
-	
+
 	@Override
 	public long findProjectIdBySuiteId(long suiteId) {
 		return (Long) executeEntityNamedQuery("testSuite.findProjectIdBySuiteId", idParameter(suiteId));
 	}
+
 	// ************************ utils ********************
 
 	private List<IterationTestPlanItem> buildItems(List<Object[]> tuples) {

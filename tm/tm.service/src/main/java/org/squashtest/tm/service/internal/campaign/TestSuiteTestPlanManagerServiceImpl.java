@@ -21,10 +21,12 @@
 package org.squashtest.tm.service.internal.campaign;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,7 +47,8 @@ import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.campaign.TestSuiteTestPlanManagerService;
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
-import org.squashtest.tm.service.project.ProjectsPermissionFinder;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.user.UserAccountService;
 
 @Service("squashtest.tm.service.TestSuiteTestPlanManagerService")
@@ -69,7 +72,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	private IterationTestPlanDao itemTestPlanDao;
 	
 	@Inject
-	private ProjectsPermissionFinder projectsPermissionFinder;
+	private PermissionEvaluationService permissionEvaluationService;
 	
 	
 	private static final String OR_HAS_ROLE_ADMIN = "or hasRole('ROLE_ADMIN')";
@@ -131,13 +134,12 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	@Override
 	public PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findAssignedTestPlan(long iterationId, PagingAndMultiSorting sorting) {
 
-		String userLogin = userService.findCurrentUser().getLogin();
-		TestSuite testSuite = testSuiteDao.findById(iterationId);
-		Long projectId = testSuite.getProject().getId();
-		
 		//configure the filter, in case the test plan must be restricted to what the user can see.
 		Filtering filtering = DefaultFiltering.NO_FILTERING;
-		if (projectsPermissionFinder.isInPermissionGroup(userLogin, projectId, "squashtest.acl.group.tm.TestRunner")) {
+		try{
+			PermissionsUtils.checkPermission(permissionEvaluationService, Arrays.asList(iterationId), "READ_UNASSIGNED", Iteration.class.getCanonicalName());
+		}catch(AccessDeniedException ade){
+			String userLogin = userService.findCurrentUser().getLogin();
 			filtering = new DefaultFiltering("User.login", userLogin);
 		}
 

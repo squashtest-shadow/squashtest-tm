@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.campaign;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -95,27 +96,24 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Inject
 	private IterationTestPlanDao iterationTestPlanDao;
-	
+
 	@Inject
 	private ObjectAclService aclService;
 
 	@Inject
 	private UserDao userDao;
-	
-	@Inject 
+
+	@Inject
 	private AdvancedSearchService advancedSearchService;
-	
+
 	@Inject
 	private UserAccountService userService;
 
 	@Inject
 	private DatasetDao datasetDao;
-	
-	@Inject
-	private ProjectsPermissionFinder projectsPermissionFinder;
+
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
-	
 
 	@Inject
 	@Qualifier("squashtest.tm.repository.TestCaseLibraryNodeDao")
@@ -141,34 +139,33 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	}
 
-	
-	
 	/**
 	 * 
 	 * @see org.squashtest.tm.service.campaign.CustomIterationModificationService#findAssignedTestPlan(long, Paging)
 	 */
 	@Override
-	public PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findAssignedTestPlan(long iterationId, PagingAndMultiSorting sorting) {
+	public PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findAssignedTestPlan(long iterationId,
+			PagingAndMultiSorting sorting) {
 
-		String userLogin = userService.findCurrentUser().getLogin();
-		Iteration iteration = iterationDao.findById(iterationId);
-		Long projectId = iteration.getProject().getId();
 		
-		//configure the filter, in case the test plan must be restricted to what the user can see.
+		// configure the filter, in case the test plan must be restricted to what the user can see.
 		Filtering filtering = DefaultFiltering.NO_FILTERING;
-		if (projectsPermissionFinder.isInPermissionGroup(userLogin, projectId, "squashtest.acl.group.tm.TestRunner")) {
+
+		try {
+			PermissionsUtils.checkPermission(permissionEvaluationService, Arrays.asList(iterationId), "READ_UNASSIGNED", Iteration.class.getName());
+		} catch (AccessDeniedException ade) {
+			String userLogin = userService.findCurrentUser().getLogin();
 			filtering = new DefaultFiltering("User.login", userLogin);
 		}
 
-		
-		List<IndexedIterationTestPlanItem> indexedItems = iterationDao.findIndexedTestPlan(iterationId, sorting, filtering);
+		List<IndexedIterationTestPlanItem> indexedItems = iterationDao.findIndexedTestPlan(iterationId, sorting,
+				filtering);
 		long testPlanSize = iterationDao.countTestPlans(iterationId, filtering);
 
-		return new PagingBackedPagedCollectionHolder<List<IndexedIterationTestPlanItem>>(sorting, testPlanSize, indexedItems);
+		return new PagingBackedPagedCollectionHolder<List<IndexedIterationTestPlanItem>>(sorting, testPlanSize,
+				indexedItems);
 	}
 
-	
-	
 	/*
 	 * security note here : well what if we add test cases for which the user have no permissions on ? think of
 	 * something better.
@@ -219,7 +216,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 			// TODO somewhat useless, above "if" branch could handle both cases
 			testPlan.add(IterationTestPlanItem.createUnparameterizedTestPlanItem(testCase));
 		}
-		
+
 		advancedSearchService.reindexTestCase(testCase.getId());
 	}
 
@@ -234,8 +231,6 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		}
 	}
 
-	
-
 	/**
 	 * @see CustomIterationModificationService#changeTestPlanPosition(long, int, List)
 	 */
@@ -248,25 +243,24 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 		iteration.moveTestPlans(newPosition, items);
 	}
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'LINK') "
-			+ OR_HAS_ROLE_ADMIN)	
+			+ OR_HAS_ROLE_ADMIN)
 	public void reorderTestPlan(long iterationId, MultiSorting newSorting) {
-		
+
 		Paging noPaging = Pagings.NO_PAGING;
 		PagingAndMultiSorting sorting = new DelegatePagingAndMultiSorting(noPaging, newSorting);
 		Filtering filtering = DefaultFiltering.NO_FILTERING;
-		
+
 		List<IterationTestPlanItem> items = iterationDao.findTestPlan(iterationId, sorting, filtering);
-		
+
 		Iteration iteration = iterationDao.findById(iterationId);
-		
+
 		iteration.getTestPlans().clear();
 		iteration.getTestPlans().addAll(items);
 	}
-	
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'LINK') "
 			+ OR_HAS_ROLE_ADMIN)
@@ -294,36 +288,32 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		return unauthorizedDeletion;
 	}
 
-
-
 	private boolean removeTestPlanItemIfOkWithExecsAndRights(Iteration iteration, boolean unauthorizedDeletion,
 			IterationTestPlanItem item) {
 		if (item.getExecutions().isEmpty()) {
 			doRemoveTestPlanItemFromIteration(iteration, item);
 		} else {
-			try{
-				PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(item,"EXTENDED_DELETE"));		
+			try {
+				PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(item,
+						"EXTENDED_DELETE"));
 				doRemoveTestPlanItemFromIteration(iteration, item);
-			}
-			catch(AccessDeniedException exception){
+			} catch (AccessDeniedException exception) {
 				unauthorizedDeletion = true;
 			}
-			
+
 		}
 		return unauthorizedDeletion;
 	}
 
-
-
 	private void doRemoveTestPlanItemFromIteration(Iteration iteration, IterationTestPlanItem item) {
 		TestCase testCase = item.getReferencedTestCase();
-		
+
 		iteration.removeItemFromTestPlan(item);
 		iterationTestPlanDao.remove(item);
-		
+
 		// unless the test case was deleted, we need to reindex its statistics
-		if (testCase != null){
-			advancedSearchService.reindexTestCase(testCase.getId());					
+		if (testCase != null) {
+			advancedSearchService.reindexTestCase(testCase.getId());
 		}
 	}
 
@@ -376,8 +366,10 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
 			+ OR_HAS_ROLE_ADMIN)
-	public PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findTestPlan(long iterationId, PagingAndSorting filter) {
-		List<IndexedIterationTestPlanItem> testPlan = iterationDao.findIndexedTestPlan(iterationId, filter, DefaultFiltering.NO_FILTERING);
+	public PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findTestPlan(long iterationId,
+			PagingAndSorting filter) {
+		List<IndexedIterationTestPlanItem> testPlan = iterationDao.findIndexedTestPlan(iterationId, filter,
+				DefaultFiltering.NO_FILTERING);
 		long count = iterationDao.countTestPlans(iterationId, DefaultFiltering.NO_FILTERING);
 		return new PagingBackedPagedCollectionHolder<List<IndexedIterationTestPlanItem>>(filter, count, testPlan);
 	}

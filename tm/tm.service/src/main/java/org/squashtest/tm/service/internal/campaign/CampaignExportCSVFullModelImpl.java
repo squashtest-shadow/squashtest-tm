@@ -365,6 +365,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 
 		}
 		
+		@SuppressWarnings("unchecked")
 		private void populateExecutionStepCUFRowData(List<CellImpl> dataCells){
 			ExecutionStep eStep = execStep;
 			if (eStep != null){
@@ -377,6 +378,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 			}
 		}
 		
+		@SuppressWarnings("unchecked")
 		private void populateTestCaseCUFRowData(List<CellImpl> dataCells){
 			
 			if (_cached_itpcell_ready){
@@ -398,6 +400,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 		}
 		
 		
+		@SuppressWarnings("unchecked")
 		private void populateIterationCUFRowData(List<CellImpl> dataCells){
 			Collection<CustomFieldValue> iValues = (Collection<CustomFieldValue>) iterCUFValues.get(iteration.getId());
 			for (CustomField model : iterCUFModel) {
@@ -603,8 +606,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 			
 			boolean foundNextStep = false;
 			boolean _nextTCSucc;
-			boolean foundNextTestStep = false;
-
+			
 			do{
 				// test if we must move to the next test case
 				if (execStep == null && actionTestStep == null){

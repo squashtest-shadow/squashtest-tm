@@ -283,11 +283,9 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 			}
 		}
 		
-		@SuppressWarnings("unchecked")
 		private void populateTestCaseRowData(List<CellImpl> dataCells) {
 
 			TestCase testCase = itp.getReferencedTestCase();
-			
 			dataCells.add(new CellImpl(testCase.getId().toString()));
 			dataCells.add(new CellImpl(itp.getLabel()));
 			dataCells.add(new CellImpl(testCase.getProject().getId().toString()));
@@ -306,7 +304,6 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 			dataCells.add(new CellImpl(testCase.getStatus().toString()));
 		}
 
-		@SuppressWarnings("unchecked")
 		private void populateIterationRowData(List<CellImpl> dataCells) {
 			
 			dataCells.add(new CellImpl(iteration.getId().toString()));
@@ -366,9 +363,6 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 
 		}
 
-		private String formatLongText(String text) {
-			return (text == null) ? "" : text;
-		}
 
 		// ****************** iterator mechanics here ****************
 

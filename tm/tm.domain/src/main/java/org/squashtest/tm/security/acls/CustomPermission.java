@@ -39,6 +39,7 @@ public class CustomPermission extends BasePermission {
 	public static final Permission IMPORT = new CustomPermission(1 << 9, 'I'); //NONSONAR 512
 	public static final Permission ATTACH = new CustomPermission(1 << 10, 'T'); //NONSONAR 1024
 	public static final Permission EXTENDED_DELETE = new CustomPermission(1 << 11, 'S'); //NONSONAR 2048
+	public static final Permission READ_UNASSIGNED = new CustomPermission(1 << 12, 'U'); //NONSONAR 4096
 	
 	public CustomPermission(int mask) {
 		super(mask);

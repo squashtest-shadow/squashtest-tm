@@ -20,41 +20,62 @@
  */
 package org.squashtest.tm.service.security;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.squashtest.it.infrastructure.Stub;
+import org.squashtest.tm.domain.Identified;
 
 @Stub
 public class StubPermissionEvaluationService implements PermissionEvaluationService {
 
+	Set<String> permissionsToRefuse = new HashSet<String>();
+
 	public StubPermissionEvaluationService() {
 		super();
-		// TODO Auto-generated constructor stub
+	}
+
+	public void emptyPermissionsToRefuse() {
+		permissionsToRefuse.clear();
+	}
+
+	public void addPermissionToRefuse(String permission, String className, long id) {
+		String permissionString = permission + className + id;
+		permissionsToRefuse.add(permissionString);
 	}
 
 	@Override
 	public boolean hasRoleOrPermissionOnObject(String role, String permission, Object object) {
-		// TODO Auto-generated method stub
-		return true;
+		Identified identified = (Identified) object;
+		return hasPermissionOnObject(permission, identified.getId(),  object.getClass().getName() );
 	}
 
 	@Override
 	public boolean canRead(Object object) {
 		return true;
-
 	}
 
 	@Override
 	public boolean hasMoreThanRead(Object object) {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
 	public boolean hasRoleOrPermissionOnObject(String role, String permission, Long entityId, String entityClassName) {
-		return true;
+		return hasPermissionOnObject(permission, entityId, entityClassName);
 	}
 
 	@Override
 	public boolean hasRole(String role) {
+		return true;
+	}
+
+	@Override
+	public boolean hasPermissionOnObject(String permission, Long entityId, String entityClassName) {
+		String permissionString = permission + entityClassName + entityId;
+		if (permissionsToRefuse.contains(permissionString)) {
+			return false;
+		}
 		return true;
 	}
 

@@ -26,25 +26,54 @@ import org.springframework.security.access.AccessDeniedException;
 
 public final class PermissionsUtils {
 
-	private PermissionsUtils(){
+	private PermissionsUtils() {
 		super();
 	}
-	
-	public static final void checkPermission(PermissionEvaluationService permissionService, SecurityCheckableObject... checkableObjects) {
+
+	/**
+	 * Will check if the current user has sufficient rights on the given checkable objects. If not will throw an
+	 * {@link AccessDeniedException}.
+	 * 
+	 * @throws AccessDeniedException
+	 * @param permissionService
+	 *            : the {@link PermissionEvaluationService} to use to do the check
+	 * @param checkableObjects
+	 *            : the {@link SecurityCheckableObject}s to check
+	 */
+	public static final void checkPermission(PermissionEvaluationService permissionService,
+			SecurityCheckableObject... checkableObjects) {
 		for (SecurityCheckableObject object : checkableObjects) {
 			if (!permissionService
 					.hasRoleOrPermissionOnObject("ROLE_ADMIN", object.getPermission(), object.getObject())) {
 				throw new AccessDeniedException("Access is denied");
-				
+
 			}
 		}
 	}
-	
-	public static final void checkPermission(PermissionEvaluationService permissionService, List<Long> ids, String permission, String entityClassName) {
+
+	/**
+	 * Wil check if the current user has sufficient rights on the entities of the given ids and classname. If not, will
+	 * throw an {@link AccessDeniedException}
+	 * 
+	 * @throws AccessDeniedException
+	 * @param permissionService
+	 *            : the {@link PermissionEvaluationService} to use to do the check
+	 * @param ids
+	 *            : the ids of the entities to check the permissions on
+	 * @param permission
+	 *            : the permission name to check
+	 * @param entityClassName
+	 *            : the classname of the entities to check
+	 */
+	public static final void checkPermission(PermissionEvaluationService permissionService, List<Long> ids,
+			String permission, String entityClassName) {
+		if (permissionService.hasRole("ROLE_ADMIN")) {
+			return;
+		}
 		for (Long entityId : ids) {
-			if (!permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", permission, entityId, entityClassName)) {
+			if (!permissionService.hasPermissionOnObject(permission, entityId, entityClassName)) {
 				throw new AccessDeniedException("Access is denied");
-				
+
 			}
 		}
 	}

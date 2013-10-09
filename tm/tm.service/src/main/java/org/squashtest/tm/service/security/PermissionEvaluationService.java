@@ -72,4 +72,14 @@ public interface PermissionEvaluationService {
 	 * @return
 	 */
 	boolean hasRole(String role);
+
+	/**
+	 * returns <code>true</code> if the current user has the given permission on the object of the given id and classname.
+	 * 
+	 * @param permission
+	 * @param entityId
+	 * @param entityClassName
+	 * @return <code>true</code> if the current user has the given permission on the object of the given id and classname.
+	 */
+	boolean hasPermissionOnObject(String permission, Long entityId, String entityClassName);
 }

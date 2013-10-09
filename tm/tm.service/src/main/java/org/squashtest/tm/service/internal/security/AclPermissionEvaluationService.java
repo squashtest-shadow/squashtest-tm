@@ -73,11 +73,10 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 			return true;
 		}
 		
-		Authentication authentication = userContextService.getPrincipal();
-		Permission permission = permissionFactory.buildFromName(permissionName);
-
-		return permissionEvaluator.hasPermission(authentication,entityId, entityClassName, permission);
+		return hasPermissionOnObject(permissionName, entityId, entityClassName);
 	}
+
+
 
 	@Override
 	public boolean canRead(Object object) {
@@ -116,4 +115,13 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 		return hasMore;
 	}
 
+	@Override
+	public boolean hasPermissionOnObject(String permissionName, Long entityId, String entityClassName) {
+		Authentication authentication = userContextService.getPrincipal();
+		Permission permission = permissionFactory.buildFromName(permissionName);
+
+		return permissionEvaluator.hasPermission(authentication,entityId, entityClassName, permission);
+	}
+
+	
 }

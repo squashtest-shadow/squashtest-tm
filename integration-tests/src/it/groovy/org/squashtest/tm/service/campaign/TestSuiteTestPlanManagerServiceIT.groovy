@@ -38,7 +38,7 @@ import spock.unitils.UnitilsSupport
 @NotThreadSafe
 @UnitilsSupport
 @Transactional
-class TestSuiteTestPlanManagerServiceImplIT extends DbunitServiceSpecification {
+class TestSuiteTestPlanManagerServiceIT extends DbunitServiceSpecification {
 
 	@Inject
 	private TestSuiteTestPlanManagerService service

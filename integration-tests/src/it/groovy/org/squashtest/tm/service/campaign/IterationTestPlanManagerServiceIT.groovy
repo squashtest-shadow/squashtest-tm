@@ -50,27 +50,20 @@ class IterationTestPlanManagerServiceIT extends DbunitServiceSpecification {
 	@Inject
 	private IterationTestPlanManagerService service;
 	
-	private ProjectsPermissionFinder permFinder;
-	private UserAccountService userService
 	
 
 	def setup(){
 		
 		// mock declaration 
-		permFinder = Mock()
 		User mockUser = Mock()
-		userService = Mock()
 		
 		// behaviour
-		permFinder.isInPermissionGroup(_,_,_) >> false		
 		mockUser.getLogin() >> "bob"
-		userService.findCurrentUser() >> mockUser
 		
 		// wiring
 		def proxyutil = new AopSquashProxyUtil();
 		def serviceImpl = proxyutil.getTarget(service)
-		serviceImpl.userService = userService		
-		serviceImpl.projectsPermissionFinder = permFinder
+		
 	}
 
 	@DataSet("IterationTestPlanManagerServiceIT.xml")

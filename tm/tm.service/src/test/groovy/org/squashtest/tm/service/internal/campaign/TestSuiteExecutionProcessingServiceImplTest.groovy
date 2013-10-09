@@ -34,6 +34,7 @@ import org.squashtest.tm.service.internal.campaign.IterationTestPlanManager
 import org.squashtest.tm.service.internal.campaign.TestSuiteExecutionProcessingServiceImpl;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao
 import org.squashtest.tm.service.project.ProjectsPermissionFinder;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.UserAccountService;
 
 import spock.lang.Specification
@@ -44,17 +45,16 @@ class TestSuiteExecutionProcessingServiceImplTest  extends Specification {
 	TestSuiteDao testSuiteDao = Mock()
 	IterationTestPlanManager testPlanManager = Mock()
 	UserAccountService userService = Mock()
-	ProjectsPermissionFinder projectsPermissionFinder = Mock()
+	PermissionEvaluationService permissionEvaluationService = Mock()
 
 	def setup() {
 		manager.suiteDao = testSuiteDao
 		manager.testPlanManager = testPlanManager
 		manager.userService = userService
-		manager.projectsPermissionFinder = projectsPermissionFinder
+		manager.permissionEvaluationService = permissionEvaluationService
 		User user = Mock()
 		user.getLogin() >> "admin"
 		userService.findCurrentUser() >> user
-		projectsPermissionFinder.isInPermissionGroup(_,_,"squashtest.acl.group.tm.TestRunner") >> false
 	}
 
 	def "should start new execution of test suite"() {
