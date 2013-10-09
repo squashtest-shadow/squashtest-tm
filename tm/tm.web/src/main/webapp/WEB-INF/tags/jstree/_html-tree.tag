@@ -26,6 +26,7 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"  %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib uri="http://org.squashtest.tm/taglib/workspace-utils" prefix="wu" %>
 
 
 <c:set var="importable" value="${ false }"/>
@@ -33,9 +34,10 @@
 <c:set var="importable" value="${ true }"/>
 </sec:authorize>
 
+<c:set var="filter" value="${wu:getProjectFilter(pageContext.servletContext)}" />
 
-<div  class="tree-filter-reminder-div">
-	<span class="not-displayed"><f:message key="tabbed_panel.tree.pane.filter.enabled.label"/></span>
+<div class="tree-filter-reminder-div">
+	<span class="${filter.enabled ? '' : 'not-displayed'}"><f:message key="tabbed_panel.tree.pane.filter.enabled.label"/></span>
 </div>
 
 <div id="${ treeId }" class="tree" data-importable="${ importable }"></div>
