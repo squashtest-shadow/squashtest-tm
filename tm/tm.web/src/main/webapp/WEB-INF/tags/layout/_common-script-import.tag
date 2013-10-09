@@ -35,19 +35,7 @@ require.baseUrl = "${pageContext.servletContext.contextPath}/scripts";
 	squashtm.app = {
 		contextRoot: "${pageContext.servletContext.contextPath}",
 		ckeditorLanguage: "<f:message key='rich-edit.language.value' />",
-		projectFilterConf: {
-			url: "<c:url value='/global-filter/filter' />",
-			title: "<f:message key='dialog.settings.filter.title' />",
-			confirmLabel: "<f:message key='label.Confirm' />",
-			cancelLabel: "<f:message key='label.Cancel' />",
-		}, 
 		menuBarConf: {
-    		boxSelector: "#menu-toggle-filter-ckbox",
-    		url: "<c:url value='/global-filter/filter-status' />",
-    		linkSelector: "#menu-project-filter-link",
-    		enabledTxt: "<f:message key='workspace.menubar.filter.enabled.label' />",
-    		disabledTxt: "<f:message key='workspace.menubar.filter.disabled.label' />",
-    		enabledCallbacks: [ function(){ $("div.tree-filter-reminder-div > span").removeClass("not-displayed");} ]
     	}, 
     	notificationConf: {
   			infoTitle: "<f:message key='popup.title.info' />", 
