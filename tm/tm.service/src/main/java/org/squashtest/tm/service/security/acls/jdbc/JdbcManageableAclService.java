@@ -411,7 +411,6 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 	private List<String> findUsersWithPermissions(List<ObjectIdentity> entityRefs, List<Permission> permissionsList) {
 		List<String> resultSidList = new ArrayList<String>();
 		Collection<Acl> aclList;
-		aclCache.clearCache();
 		try {
 			aclList = readAclsById(entityRefs).values();
 		} catch (NotFoundException nfe) {
