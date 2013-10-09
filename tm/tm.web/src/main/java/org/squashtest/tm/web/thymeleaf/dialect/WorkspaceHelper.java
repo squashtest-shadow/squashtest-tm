@@ -30,8 +30,11 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
+import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.project.ProjectFinder;
+import org.squashtest.tm.web.internal.model.jquery.FilterModel;
 
 
 
@@ -51,6 +54,7 @@ public class WorkspaceHelper {
 	}
 	
 	public Collection<BugTracker> visibleBugtrackers(){
+		
 		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(servletContext);
 		
 		ProjectFinder projectFinder = wac.getBean(ProjectFinder.class);
@@ -58,7 +62,21 @@ public class WorkspaceHelper {
 		
 		List<Project> projects = projectFinder.findAllReadable();
 		List<Long> projectsIds = IdentifiedUtil.extractIds(projects);
+		
 		return bugtrackerService.findDistinctBugTrackersForProjects(projectsIds);
+		
+	}
+	
+	
+	public FilterModel projectFilter(){		
+		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(servletContext);		
+		ProjectFilterModificationService service = wac.getBean(ProjectFilterModificationService.class);
+		
+		ProjectFilter filter = service.findProjectFilterByUserLogin();
+		List<Project> allProjects = service.getAllProjects();
+		
+		return new FilterModel(filter, allProjects);
+		
 	}
 
 }

@@ -23,8 +23,7 @@
  */
 var squashtm = squashtm || {};
 
-define(
-		[ "jquery", "jquery.squash.projectpicker" ],
+define([ "jquery", "jquery.squash.projectpicker" ],
 		function($) {
 			var popupSelector = "#project-filter-popup";
 			var popupOpener = "#menu-project-filter-link";
@@ -38,7 +37,7 @@ define(
 			}
 
 			function getSelectedProjectIds(containerId) {
-				var selectedBoxes = $("#" + containerId	+ " .project-checkbox:checked");
+				var selectedBoxes = $("#dialog-settings-filter-projectlist .project-checkbox:checked");
 				var zeids = [];
 				var i;
 
@@ -52,7 +51,7 @@ define(
 			}
 
 			function newFilterSuccess() {
-				$(popupSelector).dialog('close');
+				$(popupSelector).projectPicker('close');
 				window.location.reload();
 			}
 
@@ -60,41 +59,51 @@ define(
 			 * code managing the data transmissions
 			 */
 			function sendNewFilter() {
-				var isEnabled = $("#dialog-settings-isselected-checkbox").is(
-						":checked");
-
-				var ids = getSelectedProjectIds("dialog-settings-filter-projectlist");
+				var ids = getSelectedProjectIds();
 				$.post(projectFilterUrl, {
 					projectIds : ids
 				}, newFilterSuccess);
 
 			}
 
-			function initPopup(conf) {
-				projectFilterUrl = conf.url;
+			function init() {
+				projectFilterUrl = $("#project-filter-popup").data('url');
 
 				var picker = $(popupSelector).projectPicker({
-					url : conf.url,
-					ok : {
-						text : conf.confirmLabel,
-						click : sendNewFilter
-					},
-					cancel : {
-						text : conf.cancelLabel
-					},
-					width : 400
+					url : projectFilterUrl, 
+					loadOnce : "never",
+					width : 400,
+					confirm : sendNewFilter
 				});
 
 				$(popupOpener).click(function() {
 					picker.projectPicker("open");
 				});
+				
+				$("#menu-toggle-filter-ckbox").click(function(){
+					
+					function postStatus(enabled){
+						$.post(squashtm.app.contextRoot+'/global-filter/filter-status', { isEnabled : enabled })
+						.done(function(){
+							window.location.reload();
+						});
+					}
+					
+					if ($(this).is(':checked')){
+						postStatus(true);
+					}
+					else{
+						postStatus(false);
+					}
+				});
 			}
+			
 
 			/**
 			 * public module
 			 */
 			squashtm.projectfilter = {
-				init : initPopup
+				init : init
 			};
 
 			return squashtm.projectfilter;

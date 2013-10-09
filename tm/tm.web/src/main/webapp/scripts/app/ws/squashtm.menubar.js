@@ -37,65 +37,10 @@
 var squashtm = squashtm || {};
 
 define([ "jquery" ], function($) {
-	function enableProjectFilter(url, bEnabled) {
-		$.post(url, {
-			isEnabled : bEnabled
-		}, function() {
-			window.location.reload();
-		});
-	}
 
-	function toggleProjectFilter(url) {
-		var tgCheck = $(this);
-
-		if (tgCheck.is(":checked")) {
-			enableProjectFilter(url, true);
-		} else {
-			enableProjectFilter(url, false);
-		}
-	}
-
-	/**
-	 * parameter object : - boxSelector : the jquery selector we'll use to find
-	 * the checkbox back - url : the url we need to get/post to - linkSelector :
-	 * the jquery selector we'll use to find the link to the configuration popup -
-	 * enabledTxt : the caption the said link should display if the filter is
-	 * enabled - disabledTxt : the caption the said link should display if the
-	 * filter is disabled - enabledCallbacks : an array containing callbacks to
-	 * execute when the filter is enabled
-	 */
-
-	function initToggleFilterMenu(params) {
-		var jqCkbox = $(params.boxSelector);
-
-		jqCkbox.click(function() {
-			toggleProjectFilter.call(this, params.url);
-		});
-
-		$.get(params.url, function(json) {
-			if (json.enabled) {
-				jqCkbox.prop('checked', true);
-
-				var link = $(params.linkSelector);
-				link.text(params.enabledTxt);
-				link.addClass("filter-enabled");
-
-				if ((params.enabledCallbacks !== undefined) && (params.enabledCallbacks.length > 0)) {
-					for ( var i = 0; i < params.enabledCallbacks.length; i++) {
-						var callback = params.enabledCallbacks[i];
-						callback();
-					}
-				}
-
-			} else {
-				$(params.linkSelector).text(params.disabledTxt);
-			}
-		}, "json");
-
-	}
 
 	function initMainMenuBar(objFilter) {
-		initToggleFilterMenu(objFilter);
+		//nothing left to do here, but that might change later
 	}
 
 	squashtm.menubar = {

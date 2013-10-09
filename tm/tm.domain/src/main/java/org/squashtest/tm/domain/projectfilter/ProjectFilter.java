@@ -45,7 +45,7 @@ public class ProjectFilter {
 
 	private String userLogin;
 
-	private Boolean activated;
+	private boolean activated;
 
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinTable(name = "PROJECT_FILTER_ENTRY", joinColumns = @JoinColumn(name = "FILTER_ID"), inverseJoinColumns = @JoinColumn(name = "PROJECT_ID"))
@@ -73,6 +73,11 @@ public class ProjectFilter {
 	}
 
 	public Boolean getActivated() {
+		return activated;
+	}
+	
+	// alias for getActivated()
+	public boolean isEnabled(){
 		return activated;
 	}
 

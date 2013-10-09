@@ -27,7 +27,7 @@ define([ "jquery", "app/ws/squashtm.navbar", "app/ws/squashtm.projectfilter",
 		NavBar.init(highlightedWorkspace);
 
 
-		ProjectFilter.init(squashtm.app.projectFilterConf);
+		ProjectFilter.init();
 		MenuBar.init(squashtm.app.menuBarConf);
 
 		/* wtf */

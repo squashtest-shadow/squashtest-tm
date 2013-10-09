@@ -53,9 +53,16 @@
 		bean-name="squashtest.core.security.ObjectIdentityRetrievalStrategy"
 		interface="org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy"
 		availability="mandatory" />
+		
+	<osgi:reference 
+	  	id="squashtest.tm.service.ProjectFilterModificationService" 
+	  	bean-name="squashtest.tm.service.ProjectFilterModificationService"	  	
+	  	interface="org.squashtest.tm.service.project.ProjectFilterModificationService" 
+	  	availability="mandatory"/>
 
 	<osgi:reference id="squashtest.core.security.AclService"
-		bean-name="squashtest.core.security.AclService" interface="org.springframework.security.acls.model.AclService"
+		bean-name="squashtest.core.security.AclService" 
+		interface="org.springframework.security.acls.model.AclService"
 		availability="mandatory" />
 
 	<osgi:reference id="squashtest.core.configuration.ConfigurationService"

@@ -172,7 +172,7 @@ requirejs.config({
 					exports : "jquerySquashtmJeditable"
 				},
 				"jquery.squash.projectpicker" : {
-					deps : [ "jquery", "jqueryui" ],
+					deps : [ "jquery", "jqueryui", "jquery.squash.confirmdialog" ],
 					exports : "jquerySquashtmProjectPicker"
 				},
 				"jquery.squash.squashbutton" : {

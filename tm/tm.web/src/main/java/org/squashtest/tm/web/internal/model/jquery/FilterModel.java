@@ -23,6 +23,9 @@ package org.squashtest.tm.web.internal.model.jquery;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.projectfilter.ProjectFilter;
+
 /*
  * Note : we set the NOSONAR flag on the setters for Array-type properties otherwise it rings because we don't clone them.
  * We can reasonably ignore those warnings because that class is meant to be serialized from/to json. Of course, that assumption holds
@@ -35,6 +38,32 @@ import java.util.List;
 public class FilterModel {
 	private List<Object[]> projectData = new ArrayList<Object[]>();
 	private Boolean enabled;
+	
+	public FilterModel(){
+		super();
+	}
+	
+	public FilterModel(ProjectFilter filter, List<Project> projects){
+
+		setEnabled(filter.getActivated());
+		
+		Object[][] projectData = new Object[projects.size()][3];  
+		int i = 0;
+		
+		for (Project project : projects){
+			projectData[i] = new Object[]{
+				project.getId(),
+				project.getName(),
+				filter.isProjectSelected(project)
+			};
+			
+			i++;
+			
+		}
+		
+		//remember that projectData.toArray() actually returns an Object[][]
+		setProjectData((Object[][]) projectData);
+	}
 	
 	public Object[] getProjectData() {
 		return projectData.toArray();

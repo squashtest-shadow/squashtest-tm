@@ -19,14 +19,15 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * projectPicker JQuery ui widget. Should be used with the appropriate dom
- * component (project-picker.frag.html)
+ * projectPicker JQuery ui widget. Should be used with the appropriate dom component (project-picker.frag.html)
  * 
- * Configuration : { url: "the url where to get the projects", // required ok: {
- * text: "ok button text", click: okClickHandler } // required cancel: { text:
- * "cancel button text", click: cancelClickHandler } // optional, defaults to
- * close loadOnce: true // loads projects only once, defaults to false, loads on
- * each open. }
+ * Configuration : { 
+ * 	url: "the url where to get the projects", required 
+ *  confirm : function() on confirm, required 
+ *  cancel: function() on cancel,  optional, defaults to close 
+ *  loadOnce: true|false|"never", loads projects only once, defaults to false, loads on each open, "never" never loads. 
+ *  
+ *  }
  * 
  * It also forwards additional configuration to the internal popup dialog.
  * 
@@ -41,8 +42,7 @@
 	};
 
 	function eachCheckbox(domPicker, eachCallback) {
-		var boxes = $(domPicker).parents(".project-picker").find(
-				".project-filter-list .project-checkbox");
+		var boxes = $(domPicker).parents(".project-picker").find(".project-filter-list .project-checkbox");
 		boxes.each(eachCallback);
 	}
 
@@ -75,21 +75,18 @@
 	}
 
 	/**
-	 * Code managing the loading phase of the popup. It expects the server to
-	 * send the data as a json object, see
+	 * Code managing the loading phase of the popup. It expects the server to send the data as a json object, see
 	 * tm.web.internal.model.jquery.FilterModel
 	 * 
-	 * note : each project in the array is an array made of the following : {
-	 * Long , String , Boolean )
+	 * note : each project in the array is an array made of the following : { Long , String , Boolean )
 	 */
 
 	function appendProjectItem(jqPicker, projectItemData, cssClass) {
-		var jqNewItem = jqPicker.find(".project-item-template .project-item")
-				.clone();
+		var jqNewItem = jqPicker.find(".project-item-template .project-item").clone();
 		jqNewItem.addClass(cssClass);
 
 		var jqChkBx = jqNewItem.find(".project-checkbox");
-		jqChkBx.attr('id', 'project-checkbox-' + parseInt(projectItemData[0],10));
+		jqChkBx.attr('id', 'project-checkbox-' + parseInt(projectItemData[0], 10));
 		jqChkBx.attr("value", projectItemData[0]);
 
 		var jqName = jqNewItem.find(".project-name");
@@ -112,8 +109,7 @@
 	}
 
 	function itemToDataMapper() {
-		var item = $(this), jqCbx = item.find(".project-checkbox"), cbx = jqCbx
-				.get()[0];
+		var item = $(this), jqCbx = item.find(".project-checkbox"), cbx = jqCbx.get()[0];
 		var $name = item.find(".project-name").text();
 
 		return {
@@ -123,153 +119,110 @@
 		};
 	}
 
-	$
-			.widget(
-					"squash.projectPicker",
-					{
-						options : {
-							url : "",
-							loadOnce : false,
-							ok : {
-								text : "OK",
-								click : function() {
-								}
-							},
-							cancel : {
-								text : "Cancel",
-								click : function() {
-									$(this).projectPicker("close");
-								}
-							}
-						},
+	$.widget("squash.projectPicker",$.squash.confirmDialog, {
+		options : {
+			url : "",
+			loadOnce : false
+		},
 
-						_create : function() {
-							var self = this, opt = self.options, elem = self.element, projectList = elem
-									.find(".project-filter-list"), selAll = elem
-									.find(".project-picker-selall"), unselAll = elem
-									.find(".project-picker-deselall"), invSel = elem
-									.find(".project-picker-invsel");
+		_create : function() {
+			this._super();
+			var self = this, 
+				opt = self.options, 
+				elem = self.element, 
+				projectList = elem.find(".project-filter-list"), 
+				selAll = elem.find(".project-picker-selall"), 
+				unselAll = elem.find(".project-picker-deselall"), 
+				invSel = elem.find(".project-picker-invsel");
 
-							elem.addClass("popup-dialog");
-							self.projectList = projectList;
+			elem.addClass("popup-dialog");
+			self.projectList = projectList;
 
-							selAll.click(selectAllProjects);
-							unselAll.click(deselectAllProjects);
-							invSel.click(invertAllProjects);
+			selAll.click(selectAllProjects);
+			unselAll.click(deselectAllProjects);
+			invSel.click(invertAllProjects);
 
-							var dopt = $.extend({}, dialogConfig);
+			// on dialog close we reset checkboxes to last
+			// stored state. Ok handler insures state has been
+			// stored beforehand.
+			self.uiDialog.on('click', '.ui-dialog-buttonpane button:first',  $.proxy(self._okWrapper, self));
+		},
 
-							var ok = {
-								text : opt.ok.text,
-								click : self._wrapOkHandler(opt.ok.click)
-							};
+		/**
+		 * Returns a function which should be used as the ok handler for this widget's dialog.
+		 */
+		_okWrapper : function() {
+			this._commitState.apply(this, arguments);
+			if (!! this.options.confirm){
+				this.options.confirm.call(this, arguments);
+			}
+		},
 
-							dopt.buttons = [ ok, opt.cancel ];
-							dopt.width = opt.width || dopt.width;
+		/**
+		 * Commits the current state of project checkboxes ie stores the current state.
+		 */
+		_commitState : function() {
+			this.element.find(".project-filter-list .project-checkbox").each(function() {
+				$(this).data("previous-checked", this.checked);
+			});
+		},
 
-							self.dialog = elem.dialog(dopt);
+		/**
+		 * Sets the project checkboxes back in their previously saved state.
+		 */
+		_resetState : function() {
+			this.element.find(".project-filter-list .project-checkbox").each(function() {
+				var previous = $(this).data("previous-checked");
+				this.checked = previous;
+			});
+		},
 
-							// on dialog close we reset checkboxes to last
-							// stored state. Ok handler insures state has been
-							// stored beforehand.
-							self.dialog.on({
-								"dialogclose" : $.proxy(self._resetState, self)
-							});
-						},
+		_setOption : function(key, value) {
+			$.Widget.prototype._setOption.apply(this, arguments);
+		},
 
-						/**
-						 * Returns a function which should be used as the ok
-						 * handler for this widget's dialog.
-						 */
-						_wrapOkHandler : function(callback) {
-							var self = this;
+		destroy : function() {
+			$.Widget.prototype.destroy.call(this);
+		},
 
-							return function() {
-								self._commitState.apply(self, arguments);
-								return callback.apply(this, arguments);
-							};
-						},
+		open : function() {
+			var _super = this._super;
+			var self = this;
+			self._load().done(function() {
+				_super.call(self);
+				self._resetState();
+			});
+		},
+		
+		_load : function() {
+			var self = this, picker = this.element, opt = self.options, deferred = $.Deferred();
 
-						/**
-						 * Commits the current state of project checkboxes ie
-						 * stores the current state.
-						 */
-						_commitState : function() {
-							this.element.find(
-									".project-filter-list .project-checkbox")
-									.each(
-											function() {
-												$(this).data(
-														"previous-checked",
-														this.checked);
-											});
-						},
+			if (opt.loadOnce === "never"){
+				deferred.resolve();
+			}			
+			else if (opt.loadOnce && self.projectsLoaded) {
+				deferred.resolve();
+			} 
+			else {
+				self.projectList.empty();
 
-						/**
-						 * Sets the project checkboxes back in their previously
-						 * saved state.
-						 */
-						_resetState : function() {
-							this.element.find(
-									".project-filter-list .project-checkbox")
-									.each(
-											function() {
-												var previous = $(this).data(
-														"previous-checked");
-												this.checked = previous;
-											});
-						},
+				$.getJSON(opt.url).done(function(data) {
+					populateFilterProject(picker, data);
+					self.projectsLoaded = true;
+					deferred.resolve();
 
-						_setOption : function(key, value) {
-							$.Widget.prototype._setOption
-									.apply(this, arguments);
-						},
+				}).fail(function() {
+					deferred.reject();
+				});
 
-						destroy : function() {
-							$.Widget.prototype.destroy.call(this);
-						},
+			}
 
-						open : function() {
-							var self = this;
-							self._load().done(function() {
-								self.element.dialog("open");
-							});
-						},
+			return deferred.promise();
+		},
 
-						close : function() {
-							this.element.dialog("close");
-						},
-
-						_load : function() {
-							var self = this, picker = this.element, opt = self.options, deferred = $
-									.Deferred();
-
-							if (opt.loadOnce && self.projectsLoaded) {
-								deferred.resolve();
-
-							} else {
-								self.projectList.empty();
-
-								$.getJSON(opt.url).done(function(data) {
-									populateFilterProject(picker, data);
-									self.projectsLoaded = true;
-									deferred.resolve();
-
-								}).fail(function() {
-									deferred.reject();
-
-								});
-
-							}
-
-							return deferred.promise();
-						},
-
-						data : function() {
-							var self = this, projectList = self.projectList;
-
-							return projectList.find(".project-item").map(
-									itemToDataMapper);
-						}
-					});
+		data : function() {
+			var self = this, projectList = self.projectList;
+			return projectList.find(".project-item").map(itemToDataMapper);
+		}
+	});
 })(jQuery);

@@ -23,6 +23,8 @@ package org.squashtest.tm.web.internal.controller.projectfilter;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
@@ -57,12 +59,9 @@ public class ProjectFilterController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProjectFilterController.class);
 	
 
+	@Inject
 	private ProjectFilterModificationService projectFilterService;
 	
-	@ServiceReference
-	public void setProjectFilterModificationService(ProjectFilterModificationService service){
-		this.projectFilterService = service;
-	}
 	
 	@RequestMapping(value="/filter", method = RequestMethod.GET)
 	public @ResponseBody FilterModel getProjects(){
@@ -70,7 +69,7 @@ public class ProjectFilterController {
 		ProjectFilter filter = projectFilterService.findProjectFilterByUserLogin();
 		List<Project> allProjects = projectFilterService.getAllProjects();
 		
-		return buildFilterModel(allProjects, filter);
+		return new FilterModel(filter, allProjects);
 	}
 	
 	
@@ -100,6 +99,7 @@ public class ProjectFilterController {
 		
 	}
 	
+	
 	@RequestMapping(value="/filter-status", params=("isEnabled"), method = RequestMethod.POST)
 	public @ResponseBody void setProjectFilterStatus(@RequestParam("isEnabled") boolean isEnabled){
 		LOGGER.trace("UserPreferenceController : filter enabled to "+isEnabled);
@@ -115,32 +115,6 @@ public class ProjectFilterController {
 	}
 	
 	
-	/* ************************************* private stuffs ************************************* */
-	
-	
-	private FilterModel buildFilterModel(List<Project> projects , ProjectFilter filter) {
-		
-		FilterModel model = new FilterModel();
-		model.setEnabled(filter.getActivated());
-		
-		Object[][] projectData = new Object[projects.size()][3];  
-		int i = 0;
-		
-		for (Project project : projects){
-			projectData[i] = new Object[]{
-				project.getId(),
-				project.getName(),
-				filter.isProjectSelected(project)
-			};
-			
-			i++;
-			
-		}
-		
-		//remember that projectData.toArray() actually returns an Object[][]
-		model.setProjectData((Object[][]) projectData);
-		return model;		
-	}
-	
+
 	
 }
