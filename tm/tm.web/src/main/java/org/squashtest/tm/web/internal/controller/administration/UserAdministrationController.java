@@ -83,6 +83,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 	private static final PagingAndSorting TEAMS_DEFAULT_PAGING = new DefaultPagingAndSorting("name");
 	private static final Filtering TEAMS_DEFAULT_FILTERING = DefaultFiltering.NO_FILTERING;
 
+	@Inject
 	private AdministrationService adminService;
 
 	@Inject
@@ -94,20 +95,23 @@ public class UserAdministrationController extends PartyControllerSupport {
 	@Inject
 	private AuthenticationProviderContext authenticationProviderContext;
 
-	private DatatableMapper<String> userMapper = new NameBasedMapper(10).map("user-id", "id")
-			.map("user-login", "login").map("user-group", "group").map("user-firstname", "firstName")
-			.map("user-lastname", "lastName").map("user-email", "email").map("user-created-on", "audit.createdOn")
-			.map("user-created-by", "audit.createdBy").map("user-modified-on", "audit.lastModifiedOn")
+	private DatatableMapper<String> userMapper = new NameBasedMapper(10)
+			.map("user-id", "id")
+			.map("user-login", "login")
+			.map("user-group", "group")
+			.map("user-firstname", "firstName")
+			.map("user-lastname", "lastName")
+			.map("user-email", "email")
+			.map("user-created-on", "audit.createdOn")
+			.map("user-created-by", "audit.createdBy")
+			.map("user-modified-on", "audit.lastModifiedOn")
 			.map("user-modified-by", "audit.lastModifiedBy");
 
-	private DatatableMapper<String> permissionMapper = new NameBasedMapper(2).mapAttribute("project-name",
-			"project.name", ProjectPermission.class).mapAttribute("permission-name", "permissionGroup.qualifiedName",
-			ProjectPermission.class);
+	private DatatableMapper<String> permissionMapper = new NameBasedMapper(2)
+			.mapAttribute("project-name","project.name", ProjectPermission.class)
+			.mapAttribute("permission-name", "permissionGroup.qualifiedName", ProjectPermission.class);
 
-	@ServiceReference
-	public void setAdministrationService(AdministrationService adminService) {
-		this.adminService = adminService;
-	}
+
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public ModelAndView getUserList(Locale locale) {
@@ -124,8 +128,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 		mav.addObject("usersGroupList", list);
 		mav.addObject("userList", model.getAaData());
 
-		PagedCollectionHolder<List<Team>> teams = teamFinderService.findAllFiltered(TEAMS_DEFAULT_PAGING,
-				TEAMS_DEFAULT_FILTERING);
+		PagedCollectionHolder<List<Team>> teams = teamFinderService.findAllFiltered(TEAMS_DEFAULT_PAGING, TEAMS_DEFAULT_FILTERING);
 		mav.addObject("pagedTeams", teams);
 		mav.addObject("teamsPageSize", TEAMS_DEFAULT_PAGING.getPageSize());
 		return mav;

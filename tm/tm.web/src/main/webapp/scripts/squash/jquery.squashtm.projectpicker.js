@@ -22,7 +22,7 @@
  * projectPicker JQuery ui widget. Should be used with the appropriate dom component (project-picker.frag.html)
  * 
  * Configuration : { 
- * 	url: "the url where to get the projects", required 
+ *	url: "the url where to get the projects", required 
  *  confirm : function() on confirm, required 
  *  cancel: function() on cancel,  optional, defaults to close 
  *  loadOnce: true|false|"never", loads projects only once, defaults to false, loads on each open, "never" never loads. 
