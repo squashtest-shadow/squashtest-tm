@@ -72,14 +72,14 @@
 				<hr/>
 				<div id="dialog-settings-filter-projectlist" class="project-filter-list">
 				
-				<div class="project-item" th:each="item, status : ${filter.projectData}" th:classappend="${status.odd} ? 'odd' : 'even'">
-					<input type="checkbox" class="project-checkbox" 
-											th:id="'project-checkbox-'+${item[0]}"
-											th:value="${item[0]}"
-											th:checked="${item[2]}"
-											th:attr="data-previous-checked=${item[2]}"/> 
-					<span class="project-name" th:text="${item[1]}">Projet 1</span>
-				</div>
+					<div class="project-item" th:each="item, status : ${filter.projectData}" th:classappend="${status.odd} ? 'odd' : 'even'">
+						<input type="checkbox" class="project-checkbox" 
+												th:id="'project-checkbox-'+${item[0]}"
+												th:value="${item[0]}"
+												th:checked="${item[2]}"
+												th:attr="data-previous-checked=${item[2]}"/> 
+						<span class="project-name" th:text="${item[1]}">Projet 1</span>
+					</div>
 				
 				</div>
 				<div class="unsnap not-displayed"></div>

@@ -37,7 +37,7 @@ import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 
 public class FilterModel {
 	private List<Object[]> projectData = new ArrayList<Object[]>();
-	private Boolean enabled;
+	private boolean enabled;
 	
 	public FilterModel(){
 		super();
@@ -74,10 +74,10 @@ public class FilterModel {
 			this.projectData.add(project);
 		}
 	}
-	public Boolean isEnabled() {
+	public boolean isEnabled() {
 		return enabled;
 	}
-	public void setEnabled(Boolean activated) {
+	public void setEnabled(boolean activated) {
 		this.enabled = activated;
 	}
 	public void addProject(long id, String name) {

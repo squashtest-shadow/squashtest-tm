@@ -26,20 +26,27 @@
 <%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://org.squashtest.tm/taglib/workspace-utils" prefix="wu" %>
 <%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec"%>
- 
- <%-- 
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squash/jquery.squashtm.projectpicker.js"></script>
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squash/squashtm.menubar.js"></script>
---%>
 
 <c:url var="projectFilterStatusUrl" value="/global-filter/filter-status"/>
 <c:url var="administrationUrl" value="/administration"/>
 <c:url var="userAccountUrl" value="/user-account" />
+<c:url var="filterUrl" value="/global-filter/filter" />
+
+<c:set var="filter" value="${wu:getProjectFilter(pageContext.servletContext)}" />
+<c:set var="filterCheckedClause" value="${filter.enabled ? 'checked=\"checked\"' : ''}" />
+<c:set var="filterLabelClass" value="${filter.enabled ? 'filter-enabled' : '' }" />
+
+<f:message var="filterLabelText">${filter.enabled ? 'workspace.menubar.filter.enabled.label' : 'workspace.menubar.filter.disabled.label' }</f:message>
+<f:message var="filterPopupTitle" key="dialog.settings.filter.title"/>
+<f:message var="confirmLabel" key="label.Confirm"/>
+<f:message var="cancelLabel" key="label.Cancel"/>
+
 
 <div>
-	<input type="checkbox" id="menu-toggle-filter-ckbox"></input>
-	<a id="menu-project-filter-link" href="#" ></a> 
+	<input type="checkbox" id="menu-toggle-filter-ckbox" ${filterCheckedClause}></input>
+	<a id="menu-project-filter-link" href="#" class="${filterLabelClass}">${filterLabelText}</a> 
 </div>
 <sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
 <div><a id="menu-administration-link" href="${ administrationUrl }" ><f:message key="workspace.menubar.administration.label"/></a></div>
@@ -57,4 +64,42 @@
 <div><a id="menu-logout-link" href="${ logoutUrl }" ><f:message key="workspace.menubar.logout.label"/></a></div>
 
 
-<comp:settings-project-filter-popup divId="project-filter-popup" openedBy="menu-project-filter-link"/>
+<%-- ====== project filter popup ========  --%>
+
+
+<div id="project-filter-popup" class="project-picker popup-dialog not-displayed" style="display:none" title="${filterPopupTitle}" data-url="${filterUrl}">
+	<div id="dialog-settings-filter-maincontent">			
+		<div id="dialog-settings-filter-controls" class="project-filter-controls">
+			<a id="dialog-settings-filter-selectall"  class="project-picker-selall cursor-pointer">
+				<f:message key="dialog.settings.filter.controls.selectall"/>
+			</a>
+			<a id="dialog-settings-filter-deselectall"  class="project-picker-deselall cursor-pointer">
+				<f:message key="dialog.settings.filter.controls.deselectall"/>
+			</a>
+			<a id="dialog-settings-filter-invertselect" class="project-picker-invsel cursor-pointer">
+				<f:message key="dialog.settings.filter.controls.invertselect"/>
+			</a>				
+		</div>	
+		<hr/>
+		<div id="dialog-settings-filter-projectlist" class="project-filter-list">
+		
+<c:forEach var="item" items="${filter.projectData}" varStatus="status" >
+			<div class="project-item ${(status.count % 2 == 0) ? 'odd' : 'even' }">
+				<c:set var="checkedClause" value="${item[2] ? 'checked=\"checked\"' : ''}" />
+				<input type="checkbox" class="project-checkbox" 
+										id="project-checkbox-${item[0]}"  
+										value="${item[0]}" 
+										data-previous-checked="${item[2]}" 
+										${checkedClause}/> 
+				<span class="project-name" >${item[1]}</span>
+			</div>
+</c:forEach>
+		
+		</div>
+		<div class="unsnap not-displayed"></div>
+	</div>
+	<div class="popup-dialog-buttonpane"> 
+		<input type="button" value="${confirmLabel}"/>
+		<input type="button" value="${cancelLabel}"/>
+	</div>
+</div>
