@@ -63,18 +63,16 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 
 	@Inject
 	private TestSuiteDao testSuiteDao;
-	
 
 	@Inject
 	private UserAccountService userService;
 
 	@Inject
 	private IterationTestPlanDao itemTestPlanDao;
-	
+
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
-	
-	
+
 	private static final String OR_HAS_ROLE_ADMIN = "or hasRole('ROLE_ADMIN')";
 
 	@Override
@@ -83,7 +81,6 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	public TestSuite findTestSuite(long testSuiteId) {
 		return testSuiteDao.findById(testSuiteId);
 	}
-	
 
 	@Override
 	@PreAuthorize(HAS_LINK_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
@@ -119,36 +116,41 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	public void unbindTestPlanObj(TestSuite testSuite, List<IterationTestPlanItem> itemTestPlans) {
 		testSuite.unBindTestPlan(itemTestPlans);
 	}
-	
+
 	@Override
 	public void unbindTestPlanToMultipleSuites(List<Long> unboundTestSuiteIds, List<Long> itpIds) {
 		List<TestSuite> unboundTestSuites = testSuiteDao.findAllByIds(unboundTestSuiteIds);
 		List<IterationTestPlanItem> iterationTestPlanItems = itemTestPlanDao.findAllByIds(itpIds);
-		for(TestSuite suite : unboundTestSuites){
+		for (TestSuite suite : unboundTestSuites) {
 			unbindTestPlanObj(suite, iterationTestPlanItems);
 		}
-		
+
 	}
 
-
+	/**
+	 * @see TestSuiteTestPlanManagerService#findAssignedTestPlan(long, PagingAndMultiSorting)
+	 **/
 	@Override
-	public PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findAssignedTestPlan(long iterationId, PagingAndMultiSorting sorting) {
+	public PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findAssignedTestPlan(long testSuiteId,
+			PagingAndMultiSorting sorting) {
 
-		//configure the filter, in case the test plan must be restricted to what the user can see.
+		// configure the filter, in case the test plan must be restricted to what the user can see.
 		Filtering filtering = DefaultFiltering.NO_FILTERING;
-		try{
-			PermissionsUtils.checkPermission(permissionEvaluationService, Arrays.asList(iterationId), "READ_UNASSIGNED", Iteration.class.getCanonicalName());
-		}catch(AccessDeniedException ade){
+		try {
+			PermissionsUtils.checkPermission(permissionEvaluationService, Arrays.asList(testSuiteId),
+					"READ_UNASSIGNED", TestSuite.class.getCanonicalName());
+		} catch (AccessDeniedException ade) {
 			String userLogin = userService.findCurrentUser().getLogin();
 			filtering = new DefaultFiltering("User.login", userLogin);
 		}
 
-		List<IndexedIterationTestPlanItem> indexedItems = testSuiteDao.findIndexedTestPlan(iterationId, sorting, filtering);
-		long testPlanSize = testSuiteDao.countTestPlans(iterationId, filtering);
+		List<IndexedIterationTestPlanItem> indexedItems = testSuiteDao.findIndexedTestPlan(testSuiteId, sorting,
+				filtering);
+		long testPlanSize = testSuiteDao.countTestPlans(testSuiteId, filtering);
 
-		return new PagingBackedPagedCollectionHolder<List<IndexedIterationTestPlanItem>>(sorting, testPlanSize, indexedItems);
+		return new PagingBackedPagedCollectionHolder<List<IndexedIterationTestPlanItem>>(sorting, testPlanSize,
+				indexedItems);
 	}
-
 
 	@Override
 	@PreAuthorize(HAS_LINK_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
@@ -160,28 +162,25 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 
 		suite.reorderTestPlan(newIndex, items);
 	}
-	
+
 	@Override
-	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'LINK') "
-			+ OR_HAS_ROLE_ADMIN)	
+	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'LINK') " + OR_HAS_ROLE_ADMIN)
 	public void reorderTestPlan(long suiteId, MultiSorting newSorting) {
-		
+
 		Paging noPaging = Pagings.NO_PAGING;
 		PagingAndMultiSorting sorting = new DelegatePagingAndMultiSorting(noPaging, newSorting);
 		Filtering filtering = DefaultFiltering.NO_FILTERING;
-		
+
 		List<IterationTestPlanItem> items = testSuiteDao.findTestPlan(suiteId, sorting, filtering);
-		
+
 		TestSuite testSuite = testSuiteDao.findById(suiteId);
-		
+
 		testSuite.getTestPlan().clear();
 		testSuite.getTestPlan().addAll(items);
 	}
 
-
 	@Override
-	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'LINK') "
-			+ OR_HAS_ROLE_ADMIN)
+	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'LINK') " + OR_HAS_ROLE_ADMIN)
 	public void addTestCasesToIterationAndTestSuite(List<Long> testCaseIds, long suiteId) {
 
 		TestSuite testSuite = testSuiteDao.findById(suiteId);
@@ -195,8 +194,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'LINK') "
-			+ OR_HAS_ROLE_ADMIN)
+	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'LINK') " + OR_HAS_ROLE_ADMIN)
 	public void detachTestPlanFromTestSuite(List<Long> testPlanIds, long suiteId) {
 
 		TestSuite testSuite = testSuiteDao.findById(suiteId);
@@ -211,8 +209,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'LINK') "
-			+ OR_HAS_ROLE_ADMIN)
+	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'LINK') " + OR_HAS_ROLE_ADMIN)
 	public boolean detachTestPlanFromTestSuiteAndRemoveFromIteration(List<Long> testPlanIds, long suiteId) {
 		TestSuite testSuite = testSuiteDao.findById(suiteId);
 		List<IterationTestPlanItem> listTestPlanItems = new ArrayList<IterationTestPlanItem>();
@@ -228,6 +225,5 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 
 		return delegateIterationTestPlanManagerService.removeTestPlansFromIterationObj(testPlanIds, iteration);
 	}
-	
 
 }
