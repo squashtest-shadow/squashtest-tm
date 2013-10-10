@@ -21,12 +21,12 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
+<databaseChangeLog
+     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
-	<changeSet id="tm-data-1.6.0-2.01" author="bsiri">
-			<sqlFile path="tm.data-1.6.0-2.sql" relativeToChangelogFile="true" endDelimiter=";"/>
-	</changeSet>
-</databaseChangeLog>
- 
+     
+	<include file="../tm/tm.changelog-upgrade-to-1.7.1.xml" relativeToChangelogFile="true" />
+	
+</databaseChangeLog> 
