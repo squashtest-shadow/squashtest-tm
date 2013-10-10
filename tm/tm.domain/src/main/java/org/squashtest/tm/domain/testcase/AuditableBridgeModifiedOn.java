@@ -18,23 +18,30 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.domain.testcase;
 
-import java.util.List;
+import java.text.SimpleDateFormat;
 
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.hibernate.search.bridge.FieldBridge;
+import org.hibernate.search.bridge.LuceneOptions;
+import org.squashtest.tm.domain.audit.AuditableMixin;
 
-/**
- * @author Gregory Fouquet
- *
- */
-public interface CustomProjectDao {
-	long countNonFoldersInProject(long projectId);
+public class AuditableBridgeModifiedOn implements FieldBridge{
 
-	List<String> findUsersWhoCreatedTestCases(List<Long> projectIds);
-
-	List<String> findUsersWhoModifiedTestCases(List<Long> projectIds);
+	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 	
-	List<String> findUsersWhoCreatedRequirementVersions(List<Long> projectIds);
-
-	List<String> findUsersWhoModifiedRequirementVersions(List<Long> projectIds);
+	@Override
+	public void set(String name, Object value, Document document, LuceneOptions luceneOptions) {
+		
+		AuditableMixin audit = ((AuditableMixin) value);
+		
+		if(audit.getLastModifiedOn() != null){
+			Field field = new Field(name, dateFormat.format(audit.getCreatedOn()), luceneOptions.getStore(),
+		    luceneOptions.getIndex(), luceneOptions.getTermVector() );
+		    field.setBoost( luceneOptions.getBoost());
+		    document.add(field);
+		}
+	}
 }

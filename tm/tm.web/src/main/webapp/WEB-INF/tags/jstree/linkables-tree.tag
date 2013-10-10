@@ -57,13 +57,23 @@
 			initTree.initLinkableTree(conf);				
 		});		
 		
-		$("#search-tree-button").on('click', function(){
-			document.location.href = squashtm.app.contextRoot + "/advanced-search?testcase&id=${elementId}&associateResultWithType=${elementType}";
-		});
-
-		$("#search-tree-button-old").on('click', function(){
-			document.location.href = squashtm.app.contextRoot + "/advanced-search?testcase&id=${elementId}&associateResultWithType=${elementType}";
-		});
+		if(conf.workspace === "requirement"){
+			$("#search-tree-button").on('click', function(){
+				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=requirement&id=${elementId}&associateResultWithType=${elementType}";
+			});
+	
+			$("#search-tree-button-old").on('click', function(){
+				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=requirement&id=${elementId}&associateResultWithType=${elementType}";
+			});
+		} else {
+			$("#search-tree-button").on('click', function(){
+				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=testcase&id=${elementId}&associateResultWithType=${elementType}";
+			});
+	
+			$("#search-tree-button-old").on('click', function(){
+				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=testcase&id=${elementId}&associateResultWithType=${elementType}";
+			});
+		}
 	});
 	
 </script>

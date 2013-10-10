@@ -39,14 +39,13 @@ public class AdvancedSearchIndexingController {
 	@RequestMapping(value = "/index-all", method = RequestMethod.POST)
 	@ResponseBody
 	public void indexAll(){
-		//TODO change this when other search domains are added
-		advancedSearchService.indexTestCases();
+		advancedSearchService.indexAll();
 	} 
 	
 	@RequestMapping(value = "/index-requirements", method = RequestMethod.POST)
 	@ResponseBody
 	public void indexRequirements(){
-		//TODO implement
+		advancedSearchService.indexRequirementVersions();
 	} 	
 	
 	

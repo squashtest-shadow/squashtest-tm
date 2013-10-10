@@ -18,30 +18,17 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.testcase;
+package org.squashtest.tm.domain.requirement;
 
-import java.text.SimpleDateFormat;
+import org.hibernate.search.bridge.StringBridge;
 
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.hibernate.search.bridge.FieldBridge;
-import org.hibernate.search.bridge.LuceneOptions;
-import org.squashtest.tm.domain.audit.AuditableMixin;
+public class RequirementCriticalityBridge implements StringBridge {
 
-public class TestCaseBridgeModifiedOn implements FieldBridge{
-
-	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-	
 	@Override
-	public void set(String name, Object value, Document document, LuceneOptions luceneOptions) {
-		
-		AuditableMixin audit = ((AuditableMixin) value);
-		
-		if(audit.getLastModifiedOn() != null){
-			Field field = new Field(name, dateFormat.format(audit.getCreatedOn()), luceneOptions.getStore(),
-		    luceneOptions.getIndex(), luceneOptions.getTermVector() );
-		    field.setBoost( luceneOptions.getBoost());
-		    document.add(field);
-		}
+	public String objectToString(Object value) {
+		RequirementCriticality criticality = (RequirementCriticality) value;
+		return (criticality.getLevel()+1)+"-"+criticality.name();
 	}
+
 }
+

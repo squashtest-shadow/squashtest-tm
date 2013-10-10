@@ -34,7 +34,7 @@ define(['jquery', './utils', './permissions-rules',
 		var renameconf = utils.btnconf("ui-icon-pencil");
 		var importconf = utils.btnconf("ui-icon-transferthick-e-w");
 		var deleteconf = utils.btnconf("ui-icon-trash");
-		
+		var searchconf = utils.btnconf("ui-icon-search");
 		
 		$("#tree-create-button").buttonmenu({
 			button : createconf
@@ -49,6 +49,8 @@ define(['jquery', './utils', './permissions-rules',
 		$("#tree-import-button").buttonmenu({
 			button : importconf
 		});		
+		
+		$("#search-tree-button").squashButton(searchconf);
 		
 		$("#delete-node-tree-button").squashButton(deleteconf);
 

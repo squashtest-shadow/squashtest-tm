@@ -159,7 +159,7 @@ public class RequirementModificationController {
 		model.addAttribute("auditTrailModel", auditTrailModel);
 		
 	}
-
+	
 	private String buildMarshalledCriticalities(Locale locale) {
 		return criticalityComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}

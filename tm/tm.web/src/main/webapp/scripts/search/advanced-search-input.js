@@ -30,7 +30,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 
 	var TestCaseSearchInputPanel = Backbone.View.extend({
 
-		el : "#test-case-search-input-panel",
+		el : "#advanced-search-input-panel",
 
 		initialize : function() {
 			this.getInputInterfaceModel();
@@ -38,13 +38,13 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 		},
 
 		events : {
-			"click #test-case-search-button" : "showResults"
+			"click #advanced-search-button" : "showResults"
 		},
 
 		getInputInterfaceModel : function() {
 			var self = this;
 			var result = $.ajax({
-				url : squashtm.app.contextRoot + "/advanced-search/input",
+				url : squashtm.app.contextRoot + "/advanced-search/input?"+$("#searchDomain").text(),
 				data : "nodata",
 				dataType : "json"
 			}).success(function(json) {
@@ -57,7 +57,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 									       "toggle-panel-table-id": val.id+"-panel-table-id"};
 							var tableid = val.id+"-panel-table-id";
 							var html = template(context);
-							$("#test-case-search-input-form-panel-"+val.location).append(html);
+							$("#advanced-search-input-form-panel-"+val.location).append(html);
 							var i;
 							var searchModel = {}; 
 							if($("#searchModel").text()){
@@ -236,8 +236,10 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 		post : function (URL, PARAMS) {
 			var temp=document.createElement("form");
 			temp.action=URL;
+			temp.encoding="UTF-8";
 			temp.method="POST";
 			temp.style.display="none";
+			temp.acceptCharset="UTF-8";
 			for(var x in PARAMS) {
 				var opt=document.createElement("textarea");
 				opt.name=x;
@@ -258,7 +260,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 				var associateResultWithType = $("#associationType").text();
 				var id = $("#associationId").text();
 				
-				this.post(squashtm.app.contextRoot + "/advanced-search/results?testcase", {
+				this.post(squashtm.app.contextRoot + "/advanced-search/results?"+$("#searchDomain").text(), {
 					searchModel : JSON.stringify(this.model),
 					associateResultWithType : associateResultWithType,
 					id : id
@@ -266,7 +268,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 				
 				
 			} else {
-				this.post(squashtm.app.contextRoot + "/advanced-search/results?testcase", {
+				this.post(squashtm.app.contextRoot + "advanced-search/results?"+$("#searchDomain").text(), {
 					searchModel : JSON.stringify(this.model)
 				});	
 			}

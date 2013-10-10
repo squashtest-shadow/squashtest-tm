@@ -21,15 +21,14 @@
 define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "jquery.squash.jeditable" ], function($, Backbone, translator) {
 
 	var TestCaseSearchResultTable = Backbone.View.extend({
-		el : "#test-case-search-result-table",
+		el : "#requirement-search-result-table",
 		initialize : function(model, isAssociation, associateType, associateId) {
 			this.model = model;
 			this.isAssociation = isAssociation;
 			this.associateType = associateType;
 			this.associateId = associateId;
-			this.addSelectEditableToImportance = $.proxy(this._addSelectEditableToImportance, this);
-			this.addSelectEditableToNature = $.proxy(this._addSelectEditableToNature, this);
-			this.addSelectEditableToType = $.proxy(this._addSelectEditableToType, this);
+			this.addSelectEditableToCriticality = $.proxy(this._addSelectEditableToCriticality, this);
+			this.addSelectEditableToCategory = $.proxy(this._addSelectEditableToCategory, this);
 			this.addSelectEditableToStatus = $.proxy(this._addSelectEditableToStatus, this);
 			this.addSimpleEditableToReference = $.proxy(this._addSimpleEditableToReference, this);
 			this.addSimpleEditableToLabel = $.proxy(this._addSimpleEditableToLabel, this);
@@ -38,8 +37,7 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 			this.addTreeLink = $.proxy(this._addTreeLink, this);
 			this.getTableRowId = $.proxy(this._getTableRowId, this);
 			this.tableRowCallback = $.proxy(this._tableRowCallback, this);
-			this.addAssociationCheckboxes  = $.proxy(this._addAssociationCheckboxes, this);
-			
+
 			var self;
 			
 			if(isAssociation){
@@ -52,10 +50,10 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 						"sAjaxSource" : squashtm.app.contextRoot + "/advanced-search/table",
 						 "fnServerParams": function ( aoData )   
 						    {  
-							 	aoData.push( { "name": "testcase", "value": "testcase" } );  
 						        aoData.push( { "name": "model", "value": JSON.stringify(model) } );  
 						        aoData.push( { "name": "associateResultWithType", "value": associateType } );  
 						        aoData.push( { "name": "id", "value":  associateId } );  
+							 	aoData.push( { "name": "requirement", "value": "requirement" } );  
 						    }, 
 						"sServerMethod": "POST",
 						"bDeferRender" : true,
@@ -80,74 +78,69 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 							"bSortable" : true
 						}, {		
 							"aTargets" : [ 3 ],
-							"mDataProp" : "test-case-id",
+							"mDataProp" : "requirement-id",
 							"bSortable" : true,
 							"sClass" : "centered"
 						}, {
 							"aTargets" : [ 4 ],
-							"mDataProp" : "test-case-ref",
+							"mDataProp" : "requirement-reference",
 							"bSortable" : true,
 							"sClass" : "editable_ref"
 						}, {
 							"aTargets" : [ 5 ],
-							"mDataProp" : "test-case-label",
+							"mDataProp" : "requirement-label",
 							"bSortable" : true,
 							"sClass" : "editable_label"
 						}, {
 							"aTargets" : [ 6 ],
-							"mDataProp" : "test-case-weight",
+							"mDataProp" : "requirement-criticality",
 							"bSortable" : true,
-							"sClass" : "editable_importance"
+							"sClass" : "editable_criticality"
 						}, {
 							"aTargets" : [ 7 ],
-							"mDataProp" : "test-case-nature",
+							"mDataProp" : "requirement-category",
 							"bSortable" : true,
-							"sClass" : "editable_nature"
+							"sClass" : "editable_category"
 						}, {
 							"aTargets" : [ 8 ],
-							"mDataProp" : "test-case-type",
-							"bSortable" : true,
-							"sClass" : "editable_type"
-						}, {
-							"aTargets" : [ 9 ],
-							"mDataProp" : "test-case-status",
+							"mDataProp" : "requirement-status",
 							"bSortable" : true,
 							"sClass" : "editable_status"
 						}, {
+							"aTargets" : [ 9 ],
+							"mDataProp" : "requirement-version",
+							"bSortable" : true,
+							"sClass" : "centered"
+						}, {
 							"aTargets" : [ 10 ],
-							"mDataProp" : "test-case-requirement-nb",
+							"mDataProp" : "requirement-version-nb",
 							"bSortable" : true,
 							"sClass" : "centered"
 						}, {
 							"aTargets" : [ 11 ],
-							"mDataProp" : "test-case-teststep-nb",
+							"mDataProp" : "requirement-testcase-nb",
 							"bSortable" : true,
 							"sClass" : "centered"
 						}, {
 							"aTargets" : [ 12 ],
-							"mDataProp" : "test-case-iteration-nb",
-							"bSortable" : true,
-							"sClass" : "centered"
+							"mDataProp" : "requirement-attachment-nb",
+							"bSortable" : true
 						}, {
 							"aTargets" : [ 13 ],
-							"mDataProp" : "test-case-attachment-nb",
+							"mDataProp" : "requirement-created-by",
 							"bSortable" : true
 						}, {
 							"aTargets" : [ 14 ],
-							"mDataProp" : "test-case-created-by",
+							"mDataProp" : "requirement-modified-by",
 							"bSortable" : true
 						}, {
 							"aTargets" : [ 15 ],
-							"mDataProp" : "test-case-modified-by",
-							"bSortable" : true
-						}, {
-							"aTargets" : [ 16 ],
 							"mDataProp" : "empty-openinterface2-holder",
 							"sClass" : "centered search-open-interface2-holder",
 							"sWidth" : "2em",
 							"bSortable" : false
 						}, {
-							"aTargets" : [ 17 ],
+							"aTargets" : [ 16 ],
 							"mDataProp" : "editable",
 							"bVisible" : false,
 							"bSortable" : false
@@ -167,8 +160,8 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 						"sAjaxSource" : squashtm.app.contextRoot + "/advanced-search/table",
 						 "fnServerParams": function ( aoData )   
 						    {  
-							 	aoData.push( { "name": "testcase", "value": "testcase" } );  
 						        aoData.push( { "name": "model", "value": JSON.stringify(model) } );  
+						        aoData.push( { "name": "requirement", "value": "requirement" } );  
 						    }, 
 						"sServerMethod": "POST",
 						"bDeferRender" : true,
@@ -187,81 +180,76 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 							"bSortable" : true
 						}, {		
 							"aTargets" : [ 2 ],
-							"mDataProp" : "test-case-id",
+							"mDataProp" : "requirement-id",
 							"bSortable" : true,
 							"sClass" : "centered"
 						}, {
 							"aTargets" : [ 3 ],
-							"mDataProp" : "test-case-ref",
+							"mDataProp" : "requirement-reference",
 							"bSortable" : true,
 							"sClass" : "editable_ref"
 						}, {
 							"aTargets" : [ 4 ],
-							"mDataProp" : "test-case-label",
+							"mDataProp" : "requirement-label",
 							"bSortable" : true,
 							"sClass" : "editable_label"
 						}, {
 							"aTargets" : [ 5 ],
-							"mDataProp" : "test-case-weight",
+							"mDataProp" : "requirement-criticality",
 							"bSortable" : true,
-							"sClass" : "editable_importance"
+							"sClass" : "editable_criticality"
 						}, {
 							"aTargets" : [ 6 ],
-							"mDataProp" : "test-case-nature",
+							"mDataProp" : "requirement-category",
 							"bSortable" : true,
-							"sClass" : "editable_nature"
+							"sClass" : "editable_category"
 						}, {
 							"aTargets" : [ 7 ],
-							"mDataProp" : "test-case-type",
-							"bSortable" : true,
-							"sClass" : "editable_type"
-						}, {
-							"aTargets" : [ 8 ],
-							"mDataProp" : "test-case-status",
+							"mDataProp" : "requirement-status",
 							"bSortable" : true,
 							"sClass" : "editable_status"
 						}, {
+							"aTargets" : [ 8 ],
+							"mDataProp" : "requirement-version",
+							"bSortable" : true,
+							"sClass" : "centered"
+						}, {
 							"aTargets" : [ 9 ],
-							"mDataProp" : "test-case-requirement-nb",
+							"mDataProp" : "requirement-version-nb",
 							"bSortable" : true,
 							"sClass" : "centered"
 						}, {
 							"aTargets" : [ 10 ],
-							"mDataProp" : "test-case-teststep-nb",
+							"mDataProp" : "requirement-testcase-nb",
 							"bSortable" : true,
 							"sClass" : "centered"
 						}, {
 							"aTargets" : [ 11 ],
-							"mDataProp" : "test-case-iteration-nb",
+							"mDataProp" : "requirement-attachment-nb",
 							"bSortable" : true,
 							"sClass" : "centered"
 						}, {
 							"aTargets" : [ 12 ],
-							"mDataProp" : "test-case-attachment-nb",
-							"bSortable" : true,
-							"sClass" : "centered"
+							"mDataProp" : "requirement-created-by",
+							"bSortable" : true
 						}, {
 							"aTargets" : [ 13 ],
-							"mDataProp" : "test-case-created-by",
+							"mDataProp" : "requirement-modified-by",
 							"bSortable" : true
 						}, {
 							"aTargets" : [ 14 ],
-							"mDataProp" : "test-case-modified-by",
-							"bSortable" : true
-						}, {
-							"aTargets" : [ 15 ],
 							"mDataProp" : "empty-openinterface2-holder",
 							"sClass" : "centered search-open-interface2-holder",
 							"sWidth" : "2em",
 							"bSortable" : false
 						}, {
-							"aTargets" : [ 16 ],
+							"aTargets" : [ 15 ],
 							"mDataProp" : "empty-opentree-holder",
 							"sClass" : "centered search-open-tree-holder",
 							"sWidth" : "2em",
 							"bSortable" : false
 						}, {
-							"aTargets" : [ 17 ],
+							"aTargets" : [ 16 ],
 							"mDataProp" : "editable",
 							"bVisible" : false,
 							"bSortable" : false
@@ -281,61 +269,44 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 			return rowData[2];	
 		},
 
-		_addSelectEditableToImportance : function(row, data) {
+		_addSelectEditableToCriticality : function(row, data) {
 			var self = this;
-			var urlPOST = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
-			var urlGET = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"] + "/importance-combo-data";
+			var urlPOST = squashtm.app.contextRoot + "/requirements/" + data["requirement-id"];
+			var urlGET = squashtm.app.contextRoot + "/requirements/criticality-combo-data";
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
-			$('.editable_importance', row).editable(urlPOST, {
+			$('.editable_criticality', row).editable(urlPOST, {
 						type : 'select',
 						submit : ok,
 						cancel : cancel,
 						loadurl : urlGET,
 						"submitdata" : function(value, settings) {
-							return {"id": "test-case-importance"};
+							return {"id": "requirement-criticality"};
 						}
 					});
 		},
 		
-		_addSelectEditableToNature : function(row, data) {
+		_addSelectEditableToCategory : function(row, data) {
 			var self = this;
-			var urlPOST = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
-			var urlGET = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"] + "/nature-combo-data";
+			var urlPOST = squashtm.app.contextRoot + "/requirements/" + data["requirement-id"];
+			var urlGET = squashtm.app.contextRoot + "/requirements/category-combo-data";
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
-			$('.editable_nature', row).editable(urlPOST, {
+			$('.editable_category', row).editable(urlPOST, {
 				type : 'select',
 				submit : ok,
 				cancel : cancel,
 				loadurl : urlGET,
 				"submitdata" : function(value, settings) {
-					return {"id": "test-case-nature"};
-				}
-			});
-		},
-		
-		_addSelectEditableToType : function(row, data) {
-			var self = this;
-			var urlPOST = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
-			var urlGET = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"] + "/type-combo-data";
-			var ok = translator.get("rich-edit.button.ok.label");
-			var cancel = translator.get("label.Cancel");
-			$('.editable_type', row).editable(urlPOST, {
-				type : 'select',
-				submit : ok,
-				cancel : cancel,
-				loadurl : urlGET,
-				"submitdata" : function(value, settings) {
-					return {"id": "test-case-type"};
+					return {"id": "requirement-category"};
 				}
 			});
 		},
 		
 		_addSelectEditableToStatus : function(row, data) {
 			var self = this;
-			var urlPOST = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
-			var urlGET = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"] + "/status-combo-data";
+			var urlPOST = squashtm.app.contextRoot + "/requirements/" + data["requirement-id"];
+			var urlGET = squashtm.app.contextRoot + "/requirements/status-combo-data";
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
 			$('.editable_status', row).editable(urlPOST, {
@@ -344,7 +315,7 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 				cancel : cancel,
 				loadurl : urlGET,
 				"submitdata" : function(value, settings) {
-					return {"id": "test-case-status"};
+					return {"id": "requirement-status"};
 				}
 			});
 		},
@@ -353,33 +324,29 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
 			var placeholder = translator.get("rich-edit.placeholder");
-			var url = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
+			var url = squashtm.app.contextRoot + "/requirements/" + data["requirement-id"];
 			
 			$(".editable_ref", row).editable(url,{
 				"placeholder" : placeholder,
 				"submit" : ok,
 				"cancel" : cancel,
 				"submitdata" : function(value, settings) {
-					return {"id": "test-case-reference"};
+					return {"id": "requirement-reference"};
 				}
 			});
-		},
-
-		_addAssociationCheckboxes : function(row, data) {
-			$(".association-checkbox", row).html("<input type='checkbox'/>");
 		},
 		
 		_addSimpleEditableToLabel : function(row, data) {
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
 			var placeholder = translator.get("rich-edit.placeholder");
-			var url = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
+			var url = squashtm.app.contextRoot + "/requirements/" + data["requirement-id"];
 			$(".editable_label", row).editable(url,{
 				"placeholder" : placeholder,
 				"submit" : ok,
 				"cancel" : cancel,	
 				"submitdata" : function(value, settings) {
-					return {"id": "test-case-newname"};
+					return {"id": "requirement-newname"};
 				}
 			});
 		},
@@ -388,10 +355,9 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 			if(data["editable"]){
 				this.addSimpleEditableToReference(row,data);
 				this.addSimpleEditableToLabel(row,data);
-				this.addSelectEditableToImportance(row,data);
-				this.addSelectEditableToNature(row,data);
+				this.addSelectEditableToCriticality(row,data);
+				this.addSelectEditableToCategory(row,data);
 				this.addSelectEditableToStatus(row,data);
-				this.addSelectEditableToType(row,data);
 			}
 
 			this.addInterfaceLevel2Link(row,data);

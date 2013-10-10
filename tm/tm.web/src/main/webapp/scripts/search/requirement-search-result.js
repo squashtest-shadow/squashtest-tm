@@ -19,10 +19,10 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
-        "./TestCaseSearchResultTable","jquery.squash", "jqueryui",
+        "./RequirementSearchResultTable","jquery.squash", "jqueryui",
 		"jquery.squash.togglepanel", "squashtable",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
-		"jquery.squash.confirmdialog" ], function($, Backbone, _, StringUtil, TestCaseSearchResultTable) {
+		"jquery.squash.confirmdialog" ], function($, Backbone, _, StringUtil, RequirementSearchResultTable) {
 	
 	var TestCaseSearchInputPanel = Backbone.View.extend({
 
@@ -40,7 +40,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 				this.associationId = $("#associationId").text();
 			}
 			this.model = model;
-			new TestCaseSearchResultTable(model, this.isAssociation, this.associationType, this.associationId);
+			new RequirementSearchResultTable(model, this.isAssociation, this.associationType, this.associationId);
 		},
 
 		events : {
@@ -57,7 +57,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		
 		
 		associateSelection : function(){
-			var table = $('#test-case-search-result-table').dataTable();
+			var table = $('#requirement-search-result-table').dataTable();
 			var ids = table.squashTable().getSelectedIds();
 			if(ids.length === 0){
 				var noLineSelectedDialog = $("#no-selected-lines").messageDialog();
@@ -146,13 +146,12 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		},
 		
 		modifySearch : function(){
-			
 			if(this.isAssociation){
-				this.post(squashtm.app.contextRoot + "advanced-search?searchDomain=testcase&id="+this.associationId+"&associateResultWithType="+this.associationType, {
+				this.post(squashtm.app.contextRoot + "advanced-search?searchDomain=requirement&id="+this.associationId+"&associateResultWithType="+this.associationType, {
 					searchModel : JSON.stringify(this.model)
 				});	
 			} else {
-				this.post(squashtm.app.contextRoot + "advanced-search?searchDomain=testcase", {
+				this.post(squashtm.app.contextRoot + "advanced-search?searchDomain=requirement", {
 					searchModel : JSON.stringify(this.model)
 				});	
 			}
@@ -179,14 +178,14 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		newSearch : function(){
 			
 			if(this.isAssociation){
-				document.location.href= squashtm.app.contextRoot +"advanced-search?searchDomain=testcase&id="+this.associationId+"&associateResultWithType="+this.associationType;
+				document.location.href= squashtm.app.contextRoot +"/advanced-search?searchDomain=requirement&id="+this.associationId+"&associateResultWithType="+this.associationType;
 			} else {
-				document.location.href= squashtm.app.contextRoot +"advanced-search?searchDomain=testcase";
+				document.location.href= squashtm.app.contextRoot +"/advanced-search?searchDomain=requirement";
 			}
 		},
 		
 		exportResults : function(){
-			document.location.href= squashtm.app.contextRoot +"/advanced-search?testcase&export=csv&searchModel="+JSON.stringify(this.model);
+			document.location.href= squashtm.app.contextRoot +"/advanced-search?requirement&export=csv&searchModel="+JSON.stringify(this.model);
 		},
 		
 		editResults : function(){
@@ -240,12 +239,12 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		configureModifyResultsDialog : function() {
 			var self = this;
 			var addModifyResultDialog = $("#modify-search-result-dialog").confirmDialog();
-			
+
 			$.ajax({
-				url : squashtm.app.contextRoot + "/test-cases/importance-combo-data",
+				url : squashtm.app.contextRoot + "/requirements/criticality-combo-data",
 				dataType : 'json'
 			}).success(function(json) {
-				var importance_cell = $("#importance-combo");
+				var importance_cell = $("#criticality-combo");
 				importance_cell.html("<select></select>");
 				 $.each(json, function(key, value){ 
 					var option = new Option(value, key);
@@ -253,14 +252,12 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 					$("select", importance_cell).append(option);
 				 });
 			});
-			
-
 
 			$.ajax({
-				url : squashtm.app.contextRoot + "/test-cases/status-combo-data",
+				url : squashtm.app.contextRoot + "/requirements/category-combo-data",
 				dataType : 'json'
 			}).success(function(json) {
-				status_cell = $("#status-combo");
+				status_cell = $("#category-combo");
 				status_cell.html("<select></select>");
 				 $.each(json, function(key, value){ 
 					var option = new Option(value, key);
@@ -268,27 +265,12 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 					$("select", status_cell).append(option);
 				 });
 			});
-			
-
-			
+								
 			$.ajax({
-				url : squashtm.app.contextRoot + "/test-cases/type-combo-data",
+				url : squashtm.app.contextRoot + "/requirements/status-combo-data",
 				dataType : 'json'
 			}).success(function(json) {
-				type_cell = $("#type-combo");
-				type_cell.html("<select></select>");
-				 $.each(json, function(key, value){ 
-					var option = new Option(value, key);
-					$(option).html(value);
-					$("select", type_cell).append(option);
-				 });
-			});
-					
-			$.ajax({
-				url : squashtm.app.contextRoot + "/test-cases/nature-combo-data",
-				dataType : 'json'
-			}).success(function(json) {
-				nature_cell = $("#nature-combo");
+				nature_cell = $("#status-combo");
 				nature_cell.html("<select></select>");
 				 $.each(json, function(key, value){ 
 					var option = new Option(value, key);
@@ -296,6 +278,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 					$("select", nature_cell).append(option);
 				 });
 			});
+			
 			
 			addModifyResultDialog.on("confirmdialogvalidate",
 					function() {
@@ -306,7 +289,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 					function() {
 						var table = $('#test-case-search-result-table').dataTable();
 						var ids = self.getIdsOfSelectedTableRowList(table);
-						var columns = ["importance","status","type","nature"];
+						var columns = ["criticality","category","status"];
 						var index = 0;
 						
 						for(index=0; index<columns.length; index++){

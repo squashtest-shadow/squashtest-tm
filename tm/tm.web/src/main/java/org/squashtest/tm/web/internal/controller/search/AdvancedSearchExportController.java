@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.squashtest.tm.domain.requirement.RequirementVersionSearchExportCSVModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.testcase.TestCaseSearchExportCSVModel;
 import org.squashtest.tm.domain.testcase.TestCaseSearchExportCSVModel.Row;
@@ -48,13 +49,44 @@ public class AdvancedSearchExportController {
 	@Inject
 	private AdvancedSearchService advancedSearchService;
 
-	@RequestMapping(method = RequestMethod.GET, params = {"searchModel", "export=csv"})
+	@RequestMapping(method = RequestMethod.GET, params = {"searchModel", "export=csv", "requirement"})
+	public @ResponseBody
+	void exportRequirementVersionAdvancedSearchResult(HttpServletResponse response, @RequestParam(value = "searchModel") String searchModel) throws IOException {
+
+		AdvancedSearchModel parsedSearchModel = new ObjectMapper().readValue(searchModel, AdvancedSearchModel.class);
+		
+		TestCaseSearchExportCSVModel model = advancedSearchService.exportRequirementVersionSearchResultsToCSV(parsedSearchModel);
+
+		// prepare the response
+		response.setContentType("application/octet-stream");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+
+		response.setHeader("Content-Disposition",
+				"attachment; filename=" + "RequirementExport" + sdf.format(new Date()) + ".csv");
+
+		// print
+		PrintWriter writer = response.getWriter();
+		Row header = model.getHeader();
+		writer.write(header.toString() + "\n");
+
+		Iterator<Row> iterator = model.dataIterator();
+		while (iterator.hasNext()) {
+			Row datarow = iterator.next();
+			String cleanRowValue = HTMLCleanupUtils.htmlToText(datarow.toString()).replaceAll("\\n", " ")
+					.replaceAll("\\r", " ");
+			writer.write(cleanRowValue + "\n");
+		}
+
+	}
+	
+	
+	@RequestMapping(method = RequestMethod.GET, params = {"searchModel", "export=csv", "testcase"})
 	public @ResponseBody
 	void exportTestCaseAdvancedSearchResult(HttpServletResponse response, @RequestParam(value = "searchModel") String searchModel) throws IOException {
 
 		AdvancedSearchModel parsedSearchModel = new ObjectMapper().readValue(searchModel, AdvancedSearchModel.class);
 		
-		TestCaseSearchExportCSVModel model = advancedSearchService.exportTestCaseSearchToCSV(parsedSearchModel);
+		TestCaseSearchExportCSVModel model = advancedSearchService.exportTestCaseSearchResultsToCSV(parsedSearchModel);
 
 		// prepare the response
 		response.setContentType("application/octet-stream");

@@ -18,31 +18,37 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.testcase;
+package org.squashtest.tm.domain.requirement;
 
-import java.text.SimpleDateFormat;
+import java.util.Iterator;
+import java.util.List;
 
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.hibernate.search.bridge.FieldBridge;
-import org.hibernate.search.bridge.LuceneOptions;
-import org.squashtest.tm.domain.audit.AuditableMixin;
+public interface RequirementVersionSearchExportCSVModel {
 
-public class TestCaseBridgeCreatedOn implements FieldBridge{
-
-	
-	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-	
-	@Override
-	public void set(String name, Object value, Document document, LuceneOptions luceneOptions) {
+		char getSeparator();
 		
-		AuditableMixin audit = ((AuditableMixin) value);
+		void setSeparator(char separator);
 		
-		if(audit.getCreatedOn() != null){
-			Field field = new Field(name, dateFormat.format(audit.getCreatedOn()), luceneOptions.getStore(),
-		    luceneOptions.getIndex(), luceneOptions.getTermVector() );
-		    field.setBoost( luceneOptions.getBoost());
-		    document.add(field);
+		Row getHeader();
+		
+		Iterator<Row> dataIterator();  
+		
+		
+		// ********** interfaces *************
+		
+		
+		public static interface Row{
+			/**
+			 * return a separator-separated list of cell values 
+			 */
+			String toString();
+			
+			public List<Cell> getCells();
 		}
-	}
+		
+		
+		
+		public static interface Cell{
+			String getValue();
+		}
 }

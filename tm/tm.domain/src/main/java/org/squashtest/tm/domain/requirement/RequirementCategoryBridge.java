@@ -18,23 +18,17 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.domain.requirement;
 
-import java.util.List;
+import org.hibernate.search.bridge.StringBridge;
 
-
-/**
- * @author Gregory Fouquet
- *
- */
-public interface CustomProjectDao {
-	long countNonFoldersInProject(long projectId);
-
-	List<String> findUsersWhoCreatedTestCases(List<Long> projectIds);
-
-	List<String> findUsersWhoModifiedTestCases(List<Long> projectIds);
+public class RequirementCategoryBridge implements StringBridge {
 	
-	List<String> findUsersWhoCreatedRequirementVersions(List<Long> projectIds);
+	@Override
+	public String objectToString(Object value) {
+		RequirementCategory category = (RequirementCategory) value;
+		return category.name();
+	}
 
-	List<String> findUsersWhoModifiedRequirementVersions(List<Long> projectIds);
 }
+

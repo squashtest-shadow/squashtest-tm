@@ -19,15 +19,15 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function(common) {
-	require([ "jquery", "search/test-case-search-input", "app/ws/squashtm.workspace", "domReady" ], function($,
-			TestCaseSearchView, WS, domReady) {
+	require([ "jquery", "search/requirement-search-result", "app/ws/squashtm.workspace", "domReady" ], function($,
+			TestCaseSearchResultView, WS, domReady) {
 		var goBack = function() {
 			history.back();
 		};
 
 		domReady(function() {
 			WS.init("");
-			var view = new TestCaseSearchView();
+			var view = new TestCaseSearchResultView();
 			$("#back").button().on("click", goBack);
 			view.on("team.delete", goBack);
 		});

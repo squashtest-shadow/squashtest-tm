@@ -29,6 +29,12 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.Store;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.library.Library;
@@ -42,14 +48,18 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Auditable
 @SoftDeletable
+@Indexed
 public abstract class RequirementLibraryNode<RESOURCE extends Resource> implements LibraryNode {
 	@Id
 	@GeneratedValue
 	@Column(name = "RLN_ID")
+	@Field(analyze=Analyze.NO, store=Store.YES)
+	@DocumentId
 	private Long id;
 
 	@ManyToOne
 	@JoinColumn(name = "PROJECT_ID")
+	@IndexedEmbedded
 	private Project project;
 
 	@Override

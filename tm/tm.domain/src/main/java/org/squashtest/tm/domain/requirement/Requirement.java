@@ -43,6 +43,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.NullArgumentException;
+import org.hibernate.search.annotations.Indexed;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.library.NodeVisitor;
@@ -61,6 +62,7 @@ import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
  */
 
 @Entity
+@Indexed
 @PrimaryKeyJoinColumn(name = "RLN_ID")
 public class Requirement extends RequirementLibraryNode<RequirementVersion> implements NodeContainer<Requirement> {
 	/**

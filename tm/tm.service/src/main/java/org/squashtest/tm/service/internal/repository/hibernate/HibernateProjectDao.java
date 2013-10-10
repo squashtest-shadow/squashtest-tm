@@ -57,4 +57,16 @@ public class HibernateProjectDao extends HibernateEntityDao<Project> implements 
 		 List<String> users = executeListNamedQuery("Project.findAllUsersWhoModifiedTestCases", idParameters(projectIds));
 		 return users;
 	}
+	
+	@Override
+	public List<String> findUsersWhoCreatedRequirementVersions(List<Long> projectIds){
+		 List<String> users = executeListNamedQuery("Project.findAllUsersWhoCreatedRequirementVersions", idParameters(projectIds));
+		 return users;
+	}
+	
+	@Override
+	public List<String> findUsersWhoModifiedRequirementVersions(List<Long> projectIds){
+		 List<String> users = executeListNamedQuery("Project.findAllUsersWhoModifiedRequirementVersions", idParameters(projectIds));
+		 return users;
+	}
 }

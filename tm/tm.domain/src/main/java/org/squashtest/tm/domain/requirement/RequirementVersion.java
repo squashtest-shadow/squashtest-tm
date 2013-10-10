@@ -38,6 +38,15 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.ClassBridge;
+import org.hibernate.search.annotations.ClassBridges;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.Store;
+import org.hibernate.search.annotations.Parameter;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.customfield.BindableEntity;
@@ -46,6 +55,13 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.resource.Resource;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseAttachmentBridge;
+import org.squashtest.tm.domain.testcase.AuditableBridgeCreatedBy;
+import org.squashtest.tm.domain.testcase.AuditableBridgeCreatedOn;
+import org.squashtest.tm.domain.testcase.AuditableBridgeModifiedBy;
+import org.squashtest.tm.domain.testcase.AuditableBridgeModifiedOn;
+import org.squashtest.tm.domain.testcase.CUFBridge;
+import org.squashtest.tm.domain.testcase.TestCaseStatusBridge;
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
 import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
 import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException;
@@ -58,8 +74,46 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
  * 
  */
 @Entity
+@Indexed
 @PrimaryKeyJoinColumn(name = "RES_ID")
 @InheritsAcls(constrainedClass = Requirement.class, collectionName = "versions")
+@ClassBridges({
+	@ClassBridge(
+		name="attachments",
+		store=Store.YES,
+		impl=RequirementVersionAttachmentBridge.class
+	),
+	@ClassBridge(
+			name="cufs",
+			store=Store.YES,
+			impl=CUFBridge.class,
+			params = {@Parameter(name="type", value="requirement")}
+	),
+	@ClassBridge(
+		name="createdBy",
+		store=Store.YES,
+		analyze=Analyze.NO,
+		impl=AuditableBridgeCreatedBy.class	
+	),
+	@ClassBridge(
+		name="modifiedBy",
+		store=Store.YES,
+		analyze=Analyze.NO,
+		impl=AuditableBridgeModifiedBy.class	
+	),
+	@ClassBridge(
+		name="createdOn",
+		store=Store.YES,
+		analyze=Analyze.NO,
+		impl=AuditableBridgeCreatedOn.class
+	),
+	@ClassBridge(
+		name="modifiedOn",
+		store=Store.YES,
+		analyze=Analyze.NO,
+		impl=AuditableBridgeModifiedOn.class
+	)
+})
 public class RequirementVersion extends Resource implements BoundEntity{
 	
 	@NotNull
@@ -71,20 +125,27 @@ public class RequirementVersion extends Resource implements BoundEntity{
 	 * The requirement reference. It should usually be set by the Requirement.
 	 */
 	@NotNull
+	@Field
 	@Size(min = 0, max = 50)
 	private String reference = "";
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
+	@Field(analyze=Analyze.NO, store=Store.YES)
+	@FieldBridge(impl = RequirementCriticalityBridge.class)
 	private RequirementCriticality criticality = RequirementCriticality.UNDEFINED;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
+	@Field(analyze=Analyze.NO, store=Store.YES)
+	@FieldBridge(impl = RequirementCategoryBridge.class)
 	private RequirementCategory category = RequirementCategory.UNDEFINED;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "REQUIREMENT_STATUS")
+	@Field(analyze=Analyze.NO, store=Store.YES)
+	@FieldBridge(impl = RequirementStatusBridge.class)
 	private RequirementStatus status = RequirementStatus.WORK_IN_PROGRESS;
 
 	
@@ -92,6 +153,7 @@ public class RequirementVersion extends Resource implements BoundEntity{
 	@NotNull
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "REQUIREMENT_ID")
+	@IndexedEmbedded
 	private Requirement requirement;
 
 	private int versionNumber = 1;

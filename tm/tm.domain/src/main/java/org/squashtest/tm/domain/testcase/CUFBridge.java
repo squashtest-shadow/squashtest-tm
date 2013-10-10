@@ -22,8 +22,11 @@ package org.squashtest.tm.domain.testcase;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -36,21 +39,24 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.bridge.FieldBridge;
 import org.hibernate.search.bridge.LuceneOptions;
+import org.hibernate.search.bridge.ParameterizedBridge;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.InputType;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 
 
 @Configurable
-public class TestCaseCUFBridge implements FieldBridge {
+public class CUFBridge implements FieldBridge, ParameterizedBridge {
 
 	@Inject
 	private BeanFactory beanFactory;
 
 	private SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+	private String type = "";
 	
 	private SessionFactory getSessionFactory() {
 	// We cannot inject the SessionFactory because it creates a cyclic dependency injection problem :
@@ -61,8 +67,6 @@ public class TestCaseCUFBridge implements FieldBridge {
 	@Override
 	public void set(String name, Object value, Document document,
 			LuceneOptions luceneOptions) {
-
-		TestCase testcase = (TestCase) value;
 
 		Session currentSession = null;
 		Session session = null;
@@ -77,12 +81,29 @@ public class TestCaseCUFBridge implements FieldBridge {
 		}finally{
 			
 
-		@SuppressWarnings("unchecked")
-		List<CustomFieldValue> cufValues = (List<CustomFieldValue>) session
-				.createCriteria(CustomFieldValue.class) //NOSONAR session is never null
-				.add(Restrictions.eq("boundEntityId", testcase.getId()))
-				.add(Restrictions.eq("boundEntityType", BindableEntity.TEST_CASE)).list();
-
+		List<CustomFieldValue> cufValues = new ArrayList<CustomFieldValue>();
+			
+		
+		if("testcase".equals(type)){
+		
+			TestCase testcase = (TestCase) value;
+			
+			cufValues = (List<CustomFieldValue>) session
+					.createCriteria(CustomFieldValue.class) //NOSONAR session is never null
+					.add(Restrictions.eq("boundEntityId", testcase.getId()))
+					.add(Restrictions.eq("boundEntityType", BindableEntity.TEST_CASE)).list();
+			
+		} else if("requirement".equals(type)){
+		
+			RequirementVersion requirement = (RequirementVersion) value;
+			
+			cufValues = (List<CustomFieldValue>) session
+					.createCriteria(CustomFieldValue.class) //NOSONAR session is never null
+					.add(Restrictions.eq("boundEntityId", requirement.getId()))
+					.add(Restrictions.eq("boundEntityType", BindableEntity.REQUIREMENT_VERSION)).list();
+			
+		}
+	
 		for (CustomFieldValue cufValue : cufValues) {
 			
 			InputType inputType = cufValue.getBinding().getCustomField().getInputType();
@@ -128,6 +149,13 @@ public class TestCaseCUFBridge implements FieldBridge {
 		    tx.commit(); //NOSONAR the test above prevents null point exception from happening
 		    session.close();
 	    }
+		}
+	}
+
+	@Override
+	public void setParameterValues(Map<String, String> parameters) {
+		if(parameters.containsKey("type")){
+			this.type = (String) parameters.get("type");
 		}
 	}
 

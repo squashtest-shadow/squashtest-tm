@@ -26,7 +26,7 @@ import org.hibernate.search.bridge.FieldBridge;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 
-public class TestCaseBridgeModifiedBy implements FieldBridge {
+public class AuditableBridgeModifiedBy implements FieldBridge {
 
 	@Override
 	public void set(String name, Object value, Document document,

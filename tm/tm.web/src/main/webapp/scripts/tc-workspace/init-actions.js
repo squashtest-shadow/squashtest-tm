@@ -188,11 +188,11 @@ define(['tree','./permissions-rules', 'workspace.contextual-content', 'squash.tr
 			// *****************  search  ********************
 			
 			$("#search-tree-button").on('click', function(){
-				document.location.href = squashtm.app.contextRoot + "/advanced-search?testcase";
+				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=testcase";
 			});
 		
 			$("#search-tree-button-old").on('click', function(){
-				document.location.href = squashtm.app.contextRoot + "/advanced-search?testcase";
+				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=testcase";
 			});
 			
 			// ***************** deletion ********************

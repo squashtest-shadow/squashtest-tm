@@ -49,6 +49,10 @@
 		</ul>		
 	</div>
 
+	<div class="button-group">
+		<a id="search-tree-button" ><f:message key="tree.button.search.label"/>...</a>
+	</div>
+	
 	<c:if test="${ not empty wizards }">
 	<div id="wizard-tree-pane" class="button-group">
 		<a id="wizard-tree-button" class="buttonmenu"  data-icon="ui-icon-star" data-text="false"><f:message key="label.wizards" />...</a>

@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2013 Henix, henix.fr
  *
@@ -18,23 +18,19 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+require([ "common" ], function(common) {
+	require([ "jquery", "search/advanced-search-input", "app/ws/squashtm.workspace", "domReady" ], function($,
+			AdvancedSearchView, WS, domReady) {
+		var goBack = function() {
+			history.back();
+		};
 
-import java.util.List;
+		domReady(function() {
+			WS.init("");
+			var view = new AdvancedSearchView();
+			$("#back").button().on("click", goBack);
+			view.on("team.delete", goBack);
+		});
 
-
-/**
- * @author Gregory Fouquet
- *
- */
-public interface CustomProjectDao {
-	long countNonFoldersInProject(long projectId);
-
-	List<String> findUsersWhoCreatedTestCases(List<Long> projectIds);
-
-	List<String> findUsersWhoModifiedTestCases(List<Long> projectIds);
-	
-	List<String> findUsersWhoCreatedRequirementVersions(List<Long> projectIds);
-
-	List<String> findUsersWhoModifiedRequirementVersions(List<Long> projectIds);
-}
+	});
+});

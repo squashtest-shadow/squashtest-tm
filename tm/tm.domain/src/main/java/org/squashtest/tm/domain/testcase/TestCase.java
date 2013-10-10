@@ -107,31 +107,32 @@ import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedExcepti
 		@ClassBridge(
 				name="cufs",
 				store=Store.YES,
-				impl=TestCaseCUFBridge.class
+				impl=CUFBridge.class,
+				params = {@org.hibernate.search.annotations.Parameter(name="type", value="testcase")}
 		),
 		@ClassBridge(
 			name="createdBy",
 			store=Store.YES,
 			analyze=Analyze.NO,
-			impl=TestCaseBridgeCreatedBy.class	
+			impl=AuditableBridgeCreatedBy.class	
 		),
 		@ClassBridge(
 			name="modifiedBy",
 			store=Store.YES,
 			analyze=Analyze.NO,
-			impl=TestCaseBridgeModifiedBy.class	
+			impl=AuditableBridgeModifiedBy.class	
 		),
 		@ClassBridge(
 			name="createdOn",
 			store=Store.YES,
 			analyze=Analyze.NO,
-			impl=TestCaseBridgeCreatedOn.class
+			impl=AuditableBridgeCreatedOn.class
 		),
 		@ClassBridge(
 			name="modifiedOn",
 			store=Store.YES,
 			analyze=Analyze.NO,
-			impl=TestCaseBridgeModifiedOn.class
+			impl=AuditableBridgeModifiedOn.class
 		)
 })
 @PrimaryKeyJoinColumn(name = "TCLN_ID")

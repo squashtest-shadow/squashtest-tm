@@ -27,6 +27,8 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.library.IndexModel;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.requirement.RequirementVersionSearchExportCSVModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseSearchExportCSVModel;
@@ -35,9 +37,23 @@ import org.squashtest.tm.domain.testcase.TestCaseSearchExportCSVModel;
 
 public interface AdvancedSearchService {
 
-	//Indexing
+	//Indexing Test Cases
 	void indexTestCases();
+	
+	void reindexTestCase(Long testCaseId);
 
+	void reindexTestCases(List<TestCase> testCaseList);
+
+	//Indexing Requirement Versions
+	void indexRequirementVersions();
+	
+	void reindexRequirementVersion(Long requirementVersionId);
+	
+	void reindexRequirementVersions(List<RequirementVersion> requirementVersionList);
+	
+	//Indexing All
+	void indexAll();
+	
 	IndexModel findIndexModel();
 	
 	Boolean isIndexedOnPreviousVersion();
@@ -47,21 +63,24 @@ public interface AdvancedSearchService {
 	
 	PagedCollectionHolder<List<TestCase>> searchForTestCases(AdvancedSearchModel model, PagingAndSorting sorting);
 	
+	PagedCollectionHolder<List<RequirementVersion>> searchForRequirementVersions(AdvancedSearchModel searchModel, PagingAndSorting paging);
+	
 	List<TestCase> searchForTestCases(AdvancedSearchModel model);
+	
+	List<RequirementVersion> searchForRequirementVersions(AdvancedSearchModel model);
 
 	void updateIndexingDate();
-	
-	//Exporting
-	TestCaseSearchExportCSVModel exportTestCaseSearchToCSV(AdvancedSearchModel model);
 
 	List<String> findAllUsersWhoModifiedTestCases();
 
 	List<String> findAllUsersWhoCreatedTestCases();
 
-	void reindexTestCase(Long testCaseId);
+	List<String> findAllUsersWhoCreatedRequirementVersions();
+	
+	List<String> findAllUsersWhoModifiedRequirementVersions();
+	
+	//Exporting
+	TestCaseSearchExportCSVModel exportTestCaseSearchResultsToCSV(AdvancedSearchModel model);
 
-	void reindexTestCases(List<TestCase> testCaseList);
-
-
-
+	TestCaseSearchExportCSVModel exportRequirementVersionSearchResultsToCSV(AdvancedSearchModel model);
 }

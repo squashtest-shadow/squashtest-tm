@@ -51,6 +51,8 @@ import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.library.IndexModel;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.requirement.RequirementVersionSearchExportCSVModel;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
@@ -92,6 +94,10 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	@Inject
 	private Provider<TestCaseSearchExportCSVModelImpl> testCaseSearchExportCSVModelProvider;
 
+	@Inject
+	private Provider<RequirementVersionSearchExportCSVModelImpl> requirementVersionSearchExportCSVModelProvider;
+
+	
 	@Inject
 	private ConfigurationService configurationService;
 	
@@ -147,12 +153,49 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	@Override
 	public void reindexTestCases(List<TestCase> testCaseList){
-		Session session = sessionFactory.getCurrentSession();
-		FullTextSession ftSession = Search.getFullTextSession(session);
-		
 		for(TestCase testcase : testCaseList){
 			 reindexTestCase(testcase.getId());
 		}
+	}
+	
+	@Override
+	public void indexRequirementVersions() {
+
+		Session session = sessionFactory.getCurrentSession();
+		FullTextSession ftSession = Search.getFullTextSession(session);
+
+		MassIndexerProgressMonitor monitor = new AdvancedSearchIndexingMonitor(RequirementVersion.class, this.configurationService);
+
+		try {
+
+			ftSession.createIndexer(RequirementVersion.class).purgeAllOnStart(true)
+					.batchSizeToLoadObjects(25).cacheMode(CacheMode.NORMAL)
+					.progressMonitor(monitor).startAndWait();
+
+		} catch (InterruptedException e) {
+
+		}
+	}
+
+	@Override
+	public void reindexRequirementVersion(Long requirementVersionId) {
+		Session session = sessionFactory.getCurrentSession();
+		FullTextSession ftSession = Search.getFullTextSession(session);
+		Object requirementVersion = ftSession.load(RequirementVersion.class, requirementVersionId);
+		ftSession.index(requirementVersion);
+	}
+
+	@Override
+	public void reindexRequirementVersions(List<RequirementVersion> requirementVersionList) {
+		for(RequirementVersion requirementVersion : requirementVersionList){
+			reindexRequirementVersion(requirementVersion.getId());
+		}
+	}
+
+	@Override
+	public void indexAll() {
+		this.indexTestCases();
+		this.indexRequirementVersions();
 	}
 	
 	@Override
@@ -211,6 +254,17 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 
 	@Override
+	public List<String> findAllUsersWhoCreatedRequirementVersions() {
+		List<Project> readableProjects = projectFinder.findAllReadable();
+		List<Long> projectIds = new ArrayList<Long>(readableProjects.size());
+		for (Project project : readableProjects) {
+			projectIds.add(project.getId());
+		}
+		return projectDao.findUsersWhoCreatedRequirementVersions(projectIds);
+	}
+	
+	
+	@Override
 	public List<String> findAllUsersWhoModifiedTestCases() {
 		List<Project> readableProjects = projectFinder.findAllReadable();
 		List<Long> projectIds = new ArrayList<Long>(readableProjects.size());
@@ -220,6 +274,16 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return projectDao.findUsersWhoModifiedTestCases(projectIds);
 	}
 
+	@Override
+	public List<String> findAllUsersWhoModifiedRequirementVersions() {
+		List<Project> readableProjects = projectFinder.findAllReadable();
+		List<Long> projectIds = new ArrayList<Long>(readableProjects.size());
+		for (Project project : readableProjects) {
+			projectIds.add(project.getId());
+		}
+		return projectDao.findUsersWhoModifiedRequirementVersions(projectIds);
+	}
+	
 	private org.apache.lucene.search.Query buildLuceneRangeQuery(
 			QueryBuilder qb, String fieldName, Integer minValue,
 			Integer maxValue) {
@@ -466,6 +530,27 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<RequirementVersion> searchForRequirementVersions(AdvancedSearchModel model) {
+
+		Session session = sessionFactory.getCurrentSession();
+
+		FullTextSession ftSession = Search.getFullTextSession(session);
+
+		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder()
+				.forEntity(RequirementVersion.class).get();
+
+		org.apache.lucene.search.Query luceneQuery = buildLuceneQuery(qb, model);
+
+		org.hibernate.Query hibQuery = ftSession.createFullTextQuery(
+				luceneQuery, RequirementVersion.class);
+
+		return hibQuery.list();
+
+	}
+	
+	
 	private Sort getSort(String fieldName, SortOrder sortOrder){
 		
 		boolean isReverse = true;
@@ -491,6 +576,36 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		}
 		
 		return sort;
+	}
+	
+	@Override
+	public PagedCollectionHolder<List<RequirementVersion>> searchForRequirementVersions(
+			AdvancedSearchModel model, PagingAndSorting sorting) {
+		
+		Session session = sessionFactory.getCurrentSession();
+
+		FullTextSession ftSession = Search.getFullTextSession(session);
+
+		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder()
+				.forEntity(RequirementVersion.class).get();
+
+		org.apache.lucene.search.Query luceneQuery = buildLuceneQuery(qb, model);
+
+		List<RequirementVersion> result = Collections.emptyList();
+		int countAll = 0 ;
+		if(luceneQuery != null){
+			Sort sort = getSort(sorting.getSortedAttribute(), sorting.getSortOrder());
+			org.hibernate.Query hibQuery = ftSession.createFullTextQuery(
+					luceneQuery, RequirementVersion.class).setSort(sort);
+	
+			countAll = hibQuery.list().size();	
+			
+			
+			result = hibQuery.setFirstResult(sorting.getFirstItemIndex())
+					.setMaxResults(sorting.getPageSize()).list();
+		}
+		return new PagingBackedPagedCollectionHolder<List<RequirementVersion>>(sorting,
+				countAll, result);
 	}
 	
 	@Override
@@ -524,7 +639,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 
 	@Override
-	public TestCaseSearchExportCSVModel exportTestCaseSearchToCSV(AdvancedSearchModel searchModel) {
+	public TestCaseSearchExportCSVModel exportTestCaseSearchResultsToCSV(AdvancedSearchModel searchModel) {
 
 		TestCaseSearchExportCSVModelImpl model = testCaseSearchExportCSVModelProvider.get();
 
@@ -535,20 +650,31 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 
 	@Override
+	public TestCaseSearchExportCSVModel exportRequirementVersionSearchResultsToCSV(AdvancedSearchModel searchModel) {
+
+		RequirementVersionSearchExportCSVModelImpl model = requirementVersionSearchExportCSVModelProvider.get();
+
+		List<RequirementVersion> requirementVersions = this.searchForRequirementVersions(searchModel);
+		model.setRequirementVersions(requirementVersions);
+		return model;
+	}
+	
+	@Override
 	public Boolean isIndexedOnPreviousVersion() {
 		String currentVersion = configurationService
 				.findConfiguration(SQUASH_VERSION_KEY);
 		String testcaseIndexVersion = configurationService
 				.findConfiguration(TESTCASE_INDEXING_VERSION_KEY);
-
-		boolean result = currentVersion.equals(testcaseIndexVersion);
+		String requirementIndexVersion = configurationService
+				.findConfiguration(REQUIREMENT_INDEXING_VERSION_KEY);
+		
+		boolean result = currentVersion.equals(requirementIndexVersion) 
+				&& currentVersion.equals(testcaseIndexVersion);
 
 		// TODO uncomment when requirements and campains are added to advanced
 		// search
 		/*
-		 * String requirementIndexVersion =
-		 * configurationService.findConfiguration
-		 * (REQUIREMENT_INDEXING_VERSION_KEY); String campaignIndexVersion =
+		 * String campaignIndexVersion =
 		 * configurationService
 		 * .findConfiguration(CAMPAIGN_INDEXING_VERSION_KEY);
 		 * 

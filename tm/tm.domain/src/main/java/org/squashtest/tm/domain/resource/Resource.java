@@ -33,6 +33,11 @@ import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Fields;
+import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
@@ -52,13 +57,20 @@ public abstract class Resource implements AttachmentHolder, Identified{
 	@Id
 	@GeneratedValue
 	@Column(name = "RES_ID")
+	@DocumentId
+	@Field
 	private Long id;
 
 	@NotBlank
 	@Size(min = 0, max = 255)
+	@Fields({
+		@Field,
+		@Field(name="label", analyze=Analyze.NO, store=Store.YES)
+	})
 	private String name;
 
 	@Lob
+	@Field
 	private String description;
 	
 	@NotNull
