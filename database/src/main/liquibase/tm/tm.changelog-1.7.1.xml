@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2013 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<!-- DO NOT FORGET TO UPDATE VERSION IN CORE_CONFIG ! -->
+	<!-- OK BOSS ! -->
+	<changeSet id="tm-1.7.1" author="mpagnon">
+		<comment>Update TM database version number</comment>
+		<update tableName="CORE_CONFIG">
+			<column name="VALUE" value="1.7.1" />
+			<where>STR_KEY = 'squashtest.tm.database.version'</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="tm-1.7.1.issue-2873-01" author="mpagnon">
+		<comment>Delete ghost executions</comment>
+
+		<comment>create table to store the id of entities to delete</comment>
+		<createTable tableName="ENTITIES_TO_DELETE">
+
+			<column name="ENTITY_NAME" type="VARCHAR(30)">
+			</column>
+			<column name="ENTITY_ID" type="BIGINT">
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="tm-1.7.1.issue-2873-02" author="mpagnon">
+		<comment>Store the ids of the ghost executions</comment>
+		<sql>
+			INSERT into ENTITIES_TO_DELETE (ENTITY_NAME, ENTITY_ID)
+			SELECT
+			'execution', e.execution_id
+			FROM EXECUTION e
+			WHERE e.execution_id NOT
+			IN (
+			SELECT itpe.execution_id FROM ITEM_TEST_PLAN_EXECUTION itpe
+			);
+		</sql>
+	</changeSet>
+	<changeSet id="tm-1.7.1.issue-2873-03" author="mpagnon">
+		<comment>Store the ids of the execution steps</comment>
+		<sql>INSERT into ENTITIES_TO_DELETE (ENTITY_NAME, ENTITY_ID)
+			SELECT
+			'execution_step', es.execution_step_id
+			FROM EXECUTION_STEP es,
+			EXECUTION_EXECUTION_STEPS ees, ENTITIES_TO_DELETE
+			etd
+			WHERE
+			es.execution_step_id = ees.execution_step_id
+			AND ees.execution_id =
+			etd.entity_id
+			AND etd.entity_name = 'execution'
+			;
+		</sql>
+		
+	</changeSet>
+	<changeSet id="tm-1.7.1.issue-2873-04" author="mpagnon">
+		<comment>Store the ids of the issue lists to delete</comment>
+		<sql>
+			INSERT into entities_to_delete (entity_name, entity_id)
+			SELECT 'issue_list', il.issue_list_id
+			FROM ISSUE_LIST il , EXECUTION e,  ENTITIES_TO_DELETE etd
+			WHERE
+			 il.issue_list_id = e.issue_list_id
+			AND e.execution_id = etd.entity_id
+			AND etd.entity_name = 'execution'			
+		</sql>
+		<sql>
+			INSERT into entities_to_delete (entity_name, entity_id)
+			SELECT 'issue_list', il.issue_list_id
+			FROM ISSUE_LIST il ,  EXECUTION_STEP es,  ENTITIES_TO_DELETE etd2
+			WHERE		
+			 il.issue_list_id =	es.issue_list_id
+			AND es.execution_step_id = etd2.entity_id
+			AND	etd2.entity_name = 'execution_step'
+			;
+		</sql>
+	</changeSet>
+	<changeSet id="tm-1.7.1.issue-2873-05" author="mpagnon">
+		<comment>DELETE Issues of execution and execution steps to delete</comment>
+		<delete tableName="ISSUE">
+			<where>
+				ISSUE_LIST_ID IN (
+				SELECT entity_id
+				FROM
+				ENTITIES_TO_DELETE
+				WHERE
+				entity_name = 'issue_list'
+				);
+			</where>
+		</delete>
+	</changeSet>
+	<changeSet id="tm-1.7.1.issue-2873-06" author="mpagnon">
+		<comment>DELETE Automated execution extender of executions to delete</comment>
+		<delete tableName="AUTOMATED_EXECUTION_EXTENDER">
+			<where>
+				MASTER_EXECUTION_ID in (select
+				entity_id from
+				ENTITIES_TO_DELETE
+				where entity_name = 'execution')
+			</where>
+		</delete>
+	</changeSet>
+	<changeSet id="tm-1.7.1.issue-2873-07" author="mpagnon">
+		<comment>DELETE automated suites that are not linked to any automated execution extender</comment>
+		<delete tableName="AUTOMATED_SUITE">
+			<where>
+				SUITE_ID not in (select
+				AUTOMATED_EXECUTION_EXTENDER.SUITE_ID
+				from
+				AUTOMATED_EXECUTION_EXTENDER)
+			</where>
+		</delete>
+
+	</changeSet>
+	<changeSet id="tm-1.7.1.issue-2873-08" author="mpagnon">
+		<comment>Delete execution steps of ghost executions</comment>
+		<delete tableName="EXECUTION_EXECUTION_STEPS">
+			<where>
+				EXECUTION_STEP_ID in (select entity_id from
+				ENTITIES_TO_DELETE
+				where
+				entity_name = 'execution_step')
+			</where>
+		</delete>
+		<delete tableName="EXECUTION_STEP">
+			<where>
+				EXECUTION_STEP_ID in (select entity_id from
+				ENTITIES_TO_DELETE
+				where
+				entity_name = 'execution_step')
+			</where>
+		</delete>
+	</changeSet>
+	<changeSet id="tm-1.7.1.issue-2873-09" author="mpagnon">
+		<comment>Delete ghost executions</comment>
+		<delete tableName="EXECUTION">
+			<where>
+				EXECUTION_ID in (select entity_id from ENTITIES_TO_DELETE
+				where
+				entity_name = 'execution')
+			</where>
+		</delete>
+	</changeSet>
+	<changeSet id="tm-1.7.1.issue-2873-10" author="mpagnon">
+		<comment>DELETE issue lists of executions and execution-steps to delete</comment>
+		<delete tableName="ISSUE_LIST">
+			<where>
+				ISSUE_LIST_ID in (select entity_id from
+				ENTITIES_TO_DELETE
+				where
+				entity_name ='issue_list')
+			</where>
+		</delete>
+	</changeSet>
+	<changeSet id="tm-1.7.1.issue-2873-11" author="mpagnon">
+		<comment>Drop table used to store the ids of the entities to delete</comment>
+		<dropTable tableName="ENTITIES_TO_DELETE" />
+	</changeSet>
+
+</databaseChangeLog>
+ 
