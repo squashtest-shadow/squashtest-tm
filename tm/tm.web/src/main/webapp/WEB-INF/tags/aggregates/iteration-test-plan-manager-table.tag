@@ -37,7 +37,7 @@
 <s:url var="testplanUrl"  value="/iterations/${iteration.id}/test-plan" />
 <s:url var="testcaseUrl"  value="/test-cases/{tc-id}/info" />
 
-<table id="test-plans-table" data-def="language=${dtMessagesUrl}, ajaxsource=${testplanUrl}, hover">
+<table id="test-plans-table" data-def="ajaxsource=${testplanUrl}">
 	<thead>
 		<tr>
 			<th data-def="map=entity-index, select, sClass=drag-handle, narrow">&nbsp;</th>

@@ -72,7 +72,7 @@
 			</div>
 			
 			<div id="sub-page-list-panel" class="sub-page-list-panel shadow ui-corner-all ui-helper-reset ui-widget ui-widget-content" >
-				<table id="versions-table" data-def="ajaxsource=${dtModel}, language=${dtMessages}, hover, pre-sort=1-desc, deferLoading=${fn:length(versions)}">
+				<table id="versions-table" data-def="ajaxsource=${dtModel}, hover, pre-sort=1-desc, deferLoading=${fn:length(versions)}">
 					<thead>
 						<tr>
 							<th data-def="map=entity-id, invisible">Id</th>

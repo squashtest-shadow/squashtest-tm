@@ -140,8 +140,9 @@ define([ "jquery", "squash.translator", "squashtable", "jquery.squash.confirmdia
 		$("#deactivate-user-button").button().on('click', function(){
 			var ids = $("#users-list-table").squashTable().getSelectedIds();
 			if (ids.length>0){
-				$("#deactivate-user-popup").data('entity-id',null);
-				$("#deactivate-user-popup").confirmDialog('open');
+				var popup = $("#deactivate-user-popup");
+				popup.data('entity-id',null);
+				popup.confirmDialog('open');
 			}
 			else{
 				var warn = translator.get({
@@ -185,13 +186,13 @@ define([ "jquery", "squash.translator", "squashtable", "jquery.squash.confirmdia
 			var userId = $this.data('entity-id'),
 				userIds = (!! userId) ? [ userId ] : table.getSelectedIds();
 
-			$this.data('entity-id');
+			$this.data('entity-id');	//reset
 			
 			var url = squashtm.app.contextRoot+"/administration/users/"+userIds.join(',')+'/deactivate';
 			$.post(url)
 			.done(function(){
 				table.refresh();
-			})
+			});
 			
 		});
 	}

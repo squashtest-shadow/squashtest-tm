@@ -97,7 +97,7 @@
 				class="button" />
 			</span>
 			<div class="toggle-panel-main" id="verified-requirements-panel">
-				<table id="verified-requirements-table" th:attr="data-def='hover, pre-filled, datakeys-id=entity-id, ajaxsource='+@{/test-steps/__${requirementVerifier.verifyingStep.id}__/verified-requirement-versions/}+', language='+@{/datatables/messages}">
+				<table id="verified-requirements-table" th:attr="data-def='pre-filled, datakeys-id=entity-id, ajaxsource='+@{/test-steps/__${requirementVerifier.verifyingStep.id}__/verified-requirement-versions/}">
 					<thead>
 						<tr>
 							<th th:attr="data-def='select, map=entity-index'" >#</th>

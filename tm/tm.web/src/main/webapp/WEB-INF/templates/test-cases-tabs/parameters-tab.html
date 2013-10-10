@@ -73,7 +73,7 @@
 				class="button" /></span>
 			<div id="parameters-panel" class="toggle-panel-main">
 			<table id="parameters-table" class="unstyled-table"
-					th:attr="data-def='hover, datakeys-id=entity-id ,ajaxsource='+@{/test-cases/__${testCase.id}__/parameters}+',language='+@{/datatables/messages}+', pre-sort=1'">
+					th:attr="data-def='datakeys-id=entity-id ,ajaxsource='+@{/test-cases/__${testCase.id}__/parameters}+', pre-sort=1'">
 					<thead>
 						<tr>
 							<th th:attr="data-def='select, map=entity-index'">#</th>

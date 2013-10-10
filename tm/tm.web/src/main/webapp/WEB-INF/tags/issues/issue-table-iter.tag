@@ -50,7 +50,7 @@
  --%>
 
 	
-<table id="issue-table" data-def="hover, datakeys-id=issue-id, ajaxsource=${dataUrl}, language=${tableLanguageUrl}, pre-sort=1-desc">
+<table id="issue-table" data-def="datakeys-id=issue-id, ajaxsource=${dataUrl}, pre-sort=1-desc">
 	<thead>
 		<tr>
 			<th data-def="select, map=issue-id, link={issue-url}, sWidth=2.5em, sortable">${interfaceDescriptor.tableIssueIDHeader}</th>

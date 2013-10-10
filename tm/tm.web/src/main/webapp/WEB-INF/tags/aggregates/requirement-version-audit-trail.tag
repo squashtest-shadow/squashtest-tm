@@ -42,8 +42,8 @@
 <cmp:toggle-panel id="requirement-audit-trail-panel" titleKey="title.EditHistory" open="false">
 	<jsp:attribute name="body">		
 		<div>
-			<table id="requirement-audit-trail-table" data-def="ajaxsource=${modelUrl}, language=${tableLangUrl}, 
-																datakeys-id=event-id, hover, pagesize=10 ${deferloadingClause}" >
+			<table id="requirement-audit-trail-table" data-def="ajaxsource=${modelUrl}, 
+																datakeys-id=event-id, pagesize=10 ${deferloadingClause}" >
 				<thead>
 					<tr>
 						<th data-def="map=event-date"><f:message key="label.Date" /></th>

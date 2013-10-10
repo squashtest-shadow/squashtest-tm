@@ -92,7 +92,7 @@
 		</script>
 
 <table id="verified-requirements-table" 
-data-def='hover,  datakeys-id=entity-id ,ajaxsource=${ verifiedRequirementsTableUrl }, language=${tableLanguageUrl}'>
+data-def='datakeys-id=entity-id ,ajaxsource=${ verifiedRequirementsTableUrl }'>
 	<thead>
 		<tr>
 			<th data-def="select, map=entity-index">#</th>

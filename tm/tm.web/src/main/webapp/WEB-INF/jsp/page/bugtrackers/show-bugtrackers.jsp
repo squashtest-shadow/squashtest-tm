@@ -62,7 +62,7 @@
 	<input style="float: right;" type="button" value='<f:message key="label.AddBugtracker" />' id="new-bugtracker-button"/>
 	<div style="clear:both"></div>
 	
-	<table id="bugtrackers-table" data-def="ajaxsource=${bugtrackersUrl}, hover, language=${dtMessagesUrl}, pre-sort=1-asc">
+	<table id="bugtrackers-table" data-def="ajaxsource=${bugtrackersUrl}, hover, pre-sort=1-asc">
 		<thead>
 			<tr>
 				<th data-def="map=index, select">#</th>

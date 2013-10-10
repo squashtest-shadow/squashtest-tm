@@ -44,7 +44,7 @@
 
 <%-- ==============  variables, urls etc =================== --%>
 
-<table id="test-plans-table" data-def="language=${dtMessagesUrl}, ajaxsource=${testplanUrl}, hover">
+<table id="test-plans-table" data-def="ajaxsource=${testplanUrl}">
 	<thead>
 		<tr>
 			<th data-def="map=entity-index, select, sClass=drag-handle, narrow">&nbsp;</th>

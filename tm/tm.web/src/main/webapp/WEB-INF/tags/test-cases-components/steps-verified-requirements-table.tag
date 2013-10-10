@@ -73,7 +73,7 @@
 				class="button" />
 				</div>
 <table id="verified-requirements-table" 
-data-def='hover,  datakeys-id=entity-id ,ajaxsource=${ stepVerifiedRequirementsUrl }, language=${tableLanguageUrl}'>
+data-def='datakeys-id=entity-id ,ajaxsource=${ stepVerifiedRequirementsUrl }'>
 	<thead>
 		<tr>
 			<th data-def="select, map=entity-index">#</th>

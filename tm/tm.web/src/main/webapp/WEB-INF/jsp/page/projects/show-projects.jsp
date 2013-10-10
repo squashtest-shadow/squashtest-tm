@@ -82,7 +82,7 @@
   </sec:authorize>
   <div style="clear:both"></div>
   <table id="projects-table" class="unstyled-table" data-def="ajaxsource=${dtModel}, hover, datakeys-id=project-id, 
-  															  language=${dtLanguage}, deferLoading=${fn:length(projects)},
+  															  deferLoading=${fn:length(projects)},
   															  filter, pre-sort=2-asc">
   	<thead>
   		<tr>

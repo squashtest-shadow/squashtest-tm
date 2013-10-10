@@ -110,7 +110,7 @@
 <c:if test="${editable}">
 	<c:set var="deleteBtnClause" value=", delete-button=#iter-test-plan-delete-dialog"/>
 </c:if>
-<table id="iteration-test-plans-table" class="test-plan-table" data-def="language=${dtMessagesUrl}, ajaxsource=${tableModelUrl}, hover"  >
+<table id="iteration-test-plans-table" class="test-plan-table" data-def="ajaxsource=${tableModelUrl}"  >
 	<thead>
 		<tr>
 			<th class="no-user-select" data-def="map=entity-index, select, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>

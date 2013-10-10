@@ -38,7 +38,7 @@
 <%-- be careful that the variable below is a 'var', not a 'url'. It's so because 'campaignUrl' is already an URL. Just another detail to get straight one day... --%>
 <c:set var="tablemodel" value="${campaignUrl}/test-plan/table" />
 
-<table id="test-cases-table" data-def="ajaxsource=${tablemodel}, language=${dtMessagesUrl}, hover">
+<table id="test-cases-table" data-def="ajaxsource=${tablemodel}">
 	<thead>
 		<tr>
 			<th data-def="map=entity-index, select,center, sClass=drag-handle">#</th>

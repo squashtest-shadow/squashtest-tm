@@ -99,7 +99,7 @@
 <c:if test="${executable}">
 	<c:set var="deleteBtnClause" value=", sClass=delete-button"/>
 </c:if>
-<table id="issue-table" data-def="language=${tableLangUrl}, hover, ajaxsource=${dataUrl}">
+<table id="issue-table" data-def="ajaxsource=${dataUrl}">
 	<thead >
 		<tr>
 			<th data-def="map=remote-id, link={issue-url}, center, select, double-narrow">${interfaceDescriptor.tableIssueIDHeader}</th>

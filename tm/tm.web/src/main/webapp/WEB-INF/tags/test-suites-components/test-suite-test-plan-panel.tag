@@ -103,7 +103,7 @@
 			<c:set var="deleteBtnClause"
 				value=", delete-button=#ts-test-plan-delete-dialog" />
 		</c:if>
-		<table id="test-suite-test-plans-table" class="test-plan-table"	data-def="language=${dtMessagesUrl}, ajaxsource=${tableModelUrl}, hover">
+		<table id="test-suite-test-plans-table" class="test-plan-table"	data-def="ajaxsource=${tableModelUrl}">
 			<thead>
 				<tr>
 					<th	class="no-user-select" data-def="map=entity-index, select, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>

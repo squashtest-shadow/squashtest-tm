@@ -47,7 +47,7 @@
 <c:if test="${editable}">
 	<c:set var="deleteBtnClause" value=", delete-button=#delete-multiple-test-cases-dialog"/>
 </c:if>
-<table id="test-cases-table" data-def="ajaxsource=${tablemodel}, language=${dtMessagesUrl}, hover">
+<table id="test-cases-table" data-def="ajaxsource=${tablemodel}">
 	<thead>
 		<tr>
 			<th class="no-user-select" data-def="map=entity-index, select, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>
