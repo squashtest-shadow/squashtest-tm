@@ -20,8 +20,12 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
+import org.hibernate.Query;
+import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.service.internal.repository.PartyDao;
@@ -30,8 +34,23 @@ import org.squashtest.tm.service.internal.repository.PartyDao;
 public class HibernatePartyDao extends HibernateEntityDao<Party> implements PartyDao{
 
 	@Override
-	public List<Party> findAllActiveByIds(List<Long> idList) {
-		return executeListNamedQuery("party.findAllActiveByIds");
+	public List<Party> findAllActiveParties() {
+		return executeListNamedQuery("party.findAllActive");
 	}
 
+	@Override
+	public List<Party> findAllActiveByIds(final Collection<Long> ids) {
+		if (ids.isEmpty()){
+			return Collections.emptyList();
+		}
+		else{
+			return executeListNamedQuery("party.findAllActiveByIds", new SetQueryParametersCallback() {
+				@Override
+				public void setQueryParameters(Query query) {
+					query.setParameterList("partyIds", ids, LongType.INSTANCE);
+				}
+			});
+		}
+	}
+	
 }

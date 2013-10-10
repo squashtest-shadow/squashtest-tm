@@ -33,9 +33,7 @@ public interface UserDao extends EntityDao<User> {
 
 	List<User> findAllActiveUsersOrderedByLogin();
 	
-	List<User> findAllUsersFiltered(PagingAndSorting filter);
-
-	List<User> findAllActiveUsers(PagingAndSorting sorter, Filtering filter);
+	List<User> findAllUsers(PagingAndSorting sorter, Filtering filter);
 	
 	User findUserByLogin(String login);
 

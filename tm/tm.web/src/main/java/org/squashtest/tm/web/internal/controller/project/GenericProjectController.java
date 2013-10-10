@@ -23,6 +23,7 @@ package org.squashtest.tm.web.internal.controller.project;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -262,19 +263,24 @@ public class GenericProjectController {
 	}
 
 	// ********************************** Permission Popup *******************************
-	@RequestMapping(value = PROJECT_ID_URL + "/permission-popup", method = RequestMethod.GET)
-	public ModelAndView getPermissionPopup(@PathVariable long projectId) {
+	
+	@RequestMapping(value = PROJECT_ID_URL + "/unbound-parties", method = RequestMethod.GET)
+	@ResponseBody
+	public List<Map<String, Object>> getPermissionPopup(@PathVariable long projectId) {
 
-		GenericProject project = projectManager.findById(projectId);
-		List<PermissionGroup> permissionList = projectManager.findAllPossiblePermission();
 		List<Party> partyList = projectManager.findPartyWithoutPermissionByProject(projectId);
+		
+		List<Map<String, Object>> partiesModel = new ArrayList<Map<String,Object>>(partyList.size());
+		for (Party p : partyList){
+			Map<String, Object> newModel = new HashMap<String, Object>();
+			newModel.put("label", p.getName());
+			newModel.put("value", p.getName());
+			newModel.put("id", p.getId());
+			partiesModel.add(newModel);
+		}
+		
+		return partiesModel;
 
-		ModelAndView mav = new ModelAndView("fragment/project/project-permission-popup");
-		mav.addObject("project", project);
-		mav.addObject("partyList", partyList);
-		mav.addObject("permissionList", permissionList);
-
-		return mav;
 	}
 
 	@RequestMapping(value = PROJECT_ID_URL + "/parties/{partyId}/permissions/{permission}", method = RequestMethod.PUT)

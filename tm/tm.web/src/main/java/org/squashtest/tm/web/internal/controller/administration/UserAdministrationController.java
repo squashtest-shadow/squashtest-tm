@@ -98,6 +98,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 
 	private DatatableMapper<String> userMapper = new NameBasedMapper(10)
 			.map("user-id", "id")
+			.map("user-active", "active")
 			.map("user-login", "login")
 			.map("user-group", "group")
 			.map("user-firstname", "firstName")
@@ -148,7 +149,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 	}
 
 	private DataTableModel getTableModel(PagingAndSorting sorting, Filtering filtering, String sEcho, Locale locale) {
-		PagedCollectionHolder<List<User>> holder = adminService.findAllActiveUsersFiltered(sorting, filtering);
+		PagedCollectionHolder<List<User>> holder = adminService.findAllUsersFiltered(sorting, filtering);
 
 		return new UserDataTableModelBuilder(locale).buildDataModel(holder, sEcho);
 	}
@@ -353,6 +354,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 
 			Map<Object, Object> result = new HashMap<Object, Object>();
 			result.put("user-id", item.getId());
+			result.put("user-active", item.getActive());
 			result.put("user-index", getCurrentIndex());
 			result.put("user-login", item.getLogin());
 			result.put("user-group", group);

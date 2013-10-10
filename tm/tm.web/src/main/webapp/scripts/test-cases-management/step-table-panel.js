@@ -184,9 +184,6 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 		// create the settings
 		var datatableSettings = {
-			oLanguage : {
-				sUrl : urls.tableLanguageUrl
-			},
 			aaData : settings.basic.tableData,
 			sAjaxSource : urls.tableAjaxUrl,
 			fnDrawCallback : stepsTableDrawCallback,

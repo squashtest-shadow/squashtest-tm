@@ -49,9 +49,6 @@ define([ "jquery", "squashtable", "jqueryui" ],
 				var conf = squashtm.app.testCaseExecutionsTable;
 
 				var table = $("#execs-table").squashTable({
-					"oLanguage" : {
-						"sUrl" : conf.languageUrl
-					},
 					"bJQueryUI" : true,
 					"bAutoWidth" : false,
 					"bFilter" : false,

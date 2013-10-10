@@ -244,8 +244,9 @@
 		@NamedQuery(name = "user.countAllTeamMembers",   query = "select members.size from Team where id = :teamId"),
 		
 		//Party
-		@NamedQuery(name = "party.findAllActiveByIds", query = "select party from Party party where party.id in (select user.id from User user where user.active = true) or party.id in (select team.id from Team team)"),
-		
+		@NamedQuery(name = "party.findAllActive", query = "select party from Party party where party.id in (select user.id from User user where user.active = true) or party.id in (select team.id from Team team)"),
+		@NamedQuery(name = "party.findAllActiveByIds", query = "select party from Party party where party.id in (:partyIds) and (party.id in (select user.id from User user where user.active = true) or party.id in (select team.id from Team team))"),
+				
 		//RequirementAuditEvent
 		//XXX RequirementVersion
 		@NamedQuery(name = "RequirementAuditEvent.findAllByRequirementVersionIdOrderedByDate", query = "select rae from RequirementAuditEvent rae join rae.requirementVersion r where r.id = ?1 order by rae.date desc"),

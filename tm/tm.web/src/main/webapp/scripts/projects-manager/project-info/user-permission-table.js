@@ -90,15 +90,6 @@ define([ "jquery", "squashtable" ], function($) {
 		var language = settings.language;
 
 		var datatableSettings = {
-			"oLanguage" : {
-				"sUrl" : squashtm.app.contextRoot + "/datatables/messages"
-			},
-			"bJQueryUI" : true,
-			"bAutoWidth" : false,
-			"bFilter" : true,
-			"bPaginate" : true,
-			"sPaginationType" : "squash",
-			"iDisplayLength" : 25,
 			"fnDrawCallback" : drawCallback,
 			"iDeferLoading" : userPermissions.length,
 			"bServerSide" : true,

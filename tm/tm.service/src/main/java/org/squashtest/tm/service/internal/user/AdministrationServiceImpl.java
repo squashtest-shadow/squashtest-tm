@@ -157,8 +157,8 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
-	public PagedCollectionHolder<List<User>> findAllActiveUsersFiltered(PagingAndSorting sorter, Filtering filter) {
-		List<User> list = userDao.findAllActiveUsers(sorter, filter);
+	public PagedCollectionHolder<List<User>> findAllUsersFiltered(PagingAndSorting sorter, Filtering filter) {
+		List<User> list = userDao.findAllUsers(sorter, filter);
 		long count = userDao.findAll().size();
 		return new PagingBackedPagedCollectionHolder<List<User>>(sorter, count, list);
 	}

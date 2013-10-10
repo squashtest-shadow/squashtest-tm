@@ -47,7 +47,7 @@
 <s:url var="projectsUrl" value="/administration/projects" />
 
 <s:url var="permissionPopupUrl"
-	value="/generic-projects/{projectId}/permission-popup">
+	value="/generic-projects/{projectId}/unbound-parties">
 	<s:param name="projectId" value="${adminproject.project.id}" />
 </s:url>
 
@@ -300,39 +300,48 @@
 
 		<%---------------------------------------------------------------END  BODY -----------------------------------------------%>
 		
-			<%----------------------------------- add User Popup-----------------------------------------------%>
-		<f:message var="noUserSelectedError" key="error.permissions.noUserSelected" />
-		<pop:popup id="add-permission-dialog"
-				titleKey="title.AddPermission" isContextual="true"
-				openedBy="add-permission-button">
-			<jsp:attribute name="buttons">
+		<%----------------------------------- add User Popup-----------------------------------------------%>
+		
+		<f:message var="noUserSelectedError" key="error.permissions.noUserSelected" />		
+		<div id="add-permission-dialog" class="popup-dialog not-displayed">
+		
+			<div data-def="state=loading" class="waiting-loading full-size-hack">
+				<div><f:message key="message.PleaseWait"/></div>
+			</div>
 			
-				<%--- the slash at the end of the url below cannot be removed because it would cause the last part of the
-				permission to be interpreted as a file extension by spring MVC --%>
-				<f:message var="label" key="label.Add" />
-				'${ label }': function() {
-					var partyId = $("#party-id").val();
-					
-					if (partyId == "" || partyId === null || partyId === undefined){
-						squashtm.notification.showInfo("${noUserSelectedError}");
-					}
-					else{					
-						var permission = $("#permission-input").val();
-						var url = squashtm.app.contextRoot+"/generic-projects/${adminproject.project.id}/parties/"+partyId+"/permissions/"+permission+"/";
-						$.ajax({
-							url : url,
-							type : 'PUT',
-						}).success(refreshTableAndPopup);	
-					}				
-				},			
-				<pop:cancel-button />
-			</jsp:attribute>
-			<jsp:attribute name="body">
-				<div id="permission-popup">
+			<div data-def="state=normal" class="display-table">
+				<div class="display-table-row">
+					<span class="display-table-cell"> <f:message key="party.label" /></span> 
+					<div class="display-table-cell"><input id="party-input"/></div>
 				</div>
-			</jsp:attribute>
-		</pop:popup>
+				<div class="display-table-row">
+					<span class="display-table-cell"><f:message key="label.Permission"/></span>
+					<div class="display-table-cell">
+						<select id="permission-input">
+<c:forEach items="${availablePermissions}" var="permission">
+							<option value="${permission.qualifiedName}" id="${permission.simpleName}">
+								<f:message	key="user.project-rights.${permission.simpleName}.label" />
+							</option>
+</c:forEach>
+						</select>
+					</div>
+				</div>
+			</div>
+		
+			<div data-def="state=allbound"><span><f:message key="message.AllUsersAlreadyLinkedToProject"/></span></div>
+		
+			<div data-def="state=noselect"><span><f:message key="error.permissions.noUserSelected"/></span></div>
+			
+			<div class="popup-dialog-buttonpane">
+				<input type="button" value="<f:message key='label.Confirm'/>" data-def="state=normal, mainbtn=normal, evt=confirm"/>
+				<input type="button" value="<f:message key='label.Cancel' />" data-def="state=normal loading, mainbtn=loading, evt=cancel" />
+				<input type="button" value="<f:message key='label.Ok'    />"  data-def="state=allbound noselect, mainbtn=allbound noselect, evt=cancel"/>
+			</div>
+		
+		</div>
+
 		<%----------------------------------- /add User Popup-----------------------------------------------%>
+	
 	</jsp:attribute>
 </layout:info-page-layout>
 
@@ -389,23 +398,14 @@
 		
 	}
 	
-	function reloadPermissionPopup(){
-		var permPopup = $("#permission-popup");
-		permPopup.empty();
-		permPopup.load("${permissionPopupUrl}");		
-	}
-	
 	function refreshTableAndPopup(){
-		reloadPermissionPopup();		
 		$("#user-permissions-table").squashTable().refresh();		
 	}
 	
-
-
 	$(function() {
 
 		require(["common"], function(){
-		 	require(["projects-manager", "jquery.squash.fragmenttabs", "project", "squashtable"], function(projectsManager, Frag){
+		 	require(["projects-manager", "jquery.squash.fragmenttabs", "project", "squashtable", "jquery.squash.formdialog"], function(projectsManager, Frag){
 		 		init(projectsManager, Frag);	
 		 	});			
 		});
@@ -417,9 +417,7 @@
 		// back button
 		$("#back").button().click(clickProjectBackButton);
 		
-		// permission mgt
-		$("#add-permission-button").button();
-		
+
 		// rename popup
 		$("#rename-project-dialog").bind("dialogopen", function(event, ui) {
 			var name = $.trim($('#project-name-header').text());
@@ -428,8 +426,60 @@
 		});
 		
 		// permissions popup
-		reloadPermissionPopup();
-		$("#add-permission-dialog").on('dialogopen', function(){$("#party-id").val('');});
+		var permpopup = $("#add-permission-dialog"); 
+		permpopup.formDialog();
+		
+		permpopup.on('formdialogopen', function(){
+			
+			permpopup.formDialog('setState', 'loading');
+			
+			$.getJSON("${permissionPopupUrl}").done(function(json){
+				if (json.length === 0){
+					permpopup.formDialog('setState', "allbound");
+				}
+				else{
+					permpopup.data('source', json);
+					$("#party-input").autocomplete({
+						source : json
+					});
+					permpopup.formDialog('setState', "normal");
+				}
+			});
+		});
+		
+		permpopup.on('formdialogconfirm', function(){
+			
+			var partyname = $("#party-input").val();
+			var permission = $("#permission-input").val();
+			var validselection = $.grep(permpopup.data('source'), function(e){ return (e.label === partyname);});
+				
+			if (validselection.length === 1){
+				var partyId = validselection[0].id;
+				var url = squashtm.app.contextRoot+"/generic-projects/${adminproject.project.id}/parties/"+partyId+"/permissions/"+permission+"/";
+				permpopup.formDialog('setState','loading');
+				$.ajax({
+					url : url,
+					type : 'PUT',
+					success : function(){
+						$("#user-permissions-table").squashTable().refresh();
+						permpopup.formDialog('close');
+					}
+				})
+			}else{
+				permpopup.formDialog('setState', 'noselect');
+			}
+			
+		});
+		
+		permpopup.on('formdialogcancel', function(){
+			permpopup.formDialog('close');
+		});
+		
+		// permission mgt
+		$("#add-permission-button").squashButton().on('click', function(){
+			permpopup.formDialog('open');
+		});
+		
 
 		//user permissions table
 		var permSettings = {

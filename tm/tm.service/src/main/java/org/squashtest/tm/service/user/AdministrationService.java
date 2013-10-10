@@ -95,7 +95,7 @@ public interface AdministrationService {
 
 	List<User> findAllActiveUsersOrderedByLogin();
 
-	PagedCollectionHolder<List<User>> findAllActiveUsersFiltered(PagingAndSorting sorter, Filtering filter);
+	PagedCollectionHolder<List<User>> findAllUsersFiltered(PagingAndSorting sorter, Filtering filter);
 
 	List<UsersGroup> findAllUsersGroupOrderedByQualifiedName();
 

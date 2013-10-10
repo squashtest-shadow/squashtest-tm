@@ -61,7 +61,7 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<User> findAllActiveUsers(PagingAndSorting sorter, Filtering filter) {
+	public List<User> findAllUsers(PagingAndSorting sorter, Filtering filter) {
 	
 		User example = new User();
 		example.setActive(true);
@@ -70,7 +70,7 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 		SortOrder order = sorter.getSortOrder();
 		
 		
-		Criteria crit = currentSession().createCriteria(User.class, "User").add(Restrictions.eq("active", true));
+		Criteria crit = currentSession().createCriteria(User.class, "User");
 		
 		
 		/* create the query with respect to the filtering */
@@ -112,27 +112,7 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 		
 	}
 	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<User> findAllUsersFiltered(PagingAndSorting filter) {
-		Session session = currentSession();
-		
-		String sortedAttribute = filter.getSortedAttribute();
-		
-		Criteria crit = session.createCriteria(User.class, "User");
-		
-		/* add ordering */
-		if (sortedAttribute != null) {
-			SortingUtils.addOrder(crit, filter);
-		}
-		
-		/* result range */
-		crit.setFirstResult(filter.getFirstItemIndex());
-		crit.setMaxResults(filter.getPageSize());
 
-		return crit.list();
-		
-	}
 
 	@Override
 	// FIXME : be careful of the filter 

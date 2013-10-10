@@ -177,10 +177,13 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 			+ "where ro.ID = nro.ID and rc.ID = nrc.ID and r.PARTY_ID = ?) ";
 
 	private static final String FIND_PARTIES_WITHOUT_PERMISSION_BY_OBJECT = "select p.PARTY_ID from CORE_PARTY p "
+			+ "left outer join CORE_USER cu on p.PARTY_ID = cu.PARTY_ID "
+			+ "left outer join CORE_TEAM ct on p.PARTY_ID = ct.PARTY_ID "
 			+ "where not exists (select 1  from ACL_OBJECT_IDENTITY aoi "
 			+ "inner join ACL_CLASS ac on ac.ID = aoi.CLASS_ID "
 			+ "inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on arse.OBJECT_IDENTITY_ID = aoi.ID "
-			+ "where p.PARTY_ID = arse.PARTY_ID  and ac.CLASSNAME in ( ? , ? )  and aoi.IDENTITY = ?) ";
+			+ "where p.PARTY_ID = arse.PARTY_ID  and ac.CLASSNAME in ( ? , ? )  and aoi.IDENTITY = ? )"
+			+ "and (cu.ACTIVE = true or ct.PARTY_ID is not NULL)";
 	
 	private static final String DELETE_OBJECT_IDENTITY = "delete from ACL_OBJECT_IDENTITY where IDENTITY = ? and CLASS_ID = ?";
 	
@@ -524,8 +527,13 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 		
 		qualifiedClassNames = adaptQualifiedClassNameList(qualifiedClassNames);
 		
-		List<BigInteger> result = jdbcTemplate.queryForList(FIND_PARTIES_WITHOUT_PERMISSION_BY_OBJECT, new Object[] {
-				qualifiedClassNames.get(0),qualifiedClassNames.get(1), objectId }, BigInteger.class);
+		List<BigInteger> result = jdbcTemplate.queryForList(FIND_PARTIES_WITHOUT_PERMISSION_BY_OBJECT, 
+									new Object[] {
+										qualifiedClassNames.get(0),
+										qualifiedClassNames.get(1), 
+										objectId 
+									}, 
+									BigInteger.class);
 		List<Long> finalResult = new ArrayList<Long>();
 		for (BigInteger bigInteger : result) {
 			finalResult.add(bigInteger.longValue());
