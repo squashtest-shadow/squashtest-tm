@@ -20,10 +20,26 @@
  */
 define(function(){
 	
+	if (squashtm && squashtm.datatable && squashtm.datatable.defaults){
+		return squashtm.datatable.defaults;
+	}
+	
 	squashtm = squashtm || {};
 	
 	// defines datatable defaults settings and puts them in the squash
 	// namespace.
+	
+	var oLanguage;
+	$.ajax({
+		url : squashtm.app.contextRoot+'/datatables/messages',
+		type : 'get',
+		async : false,
+		dataType : 'json',
+		success : function(json){
+			oLanguage = json;
+		}
+	});
+	
 	var datatableDefaults = {
 		"bJQueryUI" : true,
 		"bAutoWidth" : false,
@@ -33,7 +49,8 @@ define(function(){
 		"iDisplayLength" : 50,
 		"bServerSide" : true,
 		"bRetrieve" : true,
-		"sDom" : 't<"dataTables_footer"lp>'
+		"sDom" : 't<"dataTables_footer"lp>',
+		"oLanguage" : oLanguage
 	};
 
 	squashtm.datatable = squashtm.datatable || {};

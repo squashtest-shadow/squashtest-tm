@@ -1182,6 +1182,7 @@ define(["jquery",
 	var datatableDefaults = $.extend(true, {}, squashtm.datatable.defaults);
 
 	var squashDefaults = {
+		enableHover : true,
 		dataKeys : {
 			entityId : 'entity-id',
 			entityIndex : 'entity-index'

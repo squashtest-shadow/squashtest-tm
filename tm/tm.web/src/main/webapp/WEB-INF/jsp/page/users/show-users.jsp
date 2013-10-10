@@ -30,10 +30,17 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <s:url var="rootContext" value="/" />
 <s:url var="backUrl" value="/administration" />
 <s:url var="baseUrl" value="/administration/users"/>
+<s:url var="userInfoUrl" value="/administration/users/{user-id}/info" />
+<s:url var="tableModelUrl" value="/administration/users/table" />
+
+<c:set var="tableModel" 		value="${json:serialize(userList)}"/>
+<c:set var="tableModelLength" 	value="${fn:length(tableModel)}" />
+
 
 
 <layout:info-page-layout titleKey="squashtm.users.title" isSubPaged="true">
@@ -59,41 +66,47 @@
 				<li><a href="#team-table-pane"><f:message key="label.teams"/></a></li>
 			</ul>
 			<div id="users-table-pane" class="table-tab">
-					<div class="toolbar">
-				<a id="add-user-button" href="#" class="add-user-button"><f:message key="user.add.label" /></a>
-			</div>
-					<div class="table-tab-wrap">
-			<table id="users-list-table"  class="unstyled-table">
-				<thead>
-					<tr>
-						<th class="user-id">Id</th>
-						<th class="user-index">#</th>
-						<th class="user-login datatable-filterable"><f:message key="label.Login" /></th>
-						<th class="user-group"><f:message key="label.Group" /></th>
-						<th class="user-firstname datatable-filterable"><f:message key="label.FirstName" /></th>
-						<th class="user-lastname datatable-filterable"><f:message key="label.LastName" /></th>
-						<th class="user-email datatable-filterable"><f:message key="label.Email" /></th>
-						<th class="user-created-on"><f:message key="label.CreatedOn" /></th>
-						<th class="user-created-by datatable-filterable"><f:message key="label.createdBy" /></th>
-						<th class="user-modified-on"><f:message key="label.modifiedOn" /></th>	
-						<th class="user-modified-by datatable-filterable"><f:message key="label.modifiedBy" /></th>
-						<th class="empty-delete-holder"></th>
-					</tr>
-				</thead>
-				<tbody>
-					<%-- Will be populated through ajax --%>
-				</tbody>
-			</table>
+				<div class="toolbar">
+					<a id="add-user-button" href="#" class="add-user-button"><f:message key="user.add.label" /></a>
+					<a id="activate-user-button" href="#" ><f:message key="label.activate-users"/></a>
+					<a id="deactivate-user-button" href="#" ><f:message key="label.deactivate-users"/></a>
+				</div>
+				<div class="table-tab-wrap">
+					<table id="users-list-table"  class="unstyled-table" 
+							data-def="ajaxsource=${tableModelUrl}, datakeys-id=user-id, deferLoading=${tableModelLength},
+							pagesize=10, filter, pre-sort=2-asc">
+						<thead>
+							<tr>
+								<th class="user-index" 							data-def="map=user-index, select">#</th>
+								<th class="user-login datatable-filterable" 	data-def="map=user-login, sortable, link=${userInfoUrl}"><f:message key="label.Login" /></th>
+								<th class="user-group" 							data-def="map=user-group, sortable"><f:message key="label.Group" /></th>
+								<th class="user-firstname datatable-filterable" data-def="map=user-firstname, sortable"><f:message key="label.FirstName" /></th>
+								<th class="user-lastname datatable-filterable"	data-def="map=user-lastname, sortable"><f:message key="label.LastName" /></th>
+								<th class="user-email datatable-filterable"		data-def="map=user-email, sortable"><f:message key="label.Email" /></th>
+								<th class="user-created-on"						data-def="map=user-created-on, sortable"><f:message key="label.CreatedOn" /></th>
+								<th class="user-created-by datatable-filterable"data-def="map=user-created-by, sortable"><f:message key="label.createdBy" /></th>
+								<th class="user-modified-on"					data-def="map=user-modified-on, sortable"><f:message key="label.modifiedOn" /></th>	
+								<th class="user-modified-by datatable-filterable"data-def="map=user-modified-by, sortable"><f:message key="label.modifiedBy" /></th>
+								<th class="empty-delete-holder" 				data-def="map=empty-delete-holder, delete-button=#deactivate-user-popup"></th>
+							</tr>
+						</thead>
+						<tbody>
+							<%-- Will be populated through ajax --%>
+						</tbody>
+					</table>
 
+				</div>
+		
+			</div><%-- /div#users-table-pane --%>
 	
-		</div>
-	</div><%-- /div#users-table-pane --%>
-	
-	<agg:teams-table-tab />
+			<agg:teams-table-tab />
 	
 	
 	</div><%-- /div.fragment-body.fragment-tabs --%>
+	
+	
 	<%-- ------------------------------ Add User Dialog ------------------------------------------------ --%>
+	
 		<pop:popup id="add-user-dialog" titleKey="title.AddUser" isContextual="true"
 			openedBy="add-user-button">
 			<jsp:attribute name="buttons">
@@ -110,47 +123,35 @@
 			</jsp:attribute>
 			<jsp:attribute name="body">
 				<table id="add-user-table">
-					<tr> <td>
-						<label  for="add-user-login"><f:message key="label.Login" /></label>
-						</td>
-						<td>
-						<input type="text" id="add-user-login" size="30"/></td>
-						</tr>
-						<tr>
-						<td> <comp:error-message forField="user-login" /> </td>
-						 </tr>
-					<tr> <td>
-						<label  for="add-user-firstName"><f:message key="label.FirstName" /></label>
-						</td>
-						<td>
-						<input type="text" id="add-user-firstName" size="30"/></td> 
-						</tr>
-						<tr>
+					<tr> 
+						<td><label  for="add-user-login"><f:message key="label.Login" /></label></td>
+						<td><input type="text" id="add-user-login" size="30"/></td>
+					</tr>
+					<tr><td> <comp:error-message forField="user-login" /> </td>
+					</tr>
+					<tr> 
+						<td><label  for="add-user-firstName"><f:message key="label.FirstName" /></label></td>
+						<td><input type="text" id="add-user-firstName" size="30"/></td> 
+					</tr>
+					<tr>
 						<td><comp:error-message forField="user-firstName" /></td>
-						</tr> 
-					<tr> <td>
-						<label  for="add-user-lastName"><f:message key="label.LastName" /></label>
-						</td>
-						<td>
-						<input type="text" id="add-user-lastName" size="30"/>
-					</td>
+					</tr> 
+					<tr> 
+						<td><label  for="add-user-lastName"><f:message key="label.LastName" /></label></td>
+						<td><input type="text" id="add-user-lastName" size="30"/></td>
 					</tr>
-						<tr>
-					<td><comp:error-message forField="user-lastName" /></td>
-					 </tr>
-					<tr> <td>
-						<label  for="add-user-email"><f:message key="label.Email" /></label>
-						</td>
-						<td>
-						<input type="email" id="add-user-email" size="30"/>
-					</td>
+					<tr>
+						<td><comp:error-message forField="user-lastName" /></td>
 					</tr>
-						<tr>
-					<td><comp:error-message forField="user-email" /></td>
-					 </tr>
-					<tr> <td>
-						<label  for="add-user-group"><f:message key="label.Group" /></label>
-						</td>
+					<tr> 
+						<td><label  for="add-user-email"><f:message key="label.Email" /></label></td>
+						<td><input type="email" id="add-user-email" size="30"/></td>
+					</tr>
+					<tr>
+						<td><comp:error-message forField="user-email" /></td>
+					</tr>
+					<tr> 
+						<td><label  for="add-user-group"><f:message key="label.Group" /></label></td>
 						<td>
 						<select id="add-user-group">
 							<c:forEach var="group" items="${ usersGroupList }">
@@ -164,51 +165,53 @@
 								</c:choose>
 							</c:forEach>
 						</select>
-					</td> </tr>
-          <c:if test="${ not authenticationProvider.managedPassword }">
-          <tr>
-            <td>
-              <label for="add-user-password"><f:message key="user.account.newpass.label" /></label>
-            </td>
-            <td>
-              <input type="password" id="add-user-password" size="30" />
-            </td>
-          </tr>
-          <tr>
-            <td><comp:error-message forField="password" /></td>
-          </tr>	
-          <tr>
-            <td>
-              <label for="new-user-confirmpass"><f:message key="user.account.confirmpass.label"/></label>				
-            </td>
-            <td>
-              <input type="password" id="new-user-confirmpass" size="30"/>
-            </td>
-          </tr>
-          <tr>
-            <td><comp:error-message forField="confirmpass" /></td>
-          </tr>
-          </c:if>
-          <c:if test="${ authenticationProvider.managedPassword }">
-          <tr>
-            <td><label><f:message key="label.password" /></label></td>
-            <td><span><f:message key="message.managedPassword" /></span></td>
-          </tr>
-          </c:if>
+						</td> 
+					</tr>
+<c:if test="${ not authenticationProvider.managedPassword }">
+			          <tr>
+			            <td> <label for="add-user-password"><f:message key="user.account.newpass.label" /></label> </td>
+			            <td><input type="password" id="add-user-password" size="30" /></td>
+			          </tr>
+			          <tr>
+			            <td><comp:error-message forField="password" /></td>
+			          </tr>	
+			          <tr>
+			            <td><label for="new-user-confirmpass"><f:message key="user.account.confirmpass.label"/></label></td>
+			            <td><input type="password" id="new-user-confirmpass" size="30"/> </td>
+			          </tr>
+			          <tr>
+			            <td><comp:error-message forField="confirmpass" /></td>
+			          </tr>
+</c:if>
+ <c:if test="${ authenticationProvider.managedPassword }">
+			          <tr>
+			            <td><label><f:message key="label.password" /></label></td>
+			            <td><span><f:message key="message.managedPassword" /></span></td>
+			          </tr>
+</c:if>
 				</table>
 			</jsp:attribute>
 		</pop:popup>
+		
+		
+		<f:message var="deactivateUsersTitle" key="title.deactivate-users" />
+		<div id="deactivate-user-popup" class="popup-dialog not-displayed" title="${deactivateUsersTitle}">
+			
+			<span class="normal-warning-message"><f:message key="message.ConfirmDeactivateUser"/></span>
+		
+			<div class="popup-dialog-buttonpane">
+			    <input class="confirm" type="button" value="<f:message key='label.Confirm' />" />
+			    <input class="cancel" type="button" value="<f:message key='label.Cancel' />" />				
+			</div>
+		
+		</div>	
 	
 	<f:message var="missingNewPassword" key="user.account.newpass.error"/>
 	<f:message var="missingConfirmPassword" key="user.account.confirmpass.error"/>
 	<f:message var="differentConfirmation" key="user.account.newpass.differ.error"/>
-	<f:message var="deleteMessage" key="dialog.delete-user.message"/>
-	<f:message var="deleteTooltip" key="tooltips.delete-user"/>
 	<f:message var="ok" key="label.Confirm"/>
 	<f:message var="cancel" key="label.Cancel"/>
 		
-	<comp:decorate-buttons />
-
 	<script type="text/javascript">
 	//<![CDATA[
 		squashtm.app.teamsManager = {
@@ -223,7 +226,7 @@
     		require(["users-manager", "jquery"], function(userAdmin, $){
     			var settings = {
     				data : {
-    					tableData : ${json:serialize(userList)}
+    					tableData : ${tableModel}
     				},
     				urls : {
     					rootContext : "${rootContext}",
@@ -234,8 +237,6 @@
     					missingNewPassword : "${missingNewPassword}",
     					missingConfirmPassword : "${missingConfirmPassword}",
     					differentConfirmation : "${differentConfirmation}",
-    					deleteMessage :"${deleteMessage}",
-    					deleteTooltip : "${deleteTooltip}",
     					ok : "${ok}",
     					cancel :"${cancel}"
     				},

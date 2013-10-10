@@ -187,6 +187,10 @@ tr.nodrop td.drag-handle {
 	display : inline-block;
 }
 
+.normal-warning-message{
+	font-weight : bold;	
+}
+
 .minimal-height{
 	min-height : 50px;	
 }

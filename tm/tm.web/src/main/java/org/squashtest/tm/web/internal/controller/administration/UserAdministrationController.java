@@ -79,6 +79,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 	private static final String USER_ID = "userId";
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserAdministrationController.class);
 	private static final String USER_URL = "/{userId}";
+	private static final String USER_URLS = "/{userIds}";
 
 	private static final PagingAndSorting TEAMS_DEFAULT_PAGING = new DefaultPagingAndSorting("name");
 	private static final Filtering TEAMS_DEFAULT_FILTERING = DefaultFiltering.NO_FILTERING;
@@ -189,11 +190,20 @@ public class UserAdministrationController extends PartyControllerSupport {
 		return new DataTableSorting(params, mapper);
 	}
 
-	@RequestMapping(value = USER_URL, method = RequestMethod.DELETE)
+	
+	@RequestMapping(value = USER_URLS +"/deactivate", method = RequestMethod.POST)
 	public @ResponseBody
-	void removeUser(@PathVariable long userId) {
-		adminService.deactivateUser(userId);
+	void deactivateUsers(@PathVariable("userIds") List<Long> userIds) {
+		adminService.deactivateUsers(userIds);
 	}
+	
+	@RequestMapping(value = USER_URLS + "/activate", method = RequestMethod.POST)
+	public @ResponseBody
+	void activateUsers(@PathVariable("userIds") List<Long> userIds){
+		adminService.activateUsers(userIds);
+	}
+	
+	
 
 	/**
 	 * Will return a view for the user of the given id

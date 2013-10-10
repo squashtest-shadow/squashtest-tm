@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.user;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -196,9 +197,25 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void activateUser(long userId) {
-		userAccountService.activateUser(userId);
+		userAccountService.activateUser(userId);		
+		User user = userDao.findById(userId);
+		adminAuthentService.deactivateAccount(user.getLogin());
 	}
-
+	
+	@Override
+	public void deactivateUsers(Collection<Long> userIds) {
+		for (Long id : userIds){
+			deactivateUser(id);
+		}
+	}
+	
+	@Override
+	public void activateUsers(Collection<Long> userIds) {
+		for (Long id : userIds){
+			activateUser(id);
+		}
+	}
+	
 	@Override
 	public List<Project> findAllProjects() {
 		return projectDao.findAll();

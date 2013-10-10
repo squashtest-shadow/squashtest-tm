@@ -28,22 +28,17 @@
  * language : { missingNewPassword : error message when the new password input
  * wasn't typed in missingConfirmPassword : same, for the confirmation input
  * differentConfirmation : error message when the new password and confirmation
- * differ deleteMessage : message displayed when clicking on the delete button
- * deleteTooltip : the tooltip for that button ok : label for ok cancel : label
+ * button ok : label for ok cancel : label
  * for cancel } }
  */
 
-define([ "jquery", "squashtable" ], function($) {
+define([ "jquery", "squash.translator", "squashtable", "jquery.squash.confirmdialog" ], function($, translator) {
 
 	function cleanUp() {
 		$("#add-user-password").val('');
 		$("#new-user-confirmpass").val('');
 	}
 
-	function refreshUsers() {
-		var dataTable = $('#users-list-table').squashTable();
-		dataTable.fnDraw();
-	}
 
 	// note : I don't trust hasOwnProperty due to its cross-browser issues.
 	// We'll
@@ -132,14 +127,31 @@ define([ "jquery", "squashtable" ], function($) {
 				type : 'POST',
 				dataType : 'json',
 				data : readForm(settings)
-			}).success(refreshUsers);
+			}).success(function(){
+				$('#users-list-table').squashTable().refresh();
+			});
 		};
 	}
 
 	function initButtons(settings) {
 		$('#add-user-button').button();
-		$("#add-user-dialog").bind("dialogclose", cleanUp);
-
+		$("#activate-user-button").button();
+		
+		$("#deactivate-user-button").button().on('click', function(){
+			var ids = $("#users-list-table").squashTable().getSelectedIds();
+			if (ids.length>0){
+				$("#deactivate-user-popup").data('entity-id',null);
+				$("#deactivate-user-popup").confirmDialog('open');
+			}
+			else{
+				var warn = translator.get({
+					errorTitle : 'popup.title.Info',
+					errorMessage : 'message.EmptyTableSelection'
+				});
+				$.squash.openMessage(warn.errorTitle, warn.errorMessage);
+			}
+		});
+		
 		$("#back").button().click(function() {
 			document.location.href = settings.urls.backUrl;
 		});
@@ -147,121 +159,41 @@ define([ "jquery", "squashtable" ], function($) {
 
 	function initTable(settings) {
 		var datatableSettings = {
-			"oLanguage" : {
-				"sUrl" : settings.urls.rootContext + "datatables/messages"
-			},
-			"bJQueryUI" : true,
-			"bAutoWidth" : false,
-			"bFilter" : true,
-			"bPaginate" : true,
-			"sPaginationType" : "squash",
-			"iDisplayLength" : 10,
-			"iDeferLoading" : settings.data.tableData.length,
-			"bServerSide" : true,
-			"sAjaxSource" : settings.urls.baseUrl + '/table',
-			"aaData" : settings.data.tableData,
-			"sDom" : 'ft<"dataTables_footer"lp>',
-			"aoColumnDefs" : [ {
-				'bVisible' : false,
-				'bSortable' : false,
-				'mDataProp' : 'user-id',
-				'aTargets' : [ 'user-id' ]
-			}, {
-				'bVisible' : true,
-				'bSortable' : false,
-				'mDataProp' : 'user-index',
-				'aTargets' : [ 'user-index' ],
-				'sWidth' : '2em',
-				'sClass' : 'select-handle centered'
-			}, {
-				'bVisible' : true,
-				'bSortable' : true,
-				'mDataProp' : 'user-login',
-				'aTargets' : [ 'user-login' ],
-				'sClass' : 'user-reference'
-			}, {
-				'bVisible' : true,
-				'bSortable' : true,
-				'mDataProp' : 'user-group',
-				'aTargets' : [ 'user-group' ]
-			}, {
-				'bVisible' : true,
-				'bSortable' : true,
-				'mDataProp' : 'user-firstname',
-				'aTargets' : [ 'user-firstname' ]
-			}, {
-				'bVisible' : true,
-				'bSortable' : true,
-				'mDataProp' : 'user-lastname',
-				'aTargets' : [ 'user-lastname' ]
-			}, {
-				'bVisible' : true,
-				'bSortable' : true,
-				'mDataProp' : 'user-email',
-				'aTargets' : [ 'user-email' ]
-			}, {
-				'bVisible' : true,
-				'bSortable' : true,
-				'mDataProp' : 'user-created-on',
-				'aTargets' : [ 'user-created-on' ]
-			}, {
-				'bVisible' : true,
-				'bSortable' : true,
-				'mDataProp' : 'user-created-by',
-				'aTargets' : [ 'user-created-by' ]
-			}, {
-				'bVisible' : true,
-				'bSortable' : true,
-				'mDataProp' : 'user-modified-on',
-				'aTargets' : [ 'user-modified-on' ]
-			}, {
-				'bVisible' : true,
-				'bSortable' : true,
-				'mDataProp' : 'user-modified-by',
-				'aTargets' : [ 'user-modified-by' ],
-				'sWidth' : '2em'
-			}, {
-				'bVisible' : true,
-				'bSortable' : false,
-				'mDataProp' : 'empty-delete-holder',
-				'aTargets' : [ 'empty-delete-holder' ],
-				'sWidth' : '2em',
-				'sClass' : 'centered delete-button'
-			}
-
-			]
+			"aaData" : settings.data.tableData
 		};
 
-		var squashSettings = {
-			enableHover : true,
-			confirmPopup : {
-				oklabel : settings.language.ok,
-				cancellabel : settings.language.cancel
-			},
-			deleteButtons : {
-				url : settings.urls.baseUrl + "/{user-id}",
-				popupmessage : settings.language.deleteMessage,
-				tooltip : settings.language.deleteTooltip,
-				success : function() {
-					refreshUsers();
-				}
-			},
-			bindLinks : {
-				list : [ {
-					url : settings.urls.baseUrl + '/{user-id}/info',
-					targetClass : 'user-reference'
-				} ]
-			}
-		};
-
-		$("#users-list-table").squashTable(datatableSettings, squashSettings);
+		$("#users-list-table").squashTable(datatableSettings, {});
 
 	}
 
 	function initDialog(settings) {
+		
+		// new user popup
+		
 		var passValidation = buildPasswordValidation(settings);
 		var addUserConfirm = buildAddUserConfirm(settings, passValidation);
 		$("#add-user-dialog").data('confirm-handler', addUserConfirm);
+		$("#add-user-dialog").bind("dialogclose", cleanUp);
+		
+		
+		// confirm deactivation
+		
+		$("#deactivate-user-popup").confirmDialog().on('confirmdialogconfirm', function(){
+			var $this = $(this),
+				table = $("#users-list-table").squashTable();
+					
+			var userId = $this.data('entity-id'),
+				userIds = (!! userId) ? [ userId ] : table.getSelectedIds();
+
+			$this.data('entity-id');
+			
+			var url = squashtm.app.contextRoot+"/administration/users/"+userIds.join(',')+'/deactivate';
+			$.post(url)
+			.done(function(){
+				table.refresh();
+			})
+			
+		});
 	}
 
 	function init(settings) {

@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.user;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
@@ -108,6 +109,10 @@ public interface AdministrationService {
 
 	void activateUser(long userId);
 
+	void deactivateUsers(Collection<Long> userIds);
+	
+	void activateUsers(Collection<Long> userIds);
+	
 	/**
 	 * Will remove user from teams members lists. <br>
 	 * access restricted to admins

@@ -117,6 +117,22 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 			LOGGER.trace("User {} has no authentidation data, it can't be deactivated", login);
 		}
 	}
+	
+	@Override
+	public void activateAccount(String login) {
+		if (userManager.userExists(login)) {
+			UserDetails oldUser = userManager.loadUserByUsername(login);
+			userManager.deleteUser(login);
+			UserDetails newUser = new User(login, oldUser.getPassword(), true, oldUser.isAccountNonExpired(),
+					oldUser.isCredentialsNonExpired(), oldUser.isAccountNonLocked(), oldUser.getAuthorities());
+			LOGGER.debug("Activating account for user {}", login);
+			userManager.createUser(newUser);
+
+		} else {
+			LOGGER.trace("User {} has no authentidation data, it can't be activated", login);
+		}
+	}
+	
 
 	/**
 	 * @see org.squashtest.tm.service.security.AdministratorAuthenticationService#userExists(java.lang.String)
