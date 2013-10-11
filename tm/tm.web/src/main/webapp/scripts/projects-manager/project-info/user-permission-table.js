@@ -80,7 +80,7 @@ define([ "jquery", "squashtable" ], function($) {
 				if (!! data && data['party-active'] === false){
 					$(this).addClass('disabled-transparent');
 				}
-			})
+			});
 			table.find('td.permissions-cell').each(function() {
 				decorateCombo($(this));
 			});

@@ -267,7 +267,7 @@ define([ "jquery", "squash.translator", "squashtable", "jquery.squash.confirmdia
 					this._changeActivation(ids, false, "table-icon user-active-btn icon-user-deactivated disabled-transparent");
 				}
 			}
-		}
+		};
 
 		var table = $("#users-list-table").squashTable(datatableSettings, squashSettings);
 		

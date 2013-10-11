@@ -172,10 +172,10 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "./TeamPermi
 						if (!! data && data['user-active'] === false){
 							$(this).addClass('disabled-transparent');
 						}
-					})
+					});
 						
 				}
-			}
+			};
 			
 			$("#members-table").squashTable(datatableSettings, {}); 
 		},
