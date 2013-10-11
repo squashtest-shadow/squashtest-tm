@@ -93,8 +93,6 @@ public class TeamController extends PartyControllerSupport {
 														.mapAttribute("name", "name", Team.class)
 														.mapAttribute("description", "description", Team.class)
 														.mapAttribute("nb-associated-users", "size", Team.class)
-														// WARNING : the 'size' attribute doesn't actually exist. It's a trick, see
-														// HibernateTeamDao#findSortedTeams. see #1968
 														.mapAttribute("created-on", "audit.createdOn", Team.class)
 														.mapAttribute("created-by", "audit.createdBy", Team.class)
 														.mapAttribute("last-mod-on", "audit.lastModifiedOn", Team.class)
@@ -315,6 +313,7 @@ public class TeamController extends PartyControllerSupport {
 		protected Map<?, ?> buildItemData(User item) {
 			Map<String, Object> res = new HashMap<String, Object>();
 			res.put("user-id", item.getId());
+			res.put("user-active", item.getActive());
 			res.put("user-index", getCurrentIndex());
 			res.put("user-name", item.getFirstName() + " " + item.getLastName() + " (" + item.getLogin() + ")");
 			res.put("empty-delete-holder", null);

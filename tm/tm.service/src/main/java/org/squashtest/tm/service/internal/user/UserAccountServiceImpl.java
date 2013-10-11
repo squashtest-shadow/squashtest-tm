@@ -25,12 +25,15 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.UnauthorizedPasswordChange;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.WrongPasswordException;
+import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService;
+import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.security.UserAuthenticationService;
@@ -52,11 +55,6 @@ public class UserAccountServiceImpl implements UserAccountService {
 	@Inject
 	private UserAuthenticationService authService;
 
-	@Inject 
-	private TeamModificationService teamModificationService;
-	
-	@Inject 
-	private ProjectsPermissionManagementService projectsPermissionManagementService;
 	
 	@Override
 	public void modifyUserFirstName(long userId, String newName) {
@@ -107,18 +105,19 @@ public class UserAccountServiceImpl implements UserAccountService {
 	}
 
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void deactivateUser(long userId) {
 		// fetch
 		User user = userDao.findById(userId);
 		// check
 		checkPermissions(user);
 		// proceed
-		teamModificationService.removeMemberFromAllTeams(userId);
-		projectsPermissionManagementService.removeProjectPermissionForAllProjects(userId);
+		userDao.unassignUserFromAllTestPlan(userId);
 		user.setActive(false);
 	}
 
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void activateUser(long userId) {
 		// fetch
 		User user = userDao.findById(userId);

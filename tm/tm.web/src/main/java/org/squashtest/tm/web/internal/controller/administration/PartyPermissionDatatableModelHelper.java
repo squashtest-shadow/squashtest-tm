@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.squashtest.tm.domain.users.ActivePartyDetector;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.security.acls.PermissionGroup;
@@ -34,6 +35,7 @@ public class PartyPermissionDatatableModelHelper extends DataTableModelBuilder<P
 
 	private InternationalizationHelper messageSource;
 	private Locale locale;
+	private ActivePartyDetector activePartyDetector = new ActivePartyDetector();
 
 	public PartyPermissionDatatableModelHelper(Locale locale, InternationalizationHelper messageSource) {
 		this.locale = locale;
@@ -46,8 +48,10 @@ public class PartyPermissionDatatableModelHelper extends DataTableModelBuilder<P
 		Map<Object, Object> result = new HashMap<Object, Object>();
 		Party party = item.getParty();
 		PermissionGroup group = item.getPermissionGroup();
-
+		Boolean active = activePartyDetector.isActive(party);
+		
 		result.put("party-id", party.getId());
+		result.put("party-active", active);
 		result.put("party-name", party.getName());
 		result.put("party-index", getCurrentIndex());
 		result.put("permission-group", group);
@@ -57,5 +61,7 @@ public class PartyPermissionDatatableModelHelper extends DataTableModelBuilder<P
 		return result;
 
 	}
+	
+	
 
 }

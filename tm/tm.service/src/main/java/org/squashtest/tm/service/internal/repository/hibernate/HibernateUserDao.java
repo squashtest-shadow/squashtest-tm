@@ -164,6 +164,19 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 		return (Integer)query.uniqueResult();
 	}
 	
+	
+	@Override
+	public void unassignUserFromAllTestPlan(long userId) {
+		Query query = currentSession().getNamedQuery("user.unassignFromAllCampaignTestPlan");
+		query.setParameter("userId", userId, LongType.INSTANCE);
+		query.executeUpdate();
+		
+		query = currentSession().getNamedQuery("user.unassignFromAllIterationTestPlan");		
+		query.setParameter("userId", userId, LongType.INSTANCE);
+		query.executeUpdate();
+	}
+	
+	
 	@Override
 	public List<User> findAllTeamMembers(long teamId, PagingAndSorting paging,
 			Filtering filtering) {
@@ -171,7 +184,6 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 		Criteria crit = currentSession().createCriteria(Team.class, "Team")
 										.add(Restrictions.eq("Team.id", teamId))
 										.createCriteria("Team.members", "User")
-										.add(Restrictions.eq("User.active", true))
 										.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
 		
 		/* add ordering */

@@ -120,11 +120,7 @@
             <input:cancel />
           </div>
 
-<!-- NON ACTIVE BUTTON : WAIT FOR FEATURE TO BE REQUESTED -->
-<%-- 					<c:if test="${ adminproject.template }"> --%>
-<%-- 					<f:message var="createFromTemplate" key="label.createFromTemplate" /> --%>
-<%-- 					<input type="button" value="${ createFromTemplate }" id="createFromTemplate-project-button" --%>
-<!-- 								class="button" /> -->
+
  					</c:if>
 					<f:message var="rename" key="project.button.rename.label" />
 					<input type="button" value="${ rename }" id="rename-project-button"

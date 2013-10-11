@@ -199,7 +199,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	public void activateUser(long userId) {
 		userAccountService.activateUser(userId);		
 		User user = userDao.findById(userId);
-		adminAuthentService.deactivateAccount(user.getLogin());
+		adminAuthentService.activateAccount(user.getLogin());
 	}
 	
 	@Override

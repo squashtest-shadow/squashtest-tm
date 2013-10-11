@@ -182,8 +182,8 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 			+ "where not exists (select 1  from ACL_OBJECT_IDENTITY aoi "
 			+ "inner join ACL_CLASS ac on ac.ID = aoi.CLASS_ID "
 			+ "inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on arse.OBJECT_IDENTITY_ID = aoi.ID "
-			+ "where p.PARTY_ID = arse.PARTY_ID  and ac.CLASSNAME in ( ? , ? )  and aoi.IDENTITY = ? )"
-			+ "and (cu.ACTIVE = true or ct.PARTY_ID is not NULL)";
+			+ "where p.PARTY_ID = arse.PARTY_ID  and ac.CLASSNAME in ( ? , ? )  and aoi.IDENTITY = ? )";
+			//+ "and (cu.ACTIVE = true or ct.PARTY_ID is not NULL)"; uncomment if only active user should be granted new clearances
 	
 	private static final String DELETE_OBJECT_IDENTITY = "delete from ACL_OBJECT_IDENTITY where IDENTITY = ? and CLASS_ID = ?";
 	

@@ -74,7 +74,14 @@ define([ "jquery", "squashtable" ], function($) {
 		}
 
 		return function() {
-			$(this).find('td.permissions-cell').each(function() {
+			var table = this;
+			this.find('tbody tr').each(function(){
+				var data = table.fnGetData(this);
+				if (!! data && data['party-active'] === false){
+					$(this).addClass('disabled-transparent');
+				}
+			})
+			table.find('td.permissions-cell').each(function() {
 				decorateCombo($(this));
 			});
 		};

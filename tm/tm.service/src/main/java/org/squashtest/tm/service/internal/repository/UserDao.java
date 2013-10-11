@@ -51,4 +51,6 @@ public interface UserDao extends EntityDao<User> {
 	List<User> findAllTeamMembers(long teamId, PagingAndSorting paging, Filtering filtering);
 	
 	int countAllTeamMembers(long teamId);
+	
+	void unassignUserFromAllTestPlan(long userId);
 }

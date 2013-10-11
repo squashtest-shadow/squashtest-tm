@@ -251,7 +251,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	@Override
 	public List<Party> findPartyWithoutPermissionByProject(long projectId) {
 		List<Long> idList = aclService.findPartiesWithoutPermissionByObject(projectId, PROJECT_CLASS_NAMES);
-		return partyDao.findAllActiveByIds(idList);
+		return partyDao.findAllByIds(idList);
 	}
 	
 	/**

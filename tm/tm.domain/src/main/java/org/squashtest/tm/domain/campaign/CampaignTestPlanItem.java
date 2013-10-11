@@ -84,7 +84,6 @@ public class CampaignTestPlanItem {
 		return user;
 	}
 
-	// TODO add isAssigned()
 
 	/**
 	 * Factory method. Creates a copy of this object according to copy / paste rules. The copy is associated to no

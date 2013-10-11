@@ -163,11 +163,21 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "./TeamPermi
 		},
 
 		configureMembersTable : function() {
-			$("#members-table").squashTable({}, {}); // let's
-			// try
-			// pure
-			// DOM
-			// conf
+			
+			var datatableSettings = {
+				'fnDrawCallback' : function(){
+					var table = this;
+					this.find('tbody tr').each(function(){
+						var data = table.fnGetData(this);
+						if (!! data && data['user-active'] === false){
+							$(this).addClass('disabled-transparent');
+						}
+					})
+						
+				}
+			}
+			
+			$("#members-table").squashTable(datatableSettings, {}); 
 		},
 
 		renameTeam : function() {

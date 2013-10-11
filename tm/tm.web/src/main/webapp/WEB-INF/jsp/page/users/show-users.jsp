@@ -207,7 +207,7 @@
 		
 		</div>	
 		
-		<f:message var="ctivateUsersTitle" key="title.activate-users" />
+		<f:message var="activateUsersTitle" key="title.activate-users" />
 		<div id="activate-user-popup" class="popup-dialog not-displayed" title="${activateUsersTitle}">
 			
 			<span class="normal-warning-message"><f:message key="message.ConfirmActivateUser"/></span>
