@@ -233,7 +233,7 @@
  * tdSelector : "td.run-step-button",
  * 
  * onClick : function(table, cell){doThatWithTableAndCell(table, cell);} },
- *  { tooltip : "tooltip", class : "classa", tdSelector : "td.run-step-button", onClick : function(table, cell){
+ *  { tooltip : "tooltip", cssclass : "classa", tdSelector : "td.run-step-button", onClick : function(table, cell){
  * doThatWithTableAndCell(table, cell);} }];
  * 
  * 
@@ -241,7 +241,7 @@
  * 
  * .tooltip : the button's tooltip
  * 
- * .class : litteral or function(row, data). Define some css class added to the input button.
+ * .cssclass : litteral or function(row, data). Define some css class added to the input button.
  * 
  * .uiIcon : litteral or function(row, data) if the button is to be a jqueryUi icon, set this property to the wanted icon name. 
  * 
@@ -567,6 +567,14 @@ define(["jquery",
 		});
 	}
 	
+	function _getRowsByIds(ids){
+		var table = this;
+		return table.find('tbody tr').filter(function(){
+			var id = table.getODataId(this);
+			return (!! id && $.inArray(id, ids)!== -1);
+		});
+	}
+	
 	// reapped from the dataTable source : 
 	function _getAjaxParameters(){
 		var settings = this.fnSettings();
@@ -753,7 +761,7 @@ define(["jquery",
 					}
 					
 					// additional classes ?
-					var classes = ($.isFunction(button.class)) ? button.class(row, data) : button.class;
+					var classes = ($.isFunction(button.cssclass)) ? button.cssclass(row, data) : button.cssclass;
 					instance.addClass(classes);
 					
 					// an icon maybe ? 
@@ -1361,6 +1369,7 @@ define(["jquery",
 		this.selectRows = _selectRows;
 		this.deselectRows = _deselectRows;
 		this.configureLinks = _configureLinks;
+		this.getRowsByIds = _getRowsByIds;
 
 		this.attachButtonsCallback = _attachButtonsCallback;
 		this.configureRichEditables = _configureRichEditables;

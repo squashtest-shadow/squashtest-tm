@@ -78,6 +78,7 @@
 						<thead>
 							<tr>
 								<th class="user-index" 							data-def="map=user-index, select">#</th>
+								<th class="user-active"							data-def="map=user-active, narrow, center, sClass=user-active-cell"><f:message key="label.active"/></th>								
 								<th class="user-login datatable-filterable" 	data-def="map=user-login, sortable, link=${userInfoUrl}"><f:message key="label.Login" /></th>
 								<th class="user-group" 							data-def="map=user-group, sortable"><f:message key="label.Group" /></th>
 								<th class="user-firstname datatable-filterable" data-def="map=user-firstname, sortable"><f:message key="label.FirstName" /></th>
@@ -87,7 +88,7 @@
 								<th class="user-created-by datatable-filterable"data-def="map=user-created-by, sortable"><f:message key="label.createdBy" /></th>
 								<th class="user-modified-on"					data-def="map=user-modified-on, sortable"><f:message key="label.modifiedOn" /></th>	
 								<th class="user-modified-by datatable-filterable"data-def="map=user-modified-by, sortable"><f:message key="label.modifiedBy" /></th>
-								<th class="empty-delete-holder" 				data-def="map=empty-delete-holder, delete-button=#deactivate-user-popup"></th>
+								<th class="empty-delete-holder" 				data-def="map=empty-delete-holder"></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -205,6 +206,19 @@
 			</div>
 		
 		</div>	
+		
+		<f:message var="ctivateUsersTitle" key="title.activate-users" />
+		<div id="activate-user-popup" class="popup-dialog not-displayed" title="${activateUsersTitle}">
+			
+			<span class="normal-warning-message"><f:message key="message.ConfirmActivateUser"/></span>
+		
+			<div class="popup-dialog-buttonpane">
+			    <input class="confirm" type="button" value="<f:message key='label.Confirm' />" />
+			    <input class="cancel" type="button" value="<f:message key='label.Cancel' />" />				
+			</div>
+		
+		</div>	
+		
 	
 	<f:message var="missingNewPassword" key="user.account.newpass.error"/>
 	<f:message var="missingConfirmPassword" key="user.account.confirmpass.error"/>

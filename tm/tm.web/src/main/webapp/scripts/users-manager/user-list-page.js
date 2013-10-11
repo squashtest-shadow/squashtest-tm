@@ -34,6 +34,8 @@
 
 define([ "jquery", "squash.translator", "squashtable", "jquery.squash.confirmdialog" ], function($, translator) {
 
+	// ---------------- add user dialog ----------------------------
+	
 	function cleanUp() {
 		$("#add-user-password").val('');
 		$("#new-user-confirmpass").val('');
@@ -132,41 +134,10 @@ define([ "jquery", "squash.translator", "squashtable", "jquery.squash.confirmdia
 			});
 		};
 	}
-
-	function initButtons(settings) {
-		$('#add-user-button').button();
-		$("#activate-user-button").button();
-		
-		$("#deactivate-user-button").button().on('click', function(){
-			var ids = $("#users-list-table").squashTable().getSelectedIds();
-			if (ids.length>0){
-				var popup = $("#deactivate-user-popup");
-				popup.data('entity-id',null);
-				popup.confirmDialog('open');
-			}
-			else{
-				var warn = translator.get({
-					errorTitle : 'popup.title.Info',
-					errorMessage : 'message.EmptyTableSelection'
-				});
-				$.squash.openMessage(warn.errorTitle, warn.errorMessage);
-			}
-		});
-		
-		$("#back").button().click(function() {
-			document.location.href = settings.urls.backUrl;
-		});
-	}
-
-	function initTable(settings) {
-		var datatableSettings = {
-			"aaData" : settings.data.tableData
-		};
-
-		$("#users-list-table").squashTable(datatableSettings, {});
-
-	}
-
+	
+	
+	// ------------- dialog init -----------------
+	
 	function initDialog(settings) {
 		
 		// new user popup
@@ -177,25 +148,151 @@ define([ "jquery", "squash.translator", "squashtable", "jquery.squash.confirmdia
 		$("#add-user-dialog").bind("dialogclose", cleanUp);
 		
 		
-		// confirm deactivation
+		// activation / deactivation
 		
-		$("#deactivate-user-popup").confirmDialog().on('confirmdialogconfirm', function(){
+		function xhrActivateDeactivate(action, callbackName){
 			var $this = $(this),
 				table = $("#users-list-table").squashTable();
 					
 			var userId = $this.data('entity-id'),
 				userIds = (!! userId) ? [ userId ] : table.getSelectedIds();
-
+	
 			$this.data('entity-id');	//reset
 			
-			var url = squashtm.app.contextRoot+"/administration/users/"+userIds.join(',')+'/deactivate';
+			var url = squashtm.app.contextRoot+"/administration/users/"+userIds.join(',')+'/'+action;
 			$.post(url)
 			.done(function(){
-				table.refresh();
-			});
-			
+				table[callbackName](userIds);
+			});			
+		}
+		
+		// confirm deactivation
+		
+		$("#activate-user-popup").confirmDialog().on('confirmdialogconfirm', function(){			
+			xhrActivateDeactivate.call(this, 'activate', 'activateUsers');			
+		});
+		
+		// confirm activation
+		
+		$("#deactivate-user-popup").confirmDialog().on('confirmdialogconfirm', function(){			
+			xhrActivateDeactivate.call(this, 'deactivate', 'deactivateUsers');			
+		});		
+		
+	}
+	
+	
+	// ---------------------- button ----------------------
+
+	function initButtons(settings) {
+		
+		
+		function openpopup(selector){
+			var ids = $("#users-list-table").squashTable().getSelectedIds();
+			if (ids.length>0){
+				var popup = $(selector);
+				popup.data('entity-id',null);
+				popup.confirmDialog('open');
+			}
+			else{
+				var warn = translator.get({
+					errorTitle : 'popup.title.Info',
+					errorMessage : 'message.EmptyTableSelection'
+				});
+				$.squash.openMessage(warn.errorTitle, warn.errorMessage);
+			}		
+		}
+		
+		$('#add-user-button, #activate-user-button, #activate-user-button').button();
+		
+		$("#deactivate-user-button").button().on('click', function(){
+			openpopup("#deactivate-user-popup");
+		});
+		
+		$("#activate-user-button").button().on('click', function(){			
+			openpopup("#activate-user-popup");			
+		});
+		
+		$("#back").button().click(function() {
+			document.location.href = settings.urls.backUrl;
 		});
 	}
+
+	// ----------- table ---------------------
+	
+	function drawCallback(){
+		var table = this;
+		
+		// activation button
+		
+		useractiveCells = table.find('tbody .user-active-cell');
+		
+		useractiveCells.each(function(){
+			
+			var value = table.fnGetData(this),
+				$cell = $(this);
+			
+			var btnclass = (value) ? 'table-icon user-active-btn icon-user-activated' : 'table-icon user-active-btn icon-user-deactivated disabled-transparent';
+			
+			$cell.empty().append('<a href="#" class="'+btnclass+'"/>');
+			
+		});
+		
+	}
+	
+	function initTable(settings) {
+			
+		var datatableSettings = {
+			"aaData" : settings.data.tableData,
+			"fnDrawCallback" : drawCallback
+		};
+		
+		var squashSettings = {
+			functions : {
+				
+				_changeActivation : function(ids, value, cssclass){
+					var _table = this;
+					var rows = _table.getRowsByIds(ids);
+					rows.each(function(){
+						var data = _table.fnGetData(this);
+						data['user-active'] = value;						
+					});
+					rows.find('a.user-active-btn').removeClass().addClass(cssclass);
+				},
+				
+				activateUsers : function(ids){
+					this._changeActivation(ids, true, "table-icon user-active-btn icon-user-activated");
+				},
+				
+				deactivateUsers : function(ids){
+					this._changeActivation(ids, false, "table-icon user-active-btn icon-user-deactivated disabled-transparent");
+				}
+			}
+		}
+
+		var table = $("#users-list-table").squashTable(datatableSettings, squashSettings);
+		
+		// various hooks
+		
+		table.on('click', 'a.user-active-btn', function(evt){
+			
+			var tr = this.parentNode.parentNode;
+				data = table.fnGetData(tr),
+				id = data['user-id'],
+				active = data['user-active'];
+			
+			if (active){
+				$("#deactivate-user-popup").data('entity-id', id).confirmDialog('open');
+			}else{
+				$("#activate-user-popup").data('entity-id', id).confirmDialog('open');				
+			}	
+			
+			
+		});
+
+	}
+	
+
+
 
 	function init(settings) {
 		initButtons(settings);

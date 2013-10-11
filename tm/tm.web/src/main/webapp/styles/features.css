@@ -277,7 +277,7 @@ td.double-narrow{
 
 /*********************** various icons *****************/
 
-.icon-entity{
+.table-icon, .icon-entity{
 	width : 16px;
 	height : 16px;
 	background-repeat : no-repeat;
@@ -349,6 +349,15 @@ td.double-narrow{
 	width : 20px;
 	height : 20px;
 }
+
+.icon-user-deactivated, .table-icon.icon-user-deactivated{
+	background-image : url(../images/icon-user-deactivated.png); /** sprite-ref: sprites-icons; */
+}
+
+.icon-user-activated, .table-icon.icon-user-activated{
+	background-image : url(../images/icon-user-active.png);  /** sprite-ref: sprites-icons; */
+}
+
 
 .disabled-transparent{
 	opacity : 0.35;
