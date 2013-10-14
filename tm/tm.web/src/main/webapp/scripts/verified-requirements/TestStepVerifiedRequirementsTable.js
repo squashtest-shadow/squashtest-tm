@@ -25,14 +25,16 @@ define([ "jquery", "backbone", "underscore", "handlebars", "app/util/StringUtil"
 	var VRTS = squashtm.app.verifiedRequirementsTableSettings;
 	var TestStepVerifiedRequirementsTable = VerifiedRequirementsTable.extend({
 		initialize : function(options) {
+
+			this.linkTemplate = Handlebars
+					.compile('<label class="{{cssClass}} ui-icon afterDisabled req-link-label"></label>');			
+			
 			this.constructor.__super__.initialize.apply(this, [ options ]);
 			this.detachSelectedRequirements = $.proxy(this._detachSelectedRequirements, this);
 			this.detachRequirements = $.proxy(this._detachRequirements, this);
 			this.confirmDetachRequirements = $.proxy(this._confirmDetachRequirements, this);
 			this.configureDetachRequirementDialog.call(this);
 
-			this.linkTemplate = Handlebars
-					.compile('<label class="{{cssClass}} ui-icon afterDisabled req-link-label"></label>');
 		},
 
 		events : {
