@@ -52,7 +52,6 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.library.IndexModel;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.requirement.RequirementVersionSearchExportCSVModel;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;

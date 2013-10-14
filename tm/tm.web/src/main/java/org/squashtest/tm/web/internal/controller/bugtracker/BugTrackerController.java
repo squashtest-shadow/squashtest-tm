@@ -61,7 +61,6 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.domain.Identified;
-import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.bugtracker.BugTrackerStatus;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;

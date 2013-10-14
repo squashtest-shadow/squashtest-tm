@@ -32,13 +32,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.UnauthorizedPasswordChange;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.WrongPasswordException;
-import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService;
-import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.internal.repository.UserDao;
-import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.security.UserAuthenticationService;
 import org.squashtest.tm.service.security.UserContextService;
-import org.squashtest.tm.service.user.TeamModificationService;
 import org.squashtest.tm.service.user.UserAccountService;
 
 @Service("squashtest.tm.service.UserAccountService")

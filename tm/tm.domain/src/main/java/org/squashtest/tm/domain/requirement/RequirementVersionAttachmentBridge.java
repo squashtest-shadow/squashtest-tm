@@ -33,7 +33,6 @@ import org.hibernate.search.bridge.FieldBridge;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.squashtest.tm.domain.testcase.TestCase;
 
 @Configurable
 public class RequirementVersionAttachmentBridge implements FieldBridge{

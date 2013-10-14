@@ -66,7 +66,6 @@ import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.exception.NoBugTrackerBindingException;
 import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.exception.user.LoginDoNotExistException;
-import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
