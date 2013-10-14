@@ -35,7 +35,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.squashtest.tm.domain.requirement.RequirementVersionSearchExportCSVModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.testcase.TestCaseSearchExportCSVModel;
 import org.squashtest.tm.domain.testcase.TestCaseSearchExportCSVModel.Row;
