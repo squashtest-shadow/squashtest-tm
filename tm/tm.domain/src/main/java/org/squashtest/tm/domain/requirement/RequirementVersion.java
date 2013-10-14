@@ -78,17 +78,17 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 @PrimaryKeyJoinColumn(name = "RES_ID")
 @InheritsAcls(constrainedClass = Requirement.class, collectionName = "versions")
 @ClassBridges({
-	@ClassBridge(
+	/*@ClassBridge(
 		name="attachments",
 		store=Store.YES,
 		impl=RequirementVersionAttachmentBridge.class
-	),
+	),*//*
 	@ClassBridge(
 			name="cufs",
 			store=Store.YES,
 			impl=CUFBridge.class,
 			params = {@Parameter(name="type", value="requirement")}
-	),
+	),*/
 	@ClassBridge(
 		name="createdBy",
 		store=Store.YES,

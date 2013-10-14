@@ -53,7 +53,7 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 						        aoData.push( { "name": "model", "value": JSON.stringify(model) } );  
 						        aoData.push( { "name": "associateResultWithType", "value": associateType } );  
 						        aoData.push( { "name": "id", "value":  associateId } );  
-							 	aoData.push( { "name": "requirement", "value": "requirement" } );  
+						        aoData.push( { "name": "requirement", "value": "requirement" } );  
 						    }, 
 						"sServerMethod": "POST",
 						"bDeferRender" : true,

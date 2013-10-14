@@ -52,7 +52,7 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 						"sAjaxSource" : squashtm.app.contextRoot + "/advanced-search/table",
 						 "fnServerParams": function ( aoData )   
 						    {  
-							 	aoData.push( { "name": "testcase", "value": "testcase" } );  
+							 aoData.push( { "name": "testcase", "value": "testcase" } );  
 						        aoData.push( { "name": "model", "value": JSON.stringify(model) } );  
 						        aoData.push( { "name": "associateResultWithType", "value": associateType } );  
 						        aoData.push( { "name": "id", "value":  associateId } );  
@@ -167,8 +167,8 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 						"sAjaxSource" : squashtm.app.contextRoot + "/advanced-search/table",
 						 "fnServerParams": function ( aoData )   
 						    {  
-							 	aoData.push( { "name": "testcase", "value": "testcase" } );  
-						        aoData.push( { "name": "model", "value": JSON.stringify(model) } );  
+							 aoData.push( { "name": "testcase", "value": "testcase" } );  
+							 aoData.push( { "name": "model", "value": JSON.stringify(model) } );  
 						    }, 
 						"sServerMethod": "POST",
 						"bDeferRender" : true,
