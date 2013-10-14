@@ -1301,7 +1301,7 @@ div.information-panel p {
 /* =================STATISTICS==================== */
 div#admin-stats {
 	float:right;
-	padding:30px;
+	padding: 100px 30px 30px;
 	font-size: 1.2em;
 }
 div.admin-stats-table {
