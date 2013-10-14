@@ -194,11 +194,11 @@ public class IterationTestPlanManagerController {
 	}
 
 
-	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanIds}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanItemsIds}", method = RequestMethod.DELETE)
 	public @ResponseBody
-	String removeTestCaseFromIteration(@PathVariable("testPlanIds") List<Long> testPlanIds, @PathVariable long iterationId) {
-		// check if a test plan was already executed and therefore not removed
-		Boolean response = iterationTestPlanManagerService.removeTestPlansFromIteration(testPlanIds, iterationId);
+	String removeTestPlanItemsFromIteration(@PathVariable("testPlanItemsIds") List<Long> testPlanItemsIds, @PathVariable long iterationId) {
+		// check if a test plan item was already executed and therefore not removed
+		Boolean response = iterationTestPlanManagerService.removeTestPlansFromIteration(testPlanItemsIds, iterationId);
 		return response.toString();
 	}
 

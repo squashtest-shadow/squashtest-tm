@@ -79,7 +79,7 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 *            the ids of the test plan managing that test case for that iteration
 	 * @param iterationId
 	 *            the id of the iteration
-	 * @return true if at least one test plan was already executed and therefore not deleted
+	 * @return true if at least one test plan item was deleted (because of insufficient rights on executed item)
 	 */
 	boolean removeTestPlansFromIteration(List<Long> testPlanIds, long iterationId);
 

@@ -277,13 +277,13 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Override
 	@PreAuthorize("hasPermission(#iteration, 'LINK') " + OR_HAS_ROLE_ADMIN)
-	public boolean removeTestPlansFromIterationObj(List<Long> testPlanIds, Iteration iteration) {
+	public boolean removeTestPlansFromIterationObj(List<Long> testPlanItemsIds, Iteration iteration) {
 		boolean unauthorizedDeletion = false;
 
-		List<IterationTestPlanItem> items = iterationTestPlanDao.findAllByIds(testPlanIds);
+		List<IterationTestPlanItem> items = iterationTestPlanDao.findAllByIds(testPlanItemsIds);
 
 		for (IterationTestPlanItem item : items) {
-			// We do not allow deletion if there are execution
+			// We do not allow deletion if there are execution and the user does not have sufficient rights
 			unauthorizedDeletion = removeTestPlanItemIfOkWithExecsAndRights(iteration, unauthorizedDeletion, item);
 		}
 
@@ -314,7 +314,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	
 		deletionHandler.deleteIterationTestPlanItem(item);
 
-		// unless the test case was deleted, we need to reindex its statistics
+		// unless the test case was deleted, we need to re-index its statistics
 		if (testCase != null) {
 			advancedSearchService.reindexTestCase(testCase.getId());
 		}

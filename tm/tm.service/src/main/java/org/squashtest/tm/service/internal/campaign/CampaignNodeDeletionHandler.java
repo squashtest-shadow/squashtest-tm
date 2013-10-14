@@ -66,7 +66,7 @@ import org.squashtest.tm.service.internal.library.NodeDeletionHandler;
 public interface CampaignNodeDeletionHandler extends NodeDeletionHandler<CampaignLibraryNode, CampaignFolder> {
 
 	/**
-	 * that method should investigate the consequences of the deletion of the given iterations, and return a report
+	 * That method should investigate the consequences of the deletion of the given iterations, and return a report
 	 * about what will happen.
 	 * 
 	 * @param targetIds
@@ -75,7 +75,7 @@ public interface CampaignNodeDeletionHandler extends NodeDeletionHandler<Campaig
 	List<SuppressionPreviewReport> simulateIterationDeletion(List<Long> targetIds);
 
 	/**
-	 * that method should delete the iterations. It still takes care of non deletable iterations so the implementation
+	 * That method should delete the iterations. It still takes care of non deletable iterations so the implementation
 	 * should filter out the ids that can't be deleted.
 	 * 
 	 * 
@@ -83,7 +83,7 @@ public interface CampaignNodeDeletionHandler extends NodeDeletionHandler<Campaig
 	 * @return 
 	 */
 	OperationReport deleteIterations(List<Long> targetIds);
-
+	
 	/**
 	 * That method should delete the test plan item. It will remove the executions along with the test plan item.
 	 * 
@@ -101,7 +101,7 @@ public interface CampaignNodeDeletionHandler extends NodeDeletionHandler<Campaig
 	List<SuppressionPreviewReport> simulateExecutionDeletion(Long execId);
 
 	/**
-	 * that method should delete the execution. It still takes care of non deletable executions so the implementation
+	 * That method should delete the execution. It still takes care of non deletable executions so the implementation
 	 * should abort if the execution can't be deleted.
 	 * 
 	 * 
@@ -119,7 +119,7 @@ public interface CampaignNodeDeletionHandler extends NodeDeletionHandler<Campaig
 	void deleteExecutions(List<Execution> executions);
 	
 	/**
-	 * that method should investigate the consequences of the deletion of the given test suites, and return a report
+	 * That method should investigate the consequences of the deletion of the given test suites, and return a report
 	 * about what will happen.
 	 * 
 	 * @param targetIds
@@ -128,7 +128,7 @@ public interface CampaignNodeDeletionHandler extends NodeDeletionHandler<Campaig
 	List<SuppressionPreviewReport> simulateSuiteDeletion(List<Long> targetIds);
 
 	/**
-	 * that method should delete test suites, and remove its references in iteration and iteration test plan item
+	 * That method should delete test suites, and remove its references in iteration and iteration test plan item
 	 * 
 	 * @param testSuites
 	 * @return
