@@ -110,6 +110,9 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Inject
 	private DatasetDao datasetDao;
+	
+	@Inject
+	private CampaignNodeDeletionHandler deletionHandler;
 
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
@@ -308,7 +311,8 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		TestCase testCase = item.getReferencedTestCase();
 
 		iteration.removeItemFromTestPlan(item);
-		iterationTestPlanDao.remove(item);
+	
+		deletionHandler.deleteIterationTestPlanItem(item);
 
 		// unless the test case was deleted, we need to reindex its statistics
 		if (testCase != null) {

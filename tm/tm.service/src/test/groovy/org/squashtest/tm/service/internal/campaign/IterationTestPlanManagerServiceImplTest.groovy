@@ -21,6 +21,8 @@
 package org.squashtest.tm.service.internal.campaign;
 
 
+import java.util.Collections;
+
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
@@ -48,15 +50,17 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 	IterationTestPlanDao itemDao = Mock()
 	DatasetDao datasetDao = Mock()
 	AdvancedSearchService advancedSearchService = Mock()
+	CampaignNodeDeletionHandler deletionHandler = Mock()
 
 	def setup(){
-		service.testCaseLibraryNodeDao = nodeDao;
-		service.iterationDao = iterDao;
-		service.iterationTestPlanDao = itemDao;
-		service.datasetDao = datasetDao;
-		service.advancedSearchService = advancedSearchService;
+		service.testCaseLibraryNodeDao = nodeDao
+		service.iterationDao = iterDao
+		service.iterationTestPlanDao = itemDao
+		service.datasetDao = datasetDao
+		service.advancedSearchService = advancedSearchService
+		service.deletionHandler = deletionHandler
+		
 	}
-
 
 	def "should reccursively add a list of test cases to an iteration" () {
 		given: "a campaign"
@@ -166,6 +170,23 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 			TestCaseLibraryNode.set field: "id", of: f, to: id
 		}
 		return f
+	}
+	
+	def "should remove test plan item from iteration by calling deletion handler"(){
+		given:
+		IterationTestPlanItem item = Mock()
+		Iteration iteration = Mock()
+		item.getIteration() >> iteration		
+		item.getExecutions() >> Collections.emptyList()
+		item.getReferencedTestCase() >> null
+		
+		itemDao.findById(1L)>>item
+		when:
+		service.removeTestPlanFromIteration(1L)
+		
+		then:
+		1* deletionHandler.deleteIterationTestPlanItem(item); 
+		
 	}
 }
 
