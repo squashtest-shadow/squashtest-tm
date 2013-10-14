@@ -157,4 +157,8 @@ class StubObjectAclService implements ObjectAclService {
 
 		return Collections.emptyList();
 	}
+			
+	@Override
+	public void refreshAcls() {
+	}
 }
