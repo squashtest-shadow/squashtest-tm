@@ -31,12 +31,12 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/u
 			this.configureTogglePanels();
 			this.configureEditables();
 			this.configureDeletionDialog();
+			this.configureActivation();
 			
 			this.model = new Backbone.Model({
 				hasAuthentication : UMod.user.hasAuthentication
 			});
 			
-			this.confirmDeleteUserDialog = $("#delete-user-dialog").confirmDialog();
 
 			if (this.model.get("hasAuthentication")) {
 				this.resetPasswordPopup = this.createResetPasswordPopup();
@@ -58,12 +58,11 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/u
 			this.configureButtons();
 
 			this.listenTo(this.model, "change:hasAuthentication", this.onChangeHasAuthentication);
-			//apparently listenTo on the confirmDeleteUser has problems so we're using regular jquery.
-			this.confirmDeleteUserDialog.on('confirmdialogconfirm', $.proxy(this.deleteUser, this));
 		},
 
 		events : {
 			"click #delete-user-button" : "confirmUserDeletion",
+			"click #toggle-activation-button" : "confirmToggleActivation",
 			"change #user-group" : "changeUserGroup"
 		},
 
@@ -81,10 +80,6 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/u
 			});
 		},
 		
-		confirmDeleteUser : function(evt){
-			this.confirmDeleteUserDialog.confirmDialog('open');			
-		},
-
 		deleteUser : function(event) {
 			var self = this;
 			$.ajax({
@@ -121,6 +116,44 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/u
 		configureDeletionDialog : function() {
 			this.confirmDeletionDialog = $("#delete-warning-pane").confirmDialog();
 			this.confirmDeletionDialog.on("confirmdialogconfirm", $.proxy(this.deleteUser, this));
+		},
+		
+		configureActivation : function(){
+			var deactivateDialog = $("#deactivate-user-popup").confirmDialog();
+			var activateDialog = $("#activate-user-popup").confirmDialog();
+			
+			deactivateDialog.on("confirmdialogconfirm", $.proxy(this.deactivateUser, this));
+			activateDialog.on("confirmdialogconfirm", $.proxy(this.activateUser, this));
+		},
+		
+		confirmToggleActivation : function(){
+			var active = $("#toggle-activation-button").data('active');
+			if (active){
+				$("#deactivate-user-popup").confirmDialog('open');
+			}
+			else{
+				$("#activate-user-popup").confirmDialog('open');
+			}			
+		},
+		
+		activateUser : function(){
+			$.post(UMod.user.url.admin + '/activate')
+			.done(function(){
+				var btn = $("#toggle-activation-button");
+				btn.data('active',true);
+				btn.prop('value', UMod.message.deactivate);
+				$("#user-name-deactivated-hint").addClass('not-displayed');
+			});
+		},
+		
+		deactivateUser : function(){
+			$.post(UMod.user.url.admin + '/deactivate')
+			.done(function(){
+				var btn = $("#toggle-activation-button");
+				btn.data('active',false);
+				btn.prop('value',UMod.message.activate);
+				$("#user-name-deactivated-hint").removeClass('not-displayed');
+			});			
 		},
 		
 		makeSimpleJEditable : function(imputId) {

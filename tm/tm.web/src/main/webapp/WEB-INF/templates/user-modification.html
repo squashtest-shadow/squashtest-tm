@@ -63,6 +63,8 @@
 				newPassError : /*[[ #{user.account.newpass.error} ]]*/"new Pass Error",
 				confirmPassError : /*[[ #{user.account.confirmpass.error} ]]*/"confirm pass error",
 				samePassError : /*[[ #{user.account.newpass.differ.error} ]]*/"same pass error",
+				activate : /*[[ #{label.Activate} ]]*/ "activate",
+				deactivate : /*[[ #{label.Deactivate} ]]*/ "deactivate"
 			},
 			permission : {
 				url : {
@@ -140,7 +142,10 @@
 						<div class="sub-page-fragment-title">
 							<h2>
 								<label for="user-login-header" th:text="#{user.header.title}">User</label>
-								<a id="team-name-header" href="#" th:text="${user.login}">Machin</a>
+								<a id="user-name-header" href="#" th:text="${user.login}">Machin</a>
+								<span id="user-name-deactivated-hint" th:text="'(' + #{label.Deactivated} + ')'" th:class="${user.active} ? 'not-displayed'">
+									(deactivated)
+								</span>
 							</h2>
 						</div>
 						<div class="snap-right"></div>
@@ -168,7 +173,12 @@
                 <div class="display-table" id="user-infos-table">
                   <div class="display-table-row">
                     <label for="user-login" th:text="#{label.Login}">Login</label>
-                    <div id="user-login" class="display-table-cell" th:text="${user.login}">Machin</div>
+                    <div class="display-table-cell">
+                    	<span id="user-login" th:text="${user.login}">Machin</span>
+                    	<input id="toggle-activation-button" type="button" class="button" 
+                    			th:value="${user.active} ?  #{label.Deactivate} : #{label.Activate}"
+                    			th:attr="data-active=${user.active}"/>
+                    </div>
                   </div>
                   <div class="display-table-row" th:unless="${authenticationProvider.managedPassword}">
                     <label for="reset-password-button" th:text="#{label.password}">Password</label>
@@ -355,15 +365,7 @@
 				value="cancel" th:value="#{label.Cancel}" />
 		</div>
 	</div>
-	
-	<div id="delete-user-dialog" class="popup-dialog not-displayed" th:title="#{tooltips.delete-user}">
-		<div th:text="#{dialog.delete-user.message}"></div>
-		<div class="popup-dialog-buttonpane">
-			<input class="confirm" type="button" value="confirm"
-				th:value="#{label.Confirm}" /> <input class="cancel" type="button"
-				value="cancel" th:value="#{label.Cancel}" />
-		</div>	
-	</div>
+
 
 	<div id="delete-warning-pane" class="not-displayed popup-dialog"
 		title="Delete" th:title="#{label.Delete}">
@@ -415,5 +417,28 @@
 				value="cancel" th:value="#{label.Cancel}" />
 		</div>
 	</div>
+	
+	<div id="deactivate-user-popup" class="popup-dialog not-displayed" th:title="#{title.deactivate-users}">
+		
+		<span class="normal-warning-message" th:text="#{message.ConfirmDeactivateUser}">you sure ?</span>
+	
+		<div class="popup-dialog-buttonpane">
+		    <input class="confirm" type="button" th:value="#{label.Confirm}" />
+		    <input class="cancel" type="button" th:value="#{label.Cancel}" />				
+		</div>
+	
+	</div>	
+	
+	<div id="activate-user-popup" class="popup-dialog not-displayed" th:title="#{title.activate-users}">
+		
+		<span class="normal-warning-message" th:text="#{message.ConfirmActivateUser}">you sure ?</span>
+	
+		<div class="popup-dialog-buttonpane">
+		    <input class="confirm" type="button" th:value="#{label.Confirm}" />
+		    <input class="cancel" type="button" th:value="#{label.Cancel}" />				
+		</div>
+	
+	</div>	
+		
 </body>
 </html>
