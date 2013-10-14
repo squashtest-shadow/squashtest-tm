@@ -221,6 +221,18 @@ public class AdministrationServiceImpl implements AdministrationService {
 	}
 	
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	public void deleteUsers(Collection<Long> userIds) {
+		for (Long id : userIds){
+			userAccountService.deleteUser(id);
+			User user = userDao.findById(id);
+			adminAuthentService.deleteAccount(user.getLogin());
+			userDao.remove(user);
+		}
+		aclService.refreshAcls();
+	}
+	
+	@Override
 	public List<Project> findAllProjects() {
 		return projectDao.findAll();
 	}

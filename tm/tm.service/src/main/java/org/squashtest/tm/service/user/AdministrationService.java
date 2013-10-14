@@ -113,6 +113,8 @@ public interface AdministrationService {
 	
 	void activateUsers(Collection<Long> userIds);
 	
+	void deleteUsers(Collection<Long> userIds);
+	
 	/**
 	 * Will remove user from teams members lists. <br>
 	 * access restricted to admins

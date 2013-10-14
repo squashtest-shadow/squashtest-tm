@@ -178,6 +178,25 @@ define([ "jquery", "squash.translator", "squashtable", "jquery.squash.confirmdia
 			xhrActivateDeactivate.call(this, 'deactivate', 'deactivateUsers');			
 		});		
 		
+		// confirm deleteion
+		$("#delete-user-popup").confirmDialog().on('confirmdialogconfirm', function(){
+			var $this = $(this),
+			table = $("#users-list-table").squashTable();
+					
+			var userId = $this.data('entity-id'),
+				userIds = (!! userId) ? [ userId ] : table.getSelectedIds();
+	
+			$this.data('entity-id');	//reset		
+			var url = squashtm.app.contextRoot+'/administration/users/'+userIds.join(',');
+			$.ajax({
+				url : url,
+				type : 'delete'
+			})
+			.done(function(){
+				table.refresh();
+			});
+		});
+		
 	}
 	
 	
@@ -202,7 +221,7 @@ define([ "jquery", "squash.translator", "squashtable", "jquery.squash.confirmdia
 			}		
 		}
 		
-		$('#add-user-button, #activate-user-button, #activate-user-button').button();
+		$('#add-user-button').button();
 		
 		$("#deactivate-user-button").button().on('click', function(){
 			openpopup("#deactivate-user-popup");
@@ -210,6 +229,10 @@ define([ "jquery", "squash.translator", "squashtable", "jquery.squash.confirmdia
 		
 		$("#activate-user-button").button().on('click', function(){			
 			openpopup("#activate-user-popup");			
+		});
+		
+		$("#delete-user-button").button().on('click', function(){
+			openpopup("#delete-user-popup");
 		});
 		
 		$("#back").button().click(function() {

@@ -49,6 +49,8 @@ public interface AdministratorAuthenticationService extends UserAuthenticationSe
 	void deactivateAccount(String login);
 	
 	void activateAccount(String login);
+	
+	void deleteAccount(String login);
 
 	/**
 	 * 

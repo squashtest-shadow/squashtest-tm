@@ -38,6 +38,8 @@ public interface UserAccountService {
 	void deactivateUser(long userId);
 
 	void activateUser(long userId);
+	
+	void deleteUser(long userId);
 
 	/* ** services using no ID : the modified user is the calling user ** */
 	/**

@@ -70,6 +70,7 @@
 					<a id="add-user-button" href="#" class="add-user-button"><f:message key="user.add.label" /></a>
 					<a id="activate-user-button" href="#" ><f:message key="label.activate-users"/></a>
 					<a id="deactivate-user-button" href="#" ><f:message key="label.deactivate-users"/></a>
+					<a id="delete-user-button" href="#"><f:message key="label.delete-users"/></a>
 				</div>
 				<div class="table-tab-wrap">
 					<table id="users-list-table"  class="unstyled-table" 
@@ -88,7 +89,7 @@
 								<th class="user-created-by datatable-filterable"data-def="map=user-created-by, sortable"><f:message key="label.createdBy" /></th>
 								<th class="user-modified-on"					data-def="map=user-modified-on, sortable"><f:message key="label.modifiedOn" /></th>	
 								<th class="user-modified-by datatable-filterable"data-def="map=user-modified-by, sortable"><f:message key="label.modifiedBy" /></th>
-								<th class="empty-delete-holder" 				data-def="map=empty-delete-holder"></th>
+								<th class="empty-delete-holder" 				data-def="map=empty-delete-holder, delete-button=#delete-user-popup"></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -211,6 +212,20 @@
 		<div id="activate-user-popup" class="popup-dialog not-displayed" title="${activateUsersTitle}">
 			
 			<span class="normal-warning-message"><f:message key="message.ConfirmActivateUser"/></span>
+		
+			<div class="popup-dialog-buttonpane">
+			    <input class="confirm" type="button" value="<f:message key='label.Confirm' />" />
+			    <input class="cancel" type="button" value="<f:message key='label.Cancel' />" />				
+			</div>
+		
+		</div>	
+		
+		<f:message var="deleteUsersTitle" key="title.delete-users" />
+		<div id="delete-user-popup" class="popup-dialog not-displayed" title="${deleteUsersTitle}">
+			
+			<div class="alert">
+				<span><f:message key="message.user.remove"/></span>
+			</div>
 		
 			<div class="popup-dialog-buttonpane">
 			    <input class="confirm" type="button" value="<f:message key='label.Confirm' />" />

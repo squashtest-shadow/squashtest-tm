@@ -203,7 +203,11 @@ public class UserAdministrationController extends PartyControllerSupport {
 		adminService.activateUsers(userIds);
 	}
 	
-	
+	@RequestMapping(value = USER_URLS, method = RequestMethod.DELETE)
+	public @ResponseBody
+	void deleteUsers(@PathVariable("userIds") List<Long> userIds){
+		adminService.deleteUsers(userIds);
+	}
 
 	/**
 	 * Will return a view for the user of the given id

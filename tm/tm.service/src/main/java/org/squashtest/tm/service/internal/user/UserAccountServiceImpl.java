@@ -33,8 +33,10 @@ import org.squashtest.tm.domain.UnauthorizedPasswordChange;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.WrongPasswordException;
 import org.squashtest.tm.service.internal.repository.UserDao;
+import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.security.UserAuthenticationService;
 import org.squashtest.tm.service.security.UserContextService;
+import org.squashtest.tm.service.user.TeamModificationService;
 import org.squashtest.tm.service.user.UserAccountService;
 
 @Service("squashtest.tm.service.UserAccountService")
@@ -51,7 +53,11 @@ public class UserAccountServiceImpl implements UserAccountService {
 	@Inject
 	private UserAuthenticationService authService;
 	
-
+    @Inject 
+    private TeamModificationService teamModificationService;
+    
+    @Inject 
+    private ProjectsPermissionManagementService projectsPermissionManagementService;
 	
 	@Override
 	public void modifyUserFirstName(long userId, String newName) {
@@ -100,30 +106,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 		// proceed
 		user.setEmail(newEmail);
 	}
-
-	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public void deactivateUser(long userId) {
-		// fetch
-		User user = userDao.findById(userId);
-		// check
-		checkPermissions(user);
-		// proceed
-		userDao.unassignUserFromAllTestPlan(userId);
-		user.setActive(false);
-	}
-
-	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public void activateUser(long userId) {
-		// fetch
-		User user = userDao.findById(userId);
-		// check
-		checkPermissions(user);
-
-		// proceed
-		user.setActive(true);
-	}
+	
 
 	/* ************ surprise : no security check is needed for the methods below ********** */
 
@@ -154,6 +137,39 @@ public class UserAccountServiceImpl implements UserAccountService {
 		}
 
 	}
+	
+	
+	/* ******************* admin only *********** */
+
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public void deactivateUser(long userId) {
+		
+		User user = userDao.findById(userId);		
+		
+		userDao.unassignUserFromAllTestPlan(userId);
+		user.setActive(false);
+	}
+
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public void activateUser(long userId) {
+	
+		User user = userDao.findById(userId);
+	
+		user.setActive(true);
+	}
+	
+	@Override
+	public void deleteUser(long userId) {
+		
+		userDao.unassignUserFromAllTestPlan(userId);		
+		teamModificationService.removeMemberFromAllTeams(userId);
+        projectsPermissionManagementService.removeProjectPermissionForAllProjects(userId);
+        
+	}
+
+	
 
 	/* ************ private stuffs ****************** */
 
