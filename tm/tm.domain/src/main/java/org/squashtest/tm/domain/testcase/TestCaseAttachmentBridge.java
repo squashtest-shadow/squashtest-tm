@@ -47,7 +47,15 @@ public class TestCaseAttachmentBridge implements FieldBridge{
 		return beanFactory.getBean(SessionFactory.class);
 	}
 
-
+	private void writeFieldToDocument(String name, TestCase testcase, Session session, Document document, LuceneOptions luceneOptions){
+		testcase = (TestCase) session.createCriteria(TestCase.class).add(Restrictions.eq("id", testcase.getId())).uniqueResult(); //NOSONAR session is never null
+		
+		Field field = new Field(name, String.valueOf(testcase.getAttachmentList().size()), luceneOptions.getStore(),
+	    luceneOptions.getIndex(), luceneOptions.getTermVector() );
+	    field.setBoost( luceneOptions.getBoost());
+	    document.add(field);
+	}
+	
 	@Override
 	public void set(String name, Object value, Document document, LuceneOptions luceneOptions) {
 
@@ -60,21 +68,17 @@ public class TestCaseAttachmentBridge implements FieldBridge{
 			currentSession = getSessionFactory().getCurrentSession();
 			session = currentSession;
 		}catch(HibernateException ex){
+			currentSession = null;
+		}
+		
+		if(currentSession == null){
 			session = getSessionFactory().openSession();
-			tx = session.beginTransaction();
-		}finally{
-
-			testcase = (TestCase) session.createCriteria(TestCase.class).add(Restrictions.eq("id", testcase.getId())).uniqueResult(); //NOSONAR session is never null
-			
-			Field field = new Field(name, String.valueOf(testcase.getAttachmentList().size()), luceneOptions.getStore(),
-		    luceneOptions.getIndex(), luceneOptions.getTermVector() );
-		    field.setBoost( luceneOptions.getBoost());
-		    document.add(field);
-	
-		    if(currentSession == null){
-			    tx.commit(); //NOSONAR the test above prevents null point exception from happening
-			    session.close();
-		    }
+			tx = session.beginTransaction();	
+			writeFieldToDocument(name, testcase, session, document, luceneOptions);
+			tx.commit(); 
+		    session.close();
+		} else {
+			writeFieldToDocument(name, testcase, session, document, luceneOptions);
 		}
 	}
 }

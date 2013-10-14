@@ -63,6 +63,16 @@ public class TestCaseIssueBridge implements FieldBridge{
 
 	}
 
+	private Long getNumberOfIssues(Session session, Long id){
+		
+		return (Long) session.createCriteria(Execution.class)
+				.add(Restrictions.eq("referencedTestCase.id", id))
+				.createCriteria("issueList")
+				.createCriteria("issues")
+				.setProjection(Projections.rowCount())
+				.uniqueResult();
+	}
+	
 	private Long findNumberOfIssues(Long id) {
 
 		Session currentSession = null;
@@ -74,22 +84,23 @@ public class TestCaseIssueBridge implements FieldBridge{
 			currentSession = getSessionFactory().getCurrentSession();
 			session = currentSession;
 		}catch(HibernateException ex){
+			currentSession = null;
+		}
+		
+		if(currentSession == null){
+		
 			session = getSessionFactory().openSession();
 			tx = session.beginTransaction();
-		}finally{
 		
-		 numberOfIssues = (Long) session.createCriteria(Execution.class) //NOSONAR session is never null
-			.add(Restrictions.eq("referencedTestCase.id", id))
-			.createCriteria("issueList")
-			.createCriteria("issues")
-			.setProjection(Projections.rowCount())
-			.uniqueResult();
-
-	    if(currentSession == null){
-		    tx.commit(); //NOSONAR the test above prevents null point exception from happening
+			 numberOfIssues = getNumberOfIssues(session, id);
+			 
+		    tx.commit();
 		    session.close();
-	    }
+		} else {
+
+			 numberOfIssues = getNumberOfIssues(session, id);
 		}
+		
 	    return numberOfIssues;
 	}
 

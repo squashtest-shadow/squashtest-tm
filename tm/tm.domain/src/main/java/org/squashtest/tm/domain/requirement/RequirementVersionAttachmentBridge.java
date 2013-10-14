@@ -47,6 +47,17 @@ public class RequirementVersionAttachmentBridge implements FieldBridge{
 		return beanFactory.getBean(SessionFactory.class);
 	}
 
+	private void writeFieldToDocument(String name, Session session, RequirementVersion requirement, Document document, LuceneOptions luceneOptions){
+		requirement = (RequirementVersion) session.createCriteria(RequirementVersion.class).add(Restrictions.eq("id", requirement.getId())).uniqueResult(); //NOSONAR session is never null
+		
+		Field field = new Field(name, String.valueOf(requirement.getAttachmentList().size()), luceneOptions.getStore(),
+		   luceneOptions.getIndex(), luceneOptions.getTermVector() );
+		   field.setBoost( luceneOptions.getBoost());
+		
+		document.add(field);
+	}
+	
+	
 	@Override
 	public void set(String name, Object value, Document document, LuceneOptions luceneOptions) {
 
@@ -59,21 +70,17 @@ public class RequirementVersionAttachmentBridge implements FieldBridge{
 			currentSession = getSessionFactory().getCurrentSession();
 			session = currentSession;
 		}catch(HibernateException ex){
+			currentSession = null;
+		}
+		
+		if(currentSession == null){
 			session = getSessionFactory().openSession();
 			tx = session.beginTransaction();
-		}finally{
-
-			requirement = (RequirementVersion) session.createCriteria(RequirementVersion.class).add(Restrictions.eq("id", requirement.getId())).uniqueResult(); //NOSONAR session is never null
-			
-			Field field = new Field(name, String.valueOf(requirement.getAttachmentList().size()), luceneOptions.getStore(),
-		    luceneOptions.getIndex(), luceneOptions.getTermVector() );
-		    field.setBoost( luceneOptions.getBoost());
-		    document.add(field);
-	
-		    if(currentSession == null){
-			    tx.commit(); //NOSONAR the test above prevents null point exception from happening
-			    session.close();
-		    }
+			writeFieldToDocument(name, session, requirement, document, luceneOptions);
+			tx.commit();
+			session.close();
+		} else {
+			writeFieldToDocument(name, session, requirement, document, luceneOptions);
 		}
 	}
 }

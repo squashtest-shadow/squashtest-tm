@@ -62,33 +62,45 @@ public class TestCaseIterationBridge implements FieldBridge{
 
 	}
 
+	private Long getNumberOfIterations(Session session, Long id){
+		
+		return (Long) session.createCriteria(Iteration.class)
+				.createCriteria("testPlans")
+				.createCriteria("referencedTestCase")
+				.add(Restrictions.eq("id", id))
+				.setProjection(Projections.rowCount())
+				.uniqueResult();
+	}
+	
+	
 	private Long findNumberOfIterations(Long id) {
 
 		Session currentSession = null;
 		Session session = null;
 		Transaction tx = null;
 		Long numberOfIterations = 0L;
-		try{
+		
+		try {
 			currentSession = getSessionFactory().getCurrentSession();
 			session = currentSession;
-		}catch(HibernateException ex){
+		} catch (HibernateException ex) {
+			currentSession = null;
+		}
+
+		if (currentSession == null) {
+
 			session = getSessionFactory().openSession();
 			tx = session.beginTransaction();
-		}finally{
-		
-		numberOfIterations = (Long) session.createCriteria(Iteration.class) //NOSONAR session is never null
-			.createCriteria("testPlans")
-			.createCriteria("referencedTestCase")
-			.add(Restrictions.eq("id", id))
-			.setProjection(Projections.rowCount())
-			.uniqueResult();
-	    
-	    if(currentSession == null){
-		    tx.commit(); //NOSONAR the test above prevents null point exception from happening
-		    session.close();
-	    }
+
+			numberOfIterations = getNumberOfIterations(session, id);
+
+			tx.commit();
+			session.close();
+		} else {
+			numberOfIterations = getNumberOfIterations(session, id);
 		}
-	    return numberOfIterations;
+		
+		return numberOfIterations;
 	}
 
 }

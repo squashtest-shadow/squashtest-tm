@@ -64,6 +64,14 @@ public class TestCaseCallStepBridge implements FieldBridge {
 		document.add(field);
 	}
 
+	private Long getNumberOfCalledTestCases(Session session, Long id){
+		return (Long) session
+				.createCriteria(TestCase.class)
+				.add(Restrictions.eq("id", id)).createCriteria("steps")
+				.createCriteria("calledTestCase")
+				.setProjection(Projections.rowCount()).uniqueResult(); 
+	}
+	
 	private Long findNumberOfCalledTestCases(Long id) {
 
 		Session currentSession = null;
@@ -75,20 +83,20 @@ public class TestCaseCallStepBridge implements FieldBridge {
 			currentSession = getSessionFactory().getCurrentSession();
 			session = currentSession;
 		} catch (HibernateException ex) {
+			currentSession = null;
+		}
+
+		if(currentSession == null){
 			session = getSessionFactory().openSession();
 			tx = session.beginTransaction();
-		} finally {
-
-			numberOfCalledTestCases = (Long) session
-					.createCriteria(TestCase.class) //NOSONAR session is never null
-					.add(Restrictions.eq("id", id)).createCriteria("steps")
-					.createCriteria("calledTestCase")
-					.setProjection(Projections.rowCount()).uniqueResult(); 
-
-			if (currentSession == null) {
-				tx.commit(); //NOSONAR the test above prevents null point exception from happening
-				session.close();
-			}
+			
+			numberOfCalledTestCases =  getNumberOfCalledTestCases(session, id);
+			
+			tx.commit(); 
+			session.close();
+		} else {
+			
+			numberOfCalledTestCases =  getNumberOfCalledTestCases(session, id);
 		}
 
 		return numberOfCalledTestCases;
