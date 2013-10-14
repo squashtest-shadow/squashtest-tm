@@ -54,6 +54,7 @@ import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.internal.repository.UsersGroupDao;
 import org.squashtest.tm.service.internal.security.UserBuilder;
 import org.squashtest.tm.service.security.AdministratorAuthenticationService;
+import org.squashtest.tm.service.security.acls.model.ObjectAclService;
 import org.squashtest.tm.service.user.AdministrationService;
 import org.squashtest.tm.service.user.AuthenticatedUser;
 import org.squashtest.tm.service.user.UserAccountService;
@@ -87,6 +88,9 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 	@Inject
 	private TeamDao teamDao;
+
+	@Inject
+	private ObjectAclService aclService;
 
 	@Inject
 	private AdministratorAuthenticationService adminAuthentService;
@@ -192,6 +196,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 		userAccountService.deactivateUser(userId);
 		User user = userDao.findById(userId);
 		adminAuthentService.deactivateAccount(user.getLogin());
+		aclService.refreshAcls();
 	}
 
 	@Override
@@ -200,9 +205,11 @@ public class AdministrationServiceImpl implements AdministrationService {
 		userAccountService.activateUser(userId);		
 		User user = userDao.findById(userId);
 		adminAuthentService.activateAccount(user.getLogin());
+		aclService.refreshAcls();
 	}
 	
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void deactivateUsers(Collection<Long> userIds) {
 		for (Long id : userIds){
 			deactivateUser(id);
@@ -210,6 +217,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	}
 	
 	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void activateUsers(Collection<Long> userIds) {
 		for (Long id : userIds){
 			activateUser(id);

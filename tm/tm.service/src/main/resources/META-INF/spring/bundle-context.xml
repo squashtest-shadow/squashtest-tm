@@ -259,7 +259,7 @@
 					left join CORE_TEAM team on team.PARTY_ID = party.PARTY_ID
 					left join CORE_TEAM_MEMBER tmemb on tmemb.TEAM_ID = team.PARTY_ID,
 					CORE_USER u 
-				where((u.PARTY_ID = tmemb.USER_ID) or (u.PARTY_ID = party.PARTY_ID)) and (
+				where((u.PARTY_ID = tmemb.USER_ID) or (u.PARTY_ID = party.PARTY_ID)) and u.ACTIVE = true and (
       </value>
     </property>
     <property name="lookupObjectIdentitiesWhereClause">

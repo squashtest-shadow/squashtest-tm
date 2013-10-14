@@ -573,6 +573,11 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 		jdbcTemplate.update(DELETE_ALL_RESPONSABILITY_ENTRIES_FOR_PARTY, partyId);
 		
 	}
+	
+	@Override
+	public void refreshAcls() {
+		aclCache.clearCache();
+	}
 
 	private List<String> adaptQualifiedClassNameList(List<String> qualifiedClassNameList){
 		

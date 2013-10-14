@@ -93,4 +93,9 @@ public interface ObjectAclService {
 	 * @param partyId
 	 */
 	void removeAllResponsibilitiesForParty(long partyId);
+	
+	/**
+	 * basically ensures that recent modification affecting the ACL will be taken into account immediately.
+	 */
+	void refreshAcls();
 }

@@ -50,6 +50,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
 	@Inject
 	private UserAuthenticationService authService;
+	
 
 	
 	@Override
