@@ -64,6 +64,28 @@ public class CUFBridge implements FieldBridge, ParameterizedBridge {
 		return beanFactory.getBean(SessionFactory.class);
 	}
 
+	private List<CustomFieldValue> findCufValuesForType(Session session, Object value, String type){
+		
+		BindableEntity entityType = null; 
+		Long id = null;
+		
+		if("testcase".equals(type)){
+			TestCase testcase = (TestCase) value;
+			id = testcase.getId();
+			entityType = BindableEntity.TEST_CASE;
+			
+		} else if ("requirement".equals(type)){
+			RequirementVersion requirement = (RequirementVersion) value;
+			id = requirement.getId();
+			entityType = BindableEntity.REQUIREMENT_VERSION;
+		}
+				
+		return (List<CustomFieldValue>) session
+				.createCriteria(CustomFieldValue.class) 
+				.add(Restrictions.eq("boundEntityId", id))
+				.add(Restrictions.eq("boundEntityType", entityType)).list();
+	}
+	
 	@Override
 	public void set(String name, Object value, Document document,
 			LuceneOptions luceneOptions) {
@@ -76,34 +98,26 @@ public class CUFBridge implements FieldBridge, ParameterizedBridge {
 			currentSession = getSessionFactory().getCurrentSession();
 			session = currentSession;
 		}catch(HibernateException ex){
+			currentSession = null;
+		}
+		
+		
+		if(currentSession == null){
 			session = getSessionFactory().openSession();
 			tx = session.beginTransaction();
-		}finally{
-			
-
-		List<CustomFieldValue> cufValues = new ArrayList<CustomFieldValue>();
-			
-		
-		if("testcase".equals(type)){
-		
-			TestCase testcase = (TestCase) value;
-			
-			cufValues = (List<CustomFieldValue>) session
-					.createCriteria(CustomFieldValue.class) //NOSONAR session is never null
-					.add(Restrictions.eq("boundEntityId", testcase.getId()))
-					.add(Restrictions.eq("boundEntityType", BindableEntity.TEST_CASE)).list();
-			
-		} else if("requirement".equals(type)){
-		
-			RequirementVersion requirement = (RequirementVersion) value;
-			
-			cufValues = (List<CustomFieldValue>) session
-					.createCriteria(CustomFieldValue.class) //NOSONAR session is never null
-					.add(Restrictions.eq("boundEntityId", requirement.getId()))
-					.add(Restrictions.eq("boundEntityType", BindableEntity.REQUIREMENT_VERSION)).list();
-			
+			writeFieldsToDocument(session, value, document, luceneOptions);
+		    tx.commit(); //NOSONAR the test above prevents null point exception from happening
+		    session.close();
+		} else {
+			writeFieldsToDocument(session, value, document, luceneOptions);
 		}
-	
+	}
+
+
+	private void writeFieldsToDocument(Session session, Object value, Document document, LuceneOptions luceneOptions){		
+			
+		List<CustomFieldValue> cufValues = findCufValuesForType(session, value, type);
+
 		for (CustomFieldValue cufValue : cufValues) {
 			
 			InputType inputType = cufValue.getBinding().getCustomField().getInputType();
@@ -143,12 +157,6 @@ public class CUFBridge implements FieldBridge, ParameterizedBridge {
 				field.setBoost(luceneOptions.getBoost());
 				document.add(field);				
 			} 
-		}
-
-	    if(currentSession == null){
-		    tx.commit(); //NOSONAR the test above prevents null point exception from happening
-		    session.close();
-	    }
 		}
 	}
 
