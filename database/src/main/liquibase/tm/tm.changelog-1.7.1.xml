@@ -50,29 +50,24 @@
 	<changeSet id="tm-1.7.1.issue-2873-02" author="mpagnon">
 		<comment>Store the ids of the ghost executions</comment>
 		<sql>
-			INSERT into ENTITIES_TO_DELETE (ENTITY_NAME, ENTITY_ID)
-			SELECT
-			'execution', e.execution_id
-			FROM EXECUTION e
-			WHERE e.execution_id NOT
-			IN (
-			SELECT itpe.execution_id FROM ITEM_TEST_PLAN_EXECUTION itpe
+			insert into ENTITIES_TO_DELETE (ENTITY_NAME, ENTITY_ID)
+			select 'EXECUTION', E.EXECUTION_ID
+			from EXECUTION E
+			where E.EXECUTION_ID NOT IN (
+			select ITPE.EXECUTION_ID 
+			from ITEM_TEST_PLAN_EXECUTION ITPE
 			);
 		</sql>
 	</changeSet>
 	<changeSet id="tm-1.7.1.issue-2873-03" author="mpagnon">
 		<comment>Store the ids of the execution steps</comment>
-		<sql>INSERT into ENTITIES_TO_DELETE (ENTITY_NAME, ENTITY_ID)
-			SELECT
-			'execution_step', es.execution_step_id
-			FROM EXECUTION_STEP es,
-			EXECUTION_EXECUTION_STEPS ees, ENTITIES_TO_DELETE
-			etd
-			WHERE
-			es.execution_step_id = ees.execution_step_id
-			AND ees.execution_id =
-			etd.entity_id
-			AND etd.entity_name = 'execution'
+		<sql>insert into ENTITIES_TO_DELETE (ENTITY_NAME, ENTITY_ID)
+			select
+			'EXECUTION_STEP', ES.EXECUTION_STEP_ID
+			from EXECUTION_STEP ES, EXECUTION_EXECUTION_STEPS EES, ENTITIES_TO_DELETE ETD
+			where ES.EXECUTION_STEP_ID = EES.EXECUTION_STEP_ID
+			and EES.EXECUTION_ID =	ETD.ENTITY_ID
+			and ETD.ENTITY_NAME = 'EXECUTION'
 			;
 		</sql>
 		
@@ -80,22 +75,20 @@
 	<changeSet id="tm-1.7.1.issue-2873-04" author="mpagnon">
 		<comment>Store the ids of the issue lists to delete</comment>
 		<sql>
-			INSERT into entities_to_delete (entity_name, entity_id)
-			SELECT 'issue_list', il.issue_list_id
-			FROM ISSUE_LIST il , EXECUTION e,  ENTITIES_TO_DELETE etd
-			WHERE
-			 il.issue_list_id = e.issue_list_id
-			AND e.execution_id = etd.entity_id
-			AND etd.entity_name = 'execution'			
+			insert into ENTITIES_TO_DELETE (ENTITY_NAME, ENTITY_ID)
+			select 'ISSUE_LIST', IL.ISSUE_LIST_ID
+			from ISSUE_LIST IL , EXECUTION E,  ENTITIES_TO_DELETE ETD
+			where IL.ISSUE_LIST_ID = E.ISSUE_LIST_ID
+			and E.EXECUTION_ID = ETD.ENTITY_ID
+			and ETD.ENTITY_NAME = 'EXECUTION'			
 		</sql>
 		<sql>
-			INSERT into entities_to_delete (entity_name, entity_id)
-			SELECT 'issue_list', il.issue_list_id
-			FROM ISSUE_LIST il ,  EXECUTION_STEP es,  ENTITIES_TO_DELETE etd2
-			WHERE		
-			 il.issue_list_id =	es.issue_list_id
-			AND es.execution_step_id = etd2.entity_id
-			AND	etd2.entity_name = 'execution_step'
+			insert into ENTITIES_TO_DELETE (ENTITY_NAME, ENTITY_ID)
+			select 'ISSUE_LIST', IL.ISSUE_LIST_ID
+			from ISSUE_LIST IL ,  EXECUTION_STEP ES,  ENTITIES_TO_DELETE ETD2
+			where IL.ISSUE_LIST_ID =	ES.ISSUE_LIST_ID
+			and ES.EXECUTION_STEP_ID = ETD2.ENTITY_ID
+			and	ETD2.ENTITY_NAME = 'EXECUTION_STEP'
 			;
 		</sql>
 	</changeSet>
@@ -104,11 +97,9 @@
 		<delete tableName="ISSUE">
 			<where>
 				ISSUE_LIST_ID IN (
-				SELECT entity_id
-				FROM
-				ENTITIES_TO_DELETE
-				WHERE
-				entity_name = 'issue_list'
+				select ENTITY_ID
+				from ENTITIES_TO_DELETE
+				where ENTITY_NAME = 'ISSUE_LIST'
 				);
 			</where>
 		</delete>
@@ -117,10 +108,10 @@
 		<comment>DELETE Automated execution extender of executions to delete</comment>
 		<delete tableName="AUTOMATED_EXECUTION_EXTENDER">
 			<where>
-				MASTER_EXECUTION_ID in (select
-				entity_id from
-				ENTITIES_TO_DELETE
-				where entity_name = 'execution')
+				MASTER_EXECUTION_ID IN (
+				select	ENTITY_ID 
+				from ENTITIES_TO_DELETE
+				where ENTITY_NAME = 'EXECUTION')
 			</where>
 		</delete>
 	</changeSet>
@@ -128,10 +119,9 @@
 		<comment>DELETE automated suites that are not linked to any automated execution extender</comment>
 		<delete tableName="AUTOMATED_SUITE">
 			<where>
-				SUITE_ID not in (select
-				AUTOMATED_EXECUTION_EXTENDER.SUITE_ID
-				from
-				AUTOMATED_EXECUTION_EXTENDER)
+				SUITE_ID NOT IN (
+				select AUTOMATED_EXECUTION_EXTENDER.SUITE_ID
+				from AUTOMATED_EXECUTION_EXTENDER)
 			</where>
 		</delete>
 
@@ -140,18 +130,18 @@
 		<comment>Delete execution steps of ghost executions</comment>
 		<delete tableName="EXECUTION_EXECUTION_STEPS">
 			<where>
-				EXECUTION_STEP_ID in (select entity_id from
-				ENTITIES_TO_DELETE
-				where
-				entity_name = 'execution_step')
+				EXECUTION_STEP_ID IN (
+				select ENTITY_ID 
+				from ENTITIES_TO_DELETE
+				where ENTITY_NAME = 'EXECUTION_STEP')
 			</where>
 		</delete>
 		<delete tableName="EXECUTION_STEP">
 			<where>
-				EXECUTION_STEP_ID in (select entity_id from
-				ENTITIES_TO_DELETE
-				where
-				entity_name = 'execution_step')
+				EXECUTION_STEP_ID IN (
+				select ENTITY_ID 
+				from ENTITIES_TO_DELETE
+				where ENTITY_NAME = 'EXECUTION_STEP')
 			</where>
 		</delete>
 	</changeSet>
@@ -159,9 +149,10 @@
 		<comment>Delete ghost executions</comment>
 		<delete tableName="EXECUTION">
 			<where>
-				EXECUTION_ID in (select entity_id from ENTITIES_TO_DELETE
-				where
-				entity_name = 'execution')
+				EXECUTION_ID IN (
+				select ENTITY_ID 
+				from ENTITIES_TO_DELETE
+				where ENTITY_NAME = 'EXECUTION')
 			</where>
 		</delete>
 	</changeSet>
@@ -169,10 +160,10 @@
 		<comment>DELETE issue lists of executions and execution-steps to delete</comment>
 		<delete tableName="ISSUE_LIST">
 			<where>
-				ISSUE_LIST_ID in (select entity_id from
-				ENTITIES_TO_DELETE
-				where
-				entity_name ='issue_list')
+				ISSUE_LIST_ID IN (
+				select ENTITY_ID 
+				from ENTITIES_TO_DELETE
+				where ENTITY_NAME ='ISSUE_LIST')
 			</where>
 		</delete>
 	</changeSet>
