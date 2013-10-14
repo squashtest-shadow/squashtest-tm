@@ -293,6 +293,40 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		cpg.iterations.size()==1
 		cpg.iterations[0].id==12l
 	}
+	
+	@DataSet("NodeDeletionHandlerTest.iterationPlusExecutions.xml")
+	def "should remove iteration test plan item and its executions"(){
+		given :
+		IterationTestPlanItem item = findEntity(IterationTestPlanItem.class, 111L)
+		when :
+
+		deletionHandler.deleteIterationTestPlanItem(item)
+
+
+		then :
+
+		allDeleted("AttachmentList", [1111l, 1112l])
+		allDeleted("IssueList", [1111l, 1112l])
+		allDeleted("Execution", [1111l, 1112l])
+		allDeleted("IterationTestPlanItem", [111l])
+
+		and :
+		!allDeleted("AttachmentList", [
+			11l,12l,
+			1211l,
+			1212l,
+			1221l,
+			1222l,
+			1121l,
+			1122l
+		])
+		!allDeleted("IssueList", [1211l, 1212l, 1221l, 1222l, 1121l, 1122l])
+		!allDeleted("Execution", [1211l, 1212l, 1221l, 1222l, 1121l, 1122l])
+		!allDeleted("IterationTestPlanItem", [121l, 122l, 112l])
+		!allDeleted("Iteration", [12l, 11l])
+
+		
+	}
 
 
 	@DataSet("NodeDeletionHandlerTest.campaignPlusTestplan.xml")

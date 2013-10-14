@@ -114,6 +114,9 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@Inject
 	private ProjectsPermissionFinder projectsPermissionFinder;
 	@Inject
+	private CampaignNodeDeletionHandler deletionHandler;
+
+	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
 	
 
@@ -318,7 +321,8 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	private void doRemoveTestPlanItemFromIteration(Iteration iteration, IterationTestPlanItem item) {
 		Long testCaseId = item.getReferencedTestCase().getId();
 		iteration.removeItemFromTestPlan(item);
-		iterationTestPlanDao.remove(item);
+	
+		deletionHandler.deleteIterationTestPlanItem(item);
 		advancedSearchService.reindexTestCase(testCaseId);
 	}
 

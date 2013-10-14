@@ -335,7 +335,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		
 		denormalizedFieldValueService.deleteAllDenormalizedFieldValues(execution);
 		
-		deletionDao.removeAttachmentList(execution.getAttachmentList());		
+		deletionDao.removeAttachmentList(execution.getAttachmentList());
 		deletionDao.removeEntity(execution);
 	}
 
@@ -396,11 +396,17 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	 * 
 	 * - remove the executions - remove itself.
 	 */
-	private void deleteIterationTestPlan(List<IterationTestPlanItem> testPlans) {
-		for (IterationTestPlanItem testPlan : testPlans) {
-			deleteExecutions(testPlan.getExecutions());
-			deletionDao.removeEntity(testPlan);
+	private void deleteIterationTestPlan(List<IterationTestPlanItem> testPlan) {
+		for (IterationTestPlanItem item : testPlan) {
+			deleteIterationTestPlanItem(item);
 		}
+	}
+	
+	
+	@Override
+	public void deleteIterationTestPlanItem(IterationTestPlanItem item){
+		deleteExecutions(item.getExecutions());
+		deletionDao.removeEntity(item);
 	}
 
 	/*
