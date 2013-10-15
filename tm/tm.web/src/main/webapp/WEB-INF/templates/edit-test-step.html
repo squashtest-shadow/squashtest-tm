@@ -135,7 +135,7 @@
             	 <input type="button" id="save-test-step-button" th:value="#{ label.save }" value="Save" th:if="(${testStepView.actionStep} or ${hasCUF}) and  ${writable}" ></input>
             	
 				</span>
-              <div id="test-step-info-panel" class="information-panel toggle-panel-main">
+              <div id="test-step-info-panel" class="information-panel toggle-panel-main" th:title="#{label.testStep.information}">
                 <div class="display-table" id="test-step-infos-table"  th:style="${testStepView.actionStep}? 'width:100%' : ''">
                  <div class="display-table-row" >
                     <label for="test-step-id" >Id</label>

@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "./TestStepInfoModel", "../verified-requirements/TestStepVerifiedRequirementsPanel",
-		"app/lnf/Forms", "jquery.squash", "jqueryui", "jquery.squash.togglepanel", "jquery.ckeditor", "jeditable",
+		"app/lnf/Forms", "jquery.squash", "jqueryui", "jquery.ckeditor", "jeditable",
 		"ckeditor", "jeditable.ckeditor", "jquery.squash.jeditable", "jquery.squash.squashbutton",
 		"datepicker/require.jquery.squash.datepicker-locales" ], function($, Backbone, TestStepInfoModel,
 		VerifiedRequirementsPanel, Forms) {
@@ -33,7 +33,6 @@ define([ "jquery", "backbone", "./TestStepInfoModel", "../verified-requirements/
 			if (squashtm.app.verifiedRequirementsBlocSettings) {
 				this.verifiedRequirementPanel = new VerifiedRequirementsPanel();
 			}
-			this.configureTogglePanels();
 			this.configureCKEs();
 			this.configureButtons();
 			this.configureCUFs();
@@ -93,13 +92,7 @@ define([ "jquery", "backbone", "./TestStepInfoModel", "../verified-requirements/
 
 		},
 
-		configureTogglePanels : function() {
-			var informationSettings = {
-				initiallyOpen : true,
-				title : editTCS.informationPanelLabel
-			};
-			this.$("#test-step-info-panel").togglePanel(informationSettings);
-		},
+		
 		configureCUFs : function() {
 			var dateSettings = {
 				dateFormat : editTCS.localizedDateFormat

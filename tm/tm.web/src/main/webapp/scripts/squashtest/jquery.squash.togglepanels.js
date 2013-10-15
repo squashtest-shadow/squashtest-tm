@@ -125,7 +125,7 @@
 				panelHead.addClass('tg-open ui-state-focus ui-corner-top');
 			}
 			else{
-				$maindiv.css('display:none');
+				$maindiv.addClass('not-displayed');
 				panelHead.addClass('ui-state-active ui-corner-all');
 			}
 			

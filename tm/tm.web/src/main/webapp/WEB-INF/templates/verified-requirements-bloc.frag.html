@@ -57,8 +57,6 @@
 			squashtm.app.verifiedRequirementsBlocSettings = {
 				linkable : /*[[ ${linkable} ]]*/ true, 
 				containerId : /*[[ ${containerId} ]]*/ "verified-requirements-bloc-frag",
-				oppened : ! /*[[ ${requirementVerifier.verifier.verifiedRequirementVersions.empty} ]]*/ false,
-				title : /*[[ #{label.verifiedRequirements.test-steps} ]]*/'Verified Requirements',
 				url : /*[[ @{/test-cases/__${requirementVerifier.verifier.id}__/verified-requirement-versions} ]]*/'http://localhost:8080/squash/test-cases/1/verified-requirements' ,
 				stepUrl : /*[[ @{/test-steps/__${requirementVerifier.verifyingStep.id}__/verified-requirement-versions} ]]*/'http://localhost:8080/squash/test-steps/1/verified-requirements' ,
 			};
@@ -96,7 +94,8 @@
 				type="button" th:value="#{label.removeRequirementsAssociation.test-steps}" value="Remove from step"
 				class="button" />
 			</span>
-			<div class="toggle-panel-main" id="verified-requirements-panel">
+			<div class="toggle-panel-main" id="verified-requirements-panel" th:title="#{label.verifiedRequirements.test-steps}" 
+					th:attr="data-init-open=${! requirementVerifier.verifier.verifiedRequirementVersions.empty}">
 				<table id="verified-requirements-table" th:attr="data-def='pre-filled, datakeys-id=entity-id, ajaxsource='+@{/test-steps/__${requirementVerifier.verifyingStep.id}__/verified-requirement-versions/}">
 					<thead>
 						<tr>
