@@ -76,23 +76,40 @@
 		<comment>Store the ids of the issue lists to delete</comment>
 		<sql>
 			insert into ENTITIES_TO_DELETE (ENTITY_NAME, ENTITY_ID)
-			select 'ISSUE_LIST', IL.ISSUE_LIST_ID
-			from ISSUE_LIST IL , EXECUTION E,  ENTITIES_TO_DELETE ETD
-			where IL.ISSUE_LIST_ID = E.ISSUE_LIST_ID
-			and E.EXECUTION_ID = ETD.ENTITY_ID
+			select 'ISSUE_LIST', E.ISSUE_LIST_ID
+			from EXECUTION E,  ENTITIES_TO_DELETE ETD
+			where E.EXECUTION_ID = ETD.ENTITY_ID
 			and ETD.ENTITY_NAME = 'EXECUTION'			
 		</sql>
 		<sql>
 			insert into ENTITIES_TO_DELETE (ENTITY_NAME, ENTITY_ID)
-			select 'ISSUE_LIST', IL.ISSUE_LIST_ID
-			from ISSUE_LIST IL ,  EXECUTION_STEP ES,  ENTITIES_TO_DELETE ETD2
-			where IL.ISSUE_LIST_ID =	ES.ISSUE_LIST_ID
-			and ES.EXECUTION_STEP_ID = ETD2.ENTITY_ID
+			select 'ISSUE_LIST', ES.ISSUE_LIST_ID
+			from   EXECUTION_STEP ES,  ENTITIES_TO_DELETE ETD2
+			where ES.EXECUTION_STEP_ID = ETD2.ENTITY_ID
 			and	ETD2.ENTITY_NAME = 'EXECUTION_STEP'
 			;
 		</sql>
 	</changeSet>
+	
 	<changeSet id="tm-1.7.1.issue-2873-05" author="mpagnon">
+		<comment>Store the ids of the issue lists to delete</comment>
+		<sql>
+			insert into ENTITIES_TO_DELETE (ENTITY_NAME, ENTITY_ID)
+			select 'ATTACHMENT_LIST', E.ATTACHMENT_LIST_ID
+			from EXECUTION E,  ENTITIES_TO_DELETE ETD
+			where  E.EXECUTION_ID = ETD.ENTITY_ID
+			and ETD.ENTITY_NAME = 'EXECUTION'			
+		</sql>
+		<sql>
+			insert into ENTITIES_TO_DELETE (ENTITY_NAME, ENTITY_ID)
+			select 'ATTACHMENT_LIST', ES.ATTACHMENT_LIST_ID
+			from  EXECUTION_STEP ES,  ENTITIES_TO_DELETE ETD2
+			where  ES.EXECUTION_STEP_ID = ETD2.ENTITY_ID
+			and	ETD2.ENTITY_NAME = 'EXECUTION_STEP'
+			;
+		</sql>
+	</changeSet>
+	<changeSet id="tm-1.7.1.issue-2873-06" author="mpagnon">
 		<comment>DELETE Issues of execution and execution steps to delete</comment>
 		<delete tableName="ISSUE">
 			<where>
@@ -104,7 +121,7 @@
 			</where>
 		</delete>
 	</changeSet>
-	<changeSet id="tm-1.7.1.issue-2873-06" author="mpagnon">
+	<changeSet id="tm-1.7.1.issue-2873-07" author="mpagnon">
 		<comment>DELETE Automated execution extender of executions to delete</comment>
 		<delete tableName="AUTOMATED_EXECUTION_EXTENDER">
 			<where>
@@ -115,7 +132,7 @@
 			</where>
 		</delete>
 	</changeSet>
-	<changeSet id="tm-1.7.1.issue-2873-07" author="mpagnon">
+	<changeSet id="tm-1.7.1.issue-2873-08" author="mpagnon">
 		<comment>DELETE automated suites that are not linked to any automated execution extender</comment>
 		<delete tableName="AUTOMATED_SUITE">
 			<where>
@@ -126,7 +143,7 @@
 		</delete>
 
 	</changeSet>
-	<changeSet id="tm-1.7.1.issue-2873-08" author="mpagnon">
+	<changeSet id="tm-1.7.1.issue-2873-09" author="mpagnon">
 		<comment>Delete execution steps of ghost executions</comment>
 		<delete tableName="EXECUTION_EXECUTION_STEPS">
 			<where>
@@ -145,7 +162,7 @@
 			</where>
 		</delete>
 	</changeSet>
-	<changeSet id="tm-1.7.1.issue-2873-09" author="mpagnon">
+	<changeSet id="tm-1.7.1.issue-2873-10" author="mpagnon">
 		<comment>Delete ghost executions</comment>
 		<delete tableName="EXECUTION">
 			<where>
@@ -156,7 +173,36 @@
 			</where>
 		</delete>
 	</changeSet>
-	<changeSet id="tm-1.7.1.issue-2873-10" author="mpagnon">
+	<changeSet id="tm-1.7.1.issue-2873-11" author="mpagnon">
+		<comment>DELETE Attachments of execution and execution steps to delete</comment>
+		<delete tableName="ATTACHMENT">
+			<where>
+				ATTACHMENT_LIST_ID IN (
+				select ENTITY_ID
+				from ENTITIES_TO_DELETE
+				where ENTITY_NAME = 'ATTACHMENT_LIST'
+				);
+			</where>
+		</delete>
+		<delete tableName="ATTACHMENT_CONTENT">
+			<where>
+				ATTACHMENT_CONTENT_ID NOT IN (
+				select CONTENT_ID
+				from ATTACHMENT
+				);
+			</where>
+		</delete>
+		<delete tableName="ATTACHMENT_LIST">
+			<where>
+				ATTACHMENT_LIST_ID IN (
+				select ENTITY_ID
+				from ENTITIES_TO_DELETE
+				where ENTITY_NAME = 'ATTACHMENT_LIST'
+				);
+			</where>
+		</delete>
+	</changeSet>
+	<changeSet id="tm-1.7.1.issue-2873-12" author="mpagnon">
 		<comment>DELETE issue lists of executions and execution-steps to delete</comment>
 		<delete tableName="ISSUE_LIST">
 			<where>
@@ -167,7 +213,7 @@
 			</where>
 		</delete>
 	</changeSet>
-	<changeSet id="tm-1.7.1.issue-2873-11" author="mpagnon">
+	<changeSet id="tm-1.7.1.issue-2873-13" author="mpagnon">
 		<comment>Drop table used to store the ids of the entities to delete</comment>
 		<dropTable tableName="ENTITIES_TO_DELETE" />
 	</changeSet>
