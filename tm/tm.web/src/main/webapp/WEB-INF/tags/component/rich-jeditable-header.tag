@@ -21,7 +21,7 @@
 
 --%>
 <%@ tag language="java" pageEncoding="utf-8"%>
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.jeditable.js"></script>
+<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.jeditable.authored.js"></script>
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.generateId.js"></script>
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.jeditable.ckeditor.js"></script>
 <script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.jeditable.ext.js"></script>

@@ -47,7 +47,7 @@
 	 * editable (edit-mode or display-mode).
 	 * 
 	 * It accepts one object for argument, with the regular options of a
-	 * jeditable. : - this : a dome element javascript object. Not part of the
+	 * jeditable. : - this : a dom element javascript object. Not part of the
 	 * settings. - url : the url where to post. - ckeditor : the config for the
 	 * nested ckeditor instance - placeholder : message displayed when the
 	 * content is empty - submit : text for the submit button - cancel : text
@@ -57,34 +57,14 @@
 
 	$.widget('ui.richEditable', {
 
-		_bindLinks : function() {
-			this.bindLinks.call(this.element);
-		},
-
-		bindLinks : function() {
-			var elts = $('a', this);
-
-			elts.unbind('click');
-			elts.click(function(event) {
-				if (this.onclick) {
-					this.onclick();
-				} else {
-					document.location.href = this.href;
-				}
-				event.stopPropagation();
-				return false;
-			});
-		},
-
 		options : {
 			type : 'ckeditor',
 			rows : 10,
 			cols : 80,
 			onblur : function() {
 			},
-			callback : function(result, settings) {
-				// 'this' in this context is the div itself
-				$.ui.richEditable.prototype.bindLinks.call(this);
+			onedit : function(settings, editable, evt){
+				return ! $(evt.target).is('a');
 			}
 		},
 
@@ -92,20 +72,6 @@
 			var self = this;
 			var element = this.element;
 			element.editable(this.options.url, this.options);
-			this._bindLinks();
-
-			// hook the reset so that we bind links there too.
-			// unfortunately we cannot simply define the reset method in
-			// jquery.jeditable.ckeditor.js because jeditable calls the
-			// callback in an place useless to us.
-
-			// todo : make the reset thing available for all input types.
-			var domElement = element.get(0);
-			var oldReset = domElement.reset;
-			domElement.reset = function() {
-				oldReset.call(this);
-				self._bindLinks();
-			};
 		}
 
 	});

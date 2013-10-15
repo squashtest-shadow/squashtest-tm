@@ -135,7 +135,7 @@
                 }
                 
                 /* abort if onedit hook returns false */
-                if (false === onedit.apply(this, [settings, self])) {
+                if (false === onedit.apply(this, [settings, self, e])) {
                    return;
                 }
                 

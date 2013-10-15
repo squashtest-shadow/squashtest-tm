@@ -6,7 +6,7 @@ var settings=$.extend({},$.fn.editable.defaults,{target:target},options);var plu
 settings.autowidth='auto'==settings.width;settings.autoheight='auto'==settings.height;return this.each(function(){var self=this;var savedwidth=$(self).width();var savedheight=$(self).height();$(this).data('event.editable',settings.event);if(!$.trim($(this).html())){$(this).html(settings.placeholder);}
 $(this).bind(settings.event,function(e){if(true===$(this).data('disabled.editable')){return;}
 if(self.editing){return;}
-if(false===onedit.apply(this,[settings,self])){return;}
+if(false===onedit.apply(this,[settings,self, e])){return;}
 e.preventDefault();e.stopPropagation();if(settings.tooltip){$(self).removeAttr('title');}
 if(0==$(self).width()){settings.width=savedwidth;settings.height=savedheight;}else{if(settings.width!='none'){settings.width=settings.autowidth?$(self).width():settings.width;}
 if(settings.height!='none'){settings.height=settings.autoheight?$(self).height():settings.height;}}

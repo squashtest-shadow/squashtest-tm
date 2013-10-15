@@ -65,7 +65,7 @@ requirejs.config({
 				"backbone" : "lib/backbone/backbone-1.0.0-min",
 				"ckeditor" : "ckeditor/ckeditor",
 				"jquery.ckeditor" : "ckeditor/adapters/jquery",
-				"jeditable" : "jquery/jquery.jeditable.mini",
+				"jeditable" : "jquery/jquery.jeditable.mini.authored",
 				"jeditable.ckeditor" : "jquery/jquery.jeditable.ckeditor",
 				"jeditable.datepicker" : "jquery/jquery.jeditable.datepicker",
 				"jeditable.simpleJEditable" : "squashtest/classes/SimpleJEditable",
