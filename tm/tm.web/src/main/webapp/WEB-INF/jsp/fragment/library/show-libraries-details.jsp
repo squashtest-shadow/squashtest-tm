@@ -48,7 +48,7 @@
 
 <div class="fragment-body">
 
-<comp:toggle-panel id="library-description-panel" titleKey="label.Description" isContextual="true" open="true">
+<comp:toggle-panel id="library-description-panel" titleKey="label.Description" open="true">
 
 	<jsp:attribute name="body">
 		<div id="library-description" >${ library.project.description }</div>
@@ -56,7 +56,13 @@
 </comp:toggle-panel> 
 <at:attachment-bloc editable="${ editable }" workspaceName="${ workspaceName }" attachListId="${ library.attachmentList.id}" attachmentSet="${attachments}"/>
 
-<comp:decorate-buttons />
+<script type="text/javascript">
+	$(function(){
+		require(["squash.basicwidgets"], function(basic){
+			basic.init();
+		})
+	});
+</script>
 </div>
 
 

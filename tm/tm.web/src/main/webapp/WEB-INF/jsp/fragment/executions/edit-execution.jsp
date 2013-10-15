@@ -164,7 +164,7 @@
 	<%----------------------------------- Information -----------------------------------------------%>
 	
 	<comp:toggle-panel id="execution-information-panel"
-		titleKey="generics.information.title" isContextual="true"
+		titleKey="generics.information.title" 
 		open="true">
 		<jsp:attribute name="body">
 		<div id="execution-information-table" class="display-table">
@@ -200,7 +200,7 @@
 	<%----------------------------------- Prerequisites -----------------------------------------------%>
 
 	<comp:toggle-panel id="execution-prerequisite-panel"
-		titleKey="generics.prerequisite.title" isContextual="true"
+		titleKey="generics.prerequisite.title" 
 		open="${ not empty execution.prerequisite }">
 		<jsp:attribute name="body">
 		<div id="execution-prerequisite-table" class="display-table">
@@ -217,7 +217,7 @@
 
 	<c:if test="${execution.automated}">
 	<comp:toggle-panel id="auto-execution-result-summary-panel"
-		titleKey="label.resultSummary" isContextual="true"
+		titleKey="label.resultSummary" 
 		open="${ not empty execution.resultSummary }">
 		<jsp:attribute name="body">
 			<span>${execution.resultSummary}</span>
@@ -231,7 +231,7 @@
 
 	<comp:toggle-panel id="execution-steps-panel"
 		titleKey="executions.execution-steps-summary.panel.title"
-		isContextual="true" open="true">
+		open="true">
 		<jsp:attribute name="body">
 		<table id="execution-execution-steps-table">
 			<thead>
@@ -286,7 +286,7 @@
 		<comp:rich-jeditable targetUrl="${ executionUrl }" componentId="execution-description" />
 	</c:if>
 	<f:message var="executionComment" key="execution.description.panel.title" />
-	<comp:toggle-panel id="execution-description-panel" title="${executionComment}" isContextual="true" open="false">
+	<comp:toggle-panel id="execution-description-panel" title="${executionComment}"  open="false">
 		<jsp:attribute name="body">
 		<div id="execution-description">${ execution.description }</div>
 	</jsp:attribute>

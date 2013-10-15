@@ -227,8 +227,8 @@
 		</c:if>
 
 		<comp:toggle-panel id="iteration-description-panel"
-			classes="information-panel" titleKey="label.Description"
-			isContextual="true" open="true">
+			titleKey="label.Description"
+			open="true">
 			<jsp:attribute name="body">
 			<div id="iteration-description">${ iteration.description }</div>
 			</jsp:attribute>
@@ -239,11 +239,13 @@
 		<%----------------------------------- Custom Fields -----------------------------------------------%>
 		
 		<comp:toggle-panel id="iteration-custom-fields" 
-			titleKey="generics.customfieldvalues.title" isContextual="true"
+			titleKey="generics.customfieldvalues.title"
 			open="${hasCUF}">
 			<jsp:attribute name="body">
 				<div id="iteration-custom-fields-content" class="display-table">
+<c:if test="${hasCUF}">
 				<div class="waiting-loading full-size-hack minimal-height"></div>
+</c:if>
 				</div>
 			</jsp:attribute>
 		</comp:toggle-panel>
@@ -254,7 +256,7 @@
 		<%--------------------------- Planning section ------------------------------------%>
 
 		<comp:toggle-panel id="datepicker-panel"
-			titleKey="label.Planning" isContextual="true"
+			titleKey="label.Planning"
 			open="true">
 			<jsp:attribute name="body">
 			<div class="datepicker-panel">
@@ -360,8 +362,6 @@
 	<%------------------------------------------/automated suite overview --------------------------------------------%>
 	
 
-<comp:decorate-buttons />
-
  <f:message key="tabs.label.issues" var="tabIssueLabel"/>
 <script type="text/javascript">
 
@@ -370,9 +370,12 @@
 	
 	require(["domReady", "require"], function(domReady, require){
 		domReady(function(){
-			require(["jquery", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", "workspace.contextual-content", "iteration-management"], 
-					function($, contentHandlers, Frag, bugtracker, contextualContent, itermanagement){
+			require(["jquery", "squash.basicwidgets", "contextual-content-handlers", 
+			         "jquery.squash.fragmenttabs", "bugtracker", "workspace.contextual-content", 
+			         "iteration-management"], 
+					function($, basicwidg, contentHandlers, Frag, bugtracker, contextualContent, itermanagement, basic){
 
+				basicwidg.init();
 				
 				// *********** event handler ***************
 				
@@ -399,8 +402,6 @@
 					label : "${tabIssueLabel}"
 				});
 				</c:if>
-				
-				
 				
 				<c:if test="${hasCUF}">
 				<%-- loading the custom field panel --%>

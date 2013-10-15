@@ -24,39 +24,37 @@
 <%@ attribute name="title" description="Title of the panel. Alternative : set the titleKey attribute"%>
 <%@ attribute name="titleKey" description="Key of the panel title. Alternative : set the title attribute" %>
 <%@ attribute name="open" description="true if the panel should be opened when rendered" %>
-<%@ attribute name="isContextual" %>
 <%@ attribute name="panelButtons" fragment="true" description="add buttons to the togglepanel" %>
 <%@ attribute name="body" fragment="true" description="body of the panel" %>
 <%@ attribute name="id" required="true" description="the id of the panel" %>
-<%@ attribute name="classes" description="classes the panel" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 
+<c:set var="headerclass" value="${not empty open and not open ? 'ui-state-active ui-corner-all' : 'tg-open ui-state-focus ui-corner-top' }"/>
+<c:set var="styleContentdisplay" value="${not empty open and not open ? 'display:none;' : ''}"/>
+
 <c:if test="${ not empty titleKey }">
 	<f:message var="title" key="${ titleKey }" />
 </c:if>
-<%-- dirty trick is dirty --%>
-<c:if test="${not empty classes}"><c:set var="classesToDiv" value="${classes}" /></c:if>
 
-<div class="toggle-panel">
+<div class="toggle-panel ui-accordion ui-widget ui-helper-reset ui-accordion-icons">
+	<h3 class="ui-accordion-header ui-helper-reset ui-state-default ${headerclass}">
+		<div style="overflow:hidden">
+			<div class="snap-left">
+				<a class="tg-link">${title}</a>
+			</div>
+			<div class="snap-right">
+				<jsp:invoke fragment="panelButtons"/>
+			</div>
+		</div>		
+	</h3>
+	<%--  not used anymore
 	<span class="not-displayed toggle-panel-buttons"><jsp:invoke fragment="panelButtons"/></span>
-	<div id="${id}" class="${classesToDiv} toggle-panel-main">
+	 --%>
+	<div id="${id}" class="toggle-panel-main ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" 
+		 data-init-open="${open}" data-prerendered="true" style="${styleContentdisplay}">
 		<jsp:invoke fragment="body"/>
 	</div>
 </div>
-
-<script type="text/javascript">
-	$(function(){
-		
-		var settings = {
-				<c:if test="${not empty open}">initiallyOpen : ${open},</c:if>
-				title : "${title}",
-				<c:if test="${not empty isContextual}">cssClasses : "is-contextual",</c:if>
-		}
-		
-		$("#${id}").togglePanel(settings);
-		
-	});
-</script>
 

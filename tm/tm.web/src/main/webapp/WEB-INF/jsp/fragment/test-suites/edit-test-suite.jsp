@@ -265,7 +265,7 @@
 		</c:if>
 
 		<comp:toggle-panel id="test-suite-description-panel"
-			titleKey="label.Description" isContextual="true"
+			titleKey="label.Description" 
 			open="${ not empty testSuite.description }">
 			<jsp:attribute name="body">
 				<div id="test-suite-description">${ testSuite.description }</div>
@@ -276,7 +276,7 @@
 		<%----------------------------------- Custom Fields -----------------------------------------------%>
 		
 		<comp:toggle-panel id="test-suite-custom-fields"
-			titleKey="generics.customfieldvalues.title" isContextual="true"
+			titleKey="generics.customfieldvalues.title" 
 			open="${hasCUF}">
 			<jsp:attribute name="body">
 				<div id="test-suite-custom-fields-content" class="display-table">
@@ -347,9 +347,10 @@
 
 	require(["domReady", "require"], function(domReady, require){
 		domReady(function(){	
-			require(["jquery", "workspace.contextual-content", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", "test-suite-management"], 
-					function($, ctxt, contentHandlers, Frag, bugtracker, tsmanagement){
+			require(["jquery", "squash.basicwidgets", "workspace.contextual-content", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", "test-suite-management"], 
+					function($, basicwidg, ctxt, contentHandlers, Frag, bugtracker, tsmanagement){
 				
+				basicwidg.init();
 				
 				var nameHandler = contentHandlers.getSimpleNameHandler();
 				
@@ -391,4 +392,3 @@
 		});
 	});
 </script>
-<comp:decorate-buttons />

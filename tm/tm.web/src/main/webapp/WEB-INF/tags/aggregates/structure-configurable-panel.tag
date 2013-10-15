@@ -54,8 +54,7 @@
 <c:otherwise>
 	<!-- default is toggle panel -->
 	<comp:toggle-panel id="${id}" title="${title}" 
-					   titleKey="${titleKey}" open="${open}" 
-					   isContextual="${isContextual}" classes="${classes}">
+					   titleKey="${titleKey}" open="${open}" >
 		<jsp:attribute name="panelButtons">
 			<jsp:invoke fragment="panelButtons"/>
 		</jsp:attribute>

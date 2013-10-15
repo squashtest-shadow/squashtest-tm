@@ -32,20 +32,11 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 
 		initialize : function() {
 			VRBS = squashtm.app.verifiedRequirementsBlocSettings;
-			this.makeTogglePanel();
 			this.table = new TestStepVerifiedRequirementsTable();
 			this.configureButtons.call(this);
 		},
 
 		events : {},
-
-		makeTogglePanel : function() {
-			var infoSettings = {
-				initiallyOpen : VRBS.oppened,
-				title : VRBS.title
-			};
-			this.$("#verified-requirements-panel").togglePanel(infoSettings);
-		},
 
 		configureButtons : function() {
 			var self = this;

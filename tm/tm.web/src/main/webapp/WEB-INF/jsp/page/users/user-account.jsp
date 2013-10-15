@@ -46,12 +46,14 @@
 	</jsp:attribute>
 	
 	<jsp:attribute name="informationContent">	
-		<comp:decorate-buttons />
 	
 	<script type="text/javascript">
 			$(function(){
-				$("#back").button().click(function(){
-					history.back();
+				require(["squash.basicwidgets"], function(basic){
+					basic.init();
+					$("#back").click(function(){
+						history.back();
+					});
 				});
 			});
 			function changePasswordCallback(){
@@ -109,7 +111,7 @@
         </c:if>
 			</jsp:attribute>
 		</comp:toggle-panel>	
-		<comp:toggle-panel id="project-permission-panel" titleKey="user.project-rights.title.label" isContextual="true" open="true">
+		<comp:toggle-panel id="project-permission-panel" titleKey="user.project-rights.title.label" open="true">
 			<jsp:attribute name="body">
 				<table id="project-permission-table">
 				<thead>

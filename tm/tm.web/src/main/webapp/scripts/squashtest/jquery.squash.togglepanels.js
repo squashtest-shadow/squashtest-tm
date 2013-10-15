@@ -20,43 +20,82 @@
  */
 (function($) {
 	$.widget("ui.togglePanel",{
+		
 		options : {
 			initiallyOpen : true,
-			title : undefined,
-			cssClasses : ""
+			title : undefined
 		},
-
+		
 		_create : function() {
-			this.originalTitle = this.element.attr('title');
-			if (typeof this.originalTitle !== "string") {
-				this.originalTitle = "";
+			var widget = this;
+			
+			this.element.each(function(){
+				var $elt = $(this);
+				
+				if ($elt.hasClass('toggle-panel-initialized')){
+					return true; 	//AKA 'continue'
+				}
+				
+				var prerendered = $elt.data('prerendered');
+				if (prerendered !== true){
+					widget._createDom($elt);
+				}
+				
+				var panelHead = $elt.prev(),
+					wrapper = $elt.parent('div.toggle-panel');
+				
+				// buttons
+				panelHead.find('.snap-right')
+							.children()
+							.filter('input')
+							.squashButton()
+							.click(function(event) {
+								event.stopPropagation();
+							});
+							
+
+				// click event
+				panelHead.click(function(event) {
+					event.stopImmediatePropagation();
+					widget.toggleContent();
+				});
+				
+				$elt.addClass('toggle-panel-initialized');
+
+			});
+			
+		},
+		
+		_createDom : function($maindiv){
+			var title = $maindiv.attr('title') || this.options.title;
+			
+			var initiallyOpen = $maindiv.data('init-open');
+			if (initiallyOpen===undefined){
+				initiallyOpen = this.options.initiallyOpen;
 			}
 
-			this.options.title = this.options.title || this.originalTitle;
-
-			var widget = this;
-
 			// build the necessary components
-			var panelHead = $(
-					'<h3/>',
-					{
-						'class' : "ui-accordion-header ui-helper-reset ui-state-default ui-state-focus ui-corner-top"
-					});
+			var panelHead = $('<h3/>',{
+				'class' : "ui-accordion-header ui-helper-reset ui-state-default"
+			});
+
 			var titlepanel = $('<div/>', {
 				'style' : "overflow:hidden;"
 			});
-			var snapleft = $('<div class="snap-left"><a class="tg-link" ></a></div>');
+			var snapleft = $('<div class="snap-left"><a class="tg-link">'+ title +'</a></div>');
 			var snapright = $('<div/>', {
 				'class' : "snap-right"
 			});
 
-			// find the wrapper or create it if not exists. It's
-			// best if the wrapper exists, because inserting the
-			// content into it won't be necessary. This will
-			// prevent
-			// the double javascript execution bug, see #1291
+			/* 
+			 * find the wrapper or create it if not exists. It's
+			 * best if the wrapper exists, because inserting the
+			 * content into it won't be necessary. This will
+			 * prevent
+			 * the double javascript execution bug, see #1291
+			 */
 			var wCreate;
-			var wrapper = this.element.parent('div.toggle-panel');
+			var wrapper = $maindiv.parent('div.toggle-panel');
 			if (wrapper.length > 0) {
 				wrapper.addClass("ui-accordion ui-widget ui-helper-reset ui-accordion-icons");
 				wCreate = false;
@@ -68,62 +107,33 @@
 			}
 
 			// finish the creation of the structure
-			this.element
-					.addClass("ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active");
+			$maindiv.addClass("ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active");
 
 			titlepanel.append(snapleft).append(snapright);
 			panelHead.append(titlepanel);
+			
+			var buttons = wrapper.find('.toggle-panel-buttons').children();
+			panelHead.find('.snap-right').append(buttons);	
 
 			if (wCreate) {
-				this.element.wrap(wrapper);
+				$maindiv.wrap(wrapper);
 			}
 
-			widget.panelHead = panelHead;
-			panelHead.insertBefore(this.element);
-
-			// the buttons now
-			/* 
-			 * 05/08/14 : I've changed this part so that we can stuff more things in the button panel, provided they have 
-			 * a display style 'inline' (like spans).
-			 * 
-			 * -- bsiri
-			 */
-			var snappedright = $('.toggle-panel-buttons', wrapper).children();
-
-			panelHead.find('.snap-right').append(snappedright);		
+			panelHead.insertBefore($maindiv);		
 			
-			snappedright.filter('input')
-						.squashButton()
-						.click(function(event) {
-							event.stopPropagation();
-						});
-						
-
-			// click event
-			panelHead.click($.proxy(function(event) {
-				event.stopImmediatePropagation();
-				widget.toggleContent();
-			}, this));
-
-		},
-
-		_init : function() {
-			var settings = this.options;
-			var title = settings.title || '&#160;';
-
-			var panelHead = this.panelHead;
-			if (settings.initiallyOpen) {
-				panelHead.addClass('tg-open');
-			} else {
-				this.element.hide();
-				panelHead.toggleClass('ui-state-focus ui-state-active ui-corner-top ui-corner-all');
+			if (initiallyOpen){
+				panelHead.addClass('tg-open ui-state-focus ui-corner-top');
 			}
-
-			panelHead.find(".snap-left a").text(title);
-			panelHead.parent().addClass(settings.cssClasses);
-
+			else{
+				$maindiv.css('display:none');
+				panelHead.addClass('ui-state-active ui-corner-all');
+			}
+			
+	
 		},
 
+
+		
 		toggleContent : function() {
 
 			// skip if already being toggled
@@ -131,7 +141,7 @@
 				return;
 			}
 
-			var panelHead = this.panelHead;
+			var panelHead = this.element.prev();
 
 			this.element.toggle('blind', 500);
 			panelHead.toggleClass("ui-state-focus ui-state-active ui-corner-top ui-corner-all tg-open");
@@ -142,14 +152,14 @@
 		},
 
 		openContent : function() {
-			var panelHead = this.panelHead;
+			var panelHead = this.element.prev();
 			if (!panelHead.hasClass('tg-open')) {
 				this.toggleContent();
 			}
 		},
 
 		closeContent : function() {
-			var panelHead = this.panelHead;
+			var panelHead = this.element.prev();
 			if (panelHead.hasClass('tg-open')) {
 				this.toggleContent();
 			}

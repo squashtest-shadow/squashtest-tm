@@ -60,7 +60,7 @@
 	<dashboard:test-case-dashboard-panel url="${statsUrl}"/>
 	
 	<%-- description panel --%>
-	<comp:toggle-panel id="library-description-panel" titleKey="label.Description" isContextual="true" open="true">
+	<comp:toggle-panel id="library-description-panel" titleKey="label.Description"  open="true">
 		<jsp:attribute name="body">
 			<div id="library-description" >${ library.project.description }</div>
 		</jsp:attribute>
@@ -68,13 +68,12 @@
 	
 	<at:attachment-bloc editable="${ editable }" workspaceName="${ workspaceName }" attachListId="${ library.attachmentList.id}" attachmentSet="${attachments}"/>
 
-	<comp:decorate-buttons />
-
 </div>
 
 <script type="text/javascript">
 	$(function(){
-		require(["dashboard"], function(dashboard){
+		require(["squash.basicwidgets","dashboard"], function(basicwidg, dashboard){
+			basicwidg.init();
 			dashboard.init({
 				master : '#dashboard-master',
 				cacheKey : 'tclib${library.id}'

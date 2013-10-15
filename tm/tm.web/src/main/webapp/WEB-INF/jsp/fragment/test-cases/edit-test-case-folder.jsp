@@ -51,33 +51,7 @@
 	</authz:authorized>
 </c:if>
 
-<script type="text/javascript">
 
-	var identity = { obj_id : ${folder.id}, obj_restype : 'test-cases'  };
-	
-	require(["domReady", "require"], function(domReady, require){
-		domReady(function(){
-			require(["jquery", "contextual-content-handlers", "workspace.contextual-content", "dashboard"], 
-					function($, contentHandlers, contextualContent, dashboard){
-				
-				var nameHandler = contentHandlers.getSimpleNameHandler();
-				
-				nameHandler.identity = identity;
-				nameHandler.nameDisplay = "#folder-name";
-				
-				contextualContent.addListener(nameHandler);				
-				
-				//init the dashboard
-				dashboard.init({
-					master : '#dashboard-master',
-					cacheKey : 'tcfold${folder.id}'
-				});
-				
-			});
-		});
-	});
-
-</script>
 
 <c:if test="${ editable }">
 <comp:rich-jeditable
@@ -100,7 +74,7 @@
 	
 	<%-- description panel --%>
 	
-	<comp:toggle-panel id="folder-description-panel" titleKey="label.Description" isContextual="true" open="true">
+	<comp:toggle-panel id="folder-description-panel" titleKey="label.Description"  open="true">
 		<jsp:attribute name="body">
 			<div id="folder-description">${ folder.description }</div>
 		</jsp:attribute>
@@ -110,5 +84,37 @@
 	<%-- attachments panel --%>
 	
 	<at:attachment-bloc editable="${ editable }" workspaceName="${ workspaceName }" attachListId="${ folder.attachmentList.id }" attachmentSet="${attachments}"/>
+	
+	<script type="text/javascript">
+
+	var identity = { obj_id : ${folder.id}, obj_restype : 'test-cases'  };
+	
+	require(["domReady", "require"], function(domReady, require){
+		domReady(function(){
+			require(["jquery", "squash.basicwidgets","contextual-content-handlers", "workspace.contextual-content", "dashboard"], 
+					function($, basic, contentHandlers, contextualContent, dashboard){
+				
+				basic.init();
+				
+				var nameHandler = contentHandlers.getSimpleNameHandler();
+				
+				nameHandler.identity = identity;
+				nameHandler.nameDisplay = "#folder-name";
+				
+				contextualContent.addListener(nameHandler);				
+				
+				//init the dashboard
+				dashboard.init({
+					master : '#dashboard-master',
+					cacheKey : 'tcfold${folder.id}'
+				});
+				
+			});
+		});
+	});
+
+</script>
+	
 </div>
+
 

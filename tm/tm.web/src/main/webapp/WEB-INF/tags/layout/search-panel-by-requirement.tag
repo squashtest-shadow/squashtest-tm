@@ -43,26 +43,32 @@
 	
 	//add the event on research button and sort options change
 	$(function() {
-		setupReq();
-		//Set the search input to last entered value
-		byReqGetOldSearch();
 		
-		$("#byReqSearch-button").button().bind(
-				"click",
-				function() {
+		require(["squash.basicwidgets"], function(widg){
+			widg.init();	
+			
+			setupReq();
+			//Set the search input to last entered value
+			byReqGetOldSearch();
+			
+			$("#byReqSearch-button").button().bind(
+					"click",
+					function() {
 
-					if (!byReqVerifyParams()) {
-						return;
-					}
-					byReqResearch($("#byReqSearchName").val(), $('#byReqProject-view').is(':checked'));
-					//save the research to pre-fill the field for the next research
-					$.cookie('searchByReq${workspace}', $("#byReqSearchName").val());
-				});
+						if (!byReqVerifyParams()) {
+							return;
+						}
+						byReqResearch($("#byReqSearchName").val(), $('#byReqProject-view').is(':checked'));
+						//save the research to pre-fill the field for the next research
+						$.cookie('searchByReq${workspace}', $("#byReqSearchName").val());
+					});
 
-		$("#byReqSortParam").change(function(){
-			var option = $("#byReqSortParam option:selected");
-			byReqSortBy(option.attr('value'));
+			$("#byReqSortParam").change(function(){
+				var option = $("#byReqSortParam option:selected");
+				byReqSortBy(option.attr('value'));
+			});
 		});
+	
 	});
 	
 	//Sort only by requirement dataTable
@@ -231,5 +237,3 @@
 <div id="byReqSearch">
 	<div id="byReqSearch-result-pane"></div>
 </div>
-
-<comp:decorate-buttons />

@@ -55,6 +55,8 @@
 			// else, dataText is either true or crap
 
 			this._super();
+			
+			this.element.addClass('.squash-button-initialized');
 		},
 
 		_setOption : function(key, value) {
@@ -71,6 +73,7 @@
 	$.extend($.squash, {
 		decorateButtons : function() {
 			$("a.button, input:submit.button, input:button.button, button.button")
+					.not('.squash-button-initialized')
 					.squashButton();
 		}
 	});
@@ -82,6 +85,7 @@
 	$.fn.extend({
 		decorateButtons : function() {
 			$(this).find("a.button, input:submit.button, input:button.button, button.button")
+					.not('squash-button-initialized')
 					.squashButton();
 		}
 	});

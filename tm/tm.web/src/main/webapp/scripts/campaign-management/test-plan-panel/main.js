@@ -58,7 +58,7 @@ define(['./table', './popups' ], function(table, popups) {
 	
 	function _bindButtons(conf){
 		if (conf.permissions.reorderable){
-			$("#reorder-test-plan-button").on('click', function(){
+			$("#reorder-test-plan-button").squashButton().on('click', function(){
 				$("#camp-test-plan-reorder-dialog").confirmDialog('open');
 			});
 		}			
@@ -67,11 +67,11 @@ define(['./table', './popups' ], function(table, popups) {
 	return {	
 		init : function(origconf){			
 			var conf = enhanceConfiguration(origconf);
-			
+
+			_bindButtons(conf);
 			table.init(conf);
 			popups.init(conf);
 			
-			_bindButtons(conf);
 		}
 	}
 	

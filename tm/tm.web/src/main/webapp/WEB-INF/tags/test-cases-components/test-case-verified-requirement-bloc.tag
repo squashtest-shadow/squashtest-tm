@@ -22,10 +22,9 @@
 --%>
 <%@ tag body-content="empty" description="inserts the html table of verified resquirements" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates"%>
 <%@ taglib prefix="tc" tagdir="/WEB-INF/tags/test-cases-components"%>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 
 
 <%@ attribute name="containerId" required="true" description="if of dom container that will hold the table events" %>
@@ -34,7 +33,7 @@
 
 
 
-<s:url var="root" value="/" />
+<c:url var="root" value="/" />
 <c:url var="verifiedRequirementsTableUrl"	value="/test-cases/${testCase.id}/verified-requirement-versions?includeCallSteps=true" />
 <c:url var="verifiedRequirementsUrl" 		value="/test-cases/${testCase.id }/verified-requirement-versions"/>
 
@@ -50,24 +49,25 @@
 			squashtm.app.verifiedRequirementsBlocSettings = {
 				containerId : "${containerId}",
 				linkable : "${linkable}",
-				oppened : true,
-				title : "<f:message key='label.verifiedRequirements.test-cases' />",
-				url :"${verifiedRequirementsUrl}",
+				url :"${verifiedRequirementsUrl}"
 			};
 </script>
+
+<f:message var="panelTitle" key="label.verifiedRequirements.test-cases"/>
+
 <div id="verified-requirements-bloc-frag">
-	<div class="toggle-panel">	
-		<span class="not-displayed toggle-panel-buttons"> 
+	<comp:toggle-panel id="verified-requirements-panel" title="${panelTitle}" >
+		<jsp:attribute name="panelButtons">
 			<c:if test="${ linkable }">					
 					<f:message var="associateLabel"	key="label.associateRequirements" />
 					<input id="add-verified-requirements-button" type="button" value="${associateLabel}" class="button" />
 					
 					<f:message var="removeLabel" key="label.removeRequirementsAssociation" />
 					<input id="remove-verified-requirements-button" type="button" value="${ removeLabel }" class="button" />
-			</c:if>
-		</span>
-		<div class="toggle-panel-main" id="verified-requirements-panel">
+			</c:if>		
+		</jsp:attribute>
+		<jsp:attribute name="body">
 			<tc:verified-requirements-table includeIndirectlyVerified="${ true }" linkable="${ linkable }" verifiedRequirementsTableUrl="${ verifiedRequirementsTableUrl }" verifiedRequirementsUrl="${verifiedRequirementsUrl }" containerId="contextual-content" />
-		</div>
-	</div>
+		</jsp:attribute>
+	</comp:toggle-panel>
 </div>

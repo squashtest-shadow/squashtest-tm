@@ -67,7 +67,7 @@
 <c:set var="inputSize" value="50" />
 
 <comp:toggle-panel id="test-automation-management-panel"
-	titleKey="project.testauto.panel.title" isContextual="true" open="true">
+	titleKey="project.testauto.panel.title" open="true">
 
 	<jsp:attribute name="body">
 		<div class="ta-main-div">

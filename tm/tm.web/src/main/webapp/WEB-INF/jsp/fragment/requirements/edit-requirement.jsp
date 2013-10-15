@@ -262,7 +262,7 @@ that page won't be editable if
 		<comp:simple-jeditable targetUrl="${ requirementUrl }" componentId="requirement-reference" submitCallback="updateReferenceInTitle" maxLength="50" />
 	</c:if>
 <%--------------------------- General Informations section ------------------------------------%>
-	<comp:toggle-panel id="requirement-information-panel" classes="information-panel" titleKey="requirement.panel.general-informations.title" isContextual="true" open="true" >
+	<comp:toggle-panel id="requirement-information-panel" titleKey="requirement.panel.general-informations.title"  open="true" >
 		<jsp:attribute name="body">
 			<div id="edit-requirement-table" class="display-table">
 				<div class="display-table-row">
@@ -327,7 +327,7 @@ that page won't be editable if
 		</jsp:attribute>
 	</comp:toggle-panel>
 	<%--------------------------- Description section------------------------------------%>
-	<comp:toggle-panel id="requirement-description-panel" classes="description-panel" titleKey="label.Description" isContextual="true" open="true" >
+	<comp:toggle-panel id="requirement-description-panel" titleKey="label.Description" open="true" >
 		<jsp:attribute name="body">	
 					<div id="requirement-description">${ requirement.description }</div>
 		</jsp:attribute>
@@ -470,9 +470,6 @@ that page won't be editable if
 	</c:if>
 <%-- -----------------------------------/POPUPS ----------------------------------------------%>
 <%-- -----------------------------------SCRIPT ----------------------------------------------%>
-<comp:decorate-buttons />
-
-
 
 <script type="text/javascript">
 
@@ -480,7 +477,11 @@ that page won't be editable if
 	
 	require(["domReady", "require"], function(domReady, require){
 		domReady(function(){
-			require(["jquery", "contextual-content-handlers", "workspace.contextual-content"], function($, contentHandlers, contextualContent){
+			require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "workspace.contextual-content"], 
+					function($, basicwidg,  contentHandlers, contextualContent){
+				
+				basicwidg.init();
+				
 				var nameHandler = contentHandlers.getNameAndReferenceHandler();
 				
 				nameHandler.identity = identity;

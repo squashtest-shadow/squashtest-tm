@@ -70,7 +70,6 @@
 
 <comp:toggle-panel id="test-case-description-panel"
 				   titleKey="label.Description" 
-				   isContextual="true" 
 				   open="true">
 				   
 	<jsp:attribute name="body">

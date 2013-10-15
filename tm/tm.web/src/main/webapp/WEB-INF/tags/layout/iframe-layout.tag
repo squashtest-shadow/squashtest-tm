@@ -67,11 +67,13 @@
 	<jsp:invoke fragment="footer" />
 </body>
 	<comp:rich-jeditable-header />
-	<comp:decorate-buttons />
 <layout:_init_workspace_variables />
 <jsp:invoke fragment="foot" />
   <script type="text/javascript">
     	$(function() {
+    		require(["squash.basicwidgets"], function(basic){
+    			basic.init();
+    		});
       		$(".unstyled").fadeIn("fast", function() { $(this).removeClass("unstyled"); });
     	});
  

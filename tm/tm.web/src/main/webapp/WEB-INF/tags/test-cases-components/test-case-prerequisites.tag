@@ -36,7 +36,7 @@
 </c:if>
 
 <comp:toggle-panel id="test-case-prerequisite-panel" titleKey="generics.prerequisite.title" 
-				   isContextual="true" open="${ not empty testCase.prerequisite }">
+				   open="${ not empty testCase.prerequisite }">
 	<jsp:attribute name="body">
 		<div id="test-case-prerequisite-table" class="display-table">
 			<div class="display-table-row">

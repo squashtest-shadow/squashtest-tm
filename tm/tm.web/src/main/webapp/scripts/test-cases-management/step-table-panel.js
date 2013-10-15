@@ -309,7 +309,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 			}, {
 				tooltip : language.requirements,
 				tdSelector : "td.requirements-button",
-				'class' : 'icon-entity',
+				'cssclass' : 'icon-entity',
 				uiIcon : function(row, data) {
 					return (data["has-requirements"]) ? "icon-requirement" : "icon-requirement-off";
 				},

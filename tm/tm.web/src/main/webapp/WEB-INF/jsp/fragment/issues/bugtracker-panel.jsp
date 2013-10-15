@@ -39,9 +39,6 @@
 	That jsp generates the Bug section of the GUI. It's made of two components : the Issue panel, that displays the bugs
 	currently associated to the corresponding entity, and the bug report form, the dialog that will submit new ones.
 
-	required in the surrounding context of that jsp : 
-		- <comp:decorate-buttons />
-
 
 	parameters : 
 		- entity : the instance of the entity we need to display current bugs and possible add new ones.
@@ -368,20 +365,21 @@ check that in the next <script></script> tags
 	failureCallback="loginFail" bugTrackerId="${bugTracker.id}"/>
 
 
-<%-- init code, including copy pasta de decorate-button.tag, that will handle those two buttons only --%>
 <script type="text/javascript">
 	$(function() {
+		require(["squash.basicwidgets"], function(basicwidg){
+			basicwidg.init();
+			<c:if test="${executable}">
+			$("#issue-report-dialog-openbutton").squashButton().click(function() {
+				$(this).removeClass("ui-state-focus ui-state-hover");
+				checkAndReportIssue( {reportUrl:"${entityUrl}/new-issue", callback:issueReportSuccess} );
+			});
+			</c:if>
 
-		<c:if test="${executable}">
-		$("#issue-report-dialog-openbutton").squashButton().click(function() {
-			$(this).removeClass("ui-state-focus ui-state-hover");
-			checkAndReportIssue( {reportUrl:"${entityUrl}/new-issue", callback:issueReportSuccess} );
-		});
-		</c:if>
-
-		$("#issue-login-button").button().click(function() {
-			$(this).removeClass("ui-state-focus ui-state-hover");
-			bugTrackerLogin();
+			$("#issue-login-button").click(function() {
+				$(this).removeClass("ui-state-focus ui-state-hover");
+				bugTrackerLogin();
+			});
 		});
 	});
 </script>

@@ -23,6 +23,8 @@
 <%@ tag language="java" pageEncoding="utf-8" body-content="empty" description="structure of a dashboard for test cases. No javascript."%>
 
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
+
 <%@ attribute name="url" required="true" description="url where to get the data" %>
 <%@ attribute name="cacheKey" required="false" description="if set, will use the cache using that key" %>
 
@@ -32,16 +34,15 @@
 	<f:message var="dashboardTitle" key="title.Dashboard"/>
 	<f:message var="refreshLabel" key="label.Refresh" />
 	
-	<div class="toggle-panel">
+	
+	<comp:toggle-panel id="" title="${dashboardTitle}">
 		
-		<span class="not-displayed toggle-panel-buttons">
-			
+		<jsp:attribute name="panelButtons">
 			<span class="dashboard-timestamp not-displayed"><f:message key="dashboard.meta.timestamp.label"/></span> 
 			<input type="button" class="dashboard-refresh-button button" role="button" value="${refreshLabel}"/>
-			
-		</span>
+		</jsp:attribute>
 		
-		<div class="toggle-panel-main" title="${dashboardTitle}">
+		<jsp:attribute name="body">
 		
 			<div class="dashboard-figures not-displayed">
 				
@@ -177,7 +178,8 @@
 				
 			</div>
 			
-		</div>
-	</div>
+		</jsp:attribute>
+	</comp:toggle-panel>
+
 	
 </div>

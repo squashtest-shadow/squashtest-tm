@@ -44,13 +44,37 @@
 	</authz:authorized>
 </c:if>
 
+
+<div class="ui-widget-header ui-corner-all ui-state-default fragment-header">
+	<h2>
+		<span><f:message key="folder.title" />&nbsp;:&nbsp;</span><span id="folder-name"><c:out value="${ folder.name }" escapeXml="true"/></span>
+	</h2>
+</div>
+<c:if test="${ editable }">
+<comp:rich-jeditable
+	targetUrl="${ folderUrl }" componentId="folder-description" />
+</c:if>
+<div class="fragment-body">
+	<comp:toggle-panel id="folder-description-panel" titleKey="label.Description" open="true">
+		<jsp:attribute name="body">
+			<div id="folder-description">${ folder.description }</div>
+		</jsp:attribute>
+	</comp:toggle-panel>
+	<at:attachment-bloc editable="${ editable }" workspaceName="${ workspaceName }" attachListId="${ folder.attachmentList.id }" attachmentSet="${attachments}"/>
+</div>
+
+
 <script type="text/javascript">
 
 	var identity = { obj_id : ${folder.id}, obj_restype : '${su:camelCaseToHyphened(folder.class.simpleName)}s'  };
 	
 	require(["domReady", "require"], function(domReady, require){
 		domReady(function(){
-			require(["jquery", "contextual-content-handlers", "workspace.contextual-content"], function($, contentHandlers, contextualContent){
+			require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "workspace.contextual-content"], 
+					function($, basic, contentHandlers, contextualContent){
+				
+				basic.init();
+				
 				var nameHandler = contentHandlers.getSimpleNameHandler();
 				
 				nameHandler.identity = identity;
@@ -63,23 +87,4 @@
 	});
 
 </script>
-
-
-<div class="ui-widget-header ui-corner-all ui-state-default fragment-header">
-	<h2>
-		<span><f:message key="folder.title" />&nbsp;:&nbsp;</span><span id="folder-name"><c:out value="${ folder.name }" escapeXml="true"/></span>
-	</h2>
-</div>
-<c:if test="${ editable }">
-<comp:rich-jeditable
-	targetUrl="${ folderUrl }" componentId="folder-description" />
-</c:if>
-<div class="fragment-body">
-	<comp:toggle-panel id="folder-description-panel" titleKey="label.Description" isContextual="true" open="true">
-		<jsp:attribute name="body">
-			<div id="folder-description">${ folder.description }</div>
-		</jsp:attribute>
-	</comp:toggle-panel>
-	<at:attachment-bloc editable="${ editable }" workspaceName="${ workspaceName }" attachListId="${ folder.attachmentList.id }" attachmentSet="${attachments}"/>
-</div>
 

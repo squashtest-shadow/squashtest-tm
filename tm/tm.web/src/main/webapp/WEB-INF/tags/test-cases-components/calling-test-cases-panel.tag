@@ -43,7 +43,6 @@
 
 <comp:toggle-panel id="calling-test-case-panel"
 				   titleKey="test-case.calling-test-cases.panel.title"
-				   isContextual="true" 
 				   open="true">
 
 

@@ -100,16 +100,17 @@
 		<jsp:invoke fragment="footer" />	
 	</body>
 	<comp:rich-jeditable-header />
-	<comp:decorate-buttons />
 	<layout:_init_workspace_variables />
 	<jsp:invoke fragment="foot" />
     <script type="text/javascript">
     	$(function() {
-    		$(".unstyled").fadeIn("fast", function() { $(this).removeClass("unstyled"); });
-
-    		$.ajaxSetup({
-    			scriptCharset : "utf-8"
-    			});
+    		require(["squash.basicwidgets"], function(basicwidg){
+    			basicwidg.init();
+        		$(".unstyled").fadeIn("fast", function() { $(this).removeClass("unstyled"); });    		
+        		$.ajaxSetup({
+        			scriptCharset : "utf-8"
+        		});
+    		});
     	});
     </script>
 </html>

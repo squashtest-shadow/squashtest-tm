@@ -128,7 +128,7 @@
 		<comp:simple-jeditable targetUrl="${ requirementUrl }" componentId="requirement-reference" submitCallback="updateReferenceInTitle" maxLength="50" />
 	</c:if>
 
-	<comp:toggle-panel id="requirement-information-panel" titleKey="requirement.panel.general-informations.title" isContextual="true" open="true" >
+	<comp:toggle-panel id="requirement-information-panel" titleKey="requirement.panel.general-informations.title" open="true" >
 		<jsp:attribute name="body">
 			<div id="edit-requirement-table" class="display-table">
 				<div>
@@ -199,7 +199,7 @@
 		</jsp:attribute>
 	</comp:toggle-panel>
 
-	<comp:toggle-panel id="requirement-description-panel" classes="description-panel" titleKey="label.Description" isContextual="true" open="true" >
+	<comp:toggle-panel id="requirement-description-panel" titleKey="label.Description" open="true" >
 		<jsp:attribute name="body">	
 					<div id="requirement-description">${ requirementVersion.description }</div>
 		</jsp:attribute>
@@ -232,7 +232,7 @@
 	
 </div>
 <%-- --------------------------------------------------------------- /TABS ------------------------------------------------------------%>
-<comp:decorate-buttons />
+
 <!------------------------------------------ POPUPS ------------------------------------------------------>
 	<%------------------- confirm new status if set to obsolete ---------------------%>
 	<c:if test="${ editableStatus }">
@@ -371,6 +371,33 @@
 	
 	$(function(){
 		
+		var identity = { obj_id : ${requirementVersion.id}, obj_restype : "requirements"  };
+
+		require(["domReady", "require"], function(domReady, require){
+			domReady(function(){
+				require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "workspace.contextual-content"], 
+						function($, basic, contentHandlers, contextualContent){
+					
+					basic.init();
+					
+					var nameHandler = contentHandlers.getNameAndReferenceHandler();
+					
+					nameHandler.identity = identity;
+					nameHandler.nameDisplay = "#requirement-name";
+					nameHandler.nameHidden = "#requirement-raw-name";
+					nameHandler.referenceHidden = "#requirement-raw-reference";
+					
+					contextualContent.addListener(nameHandler);
+					$("#print-requirement-version-button").click(function(){
+						window.open("${requirementUrl}?format=printable", "_blank");
+					});
+					
+				});
+			});
+		});
+		
+		
+		
 		$( "#rename-requirement-dialog" ).bind( "dialogopen", function(event, ui) {
 			var name = $('#requirement-raw-name').text();
 			$("#rename-requirement-input").val(name);
@@ -394,26 +421,7 @@
 	
 	
 	
-	var identity = { obj_id : ${requirementVersion.id}, obj_restype : "requirements"  };
 
-	require(["domReady", "require"], function(domReady, require){
-		domReady(function(){
-			require(["jquery", "contextual-content-handlers", "workspace.contextual-content"], function($, contentHandlers, contextualContent){
-				var nameHandler = contentHandlers.getNameAndReferenceHandler();
-				
-				nameHandler.identity = identity;
-				nameHandler.nameDisplay = "#requirement-name";
-				nameHandler.nameHidden = "#requirement-raw-name";
-				nameHandler.referenceHidden = "#requirement-raw-reference";
-				
-				contextualContent.addListener(nameHandler);
-				$("#print-requirement-version-button").click(function(){
-					window.open("${requirementUrl}?format=printable", "_blank");
-				});
-				
-			});
-		});
-	});
 
 	<c:if test="${ writable }">
 	function renameRequirementSuccess(data){

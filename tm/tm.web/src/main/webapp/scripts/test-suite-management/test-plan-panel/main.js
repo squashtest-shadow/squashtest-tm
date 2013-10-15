@@ -87,7 +87,7 @@ define(['squash.translator', './table', './popups'], function(translator, table,
 		}
 		
 		if (conf.permissions.reorderable){
-			$("#reorder-test-plan-button").on('click', function(){
+			$("#reorder-test-plan-button").squashButton().on('click', function(){
 				$("#ts-test-plan-reorder-dialog").confirmDialog('open');
 			});
 		}
@@ -97,11 +97,11 @@ define(['squash.translator', './table', './popups'], function(translator, table,
 		init : function(origconf){
 			
 			var conf = enhanceConfiguration(origconf);
-			
+
+			_bindButtons(conf);
 			table.init(conf);
 			popups.init(conf);
 			
-			_bindButtons(conf);
 			
 		}
 	};	

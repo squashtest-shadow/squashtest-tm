@@ -86,8 +86,7 @@
 			<br />
 			<br />
 			<comp:toggle-panel id="bugtracker-info-panel"
-				titleKey="label.BugtrackerInformations" isContextual="true" open="true"
-				classes="information-panel">
+				titleKey="label.BugtrackerInformations" open="true">
 	
 				<jsp:attribute name="body">
 					<div id="bugtracker-description-table" class="display-table">
@@ -126,7 +125,6 @@
 			<%-----------------------------------END INFORMATION PANEL -----------------------------------------------%>
 			</div>
 		<%---------------------------------------------------------------END  BODY -----------------------------------------------%>
-	<comp:decorate-buttons />
 	</jsp:attribute>
 </layout:info-page-layout>
 <script type="text/javascript">
@@ -134,9 +132,11 @@
 //*****************Back button
 
 $(function() {
-			
-		$("#back").button().click(clickBugtackerBackButton);
-		$("#bugtracker-iframeFriendly-checkbx").change(clickBugTrackerIframeFriendly);
+		require(["squash.basicwidgets"], function(basic){
+			basic.init();
+			$("#back").button().click(clickBugtackerBackButton);
+			$("#bugtracker-iframeFriendly-checkbx").change(clickBugTrackerIframeFriendly);
+		});
 });
 
 function clickBugtackerBackButton(){
@@ -169,7 +169,7 @@ function renameBugtrackerSuccess(data) {
 <!-- --------------------------------RENAME POPUP--------------------------------------------------------- -->
 
 	<pop:popup id="rename-bugtracker-dialog"
-		titleKey="dialog.rename-bugtracker.title" isContextual="true"
+		titleKey="dialog.rename-bugtracker.title"
 		openedBy="rename-bugtracker-button">
 		<jsp:attribute name="buttons">
 		<f:message var="label" key="rename" />

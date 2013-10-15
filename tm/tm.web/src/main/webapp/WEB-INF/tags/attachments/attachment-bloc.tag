@@ -58,7 +58,7 @@
 		});
 	</script>
 
-<comp:toggle-panel id="attachment-panel" titleKey="label.Attachments" isContextual="true" open="${ entity.attachmentList.notEmpty }">
+<comp:toggle-panel id="attachment-panel" titleKey="label.Attachments" open="${ entity.attachmentList.notEmpty }">
 	<jsp:attribute name="panelButtons">
 		<c:if test="${ editable }">
 			<f:message var="uploadAttachment" key="label.UploadAttachment" />

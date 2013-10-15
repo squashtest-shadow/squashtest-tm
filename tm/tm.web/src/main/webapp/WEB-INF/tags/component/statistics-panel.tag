@@ -28,7 +28,7 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 
 <c:if test="${not empty statisticsEntity}">
-<comp:toggle-panel id="statistics-toggle-panel" titleKey="title.statistics" open="true" isContextual="true">
+<comp:toggle-panel id="statistics-toggle-panel" titleKey="title.statistics" open="true"  >
 	<jsp:attribute name="body">
 			<div id="statistics-panel">
 				<comp:statistics-panel-content statisticsEntity="${ statisticsEntity }"/>

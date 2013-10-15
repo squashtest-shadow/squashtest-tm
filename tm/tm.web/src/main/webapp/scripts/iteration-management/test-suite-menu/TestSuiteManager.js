@@ -36,7 +36,7 @@ define([ "jquery", "jqueryui" ], function($) {
 		this.onfocus = settings.onfocus;
 
 		this.input = $("input[type='text']", settings.panel);
-		this.button = $("input[type='button']", settings.panel);
+		this.button = $("input[type='button']", settings.panel).squashButton();
 
 		var self = this;
 

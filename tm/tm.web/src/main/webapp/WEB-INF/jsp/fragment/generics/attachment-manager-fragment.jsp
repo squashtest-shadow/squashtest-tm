@@ -56,7 +56,7 @@
 	<%---------------------------------Attachments table ------------------------------------------------%>
 	
 	
-	<comp:toggle-panel id="attachment-table-panel" titleKey="label.CurrentAttachments" isContextual="true" open="true" >
+	<comp:toggle-panel id="attachment-table-panel" titleKey="label.CurrentAttachments"  open="true" >
 		<jsp:attribute name="panelButtons">	
 			<f:message var="renameAttachment" key="label.Rename" />
 			<input type="button" value="${renameAttachment}" id="rename-attachment-button" class="button" />

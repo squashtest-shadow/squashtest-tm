@@ -302,41 +302,48 @@
 				}
 				
 				$(function(){
-					initNextButton();
-					initPreviousButton();
-					initStopButton();
-					<c:if test="${editable}">
-					initUntestableButton();
-					initBlockedButton();
-					initFailButton();
-					initSuccessButton();
-	
-					$("#execution-status-combo").val("${executionStep.executionStatus}");
-					statusComboSetIcon();
 					
-					$('#execution-status-combo').change(function(success) {
-						$.post('${ executeStatus }', {
-							executionStatus : $(this).val()
-						},
-						statusComboChange
-						);
+					require(["squash.basicwidgets"], function(basicwidg){
+						
+						basicwidg.init();
+						
+						initNextButton();
+						initPreviousButton();
+						initStopButton();
+						<c:if test="${editable}">
+						initUntestableButton();
+						initBlockedButton();
+						initFailButton();
+						initSuccessButton();
+		
+						$("#execution-status-combo").val("${executionStep.executionStatus}");
+						statusComboSetIcon();
+						
+						$('#execution-status-combo').change(function(success) {
+							$.post('${ executeStatus }', {
+								executionStatus : $(this).val()
+							},
+							statusComboChange
+							);
+						});
+						</c:if>
+						$("#execute-next-test-case").button({
+							'text': false,
+							'disabled': !hasNextTestCase || hasNextStep,
+							icons: {
+								primary : 'ui-icon-seek-next'
+							}
+						});
+						
+						if (${ not empty testPlanItemUrl }) $('#execute-next-test-case-panel').removeClass('not-displayed');		
+						
+						
+						$(window).unload( refreshParent );
+						
+						//issue #2069
+						noBackspaceNavigation();					
+					
 					});
-					</c:if>
-					$("#execute-next-test-case").button({
-						'text': false,
-						'disabled': !hasNextTestCase || hasNextStep,
-						icons: {
-							primary : 'ui-icon-seek-next'
-						}
-					});
-					
-					if (${ not empty testPlanItemUrl }) $('#execute-next-test-case-panel').removeClass('not-displayed');		
-					
-					
-					$(window).unload( refreshParent );
-					
-					//issue #2069
-					noBackspaceNavigation();
 					
 				});	
 			</script>
@@ -398,7 +405,7 @@
 
 			<div id="execute-body" class="execute-fragment-body">
 				<c:if test="${not empty denormalizedFieldValues }">
-				<span id="denormalized-fields"><comp:toggle-panel id="denormalized-fields-panel" titleKey="title.step.fields" isContextual="true"
+				<span id="denormalized-fields"><comp:toggle-panel id="denormalized-fields-panel" titleKey="title.step.fields" 
 					open="true">
 				<jsp:attribute name="body"> 
 						<div class="display-table">
@@ -408,7 +415,7 @@
 				</comp:toggle-panel></span>
 				</c:if>
 				<comp:toggle-panel id="execution-action-panel"
-					titleKey="execute.panel.action.title" isContextual="true"
+					titleKey="execute.panel.action.title" 
 					open="true">
 					<jsp:attribute name="body">
 						<div id="execution-action">${executionStep.action}</div>
@@ -416,7 +423,7 @@
 				</comp:toggle-panel>
 
 				<comp:toggle-panel id="execution-expected-result-panel"
-					titleKey="execute.panel.expected-result.title" isContextual="true"
+					titleKey="execute.panel.expected-result.title"
 					open="true">
 					<jsp:attribute name="body">
 						<div id="execution-expected-result">${executionStep.expectedResult}</div>
@@ -432,7 +439,7 @@
 								submitCallback="refreshExecStepInfos" />
 						</c:if>
 						<comp:toggle-panel id="execution-comment-panel"
-							titleKey="execute.panel.comment.title" isContextual="true"
+							titleKey="execute.panel.comment.title" 
 							open="true">
 							<jsp:attribute name="body">
 								<div id="execution-comment">${executionStep.comment}</div>
@@ -463,7 +470,6 @@
 	
 				
 			</div>
-			<comp:decorate-buttons />
 		</body>
 	</c:otherwise>
 </c:choose>

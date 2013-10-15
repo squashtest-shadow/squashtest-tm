@@ -88,59 +88,64 @@
 		
 		$(function(){
 			
+			require(["squash.basicwidg"], function(basicwidg){
+				basicwidg.init();
+				
+				$("#execute-next-button").button({
+					'text': false,
+					'disabled': ${ not hasNextStep },
+					icons: {
+						primary : 'ui-icon-triangle-1-e'
+					}
+				}).click(function(){
+					parent.squashtm.ieomanager.navigateNext();
+				});	
 			
-			$("#execute-next-button").button({
-				'text': false,
-				'disabled': ${ not hasNextStep },
-				icons: {
-					primary : 'ui-icon-triangle-1-e'
-				}
-			}).click(function(){
-				parent.squashtm.ieomanager.navigateNext();
-			});	
-		
-			$("#execute-previous-button").button({
-				'text' : false,
-				icons : {
-					primary : 'ui-icon-triangle-1-w'
-				}
-			}).click(function(){
-				parent.squashtm.ieomanager.navigatePrevious();
-			});
-		
-			$("#execute-stop-button").button({
-				'text': false, 
-				'icons' : {
-					'primary' : 'ui-icon-power'
-				} 
-			}).click(function(){
-				parent.squashtm.ieomanager.closeWindow();
-			});			
+				$("#execute-previous-button").button({
+					'text' : false,
+					icons : {
+						primary : 'ui-icon-triangle-1-w'
+					}
+				}).click(function(){
+					parent.squashtm.ieomanager.navigatePrevious();
+				});
+			
+				$("#execute-stop-button").button({
+					'text': false, 
+					'icons' : {
+						'primary' : 'ui-icon-power'
+					} 
+				}).click(function(){
+					parent.squashtm.ieomanager.closeWindow();
+				});			
 
-			
-			$("div.load-links-right-frame a").live('click', function(event){
-				event.preventDefault();
-				var url = $(this).attr('href'); 
-				parent.squashtm.ieomanager.fillRightPane(url);
-				return false;				
-			});
-			
-			$("#bugtracker-section-div a").live('click', function(){
-				$(this).attr('target', "${bugLinkTarget}");
-			});			
+				
+				$("div.load-links-right-frame a").live('click', function(event){
+					event.preventDefault();
+					var url = $(this).attr('href'); 
+					parent.squashtm.ieomanager.fillRightPane(url);
+					return false;				
+				});
+				
+				$("#bugtracker-section-div a").live('click', function(){
+					$(this).attr('target', "${bugLinkTarget}");
+				});			
 
-			$("#execute-next-test-case").button({
-				'text': false,
-				'disabled': ${ (empty hasNextTestCase) or (not hasNextTestCase) or hasNextStep },
-				icons: {
-					primary : 'ui-icon-seek-next'
-				}
-			}).click(function(){
-				parent.squashtm.ieomanager.navigateNextTestCase();
+				$("#execute-next-test-case").button({
+					'text': false,
+					'disabled': ${ (empty hasNextTestCase) or (not hasNextTestCase) or hasNextStep },
+					icons: {
+						primary : 'ui-icon-seek-next'
+					}
+				}).click(function(){
+					parent.squashtm.ieomanager.navigateNextTestCase();
+				});
+				
+				if (${ not empty testPlanItemUrl }) $('#execute-next-test-case-panel').removeClass('not-displayed');		
+				if (${ (not empty testPlanItemUrl) and hasPreviousTestCase and (not hasPreviousStep) }) $('#new-test-case-label').removeClass('not-displayed');				
+				
 			});
-			
-			if (${ not empty testPlanItemUrl }) $('#execute-next-test-case-panel').removeClass('not-displayed');		
-			if (${ (not empty testPlanItemUrl) and hasPreviousTestCase and (not hasPreviousStep) }) $('#new-test-case-label').removeClass('not-displayed');
+	
 		});
 	</script> 
 	<div id="execute-header" >
@@ -176,7 +181,7 @@
 		
 		<c:if test="${not empty denormalizedFieldValues }">
 		<span id="denormalized-fields">
-		<comp:toggle-panel id="denormalized-fields-panel" titleKey="title.step.fields" isContextual="true" open="true">
+		<comp:toggle-panel id="denormalized-fields-panel" titleKey="title.step.fields" open="true">
 		<jsp:attribute name="body"> 
 				<div class="display-table">
 					<comp:denormalized-field-values-list denormalizedFieldValues="${ denormalizedFieldValues }" />
@@ -186,13 +191,13 @@
 		</span>
 		</c:if>		
 		
-		<comp:toggle-panel id="execution-action-panel" titleKey="execute.panel.action.title" isContextual="true" open="true">
+		<comp:toggle-panel id="execution-action-panel" titleKey="execute.panel.action.title"  open="true">
 			<jsp:attribute name="body">
 				<div id="execution-action" class="load-links-right-frame">${executionStep.action}</div>
 			</jsp:attribute>
 		</comp:toggle-panel>
 		
-		<comp:toggle-panel id="execution-expected-result-panel" titleKey="execute.panel.expected-result.title" isContextual="true" open="true">
+		<comp:toggle-panel id="execution-expected-result-panel" titleKey="execute.panel.expected-result.title"  open="true">
 			<jsp:attribute name="body">
 				<div id="execution-expected-result" class="load-links-right-frame">${executionStep.expectedResult}</div>
 			</jsp:attribute>
@@ -205,7 +210,7 @@
 	
 				<comp:rich-jeditable targetUrl="${executeComment}" componentId="execution-comment" />
 	
-				<comp:toggle-panel id="execution-comment-panel" titleKey="execute.panel.comment.title" isContextual="true" open="true">
+				<comp:toggle-panel id="execution-comment-panel" titleKey="execute.panel.comment.title"  open="true">
 					<jsp:attribute name="body">
 						<div id="execution-comment"  class="load-links-right-frame">${executionStep.comment}</div>
 					</jsp:attribute>
@@ -235,7 +240,6 @@
 		
 		<%------------------------------ /bugs section -------------------------------%>
 	</div>
-	<comp:decorate-buttons />
 </body>
 </c:otherwise>
 </c:choose>

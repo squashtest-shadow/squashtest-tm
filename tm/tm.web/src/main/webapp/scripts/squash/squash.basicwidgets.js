@@ -18,21 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-require([ "common" ], function(common) {
-	require([ "jquery", "squash.basicwidgets", "test-step-editor/TestStepModificationView",
-			"app/ws/squashtm.workspace", "domReady", "attachment-bloc.frag" ],
-			function($, basic, TestStepModificationView, WS, domReady) {
-				var closeWindow = function() {
-					window.close();
-				};
-
-				domReady(function() {
-					basic.init();
-					WS.init("");
-					new TestStepModificationView();
-					$("#close").button().on("click", closeWindow);
-
-				});
-
-			});
+define(["jquery.squash.squashbutton", "jquery.squash.togglepanel"], function(){
+	
+	return {
+		init : function(){
+			$.squash.decorateButtons();
+			$(".toggle-panel-main").togglePanel();
+		}
+	}
 });

@@ -160,7 +160,7 @@
 		
 		<c:if test="${ writable }">
 		
-			<input type="button"
+			<input type="button" class="button"
 				value='<f:message key="label.Rename" />'
 				id="rename-campaign-button" />
 		</c:if>
@@ -211,8 +211,8 @@
 		</script>
 
 		<comp:toggle-panel id="campaign-description-panel"
-			classes="information-panel" titleKey="label.Description"
-			isContextual="true" open="true">
+			titleKey="label.Description"
+			open="true">
 			<jsp:attribute name="body">
 				<div id="campaign-description">${ campaign.description }</div>
 			</jsp:attribute>
@@ -222,10 +222,12 @@
 		<%----------------------------------- Custom Fields -----------------------------------------------%>
 		
 		<comp:toggle-panel id="campaign-custom-fields" 
-			titleKey="generics.customfieldvalues.title" isContextual="true"	open="${hasCUF}">
+			titleKey="generics.customfieldvalues.title"	open="${hasCUF}">
 			<jsp:attribute name="body">
 				<div id="campaign-custom-fields-content" class="display-table">
+<c:if test="${hasCUF}">
 				<div class="waiting-loading full-size-hack"></div>
+</c:if>
 				</div>
 			</jsp:attribute>
 		</comp:toggle-panel>
@@ -235,7 +237,7 @@
 
 		<%--------------------------- Planning section ------------------------------------%>
 		<comp:toggle-panel id="datepicker-panel"
-			titleKey="label.Planning" isContextual="true"
+			titleKey="label.Planning" 
 			open="true">
 			<jsp:attribute name="body">
 	<div class="datepicker-panel">
@@ -474,10 +476,11 @@
 	
 	require(["domReady", "require"], function(domReady, require){
 		domReady(function(){
-			require(["jquery", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", 'workspace.contextual-content', "jqueryui"], 
-					function($, contentHandlers, Frag, bugtracker, contextualContent){
+			require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", 'workspace.contextual-content', 
+			         "jqueryui"], 
+					function($, basicwidg, contentHandlers, Frag, bugtracker, contextualContent){
 				
-				$('#rename-campaign-button').button();
+				basicwidg.init();
 				
 				var nameHandler = contentHandlers.getSimpleNameHandler();
 				
@@ -512,4 +515,3 @@
 	
 </script>
 
-<comp:decorate-buttons />
