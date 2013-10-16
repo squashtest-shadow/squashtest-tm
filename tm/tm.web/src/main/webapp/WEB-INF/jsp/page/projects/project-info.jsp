@@ -151,8 +151,7 @@
 			<comp:rich-jeditable targetUrl="${ projectUrl }" componentId="project-description" />
 			
 			<comp:toggle-panel id="project-info-panel"
-				titleKey="project.info.panel.title" open="true"
-				classes="information-panel">
+				titleKey="project.info.panel.title" open="true">
 	
 				<jsp:attribute name="body">
 					<div id="project-description-table" class="display-table">
@@ -178,7 +177,7 @@
 		<c:if test="${!bugtrackersListEmpty}">
 			<comp:toggle-panel id="project-bugtracker-panel"
 					titleKey="label.Bugtracker" 
-					open="true" classes="bugtacker-panel">
+					open="true" >
 				<jsp:attribute name="body">
 			
 					<div id="project-bugtracker-table" class="display-table">
@@ -243,8 +242,7 @@
 				<%----------------------------------- USER PANEL -----------------------------------------------%>
 			<f:message key="title.AddPermission" var="addButtonTitle" />
 			<comp:toggle-panel id="project-users-panel"
-				titleKey="label.Permissions" open="true"
-				classes="users-panel">
+				titleKey="label.Permissions" open="true">
 	
 				<jsp:attribute name="panelButtons">
 					<input id="add-permission-button" title="${addButtonTitle}"	type="button" value="+" class="button" />
