@@ -24,7 +24,36 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
-
+	
+	<changeSet id="tm-1.8.0.issue-1846-01" author="mpagnon">
+		<preConditions 
+		onFailMessage="Your database still have logicaly deleted entities. 
+		Please run the following script :
+		 https://ci.squashtest.org/mantis/file_download.php?file_id=1559&amp;type=bug on your database prior to this upgrade." onError="HALT" >
+			<and>
+				<sqlCheck expectedResult="0">
+				select count(1) from CAMPAIGN_LIBRARY_NODE
+				where DELETED_ON is not null;
+				</sqlCheck>
+				<sqlCheck expectedResult="0">
+				select count(1) from TEST_CASE_LIBRARY_NODE
+				where DELETED_ON is not null;
+				</sqlCheck>
+				<sqlCheck expectedResult="0">
+				select count(1) from REQUIREMENT_LIBRARY_NODE
+				where DELETED_ON is not null;
+				</sqlCheck>
+				<sqlCheck expectedResult="0">
+				select count(1) from ITERATION 
+				where DELETED_ON is not null;
+				</sqlCheck>
+			</and>
+		</preConditions>
+		<comment>precondition prior to remove the DELETED_ON columns</comment>
+	</changeSet>
+	
+	
+	
 	<!-- DO NOT FORGET TO UPDATE VERSION IN CORE_CONFIG ! -->
 	<!-- OK BOSS ! -->
 	<changeSet id="tm-1.8.0" author="mpagnon">
@@ -44,7 +73,16 @@
 		where ACL_GROUP.QUALIFIED_NAME != 'squashtest.acl.group.tm.TestRunner'
 		and ACL_CLASS.CLASSNAME = 'org.squashtest.tm.domain.campaign.CampaignLibrary';
 	</sql>
-
 	</changeSet>
+	
+	<changeSet id="tm-1.8.0.issue-1846-02" author="mpagnon">
+		<comment>Remove the DELETED_ON columns</comment>
+		<dropColumn tableName="CAMPAIGN_LIBRARY_NODE" columnName="DELETED_ON"/>
+		<dropColumn tableName="TEST_CASE_LIBRARY_NODE" columnName="DELETED_ON"/>
+		<dropColumn tableName="REQUIREMENT_LIBRARY_NODE" columnName="DELETED_ON"/>
+		<dropColumn tableName="ITERATION" columnName="DELETED_ON"/>
+	</changeSet>
+	
+
 </databaseChangeLog>
  

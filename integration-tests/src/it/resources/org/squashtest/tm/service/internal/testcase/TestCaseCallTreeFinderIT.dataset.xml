@@ -50,7 +50,7 @@
 
 
  -->
-<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.6.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.8.0.dtd">
 <dataset>
 
 	<!--  dummy attachment list, the same for everyone that need one. -->
