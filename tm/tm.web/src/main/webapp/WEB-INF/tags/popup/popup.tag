@@ -96,6 +96,6 @@ $(function() {
 </script>
 
 
-<div id="${ id }" class="popup-dialog">
+<div id="${ id }" class="popup-dialog not-displayed">
 	<jsp:invoke fragment="body" />
 </div>

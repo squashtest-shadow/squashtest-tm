@@ -95,7 +95,7 @@
 <div class="fragment-tabs fragment-body">
 
 	<%--  ------------------ main tab panel --------------------------------- --%>
-	<ul>
+	<ul class="tab-menu">
 		<li>
 			<a href="#tabs-1"><f:message key="tabs.label.information" /></a>
 		</li>

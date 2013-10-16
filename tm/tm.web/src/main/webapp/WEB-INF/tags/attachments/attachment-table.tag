@@ -94,7 +94,7 @@
 <f:message var="confirmLabel" key="label.Confirm"/>
 <f:message var="cancelLabel" key="label.Cancel" />
 <f:message var="deleteDialogTitle" key="title.RemoveAttachment"/>
-<div id="delete-attachment-dialog" title="${deleteDialogTitle}">
+<div id="delete-attachment-dialog" title="${deleteDialogTitle}"class="not-displayed">
 	<span style="font-weight:bold"><f:message key="message.ConfirmRemoveAttachments" /></span>
 	<div class="popup-dialog-buttonpane">
 		<input type="button" value="${confirmLabel}"/>
@@ -103,7 +103,7 @@
 </div>
 
 <f:message var="renameDialogTitle" key="title.RenameAttachment" />
-<div id="rename-attachment-dialog" title="${renameDialogTitle}">
+<div id="rename-attachment-dialog" title="${renameDialogTitle}" class="not-displayed">
 	<label for="rename-attachment-input"><f:message key="dialog.rename.label" /></label>
 	<input type="text" id="rename-attachment-input" size="50"/>
 	<br />
