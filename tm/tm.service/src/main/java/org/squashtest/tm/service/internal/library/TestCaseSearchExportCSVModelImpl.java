@@ -97,6 +97,9 @@ public class TestCaseSearchExportCSVModelImpl implements TestCaseSearchExportCSV
 		headerCells.add(new CellImpl("TEST_CASE_REF"));
 		headerCells.add(new CellImpl("TEST_CASE_LABEL"));
 		headerCells.add(new CellImpl("WEIGHT"));
+		headerCells.add(new CellImpl("NATURE"));
+		headerCells.add(new CellImpl("TYPE"));
+		headerCells.add(new CellImpl("STATUS"));
 		headerCells.add(new CellImpl("#_REQUIREMENTS"));
 		headerCells.add(new CellImpl("#_TEST_STEPS"));	
 		headerCells.add(new CellImpl("#_ITERATIONS"));	
@@ -125,6 +128,9 @@ public class TestCaseSearchExportCSVModelImpl implements TestCaseSearchExportCSV
 			dataCells.add(new CellImpl(testCase.getReference()));
 			dataCells.add(new CellImpl(testCase.getName()));
 			dataCells.add(new CellImpl(testCase.getImportance().toString()));
+			dataCells.add(new CellImpl(testCase.getNature().toString()));
+			dataCells.add(new CellImpl(testCase.getType().toString()));
+			dataCells.add(new CellImpl(testCase.getStatus().toString()));
 			dataCells.add(new CellImpl(Integer.toString(testCase.getVerifiedRequirementVersions().size())));
 			dataCells.add(new CellImpl(Integer.toString(testCase.getSteps().size())));
 			dataCells.add(new CellImpl(Integer.toString(iterationService.findIterationContainingTestCase(testCase.getId()).size())));
