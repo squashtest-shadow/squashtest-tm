@@ -25,5 +25,5 @@ define(["jquery.squash.squashbutton", "jquery.squash.togglepanel"], function(){
 			$.squash.decorateButtons();
 			$(".toggle-panel-main").togglePanel();
 		}
-	}
+	};
 });

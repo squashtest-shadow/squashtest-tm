@@ -33,7 +33,7 @@
 				var $elt = $(this);
 				
 				if ($elt.hasClass('toggle-panel-initialized')){
-					return true; 	//AKA 'continue'
+					return true;	//AKA 'continue'
 				}
 				
 				var prerendered = $elt.data('prerendered');
