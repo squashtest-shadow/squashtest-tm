@@ -30,12 +30,10 @@ import javax.persistence.InheritanceType;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.library.GenericLibraryNode;
 import org.squashtest.tm.domain.library.Library;
-import org.squashtest.tm.domain.softdelete.SoftDeletable;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@SoftDeletable
 @Auditable
 public abstract class CampaignLibraryNode extends GenericLibraryNode {
 	@Id

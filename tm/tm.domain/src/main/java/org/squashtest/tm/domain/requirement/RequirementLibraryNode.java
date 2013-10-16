@@ -41,13 +41,11 @@ import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.resource.Resource;
-import org.squashtest.tm.domain.softdelete.SoftDeletable;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Auditable
-@SoftDeletable
 @Indexed
 public abstract class RequirementLibraryNode<RESOURCE extends Resource> implements LibraryNode {
 	@Id

@@ -50,7 +50,6 @@ class RequirementMappingIT extends HibernateMappingSpecification {
 		obj.createdBy != null
 		obj.createdOn !=null
 		obj.lastModifiedOn ==null
-		obj.deletedOn == null
 		cleanup :
 		deleteFixture requirement
 	}

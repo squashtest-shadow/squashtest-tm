@@ -65,7 +65,6 @@ import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.library.NodeVisitor;
 import org.squashtest.tm.domain.library.TreeNode;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.softdelete.SoftDeletable;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.UnknownEntityException;
@@ -73,7 +72,6 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Auditable
 @Entity
-@SoftDeletable
 public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, TreeNode, Copiable, Identified,
 		BoundEntity {
 

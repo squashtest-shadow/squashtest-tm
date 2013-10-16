@@ -91,7 +91,6 @@
         <value>org.squashtest.tm.domain.projectfilter.ProjectFilter</value>
 
         <value>org.squashtest.tm.domain.audit.AuditableSupport</value>
-        <value>org.squashtest.tm.domain.softdelete.SoftDeletableSupport</value>
 
         <value>org.squashtest.tm.domain.project.GenericProject</value>
         <value>org.squashtest.tm.domain.project.Project</value>

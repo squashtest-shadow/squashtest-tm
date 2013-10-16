@@ -38,7 +38,6 @@ import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.library.GenericLibraryNode;
 import org.squashtest.tm.domain.library.Library;
-import org.squashtest.tm.domain.softdelete.SoftDeletable;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 /**
@@ -50,7 +49,6 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Auditable
-@SoftDeletable
 public abstract class TestCaseLibraryNode extends GenericLibraryNode implements SelfClassAware {
 	@Id
 	@GeneratedValue

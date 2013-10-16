@@ -55,7 +55,6 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinTable(name = "CAMPAIGN_LIBRARY_CONTENT", joinColumns = @JoinColumn(name = "LIBRARY_ID"), inverseJoinColumns = @JoinColumn(name = "CONTENT_ID"))
-	@Where(clause = "DELETED_ON IS NULL")
 	private final Set<CampaignLibraryNode> rootContent = new HashSet<CampaignLibraryNode>();
 
 	@OneToOne(mappedBy = "campaignLibrary")

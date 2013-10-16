@@ -794,4 +794,3 @@ R core\org.squashtest.tm.web\src\main\webapp\scripts\ckeditor\themes\default\the
 ? integration-tests\toto.log
 ? integration-tests\tree.log
 ? tm\org.squashtest.tm.tm.service\derby.log
-? tm\org.squashtest.tm.tm.service\src\test\resources\softdelete-import.sql
