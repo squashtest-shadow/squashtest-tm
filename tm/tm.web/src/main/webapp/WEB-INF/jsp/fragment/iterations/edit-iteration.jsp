@@ -34,6 +34,8 @@
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%@ taglib prefix="it" tagdir="/WEB-INF/tags/iterations-components"%>
+<%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform" %>
+
 
 <f:message var="squashlocale" key="squashtm.locale" />
 
@@ -203,8 +205,9 @@
 	</c:if>
 </div>
 
+<csst:jq-tab>
 <div class="fragment-tabs fragment-body">
-	<ul>
+	<ul class="tab-menu">
 		<li><a href="#tabs-1"><f:message key="tabs.label.information" />
 		</a>
 		</li>
@@ -355,6 +358,7 @@
 
 
 </div>
+</csst:jq-tab>
 <%------------------------------------------automated suite overview --------------------------------------------%>
 <c:if test="${ executable && iteration.project.testAutomationEnabled }">		
 	<comp:automated-suite-overview-popup />

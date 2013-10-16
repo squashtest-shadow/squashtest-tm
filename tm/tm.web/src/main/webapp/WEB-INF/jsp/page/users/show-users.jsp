@@ -61,7 +61,7 @@
 	</jsp:attribute>
 	<jsp:attribute name="informationContent">	
 			<div class="fragment-tabs fragment-body">
-			<ul>
+			<ul class="tab-menu">
 				<li><a href="#users-table-pane"><f:message key="label.users"/></a></li>
 				<li><a href="#team-table-pane"><f:message key="label.teams"/></a></li>
 			</ul>
@@ -282,4 +282,3 @@
 	</script>	
 	</jsp:attribute>
 </layout:info-page-layout>
-<comp:fragment-tabs/>

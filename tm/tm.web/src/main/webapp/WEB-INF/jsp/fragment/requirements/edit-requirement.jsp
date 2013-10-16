@@ -26,13 +26,13 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 <%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates" %>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 <%@ taglib prefix="input" tagdir="/WEB-INF/tags/input" %>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
+<%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform" %>
 
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
 <s:url var="requirementUrl" value="/requirements/{reqId}">
@@ -244,9 +244,9 @@ that page won't be editable if
 </div>
 <%-- ----------------------------------- /AUDIT & TOOLBAR  ----------------------------------------------%>	
 <%-- ----------------------------------- TABS  ----------------------------------------------%>	
-<comp:fragment-tabs />
+<csst:jq-tab>
 <div class="fragment-tabs fragment-body">
-	<ul>
+	<ul class="tab-menu">
 		<li><a href="#tabs-1"><f:message key="tabs.label.information" /></a></li>
 		<li><a href="#tabs-2"><f:message key="label.Attachments" />
 		<c:if test="${ requirement.attachmentList.notEmpty }"><span class="hasAttach">!</span></c:if>
@@ -370,6 +370,7 @@ that page won't be editable if
 <%-- ----------------------------------- /ATTACHMENT TAB  ----------------------------------------------%>	
 <%-- -------------------------------------------------------- /TABS  ----------------------------------------------%>	
 </div>
+</csst:jq-tab>
 <%-- ----------------------------------------------------------- /CONTENT ----------------------------------------------%>
 	
 <%-- -----------------------------------POPUPS ----------------------------------------------%>
@@ -477,8 +478,8 @@ that page won't be editable if
 	
 	require(["domReady", "require"], function(domReady, require){
 		domReady(function(){
-			require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "workspace.contextual-content"], 
-					function($, basicwidg,  contentHandlers, contextualContent){
+			require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "workspace.contextual-content", "jquery.squash.fragmenttabs"], 
+					function($, basicwidg,  contentHandlers, contextualContent, Frag){
 				
 				basicwidg.init();
 				
@@ -491,11 +492,19 @@ that page won't be editable if
 				
 				contextualContent.addListener(nameHandler);
 
+				//****** tabs configuration *******
+				
+				var fragConf = {
+					beforeLoad : Frag.confHelper.fnCacheRequests	
+				};
+				Frag.init(fragConf);
+
+				// ***** other events from the contextual content ********
+				
 				$("#print-requirement-version-button").click(function(){
 					window.open("${currentVersionUrl}?format=printable", "_blank");
 				});
 				
-				// ***** other events from the contextual content ********
 				contextualContent.addListener({
 					update : function(evt){
 						if (evt.evt_name === "tc-req-links-updated"){

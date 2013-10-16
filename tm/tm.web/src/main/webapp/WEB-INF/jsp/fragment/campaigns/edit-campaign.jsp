@@ -32,6 +32,7 @@
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
+<%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform" %>
 
 <f:message var="squashlocale" key="squashtm.locale" />
 
@@ -174,9 +175,9 @@
 </div>
 
 
-
+<csst:jq-tab>
 <div class="fragment-tabs fragment-body">
-	<ul>
+	<ul class="tab-menu">
 		<li><a href="#tabs-1"><f:message key="tabs.label.information" />
 		</a>
 		</li>
@@ -408,7 +409,7 @@
 	
 
 </div>
-
+</csst:jq-tab>
 
 
 <%--------------------------- Assign User popup -------------------------------------%>

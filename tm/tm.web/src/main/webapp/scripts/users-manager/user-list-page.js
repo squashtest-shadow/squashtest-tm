@@ -32,7 +32,8 @@
  * for cancel } }
  */
 
-define([ "jquery", "squash.translator", "squashtable", "jquery.squash.confirmdialog" ], function($, translator) {
+define([ "jquery", "squash.translator", "jquery.squash.fragmenttabs", "squashtable", "jquery.squash.confirmdialog" ], 
+		function($, translator, Frag) {
 
 	// ---------------- add user dialog ----------------------------
 	
@@ -314,10 +315,16 @@ define([ "jquery", "squash.translator", "squashtable", "jquery.squash.confirmdia
 
 	}
 	
-
+	function initTabs(){
+		var fragConf = {
+			beforeLoad : Frag.confHelper.fnCacheRequests	
+		};
+		Frag.init(fragConf);
+	}
 
 
 	function init(settings) {
+		initTabs();
 		initButtons(settings);
 		initTable(settings);
 		initDialog(settings);

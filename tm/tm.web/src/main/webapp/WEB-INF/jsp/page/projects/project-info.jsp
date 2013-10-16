@@ -32,6 +32,8 @@
 <%@ taglib prefix="input" tagdir="/WEB-INF/tags/input"%>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
+<%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform" %>
+
 
 <%@ taglib prefix="sec"
 	uri="http://www.springframework.org/security/tags"%>
@@ -137,9 +139,9 @@
 			<%-------------------------------------------------------------END INFO + Toolbar ---------------%>
 			
 			<%------------------------------------------------ BODY -----------------------------------------------%>
-		
+			<csst:jq-tab>
 			<div class="fragment-tabs fragment-body">
-			<ul>
+			<ul class="tab-menu">
 				<li><a href="#main-informations"><f:message key="tabs.label.mainpanel"/></a></li>
 				<li><a href="${customFieldManagerURL}"><f:message key="tabs.label.cufbinding"/></a></li>
 				<li><a href="${wizardsManagerURL}"><f:message key="tabs.label.wizards"/></a></li>
@@ -291,7 +293,7 @@
 			</div> <%-- /div#main-informations --%>		
 				
 			</div>	<%-- /div#project-administration-content --%>
-
+			</csst:jq-tab>
 		<%---------------------------------------------------------------END  BODY -----------------------------------------------%>
 		
 		<%----------------------------------- add User Popup-----------------------------------------------%>

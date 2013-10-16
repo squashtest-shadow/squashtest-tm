@@ -40,6 +40,7 @@
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 <%@ taglib prefix="input" tagdir="/WEB-INF/tags/input" %>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
+<%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform" %>
 
 <s:url var="requirementUrl" value="/requirement-versions/${ requirementVersion.id }" />
 <s:url var="pageUrl" value="/requirement-versions/" />
@@ -107,13 +108,9 @@
 </div>
 <%-- ----------------------------------- /toolbar ----------------------------------------------%>
 <%-- -------------------------------------------------------- TABS-----------------------------------------------------------%>
-<script>
-	$(function() { 
-		$('.fragment-tabs').tabs();
- 	}); 
-</script>
+<csst:jq-tab>
 <div class="fragment-tabs fragment-body">
-	<ul>
+	<ul class="tab-menu">
 		<li><a href="#tabs-1"><f:message key="tabs.label.information" /></a></li>
 		<li><a href="#tabs-2"><f:message key="label.Attachments" />
 		<c:if test="${ requirementVersion.attachmentList.notEmpty }"><span class="hasAttach">!</span></c:if>
@@ -231,6 +228,7 @@
 <%-- --------------------------------------------- /tab2 Attachments ----------------------------------------------%>
 	
 </div>
+</csst:jq-tab>
 <%-- --------------------------------------------------------------- /TABS ------------------------------------------------------------%>
 
 <!------------------------------------------ POPUPS ------------------------------------------------------>
