@@ -328,6 +328,14 @@
 								  linkable="${linkable}"   editable="${writable}"  executable="${executable}" reorderable="${linkable}"/>
 	
 	<%-- ------------------ /test plan ----------------------------- --%>
+
+
+	<%------------------------------ Attachments bloc ------------------------------------------- --%>
+	
+	<at:attachment-tab tabId="tabs-3" entity="${ iteration }"	editable="${ attachable }"  tableModel="${attachmentsModel}"/>
+
+
+
 		
 	<%-- ----------------------------------- Test Suite Management -------------------------------------------------- --%>
 	<c:if test="${ writable }">
@@ -348,12 +356,6 @@
 		</div>
 	</c:if>
 	<%-- ----------------------------------- /Test Suite Management -------------------------------------------------- --%>
-
-
-	<%------------------------------ Attachments bloc ------------------------------------------- --%>
-	
-	<at:attachment-tab tabId="tabs-3" entity="${ iteration }"	editable="${ attachable }"  tableModel="${attachmentsModel}"/>
-
 
 
 
