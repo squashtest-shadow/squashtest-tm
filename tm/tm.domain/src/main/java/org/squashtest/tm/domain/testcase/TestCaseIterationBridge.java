@@ -20,49 +20,18 @@
  */
 package org.squashtest.tm.domain.testcase;
 
-import javax.inject.Inject;
-
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.search.bridge.FieldBridge;
 import org.hibernate.search.bridge.LuceneOptions;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.Configurable;
 import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.search.SessionFieldBridge;
 
-@Configurable
-public class TestCaseIterationBridge implements FieldBridge{
+public class TestCaseIterationBridge extends SessionFieldBridge{
 
-	@Inject
-	private BeanFactory beanFactory;
-
-	private SessionFactory getSessionFactory() {
-	// We cannot inject the SessionFactory because it creates a cyclic dependency injection problem :
-	// SessionFactory -> Hibernate Search -> this bridge -> SessionFactory
-		return beanFactory.getBean(SessionFactory.class);
-	}
-	
-	@Override
-	public void set(String name, Object value, Document document, LuceneOptions luceneOptions) {
-
-		TestCase testcase = (TestCase) value;
-		
-		Long numberOfIterations = findNumberOfIterations(testcase.getId());
-		
-		Field field = new Field(name, String.valueOf(numberOfIterations), luceneOptions.getStore(),
-	    luceneOptions.getIndex(), luceneOptions.getTermVector() );
-	    field.setBoost( luceneOptions.getBoost());
-	    document.add(field);
-
-	}
-
-	private Long getNumberOfIterations(Session session, Long id){
+	private Long findNumberOfIterations(Session session, Long id){
 		
 		return (Long) session.createCriteria(Iteration.class)
 				.createCriteria("testPlans")
@@ -72,35 +41,17 @@ public class TestCaseIterationBridge implements FieldBridge{
 				.uniqueResult();
 	}
 	
-	
-	private Long findNumberOfIterations(Long id) {
+	@Override
+	protected void writeFieldToDocument(String name, Session session, Object value, Document document, LuceneOptions luceneOptions) {
 
-		Session currentSession = null;
-		Session session = null;
-		Transaction tx = null;
-		Long numberOfIterations = 0L;
+		TestCase testcase = (TestCase) value;
 		
-		try {
-			currentSession = getSessionFactory().getCurrentSession();
-			session = currentSession;
-		} catch (HibernateException ex) {
-			currentSession = null;
-		}
-
-		if (currentSession == null) {
-
-			session = getSessionFactory().openSession();
-			tx = session.beginTransaction();
-
-			numberOfIterations = getNumberOfIterations(session, id);
-
-			tx.commit();
-			session.close();
-		} else {
-			numberOfIterations = getNumberOfIterations(session, id);
-		}
+		Long numberOfIterations = findNumberOfIterations(session, testcase.getId());
 		
-		return numberOfIterations;
+		Field field = new Field(name, String.valueOf(numberOfIterations), luceneOptions.getStore(),
+	    luceneOptions.getIndex(), luceneOptions.getTermVector() );
+	    field.setBoost( luceneOptions.getBoost());
+	    document.add(field);
 	}
 
 }

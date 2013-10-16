@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.testcase;
+package org.squashtest.tm.domain.search;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,42 +26,24 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.search.bridge.FieldBridge;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.hibernate.search.bridge.ParameterizedBridge;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.Configurable;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testcase.TestCase;
 
-
-@Configurable
-public class CUFBridge implements FieldBridge, ParameterizedBridge {
-
-	@Inject
-	private BeanFactory beanFactory;
+public class CUFBridge extends SessionFieldBridge implements ParameterizedBridge {
 
 	private SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 	private String type = "";
 	
-	private SessionFactory getSessionFactory() {
-	// We cannot inject the SessionFactory because it creates a cyclic dependency injection problem :
-	// SessionFactory -> Hibernate Search -> this bridge -> SessionFactory
-		return beanFactory.getBean(SessionFactory.class);
-	}
-
 	private List<CustomFieldValue> findCufValuesForType(Session session, Object value, String type){
 		
 		BindableEntity entityType = null; 
@@ -83,37 +65,17 @@ public class CUFBridge implements FieldBridge, ParameterizedBridge {
 				.add(Restrictions.eq("boundEntityId", id))
 				.add(Restrictions.eq("boundEntityType", entityType)).list();
 	}
-	
-	@Override
-	public void set(String name, Object value, Document document,
-			LuceneOptions luceneOptions) {
 
-		Session currentSession = null;
-		Session session = null;
-		Transaction tx = null;
-		
-		try{
-			currentSession = getSessionFactory().getCurrentSession();
-			session = currentSession;
-		}catch(HibernateException ex){
-			currentSession = null;
-		}
-		
-		
-		if(currentSession == null){
-			session = getSessionFactory().openSession();
-			tx = session.beginTransaction();
-			writeFieldsToDocument(session, value, document, luceneOptions);
-		    tx.commit(); //NOSONAR the test above prevents null point exception from happening
-		    session.close();
-		} else {
-			writeFieldsToDocument(session, value, document, luceneOptions);
+	@Override
+	public void setParameterValues(Map<String, String> parameters) {
+		if(parameters.containsKey("type")){
+			this.type = (String) parameters.get("type");
 		}
 	}
 
-
-	private void writeFieldsToDocument(Session session, Object value, Document document, LuceneOptions luceneOptions){		
-			
+	@Override
+	protected void writeFieldToDocument(String name, Session session, Object value, Document document, LuceneOptions luceneOptions) {
+		
 		List<CustomFieldValue> cufValues = findCufValuesForType(session, value, type);
 
 		for (CustomFieldValue cufValue : cufValues) {
@@ -155,13 +117,6 @@ public class CUFBridge implements FieldBridge, ParameterizedBridge {
 				field.setBoost(luceneOptions.getBoost());
 				document.add(field);				
 			} 
-		}
-	}
-
-	@Override
-	public void setParameterValues(Map<String, String> parameters) {
-		if(parameters.containsKey("type")){
-			this.type = (String) parameters.get("type");
 		}
 	}
 

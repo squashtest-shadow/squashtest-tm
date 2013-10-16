@@ -20,76 +20,44 @@
  */
 package org.squashtest.tm.domain.testcase;
 
-import javax.inject.Inject;
-
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.search.bridge.FieldBridge;
 import org.hibernate.search.bridge.LuceneOptions;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.Configurable;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.search.SessionFieldBridge;
 
-@Configurable
-public class TestCaseExecutionBridge implements FieldBridge{
+public class TestCaseExecutionBridge extends SessionFieldBridge{
 
-	@Inject
-	private BeanFactory beanFactory;
-
-	private SessionFactory getSessionFactory() {
-	// We cannot inject the SessionFactory because it creates a cyclic dependency injection problem :
-	// SessionFactory -> Hibernate Search -> this bridge -> SessionFactory
-		return beanFactory.getBean(SessionFactory.class);
-	}
-	
 	@Override
 	public void set(String name, Object value, Document document, LuceneOptions luceneOptions) {
 
+
+		
+	}
+
+	private Long findNumberOfExecutions(Session session, Long id) {
+
+		return (Long) session.createCriteria(Execution.class) //NOSONAR session is never null
+			.createCriteria("referencedTestCase") 
+			.add(Restrictions.eq("id", id))
+			.setProjection(Projections.rowCount())
+			.uniqueResult();
+	}
+
+	@Override
+	protected void writeFieldToDocument(String name, Session session, Object value, Document document, LuceneOptions luceneOptions) {
+
 		TestCase testcase = (TestCase) value;
 
-		Long numberOfExecutions = findNumberOfExecutions(testcase.getId());
+		Long numberOfExecutions = findNumberOfExecutions(session, testcase.getId());
 		
 		Field field = new Field(name, String.valueOf(numberOfExecutions), luceneOptions.getStore(),
 	    luceneOptions.getIndex(), luceneOptions.getTermVector() );
 	    field.setBoost( luceneOptions.getBoost());
 	    document.add(field);
-		
-	}
-
-	private Long findNumberOfExecutions(Long id) {
-	
-		Session currentSession = null;
-		Session session = null;
-		Transaction tx = null;
-		Long numberOfExecutions = 0L;
-				
-		try{
-			currentSession = getSessionFactory().getCurrentSession();
-			session = currentSession;
-		}catch(HibernateException ex){
-			session = getSessionFactory().openSession();
-			tx = session.beginTransaction();
-		}finally{
-		
-		numberOfExecutions = (Long) session.createCriteria(Execution.class) //NOSONAR session is never null
-			.createCriteria("referencedTestCase") 
-			.add(Restrictions.eq("id", id))
-			.setProjection(Projections.rowCount())
-			.uniqueResult();
-	    
-	    if(currentSession == null){
-		    tx.commit(); //NOSONAR the test above prevents null point exception from happening
-		    session.close();
-	    }
-		}
-	    
-	    return numberOfExecutions;
 	}
 
 }

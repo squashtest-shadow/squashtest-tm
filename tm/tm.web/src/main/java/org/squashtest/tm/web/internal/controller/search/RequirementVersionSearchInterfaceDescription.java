@@ -47,9 +47,11 @@ public class RequirementVersionSearchInterfaceDescription {
 	private static final String EXISTS = "exists";
 	private static final String DATE = "date";
 	private static final String MULTISELECT = "multiselect";
+	private static final String RADIOBUTTON = "radiobutton";
 	private static final String ATLEASTONE = "1";
 	private static final String NONE = "0";
-
+	private static final String EMPTY = "";
+	
 	@Inject
 	private InternationalizationHelper messageSource;
 	
@@ -81,17 +83,20 @@ public class RequirementVersionSearchInterfaceDescription {
 		panel.setLocation("column1");
 		panel.addCssClass("search-icon-information");
 		
-		SearchInputFieldModel idField = new SearchInputFieldModel("id",
+		SearchInputFieldModel idField = new SearchInputFieldModel("requirement.id",
 				messageSource.internationalize("label.id", locale), TEXTFIELD);
 		panel.addField(idField);
+		
 		SearchInputFieldModel referenceField = new SearchInputFieldModel(
 				"reference", messageSource.internationalize("label.reference",
 						locale), TEXTFIELD);
 		panel.addField(referenceField);
+		
 		SearchInputFieldModel labelField = new SearchInputFieldModel("name",
 				messageSource.internationalize("label.Label", locale),
 				TEXTFIELD);
 		panel.addField(labelField);
+		
 		SearchInputFieldModel descriptionField = new SearchInputFieldModel(
 				"description", messageSource.internationalize(
 						"label.Description", locale), TEXTAREA);
@@ -159,11 +164,32 @@ public class RequirementVersionSearchInterfaceDescription {
 	
 	public  SearchInputPanelModel createRequirementVersionPanel(Locale locale){
 		SearchInputPanelModel panel = new SearchInputPanelModel();
-		panel.setTitle(messageSource.internationalize("search.testcase.attributes.panel.title", locale));
+		panel.setTitle(messageSource.internationalize("search.requirement.versions.panel.title", locale));
 		panel.setOpen(true);
 		panel.setId("versions");
 		panel.setLocation("column1");
 		panel.addCssClass("search-icon-attributes");
+		
+		SearchInputFieldModel versionField = new SearchInputFieldModel(
+				"isCurrentVersion", messageSource.internationalize(
+						"search.requirement.content.version.label", locale),
+				RADIOBUTTON);
+		versionField.setIgnoreBridge(true);
+		panel.addField(versionField);
+
+		versionField
+		.addPossibleValue(new SearchInputPossibleValueModel(
+				messageSource.internationalize(
+						"search.requirement.allVersions",
+						locale), EMPTY));
+		
+		versionField
+				.addPossibleValue(new SearchInputPossibleValueModel(
+						messageSource.internationalize(
+								"search.requirement.onlyLastVersion",
+								locale), ATLEASTONE));
+	
+
 		
 		return panel;
 	}
@@ -178,37 +204,37 @@ public class RequirementVersionSearchInterfaceDescription {
 		panel.addCssClass("search-icon-content");
 		
 		SearchInputFieldModel descriptionField = new SearchInputFieldModel(
-				"description", messageSource.internationalize(
-						"search.testcase.content.parameter.label", locale),
-				EXISTS);
+				"hasDescription", "", EXISTS);
 		panel.addField(descriptionField);
 
 		descriptionField
-				.addPossibleValue(new SearchInputPossibleValueModel(
-						messageSource.internationalize(
-								"search.testcase.content.parameter.atleastone",
-								locale), ATLEASTONE));
+		.addPossibleValue(new SearchInputPossibleValueModel(
+				messageSource.internationalize(
+						"search.requirement.emptyDescription",
+						locale), NONE));
+		
 		descriptionField
 				.addPossibleValue(new SearchInputPossibleValueModel(
 						messageSource.internationalize(
-								"search.testcase.content.parameter.none",
-								locale), NONE));
+								"search.requirement.nonemptyDescription",
+								locale), ATLEASTONE));
+	
 
 		SearchInputFieldModel attachmentField = new SearchInputFieldModel(
 				"attachments", messageSource.internationalize(
-						"search.testcase.content.parameter.label", locale),
+						"search.testcase.content.attachment.label", locale),
 				EXISTS);
 		panel.addField(attachmentField);
 
 		attachmentField
 				.addPossibleValue(new SearchInputPossibleValueModel(
 						messageSource.internationalize(
-								"search.testcase.content.parameter.atleastone",
+								"search.testcase.content.attachment.atleastone",
 								locale), ATLEASTONE));
 		attachmentField
 				.addPossibleValue(new SearchInputPossibleValueModel(
 						messageSource.internationalize(
-								"search.testcase.content.parameter.none",
+								"search.testcase.content.attachment.none",
 								locale), NONE));
 
 		
@@ -229,7 +255,7 @@ public class RequirementVersionSearchInterfaceDescription {
 				"testcases",
 				messageSource
 						.internationalize(
-								"search.testcase.association.requirement.label",
+								"search.requirement.association.testcase.label",
 								locale), RANGE);
 		panel.addField(testcasesField);
 

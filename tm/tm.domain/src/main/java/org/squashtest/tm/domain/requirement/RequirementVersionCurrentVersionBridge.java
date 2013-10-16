@@ -18,39 +18,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.testcase;
+package org.squashtest.tm.domain.requirement;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.hibernate.Session;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.squashtest.tm.domain.search.SessionFieldBridge;
 
-public class TestCaseCallStepBridge extends SessionFieldBridge{
-
-	private Long findNumberOfCalledTestCases(Session session, Long id){
-		return (Long) session
-				.createCriteria(TestCase.class)
-				.add(Restrictions.eq("id", id)).createCriteria("steps")
-				.createCriteria("calledTestCase")
-				.setProjection(Projections.rowCount()).uniqueResult(); 
-	}
+public class RequirementVersionCurrentVersionBridge extends SessionFieldBridge{
 
 	@Override
-	protected void writeFieldToDocument(String name, Session session, Object value, Document document, LuceneOptions luceneOptions) {		
-	
-		TestCase testcase = (TestCase) value;
-
-		Long numberOfCalledTestCases = findNumberOfCalledTestCases(session, testcase.getId());
-
-		Field field = new Field(name, String.valueOf(numberOfCalledTestCases),
-				luceneOptions.getStore(), luceneOptions.getIndex(),
-				luceneOptions.getTermVector());
-		field.setBoost(luceneOptions.getBoost());
+	protected void writeFieldToDocument(String name, Session session, Object value, Document document, LuceneOptions luceneOptions){
+		
+		RequirementVersion requirement = (RequirementVersion) value;
+		requirement = (RequirementVersion) session.createCriteria(RequirementVersion.class).add(Restrictions.eq("id", requirement.getId())).uniqueResult(); //NOSONAR session is never null
+		
+		int val = 0;
+		RequirementVersion currentVersion = requirement.getRequirement().getCurrentVersion();
+		if(currentVersion.getId().equals(requirement.getId()) && currentVersion.isNotObsolete()){
+			val = 1;
+		} 
+		
+		Field field = new Field(name, String.valueOf(val), luceneOptions.getStore(),
+		   luceneOptions.getIndex(), luceneOptions.getTermVector() );
+		   field.setBoost( luceneOptions.getBoost());
 		
 		document.add(field);
 	}
-
 }

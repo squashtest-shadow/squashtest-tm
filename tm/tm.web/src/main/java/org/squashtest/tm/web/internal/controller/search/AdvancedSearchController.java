@@ -173,14 +173,14 @@ public class AdvancedSearchController {
 			.mapAttribute("test-case-modified-by", "modifiedBy", TestCase.class);
 
 	private DatatableMapper<String> requirementSearchResultMapper = new NameBasedMapper(11)
-			.mapAttribute("project-name", "name", Project.class)
-			.mapAttribute("requirement-id", "id", RequirementVersion.class)
+			.mapAttribute("project-name", "requirement.project.name", Project.class)
+			.mapAttribute("requirement-id", "requirement.id", RequirementVersion.class)
 			.mapAttribute("requirement-reference", "reference", RequirementVersion.class)
 			.mapAttribute("requirement-label", "label", RequirementVersion.class)
 			.mapAttribute("requirement-criticality", "criticality", RequirementVersion.class)
 			.mapAttribute("requirement-category", "category", RequirementVersion.class)
 			.mapAttribute("requirement-status", "status", RequirementVersion.class)
-			.mapAttribute("requirement-version", "version", RequirementVersion.class)
+			.mapAttribute("requirement-version", "versionNumber", RequirementVersion.class)
 			.mapAttribute("requirement-version-nb","versions", RequirementVersion.class)
 			.mapAttribute("requirement-testcase-nb", "testcases", RequirementVersion.class)
 			.mapAttribute("requirement-attachment-nb", "attachments", RequirementVersion.class)
@@ -482,8 +482,7 @@ public class AdvancedSearchController {
 		}
 		
 		private String formatCategory(RequirementCategory category, Locale locale) {
-			return category.getLevel() + "-"
-					+ messageSource.internationalize(category, locale);
+			return messageSource.internationalize(category, locale);
 		}
 		
 		private RequirementSearchResultDataTableModelHelper(Locale locale,
@@ -510,7 +509,7 @@ public class AdvancedSearchController {
 				res.put("is-associated", associatedRequirementIds.contains(item.getId()));
 			}	
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
-			res.put("requirement-id", item.getId());
+			res.put("requirement-id", item.getRequirement().getId());
 			res.put("requirement-reference", item.getReference());
 			res.put("requirement-label", item.getName());
 			res.put("editable", isRequirementVersionEditable(item));
@@ -529,8 +528,11 @@ public class AdvancedSearchController {
 		}
 		
 		private boolean isRequirementVersionEditable(RequirementVersion item) {
-			return permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN",
-					"WRITE", item);
+			if(item.isModifiable()){
+				return permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN","WRITE", item);
+			} else {
+				return false;
+			}
 		}
 
 	}

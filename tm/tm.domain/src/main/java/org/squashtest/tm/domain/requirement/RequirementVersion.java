@@ -52,6 +52,7 @@ import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.resource.Resource;
+import org.squashtest.tm.domain.search.CUFBridge;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.AuditableBridgeCreatedBy;
@@ -74,17 +75,27 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 @PrimaryKeyJoinColumn(name = "RES_ID")
 @InheritsAcls(constrainedClass = Requirement.class, collectionName = "versions")
 @ClassBridges({
-	/*@ClassBridge(
+	@ClassBridge(
 		name="attachments",
 		store=Store.YES,
 		impl=RequirementVersionAttachmentBridge.class
-	),*//*
+	),
 	@ClassBridge(
-			name="cufs",
-			store=Store.YES,
-			impl=CUFBridge.class,
-			params = {@Parameter(name="type", value="requirement")}
-	),*/
+		name="cufs",
+		store=Store.YES,
+		impl=CUFBridge.class,
+		params = {@org.hibernate.search.annotations.Parameter(name="type", value="requirement")}
+	),
+	@ClassBridge(
+		name="isCurrentVersion",
+		store=Store.YES,
+		impl=RequirementVersionCurrentVersionBridge.class	
+	),
+	@ClassBridge(
+		name="testcases",
+		store=Store.YES,
+		impl=RequirementVersionTestcaseBridge.class	
+	),
 	@ClassBridge(
 		name="createdBy",
 		store=Store.YES,
@@ -152,6 +163,7 @@ public class RequirementVersion extends Resource implements BoundEntity{
 	@IndexedEmbedded
 	private Requirement requirement;
 
+	@Field(analyze=Analyze.NO, store=Store.YES)	
 	private int versionNumber = 1;
 
 	public RequirementVersion() {

@@ -215,18 +215,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 		}
 	}
-	
-	@Override	
-	public void updateIndexingDate(){
-		Date indexingDate = new Date();
-		this.configurationService.updateConfiguration(
-				TESTCASE_INDEXING_DATE_KEY, dateFormat.format(indexingDate));
-		String currentVersion = this.configurationService
-				.findConfiguration(SQUASH_VERSION_KEY);
-		this.configurationService.updateConfiguration(
-				TESTCASE_INDEXING_VERSION_KEY, currentVersion);
-	}
-	
+		
 	@Override
 	public List<CustomField> findAllQueryableCustomFieldsByBoundEntityType(
 			BindableEntity entity) {
@@ -549,8 +538,36 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	}
 	
+	private Sort getRequirementVersionSort(String fieldName, SortOrder sortOrder){
+		
+		boolean isReverse = true;
+		
+		if(SortOrder.ASCENDING.equals(sortOrder)){
+			isReverse = false;
+		}
+		
+		Sort sort = new Sort(new SortField("id", SortField.LONG, isReverse));
+		
+		if(fieldName.startsWith("RequirementVersion.")){
+			fieldName = fieldName.replaceFirst("RequirementVersion.", "");
+		} else if(fieldName.startsWith("Requirement.")){
+			fieldName = fieldName.replaceFirst("Requirement.", "requirement.");
+		} else if(fieldName.startsWith("Project.")){
+			fieldName = fieldName.replaceFirst("Project.", "project.");
+		}
+		
+		if("requirement.id".equals(fieldName) || "version".equals(fieldName) || 
+		   "versions".equals(fieldName) || "testcases".equals(fieldName) || 
+		   "attachments".equals(fieldName)){
+			sort = new Sort(new SortField(fieldName, SortField.LONG, isReverse));
+		} else {
+			sort = new Sort(new SortField(fieldName, SortField.STRING, isReverse));
+		}
+		
+		return sort;
+	}
 	
-	private Sort getSort(String fieldName, SortOrder sortOrder){
+	private Sort getTestCaseSort(String fieldName, SortOrder sortOrder){
 		
 		boolean isReverse = true;
 		
@@ -593,7 +610,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		List<RequirementVersion> result = Collections.emptyList();
 		int countAll = 0 ;
 		if(luceneQuery != null){
-			Sort sort = getSort(sorting.getSortedAttribute(), sorting.getSortOrder());
+			Sort sort = getRequirementVersionSort(sorting.getSortedAttribute(), sorting.getSortOrder());
 			org.hibernate.Query hibQuery = ftSession.createFullTextQuery(
 					luceneQuery, RequirementVersion.class).setSort(sort);
 	
@@ -623,7 +640,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		List<TestCase> result = Collections.emptyList();
 		int countAll = 0 ;
 		if(luceneQuery != null){
-			Sort sort = getSort(sorting.getSortedAttribute(), sorting.getSortOrder());
+			Sort sort = getTestCaseSort(sorting.getSortedAttribute(), sorting.getSortOrder());
 			org.hibernate.Query hibQuery = ftSession.createFullTextQuery(
 					luceneQuery, TestCase.class).setSort(sort);
 	

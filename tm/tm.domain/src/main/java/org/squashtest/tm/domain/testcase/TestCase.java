@@ -66,6 +66,7 @@ import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.library.NodeVisitor;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.search.CUFBridge;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.exception.UnallowedTestAssociationException;
 import org.squashtest.tm.exception.UnknownEntityException;

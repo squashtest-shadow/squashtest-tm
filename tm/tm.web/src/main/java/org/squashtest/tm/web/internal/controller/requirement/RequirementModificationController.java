@@ -224,6 +224,14 @@ public class RequirementModificationController {
 		return internationalize(status, locale, levelFormatterProvider);
 	}
 
+	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-name", VALUE })
+	@ResponseBody
+	public String changeName(@RequestParam(VALUE) String value, @PathVariable long requirementId, Locale locale) {
+		requirementModService.rename(requirementId, value);
+		LOGGER.info("RequirementModificationController : renaming " + requirementId + " as " + value);
+		return value;
+	}
+	
 	@RequestMapping(method = RequestMethod.GET, value = "/next-status")
 	@ResponseBody
 	public Map<String, String> getNextStatusList(Locale locale, @PathVariable long requirementId) {

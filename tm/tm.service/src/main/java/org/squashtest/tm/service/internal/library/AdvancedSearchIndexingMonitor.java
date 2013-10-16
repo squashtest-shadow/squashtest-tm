@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.hibernate.search.batchindexing.MassIndexerProgressMonitor;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoring;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.configuration.ConfigurationService;
@@ -68,10 +69,19 @@ public class AdvancedSearchIndexingMonitor implements MassIndexerProgressMonitor
 		
 		if(this.indexedDomain.equals(TestCase.class)){
 			this.updateTestCaseIndexingDateAndVersion();
-		}
+		} else if (this.indexedDomain.equals(RequirementVersion.class)){
+			this.updateRequirementVersionIndexingDateAndVersion();
+		}			
 
 	}
 
+	private void updateRequirementVersionIndexingDateAndVersion(){
+		Date indexingDate = new Date();
+		this.configurationService.updateConfiguration(AdvancedSearchServiceImpl.REQUIREMENT_INDEXING_DATE_KEY, dateFormat.format(indexingDate));
+		String currentVersion = this.configurationService.findConfiguration(AdvancedSearchServiceImpl.SQUASH_VERSION_KEY);
+		this.configurationService.updateConfiguration(AdvancedSearchServiceImpl.REQUIREMENT_INDEXING_VERSION_KEY, currentVersion);
+	}
+	
 	private void updateTestCaseIndexingDateAndVersion(){
 		Date indexingDate = new Date();
 		this.configurationService.updateConfiguration(AdvancedSearchServiceImpl.TESTCASE_INDEXING_DATE_KEY, dateFormat.format(indexingDate));

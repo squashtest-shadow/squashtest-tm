@@ -24,7 +24,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
 		"jquery.squash.confirmdialog" ], function($, Backbone, _, StringUtil, RequirementSearchResultTable) {
 	
-	var TestCaseSearchInputPanel = Backbone.View.extend({
+	var RequirementSearchResultPanel = Backbone.View.extend({
 
 		expanded : false,
 		el : "#sub-page",
@@ -125,7 +125,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		},
 		
 		selectAllForAssocation : function(){
-			var table = $('#test-case-search-result-table').dataTable();
+			var table = $('#requirement-search-result-table').dataTable();
 			var rows = table.fnGetNodes();
 			var ids = [];
 			$(rows).each(function(index, row) {
@@ -136,7 +136,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		},
 		
 		deselectAll : function(){
-			var table = $('#test-case-search-result-table').dataTable();
+			var table = $('#requirement-search-result-table').dataTable();
 			table.squashTable().deselectRows();
 		},
 		
@@ -204,8 +204,6 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 					}
 				}
 			});
-			
-			return ids;
 		},
 		
 		_getIdsOfSelectedTableRowList : function(dataTable) {
@@ -216,7 +214,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 				if ($( row ).attr('class').search('selected') != -1) {
 					var data = dataTable.fnGetData(row);
 					if(data["editable"]){
-						ids.push(data["test-case-id"]);
+						ids.push(data["requirement-id"]);
 					} 
 				}
 			});
@@ -287,7 +285,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 
 			addModifyResultDialog.on("confirmdialogconfirm",
 					function() {
-						var table = $('#test-case-search-result-table').dataTable();
+						var table = $('#requirement-search-result-table').dataTable();
 						var ids = self.getIdsOfSelectedTableRowList(table);
 						var columns = ["criticality","category","status"];
 						var index = 0;
@@ -297,10 +295,10 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 								self.updateDisplayedValueInColumn(table, columns[index]);
 								var value = $("#"+columns[index]+"-combo").find('option:selected').val();
 								for(var i=0; i<ids.length; i++){
-									var urlPOST = squashtm.app.contextRoot + "/test-cases/" + ids[i];
+									var urlPOST = squashtm.app.contextRoot + "/requirements/" + ids[i];
 									$.post(urlPOST, {
 										value : value,
-										id : "test-case-"+columns[index]	
+										id : "requirement-"+columns[index]	
 									});
 								}
 							}
@@ -309,7 +307,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			
 			addModifyResultDialog.on('confirmdialogopen',
 					function() {
-						var table = $('#test-case-search-result-table').dataTable();
+						var table = $('#requirement-search-result-table').dataTable();
 						var ids = self.getIdsOfSelectedTableRowList(table);
 						if(ids.length === 0) {
 							var noLineSelectedDialog = $("#no-selected-lines").messageDialog();
@@ -327,7 +325,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		}
 		
 	});
-	return TestCaseSearchInputPanel;
+	return RequirementSearchResultPanel;
 });
 
 

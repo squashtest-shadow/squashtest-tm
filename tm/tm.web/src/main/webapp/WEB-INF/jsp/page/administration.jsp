@@ -112,7 +112,7 @@
 				</div>
 				<div class="admin-stats-table"><label><f:message key="label.lastIndexing"/></label>
 					<div>
-					<!--  <div><label><f:message key="label.requirements"/></label>
+					<div><label><f:message key="label.requirements"/></label>
 						<c:choose>
 							<c:when test="${not empty adminStats.requirementIndexingDate}">
 								<span id="last-modified-on">
@@ -123,7 +123,7 @@
 								<span>(<f:message key="label.lower.Never" />)</span>
 							</c:otherwise>
 						</c:choose>	
-					</div>-->
+					</div>
 					<div><label><f:message key="label.testCases"/></label>
 						<c:choose>
 							<c:when test="${not empty adminStats.testcaseIndexingDate}">

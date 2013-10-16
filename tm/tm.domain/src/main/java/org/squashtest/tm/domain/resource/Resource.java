@@ -36,6 +36,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.search.annotations.Fields;
 import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotBlank;
@@ -43,6 +44,7 @@ import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.audit.Auditable;
+import org.squashtest.tm.domain.requirement.RequirementCategoryBridge;
 
 /**
  * A Resource is the actual "things" which are organized in a library tree.
@@ -70,7 +72,16 @@ public abstract class Resource implements AttachmentHolder, Identified{
 	private String name;
 
 	@Lob
-	@Field
+	@Fields({
+		@Field(),
+		@Field(
+			name="hasDescription", 
+			analyze=Analyze.NO, 
+			store=Store.YES,
+			bridge=@FieldBridge(impl = RequirementVersionDescriptionBridge.class)
+		)
+	})
+
 	private String description;
 	
 	@NotNull

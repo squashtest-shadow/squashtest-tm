@@ -20,7 +20,7 @@
  */
 define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "jquery.squash.jeditable" ], function($, Backbone, translator) {
 
-	var TestCaseSearchResultTable = Backbone.View.extend({
+	var RequirementSearchResultTable = Backbone.View.extend({
 		el : "#requirement-search-result-table",
 		initialize : function(model, isAssociation, associateType, associateId) {
 			this.model = model;
@@ -346,7 +346,7 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 				"submit" : ok,
 				"cancel" : cancel,	
 				"submitdata" : function(value, settings) {
-					return {"id": "requirement-newname"};
+					return {"id": "requirement-name"};
 				}
 			});
 		},
@@ -369,11 +369,11 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 		},
 
 		_addInterfaceLevel2Link : function(row, data) {
-			var id = data["test-case-id"];
+			var id = data["requirement-id"];
 			var $cell = $(".search-open-interface2-holder",row);
 			$cell.append('<span class="search-open-interface2"></span>')
 			.click(function(){
-		        window.location = squashtm.app.contextRoot + "/test-cases/" + id + "/info";
+		        window.location = squashtm.app.contextRoot + "/requirements/" + id + "/info";
 		    });
 		},
 		
@@ -384,6 +384,8 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 			if(associatedTo){
 				if(this.associateType == "requirement"){
 					$(".is-associated",row).append('<span class="associated-icon-requirement"></span>');
+				} else if(this.associateType == "testcase"){
+					$(".is-associated",row).append('<span class="associated-icon-testcase"></span>');
 				} else {
 					$(".is-associated",row).append('<span class="associated-icon-campaign"></span>');
 				}
@@ -392,11 +394,11 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 		
 		_addTreeLink : function(row, data){
 			var self = this;
-			var id = data["test-case-id"];
+			var id = data["requirement-id"];
 			var $cell = $(".search-open-tree-holder", row);
 			$cell.append('<span class="search-open-tree"></span>')
 				.click(function(){
-				window.location = squashtm.app.contextRoot + "/test-case-workspace?element_id="+id;
+				window.location = squashtm.app.contextRoot + "/requirement-workspace?element_id="+id;
 			});
 		},
 				
@@ -405,5 +407,5 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 		}
 	});
 
-	return TestCaseSearchResultTable;
+	return RequirementSearchResultTable;
 });

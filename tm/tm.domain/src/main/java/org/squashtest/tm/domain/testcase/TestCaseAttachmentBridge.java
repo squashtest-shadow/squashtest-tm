@@ -20,65 +20,25 @@
  */
 package org.squashtest.tm.domain.testcase;
 
-import javax.inject.Inject;
-
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.search.bridge.FieldBridge;
 import org.hibernate.search.bridge.LuceneOptions;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.Configurable;
+import org.squashtest.tm.domain.search.SessionFieldBridge;
 
 
-@Configurable
-public class TestCaseAttachmentBridge implements FieldBridge{
+public class TestCaseAttachmentBridge extends SessionFieldBridge{
 
-	@Inject
-	private BeanFactory beanFactory;
-
-	private SessionFactory getSessionFactory() {
-	// We cannot inject the SessionFactory because it creates a cyclic dependency injection problem :
-	// SessionFactory -> Hibernate Search -> this bridge -> SessionFactory
-		return beanFactory.getBean(SessionFactory.class);
-	}
-
-	private void writeFieldToDocument(String name, TestCase testcase, Session session, Document document, LuceneOptions luceneOptions){
+	@Override
+	protected void writeFieldToDocument(String name, Session session, Object value, Document document, LuceneOptions luceneOptions){
+		
+		TestCase testcase = (TestCase) value;
 		testcase = (TestCase) session.createCriteria(TestCase.class).add(Restrictions.eq("id", testcase.getId())).uniqueResult(); //NOSONAR session is never null
 		
 		Field field = new Field(name, String.valueOf(testcase.getAttachmentList().size()), luceneOptions.getStore(),
 	    luceneOptions.getIndex(), luceneOptions.getTermVector() );
 	    field.setBoost( luceneOptions.getBoost());
 	    document.add(field);
-	}
-	
-	@Override
-	public void set(String name, Object value, Document document, LuceneOptions luceneOptions) {
-
-		TestCase testcase = (TestCase) value;
-		Session currentSession = null;
-		Session session = null;
-		Transaction tx = null;
-		
-		try{
-			currentSession = getSessionFactory().getCurrentSession();
-			session = currentSession;
-		}catch(HibernateException ex){
-			currentSession = null;
-		}
-		
-		if(currentSession == null){
-			session = getSessionFactory().openSession();
-			tx = session.beginTransaction();	
-			writeFieldToDocument(name, testcase, session, document, luceneOptions);
-			tx.commit(); 
-		    session.close();
-		} else {
-			writeFieldToDocument(name, testcase, session, document, luceneOptions);
-		}
 	}
 }

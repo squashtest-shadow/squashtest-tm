@@ -51,7 +51,5 @@
 
   <context:component-scan base-package="org.squashtest.tm.service.internal" />
   <context:component-scan base-package="org.squashtest.tm.service.security" />
-
-<bean name="org.springframework.context.config.internalBeanConfigurerAspect" class="java.lang.Object" />
-
+  
 </beans>

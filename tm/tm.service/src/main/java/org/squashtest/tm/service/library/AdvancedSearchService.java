@@ -68,8 +68,6 @@ public interface AdvancedSearchService {
 	
 	List<RequirementVersion> searchForRequirementVersions(AdvancedSearchModel model);
 
-	void updateIndexingDate();
-
 	List<String> findAllUsersWhoModifiedTestCases();
 
 	List<String> findAllUsersWhoCreatedTestCases();

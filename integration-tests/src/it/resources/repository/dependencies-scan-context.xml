@@ -27,11 +27,9 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
 	  	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
 	">
-	
+	<context:spring-configured/> 
 	<context:component-scan base-package="org.squashtest.tm.service.internal.repository" />
 	<context:component-scan base-package="org.squashtest.tm.service.internal.api" />
 <bean class="org.squashtest.tm.service.security.StubUserContextService" />
 
-<bean name="org.springframework.context.config.internalBeanConfigurerAspect" class="java.lang.Object" />
- 
 </beans>
