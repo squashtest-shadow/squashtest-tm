@@ -29,6 +29,7 @@
 <%@ taglib prefix="ta" tagdir="/WEB-INF/tags/testautomation"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%@ taglib prefix="tc" tagdir="/WEB-INF/tags/test-cases-components"%>
+<%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform" %>
 
 
 <?xml version="1.0" encoding="utf-8" ?>
@@ -90,7 +91,7 @@
 					  moreThanReadOnly="${moreThanReadOnly}"  writable="${writable}" deletable="${deletable}" />
 
 <%-- --------------------------------------- Test Case body --------------------------------------- --%>
-
+<csst:jq-tab>
 <div class="fragment-tabs fragment-body">
 
 	<%--  ------------------ main tab panel --------------------------------- --%>
@@ -156,6 +157,7 @@
 
 
 </div>
+</csst:jq-tab>
 
 
 <%-- ===================================== INIT =============================== --%>
