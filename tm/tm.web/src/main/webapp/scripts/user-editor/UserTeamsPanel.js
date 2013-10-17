@@ -32,11 +32,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 		},
 		events : {},
 		makeTogglePanel : function() {
-			var infoSettings = {
-				initiallyOpen : true,
-				title : UMod.message.teamsPanelTitle
-			};
-			this.$("#teams-panel").togglePanel(infoSettings);
+			this.$("#teams-panel").togglePanel();
 		},
 		configurePopups : function() {
 			this.configureRemoveTeamDialog();

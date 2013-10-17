@@ -99,11 +99,7 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/u
 		},
 
 		configureTogglePanels : function() {
-			var infoSettings = {
-				initiallyOpen : true,
-				title : UMod.message.userInfoPanelTitle
-			};
-			this.$("#user-info-panel").togglePanel(infoSettings);
+			this.$("#user-info-panel").togglePanel();
 		},
 
 		configureEditables : function() {

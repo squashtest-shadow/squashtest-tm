@@ -49,9 +49,6 @@
 			</div>
 		</div>		
 	</h3>
-	<%--  not used anymore
-	<span class="not-displayed toggle-panel-buttons"><jsp:invoke fragment="panelButtons"/></span>
-	 --%>
 	<div id="${id}" class="toggle-panel-main ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" 
 		 data-init-open="${open}" data-prerendered="true" style="${styleContentdisplay}">
 		<jsp:invoke fragment="body"/>

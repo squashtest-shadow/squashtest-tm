@@ -29,6 +29,7 @@ import java.util.Set;
 import javax.servlet.ServletContext;
 
 import org.squashtest.tm.web.thymeleaf.processor.attr.SquashCssAttrProcessor;
+import org.squashtest.tm.web.thymeleaf.processor.attr.SquashTogglePanelAttrProcessor;
 import org.squashtest.tm.web.thymeleaf.processor.attr.SquashUnsafeHtmlAttrProcessor;
 import org.thymeleaf.context.IContext;
 import org.thymeleaf.context.IProcessingContext;
@@ -66,10 +67,10 @@ public class SquashDialect extends AbstractDialect implements IExpressionEnhanci
 	 */
 	@Override
 	public Set<IProcessor> getProcessors() {
-		Set<IProcessor> processors = new HashSet<IProcessor>(2);
+		Set<IProcessor> processors = new HashSet<IProcessor>(3);
 		processors.add(new SquashUnsafeHtmlAttrProcessor());
 		processors.add(new SquashCssAttrProcessor());
-
+		processors.add(new SquashTogglePanelAttrProcessor());
 		return processors;
 	}
 

@@ -54,11 +54,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 		},
 
 		makeTogglePanel : function() {
-			var infoSettings = {
-				initiallyOpen : true,
-				title : UMod.message.permissionsPanelTitle
-			};
-			this.$("#project-permission-panel").togglePanel(infoSettings);
+			this.$("#project-permission-panel").togglePanel();
 		},
 		configureTable : function() {
 			$("#permission-table").squashTable({

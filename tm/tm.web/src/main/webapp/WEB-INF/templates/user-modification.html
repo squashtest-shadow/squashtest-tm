@@ -50,12 +50,9 @@
 				passSuccess : /*[[ #{user.account.changepass.success} ]]*/"cool it worked ! ",
 				error : /*[[ #{popup.title.error} ]]*/"Error",
 				empty : /*[[ #{message.AllProjectsAlreadyLinkedToUser} ]]*/"tous les projets sont liés à l'utilisateur",
-				userInfoPanelTitle : /*[[ #{user.info.panel.title} ]]*/"Infos Utilisateur",
-				permissionsPanelTitle : /*[[ #{user.project-rights.title.label} ]]*/"Permissions",
 				richEditPlaceHolder : /*[[#{rich-edit.placeholder}]]*/'(Click to edit ...)',
 				okLabel : /*[[ #{label.Ok}]]*/"ok",
 				cancelLabel : /*[[ #{label.Cancel} ]]*/'Cancel',
-				teamsPanelTitle : /*[[ #{label.teams} ]]*/"teams",
 				resetPasswordPopupTitle : /*[[ #{user.account.password.reset.label} ]]*/"reset password",
 				confirmLabel : /*[[ #{label.Confirm} ]]*/'Confirmer',
 				addPermissionPopupTitle : /*[[#{title.AddPermission}]]*/"add permission",
@@ -167,14 +164,21 @@
 						</div>
 						<br /> <br />
 						<!-- ============================================User Infos ======================================= -->
-            <div class="toggle-panel">
-              <span class="not-displayed toogle-panel-buttons"></span>
-              <div id="user-info-panel" class="information-panel toggle-panel-main">
-                <div class="display-table" id="user-infos-table">
-                  <div class="display-table-row">
-                    <label for="user-login" th:text="#{label.Login}">Login</label>
-                    <div class="display-table-cell">
-                    	<span id="user-login" th:text="${user.login}">Machin</span>
+          <div sq:togglePanel="opened">
+			<div>
+				<h3 >
+					<div>
+						<div >
+							<a th:text="#{user.info.panel.title}" >Infos</a>
+						</div>
+					</div>		
+				</h3>
+				<div id="user-info-panel"  class="information-panel" >
+					<div class="display-table" id="user-infos-table">
+									<div class="display-table-row">
+										<label for="user-login" th:text="#{label.Login}">Login</label>
+										<div class="display-table-cell">
+											<span id="user-login" th:text="${user.login}">Machin</span> 
                     </div>
                   </div>
                   <div class="display-table-row">
@@ -182,56 +186,79 @@
                   	<div class="display-table-cell">                  		
                   		<input id="toggle-activation-checkbox" type="checkbox" th:checked="${user.active}" th:attr="data-def='width=35, on_label='+#{label.active}+', off_label='+#{label.inactive}"/>
                   	</div>
-                  </div>
-                  <div class="display-table-row" th:unless="${authenticationProvider.managedPassword}">
-                    <label for="reset-password-button" th:text="#{label.password}">Password</label>
-                    <div class="display-table-cell">
-                      <a  id="reset-password-button" th:text="#{user.button.reset.password}" th:class="${ !user.hasAuthentication } ? 'not-displayed'">Reset</a>
-                      <a  id="create-auth-button" th:text="#{label.createPassword}" th:class="${ user.hasAuthentication } ? 'not-displayed'">Create authentication</a>
-                    </div>
-                  </div>
-                  <div class="display-table-row" th:if="${authenticationProvider.managedPassword}">
-                    <label for="password-info" th:text="#{label.password}">Password</label>
-                    <div class="display-table-cell">
-                      <span id="password-info" th:text="#{message.managedPassword}">Managed by auth provider</span>
-                    </div>
-                  </div>
-                  <div class="display-table-row">
-                    <label for="user-first-name" th:text="#{label.FirstName}">First name</label>
-                    <div id="user-first-name" class="display-table-cell" th:text="${ user.firstName }">Machinou</div>
-                  </div>
-                  <div class="display-table-row">
-                    <label for="user-last-name" th:text="#{label.LastName}">Last Name</label>
-                    <div id="user-last-name" class="display-table-cell" th:text="${ user.lastName }">Bidule</div>
-                  </div>
-                  <div class="display-table-row">
-                    <label for="user-email" th:text="#{label.Email}">Email</label>
-                    <div id="user-email" class="display-table-cell" th:text="${ user.email }"></div>
-                  </div>
-                  <div class="display-table-row">
-                    <label for="user-group" th:text="#{label.UserGroup}">User Group</label>
-                    <div class="display-table-cell">
-                      <select id="user-group">
-                        <option th:each="group : ${ usersGroupList }" th:id="${group.qualifiedName}"
-                          id="squashtest.authz.group.core.Admin" value="1" th:value="${group.id}"
-                          th:selected="${ group.simpleName == user.group.simpleName } ? 'selected'"
-                          th:text="#{'user.account.group.'+${group.qualifiedName}+'.label'}">Admin</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-            <!-- ============================================/User Infos ======================================= -->
+									</div>
+									<div class="display-table-row"
+										th:unless="${authenticationProvider.managedPassword}">
+										<label for="reset-password-button" th:text="#{label.password}">Password</label>
+										<div class="display-table-cell">
+											<a id="reset-password-button"
+												th:text="#{user.button.reset.password}"
+												th:class="${ !user.hasAuthentication } ? 'not-displayed'">Reset</a>
+											<a id="create-auth-button" th:text="#{label.createPassword}"
+												th:class="${ user.hasAuthentication } ? 'not-displayed'">Create
+												authentication</a>
+										</div>
+									</div>
+									<div class="display-table-row"
+										th:if="${authenticationProvider.managedPassword}">
+										<label for="password-info" th:text="#{label.password}">Password</label>
+										<div class="display-table-cell">
+											<span id="password-info" th:text="#{message.managedPassword}">Managed
+												by auth provider</span>
+										</div>
+									</div>
+									<div class="display-table-row">
+										<label for="user-first-name" th:text="#{label.FirstName}">First
+											name</label>
+										<div id="user-first-name" class="display-table-cell"
+											th:text="${ user.firstName }">Machinou</div>
+									</div>
+									<div class="display-table-row">
+										<label for="user-last-name" th:text="#{label.LastName}">Last
+											Name</label>
+										<div id="user-last-name" class="display-table-cell"
+											th:text="${ user.lastName }">Bidule</div>
+									</div>
+									<div class="display-table-row">
+										<label for="user-email" th:text="#{label.Email}">Email</label>
+										<div id="user-email" class="display-table-cell"
+											th:text="${ user.email }"></div>
+									</div>
+									<div class="display-table-row">
+										<label for="user-group" th:text="#{label.UserGroup}">User
+											Group</label>
+										<div class="display-table-cell">
+											<select id="user-group">
+												<option th:each="group : ${ usersGroupList }"
+													th:id="${group.qualifiedName}"
+													id="squashtest.authz.group.core.Admin" value="1"
+													th:value="${group.id}"
+													th:selected="${ group.simpleName == user.group.simpleName } ? 'selected'"
+													th:text="#{'user.account.group.'+${group.qualifiedName}+'.label'}">Admin</option>
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+						<!-- ============================================/User Infos ======================================= -->
 						<!-- ============================================ Permissions ======================================= -->
 
-						<div id="permissions" class="toggle-panel">
-							<span class="not-displayed toggle-panel-buttons"> <input
-								id="add-permission-button" th:title="${addButtonTitle}"
-								title="add" type="button" value="+" class="button" />
-							</span>
-							<div id="project-permission-panel" class="toggle-panel-main">
+			 			<div sq:togglePanel="opened">
+						<div id="permissions" >
+							<h3 >
+								<div>
+									<div >
+										<a th:text="#{user.project-rights.title.label}" >Permissions</a>
+									</div>
+									<div> <input
+											id="add-permission-button" th:title="${addButtonTitle}"
+											title="add" type="button" value="+" class="button" /></div>
+								</div>		
+							</h3>
+						
+							<div id="project-permission-panel" >
 								<table id="permission-table"
 									th:attr="data-def='filter, pre-sort=1-asc, datakeys-id=project-id ,ajaxsource='+@{/administration/users/__${user.id}__/permissions}">
 									<thead>
@@ -261,17 +288,26 @@
 								</div> 
 							</div>
 						</div>
+						</div>
 						<!-- ============================================/ Permissions ======================================= -->
 						<!-- ============================================ Teams ======================================= -->
 
-						<div id="teams" class="toggle-panel">
-							<span class="not-displayed toggle-panel-buttons"> <input
-								type="button" id="add-team-button" value="+"></input> <input
-								type="button" id="remove-teams-button"
-								th:value="#{label.unsubscribeToTeams}"></input>
-							</span>
-							<div id="teams-panel" class="toggle-panel-main">
-
+						<div sq:togglePanel="opened">
+						<div id="teams" >
+							<h3 >
+								<div>
+									<div >
+										<a th:text="#{label.teams}" >Teams</a>
+									</div>
+									<div> <input
+									type="button" id="add-team-button" value="+"></input> <input
+									type="button" id="remove-teams-button"
+									th:value="#{label.unsubscribeToTeams}"></input>
+									</div>
+								</div>		
+							</h3>
+						
+						<div id="teams-panel" >
 								<table id="teams-table"
 									th:attr="data-def='filter, pre-sort=1-asc, datakeys-id=team-id ,ajaxsource=' + @{/users/__${user.id}__/teams}">
 									<thead>
@@ -291,6 +327,7 @@
 									</tbody>
 								</table>
 							</div>
+						</div>
 						</div>
 
 						<!-- ============================================ /Teams ======================================= -->
