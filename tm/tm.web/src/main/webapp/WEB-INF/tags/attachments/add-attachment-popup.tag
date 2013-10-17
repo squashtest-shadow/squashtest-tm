@@ -23,401 +23,55 @@
 <%@ tag description="Popup allowing to upload files some files" body-content="empty" %>
 	
 <%@ attribute name="url" required="true" description="url to upload to"%>
-<%@ attribute name="paramName" required="true" description="how the post parameter should be named with."%>
-<%@ attribute name="openedBy" required="true" description="button opening the popup"%>
-<%@ attribute name="successCallback" required="true" description="when an upload completed successfuly"%>
 
-
-<%@ tag language="java" pageEncoding="utf-8"%>
-<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
-									
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.form.js"></script>
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.generateId.js"></script>
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/add-attachment-popup.js"></script>
 
-<%-- 
-	that file groups three popup together. 
-	 - file selection, 
-	 - progres bar,
-	 - summary
- --%>
+<f:message var="attachSubmit" key="label.Upload"/>
+<f:message var="okLabel" key="label.Ok"/>
+<f:message var="cancelLabel" key="label.Cancel" />
+<f:message var="removeFileBrowser" key="dialog.attachment.add.button.remove.label" />
 
-<f:message var="uploadErrorMessage" key="message.AttachmentUploadSizeExceeded" />
-<f:message var="megaByteLabel" key="squashtm.megabyte.label" />			
+<div id="add-attachments-dialog" class="popup-dialog not-displayed" data-def="url=${url}">
 
-			
+	<%-- templates for cloning --%>
+	<div class="add-attachments-templates not-displayed" style="display:none;">
+		<div class="attachment-item">
+			<input type="file" name="attachment[]" size="40" />
+			<input type="button" value="${removeFileBrowser}">
+		</div>
+	</div>
 
-<script type="text/javascript">
-
-	<%--
-	 * This section handles the transition between phase 1 and phase 2, ie all the operations between 
-	 * the moment the user presses "submit" and the end of the download :
-     *   - prelude to the upload : we'll need a 'ticket' for later use (see below),
-	 *   - close the uploader popup, open the progress bar,
-	 *   - start the uploading request (still stuck to HttpRequests, no XHR for this one)
-	 *   - during the upload, poll the server for the upload using the ticket obtained in step 1
- 	 *   - once it's done it will open the uploadSummary popup 
-	 *
-	 *  
-	 * Notes : 
-	 * 		- tickets are like sEcho for datatable : an identifier used by the server to know which upload to watch for.	 
-	 * 		- we need the instruction flow to run as if the Ajax calls were synchronous. Since they aren't, we put the next steps of the 
-	 *      code in the ajax success handlers.
-	 --%>
-
-	
-	<%--
-	 * This is the entry point : the user just clicked the "submit" button.
-	 * 
-	 * first let's warn the server we're going for an upload and request an upload ticket
-	 * the server returns a string containing the number : that's the ticket.
-	 *
-	 --%>
-	function setupAndBeginUpload(){
-		$.post("${url}", function(data){ beginUpload(data)} );
-	}
-
-	
-	<%-- once we got a ticket the real thing begins --%>
-	function beginUpload(ticket){
-		$("#attachment-progress-dialog").data("ticket",ticket);
-		attachmentDisplayBar();
-		attachmentSubmit(ticket);
-	}
-
-
-	<%--
-	* the #attachment-progress-dialog dialog opening function is overloaded. See the javascript snippet at the bottom to see how.
-	* It will mainly handle the logic regarging the progressbar and polling the server.
-	--%>
-	function attachmentDisplayBar(){
-		$("#attachment-upload-dialog").dialog("close");
-		$("#attachment-progress-dialog").dialog("open");
-	}
-	
-	
-	<%-- 
-		.ajaxSubmit({}) will not treat server response status, will not fire error handlers, and returns a fake xhr object.
-		It wont accept specific response data type so we must parse html, strip the tags and parse json ourselves.
+	<div data-def="state=selection">
+		<form class="attachment-upload-form">
 		
-		The only solution to process the response is to analyse the content to infer the status.	
-	--%>
-	function attachmentSubmit(ticket){
-		$("#add-attachment-form").ajaxSubmit({
-			url : "${url}?upload-ticket="+ticket,
-			dataType : "text/html",
-			success : function(){},
-			error : function(){},
-			complete : function(jqXHR){attachmentSubmitComplete(ticket, jqXHR);},
-			target : '#dump'
-		});	
-	}
+		</form>	
+	</div>
+
+	<div data-def="state=uploading" class="attachment-upload-uploading centered">
+	 	<h4 	class="attachment-progress-message centered"><f:message key="title.UploadingPleaseWait" /></h4>
+ 		<div 	class="attachment-progressbar"></div>
+ 		<span 	class="attachment-progress-percentage"></span>
+ 	</div>
 	
-	function formatToMegabyte(lMaxSize){
-		var mb = lMaxSize / 1048576;
-		return mb.toFixed(3);
-	}
+	<div data-def="state=summary" class="attachment-upload-summary display-table">
 	
+	</div>
 	
-	
+	<div data-def="state=error" >
+		<span class="attachment-upload-error-message">
+			<f:message key="message.AttachmentUploadSizeExceeded"/>
+		</span>
+	</div>
 
-	<%-- see #attachmentSubmit for details regarding error handling --%>
-	function attachmentSubmitComplete(ticket, jqXHR){
+	<div class="popup-dialog-buttonpane">
+		<input type="button" value="${attachSubmit}" data-def="evt=submit, state=selection, mainbtn=selection"/>
+		<input type="button" value="${cancelLabel}" data-def="evt=cancel, state=selection uploading, mainbtn=selection uploading"/>
+		<input type="button" value="${okLabel}" data-def="evt=done, state=summary, mainbtn=summary"/>
+	</div>
 
-		$("#attachment-progress-dialog").dialog("close");
-		<%-- 
-		because some browsers find it clever to wrap the raw response inside html tags (no, it's not IE for once) 
-		we need to 'unwrap' our nested json response.
-		
-		in our case, if the json response has an attribute maxSize, then we got an error.
-		 --%>
-		
-		var text = $(jqXHR.responseText).text();
-		var json = $.parseJSON(text);
-		if (json.maxSize === undefined){
-			openUploadSummary(ticket);
-		}else{
-			var maxSize = json.maxSize;		
-			var message = "${uploadErrorMessage} (" + formatToMegabyte(maxSize) + " ${megaByteLabel})";
-			
-			squashtm.notification.showInfo(message);
-			
-			exitUpload();
-		}
-		
-	}
-</script>
+</div>
 
-
-<%-- 
-	third section : the final popup giving a summary of the whole operation.
-	
- --%>
-<script type="text/javascript">
-
-	//todo : init the popup with json that'll be loaded using the finalizeUpload on the controller
-	
-	function openUploadSummary(ticket){
-		resetUploadSummary();
-		
-		$.ajax({
-			url : "${url}?upload-ticket="+ticket,
-			type : "DELETE",
-			dataType : "json",
-			success : populateAndOpenSummary
-		});
-		
-		
-	}
-	
-	function resetUploadSummary(){
-		$("#attachment-upload-summary-body").html('');			
-	}
-	
-
-	
-	function populateAndOpenSummary(json){
-		
-		if (json!=null){
-			if (! allTransferSuccessful(json)){
-				populateSummary(json);			
-				$("#attachment-upload-summary").dialog("open");
-			}
-			else{
-				exitUpload();
-			}
-		}
-	}
-
-	
-	function allTransferSuccessful(json){
-		var summaries = json[0];
-		var i=0;
-		var allSuccess=true;
-		for (i=0;i<summaries.length;i++){
-			if (summaries[i].iStatus!=0){
-				allSuccess=false;
-				break;
-			}
-		}
-		return allSuccess;		
-	}
-
-	
-	function populateSummary(json){
-		
-		var summaries = json[0];
-		var i=0;
-		
-		for (i=0;i<summaries.length;i++){
-			$("#attachment-upload-summary-body").append(
-					"<div class=\"display-table-row\" >"+
-					"<div class=\"display-table-cell\" >"+
-					"<label style=\"font-weight:bold;\">"+summaries[i].name+"</label>"+
-					"</div>"+
-					"<div class=\"display-table-cell\" >"+
-					"<span>"+summaries[i].status+"</span>"+
-					"</div>"+
-					"</div>"					
-			);
-		}
-				
-	}
-
-	
-	function exitUpload(){
-		<c:if test="${not empty successCallback}">
-		${successCallback}();
-		</c:if>
-	}
-
-
-</script>
-
-
-
-<%--  depends heavily on the jquery.form.js plugin, do not forget to include it  --%>
-<pop:popup id="attachment-upload-dialog" openedBy="${openedBy}" 
- 				isContextual="true" titleKey="dialog.attachment.upload.title">
- 	<jsp:attribute name="buttons"> 		
- 		<f:message var="attachSubmit" key="label.Upload"/>
- 		'${attachSubmit}' : function(){
- 			setupAndBeginUpload();
- 		},
- 		
- 		<pop:cancel-button />
- 	</jsp:attribute> 
- 	
- 	<jsp:attribute name="additionalSetup">
- 		width : 435,
- 		open : function(){
- 			var formInstance = $("#attachment-upload-dialog").data("formInstance");
- 			formInstance.clear();
- 		}
- 	</jsp:attribute>
- 	<jsp:attribute name="body"> 
- 
- 			
- 		<%-- templates for cloning --%>
- 		<div id="add-attachments-templates" style="display:none;">
-	 		<f:message var="removeFileBrowser" key="dialog.attachment.add.button.remove.label" />
-	 		<div class="attachment-item">
-		 		<input type="file" name="${paramName}[]" size="40" />
-		 		<input type="button" value="${removeFileBrowser}">
-	 		</div>
- 		</div>
-
- 		
- 		<div id="add-attachment-list" style="height:300px; margin:10 10 10 10;overflow-y:auto">
-			<form id="add-attachment-form" action="${url}" method="POST" enctype="multipart/form-data">
- 				 				 			
- 			</form>
- 		</div> 	
- 		<div id="dump" style="display:none;"></div>
- 	</jsp:attribute>
- </pop:popup>
- 
- <%-- additional setup for the file selection popup --%>
- <script type="text/javascript">
- 	$(function(){
- 		var itemTemplate = $("#add-attachments-templates  .attachment-item");
- 		var formInstance = $("#add-attachment-form").uploadPopup(itemTemplate);
- 		$("#attachment-upload-dialog").data("formInstance", formInstance);
- 	});
- </script>
- 
+<div id="dump" class="not-displayed"></div>
  
 
- <pop:popup id="attachment-progress-dialog" openedBy="aezfsdfsfze" isContextual="true" 
- titleKey="title.UploadingPleaseWait" closeOnSuccess="false">
- 	<jsp:attribute name="buttons">
-		 <f:message var="cancelLabel" key="label.Cancel"/>
-		'${cancelLabel}': function() {
-			$( this ).dialog( 'close' );
-			window.location.reload();
-		}		
- 	</jsp:attribute>
- 	
- 	<jsp:attribute name="body"> 
-
- 		 	
- 		<div style="text-align:center;">
- 		<f:message var="pleaseWaitMessage" key="title.UploadingPleaseWait" />
- 			<h4 id="attachment-progress-message" style="text-align:center;"></h4>
- 			<div id="attachment-progressbar"></div>
- 			<span id="attachment-progress-percentage"></span>
- 		</div>
- 	</jsp:attribute>
- 	
- 	
- </pop:popup>
- 
- 
- <%-- more initiatisation code for the progress bar popup --%>
- <script type="text/javascript">
-  
-  
- 	//popup additional init
-	$(function(){
-		//make it a progressbar
-		$("#attachment-progressbar").progressbar({ value: 0 });
-		
-		//overload the open event of this dialog : reset the bar and init the poll loop;
-		$("#attachment-progress-dialog").bind("dialogopen", function(){
- 			
-			uploadUpdateBar(0);
- 			uploadDisplayPercentage(0);
- 			uploadDisplayMessage("${pleaseWaitMessage}");			
-			
-			uploadIntervalId = setInterval ( "pollUploadStatus()", 1000 );
-
-		});
-		
-		//overload the closing handler
-		$("#attachment-progress-dialog").bind("dialogclose", function(){
-			clearInterval ( uploadIntervalId );
-		});
-
-	}); 
-  
- 	<%--
- 	 * the section below handle the polling routine.
- 	 * it will periodically call the server for the upload status, with the upload ticket as a reference.
- 	--%>
- 	
- 	var uploadIntervalId;
-
- 	function updateProgressStatus(data){
- 		
- 		if (data.percentage<0){
- 			uploadDisplayMessage("Warning : upload progress statistics are invalid");
- 		}
- 		
- 		else{ 		
- 			uploadUpdateBar(data.percentage);
- 			uploadDisplayPercentage(data.percentage);
- 			
-	 		if (data.percentage==100){
-	 			<f:message var="uploadCompleted" key="message.UploadComplete" />
-	 			uploadDisplayMessage("${uploadCompleted}");
-	 		}
- 		}
- 	}
- 
- 	function pollUploadStatus(){
- 		var ticket = $("#attachment-progress-dialog").data("ticket");
- 		url = "${url}?upload-ticket="+ticket;
- 		$.get(
- 				url,
- 				function(data){
- 					updateProgressStatus(data);
- 					},
- 				"json"
- 		);
- 	}
- 	
- 	function uploadUpdateBar(percentage){
- 		$("#attachment-progressbar").progressbar( "option", "value", percentage );
- 	}
- 	
- 	function uploadDisplayPercentage(percentage){
- 		$("#attachment-progress-percentage").html(percentage.toString()+" &#37;");
- 	}
- 	
- 	function uploadDisplayMessage(message){
- 		$("#attachment-progress-message").html(message);
- 	}
-
- </script>
- 
- 
- <%-- popup for the summary --%>
- <pop:popup id="attachment-upload-summary"  titleKey="dialog.attachment.summary.label"  openedBy="nothing" isContextual="true" closeOnSuccess="false">
- 	 <jsp:attribute name="buttons">
-		 <f:message var="okLabel" key="label.Ok"/>
-		'${okLabel}': function() {
-			$(this).dialog('close');
-		}		
- 	</jsp:attribute>
- 	
- 	<jsp:attribute name="additionalSetup">
- 		close : function(){
- 			exitUpload();
- 		}
- 	</jsp:attribute>
-
- 	
- 	<jsp:attribute name="body">
- 		
- 		<div id="attachment-upload-summary-body" class="display-table">
- 		
- 		</div>
- 		
- 	
- 	</jsp:attribute>
- 
- </pop:popup>
  

@@ -93,7 +93,6 @@ requirejs.config({
 				"squash.basicwidgets" : "squash/squash.basicwidgets",
 				"jquery.tagit" : "jquery/tag-it.min",		
 				"jquery.squash.tagit" : "squashtest/jquery.squash.tagit",
-				"jquery.squash.add-attachment-popup" : "squashtest/add-attachment-popup",
 				"jquery.squash.buttonmenu" : "squashtest/jquery.squash.buttonmenu",
 				"jquery.squash.formdialog" : "squashtest/jquery.squash.formdialog",
 				"squash.attributeparser" : 'squash/squash.attributeparser',
@@ -198,10 +197,6 @@ requirejs.config({
 				"jquery.tagit" : {
 					deps : ["jquery", "jqueryui"],
 					exports : "tagit"
-				},
-				"jquery.squash.add-attachment-popup" : {
-					deps : ["jquery", "jquery.generateId"],
-					exports : "squash.add-attachment-popup"
 				},
 				'jqplot' : {
 					deps : ['jquery'],

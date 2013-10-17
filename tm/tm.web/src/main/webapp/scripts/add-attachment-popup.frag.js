@@ -20,7 +20,7 @@
  */
 require([ "common" ], function(common) {
 	require([ "jquery", "app/ws/squashtm.workspace", "domReady", "jquery.squash.squashbutton", "jform",
-			"squashtest/add-attachment-popup" ], function($, WS, domReady) {
+			"file-upload" ], function($, WS, domReady) {
 
 		var AAPS = squashtm.app.addAttachmentPopupSettings;
 
@@ -318,7 +318,7 @@ require([ "common" ], function(common) {
 
 			/** additional setup for the file selection popup * */
 			var itemTemplate = $("#add-attachments-templates  .attachment-item");
-			var formInstance = $("#add-attachment-form").uploadPopup(itemTemplate);
+			var formInstance = $("#add-attachment-form").multiFileupload(itemTemplate);
 			$("#attachment-upload-dialog").data("formInstance", formInstance);
 
 			/**

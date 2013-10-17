@@ -18,28 +18,30 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-/* ***************** upload popup internal logic **************************** */
+
 
 /*
- * The file upload popup works like a repeater. It will append or remove lists of Items.
+ * This will transform a <form> element into a multiple file upload.
+ * 
+ * It works works like a repeater, appending or removing lists of Items.
  * 
  * An Item is the following : 
  *	- a file browser,
  *	- a button that will remove it when clicked.
  * 
- * The popup will always propose an empty Item for new inputs. When an item is not empty anymore, a new 
+ * The form will always propose an empty Item for new inputs. When an item is not empty anymore, a new 
  * empty Item will be appended to the popup.
  * 
- * 
- * For the sake of clarity, let's mention here that a Form refers to a specific container (ie a div) of 
- * the popup (or whatever you wish anyway).
- *
  * 
  * @author bsiri
  */
 
-(function($) {
 
+require(["jquery", "jqueryui", "jform", "jquery.generateId"], function($){
+	if (!! $.fn.multiFileupload){
+		return;
+	}
+	
 	/*
 	 * Here is an object wrapper for the JQuery version of an Item
 	 * 
@@ -100,28 +102,7 @@
 		jqItem.getFile().data("wasEmpty", false);
 
 	}
-
-	/*
-	 * the container is an object too. It job is to manage the various Items it contains.
-	 * 
-	 * 
-	 */
-
-	$.fn.uploadPopup = function(jqItemTemplate) {
-
-		// init
-		if (jqItemTemplate != 'undefined') {
-			this.itemTemplate = jqItemTemplate;
-		}
-
-		this.findLastItem = findLastItem;
-		this.removeItem = removeItem;
-		this.clear = attachementClear;
-		this.appendItem = appendItem;
-
-		return this;
-	};
-
+	
 	// returns the last item of the list of files to upload
 	function findLastItem() {
 		var last = this.find(".attachment-item:last");
@@ -169,5 +150,30 @@
 			return false;
 		}
 	}
+	
 
-})(jQuery);
+	/*
+	 * the container is an object too. It job is to manage the various Items it contains.
+	 * 
+	 * 
+	 */
+
+	$.fn.multiFileupload = function(jqItemTemplate) {
+
+		// init
+		if (jqItemTemplate != 'undefined') {
+			this.itemTemplate = jqItemTemplate;
+		}
+
+		this.findLastItem = findLastItem;
+		this.removeItem = removeItem;
+		this.clear = attachementClear;
+		this.appendItem = appendItem;
+
+		return this;
+	};
+
+
+	
+	return $.fn.multiFileupload;
+});

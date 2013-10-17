@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "../domain/FieldValue", "squash.translator", "handlebars"], function($, FieldValue, translator, Handlerbars){
+define(["jquery", "../domain/FieldValue", "squash.translator", "handlebars", "fileupload"], function($, FieldValue, translator, Handlerbars){
 	
 	
 	//TODO : move this to an external template and load it via "text!" loader
@@ -50,7 +50,7 @@ define(["jquery", "../domain/FieldValue", "squash.translator", "handlebars"], fu
 			
 			//this is NOT a jquery widget, fetching and caching the instance of the object created that way is important because 
 			//we cannot query for it later.
-			this._delegateWidget = delegate.uploadPopup(itemTemplate);
+			this._delegateWidget = delegate.multiFileupload(itemTemplate);
 			this._delegateWidget.clear();
 			
 		},
