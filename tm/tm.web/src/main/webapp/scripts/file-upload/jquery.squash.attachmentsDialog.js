@@ -46,7 +46,7 @@ define(["jquery", "squash.attributeparser", "handlebars", "jquery.squash.formdia
  		
  		options : {
  			width : 435,
- 			url : undefined //also read via data-def thanks to native formDialog init
+ 			url : undefined 
  		},
  		
  		_create : function(){
@@ -240,7 +240,10 @@ define(["jquery", "squash.attributeparser", "handlebars", "jquery.squash.formdia
   		// ***************** errors ***********************
   		
   		displayError : function(size){
-  			var errMessage = this.options._sizeexceeded.replace('#size#', size);
+  			
+  			var s = (size / 104576).toFixed(3);
+  			
+  			var errMessage = this.options._sizeexceeded.replace('#size#', s);
   			this.element.find('.attachment-upload-error-message').text(errMessage);
   			this.setState('error');
   		}

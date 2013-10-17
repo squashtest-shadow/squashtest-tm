@@ -20,7 +20,7 @@
  */
 require([ "common" ], function(common) {
 	require([ "jquery", "squash.basicwidgets", "test-step-editor/TestStepModificationView",
-			"app/ws/squashtm.workspace", "domReady", "attachment-bloc.frag" ],
+			"app/ws/squashtm.workspace", "domReady" ],
 			function($, basic, TestStepModificationView, WS, domReady) {
 				var closeWindow = function() {
 					window.close();

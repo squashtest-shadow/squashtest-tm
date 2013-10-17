@@ -330,7 +330,7 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui',
 			else{
 				var values = $.trim(value).split(' ');
 				for (var i=0, len = values.length; i<len;i++){
-					this.options._mainBtns[values] = $elt;
+					this.options._mainBtns[values[i]] = $elt;
 				}
 			}
 		},

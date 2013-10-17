@@ -24,11 +24,10 @@ define(["jquery", "./jquery.squash.attachmentsDialog"], function($){
 	function reloadAttachments(settings){
 		var container =$("#attachment-container"); 
 		
-		container.load(settings.baseURL+"/display")
-		.done(function(){
+		container.load(settings.baseURL+"/display", function(){
 			if (container.find(".div-attachments-item").length>0){
 				$("#attachment-panel").togglePanel("openContent");
-			}
+			}		
 		});
 	}
 	

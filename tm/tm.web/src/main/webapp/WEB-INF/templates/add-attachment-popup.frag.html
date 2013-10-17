@@ -29,90 +29,50 @@
 	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.blue.css" sq:css="squash.blue.css" />
 </head>
 <body>
-<div th:remove="all">
-<!--  
-	parameters are :
-		
-		attachable : boolean that says whether user has attach right on attachable entity
-		attachableEntity : an attachable entity
-		
-		
-	that file groups three popup together. 
-	 - file selection, 
-	 - progres bar,
-	 - summary
- 
 
- -->
-</div>
 	<div th:fragment="add-attachment-popup">
-	<script th:remove="all" data-main="../../scripts/attachment-popup.frag.js"  src="../../scripts/require.js" ></script>
-	<script type="text/javascript" th:inline="javascript">
-	if(!squashtm){
-		var squashtm = {};
-	}
-	if(!squashtm.app){
-		squashtm.app = {
-				contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
-		};
-	}
-	squashtm.app.addAttachmentPopupSettings = {
-		uploadAttachmentUrl : /*[[ @{/attach-list/} + ${attachableEntity.attachmentList.id} + '/attachments/upload' ]]*/'http://localhost:8080/squash/attach-list/1/attachments/upload',
-		uploadErrorMessage : /*[[ #{message.AttachmentUploadSizeExceeded} ]]*/'size exceeded',
-		megaByteLabel : /*[[ #{squashtm.megabyte.label} ]]*/'mega bytes',
-		uploadPopupTitle : /*[[ #{dialog.attachment.upload.title} ]]*/'Upload attachment',
-		uploadPleaseWaitTitle : /*[[ #{title.UploadingPleaseWait} ]]*/'Uploading please wait',
-		uploadSummaryTitle : /*[[ #{dialog.attachment.summary.label} ]]*/'Upload summary',
-		uploadCompletedMessage : /*[[ #{message.UploadComplete} ]]*/ 'Upload complete',
-		pleaseWaitMessage : /*[[ #{title.UploadingPleaseWait} ]]*/'Please wait !',
-		uploadLabel : /*[[ #{label.Upload} ]]*/ 'Upload',
-		cancelLabel : /*[[ #{label.Cancel} ]]*/ 'Cancel',
-		okLabel : /*[[ #{label.Ok} ]]*/ 'OK',
-	};
-	</script>
 
-<!-- <comp:add-attachment-popup paramName="attachment" url="${uploadAttachmentUrl}"   -->
-<!-- 				openedBy="upload-attachment-button"	submitCallback="reloadAttachments"/> -->
+	<div id="add-attachments-dialog" class="popup-dialog not-displayed" th:title="#{dialog.attachment.upload.title}">
 
-<div id="attachment-upload-dialog" class="popup-dialog" > 			
-<!--  		 templates for cloning  -->
- 		<div id="add-attachments-templates" class="not-displayed">
-	 		<div class="attachment-item">
-		 		<input type="file" name="attachment[]" size="40" />
-		 		<input type="button" th:value="#{dialog.attachment.add.button.remove.label}" value="remove" />
-	 		</div>
- 		</div>
 
- 		
- 		<div id="add-attachment-list" style="height:300px; margin:10 10 10 10;overflow-y:auto">
-			<form id="add-attachment-form" th:action="@{/attach-list/} + ${attachableEntity.attachmentList.id} + 'attachments/upload'" action="http://localhost:8080/squash/attach-list/1/attachments/upload" method="POST" enctype="multipart/form-data">
- 				 				 			
- 			</form>
- 		</div> 	
- 		<div id="dump" class="not-displayed"></div>
- </div>
- 
- 
- 
- 
- 
+	<div class="add-attachments-templates not-displayed" style="display:none;">
+		<div class="attachment-item">
+			<input type="file" name="attachment[]" size="40" ></input>
+			<input type="button" th:value="#{dialog.attachment.add.button.remove.label}"></input>
+		</div>
+	</div>
 
- <div id="attachment-progress-dialog" class="popup-dialog"  >
- 		<div>
- 			<h4 id="attachment-progress-message"></h4>
- 			<div id="attachment-progressbar"></div>
- 			<span id="attachment-progress-percentage"></span>
- 		</div>
- </div>
- 
- 
- 
- 
-<!--   popup for the summary  -->
- <div id="attachment-upload-summary" class="popup-dialog" >
- 	<div id="attachment-upload-summary-body" class="display-table">
+	<div data-def="state=selection">
+		<form class="attachment-upload-form">
+		
+		</form>	
+	</div>
+
+	<div data-def="state=uploading" class="attachment-upload-uploading centered">
+	 	<h4 	class="attachment-progress-message centered" th:text="#{title.UploadingPleaseWait}"></h4>
+ 		<div 	class="attachment-progressbar"></div>
+ 		<span 	class="attachment-progress-percentage"></span>
  	</div>
- </div>
+	
+	<div data-def="state=summary" class="attachment-upload-summary display-table">
+	
+	</div>
+	
+	<div data-def="state=error" >
+		<span class="attachment-upload-error-message" th:text="#{message.AttachmentUploadSizeExceeded}">
+			
+		</span>
+	</div>
+
+	<div class="popup-dialog-buttonpane">
+		<input type="button" th:value="#{label.Upload}" data-def="evt=submit, state=selection, mainbtn=selection"></input>
+		<input type="button" th:value="#{label.Cancel}" data-def="evt=cancel, state=selection uploading, mainbtn=uploading"></input>
+		<input type="button" th:value="#{label.Ok}" data-def="evt=done, state=summary error, mainbtn=summary error"></input>
+	</div>
+
+</div>
+
+<div id="dump" class="not-displayed"></div>
  
 	
 	</div>

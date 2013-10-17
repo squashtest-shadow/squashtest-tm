@@ -54,6 +54,10 @@ documentation :
 	var require = {
 		baseUrl : /*[[@{/scripts/}]]*/'../../scripts/'
 	};
+	
+	var squashtm = squashtm || {};
+	squashtm.app = squashtm.app || {};
+	squashtm.app.contextRoot = /*[[@{/}]]*/ "http://localhost:8080/squash";
 //]]>
 </script>
 <script type="text/javascript" th:src="@{/scripts/require-min.js}"></script>
@@ -173,7 +177,7 @@ documentation :
 	<script type="text/javascript" th:inline="javascript">
 	//<![CDATA[
 	
-	require(["domReady", "execution-processing"], function(domReady, executionProcessing){
+	require(["domReady", "execution-processing", 'squash.basicwidgets'], function(domReady, executionProcessing, basic){
 		domReady(function(){
 			
 			requirejs.config({
@@ -185,6 +189,7 @@ documentation :
 			})
 			
 			executionProcessing.initPreview();
+			basic.init();
 		});		
 	});
 		

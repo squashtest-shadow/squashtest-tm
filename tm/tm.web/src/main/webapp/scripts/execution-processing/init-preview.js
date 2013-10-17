@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "module", "jquery.squash.squashbutton",
-		"jquery.squash.togglepanel", "jquery.squash", "attachment-bloc.frag" ], function($, module) {
+define([ "jquery", "module",  "jquery.squash.squashbutton",
+		"jquery.squash.togglepanel", "jquery.squash" ], function($, module) {
 
 	function initPreview() {
 
