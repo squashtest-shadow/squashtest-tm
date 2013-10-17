@@ -97,7 +97,7 @@
 			$( "#tabbed-pane" ).tabs();
 			
 			require( ["common"], function(){
-				require(["squash/squashtm.tree-page-resizer"], function(resizer){
+				require(["squash/squash.tree-page-resizer"], function(resizer){
 					
 					var conf = {
 						leftSelector : "#tree-panel-left",

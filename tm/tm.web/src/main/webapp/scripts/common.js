@@ -50,61 +50,71 @@ requirejs.config({
 			 * name and remove any unrequired "ext" suffix.
 			 */
 			paths : {
-				"domReady" : "lib/require/domReady",
 				/*
 				 * CAVEAT: as we defined a "jquery" path, any module named
 				 * "jquery/my.module" will be interpolated as
 				 * "/lib/jquery/../my.module"
 				 */
+				
+				"datatables" : "datatables/jquery.dataTables.min",
+				//lib
+				"domReady" : "lib/require/domReady",
 				"jquery" : "lib/jquery/jquery-1.8.3.min",
 				"jqueryui" : "lib/jquery/jquery-ui-1.9.0.custom.min",
-				"jquery.dialog-patch" : "jquery/jquery.dialog-patch",
-				"datatables" : "datatables/jquery.dataTables.min",
 				"handlebars" : "lib/handlebars/handlebars-1.0.0.rc3",
 				"underscore" : "lib/underscore/underscore-1.4.4-min",
 				"backbone" : "lib/backbone/backbone-1.0.0-min",
+				'jqplot' : 'lib/jqplot/jquery.jqplot.min',
+				'jqplot-pie' : 'lib/jqplot/plugins/jqplot.pieRenderer.min',
+				'excanvas' : 'lib/excanvas.min',
+				//cke
 				"ckeditor" : "ckeditor/ckeditor",
 				"jquery.ckeditor" : "ckeditor/adapters/jquery",
+				//jeditable
 				"jeditable" : "jquery/jquery.jeditable.mini.authored",
 				"jeditable.ckeditor" : "jquery/jquery.jeditable.ckeditor",
 				"jeditable.datepicker" : "jquery/jquery.jeditable.datepicker",
 				"jeditable.simpleJEditable" : "squashtest/classes/SimpleJEditable",
 				"jeditable.selectJEditable" : "squashtest/classes/SelectJEditable",
+				//jquery
 				"jstree" : "jquery/jquery.jstree",
 				"jform" : "jquery/jquery.form",
+				"jquery.dialog-patch" : "jquery/jquery.dialog-patch",
 				"jquery.throttle-debounce" : "jquery/jquery.ba-throttle-debounce.min",
 				"jquery.generateId" : "jquery/jquery.generateId",
 				"jquery.hotkeys" : "jquery/jquery.hotkeys-0.8",
 				"jquery.timepicker" : "jquery/jquery-ui-timepicker-addon",
-				"jquery.squash" : "squashtest/jquery.squashtm.plugin",
-				"jquery.squash.fragmenttabs" : "squash/squashtm.fragmenttabs",
+				"jquery.cookie" : "jquery/jquery.cookie",
+				"jquery.tagit" : "jquery/tag-it.min",
+				//squashtest
+				"jquery.squash" : "squashtest/jquery.squash.plugin",
 				"jquery.squash.togglepanel" : "squashtest/jquery.squash.togglepanels",
 				"jquery.squash.messagedialog" : "squashtest/jquery.squash.messagedialog",
 				"jquery.squash.confirmdialog" : "squashtest/jquery.squash.confirmdialog",
-				"jquery.squash.oneshotdialog" : "squashtest/jquery.squashtm.oneshotdialog",
+				"jquery.squash.oneshotdialog" : "squashtest/jquery.squash.oneshotdialog",
 				"jquery.squash.squashbutton" : "squashtest/jquery.squash.squashbutton",
-				"jquery.squash.jeditable" : "squashtest/jquery.squashtm.jeditable.ext",
-				"jquery.squash.projectpicker" : "squash/jquery.squashtm.projectpicker",
-				"jquery.cookie" : "jquery/jquery.cookie",
-				"squash.cssloader" : "squash/squash.cssloader",
-				"squash.translator" : "squash/squash.translator",
-				"squash.resizer" : "squash/squashtm.tree-page-resizer",
+				"jquery.squash.jeditable" : "squashtest/jquery.squash.jeditable.ext",
 				"squash.session-pinger" : "squashtest/jquery.squash.session-pinger",
-				"squash.basicwidgets" : "squash/squash.basicwidgets",
-				"jquery.tagit" : "jquery/tag-it.min",		
 				"jquery.squash.tagit" : "squashtest/jquery.squash.tagit",
 				"jquery.squash.buttonmenu" : "squashtest/jquery.squash.buttonmenu",
 				"jquery.squash.formdialog" : "squashtest/jquery.squash.formdialog",
 				"jquery.switchButton" : "jquery/jquery.switchButton",
+				"jquery.squash.add-attachment-popup" : "squashtest/add-attachment-popup",
+				//squash
+				"jquery.squash.projectpicker" : "squash/jquery.squash.projectpicker",
+				"jquery.squash.fragmenttabs" : "squash/squash.fragmenttabs",
+				"squash.cssloader" : "squash/squash.cssloader",
+				"squash.translator" : "squash/squash.translator",
+				"squash.resizer" : "squash/squash.tree-page-resizer",
+				"squash.basicwidgets" : "squash/squash.basicwidgets",
 				"squash.attributeparser" : 'squash/squash.attributeparser',
 				"squash.configmanager" : 'squash/squash.configmanager',
+				//workspace
 				"workspace.tree-node-copier" : "workspace/workspace.tree-node-copier",
 				"workspace.tree-event-handler" : "workspace/workspace.tree-event-handler",
 				"workspace.permissions-rules-broker" : "workspace/workspace.permissions-rules-broker",
-				"workspace.contextual-content" : "workspace/workspace.contextual-content",	
-				'jqplot' : 'lib/jqplot/jquery.jqplot.min',
-				'jqplot-pie' : 'lib/jqplot/plugins/jqplot.pieRenderer.min',
-				'excanvas' : 'lib/excanvas.min'
+				"workspace.contextual-content" : "workspace/workspace.contextual-content"
+				
 			},
 			shim : {
 				"ckeditor" : {

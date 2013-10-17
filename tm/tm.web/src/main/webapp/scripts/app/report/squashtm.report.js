@@ -23,8 +23,8 @@ var squashtm = squashtm || {};
  * Controller for the report panel
  * 
  * depends on : jquery jquery ui jquery.jeditable.js
- * jquery.jeditable.datepicker.js jquery.squashtm.plugin.js
- * jquery.squashtm.linkabletree.js squashtm.reportworkspace.js
+ * jquery.jeditable.datepicker.js jquery.squash.plugin.js
+ * jquery.squash.linkabletree.js squash.reportworkspace.js
  * 
  * @author Gregory Fouquet
  */

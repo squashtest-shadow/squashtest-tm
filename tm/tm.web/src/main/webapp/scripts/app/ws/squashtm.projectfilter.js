@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * requires : * jquery.squashtm.projectpicker.js
+ * requires : * jquery.squash.projectpicker.js
  */
 var squashtm = squashtm || {};
 

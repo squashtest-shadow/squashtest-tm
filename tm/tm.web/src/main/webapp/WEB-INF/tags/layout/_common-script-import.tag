@@ -57,9 +57,9 @@ require.baseUrl = "${pageContext.servletContext.contextPath}/scripts";
 <jq:jquery-header />
 <ck:ckeditor-header />
 
-<script charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.popup-error.js" ></script>
+<script charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squash.popup-error.js" ></script>
 
-<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squashtm.oneshotdialog.js"></script>
+<script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/jquery.squash.oneshotdialog.js"></script>
 <script  charset="utf-8" type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/classes/KeyEventListener.js"></script>
 
 

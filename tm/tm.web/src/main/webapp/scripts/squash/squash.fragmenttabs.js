@@ -74,7 +74,8 @@ squashtm.fragmenttabs = (function($, window) {
 			calculateTopPositionsOfTabs();
 
 			var args = {
-				show : calculateTopTableWrap
+				show : calculateTopTableWrap,
+				active: 0
 			};
 
 			if (arguments.length > 0) {

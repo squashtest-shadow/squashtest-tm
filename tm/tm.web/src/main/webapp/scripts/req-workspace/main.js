@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(['tree', './req-treemenu', './popups/init-all', './init-actions', 'squash/squashtm.tree-page-resizer'], 
+define(['tree', './req-treemenu', './popups/init-all', './init-actions', 'squash/squash.tree-page-resizer'], 
 		function(tree, treemenu, popups, actions, resizer) {
 
 	

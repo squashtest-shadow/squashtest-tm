@@ -26,8 +26,8 @@
  dataTables
  KeyEventListener
  statusFactory
- jquery.squashtm.oneshotdialog.js
- jquery.squashtm.datatables
+ jquery.squash.oneshotdialog.js
+ jquery.squash.datatables
 
  */
 
@@ -155,7 +155,7 @@
  * 
  * If set, will attempt to turn some cells to rich editables. If undefined, nothing will happen. the property
  * 'richEditables' is an compound object and must define at least 1 member for 'target'. conf : a regular object
- * configuring the plugin $.ui.richEditable (see jquery.squashtm.jeditable.ext.js). targets : a map of key-values. A key
+ * configuring the plugin $.ui.richEditable (see jquery.squash.jeditable.ext.js). targets : a map of key-values. A key
  * represents a css class and the value represents an url supporting placeholders. Any td having the given css class
  * will be turned to a rich jeditable configured with 'conf' and posting to the supplied url.
  * 

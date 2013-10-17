@@ -279,7 +279,7 @@
 				}
 				
 				//issue #2069
-				//note : could not user jquery.squashtm.plugin.js because of errors from unknown origin
+				//note : could not user jquery.squash.plugin.js because of errors from unknown origin
 				//so I'll inline the code here
 				function noBackspaceNavigation(){
 					$(document).bind('keydown', function (event) {	
