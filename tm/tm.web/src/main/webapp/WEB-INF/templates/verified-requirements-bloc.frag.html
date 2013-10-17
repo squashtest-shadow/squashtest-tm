@@ -83,18 +83,26 @@
 				});
 			});
 		</script>
-		<div class="toggle-panel">
-			<span class="not-displayed toggle-panel-buttons"> 
-				<input th:if="${linkable}" id="add-verified-requirements-button" type="button"
-				th:value="#{label.associateRequirements}" value="Associate Requirements" class="button" />
-				<input th:if="${linkable}" id="remove-verified-requirements-button"
-				type="button" th:value="#{label.removeRequirementsAssociation.test-cases}" value="Remove from test-case"
-				class="button" />
-				<input th:if="${linkable}" id="remove-verified-requirements-from-step-button"
-				type="button" th:value="#{label.removeRequirementsAssociation.test-steps}" value="Remove from step"
-				class="button" />
-			</span>
-			<div class="toggle-panel-main" id="verified-requirements-panel" th:title="#{label.verifiedRequirements.test-steps}" 
+		 <div sq:togglePanel="opened">
+		<div>
+			<h3 >
+				<div>
+					<div>
+						<a th:text="#{abel.verifiedRequirements.test-steps}" >Verified requirements</a>
+					</div>
+					<div> 
+						<input th:if="${linkable}" id="add-verified-requirements-button" type="button"
+						th:value="#{label.associateRequirements}" value="Associate Requirements" class="button" />
+						<input th:if="${linkable}" id="remove-verified-requirements-button"
+						type="button" th:value="#{label.removeRequirementsAssociation.test-cases}" value="Remove from test-case"
+						class="button" />
+						<input th:if="${linkable}" id="remove-verified-requirements-from-step-button"
+						type="button" th:value="#{label.removeRequirementsAssociation.test-steps}" value="Remove from step"
+						class="button" />
+					</div>
+				</div>		
+			</h3>    
+			<div id="verified-requirements-panel" th:title="#{l}" 
 					th:attr="data-init-open=${! requirementVerifier.verifier.verifiedRequirementVersions.empty}">
 				<table id="verified-requirements-table" th:attr="data-def='pre-filled, datakeys-id=entity-id, ajaxsource='+@{/test-steps/__${requirementVerifier.verifyingStep.id}__/verified-requirement-versions/}">
 					<thead>
@@ -130,6 +138,7 @@
 						</tr>
 					</tbody>
 				</table>
+			</div>
 			</div>
 		</div>
 	

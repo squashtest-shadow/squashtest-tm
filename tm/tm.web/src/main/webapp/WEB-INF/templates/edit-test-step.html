@@ -130,12 +130,20 @@
 
           <div class="fragment-body unstyled">
             
-            <div class="toggle-panel ">
-            	<span class="not-displayed toggle-panel-buttons"> 
-            	 <input type="button" id="save-test-step-button" th:value="#{ label.save }" value="Save" th:if="(${testStepView.actionStep} or ${hasCUF}) and  ${writable}" ></input>
-            	
-				</span>
-              <div id="test-step-info-panel" class="information-panel toggle-panel-main" th:title="#{label.testStep.information}">
+            
+        <div sq:togglePanel="opened">
+		<div>
+			<h3 >
+				<div>
+					<div>
+						<a th:text="#{label.testStep.information}" >Informations</a>
+					</div>
+					<div> 
+						<input type="button" id="save-test-step-button" th:value="#{ label.save }" value="Save" th:if="(${testStepView.actionStep} or ${hasCUF}) and  ${writable}" ></input>
+        						</div>
+				</div>		
+			</h3>          
+              <div id="test-step-info-panel" class="information-panel" >
                 <div class="display-table" id="test-step-infos-table"  th:style="${testStepView.actionStep}? 'width:100%' : ''">
                  <div class="display-table-row" >
                     <label for="test-step-id" >Id</label>
@@ -188,6 +196,7 @@
                     <a id="test-step-called-test-case" class="display-table-cell" th:href="@{/test-cases/} + ${testStepView.testCase.id}+'/info'" href="http://localhost:8080/squash/test-cases/1" th:text="${testStepView.callStep.calledTestCase.reference}+'-'+${testStepView.callStep.calledTestCase.name}">that one</a>
                   </div>
                   </div>
+                </div>
                 </div>
               </div>
               <div th:if="${attachableEntity}" id="attachment-bloc-frag" th:include="attachment-bloc.frag :: attachment-bloc">ATTACHMENT-BLOC</div>
