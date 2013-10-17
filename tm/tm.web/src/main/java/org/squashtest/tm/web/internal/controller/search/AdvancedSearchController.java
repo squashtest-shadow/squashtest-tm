@@ -98,7 +98,11 @@ public class AdvancedSearchController {
 	private static final String TEXTFIELD = "textfield";
 	private static final String DATE = "date";
 	private static final String COMBOMULTISELECT = "combomultiselect";
-
+	private static final String TESTCASE = "testcase";
+	private static final String REQUIREMENT = "requirement";
+	private static final String SEARCH_MODEL = "searchModel";
+	private static final String SEARCH_DOMAIN = "searchDomain";
+	
 	@Inject
 	private AdvancedSearchService advancedSearchService;
 
@@ -195,7 +199,7 @@ public class AdvancedSearchController {
 			@RequestParam(required = false) Long id) {
 
 		initModelForPage(model, associateResultWithType, id);
-		model.addAttribute("searchDomain", searchDomain);
+		model.addAttribute(SEARCH_DOMAIN, searchDomain);
 		return searchDomain+"-search-input.html";
 	}
 	
@@ -219,35 +223,35 @@ public class AdvancedSearchController {
 			@RequestParam(required = false) Long id) {
 
 		initModelForPage(model, associateResultWithType, id);
-		model.addAttribute("searchModel", searchModel);
-		model.addAttribute("searchDomain", searchDomain);
+		model.addAttribute(SEARCH_MODEL, searchModel);
+		model.addAttribute(SEARCH_DOMAIN, searchDomain);
 
 		return searchDomain+"-search-input.html";
 	}
 
 	
-	@RequestMapping(value = "/results", method = RequestMethod.POST, params = "testcase")
+	@RequestMapping(value = "/results", method = RequestMethod.POST, params = TESTCASE)
 	public String getTestCaseSearchResultPage(Model model,
 			@RequestParam String searchModel,
 			@RequestParam(required = false) String associateResultWithType,
 			@RequestParam(required = false) Long id) {
 
 		initModelForPage(model, associateResultWithType, id);
-		model.addAttribute("searchModel", searchModel);
-		model.addAttribute("searchDomain", "testcase");
+		model.addAttribute(SEARCH_MODEL, searchModel);
+		model.addAttribute(SEARCH_DOMAIN, TESTCASE);
 		
 		return "test-case-search-result.html";
 	}
 
-	@RequestMapping(value = "/results", method = RequestMethod.POST, params = "requirement")
+	@RequestMapping(value = "/results", method = RequestMethod.POST, params = REQUIREMENT)
 	public String getRequirementSearchResultPage(Model model,
 			@RequestParam String searchModel,
 			@RequestParam(required = false) String associateResultWithType,
 			@RequestParam(required = false) Long id) {
 
 		initModelForPage(model, associateResultWithType, id);
-		model.addAttribute("searchModel", searchModel);
-		model.addAttribute("searchDomain", "requirement");
+		model.addAttribute(SEARCH_MODEL, searchModel);
+		model.addAttribute(SEARCH_DOMAIN, REQUIREMENT);
 		
 		return "requirement-search-result.html";
 	}
@@ -263,7 +267,7 @@ public class AdvancedSearchController {
 	}
 
 	@RequestMapping(value = "/table", method = RequestMethod.POST, params = {
-			"model", "testcase", RequestParams.S_ECHO_PARAM })
+			"model", TESTCASE, RequestParams.S_ECHO_PARAM })
 	@ResponseBody
 	public DataTableModel getTestCaseTableModel(final DataTableDrawParameters params,
 			final Locale locale, @RequestParam(value = "model") String model,
@@ -296,7 +300,7 @@ public class AdvancedSearchController {
 	}
 
 	@RequestMapping(value = "/table", method = RequestMethod.POST, params = {
-			"model", "requirement", RequestParams.S_ECHO_PARAM })
+			"model", REQUIREMENT, RequestParams.S_ECHO_PARAM })
 	@ResponseBody
 	public DataTableModel getRequirementTableModel(final DataTableDrawParameters params,
 			final Locale locale, @RequestParam(value = "model") String model,
@@ -332,7 +336,7 @@ public class AdvancedSearchController {
 		
 		Set<Long> ids = new HashSet<Long>();
 
-		if ("testcase".equals(associateResultWithType)) {
+		if (TESTCASE.equals(associateResultWithType)) {
 			List<VerifiedRequirement> requirements = verifiedRequirementsManagerService.findAllVerifiedRequirementsByTestCaseId(id);
 			for (VerifiedRequirement requirement : requirements) {
 				ids.add(requirement.getId());
@@ -346,7 +350,7 @@ public class AdvancedSearchController {
 
 		Set<Long> ids = new HashSet<Long>();
 
-		if ("requirement".equals(associateResultWithType)) {
+		if (REQUIREMENT.equals(associateResultWithType)) {
 			List<TestCase> testCases = verifyingTestCaseManagerService
 					.findAllByRequirementVersion(id);
 			for (TestCase testCase : testCases) {
@@ -395,7 +399,7 @@ public class AdvancedSearchController {
 	
 	
 	
-	@RequestMapping(value = "/input", method = RequestMethod.GET, headers = RequestHeaders.CONTENT_JSON, params = "requirement")
+	@RequestMapping(value = "/input", method = RequestMethod.GET, headers = RequestHeaders.CONTENT_JSON, params = REQUIREMENT)
 	@ResponseBody
 	public SearchInputInterfaceModel getRequirementSearchInputInterfaceModel(Locale locale) {
 
@@ -428,7 +432,7 @@ public class AdvancedSearchController {
 		return model;
 	}
 	
-	@RequestMapping(value = "/input", method = RequestMethod.GET, headers = RequestHeaders.CONTENT_JSON, params = "testcase")
+	@RequestMapping(value = "/input", method = RequestMethod.GET, headers = RequestHeaders.CONTENT_JSON, params = TESTCASE)
 	@ResponseBody
 	public SearchInputInterfaceModel getTestCaseSearchInputInterfaceModel(Locale locale) {
 
