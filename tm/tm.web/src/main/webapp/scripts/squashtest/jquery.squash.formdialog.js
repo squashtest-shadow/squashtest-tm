@@ -273,7 +273,6 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui',
 
 		_destroyCked : function() {
 			var editors = this.options._richeditors;
-			var i = 0
 			for (var i in editors) {
 				var domelt = editors[i];
 				var ckInstance = CKEDITOR.instances[domelt.id];
