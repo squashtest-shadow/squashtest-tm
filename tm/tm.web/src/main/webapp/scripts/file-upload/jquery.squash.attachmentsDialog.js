@@ -159,7 +159,7 @@ define(["jquery", "squash.attributeparser", "handlebars", "jquery.squash.formdia
   		
 
   		// ********************* upload progress ******************
-  		
+
   		startPolling : function(){
   			this.refreshBar(0);
   			var fnpoll = $.proxy(this.poll, this);

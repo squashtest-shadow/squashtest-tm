@@ -92,7 +92,7 @@
 	<div class="popup-dialog-buttonpane">
 		<input type="button" value="${attachSubmit}" data-def="evt=submit, state=selection, mainbtn=selection"/>
 		<input type="button" value="${cancelLabel}" data-def="evt=cancel, state=selection uploading, mainbtn=selection uploading"/>
-		<input type="button" value="${okLabel}" data-def="evt=done, state=summary, mainbtn=summary"/>
+		<input type="button" value="${okLabel}" data-def="evt=done, state=summary error, mainbtn=summary error"/>
 	</div>
 
 </div>
