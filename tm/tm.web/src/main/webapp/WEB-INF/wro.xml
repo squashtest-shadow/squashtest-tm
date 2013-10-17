@@ -25,6 +25,7 @@
 
   <group name="squash-js">
     <js>/scripts/app/**.js</js>
+    <js>/scripts/file-upload/**.js</js>
     <js>/scripts/bugtracker/**.js</js>
     <js>/scripts/dashboard/**.js</js>
     <js>/scripts/camp-workspace/**.js</js>

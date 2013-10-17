@@ -39,7 +39,7 @@ define(["jquery", "squash.translator", "./jquery.squash.attachmentsDialog",
 			errorTitle : 'popup.title.error',
 			nothingSelected : 'message.EmptyTableSelection',
 			renameImpossible : 'message.CanRenameOnlyOneAttachment'
-		})
+		});
 	}
 	
 	function initDialogs(settings){

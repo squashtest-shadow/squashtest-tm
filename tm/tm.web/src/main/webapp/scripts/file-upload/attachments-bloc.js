@@ -34,7 +34,7 @@ define(["jquery", "./jquery.squash.attachmentsDialog"], function($){
 	function initDialogs(settings){
 		var dialog = $("#add-attachments-dialog").attachmentsDialog({
 			url : settings.baseURL+"/upload"
-		})
+		});
 		
 		dialog.on('attachmentsdialogdone', function(){
 			reloadAttachments(settings);

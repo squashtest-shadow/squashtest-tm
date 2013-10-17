@@ -86,6 +86,6 @@ define(["jquery", "jform"], function($){
 			
 
 		}
-	}
+	};
 	
 });

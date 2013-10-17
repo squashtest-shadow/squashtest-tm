@@ -34,5 +34,5 @@ define(["jquery", "./SimpleFileUploader", "./attachments-manager", "./attachment
 		uploadFilesOnly : function(form, url){
 			return simpleFileUploader.uploadFilesOnly(form, url);
 		}
-	}
+	};
 });
