@@ -20,7 +20,9 @@
  */
 package org.squashtest.tm.web.internal.controller.search;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -30,6 +32,8 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -39,29 +43,39 @@ import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.testcase.TestCaseSearchExportCSVModel;
 import org.squashtest.tm.domain.testcase.TestCaseSearchExportCSVModel.Row;
 import org.squashtest.tm.service.library.AdvancedSearchService;
+import org.squashtest.tm.web.internal.controller.campaign.CampaignLibraryNavigationController;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 @Controller
 @RequestMapping("/advanced-search")
 public class AdvancedSearchExportController {
-	
+
 	@Inject
 	private AdvancedSearchService advancedSearchService;
 
-	@RequestMapping(method = RequestMethod.GET, params = {"searchModel", "export=csv", "requirement"})
-	public @ResponseBody
-	void exportRequirementVersionAdvancedSearchResult(HttpServletResponse response, @RequestParam(value = "searchModel") String searchModel) throws IOException {
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(CampaignLibraryNavigationController.class);
 
-		AdvancedSearchModel parsedSearchModel = new ObjectMapper().readValue(searchModel, AdvancedSearchModel.class);
-		
-		TestCaseSearchExportCSVModel model = advancedSearchService.exportRequirementVersionSearchResultsToCSV(parsedSearchModel);
+	@RequestMapping(method = RequestMethod.GET, params = { "searchModel",
+			"export=csv", "requirement" })
+	public @ResponseBody
+	void exportRequirementVersionAdvancedSearchResult(
+			HttpServletResponse response,
+			@RequestParam(value = "searchModel") String searchModel)
+			throws IOException {
+
+		AdvancedSearchModel parsedSearchModel = new ObjectMapper().readValue(
+				searchModel, AdvancedSearchModel.class);
+
+		TestCaseSearchExportCSVModel model = advancedSearchService
+				.exportRequirementVersionSearchResultsToCSV(parsedSearchModel);
 
 		// prepare the response
 		response.setContentType("application/octet-stream");
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 
-		response.setHeader("Content-Disposition",
-				"attachment; filename=" + "RequirementExport" + sdf.format(new Date()) + ".csv");
+		response.setHeader("Content-Disposition", "attachment; filename="
+				+ "RequirementExport" + sdf.format(new Date()) + ".csv");
 
 		// print
 		PrintWriter writer = response.getWriter();
@@ -71,40 +85,64 @@ public class AdvancedSearchExportController {
 		Iterator<Row> iterator = model.dataIterator();
 		while (iterator.hasNext()) {
 			Row datarow = iterator.next();
-			String cleanRowValue = HTMLCleanupUtils.htmlToText(datarow.toString()).replaceAll("\\n", " ")
+			String cleanRowValue = HTMLCleanupUtils
+					.htmlToText(datarow.toString()).replaceAll("\\n", " ")
 					.replaceAll("\\r", " ");
 			writer.write(cleanRowValue + "\n");
 		}
 
 	}
-	
-	
-	@RequestMapping(method = RequestMethod.GET, params = {"searchModel", "export=csv", "testcase"})
+
+	@RequestMapping(method = RequestMethod.GET, params = { "searchModel",
+			"export=csv", "testcase" })
 	public @ResponseBody
-	void exportTestCaseAdvancedSearchResult(HttpServletResponse response, @RequestParam(value = "searchModel") String searchModel) throws IOException {
+	void exportTestCaseAdvancedSearchResult(HttpServletResponse response,
+			@RequestParam(value = "searchModel") String searchModel)
+			throws IOException {
 
-		AdvancedSearchModel parsedSearchModel = new ObjectMapper().readValue(searchModel, AdvancedSearchModel.class);
-		
-		TestCaseSearchExportCSVModel model = advancedSearchService.exportTestCaseSearchResultsToCSV(parsedSearchModel);
+		BufferedWriter writer = null;
 
-		// prepare the response
-		response.setContentType("application/octet-stream");
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+		try {
+			AdvancedSearchModel parsedSearchModel = new ObjectMapper()
+					.readValue(searchModel, AdvancedSearchModel.class);
+			TestCaseSearchExportCSVModel model = advancedSearchService
+					.exportTestCaseSearchResultsToCSV(parsedSearchModel);
 
-		response.setHeader("Content-Disposition",
-				"attachment; filename=" + "TestCaseExport" + sdf.format(new Date()) + ".csv");
+			// prepare the response
+			writer = new BufferedWriter(new OutputStreamWriter(
+					response.getOutputStream()));
 
-		// print
-		PrintWriter writer = response.getWriter();
-		Row header = model.getHeader();
-		writer.write(header.toString() + "\n");
+			response.setContentType("application/octet-stream");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 
-		Iterator<Row> iterator = model.dataIterator();
-		while (iterator.hasNext()) {
-			Row datarow = iterator.next();
-			String cleanRowValue = HTMLCleanupUtils.htmlToText(datarow.toString()).replaceAll("\\n", " ")
-					.replaceAll("\\r", " ");
-			writer.write(cleanRowValue + "\n");
+			response.setHeader("Content-Disposition", "attachment; filename="
+					+ "TestCaseExport" + sdf.format(new Date()) + ".csv");
+
+			// print
+			Row header = model.getHeader();
+			writer.write(header.toString() + "\n");
+
+			Iterator<Row> iterator = model.dataIterator();
+			while (iterator.hasNext()) {
+				Row datarow = iterator.next();
+				String cleanRowValue = HTMLCleanupUtils
+						.htmlToText(datarow.toString()).replaceAll("\\n", " ")
+						.replaceAll("\\r", " ");
+				writer.write(cleanRowValue + "\n");
+			}
+
+			// closes stream in the finally clause
+		} catch (IOException ex) {
+			LOGGER.error(ex.getMessage());
+			throw new RuntimeException(ex);
+		} finally {
+			if (writer != null) {
+				try {
+					writer.close();
+				} catch (IOException ex) {
+					LOGGER.warn(ex.getMessage());
+				}
+			}
 		}
 
 	}
