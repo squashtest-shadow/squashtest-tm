@@ -32,6 +32,10 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments" %>
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
+
+
+<c:url var="baseURL" value="/attach-list/${entity.attachmentList.id}/attachments" />
 
 <%-- ------------------------------------- DOM -------------------------------------------------- --%>
 
@@ -49,9 +53,26 @@
 	</div>
 	
 	<div class="table-tab-wrap" >
-		<at:attachment-table entity="${entity}" editable="${editable}" model="${tableModel}"/>
+		<at:attachment-table baseURL="${baseURL}" editable="${editable}"/>
 	</div>
+	
+
+<c:if test="${ editable }">
+	<div class="not-displayed">		
+		<at:attachment-dialogs />
+	</div>
+</c:if>		
+
+	<script type="text/javascript">
+		$(function(){
+			require(["file-upload"], function(upload){
+				upload.initAttachmentsManager({
+					baseURL : "${baseURL}",
+					aaData : ${json:serialize(tableModel.aaData)}
+				});
+			});
+		});	
+	</script>
 
 </div>
 
-<%-- ------------------------------------- /DOM ------------------------------------------------- --%>

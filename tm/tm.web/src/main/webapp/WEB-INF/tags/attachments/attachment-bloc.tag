@@ -33,30 +33,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 
+<s:url var="baseURL" value="/attach-list/${attachListId}/attachments"/>
 
-
-<s:url var="attachmentsListUrl" value="/attach-list/${attachListId}/attachments/display"/>
-
-<s:url var="uploadAttachmentUrl" value="/attach-list/${attachListId}/attachments/upload"/>
-
-<s:url var="attachmentManagerUrl" value="/attach-list/${attachListId}/attachments/manager">
-	<s:param name="workspace" value="${workspaceName}" ></s:param>
-</s:url>
-
-
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/squashtest/attachment-bloc.js"></script>
-
-	<script type="text/javascript">
-		function reloadAttachments(){
-			$("#attachment-container").load("${attachmentsListUrl}", openAttachmentIfNotEmpty);
-		}
-		
-		$(function(){
-			$("#manage-attachment-bloc-button").click(function(){
-				document.location.href = "${attachmentManagerUrl}";
-			});
-		});
-	</script>
 
 <comp:toggle-panel id="attachment-panel" titleKey="label.Attachments" open="${ entity.attachmentList.notEmpty }">
 	<jsp:attribute name="panelButtons">
@@ -76,6 +54,20 @@
 </comp:toggle-panel>
 
 <c:if test="${ editable }">
-	<at:add-attachment-popup paramName="attachment" url="${uploadAttachmentUrl}"  
-				openedBy="upload-attachment-button" successCallback="reloadAttachments" />
-</c:if>
+	<div class="not-displayed">		
+		<at:attachment-dialogs />
+	</div>
+</c:if>		
+
+<script type="text/javascript">
+	$(function(){
+		require(["file-upload"], function(upload){
+			upload.initAttachmentsBloc({
+				baseURL : "${baseURL}",
+				workspace: "${workspaceName}"
+			});
+		});
+	});
+
+</script>
+

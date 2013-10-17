@@ -24,9 +24,14 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments" %>
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
+
+
 
 <?xml version="1.0" encoding="utf-8" ?>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+
+<c:url var="baseURL" value="/attach-list/${attachListId}/attachments" />
 
 
 <div id="attachment-manager-header" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
@@ -64,9 +69,24 @@
 			<input type="button" value="${removeAttachment}" id="delete-attachment-button" class="button" />
 		</jsp:attribute>
 		<jsp:attribute name="body">
-			<at:attachment-table editable="${true}" attachListId="${attachListId}" model="${attachmentsModel}"/>					
+			<at:attachment-table editable="${true}" baseURL="${baseURL}" />					
 		</jsp:attribute>
 	</comp:toggle-panel>
+	
+	<div class="not-displayed">		
+		<at:attachment-dialogs />
+	</div>
+	
+	<script type="text/javascript">
+		$(function(){
+			require(["file-upload"], function(upload){
+				upload.initAttachmentsManager({
+					baseURL : "${baseURL}",
+					aaData : ${json:serialize(attachmentsModel.aaData)}
+				});
+			});
+		});	
+	</script>
 
 </div>
 

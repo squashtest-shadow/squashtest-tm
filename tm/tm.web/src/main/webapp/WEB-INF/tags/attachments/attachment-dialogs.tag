@@ -22,16 +22,42 @@
 --%>
 <%@ tag description="Popup allowing to upload files some files" body-content="empty" %>
 	
-<%@ attribute name="url" required="true" description="url to upload to"%>
 
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 
 <f:message var="attachSubmit" key="label.Upload"/>
 <f:message var="okLabel" key="label.Ok"/>
 <f:message var="cancelLabel" key="label.Cancel" />
+<f:message var="confirmLabel" key="label.Confirm"/>
 <f:message var="removeFileBrowser" key="dialog.attachment.add.button.remove.label" />
+<f:message var="deleteDialogTitle" key="title.RemoveAttachment"/>
+<f:message var="renameDialogTitle" key="title.RenameAttachment" />
+<f:message var="uploadDialogTitle" key="dialog.attachment.upload.title" />
 
-<div id="add-attachments-dialog" class="popup-dialog not-displayed" data-def="url=${url}">
+
+
+<div id="delete-attachment-dialog" title="${deleteDialogTitle}"class="not-displayed">
+	<span style="font-weight:bold"><f:message key="message.ConfirmRemoveAttachments" /></span>
+	<div class="popup-dialog-buttonpane">
+		<input type="button" value="${confirmLabel}"/>
+		<input type="button" value="${cancelLabel}"/>
+	</div>
+</div>
+
+<div id="rename-attachment-dialog" title="${renameDialogTitle}" class="not-displayed">
+	<label for="rename-attachment-input"><f:message key="dialog.rename.label" /></label>
+	<input type="text" id="rename-attachment-input" size="50"/>
+	<br />
+	<comp:error-message forField="shortName" />
+	<div class="popup-dialog-buttonpane">
+		<input type="button" value="${confirmLabel}"/>
+		<input type="button" value="${cancelLabel}"/>
+	</div>	
+</div>
+
+
+<div id="add-attachments-dialog" class="popup-dialog not-displayed" title="${uploadDialogTitle}">
 
 	<%-- templates for cloning --%>
 	<div class="add-attachments-templates not-displayed" style="display:none;">

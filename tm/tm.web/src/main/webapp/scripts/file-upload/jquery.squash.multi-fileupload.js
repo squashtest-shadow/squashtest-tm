@@ -37,7 +37,7 @@
  */
 
 
-require(["jquery", "jqueryui", "jform", "jquery.generateId"], function($){
+define(["jquery", "jqueryui", "jform", "jquery.generateId"], function($){
 	if (!! $.fn.multiFileupload){
 		return;
 	}
@@ -162,7 +162,7 @@ require(["jquery", "jqueryui", "jform", "jquery.generateId"], function($){
 
 		// init
 		if (jqItemTemplate != 'undefined') {
-			this.itemTemplate = jqItemTemplate;
+			this.itemTemplate = jqItemTemplate.clone();
 		}
 
 		this.findLastItem = findLastItem;

@@ -29,11 +29,7 @@ define(['jquery', 'tree', 'workspace.contextual-content',
 		
 		_create : function(){
 			this._super();
-			
-			var def = this.element.data('def');
-			var conf = attrparser.parse(def);
-			$.extend(this.options, conf);
-			
+	
 			var self = this;
 			
 			this.onOwnBtn('cancel', function(){

@@ -201,8 +201,10 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui' 
 			
 			// extend the conf with the domconf on the root element
 			var def = this.element.data('def');
-			var conf = attrparser.parse(def);
-			$.extend(this.options, conf);
+			if (!!def){
+				var conf = attrparser.parse(def);
+				$.extend(this.options, conf);
+			}
 
 			// read and apply dom conf
 			this._readDomConf();

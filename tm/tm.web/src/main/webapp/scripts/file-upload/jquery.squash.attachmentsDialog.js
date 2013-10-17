@@ -35,10 +35,12 @@
  *      code in the ajax success handlers.
  */
 
-require(["jquery", "squash.attributeparser", "jquery.squash.formdialog", 
-         "./jquery.squash.multi-fileupload"], function($, attrparser){
+define(["jquery", "squash.attributeparser", "handlebars", "jquery.squash.formdialog", "./jquery.squash.multi-fileupload"], function($, attrparser, Handlebars){
 
-
+	if (($.squash !== undefined) && ($.squash.attachmentsDialog !== undefined)) {
+		// plugin already loaded
+		return;
+	}
 
  	$.widget("squash.attachmentsDialog", $.squash.formDialog,{
  		
@@ -51,18 +53,27 @@ require(["jquery", "squash.attributeparser", "jquery.squash.formdialog",
  			
  			this._super();
  			
- 			// fetch the upload size exceeded error message
- 			var errSpan = this.element.find('.attachment-upload-error-message');
- 			this.options._sizeexceeded = errSpan.text();
- 			errSpan.text('');
- 			 			
- 			// create the multiFileupload
+ 			// main form init
  			var template = this.element.find('.add-attachments-templates > .attachment-item');
  			this.options._form = this.element.find('.attachment-upload-form').multiFileupload(template);
  			
- 			// create the progressbar
+ 			// progressbar init
  			this.options.bar = this.element.find('.attachment-progressbar').progressbar({ value: 0 });
- 			this.option.percent = this.element.find('.attachment-progress-percentage');
+ 			this.options.percent = this.element.find('.attachment-progress-percentage');
+ 			
+ 			// summary init
+			var summaryItemTpl ='<div class="display-table-row" >'+
+				'<label class="display-table-cell" style="font-weight:bold;">{{name}}</label>'+
+				'<span class="display-table-cell">{{status}}</span>'+
+				'</div>';	
+ 			this.options.summaryitem = Handlebars.compile(summaryItemTpl);
+ 			
+ 			// error init
+ 			var errSpan = this.element.find('.attachment-upload-error-message');
+ 			this.options._sizeexceeded = errSpan.text();
+ 			errSpan.text('');
+ 			
+ 			this._bindEvents();
  		},
  		
  		
@@ -94,7 +105,7 @@ require(["jquery", "squash.attributeparser", "jquery.squash.formdialog",
 				this.stopPolling();
 				this.options._xhr.abort();
 			}
-  		}
+  		},
   		
   		// ****************** files submission ***********************
   		
@@ -108,14 +119,17 @@ require(["jquery", "squash.attributeparser", "jquery.squash.formdialog",
   				self.setState('uploading');
   				self.startPolling();
   				
-  				self.options._xhr = self.options._form.ajaxSubmit({
+  				self.options._form.ajaxSubmit({
   					url : url+"?upload-ticket="+ticket,
   					dataType : "text/html",
+  					beforeSend : function(xhr){
+  						self.options._xhr = xhr;
+  					},
   					success : function(){},
   					error : function(){},
   					complete : function(json){
   						self.stopPolling();
-  						self.submitComplete(json),
+  						self.submitComplete(json);
   					},
   					target : "#dump"
   					
@@ -148,7 +162,8 @@ require(["jquery", "squash.attributeparser", "jquery.squash.formdialog",
   		
   		startPolling : function(){
   			this.refreshBar(0);
-  			this.options.pollid = setInterval($.proxy(self.poll, self), this), 1000);
+  			var fnpoll = $.proxy(this.poll, this);
+  			this.options.pollid = setInterval(fnpoll,  1000);
   		},
   		
   		poll : function(){
@@ -161,13 +176,13 @@ require(["jquery", "squash.attributeparser", "jquery.squash.formdialog",
   		
   		stopPolling : function(){
   			clearInterval(this.options.pollid);
-  		}
+  		},
   		
   		refreshBar : function(percentage){
   			this.options.bar.progressbar('option', 'value', percentage);
-  			this.options.percent.text(percentage.toString+'&#37;');
+  			this.options.percent.text(percentage.toString()+'%');
   			
-  		}
+  		},
   		
   		
   		// ******************** upload summary ********************
@@ -184,7 +199,7 @@ require(["jquery", "squash.attributeparser", "jquery.squash.formdialog",
   				dataType : 'json'
   			})
   			.done(function(json){
-  				if (json !== null && self.allSuccessful(json)) {
+  				if (json !== null && ! self.allSuccessful(json)) {
   					self.populateSummary(json);
   					self.setState('summary');
   				}else{
@@ -208,17 +223,14 @@ require(["jquery", "squash.attributeparser", "jquery.squash.formdialog",
   		
   		populateSummary : function(json){
   			var summaries = json[0],
-  			var i=0,
-  				summarydiv = this.find('.attachment-upload-summary'),
-  				summaryItemTpl ='<div class="display-table-row" >'+
-								'<label class="display-table-cell" style="font-weight:bold;">#summaryname#</label>'+
-								'<span class="display-table-cell">#summarystatus#</span>'+
-								'</div>';	
+  				i=0,
+  				summarydiv = this.element.find('.attachment-upload-summary'),
+  				summaryItemTpl = this.options.summaryitem;
   			
+  			summarydiv.empty();
   			for (i=0;i<summaries.length;i++){
   				var item = summaries[i];
-  				var line = summaryItemTpl.replace('#summaryname#', item.name)
-  										.replace('#summarystatus#', item.status);
+  				var line = summaryItemTpl(item);
   				summarydiv.append(line);
   			}
   				 			
@@ -238,6 +250,4 @@ require(["jquery", "squash.attributeparser", "jquery.squash.formdialog",
  	});
 
  
-	
-	return $.squash.attachmentsDialog;
 });

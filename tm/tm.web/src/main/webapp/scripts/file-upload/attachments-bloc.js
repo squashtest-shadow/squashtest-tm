@@ -19,20 +19,43 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "./SimpleFileUploader", "./attachments-manager", "./attachments-bloc", "./jquery.squash.multi-fileupload"], function($, simpleFileUploader, attachmanager, attachbloc){
+define(["jquery", "./jquery.squash.attachmentsDialog"], function($){
+	
+	function reloadAttachments(settings){
+		var container =$("#attachment-container"); 
+		
+		container.load(settings.baseURL+"/display")
+		.done(function(){
+			if (container.find(".div-attachments-item").length>0){
+				$("#attachment-panel").togglePanel("openContent");
+			}
+		});
+	}
+	
+	function initDialogs(settings){
+		var dialog = $("#add-attachments-dialog").attachmentsDialog({
+			url : settings.baseURL+"/upload"
+		})
+		
+		dialog.on('attachmentsdialogdone', function(){
+			reloadAttachments(settings);
+		});
+	}
+
+	function init(settings){
+		
+		initDialogs(settings);
+		
+		$("#manage-attachment-bloc-button").on('click', function(){
+			document.location.href = settings.baseURL+"/manager?workspace="+settings.workspace;
+		});
+		
+		$("#upload-attachment-button").on('click', function(){
+			$("#add-attachments-dialog").attachmentsDialog('open');
+		});
+	}
 	
 	return {
-		
-		initAttachmentsBloc : function(settings){
-			attachbloc.init(settings);
-		},
-		
-		initAttachmentsManager : function(settings){
-			attachmanager.init(settings);
-		},
-		
-		uploadFilesOnly : function(form, url){
-			return simpleFileUploader.uploadFilesOnly(form, url);
-		}
-	}
+		init : init
+	};
 });

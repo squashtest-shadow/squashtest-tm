@@ -163,7 +163,7 @@ public class AttachmentController {
 	}
 
 	// answers the polls regarding upload status
-	@RequestMapping(value = UPLOAD_URL, method = RequestMethod.GET, params = "upload-ticket")
+	@RequestMapping(value = UPLOAD_URL, method = RequestMethod.GET, params = "upload-ticket", produces="application/json")
 	public @ResponseBody
 	UploadProgress pollUploadStatus(HttpServletRequest request) {
 		String ticket = UploadProgressListenerUtils.getUploadTicket(request);
