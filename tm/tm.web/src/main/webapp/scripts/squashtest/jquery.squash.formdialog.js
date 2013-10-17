@@ -102,7 +102,7 @@
  * 
  */
 
-define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui' ], function($, attrparser, confman) {
+define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui', 'jquery.squash.squashbutton' ], function($, attrparser, confman) {
 
 	if (($.squash !== undefined) && ($.squash.formDialog !== undefined)) {
 		// plugin already loaded
@@ -119,7 +119,7 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui' 
 			position : [ 'center', 100 ],
 			_internalEvents : {},
 			_state : "default",
-			_richeditors : [],
+			_richeditors : {},
 			_mainBtns : {}
 		},
 
@@ -217,7 +217,7 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui' 
 
 			// autoremove when parent container is removed
 			parent.on('remove', function() {
-				self.destroy('destroy');
+				self._destroy();
 				self.element.remove();
 			});
 
@@ -246,7 +246,7 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui' 
 			var buttonpane = this.uiDialog.find('.popup-dialog-buttonpane');
 			buttonpane.addClass('ui-dialog-buttonpane ui-widget-content ui-helper-clearfix').wrapInner(
 					'<div class="ui-dialog-buttonset"></div>');
-			var buttons = buttonpane.find('input:button').button();
+			var buttons = buttonpane.find('input:button').squashButton();
 			buttonpane.find('.ui-dialog-buttonset').append(buttons);
 
 			// the following line will move the buttonpane after the body of the popup.
@@ -258,7 +258,7 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui' 
 		_destroyButtons : function() {
 			var buttonpane = this.uiDialog.find('.popup-dialog-buttonpane');
 			buttonpane.removeClass('ui-dialog-buttonpane ui-widget-content ui-helper-clearfix');
-			buttonpane.find('input:button').button('destroy').appendTo(buttonPane);
+			buttonpane.find('input:button').squashButton('destroy').appendTo(buttonpane);
 			buttonpane.find('div.ui-dialog-buttonset').remove();
 
 			// move the buttonpane back to the body.
@@ -272,9 +272,10 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui' 
 		},
 
 		_destroyCked : function() {
-			var i = 0, len = this._richeditors.length;
-			for (i = 0; i < len; i++) {
-				var domelt = this._richeditors[i].get(0);
+			var editors = this.options._richeditors;
+			var i = 0
+			for (var i in editors) {
+				var domelt = editors[i];
 				var ckInstance = CKEDITOR.instances[domelt.id];
 				if (ckInstance) {
 					ckInstance.destroy(true);
@@ -315,7 +316,8 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui' 
 
 	$.squash.formDialog.domconf = {
 		'isrich' : function($elt, value) {
-			this.options._richeditors.push($elt);
+			var randomKey = Math.random().toString().substring(3,6);
+			this.options._richeditors[randomKey]=$elt;
 			var conf = confman.getStdChkeditor();
 			$elt.ckeditor(function() {
 			}, conf);
