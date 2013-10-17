@@ -25,6 +25,15 @@ public class IndexingProgressModel {
 	private double progressPercentage;
 	private long writtenEntities;
 	private long totalEntities;
+
+	private double progressPercentageForTestcases;
+	private long writtenEntitiesForTestcases;
+	private long totalEntitiesForTestcases;
+	
+	private double progressPercentageForRequirementVersions;
+	private long writtenEntitiesForRequirementVersions;
+	private long totalEntitiesForRequirementVersions;
+	
 	public double getProgressPercentage() {
 		return progressPercentage;
 	}
@@ -42,5 +51,45 @@ public class IndexingProgressModel {
 	}
 	public void setTotalEntities(long totalEntities) {
 		this.totalEntities = totalEntities;
+	}
+	public double getProgressPercentageForTestcases() {
+		return progressPercentageForTestcases;
+	}
+	public void setProgressPercentageForTestcases(
+			double progressPercentageForTestcases) {
+		this.progressPercentageForTestcases = progressPercentageForTestcases;
+	}
+	public long getWrittenEntitiesForTestcases() {
+		return writtenEntitiesForTestcases;
+	}
+	public void setWrittenEntitiesForTestcases(long writtenEntitiesForTestcases) {
+		this.writtenEntitiesForTestcases = writtenEntitiesForTestcases;
+	}
+	public long getTotalEntitiesForTestcases() {
+		return totalEntitiesForTestcases;
+	}
+	public void setTotalEntitiesForTestcases(long totalEntitiesForTestcases) {
+		this.totalEntitiesForTestcases = totalEntitiesForTestcases;
+	}
+	public double getProgressPercentageForRequirementVersions() {
+		return progressPercentageForRequirementVersions;
+	}
+	public void setProgressPercentageForRequirementVersions(
+			double progressPercentageForRequirementVersions) {
+		this.progressPercentageForRequirementVersions = progressPercentageForRequirementVersions;
+	}
+	public long getWrittenEntitiesForRequirementVersions() {
+		return writtenEntitiesForRequirementVersions;
+	}
+	public void setWrittenEntitiesForRequirementVersions(
+			long writtenEntitiesForRequirementVersions) {
+		this.writtenEntitiesForRequirementVersions = writtenEntitiesForRequirementVersions;
+	}
+	public long getTotalEntitiesForRequirementVersions() {
+		return totalEntitiesForRequirementVersions;
+	}
+	public void setTotalEntitiesForRequirementVersions(
+			long totalEntitiesForRequirementVersions) {
+		this.totalEntitiesForRequirementVersions = totalEntitiesForRequirementVersions;
 	}
 }

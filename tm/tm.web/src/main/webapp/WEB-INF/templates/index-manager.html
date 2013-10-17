@@ -111,7 +111,7 @@
 					<div align="center">
 						<div class="index-inline-left-block index-warning">
 						   	<span id="should-reindex-message" th:if="${indexedOnPreviousVersion}" th:text="#{search.index.newversion.message}"></span>
-						   	<span id="monitor-percentage" class="not-displayed"></span>
+						   	<span id="monitor-percentage" class="not-displayed">0 / 0 (0%)</span>
 						   	<span id="monitor-message" class="not-displayed" th:text="#{search.index.monitor.message}"></span> 
 						</div>
 						<div class="index-inline-right-block" align="right">
@@ -135,7 +135,10 @@
 									<input type="button" th:value="#{ search.index.index.label }"
 										value="Réindexer" id="requirement-index-button" class="button ui-button ui-widget ui-state-default ui-corner-all" />
 								</div>
-								<div class="index-warning" th:text="#{search.index.running.label}"></div>
+								<div class="index-warning">
+									<span id="requirement-monitor-percentage" class="not-displayed">0 / 0 (0%)</span>
+						   			<span id="requirement-monitor-message" class="not-displayed" th:text="#{search.index.monitor.message}"></span> 
+								</div>
 							</div>
 							<div class="index-inline-center-block">
 								<div class="index-block-title" th:text="#{search.index.testcase.label}"></div>
@@ -151,7 +154,10 @@
 									<input type="button" th:value="#{ search.index.index.label }"
 										value="Réindexer" id="testcase-index-button" class="button ui-button ui-widget ui-state-default ui-corner-all" />
 								</div>
-								<div class="index-warning" th:text="#{search.index.running.label}"></div>
+								<div class="index-warning">
+									<span id="testcase-monitor-percentage" class="not-displayed">0 / 0 (0%)</span>
+						   			<span id="testcase-monitor-message" class="not-displayed" th:text="#{search.index.monitor.message}"></span> 
+								</div>
 							</div>
 						<!--  <div class="index-inline-center-block">
 								<div class="index-block-title" th:text="#{search.index.campaign.label}"></div>

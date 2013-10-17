@@ -543,15 +543,8 @@
 
 <div id="search-input">
 	<table>
-		<c:if test="${(workspace eq 'requirement' && empty linkable) || (linkable eq 'requirement')}">
-		<tr id="requirementReference" class="requirementCriterion">
-			<td><span class="gray-text"> <f:message	key="search.reference.label" /> </span> : <input id="searchReference"
-				type="text" class="std-height snap-right" style="width: 66%;" />
-			</td>
-		</tr>
-		</c:if>
-		
-		<c:if test="${!((workspace eq 'test-case' || linkable eq 'test-case' )&& linkable != 'requirement')}">		
+	
+		<c:if test="${!((workspace eq 'test-case' || workspace eq 'requirement' || linkable eq 'test-case' )&& linkable != 'requirement')}">		
 		<tr>
 			<td><span class="gray-text"> <f:message	key="label.Name" /> </span> : 
 			<input id="searchName" type="text"
@@ -560,93 +553,11 @@
 		</tr>
 		</c:if>
 		
-		<c:if test="${(workspace eq 'requirement' && empty linkable) || (linkable eq 'requirement')}">
-				<tr>
-					<td>
-						<div id="requirementProperties" class="requirementCriterion">
-
-							<span class="gray-text"><f:message
-									key="requirement.criticality.label" /> :</span>
-							<table>
-								<tr>
-									<td class="requirement-UNDEFINED"><span> <input
-											type="checkbox" id="crit-1" value="1" checked="checked"/> <span> <f:message
-													key="requirement.criticality.UNDEFINED" /> </span> </span>
-									</td>
-									<td class="requirement-MINOR"><span> <input
-											type="checkbox" id="crit-2" value="2" checked="checked"/> <span> <f:message
-													key="requirement.criticality.MINOR" /> </span> </span>
-									</td>
-								</tr>
-								<tr>
-									<td class="requirement-MAJOR"><span> <input
-											type="checkbox" id="crit-3" value="3" checked="checked"/> <span> <f:message
-													key="requirement.criticality.MAJOR" /> </span> </span>
-									</td>
-									<td class="requirement-CRITICAL"><span> <input
-											type="checkbox" id="crit-4" value="4" checked="checked"/> <span> <f:message
-													key="requirement.criticality.CRITICAL" /> </span> </span>
-									</td>
-								</tr>
-							</table>
-							<span class="gray-text"><f:message
-							key="requirement.category.label" /> :</span>
-					<table>
-						<tr>
-							<td ><span> <input
-									type="checkbox" id="cat-1" value="1" checked="checked"/> <span> <f:message
-											key="requirement.category.FUNCTIONAL" /> </span> </span></td>
-							<td ><span> <input
-									type="checkbox" id="cat-2" value="2" checked="checked"/> <span> <f:message
-											key="requirement.category.NON_FUNCTIONAL" /> </span> </span></td>
-							</tr>
-						<tr>					<td ><span> <input
-									type="checkbox" id="cat-3" value="3" checked="checked"/> <span> <f:message
-											key="requirement.category.USE_CASE" /> </span> </span></td>
-					
-							<td ><span> <input
-									type="checkbox" id="cat-4" value="4" checked="checked"/> <span> <f:message
-											key="requirement.category.BUSINESS" /> </span> </span></td>
-							</tr>
-						<tr>	<td ><span> <input
-									type="checkbox" id="cat-5" value="5" checked="checked"/> <span> <f:message
-											key="requirement.category.TEST_REQUIREMENT" /> </span>
-							</span></td>
-							<td ><span> <input
-									type="checkbox" id="cat-6" value="6" checked="checked"/> <span> <f:message
-											key="requirement.category.UNDEFINED" /> </span>
-							</span></td>
-						</tr>
-					</table>
-						</div>
-						
-						<div class="requirementCriterion">
-							<select id="requirementVerification">
-								<c:forEach var="verificationCriterion"
-									items="${ verificationCriterionEnum }" varStatus="status">
-									<c:if test="${ status.first }">
-										<option value="${ verificationCriterion }" selected="selected">
-											<f:message key="${ verificationCriterion.i18nKey }" />
-										</option>
-									</c:if>
-									<c:if test="${ not status.first }">
-										<option value="${ verificationCriterion }">
-											<f:message key="${ verificationCriterion.i18nKey }" />
-										</option>
-									</c:if>
-								</c:forEach>
-							</select>
-						</div>
-					</td>
-				</tr>
+		<c:if test="${((workspace eq 'test-case' || workspace eq 'requirement' || linkable eq 'test-case' )&& linkable != 'requirement')}">		
+			<a id="search-tree-button-old" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only" role="button" aria-disabled="false" title="Rechercher..."><span class="ui-button-icon-primary ui-icon ui-icon-search"></span><span class="ui-button-text">Rechercher...</span></a>	
 		</c:if>
-
-
-		<c:if test="${((workspace eq 'test-case' || linkable eq 'test-case' )&& linkable != 'requirement')}">
-			<a id="search-tree-button-old" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only" role="button" aria-disabled="false" title="Rechercher..."><span class="ui-button-icon-primary ui-icon ui-icon-search"></span><span class="ui-button-text">Rechercher...</span></a>
-		</c:if>
-
-		<c:if test="${!((workspace eq 'test-case' || linkable eq 'test-case' )&& linkable != 'requirement')}">
+		
+		<c:if test="${!((workspace eq 'test-case' || workspace eq 'requirement' || linkable eq 'test-case' )&& linkable != 'requirement')}">
 
 		<tr>
 			<td><input type="checkbox" id="project-view" /> <span
@@ -660,27 +571,6 @@
 			</td>
 		</tr>
 		</c:if>
-
-		<c:if test="${(workspace eq 'requirement' && empty linkable) || (linkable eq 'requirement')}">
-				<tr>
-					<td>
-						<div id="sortingProperties" class="requirementCriterion">
-							<span><f:message key="search.sort.choose.label" /> </span> <select
-								id="sortParam">
-								<option value="4" selected="selected">
-									<f:message key="label.Name" />
-								</option>
-								<option value="3">
-									<f:message key="search.reference.label" />
-								</option>
-								<option value="2">
-									<f:message key="search.criticality.label" />
-								</option>
-							</select>
-						</div>
-					</td>
-				</tr>
-			</c:if>
 	</table>
 </div>
 

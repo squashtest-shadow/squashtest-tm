@@ -55,6 +55,8 @@ import org.squashtest.tm.domain.library.IndexModel;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoring;
+import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoringForTestcases;
 import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.search.AdvancedSearchRangeFieldModel;
@@ -176,22 +178,19 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 	
 	@Override
-	public void indexRequirementVersions() {
+	public void indexRequirementVersions(){
 
 		Session session = sessionFactory.getCurrentSession();
 		FullTextSession ftSession = Search.getFullTextSession(session);
 
-		MassIndexerProgressMonitor monitor = new AdvancedSearchIndexingMonitor(RequirementVersion.class, this.configurationService);
+		List<Class> domains = new ArrayList<Class>();
+		domains.add(RequirementVersion.class);
+		MassIndexerProgressMonitor monitor = new AdvancedSearchIndexingMonitor(domains, this.configurationService);
 
-		try {
-
-			ftSession.createIndexer(RequirementVersion.class).purgeAllOnStart(true)
-					.batchSizeToLoadObjects(25).cacheMode(CacheMode.NORMAL)
-					.progressMonitor(monitor).startAndWait();
-
-		} catch (InterruptedException e) {
-
-		}
+		ftSession.createIndexer(RequirementVersion.class).purgeAllOnStart(true)
+					.threadsToLoadObjects(1).threadsForSubsequentFetching(1)
+					.batchSizeToLoadObjects(10).cacheMode(CacheMode.NORMAL)
+					.progressMonitor(monitor).start();
 	}
 
 	@Override
@@ -210,28 +209,37 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 
 	@Override
-	public void indexAll() {
-		this.indexTestCases();
-		this.indexRequirementVersions();
+	public void indexAll(){
+		AdvancedSearchIndexMonitoring.reset();
+		Session session = sessionFactory.getCurrentSession();
+		FullTextSession ftSession = Search.getFullTextSession(session);
+
+		List<Class> domains = new ArrayList<Class>();
+		domains.add(TestCase.class);
+		domains.add(RequirementVersion.class);
+		MassIndexerProgressMonitor monitor = new AdvancedSearchIndexingMonitor(domains, this.configurationService);
+		
+		ftSession.createIndexer(TestCase.class, RequirementVersion.class).purgeAllOnStart(true)
+					.threadsToLoadObjects(1).threadsForSubsequentFetching(1)
+					.batchSizeToLoadObjects(10).cacheMode(CacheMode.IGNORE)
+					.progressMonitor(monitor).start();
 	}
 	
+	
 	@Override
-	public void indexTestCases() {
+	public void indexTestCases(){
 
 		Session session = sessionFactory.getCurrentSession();
 		FullTextSession ftSession = Search.getFullTextSession(session);
 
-		MassIndexerProgressMonitor monitor = new AdvancedSearchIndexingMonitor(TestCase.class, this.configurationService);
-
-		try {
-
-			ftSession.createIndexer(TestCase.class).purgeAllOnStart(true)
-					.batchSizeToLoadObjects(25).cacheMode(CacheMode.NORMAL)
-					.progressMonitor(monitor).startAndWait();
-
-		} catch (InterruptedException e) {
-
-		}
+		List<Class> domains = new ArrayList<Class>();
+		domains.add(TestCase.class);
+		MassIndexerProgressMonitor monitor = new AdvancedSearchIndexingMonitor(domains, this.configurationService);
+		
+		ftSession.createIndexer(TestCase.class).purgeAllOnStart(true)
+					.threadsToLoadObjects(1).threadsForSubsequentFetching(1)
+					.batchSizeToLoadObjects(10).cacheMode(CacheMode.NORMAL)
+					.progressMonitor(monitor).start();
 	}
 		
 	@Override

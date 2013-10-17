@@ -22,10 +22,13 @@ package org.squashtest.tm.service.internal.library;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import org.hibernate.search.batchindexing.MassIndexerProgressMonitor;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoring;
+import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoringForRequirementVersions;
+import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoringForTestcases;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 
@@ -33,46 +36,94 @@ import org.squashtest.tm.service.configuration.ConfigurationService;
 public class AdvancedSearchIndexingMonitor implements MassIndexerProgressMonitor {
 
 	private ConfigurationService configurationService;
-	private Class indexedDomain;
+	private List<Class> indexedDomains;
 	
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm");
 
-	public AdvancedSearchIndexingMonitor(Class clazz, ConfigurationService configurationService){
-		AdvancedSearchIndexMonitoring.reset();
+	public AdvancedSearchIndexingMonitor(List<Class> classes, ConfigurationService configurationService){
 		this.configurationService = configurationService;
-		this.indexedDomain = clazz;
+		this.indexedDomains = classes;
+		
+		if(this.indexedDomains.contains(TestCase.class)){
+			AdvancedSearchIndexMonitoringForTestcases.reset();
+		}
+		
+		if(this.indexedDomains.contains(RequirementVersion.class)){
+			AdvancedSearchIndexMonitoringForRequirementVersions.reset();
+		}
 	}
 	
 	@Override
 	public void documentsAdded(long arg0) {
+		
 		AdvancedSearchIndexMonitoring.setDocumentsAdded(arg0);	
+		
+		if(this.indexedDomains.contains(TestCase.class)){
+			AdvancedSearchIndexMonitoringForTestcases.setDocumentsAdded(arg0);
+		}
+		
+		if(this.indexedDomains.contains(RequirementVersion.class)){
+			AdvancedSearchIndexMonitoringForRequirementVersions.setDocumentsAdded(arg0);
+		}
 	}
 
 	@Override
 	public void addToTotalCount(long arg0) {
+		
 		AdvancedSearchIndexMonitoring.setAddToTotalCount(arg0);	
+		
+		if(this.indexedDomains.contains(TestCase.class)){
+			AdvancedSearchIndexMonitoringForTestcases.setAddToTotalCount(arg0);	
+		}
+		
+		if(this.indexedDomains.contains(RequirementVersion.class)){
+			AdvancedSearchIndexMonitoringForRequirementVersions.setAddToTotalCount(arg0);	
+		}
 	}
 
 	@Override
 	public void documentsBuilt(int arg0) {
+		
 		AdvancedSearchIndexMonitoring.setDocumentsBuilt(arg0);	
+		
+		if(this.indexedDomains.contains(TestCase.class)){
+			AdvancedSearchIndexMonitoringForTestcases.setDocumentsBuilt(arg0);		
+		}
+		
+		if(this.indexedDomains.contains(RequirementVersion.class)){
+			AdvancedSearchIndexMonitoringForRequirementVersions.setDocumentsBuilt(arg0);		
+		}
 	}
 
 	@Override
 	public void entitiesLoaded(int arg0) {
+		
 		AdvancedSearchIndexMonitoring.setEntitiesLoaded(arg0);	
+		
+		
+		if(this.indexedDomains.contains(TestCase.class)){
+			AdvancedSearchIndexMonitoringForTestcases.setEntitiesLoaded(arg0);	
+		}
+		
+		if(this.indexedDomains.contains(RequirementVersion.class)){
+			AdvancedSearchIndexMonitoringForRequirementVersions.setEntitiesLoaded(arg0);		
+		}
 	}
 
 	@Override
 	public void indexingCompleted() {
+		
 		AdvancedSearchIndexMonitoring.setIndexingOver(true);
 		
-		if(this.indexedDomain.equals(TestCase.class)){
+		if(this.indexedDomains.contains(TestCase.class)){
+			AdvancedSearchIndexMonitoringForTestcases.setIndexingOver(true);
 			this.updateTestCaseIndexingDateAndVersion();
-		} else if (this.indexedDomain.equals(RequirementVersion.class)){
+		}
+		
+		if (this.indexedDomains.contains(RequirementVersion.class)){
+			AdvancedSearchIndexMonitoringForRequirementVersions.setIndexingOver(true);
 			this.updateRequirementVersionIndexingDateAndVersion();
-		}			
-
+		} 	
 	}
 
 	private void updateRequirementVersionIndexingDateAndVersion(){

@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.domain.search;
 
-public final class AdvancedSearchIndexMonitoring {
+public class AdvancedSearchIndexMonitoringForTestcases {
 
 	private static boolean isIndexingOver = false;
 	private static long documentsAdded = 0L;
@@ -29,16 +29,16 @@ public final class AdvancedSearchIndexMonitoring {
 	private static int entitiesLoaded = 0;
 	private static double progressPercentage = 0;
 
-	private AdvancedSearchIndexMonitoring() {
+	private AdvancedSearchIndexMonitoringForTestcases() {
 		super();
 	}
 
 	public static void reset() {
-		AdvancedSearchIndexMonitoring.isIndexingOver = false;
-		AdvancedSearchIndexMonitoring.documentsAdded = 0L;
-		AdvancedSearchIndexMonitoring.addToTotalCount = 0L;
-		AdvancedSearchIndexMonitoring.documentsBuilt = 0;
-		AdvancedSearchIndexMonitoring.entitiesLoaded = 0;
+		AdvancedSearchIndexMonitoringForTestcases.isIndexingOver = false;
+		AdvancedSearchIndexMonitoringForTestcases.documentsAdded = 0L;
+		AdvancedSearchIndexMonitoringForTestcases.addToTotalCount = 0L;
+		AdvancedSearchIndexMonitoringForTestcases.documentsBuilt = 0;
+		AdvancedSearchIndexMonitoringForTestcases.entitiesLoaded = 0;
 		AdvancedSearchIndexMonitoring.setProgressPercentage(0);
 	}
 
@@ -47,7 +47,7 @@ public final class AdvancedSearchIndexMonitoring {
 	}
 
 	public static void setIndexingOver(boolean isIndexingOver) {
-		AdvancedSearchIndexMonitoring.isIndexingOver = isIndexingOver;
+		AdvancedSearchIndexMonitoringForTestcases.isIndexingOver = isIndexingOver;
 	}
 
 	public static long getDocumentsAdded() {
@@ -55,7 +55,7 @@ public final class AdvancedSearchIndexMonitoring {
 	}
 
 	public static void setDocumentsAdded(long documentsAdded) {
-		AdvancedSearchIndexMonitoring.documentsAdded += documentsAdded;
+		AdvancedSearchIndexMonitoringForTestcases.documentsAdded += documentsAdded;
 	}
 
 	public static long getAddToTotalCount() {
@@ -63,7 +63,7 @@ public final class AdvancedSearchIndexMonitoring {
 	}
 
 	public static void setAddToTotalCount(long addToTotalCount) {
-		AdvancedSearchIndexMonitoring.addToTotalCount += addToTotalCount;
+		AdvancedSearchIndexMonitoringForTestcases.addToTotalCount += addToTotalCount;
 	}
 
 	public static int getDocumentsBuilt() {
@@ -71,7 +71,7 @@ public final class AdvancedSearchIndexMonitoring {
 	}
 
 	public static void setDocumentsBuilt(int documentsBuilt) {
-		AdvancedSearchIndexMonitoring.documentsBuilt += documentsBuilt;
+		AdvancedSearchIndexMonitoringForTestcases.documentsBuilt += documentsBuilt;
 	}
 
 	public static int getEntitiesLoaded() {
@@ -79,16 +79,16 @@ public final class AdvancedSearchIndexMonitoring {
 	}
 
 	public static void setEntitiesLoaded(int entitiesLoaded) {
-		AdvancedSearchIndexMonitoring.entitiesLoaded += entitiesLoaded;
+		AdvancedSearchIndexMonitoringForTestcases.entitiesLoaded += entitiesLoaded;
 	}
 
 	public static double getProgressPercentage() {
-		AdvancedSearchIndexMonitoring.progressPercentage = Math.round(((double) AdvancedSearchIndexMonitoring.documentsBuilt
-				*100.0 / (double) AdvancedSearchIndexMonitoring.addToTotalCount))/100.0;
-		return AdvancedSearchIndexMonitoring.progressPercentage;
+		AdvancedSearchIndexMonitoringForTestcases.progressPercentage = Math.round(((double) AdvancedSearchIndexMonitoringForTestcases.documentsBuilt
+				*100.0 / (double) AdvancedSearchIndexMonitoringForTestcases.addToTotalCount))/100.0;
+		return AdvancedSearchIndexMonitoringForTestcases.progressPercentage;
 	}
 
 	public static void setProgressPercentage(float progressPercentage) {
-		AdvancedSearchIndexMonitoring.progressPercentage = progressPercentage;
+		AdvancedSearchIndexMonitoringForTestcases.progressPercentage = progressPercentage;
 	}
 }

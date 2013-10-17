@@ -50,19 +50,30 @@ define([ "jquery", "backbone", "underscore", "jquery.squash.confirmdialog"], fun
 		},
 		
 		indexAll : function(){
+
+			$("#index-all-button").attr("disabled", "disabled");
+			$("#requirement-index-button").attr("disabled", "disabled");
+			$("#testcase-index-button").attr("disabled", "disabled");
+			$("#should-reindex-message").addClass("not-displayed");
+			$("#refresh-index-button").removeAttr("disabled");   
+			$("#monitor-percentage").removeClass("not-displayed");
+			$("#monitor-message").removeClass("not-displayed");
 			
 			$.ajax({
 				  type: "POST",
 				  url: squashtm.app.contextRoot + "advanced-search/index-all",
 				  data: "nodata"
-			}).success(function(){
-				$("#index-all-button").attr("disabled", "disabled");
-				$("#should-reindex-message").addClass("not-displayed");
-				$("#refresh-index-button").removeAttr("disabled");    
 			});
 		},
 		
 		indexRequirements : function(){
+			
+			$("#index-all-button").attr("disabled", "disabled");
+			$("#requirement-index-button").attr("disabled", "disabled");
+			$("#refresh-index-button").removeAttr("disabled");  
+			$("#requirement-monitor-percentage").removeClass("not-displayed");
+			$("#requirement-monitor-message").removeClass("not-displayed");
+			
 			$.ajax({
 				  type: "POST",
 				  url: squashtm.app.contextRoot + "advanced-search/index-requirements",
@@ -71,6 +82,13 @@ define([ "jquery", "backbone", "underscore", "jquery.squash.confirmdialog"], fun
 		},
 
 		indexTestcases : function(){
+			
+			$("#index-all-button").attr("disabled", "disabled");
+			$("#testcase-index-button").attr("disabled", "disabled");
+			$("#refresh-index-button").removeAttr("disabled");  
+			$("#testcase-monitor-percentage").removeClass("not-displayed");
+			$("#testcase-monitor-message").removeClass("not-displayed");
+			
 			$.ajax({
 				  type: "POST",
 				  url: squashtm.app.contextRoot + "advanced-search/index-testcases",
@@ -88,13 +106,13 @@ define([ "jquery", "backbone", "underscore", "jquery.squash.confirmdialog"], fun
 		
 		refreshPage : function(){
 			$.ajax({
-				  type: "GET",
+				  type: "POST",
 				  url: squashtm.app.contextRoot + "advanced-search/refresh",
 				  data: "nodata"
 			}).success(function(json){	
 				$("#monitor-percentage").html(json.writtenEntities+" / "+json.totalEntities+" ("+json.progressPercentage+"%) ");
-				$("#monitor-percentage").removeClass("not-displayed");
-				$("#monitor-message").removeClass("not-displayed");
+				$("#requirement-monitor-percentage").html(json.writtenEntitiesForRequirementVersions+" / "+json.totalEntitiesForRequirementVersions+" ("+json.progressPercentageForRequirementVersions+"%) ");
+				$("#testcase-monitor-percentage").html(json.writtenEntitiesForTestcases+" / "+json.totalEntitiesForTestcases+" ("+json.progressPercentageForTestcases+"%) ");
 			});
 		}
 	});
