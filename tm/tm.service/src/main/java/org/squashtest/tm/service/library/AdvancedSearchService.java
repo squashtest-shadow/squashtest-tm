@@ -23,6 +23,7 @@ package org.squashtest.tm.service.library;
 import java.util.List;
 
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
@@ -60,9 +61,9 @@ public interface AdvancedSearchService {
 	//Querying
 	List<CustomField> findAllQueryableCustomFieldsByBoundEntityType(BindableEntity entity);
 	
-	PagedCollectionHolder<List<TestCase>> searchForTestCases(AdvancedSearchModel model, PagingAndSorting sorting);
+	PagedCollectionHolder<List<TestCase>> searchForTestCases(AdvancedSearchModel model, PagingAndMultiSorting sorting);
 	
-	PagedCollectionHolder<List<RequirementVersion>> searchForRequirementVersions(AdvancedSearchModel searchModel, PagingAndSorting paging);
+	PagedCollectionHolder<List<RequirementVersion>> searchForRequirementVersions(AdvancedSearchModel searchModel, PagingAndMultiSorting paging);
 	
 	List<TestCase> searchForTestCases(AdvancedSearchModel model);
 	

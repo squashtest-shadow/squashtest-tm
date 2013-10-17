@@ -44,9 +44,11 @@ import org.hibernate.search.batchindexing.MassIndexerProgressMonitor;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
+import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.library.IndexModel;
@@ -110,6 +112,22 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	public final static String SQUASH_VERSION_KEY = "squashtest.tm.database.version";
 
+	private final static SortField[] DEFAULT_SORT_TESTCASES = new SortField[]{
+		new SortField("project.name", SortField.STRING, false),
+		new SortField("reference", SortField.STRING, false),
+		new SortField("importance", SortField.STRING, false),
+		new SortField("label", SortField.STRING, false)
+	};
+	
+	private final static SortField[] DEFAULT_SORT_REQUIREMENTS = new SortField[]{
+			new SortField("requirement.project.name", SortField.STRING, false),
+			new SortField("reference", SortField.STRING, false),
+			new SortField("criticality", SortField.STRING, false),
+			new SortField("category", SortField.STRING, false),
+			new SortField("status", SortField.STRING, false),
+			new SortField("label", SortField.STRING, false)
+	};
+	
 	public SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm");
 
 	@Override
@@ -538,65 +556,93 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	}
 	
-	private Sort getRequirementVersionSort(String fieldName, SortOrder sortOrder){
+	private Sort getRequirementVersionSort(List<Sorting> sortings){
 		
 		boolean isReverse = true;
+		Sort sort = null;
 		
-		if(SortOrder.ASCENDING.equals(sortOrder)){
-			isReverse = false;
-		}
-		
-		Sort sort = new Sort(new SortField("id", SortField.LONG, isReverse));
-		
-		if(fieldName.startsWith("RequirementVersion.")){
-			fieldName = fieldName.replaceFirst("RequirementVersion.", "");
-		} else if(fieldName.startsWith("Requirement.")){
-			fieldName = fieldName.replaceFirst("Requirement.", "requirement.");
-		} else if(fieldName.startsWith("Project.")){
-			fieldName = fieldName.replaceFirst("Project.", "project.");
-		}
-		
-		if("requirement.id".equals(fieldName) || "version".equals(fieldName) || 
-		   "versions".equals(fieldName) || "testcases".equals(fieldName) || 
-		   "attachments".equals(fieldName)){
-			sort = new Sort(new SortField(fieldName, SortField.LONG, isReverse));
+		if(sortings == null || sortings.size() == 0){
+			
+			sort = new Sort(DEFAULT_SORT_REQUIREMENTS);
 		} else {
-			sort = new Sort(new SortField(fieldName, SortField.STRING, isReverse));
-		}
 		
+		SortField[] sortFieldArray = new SortField[sortings.size()];
+		
+		for (int i=0; i<sortings.size(); i++) {
+	
+			if (SortOrder.ASCENDING.equals(sortings.get(i).getSortOrder())) {
+				isReverse = false;
+			} 
+	
+				String fieldName = sortings.get(i).getSortedAttribute();
+			
+				if(fieldName.startsWith("RequirementVersion.")){
+					fieldName = fieldName.replaceFirst("RequirementVersion.", "");
+				} else if(fieldName.startsWith("Requirement.")){
+					fieldName = fieldName.replaceFirst("Requirement.", "requirement.");
+				} else if(fieldName.startsWith("Project.")){
+					fieldName = fieldName.replaceFirst("Project.", "requirement.project.");
+				}
+				
+				if("requirement.id".equals(fieldName) || "version".equals(fieldName) || 
+				   "versions".equals(fieldName) || "testcases".equals(fieldName) || 
+				   "attachments".equals(fieldName)){
+					sortFieldArray[i] =  new SortField(fieldName, SortField.LONG, isReverse);
+				} else {
+					sortFieldArray[i] = new SortField(fieldName, SortField.STRING, isReverse);
+				}
+			}
+			
+			sort = new Sort(sortFieldArray);
+		}
 		return sort;
 	}
 	
-	private Sort getTestCaseSort(String fieldName, SortOrder sortOrder){
-		
+	private Sort getTestCaseSort(List<Sorting> sortings) {
+
 		boolean isReverse = true;
+		Sort sort = null;
 		
-		if(SortOrder.ASCENDING.equals(sortOrder)){
-			isReverse = false;
-		}
-		
-		Sort sort = new Sort(new SortField("id", SortField.LONG, isReverse));
-		
-		if(fieldName.startsWith("TestCase.")){
-			fieldName = fieldName.replaceFirst("TestCase.", "");
-		} else if(fieldName.startsWith("Project.")){
-			fieldName = fieldName.replaceFirst("Project.", "project.");
-		}
-		
-		if("id".equals(fieldName) || "requirements".equals(fieldName) || 
-		   "steps".equals(fieldName) || "iterations".equals(fieldName) || 
-		   "attachments".equals(fieldName)){
-			sort = new Sort(new SortField(fieldName, SortField.LONG, isReverse));
+		if(sortings == null || sortings.size() == 0){
+			
+			sort = new Sort(DEFAULT_SORT_TESTCASES);
+			
 		} else {
-			sort = new Sort(new SortField(fieldName, SortField.STRING, isReverse));
-		}
+			SortField[] sortFieldArray = new SortField[sortings.size()];
+			
+			for (int i=0; i<sortings.size(); i++) {
 		
+				if (SortOrder.ASCENDING.equals(sortings.get(i).getSortOrder())) {
+					isReverse = false;
+				}
+	
+				String fieldName = sortings.get(i).getSortedAttribute();
+	
+				if (fieldName.startsWith("TestCase.")) {
+					fieldName = fieldName.replaceFirst("TestCase.", "");
+				} else if (fieldName.startsWith("Project.")) {
+					fieldName = fieldName.replaceFirst("Project.", "project.");
+				}
+	
+				if ("id".equals(fieldName) 
+						|| "requirements".equals(fieldName)
+						|| "steps".equals(fieldName)
+						|| "iterations".equals(fieldName)
+						|| "attachments".equals(fieldName)) {
+					sortFieldArray[i] = new SortField(fieldName, SortField.LONG, isReverse);
+				} else {
+					sortFieldArray[i] = new SortField(fieldName, SortField.STRING, isReverse);
+				}
+			}
+			
+			sort = new Sort(sortFieldArray);
+		}
 		return sort;
 	}
 	
 	@Override
 	public PagedCollectionHolder<List<RequirementVersion>> searchForRequirementVersions(
-			AdvancedSearchModel model, PagingAndSorting sorting) {
+			AdvancedSearchModel model, PagingAndMultiSorting sorting) {
 		
 		Session session = sessionFactory.getCurrentSession();
 
@@ -610,7 +656,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		List<RequirementVersion> result = Collections.emptyList();
 		int countAll = 0 ;
 		if(luceneQuery != null){
-			Sort sort = getRequirementVersionSort(sorting.getSortedAttribute(), sorting.getSortOrder());
+			Sort sort = getRequirementVersionSort(sorting.getSortings());
 			org.hibernate.Query hibQuery = ftSession.createFullTextQuery(
 					luceneQuery, RequirementVersion.class).setSort(sort);
 	
@@ -626,7 +672,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	
 	@Override
 	public PagedCollectionHolder<List<TestCase>> searchForTestCases(
-			AdvancedSearchModel model, PagingAndSorting sorting) {
+			AdvancedSearchModel model, PagingAndMultiSorting sorting) {
 
 		Session session = sessionFactory.getCurrentSession();
 
@@ -640,7 +686,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		List<TestCase> result = Collections.emptyList();
 		int countAll = 0 ;
 		if(luceneQuery != null){
-			Sort sort = getTestCaseSort(sorting.getSortedAttribute(), sorting.getSortOrder());
+			Sort sort = getTestCaseSort(sorting.getSortings());
 			org.hibernate.Query hibQuery = ftSession.createFullTextQuery(
 					luceneQuery, TestCase.class).setSort(sort);
 	

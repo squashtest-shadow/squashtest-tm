@@ -60,7 +60,7 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 						"bFilter" : false,
 						"fnRowCallback" : this.tableRowCallback,
 						"fnDrawCallback" : this.tableDrawCallback,
-						"aaSorting" : [ [ 2, "asc" ] ],
+						"aaSorting" : [ [ 2, "asc" ],  [4, "asc"], [6, "asc"], [7, "asc"], [8, "asc"], [5, "asc"] ],
 						"aoColumnDefs" : [ {
 							"bSortable" : false,
 							"aTargets" : [ 0 ],
@@ -168,7 +168,7 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 						"bFilter" : false,
 						"fnRowCallback" : this.tableRowCallback,
 						"fnDrawCallback" : this.tableDrawCallback,
-						"aaSorting" : [ [ 2, "asc" ] ],
+						"aaSorting" : [ [ 1, "asc" ], [ 3, "asc" ], [ 5, "asc" ], [ 6, "asc" ], [ 7, "asc" ], [ 4, "asc" ] ],
 						"aoColumnDefs" : [ {
 							"bSortable" : false,
 							"aTargets" : [ 0 ],

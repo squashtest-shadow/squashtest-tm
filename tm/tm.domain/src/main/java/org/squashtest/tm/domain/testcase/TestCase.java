@@ -67,6 +67,7 @@ import org.squashtest.tm.domain.library.NodeVisitor;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.CUFBridge;
+import org.squashtest.tm.domain.search.CountElementsInCollectionBridge;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.exception.UnallowedTestAssociationException;
 import org.squashtest.tm.exception.UnknownEntityException;
@@ -158,14 +159,14 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@OrderColumn(name = "STEP_ORDER")
 	@JoinTable(name = "TEST_CASE_STEPS", joinColumns = @JoinColumn(name = "TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "STEP_ID"))
-	@FieldBridge(impl = TestCaseCountParametersBridge.class)
+	@FieldBridge(impl = CountElementsInCollectionBridge.class)
 	@Field
 	private final List<TestStep> steps = new ArrayList<TestStep>();
 
 	@NotNull
 	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE })
 	@JoinColumn(name = "VERIFYING_TEST_CASE_ID")
-	@FieldBridge(impl = TestCaseCountParametersBridge.class)
+	@FieldBridge(impl = CountElementsInCollectionBridge.class)
 	@Field(name="requirements")
 	private Set<RequirementVersionCoverage> requirementVersionCoverages = new HashSet<RequirementVersionCoverage>(0);
 
@@ -173,14 +174,14 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "testCase")
 	@OrderBy("name")
 	@Field
-	@FieldBridge(impl = TestCaseCountParametersBridge.class)
+	@FieldBridge(impl = CountElementsInCollectionBridge.class)
 	private Set<Parameter> parameters = new HashSet<Parameter>(0);
 
 	@NotNull
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "testCase")
 	@OrderBy("name")
 	@Field
-	@FieldBridge(impl = TestCaseCountDatasetsBridge.class)
+	@FieldBridge(impl = CountElementsInCollectionBridge.class)
 	private Set<Dataset> datasets = new HashSet<Dataset>(0);
 
 	@NotNull

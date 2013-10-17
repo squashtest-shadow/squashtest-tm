@@ -18,19 +18,19 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.testcase;
+package org.squashtest.tm.domain.search;
 
-import java.util.Set;
+import java.util.Collection;
 
 import org.hibernate.search.bridge.StringBridge;
 
-public class TestCaseCountDatasetsBridge implements StringBridge {
-
+public class CountElementsInCollectionBridge implements StringBridge {
+	
 	@Override
 	public String objectToString(Object value) {
 		@SuppressWarnings("unchecked")
-		Set<Dataset> datasets = (Set<Dataset>) value;
-		return Integer.toString(datasets.size());
+		Collection<Object> collection = (Collection<Object>) value;
+		return Integer.toString(collection.size());
 	}
-
 }
+

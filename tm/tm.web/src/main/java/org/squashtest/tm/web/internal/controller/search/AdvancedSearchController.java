@@ -43,6 +43,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.campaign.Campaign;
@@ -54,6 +55,7 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCategory;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
@@ -87,6 +89,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
+import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
@@ -177,7 +180,7 @@ public class AdvancedSearchController {
 			.mapAttribute("test-case-modified-by", "modifiedBy", TestCase.class);
 
 	private DatatableMapper<String> requirementSearchResultMapper = new NameBasedMapper(11)
-			.mapAttribute("project-name", "requirement.project.name", Project.class)
+			.mapAttribute("project-name", "name", Project.class)
 			.mapAttribute("requirement-id", "requirement.id", RequirementVersion.class)
 			.mapAttribute("requirement-reference", "reference", RequirementVersion.class)
 			.mapAttribute("requirement-label", "label", RequirementVersion.class)
@@ -185,7 +188,7 @@ public class AdvancedSearchController {
 			.mapAttribute("requirement-category", "category", RequirementVersion.class)
 			.mapAttribute("requirement-status", "status", RequirementVersion.class)
 			.mapAttribute("requirement-version", "versionNumber", RequirementVersion.class)
-			.mapAttribute("requirement-version-nb","versions", RequirementVersion.class)
+			.mapAttribute("requirement-version-nb","versions", Requirement.class)
 			.mapAttribute("requirement-testcase-nb", "testcases", RequirementVersion.class)
 			.mapAttribute("requirement-attachment-nb", "attachments", RequirementVersion.class)
 			.mapAttribute("requirement-created-by", "createdBy", RequirementVersion.class)
@@ -278,7 +281,7 @@ public class AdvancedSearchController {
 		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model,
 				AdvancedSearchModel.class);
 
-		PagingAndSorting paging = new DataTableSorting(params,
+		PagingAndMultiSorting paging = new DataTableMultiSorting(params,
 				testCaseSearchResultMapper);
 
 		PagedCollectionHolder<List<TestCase>> holder = advancedSearchService
@@ -311,7 +314,7 @@ public class AdvancedSearchController {
 		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model,
 				AdvancedSearchModel.class);
 
-		PagingAndSorting paging = new DataTableSorting(params,
+		PagingAndMultiSorting paging = new DataTableMultiSorting(params,
 				requirementSearchResultMapper);
 
 		PagedCollectionHolder<List<RequirementVersion>> holder = advancedSearchService
