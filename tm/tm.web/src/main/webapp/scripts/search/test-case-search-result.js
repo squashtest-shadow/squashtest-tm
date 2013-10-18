@@ -129,7 +129,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			var rows = table.fnGetNodes();
 			var ids = [];
 			$(rows).each(function(index, row) {
-				ids.push(parseInt($($("td", row)[2]).text(),10));
+				ids.push(parseInt($(".element_id", row).text(),10));
 			});
 			
 			table.squashTable().selectRows(ids);
