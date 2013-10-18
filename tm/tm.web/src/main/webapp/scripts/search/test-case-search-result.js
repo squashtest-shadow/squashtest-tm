@@ -146,9 +146,15 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		},
 		
 		modifySearch : function(){
-			this.post(squashtm.app.contextRoot + "/advanced-search?testcase", {
-				searchModel : JSON.stringify(this.model)
-			});	
+			if(this.isAssociation){
+				this.post(squashtm.app.contextRoot + "/advanced-search?testcase&id="+this.associationId+"&associateResultWithType="+this.associationType, {
+					searchModel : JSON.stringify(this.model)
+				});	
+			} else {
+				this.post(squashtm.app.contextRoot + "/advanced-search?testcase", {
+					searchModel : JSON.stringify(this.model)
+				});	
+			}
 		},
 		
 		post : function (URL, PARAMS) {
