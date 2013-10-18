@@ -175,10 +175,13 @@
                     <label for="user-login" th:text="#{label.Login}">Login</label>
                     <div class="display-table-cell">
                     	<span id="user-login" th:text="${user.login}">Machin</span>
-                    	<input id="toggle-activation-button" type="button" class="button" 
-                    			th:value="${user.active} ?  #{label.Deactivate} : #{label.Activate}"
-                    			th:attr="data-active=${user.active}"/>
                     </div>
+                  </div>
+                  <div class="display-table-row">
+                  	<label for="toggle-activation-checkbox" th:text="#{label.State}">State</label>
+                  	<div class="display-table-cell">                  		
+                  		<input id="toggle-activation-checkbox" type="checkbox" th:checked="${user.active}" th:attr="data-def='width=35, on_label='+#{label.active}+', off_label='+#{label.inactive}"/>
+                  	</div>
                   </div>
                   <div class="display-table-row" th:unless="${authenticationProvider.managedPassword}">
                     <label for="reset-password-button" th:text="#{label.password}">Password</label>
@@ -418,27 +421,7 @@
 		</div>
 	</div>
 	
-	<div id="deactivate-user-popup" class="popup-dialog not-displayed" th:title="#{title.deactivate-users}">
-		
-		<span class="normal-warning-message" th:text="#{message.ConfirmDeactivateUser}">you sure ?</span>
 	
-		<div class="popup-dialog-buttonpane">
-		    <input class="confirm" type="button" th:value="#{label.Confirm}" />
-		    <input class="cancel" type="button" th:value="#{label.Cancel}" />				
-		</div>
-	
-	</div>	
-	
-	<div id="activate-user-popup" class="popup-dialog not-displayed" th:title="#{title.activate-users}">
-		
-		<span class="normal-warning-message" th:text="#{message.ConfirmActivateUser}">you sure ?</span>
-	
-		<div class="popup-dialog-buttonpane">
-		    <input class="confirm" type="button" th:value="#{label.Confirm}" />
-		    <input class="cancel" type="button" th:value="#{label.Cancel}" />				
-		</div>
-	
-	</div>	
-		
+
 </body>
 </html>

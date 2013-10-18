@@ -280,14 +280,16 @@
             <exclude>**/scripts/iesupport/**/*.*</exclude>
             <exclude>**/scripts/thirdparties/**/*.*</exclude>
             <exclude>**/scripts/lib/**/*.*</exclude>
-            <exclude>**/scripts/require*.js</exclude>
+            <exclude>**/scripts/require*.js</exclude>          
             <exclude>**/styles/ckeditor/**/*.*</exclude>
             <exclude>**/styles/datatables/**/*.*</exclude>
             <exclude>**/styles/jquery/**/*.*</exclude>
             <exclude>**/styles/jqgrid/**/*.*</exclude>
             <exclude>**/styles/jqplot/**/*.*</exclude>
+            <exclude>**/styles/switchButton/*.*</exclude>
             <exclude>**/styles/**/thymol.js</exclude>
-            <exclude>**/styles/**/bootstrap*.css</exclude>
+            <exclude>**/styles/**/bootstrap*.css</exclude> 
+            
 	    <!-- generated stylesheets -->
             <exclude>**/styles/**/squash.*.css</exclude>
 						<!-- third-party wslds -->

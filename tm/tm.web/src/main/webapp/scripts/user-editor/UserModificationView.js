@@ -19,10 +19,10 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/util/StringUtil",
-		"./UserResetPasswordPopup", "./UserPermissionsPanel", "./UserTeamsPanel", "jquery.squash", "jqueryui",
+		"./UserResetPasswordPopup", "./UserPermissionsPanel", "./UserTeamsPanel", "squash.attributeparser", "jquery.squash", "jqueryui",
 		"jquery.squash.togglepanel", "squashtable", "jquery.squash.oneshotdialog",
-		"jquery.squash.messagedialog", "jquery.squash.confirmdialog", "jquery.squash.jeditable" ], function($, Backbone, _,
-		SimpleJEditable, StringUtil, UserResetPasswordPopup, UserPermissionsPanel, UserTeamsPanel) {
+		"jquery.squash.messagedialog", "jquery.squash.confirmdialog", "jquery.squash.jeditable", "jquery.switchButton" ], function($, Backbone, _,
+		SimpleJEditable, StringUtil, UserResetPasswordPopup, UserPermissionsPanel, UserTeamsPanel, attrparser) {
 	var UMod = squashtm.app.UMod;
 	var UserModificationView = Backbone.View.extend({
 		el : "#information-content",
@@ -62,7 +62,7 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/u
 
 		events : {
 			"click #delete-user-button" : "confirmUserDeletion",
-			"click #toggle-activation-button" : "confirmToggleActivation",
+			"change #toggle-activation-checkbox" : "toggleUserActivation",
 			"change #user-group" : "changeUserGroup"
 		},
 
@@ -119,29 +119,30 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/u
 		},
 		
 		configureActivation : function(){
-			var deactivateDialog = $("#deactivate-user-popup").confirmDialog();
-			var activateDialog = $("#activate-user-popup").confirmDialog();
+
+			var activCbx = $("#toggle-activation-checkbox"),
+				activConf = attrparser.parse(activCbx.data('def'));
 			
-			deactivateDialog.on("confirmdialogconfirm", $.proxy(this.deactivateUser, this));
-			activateDialog.on("confirmdialogconfirm", $.proxy(this.activateUser, this));
+			activCbx.switchButton(activConf);
+			
+			//a bit of css tweak now
+			activCbx.siblings('.switch-button-background').css({position : 'relative', top : '6px'});
 		},
 		
-		confirmToggleActivation : function(){
-			var active = $("#toggle-activation-button").data('active');
-			if (active){
-				$("#deactivate-user-popup").confirmDialog('open');
+		toggleUserActivation : function(){
+			var shouldActivate = $("#toggle-activation-checkbox").prop('checked');
+			if (shouldActivate){
+				this.activateUser();
 			}
 			else{
-				$("#activate-user-popup").confirmDialog('open');
-			}			
-		},
+				this.deactivateUser();
+			}
+				
+		},		
 		
 		activateUser : function(){
 			$.post(UMod.user.url.admin + '/activate')
 			.done(function(){
-				var btn = $("#toggle-activation-button");
-				btn.data('active',true);
-				btn.prop('value', UMod.message.deactivate);
 				$("#user-name-deactivated-hint").addClass('not-displayed');
 			});
 		},
@@ -149,9 +150,6 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/u
 		deactivateUser : function(){
 			$.post(UMod.user.url.admin + '/deactivate')
 			.done(function(){
-				var btn = $("#toggle-activation-button");
-				btn.data('active',false);
-				btn.prop('value',UMod.message.activate);
 				$("#user-name-deactivated-hint").removeClass('not-displayed');
 			});			
 		},

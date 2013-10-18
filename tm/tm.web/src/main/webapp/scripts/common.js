@@ -95,6 +95,7 @@ requirejs.config({
 				"jquery.squash.tagit" : "squashtest/jquery.squash.tagit",
 				"jquery.squash.buttonmenu" : "squashtest/jquery.squash.buttonmenu",
 				"jquery.squash.formdialog" : "squashtest/jquery.squash.formdialog",
+				"jquery.switchButton" : "jquery/jquery.switchButton",
 				"squash.attributeparser" : 'squash/squash.attributeparser',
 				"squash.configmanager" : 'squash/squash.configmanager',
 				"workspace.tree-node-copier" : "workspace/workspace.tree-node-copier",
@@ -198,6 +199,8 @@ requirejs.config({
 					deps : ["jquery", "jqueryui"],
 					exports : "tagit"
 				},
+				"jquery.switchButton" : ["jquery", "jqueryui"],
+
 				'jqplot' : {
 					deps : ['jquery'],
 					exports : 'jqplot'
