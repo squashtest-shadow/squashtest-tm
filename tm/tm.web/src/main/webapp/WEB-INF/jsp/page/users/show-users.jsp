@@ -196,30 +196,6 @@
 		</pop:popup>
 		
 		
-		<f:message var="deactivateUsersTitle" key="title.deactivate-users" />
-		<div id="deactivate-user-popup" class="popup-dialog not-displayed" title="${deactivateUsersTitle}">
-			
-			<span class="normal-warning-message"><f:message key="message.ConfirmDeactivateUser"/></span>
-		
-			<div class="popup-dialog-buttonpane">
-			    <input class="confirm" type="button" value="<f:message key='label.Confirm' />" />
-			    <input class="cancel" type="button" value="<f:message key='label.Cancel' />" />				
-			</div>
-		
-		</div>	
-		
-		<f:message var="activateUsersTitle" key="title.activate-users" />
-		<div id="activate-user-popup" class="popup-dialog not-displayed" title="${activateUsersTitle}">
-			
-			<span class="normal-warning-message"><f:message key="message.ConfirmActivateUser"/></span>
-		
-			<div class="popup-dialog-buttonpane">
-			    <input class="confirm" type="button" value="<f:message key='label.Confirm' />" />
-			    <input class="cancel" type="button" value="<f:message key='label.Cancel' />" />				
-			</div>
-		
-		</div>	
-		
 		<f:message var="deleteUsersTitle" key="title.delete-users" />
 		<div id="delete-user-popup" class="popup-dialog not-displayed" title="${deleteUsersTitle}">
 			

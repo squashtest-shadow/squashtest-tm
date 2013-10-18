@@ -149,37 +149,7 @@ define([ "jquery", "squash.translator", "jquery.squash.fragmenttabs", "squashtab
 		$("#add-user-dialog").bind("dialogclose", cleanUp);
 		
 		
-		// activation / deactivation
-		
-		function xhrActivateDeactivate(action, callbackName){
-			var $this = $(this),
-				table = $("#users-list-table").squashTable();
-					
-			var userId = $this.data('entity-id'),
-				userIds = (!! userId) ? [ userId ] : table.getSelectedIds();
-	
-			$this.data('entity-id');	//reset
-			
-			var url = squashtm.app.contextRoot+"/administration/users/"+userIds.join(',')+'/'+action;
-			$.post(url)
-			.done(function(){
-				table[callbackName](userIds);
-			});			
-		}
-		
-		// confirm deactivation
-		
-		$("#activate-user-popup").confirmDialog().on('confirmdialogconfirm', function(){			
-			xhrActivateDeactivate.call(this, 'activate', 'activateUsers');			
-		});
-		
-		// confirm activation
-		
-		$("#deactivate-user-popup").confirmDialog().on('confirmdialogconfirm', function(){			
-			xhrActivateDeactivate.call(this, 'deactivate', 'deactivateUsers');			
-		});		
-		
-		// confirm deleteion
+		// confirm deletion
 		$("#delete-user-popup").confirmDialog().on('confirmdialogconfirm', function(){
 			var $this = $(this),
 			table = $("#users-list-table").squashTable();
@@ -206,10 +176,24 @@ define([ "jquery", "squash.translator", "jquery.squash.fragmenttabs", "squashtab
 	function initButtons(settings) {
 		
 		
-		function openpopup(selector){
+		$('#add-user-button').button();
+		
+		$("#deactivate-user-button").button().on('click', function(){
+			var table =  $("#users-list-table").squashTable();
+			var ids = table.getSelectedIds();
+			table.deactivateUsers(ids);
+		});
+		
+		$("#activate-user-button").button().on('click', function(){			
+			var table =  $("#users-list-table").squashTable();
+			var ids = table.getSelectedIds();
+			table.activateUsers(ids);		
+		});
+		
+		$("#delete-user-button").button().on('click', function(){
 			var ids = $("#users-list-table").squashTable().getSelectedIds();
 			if (ids.length>0){
-				var popup = $(selector);
+				var popup = $("#delete-user-popup");
 				popup.data('entity-id',null);
 				popup.confirmDialog('open');
 			}
@@ -219,21 +203,7 @@ define([ "jquery", "squash.translator", "jquery.squash.fragmenttabs", "squashtab
 					errorMessage : 'message.EmptyTableSelection'
 				});
 				$.squash.openMessage(warn.errorTitle, warn.errorMessage);
-			}		
-		}
-		
-		$('#add-user-button').button();
-		
-		$("#deactivate-user-button").button().on('click', function(){
-			openpopup("#deactivate-user-popup");
-		});
-		
-		$("#activate-user-button").button().on('click', function(){			
-			openpopup("#activate-user-popup");			
-		});
-		
-		$("#delete-user-button").button().on('click', function(){
-			openpopup("#delete-user-popup");
+			}			
 		});
 		
 		$("#back").button().click(function() {
@@ -272,6 +242,23 @@ define([ "jquery", "squash.translator", "jquery.squash.fragmenttabs", "squashtab
 		
 		var squashSettings = {
 			functions : {
+
+				
+				activateUsers : function(ids){
+					var table = this;
+					var url = squashtm.app.contextRoot+"/administration/users/"+ids.join(',')+'/activate';
+					$.post(url).done(function(){
+						table._changeActivation(ids, true, "table-icon user-active-btn icon-user-activated");
+					});					
+				},
+				
+				deactivateUsers : function(ids){
+					var table = this;
+					var url = squashtm.app.contextRoot+"/administration/users/"+ids.join(',')+'/deactivate';
+					$.post(url).done(function(){
+						table._changeActivation(ids, false, "table-icon user-active-btn icon-user-deactivated disabled-transparent");
+					});
+				}, 
 				
 				_changeActivation : function(ids, value, cssclass){
 					var _table = this;
@@ -281,14 +268,6 @@ define([ "jquery", "squash.translator", "jquery.squash.fragmenttabs", "squashtab
 						data['user-active'] = value;						
 					});
 					rows.find('a.user-active-btn').removeClass().addClass(cssclass);
-				},
-				
-				activateUsers : function(ids){
-					this._changeActivation(ids, true, "table-icon user-active-btn icon-user-activated");
-				},
-				
-				deactivateUsers : function(ids){
-					this._changeActivation(ids, false, "table-icon user-active-btn icon-user-deactivated disabled-transparent");
 				}
 			}
 		};
@@ -305,9 +284,9 @@ define([ "jquery", "squash.translator", "jquery.squash.fragmenttabs", "squashtab
 				active = data['user-active'];
 			
 			if (active){
-				$("#deactivate-user-popup").data('entity-id', id).confirmDialog('open');
+				table.deactivateUsers([id]);
 			}else{
-				$("#activate-user-popup").data('entity-id', id).confirmDialog('open');				
+				table.activateUsers([id]);		
 			}	
 			
 			
