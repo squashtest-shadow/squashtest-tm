@@ -238,6 +238,8 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 			temp.action=URL;
 			temp.method="POST";
 			temp.style.display="none";
+			temp.acceptCharset="UTF-8";
+			temp.encoding="UTF-8";
 			for(var x in PARAMS) {
 				var opt=document.createElement("textarea");
 				opt.name=x;

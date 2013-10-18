@@ -20,11 +20,15 @@
  */
 package org.squashtest.tm.web.internal.controller.search;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
@@ -48,32 +52,57 @@ public class AdvancedSearchExportController {
 	@Inject
 	private AdvancedSearchService advancedSearchService;
 
-	@RequestMapping(method = RequestMethod.GET, params = {"searchModel", "export=csv"})
+	private static final Logger LOGGER = LoggerFactory.getLogger(AdvancedSearchExportController.class);
+	
+	@RequestMapping(method = RequestMethod.GET, params = { "searchModel",
+			"export=csv" })
 	public @ResponseBody
-	void exportTestCaseAdvancedSearchResult(HttpServletResponse response, @RequestParam(value = "searchModel") String searchModel) throws IOException {
+	void exportTestCaseAdvancedSearchResult(HttpServletResponse response,
+			@RequestParam(value = "searchModel") String searchModel)
+			throws IOException {
 
-		AdvancedSearchModel parsedSearchModel = new ObjectMapper().readValue(searchModel, AdvancedSearchModel.class);
-		
-		TestCaseSearchExportCSVModel model = advancedSearchService.exportTestCaseSearchToCSV(parsedSearchModel);
+		BufferedWriter writer = null;
 
-		// prepare the response
-		response.setContentType("application/octet-stream");
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+		try {
+			AdvancedSearchModel parsedSearchModel = new ObjectMapper()
+					.readValue(searchModel, AdvancedSearchModel.class);
+			TestCaseSearchExportCSVModel model = advancedSearchService
+					.exportTestCaseSearchToCSV(parsedSearchModel);
 
-		response.setHeader("Content-Disposition",
-				"attachment; filename=" + "TestCaseExport" + sdf.format(new Date()) + ".csv");
+			// prepare the response
+			writer = new BufferedWriter(new OutputStreamWriter(
+					response.getOutputStream()));
+			response.setContentType("application/octet-stream");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 
-		// print
-		PrintWriter writer = response.getWriter();
-		Row header = model.getHeader();
-		writer.write(header.toString() + "\n");
+			response.setHeader("Content-Disposition", "attachment; filename="
+					+ "TestCaseExport" + sdf.format(new Date()) + ".csv");
 
-		Iterator<Row> iterator = model.dataIterator();
-		while (iterator.hasNext()) {
-			Row datarow = iterator.next();
-			String cleanRowValue = HTMLCleanupUtils.htmlToText(datarow.toString()).replaceAll("\\n", " ")
-					.replaceAll("\\r", " ");
-			writer.write(cleanRowValue + "\n");
+			// print
+			Row header = model.getHeader();
+			writer.write(header.toString() + "\n");
+
+			Iterator<Row> iterator = model.dataIterator();
+			while (iterator.hasNext()) {
+				Row datarow = iterator.next();
+				String cleanRowValue = HTMLCleanupUtils
+						.htmlToText(datarow.toString()).replaceAll("\\n", " ")
+						.replaceAll("\\r", " ");
+				writer.write(cleanRowValue + "\n");
+			}
+
+			// closes stream in the finally clause
+		} catch (IOException ex) {
+			LOGGER.error(ex.getMessage());
+			throw new RuntimeException(ex);
+		} finally {
+			if (writer != null) {
+				try {
+					writer.close();
+				} catch (IOException ex) {
+					LOGGER.warn(ex.getMessage());
+				}
+			}
 		}
 
 	}
