@@ -82,7 +82,7 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 							"aTargets" : [ 3 ],
 							"mDataProp" : "test-case-id",
 							"bSortable" : true,
-							"sClass" : "centered"
+							"sClass" : "centered element_id"
 						}, {
 							"aTargets" : [ 4 ],
 							"mDataProp" : "test-case-ref",
@@ -189,7 +189,7 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 							"aTargets" : [ 2 ],
 							"mDataProp" : "test-case-id",
 							"bSortable" : true,
-							"sClass" : "centered"
+							"sClass" : "centered element_id"
 						}, {
 							"aTargets" : [ 3 ],
 							"mDataProp" : "test-case-ref",

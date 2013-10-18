@@ -66,61 +66,15 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			}
 			var id = this.associationId;
 				
-			if("requirement" === this.associationType){
-				
-				var st = "";
-				var i;
-				
-				for(i=0; i<ids.length; i++){
-					if(i+1 == ids.length){
-						st = st+ids[i];
-					} else {
-						st = st+ids[i]+",";
-					}
-				}
-				
-
+			if("testcase" === this.associationType){
 				
 				$.ajax({
 					type: "POST",
-					url : squashtm.app.contextRoot + "/requirement-versions/" + id + "/verifying-test-cases/"+st
+					url : squashtm.app.contextRoot + "/test-cases/" + id + "/verified-requirements",
+					data : { "requirementsIds[]" : ids }
 				}).done(function() {
-					document.location.href = squashtm.app.contextRoot + "/requirement-versions/" + id + "/verifying-test-cases/manager";
+					document.location.href = squashtm.app.contextRoot + "/test-cases/" + id + "/verified-requirement-versions/manager";
 				});
-				
-			} else if ("campaign" === this.associationType){
-				
-				
-				$.ajax({
-					type: "POST",
-					url : squashtm.app.contextRoot + "/campaigns/" + id + "/test-plan",
-					data : { "testCasesIds[]" : ids }
-				}).done(function() {
-					document.location.href = squashtm.app.contextRoot + "/campaigns/" + id + "/test-plan/manager";				
-				});
-					
-			} else if ("iteration" === this.associationType){
-
-				
-				$.ajax({
-					type: "POST",
-					url : squashtm.app.contextRoot + "/iterations/" + id + "/test-plan",
-					data : { "testCasesIds[]" : ids }
-				}).done(function() {
-					document.location.href = squashtm.app.contextRoot + "/iterations/" + id + "/test-plan-manager";				
-				});
-				
-			} else if ("testsuite" === this.associationType){
-
-				
-				$.ajax({
-					type: "POST",
-					url : squashtm.app.contextRoot + "/test-suites/" + id + "/test-plan",
-					data: { "testCasesIds[]" : ids }
-				}).done(function() {
-					document.location.href = squashtm.app.contextRoot + "/test-suites/" + id + "/test-plan-manager";					
-				});
-				
 			}
 		},
 		
@@ -129,7 +83,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			var rows = table.fnGetNodes();
 			var ids = [];
 			$(rows).each(function(index, row) {
-				ids.push(parseInt($($("td", row)[2]).text(),10));
+				ids.push(parseInt($(".element_id", row).text(),10));
 			});
 			
 			table.squashTable().selectRows(ids);

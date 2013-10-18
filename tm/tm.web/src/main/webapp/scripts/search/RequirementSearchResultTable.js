@@ -80,7 +80,7 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 							"aTargets" : [ 3 ],
 							"mDataProp" : "requirement-id",
 							"bSortable" : true,
-							"sClass" : "centered"
+							"sClass" : "centered element_id"
 						}, {
 							"aTargets" : [ 4 ],
 							"mDataProp" : "requirement-reference",
@@ -182,7 +182,7 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 							"aTargets" : [ 2 ],
 							"mDataProp" : "requirement-id",
 							"bSortable" : true,
-							"sClass" : "centered"
+							"sClass" : "centered element_id"
 						}, {
 							"aTargets" : [ 3 ],
 							"mDataProp" : "requirement-reference",
