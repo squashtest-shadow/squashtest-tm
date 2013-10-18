@@ -34,7 +34,7 @@
 <%@ taglib prefix="tree" tagdir="/WEB-INF/tags/jstree" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<div id="tree_element_menu" class="tree-top-toolbar">
+<div id="tree_element_menu" class="tree-top-toolbar not-displayed">
 	<div class="button-group">
 		<a id="search-tree-button"  class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only" role="button" aria-disabled="false" title="<f:message key='tree.button.search.label' />...">
 			<span class="ui-button-icon-primary ui-icon ui-icon-search"></span>
@@ -57,13 +57,18 @@
 			initTree.initLinkableTree(conf);				
 		});		
 		
-		$("#search-tree-button").on('click', function(){
-			document.location.href = squashtm.app.contextRoot + "/advanced-search?testcase&id=${elementId}&associateResultWithType=${elementType}";
-		});
-
-		$("#search-tree-button-old").on('click', function(){
-			document.location.href = squashtm.app.contextRoot + "/advanced-search?testcase&id=${elementId}&associateResultWithType=${elementType}";
-		});
+		if(conf.workspace !== "requirement"){
+			
+			$("#tree_element_menu").removeClass("not-displayed");
+			
+			$("#search-tree-button").on('click', function(){
+				document.location.href = squashtm.app.contextRoot + "/advanced-search?testcase&id=${elementId}&associateResultWithType=${elementType}";
+			});
+	
+			$("#search-tree-button-old").on('click', function(){
+				document.location.href = squashtm.app.contextRoot + "/advanced-search?testcase&id=${elementId}&associateResultWithType=${elementType}";
+			});
+		}
 	});
 	
 </script>
