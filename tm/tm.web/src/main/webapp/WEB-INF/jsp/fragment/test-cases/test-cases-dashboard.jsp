@@ -42,15 +42,15 @@
 
 <div class="fragment-body">
 
-	<dashboard:test-case-dashboard-panel url="${statsUrl}"/>
+	<dashboard:test-cases-dashboard-panel url="${statsUrl}"/>
 	
 </div>
 
 
 <script type="text/javascript">
 	$(function(){
-		require(["dashboard"], function(dashboard){
-			dashboard.init({
+		require(["test-case-folders-management"], function(TCF){
+			TCF.initDashboardPanel({
 				master : '#dashboard-master',
 				model : ${json:serialize(statistics)},
 				listenTree : true

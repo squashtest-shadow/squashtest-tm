@@ -26,7 +26,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		"jquery.squash.confirmdialog" ], function($, Backbone, _, StringUtil,
 		TestStepVerifiedRequirementsTable) {
 	var VRBS = squashtm.app.verifiedRequirementsBlocSettings;
-	var VerifiedRequirementsPanel = Backbone.View.extend({
+	var TestStepVerifiedRequirementsPanel = Backbone.View.extend({
 
 		el : "#verified-requirements-bloc-frag",
 
@@ -66,5 +66,5 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		}
 
 	});
-	return VerifiedRequirementsPanel;
+	return TestStepVerifiedRequirementsPanel;
 });

@@ -20,29 +20,33 @@
  */
 requirejs.config({
 			packages : [
-				"custom-field-editor",
-				"custom-field-binding",
-				"custom-field-values",
 				"execution-processing",
-				"projects-manager",
-				"teams-manager",
-				"project",
 				"contextual-content-handlers",
-				"test-cases-management",
-				"users-manager",
 				"bugtracker",
 				"file-upload",
 				"squashtable",
+				"issue-tables",
+				"tree",
+				"search",
+				//cufs
+				"custom-field-editor",
+				"custom-field-binding",
+				"custom-field-values",
+				//entities management
+				"teams-manager",
+				"projects-manager",
+				"project",
+				"users-manager",
+				"test-case-management",
+				"test-case-folder-management",
+				"test-case-library-management",
 				"iteration-management",	
 				"test-suite-management",
 				"campaign-management",
-				"issue-tables",
-				'tree',
-				'tc-workspace',
-				'req-workspace',
-				'camp-workspace',
-				'dashboard',
-				'search'
+				//workspaces
+				"tc-workspace",
+				"req-workspace",
+				"camp-workspace"
 			],
 			/*
 			 * rules for paths naming: * third party lib: unversionned lib name *
@@ -55,7 +59,6 @@ requirejs.config({
 				 * "jquery/my.module" will be interpolated as
 				 * "/lib/jquery/../my.module"
 				 */
-				
 				"datatables" : "datatables/jquery.dataTables.min",
 				//lib
 				"domReady" : "lib/require/domReady",
@@ -64,9 +67,9 @@ requirejs.config({
 				"handlebars" : "lib/handlebars/handlebars-1.0.0.rc3",
 				"underscore" : "lib/underscore/underscore-1.4.4-min",
 				"backbone" : "lib/backbone/backbone-1.0.0-min",
-				'jqplot' : 'lib/jqplot/jquery.jqplot.min',
-				'jqplot-pie' : 'lib/jqplot/plugins/jqplot.pieRenderer.min',
-				'excanvas' : 'lib/excanvas.min',
+				"jqplot" : "lib/jqplot/jquery.jqplot.min",
+				"jqplot-pie" : "lib/jqplot/plugins/jqplot.pieRenderer.min",
+				"excanvas" : "lib/excanvas.min",
 				//cke
 				"ckeditor" : "ckeditor/ckeditor",
 				"jquery.ckeditor" : "ckeditor/adapters/jquery",
@@ -107,13 +110,13 @@ requirejs.config({
 				"squash.translator" : "squash/squash.translator",
 				"squash.resizer" : "squash/squash.tree-page-resizer",
 				"squash.basicwidgets" : "squash/squash.basicwidgets",
-				"squash.attributeparser" : 'squash/squash.attributeparser',
-				"squash.configmanager" : 'squash/squash.configmanager',
+				"squash.attributeparser" : "squash/squash.attributeparser",
+				"squash.configmanager" : "squash/squash.configmanager",
 				//workspace
 				"workspace.tree-node-copier" : "workspace/workspace.tree-node-copier",
 				"workspace.tree-event-handler" : "workspace/workspace.tree-event-handler",
 				"workspace.permissions-rules-broker" : "workspace/workspace.permissions-rules-broker",
-				"workspace.contextual-content" : "workspace/workspace.contextual-content"
+				"workspace.contextual-content" : "workspace/workspace.contextual-content",
 				
 			},
 			shim : {
@@ -151,7 +154,7 @@ requirejs.config({
 					exports : "jqueryui"
 				},
 				"jform" : [ "jquery" ],
-				"jquery.throttle-debounce" : ['jquery'],
+				"jquery.throttle-debounce" : ["jquery"],
 				"jqueryui" : [ "jquery" ],
 				"datatables" : [ "jqueryui" ],
 				"jquery.squash" : {
@@ -211,13 +214,13 @@ requirejs.config({
 				},
 				"jquery.switchButton" : ["jquery", "jqueryui"],
 
-				'jqplot' : {
-					deps : ['jquery'],
-					exports : 'jqplot'
+				"jqplot" : {
+					deps : ["jquery"],
+					exports : "jqplot"
 				},
-				'jqplot-pie' : {
-					deps : ['jquery', 'jqplot'],
-					explort : 'jqplot-pie'
+				"jqplot-pie" : {
+					deps : ["jquery", "jqplot"],
+					explort : "jqplot-pie"
 				}
 			}
 		});

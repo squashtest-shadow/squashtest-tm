@@ -24,12 +24,11 @@
 
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
-
 <%@ attribute name="url" required="true" description="url where to get the data" %>
 <%@ attribute name="cacheKey" required="false" description="if set, will use the cache using that key" %>
 
 
-<div id="dashboard-master" data-def="rendering=toggle-panel, workspace=test-case, url=${url}">
+<div id="dashboard-master" data-def="url=${url}">
 
 	<f:message var="dashboardTitle" key="title.Dashboard"/>
 	<f:message var="refreshLabel" key="label.Refresh" />
@@ -173,9 +172,7 @@
 			</div>
 			
 			<div class="dashboard-notready" style="text-align : center">
-			
 				<h3 class="dashboard-notready-title"><f:message key="dashboard.notready.title"/></h3>
-				
 			</div>
 			
 		</jsp:attribute>

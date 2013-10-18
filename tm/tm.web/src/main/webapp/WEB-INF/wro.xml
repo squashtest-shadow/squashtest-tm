@@ -45,7 +45,7 @@
     <js>/scripts/squashtest/**.js</js>
     <js>/scripts/team-editor/**.js</js>
     <js>/scripts/teams-manager/**.js</js>
-    <js>/scripts/test-cases-management/**.js</js>
+    <js>/scripts/test-case-management/**.js</js>
     <js>/scripts/test-step-editor/**.js</js>
     <js>/scripts/user-editor/**.js</js>
     <js>/scripts/users-manager/**.js</js>

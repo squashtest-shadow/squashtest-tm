@@ -245,7 +245,7 @@ public class TestCaseLibraryNavigationController extends
 		
 		model.addAttribute("statistics", stats);
 		
-		return "fragment/test-cases/test-case-dashboard";
+		return "fragment/test-cases/test-cases-dashboard";
 	}
 	
 

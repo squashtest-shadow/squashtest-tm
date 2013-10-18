@@ -24,7 +24,6 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
-<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 <%@ taglib prefix="dashboard" tagdir="/WEB-INF/tags/dashboard"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -57,7 +56,7 @@
 <div class="fragment-body">
 
 	<%-- statistics panel --%>	
-	<dashboard:test-case-dashboard-panel url="${statsUrl}"/>
+	<dashboard:test-cases-dashboard-panel url="${statsUrl}"/>
 	
 	<%-- description panel --%>
 	<comp:toggle-panel id="library-description-panel" titleKey="label.Description"  open="true">
@@ -72,15 +71,14 @@
 
 <script type="text/javascript">
 	$(function(){
-		require(["squash.basicwidgets","dashboard"], function(basicwidg, dashboard){
+		require(["squash.basicwidgets","test-case-library-management"], function(basicwidg, TCLM){
 			basicwidg.init();
-			dashboard.init({
+			TCLM.initDashboardPanel({
 				master : '#dashboard-master',
 				cacheKey : 'tclib${library.id}'
 			});			
 		});	
 	});
 </script>
-
 
 

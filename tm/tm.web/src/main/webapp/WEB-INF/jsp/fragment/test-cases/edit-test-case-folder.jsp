@@ -24,11 +24,9 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
-<%@ taglib prefix="su" uri="http://org.squashtest.tm/taglib/string-utils" %>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz" %>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%@ taglib prefix="dashboard" tagdir="/WEB-INF/tags/dashboard"%>
-<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 
 <?xml version="1.0" encoding="utf-8" ?>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
@@ -70,7 +68,7 @@
 	
 	<%-- statistics panel --%>
 	
-	<dashboard:test-case-dashboard-panel url="${statsUrl}"/>
+	<dashboard:test-cases-dashboard-panel url="${statsUrl}"/>
 	
 	<%-- description panel --%>
 	
@@ -91,8 +89,8 @@
 	
 	require(["domReady", "require"], function(domReady, require){
 		domReady(function(){
-			require(["jquery", "squash.basicwidgets","contextual-content-handlers", "workspace.contextual-content", "dashboard"], 
-					function($, basic, contentHandlers, contextualContent, dashboard){
+			require(["jquery", "squash.basicwidgets","contextual-content-handlers", "workspace.contextual-content", "test-case-folder-management"], 
+					function($, basic, contentHandlers, contextualContent, TCFM){
 				
 				basic.init();
 				
@@ -104,7 +102,7 @@
 				contextualContent.addListener(nameHandler);				
 				
 				//init the dashboard
-				dashboard.init({
+				TCFM.initDashboardPanel({
 					master : '#dashboard-master',
 					cacheKey : 'tcfold${folder.id}'
 				});

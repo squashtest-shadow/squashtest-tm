@@ -18,14 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["../basic-objects/pie-view"], function(PieView){
+define([ 'dashboard/test-cases-dashboard/main' ], function(dashboardPanel) {
 
-	return PieView.extend({
+	return {
 		
-		getSerie : function(){
-			var stats = this.model.get('statusesStatistics');
-			return [ stats.workInProgress, stats.underReview, stats.approved , stats.toBeUpdated, stats.obsolete ];
+		initDashboardPanel : function(conf){
+			dashboardPanel.init(conf);
 		}
-	});
+	};
 	
 });

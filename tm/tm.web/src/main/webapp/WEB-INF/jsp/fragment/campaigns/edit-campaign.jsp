@@ -68,6 +68,10 @@
 
 <c:url var="customFieldsValuesURL" value="/custom-fields/values" />
 
+<s:url var="dashboardUrl" value="/campaigns/{campId}/dashboard?tab=" >
+	<s:param name="campId" value="${campaign.id}"/>
+</s:url>
+
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE"
 	domainObject="${ campaign }">
@@ -178,6 +182,9 @@
 <csst:jq-tab>
 <div class="fragment-tabs fragment-body">
 	<ul class="tab-menu">
+		<li><a href="${ dashboardUrl }"><f:message key="title.Dashboard"/>
+		</a>
+		</li>
 		<li><a href="#tabs-1"><f:message key="tabs.label.information" />
 		</a>
 		</li>

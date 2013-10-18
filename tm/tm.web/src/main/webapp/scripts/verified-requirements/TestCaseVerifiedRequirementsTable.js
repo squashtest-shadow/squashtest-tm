@@ -28,7 +28,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 	var TestCaseVerifiedRequirementsTable = VerifiedRequirementsTable.extend({
 
 		initialize : function(options) {
-			this.constructor.__super__.initialize.apply(this, [ options ]);
+			VerifiedRequirementsTable.prototype.initialize.apply(this);
 			this.configureNoDirectRequirementSelectedDialog.call(this);
 		},
 
