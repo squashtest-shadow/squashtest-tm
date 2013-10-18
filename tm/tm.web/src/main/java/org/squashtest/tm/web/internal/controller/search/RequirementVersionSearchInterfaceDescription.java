@@ -168,7 +168,7 @@ public class RequirementVersionSearchInterfaceDescription {
 		panel.setOpen(true);
 		panel.setId("versions");
 		panel.setLocation("column1");
-		panel.addCssClass("search-icon-attributes");
+		panel.addCssClass("search-icon-version");
 		
 		SearchInputFieldModel versionField = new SearchInputFieldModel(
 				"isCurrentVersion", messageSource.internationalize(
@@ -270,7 +270,7 @@ public class RequirementVersionSearchInterfaceDescription {
 		panel.setOpen(true);
 		panel.setId("history");
 		panel.setLocation("column3");
-		panel.addCssClass("search-icon-history");
+		panel.addCssClass("search-icon-history-blue");
 
 		SearchInputFieldModel createdByField = new SearchInputFieldModel(
 				"createdBy", messageSource.internationalize(
@@ -327,7 +327,7 @@ public class RequirementVersionSearchInterfaceDescription {
 		panel.setOpen(true);
 		panel.setId("perimeter");
 		panel.setLocation("column2");
-		panel.addCssClass("search-icon-perimeter");
+		panel.addCssClass("search-icon-perimeter-blue");
 
 		SearchInputFieldModel projectField = new SearchInputFieldModel(
 				"requirement.project.id", messageSource.internationalize(

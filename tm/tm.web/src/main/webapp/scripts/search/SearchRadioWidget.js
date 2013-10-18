@@ -54,8 +54,6 @@ define(["jquery", "jqueryui"], function($){
 		createDom : function(id, options){
 			
 			var input = $(".search-line", this.element);
-			var table = $('<table>');
-			input.append(table);
 			
 			var opt;
 			for (var i=0, len = options.length; i<len;i++){
@@ -64,10 +62,10 @@ define(["jquery", "jqueryui"], function($){
 					'name' : id,
 					'value' : options[i].code
 				});
-				var row = $('<tr>');
+				var row = $('<div>');
 				row.append(opt);
 				row.append(" "+options[i].value);
-				table.append(row);
+				input.append(row);
 			}
 		}
 	 });

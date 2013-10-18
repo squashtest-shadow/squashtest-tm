@@ -43,7 +43,6 @@ import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.testcase.TestCaseSearchExportCSVModel;
 import org.squashtest.tm.domain.testcase.TestCaseSearchExportCSVModel.Row;
 import org.squashtest.tm.service.library.AdvancedSearchService;
-import org.squashtest.tm.web.internal.controller.campaign.CampaignLibraryNavigationController;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 @Controller
@@ -54,7 +53,7 @@ public class AdvancedSearchExportController {
 	private AdvancedSearchService advancedSearchService;
 
 	private static final Logger LOGGER = LoggerFactory
-			.getLogger(CampaignLibraryNavigationController.class);
+			.getLogger(AdvancedSearchExportController.class);
 
 	@RequestMapping(method = RequestMethod.GET, params = { "searchModel",
 			"export=csv", "requirement" })

@@ -654,6 +654,8 @@ span.span-green {
 	background-color : transparent;
 	background-repeat : no-repeat;
 	padding-left: 20px;
+	height:16px;
+	display: block
 }
 .search-icon-attributes {
 	background-position : center left;
@@ -661,6 +663,8 @@ span.span-green {
 	background-color : transparent;
 	background-repeat : no-repeat;
 	padding-left: 20px;
+	height:16px;
+	display: block
 }
 .search-icon-perimeter {
 	background-position : center left;
@@ -668,6 +672,17 @@ span.span-green {
 	background-color : transparent;
 	background-repeat : no-repeat;
 	padding-left: 20px;
+	height:16px;
+	display: block
+}
+.search-icon-perimeter-blue {
+	background-position : center left;
+	background-image: url("../images/Search_Perimeter_Blue.png");  /** sprite-ref: sprites-icons; sprite-alignment: left; */
+	background-color : transparent;
+	background-repeat : no-repeat;
+	padding-left: 20px;
+	height:16px;
+	display: block
 }
 .search-icon-associations  {
 	background-position : center left;
@@ -675,6 +690,8 @@ span.span-green {
 	background-color : transparent;
 	background-repeat : no-repeat;
 	padding-left: 20px;
+	height:16px;
+	display: block
 }
 .search-icon-content {
 	background-position : center left;
@@ -682,6 +699,8 @@ span.span-green {
 	background-color : transparent;
 	background-repeat : no-repeat;
 	padding-left: 20px;
+	height:16px;
+	display: block;
 }
 .search-icon-history  {
 	background-position : center left;
@@ -689,6 +708,17 @@ span.span-green {
 	background-color : transparent;
 	background-repeat : no-repeat;
 	padding-left: 20px;
+	height:16px;
+	display: block;
+}
+.search-icon-history-blue  {
+	background-position : center left;
+	background-image: url("../images/Search_History_Blue.png");  /** sprite-ref: sprites-icons; sprite-alignment: left; */
+	background-color : transparent;
+	background-repeat : no-repeat;
+	padding-left: 20px;
+	height:16px;
+	display: block
 }
 .search-icon-cuf {
 	background-position : center left;
@@ -696,6 +726,17 @@ span.span-green {
 	background-color : transparent;
 	background-repeat : no-repeat;
 	padding-left: 20px;
+	height:16px;
+	display: block
+}
+.search-icon-version {
+	background-position : center left;
+	background-image: url("../images/Search_Version.png");  /** sprite-ref: sprites-icons; sprite-alignment: left; */
+	background-color : transparent;
+	background-repeat : no-repeat;
+	padding-left: 20px;
+	height:16px;
+	display: block
 }
 
 .associated-icon-requirement {
