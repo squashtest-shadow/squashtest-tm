@@ -69,7 +69,8 @@ define(function(){
 				},
 
 				squash : {
-					rootUrl : squashtm.app.contextRoot
+					rootUrl : squashtm.app.contextRoot,
+					opened : (!!settings.selectedNode) ? [settings.selectedNode] : []
 				}
 			}
 		}

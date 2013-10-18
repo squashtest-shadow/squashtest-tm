@@ -44,18 +44,6 @@ define([ "./simple-tree-conf/conf-factory", "./workspace-tree-conf/conf-factory"
 			var conf = wkspConf.generate(settings);
 			var instance = $(settings.treeselector).jstree(conf);
 			squashtm.tree = instance;	
-			var selectedNode = settings.selectedNode; 
-			instance.on('select_node.jstree', function(event, data){
-				if(!!selectedNode){0
-					var jqTree=$("#tree");
-					var treeNode = jqTree.find("li[id=\'"+selectedNode+"\']");
-					if($("#tree").jstree("get_selected")[0] !== treeNode[0] && !this.overrideDone){
-						jqTree.jstree("deselect_all");
-						jqTree.jstree("select_node",treeNode);
-						this.overrideDone = true;
-					}
-				}
-			});
 		},
 		
 		initLinkableTree : function(settings){
