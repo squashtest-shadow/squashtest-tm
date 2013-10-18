@@ -74,11 +74,6 @@ squashtm.fragmenttabs = (function($, window) {
 			calculateTopPositionsOfTabs();
 
 			var args = {
-				cookie : {
-					// store cookie for a day, without, it would be a session
-					// cookie
-					expires : 1
-				},
 				show : calculateTopTableWrap
 			};
 

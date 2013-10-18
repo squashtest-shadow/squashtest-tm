@@ -29,7 +29,6 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
-<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables"%>
 <%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
@@ -398,7 +397,8 @@
 				//****** tabs configuration *******
 				
 				var fragConf = {
-					beforeLoad : Frag.confHelper.fnCacheRequests	
+					beforeLoad : Frag.confHelper.fnCacheRequests,
+					active : 1
 				};
 				Frag.init(fragConf);
 				
