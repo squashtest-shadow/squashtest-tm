@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.library;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,12 +28,14 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.apache.lucene.document.DateTools;
+import org.apache.lucene.search.FieldComparator;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.hibernate.CacheMode;
@@ -42,6 +45,7 @@ import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.hibernate.search.batchindexing.MassIndexerProgressMonitor;
 import org.hibernate.search.query.dsl.QueryBuilder;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
@@ -564,11 +568,11 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	}
 	
-	private Sort getRequirementVersionSort(List<Sorting> sortings){
-		
+	private Sort getRequirementVersionSort(List<Sorting> sortings, MessageSource source, Locale locale){
 		boolean isReverse = true;
 		Sort sort = null;
-		
+
+				
 		if(sortings == null || sortings.size() == 0){
 			
 			sort = new Sort(DEFAULT_SORT_REQUIREMENTS);
@@ -596,6 +600,8 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 				   "versions".equals(fieldName) || "testcases".equals(fieldName) || 
 				   "attachments".equals(fieldName)){
 					sortFieldArray[i] =  new SortField(fieldName, SortField.LONG, isReverse);
+				} if("category".equals(fieldName)){
+					sortFieldArray[i] =  new SortField(fieldName, new RequirementVersionCategoryComparatorSource(source, locale), isReverse);
 				} else {
 					sortFieldArray[i] = new SortField(fieldName, SortField.STRING, isReverse);
 				}
@@ -650,7 +656,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	
 	@Override
 	public PagedCollectionHolder<List<RequirementVersion>> searchForRequirementVersions(
-			AdvancedSearchModel model, PagingAndMultiSorting sorting) {
+			AdvancedSearchModel model, PagingAndMultiSorting sorting, MessageSource source, Locale locale) {
 		
 		Session session = sessionFactory.getCurrentSession();
 
@@ -664,7 +670,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		List<RequirementVersion> result = Collections.emptyList();
 		int countAll = 0 ;
 		if(luceneQuery != null){
-			Sort sort = getRequirementVersionSort(sorting.getSortings());
+			Sort sort = getRequirementVersionSort(sorting.getSortings(), source, locale);
 			org.hibernate.Query hibQuery = ftSession.createFullTextQuery(
 					luceneQuery, RequirementVersion.class).setSort(sort);
 	

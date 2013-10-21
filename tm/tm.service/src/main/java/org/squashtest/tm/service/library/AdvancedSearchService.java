@@ -21,7 +21,9 @@
 package org.squashtest.tm.service.library;
 
 import java.util.List;
+import java.util.Locale;
 
+import org.springframework.context.MessageSource;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -63,7 +65,7 @@ public interface AdvancedSearchService {
 	
 	PagedCollectionHolder<List<TestCase>> searchForTestCases(AdvancedSearchModel model, PagingAndMultiSorting sorting);
 	
-	PagedCollectionHolder<List<RequirementVersion>> searchForRequirementVersions(AdvancedSearchModel searchModel, PagingAndMultiSorting paging);
+	PagedCollectionHolder<List<RequirementVersion>> searchForRequirementVersions(AdvancedSearchModel searchModel, PagingAndMultiSorting paging, MessageSource source, Locale locale);
 	
 	List<TestCase> searchForTestCases(AdvancedSearchModel model);
 	

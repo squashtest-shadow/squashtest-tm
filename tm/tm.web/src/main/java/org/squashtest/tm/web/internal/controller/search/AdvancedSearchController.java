@@ -318,7 +318,7 @@ public class AdvancedSearchController {
 				requirementSearchResultMapper);
 
 		PagedCollectionHolder<List<RequirementVersion>> holder = advancedSearchService
-				.searchForRequirementVersions(searchModel, paging);
+				.searchForRequirementVersions(searchModel, paging, messageSource, locale);
 
 		boolean isInAssociationContext = isInAssociationContext(associateResultWithType);
 
