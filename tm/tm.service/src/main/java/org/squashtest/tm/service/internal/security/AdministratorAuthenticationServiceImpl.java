@@ -107,11 +107,10 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 	public void deactivateAccount(String login) {
 		if (userManager.userExists(login)) {
 			UserDetails oldUser = userManager.loadUserByUsername(login);
-			userManager.deleteUser(login);
 			UserDetails newUser = new User(login, oldUser.getPassword(), false, oldUser.isAccountNonExpired(),
 					oldUser.isCredentialsNonExpired(), oldUser.isAccountNonLocked(), oldUser.getAuthorities());
 			LOGGER.debug("Deactivate account for user {}", login);
-			userManager.createUser(newUser);
+			userManager.updateUser(newUser);
 
 		} else {
 			LOGGER.trace("User {} has no authentidation data, it can't be deactivated", login);
@@ -122,11 +121,10 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 	public void activateAccount(String login) {
 		if (userManager.userExists(login)) {
 			UserDetails oldUser = userManager.loadUserByUsername(login);
-			userManager.deleteUser(login);
 			UserDetails newUser = new User(login, oldUser.getPassword(), true, oldUser.isAccountNonExpired(),
 					oldUser.isCredentialsNonExpired(), oldUser.isAccountNonLocked(), oldUser.getAuthorities());
 			LOGGER.debug("Activating account for user {}", login);
-			userManager.createUser(newUser);
+			userManager.updateUser(newUser);
 
 		} else {
 			LOGGER.trace("User {} has no authentidation data, it can't be activated", login);

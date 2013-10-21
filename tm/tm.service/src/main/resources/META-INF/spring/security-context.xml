@@ -112,14 +112,21 @@
 					left join CORE_TEAM team on team.PARTY_ID = party.PARTY_ID
 					left join CORE_TEAM_MEMBER tmemb on tmemb.TEAM_ID = team.PARTY_ID,
 					CORE_USER u 
-				where( (u.PARTY_ID = tmemb.USER_ID AND u.ACTIVE = true) or (u.PARTY_ID = party.PARTY_ID) ) and ( u.LOGIN = ?	)
+				where( (u.PARTY_ID = tmemb.USER_ID AND u.ACTIVE = true) or (u.PARTY_ID = party.PARTY_ID) ) and ( u.LOGIN = ?)
 
       </value>
     </property> 
     
-    <!--  dummy query, see explanation below -->
-    <property name="authoritiesByUsernameQuery" value="select login, 'ROLE_USER' from CORE_USER where login = ?">
-
+   
+    <property name="authoritiesByUsernameQuery">
+    	<value>
+			select cpa.PARTY_ID,  cpa.AUTHORITY from CORE_PARTY_AUTHORITY cpa
+			inner join CORE_PARTY party on cp.PARTY_ID = cpa.PARTY_ID
+			left join CORE_TEAM team on team.PARTY_ID = party.PARTY_ID
+			left join CORE_TEAM_MEMBER tmemb on tmemb.TEAM_ID = team.PARTY_ID,
+			CORE_USER u 
+			where( (u.PARTY_ID = tmemb.USER_ID AND u.ACTIVE = true) or (u.PARTY_ID = party.PARTY_ID) ) and ( u.LOGIN = ?)
+		</value>
     </property>
 
     <property name="changePasswordSql">
@@ -152,6 +159,25 @@
       </value>
     </property>
     
+    <property name="createAuthoritySql">
+    	<value>
+    		insert into CORE_PARTY_AUTHORITY (PARTY_ID, AUTHORITY)
+    		values ((select cu.PARTY_ID from CORE_USER cu where cu.LOGN = ?), ?)
+    	</value>
+    </property>
+    
+    
+    <property name="deleteUserAuthoritiesSql">
+    	<value>
+    		delete from CORE_PARTY_AUTHORITY
+    		where PARTY_ID in (
+    			select cu.PARTY_ID from CORE_USER cu
+    			where cu.LOGIN = ?
+    		)
+    	</value>
+    </property>
+
+    
     <property name="userExistsSql" value="select LOGIN from AUTH_USER where LOGIN = ?" />
     
     <!--  
@@ -179,7 +205,12 @@
       new one. While deleting a user it would try to delete all his authorities, and that we don't want. Therefore, now enableAuthorities is "false". 
       
     -->
-    <property name="enableAuthorities" value="false" />
+    <!-- 
+    	Feat 2699 :
+    	
+    	parties now have personal authorities.
+     -->
+    <property name="enableAuthorities" value="true" />
     <property name="enableGroups" value="true" />
   </bean>
   

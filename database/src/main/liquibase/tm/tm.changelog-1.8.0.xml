@@ -112,14 +112,14 @@
 	</changeSet>
 	
 	<changeSet id="core-1.8.0-feat-2269-03" author="bsiri">
-		<comment>The table CORE_USER_AUTHORITY stores personal authorities. As for TM 1.8.0 the users now have blanket permissions 
-		(aka authorities) for themselves, not only via group membership. However, a user will still belong to one of the CORE_GROUPs and 
+		<comment>The table CORE_USER_AUTHORITY stores personal authorities. As for TM 1.8.0 the users and teams now have blanket permissions 
+		(aka authorities) for themselves, not only via core_group membership. However, a user will still belong to one of the CORE_GROUPs and 
 		the personal authorities will stack with the authorities of the group they belong to.</comment>
 		
-		<createTable tableName="CORE_USER_AUTHORITY">
+		<createTable tableName="CORE_PARTY_AUTHORITY">
 			
-			<column name="USER_ID" type="BIGINT" remarks="The CORE_USER id. Note that it references a concrete User, not a Party.">
-				<constraints nullable="false" references="CORE_USER(PARTY_ID)" foreignKeyName="FK_USER_AUTHORITY_USER" />
+			<column name="PARTY_ID" type="BIGINT" remarks="The CORE_PARTY ">
+				<constraints nullable="false" references="CORE_PARTY(PARTY_ID)" foreignKeyName="FK_PARTY_AUTHORITY_PARTY" />
 			</column>
 
 			<column name="AUTHORITY" type="VARCHAR(50)" remarks="The authority">
