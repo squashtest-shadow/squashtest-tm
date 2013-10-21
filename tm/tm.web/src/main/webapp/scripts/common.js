@@ -116,7 +116,7 @@ requirejs.config({
 				"workspace.tree-node-copier" : "workspace/workspace.tree-node-copier",
 				"workspace.tree-event-handler" : "workspace/workspace.tree-event-handler",
 				"workspace.permissions-rules-broker" : "workspace/workspace.permissions-rules-broker",
-				"workspace.contextual-content" : "workspace/workspace.contextual-content",
+				"workspace.contextual-content" : "workspace/workspace.contextual-content"
 				
 			},
 			shim : {

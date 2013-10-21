@@ -23,10 +23,11 @@
 define(['jquery', 'jstree', './tree-node', 'jquery.squash'], function($){
 	
 	
-	
-	/* **********************************************************************
-	  					Library part
-	************************************************************************ */
+
+		
+	/***************************************************************************
+	* Library part
+	**************************************************************************/
 
 	/**
 	 * Behaviour of a node when clicked or double clicked. There are two possible paths : 1) the node is not a container

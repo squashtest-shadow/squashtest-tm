@@ -55,6 +55,6 @@ define(['jquery'], function($){
 		});		
 		
 		
-	}
+	};
 	
 });

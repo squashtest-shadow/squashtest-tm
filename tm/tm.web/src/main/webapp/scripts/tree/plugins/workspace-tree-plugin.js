@@ -253,7 +253,7 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 
 		var rawurl = $(target).treeNode().getMoveUrl();
 		var nodeIds = $(nodes).treeNode().all('getResId').join(',');
-		var url = rawurl.replace('\{nodeIds\}', nodeIds);
+		var url = rawurl.replace('{nodeIds}', nodeIds);
 
 		tree.open_node(target);
 
@@ -390,7 +390,7 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 
 					var moveObject = data.args[0];
 					
-					if (moveObject == null || moveObject == undefined || moveObject.cr == undefined) {
+					if (moveObject === null || moveObject === undefined || moveObject.cr === undefined) {
 						return; //abort !
 					}
 					var rules = data.inst._getRules();
@@ -444,7 +444,7 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 					//this code handle lazy initialisation for permissions-rules. 
 					var settings = this._get_settings(); 
 					
-					if (settings.workspace_tree.rules == undefined){
+					if (settings.workspace_tree.rules === undefined){
 						settings.workspace_tree.rules = rulesbroker.get();
 					}
 					
@@ -452,38 +452,38 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 				},
 				
 				/*
-				 * A example command object is of the form : 
-				 * 
-				 * {
-				 * 	  removed : [ Node, ...],
-				 * 	  renamed : [ NodeRenaming, ... ],
-				 * 	  moved :   [ NodeMovement, ... ] 
-				 * }
-				 * 
-				 * With the following definitions :
-				 * 
-				 * Node : {
-				 * 		//any properties that might help identify your node, eg { resid : 13, rel : 'test-case' }
-				 * }
-				 * 
-				 * NodeRenaming : {
-				 * 		node : Node,
-				 * 		name : String
-				 * }
-				 * 
-				 * NodeMovement : {
-				 * 		dest : Node,
-				 * 		moved : [ Node, ... ]
-				 * }
-				 */
+				* A example command object is of the form : 
+				* 
+				* {
+				*	removed : [ Node, ...],
+				*	renamed : [ NodeRenaming, ... ],
+				*	moved : [ NodeMovement, ... ] 
+				* }
+				* 
+				* With the following definitions :
+				* 
+				* Node : {
+				*	//any properties that might help identify your node, eg { resid : 13, rel : 'test-case' }
+				* }
+				* 
+				* NodeRenaming : {
+				*	node : Node,
+				*	name : String
+				* }
+				* 
+				* NodeMovement : {
+				*	dest : Node,
+				*	moved : [ Node, ... ]
+				* }
+				*/
 				apply_commands : function(commandObject){
 				
-					if (commandObject === null || commandObject === undefined) return;
+					if (commandObject === null || commandObject === undefined){return;}
 										
 					//first, node renamings.
 					var renamed = commandObject.renamed;
 					if (renamed !== null && renamed !== undefined &&  renamed instanceof Array){
-						var i=0, len = renamed.length;
+						var len = renamed.length;
 						for (var i=0; i<len; i++){
 							var node = this.findNodes(renamed[i].node);
 							if (node.length>0){
@@ -496,9 +496,9 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 					//hasn't loaded yet we simply need to remove the children.
 					var moved = commandObject.moved;
 					if (moved !== null && moved !== undefined &&  moved instanceof Array){
-						var i=0, len = moved.length;
-						for (var i=0;i<len;i++){
-							var movement = moved[i];
+						var len2 = moved.length;
+						for (var j=0;j<len2;j++){
+							var movement = moved[j];
 							
 							var target = this.findNodes(movement.dest);
 							var children = this.findNodes(movement.moved);

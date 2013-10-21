@@ -220,7 +220,7 @@ define(['jquery'], function($){
 				CREATE : "creatable",
 				DELETE : "deletable",
 				EXECUTE : "executable",
-				EXPORT : "exportable",
+				EXPORT : "exportable"
 			};
 
 			if (permission === "ANY") {
@@ -375,7 +375,7 @@ define(['jquery'], function($){
 		 */
 		this.moveTo = function(target){
 			
-			if (this.length===0) return;
+			if (this.length===0) {return;}
 
 			// remove me from my former parent 
 			this.removeMe();
@@ -531,7 +531,7 @@ define(['jquery'], function($){
 		
 		this.areEither = function(typesArray){
 			var collected = this.all('getDomType');
-			return $(collected).not(typesArray).length == 0;
+			return $(collected).not(typesArray).length === 0;
 		};
 		
         this.areSameLibs = function() {

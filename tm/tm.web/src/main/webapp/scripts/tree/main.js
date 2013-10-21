@@ -19,63 +19,63 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
 /*
  * settings : {
- * 	  workspace : one of ['test-case', 'requirement', 'campaign']
- *    treeselector : the tree selector,
- *    model : the data model for that tree.
- *    selectedNode : 
+ * workspace : one of ['test-case', 'requirement', 'campaign']
+ * treeselector : the tree selector,
+ * model : the data model for that tree.
+ * selectedNode : 
  * }
  */
 
-define([ "./simple-tree-conf/conf-factory", "./workspace-tree-conf/conf-factory", 
-         './tree-picker-conf/conf-factory', "./plugins/plugin-factory", "workspace.contextual-content"], 
-         function(simpleConf, wkspConf, pickerConf, pluginsFactory, ctxtcontent) {
+define([ "./simple-tree-conf/conf-factory",
+		"./workspace-tree-conf/conf-factory",
+		'./tree-picker-conf/conf-factory', "./plugins/plugin-factory",
+		"workspace.contextual-content" ], function(simpleConf, wkspConf,
+		pickerConf, pluginsFactory, ctxtcontent) {
 
 	squashtm = squashtm || {};
 	squashtm.tree = squashtm.tree || undefined;
-	
-	
+
 	return {
-		initWorkspaceTree : function(settings){
+		initWorkspaceTree : function(settings) {
 			pluginsFactory.configure('workspace-tree');
 			var conf = wkspConf.generate(settings);
 			var instance = $(settings.treeselector).jstree(conf);
-			squashtm.tree = instance;	
+			squashtm.tree = instance;
 		},
-		
-		initLinkableTree : function(settings){
+
+		initLinkableTree : function(settings) {
 			pluginsFactory.configure('tree-picker');
 			var conf = pickerConf.generate(settings);
 			var instance = $(settings.treeselector).jstree(conf);
-			squashtm.tree = instance;			
+			squashtm.tree = instance;
 		},
-		
-		initSimpleTree : function(settings){
+
+		initSimpleTree : function(settings) {
 			pluginsFactory.configure('simple-tree');
 			var conf = simpleConf.generate(settings);
 			var instance = $(settings.treeselector).jstree(conf);
-			squashtm.tree = instance;					
+			squashtm.tree = instance;
 		},
-		
-		initCallStepTree : function(settings){
+
+		initCallStepTree : function(settings) {
 			pluginsFactory.configure('simple-tree');
 			var conf = simpleConf.generate(settings);
 			var instance = $(settings.treeselector).jstree(conf);
-			
-			instance.on('select_node.jstree', function(event, data){
+
+			instance.on('select_node.jstree', function(event, data) {
 				var resourceUrl = $(data.rslt.obj).treeNode().getResourceUrl();
-				ctxtcontent.loadWith(resourceUrl);				
-				return true;				
+				ctxtcontent.loadWith(resourceUrl);
+				return true;
 			});
-			
-			squashtm.tree = instance;			
+
+			squashtm.tree = instance;
 		},
-		
-		get : function() { return squashtm.tree; }
+
+		get : function() {
+			return squashtm.tree;
+		}
 	};
-	
-	
+
 });

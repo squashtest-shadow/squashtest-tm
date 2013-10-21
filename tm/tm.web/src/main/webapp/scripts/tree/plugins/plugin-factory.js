@@ -48,6 +48,6 @@ define(['jquery', './jstree-dnd-override','./squash-plugin', './workspace-tree-p
 			}
 		}
 		
-	}
+	};
 	
 });

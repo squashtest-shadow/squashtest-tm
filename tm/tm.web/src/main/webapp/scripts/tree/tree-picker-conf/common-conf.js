@@ -72,8 +72,8 @@ define(function(){
 					rootUrl : squashtm.app.contextRoot,
 					opened : (!!settings.selectedNode) ? [settings.selectedNode] : []
 				}
-			}
+			};
 		}
-	}
+	};
 
 });

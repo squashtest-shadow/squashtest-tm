@@ -62,8 +62,8 @@ define(function(){
 					opened : (!!settings.selectedNode) ? [settings.selectedNode] : []
 				}				
 				
-			}
+			};
 		}
-	}
+	};
 
 });

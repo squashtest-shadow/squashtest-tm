@@ -26,12 +26,12 @@
  * 
  *  controller : the controller object that manages the tree, the buttons and popups,
  *  
- * 	model : model object for that tree
- * 
+ *	model : model object for that tree,
+ *	
  *  messages :{
- *  	cannotMove : the given node(s) cannot be moved,
- *  	warningMove : moving the given node(s) might result in loss of data,
- *  	warningCopy : the clones of the given node(s) might not inherit all the data of the originals 
+ *		cannotMove : the given node(s) cannot be moved,
+ *		warningMove : moving the given node(s) might result in loss of data,
+ *		warningCopy : the clones of the given node(s) might not inherit all the data of the originals 
  *  }
  *  
  * }
@@ -46,7 +46,7 @@ define(["jquery", "./common-conf", "./tp-testcase-conf", "./tp-requirement-conf"
 			var specificConf;
 			
 			switch(settings.workspace){
-			case 'test-case' 	: specificConf = genTC.generate(settings); break;
+			case 'test-case'	: specificConf = genTC.generate(settings); break;
 			case 'requirement'	: specificConf = genReq.generate(settings); break;
 			case 'campaign'		: specificConf = genCamp.generate(settings); break;
 			}
@@ -54,7 +54,7 @@ define(["jquery", "./common-conf", "./tp-testcase-conf", "./tp-requirement-conf"
 			return $.extend({}, commonConf, specificConf);
 			
 		}		
-	}
+	};
 	
 	
 });

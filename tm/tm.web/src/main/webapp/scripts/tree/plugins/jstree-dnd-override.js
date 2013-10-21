@@ -113,6 +113,6 @@ define(['jquery'], function($){
 
 		};
 		
-	}
+	};
 	
 });
