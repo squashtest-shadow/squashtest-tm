@@ -28,12 +28,12 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseSearchExportCSVModel;
+import org.squashtest.tm.domain.search.SearchExportCSVModel;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 
 @Component
 @Scope("prototype")
-public class TestCaseSearchExportCSVModelImpl implements TestCaseSearchExportCSVModel{
+public class TestCaseSearchExportCSVModelImpl implements SearchExportCSVModel{
 
 	private int nbColumns;
 	

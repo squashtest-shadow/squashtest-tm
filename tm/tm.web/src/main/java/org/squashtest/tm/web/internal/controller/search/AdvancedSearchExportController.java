@@ -40,8 +40,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
-import org.squashtest.tm.domain.testcase.TestCaseSearchExportCSVModel;
-import org.squashtest.tm.domain.testcase.TestCaseSearchExportCSVModel.Row;
+import org.squashtest.tm.domain.search.SearchExportCSVModel;
+import org.squashtest.tm.domain.search.SearchExportCSVModel.Row;
 import org.squashtest.tm.service.library.AdvancedSearchService;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
@@ -66,7 +66,7 @@ public class AdvancedSearchExportController {
 		AdvancedSearchModel parsedSearchModel = new ObjectMapper().readValue(
 				searchModel, AdvancedSearchModel.class);
 
-		TestCaseSearchExportCSVModel model = advancedSearchService
+		SearchExportCSVModel model = advancedSearchService
 				.exportRequirementVersionSearchResultsToCSV(parsedSearchModel);
 
 		// prepare the response
@@ -104,7 +104,7 @@ public class AdvancedSearchExportController {
 		try {
 			AdvancedSearchModel parsedSearchModel = new ObjectMapper()
 					.readValue(searchModel, AdvancedSearchModel.class);
-			TestCaseSearchExportCSVModel model = advancedSearchService
+			SearchExportCSVModel model = advancedSearchService
 					.exportTestCaseSearchResultsToCSV(parsedSearchModel);
 
 			// prepare the response

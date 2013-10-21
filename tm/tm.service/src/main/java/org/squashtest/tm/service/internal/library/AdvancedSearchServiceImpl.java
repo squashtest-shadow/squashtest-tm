@@ -68,7 +68,7 @@ import org.squashtest.tm.domain.search.AdvancedSearchSingleFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchTextFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchTimeIntervalFieldModel;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseSearchExportCSVModel;
+import org.squashtest.tm.domain.search.SearchExportCSVModel;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
@@ -715,7 +715,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 
 	@Override
-	public TestCaseSearchExportCSVModel exportTestCaseSearchResultsToCSV(AdvancedSearchModel searchModel) {
+	public SearchExportCSVModel exportTestCaseSearchResultsToCSV(AdvancedSearchModel searchModel) {
 
 		TestCaseSearchExportCSVModelImpl model = testCaseSearchExportCSVModelProvider.get();
 
@@ -726,7 +726,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 
 	@Override
-	public TestCaseSearchExportCSVModel exportRequirementVersionSearchResultsToCSV(AdvancedSearchModel searchModel) {
+	public SearchExportCSVModel exportRequirementVersionSearchResultsToCSV(AdvancedSearchModel searchModel) {
 
 		RequirementVersionSearchExportCSVModelImpl model = requirementVersionSearchExportCSVModelProvider.get();
 

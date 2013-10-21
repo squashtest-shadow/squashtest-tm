@@ -26,14 +26,13 @@ import java.util.Locale;
 import org.springframework.context.MessageSource;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.library.IndexModel;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseSearchExportCSVModel;
+import org.squashtest.tm.domain.search.SearchExportCSVModel;
 
 
 
@@ -80,7 +79,7 @@ public interface AdvancedSearchService {
 	List<String> findAllUsersWhoModifiedRequirementVersions();
 	
 	//Exporting
-	TestCaseSearchExportCSVModel exportTestCaseSearchResultsToCSV(AdvancedSearchModel model);
+	SearchExportCSVModel exportTestCaseSearchResultsToCSV(AdvancedSearchModel model);
 
-	TestCaseSearchExportCSVModel exportRequirementVersionSearchResultsToCSV(AdvancedSearchModel model);
+	SearchExportCSVModel exportRequirementVersionSearchResultsToCSV(AdvancedSearchModel model);
 }
