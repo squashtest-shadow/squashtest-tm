@@ -86,7 +86,7 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 		UserDetails user2 = userManager.loadUserByUsername(login);
 		String encodedPassword = encode(plainTextPassword);
 		UserDetails user = new User(login, encodedPassword, user2.isEnabled(), true, true, true,
-				Collections.<GrantedAuthority> emptyList());
+				user2.getAuthorities());
 		LOGGER.debug("reset password for user {}", login);
 		userManager.updateUser(user);
 
