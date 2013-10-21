@@ -181,7 +181,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	public void reindexRequirementVersion(Long requirementVersionId){
 		Session session = sessionFactory.getCurrentSession();
 		FullTextSession ftSession = Search.getFullTextSession(session);
-		Object requirementVersion = ftSession.load(TestCase.class, requirementVersionId);
+		Object requirementVersion = ftSession.load(RequirementVersion.class, requirementVersionId);
 		ftSession.index(requirementVersion);
 	}
 
