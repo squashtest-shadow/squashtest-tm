@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.attachment.AttachmentList;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.repository.AttachmentListDao;
 
@@ -38,5 +39,16 @@ public class HibernateAttachmentListDao extends HibernateEntityDao<AttachmentLis
 				.uniqueResult();
 		
 		return testCase;
+	}
+
+	@Override
+	public RequirementVersion findAssociatedRequirementVersionIfExists(Long attachmentListId) {
+
+		RequirementVersion requirementVersion = (RequirementVersion) currentSession().createCriteria(RequirementVersion.class)
+				.createCriteria("attachmentList")
+				.add(Restrictions.eq("id",attachmentListId))
+				.uniqueResult();
+		
+		return requirementVersion;
 	}
 }

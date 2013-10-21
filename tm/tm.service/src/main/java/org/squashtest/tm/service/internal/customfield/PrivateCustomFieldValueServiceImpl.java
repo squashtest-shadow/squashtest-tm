@@ -157,6 +157,9 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 			if(BindableEntity.TEST_CASE.equals(entity.getBoundEntityType())){
 				advancedSearchService.reindexTestCase(entity.getBoundEntityId());
 			}
+			if(BindableEntity.REQUIREMENT_VERSION.equals(entity.getBoundEntityType())){
+				advancedSearchService.reindexRequirementVersion(entity.getBoundEntityId());
+			}
 		}
 	}
 
@@ -173,6 +176,9 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 			BoundEntity boundEntity = boundEntityDao.findBoundEntity(value);
 			if(BindableEntity.TEST_CASE.equals(boundEntity.getBoundEntityType())){
 				advancedSearchService.reindexTestCase(boundEntity.getBoundEntityId());
+			}
+			if(BindableEntity.REQUIREMENT_VERSION.equals(boundEntity.getBoundEntityType())){
+				advancedSearchService.reindexRequirementVersion(boundEntity.getBoundEntityId());
 			}
 		}
 		deleteCustomFieldValues(allValues);
@@ -192,6 +198,9 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 				
 				if(BindableEntity.TEST_CASE.equals(entity.getBoundEntityType())){
 					advancedSearchService.reindexTestCase(entity.getBoundEntityId());
+				}
+				if(BindableEntity.REQUIREMENT_VERSION.equals(entity.getBoundEntityType())){
+					advancedSearchService.reindexRequirementVersion(entity.getBoundEntityId());
 				}
 			}
 		}
@@ -258,6 +267,9 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		
 		if(BindableEntity.TEST_CASE.equals(boundEntity.getBoundEntityType())){
 			advancedSearchService.reindexTestCase(boundEntity.getBoundEntityId());
+		}
+		if(BindableEntity.REQUIREMENT_VERSION.equals(boundEntity.getBoundEntityType())){
+			advancedSearchService.reindexRequirementVersion(boundEntity.getBoundEntityId());
 		}
 	}
 

@@ -178,6 +178,21 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 	
 	@Override
+	public void reindexRequirementVersion(Long requirementVersionId){
+		Session session = sessionFactory.getCurrentSession();
+		FullTextSession ftSession = Search.getFullTextSession(session);
+		Object requirementVersion = ftSession.load(TestCase.class, requirementVersionId);
+		ftSession.index(requirementVersion);
+	}
+
+	@Override
+	public void reindexRequirementVersions(List<RequirementVersion> requirementVersionList){
+		for(RequirementVersion requirementVersion : requirementVersionList){
+			 reindexRequirementVersion(requirementVersion.getId());
+		}
+	}
+	
+	@Override
 	public void indexRequirementVersions(){
 
 		Session session = sessionFactory.getCurrentSession();
@@ -191,21 +206,6 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 					.threadsToLoadObjects(1).threadsForSubsequentFetching(1)
 					.batchSizeToLoadObjects(10).cacheMode(CacheMode.NORMAL)
 					.progressMonitor(monitor).start();
-	}
-
-	@Override
-	public void reindexRequirementVersion(Long requirementVersionId) {
-		Session session = sessionFactory.getCurrentSession();
-		FullTextSession ftSession = Search.getFullTextSession(session);
-		Object requirementVersion = ftSession.load(RequirementVersion.class, requirementVersionId);
-		ftSession.index(requirementVersion);
-	}
-
-	@Override
-	public void reindexRequirementVersions(List<RequirementVersion> requirementVersionList) {
-		for(RequirementVersion requirementVersion : requirementVersionList){
-			reindexRequirementVersion(requirementVersion.getId());
-		}
 	}
 
 	@Override

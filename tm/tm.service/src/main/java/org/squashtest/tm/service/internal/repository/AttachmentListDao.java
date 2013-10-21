@@ -21,9 +21,12 @@
 package org.squashtest.tm.service.internal.repository;
 
 import org.squashtest.tm.domain.attachment.AttachmentList;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 
 public interface AttachmentListDao extends EntityDao<AttachmentList> {
 
 	TestCase findAssociatedTestCaseIfExists(Long attachmentListId);
+	
+	RequirementVersion findAssociatedRequirementVersionIfExists(Long attachmentListId);
 }

@@ -124,6 +124,7 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 				RequirementVersionCoverage coverage = new RequirementVersionCoverage(requirementVersion, testCase);
 				requirementVersionCoverageDao.persist(coverage);
 				advancedSearchService.reindexTestCase(testCase.getId());
+				advancedSearchService.reindexRequirementVersion(requirementVersion.getId());
 			} catch (RequirementAlreadyVerifiedException ex) {
 				rejections.add(ex);
 				iterator.remove();
@@ -150,6 +151,7 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 			}
 			
 			advancedSearchService.reindexTestCases(testCases);
+			advancedSearchService.reindexRequirementVersion(requirementVersionId);
 			
 			testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromReq(testCasesIds,
 					requirementVersionId);
