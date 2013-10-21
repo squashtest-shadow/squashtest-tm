@@ -390,7 +390,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 		}
 
 		User user = User.createFromLogin(login);
-		UsersGroup defaultGroup = groupDao.findByQualifiedName("squashtest.tm.group.User");
+		UsersGroup defaultGroup = groupDao.findByQualifiedName("squashtest.authz.group.tm.User");
 		user.setGroup(defaultGroup);
 
 		userDao.persist(user);

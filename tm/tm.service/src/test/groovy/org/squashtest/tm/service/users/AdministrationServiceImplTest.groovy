@@ -94,7 +94,7 @@ class AdministrationServiceImplTest extends Specification {
 
 		and:
 		UsersGroup defaultGroup = Mock()
-		groupDao.findByQualifiedName("squashtest.tm.group.User") >> defaultGroup
+		groupDao.findByQualifiedName("squashtest.authz.group.tm.User") >> defaultGroup
 
 		when:
 		User res = service.createUserFromLogin("chris.jericho")

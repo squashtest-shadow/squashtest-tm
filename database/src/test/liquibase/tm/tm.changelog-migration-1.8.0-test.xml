@@ -26,11 +26,11 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
+ <include file="tm.data-1.7.0-core-user-project-manager.xml" relativeToChangelogFile="true" />
   <include file="tm.data-1.7.1-remove-deleted-on.xml" relativeToChangelogFile="true" />
   
 	<!-- ========================================INCLUDE CHANGELOG================================================ -->
-	<include file="../../../main/liquibase/tm/tm.changelog-1.8.0.xml"
-		relativeToChangelogFile="true" />
+	<include file="../../../main/liquibase/tm/tm.changelog-1.8.0.xml" relativeToChangelogFile="true" />
 	<!-- ========================================================================================================= -->
 	
 	<changeSet id="tm-1.8.0.issue-2688-test-01" author="mpagnon">
@@ -77,6 +77,40 @@
 			where ACL_GROUP_ID = (select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.Validator')
 				and PERMISSION_MASK = 4096
 				and CLASS_ID = (select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.campaign.CampaignLibrary')
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+	
+	
+	<!--  check that the core_group for Users is correctly renamed -->
+	<changeSet id="tm-data-1.7.0-feat-2269-test-01" author="bsiri">
+		<preConditions>
+			<sqlCheck expectedResult="1">
+				select count(*) from CORE_GROUP
+				where ID = 2 and QUALIFIED_NAME = 'squashtest.authz.group.tm.User'		
+			</sqlCheck>
+			
+			<sqlCheck expectedResult="0">
+				select count(*) from CORE_GROUP
+				where QUALIFIED_NAME = 'squashtest.tm.group.User'		
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+	
+	<!--  check that there are no more references to the core_group ProjectManager and that previous instances are now demoted to Users -->
+	<changeSet id="tm-data-1.7.0-feat-2269-test-02" author="bsiri">
+		<preConditions>		
+			<sqlCheck expectedResult="0">
+				select count(*) from CORE_GROUP
+				where QUALIFIED_NAME = 'squashtest.authz.group.tm.ProjectManager'			
+			</sqlCheck>
+			<sqlCheck expectedResult="0">
+				select count(*) from CORE_GROUP_MEMBER where GROUP_ID = 3	
+			</sqlCheck>
+			<sqlCheck expectedResult="2">
+				select cgm.GROUP_ID from CORE_GROUP_MEMBER cgm 
+				inner join CORE_USER cu on cgm.PARTY_ID = cu.PARTY_ID
+				where cu.LAST_NAME = 'Bobovitch' 
 			</sqlCheck>
 		</preConditions>
 	</changeSet>

@@ -83,6 +83,53 @@
 		<dropColumn tableName="ITERATION" columnName="DELETED_ON"/>
 	</changeSet>
 	
+	
+	
+	<changeSet id="core-1.8.0-feat-2269-01" author="bsiri">
+		<comment>the CORE_GROUP squashtest.tm.group.User is now renamed to the normalized squashtest.authz.group.tm.User</comment>
+		<update tableName="CORE_GROUP">
+			<column name="QUALIFIED_NAME" type="varchar(255)" value="squashtest.authz.group.tm.User"/>
+			<where>ID = 2</where>
+		</update>	
+	</changeSet>
+	
+	<changeSet id="core-1.8.0-feat-2269-02" author="bsiri">
+		<comment>the CORE_GROUP squashtest.authz.tm.group.ProjectManager is deleted and the users belonging to that group are now 
+		demoted to squashtest.authz.group.tm.User</comment>
+	
+		<update tableName="CORE_GROUP_MEMBER">
+			<column name="GROUP_ID" type="BIGINT" value="2"></column>
+			<where>GROUP_ID = 3</where>		
+		</update>
+		
+		<delete tableName="CORE_GROUP_AUTHORITY">
+			<where>GROUP_ID = 3</where>
+		</delete>
+		
+		<delete tableName="CORE_GROUP">
+			<where>ID = 3</where>
+		</delete>
+	</changeSet>
+	
+	<changeSet id="core-1.8.0-feat-2269-03" author="bsiri">
+		<comment>The table CORE_USER_AUTHORITY stores personal authorities. As for TM 1.8.0 the users now have blanket permissions 
+		(aka authorities) for themselves, not only via group membership. However, a user will still belong to one of the CORE_GROUPs and 
+		the personal authorities will stack with the authorities of the group they belong to.</comment>
+		
+		<createTable tableName="CORE_USER_AUTHORITY">
+			
+			<column name="USER_ID" type="BIGINT" remarks="The CORE_USER id. Note that it references a concrete User, not a Party.">
+				<constraints nullable="false" references="CORE_USER(PARTY_ID)" foreignKeyName="FK_USER_AUTHORITY_USER" />
+			</column>
+
+			<column name="AUTHORITY" type="VARCHAR(50)" remarks="The authority">
+				<constraints nullable="false" />
+			</column>
+		
+		</createTable>
+	
+	</changeSet>
+	
 
 </databaseChangeLog>
  
