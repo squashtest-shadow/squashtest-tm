@@ -1164,8 +1164,9 @@ define(["jquery",
 			match, 
 			dataprop_regexp = /mDataProp_(\d+)/,
 			sortcol_regexp = /iSortCol_(\d+)/,
-			sortdir_regexp = /sSortDir_(\d+)/;
-
+			sortdir_regexp = /sSortDir_(\d+)/,
+			search_regexp = /sSearch_(\d+)/;
+		
 		for (i = 0; i < length; i++) {
 
 			if ((match = aoData[i].name.match(dataprop_regexp)) !== null){
@@ -1176,6 +1177,9 @@ define(["jquery",
 			}
 			else if ((match = aoData[i].name.match(sortdir_regexp)) !== null){
 				aoData[i].name = "sSortDir[" + match[1] + "]";
+			}
+			else if ((match = aoData[i].name.match(search_regexp)) !== null){
+				aoData[i].name = "sSearches[" + match[1] + "]";
 			}
 		}
 	}

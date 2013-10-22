@@ -80,6 +80,7 @@
 
 		<c:if test="${ reorderable }">
 			<span class="group left-buttons"> 
+			<button	id="filter-test-plan-button" data-icon="ui-icon-refresh" class="button" title="${reorderTooltip}" >${reorderLabel}</button>
 			<button	id="reorder-test-plan-button" data-icon="ui-icon-refresh" class="button" title="${reorderTooltip}" >${reorderLabel}</button>
 				<span
 				id="test-plan-sort-mode-message" class="not-displayed sort-mode-message" title="${tooltipSortmode}">${messageSortmode}</span>

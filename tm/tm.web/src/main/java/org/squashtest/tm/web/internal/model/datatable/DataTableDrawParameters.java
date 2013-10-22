@@ -44,12 +44,16 @@ public class DataTableDrawParameters {
 
 	// filtering information
 	private String sSearch;
-
-	// sorting informations
+	private Map<Integer, String> sSearches = new HashMap<Integer, String>();
+	
+	// sorting information
 	private Map<Integer, Integer> iSortCol = new HashMap<Integer, Integer>();
 	private Map<Integer, String> sSortDir = new HashMap<Integer, String>();
 	private int iSortingCols;
 
+	// filtering information
+
+	
 	public int getiDisplayStart() {
 		return iDisplayStart;
 	}
@@ -142,5 +146,12 @@ public class DataTableDrawParameters {
 		this.iSortingCols = iSortingCols;
 	}
 
+	public Map<Integer,String> getsSearches(){
+		return sSearches;
+	}
+	
+	public String getsSearches(Integer index){
+		return sSearches.get(index);
+	}
 }
 // IGNOREVIOLATIONS:END 
