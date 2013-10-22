@@ -37,11 +37,18 @@ import org.squashtest.tm.service.security.UserDetailsService;
  */
 public class SquashUserDetailsManager extends JdbcUserDetailsManager implements UserDetailsService {
 
+	private static final String CHANGE_USER_LOGIN = "update AUTH_USER set LOGIN = ? where LOGIN = ?"; 
+	
 	/**
 	 * 
 	 */
 	public SquashUserDetailsManager() {
 		super();
+	}
+	
+	@Override
+	public void changeUserLogin(String newLogin, String oldLogin) {
+		getJdbcTemplate().update(CHANGE_USER_LOGIN, newLogin, oldLogin);
 	}
 
 	/**
@@ -66,4 +73,6 @@ public class SquashUserDetailsManager extends JdbcUserDetailsManager implements 
 
 		return dbAuths;
 	}
+	
+	
 }

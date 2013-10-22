@@ -169,7 +169,7 @@ class DerivedPermissionsManager {
 	 */
 	private boolean isSortOfProject(ObjectIdentity identity){
 		String type = identity.getType();
-		return (type.equals(PROJECT_CLASS_NAME) || type.equals(TEMPLATE_CLASS_NAME));
+		return (type.equals(PROJECT_CLASS_NAME));
 	}
 
 	

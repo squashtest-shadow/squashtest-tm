@@ -21,7 +21,6 @@
 package org.squashtest.tm.service.internal.security;
 
 import java.util.Collection;
-import java.util.Collections;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,11 +34,11 @@ import org.squashtest.tm.service.security.AdministratorAuthenticationService;
 public class AdministratorAuthenticationServiceImpl implements AdministratorAuthenticationService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AdministratorAuthenticationServiceImpl.class);
 
-	private UserDetailsManager userManager;
+	private SquashUserDetailsManager userManager;
 	private PasswordEncoder encoder;
 	private Object salt = null;
 
-	public void setUserDetailsManager(UserDetailsManager userManager) {
+	public void setUserDetailsManager(SquashUserDetailsManager userManager) {
 		this.userManager = userManager;
 	}
 
@@ -94,13 +93,7 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 
 	@Override
 	public void changeUserlogin(String newLogin, String oldLogin) {
-		UserDetails oldUser = userManager.loadUserByUsername(oldLogin);
-		UserDetails newUser = new User(newLogin, oldUser.getPassword(), oldUser.isEnabled(),
-				oldUser.isAccountNonExpired(), oldUser.isCredentialsNonExpired(), oldUser.isAccountNonLocked(),
-				oldUser.getAuthorities());
-		LOGGER.debug("change login for user {} to {}", oldLogin, newLogin);
-		userManager.deleteUser(oldLogin);
-		userManager.createUser(newUser);
+		userManager.changeUserLogin(newLogin, oldLogin);
 	}
 
 	@Override

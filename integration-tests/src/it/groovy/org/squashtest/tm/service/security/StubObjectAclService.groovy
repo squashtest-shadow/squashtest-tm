@@ -103,10 +103,6 @@ class StubObjectAclService implements ObjectAclService {
 		return Collections.emptyList();
 	}
 
-	@Override
-	public void removeAllResponsibilitiesForParty(long partyId) {
-		
-	}
 
 	@Override
 	public List<Object[]> retrieveClassAclGroupFromUserLogin(String userLogin,
@@ -160,5 +156,10 @@ class StubObjectAclService implements ObjectAclService {
 			
 	@Override
 	public void refreshAcls() {
+	}
+
+	@Override
+	public void removeAllResponsibilities(long partyId) {
+		
 	}
 }

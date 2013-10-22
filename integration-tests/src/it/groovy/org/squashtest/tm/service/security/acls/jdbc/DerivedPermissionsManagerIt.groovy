@@ -18,35 +18,24 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.security;
+package org.squashtest.tm.service.security.acls.jdbc
 
-import java.util.List;
+import javax.inject.Inject;
 
-import javax.validation.constraints.NotNull;
+import org.spockframework.util.NotThreadSafe;
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.service.DbunitServiceSpecification
 
-import org.springframework.security.core.GrantedAuthority;
+import spock.unitils.UnitilsSupport;
 
-/**
- * @author Gregory Fouquet
- *
- */
-public interface UserDetailsService extends org.springframework.security.core.userdetails.UserDetailsService { // NOSONAR cant find a better name
-	/**
-	 * Loads authorities as the {@link #loadUserByUsername(String)} method would, but it does not check the
-	 * authentication table beforehand.
-	 * 
-	 * @param username
-	 * @return
-	 */
-	List<GrantedAuthority> loadAuthoritiesByUsername(@NotNull String username);
+@NotThreadSafe
+@UnitilsSupport
+@Transactional
+class DerivedPermissionsManagerIt extends DbunitServiceSpecification {
+
+	@Inject
+	private DerivedPermissionsManager manager
 	
 	
-	/**
-	 * Changes the user login (for authentication) from oldLogin to newLogin
-	 * 
-	 * @param newLogin
-	 * @param oldLogin
-	 */
-	void changeUserLogin(String newLogin, String oldLogin);
-
+	
 }
