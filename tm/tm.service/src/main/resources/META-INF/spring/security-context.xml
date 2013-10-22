@@ -121,7 +121,7 @@
     <property name="authoritiesByUsernameQuery">
     	<value>
 			select cpa.PARTY_ID,  cpa.AUTHORITY from CORE_PARTY_AUTHORITY cpa
-			inner join CORE_PARTY party on cp.PARTY_ID = cpa.PARTY_ID
+			inner join CORE_PARTY party on party.PARTY_ID = cpa.PARTY_ID
 			left join CORE_TEAM team on team.PARTY_ID = party.PARTY_ID
 			left join CORE_TEAM_MEMBER tmemb on tmemb.TEAM_ID = team.PARTY_ID,
 			CORE_USER u 
@@ -162,7 +162,7 @@
     <property name="createAuthoritySql">
     	<value>
     		insert into CORE_PARTY_AUTHORITY (PARTY_ID, AUTHORITY)
-    		values ((select cu.PARTY_ID from CORE_USER cu where cu.LOGN = ?), ?)
+    		values ((select cu.PARTY_ID from CORE_USER cu where cu.LOGIN = ?), ?)
     	</value>
     </property>
     
