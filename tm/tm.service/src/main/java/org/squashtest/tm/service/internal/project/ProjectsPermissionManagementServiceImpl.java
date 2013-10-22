@@ -226,7 +226,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	
 	@Override 
 	public void removeProjectPermissionForAllProjects(long partyId){
-		 aclService.removeAllResponsibilitiesForParty(partyId);
+		 aclService.removeAllResponsibilities(partyId);
 	}
 
 	@Override

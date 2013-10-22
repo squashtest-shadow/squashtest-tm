@@ -71,7 +71,7 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 	@Override
 	public void deleteTeam(long teamId) {
 		Team team = teamDao.findById(teamId);
-		aclService.removeAllResponsibilitiesForParty(teamId);
+		aclService.removeAllResponsibilities(teamId);
 		teamDao.delete(team);
 		
 	}

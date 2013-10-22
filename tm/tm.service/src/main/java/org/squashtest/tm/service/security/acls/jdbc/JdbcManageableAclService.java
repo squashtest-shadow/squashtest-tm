@@ -267,6 +267,58 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 				permissionGroupMapper);
 	}
 
+	
+	// ******************** ACL Modifications ***********************************
+
+
+	@Override
+	public void addNewResponsibility(@NotNull long partyId, @NotNull ObjectIdentity entityRef,
+			@NotNull String qualifiedName) {
+		jdbcTemplate.update(DELETE_PARTY_RESPONSABILITY_ENTRY,
+				new Object[] { partyId, entityRef.getIdentifier(), entityRef.getType() });
+		
+		jdbcTemplate.update(INSERT_PARTY_ACL_RESPONSABILITY_SCOPE,
+				new Object[] { partyId, qualifiedName, entityRef.getType(), entityRef.getIdentifier() });
+		
+		evictFromCache(entityRef);
+	}
+
+	
+
+	/* (non-Javadoc)
+	 * @see org.squashtest.tm.service.security.acls.jdbc.ManageableAclService#removeObjectIdentity(org.springframework.security.acls.model.ObjectIdentity)
+	 */
+	public void removeObjectIdentity(ObjectIdentity objectIdentity) {
+		LOGGER.info("Attempting to delete the Object Identity " + objectIdentity);
+
+		long classId = retrieveClassPrimaryKey(objectIdentity.getType());
+
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Will attempt to perform '" + DELETE_OBJECT_IDENTITY + "' with args ["
+					+ objectIdentity.getIdentifier() + ',' + classId + ']');
+		}
+		jdbcTemplate.update(DELETE_OBJECT_IDENTITY, objectIdentity.getIdentifier(), classId);
+		evictFromCache(objectIdentity);
+	}
+	
+
+	/* (non-Javadoc)
+	 * @see org.squashtest.tm.service.security.acls.jdbc.ManageableAclService#removeAllResponsibilities(org.springframework.security.acls.model.ObjectIdentity)
+	 */
+	@Override
+	public void removeAllResponsibilities(ObjectIdentity entityRef) {
+		jdbcTemplate.update(DELETE_ALL_RESPONSABILITY_ENTRIES,
+				new Object[] { entityRef.getIdentifier(), entityRef.getType() });
+
+		evictFromCache(entityRef);
+	}
+
+	@Override
+	public void removeAllResponsibilities(long partyId) {
+		jdbcTemplate.update(DELETE_ALL_RESPONSABILITY_ENTRIES_FOR_PARTY, partyId);
+		
+	}
+	
 	/**
 	 * Removes all responsibilities a user might have on a entity. In other words, the given user will no longer have
 	 * any permission on the entity.
@@ -281,20 +333,9 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 		evictFromCache(entityRef);
 	}
 
-	@Override
-	public void addNewResponsibility(@NotNull long partyId, @NotNull ObjectIdentity entityRef,
-			@NotNull String qualifiedName) {
-		removeAllResponsibilities(partyId, entityRef);
-		insertResponsibility(partyId, entityRef, qualifiedName);
-	}
-
-	private void insertResponsibility(long partyId, ObjectIdentity entityRef, String permissionGroupName) {
-		jdbcTemplate.update(INSERT_PARTY_ACL_RESPONSABILITY_SCOPE,
-				new Object[] { partyId, permissionGroupName, entityRef.getType(), entityRef.getIdentifier() });
-
-		evictFromCache(entityRef);
-	}
-
+	
+	// ******************** /ACL Modifications ***********************************
+	
 
 	@Override
 	public List<Object[]> retrieveClassAclGroupFromPartyId(@NotNull long partyId, String qualifiedClassName) {
@@ -541,38 +582,6 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 		return finalResult;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.squashtest.tm.service.security.acls.jdbc.ManageableAclService#removeObjectIdentity(org.springframework.security.acls.model.ObjectIdentity)
-	 */
-	public void removeObjectIdentity(ObjectIdentity objectIdentity) {
-		LOGGER.info("Attempting to delete the Object Identity " + objectIdentity);
-
-		long classId = retrieveClassPrimaryKey(objectIdentity.getType());
-
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Will attempt to perform '" + DELETE_OBJECT_IDENTITY + "' with args ["
-					+ objectIdentity.getIdentifier() + ',' + classId + ']');
-		}
-		jdbcTemplate.update(DELETE_OBJECT_IDENTITY, objectIdentity.getIdentifier(), classId);
-		evictFromCache(objectIdentity);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.squashtest.tm.service.security.acls.jdbc.ManageableAclService#removeAllResponsibilities(org.springframework.security.acls.model.ObjectIdentity)
-	 */
-	@Override
-	public void removeAllResponsibilities(ObjectIdentity entityRef) {
-		jdbcTemplate.update(DELETE_ALL_RESPONSABILITY_ENTRIES,
-				new Object[] { entityRef.getIdentifier(), entityRef.getType() });
-
-		evictFromCache(entityRef);
-	}
-
-	@Override
-	public void removeAllResponsibilitiesForParty(long partyId) {
-		jdbcTemplate.update(DELETE_ALL_RESPONSABILITY_ENTRIES_FOR_PARTY, partyId);
-		
-	}
 	
 	@Override
 	public void refreshAcls() {

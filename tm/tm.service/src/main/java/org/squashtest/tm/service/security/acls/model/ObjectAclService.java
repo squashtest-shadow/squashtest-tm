@@ -92,7 +92,7 @@ public interface ObjectAclService {
 	 * Remove all responsibilities for the Party of the given Id
 	 * @param partyId
 	 */
-	void removeAllResponsibilitiesForParty(long partyId);
+	void removeAllResponsibilities(long partyId);
 	
 	/**
 	 * basically ensures that recent modification affecting the ACL will be taken into account immediately.
