@@ -150,6 +150,26 @@ define(['jquery', 'squash.translator', './exec-runner', './sortmode',
 	
 	}	
 	
+	function _hideFilterFields(){
+		$(".th_input", $("#test-suite-test-plans-table")).hide();
+	}
+	
+	function _showFilterFields(){
+		$(".th_input", $("#test-suite-test-plans-table")).show();
+	}
+	
+	function _initializeFilterFields(){	
+		$($("th", $("#test-suite-test-plans-table"))[1]).append("<input class='th_input'/>");
+		$($("th", $("#test-suite-test-plans-table"))[2]).append("<input class='th_input'/>");
+		$($("th", $("#test-suite-test-plans-table"))[3]).append("<input class='th_input'/>");
+		$($("th", $("#test-suite-test-plans-table"))[4]).append("<select class='th_input'/>");
+		$($("th", $("#test-suite-test-plans-table"))[5]).append("<input class='th_input'/>");
+		$($("th", $("#test-suite-test-plans-table"))[6]).append("<select class='th_input'/>");
+		$($("th", $("#test-suite-test-plans-table"))[7]).append("<select class='th_input'/>");
+		$($("th", $("#test-suite-test-plans-table"))[8]).append("<input class='th_input'/>");
+		_hideFilterFields();
+	}
+	
 	function createTableConfiguration(initconf){
 		
 		// conf objects for the row callbacks
@@ -356,7 +376,11 @@ define(['jquery', 'squash.translator', './exec-runner', './sortmode',
 			
 			var table = $("#test-suite-test-plans-table").squashTable(tableconf.tconf, tableconf.sconf);
 			table.data('sortmode', sortmode);
-			
+			this.lockSortMode = sortmode._lockSortMode;
+			this.unlockSortMode = sortmode._unlockSortMode;
+			this.hideFilterFields = _hideFilterFields;
+			this.showFilterFields = _showFilterFields;
+			_initializeFilterFields();
 		}
 	};
 	

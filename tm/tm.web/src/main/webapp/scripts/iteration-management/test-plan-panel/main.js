@@ -38,6 +38,8 @@
 
 define(['squash.translator', './table', './popups'], function(translator, table, popups){
 	
+	var filterOn = false;
+	
 	function enhanceConfiguration(origconf){
 		
 		var conf = $.extend({}, origconf);
@@ -91,7 +93,33 @@ define(['squash.translator', './table', './popups'], function(translator, table,
 				$("#iter-test-plan-reorder-dialog").confirmDialog('open');
 			});
 		}
+		
+		$("#filter-test-plan-button").squashButton().on('click', function(){
+		
+			if(filterOn){
+				table.hideFilterFields();
+				table.unlockSortMode();
+				filterOn=false;
+				$("#test-plan-sort-mode-message").show();
+				$("#test-cases-table").find('.select-handle').removeClass('drag-handle');
+				if (this.reorderable){
+					$("#reorder-test-plan-button").squashButton('enable');
+				}
+	
+			} else {
+				table.showFilterFields();
+				table.lockSortMode();
+				filterOn=true;
+				$("#test-plan-sort-mode-message").hide();
+				$("#test-cases-table").find('.select-handle').addClass('drag-handle');
+				$("#reorder-test-plan-button").squashButton('disable');
+
+			}
+		});
+		
 	}
+	
+	
 	
 	return {
 		init : function(origconf){
@@ -102,7 +130,7 @@ define(['squash.translator', './table', './popups'], function(translator, table,
 			
 			table.init(conf);
 			popups.init(conf);
-			
+			filterOn = false;
 			
 		}
 	};	

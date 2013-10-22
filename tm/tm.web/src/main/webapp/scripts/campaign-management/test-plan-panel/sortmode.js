@@ -39,6 +39,8 @@ define(['jquery'], function($){
 	
 	function SortMode(conf) {
 
+		var isLocked = false;
+		
 		this.storage = localStorage || {
 			setItem : function(){},
 			getItem : function(){},
@@ -69,7 +71,9 @@ define(['jquery'], function($){
 				this._deleteaaSorting();
 			}
 			else{
-				this._enableSortMode();
+				if(!isLocked){
+					this._enableSortMode();
+				}
 				this._saveaaSorting(newSorting);
 			}
 		};
@@ -91,6 +95,14 @@ define(['jquery'], function($){
 			
 		};
 
+		this._lockSortMode = function(){
+			isLocked = true;
+		};
+
+		this._unlockSortMode = function(){
+			isLocked = false;
+		};
+		
 		this._isDefaultSorting = function(someSorting){
 			var defaultSorting = StaticSortMode.defaultSorting();
 			return (someSorting.length === 1 &&

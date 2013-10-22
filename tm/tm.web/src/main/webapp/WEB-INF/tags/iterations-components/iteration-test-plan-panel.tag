@@ -60,6 +60,7 @@
 	<f:message var="tooltipSortmode" 	key="tooltips.TestPlanSortMode"/>
 	<f:message var="messageSortmode"	key="message.TestPlanSortMode"/>
 	<f:message var="reorderLabel"		key="label.Reorder" />
+	<f:message var="filterLabel" key="label.Filter" />
 	<f:message var="reorderTooltip"		key="tooltips.ReorderTestPlan" />
 	<f:message var="associateLabel" 	key="label.Add" />
 	<f:message var="removeLabel" 		key="label.Remove" />
@@ -72,7 +73,7 @@
 	
 	<c:if test="${ reorderable }">
 		<span class="group left-buttons">
-		<button id="filter-test-plan-button" class="button" title="${reorderTooltip}" data-icon="ui-icon-refresh">${reorderLabel}</button>
+		<button id="filter-test-plan-button" class="button" title="${reorderTooltip}" data-icon="ui-icon-refresh">${filterLabel}</button>
 		<button id="reorder-test-plan-button" class="button" title="${reorderTooltip}" data-icon="ui-icon-refresh">${reorderLabel}</button>
 		<span id="test-plan-sort-mode-message" class="not-displayed sort-mode-message" title="${tooltipSortmode}">${messageSortmode}</span>
 		</span>

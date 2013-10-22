@@ -90,7 +90,24 @@ define(['jquery', './sortmode', 'squashtable', 'jeditable'],
 		}
 	}
 
-
+	function _hideFilterFields(){
+		$(".th_input", $("#test-cases-table")).hide();
+	}
+	
+	function _showFilterFields(){
+		$(".th_input", $("#test-cases-table")).show();
+	}
+	
+	function _initializeFilterFields(){	
+		$($("th", $("#test-cases-table"))[1]).append("<input class='th_input'/>");
+		$($("th", $("#test-cases-table"))[2]).append("<input class='th_input'/>");
+		$($("th", $("#test-cases-table"))[3]).append("<input class='th_input'/>");
+		$($("th", $("#test-cases-table"))[4]).append("<select class='th_input'/>");
+		$($("th", $("#test-cases-table"))[5]).append("<select class='th_input'/>");
+		$($("th", $("#test-cases-table"))[6]).append("<select class='th_input'/>");
+		_hideFilterFields();
+	}
+	
 	// **************** MAIN ****************
 	
 	return {
@@ -103,7 +120,11 @@ define(['jquery', './sortmode', 'squashtable', 'jeditable'],
 			
 			var table = $("#test-cases-table").squashTable(tableconf.tconf, tableconf.sconf);
 			table.data('sortmode', sortmode);
-			
+			this.lockSortMode = sortmode._lockSortMode;
+			this.unlockSortMode = sortmode._unlockSortMode;	
+			this.hideFilterFields = _hideFilterFields;
+			this.showFilterFields = _showFilterFields;
+			_initializeFilterFields();
 		}
 	};
 	

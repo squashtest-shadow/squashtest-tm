@@ -331,6 +331,7 @@
 			<f:message var="removeLabel" key="label.Remove" />
 			<f:message var="assignLabel" key="label.Assign" />
 			<f:message var="reorderLabel" key="label.Reorder" />
+			<f:message var="filterLabel" key="label.Filter" />
 			<f:message var="reorderTooltip" key="tooltips.ReorderTestPlan" />
 			<f:message var="tooltipAddTPI" key="tooltips.AddTPIToTP" />
 			<f:message var="tooltipRemoveTPI" key="tooltips.RemoveTPIFromTP" />
@@ -338,7 +339,7 @@
 
 			<c:if test="${ writable }">
 				<span class="group left-buttons">
-				<button id="filter-test-plan-button" class="button" data-icon="ui-icon-refresh" title="${reorderTooltip}">${reorderLabel}</button>
+				<button id="filter-test-plan-button" class="button" data-icon="ui-icon-refresh" title="${reorderTooltip}">${filterLabel}</button>
 				<button id="reorder-test-plan-button" class="button" data-icon="ui-icon-refresh" title="${reorderTooltip}">${reorderLabel}</button>
 				<span id="test-plan-sort-mode-message" class="not-displayed sort-mode-message" title="${tooltipSortmode}">${messageSortmode}</span>
 				</span>
