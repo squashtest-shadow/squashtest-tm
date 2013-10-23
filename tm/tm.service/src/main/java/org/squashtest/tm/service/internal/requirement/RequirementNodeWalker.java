@@ -28,56 +28,64 @@ import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNodeVisitor;
 
-
 /**
  * 
- *  That class will descend a RequirementLibraryNode hierarchy and add them in a particular order.
+ * That class will descend a RequirementLibraryNode hierarchy and add them in a particular order.
  * 
- *  Currently : will walk depth-first and wont add duplicate entries.
- *  
- *  NOT THREAD SAFE. Get a new instance every-time you need a walk.
+ * Currently : will walk depth-first and wont add duplicate entries.
+ * 
+ * If first nodes are folder then all the requirements in the folder are added
+ * 
+ * NOT THREAD SAFE. Get a new instance every-time you need a walk.
  */
 
 /*
- * TODO : 
- * 		1) define Folder and LibraryNode as visitable so that we can turn that class into generic.
- * 		2) let the user choose the walking and adding strategy if need be some day.
+ * TODO : 1) define Folder and LibraryNode as visitable so that we can turn that class into generic. 
+ *        2) let the user choose the walking and adding strategy if need be some day.
+ *        
  */
-public class RequirementNodeWalker implements RequirementLibraryNodeVisitor{
+public class RequirementNodeWalker implements RequirementLibraryNodeVisitor {
 
+	List<Requirement> outputList;
 
-	List<Requirement> outputList ;
-			
-	public RequirementNodeWalker(){
+	/** Flag to indicate if the first nodes are directory */
+	private boolean firstNodesAreDirectory;
+
+	public RequirementNodeWalker() {
 		outputList = new LinkedList<Requirement>();
 	}
-	
-	public List<Requirement> walk(List<RequirementLibraryNode> nodes){
-		
-		for (RequirementLibraryNode node : nodes){
+
+	public List<Requirement> walk(List<RequirementLibraryNode> nodes) {
+		firstNodesAreDirectory = false;
+		for (RequirementLibraryNode node : nodes) {
 			node.accept(this);
+			firstNodesAreDirectory = false;
 		}
-		
 		return outputList;
 	}
 
-	
-	
-
 	@Override
 	public void visit(RequirementFolder requirementFolder) {
-		for (RequirementLibraryNode node : requirementFolder.getContent()){
+		// A requirement folder can't be a child of a requirement, then if we "visit" a requirement folder that means
+		// that first nodes are directory
+		firstNodesAreDirectory = true;
+		for (RequirementLibraryNode node : requirementFolder.getContent()) {
 			node.accept(this);
 		}
 	}
 
 	@Override
 	public void visit(Requirement requirement) {
-		
-		if (! outputList.contains(requirement)){
+
+		if (!outputList.contains(requirement)) {
 			outputList.add(requirement);
+		}
+		// If first nodes is a requirement folder then all the requirement inside the folder should be added
+		if (firstNodesAreDirectory) {
+			for (Requirement childRequirement : requirement.getContent()) {
+				childRequirement.accept(this);
+			}
 		}
 	}
 
-	
 }
