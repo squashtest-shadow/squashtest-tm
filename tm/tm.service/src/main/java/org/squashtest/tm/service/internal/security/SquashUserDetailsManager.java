@@ -20,59 +20,10 @@
  */
 package org.squashtest.tm.service.internal.security;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.validation.constraints.NotNull;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.squashtest.tm.service.security.UserDetailsService;
 
-/**
- * @author Gregory Fouquet
- * 
- */
-public class SquashUserDetailsManager extends JdbcUserDetailsManager implements UserDetailsService {
+public interface SquashUserDetailsManager extends UserDetailsManager, UserDetailsService{
 
-	private static final String CHANGE_USER_LOGIN = "update AUTH_USER set LOGIN = ? where LOGIN = ?"; 
-	
-	/**
-	 * 
-	 */
-	public SquashUserDetailsManager() {
-		super();
-	}
-	
-	@Override
-	public void changeUserLogin(String newLogin, String oldLogin) {
-		getJdbcTemplate().update(CHANGE_USER_LOGIN, newLogin, oldLogin);
-	}
-
-	/**
-	 * 
-	 * @see org.squashtest.tm.service.security.UserDetailsService#loadAuthoritiesByUsername(java.lang.String)
-	 */
-	@Override
-	public List<GrantedAuthority> loadAuthoritiesByUsername(@NotNull String username) {
-		Set<GrantedAuthority> dbAuthsSet = new HashSet<GrantedAuthority>();
-
-		if (getEnableAuthorities()) {
-			dbAuthsSet.addAll(loadUserAuthorities(username));
-		}
-
-		if (getEnableGroups()) {
-			dbAuthsSet.addAll(loadGroupAuthorities(username));
-		}
-
-		List<GrantedAuthority> dbAuths = new ArrayList<GrantedAuthority>(dbAuthsSet);
-
-		addCustomAuthorities(username, dbAuths);
-
-		return dbAuths;
-	}
-	
 	
 }

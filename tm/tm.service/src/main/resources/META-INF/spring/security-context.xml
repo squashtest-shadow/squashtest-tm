@@ -91,7 +91,7 @@
   </bean>
 
 <!--  vient de core.web -->
-  <bean id="squashtest.core.security.JdbcUserDetailsManager" class="org.squashtest.tm.service.internal.security.SquashUserDetailsManager">
+  <bean id="squashtest.core.security.JdbcUserDetailsManager" class="org.squashtest.tm.service.internal.security.SquashUserDetailsManagerImpl">
     <property name="authenticationManager">
       <bean class="org.squashtest.tm.service.security.AuthenticationManagerDelegator">
         <constructor-arg name="authProviderBean" value="squash.security.authenticationProvider.internal" />
