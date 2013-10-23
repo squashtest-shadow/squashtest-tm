@@ -49,9 +49,9 @@ requirejs.config({
 				"camp-workspace"
 			],
 			/*
-			 * rules for paths naming: * third party lib: unversionned lib name *
-			 * non AMD squash lib: replace "squashtm" by "squash" in js file
-			 * name and remove any unrequired "ext" suffix.
+			 * rules for paths naming: 
+			 * * third party lib: unversionned lib name 
+			 * * non AMD squash lib: replace "squashtm" by "squash" in js file name and remove any unrequired "ext" suffix.
 			 */
 			paths : {
 				/*
