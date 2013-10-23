@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "./SimpleFileUploader", "./attachments-manager", "./attachments-bloc", "./jquery.squash.multi-fileupload"], function($, simpleFileUploader, attachmanager, attachbloc){
+define(["./SimpleFileUploader", "./attachments-manager", "./attachments-bloc", "./jquery.squash.multi-fileupload"], function(simpleFileUploader, attachmanager){
 	
 	return {
 		
