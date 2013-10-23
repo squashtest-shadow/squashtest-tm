@@ -160,7 +160,7 @@ requirejs.config({
 				"jquery.dialog-patch" : [ "jqueryui" ],
 				"jquery.squash" : {
 					deps : [ "jquery" ],
-					exports : "jquerySquashtm"
+					exports : "squashtm.popup"
 				},
 				"jquery.squash.fragmenttabs" : {
 					deps : [ "jquery", "jqueryui" ],
