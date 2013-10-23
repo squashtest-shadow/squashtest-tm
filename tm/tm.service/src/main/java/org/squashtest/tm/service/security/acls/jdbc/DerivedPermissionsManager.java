@@ -23,6 +23,7 @@ package org.squashtest.tm.service.security.acls.jdbc;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
@@ -35,7 +36,6 @@ import org.hibernate.type.StringType;
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.project.ProjectTemplate;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.internal.repository.TeamDao;
@@ -46,7 +46,6 @@ import org.squashtest.tm.service.internal.repository.hibernate.SqLIdResultTransf
 class DerivedPermissionsManager {
 	
 	private static final String PROJECT_CLASS_NAME = Project.class.getName();
-	private static final String TEMPLATE_CLASS_NAME = ProjectTemplate.class.getName();
 	
 
 	private static final String REMOVE_CORE_PARTY_MANAGER_AUTHORITY = "delete from CORE_PARTY_PERMISSION where PARTY_ID in (:ids) and AUTHORITY = 'ROLE_TM_PROJECT_MANAGER'";
@@ -63,6 +62,7 @@ class DerivedPermissionsManager {
 	 		"and aoi.IDENTITY = :id and acc.CLASSNAME = :class ";
 	
 	
+	
 	private static final String RETAIN_USERS_MANAGING_ANYTHING =  
 			"select arse.PARTY_ID from ACL_RESPONSIBILITY_SCOPE_ENTRY arse " +
 	 		"inner join ACL_OBJECT_IDENTITY aoi on arse.OBJECT_IDENTITY_ID = aoi.IDENTITY "+
@@ -70,9 +70,19 @@ class DerivedPermissionsManager {
 	 		"inner join ACL_GROUP_PERMISSION acp on acp.ACL_GROUP_ID = arse.ACL_GROUP_ID " +
 	 		"where acp.CLASS_ID = acc.ID and acp.PERMISSION_MASK = 32 " +
 	 		"and acc.CLASSNAME in ('org.squashtest.tm.domain.project.Project', 'org.squashtest.tm.domain.project.ProjectTemplate') " +
-	 		"and arse.PARTY_ID in (:ids)";
+	 		"and arse.PARTY_ID in (:ids)" ;
+
 	
-	
+	private static final String RETAIN_MEMBERS_OF_TEAM_MANAGING_ANYTHING = 
+			"select cu.PARTY_ID from CORE_USER cu " +
+			"inner join CORE_TEAM_MEMBER ctm on ctm.USER_ID = cu.USER_ID " +
+			"inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on arse.PARTY_ID = ctm.TEAM_ID "+
+			"inner join ACL_OBJECT_IDENTITY aoi on arse.OBJECT_IDENTITY_ID = aoi.IDENTITY "+
+	 		"inner join ACL_CLASS acc on aoi.CLASS_ID = acc.ID " +
+	 		"inner join ACL_GROUP_PERMISSION acp on acp.ACL_GROUP_ID = arse.ACL_GROUP_ID " +
+	 		"where acp.CLASS_ID = acc.ID and acp.PERMISSION_MASK = 32 " +
+	 		"and acc.CLASSNAME in ('org.squashtest.tm.domain.project.Project', 'org.squashtest.tm.domain.project.ProjectTemplate') " +
+	 		"and cu.PARTY_ID in (:ids)" ;
 	
 	@Inject
 	private SessionFactory sessionFactory; 
@@ -228,10 +238,27 @@ class DerivedPermissionsManager {
 	
 	private Collection<Long> retainUsersManagingAnything(Collection<Long> ids){
 		if (! ids.isEmpty()){
+			
+			Set<Long> userIds = new HashSet<Long>();
+			Collection<Long> buffer;
+			
+			// first, get users directly managing anything 
 			Query query = sessionFactory.getCurrentSession().createSQLQuery(RETAIN_USERS_MANAGING_ANYTHING);
 			query.setParameterList("ids", ids, LongType.INSTANCE);
 			query.setResultTransformer(new SqLIdResultTransformer());
-			return query.list();
+			
+			buffer = query.list();
+			userIds.addAll(buffer);
+			
+			// second, get users managing through teams or project leaders (which sounds quite silly I agree)
+			query = sessionFactory.getCurrentSession().createSQLQuery(RETAIN_MEMBERS_OF_TEAM_MANAGING_ANYTHING);
+			query.setParameterList("ids", ids, LongType.INSTANCE);
+			query.setResultTransformer(new SqLIdResultTransformer());
+			
+			buffer = query.list();
+			userIds.addAll(buffer);			
+			
+			return userIds;
 		}
 		else{
 			return Collections.emptyList();

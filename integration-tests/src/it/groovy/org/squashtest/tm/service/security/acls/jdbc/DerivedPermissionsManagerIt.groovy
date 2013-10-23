@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import org.spockframework.util.NotThreadSafe;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.service.DbunitServiceSpecification
+import org.unitils.dbunit.annotation.DataSet;
 
 import spock.unitils.UnitilsSupport;
 
@@ -37,5 +38,11 @@ class DerivedPermissionsManagerIt extends DbunitServiceSpecification {
 	private DerivedPermissionsManager manager
 	
 	
+	@DataSet("DerivedPermissionsManagerIt.setup.xml")
+	def "should remove project manager personal authority to user"(){
+		
+		
+		
+	}
 	
 }
