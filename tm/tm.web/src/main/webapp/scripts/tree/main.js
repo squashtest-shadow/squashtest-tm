@@ -28,10 +28,10 @@
  * }
  */
 
-define([ "./simple-tree-conf/conf-factory",
+define([ "jquery", "./simple-tree-conf/conf-factory",
 		"./workspace-tree-conf/conf-factory",
 		'./tree-picker-conf/conf-factory', "./plugins/plugin-factory",
-		"workspace.contextual-content" ], function(simpleConf, wkspConf,
+		"workspace.contextual-content", "jstree" ], function($, simpleConf, wkspConf,
 		pickerConf, pluginsFactory, ctxtcontent) {
 
 	squashtm = squashtm || {};
