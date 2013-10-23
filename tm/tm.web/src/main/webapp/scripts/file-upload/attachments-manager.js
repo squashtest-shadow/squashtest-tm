@@ -31,7 +31,7 @@
  */
 
 define(["jquery", "squash.translator", "./jquery.squash.attachmentsDialog", 
-        "jquery.squash.confirmdialog", "jquery.squash.squashbutton"], 
+        "jquery.squash.confirmdialog", "jquery.squash.squashbutton", "squashtable"], 
 		function($,  translator){
 	
 	function getMessages(){
