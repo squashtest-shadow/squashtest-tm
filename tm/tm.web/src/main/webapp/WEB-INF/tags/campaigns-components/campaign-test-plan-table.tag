@@ -28,11 +28,16 @@
 <%@ attribute name="campaignUrl" required="true" description="the url to the campaign that hold all of these test cases" %>
 <%@ attribute name="testCaseMultipleRemovalPopupId" required="true" description="html id of the multiple test-case removal popup" %>
 <%@ attribute name="campaign" required="true" type="java.lang.Object" description="the instance of the campaign"%>
+<%@ attribute name="assignableUsers" type="java.lang.Object" description="a map of users paired by id -> login. The id must be a string."%>
+<%@ attribute name="weights" type="java.lang.Object" description="a map of weights paired by id -> internationalized text. The id must be a string."%>	
+<%@ attribute name="modes" type="java.lang.Object" description="a map of modes paired by id -> internationalized text. The id must be a string."%>	
+
 
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 
 <c:url var="testCaseUrl" value="/test-cases/{tc-id}/info" />
 <c:url var="dtMessagesUrl" value="/datatables/messages" />
@@ -47,7 +52,7 @@
 <c:if test="${editable}">
 	<c:set var="deleteBtnClause" value=", delete-button=#delete-multiple-test-cases-dialog"/>
 </c:if>
-<table id="test-cases-table" data-def="ajaxsource=${tablemodel}">
+<table id="test-cases-table" data-def="ajaxsource=${tablemodel}, filter">
 	<thead>
 		<tr>
 			<th class="no-user-select" data-def="map=entity-index, select, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>
@@ -190,7 +195,11 @@
 
 				var mainconf = {
 					basic :{
-						campaignId : ${campaign.id}	
+						campaignId : ${campaign.id},
+						assignableUsers : ${ json:serialize(assignableUsers)},
+						weights	: ${ json:serialize(weights)},
+						modes : ${ json:serialize(modes)}
+						
 					},
 					permissions : {
 						editable : ${editable},

@@ -297,7 +297,7 @@
 		<%-- ------------------ test plan ------------------------------ --%>
 	
 
-	<ts:test-suite-test-plan-panel assignableUsers="${assignableUsers}" testSuite="${testSuite}"
+	<ts:test-suite-test-plan-panel assignableUsers="${assignableUsers}" testSuite="${testSuite}" weights="${weights}"
 									editable="${writable}" executable="${executable}" linkable="${linkable}" reorderable="${linkable}"	/>
 
 

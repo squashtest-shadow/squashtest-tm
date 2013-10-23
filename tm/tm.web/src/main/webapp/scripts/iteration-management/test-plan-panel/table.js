@@ -31,6 +31,7 @@
  *		basic : {
  *			iterationId : the id of the current iteration
  *			assignableUsers : [ { 'id' : id, 'login' : login } ]
+ *			weights : []
  *		},
  *		messages : {
  *			executionStatus : {
@@ -158,16 +159,48 @@ define(['jquery', 'squash.translator', './exec-runner', './sortmode',
 		$(".th_input", $("#iteration-test-plans-table")).show();
 	}
 	
-	function _initializeFilterFields(){	
+	function _initializeFilterFields(initconf){	
+		
+		var users = initconf.basic.assignableUsers;
+		var statuses = initconf.messages.executionStatus;
+		var weights = initconf.basic.weights;
+		
 		$($("th", $("#iteration-test-plans-table"))[1]).append("<input class='th_input'/>");
 		$($("th", $("#iteration-test-plans-table"))[2]).append("<input class='th_input'/>");
 		$($("th", $("#iteration-test-plans-table"))[3]).append("<input class='th_input'/>");
-		$($("th", $("#iteration-test-plans-table"))[4]).append("<select class='th_input'/>");
+		$($("th", $("#iteration-test-plans-table"))[4]).append("<select id='filter-weight-combo' class='th_input'/>");
 		$($("th", $("#iteration-test-plans-table"))[5]).append("<input class='th_input'/>");
 		$($("th", $("#iteration-test-plans-table"))[6]).append("<input class='th_input'/>");
-		$($("th", $("#iteration-test-plans-table"))[7]).append("<select class='th_input'/>");
-		$($("th", $("#iteration-test-plans-table"))[8]).append("<select class='th_input'/>");
+		$($("th", $("#iteration-test-plans-table"))[7]).append("<select id='filter-status-combo' class='th_input'/>");
+		$($("th", $("#iteration-test-plans-table"))[8]).append("<select id='filter-user-combo' class='th_input'/>");
 		$($("th", $("#iteration-test-plans-table"))[9]).append("<input class='th_input'/>");
+		
+		$.each(statuses, function(index,value){
+			var o = new Option(value, index);
+			$(o).html(value);
+			$("#filter-status-combo", $("#iteration-test-plans-table")).append(o);
+		});
+
+		$.each(users, function(index,value){
+			var o = new Option(value, index);
+			$(o).html(value);
+			$("#filter-user-combo", $("#iteration-test-plans-table")).append(o);
+		});
+
+		$.each(weights, function(index,value){
+			var o = new Option(value, index);
+			$(o).html(value);
+			$("#filter-weight-combo", $("#iteration-test-plans-table")).append(o);
+		});
+		
+		$(".th_input").click(function(event){
+			event.stopPropagation();
+		});
+		
+		$(".th_input").change( function () {
+			 $("#iteration-test-plans-table").squashTable().fnFilter(this.value, $(".th_input").index(this));
+		});
+		
 		_hideFilterFields();
 	}
 	
@@ -383,7 +416,7 @@ define(['jquery', 'squash.translator', './exec-runner', './sortmode',
 			this.unlockSortMode = sortmode._unlockSortMode;
 			this.hideFilterFields = _hideFilterFields;
 			this.showFilterFields = _showFilterFields;
-			_initializeFilterFields();
+			_initializeFilterFields(enhconf);
 		}
 	};
 	

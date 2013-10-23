@@ -35,6 +35,8 @@
 
 <%@ attribute name="assignableUsers" type="java.lang.Object"
 	description="a map of users paired by id -> login. The id must be a string."%>
+<%@ attribute name="weights" type="java.lang.Object"
+	description="a map of weights paired by id -> internationalized text. The id must be a string."%>	
 <%@ attribute name="testSuite" type="java.lang.Object"
 	description="the instance of test suite"%>
 
@@ -105,7 +107,7 @@
 			<c:set var="deleteBtnClause"
 				value=", delete-button=#ts-test-plan-delete-dialog" />
 		</c:if>
-		<table id="test-suite-test-plans-table" class="test-plan-table"	data-def="ajaxsource=${tableModelUrl}">
+		<table id="test-suite-test-plans-table" class="test-plan-table"	data-def="ajaxsource=${tableModelUrl}, filter">
 			<thead>
 				<tr>
 					<th	class="no-user-select" data-def="map=entity-index, select, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>
@@ -229,7 +231,8 @@
 				},
 				basic : {
 					testsuiteId : ${testSuite.id},
-					assignableUsers : ${ json:serialize(assignableUsers) }
+					assignableUsers : ${ json:serialize(assignableUsers) },
+					weights : ${ json:serialize(weights)}
 				}
 			};
 			

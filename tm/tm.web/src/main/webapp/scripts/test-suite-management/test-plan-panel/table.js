@@ -30,6 +30,7 @@
  *		basic : {
  *			testsuiteId : the id of the current testSuite
  *			assignableUsers : [ { 'id' : id, 'login' : login } ]
+ *			weights [{ }]
  *		},
  *		messages : {
  *			executionStatus : {
@@ -54,9 +55,9 @@
  * 
  */
 
-define(['jquery', 'squash.translator', './exec-runner', './sortmode',
-        'squashtable', 'jeditable', 'jquery.squash.buttonmenu'],
-        function($, translator, execrunner, smode) {
+define(['jquery', 'squash.translator', './exec-runner', './sortmode', 'datepicker/require.jquery.squash.datepicker-locales', 
+        'jeditable.datepicker', 'squashtable', 'jeditable', 'jquery.squash.buttonmenu'],
+        function($, translator, execrunner, smode, regionale) {
 
 	
 	// ****************** TABLE CONFIGURATION **************
@@ -158,15 +159,129 @@ define(['jquery', 'squash.translator', './exec-runner', './sortmode',
 		$(".th_input", $("#test-suite-test-plans-table")).show();
 	}
 	
-	function _initializeFilterFields(){	
+	function _initializeFilterFields(initconf){	
+
+		var users = initconf.basic.assignableUsers;
+		var statuses = initconf.messages.executionStatus;
+		var weights = initconf.basic.weights;
+		
 		$($("th", $("#test-suite-test-plans-table"))[1]).append("<input class='th_input'/>");
 		$($("th", $("#test-suite-test-plans-table"))[2]).append("<input class='th_input'/>");
 		$($("th", $("#test-suite-test-plans-table"))[3]).append("<input class='th_input'/>");
-		$($("th", $("#test-suite-test-plans-table"))[4]).append("<select class='th_input'/>");
+		$($("th", $("#test-suite-test-plans-table"))[4]).append("<select id='filter-weight-combo' class='th_input'/>");
 		$($("th", $("#test-suite-test-plans-table"))[5]).append("<input class='th_input'/>");
-		$($("th", $("#test-suite-test-plans-table"))[6]).append("<select class='th_input'/>");
-		$($("th", $("#test-suite-test-plans-table"))[7]).append("<select class='th_input'/>");
-		$($("th", $("#test-suite-test-plans-table"))[8]).append("<input class='th_input'/>");
+		$($("th", $("#test-suite-test-plans-table"))[6]).append("<select id='filter-status-combo' class='th_input'/>");
+		$($("th", $("#test-suite-test-plans-table"))[7]).append("<select id='filter-user-combo' class='th_input'/>");
+		$($("th", $("#test-suite-test-plans-table"))[8]).append("<div class='datepicker th_input'><input/><div></div></div>");
+		
+		$.each(statuses, function(index,value){
+			var o = new Option(value, index);
+			$(o).html(value);
+			$("#filter-status-combo", $("#test-suite-test-plans-table")).append(o);
+		});
+
+		$.each(users, function(index,value){
+			var o = new Option(value, index);
+			$(o).html(value);
+			$("#filter-user-combo", $("#test-suite-test-plans-table")).append(o);
+		});
+
+		$.each(weights, function(index,value){
+			var o = new Option(value, index);
+			$(o).html(value);
+			$("#filter-weight-combo", $("#test-suite-test-plans-table")).append(o);
+		});
+		
+		$(".th_input").click(function(event){
+			event.stopPropagation();
+		});
+		
+		$(".th_input").change( function () {
+			 $("#test-suite-test-plans-table").squashTable().fnFilter(this.value, $(".th_input").index(this));
+		});
+		
+		$.datepicker._defaults.onAfterUpdate = null;
+
+		var datepicker__updateDatepicker = $.datepicker._updateDatepicker;
+		$.datepicker._updateDatepicker = function( inst ) {
+		   datepicker__updateDatepicker.call( this, inst );
+
+		   var onAfterUpdate = this._get(inst, 'onAfterUpdate');
+		   if (onAfterUpdate){
+		      onAfterUpdate.apply((inst.input ? inst.input[0] : null),
+		         [(inst.input ? inst.input.val() : ''), inst]);
+		   }
+		};
+
+		var cur = -1, prv = -1;
+		   $('.datepicker div')
+		      .datepicker({
+		            //numberOfMonths: 3,
+		            changeMonth: true,
+		            changeYear: true,
+		            showButtonPanel: true,
+
+		            beforeShowDay: function ( date ) {
+		                  return [true, ( (date.getTime() >= Math.min(prv, cur) && date.getTime() <= Math.max(prv, cur)) ? 'date-range-selected' : '')];
+		               },
+
+		            onSelect: function ( dateText, inst ) {
+		                  var d1, d2;
+
+		                  prv = cur;
+		                  cur = (new Date(inst.selectedYear, inst.selectedMonth, inst.selectedDay)).getTime();
+		                  if ( prv == -1 || prv == cur ) {
+		                     prv = cur;
+		                     $('.datepicker input').val( dateText );
+		                  } else {
+		                     d1 = $.datepicker.formatDate( 'mm/dd/yy', new Date(Math.min(prv,cur)), {} );
+		                     d2 = $.datepicker.formatDate( 'mm/dd/yy', new Date(Math.max(prv,cur)), {} );
+		                     $('.datepicker input').val( d1+' - '+d2 );
+		                  }
+		               },
+
+		            onChangeMonthYear: function ( year, month, inst ) {
+		                  //prv = cur = -1;
+		               },
+
+		            onAfterUpdate: function ( inst ) {
+		                  $('<button type="button" class="ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all" data-handler="hide" data-event="click">Done</button>')
+		                     .appendTo($('.datepicker div .ui-datepicker-buttonpane'))
+		                     .on('click', function () { $('.datepicker div').hide(); });
+		               }
+		         })
+		      .position({
+		            my: 'left top',
+		            at: 'left bottom',
+		            of: $('.datepicker input')
+		         })
+		      .hide();
+
+		   $('.datepicker input').on('focus', function (e) {
+		         var v = this.value,
+		             d;
+
+		         try {
+		            if ( v.indexOf(' - ') > -1 ) {
+		               d = v.split(' - ');
+
+		               prv = $.datepicker.parseDate( 'mm/dd/yy', d[0] ).getTime();
+		               cur = $.datepicker.parseDate( 'mm/dd/yy', d[1] ).getTime();
+
+		            } else if ( v.length > 0 ) {
+		               prv = cur = $.datepicker.parseDate( 'mm/dd/yy', v ).getTime();
+		            }
+		         } catch ( e ) {
+		            cur = prv = -1;
+		         }
+
+		         if ( cur > -1 ){
+		            $('.datepicker div').datepicker('setDate', new Date(cur));
+		         }
+
+		         $('.datepicker div').datepicker('refresh').show();
+		      });
+		
 		_hideFilterFields();
 	}
 	
@@ -380,7 +495,7 @@ define(['jquery', 'squash.translator', './exec-runner', './sortmode',
 			this.unlockSortMode = sortmode._unlockSortMode;
 			this.hideFilterFields = _hideFilterFields;
 			this.showFilterFields = _showFilterFields;
-			_initializeFilterFields();
+			_initializeFilterFields(enhconf);
 		}
 	};
 	

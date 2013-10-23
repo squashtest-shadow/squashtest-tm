@@ -98,13 +98,46 @@ define(['jquery', './sortmode', 'squashtable', 'jeditable'],
 		$(".th_input", $("#test-cases-table")).show();
 	}
 	
-	function _initializeFilterFields(){	
+	function _initializeFilterFields(initconf){	
+		
+		var users = initconf.basic.assignableUsers;
+		var weights = initconf.basic.weights;
+		var modes = initconf.basic.modes;
+		
 		$($("th", $("#test-cases-table"))[1]).append("<input class='th_input'/>");
 		$($("th", $("#test-cases-table"))[2]).append("<input class='th_input'/>");
 		$($("th", $("#test-cases-table"))[3]).append("<input class='th_input'/>");
-		$($("th", $("#test-cases-table"))[4]).append("<select class='th_input'/>");
-		$($("th", $("#test-cases-table"))[5]).append("<select class='th_input'/>");
-		$($("th", $("#test-cases-table"))[6]).append("<select class='th_input'/>");
+		$($("th", $("#test-cases-table"))[4]).append("<select id='filter-user-combo' class='th_input'/>");
+		$($("th", $("#test-cases-table"))[5]).append("<select id='filter-weight-combo' class='th_input'/>");
+		$($("th", $("#test-cases-table"))[6]).append("<select id='filter-mode-combo' class='th_input'/>");
+		
+		$.each(users, function(index,value){
+			var o = new Option(value, index);
+			$(o).html(value);
+			$("#filter-user-combo", $("#test-cases-table")).append(o);
+		});
+
+		$.each(weights, function(index,value){
+			var o = new Option(value, index);
+			$(o).html(value);
+			$("#filter-weight-combo", $("#test-cases-table")).append(o);
+		});
+		
+		
+		$.each(modes, function(index,value){
+			var o = new Option(value, index);
+			$(o).html(value);
+			$("#filter-mode-combo", $("#test-cases-table")).append(o);
+		});
+		
+		$(".th_input").click(function(event){
+			event.stopPropagation();
+		});
+		
+		$(".th_input").change( function () {
+			 $("#test-cases-table").squashTable().fnFilter(this.value, $(".th_input").index(this));
+		});
+
 		_hideFilterFields();
 	}
 	
@@ -124,7 +157,7 @@ define(['jquery', './sortmode', 'squashtable', 'jeditable'],
 			this.unlockSortMode = sortmode._unlockSortMode;	
 			this.hideFilterFields = _hideFilterFields;
 			this.showFilterFields = _showFilterFields;
-			_initializeFilterFields();
+			_initializeFilterFields(enhconf);
 		}
 	};
 	

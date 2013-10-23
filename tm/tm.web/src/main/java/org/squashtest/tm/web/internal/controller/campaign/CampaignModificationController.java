@@ -22,13 +22,24 @@ package org.squashtest.tm.web.internal.controller.campaign;
 
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,11 +49,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
+import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.CampaignModificationService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
+import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
+import org.squashtest.tm.web.internal.controller.testcase.TestCaseImportanceJeditableComboDataBuilder;
+import org.squashtest.tm.web.internal.controller.testcase.TestCaseModeJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
@@ -72,7 +88,15 @@ public class CampaignModificationController {
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentHelper;
 
+	@Inject
+	private Provider<TestCaseImportanceJeditableComboDataBuilder> importanceComboBuilderProvider;
 
+	@Inject
+	private Provider<TestCaseModeJeditableComboDataBuilder> modeComboBuilderProvider;
+	
+	@Inject
+	private IterationTestPlanManagerService iterationTestPlanManagerService;
+	
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
 	public ModelAndView refreshStats(@PathVariable long campaignId) {
 
@@ -109,10 +133,51 @@ public class CampaignModificationController {
 		model.addAttribute("statistics", statistics);
 		model.addAttribute("hasCUF", hasCUF);		
 		model.addAttribute("attachmentsModel", attachments);
+		model.addAttribute("assignableUsers", getAssignableUsers(campaignId));
+		model.addAttribute("weights", getWeights());
+		model.addAttribute("modes", getModes());
 		
 		return model;
 	}
 
+	private Map<String, String> getAssignableUsers(long campaignId){
+		
+		Locale locale = LocaleContextHolder.getLocale();
+		
+		Campaign campaign = campaignModService.findById(campaignId);
+
+		String unassignedLabel = messageSource.internationalize("label.Unassigned", locale);
+
+		Set<User> usersSet = new HashSet<User>();
+		
+		for(Iteration iteration : campaign.getIterations()){	
+			usersSet.addAll(iterationTestPlanManagerService.findAssignableUserForTestPlan(iteration.getId()));
+		}
+		
+		List<User> usersList = new ArrayList<User>(usersSet.size());
+		usersList.addAll(usersSet);
+		Collections.sort(usersList, new UserLoginComparator());
+		
+		Map<String, String> jsonUsers = new LinkedHashMap<String, String>(usersList.size());
+		jsonUsers.put(User.NO_USER_ID.toString(), unassignedLabel);
+		for (User user : usersList){
+			jsonUsers.put(user.getId().toString(), user.getLogin());
+		}
+		
+		return jsonUsers;
+	}
+	
+	private Map<String, String> getWeights(){
+		Locale locale = LocaleContextHolder.getLocale();
+		return importanceComboBuilderProvider.get().useLocale(locale).buildMap();
+	}
+	
+	private Map<String, String> getModes(){
+		Locale locale = LocaleContextHolder.getLocale();
+		return modeComboBuilderProvider.get().useLocale(locale).buildMap();
+	}
+	
+	
 	@RequestMapping(method = RequestMethod.POST, params = { "id=campaign-description", VALUE })
 	public @ResponseBody
 	String updateDescription(@RequestParam(VALUE) String newDescription, @PathVariable long campaignId) {
@@ -269,5 +334,11 @@ public class CampaignModificationController {
 
 	}
 
-
+	private static final class UserLoginComparator implements Comparator<User>{
+		@Override
+		public int compare(User u1, User u2) {
+			return u1.getLogin().compareTo(u2.getLogin());
+		}
+		
+	}
 }

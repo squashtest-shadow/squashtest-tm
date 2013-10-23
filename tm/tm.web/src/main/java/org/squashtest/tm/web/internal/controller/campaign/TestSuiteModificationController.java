@@ -31,6 +31,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
@@ -54,6 +55,7 @@ import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.AutomatedSuiteOverview;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
+import org.squashtest.tm.web.internal.controller.testcase.TestCaseImportanceJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
@@ -83,7 +85,8 @@ public class TestSuiteModificationController {
 	@Inject
 	private InternationalizationHelper messageSource;
 
-	
+	@Inject
+	private Provider<TestCaseImportanceJeditableComboDataBuilder> importanceComboBuilderProvider;
 
 
 	// will return the fragment only
@@ -109,16 +112,21 @@ public class TestSuiteModificationController {
 		boolean hasCUF = cufValueService.hasCustomFields(testSuite);
 		DataTableModel attachmentsModel = attachmentsHelper.findPagedAttachments(testSuite);
 		Map<String, String> assignableUsers = getAssignableUsers(testSuiteId);
+		Map<String, String> weights = getWeights();
 		
 		model.addAttribute(TEST_SUITE, testSuite);
 		model.addAttribute("statistics", testSuiteStats);
 		model.addAttribute("hasCUF", hasCUF);
 		model.addAttribute("attachmentsModel", attachmentsModel);
 		model.addAttribute("assignableUsers", assignableUsers);
-		
+		model.addAttribute("weights", weights);
 	}
 
-	
+
+	private Map<String, String> getWeights(){
+		Locale locale = LocaleContextHolder.getLocale();
+		return importanceComboBuilderProvider.get().useLocale(locale).buildMap();
+	}
 	
 	private Map<String, String> getAssignableUsers(long testSuiteId){
 

@@ -29,6 +29,7 @@
 <%@ attribute name="reorderable"type="java.lang.Boolean" description="can the user reorder the test plan en masse ?" %>
 
 <%@ attribute name="assignableUsers" type="java.lang.Object" description="a map of users paired by id -> login. The id must be a string."%>
+<%@ attribute name="weights" type="java.lang.Object" description="a map of weights paired by id -> internationalized text. The id must be a string."%>	
 <%@ attribute name="iteration" type="java.lang.Object" description="the instance of iteration" %>
 
 
@@ -112,7 +113,7 @@
 <c:if test="${editable}">
 	<c:set var="deleteBtnClause" value=", delete-button=#iter-test-plan-delete-dialog"/>
 </c:if>
-<table id="iteration-test-plans-table" class="test-plan-table" data-def="ajaxsource=${tableModelUrl}"  >
+<table id="iteration-test-plans-table" class="test-plan-table" data-def="ajaxsource=${tableModelUrl}, filter"  >
 	<thead>
 		<tr>
 			<th class="no-user-select" data-def="map=entity-index, select, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>
@@ -210,7 +211,8 @@
 				},
 				basic : {
 					iterationId : ${iteration.id},
-					assignableUsers : ${ json:serialize(assignableUsers) }
+					assignableUsers : ${ json:serialize(assignableUsers) },
+					weights : ${ json:serialize(weights)}
 				}
 			};
 			

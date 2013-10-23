@@ -357,6 +357,9 @@
 		</div>
 		<div class="table-tab-wrap">
 			<camp:campaign-test-plan-table
+				assignableUsers="${assignableUsers}" 
+				modes="${modes}"
+				weights="${weights}"
 				batchRemoveButtonId="remove-test-case-button"
 				editable="${ linkable }" assignableUsersUrl="${assignableUsersUrl}"
 				reorderable="${linkable}"

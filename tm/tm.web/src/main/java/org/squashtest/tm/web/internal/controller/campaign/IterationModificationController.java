@@ -34,6 +34,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -66,6 +67,7 @@ import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.AutomatedSuiteOverview;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
+import org.squashtest.tm.web.internal.controller.testcase.TestCaseImportanceJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
@@ -102,6 +104,8 @@ public class IterationModificationController {
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentHelper;
 
+	@Inject
+	private Provider<TestCaseImportanceJeditableComboDataBuilder> importanceComboBuilderProvider;
 	
 	@Inject
 	private InternationalizationHelper messageSource;
@@ -131,15 +135,20 @@ public class IterationModificationController {
 		boolean hasCUF = cufValueService.hasCustomFields(iteration);
 		DataTableModel attachmentsModel = attachmentHelper.findPagedAttachments(iteration);
 		Map<String, String> assignableUsers = getAssignableUsers(iterationId);
-
+		Map<String, String> weights = getWeights();
+		
 		model.addAttribute(ITERATION_KEY, iteration);
 		model.addAttribute("statistics", statistics);
 		model.addAttribute("hasCUF", hasCUF);		
 		model.addAttribute("attachmentsModel", attachmentsModel);		
 		model.addAttribute("assignableUsers", assignableUsers);
-		
+		model.addAttribute("weights", weights);
 	}
 
+	private Map<String, String> getWeights(){
+		Locale locale = LocaleContextHolder.getLocale();
+		return importanceComboBuilderProvider.get().useLocale(locale).buildMap();
+	}
 	
 	private Map<String, String> getAssignableUsers(@PathVariable long iterationId){
 
