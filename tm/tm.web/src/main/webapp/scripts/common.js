@@ -157,6 +157,7 @@ requirejs.config({
 				"jquery.throttle-debounce" : ["jquery"],
 				"jqueryui" : [ "jquery" ],
 				"datatables" : [ "jqueryui" ],
+				"jquery.dialog-patch" : [ "jqueryui" ],
 				"jquery.squash" : {
 					deps : [ "jquery" ],
 					exports : "jquerySquashtm"
