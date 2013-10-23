@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(['tree','./permissions-rules', 'workspace.contextual-content', 'squash.translator' , 
-        'workspace.tree-node-copier', 'workspace.tree-event-handler'], function(zetree, rules, ctxcontent, translator, copier, treehandler){
+define(["jquery", 'tree','./permissions-rules', 'workspace.contextual-content', 'squash.translator' , 
+        'workspace.tree-node-copier', 'workspace.tree-event-handler'], function($, zetree, rules, ctxcontent, translator, copier, treehandler){
 	
 	
 	function showError(messageName){	
