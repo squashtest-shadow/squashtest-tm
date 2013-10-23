@@ -128,6 +128,7 @@
   <core_party PARTY_ID="36"/>
   <core_party PARTY_ID="37"/>
   <core_party PARTY_ID="38"/>
+  <core_party PARTY_ID="39"/>
   <acl_responsibility_scope_entry ID="60" PARTY_ID="35" ACL_GROUP_ID="5" OBJECT_IDENTITY_ID="14"/>
   <acl_responsibility_scope_entry ID="61" PARTY_ID="35" ACL_GROUP_ID="5" OBJECT_IDENTITY_ID="15"/>
   <acl_responsibility_scope_entry ID="62" PARTY_ID="35" ACL_GROUP_ID="5" OBJECT_IDENTITY_ID="16"/>
@@ -156,6 +157,7 @@
   <auth_user LOGIN="leader because of team" PASSWORD="d22c1d30b0c0fee94183438bff0f7cda8653e483" ACTIVE="true"/>
   <auth_user LOGIN="leader both direct and via team" PASSWORD="c6f28fe37a4224cbc21065d85dff940f76ea20a2" ACTIVE="true"/>
   <auth_user LOGIN="regular user" PASSWORD="4c2a33db610f5390408228e537de3f7ed4d20b0e" ACTIVE="true"/>
+  <auth_user LOGIN="unrelated user" PASSWORD="4c28da11610f5390464228e537de51af86d0ab31" ACTIVE="true"/>
   <requirement_library RL_ID="14" ATTACHMENT_LIST_ID="902"/>
   <test_case_library TCL_ID="14" ATTACHMENT_LIST_ID="903"/>
   <campaign_library CL_ID="14" ATTACHMENT_LIST_ID="904"/>
@@ -165,6 +167,7 @@
   <core_user PARTY_ID="35" LOGIN="direct project leader" FIRST_NAME="direct project leader" LAST_NAME="direct project leader" EMAIL="direct project leader" ACTIVE="true" CREATED_BY="admin" CREATED_ON="2013-10-22 18:23:42.0"/>
   <core_user PARTY_ID="36" LOGIN="leader because of team" FIRST_NAME="leader because of team" LAST_NAME="leader because of team" EMAIL="leader because of team" ACTIVE="true" CREATED_BY="admin" CREATED_ON="2013-10-22 18:23:58.0"/>
   <core_user PARTY_ID="37" LOGIN="leader both direct and via team" FIRST_NAME="leader both direct and via team" LAST_NAME="leader both direct and via team" EMAIL="leader both direct and via team" ACTIVE="true" CREATED_BY="admin" CREATED_ON="2013-10-22 18:24:13.0"/>
+  <core_user PARTY_ID="39" LOGIN="unrelated user" FIRST_NAME="unrelated user" LAST_NAME="unrelated user" EMAIL="unrelated user" ACTIVE="true" CREATED_BY="admin" CREATED_ON="2013-10-22 18:24:13.0"/>
   <core_config STR_KEY="lastindexing.campaign.date"/>
   <core_config STR_KEY="lastindexing.campaign.version"/>
   <core_config STR_KEY="lastindexing.requirement.date"/>

@@ -20,11 +20,9 @@
  */
 package org.squashtest.tm.service.security.acls.jdbc;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -36,8 +34,6 @@ import org.hibernate.type.StringType;
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.users.Team;
-import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.internal.repository.TeamDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.internal.repository.hibernate.SqLIdResultTransformer;
@@ -47,18 +43,26 @@ class DerivedPermissionsManager {
 	
 	private static final String PROJECT_CLASS_NAME = Project.class.getName();
 	
-
-	private static final String REMOVE_CORE_PARTY_MANAGER_AUTHORITY = "delete from CORE_PARTY_PERMISSION where PARTY_ID in (:ids) and AUTHORITY = 'ROLE_TM_PROJECT_MANAGER'";
-	private static final String INSERT_CORE_PARTY_MANAGER_AUTHORITY = "insert into CORE_PARTY_PERMISSION(PARTY_ID, AUTHORITY) values (:id, 'ROLE_TM_PROJECT_MANAGER')";
-
-
 	
-	private static final String FIND_PARTIES_MANAGING_IDENTITY = 
+	private static final String FIND_TEAM_MEMBERS_OR_USER = 
+			"select cu.PARTY_ID from CORE_USER cu " +
+			"where cu.PARTY_ID = :id " +
+			"UNION " +
+			"select cu.PARTY_ID from CORE_USER cu "+
+			"inner join CORE_TEAM_MEMBER ctm on ctm.USER_ID = cu.PARTY_ID "+
+			"inner join CORE_TEAM ct on ct.PARTY_ID = ctm.TEAM_ID "+
+			"where ct.PARTY_ID = :id";
+
+	private static final String REMOVE_CORE_PARTY_MANAGER_AUTHORITY = "delete from CORE_PARTY_AUTHORITY where PARTY_ID in (:ids) and AUTHORITY = 'ROLE_TM_PROJECT_MANAGER'";
+	private static final String INSERT_CORE_PARTY_MANAGER_AUTHORITY = "insert into CORE_PARTY_AUTHORITY(PARTY_ID, AUTHORITY) values (:id, 'ROLE_TM_PROJECT_MANAGER')";
+
+
+	private static final String FIND_PARTIES_USING_IDENTITY = 
 			"select arse.PARTY_ID from ACL_RESPONSIBILITY_SCOPE_ENTRY arse " +
 	 		"inner join ACL_OBJECT_IDENTITY aoi on arse.OBJECT_IDENTITY_ID = aoi.IDENTITY "+
 	 		"inner join ACL_CLASS acc on aoi.CLASS_ID = acc.ID " +
 	 		"inner join ACL_GROUP_PERMISSION acp on acp.ACL_GROUP_ID = arse.ACL_GROUP_ID " +
-	 		"where acp.CLASS_ID = acc.ID and acp.PERMISSION_MASK = 32 " +
+	 		"where acp.CLASS_ID = acc.ID " +
 	 		"and aoi.IDENTITY = :id and acc.CLASSNAME = :class ";
 	
 	
@@ -73,9 +77,9 @@ class DerivedPermissionsManager {
 	 		"and arse.PARTY_ID in (:ids)" ;
 
 	
-	private static final String RETAIN_MEMBERS_OF_TEAM_MANAGING_ANYTHING = 
+	private static final String RETAIN_MEMBERS_OF_TEAMS_MANAGING_ANYTHING = 
 			"select cu.PARTY_ID from CORE_USER cu " +
-			"inner join CORE_TEAM_MEMBER ctm on ctm.USER_ID = cu.USER_ID " +
+			"inner join CORE_TEAM_MEMBER ctm on ctm.USER_ID = cu.PARTY_ID " +
 			"inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on arse.PARTY_ID = ctm.TEAM_ID "+
 			"inner join ACL_OBJECT_IDENTITY aoi on arse.OBJECT_IDENTITY_ID = aoi.IDENTITY "+
 	 		"inner join ACL_CLASS acc on aoi.CLASS_ID = acc.ID " +
@@ -125,7 +129,7 @@ class DerivedPermissionsManager {
 			return;
 		}
 		
-		Collection<Long> userIds = findManagers(identity);
+		Collection<Long> userIds = findUsers(identity);
 		
 		removeProjectManagerAuthorities(userIds);
 		
@@ -153,7 +157,7 @@ class DerivedPermissionsManager {
 			return;
 		}
 		
-		recomputeDerivedAcl(partyId);
+		recomputeDerivedAcl(identity);
 		
 	}
 	
@@ -186,32 +190,18 @@ class DerivedPermissionsManager {
 	// will find all members of a team given its id. It the id actually refers to a user, that user id will be the only result.
 	private Collection<Long> findMembers(long partyId){
 		
-		Collection<Long> result;
-		
-		Team team = teamDao.findById(partyId);
-		if (team == null){
-			// then that party is a single user
-			result = new ArrayList<Long>(1);
-			User user = userDao.findById(partyId);
-			result.add(user.getId());
-		}
-		else{
-			Set<User> members = team.getMembers();
-			result = new ArrayList<Long>(members.size());
-			for (User user : members){
-				result.add(user.getId());
-			}			
-		}
-		
-		return result;		
+		Query query = sessionFactory.getCurrentSession().createSQLQuery(FIND_TEAM_MEMBERS_OR_USER);
+		query.setParameter("id", partyId, LongType.INSTANCE);
+		query.setResultTransformer(new SqLIdResultTransformer());
+		return query.list();	
 		
 	}
 	
 	// will find all the users 
-	private Collection<Long> findManagers(ObjectIdentity identity){
+	private Collection<Long> findUsers(ObjectIdentity identity){
 		
 		// first find the parties managing that thing
-		Query query = sessionFactory.getCurrentSession().createSQLQuery(FIND_PARTIES_MANAGING_IDENTITY);
+		Query query = sessionFactory.getCurrentSession().createSQLQuery(FIND_PARTIES_USING_IDENTITY);
 		query.setParameter("id", identity.getIdentifier(), LongType.INSTANCE);
 		query.setParameter("class", identity.getType(), StringType.INSTANCE);
 		query.setResultTransformer(new SqLIdResultTransformer());
@@ -219,7 +209,7 @@ class DerivedPermissionsManager {
 		Collection<Long> partyIds = query.list();
 		
 		// then find the corresponding users
-		Collection<Long> userIds = new LinkedList<Long>();
+		Collection<Long> userIds = new HashSet<Long>();
 		for (Long id : partyIds){
 			userIds.addAll(findMembers(id));
 		}
@@ -251,7 +241,7 @@ class DerivedPermissionsManager {
 			userIds.addAll(buffer);
 			
 			// second, get users managing through teams or project leaders (which sounds quite silly I agree)
-			query = sessionFactory.getCurrentSession().createSQLQuery(RETAIN_MEMBERS_OF_TEAM_MANAGING_ANYTHING);
+			query = sessionFactory.getCurrentSession().createSQLQuery(RETAIN_MEMBERS_OF_TEAMS_MANAGING_ANYTHING);
 			query.setParameterList("ids", ids, LongType.INSTANCE);
 			query.setResultTransformer(new SqLIdResultTransformer());
 			

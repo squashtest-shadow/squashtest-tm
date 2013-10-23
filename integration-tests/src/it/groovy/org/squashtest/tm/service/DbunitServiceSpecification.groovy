@@ -26,6 +26,7 @@ import java.util.List;
 import javax.inject.Inject
 
 import org.hibernate.Query
+import org.hibernate.transform.ResultTransformer;
 import org.hibernate.type.LongType
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session
@@ -97,6 +98,93 @@ abstract class DbunitServiceSpecification extends Specification {
 		List<?> result = query.list()
 
 		return result.size() == ids.size()
+	}
+	
+	protected NewSQLQuery newSQLQuery(String query){
+		return new NewSQLQuery(query, session);
+	}
+	
+	protected Object executeSQL (String query){
+		def q = newSQLQuery(query)
+		def expr = /(?is)\s*select.*/
+		if (query ==~ expr){
+			return q.list()
+		}
+		else{
+			q.update()
+			return null
+		}
+	}
+	
+	
+	class NewSQLQuery {
+		
+		Query query
+		
+		public NewSQLQuery(String query, Session session){
+			this.query = session.createSQLQuery(query);
+			this.query.setResultTransformer  new EasyResultTransformer()
+		}
+		
+		NewSQLQuery setParameter(String name, Object value){
+			query.setParameter(name, value)
+			return this
+		}
+		
+		NewSQLQuery setParameter(String name, Object value, Object type){
+			query.setParameter(name, value, type)
+			return this
+		}
+		
+		NewSQLQuery setParameterList(String name, Collection value){
+			query.setParameterList(name, value)
+			return this
+		}
+		
+		NewSQLQuery setParameterList(String name, Collection value, Object type){
+			query.setParameterList(name, value, type)
+			return this
+		}
+		
+		List list(){
+			return query.list()
+		}
+		
+		Object uniqueResult(){
+			return query.uniqueResult()
+		}
+		
+		void update(){
+			query.executeUpdate()
+		}
+	}
+	
+	
+	class EasyResultTransformer implements ResultTransformer{
+
+		@Override
+		public Object transformTuple(Object[] tuple, String[] aliases) {
+			for (int i=0;i<tuple.length;i++){
+				def elem = tuple[i]
+				def converted = convert(elem)
+				tuple[i] = converted
+			}
+			return tuple
+		}
+
+		@Override
+		public List transformList(List collection) {
+			if ( collection.findAll({it.length==1}).size() == collection.size() ){
+				return collection.flatten()
+			}
+			else{
+				return collection
+			}
+		}
+		
+		Object convert(Object sourceOjbect){
+			(sourceOjbect instanceof BigInteger) ? ((BigInteger)sourceOjbect).longValue() : sourceOjbect
+		}
 	}
 	
 }

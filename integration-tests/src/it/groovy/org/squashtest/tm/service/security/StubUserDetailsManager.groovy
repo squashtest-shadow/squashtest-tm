@@ -20,12 +20,17 @@
  */
 package org.squashtest.tm.service.security
 
+import java.util.List;
+
+import javax.validation.constraints.NotNull;
+
 import org.springframework.dao.DataAccessException
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.provisioning.UserDetailsManager;
+import org.squashtest.tm.service.internal.security.SquashUserDetailsManager;
 
-class StubUserDetailsManager implements UserDetailsManager {
+class StubUserDetailsManager implements SquashUserDetailsManager {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
@@ -55,6 +60,17 @@ class StubUserDetailsManager implements UserDetailsManager {
 	@Override
 	public boolean userExists(String username) {
 		return true;
+	}
+	
+	@Override
+	public void changeUserLogin(String newLogin, String oldLogin) {
+		
+	}
+
+	@Override
+	public List<GrantedAuthority> loadAuthoritiesByUsername(
+			@NotNull String username) {
+		return Collections.emptyList
 	}
 
 }
