@@ -86,7 +86,7 @@ import spock.unitils.UnitilsSupport;
 @NotThreadSafe
 @UnitilsSupport
 @Transactional
-class DerivedPermissionsManagerIt extends DbunitServiceSpecification {
+class DerivedPermissionsManagerIT extends DbunitServiceSpecification {
 
 	private static final String PROJECT_CLASSNAME = Project.class.getName()
 	private static final ObjectIdentity PROJECT_IDENTITY = new ObjectIdentityImpl(PROJECT_CLASSNAME, 14l)
@@ -98,7 +98,7 @@ class DerivedPermissionsManagerIt extends DbunitServiceSpecification {
 
 	
 	
-	@Unroll("should decide that it should #yesorno handle object of class #oclass")
+	@Unroll("should decide that it should #yesorno handle object of class #type")
 	def "should decide that it should handle this or that"(){
 		
 		expect :
@@ -204,7 +204,7 @@ class DerivedPermissionsManagerIt extends DbunitServiceSpecification {
 						set ACL_GROUP_ID=5 where PARTY_ID=34 """)
 
 		when :
-			manager.recomputeDerivedPermissions(34l)
+			manager.updateDerivedPermissions(34l)
 			
 			def authorizedUsers =
 			executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY
@@ -222,7 +222,7 @@ class DerivedPermissionsManagerIt extends DbunitServiceSpecification {
 			executeSQL(""" insert into CORE_TEAM_MEMBER values(38, 34) """)
 
 		when :
-			manager.recomputeDerivedPermissions(34l)
+			manager.updateDerivedPermissions(34l)
 			
 			def authorizedUsers =
 			executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY
@@ -241,7 +241,7 @@ class DerivedPermissionsManagerIt extends DbunitServiceSpecification {
 						set ACL_GROUP_ID=2 where PARTY_ID=35 """)
 
 		when :
-			manager.recomputeDerivedPermissions(35l)
+			manager.updateDerivedPermissions(35l)
 			
 			def authorizedUsers =
 			executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY
@@ -259,7 +259,7 @@ class DerivedPermissionsManagerIt extends DbunitServiceSpecification {
 			executeSQL("""delete from CORE_TEAM_MEMBER where USER_ID=36 """)
 
 		when :
-			manager.recomputeDerivedPermissions(36l)
+			manager.updateDerivedPermissions(36l)
 			
 			def authorizedUsers =
 			executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY
@@ -278,7 +278,7 @@ class DerivedPermissionsManagerIt extends DbunitServiceSpecification {
 			executeSQL("""delete from ACL_RESPONSIBILITY_SCOPE_ENTRY where PARTY_ID=37 """)
 
 		when :
-			manager.recomputeDerivedPermissions(37l)
+			manager.updateDerivedPermissions(37l)
 			
 			def authorizedUsers =
 			executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY
@@ -296,7 +296,7 @@ class DerivedPermissionsManagerIt extends DbunitServiceSpecification {
 			executeSQL(""" delete from CORE_TEAM_MEMBER where USER_ID=37 """)
 
 		when :
-			manager.recomputeDerivedPermissions(37l)
+			manager.updateDerivedPermissions(37l)
 			
 			def authorizedUsers =
 			executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY
@@ -314,7 +314,7 @@ class DerivedPermissionsManagerIt extends DbunitServiceSpecification {
 			executeSQL(""" delete from ACL_RESPONSIBILITY_SCOPE_ENTRY where  PARTY_ID=""" +TEAM_ID)
 
 		when :
-			manager.recomputeDerivedPermissions(TEAM_ID)
+			manager.updateDerivedPermissions(TEAM_ID)
 			
 			def authorizedUsers =
 			executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY
@@ -333,7 +333,7 @@ class DerivedPermissionsManagerIt extends DbunitServiceSpecification {
 						set ACL_GROUP_ID=2 where PARTY_ID=""" +TEAM_ID)
 
 		when :
-			manager.recomputeDerivedPermissions(TEAM_ID)
+			manager.updateDerivedPermissions(TEAM_ID)
 			
 			def authorizedUsers =
 			executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY

@@ -100,20 +100,20 @@ class DerivedPermissionsManager {
 	
 	
 	
-	void recomputeDerivedPermissions(ObjectIdentity identity){
-		recomputeDerivedAcl(identity);
-		recomputeDerivedAuths(identity);
+	void updateDerivedPermissions(ObjectIdentity identity){
+		updateDerivedAcl(identity);
+		updateDerivedAuths(identity);
 	}
 	
-	void recomputeDerivedPermissions(long partyId){
-		recomputeDerivedAcl(partyId);
-		recomputeDerivedAuths(partyId);
+	void updateDerivedPermissions(long partyId){
+		updateDerivedAcl(partyId);
+		updateDerivedAuths(partyId);
 	}
 	
 
-	void recomputeDerivedPermissions(long partyId, ObjectIdentity identity){
-		recomputeDerivedAcl(partyId, identity);
-		recomputeDerivedAuths(partyId, identity);
+	void updateDerivedPermissions(long partyId, ObjectIdentity identity){
+		updateDerivedAcl(partyId, identity);
+		updateDerivedAuths(partyId, identity);
 	}
 	
 	
@@ -123,7 +123,7 @@ class DerivedPermissionsManager {
 	// *************************** private ******************************
 	
 	
-	void recomputeDerivedAuths(ObjectIdentity identity){
+	void updateDerivedAuths(ObjectIdentity identity){
 		
 		if (! isSortOfProject(identity)){
 			return;
@@ -139,7 +139,7 @@ class DerivedPermissionsManager {
 		
 	}
 	
-	void recomputeDerivedAuths(long partyId){
+	void updateDerivedAuths(long partyId){
 
 		Collection<Long> memberIds = findMembers(partyId);
 		
@@ -151,26 +151,26 @@ class DerivedPermissionsManager {
 		
 	}
 	
-	void recomputeDerivedAuths(long partyId, ObjectIdentity identity){
+	void updateDerivedAuths(long partyId, ObjectIdentity identity){
 		
 		if (! isSortOfProject(identity)){
 			return;
 		}
 		
-		recomputeDerivedAcl(identity);
+		updateDerivedAcl(identity);
 		
 	}
 	
 	
-	void recomputeDerivedAcl(ObjectIdentity identity){
+	void updateDerivedAcl(ObjectIdentity identity){
 		//nothing yet
 	}
 	
-	void recomputeDerivedAcl(long partyId){
+	void updateDerivedAcl(long partyId){
 		// nothing yet
 	}
 	
-	void recomputeDerivedAcl(long partyId, ObjectIdentity identity){
+	void updateDerivedAcl(long partyId, ObjectIdentity identity){
 		// nothing yet
 	}
 	
