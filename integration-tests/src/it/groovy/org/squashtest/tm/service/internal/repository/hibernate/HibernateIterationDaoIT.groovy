@@ -24,7 +24,9 @@ import javax.inject.Inject
 
 import org.apache.poi.hssf.record.formula.functions.T
 import org.hibernate.HibernateException;
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering
 import org.squashtest.tm.core.foundation.collection.Filtering;
+import org.squashtest.tm.core.foundation.collection.DefaultColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics
 import org.squashtest.tm.domain.campaign.TestPlanStatus
@@ -72,6 +74,7 @@ class HibernateIterationDaoIT extends DbunitDaoSpecification {
 	def "[Issue 2828] should not break when looking up indexed test plan with filtering : #hasFiltering"() {
 		given:
 		PagingAndMultiSorting sorting = Mock()
+		ColumnFiltering columnFiltering = DefaultColumnFiltering.NO_FILTERING
 		sorting.getSortings() >> []
 		sorting.getFirstItemIndex() >> 0
 		sorting.getPageSize() >> 500
@@ -81,7 +84,7 @@ class HibernateIterationDaoIT extends DbunitDaoSpecification {
 		filtering.isDefined() >> hasFiltering
 		 
 		when:
-		def res = iterationDao.findIndexedTestPlan(1L, sorting, filtering)
+		def res = iterationDao.findIndexedTestPlan(1L, sorting, filtering, columnFiltering)
 		
 		then:
 		notThrown(HibernateException)
@@ -95,6 +98,7 @@ class HibernateIterationDaoIT extends DbunitDaoSpecification {
 	def "[Issue 2828] should not break when looking up test plan with filtering : #hasFiltering"() {
 		given:
 		PagingAndMultiSorting sorting = Mock()
+		ColumnFiltering columnFiltering = DefaultColumnFiltering.NO_FILTERING
 		sorting.getSortings() >> []
 		sorting.getFirstItemIndex() >> 0
 		sorting.getPageSize() >> 500
@@ -104,7 +108,7 @@ class HibernateIterationDaoIT extends DbunitDaoSpecification {
 		filtering.isDefined() >> hasFiltering
 		 
 		when:
-		def res = iterationDao.findTestPlan(1L, sorting, filtering)
+		def res = iterationDao.findTestPlan(1L, sorting, filtering, columnFiltering)
 		
 		then:
 		notThrown(HibernateException)

@@ -34,6 +34,7 @@ import org.unitils.dbunit.annotation.DataSet
 import org.squashtest.tm.service.project.ProjectsPermissionFinder
 import org.squashtest.tm.service.internal.campaign.IterationTestPlanManagerServiceImpl
 import org.squashtest.tm.core.foundation.collection.DefaultSorting
+import org.squashtest.tm.core.foundation.collection.DefaultColumnFiltering
 import org.squashtest.tm.core.foundation.collection.SortOrder
 import org.squashtest.tm.domain.users.User
 import org.squashtest.tm.service.user.UserAccountService
@@ -73,9 +74,10 @@ class IterationTestPlanManagerServiceIT extends DbunitServiceSpecification {
 		
 		given :
 			def pagingsorting = new TestPagingMultiSorting(attributes)			
-		
+			def columnsorting = DefaultColumnFiltering.NO_FILTERING
+			
 		when :
-			List items = service.findAssignedTestPlan(84l, pagingsorting).pagedItems
+			List items = service.findAssignedTestPlan(84l, pagingsorting, columnsorting).pagedItems
 			List itemIds = items.collect { it.item.id }
 		
 		then :
