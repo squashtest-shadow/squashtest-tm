@@ -23,6 +23,7 @@ package org.squashtest.tm.service.campaign;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.MultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
@@ -54,7 +55,7 @@ public interface TestSuiteTestPlanManagerService {
 	 * @return the test plan of given iteration filtered by the current user
 	 */
 	@Transactional(readOnly = true)
-	PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findAssignedTestPlan(long suiteId, PagingAndMultiSorting sorting);
+	PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findAssignedTestPlan(long suiteId, PagingAndMultiSorting sorting, ColumnFiltering filtering);
 	
 	
 	

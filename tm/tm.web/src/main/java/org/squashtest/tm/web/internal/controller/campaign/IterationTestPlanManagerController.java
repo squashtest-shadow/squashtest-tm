@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.campaign.Iteration;
@@ -55,6 +56,7 @@ import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
+import org.squashtest.tm.web.internal.model.datatable.DataTableColumnFiltering;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
@@ -127,7 +129,10 @@ public class IterationTestPlanManagerController {
 			final Locale locale) {
 
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, testPlanMapper);
-		PagedCollectionHolder<List<IndexedIterationTestPlanItem>> holder = iterationTestPlanManagerService.findAssignedTestPlan(iterationId, paging);
+		
+		ColumnFiltering filter = new DataTableColumnFiltering(params);
+		
+		PagedCollectionHolder<List<IndexedIterationTestPlanItem>> holder = iterationTestPlanManagerService.findAssignedTestPlan(iterationId, paging, filter);
 
 		return new TestPlanTableModelHelper(messageSource, locale).buildDataModel(holder,
 				params.getsEcho());

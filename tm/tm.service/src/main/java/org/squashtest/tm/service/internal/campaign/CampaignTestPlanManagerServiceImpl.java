@@ -35,7 +35,9 @@ import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.DelegatePagingAndMultiSorting;
+import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.MultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
@@ -140,13 +142,13 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 		long count = campaignDao.countTestPlanById(campaignId);
 		return new PagingBackedPagedCollectionHolder<List<CampaignTestPlanItem>>(filter, count, tcs);
 	}
-	
+
 	@Override
 	@PreAuthorize(CAN_READ_TEST_PLAN)
-	public PagedCollectionHolder<List<IndexedCampaignTestPlanItem>> findTestPlan(long campaignId, PagingAndMultiSorting sorting) {
-		
-		List<IndexedCampaignTestPlanItem> indexedItems = campaignDao.findIndexedTestPlan(campaignId, sorting);
-		long testPlanSize = campaignDao.countTestPlanById(campaignId);
+	public PagedCollectionHolder<List<IndexedCampaignTestPlanItem>> findTestPlan(long campaignId, PagingAndMultiSorting sorting, ColumnFiltering filtering) {
+
+		List<IndexedCampaignTestPlanItem> indexedItems = campaignDao.findFilteredIndexedTestPlan(campaignId, sorting, filtering);
+		long testPlanSize = campaignDao.countFilteredTestPlanById(campaignId, filtering);
 
 		return new PagingBackedPagedCollectionHolder<List<IndexedCampaignTestPlanItem>>(sorting, testPlanSize, indexedItems);
 	}

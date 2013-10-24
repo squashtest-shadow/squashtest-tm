@@ -30,9 +30,11 @@ import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.type.DateType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
@@ -54,11 +56,21 @@ import org.squashtest.tm.service.internal.repository.IterationDao;
 @Repository
 public class HibernateIterationDao extends HibernateEntityDao<Iteration> implements IterationDao {
 
+	private static final String PROJECT_FILTER = "projectFilter";
+	private static final String REFERENCE_FILTER = "referenceFilter";
+	private static final String TESTCASE_FILTER = "testcaseFilter";	
+	private static final String WEIGHT_FILTER = "weightFilter";
+	private static final String DATASET_FILTER = "datasetFilter";
+	private static final String TESTSUITE_FILTER = "testsuiteFilter";
+	private static final String STATUS_FILTER = "statusFilter";
+	private static final String USER_FILTER = "userFilter";
+	private static final String EXECUTION_DATE_FILTER = "executionDateFilter";
+	
 	/*
 	 * Because it is impossible to sort over the indices of ordered collection in a criteria query 
 	 * we must then build an hql string which will let us do that. 
-	 */
-	private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE = 
+	 */	
+	private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_START = 
 			"select index(IterationTestPlanItem), IterationTestPlanItem, group_concat(TestSuite.name, 'order by', TestSuite.name) as suitenames "+
 			"from Iteration as Iteration inner join Iteration.testPlans as IterationTestPlanItem "+
 			"left outer join IterationTestPlanItem.referencedTestCase as TestCase " +
@@ -66,17 +78,46 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 			"left outer join IterationTestPlanItem.referencedDataset as Dataset " +
 			"left outer join IterationTestPlanItem.user as User "+
 			"left outer join IterationTestPlanItem.testSuites as TestSuite "+
-			"where Iteration.id = :iterationId {whereClause}"+
+			"where Iteration.id = :iterationId {whereClause} ";
+	
+private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =	
 			"group by index(IterationTestPlanItem), IterationTestPlanItem.id ";
+	
+	private static final String HQL_INDEXED_TEST_PLAN_PROJECT_FILTER =
+			"and Project.name like :projectFilter ";
+
+	private static final String HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER =
+			"and TestCase.reference like :referenceFilter ";
+	
+	private static final String HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER =
+			"and TestCase.name like :testcaseFilter ";
+	
+	private static final String HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER =
+			"and TestCase.importance = :weightFilter ";
+	
+	private static final String HQL_INDEXED_TEST_PLAN_DATASET_FILTER =
+			"and Dataset like :datasetFilter ";
+
+	private static final String HQL_INDEXED_TEST_PLAN_TESTSUITE_FILTER =
+			"having group_concat(TestSuite.name, 'order by', TestSuite.name) like :testsuiteFilter ";
+	
+	private static final String HQL_INDEXED_TEST_PLAN_STATUS_FILTER =
+			"and IterationTestPlanItem.executionStatus = :statusFilter ";
+	
+	private static final String HQL_INDEXED_TEST_PLAN_USER_FILTER =
+			"and IterationTestPlanItem.user = :userFilter ";
+
+	private static final String HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER =
+			"";
 	
 	/**
 	 * HQL query which looks up the whole iteration test plan
 	 */
-	private final String hqlFullIndexedTestPlan = HQL_INDEXED_TEST_PLAN_TEMPLATE.replace("{whereClause}", "");
+	private final String hqlFullIndexedTestPlan = HQL_INDEXED_TEST_PLAN_TEMPLATE_START.replace("{whereClause}", "");
 	/**
 	 * HQL query which looks up the test plan assigned to a given user
 	 */
-	private final String hqlUserFilteredIndexedTestPlan = HQL_INDEXED_TEST_PLAN_TEMPLATE.replace("{whereClause}", "and User.login = :userLogin ");
+	private final String hqlUserFilteredIndexedTestPlan = HQL_INDEXED_TEST_PLAN_TEMPLATE_START.replace("{whereClause}", "and User.login = :userLogin ");
 
 	@Override
 	public List<Iteration> findAllInitializedByCampaignId(long campaignId) {
@@ -254,10 +295,10 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	
 
 	@Override
-	public List<IterationTestPlanItem> findTestPlan(long iterationId, PagingAndMultiSorting sorting, Filtering filtering) {
+	public List<IterationTestPlanItem> findTestPlan(long iterationId, PagingAndMultiSorting sorting, Filtering filtering, ColumnFiltering columnFiltering) {
 		
 		/* get the data */
-		List<Object[]> tuples = findIndexedTestPlanData(iterationId, sorting, filtering);
+		List<Object[]> tuples = findIndexedTestPlanData(iterationId, sorting, filtering, columnFiltering);
 		
 		/* filter them */
 		List<IterationTestPlanItem> items = new ArrayList<IterationTestPlanItem>(tuples.size());
@@ -271,16 +312,16 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	}
 	
 	@Override
-	public List<IndexedIterationTestPlanItem> findIndexedTestPlan(long iterationId, PagingAndSorting sorting, Filtering filtering) {		
-		return findIndexedTestPlan(iterationId, new SingleToMultiSortingAdapter(sorting), filtering);
+	public List<IndexedIterationTestPlanItem> findIndexedTestPlan(long iterationId, PagingAndSorting sorting, Filtering filtering, ColumnFiltering columnFiltering) {		
+		return findIndexedTestPlan(iterationId, new SingleToMultiSortingAdapter(sorting), filtering, columnFiltering);
 	}
 
 	@Override
 	public List<IndexedIterationTestPlanItem> findIndexedTestPlan(final long iterationId, PagingAndMultiSorting sorting, 
-			Filtering filtering) {
+			Filtering filtering, ColumnFiltering columnFiltering) {
 	
 		/* get the data */
-		List<Object[]> tuples = findIndexedTestPlanData(iterationId, sorting, filtering);
+		List<Object[]> tuples = findIndexedTestPlanData(iterationId, sorting, filtering, columnFiltering);
 		
 		/* format them*/
 		List<IndexedIterationTestPlanItem> indexedItems = new ArrayList<IndexedIterationTestPlanItem>(tuples.size());
@@ -298,23 +339,84 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	
 	// this method will use one or another strategy to fetch its data depending on what the user is requesting. 
 	@SuppressWarnings("unchecked")
-	private List<Object[]> findIndexedTestPlanData(final long iterationId, PagingAndMultiSorting sorting, Filtering filtering){
+	private List<Object[]> findIndexedTestPlanData(final long iterationId, PagingAndMultiSorting sorting, Filtering filtering, ColumnFiltering columnFiltering){
+		
+		StringBuilder hqlbuilder = new StringBuilder();
 		
 		String hql = filtering.isDefined() ? hqlUserFilteredIndexedTestPlan : hqlFullIndexedTestPlan;
-				
+		hqlbuilder.append(hql);
+		
+		if(columnFiltering.hasFilter(0)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_PROJECT_FILTER);
+		}
+		if(columnFiltering.hasFilter(1)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER);
+		}
+		if(columnFiltering.hasFilter(2)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER);
+		}
+		if(columnFiltering.hasFilter(3)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER);
+		}
+		if(columnFiltering.hasFilter(4)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_DATASET_FILTER);
+		}
+		if(columnFiltering.hasFilter(6)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_STATUS_FILTER);
+		}
+		if(columnFiltering.hasFilter(7)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
+		}
+		if(columnFiltering.hasFilter(8)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER);
+		}
+		
+		hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TEMPLATE_END);
+		
+		if(columnFiltering.hasFilter(5)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TESTSUITE_FILTER);
+		}
+		
 		// tune the sorting to make hql happy
 		LevelImplementorSorter wrapper= new LevelImplementorSorter(sorting);
 		wrapper.map("TestCase.importance", TestCaseImportance.class);
 		wrapper.map("IterationTestPlanItem.executionStatus", ExecutionStatus.class);
 		
-		hql = SortingUtils.addOrder(hql, wrapper);
-		
+		hql = SortingUtils.addOrder(hqlbuilder.toString(), wrapper);
 		Query query = currentSession().createQuery(hql);
 		
 		query.setParameter("iterationId", iterationId, LongType.INSTANCE);
 		
 		if (filtering.isDefined()){
 			query.setParameter("userLogin", filtering.getFilter(), StringType.INSTANCE);
+		}
+		
+		if(columnFiltering.hasFilter(0)){
+			query.setParameter(PROJECT_FILTER, "%"+columnFiltering.getFilter(0)+"%", StringType.INSTANCE);
+		}
+		if(columnFiltering.hasFilter(1)){
+			query.setParameter(REFERENCE_FILTER, "%"+columnFiltering.getFilter(1)+"%", StringType.INSTANCE);
+		} 
+		if(columnFiltering.hasFilter(2)){
+			query.setParameter(TESTCASE_FILTER, "%"+columnFiltering.getFilter(2)+"%", StringType.INSTANCE);
+		}
+		if(columnFiltering.hasFilter(3)){
+			query.setParameter(WEIGHT_FILTER, columnFiltering.getFilter(3), StringType.INSTANCE);
+		}
+		if(columnFiltering.hasFilter(4)){
+			query.setParameter(DATASET_FILTER, "%"+columnFiltering.getFilter(4)+"%", StringType.INSTANCE);
+		}
+		if(columnFiltering.hasFilter(5)){
+			query.setParameter(TESTSUITE_FILTER, "%"+columnFiltering.getFilter(5)+"%", StringType.INSTANCE);
+		}
+		if(columnFiltering.hasFilter(6)){
+			query.setParameter(STATUS_FILTER, columnFiltering.getFilter(6), StringType.INSTANCE);
+		}
+		if(columnFiltering.hasFilter(7)){
+			query.setParameter(USER_FILTER, Long.parseLong(columnFiltering.getFilter(7)), LongType.INSTANCE);
+		}
+		if(columnFiltering.hasFilter(8)){
+			query.setParameter(EXECUTION_DATE_FILTER, columnFiltering.getFilter(8), DateType.INSTANCE);
 		}
 		
 		PagingUtils.addPaging(query, sorting);
@@ -332,6 +434,13 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 		else{
 			return (Long) executeEntityNamedQuery("iteration.countTestPlansFiltered", IdAndLoginParameter(iterationId, filtering.getFilter()));
 		}
+	}
+
+	@Override
+	public long countTestPlans(Long iterationId, Filtering filtering,
+			ColumnFiltering columnFiltering) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 	
 

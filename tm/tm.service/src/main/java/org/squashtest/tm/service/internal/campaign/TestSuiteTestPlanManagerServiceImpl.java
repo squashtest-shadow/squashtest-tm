@@ -30,6 +30,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
+import org.squashtest.tm.core.foundation.collection.DefaultColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
 import org.squashtest.tm.core.foundation.collection.DelegatePagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.Filtering;
@@ -132,21 +134,21 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	 **/
 	@Override
 	public PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findAssignedTestPlan(long testSuiteId,
-			PagingAndMultiSorting sorting) {
+			PagingAndMultiSorting sorting, ColumnFiltering columnFiltering) {
 
 		// configure the filter, in case the test plan must be restricted to what the user can see.
-		Filtering filtering = DefaultFiltering.NO_FILTERING;
+		Filtering userFiltering = DefaultFiltering.NO_FILTERING;
 		try {
 			PermissionsUtils.checkPermission(permissionEvaluationService, Arrays.asList(testSuiteId),
 					"READ_UNASSIGNED", TestSuite.class.getCanonicalName());
 		} catch (AccessDeniedException ade) {
 			String userLogin = userService.findCurrentUser().getLogin();
-			filtering = new DefaultFiltering("User.login", userLogin);
+			userFiltering = new DefaultFiltering("User.login", userLogin);
 		}
 
 		List<IndexedIterationTestPlanItem> indexedItems = testSuiteDao.findIndexedTestPlan(testSuiteId, sorting,
-				filtering);
-		long testPlanSize = testSuiteDao.countTestPlans(testSuiteId, filtering);
+				userFiltering, columnFiltering);
+		long testPlanSize = testSuiteDao.countTestPlans(testSuiteId, userFiltering, columnFiltering);
 
 		return new PagingBackedPagedCollectionHolder<List<IndexedIterationTestPlanItem>>(sorting, testPlanSize,
 				indexedItems);
@@ -170,8 +172,9 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 		Paging noPaging = Pagings.NO_PAGING;
 		PagingAndMultiSorting sorting = new DelegatePagingAndMultiSorting(noPaging, newSorting);
 		Filtering filtering = DefaultFiltering.NO_FILTERING;
-
-		List<IterationTestPlanItem> items = testSuiteDao.findTestPlan(suiteId, sorting, filtering);
+		ColumnFiltering columnFiltering = DefaultColumnFiltering.NO_FILTERING;
+		
+		List<IterationTestPlanItem> items = testSuiteDao.findTestPlan(suiteId, sorting, filtering, columnFiltering);
 
 		TestSuite testSuite = testSuiteDao.findById(suiteId);
 

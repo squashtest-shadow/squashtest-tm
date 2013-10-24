@@ -19,34 +19,27 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.core.foundation.collection;
-
-
 /**
- * Interface for data-filtering instructions. The string that the user is looking for is returned by {@link #getFilter()}, and the name of the filtered attribute (if any)
- * is returned by {@link #getFilteredAttribute()} (see the method comments for details). 
+ * Interface for column-filtering instructions.
  * Because filtering requires significantly more processing, services and dao using it should first check {@link #isDefined()} first before triggering the additional 
  * filtering mecanisms.
  * 
  * 
- * @author bsiri
+ * @author flaurens
  *
  */
-public interface Filtering {
+public interface ColumnFiltering {
 
-	
 	/**
 	 * @return true if any filtering is required. 
 	 */
 	boolean isDefined();
-	
+
 	/**
-	 * @return the String that the user is searching for
+	 * @return the filter String for a column given its index
 	 */
-	String getFilter();
+	String getFilter(Integer index);
 	
-	
-	/**
-	 * @return null if the filter is to be applied to any relevant attribute, a non-null values is the name (qualified or not) of the sorted attribute if the filtering should be applied to only one specific attribute.
-	 */
-	String getFilteredAttribute(); 
+	boolean hasFilter(Integer index);
 }
+

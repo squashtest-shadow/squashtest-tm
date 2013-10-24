@@ -38,6 +38,8 @@ import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
+import org.squashtest.tm.core.foundation.collection.DefaultColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
 import org.squashtest.tm.core.foundation.collection.DelegatePagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.Filtering;
@@ -147,22 +149,22 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	 */
 	@Override
 	public PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findAssignedTestPlan(long iterationId,
-			PagingAndMultiSorting sorting) {
+			PagingAndMultiSorting sorting, ColumnFiltering columnFiltering) {
 
 		
 		// configure the filter, in case the test plan must be restricted to what the user can see.
-		Filtering filtering = DefaultFiltering.NO_FILTERING;
+		Filtering userFiltering = DefaultFiltering.NO_FILTERING;
 
 		try {
 			PermissionsUtils.checkPermission(permissionEvaluationService, Arrays.asList(iterationId), "READ_UNASSIGNED", Iteration.class.getName());
 		} catch (AccessDeniedException ade) {
 			String userLogin = userService.findCurrentUser().getLogin();
-			filtering = new DefaultFiltering("User.login", userLogin);
+			userFiltering = new DefaultFiltering("User.login", userLogin);
 		}
 
 		List<IndexedIterationTestPlanItem> indexedItems = iterationDao.findIndexedTestPlan(iterationId, sorting,
-				filtering);
-		long testPlanSize = iterationDao.countTestPlans(iterationId, filtering);
+				userFiltering, columnFiltering);
+		long testPlanSize = iterationDao.countTestPlans(iterationId, userFiltering, columnFiltering);
 
 		return new PagingBackedPagedCollectionHolder<List<IndexedIterationTestPlanItem>>(sorting, testPlanSize,
 				indexedItems);
@@ -254,8 +256,9 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		Paging noPaging = Pagings.NO_PAGING;
 		PagingAndMultiSorting sorting = new DelegatePagingAndMultiSorting(noPaging, newSorting);
 		Filtering filtering = DefaultFiltering.NO_FILTERING;
-
-		List<IterationTestPlanItem> items = iterationDao.findTestPlan(iterationId, sorting, filtering);
+		ColumnFiltering columnFiltering = DefaultColumnFiltering.NO_FILTERING;
+		
+		List<IterationTestPlanItem> items = iterationDao.findTestPlan(iterationId, sorting, filtering, columnFiltering);
 
 		Iteration iteration = iterationDao.findById(iterationId);
 
@@ -372,7 +375,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	public PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findTestPlan(long iterationId,
 			PagingAndSorting filter) {
 		List<IndexedIterationTestPlanItem> testPlan = iterationDao.findIndexedTestPlan(iterationId, filter,
-				DefaultFiltering.NO_FILTERING);
+				DefaultFiltering.NO_FILTERING, DefaultColumnFiltering.NO_FILTERING);
 		long count = iterationDao.countTestPlans(iterationId, DefaultFiltering.NO_FILTERING);
 		return new PagingBackedPagedCollectionHolder<List<IndexedIterationTestPlanItem>>(filter, count, testPlan);
 	}

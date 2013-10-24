@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.campaign.Campaign;
@@ -52,6 +53,7 @@ import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
+import org.squashtest.tm.web.internal.model.datatable.DataTableColumnFiltering;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
@@ -112,9 +114,11 @@ public class CampaignTestPlanManagerController {
 	public @ResponseBody
 	DataTableModel getTestCasesTableModel(@PathVariable("campaignId") long campaignId,
 			final DataTableDrawParameters params, final Locale locale) {
-		DataTableMultiSorting filter = new DataTableMultiSorting(params, testPlanMapper);
+		DataTableMultiSorting sorter = new DataTableMultiSorting(params, testPlanMapper);
 
-		PagedCollectionHolder<List<IndexedCampaignTestPlanItem>> holder = testPlanManager.findTestPlan(campaignId, filter);
+		ColumnFiltering filter = new DataTableColumnFiltering(params);
+		
+		PagedCollectionHolder<List<IndexedCampaignTestPlanItem>> holder = testPlanManager.findTestPlan(campaignId, sorter, filter);
 
 		return new CampaignTestPlanTableModelHelper(messageSource, locale).buildDataModel(holder, 	params.getsEcho());
 	}

@@ -26,9 +26,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Query;
+import org.hibernate.type.DateType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
@@ -52,6 +54,15 @@ import org.squashtest.tm.service.internal.repository.CustomTestSuiteDao;
 @Repository("CustomTestSuiteDao")
 public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> implements CustomTestSuiteDao {
 
+	private static final String PROJECT_FILTER = "projectFilter";
+	private static final String REFERENCE_FILTER = "referenceFilter";
+	private static final String TESTCASE_FILTER = "testcaseFilter";	
+	private static final String WEIGHT_FILTER = "weightFilter";
+	private static final String DATASET_FILTER = "datasetFilter";
+	private static final String STATUS_FILTER = "statusFilter";
+	private static final String USER_FILTER = "userFilter";
+	private static final String EXECUTION_DATE_FILTER = "executionDateFilter";
+	
 	/*
 	 * Because it is impossible to sort over the indices of ordered collection in a criteria query we must then build an
 	 * hql string which will let us do that.
@@ -63,6 +74,30 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 			+ "left outer join IterationTestPlanItem.referencedDataset as Dataset "
 			+ "left outer join IterationTestPlanItem.user as User " + "where TestSuite.id = :suiteId ";
 
+	private static final String HQL_INDEXED_TEST_PLAN_PROJECT_FILTER =
+			"and Project.name like :projectFilter ";
+
+	private static final String HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER =
+			"and TestCase.reference like :referenceFilter ";
+	
+	private static final String HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER =
+			"and TestCase.name like :testcaseFilter ";
+	
+	private static final String HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER =
+			"and TestCase.importance = :weightFilter ";
+	
+	private static final String HQL_INDEXED_TEST_PLAN_DATASET_FILTER =
+			"and Dataset like :datasetFilter ";
+
+	private static final String HQL_INDEXED_TEST_PLAN_STATUS_FILTER =
+			"and IterationTestPlanItem.executionStatus = :statusFilter ";
+	
+	private static final String HQL_INDEXED_TEST_PLAN_USER_FILTER =
+			"and IterationTestPlanItem.user = :userFilter";
+
+	private static final String HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER =
+			"";
+	
 	@Override
 	public List<TestSuite> findAllByIterationId(final long iterationId) {
 
@@ -260,28 +295,28 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 	}
 
 	@Override
-	public List<IterationTestPlanItem> findTestPlan(long suiteId, PagingAndMultiSorting sorting, Filtering filtering) {
-		List<Object[]> tuples = _findIndexedTestPlan(suiteId, sorting, filtering);
+	public List<IterationTestPlanItem> findTestPlan(long suiteId, PagingAndMultiSorting sorting, Filtering filtering, ColumnFiltering columnFiltering) {
+		List<Object[]> tuples = _findIndexedTestPlan(suiteId, sorting, filtering, columnFiltering);
 		return buildItems(tuples);
 	}
 
 	@Override
 	public List<IndexedIterationTestPlanItem> findIndexedTestPlan(long suiteId, PagingAndSorting sorting,
-			Filtering filtering) {
+			Filtering filtering, ColumnFiltering columnFiltering) {
 
-		return findIndexedTestPlan(suiteId, new SingleToMultiSortingAdapter(sorting), filtering);
+		return findIndexedTestPlan(suiteId, new SingleToMultiSortingAdapter(sorting), filtering, columnFiltering);
 	}
 
 	@Override
 	public List<IndexedIterationTestPlanItem> findIndexedTestPlan(final long suiteId, PagingAndMultiSorting sorting,
-			Filtering filtering) {
+			Filtering filtering, ColumnFiltering columnFiltering) {
 
-		List<Object[]> tuples = _findIndexedTestPlan(suiteId, sorting, filtering);
+		List<Object[]> tuples = _findIndexedTestPlan(suiteId, sorting, filtering, columnFiltering);
 		return buildIndexedItems(tuples);
 
 	}
 
-	private List<Object[]> _findIndexedTestPlan(final long suiteId, PagingAndMultiSorting sorting, Filtering filtering) {
+	private List<Object[]> _findIndexedTestPlan(final long suiteId, PagingAndMultiSorting sorting, Filtering filtering, ColumnFiltering columnFiltering) {
 		StringBuilder hqlbuilder = new StringBuilder(HQL_INDEXED_TEST_PLAN);
 
 		// check if we want to filter on the user login
@@ -289,6 +324,31 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 			hqlbuilder.append("and User.login = :userLogin ");
 		}
 
+		if(columnFiltering.hasFilter(0)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_PROJECT_FILTER);
+		}
+		if(columnFiltering.hasFilter(1)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER);
+		}
+		if(columnFiltering.hasFilter(2)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER);
+		}
+		if(columnFiltering.hasFilter(3)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER);
+		}
+		if(columnFiltering.hasFilter(4)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_DATASET_FILTER);
+		}
+		if(columnFiltering.hasFilter(5)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_STATUS_FILTER);
+		}
+		if(columnFiltering.hasFilter(6)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
+		}
+		if(columnFiltering.hasFilter(7)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER);
+		}
+		
 		// tune the sorting to make hql happy
 		LevelImplementorSorter wrapper = new LevelImplementorSorter(sorting);
 		wrapper.map("TestCase.importance", TestCaseImportance.class);
@@ -304,6 +364,31 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 			query.setParameter("userLogin", filtering.getFilter(), StringType.INSTANCE);
 		}
 
+		if(columnFiltering.hasFilter(0)){
+			query.setParameter(PROJECT_FILTER, "%"+columnFiltering.getFilter(0)+"%", StringType.INSTANCE);
+		}
+		if(columnFiltering.hasFilter(1)){
+			query.setParameter(REFERENCE_FILTER, "%"+columnFiltering.getFilter(1)+"%", StringType.INSTANCE);
+		} 
+		if(columnFiltering.hasFilter(2)){
+			query.setParameter(TESTCASE_FILTER, "%"+columnFiltering.getFilter(2)+"%", StringType.INSTANCE);
+		}
+		if(columnFiltering.hasFilter(3)){
+			query.setParameter(WEIGHT_FILTER, columnFiltering.getFilter(3), StringType.INSTANCE);
+		}
+		if(columnFiltering.hasFilter(4)){
+			query.setParameter(DATASET_FILTER, "%"+columnFiltering.getFilter(4)+"%", StringType.INSTANCE);
+		}
+		if(columnFiltering.hasFilter(5)){
+			query.setParameter(STATUS_FILTER, columnFiltering.getFilter(5), StringType.INSTANCE);
+		}
+		if(columnFiltering.hasFilter(6)){
+			query.setParameter(USER_FILTER, Long.parseLong(columnFiltering.getFilter(6)), LongType.INSTANCE);
+		}
+		if(columnFiltering.hasFilter(7)){
+			query.setParameter(EXECUTION_DATE_FILTER, columnFiltering.getFilter(7), DateType.INSTANCE);
+		}
+		
 		PagingUtils.addPaging(query, sorting);
 
 		return query.list();
@@ -350,4 +435,10 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 		return indexedItems;
 	}
 
+	@Override
+	public long countTestPlans(Long suiteId, Filtering filtering,
+			ColumnFiltering columnFiltering) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }
