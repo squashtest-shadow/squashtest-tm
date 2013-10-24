@@ -23,6 +23,7 @@ package org.squashtest.tm.service.security.acls.jdbc;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -43,6 +44,20 @@ class DerivedPermissionsManager {
 	
 	private static final String PROJECT_CLASS_NAME = Project.class.getName();
 	
+
+
+	private static final String REMOVE_CORE_PARTY_MANAGER_AUTHORITY = "delete from CORE_PARTY_AUTHORITY where PARTY_ID in (:ids) and AUTHORITY = 'ROLE_TM_PROJECT_MANAGER'";
+	private static final String INSERT_CORE_PARTY_MANAGER_AUTHORITY = "insert into CORE_PARTY_AUTHORITY(PARTY_ID, AUTHORITY) values (:id, 'ROLE_TM_PROJECT_MANAGER')";
+	
+	
+	private static final String CHECK_OBJECT_IDENTITY_EXISTENCE = 
+			"select aoi.ID from ACL_OBJECT_IDENTITY aoi " +
+			"inner join ACL_CLASS acc on acc.ID = aoi.CLASS_ID "+
+			"where aoi.IDENTITY = :id and acc.CLASSNAME = :class";
+	
+	private static final String CHECK_PARTY_EXISTENCE = "select PARTY_ID from CORE_PARTY where PARTY_ID = :id";
+	
+	private static final String FIND_ALL_USERS = "select PARTY_ID from CORE_USER";
 	
 	private static final String FIND_TEAM_MEMBERS_OR_USER = 
 			"select cu.PARTY_ID from CORE_USER cu " +
@@ -52,9 +67,6 @@ class DerivedPermissionsManager {
 			"inner join CORE_TEAM_MEMBER ctm on ctm.USER_ID = cu.PARTY_ID "+
 			"inner join CORE_TEAM ct on ct.PARTY_ID = ctm.TEAM_ID "+
 			"where ct.PARTY_ID = :id";
-
-	private static final String REMOVE_CORE_PARTY_MANAGER_AUTHORITY = "delete from CORE_PARTY_AUTHORITY where PARTY_ID in (:ids) and AUTHORITY = 'ROLE_TM_PROJECT_MANAGER'";
-	private static final String INSERT_CORE_PARTY_MANAGER_AUTHORITY = "insert into CORE_PARTY_AUTHORITY(PARTY_ID, AUTHORITY) values (:id, 'ROLE_TM_PROJECT_MANAGER')";
 
 
 	private static final String FIND_PARTIES_USING_IDENTITY = 
@@ -123,58 +135,89 @@ class DerivedPermissionsManager {
 	// *************************** private ******************************
 	
 	
-	void updateDerivedAuths(ObjectIdentity identity){
+	
+	private void updateDerivedAuths(ObjectIdentity identity){
 		
 		if (! isSortOfProject(identity)){
 			return;
 		}
 		
-		Collection<Long> userIds = findUsers(identity);
+		if (doesExist(identity)){
+		
+			Collection<Long> userIds = findUsers(identity);
+			
+			updateAuthsForThoseUsers(userIds);
+			
+		}
+		else{
+			// corner case : the target object doesn't exist anymore so we can't find 
+			// which users were using it. We must then update them all.
+			updateDerivedAuths();
+		}
+		
+	}
+	
+	private void updateDerivedAuths(long partyId){
+
+		if (doesExist(partyId)){
+			Collection<Long> memberIds = findMembers(partyId);
+		
+			updateAuthsForThoseUsers(memberIds);
+		}
+		else{
+			// corner case : the target party doesn't exist anymore so we don't know
+			// which team members were part of it (in case of a team). We must then update
+			// all the users.
+			updateDerivedAuths();
+		}
+		
+	}
+	
+	private void updateDerivedAuths(long partyId, ObjectIdentity identity){
+		
+		// we don't really care of the target object actually, because ultimately permissions are 
+		// bound to users. Hence we drop the extra argument.
+		updateDerivedAcl(partyId);
+		
+	}
+	
+	// will update all users, no exceptions
+	private void updateDerivedAuths(){
+		
+		Collection<Long> allUsers = findAllUsers();
+		
+		updateAuthsForThoseUsers(allUsers);
+	}
+	
+	
+	private void updateAuthsForThoseUsers(Collection<Long> userIds){
 		
 		removeProjectManagerAuthorities(userIds);
 		
 		Collection<Long> managerIds = retainUsersManagingAnything(userIds);
 		
-		grantProjectManagerAuthorities(managerIds);
-		
-	}
-	
-	void updateDerivedAuths(long partyId){
-
-		Collection<Long> memberIds = findMembers(partyId);
-		
-		removeProjectManagerAuthorities(memberIds);
-		
-		Collection<Long> managerIds = retainUsersManagingAnything(memberIds);
-		
-		grantProjectManagerAuthorities(managerIds);
-		
-	}
-	
-	void updateDerivedAuths(long partyId, ObjectIdentity identity){
-		
-		if (! isSortOfProject(identity)){
-			return;
-		}
-		
-		updateDerivedAcl(identity);
-		
+		grantProjectManagerAuthorities(managerIds);	
 	}
 	
 	
-	void updateDerivedAcl(ObjectIdentity identity){
+	
+	private void updateDerivedAcl(ObjectIdentity identity){
 		//nothing yet
 	}
 	
-	void updateDerivedAcl(long partyId){
+	private void updateDerivedAcl(long partyId){
 		// nothing yet
 	}
 	
-	void updateDerivedAcl(long partyId, ObjectIdentity identity){
+	private void updateDerivedAcl(long partyId, ObjectIdentity identity){
 		// nothing yet
 	}
 	
-	
+	// will update all users, no exceptions
+	/*private void updateDerivedAcl(){
+		//TODO nothing yet
+	}*/
+
 	// ******************************** helpers ***********************************
 	
 	/*
@@ -184,6 +227,26 @@ class DerivedPermissionsManager {
 	private boolean isSortOfProject(ObjectIdentity identity){
 		String type = identity.getType();
 		return (type.equals(PROJECT_CLASS_NAME));
+	}
+	
+	private boolean doesExist(ObjectIdentity identity){
+		
+		Query query = sessionFactory.getCurrentSession().createSQLQuery(CHECK_OBJECT_IDENTITY_EXISTENCE);
+		query.setParameter("id", identity.getIdentifier(), LongType.INSTANCE);
+		query.setParameter("class", identity.getType());
+		
+		List<?> result = query.list();
+		return (! result.isEmpty());
+	}
+	
+	
+	private boolean doesExist(long partyId){
+		
+		Query query = sessionFactory.getCurrentSession().createSQLQuery(CHECK_PARTY_EXISTENCE);
+		query.setParameter("id", partyId, LongType.INSTANCE);
+		
+		List<?> result = query.list();
+		return (! result.isEmpty());		
 	}
 
 	
@@ -216,6 +279,12 @@ class DerivedPermissionsManager {
 		
 		return userIds;
 		
+	}
+	
+	private Collection<Long> findAllUsers(){
+		Query query = sessionFactory.getCurrentSession().createSQLQuery(FIND_ALL_USERS);
+		query.setResultTransformer(new SqLIdResultTransformer());
+		return query.list();
 	}
 	
 	private void removeProjectManagerAuthorities(Collection<Long> ids){

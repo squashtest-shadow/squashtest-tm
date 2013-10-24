@@ -122,7 +122,6 @@
   <acl_object_identity ID="15" IDENTITY="14" CLASS_ID="2"/>
   <acl_object_identity ID="16" IDENTITY="14" CLASS_ID="3"/>
   <acl_object_identity ID="17" IDENTITY="14" CLASS_ID="4"/>
-  <core_party PARTY_ID="1"/>
   <core_party PARTY_ID="34"/>
   <core_party PARTY_ID="35"/>
   <core_party PARTY_ID="36"/>
@@ -162,7 +161,6 @@
   <test_case_library TCL_ID="14" ATTACHMENT_LIST_ID="903"/>
   <campaign_library CL_ID="14" ATTACHMENT_LIST_ID="904"/>
   <project PROJECT_ID="14" NAME="Projet 1" DESCRIPTION="&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam felis ante,&lt;/p&gt;" LABEL="Lorem ipsum dolor sit amet, " ACTIVE="true" CREATED_BY="admin" CREATED_ON="2011-09-30 10:24:47.0" LAST_MODIFIED_BY="admin" LAST_MODIFIED_ON="2013-10-22 18:23:05.0" CL_ID="14" TCL_ID="14" RL_ID="14" TEST_AUTOMATION_ENABLED="false" ATTACHMENT_LIST_ID="901" PROJECT_TYPE="P"/>
-  <core_user PARTY_ID="1" LOGIN="admin" FIRST_NAME="" LAST_NAME="Squash Administrator" EMAIL="admin@squashtest.org" ACTIVE="true" CREATED_BY="liquibase" CREATED_ON="2013-10-22 18:20:41.0"/>
   <core_user PARTY_ID="34" LOGIN="regular user" FIRST_NAME="regular user" LAST_NAME="regular user" EMAIL="regular user" ACTIVE="true" CREATED_BY="admin" CREATED_ON="2013-10-22 18:23:27.0"/>
   <core_user PARTY_ID="35" LOGIN="direct project leader" FIRST_NAME="direct project leader" LAST_NAME="direct project leader" EMAIL="direct project leader" ACTIVE="true" CREATED_BY="admin" CREATED_ON="2013-10-22 18:23:42.0"/>
   <core_user PARTY_ID="36" LOGIN="leader because of team" FIRST_NAME="leader because of team" LAST_NAME="leader because of team" EMAIL="leader because of team" ACTIVE="true" CREATED_BY="admin" CREATED_ON="2013-10-22 18:23:58.0"/>
@@ -185,7 +183,6 @@
   <core_group_authority GROUP_ID="1" AUTHORITY="ROLE_TM_USER"/>
   <core_group_authority GROUP_ID="2" AUTHORITY="ROLE_TM_USER"/>
   <core_group_authority GROUP_ID="4" AUTHORITY="ROLE_TA_API_CLIENT"/>
-  <core_group_member PARTY_ID="1" GROUP_ID="1"/>
   <core_group_member PARTY_ID="34" GROUP_ID="2"/>
   <core_group_member PARTY_ID="35" GROUP_ID="2"/>
   <core_group_member PARTY_ID="36" GROUP_ID="2"/>

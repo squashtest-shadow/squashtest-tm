@@ -97,6 +97,8 @@ class DerivedPermissionsManagerIT extends DbunitServiceSpecification {
 	private DerivedPermissionsManager manager
 
 	
+	// ***************** low level methods ***************************
+	
 	
 	@Unroll("should decide that it should #yesorno handle object of class #type")
 	def "should decide that it should handle this or that"(){
@@ -114,44 +116,63 @@ class DerivedPermissionsManagerIT extends DbunitServiceSpecification {
 	
 	
 	@DataSet("DerivedPermissionsManagerIT.setup.xml")
+	@Unroll("should find that this given target object identity #yesorno exist")
+	def "should find that this or that target object identity exist or dont"(){
+		
+		expect :
+			expectation == manager.doesExist(id)
+		
+		where :
+			expectation	|	yesorno		| id
+			true		|	"does"		| PROJECT_IDENTITY
+			false		|	"does not"	| new ObjectIdentityImpl("georges.what.else", 2l)
+	}
+	
+	
+	@DataSet("DerivedPermissionsManagerIT.setup.xml")
+	@Unroll("should find that this given party #yesorno exist")
+	def "should find that this or that given party exist/dont"(){
+		
+		expect :
+			expectation == manager.doesExist(id)
+		
+		where :
+			expectation	|	yesorno		| id
+			true		|	"does"		| 38l
+			false		|	"does not"	| 999l
+	}
+	
+	
+	@DataSet("DerivedPermissionsManagerIT.setup.xml")
 	def "should find the members of the team"(){
 		
-		given :
-			def id = TEAM_ID	
-		
-		when :
-			def ids = manager.findMembers(id)
-		
-		
-		then :
-			ids as Set == [36l, 37l] as Set
-		
+		expect :
+			 manager.findMembers(TEAM_ID) as Set == [36l, 37l] as Set
 		
 	}
 	
 	@DataSet("DerivedPermissionsManagerIT.setup.xml")
 	def "should find out that the said team is actually a user and returns it"(){
 		
-		given : 
-			def id = 36l
-		
-		when :
-			def ids = manager.findMembers(id)
-		
-		
-		then :
-			ids == [36l]
-		
+		expect :
+			manager.findMembers(36l) == [36l]
+				
 	}
+
 	
 	@DataSet("DerivedPermissionsManagerIT.setup.xml")
 	def "should find all the users that participate to a project, either directly or via a team"(){
 		
-		when :
-			def usermanagers = manager.findUsers(PROJECT_IDENTITY)
+		expect :
+			manager.findUsers(PROJECT_IDENTITY) as Set == [34l, 35l, 36l, 37l] as Set 
+
+	}
+	
+	@DataSet("DerivedPermissionsManagerIT.setup.xml")
+	def "should find all the users, no restrictions"(){
 		
-		then :
-			usermanagers as Set == [34l, 35l, 36l, 37l] as Set
+		expect :
+			manager.findAllUsers() as Set == [34l, 35l, 36l, 37l, 39l] as Set
 	}
 	
 	
@@ -160,13 +181,12 @@ class DerivedPermissionsManagerIT extends DbunitServiceSpecification {
 		
 		when :
 			manager.removeProjectManagerAuthorities([35l, 37l])
-			def remainingAuthorizedUsers = 
-				executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY 
-							where AUTHORITY='ROLE_TM_PROJECT_MANAGER' """)
-			
-			
-		then :
-			remainingAuthorizedUsers == [36l]
+						
+		then :				
+		
+		executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY 
+					where AUTHORITY='ROLE_TM_PROJECT_MANAGER' """) == [36l]
+		
 	}
 	
 	
@@ -174,27 +194,51 @@ class DerivedPermissionsManagerIT extends DbunitServiceSpecification {
 	def "should grant project manager authority to user"(){
 		
 		when :
-			manager.grantProjectManagerAuthorities([34l])
-			def authorizedUsers = 
-				executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY 
-								where AUTHORITY='ROLE_TM_PROJECT_MANAGER' """)
+			manager.grantProjectManagerAuthorities([34l])				
 		
 		then :
-			authorizedUsers.contains 34l
+			executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY 
+						where AUTHORITY='ROLE_TM_PROJECT_MANAGER' """).contains 34l
 	}
 	
 	@DataSet("DerivedPermissionsManagerIT.setup.xml")
 	def "should filter out users that don't manage anything"(){
 		
-		given :
-			def ids = [34l, 35l, 36l, 37l]
+		expect :
+			manager.retainUsersManagingAnything([34l, 35l, 36l, 37l]) as Set == [35l, 36l, 37l] as Set
+	
+	}
+
+	
+	// ***************** high level methods ***************************
+	
+	
+	
+	@DataSet("DerivedPermissionsManagerIT.setup.xml")
+	@Unroll("should fix messed up personal authorities (#loopnum)")
+	def "should fix the personal authorities regardless of their current (and possibly wrong) state"(){
 		
+		given :
+			def ids = [34l, 35l, 36l, 37l, 39l]
+			messUpAuthorities( ids )
+			
 		when :
-			def res = manager.retainUsersManagingAnything(ids)
+			manager.updateAuthsForThoseUsers([34l, 35l, 36l, 37l, 39l])
 		
 		then :
-			res as Set == [35l, 36l, 37l] as Set
+			executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY 
+				where AUTHORITY='ROLE_TM_PROJECT_MANAGER' """) as Set == [35l, 36l, 37l] as Set
+		
+		where :
+			a						|	loopnum
+			"dummy"					|	"(1)"
+			"dummy"					|	"(2)"
+			"dummy"					|	"(3)"
+			"dummy"					|	"(4)"
+			"dummy"					|	"(5)"
+			
 	}
+	
 	
 	@DataSet("DerivedPermissionsManagerIT.setup.xml")
 	def "should update the authorities of a new project manager on the project"(){
@@ -205,13 +249,10 @@ class DerivedPermissionsManagerIT extends DbunitServiceSpecification {
 
 		when :
 			manager.updateDerivedPermissions(34l)
-			
-			def authorizedUsers =
-			executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY
-								where AUTHORITY='ROLE_TM_PROJECT_MANAGER' """)
-					
+								
 		then :
-			authorizedUsers as Set == [34l, 35l, 36l, 37l] as Set
+			executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY
+					where AUTHORITY='ROLE_TM_PROJECT_MANAGER' """) as Set == [34l, 35l, 36l, 37l] as Set
 		
 	}
 	
@@ -222,14 +263,11 @@ class DerivedPermissionsManagerIT extends DbunitServiceSpecification {
 			executeSQL(""" insert into CORE_TEAM_MEMBER values(38, 34) """)
 
 		when :
-			manager.updateDerivedPermissions(34l)
-			
-			def authorizedUsers =
-			executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY
-								where AUTHORITY='ROLE_TM_PROJECT_MANAGER' """)
+			manager.updateDerivedPermissions(34l)			
 		
 		then :
-			authorizedUsers as Set == [34l, 35l, 36l, 37l] as Set
+			executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY
+					where AUTHORITY='ROLE_TM_PROJECT_MANAGER' """) as Set == [34l, 35l, 36l, 37l] as Set
 		
 	}
 	
@@ -243,12 +281,9 @@ class DerivedPermissionsManagerIT extends DbunitServiceSpecification {
 		when :
 			manager.updateDerivedPermissions(35l)
 			
-			def authorizedUsers =
-			executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY
-								where AUTHORITY='ROLE_TM_PROJECT_MANAGER' """)
-		
 		then :
-			authorizedUsers as Set == [36l, 37l] as Set
+			executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY
+					where AUTHORITY='ROLE_TM_PROJECT_MANAGER' """) as Set == [36l, 37l] as Set
 		
 	}
 	
@@ -261,12 +296,9 @@ class DerivedPermissionsManagerIT extends DbunitServiceSpecification {
 		when :
 			manager.updateDerivedPermissions(36l)
 			
-			def authorizedUsers =
-			executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY
-								where AUTHORITY='ROLE_TM_PROJECT_MANAGER' """)
-		
 		then :
-			authorizedUsers as Set == [35l, 37l] as Set
+			executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY
+					where AUTHORITY='ROLE_TM_PROJECT_MANAGER' """) as Set == [35l, 37l] as Set
 		
 	}
 	
@@ -279,13 +311,10 @@ class DerivedPermissionsManagerIT extends DbunitServiceSpecification {
 
 		when :
 			manager.updateDerivedPermissions(37l)
-			
-			def authorizedUsers =
-			executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY
-								where AUTHORITY='ROLE_TM_PROJECT_MANAGER' """)
 		
 		then :
-			authorizedUsers as Set == [35l, 36l, 37l] as Set
+			executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY
+					where AUTHORITY='ROLE_TM_PROJECT_MANAGER' """) as Set == [35l, 36l, 37l] as Set
 		
 	}
 	
@@ -297,31 +326,25 @@ class DerivedPermissionsManagerIT extends DbunitServiceSpecification {
 
 		when :
 			manager.updateDerivedPermissions(37l)
-			
-			def authorizedUsers =
-			executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY
-								where AUTHORITY='ROLE_TM_PROJECT_MANAGER' """)
 		
 		then :
-			authorizedUsers as Set == [35l, 36l, 37l] as Set
+			executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY
+				where AUTHORITY='ROLE_TM_PROJECT_MANAGER' """) as Set == [35l, 36l, 37l] as Set
 		
 	}
 	
 	@DataSet("DerivedPermissionsManagerIT.setup.xml")
-	def "once the team of project leaders is removed, one user is demoted but not the other one"(){
+	def "once the team of project leaders is removed from the project, one user is demoted but not the other one"(){
 		
 		given :
 			executeSQL(""" delete from ACL_RESPONSIBILITY_SCOPE_ENTRY where  PARTY_ID=""" +TEAM_ID)
 
 		when :
 			manager.updateDerivedPermissions(TEAM_ID)
-			
-			def authorizedUsers =
-			executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY
-								where AUTHORITY='ROLE_TM_PROJECT_MANAGER' """)
 		
 		then :
-			authorizedUsers as Set == [35l,  37l] as Set
+			executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY
+				where AUTHORITY='ROLE_TM_PROJECT_MANAGER' """) as Set == [35l,  37l] as Set
 		
 	}
 	
@@ -334,14 +357,63 @@ class DerivedPermissionsManagerIT extends DbunitServiceSpecification {
 
 		when :
 			manager.updateDerivedPermissions(TEAM_ID)
-			
-			def authorizedUsers =
-			executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY
-								where AUTHORITY='ROLE_TM_PROJECT_MANAGER' """)
 		
 		then :
-			authorizedUsers as Set == [35l,  37l] as Set
+			executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY
+					where AUTHORITY='ROLE_TM_PROJECT_MANAGER' """) as Set == [35l,  37l] as Set
 		
+	}
+	
+	@DataSet("DerivedPermissionsManagerIT.setup.xml")
+	def "project is nuked ! authorities updated accordingly"(){
+		
+		given :
+			executeSQL(""" delete from ACL_RESPONSIBILITY_SCOPE_ENTRY  
+					where OBJECT_IDENTITY_ID in (14, 15, 16, 17)""")
+			executeSQL(""" delete from ACL_OBJECT_IDENTITY """)
+		
+		when :
+			manager.updateDerivedPermissions(PROJECT_IDENTITY)
+		
+		then :
+			executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY
+					where AUTHORITY='ROLE_TM_PROJECT_MANAGER' """) == []
+	}
+	
+	@DataSet("DerivedPermissionsManagerIT.setup.xml")
+	def "the project leader team is nuked ! authorities updated accordingly"(){
+		
+		given :
+			executeSQL(""" delete from ACL_RESPONSIBILITY_SCOPE_ENTRY where  PARTY_ID=""" +TEAM_ID)
+			executeSQL(""" delete from CORE_TEAM_MEMBER """)
+			executeSQL(""" delete from CORE_TEAM """)
+			executeSQL(""" delete from CORE_PARTY where PARTY_ID = """+TEAM_ID)
+			
+		when :
+			manager.updateDerivedPermissions(TEAM_ID)
+			
+		then :
+			executeSQL(""" select PARTY_ID from CORE_PARTY_AUTHORITY
+					where AUTHORITY='ROLE_TM_PROJECT_MANAGER' """) == [35l, 37l ]
+			
+	}
+	
+	
+	
+	// ******************************* utilities *******************************
+	
+	def messUpAuthorities(ids){
+		
+		def random = new Random()
+		
+		executeSQL(""" delete from CORE_PARTY_AUTHORITY """)
+		
+		ids.each{
+			def ismanager = random.nextBoolean()
+			if (ismanager){
+				newSQLQuery(""" insert into CORE_PARTY_AUTHORITY values ($it, 'ROLE_TM_PROJECT_MANAGER')""")
+			}
+		}
 	}
 	
 }
