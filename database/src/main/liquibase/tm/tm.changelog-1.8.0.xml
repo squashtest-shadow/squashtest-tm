@@ -85,7 +85,7 @@
 	
 	
 	
-	<changeSet id="core-1.8.0-feat-2269-01" author="bsiri">
+	<changeSet id="core-1.8.0-feat-2699-01" author="bsiri">
 		<comment>the CORE_GROUP squashtest.tm.group.User is now renamed to the normalized squashtest.authz.group.tm.User</comment>
 		<update tableName="CORE_GROUP">
 			<column name="QUALIFIED_NAME" type="varchar(255)" value="squashtest.authz.group.tm.User"/>
@@ -93,7 +93,7 @@
 		</update>	
 	</changeSet>
 	
-	<changeSet id="core-1.8.0-feat-2269-02" author="bsiri">
+	<changeSet id="core-1.8.0-feat-2699-02" author="bsiri">
 		<comment>the CORE_GROUP squashtest.authz.tm.group.ProjectManager is deleted and the users belonging to that group are now 
 		demoted to squashtest.authz.group.tm.User</comment>
 	
@@ -111,10 +111,12 @@
 		</delete>
 	</changeSet>
 	
-	<changeSet id="core-1.8.0-feat-2269-03" author="bsiri">
-		<comment>The table CORE_USER_AUTHORITY stores personal authorities. As for TM 1.8.0 the users and teams now have blanket permissions 
-		(aka authorities) for themselves, not only via core_group membership. However, a user will still belong to one of the CORE_GROUPs and 
-		the personal authorities will stack with the authorities of the group they belong to.</comment>
+	<changeSet id="core-1.8.0-feat-2699-03" author="bsiri">
+		<comment>
+			The table CORE_PARY_AUTHORITY stores personal authorities. As for TM 1.8.0 the users and teams now have blanket permissions 
+			(aka authorities) for themselves, not only via core_group membership. However, a user will still belong to one of the CORE_GROUPs and 
+			the personal authorities will stack with the authorities of the group they belong to.
+		</comment>
 		
 		<createTable tableName="CORE_PARTY_AUTHORITY">
 			
@@ -127,6 +129,28 @@
 			</column>
 		
 		</createTable>
+	
+	</changeSet>
+	
+	
+	<changeSet id="core-1.8.0-feat-2699-04" author="bsiri">
+		<comment>we have now to set the role ROLE_TM_PROJECT_MANAGER to the corresponding users </comment>
+		
+		<sql> 
+			insert into CORE_PARTY_AUTHORITY(PARTY_ID, AUTHORITY)  
+			select distinct cu.PARTY_ID, 'ROLE_TM_PROJECT_MANAGER' from CORE_USER cu 
+			where cu.PARTY_ID in (
+				select cu1.PARTY_ID from CORE_USER cu1  
+				inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse1 on arse1.PARTY_ID = cu1.PARTY_ID 
+				where arse1.ACL_GROUP_ID = 5 
+			) 
+			or cu.PARTY_ID in (
+				select cu2.PARTY_ID from CORE_USER cu2 
+				inner join CORE_TEAM_MEMBER ctm on ctm.USER_ID = cu2.PARTY_ID 
+				inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse2 on arse2.PARTY_ID = ctm.TEAM_ID 
+				where arse2.ACL_GROUP_ID = 5
+			)
+		</sql>
 	
 	</changeSet>
 	

@@ -83,7 +83,7 @@
 	
 	
 	<!--  check that the core_group for Users is correctly renamed -->
-	<changeSet id="tm-data-1.7.0-feat-2269-test-01" author="bsiri">
+	<changeSet id="tm-data-1.7.0-feat-2699-test-01" author="bsiri">
 		<preConditions>
 			<sqlCheck expectedResult="1">
 				select count(*) from CORE_GROUP
@@ -98,7 +98,7 @@
 	</changeSet>
 	
 	<!--  check that there are no more references to the core_group ProjectManager and that previous instances are now demoted to Users -->
-	<changeSet id="tm-data-1.7.0-feat-2269-test-02" author="bsiri">
+	<changeSet id="tm-data-1.7.0-feat-2699-test-02" author="bsiri">
 		<preConditions>		
 			<sqlCheck expectedResult="0">
 				select count(*) from CORE_GROUP
@@ -113,5 +113,23 @@
 				where cu.LAST_NAME = 'Bobovitch' 
 			</sqlCheck>
 		</preConditions>
+	</changeSet>
+	
+	
+	<!--  checks that users being project leader directly or via a team on at least one concrete project have received the 
+	personal authority ROLE_TM_PROJECT_MANAGER -->
+	<changeSet id="tm-data-1.7.0-feat-2699-test-03" author="bsiri">
+		<preConditions>
+			<sqlCheck expectedResult="3">
+				select count(cpa.PARTY_ID) from CORE_PARTY_AUTHORITY cpa 
+				inner join CORE_USER cu on cu.PARTY_ID = cpa.PARTY_ID 				
+				where cpa.AUTHORITY = 'ROLE_TM_PROJECT_MANAGER'  
+				and cu.LOGIN in ('Myiku', 'Robertu', 'Garyu')
+			</sqlCheck>		
+			<sqlCheck expectedResult="3">
+				select count(cpa.PARTY_ID) from CORE_PARTY_AUTHORITY cpa 		
+				where cpa.AUTHORITY = 'ROLE_TM_PROJECT_MANAGER'  
+			</sqlCheck>					
+		</preConditions>	
 	</changeSet>
 </databaseChangeLog>
