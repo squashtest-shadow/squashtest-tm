@@ -35,6 +35,7 @@ import org.hibernate.type.StringType;
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.security.acls.CustomPermission;
 import org.squashtest.tm.service.internal.repository.TeamDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.internal.repository.hibernate.SqLIdResultTransformer;
@@ -43,6 +44,8 @@ import org.squashtest.tm.service.internal.repository.hibernate.SqLIdResultTransf
 class DerivedPermissionsManager {
 	
 	private static final String PROJECT_CLASS_NAME = Project.class.getName();
+	
+	private static final String PERM_MANAGEMENT = Integer.toString(CustomPermission.MANAGEMENT.getMask());
 	
 
 
@@ -71,7 +74,7 @@ class DerivedPermissionsManager {
 
 	private static final String FIND_PARTIES_USING_IDENTITY = 
 			"select arse.PARTY_ID from ACL_RESPONSIBILITY_SCOPE_ENTRY arse " +
-	 		"inner join ACL_OBJECT_IDENTITY aoi on arse.OBJECT_IDENTITY_ID = aoi.IDENTITY "+
+	 		"inner join ACL_OBJECT_IDENTITY aoi on arse.OBJECT_IDENTITY_ID = aoi.ID "+
 	 		"inner join ACL_CLASS acc on aoi.CLASS_ID = acc.ID " +
 	 		"inner join ACL_GROUP_PERMISSION acp on acp.ACL_GROUP_ID = arse.ACL_GROUP_ID " +
 	 		"where acp.CLASS_ID = acc.ID " +
@@ -81,10 +84,10 @@ class DerivedPermissionsManager {
 	
 	private static final String RETAIN_USERS_MANAGING_ANYTHING =  
 			"select arse.PARTY_ID from ACL_RESPONSIBILITY_SCOPE_ENTRY arse " +
-	 		"inner join ACL_OBJECT_IDENTITY aoi on arse.OBJECT_IDENTITY_ID = aoi.IDENTITY "+
+	 		"inner join ACL_OBJECT_IDENTITY aoi on arse.OBJECT_IDENTITY_ID = aoi.ID "+
 	 		"inner join ACL_CLASS acc on aoi.CLASS_ID = acc.ID " +
 	 		"inner join ACL_GROUP_PERMISSION acp on acp.ACL_GROUP_ID = arse.ACL_GROUP_ID " +
-	 		"where acp.CLASS_ID = acc.ID and acp.PERMISSION_MASK = 32 " +
+	 		"where acp.CLASS_ID = acc.ID and acp.PERMISSION_MASK = " + PERM_MANAGEMENT + " " +
 	 		"and acc.CLASSNAME in ('org.squashtest.tm.domain.project.Project', 'org.squashtest.tm.domain.project.ProjectTemplate') " +
 	 		"and arse.PARTY_ID in (:ids)" ;
 
@@ -93,10 +96,10 @@ class DerivedPermissionsManager {
 			"select cu.PARTY_ID from CORE_USER cu " +
 			"inner join CORE_TEAM_MEMBER ctm on ctm.USER_ID = cu.PARTY_ID " +
 			"inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse on arse.PARTY_ID = ctm.TEAM_ID "+
-			"inner join ACL_OBJECT_IDENTITY aoi on arse.OBJECT_IDENTITY_ID = aoi.IDENTITY "+
+			"inner join ACL_OBJECT_IDENTITY aoi on arse.OBJECT_IDENTITY_ID = aoi.ID "+
 	 		"inner join ACL_CLASS acc on aoi.CLASS_ID = acc.ID " +
 	 		"inner join ACL_GROUP_PERMISSION acp on acp.ACL_GROUP_ID = arse.ACL_GROUP_ID " +
-	 		"where acp.CLASS_ID = acc.ID and acp.PERMISSION_MASK = 32 " +
+	 		"where acp.CLASS_ID = acc.ID and acp.PERMISSION_MASK = " + PERM_MANAGEMENT + " " +
 	 		"and acc.CLASSNAME in ('org.squashtest.tm.domain.project.Project', 'org.squashtest.tm.domain.project.ProjectTemplate') " +
 	 		"and cu.PARTY_ID in (:ids)" ;
 	
@@ -113,12 +116,10 @@ class DerivedPermissionsManager {
 	
 	
 	void updateDerivedPermissions(ObjectIdentity identity){
-		//updateDerivedAcl(identity);
 		updateDerivedAuths(identity);
 	}
 	
 	void updateDerivedPermissions(long partyId){
-		//updateDerivedAcl(partyId);
 		updateDerivedAuths(partyId);
 	}
 	
@@ -140,6 +141,8 @@ class DerivedPermissionsManager {
 	
 	private void updateDerivedAuths(ObjectIdentity identity){
 		
+		flush();
+		
 		if (! isSortOfProject(identity)){
 			return;
 		}
@@ -160,6 +163,8 @@ class DerivedPermissionsManager {
 	}
 	
 	private void updateDerivedAuths(long partyId){
+		
+		flush();
 
 		if (doesExist(partyId)){
 			Collection<Long> memberIds = findMembers(partyId);
@@ -178,6 +183,8 @@ class DerivedPermissionsManager {
 	// will update all users, no exceptions
 	private void updateDerivedAuths(){
 		
+		flush();
+		
 		Collection<Long> allUsers = findAllUsers();
 		
 		updateAuthsForThoseUsers(allUsers);
@@ -193,21 +200,6 @@ class DerivedPermissionsManager {
 		grantProjectManagerAuthorities(managerIds);	
 	}
 	
-	
-	/*
-	private void updateDerivedAcl(ObjectIdentity identity){
-		//nothing yet
-	}
-	
-	private void updateDerivedAcl(long partyId){
-		// nothing yet
-	}
-	
-
-	// will update all users, no exceptions
-	private void updateDerivedAcl(){
-		//TODO nothing yet
-	}*/
 
 	// ******************************** helpers ***********************************
 	
@@ -325,6 +317,10 @@ class DerivedPermissionsManager {
 		
 		
 		
+	}
+	
+	private void flush(){
+		sessionFactory.getCurrentSession().flush();
 	}
 	
 }

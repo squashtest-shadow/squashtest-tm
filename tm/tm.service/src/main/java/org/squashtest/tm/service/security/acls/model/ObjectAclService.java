@@ -29,7 +29,23 @@ import org.squashtest.tm.security.acls.PermissionGroup;
 
 public interface ObjectAclService {
 	
-	List<PermissionGroup> findAllPermissionGroupsByNamespace(String namespace);
+
+
+	void addNewResponsibility(long partyId, ObjectIdentity entityRef, String qualifiedName);
+	
+	/**
+	 * Removes ALL RESPONSIBILITIES from the given object.
+	 * 
+	 * @param entityRef
+	 */
+	void removeAllResponsibilities(ObjectIdentity entityRef);
+	
+	/**
+	 * Remove all responsibilities for the Party of the given Id
+	 * @param partyId
+	 */
+	void removeAllResponsibilities(long partyId);
+	
 
 	/**
 	 * Returns all permission groups for a namespace. A namespace is the start of a group's qualified name.
@@ -39,12 +55,8 @@ public interface ObjectAclService {
 	 */
 	void removeAllResponsibilities(long partyId, ObjectIdentity entityRef);
 	
-	/**
-	 * Removes ALL RESPONSIBILITIES from the given object.
-	 * 
-	 * @param entityRef
-	 */
-	void removeAllResponsibilities(ObjectIdentity entityRef);
+
+	List<PermissionGroup> findAllPermissionGroupsByNamespace(String namespace);
 
 	List<Object[]> retrieveClassAclGroupFromPartyId(long partyId, String qualifiedClassName);
 
@@ -62,7 +74,6 @@ public interface ObjectAclService {
 
 	List<Long> findObjectWithoutPermissionByPartyId(long partyId, List<String> qualifiedClasses);
 	
-	void addNewResponsibility(long partyId, ObjectIdentity entityRef, String qualifiedName);
 
 	List<String> findUsersWithWritePermission(List<ObjectIdentity> entityRefs);
 	/**
@@ -88,11 +99,8 @@ public interface ObjectAclService {
 	
 	List<String> findUsersWithExecutePermission(List<ObjectIdentity> entityRefs);
 	
-	/**
-	 * Remove all responsibilities for the Party of the given Id
-	 * @param partyId
-	 */
-	void removeAllResponsibilities(long partyId);
+	
+	void updateDerivedPermissions(long partyId);
 	
 	/**
 	 * basically ensures that recent modification affecting the ACL will be taken into account immediately.

@@ -103,6 +103,9 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 		List<User> users = userDao.findUsersByLoginList(logins);
 		Team team = teamDao.findById(teamId);
 		team.addMembers(users);
+		for (User user : users){
+			aclService.updateDerivedPermissions(user.getId());
+		}
 	}
 	
 	@Override
@@ -116,6 +119,7 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 		User user = userDao.findById(memberId);
 		Team team = teamDao.findById(teamId);
 		team.removeMember(user);
+		aclService.updateDerivedPermissions(memberId);
 	}
 	
 	@Override
@@ -123,6 +127,9 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 		List<User> users = userDao.findAllByIds(memberIds);
 		Team team = teamDao.findById(teamId);
 		team.removeMember(users);
+		for (Long id  : memberIds){
+			aclService.updateDerivedPermissions(id);
+		}		
 	}
 
 	@Override
@@ -141,5 +148,7 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 			teamIds.add(team.getId());
 		}
 		user.removeTeams(teamIds);
+		
+		aclService.updateDerivedPermissions(memberId);
 	}
 }
