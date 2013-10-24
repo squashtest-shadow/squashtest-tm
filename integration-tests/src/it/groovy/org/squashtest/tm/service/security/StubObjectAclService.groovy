@@ -162,4 +162,10 @@ class StubObjectAclService implements ObjectAclService {
 	public void removeAllResponsibilities(long partyId) {
 		
 	}
+	
+	@Override
+	public void updateDerivedPermissions(long partyId) {
+		// TODO Auto-generated method stub
+		
+	}
 }
