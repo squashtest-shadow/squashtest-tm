@@ -175,19 +175,36 @@ define([ "jquery", "squash.translator", "jquery.squash.fragmenttabs", "squashtab
 
 	function initButtons(settings) {
 		
+		function displayNothingSelected(){
+			var warn = translator.get({
+				errorTitle : 'popup.title.Info',
+				errorMessage : 'message.EmptyTableSelection'
+			});
+			$.squash.openMessage(warn.errorTitle, warn.errorMessage);							
+		}
 		
 		$('#add-user-button').button();
 		
 		$("#deactivate-user-button").button().on('click', function(){
 			var table =  $("#users-list-table").squashTable();
 			var ids = table.getSelectedIds();
-			table.deactivateUsers(ids);
+			if (ids.length>0){
+				table.deactivateUsers(ids);
+			}
+			else{
+				displayNothingSelected();
+			}
 		});
 		
 		$("#activate-user-button").button().on('click', function(){			
 			var table =  $("#users-list-table").squashTable();
 			var ids = table.getSelectedIds();
-			table.activateUsers(ids);		
+			if (ids.length>0){
+				table.activateUsers(ids);
+			}	
+			else{
+				displayNothingSelected();
+			}
 		});
 		
 		$("#delete-user-button").button().on('click', function(){
@@ -198,11 +215,7 @@ define([ "jquery", "squash.translator", "jquery.squash.fragmenttabs", "squashtab
 				popup.confirmDialog('open');
 			}
 			else{
-				var warn = translator.get({
-					errorTitle : 'popup.title.Info',
-					errorMessage : 'message.EmptyTableSelection'
-				});
-				$.squash.openMessage(warn.errorTitle, warn.errorMessage);
+				displayNothingSelected();
 			}			
 		});
 		

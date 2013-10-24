@@ -66,7 +66,8 @@
 				<li><a href="#team-table-pane"><f:message key="label.teams"/></a></li>
 			</ul>
 			<div id="users-table-pane" class="table-tab">
-				<div class="toolbar">
+				<!-- z-index fix needed for button pane because it would be partially shadowed by the table filter input otherwise -->
+				<div class="toolbar" style="z-index:1;">
 					<a id="add-user-button" href="#" class="add-user-button"><f:message key="user.add.label" /></a>
 					<a id="activate-user-button" href="#" ><f:message key="label.activate-users"/></a>
 					<a id="deactivate-user-button" href="#" ><f:message key="label.deactivate-users"/></a>
