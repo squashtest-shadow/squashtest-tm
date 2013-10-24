@@ -113,19 +113,21 @@ class DerivedPermissionsManager {
 	
 	
 	void updateDerivedPermissions(ObjectIdentity identity){
-		updateDerivedAcl(identity);
+		//updateDerivedAcl(identity);
 		updateDerivedAuths(identity);
 	}
 	
 	void updateDerivedPermissions(long partyId){
-		updateDerivedAcl(partyId);
+		//updateDerivedAcl(partyId);
 		updateDerivedAuths(partyId);
 	}
 	
 
 	void updateDerivedPermissions(long partyId, ObjectIdentity identity){
-		updateDerivedAcl(partyId, identity);
-		updateDerivedAuths(partyId, identity);
+		
+		// as for now we don't have a use for the identity argument yet. That might change later though.
+		//updateDerivedAcl(partyId);
+		updateDerivedAuths(partyId);
 	}
 	
 	
@@ -172,15 +174,7 @@ class DerivedPermissionsManager {
 		}
 		
 	}
-	
-	private void updateDerivedAuths(long partyId, ObjectIdentity identity){
-		
-		// we don't really care of the target object actually, because ultimately permissions are 
-		// bound to users. Hence we drop the extra argument.
-		updateDerivedAcl(partyId);
-		
-	}
-	
+
 	// will update all users, no exceptions
 	private void updateDerivedAuths(){
 		
@@ -200,7 +194,7 @@ class DerivedPermissionsManager {
 	}
 	
 	
-	
+	/*
 	private void updateDerivedAcl(ObjectIdentity identity){
 		//nothing yet
 	}
@@ -209,12 +203,9 @@ class DerivedPermissionsManager {
 		// nothing yet
 	}
 	
-	private void updateDerivedAcl(long partyId, ObjectIdentity identity){
-		// nothing yet
-	}
-	
+
 	// will update all users, no exceptions
-	/*private void updateDerivedAcl(){
+	private void updateDerivedAcl(){
 		//TODO nothing yet
 	}*/
 
