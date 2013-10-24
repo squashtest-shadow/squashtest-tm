@@ -113,7 +113,7 @@ class DerivedPermissionsManagerIt extends DbunitServiceSpecification {
 	}
 	
 	
-	@DataSet("DerivedPermissionsManagerIt.setup.xml")
+	@DataSet("DerivedPermissionsManagerIT.setup.xml")
 	def "should find the members of the team"(){
 		
 		given :
@@ -129,7 +129,7 @@ class DerivedPermissionsManagerIt extends DbunitServiceSpecification {
 		
 	}
 	
-	@DataSet("DerivedPermissionsManagerIt.setup.xml")
+	@DataSet("DerivedPermissionsManagerIT.setup.xml")
 	def "should find out that the said team is actually a user and returns it"(){
 		
 		given : 
@@ -144,7 +144,7 @@ class DerivedPermissionsManagerIt extends DbunitServiceSpecification {
 		
 	}
 	
-	@DataSet("DerivedPermissionsManagerIt.setup.xml")
+	@DataSet("DerivedPermissionsManagerIT.setup.xml")
 	def "should find all the users that participate to a project, either directly or via a team"(){
 		
 		when :
@@ -155,7 +155,7 @@ class DerivedPermissionsManagerIt extends DbunitServiceSpecification {
 	}
 	
 	
-	@DataSet("DerivedPermissionsManagerIt.setup.xml")
+	@DataSet("DerivedPermissionsManagerIT.setup.xml")
 	def "should remove project manager authorities from the given users"(){
 		
 		when :
@@ -170,7 +170,7 @@ class DerivedPermissionsManagerIt extends DbunitServiceSpecification {
 	}
 	
 	
-	@DataSet("DerivedPermissionsManagerIt.setup.xml")
+	@DataSet("DerivedPermissionsManagerIT.setup.xml")
 	def "should grant project manager authority to user"(){
 		
 		when :
@@ -183,7 +183,7 @@ class DerivedPermissionsManagerIt extends DbunitServiceSpecification {
 			authorizedUsers.contains 34l
 	}
 	
-	@DataSet("DerivedPermissionsManagerIt.setup.xml")
+	@DataSet("DerivedPermissionsManagerIT.setup.xml")
 	def "should filter out users that don't manage anything"(){
 		
 		given :
@@ -196,7 +196,7 @@ class DerivedPermissionsManagerIt extends DbunitServiceSpecification {
 			res as Set == [35l, 36l, 37l] as Set
 	}
 	
-	@DataSet("DerivedPermissionsManagerIt.setup.xml")
+	@DataSet("DerivedPermissionsManagerIT.setup.xml")
 	def "should update the authorities of a new project manager on the project"(){
 		
 		given :
@@ -215,7 +215,7 @@ class DerivedPermissionsManagerIt extends DbunitServiceSpecification {
 		
 	}
 	
-	@DataSet("DerivedPermissionsManagerIt.setup.xml")
+	@DataSet("DerivedPermissionsManagerIT.setup.xml")
 	def "should update the authorities of a new team member"(){
 		
 		given :
@@ -233,7 +233,7 @@ class DerivedPermissionsManagerIt extends DbunitServiceSpecification {
 		
 	}
 	
-	@DataSet("DerivedPermissionsManagerIt.setup.xml")
+	@DataSet("DerivedPermissionsManagerIT.setup.xml")
 	def "should remove the authorities of a demoted project manager"(){
 		
 		given :
@@ -252,7 +252,7 @@ class DerivedPermissionsManagerIt extends DbunitServiceSpecification {
 		
 	}
 	
-	@DataSet("DerivedPermissionsManagerIt.setup.xml")
+	@DataSet("DerivedPermissionsManagerIT.setup.xml")
 	def "should remove the authorities of a member removed of a team of project leaders and who doesn't manage anything else"(){
 		
 		given :
@@ -271,7 +271,7 @@ class DerivedPermissionsManagerIt extends DbunitServiceSpecification {
 	}
 	
 	
-	@DataSet("DerivedPermissionsManagerIt.setup.xml")
+	@DataSet("DerivedPermissionsManagerIT.setup.xml")
 	def "should maintain the authorities of a removed project leader because he still belongs to the team of project leaders"(){
 		
 		given :
@@ -289,7 +289,7 @@ class DerivedPermissionsManagerIt extends DbunitServiceSpecification {
 		
 	}
 	
-	@DataSet("DerivedPermissionsManagerIt.setup.xml")
+	@DataSet("DerivedPermissionsManagerIT.setup.xml")
 	def "should maintain the authorities of a guy removed from the team of project leader because he still has direct manager clearances"(){
 		
 		given :
@@ -307,7 +307,7 @@ class DerivedPermissionsManagerIt extends DbunitServiceSpecification {
 		
 	}
 	
-	@DataSet("DerivedPermissionsManagerIt.setup.xml")
+	@DataSet("DerivedPermissionsManagerIT.setup.xml")
 	def "once the team of project leaders is removed, one user is demoted but not the other one"(){
 		
 		given :
@@ -325,7 +325,7 @@ class DerivedPermissionsManagerIt extends DbunitServiceSpecification {
 		
 	}
 	
-	@DataSet("DerivedPermissionsManagerIt.setup.xml")
+	@DataSet("DerivedPermissionsManagerIT.setup.xml")
 	def "once the team of project leaders is demoted, one user is demoted but not the other one"(){
 		
 		given :
