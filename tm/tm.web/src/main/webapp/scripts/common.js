@@ -192,7 +192,7 @@ requirejs.config({
 				},
 				"jquery.squash.squashbutton" : {
 					deps : [ "jquery", "jqueryui" ],
-					exports : "jquerySquashSquashButton"
+					exports : "$.squash"
 				},
 				"jquery.cookie" : {
 					deps : [ "jquery" ],
