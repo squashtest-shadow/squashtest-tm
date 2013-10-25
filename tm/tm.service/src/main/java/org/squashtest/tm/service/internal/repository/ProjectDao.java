@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PostFilter;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
 import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -41,7 +42,6 @@ public interface ProjectDao extends CustomProjectDao {
 	List<Project> findAllOrderedByName();
 
 	long countProjects();
-
 
 	List<ProjectFilter> findProjectFiltersContainingProject(@QueryParam("projectId") long id);
 	

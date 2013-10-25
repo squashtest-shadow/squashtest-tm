@@ -20,11 +20,14 @@
  */
 package org.squashtest.tm.service.internal.project;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
@@ -38,6 +41,7 @@ import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.Pagings;
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.library.PluginReferencer;
@@ -45,7 +49,6 @@ import org.squashtest.tm.domain.project.AdministrableProject;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
-import org.squashtest.tm.domain.project.ProjectVisitor;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
@@ -66,8 +69,6 @@ import org.squashtest.tm.service.project.CustomGenericProjectManager;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.security.ObjectIdentityService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
-import org.squashtest.tm.service.security.PermissionsUtils;
-import org.squashtest.tm.service.security.SecurityCheckableObject;
 
 /**
  * @author Gregory Fouquet
@@ -115,46 +116,60 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	/**
 	 * @see org.squashtest.tm.service.project.CustomGenericProjectManager#findSortedProjects(org.squashtest.tm.core.foundation.collection.PagingAndSorting)
 	 */
+	/*
+	 * Implementation note :
+	 * 
+	 * Here for once the paging will not be handled by the database, but programmatically. The reason is that we want to filter the projects according to the 
+	 * caller's permissions, something that isn't doable using hql alone (the acl system isn't part of the domain and thus wasn't modeled).
+	 * 
+	 * So, we just load all the projects and apply paging on the resultset
+	 * 
+	 */
 	@Override
 	@Transactional(readOnly = true)
 	@PreAuthorize(IS_ADMIN_OR_MANAGER)
 	public PagedCollectionHolder<List<GenericProject>> findSortedProjects(PagingAndSorting pagingAndSorting, Filtering filter) {
+		
+		List<? extends GenericProject> resultset;
+		PagingAndSorting unpaged = Pagings.disablePaging(pagingAndSorting);
+		
 		if (permissionEvaluationService.hasRole("ROLE_ADMIN")){
-			return findAllSortedProjects(pagingAndSorting, filter);
+			resultset = findAllSortedProjects(unpaged, filter);
 		}
 		else{
-			return findSortedActualProjects(pagingAndSorting, filter);
+			resultset = findSortedActualProjects(unpaged, filter);
 		}
+		
+		// filter on permissions
+		List<? extends GenericProject> securedResultset = new LinkedList<GenericProject>(resultset);
+		CollectionUtils.filter(securedResultset, new IsManagerOnObject());
+		
+		// manual paging
+		int listsize = securedResultset.size();
+		int firstIdx = Math.min(listsize, pagingAndSorting.getFirstItemIndex());
+		int lastIdx = Math.min(listsize, firstIdx + pagingAndSorting.getPageSize());
+		securedResultset = securedResultset.subList(firstIdx, lastIdx);
+
+		return new PagingBackedPagedCollectionHolder<List<GenericProject>>(pagingAndSorting, listsize , (List<GenericProject>) securedResultset);
 	}
 	
 	
-	private PagedCollectionHolder<List<GenericProject>> findAllSortedProjects(PagingAndSorting pagingAndSorting, Filtering filter) {
-		List<GenericProject> projects;
-		
+	private List<GenericProject> findAllSortedProjects(PagingAndSorting pagingAndSorting, Filtering filter) {
 		if (filter.isDefined()){
-			projects = genericProjectDao.findProjectsFiltered(pagingAndSorting, "%"+filter.getFilter()+"%");
+			return genericProjectDao.findProjectsFiltered(pagingAndSorting, "%"+filter.getFilter()+"%");
 		}
 		else{
-			projects = genericProjectDao.findAll(pagingAndSorting);
+			return genericProjectDao.findAll(pagingAndSorting);
 		}
-		
-		long count = genericProjectDao.countGenericProjects();
-		return new PagingBackedPagedCollectionHolder<List<GenericProject>>(pagingAndSorting, count, projects);
 	}
 	
-	private PagedCollectionHolder<List<GenericProject>> findSortedActualProjects(PagingAndSorting pagingAndSorting, Filtering filter) {
-		List<? extends GenericProject> projects;
-		
+	private List<Project> findSortedActualProjects(PagingAndSorting pagingAndSorting, Filtering filter) {
 		if (filter.isDefined()){
-			projects =projectDao.findProjectsFiltered(pagingAndSorting, "%"+filter.getFilter()+"%");
+			return projectDao.findProjectsFiltered(pagingAndSorting, "%"+filter.getFilter()+"%");
 		}
 		else{
-			projects = projectDao.findAll(pagingAndSorting);
+			return projectDao.findAll(pagingAndSorting);
 		}
-		
-		long count = projectDao.countProjects();
-		List<GenericProject> genProjects = (List<GenericProject>)projects;
-		return new PagingBackedPagedCollectionHolder<List<GenericProject>>(pagingAndSorting, count, genProjects);
 	}
 
 	// ************************* finding projects wrt user role ****************************	
@@ -214,25 +229,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		return genericToAdministrableConvertor.get().convertToAdministrableProject(genericProject);
 	}
 
-	private void checkManageProjectOrAdmin(GenericProject genericProject) {
-		genericProject.accept(new ProjectVisitor() {
 
-			@Override
-			public void visit(ProjectTemplate projectTemplate) {
-				PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(
-						projectTemplate, "MANAGEMENT"));
-
-			}
-
-			@Override
-			public void visit(Project project) {
-				PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(project,
-						"MANAGEMENT"));
-
-			}
-		});
-
-	}
 
 	@Override
 	public void addNewPermissionToProject(long userId, long projectId, String permission) {
@@ -381,6 +378,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	}
 	
+	// **************************** wizards section **********************************
+	
 	
 	@Override
 	@PreAuthorize(IS_ADMIN_OR_MANAGER)
@@ -409,6 +408,18 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 			case REQUIREMENT_WORKSPACE : 	return project.getRequirementLibrary();
 			case CAMPAIGN_WORKSPACE : 		return project.getCampaignLibrary();
 			default : throw new IllegalArgumentException("WorkspaceType "+workspace+" is unknown and is not covered");
+		}
+	}
+	
+	
+	private void checkManageProjectOrAdmin(GenericProject genericProject) {
+		permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "MANAGEMENT", genericProject);
+	}
+	
+	private final class IsManagerOnObject implements Predicate{
+		@Override
+		public boolean evaluate(Object object) {
+			return permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "MANAGEMENT", object);
 		}
 	}
 	

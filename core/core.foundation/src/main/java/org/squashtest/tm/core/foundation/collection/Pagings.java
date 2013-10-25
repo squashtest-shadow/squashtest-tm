@@ -20,6 +20,10 @@
  */
 package org.squashtest.tm.core.foundation.collection;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+
 /**
  * {@link Paging} of Squash TM default size.
  * 
@@ -46,6 +50,9 @@ public final class Pagings {
 		return new PagingImpl(firstItemIndex, pageSize, shouldDisplayAll);
 	}
 	
+	public static final <P extends Paging> P disablePaging(P paging){
+		return (P)Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), paging.getClass().getInterfaces(), new DisabledPagingProxy<Paging>(paging));
+	}
 	
 	private static final class PagingImpl implements Paging{
 
@@ -91,6 +98,27 @@ public final class Pagings {
 		@Override
 		public boolean shouldDisplayAll() {
 			return displayAll;
+		}
+		
+	}
+	
+	private static class DisabledPagingProxy<P extends Paging> implements InvocationHandler{
+		
+		private P original;
+
+		DisabledPagingProxy(P original) {
+			this.original = original;
+		}
+		
+		@Override
+		public Object invoke(Object proxy, Method method, Object[] args)
+				throws Throwable {
+			if (method.getName().equals("shouldDisplayAll")){
+				return true;
+			}
+			else{
+				return method.invoke(original, args);
+			}
 		}
 		
 	}
