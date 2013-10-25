@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2013 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+ <include file="tm.data-1.7.0-core-user-project-manager.xml" relativeToChangelogFile="true" />
+  <include file="tm.data-1.7.1-remove-deleted-on.xml" relativeToChangelogFile="true" />
+  
+	<!-- ========================================INCLUDE CHANGELOG================================================ -->
+	<include file="../../../main/liquibase/tm/tm.changelog-1.8.0.xml" relativeToChangelogFile="true" />
+	<!-- ========================================================================================================= -->
+	
+	<changeSet id="tm-1.8.0.issue-2688-test-01" author="mpagnon">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+			select count(1) from ACL_GROUP_PERMISSION 
+			where ACL_GROUP_ID = (select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestRunner')
+				and PERMISSION_MASK = 4096
+				and CLASS_ID = (select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.campaign.CampaignLibrary')
+			</sqlCheck>
+	
+			<sqlCheck expectedResult="1">
+			select count(1) from ACL_GROUP_PERMISSION 
+			where ACL_GROUP_ID = (select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestEditor')
+				and PERMISSION_MASK = 4096
+				and CLASS_ID = (select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.campaign.CampaignLibrary')
+			</sqlCheck>
+			<sqlCheck expectedResult="1">
+			select count(1) from ACL_GROUP_PERMISSION 
+			where ACL_GROUP_ID = (select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.ProjectViewer')
+				and PERMISSION_MASK = 4096
+				and CLASS_ID = (select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.campaign.CampaignLibrary')
+			</sqlCheck>
+				<sqlCheck expectedResult="1">
+			select count(1) from ACL_GROUP_PERMISSION 
+			where ACL_GROUP_ID = (select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.ProjectManager')
+				and PERMISSION_MASK = 4096
+				and CLASS_ID = (select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.campaign.CampaignLibrary')
+			</sqlCheck>
+				<sqlCheck expectedResult="1">
+			select count(1) from ACL_GROUP_PERMISSION 
+			where ACL_GROUP_ID = (select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestDesigner')
+				and PERMISSION_MASK = 4096
+				and CLASS_ID = (select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.campaign.CampaignLibrary')
+			</sqlCheck>
+				<sqlCheck expectedResult="1">
+			select count(1) from ACL_GROUP_PERMISSION 
+			where ACL_GROUP_ID = (select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.AdvanceTester')
+				and PERMISSION_MASK = 4096
+				and CLASS_ID = (select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.campaign.CampaignLibrary')
+			</sqlCheck>
+				<sqlCheck expectedResult="1">
+			select count(1) from ACL_GROUP_PERMISSION 
+			where ACL_GROUP_ID = (select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.Validator')
+				and PERMISSION_MASK = 4096
+				and CLASS_ID = (select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.campaign.CampaignLibrary')
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+	
+	
+	<!--  check that the core_group for Users is correctly renamed -->
+	<changeSet id="tm-data-1.7.0-feat-2699-test-01" author="bsiri">
+		<preConditions>
+			<sqlCheck expectedResult="1">
+				select count(*) from CORE_GROUP
+				where ID = 2 and QUALIFIED_NAME = 'squashtest.authz.group.tm.User'		
+			</sqlCheck>
+			
+			<sqlCheck expectedResult="0">
+				select count(*) from CORE_GROUP
+				where QUALIFIED_NAME = 'squashtest.tm.group.User'		
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+	
+	<!--  check that there are no more references to the core_group ProjectManager and that previous instances are now demoted to Users -->
+	<changeSet id="tm-data-1.7.0-feat-2699-test-02" author="bsiri">
+		<preConditions>		
+			<sqlCheck expectedResult="0">
+				select count(*) from CORE_GROUP
+				where QUALIFIED_NAME = 'squashtest.authz.group.tm.ProjectManager'			
+			</sqlCheck>
+			<sqlCheck expectedResult="0">
+				select count(*) from CORE_GROUP_MEMBER where GROUP_ID = 3	
+			</sqlCheck>
+			<sqlCheck expectedResult="2">
+				select cgm.GROUP_ID from CORE_GROUP_MEMBER cgm 
+				inner join CORE_USER cu on cgm.PARTY_ID = cu.PARTY_ID
+				where cu.LAST_NAME = 'Bobovitch' 
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+	
+	
+	<!--  checks that users being project leader directly or via a team on at least one concrete project have received the 
+	personal authority ROLE_TM_PROJECT_MANAGER -->
+	<changeSet id="tm-data-1.7.0-feat-2699-test-03" author="bsiri">
+		<preConditions>
+			<sqlCheck expectedResult="3">
+				select count(cpa.PARTY_ID) from CORE_PARTY_AUTHORITY cpa 
+				inner join CORE_USER cu on cu.PARTY_ID = cpa.PARTY_ID 				
+				where cpa.AUTHORITY = 'ROLE_TM_PROJECT_MANAGER'  
+				and cu.LOGIN in ('Myiku', 'Robertu', 'Garyu')
+			</sqlCheck>		
+			<sqlCheck expectedResult="3">
+				select count(cpa.PARTY_ID) from CORE_PARTY_AUTHORITY cpa 		
+				where cpa.AUTHORITY = 'ROLE_TM_PROJECT_MANAGER'  
+			</sqlCheck>					
+		</preConditions>	
+	</changeSet>
+</databaseChangeLog>

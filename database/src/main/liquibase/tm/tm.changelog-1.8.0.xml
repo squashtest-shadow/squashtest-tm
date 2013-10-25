@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2013 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+	
+	<changeSet id="tm-1.8.0.issue-1846-01" author="mpagnon">
+		<preConditions 
+		onFailMessage="Your database still have logicaly deleted entities. 
+		Please run the following script :
+		 https://ci.squashtest.org/mantis/file_download.php?file_id=1559&amp;type=bug on your database prior to this upgrade." onError="HALT" >
+			<and>
+				<sqlCheck expectedResult="0">
+				select count(1) from CAMPAIGN_LIBRARY_NODE
+				where DELETED_ON is not null;
+				</sqlCheck>
+				<sqlCheck expectedResult="0">
+				select count(1) from TEST_CASE_LIBRARY_NODE
+				where DELETED_ON is not null;
+				</sqlCheck>
+				<sqlCheck expectedResult="0">
+				select count(1) from REQUIREMENT_LIBRARY_NODE
+				where DELETED_ON is not null;
+				</sqlCheck>
+				<sqlCheck expectedResult="0">
+				select count(1) from ITERATION 
+				where DELETED_ON is not null;
+				</sqlCheck>
+			</and>
+		</preConditions>
+		<comment>precondition prior to remove the DELETED_ON columns</comment>
+	</changeSet>
+	
+	
+	
+	<!-- DO NOT FORGET TO UPDATE VERSION IN CORE_CONFIG ! -->
+	<!-- OK BOSS ! -->
+	<changeSet id="tm-1.8.0" author="mpagnon">
+		<comment>Update TM database version number</comment>
+		<update tableName="CORE_CONFIG">
+			<column name="VALUE" value="1.8.0" />
+			<where>STR_KEY = 'squashtest.tm.database.version'</where>
+		</update>
+	</changeSet>
+
+	<changeSet id="tm-1.8.0.feat-2688" author="mpagnon">
+	<comment>add permission READ_UNASSIGNED on Campaign library for all users but TestRunners</comment>
+	<sql>
+		insert into ACL_GROUP_PERMISSION (ACL_GROUP_ID, PERMISSION_MASK, CLASS_ID)
+		select ACL_GROUP.ID, 4096, ACL_CLASS.ID
+		from ACL_GROUP , ACL_CLASS
+		where ACL_GROUP.QUALIFIED_NAME != 'squashtest.acl.group.tm.TestRunner'
+		and ACL_CLASS.CLASSNAME = 'org.squashtest.tm.domain.campaign.CampaignLibrary';
+	</sql>
+	</changeSet>
+	
+	<changeSet id="tm-1.8.0.issue-1846-02" author="mpagnon">
+		<comment>Remove the DELETED_ON columns</comment>
+		<dropColumn tableName="CAMPAIGN_LIBRARY_NODE" columnName="DELETED_ON"/>
+		<dropColumn tableName="TEST_CASE_LIBRARY_NODE" columnName="DELETED_ON"/>
+		<dropColumn tableName="REQUIREMENT_LIBRARY_NODE" columnName="DELETED_ON"/>
+		<dropColumn tableName="ITERATION" columnName="DELETED_ON"/>
+	</changeSet>
+	
+	
+	
+	<changeSet id="core-1.8.0-feat-2699-01" author="bsiri">
+		<comment>the CORE_GROUP squashtest.tm.group.User is now renamed to the normalized squashtest.authz.group.tm.User</comment>
+		<update tableName="CORE_GROUP">
+			<column name="QUALIFIED_NAME" type="varchar(255)" value="squashtest.authz.group.tm.User"/>
+			<where>ID = 2</where>
+		</update>	
+	</changeSet>
+	
+	<changeSet id="core-1.8.0-feat-2699-02" author="bsiri">
+		<comment>the CORE_GROUP squashtest.authz.tm.group.ProjectManager is deleted and the users belonging to that group are now 
+		demoted to squashtest.authz.group.tm.User</comment>
+	
+		<update tableName="CORE_GROUP_MEMBER">
+			<column name="GROUP_ID" type="BIGINT" value="2"></column>
+			<where>GROUP_ID = 3</where>		
+		</update>
+		
+		<delete tableName="CORE_GROUP_AUTHORITY">
+			<where>GROUP_ID = 3</where>
+		</delete>
+		
+		<delete tableName="CORE_GROUP">
+			<where>ID = 3</where>
+		</delete>
+	</changeSet>
+	
+	<changeSet id="core-1.8.0-feat-2699-03" author="bsiri">
+		<comment>
+			The table CORE_PARY_AUTHORITY stores personal authorities. As for TM 1.8.0 the users and teams now have blanket permissions 
+			(aka authorities) for themselves, not only via core_group membership. However, a user will still belong to one of the CORE_GROUPs and 
+			the personal authorities will stack with the authorities of the group they belong to.
+		</comment>
+		
+		<createTable tableName="CORE_PARTY_AUTHORITY">
+			
+			<column name="PARTY_ID" type="BIGINT" remarks="The CORE_PARTY ">
+				<constraints nullable="false" references="CORE_PARTY(PARTY_ID)" foreignKeyName="FK_PARTY_AUTHORITY_PARTY" />
+			</column>
+
+			<column name="AUTHORITY" type="VARCHAR(50)" remarks="The authority">
+				<constraints nullable="false" />
+			</column>
+		
+		</createTable>
+	
+	</changeSet>
+	
+	
+	<changeSet id="core-1.8.0-feat-2699-04" author="bsiri">
+		<comment>we have now to set the role ROLE_TM_PROJECT_MANAGER to the corresponding users </comment>
+		
+		<sql> 
+			insert into CORE_PARTY_AUTHORITY(PARTY_ID, AUTHORITY)  
+			select distinct cu.PARTY_ID, 'ROLE_TM_PROJECT_MANAGER' from CORE_USER cu 
+			where cu.PARTY_ID in (
+				select cu1.PARTY_ID from CORE_USER cu1  
+				inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse1 on arse1.PARTY_ID = cu1.PARTY_ID 
+				where arse1.ACL_GROUP_ID = 5 
+			) 
+			or cu.PARTY_ID in (
+				select cu2.PARTY_ID from CORE_USER cu2 
+				inner join CORE_TEAM_MEMBER ctm on ctm.USER_ID = cu2.PARTY_ID 
+				inner join ACL_RESPONSIBILITY_SCOPE_ENTRY arse2 on arse2.PARTY_ID = ctm.TEAM_ID 
+				where arse2.ACL_GROUP_ID = 5
+			)
+		</sql>
+	
+	</changeSet>
+	
+
+</databaseChangeLog>
+ 
