@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.annotation;
+package org.squashtest.tm.core.web.internal.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -30,10 +30,10 @@ import org.springframework.stereotype.Component;
 
 /**
  * This interface is equivalent to @Component but it's meant to identify beans which should be instanciated by
- * applicationContext-*.xml, while @Component beans are instanciated by Spring mvc *-servlet.xml.
+ * applicationContext-gov*.xml, while @Component beans are instanciated by Spring mvc *-servlet.xml.
  * 
  * Be careful : you cannot inject any bean from *-servlet.xml (including @Component et al.) into an
- * @ApplicationComponent. *-servlet.xml is a child context of applicationContext-*.xml, so the latter has no knowledge
+ * @ApplicationComponent. *-servlet.xml is a child context of applicationContext-gov*.xml, so the latter has no knowledge
  * of the former's beans.
  * 
  * @author Gregory Fouquet
