@@ -29,27 +29,27 @@ import org.squashtest.tm.core.foundation.i18n.Labelled;
 import org.squashtest.tm.core.foundation.lang.Assert;
 
 /**
- * Implementation of {@link MenuItem} which provides internationalized properties using the context's message source.
+ * Implementation of {@link WorkspaceTreeMenuItem} which provides internationalized properties using the context's message source.
  * Has to be configured using Spring.
  * 
  * @author Gregory Fouquet
  * 
  */
-public class InternationalizedMenuItem extends Labelled implements MenuItem, InitializingBean {
-	private static final Logger LOGGER = LoggerFactory.getLogger(InternationalizedMenuItem.class);
+public class InternationalizedWorkspaceTreeMenuItem extends Labelled implements WorkspaceTreeMenuItem, InitializingBean {
+	private static final Logger LOGGER = LoggerFactory.getLogger(InternationalizedWorkspaceTreeMenuItem.class);
 
 	private String tooltipKey;
 	private String url;
 	private AccessRule accessRule;
 
-	public InternationalizedMenuItem() {
+	public InternationalizedWorkspaceTreeMenuItem() {
 		super();
 	}
 
 	/**
 	 * Tooltip is internationalized.
 	 * 
-	 * @see org.squashtest.tm.api.widget.MenuItem#getTooltip()
+	 * @see org.squashtest.tm.api.widget.WorkspaceTreeMenuItem#getTooltip()
 	 */
 	@Override
 	public String getTooltip() {
@@ -57,7 +57,7 @@ public class InternationalizedMenuItem extends Labelled implements MenuItem, Ini
 	}
 
 	/**
-	 * @see org.squashtest.tm.api.widget.MenuItem#getUrl()
+	 * @see org.squashtest.tm.api.widget.WorkspaceTreeMenuItem#getUrl()
 	 */
 	@Override
 	public String getUrl() {
@@ -100,7 +100,7 @@ public class InternationalizedMenuItem extends Labelled implements MenuItem, Ini
 	}
 
 	/**
-	 * @see org.squashtest.tm.api.widget.MenuItem#getAccessRule()
+	 * @see org.squashtest.tm.api.widget.WorkspaceTreeMenuItem#getAccessRule()
 	 */
 	@Override
 	public AccessRule getAccessRule() {
@@ -132,5 +132,6 @@ public class InternationalizedMenuItem extends Labelled implements MenuItem, Ini
 		// NOOP
 
 	}
+
 
 }

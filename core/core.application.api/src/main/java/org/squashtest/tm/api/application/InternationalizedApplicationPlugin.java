@@ -18,32 +18,26 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.api.wizard;
-
-import javax.annotation.PostConstruct;
+package org.squashtest.tm.api.application;
 
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.osgi.context.BundleContextAware;
-import org.squashtest.tm.api.plugin.EntityReference;
-import org.squashtest.tm.api.widget.WorkspaceTreeMenuItem;
-import org.squashtest.tm.api.workspace.WorkspaceType;
+import org.squashtest.tm.api.widget.NavigationButton;
 import org.squashtest.tm.core.foundation.i18n.ContextBasedInternationalized;
-import org.squashtest.tm.core.foundation.lang.Assert;
 
 /**
- * @author Gregory Fouquet
+ * @author mpagnon
  * 
  */
-public class InternationalizedWorkspaceWizard extends ContextBasedInternationalized implements WorkspaceWizard,
+public class InternationalizedApplicationPlugin extends ContextBasedInternationalized implements ApplicationPlugin,
 		BeanNameAware, BundleContextAware {
 
-	private WorkspaceType displayWorkspace;
-	private WorkspaceTreeMenuItem wizardMenu;
-	private String id;
+private String id;
 
 	private String filename;
 	private String version;
+	private NavigationButton navbarMenu;
 
 	public void setBundleContext(BundleContext bundleContext) {
 		version = bundleContext.getBundle().getVersion().toString();
@@ -55,28 +49,27 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 	 */
 	private String nameKey;
 
-	/**
-	 * @see org.squashtest.tm.api.wizard.WorkspaceWizard#getDisplayWorkspace()
-	 */
-	@Override
-	public WorkspaceType getDisplayWorkspace() {
-		return displayWorkspace;
-	}
 
 	/**
-	 * @see org.squashtest.tm.api.wizard.WorkspaceWizard#getWizardMenu()
-	 */
-	@Override
-	public WorkspaceTreeMenuItem getWizardMenu() {
-		return wizardMenu;
-	}
-
-	/**
-	 * @see org.squashtest.tm.api.wizard.WorkspaceWizard#getName()
+	 * @see org.squashtest.tm.api.application.ApplicationPlugin#getName()
 	 */
 	@Override
 	public String getName() {
 		return getMessage(nameKey);
+	}
+	/**
+	 * @param navBarMenu
+	 *            the navBarMenu to set
+	 */
+	public void setNavBarMenu(NavigationButton navbarMenu) {
+		this.navbarMenu = navbarMenu;
+	}
+	/**
+	 * @see org.squashtest.tm.api.wizard.ApplicationPlugin#getNavBarMenu()
+	 */
+	@Override
+	public NavigationButton getNavBarMenu() {
+		return navbarMenu;
 	}
 
 	/**
@@ -89,7 +82,7 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 	}
 
 	/**
-	 * @see org.squashtest.tm.api.wizard.WizardPlugin#getId()
+	 * @see org.squashtest.tm.api.application.ApplicationPlugin#getId()
 	 */
 	@Override
 	public String getId() {
@@ -114,36 +107,6 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 		this.nameKey = nameKey;
 	}
 
-	/**
-	 * @param wizardMenu
-	 *            the wizardMenu to set
-	 */
-	public void setWizardMenu(WorkspaceTreeMenuItem wizardMenu) {
-		this.wizardMenu = wizardMenu;
-	}
 
-	/**
-	 * @param displayWorkspace
-	 *            the displayWorkspace to set
-	 */
-	public void setDisplayWorkspace(WorkspaceType displayWorkspace) {
-		this.displayWorkspace = displayWorkspace;
-	}
 
-	/**
-	 * This default validation always passes.
-	 * 
-	 * @see org.squashtest.tm.api.wizard.WorkspaceWizard#validate(EntityReference)
-	 */
-	@Override
-	public void validate(EntityReference reference) {
-		// defaults : allways passes
-	}
-
-	@PostConstruct
-	public void checkBeanState() {
-		Assert.propertyNotBlank(nameKey, "nameKey property should not be blank");
-		Assert.propertyNotNull(wizardMenu, "wizardMenu property should not be null");
-		Assert.propertyNotNull(displayWorkspace, "displayWorkspace property should not be null");
-	}
 }

@@ -22,30 +22,25 @@ package org.squashtest.tm.api.widget;
 
 
 /**
- * Describes a menu item.
+ * Describes a navigation buttno
  * 
- * @author mpagnon
+ * @author Gregory Fouquet
  * 
  */
-public interface MenuItem {
+public interface NavigationButton extends MenuItem{
 	/**
-	 * Should return this menu item's label. Should never return <code>null</code>
+	 * Should return this navigation's button active image url.
 	 * 
 	 * @return
 	 */
-	String getLabel();
+	String getImageOnUrl();
+	
+	/**
+	 * Should return this navigation's button inactive image url.
+	 * @return
+	 */
+	String getImageOffUrl();
 
-	/**
-	 * May return this menu item's tooltip. Should not return <code>null</code>
-	 * 
-	 * @return
-	 */
-	String getTooltip();
 
-	/**
-	 * Should return the URL bound to this menu item.
-	 * 
-	 * @return
-	 */
-	String getUrl();
+
 }

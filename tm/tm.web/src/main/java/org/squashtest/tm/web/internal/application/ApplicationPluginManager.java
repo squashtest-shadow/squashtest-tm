@@ -18,34 +18,27 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.api.widget;
+package org.squashtest.tm.web.internal.application;
 
+import java.util.Collection;
+
+import org.squashtest.tm.api.application.ApplicationPlugin;
+import org.squashtest.tm.web.internal.controller.generic.NavigationButton;
 
 /**
- * Describes a menu item.
- * 
  * @author mpagnon
  * 
  */
-public interface MenuItem {
-	/**
-	 * Should return this menu item's label. Should never return <code>null</code>
-	 * 
-	 * @return
-	 */
-	String getLabel();
-
-	/**
-	 * May return this menu item's tooltip. Should not return <code>null</code>
-	 * 
-	 * @return
-	 */
-	String getTooltip();
-
-	/**
-	 * Should return the URL bound to this menu item.
-	 * 
-	 * @return
-	 */
-	String getUrl();
+public interface ApplicationPluginManager {
+	
+	
+	ApplicationPlugin findById(String wizardId);
+	
+	
+	Collection<ApplicationPlugin> findAll();
+	
+	NavigationButton[] getNavigationButtons();
+	
 }
+
+

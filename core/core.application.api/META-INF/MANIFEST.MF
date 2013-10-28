@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1382959460371
+Build-Jdk: 1.6.0_27
+Built-By: mpagnon
+Bundle-Description: Squash TM API required to provide applications as pl
+ ugins
+Bundle-ManifestVersion: 2
+Bundle-Name: org.squashtest.tm.core.application.api
+Bundle-SymbolicName: org.squashtest.tm.core.application.api
+Bundle-Vendor: Henix, henix.fr
+Bundle-Version: 1.8.0.M1-SNAPSHOT
+Created-By: Apache Maven Bundle Plugin
+Export-Package: org.squashtest.tm.api.application;uses:="org.squashtest.
+ tm.api.widget,org.squashtest.tm.api.plugin,org.springframework.osgi.con
+ text,org.osgi.framework,org.squashtest.tm.core.foundation.i18n,org.spri
+ ngframework.beans.factory";version="1.8.0.M1-SNAPSHOT"
+Import-Package: org.osgi.framework;version="[1.5,2)",org.springframework
+ .beans.factory;version="[3.1,4)",org.springframework.osgi.context;versi
+ on="[2.0,3)",org.squashtest.tm.api.plugin;version="[1.8,2)",org.squasht
+ est.tm.api.widget;version="[1.8,2)",org.squashtest.tm.core.foundation.i
+ 18n;version="[1.8,2)"
+Tool: Bnd-1.50.0

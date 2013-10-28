@@ -20,32 +20,20 @@
  */
 package org.squashtest.tm.api.widget;
 
+import org.squashtest.tm.api.security.acls.AccessRule;
 
 /**
- * Describes a menu item.
+ * Describes a workspace tree menu item.
  * 
- * @author mpagnon
+ * @author Gregory Fouquetn mpagnon
  * 
  */
-public interface MenuItem {
+public interface WorkspaceTreeMenuItem extends MenuItem {
+	
 	/**
-	 * Should return this menu item's label. Should never return <code>null</code>
+	 * Should return the access rule for this menu item.
 	 * 
 	 * @return
 	 */
-	String getLabel();
-
-	/**
-	 * May return this menu item's tooltip. Should not return <code>null</code>
-	 * 
-	 * @return
-	 */
-	String getTooltip();
-
-	/**
-	 * Should return the URL bound to this menu item.
-	 * 
-	 * @return
-	 */
-	String getUrl();
+	AccessRule getAccessRule();
 }

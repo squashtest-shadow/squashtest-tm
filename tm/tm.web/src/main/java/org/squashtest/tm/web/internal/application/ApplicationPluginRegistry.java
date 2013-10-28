@@ -18,34 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.api.widget;
+package org.squashtest.tm.web.internal.application;
 
+import java.util.Map;
+
+import org.squashtest.tm.api.application.ApplicationPlugin;
 
 /**
- * Describes a menu item.
+ * Interface of an object which should be notified when an application plugin is available or removed.
  * 
  * @author mpagnon
  * 
  */
-public interface MenuItem {
-	/**
-	 * Should return this menu item's label. Should never return <code>null</code>
-	 * 
-	 * @return
-	 */
-	String getLabel();
+public interface ApplicationPluginRegistry {
+	void registerApplicationPlugin(ApplicationPlugin plugin, Map<?, ?> properties);
 
-	/**
-	 * May return this menu item's tooltip. Should not return <code>null</code>
-	 * 
-	 * @return
-	 */
-	String getTooltip();
-
-	/**
-	 * Should return the URL bound to this menu item.
-	 * 
-	 * @return
-	 */
-	String getUrl();
+	void unregisterApplicationPlugin(ApplicationPlugin plugin, Map<?, ?> properties);
 }
