@@ -118,9 +118,7 @@ define([ "jquery", "backbone", "app/lnf/Forms", 'workspace.event-bus',
 		_initializeCkeditorTermination : function() {
 			
 			eventBus.onContextual('contextualcontent.clear', function(event) {
-				if (event.evt_name === "contextualcontent.clear") {
-					self.$textAreas.ckeditorGet().destroy();
-				}
+				self.$textAreas.ckeditorGet().destroy();
 			});
 		}
 	});

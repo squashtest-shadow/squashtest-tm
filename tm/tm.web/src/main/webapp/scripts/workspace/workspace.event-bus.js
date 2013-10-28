@@ -53,7 +53,7 @@ define([ 'jquery' ], function($) {
 	} 
 	else {
 
-		squashtm.workspace.eventMediator = $.extend($({}), {
+		squashtm.workspace.eventBus = $.extend($({}), {
 
 			// *********** for old school API : *************
 			
@@ -84,7 +84,7 @@ define([ 'jquery' ], function($) {
 			
 			_fire : function(origin, event){				
 				
-				for ( var i in this.listeners) {
+				for ( var i=0, len = this.oldschool_listeners.length; i<len;i++) {
 					var listener = this.oldschool_listeners[i];
 					if (listener !== origin) {
 						listener.update(event);
@@ -109,7 +109,7 @@ define([ 'jquery' ], function($) {
 					offParams.splice(dataParamIndex, 1);
 				}
 
-				this.newschool_contextualListeners.push(offParameters);	
+				this.newschool_contextualListeners.push(offParams);	
 				
 				// now register the event
 				this.on.apply(this, arguments);
@@ -120,7 +120,8 @@ define([ 'jquery' ], function($) {
 			/* 
 			 * jquery .on() signature : .on(events [, selector ] [, data ], handler(eventObject))
 			 * 
-			 * Finding if there is a 'data' parameter is tricky. This code is adapted from jQuery 1.8.3. 
+			 * Finding if there is a 'data' parameter is tricky because it can be in second or third position in the parameter list, 
+			 * depending on things like what are the other parameters and their types. The following code is adapted from jQuery 1.8.3. 
 			 */
 			_findDataIndex : function(types, selector, data, fn){
 				var index = -1;
@@ -158,16 +159,18 @@ define([ 'jquery' ], function($) {
 				// the permanent listeners only.
 				this._fire(null, { evt_name : 'contextualcontent.clear'} );
 				
-				this.oldschool_listeners = bus.oldschool_permentListeners.slice(0);
+				this.oldschool_listeners = this.oldschool_permanentListeners.slice(0);
 				
-				// notify then wipe the jquery style contextual listeners :
+				// notify then wipe the jquery style contextual listeners, then empty the list of contextual listeners :
 				this.trigger('contextualcontent.clear');
 				
-				var offparams = bus.newschool_contextualListeners;
+				var offparams = this.newschool_contextualListeners;
 				for (var i=0;i<offparams.length;i++){
 					var params = offparams[i]; 
-					bus.off(params);
+					this.off.apply(this, params);
 				}
+				
+				this.newschool_contextualListeners = [];
 			}
 			
 		});

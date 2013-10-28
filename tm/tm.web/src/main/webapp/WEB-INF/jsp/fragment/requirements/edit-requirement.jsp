@@ -505,12 +505,8 @@ that page won't be editable if
 					window.open("${currentVersionUrl}?format=printable", "_blank");
 				});
 				
-				contextualContent.addListener({
-					update : function(evt){
-						if (evt.evt_name === "tc-req-links-updated"){
-							$("#verifying-test-cases-table").squashTable().refresh();
-						}
-					}
+				eventBus.onContextual('tc-req-links-updated', function(evt){
+					$("#verifying-test-cases-table").squashTable().refresh();					
 				});
 				
 			});

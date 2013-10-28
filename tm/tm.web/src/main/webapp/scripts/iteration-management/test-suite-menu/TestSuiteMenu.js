@@ -22,10 +22,10 @@ define([ "jquery", "underscore", "jqueryui" ],function($, _) {
 
 	function TestSuiteMenuNewStatuses() {
 
-		var initiallyChecked = [];
-		var checkedIds = [];
-		var initiallyNotChecked = [];
-		var uncheckedIds = [];
+		this.initiallyChecked = [];
+		this.checkedIds = [];
+		this.initiallyNotChecked = [];
+		this.uncheckedIds = [];
 
 		this.getChecked = function() {
 			return this.checkedIds;

@@ -37,11 +37,12 @@
 					type : 'DELETE',
 					url : '${objectUrl}'+'/opened-entity',
 					async : false
-		});
+			});
+		}
 			 
 		require(["jquery","workspace.event-bus"], function($, eventBus){
 			window.onbeforeunload = releaseEntity;
-			eventBus.on('contextualcontent.clear', releaseEntity);
+			eventBus.onContextual('contextualcontent.clear', releaseEntity);
 		});
 	});
 </script>
