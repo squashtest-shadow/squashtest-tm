@@ -25,13 +25,13 @@
  * }
  * 
  */
-define(['jquery', 'workspace.contextual-content' ], function($, ctxtContent) {
+define(['jquery', 'workspace.event-bus' ], function($, eventBus) {
 
 	
 	return {
 		init : function(conf){
 			
-			ctxtContent.on('context.content-modified', function(evt, args){	
+			eventBus.onContextual('context.content-modified', function(evt, args){	
 				
 				$("#iteration-test-plans-table").squashTable().refresh();           
                 refreshIterationInfos();

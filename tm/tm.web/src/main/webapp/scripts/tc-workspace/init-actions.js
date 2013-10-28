@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", 'tree','./permissions-rules', 'workspace.contextual-content', 'squash.translator' , 
-        'workspace.tree-node-copier', 'workspace.tree-event-handler'], function($, zetree, rules, ctxcontent, translator, copier, treehandler){
+define(["jquery", 'tree','./permissions-rules', 'workspace.contextual-content', 'workspace.event-bus', 'squash.translator' , 
+        'workspace.tree-node-copier', 'workspace.tree-event-handler'], function($, zetree, rules, ctxcontent, eventBus, translator, copier, treehandler){
 	
 	
 	function showError(messageName){	
@@ -60,10 +60,7 @@ define(["jquery", 'tree','./permissions-rules', 'workspace.contextual-content', 
 	}
 	
 	function loadSearchFragment(url){
-		ctxcontent.loadWith(url)
-		.done(function(){
-
-		});
+		ctxcontent.loadWith(url);
 	}
 	
 	function loadFragment(tree){
@@ -77,10 +74,7 @@ define(["jquery", 'tree','./permissions-rules', 'workspace.contextual-content', 
 				break;
 			//exactly one element is selected : display it
 			case 1 : 
-				ctxcontent.loadWith(selected.getResourceUrl())
-				.done(function(){
-					ctxcontent.addListener(treehandler);
-				});
+				ctxcontent.loadWith(selected.getResourceUrl());
 				break;
 				
 			//mode than 1 element is selected : display the dashboard
@@ -99,10 +93,7 @@ define(["jquery", 'tree','./permissions-rules', 'workspace.contextual-content', 
 					nodes : nodeIds.join(',')
 				};
 				
-				ctxcontent.loadWith(squashtm.app.contextRoot+"/test-case-browser/dashboard", params)
-				.done(function(){
-					ctxcontent.addListener(treehandler);
-				});		
+				ctxcontent.loadWith(squashtm.app.contextRoot+"/test-case-browser/dashboard", params);
 				
 				break;
 		}
@@ -112,6 +103,8 @@ define(["jquery", 'tree','./permissions-rules', 'workspace.contextual-content', 
 		init : function(){
 			
 			var tree = zetree.get();
+			
+			eventBus.addPermanentListener(treehandler);
 			
 			tree.on('select_node.jstree deselect_node.jstree', function(){
 				loadFragment(tree);

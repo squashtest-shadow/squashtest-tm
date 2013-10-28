@@ -85,8 +85,8 @@
 		
 					
 		//init the renaming listener
-		require(["jquery", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", "workspace.contextual-content", "jqueryui", "squashtable"], 
-				function($, contentHandlers, Frag, bugtracker, contextualContent){
+		require(["jquery", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", "workspace.event-bus", "jqueryui", "squashtable"], 
+				function($, contentHandlers, Frag, bugtracker, eventBus){
 			
 			var identity = { obj_id : ${testCase.id}, obj_restype : "test-cases"  };
 			
@@ -97,7 +97,7 @@
 			nameHandler.nameHidden = "#test-case-raw-name";
 			nameHandler.referenceHidden = "#test-case-raw-reference";
 			
-			contextualContent.addListener(nameHandler);
+			eventBus.addContextualListener(nameHandler);
 			
 			//****** tabs configuration *******
 			
@@ -123,18 +123,14 @@
 			</c:if>
 			
 			
-			// ***** other events from the contextual content ********
-			contextualContent.addListener({
-				update : function(evt){
-					if (evt.evt_name === "tc-req-links-updated"){
-						$("#verified-requirements-table").squashTable().refresh();
-						try{
-							$("#test-steps-table").squashTable().refresh();
-						}catch(notloadedyet){
-							//no problems
-						}
-					}
-				}
+			// ***** other events from the contextual content ********			
+			eventBus.onContextual('tc-req-links-updated', function(){
+				$("#verified-requirements-table").squashTable().refresh();
+				try{
+					$("#test-steps-table").squashTable().refresh();
+				}catch(notloadedyet){
+					//no problems
+				}			
 			});
 			
 		});

@@ -19,11 +19,11 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(['jquery', 'tree', 'workspace.contextual-content', 
+define(['jquery', 'tree', 
         'squash.attributeparser',
         'lib/dateformat',
         'jquery.squash.formdialog'], 
-		function($, zetree, ctxcontent, attrparser){
+		function($, zetree, attrparser){
 	
 	$.widget("squash.exportDialog", $.squash.formDialog, {
 		

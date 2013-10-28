@@ -70,8 +70,8 @@
 	
 	require(["domReady", "require"], function(domReady, require){
 		domReady(function(){
-			require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "workspace.contextual-content"], 
-					function($, basic, contentHandlers, contextualContent){
+			require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "workspace.event-bus"], 
+					function($, basic, contentHandlers, eventBus){
 				
 				basic.init();
 				
@@ -80,7 +80,7 @@
 				nameHandler.identity = identity;
 				nameHandler.nameDisplay = "#folder-name";
 				
-				contextualContent.addListener(nameHandler);				
+				eventBus.addContextualListener(nameHandler);				
 				
 			});
 		});

@@ -64,8 +64,8 @@
  * 
  */
 
-define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "squash.translator" ], function($, TableCollapser,
-		cufValuesManager, translator) {
+define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "squash.translator", 'workspace.event-bus' ], function($, TableCollapser,
+		cufValuesManager, translator, eventBus) {
 
 	// ************************* configuration functions
 	// ************************************
@@ -105,7 +105,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 	function removeStepSuccess() {
 		refresh();
-		$("#contextual-content").trigger("testStepsTable.removedSteps");
+		eventBus.trigger("testStepsTable.removedSteps");
 	}
 
 	function stepsTableCreatedRowCallback(nRow, aData, iDisplayIndex, iDisplayIndexFull) {

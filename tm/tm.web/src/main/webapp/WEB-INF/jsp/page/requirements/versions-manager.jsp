@@ -110,7 +110,7 @@
 				
 			<script type="text/javascript">
 				$(function(){
-					require(['jquery', 'workspace.contextual-content', 'squashtable'], function($){
+					require(['jquery', 'workspace.contextual-content', 'squashtable'], function($, ctxcontent){
 						var table = $("#versions-table").squashTable({
 							// select the initially selected version 
 							fnInitComplete : function(){
@@ -128,7 +128,7 @@
 							if (ids.length>0){
 								var id = ids[0];
 								var urlPattern = "<c:url value='/requirement-versions/selectedVersionId/editor-fragment' />";						
-								squashtm.workspace.contextualContent.loadWith(urlPattern.replace("selectedVersionId", id));						
+								ctxcontent.loadWith(urlPattern.replace("selectedVersionId", id));						
 							}
 						}
 						

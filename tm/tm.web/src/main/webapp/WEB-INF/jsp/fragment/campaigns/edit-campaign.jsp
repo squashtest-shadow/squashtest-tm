@@ -489,9 +489,9 @@
 	
 	require(["domReady", "require"], function(domReady, require){
 		domReady(function(){
-			require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", 'workspace.contextual-content', 
+			require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", 'workspace.event-bus', 
 			         "jqueryui"], 
-					function($, basicwidg, contentHandlers, Frag, bugtracker, contextualContent){
+					function($, basicwidg, contentHandlers, Frag, bugtracker, eventBus){
 				
 				basicwidg.init();
 				
@@ -500,7 +500,7 @@
 				nameHandler.identity = identity;
 				nameHandler.nameDisplay = "#campaign-name";
 				
-				contextualContent.addListener(nameHandler);				
+				eventBus.addContextualListener(nameHandler);				
 		
 				
 				//****** tabs configuration ***********
@@ -523,7 +523,7 @@
 	
 	function renameCampaignSuccess(data){
 		var evt = new EventRename(identity, data.newName);
-		squashtm.workspace.contextualContent.fire(null, evt);		
+		squashtm.workspace.eventBus.fire(null, evt);		
 	};					
 	
 </script>

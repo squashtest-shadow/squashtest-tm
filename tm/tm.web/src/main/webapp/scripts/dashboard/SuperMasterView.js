@@ -35,13 +35,13 @@
  * 
  */
 define(
-		[ "jquery", 'squash.attributeparser', 'workspace.contextual-content',
+		[ "jquery", 'squash.attributeparser', 'workspace.event-bus',
 				"./basic-objects/model",
 				"./basic-objects/model-cache",
 				"./basic-objects/refresh-button",
 				"./basic-objects/timestamp-label",
 		        "backbone", "./TogglePanelView"],
-		function($, attrparser, ctxt, StatModel, cache, RefreshButton, Timestamp,Backbone, TogglePanelView) {
+		function($, attrparser, eventBus, StatModel, cache, RefreshButton, Timestamp,Backbone, TogglePanelView) {
 
 			var SuperMasterView = Backbone.View.extend({
 								
@@ -107,10 +107,10 @@ define(
 							self.views[i].remove();
 						}
 						// unbind this hook itself.
-						ctxt.off('contextualcontent.clear', removeOnClear);
+						eventBus.off('contextualcontent.clear', removeOnClear);
 					};
 
-					ctxt.on('contextualcontent.clear', removeOnClear);
+					eventBus.on('contextualcontent.clear', removeOnClear);
 
 				}
 			});

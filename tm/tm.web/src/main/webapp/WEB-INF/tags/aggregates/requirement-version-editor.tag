@@ -373,8 +373,8 @@
 
 		require(["domReady", "require"], function(domReady, require){
 			domReady(function(){
-				require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "workspace.contextual-content"], 
-						function($, basic, contentHandlers, contextualContent){
+				require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "workspace.event-bus"], 
+						function($, basic, contentHandlers, eventBus){
 					
 					basic.init();
 					
@@ -385,7 +385,7 @@
 					nameHandler.nameHidden = "#requirement-raw-name";
 					nameHandler.referenceHidden = "#requirement-raw-reference";
 					
-					contextualContent.addListener(nameHandler);
+					eventBus.addContextualListener(nameHandler);
 					$("#print-requirement-version-button").click(function(){
 						window.open("${requirementUrl}?format=printable", "_blank");
 					});
@@ -424,13 +424,13 @@
 	<c:if test="${ writable }">
 	function renameRequirementSuccess(data){
 		var evt = new EventRename(identity, $('#rename-requirement-input').val());
-		squashtm.workspace.contextualContent.fire(null, evt);
+		squashtm.workspace.eventBus.fire(null, evt);
 		
 	};	
 	
 	function updateReferenceInTitle(newRef){
 		var evt = new EventUpdateReference(identity, newRef);
-		squashtm.workspace.contextualContent.fire(null, evt);		
+		squashtm.workspace.eventBus.fire(null, evt);		
 	};
 	</c:if>
 	

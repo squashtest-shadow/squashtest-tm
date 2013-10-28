@@ -44,11 +44,11 @@
 	<c:when test="${includeIndirectlyVerified}">
 	<script type="text/javascript" th:inline="javascript">
 		require([ "common" ], function(common) {
-			require([ "jquery",  "domReady","verified-requirements/TestCaseVerifiedRequirementsPanel" ], function($, domReady, TestCaseVerifiedRequirementsPanel) {
+			require([ "jquery",  "domReady","verified-requirements/TestCaseVerifiedRequirementsPanel", "workspace.event-bus" ], function($, domReady, TestCaseVerifiedRequirementsPanel, eventBus) {
 				domReady(function() {
 					
 					var panel = new TestCaseVerifiedRequirementsPanel();
-					$("#contextual-content").on("testStepsTable.removedSteps", panel.table.refresh);
+					eventBus.onContextual("testStepsTable.removedSteps", panel.table.refresh);
 					
 				});
 			});

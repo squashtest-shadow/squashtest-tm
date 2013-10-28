@@ -35,7 +35,6 @@
  * 
  */
 define(["jquery", 'squash.attributeparser', 
-        'workspace.contextual-content',
         "dashboard/basic-objects/model", 
         "dashboard/basic-objects/model-cache",
         "dashboard/basic-objects/refresh-button", 
@@ -46,7 +45,7 @@ define(["jquery", 'squash.attributeparser',
         "./status-pie", 
         "./importance-pie", 
         "./size-pie"], 
-        function($, attrparser, ctxt, StatModel, cache, RefreshButton, Timestamp, SuperMasterView, Summary,
+        function($, attrparser, StatModel, cache, RefreshButton, Timestamp, SuperMasterView, Summary,
         BoundReqPie, StatusPie, ImportancePie, SizePie){
 	
 	

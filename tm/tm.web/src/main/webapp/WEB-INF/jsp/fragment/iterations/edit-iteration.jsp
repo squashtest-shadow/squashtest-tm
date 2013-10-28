@@ -376,9 +376,9 @@
 	require(["domReady", "require"], function(domReady, require){
 		domReady(function(){
 			require(["jquery", "squash.basicwidgets", "contextual-content-handlers", 
-			         "jquery.squash.fragmenttabs", "bugtracker", "workspace.contextual-content", 
+			         "jquery.squash.fragmenttabs", "bugtracker", "workspace.event-bus", 
 			         "iteration-management"], 
-					function($, basicwidg, contentHandlers, Frag, bugtracker, contextualContent, itermanagement, basic){
+					function($, basicwidg, contentHandlers, Frag, bugtracker, eventBus, itermanagement, basic){
 
 				basicwidg.init();
 				
@@ -389,7 +389,7 @@
 				nameHandler.identity = identity;
 				nameHandler.nameDisplay = "#iteration-name";
 				
-				contextualContent.addListener(nameHandler);
+				eventBus.addContextualListener(nameHandler);
 				
 				// todo : uniform the event handling.
 				itermanagement.initEvents();
@@ -429,7 +429,7 @@
 	/* renaming success handler */
 	function renameIterationSuccess(data) {
 		var evt = new EventRename(identity, data.newName);
-		squashtm.workspace.contextualContent.fire(null, evt);		
+		squashtm.workspace.eventBus.fire(null, evt);		
 		refreshIterationInfos();
 	}
 	

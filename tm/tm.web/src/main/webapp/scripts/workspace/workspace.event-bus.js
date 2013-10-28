@@ -71,19 +71,6 @@ define([ 'jquery' ], function($) {
 			addContextualListener : function(listener){
 				this.oldschool_listeners.push(listener);
 			},
-			
-			/*
-			removeListener : function(listener){
-				this._removeFrom(this.oldschool_listeners, listener);
-				this._removeFrom(this.oldschool_permanentListeners, listener);
-			},
-
-			_removeFrom(array, listener){
-				var idx = $.inArray(listener, array);				
-				if (idx !== -1){
-					array(idx,1);
-				}
-			},*/
 						
 			fire : function(origin, event) {
 				

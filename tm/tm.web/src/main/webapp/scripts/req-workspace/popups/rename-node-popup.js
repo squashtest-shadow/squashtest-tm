@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(['jquery', 'tree', 'workspace.contextual-content', '../permissions-rules', 'jquery.squash.formdialog'], 
-		function($, zetree, ctxcontent, rules){
+define(['jquery', 'tree', 'workspace.event-bus', '../permissions-rules', 'jquery.squash.formdialog'], 
+		function($, zetree, eventBus, rules){
 	
 	
 	function init(){
@@ -53,7 +53,7 @@ define(['jquery', 'tree', 'workspace.contextual-content', '../permissions-rules'
 					new SquashEventObject(node.getResId(), node.getResType()),
 					name
 				);
-				ctxcontent.fire(null, event);
+				eventBus.fire(null, event);
 				dialog.formDialog('close');
 			});
 			

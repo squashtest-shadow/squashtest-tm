@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", 'tree','./permissions-rules', 'workspace.contextual-content', 'squash.translator' , 
-        'workspace.tree-node-copier', 'workspace.tree-event-handler'], function($, zetree, rules, ctxcontent, translator, copier, treehandler){
+define(["jquery", 'tree','./permissions-rules', 'workspace.contextual-content', 'workspace.event-bus', 'squash.translator' , 
+        'workspace.tree-node-copier', 'workspace.tree-event-handler'], function($, zetree, rules, ctxcontent, eventBus,  translator, copier, treehandler){
 	
 	
 	function showError(messageName){	
@@ -64,10 +64,7 @@ define(["jquery", 'tree','./permissions-rules', 'workspace.contextual-content', 
 	function loadFragment(tree){
 		var selected =  tree.jstree('get_selected');
 		if (selected.length == 1){
-			ctxcontent.loadWith(selected.getResourceUrl())
-			.done(function(){
-				ctxcontent.addListener(treehandler);
-			});
+			ctxcontent.loadWith(selected.getResourceUrl());
 		}
 		else{
 			ctxcontent.unload();				
@@ -78,6 +75,8 @@ define(["jquery", 'tree','./permissions-rules', 'workspace.contextual-content', 
 		init : function(){
 			
 			var tree = zetree.get();
+			
+			eventBus.addPermanentListener(treehandler);
 			
 			tree.on('select_node.jstree deselect_node.jstree', function(){
 				loadFragment(tree);

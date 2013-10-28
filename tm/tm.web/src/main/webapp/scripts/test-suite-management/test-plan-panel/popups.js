@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'workspace.contextual-content', 'jqueryui', 'jquery.squash.confirmdialog', 'jquery.squash.formdialog' ], function($, ctxt) {
+define(['jquery', 'workspace.event-bus', 'jqueryui', 'jquery.squash.confirmdialog', 'jquery.squash.formdialog' ], function($, eventBus) {
 
 
 	function _initDeleteExecutionPopup(conf){
@@ -37,7 +37,7 @@ define(['jquery', 'workspace.contextual-content', 'jqueryui', 'jquery.squash.con
 				type : 'DELETE',
 				dataType : 'json'
 			}).done(function(data){
-				ctxt.trigger('context.content-modified', { newDates : data });
+				eventBus.trigger('context.content-modified', { newDates : data });
 			});				
 		});
 	}
@@ -67,7 +67,7 @@ define(['jquery', 'workspace.contextual-content', 'jqueryui', 'jquery.squash.con
 				if (unauthorized){
 					squashtm.notification.showInfo(conf.messages.unauthorizedTestplanRemoval);
 				}
-				ctxt.trigger('context.content-modified');
+				eventBus.trigger('context.content-modified');
 			});
 			
 			$(this).formDialog('close');
@@ -166,7 +166,7 @@ define(['jquery', 'workspace.contextual-content', 'jqueryui', 'jquery.squash.con
 			$.post(url, drawParameters, 'json')
 			.success(function(){
 				table.data('sortmode').resetTableOrder(table);
-				ctxt.trigger('context.content-modified');				
+				eventBus.trigger('context.content-modified');				
 			});
 		});
 		

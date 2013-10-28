@@ -349,8 +349,8 @@
 
 	require(["domReady", "require"], function(domReady, require){
 		domReady(function(){	
-			require(["jquery", "squash.basicwidgets", "workspace.contextual-content", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", "test-suite-management"], 
-					function($, basicwidg, ctxt, contentHandlers, Frag, bugtracker, tsmanagement){
+			require(["jquery", "squash.basicwidgets", "workspace.event-bus", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", "test-suite-management"], 
+					function($, basicwidg, eventBus, contentHandlers, Frag, bugtracker, tsmanagement){
 				
 				basicwidg.init();
 				
@@ -359,7 +359,7 @@
 				nameHandler.identity = identity;
 				nameHandler.nameDisplay = "#test-suite-name";
 				
-				ctxt.addListener(nameHandler);
+				eventBus.addContextualListener(nameHandler);
 
 				// todo : uniform the event handling.
 				tsmanagement.initEvents();
@@ -388,7 +388,7 @@
 		    	
 			 	squashtm.execution = squashtm.execution || {};
 			 	squashtm.execution.refresh = function(){
-			 		ctxt.trigger('context.content-modified');
+			 		eventBus.trigger('context.content-modified');
 			 	};
 			});
 		});

@@ -40,8 +40,8 @@
  *	"passive" : the model will be synchronized only when requested to.  
  *	"tree-listener" : Will listen to the tree and trigger synchronization everytime the node selection changes. Incidentally, will force 'includeTreeSelection' to true.
  */
-define(["jquery", "backbone", "underscore", './model-cache', "tree", "workspace.contextual-content", "jquery.throttle-debounce"], 
-		function($, Backbone, _, cache, zetree, ctxt){
+define(["jquery", "backbone", "underscore", './model-cache', "tree", "workspace.event-bus", "jquery.throttle-debounce"], 
+		function($, Backbone, _, cache, zetree, eventBus){
 
 	return Backbone.Model.extend({
 		
@@ -53,7 +53,7 @@ define(["jquery", "backbone", "underscore", './model-cache', "tree", "workspace.
 
 			this.options = options;
 			this.tree = zetree.get();
-			this.ctxt = ctxt;
+			this.eventBus = eventBus;
 		
 			this._configure(_attributes);
 
@@ -112,11 +112,10 @@ define(["jquery", "backbone", "underscore", './model-cache', "tree", "workspace.
 				 */ 
 				var unbindOnClear = function(){
 					self.tree.off('select_node.jstree deselect_node.jstree', syncOnSelect);
-					self.ctxt.off('contextualcontent.clear', unbindOnClear);
 				};
 				
 				this.tree.on('select_node.jstree deselect_node.jstree', syncOnSelect);
-				this.ctxt.on('contextualcontent.clear', unbindOnClear);
+				this.eventBus.onContextual('contextualcontent.clear', unbindOnClear);
 				
 			}
 		},

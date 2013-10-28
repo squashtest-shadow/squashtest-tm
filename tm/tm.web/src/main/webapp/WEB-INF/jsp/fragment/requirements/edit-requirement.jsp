@@ -478,8 +478,8 @@ that page won't be editable if
 	
 	require(["domReady", "require"], function(domReady, require){
 		domReady(function(){
-			require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "workspace.contextual-content", "jquery.squash.fragmenttabs"], 
-					function($, basicwidg,  contentHandlers, contextualContent, Frag){
+			require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "workspace.event-bus", "jquery.squash.fragmenttabs"], 
+					function($, basicwidg,  contentHandlers, eventBus, Frag){
 				
 				basicwidg.init();
 				
@@ -490,7 +490,7 @@ that page won't be editable if
 				nameHandler.nameHidden = "#requirement-raw-name";
 				nameHandler.referenceHidden = "#requirement-raw-reference";
 				
-				contextualContent.addListener(nameHandler);
+				eventBus.addContextualListener(nameHandler);
 
 				//****** tabs configuration *******
 				

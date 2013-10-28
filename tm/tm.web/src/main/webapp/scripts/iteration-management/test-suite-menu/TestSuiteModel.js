@@ -26,7 +26,7 @@ As such a model object is both master (of its listeners) and slave (of the conte
 
  ********************* */
 
-define([ "jquery", "workspace.contextual-content" , "jqueryui" ], function($, contextualContent) {
+define([ "jquery", "workspace.event-bus", "jqueryui" ], function($, eventBus) {
 
 	function TestSuiteModel(settings) {
 
@@ -34,7 +34,7 @@ define([ "jquery", "workspace.contextual-content" , "jqueryui" ], function($, co
 		this.baseUpdateUrl = settings.baseUpdateUrl;
 		this.getUrl = settings.getUrl;
 		this.removeUrl = settings.removeUrl;
-		this.contextualContent = contextualContent;
+		this.eventBus = eventBus;
 
 		if (settings.initData !== undefined) {
 			this.data = settings.initData;
@@ -93,9 +93,7 @@ define([ "jquery", "workspace.contextual-content" , "jqueryui" ], function($, co
 		}, self);
 
 		var notifyContextualContent = $.proxy(function(evt) {
-			if (this.contextualContent !== "none") {
-				this.contextualContent.fire(this, evt);
-			}
+			this.eventBus.fire(this, evt);			
 		}, self);
 		
 		var notifyBind = $.proxy(function(){
@@ -229,9 +227,7 @@ define([ "jquery", "workspace.contextual-content" , "jqueryui" ], function($, co
 
 		// register to the contextual content manager if exists
 
-		if (this.contextualContent !== undefined) {
-			this.contextualContent.addListener(this);
-		}
+		this.eventBus.addContextualListener(this);
 
 	}
 
