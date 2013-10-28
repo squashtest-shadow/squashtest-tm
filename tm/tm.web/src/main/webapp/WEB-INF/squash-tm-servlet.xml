@@ -69,12 +69,14 @@
     <property name="prefix" value="/WEB-INF/templates/" />
 		<!-- no suffix because it's already in view name  -->
     <property name="templateMode" value="HTML5" />
+    <property name="cacheable" value="@is.war.deploy@" /> <!-- this is a maven placeholder -->
   </bean>
 
   <bean id="thymeleaf.fragment.templateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
     <property name="prefix" value="/WEB-INF/templates/" />
     <property name="suffix" value=".html" />
     <property name="templateMode" value="HTML5" />
+    <property name="cacheable" value="@is.war.deploy@" /> <!-- this is a maven placeholder -->
   </bean>
 
   <bean id="thymeleaf.templateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
