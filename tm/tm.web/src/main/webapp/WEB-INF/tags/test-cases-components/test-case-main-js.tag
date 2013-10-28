@@ -85,8 +85,16 @@
 		
 					
 		//init the renaming listener
-		require(["jquery", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", "workspace.event-bus", "jqueryui", "squashtable"], 
-				function($, contentHandlers, Frag, bugtracker, eventBus){
+		require(["jquery", 
+			"squash.basicwidgets", 
+			"contextual-content-handlers", 
+			"jquery.squash.fragmenttabs", 
+			"bugtracker", 
+			"workspace.event-bus", 
+			"jqueryui", 
+			"squashtable"], 
+				function($, basic, contentHandlers, Frag, bugtracker, eventBus){
+			basic.init();
 			
 			var identity = { obj_id : ${testCase.id}, obj_restype : "test-cases"  };
 			
