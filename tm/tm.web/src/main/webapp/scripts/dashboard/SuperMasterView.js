@@ -40,8 +40,9 @@ define(
 				"./basic-objects/model-cache",
 				"./basic-objects/refresh-button",
 				"./basic-objects/timestamp-label",
-		        "backbone", "./TogglePanelView"],
-		function($, attrparser, eventBus, StatModel, cache, RefreshButton, Timestamp,Backbone, TogglePanelView) {
+				"./basic-objects/toggle-panel-view",
+		        "backbone"],
+		function($, attrparser, eventBus, StatModel, cache, RefreshButton, Timestamp, TogglePanelView,Backbone) {
 
 			var SuperMasterView = Backbone.View.extend({
 								
