@@ -107,7 +107,7 @@ public class InternationalizedNavigationMenuItem extends Labelled implements Nav
 	 * @param onImageUrl
 	 *            : the image of the activated button to set
 	 */
-	public void setOnImageUrl(String onImageUrl) {
+	public void setImageOnUrl(String onImageUrl) {
 		this.imageOnUrl = onImageUrl;
 	}
 
@@ -124,7 +124,7 @@ public class InternationalizedNavigationMenuItem extends Labelled implements Nav
 	 * @param offImageUrl
 	 *            : the image of the inactive button to set
 	 */
-	public void setOffImageUrl(String offImageUrl) {
+	public void setImageOffUrl(String offImageUrl) {
 		this.imageOffUrl = offImageUrl;
 	}
 }

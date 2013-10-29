@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.internal.application;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.squashtest.tm.api.application.ApplicationPlugin;
 import org.squashtest.tm.web.internal.controller.generic.NavigationButton;
@@ -37,7 +38,7 @@ public interface ApplicationPluginManager {
 	
 	Collection<ApplicationPlugin> findAll();
 	
-	NavigationButton[] getNavigationButtons();
+	List<NavigationButton> getNavigationButtons();
 	
 }
 

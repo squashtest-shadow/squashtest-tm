@@ -20,8 +20,10 @@
  */
 package org.squashtest.tm.web.internal.application;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -87,6 +89,7 @@ public class ApplicationPluginManagerImpl implements ApplicationPluginManager, A
 	public ApplicationPlugin findById(String applicationPluginId) {
 		for (ApplicationPlugin appPlugin : findAll()) {
 			if (appPlugin.getId().equals(applicationPluginId)) {
+				LOGGER.debug("Found application plugin of id = {}", applicationPluginId);
 				return appPlugin;
 			}
 		}
@@ -97,13 +100,14 @@ public class ApplicationPluginManagerImpl implements ApplicationPluginManager, A
 	public Collection<ApplicationPlugin> findAll() {
 		try {
 			lock.readLock().lock();
+			LOGGER.debug("Found {} registered application plugins.", applicationPlugins.size());
 			return applicationPlugins;
 		} finally {
 			lock.readLock().unlock();
 		}
 	}
 
-	public NavigationButton[] getNavigationButtons() {
+	public List<NavigationButton> getNavigationButtons() {
 		Collection<ApplicationPlugin> appPlugins = findAll();
 
 		return menuItems(appPlugins);
@@ -114,13 +118,12 @@ public class ApplicationPluginManagerImpl implements ApplicationPluginManager, A
 	 *            : the collection of appPlugins to get the {@link NavigationButton} from
 	 * @return the list of {@link NavigationButton} for the given {@link ApplicationPlugin}s
 	 */
-	private NavigationButton[] menuItems(Collection<ApplicationPlugin> appPlugins) {
-		NavigationButton[] res = new NavigationButton[appPlugins.size()];
-		int i = 0;
-
+	private List<NavigationButton> menuItems(Collection<ApplicationPlugin> appPlugins) {
+		List<NavigationButton> res = new ArrayList<NavigationButton>(appPlugins.size());
+		
 		for (ApplicationPlugin appPlugin : appPlugins) {
-			res[i] = createMenuItem(appPlugin);
-			i++;
+			res.add(createMenuItem(appPlugin));
+			
 		}
 
 		return res;
