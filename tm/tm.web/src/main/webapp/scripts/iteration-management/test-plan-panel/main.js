@@ -100,6 +100,7 @@ define(['squash.translator', './table', './popups'], function(translator, table,
 				table.hideFilterFields();
 				table.unlockSortMode();
 				filterOn=false;
+				$("#iteration-test-plans-table").squashTable().refresh();
 				$("#test-plan-sort-mode-message").show();
 				$("#test-cases-table").find('.select-handle').removeClass('drag-handle');
 				if (this.reorderable){

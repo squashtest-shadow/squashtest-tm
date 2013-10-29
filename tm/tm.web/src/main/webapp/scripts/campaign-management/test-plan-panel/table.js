@@ -29,7 +29,7 @@
  * 
  * 
  * configuration an object as follow :
- * 
+ *" 
  * {
  *		permissions : {
  *			editable : boolean, is the table content editable ?
@@ -92,10 +92,18 @@ define(['jquery', './sortmode', 'squashtable', 'jeditable'],
 
 	function _hideFilterFields(){
 		$(".th_input", $("#test-cases-table")).hide();
+		$(".th_input", $("#test-cases-table")).each(function(){
+			$("#test-cases-table").squashTable().fnFilter("", $(".th_input").index(this));
+		});
+		
 	}
 	
 	function _showFilterFields(){
 		$(".th_input", $("#test-cases-table")).show();
+		$(".th_input", $("#test-cases-table")).each(function(){
+			$("#test-cases-table").squashTable().fnFilter(this.value, $(".th_input").index(this));
+		});
+		
 	}
 	
 	function _initializeFilterFields(initconf){	
@@ -110,20 +118,33 @@ define(['jquery', './sortmode', 'squashtable', 'jeditable'],
 		$($("th", $("#test-cases-table"))[4]).append("<select id='filter-user-combo' class='th_input'/>");
 		$($("th", $("#test-cases-table"))[5]).append("<select id='filter-weight-combo' class='th_input'/>");
 		$($("th", $("#test-cases-table"))[6]).append("<select id='filter-mode-combo' class='th_input'/>");
+		$("#test-cases-table_filter").hide();
 		
+		
+		var nullOption = new Option("", "");
+		$(nullOption).html("");
+		
+		$("#filter-user-combo", $("#test-cases-table")).append(nullOption);
 		$.each(users, function(index,value){
 			var o = new Option(value, index);
 			$(o).html(value);
 			$("#filter-user-combo", $("#test-cases-table")).append(o);
 		});
 
+		nullOption = new Option("", "");
+		$(nullOption).html("");
+		
+		$("#filter-weight-combo", $("#test-cases-table")).append(nullOption);
 		$.each(weights, function(index,value){
 			var o = new Option(value, index);
 			$(o).html(value);
 			$("#filter-weight-combo", $("#test-cases-table")).append(o);
 		});
 		
+		nullOption = new Option("", "");
+		$(nullOption).html("");
 		
+		$("#filter-mode-combo", $("#test-cases-table")).append(nullOption);	
 		$.each(modes, function(index,value){
 			var o = new Option(value, index);
 			$(o).html(value);

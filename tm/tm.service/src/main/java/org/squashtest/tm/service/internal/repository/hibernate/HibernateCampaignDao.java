@@ -336,6 +336,50 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 
 	@Override
 	public long countFilteredTestPlanById(long campaignId, ColumnFiltering filtering) {
-		return (Long) executeEntityNamedQuery("campaign.countTestCasesById", idParameter(campaignId));
+		
+		StringBuilder hqlbuilder = new StringBuilder(HQL_INDEXED_TEST_PLAN);
+		if(filtering.hasFilter(0)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_PROJECT_FILTER);
+		}
+		if(filtering.hasFilter(1)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER);
+		}
+		if(filtering.hasFilter(2)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER);
+		}
+		if(filtering.hasFilter(3)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
+		}
+		if(filtering.hasFilter(4)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER);
+		}
+		if(filtering.hasFilter(5)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_MODE_FILTER);
+		}
+				
+		Query query = currentSession().createQuery(hqlbuilder.toString());
+		
+		query.setParameter("campaignId", campaignId, LongType.INSTANCE);
+		
+		if(filtering.hasFilter(0)){
+			query.setParameter(PROJECT_FILTER, "%"+filtering.getFilter(0)+"%", StringType.INSTANCE);
+		}
+		if(filtering.hasFilter(1)){
+			query.setParameter(REFERENCE_FILTER, "%"+filtering.getFilter(1)+"%", StringType.INSTANCE);
+		} 
+		if(filtering.hasFilter(2)){
+			query.setParameter(TESTCASE_FILTER, "%"+filtering.getFilter(2)+"%", StringType.INSTANCE);
+		}
+		if(filtering.hasFilter(3)){
+			query.setParameter(USER_FILTER, Long.parseLong(filtering.getFilter(3)), LongType.INSTANCE);
+		}
+		if(filtering.hasFilter(4)){
+			query.setParameter(WEIGHT_FILTER, filtering.getFilter(4), StringType.INSTANCE);
+		}
+		if(filtering.hasFilter(5)){
+			query.setParameter(MODE_FILTER, filtering.getFilter(5), StringType.INSTANCE);
+		}
+		
+		return query.list().size();
 	}
 }

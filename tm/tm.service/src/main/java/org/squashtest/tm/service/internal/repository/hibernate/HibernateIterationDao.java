@@ -20,12 +20,19 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import javax.print.attribute.standard.DateTimeAtCompleted;
+
+import org.apache.tools.ant.util.DateUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -64,7 +71,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	private static final String TESTSUITE_FILTER = "testsuiteFilter";
 	private static final String STATUS_FILTER = "statusFilter";
 	private static final String USER_FILTER = "userFilter";
-	private static final String EXECUTION_DATE_FILTER = "executionDateFilter";
+
 	
 	/*
 	 * Because it is impossible to sort over the indices of ordered collection in a criteria query 
@@ -108,8 +115,8 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 			"and IterationTestPlanItem.user = :userFilter ";
 
 	private static final String HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER =
-			"";
-	
+			"and IterationTestPlanItem.lastExecutedOn between :startDate and :endDate ";
+
 	/**
 	 * HQL query which looks up the whole iteration test plan
 	 */
@@ -368,7 +375,7 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
 		}
 		if(columnFiltering.hasFilter(8)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER);
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER);				
 		}
 		
 		hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TEMPLATE_END);
@@ -416,7 +423,28 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 			query.setParameter(USER_FILTER, Long.parseLong(columnFiltering.getFilter(7)), LongType.INSTANCE);
 		}
 		if(columnFiltering.hasFilter(8)){
-			query.setParameter(EXECUTION_DATE_FILTER, columnFiltering.getFilter(8), DateType.INSTANCE);
+			String dates = columnFiltering.getFilter(8);
+			if(dates.contains("-")){
+				String[] dateArray = dates.split("-");
+				Date startDate;
+				try {
+					startDate = new SimpleDateFormat("dd/MM/yyyy").parse(dateArray[0].trim());
+					Date endDate = new SimpleDateFormat("dd/MM/yyyy").parse(dateArray[1].trim());
+					query.setParameter("startDate", startDate, DateType.INSTANCE);
+					query.setParameter("endDate", nextDay(endDate), DateType.INSTANCE);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			} else {
+				Date date;
+				try {
+					date = new SimpleDateFormat("dd/MM/yyyy").parse(dates.trim());
+					query.setParameter("startDate", date, DateType.INSTANCE);
+					query.setParameter("endDate", nextDay(date), DateType.INSTANCE);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		
 		PagingUtils.addPaging(query, sorting);
@@ -424,7 +452,12 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 		return query.list();
 	}
 
-
+	private Date nextDay(Date day){
+		Calendar cal = Calendar.getInstance(); 
+	    cal.setTime(day);
+	    cal.add(Calendar.DAY_OF_YEAR, 1);
+	    return cal.getTime();
+	}
 
 	@Override
 	public long countTestPlans(Long iterationId, Filtering filtering) {
@@ -437,10 +470,102 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 	}
 
 	@Override
-	public long countTestPlans(Long iterationId, Filtering filtering,
-			ColumnFiltering columnFiltering) {
-		// TODO Auto-generated method stub
-		return 0;
+	public long countTestPlans(Long iterationId, Filtering filtering, ColumnFiltering columnFiltering) {
+
+		StringBuilder hqlbuilder = new StringBuilder();
+		
+		String hql = filtering.isDefined() ? hqlUserFilteredIndexedTestPlan : hqlFullIndexedTestPlan;
+		hqlbuilder.append(hql);
+		
+		if(columnFiltering.hasFilter(0)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_PROJECT_FILTER);
+		}
+		if(columnFiltering.hasFilter(1)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER);
+		}
+		if(columnFiltering.hasFilter(2)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER);
+		}
+		if(columnFiltering.hasFilter(3)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER);
+		}
+		if(columnFiltering.hasFilter(4)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_DATASET_FILTER);
+		}
+		if(columnFiltering.hasFilter(6)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_STATUS_FILTER);
+		}
+		if(columnFiltering.hasFilter(7)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
+		}
+		if(columnFiltering.hasFilter(8)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER);				
+		}
+		
+		hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TEMPLATE_END);
+		
+		if(columnFiltering.hasFilter(5)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TESTSUITE_FILTER);
+		}
+		
+		Query query = currentSession().createQuery(hqlbuilder.toString());
+		
+		query.setParameter("iterationId", iterationId, LongType.INSTANCE);
+		
+		if (filtering.isDefined()){
+			query.setParameter("userLogin", filtering.getFilter(), StringType.INSTANCE);
+		}
+		
+		if(columnFiltering.hasFilter(0)){
+			query.setParameter(PROJECT_FILTER, "%"+columnFiltering.getFilter(0)+"%", StringType.INSTANCE);
+		}
+		if(columnFiltering.hasFilter(1)){
+			query.setParameter(REFERENCE_FILTER, "%"+columnFiltering.getFilter(1)+"%", StringType.INSTANCE);
+		} 
+		if(columnFiltering.hasFilter(2)){
+			query.setParameter(TESTCASE_FILTER, "%"+columnFiltering.getFilter(2)+"%", StringType.INSTANCE);
+		}
+		if(columnFiltering.hasFilter(3)){
+			query.setParameter(WEIGHT_FILTER, columnFiltering.getFilter(3), StringType.INSTANCE);
+		}
+		if(columnFiltering.hasFilter(4)){
+			query.setParameter(DATASET_FILTER, "%"+columnFiltering.getFilter(4)+"%", StringType.INSTANCE);
+		}
+		if(columnFiltering.hasFilter(5)){
+			query.setParameter(TESTSUITE_FILTER, "%"+columnFiltering.getFilter(5)+"%", StringType.INSTANCE);
+		}
+		if(columnFiltering.hasFilter(6)){
+			query.setParameter(STATUS_FILTER, columnFiltering.getFilter(6), StringType.INSTANCE);
+		}
+		if(columnFiltering.hasFilter(7)){
+			query.setParameter(USER_FILTER, Long.parseLong(columnFiltering.getFilter(7)), LongType.INSTANCE);
+		}
+		if(columnFiltering.hasFilter(8)){
+			String dates = columnFiltering.getFilter(8);
+			if(dates.contains("-")){
+				String[] dateArray = dates.split("-");
+				Date startDate;
+				try {
+					startDate = new SimpleDateFormat("dd/MM/yyyy").parse(dateArray[0].trim());
+					Date endDate = new SimpleDateFormat("dd/MM/yyyy").parse(dateArray[1].trim());
+					query.setParameter("startDate", startDate, DateType.INSTANCE);
+					query.setParameter("endDate", nextDay(endDate), DateType.INSTANCE);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			} else {
+				Date date;
+				try {
+					date = new SimpleDateFormat("dd/MM/yyyy").parse(dates.trim());
+					query.setParameter("startDate", date, DateType.INSTANCE);
+					query.setParameter("endDate", nextDay(date), DateType.INSTANCE);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		return query.list().size();
 	}
 	
 

@@ -99,6 +99,7 @@ define(['squash.translator', './table', './popups'], function(translator, table,
 				filterOn=false;
 				table.hideFilterFields();
 				table.unlockSortMode();
+				$("#test-suite-test-plans-table").squashTable().refresh();
 				$("#test-plan-sort-mode-message").show();
 				$("#test-cases-table").find('.select-handle').removeClass('drag-handle');
 				if (this.reorderable){

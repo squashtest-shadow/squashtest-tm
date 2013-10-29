@@ -78,7 +78,6 @@ public class DataTableDrawParameters {
 		this.sEcho = sEcho;
 	}
 
-
 	public int getiSortCol_0() {
 		return iSortCol.get(0);
 	}

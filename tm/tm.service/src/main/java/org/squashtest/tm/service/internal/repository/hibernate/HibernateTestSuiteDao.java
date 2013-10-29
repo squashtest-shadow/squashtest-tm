@@ -20,7 +20,11 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +35,8 @@ import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
+import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.DelegatePagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
@@ -61,8 +67,7 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 	private static final String DATASET_FILTER = "datasetFilter";
 	private static final String STATUS_FILTER = "statusFilter";
 	private static final String USER_FILTER = "userFilter";
-	private static final String EXECUTION_DATE_FILTER = "executionDateFilter";
-	
+
 	/*
 	 * Because it is impossible to sort over the indices of ordered collection in a criteria query we must then build an
 	 * hql string which will let us do that.
@@ -93,10 +98,11 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 			"and IterationTestPlanItem.executionStatus = :statusFilter ";
 	
 	private static final String HQL_INDEXED_TEST_PLAN_USER_FILTER =
-			"and IterationTestPlanItem.user = :userFilter";
+			"and IterationTestPlanItem.user = :userFilter ";
 
 	private static final String HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER =
-			"";
+			"and IterationTestPlanItem.lastExecutedOn between :startDate and :endDate ";
+	
 	
 	@Override
 	public List<TestSuite> findAllByIterationId(final long iterationId) {
@@ -346,7 +352,7 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
 		}
 		if(columnFiltering.hasFilter(7)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER);
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER);				
 		}
 		
 		// tune the sorting to make hql happy
@@ -386,7 +392,28 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 			query.setParameter(USER_FILTER, Long.parseLong(columnFiltering.getFilter(6)), LongType.INSTANCE);
 		}
 		if(columnFiltering.hasFilter(7)){
-			query.setParameter(EXECUTION_DATE_FILTER, columnFiltering.getFilter(7), DateType.INSTANCE);
+			String dates = columnFiltering.getFilter(7);
+			if(dates.contains("-")){
+				String[] dateArray = dates.split("-");
+				Date startDate;
+				try {
+					startDate = new SimpleDateFormat("dd/MM/yyyy").parse(dateArray[0].trim());
+					Date endDate = new SimpleDateFormat("dd/MM/yyyy").parse(dateArray[1].trim());
+					query.setParameter("startDate", startDate, DateType.INSTANCE);
+					query.setParameter("endDate", nextDay(endDate), DateType.INSTANCE);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			} else {
+				Date date;
+				try {
+					date = new SimpleDateFormat("dd/MM/yyyy").parse(dates.trim());
+					query.setParameter("startDate", date, DateType.INSTANCE);
+					query.setParameter("endDate", nextDay(date), DateType.INSTANCE);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		
 		PagingUtils.addPaging(query, sorting);
@@ -394,6 +421,13 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 		return query.list();
 	}
 
+	private Date nextDay(Date day){
+		Calendar cal = Calendar.getInstance(); 
+	    cal.setTime(day);
+	    cal.add(Calendar.DAY_OF_YEAR, 1);
+	    return cal.getTime();
+	}
+	
 	@Override
 	public long countTestPlans(Long suiteId, Filtering filtering) {
 		if (!filtering.isDefined()) {
@@ -436,9 +470,94 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 	}
 
 	@Override
-	public long countTestPlans(Long suiteId, Filtering filtering,
-			ColumnFiltering columnFiltering) {
-		// TODO Auto-generated method stub
-		return 0;
+	public long countTestPlans(Long suiteId, Filtering filtering, ColumnFiltering columnFiltering) {
+		
+		StringBuilder hqlbuilder = new StringBuilder(HQL_INDEXED_TEST_PLAN);
+
+		// check if we want to filter on the user login
+		if (filtering.isDefined()) {
+			hqlbuilder.append("and User.login = :userLogin ");
+		}
+
+		if(columnFiltering.hasFilter(0)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_PROJECT_FILTER);
+		}
+		if(columnFiltering.hasFilter(1)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER);
+		}
+		if(columnFiltering.hasFilter(2)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER);
+		}
+		if(columnFiltering.hasFilter(3)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER);
+		}
+		if(columnFiltering.hasFilter(4)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_DATASET_FILTER);
+		}
+		if(columnFiltering.hasFilter(5)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_STATUS_FILTER);
+		}
+		if(columnFiltering.hasFilter(6)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
+		}
+		if(columnFiltering.hasFilter(7)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER);				
+		}
+
+		Query query = currentSession().createQuery(hqlbuilder.toString());
+
+		query.setParameter("suiteId", suiteId, LongType.INSTANCE);
+
+		if (filtering.isDefined()) {
+			query.setParameter("userLogin", filtering.getFilter(), StringType.INSTANCE);
+		}
+
+		if(columnFiltering.hasFilter(0)){
+			query.setParameter(PROJECT_FILTER, "%"+columnFiltering.getFilter(0)+"%", StringType.INSTANCE);
+		}
+		if(columnFiltering.hasFilter(1)){
+			query.setParameter(REFERENCE_FILTER, "%"+columnFiltering.getFilter(1)+"%", StringType.INSTANCE);
+		} 
+		if(columnFiltering.hasFilter(2)){
+			query.setParameter(TESTCASE_FILTER, "%"+columnFiltering.getFilter(2)+"%", StringType.INSTANCE);
+		}
+		if(columnFiltering.hasFilter(3)){
+			query.setParameter(WEIGHT_FILTER, columnFiltering.getFilter(3), StringType.INSTANCE);
+		}
+		if(columnFiltering.hasFilter(4)){
+			query.setParameter(DATASET_FILTER, "%"+columnFiltering.getFilter(4)+"%", StringType.INSTANCE);
+		}
+		if(columnFiltering.hasFilter(5)){
+			query.setParameter(STATUS_FILTER, columnFiltering.getFilter(5), StringType.INSTANCE);
+		}
+		if(columnFiltering.hasFilter(6)){
+			query.setParameter(USER_FILTER, Long.parseLong(columnFiltering.getFilter(6)), LongType.INSTANCE);
+		}
+		if(columnFiltering.hasFilter(7)){
+			String dates = columnFiltering.getFilter(7);
+			if(dates.contains("-")){
+				String[] dateArray = dates.split("-");
+				Date startDate;
+				try {
+					startDate = new SimpleDateFormat("dd/MM/yyyy").parse(dateArray[0].trim());
+					Date endDate = new SimpleDateFormat("dd/MM/yyyy").parse(dateArray[1].trim());
+					query.setParameter("startDate", startDate, DateType.INSTANCE);
+					query.setParameter("endDate", nextDay(endDate), DateType.INSTANCE);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			} else {
+				Date date;
+				try {
+					date = new SimpleDateFormat("dd/MM/yyyy").parse(dates.trim());
+					query.setParameter("startDate", date, DateType.INSTANCE);
+					query.setParameter("endDate", nextDay(date), DateType.INSTANCE);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return query.list().size();
 	}
 }

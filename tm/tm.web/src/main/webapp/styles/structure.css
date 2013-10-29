@@ -245,6 +245,26 @@ div.sub-page div.table-tab-wrap .dataTables_footer{
 	width: 90px;
 }
 
+input.th_input {
+	width: 100px;
+}
+
+select.th_input {
+	width: 100px;
+}
+
+#datepicker-div > .ui-state-highlight a, 
+#datepicker-div > .ui-widget-content .ui-state-highlight a, 
+#datepicker-div > .ui-widget-header .ui-state-highlight a {
+	color : white;
+}
+
+.date-range-selected > .ui-state-default,
+.date-range-selected > .ui-widget-content .ui-state-default
+.date-range-selected > .ui-widget-header .ui-state-default {
+    background: goldenrod;
+}
+
 .search-input-column {
 	display:inline-block;
 	width:33%;
