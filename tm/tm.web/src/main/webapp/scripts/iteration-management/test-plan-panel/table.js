@@ -58,8 +58,9 @@
 
 define(
 		[ 'jquery', 'squash.translator', './exec-runner', './sortmode',
-		  'datepicker/require.jquery.squash.datepicker-locales', 'squashtable', 'jeditable', 'jquery.squash.buttonmenu' ],
-		function($, translator, execrunner, smode, regionale) {
+		  'datepicker/require.jquery.squash.datepicker-locales', 
+		  'jquery.squash.rangedatepicker', 'squashtable', 'jeditable', 'jquery.squash.buttonmenu' ],
+		function($, translator, execrunner, smode, regionale, rangedatepicker) {
 
 			// ****************** TABLE CONFIGURATION **************
 
@@ -197,10 +198,10 @@ define(
 								"<select id='filter-user-combo' class='th_input filter_input'/>");
 				$($("th", $("#iteration-test-plans-table"))[9])
 						.append(
-								"<div class='datepicker th_input'>"
-										+ "<input id='datepicker-input' readonly='readonly'/>"
-										+ "<div id='datepicker-div' style='position:absolute;top:auto;left:auto;z-index:1;'></div>"
-										+ "<input type='hidden' id='datepicker-hidden-input' class='filter_input'/>"
+								"<div class='rangedatepicker th_input'>"
+										+ "<input class='rangedatepicker-input' readonly='readonly'/>"
+										+ "<div class='rangedatepicker-div' style='position:absolute;top:auto;left:auto;z-index:1;'></div>"
+										+ "<input type='hidden' class='rangedatepicker-hidden-input filter_input'/>"
 										+ "</div>");
 
 				$("#iteration-test-plans-table_filter").hide();
@@ -245,11 +246,7 @@ define(
 				$("#iteration-test-plans-table th").hover(function(event) {
 					event.stopPropagation();
 				});
-				
-				$("#datepicker-div td").hover(function(event) {
-					event.stopPropagation();
-				});
-				
+			
 				$(".filter_input").change(
 						function() {
 							$("#iteration-test-plans-table").squashTable()
@@ -257,177 +254,8 @@ define(
 											$(".filter_input").index(this));
 						});
 
-				var localemeta = {
-						format : 'squashtm.dateformatShort.js',
-						locale : 'squashtm.locale'
-					};
-					
-				var message = translator.get(localemeta);
-
-				var language = regionale[message.locale] || regionale;
-					
-				$.datepicker._defaults.onAfterUpdate = null;
-				 $.datepicker.setDefaults(language);
-				 
-				var datepicker__updateDatepicker = $.datepicker._updateDatepicker;
-				$.datepicker._updateDatepicker = function(inst) {
-					datepicker__updateDatepicker.call(this, inst);
-
-					var onAfterUpdate = this._get(inst, 'onAfterUpdate');
-					if (onAfterUpdate) {
-						onAfterUpdate.apply(
-								(inst.input ? inst.input[0] : null), [
-										(inst.input ? inst.input.val() : ''),
-										inst ]);
-					}
-				};
-
-				var cur = -1, prv = -1;
-				$('.datepicker div')
-						.datepicker(
-								{
-									dateFormat : message.format,
-									changeMonth : true,
-									changeYear : true,
-									showButtonPanel : true,
-
-									beforeShowDay : function(date) {
-										return [
-												true,
-												((date.getTime() >= Math.min(
-														prv, cur) && date
-														.getTime() <= Math.max(
-														prv, cur)) ? 'date-range-selected'
-														: '') ];
-									},
-
-									onSelect : function(dateText, inst) {
-										var d1, d2;
-
-										prv = cur;
-										cur = (new Date(inst.selectedYear,
-												inst.selectedMonth,
-												inst.selectedDay)).getTime();
-										if (prv == -1) {
-											prv = cur;
-											d1 = $.datepicker.formatDate(
-													message.format, new Date(cur),
-													{});
-											df1 = $.datepicker.formatDate(
-													'dd/mm/yy', new Date(cur),
-													{});
-											$('#datepicker-input').val(d1);
-											$('#datepicker-hidden-input').val(
-													df1);
-											$('#datepicker-hidden-input')
-													.change();
-										} else if (prv == cur) {
-											d1 = $.datepicker.formatDate(
-													message.format, new Date(cur),
-													{});
-											df1 = $.datepicker.formatDate(
-													'dd/mm/yy', new Date(cur),
-													{});
-											$('#datepicker-input').val(d1);
-											$('#datepicker-hidden-input').val(
-													df1);
-											$('#datepicker-hidden-input')
-													.change();
-										} else {
-											d1 = $.datepicker
-													.formatDate(message.format,
-															new Date(Math.min(
-																	prv, cur)),
-															{});
-											d2 = $.datepicker
-													.formatDate(message.format,
-															new Date(Math.max(
-																	prv, cur)),
-															{});
-											df1 = $.datepicker
-													.formatDate('dd/mm/yy',
-															new Date(Math.min(
-																	prv, cur)),
-															{});
-											df2 = $.datepicker
-													.formatDate('dd/mm/yy',
-															new Date(Math.max(
-																	prv, cur)),
-															{});
-											$('#datepicker-input').val(
-													d1 + ' - ' + d2);
-											$('#datepicker-hidden-input').val(
-													df1 + ' - ' + df2);
-											$('#datepicker-hidden-input')
-													.change();
-										}
-									},
-
-									onChangeMonthYear : function(year, month,
-											inst) {
-										// prv = cur = -1;
-									},
-
-									onAfterUpdate : function(inst) {
-										if(!$("#okbutton", ".datepicker div .ui-datepicker-buttonpane").length){
-										
-											$(
-											'<button type="button"  id="okbutton" class="ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all" data-handler="hide" data-event="click">Ok</button>')
-											.appendTo(
-													$('.datepicker div .ui-datepicker-buttonpane'))
-											.on(
-													'click',
-													function() {
-														$('.datepicker div')
-																.hide();
-													});
-											
-											$(
-											'<button type="button" id="resetbutton" class="ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all" data-handler="hide" data-event="click">reset</button>')
-											.appendTo(
-													$('.datepicker div .ui-datepicker-buttonpane'))
-											.on(
-													'click',
-													function() {
-														$('#datepicker-input').val("");
-														$('#datepicker-hidden-input').val("");
-														$('#datepicker-hidden-input').change();
-													});
-											
-			
-									}}
-								}).hide();
-
-				$('#datepicker-input').on(
-						'focus',
-						function(e) {
-							var v = this.value, d;
-
-							try {
-								if (v.indexOf(' - ') > -1) {
-									d = v.split(' - ');
-
-									prv = $.datepicker.parseDate(message.format,
-											d[0]).getTime();
-									cur = $.datepicker.parseDate(message.format,
-											d[1]).getTime();
-
-								} else if (v.length > 0) {
-									prv = cur = $.datepicker.parseDate(
-											message.format, v).getTime();
-								}
-							} catch (e) {
-								cur = prv = -1;
-							}
-
-							if (cur > -1) {
-								$('.datepicker div').datepicker('setDate',
-										new Date(cur));
-							}
-
-							$('.datepicker div').datepicker('refresh').show();
-						});
-
+				rangedatepicker.init();
+				
 				_hideFilterFields();
 			}
 

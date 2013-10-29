@@ -91,6 +91,7 @@ requirejs.config({
 				"jquery.tagit" : "jquery/tag-it.min",
 				//squashtest
 				"jquery.squash" : "squashtest/jquery.squash.plugin",
+				"jquery.squash.rangedatepicker" : "squashtest/jquery.squash.rangedatepicker",
 				"jquery.squash.togglepanel" : "squashtest/jquery.squash.togglepanels",
 				"jquery.squash.messagedialog" : "squashtest/jquery.squash.messagedialog",
 				"jquery.squash.confirmdialog" : "squashtest/jquery.squash.confirmdialog",
