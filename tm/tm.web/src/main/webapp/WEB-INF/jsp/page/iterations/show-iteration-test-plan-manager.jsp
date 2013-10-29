@@ -68,7 +68,7 @@
 		//each panel (tree, search tc, search by req) should define a method getSelected()
 		//the present function should only call the one belonging to the currently selected panel.
 		function getTestCasesIds(){
-			var tab =  new Array();
+			var tab =  [];
 			var selected = $( "#tabbed-pane" ).tabs('option', 'selected');
 			var tree = $( '#linkable-test-cases-tree' );
 			if (selected == 0){

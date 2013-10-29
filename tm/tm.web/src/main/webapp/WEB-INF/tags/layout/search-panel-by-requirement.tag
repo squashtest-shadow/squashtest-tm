@@ -34,7 +34,7 @@
 <script type="text/javascript">
 
 	//Array with selected ids
-	selectionSearchByReq = new Array();
+	selectionSearchByReq = [];
 	
 	function setupReq(){
 		$("#byReqSearch").addClass("search-div");

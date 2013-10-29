@@ -47,7 +47,7 @@
 		<script type="text/javascript">
 			
 			function getRequirementsIds(){
-				var tab =  new Array();
+				var tab =  [];
 				var selected = $( "#tabbed-pane" ).tabs('option', 'selected');
 				var tree = $( '#linkable-requirements-tree' );
 				if (selected == 0){

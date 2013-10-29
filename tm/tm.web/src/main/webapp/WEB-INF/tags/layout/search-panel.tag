@@ -55,7 +55,7 @@
 <script type="text/javascript">
 	
 	//Array with selected ids
-	selectionSearch = new Array();
+	selectionSearch = [];
 	
 	//multiple selection
 	var firstIndex;
@@ -253,7 +253,7 @@
 	function findIdsOfSelectedSearchRow(){
 		var dataTable = $("#search-result-datatable").dataTable();
 		var rows = dataTable.fnGetNodes();
-		var ids = new Array();
+		var ids = [];
 
 		for(var i =0; i < rows.length ; i++){
 			var row = rows[i]; 

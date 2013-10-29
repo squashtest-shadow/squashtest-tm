@@ -90,7 +90,7 @@
 			
 			function getSelectedId(){
 				
-				var tab =  new Array();
+				var tab =  [];
 				var selected = $( "#tabbed-pane" ).tabs('option', 'selected');
 				var tree = $("#tree-pane .tree");
 				if (selected == 0){
