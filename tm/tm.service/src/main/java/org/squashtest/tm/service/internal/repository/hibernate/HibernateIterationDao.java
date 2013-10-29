@@ -30,9 +30,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import javax.print.attribute.standard.DateTimeAtCompleted;
-
-import org.apache.tools.ant.util.DateUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -71,7 +68,9 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	private static final String TESTSUITE_FILTER = "testsuiteFilter";
 	private static final String STATUS_FILTER = "statusFilter";
 	private static final String USER_FILTER = "userFilter";
-
+	private static final String START_DATE = "startDate";
+	private static final String END_DATE = "endDate";
+	private static final String DATE_FORMAT = "dd/MM/yyyy";
 	
 	/*
 	 * Because it is impossible to sort over the indices of ordered collection in a criteria query 
@@ -343,10 +342,7 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 		
 	}
 	
-	
-	// this method will use one or another strategy to fetch its data depending on what the user is requesting. 
-	@SuppressWarnings("unchecked")
-	private List<Object[]> findIndexedTestPlanData(final long iterationId, PagingAndMultiSorting sorting, Filtering filtering, ColumnFiltering columnFiltering){
+	private String buildIndexedTestPlanQueryString(PagingAndMultiSorting sorting, Filtering filtering, ColumnFiltering columnFiltering){
 		
 		StringBuilder hqlbuilder = new StringBuilder();
 		
@@ -389,8 +385,16 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 		wrapper.map("TestCase.importance", TestCaseImportance.class);
 		wrapper.map("IterationTestPlanItem.executionStatus", ExecutionStatus.class);
 		
-		hql = SortingUtils.addOrder(hqlbuilder.toString(), wrapper);
-		Query query = currentSession().createQuery(hql);
+		return SortingUtils.addOrder(hqlbuilder.toString(), wrapper);
+	}
+	
+	// this method will use one or another strategy to fetch its data depending on what the user is requesting. 
+	@SuppressWarnings("unchecked")
+	private List<Object[]> findIndexedTestPlanData(final long iterationId, PagingAndMultiSorting sorting, Filtering filtering, ColumnFiltering columnFiltering){
+		
+		String queryString = buildIndexedTestPlanQueryString(sorting, filtering, columnFiltering);
+				
+		Query query = currentSession().createQuery(queryString);
 		
 		query.setParameter("iterationId", iterationId, LongType.INSTANCE);
 		
@@ -428,19 +432,19 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 				String[] dateArray = dates.split("-");
 				Date startDate;
 				try {
-					startDate = new SimpleDateFormat("dd/MM/yyyy").parse(dateArray[0].trim());
-					Date endDate = new SimpleDateFormat("dd/MM/yyyy").parse(dateArray[1].trim());
-					query.setParameter("startDate", startDate, DateType.INSTANCE);
-					query.setParameter("endDate", nextDay(endDate), DateType.INSTANCE);
+					startDate = new SimpleDateFormat(DATE_FORMAT).parse(dateArray[0].trim());
+					Date endDate = new SimpleDateFormat(DATE_FORMAT).parse(dateArray[1].trim());
+					query.setParameter(START_DATE, startDate, DateType.INSTANCE);
+					query.setParameter(END_DATE, nextDay(endDate), DateType.INSTANCE);
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
 			} else {
 				Date date;
 				try {
-					date = new SimpleDateFormat("dd/MM/yyyy").parse(dates.trim());
-					query.setParameter("startDate", date, DateType.INSTANCE);
-					query.setParameter("endDate", nextDay(date), DateType.INSTANCE);
+					date = new SimpleDateFormat(DATE_FORMAT).parse(dates.trim());
+					query.setParameter(START_DATE, date, DateType.INSTANCE);
+					query.setParameter(END_DATE, nextDay(date), DateType.INSTANCE);
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
@@ -546,19 +550,19 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 				String[] dateArray = dates.split("-");
 				Date startDate;
 				try {
-					startDate = new SimpleDateFormat("dd/MM/yyyy").parse(dateArray[0].trim());
-					Date endDate = new SimpleDateFormat("dd/MM/yyyy").parse(dateArray[1].trim());
-					query.setParameter("startDate", startDate, DateType.INSTANCE);
-					query.setParameter("endDate", nextDay(endDate), DateType.INSTANCE);
+					startDate = new SimpleDateFormat(DATE_FORMAT).parse(dateArray[0].trim());
+					Date endDate = new SimpleDateFormat(DATE_FORMAT).parse(dateArray[1].trim());
+					query.setParameter(START_DATE, startDate, DateType.INSTANCE);
+					query.setParameter(END_DATE, nextDay(endDate), DateType.INSTANCE);
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
 			} else {
 				Date date;
 				try {
-					date = new SimpleDateFormat("dd/MM/yyyy").parse(dates.trim());
-					query.setParameter("startDate", date, DateType.INSTANCE);
-					query.setParameter("endDate", nextDay(date), DateType.INSTANCE);
+					date = new SimpleDateFormat(DATE_FORMAT).parse(dates.trim());
+					query.setParameter(START_DATE, date, DateType.INSTANCE);
+					query.setParameter(END_DATE, nextDay(date), DateType.INSTANCE);
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}

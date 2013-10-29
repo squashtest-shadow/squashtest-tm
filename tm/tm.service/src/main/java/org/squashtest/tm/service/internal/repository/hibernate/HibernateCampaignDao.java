@@ -35,7 +35,6 @@ import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
-import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SingleToMultiSortingAdapter;
@@ -150,8 +149,8 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 		
 		return query.list();
 	}
-	
-	private List<Object[]> _findIndexedTestPlan(final long campaignId, PagingAndMultiSorting sorting, ColumnFiltering filtering){
+
+	private String buildIndexedTestPlanQueryString(PagingAndMultiSorting sorting, ColumnFiltering filtering){
 		
 		StringBuilder hqlbuilder = new StringBuilder(HQL_INDEXED_TEST_PLAN);
 		if(filtering.hasFilter(0)){
@@ -173,13 +172,48 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_MODE_FILTER);
 		}
 		
+		
 		// tune the sorting to make hql happy
 		LevelImplementorSorter wrapper= new LevelImplementorSorter(sorting);
 		wrapper.map("TestCase.importance", TestCaseImportance.class);
 		
 		SortingUtils.addOrder(hqlbuilder, wrapper);
 		
-		Query query = currentSession().createQuery(hqlbuilder.toString());
+		return hqlbuilder.toString();
+	}
+	
+private String buildIndexedTestPlanQueryStringWithoutSorting(ColumnFiltering filtering){
+		
+		StringBuilder hqlbuilder = new StringBuilder(HQL_INDEXED_TEST_PLAN);
+		if(filtering.hasFilter(0)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_PROJECT_FILTER);
+		}
+		if(filtering.hasFilter(1)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER);
+		}
+		if(filtering.hasFilter(2)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER);
+		}
+		if(filtering.hasFilter(3)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
+		}
+		if(filtering.hasFilter(4)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER);
+		}
+		if(filtering.hasFilter(5)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_MODE_FILTER);
+		}
+		
+		return hqlbuilder.toString();
+	}
+	
+
+	private List<Object[]> _findIndexedTestPlan(final long campaignId, PagingAndMultiSorting sorting, ColumnFiltering filtering){
+		
+		
+		String queryString = buildIndexedTestPlanQueryString(sorting, filtering);
+		
+		Query query = currentSession().createQuery(queryString);
 		
 		query.setParameter("campaignId", campaignId, LongType.INSTANCE);
 		
@@ -337,27 +371,9 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 	@Override
 	public long countFilteredTestPlanById(long campaignId, ColumnFiltering filtering) {
 		
-		StringBuilder hqlbuilder = new StringBuilder(HQL_INDEXED_TEST_PLAN);
-		if(filtering.hasFilter(0)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_PROJECT_FILTER);
-		}
-		if(filtering.hasFilter(1)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER);
-		}
-		if(filtering.hasFilter(2)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER);
-		}
-		if(filtering.hasFilter(3)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
-		}
-		if(filtering.hasFilter(4)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER);
-		}
-		if(filtering.hasFilter(5)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_MODE_FILTER);
-		}
-				
-		Query query = currentSession().createQuery(hqlbuilder.toString());
+		String queryString = buildIndexedTestPlanQueryStringWithoutSorting(filtering);
+		
+		Query query = currentSession().createQuery(queryString);
 		
 		query.setParameter("campaignId", campaignId, LongType.INSTANCE);
 		

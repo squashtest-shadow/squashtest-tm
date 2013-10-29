@@ -35,8 +35,6 @@ import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
-import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.DelegatePagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
@@ -67,7 +65,9 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 	private static final String DATASET_FILTER = "datasetFilter";
 	private static final String STATUS_FILTER = "statusFilter";
 	private static final String USER_FILTER = "userFilter";
-
+	private static final String START_DATE = "startDate";
+	private static final String END_DATE = "endDate";
+	private static final String DATE_FORMAT = "dd/MM/yyyy";
 	/*
 	 * Because it is impossible to sort over the indices of ordered collection in a criteria query we must then build an
 	 * hql string which will let us do that.
@@ -397,19 +397,19 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 				String[] dateArray = dates.split("-");
 				Date startDate;
 				try {
-					startDate = new SimpleDateFormat("dd/MM/yyyy").parse(dateArray[0].trim());
-					Date endDate = new SimpleDateFormat("dd/MM/yyyy").parse(dateArray[1].trim());
-					query.setParameter("startDate", startDate, DateType.INSTANCE);
-					query.setParameter("endDate", nextDay(endDate), DateType.INSTANCE);
+					startDate = new SimpleDateFormat(DATE_FORMAT).parse(dateArray[0].trim());
+					Date endDate = new SimpleDateFormat(DATE_FORMAT).parse(dateArray[1].trim());
+					query.setParameter(START_DATE, startDate, DateType.INSTANCE);
+					query.setParameter(END_DATE, nextDay(endDate), DateType.INSTANCE);
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
 			} else {
 				Date date;
 				try {
-					date = new SimpleDateFormat("dd/MM/yyyy").parse(dates.trim());
-					query.setParameter("startDate", date, DateType.INSTANCE);
-					query.setParameter("endDate", nextDay(date), DateType.INSTANCE);
+					date = new SimpleDateFormat(DATE_FORMAT).parse(dates.trim());
+					query.setParameter(START_DATE, date, DateType.INSTANCE);
+					query.setParameter(END_DATE, nextDay(date), DateType.INSTANCE);
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
@@ -539,19 +539,19 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 				String[] dateArray = dates.split("-");
 				Date startDate;
 				try {
-					startDate = new SimpleDateFormat("dd/MM/yyyy").parse(dateArray[0].trim());
-					Date endDate = new SimpleDateFormat("dd/MM/yyyy").parse(dateArray[1].trim());
-					query.setParameter("startDate", startDate, DateType.INSTANCE);
-					query.setParameter("endDate", nextDay(endDate), DateType.INSTANCE);
+					startDate = new SimpleDateFormat(DATE_FORMAT).parse(dateArray[0].trim());
+					Date endDate = new SimpleDateFormat(DATE_FORMAT).parse(dateArray[1].trim());
+					query.setParameter(START_DATE, startDate, DateType.INSTANCE);
+					query.setParameter(END_DATE, nextDay(endDate), DateType.INSTANCE);
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
 			} else {
 				Date date;
 				try {
-					date = new SimpleDateFormat("dd/MM/yyyy").parse(dates.trim());
-					query.setParameter("startDate", date, DateType.INSTANCE);
-					query.setParameter("endDate", nextDay(date), DateType.INSTANCE);
+					date = new SimpleDateFormat(DATE_FORMAT).parse(dates.trim());
+					query.setParameter(START_DATE, date, DateType.INSTANCE);
+					query.setParameter(END_DATE, nextDay(date), DateType.INSTANCE);
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
