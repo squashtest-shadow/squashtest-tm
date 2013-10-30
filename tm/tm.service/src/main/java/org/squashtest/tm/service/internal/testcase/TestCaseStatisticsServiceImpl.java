@@ -35,11 +35,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
-import org.squashtest.tm.service.testcase.TestCaseStatisticsBundle;
-import org.squashtest.tm.service.testcase.TestCaseStatisticsBundle.TestCaseBoundRequirementsStatistics;
-import org.squashtest.tm.service.testcase.TestCaseStatisticsBundle.TestCaseImportanceStatistics;
-import org.squashtest.tm.service.testcase.TestCaseStatisticsBundle.TestCaseSizeStatistics;
-import org.squashtest.tm.service.testcase.TestCaseStatisticsBundle.TestCaseStatusesStatistics;
+import org.squashtest.tm.service.statistics.testcase.TestCaseBoundRequirementsStatistics;
+import org.squashtest.tm.service.statistics.testcase.TestCaseImportanceStatistics;
+import org.squashtest.tm.service.statistics.testcase.TestCaseSizeStatistics;
+import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
+import org.squashtest.tm.service.statistics.testcase.TestCaseStatusesStatistics;
 import org.squashtest.tm.service.testcase.TestCaseStatisticsService;
 
 @Service("TestCaseStatisticsService")

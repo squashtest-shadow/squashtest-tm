@@ -22,13 +22,15 @@ package org.squashtest.tm.service.campaign;
 
 import java.util.List;
 
-import org.squashtest.tm.service.campaign.CampaignStatisticsBundle.IterationTestInventoryStatistics;
+import org.squashtest.tm.service.statistics.campaign.CampaignProgressionStatistics;
+import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
+import org.squashtest.tm.service.statistics.campaign.IterationTestInventoryStatistics;
 
 public interface CampaignStatisticsService {
 
 	
 	/**
-	 * Given a campaign id, gather and returns how many tests and at which status are planned in this campaign.
+	 * Given a campaign id, gathers and returns how many tests and at which status are planned in this campaign.
 	 * Only tests part of an iteration count. Those statistics are grouped and sorted by Iteration.
 	 * 
 	 * @param campaignId
@@ -37,9 +39,24 @@ public interface CampaignStatisticsService {
 	List<IterationTestInventoryStatistics> gatherIterationTestInventoryStatistics(long campaignId);
 	
 	
+	/**
+	 * <p>Given a campaignId, gathers and return the theoterical and actual cumulative test count by iterations.
+	 * The theoterical cumulative test count by iterations means how many tests should have been executed per day on 
+	 * the basis of the scheduled start and end of an iteration. The actual cumulative test count means how many tests
+	 * have been executed so far, each days, during the same period.</p>
+	 * 
+	 * <p>This assumes that the scheduled start and end dates of each iterations are square : they must all be defined, 
+	 * and must not overlap. In case of errors appropriate messages will be filled instead and data won't be returned.</p>
+	 *  
+	 * 
+	 * @param campaignId
+	 * @return
+	 */
+	CampaignProgressionStatistics gatherCampaignProgressionStatistics(long campaignId);
+	
 	
 	/**
-	 * Given a campaign id, gather all of the above in one package. 
+	 * Given a campaign id, gathers all of the above in one package. 
 	 * 
 	 * @param campaignId
 	 * @return

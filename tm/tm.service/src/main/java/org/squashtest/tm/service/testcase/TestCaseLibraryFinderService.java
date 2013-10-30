@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
 
 /**
  * @author Gregory

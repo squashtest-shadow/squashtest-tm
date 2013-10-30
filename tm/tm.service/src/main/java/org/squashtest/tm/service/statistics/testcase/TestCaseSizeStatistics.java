@@ -18,26 +18,45 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.campaign;
+package org.squashtest.tm.service.statistics.testcase;
 
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.campaign.TestPlanStatistics;
-import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
+public class TestCaseSizeStatistics {
 
-@Transactional
-public interface CustomCampaignModificationService {
-
-	void rename(long campaignId, String newName);
-
+	private int zeroSteps = 0;
+	private int between0And10Steps = 0;
+	private int between11And20Steps = 0;
+	private int above20Steps = 0;
 	
-	/**
-	 * 
-	 * @param campaignId the id of the concerned campaign
-	 * @return the computed {@link TestPlanStatistics} out of each test-plan-item of each campaign's iteration
-	 */
-	TestPlanStatistics findCampaignStatistics(long campaignId);
+	public int getZeroSteps() {
+		return zeroSteps;
+	}
 	
+	public void setZeroSteps(int zeroSteps) {
+		this.zeroSteps = zeroSteps;
+	}
 	
-	CampaignStatisticsBundle gatherCampaignStatisticsBundle(long campaignId);
-
+	public int getBetween0And10Steps() {
+		return between0And10Steps;
+	}
+	
+	public void setBetween0And10Steps(int between0And10Steps) {
+		this.between0And10Steps = between0And10Steps;
+	}
+	
+	public int getBetween11And20Steps() {
+		return between11And20Steps;
+	}
+	
+	public void setBetween11And20Steps(int between11And20Steps) {
+		this.between11And20Steps = between11And20Steps;
+	}
+	
+	public int getAbove20Steps() {
+		return above20Steps;
+	}
+	
+	public void setAbove20Steps(int above20Steps) {
+		this.above20Steps = above20Steps;
+	}
+	
 }

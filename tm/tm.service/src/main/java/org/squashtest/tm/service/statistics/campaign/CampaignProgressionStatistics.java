@@ -18,26 +18,36 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.campaign;
+package org.squashtest.tm.service.statistics.campaign;
 
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.campaign.TestPlanStatistics;
-import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
+import java.util.Collection;
+import java.util.LinkedList;
 
-@Transactional
-public interface CustomCampaignModificationService {
 
-	void rename(long campaignId, String newName);
-
+public final class CampaignProgressionStatistics {
 	
-	/**
-	 * 
-	 * @param campaignId the id of the concerned campaign
-	 * @return the computed {@link TestPlanStatistics} out of each test-plan-item of each campaign's iteration
-	 */
-	TestPlanStatistics findCampaignStatistics(long campaignId);
+	private Collection<String> i18nErrors;
 	
-	
-	CampaignStatisticsBundle gatherCampaignStatisticsBundle(long campaignId);
+	Collection<ScheduledIteration> scheduledIterations = new LinkedList<ScheduledIteration>();
 
+
+	public Collection<ScheduledIteration> getScheduledIterations() {
+		return scheduledIterations;
+	}
+	
+	public void addi18nErrorMessage(String i18nErrorMessage){
+		if (i18nErrors==null){
+			i18nErrors = new LinkedList<String>());
+		}
+		i18nErrors.add(i18nErrorMessage);
+	}
+	
+	public Collection<String> getErrors(){
+		return i18nErrors;
+	}
+	
+	public void addScheduledIteration(ScheduledIteration iteration){
+		scheduledIterations.add(iteration);
+	}
+	
 }

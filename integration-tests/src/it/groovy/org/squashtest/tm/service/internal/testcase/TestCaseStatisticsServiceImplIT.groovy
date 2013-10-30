@@ -26,11 +26,12 @@ import org.hibernate.type.LongType;
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.service.DbunitServiceSpecification
-import org.squashtest.tm.service.testcase.TestCaseStatisticsBundle.TestCaseBoundRequirementsStatistics;
-import org.squashtest.tm.service.testcase.TestCaseStatisticsBundle.TestCaseImportanceStatistics;
-import org.squashtest.tm.service.testcase.TestCaseStatisticsBundle.TestCaseSizeStatistics;
-import org.squashtest.tm.service.testcase.TestCaseStatisticsBundle.TestCaseStatusesStatistics;
-import org.squashtest.tm.service.testcase.TestCaseStatisticsService
+import org.squashtest.tm.service.statistics.testcase.TestCaseBoundRequirementsStatistics;
+import org.squashtest.tm.service.statistics.testcase.TestCaseImportanceStatistics;
+import org.squashtest.tm.service.statistics.testcase.TestCaseSizeStatistics;
+import org.squashtest.tm.service.statistics.testcase.TestCaseStatusesStatistics;
+import org.squashtest.tm.service.testcase.TestCaseStatisticsService;
+
 import org.unitils.dbunit.annotation.DataSet
 
 import spock.unitils.UnitilsSupport

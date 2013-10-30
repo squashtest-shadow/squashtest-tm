@@ -33,9 +33,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
-import org.squashtest.tm.service.campaign.CampaignStatisticsBundle;
-import org.squashtest.tm.service.campaign.CampaignStatisticsBundle.IterationTestInventoryStatistics;
 import org.squashtest.tm.service.campaign.CampaignStatisticsService;
+import org.squashtest.tm.service.statistics.campaign.CampaignProgressionStatistics;
+import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
+import org.squashtest.tm.service.statistics.campaign.IterationTestInventoryStatistics;
 
 @Transactional(readOnly=true)
 @Service("CampaignStatisticsService")
@@ -51,17 +52,29 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ') "
 			+ "or hasRole('ROLE_ADMIN')")
+	public CampaignProgressionStatistics gatherCampaignProgressionStatistics(
+			long campaignId) {
+		
+		throw new RuntimeException("not implemented yet");
+	}
+	
+	
+	@Override
+	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ') "
+			+ "or hasRole('ROLE_ADMIN')")
 	public List<IterationTestInventoryStatistics> gatherIterationTestInventoryStatistics(long campaignId) {
 		
-		List<IterationTestInventoryStatistics> result = new LinkedList<CampaignStatisticsBundle.IterationTestInventoryStatistics>();
+		List<IterationTestInventoryStatistics> result = new LinkedList<IterationTestInventoryStatistics>();
 		
 		//get the data
 		Query query = sessionFactory.getCurrentSession().getNamedQuery("campaignstatisticsservice.testinventory");
 		query.setParameter("id", campaignId);
 		List<Object[]> res = query.list();
 		
-		// process. Beware that the logic is a bit awkward here. Indeed we first insert new 
-		// IterationTestInventoryStatistics in the result list, then we populate them.
+		/*
+		 * Process. Beware that the logic is a bit awkward here. Indeed we first insert new 
+		 * IterationTestInventoryStatistics in the result list, then we populate them.
+		 */
 		IterationTestInventoryStatistics newStatistics = new IterationTestInventoryStatistics();
 		Long currentId = null;		
 			
@@ -104,8 +117,10 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 		CampaignStatisticsBundle bundle = new CampaignStatisticsBundle();
 		
 		List<IterationTestInventoryStatistics> inventory = gatherIterationTestInventoryStatistics(campaignId);
+		CampaignProgressionStatistics progression = gatherCampaignProgressionStatistics(campaignId);
 		
 		bundle.setIterationTestInventoryStatisticsList(inventory);
+		bundle.setCampaignProgressionStatistics(progression);
 		
 		return bundle;
 		

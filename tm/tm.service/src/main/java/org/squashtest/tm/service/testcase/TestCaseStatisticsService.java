@@ -22,10 +22,11 @@ package org.squashtest.tm.service.testcase;
 
 import java.util.Collection;
 
-import org.squashtest.tm.service.testcase.TestCaseStatisticsBundle.TestCaseBoundRequirementsStatistics;
-import org.squashtest.tm.service.testcase.TestCaseStatisticsBundle.TestCaseImportanceStatistics;
-import org.squashtest.tm.service.testcase.TestCaseStatisticsBundle.TestCaseSizeStatistics;
-import org.squashtest.tm.service.testcase.TestCaseStatisticsBundle.TestCaseStatusesStatistics;
+import org.squashtest.tm.service.statistics.testcase.TestCaseBoundRequirementsStatistics;
+import org.squashtest.tm.service.statistics.testcase.TestCaseImportanceStatistics;
+import org.squashtest.tm.service.statistics.testcase.TestCaseSizeStatistics;
+import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
+import org.squashtest.tm.service.statistics.testcase.TestCaseStatusesStatistics;
 
 public interface TestCaseStatisticsService {
 

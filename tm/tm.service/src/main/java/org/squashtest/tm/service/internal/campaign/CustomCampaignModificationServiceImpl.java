@@ -30,11 +30,11 @@ import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
-import org.squashtest.tm.service.campaign.CampaignStatisticsBundle;
 import org.squashtest.tm.service.campaign.CampaignStatisticsService;
 import org.squashtest.tm.service.campaign.CustomCampaignModificationService;
 import org.squashtest.tm.service.internal.library.NodeManagementService;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
+import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 
 @Service("CustomCampaignModificationService")
 @Transactional
