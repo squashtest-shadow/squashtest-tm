@@ -339,6 +339,10 @@
 		@NamedQuery(name = "TestCaseStatistics.importanceStatistics", query = "select tc.importance, count(tc) from TestCase tc where tc.id in (:testCaseIds) group by tc.importance"),
 		@NamedQuery(name = "TestCaseStatistics.statusesStatistics",	query = "select tc.status, count(tc) from TestCase tc where tc.id in (:testCaseIds) group by tc.status"),
 
+		//Campaign Statistics
+		@NamedQuery(name="campaignstatisticsservice.testinventory", 
+		query=	"select iter.id as iterid, iter.name as name, itp.executionStatus as status, count(itp) as num " +
+				"from Campaign c join c.iterations iter join iter.testPlans itp where c.id = :id group by iter, itp.executionStatus order by iter"),
 		
 		/* ********************************************** batch deletion-related queries **************************************************** */
 

@@ -40,9 +40,9 @@ define(
 				"./basic-objects/model-cache",
 				"./basic-objects/refresh-button",
 				"./basic-objects/timestamp-label",
-				"./basic-objects/toggle-panel-view",
+				"./basic-objects/figleaf-view",
 		        "backbone"],
-		function($, attrparser, eventBus, StatModel, cache, RefreshButton, Timestamp, TogglePanelView,Backbone) {
+		function($, attrparser, eventBus, StatModel, cache, RefreshButton, Timestamp, FigLeafView, Backbone) {
 
 			var SuperMasterView = Backbone.View.extend({
 								
@@ -61,11 +61,11 @@ define(
 
 					];},
 					
-				initTogglePanels : function(){
+				initFigleaves : function(){
 					var self = this;
-					var panels = this.el.find('.toggle-panel-main');
+					var panels = this.el.find('.dashboard-figleaf');
 					panels.each(function(index, panel){
-						new TogglePanelView({
+						new FigLeafView({
 							el : panel,
 							model : self.bbModel
 						});
@@ -97,7 +97,9 @@ define(
 						syncmode : (isTreeListener) ? "tree-listener"	: "passive",
 						cacheKey : conf.cacheKey
 					});
-					self.initTogglePanels();
+					
+					
+					self.initFigleaves();
 					self.initViews();
 					
 					// this hook will ensure the destruction of the

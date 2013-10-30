@@ -25,7 +25,6 @@
 	pageEncoding="utf-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
-<%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="camp" tagdir="/WEB-INF/tags/campaigns-components"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
@@ -33,6 +32,7 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform" %>
+<%@ taglib prefix="dashboard" tagdir="/WEB-INF/tags/dashboard" %>
 
 <f:message var="squashlocale" key="squashtm.locale" />
 
@@ -40,37 +40,15 @@
 
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
 <c:url var="campaignUrl" value="/campaigns/${campaign.id}" />
-
-<s:url var="campaignInfoUrl" value="/campaigns/{campId}/general">
-	<s:param name="campId" value="${campaign.id}" />
-</s:url>
-<s:url var="campaignPlanningUrl" value="/campaigns/{campId}/planning">
-	<s:param name="campId" value="${campaign.id}" />
-</s:url>
-<s:url var="assignableUsersUrl"
-	value="/campaigns/{campId}/assignable-users">
-	<s:param name="campId" value="${campaign.id}" />
-</s:url>
-<s:url var="campaignStatisticsUrl" value="/campaigns/{campId}/statistics">
-	<s:param name="campId" value="${campaign.id }"/>
-</s:url>
-<s:url var="assignTestCasesUrl"
-	value="/campaigns/${ campaign.id }/batch-assign-user" />
-
-<c:url var="testCaseManagerUrl"
-	value="/campaigns/${ campaign.id }/test-plan/manager" />
-
+<c:url var="campaignInfoUrl" value="/campaigns/${campaign.id}/general" />
+<c:url var="campaignPlanningUrl" value="/campaigns/${campaign.id}/planning"/>
+<c:url var="assignableUsersUrl" value="/campaigns/${campaign.id}/assignable-users" />
+<c:url var="campaignStatisticsUrl" value="/campaigns/${campaign.id}/dashboard-statistics" />
+<c:url var="assignTestCasesUrl" value="/campaigns/${campaign.id}/batch-assign-user" />
+<c:url var="testCaseManagerUrl"	value="/campaigns/${campaign.id}/test-plan/manager" />
 <c:url var="workspaceUrl" value="/campaign-workspace/#" />
-
-<s:url var="btEntityUrl" value="/bugtracker/campaign/{id}">
-	<s:param name="id" value="${campaign.id}" />
-</s:url>
-
+<c:url var="btEntityUrl" value="/bugtracker/campaign/${campaign.id}" />
 <c:url var="customFieldsValuesURL" value="/custom-fields/values" />
-
-<s:url var="dashboardUrl" value="/campaigns/{campId}/dashboard?tab=" >
-	<s:param name="campId" value="${campaign.id}"/>
-</s:url>
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE"
@@ -182,7 +160,7 @@
 <csst:jq-tab>
 <div class="fragment-tabs fragment-body">
 	<ul class="tab-menu">
-		<li><a href="${ dashboardUrl }"><f:message key="title.Dashboard"/>
+		<li><a href="#dashboard-campaign"><f:message key="title.Dashboard"/>
 		</a>
 		</li>
 		<li><a href="#tabs-1"><f:message key="tabs.label.information" />
@@ -419,6 +397,11 @@
 
 	<at:attachment-tab tabId="tabs-3" entity="${ campaign }" editable="${ attachable }" tableModel="${attachmentsModel}"/>
 	
+	
+	<%------------------------------- Dashboard ---------------------------------------------------%>
+	<div id="dashboard-campaign">
+		<dashboard:campaign-dashboard-panel url="${campaignStatisticsUrl}"/>
+	</div>
 
 </div>
 </csst:jq-tab>
@@ -489,9 +472,10 @@
 	
 	require(["domReady", "require"], function(domReady, require){
 		domReady(function(){
-			require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", 'workspace.event-bus', 
+			require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs", 
+			         "bugtracker", 'workspace.event-bus', "campaign-management",
 			         "jqueryui"], 
-					function($, basicwidg, contentHandlers, Frag, bugtracker, eventBus){
+					function($, basicwidg, contentHandlers, Frag, bugtracker, eventBus, campmanager){
 				
 				basicwidg.init();
 				
@@ -516,6 +500,13 @@
 					label : "${tabIssueLabel}"
 				});
 				</c:if>
+				
+				// ********** dashboard **************
+				
+				campmanager.initDashboardPanel({
+					master : '#dashboard-master',
+					cacheKey : 'camp${campaign.id}'
+				});		
 				
 			});
 		});

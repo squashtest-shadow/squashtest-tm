@@ -30,6 +30,8 @@ import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
+import org.squashtest.tm.service.campaign.CampaignStatisticsBundle;
+import org.squashtest.tm.service.campaign.CampaignStatisticsService;
 import org.squashtest.tm.service.campaign.CustomCampaignModificationService;
 import org.squashtest.tm.service.internal.library.NodeManagementService;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
@@ -40,6 +42,9 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 
 	@Inject
 	private CampaignDao campaignDao;
+	
+	@Inject
+	private CampaignStatisticsService statisticsService;
 
 	@Inject
 	@Named("squashtest.tm.service.internal.CampaignManagementService")
@@ -59,6 +64,15 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 	@Override
 	public TestPlanStatistics findCampaignStatistics(long campaignId) {
 		return campaignDao.findCampaignStatistics(campaignId);
+	}
+	
+	
+	@Override
+	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public CampaignStatisticsBundle gatherCampaignStatisticsBundle(
+			long campaignId) {
+		return statisticsService.gatherCampaignStatisticsBundle(campaignId);
 	}
 	
 	

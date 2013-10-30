@@ -1,4 +1,4 @@
-/*
+/**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2013 Henix, henix.fr
  *
@@ -18,35 +18,31 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.squashtest.tm.service.campaign;
 
-define(["jquery", "backbone", "jquery.squash.togglepanel"], function($, Backbone){
+import java.util.List;
 
-	return Backbone.View.extend({
-		
-		initialize : function(){
-			
-			this.$el.togglePanel();
-			
-			if (this.model.isAvailable()){
-				this.show();
-			}
-			else{
-				this.hide();
-				this.listenToOnce(this.model, 'change', this.show);
-			}
-		
-		},
-		
+import org.squashtest.tm.service.campaign.CampaignStatisticsBundle.IterationTestInventoryStatistics;
+
+public interface CampaignStatisticsService {
+
 	
-		show : function(){
-			this.$el.find('.dashboard-figures').removeClass('not-displayed');
-			this.$el.find('.dashboard-notready').addClass('not-displayed');
-		},
-		
-		hide : function(){
-			this.$el.find('.dashboard-figures').addClass('not-displayed');
-			this.$el.find('.dashboard-notready').removeClass('not-displayed');			
-		}
-		
-	});
-});
+	/**
+	 * Given a campaign id, gather and returns how many tests and at which status are planned in this campaign.
+	 * Only tests part of an iteration count. Those statistics are grouped and sorted by Iteration.
+	 * 
+	 * @param campaignId
+	 * @return
+	 */
+	List<IterationTestInventoryStatistics> gatherIterationTestInventoryStatistics(long campaignId);
+	
+	
+	
+	/**
+	 * Given a campaign id, gather all of the above in one package. 
+	 * 
+	 * @param campaignId
+	 * @return
+	 */
+	CampaignStatisticsBundle gatherCampaignStatisticsBundle(long campaignId);
+}

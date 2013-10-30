@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2013 Henix, henix.fr
  *
@@ -18,25 +18,21 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.campaign;
 
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 
-@Transactional
-public interface CustomCampaignModificationService {
-
-	void rename(long campaignId, String newName);
-
+define(["jquery", 'squash.attributeparser', 
+        "dashboard/SuperMasterView"],
+        function($, attrparser, SuperMasterView){
 	
-	/**
-	 * 
-	 * @param campaignId the id of the concerned campaign
-	 * @return the computed {@link TestPlanStatistics} out of each test-plan-item of each campaign's iteration
-	 */
-	TestPlanStatistics findCampaignStatistics(long campaignId);
+	return SuperMasterView.extend({
+		
+		initViews : function(master){
+			var self = this;
+			var views = [
+			     
+			];
+			self.views = $.merge( self.getBasicViews(), views) ;
+		}
+	});
 	
-	
-	CampaignStatisticsBundle gatherCampaignStatisticsBundle(long campaignId);
-
-}
+});

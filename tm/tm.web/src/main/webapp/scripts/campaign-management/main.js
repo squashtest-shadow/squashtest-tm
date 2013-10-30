@@ -18,11 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['./test-plan-panel/main'  ], function(testPlanPanel) {
+define(['./test-plan-panel/main', "dashboard/campaigns-dashboard/main"  ], function(testPlanPanel, dashboard) {
 	
 	return {
 		initTestPlanPanel : function(conf){
 			testPlanPanel.init(conf);
-		}		
+		},
+		initDashboardPanel : function(conf){
+			dashboard.init(conf);
+		}
 	};
 });

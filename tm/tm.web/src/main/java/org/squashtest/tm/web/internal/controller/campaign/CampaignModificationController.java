@@ -53,6 +53,7 @@ import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.CampaignModificationService;
+import org.squashtest.tm.service.campaign.CampaignStatisticsBundle;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
@@ -333,7 +334,26 @@ public class CampaignModificationController {
 		return toreturn;
 
 	}
+	
+	
+	// *************************** statistics ********************************
 
+	//URL should have been /statistics, but that was already used by another method in this controller
+	@RequestMapping (value = "/dashboard-statistics", method = RequestMethod.GET, produces="application/json"/*, params = {"date"}*/)
+	public @ResponseBody CampaignStatisticsBundle getStatisticsAsJson(@PathVariable("campaignId") long campaignId/*, @RequestParam(value="date", defaultValue="") String strDate*/){
+		
+		return campaignModService.gatherCampaignStatisticsBundle(campaignId);
+	}
+	
+	@RequestMapping (value = "/dashboard", method = RequestMethod.GET, produces="text/html", params = {"date"})
+	public String getDashboard(Model model, @PathVariable("campaignId") long campaignId, @RequestParam(value="date", defaultValue="") String strDate){
+		
+		throw new RuntimeException("not implemented yet");
+	}
+	
+	
+	// **************************** private stuffs ***************************
+	
 	private static final class UserLoginComparator implements Comparator<User>{
 		@Override
 		public int compare(User u1, User u2) {

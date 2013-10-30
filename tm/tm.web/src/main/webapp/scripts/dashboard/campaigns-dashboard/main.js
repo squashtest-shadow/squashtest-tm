@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2013 Henix, henix.fr
  *
@@ -18,25 +18,21 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.campaign;
 
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.campaign.TestPlanStatistics;
-
-@Transactional
-public interface CustomCampaignModificationService {
-
-	void rename(long campaignId, String newName);
-
+define(['require', 'iesupport/am-I-ie8'],function(require, isIE8){
 	
-	/**
-	 * 
-	 * @param campaignId the id of the concerned campaign
-	 * @return the computed {@link TestPlanStatistics} out of each test-plan-item of each campaign's iteration
-	 */
-	TestPlanStatistics findCampaignStatistics(long campaignId);
+	var dependencies = ['squash.attributeparser', './main-view'];
 	
+	if (isIE8){
+		dependencies.push('excanvas');
+	}
 	
-	CampaignStatisticsBundle gatherCampaignStatisticsBundle(long campaignId);
-
-}
+	return {
+		init : function(settings){
+			require(dependencies, function(attrparser, CampDashboardView){
+				new CampDashboardView(settings);
+			});
+		}
+	};
+	
+});

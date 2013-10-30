@@ -219,8 +219,7 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 			return new TestCaseSizeStatistics();
 		}
 
-		Query query = sessionFactory.getCurrentSession().createSQLQuery(
-				SQL_SIZE_STATISTICS);
+		Query query = sessionFactory.getCurrentSession().createSQLQuery(SQL_SIZE_STATISTICS);
 		query.setParameterList("testCaseIds", testCaseIds, LongType.INSTANCE);
 
 		List<Object[]> tuples = query.list();
