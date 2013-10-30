@@ -118,7 +118,7 @@ define(["jquery", "../domain/DelegateCommand"], function($, DelegateCommand){
 			var url =this.options._delegateurl;
 			
 			if (url.length===0){
-				if (console && console.log){
+				if (window.console && window.console.log){
 					console.log('bugtracker widget : no url for delegate command was supplied, request is aborted');
 				}
 				if (!!fnError){
@@ -138,7 +138,7 @@ define(["jquery", "../domain/DelegateCommand"], function($, DelegateCommand){
 					callback(json);
 				}
 			}).error(function(xhr, err){
-				if (console && console.log){
+				if (window.console && window.console.log){
 					console.log('command '+command.command+' : error : '+err);
 				}
 				if (!!fnError){

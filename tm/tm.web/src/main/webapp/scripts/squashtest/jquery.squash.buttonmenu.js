@@ -143,7 +143,7 @@ define([ 'jquery', 'jqueryui', 'jquery.squash.squashbutton' ], function($) {
 					blurhandler.call(this, evt);
 				}
 				catch(wtf){
-					if (console && console.log){
+					if (window.console && window.console.log){
 						console.log('buttonmenu : problem while bluring menu '+this.selector);
 					}
 				}
