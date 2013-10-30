@@ -34,6 +34,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.document.DateTools;
 import org.apache.lucene.search.FieldComparator;
 import org.apache.lucene.search.Sort;
@@ -363,45 +364,66 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 
 	private org.apache.lucene.search.Query buildLuceneSingleValueQuery(
-			QueryBuilder qb, String fieldName, String value,
+			QueryBuilder qb, String fieldName, List<String> values,
 			boolean ignoreBridge) {
 
-		org.apache.lucene.search.Query query;
 
-		if (ignoreBridge) {
-			query = qb
-					.bool()
-					.must(qb.keyword().onField(fieldName).ignoreFieldBridge()
-							.matching(value).createQuery()).createQuery();
-		} else {
-			query = qb
-					.bool()
-					.must(qb.keyword().onField(fieldName).matching(value)
-							.createQuery()).createQuery();
+		org.apache.lucene.search.Query mainQuery = null;
+		
+		for(String value : values){
+			
+			org.apache.lucene.search.Query query;
+
+			if (ignoreBridge) {
+				query = qb
+						.bool()
+						.must(qb.phrase().onField(fieldName).ignoreFieldBridge()
+								.sentence(value).createQuery()).createQuery();
+			} else {
+				query = qb
+						.bool()
+						.must(qb.phrase().onField(fieldName).sentence(value)
+								.createQuery()).createQuery();
+			}
+			
+			if (query != null && mainQuery == null) {
+				mainQuery = query;
+			} else if (query != null) {
+				mainQuery = qb.bool().must(mainQuery).must(query).createQuery();
+			}
 		}
 
-		return query;
+
+		return mainQuery;
 	}
 
 	private org.apache.lucene.search.Query buildLuceneTextQuery(
-			QueryBuilder qb, String fieldName, String value,
+			QueryBuilder qb, String fieldName, List<String> values,
 			boolean ignoreBridge) {
 
-		org.apache.lucene.search.Query query;
-
-		if (ignoreBridge) {
-			query = qb
-					.bool()
-					.must(qb.phrase().onField(fieldName).ignoreFieldBridge()
-							.sentence(value).createQuery()).createQuery();
-		} else {
-			query = qb
-					.bool()
-					.must(qb.phrase().onField(fieldName).sentence(value)
-							.createQuery()).createQuery();
+		org.apache.lucene.search.Query mainQuery = null;
+		
+		for(String value : values){
+			
+			org.apache.lucene.search.Query query;
+	
+			if (ignoreBridge) {
+				query = qb
+						.bool()
+						.must(qb.phrase().onField(fieldName).ignoreFieldBridge().sentence(value).createQuery()).createQuery();
+			} else {
+				query = qb
+						.bool()
+						.must(qb.phrase().onField(fieldName).sentence(value).createQuery()).createQuery();
+			}
+			
+			if (query != null && mainQuery == null) {
+				mainQuery = query;
+			} else if (query != null) {
+				mainQuery = qb.bool().must(mainQuery).must(query).createQuery();
+			}
 		}
-
-		return query;
+		return mainQuery;
 	}
 
 	private org.apache.lucene.search.Query buildLuceneTimeIntervalQuery(
@@ -428,8 +450,10 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		AdvancedSearchSingleFieldModel singleModel = (AdvancedSearchSingleFieldModel) fieldModel;
 		if (singleModel.getValue() != null
 				&& !"".equals(singleModel.getValue().trim())) {
+			List<String> inputs = parseInput(singleModel.getValue());
+	
 			return buildLuceneSingleValueQuery(qb, fieldKey,
-					singleModel.getValue(), ignoreBridge);
+					inputs, ignoreBridge);
 		}
 
 		return null;
@@ -448,13 +472,65 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return null;
 	}
 
+	private void addToTokens(List<String> tokens, String token){
+		if(StringUtils.isNotBlank(token)){
+			tokens.add(token);
+		}
+
+	}
+	
+	private List<String> parseInput(String textInput){
+		
+		List<String> tokens = new ArrayList<String>();
+		boolean inDoubleQuoteContext = false;
+		char[] input = textInput.toCharArray();
+		int start = 0;
+
+		for(int i=0; i<input.length; i++){
+			
+			//if we encounter a double quote at the very start 
+			if(i == 0){
+				if(input[i] == '"'){
+					inDoubleQuoteContext = true;
+					start = i+1;
+				}
+			} else {				
+				//if we encounter a blank while NOT in the context of a double quote
+				if(input[i] == ' ' && input[i-1] != ' ' && !inDoubleQuoteContext){
+					addToTokens(tokens, textInput.substring(start, i).trim());
+					start = i+1;
+				}
+				
+				//if we encounter a double quote while in the context of a double quote
+				else if(input[i] == '"' && input[i-1] != '\\' && inDoubleQuoteContext){	
+					addToTokens(tokens, textInput.substring(start, i).trim());
+					inDoubleQuoteContext = false;
+					start = i+1;
+				}
+				
+				//if we encounter a double quote while NOT in the context of a double quote
+				else if(input[i] == '"' && input[i-1] != '\\' && !inDoubleQuoteContext){
+					addToTokens(tokens, textInput.substring(start, i).trim());
+					inDoubleQuoteContext = true;
+					start = i+1;
+				}
+			}
+		}
+		
+		if(input[input.length-1] != '"' && input[input.length-1] != ' '){
+			addToTokens(tokens, textInput.substring(start, input.length).trim());
+		}
+		
+		return tokens;
+	}
+	
 	private org.apache.lucene.search.Query buildQueryForTextCriterium(
 			String fieldKey, AdvancedSearchFieldModel fieldModel,
 			QueryBuilder qb, boolean ignoreBridge) {
 		AdvancedSearchTextFieldModel textModel = (AdvancedSearchTextFieldModel) fieldModel;
-		if (textModel.getValue() != null
-				&& !"".equals(textModel.getValue().trim())) {
-			return buildLuceneTextQuery(qb, fieldKey, textModel.getValue(), ignoreBridge);
+		if (textModel.getValue() != null && !"".equals(textModel.getValue().trim())) {
+			List<String> inputs = parseInput(textModel.getValue());
+			return buildLuceneTextQuery(qb, fieldKey, inputs, ignoreBridge);
 		}
 
 		return null;
