@@ -33,11 +33,11 @@
  * 
  * one can define sereval rows here, that will be interpreted as templates.
  * - <tr class="dashboard-table-template-emptyrow"> : 
- * 	that row will be used when there are no data to display. 
+ *  that row will be used when there are no data to display. 
  *  Default  : empty row 
  *  
  * <tr class="dashboard-table-template-datarow"> : 
- * 	this is a handlebar template, which context will be a row data (an array). Useful if you want custom css for your tds. 
+ *  this is a handlebar template, which context will be a row data (an array). Useful if you want custom css for your tds. 
  *  Default : will generate rows and tds that work, with no css.
  * 
  */

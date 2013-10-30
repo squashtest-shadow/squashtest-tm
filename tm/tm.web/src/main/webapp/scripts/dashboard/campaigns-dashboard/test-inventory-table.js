@@ -33,7 +33,7 @@ define(["../basic-objects/table-view"], function(TableView){
 			for (i=0;i<len;i++){
 				var m = inventory[i];
 				var _nbterm = m.nbSuccess + m.nbFailure + m.nbBlocked + m.nbUntestable + m.nbWarning + m.nbError;
-				var total 	= _nbterm + m.nbReady + m.nbRunning;
+				var total = _nbterm + m.nbReady + m.nbRunning;
 				var progress = (_nbterm * 100 / total).toFixed(0) + ' %';
 				var rowdata = [
 				               m.iterationName,
@@ -45,7 +45,7 @@ define(["../basic-objects/table-view"], function(TableView){
 				               m.nbUntestable,
 				               total,
 				               progress
-				               	];
+				               ];
 				data.push(rowdata);
 			}
 			

@@ -30,10 +30,10 @@ define(["jquery", 'squash.attributeparser',
 		initViews : function(master){
 			var self = this;
 			var views = [
-			     new InventoryTable({
-			    	el : "#dashboard-test-inventory",
-			    	model : self.bbModel
-			     })
+				new InventoryTable({
+					el : "#dashboard-test-inventory",
+					model : self.bbModel
+				})
 			];
 			self.views = $.merge( self.getBasicViews(), views) ;
 		}
