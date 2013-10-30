@@ -20,22 +20,36 @@
  */
 
 
-define(["jquery", 'squash.attributeparser', 
-        "./test-inventory-table",
-        "dashboard/SuperMasterView"],
-        function($, attrparser, InventoryTable, SuperMasterView){
+define(["../basic-objects/table-view"], function(TableView){
 	
-	return SuperMasterView.extend({
+	return TableView.extend({
 		
-		initViews : function(master){
-			var self = this;
-			var views = [
-			     new InventoryTable({
-			    	el : "#dashboard-test-inventory",
-			    	model : self.bbModel
-			     })
-			];
-			self.views = $.merge( self.getBasicViews(), views) ;
+		getData : function(){
+			var inventory = this.model.get('iterationTestInventoryStatisticsList');
+			
+			var data = [],
+				i = 0,
+				len = inventory.length;
+			for (i=0;i<len;i++){
+				var m = inventory[i];
+				var _nbterm = m.nbSuccess + m.nbFailure + m.nbBlocked + m.nbUntestable + m.nbWarning + m.nbError;
+				var total 	= _nbterm + m.nbReady + m.nbRunning;
+				var progress = (_nbterm * 100 / total).toFixed(0) + ' %'
+				var rowdata = [
+				               m.iterationName,
+				               m.nbReady,
+				               m.nbRunning,
+				               m.nbSuccess + m.nbWarning,
+				               m.nbFailure,
+				               m.nbBlocked + m.nbError,
+				               m.nbUntestable,
+				               total,
+				               progress
+				               	];
+				data.push(rowdata);
+			}
+			
+			return data;
 		}
 	});
 	

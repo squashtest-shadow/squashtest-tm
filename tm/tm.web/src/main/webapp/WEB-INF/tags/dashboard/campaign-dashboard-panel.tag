@@ -104,26 +104,28 @@
 			
 			</style>
 			
-			<comp:toggle-panel id="dashboard-test-inventory" title="${inventoryTitle}">
+			<comp:toggle-panel id="" title="${inventoryTitle}">
 				<jsp:attribute name="body">
 				<div class="dashboard-figures">		
-					<table class="test-inventory">
+					<table id="dashboard-test-inventory" class="test-inventory" data-def="model-attribute=iterationTestInventoryStatisticsList">
 						<thead>
 							<tr>				
 								<th style="width:25%"><span><f:message key="label.iteration"/></span></th>
-								<th class="status-color-ready"><span>0. <f:message key="label.Ready"/></span></th>
-								<th class="status-color-running"><span>1. <f:message key="label.Running"/></span></th>
-								<th class="status-color-success"><span>2. <f:message key="label.Success"/></span></th>
-								<th class="status-color-failure"><span>3. <f:message key="label.Failure"/></span></th>
-								<th class="status-color-blocked"><span>4. <f:message key="label.Blocked"/></span></th>
-								<th class="status-color-untestable"><span>5. <f:message key="label.Untestable"/></span></th>
+								<th class="status-color-ready"><span><f:message key="label.Ready"/></span></th>
+								<th class="status-color-running"><span><f:message key="label.Running"/></span></th>
+								<th class="status-color-success"><span><f:message key="label.Success"/></span></th>
+								<th class="status-color-failure"><span><f:message key="label.Failure"/></span></th>
+								<th class="status-color-blocked"><span><f:message key="label.Blocked"/></span></th>
+								<th class="status-color-untestable"><span><f:message key="label.Untestable"/></span></th>
 								<th><span><f:message key="dashboard.campaigns.testinventory.legend.testnumber"/></span></th>
 								<th><span><f:message key="dashboard.campaigns.testinventory.legend.advancementexecution"/></span></th>
 							</tr>
 						</thead>
 					
 						<tbody>
-						
+							<tr>
+								<td colspan="9">No record founds (résultat vide) (internationalise moi ça)</td>
+							</tr>
 						</tbody>			
 					</table>		
 				</div>

@@ -73,6 +73,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 				newStatistics = new IterationTestInventoryStatistics();
 				newStatistics.setIterationName(name);
 				result.add(newStatistics);
+				currentId = id;
 			}
 			
 			ExecutionStatus status = (ExecutionStatus)tuple[2];
