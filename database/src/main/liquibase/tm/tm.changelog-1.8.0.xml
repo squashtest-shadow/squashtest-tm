@@ -84,6 +84,32 @@
 	</changeSet>
 	
 	
+	<changeSet id="core-1.8.0-feat-2699-00" author="bsiri">
+		<comment>actually remove user accounts that were deactivated</comment>
+		<sql>
+			
+			delete from CORE_TEAM_MEMBER 
+			where USER_ID in (
+				select PARTY_ID from CORE_USER
+				where ACTIVE=0
+			);
+			
+			delete from CORE_GROUP_MEMBER
+			where PARTY_ID in (
+				select PARTY_ID from CORE_USER
+				where ACTIVE=0
+			);
+			
+			delete from CORE_USER where active = 0;
+			
+			delete from CORE_PARTY where PARTY_ID not in
+			(select PARTY_ID from CORE_USER)
+			and PARTY_ID not in
+			(select PARTY_ID from CORE_TEAM);				
+			
+			delete from AUTH_USER where active=0;
+		</sql>
+	</changeSet>
 	
 	<changeSet id="core-1.8.0-feat-2699-01" author="bsiri">
 		<comment>the CORE_GROUP squashtest.tm.group.User is now renamed to the normalized squashtest.authz.group.tm.User</comment>

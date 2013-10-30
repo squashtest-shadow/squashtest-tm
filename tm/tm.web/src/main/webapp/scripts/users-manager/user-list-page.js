@@ -238,7 +238,7 @@ define([ "jquery", "squash.translator", "jquery.squash.fragmenttabs", "squashtab
 			var value = table.fnGetData(this),
 				$cell = $(this);
 			
-			var btnclass = (value) ? 'table-icon user-active-btn icon-user-activated' : 'table-icon user-active-btn icon-user-deactivated disabled-transparent';
+			var btnclass = (value) ? 'table-icon user-active-btn icon-user-activated' : 'table-icon user-active-btn icon-user-deactivated';
 			
 			$cell.empty().append('<a href="#" class="'+btnclass+'"/>');
 			
@@ -269,7 +269,7 @@ define([ "jquery", "squash.translator", "jquery.squash.fragmenttabs", "squashtab
 					var table = this;
 					var url = squashtm.app.contextRoot+"/administration/users/"+ids.join(',')+'/deactivate';
 					$.post(url).done(function(){
-						table._changeActivation(ids, false, "table-icon user-active-btn icon-user-deactivated disabled-transparent");
+						table._changeActivation(ids, false, "table-icon user-active-btn icon-user-deactivated");
 					});
 				}, 
 				

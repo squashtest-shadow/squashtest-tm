@@ -26,8 +26,22 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
- <include file="tm.data-1.7.0-core-user-project-manager.xml" relativeToChangelogFile="true" />
+  <include file="tm.data-1.7.0-core-user-project-manager.xml" relativeToChangelogFile="true" />
   <include file="tm.data-1.7.1-remove-deleted-on.xml" relativeToChangelogFile="true" />
+  
+  <!--  dataset test -->
+	<changeSet id="tm-data-1.7.0-feat-2699-test-00" author="bsiri">
+		<preConditions>
+			<sqlCheck expectedResult="2">
+				select count(*) from AUTH_USER
+				where login like 'deactivated%'
+			</sqlCheck>
+			<sqlCheck expectedResult="2">
+				select count(*) from CORE_USER
+				where login like 'deactivated%'
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
   
 	<!-- ========================================INCLUDE CHANGELOG================================================ -->
 	<include file="../../../main/liquibase/tm/tm.changelog-1.8.0.xml" relativeToChangelogFile="true" />
@@ -131,5 +145,22 @@
 				where cpa.AUTHORITY = 'ROLE_TM_PROJECT_MANAGER'  
 			</sqlCheck>					
 		</preConditions>	
+	</changeSet>
+	
+	<!--  also check that previously deactivated users are actually deleted -->
+	<changeSet id="tm-data-1.7.0-feat-2699-test-04" author="bsiri">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*) from AUTH_USER
+				where active=0	;		
+			</sqlCheck>
+			
+			<sqlCheck expectedResult="0">
+				select count(*) from CORE_USER
+				where active=0;
+			</sqlCheck>
+		
+		</preConditions>
+	
 	</changeSet>
 </databaseChangeLog>
