@@ -22,14 +22,35 @@ require([ "common" ], function(common) {
 	require([ "jquery", "search/advanced-search-input", "app/ws/squashtm.workspace", "domReady" ], function($,
 			AdvancedSearchView, WS, domReady) {
 		var goBack = function() {
-			history.back();
+			
+			var searchDomain = $("#searchDomain").text();
+			var associationType = $("#associationType").text();
+			var associationId = $("#associationId").text();
+			if(!!associationType){
+				if("testcase" === searchDomain && "requirement" === associationType){
+					document.location.href = squashtm.app.contextRoot + "requirement-versions/"+associationId+"/verifying-test-cases/manager";
+				} else if("testcase" === searchDomain && "campaign" === associationType){
+					document.location.href = squashtm.app.contextRoot + "campaigns/"+associationId+"/test-plan/manager";
+				} else if("testcase" === searchDomain && "iteration" === associationType){
+					document.location.href = squashtm.app.contextRoot + "iterations/"+associationId+"/test-plan-manager";
+				} else if("testcase" === searchDomain && "testsuite" === associationType){
+					document.location.href = squashtm.app.contextRoot + "test-suites/"+associationId+"/test-plan-manager";
+				} else if("requirement" === searchDomain && "testcase" === associationType){
+					document.location.href = squashtm.app.contextRoot + "test-cases/"+associationId+"/verified-requirement-versions/manager";
+				}
+			} else {
+				if("testcase" === searchDomain){
+					document.location.href = squashtm.app.contextRoot + "test-case-workspace";
+				} else if("requirement" === searchDomain){
+					document.location.href = squashtm.app.contextRoot + "requirement-workspace";
+				}
+			}
 		};
 
 		domReady(function() {
 			WS.init("");
 			var view = new AdvancedSearchView();
 			$("#back").button().on("click", goBack);
-			view.on("team.delete", goBack);
 		});
 
 	});

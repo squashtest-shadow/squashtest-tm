@@ -21,6 +21,12 @@
 require([ "common" ], function(common) {
 	require([ "jquery", "user-editor/UserModificationView", "app/ws/squashtm.workspace", "domReady" ], function($,
 			UserModificationView, WS, domReady) {
+		
+		
+		var goBackInHistory = function(){
+			history.back();
+		};
+		
 		var goBack = function() {
 			document.location.href = squashtm.app.contextRoot + "/administration/users/list";
 		};
@@ -28,7 +34,7 @@ require([ "common" ], function(common) {
 		domReady(function() {
 			WS.init("");
 			var view = new UserModificationView();
-			$("#back").button().on("click", goBack);
+			$("#back").button().on("click", goBackInHistory);
 			view.on("user.delete", goBack);
 			
 		});

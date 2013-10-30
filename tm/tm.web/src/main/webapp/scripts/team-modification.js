@@ -22,6 +22,10 @@ require([ "common" ], function(common) {
 	require([ "jquery", "team-editor/TeamModificationView", "app/ws/squashtm.workspace", "domReady" ], 
 				function($, TeamModificationView, WS, domReady) {
 		
+		var goBackInHistory = function(){
+			history.back();
+		};
+		
 		var goBack = function() {
 			document.location.href = squashtm.app.contextRoot + "/administration/users/list";
 		};
@@ -29,7 +33,7 @@ require([ "common" ], function(common) {
 		domReady(function() {
 			WS.init("");
 			var view = new TeamModificationView();
-			$("#back").button().on("click", goBack);
+			$("#back").button().on("click", goBackInHistory);
 			view.on("team.delete", goBack);
 		});
 

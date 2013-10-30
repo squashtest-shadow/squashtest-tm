@@ -77,7 +77,7 @@
 	<jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back" />
 		<f:message var="backButtonLabel" key="label.Back" />
-		<input type="button" class="button" value="${backButtonLabel}" onClick="document.location.href= '${projectsUrl}'"/>	
+		<input type="button" class="button" value="${backButtonLabel}" onClick="history.back();"/>	
 	</jsp:attribute>
 	<jsp:attribute name="informationContent">
 	<c:choose>
