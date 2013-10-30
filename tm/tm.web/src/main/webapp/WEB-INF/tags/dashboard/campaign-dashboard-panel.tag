@@ -70,61 +70,40 @@
 				</jsp:attribute>
 			</comp:toggle-panel>
 			
-			<style type="text/css">
 			
-				table.test-inventory thead th{
-					border : 1px solid black;
-					border-collapse : collapse;
-					height : 30px;
-				}
-				
-				table.test-inventory th.status-color-ready{
-					background-color : #BDD3FF;
-				}
-				
-				table.test-inventory th.status-color-running{
-					background-color : #6699FF;
-				}
-				
-				table.test-inventory th.status-color-success{
-					background-color : #99CC00;
-				}
-				
-				table.test-inventory th.status-color-failure{
-					background-color : #FF3300;
-				}
-				
-				table.test-inventory th.status-color-blocked{
-					background-color : #FFCC00;
-				}
-				
-				table.test-inventory th.status-color-untestable{
-					background-color : #969696;
-				}
-			
-			</style>
 			
 			<comp:toggle-panel id="" title="${inventoryTitle}">
 				<jsp:attribute name="body">
 				<div class="dashboard-figures">		
-					<table id="dashboard-test-inventory" class="test-inventory" data-def="model-attribute=iterationTestInventoryStatisticsList">
+					<table id="dashboard-test-inventory" class="dashboard-table" data-def="model-attribute=iterationTestInventoryStatisticsList">
 						<thead>
-							<tr>				
+							<tr >				
 								<th style="width:25%"><span><f:message key="label.iteration"/></span></th>
-								<th class="status-color-ready"><span><f:message key="label.Ready"/></span></th>
+								<th class="status-color-ready std-border thick-border-left"><span><f:message key="label.Ready"/></span></th>
 								<th class="status-color-running"><span><f:message key="label.Running"/></span></th>
 								<th class="status-color-success"><span><f:message key="label.Success"/></span></th>
 								<th class="status-color-failure"><span><f:message key="label.Failure"/></span></th>
 								<th class="status-color-blocked"><span><f:message key="label.Blocked"/></span></th>
-								<th class="status-color-untestable"><span><f:message key="label.Untestable"/></span></th>
-								<th><span><f:message key="dashboard.campaigns.testinventory.legend.testnumber"/></span></th>
-								<th><span><f:message key="dashboard.campaigns.testinventory.legend.advancementexecution"/></span></th>
+								<th class="status-color-untestable std-border thick-border-right"><span><f:message key="label.Untestable"/></span></th>
+								<th ><span><f:message key="dashboard.campaigns.testinventory.legend.testnumber"/></span></th>
+								<th ><span><f:message key="dashboard.campaigns.testinventory.legend.advancementexecution"/></span></th>
 							</tr>
 						</thead>
 					
 						<tbody>
-							<tr>
-								<td colspan="9">No record founds (résultat vide) (internationalise moi ça)</td>
+							<tr class="dashboard-table-template-emptyrow">
+								<td colspan="9" class="std-border">No record founds (résultat vide) (internationalise moi ça)</td>
+							</tr>
+							<tr class="dashboard-table-template-datarow">
+								<td class="std-border light-border" style="font-weight:bold">{{this.[0]}}</td>
+								<td class="std-border light-border" style="border-left:2px solid black;">{{this.[1]}}</td>
+								<td class="std-border light-border">{{this.[2]}}</td>
+								<td class="std-border light-border">{{this.[3]}}</td>
+								<td class="std-border light-border">{{this.[4]}}</td>
+								<td class="std-border light-border">{{this.[5]}}</td>
+								<td class="std-border light-border" style="border-right:2px solid black;">{{this.[6]}}</td>
+								<td class="std-border light-border" style="font-weight:bold;">{{this.[7]}}</td>
+								<td class="std-border light-border"style="font-weight:bold;">{{this.[8]}}</td>
 							</tr>
 						</tbody>			
 					</table>		

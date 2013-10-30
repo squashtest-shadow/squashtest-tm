@@ -21,12 +21,25 @@
 
 /*
  * This is your plain table. When its model is updated, will render again. Note that 
- * it must be subclassed and implement getData. Also, if there is one row in the tbody when
- * the widget initialize, this line will be used as a template for when the model is 
- * empty (no data).
+ * it must be subclassed and implement getData. 
  * 
- * DOM options (set on the <table> tag) : 
- * 	- model-attribute : (optional) If set, will consider only this attribute of the model and not the whole model.
+ * DOM configuration :
+ * 
+ * 1/ on the <table> tag :
+ * use the usual 'data-def' attributes : 
+ * - model-attribute : (optional) If set, will consider only this attribute of the model and not the whole model.
+ * 
+ * 2/ on the <tbody>
+ * 
+ * one can define sereval rows here, that will be interpreted as templates.
+ * - <tr class="dashboard-table-template-emptyrow"> : 
+ * 	that row will be used when there are no data to display. 
+ *  Default  : empty row 
+ *  
+ * <tr class="dashboard-table-template-datarow"> : 
+ * 	this is a handlebar template, which context will be a row data (an array). Useful if you want custom css for your tds. 
+ *  Default : will generate rows and tds that work, with no css.
+ * 
  */
 
 define(["jquery", "backbone", "squash.attributeparser", "handlebars"], 
@@ -34,16 +47,9 @@ define(["jquery", "backbone", "squash.attributeparser", "handlebars"],
 	
 	
 	return Backbone.View.extend({
+		
+		DEFAULT_DATAROW : "<tr> {{#each this}}<td>{{this}}</td>{{/each}} </tr>" ,
 
-		_datarowtemplate : Handlebars.compile(
-				"{{#each this}}" +
-				"<tr>" +
-				"{{#each this}}" +
-				"<td>{{this}}</td>" +
-				"{{/each}}" +
-				"</tr>" +
-				"{{/each}}"
-		),
 		
 		getData : function(){
 			throw "must be override. Must return [][] (array of array).";
@@ -67,19 +73,30 @@ define(["jquery", "backbone", "squash.attributeparser", "handlebars"],
 			var data = this.getData();
 			
 			if (data.length===0){
-				body.append(this.emptyRowTemplate.clone());
+				body.append(this.emptyrowTemplate.clone());
 			}
 			else{
-				var rows = this._datarowtemplate(data);
-				body.append(rows);
+				var i=0,
+					len=data.length;
+				for (i=0;i<len;i++){
+					var r = this.datarowTemplate(data[i]);
+					body.append(r);
+				}
 			}
 		},
 		
 		_readDOM : function(){
+			var body = this.$el.find('tbody');
+			
 			// empty row template
-			var emptyrow = this.$el.find('tbody tr:first')
-			this.emptyRowTemplate = (emptyrow.length>0) ? emptyrow : $('<tr></tr>');
+			var emptyrow = body.find('tr.dashboard-table-template-emptyrow');
+			this.emptyrowTemplate = (emptyrow.length>0) ? emptyrow : $('<tr></tr>');
 
+			// data row template
+			var datarow = body.find("tr.dashboard-table-template-datarow");
+			var dtrtpl = (datarow.length>0) ? "<tr>"+datarow.html()+"</tr>" : this.DEFAULT_DATAROW;		
+				
+			this.datarowTemplate = Handlebars.compile(dtrtpl);
 			
 			var strconf = this.$el.data('def');
 			var conf = attrparser.parse(strconf);

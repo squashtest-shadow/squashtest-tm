@@ -214,6 +214,29 @@ table.datepicker-table td.datepicker-table-col {
 	background-repeat : no-repeat;
 }
 
+.status-color-ready{
+	background-color : #BDD3FF;
+}
+
+.status-color-running{
+	background-color : #6699FF;
+}
+
+.status-color-success{
+	background-color : #99CC00;
+}
+
+.status-color-failure{
+	background-color : #FF3300;
+}
+
+.status-color-blocked{
+	background-color : #FFCC00;
+}
+
+.status-color-untestable{
+	background-color : #969696;
+}
 
 
 .manage-attachment-button {
@@ -1005,6 +1028,17 @@ predefined for future evolutions :
 	font-size: 1.5em;
 }
 
+.dashboard-table{	
+	text-align : center;	
+	border-collapse : collapse;
+}
+
+.dashboard-table thead th, .dashboard-table tbody td{
+	height : 20px;
+	border : 1px solid black;
+}
+
+
 /****************************************
  some fixes for the buttonmenu
 ****************************************/
@@ -1017,6 +1051,7 @@ predefined for future evolutions :
 /*****************************************
  * various icons
  ****************************************/
+ 
 .ui-icon-wizard {
 	background-image: url("../images/icon_wizard.gif") !important; /** sprite-ref: sprites-icons; */
 	background-repeat: no-repeat;
