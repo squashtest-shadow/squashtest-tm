@@ -322,6 +322,78 @@
         </dependency>
       </dependencies>
     </profile>
+    
+    <profile>
+			<id>govDev</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+				<property>
+					<name>gov</name>
+				</property>
+			</activation>
+			<properties>
+				<gov.master.changelog>${db.resources.dir}/sample/gov.sample-db.changelog.xml</gov.master.changelog>
+				<gov.version>0.0.1-SNAPSHOT</gov.version>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-remote-resources-plugin</artifactId>
+						<version>1.4</version>
+						<executions>
+							<execution>
+								<id>generate-gov-database-resources</id>
+								<phase>generate-resources</phase>
+								<goals>
+									<goal>process</goal>
+								</goals>
+								<configuration>
+									<resourceBundles>
+										<resourceBundle>org.squashtest.gov:gov.database:${gov.version}</resourceBundle>
+									</resourceBundles>
+									<outputDirectory>${db.resources.dir}</outputDirectory>
+								</configuration>
+							</execution>
+
+
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.liquibase</groupId>
+						<artifactId>liquibase-maven-plugin</artifactId>
+						<configuration>
+							<skip>${db.nopopulate}</skip>
+						</configuration>
+						<executions>
+							<execution>
+								<id>populate-gov-data</id>
+								<!-- this phase should be after schema generation -->
+								<phase>generate-test-resources</phase>
+								<goals>
+									<goal>update</goal>
+								</goals>
+								<configuration>
+									<changeLogFile>${gov.master.changelog}</changeLogFile>
+									<driver>${db.driver}</driver>
+									<url>${db.url}</url>
+									<username>${db.create.user}</username>
+									<password>${db.create.password}</password>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+			<dependencies>
+				<dependency>
+					<groupId>org.squashtest.gov</groupId>
+					<artifactId>gov.database</artifactId>
+					<version>${gov.version}</version>
+				</dependency>
+			</dependencies>
+		</profile>
+    
   </profiles>
 
   <dependencies>
