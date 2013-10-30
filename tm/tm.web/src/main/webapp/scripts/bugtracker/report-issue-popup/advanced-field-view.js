@@ -34,7 +34,7 @@ define(["jquery",
 
 	var logger = {
 		log : function(message){
-			if (console && console.log){
+			if (window.console && window.console.log){
 				console.log(message);
 			}
 		}

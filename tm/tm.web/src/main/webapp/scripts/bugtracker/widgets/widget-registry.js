@@ -42,8 +42,7 @@ define(["require",
 		
 
 		smartlog : function(widgetName, error){
-			
-			if ( (! console) ||  ( ! console.log)){
+			if (!window.console || !window.console.log){
 				return;
 			}
 

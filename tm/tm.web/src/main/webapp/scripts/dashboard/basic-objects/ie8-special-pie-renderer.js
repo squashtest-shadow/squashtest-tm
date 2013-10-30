@@ -90,7 +90,7 @@ define(['jquery'], function($){
 			
 		}
 		catch(exception){
-			if (console && console.log){
+			if (window.console && window.console.log){
 				console.log("ie8-special-pie-renderer : unable to display caption because of exception : " + exception);
 			}
 		}

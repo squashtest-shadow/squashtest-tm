@@ -91,7 +91,7 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 					helper.postAttachments(json);
 				}
 				catch(wtf){
-					if (console && console.log){
+					if (window.console && window.console.log){
 						console.log(wtf);
 					}
 				}
