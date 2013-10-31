@@ -88,7 +88,7 @@
 
 	<!-- ==================== table definition =================== -->
 	<div class="table-tab-wrap" >
-		<table id="test-steps-table" class="unstyled-table">
+		<table th:id="'test-steps-table-'+${testCase.id}" class="unstyled-table test-steps-table">
 			<thead>
 				<tr>
 					<th class="not-displayed">id (masked)</th>

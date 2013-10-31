@@ -91,7 +91,8 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 			callStepManagerUrl : tcUrl + "/call",
 			tableLanguageUrl : ctxUrl + "/datatables/messages",
 			tableAjaxUrl : tcUrl + "/steps",
-			projectId : conf.basic.projectId
+			projectId : conf.basic.projectId,
+			testCaseId : conf.basic.testCaseId
 		// yes, that's no url. Uh.
 		};
 	}
@@ -100,10 +101,10 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 	// ******************************
 
 	function refresh() {
-		$("#test-steps-table").squashTable().refresh();
+		$(".test-steps-table").squashTable().refresh();
 	}
 
-	function removeStepSuccess() {
+	function removeStepSuccess(testCaseId) {
 		refresh();
 		eventBus.trigger("testStepsTable.removedSteps");
 	}
@@ -129,6 +130,21 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		callRows.find('td.called-tc-cell').next().remove().end().attr('colspan', 2);
 	}
 
+	function save_dt_view (oSettings, oData, testCaseId) {
+		 var id = $(".test-steps-table")[0].id;
+		 localStorage.setItem( 'DataTables_'+window.location.pathname+"_"+id, JSON.stringify(oData) );
+	}
+		
+	function load_dt_view (oSettings, testCaseId) {
+	     var id = $(".test-steps-table")[0].id;
+		 return JSON.parse( localStorage.getItem('DataTables_'+window.location.pathname+"_"+id) );
+	}
+		
+	function reset_dt_view(testCaseId) {
+		var id = $(".test-steps-table")[0].id;
+		localStorage.removeItem('DataTables_'+window.location.pathname+"_"+id);
+	}
+		
 	function stepsTableDrawCallback() {
 
 		// rework the td css classes to inhibit some post processing on
@@ -161,7 +177,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		var cufTableHandler = cufValuesManager.cufTableSupport;
 
 		// first we must process the DOM table for cufs
-		cufTableHandler.decorateDOMTable($("#test-steps-table"), settings.basic.cufDefinitions, cufColumnPosition);
+		cufTableHandler.decorateDOMTable($("#test-steps-table-"+urls.testCaseId), settings.basic.cufDefinitions, cufColumnPosition);
 
 		// now let's move to the datatable configuration
 		// in order to enable/disable some features regarding the
@@ -181,10 +197,16 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		if(!permissions.isAttachable){
 			attachButtonClass = "default-cursor";
 		}
-
+		
+		var id = $(".test-steps-table")[0].id;
+		var savedData = JSON.parse( localStorage.getItem('DataTables_'+window.location.pathname+"_"+id));
+				 
 		// create the settings
 		var datatableSettings = {
 			aaData : settings.basic.tableData,
+			bStateSave : true,
+			fnStateSave: function(oSettings, oData) { save_dt_view(oSettings, oData); },
+		    fnStateLoad: function(oSettings) { return load_dt_view(oSettings); },
 			sAjaxSource : urls.tableAjaxUrl,
 			fnDrawCallback : stepsTableDrawCallback,
 			fnCreatedRow : stepsTableCreatedRowCallback,
@@ -266,6 +288,17 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 		};
 
+		if(!!savedData){
+			datatableSettings.aaSorting = savedData.aaSorting;
+			datatableSettings.abVisCols = savedData.abVisCols;
+			datatableSettings.aoSearchCols = savedData.aoSearchCols;
+			datatableSettings.iCreate = savedData.iCreate.aoSearchCols;
+			datatableSettings.iEnd = savedData.iEnd;
+			datatableSettings.iLength = savedData.iLength;
+			datatableSettings.iStart = savedData.iStart;
+			datatableSettings.oSearch = savedData.oSearch;
+		}
+		
 		// decorate the settings with the cuf values support
 		datatableSettings = cufTableHandler.decorateTableSettings(datatableSettings, settings.basic.cufDefinitions,
 				cufColumnPosition, permissions.isWritable);
@@ -374,8 +407,8 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 			};
 		}
 
-		$("#test-steps-table").squashTable(datatableSettings, squashSettings);
-
+		$("#test-steps-table-"+urls.testCaseId).squashTable(datatableSettings, squashSettings);
+		$("#test-steps-table-"+urls.testCaseId).squashTable().refresh();
 	}
 
 	// ************************************ toolbar utility functions
@@ -488,7 +521,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 	function initStepCopyPastaButtons(language, urls) {
 
-		var table = $("#test-steps-table").squashTable();
+		var table = $("#test-steps-table-"+urls.testCaseId).squashTable();
 
 		
 		$("#copy-step").bind('click', function() {
@@ -567,7 +600,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 				'click',
 				function() {
 
-					var table = $("#test-steps-table").squashTable();
+					var table = $("#test-steps-table-"+urls.testCaseId).squashTable();
 					var ids = table.getSelectedIds();
 
 					if (!ids.length) {
@@ -658,7 +691,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 		var collapseButton = $('#collapse-steps-button');
 
-		var table = $('#test-steps-table');
+		var table = $('#test-steps-table-'+urls.testCaseId);
 
 		// begin
 
@@ -736,7 +769,6 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 		// table collapser
 		initCollapser(language, urls, permissions.isWritable);
-
 	}
 
 	return {

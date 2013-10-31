@@ -52,7 +52,7 @@ define(['jquery','datatables'], function($){
 				'class' : 'paginate_button last'
 			});
 			var nPageTxt = $("<span />", {
-				text : '1'
+				text : parseInt((oSettings._iDisplayStart+oSettings._iDisplayLength) / oSettings._iDisplayLength, 10)
 			});
 
 			$(nPaging).append(nFirst).append(nPrevious).append(nPageTxt).append(nNext).append(nLast);
