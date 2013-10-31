@@ -26,7 +26,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.type.LongType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,13 +39,14 @@ import org.squashtest.tm.service.campaign.CampaignStatisticsService;
 import org.squashtest.tm.service.statistics.campaign.CampaignProgressionStatistics;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 import org.squashtest.tm.service.statistics.campaign.IterationTestInventoryStatistics;
+import org.squashtest.tm.service.statistics.campaign.ScheduledIteration;
 
 @Transactional(readOnly=true)
 @Service("CampaignStatisticsService")
 public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 
-	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignStatisticsService.class);
+
 	
 	@Inject
 	private SessionFactory sessionFactory;
@@ -52,10 +55,31 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ') "
 			+ "or hasRole('ROLE_ADMIN')")
-	public CampaignProgressionStatistics gatherCampaignProgressionStatistics(
-			long campaignId) {
+	public CampaignProgressionStatistics gatherCampaignProgressionStatistics(long campaignId) {		
+
+		CampaignProgressionStatistics progression = new CampaignProgressionStatistics();
 		
-		throw new RuntimeException("not implemented yet");
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.getNamedQuery("CampaignStatistics.findScheduledIterations");
+		query.setParameter("id", campaignId, LongType.INSTANCE);
+		
+		List<ScheduledIteration> scheduledIterations = query.list();
+	
+		try{
+			
+			progression.setScheduledIterations(scheduledIterations);	//we want them in any case
+			
+			ScheduledIteration.checkIterationsDatesIntegrity(scheduledIterations);
+			
+		}catch(IllegalArgumentException ex){
+			if (LOGGER.isInfoEnabled()){
+				LOGGER.info("CampaignStatistics : could not generate campaign progression statistics for campaign "+campaignId+" : some iterations scheduled dates are wrong");
+			}
+			progression.addi18nErrorMessage(ex.getMessage());
+		}
+		
+		return progression;
+		
 	}
 	
 	
@@ -67,7 +91,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 		List<IterationTestInventoryStatistics> result = new LinkedList<IterationTestInventoryStatistics>();
 		
 		//get the data
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("campaignstatisticsservice.testinventory");
+		Query query = sessionFactory.getCurrentSession().getNamedQuery("CampaignStatistics.testinventory");
 		query.setParameter("id", campaignId);
 		List<Object[]> res = query.list();
 		

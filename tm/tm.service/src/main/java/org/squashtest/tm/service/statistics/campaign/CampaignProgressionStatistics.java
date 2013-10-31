@@ -28,7 +28,7 @@ public final class CampaignProgressionStatistics {
 	
 	private Collection<String> i18nErrors;
 	
-	Collection<ScheduledIteration> scheduledIterations = new LinkedList<ScheduledIteration>();
+	private Collection<ScheduledIteration> scheduledIterations = new LinkedList<ScheduledIteration>();
 
 
 	public Collection<ScheduledIteration> getScheduledIterations() {
@@ -37,7 +37,7 @@ public final class CampaignProgressionStatistics {
 	
 	public void addi18nErrorMessage(String i18nErrorMessage){
 		if (i18nErrors==null){
-			i18nErrors = new LinkedList<String>());
+			i18nErrors = new LinkedList<String>();
 		}
 		i18nErrors.add(i18nErrorMessage);
 	}
@@ -45,9 +45,12 @@ public final class CampaignProgressionStatistics {
 	public Collection<String> getErrors(){
 		return i18nErrors;
 	}
-	
-	public void addScheduledIteration(ScheduledIteration iteration){
-		scheduledIterations.add(iteration);
+
+	public void setScheduledIterations(
+			Collection<ScheduledIteration> scheduledIterations) {
+		this.scheduledIterations = scheduledIterations;
 	}
+
+	
 	
 }
