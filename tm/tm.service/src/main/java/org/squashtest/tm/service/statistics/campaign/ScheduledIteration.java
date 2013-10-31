@@ -25,6 +25,12 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import org.apache.poi.hssf.record.formula.functions.Days360;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
+
 
 public final class ScheduledIteration{
 	
@@ -106,6 +112,77 @@ public final class ScheduledIteration{
 		cumulativeTestsByDate.add(testByDate);
 	}
 
+	
+	/**
+	 * Will fill the informations in field cumulativeTestsByDate. Basically it means the cumulative average number of test that must be run 
+	 * within the scheduled time period, per working day. Saturdays and Sundays are discounted. 
+	 */
+	public void computeCumulativeTestByDate(){
+
+		// because we discard week ends we have to compute how many working day we really have in the scheduled period
+		long workdays = getNumberOfWorkdays();
+		
+	}
+
+	
+	
+	// ******************** Date helpers *******************************
+	
+	
+	/*
+	 * 
+	 * This works by "normalizing" the scheduled period, computing the number of days in this period, then and substracting 
+	 * 2 days per slices of 7 days. 
+	 * 
+	 * Normalizing means :
+	 * offsetting the start date to next monday,
+	 * offsetting the end date by the same number of days and set it back to friday if it corresponds to a weekend day
+	 * 
+	 */
+	private long getNumberOfWorkdays(){
+		
+		LocalDate start = new LocalDate(scheduledStart);
+		LocalDate end = new LocalDate(scheduledEnd);
+
+		// normalization
+		LocalDate pseudoStart = toNextMonday(start);
+		int _offsetDays = Days.daysBetween(start, pseudoStart).getDays();
+		LocalDate pseudoEnd = shaveDown(end.plusDays(_offsetDays));
+		
+		// actual computation
+		//int  = Days.daysBetween(pseudoStart, pseudoEnd);
+		
+		// TODO
+		return 0l;
+	}
+	
+	private boolean isWeekend(LocalDate date){
+		return (date.getDayOfWeek() == DateTimeConstants.SATURDAY || date.getDayOfWeek() == DateTimeConstants.SUNDAY);
+	}
+	
+	// push date to next monday, if not already monday
+	private LocalDate toNextMonday(LocalDate date){
+		if (date.getDayOfWeek() == DateTimeConstants.MONDAY){
+			return date;
+		}
+		else{
+			return date.plusWeeks(1).withDayOfWeek(DateTimeConstants.MONDAY);
+		}
+	}
+
+	
+	// if the date is saturday or sunday, will set the date back to the friday of the same week
+	private LocalDate shaveDown(LocalDate date){
+		if (isWeekend(date)){
+			return date.withDayOfWeek(DateTimeConstants.FRIDAY);
+		}
+		else{
+			return date;
+		}
+	}
+	
+	
+	// ********************** static part *************************
 	
 	public static final void checkIterationsDatesIntegrity(Collection<ScheduledIteration> iterations){
 		

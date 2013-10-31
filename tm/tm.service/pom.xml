@@ -230,6 +230,13 @@
       <groupId>org.apache.lucene</groupId>
       <artifactId>org.squashtest.org.apache.lucene.core</artifactId>
     </dependency>
+    
+    <!--  JODA -->
+     <dependency>
+        <groupId>org.joda</groupId>
+        <artifactId>com.springsource.org.joda.time</artifactId>
+        <scope>compile</scope>
+     </dependency>
 
   </dependencies>
   <build>
