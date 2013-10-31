@@ -33,6 +33,7 @@
 
 <c:url var="backUrl" value="/campaign-workspace/" />
 <c:url var="testPlanUrl" value="/iterations/${iteration.id}/test-plan/" />
+<c:url var="iterationUrl" value="/iterations/${iteration.id}/" />
 <c:url var="iterationTestPlanUrl" value="/iterations/${iteration.id}/info" />
 
 <f:message var="unauthorizedDeletion" key="dialog.remove-testcase-association.unauthorized-deletion.message"  />
