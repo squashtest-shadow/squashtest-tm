@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.statistics.campaign
 
+import java.text.SimpleDateFormat;
+
 import org.squashtest.tm.service.statistics.campaign.ScheduledIteration;
 import org.squashtest.tm.service.statistics.campaign.ScheduledIteration.ScheduledDatesIterator;
 
@@ -27,6 +29,8 @@ import spock.lang.Specification
 import spock.lang.Unroll;
 
 class ScheduledIterationTest extends Specification {
+	
+	SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy")
 
 	// *********** ScheduledDatesIterator test *****************
 	
@@ -239,5 +243,35 @@ class ScheduledIterationTest extends Specification {
 		then :
 			IllegalArgumentException e = thrown(IllegalArgumentException)
 			e.message == ScheduledIteration.SCHED_ITER_MISSING_DATES_I18N
+	}
+	
+	def "should compute the cumulative number of tests per day wrt workload"(){
+		
+		given :
+			ScheduledIteration iter = new ScheduledIteration(1l, "iter", 20, date("28/10/2013"), date("08/11/2013"))
+		
+		when :
+			iter.computeCumulativeTestByDate(0.0f)
+		
+		then :
+			iter.cumulativeTestsByDate == [
+				[date("28/10/2013"), 2.0f] as Object[],
+				[date("29/10/2013"), 4.0f] as Object[],
+				[date("30/10/2013"), 6.0f] as Object[],
+				[date("31/10/2013"), 8.0f] as Object[],
+				[date("01/11/2013"), 10.0f] as Object[],
+				[date("02/11/2013"), 10.0f] as Object[],
+				[date("03/11/2013"), 10.0f] as Object[],
+				[date("04/11/2013"), 12.0f] as Object[],
+				[date("05/11/2013"), 14.0f] as Object[],
+				[date("06/11/2013"), 16.0f] as Object[],
+				[date("07/11/2013"), 18.0f] as Object[],
+				[date("08/11/2013"), 20.0f] as Object[]
+			]
+			
+	}
+	
+	def date(String str){
+		dateFormat.parse(str)
 	}
 }

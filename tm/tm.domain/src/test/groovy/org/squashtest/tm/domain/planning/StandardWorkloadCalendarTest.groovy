@@ -33,21 +33,25 @@ class StandardWorkloadCalendarTest extends Specification {
 	@Shared
 	SimpleDateFormat dateformatter = new SimpleDateFormat("dd/MM/yyyy");
 	
+	def date(strdate){
+		dateformatter.parse(strdate)
+	}
+	
 	@Unroll("should say that workload for #strday is #res")
 	def "should say that workload is 1 or 0"(){
 		
 		expect : 
-			res == new StandardWorkloadCalendar().getWorkload(date)
+			res == new StandardWorkloadCalendar().getWorkload(zedate)
 			
 		where :
-		strday		|	res		|	date
-		"monday"	|	1.0f	|	dateformatter.parse("28/10/2013")
-		"tuesday"	|	1.0f	|	dateformatter.parse("29/10/2013")
-		"wednesday"	|	1.0f	|	dateformatter.parse("30/10/2013")
-		"thursday"	|	1.0f	|	dateformatter.parse("31/10/2013")
-		"friday"	|	1.0f	|	dateformatter.parse("01/11/2013")
-		"saturday"	|	0.0f	|	dateformatter.parse("02/11/2013")
-		"sunday"	|	0.0f	|	dateformatter.parse("03/11/2013")
+		strday		|	res		|	zedate
+		"monday"	|	1.0f	|	date("28/10/2013")
+		"tuesday"	|	1.0f	|	date("29/10/2013")
+		"wednesday"	|	1.0f	|	date("30/10/2013")
+		"thursday"	|	1.0f	|	date("31/10/2013")
+		"friday"	|	1.0f	|	date("01/11/2013")
+		"saturday"	|	0.0f	|	date("02/11/2013")
+		"sunday"	|	0.0f	|	date("03/11/2013")
 	}
 	
 
@@ -55,8 +59,8 @@ class StandardWorkloadCalendarTest extends Specification {
 	def "should return a workload of 10.f, because of approximately two weeks"(){
 		
 		given :
-			Date start = dateformatter.parse("28/10/2013");	//wednesday
-			Date end = dateformatter.parse("09/11/2013");	//saturday two weeks later
+			Date start = date("28/10/2013");	//wednesday
+			Date end = date("09/11/2013");	//saturday two weeks later
 			
 		when :
 			def res = new StandardWorkloadCalendar().getWorkload(start, end)
@@ -68,7 +72,7 @@ class StandardWorkloadCalendarTest extends Specification {
 	def "should return a workload of 0 because nobody (should) work the weekend"(){
 		
 		given :
-			Date start = dateformatter.parse("02/11/2013");	//saturday
+			Date start = date("02/11/2013");	//saturday
 			Date end = start.plus(1);	//sunday
 			
 		when :
@@ -81,7 +85,7 @@ class StandardWorkloadCalendarTest extends Specification {
 	
 	def "should return a workload of 1 because we're working only the monday"(){
 		given :
-			Date start = dateformatter.parse("02/11/2013");	//saturday
+			Date start = date("02/11/2013");	//saturday
 			Date end = start.plus(2);	//monday
 			
 		when :
@@ -93,7 +97,7 @@ class StandardWorkloadCalendarTest extends Specification {
 	
 	def "should return a workload of 1 because the period lasts for 1 day only"(){
 		given :
-			Date start = dateformatter.parse("28/10/2013");	//monday
+			Date start = date("28/10/2013");	//monday
 			Date end = start;	//same monday
 		
 		when :
@@ -105,8 +109,8 @@ class StandardWorkloadCalendarTest extends Specification {
 	
 	def "should return a workload of 10 because this is the workload of a sprint"(){
 		given :
-			Date start = dateformatter.parse("28/10/2013");	//monday
-			Date end = dateformatter.parse("08/11/2013");	//friday the week after
+			Date start = date("28/10/2013");	//monday
+			Date end = date("08/11/2013");	//friday the week after
 		
 		when :
 			def res = new StandardWorkloadCalendar().getWorkload(start, end)
@@ -117,7 +121,7 @@ class StandardWorkloadCalendarTest extends Specification {
 	
 	def "should rant because the end date predate the start date"(){
 		given :
-			Date end =dateformatter.parse("27/10/2013") //sunday
+			Date end = date("27/10/2013") //sunday
 			Date start = end.plus(1);	//monday
 		
 		when :

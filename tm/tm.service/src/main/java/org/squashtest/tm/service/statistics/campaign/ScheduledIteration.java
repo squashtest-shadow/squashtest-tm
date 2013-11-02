@@ -20,17 +20,14 @@
  */
 package org.squashtest.tm.service.statistics.campaign;
 
-import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import org.apache.poi.hssf.record.formula.functions.Days360;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeConstants;
-import org.joda.time.Days;
-import org.joda.time.LocalDate;
+import org.squashtest.tm.domain.planning.WorkloadCalendar;
+import org.squashtest.tm.domain.planning.StandardWorkloadCalendar;
 
 
 public final class ScheduledIteration{
@@ -115,31 +112,34 @@ public final class ScheduledIteration{
 
 	
 	/**
-	 * Will fill the informations in field cumulativeTestsByDate. Basically it means the cumulative average number of test that must be run 
-	 * within the scheduled time period, per working day. Saturdays and Sundays are discounted. 
+	 * Will fill the informations of field cumulativeTestsByDate. Basically it means the cumulative average number of test that must be run 
+	 * within the scheduled time period per day, according to their workload.
 	 */
-	public void computeCumulativeTestByDate(){
+	public void computeCumulativeTestByDate(float initialCumulativeTests){
 
-		// because we discard week ends we have to compute how many working day we really have in the scheduled period
-		//long workdays = getNumberOfWorkdays();
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(scheduledStart);
+		WorkloadCalendar workloadCalendar = new StandardWorkloadCalendar();
 		
-		// TODO : see and use StandardWorkloadCalendar
+		float workload = workloadCalendar.getWorkload(scheduledStart, scheduledEnd);
+		float incrementPerDay = testplanCount / workload;
 		
-		/*
-		 * 
-		 * note : la courbe s'exprime tq Sum (w(d) * C) = T, avec 'd' une date comprise entre debut et fin, w(d) la workload de d, T le nombre total de 
-		 * tests et C la constante qu'on cherche (nombre moyen de tests).
-		 * 
-		 * Il en résulte sans suprise que C = T / SUM w(d), ce qui implique de calculer au préalable SUM w(d)
-		 * 
-		 * TODO : trouver la version fenêtre glissante
-		 */
+		// ready to iterate
+		Date curDate = scheduledStart;
+		float cumulativeTests = initialCumulativeTests;
+		do{
+			cumulativeTests += workloadCalendar.getWorkload(curDate) * incrementPerDay;
+			cumulativeTestsByDate.add(new Object[]{curDate, cumulativeTests});
+			
+			calendar.add(Calendar.DAY_OF_YEAR, 1);
+			curDate = calendar.getTime();
+		}
+		while(! curDate.after(scheduledEnd));
+
 		
 	}
 
 
-	
-	
 	// ********************** static part *************************
 	
 	public static final void checkIterationsDatesIntegrity(Collection<ScheduledIteration> iterations){

@@ -348,7 +348,7 @@
 		@NamedQuery(name="CampaignStatistics.findScheduledIterations", 
 					query = "select new org.squashtest.tm.service.statistics.campaign.ScheduledIteration(iter.id as id, iter.name as name, size(iter.testPlans) as testplanCount, " +
 							"iter.scheduledPeriod.scheduledStartDate as scheduledStart, iter.scheduledPeriod.scheduledEndDate as scheduledEnd) " +
-							"from Campaign c join c.iterations iter where c.id = :id order by index(iter)"),
+							"from Campaign c join c.iterations iter where c.id = :id group by iter order by index(iter)"),
 
 		/* ********************************************** batch deletion-related queries **************************************************** */
 

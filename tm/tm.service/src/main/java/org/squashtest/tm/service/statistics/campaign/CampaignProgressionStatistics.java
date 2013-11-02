@@ -51,6 +51,14 @@ public final class CampaignProgressionStatistics {
 		this.scheduledIterations = scheduledIterations;
 	}
 
-	
+	public void computeSchedule(){
+		float cumulative = 0.0f;
+		for (ScheduledIteration iteration : scheduledIterations){
+			
+			iteration.computeCumulativeTestByDate(cumulative);
+			cumulative += (float)(iteration.getTestplanCount());
+			
+		}		
+	}
 	
 }

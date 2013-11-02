@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
-import java.sql.Timestamp;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -41,7 +41,6 @@ import org.squashtest.tm.service.statistics.campaign.CampaignProgressionStatisti
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 import org.squashtest.tm.service.statistics.campaign.IterationTestInventoryStatistics;
 import org.squashtest.tm.service.statistics.campaign.ScheduledIteration;
-import org.squashtest.tm.service.statistics.campaign.Toto;
 
 @Transactional(readOnly=true)
 @Service("CampaignStatisticsService")
@@ -70,8 +69,10 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 		try{
 			
 			progression.setScheduledIterations(scheduledIterations);	//we want them in any case
-			
 			ScheduledIteration.checkIterationsDatesIntegrity(scheduledIterations);
+			
+			progression.computeSchedule();
+
 			
 		}catch(IllegalArgumentException ex){
 			if (LOGGER.isInfoEnabled()){
