@@ -20,15 +20,23 @@
  */
 package org.squashtest.tm.service.statistics.campaign;
 
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
+
+import org.apache.commons.lang.time.DateUtils;
 
 
 public final class CampaignProgressionStatistics {
 	
 	private Collection<String> i18nErrors;
 	
-	private Collection<ScheduledIteration> scheduledIterations = new LinkedList<ScheduledIteration>();
+	private Collection<ScheduledIteration> scheduledIterations;
+	
+	private List<Object[]> cumulativeExecutionsPerDate;
 
 
 	public Collection<ScheduledIteration> getScheduledIterations() {
@@ -50,6 +58,15 @@ public final class CampaignProgressionStatistics {
 			Collection<ScheduledIteration> scheduledIterations) {
 		this.scheduledIterations = scheduledIterations;
 	}
+	
+	public List<Object[]> getCumulativeExecutionsPerDate() {
+		return cumulativeExecutionsPerDate;
+	}
+
+	public void setCumulativeExecutionsPerDate(
+			List<Object[]> cumulativeExecutionsPerDate) {
+		this.cumulativeExecutionsPerDate = cumulativeExecutionsPerDate;
+	}
 
 	public void computeSchedule(){
 		float cumulative = 0.0f;
@@ -60,5 +77,52 @@ public final class CampaignProgressionStatistics {
 			
 		}		
 	}
+	
+	
+	// TODO : have the db do the job for me (hint : try with 'cast as Date')
+	public void computeCumulativeTestPerDate(List<Date> dates){
+		
+		// that where I'd love to have collection.fold(), instead we do the following
+		List<Object[]> cumulativeTestsPerDate = new LinkedList<Object[]>();
+		
+		if (! dates.isEmpty()){
+			// we use here a modified list with a dummy element at the end that will 
+			// help us to work around a corner case : handling the last element of the loop
+			List<Date> trickedDates = new LinkedList<Date>(dates);
+			trickedDates.add(null);
+			
+			Iterator<Date> dateIter = trickedDates.iterator();
+			Date precDate= dateIter.next();
+			Date curDate = null;
+			Date truncated = null;
+			int accumulator = 1;
+			
+			// iterate over the rest. Remember that the last element is a dummy null value
+			while(dateIter.hasNext()){
+				curDate = dateIter.next();
+				if (! isSameDay(precDate, curDate)){
+					truncated = DateUtils.truncate(precDate, Calendar.DATE);
+					cumulativeTestsPerDate.add(new Object[]{truncated, accumulator});
+				}
+				accumulator++;
+				precDate = curDate;
+			}
+			
+		}
+		
+		setCumulativeExecutionsPerDate(cumulativeTestsPerDate);
+		
+		
+	}
+	
+	private boolean isSameDay(Date d1, Date d2){
+		if (d1==null || d2 == null){
+			return false;
+		}
+		else{
+			return DateUtils.isSameDay(d1,  d2);
+		}
+	}
+	
 	
 }

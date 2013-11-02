@@ -21,6 +21,8 @@
 package org.squashtest.tm.service.internal.campaign;
 
 
+import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -61,17 +63,25 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 		CampaignProgressionStatistics progression = new CampaignProgressionStatistics();
 		
 		Session session = sessionFactory.getCurrentSession();
+		
 		Query query = session.getNamedQuery("CampaignStatistics.findScheduledIterations");
 		query.setParameter("id", campaignId, LongType.INSTANCE);
-		
 		List<ScheduledIteration> scheduledIterations = query.list();
-	
+		
+		//TODO : have the db do the job for me
+		Query requery = session.getNamedQuery("CampaignStatistics.findExecutionHistory");
+		requery.setParameter("id", campaignId, LongType.INSTANCE);
+		List<Date> executionHistory = requery.list();
 		try{
 			
+			// scheduled iterations
 			progression.setScheduledIterations(scheduledIterations);	//we want them in any case
 			ScheduledIteration.checkIterationsDatesIntegrity(scheduledIterations);
 			
 			progression.computeSchedule();
+			
+			// actual executions
+			progression.computeCumulativeTestPerDate(executionHistory);
 
 			
 		}catch(IllegalArgumentException ex){

@@ -349,6 +349,10 @@
 					query = "select new org.squashtest.tm.service.statistics.campaign.ScheduledIteration(iter.id as id, iter.name as name, size(iter.testPlans) as testplanCount, " +
 							"iter.scheduledPeriod.scheduledStartDate as scheduledStart, iter.scheduledPeriod.scheduledEndDate as scheduledEnd) " +
 							"from Campaign c join c.iterations iter where c.id = :id group by iter order by index(iter)"),
+							
+		@NamedQuery(name="CampaignStatistics.findExecutionsHistory",
+					query="select itp.lastExecutedOn as dateexec, count(itp) from Campaign c join c.iterations iter join iter.testPlans " +
+							"itp where c.id = :id group by dateexec order by dateexec"),
 
 		/* ********************************************** batch deletion-related queries **************************************************** */
 
