@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.statistics.campaign;
 
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -39,7 +40,7 @@ public final class ScheduledIteration{
 	
 	private long id;
 	private String name;
-	private long testplanCount;
+	private int testplanCount;
 	private Date scheduledStart;
 	private Date scheduledEnd;
 	
@@ -51,7 +52,7 @@ public final class ScheduledIteration{
 	}
 	
 	
-	public ScheduledIteration(long id, String name, long testplanCount,
+	public ScheduledIteration(long id, String name, int testplanCount,
 			Date scheduledStart, Date scheduledEnd) {
 		super();
 		this.id = id;
@@ -60,8 +61,8 @@ public final class ScheduledIteration{
 		this.scheduledStart = scheduledStart;
 		this.scheduledEnd = scheduledEnd;
 	}
-
-
+	
+	
 
 	public long getId() {
 		return id;
@@ -80,11 +81,11 @@ public final class ScheduledIteration{
 	}
 	
 	
-	public long getTestplanCount() {
+	public int getTestplanCount() {
 		return testplanCount;
 	}
 
-	public void setTestplanCount(long testplanCount) {
+	public void setTestplanCount(int testplanCount) {
 		this.testplanCount = testplanCount;
 	}
 
@@ -120,66 +121,23 @@ public final class ScheduledIteration{
 	public void computeCumulativeTestByDate(){
 
 		// because we discard week ends we have to compute how many working day we really have in the scheduled period
-		long workdays = getNumberOfWorkdays();
+		//long workdays = getNumberOfWorkdays();
+		
+		// TODO : see and use StandardWorkloadCalendar
+		
+		/*
+		 * 
+		 * note : la courbe s'exprime tq Sum (w(d) * C) = T, avec 'd' une date comprise entre debut et fin, w(d) la workload de d, T le nombre total de 
+		 * tests et C la constante qu'on cherche (nombre moyen de tests).
+		 * 
+		 * Il en résulte sans suprise que C = T / SUM w(d), ce qui implique de calculer au préalable SUM w(d)
+		 * 
+		 * TODO : trouver la version fenêtre glissante
+		 */
 		
 	}
 
-	
-	
-	// ******************** Date helpers *******************************
-	
-	
-	/*
-	 * 
-	 * This works by "normalizing" the scheduled period, computing the number of days in this period, then and substracting 
-	 * 2 days per slices of 7 days. 
-	 * 
-	 * Normalizing means :
-	 * offsetting the start date to next monday,
-	 * offsetting the end date by the same number of days and set it back to friday if it corresponds to a weekend day
-	 * 
-	 */
-	private long getNumberOfWorkdays(){
-		
-		LocalDate start = new LocalDate(scheduledStart);
-		LocalDate end = new LocalDate(scheduledEnd);
 
-		// normalization
-		LocalDate pseudoStart = toNextMonday(start);
-		int _offsetDays = Days.daysBetween(start, pseudoStart).getDays();
-		LocalDate pseudoEnd = shaveDown(end.plusDays(_offsetDays));
-		
-		// actual computation
-		//int  = Days.daysBetween(pseudoStart, pseudoEnd);
-		
-		// TODO
-		return 0l;
-	}
-	
-	private boolean isWeekend(LocalDate date){
-		return (date.getDayOfWeek() == DateTimeConstants.SATURDAY || date.getDayOfWeek() == DateTimeConstants.SUNDAY);
-	}
-	
-	// push date to next monday, if not already monday
-	private LocalDate toNextMonday(LocalDate date){
-		if (date.getDayOfWeek() == DateTimeConstants.MONDAY){
-			return date;
-		}
-		else{
-			return date.plusWeeks(1).withDayOfWeek(DateTimeConstants.MONDAY);
-		}
-	}
-
-	
-	// if the date is saturday or sunday, will set the date back to the friday of the same week
-	private LocalDate shaveDown(LocalDate date){
-		if (isWeekend(date)){
-			return date.withDayOfWeek(DateTimeConstants.FRIDAY);
-		}
-		else{
-			return date;
-		}
-	}
 	
 	
 	// ********************** static part *************************

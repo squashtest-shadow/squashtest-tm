@@ -344,10 +344,12 @@
 					query=	"select iter.id as iterid, iter.name as name, itp.executionStatus as status, count(itp) as num " +
 							"from Campaign c join c.iterations iter join iter.testPlans itp where c.id = :id group by iter, itp.executionStatus order by iter"),
 		
-		@NamedQuery(name="CampaignStatistics.findScheduledIterations", 
-					query = "select new ScheduledIteration(iter.id as id, iter.name as name, size(iter.testPlans) as testplanCount, iter.scheduledStartDate as scheduledStart, iter.scheduledEndDate as scheduledEnd) " +
-							"from Campaign c join c.testPlan iter where c.id = :id order by index(iter)"),
 		
+		@NamedQuery(name="CampaignStatistics.findScheduledIterations", 
+					query = "select new org.squashtest.tm.service.statistics.campaign.ScheduledIteration(iter.id as id, iter.name as name, size(iter.testPlans) as testplanCount, " +
+							"iter.scheduledPeriod.scheduledStartDate as scheduledStart, iter.scheduledPeriod.scheduledEndDate as scheduledEnd) " +
+							"from Campaign c join c.iterations iter where c.id = :id order by index(iter)"),
+
 		/* ********************************************** batch deletion-related queries **************************************************** */
 
 		@NamedQuery(name = "testCase.findAllAttachmentLists", query = "select testCase.attachmentList.id from TestCase testCase where testCase.id in (:testCaseIds)"),
