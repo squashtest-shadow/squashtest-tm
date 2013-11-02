@@ -29,8 +29,8 @@
 	<div class="button-group">
 		<a id="tree-create-button"  	class="buttonmenu"><f:message key="label.create"/>...</a>
 		<ul id="tree-create-menu" class="not-displayed">
-			<li id="new-folder-tree-button" 	class="ui-state-disabled"><a ><f:message key="tree.button.new-folder.label" />...</a></li>
-			<li id="new-test-case-tree-button"  class="ui-state-disabled"><a ><f:message key="tree.button.new-test-case.label" />...</a></li>
+			<li id="new-folder-tree-button" 	class="ui-state-disabled cursor-pointer"><a ><f:message key="tree.button.new-folder.label" />...</a></li>
+			<li id="new-test-case-tree-button"  class="ui-state-disabled cursor-pointer"><a ><f:message key="tree.button.new-test-case.label" />...</a></li>
 		</ul>
 	</div>
 	
@@ -43,9 +43,9 @@
 		<a  id="rename-node-tree-button"   ><f:message key="tree.button.rename-node.label" />...</a>			
 		<a  id="tree-import-button" 	   class="buttonmenu"><f:message key="squashtm.treemenu.import.label"/>...</a>
 		<ul id="tree-import-menu" class="not-displayed">
-			<li id="import-excel-tree-button" class="ui-state-disabled"><a ><f:message key="label.Import" />...</a></li>
-			<li id="import-links-excel-tree-button" class="ui-state-disabled"><a ><f:message key="tree.button.import.links.label" />...</a></li>
-			<li id="export-tree-button" class="ui-state-disabled"><a  ><f:message key='label.Export'/>...</a></li>
+			<li id="import-excel-tree-button" class="ui-state-disabled cursor-pointer"><a ><f:message key="label.Import" />...</a></li>
+			<li id="import-links-excel-tree-button" class="ui-state-disabled cursor-pointer"><a ><f:message key="tree.button.import.links.label" />...</a></li>
+			<li id="export-tree-button" class="ui-state-disabled cursor-pointer"><a  ><f:message key='label.Export'/>...</a></li>
 		</ul>		
 	</div>
 	
@@ -59,7 +59,7 @@
 		<script id="ws-wizard-tree-menu-template" type="text/x-handlebars-template">		
 		<ul id="ws-wizard-tree-menu">
 			{{#each wizards}}
-			<li id="{{this.name}}" class="ui-state-disabled"><a  title="{{this.tooltip}}">{{this.label}}...</a></li>
+			<li id="{{this.name}}" class="ui-state-disabled cursor-pointer"><a  title="{{this.tooltip}}">{{this.label}}...</a></li>
 			{{/each}}
 		</ul>	
 	</script>

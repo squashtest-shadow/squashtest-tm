@@ -29,9 +29,9 @@
 	<div class="button-group">
 		<a id="tree-create-button"  	class="buttonmenu"><f:message key="label.create"/>...</a>
 		<ul id="tree-create-menu" class="not-displayed">
-			<li id="new-folder-tree-button" 	  	class="ui-state-disabled"><a ><f:message key="tree.button.new-folder.label" />...</a></li>
-			<li id="new-campaign-tree-button"  		class="ui-state-disabled"><a ><f:message key="tree.button.new-campaign.label" />...</a></li>
-			<li id="new-iteration-tree-button" 		class="ui-state-disabled"><a ><f:message key="tree.button.new-iteration.label" />...</a></li>
+			<li id="new-folder-tree-button" 	  	class="ui-state-disabled cursor-pointer"><a ><f:message key="tree.button.new-folder.label" />...</a></li>
+			<li id="new-campaign-tree-button"  		class="ui-state-disabled cursor-pointer"><a ><f:message key="tree.button.new-campaign.label" />...</a></li>
+			<li id="new-iteration-tree-button" 		class="ui-state-disabled cursor-pointer"><a ><f:message key="tree.button.new-iteration.label" />...</a></li>
 		</ul>
 	</div>
 	
@@ -45,9 +45,9 @@
 	
 		<a  id="tree-import-button"  class="buttonmenu"><f:message key="squashtm.treemenu.import.label"/>...</a>
 		<ul id="tree-import-menu" class="not-displayed">
-			<li id="export-L-tree-button" class="ui-state-disabled"><a ><f:message key="label.Export.Campaign.Light" />...</a></li>
-			<li id="export-S-tree-button" class="ui-state-disabled"><a ><f:message key="label.Export.Campaign.Standard" />...</a></li>
-			<li id="export-F-tree-button" class="ui-state-disabled"><a ><f:message key='label.Export.Campaign.Full'/>...</a></li>
+			<li id="export-L-tree-button" class="ui-state-disabled cursor-pointer"><a ><f:message key="label.Export.Campaign.Light" />...</a></li>
+			<li id="export-S-tree-button" class="ui-state-disabled cursor-pointer"><a ><f:message key="label.Export.Campaign.Standard" />...</a></li>
+			<li id="export-F-tree-button" class="ui-state-disabled cursor-pointer"><a ><f:message key='label.Export.Campaign.Full'/>...</a></li>
 		</ul>	
 	</div>
 	
@@ -57,7 +57,7 @@
 		<script id="ws-wizard-tree-menu-template" type="text/x-handlebars-template">		
 		<ul id="ws-wizard-tree-menu">
 			{{#each wizards}}
-			<li id="{{this.name}}" class="ui-state-disabled"><a  title="{{this.tooltip}}">{{this.label}}...</a></li>
+			<li id="{{this.name}}" class="ui-state-disabled cursor-pointer"><a  title="{{this.tooltip}}">{{this.label}}...</a></li>
 			{{/each}}
 		</ul>	
 	</script>
