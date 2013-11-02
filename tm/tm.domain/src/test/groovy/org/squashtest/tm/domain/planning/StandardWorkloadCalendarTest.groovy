@@ -24,11 +24,15 @@ import java.text.SimpleDateFormat;
 
 import org.joda.time.LocalDate;
 
+import spock.lang.Shared;
 import spock.lang.Specification
 import spock.lang.Unroll;
 
 class StandardWorkloadCalendarTest extends Specification {
 
+	@Shared
+	SimpleDateFormat dateformatter = new SimpleDateFormat("dd/MM/yyyy");
+	
 	@Unroll("should say that workload for #strday is #res")
 	def "should say that workload is 1 or 0"(){
 		
@@ -37,19 +41,90 @@ class StandardWorkloadCalendarTest extends Specification {
 			
 		where :
 		strday		|	res		|	date
-		"monday"	|	1.0f	|	new SimpleDateFormat("dd/MM/yyyy").parse("28/10/2013")
-		"tuesday"	|	1.0f	|	new SimpleDateFormat("dd/MM/yyyy").parse("29/10/2013")
-		"wednesday"	|	1.0f	|	new SimpleDateFormat("dd/MM/yyyy").parse("30/10/2013")
-		"thursday"	|	1.0f	|	new SimpleDateFormat("dd/MM/yyyy").parse("31/10/2013")
-		"friday"	|	1.0f	|	new SimpleDateFormat("dd/MM/yyyy").parse("01/11/2013")
-		"saturday"	|	0.0f	|	new SimpleDateFormat("dd/MM/yyyy").parse("02/11/2013")
-		"sunday"	|	0.0f	|	new SimpleDateFormat("dd/MM/yyyy").parse("03/11/2013")
+		"monday"	|	1.0f	|	dateformatter.parse("28/10/2013")
+		"tuesday"	|	1.0f	|	dateformatter.parse("29/10/2013")
+		"wednesday"	|	1.0f	|	dateformatter.parse("30/10/2013")
+		"thursday"	|	1.0f	|	dateformatter.parse("31/10/2013")
+		"friday"	|	1.0f	|	dateformatter.parse("01/11/2013")
+		"saturday"	|	0.0f	|	dateformatter.parse("02/11/2013")
+		"sunday"	|	0.0f	|	dateformatter.parse("03/11/2013")
 	}
-	/*
-	def "should return a workload of 10.f, because of exactly two weeks"(){
+	
+
+	
+	def "should return a workload of 10.f, because of approximately two weeks"(){
 		
 		given :
-			Date start = new SimpleDateFormat()
-	}*/
+			Date start = dateformatter.parse("28/10/2013");	//wednesday
+			Date end = dateformatter.parse("09/11/2013");	//saturday two weeks later
+			
+		when :
+			def res = new StandardWorkloadCalendar().getWorkload(start, end)
+			
+		then :
+			res == 10.0f;
+	}
 	
+	def "should return a workload of 0 because nobody (should) work the weekend"(){
+		
+		given :
+			Date start = dateformatter.parse("02/11/2013");	//saturday
+			Date end = start.plus(1);	//sunday
+			
+		when :
+			def res = new StandardWorkloadCalendar().getWorkload(start, end)
+			
+		then :
+			res == 0.0f;
+		
+	}
+	
+	def "should return a workload of 1 because we're working only the monday"(){
+		given :
+			Date start = dateformatter.parse("02/11/2013");	//saturday
+			Date end = start.plus(2);	//monday
+			
+		when :
+			def res = new StandardWorkloadCalendar().getWorkload(start, end)
+			
+		then :
+			res == 1.0f;
+	}
+	
+	def "should return a workload of 1 because the period lasts for 1 day only"(){
+		given :
+			Date start = dateformatter.parse("28/10/2013");	//monday
+			Date end = start;	//same monday
+		
+		when :
+			def res = new StandardWorkloadCalendar().getWorkload(start, end)
+			
+		then :
+			res == 1.0f;
+	}
+	
+	def "should return a workload of 10 because this is the workload of a sprint"(){
+		given :
+			Date start = dateformatter.parse("28/10/2013");	//monday
+			Date end = dateformatter.parse("08/11/2013");	//friday the week after
+		
+		when :
+			def res = new StandardWorkloadCalendar().getWorkload(start, end)
+			
+		then :
+			res == 10.0f;
+	}
+	
+	def "should rant because the end date predate the start date"(){
+		given :
+			Date end =dateformatter.parse("27/10/2013") //sunday
+			Date start = end.plus(1);	//monday
+		
+		when :
+			new StandardWorkloadCalendar().getWorkload(start, end)
+			
+		then :
+			thrown IllegalArgumentException
+		
+	}
 }
