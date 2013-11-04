@@ -32,11 +32,18 @@ define([ "jquery", "jqueryui" ], function($) {
 			}
 
 			tab.tabs("add", "#bugtracker-section-div", conf.label);
-
+			
 			// second : load the bugtracker section
 			btDiv.load(conf.url + "?style=fragment-tab", function() {
 				btDiv.addClass("table-tab");
 			});
+			
+			var cookieName = "iteration-tab-cookie";
+			var cookie = $.cookie(cookieName);
+			if (cookie){
+				tab.tabs({active : parseInt(cookie,10)});
+				$.cookie(cookieName, null, { path: '/' });
+			}		
 		}
 
 	};

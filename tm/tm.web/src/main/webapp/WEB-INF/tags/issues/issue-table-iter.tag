@@ -53,12 +53,12 @@
 <table id="issue-table" data-def="datakeys-id=issue-id, ajaxsource=${dataUrl}, pre-sort=1-desc">
 	<thead>
 		<tr>
-			<th data-def="select, map=issue-id, link={issue-url}, sWidth=2.5em, sortable">${interfaceDescriptor.tableIssueIDHeader}</th>
+			<th data-def="select, map=issue-id, link={issue-url}, sWidth=2.5em, sortable,">${interfaceDescriptor.tableIssueIDHeader}</th>
 			<th data-def="map=issue-summary">${interfaceDescriptor.tableSummaryHeader}</th>
 			<th data-def="map=issue-priority">${interfaceDescriptor.tablePriorityHeader}</th>
 			<th data-def="map=issue-status">${interfaceDescriptor.tableStatusHeader}</th>
 			<th data-def="map=issue-assignee">${interfaceDescriptor.tableAssigneeHeader}</th>
-			<th data-def="map=issue-owner, link=${pageContext.servletContext.contextPath}{issue-owner-url}"><f:message key="iteration.issues.table.column-header.reportedin.label" /></th>
+			<th data-def="map=issue-owner"><f:message key="iteration.issues.table.column-header.reportedin.label" /></th>
 		</tr>
 	</thead>
 	<tbody><%-- Will be populated through ajax --%></tbody>
@@ -67,12 +67,23 @@
 <script type="text/javascript">
 
 	$(function(){
-		
 
 		var issueTableRowCallback = function(row, data, displayIndex) {
 			var correctAssignee = (data["issue-assignee"]!=="") ? data["issue-assignee"] : "${interfaceDescriptor.tableNoAssigneeLabel}";
 			var td=$(row).find("td:eq(4)");
 			$(td).html(correctAssignee);
+	
+			td =  $(row).find("td:eq(5)");
+			var linkText = $(row).find("td:eq(5)").text();
+			var link = $('<a></a>');
+			link.attr('href', "${pageContext.servletContext.contextPath}"+data["issue-owner-url"]);
+			link.text(linkText);
+			$(td).html(link);
+			$(row).find("td:eq(5) a").on("click", function(){
+				var currentTab = $(".fragment-tabs").tabs("option", "active");
+				$.cookie("iteration-tab-cookie", currentTab, { expires: 1, path: '/' });
+			});
+
 			return row;
 		};
 		

@@ -28,8 +28,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspContext;
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
@@ -98,10 +102,11 @@ public class JQueryTabsHeader extends SimpleTagSupport {
 	private static final String LI_ELT = "li";
 	private static final String A_ELT = "a";
 	
+	private static final String[] TAB_COOKIES = {"testcase-tab-cookie", "iteration-tab-cookie"};
 	
 	/* attributes */
 	private Collection<String> contentIds = new LinkedList<String>();
-	private int activeContentIndex = 0; 	// UNUSED OR MISUSED for now, it'd require to process the cookies. The cookies themselves are malfunctionning.
+	private int activeContentIndex=0; 	// UNUSED OR MISUSED for now, it'd require to process the cookies. The cookies themselves are malfunctionning.
 	
 	
 	private Source source;
@@ -112,6 +117,17 @@ public class JQueryTabsHeader extends SimpleTagSupport {
 		
 		JspFragment body = getJspBody();
 		JspContext context = getJspContext();
+
+		PageContext ctx = (PageContext) context;  
+		HttpServletRequest request = (HttpServletRequest) ctx.getRequest();
+		Cookie[] cookies = request.getCookies();
+		for(int i=0; i<cookies.length; i++){
+			for(int j=0; j<TAB_COOKIES.length; j++){
+				if(TAB_COOKIES[j].equals(cookies[i].getName())){
+					activeContentIndex = Integer.parseInt(cookies[i].getValue());
+				}
+			}
+		}
 		
 		StringWriter writer = new StringWriter();
 		
@@ -164,7 +180,7 @@ public class JQueryTabsHeader extends SimpleTagSupport {
 			css = MAIN_MENUITEM_ADDITIONAL_CLASSES;
 			
 			// UNUSED for now, it'd require to process the cookies. The cookies themselves are malfunctionning.
-			//css+= (counter == activeContentIndex) ? MAIN_MENUITEM_ACTIVE_ADD_CLASSES : "";
+			css+= (counter == activeContentIndex) ? MAIN_MENUITEM_ACTIVE_ADD_CLASSES : "";
 			
 			process(elt, css);
 			counter++;

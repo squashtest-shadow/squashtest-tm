@@ -351,6 +351,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 				},
 				onClick : function(table, cell) {
 					if (permissions.isLinkable){
+						$.cookie("testcase-tab-cookie", 1, { expires: 1, path: '/' });
 						var row = cell.parentNode.parentNode;
 						var stepId = table.getODataId(row);
 						var url = urls.steps + stepId + "/verified-requirement-versions/manager";

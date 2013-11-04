@@ -398,7 +398,8 @@
 				
 				var fragConf = {
 					beforeLoad : Frag.confHelper.fnCacheRequests,
-					active : 1
+					active : 1,
+					cookie : "iteration-tab-cookie"
 				};
 				Frag.init(fragConf);
 				

@@ -72,11 +72,24 @@ squashtm.fragmenttabs = (function($, window) {
 				setTimeout(calculateTopPositionsOfTabs, 200);
 			};
 			calculateTopPositionsOfTabs();
+			
+			var cookieName = arguments[0].cookie;
 
+				
 			var args = {
-				show : calculateTopTableWrap,
-				active: 0
-			};
+					show : calculateTopTableWrap,
+					active: 0
+				};
+			
+			if(!!cookieName){
+			var cookie = $.cookie(cookieName);
+				if (cookie){
+					args.active = parseInt(cookie,10);
+					if("iteration-tab-cookie" !== cookieName){
+						$.cookie(cookieName, null, { path: '/' });
+					}
+				}
+			} 
 
 			if (arguments.length > 0) {
 				args = $.extend(args, arguments[0]);
