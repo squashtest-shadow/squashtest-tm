@@ -69,6 +69,7 @@ requirejs.config({
 				"backbone" : "lib/backbone/backbone-1.0.0-min",
 				"jqplot" : "lib/jqplot/jquery.jqplot.min",
 				"jqplot-pie" : "lib/jqplot/plugins/jqplot.pieRenderer.min",
+				"jqplot-dates" : "lib/jqplot/plugins/jqplot.dateAxisRenderer.min",
 				"excanvas" : "lib/excanvas.min",
 				//cke
 				"ckeditor" : "ckeditor/ckeditor",
@@ -223,7 +224,12 @@ requirejs.config({
 				},
 				"jqplot-pie" : {
 					deps : ["jquery", "jqplot"],
-					explort : "jqplot-pie"
+					exports : "jqplot-pie"
+				},
+				
+				"jqplot-dates" : {
+					deps : ["jquery", "jqplot"],
+					exports : "jqplot-dates"
 				}
 			}
 		});

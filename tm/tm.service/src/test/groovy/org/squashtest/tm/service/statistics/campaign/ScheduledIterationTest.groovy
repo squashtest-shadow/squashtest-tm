@@ -221,7 +221,7 @@ class ScheduledIterationTest extends Specification {
 			ex.message == ScheduledIteration.SCHED_ITER_OVERLAP_DATES_I18N
 	}
 	
-	def "should say that empty lists are ok"(){
+	def "should say that empty lists are not ok"(){
 		given :
 			def collection = []
 			
@@ -229,7 +229,7 @@ class ScheduledIterationTest extends Specification {
 			ScheduledIteration.checkIterationsDatesIntegrity(collection);
 			
 		then :
-			notThrown IllegalArgumentException
+			thrown IllegalArgumentException
 	}
 	
 	def "should also correctly handle the first item"(){

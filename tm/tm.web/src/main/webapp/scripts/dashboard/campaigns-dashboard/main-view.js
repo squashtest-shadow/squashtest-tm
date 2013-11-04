@@ -20,16 +20,23 @@
  */
 
 
-define(["jquery", 'squash.attributeparser', 
+define(["jquery", 'squash.attributeparser',
+        "./campaign-progression-view",
         "./test-inventory-table",
         "dashboard/SuperMasterView"],
-        function($, attrparser, InventoryTable, SuperMasterView){
+        function($, attrparser, ProgressionPlot, InventoryTable, SuperMasterView){
 	
 	return SuperMasterView.extend({
 		
 		initViews : function(master){
 			var self = this;
 			var views = [
+			             
+			    new ProgressionPlot({
+			    	el : "#dashboard-cumulative-progression",
+			    	model : self.bbModel
+			    }),     
+			             
 				new InventoryTable({
 					el : "#dashboard-test-inventory",
 					model : self.bbModel

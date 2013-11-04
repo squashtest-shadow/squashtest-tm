@@ -32,7 +32,8 @@ import org.squashtest.tm.domain.planning.StandardWorkloadCalendar;
 
 public final class ScheduledIteration{
 	
-	public static final String	SCHED_ITER_MISSING_DATES_I18N = "dashboard.campaigns.progression.errors.nulldates";
+	public static final String SCHED_ITER_NO_ITERATIONS_I18N = "dashboard.campaigns.progression.errors.nodata";
+	public static final String SCHED_ITER_MISSING_DATES_I18N = "dashboard.campaigns.progression.errors.nulldates";
 	public static final String SCHED_ITER_OVERLAP_DATES_I18N = "dashboard.campaigns.progression.errors.overlap";
 	
 	private long id;
@@ -150,7 +151,7 @@ public final class ScheduledIteration{
 		Date currDate;
 		
 		if (! datesIterator.hasNext()){
-			return;
+			throw new IllegalArgumentException(SCHED_ITER_NO_ITERATIONS_I18N);
 		}
 		
 		currDate = datesIterator.next();

@@ -53,10 +53,17 @@
 		<div class="dashboard-figleaf-figures not-displayed">
 		
 			<%-- first dashboard : cumulative progression of this campaign --%>
-			<comp:toggle-panel id="dashboard-cumulative-progression" title="${advanceTitle}">
-				<jsp:attribute name="body">
-				<div class="dashboard-figures not-displayed">
-				
+			<comp:toggle-panel id="" title="${advanceTitle}">
+				<jsp:attribute name="body">				
+				<div id="dashboard-cumulative-progression" data-def="model-attribute=campaignProgressionStatistics">
+					
+					<div class="dashboard-figures" >					
+						<div id="dashboard-cumulative-progression-view" class="dashboard-item-view" style="width:95%;float:none;margin:auto">
+						
+						
+						</div>				
+					</div>
+					
 				</div>
 				</jsp:attribute>
 			</comp:toggle-panel>
