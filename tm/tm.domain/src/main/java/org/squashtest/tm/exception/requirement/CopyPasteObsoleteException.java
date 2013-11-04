@@ -24,10 +24,7 @@ import org.squashtest.tm.core.foundation.exception.ActionException;
 
 public class CopyPasteObsoleteException extends ActionException {
 
-	/**
-	 * TODO generate serialVersionUID my eclipse couldn't thanks. mpagnon
-	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2485681955485759891L;
 	private static final String COPY_OBSOLETE_MESSAGE_KEY = "squashtm.action.exception.copy.paste.obsolete";
 
 	public CopyPasteObsoleteException(Exception ex) {

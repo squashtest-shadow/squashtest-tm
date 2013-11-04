@@ -68,7 +68,7 @@ public class HandlerActionExceptionResolver extends AbstractHandlerExceptionReso
 
 	private ModelAndView handleException(HttpServletRequest request, HttpServletResponse response, Exception ex) {
 		ActionException actionEx = (ActionException) ex; // NOSONAR Type was checked earlier
-		if (clientAcceptsMIME(request, MimeType.APPLICATION_JSON)) {
+		if (clientAcceptsMIME(request, MimeType.APPLICATION_JSON) || clientAcceptsMIME(request, MimeType.ANYTHING)) {
 			return formatJsonResponse(response, actionEx, request.getLocale());
 		}
 
@@ -111,7 +111,7 @@ public class HandlerActionExceptionResolver extends AbstractHandlerExceptionReso
 	}
 
 	private boolean exceptionIsHandled(Exception ex) {
-		//return ex instanceof ActionException;
+		// return ex instanceof ActionException;
 		return ActionException.class.isAssignableFrom(ex.getClass());
 	}
 
