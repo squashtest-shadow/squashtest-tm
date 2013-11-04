@@ -69,9 +69,10 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 		List<ScheduledIteration> scheduledIterations = query.list();
 		
 		//TODO : have the db do the job for me
-		Query requery = session.getNamedQuery("CampaignStatistics.findExecutionHistory");
+		Query requery = session.getNamedQuery("CampaignStatistics.findExecutionsHistory");
 		requery.setParameter("id", campaignId, LongType.INSTANCE);
 		List<Date> executionHistory = requery.list();
+	
 		try{
 			
 			// scheduled iterations

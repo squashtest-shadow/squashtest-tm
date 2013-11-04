@@ -343,16 +343,19 @@
 		@NamedQuery(name="CampaignStatistics.testinventory", 
 					query=	"select iter.id as iterid, iter.name as name, itp.executionStatus as status, count(itp) as num " +
 							"from Campaign c join c.iterations iter join iter.testPlans itp where c.id = :id group by iter, itp.executionStatus order by iter"),
-		
-		
+				
 		@NamedQuery(name="CampaignStatistics.findScheduledIterations", 
 					query = "select new org.squashtest.tm.service.statistics.campaign.ScheduledIteration(iter.id as id, iter.name as name, size(iter.testPlans) as testplanCount, " +
 							"iter.scheduledPeriod.scheduledStartDate as scheduledStart, iter.scheduledPeriod.scheduledEndDate as scheduledEnd) " +
 							"from Campaign c join c.iterations iter where c.id = :id group by iter order by index(iter)"),
 							
+		/*@NamedQuery(name="CampaignStatistics.findExecutionsHistory",
+					query="select itp.lastExecutedOn from Campaign c inner join c.iterations iter inner join iter.testPlans itp " +
+							"where c.id = :id and itp.lastExecutedOn is not null order by itp.lastExecutedOn"),*/
+						
 		@NamedQuery(name="CampaignStatistics.findExecutionsHistory",
-					query="select itp.lastExecutedOn as dateexec, count(itp) from Campaign c join c.iterations iter join iter.testPlans " +
-							"itp where c.id = :id group by dateexec order by dateexec"),
+					query="select itp.lastExecutedOn from IterationTestPlanItem itp where itp.iteration.campaign.id = :id " +
+							"and itp.lastExecutedOn is not null order by itp.lastExecutedOn"),
 
 		/* ********************************************** batch deletion-related queries **************************************************** */
 
