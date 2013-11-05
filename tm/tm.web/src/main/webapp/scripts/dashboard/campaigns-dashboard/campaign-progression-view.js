@@ -19,7 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "backbone", "squash.attributeparser", "jqplot-dates"], function($, Backbone, attrparser){
+define(["jquery", "backbone", "squash.attributeparser", 
+        "jqplot-dates", "jqplot-highlight"], function($, Backbone, attrparser){
 	
 	return Backbone.View.extend({
 		
@@ -53,7 +54,7 @@ define(["jquery", "backbone", "squash.attributeparser", "jqplot-dates"], functio
 			}
 			
 			var series = this.getSeries();
-			var conf = this.getConf();
+			var conf = this.getConf(series);
 			
 			if (this.plot === undefined){
 				var viewId = this.$el.find('.dashboard-item-view').attr('id');
@@ -72,9 +73,12 @@ define(["jquery", "backbone", "squash.attributeparser", "jqplot-dates"], functio
 			Backbone.View.prototype.remove.call(this);
 		},
 		
+		getModel : function(){
+			return this.model.get('campaignProgressionStatistics');
+		},		
 		
 		getSeries : function(){
-			var _model = this.model.get('campaignProgressionStatistics');
+			var _model = this.getModel();
 			
 			var scheduledIterations = _model.scheduledIterations;
 			var executions = _model.cumulativeExecutionsPerDate;
@@ -91,12 +95,65 @@ define(["jquery", "backbone", "squash.attributeparser", "jqplot-dates"], functio
 			return [ iterData, executions ]; 
 		},
 		
-		getConf : function(){
+		getConf : function(series){
+
+			var iterSeries = series[0],
+				execSeries = series[1];
+			
+			// explicitly compute and set the start and end of the axis to ensure that the x1axis and x2axis are synchronized 
+			var axisStart = iterSeries[0][0].getTime() - (24*60*60*1000),
+				axisEnd = iterSeries[iterSeries.length -1][0].getTime() + (24*60*60*1000);
+			
+			var iterations = this.getModel().scheduledIterations;
+			
+			var x2ticks = [],
+				i=0,
+				len = iterations.length;
+			
+			x2ticks.push(axisStart);
+			var i;
+			for (i=0;i<len;i++){
+				var iter = iterations[i];
+				x2ticks = x2ticks.concat([iter.scheduledStart, iter.scheduledEnd]);
+			}
+			x2ticks.push(axisEnd);
+			
 			return {
 				axes : {
 					xaxis : {
-						renderer : $.jqplot.DateAxisRenderer
+						renderer : $.jqplot.DateAxisRenderer,
+						tickOptions : {
+							showGridline : false													
+						},
+						min : new Date(axisStart),
+						max : new Date(axisEnd)
+					},
+					yaxis :{
+						min : 0
+					},
+					x2axis :{
+						ticks : x2ticks,
+						tickOptions: {
+							showLabel : false
+						},
+						show : true,
+						borderWidth : 0,
+						min : axisStart,
+						max : axisEnd
 					}
+				},
+				seriesDefaults:{
+					markerOptions:{ 
+						size:7
+					},
+					fill : true,
+					fillAndStroke : true
+				},
+				highlighter : {
+					tooltipAxes: 'y',
+					tooltipLocation : 'n',					
+					sizeAdjust : 0,
+					tooltipFormatString: '<span>%s</span>'
 				}
 			};
 		},

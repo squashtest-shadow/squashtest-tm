@@ -67,9 +67,10 @@ requirejs.config({
 				"handlebars" : "lib/handlebars/handlebars-1.0.0.rc3",
 				"underscore" : "lib/underscore/underscore-1.4.4-min",
 				"backbone" : "lib/backbone/backbone-1.0.0-min",
-				"jqplot" : "lib/jqplot/jquery.jqplot.min",
+				"jqplot-core" : "lib/jqplot/jquery.jqplot.min",
 				"jqplot-pie" : "lib/jqplot/plugins/jqplot.pieRenderer.min",
-				"jqplot-dates" : "lib/jqplot/plugins/jqplot.dateAxisRenderer.min",
+				"jqplot-dates" : "lib/jqplot/plugins/jqplot.dateAxisRenderer",
+				"jqplot-highlight": "lib/jqplot/plugins/jqplot.highlighter.min",
 				"excanvas" : "lib/excanvas.min",
 				//cke
 				"ckeditor" : "ckeditor/ckeditor",
@@ -218,18 +219,18 @@ requirejs.config({
 				},
 				"jquery.switchButton" : ["jquery", "jqueryui"],
 
-				"jqplot" : {
-					deps : ["jquery"],
-					exports : "jqplot"
-				},
-				"jqplot-pie" : {
-					deps : ["jquery", "jqplot"],
-					exports : "jqplot-pie"
-				},
+				"jqplot-core" : ["jquery"],
 				
-				"jqplot-dates" : {
-					deps : ["jquery", "jqplot"],
-					exports : "jqplot-dates"
-				}
+				"jqplot-pie" : ["jquery", "jqplot-core"],
+				
+				"jqplot-dates" : ["jquery", "jqplot-core"],
+				
+				"jqplot-highlight" :{
+					deps : ["jquery", "jqplot-core"],
+					init : function($){
+						$.jqplot.config.enablePlugins = true;						
+						return $;
+					}
+				},
 			}
 		});
