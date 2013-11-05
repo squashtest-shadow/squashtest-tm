@@ -228,9 +228,9 @@ requirejs.config({
 				"jqplot-highlight" :{
 					deps : ["jquery", "jqplot-core"],
 					init : function($){
-						$.jqplot.config.enablePlugins = true;						
+						$.jqplot.config.enablePlugins = true;
 						return $;
 					}
-				},
+				}
 			}
 		});

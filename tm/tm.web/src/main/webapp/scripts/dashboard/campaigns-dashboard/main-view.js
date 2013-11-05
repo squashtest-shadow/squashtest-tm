@@ -31,12 +31,12 @@ define(["jquery", 'squash.attributeparser',
 		initViews : function(master){
 			var self = this;
 			var views = [
-			             
-			    new ProgressionPlot({
-			    	el : "#dashboard-cumulative-progression",
-			    	model : self.bbModel
-			    }),     
-			             
+
+				new ProgressionPlot({
+					 el : "#dashboard-cumulative-progression",
+					model : self.bbModel
+				}),
+
 				new InventoryTable({
 					el : "#dashboard-test-inventory",
 					model : self.bbModel

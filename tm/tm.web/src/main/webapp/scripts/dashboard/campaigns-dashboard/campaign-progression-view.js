@@ -228,7 +228,6 @@ define(["jquery", "backbone", "squash.attributeparser",
 				len = iterations.length;
 			
 			x2ticks.push(axisStart);
-			var i;
 			for (i=0;i<len;i++){
 				var iter = iterations[i];
 				x2ticks = x2ticks.concat([iter.scheduledStart, iter.scheduledEnd]);
