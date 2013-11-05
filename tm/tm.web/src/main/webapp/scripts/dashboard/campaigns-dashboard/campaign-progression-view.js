@@ -22,6 +22,70 @@
 define(["jquery", "backbone", "squash.attributeparser", 
         "jqplot-dates", "jqplot-highlight"], function($, Backbone, attrparser){
 	
+	var _dateUtils = {
+		// makes start dates and end dates be the same for the iterations series and executions series
+		adjustDates : function(iterations, executions){
+			
+			this._adjustStartDates(iterations, executions);
+			this._adjustEndDates(iterations, executions);
+			
+		},
+		
+		_adjustStartDates : function(iterations, executions){
+			var startIter = iterations[0][0],
+				startExecs = (executions.length>0) ? executions[0][0] : null;
+			
+			if (startExecs === startIter){
+				return;	// nothing to adjust
+			}
+			
+			var execdatesUnderflowed = (startExecs === null || startIter < startExecs);
+			
+			var fixedArray = (execdatesexecdatesUnderflowed) ? executions : iterations;
+			var datefix = (execdatesexecdatesUnderflowed) ? startIter : startExecs;
+			var valuefix = fixedArray[0][1];
+			
+			fixedArray.unshift([datefix, valuefix]);		
+		},
+		
+		_adjustEndDates : function(iterations, executions){
+			var endIter = iterations[iterations.length-1][0],
+				endExecs = (executions.length>0) ? executions[executions.length - 1][0] : null;
+				
+			if (endIter === endExecs){
+				return ;	// nothing to do
+			}
+			
+			var execdatesOverflowed = ( endExecs === null || endIter > endExecs );
+			
+			var fixedArray = (execdatesOverflowed) ? executions : iterations;
+			var datefix = (execdatesOverflowed) ? endIter : endExecs;
+			var valuefix = fixedArray[fixedArray.length -1][1];
+				
+			fixedArray.push([datefix, valuefix]);		
+		},
+		
+		// this function must transform millis timestamp dates to Date objects
+		formatDates : function(iterations, executions){
+			
+			var i=0,
+				ilen = iterations.length;
+			
+			for (i=0;i<ilen;i++){
+				iterations[i][0] = new Date(iterations[i][0]);
+			}
+			
+			var k=0,
+				klen = executions.length;
+			
+			for (k=0; k < klen; k++){
+				executions[k][0] = new Date(executions[k][0]);
+			}
+		}			
+	};
+	
+	
+	
 	return Backbone.View.extend({
 		
 		initialize : function(){
@@ -79,62 +143,60 @@ define(["jquery", "backbone", "squash.attributeparser",
 		
 		getSeries : function(){
 			var _model = this.getModel();
-			
+
 			var scheduledIterations = _model.scheduledIterations;
 			var executions = _model.cumulativeExecutionsPerDate;
-
-			this.adjustDates(scheduledIterations, executions);
-			this.formatDates(scheduledIterations, executions);
 			
-			// concatenate all iterations data into one source
-			var iterData = [];
+			// flatten all iterations data into one array
+			var iterations = [];
 			for (var i=0;i<scheduledIterations.length;i++){
-				iterData = iterData.concat(scheduledIterations[i].cumulativeTestsByDate);
+				iterations = iterations.concat(scheduledIterations[i].cumulativeTestsByDate);
 			}
 			
-			return [ iterData, executions ]; 
+			// fixes the dates
+			_dateUtils.adjustDates(iterations, executions);
+			_dateUtils.formatDates(iterations, executions);
+			
+
+			
+			return [ iterations, executions ]; 
 		},
 		
 		getConf : function(series){
 
-			var iterSeries = series[0],
-				execSeries = series[1];
+			var iterSeries = series[0];
 			
 			// explicitly compute and set the start and end of the axis to ensure that the x1axis and x2axis are synchronized 
+			// namely, sets the boundaries to day1 -1 and daymax + 1
 			var axisStart = iterSeries[0][0].getTime() - (24*60*60*1000),
 				axisEnd = iterSeries[iterSeries.length -1][0].getTime() + (24*60*60*1000);
 			
-			var iterations = this.getModel().scheduledIterations;
+			// compute x2axis ticks
+			var x2ticks = this.createX2ticks(axisStart, axisEnd);
 			
-			var x2ticks = [],
-				i=0,
-				len = iterations.length;
-			
-			x2ticks.push(axisStart);
-			var i;
-			for (i=0;i<len;i++){
-				var iter = iterations[i];
-				x2ticks = x2ticks.concat([iter.scheduledStart, iter.scheduledEnd]);
-			}
-			x2ticks.push(axisEnd);
-			
+			// return the conf object
 			return {
 				axes : {
 					xaxis : {
 						renderer : $.jqplot.DateAxisRenderer,
 						tickOptions : {
-							showGridline : false													
+							showGridline : false,
+							fontSize : '12px'
 						},
 						min : new Date(axisStart),
 						max : new Date(axisEnd)
 					},
 					yaxis :{
-						min : 0
+						min : 0,
+						tickOptions :{
+							fontSize : '12px'							
+						}
 					},
 					x2axis :{
 						ticks : x2ticks,
 						tickOptions: {
-							showLabel : false
+							showLabel : false,
+							fontSize : '12px'
 						},
 						show : true,
 						borderWidth : 0,
@@ -144,7 +206,7 @@ define(["jquery", "backbone", "squash.attributeparser",
 				},
 				seriesDefaults:{
 					markerOptions:{ 
-						size:7
+						size:6
 					},
 					fill : true,
 					fillAndStroke : true
@@ -158,74 +220,25 @@ define(["jquery", "backbone", "squash.attributeparser",
 			};
 		},
 		
-		// makes start dates and end dates be the same for the iterations series and executions series
-		adjustDates : function(iterations, executions){
+		createX2ticks : function(axisStart, axisEnd){
+			var iterations = this.getModel().scheduledIterations;
 			
-			this._adjustStartDates(iterations[0], executions);
-			this._adjustEndDates(iterations[iterations.length -1], executions);
+			var x2ticks = [], 
+				i=0, 
+				len = iterations.length;
 			
-		},
-		
-		_adjustStartDates : function(firstIteration, executions){
-			var startIter = firstIteration.scheduledStart,
-				startExecs = (executions.length>0) ? executions[0][0] : null;
-			
-			if (startExecs === startIter){
-				return;
+			x2ticks.push(axisStart);
+			var i;
+			for (i=0;i<len;i++){
+				var iter = iterations[i];
+				x2ticks = x2ticks.concat([iter.scheduledStart, iter.scheduledEnd]);
 			}
+			x2ticks.push(axisEnd);
 			
-			if (startExecs === null || startIter < startExecs){
-				executions.unshift([startIter, 0.0]);		
-			}
-			else{
-				firstIteration.cumulativeTestsByDate.unshift([startExecs, 0.0]);
-			}			
-		},
-		
-		_adjustEndDates : function(lastIteration, executions){
-			var endIter = lastIteration.scheduledEnd,
-				endExecs = (executions.length>0) ? executions[executions.length - 1][0] : null;
-				
-			if (endIter === endExecs){
-				return ;
-			}
-				
-			if ( endExecs === null || endIter > endExecs ){
-				var value = executions[executions.length -1][1];
-				executions.push([endIter, value]);
-			}
-			else{
-				var cumuls = lastIteration.cumulativeTestsByDate;
-				var value = cumuls[cumuls.length -1][1];
-				cumuls.push([endExecs, value]);
-			}		
-		},
-		
-		// this function must transform millis timestamp dates to Date objects
-		formatDates : function(iterations, executions){
-			
-			var i=0,
-				ilen = iterations.length;
-			
-			for (i=0;i<ilen;i++){
-				var iter = iterations[i],
-					j=0,
-					jlen = iter.cumulativeTestsByDate.length;
-				
-				for (j=0;j<jlen;j++){
-					iter.cumulativeTestsByDate[j][0] = new Date(iter.cumulativeTestsByDate[j][0]);
-				}
-			}
-			
-			var k=0,
-				klen = executions.length;
-			
-			for (k=0; k < klen; k++){
-				executions[k][0] = new Date(executions[k][0]);
-			}
+			return x2ticks;
 		}
-		
-	
 	});
+
 	
+
 });

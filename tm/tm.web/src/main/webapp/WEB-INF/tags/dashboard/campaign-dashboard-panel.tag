@@ -57,7 +57,7 @@
 				<jsp:attribute name="body">				
 				<div id="dashboard-cumulative-progression" data-def="model-attribute=campaignProgressionStatistics">
 					
-					<div class="dashboard-figures" >					
+					<div class="dashboard-figures" style="height : 300px;">					
 						<div id="dashboard-cumulative-progression-view" class="dashboard-item-view" style="width:95%;float:none;margin:auto">
 						
 						
