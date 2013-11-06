@@ -85,9 +85,6 @@ squashtm.fragmenttabs = (function($, window) {
 			var cookie = $.cookie(cookieName);
 				if (cookie){
 					args.active = parseInt(cookie,10);
-					if("iteration-tab-cookie" !== cookieName){
-						$.cookie(cookieName, null, { path: '/' });
-					}
 				}
 			} 
 

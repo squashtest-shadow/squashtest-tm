@@ -66,7 +66,7 @@
 
 define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "squash.translator", 'workspace.event-bus' ], function($, TableCollapser,
 		cufValuesManager, translator, eventBus) {
-
+ 
 	// ************************* configuration functions
 	// ************************************
 
@@ -197,7 +197,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		if(!permissions.isAttachable){
 			attachButtonClass = "default-cursor";
 		}
-		
+
 		var id = $(".test-steps-table")[0].id;
 		var savedData = JSON.parse( localStorage.getItem('DataTables_'+window.location.pathname+"_"+id));
 				 
@@ -288,7 +288,10 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 		};
 
-		if(!!savedData){
+		var cookieName = "testcase-tab-cookie";
+		var cookie = $.cookie(cookieName);
+		
+		if(!!savedData & !!cookie){
 			datatableSettings.aaSorting = savedData.aaSorting;
 			datatableSettings.abVisCols = savedData.abVisCols;
 			datatableSettings.aoSearchCols = savedData.aoSearchCols;
@@ -297,6 +300,9 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 			datatableSettings.iLength = savedData.iLength;
 			datatableSettings.iStart = savedData.iStart;
 			datatableSettings.oSearch = savedData.oSearch;
+			$.cookie(cookieName, null, { path: '/' });
+		} else {
+			localStorage.removeItem('DataTables_'+window.location.pathname+"_"+id);
 		}
 		
 		// decorate the settings with the cuf values support
@@ -770,6 +776,8 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 		// table collapser
 		initCollapser(language, urls, permissions.isWritable);
+		
+
 	}
 
 	return {
