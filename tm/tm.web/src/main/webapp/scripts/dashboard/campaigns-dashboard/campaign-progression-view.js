@@ -19,8 +19,10 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "backbone", "squash.attributeparser", 
-        "jqplot-dates", "jqplot-highlight", "../jqplot-ext/jqplot.squash.iterationAxisRenderer", "../jqplot-ext/jqplot.squash.iterationGridRenderer"], function($, Backbone, attrparser){
+define(["jquery", "backbone", "squash.attributeparser", "iesupport/am-I-ie8", 
+        "jqplot-dates", "jqplot-highlight", 
+        "../jqplot-ext/jqplot.squash.iterationAxisRenderer", "../jqplot-ext/jqplot.squash.iterationGridRenderer"], 
+        function($, Backbone, attrparser, isIE8){
 	
 	var _dateUtils = {
 		// makes start dates and end dates be the same for the iterations series and executions series
@@ -120,6 +122,7 @@ define(["jquery", "backbone", "squash.attributeparser",
 		},
 		
 		render : function(){
+			
 			if (! this.model.isAvailable()){
 				return;
 			}
@@ -135,6 +138,21 @@ define(["jquery", "backbone", "squash.attributeparser",
 				conf.data = series;
 				this.plot.replot(conf);
 			}
+			
+			
+			// 
+			// now the following hack will make the grid appear over the plots, thanks to Mark on Stackoverflow
+			// try this if the transparency trick is not satisfying.
+			// 
+			
+			/*
+			if (! isIE8){
+				var itemview = this.$el.find('.dashboard-item-view');
+				var grid = itemview.find('.jqplot-grid-canvas').eq(0);  
+				var lastSeries = itemview.find(".jqplot-series-canvas").last();
+				grid.detach();
+				lastSeries.after(grid);
+			}*/
 		},
 		
 		remove : function(){
@@ -211,6 +229,7 @@ define(["jquery", "backbone", "squash.attributeparser",
 					}
 				},
 				grid : {
+					//background : 'transparent',
 					background : '#FFFFFF',
 					drawBorder : false,
 					shadow : false,
@@ -223,7 +242,8 @@ define(["jquery", "backbone", "squash.attributeparser",
 						size:6
 					},
 					fill : true,
-					fillAndStroke : true
+					fillAndStroke : true,
+					fillAlpha : 0.4
 				},
 				highlighter : {
 					tooltipAxes: 'y',

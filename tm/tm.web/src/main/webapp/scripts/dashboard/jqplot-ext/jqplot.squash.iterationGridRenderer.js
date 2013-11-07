@@ -20,7 +20,7 @@
  */
 
 /*
- * ripped and adapted from jqplot.CanvasGridRenderer * 
+ * ripped and adapted from jqplot.CanvasGridRenderer
  */
 
 define(["jquery", "jqplot-core"], function($){
