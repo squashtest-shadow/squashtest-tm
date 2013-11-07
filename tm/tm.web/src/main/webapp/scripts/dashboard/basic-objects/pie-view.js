@@ -27,8 +27,7 @@
  * 
  * Must implement : 
  * 
- * getSerie() : a function that must return an array of integers read from the model, that represent the values used to draw the pie.
- *				You must ensure that the order of the data is consistent with the one of the legend (see structure below)
+ * getSeries() : see JqplotView
  * 
  * ---------- settings ---------
  * 
@@ -70,58 +69,20 @@
  * 
  */
 
-define(["jquery", "backbone", "squash.attributeparser", "iesupport/am-I-ie8", "./ie8-special-pie-renderer", 
-        "jqplot-pie", "jquery.throttle-debounce"], function($, Backbone, attrparser, isIE8, specialHandler){
+define(["jquery", "./jqplot-view", "iesupport/am-I-ie8", "./ie8-special-pie-renderer", 
+        "jqplot-pie", "jquery.throttle-debounce"], function($, JqplotView, isIE8, specialHandler){
 
 	
 	
-	return Backbone.View.extend({
+	return JqplotView.extend({
 		
 		// The color for '0%' charts
 		EMPTY_COLOR : ["#EEEEEE"],
-		
-		
-		// ************************* abstract methods *********************
-		
-		
-		getSerie : function(){
-			throw "dashboard : attempted to instanciate an abstract pie view !";
-		},
-		
-		
-		// ************************* initialization ***********************
-		
-		
-		initialize : function(){
-			
-			//configure
-			this._readDOM();
-			
-			//create. This may abort if the model is not available yet.
-			this.render();
-			
-			//events
-			this._bindEvents();
-			
-		},
-		
 
-		remove : function(){
-			if (!! this.pie){
-				this.pie.destroy();
-			}
-			Backbone.View.prototype.remove.call(this);
-		},
-		
-		
+
 		_readDOM : function(){
 			
-			//reads the data-def from the master element
-			var strconf = this.$el.data('def');
-			var moarconf = attrparser.parse(strconf);
-			if (moarconf['model-attribute']!==undefined){
-				this.modelAttribute = moarconf['model-attribute'];
-			}
+			JqplotView.prototype._readDOM.call(this);
 			
 			//read datas from the div.dashboard-item-legend
 			var legendspans = this.$el.find('.dashboard-item-legend span');
@@ -132,22 +93,6 @@ define(["jquery", "backbone", "squash.attributeparser", "iesupport/am-I-ie8", ".
 			
 			
 		},
-
-		
-		_bindEvents : function(){
-			
-			var self = this;
-			$(window).on('resize', $.debounce(250, function(){
-				self.render();
-			}));
-			
-			var modelchangeevt = "change";
-			if (this.modelAttribute!==undefined){
-				modelchangeevt+=":"+this.modelAttribute;
-			}
-			
-			this.listenTo(this.model, modelchangeevt , this.render);
-		},	
 
 
 		// ************************* rendering  ***********************
@@ -165,15 +110,8 @@ define(["jquery", "backbone", "squash.attributeparser", "iesupport/am-I-ie8", ".
 			if (isIE8 && (pieserie.isEmpty || pieserie.isFull)){
 				specialHandler.render(conf, this.$el.find('.dashboard-item-view'));
 			}
-			
-			else if (this.pie === undefined){	
-				var viewId = this.$el.find('.dashboard-item-view').attr('id');
-				this.pie = $.jqplot(viewId, pieserie.plotdata, conf);
-			}
-			
 			else{
-				conf.data = pieserie.plotdata;
-				this.pie.replot(conf);
+				this.draw(pieserie.plotdata, conf);
 			}
 
 		},
@@ -183,7 +121,7 @@ define(["jquery", "backbone", "squash.attributeparser", "iesupport/am-I-ie8", ".
 		
 		// returns data that works, eliminating corner cases. 
 		getData : function(){
-			var serie = this.getSerie();
+			var serie = this.getSeries();
 			return new PieSerie(serie);			
 		},
 
@@ -309,6 +247,7 @@ define(["jquery", "backbone", "squash.attributeparser", "iesupport/am-I-ie8", ".
 	}
 	
 	PieSerie.prototype = [];
+	PieSerie.prototype.constructor = PieSerie;
 	
 	
 	

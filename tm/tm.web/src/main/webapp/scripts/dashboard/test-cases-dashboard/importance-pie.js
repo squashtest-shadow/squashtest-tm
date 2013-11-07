@@ -22,7 +22,7 @@ define(["dashboard/basic-objects/pie-view"], function(PieView){
 
 	return PieView.extend({
 		
-		getSerie : function(){
+		getSeries : function(){
 			var stats = this.model.get('importanceStatistics');
 			return [ stats.low, stats.medium, stats.high, stats.veryHigh ];
 		}

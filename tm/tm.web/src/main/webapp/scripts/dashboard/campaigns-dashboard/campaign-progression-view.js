@@ -19,10 +19,10 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "backbone", "squash.attributeparser", "iesupport/am-I-ie8", 
+define(["jquery", '../basic-objects/jqplot-view', 
         "jqplot-dates", "jqplot-highlight", 
         "../jqplot-ext/jqplot.squash.iterationAxisRenderer", "../jqplot-ext/jqplot.squash.iterationGridRenderer"], 
-        function($, Backbone, attrparser, isIE8){
+        function($, JqplotView){
 	
 	var _dateUtils = {
 		// makes start dates and end dates be the same for the iterations series and executions series
@@ -88,80 +88,8 @@ define(["jquery", "backbone", "squash.attributeparser", "iesupport/am-I-ie8",
 	
 	
 	
-	return Backbone.View.extend({
-		
-		initialize : function(){
-			this._readDOM();
-			this.render();
-			this._bindEvents();
-		},
-		
-		_readDOM : function(){
-			var strconf = this.$el.data('def');
-			var conf = attrparser.parse(strconf);
-			if (conf['model-attribute'] !== undefined){
-				this.modelAttribute = conf['model-attribute'];
-			}
-			
-		},
-		
-		_bindEvents : function(){
-			var self = this;
-			
-			var self = this;
-			$(window).on('resize', $.debounce(250, function(){
-				self.render();
-			}));
-			
-			var modelchangeevt = "change";
-			if (this.modelAttribute !== undefined){
-				modelchangeevt+=":"+this.modelAttribute;
-			}
-			
-			this.listenTo(this.model, modelchangeevt, this.render);
-		},
-		
-		render : function(){
-			
-			if (! this.model.isAvailable()){
-				return;
-			}
-			
-			var series = this.getSeries();
-			var conf = this.getConf(series);
-			
-			if (this.plot === undefined){
-				var viewId = this.$el.find('.dashboard-item-view').attr('id');
-				this.plot = $.jqplot(viewId, series, conf);
-			}
-			else{
-				conf.data = series;
-				this.plot.replot(conf);
-			}
-			
-			
-			// 
-			// now the following hack will make the grid appear over the plots, thanks to Mark on Stackoverflow
-			// try this if the transparency trick is not satisfying.
-			// 
-			
-			/*
-			if (! isIE8){
-				var itemview = this.$el.find('.dashboard-item-view');
-				var grid = itemview.find('.jqplot-grid-canvas').eq(0);  
-				var lastSeries = itemview.find(".jqplot-series-canvas").last();
-				grid.detach();
-				lastSeries.after(grid);
-			}*/
-		},
-		
-		remove : function(){
-			if ( this.plot !== undefined ){
-				this.plot.destroy();
-			}
-			Backbone.View.prototype.remove.call(this);
-		},
-		
+	return JqplotView.extend({
+				
 		getModel : function(){
 			return this.model.get('campaignProgressionStatistics');
 		},		
@@ -229,7 +157,6 @@ define(["jquery", "backbone", "squash.attributeparser", "iesupport/am-I-ie8",
 					}
 				},
 				grid : {
-					//background : 'transparent',
 					background : '#FFFFFF',
 					drawBorder : false,
 					shadow : false,
@@ -274,7 +201,5 @@ define(["jquery", "backbone", "squash.attributeparser", "iesupport/am-I-ie8",
 			return x2ticks;
 		}
 	});
-
-	
 
 });
