@@ -19,10 +19,14 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", '../basic-objects/jqplot-view', 
-        "jqplot-dates", "jqplot-highlight", 
+define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'handlebars',
+        "jqplot-dates", "jqplot-highlight", 'jquery.squash.formdialog',
         "../jqplot-ext/jqplot.squash.iterationAxisRenderer", "../jqplot-ext/jqplot.squash.iterationGridRenderer"], 
-        function($, JqplotView){
+        function($, JqplotView, translator, handlebars){
+	
+	var getMessage = function(msg){
+		return translator.get(msg);
+	}
 	
 	var _dateUtils = {
 		// makes start dates and end dates be the same for the iterations series and executions series
@@ -88,14 +92,77 @@ define(["jquery", '../basic-objects/jqplot-view',
 	
 	
 	
+	// ********************* the popup ********************
+	if ($.squash.dashboarditerDialog == undefined || $.squash.dashboarditerDialog === null){
+		$.widget("squash.dashboarditerDialog", $.squash.formDialog, {
+			
+			options : {
+				template : handlebars.compile(
+						'{{#each scheduledIterations}}'+
+							'<div class="display-table-row row-data" data-def="{{this.id}}">'+
+								"<div>{{this.name}}</div><div>{{this.scheduledStart}}</div><div>{{this.scheduledEnd}}</div>"+
+							'</div>' + 
+						'{{/each}}')
+			},
+			
+			_create : function(){
+				this._super();
+				var self=this;
+				this.onOwnBtn('close', function(){
+					self.close();
+				});
+			},
+			
+			updateContent : function(model){
+				this.uiDialog.find('.row-data').remove();
+				this.uiDialog.find('.iterpopup-content').append(this.options.template(model));			
+			}
+			
+		});
+	}
+	
+	
+	// ********************* the view ***********************
+	
 	return JqplotView.extend({
+		
+		
+		initialize : function(){
+			this.initErrorHandling();
+			JqplotView.prototype.initialize.apply(this, Array.prototype.slice.call(arguments));
+		},
+		
+		
+		render : function(){
+			
+			if (!this.model.isAvailable()){
+				return;
+			};
+			
+			var model = this._getModelData();
+			
+			if (!! model.errors ){
+				this.handleErrors();
+				this._swapTo('.dashboard-cumulative-progression-error');
+			}
+			else{
+				this._swapTo('.dashboard-figures');
+				JqplotView.prototype.render.call(this);
+			}
+		},
+		_swapTo : function(clazz){
+			this.$el.find('.dashboard-alternative-content').hide();
+			this.$el.find(clazz).show();
+		},
+		
+		// *********************** PLOTTING SECTION *****************************
 				
-		getModel : function(){
+		_getModelData : function(){
 			return this.model.get('campaignProgressionStatistics');
 		},		
 		
 		getSeries : function(){
-			var _model = this.getModel();
+			var _model = this._getModelData();
 
 			var scheduledIterations = _model.scheduledIterations.slice(0);
 			var executions = _model.cumulativeExecutionsPerDate.slice(0);
@@ -182,7 +249,7 @@ define(["jquery", '../basic-objects/jqplot-view',
 		},
 		
 		createX2ticks : function(axisStart, axisEnd){
-			var iterations = this.getModel().scheduledIterations;
+			var iterations = this._getModelData().scheduledIterations;
 			
 			var labeltpl = '<div style="background-color:#750021; color:white; font-weight:bold; "><span>{{this.name}}</span></div>';
 			
@@ -199,7 +266,31 @@ define(["jquery", '../basic-objects/jqplot-view',
 			x2ticks.push(axisEnd);
 			
 			return x2ticks;
+		},
+		
+		
+		// ************************************* ERROR HANDLING SECTION ******************************
+		
+		initErrorHandling : function(){
+			this.iterPopup = $(".dashboard-cumulative-progression-iterpopup");
+			this.iterPopup.dashboarditerDialog();
+		},
+		
+		handleErrors : function(){
+			
+			if (!this.model.isAvailable()){
+				return;
+			};
+			
+			var model = this._getModelData();
+			
+			var msg = getMessage(model.errors[0]);
+			this.$el.find('.cumulative-progression-errormsg').text(msg);
+			this.iterPopup.dashboarditerDialog('updateContent', model);
 		}
+		
 	});
+	
+
 
 });

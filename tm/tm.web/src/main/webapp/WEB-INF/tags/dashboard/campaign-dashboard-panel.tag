@@ -57,11 +57,33 @@
 				<jsp:attribute name="body">				
 				<div id="dashboard-cumulative-progression" data-def="model-attribute=campaignProgressionStatistics">
 					
-					<div class="dashboard-figures" style="height : 300px;">					
+					<div class="dashboard-figures  dashboard-alternative-content" style="height : 300px;">					
 						<div id="dashboard-cumulative-progression-view" class="dashboard-item-view" style="width:95%;float:none;margin:auto">
 						
 						
 						</div>				
+					</div>
+					
+					<div class="dashboard-cumulative-progression-error not-displayed  dashboard-alternative-content">
+						<span class="cumulative-progression-errormsg"></span><a>(<f:message key="error.generic.button.details.label"/>...)</a>
+					</div>
+					
+					<f:message var="buttonOK" key="label.Ok"/>
+					<div class="dashboard-cumulative-progression-iterpopup popup-dialog not-displayed ">						
+						
+						<div class="iterpopup-content display-table">
+							<div class="display-table-row">
+								<div class="display-table-cell"><f:message key="label.Name"/></div>
+								<div class="display-table-cell"><f:message key="dialog.label.iteration.scheduled_start.label"/></div>
+								<div class="display-table-cell"><f:message key="dialog.label.iteration.scheduled_end.label"/></div>
+							</div>
+						
+						</div>
+						
+						<div class="popup-dialog-buttonpane">
+							<input type="button" value="${buttonOK}" data-def="evt=close, mainbtn"/>
+						</div>					
+						
 					</div>
 					
 				</div>
