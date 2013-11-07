@@ -29,6 +29,7 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
+import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
 
 /**
  * Iteration modification services which cannot be dynamically generated.
@@ -136,4 +137,5 @@ public interface CustomIterationModificationService extends IterationFinder {
 	 */
 	AutomatedSuite createAndStartAutomatedSuite(long iterationId, Collection<Long> testPlanIds);
 
+	IterationStatisticsBundle gatherIterationStatisticsBundle(long iterationId);
 }

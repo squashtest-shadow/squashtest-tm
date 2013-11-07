@@ -65,9 +65,19 @@ public interface CampaignStatisticsService {
 	 */
 	CampaignStatisticsBundle gatherCampaignStatisticsBundle(long campaignId);
 
-
+	/**
+	 * Given a campaign id, gathers and returns the number of test cases grouped by execution status.
+	 * 
+	 * @param campaignId
+	 * @return
+	 */
 	CampaignTestCaseStatusStatistics gatherCampaignTestCaseStatusStatistics(long campaignId);
 
-
+	/**
+	 * Given a campaign id, gathers and returns the number of non-executed test cases grouped by weight.
+	 * 
+	 * @param campaignId
+	 * @return
+	 */
 	CampaignNonExecutedTestCaseImportanceStatistics gatherCampaignNonExecutedTestCaseImportanceStatistics(long campaignId);
 }

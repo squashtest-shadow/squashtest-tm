@@ -51,7 +51,9 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
+import org.squashtest.tm.service.campaign.CampaignStatisticsService;
 import org.squashtest.tm.service.campaign.CustomIterationModificationService;
+import org.squashtest.tm.service.campaign.IterationStatisticsService;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
@@ -70,6 +72,7 @@ import org.squashtest.tm.service.library.AdvancedSearchService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
+import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker;
 
 @Service("CustomIterationModificationService")
@@ -104,6 +107,8 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Inject	private PrivateDenormalizedFieldValueService denormalizedFieldValueService;
 	
 	@Inject private AdvancedSearchService advancedSearchService;
+
+	@Inject private IterationStatisticsService statisticsService;
 	
 	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToIterationStrategy")
@@ -432,6 +437,11 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Override
 	public List<Iteration> findIterationContainingTestCase(long testCaseId) {
 		return iterationDao.findAllIterationContainingTestCase(testCaseId);
+	}
+
+	@Override
+	public IterationStatisticsBundle gatherIterationStatisticsBundle(long iterationId) {
+		return statisticsService.gatherIterationStatisticsBundle(iterationId);
 	}
 
 } 

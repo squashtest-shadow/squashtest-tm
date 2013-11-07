@@ -63,6 +63,7 @@ import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.AutomatedSuiteOverview;
@@ -169,6 +170,18 @@ public class IterationModificationController {
 		return jsonUsers;
 	}
 
+	//URL should have been /statistics, but that was already used by another method in this controller
+	@RequestMapping (value = "/dashboard-statistics", method = RequestMethod.GET, produces="application/json"/*, params = {"date"}*/)
+	public @ResponseBody IterationStatisticsBundle getStatisticsAsJson(@PathVariable("iterationId") long iterationId/*, @RequestParam(value="date", defaultValue="") String strDate*/){
+			
+			return iterationModService.gatherIterationStatisticsBundle(iterationId);
+		}
+		
+	@RequestMapping (value = "/dashboard", method = RequestMethod.GET, produces="text/html", params = {"date"})
+		public String getDashboard(Model model, @PathVariable("iterationId") long iterationId, @RequestParam(value="date", defaultValue="") String strDate){
+			
+		throw new RuntimeException("not implemented yet");
+	}
 	
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
 	public ModelAndView refreshStats(@PathVariable long iterationId) {

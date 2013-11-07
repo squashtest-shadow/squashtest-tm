@@ -360,15 +360,26 @@
 					query = "select new org.squashtest.tm.service.statistics.campaign.ScheduledIteration(iter.id as id, iter.name as name, size(iter.testPlans) as testplanCount, " +
 							"iter.scheduledPeriod.scheduledStartDate as scheduledStart, iter.scheduledPeriod.scheduledEndDate as scheduledEnd) " +
 							"from Campaign c join c.iterations iter where c.id = :id group by iter order by index(iter)"),
-							
-		/*@NamedQuery(name="CampaignStatistics.findExecutionsHistory",
+
+      /*@NamedQuery(name="CampaignStatistics.findExecutionsHistory",
 					query="select itp.lastExecutedOn from Campaign c inner join c.iterations iter inner join iter.testPlans itp " +
 							"where c.id = :id and itp.lastExecutedOn is not null order by itp.lastExecutedOn"),*/
 						
 		@NamedQuery(name="CampaignStatistics.findExecutionsHistory",
 					query="select itp.lastExecutedOn from IterationTestPlanItem itp where itp.iteration.campaign.id = :id " +
 							"and itp.lastExecutedOn is not null order by itp.lastExecutedOn"),
-
+		
+		//Iteration Statistics
+			
+		@NamedQuery(name="IterationStatistics.globaltestinventory", 
+		query = "select itp.executionStatus, count(itp.executionStatus) " +
+				"from Iteration iter join iter.testPlans itp where iter.id = :id group by itp.executionStatus"),
+				
+		@NamedQuery(name="IterationStatistics.nonexecutedTestcaseImportance", 
+		query = "select tc.importance, count(tc.importance) " +
+				"from Iteration iter join iter.testPlans itp join itp.referencedTestCase tc where iter.id = :id and (itp.executionStatus = 'READY' or itp.executionStatus = 'RUNNING') group by tc.importance"),		
+		
+			
 		/* ********************************************** batch deletion-related queries **************************************************** */
 
 		@NamedQuery(name = "testCase.findAllAttachmentLists", query = "select testCase.attachmentList.id from TestCase testCase where testCase.id in (:testCaseIds)"),
