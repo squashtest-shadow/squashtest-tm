@@ -74,6 +74,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 		//TODO : have the db do the job for me
 		Query requery = session.getNamedQuery("CampaignStatistics.findExecutionsHistory");
 		requery.setParameter("id", campaignId, LongType.INSTANCE);
+		requery.setParameterList("nonterminalStatuses", ExecutionStatus.getNonTerminatedStatusSet());
 		List<Date> executionHistory = requery.list();
 	
 		try{
