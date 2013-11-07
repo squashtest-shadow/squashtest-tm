@@ -26,38 +26,36 @@ import java.util.List;
 
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
 
-
 /**
  * 
- * a BTProject has lists of Priority, Version, assignable User and Category. Those lists must never be empty : if 
- * such list would be empty because their counterpart on the remote server do not exist, please use the dummy 
- * specified for each of those classes, eg {@link Version#NO_VERSION} for empty version list.
+ * a BTProject has lists of Priority, Version, assignable User and Category. Those lists must never be empty : if such
+ * list would be empty because their counterpart on the remote server do not exist, please use the dummy specified for
+ * each of those classes, eg {@link Version#NO_VERSION} for empty version list.
  * 
  * @author bsiri
- *
+ * 
  */
-public class BTProject implements Identifiable<BTProject>, RemoteProject{
-	
+public class BTProject implements Identifiable<BTProject>, RemoteProject {
+
 	private String id;
 	private String name;
-	
+
 	private List<Priority> priorities = new LinkedList<Priority>();
 	private List<Version> versions = new LinkedList<Version>();
 	private List<User> users = new LinkedList<User>();
 	private List<Category> categories = new LinkedList<Category>();
+	/* Set to the dummy priority by default */
+	private Priority defaultIssuePriority = Priority.NO_PRIORITY;
 
-	
-	public BTProject(){
-		
+	public BTProject() {
+
 	}
-	
+
 	public BTProject(String id, String name) {
 		super();
 		this.id = id;
 		this.name = name;
 	}
-	
-	
 
 	public void setId(String id) {
 		this.id = id;
@@ -68,23 +66,23 @@ public class BTProject implements Identifiable<BTProject>, RemoteProject{
 	}
 
 	@Override
-	public String getId(){
+	public String getId() {
 		return id;
 	}
-	
+
 	@Override
-	public String getName(){
+	public String getName() {
 		return name;
 	}
-	
-	public void setVersions(List<Version> versions){
-		this.versions=versions;
+
+	public void setVersions(List<Version> versions) {
+		this.versions = versions;
 	}
-	
-	public List<Version> getVersions(){
+
+	public List<Version> getVersions() {
 		return versions;
 	}
-	
+
 	public List<Category> getCategories() {
 		return categories;
 	}
@@ -92,147 +90,158 @@ public class BTProject implements Identifiable<BTProject>, RemoteProject{
 	public void setCategories(List<Category> categories) {
 		this.categories = categories;
 	}
-	
-	public List<Priority> getPriorities(){
+
+	public List<Priority> getPriorities() {
 		return priorities;
 	}
-	
-	public void setPriorities(List<Priority> priorities){
-		this.priorities=priorities;
-	}
-	
 
-	public void addVersion(Version version){
+	public void setPriorities(List<Priority> priorities) {
+		this.priorities = priorities;
+	}
+
+	/**
+	 * Get the default issue priority
+	 * 
+	 * @return The default issue priority
+	 */
+	public Priority getDefaultIssuePriority() {
+		return defaultIssuePriority;
+	}
+
+	/**
+	 * Set the default issue priority
+	 * 
+	 * @param defaultIssuePriority
+	 *            The new default issue priority
+	 */
+	public void setDefaultIssuePriority(Priority defaultPriority) {
+		this.defaultIssuePriority = defaultPriority;
+	}
+
+	public void addVersion(Version version) {
 		versions.add(version);
 	}
-	
-	public void addAllVersions(Collection<Version> versions){
+
+	public void addAllVersions(Collection<Version> versions) {
 		this.versions.addAll(versions);
 	}
-	
-	public Version findVersionByName(String versionName){
-		for (Version version : versions){
-			if (version.getName().equals(versionName)){
+
+	public Version findVersionByName(String versionName) {
+		for (Version version : versions) {
+			if (version.getName().equals(versionName)) {
 				return version;
 			}
 		}
 		return null;
 	}
-	
-	public Version findVersionById(String versionId){
-		for (Version version : versions){
-			if (version.getId().equals(versionId)){
+
+	public Version findVersionById(String versionId) {
+		for (Version version : versions) {
+			if (version.getId().equals(versionId)) {
 				return version;
 			}
 		}
-		return null;	
+		return null;
 	}
-	
-	public void addAllCategories(Collection<Category> categories){
+
+	public void addAllCategories(Collection<Category> categories) {
 		this.categories.addAll(categories);
 	}
-	
-	public Category findCategoryByName(String categoryName){
-		for (Category category : categories){
-			if (category.getName().equals(categoryName)){
+
+	public Category findCategoryByName(String categoryName) {
+		for (Category category : categories) {
+			if (category.getName().equals(categoryName)) {
 				return category;
 			}
 		}
-		return null;		
+		return null;
 	}
-	
-	public Category findCategoryById(String categoryId){
-		for (Category category : categories){
-			if (category.getId().equals(categoryId)){
+
+	public Category findCategoryById(String categoryId) {
+		for (Category category : categories) {
+			if (category.getId().equals(categoryId)) {
 				return category;
 			}
 		}
-		return null;		
+		return null;
 	}
-	
-	public void addallPriorities(Collection<Priority> priorities){
+
+	public void addallPriorities(Collection<Priority> priorities) {
 		this.priorities.addAll(priorities);
 	}
-	
-	public Priority findPriorityByName(String priorityName){
-		for (Priority priority : priorities){
-			if (priority.getName().equals(priorityName)){
+
+	public Priority findPriorityByName(String priorityName) {
+		for (Priority priority : priorities) {
+			if (priority.getName().equals(priorityName)) {
 				return priority;
 			}
 		}
-		return null;			
+		return null;
 	}
-	
-	public Priority findPriorityById(String priorityId){
-		for (Priority priority : priorities){
-			if (priority.getId().equals(priorityId)){
+
+	public Priority findPriorityById(String priorityId) {
+		for (Priority priority : priorities) {
+			if (priority.getId().equals(priorityId)) {
 				return priority;
 			}
 		}
-		return null;			
+		return null;
 	}
-	
-	
-	
-	public void setUsers(List<User> users){
-		this.users=users;
+
+	public void setUsers(List<User> users) {
+		this.users = users;
 	}
-	
-	public List<User> getUsers(){
+
+	public List<User> getUsers() {
 		return users;
 	}
-	
-	public void addUser(User user){
+
+	public void addUser(User user) {
 		this.users.add(user);
 	}
-	
-	public void addAllUsers(Collection<User> users){
+
+	public void addAllUsers(Collection<User> users) {
 		this.users.addAll(users);
 	}
-	
-	public User findUserByName(String userName){
-		for (User user : users){
-			if (user.getName().equals(userName)){
+
+	public User findUserByName(String userName) {
+		for (User user : users) {
+			if (user.getName().equals(userName)) {
 				return user;
 			}
 		}
 		return null;
 	}
-	
-	public User findUserById(String userId){
-		for (User user : users){
-			if (user.getId().equals(userId)){
+
+	public User findUserById(String userId) {
+		for (User user : users) {
+			if (user.getId().equals(userId)) {
 				return user;
 			}
 		}
 		return null;
 	}
-	
-	
+
 	/**
 	 * is hopefully never a dummy
 	 * 
 	 */
 	@Override
-	public boolean isDummy(){
+	public boolean isDummy() {
 		return false;
 	}
-	
+
 	/** exists for the purpose of being java-bean compliant */
-	public void setDummy(Boolean dummy){
-		
+	public void setDummy(Boolean dummy) {
+
 	}
-	
 
 	/**
-	 *  returns true if the user list is empty or if it contains only {@link User}.NO_USER 
+	 * returns true if the user list is empty or if it contains only {@link User}.NO_USER
 	 * 
 	 * @return
 	 */
-	public boolean canAssignUsers(){
-		return ! (
-				(users.isEmpty()) ||
-				(users.size() == 1 && users.get(0).isDummy()) 
-		);
+	public boolean canAssignUsers() {
+		return !((users.isEmpty()) || (users.size() == 1 && users.get(0).isDummy()));
 	}
 }

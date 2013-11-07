@@ -246,10 +246,16 @@ public class MantisConnector implements BugTrackerConnector {
 		project.addAllUsers(findUsers(project));
 		project.addAllCategories(findCategories(project));
 		project.addallPriorities(getPriorities());
+		project.setDefaultIssuePriority(getDefaultPriority(project.getPriorities()));
 		return project;
 	}
 	
 	
+	private Priority getDefaultPriority(List<Priority> projectPriorities) {
+		String defaultPriorityId= client.getDefaultPriority(credentialsHolder.get());
+		return findInListById(projectPriorities, defaultPriorityId);
+	}
+
 	private List<User> makeUserList(String projectId, List<Permission> permissions) {
 
 		Map<String, User> userMap = new HashMap<String, User>();

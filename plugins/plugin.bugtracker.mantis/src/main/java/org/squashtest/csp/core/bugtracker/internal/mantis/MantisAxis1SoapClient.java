@@ -43,10 +43,10 @@ import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 
 /**
  * Provides a soap client to a mantis bugtracker
- *
+ * 
  * @author Gregory Fouquet
  * @reviewed-on 2011/11/23
- *
+ * 
  */
 public class MantisAxis1SoapClient {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MantisAxis1SoapClient.class);
@@ -54,6 +54,11 @@ public class MantisAxis1SoapClient {
 	 * location of mantis's soap api
 	 */
 	private static final String SOAP_API_LOCATION = "/api/soap/mantisconnect.php";
+
+	/**
+	 * Mantis config_var value to retrieve mantis default bug severity
+	 */
+	private static final String CONFIG_DEFAULT_BUG_SEVERITY = "default_bug_severity";
 
 	private final MantisConnectPortType service;
 
@@ -76,8 +81,8 @@ public class MantisAxis1SoapClient {
 		}
 	}
 
-	public void setMantisExceptionConverter(MantisExceptionConverter converter){
-		this.exceptionConverter=converter;
+	public void setMantisExceptionConverter(MantisExceptionConverter converter) {
+		this.exceptionConverter = converter;
 	}
 
 	public MantisConnectPortType getService() {
@@ -85,7 +90,7 @@ public class MantisAxis1SoapClient {
 	}
 
 	/**
-	 *
+	 * 
 	 * @return the list of severities as {@link ObjectRef}s
 	 */
 	public ObjectRef[] getSeverities(AuthenticationCredentials credentials) {
@@ -97,74 +102,75 @@ public class MantisAxis1SoapClient {
 		}
 	}
 
-	public ObjectRef[] getPriorities(AuthenticationCredentials credentials){
-		try{
+	public ObjectRef[] getPriorities(AuthenticationCredentials credentials) {
+		try {
 			// get what mantis calls severities
 			return service.mc_enum_severities(credentials.getUsername(), credentials.getPassword());
-		}catch(RemoteException rme){
-			LOGGER.error(rme.getMessage(),rme);
+		} catch (RemoteException rme) {
+			LOGGER.error(rme.getMessage(), rme);
 			throw setupException(rme);
 		}
 	}
 
-	public ProjectData[] findProjects(AuthenticationCredentials credentials){
-		try{
-			return service.mc_projects_get_user_accessible(credentials.getUsername(),credentials.getPassword());
-		}catch(RemoteException rme){
-			LOGGER.error(rme.getMessage(),rme);
+	public ProjectData[] findProjects(AuthenticationCredentials credentials) {
+		try {
+			return service.mc_projects_get_user_accessible(credentials.getUsername(), credentials.getPassword());
+		} catch (RemoteException rme) {
+			LOGGER.error(rme.getMessage(), rme);
 			throw setupException(rme);
 		}
 	}
 
-
-	public ProjectVersionData[] findVersions(AuthenticationCredentials credentials, BigInteger projectId){
-		try{
-			return service.mc_project_get_versions(credentials.getUsername(),credentials.getPassword(), projectId);
-		}catch(RemoteException rme){
-			LOGGER.error(rme.getMessage(),rme);
+	public ProjectVersionData[] findVersions(AuthenticationCredentials credentials, BigInteger projectId) {
+		try {
+			return service.mc_project_get_versions(credentials.getUsername(), credentials.getPassword(), projectId);
+		} catch (RemoteException rme) {
+			LOGGER.error(rme.getMessage(), rme);
 			throw setupException(rme);
 		}
 	}
 
-	public ObjectRef[] getAccessLevel(AuthenticationCredentials credentials){
-		try{
-			return service.mc_enum_access_levels(credentials.getUsername(),credentials.getPassword());
-		}catch(RemoteException rme){
-			LOGGER.error(rme.getMessage(),rme);
+	public ObjectRef[] getAccessLevel(AuthenticationCredentials credentials) {
+		try {
+			return service.mc_enum_access_levels(credentials.getUsername(), credentials.getPassword());
+		} catch (RemoteException rme) {
+			LOGGER.error(rme.getMessage(), rme);
 			throw setupException(rme);
 		}
 	}
 
-	public AccountData[] findUsersForProject(AuthenticationCredentials credentials, BigInteger projectId, BigInteger access){
-		try{
-			return service.mc_project_get_users(credentials.getUsername(),credentials.getPassword(), projectId, access);
-		}catch(RemoteException rme){
-			LOGGER.error(rme.getMessage(),rme);
+	public AccountData[] findUsersForProject(AuthenticationCredentials credentials, BigInteger projectId,
+			BigInteger access) {
+		try {
+			return service
+					.mc_project_get_users(credentials.getUsername(), credentials.getPassword(), projectId, access);
+		} catch (RemoteException rme) {
+			LOGGER.error(rme.getMessage(), rme);
 			throw setupException(rme);
 		}
 	}
 
-	public String[] findCategories(AuthenticationCredentials credentials, BigInteger projectId){
-		try{
-			return service.mc_project_get_categories(credentials.getUsername(),credentials.getPassword(), projectId);
-		}catch(RemoteException rme){
-			LOGGER.error(rme.getMessage(),rme);
+	public String[] findCategories(AuthenticationCredentials credentials, BigInteger projectId) {
+		try {
+			return service.mc_project_get_categories(credentials.getUsername(), credentials.getPassword(), projectId);
+		} catch (RemoteException rme) {
+			LOGGER.error(rme.getMessage(), rme);
 			throw setupException(rme);
 		}
 	}
 
-	public BigInteger createIssue(AuthenticationCredentials credentials, IssueData issue){
-		try{
-			return service.mc_issue_add(credentials.getUsername(),credentials.getPassword(), issue);
-		}catch(RemoteException rme){
-			LOGGER.error(rme.getMessage(),rme);
+	public BigInteger createIssue(AuthenticationCredentials credentials, IssueData issue) {
+		try {
+			return service.mc_issue_add(credentials.getUsername(), credentials.getPassword(), issue);
+		} catch (RemoteException rme) {
+			LOGGER.error(rme.getMessage(), rme);
 			throw setupException(rme);
 		}
 	}
 
 	/***
 	 * This method returns Mantis issue data corresponding to a given issue id
-	 *
+	 * 
 	 * @param credentials
 	 *            the connection data
 	 * @param issueId
@@ -179,10 +185,29 @@ public class MantisAxis1SoapClient {
 		}
 	}
 
+	/**
+	 * This method return as a String the ID of the default issue severity
+	 * 
+	 * @param credentials
+	 *            the connection data
+	 * @return the ID of the default priority
+	 */
+	public String getDefaultPriority(AuthenticationCredentials credentials) {
+		return getConfig(credentials, CONFIG_DEFAULT_BUG_SEVERITY);
+	}
+
+	private String getConfig(AuthenticationCredentials credentials, String configVar) {
+		try {
+			return service.mc_config_get_string(credentials.getUsername(), credentials.getPassword(), configVar);
+		} catch (RemoteException rme) {
+			LOGGER.error(rme.getMessage(), rme);
+			throw setupException(rme);
+		}
+	}
 
 	/* ********************* private utils ************************ */
 
-	private BugTrackerRemoteException setupException(RemoteException remoteException){
+	private BugTrackerRemoteException setupException(RemoteException remoteException) {
 		return exceptionConverter.convertException(remoteException);
 	}
 

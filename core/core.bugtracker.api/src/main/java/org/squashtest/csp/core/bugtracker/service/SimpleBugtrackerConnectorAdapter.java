@@ -32,6 +32,7 @@ import org.squashtest.csp.core.bugtracker.core.ProjectNotFoundException;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BTProject;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.csp.core.bugtracker.domain.Priority;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnector;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
@@ -41,29 +42,27 @@ import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
 import org.squashtest.tm.core.foundation.lang.CollectionUtils;
 
-
 /**
  * Could also have been called LegacyBugtrackerConnectorAdapter
  * 
  * @author bsiri
- *
+ * 
  */
 
-public class SimpleBugtrackerConnectorAdapter implements
-		InternalBugtrackerConnector {
-	
+public class SimpleBugtrackerConnectorAdapter implements InternalBugtrackerConnector {
+
 	private BugTrackerConnector connector;
-	
-	public SimpleBugtrackerConnectorAdapter(){
+
+	public SimpleBugtrackerConnectorAdapter() {
 		super();
 	}
-	
-	public SimpleBugtrackerConnectorAdapter(BugTrackerConnector connector){
+
+	public SimpleBugtrackerConnectorAdapter(BugTrackerConnector connector) {
 		super();
 		this.connector = connector;
 	}
-	
-	public void setConnector(BugTrackerConnector connector){
+
+	public void setConnector(BugTrackerConnector connector) {
 		this.connector = connector;
 	}
 
@@ -73,27 +72,24 @@ public class SimpleBugtrackerConnectorAdapter implements
 	}
 
 	@Override
-	public void checkCredentials(AuthenticationCredentials credentials)
-			throws BugTrackerNoCredentialsException, BugTrackerRemoteException {
+	public void checkCredentials(AuthenticationCredentials credentials) throws BugTrackerNoCredentialsException,
+			BugTrackerRemoteException {
 		connector.checkCredentials(credentials);
 	}
 
 	@Override
-	public RemoteProject findProject(String projectName)
-			throws ProjectNotFoundException, BugTrackerRemoteException {
+	public RemoteProject findProject(String projectName) throws ProjectNotFoundException, BugTrackerRemoteException {
 		return connector.findProject(projectName);
 	}
 
 	@Override
-	public RemoteProject findProjectById(String projectId)
-			throws ProjectNotFoundException, BugTrackerRemoteException {
+	public RemoteProject findProjectById(String projectId) throws ProjectNotFoundException, BugTrackerRemoteException {
 		return connector.findProject(projectId);
 	}
 
 	@Override
-	public RemoteIssue createIssue(RemoteIssue issue)
-			throws BugTrackerRemoteException {
-		return connector.createIssue((BTIssue)issue);
+	public RemoteIssue createIssue(RemoteIssue issue) throws BugTrackerRemoteException {
+		return connector.createIssue((BTIssue) issue);
 	}
 
 	@Override
@@ -105,35 +101,45 @@ public class SimpleBugtrackerConnectorAdapter implements
 	public RemoteIssue findIssue(String key) {
 		return connector.findIssue(key);
 	}
-/**
- * 
- * @see org.squashtest.csp.core.bugtracker.service.InternalBugtrackerConnector#findIssues(java.util.Collection)
- */
+
+	/**
+	 * 
+	 * @see org.squashtest.csp.core.bugtracker.service.InternalBugtrackerConnector#findIssues(java.util.Collection)
+	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<RemoteIssue> findIssues(Collection<String> issueKeys) {
 		return (List) connector.findIssues(coerceToList(issueKeys));
 	}
-	
+
 	/**
- * @param issueKeys
- * @return
- */
-private List<String> coerceToList(Collection<String> issueKeys) {
-	
-	return CollectionUtils.coerceToList(issueKeys);
-}
+	 * @param issueKeys
+	 * @return
+	 */
+	private List<String> coerceToList(Collection<String> issueKeys) {
+
+		return CollectionUtils.coerceToList(issueKeys);
+	}
 
 	@Override
 	public RemoteIssue createReportIssueTemplate(String projectName) {
 		RemoteProject project = connector.findProject(projectName);
 
 		BTIssue emptyIssue = new BTIssue();
-		emptyIssue.setProject((BTProject)project);
-		
+		BTProject btProject = (BTProject) project;
+		emptyIssue.setProject(btProject);
+		Priority defaultPriority = btProject.getDefaultIssuePriority();
+		/*
+		 * The dummy priority is the default value for BTProject defaultIssuePriority property. We want to fill the
+		 * priority of the issue template only if a real value has been set for defaultIssuePriority property.
+		 */
+		if (!defaultPriority.equals(Priority.NO_PRIORITY)) {
+			emptyIssue.setPriority(defaultPriority);
+		}
+
 		return emptyIssue;
 	}
-	
+
 	@Override
 	public URL makeViewIssueUrl(BugTracker bugTracker, String issueId) {
 		URL url = null;
@@ -152,24 +158,23 @@ private List<String> coerceToList(Collection<String> issueKeys) {
 
 		return url;
 	}
-	
+
 	@Override
 	public void forwardAttachments(String remoteIssueKey, List<Attachment> attachments) {
-		//NOOP : the old interface simply cannot do that. It cannot possibly be invoked anyway. Normally.
-		throw new BugTrackerManagerException("Technical error : impossible to post attachments for issue '"+remoteIssueKey+"' . This issue "+
-											 "is managed by a simple connector that cannot handle such operation. As such yhis is likely a "+
-											 "a programming error : file uploads should never have been available in the GUI in the first place. "+
-											 "Please submit " +
-											 "your attachments using the bugtracker itself.");
-	}
-	
-	@Override
-	public Object executeDelegateCommand(DelegateCommand command) {
-		//NOOP : the old interface simply cannot do that. It cannot possibly be invoked anyway. Normally.
-		throw new BugTrackerManagerException("Technical error : impossible to execute a delegate command. This issue "+
-											 "is managed by a simple connector that cannot handle such operation. As such yhis is likely a "+
-											 "a programming error : file uploads should never have been available in the GUI in the first place");
+		// NOOP : the old interface simply cannot do that. It cannot possibly be invoked anyway. Normally.
+		throw new BugTrackerManagerException("Technical error : impossible to post attachments for issue '"
+				+ remoteIssueKey + "' . This issue "
+				+ "is managed by a simple connector that cannot handle such operation. As such yhis is likely a "
+				+ "a programming error : file uploads should never have been available in the GUI in the first place. "
+				+ "Please submit " + "your attachments using the bugtracker itself.");
 	}
 
+	@Override
+	public Object executeDelegateCommand(DelegateCommand command) {
+		// NOOP : the old interface simply cannot do that. It cannot possibly be invoked anyway. Normally.
+		throw new BugTrackerManagerException("Technical error : impossible to execute a delegate command. This issue "
+				+ "is managed by a simple connector that cannot handle such operation. As such yhis is likely a "
+				+ "a programming error : file uploads should never have been available in the GUI in the first place");
+	}
 
 }
