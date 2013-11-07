@@ -22,8 +22,10 @@ package org.squashtest.tm.service.campaign;
 
 import java.util.List;
 
+import org.squashtest.tm.service.statistics.campaign.CampaignNonExecutedTestCaseImportanceStatistics;
 import org.squashtest.tm.service.statistics.campaign.CampaignProgressionStatistics;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
+import org.squashtest.tm.service.statistics.campaign.CampaignTestCaseStatusStatistics;
 import org.squashtest.tm.service.statistics.campaign.IterationTestInventoryStatistics;
 
 public interface CampaignStatisticsService {
@@ -62,4 +64,10 @@ public interface CampaignStatisticsService {
 	 * @return
 	 */
 	CampaignStatisticsBundle gatherCampaignStatisticsBundle(long campaignId);
+
+
+	CampaignTestCaseStatusStatistics gatherCampaignTestCaseStatusStatistics(long campaignId);
+
+
+	CampaignNonExecutedTestCaseImportanceStatistics gatherCampaignNonExecutedTestCaseImportanceStatistics(long campaignId);
 }

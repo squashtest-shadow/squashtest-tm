@@ -29,10 +29,16 @@ public final class CampaignStatisticsBundle {
 
 	private CampaignProgressionStatistics campaignProgressionStatistics;
 
+	private CampaignTestCaseStatusStatistics campaignTestCaseStatusStatistics;
+	
+	private CampaignNonExecutedTestCaseImportanceStatistics campaignNonExecutedTestCaseImportanceStatistics;
+	
+	private CampaignTestCaseSuccessRateStatistics campaignTestCaseSuccessRateStatistics; 
+	
+	
 	public List<IterationTestInventoryStatistics> getIterationTestInventoryStatisticsList() {
 		return iterationTestInventoryStatisticsList;
 	}
-
 
 	public void setIterationTestInventoryStatisticsList(
 			List<IterationTestInventoryStatistics> iterationTestInventoryStatisticsList) {
@@ -50,7 +56,38 @@ public final class CampaignStatisticsBundle {
 		this.campaignProgressionStatistics = campaignProgressionStatistics;
 	}
 
-	
+
+	public CampaignTestCaseStatusStatistics getCampaignTestCaseStatusStatistics() {
+		return campaignTestCaseStatusStatistics;
+	}
+
+
+	public void setCampaignTestCaseStatusStatistics(
+			CampaignTestCaseStatusStatistics campaignTestCaseStatusStatistics) {
+		this.campaignTestCaseStatusStatistics = campaignTestCaseStatusStatistics;
+	}
+
+
+	public CampaignNonExecutedTestCaseImportanceStatistics getCampaignNonExecutedTestCaseImportanceStatistics() {
+		return campaignNonExecutedTestCaseImportanceStatistics;
+	}
+
+
+	public void setCampaignNonExecutedTestCaseImportanceStatistics(
+			CampaignNonExecutedTestCaseImportanceStatistics campaignNonExecutedTestCaseImportanceStatistics) {
+		this.campaignNonExecutedTestCaseImportanceStatistics = campaignNonExecutedTestCaseImportanceStatistics;
+	}
+
+
+	public CampaignTestCaseSuccessRateStatistics getCampaignTestCaseSuccessRateStatistics() {
+		return campaignTestCaseSuccessRateStatistics;
+	}
+
+
+	public void setCampaignTestCaseSuccessRateStatistics(
+			CampaignTestCaseSuccessRateStatistics campaignTestCaseSuccessRateStatistics) {
+		this.campaignTestCaseSuccessRateStatistics = campaignTestCaseSuccessRateStatistics;
+	}
 	
 }
 

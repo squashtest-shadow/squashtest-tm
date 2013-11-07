@@ -1,4 +1,4 @@
-/*
+/**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2013 Henix, henix.fr
  *
@@ -18,14 +18,37 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["dashboard/basic-objects/pie-view"], function(PieView){
+package org.squashtest.tm.service.statistics.campaign;
 
-	return PieView.extend({
-		
-		getSerie : function(){
-			var stats = this.model.get('boundRequirementsStatistics');
-			return [ stats.zeroRequirements, stats.oneRequirement, stats.manyRequirements  ];
-		}
-	});
+public class CampaignNonExecutedTestCaseImportanceStatistics {
 
-});
+	private int percentageVeryHigh;
+	private int percentageHigh;
+	private int percentageMedium;
+	private int percentageLow;
+	
+	public int getPercentageVeryHigh() {
+		return percentageVeryHigh;
+	}
+	public void setPercentageVeryHigh(int percentageVeryHigh) {
+		this.percentageVeryHigh = percentageVeryHigh;
+	}
+	public int getPercentageHigh() {
+		return percentageHigh;
+	}
+	public void setPercentageHigh(int percentageHigh) {
+		this.percentageHigh = percentageHigh;
+	}
+	public int getPercentageMedium() {
+		return percentageMedium;
+	}
+	public void setPercentageMedium(int percentageMedium) {
+		this.percentageMedium = percentageMedium;
+	}
+	public int getPercentageLow() {
+		return percentageLow;
+	}
+	public void setPercentageLow(int percentageLow) {
+		this.percentageLow = percentageLow;
+	}
+}

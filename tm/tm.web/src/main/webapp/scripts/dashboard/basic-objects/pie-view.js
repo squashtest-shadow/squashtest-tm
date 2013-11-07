@@ -211,6 +211,10 @@ define(["jquery", "backbone", "squash.attributeparser", "iesupport/am-I-ie8", ".
 						startAngle : -45,
 						shadowOffset : 0,
 						sliceMargin : 1.5
+					},
+					 highlighter: {
+					    show: false,
+					    useAxesFormatters:false
 					}
 				},
 				grid : {

@@ -976,13 +976,25 @@ predefined for future evolutions :
 	margin : 0.5%;
 }
 
+.dashboard-narrow-item {
+	width : 32%;
+	float : left;
+	border : 1px solid lightgray;
+	height : 300px;	
+	margin : 0.5%;
+	position: relative;
+}
+
 .dashboard-item-title{
 	text-align : right;
 	margin-right : 1em;
 	margin-top : 0.2em;
 	font-weight : bold;
 	color : #CCCCCC;
-	
+	position : absolute;
+	top : 5px;
+	right : 5px;
+	z-index : 1;
 }
 
 .dashboard-item-view {
