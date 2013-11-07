@@ -20,7 +20,7 @@
  */
 
 define(["jquery", "backbone", "squash.attributeparser", 
-        "jqplot-dates", "jqplot-highlight"], function($, Backbone, attrparser){
+        "jqplot-dates", "jqplot-highlight", "../jqplot-ext/jqplot.squash.iterationAxisRenderer", "../jqplot-ext/jqplot.squash.iterationGridRenderer"], function($, Backbone, attrparser){
 	
 	var _dateUtils = {
 		// makes start dates and end dates be the same for the iterations series and executions series
@@ -41,9 +41,9 @@ define(["jquery", "backbone", "squash.attributeparser",
 			
 			var execdatesUnderflowed = (startExecs === null || startIter < startExecs);
 			
-			var fixedArray = (execdatesexecdatesUnderflowed) ? executions : iterations;
-			var datefix = (execdatesexecdatesUnderflowed) ? startIter : startExecs;
-			var valuefix = fixedArray[0][1];
+			var fixedArray = (execdatesUnderflowed) ? executions : iterations;
+			var datefix = (execdatesUnderflowed) ? startIter : startExecs;
+			var valuefix = 0.0;
 			
 			fixedArray.unshift([datefix, valuefix]);		
 		},
@@ -105,10 +105,17 @@ define(["jquery", "backbone", "squash.attributeparser",
 		
 		_bindEvents : function(){
 			var self = this;
+			
+			var self = this;
+			$(window).on('resize', $.debounce(250, function(){
+				self.render();
+			}));
+			
 			var modelchangeevt = "change";
 			if (this.modelAttribute !== undefined){
 				modelchangeevt+=":"+this.modelAttribute;
 			}
+			
 			this.listenTo(this.model, modelchangeevt, this.render);
 		},
 		
@@ -144,8 +151,8 @@ define(["jquery", "backbone", "squash.attributeparser",
 		getSeries : function(){
 			var _model = this.getModel();
 
-			var scheduledIterations = _model.scheduledIterations;
-			var executions = _model.cumulativeExecutionsPerDate;
+			var scheduledIterations = _model.scheduledIterations.slice(0);
+			var executions = _model.cumulativeExecutionsPerDate.slice(0);
 			
 			// flatten all iterations data into one array
 			var iterations = [];
@@ -156,8 +163,6 @@ define(["jquery", "backbone", "squash.attributeparser",
 			// fixes the dates
 			_dateUtils.adjustDates(iterations, executions);
 			_dateUtils.formatDates(iterations, executions);
-			
-
 			
 			return [ iterations, executions ]; 
 		},
@@ -193,16 +198,25 @@ define(["jquery", "backbone", "squash.attributeparser",
 						}
 					},
 					x2axis :{
+						renderer : $.jqplot.IterationAxisRenderer,
 						ticks : x2ticks,
 						tickOptions: {
-							showLabel : false,
-							fontSize : '12px'
+							fontSize : '12px',
+							markSize : 12
 						},
 						show : true,
 						borderWidth : 0,
 						min : axisStart,
 						max : axisEnd
 					}
+				},
+				grid : {
+					background : '#FFFFFF',
+					drawBorder : false,
+					shadow : false,
+					renderer : $.jqplot.IterationGridRenderer,
+					iterLinecolor : '#750021',
+					iterLinedash : 5
 				},
 				seriesDefaults:{
 					markerOptions:{ 
@@ -223,14 +237,17 @@ define(["jquery", "backbone", "squash.attributeparser",
 		createX2ticks : function(axisStart, axisEnd){
 			var iterations = this.getModel().scheduledIterations;
 			
+			var labeltpl = '<div style="background-color:#750021; color:white; font-weight:bold; "><span>{{this.name}}</span></div>';
+			
 			var x2ticks = [], 
 				i=0, 
 				len = iterations.length;
 			
 			x2ticks.push(axisStart);
 			for (i=0;i<len;i++){
-				var iter = iterations[i];
-				x2ticks = x2ticks.concat([iter.scheduledStart, iter.scheduledEnd]);
+				var iter = iterations[i],
+					label = labeltpl.replace('{{this.name}}', iter.name);
+				x2ticks.push([iter.scheduledStart, iter.scheduledEnd, label]);
 			}
 			x2ticks.push(axisEnd);
 			

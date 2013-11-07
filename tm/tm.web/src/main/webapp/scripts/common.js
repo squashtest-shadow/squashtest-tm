@@ -67,10 +67,11 @@ requirejs.config({
 				"handlebars" : "lib/handlebars/handlebars-1.0.0.rc3",
 				"underscore" : "lib/underscore/underscore-1.4.4-min",
 				"backbone" : "lib/backbone/backbone-1.0.0-min",
-				"jqplot-core" : "lib/jqplot/jquery.jqplot.min",
-				"jqplot-pie" : "lib/jqplot/plugins/jqplot.pieRenderer.min",
+				"jqplot-core" : "lib/jqplot/jquery.jqplot",
+				"jqplot-pie" : "lib/jqplot/plugins/jqplot.pieRenderer",
 				"jqplot-dates" : "lib/jqplot/plugins/jqplot.dateAxisRenderer",
-				"jqplot-highlight": "lib/jqplot/plugins/jqplot.highlighter.min",
+				"jqplot-highlight": "lib/jqplot/plugins/jqplot.highlighter",
+				"jqplot-category" : "lib/jqplot/plugins/jqplot.categoryAxisRenderer",
 				"excanvas" : "lib/excanvas.min",
 				//cke
 				"ckeditor" : "ckeditor/ckeditor",
@@ -224,6 +225,8 @@ requirejs.config({
 				"jqplot-pie" : ["jquery", "jqplot-core"],
 				
 				"jqplot-dates" : ["jquery", "jqplot-core"],
+				
+				"jqplot-category" : ["jquery", "jqplot-core"],
 				
 				"jqplot-highlight" :{
 					deps : ["jquery", "jqplot-core"],
