@@ -23,7 +23,7 @@ define(["../basic-objects/pie-view"], function(PieView){
 
 	return PieView.extend({
 		
-		getSerie : function(){
+		getSeries : function(){
 			var stats = this.model.get('campaignNonExecutedTestCaseImportanceStatistics');
 			return [ stats.percentageLow, stats.percentageMedium, stats.percentageHigh, stats.percentageVeryHigh ];
 		}
