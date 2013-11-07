@@ -150,10 +150,7 @@ define(["jquery", "./jqplot-view", "iesupport/am-I-ie8", "./ie8-special-pie-rend
 						shadowOffset : 0,
 						sliceMargin : 1.5
 					},
-					 highlighter: {
-					    show: false,
-					    useAxesFormatters:false
-					}
+					showHighlight : false
 				},
 				grid : {
 					background : '#FFFFFF',
