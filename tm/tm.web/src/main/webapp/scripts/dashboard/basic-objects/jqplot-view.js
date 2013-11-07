@@ -64,7 +64,6 @@ define(["jquery", "backbone", "squash.attributeparser", "jquery.throttle-debounc
 		
 		
 		_bindEvents : function(){
-			var self = this;
 			
 			var self = this;
 			$(window).on('resize', $.debounce(250, function(){
