@@ -25,8 +25,9 @@ define(["jquery", 'squash.attributeparser',
         "./test-inventory-table",
         "./nonexecuted-testcase-importance-pie",
         "./testcase-status-pie",
+        "./success-rate-view",
         "dashboard/SuperMasterView"],
-        function($, attrparser, ProgressionPlot, InventoryTable, ImportancePie, StatusPie, SuperMasterView){
+        function($, attrparser, ProgressionPlot, InventoryTable, ImportancePie, StatusPie, SuccessRateDonut, SuperMasterView){
 	
 	return SuperMasterView.extend({
 		
@@ -46,6 +47,11 @@ define(["jquery", 'squash.attributeparser',
 				
 				new StatusPie({
 					 el : "#dashboard-testcase-status",
+					model : self.bbModel
+				}),
+
+				new SuccessRateDonut({
+					 el : "#dashboard-success-rate",
 					model : self.bbModel
 				}),
 				

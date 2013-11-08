@@ -146,7 +146,7 @@
 						</div>
 					</div>
 						
-					<div id="dashboard-success-rate" class="dashboard-narrow-item" data-def="model-attribute=">
+					<div id="dashboard-success-rate" class="dashboard-narrow-item" data-def="model-attribute=campaignTestCaseSuccessRateStatistics">
 					
 						<h2 class="dashboard-item-title"><f:message key="dashboard.test-cases.importance.title"/></h2>
 											
@@ -160,20 +160,16 @@
 						
 							<div class="dashboard-item-legend">
 								<div>
-									<div class="dashboard-legend-sample-color" style="background-color:#FCEDB6"></div>
-									<span><f:message key="test-case.importance.LOW" /></span>
+									<div class="dashboard-legend-sample-color" style="background-color:#99CC00"></div>
+									<span><f:message key="execution.execution-status.SUCCESS" /></span>
 								</div>
 								<div>
-									<div class="dashboard-legend-sample-color" style="background-color:#FBD329"></div>
-									<span><f:message key="test-case.importance.MEDIUM" /></span>
+									<div class="dashboard-legend-sample-color" style="background-color:#FF3300"></div>
+									<span><f:message key="execution.execution-status.FAILURE" /></span>
 								</div>
 								<div>
-									<div class="dashboard-legend-sample-color" style="background-color:#FDA627"></div>
-									<span><f:message key="test-case.importance.HIGH" /></span>
-								</div>
-								<div>
-									<div class="dashboard-legend-sample-color" style="background-color:#FD7927"></div>
-									<span><f:message key="test-case.importance.VERY_HIGH" /></span>
+									<div class="dashboard-legend-sample-color" style="background-color:#969696"></div>
+									<span><f:message key="label.Other" /></span>
 								</div>
 							</div>
 						</div>

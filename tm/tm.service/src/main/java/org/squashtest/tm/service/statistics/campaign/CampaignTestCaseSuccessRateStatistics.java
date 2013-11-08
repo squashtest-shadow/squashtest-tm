@@ -20,42 +20,180 @@
  */
 package org.squashtest.tm.service.statistics.campaign;
 
+import org.squashtest.tm.domain.execution.ExecutionStatus;
+
 public class CampaignTestCaseSuccessRateStatistics {
 
-	private int successPercentageVeryHigh;
-	private int successPercentageHigh;
-	private int successPercentageMedium;
-	private int successPercentageLow;
-	private int globalSuccessPercentage;
+	private int nbVeryHighSuccess = 0;
+	private int nbHighSuccess = 0;
+	private int nbMediumSuccess = 0;
+	private int nbLowSuccess = 0;
 	
-	public int getSuccessPercentageVeryHigh() {
-		return successPercentageVeryHigh;
+	private int nbVeryHighFailure = 0;
+	private int nbHighFailure = 0;
+	private int nbMediumFailure = 0;
+	private int nbLowFailure = 0;
+
+	private int nbVeryHighOther = 0;
+	private int nbHighOther = 0;
+	private int nbMediumOther = 0;
+	private int nbLowOther = 0;
+	
+	public void addNbLow(ExecutionStatus status, int number){
+		
+		switch(status){
+		case BLOCKED: nbLowOther++;
+			break;
+		case ERROR: nbLowFailure++;
+			break;
+		case FAILURE: nbLowFailure++;
+			break;
+		case READY: nbLowOther++;
+			break;
+		case RUNNING: nbLowOther++;
+			break;
+		case SUCCESS: nbLowSuccess++;
+			break;
+		case UNTESTABLE: nbLowOther++;
+			break;
+		case WARNING: nbLowSuccess++;
+			break;
+		}
 	}
-	public void setSuccessPercentageVeryHigh(int successPercentageVeryHigh) {
-		this.successPercentageVeryHigh = successPercentageVeryHigh;
+
+	public void addNbMedium(ExecutionStatus status, int number){
+		switch(status){
+		case BLOCKED: nbMediumOther++;
+			break;
+		case ERROR: nbMediumFailure++;
+			break;
+		case FAILURE: nbMediumFailure++;
+			break;
+		case READY: nbMediumOther++;
+			break;
+		case RUNNING: nbMediumOther++;
+			break;
+		case SUCCESS: nbMediumSuccess++;
+			break;
+		case UNTESTABLE: nbMediumOther++;
+			break;
+		case WARNING: nbMediumSuccess++;
+			break;
+		}
 	}
-	public int getSuccessPercentageHigh() {
-		return successPercentageHigh;
+	
+	public void addNbHigh(ExecutionStatus status, int number){
+		switch(status){
+		case BLOCKED: nbHighOther++;
+			break;
+		case ERROR: nbHighFailure++;
+			break;
+		case FAILURE: nbHighFailure++;
+			break;
+		case READY: nbHighOther++;
+			break;
+		case RUNNING: nbHighOther++;
+			break;
+		case SUCCESS: nbHighSuccess++;
+			break;
+		case UNTESTABLE: nbHighOther++;
+			break;
+		case WARNING: nbHighSuccess++;
+			break;
+		}
 	}
-	public void setSuccessPercentageHigh(int successPercentageHigh) {
-		this.successPercentageHigh = successPercentageHigh;
+	
+	public void addNbVeryHigh(ExecutionStatus status, int number){
+		switch(status){
+		case BLOCKED: nbVeryHighOther++;
+			break;
+		case ERROR: nbVeryHighFailure++;
+			break;
+		case FAILURE: nbVeryHighFailure++;
+			break;
+		case READY: nbVeryHighOther++;
+			break;
+		case RUNNING: nbVeryHighOther++;
+			break;
+		case SUCCESS: nbVeryHighSuccess++;
+			break;
+		case UNTESTABLE: nbVeryHighOther++;
+			break;
+		case WARNING: nbVeryHighSuccess++;
+			break;
+		}
 	}
-	public int getSuccessPercentageMedium() {
-		return successPercentageMedium;
+	
+	public int getNbVeryHighSuccess() {
+		return nbVeryHighSuccess;
 	}
-	public void setSuccessPercentageMedium(int successPercentageMedium) {
-		this.successPercentageMedium = successPercentageMedium;
+	public void setNbVeryHighSuccess(int nbVeryHighSuccess) {
+		this.nbVeryHighSuccess = nbVeryHighSuccess;
 	}
-	public int getSuccessPercentageLow() {
-		return successPercentageLow;
+	public int getNbHighSuccess() {
+		return nbHighSuccess;
 	}
-	public void setSuccessPercentageLow(int successPercentageLow) {
-		this.successPercentageLow = successPercentageLow;
+	public void setNbHighSuccess(int nbHighSuccess) {
+		this.nbHighSuccess = nbHighSuccess;
 	}
-	public int getGlobalSuccessPercentage() {
-		return globalSuccessPercentage;
+	public int getNbMediumSuccess() {
+		return nbMediumSuccess;
 	}
-	public void setGlobalSuccessPercentage(int globalSuccessPercentage) {
-		this.globalSuccessPercentage = globalSuccessPercentage;
+	public void setNbMediumSuccess(int nbMediumSuccess) {
+		this.nbMediumSuccess = nbMediumSuccess;
+	}
+	public int getNbLowSuccess() {
+		return nbLowSuccess;
+	}
+	public void setNbLowSuccess(int nbLowSuccess) {
+		this.nbLowSuccess = nbLowSuccess;
+	}
+	public int getNbVeryHighFailure() {
+		return nbVeryHighFailure;
+	}
+	public void setNbVeryHighFailure(int nbVeryHighFailure) {
+		this.nbVeryHighFailure = nbVeryHighFailure;
+	}
+	public int getNbHighFailure() {
+		return nbHighFailure;
+	}
+	public void setNbHighFailure(int nbHighFailure) {
+		this.nbHighFailure = nbHighFailure;
+	}
+	public int getNbMediumFailure() {
+		return nbMediumFailure;
+	}
+	public void setNbMediumFailure(int nbMediumFailure) {
+		this.nbMediumFailure = nbMediumFailure;
+	}
+	public int getNbLowFailure() {
+		return nbLowFailure;
+	}
+	public void setNbLowFailure(int nbLowFailure) {
+		this.nbLowFailure = nbLowFailure;
+	}
+	public int getNbVeryHighOther() {
+		return nbVeryHighOther;
+	}
+	public void setNbVeryHighOther(int nbVeryHighOther) {
+		this.nbVeryHighOther = nbVeryHighOther;
+	}
+	public int getNbHighOther() {
+		return nbHighOther;
+	}
+	public void setNbHighOther(int nbHighOther) {
+		this.nbHighOther = nbHighOther;
+	}
+	public int getNbMediumOther() {
+		return nbMediumOther;
+	}
+	public void setNbMediumOther(int nbMediumOther) {
+		this.nbMediumOther = nbMediumOther;
+	}
+	public int getNbLowOther() {
+		return nbLowOther;
+	}
+	public void setNbLowOther(int nbLowOther) {
+		this.nbLowOther = nbLowOther;
 	}
 }

@@ -18,3 +18,17 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+define(["../basic-objects/donut-view"], function(DonutView){
+
+	return DonutView.extend({
+		
+		getSeries : function(){
+			var stats = this.model.get('campaignTestCaseSuccessRateStatistics');
+			return [ [stats.nbVeryHighSuccess, stats.nbVeryHighFailure, stats.nbVeryHighOther],
+					 [stats.nbHighSuccess, stats.nbHighFailure, stats.nbHighOther], 
+					 [stats.nbMediumSuccess, stats.nbMediumFailure, stats.nbMediumOther], 
+			         [stats.nbLowSuccess, stats.nbLowFailure, stats.nbLowOther]];
+		}
+	});
+});

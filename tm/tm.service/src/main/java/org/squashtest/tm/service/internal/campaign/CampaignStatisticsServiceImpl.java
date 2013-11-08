@@ -43,6 +43,7 @@ import org.squashtest.tm.service.statistics.campaign.CampaignNonExecutedTestCase
 import org.squashtest.tm.service.statistics.campaign.CampaignProgressionStatistics;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 import org.squashtest.tm.service.statistics.campaign.CampaignTestCaseStatusStatistics;
+import org.squashtest.tm.service.statistics.campaign.CampaignTestCaseSuccessRateStatistics;
 import org.squashtest.tm.service.statistics.campaign.IterationTestInventoryStatistics;
 import org.squashtest.tm.service.statistics.campaign.ScheduledIteration;
 
@@ -209,6 +210,35 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 		
 		return result;
 	}
+
+	@Override
+	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public CampaignTestCaseSuccessRateStatistics gatherCampaignTestCaseSuccessRateStatistics(long campaignId) {
+
+		CampaignTestCaseSuccessRateStatistics result = new CampaignTestCaseSuccessRateStatistics();
+		
+		//get the data
+		Query query = sessionFactory.getCurrentSession().getNamedQuery("CampaignStatistics.successRate");
+		query.setParameter("id", campaignId);
+		List<Object[]> res = query.list();
+		
+		for (Object[] tuple : res){
+
+			TestCaseImportance importance = (TestCaseImportance)tuple[0];
+			ExecutionStatus status = (ExecutionStatus)tuple[1];
+			Long howmany = (Long)tuple[2];
+			
+			switch(importance){
+				case HIGH: result.addNbHigh(status, howmany.intValue()); break;
+				case LOW: result.addNbLow(status, howmany.intValue()); break;
+				case MEDIUM: result.addNbMedium(status, howmany.intValue()); break;
+				case VERY_HIGH: result.addNbVeryHigh(status, howmany.intValue()); break;
+			}
+		}
+		
+		return result;
+	}
 	
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ') "
@@ -221,12 +251,15 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 		CampaignProgressionStatistics progression = gatherCampaignProgressionStatistics(campaignId);
 		CampaignTestCaseStatusStatistics testcaseStatuses = gatherCampaignTestCaseStatusStatistics(campaignId);
 		CampaignNonExecutedTestCaseImportanceStatistics testcaseImportance = gatherCampaignNonExecutedTestCaseImportanceStatistics(campaignId);
+		CampaignTestCaseSuccessRateStatistics testcaseSuccessRate = gatherCampaignTestCaseSuccessRateStatistics(campaignId);
 		
 		bundle.setIterationTestInventoryStatisticsList(inventory);
 		bundle.setCampaignProgressionStatistics(progression);
 		bundle.setCampaignTestCaseStatusStatistics(testcaseStatuses);
 		bundle.setCampaignNonExecutedTestCaseImportanceStatistics(testcaseImportance);
+		bundle.setCampaignTestCaseSuccessRateStatistics(testcaseSuccessRate);
 		return bundle;
 		
 	}
+
 }

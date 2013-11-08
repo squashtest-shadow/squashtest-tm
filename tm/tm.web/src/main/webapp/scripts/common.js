@@ -69,6 +69,7 @@ requirejs.config({
 				"backbone" : "lib/backbone/backbone-1.0.0-min",
 				"jqplot-core" : "lib/jqplot/jquery.jqplot",
 				"jqplot-pie" : "lib/jqplot/plugins/jqplot.pieRenderer",
+				"jqplot-donut" : "lib/jqplot/plugins/jqplot.donutRenderer",
 				"jqplot-dates" : "lib/jqplot/plugins/jqplot.dateAxisRenderer",
 				"jqplot-highlight": "lib/jqplot/plugins/jqplot.highlighter",
 				"jqplot-category" : "lib/jqplot/plugins/jqplot.categoryAxisRenderer",
@@ -224,6 +225,8 @@ requirejs.config({
 				"jqplot-core" : ["jquery"],
 				
 				"jqplot-pie" : ["jquery", "jqplot-core"],
+				
+				"jqplot-donut" : ["jquery", "jqplot-core"],
 				
 				"jqplot-dates" : ["jquery", "jqplot-core"],
 				
