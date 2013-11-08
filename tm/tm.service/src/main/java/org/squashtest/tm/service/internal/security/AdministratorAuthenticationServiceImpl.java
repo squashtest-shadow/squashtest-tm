@@ -28,7 +28,6 @@ import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.provisioning.UserDetailsManager;
 import org.squashtest.tm.service.security.AdministratorAuthenticationService;
 
 public class AdministratorAuthenticationServiceImpl implements AdministratorAuthenticationService {

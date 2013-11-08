@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.library;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,7 +35,6 @@ import javax.inject.Provider;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.document.DateTools;
-import org.apache.lucene.search.FieldComparator;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.hibernate.CacheMode;
@@ -50,7 +48,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.core.foundation.collection.Sorting;
@@ -61,15 +58,14 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoring;
-import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoringForTestcases;
 import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.search.AdvancedSearchRangeFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchSingleFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchTextFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchTimeIntervalFieldModel;
-import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.search.SearchExportCSVModel;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;

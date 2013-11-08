@@ -25,6 +25,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.tm.domain.requirement.NewRequirementVersionDto;
 import org.squashtest.tm.domain.requirement.Requirement;

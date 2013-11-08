@@ -21,7 +21,6 @@
 package org.squashtest.tm.domain.search;
 
 import javax.inject.Inject;
-import javax.persistence.PessimisticLockException;
 
 import org.apache.lucene.document.Document;
 import org.hibernate.HibernateException;

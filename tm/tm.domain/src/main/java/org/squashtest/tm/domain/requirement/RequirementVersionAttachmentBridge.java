@@ -25,7 +25,6 @@ import org.apache.lucene.document.Field;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.bridge.LuceneOptions;
-import org.springframework.beans.factory.annotation.Configurable;
 import org.squashtest.tm.domain.search.SessionFieldBridge;
 
 public class RequirementVersionAttachmentBridge extends SessionFieldBridge{

@@ -44,7 +44,6 @@ import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.audit.Auditable;
-import org.squashtest.tm.domain.requirement.RequirementCategoryBridge;
 
 /**
  * A Resource is the actual "things" which are organized in a library tree.

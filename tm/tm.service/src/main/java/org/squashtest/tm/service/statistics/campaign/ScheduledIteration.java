@@ -26,8 +26,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import org.squashtest.tm.domain.planning.WorkloadCalendar;
 import org.squashtest.tm.domain.planning.StandardWorkloadCalendar;
+import org.squashtest.tm.domain.planning.WorkloadCalendar;
 
 
 public final class ScheduledIteration{

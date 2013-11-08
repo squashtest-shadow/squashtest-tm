@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.internal.model.datatable;
 
 import java.util.Collection;
+
 import org.apache.commons.lang.StringUtils;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 
