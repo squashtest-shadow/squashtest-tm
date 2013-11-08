@@ -55,10 +55,8 @@ define(["jquery", "backbone", "squash.attributeparser", "jquery.throttle-debounc
 			
 			//reads the data-def from the master element
 			var strconf = this.$el.data('def');
-			var moarconf = attrparser.parse(strconf);
-			if (moarconf['model-attribute']!==undefined){
-				this.modelAttribute = moarconf['model-attribute'];
-			}
+			var domconf = attrparser.parse(strconf);
+			$.extend(this.options, domconf);
 			
 		},
 		
@@ -71,8 +69,8 @@ define(["jquery", "backbone", "squash.attributeparser", "jquery.throttle-debounc
 			}));
 			
 			var modelchangeevt = "change";
-			if (this.modelAttribute !== undefined){
-				modelchangeevt+=":"+this.modelAttribute;
+			if (this.options['model-attribute']!== undefined){
+				modelchangeevt+=":"+this.options['model-attribute'];
 			}
 			
 			this.listenTo(this.model, modelchangeevt, this.render);

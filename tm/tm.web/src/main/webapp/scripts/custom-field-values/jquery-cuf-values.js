@@ -19,10 +19,10 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(
-		[ "jquery", "./cuf-values-utils", "jqueryui",
+		[ "jquery", "./cuf-values-utils", 'squash.configmanager', "jqueryui",
 				'jquery.squash.jeditable', "jeditable.datepicker",
 				"datepicker/require.jquery.squash.datepicker-locales" ],
-		function($, utils) {
+		function($, utils, confman) {
 
 			function buildPostFunction(idOrURLOrPostfunction, postProcess) {
 
@@ -80,19 +80,7 @@ define(
 			}
 
 			function getBasicConf() {
-				return {
-					width : '100%',
-					submit : squashtm.message.confirm,
-					cancel : squashtm.message.cancel,
-					maxlength : 255,
-					cols : 80,
-					max_size : 20,
-					onblur : function() {
-					},
-					placeholder : squashtm.message.placeholder
-					
-				};
-
+				return confman.getStdJeditable();
 			}
 
 			function initAsDatePicker(elts, cufDefinition,

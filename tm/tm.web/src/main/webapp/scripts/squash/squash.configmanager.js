@@ -29,9 +29,25 @@ define([ "jquery", "squash.translator" ], function($, translator) {
 			lang : lang
 		};
 	}
+	
+	function stdJeditable(){
+		return {
+			width : '100%',
+			submit : squashtm.message.confirm,
+			cancel : squashtm.message.cancel,
+			maxlength : 255,
+			cols : 80,
+			max_size : 20,
+			onblur : function() {
+			},
+			placeholder : squashtm.message.placeholder
+			
+		};
+	}
 
 	return {
-		getStdChkeditor : stdCkeditor
+		getStdChkeditor : stdCkeditor,
+		getStdJeditable : stdJeditable
 	};
 
 });
