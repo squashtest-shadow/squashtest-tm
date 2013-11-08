@@ -186,9 +186,9 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 		headerCells.add(new CellImpl("USER"));
 		headerCells.add(new CellImpl("EXECUTION_DATE"));
 		headerCells.add(new CellImpl("DESCRIPTION"));
-		headerCells.add(new CellImpl("REF"));
-		headerCells.add(new CellImpl("NATURE"));
-		headerCells.add(new CellImpl("TYPE"));
+		headerCells.add(new CellImpl("TC_REF"));
+		headerCells.add(new CellImpl("TC_NATURE"));
+		headerCells.add(new CellImpl("TC_TYPE"));
 		headerCells.add(new CellImpl("TC_STATUS"));
 		headerCells.add(new CellImpl("PREREQUISITE"));
 
