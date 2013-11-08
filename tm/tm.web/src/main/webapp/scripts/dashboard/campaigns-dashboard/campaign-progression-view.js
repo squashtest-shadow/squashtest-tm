@@ -20,11 +20,11 @@
  */
 
 define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'squash.attributeparser', 
-        'handlebars','datepicker/require.jquery.squash.datepicker-locales', 'lib/dateformat',
+        'handlebars','datepicker/require.jquery.squash.datepicker-locales', 'lib/dateformat', 'iesupport/am-I-ie8',
         'jqplot-dates', 'jqplot-highlight', 
-        '../jqplot-ext/jqplot.squash.iterationAxisRenderer', '../jqplot-ext/jqplot.squash.iterationGridRenderer',
+        '../jqplot-ext/jqplot.squash.iterationAxisRenderer', '../jqplot-ext/jqplot.squash.overridableGridRenderer',
         'jquery.squash.formdialog', 'jeditable.datepicker'  ], 
-        function($, JqplotView, translator,  attrparser, handlebars, regionale, dateformat){
+        function($, JqplotView, translator,  attrparser, handlebars, regionale, dateformat, isIE8){
 	
 	
 	/* *********************************************************************************************
@@ -78,6 +78,13 @@ define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'squash.a
 			else{
 				this._swapTo('.dashboard-figures');
 				JqplotView.prototype.render.call(this);
+				
+				if (!isIE8){
+					var grid = this.$el.find('.jqplot-grid-canvas');
+					var line = this.$el.find('.jqplot-series-canvas').last();
+					grid.detach();
+					line.after(grid);
+				}
 			}
 		},
 		
@@ -128,6 +135,9 @@ define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'squash.a
 			
 			// compute x2axis ticks
 			var x2ticks = this.createX2ticks(axisStart, axisEnd);
+			
+			// grid style
+			var gridcolor = (isIE8) ? "#FFFFFF" : 'transparent';
 
 			// return the conf object
 			return {
@@ -145,7 +155,11 @@ define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'squash.a
 					yaxis :{
 						min : 0,
 						tickOptions :{
-							fontSize : '12px'							
+							fontSize : '12px',
+							// Special OverridableGridRenderer
+							gridStyle : {
+								lineDash : [3, 6]
+							}
 						}
 					},
 					x2axis :{
@@ -153,7 +167,16 @@ define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'squash.a
 						ticks : x2ticks,
 						tickOptions: {
 							fontSize : '12px',
-							markSize : 12
+							markSize : 12,
+							// Special OverridableGridRenderer
+							gridStyle : {
+								lineDash : [5],
+								strokeStyle : '#750021',
+							},
+							markStyle : {
+								lineDash : [5],
+								strokeStyle : '#750021'	
+							}							
 						},
 						show : true,
 						borderWidth : 0,
@@ -162,20 +185,17 @@ define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'squash.a
 					}
 				},
 				grid : {
-					background : '#FFFFFF',
+					background : gridcolor,
 					drawBorder : false,
 					shadow : false,
-					renderer : $.jqplot.IterationGridRenderer,
-					iterLinecolor : '#750021',
-					iterLinedash : 5
+					renderer : $.jqplot.OverridableGridRenderer
 				},
 				seriesDefaults:{
 					markerOptions:{ 
 						size:6
 					},
 					fill : true,
-					fillAndStroke : true,
-					fillAlpha : 0.4
+					fillAndStroke : true
 				},
 				highlighter : {
 					tooltipAxes: 'y',
@@ -261,8 +281,8 @@ define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'squash.a
 						'{{#each scheduledIterations}}'+
 							'<tr data-iterid="{{this.id}}" class="centered">'+
 								'<td>{{this.name}}</td>'+
-								'<td><span class="picker-start">{{this.scheduledStart}}</span></td>'+
-								'<td><span class="picker-end">{{this.scheduledEnd}}</span></td>'+
+								'<td><span class="picker-start cursor-pointer">{{this.scheduledStart}}</span></td>'+
+								'<td><span class="picker-end cursor-pointer">{{this.scheduledEnd}}</span></td>'+
 							'</tr>' + 
 						'{{/each}}')
 			},

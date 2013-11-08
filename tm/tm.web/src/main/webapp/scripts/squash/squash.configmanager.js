@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define([ "jquery", "squash.translator" ], function($, translator) {
+define([ "jquery", "squash.translator", "datepicker/require.jquery.squash.datepicker-locales" ], function($, translator, regionale) {
 
 	function stdCkeditor() {
 		var lang = translator.get('rich-edit.language.value');
@@ -43,6 +43,21 @@ define([ "jquery", "squash.translator" ], function($, translator) {
 			placeholder : squashtm.message.placeholder
 			
 		};
+	}
+	
+	function stdDatepicker(){
+		
+		//parameterize the locale
+		var localemeta = {
+			format : 'squashtm.dateformatShort.js',
+			locale : 'squashtm.locale'
+		};
+		
+		var message = translator.get(localemeta);
+		
+		var language = regionale[message.locale] || regionale;
+		
+		return $.extend(true, {}, {dateFormat : message.format}, language);	
 	}
 
 	return {

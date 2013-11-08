@@ -25,20 +25,21 @@
 
 define([ "jquery", "jqplot-core" ], function($) {
 
-	$.jqplot.IterationGridRenderer = function() {
+	$.jqplot.OverridableGridRenderer = function() {
 		$.jqplot.CanvasGridRenderer.call(this);
 	};
 
-	$.jqplot.IterationGridRenderer.prototype = new $.jqplot.CanvasGridRenderer();
-	$.jqplot.IterationGridRenderer.prototype.constructor = $.jqplot.IterationGridRenderer;
+	$.jqplot.OverridableGridRenderer.prototype = new $.jqplot.CanvasGridRenderer();
+	$.jqplot.OverridableGridRenderer.prototype.constructor = $.jqplot.OverridableGridRenderer;
 
 	/*
 	 * modified in several places
 	 */
-	$.jqplot.IterationGridRenderer.prototype.draw = function() {
+	$.jqplot.OverridableGridRenderer.prototype.draw = function() {
 		this._ctx = this._elem.get(0).getContext("2d");
 		var ctx = this._ctx;
 		var pos, t, axis, ticks, j, points;
+		
 		/*
 		 * BEGIN modification
 		 */
@@ -52,6 +53,7 @@ define([ "jquery", "jqplot-core" ], function($) {
 		/*
 		 * END modification
 		 */
+		
 		var axes = this._axes;
 		// Add the grid onto the grid canvas. This is the bottom most layer.
 		ctx.save();
@@ -105,7 +107,9 @@ define([ "jquery", "jqplot-core" ], function($) {
 							if (t.showGridline &&
 									this.drawGridlines &&
 									((!t.isMinorTick && axis.drawMajorGridlines) || (t.isMinorTick && axis.drawMinorGridlines))) {
+								overrideCtx(ctx, t.gridStyle);
 								drawLine(pos, this._top, pos, this._bottom);
+								unoverrideCtx(ctx);
 							}
 							// draw the mark
 							if (t.showMark &&
@@ -144,16 +148,23 @@ define([ "jquery", "jqplot-core" ], function($) {
 									});
 								}
 								// draw the line
+								overrideCtx(ctx, t.markStyle);
 								drawLine(pos, b, pos, e);
+								unoverrideCtx(ctx);
 							}
 							break;
+
 						case 'yaxis':
+
 							// draw the grid line
 							if (t.showGridline &&
 									this.drawGridlines &&
 									((!t.isMinorTick && axis.drawMajorGridlines) || (t.isMinorTick && axis.drawMinorGridlines))) {
+								overrideCtx(ctx, t.gridStyle);
 								drawLine(this._right, pos, this._left, pos);
+								unoverrideCtx(ctx);
 							}
+							
 							// draw the mark
 							if (t.showMark &&
 									t.mark &&
@@ -189,32 +200,24 @@ define([ "jquery", "jqplot-core" ], function($) {
 										closePath : false
 									});
 								}
+								overrideCtx(ctx, t.markStyle);
 								drawLine(b, pos, e, pos, {
 									strokeStyle : axis.borderColor
 								});
+								unoverrideCtx(ctx);
+								
 							}
 							break;
 
-						/*
-						 * BEGIN modification
-						 */
 						case 'x2axis':
-
-							// save the default settings then modify the context for this tick
-
-							var saveStyle = {
-								strokeStyle : ctx.strokeStyle,
-								lineDash : ctx.getLineDash()
-							};
-
-							ctx.strokeStyle = this.iterLinecolor;
-							ctx.setLineDash([ this.iterLinedash ]);
 
 							// draw the grid line
 							if (t.showGridline &&
 									this.drawGridlines &&
 									((!t.isMinorTick && axis.drawMajorGridlines) || (t.isMinorTick && axis.drawMinorGridlines))) {
+								overrideCtx(ctx, t.gridStyle);
 								drawLine(pos, this._bottom, pos, this._top);
+								unoverrideCtx(ctx);
 							}
 							// draw the mark
 							if (t.showMark &&
@@ -252,25 +255,20 @@ define([ "jquery", "jqplot-core" ], function($) {
 										closePath : false
 									});
 								}
+								overrideCtx(ctx, t.markStyle);
 								drawLine(pos, b, pos, e);
+								unoverrideCtx(ctx);
 							}
-
-							// restore the defaults
-							ctx.strokeStyle = saveStyle.strokeStyle;
-							ctx.setLineDash(saveStyle.lineDash);
-
 							break;
 
-						/*
-						 * END modification
-						 * 
-						 */
 						case 'y2axis':
 							// draw the grid line
 							if (t.showGridline &&
 									this.drawGridlines &&
 									((!t.isMinorTick && axis.drawMajorGridlines) || (t.isMinorTick && axis.drawMinorGridlines))) {
+								overrideCtx(ctx, t.gridStyle);
 								drawLine(this._left, pos, this._right, pos);
+								unoverrideCtx(ctx);
 							}
 							// draw the mark
 							if (t.showMark &&
@@ -307,9 +305,11 @@ define([ "jquery", "jqplot-core" ], function($) {
 										closePath : false
 									});
 								}
+								overrideCtx(ctx, t.markStyle);
 								drawLine(b, pos, e, pos, {
 									strokeStyle : axis.borderColor
 								});
+								unoverrideCtx(ctx);
 							}
 							break;
 						default:
@@ -451,5 +451,47 @@ define([ "jquery", "jqplot-core" ], function($) {
 		ctx = null;
 		axes = null;
 	};
+	
+	
+	/*
+	 * ADDITIONAL FUNCTIONS HERE
+	 * 
+	 */
+	
+	function overrideCtx(ctx, style){
+		
+		if (style === undefined){
+			return;
+		}
+		
+		var saveStyle = {
+			strokeStyle : ctx.strokeStyle,
+			lineDash : ctx.getLineDash()
+		};
+		
+		if (!! style.lineDash){
+			ctx.setLineDash(style.lineDash);
+		}
+		
+		if (!! style.strokeStyle){
+			ctx.strokeStyle = style.strokeStyle;
+		}
+		
+		ctx._save = saveStyle;
+	}
+	
+	function unoverrideCtx(ctx){
+		
+		var saveStyle=ctx._save;
+		
+		if (saveStyle === undefined){
+			return;
+		}
+		
+		ctx.setLineDash(saveStyle.lineDash);
+		ctx.strokeStyle = saveStyle.strokeStyle;
+		
+		delete ctx._save;
+	}
 
 });

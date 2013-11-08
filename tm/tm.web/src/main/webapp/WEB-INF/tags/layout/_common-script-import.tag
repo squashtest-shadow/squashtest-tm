@@ -20,11 +20,12 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
+<%@ taglib prefix="lay" tagdir="/WEB-INF/tags/layout" %>
 <%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
 <%@ taglib prefix="ck" tagdir="/WEB-INF/tags/ckeditor" %>
-<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <%@ attribute name="highlightedWorkspace" required="false" description="the highlighted workspace in the navigation bar." %>
 <%-- the declaration oder does matter --%>
 
@@ -43,13 +44,7 @@ require.baseUrl = "${pageContext.servletContext.contextPath}/scripts";
   		}
 	};
 	
-	// -------------------- Waiting for better handle of locale in .js---------------------------------------------
-	squashtm.message = squashtm.message || {};
-	squashtm.message.cancel = "<f:message key='label.Cancel'/>";
-	squashtm.message.placeholder = "<f:message key='rich-edit.placeholder'/>";
-	squashtm.message.confirm = "<f:message key='label.Confirm'/>";		
-	squashtm.message.intoTitle = "<f:message key='popup.title.info'/>";		
-	squashtm.message.errorTitle = "<f:message key='popup.title.error'/>";	
+<lay:_common-lang/>
 	
 </script>
 <script  charset="utf-8"src="<c:url value='/scripts/require-min.js' />"></script>
