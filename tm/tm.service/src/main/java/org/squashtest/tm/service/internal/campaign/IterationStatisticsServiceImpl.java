@@ -108,7 +108,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(IterationStatistics
 	}
 	
 	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public IterationStatisticsBundle gatherIterationStatisticsBundle(long iterationId) {
 

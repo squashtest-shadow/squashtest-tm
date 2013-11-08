@@ -18,22 +18,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "./test-suite-menu/TestSuiteMenuMain", './test-plan-panel/main', './events/ctxt-evt-handler', "dashboard/iterations-dashboard/main" ], function(TestSuiteMenuMain, testPlanPanel, evtHandler, dashboard) {
 
-	return {
-		initTestSuiteMenu : TestSuiteMenuMain,
+
+define(["jquery", 'squash.attributeparser',  
+        "./nonexecuted-testcase-importance-pie",
+        "./testcase-status-pie",
+        "dashboard/SuperMasterView"],
+        function($, attrparser, ImportancePie, StatusPie, SuperMasterView){
+	
+	return SuperMasterView.extend({
 		
-		initTestPlanPanel : function(conf){
-			testPlanPanel.init(conf);
-		},
-		
-		initEvents : function(conf){
-			evtHandler.init(conf);
-		},
-		
-		initDashboardPanel : function(conf){
-			dashboard.init(conf);
+		initViews : function(master){
+			var self = this;
+			var views = [
+							
+				new ImportancePie({
+					 el : "#dashboard-nonexecuted-testcase-importance",
+					model : self.bbModel
+				}),
+				
+				new StatusPie({
+					 el : "#dashboard-testcase-status",
+					model : self.bbModel
+				})
+							
+			];
+			self.views = $.merge( self.getBasicViews(), views) ;
 		}
-	};
+	});
 	
 });

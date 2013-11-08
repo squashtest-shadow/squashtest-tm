@@ -18,21 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "./test-suite-menu/TestSuiteMenuMain", './test-plan-panel/main', './events/ctxt-evt-handler', "dashboard/iterations-dashboard/main" ], function(TestSuiteMenuMain, testPlanPanel, evtHandler, dashboard) {
 
+define(['require', 'iesupport/am-I-ie8'],function(require, isIE8){
+	
+	var dependencies = ['squash.attributeparser', './main-view'];
+	
+	if (isIE8){
+		dependencies.push('excanvas');
+	}
+	
 	return {
-		initTestSuiteMenu : TestSuiteMenuMain,
-		
-		initTestPlanPanel : function(conf){
-			testPlanPanel.init(conf);
-		},
-		
-		initEvents : function(conf){
-			evtHandler.init(conf);
-		},
-		
-		initDashboardPanel : function(conf){
-			dashboard.init(conf);
+		init : function(settings){
+			require(dependencies, function(attrparser, IterDashboardView){
+				new IterDashboardView(settings);
+			});
 		}
 	};
 	

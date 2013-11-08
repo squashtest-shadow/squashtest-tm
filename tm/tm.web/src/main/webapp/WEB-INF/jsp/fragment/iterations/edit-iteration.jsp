@@ -34,7 +34,7 @@
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%@ taglib prefix="it" tagdir="/WEB-INF/tags/iterations-components"%>
 <%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform" %>
-
+<%@ taglib prefix="dashboard" tagdir="/WEB-INF/tags/dashboard" %>
 
 <f:message var="squashlocale" key="squashtm.locale" />
 
@@ -54,6 +54,9 @@
 	<s:param name="iterId" value="${iteration.id}" />
 </s:url>
 <s:url var="iterationStatisticsUrl" value="/iterations/{iterId}/statistics">
+	<s:param name="iterId" value="${iteration.id}" />
+</s:url>
+<s:url var="iterationDashboardStatisticsUrl" value="/iterations/{iterId}/dashboard-statistics">
 	<s:param name="iterId" value="${iteration.id}" />
 </s:url>
 
@@ -207,6 +210,9 @@
 <csst:jq-tab>
 <div class="fragment-tabs fragment-body">
 	<ul class="tab-menu">
+		<li><a href="#dashboard-iteration"><f:message key="title.Dashboard"/>
+		</a>
+		</li>
 		<li><a href="#tabs-1"><f:message key="tabs.label.information" />
 		</a>
 		</li>
@@ -328,6 +334,11 @@
 	
 	<%-- ------------------ /test plan ----------------------------- --%>
 
+	<%------------------------------- Dashboard ---------------------------------------------------%>
+	<div id="dashboard-iteration">
+		<dashboard:iteration-dashboard-panel url="${iterationDashboardStatisticsUrl}"/>
+	</div>
+
 
 	<%------------------------------ Attachments bloc ------------------------------------------- --%>
 	
@@ -420,6 +431,13 @@
 			 		$("#iteration-test-plans-table").squashTable().refresh();
 			 		$('#general-informations-panel').load('${iterationInfoUrl}');
 			 	}, window);
+			 	
+				// ********** dashboard **************
+				
+				itermanagement.initDashboardPanel({
+					master : '#dashboard-master',
+					cacheKey : 'it${iteration.id}'
+				});	
 				
 			});
 		});
