@@ -545,7 +545,7 @@ public final class BugTrackerControllerHelper {
 
 	}
 	
-	public static final String findOwnerDescForTestCase(IssueDetector bugged, MessageSource messageSource, Locale locale){
+	public static String findOwnerDescForTestCase(IssueDetector bugged, MessageSource messageSource, Locale locale){
 		TestCaseModelOwnershipNamebuilder nameBuilder = new TestCaseModelOwnershipNamebuilder();
 		nameBuilder.setMessageSource(messageSource);
 		nameBuilder.setLocale(locale);

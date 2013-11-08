@@ -32,7 +32,7 @@ public class FormEntryNotConvertibleException extends RuntimeException {
 	 */
 	private static final long serialVersionUID = 7295665354262783414L;
 
-	private static final String message(Map.Entry<String, Object> entry) {
+	private final String message(Map.Entry<String, Object> entry) {
 		return "Form entry not convertible : " + entry.toString();
 	}
 	

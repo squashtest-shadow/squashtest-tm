@@ -34,7 +34,7 @@ import org.squashtest.tm.domain.customfield.CustomField;
 @Transactional
 @DynamicManager(name = "squashtest.tm.service.CustomFieldManagerService", entity = CustomField.class)
 public interface CustomFieldManagerService extends CustomCustomFieldManagerService, CustomFieldFinderService {
-	static final String HAS_ROLE_ADMIN = "hasRole('ROLE_ADMIN')";
+	String HAS_ROLE_ADMIN = "hasRole('ROLE_ADMIN')";
 
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeLabel(long customFieldId, String label);

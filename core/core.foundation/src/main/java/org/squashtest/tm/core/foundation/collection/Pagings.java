@@ -38,19 +38,19 @@ public final class Pagings {
 	
 	public static final Paging NO_PAGING = new PagingImpl(0,0,true);
 	
-	public static final Paging createNew (int firstItemIndex){
+	public static Paging createNew (int firstItemIndex){
 		return new PagingImpl(firstItemIndex);
 	}
 	
-	public static final Paging createNew (int firstItemIndex, int pageSize){
+	public static Paging createNew (int firstItemIndex, int pageSize){
 		return new PagingImpl(firstItemIndex, pageSize);
 	}
 	
-	public static final Paging createNew (int firstItemIndex, int pageSize, boolean shouldDisplayAll){
+	public static Paging createNew (int firstItemIndex, int pageSize, boolean shouldDisplayAll){
 		return new PagingImpl(firstItemIndex, pageSize, shouldDisplayAll);
 	}
 	
-	public static final <P extends Paging> P disablePaging(P paging){
+	public static <P extends Paging> P disablePaging(P paging){
 		return (P)Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), paging.getClass().getInterfaces(), new DisabledPagingProxy<Paging>(paging));
 	}
 	

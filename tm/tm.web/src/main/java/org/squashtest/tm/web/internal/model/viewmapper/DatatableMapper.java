@@ -33,7 +33,7 @@ public interface DatatableMapper<KEY> {
 	 * @param mapping
 	 * @return
 	 */
-	public DatatableMapper<KEY> map(KEY key, Mapping mapping);
+	DatatableMapper<KEY> map(KEY key, Mapping mapping);
 	
 	/**
 	 * Will map an attribute named 'attribute' of the model to the datatable column 'key'. Note that this
@@ -43,7 +43,7 @@ public interface DatatableMapper<KEY> {
 	 * @param attribute : the name of an attribute of a class 
 	 * @return this
 	 */
-	public DatatableMapper<KEY> map(KEY key, String attribute);
+	DatatableMapper<KEY> map(KEY key, String attribute);
 	
 	
 	/**
@@ -55,7 +55,7 @@ public interface DatatableMapper<KEY> {
 	 * @param ownerType : the class that own the attribute  stated above
 	 * @return this
 	 */
-	public DatatableMapper<KEY> mapAttribute(KEY key, String attribute, Class<?> ownerType);
+	DatatableMapper<KEY> mapAttribute(KEY key, String attribute, Class<?> ownerType);
 
 
 	/**
@@ -64,7 +64,7 @@ public interface DatatableMapper<KEY> {
 	 * implementation of DatatableMapper.Mapping actually used. 
 	 * 
 	 */
-	public String getMapping(KEY key);
+	String getMapping(KEY key);
 	
 	public static interface Mapping{
 		

@@ -50,6 +50,6 @@ public interface CustomFieldBindingDao extends CustomCustomFieldBindingDao {
 	 * @param id
 	 * @return
 	 */
-	public List<CustomFieldBinding> findAllAlike(long id);
+	List<CustomFieldBinding> findAllAlike(long id);
 
 }

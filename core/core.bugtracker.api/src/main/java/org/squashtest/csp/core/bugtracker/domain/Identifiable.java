@@ -22,8 +22,8 @@ package org.squashtest.csp.core.bugtracker.domain;
 
 public interface Identifiable<X> {
 	
-	static final String DUMMY_ID = "----";
-	static final String DUMMY_NAME = "--" ;
+	final String DUMMY_ID = "----";
+	final String DUMMY_NAME = "--" ;
 	
 	/**
 	 * 

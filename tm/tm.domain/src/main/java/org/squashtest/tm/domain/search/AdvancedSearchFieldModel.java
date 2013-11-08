@@ -36,11 +36,11 @@ import org.codehaus.jackson.annotate.JsonTypeInfo;
 	    @Type(value = AdvancedSearchTimeIntervalFieldModel.class, name = "TIME_INTERVAL")})  
 public interface AdvancedSearchFieldModel {
 
-	static final String SINGLE = "SINGLE";
-	static final String LIST = "LIST";
-	static final String TEXT = "TEXT";	
-	static final String TIME_INTERVAL = "TIME_INTERVAL";	
-	static final String RANGE = "RANGE";
+	final String SINGLE = "SINGLE";
+	final String LIST = "LIST";
+	final String TEXT = "TEXT";	
+	final String TIME_INTERVAL = "TIME_INTERVAL";	
+	final String RANGE = "RANGE";
 	
 	String getType();
 	

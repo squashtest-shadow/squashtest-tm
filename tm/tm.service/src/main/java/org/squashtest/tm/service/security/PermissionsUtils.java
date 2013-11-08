@@ -40,7 +40,7 @@ public final class PermissionsUtils {
 	 * @param checkableObjects
 	 *            : the {@link SecurityCheckableObject}s to check
 	 */
-	public static final void checkPermission(PermissionEvaluationService permissionService,
+	public static void checkPermission(PermissionEvaluationService permissionService,
 			SecurityCheckableObject... checkableObjects) {
 		for (SecurityCheckableObject object : checkableObjects) {
 			if (!permissionService
@@ -65,7 +65,7 @@ public final class PermissionsUtils {
 	 * @param entityClassName
 	 *            : the classname of the entities to check
 	 */
-	public static final void checkPermission(PermissionEvaluationService permissionService, List<Long> ids,
+	public static void checkPermission(PermissionEvaluationService permissionService, List<Long> ids,
 			String permission, String entityClassName) {
 		if (permissionService.hasRole("ROLE_ADMIN")) {
 			return;

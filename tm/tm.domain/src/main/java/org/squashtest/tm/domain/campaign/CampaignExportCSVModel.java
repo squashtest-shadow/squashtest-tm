@@ -37,18 +37,18 @@ public interface CampaignExportCSVModel {
 	// ********** interfaces *************
 	
 	
-	public static interface Row{
+	public interface Row{
 		/**
 		 * return a separator-separated list of cell values 
 		 */
 		String toString();
 		
-		public List<Cell> getCells();
+		List<Cell> getCells();
 	}
 	
 	
 	
-	public static interface Cell{
+	public interface Cell{
 		String getValue();
 	}
 	

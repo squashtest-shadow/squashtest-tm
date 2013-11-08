@@ -143,7 +143,7 @@ public final class ScheduledIteration{
 
 	// ********************** static part *************************
 	
-	public static final void checkIterationsDatesIntegrity(Collection<ScheduledIteration> iterations){
+	public static void checkIterationsDatesIntegrity(Collection<ScheduledIteration> iterations){
 		
 		ScheduledDatesIterator datesIterator = new ScheduledDatesIterator(iterations);
 		

@@ -28,7 +28,7 @@ import org.squashtest.tm.api.report.form.InputType;
  * 
  */
 public final class EmptyCriteria extends CriteriaBase implements Criteria {
-	public static final Criteria createEmptyCriteria(String name, InputType sourceInput) {
+	public static Criteria createEmptyCriteria(String name, InputType sourceInput) {
 		return new EmptyCriteria(name, sourceInput);
 	}
 

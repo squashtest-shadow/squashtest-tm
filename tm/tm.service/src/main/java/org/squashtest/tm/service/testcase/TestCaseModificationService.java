@@ -35,7 +35,7 @@ public interface TestCaseModificationService extends CustomTestCaseModificationS
 	/**
 	 * 
 	 */
-	public static final String TEST_CASE_IS_WRITABLE = "hasPermission(#arg0, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')";
+	static final String TEST_CASE_IS_WRITABLE = "hasPermission(#arg0, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') or hasRole('ROLE_ADMIN')";
 
 	@PreAuthorize(TEST_CASE_IS_WRITABLE)
 	void changeDescription(long testCaseId, String newDescription);

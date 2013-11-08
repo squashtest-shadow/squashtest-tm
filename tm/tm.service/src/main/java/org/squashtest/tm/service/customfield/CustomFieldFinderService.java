@@ -43,7 +43,7 @@ public interface CustomFieldFinderService {
 	 * 
 	 * @return the list of all existing {@link CustomField} ordered by {@link CustomField#getName()}
 	 */
-	public List<CustomField> findAllOrderedByName();
+	List<CustomField> findAllOrderedByName();
 
 	/**
 	 * Will find all custom fields available and return them ordered according to the given parameters.
@@ -52,7 +52,7 @@ public interface CustomFieldFinderService {
 	 *            the {@link PagingAndSorting} that holds order and paging params.
 	 * @return the filtered collection of all custom field available in squash
 	 */
-	public PagedCollectionHolder<List<CustomField>> findSortedCustomFields(PagingAndSorting filter);
+	PagedCollectionHolder<List<CustomField>> findSortedCustomFields(PagingAndSorting filter);
 
 	/**
 	 * Will find the {@link SingleSelectField} of the given id
@@ -61,7 +61,7 @@ public interface CustomFieldFinderService {
 	 *            the id of the {@link SingleSelectField}
 	 * @return the {@link SingleSelectField} or <code>null</code>
 	 */
-	public SingleSelectField findSingleSelectFieldById(Long customFieldId);
+	SingleSelectField findSingleSelectFieldById(Long customFieldId);
 
 	/**
 	 * @param name

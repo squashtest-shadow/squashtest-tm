@@ -54,6 +54,6 @@ public interface Entry {
 	 * must return null if it's a directory, otherwise must return the stream
 	 * @return
 	 */
-	public InputStream getStream();
+	InputStream getStream();
 
 }

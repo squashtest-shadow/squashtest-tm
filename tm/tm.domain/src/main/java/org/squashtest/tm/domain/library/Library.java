@@ -31,6 +31,6 @@ import org.squashtest.tm.domain.project.ProjectResource;
  * @param <NODE> type of contained node.
  */
 public interface Library<NODE extends LibraryNode> extends ProjectResource<GenericProject>, SelfClassAware, NodeContainer<NODE>, Identified, AttachmentHolder, PluginReferencer {
-	public void notifyAssociatedWithProject(GenericProject p) ;
+	void notifyAssociatedWithProject(GenericProject p) ;
 
 }

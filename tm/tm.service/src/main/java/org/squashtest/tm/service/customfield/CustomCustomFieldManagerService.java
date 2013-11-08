@@ -155,7 +155,7 @@ public interface CustomCustomFieldManagerService {
 	 *            the {@link PagedCollectionHolder} that holds order and paging params.
 	 * @return the filtered collection of all custom field available in squash
 	 */
-	public PagedCollectionHolder<List<CustomField>> findSortedCustomFields(PagingAndSorting filter);
+	PagedCollectionHolder<List<CustomField>> findSortedCustomFields(PagingAndSorting filter);
 
 	/**
 	 * Will find the {@link SingleSelectField} of the given id
@@ -164,7 +164,7 @@ public interface CustomCustomFieldManagerService {
 	 *            the id of the {@link SingleSelectField}
 	 * @return the {@link SingleSelectField} or <code>null</code>
 	 */
-	public SingleSelectField findSingleSelectFieldById(Long customFieldId);
+	SingleSelectField findSingleSelectFieldById(Long customFieldId);
 
 	/**
 	 * Will change the code of the custom field after having checked that : the code is unique among all custom fields,

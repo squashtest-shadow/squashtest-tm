@@ -89,7 +89,7 @@ public class CustomFieldValueConfigurationBean {
 
 	// ********************************* classes **************************
 
-	public static interface ConfigurationBean {
+	public interface ConfigurationBean {
 		String getFieldLabel();
 
 		Long getFieldId();

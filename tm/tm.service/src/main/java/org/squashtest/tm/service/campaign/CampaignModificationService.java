@@ -30,7 +30,7 @@ import org.squashtest.tm.domain.campaign.Campaign;
 @Transactional
 @DynamicManager(name="squashtest.tm.service.CampaignModificationService" , entity=Campaign.class)
 public interface CampaignModificationService extends CustomCampaignModificationService, CampaignFinder {
-	final String WRITE_CAMAIGN_OR_ADMIN = "hasPermission(#arg0, 'org.squashtest.tm.domain.campaign.Campaign' ,'WRITE') "
+	String WRITE_CAMAIGN_OR_ADMIN = "hasPermission(#arg0, 'org.squashtest.tm.domain.campaign.Campaign' ,'WRITE') "
 		+ "or hasRole('ROLE_ADMIN')";
 
 	@PreAuthorize(WRITE_CAMAIGN_OR_ADMIN)

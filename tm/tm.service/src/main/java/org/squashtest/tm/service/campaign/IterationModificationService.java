@@ -31,7 +31,7 @@ import org.squashtest.tm.domain.campaign.Iteration;
 @DynamicManager(name = "squashtest.tm.service.IterationModificationService", entity = Iteration.class)
 public interface IterationModificationService extends CustomIterationModificationService {
 
-	final String WRITE_ITERATION_OR_ADMIN = "hasPermission(#arg0, 'org.squashtest.tm.domain.campaign.Iteration', 'WRITE') "
+	String WRITE_ITERATION_OR_ADMIN = "hasPermission(#arg0, 'org.squashtest.tm.domain.campaign.Iteration', 'WRITE') "
 			+ "or hasRole('ROLE_ADMIN')";
 
 	@PreAuthorize(WRITE_ITERATION_OR_ADMIN)

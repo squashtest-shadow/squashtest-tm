@@ -34,7 +34,7 @@ public interface CustomCustomFieldBindingDao {
 	 * @param ids
 	 * @return
 	 */
-	public List<CustomFieldBinding> findAllByIds(Collection<Long> ids);
+	List<CustomFieldBinding> findAllByIds(Collection<Long> ids);
 
 	
 	/**
@@ -42,7 +42,7 @@ public interface CustomCustomFieldBindingDao {
 	 * @param ids
 	 * @return
 	 */
-	public List<CustomFieldBinding> findAllByIds(List<Long> ids);
+	List<CustomFieldBinding> findAllByIds(List<Long> ids);
 	
 
 }

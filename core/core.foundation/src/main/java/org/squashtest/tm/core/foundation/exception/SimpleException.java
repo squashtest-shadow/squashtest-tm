@@ -27,5 +27,5 @@ package org.squashtest.tm.core.foundation.exception;
  *
  */
 public interface SimpleException {
-	public String getMessage();
+	String getMessage();
 }
