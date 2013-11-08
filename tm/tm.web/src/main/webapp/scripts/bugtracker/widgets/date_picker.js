@@ -49,7 +49,6 @@ define(["jquery", "../domain/FieldValue", "squash.translator", "datepicker/requi
 			};
 			
 			var message = translator.get(localemeta);
-			this.options.message = message;
 			
 			var language = regionale[message.locale] || regionale;
 			
