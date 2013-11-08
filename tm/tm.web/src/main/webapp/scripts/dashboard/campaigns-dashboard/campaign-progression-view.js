@@ -28,27 +28,28 @@ define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'squash.a
 	
 	
 	/* *********************************************************************************************
-	 *						MAIN VIEW
-	 * 
-	 * what : 
-	 * 	this view is the local master of three elements : 
-	 * 	- a plot, when everything is fine
-	 * 	- an error panel, when some errors where detected in the model,
-	 * 	- a custom dialog that displays the dates of the campaign iteration, in case or errors.
-	 * 
-	 * uses :
-	 * 	- a custom dialog to display iteration dates, used when some dates in the model are wrong (see below) 
-	 * 	- a _dateUtils object	for formatting purposes (see more below)
-	 * 
-	 * DOM conf : 
-	 * 	- model-attribute : the name of the attribute of interest in the model
-	 * 	- dateformat : the format string for the dates in the plot. 
-	 * 
-	 * Remember :
-	 * 	that this view extends JqplotView, as such the parsing of the DOM conf attributes
-	 * 	is performed in the superclass and merged with 'this.options'.
-	 * 
-	 *********************************************************************************************** */
+	*						MAIN VIEW
+	* 
+	* what : 
+	*	this view is the local master of three elements : 
+	*	- a plot, when everything is fine
+	*	- an error panel, when some errors where detected in the model,
+	*	- a custom dialog that displays the dates of the campaign iteration, in case or errors.
+	*
+	* uses :
+	*	- a custom dialog to display iteration dates, used when some dates in the model are wrong (see below) 
+	*	- a _dateUtils object	for formatting purposes (see more below)
+	*
+	* DOM conf : 
+	*	- model-attribute : the name of the attribute of interest in the model
+	*	- dateformat : the format string for the dates in the plot. 
+	*
+	* Remember :
+	*	that this view extends JqplotView, as such the parsing of the DOM conf attributes
+	*	is performed in the superclass and merged with 'this.options'.
+	*
+	*********************************************************************************************** */
+	
 	
 	var CampaignProgressionView =  JqplotView.extend({
 		
@@ -66,7 +67,7 @@ define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'squash.a
 			
 			if (!this.model.isAvailable()){
 				return;
-			};
+			}
 			
 			var model = this._getModelData();
 			
@@ -217,7 +218,7 @@ define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'squash.a
 			
 			if (!this.model.isAvailable()){
 				return;
-			};
+			}
 			
 			var model = this._getModelData();
 			
@@ -235,23 +236,24 @@ define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'squash.a
 	
 	
 	/* *********************************************************************************************
-	 *						ITERATIONS DATES DIALOG
-	 * 
-	 * what : 
-	 * 	this dialog is a sub element of this view. It displays the SCHEDULED dates of the iterations 
-	 *  of this campaign, and provides edit-in-place for those dates so as to fix them.   
-	 * 
-	 * uses :
-	 * 	- datepicker embedded in an edit-in-place
-	 * 
-	 * DOM conf : 
-	 * 	- dateformat : the format string for the dates in the plot. 
-	 * 	- locale : the locale that must be used
-	 * 
-	 * 
-	 *********************************************************************************************** */
+	*						ITERATIONS DATES DIALOG
+	* 
+	* what : 
+	*	this dialog is a sub element of this view. It displays the SCHEDULED dates of the iterations 
+	* of this campaign, and provides edit-in-place for those dates so as to fix them.   
+	*
+	* uses :
+	*	- datepicker embedded in an edit-in-place
+	*
+	* DOM conf : 
+	*	- dateformat : the format string for the dates in the plot. 
+	*	- locale : the locale that must be used
+	*
+	*
+	*********************************************************************************************** */
 	
-	if ($.squash.dashboarditerDialog == undefined || $.squash.dashboarditerDialog === null){
+	
+	if ($.squash.dashboarditerDialog === undefined || $.squash.dashboarditerDialog === null){
 		$.widget("squash.dashboarditerDialog", $.squash.formDialog, {
 			
 			options : {
@@ -334,8 +336,8 @@ define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'squash.a
 					});
 					
 					return value;
-				}
-				
+				};
+
 				body.find('.picker-start').editable(postFunction, conf);
 				body.find('.picker-end').editable(postFunction, conf);
 			}
@@ -346,20 +348,20 @@ define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'squash.a
 	
 	
 	/* *********************************************************************************************
-	 *						DATE UTILS
-	 * 
-	 * what : 
-	 * 	an object used by CampaignProgressionView to make the data model square and ready
-	 * to plot
-	 * 
-	 * uses :
-	 * 	- nothing
-	 * 
-	 * DOM conf : 
-	 * 	- nothing
-	 * 
-	 * 
-	 *********************************************************************************************** */
+	*						DATE UTILS
+	*
+	* what : 
+	*	an object used by CampaignProgressionView to make the data model square and ready
+	*	to plot
+	* 
+	* uses :
+	*	- nothing
+	*
+	* DOM conf : 
+	*	- nothing
+	*
+	*
+	*********************************************************************************************** */
 	
 	
 	
@@ -430,10 +432,10 @@ define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'squash.a
 	
 
 	
-	// **************************************** RETURN + STUFFS *************************************************
+	//**************************************** RETURN + STUFFS *************************************************
 	
 	
-	var getMessage = function(msg){
+	function getMessage(msg){
 		return translator.get(msg);
 	}
 	
