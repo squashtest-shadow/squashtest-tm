@@ -45,12 +45,17 @@ define([ "jquery", "squash.translator", "datepicker/require.jquery.squash.datepi
 		};
 	}
 	
-	function stdDatepicker(){
+	/*
+	 * @params (optionals)
+	 * 	format : a string date format that datepicker understands
+	 * 	locale : a locale, used for datepicker internationalization
+	 */
+	function stdDatepicker(format, locale){
 		
 		//parameterize the locale
 		var localemeta = {
-			format : 'squashtm.dateformatShort.js',
-			locale : 'squashtm.locale'
+			format : format || 'squashtm.dateformatShort.js',
+			locale : locale || 'squashtm.locale'
 		};
 		
 		var message = translator.get(localemeta);
@@ -62,7 +67,8 @@ define([ "jquery", "squash.translator", "datepicker/require.jquery.squash.datepi
 
 	return {
 		getStdChkeditor : stdCkeditor,
-		getStdJeditable : stdJeditable
+		getStdJeditable : stdJeditable,
+		getStdDatepicker : stdDatepicker
 	};
 
 });

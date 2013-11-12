@@ -116,6 +116,7 @@ requirejs.config({
 				"squash.basicwidgets" : "squash/squash.basicwidgets",
 				"squash.attributeparser" : "squash/squash.attributeparser",
 				"squash.configmanager" : "squash/squash.configmanager",
+				"squash.dateutils" : "squash/squash.dateutils",
 				//workspace
 				"workspace.tree-node-copier" : "workspace/workspace.tree-node-copier",
 				"workspace.tree-event-handler" : "workspace/workspace.tree-event-handler",

@@ -19,13 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "../domain/FieldValue", "squash.translator", "datepicker/require.jquery.squash.datepicker-locales", "jqueryui"], function($, FieldValue, translator, regionale){
+define(["jquery", "../domain/FieldValue", "squash.configmanager", "squash.dateutils", "jqueryui"], function($, FieldValue, confman, dateutils){
 
-	function convertStrDate(fromFormat, toFormat, strFromValue){
-		var date = $.datepicker.parseDate(fromFormat, strFromValue);
-		return $.datepicker.formatDate(toFormat, date);		
-	}
-	
+
 	return {
 		
 		options : {
@@ -42,17 +38,7 @@ define(["jquery", "../domain/FieldValue", "squash.translator", "datepicker/requi
 			
 			this._super();
 			
-			//parameterize the locale
-			var localemeta = {
-				format : 'squashtm.dateformatShort.js',
-				locale : 'squashtm.locale'
-			};
-			
-			var message = translator.get(localemeta);
-			
-			var language = regionale[message.locale] || regionale;
-			
-			var pickerconf = $.extend(true, {}, language, {dateFormat : message.format});
+			var pickerconf = confman.getStdDatepicker();
 			
 			this.element.datepicker(pickerconf);
 
@@ -64,8 +50,9 @@ define(["jquery", "../domain/FieldValue", "squash.translator", "datepicker/requi
 				
 				date = this.element.datepicker('getDate');
 				var toFormat = this.options.rendering.inputType.meta['date-format'];
-				strDate = $.datepicker.formatDate(toFormat, date);
 				var typename = this.options.rendering.inputType.dataType;
+				
+				strDate = dateutils.format(date, toFormat);
 				
 				return new FieldValue("--", typename, strDate);
 			}
@@ -73,7 +60,7 @@ define(["jquery", "../domain/FieldValue", "squash.translator", "datepicker/requi
 				var fromFormat = this.options.rendering.inputType.meta['date-format'];
 				strDate = fieldvalue.scalar;
 				if (!!strDate){
-					date = $.datepicker.parseDate(fromFormat, strDate);
+					date = dateutils.parse(strDate, fromFormat);
 					this.element.datepicker('setDate', date);
 				}
 			}
