@@ -22,7 +22,8 @@
 define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'squash.attributeparser', 
         'handlebars','datepicker/require.jquery.squash.datepicker-locales', 'lib/dateformat', 'iesupport/am-I-ie8',
         'jqplot-dates', 'jqplot-highlight', 
-        '../jqplot-ext/jqplot.squash.iterationAxisRenderer', '../jqplot-ext/jqplot.squash.overridableGridRenderer',
+        '../jqplot-ext/jqplot.squash.iterationAxisRenderer', '../jqplot-ext/jqplot.squash.stylableGridRenderer',
+        '../jqplot-ext/jqplot.squash.strippedTimeDateTickRenderer',
         'jquery.squash.formdialog', 'jeditable.datepicker'  ], 
         function($, JqplotView, translator,  attrparser, handlebars, regionale, dateformat, isIE8){
 	
@@ -149,6 +150,8 @@ define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'squash.a
 							fontSize : '12px',
 							formatString: xaxisFormatstring
 						},
+						//the default tick renderer doesn't suit us either 
+						tickRenderer: $.jqplot.StrippedTimeDateTickRenderer,
 						min : new Date(axisStart),
 						max : new Date(axisEnd)
 					},
@@ -156,7 +159,7 @@ define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'squash.a
 						min : 0,
 						tickOptions :{
 							fontSize : '12px',
-							// Special OverridableGridRenderer
+							// Special stylableGridRenderer
 							gridStyle : {
 								lineDash : [3, 6]
 							}
@@ -168,7 +171,7 @@ define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'squash.a
 						tickOptions: {
 							fontSize : '12px',
 							markSize : 12,
-							// Special OverridableGridRenderer
+							// Special StylableGridRenderer
 							gridStyle : {
 								lineDash : [5],
 								strokeStyle : '#750021'
@@ -188,15 +191,21 @@ define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'squash.a
 					background : gridcolor,
 					drawBorder : false,
 					shadow : false,
-					renderer : $.jqplot.OverridableGridRenderer
+					renderer : $.jqplot.StylableGridRenderer
 				},
 				seriesDefaults:{
 					markerOptions:{ 
 						size:6
 					},
+					//lineWidth : 4,
 					fill : true,
 					fillAndStroke : true
 				},
+				series: [
+				         {color: '#AABEE6', fillColor : '#BDD3FF'},
+				         {color: '#9C69E6', fillColor : '#AD75FF'}
+				         
+				],
 				highlighter : {
 					tooltipAxes: 'y',
 					tooltipLocation : 'n',					

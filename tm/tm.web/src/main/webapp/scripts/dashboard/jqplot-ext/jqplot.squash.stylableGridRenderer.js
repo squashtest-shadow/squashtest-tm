@@ -38,17 +38,17 @@
  */
 define([ "jquery", "jqplot-core" ], function($) {
 
-	$.jqplot.OverridableGridRenderer = function() {
+	$.jqplot.StylableGridRenderer = function() {
 		$.jqplot.CanvasGridRenderer.call(this);
 	};
 
-	$.jqplot.OverridableGridRenderer.prototype = new $.jqplot.CanvasGridRenderer();
-	$.jqplot.OverridableGridRenderer.prototype.constructor = $.jqplot.OverridableGridRenderer;
+	$.jqplot.StylableGridRenderer.prototype = new $.jqplot.CanvasGridRenderer();
+	$.jqplot.StylableGridRenderer.prototype.constructor = $.jqplot.StylableGridRenderer;
 
 	/*
 	 * modified in several places
 	 */
-	$.jqplot.OverridableGridRenderer.prototype.draw = function() {
+	$.jqplot.StylableGridRenderer.prototype.draw = function() {
 		this._ctx = this._elem.get(0).getContext("2d");
 		var ctx = this._ctx;
 		var pos, t, axis, ticks, j, points;
