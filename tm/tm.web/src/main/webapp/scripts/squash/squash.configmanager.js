@@ -47,8 +47,8 @@ define([ "jquery", "squash.translator", "datepicker/require.jquery.squash.datepi
 	
 	/*
 	 * @params (optionals)
-	 * 	format : a string date format that datepicker understands
-	 * 	locale : a locale, used for datepicker internationalization
+	 *	format : a string date format that datepicker understands
+	 *	locale : a locale, used for datepicker internationalization
 	 */
 	function stdDatepicker(format, locale){
 		

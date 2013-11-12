@@ -44,8 +44,8 @@ define(["jquery", "datepicker/require.jquery.squash.datepicker-locales", "jquery
 		
 		/*
 		 * @params :
-		 * 	date : a Date object
-		 * 	format : a String format
+		 *	date : a Date object
+		 *	format : a String format
 		 */
 		format : function(date, format){
 			return $.datepicker.formatDate(format, date);		
@@ -60,5 +60,5 @@ define(["jquery", "datepicker/require.jquery.squash.datepicker-locales", "jquery
 		parse : function(value, format){
 			$.datepicker.parseDate(format, value);
 		}
-	}
+	};
 });

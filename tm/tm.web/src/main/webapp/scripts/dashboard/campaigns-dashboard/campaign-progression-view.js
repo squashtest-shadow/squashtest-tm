@@ -171,7 +171,7 @@ define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'squash.a
 							// Special OverridableGridRenderer
 							gridStyle : {
 								lineDash : [5],
-								strokeStyle : '#750021',
+								strokeStyle : '#750021'
 							},
 							markStyle : {
 								lineDash : [5],
