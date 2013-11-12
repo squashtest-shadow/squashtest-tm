@@ -20,9 +20,22 @@
  */
 
 /*
- * ripped and adapted from jqplot.CanvasGridRenderer
+ * ripped and adapted from jqplot.CanvasGridRenderer.
+ *
+ * This grid renderer let your customize further the grid lines per axis, and adds the linedash feature (for OSes that support it).
+ * This extra configuration is nested in the axes.[axis].tickOptions item :
+ * 
+ *  gridStyle : {
+ *		lineDash : line dash configuration for the grid(see cavans API),
+ *		strokeStyle : the css color spec for the grid
+ *  },
+ *  markStyle : {
+ *		lineDash : line dash configuration for the tick mark (see cavans API),
+ *		strokeStyle : the css color spec for the tick mark
+ *  }
+ * 
+ * 
  */
-
 define([ "jquery", "jqplot-core" ], function($) {
 
 	$.jqplot.OverridableGridRenderer = function() {
