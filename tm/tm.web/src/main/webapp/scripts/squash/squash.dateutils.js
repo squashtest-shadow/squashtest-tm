@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "jqueryui", "lib/dateformat"], function($, ){
+define(["jquery", "datepicker/require.jquery.squash.datepicker-locales", "jqueryui"], function($, regionale){
 	
 	return {
 		/*
@@ -42,12 +42,17 @@ define(["jquery", "jqueryui", "lib/dateformat"], function($, ){
 			}
 		},
 		
+		/*
+		 * @params :
+		 * 	date : a Date object
+		 * 	format : a String format
+		 */
 		format : function(date, format){
-			return date.format(format);
+			return $.datepicker.formatDate(toFormat, date);		
 		},
 		
 		parse : function(value, format){
-			
+			$.datepicker.parseDate(format, value);
 		}
 	}
 });
