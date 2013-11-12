@@ -421,7 +421,7 @@
 							return (data["bug-list"].length>0)? "has-bugs" : "table-cell-add";
 						},
 						onClick : function(table, cell){							
-							var row = btn.parentNode.parentNode; // hopefully, that's the
+							var row = cell.parentNode.parentNode; // hopefully, that's the
 							// 'tr' one
 							var executionStepId = table.getODataId(row);
 							checkAndReportIssue( {
