@@ -176,20 +176,10 @@ private static final Logger LOGGER = LoggerFactory.getLogger(IterationStatistics
 				case FAILURE : 		newStatistics.addNbFailure(howmany.intValue()); break;   
 				case SUCCESS : 		newStatistics.addNbSuccess(howmany.intValue()); break;
 				case RUNNING : 		newStatistics.addNbRunning(howmany.intValue()); 
-									switch(importance){
-										case HIGH: newStatistics.addNbHigh(howmany.intValue()); break;
-										case LOW: newStatistics.addNbLow(howmany.intValue()); break;
-										case MEDIUM: newStatistics.addNbMedium(howmany.intValue()); break;
-										case VERY_HIGH: newStatistics.addNbVeryHigh(howmany.intValue()); break;
-									} 
-									break;   
+									addImportance(newStatistics, importance, howmany); 
+									break;  
 				case READY 	 : 		newStatistics.addNbReady(howmany.intValue()); 
-									switch(importance){
-										case HIGH: newStatistics.addNbHigh(howmany.intValue()); break;
-										case LOW: newStatistics.addNbLow(howmany.intValue()); break;
-										case MEDIUM: newStatistics.addNbMedium(howmany.intValue()); break;
-										case VERY_HIGH: newStatistics.addNbVeryHigh(howmany.intValue()); break;
-									}	
+									addImportance(newStatistics, importance, howmany); 
 									break;
 				case WARNING : 		newStatistics.addNbSuccess(howmany.intValue()); break;   
 				case ERROR : 		newStatistics.addNbFailure(howmany.intValue()); break;
@@ -200,6 +190,15 @@ private static final Logger LOGGER = LoggerFactory.getLogger(IterationStatistics
 		
 		return result;
 	}
+	
+	private void addImportance(TestSuiteTestInventoryStatistics newStatistics, TestCaseImportance importance, Long howmany){
+		switch(importance){
+			case HIGH: newStatistics.addNbHigh(howmany.intValue()); break;
+			case LOW: newStatistics.addNbLow(howmany.intValue()); break;
+			case MEDIUM: newStatistics.addNbMedium(howmany.intValue()); break;
+			case VERY_HIGH: newStatistics.addNbVeryHigh(howmany.intValue()); break;
+		}
+	} 
 	
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
