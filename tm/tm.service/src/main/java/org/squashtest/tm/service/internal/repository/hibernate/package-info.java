@@ -374,8 +374,20 @@
 		@NamedQuery(name="IterationStatistics.nonexecutedTestcaseImportance", 
 		query = "select tc.importance, count(tc.importance) " +
 				"from Iteration iter join iter.testPlans itp join itp.referencedTestCase tc where iter.id = :id and (itp.executionStatus = 'READY' or itp.executionStatus = 'RUNNING') group by tc.importance"),		
+	
+		@NamedQuery(name="IterationStatistics.successRate", 
+		query = "select tc.importance, itp.executionStatus, count(tc.importance) " +
+				"from Iteration iter join iter.testPlans itp join itp.referencedTestCase tc where iter.id = :id group by tc.importance, itp.executionStatus"),		
+
+
+		@NamedQuery(name="IterationStatistics.testSuiteStatistics", 
+		query = "select ts.name, tp.executionStatus, tc.importance, count(tc.importance) " +
+		         "from TestSuite ts join ts.testPlan tp join ts.iteration iter join tp.referencedTestCase tc where iter.id = :id group by ts.name, tp.executionStatus, tc.importance order by ts.name, tp.executionStatus, tc.importance" ),
+
 		
-			
+
+				
+				
 		/* ********************************************** batch deletion-related queries **************************************************** */
 
 		@NamedQuery(name = "testCase.findAllAttachmentLists", query = "select testCase.attachmentList.id from TestCase testCase where testCase.id in (:testCaseIds)"),

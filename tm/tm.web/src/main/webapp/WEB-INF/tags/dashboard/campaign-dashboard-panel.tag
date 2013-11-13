@@ -148,7 +148,7 @@
 						
 					<div id="dashboard-success-rate" class="dashboard-narrow-item" data-def="model-attribute=campaignTestCaseSuccessRateStatistics">
 					
-						<h2 class="dashboard-item-title"><f:message key="dashboard.test-cases.importance.title"/></h2>
+						<h2 class="dashboard-item-title"><f:message key="dashboard.campaigns.successrate.title"/></h2>
 											
 						<div class="dashboard-figures">
 							<div id="dashboard-success-rate-view" class="dashboard-item-view"></div>
@@ -156,7 +156,6 @@
 						
 						
 						<div class="dashboard-item-meta">					
-							
 						
 							<div class="dashboard-item-legend">
 								<div>

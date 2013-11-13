@@ -929,7 +929,7 @@ div#contextual-content>div:first-child h2,.fragment-header h2 {
 	position: absolute;
 	right: inherit;
 	top: 0.9cm;
-	width: 100%;
+	width: 99%;
 }
 
 .fragment-body-without-upper-margin {

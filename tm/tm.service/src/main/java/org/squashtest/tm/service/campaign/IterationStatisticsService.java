@@ -20,9 +20,13 @@
  */
 package org.squashtest.tm.service.campaign;
 
+import java.util.List;
+
 import org.squashtest.tm.service.statistics.campaign.CampaignNonExecutedTestCaseImportanceStatistics;
 import org.squashtest.tm.service.statistics.campaign.CampaignTestCaseStatusStatistics;
+import org.squashtest.tm.service.statistics.campaign.CampaignTestCaseSuccessRateStatistics;
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
+import org.squashtest.tm.service.statistics.iteration.TestSuiteTestInventoryStatistics;
 
 public interface IterationStatisticsService {
 
@@ -42,6 +46,20 @@ public interface IterationStatisticsService {
 	 */
 	CampaignTestCaseStatusStatistics gatherIterationTestCaseStatusStatistics(long iterationId);
 	
+	
+	/**
+	 * Given an iteration id, gathers and returns the number of passed and failed test cases grouped by weight.
+	 * 
+	 * @param iterationId
+	 * @return
+	 */
+	CampaignTestCaseSuccessRateStatistics gatherIterationTestCaseSuccessRateStatistics(long iterationId);
+
+	
+	List<TestSuiteTestInventoryStatistics> gatherTestSuiteTestInventoryStatistics(long iterationId);
+
+
+	
 	/**
 	 * Given an iteration id, gathers all of the above in one package. 
 	 * 
@@ -49,6 +67,8 @@ public interface IterationStatisticsService {
 	 * @return
 	 */
 	IterationStatisticsBundle gatherIterationStatisticsBundle(long iterationId);
+
+
 
 
 

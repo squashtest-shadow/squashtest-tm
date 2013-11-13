@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -36,7 +38,10 @@ import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.campaign.IterationStatisticsService;
 import org.squashtest.tm.service.statistics.campaign.CampaignNonExecutedTestCaseImportanceStatistics;
 import org.squashtest.tm.service.statistics.campaign.CampaignTestCaseStatusStatistics;
+import org.squashtest.tm.service.statistics.campaign.CampaignTestCaseSuccessRateStatistics;
+import org.squashtest.tm.service.statistics.campaign.IterationTestInventoryStatistics;
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
+import org.squashtest.tm.service.statistics.iteration.TestSuiteTestInventoryStatistics;
 
 @Transactional(readOnly=true)
 @Service("IterationStatisticsService")
@@ -108,6 +113,95 @@ private static final Logger LOGGER = LoggerFactory.getLogger(IterationStatistics
 	}
 	
 	@Override
+	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public CampaignTestCaseSuccessRateStatistics gatherIterationTestCaseSuccessRateStatistics(long iterationId) {
+
+		CampaignTestCaseSuccessRateStatistics result = new CampaignTestCaseSuccessRateStatistics();
+		
+		//get the data
+		Query query = sessionFactory.getCurrentSession().getNamedQuery("IterationStatistics.successRate");
+		query.setParameter("id", iterationId);
+		List<Object[]> res = query.list();
+		
+		for (Object[] tuple : res){
+
+			TestCaseImportance importance = (TestCaseImportance)tuple[0];
+			ExecutionStatus status = (ExecutionStatus)tuple[1];
+			Long howmany = (Long)tuple[2];
+			
+			switch(importance){
+				case HIGH: result.addNbHigh(status, howmany.intValue()); break;
+				case LOW: result.addNbLow(status, howmany.intValue()); break;
+				case MEDIUM: result.addNbMedium(status, howmany.intValue()); break;
+				case VERY_HIGH: result.addNbVeryHigh(status, howmany.intValue()); break;
+			}
+		}
+		
+		return result;
+	}
+	
+	
+	@Override
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
+			+ "or hasRole('ROLE_ADMIN')")
+	public List<TestSuiteTestInventoryStatistics> gatherTestSuiteTestInventoryStatistics(long iterationId) {
+
+		List<TestSuiteTestInventoryStatistics> result = new LinkedList<TestSuiteTestInventoryStatistics>();
+		
+		//get the data
+		Query query = sessionFactory.getCurrentSession().getNamedQuery("IterationStatistics.testSuiteStatistics");
+		query.setParameter("id", iterationId);
+		List<Object[]> res = query.list();
+		
+		TestSuiteTestInventoryStatistics newStatistics = new TestSuiteTestInventoryStatistics();
+		String previousSuiteName = "";
+		
+		for (Object[] tuple : res){
+
+			String suiteName = (String)tuple[0];
+			ExecutionStatus status = (ExecutionStatus)tuple[1];
+			TestCaseImportance importance = (TestCaseImportance)tuple[2];
+			Long howmany = (Long)tuple[3];
+			
+			if(!previousSuiteName.equals(suiteName)){
+				newStatistics = new TestSuiteTestInventoryStatistics();
+				newStatistics.setTestsuiteName(suiteName);
+				result.add(newStatistics);
+			}
+			
+			switch(status){
+				case UNTESTABLE : 	newStatistics.addNbUntestable(howmany.intValue()); break;   
+				case BLOCKED : 		newStatistics.addNbBlocked(howmany.intValue()); break;
+				case FAILURE : 		newStatistics.addNbFailure(howmany.intValue()); break;   
+				case SUCCESS : 		newStatistics.addNbSuccess(howmany.intValue()); break;
+				case RUNNING : 		newStatistics.addNbRunning(howmany.intValue()); 
+									switch(importance){
+										case HIGH: newStatistics.addNbHigh(howmany.intValue()); break;
+										case LOW: newStatistics.addNbLow(howmany.intValue()); break;
+										case MEDIUM: newStatistics.addNbMedium(howmany.intValue()); break;
+										case VERY_HIGH: newStatistics.addNbVeryHigh(howmany.intValue()); break;
+									} 
+									break;   
+				case READY 	 : 		newStatistics.addNbReady(howmany.intValue()); 
+									switch(importance){
+										case HIGH: newStatistics.addNbHigh(howmany.intValue()); break;
+										case LOW: newStatistics.addNbLow(howmany.intValue()); break;
+										case MEDIUM: newStatistics.addNbMedium(howmany.intValue()); break;
+										case VERY_HIGH: newStatistics.addNbVeryHigh(howmany.intValue()); break;
+									}	
+									break;
+				case WARNING : 		newStatistics.addNbSuccess(howmany.intValue()); break;   
+				case ERROR : 		newStatistics.addNbFailure(howmany.intValue()); break;
+			}
+			
+			previousSuiteName = suiteName;
+		}
+		
+		return result;
+	}
+	
+	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
 			+ "or hasRole('ROLE_ADMIN')")
 	public IterationStatisticsBundle gatherIterationStatisticsBundle(long iterationId) {
@@ -116,9 +210,12 @@ private static final Logger LOGGER = LoggerFactory.getLogger(IterationStatistics
 		
 		CampaignTestCaseStatusStatistics testcaseStatuses = gatherIterationTestCaseStatusStatistics(iterationId);
 		CampaignNonExecutedTestCaseImportanceStatistics testcaseImportance = gatherIterationNonExecutedTestCaseImportanceStatistics(iterationId);
-
+		CampaignTestCaseSuccessRateStatistics testCaseSuccessRate = gatherIterationTestCaseSuccessRateStatistics(iterationId);
+		List<TestSuiteTestInventoryStatistics> testSuiteTestInventoryStatistics = gatherTestSuiteTestInventoryStatistics(iterationId);
 		bundle.setIterationTestCaseStatusStatistics(testcaseStatuses);
 		bundle.setIterationNonExecutedTestCaseImportanceStatistics(testcaseImportance);
+		bundle.setIterationTestCaseSuccessRateStatistics(testCaseSuccessRate);
+		bundle.setTestsuiteTestInventoryStatisticsList(testSuiteTestInventoryStatistics);
 		return bundle;
 		
 	}

@@ -19,45 +19,44 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "datepicker/require.jquery.squash.datepicker-locales", "jqueryui"], function($, regionale){
-	
+define([ "jquery", "datepicker/require.jquery.squash.datepicker-locales",
+		"jqueryui" ], function($, regionale) {
+
 	return {
 		/*
-		 * Accepts : 
-		 *	convert(long timestamp, string format) : convert the given numeric timestamp to a string of the given format
-		 *	convert(string inputvalue, string toFormat, String fromFormat) : convert the date given as String, parsed using fromFormat, and converted to toFormat 
+		 * Accepts : convert(long timestamp, string format) : convert the given
+		 * numeric timestamp to a string of the given format convert(string
+		 * inputvalue, string toFormat, String fromFormat) : convert the date
+		 * given as String, parsed using fromFormat, and converted to toFormat
 		 */
-		convert : function(value, toFormat, fromFormat){
-			
+		convert : function(value, toFormat, fromFormat) {
+
 			var lang = translator.get('squashtm.locale');
-			var reg = regionale[lang]	||	regionale;
-			
-			if (typeof value === "number"){
+			var reg = regionale[lang] || regionale;
+
+			if (typeof value === "number") {
 				// this case is when we have the timestamp as long
 				return newDate(value).format(toFormat);
-			}
-			else{
+			} else {
 				var date = $.datepicker.parseDate(fromFormat, value, reg);
 				return $.datepicker.formatDate(toFormat, date, reg);
 			}
 		},
-		
+
 		/*
-		 * @params :
-		 *	date : a Date object
-		 *	format : a String format
+		 * @params : date : a Date object format : a String format
 		 */
-		format : function(date, format){
+		format : function(date, format) {	
 			return $.datepicker.formatDate(format, date);		
 		},
-		
+
 		/*
 		 * @ params: 
 		 *  value : string value of the date
 		 *  format : string dateformat
 		 * 
 		 */
-		parse : function(value, format){
+		parse : function(value, format) {
 			$.datepicker.parseDate(format, value);
 		}
 	};

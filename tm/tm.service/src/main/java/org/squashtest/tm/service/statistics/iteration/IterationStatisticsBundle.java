@@ -20,8 +20,11 @@
  */
 package org.squashtest.tm.service.statistics.iteration;
 
+import java.util.List;
+
 import org.squashtest.tm.service.statistics.campaign.CampaignNonExecutedTestCaseImportanceStatistics;
 import org.squashtest.tm.service.statistics.campaign.CampaignTestCaseStatusStatistics;
+import org.squashtest.tm.service.statistics.campaign.CampaignTestCaseSuccessRateStatistics;
 
 public class IterationStatisticsBundle {
 
@@ -30,6 +33,10 @@ public class IterationStatisticsBundle {
 	
 	private CampaignNonExecutedTestCaseImportanceStatistics iterationNonExecutedTestCaseImportanceStatistics;
 
+	private CampaignTestCaseSuccessRateStatistics iterationTestCaseSuccessRateStatistics;
+	
+	private List<TestSuiteTestInventoryStatistics> testsuiteTestInventoryStatisticsList; 
+	
 	public CampaignTestCaseStatusStatistics getIterationTestCaseStatusStatistics() {
 		return iterationTestCaseStatusStatistics;
 	}
@@ -46,6 +53,24 @@ public class IterationStatisticsBundle {
 	public void setIterationNonExecutedTestCaseImportanceStatistics(
 			CampaignNonExecutedTestCaseImportanceStatistics iterationNonExecutedTestCaseImportanceStatistics) {
 		this.iterationNonExecutedTestCaseImportanceStatistics = iterationNonExecutedTestCaseImportanceStatistics;
+	}
+
+	public CampaignTestCaseSuccessRateStatistics getIterationTestCaseSuccessRateStatistics() {
+		return iterationTestCaseSuccessRateStatistics;
+	}
+
+	public void setIterationTestCaseSuccessRateStatistics(
+			CampaignTestCaseSuccessRateStatistics iterationTestCaseSuccessRateStatistics) {
+		this.iterationTestCaseSuccessRateStatistics = iterationTestCaseSuccessRateStatistics;
+	}
+
+	public List<TestSuiteTestInventoryStatistics> getTestsuiteTestInventoryStatisticsList() {
+		return testsuiteTestInventoryStatisticsList;
+	}
+
+	public void setTestsuiteTestInventoryStatisticsList(
+			List<TestSuiteTestInventoryStatistics> testSuiteTestInventoryStatisticsList) {
+		this.testsuiteTestInventoryStatisticsList = testSuiteTestInventoryStatisticsList;
 	}
 	
 }

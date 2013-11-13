@@ -29,7 +29,7 @@
 
 
 <f:message var="advanceTitle" key="title.CampaignCumulativeAdvancement"/>
-<f:message var="statisticsTitle" key="title.CampaignStatistics"/>
+<f:message var="statisticsTitle" key="title.IterationStatistics"/>
 <f:message var="inventoryTitle" key="title.TestInventoryByIteration"/>
 <f:message var="refreshLabel" key="label.Refresh" />
 
@@ -97,9 +97,9 @@
 						</div>
 					</div>
 						
-					<div id="dashboard-success-rate" class="dashboard-narrow-item" data-def="model-attribute=">
+					<div id="dashboard-success-rate" class="dashboard-narrow-item" data-def="model-attribute=iterationTestCaseSuccessRateStatistics">
 					
-						<h2 class="dashboard-item-title"><f:message key="dashboard.test-cases.importance.title"/></h2>
+						<h2 class="dashboard-item-title"><f:message key="dashboard.campaigns.successrate.title"/></h2>
 											
 						<div class="dashboard-figures">
 							<div id="dashboard-success-rate-view" class="dashboard-item-view"></div>
@@ -107,24 +107,19 @@
 						
 						
 						<div class="dashboard-item-meta">					
-							
 						
 							<div class="dashboard-item-legend">
 								<div>
-									<div class="dashboard-legend-sample-color" style="background-color:#FCEDB6"></div>
-									<span><f:message key="test-case.importance.LOW" /></span>
+									<div class="dashboard-legend-sample-color" style="background-color:#99CC00"></div>
+									<span><f:message key="execution.execution-status.SUCCESS" /></span>
 								</div>
 								<div>
-									<div class="dashboard-legend-sample-color" style="background-color:#FBD329"></div>
-									<span><f:message key="test-case.importance.MEDIUM" /></span>
+									<div class="dashboard-legend-sample-color" style="background-color:#FF3300"></div>
+									<span><f:message key="execution.execution-status.FAILURE" /></span>
 								</div>
 								<div>
-									<div class="dashboard-legend-sample-color" style="background-color:#FDA627"></div>
-									<span><f:message key="test-case.importance.HIGH" /></span>
-								</div>
-								<div>
-									<div class="dashboard-legend-sample-color" style="background-color:#FD7927"></div>
-									<span><f:message key="test-case.importance.VERY_HIGH" /></span>
+									<div class="dashboard-legend-sample-color" style="background-color:#969696"></div>
+									<span><f:message key="label.Other" /></span>
 								</div>
 							</div>
 						</div>
@@ -166,6 +161,70 @@
 				</jsp:attribute>
 			</comp:toggle-panel>
 			
+			<comp:toggle-panel id="test-suite-statistics" title="${statisticsTitle}">
+				<jsp:attribute name="body">
+				<div class="dashboard-figures">		
+					<table id="dashboard-test-inventory" class="dashboard-table" data-def="model-attribute=testsuiteTestInventoryStatisticsList">
+						<thead>
+							<tr>
+								<th colspan="1"></th>
+								<th colspan="3"></th>
+								<th colspan="11"></th>
+								<th colspan="4"></th>
+							</tr>
+							<tr>				
+								<th></th>
+								<th></th>
+								<th></th>
+							    <th></th>
+								<th></th>
+								<th></th>															    								
+								<th></th>
+								<th></th>
+								<th></th>								
+								<th></th>
+								<th></th>								
+								<th></th>
+								<th></th>
+								<th></th>
+								<th></th>								
+								<th></th>
+								<th></th>
+								<th></th>								
+								<th></th>
+							</tr>
+						</thead>
+					
+						<tbody>
+							<tr class="dashboard-table-template-emptyrow">
+								<td colspan="19" class="std-border">No record founds (résultat vide) (internationalise moi ça)</td>
+							</tr>
+							<tr class="dashboard-table-template-datarow">
+								<td class="std-border light-border">{{this.[0]}}</td>
+								<td class="std-border light-border">{{this.[1]}}</td>
+								<td class="std-border light-border">{{this.[2]}}</td>
+								<td class="std-border light-border">{{this.[3]}}</td>								
+								<td class="std-border light-border">{{this.[4]}}</td>
+								<td class="std-border light-border">{{this.[5]}}</td>
+								<td class="std-border light-border">{{this.[6]}}</td>
+								<td class="std-border light-border">{{this.[7]}}</td>
+								<td class="std-border light-border">{{this.[8]}}</td>
+								<td class="std-border light-border">{{this.[9]}}</td>
+								<td class="std-border light-border">{{this.[10]}}</td>								
+								<td class="std-border light-border">{{this.[11]}}</td>
+								<td class="std-border light-border">{{this.[12]}}</td>
+								<td class="std-border light-border">{{this.[13]}}</td>
+								<td class="std-border light-border">{{this.[14]}}</td>
+								<td class="std-border light-border">{{this.[15]}}</td>								
+								<td class="std-border light-border">{{this.[16]}}</td>
+								<td class="std-border light-border">{{this.[17]}}</td>
+								<td class="std-border light-border">{{this.[18]}}</td>
+							</tr>
+						</tbody>			
+					</table>		
+				</div>
+				</jsp:attribute>
+			</comp:toggle-panel>
 		</div>
 	
 	</div>
