@@ -52,17 +52,20 @@ define([ "jquery", "squash.translator", "datepicker/require.jquery.squash.datepi
 	 */
 	function stdDatepicker(format, locale){
 		
-		//parameterize the locale
-		var localemeta = {
-			format : format || 'squashtm.dateformatShort.js',
-			locale : locale || 'squashtm.locale'
-		};
+		// fetch the optional parameters if unspecified
+		var fetchmeta = {},
+			conf = {};
 		
-		var message = translator.get(localemeta);
+		(!! format) ? conf.format = format : fetchmeta.format = 'squashtm.dateformatShort.js';
+		(!! locale) ? conf.locale = locale : fetchmeta.locale = 'squashtm.locale';
+				
+		var translated = translator.get(fetchmeta);
+		$.extend(conf, translated);
 		
-		var language = regionale[message.locale] || regionale;
+		// now configure the datepicker
+		var language = regionale[conf.locale] || regionale;
 		
-		return $.extend(true, {}, {dateFormat : message.format}, language);	
+		return $.extend(true, {}, {dateFormat : conf.format}, language);	
 	}
 
 	return {

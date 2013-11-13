@@ -36,7 +36,6 @@
 <f:message var="buttonOK" key="label.Ok"/>
 <f:message var="dateformatSupershort" key="squashtm.dateformatSupershort" />		
 <f:message var="dateformatJs" key="squashtm.dateformatShort.js" />
-<f:message var="locale" key="squashtm.locale"/>
 
 <div id="dashboard-master" data-def="url=${url}">
 
@@ -76,7 +75,7 @@
 					</div>
 
 					<div class="dashboard-cumulative-progression-iterpopup popup-dialog not-displayed" 
-						title="${dialogTitle}" data-def="dateformat=${dateformatJs}, locale=${locale}">						
+						title="${dialogTitle}" data-def="dateformat=${dateformatJs}">						
 						
 						<table class="iterpopup-content" >
 							<thead>

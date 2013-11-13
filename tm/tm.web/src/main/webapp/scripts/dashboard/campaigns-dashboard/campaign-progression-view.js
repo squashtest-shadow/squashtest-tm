@@ -19,13 +19,26 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'squash.attributeparser', 
-        'handlebars','datepicker/require.jquery.squash.datepicker-locales', 'lib/dateformat', 'iesupport/am-I-ie8',
-        'jqplot-dates', 'jqplot-highlight', 
-        '../jqplot-ext/jqplot.squash.iterationAxisRenderer', '../jqplot-ext/jqplot.squash.stylableGridRenderer',
-        '../jqplot-ext/jqplot.squash.strippedTimeDateTickRenderer',
-        'jquery.squash.formdialog', 'jeditable.datepicker'  ], 
-        function($, JqplotView, translator,  attrparser, handlebars, regionale, dateformat, isIE8){
+define([
+        /* --------------- explicit modules ------------------ */
+        'jquery', 												/* required by all */
+        '../basic-objects/jqplot-view', 						/* required by the main view */
+        'squash.translator',									/* required by the main view */
+        'iesupport/am-I-ie8',									/* required by the main view */
+        'squash.attributeparser', 								/* required by the iteration schedule dialog */
+        'handlebars',											/* required by the iteration schedule dialog */
+        'squash.configmanager', 								/* required by the iteration schedule dialog */
+        'squash.dateutils',										/* required by the iteration schedule dialog */
+        /* -------------- implicit modules -------------------- */
+        'jqplot-dates', 										/* required by the main view */
+        'jqplot-highlight', 									/* required by the main view */
+        '../jqplot-ext/jqplot.squash.iterationAxisRenderer', 	/* required by the main view */
+        '../jqplot-ext/jqplot.squash.stylableGridRenderer',		/* required by the main view */
+        '../jqplot-ext/jqplot.squash.strippedTimeDateTickRenderer',	/* required by the main view */
+        'jquery.squash.formdialog',								/* required by the iteration schedule dialog */
+        'jeditable.datepicker'  								/* required by the iteration schedule dialog */
+        ], 
+        function($, JqplotView, translator, isIE8,  attrparser, handlebars, confman, dateutils){
 	
 	
 	/* *********************************************************************************************
@@ -39,7 +52,7 @@ define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'squash.a
 	*
 	* uses :
 	*	- a custom dialog to display iteration dates, used when some dates in the model are wrong (see below) 
-	*	- a _dateUtils object	for formatting purposes (see more below)
+	*	- a _axisHelper object that helps preparing the model for plotting (see more below).  
 	*
 	* DOM conf : 
 	*	- model-attribute : the name of the attribute of interest in the model
@@ -113,8 +126,8 @@ define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'squash.a
 			}
 			
 			// fixes the dates
-			_dateUtils.adjustDates(iterations, executions);
-			_dateUtils.formatDates(iterations, executions);
+			_axisHelper.adjustDates(iterations, executions);
+			_axisHelper.formatDates(iterations, executions);
 			
 			return [ iterations, executions ]; 
 		},
@@ -123,8 +136,9 @@ define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'squash.a
 
 			var iterSeries = series[0];
 			
-			// explicitly compute and set the start and end of the axis to ensure that the x1axis and x2axis are synchronized 
-			// namely, sets the boundaries to day1 -1 and daymax + 1
+			// We need to explicitly compute and set the start and end of the axis to ensure that 
+			// the x1axis and x2axis are synchronized.
+			// To do so we set the boundaries to day1 -1 and daymax + 1
 			var axisStart = iterSeries[0][0].getTime() - (24*60*60*1000),
 				axisEnd = iterSeries[iterSeries.length -1][0].getTime() + (24*60*60*1000);
 			
@@ -197,7 +211,6 @@ define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'squash.a
 					markerOptions:{ 
 						size:6
 					},
-					//lineWidth : 4,
 					fill : true,
 					fillAndStroke : true
 				},
@@ -265,7 +278,7 @@ define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'squash.a
 	
 	
 	/* *********************************************************************************************
-	*						ITERATIONS DATES DIALOG
+	*						ITERATIONS SCHEDULE DIALOG
 	* 
 	* what : 
 	*	this dialog is a sub element of this view. It displays the SCHEDULED dates of the iterations 
@@ -276,7 +289,6 @@ define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'squash.a
 	*
 	* DOM conf : 
 	*	- dateformat : the format string for the dates in the plot. 
-	*	- locale : the locale that must be used
 	*
 	*
 	*********************************************************************************************** */
@@ -321,8 +333,8 @@ define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'squash.a
 					dateformat = this.options.dateformat;				
 				
 				$.each(model.scheduledIterations, function(){
-					var dSchedStart = (this.scheduledStart!==null) ? new Date(this.scheduledStart).format(dateformat) : '--';
-					var dSchedEnd  = (this.scheduledEnd!==null) ? new Date(this.scheduledEnd).format(dateformat) : '--';
+					var dSchedStart = (this.scheduledStart!==null) ? dateutils.format(this.scheduledStart, dateformat) : '--';
+					var dSchedEnd  = (this.scheduledEnd!==null) ? dateutils.format(this.scheduledEnd, dateformat) : '--';
 					_formated.push({id : this.id, name : this.name,	scheduledStart : dSchedStart, scheduledEnd : dSchedEnd });
 				});
 				
@@ -334,17 +346,14 @@ define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'squash.a
 			
 			_createWidgets : function(){
 				
-				var format = this.options.dateformat,
-					locale = this.options.locale;
+				var format = this.options.dateformat;
 				
 				var body = this.uiDialog.find('tbody');
 				
 				var conf = {
 					type : 'datepicker',
 					placeholder : squashtm.message.placeholder,
-					datepicker : $.extend({
-							dateFormat : format
-						}, $.datepicker.regional[locale])	
+					datepicker : confman.getStdDatepicker(format)
 				};
 				
 				var postFunction = function(value){
@@ -354,7 +363,7 @@ define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'squash.a
 						url = squashtm.app.contextRoot+"/iterations/"+id+"/planning/",
 						data = {};
 					
-					var _date = $.datepicker.parseDate(format, value);
+					var _date = dateutils.parse(value, format);
 					
 					data[type]=_date.getTime();
 					
@@ -394,7 +403,7 @@ define(["jquery", '../basic-objects/jqplot-view', 'squash.translator', 'squash.a
 	
 	
 	
-	var _dateUtils = {
+	var _axisHelper = {
 		// makes start dates and end dates be the same for the iterations series and executions series
 		adjustDates : function(iterations, executions){
 			

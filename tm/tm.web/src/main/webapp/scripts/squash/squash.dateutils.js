@@ -36,7 +36,7 @@ define([ "jquery", "datepicker/require.jquery.squash.datepicker-locales",
 
 			if (typeof value === "number") {
 				// this case is when we have the timestamp as long
-				return newDate(value).format(toFormat);
+				this.format(value, toFormat);
 			} else {
 				var date = $.datepicker.parseDate(fromFormat, value, reg);
 				return $.datepicker.formatDate(toFormat, date, reg);
@@ -44,10 +44,13 @@ define([ "jquery", "datepicker/require.jquery.squash.datepicker-locales",
 		},
 
 		/*
-		 * @params : date : a Date object format : a String format
+		 * @params :
+		 *	date : a Date object, or milisecond timestamp
+		 *	format : a String format
 		 */
 		format : function(date, format) {	
-			return $.datepicker.formatDate(format, date);		
+			var zedate = (typeof date === "number") ? new Date(date) : date;
+			return $.datepicker.formatDate(format, zedate);		
 		},
 
 		/*
@@ -57,7 +60,7 @@ define([ "jquery", "datepicker/require.jquery.squash.datepicker-locales",
 		 * 
 		 */
 		parse : function(value, format) {
-			$.datepicker.parseDate(format, value);
+			return $.datepicker.parseDate(format, value);
 		}
 	};
 });
