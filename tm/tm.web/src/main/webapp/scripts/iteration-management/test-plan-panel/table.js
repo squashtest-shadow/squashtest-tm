@@ -285,7 +285,7 @@ define(
 								+ json.executionStatus.toLowerCase());
 						$span.text(statuses[value]);
 						
-						var newdate = dateutils.convert
+						var newdate = dateutils.format
 						$execon.text();
 					},
 

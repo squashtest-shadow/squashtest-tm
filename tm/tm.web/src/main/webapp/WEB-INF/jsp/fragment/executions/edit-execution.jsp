@@ -45,7 +45,6 @@
 <c:set var="automated"
 	value="${ execution.executionMode == 'AUTOMATED' }" />
 
-<script type="text/javascript"	src="${ pageContext.servletContext.contextPath }/scripts/lib/dateformat.js"></script>
 
 <%-------------------------- urls ------------------------------%>
 

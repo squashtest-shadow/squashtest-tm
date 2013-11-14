@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "../domain/FieldValue", "squash.configmanager", "squash.dateutils", "jqueryui"], function($, FieldValue, confman, dateutils){
+define(["jquery", "../domain/FieldValue", "squash.configmanager", "jqueryui"], function($, FieldValue, confman){
 
 
 	return {
@@ -45,14 +45,13 @@ define(["jquery", "../domain/FieldValue", "squash.configmanager", "squash.dateut
 		},
 		
 		fieldvalue : function(fieldvalue){
-			var date,strDate;
+				var date,strDate;
 			if (fieldvalue===null || fieldvalue === undefined){
 				
 				date = this.element.datepicker('getDate');
 				var toFormat = this.options.rendering.inputType.meta['date-format'];
+				strDate = $.datepicker.formatDate(toFormat, date);
 				var typename = this.options.rendering.inputType.dataType;
-				
-				strDate = dateutils.format(date, toFormat);
 				
 				return new FieldValue("--", typename, strDate);
 			}
@@ -60,7 +59,7 @@ define(["jquery", "../domain/FieldValue", "squash.configmanager", "squash.dateut
 				var fromFormat = this.options.rendering.inputType.meta['date-format'];
 				strDate = fieldvalue.scalar;
 				if (!!strDate){
-					date = dateutils.parse(strDate, fromFormat);
+					date = $.datepicker.parseDate(fromFormat, strDate);
 					this.element.datepicker('setDate', date);
 				}
 			}

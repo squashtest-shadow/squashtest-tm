@@ -165,9 +165,9 @@ define([
 			
 
 			// format string for the xaxis. Because the $.jqplot.DateAxisRenderer has a slightly different formatting scheme than the civilized world
-			// we have to make a little bit of traduction (remember that the original format string comes from the DOM conf 
+			// we have to make a little bit of translation (remember that the original format string comes from the DOM conf 
 			// and that .replace means 'replace first occurence')			
-			var xaxisFormatstring = this.options.dateformat.replace('d', '%').replace('m', '%');
+			var xaxisFormatstring = this.options.dateformat.replace('d', '%').replace('M', '%').toLowerCase();
 			
 			// compute x2axis ticks
 			var x2ticks = this.createX2ticks(axisStart, axisEnd);

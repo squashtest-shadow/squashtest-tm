@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "backbone", "lib/dateformat"], function($, Backbone){
+define(["jquery", "backbone", "squash.dateutils"], function($, Backbone, dateutils){
 
 	return Backbone.View.extend({
 		
@@ -48,8 +48,8 @@ define(["jquery", "backbone", "lib/dateformat"], function($, Backbone){
 			var timestamp = this.model.get('timestamp');
 			if (!! timestamp){
 				
-				var strdate = timestamp.format(this.dateformat);
-				var strtime = timestamp.format(this.timeformat);
+				var strdate = dateutils.format(timestamp,this.dateformat);
+				var strtime = dateutils.format(timestamp,this.timeformat);
 				
 				var txt = this.template.replace(/\{.*?\}/, '<span style="font-weight:bold">'+strdate+'</span>')
 										.replace(/\{.*?\}/, '<span style="font-weight:bold">'+strtime+'</span>');

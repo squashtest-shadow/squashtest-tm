@@ -35,7 +35,7 @@
 <f:message var="dialogTitle" key="dialog.label.iteration.scheduled_dates.label"/>
 <f:message var="buttonOK" key="label.Ok"/>
 <f:message var="dateformatSupershort" key="squashtm.dateformatSupershort" />		
-<f:message var="dateformatJs" key="squashtm.dateformatShort.js" />
+<f:message var="dateformatJs" key="squashtm.dateformatShort" />
 
 <div id="dashboard-master" data-def="url=${url}">
 

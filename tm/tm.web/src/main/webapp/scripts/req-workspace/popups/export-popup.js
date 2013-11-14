@@ -21,9 +21,9 @@
 
 define(['jquery', 'tree',
         'squash.attributeparser',
-        'lib/dateformat',
+        'squash.dateutils',
         'jquery.squash.formdialog'], 
-		function($, zetree, attrparser){
+		function($, zetree, attrparser, dateutils){
 	
 	$.widget("squash.exportDialog", $.squash.formDialog, {
 		
@@ -57,7 +57,7 @@ define(['jquery', 'tree',
 		},
 		
 		_createName : function(){
-			return this.options.nameprefix+"-"+new Date().format(this.options.dateformat);
+			return this.options.nameprefix+"-"+ dateutils.format(new Date(), this.options.dateformat);
 		},
 		
 		_createUrl : function(nodes, name, format){

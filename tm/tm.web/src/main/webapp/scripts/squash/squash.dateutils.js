@@ -19,48 +19,65 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define([ "jquery", "datepicker/require.jquery.squash.datepicker-locales",
-		"jqueryui" ], function($, regionale) {
+define(["datejs-all", "squash.translator"], function(datelocales, translator) {
+	
+	
 
+	function loadLocale(locale){
+		var _loc = locale;
+	
+		if (_loc === null || _loc === undefined){
+			_loc = translator.get('squashtm.locale');
+		}
+	
+		Date.CultureInfo = datelocales[_loc] || datelocales['en'];
+	}
+	
 	return {
+		
 		/*
-		 * Accepts : convert(long timestamp, string format) : convert the given
-		 * numeric timestamp to a string of the given format convert(string
-		 * inputvalue, string toFormat, String fromFormat) : convert the date
-		 * given as String, parsed using fromFormat, and converted to toFormat
+		 * Accepts : 
+		 * 	1/ format(Unknown value, string format) : returns the given date as string using the given format.
+		 * 	The date can be a numeric timestamp, a Date instance or a string. If String, the ATOM (ISO 8601) format is assumed. 
+		 * 	
+		 * 2/ format(string value, string toFormat, String fromFormat) : convert the date
+		 * 		given as String, parsed using fromFormat, and converted to toFormat
 		 */
-		convert : function(value, toFormat, fromFormat) {
+		format : function(value, toFormat, fromFormat) {
+		
+			var _localDate = this.parse(value, fromFormat);
 
-			var lang = translator.get('squashtm.locale');
-			var reg = regionale[lang] || regionale;
-
-			if (typeof value === "number") {
-				// this case is when we have the timestamp as long
-				this.format(value, toFormat);
-			} else {
-				var date = $.datepicker.parseDate(fromFormat, value, reg);
-				return $.datepicker.formatDate(toFormat, date, reg);
-			}
+			return _localDate.toString(toFormat);
 		},
-
-		/*
-		 * @params :
-		 *	date : a Date object, or milisecond timestamp
-		 *	format : a String format
-		 */
-		format : function(date, format) {	
-			var zedate = (typeof date === "number") ? new Date(date) : date;
-			return $.datepicker.formatDate(format, zedate);		
-		},
+		
 
 		/*
 		 * @ params: 
-		 *  value : string value of the date
-		 *  format : string dateformat
+		 *  value : string value of the date, or numeric timestamp, or even a Date.
+		 *  format : string dateformat. if value is a string and the format is not specified, ATOM is assumed.
 		 * 
 		 */
 		parse : function(value, format) {
-			return $.datepicker.parseDate(format, value);
+			
+			loadLocale();
+			
+			var _localDate,
+				type = typeof value;
+		
+			switch(type){
+			case "number" : _localDate = new Date(value); 
+							break;
+			case "object" : _localDate = value; 
+							break;
+			case "string" : _localDate = (!! format) ? Date.parseExact(value, format) :
+															Date.parse(value);	//ATOM is assumed
+							break;
+			default : throw "dateutils.format : cannot handle supplied argument";
+			}
+			
+			return _localDate;
 		}
+		
+		
 	};
 });
