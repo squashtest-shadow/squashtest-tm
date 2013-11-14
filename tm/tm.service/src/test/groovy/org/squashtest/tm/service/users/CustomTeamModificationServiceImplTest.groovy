@@ -25,6 +25,7 @@ import org.squashtest.tm.domain.users.Team
 import org.squashtest.tm.exception.customfield.NameAlreadyInUseException
 import org.squashtest.tm.service.internal.repository.TeamDao
 import org.squashtest.tm.service.internal.user.CustomTeamModificationServiceImpl
+import org.squashtest.tm.service.security.acls.jdbc.ManageableAclService;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService
 
 import spock.lang.Specification
@@ -34,10 +35,12 @@ class CustomTeamModificationServiceImplTest extends Specification {
 	CustomTeamModificationServiceImpl service = new CustomTeamModificationServiceImpl()
 	TeamDao teamDao = Mock()
 	ObjectAclService aclService = Mock()
+	ManageableAclService manageableAclService = Mock()
 	
 	def setup(){
 		service.teamDao = teamDao
 		service.aclService = aclService
+		service.managableAclService = manageableAclService
 	}
 
 	def "should persist a new team"(){

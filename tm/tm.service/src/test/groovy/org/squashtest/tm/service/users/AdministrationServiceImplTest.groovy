@@ -33,6 +33,7 @@ import org.squashtest.tm.service.internal.repository.UserDao
 import org.squashtest.tm.service.internal.repository.UsersGroupDao
 import org.squashtest.tm.service.internal.user.AdministrationServiceImpl
 import org.squashtest.tm.service.security.AdministratorAuthenticationService
+import org.squashtest.tm.service.security.acls.jdbc.ManageableAclService;
 import org.squashtest.tm.service.user.UserAccountService
 
 import spock.lang.Specification
@@ -41,6 +42,7 @@ class AdministrationServiceImplTest extends Specification {
 
 	AdministrationServiceImpl service = new AdministrationServiceImpl()
 
+	ManageableAclService manageableAclService = Mock()
 	UserAccountService userAccountService = Mock()
 	ProjectDao projectDao = Mock()
 	UserDao userDao = Mock()
@@ -60,6 +62,7 @@ class AdministrationServiceImplTest extends Specification {
 		service.configurationService = configurationService
 		service.teamDao = teamDao
 		service.adminAuthentService = adminAuthentService
+		service.managableAclService = manageableAclService
 	}
 
 	def "should associate user to team"(){
