@@ -56,8 +56,8 @@ define([ "jquery", "squash.translator", "datepicker/require.jquery.squash.datepi
 		var fetchmeta = {},
 			conf = {};
 		
-		(!! format) ? conf.format = format : fetchmeta.format = 'squashtm.dateformatShort.js';
-		(!! locale) ? conf.locale = locale : fetchmeta.locale = 'squashtm.locale';
+		if (!! format) { conf.format = format; } else { fetchmeta.format = 'squashtm.dateformatShort.js'; }
+		if (!! locale) { conf.locale = locale; } else { fetchmeta.locale = 'squashtm.locale'; }
 				
 		var translated = translator.get(fetchmeta);
 		$.extend(conf, translated);

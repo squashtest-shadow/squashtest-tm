@@ -20,25 +20,25 @@
  */
 
 define([
-        /* --------------- explicit modules ------------------ */
-        'jquery', 												/* required by all */
-        '../basic-objects/jqplot-view', 						/* required by the main view */
-        'squash.translator',									/* required by the main view */
-        'iesupport/am-I-ie8',									/* required by the main view */
-        'squash.attributeparser', 								/* required by the iteration schedule dialog */
-        'handlebars',											/* required by the iteration schedule dialog */
-        'squash.configmanager', 								/* required by the iteration schedule dialog */
-        'squash.dateutils',										/* required by the iteration schedule dialog */
-        /* -------------- implicit modules -------------------- */
-        'jqplot-dates', 										/* required by the main view */
-        'jqplot-highlight', 									/* required by the main view */
-        '../jqplot-ext/jqplot.squash.iterationAxisRenderer', 	/* required by the main view */
-        '../jqplot-ext/jqplot.squash.stylableGridRenderer',		/* required by the main view */
-        '../jqplot-ext/jqplot.squash.strippedTimeDateTickRenderer',	/* required by the main view */
-        'jquery.squash.formdialog',								/* required by the iteration schedule dialog */
-        'jeditable.datepicker'  								/* required by the iteration schedule dialog */
-        ], 
-        function($, JqplotView, translator, isIE8,  attrparser, handlebars, confman, dateutils){
+	/* --------------- explicit modules ------------------ */
+	'jquery',												/* required by all */
+	'../basic-objects/jqplot-view',							/* required by the main view */
+	'squash.translator',									/* required by the main view */
+	'iesupport/am-I-ie8',									/* required by the main view */
+	'squash.attributeparser',								/* required by the iteration schedule dialog */
+	'handlebars',											/* required by the iteration schedule dialog */
+	'squash.configmanager',									/* required by the iteration schedule dialog */
+	'squash.dateutils',										/* required by the iteration schedule dialog */
+	/* -------------- implicit modules -------------------- */
+	'jqplot-dates',											/* required by the main view */
+	'jqplot-highlight',										/* required by the main view */
+	'../jqplot-ext/jqplot.squash.iterationAxisRenderer',	/* required by the main view */
+	'../jqplot-ext/jqplot.squash.stylableGridRenderer',		/* required by the main view */
+	'../jqplot-ext/jqplot.squash.strippedTimeDateTickRenderer',	/* required by the main view */
+	'jquery.squash.formdialog',								/* required by the iteration schedule dialog */
+	'jeditable.datepicker'									/* required by the iteration schedule dialog */
+	],
+	function($, JqplotView, translator, isIE8,  attrparser, handlebars, confman, dateutils){
 	
 	
 	/* *********************************************************************************************
@@ -73,9 +73,29 @@ define([
 		
 		initialize : function(){
 			this.initErrorHandling();
+			this.configureHighlight();
+			
 			JqplotView.prototype.initialize.apply(this, Array.prototype.slice.call(arguments));
+
 		},
 		
+		configureHighlight : function(){
+			var highlight = {};
+			
+			highlight.messages = getMessage({
+				dateLabel : 'label.Date',
+				actualTestcount : 'dashboard.campaigns.progression.tooltip.actualcount',
+				scheduledTestcount : 'dashboard.campaigns.progression.tooltip.scheduledcount'
+			});
+			
+			highlight.template = handlebars.compile(
+					'<div style="font-size:12px">' +
+						'<p><label>{{dateLabel}}</label> {{dateValue}}</p>' +
+						'<p><label>{{pointLabel}}</label> {{pointValue}}</p>' +
+					'</div>');
+			
+			this.options.highlight = highlight;
+		},
 		
 		render : function(){
 			
@@ -134,11 +154,12 @@ define([
 		
 		getConf : function(series){
 
-			var iterSeries = series[0];
+			var bbview = this;
 			
 			// We need to explicitly compute and set the start and end of the axis to ensure that 
 			// the x1axis and x2axis are synchronized.
 			// To do so we set the boundaries to day1 -1 and daymax + 1
+			var iterSeries = series[0];
 			var axisStart = iterSeries[0][0].getTime() - (24*60*60*1000),
 				axisEnd = iterSeries[iterSeries.length -1][0].getTime() + (24*60*60*1000);
 			
@@ -146,7 +167,7 @@ define([
 			// format string for the xaxis. Because the $.jqplot.DateAxisRenderer has a slightly different formatting scheme than the civilized world
 			// we have to make a little bit of traduction (remember that the original format string comes from the DOM conf 
 			// and that .replace means 'replace first occurence')			
-			var xaxisFormatstring = this.options.dateformat.replace('d', '%').replace('M', '%').toLowerCase();
+			var xaxisFormatstring = this.options.dateformat.replace('d', '%').replace('m', '%');
 			
 			// compute x2axis ticks
 			var x2ticks = this.createX2ticks(axisStart, axisEnd);
@@ -222,8 +243,23 @@ define([
 				highlighter : {
 					tooltipAxes: 'y',
 					tooltipLocation : 'n',					
-					sizeAdjust : 0,
-					tooltipFormatString: '<span>%s</span>'
+					tooltipContentEditor : function(str, seriesIndex, pointIndex){
+						
+						var point = series[seriesIndex][pointIndex],
+							currentDate = point[0],
+							decimal = (seriesIndex === 0) ? 1 : 0,
+							currentValue = point[1].toFixed(decimal),
+							opts = bbview.options.highlight;
+						
+						var model = {
+							dateLabel : opts.messages.dateLabel,
+							dateValue : dateutils.format(currentDate, bbview.options.dateformat),
+							pointLabel : (seriesIndex===0) ? opts.messages.scheduledTestcount : opts.messages.actualTestcount,
+							pointValue : currentValue
+						};
+						
+						return opts.template(model);
+					}
 				}
 			};
 		},
@@ -473,8 +509,8 @@ define([
 	//**************************************** RETURN + STUFFS *************************************************
 	
 	
-	function getMessage(msg){
-		return translator.get(msg);
+	function getMessage(msgOrObj){
+		return translator.get(msgOrObj);
 	}
 	
 	
