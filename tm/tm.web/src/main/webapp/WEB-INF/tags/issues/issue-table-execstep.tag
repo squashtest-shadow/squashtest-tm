@@ -52,7 +52,7 @@
 <c:if test="${executable}">
 	<c:set var="deleteBtnClause" value=", sClass=centered delete-button"/>
 </c:if>
-<table id="issue-table" data-def="ajaxsource=${dataUrl}, pre-sort=1">
+<table id="issue-table" data-def="ajaxsource=${dataUrl}, pre-sort=0-asc">
 	<thead>
 		<tr>
 			<th style="cursor:pointer" data-def="link={issue-url}, select, map=remote-id, sortable, narrow, sClass=id-header">${interfaceDescriptor.tableIssueIDHeader}</th>
