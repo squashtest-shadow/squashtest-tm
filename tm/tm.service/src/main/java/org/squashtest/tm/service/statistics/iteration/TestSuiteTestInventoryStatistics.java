@@ -95,17 +95,17 @@ public class TestSuiteTestInventoryStatistics {
 		this.nbUntestable += nbUntestable;
 	}
 	public float getPcProgress() {
-		return Math.round(((float) getNbExecuted() / (float) getNbTotal())*10000)/100;
+		return Math.round(((float) getNbExecuted() / (float) getNbTotal())*10000)/(float) 100;
 	}
 	public float getPcSuccess() {
-		return  Math.round(((float) getNbSuccess() / (float) getNbTotal())*10000)/100;
+		return  Math.round(((float) getNbSuccess() / (float) getNbTotal())*10000)/ (float) 100;
 	}
 	public float getPcFailure() {
-		return  Math.round(((float) getNbFailure() / (float) getNbTotal())*10000)/100;
+		return  Math.round(((float) getNbFailure() / (float) getNbTotal())*10000)/ (float) 100;
 	}
 	public float getPcPrevProgress() {
 		if(nbOfTestsToExecuteToDate(scheduledStart, scheduledEnd, new Date(), getNbTotal()) != 0.0f){
-			return Math.round(((float) getNbExecuted() / nbOfTestsToExecuteToDate(scheduledStart, scheduledEnd, new Date(), getNbTotal()))*10000)/100;
+			return Math.round(((float) getNbExecuted() / nbOfTestsToExecuteToDate(scheduledStart, scheduledEnd, new Date(), getNbTotal()))*10000)/ (float) 100;
 		} else {
 			return getPcProgress();
 		}
