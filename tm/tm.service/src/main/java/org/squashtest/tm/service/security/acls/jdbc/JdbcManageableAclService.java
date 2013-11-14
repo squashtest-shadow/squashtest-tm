@@ -291,6 +291,7 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 	
 	public void updateDerivedPermissions(long partyId){
 		derivedManager.updateDerivedPermissions(partyId);
+		aclCache.clearCache();
 	}
 
 	

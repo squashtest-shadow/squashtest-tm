@@ -33,6 +33,7 @@ import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
@@ -40,16 +41,17 @@ import org.squashtest.tm.service.internal.repository.TeamDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService;
 import org.squashtest.tm.service.user.CustomTeamModificationService;
+
 @Service("CustomTeamModificationService")
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 public class CustomTeamModificationServiceImpl implements CustomTeamModificationService {
 
 	@Inject
 	private TeamDao teamDao;
-	
+
 	@Inject
 	private UserDao userDao;
-	
+
 	@Inject
 	private ObjectAclService aclService;
 
@@ -58,24 +60,26 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 	 */
 	@Override
 	public void persist(Team team) {
-		if(teamDao.findAllByName(team.getName()).isEmpty()){
-		teamDao.persist(team);
-		}else{
+		if (teamDao.findAllByName(team.getName()).isEmpty()) {
+			teamDao.persist(team);
+		} else {
 			throw new NameAlreadyInUseException("Team", team.getName());
 		}
 	}
-	
+
 	/**
 	 * @see CustomTeamModificationService#deleteTeam(long)
 	 */
 	@Override
 	public void deleteTeam(long teamId) {
 		Team team = teamDao.findById(teamId);
+		List<Long> memberIds = IdentifiedUtil.extractIds(team.getMembers());
+		removeMembers(team, memberIds);
 		aclService.removeAllResponsibilities(teamId);
 		teamDao.delete(team);
-		
+
 	}
-	
+
 	@Override
 	public PagedCollectionHolder<List<Team>> findAllFiltered(PagingAndSorting paging, Filtering filtering) {
 		List<Team> teams = teamDao.findSortedTeams(paging, filtering);
@@ -85,35 +89,34 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 
 	@Override
 	public void changeName(long teamId, String name) {
-		if(!teamDao.findAllByName(name).isEmpty()){			
-				throw new NameAlreadyInUseException("Team", name);
+		if (!teamDao.findAllByName(name).isEmpty()) {
+			throw new NameAlreadyInUseException("Team", name);
 		}
 		Team team = teamDao.findById(teamId);
 		team.setName(name);
-		
+
 	}
 
 	@Override
 	public void addMember(long teamId, String login) {
 		addMembers(teamId, Arrays.asList(login));
 	}
-	
+
 	@Override
 	public void addMembers(long teamId, List<String> logins) {
 		List<User> users = userDao.findUsersByLoginList(logins);
 		Team team = teamDao.findById(teamId);
 		team.addMembers(users);
-		for (User user : users){
+		for (User user : users) {
 			aclService.updateDerivedPermissions(user.getId());
 		}
 	}
-	
+
 	@Override
 	public List<User> findAllNonMemberUsers(long teamId) {
 		return userDao.findAllNonTeamMembers(teamId);
 	}
-	
-	
+
 	@Override
 	public void removeMember(long teamId, long memberId) {
 		User user = userDao.findById(memberId);
@@ -121,34 +124,39 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 		team.removeMember(user);
 		aclService.updateDerivedPermissions(memberId);
 	}
-	
+
 	@Override
 	public void removeMembers(long teamId, List<Long> memberIds) {
-		List<User> users = userDao.findAllByIds(memberIds);
 		Team team = teamDao.findById(teamId);
+		removeMembers(team, memberIds);
+	}
+	
+	private void removeMembers(Team team , List<Long> memberIds){
+		List<User> users = userDao.findAllByIds(memberIds);
 		team.removeMember(users);
-		for (Long id  : memberIds){
+		for (Long id : memberIds) {
 			aclService.updateDerivedPermissions(id);
-		}		
+		}
 	}
 
 	@Override
-	public PagedCollectionHolder<List<User>> findAllTeamMembers(long teamId, PagingAndSorting sorting, Filtering filtering) {
+	public PagedCollectionHolder<List<User>> findAllTeamMembers(long teamId, PagingAndSorting sorting,
+			Filtering filtering) {
 		List<User> teamMates = userDao.findAllTeamMembers(teamId, sorting, filtering);
 		long allMates = userDao.countAllTeamMembers(teamId);
 		return new PagingBackedPagedCollectionHolder<List<User>>(sorting, allMates, teamMates);
 	}
 
 	@Override
-	public void removeMemberFromAllTeams(long memberId){
+	public void removeMemberFromAllTeams(long memberId) {
 		User user = userDao.findById(memberId);
 		List<Long> teamIds = new ArrayList<Long>();
 		Set<Team> teams = user.getTeams();
-		for(Team team : teams){
+		for (Team team : teams) {
 			teamIds.add(team.getId());
 		}
 		user.removeTeams(teamIds);
-		
+
 		aclService.updateDerivedPermissions(memberId);
 	}
 }

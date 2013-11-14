@@ -31,10 +31,12 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.squashtest.tm.domain.Identified;
+
 @Entity
 @Table(name = "CORE_PARTY")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Party {
+public abstract class Party implements Identified{
 	
 	private final static String TYPE = "PARTY";
 	

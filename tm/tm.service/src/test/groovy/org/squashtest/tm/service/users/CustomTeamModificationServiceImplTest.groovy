@@ -24,6 +24,7 @@ import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.tm.domain.users.Team
 import org.squashtest.tm.exception.customfield.NameAlreadyInUseException
 import org.squashtest.tm.service.internal.repository.TeamDao
+import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.internal.user.CustomTeamModificationServiceImpl
 import org.squashtest.tm.service.security.acls.model.ObjectAclService
 
@@ -33,10 +34,12 @@ class CustomTeamModificationServiceImplTest extends Specification {
 	
 	CustomTeamModificationServiceImpl service = new CustomTeamModificationServiceImpl()
 	TeamDao teamDao = Mock()
+	UserDao userDao = Mock()
 	ObjectAclService aclService = Mock()
 	
 	def setup(){
 		service.teamDao = teamDao
+		service.userDao = userDao
 		service.aclService = aclService
 	}
 
@@ -68,6 +71,8 @@ class CustomTeamModificationServiceImplTest extends Specification {
 	def "should delete a team and delete acls"(){
 		given : Team team = Mock()
 		team.getId()>> 1L
+		team.getMembers()>>[]
+		userDao.findAllByIds(_)>>[]
 		teamDao.findById(1L)>> team
 		when: service.deleteTeam(1L)
 		then :
