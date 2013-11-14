@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,7 +39,6 @@ import org.squashtest.tm.service.campaign.IterationStatisticsService;
 import org.squashtest.tm.service.statistics.campaign.CampaignNonExecutedTestCaseImportanceStatistics;
 import org.squashtest.tm.service.statistics.campaign.CampaignTestCaseStatusStatistics;
 import org.squashtest.tm.service.statistics.campaign.CampaignTestCaseSuccessRateStatistics;
-import org.squashtest.tm.service.statistics.campaign.IterationTestInventoryStatistics;
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
 import org.squashtest.tm.service.statistics.iteration.TestSuiteTestInventoryStatistics;
 
@@ -48,7 +46,8 @@ import org.squashtest.tm.service.statistics.iteration.TestSuiteTestInventoryStat
 @Service("IterationStatisticsService")
 public class IterationStatisticsServiceImpl implements IterationStatisticsService{
 
-private static final Logger LOGGER = LoggerFactory.getLogger(IterationStatisticsService.class);
+	private static final String ID = "id";
+	private static final Logger LOGGER = LoggerFactory.getLogger(IterationStatisticsService.class);
 
 	@Inject
 	private SessionFactory sessionFactory;
@@ -62,7 +61,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(IterationStatistics
 		
 		//get the data
 		Query query = sessionFactory.getCurrentSession().getNamedQuery("IterationStatistics.globaltestinventory");
-		query.setParameter("id", iterationId);
+		query.setParameter(ID, iterationId);
 		List<Object[]> res = query.list();
 		
 		for (Object[] tuple : res){
@@ -94,7 +93,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(IterationStatistics
 		
 		//get the data
 		Query query = sessionFactory.getCurrentSession().getNamedQuery("IterationStatistics.nonexecutedTestcaseImportance");
-		query.setParameter("id", iterationId);
+		query.setParameter(ID, iterationId);
 		List<Object[]> res = query.list();
 		
 		for (Object[] tuple : res){
@@ -122,7 +121,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(IterationStatistics
 		
 		//get the data
 		Query query = sessionFactory.getCurrentSession().getNamedQuery("IterationStatistics.successRate");
-		query.setParameter("id", iterationId);
+		query.setParameter(ID, iterationId);
 		List<Object[]> res = query.list();
 		
 		for (Object[] tuple : res){
@@ -152,7 +151,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(IterationStatistics
 		
 		//get the data
 		Query query = sessionFactory.getCurrentSession().getNamedQuery("IterationStatistics.testSuiteStatistics");
-		query.setParameter("id", iterationId);
+		query.setParameter(ID, iterationId);
 		List<Object[]> res = query.list();
 		
 		TestSuiteTestInventoryStatistics newStatistics = new TestSuiteTestInventoryStatistics();
