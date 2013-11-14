@@ -38,6 +38,7 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
 import org.squashtest.tm.service.internal.repository.TeamDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
+import org.squashtest.tm.service.security.acls.jdbc.ManageableAclService;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService;
 import org.squashtest.tm.service.user.CustomTeamModificationService;
 @Service("CustomTeamModificationService")
@@ -52,6 +53,9 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 	
 	@Inject
 	private ObjectAclService aclService;
+	
+	@Inject
+	private ManageableAclService managableAclService;
 
 	/**
 	 * @see CustomTeamModificationService#persist(Team)
@@ -73,7 +77,7 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 		Team team = teamDao.findById(teamId);
 		aclService.removeAllResponsibilitiesForParty(teamId);
 		teamDao.delete(team);
-		
+		managableAclService.clearAclCache();
 	}
 	
 	@Override
@@ -96,6 +100,7 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 	@Override
 	public void addMember(long teamId, String login) {
 		addMembers(teamId, Arrays.asList(login));
+		managableAclService.clearAclCache();
 	}
 	
 	@Override
@@ -103,6 +108,7 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 		List<User> users = userDao.findUsersByLoginList(logins);
 		Team team = teamDao.findById(teamId);
 		team.addMembers(users);
+		managableAclService.clearAclCache();
 	}
 	
 	@Override
@@ -116,6 +122,7 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 		User user = userDao.findById(memberId);
 		Team team = teamDao.findById(teamId);
 		team.removeMember(user);
+		managableAclService.clearAclCache();
 	}
 	
 	@Override
@@ -123,6 +130,7 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 		List<User> users = userDao.findAllByIds(memberIds);
 		Team team = teamDao.findById(teamId);
 		team.removeMember(users);
+		managableAclService.clearAclCache();
 	}
 
 	@Override
@@ -141,5 +149,6 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 			teamIds.add(team.getId());
 		}
 		user.removeTeams(teamIds);
+		managableAclService.clearAclCache();
 	}
 }

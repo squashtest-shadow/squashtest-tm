@@ -53,6 +53,7 @@ import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.internal.repository.UsersGroupDao;
 import org.squashtest.tm.service.internal.security.UserBuilder;
 import org.squashtest.tm.service.security.AdministratorAuthenticationService;
+import org.squashtest.tm.service.security.acls.jdbc.ManageableAclService;
 import org.squashtest.tm.service.user.AdministrationService;
 import org.squashtest.tm.service.user.AuthenticatedUser;
 import org.squashtest.tm.service.user.UserAccountService;
@@ -89,6 +90,8 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 	@Inject
 	private AdministratorAuthenticationService adminAuthentService;
+	@Inject
+	private ManageableAclService managableAclService;
 
 	private final static String WELCOME_MESSAGE_KEY = "WELCOME_MESSAGE";
 	private final static String LOGIN_MESSAGE_KEY = "LOGIN_MESSAGE";
@@ -298,6 +301,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	public void deassociateTeams(long userId, List<Long> teamIds) {
 		User user = userDao.findById(userId);
 		user.removeTeams(teamIds);
+		managableAclService.clearAclCache();
 	}
 
 	/**

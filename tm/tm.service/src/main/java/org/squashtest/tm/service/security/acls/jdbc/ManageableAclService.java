@@ -39,5 +39,10 @@ public interface ManageableAclService {
 	 * @param objectIdentity
 	 */
 	void removeObjectIdentity(ObjectIdentity objectIdentity);
+	
+	/**
+	 * Clear acl cache
+	 */
+	void clearAclCache();
 
 }

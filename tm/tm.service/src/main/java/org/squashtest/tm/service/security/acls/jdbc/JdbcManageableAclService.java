@@ -459,6 +459,7 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 	protected void evictFromCache(ObjectIdentity oIdentity) {
 		if (aclCache != null) {
 			aclCache.evictFromCache(oIdentity);
+			
 		}
 	}
 
@@ -564,7 +565,7 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 	@Override
 	public void removeAllResponsibilitiesForParty(long partyId) {
 		jdbcTemplate.update(DELETE_ALL_RESPONSABILITY_ENTRIES_FOR_PARTY, partyId);
-		
+		clearAclCache();
 	}
 
 	private List<String> adaptQualifiedClassNameList(List<String> qualifiedClassNameList){
@@ -580,5 +581,11 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 		
 		return qualifiedClassNameList;
 	}
-
+	/**
+	 * @see ManageableAclService#clearAclCache()
+	 */
+	@Override
+	public void clearAclCache(){
+		aclCache.clearCache();
+	}
 }
