@@ -131,7 +131,7 @@
 			<th class="no-user-select" data-def="map=suiteIds, invisible, sortable, sWidth=10%"></th>
 			<th class="no-user-select" data-def="map=status, sortable, sWidth=10%, sClass=has-status status-combo"><f:message key="iteration.executions.table.column-header.status.label" /></th>
 			<th class="no-user-select" data-def="map=assignee-login, sortable, sWidth=10%, sClass=assignee-combo"><f:message key="iteration.executions.table.column-header.user.label" /></th>
-			<th class="no-user-select" data-def="map=last-exec-on, sortable, sWidth=10%"><f:message key="iteration.executions.table.column-header.execution-date.label" /></th>
+			<th class="no-user-select" data-def="map=last-exec-on, sortable, sWidth=10%, sClass=exec-on"><f:message key="iteration.executions.table.column-header.execution-date.label" /></th>
 			<th class="no-user-select" data-def="map=empty-execute-holder, narrow, center, sClass=execute-button">&nbsp;</th>	
 			<th class="no-user-select" data-def="map=empty-delete-holder${deleteBtnClause}">&nbsp;</th>				
 		</tr>

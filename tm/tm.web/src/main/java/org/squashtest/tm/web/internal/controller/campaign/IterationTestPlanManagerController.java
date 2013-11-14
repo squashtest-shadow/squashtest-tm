@@ -61,6 +61,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
 import org.squashtest.tm.web.internal.model.jquery.TestPlanAssignableUser;
+import org.squashtest.tm.web.internal.model.json.JsonIterationTestPlanItem;
 import org.squashtest.tm.web.internal.model.json.JsonTestCase;
 import org.squashtest.tm.web.internal.model.json.JsonTestCaseBuilder;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
@@ -250,18 +251,31 @@ public class IterationTestPlanManagerController {
 
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanId}", method = RequestMethod.POST, params = {"status"})
 	public @ResponseBody
-	String setTestPlanItemStatus(@PathVariable("testPlanId") long testPlanId, 
+	JsonIterationTestPlanItem setTestPlanItemStatus(@PathVariable("testPlanId") long testPlanId, 
 										  @PathVariable("iterationId") long iterationId,
 										  @RequestParam("status") String status) {
+		
 		iterationTestPlanManagerService.assignExecutionStatusToTestPlanItem(testPlanId, status);
-		return status;
+		IterationTestPlanItem item = iterationTestPlanManagerService.findTestPlanItem(testPlanId);
+		
+		return createJsonITPI(item);
+		
 	}
-
-
 
 	private String formatUnassigned(Locale locale) {
 		return messageSource.internationalize("label.Unassigned", locale);
 	}
 
+	private JsonIterationTestPlanItem createJsonITPI(IterationTestPlanItem item){
+		String name = (item.isTestCaseDeleted()) ? null : item.getReferencedTestCase().getName();
+		return new JsonIterationTestPlanItem(
+					item.getId(),
+					item.getExecutionStatus(),
+					name,
+					item.getLastExecutedOn(),
+					item.getLastExecutedBy(),
+					item.isTestCaseDeleted()						
+				);
+	}
 
 }

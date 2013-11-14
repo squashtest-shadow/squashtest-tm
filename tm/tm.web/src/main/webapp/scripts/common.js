@@ -74,6 +74,7 @@ requirejs.config({
 				"jqplot-highlight": "lib/jqplot/plugins/jqplot.highlighter.min",
 				"jqplot-category" : "lib/jqplot/plugins/jqplot.categoryAxisRenderer.min",
 				"excanvas" : "lib/excanvas.min",
+				"datejs" : "lib/date",				
 				//cke
 				"ckeditor" : "ckeditor/ckeditor",
 				"jquery.ckeditor" : "ckeditor/adapters/jquery",

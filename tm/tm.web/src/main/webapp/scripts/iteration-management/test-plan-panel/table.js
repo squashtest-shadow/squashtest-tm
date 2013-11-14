@@ -59,8 +59,8 @@
 define(
 		[ 'jquery', 'squash.translator', './exec-runner', './sortmode',
 		  'datepicker/require.jquery.squash.datepicker-locales', 
-		  'jquery.squash.rangedatepicker', 'squashtable', 'jeditable', 'jquery.squash.buttonmenu' ],
-		function($, translator, execrunner, smode, regionale, rangedatepicker) {
+		  'jquery.squash.rangedatepicker', 'squash.dateutils', 'squashtable', 'jeditable', 'jquery.squash.buttonmenu' ],
+		function($, translator, execrunner, smode, regionale, rangedatepicker, dateutils) {
 
 			// ****************** TABLE CONFIGURATION **************
 
@@ -111,20 +111,21 @@ define(
 				// return the span element.
 				var assigneeurl = _conf.testplanUrl + data['entity-id'];
 				$row.find('.assignee-combo').children().first().editable(
-						assigneeurl, {
-							type : 'select',
-							data : _conf.jsonAssignableUsers,
-							name : 'assignee',
-							onblur : 'cancel',
-							callback : _conf.submitAssigneeClbk
-						});
+					assigneeurl, {
+						type : 'select',
+						data : _conf.jsonAssignableUsers,
+						name : 'assignee',
+						onblur : 'cancel',
+						callback : _conf.submitAssigneeClbk
+					});
 
 			}
 
 			function _rowCallbackExecFeatures($row, data, _conf) {
 
 				// add the execute shortcut menu
-				var isTcDel = data['is-tc-deleted'], isManual = (data['exec-mode'] === "M");
+				var isTcDel = data['is-tc-deleted'], 
+					isManual = (data['exec-mode'] === "M");
 
 				var tpId = data['entity-id'], $td = $row
 						.find('.execute-button'), strmenu = $(
@@ -273,18 +274,23 @@ define(
 
 					testplanUrl : initconf.urls.testplanUrl,
 
-					jsonStatuses : JSON
-							.stringify(initconf.messages.executionStatus),
-					submitStatusClbk : function(value, settings) {
-						var $span = $(this), statuses = JSON
-								.parse(settings.data);
+					jsonStatuses : JSON.stringify(initconf.messages.executionStatus),
+					
+					submitStatusClbk : function(json, settings) {
+						var $span = $(this), 
+							$execon= $span.parentNode.parents('tr:first').find("td.exec-on"),
+							statuses = JSON.parse(settings.data);
+						
 						$span.attr('class', 'exec-status-label exec-status-'
-								+ value.toLowerCase());
+								+ json.executionStatus.toLowerCase());
 						$span.text(statuses[value]);
+						
+						var newdate = dateutils.convert
+						$execon.text();
 					},
 
-					jsonAssignableUsers : JSON
-							.stringify(initconf.basic.assignableUsers),
+					jsonAssignableUsers : JSON.stringify(initconf.basic.assignableUsers),
+					
 					submitAssigneeClbk : function(value, settings) {
 						var assignableUsers = JSON.parse(settings.data);
 						$(this).text(assignableUsers[value]);
@@ -295,23 +301,23 @@ define(
 
 					manualHandler : function() {
 
-						var $this = $(this), tpid = $this.data('tpid'), ui = ($this
-								.is('.run-popup')) ? "popup" : "oer", newurl = initconf.urls.testplanUrl
+						var $this = $(this), 
+							tpid = $this.data('tpid'), 
+							ui = ($this.is('.run-popup')) ? "popup" : "oer", newurl = initconf.urls.testplanUrl
 								+ tpid + '/executions/new';
 
 						$.post(newurl, {
 							mode : 'manual'
-						}, 'json').done(
-								function(execId) {
-									var execurl = initconf.urls.executionsUrl
-											+ execId + '/runner';
-									if (ui === "popup") {
-										execrunner.runInPopup(execurl);
-									} else {
-										execrunner.runInOER(execurl);
-									}
+						}, 'json').done(function(execId) {
+							var execurl = initconf.urls.executionsUrl
+									+ execId + '/runner';
+							if (ui === "popup") {
+								execrunner.runInPopup(execurl);
+							} else {
+								execrunner.runInOER(execurl);
+							}
 
-								});
+						});
 					},
 
 					automatedHandler : function() {
@@ -320,22 +326,19 @@ define(
 								.fnGetData(row), tpid = data['entity-id'], newurl = initconf.urls.testplanUrl
 								+ tpid + '/executions/new';
 
-						$
-								.post(newurl, {
-									mode : 'auto'
-								}, 'json')
-								.done(
-										function(suiteview) {
-											if (suiteview.executions.length === 0) {
-												$.squash
-														.openMessage(
-																initcon.messages.titleInfo,
-																initconf.messages.messageNoAutoexecFound);
-											} else {
-												squashtm.automatedSuiteOverviewDialog
-														.open(suiteview);
-											}
-										});
+						$.post(newurl, {
+							mode : 'auto'
+						}, 'json')
+						.done(function(suiteview) {
+							if (suiteview.executions.length === 0) {
+								var _msg ) initconf.messages;
+								$.squash.openMessage(_msg.titleInfo,
+												_msg.messageNoAutoexecFound);
+							} else {
+								squashtm.automatedSuiteOverviewDialog
+										.open(suiteview);
+							}
+						});
 
 					}
 				};
@@ -391,97 +394,60 @@ define(
 							var data = table.fnGetData(jqold.get(0)), url = initconf.urls.testplanUrl
 									+ data['entity-id'] + '/executions';
 
-							jqnew
-									.load(
-											url,
-											function() {
+							jqnew.load(url, function() {
 
-												// styling
-												var newexecBtn = jqnew.find(
-														'.new-exec')
-														.squashButton(), newautoexecBtn = jqnew
-														.find('.new-auto-exec')
-														.squashButton();
+								// styling
+								var newexecBtn = jqnew.find(
+										'.new-exec')
+										.squashButton(), newautoexecBtn = jqnew
+										.find('.new-auto-exec')
+										.squashButton();
 
-												// the delete buttons
-												if (initconf.permissions.executable) {
+								// the delete buttons
+								if (initconf.permissions.executable) {
+									jqnew.find('.delete-execution-table-button')
+										.button({
+											text : false,
+											icons : {
+												primary : "ui-icon-trash"
+											}
+										}).on('click', function() {
+											var dialog = $("#iter-test-plan-delete-execution-dialog");
+											dialog.data('origin',this);
+											dialog.confirmDialog('open');
+										});
 
-													jqnew
-															.find(
-																	'.delete-execution-table-button')
-															.button(
-																	{
-																		text : false,
-																		icons : {
-																			primary : "ui-icon-trash"
-																		}
-																	})
-															.on(
-																	'click',
-																	function() {
-																		var dialog = $("#iter-test-plan-delete-execution-dialog");
-																		dialog
-																				.data(
-																						'origin',
-																						this);
-																		dialog
-																				.confirmDialog('open');
-																	});
+									// the new execution buttons
+									newexecBtn.click(function() {
+										var url = $(this).data('new-exec');
+										$.post(url,{
+											mode : 'manual'
+										},
+										'json')
+										.done(function(id) {
+											document.location.href = initconf.urls.executionsUrl + id;
+										});
+										return false;
+									});
 
-													// the new execution buttons
-
-													newexecBtn
-															.click(function() {
-																var url = $(
-																		this)
-																		.data(
-																				'new-exec');
-																$
-																		.post(
-																				url,
-																				{
-																					mode : 'manual'
-																				},
-																				'json')
-																		.done(
-																				function(
-																						id) {
-																					document.location.href = initconf.urls.executionsUrl
-																							+ id;
-																				});
-																return false;
-															});
-
-													newautoexecBtn
-															.click(function() {
-																var url = $(
-																		this)
-																		.data(
-																				'new-exec');
-																$
-																		.post(
-																				url,
-																				{
-																					mode : 'auto'
-																				},
-																				'json')
-																		.done(
-																				function(
-																						suiteview) {
-																					if (suiteview.executions.length === 0) {
-																						$.squash
-																								.openMessage(
-																										initcon.messages.titleInfo,
-																										initconf.messages.messageNoAutoexecFound);
-																					} else {
-																						squashtm.automatedSuiteOverviewDialog
-																								.open(suiteview);
-																					}
-																				});
-																return false;
-															});
-												}
-											});
+									newautoexecBtn.click(function() {
+										var url = $(this).data('new-exec');
+										$.post(url,{
+											mode : 'auto'
+										},
+										'json')
+										.done(function(suiteview) {
+											var _msg = initconf.messages;
+											if (suiteview.executions.length === 0) {
+												$.squash.openMessage(_msg.titleInfo,_msg.messageNoAutoexecFound);
+											} else {
+												squashtm.automatedSuiteOverviewDialog.open(suiteview);
+											}
+										});
+										return false;
+									});
+								}
+							});
 						}
 					}
 				};

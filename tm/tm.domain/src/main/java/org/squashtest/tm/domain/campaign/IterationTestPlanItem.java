@@ -61,6 +61,7 @@ import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.NotAutomatedException;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
+import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.security.annotation.InheritsAcls;
 
 @Entity
@@ -148,6 +149,10 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 
 	public void setExecutionStatus(ExecutionStatus executionStatus) {
 		this.executionStatus = executionStatus;
+
+		// since 1.8, also sets the following :
+		setLastExecutedOn(new Date());
+		setLastExecutedBy(UserContextHolder.getUsername());
 	}
 
 	/**
