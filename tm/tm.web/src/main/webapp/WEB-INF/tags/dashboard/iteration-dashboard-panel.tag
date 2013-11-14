@@ -30,7 +30,28 @@
 
 <f:message var="advanceTitle" key="title.CampaignCumulativeAdvancement"/>
 <f:message var="statisticsTitle" key="title.IterationStatistics"/>
-<f:message var="inventoryTitle" key="title.TestInventoryByIteration"/>
+<f:message var="inventoryTitle" key="title.TestInventoryByTestSuite"/>
+<f:message var="TestSuiteLabel" key="label.testSuite"/>
+<f:message var="TotalLabel" key="statisticsbytestsuite.total.label"/>
+<f:message var="ToDoLabel" key="statisticsbytestsuite.toDo.label"/>
+<f:message var="DoneLabel" key="statisticsbytestsuite.Done.label"/>
+<f:message var="ToExecuteLabel" key="label.Ready"/>
+<f:message var="RunningLabel" key="label.Running"/>
+<f:message var="SuccessLabel" key="label.Success"/>
+<f:message var="FailureLabel" key="label.Failure"/>
+<f:message var="BlockedLabel" key="label.Blocked"/>
+<f:message var="NonExecutableLabel" key="label.Untestable"/>
+<f:message var="ProgressLabel" key="statisticsbytestsuite.Progress.label"/>
+<f:message var="SuccessRateLabel" key="statisticsbytestsuite.SuccessRate.label"/>
+<f:message var="FailureRateLabel" key="statisticsbytestsuite.FailureRate.label"/>
+<f:message var="ProgressVsPrevLabel" key="statisticsbytestsuite.ProgressVsPrev.label"/>
+<f:message var="ToDoVsPrevLabel" key="statisticsbytestsuite.ToDoVsPrev.label"/>
+<f:message var="VeryHighLabel" key="test-case.importance.VERY_HIGH"/>
+<f:message var="HighLabel" key="test-case.importance.HIGH"/>
+<f:message var="MediumLabel" key="test-case.importance.MEDIUM"/>
+<f:message var="LowLabel" key="test-case.importance.LOW"/>
+
+
 <f:message var="refreshLabel" key="label.Refresh" />
 
 <div id="dashboard-master" data-def="url=${url}">
@@ -107,8 +128,23 @@
 						
 						
 						<div class="dashboard-item-meta">					
-						
+	
+								
 							<div class="dashboard-item-legend">
+								
+												<div>
+							<span class="serie serie0"><f:message key="test-case.importance.VERY_HIGH" /></span>
+						</div>
+						<div>
+							<span class="serie serie1"><f:message key="test-case.importance.HIGH" /></span>
+						</div>
+						<div>
+							<span class="serie serie2"><f:message key="test-case.importance.MEDIUM" /></span>
+						</div>
+						<div>
+							<span class="serie serie3"><f:message key="test-case.importance.LOW" /></span>
+						</div>
+						
 								<div>
 									<div class="dashboard-legend-sample-color" style="background-color:#99CC00"></div>
 									<span><f:message key="execution.execution-status.SUCCESS" /></span>
@@ -161,60 +197,73 @@
 				</jsp:attribute>
 			</comp:toggle-panel>
 			
-			<comp:toggle-panel id="test-suite-statistics" title="${statisticsTitle}">
+			<comp:toggle-panel id="test-suite-statistics" title="${inventoryTitle}">
 				<jsp:attribute name="body">
 				<div class="dashboard-figures">		
 					<table id="dashboard-test-inventory" class="dashboard-table" data-def="model-attribute=testsuiteTestInventoryStatisticsList">
 						<thead>
 							<tr>
-								<th colspan="1"></th>
-								<th colspan="3"></th>
-								<th colspan="11"></th>
-								<th colspan="4"></th>
+								<th style="border:none;" colspan="1"></th>
+								<th style="border:none;"></th>
+								<th class="status-color-untestable" colspan="3"><f:message key="label.Synthesis"/></th>
+								<th style="border:none;"></th>
+								<th class="status-color-untestable" colspan="13"><f:message key="label.ExecutionProgress"/> </th>
+								<th style="border:none;"></th>
+								<th class="status-color-untestable" colspan="4"><f:message key="label.NeverExecuted"/></th>
 							</tr>
 							<tr>				
-								<th></th>
-								<th></th>
-								<th></th>
-							    <th></th>
-								<th></th>
-								<th></th>															    								
-								<th></th>
-								<th></th>
-								<th></th>								
-								<th></th>
-								<th></th>								
-								<th></th>
-								<th></th>
-								<th></th>
-								<th></th>								
-								<th></th>
-								<th></th>
-								<th></th>								
-								<th></th>
+								<th title="${TestSuiteLabel}" class="status-color-campaign" style="width:10%"><f:message key="shortLabel.TestSuite"/></th>
+								<th style="border:none;"></th>
+								<th title="${TotalLabel}" class="status-color-campaign"><f:message key="shortLabel.Total"/></th>
+								<th title="${ToDoLabel}" class="status-color-campaign"><f:message key="shortLabel.ToDo"/></th>
+							    <th title="${DoneLabel}" class="status-color-campaign"><f:message key="shortLabel.Done"/></th>
+								<th style="border:none;"></th>
+								<th title="${ToExecuteLabel}" class="status-color-campaign"><f:message key="shortLabel.Ready"/></th>
+								<th title="${RunningLabel}" class="status-color-campaign"><f:message key="shortLabel.Running"/></th>															    								
+								<th title="${SuccessLabel}" class="status-color-campaign"><f:message key="shortLabel.Success"/></th>
+								<th title="${FailureLabel}" class="status-color-campaign"><f:message key="shortLabel.Failure"/></th>
+								<th title="${BlockedLabel}" class="status-color-campaign"><f:message key="shortLabel.Blocked"/></th>								
+								<th title="${NonExecutableLabel}" class="status-color-campaign"><f:message key="shortLabel.NonExecutable"/></th>
+								<th style="border:none;"></th>
+								<th title="${ProgressLabel}" class="status-color-campaign"><f:message key="shortLabel.ExecutionProgress"/></th>								
+								<th title="${SuccessRateLabel}" class="status-color-campaign"><f:message key="shortLabel.SuccessRate"/></th>
+								<th title="${FailureRateLabel}" class="status-color-campaign"><f:message key="shortLabel.FailureRate"/></th>
+								<th style="border:none;"></th>
+								<th title="${ProgressVsPrevLabel}" class="status-color-campaign" style="width:8%"><f:message key="shortLabel.ExecutionProgressComparedToPrev"/></th>
+								<th title="${ToDoVsPrevLabel}" class="status-color-campaign" style="width:8%"><f:message key="shortLabel.ToDoComparedToPrev"/></th>
+								<th style="border:none;"></th>								
+								<th title="${VeryHighLabel}" class="status-color-campaign"><f:message key="shortLabel.VeryHigh"/></th>
+								<th title="${HighLabel}" class="status-color-campaign"><f:message key="shortLabel.High"/></th>
+								<th title="${MediumLabel}" class="status-color-campaign"><f:message key="shortLabel.Medium"/></th>								
+								<th title="${LowLabel}"class="status-color-campaign"><f:message key="shortLabel.Low"/></th>
 							</tr>
 						</thead>
-					
+				
 						<tbody>
 							<tr class="dashboard-table-template-emptyrow">
 								<td colspan="19" class="std-border">No record founds (résultat vide) (internationalise moi ça)</td>
 							</tr>
 							<tr class="dashboard-table-template-datarow">
 								<td class="std-border light-border">{{this.[0]}}</td>
+								<td style="border:none;"></td>
 								<td class="std-border light-border">{{this.[1]}}</td>
-								<td class="std-border light-border">{{this.[2]}}</td>
-								<td class="std-border light-border">{{this.[3]}}</td>								
+								<td class="std-border light-border" style="color:blue;">{{this.[2]}}</td>
+								<td class="std-border light-border" style="color:purple;">{{this.[3]}}</td>								
+								<td style="border:none;"></td>
 								<td class="std-border light-border">{{this.[4]}}</td>
 								<td class="std-border light-border">{{this.[5]}}</td>
 								<td class="std-border light-border">{{this.[6]}}</td>
 								<td class="std-border light-border">{{this.[7]}}</td>
 								<td class="std-border light-border">{{this.[8]}}</td>
 								<td class="std-border light-border">{{this.[9]}}</td>
-								<td class="std-border light-border">{{this.[10]}}</td>								
-								<td class="std-border light-border">{{this.[11]}}</td>
-								<td class="std-border light-border">{{this.[12]}}</td>
-								<td class="std-border light-border">{{this.[13]}}</td>
+								<td style="border:none;"></td>
+								<td class="std-border light-border">{{this.[10]}}%</td>								
+								<td class="std-border light-border">{{this.[11]}}%</td>
+								<td class="std-border light-border">{{this.[12]}}%</td>
+								<td class="std-border light-border"></td>
+								<td class="std-border light-border">{{this.[13]}}%</td>
 								<td class="std-border light-border">{{this.[14]}}</td>
+								<td style="border:none;"></td>
 								<td class="std-border light-border">{{this.[15]}}</td>								
 								<td class="std-border light-border">{{this.[16]}}</td>
 								<td class="std-border light-border">{{this.[17]}}</td>

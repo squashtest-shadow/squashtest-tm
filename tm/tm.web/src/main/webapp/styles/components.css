@@ -238,6 +238,11 @@ table.datepicker-table td.datepicker-table-col {
 	background-color : #969696;
 }
 
+.status-color-campaign{
+	background-color : #7B4F93;
+	color : white;
+	font-weight : normal;
+}
 
 .manage-attachment-button {
 	border: 0 none;

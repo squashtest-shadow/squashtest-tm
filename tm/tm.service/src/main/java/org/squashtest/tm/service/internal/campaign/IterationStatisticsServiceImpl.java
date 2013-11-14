@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.campaign;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -163,10 +164,14 @@ private static final Logger LOGGER = LoggerFactory.getLogger(IterationStatistics
 			ExecutionStatus status = (ExecutionStatus)tuple[1];
 			TestCaseImportance importance = (TestCaseImportance)tuple[2];
 			Long howmany = (Long)tuple[3];
+			Date scheduledStart = (Date)tuple[4];
+			Date scheduledEnd = (Date)tuple[5];
 			
 			if(!previousSuiteName.equals(suiteName)){
 				newStatistics = new TestSuiteTestInventoryStatistics();
 				newStatistics.setTestsuiteName(suiteName);
+				newStatistics.setScheduledStart(scheduledStart);
+				newStatistics.setScheduledEnd(scheduledEnd);
 				result.add(newStatistics);
 			}
 			

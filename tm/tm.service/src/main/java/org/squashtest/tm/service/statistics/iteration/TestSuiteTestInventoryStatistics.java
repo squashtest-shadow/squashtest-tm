@@ -20,10 +20,17 @@
  */
 package org.squashtest.tm.service.statistics.iteration;
 
+import java.util.Date;
+
+import org.squashtest.tm.domain.planning.StandardWorkloadCalendar;
+import org.squashtest.tm.domain.planning.WorkloadCalendar;
+
 public class TestSuiteTestInventoryStatistics {
 
     private String testsuiteName = "";
-
+    private Date scheduledStart;
+    private Date scheduledEnd;
+    
     private int nbReady = 0;
     private  int nbRunning = 0;
     private  int nbSuccess = 0;
@@ -31,9 +38,6 @@ public class TestSuiteTestInventoryStatistics {
     private int nbBlocked = 0;
     private int nbUntestable = 0;
 
-    private float pcPrevProgress = 0;
-    private int nbPrevToExecute = 0;
-   
     private int nbVeryHigh = 0;
     private int nbHigh = 0;
     private int nbMedium = 0;
@@ -91,25 +95,24 @@ public class TestSuiteTestInventoryStatistics {
 		this.nbUntestable += nbUntestable;
 	}
 	public float getPcProgress() {
-		return ((float) getNbExecuted() / (float) getNbTotal())*100;
+		return Math.round(((float) getNbExecuted() / (float) getNbTotal())*10000)/100;
 	}
 	public float getPcSuccess() {
-		return  ((float) getNbSuccess() / (float) getNbTotal())*100;
+		return  Math.round(((float) getNbSuccess() / (float) getNbTotal())*10000)/100;
 	}
 	public float getPcFailure() {
-		return  ((float) getNbFailure() / (float) getNbTotal())*100;
+		return  Math.round(((float) getNbFailure() / (float) getNbTotal())*10000)/100;
 	}
 	public float getPcPrevProgress() {
-		return pcPrevProgress;
-	}
-	public void setPcPrevProgress(float pcPrevProgress) {
-		this.pcPrevProgress = pcPrevProgress;
+		if(nbOfTestsToExecuteToDate(scheduledStart, scheduledEnd, new Date(), getNbTotal()) != 0.0f){
+			return Math.round(((float) getNbExecuted() / nbOfTestsToExecuteToDate(scheduledStart, scheduledEnd, new Date(), getNbTotal()))*10000)/100;
+		} else {
+			return getPcProgress();
+		}
+		
 	}
 	public int getNbPrevToExecute() {
-		return nbPrevToExecute;
-	}
-	public void setNbPrevToExecute(int nbPrevToExecute) {
-		this.nbPrevToExecute = nbPrevToExecute;
+		return ((int) nbOfTestsToExecuteToDate(scheduledStart, scheduledEnd,  new Date(), getNbTotal()) - getNbExecuted());
 	}
 	public int getNbVeryHigh() {
 		return nbVeryHigh;
@@ -134,5 +137,44 @@ public class TestSuiteTestInventoryStatistics {
 	}
 	public void addNbLow(int nbLow) {
 		this.nbLow += nbLow;
+	}
+	
+	private float nbOfTestsToExecuteToDate(Date scheduledStart, Date scheduledEnd, Date currentDate, int nbTests){
+		
+		float result = 0.0f;
+		
+		//if current date is before the start of the previsional schedule
+		if(scheduledStart == null || scheduledEnd==null || currentDate.before(scheduledStart)){
+			result = 0.0f;
+		//if current date is after the end of the execution schedule
+		} else if(currentDate.after(scheduledEnd)){
+			result = nbTests;
+		} else {
+			
+			//Get total number of business days
+			WorkloadCalendar workloadCalendar = new StandardWorkloadCalendar();
+			float totalNumberOfBusinessDays = workloadCalendar.getWorkload(scheduledStart, scheduledEnd);
+
+			//Get number of open days before current date
+			float numberOfSpentBusinessDays = workloadCalendar.getWorkload(scheduledStart, currentDate);
+			
+			//Compute percentage of already spent time 
+			float spentTime = numberOfSpentBusinessDays / totalNumberOfBusinessDays;
+			
+			result = nbTests * spentTime;
+		}
+		return result;
+	}
+	public Date getScheduledStart() {
+		return scheduledStart;
+	}
+	public void setScheduledStart(Date scheduledStart) {
+		this.scheduledStart = scheduledStart;
+	}
+	public Date getScheduledEnd() {
+		return scheduledEnd;
+	}
+	public void setScheduledEnd(Date scheduledEnd) {
+		this.scheduledEnd = scheduledEnd;
 	}
 }

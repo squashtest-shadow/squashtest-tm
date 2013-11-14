@@ -151,14 +151,26 @@ define(["jquery", "./jqplot-view", "iesupport/am-I-ie8", "./ie8-special-pie-rend
 						sliceMargin : 1.5,
 					    innerDiameter: 20
 					},
-					showHighlight : false
+					showHighlight : true
 				},
 				grid : {
 					background : '#FFFFFF',
 					drawBorder : false,
 					shadow : false
 				},
-				seriesColors : colorsAndLabels.colors
+				seriesColors : colorsAndLabels.colors,
+								highlighter : {
+									show : true,
+									showMarker : false,
+									showTooltip : true,
+									sizeAdjust : 0,
+									useAxesFormatters : false,
+									tooltipContentEditor : function(str, seriesIndex, pointIndex, plot) {
+										$(".serie").removeClass("span-bold");
+										$(".serie"+seriesIndex).addClass("span-bold");
+										$(".jqplot-series-canvas").on("jqplotDataUnhighlight", function(){alert("lol");});
+									}
+								}
 			};
 		},
 		

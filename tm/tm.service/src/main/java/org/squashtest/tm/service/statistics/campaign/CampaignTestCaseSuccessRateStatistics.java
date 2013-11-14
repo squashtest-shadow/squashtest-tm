@@ -20,180 +20,126 @@
  */
 package org.squashtest.tm.service.statistics.campaign;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 
 public class CampaignTestCaseSuccessRateStatistics {
 
-	private int nbVeryHighSuccess = 0;
-	private int nbHighSuccess = 0;
-	private int nbMediumSuccess = 0;
-	private int nbLowSuccess = 0;
-	
-	private int nbVeryHighFailure = 0;
-	private int nbHighFailure = 0;
-	private int nbMediumFailure = 0;
-	private int nbLowFailure = 0;
-
-	private int nbVeryHighOther = 0;
-	private int nbHighOther = 0;
-	private int nbMediumOther = 0;
-	private int nbLowOther = 0;
+	private Map<ExecutionStatus, Integer> testsOfLowImportance = new HashMap<ExecutionStatus, Integer>();
+	private Map<ExecutionStatus, Integer> testsOfMediumImportance = new HashMap<ExecutionStatus, Integer>();
+	private Map<ExecutionStatus, Integer> testsOfHighImportance = new HashMap<ExecutionStatus, Integer>();
+	private Map<ExecutionStatus, Integer> testsOfVeryHighImportance = new HashMap<ExecutionStatus, Integer>();	
 	
 	public void addNbLow(ExecutionStatus status, int number){
-		
-		switch(status){
-		case BLOCKED: nbLowOther++;
-			break;
-		case ERROR: nbLowFailure++;
-			break;
-		case FAILURE: nbLowFailure++;
-			break;
-		case READY: nbLowOther++;
-			break;
-		case RUNNING: nbLowOther++;
-			break;
-		case SUCCESS: nbLowSuccess++;
-			break;
-		case UNTESTABLE: nbLowOther++;
-			break;
-		case WARNING: nbLowSuccess++;
-			break;
+			
+		if(!this.testsOfLowImportance.containsKey(status)){
+			this.testsOfLowImportance.put(status, 0);
 		}
+			
+		Integer nb = this.testsOfLowImportance.get(status);
+		nb += number;
+		this.testsOfLowImportance.put(status, nb);
 	}
 
 	public void addNbMedium(ExecutionStatus status, int number){
-		switch(status){
-		case BLOCKED: nbMediumOther++;
-			break;
-		case ERROR: nbMediumFailure++;
-			break;
-		case FAILURE: nbMediumFailure++;
-			break;
-		case READY: nbMediumOther++;
-			break;
-		case RUNNING: nbMediumOther++;
-			break;
-		case SUCCESS: nbMediumSuccess++;
-			break;
-		case UNTESTABLE: nbMediumOther++;
-			break;
-		case WARNING: nbMediumSuccess++;
-			break;
+		
+		if(!this.testsOfMediumImportance.containsKey(status)){
+			this.testsOfMediumImportance.put(status, 0);
 		}
+			
+		Integer nb = this.testsOfMediumImportance.get(status);
+		nb += number;
+		this.testsOfMediumImportance.put(status, nb);
 	}
 	
 	public void addNbHigh(ExecutionStatus status, int number){
-		switch(status){
-		case BLOCKED: nbHighOther++;
-			break;
-		case ERROR: nbHighFailure++;
-			break;
-		case FAILURE: nbHighFailure++;
-			break;
-		case READY: nbHighOther++;
-			break;
-		case RUNNING: nbHighOther++;
-			break;
-		case SUCCESS: nbHighSuccess++;
-			break;
-		case UNTESTABLE: nbHighOther++;
-			break;
-		case WARNING: nbHighSuccess++;
-			break;
+	
+		if(!this.testsOfHighImportance.containsKey(status)){
+			this.testsOfHighImportance.put(status, 0);
 		}
+			
+		Integer nb = this.testsOfHighImportance.get(status);
+		nb += number;
+		this.testsOfHighImportance.put(status, nb);
+
 	}
 	
 	public void addNbVeryHigh(ExecutionStatus status, int number){
-		switch(status){
-		case BLOCKED: nbVeryHighOther++;
-			break;
-		case ERROR: nbVeryHighFailure++;
-			break;
-		case FAILURE: nbVeryHighFailure++;
-			break;
-		case READY: nbVeryHighOther++;
-			break;
-		case RUNNING: nbVeryHighOther++;
-			break;
-		case SUCCESS: nbVeryHighSuccess++;
-			break;
-		case UNTESTABLE: nbVeryHighOther++;
-			break;
-		case WARNING: nbVeryHighSuccess++;
-			break;
+		
+		if(!this.testsOfVeryHighImportance.containsKey(status)){
+			this.testsOfVeryHighImportance.put(status, 0);
 		}
+			
+		Integer nb = this.testsOfVeryHighImportance.get(status);
+		nb += number;
+		this.testsOfVeryHighImportance.put(status, nb);
+
 	}
-	
+
 	public int getNbVeryHighSuccess() {
-		return nbVeryHighSuccess;
-	}
-	public void setNbVeryHighSuccess(int nbVeryHighSuccess) {
-		this.nbVeryHighSuccess = nbVeryHighSuccess;
+		return getValue(testsOfVeryHighImportance, ExecutionStatus.SUCCESS)+
+				getValue(testsOfVeryHighImportance, ExecutionStatus.WARNING);
 	}
 	public int getNbHighSuccess() {
-		return nbHighSuccess;
-	}
-	public void setNbHighSuccess(int nbHighSuccess) {
-		this.nbHighSuccess = nbHighSuccess;
+		return getValue(testsOfHighImportance, ExecutionStatus.SUCCESS)+
+				getValue(testsOfHighImportance, ExecutionStatus.WARNING);
 	}
 	public int getNbMediumSuccess() {
-		return nbMediumSuccess;
-	}
-	public void setNbMediumSuccess(int nbMediumSuccess) {
-		this.nbMediumSuccess = nbMediumSuccess;
+		return getValue(testsOfMediumImportance, ExecutionStatus.SUCCESS)+
+				getValue(testsOfMediumImportance, ExecutionStatus.WARNING);
 	}
 	public int getNbLowSuccess() {
-		return nbLowSuccess;
-	}
-	public void setNbLowSuccess(int nbLowSuccess) {
-		this.nbLowSuccess = nbLowSuccess;
+		return getValue(testsOfLowImportance, ExecutionStatus.SUCCESS)+
+				getValue(testsOfLowImportance, ExecutionStatus.WARNING);
 	}
 	public int getNbVeryHighFailure() {
-		return nbVeryHighFailure;
-	}
-	public void setNbVeryHighFailure(int nbVeryHighFailure) {
-		this.nbVeryHighFailure = nbVeryHighFailure;
+		return getValue(testsOfVeryHighImportance, ExecutionStatus.FAILURE)+
+				getValue(testsOfVeryHighImportance, ExecutionStatus.ERROR);
 	}
 	public int getNbHighFailure() {
-		return nbHighFailure;
-	}
-	public void setNbHighFailure(int nbHighFailure) {
-		this.nbHighFailure = nbHighFailure;
+		return getValue(testsOfHighImportance, ExecutionStatus.FAILURE)+
+				getValue(testsOfHighImportance, ExecutionStatus.ERROR);
 	}
 	public int getNbMediumFailure() {
-		return nbMediumFailure;
-	}
-	public void setNbMediumFailure(int nbMediumFailure) {
-		this.nbMediumFailure = nbMediumFailure;
+		return getValue(testsOfMediumImportance, ExecutionStatus.FAILURE)+
+				getValue(testsOfMediumImportance, ExecutionStatus.ERROR);
 	}
 	public int getNbLowFailure() {
-		return nbLowFailure;
-	}
-	public void setNbLowFailure(int nbLowFailure) {
-		this.nbLowFailure = nbLowFailure;
+		return getValue(testsOfLowImportance, ExecutionStatus.FAILURE)+
+				getValue(testsOfLowImportance, ExecutionStatus.ERROR);
 	}
 	public int getNbVeryHighOther() {
-		return nbVeryHighOther;
-	}
-	public void setNbVeryHighOther(int nbVeryHighOther) {
-		this.nbVeryHighOther = nbVeryHighOther;
+		return getValue(testsOfVeryHighImportance, ExecutionStatus.BLOCKED)+
+				getValue(testsOfVeryHighImportance, ExecutionStatus.READY)+
+				getValue(testsOfVeryHighImportance, ExecutionStatus.RUNNING)+
+				getValue(testsOfVeryHighImportance, ExecutionStatus.UNTESTABLE);
 	}
 	public int getNbHighOther() {
-		return nbHighOther;
-	}
-	public void setNbHighOther(int nbHighOther) {
-		this.nbHighOther = nbHighOther;
+		return getValue(testsOfHighImportance, ExecutionStatus.BLOCKED)+
+				getValue(testsOfHighImportance, ExecutionStatus.READY)+
+				getValue(testsOfHighImportance, ExecutionStatus.RUNNING)+
+				getValue(testsOfHighImportance, ExecutionStatus.UNTESTABLE);
 	}
 	public int getNbMediumOther() {
-		return nbMediumOther;
-	}
-	public void setNbMediumOther(int nbMediumOther) {
-		this.nbMediumOther = nbMediumOther;
+		return getValue(testsOfMediumImportance, ExecutionStatus.BLOCKED)+
+				getValue(testsOfMediumImportance, ExecutionStatus.READY)+
+				getValue(testsOfMediumImportance, ExecutionStatus.RUNNING)+
+				getValue(testsOfMediumImportance, ExecutionStatus.UNTESTABLE);
 	}
 	public int getNbLowOther() {
-		return nbLowOther;
+		return getValue(testsOfLowImportance, ExecutionStatus.BLOCKED)+
+				getValue(testsOfLowImportance, ExecutionStatus.READY)+
+				getValue(testsOfLowImportance, ExecutionStatus.RUNNING)+
+				getValue(testsOfLowImportance, ExecutionStatus.UNTESTABLE);
 	}
-	public void setNbLowOther(int nbLowOther) {
-		this.nbLowOther = nbLowOther;
+	
+	public int getValue(Map<ExecutionStatus, Integer> map, ExecutionStatus status){
+		if(map.containsKey(status)){
+			return map.get(status);
+		} else {
+			return 0;
+		}
 	}
 }

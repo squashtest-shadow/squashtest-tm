@@ -155,8 +155,21 @@
 						
 						
 						<div class="dashboard-item-meta">					
+						<div class="dashboard-item-legend">
+											<div>
+							<span class="serie serie0"><f:message key="test-case.importance.VERY_HIGH" /></span>
+						</div>
+						<div>
+							<span class="serie serie1"><f:message key="test-case.importance.HIGH" /></span>
+						</div>
+						<div>
+							<span class="serie serie2"><f:message key="test-case.importance.MEDIUM" /></span>
+						</div>
+						<div>
+							<span class="serie serie3"><f:message key="test-case.importance.LOW" /></span>
+						</div>
 						
-							<div class="dashboard-item-legend">
+							
 								<div>
 									<div class="dashboard-legend-sample-color" style="background-color:#99CC00"></div>
 									<span><f:message key="execution.execution-status.SUCCESS" /></span>
@@ -218,12 +231,12 @@
 						<thead>
 							<tr >				
 								<th style="width:25%"><span><f:message key="label.iteration"/></span></th>
-								<th class="status-color-ready std-border thick-border-left"><span><f:message key="label.Ready"/></span></th>
+								<th class="status-color-ready std-border"><span><f:message key="label.Ready"/></span></th>
 								<th class="status-color-running"><span><f:message key="label.Running"/></span></th>
 								<th class="status-color-success"><span><f:message key="label.Success"/></span></th>
 								<th class="status-color-failure"><span><f:message key="label.Failure"/></span></th>
 								<th class="status-color-blocked"><span><f:message key="label.Blocked"/></span></th>
-								<th class="status-color-untestable std-border thick-border-right"><span><f:message key="label.Untestable"/></span></th>
+								<th class="status-color-untestable std-border"><span><f:message key="label.Untestable"/></span></th>
 								<th ><span><f:message key="dashboard.campaigns.testinventory.legend.testnumber"/></span></th>
 								<th ><span><f:message key="dashboard.campaigns.testinventory.legend.advancementexecution"/></span></th>
 							</tr>
@@ -234,13 +247,13 @@
 								<td colspan="9" class="std-border">No record founds (résultat vide) (internationalise moi ça)</td>
 							</tr>
 							<tr class="dashboard-table-template-datarow">
-								<td class="std-border light-border" style="font-weight:bold">{{this.[0]}}</td>
-								<td class="std-border light-border" style="border-left:2px solid black;">{{this.[1]}}</td>
+								<td class="std-border light-border" style="text-align:left;padding-left:10pt;font-weight:bold">{{this.[0]}}</td>
+								<td class="std-border light-border">{{this.[1]}}</td>
 								<td class="std-border light-border">{{this.[2]}}</td>
 								<td class="std-border light-border">{{this.[3]}}</td>
 								<td class="std-border light-border">{{this.[4]}}</td>
 								<td class="std-border light-border">{{this.[5]}}</td>
-								<td class="std-border light-border" style="border-right:2px solid black;">{{this.[6]}}</td>
+								<td class="std-border light-border">{{this.[6]}}</td>
 								<td class="std-border light-border" style="font-weight:bold;">{{this.[7]}}</td>
 								<td class="std-border light-border"style="font-weight:bold;">{{this.[8]}}</td>
 							</tr>
