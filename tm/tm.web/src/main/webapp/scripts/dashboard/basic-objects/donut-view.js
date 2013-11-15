@@ -69,16 +69,12 @@
  * 
  */
 
-define(["jquery", "./jqplot-view", "iesupport/am-I-ie8", "./ie8-special-pie-renderer", 
-        "jqplot-donut", "jquery.throttle-debounce"], function($, JqplotView, isIE8, specialHandler){
+define(["jquery", "./jqplot-view",  "jqplot-donut", "jquery.throttle-debounce","jqplot-highlight"], 
+		function($, JqplotView){
 
-	
 	
 	return JqplotView.extend({
 		
-		// The color for '0%' charts
-		EMPTY_COLOR : ["#EEEEEE"],
-
 
 		_readDOM : function(){
 			
@@ -90,8 +86,7 @@ define(["jquery", "./jqplot-view", "iesupport/am-I-ie8", "./ie8-special-pie-rend
 			
 			this.textlegend = legendspans.map(function(i,e){return $(e).text();}).get();
 			this.colorscheme = legendcolors.map(function(i,e){return $(e).css('background-color');}).get();
-			
-			
+			this.colorscheme.push("rgb(238, 238, 238)");
 		},
 
 
@@ -106,14 +101,7 @@ define(["jquery", "./jqplot-view", "iesupport/am-I-ie8", "./ie8-special-pie-rend
 			var pieserie = this.getData();
 			var conf = this.getConf(pieserie);		
 			
-			// IE8 needs a crutch
-			if (isIE8 && (pieserie.isEmpty || pieserie.isFull)){
-				specialHandler.render(conf, this.$el.find('.dashboard-item-view'));
-			}
-			else{
-				this.draw(pieserie.plotdata, conf);
-			}
-
+			this.draw(pieserie.plotdata, conf);
 		},
 		
 		// ************************** configuration *************************
@@ -156,18 +144,17 @@ define(["jquery", "./jqplot-view", "iesupport/am-I-ie8", "./ie8-special-pie-rend
 					shadow : false
 				},
 				seriesColors : colorsAndLabels.colors,
-								highlighter : {
-									show : true,
-									showMarker : false,
-									showTooltip : true,
-									sizeAdjust : 0,
-									useAxesFormatters : false,
-									tooltipContentEditor : function(str, seriesIndex, pointIndex, plot) {
-										$(".serie").removeClass("span-bold");
-										$(".serie"+seriesIndex).addClass("span-bold");
-										$(".jqplot-series-canvas").on("jqplotDataUnhighlight", function(){alert("lol");});
-									}
-								}
+				highlighter : {
+					show : true,
+					showMarker : false,
+					showTooltip : true,
+					sizeAdjust : 0,
+					useAxesFormatters : false,
+					tooltipContentEditor : function(str, seriesIndex, pointIndex, plot) {
+						$(".serie").removeClass("span-bold");
+						$(".serie"+seriesIndex).addClass("span-bold");
+					}
+				}
 			};
 		},
 		
