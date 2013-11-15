@@ -31,10 +31,12 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
+import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.requirement.CustomRequirementVersionManagerService;
+import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 
 /**
  * @author Gregory Fouquet
@@ -45,6 +47,8 @@ import org.squashtest.tm.service.requirement.CustomRequirementVersionManagerServ
 public class CustomRequirementVersionManagerServiceImpl implements CustomRequirementVersionManagerService {
 	@Inject
 	private RequirementVersionDao requirementVersionDao;
+	@Inject
+	private TestCaseImportanceManagerService testCaseImportanceManagerService;
 
 	/**
 	 * @see org.squashtest.tm.service.requirement.CustomRequirementVersionManagerService#changeCriticality(long,
@@ -54,9 +58,9 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void changeCriticality(long requirementVersionId, RequirementCriticality criticality) {
 		RequirementVersion requirementVersion = requirementVersionDao.findById(requirementVersionId);
-		// FIXME should send event to test cases
+		RequirementCriticality oldCriticality = requirementVersion.getCriticality();
 		requirementVersion.setCriticality(criticality);
-
+		testCaseImportanceManagerService.changeImportanceIfRequirementCriticalityChanged(requirementVersionId, oldCriticality);
 	}
 
 	/**
