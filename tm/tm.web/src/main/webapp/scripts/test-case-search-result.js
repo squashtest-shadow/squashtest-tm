@@ -35,7 +35,7 @@ require([ "common" ], function(common) {
 					document.location.href = squashtm.app.contextRoot + "test-suites/"+associationId+"/test-plan-manager";
 				} 
 			} else {
-				document.location.href = squashtm.app.contextRoot + "test-case-workspace";
+				document.location.href = squashtm.app.contextRoot + "test-case-workspace/";
 			}
 		};
 

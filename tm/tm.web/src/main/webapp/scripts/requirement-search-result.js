@@ -29,7 +29,7 @@ require([ "common" ], function(common) {
 					document.location.href = squashtm.app.contextRoot + "test-cases/"+associationId+"/verified-requirement-versions/manager";
 				}
 			} else {
-				document.location.href = squashtm.app.contextRoot + "requirement-workspace";
+				document.location.href = squashtm.app.contextRoot + "requirement-workspace/";
 			}
 		};
 

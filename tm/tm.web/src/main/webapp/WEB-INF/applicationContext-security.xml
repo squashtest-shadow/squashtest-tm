@@ -42,7 +42,7 @@
     <intercept-url pattern="/login" access="permitAll" />
 
 		<!-- Logout page config; we have to set "home-workspace" instead of "/" for logout url to avoid "/null" url -->
-    <logout invalidate-session="true" logout-success-url="/home-workspace" logout-url="/logout" />
+    <logout invalidate-session="true" logout-success-url="/home-workspace/" logout-url="/logout" />
 
     <request-cache ref="httpSessionRequestCache" />
 

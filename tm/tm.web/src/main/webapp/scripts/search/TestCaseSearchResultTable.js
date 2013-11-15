@@ -430,7 +430,7 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 			var $cell = $(".search-open-tree-holder", row);
 			$cell.append('<span class="search-open-tree"></span>')
 				.click(function(){
-				window.location = squashtm.app.contextRoot + "/test-case-workspace?element_id="+id;
+				window.location = squashtm.app.contextRoot + "/test-case-workspace/?element_id="+id;
 			});
 		},
 				

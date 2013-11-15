@@ -40,9 +40,9 @@ require([ "common" ], function(common) {
 				}
 			} else {
 				if("testcase" === searchDomain){
-					document.location.href = squashtm.app.contextRoot + "test-case-workspace";
+					document.location.href = squashtm.app.contextRoot + "test-case-workspace/";
 				} else if("requirement" === searchDomain){
-					document.location.href = squashtm.app.contextRoot + "requirement-workspace";
+					document.location.href = squashtm.app.contextRoot + "requirement-workspace/";
 				}
 			}
 		};

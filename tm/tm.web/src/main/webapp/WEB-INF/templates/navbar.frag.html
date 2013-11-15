@@ -29,10 +29,10 @@
 <body>
 	<div id="workspace" th:fragment="navbar">
 		<div id="test_mgt_nav" th:with="bugtrackers = ${#workspace.visibleBugtrackers()}">
-			<a id="home-link" 			class="navigation-link navigation-home" 			href="home-workspace.html" th:href="@{/home-workspace}" th:title="#{workspace.home.button.label}"></a>
-			<a id="requirement-link" 	class="navigation-link navigation-requirement" 		href="requirement-workspace.html" th:href="@{/requirement-workspace}" th:title="#{workspace.requirement.button.label}"></a>
-			<a id="test-case-link" 		class="navigation-link navigation-test-case" 		href="test-case-workspace.html" th:href="@{/test-case-workspace}" th:title="#{workspace.test-case.button.label}" ></a>
-			<a id="campaign-link" 		class="navigation-link navigation-campaign" 		href="campaign-workspace.html" th:href="@{/campaign-workspace}" th:title="#{workspace.campaign.button.label}" ></a>
+			<a id="home-link" 			class="navigation-link navigation-home" 			href="home-workspace.html" th:href="@{/home-workspace/}" th:title="#{workspace.home.button.label}"></a>
+			<a id="requirement-link" 	class="navigation-link navigation-requirement" 		href="requirement-workspace.html" th:href="@{/requirement-workspace/}" th:title="#{workspace.requirement.button.label}"></a>
+			<a id="test-case-link" 		class="navigation-link navigation-test-case" 		href="test-case-workspace.html" th:href="@{/test-case-workspace/}" th:title="#{workspace.test-case.button.label}" ></a>
+			<a id="campaign-link" 		class="navigation-link navigation-campaign" 		href="campaign-workspace.html" th:href="@{/campaign-workspace/}" th:title="#{workspace.campaign.button.label}" ></a>
 			
 			<a id="bugtracker-link"	 	class="navigation-link navigation-bugtracker" 		th:classappend="${#lists.isEmpty(bugtrackers)} ? 'not-displayed'" th:title="#{workspace.bugtracker.button.label}"></a>
 			<ul class="not-displayed width:130px;">			
