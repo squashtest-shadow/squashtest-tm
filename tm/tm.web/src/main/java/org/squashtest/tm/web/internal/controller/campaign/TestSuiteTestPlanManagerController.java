@@ -89,7 +89,11 @@ public class TestSuiteTestPlanManagerController {
 	private static final String FALSE = "false";
 	private static final String TESTCASES_IDS_REQUEST_PARAM = "testCasesIds[]";
 	private static final String TEST_SUITE = "testSuite";
-
+	private static final String TEST_SUITE_ID = "suiteId";
+	private static final String NAME = "name";
+	private static final String REFERENCE = "reference";
+	private static final String IMPORTANCE = "importance";
+	
 	@Inject
 	private TestSuiteModificationService service;
 
@@ -110,9 +114,9 @@ public class TestSuiteTestPlanManagerController {
 	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
 			.map("entity-index", "index(IterationTestPlanItem)")
 			// index is a special case which means : no sorting.
-			.mapAttribute("project-name", "name", Project.class).mapAttribute("reference", "reference", TestCase.class)
-			.mapAttribute("tc-name", "name", TestCase.class).mapAttribute("importance", "importance", TestCase.class)
-			.mapAttribute("dataset", "name", Dataset.class)
+			.mapAttribute("project-name", NAME, Project.class).mapAttribute(REFERENCE, REFERENCE, TestCase.class)
+			.mapAttribute("tc-name", NAME, TestCase.class).mapAttribute(IMPORTANCE, IMPORTANCE, TestCase.class)
+			.mapAttribute("dataset", NAME, Dataset.class)
 			.mapAttribute("status", "executionStatus", IterationTestPlanItem.class)
 			.mapAttribute("assignee-login", "login", User.class)
 			.mapAttribute("last-exec-on", "lastExecutedOn", IterationTestPlanItem.class)
@@ -126,7 +130,7 @@ public class TestSuiteTestPlanManagerController {
 	private Provider<DriveNodeBuilder<TestCaseLibraryNode>> driveNodeBuilder;
 
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan-manager", method = RequestMethod.GET)
-	public ModelAndView showManager(@PathVariable("suiteId") long suiteId,
+	public ModelAndView showManager(@PathVariable(TEST_SUITE_ID) long suiteId,
 			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
 
 		LOGGER.debug("show test suite test plan manager for test suite #{}", suiteId);
@@ -154,7 +158,7 @@ public class TestSuiteTestPlanManagerController {
 
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan", params = RequestParams.S_ECHO_PARAM)
 	public @ResponseBody
-	DataTableModel getTestPlanModel(@PathVariable("suiteId") long suiteId, final DataTableDrawParameters params,
+	DataTableModel getTestPlanModel(@PathVariable(TEST_SUITE_ID) long suiteId, final DataTableDrawParameters params,
 			final Locale locale) {
 
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, testPlanMapper);
@@ -170,7 +174,7 @@ public class TestSuiteTestPlanManagerController {
 
 	@RequestMapping(value = "/test-suites/{suiteId}/assignable-users", method = RequestMethod.GET)
 	@ResponseBody
-	public List<TestPlanAssignableUser> getAssignUserForTestSuite(@PathVariable("suiteId") long suiteId,
+	public List<TestPlanAssignableUser> getAssignUserForTestSuite(@PathVariable(TEST_SUITE_ID) long suiteId,
 			final Locale locale) {
 
 		TestSuite testSuite = service.findById(suiteId);
@@ -192,14 +196,14 @@ public class TestSuiteTestPlanManagerController {
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{testPlanIds}", method = RequestMethod.POST, params = { "assignee" })
 	public @ResponseBody
 	long assignUserToCampaignTestPlanItem(@PathVariable("testPlanIds") List<Long> testPlanIds,
-			@PathVariable("suiteId") long suiteId, @RequestParam("assignee") long assignee) {
+			@PathVariable(TEST_SUITE_ID) long suiteId, @RequestParam("assignee") long assignee) {
 		iterationTestPlanManagerService.assignUserToTestPlanItems(testPlanIds, assignee);
 		return assignee;
 	}
 
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{itemIds}/position/{newIndex}", method = RequestMethod.POST)
 	@ResponseBody
-	public void changeTestPlanIndex(@PathVariable("suiteId") long suiteId, @PathVariable("newIndex") int newIndex,
+	public void changeTestPlanIndex(@PathVariable(TEST_SUITE_ID) long suiteId, @PathVariable("newIndex") int newIndex,
 			@PathVariable("itemIds") List<Long> itemIds) {
 		testSuiteTestPlanManagerService.changeTestPlanPosition(suiteId, newIndex, itemIds);
 	}
@@ -212,7 +216,7 @@ public class TestSuiteTestPlanManagerController {
 	 */
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/order", method = RequestMethod.POST)
 	@ResponseBody
-	public void reorderTestPlan(@PathVariable("suiteId") long suiteId, DataTableDrawParameters parameters) {
+	public void reorderTestPlan(@PathVariable(TEST_SUITE_ID) long suiteId, DataTableDrawParameters parameters) {
 
 		PagingAndMultiSorting sorting = new DataTableMultiSorting(parameters, testPlanMapper);
 		testSuiteTestPlanManagerService.reorderTestPlan(suiteId, sorting);
@@ -221,14 +225,14 @@ public class TestSuiteTestPlanManagerController {
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan", method = RequestMethod.POST, params = TESTCASES_IDS_REQUEST_PARAM)
 	public @ResponseBody
 	void addTestCasesToIteration(@RequestParam(TESTCASES_IDS_REQUEST_PARAM) List<Long> testCasesIds,
-			@PathVariable("suiteId") long suiteId) {
+			@PathVariable(TEST_SUITE_ID) long suiteId) {
 		testSuiteTestPlanManagerService.addTestCasesToIterationAndTestSuite(testCasesIds, suiteId);
 	}
 
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{testPlanIds}", method = RequestMethod.DELETE)
 	public @ResponseBody
 	String removeTestCaseFromTestSuiteAndIteration(@PathVariable("testPlanIds") List<Long> testPlanIds,
-			@PathVariable("suiteId") long suiteId) {
+			@PathVariable(TEST_SUITE_ID) long suiteId) {
 		// check if a test plan was already executed and therefore not removed from the iteration
 		Boolean response = testSuiteTestPlanManagerService.detachTestPlanFromTestSuiteAndRemoveFromIteration(
 				testPlanIds, suiteId);
@@ -238,7 +242,7 @@ public class TestSuiteTestPlanManagerController {
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{testPlanIds}", method = RequestMethod.DELETE, params = { "detach=true" })
 	public @ResponseBody
 	String detachTestCaseFromTestSuite(@PathVariable("testPlanIds") List<Long> testPlanIds,
-			@PathVariable("suiteId") long suiteId) {
+			@PathVariable(TEST_SUITE_ID) long suiteId) {
 		testSuiteTestPlanManagerService.detachTestPlanFromTestSuite(testPlanIds, suiteId);
 		return FALSE;
 	}
@@ -291,7 +295,7 @@ public class TestSuiteTestPlanManagerController {
 	}
 
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{itemId}/executions", method = RequestMethod.GET)
-	public ModelAndView getExecutionsForTestPlan(@PathVariable("suiteId") long suiteId,
+	public ModelAndView getExecutionsForTestPlan(@PathVariable(TEST_SUITE_ID) long suiteId,
 			@PathVariable("itemId") long itemId) {
 		LOGGER.debug("find model and view for executions of test plan item  #{}", itemId);
 		TestSuite testSuite = service.findById(suiteId);
@@ -320,7 +324,7 @@ public class TestSuiteTestPlanManagerController {
 	// returns the ID of the newly created execution
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{itemId}/executions/new", method = RequestMethod.POST, params = { "mode=manual" })
 	public @ResponseBody
-	String addManualExecution(@PathVariable("suiteId") long suiteId, @PathVariable("itemId") long itemId) {
+	String addManualExecution(@PathVariable(TEST_SUITE_ID) long suiteId, @PathVariable("itemId") long itemId) {
 		LOGGER.debug("add manual execution to item #{}", itemId);
 		TestSuite testSuite = service.findById(suiteId);
 		Long iterationId = testSuite.getIteration().getId();
@@ -334,7 +338,7 @@ public class TestSuiteTestPlanManagerController {
 
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{testPlanId}/executions/new", method = RequestMethod.POST, params = { "mode=auto" })
 	public @ResponseBody
-	AutomatedSuiteOverview addAutoExecution(@PathVariable("suiteId") long suiteId, @PathVariable("itemId") long itemId,
+	AutomatedSuiteOverview addAutoExecution(@PathVariable(TEST_SUITE_ID) long suiteId, @PathVariable("itemId") long itemId,
 			Locale locale) {
 		LOGGER.debug("add automated execution to item #{}", itemId);
 		List<Long> testPlanIds = new ArrayList<Long>(1);
