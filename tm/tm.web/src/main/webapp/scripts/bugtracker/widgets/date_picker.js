@@ -19,7 +19,13 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "../domain/FieldValue", "squash.configmanager", "jqueryui"], function($, FieldValue, confman){
+/*
+ * As of Squash TM 1.8 the date format can come in two flavor :
+ * 1 - datepicker format : the legacy one. The property of the conf object is rendering.inputType.meta['date-format']. Now deprecated.
+ * 2 - java format : the prefered one. The property of the conf object is rendering.inputType.meta['format'].
+ *  
+ */
+define(["jquery", "../domain/FieldValue", "squash.configmanager","squash.dateutils",  "jqueryui"], function($, FieldValue, confman, dateutils){
 
 
 	return {
@@ -28,7 +34,7 @@ define(["jquery", "../domain/FieldValue", "squash.configmanager", "jqueryui"], f
 			rendering : {
 				inputType : {
 					name : "date_picker",
-					meta : { 'date-format' : "yyyy-mm-dd" }
+					meta : { 'date-format' : "yy-mm-dd" }
 				}
 				
 			}
@@ -45,21 +51,23 @@ define(["jquery", "../domain/FieldValue", "squash.configmanager", "jqueryui"], f
 		},
 		
 		fieldvalue : function(fieldvalue){
-				var date,strDate;
+			var date,strDate;
 			if (fieldvalue===null || fieldvalue === undefined){
 				
-				date = this.element.datepicker('getDate');
-				var toFormat = this.options.rendering.inputType.meta['date-format'];
-				strDate = $.datepicker.formatDate(toFormat, date);
-				var typename = this.options.rendering.inputType.dataType;
+				date = this.element.datepicker('getDate'),
+				strDate = "";
 				
+				if (!! date){
+					strDate = this.formatDate(date);					
+				}
+				
+				var typename = this.options.rendering.inputType.dataType;
 				return new FieldValue("--", typename, strDate);
 			}
 			else{
-				var fromFormat = this.options.rendering.inputType.meta['date-format'];
 				strDate = fieldvalue.scalar;
 				if (!!strDate){
-					date = $.datepicker.parseDate(fromFormat, strDate);
+					date = this.parseDate(strDate);
 					this.element.datepicker('setDate', date);
 				}
 			}
@@ -74,6 +82,31 @@ define(["jquery", "../domain/FieldValue", "squash.configmanager", "jqueryui"], f
 			
 			
 			return input;
+		},
+		
+		formatDate : function(date){
+
+			var jsformat = this.options.rendering.inputType.meta['date-format'],		// the datepicker format (deprecated)
+				javaformat = this.options.rendering.inputType.meta['format'];			// the java format
+			
+			if (!! javaformat){
+				return dateutils.format(date, javaformat);
+			}
+			else{
+				return $.datepicker.formatDate(jsformat, date);
+			}
+		},
+		
+		parseDate : function(strdate){
+			var jsformat = this.options.rendering.inputType.meta['date-format'],		// the datepicker format (deprecated)
+				javaformat = this.options.rendering.inputType.meta['format'];			// the java format
+			
+			if (!! javaformat ){
+				return dateutils.parse(strdate, javaformat);
+			}
+			else{
+				return $.datepicker.parseDate(jsformat, strdate);
+			}
 		}
 	};
 

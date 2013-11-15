@@ -46,11 +46,20 @@ import java.util.Map;
  * 
  * 
  * <p>
- *   an InputType also accepts metadata that will be transmitted to the Squash UI, as a map. As of today, supported metadata are : 
+ *   an InputType also accepts metadata that will be transmitted to the Squash UI, as a map. Supported metadata are : 
  *   
  *   <ul>
- *   	<li>'date-format' : the format string for this input if a date is involved (mainly for DATE_PICKER and DATE_TIME). Example : 'date-format' : 'yyyy-mm-dd'</li>
- *   	<li>'onchange' : if set, when the widget on the Squash UI changes its value, it will emit a {@link DelegateCommand} to the bugtracker connector. Not all widgets 
+ *   	<li>'date-format' : since 1.5.1. DEPRECATED. The date format string if the input type is DATE_PICKER or DATE_TIME. 
+ *   		The format convention is the jquery datepicker convention .Example : 'date-format' : 'yy-mm-dd'. This is now deprecated, please use 'format' instead.</li>
+ *   	<li>
+ *   		'time-format' : since 1.5.1. Used to format the time in a DATE_TIME input. 
+ *   	</li>
+ *   	<li>'format' : since 1.8.0. A format string that the widget can use to format its input or output. Widgets using this option are :
+ *   		<ul>
+ *   			<li>DATE_PICKER (use the standard java date format)</li>
+ *   			<li>DATE_TIME (use the standard java date format)</li>
+ *   		</ul> 
+ *   	<li>'onchange' since 1.5.1. If set, when the widget on the Squash UI changes its value, it will emit a {@link DelegateCommand} to the bugtracker connector. Not all widgets 
  *   supports this, as of 1.5.1 and until further notice only text_field can do so. 
  *   		Native squash widgets will emit a DelegateCommand, using the value you supplied for 'onchange' as command name and its {@link FieldValue#getName()} as argument. Customized 
  *   widgets shipped with an extension can of course specify something else, it will be up to your connector to know how to interpret them.
@@ -91,6 +100,7 @@ public class InputType {
 	//********************* common metadata keys ******************
 	
 	public static final String DATE_FORMAT 		= "date-format";
+	public static final String FORMAT			= "format";
 	public static final String ONCHANGE 		= "onchange";
 	public static final String MAX_LENGTH		= "max-length";
 	
