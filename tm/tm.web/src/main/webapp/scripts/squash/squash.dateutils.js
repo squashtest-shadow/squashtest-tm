@@ -36,13 +36,13 @@ define(["datejs-all", "squash.translator"], function(datelocales, translator) {
 	return {
 		
 		/*
-		 * Accepts : 
-		 * 	1/ format(Unknown value, string format) : returns the given date as string using the given format.
-		 * 	The date can be a numeric timestamp, a Date instance or a string. If String, the ATOM (ISO 8601) format is assumed. 
-		 * 	
-		 * 2/ format(string value, string toFormat, String fromFormat) : convert the date
-		 * 		given as String, parsed using fromFormat, and converted to toFormat
-		 */
+		* Accepts : 
+		*	1/ format(Unknown value, string format) : returns the given date as string using the given format.
+		*	The date can be a numeric timestamp, a Date instance or a string. If String, the ATOM (ISO 8601) format is assumed. 
+		*	
+		* 2/ format(string value, string toFormat, String fromFormat) : convert the date
+		*		given as String, parsed using fromFormat, and converted to toFormat
+		*/
 		format : function(value, toFormat, fromFormat) {
 		
 			var _localDate = this.parse(value, fromFormat);
@@ -52,11 +52,11 @@ define(["datejs-all", "squash.translator"], function(datelocales, translator) {
 		
 
 		/*
-		 * @ params: 
-		 *  value : string value of the date, or numeric timestamp, or even a Date.
-		 *  format : string dateformat. if value is a string and the format is not specified, ATOM is assumed.
-		 * 
-		 */
+		* @ params: 
+		*  value : string value of the date, or numeric timestamp, or even a Date.
+		*  format : string dateformat. if value is a string and the format is not specified, ATOM is assumed.
+		* 
+		*/
 		parse : function(value, format) {
 			
 			loadLocale();
