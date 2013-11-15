@@ -56,12 +56,9 @@
  */
 
 define(
-		[ 'jquery', 'squash.translator', './exec-runner', './sortmode',
-				'datepicker/require.jquery.squash.datepicker-locales',
-				'jquery.squash.rangedatepicker',
-				'jeditable.datepicker', 'squashtable', 'jeditable',
-				'jquery.squash.buttonmenu' ],
-		function($, translator, execrunner, smode, regionale, rangedatepicker) {
+		[ 'jquery', 'squash.translator', './exec-runner', './sortmode', 'jquery.squash.rangedatepicker',
+				'squash.dateutils', 'jeditable.datepicker', 'squashtable', 'jeditable', 'jquery.squash.buttonmenu' ],
+		function($, translator, execrunner, smode, rangedatepicker, dateutils) {
 
 			// ****************** TABLE CONFIGURATION **************
 
@@ -75,23 +72,18 @@ define(
 				// execution mode icon
 				var $exectd = $row.find('.exec-mode').text('');
 				if (data['exec-mode'] === "M") {
-					$exectd.append(
-							'<span class"exec-mode-icon exec-mode-manual"/>')
-							.attr('title', '');
+					$exectd.append('<span class"exec-mode-icon exec-mode-manual"/>').attr('title', '');
 				} else {
-					$exectd
-							.append(
-									'<span class="exec-mode-icon exec-mode-automated"/>')
-							.attr('title', _conf.autoexecutionTooltip);
+					$exectd.append('<span class="exec-mode-icon exec-mode-automated"/>').attr('title',
+							_conf.autoexecutionTooltip);
 				}
 
 				// execution status (read)
 				var status = data['status'], i18nstatus = _conf.statuses[status], $statustd = $row
-						.find('.status-combo'), html = _conf.statusFactory
-						.getHtmlFor(i18nstatus, status);
+						.find('.status-combo'), html = _conf.statusFactory.getHtmlFor(i18nstatus, status);
 
 				$statustd.html(html); // remember : this will insert a <span>
-										// in the process
+				// in the process
 
 				// assignee (read)
 				var $assigneetd = $row.find('.assignee-combo');
@@ -102,25 +94,23 @@ define(
 
 				// execution status (edit)
 				var statusurl = _conf.testplanUrl + data['entity-id'];
-				$row.find('.status-combo').children().first().editable(
-						statusurl, {
-							type : 'select',
-							data : _conf.jsonStatuses,
-							name : 'status',
-							onblur : 'cancel',
-							callback : _conf.submitStatusClbk
-						});
+				$row.find('.status-combo').children().first().editable(statusurl, {
+					type : 'select',
+					data : _conf.jsonStatuses,
+					name : 'status',
+					onblur : 'cancel',
+					callback : _conf.submitStatusClbk
+				});
 
 				// assignee (edit)
 				var assigneeurl = _conf.testplanUrl + data['entity-id'];
-				$row.find('.assignee-combo').children().first().editable(
-						assigneeurl, {
-							type : 'select',
-							data : _conf.jsonAssignableUsers,
-							name : 'assignee',
-							onblur : 'cancel',
-							callback : _conf.submitAssigneeClbk
-						});
+				$row.find('.assignee-combo').children().first().editable(assigneeurl, {
+					type : 'select',
+					data : _conf.jsonAssignableUsers,
+					name : 'assignee',
+					onblur : 'cancel',
+					callback : _conf.submitAssigneeClbk
+				});
 
 			}
 
@@ -129,10 +119,8 @@ define(
 				// add the execute shortcut menu
 				var isTcDel = data['is-tc-deleted'], isManual = (data['exec-mode'] === "M");
 
-				var tpId = data['entity-id'], $td = $row
-						.find('.execute-button'), strmenu = $(
-						"#shortcut-exec-menu-template").html().replace(
-						/#placeholder-tpid#/g, tpId);
+				var tpId = data['entity-id'], $td = $row.find('.execute-button'), strmenu = $(
+						"#shortcut-exec-menu-template").html().replace(/#placeholder-tpid#/g, tpId);
 
 				$td.empty();
 				$td.append(strmenu);
@@ -162,16 +150,18 @@ define(
 
 			function _hideFilterFields() {
 				$(".th_input", $("#test-suite-test-plans-table")).hide();
-				$(".filter_input", $("#test-suite-test-plans-table")).each(function(){
+				$(".filter_input", $("#test-suite-test-plans-table")).each(function() {
 					$("#test-suite-test-plans-table").squashTable().fnFilter("", $(".filter_input").index(this));
-				});				
+				});
 			}
 
 			function _showFilterFields() {
 				$(".th_input", $("#test-suite-test-plans-table")).show();
-				$(".filter_input", $("#test-suite-test-plans-table")).each(function(){
-					$("#test-suite-test-plans-table").squashTable().fnFilter(this.value, $(".filter_input").index(this));
-				});
+				$(".filter_input", $("#test-suite-test-plans-table")).each(
+						function() {
+							$("#test-suite-test-plans-table").squashTable().fnFilter(this.value,
+									$(".filter_input").index(this));
+						});
 			}
 
 			function _initializeFilterFields(initconf) {
@@ -180,23 +170,16 @@ define(
 				var statuses = initconf.messages.executionStatus;
 				var weights = initconf.basic.weights;
 
-				$($("th", $("#test-suite-test-plans-table"))[1]).append(
-						"<input class='th_input filter_input'/>");
-				$($("th", $("#test-suite-test-plans-table"))[2]).append(
-						"<input class='th_input filter_input'/>");
-				$($("th", $("#test-suite-test-plans-table"))[3]).append(
-						"<input class='th_input filter_input'/>");
-				$($("th", $("#test-suite-test-plans-table"))[4])
-						.append(
-								"<select id='filter-weight-combo' class='th_input filter_input'/>");
-				$($("th", $("#test-suite-test-plans-table"))[5]).append(
-						"<input class='th_input filter_input'/>");
-				$($("th", $("#test-suite-test-plans-table"))[6])
-						.append(
-								"<select id='filter-status-combo' class='th_input filter_input'/>");
-				$($("th", $("#test-suite-test-plans-table"))[7])
-						.append(
-								"<select id='filter-user-combo' class='th_input filter_input'/>");
+				$($("th", $("#test-suite-test-plans-table"))[1]).append("<input class='th_input filter_input'/>");
+				$($("th", $("#test-suite-test-plans-table"))[2]).append("<input class='th_input filter_input'/>");
+				$($("th", $("#test-suite-test-plans-table"))[3]).append("<input class='th_input filter_input'/>");
+				$($("th", $("#test-suite-test-plans-table"))[4]).append(
+						"<select id='filter-weight-combo' class='th_input filter_input'/>");
+				$($("th", $("#test-suite-test-plans-table"))[5]).append("<input class='th_input filter_input'/>");
+				$($("th", $("#test-suite-test-plans-table"))[6]).append(
+						"<select id='filter-status-combo' class='th_input filter_input'/>");
+				$($("th", $("#test-suite-test-plans-table"))[7]).append(
+						"<select id='filter-user-combo' class='th_input filter_input'/>");
 				$($("th", $("#test-suite-test-plans-table"))[8])
 						.append(
 								"<div class='rangedatepicker th_input'>"
@@ -206,43 +189,36 @@ define(
 										+ "</div>");
 
 				$("#test-suite-test-plans-table_filter").hide();
-	
+
 				var nullOption = new Option("", "");
 				$(nullOption).html("");
 				$("#filter-status-combo", $("#test-suite-test-plans-table")).append(nullOption);
-				
-				$.each(statuses,
-						function(index, value) {
-							var o = new Option(value, index);
-							$(o).html(value);
-							$("#filter-status-combo",
-									$("#test-suite-test-plans-table"))
-									.append(o);
-						});
+
+				$.each(statuses, function(index, value) {
+					var o = new Option(value, index);
+					$(o).html(value);
+					$("#filter-status-combo", $("#test-suite-test-plans-table")).append(o);
+				});
 
 				nullOption = new Option("", "");
 				$(nullOption).html("");
 				$("#filter-user-combo", $("#test-suite-test-plans-table")).append(nullOption);
-				
+
 				$.each(users, function(index, value) {
 					var o = new Option(value, index);
 					$(o).html(value);
-					$("#filter-user-combo", $("#test-suite-test-plans-table"))
-							.append(o);
+					$("#filter-user-combo", $("#test-suite-test-plans-table")).append(o);
 				});
 
 				nullOption = new Option("", "");
 				$(nullOption).html("");
 				$("#filter-weight-combo", $("#test-suite-test-plans-table")).append(nullOption);
-				
-				$.each(weights,
-						function(index, value) {
-							var o = new Option(value, index);
-							$(o).html(value);
-							$("#filter-weight-combo",
-									$("#test-suite-test-plans-table"))
-									.append(o);
-						});
+
+				$.each(weights, function(index, value) {
+					var o = new Option(value, index);
+					$(o).html(value);
+					$("#filter-weight-combo", $("#test-suite-test-plans-table")).append(o);
+				});
 
 				$(".th_input").click(function(event) {
 					event.stopPropagation();
@@ -251,16 +227,15 @@ define(
 				$("#test-suite-test-plans-table th").hover(function(event) {
 					event.stopPropagation();
 				});
-								
+
 				$(".filter_input").change(
 						function() {
-							$("#test-suite-test-plans-table").squashTable()
-									.fnFilter(this.value,
-											$(".filter_input").index(this));
+							$("#test-suite-test-plans-table").squashTable().fnFilter(this.value,
+									$(".filter_input").index(this));
 						});
 
 				rangedatepicker.init();
-				
+
 				_hideFilterFields();
 			}
 
@@ -270,26 +245,32 @@ define(
 				var _readFeaturesConf = {
 					statuses : initconf.messages.executionStatus,
 					autoexecutionTooltip : initconf.messages.automatedExecutionTooltip,
-					statusFactory : new squashtm.StatusFactory(
-							initconf.messages.executionStatus)
+					statusFactory : new squashtm.StatusFactory(initconf.messages.executionStatus)
 				};
 
 				var _writeFeaturesConf = {
 
 					testplanUrl : initconf.urls.testplanUrl,
 
-					jsonStatuses : JSON
-							.stringify(initconf.messages.executionStatus),
-					submitStatusClbk : function(value, settings) {
-						var $span = $(this), statuses = JSON
-								.parse(settings.data);
-						$span.attr('class', 'exec-status-label exec-status-'
-								+ value.toLowerCase());
-						$span.text(statuses[value]);
+					jsonStatuses : JSON.stringify(initconf.messages.executionStatus),
+					
+					submitStatusClbk : function(json, settings) {						
+						var itp = JSON.parse(json),
+							format = translator.get('squashtm.dateformat'),
+							$span = $(this), 
+							$execon= $span.parents('tr:first').find("td.exec-on"),
+							statuses = JSON.parse(settings.data);
+						
+						$span.attr('class', 
+								'exec-status-label exec-status-' + itp.executionStatus.toLowerCase());
+						
+						$span.text(statuses[itp.executionStatus]);
+						
+						var newdate = dateutils.format(itp.lastExecutedOn, format);
+						$execon.text(newdate);
 					},
 
-					jsonAssignableUsers : JSON
-							.stringify(initconf.basic.assignableUsers),
+					jsonAssignableUsers : JSON.stringify(initconf.basic.assignableUsers),
 					submitAssigneeClbk : function(value, settings) {
 						var assignableUsers = JSON.parse(settings.data);
 						$(this).text(assignableUsers[value]);
@@ -300,47 +281,37 @@ define(
 
 					manualHandler : function() {
 
-						var $this = $(this), tpid = $this.data('tpid'), ui = ($this
-								.is('.run-popup')) ? "popup" : "oer", newurl = initconf.urls.testplanUrl
-								+ tpid + '/executions/new';
+						var $this = $(this), tpid = $this.data('tpid'), ui = ($this.is('.run-popup')) ? "popup" : "oer", newurl = initconf.urls.testplanUrl +
+								tpid + '/executions/new';
 
 						$.post(newurl, {
 							mode : 'manual'
-						}, 'json').done(
-								function(execId) {
-									var execurl = initconf.urls.executionsUrl
-											+ execId + '/runner';
-									if (ui === "popup") {
-										execrunner.runInPopup(execurl);
-									} else {
-										execrunner.runInOER(execurl);
-									}
+						}, 'json').done(function(execId) {
+							var execurl = initconf.urls.executionsUrl + execId + '/runner';
+							if (ui === "popup") {
+								execrunner.runInPopup(execurl);
+							} else {
+								execrunner.runInOER(execurl);
+							}
 
-								});
+						});
 					},
 
 					automatedHandler : function() {
-						var row = $(this).parents('tr').get(0), table = $(
-								"#test-suite-test-plans-table").squashTable(), data = table
-								.fnGetData(row), tpid = data['entity-id'], newurl = initconf.urls.testplanUrl
-								+ tpid + '/executions/new';
+						var row = $(this).parents('tr').get(0), table = $("#test-suite-test-plans-table").squashTable(), data = table
+								.fnGetData(row), tpid = data['entity-id'], newurl = initconf.urls.testplanUrl + tpid +
+								'/executions/new';
 
-						$
-								.post(newurl, {
-									mode : 'auto'
-								}, 'json')
-								.done(
-										function(suiteview) {
-											if (suiteview.executions.length === 0) {
-												$.squash
-														.openMessage(
-																initcon.messages.titleInfo,
-																initconf.messages.messageNoAutoexecFound);
-											} else {
-												squashtm.automatedSuiteOverviewDialog
-														.open(suiteview);
-											}
-										});
+						$.post(newurl, {
+							mode : 'auto'
+						}, 'json').done(function(suiteview) {
+							if (suiteview.executions.length === 0) {
+								$.squash.openMessage(initcon.messages.titleInfo,
+										initconf.messages.messageNoAutoexecFound);
+							} else {
+								squashtm.automatedSuiteOverviewDialog.open(suiteview);
+							}
+						});
 
 					}
 				};
@@ -358,14 +329,12 @@ define(
 
 						// add edit-mode features
 						if (initconf.permissions.editable) {
-							_rowCallbackWriteFeatures($row, data,
-									_writeFeaturesConf);
+							_rowCallbackWriteFeatures($row, data, _writeFeaturesConf);
 						}
 
 						// add execute-mode features
 						if (initconf.permissions.executable) {
-							_rowCallbackExecFeatures($row, data,
-									_execFeaturesConf);
+							_rowCallbackExecFeatures($row, data, _execFeaturesConf);
 						}
 
 						// done
@@ -393,98 +362,56 @@ define(
 					toggleRows : {
 						'td.toggle-row' : function(table, jqold, jqnew) {
 
-							var data = table.fnGetData(jqold.get(0)), url = initconf.urls.testplanUrl
-									+ data['entity-id'] + '/executions';
+							var data = table.fnGetData(jqold.get(0)), url = initconf.urls.testplanUrl +
+									data['entity-id'] + '/executions';
 
-							jqnew
-									.load(
-											url,
-											function() {
+							jqnew.load(url, function() {
 
-												// styling
-												var newexecBtn = jqnew.find(
-														'.new-exec')
-														.squashButton(), newautoexecBtn = jqnew
-														.find('.new-auto-exec')
-														.squashButton();
+								// styling
+								var newexecBtn = jqnew.find('.new-exec').squashButton(), newautoexecBtn = jqnew.find(
+										'.new-auto-exec').squashButton();
 
-												// the delete buttons
-												if (initconf.permissions.executable) {
-													jqnew
-															.find(
-																	'.delete-execution-table-button')
-															.button(
-																	{
-																		text : false,
-																		icons : {
-																			primary : "ui-icon-trash"
-																		}
-																	})
-															.on(
-																	'click',
-																	function() {
-																		var dialog = $("#ts-test-plan-delete-execution-dialog");
-																		dialog
-																				.data(
-																						'origin',
-																						this);
-																		dialog
-																				.confirmDialog('open');
-																	});
+								// the delete buttons
+								if (initconf.permissions.executable) {
+									jqnew.find('.delete-execution-table-button').button({
+										text : false,
+										icons : {
+											primary : "ui-icon-trash"
+										}
+									}).on('click', function() {
+										var dialog = $("#ts-test-plan-delete-execution-dialog");
+										dialog.data('origin', this);
+										dialog.confirmDialog('open');
+									});
 
-													// the new execution buttons
-													newexecBtn
-															.click(function() {
-																var url = $(
-																		this)
-																		.data(
-																				'new-exec');
-																$
-																		.post(
-																				url,
-																				{
-																					mode : 'manual'
-																				},
-																				'json')
-																		.done(
-																				function(
-																						id) {
-																					document.location.href = initconf.urls.executionsUrl
-																							+ id;
-																				});
-																return false;
-															});
+									// the new execution buttons
+									newexecBtn.click(function() {
+										var url = $(this).data('new-exec');
+										$.post(url, {
+											mode : 'manual'
+										}, 'json').done(function(id) {
+											document.location.href = initconf.urls.executionsUrl + id;
+										});
+										return false;
+									});
 
-													newautoexecBtn
-															.click(function() {
-																var url = $(
-																		this)
-																		.data(
-																				'new-exec');
-																$
-																		.post(
-																				url,
-																				{
-																					mode : 'auto'
-																				},
-																				'json')
-																		.done(
-																				function(
-																						suiteview) {
-																					if (suiteview.executions.length === 0) {
-																						$.squash
-																								.openMessage(
-																										initcon.messages.titleInfo,
-																										initconf.messages.messageNoAutoexecFound);
-																					} else {
-																						squashtm.automatedSuiteOverviewDialog
-																								.open(suiteview);
-																					}
-																				});
-																return false;
-															});
-												}
-											});
+									newautoexecBtn.click(function() {
+										var url = $(this).data('new-exec');
+										$.post(url, {
+											mode : 'auto'
+										}, 'json').done(
+												function(suiteview) {
+													if (suiteview.executions.length === 0) {
+														$.squash.openMessage(initcon.messages.titleInfo,
+																initconf.messages.messageNoAutoexecFound);
+													} else {
+														squashtm.automatedSuiteOverviewDialog.open(suiteview);
+													}
+												});
+										return false;
+									});
+								}
+							});
 						}
 					}
 				};
@@ -497,11 +424,9 @@ define(
 					squashSettings.functions = {};
 					squashSettings.functions.dropHandler = function(dropData) {
 						var ids = dropData.itemIds.join(',');
-						var url = initconf.urls.testplanUrl + '/' + ids
-								+ '/position/' + dropData.newIndex;
+						var url = initconf.urls.testplanUrl + '/' + ids + '/position/' + dropData.newIndex;
 						$.post(url, function() {
-							$("#test-suite-test-plans-table").squashTable()
-									.refresh();
+							$("#test-suite-test-plans-table").squashTable().refresh();
 						});
 					};
 
@@ -524,8 +449,7 @@ define(
 					var sortmode = smode.newInst(enhconf);
 					tableconf.tconf.aaSorting = sortmode.loadaaSorting();
 
-					var table = $("#test-suite-test-plans-table").squashTable(
-							tableconf.tconf, tableconf.sconf);
+					var table = $("#test-suite-test-plans-table").squashTable(tableconf.tconf, tableconf.sconf);
 					table.data('sortmode', sortmode);
 					this.lockSortMode = sortmode._lockSortMode;
 					this.unlockSortMode = sortmode._unlockSortMode;

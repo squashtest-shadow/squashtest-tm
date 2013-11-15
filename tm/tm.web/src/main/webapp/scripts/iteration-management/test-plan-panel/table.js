@@ -58,9 +58,8 @@
 
 define(
 		[ 'jquery', 'squash.translator', './exec-runner', './sortmode',
-		  'datepicker/require.jquery.squash.datepicker-locales', 
 		  'jquery.squash.rangedatepicker', 'squash.dateutils', 'squashtable', 'jeditable', 'jquery.squash.buttonmenu' ],
-		function($, translator, execrunner, smode, regionale, rangedatepicker, dateutils) {
+		function($, translator, execrunner, smode, rangedatepicker, dateutils) {
 
 			// ****************** TABLE CONFIGURATION **************
 
@@ -277,16 +276,20 @@ define(
 					jsonStatuses : JSON.stringify(initconf.messages.executionStatus),
 					
 					submitStatusClbk : function(json, settings) {
-						var $span = $(this), 
-							$execon= $span.parentNode.parents('tr:first').find("td.exec-on"),
+						
+						var itp = JSON.parse(json),
+							format = translator.get('squashtm.dateformat'),
+							$span = $(this), 
+							$execon= $span.parents('tr:first').find("td.exec-on"),
 							statuses = JSON.parse(settings.data);
 						
-						$span.attr('class', 'exec-status-label exec-status-'
-								+ json.executionStatus.toLowerCase());
-						$span.text(statuses[value]);
+						$span.attr('class', 
+								'exec-status-label exec-status-' + itp.executionStatus.toLowerCase());
 						
-						var newdate = dateutils.format
-						$execon.text();
+						$span.text(statuses[itp.executionStatus]);
+						
+						var newdate = dateutils.format(itp.lastExecutedOn, format);
+						$execon.text(newdate);
 					},
 
 					jsonAssignableUsers : JSON.stringify(initconf.basic.assignableUsers),
@@ -321,17 +324,18 @@ define(
 					},
 
 					automatedHandler : function() {
-						var row = $(this).parents('tr').get(0), table = $(
-								"#iteration-test-plans-table").squashTable(), data = table
-								.fnGetData(row), tpid = data['entity-id'], newurl = initconf.urls.testplanUrl
-								+ tpid + '/executions/new';
+						var row = $(this).parents('tr').get(0), 
+							table = $("#iteration-test-plans-table").squashTable(), 
+							data = table.fnGetData(row), 
+							tpid = data['entity-id'], 
+							newurl = initconf.urls.testplanUrl+ tpid + '/executions/new';
 
 						$.post(newurl, {
 							mode : 'auto'
 						}, 'json')
 						.done(function(suiteview) {
 							if (suiteview.executions.length === 0) {
-								var _msg ) initconf.messages;
+								var _msg = initconf.messages;
 								$.squash.openMessage(_msg.titleInfo,
 												_msg.messageNoAutoexecFound);
 							} else {

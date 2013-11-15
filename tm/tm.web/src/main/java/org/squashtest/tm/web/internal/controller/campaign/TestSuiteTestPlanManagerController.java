@@ -74,6 +74,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
 import org.squashtest.tm.web.internal.model.jquery.TestPlanAssignableUser;
+import org.squashtest.tm.web.internal.model.json.JsonIterationTestPlanItem;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
@@ -288,10 +289,12 @@ public class TestSuiteTestPlanManagerController {
 
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{testPlanId}", method = RequestMethod.POST, params = { "status" })
 	public @ResponseBody
-	String setTestPlanItemStatus(@PathVariable("testPlanId") long testPlanId, @RequestParam("status") String status) {
+	JsonIterationTestPlanItem setTestPlanItemStatus(@PathVariable("testPlanId") long testPlanId, @RequestParam("status") String status) {
 		LOGGER.debug("change status test plan item #{} to {}", testPlanId, status);
 		iterationTestPlanManagerService.assignExecutionStatusToTestPlanItem(testPlanId, status);
-		return status;
+		IterationTestPlanItem item = iterationTestPlanManagerService.findTestPlanItem(testPlanId);
+		
+		return createJsonITPI(item);
 	}
 
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{itemId}/executions", method = RequestMethod.GET)
@@ -352,6 +355,19 @@ public class TestSuiteTestPlanManagerController {
 
 	private String formatUnassigned(Locale locale) {
 		return messageSource.internationalize("label.Unassigned", locale);
+	}
+	
+
+	private JsonIterationTestPlanItem createJsonITPI(IterationTestPlanItem item){
+		String name = (item.isTestCaseDeleted()) ? null : item.getReferencedTestCase().getName();
+		return new JsonIterationTestPlanItem(
+					item.getId(),
+					item.getExecutionStatus(),
+					name,
+					item.getLastExecutedOn(),
+					item.getLastExecutedBy(),
+					item.isTestCaseDeleted()						
+				);
 	}
 
 }
