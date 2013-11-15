@@ -185,7 +185,7 @@ public class CustomFieldJsonConverter {
 		
 		populateCustomFieldModel(model, field);
 		
-		model.setFormat(getMessage("squashtm.dateformatShort.js"));
+		model.setFormat(getMessage("squashtm.dateformatShort.datepicker"));
 		model.setLocale(locale.toString());
 		
 		return model;

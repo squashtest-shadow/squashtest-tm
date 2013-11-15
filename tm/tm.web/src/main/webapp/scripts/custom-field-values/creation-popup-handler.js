@@ -27,25 +27,19 @@
  */
 
 define(
-		[ "jquery", "./cuf-values-utils", "jqueryui",
-				'jquery.squash.jeditable', "jeditable.datepicker",
-				"datepicker/require.jquery.squash.datepicker-locales" ],
-		function($, utils) {
+		[ "jquery", "./cuf-values-utils", "squash.configmanager", "jqueryui",
+				'jquery.squash.jeditable', "jeditable.datepicker"],
+		function($, utils, confman) {
 
 			function noPostFn(value) {
 				return value;
 			}
 
 			function initDatepicker(input) {
-				var locale = input.data('locale');
-				var format = input.data('format');
 
 				var conf = {
 					type : 'datepicker',
-					datepicker : $.extend({
-						dateFormat : format
-					}, $.datepicker.regional[locale])
-
+					datepicker : confman.getStdDatepicker()
 				};
 
 				input.editable(noPostFn, conf);

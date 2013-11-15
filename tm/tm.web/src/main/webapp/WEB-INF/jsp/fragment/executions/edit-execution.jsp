@@ -419,14 +419,16 @@
 						uiIcon : function(row, data){
 							return (data["bug-list"].length>0)? "has-bugs" : "table-cell-add";
 						},
-						onClick : function(table, cell){							
-							var row = cell.parentNode.parentNode; // hopefully, that's the
+						onClick : function(table, btnElt){			
+							console.log('there');
+							var row = btnElt.parentNode.parentNode; // hopefully, that's the
 							// 'tr' one
 							var executionStepId = table.getODataId(row);
 							checkAndReportIssue( {
 								reportUrl:squashtm.app.contextRoot+"/bugtracker/execution-step/"+executionStepId+"/new-issue", 
 								callback:function(json){
-									$(btn).removeClass('table-cell-add')
+									var btn = $(btnElt);
+									btn.removeClass('table-cell-add')
 											.addClass('has-bugs');
 									issueReportSuccess(json);
 								}

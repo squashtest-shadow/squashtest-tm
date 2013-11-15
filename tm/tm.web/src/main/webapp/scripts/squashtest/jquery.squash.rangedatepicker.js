@@ -24,7 +24,7 @@ define(['jquery', 'squash.translator', 'datepicker/require.jquery.squash.datepic
 	return {
 		init : function(){
 			var localemeta = {
-					format : 'squashtm.dateformatShort.js',
+					format : 'squashtm.dateformatShort.datepicker',
 					locale : 'squashtm.locale'
 				};
 

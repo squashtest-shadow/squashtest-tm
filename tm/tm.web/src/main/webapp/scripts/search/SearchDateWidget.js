@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "squash.translator", "datepicker/require.jquery.squash.datepicker-locales", "jqueryui", "jeditable.datepicker"], 
-		function($, translator, regionale){
+define(["jquery",  "squash.configmanager", "jqueryui", "jeditable.datepicker"], 
+		function($, confman){
 
 	var searchwidget = $.widget("search.searchDateWidget", {
 		
@@ -60,17 +60,7 @@ define(["jquery", "squash.translator", "datepicker/require.jquery.squash.datepic
 		
 		createDom : function(id){
 			
-			var localemeta = {
-					format : 'squashtm.dateformatShort.js',
-					locale : 'squashtm.locale'
-				};
-				
-			var message = translator.get(localemeta);
-			this.options.message = message;
-				
-			var language = regionale[message.locale] || regionale;
-				
-			var pickerconf = $.extend(true, {}, language, {dateFormat : message.format});
+			var pickerconf = confman.getStdDatepicker();
 				
 			$($("input",$($(this.element.children()[0])))[1]).datepicker(pickerconf);
 			$($("input",$($(this.element.children()[0])))[2]).datepicker(pickerconf);	

@@ -38,6 +38,7 @@ var _langcache = {
 	'label.Ok' : "<f:message key='label.Ok'/>",
 	'label.Cancel' : "<f:message key='label.Cancel'/>",
 	'squashtm.locale' : "<f:message key='squashtm.locale'/>",
+	'squashtm.dateformatShort.datepicker' : "<f:message key='squashtm.dateformatShort.datepicker'/>",
 	'rich-edit.language.value' : "<f:message key='rich-edit.language.value'/>"
 }
 
