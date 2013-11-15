@@ -233,8 +233,12 @@ class IterationTest extends Specification {
 
 		IterationTestPlanItem tp1 = new IterationTestPlanItem(iteration:iteration,referencedTestCase:testCase1)
 		IterationTestPlanItem tp2 = new IterationTestPlanItem(iteration:iteration,referencedTestCase:testCase2)
-		tp1.setExecutionStatus(ExecutionStatus.SUCCESS)
-		tp2.setExecutionStatus(ExecutionStatus.SUCCESS)
+		
+		tp1.executionStatus = ExecutionStatus.SUCCESS
+		tp2.executionStatus = ExecutionStatus.SUCCESS
+		
+		tp1.lastExecutedOn = null
+		tp2.lastExecutedOn = null
 
 		iteration.addTestPlan(tp1)
 		iteration.addTestPlan(tp2)
