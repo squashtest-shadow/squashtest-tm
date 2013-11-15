@@ -128,16 +128,12 @@ define(["jquery", "./jqplot-view", "iesupport/am-I-ie8", "./ie8-special-pie-rend
 
 		getConf : function(pieserie){
 			
-			var colorsAndLabels;
+			var colorsAndLabels = this._getNormalConf(pieserie);
 			
-			if (pieserie.isEmpty){
-				colorsAndLabels = this._getEmptyConf(pieserie);
-			}
-			else if (pieserie.isFull){
-				colorsAndLabels = this._getFullConf(pieserie);
-			}
-			else{
-				colorsAndLabels = this._getNormalConf(pieserie);
+			for(var i=0; i<pieserie.length; i++){
+				if(pieserie[i].isEmpty){
+					pieserie[i].push(['0%', 1]);
+				}
 			}
 			
 			return {
@@ -146,6 +142,7 @@ define(["jquery", "./jqplot-view", "iesupport/am-I-ie8", "./ie8-special-pie-rend
 					rendererOptions : {
 						showDataLabels : true,
 						//dataLabels : colorsAndLabels.labels,
+						dataLabels : "label",
 						startAngle : -45,
 						shadowOffset : 0,
 						sliceMargin : 1.5,
@@ -174,20 +171,6 @@ define(["jquery", "./jqplot-view", "iesupport/am-I-ie8", "./ie8-special-pie-rend
 			};
 		},
 		
-		_getEmptyConf : function(pieserie){
-			return {
-				labels : ["0% (0)"],
-				colors :  this.EMPTY_COLOR
-			};
-		},
-		
-		_getFullConf : function(pieserie){
-			return {
-				labels : [ "100% ("+pieserie.total+")" ],
-				colors : [ this.colorscheme[pieserie.nonzeroindex]]			
-			};
-		},
-		
 		_getNormalConf : function(pieserie){
 			var labels = this._createLabels(pieserie);
 			return {
@@ -206,15 +189,15 @@ define(["jquery", "./jqplot-view", "iesupport/am-I-ie8", "./ie8-special-pie-rend
 					labels = [];
 					
 				for (var s=0, lens=series[index].length; s<lens; s++){
-					total += series[index][s];
+					total += series[index][s][1];
 				}
 				var coef = 100.0/total;
 				
 				var perc, dec;
 				for (var i=0, leni=series[index].length; i<leni ;i++){
-					dec=series[index][i],
+					dec=series[index][i][1],
 					perc = (dec * coef).toFixed();
-					labels.push(perc+"% ("+dec+")");
+					series[index][i][0] = perc+"%";
 				}
 			
 				serieslabels.push(labels);
@@ -243,7 +226,7 @@ define(["jquery", "./jqplot-view", "iesupport/am-I-ie8", "./ie8-special-pie-rend
 			_val;
 		
 			for (var i=0;i<length;i++){
-				_val = serie[i];
+				_val = serie[i][1];
 				if (_val>0){
 					total += _val;
 					nonzerocount++;

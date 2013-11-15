@@ -24,10 +24,11 @@ define(["../basic-objects/donut-view"], function(DonutView){
 		
 		getSeries : function(){
 			var stats = this.model.get('iterationTestCaseSuccessRateStatistics');
-			return [ [stats.nbVeryHighSuccess, stats.nbVeryHighFailure, stats.nbVeryHighOther],
-					 [stats.nbHighSuccess, stats.nbHighFailure, stats.nbHighOther], 
-					 [stats.nbMediumSuccess, stats.nbMediumFailure, stats.nbMediumOther], 
-			         [stats.nbLowSuccess, stats.nbLowFailure, stats.nbLowOther]];
+			return [ [["",stats.nbVeryHighSuccess], ["",stats.nbVeryHighFailure], ["",stats.nbVeryHighOther]],
+					 [["",stats.nbHighSuccess], ["",stats.nbHighFailure], ["",stats.nbHighOther]], 
+					 [["",stats.nbMediumSuccess], ["",stats.nbMediumFailure], ["",stats.nbMediumOther]], 
+			         [["",stats.nbLowSuccess], ["",stats.nbLowFailure], ["",stats.nbLowOther]]
+			];
 		}
 	});
 });

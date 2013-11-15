@@ -182,6 +182,9 @@
 									<div class="dashboard-legend-sample-color" style="background-color:#969696"></div>
 									<span><f:message key="label.Other" /></span>
 								</div>
+																<div class="not-displayed">
+									<div class="dashboard-legend-sample-color" style="background-color:#EEEEEE"></div>
+								</div>
 							</div>
 						</div>
 					</div>
