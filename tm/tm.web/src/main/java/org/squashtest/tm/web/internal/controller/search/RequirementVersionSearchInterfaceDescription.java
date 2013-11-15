@@ -259,6 +259,43 @@ public class RequirementVersionSearchInterfaceDescription {
 								locale), RANGE);
 		panel.addField(testcasesField);
 
+		SearchInputFieldModel childRequirementsField = new SearchInputFieldModel(
+				"requirement.children",
+				messageSource.internationalize("search.requirement.association.childRequirement.label", locale),
+				EXISTS);
+		panel.addField(childRequirementsField);
+		
+		childRequirementsField
+		.addPossibleValue(new SearchInputPossibleValueModel(
+				messageSource.internationalize(
+						"search.requirement.association.childRequirement.atleastone",
+						locale), ATLEASTONE));
+		
+		childRequirementsField
+		.addPossibleValue(new SearchInputPossibleValueModel(
+				messageSource.internationalize(
+						"search.requirement.association.childRequirement.none",
+						locale), NONE));
+
+		SearchInputFieldModel parentRequirementsField = new SearchInputFieldModel(
+				"parent",
+				messageSource.internationalize("search.requirement.association.parentRequirement.label", locale),
+				EXISTS);
+		panel.addField(parentRequirementsField);
+		
+		parentRequirementsField
+		.addPossibleValue(new SearchInputPossibleValueModel(
+				messageSource.internationalize(
+						"search.requirement.association.parentRequirement.atleastone",
+						locale), ATLEASTONE));
+		
+		parentRequirementsField
+		.addPossibleValue(new SearchInputPossibleValueModel(
+				messageSource.internationalize(
+						"search.requirement.association.parentRequirement.none",
+						locale), NONE));
+		
+		
 		return panel;
 	}
 	

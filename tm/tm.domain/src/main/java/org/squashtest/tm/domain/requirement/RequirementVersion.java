@@ -119,6 +119,12 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 		store=Store.YES,
 		analyze=Analyze.NO,
 		impl=AuditableBridgeModifiedOn.class
+	),
+	@ClassBridge(
+		name="parent",
+		store=Store.YES,
+		analyze=Analyze.NO,
+		impl=RequirementVersionParentBridge.class
 	)
 })
 public class RequirementVersion extends Resource implements BoundEntity{

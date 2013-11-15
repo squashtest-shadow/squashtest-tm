@@ -61,6 +61,7 @@ import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.RequirementDao;
 import org.squashtest.tm.service.internal.repository.RequirementFolderDao;
 import org.squashtest.tm.service.internal.repository.RequirementLibraryDao;
+import org.squashtest.tm.service.library.AdvancedSearchService;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
@@ -89,6 +90,8 @@ public class RequirementLibraryNavigationServiceImpl extends
 	private RequirementNodeDeletionHandler deletionHandler;
 	@Inject
 	private RequirementImporter requirementImporter;
+	@Inject
+	private AdvancedSearchService advancedSearchService;
 	@Inject
 	private ProjectFilterModificationService projectFilterModificationService;
 	@Inject
@@ -263,6 +266,8 @@ public class RequirementLibraryNavigationServiceImpl extends
 		
 		createCustomFieldValues(child.getCurrentVersion());
 		initCustomFieldValues(child.getCurrentVersion(), newRequirement.getCustomFields());
+		advancedSearchService.reindexRequirementVersion(requirementId);
+		advancedSearchService.reindexRequirementVersions(child.getRequirementVersions());
 		
 		return child;
 	}
@@ -279,6 +284,8 @@ public class RequirementLibraryNavigationServiceImpl extends
 		requirementDao.persist(newRequirement);
 		createCustomFieldValues(newRequirement.getCurrentVersion());
 
+		advancedSearchService.reindexRequirementVersion(requirementId);
+		advancedSearchService.reindexRequirementVersions(newRequirement.getRequirementVersions());
 		return newRequirement;
 	}
 	

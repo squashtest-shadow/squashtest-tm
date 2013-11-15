@@ -86,6 +86,8 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
 	@JoinTable(name = "RLN_RELATIONSHIP", joinColumns = @JoinColumn(name = "ANCESTOR_ID"), inverseJoinColumns = @JoinColumn(name = "DESCENDANT_ID"))
+	@Field(analyze=Analyze.NO, store=Store.YES)
+	@FieldBridge(impl = CountElementsInCollectionBridge.class)
 	private final Set<Requirement> children = new HashSet<Requirement>();
 
 
