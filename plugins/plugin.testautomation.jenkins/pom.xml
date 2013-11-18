@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>squash-tm-plugins</artifactId>
 		<groupId>org.squashtest.tm</groupId>
-		<version>1.7.2.RELEASE</version>
+		<version>1.7.3.RELEASE-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>plugin.testautomation.jenkins</artifactId>
