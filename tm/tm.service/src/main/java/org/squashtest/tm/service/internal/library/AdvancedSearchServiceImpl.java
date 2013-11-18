@@ -167,8 +167,9 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		try {
 
 			ftSession.createIndexer(TestCase.class).purgeAllOnStart(true)
-					.batchSizeToLoadObjects(25).cacheMode(CacheMode.NORMAL)
-					.progressMonitor(monitor).startAndWait();
+							.threadsToLoadObjects(1).threadsForSubsequentFetching(1)
+							.batchSizeToLoadObjects(10).cacheMode(CacheMode.IGNORE)
+							.progressMonitor(monitor).startAndWait();
 
 		} catch (InterruptedException e) {
 
