@@ -21,38 +21,33 @@
 
 define([
 	/* --------------- explicit modules ------------------ */
-	'jquery',												/* required by all */
-	'../basic-objects/jqplot-view',							/* required by the main view */
-	'squash.translator',									/* required by the main view */
-	'iesupport/am-I-ie8',									/* required by the main view */
-	'squash.attributeparser',								/* required by the iteration schedule dialog */
-	'handlebars',											/* required by the iteration schedule dialog */
-	'squash.configmanager',									/* required by the iteration schedule dialog */
-	'squash.dateutils',										/* required by the iteration schedule dialog */
+	'jquery',
+	'../basic-objects/jqplot-view',
+	'squash.translator',
+	'iesupport/am-I-ie8',
+	'handlebars',
+	'squash.dateutils',
 	/* -------------- implicit modules -------------------- */
-	'jqplot-dates',											/* required by the main view */
-	'jqplot-highlight',										/* required by the main view */
-	'../jqplot-ext/jqplot.squash.iterationAxisRenderer',	/* required by the main view */
-	'../jqplot-ext/jqplot.squash.stylableGridRenderer',		/* required by the main view */
-	'../jqplot-ext/jqplot.squash.strippedTimeDateTickRenderer',	/* required by the main view */
-	'jquery.squash.formdialog',								/* required by the iteration schedule dialog */
-	'jeditable.datepicker'									/* required by the iteration schedule dialog */
+	'jqplot-dates',
+	'jqplot-highlight',
+	'../jqplot-ext/jqplot.squash.iterationAxisRenderer',
+	'../jqplot-ext/jqplot.squash.stylableGridRenderer',
+	'../jqplot-ext/jqplot.squash.strippedTimeDateTickRenderer'
 	],
-	function($, JqplotView, translator, isIE8,  attrparser, handlebars, confman, dateutils){
+	function($, JqplotView, translator, isIE8, handlebars, dateutils){
 	
 	
 	/* *********************************************************************************************
 	*						MAIN VIEW
 	* 
 	* what : 
-	*	this view is the local master of three elements : 
+	*	this view is the local master of two elements : 
 	*	- a plot, when everything is fine
 	*	- an error panel, when some errors where detected in the model,
-	*	- a custom dialog that displays the dates of the campaign iteration, in case or errors.
 	*
 	* uses :
-	*	- a custom dialog to display iteration dates, used when some dates in the model are wrong (see below) 
-	*	- a _axisHelper object that helps preparing the model for plotting (see more below).  
+	*	- a _axisHelper object that helps preparing the model for plotting (see more below),  
+	*	- the iteration planning, defined elsewhere in the page (it's not part of the dashboard).
 	*
 	* DOM conf : 
 	*	- model-attribute : the name of the attribute of interest in the model
@@ -72,9 +67,7 @@ define([
 		},
 		
 		initialize : function(){
-			this.initErrorHandling();
-			this.configureHighlight();
-			
+			this.configureHighlight();			
 			JqplotView.prototype.initialize.apply(this, Array.prototype.slice.call(arguments));
 
 		},
@@ -302,123 +295,14 @@ define([
 			
 			var msg = getMessage(model.errors[0]);
 			this.$el.find('.cumulative-progression-errormsg').text(msg);
-			this.iterPopup.dashboarditerDialog('updateContent', model);
 		},
 		
 		openDetails : function(){
-			this.iterPopup.dashboarditerDialog('open');
+			// see campaign-management/planning/iteration-planning-popup and the main right next to it
+			$("#iteration-planning-popup").iterplanningDialog('open');
 		}
 		
 	});
-	
-	
-	
-	/* *********************************************************************************************
-	*						ITERATIONS SCHEDULE DIALOG
-	* 
-	* what : 
-	*	this dialog is a sub element of this view. It displays the SCHEDULED dates of the iterations 
-	* of this campaign, and provides edit-in-place for those dates so as to fix them.   
-	*
-	* uses :
-	*	- datepicker embedded in an edit-in-place
-	*
-	* DOM conf : 
-	*	- dateformat : the format string for the dates in the plot. 
-	*
-	*
-	*********************************************************************************************** */
-	
-	
-	if ($.squash.dashboarditerDialog === undefined || $.squash.dashboarditerDialog === null){
-		$.widget("squash.dashboarditerDialog", $.squash.formDialog, {
-			
-			options : {
-				template : handlebars.compile(
-						'{{#each scheduledIterations}}'+
-							'<tr data-iterid="{{this.id}}" class="centered">'+
-								'<td>{{this.name}}</td>'+
-								'<td><span class="picker-start cursor-pointer">{{this.scheduledStart}}</span></td>'+
-								'<td><span class="picker-end cursor-pointer">{{this.scheduledEnd}}</span></td>'+
-							'</tr>' + 
-						'{{/each}}')
-			},
-			
-			_create : function(){
-				this._super();
-				var self=this;
-				
-				var strconf = this.element.data('def');
-				var conf = attrparser.parse(strconf);
-				$.extend(this.options, conf);
-				
-				this.onOwnBtn('close', function(){
-					self.close();
-				});
-			},
-			
-			updateContent : function(model){
-				this._createDom(model);
-				this._createWidgets();
-			},
-			
-			_createDom : function(model){
-				
-				// transform the model
-				var _formated = [],
-					dateformat = this.options.dateformat;				
-				
-				$.each(model.scheduledIterations, function(){
-					var dSchedStart = (this.scheduledStart!==null) ? dateutils.format(this.scheduledStart, dateformat) : '--';
-					var dSchedEnd  = (this.scheduledEnd!==null) ? dateutils.format(this.scheduledEnd, dateformat) : '--';
-					_formated.push({id : this.id, name : this.name,	scheduledStart : dSchedStart, scheduledEnd : dSchedEnd });
-				});
-				
-				// create the dom 
-				var body = this.uiDialog.find('tbody');
-				body.empty();
-				body.append(this.options.template({scheduledIterations : _formated}));						
-			},
-			
-			_createWidgets : function(){
-				
-				var format = this.options.dateformat;
-				
-				var body = this.uiDialog.find('tbody');
-				
-				var conf = {
-					type : 'datepicker',
-					placeholder : squashtm.message.placeholder,
-					datepicker : confman.getStdDatepicker(format)
-				};
-				
-				var postFunction = function(value){
-					var $this = $(this);
-					var id = $this.parents('tr:first').data('iterid'),
-						type = ($this.hasClass('picker-start')) ? 'scheduledStart' : 'scheduledEnd',
-						url = squashtm.app.contextRoot+"/iterations/"+id+"/planning/",
-						data = {};
-					
-					var _date = dateutils.parse(value, format);
-					
-					data[type]=_date.getTime();
-					
-					$.ajax({
-						url : url,
-						data : data,
-						type : 'POST'
-					});
-					
-					return value;
-				};
-
-				body.find('.picker-start').editable(postFunction, conf);
-				body.find('.picker-end').editable(postFunction, conf);
-			}
-			
-		});
-	}
-	
 	
 	
 	/* *********************************************************************************************
@@ -426,7 +310,7 @@ define([
 	*
 	* what : 
 	*	an object used by CampaignProgressionView to make the data model square and ready
-	*	to plot
+	*	to plot. Note that this is NOT the squash.dateutils module.
 	* 
 	* uses :
 	*	- nothing
