@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -29,11 +31,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
+import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.service.campaign.CampaignStatisticsService;
 import org.squashtest.tm.service.campaign.CustomCampaignModificationService;
 import org.squashtest.tm.service.internal.library.NodeManagementService;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
+import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 
 @Service("CustomCampaignModificationService")
@@ -42,6 +46,9 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 
 	@Inject
 	private CampaignDao campaignDao;
+	
+	@Inject
+	private IterationDao iterationDao;
 	
 	@Inject
 	private CampaignStatisticsService statisticsService;
@@ -64,6 +71,12 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 	@Override
 	public TestPlanStatistics findCampaignStatistics(long campaignId) {
 		return campaignDao.findCampaignStatistics(campaignId);
+	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ') or hasRole('ROLE_ADMIN')")
+	public List<Iteration> findIterationsByCampaignId(long campaignId) {
+		return iterationDao.findAllByCampaignId(campaignId);
 	}
 	
 	

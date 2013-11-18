@@ -33,8 +33,14 @@
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform" %>
 <%@ taglib prefix="dashboard" tagdir="/WEB-INF/tags/dashboard" %>
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 
-<f:message var="squashlocale" key="squashtm.locale" />
+<f:message var="squashlocale" key="squashtm.locale" />	
+<f:message var="iterationPlanningTitle" key="campaigns.planning.iterations.scheduled_dates"/>	
+<f:message var="iterationPlanningButton" key="campaigns.planning.iterations.button" /> 
+<f:message var="buttonOK" key="label.Ok"/>
+<f:message var="buttonCancel" key="label.Cancel"/>
+<f:message var="dateformat" key="squashtm.dateformatShort" />
 
 <comp:datepicker-manager locale="${squashlocale}" />
 
@@ -222,9 +228,12 @@
 
 
 		<%--------------------------- Planning section ------------------------------------%>
-		<comp:toggle-panel id="datepicker-panel"
-			titleKey="label.Planning" 
-			open="true">
+		<comp:toggle-panel id="datepicker-panel" titleKey="label.Planning"	open="true">
+			<jsp:attribute name="panelButtons">
+				<c:if test="${writable}">
+				<input id="iteration-planning-button" type="button" role="button" value="${iterationPlanningButton}"/>
+				</c:if>
+			</jsp:attribute>
 			<jsp:attribute name="body">
 	<div class="datepicker-panel">
 		<table class="datepicker-table">
@@ -273,7 +282,39 @@
 		</table>
 	</div>
 	</jsp:attribute>
-		</comp:toggle-panel>
+	</comp:toggle-panel>
+	
+				
+
+	<div id="iteration-planning-popup" class="popup-dialog not-displayed" 
+		title="${iterationPlanningTitle}" data-def="dateformat=${dateformat}, campaignId=${campaign.id}">						
+		
+		<div data-def="state=edit">
+			<table class="iteration-planning-content" >
+				<thead>
+					<tr>
+						<th><f:message key="label.Name"/></th>
+						<th><f:message key="campaigns.planning.iterations.scheduledstart"/></th>
+						<th><f:message key="campaigns.planning.iterations.scheduledend"/></th>
+					</tr>
+				</thead>
+				<tbody>
+				
+				</tbody>						
+			</table>
+		</div>
+		
+		<div data-def="state=loading" class="waiting-loading full-size-hack centered" >		
+ 				<div style="font-size: 1.5em; margin-top : 300px;"><f:message	key="squashtm.processing" /></div>
+		</div>
+		
+		<div class="popup-dialog-buttonpane">
+			<input type="button" value="${buttonOK}" data-def="evt=confirm, mainbtn=edit"/>
+			<input type="button" value="${buttonCancel}" data-def="evt=cancel, mainbtn" />
+		</div>					
+		
+	</div>
+	
 		<%--------------------------- /Planning section ------------------------------------%>
 		<%-- ------------------ statistiques --------------------------- --%>
 		<comp:statistics-panel statisticsEntity="${ statistics }" statisticsUrl="${ campaignStatisticsUrl }"/>
@@ -499,6 +540,14 @@
 				bugtracker.btPanel.load({
 					url : "${btEntityUrl}",
 					label : "${tabIssueLabel}"
+				});
+				</c:if>
+				
+				// ********** planning **************
+				
+				<c:if test="${writable}">
+				campmanager.initPlanning({
+					campaignId : ${campaign.id}
 				});
 				</c:if>
 				

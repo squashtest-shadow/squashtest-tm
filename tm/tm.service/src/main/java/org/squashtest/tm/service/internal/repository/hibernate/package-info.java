@@ -89,7 +89,7 @@
 		
 		
 		//Iteration
-		@NamedQuery(name = "iterationDao.findAllInitializedByCampaignId", query = "select c.iterations from Campaign c join c.iterations fetch all properties where c.id = :campaignId"),
+		@NamedQuery(name = "iterationDao.findAllByCampaignId", query = "select c.iterations from Campaign c where c.id = :campaignId"),
 		@NamedQuery(name = "iterationDao.findAllIterationContainingTestCase", query="select it from Iteration it join it.testPlans tps where tps.referencedTestCase = :testCaseId"),
 		
 		@NamedQuery(name = "iteration.countTestPlans", query = "select count(tps) from Iteration iter join iter.testPlans tps where iter.id = :iterationId"),

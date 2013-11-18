@@ -35,6 +35,8 @@ define(["datejs-all", "squash.translator"], function(datelocales, translator) {
 	
 	return {
 		
+		ISO_8601 : "yyyy-MM-ddTHH:mm:ss" ,
+		
 		/*
 		* Accepts : 
 		*	1/ format(Unknown value, string format) : returns the given date as string using the given format.
@@ -46,8 +48,13 @@ define(["datejs-all", "squash.translator"], function(datelocales, translator) {
 		format : function(value, toFormat, fromFormat) {
 		
 			var _localDate = this.parse(value, fromFormat);
-
-			return _localDate.toString(toFormat);
+			
+			if (!! toFormat){
+				return _localDate.toString(toFormat);
+			}
+			else{
+				return _localDate.toISOString();
+			}
 		},
 		
 

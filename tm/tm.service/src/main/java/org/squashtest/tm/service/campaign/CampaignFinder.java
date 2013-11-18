@@ -29,6 +29,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
+import org.squashtest.tm.domain.campaign.Iteration;
 
 @Transactional(readOnly = true)
 public interface CampaignFinder {
@@ -40,4 +41,5 @@ public interface CampaignFinder {
 	PagedCollectionHolder<List<CampaignTestPlanItem>> findTestPlanByCampaignId(long campaignId,
 			PagingAndSorting filter);
 
+	
 }

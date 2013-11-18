@@ -22,6 +22,8 @@ package org.squashtest.tm.web.internal.controller.campaign;
 
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -43,6 +45,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -63,6 +66,7 @@ import org.squashtest.tm.web.internal.controller.testcase.TestCaseModeJeditableC
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
+import org.squashtest.tm.web.internal.model.json.JsonIteration;
 import org.squashtest.tm.web.internal.util.DateUtils;
 
 @Controller
@@ -211,6 +215,7 @@ public class CampaignModificationController {
 		return retour;
 
 	}
+	
 
 	@RequestMapping(value = "/general", method = RequestMethod.GET)
 	public ModelAndView refreshGeneralInfos(@PathVariable long libraryId, @PathVariable long campaignId) {
@@ -334,8 +339,30 @@ public class CampaignModificationController {
 		return toreturn;
 
 	}
+
 	
+	@RequestMapping(value = "/iterations", produces="application/json", method = RequestMethod.GET )
+	@ResponseBody  
+	public List<JsonIteration> getIterations(@PathVariable("campaignId") long campaignId){
+		List<Iteration> iterations = campaignModService.findIterationsByCampaignId(campaignId);
+		return createJsonIterations(iterations);
+	}
 	
+	// for now, handles the scheduled dates only
+	@RequestMapping(value = "/iterations/planning", consumes="application/json", method = RequestMethod.POST)
+	@ResponseBody
+	public void setIterationsPlanning(@RequestBody JsonIteration[] iterations) throws ParseException{
+		SimpleDateFormat formatter = new SimpleDateFormat(org.apache.tools.ant.util.DateUtils.ISO8601_DATETIME_PATTERN);
+		Date date;
+		for (JsonIteration iter : iterations){
+			date = (iter.getScheduledStartDate() != null) ? formatter.parse(iter.getScheduledStartDate()) : null;
+			iterationModService.changeScheduledStartDate(iter.getId(), date);
+			date = (iter.getScheduledEndDate() != null) ? formatter.parse(iter.getScheduledEndDate()) : null;
+			iterationModService.changeScheduledEndDate(iter.getId(), date);
+		}
+	}
+	
+
 	// *************************** statistics ********************************
 
 	//URL should have been /statistics, but that was already used by another method in this controller
@@ -354,6 +381,22 @@ public class CampaignModificationController {
 	
 	// **************************** private stuffs ***************************
 	
+	private List<JsonIteration> createJsonIterations(List<Iteration> iterations){
+		List<JsonIteration> jsonIters = new ArrayList<JsonIteration>(iterations.size()); 
+		for (Iteration iter : iterations){
+			
+			JsonIteration jsonIter = new JsonIteration(
+					iter.getId(), 
+					iter.getName(), 
+					iter.getScheduledStartDate(), 
+					iter.getScheduledEndDate());
+			
+			jsonIters.add(jsonIter);
+		}
+		return jsonIters;
+	}
+	
+
 	private static final class UserLoginComparator implements Comparator<User>{
 		@Override
 		public int compare(User u1, User u2) {

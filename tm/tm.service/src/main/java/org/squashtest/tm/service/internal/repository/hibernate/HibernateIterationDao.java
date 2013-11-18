@@ -126,9 +126,9 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 	private final String hqlUserFilteredIndexedTestPlan = HQL_INDEXED_TEST_PLAN_TEMPLATE_START.replace("{whereClause}", "and User.login = :userLogin ");
 
 	@Override
-	public List<Iteration> findAllInitializedByCampaignId(long campaignId) {
+	public List<Iteration> findAllByCampaignId(long campaignId) {
 
-		return executeListNamedQuery("iterationDao.findAllInitializedByCampaignId", 
+		return executeListNamedQuery("iterationDao.findAllByCampaignId", 
 									  new SetIdParameter("campaignId", campaignId));
 	}
 

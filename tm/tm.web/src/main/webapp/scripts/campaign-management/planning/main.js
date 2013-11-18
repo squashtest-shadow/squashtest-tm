@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2013 Henix, henix.fr
  *
@@ -18,30 +18,15 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.campaign;
 
-import java.util.List;
-
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.domain.campaign.TestPlanStatistics;
-import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
-
-@Transactional
-public interface CustomCampaignModificationService {
-
-	void rename(long campaignId, String newName);
-
-	List<Iteration> findIterationsByCampaignId(long campaignId);
+define(["./iteration-planning-popup"], function(){
 	
-	/**
-	 * 
-	 * @param campaignId the id of the concerned campaign
-	 * @return the computed {@link TestPlanStatistics} out of each test-plan-item of each campaign's iteration
-	 */
-	TestPlanStatistics findCampaignStatistics(long campaignId);
-		
-	CampaignStatisticsBundle gatherCampaignStatisticsBundle(long campaignId);
-
-}
+	return {
+		init : function(conf){
+			$("#iteration-planning-popup").iterplanningDialog();
+			$("#iteration-planning-button").click(function(){
+				$("#iteration-planning-popup").iterplanningDialog('open');
+			});
+		}
+	};
+});

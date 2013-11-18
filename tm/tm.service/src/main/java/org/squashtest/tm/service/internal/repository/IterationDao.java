@@ -35,14 +35,7 @@ import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 
 public interface IterationDao extends EntityDao<Iteration> {
 
-	/**
-	 * Returns the initialized list of the iterations of a campaign. Returned list order is the same as
-	 * Campaign.iterations
-	 * 
-	 * @param campaignId
-	 * @return
-	 */
-	List<Iteration> findAllInitializedByCampaignId(long campaignId);
+	List<Iteration> findAllByCampaignId(long campaignId);
 
 	void removeFromCampaign(Iteration iteration);
 
