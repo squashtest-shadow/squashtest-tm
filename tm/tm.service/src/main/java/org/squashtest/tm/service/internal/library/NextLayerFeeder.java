@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.library;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
@@ -123,7 +124,7 @@ public class NextLayerFeeder implements NodeVisitor  {
 	@SuppressWarnings("unchecked")
 		private void saveNextToCopy(NodeContainer<? extends TreeNode> source, NodeContainer<? extends TreeNode> destination) {
 			if (source.hasContent()) {
-				Collection<TreeNode> sourceContent = (Collection<TreeNode>) source.getOrderedContent();
+				Collection<TreeNode> sourceContent = new ArrayList<TreeNode>(source.getOrderedContent());
 				sourceContent.removeAll(outputList);
 				nextLayer.put((NodeContainer<TreeNode>) destination, sourceContent);
 			}

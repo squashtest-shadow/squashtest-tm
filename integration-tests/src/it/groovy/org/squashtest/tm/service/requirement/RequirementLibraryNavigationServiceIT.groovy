@@ -87,6 +87,8 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		export3.name == "req3"
 		export3.folderName == ""
 	}
+	
+	
 
 	@DataSet("RequirementLibraryNavigationServiceIT.should not copy paste obsolete.xml")
 	def "should not copy paste selection containing obsolete"(){
@@ -141,7 +143,7 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	}
 
 	@DataSet("RequirementLibraryNavigationServiceIT.should copy paste folder with requirements.xml")
-	def "should not go infinite loop when copy paste a folder into itself"(){
+	def "should copy paste a folder into itself"(){
 		given:
 		Long[] sourceIds = [1L]
 		Long destinationId = 1L
@@ -151,9 +153,24 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
 		then:"requirement folder is copied"
 		nodes.get(0) instanceof RequirementFolder
+		RequirementFolder folder = findEntity(RequirementFolder.class, destinationId);
+		folder.content.size() == 3
 	}
 
-
+	@DataSet("RequirementLibraryNavigationServiceIT.should copy paste a requirement into itself.xml")
+	def "should copy paste a requirement into itself"(){
+		given :
+		Long[] sourceIds = [10L]
+		long destinationId = 10L
+		
+		when :
+		List<Requirement> result = navService.copyNodesToRequirement(destinationId, sourceIds)
+		
+		then:
+		//expected dataset is verified
+		Requirement destination = findEntity(Requirement.class, 10L)
+		destination.content.size() == 1
+	}
 
 	@DataSet("RequirementLibraryNavigationServiceIT.should copy paste folder with requirements.xml")
 	def "should copy paste folder with requirements"(){
