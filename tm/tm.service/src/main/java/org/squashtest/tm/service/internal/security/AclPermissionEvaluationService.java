@@ -22,11 +22,14 @@ package org.squashtest.tm.service.internal.security;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.springframework.security.access.PermissionEvaluator;
+import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.domain.PermissionFactory;
 import org.springframework.security.acls.model.Permission;
 import org.springframework.security.core.Authentication;
@@ -115,6 +118,7 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 		return hasMore;
 	}
 
+	
 	@Override
 	public boolean hasPermissionOnObject(String permissionName, Long entityId, String entityClassName) {
 		Authentication authentication = userContextService.getPrincipal();
@@ -123,5 +127,28 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 		return permissionEvaluator.hasPermission(authentication,entityId, entityClassName, permission);
 	}
 
+	
+	@Override
+	public Map<Permission, Boolean> listPermissionsOnObject(Object object) {
+		String admin = "ROLE_ADMIN";
+		
+		Map<Permission, Boolean> permissionMap = new HashMap<Permission, Boolean>(13);
+		
+		permissionMap.put(BasePermission.READ, hasRoleOrPermissionOnObject(admin, BasePermission.READ.toString(), object));
+		permissionMap.put(BasePermission.WRITE, hasRoleOrPermissionOnObject(admin, BasePermission.WRITE.toString(), object));
+		permissionMap.put(BasePermission.CREATE, hasRoleOrPermissionOnObject(admin, BasePermission.CREATE.toString(), object));
+		permissionMap.put(BasePermission.DELETE, hasRoleOrPermissionOnObject(admin, BasePermission.DELETE.toString(), object));
+		permissionMap.put(BasePermission.ADMINISTRATION, hasRoleOrPermissionOnObject(admin, BasePermission.ADMINISTRATION.toString(), object));
+		permissionMap.put(CustomPermission.MANAGEMENT, hasRoleOrPermissionOnObject(admin, CustomPermission.MANAGEMENT.toString(), object));
+		permissionMap.put(CustomPermission.EXPORT, hasRoleOrPermissionOnObject(admin, CustomPermission.EXPORT.toString(), object));
+		permissionMap.put(CustomPermission.EXECUTE, hasRoleOrPermissionOnObject(admin, CustomPermission.EXECUTE.toString(), object));
+		permissionMap.put(CustomPermission.LINK, hasRoleOrPermissionOnObject(admin, CustomPermission.LINK.toString(), object));
+		permissionMap.put(CustomPermission.IMPORT, hasRoleOrPermissionOnObject(admin, CustomPermission.IMPORT.toString(), object));
+		permissionMap.put(CustomPermission.ATTACH, hasRoleOrPermissionOnObject(admin, CustomPermission.ATTACH.toString(), object));
+		permissionMap.put(CustomPermission.EXTENDED_DELETE, hasRoleOrPermissionOnObject(admin, CustomPermission.EXTENDED_DELETE.toString(), object));
+		permissionMap.put(CustomPermission.READ_UNASSIGNED, hasRoleOrPermissionOnObject(admin, CustomPermission.READ_UNASSIGNED.toString(), object));
+		
+		return permissionMap;
+	}
 	
 }
