@@ -40,6 +40,7 @@
 		
 		<comp:sq-css name="squash.core.css" />
 		<link type="image/x-icon" rel="shortcut icon" href="${ pageContext.servletContext.contextPath }/images/favicon.ico"/>
+		<link type="text/css" rel="stylesheet" href="${ pageContext.servletContext.contextPath }/styles/print.css"/>
 
 		<script type="text/javascript">
 		var require = require || {};
@@ -51,73 +52,11 @@
 		<layout:_common-lang/>
 		</script>
 		<script type="text/javascript" src="${pageContext.servletContext.contextPath}/scripts/require-min.js"></script>
-		
-		<style type="text/css">
-			html,body {
-				background: none;
-			}
-			
-			body {
-				width: 29cm;
-				font-size : 0.8em;
-			}
-			
-			.fragment-header{
-				background-color : #982bd4;
-				height : 3em;
-				color : white;
-				margin-bottom : 2em; 
-			}
-			
-			.fragment-body{
-				position : relative;
-				top : inherit;
-				width : inherit;
-			}
-			
-			
-			.ui-accordion-header{
-				background-color : #2e2e2e;
-				color : white;
-				height : 2em;
-				font-size : 16px;
-				padding-top : 0.5em;
-			}
-			
-			.dashboard-item-view{
-				width : 100%;
-				float : none;
-				height : 260px;
-			}
-			
-			.dashboard-item-meta{
-				width : 100%;
-				height : 40px;
-				float : none;
-			}
-			
-			.dashboard-item-legend{
-				margin-left:1em;
-				margin-right : 1em;
-				margin-bottom : 1em;
-				position : relative;		
-				bottom : 0;
-				left : 0;		
-			}
-			
-			.dashboard-item-legend > div{
-				display : inline-block;
-			}
-			
-			.serie{
-				display : none;
-			}
-		</style>
-		
+
 	</head>
 	
 	<body >
-		<div class="ui-widget-header ui-state-default ui-corner-all fragment-header">
+		<div class="ui-widget-header ui-state-default ui-corner-all fragment-header purple">
 			<h2><span><f:message key="label.Campaign"/> : ${campaign.name}</span></h2>			
 		</div>
 		

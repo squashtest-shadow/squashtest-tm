@@ -48,7 +48,7 @@
 		<span class="dashboard-timestamp not-displayed"><f:message key="dashboard.meta.timestamp.label"/></span> 		
 <c:if test="${empty printmode or (not printmode) }">
 		<input type="button" class="dashboard-refresh-button button" role="button" value="${refreshLabel}"/>	
-		<a id="campaign-dashboard-print" href="${printUrl}" target="_blank" role="button" >I WANT MY ICON !</a>
+		<a id="campaign-dashboard-print" href="${printUrl}" target="_blank" role="button" >print</a>
 </c:if>
 	</div>
 	

@@ -189,7 +189,8 @@ define([
 							fontSize : '12px',
 							// Special stylableGridRenderer
 							gridStyle : {
-								lineDash : [3, 6]
+								lineDash : [3, 6],
+								strokeStyle : '#999999'
 							}
 						}
 					},
@@ -202,11 +203,11 @@ define([
 							// Special StylableGridRenderer
 							gridStyle : {
 								lineDash : [5],
-								strokeStyle : '#750021'
+								strokeStyle : 'black'
 							},
 							markStyle : {
 								lineDash : [5],
-								strokeStyle : '#750021'	
+								strokeStyle : 'black'	
 							}							
 						},
 						show : true,
@@ -260,7 +261,7 @@ define([
 		createX2ticks : function(axisStart, axisEnd){
 			var iterations = this._getModelData().scheduledIterations;
 			
-			var labeltpl = '<div style="background-color:#750021; color:white; font-weight:bold; "><span>{{this.name}}</span></div>';
+			var labeltpl = '<div style="background-color:black; color:white; font-weight:bold; "><span>{{this.name}}</span></div>';
 			
 			var x2ticks = [], 
 				i=0, 
