@@ -429,15 +429,6 @@ that page won't be editable if
 				dialog.confirmDialog( "open" );
 				return false;
 			});
-			
-			<c:if test="${hasCUF}">
-			<%-- loading the custom fields --%>
-			$.get("${customFieldsValuesURL}?boundEntityId=${requirement.currentVersion.boundEntityId}&boundEntityType=${requirement.currentVersion.boundEntityType}")
-			.success(function(data){
-				$("#edit-requirement-table").append(data);
-			});
-	    	</c:if>
-			
 		});
 	</script>		
 	</c:if>	
@@ -508,6 +499,14 @@ that page won't be editable if
 				eventBus.onContextual('tc-req-links-updated', function(evt){
 					$("#verifying-test-cases-table").squashTable().refresh();					
 				});
+				
+				<c:if test="${hasCUF}">
+				<%-- loading the custom fields --%>
+				$.get("${customFieldsValuesURL}?boundEntityId=${requirement.currentVersion.boundEntityId}&boundEntityType=${requirement.currentVersion.boundEntityType}")
+				.success(function(data){
+					$("#edit-requirement-table").append(data);
+				});
+		    	</c:if>
 				
 			});
 		});
