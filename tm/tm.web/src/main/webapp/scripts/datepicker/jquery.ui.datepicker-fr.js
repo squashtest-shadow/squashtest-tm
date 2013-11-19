@@ -23,8 +23,8 @@
 jQuery(function($) {
 	$.datepicker.regional.fr = {
 		closeText : 'Fermer',
-		prevText : '<Pr\u00e9c',
-		nextText : 'Suiv>',
+		prevText : 'Pr\u00e9c',
+		nextText : 'Suiv',
 		currentText : 'Courant',
 		monthNames : [ 'Janvier', 'F\u00e9vrier', 'Mars', 'Avril', 'Mai',
 				'Juin', 'Juillet', 'Ao\u00fbt', 'Septembre', 'Octobre',

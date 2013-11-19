@@ -22,8 +22,8 @@
 jQuery(function($){
 	$.datepicker.regional.de = {
 		closeText: 'schlie\u00dfen',
-		prevText: '<zur\u00fcck',
-		nextText: 'Vor>',
+		prevText: 'Zur\u00fcck',
+		nextText: 'Vor',
 		currentText: 'Heute',
 		timeText: 'Zeit',
 		hourText: 'Stunden',

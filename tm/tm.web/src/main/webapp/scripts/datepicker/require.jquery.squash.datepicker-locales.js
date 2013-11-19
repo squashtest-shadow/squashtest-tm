@@ -33,8 +33,8 @@ define(["jquery","jqueryui"], function($){
 		
 	$.datepicker.regional.fr = {
 		closeText: 'Fermer',
-		prevText: '<Pr\u00e9c',
-		nextText: 'Suiv>',
+		prevText: 'Pr\u00e9c',
+		nextText: 'Suiv',
 		currentText: 'Courant',
 		timeText: 'Temps',
 		hourText: 'Heures',
@@ -57,8 +57,8 @@ define(["jquery","jqueryui"], function($){
 	
 	$.datepicker.regional.de = {
 		closeText: 'schlie\u00dfen',
-		prevText: '<zur\u00fcck',
-		nextText: 'Vor>',
+		prevText: 'Zur\u00fcck',
+		nextText: 'Vor',
 		currentText: 'Heute',
 		timeText: 'Zeit',
 		hourText: 'Stunden',
