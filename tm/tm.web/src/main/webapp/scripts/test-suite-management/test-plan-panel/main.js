@@ -53,9 +53,7 @@ define(['squash.translator', './table', './popups'], function(translator, table,
 				FAILURE : "execution.execution-status.FAILURE",
 				SUCCESS : "execution.execution-status.SUCCESS",
 				RUNNING : "execution.execution-status.RUNNING",
-				READY	: "execution.execution-status.READY",
-				WARNING	: "execution.execution-status.WARNING",
-				ERROR	: "execution.execution-status.ERROR"
+				READY	: "execution.execution-status.READY"
 			},
 			automatedExecutionTooltip : "label.automatedExecution",
 			labelOk : "label.Ok",
