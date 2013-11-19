@@ -27,7 +27,7 @@
  * a model is available has class "dashboard-figleaf-notready".
  */
 
-define(["jquery"], function($){
+define(["jquery", "backbone"], function($, Backbone){
 	return Backbone.View.extend({
 		
 		initialize : function(){

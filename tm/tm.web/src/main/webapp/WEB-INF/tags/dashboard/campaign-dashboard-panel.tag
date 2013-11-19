@@ -24,8 +24,13 @@
 
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
 <%@ attribute name="url" required="true" description="url where to get the data" %>
-<%@ attribute name="cacheKey" required="false" description="if set, will use the cache using that key" %>
+<%@ attribute name="printUrl" required="false" description="url where to fetch an html version" %>
+<%@ attribute name="printmode" required="false" type="java.lang.Boolean" 
+			description="if set to true, renders in print mode. This means among other things that the toolbar will not be rendered." %>
+
 
 
 <f:message var="advanceTitle" key="title.CampaignCumulativeAdvancement"/>
@@ -40,9 +45,11 @@
 <div id="dashboard-master" data-def="url=${url}">
 
 	<div class="toolbar">
-		<span class="dashboard-timestamp not-displayed"><f:message key="dashboard.meta.timestamp.label"/></span> 
+		<span class="dashboard-timestamp not-displayed"><f:message key="dashboard.meta.timestamp.label"/></span> 		
+<c:if test="${empty printmode or (not printmode) }">
 		<input type="button" class="dashboard-refresh-button button" role="button" value="${refreshLabel}"/>	
-		<input type="button" class="button" role="button" value="I WANT MY ICON !"/>
+		<a id="campaign-dashboard-print" href="${printUrl}" target="_blank" role="button" >I WANT MY ICON !</a>
+</c:if>
 	</div>
 	
 	
@@ -244,7 +251,7 @@
 					
 						<tbody>
 							<tr class="dashboard-table-template-emptyrow">
-								<td colspan="9" class="std-border">No record founds (résultat vide) (internationalise moi ça)</td>
+								<td colspan="9" class="std-border"><f:message key="generics.datatable.zeroRecords"/></td>
 							</tr>
 							<tr class="dashboard-table-template-datarow">
 								<td class="std-border light-border" style="text-align:left;padding-left:10pt;font-weight:bold">{{this.[0]}}</td>

@@ -33,7 +33,6 @@
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform" %>
 <%@ taglib prefix="dashboard" tagdir="/WEB-INF/tags/dashboard" %>
-<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 
 <f:message var="squashlocale" key="squashtm.locale" />	
 <f:message var="iterationPlanningTitle" key="campaigns.planning.iterations.scheduled_dates"/>	
@@ -50,6 +49,7 @@
 <c:url var="campaignPlanningUrl" value="/campaigns/${campaign.id}/planning"/>
 <c:url var="assignableUsersUrl" value="/campaigns/${campaign.id}/assignable-users" />
 <c:url var="campaignStatisticsUrl" value="/campaigns/${campaign.id}/dashboard-statistics" />
+<c:url var="campaignStatisticsPrintUrl" value="/campaigns/${campaign.id}/dashboard"/>
 <c:url var="assignTestCasesUrl" value="/campaigns/${campaign.id}/batch-assign-user" />
 <c:url var="testCaseManagerUrl"	value="/campaigns/${campaign.id}/test-plan/manager" />
 <c:url var="workspaceUrl" value="/campaign-workspace/#" />
@@ -120,11 +120,11 @@
 			<jsp:attribute name="body">
 				<script type="text/javascript">
 					$("#rename-campaign-dialog").bind("dialogopen",
-							function(event, ui) {
-								var name = $.trim($('#campaign-name').text());
-								$("#rename-campaign-name").val(name);
+						function(event, ui) {
+							var name = $.trim($('#campaign-name').text());
+							$("#rename-campaign-name").val(name);
 
-							}
+						}
 					);
 				</script>			
 				<label><f:message key="dialog.rename.label" />
@@ -441,7 +441,7 @@
 	
 	<%------------------------------- Dashboard ---------------------------------------------------%>
 	<div id="dashboard-campaign">
-		<dashboard:campaign-dashboard-panel url="${campaignStatisticsUrl}"/>
+		<dashboard:campaign-dashboard-panel url="${campaignStatisticsUrl}" printUrl="${campaignStatisticsPrintUrl}"/>
 	</div>
 
 </div>

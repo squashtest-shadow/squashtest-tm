@@ -372,10 +372,19 @@ public class CampaignModificationController {
 		return campaignModService.gatherCampaignStatisticsBundle(campaignId);
 	}
 	
-	@RequestMapping (value = "/dashboard", method = RequestMethod.GET, produces="text/html", params = {"date"})
-	public String getDashboard(Model model, @PathVariable("campaignId") long campaignId, @RequestParam(value="date", defaultValue="") String strDate){
+	@RequestMapping (value = "/dashboard", method = RequestMethod.GET, produces="text/html"/*, params = {"date"}*/)
+	public ModelAndView getDashboard(Model model, @PathVariable("campaignId") long campaignId/*, @RequestParam(value="date", defaultValue="") String strDate*/){
 		
-		throw new RuntimeException("not implemented yet");
+		Campaign campaign = campaignModService.findById(campaignId);
+		CampaignStatisticsBundle bundle = campaignModService.gatherCampaignStatisticsBundle(campaignId);
+		
+		ModelAndView mav  = new ModelAndView("fragment/campaigns/campaign-dashboard");
+		mav.addObject("campaign", campaign);
+		mav.addObject("dashboardModel", bundle);
+		
+		return mav;
+		
+		
 	}
 	
 	

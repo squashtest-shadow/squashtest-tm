@@ -155,7 +155,9 @@ define(["jquery", "./jqplot-view", "iesupport/am-I-ie8", "./ie8-special-pie-rend
 				grid : {
 					background : '#FFFFFF',
 					drawBorder : false,
-					shadow : false
+					borderColor : 'transparent',
+					shadow : false,
+					shadowColor : 'transparent'
 				},
 				seriesColors : colorsAndLabels.colors
 			};

@@ -94,6 +94,10 @@
  * tableDnDupate() and tableDnDSerialize() to be called when you are outside the
  * table
  */
+
+define(['jquery'], function(jQuery){
+	
+
 jQuery.tableDnD = {
 	/** Keep hold of the current table being dragged */
 	currentTable : null,
@@ -577,3 +581,5 @@ jQuery.tableDnD.mouseup = function(event) {
 	}
 	tableDnDoldMouseUp.call(this, event);
 };
+
+});
