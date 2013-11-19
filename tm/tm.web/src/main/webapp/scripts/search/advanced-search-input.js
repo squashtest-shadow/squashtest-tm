@@ -255,7 +255,6 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 		post : function (URL, PARAMS) {
 			var temp=document.createElement("form");
 			temp.action=URL;
-			temp.encoding="UTF-8";
 			temp.method="POST";
 			temp.style.display="none";
 			temp.acceptCharset="UTF-8";
