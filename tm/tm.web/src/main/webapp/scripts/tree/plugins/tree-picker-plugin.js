@@ -38,6 +38,18 @@ define(['jquery'], function($){
 					var counter = this.data.treepicker.counter++;
 					data.rslt.obj.attr('order', counter);
 				}, this));
+				
+				container.bind("open_node.jstree", $.proxy(function(e, data) {
+					var children = $("li",data.rslt.obj);
+					var typePluginConf = data.inst.get_settings().types.types;
+					for(var i=0; i<children.size(); i++){
+						var domType = $(children[i]).attr('rel');
+						var config = typePluginConf[domType];
+						if(config === undefined || config.valid_children === 'none'){
+							$(children[i]).removeClass("jstree-open").removeClass("jstree-closed").addClass("jstree-leaf");
+						}
+					}
+				}, this));
 			},
 			_fn : {
 				get_selected : function() {
