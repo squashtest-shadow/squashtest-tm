@@ -69,6 +69,7 @@
     <property name="prefix" value="/WEB-INF/templates/" />
 		<!-- no suffix because it's already in view name  -->
     <property name="templateMode" value="HTML5" />
+    <property name="characterEncoding" value="UTF-8" />
     <property name="cacheable" value="@is.war.deploy@" /> <!-- this is a maven placeholder -->
   </bean>
 
@@ -76,6 +77,7 @@
     <property name="prefix" value="/WEB-INF/templates/" />
     <property name="suffix" value=".html" />
     <property name="templateMode" value="HTML5" />
+    <property name="characterEncoding" value="UTF-8" />
     <property name="cacheable" value="@is.war.deploy@" /> <!-- this is a maven placeholder -->
   </bean>
 
@@ -97,6 +99,8 @@
 	<!-- Thymeleaf view resolver -->
   <bean id="thymeleaf.viewResolver" class="org.thymeleaf.spring3.view.ThymeleafViewResolver">
     <property name="templateEngine" ref="thymeleaf.templateEngine" />
+ 	<property name="characterEncoding" value="UTF-8" />
+	<property name="contentType" value="text/html; charset=UTF-8" />
     <property name="order" value="1" />
 		<!-- Thymeleaf view names end with html cos we need to differenciate from jsps -->
     <property name="viewNames" value="*.html" />
