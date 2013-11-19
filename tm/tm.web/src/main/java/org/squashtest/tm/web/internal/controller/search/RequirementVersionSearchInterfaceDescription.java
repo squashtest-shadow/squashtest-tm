@@ -167,7 +167,7 @@ public class RequirementVersionSearchInterfaceDescription {
 		panel.setTitle(messageSource.internationalize("search.requirement.versions.panel.title", locale));
 		panel.setOpen(true);
 		panel.setId("versions");
-		panel.setLocation("column1");
+		panel.setLocation("column2");
 		panel.addCssClass("search-icon-version");
 		
 		SearchInputFieldModel versionField = new SearchInputFieldModel(

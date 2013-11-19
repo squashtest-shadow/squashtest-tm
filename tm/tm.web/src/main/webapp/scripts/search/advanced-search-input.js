@@ -58,6 +58,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 							var tableid = val.id+"-panel-table-id";
 							var html = template(context);
 							$("#advanced-search-input-form-panel-"+val.location).append(html);
+							$("#advanced-search-input-form-panel-"+val.location).addClass($("#searchDomain").text());
 							var i;
 							var searchModel = {}; 
 							if($("#searchModel").text()){
