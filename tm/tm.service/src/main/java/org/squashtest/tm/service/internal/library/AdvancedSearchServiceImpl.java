@@ -105,6 +105,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	@Inject
 	private ConfigurationService configurationService;
 	
+	private final static Integer EXPECTED_LENGTH = 7;
 	public final static String REQUIREMENT_INDEXING_DATE_KEY = "lastindexing.requirement.date";
 	public final static String TESTCASE_INDEXING_DATE_KEY = "lastindexing.testcase.date";
 	public final static String CAMPAIGN_INDEXING_DATE_KEY = "lastindexing.campaign.date";
@@ -299,34 +300,51 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return projectDao.findUsersWhoModifiedRequirementVersions(projectIds);
 	}
 	
+	private String padRawValue(Integer rawValue){
+		StringBuilder builder = new StringBuilder();
+		int length = Integer.toString(rawValue).length();
+		int zeroesToAdd = EXPECTED_LENGTH - length;
+		for(int i=0; i<zeroesToAdd; i++){
+			builder.append("0");
+		}
+		builder.append(Integer.toString(rawValue));
+		return builder.toString();
+	}
+
 	private org.apache.lucene.search.Query buildLuceneRangeQuery(
 			QueryBuilder qb, String fieldName, Integer minValue,
 			Integer maxValue) {
 
 		org.apache.lucene.search.Query query = null;
-
+		
+		
 		if (minValue == null) {
 
+			String paddedMaxValue = padRawValue(maxValue);
+					
 			query = qb
 					.bool()
 					.must(qb.range().onField(fieldName).ignoreFieldBridge()
-							.below(maxValue).createQuery()).createQuery();
+							.below(paddedMaxValue).createQuery()).createQuery();
 
 		} else if (maxValue == null) {
 
+			String paddedMinValue = padRawValue(minValue);
+			
 			query = qb
 					.bool()
 					.must(qb.range().onField(fieldName).ignoreFieldBridge()
-							.above(minValue).createQuery()).createQuery();
+							.above(paddedMinValue).createQuery()).createQuery();
 
 		} else {
 
+			String paddedMaxValue = padRawValue(maxValue);
+			String paddedMinValue = padRawValue(minValue);
+			
 			query = qb
 					.bool()
 					.must(qb.range().onField(fieldName).ignoreFieldBridge()
-							.above(minValue).createQuery())
-					.must(qb.range().onField(fieldName).ignoreFieldBridge()
-							.below(maxValue).createQuery()).createQuery();
+							.from(paddedMinValue).to(paddedMaxValue).createQuery()).createQuery();
 		}
 
 		return query;

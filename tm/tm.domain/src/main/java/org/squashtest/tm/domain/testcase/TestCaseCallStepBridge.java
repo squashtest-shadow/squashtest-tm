@@ -30,6 +30,20 @@ import org.squashtest.tm.domain.search.SessionFieldBridge;
 
 public class TestCaseCallStepBridge extends SessionFieldBridge{
 
+	private static final Integer EXPECTED_LENGTH = 7;
+	
+	private String padRawValue(Long rawValue){
+		String rawValueAsString = String.valueOf(rawValue);
+		StringBuilder builder = new StringBuilder();
+		int length = rawValueAsString.length();
+		int zeroesToAdd = EXPECTED_LENGTH - length;
+		for(int i=0; i<zeroesToAdd; i++){
+			builder.append("0");
+		}
+		builder.append(rawValueAsString);
+		return builder.toString();
+	}
+	
 	private Long findNumberOfCalledTestCases(Session session, Long id){
 		return (Long) session
 				.createCriteria(TestCase.class)
@@ -45,7 +59,7 @@ public class TestCaseCallStepBridge extends SessionFieldBridge{
 
 		Long numberOfCalledTestCases = findNumberOfCalledTestCases(session, testcase.getId());
 
-		Field field = new Field(name, String.valueOf(numberOfCalledTestCases),
+		Field field = new Field(name, padRawValue(numberOfCalledTestCases),
 				luceneOptions.getStore(), luceneOptions.getIndex(),
 				luceneOptions.getTermVector());
 		field.setBoost(luceneOptions.getBoost());

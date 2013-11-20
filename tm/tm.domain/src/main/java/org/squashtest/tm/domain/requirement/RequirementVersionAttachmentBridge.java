@@ -29,13 +29,27 @@ import org.squashtest.tm.domain.search.SessionFieldBridge;
 
 public class RequirementVersionAttachmentBridge extends SessionFieldBridge{
 
+	private static final Integer EXPECTED_LENGTH = 7;
+	
+	private String padRawValue(int rawValue){
+		String rawValueAsString = String.valueOf(rawValue);
+		StringBuilder builder = new StringBuilder();
+		int length = rawValueAsString.length();
+		int zeroesToAdd = EXPECTED_LENGTH - length;
+		for(int i=0; i<zeroesToAdd; i++){
+			builder.append("0");
+		}
+		builder.append(rawValueAsString);
+		return builder.toString();
+	}
+	
 	@Override
 	protected void writeFieldToDocument(String name, Session session, Object value, Document document, LuceneOptions luceneOptions){
 		
 		RequirementVersion requirement =  (RequirementVersion) value;
 		requirement = (RequirementVersion) session.createCriteria(RequirementVersion.class).add(Restrictions.eq("id", requirement.getId())).uniqueResult(); //NOSONAR session is never null
 		
-		Field field = new Field(name, String.valueOf(requirement.getAttachmentList().size()), luceneOptions.getStore(),
+		Field field = new Field(name, padRawValue(requirement.getAttachmentList().size()), luceneOptions.getStore(),
 		   luceneOptions.getIndex(), luceneOptions.getTermVector() );
 		   field.setBoost( luceneOptions.getBoost());
 		

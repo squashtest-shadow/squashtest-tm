@@ -31,6 +31,20 @@ import org.squashtest.tm.domain.search.SessionFieldBridge;
 
 public class TestCaseIssueBridge extends SessionFieldBridge{
 
+	private static final Integer EXPECTED_LENGTH = 7;
+	
+	private String padRawValue(Long rawValue){
+		String rawValueAsString = String.valueOf(rawValue);
+		StringBuilder builder = new StringBuilder();
+		int length = rawValueAsString.length();
+		int zeroesToAdd = EXPECTED_LENGTH - length;
+		for(int i=0; i<zeroesToAdd; i++){
+			builder.append("0");
+		}
+		builder.append(rawValueAsString);
+		return builder.toString();
+	}
+	
 	private Long findNumberOfIssues(Session session, Long id){
 		
 		return (Long) session.createCriteria(Execution.class)
@@ -48,7 +62,7 @@ public class TestCaseIssueBridge extends SessionFieldBridge{
 		
 		Long numberOfIssues = findNumberOfIssues(session, testcase.getId());
 		
-		Field field = new Field(name, String.valueOf(numberOfIssues), luceneOptions.getStore(),
+		Field field = new Field(name, padRawValue(numberOfIssues), luceneOptions.getStore(),
 	    luceneOptions.getIndex(), luceneOptions.getTermVector() );
 	    field.setBoost( luceneOptions.getBoost());
 	    document.add(field);

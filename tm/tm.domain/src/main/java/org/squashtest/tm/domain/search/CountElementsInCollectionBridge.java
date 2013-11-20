@@ -26,11 +26,25 @@ import org.hibernate.search.bridge.StringBridge;
 
 public class CountElementsInCollectionBridge implements StringBridge {
 	
+	private static final int EXPECTED_LENGTH = 7;
+	
+	private String padRawValue(String rawValue){
+		StringBuilder builder = new StringBuilder();
+		int length = rawValue.length();
+		int zeroesToAdd = EXPECTED_LENGTH - length;
+		for(int i=0; i<zeroesToAdd; i++){
+			builder.append("0");
+		}
+		builder.append(rawValue);
+		return builder.toString();
+	}
+	
 	@Override
 	public String objectToString(Object value) {
 		@SuppressWarnings("unchecked")
 		Collection<Object> collection = (Collection<Object>) value;
-		return Integer.toString(collection.size());
+		String rowValue = Integer.toString(collection.size());
+		return padRawValue(rowValue);
 	}
 }
 

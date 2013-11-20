@@ -31,13 +31,20 @@ import org.squashtest.tm.domain.search.SessionFieldBridge;
 
 public class TestCaseExecutionBridge extends SessionFieldBridge{
 
-	@Override
-	public void set(String name, Object value, Document document, LuceneOptions luceneOptions) {
-
-
-		
+	private static final Integer EXPECTED_LENGTH = 7;
+	
+	private String padRawValue(Long rawValue){
+		String rawValueAsString = String.valueOf(rawValue);
+		StringBuilder builder = new StringBuilder();
+		int length = rawValueAsString.length();
+		int zeroesToAdd = EXPECTED_LENGTH - length;
+		for(int i=0; i<zeroesToAdd; i++){
+			builder.append("0");
+		}
+		builder.append(rawValueAsString);
+		return builder.toString();
 	}
-
+	
 	private Long findNumberOfExecutions(Session session, Long id) {
 
 		return (Long) session.createCriteria(Execution.class) //NOSONAR session is never null
@@ -48,13 +55,13 @@ public class TestCaseExecutionBridge extends SessionFieldBridge{
 	}
 
 	@Override
-	protected void writeFieldToDocument(String name, Session session, Object value, Document document, LuceneOptions luceneOptions) {
+	protected void writeFieldToDocument(String name, Session session, Object value, Document document, LuceneOptions luceneOptions){
 
 		TestCase testcase = (TestCase) value;
 
 		Long numberOfExecutions = findNumberOfExecutions(session, testcase.getId());
 		
-		Field field = new Field(name, String.valueOf(numberOfExecutions), luceneOptions.getStore(),
+		Field field = new Field(name, padRawValue(numberOfExecutions), luceneOptions.getStore(),
 	    luceneOptions.getIndex(), luceneOptions.getTermVector() );
 	    field.setBoost( luceneOptions.getBoost());
 	    document.add(field);

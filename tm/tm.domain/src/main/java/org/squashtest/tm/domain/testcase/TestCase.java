@@ -160,27 +160,27 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@OrderColumn(name = "STEP_ORDER")
 	@JoinTable(name = "TEST_CASE_STEPS", joinColumns = @JoinColumn(name = "TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "STEP_ID"))
 	@FieldBridge(impl = CountElementsInCollectionBridge.class)
-	@Field
+	@Field(analyze=Analyze.NO, store=Store.YES)
 	private final List<TestStep> steps = new ArrayList<TestStep>();
 
 	@NotNull
 	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE })
 	@JoinColumn(name = "VERIFYING_TEST_CASE_ID")
 	@FieldBridge(impl = CountElementsInCollectionBridge.class)
-	@Field(name="requirements")
+	@Field(name="requirements",analyze=Analyze.NO, store=Store.YES)
 	private Set<RequirementVersionCoverage> requirementVersionCoverages = new HashSet<RequirementVersionCoverage>(0);
 
 	@NotNull
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "testCase")
 	@OrderBy("name")
-	@Field
+	@Field(analyze=Analyze.NO, store=Store.YES)
 	@FieldBridge(impl = CountElementsInCollectionBridge.class)
 	private Set<Parameter> parameters = new HashSet<Parameter>(0);
 
 	@NotNull
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "testCase")
 	@OrderBy("name")
-	@Field
+	@Field(analyze=Analyze.NO, store=Store.YES)
 	@FieldBridge(impl = CountElementsInCollectionBridge.class)
 	private Set<Dataset> datasets = new HashSet<Dataset>(0);
 
