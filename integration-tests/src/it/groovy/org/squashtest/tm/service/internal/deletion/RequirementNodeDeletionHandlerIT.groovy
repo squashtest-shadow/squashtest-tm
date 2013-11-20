@@ -24,7 +24,9 @@ import javax.inject.Inject
 
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.service.DbunitServiceSpecification
+import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.requirement.Requirement
+import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance
@@ -141,6 +143,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		allDeleted("RequirementCreation", [111L, 112L, 121L])
 		allDeleted("RequirementPropertyChange", [122L])
 		allDeleted("RequirementLargePropertyChange", [123L])
+		allDeleted("AttachmentList", [1l, 111l, 112l, 121l])	//requested after issue 2899
 	}
 	
 	@DataSet("RequirementNodeDeletionHandlerIT.should update tc importance.xml")
@@ -186,10 +189,27 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 
 	}
 	
+	/* this test is required after issue 2899 */
+	@DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.xml")
+	def "when a folder is removed, the SimpleResource is removed too and so is the attachmentlist"(){
+		
+		fixForDeleteCascadeDataset()
+		
+		when :
+			deletionHandler.deleteNodes([1l])
+			
+		then :
+			! found(RequirementFolder.class, 1l)
+			! found("SIMPLE_RESOURCE", "RES_ID", 1l)
+			! found("RESOURCE", "RES_ID", 1l)
+			! found(AttachmentList.class, 1l)
+		
+	}
+	
 	
 	/*
 	 * The following test is disabled because H2 complains of some random imaginary
-	 * FK constraint violation
+	 * FK constraint violation. But works fine on mysql.
 	 * 
 	@DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.xml")
 	def "should do the above on requirement 31, and prevent possible name clashes"(){

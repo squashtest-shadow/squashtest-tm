@@ -357,7 +357,7 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		then :
 		allDeleted("CampaignFolder", [11l, 21l])
 		allDeleted("Campaign", [22l, 31l, 32l])
-		allDeleted("AttachmentList", [22l, 31l, 32l])
+		allDeleted("AttachmentList", [11l, 21l, 22l, 31l, 32l])	//issue 2899 : now checks that the attachment lists for folders are also deleted
 
 		allNotDeleted("Campaign", [12l])
 		allNotDeleted("AttachmentList", [12l])

@@ -130,7 +130,7 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 			1211L,
 			1212l
 		])
-		allDeleted("AttachmentList", [11L, 12L, 111L, 121L])
+		allDeleted("AttachmentList", [11L, 12L, 111L, 121L, 123l])	//issue 2899 : now checks that the attachment lists for folders are also deleted
 		
 		allDeleted("CustomFieldValue", [11L, 12L, 21L, 22L])
 
