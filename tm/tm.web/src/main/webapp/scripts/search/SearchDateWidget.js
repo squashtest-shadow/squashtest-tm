@@ -53,8 +53,12 @@ define(["jquery",  "squash.configmanager", "jqueryui", "jeditable.datepicker"],
 				}
 			} else {
 				$($("input",$($(this.element.children()[0])))[0]).attr('checked', 'checked');
-				$($("input",$($(this.element.children()[0])))[1]).datepicker('setDate', new Date(value.startDate));
-				$($("input",$($(this.element.children()[0])))[2]).datepicker('setDate', new Date(value.endDate));
+				if(!!value.startDate){
+					$($("input",$($(this.element.children()[0])))[1]).datepicker('setDate', new Date(value.startDate));
+				}
+				if(!!value.endDate){
+					$($("input",$($(this.element.children()[0])))[2]).datepicker('setDate', new Date(value.endDate));
+				}
 			}
 		}, 
 		

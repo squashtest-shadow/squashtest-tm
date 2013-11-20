@@ -439,6 +439,36 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return query;
 	}
 
+	private org.apache.lucene.search.Query buildLuceneTimeIntervalWithoutStartQuery(
+			QueryBuilder qb, String fieldName, Date enddate) {
+
+		org.apache.lucene.search.Query query = qb
+				.bool()
+				.must(qb.range()
+						.onField(fieldName)
+						.ignoreFieldBridge()
+						.below(DateTools.dateToString(enddate,
+								DateTools.Resolution.DAY)).createQuery())
+				.createQuery();
+
+		return query;
+	}
+	
+	private org.apache.lucene.search.Query buildLuceneTimeIntervalWithoutEndQuery(
+			QueryBuilder qb, String fieldName, Date startdate) {
+
+		org.apache.lucene.search.Query query = qb
+				.bool()
+				.must(qb.range()
+						.onField(fieldName)
+						.ignoreFieldBridge()
+						.above(DateTools.dateToString(startdate,
+								DateTools.Resolution.DAY)).createQuery())
+				.createQuery();
+
+		return query;
+	}
+	
 	private org.apache.lucene.search.Query buildQueryForSingleCriterium(
 			String fieldKey, AdvancedSearchFieldModel fieldModel,
 			QueryBuilder qb, boolean ignoreBridge) {
@@ -549,10 +579,12 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			String fieldKey, AdvancedSearchFieldModel fieldModel,
 			QueryBuilder qb) {
 		AdvancedSearchTimeIntervalFieldModel intervalModel = (AdvancedSearchTimeIntervalFieldModel) fieldModel;
-		if (intervalModel.getStartDate() != null
-				|| intervalModel.getEndDate() != null) {
-			return buildLuceneTimeIntervalQuery(qb, fieldKey,
-					intervalModel.getStartDate(), intervalModel.getEndDate());
+		if (intervalModel.getStartDate() != null && intervalModel.getEndDate() != null) {
+			return buildLuceneTimeIntervalQuery(qb, fieldKey, intervalModel.getStartDate(), intervalModel.getEndDate());
+		} else if (intervalModel.getStartDate() == null && intervalModel.getEndDate() != null) {
+			return buildLuceneTimeIntervalWithoutStartQuery(qb, fieldKey, intervalModel.getEndDate());
+		} else if (intervalModel.getStartDate() != null && intervalModel.getEndDate() == null) {
+			return buildLuceneTimeIntervalWithoutEndQuery(qb, fieldKey, intervalModel.getStartDate());
 		}
 
 		return null;
