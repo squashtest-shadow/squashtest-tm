@@ -224,6 +224,17 @@ define(
 					event.stopPropagation();
 				});
 
+				$(".th_input").keypress(function(event){
+					if (event.which == 13 )
+					{
+						event.stopPropagation();
+						event.preventDefault();
+						event.target.blur();
+						event.target.focus();
+					}
+				});
+				
+				
 				$("#test-suite-test-plans-table th").hover(function(event) {
 					event.stopPropagation();
 				});

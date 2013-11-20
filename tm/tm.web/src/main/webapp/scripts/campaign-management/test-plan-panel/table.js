@@ -154,6 +154,16 @@ define(['jquery', './sortmode', 'squashtable', 'jeditable'],
 		$(".th_input").click(function(event){
 			event.stopPropagation();
 		});
+
+		$(".th_input").keypress(function(event){
+			if (event.which == 13 )
+			{
+				event.stopPropagation();
+				event.preventDefault();
+				event.target.blur();
+				event.target.focus();
+			}
+		});
 		
 		$(".th_input").change( function () {
 			 $("#test-cases-table").squashTable().fnFilter(this.value, $(".th_input").index(this));
