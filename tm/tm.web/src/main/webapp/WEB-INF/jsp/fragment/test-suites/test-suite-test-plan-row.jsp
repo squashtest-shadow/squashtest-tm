@@ -92,7 +92,7 @@
 		<!-- ------------------------------------------END ROW OF EXECUTION -->
 
 		<!-- ---------------------------------------------ROW NEW EXECUTION -->
-		<c:if test="${ executable }">
+		<c:if test="${ executable && !testPlanItem.testCaseDeleted }">
 			<tr>
 				<td colspan="12" style="text-align: left;"> 
 					<a id="new-exec-${testPlanItem.id}" style="font-size:0.8em;" class="button new-exec"  data-new-exec="${newExecutionUrl}">
