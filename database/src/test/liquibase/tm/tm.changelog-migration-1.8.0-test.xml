@@ -28,8 +28,9 @@
 
   <include file="tm.data-1.7.0-core-user-project-manager.xml" relativeToChangelogFile="true" />
   <include file="tm.data-1.7.1-remove-deleted-on.xml" relativeToChangelogFile="true" />
+  <include file="tm.data-1.7.1-undeleted-resources-and-attachmentlist.xml" relativeToChangelogFile="true" />  
   
-  <!--  dataset test -->
+  <!--  testing the dataset -->
 	<changeSet id="tm-data-1.7.0-feat-2699-test-00" author="bsiri">
 		<preConditions>
 			<sqlCheck expectedResult="2">
@@ -42,7 +43,27 @@
 			</sqlCheck>
 		</preConditions>
 	</changeSet>
+	
+	<changeSet id="tm-data-1.7.1-issue-2899-test-00" author="bsiri">
+		<preConditions>
+			<!-- count how many lists have at least one attachment : 3 are guenuine and 5 are ghost we want out of the DB.-->
+			<sqlCheck expectedResult="8">
+				select count(al.ATTACHMENT_LIST_ID) from ATTACHMENT_LIST al
+				inner join ATTACHMENT a on a.ATTACHMENT_LIST_ID = al.ATTACHMENT_LIST_ID
+				inner join ATTACHMENT_CONTENT ac on a.CONTENT_ID = ac.ATTACHMENT_CONTENT_ID
+			</sqlCheck>	
+			
+			<!--  count undead resources -->
+			<sqlCheck expectedResult="3">
+				select count(r.res_id) from SIMPLE_RESOURCE sr 
+				inner join RESOURCE r on sr.res_id = r.res_id
+				left join REQUIREMENT_FOLDER rf on rf.res_id = sr.res_id
+				where rf.res_id is null
+			</sqlCheck>	
+		</preConditions>
+	</changeSet>
   
+
 	<!-- ========================================INCLUDE CHANGELOG================================================ -->
 	<include file="../../../main/liquibase/tm/tm.changelog-1.8.0.xml" relativeToChangelogFile="true" />
 	<!-- ========================================================================================================= -->
@@ -163,4 +184,47 @@
 		</preConditions>
 	
 	</changeSet>
+	
+	
+	<!--  run after the cleanup. We perform the same tests than in tm-data-1.7.1-issue-2899-test-00, but we expect the counts to be different -->		
+	<changeSet id="tm-data-1.7.1-issue-2899-test-01" author="bsiri">
+		<preConditions>
+			
+			<!-- count how many lists have at least one attachment : only 3 remain.-->
+			<sqlCheck expectedResult="3">
+				select count(al.ATTACHMENT_LIST_ID) from ATTACHMENT_LIST al
+				inner join ATTACHMENT a on a.ATTACHMENT_LIST_ID = al.ATTACHMENT_LIST_ID
+				inner join ATTACHMENT_CONTENT ac on a.CONTENT_ID = ac.ATTACHMENT_CONTENT_ID
+			</sqlCheck>	
+			
+			<!--  count undead resources : not anymore ! -->
+			<sqlCheck expectedResult="0">
+				select count(r.res_id) from SIMPLE_RESOURCE sr 
+				inner join RESOURCE r on sr.res_id = r.res_id
+				left join REQUIREMENT_FOLDER rf on rf.res_id = sr.res_id
+				where rf.res_id is null
+			</sqlCheck>	
+			
+			<!--  additional test : check that no orphan attachment list is actually left  -->
+			<sqlCheck expectedResult="0">
+				select count(ATTACHMENT_LIST_ID) from ATTACHMENT_LIST al
+				where al.ATTACHMENT_LIST_ID not in (
+					select ATTACHMENT_LIST_ID from ACTION_TEST_STEP UNION
+					select ATTACHMENT_LIST_ID from CAMPAIGN_LIBRARY UNION
+					select ATTACHMENT_LIST_ID from CAMPAIGN_LIBRARY_NODE UNION
+					select ATTACHMENT_LIST_ID from EXECUTION UNION
+					select ATTACHMENT_LIST_ID from EXECUTION_STEP UNION
+					select ATTACHMENT_LIST_ID from ITERATION UNION
+					select ATTACHMENT_LIST_ID from PROJECT UNION
+					select ATTACHMENT_LIST_ID from REQUIREMENT_LIBRARY UNION
+					select ATTACHMENT_LIST_ID from RESOURCE UNION
+					select ATTACHMENT_LIST_ID from TEST_CASE_LIBRARY UNION
+					select ATTACHMENT_LIST_ID from TEST_CASE_LIBRARY_NODE UNION
+					select ATTACHMENT_LIST_ID from TEST_SUITE 				
+				)
+			</sqlCheck>
+		</preConditions>
+	</changeSet>
+
+	
 </databaseChangeLog>
