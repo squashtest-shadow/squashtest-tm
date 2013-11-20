@@ -48,6 +48,8 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 	
 	private static final String TEST_CASES_IDS = "testCaseIds";
 	private static final String TEST_STEP_IDS = "testStepIds";
+	private static final String FOLDER_IDS = "folderIds";
+	
 	@Override
 	public void removeEntities(final List<Long> entityIds) {
 		if (!entityIds.isEmpty()) {
@@ -93,6 +95,15 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 		}
 		return Collections.emptyList();
 	}
+	
+	@Override
+	public List<Long> findTestCaseFolderAttachmentListIds(List<Long> folderIds) {
+		if (! folderIds.isEmpty()){
+			return executeSelectNamedQuery("testCaseFolder.findAllAttachmentLists", FOLDER_IDS, folderIds);
+		}
+		return Collections.emptyList();
+	}
+	
 
 	@Override
 	public List<Long> findTestStepAttachmentListIds(List<Long> testStepIds) {

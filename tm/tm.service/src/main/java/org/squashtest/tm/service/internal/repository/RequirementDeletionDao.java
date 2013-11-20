@@ -33,6 +33,7 @@ public interface RequirementDeletionDao extends DeletionDao {
 	List<Long>[] separateFolderFromRequirementIds(List<Long> originalIds);
 	
 	List<Long> findRequirementAttachmentListIds(List<Long> requirementIds);
+	List<Long> findRequirementFolderAttachmentListIds(List<Long> folderIds);
 	
 	void removeFromVerifiedRequirementLists(List<Long> requirementIds);
 	

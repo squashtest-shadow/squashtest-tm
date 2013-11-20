@@ -59,9 +59,16 @@ public final class NativeQueries {
 	public static final String TESTSTEP_SQL_REMOVETESTSTEPS = "delete from TEST_STEP where test_step_id in (:testStepIds)";
 
 	public static final String REQUIREMENT_VERSION_FIND_ID_FROM_REQUIREMENT = "select req_v.res_id from REQUIREMENT_VERSION req_v where req_v.requirement_id in (:requirementIds)";
+	public static final String SIMPLE_RESOURCE_FIND_ID_FROM_FOLDER = "select folder.res_id from REQUIREMENT_FOLDER folder where folder.rln_id in (:folderIds)";
+	
+	
 	public static final String REQUIREMENT_SET_NULL_REQUIREMENT_VERSION = "update REQUIREMENT req set req.current_version_id = null where req.rln_id in (:requirementIds);";
+	public static final String REQUIREMENT_FOLDER_SET_NULL_SIMPLE_RESOURCE = "update REQUIREMENT_FOLDER folder set folder.res_id = null where folder.rln_id in (:folderIds)";
+	
+	
 	public static final String REQUIREMENT_VERSION_SQL_REMOVE = "delete from REQUIREMENT_VERSION where res_id in (:requirementVersionIds)";
-	public static final String RESOURCE_SQL_REMOVE = "delete from RESOURCE where res_id in (:requirementVersionIds)";
+	public static final String SIMPLE_RESOURCE_SQL_REMOVE = "delete from SIMPLE_RESOURCE where res_id in (:simpleResourceIds)";
+	public static final String RESOURCE_SQL_REMOVE = "delete from RESOURCE where res_id in (:resourceIds)";
 	public static final String REQUIREMENT_SQL_REMOVE = "delete from REQUIREMENT where rln_id in (:nodeIds)";
 	public static final String REQUIREMENTLIBRARYNODE_SQL_REMOVE = "delete from REQUIREMENT_LIBRARY_NODE where rln_id in (:nodeIds)";
 	public static final String REQUIREMENT_FOLDER_SQL_REMOVE = "delete from REQUIREMENT_FOLDER where rln_id in (:nodeIds)";

@@ -36,32 +36,48 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 
 	private static final String NODE_IDS = "nodeIds";
 	private static final String REQUIREMENT_VERSION_IDS = "requirementVersionIds";
+	private static final String RESOURCE_IDS = "resourceIds";	
+	private static final String SIMPLE_RESOURCE_IDS = "simpleResourceIds";
 	private static final String REQUIREMENT_IDS = "requirementIds";
+	private static final String FOLDER_IDS = "folderIds";
 
+	
+	// note 1 : this method will be ran twice per batch : one for folder deletion, one for requirement deletion
+	// ( is is so because two distincts calls to #deleteNodes, see RequirementDeletionHandlerImpl#deleteNodes() )
+	// It should run fine tho, at the cost of a few useless extra queries.
+	
+	// note 2 : the code below must handle the references of requirements and requirement folders to 
+	// their Resource and SimpleResource, making the thing a lot more funny and pleasant to maintain.
 	@Override
 	public void removeEntities(List<Long> entityIds) {
 		if (!entityIds.isEmpty()) {
+			
+			// Unbinds the nodes from their parent container
 			removeNodesFromFolders(entityIds);
 			executeDeleteSQLQuery(NativeQueries.REQUIREMENT_SQL_REMOVE_FROM_LIBRARY, REQUIREMENT_IDS, entityIds);
-			executeDeleteSQLQuery(NativeQueries.REQUIREMENT_FOLDER_SQL_REMOVE, NODE_IDS, entityIds);
-
-			// Retrieval of the requirement_versions linked to the wanted requirements
+			
+			// Retrieval of the Resource or SimpleResource that those entities refers to.
 			List<Long> requirementVersionIds = findAllVersionsIdsFromRequirements(entityIds);
+			List<Long> folderResourceIds = findAllSimpleResourceIdsFromFolders(entityIds);
 
-			// Removal of the reference of the requirement_versions in the wanted requirements
+			// Remove the foreign keys between the Requirements and their Resource, and between the RequirementFolders 
+			// and their SimpleResource
 			executeDeleteSQLQuery(NativeQueries.REQUIREMENT_SET_NULL_REQUIREMENT_VERSION, REQUIREMENT_IDS, entityIds);
+			executeDeleteSQLQuery(NativeQueries.REQUIREMENT_FOLDER_SET_NULL_SIMPLE_RESOURCE, FOLDER_IDS, entityIds);
 
-			// We now can remove the requirement versions
-			executeDeleteSQLQuery(NativeQueries.REQUIREMENT_VERSION_SQL_REMOVE, REQUIREMENT_VERSION_IDS,
-					requirementVersionIds);
-
-			// as well as the resource
-			executeDeleteSQLQuery(NativeQueries.RESOURCE_SQL_REMOVE, REQUIREMENT_VERSION_IDS, requirementVersionIds);
-
-			// and finally the wanted requirements
+			// Delete the resources
+			executeDeleteSQLQuery(NativeQueries.REQUIREMENT_VERSION_SQL_REMOVE, REQUIREMENT_VERSION_IDS,requirementVersionIds);
+			executeDeleteSQLQuery(NativeQueries.RESOURCE_SQL_REMOVE, RESOURCE_IDS, requirementVersionIds);
+			
+			executeDeleteSQLQuery(NativeQueries.SIMPLE_RESOURCE_SQL_REMOVE, SIMPLE_RESOURCE_IDS, folderResourceIds);
+			executeDeleteSQLQuery(NativeQueries.RESOURCE_SQL_REMOVE, RESOURCE_IDS, folderResourceIds);	
+			
+			// Now we can remove the nodes
 			executeDeleteSQLQuery(NativeQueries.REQUIREMENT_SQL_REMOVE, NODE_IDS, entityIds);
-
+			executeDeleteSQLQuery(NativeQueries.REQUIREMENT_FOLDER_SQL_REMOVE, NODE_IDS, entityIds);
 			executeDeleteSQLQuery(NativeQueries.REQUIREMENTLIBRARYNODE_SQL_REMOVE, NODE_IDS, entityIds);
+		
+
 		}
 	}
 
@@ -69,13 +85,25 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 		List<BigInteger> requirementVersionIdsBigInt = executeSelectSQLQuery(
 				NativeQueries.REQUIREMENT_VERSION_FIND_ID_FROM_REQUIREMENT, REQUIREMENT_IDS, entityIds);
 
-		List<Long> requirementVersionIds = new ArrayList<Long>();
+		List<Long> requirementVersionIds = new ArrayList<Long>(requirementVersionIdsBigInt.size());
 
 		for (BigInteger bigIntId : requirementVersionIdsBigInt) {
 			requirementVersionIds.add(bigIntId.longValue());
 		}
 
 		return requirementVersionIds;
+	}
+	
+	private List<Long> findAllSimpleResourceIdsFromFolders(List<Long> entityIds){
+		List<BigInteger> folderResourceIdsBigInt = executeSelectSQLQuery(NativeQueries.SIMPLE_RESOURCE_FIND_ID_FROM_FOLDER, FOLDER_IDS, entityIds);
+		
+		List<Long> folderResourceIds = new ArrayList<Long>(folderResourceIdsBigInt.size());
+
+		for (BigInteger bigIntId : folderResourceIdsBigInt) {
+			folderResourceIds.add(bigIntId.longValue());
+		}
+
+		return folderResourceIds;
 	}
 
 	private void removeNodesFromFolders(List<Long> entityIds) {
@@ -124,6 +152,19 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 		return Collections.emptyList();
 	}
 
+	
+	@Override
+	public List<Long> findRequirementFolderAttachmentListIds(
+			List<Long> folderIds) {
+		if (!folderIds.isEmpty()) {
+			Query query = getSession().getNamedQuery("requirementFolder.findAllAttachmentLists");
+			query.setParameterList(FOLDER_IDS, folderIds);
+			return query.list();
+		}
+		return Collections.emptyList();
+	}
+	
+	
 	@Override
 	public void removeFromVerifiedRequirementLists(List<Long> requirementIds) {
 		if (!requirementIds.isEmpty()) {

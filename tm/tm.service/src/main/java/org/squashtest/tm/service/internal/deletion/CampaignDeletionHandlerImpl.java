@@ -224,11 +224,15 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		List<Long>[] separatedIds = deletionDao.separateFolderFromCampaignIds(ids);
 		
 		List<Campaign> campaigns = campaignDao.findAllByIds(ids);
+		List<CampaignFolder> folders = folderDao.findAllByIds(ids);
 		
 		// saving the attachment list for later.
 		List<AttachmentList> attachLists = new LinkedList<AttachmentList>();
 		for (Campaign campaign : campaigns) {
 			attachLists.add(campaign.getAttachmentList());
+		}
+		for (CampaignFolder folder : folders){
+			attachLists.add(folder.getAttachmentList());
 		}
 
 		//empty of those campaigns

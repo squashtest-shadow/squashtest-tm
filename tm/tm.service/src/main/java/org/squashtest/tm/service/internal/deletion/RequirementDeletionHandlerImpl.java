@@ -114,28 +114,24 @@ public class RequirementDeletionHandlerImpl extends
 		List<Long>[] separatedIds = deletionDao.separateFolderFromRequirementIds(targetIds);
 
 		// the folderIds are treated as usual.
-		OperationReport deletedFolders = deleteFolderContent(separatedIds[0]);
+		OperationReport deletedFolders = super.deleteNodes(separatedIds[0]);
+		deletionDao.flush();
 		globalReport.mergeWith(deletedFolders);
 
-		// the requirements gets a special treatment.
+		// the requirements get a special treatment : first we rewire the children requirements 
+		// when a parent requirement is removed, second we bypass super#deleteNodes
+		// because we don't need to re-compute which folders should be deleted by transitivity.
 		OperationReport rewiredRequirements = rewireChildrenRequirements(separatedIds[1]);
 		globalReport.mergeWith(rewiredRequirements);
 
 		OperationReport deletedRequirements = batchDeleteNodes(separatedIds[1]);
+		deletionDao.flush();
 		globalReport.mergeWith(deletedRequirements);
 
 		return globalReport;
 	}
 
-	private OperationReport deleteFolderContent(List<Long> folderIds) {
-		if (!folderIds.isEmpty()) {
-			OperationReport report = super.deleteNodes(folderIds); // in that case, business as usual
-			deletionDao.flush();
-			return report;
-		} else {
-			return new OperationReport(); // empty
-		}
-	}
+
 
 	// todo : send back an object that describes which requirements where rebound to which entities, and how they were
 	// renamed if so.
@@ -183,15 +179,24 @@ public class RequirementDeletionHandlerImpl extends
 			List<Long> allVersionIds = deletionDao.findVersionIds(ids);
 			customValueService.deleteAllCustomFieldValues(BindableEntity.REQUIREMENT_VERSION, allVersionIds);
 
+			// save the attachment list ids for later reference
 			List<Long> requirementAttachmentIds = deletionDao.findRequirementAttachmentListIds(ids);
+			List<Long> requirementFolderAttachmentIds = deletionDao.findRequirementFolderAttachmentListIds(ids);
 
+			// remove binds to other entities
 			deletionDao.removeTestStepsCoverageByRequirementVersionIds(allVersionIds);
 			deletionDao.removeFromVerifiedRequirementLists(ids);
 
+			// remove the changelog
 			deletionDao.deleteRequirementAuditEvents(ids);
 
+			
+			// remove the elements now
 			deletionDao.removeEntities(ids);
 
+			
+			// finally delete the attachment lists
+			requirementAttachmentIds.addAll(requirementFolderAttachmentIds);
 			deletionDao.removeAttachmentsLists(requirementAttachmentIds);
 
 			testCaseImportanceManager.changeImportanceAfterRequirementDeletion();

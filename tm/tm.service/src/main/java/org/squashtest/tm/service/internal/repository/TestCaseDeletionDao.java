@@ -28,6 +28,7 @@ public interface TestCaseDeletionDao extends DeletionDao {
 	List<Long> findTestSteps(List<Long> testCaseIds);
 	List<Long> findTestCaseAttachmentListIds(List<Long> testCaseIds);
 	List<Long> findTestStepAttachmentListIds(List<Long> testStepIds);
+	List<Long> findTestCaseFolderAttachmentListIds(List<Long> folderIds);
 	
 	//data removers
 	void removeAllSteps(List<Long> testStepIds);

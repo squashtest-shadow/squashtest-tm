@@ -138,6 +138,7 @@ public class TestCaseNodeDeletionHandlerImpl extends
 
 			List<Long> testCaseAttachmentIds = deletionDao.findTestCaseAttachmentListIds(ids);
 			List<Long> testStepAttachmentIds = deletionDao.findTestStepAttachmentListIds(stepIds);
+			List<Long> testCaseFolderAttachmentIds = deletionDao.findTestCaseFolderAttachmentListIds(ids);
 
 			deletionDao.removeCampaignTestPlanInboundReferences(ids);
 			deletionDao.removeOrSetIterationTestPlanInboundReferencesToNull(ids);
@@ -158,10 +159,11 @@ public class TestCaseNodeDeletionHandlerImpl extends
 			
 			deletionDao.removeEntities(ids);
 
-			// We merge the list for
-			// test cases and test step first so that
+			// We merge the attachment list ids for
+			// test cases, test step and folder first so that
 			// we can make one only one query against the database.
 			testCaseAttachmentIds.addAll(testStepAttachmentIds);
+			testCaseAttachmentIds.addAll(testCaseFolderAttachmentIds);
 			deletionDao.removeAttachmentsLists(testCaseAttachmentIds);
 			
 			report.addRemoved(separatedIds[0], "folder");
