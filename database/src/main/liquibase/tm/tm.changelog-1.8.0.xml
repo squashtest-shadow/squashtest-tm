@@ -180,6 +180,107 @@
 	
 	</changeSet>
 	
+	<changeSet id="tm-1.8.0.issue-2899-1" author="bsiri">
+		<preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+			<dbms type="mysql" />
+		</preConditions>
+		<comment>Clean up the database from dead entities that slipped through the deletion routines (mysql)</comment>
+		<sql>
+		
+			SET foreign_key_checks = 0;
+			
+			delete RESOURCE.* , SIMPLE_RESOURCE.*
+			from RESOURCE inner join SIMPLE_RESOURCE on RESOURCE.RES_ID = SIMPLE_RESOURCE.RES_ID
+			where SIMPLE_RESOURCE.RES_ID NOT IN (
+				select RES_ID from REQUIREMENT_FOLDER
+			);
+			
+			
+			
+			delete ATTACHMENT_LIST.*, ATTACHMENT.*, ATTACHMENT_CONTENT.* 
+			from ATTACHMENT_LIST 
+			left join ATTACHMENT on ATTACHMENT_LIST.ATTACHMENT_LIST_ID = ATTACHMENT.ATTACHMENT_LIST_ID 
+			left join ATTACHMENT_CONTENT on ATTACHMENT_CONTENT.ATTACHMENT_CONTENT_ID = ATTACHMENT.CONTENT_ID
+			where ATTACHMENT_LIST.ATTACHMENT_LIST_ID NOT IN(
+				select ATTACHMENT_LIST_ID from ACTION_TEST_STEP UNION
+				select ATTACHMENT_LIST_ID from CAMPAIGN_LIBRARY UNION
+				select ATTACHMENT_LIST_ID from CAMPAIGN_LIBRARY_NODE UNION
+				select ATTACHMENT_LIST_ID from EXECUTION UNION
+				select ATTACHMENT_LIST_ID from EXECUTION_STEP UNION
+				select ATTACHMENT_LIST_ID from ITERATION UNION
+				select ATTACHMENT_LIST_ID from PROJECT UNION
+				select ATTACHMENT_LIST_ID from REQUIREMENT_LIBRARY UNION
+				select ATTACHMENT_LIST_ID from RESOURCE UNION
+				select ATTACHMENT_LIST_ID from TEST_CASE_LIBRARY UNION
+				select ATTACHMENT_LIST_ID from TEST_CASE_LIBRARY_NODE UNION
+				select ATTACHMENT_LIST_ID from TEST_SUITE 
+			);
+			
+			SET foreign_key_checks = 1;
+		
+		
+		</sql>
+	
+	</changeSet>
+	
+	<changeSet id="tm-1.8.0.issue-2899-2" author="bsiri">
+		<preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+			<dbms type="h2" />
+		</preConditions>
+		<comment>
+			Clean up the database from dead entities that slipped through the deletion routines (h2). Note :
+			There is no way to perform multi table delete so we must delete the tables one by one. 
+			
+			Since h2 doesn't support multi table delete we must delete the entries one table after the other
+			and this will cost quite a bit.
+			
+		</comment>
+		<sql>		
+			SET REFERENTIAL_INTEGRITY FALSE;
+			BEGIN TRANSACTION;
+			
+			delete from RESOURCE 
+			where RES_ID not in(
+				select RES_ID from REQUIREMENT_FOLDER UNION
+				select RES_ID from REQUIREMENT_VERSION
+			);
+			
+			delete from SIMPLE_RESOURCE
+			where RES_ID not in(
+				select RES_ID from RESOURCE
+			);
+			
+			delete from ATTACHMENT_LIST
+			where ATTACHMENT_LIST_ID not in (
+				select ATTACHMENT_LIST_ID from ACTION_TEST_STEP UNION
+				select ATTACHMENT_LIST_ID from CAMPAIGN_LIBRARY UNION
+				select ATTACHMENT_LIST_ID from CAMPAIGN_LIBRARY_NODE UNION
+				select ATTACHMENT_LIST_ID from EXECUTION UNION
+				select ATTACHMENT_LIST_ID from EXECUTION_STEP UNION
+				select ATTACHMENT_LIST_ID from ITERATION UNION
+				select ATTACHMENT_LIST_ID from PROJECT UNION
+				select ATTACHMENT_LIST_ID from REQUIREMENT_LIBRARY UNION
+				select ATTACHMENT_LIST_ID from RESOURCE UNION
+				select ATTACHMENT_LIST_ID from TEST_CASE_LIBRARY UNION
+				select ATTACHMENT_LIST_ID from TEST_CASE_LIBRARY_NODE UNION
+				select ATTACHMENT_LIST_ID from TEST_SUITE 
+			);
+			
+			delete from ATTACHMENT
+			where ATTACHMENT_LIST_ID not in (
+				select ATTACHMENT_LIST_ID from ATTACHMENT_LIST
+			);
+			
+			delete from ATTACHMENT_CONTENT
+			where ATTACHMENT_CONTENT_ID not in (
+				select CONTENT_ID from ATTACHMENT
+			);
+			
+			COMMIT;
+			SET REFERENTIAL_INTEGRITY TRUE;
+		</sql>
+	
+	</changeSet>	
 
 </databaseChangeLog>
  
