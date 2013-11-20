@@ -85,7 +85,7 @@
 		
 		<tr>
 			<td><label for="add-test-case-reference"><f:message key="label.Reference" /></label></td>
-			<td><input id="add-test-case-reference" type=text size="15" maxlength="20"/><br />
+			<td><input id="add-test-case-reference" type=text size="20" maxlength="50"/><br />
 				<comp:error-message forField="reference" />	<td>
 		</tr>
 					

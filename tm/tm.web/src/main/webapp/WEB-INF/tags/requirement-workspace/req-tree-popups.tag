@@ -94,7 +94,7 @@
 		
 		<tr>
 			<td><label for="add-requirement-reference"><f:message key="label.Reference" /></label></td>
-			<td><input id="add-requirement-reference" type=text size="15" maxlength="20"/><br />
+			<td><input id="add-requirement-reference" type=text size="20" maxlength="50"/><br />
 				<comp:error-message forField="reference" />	<td>
 		</tr>
 		
