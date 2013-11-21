@@ -450,8 +450,10 @@
 		 	
 		 	squashtm.execution = squashtm.execution || {};
 		 	squashtm.execution.refresh = $.proxy(function(){
-		 		$("#execution-execution-steps-table").squashTable().refresh();	
+		 		$("#execution-execution-steps-table").squashTable().refresh();
 		 		$("#general-informations-panel").load("${executionInfoUrl}");
+		 		//see execution-execute-button.tag
+		 		updateBtnlabelFromTable();
 		 	}, window);
 
 		});

@@ -53,6 +53,15 @@
 	id="execute-execution-button" />
 
 <script>
+	function updateBtnlabelFromTable(){
+		
+		// Issue 2961
+		// 99.9% of the time we want the btn to display "resume" when statuses are updated
+		// because an execution rarely walks back to 'ready' status, so I'll be lazy here
+		
+		$("#execute-execution-button").val('<f:message key="execution.execute.resume.button.label" />');
+	}
+
 	$(function() {
 		var dryRunStart = function() {
 			return $.ajax({
