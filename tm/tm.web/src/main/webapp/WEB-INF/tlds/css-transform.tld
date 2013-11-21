@@ -31,5 +31,11 @@
 		<tag-class>org.squashtest.tm.web.internal.jsp.tags.JQueryTabsHeader</tag-class>
 		<description>will process some elements in the page in order to pre-render elements of a tabbed interface</description>
 		<body-content>scriptless</body-content>
+		<attribute>  
+            <name>activeContentIndex</name>  
+            <required>no</required>  
+            <rtexprvalue>no</rtexprvalue>
+            <type>java.lang.Integer</type>  
+        </attribute>  
 	</tag>
 </taglib>  

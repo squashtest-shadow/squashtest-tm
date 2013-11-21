@@ -105,12 +105,21 @@ public class JQueryTabsHeader extends SimpleTagSupport {
 	
 	/* attributes */
 	private Collection<String> contentIds = new LinkedList<String>();
-	private int activeContentIndex=0; 	// UNUSED OR MISUSED for now, it'd require to process the cookies. The cookies themselves are malfunctionning.
 	
 	
 	private Source source;
 	private OutputDocument output;
 	
+	
+	private int activeContentIndex=0; 	// UNUSED OR MISUSED for now, it'd require to process the cookies. The cookies themselves are malfunctionning.
+
+	
+	
+	public void setActiveContentIndex(int activeContentIndex) {
+		this.activeContentIndex = activeContentIndex;
+	}
+
+
 	@Override
 	public void doTag() throws JspException, IOException {
 		

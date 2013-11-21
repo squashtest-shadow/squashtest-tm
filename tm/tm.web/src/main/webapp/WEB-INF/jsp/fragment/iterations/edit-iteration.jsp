@@ -209,7 +209,7 @@
 	</c:if>
 </div>
 
-<csst:jq-tab>
+<csst:jq-tab activeContentIndex="2">
 <div class="fragment-tabs fragment-body">
 	<ul class="tab-menu">
 		<li><a href="#dashboard-iteration"><f:message key="title.Dashboard"/>
@@ -411,7 +411,7 @@
 				
 				var fragConf = {
 					beforeLoad : Frag.confHelper.fnCacheRequests,
-					active : 1,
+					active : 2,
 					cookie : "iteration-tab-cookie"
 				};
 				Frag.init(fragConf);
