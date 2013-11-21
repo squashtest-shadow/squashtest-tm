@@ -56,7 +56,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	@Embedded
 	private final ActualTimePeriod actualPeriod = new ActualTimePeriod();
 
-	@OneToMany(cascade = { CascadeType.MERGE })
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@OrderColumn(name = "ITERATION_ORDER")
 	@JoinTable(name = "CAMPAIGN_ITERATION", joinColumns = @JoinColumn(name = "CAMPAIGN_ID"), inverseJoinColumns = @JoinColumn(name = "ITERATION_ID"))
 	private final List<Iteration> iterations = new ArrayList<Iteration>();

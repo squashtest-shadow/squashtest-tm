@@ -129,7 +129,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 
 	/* *********************** Test suites ********************************** */
 
-	@OneToMany(cascade = { CascadeType.ALL })
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinTable(name = "ITERATION_TEST_SUITE", joinColumns = @JoinColumn(name = ITERATION_ID), inverseJoinColumns = @JoinColumn(name = "TEST_SUITE_ID"))
 	private Set<TestSuite> testSuites = new HashSet<TestSuite>();
 

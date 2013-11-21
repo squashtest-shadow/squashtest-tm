@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.library;
 
+import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.project.Project;
 
 
@@ -31,7 +32,7 @@ import org.squashtest.tm.domain.project.Project;
  * @author mpagnon
  *
  */
-public interface TreeNode {
+public interface TreeNode extends Identified{
 	void accept(NodeVisitor visitor);
 	Project getProject();
 	

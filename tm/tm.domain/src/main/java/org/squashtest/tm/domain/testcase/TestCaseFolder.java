@@ -53,7 +53,7 @@ public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCa
 	@Transient
 	private final FolderSupport<TestCaseLibraryNode, TestCaseFolder> folderSupport = new FolderSupport<TestCaseLibraryNode, TestCaseFolder>(this);
 
-	@OneToMany(cascade = { CascadeType.ALL })
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
 	@JoinTable(name = "TCLN_RELATIONSHIP", joinColumns = @JoinColumn(name = "ANCESTOR_ID"), inverseJoinColumns = @JoinColumn(name = "DESCENDANT_ID"))
 	private final Set<TestCaseLibraryNode> content = new HashSet<TestCaseLibraryNode>();
 
