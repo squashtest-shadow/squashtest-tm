@@ -77,7 +77,8 @@
 		
 			$(function(){
 				require( ["common"], function(){
-					require(['camp-workspace'], function(initWkp) {
+					require(['camp-workspace', 'jquery.cookie'], function(initWkp) {
+						$.cookie("workspace-prefs", null, {path:'/'});
 						initWkp.init(conf);						
 					});
 				});						

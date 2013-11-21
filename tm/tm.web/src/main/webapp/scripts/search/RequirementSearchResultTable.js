@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "jquery.squash.jeditable" ], function($, Backbone, translator) {
+define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "jquery.squash.jeditable", "jquery.cookie" ], function($, Backbone, translator) {
 
 	var RequirementSearchResultTable = Backbone.View.extend({
 		el : "#requirement-search-result-table",
@@ -398,7 +398,8 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 			var $cell = $(".search-open-tree-holder", row);
 			$cell.append('<span class="search-open-tree"></span>')
 				.click(function(){
-				window.location = squashtm.app.contextRoot + "/requirement-workspace?element_id="+id;
+					$.cookie("workspace-prefs", id, {path : "/"});
+					window.location = squashtm.app.contextRoot + "requirement-workspace/";
 			});
 		},
 				

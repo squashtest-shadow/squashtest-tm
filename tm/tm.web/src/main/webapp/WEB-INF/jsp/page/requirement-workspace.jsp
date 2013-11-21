@@ -76,8 +76,9 @@
 		
 		
 			$(function(){
-				require( ["common"], function(){
+				require( ["common", "jquery.cookie"], function(){
 					require(['req-workspace'], function(initWkp) {
+						$.cookie("workspace-prefs", null, {path:'/'});
 						initWkp.init(conf);						
 					});
 				});						

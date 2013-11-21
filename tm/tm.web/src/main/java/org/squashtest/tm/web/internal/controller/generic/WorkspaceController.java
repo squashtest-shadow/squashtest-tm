@@ -66,16 +66,17 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale,
 			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
-			@RequestParam(value = "element_id", required = false) Long elementId) {
+			@CookieValue(value = "workspace-prefs", required = false, defaultValue = "") String elementId) {
 		List<Library<LN>> libraries = getWorkspaceService().findAllLibraries();
 		String[] nodesToOpen = null;
 		
-		if(elementId == null){
+		if(elementId == null || "".equals(elementId)){
 			nodesToOpen = openedNodes;	
 			model.addAttribute("selectedNode", "");
 		} else {
-			nodesToOpen = getNodeParentsInWorkspace(elementId);
-			model.addAttribute("selectedNode", getTreeElementIdInWorkspace(elementId));
+			Long id = Long.valueOf(elementId);
+			nodesToOpen = getNodeParentsInWorkspace(id);
+			model.addAttribute("selectedNode", getTreeElementIdInWorkspace(id));
 		}
 		
 		MultiMap expansionCandidates = mapIdsByType(nodesToOpen);

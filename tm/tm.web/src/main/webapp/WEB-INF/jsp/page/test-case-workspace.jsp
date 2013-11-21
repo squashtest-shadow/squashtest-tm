@@ -76,7 +76,8 @@
 						
 			$(function(){
 				require( ["common"], function(){
-					require(['tc-workspace'], function(initWkp) {
+					require(['tc-workspace', 'jquery.cookie'], function(initWkp) {
+						$.cookie("workspace-prefs", null, {path:'/'});
 						initWkp.init(conf);		
 					});
 				});						
