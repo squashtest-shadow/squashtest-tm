@@ -23,10 +23,16 @@
 -->
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
-     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
-     
-	<changeSet id="tm-data-1.7.0-feat-2699-dataset" author="bsiri">
-			<sqlFile path="tm.data-1.7.0-core-user-project-manager.sql" relativeToChangelogFile="true" endDelimiter=";"/>
-	</changeSet>
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<!-- ========================================INCLUDE CHANGELOG================================================ -->
+	<include file="tm.changelog-1.8.0-issue-2933-1-init.xml" relativeToChangelogFile="true" />
+	<include file="tm.changelog-1.8.0-issue-2933-2-requirements.xml" relativeToChangelogFile="true" />
+	<include file="tm.changelog-1.8.0-issue-2933-3-testcases.xml" relativeToChangelogFile="true" />
+	<include file="tm.changelog-1.8.0-issue-2933-4-campaigns.xml" relativeToChangelogFile="true" />
+	<include file="tm.changelog-1.8.0-issue-2933-5-end.xml" relativeToChangelogFile="true" />
+	<!-- ========================================================================================================= -->
+
+
+
 </databaseChangeLog>

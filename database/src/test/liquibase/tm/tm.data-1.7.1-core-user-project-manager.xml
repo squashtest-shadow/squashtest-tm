@@ -25,7 +25,8 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
-	<changeSet id="tm-data-1.7.0.01" author="mpagnon">
-			<sqlFile path="tm.data-1.7.0.sql" relativeToChangelogFile="true" endDelimiter=";"/>
+     
+	<changeSet id="tm-data-1.7.1-feat-2699-dataset" author="bsiri">
+			<sqlFile path="tm.data-1.7.1-core-user-project-manager.sql" relativeToChangelogFile="true" endDelimiter=";"/>
 	</changeSet>
 </databaseChangeLog>

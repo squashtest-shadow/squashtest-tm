@@ -181,7 +181,7 @@
 	</changeSet>
 	
 	<changeSet id="tm-1.8.0.issue-2899-1" author="bsiri">
-		<preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+		<preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST" onFailMessage="Not mysql database">
 			<dbms type="mysql" />
 		</preConditions>
 		<comment>Clean up the database from dead entities that slipped through the deletion routines (mysql)</comment>
@@ -224,7 +224,7 @@
 	</changeSet>
 	
 	<changeSet id="tm-1.8.0.issue-2899-2" author="bsiri">
-		<preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+		<preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST" onFailMessage="Not h2 database">
 			<dbms type="h2" />
 		</preConditions>
 		<comment>
@@ -281,6 +281,10 @@
 		</sql>
 	
 	</changeSet>	
-
+	
+	<!-- ========================================INCLUDE CHANGELOG================================================ -->
+		<include file="tm.changelog-1.8.0-issue-2933/tm.changelog-1.8.0-issue-2933-master.xml" relativeToChangelogFile="true" />
+ 	<!-- ========================================================================================================= -->
+ 	
 </databaseChangeLog>
  

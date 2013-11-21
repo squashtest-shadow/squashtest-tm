@@ -23,9 +23,23 @@
 -->
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
-     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
-	<changeSet id="tm.data-1.7.1-remove-deleted-on" author="mpagnon">
-			<sqlFile path="tm.data-1.7.1-remove-deleted-on.sql" relativeToChangelogFile="true" endDelimiter=";"/>
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<!-- =========== CREATE STORING TABLES=========== -->
+	<changeSet id="tm-1.8.0.issue-2933-init-01" author="mpagnon">
+		<comment>create table to store ids of orphan entities to delete</comment>
+		<createTable tableName="ENTITIES_TO_DELETE">
+			<column name="NAME" type="VARCHAR(30)"></column>
+			<column name="ID" type="BIGINT"></column>
+		</createTable>
+		<comment>create table to store if table has orphan to delete</comment>
+		<createTable tableName="IS_TO_DELETE">
+			<column name="NAME" type="VARCHAR(30)">
+				<constraints primaryKey="true"></constraints>
+			</column>
+			<column name="TOTAL" type="INT"></column>
+		</createTable>
 	</changeSet>
+	<!-- =========== /CREATE STORING TABLES=========== -->
+
 </databaseChangeLog>
