@@ -30,6 +30,16 @@ define(["jquery", 'squash.attributeparser',
 	
 	return SuperMasterView.extend({
 		
+		initialize : function(jsconf){
+			SuperMasterView.prototype.initialize.call(this, jsconf);
+			$("#iteration-dashboard-print").button({
+				text:false,
+				icons : {
+					primary : 'ui-icon-print'
+				}
+			});
+		},
+		
 		initViews : function(master){
 			var self = this;
 			var views = [

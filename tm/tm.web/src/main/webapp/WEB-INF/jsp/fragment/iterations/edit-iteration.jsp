@@ -60,6 +60,8 @@
 	<s:param name="iterId" value="${iteration.id}" />
 </s:url>
 
+<c:url var="iterationStatisticsPrintUrl" value="/iterations/${iteration.id}/dashboard"/>
+
 <s:url var="testPlanManagerUrl"
 	value="/iterations/{iterId}/test-plan-manager">
 	<s:param name="iterId" value="${iteration.id}" />
@@ -336,7 +338,7 @@
 
 	<%------------------------------- Dashboard ---------------------------------------------------%>
 	<div id="dashboard-iteration">
-		<dashboard:iteration-dashboard-panel url="${iterationDashboardStatisticsUrl}"/>
+		<dashboard:iteration-dashboard-panel url="${iterationDashboardStatisticsUrl}" printUrl="${iterationStatisticsPrintUrl}"/>
 	</div>
 
 

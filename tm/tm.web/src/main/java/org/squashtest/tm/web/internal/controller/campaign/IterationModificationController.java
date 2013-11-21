@@ -50,6 +50,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
@@ -63,6 +64,7 @@ import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
@@ -174,13 +176,20 @@ public class IterationModificationController {
 	@RequestMapping (value = "/dashboard-statistics", method = RequestMethod.GET, produces="application/json"/*, params = {"date"}*/)
 	public @ResponseBody IterationStatisticsBundle getStatisticsAsJson(@PathVariable("iterationId") long iterationId/*, @RequestParam(value="date", defaultValue="") String strDate*/){
 			
-			return iterationModService.gatherIterationStatisticsBundle(iterationId);
-		}
-		
-	@RequestMapping (value = "/dashboard", method = RequestMethod.GET, produces="text/html", params = {"date"})
-		public String getDashboard(Model model, @PathVariable("iterationId") long iterationId, @RequestParam(value="date", defaultValue="") String strDate){
+		return iterationModService.gatherIterationStatisticsBundle(iterationId);
+	}
+	
+	@RequestMapping (value = "/dashboard", method = RequestMethod.GET, produces="text/html"/*, params = {"date"}*/)
+	public ModelAndView getDashboard(Model model, @PathVariable("iterationId") long iterationId/*, @RequestParam(value="date", defaultValue="") String strDate*/){
 			
-		throw new RuntimeException("not implemented yet");
+		Iteration iteration = iterationModService.findById(iterationId);
+		IterationStatisticsBundle bundle = iterationModService.gatherIterationStatisticsBundle(iterationId);
+		
+		ModelAndView mav  = new ModelAndView("fragment/iterations/iteration-dashboard");
+		mav.addObject("iteration", iteration);
+		mav.addObject("dashboardModel", bundle);
+		
+		return mav;
 	}
 	
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
