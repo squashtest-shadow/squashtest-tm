@@ -49,7 +49,7 @@
 
 <script type="text/javascript">
 	$(function(){
-		require(["test-case-folders-management"], function(TCF){
+		require(["test-case-folder-management"], function(TCF){
 			TCF.initDashboardPanel({
 				master : '#dashboard-master',
 				model : ${json:serialize(statistics)},
