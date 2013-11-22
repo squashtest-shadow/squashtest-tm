@@ -36,17 +36,17 @@
 		
 		<span id="created-on">
 			<span class="datetime"><f:formatDate value="${ auditableEntity.createdOn }" pattern="${rawDateFormat}" timeZone="UTC"/></span> 
-			<span class="author">(${ auditableEntity.createdBy })</span>
+			<span class="author">${ auditableEntity.createdBy }</span>
 		</span>
 		<br />
 	</c:if>
 	
 	<span><f:message key="label.UpdatedOn" />&nbsp;:&nbsp;</span>
 	
-	(<f:message key="label.lower.Never" />)
+	
 	<span id="last-modified-on">	
 		<span class="datetime"><f:formatDate value="${ auditableEntity.lastModifiedOn }" pattern="${rawDateFormat}"  timeZone="UTC"/></span> 
-		<span class="author">(${ auditableEntity.lastModifiedBy })</span>
+		<span class="author">${ auditableEntity.lastModifiedBy }</span>
 	</span>
 	<br />
 </div>
@@ -57,15 +57,15 @@
 			require(["squash.dateutils"], function(dateutils){
 
 				var displayFormat = '<f:message key="squashtm.dateformat" />';
-				var never = '<f:message key="label.lower.Never" />';
+				var never = '(<f:message key="label.lower.Never" />)';
 				
 				function updateDateInformations(infos){					
 					
 					var newCreatedOn = (infos.createdOn !== null && infos.createdOn.length>0) ? dateutils.format(infos.createdOn, displayFormat) : "";
-					var newCreatedBy = (infos.createdBy !== null && infos.createdBy.length>0) ? infos.createdBy : never;
+					var newCreatedBy = (infos.createdBy !== null && infos.createdBy.length>0) ? '('+infos.createdBy+')' : never;
 					
 					var newModifiedOn = (infos.modifiedOn !== null && infos.modifiedOn.length>0) ? dateutils.format(infos.modifiedOn, displayFormat) : "";
-					var newModifiedBy = (infos.modifiedBy !== null && infos.modifiedBy.length>0) ? infos.modifiedBy : never;
+					var newModifiedBy = (infos.modifiedBy !== null && infos.modifiedBy.length>0) ? '('+infos.modifiedBy+')' : never;
 										
 					$("#created-on > .datetime").text(newCreatedOn);
 					$("#created-on > .author").text(newCreatedBy);

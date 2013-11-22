@@ -19,23 +19,59 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["datejs-all", "squash.translator"], function(datelocales, translator) {
+define(["moment", "squash.translator"], function(moment, translator) {
 	
-	
-
-	function loadLocale(locale){
-		var _loc = locale;
-	
-		if (_loc === null || _loc === undefined){
-			_loc = translator.get('squashtm.locale');
+/*
+ * This implementation is incomplete and WILL need improvement if we desire exotic formats like 'day in year' and such.
+ * The target of the conversion is the momentjs convention (http://momentjs.com/docs/#/displaying/format/) 
+ * 
+ * Currently converts :
+ *	
+ *		java		|		js				|	notes on cardinality
+ *		------------|-----------------------|-----------------------
+ *		y			|		Y				|	cardinalities are the same
+ *		d			|		D				|	cardinalities are the same
+ *
+ *
+ * For future, if we need to implement them some day : 
+ *
+ *		E			|		dd				|	not exactly true, the correct substitution is dd+d*(count(E)) but whatever
+ *		u			|		d				|	only one 'd' js-side regardless the number of 'u' java side
+ *		a			|		A				|	cardinalities are the same
+ *
+ */
+	function _javaToJSFormat(javaFormat){
+		if (javaFormat !== undefined){
+			return javaFormat.replace(/y/g, 'Y').replace(/d/g, 'D');
 		}
-	
-		Date.CultureInfo = datelocales[_loc] || datelocales['en'];
+		else{
+			return undefined;
+		}
 	}
+
+/*
+ * 	applies the expected localization to an instance of momentjs
+ */
+	function applyLocale(_momentInstance, locale){
+		var _locale = locale;
+	
+		// if not supplied, defaults to the ... defaults.
+		if (_locale === null || _locale === undefined){
+			_locale = translator.get('squashtm.locale');
+		}
+		
+		// if still undefined, arbitrarily defaults to globish
+		if (_locale === null || _locale === undefined){
+			_locale = 'en';
+		}
+		
+		_momentInstance.lang(_locale);
+		
+	}
+	
 	
 	return {
 		
-		ISO_8601 : "yyyy-MM-ddTHH:mm:ss" ,
 		
 		/*
 		* Accepts : 
@@ -47,13 +83,17 @@ define(["datejs-all", "squash.translator"], function(datelocales, translator) {
 		*/
 		format : function(value, toFormat, fromFormat) {
 		
-			var _localDate = this.parse(value, fromFormat);
+			var _date = this.parse(value, fromFormat),
+				_toFormat = _javaToJSFormat(toFormat);
+			
+			var	_momentInstance = moment(_date);
+			applyLocale(_momentInstance);
 			
 			if (!! toFormat){
-				return _localDate.toString(toFormat);
+				return _momentInstance.format(_toFormat);
 			}
 			else{
-				return _localDate.toISOString();
+				return _momentInstance.toISOString();
 			}
 		},
 		
@@ -66,23 +106,27 @@ define(["datejs-all", "squash.translator"], function(datelocales, translator) {
 		*/
 		parse : function(value, format) {
 			
-			loadLocale();
-			
-			var _localDate,
-				type = typeof value;
+			var _date,
+				_type = typeof value,
+				_format = _javaToJSFormat(format);
 		
-			switch(type){
-			case "number" : _localDate = new Date(value); 
+			switch(_type){
+			case "number" : _date = new Date(value); 
 							break;
-			case "object" : _localDate = value; 
+							
+			case "object" : _date = value; 
 							break;
-			case "string" : _localDate = (!! format) ? Date.parseExact(value, format) :
-															Date.parse(value);	//ATOM is assumed
+							
+			case "string" :
+							var _instance = (!! _format) ? moment(value, _format) :
+															moment(value);		//ATOM is assumed
+							_date = _instance.toDate();
 							break;
+					
 			default : throw "dateutils.format : cannot handle supplied argument";
 			}
 			
-			return _localDate;
+			return _date;
 		}
 		
 		

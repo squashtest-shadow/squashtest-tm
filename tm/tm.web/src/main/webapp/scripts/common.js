@@ -74,8 +74,7 @@ requirejs.config({
 				"jqplot-highlight": "lib/jqplot/plugins/jqplot.highlighter.min",
 				"jqplot-category" : "lib/jqplot/plugins/jqplot.categoryAxisRenderer.min",
 				"excanvas" : "lib/excanvas.min",
-				"datejs" : "lib/datejs/date",
-				"datejs-all" : "lib/datejs/datejs-all",	//includes datejs and exports the known locales
+				"moment" : "lib/momentjs/moment.alllang.min",
 				//cke
 				"ckeditor" : "ckeditor/ckeditor",
 				"jquery.ckeditor" : "ckeditor/adapters/jquery",
@@ -240,10 +239,6 @@ requirejs.config({
 						$.jqplot.config.enablePlugins = true;
 						return $;
 					}
-				},
-				
-				"datejs" : {
-					exports : "Date"
 				}
 			}
 		});

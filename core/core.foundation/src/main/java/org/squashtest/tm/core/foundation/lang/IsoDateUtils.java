@@ -38,7 +38,7 @@ public class IsoDateUtils {
 		ISO_DATE = new SimpleDateFormat("yyyy-MM-dd");
 		ISO_DATE.setTimeZone(tz);
 		
-		ISO_DATETIME = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+		ISO_DATETIME = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 		ISO_DATETIME.setTimeZone(tz);
 	}
 
