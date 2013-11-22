@@ -31,7 +31,7 @@
 
 
 
-<div id="test-case-name-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
+<div id="test-case-name-div" class="ui-widget-header ui-corner-all ui-state-default">
 
 	<div style="float: left; height: 100%;">
 		<h2>
