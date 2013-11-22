@@ -329,7 +329,7 @@
 						</c:if>
 						$("#execute-next-test-case").button({
 							'text': false,
-							'disabled': !hasNextTestCase || hasNextStep,
+							'disabled': !hasNextTestCase,
 							icons: {
 								primary : 'ui-icon-seek-next'
 							}
@@ -367,6 +367,14 @@
 								<f:message key="execute.header.button.next.title" />
 							</button>
 						</td>
+					<td class="centered not-displayed" id="execute-next-test-case-panel">
+							<form action="<c:url value='${ testPlanItemUrl }/next-execution/runner?optimized=false' />" method="post">
+								<f:message var="nextTestCaseTitle" key="execute.header.button.next-test-case.title" />
+								<button id="execute-next-test-case" name="classic"  title="${ nextTestCaseTitle }">
+									${ nextTestCaseTitle }
+								</button>
+							</form>
+						</td>
 						<td class="centered">
 							<label id="evaluation-label-status">
 								<f:message key="execute.header.status.label" />
@@ -391,14 +399,7 @@
 							</c:otherwise>
 							</c:choose>
 						</td>
-						<td class="centered not-displayed" id="execute-next-test-case-panel">
-							<form action="<c:url value='${ testPlanItemUrl }/next-execution/runner?optimized=false' />" method="post">
-								<f:message var="nextTestCaseTitle" key="execute.header.button.next-test-case.title" />
-								<button id="execute-next-test-case" name="classic"  title="${ nextTestCaseTitle }">
-									${ nextTestCaseTitle }
-								</button>
-							</form>
-						</td>
+	
 					</tr>
 				</table>
 			</div>
