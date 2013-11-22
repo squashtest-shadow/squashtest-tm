@@ -40,6 +40,8 @@ define([ "jquery", "squash.translator", "jquery.squash.fragmenttabs", "squashtab
 	function cleanUp() {
 		$("#add-user-password").val('');
 		$("#new-user-confirmpass").val('');
+		$("#add-user-email").val('');
+		$("#add-user-group").val($("#add-user-group option:last").val());
 	}
 
 
