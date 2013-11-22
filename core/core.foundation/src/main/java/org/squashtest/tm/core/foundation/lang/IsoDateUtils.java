@@ -18,14 +18,64 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.util;
+package org.squashtest.tm.core.foundation.lang;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
-public final class DateUtils {
-	private DateUtils() {
-		super();
+public class IsoDateUtils {
+	
+	private static final DateFormat ISO_DATE;
+	private static final DateFormat ISO_DATETIME;
+	
+	
+	static {
+		TimeZone tz = TimeZone.getTimeZone("UTC");
+		
+		ISO_DATE = new SimpleDateFormat("yyyy-MM-dd");
+		ISO_DATE.setTimeZone(tz);
+		
+		ISO_DATETIME = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+		ISO_DATETIME.setTimeZone(tz);
 	}
+
+	private IsoDateUtils(){}
+	
+	/**
+	 * @param date
+	 * @return returns that date formatted according to the ISO 8601 Date (no time info)
+	 */
+	public static String formatIso8601Date(Date date){
+		return ISO_DATE.format(date);
+	}
+	
+	/**
+	 * @param date
+	 * @return returns that date formatted according to the ISO 8601 DateTime (with time and timezone info)
+	 */
+	public static String formatIso8601DateTime(Date date){
+		return ISO_DATETIME.format(date);
+	}
+	
+	/**
+	 * @param strDate
+	 * @return the Date obtained when parsing the argument against pattern yyyy-MM-dd
+	 */
+	public static Date parseIso8601Date(String strDate) throws ParseException{
+		return ISO_DATE.parse(strDate);
+	}
+	
+	/**
+	 * @param strDate
+	 * @return the Date obtained when parsing the argument against pattern yyyy-MM-dd'T'HH:mm:ssZ
+	 */
+	public static Date parseIso8601DateTime(String strDatetime) throws ParseException{
+		 return ISO_DATETIME.parse(strDatetime);
+	}
+	
 
 	/**
 	 * 
@@ -50,4 +100,5 @@ public final class DateUtils {
 			return "";
 		}
 	}
+	
 }

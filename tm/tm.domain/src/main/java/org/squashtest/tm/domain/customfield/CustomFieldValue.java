@@ -34,9 +34,9 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.tools.ant.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.exception.customfield.BindableEntityMismatchException;
 import org.squashtest.tm.exception.customfield.MandatoryCufException;

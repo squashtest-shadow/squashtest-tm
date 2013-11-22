@@ -20,10 +20,9 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.tools.ant.util.DateUtils;
+import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
 
 
 public class JsonIteration {
@@ -89,7 +88,7 @@ public class JsonIteration {
 	
 	private String toISO8601(Date date){
 		if (date != null) {
-			return new SimpleDateFormat(DateUtils.ISO8601_DATETIME_PATTERN).format(date);
+			return IsoDateUtils.formatIso8601DateTime(date);
 		}
 		else{
 			return null;

@@ -75,7 +75,6 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.jquery.TestSuiteModel;
-import org.squashtest.tm.web.internal.util.DateUtils;
 
 @Controller
 @RequestMapping("/iterations/{iterationId}")
@@ -251,11 +250,11 @@ public class IterationModificationController {
 	 * returns null if the string is empty, or a date otherwise. No check regarding the actual content of strDate.
 	 */
 	private Date strToDate(String strDate) {
-		return DateUtils.millisecondsToDate(strDate);
+		return IsoDateUtils.millisecondsToDate(strDate);
 	}
 
 	private String dateToStr(Date date) {
-		return DateUtils.dateToMillisecondsAsString(date);
+		return IsoDateUtils.dateToMillisecondsAsString(date);
 	}
 
 	@RequestMapping(value = PLANNING_URL, params = { "scheduledStart" })

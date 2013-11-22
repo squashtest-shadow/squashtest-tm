@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.report.criteria;
 
-import static org.squashtest.tm.web.internal.report.criteria.FormEntryConstants.DATE_ENTRY_FORMATS;
 import static org.squashtest.tm.web.internal.report.criteria.FormEntryConstants.EMPTY_DATE_ENTRY;
 import static org.squashtest.tm.web.internal.report.criteria.FormEntryConstants.INPUT_VALUE;
 
@@ -28,10 +27,10 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.Map;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.springframework.util.Assert;
 import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.api.report.form.InputType;
+import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
 
 /**
  * @author Gregory
@@ -59,7 +58,7 @@ class DateEntryConverter implements SimpleEntryConverter {
 
 	private Date parseDate(String raw) {
 		try {
-			return DateUtils.parseDate(raw, DATE_ENTRY_FORMATS);
+			return IsoDateUtils.parseIso8601Date(raw);
 		} catch (ParseException e) {
 			throw new InconsistentDateFormatException(raw, e);
 		}

@@ -38,12 +38,12 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import org.apache.tools.ant.util.DateUtils;
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 import org.hibernate.validator.constraints.NotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.validation.constraint.HasDefaultAsRequired;
 
 /**
@@ -64,7 +64,6 @@ public class CustomField {
 	public static final String CODE_REGEXP = "^[A-Za-z0-9_]*$";
 	public static final int MIN_CODE_SIZE = 1;
 	public static final int MAX_CODE_SIZE = 30;
-	public static final String DATE_PATTERN = DateUtils.ISO8601_DATE_PATTERN;
 
 	@Id
 	@GeneratedValue

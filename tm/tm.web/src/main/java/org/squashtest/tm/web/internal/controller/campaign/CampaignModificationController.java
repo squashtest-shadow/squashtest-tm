@@ -23,7 +23,6 @@ package org.squashtest.tm.web.internal.controller.campaign;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -51,6 +50,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
@@ -67,7 +67,6 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.json.JsonIteration;
-import org.squashtest.tm.web.internal.util.DateUtils;
 
 @Controller
 @RequestMapping("/campaigns/{campaignId}")
@@ -236,11 +235,11 @@ public class CampaignModificationController {
 
 	// returns null if the string is empty, or a date otherwise. No check regarding the actual content of strDate.
 	private Date strToDate(String strDate) {
-		return DateUtils.millisecondsToDate(strDate);
+		return IsoDateUtils.millisecondsToDate(strDate);
 	}
 
 	private String dateToStr(Date date) {
-		return DateUtils.dateToMillisecondsAsString(date);
+		return IsoDateUtils.dateToMillisecondsAsString(date);
 	}
 
 	@RequestMapping(value = PLANNING_URL, params = { "scheduledStart" })
@@ -352,12 +351,11 @@ public class CampaignModificationController {
 	@RequestMapping(value = "/iterations/planning", consumes="application/json", method = RequestMethod.POST)
 	@ResponseBody
 	public void setIterationsPlanning(@RequestBody JsonIteration[] iterations) throws ParseException{
-		SimpleDateFormat formatter = new SimpleDateFormat(org.apache.tools.ant.util.DateUtils.ISO8601_DATETIME_PATTERN);
 		Date date;
 		for (JsonIteration iter : iterations){
-			date = (iter.getScheduledStartDate() != null) ? formatter.parse(iter.getScheduledStartDate()) : null;
+			date = (iter.getScheduledStartDate() != null) ? IsoDateUtils.parseIso8601DateTime(iter.getScheduledStartDate()) : null;
 			iterationModService.changeScheduledStartDate(iter.getId(), date);
-			date = (iter.getScheduledEndDate() != null) ? formatter.parse(iter.getScheduledEndDate()) : null;
+			date = (iter.getScheduledEndDate() != null) ? IsoDateUtils.parseIso8601DateTime(iter.getScheduledEndDate()) : null;
 			iterationModService.changeScheduledEndDate(iter.getId(), date);
 		}
 	}
