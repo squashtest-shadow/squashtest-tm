@@ -31,6 +31,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
+import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
@@ -181,7 +182,7 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 
 		public Date getValueAsDate() {
 			try {
-				return new SimpleDateFormat(CustomField.DATE_PATTERN).parse(value);
+				return IsoDateUtils.parseIso8601Date(value);
 			} catch (ParseException e) {
 				LOGGER.debug("Unable to parse date {} of custom field #{}", value, id);
 			}

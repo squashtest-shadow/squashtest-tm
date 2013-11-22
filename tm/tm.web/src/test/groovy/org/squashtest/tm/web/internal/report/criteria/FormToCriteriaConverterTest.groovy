@@ -22,10 +22,13 @@ package org.squashtest.tm.web.internal.report.criteria;
 
 import static org.junit.Assert.*;
 
+import java.util.Calendar;
+
 import org.spockframework.compiler.model.Spec;
 import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.api.report.form.InputType;
 import org.squashtest.tm.web.internal.report.criteria.FormToCriteriaConverter;
+import org.apache.commons.lang.time.DateUtils;
 
 import spock.lang.Specification;
 
@@ -101,7 +104,7 @@ class FormToCriteriaConverterTest extends Specification {
 		
 		then:
 		criteria.batman.name == "batman"
-		criteria.batman.value == c.time
+		DateUtils.truncate(criteria.batman.value, Calendar.DATE) == DateUtils.truncate(c.time, Calendar.DATE)
 		criteria.batman.sourceInput == InputType.DATE
 	} 
 	

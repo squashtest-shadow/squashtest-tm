@@ -31,6 +31,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
@@ -225,7 +226,7 @@ public class CustomFieldValueConfigurationBean {
 			Date date = null;
 
 			try {
-				date = new SimpleDateFormat(CustomField.DATE_PATTERN).parse(value);
+				date = IsoDateUtils.parseIso8601Date(value);
 			} catch (ParseException e) {
 				LOGGER.warn(e.getMessage(), e);
 			}
