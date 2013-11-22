@@ -36,8 +36,6 @@
 	</div>
 	
 
-	
-	
 	<div style="display:inline-block; margin-right:2em;vertical-align:top">
 		<label><f:message key="label.Status" /></label>
 		<jq:execution-status status="${auditableEntity.executionStatus.canonicalStatus}" /> 

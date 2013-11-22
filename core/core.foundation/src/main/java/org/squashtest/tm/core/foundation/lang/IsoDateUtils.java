@@ -49,7 +49,11 @@ public class IsoDateUtils {
 	 * @return returns that date formatted according to the ISO 8601 Date (no time info)
 	 */
 	public static String formatIso8601Date(Date date){
-		return ISO_DATE.format(date);
+		if (date == null){
+			return null;
+		} else{
+			return ISO_DATE.format(date);
+		}
 	}
 	
 	/**
@@ -57,7 +61,12 @@ public class IsoDateUtils {
 	 * @return returns that date formatted according to the ISO 8601 DateTime (with time and timezone info)
 	 */
 	public static String formatIso8601DateTime(Date date){
-		return ISO_DATETIME.format(date);
+		if (date == null){
+			return null;
+		}
+		else{
+			return ISO_DATETIME.format(date);
+		}
 	}
 	
 	/**
@@ -65,7 +74,12 @@ public class IsoDateUtils {
 	 * @return the Date obtained when parsing the argument against pattern yyyy-MM-dd
 	 */
 	public static Date parseIso8601Date(String strDate) throws ParseException{
-		return ISO_DATE.parse(strDate);
+		if (strDate == null){
+			return null;
+		}
+		else{
+			return ISO_DATE.parse(strDate);
+		}
 	}
 	
 	/**
@@ -73,7 +87,12 @@ public class IsoDateUtils {
 	 * @return the Date obtained when parsing the argument against pattern yyyy-MM-dd'T'HH:mm:ssZ
 	 */
 	public static Date parseIso8601DateTime(String strDatetime) throws ParseException{
-		 return ISO_DATETIME.parse(strDatetime);
+		if (strDatetime == null){
+			return null;
+		}
+		else{
+			return ISO_DATETIME.parse(strDatetime);
+		}
 	}
 	
 
