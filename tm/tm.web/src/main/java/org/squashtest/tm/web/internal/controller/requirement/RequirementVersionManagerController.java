@@ -143,7 +143,7 @@ public class RequirementVersionManagerController {
 		return internationalize(status, locale);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-reference", VALUE })
+	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-reference", VALUE }, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	String changeReference(@PathVariable long requirementVersionId, @RequestParam(VALUE) String requirementReference) {
 		requirementVersionManager.changeReference(requirementVersionId, requirementReference.trim());

@@ -142,7 +142,7 @@ public class CustomFieldController {
 	 *            the new label
 	 * @return
 	 */
-	@RequestMapping(value = "/{customFieldId}", method = RequestMethod.POST, params = { "id=cuf-label", VALUE })
+	@RequestMapping(value = "/{customFieldId}", method = RequestMethod.POST, params = { "id=cuf-label", VALUE }, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String changeLabel(@PathVariable long customFieldId, @RequestParam(VALUE) String label) {
 		customFieldManager.changeLabel(customFieldId, label);

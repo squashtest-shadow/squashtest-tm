@@ -273,7 +273,7 @@ public class TestCaseModificationController {
 		return internationalizationHelper.internationalize(mode, locale);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-description", VALUE })
+	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-description", VALUE }, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String changeDescription(@RequestParam(VALUE) String testCaseDescription, @PathVariable long testCaseId) {
 
@@ -285,7 +285,7 @@ public class TestCaseModificationController {
 		return testCaseDescription;
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-reference", VALUE })
+	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-reference", VALUE }, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String changeReference(@RequestParam(VALUE) String testCaseReference, @PathVariable long testCaseId) {
 

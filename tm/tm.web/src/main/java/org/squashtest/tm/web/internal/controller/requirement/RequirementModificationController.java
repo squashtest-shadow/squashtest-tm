@@ -177,7 +177,7 @@ public class RequirementModificationController {
 	
 	
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-description", VALUE })
+	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-description", VALUE }, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody
 	String changeDescription(@RequestParam(VALUE) String newDescription, @PathVariable long requirementId) {
 
@@ -240,7 +240,7 @@ public class RequirementModificationController {
 		return initStatusSelectionList(locale, status);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-reference", VALUE })
+	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-reference", VALUE }, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String changeReference(@RequestParam(VALUE) String requirementReference, @PathVariable long requirementId)
 			throws UnsupportedEncodingException {

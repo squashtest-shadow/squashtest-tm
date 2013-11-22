@@ -55,7 +55,7 @@ public class DatasetParamValueController {
 	 * @param value : value for the new paramValue
 	 * @return
 	 */
-	@RequestMapping(value= DATASTE_PARAM_VALUE_ID_URL+"/param-value", method = RequestMethod.POST, params = {VALUE})
+	@RequestMapping(value= DATASTE_PARAM_VALUE_ID_URL+"/param-value", method = RequestMethod.POST, params = {VALUE}, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String changeParamValue(@PathVariable long datasetParamValueId, @RequestParam(VALUE) String value){
 		this.datasetModificationService.changeParamValue(datasetParamValueId, value);

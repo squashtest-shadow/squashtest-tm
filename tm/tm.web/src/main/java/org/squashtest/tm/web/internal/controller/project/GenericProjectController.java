@@ -152,7 +152,7 @@ public class GenericProjectController {
 		projectManager.persist(template);
 	}
 
-	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = { "id=project-label", VALUE })
+	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = { "id=project-label", VALUE }, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String changeLabel(@RequestParam(VALUE) String projectLabel, @PathVariable long projectId) {
 		projectManager.changeLabel(projectId, projectLabel);

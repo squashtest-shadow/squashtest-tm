@@ -64,7 +64,7 @@ public class DatasetController {
 	 * @param value : value for the new name
 	 * @return
 	 */
-	@RequestMapping(value= DATASET_ID_URL+"/name", method = RequestMethod.POST, params = {VALUE})
+	@RequestMapping(value= DATASET_ID_URL+"/name", method = RequestMethod.POST, params = {VALUE}, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String changeName(@PathVariable long datasetId, @RequestParam(VALUE) String value){
 		datasetModificationService.changeName(datasetId, value);

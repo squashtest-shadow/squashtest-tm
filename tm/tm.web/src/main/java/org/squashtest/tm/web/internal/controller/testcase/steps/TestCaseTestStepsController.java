@@ -229,7 +229,7 @@ public class TestCaseTestStepsController {
 		testCaseModificationService.removeListOfSteps(testCaseId, stepIds);
 	}
 
-	@RequestMapping(value = "/{stepId}/action", method = RequestMethod.POST, params = { "id", VALUE })
+	@RequestMapping(value = "/{stepId}/action", method = RequestMethod.POST, params = { "id", VALUE }, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String changeStepAction(@PathVariable long stepId, @RequestParam(VALUE) String newAction) {
 		testCaseModificationService.updateTestStepAction(stepId, newAction);
@@ -237,8 +237,8 @@ public class TestCaseTestStepsController {
 		return newAction;
 	}
 
-	@RequestMapping(value = "/{stepId}/result", method = RequestMethod.POST, params = { "id", VALUE })
-	@ResponseBody
+	@RequestMapping(value = "/{stepId}/result", method = RequestMethod.POST, params = { "id", VALUE }, produces = "text/plain;charset=UTF-8")
+	@ResponseBody 
 	public String changeStepDescription(@PathVariable long stepId, @RequestParam(VALUE) String newResult) {
 		testCaseModificationService.updateTestStepExpectedResult(stepId, newResult);
 		LOGGER.trace("TestCaseModificationController : updated action for step {}", stepId);

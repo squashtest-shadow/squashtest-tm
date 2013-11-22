@@ -82,7 +82,7 @@ public class UserAccountController {
 			userService.setCurrentUserPassword(form.getOldPassword(), form.getNewPassword());
 	}
 	
-	@RequestMapping(value="/update", method=RequestMethod.POST, params={"id=user-account-email", VALUE})
+	@RequestMapping(value="/update", method=RequestMethod.POST, params={"id=user-account-email", VALUE}, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String updateUserEmail(@RequestParam(VALUE) String email){
 		userService.setCurrentUserEmail(email);

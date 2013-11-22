@@ -240,28 +240,28 @@ public class UserAdministrationController extends PartyControllerSupport {
 		adminService.setUserGroupAuthority(userId, groupId);
 	}
 
-	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = { "id=user-login", VALUE })
+	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = { "id=user-login", VALUE }, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String updateLogin(@RequestParam(VALUE) String userLogin, @PathVariable long userId) {
 		adminService.modifyUserLogin(userId, userLogin);
 		return HtmlUtils.htmlEscape(userLogin);
 	}
 
-	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = { "id=user-first-name", VALUE })
+	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = { "id=user-first-name", VALUE }, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String updateFirstName(@RequestParam(VALUE) String firstName, @PathVariable long userId) {
 		adminService.modifyUserFirstName(userId, firstName);
 		return HtmlUtils.htmlEscape(firstName);
 	}
 
-	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = { "id=user-last-name", VALUE })
+	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = { "id=user-last-name", VALUE }, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String updateLastName(@RequestParam(VALUE) String lastName, @PathVariable long userId) {
 		adminService.modifyUserLastName(userId, lastName);
 		return HtmlUtils.htmlEscape(lastName);
 	}
 
-	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = { "id=user-email", VALUE })
+	@RequestMapping(value = USER_URL, method = RequestMethod.POST, params = { "id=user-email", VALUE }, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String updateEmail(@RequestParam(VALUE) String email, @PathVariable long userId) {
 		adminService.modifyUserEmail(userId, email);
