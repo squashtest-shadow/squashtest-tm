@@ -67,6 +67,7 @@ import org.squashtest.tm.web.internal.helper.InternationalisableLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 
 /**
  * Controller which receives requirement version management related requests.
@@ -230,7 +231,7 @@ public class RequirementVersionManagerController {
 	public @ResponseBody
 	Object rename(@PathVariable long requirementVersionId, @RequestParam("newName") String newName) {
 		requirementVersionManager.changeName(requirementVersionId, newName);
-		return new Object();
+		return new  RenameModel(newName);
 	}
 
 	
@@ -241,7 +242,7 @@ public class RequirementVersionManagerController {
 		RequirementAuditEventTableModelBuilder builder = new RequirementAuditEventTableModelBuilder(LocaleContextHolder.getLocale(), i18nHelper);
 
 		return builder.buildDataModel(auditTrail, "");
-			
+
 	}
 	
 	
