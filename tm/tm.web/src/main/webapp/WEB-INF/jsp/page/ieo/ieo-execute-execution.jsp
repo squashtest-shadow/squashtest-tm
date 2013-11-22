@@ -76,7 +76,7 @@
 	<f:message var="completedMessage" key="execute.alert.test.complete" />
 	<c:if test="${ execution.project.bugtrackerConnected }">
 	<c:choose>
-	<c:when test="${ execution.bugTracker.iframeFriendly } }">
+	<c:when test="${ execution.bugTracker.iframeFriendly }">
 		<c:set var="bugLinkTarget" value="frameright" />
 	</c:when>
 	<c:otherwise>
