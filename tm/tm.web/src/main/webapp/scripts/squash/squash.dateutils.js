@@ -50,7 +50,7 @@ define(["moment", "squash.translator"], function(moment, translator) {
 	}
 
 /*
- * 	applies the expected localization to an instance of momentjs
+ * applies the expected localization to an instance of momentjs
  */
 	function applyLocale(_momentInstance, locale){
 		var _locale = locale;
