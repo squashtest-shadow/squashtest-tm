@@ -75,7 +75,7 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepVisitor, Identified, HasExecutionStatus, DenormalizedFieldHolder {
 	
 	private static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
-	private static final String PARAM_PATTERN = "(.*?)(\\Q${\\E(.*?)\\Q}\\E)(.*?)";
+	private static final String PARAM_PATTERN = "(\\Q${\\E([A-Za-z0-9_-]+)\\Q}\\E)";
 	private static final String NO_PARAM = "&lt;no_value&gt;";
 	static {
 		Set<ExecutionStatus> set = new HashSet<ExecutionStatus>();
@@ -296,15 +296,22 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 		    Matcher matcher = pattern.matcher(result);
 		        
 		    while(matcher.find()){ 
-		    	String paramChain = matcher.group(2);
-		    	String paramName = matcher.group(3);
-		    	if(dataset.containsKey(paramName) && dataset.get(paramName).length() > 0){
-		    		result = result.replace(paramChain, this.dataset.get(paramName));
-		    	} else if(!dataset.containsKey(paramName) || dataset.get(paramName).length() == 0) {
-		    		result = result.replace(paramChain, NO_PARAM);
+		    	StringBuilder builder = new StringBuilder(result);
+		    	String paramName = matcher.group(2);
+		    	String paramValue = dataset.get(paramName);
+		    	
+		    	if( paramValue == null|| paramValue.length() == 0) {
+		    		paramValue = NO_PARAM;
 		    	}
 		    	
-		    } 
+		    	int startParamChain = matcher.start(1);
+	    		int endParamChain = matcher.end(1);
+	    		String beforeParam = builder.substring(0, startParamChain);
+	    		String afterParam = builder.substring(endParamChain);
+	    		
+	    		result = beforeParam +paramValue+afterParam;
+	    		matcher = pattern.matcher(result);
+		    }
 		}
 	    return result;
 	}
