@@ -68,6 +68,10 @@ define(['jquery', 'tree', 'custom-field-values', 'jquery.squash.formdialog'], fu
 		dialog.on('formdialogadd-another', function(){
 			postNode(dialog, tree).then(function(){
 				dialog.formDialog('cleanup');
+				var fieldswithdefault = $("[data-default-value]");
+				for(var i=0; i<fieldswithdefault.size(); i++){
+					$(fieldswithdefault[i]).val($(fieldswithdefault[i]).attr("data-default-value"));
+				}
 			}) ;		
 		});
 		
