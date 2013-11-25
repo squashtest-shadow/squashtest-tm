@@ -417,7 +417,7 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 			
 			if(associatedTo){
 				if(this.associateType == "requirement"){
-					$(".is-associated",row).append('<span class="associated-icon-requirement"></span>');
+					$(".is-associated",row).append('<span class="associated-icon-requirement" title="'+translator.get('search.associatedwith.requirement.image.tooltip')+'"></span>');
 				} else {
 					$(".is-associated",row).append('<span class="associated-icon-campaign"></span>');
 				}

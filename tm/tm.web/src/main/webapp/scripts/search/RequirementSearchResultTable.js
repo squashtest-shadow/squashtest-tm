@@ -385,7 +385,7 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 				if(this.associateType == "requirement"){
 					$(".is-associated",row).append('<span class="associated-icon-requirement"></span>');
 				} else if(this.associateType == "testcase"){
-					$(".is-associated",row).append('<span class="associated-icon-testcase"></span>');
+					$(".is-associated",row).append('<span class="associated-icon-testcase" title="'+translator.get('search.associatedwith.testcase.image.tooltip')+'"></span>');
 				} else {
 					$(".is-associated",row).append('<span class="associated-icon-campaign"></span>');
 				}
