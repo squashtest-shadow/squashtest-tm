@@ -88,7 +88,7 @@
 		
 		$(function(){
 			
-			require(["squash.basicwidg"], function(basicwidg){
+			require(["squash.basicwidgets"], function(basicwidg){
 				basicwidg.init();
 				
 				$("#execute-next-button").button({
@@ -152,12 +152,12 @@
 			<table style="width: 100%; table-layout: fixed; white-space: nowrap;">
 			<tr>
 				<td style="width:50px;" class="left-aligned"><button id="execute-stop-button" ><f:message key="execute.header.button.stop.title" /></button></td>
-				<td style="padding-left: 20px; width: 200px" class="centered">
+				<td style="padding-left: 20px; width: 120px" class="centered">
 					<button id="execute-previous-button"><f:message key="execute.header.button.previous.title" /></button>
 					<span id="execute-header-numbers-label">${executionStep.executionStepOrder +1} / ${totalSteps}</span>
 					<button id="execute-next-button"><f:message key="execute.header.button.next.title" /></button>
 				</td>
-				<td style="width:130px" class="centered not-displayed" id="execute-next-test-case-panel">
+				<td style="width:50px" class="centered not-displayed" id="execute-next-test-case-panel">
 					<f:message  var="nextTestCaseTitle" key="execute.header.button.next-test-case.title" />
 					<button id="execute-next-test-case" name="optimized" title="${ nextTestCaseTitle }">${ nextTestCaseTitle }</button>
 				</td>
