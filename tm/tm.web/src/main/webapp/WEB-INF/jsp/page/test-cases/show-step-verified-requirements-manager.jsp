@@ -67,7 +67,7 @@
 				
 				var summaryMessages = {
 					alreadyVerifiedRejections: "<f:message key='test-case.verified-requirement-version.already-verified-rejection' />",
-					notLinkableRejections: "<f:message key='requirement-version.verifying-test-case.not-linkable-rejection' />",
+					notLinkableRejections: "<f:message key='test-case.verified-requirement-version.not-linkable-rejection' />",
 					noVerifiableVersionRejections: "<f:message key='test-case.verified-requirement-version.no-verifiable-version-rejection' />" 
 				};
 					
