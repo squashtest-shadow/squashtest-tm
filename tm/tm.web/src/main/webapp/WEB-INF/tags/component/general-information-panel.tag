@@ -51,54 +51,13 @@
 	<br />
 </div>
 	<script type="text/javascript">
-
 		$(function(){
-
-			require(["squash.dateutils"], function(dateutils){
-
-				var displayFormat = '<f:message key="squashtm.dateformat" />';
-				var never = '(<f:message key="label.lower.Never" />)';
-				
-				function updateDateInformations(infos){					
-					
-					var newCreatedOn = (infos.createdOn !== null && infos.createdOn.length>0) ? dateutils.format(infos.createdOn, displayFormat) : "";
-					var newCreatedBy = (infos.createdBy !== null && infos.createdBy.length>0) ? '('+infos.createdBy+')' : never;
-					
-					var newModifiedOn = (infos.modifiedOn !== null && infos.modifiedOn.length>0) ? dateutils.format(infos.modifiedOn, displayFormat) : "";
-					var newModifiedBy = (infos.modifiedBy !== null && infos.modifiedBy.length>0) ? '('+infos.modifiedBy+')' : never;
-										
-					$("#created-on > .datetime").text(newCreatedOn);
-					$("#created-on > .author").text(newCreatedBy);
-					
-					$("#last-modified-on > .datetime").text(newModifiedOn);
-					$("#last-modified-on > .author").text(newModifiedBy);
-				
-				}
-				
-				var infos = {
-					createdOn : $("#created-on > .datetime").text(),
-					createdBy : $("#created-on > .author").text(),
-					modifiedOn : $("#last-modified-on > .datetime").text(),
-					modifiedBy : $("#last-modified-on > .author").text()					
-				} 
-				
-				updateDateInformations(infos);
-				
-				<c:if test="${ not empty entityUrl }">
-				// also autoupdate when any information is posted from this page
-				$("#general-information-panel").ajaxSuccess(function(event, xrh, settings) {
-					if (settings.type == 'POST') {
-						$.ajax({
-							type : 'GET',
-							url : '${ entityUrl }/general',
-							dataType : 'json'
-						})
-						.done(function(json){
-							updateDateInformations(json);
-						});
-					}
+			require(["page-components/general-information-panel"], function(general){
+				general.init({
+					format : '<f:message key="squashtm.dateformat" />',
+					never : '(<f:message key="label.lower.Never" />)',
+					entityUrl : '${entityUrl}'
 				});
-				</c:if>
 			});
 		});
 	</script>
