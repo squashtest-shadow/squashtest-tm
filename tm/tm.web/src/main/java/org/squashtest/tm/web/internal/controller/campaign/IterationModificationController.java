@@ -51,6 +51,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
+import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
@@ -74,6 +76,7 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.jquery.TestSuiteModel;
+import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
 
 @Controller
 @RequestMapping("/iterations/{iterationId}")
@@ -230,17 +233,13 @@ public class IterationModificationController {
 		return duplicate.getId();
 	}
 
-	@RequestMapping(value = "/general", method = RequestMethod.GET)
-	public ModelAndView refreshGeneralInfos(@PathVariable long iterationId) {
 
+	@RequestMapping(value = "/general", method = RequestMethod.GET, produces="application/json")
+	@ResponseBody
+	public JsonGeneralInfo refreshGeneralInfos(@PathVariable long iterationId){
 		Iteration iteration = iterationModService.findById(iterationId);
-
-		ModelAndView mav = new ModelAndView("fragment/generics/general-information-fragment");
-
-		mav.addObject("auditableEntity", iteration);
-		mav.addObject("entityContextUrl", "/iterations/" + iterationId);
-
-		return mav;
+		return new JsonGeneralInfo((AuditableMixin)iteration);
+		
 	}
 
 	/* *************************************** planning ********************************* */

@@ -40,6 +40,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -50,6 +52,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
+import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
@@ -78,13 +81,15 @@ public class UserController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
-	@RequestMapping(value = USER_ID_URL + "/general")
-	public String refreshGeneralInfos(@PathVariable(USER_ID) long userId, Model model) {
-		LOGGER.info("Refresh infos for user #{}", userId);
+	
+	@RequestMapping(value =  USER_ID_URL + "/general", method = RequestMethod.GET, produces="application/json")
+	@ResponseBody
+	public JsonGeneralInfo refreshGeneralInfos(@PathVariable(USER_ID) long userId){
 		User user = service.findUserById(userId);
-		model.addAttribute("auditableEntity", user);
-		return "fragments-utils/general-information-panel.html";
+		return new JsonGeneralInfo((AuditableMixin)user);
+		
 	}
+
 
 	// ************************************ team section ************************
 

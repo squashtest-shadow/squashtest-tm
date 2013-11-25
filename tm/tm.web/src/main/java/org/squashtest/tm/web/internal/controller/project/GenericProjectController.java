@@ -56,6 +56,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
@@ -79,6 +80,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
+import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
 import org.squashtest.tm.web.internal.model.testautomation.TestAutomationProjectRegistrationForm;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
@@ -239,21 +241,14 @@ public class GenericProjectController {
 		}
 	}
 
-	@RequestMapping(value = PROJECT_ID_URL + "/general", method = RequestMethod.GET)
-	public ModelAndView refreshGeneralInfos(@PathVariable long projectId) {
-
-		ModelAndView mav = new ModelAndView("fragment/generics/general-information-fragment");
+	@RequestMapping(value = PROJECT_ID_URL + "/general", method = RequestMethod.GET, produces="application/json")
+	@ResponseBody
+	public JsonGeneralInfo refreshGeneralInfos(@PathVariable long projectId) {
 
 		GenericProject project = projectManager.findById(projectId);
-		if (project == null) {
-			throw new UnknownEntityException(projectId, Project.class);
-		}
-		mav.addObject("auditableEntity", project);
-		// context-absolute url of this entity
-		mav.addObject("entityContextUrl", "/projects/" + projectId);
-
-		return mav;
+		return new JsonGeneralInfo((AuditableMixin)project);
 	}
+	
 
 	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.DELETE)
 	@ResponseBody

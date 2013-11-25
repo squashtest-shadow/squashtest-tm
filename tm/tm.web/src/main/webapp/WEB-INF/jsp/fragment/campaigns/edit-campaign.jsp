@@ -142,7 +142,7 @@
 
 <div id="campaign-toolbar" class="toolbar-class ui-corner-all ">
 	<div class="toolbar-information-panel">
-		<comp:general-information-panel auditableEntity="${campaign}" />
+		<comp:general-information-panel auditableEntity="${campaign}" entityUrl="${campaignUrl}"/>
 	</div>
 	<div class="toolbar-button-panel">
 	

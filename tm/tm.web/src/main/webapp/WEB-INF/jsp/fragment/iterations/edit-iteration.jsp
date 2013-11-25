@@ -44,9 +44,6 @@
 <s:url var="iterationUrl" value="/iterations/{iterId}">
 	<s:param name="iterId" value="${iteration.id}" />
 </s:url>
-<s:url var="iterationInfoUrl" value="/iterations/{iterId}/general">
-	<s:param name="iterId" value="${iteration.id}" />
-</s:url>
 <s:url var="iterationPlanningUrl" value="/iterations/{iterId}/planning">
 	<s:param name="iterId" value="${iteration.id}" />
 </s:url>
@@ -126,11 +123,6 @@
 	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 
-<script type="text/javascript">
-	function refreshIterationInfos() {
-		$('#general-informations-panel').load('${iterationInfoUrl}');
-	}
-</script>
 
 <div
 	class="ui-widget-header ui-state-default ui-corner-all fragment-header">
@@ -183,7 +175,7 @@
 <div id="iteration-toolbar" class="toolbar-class ui-corner-all ">
 	<div class="toolbar-information-panel">
 		<div id="general-informations-panel">
-			<comp:general-information-panel auditableEntity="${iteration}" />
+			<comp:general-information-panel auditableEntity="${iteration}" entityUrl="${iterationUrl}"/>
 		</div>
 	</div>
 	<div class="toolbar-button-panel">
@@ -232,8 +224,7 @@
 
 		<c:if test="${ writable }">
 			<comp:rich-jeditable targetUrl="${ iterationUrl }"
-				componentId="iteration-description"
-				submitCallback="refreshIterationInfos" />
+				componentId="iteration-description"/>
 		</c:if>
 
 		<comp:toggle-panel id="iteration-description-panel"
@@ -277,7 +268,6 @@
 									fmtLabel="dialog.label.iteration.scheduled_start.label"
 									url="${iterationPlanningUrl}" datePickerId="scheduled-start"
 									paramName="scheduledStart" isContextual="true"
-									postCallback="refreshIterationInfos"
 									initialDate="${iteration.scheduledStartDate.time}"
 									editable="${ writable }">	
 					</comp:datepicker>
@@ -289,7 +279,6 @@
 									fmtLabel="dialog.label.iteration.actual_start.label"
 									paramName="actualStart" autosetParamName="setActualStartAuto"
 									isAuto="${iteration.actualStartAuto}"
-									postCallback="refreshIterationInfos"
 									initialDate="${iteration.actualStartDate.time}"
 									isContextual="true" editable="${ writable }"
 									jsVarName="actualStart">
@@ -302,7 +291,6 @@
 									fmtLabel="dialog.label.iteration.scheduled_end.label"
 									url="${iterationPlanningUrl}" datePickerId="scheduled-end"
 									paramName="scheduledEnd" isContextual="true"
-									postCallback="refreshIterationInfos"
 									initialDate="${iteration.scheduledEndDate.time}"
 									editable="${ writable }">	
 					</comp:datepicker>				
@@ -313,7 +301,6 @@
 									fmtLabel="dialog.label.iteration.actual_end.label"
 									paramName="actualEnd" autosetParamName="setActualEndAuto"
 									isAuto="${iteration.actualEndAuto}"
-									postCallback="refreshIterationInfos"
 									initialDate="${iteration.actualEndDate.time}"
 									isContextual="true" editable="${ writable }"
 									jsVarName="actualEnd">
@@ -431,7 +418,6 @@
 			 	squashtm.execution = squashtm.execution || {};
 			 	squashtm.execution.refresh = $.proxy(function(){
 			 		$("#iteration-test-plans-table").squashTable().refresh();
-			 		$('#general-informations-panel').load('${iterationInfoUrl}');
 			 	}, window);
 			 	
 				// ********** dashboard **************
@@ -450,8 +436,7 @@
 	/* renaming success handler */
 	function renameIterationSuccess(data) {
 		var evt = new EventRename(identity, data.newName);
-		squashtm.workspace.eventBus.fire(null, evt);		
-		refreshIterationInfos();
+		squashtm.workspace.eventBus.fire(null, evt);	
 	}
 	
 </script>

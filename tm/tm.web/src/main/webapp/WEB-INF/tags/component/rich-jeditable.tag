@@ -24,7 +24,6 @@
 
 <%@ attribute name="targetUrl" required="true" %>
 <%@ attribute name="componentId" required="true" %>
-<%@ attribute name="submitCallback" required="false" %>
 <%@ attribute name="rows" required="false" %>
 <%@ attribute name="welcome" required="false" %>
 

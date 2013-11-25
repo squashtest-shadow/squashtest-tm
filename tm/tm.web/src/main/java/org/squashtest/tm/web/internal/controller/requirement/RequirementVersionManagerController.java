@@ -47,6 +47,8 @@ import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.domain.Level;
+import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.tm.domain.requirement.Requirement;
@@ -68,6 +70,7 @@ import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
+import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
 
 /**
  * Controller which receives requirement version management related requests.
@@ -209,14 +212,12 @@ public class RequirementVersionManagerController {
 
 	}
 
-	@RequestMapping(value = "/general", method = RequestMethod.GET)
-	public String showGeneralInfos(@PathVariable long requirementVersionId, Model model) {
+	@RequestMapping(value = "/general", method = RequestMethod.GET, produces="application/json")
+	@ResponseBody
+	public JsonGeneralInfo refreshGeneralInfos(@PathVariable long requirementVersionId){
 		RequirementVersion version = requirementVersionManager.findById(requirementVersionId);
-
-		model.addAttribute("auditableEntity", version);
-		model.addAttribute("entityContextUrl", "/requirement-versions/" + requirementVersionId);
-
-		return "fragment/generics/general-information-fragment";
+		return new JsonGeneralInfo((AuditableMixin)version);
+		
 	}
 
 	private String buildMarshalledCriticalities(Locale locale) {

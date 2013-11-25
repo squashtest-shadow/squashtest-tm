@@ -45,6 +45,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
@@ -59,6 +61,7 @@ import org.squashtest.tm.web.internal.controller.testcase.TestCaseImportanceJedi
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
+import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
 
 @Controller
 @RequestMapping("/test-suites/{suiteId}")
@@ -149,17 +152,12 @@ public class TestSuiteModificationController {
 	}
 
 
-	@RequestMapping(value = "/general", method = RequestMethod.GET)
-	public ModelAndView refreshGeneralInfos(@PathVariable("suiteId") long suiteId) {
-
+	@RequestMapping(value = "/general", method = RequestMethod.GET, produces="application/json")
+	@ResponseBody
+	public JsonGeneralInfo refreshGeneralInfos(@PathVariable("suiteId") long suiteId) {
 		TestSuite testSuite = service.findById(suiteId);
-
-		ModelAndView mav = new ModelAndView("fragment/generics/general-information-fragment");
-
-		mav.addObject("auditableEntity", testSuite);
-		mav.addObject("entityContextUrl", "/test-suites/" + suiteId);
-
-		return mav;
+		return new JsonGeneralInfo((AuditableMixin)testSuite);
+		
 	}
 
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET)

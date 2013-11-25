@@ -28,7 +28,7 @@
  * }
  * 
  */
-define(["jquery", "squash.dateutils"], function($, dateutils){
+define(["jquery", "squash.dateutils", "squash.attributeparser"], function($, dateutils, attrparser){
 		
 	function updateDateInformations(infos, options){					
 		
@@ -46,31 +46,49 @@ define(["jquery", "squash.dateutils"], function($, dateutils){
 	
 	}
 	
+	
 	return {
-		init : function(options){
+		
+		refresh : function(){
+			var elt = $("#general-information-panel"),
+				stropts = elt.data('def'),
+				opts = attrparser.parse(stropts);
+			
+			if (opts.url){
+				$.ajax({
+					type : 'GET',
+					url : opts.url+'/general',
+					dataType : 'json'
+				})
+				.done(function(json){
+					updateDateInformations(json, opts);
+				});		
+			}
+		},
+		
+		init : function(){
+			
+			var elt = $("#general-information-panel"),
+				stropts = elt.data('def'),
+				opts = attrparser.parse(stropts);
 			
 			var infos = {
 				createdOn : $("#created-on > .datetime").text(),
 				createdBy : $("#created-on > .author").text(),
 				modifiedOn : $("#last-modified-on > .datetime").text(),
 				modifiedBy : $("#last-modified-on > .author").text()					
-			} 
+			} ;
 			
-			updateDateInformations(infos, options);
+			var self = this;
 			
-			if (!! options.entityUrl){
+			updateDateInformations(infos, opts);
+			
+			if (!! opts.url){
 				$("#general-information-panel").ajaxSuccess(function(event, xrh, settings) {
 					if (settings.type == 'POST') {
-						$.ajax({
-							type : 'GET',
-							url : options.entityUrl+'/general',
-							dataType : 'json'
-						})
-						.done(function(json){
-							updateDateInformations(json, options);
-						});
+						self.refresh();
 					}
-				});				
+				});			
 			}
 		}
 	}

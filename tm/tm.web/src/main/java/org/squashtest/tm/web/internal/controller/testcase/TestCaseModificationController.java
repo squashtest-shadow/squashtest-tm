@@ -55,6 +55,7 @@ import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.domain.IdentifiedUtil;
+import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.bugtracker.BugTrackerStatus;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
@@ -100,6 +101,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
+import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
@@ -420,19 +422,13 @@ public class TestCaseModificationController {
 		return levelLabelFormatterProvider.get().useLocale(locale).formatLabel(status);
 	}
 
-	@RequestMapping(value = "/general", method = RequestMethod.GET)
-	public ModelAndView refreshGeneralInfos(@PathVariable long testCaseId) {
 
-		ModelAndView mav = new ModelAndView("fragment/generics/general-information-fragment");
 
+	@RequestMapping(value = "/general", method = RequestMethod.GET, produces="application/json")
+	@ResponseBody
+	public JsonGeneralInfo refreshGeneralInfos(@PathVariable long testCaseId){
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
-
-		
-		mav.addObject("auditableEntity", testCase);
-		// context-absolute url of this entity
-		mav.addObject("entityContextUrl", "/test-cases/" + testCaseId);
-
-		return mav;
+		return new JsonGeneralInfo((AuditableMixin)testCase);		
 	}
 
 

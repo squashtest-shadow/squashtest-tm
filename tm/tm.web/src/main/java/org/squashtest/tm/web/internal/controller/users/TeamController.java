@@ -51,6 +51,7 @@ import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.project.ProjectPermission;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
@@ -68,6 +69,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
+import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
@@ -194,12 +196,15 @@ public class TeamController extends PartyControllerSupport {
 		return new RenameModel(value);
 	}
 
-	@RequestMapping(value = TEAM_ID_URL + "/general")
-	public String refreshGeneralInfos(@PathVariable("teamId") long teamId, Model model) {
+
+	@RequestMapping(value = TEAM_ID_URL + "/general", method = RequestMethod.GET, produces="application/json")
+	@ResponseBody
+	public JsonGeneralInfo refreshGeneralInfos(@PathVariable("teamId") long teamId){
 		Team team = service.findById(teamId);
-		model.addAttribute("auditableEntity", team);
-		return "fragments-utils/general-information-panel.html";
+		return new JsonGeneralInfo((AuditableMixin)team);
+		
 	}
+
 
 	// ************************************ team members section ************************
 
