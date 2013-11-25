@@ -32,6 +32,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
 
+<c:url var="backUrl" value="/test-case-workspace/" />
 <c:url var="testCaseUrl" value="/requirements/${ testCase.id }" />
 <c:url var="treeBaseUrl" value="/requirement-browser/"/>
 <c:url var="verifiedRequirementsUrl" value="/test-cases/${ testCase.id }/verified-requirement-versions" />
@@ -137,7 +138,7 @@
 	
 	<jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back" />
-		<input type="button" class="button" value="${ backButtonLabel }" onClick="history.back();"/>	
+		<input type="button" class="button" value="${ backButtonLabel }" onClick="document.location.href='${backUrl}'"/>	
 	</jsp:attribute>		
 	
 	<jsp:attribute name="tablePane">
