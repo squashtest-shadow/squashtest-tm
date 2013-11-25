@@ -28,8 +28,7 @@ USAGE :
 	the next fragment accepts the following variables in its context :
 		- auditableEntity : an object representing the entity we want the general informations. MANDATORY.
 		- entityUrl : rest url of that entity. If set, this component will pull the informations itself from entityUrl/general. Defaults to null.
-		- withoutCreationInfo : boolean. If set, the part created by / on will be skipped and only the modified by / on will be displayed. Defaults to false.
- 
+
 DEV NOTES :
 
 	- th:with : the default value for entity is ${auditableEntity.getCreatedBy()}. If the entity is null this will cause an early null pointer exception, just as we need.
@@ -41,36 +40,38 @@ DEV NOTES :
 	
 <div th:fragment="general-information-panel" th:remove="tag">
 	<div class="toolbar-information-panel" 
-			th:with="noCreateInfo = ${withoutCreationInfo}?: ${T(java.lang.Boolean).FALSE},
-					 entity = (${auditableEntity}?: ${auditableEntity.createdBy}),
-					 dateformat=#{squashtm.dateformat},
+			th:with="entity = (${auditableEntity}?: ${auditableEntity.createdBy}),
+					 rawDateformat=#{squashtm.dateformat.iso},
+					 displayDateformat=#{squashtm.dateformat},
+					 neverLabel=#{label.lower.Never},
 					 url = ${entityUrl}">		
 					 	 
-		<div id="general-information-panel" class="information-panel" >
+		<div id="general-information-panel" class="information-panel" th:attr="data-def='url='+${url}+', never='+${neverLabel}+', format='+${displayDateformat}">
 					 
-			<span th:unless="${noCreateInfo}" th:text="#{label.CreatedOn}+'  '">created on </span>
-			<span th:unless="${noCreateInfo}" id="created-on" th:text="${#dates.format(entity.createdOn, dateformat)}+' ('+${entity.createdBy}+')'">01/01/01 (bob)</span>
-			<br   th:unless="${noCreateInfo}" />
+			<span th:text="#{label.CreatedOn}+'  '">created on </span>
+			
+			<span id="created-on">
+				<span class="datetime" th:text="${#dates.format(entity.createdOn, rawDateformat)}">2013-11-25T15:39:00</span>
+				<span class="author"   th:text="${entity.createdBy}">bob</span>		
+			</span>
+			
+			<br/>
+			
 			<span th:text="#{label.UpdatedOn}+'  '">updated on </span>
-			<span id="last-modified-on" th:text="${entity.lastModifiedOn} ?
-													${#dates.format(entity.lastModifiedOn, dateformat)}+' ('+${entity.lastModifiedBy}+')' :
-													'('+#{label.lower.Never}+')'
-												">(nevah)</span> 			 
+			<span id="last-modified-on">
+				<span class="datetime" th:text="${#dates.format(entity.lastModifiedOn, rawDateformat)}"></span>
+				<span class="author" th:text="${entity.lastModifiedBy}"></span>
+			</span>
+			
 			<br />
 			
 		
 		</div>
-		<script th:inline="javascript" th:if="${url!=null}" type="text/javascript">
+		<script th:inline="javascript" type="text/javascript">
 		/*<![CDATA[*/
 		  require(["common"], function(){
-			  require(["jquery"], function($){
-				  var url = /*[[${url}+'/general']]*/"http://localhost/entity/general";
-				  $("#general-information-panel").unbind('ajaxSuccess')
-				  								 .bind('ajaxSuccess', function(event, xhr, settings){
-				  									if (settings.type == 'POST'){
-				  										$(this).load(url);
-				  									} 
-				  								 });				  
+			  require(["jquery", "page-components/general-information-panel"], function($, general){
+				  general.init();		  
 			  });
 		  });
 		/*]]>*/
