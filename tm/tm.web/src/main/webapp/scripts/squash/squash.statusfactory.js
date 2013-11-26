@@ -51,11 +51,17 @@ define(["squash.translator"], function(translator){
 				realStatusName = this.reverseTranslate(status);
 			}
 			
-			css = 'exec-status-' + realStatusName.toLowerCase();
-			text = this.translate(realStatusName);
-			
-			return '<span class="exec-status-label ' + css + '">' + text + '</span>';
+			// process if found
+			if (!! realStatusName){
+				css = 'exec-status-' + realStatusName.toLowerCase();
+				text = this.translate(realStatusName);
 				
+				return '<span class="exec-status-label ' + css + '">' + text + '</span>';
+			}
+			// if unknown, frack it
+			else{
+				return status;
+			}
 		},
 		
 		

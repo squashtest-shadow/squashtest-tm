@@ -20,14 +20,16 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
+import java.net.URL;
 import java.util.Date;
 
 import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 
 public class JsonExecutionInfo {
 
-	private String modifiedOn;
-	private String modifiedBy;
+	private String executedOn;
+	private String executedBy;
 	private String executionStatus;
 	private String automatedStatus;
 	private String resultURL;
@@ -36,24 +38,45 @@ public class JsonExecutionInfo {
 		super();
 	}
 
-	public JsonExecutionInfo(String modifiedOn, String modifiedBy,
+	public JsonExecutionInfo(String executedOn, String executedBy,
 			String executionStatus, String automatedStatus, String resultURL) {
 		super();
-		this.modifiedOn = modifiedOn;
-		this.modifiedBy = modifiedBy;
+		this.executedOn = executedOn;
+		this.executedBy = executedBy;
 		this.executionStatus = executionStatus;
 		this.automatedStatus = automatedStatus;
 		this.resultURL = resultURL;
 	}
 	
-	public JsonExecutionInfo(Date modifiedOn, String modifiedBy,
-			String executionStatus, String automatedStatus, String resultURL) {
+	public JsonExecutionInfo(Date executedOn, String executedBy,
+			ExecutionStatus executionStatus, ExecutionStatus automatedStatus, URL resultURL) {
 		super();
-		this.modifiedOn = IsoDateUtils.formatIso8601DateTime(modifiedOn);
-		this.modifiedBy = modifiedBy;
-		this.executionStatus = executionStatus;
-		this.automatedStatus = automatedStatus;
-		this.resultURL = resultURL;
+		this.executedOn = IsoDateUtils.formatIso8601DateTime(executedOn);
+		this.executedBy = executedBy;
+		this.executionStatus = (executionStatus != null) ? executionStatus.toString() : null;
+		this.automatedStatus = (automatedStatus != null) ? automatedStatus.toString() : null;
+		this.resultURL = (resultURL != null) ? resultURL.toExternalForm() : null;
 	}
+
+	public String getExecutedOn() {
+		return executedOn;
+	}
+
+	public String getExecutedBy() {
+		return executedBy;
+	}
+
+	public String getExecutionStatus() {
+		return executionStatus;
+	}
+
+	public String getAutomatedStatus() {
+		return automatedStatus;
+	}
+
+	public String getResultURL() {
+		return resultURL;
+	}
+	
 	
 }

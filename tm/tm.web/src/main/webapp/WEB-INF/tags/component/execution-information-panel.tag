@@ -53,19 +53,23 @@
 
 	<div id="general-info-execstatus" style="display:inline-block; margin-right:2em;vertical-align:top">
 		<label><f:message key="label.Status" /></label>
-		<span id="execstatus-label" class="exec-status-label ${statusClass}" style="white-space:nowrap; display:inline-block;">${entityStatus}</span>
+		<span id="execstatus-label">
+			<span class="exec-status-label ${statusClass}" style="white-space:nowrap; display:inline-block;">${entityStatus}</span>
+		</span>
 				
 		<c:if test="${ auditableEntity.automated }">
 		<br>
 		<label><f:message key="label.AutomatedTestStatus"/></label>
-		<span id="autostatus-label" class="exec-status-label ${autoStatusClass}" style="white-space:nowrap; display:inline-block;">${autoEntityStatus}</span>
+		<span id="autostatus-label">
+			<span class="exec-status-label ${autoStatusClass}" style="white-space:nowrap; display:inline-block;">${autoEntityStatus}</span>
+		</span>
 		</c:if>
 	</div>
 	
 	<div id="general-info-executed-on" style="display:inline-block; margin-right:2em;vertical-align:top">
-		<label for="last-modified-on" ><f:message key="label.LastExecutionOn" /></label>
+		<label for="last-executed-on" ><f:message key="label.LastExecutionOn" /></label>
 		
-		<span id="last-modified-on">	
+		<span id="last-executed-on">	
 			<span class="datetime"><f:formatDate value="${ auditableEntity.lastModifiedOn }" pattern="${rawDateFormat}"  timeZone="UTC"/></span> 
 			<span class="author">${ auditableEntity.lastModifiedBy }</span>
 		</span>
@@ -83,7 +87,11 @@
 	
 	
 	<script type="text/javascript">
-	
+		$(function(){
+			require(["page-components/execution-information-panel"], function(panel){
+				panel.init();
+			});
+		});
 	
 	</script>
 	

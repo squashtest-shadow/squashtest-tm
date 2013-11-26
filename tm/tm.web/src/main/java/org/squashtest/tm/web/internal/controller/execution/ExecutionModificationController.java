@@ -71,6 +71,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTablePaging;
+import org.squashtest.tm.web.internal.model.json.JsonExecutionInfo;
 
 @Controller
 @RequestMapping("/executions/{executionId}")
@@ -358,16 +359,13 @@ public class ExecutionModificationController {
 
 	}
 
-	@RequestMapping(value = "/general", method = RequestMethod.GET)
-	public ModelAndView refreshGeneralInfos(@PathVariable long executionId) {
+	@RequestMapping(value = "/general", method = RequestMethod.GET, produces="application/json")
+	@ResponseBody
+	public JsonExecutionInfo refreshGeneralInfos(@PathVariable long executionId) {
 
 		Execution execution = executionModService.findAndInitExecution(executionId);
-
-		ModelAndView mav = new ModelAndView("fragment/executions/execution-information-fragment");
-
-		mav.addObject("execution", execution);
-
-		return mav;
+		return toJson(execution);
+		
 	}
 
 	@RequestMapping(method = RequestMethod.DELETE)
@@ -391,6 +389,30 @@ public class ExecutionModificationController {
 			reNewEndDate = null;
 		}
 		return new StartEndDate(reNewStartDate, reNewEndDate);
+	}
+	
+	
+	// ************* private stuffs *************
+	
+	private JsonExecutionInfo toJson(Execution exec){
+		if (exec.isAutomated()){
+			return new JsonExecutionInfo(
+				exec.getLastExecutedOn(),
+				exec.getLastExecutedBy(),
+				exec.getExecutionStatus().getCanonicalStatus(),
+				exec.getExecutionStatus(),
+				exec.getAutomatedExecutionExtender().getResultURL()				
+			);
+		}
+		else{
+			return new JsonExecutionInfo(
+				exec.getLastExecutedOn(),
+				exec.getLastExecutedBy(),
+				exec.getExecutionStatus(),
+				null,
+				null
+			);
+		}
 	}
 
 	private static final class StartEndDate {

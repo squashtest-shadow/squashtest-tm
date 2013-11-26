@@ -336,7 +336,7 @@
 	<script type="text/javascript">
 	
 	$(function(){
-		require(["squashtable", "jquery.squash.jeditable"], function(){
+		require(["page-components/execution-information-panel", "squashtable", "jquery.squash.jeditable"], function(infopanel){
 			
 			
 			// ************** execution table *********************
@@ -424,6 +424,7 @@
 		 	squashtm.execution = squashtm.execution || {};
 		 	squashtm.execution.refresh = $.proxy(function(){
 		 		$("#execution-execution-steps-table").squashTable().refresh();
+		 		infopanel.refresh();
 		 		//see execution-execute-button.tag
 		 		updateBtnlabelFromTable();
 		 	}, window);
