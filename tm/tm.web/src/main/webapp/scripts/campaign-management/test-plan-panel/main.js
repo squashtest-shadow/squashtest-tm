@@ -40,7 +40,7 @@
  * 
  */
 
-define(['./table', './popups' ], function(table, popups) {
+define(['squash.translator', './table', './popups' ], function(translator, table, popups) {
 
 	var filterOn = false;
 	
@@ -49,6 +49,10 @@ define(['./table', './popups' ], function(table, popups) {
 		var conf = $.extend({}, origconf);
 		
 		var baseURL = squashtm.app.contextRoot;
+		
+		conf.messages = translator.get({
+			automatedExecutionTooltip : "label.automatedExecution"
+		});
 		
 		conf.urls = {
 			testplanUrl : baseURL + '/campaigns/'+conf.basic.campaignId+'/test-plan'

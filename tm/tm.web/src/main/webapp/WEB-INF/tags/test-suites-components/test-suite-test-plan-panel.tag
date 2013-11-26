@@ -59,6 +59,7 @@
 <f:message var="confirmLabel" key="label.Confirm" />
 <f:message var="cancelLabel" key="label.Cancel" />
 <f:message var="assignLabel" key="label.Assign" />
+<f:message var="modeLabel" key="label.Mode" />
 
 
 
@@ -114,7 +115,7 @@
 					<th class="no-user-select" data-def="map=project-name, sortable"><f:message key="label.project" /></th>
 					<%-- exec mode icon --%>
 					<c:if test="${ testSuite.project.testAutomationEnabled }">
-					<th class="no-user-select" data-def="map=exec-mode, sortable, narrow, center, sClass=exec-mode">&nbsp;</th>
+					<th title=<f:message key="label.Mode" /> class="no-user-select" data-def="map=exec-mode, sortable, narrow, center, sClass=exec-mode">&nbsp;</th>
 					</c:if>
 					<%-- exec mode icon --%>
 					<th class="no-user-select" data-def="map=reference, sortable"><f:message key="label.Reference" /></th>

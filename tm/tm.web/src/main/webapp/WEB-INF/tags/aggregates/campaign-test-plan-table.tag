@@ -28,12 +28,14 @@
 			<th>Item Id</th>
 			<th>#</th>
 			<th><f:message key="label.project" /></th>
+				<c:if test="${ campaign.project.testAutomationEnabled }">
+			<th><f:message key="label.Mode"/></th>
+			</c:if>
 			<th><f:message key="label.Reference"/></th>
 			<th><f:message key="test-case.name.label" /></th>
 			<th><f:message key="test-case.user.combo.label" /></th>
 			<th>assigned user id (masked)</th>
 			<th><f:message key="test-case.importance.combo.label" /></th>
-			<th><f:message key="label.Mode" /></th>
 			<th>&nbsp;</th>				
 			<th>TC Id</th>							
 		</tr>

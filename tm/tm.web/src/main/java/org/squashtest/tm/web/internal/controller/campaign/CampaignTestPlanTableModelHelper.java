@@ -69,7 +69,7 @@ final class CampaignTestPlanTableModelHelper extends DataTableModelBuilder<Index
 		result.put("assigned-user", user);
 		result.put("assigned-to", assigneeId);
 		result.put("importance", formatImportance(testCase.getImportance(), locale));
-		result.put("exec-mode", formatExecutionMode(testCase.getExecutionMode(), locale));
+		result.put("exec-mode", testCase.isAutomated() ? "A" : "M");
 		result.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 		result.put("tc-id", testCase.getId());
 
@@ -79,7 +79,7 @@ final class CampaignTestPlanTableModelHelper extends DataTableModelBuilder<Index
 	
 
 	private String formatExecutionMode(TestCaseExecutionMode mode, Locale locale) {
-		return messageSource.internationalize(mode, locale);
+		return messageSource.internationalize(mode+"-short", locale);
 	}
 
 

@@ -74,13 +74,13 @@ define(
 
 				// execution mode icon
 				var $exectd = $row.find('.exec-mode').text('');
-				if (data['exec-mode'] === "M") {
-					$exectd.addClass('exec-mode-manual').attr('title', '');
+				if (data['exec-mode'] === "A") {
+					$exectd.append('<span class"exec-mode-icon exec-mode-manual"/>').attr('title', '');
 				} else {
-					$exectd.addClass('exec-mode-automated').attr('title',
+					$exectd.append('<span class="exec-mode-icon exec-mode-automated"/>').attr('title',
 							_conf.autoexecutionTooltip);
 				}
-
+				
 				// execution status (read)
 				var status = data['status'], 
 					$statustd = $row.find('.status-combo'), 

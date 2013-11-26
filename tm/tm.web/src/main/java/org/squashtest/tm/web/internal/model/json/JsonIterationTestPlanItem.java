@@ -33,9 +33,10 @@ public class JsonIterationTestPlanItem{
 	private String lastExecutedOn;	//format ISO 8601 aka ATOM 
 	private String lastExecutedBy;
 	private boolean isTestCaseDeleted;
+	private boolean isAutomated;
 	
 	public JsonIterationTestPlanItem(long id, ExecutionStatus executionStatus,
-			String name, String lastExecutedOn, String lastExecutedBy, boolean isTestCaseDeleted) {
+			String name, String lastExecutedOn, String lastExecutedBy, boolean isTestCaseDeleted, boolean isAutomated) {
 		super();
 		this.id = id;
 		this.executionStatus = executionStatus;
@@ -43,10 +44,11 @@ public class JsonIterationTestPlanItem{
 		this.lastExecutedOn = lastExecutedOn;
 		this.lastExecutedBy = lastExecutedBy;
 		this.isTestCaseDeleted = isTestCaseDeleted;
+		this.isAutomated = isAutomated;
 	}
 	
 	public JsonIterationTestPlanItem(long id, ExecutionStatus executionStatus,
-			String name, Date lastExecutedOn, String lastExecutedBy, boolean isTestCaseDeleted) {
+			String name, Date lastExecutedOn, String lastExecutedBy, boolean isTestCaseDeleted, boolean isAutomated) {
 		super();
 		this.id = id;
 		this.executionStatus = executionStatus;
@@ -54,6 +56,7 @@ public class JsonIterationTestPlanItem{
 		this.lastExecutedOn = toISO8601(lastExecutedOn);
 		this.lastExecutedBy = lastExecutedBy;
 		this.isTestCaseDeleted = isTestCaseDeleted;
+		this.isAutomated = isAutomated;
 	}
 	
 		
@@ -108,7 +111,12 @@ public class JsonIterationTestPlanItem{
 	public void setTestCaseDeleted(boolean isTestCaseDeleted) {
 		this.isTestCaseDeleted = isTestCaseDeleted;
 	}
-	
-	
-	
+
+	public boolean isAutomated() {
+		return isAutomated;
+	}
+
+	public void setAutomated(boolean isAutomated) {
+		this.isAutomated = isAutomated;
+	}
 }

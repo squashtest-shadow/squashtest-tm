@@ -366,7 +366,8 @@ public class TestSuiteTestPlanManagerController {
 					name,
 					item.getLastExecutedOn(),
 					item.getLastExecutedBy(),
-					item.isTestCaseDeleted()						
+					item.isTestCaseDeleted(),
+					item.isAutomated()
 				);
 	}
 

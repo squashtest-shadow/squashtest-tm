@@ -53,6 +53,20 @@ define(['jquery', './sortmode', 'squashtable', 'jeditable'],
 
 	function createTableConfiguration(conf){
 		
+		var rowCallback = function(row, data, displayIndex) {
+			
+			var $row = $(row);
+			
+			var $exectd = $row.find('.exec-mode').text('');
+			if (data['exec-mode'] === "A") {
+				$exectd.append('<span class"exec-mode-icon exec-mode-manual"/>').attr('title', '');
+			} else {
+				$exectd.append('<span class="exec-mode-icon exec-mode-automated"/>').attr('title',
+						conf.messages.automatedExecutionTooltip);
+			}
+			
+		};
+		test-plans-table
 		var drawCallback = function(){
 			if (conf.permissions.editable){
 				addLoginListToTestPlan();
@@ -65,7 +79,8 @@ define(['jquery', './sortmode', 'squashtable', 'jeditable'],
 		
 		var tableSettings = {
 			"aLengthMenu" : [[10, 25, 50, 100, -1], [10, 25, 50, 100, conf.messages.allLabel]],
-			fnDrawCallback : drawCallback
+			fnDrawCallback : drawCallback,
+			fnRowCallback :  rowCallback
 		};
 		
 		var squashSettings = {};

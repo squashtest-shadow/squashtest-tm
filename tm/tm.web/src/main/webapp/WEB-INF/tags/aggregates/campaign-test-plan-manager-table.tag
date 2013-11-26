@@ -43,11 +43,11 @@
 		<tr>
 			<th data-def="map=entity-index, select,center, sClass=drag-handle">#</th>
 			<th data-def="map=project-name"><f:message key="label.project" /></th>
+			<th data-def="map=exec-mode, center, sClass=exec-mode"><f:message key="label.Mode" /></th>
 			<th data-def="map=reference"><f:message key="label.Reference"/></th>
 			<th data-def="map=tc-name, link=${testCaseUrl}"><f:message key="test-case.name.label" /></th>
 			<th data-def="map=assigned-user, sWidth=10%"><f:message key="test-case.user.combo.label" /></th>
 			<th data-def="map=importance"><f:message key="test-case.importance.combo.label" /></th>
-			<th data-def="map=exec-mode"><f:message key="label.Mode" /></th>
 		</tr>
 	</thead>
 	<tbody><%-- Will be populated through ajax --%></tbody>
@@ -57,6 +57,23 @@
 </div> 
 <script type="text/javascript">
 
+	var tableSettings = { 
+		"fnRowCallback" : function(row, data, displayIndex) {
+			
+			var $row = $(row);
+			
+			var $exectd = $row.find('.exec-mode').text('');
+			if (data['exec-mode'] === "A") {
+				$exectd.append('<span class"exec-mode-icon exec-mode-manual"/>').attr('title', '');
+			} else {
+				var label =  "<f:message key="label.automatedExecution"/>";
+				$exectd.append('<span class="exec-mode-icon exec-mode-automated"/>').attr('title',
+						label);
+			}
+			
+		}
+	};	
+	
 	var squashSettings = {
 		enableDnD : true,
 		functions : {
@@ -73,7 +90,7 @@
 	$(function() {
 
 		require(["jquery","squashtable"], function($){
-			$("#test-cases-table").squashTable({}, squashSettings);
+			$("#test-cases-table").squashTable(tableSettings, squashSettings);
 			
 			<%-- selected test-case removal --%>
 			$( '#${ batchRemoveButtonId }' ).click(function() {
