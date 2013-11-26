@@ -20,12 +20,12 @@
  */
 
 /*
- * API : 
- * 
- * 	translate(statusName) -> returns the i18n version of this status name
- * 	reverseTranslate(i18n) -> return the real name of the status given its translation 
- * 	getHtmlFor(status) -> given a statusname OR its translation, returns a html string to render it
- * 
+ *API : 
+ *
+ *	translate(statusName) -> returns the i18n version of this status name
+ *	reverseTranslate(i18n) -> return the real name of the status given its translation 
+ *	getHtmlFor(status) -> given a statusname OR its translation, returns a html string to render it
+ *
  */
 define(["squash.translator"], function(translator){
 	
@@ -74,7 +74,7 @@ define(["squash.translator"], function(translator){
 				if (this._conf[ppt]===translated){
 					return ppt;
 				}
-			};
+			}
 			return undefined;
 		},
 		

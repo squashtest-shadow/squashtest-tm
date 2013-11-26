@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest
 import org.springframework.web.servlet.ModelAndView
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
+import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance
@@ -37,6 +38,7 @@ import org.squashtest.tm.web.internal.helper.LevelLabelFormatterWithoutOrder
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel
+import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper
 
 import spock.lang.Specification
@@ -193,18 +195,23 @@ class TestCaseModificationControllerTest extends Specification {
 		filter.sortOrder.code == "asc"
 	}
 
+	
 	def "should return general info fragment"() {
 		given:
 		TestCase testCase = Mock()
+		AuditableMixin mixin = (AuditableMixin) testCase
+		mixin.getCreatedOn() >> new Date(1385488000402);
+		mixin.getCreatedBy() >> "robert"
 		testCaseModificationService.findById(10) >> testCase
-
+		
 		when:
-		ModelAndView mav = controller.refreshGeneralInfos(10)
+		JsonGeneralInfo infos = controller.refreshGeneralInfos(10)
 
 		then:
-		mav.viewName == "fragment/generics/general-information-fragment"
-		mav.modelMap['entityContextUrl'] == "/test-cases/10"
-		mav.modelMap['auditableEntity'] == testCase
+		infos.createdOn == "2013-11-26T17:46:40.402+0000"
+		infos.createdBy == "robert"
+		infos.modifiedOn == null
+		infos.modifiedBy == null
 	}
 
 	def "when showing a test case, should put importance data in the model"() {
