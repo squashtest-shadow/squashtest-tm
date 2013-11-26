@@ -34,7 +34,10 @@ public class TestCaseModeJeditableComboDataBuilder extends EnumJeditableComboDat
 
 	public TestCaseModeJeditableComboDataBuilder() {
 		super();
-		setModel(TestCaseExecutionMode.values());
+		TestCaseExecutionMode[] modes = new TestCaseExecutionMode[2];
+		modes[0] = TestCaseExecutionMode.AUTOMATED;
+		modes[1] = TestCaseExecutionMode.MANUAL;
+		setModel(modes);
 	}
 
 	@Inject
