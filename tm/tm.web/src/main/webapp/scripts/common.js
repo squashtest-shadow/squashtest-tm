@@ -119,6 +119,7 @@ requirejs.config({
 				"squash.attributeparser" : "squash/squash.attributeparser",
 				"squash.configmanager" : "squash/squash.configmanager",
 				"squash.dateutils" : "squash/squash.dateutils",
+				"squash.statusfactory" : "squash/squash.statusfactory",
 				//workspace
 				"workspace.tree-node-copier" : "workspace/workspace.tree-node-copier",
 				"workspace.tree-event-handler" : "workspace/workspace.tree-event-handler",

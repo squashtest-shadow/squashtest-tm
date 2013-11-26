@@ -25,7 +25,6 @@
  tableDnD,
  dataTables
  KeyEventListener
- statusFactory
  jquery.squash.oneshotdialog.js
  jquery.squash.datatables
 
@@ -161,18 +160,10 @@
  * 
  * ============== Execution status icons ======================================
  * 
+ * If a td has a css class of 'has-status', the table will automatically attempt to format 
+ * the content as an execution status (including style and translation). No other conf is 
+ * required.
  * 
- * Member name : 'executionStatus'
- * 
- * If set, will attempt to decorate some cells with execution statuses. If undefined, nothing will happen. The matched
- * cells are identified by css class 'has-status'.
- * 
- * 'executionStatus' is an object defining the localized status text : blocked : internationalized version of status
- * 'blocked' failure : internationalized version of status 'failure' success : internationalized version of status
- * 'success' running : internationalized version of status 'running' ready : internationalized version of status 'ready'
- * 
- *  internationalized version of status 'blocked' failure : internationalized version of status 'failure' success : internationalized version of status
- * 'success' running : internationalized version of status 'running' ready : internationalized version of status 'ready'
  * 
  * ============== Delete row button ========================================
  * Member name : 'deleteButtons'
@@ -260,13 +251,14 @@
  */
 
 
-define(["jquery", 
+define(["jquery",
+        "squash.statusfactory",
         "datatables", 
         "./squashtable.defaults", 
         "./squashtable.pagination", 
         "./squashtable.dnd", 
         "jquery.squash.oneshotdialog", 
-        "squashtest/classes/KeyEventListener"], function($){
+        "squashtest/classes/KeyEventListener"], function($, statusfactory){
 	
 	if (!! $.fn.squashTable ){
 		return ;
@@ -694,18 +686,12 @@ define(["jquery",
 
 	function _configureExecutionStatus() {
 
-		var statusConf = this.squashSettings.executionStatus;
-
-		if (!statusConf) {
-			return;
-		}
-		var factory = new squashtm.StatusFactory(statusConf);
-
 		var cells = $('td.has-status', this);
 
 		$(cells).each(function(i, cell) {
+			
 			var data = (cell.textContent) ? cell.textContent : cell.innerText;
-			var newhtml = factory.getHtmlFor(data);
+			var newhtml = statusfactory.getHtmlFor(data);
 			cell.innerHTML = newhtml;
 		});
 	}

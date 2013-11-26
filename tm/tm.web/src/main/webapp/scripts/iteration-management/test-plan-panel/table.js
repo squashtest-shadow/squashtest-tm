@@ -58,8 +58,8 @@
 
 define(
 		[ 'jquery', 'squash.translator', './exec-runner', './sortmode',
-		  'jquery.squash.rangedatepicker', 'squash.dateutils', 'squashtable', 'jeditable', 'jquery.squash.buttonmenu' ],
-		function($, translator, execrunner, smode, rangedatepicker, dateutils) {
+		  'jquery.squash.rangedatepicker', 'squash.dateutils', 'squash.statusfactory', 'squashtable', 'jeditable', 'jquery.squash.buttonmenu' ],
+		function($, translator, execrunner, smode, rangedatepicker, dateutils, statusfactory) {
 
 			// ****************** TABLE CONFIGURATION **************
 
@@ -80,9 +80,9 @@ define(
 				}
 
 				// execution status (read)
-				var status = data['status'], i18nstatus = _conf.statuses[status], $statustd = $row
-						.find('.status-combo'), html = _conf.statusFactory
-						.getHtmlFor(i18nstatus, status);
+				var status = data['status'], 
+					$statustd = $row.find('.status-combo'), 
+					html = statusfactory.getHtmlFor(status);
 
 				$statustd.html(html); // remember : this will insert a <span>
 										// in the process
@@ -274,9 +274,7 @@ define(
 				// conf objects for the row callbacks
 				var _readFeaturesConf = {
 					statuses : initconf.messages.executionStatus,
-					autoexecutionTooltip : initconf.messages.automatedExecutionTooltip,
-					statusFactory : new squashtm.StatusFactory(
-							initconf.messages.executionStatus)
+					autoexecutionTooltip : initconf.messages.automatedExecutionTooltip
 				};
 
 				var _writeFeaturesConf = {

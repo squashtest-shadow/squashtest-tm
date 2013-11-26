@@ -142,9 +142,7 @@
 
 	<div id="execution-toolbar" class="toolbar-class ui-corner-all ">
 		<div class="toolbar-information-panel">
-			<div id="general-informations-panel">
-				<comp:execution-information-panel auditableEntity="${execution}" />
-			</div>
+			<comp:execution-information-panel auditableEntity="${execution}" entityUrl="${executionUrl}"/>
 		</div>
 		<div class="toolbar-button-panel">
 		<c:if test="${ editable }">
@@ -343,38 +341,13 @@
 			
 			// ************** execution table *********************
 			var tableSettings = {
-				"oLanguage":{
-					"sLengthMenu": '<f:message key="generics.datatable.lengthMenu" />',
-					"sZeroRecords": '<f:message key="generics.datatable.zeroRecords" />',
-					"sInfo": '<f:message key="generics.datatable.info" />',
-					"sInfoEmpty": '<f:message key="generics.datatable.infoEmpty" />',
-					"sInfoFiltered": '<f:message key="generics.datatable.infoFiltered" />',
-					"oPaginate":{
-						"sFirst":    '<f:message key="generics.datatable.paginate.first" />',
-						"sPrevious": '<f:message key="generics.datatable.paginate.previous" />',
-						"sNext":     '<f:message key="generics.datatable.paginate.next" />',
-						"sLast":     '<f:message key="generics.datatable.paginate.last" />'
-					}
-				},	
 				"sAjaxSource": "${executionStepsUrl}", 
-				"aoColumnDefs": ${stepsAoColumnDefs},
+				"aoColumnDefs": ${stepsAoColumnDefs}
 			};
 			
 			var squashSettings = {
-					
 				enableHover : true
-				<c:if test="${ !automated }">
-				,executionStatus : {
-					untestable : "${statusUntestable}",
-					blocked : "${statusBlocked}",
-					failure : "${statusFailure}",
-					success : "${statusSuccess}",
-					running : "${statusRunning}",
-					ready : "${statusReady}"
-				}	</c:if>
-			};
-		
-			
+			};			
 			
 			<c:if test="${ editable }">
 			squashSettings.richEditables = {
@@ -451,7 +424,6 @@
 		 	squashtm.execution = squashtm.execution || {};
 		 	squashtm.execution.refresh = $.proxy(function(){
 		 		$("#execution-execution-steps-table").squashTable().refresh();
-		 		$("#general-informations-panel").load("${executionInfoUrl}");
 		 		//see execution-execute-button.tag
 		 		updateBtnlabelFromTable();
 		 	}, window);

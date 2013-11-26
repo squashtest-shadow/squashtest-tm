@@ -34,13 +34,21 @@ squashtm.message.errorTitle = "<f:message key='popup.title.error'/>";
 
 // ------------------- prefilled translator cache ---------------------------------------------------- 
 
-var _langcache = {
-	'label.Ok' : "<f:message key='label.Ok'/>",
+var _langcache = {	
+	'execution.execution-status.UNTESTABLE' : "<f:message key='execution.execution-status.UNTESTABLE'/>",
+	'execution.execution-status.BLOCKED' : "<f:message key='execution.execution-status.BLOCKED'/>",
+	'execution.execution-status.FAILURE' : "<f:message key='execution.execution-status.FAILURE'/>",
+	'execution.execution-status.SUCCESS' : "<f:message key='execution.execution-status.SUCCESS'/>",
+	'execution.execution-status.RUNNING' : "<f:message key='execution.execution-status.RUNNING'/>",
+	'execution.execution-status.READY' : "<f:message key='execution.execution-status.READY'/>",
+	'execution.execution-status.WARNING' : "<f:message key='execution.execution-status.WARNING'/>",
+	'execution.execution-status.ERROR' : "<f:message key='execution.execution-status.ERROR'/>",
 	'label.Cancel' : "<f:message key='label.Cancel'/>",
+	'label.Ok' : "<f:message key='label.Ok'/>",
+	'rich-edit.language.value' : "<f:message key='rich-edit.language.value'/>"
 	'squashtm.locale' : "<f:message key='squashtm.locale'/>",
 	'squashtm.dateformat' : "<f:message key='squashtm.dateformat'/>",
-	'squashtm.dateformatShort.datepicker' : "<f:message key='squashtm.dateformatShort.datepicker'/>",
-	'rich-edit.language.value' : "<f:message key='rich-edit.language.value'/>"
-}
+	'squashtm.dateformatShort.datepicker' : "<f:message key='squashtm.dateformatShort.datepicker'/>"
+};
 
 squashtm.message.cache = _langcache;
