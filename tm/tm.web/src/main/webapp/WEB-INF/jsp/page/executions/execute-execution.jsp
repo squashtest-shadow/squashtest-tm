@@ -436,8 +436,7 @@
 					<div id="execute-evaluation-leftside">
 						<c:if test="${editable}">
 							<comp:rich-jeditable targetUrl="${executeComment}"
-								componentId="execution-comment"
-								submitCallback="refreshExecStepInfos" />
+								componentId="execution-comment"/>
 						</c:if>
 						<comp:toggle-panel id="execution-comment-panel"
 							titleKey="execute.panel.comment.title" 

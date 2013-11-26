@@ -26,17 +26,17 @@
 
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery" %>
+<%@ taglib prefix="fn"uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <f:message var="rawDateFormat" key="squashtm.dateformat.iso" />
 <f:message var="displayDateFormat" key="squashtm.dateformat" />
 <f:message var="neverLabel" key="label.lower.Never"/>
 
-<f:message var="entityStatus" key="${auditableEntity.executionStatus.canonicalStatus}" />
+<f:message var="entityStatus" key="${auditableEntity.executionStatus.canonicalStatus.i18nKey}" />
 <c:set var="statusClass" value="exec-status-${fn:toLowerCase(auditableEntity.executionStatus.canonicalStatus)}" />
 
 <c:if test="${ auditableEntity.automated }">
-	<f:message var="autoEntityStatus" key="${auditableEntity.executionStatus}" />
+	<f:message var="autoEntityStatus" key="${auditableEntity.executionStatus.i18nKey}" />
 	<c:set var="autoStatusClass" value="exec-status-${fn:toLowerCase(auditableEntity.executionStatus)}" />
 </c:if>
 
