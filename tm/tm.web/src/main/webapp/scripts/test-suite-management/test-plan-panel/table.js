@@ -33,14 +33,6 @@
  *			weights [{ }]
  *		},
  *		messages : {
- *			executionStatus : {
- *				UNTESTABLE : i18n label,
- *				BLOCKED : i18n label,
- *				FAILURE : i18n label,
- *				SUCCESS : i18n label,
- *				RUNNING : i18n label,
- *				READY : i18n label,
- *			},
  *			automatedExecutionTooltip : i18n label,
  *			labelOk : i18n label,
  *			labelCancel : i18n label,
@@ -57,8 +49,10 @@
 
 define(
 		[ 'jquery', 'squash.translator', './exec-runner', './sortmode', 'jquery.squash.rangedatepicker',
-				'squash.dateutils', 'jeditable.datepicker', 'squashtable', 'jeditable', 'jquery.squash.buttonmenu' ],
-		function($, translator, execrunner, smode, rangedatepicker, dateutils) {
+				'squash.dateutils', 'squash.statusfactory',
+				'test-automation/automated-suite-overview',
+				'jeditable.datepicker', 'squashtable', 'jeditable', 'jquery.squash.buttonmenu' ],
+		function($, translator, execrunner, smode, rangedatepicker, dateutils, statusfactory, autosuitedialog) {
 
 			// ****************** TABLE CONFIGURATION **************
 
@@ -79,8 +73,9 @@ define(
 				}
 
 				// execution status (read)
-				var status = data['status'], i18nstatus = _conf.statuses[status], $statustd = $row
-						.find('.status-combo'), html = _conf.statusFactory.getHtmlFor(i18nstatus, status);
+				var status = data['status'], 
+					$statustd = $row.find('.status-combo'), 
+					html = statusfactory.getHtmlFor(status);
 
 				$statustd.html(html); // remember : this will insert a <span>
 				// in the process
@@ -255,8 +250,7 @@ define(
 				// conf objects for the row callbacks
 				var _readFeaturesConf = {
 					statuses : initconf.messages.executionStatus,
-					autoexecutionTooltip : initconf.messages.automatedExecutionTooltip,
-					statusFactory : new squashtm.StatusFactory(initconf.messages.executionStatus)
+					autoexecutionTooltip : initconf.messages.automatedExecutionTooltip
 				};
 
 				var _writeFeaturesConf = {
@@ -320,7 +314,7 @@ define(
 								$.squash.openMessage(initcon.messages.titleInfo,
 										initconf.messages.messageNoAutoexecFound);
 							} else {
-								squashtm.automatedSuiteOverviewDialog.open(suiteview);
+								autosuitedialog.get().watch(suiteview);
 							}
 						});
 
@@ -416,7 +410,7 @@ define(
 														$.squash.openMessage(initcon.messages.titleInfo,
 																initconf.messages.messageNoAutoexecFound);
 													} else {
-														squashtm.automatedSuiteOverviewDialog.open(suiteview);
+														autosuitedialog.get().watch(suiteview);
 													}
 												});
 										return false;

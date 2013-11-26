@@ -58,8 +58,10 @@
 
 define(
 		[ 'jquery', 'squash.translator', './exec-runner', './sortmode',
-		  'jquery.squash.rangedatepicker', 'squash.dateutils', 'squash.statusfactory', 'squashtable', 'jeditable', 'jquery.squash.buttonmenu' ],
-		function($, translator, execrunner, smode, rangedatepicker, dateutils, statusfactory) {
+		  'jquery.squash.rangedatepicker', 'squash.dateutils', 'squash.statusfactory',
+		  'test-automation/automated-suite-overview',
+		  'squashtable', 'jeditable', 'jquery.squash.buttonmenu' ],
+		function($, translator, execrunner, smode, rangedatepicker, dateutils, statusfactory, autosuitedialog) {
 
 			// ****************** TABLE CONFIGURATION **************
 
@@ -347,8 +349,7 @@ define(
 								$.squash.openMessage(_msg.titleInfo,
 												_msg.messageNoAutoexecFound);
 							} else {
-								squashtm.automatedSuiteOverviewDialog
-										.open(suiteview);
+								autosuitedialog.get().watch(suiteview);
 							}
 						});
 
@@ -453,7 +454,7 @@ define(
 											if (suiteview.executions.length === 0) {
 												$.squash.openMessage(_msg.titleInfo,_msg.messageNoAutoexecFound);
 											} else {
-												squashtm.automatedSuiteOverviewDialog.open(suiteview);
+												autosuitedialog.get().watch(suiteview);
 											}
 										});
 										return false;

@@ -78,7 +78,7 @@ define(["squash.translator"], function(translator){
 		 * 
 		 */
 		
-		_conf : translated.get({
+		_conf : translator.get({
 			UNTESTABLE : "execution.execution-status.UNTESTABLE",
 			BLOCKED : "execution.execution-status.BLOCKED",
 			FAILURE : "execution.execution-status.FAILURE",

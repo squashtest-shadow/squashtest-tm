@@ -28,7 +28,7 @@ squashtm.message = squashtm.message || {};
 squashtm.message.cancel = "<f:message key='label.Cancel'/>";
 squashtm.message.placeholder = "<f:message key='rich-edit.placeholder'/>";
 squashtm.message.confirm = "<f:message key='label.Confirm'/>";		
-squashtm.message.intoTitle = "<f:message key='popup.title.info'/>";		
+squashtm.message.infoTitle = "<f:message key='popup.title.info'/>";		
 squashtm.message.errorTitle = "<f:message key='popup.title.error'/>";	
 
 
@@ -45,9 +45,11 @@ var _langcache = {
 	'execution.execution-status.ERROR' : "<f:message key='execution.execution-status.ERROR'/>",
 	'label.Cancel' : "<f:message key='label.Cancel'/>",
 	'label.Ok' : "<f:message key='label.Ok'/>",
-	'rich-edit.language.value' : "<f:message key='rich-edit.language.value'/>"
+	'rich-edit.language.value' : "<f:message key='rich-edit.language.value'/>",
 	'squashtm.locale' : "<f:message key='squashtm.locale'/>",
+	'squashtm.message.infoTitle' : "<f:message key='popup.title.info'/>",
 	'squashtm.dateformat' : "<f:message key='squashtm.dateformat'/>",
+	'squashtm.dateformat.iso' : "<f:message key='squashtm.dateformat.iso'/>",
 	'squashtm.dateformatShort.datepicker' : "<f:message key='squashtm.dateformatShort.datepicker'/>"
 };
 

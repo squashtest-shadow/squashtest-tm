@@ -203,7 +203,7 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui',
 			var def = this.element.data('def');
 			if (!!def){
 				var conf = attrparser.parse(def);
-				$.extend(this.options, conf);
+				this.options = $.extend(conf, this.options);
 			}
 
 			// read and apply dom conf

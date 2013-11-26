@@ -46,7 +46,15 @@ define(['squash.translator', './table', './popups'], function(translator, table,
 		
 		var baseURL = squashtm.app.contextRoot;
 		
-		conf.messages = translator.get({
+		conf.messages = translator.get({			
+			executionStatus : {
+				UNTESTABLE : "execution.execution-status.UNTESTABLE",
+				BLOCKED : "execution.execution-status.BLOCKED",
+				FAILURE : "execution.execution-status.FAILURE",
+				SUCCESS : "execution.execution-status.SUCCESS",
+				RUNNING : "execution.execution-status.RUNNING",
+				READY	: "execution.execution-status.READY"
+			},
 			automatedExecutionTooltip : "label.automatedExecution",
 			labelOk : "label.Ok",
 			labelCancel : "label.Cancel",

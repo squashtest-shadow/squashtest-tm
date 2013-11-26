@@ -31,6 +31,7 @@
 <!-- *************************INITIALISATION*********************** -->
 <script type="text/javascript">
 		
+		
 	function executeAll() {
 		var ids = [];
 		executeAuto(ids);
@@ -61,7 +62,14 @@
 				.openMessage("<f:message key='popup.title.Info' />",
 						"<f:message	key='dialog.execution.auto.overview.error.none'/>");
 			}else{
-				squashtm.automatedSuiteOverviewDialog.open(suiteView);
+				/* 
+				I'm cheating here, I should write 
+				
+				require(["test-automation/automated-suite-overview"], function(auto){
+					auto.get().watch(suiteView);	
+				})
+				*/
+				squashtm.context.autosuiteOverview.watch(suiteView);
 			}
 		});
 	}
@@ -92,7 +100,8 @@
 	<script>
 	
 		$(function() {
-			require(['jquery', 'jquery.squash.buttonmenu'], function($){
+			require(['jquery', 'test-automation/automated-suite-overview',
+			         'jquery.squash.buttonmenu'], function($, autosuitedialog){
 				
 				$("#execute-auto-button").buttonmenu();
 

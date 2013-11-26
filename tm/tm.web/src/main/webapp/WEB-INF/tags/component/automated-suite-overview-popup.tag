@@ -20,68 +20,68 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%@ tag
-	description="general information panel for an auditable entity. Client can add more info in the body of this tag"
-	pageEncoding="utf-8"%>
+<%@ tag description="definition of the popup that follows the execution of an automated test suite." pageEncoding="utf-8"%>
+	
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 
-<s:url var="automatedSuitesUrl" value="/automated-suites">
-</s:url>
+<s:url var="automatedSuitesUrl" value="/automated-suites" />
 
-<div id="execution-info-template" style="display: hidden">
+<f:message var="popupTitle" key='dialog.execute-auto.title'/>
+<f:message var="closeLabel" key='label.Close' />
+<f:message var="okLabel" 	key='label.Ok' />
+<f:message var="cancelLabel" 	key='label.Cancel' />
+
+<div id="execution-info-template" class="not-displayed">
 	<div class="display-table-row">
-		<div class="executionName display-table-cell"></div>
-		<div class="executionStatus display-table-cell"></div>
+		<div class="execution-name display-table-cell"></div>
+		<div class="execution-status display-table-cell"></div>
 	</div>
 </div>
 <!-- *************************POPUP*********************** -->
-<pop:popup id="execute-auto-dialog" titleKey="dialog.execute-auto.title"
-	isContextual="true" closeOnSuccess="false">
-	<jsp:attribute name="buttons">
-			<f:message var="label" key="label.Close" />
-				'${ label }': function() {
-					var selfDialog = $( this );
-					var progressBarValue = $('#execution-auto-progress-bar').progressbar('value');
-					if( progressBarValue < 100){
-					oneShotConfirm("<f:message key='popup.title.info'/>", "<f:message key='message.CloseAutomatedSuiteOverview'/>", 
-					"<f:message key='label.Confirm'/>", 
-					"<f:message key='label.Cancel'/>", 600).done(function(){
-						selfDialog.dialog( 'close' );
-					});
-					}else{
-						selfDialog.dialog( 'close' );
-					}
-				}
-			</jsp:attribute>
-			<jsp:attribute name="additionalSetup">
-			height: 490
-			</jsp:attribute>
-	<jsp:attribute name="body">
-			<div class="executions-auto-top" style="height:335px; width: 100%; overflow-y: scroll">
-				<div id="executions-auto-infos" class="display-table" style="width:100%">
-				</div>
-			</div>
-			<div class="executions-auto-bottom" style="min-height:45px; width: 100%; ">
-			
-				<div id="execution-auto-progress"
-				style="width: 80%; margin: auto; margin-top: 20px">
-					<div
-					style="width: 80%; display: inline-block; vertical-align: middle">
+
+
+<div id="execute-auto-dialog" class="popup-dialog not-displayed" title="${popupTitle}" 
+	data-def="url=${automatedSuitesUrl}, height=490">
+
+	<div data-def="state=main">
+		<div class="executions-auto-top" style="height:335px; width: 100%; overflow-y: scroll">
+			<div id="executions-auto-infos" class="display-table" style="width:100%"></div>
+		</div>
+		
+		<div class="executions-auto-bottom" style="min-height:45px; width: 100%; ">
+		
+			<div id="execution-auto-progress" style="width: 80%; margin: auto; margin-top: 20px">
+				<div style="width: 80%; display: inline-block; vertical-align: middle">
 					<div id="execution-auto-progress-bar" ></div>
 				</div>
-	 				<div id="execution-auto-progress-amount"
-					style="width: 10%; display: inline-block"></div>
-				</div>
-				
+				<div id="execution-auto-progress-amount" style="width: 10%; display: inline-block"></div>
 			</div>
-	</jsp:attribute>
-</pop:popup>
-<script>
-	var executionProgressBar =  $("#execution-auto-progress-bar");
-	executionProgressBar.progressbar({value : 0});
-	executionProgressBar.find("div").addClass("ui-state-default");	
-	squashtm.automatedSuiteOverviewDialog = new AutomatedSuiteOverviewDialog({automatedSuiteBaseUrl : "${automatedSuitesUrl}"});
+			
+		</div>
+	</div>
+	
+	<div data-def="state=warning">
+		
+		<span><f:message key='message.CloseAutomatedSuiteOverview'/></span>
+	
+	</div>
+
+	<div class="popup-dialog-buttonpane">
+		<input type="button" value="${closeLabel}" data-def="evt=mainclose, state=main, mainbtn=main"/>
+		<input type="button" value="${okLabel}" data-def="evt=warningok, state=warning"/>
+		<input type="button" value="${cancelLabel}" data-def="evt=warningcancel, state=warning, mainbtn=warning"/>	
+	</div>
+
+</div>
+
+<script type="text/javascript">
+	$(function(){
+		require(["test-automation/automated-suite-overview"], function(overview){
+			overview.init();
+		});
+	});
 </script>
+
 <!-- *************************/POPUP*********************** -->
