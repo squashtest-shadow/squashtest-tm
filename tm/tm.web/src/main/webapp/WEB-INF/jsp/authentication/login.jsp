@@ -66,7 +66,7 @@
   <div id="main-pane">
     <s:message var="dialogTitle" code="dialog.authentication.title" />
     <div id="login-fom" class="ui-dialog ui-widget ui-widget-content ui-corner-all"
-      style="margin-left: 40%; margin-top: 5%; width: 20%; position: relative; height: auto;">
+      style="margin-left:auto; margin-right:auto; margin-top: 5%; width: 300px; position: relative; height: auto;">
       <sf:form action="j_spring_security_check" method="POST">
         <div id="login-form-body" class="ui-dialog-content ui-widget-content">
           <table class="ui-widget">
