@@ -164,18 +164,25 @@ define(
 				var users = initconf.basic.assignableUsers;
 				var statuses = initconf.messages.executionStatus;
 				var weights = initconf.basic.weights;
-
+				var modes = initconf.basic.modes;
+				var offset = 0;
+				
 				$($("th", $("#test-suite-test-plans-table"))[1]).append("<input class='th_input filter_input'/>");
-				$($("th", $("#test-suite-test-plans-table"))[2]).append("<input class='th_input filter_input'/>");
-				$($("th", $("#test-suite-test-plans-table"))[3]).append("<input class='th_input filter_input'/>");
-				$($("th", $("#test-suite-test-plans-table"))[4]).append(
+				if($($($("th", $("#test-suite-test-plans-table")))[2]).hasClass("exec-mode")){
+					$($("th", $("#test-suite-test-plans-table"))[2]).append(
+					"<select id='filter-mode-combo' class='th_input filter_input'/>");
+					offset = 1;
+				}
+				$($("th", $("#test-suite-test-plans-table"))[2+offset]).append("<input class='th_input filter_input'/>");
+				$($("th", $("#test-suite-test-plans-table"))[3+offset]).append("<input class='th_input filter_input'/>");
+				$($("th", $("#test-suite-test-plans-table"))[4+offset]).append(
 						"<select id='filter-weight-combo' class='th_input filter_input'/>");
-				$($("th", $("#test-suite-test-plans-table"))[5]).append("<input class='th_input filter_input'/>");
-				$($("th", $("#test-suite-test-plans-table"))[6]).append(
+				$($("th", $("#test-suite-test-plans-table"))[5+offset]).append("<input class='th_input filter_input'/>");
+				$($("th", $("#test-suite-test-plans-table"))[6+offset]).append(
 						"<select id='filter-status-combo' class='th_input filter_input'/>");
-				$($("th", $("#test-suite-test-plans-table"))[7]).append(
+				$($("th", $("#test-suite-test-plans-table"))[7+offset]).append(
 						"<select id='filter-user-combo' class='th_input filter_input'/>");
-				$($("th", $("#test-suite-test-plans-table"))[8])
+				$($("th", $("#test-suite-test-plans-table"))[8+offset])
 						.append(
 								"<div class='rangedatepicker th_input'>"
 										+ "<input class='rangedatepicker-input' readonly='readonly'/>"

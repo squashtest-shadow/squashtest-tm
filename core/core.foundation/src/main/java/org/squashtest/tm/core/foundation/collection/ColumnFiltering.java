@@ -40,6 +40,14 @@ public interface ColumnFiltering {
 	 */
 	String getFilter(Integer index);
 	
+	String getFilter(String mDataProp);
+	
+	boolean hasFilter(String mDataProp);
+
 	boolean hasFilter(Integer index);
+	
+	boolean hasFilter(String mDataProp, int offset);
+	
+	String getFilter(String mDataProp, int offset);
 }
 

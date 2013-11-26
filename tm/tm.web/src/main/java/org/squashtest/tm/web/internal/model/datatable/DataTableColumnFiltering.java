@@ -21,6 +21,8 @@
 package org.squashtest.tm.web.internal.model.datatable;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
@@ -28,10 +30,19 @@ import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 public class DataTableColumnFiltering implements ColumnFiltering{
 
 	private final DataTableDrawParameters params;
+	private Map<Object, Integer> dataProps = new HashMap<Object, Integer>();
 	
 	public DataTableColumnFiltering(DataTableDrawParameters params) {
 		super();
 		this.params = params;
+		createDataProps();
+	}
+	
+	public void createDataProps(){
+		Map<Integer,Object> mDataProp = params.getmDataProp();
+		for(Integer key: mDataProp.keySet()){
+			dataProps.put(mDataProp.get(key), key);
+		}
 	}
 	
 	@Override
@@ -53,5 +64,33 @@ public class DataTableColumnFiltering implements ColumnFiltering{
 	@Override
 	public boolean hasFilter(Integer index) {
 		return !StringUtils.isBlank(getFilter(index));
+	}
+
+	@Override
+	public String getFilter(String mDataProp) {
+		return getFilter(this.dataProps.get(mDataProp));
+	}
+
+	@Override
+	public boolean hasFilter(String mDataProp) {
+		if(this.dataProps.containsKey(mDataProp)){
+			return hasFilter(this.dataProps.get(mDataProp));
+		}else{
+			return false;
+		}
+	}
+
+	@Override
+	public boolean hasFilter(String mDataProp, int offset) {
+		if(this.dataProps.containsKey(mDataProp)){
+			return hasFilter(this.dataProps.get(mDataProp)+offset);
+		}else{
+			return false;
+		}
+	}
+
+	@Override
+	public String getFilter(String mDataProp, int offset) {
+		return getFilter(this.dataProps.get(mDataProp)+offset);
 	}
 }

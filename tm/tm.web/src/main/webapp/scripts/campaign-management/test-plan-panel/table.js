@@ -58,7 +58,7 @@ define(['jquery', './sortmode', 'squashtable', 'jeditable'],
 			var $row = $(row);
 			
 			var $exectd = $row.find('.exec-mode').text('');
-			if (data['exec-mode'] === "A") {
+			if (data['exec-mode'] === "M") {
 				$exectd.append('<span class"exec-mode-icon exec-mode-manual"/>').attr('title', '');
 			} else {
 				$exectd.append('<span class="exec-mode-icon exec-mode-automated"/>').attr('title',
@@ -66,7 +66,7 @@ define(['jquery', './sortmode', 'squashtable', 'jeditable'],
 			}
 			
 		};
-		test-plans-table
+
 		var drawCallback = function(){
 			if (conf.permissions.editable){
 				addLoginListToTestPlan();
@@ -126,13 +126,18 @@ define(['jquery', './sortmode', 'squashtable', 'jeditable'],
 		var users = initconf.basic.assignableUsers;
 		var weights = initconf.basic.weights;
 		var modes = initconf.basic.modes;
+		var offset = 0;
 		
 		$($("th", $("#test-cases-table"))[1]).append("<input class='th_input'/>");
-		$($("th", $("#test-cases-table"))[2]).append("<input class='th_input'/>");
-		$($("th", $("#test-cases-table"))[3]).append("<input class='th_input'/>");
-		$($("th", $("#test-cases-table"))[4]).append("<select id='filter-user-combo' class='th_input'/>");
-		$($("th", $("#test-cases-table"))[5]).append("<select id='filter-weight-combo' class='th_input'/>");
-		$($("th", $("#test-cases-table"))[6]).append("<select id='filter-mode-combo' class='th_input'/>");
+		if($($($("th", $("#test-cases-table"))[2])).hasClass("exec-mode")){
+			$($("th", $("#test-cases-table"))[2]).append(
+					"<select id='filter-mode-combo' class='th_input'/>");
+			offset = 1;
+		}
+		$($("th", $("#test-cases-table"))[2+offset]).append("<input class='th_input'/>");
+		$($("th", $("#test-cases-table"))[3+offset]).append("<input class='th_input'/>");
+		$($("th", $("#test-cases-table"))[4+offset]).append("<select id='filter-user-combo' class='th_input'/>");
+		$($("th", $("#test-cases-table"))[5+offset]).append("<select id='filter-weight-combo' class='th_input'/>");
 		$("#test-cases-table_filter").hide();
 		
 		

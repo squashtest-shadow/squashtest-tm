@@ -68,6 +68,17 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 	private static final String START_DATE = "startDate";
 	private static final String END_DATE = "endDate";
 	private static final String DATE_FORMAT = "dd/MM/yyyy";
+	private static final String MODE_FILTER = "modeFilter";
+	
+	private static final String PROJECT_DATA = "project-name";
+	private static final String REFERENCE_DATA = "reference";
+	private static final String TESTCASE_DATA = "tc-name";	
+	private static final String WEIGHT_DATA= "importance";
+	private static final String DATASET_DATA = "dataset";
+	private static final String STATUS_DATA = "status";
+	private static final String USER_DATA = "assignee-login";
+	private static final String MODE_DATA = "exec-mode";
+	private static final String LASTEXEC_DATA = "last-exec-on";
 	/*
 	 * Because it is impossible to sort over the indices of ordered collection in a criteria query we must then build an
 	 * hql string which will let us do that.
@@ -96,6 +107,9 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 
 	private static final String HQL_INDEXED_TEST_PLAN_STATUS_FILTER =
 			"and IterationTestPlanItem.executionStatus = :statusFilter ";
+
+	private static final String HQL_INDEXED_TEST_PLAN_MODE_FILTER =
+			"and TestCase.executionMode = :modeFilter ";
 	
 	private static final String HQL_INDEXED_TEST_PLAN_USER_FILTER =
 			"and IterationTestPlanItem.user = :userFilter ";
@@ -330,28 +344,31 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 			hqlbuilder.append("and User.login = :userLogin ");
 		}
 
-		if(columnFiltering.hasFilter(0)){
+		if(columnFiltering.hasFilter(PROJECT_DATA, -1)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_PROJECT_FILTER);
 		}
-		if(columnFiltering.hasFilter(1)){
+		if(columnFiltering.hasFilter(MODE_DATA, -1)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_MODE_FILTER);
+		}
+		if(columnFiltering.hasFilter(REFERENCE_DATA, -1)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER);
 		}
-		if(columnFiltering.hasFilter(2)){
+		if(columnFiltering.hasFilter(TESTCASE_DATA, -1)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER);
 		}
-		if(columnFiltering.hasFilter(3)){
+		if(columnFiltering.hasFilter(WEIGHT_DATA, -1)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER);
 		}
-		if(columnFiltering.hasFilter(4)){
+		if(columnFiltering.hasFilter(DATASET_DATA, -1)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_DATASET_FILTER);
 		}
-		if(columnFiltering.hasFilter(5)){
+		if(columnFiltering.hasFilter(STATUS_DATA, -1)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_STATUS_FILTER);
 		}
-		if(columnFiltering.hasFilter(6)){
+		if(columnFiltering.hasFilter(USER_DATA, -1)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
 		}
-		if(columnFiltering.hasFilter(7)){
+		if(columnFiltering.hasFilter(LASTEXEC_DATA, -1)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER);				
 		}
 		
@@ -370,29 +387,32 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 			query.setParameter("userLogin", filtering.getFilter(), StringType.INSTANCE);
 		}
 
-		if(columnFiltering.hasFilter(0)){
-			query.setParameter(PROJECT_FILTER, "%"+columnFiltering.getFilter(0)+"%", StringType.INSTANCE);
+		if(columnFiltering.hasFilter(PROJECT_DATA, -1)){
+			query.setParameter(PROJECT_FILTER, "%"+columnFiltering.getFilter(PROJECT_DATA, -1)+"%", StringType.INSTANCE);
 		}
-		if(columnFiltering.hasFilter(1)){
-			query.setParameter(REFERENCE_FILTER, "%"+columnFiltering.getFilter(1)+"%", StringType.INSTANCE);
+		if(columnFiltering.hasFilter(MODE_DATA, -1)){
+			query.setParameter(MODE_FILTER, "%"+columnFiltering.getFilter(MODE_DATA, -1)+"%", StringType.INSTANCE);
+		}
+		if(columnFiltering.hasFilter(REFERENCE_DATA, -1)){
+			query.setParameter(REFERENCE_FILTER, "%"+columnFiltering.getFilter(REFERENCE_DATA, -1)+"%", StringType.INSTANCE);
 		} 
-		if(columnFiltering.hasFilter(2)){
-			query.setParameter(TESTCASE_FILTER, "%"+columnFiltering.getFilter(2)+"%", StringType.INSTANCE);
+		if(columnFiltering.hasFilter(TESTCASE_DATA, -1)){
+			query.setParameter(TESTCASE_FILTER, "%"+columnFiltering.getFilter(TESTCASE_DATA, -1)+"%", StringType.INSTANCE);
 		}
-		if(columnFiltering.hasFilter(3)){
-			query.setParameter(WEIGHT_FILTER, columnFiltering.getFilter(3), StringType.INSTANCE);
+		if(columnFiltering.hasFilter(WEIGHT_DATA, -1)){
+			query.setParameter(WEIGHT_FILTER, columnFiltering.getFilter(WEIGHT_DATA, -1), StringType.INSTANCE);
 		}
-		if(columnFiltering.hasFilter(4)){
-			query.setParameter(DATASET_FILTER, "%"+columnFiltering.getFilter(4)+"%", StringType.INSTANCE);
+		if(columnFiltering.hasFilter(DATASET_DATA, -1)){
+			query.setParameter(DATASET_FILTER, "%"+columnFiltering.getFilter(DATASET_DATA, -1)+"%", StringType.INSTANCE);
 		}
-		if(columnFiltering.hasFilter(5)){
-			query.setParameter(STATUS_FILTER, columnFiltering.getFilter(5), StringType.INSTANCE);
+		if(columnFiltering.hasFilter(STATUS_DATA, -1)){
+			query.setParameter(STATUS_FILTER, columnFiltering.getFilter(STATUS_DATA, -1), StringType.INSTANCE);
 		}
-		if(columnFiltering.hasFilter(6)){
-			query.setParameter(USER_FILTER, Long.parseLong(columnFiltering.getFilter(6)), LongType.INSTANCE);
+		if(columnFiltering.hasFilter(USER_DATA, -1)){
+			query.setParameter(USER_FILTER, Long.parseLong(columnFiltering.getFilter(USER_DATA, -1)), LongType.INSTANCE);
 		}
-		if(columnFiltering.hasFilter(7)){
-			String dates = columnFiltering.getFilter(7);
+		if(columnFiltering.hasFilter(LASTEXEC_DATA, -1)){
+			String dates = columnFiltering.getFilter(LASTEXEC_DATA, -1);
 			if(dates.contains("-")){
 				String[] dateArray = dates.split("-");
 				Date startDate;
@@ -479,28 +499,31 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 			hqlbuilder.append("and User.login = :userLogin ");
 		}
 
-		if(columnFiltering.hasFilter(0)){
+		if(columnFiltering.hasFilter(PROJECT_DATA, -1)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_PROJECT_FILTER);
 		}
-		if(columnFiltering.hasFilter(1)){
+		if(columnFiltering.hasFilter(MODE_DATA, -1)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_MODE_FILTER);
+		}
+		if(columnFiltering.hasFilter(REFERENCE_DATA, -1)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER);
 		}
-		if(columnFiltering.hasFilter(2)){
+		if(columnFiltering.hasFilter(TESTCASE_DATA, -1)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER);
 		}
-		if(columnFiltering.hasFilter(3)){
+		if(columnFiltering.hasFilter(WEIGHT_DATA, -1)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER);
 		}
-		if(columnFiltering.hasFilter(4)){
+		if(columnFiltering.hasFilter(DATASET_DATA, -1)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_DATASET_FILTER);
 		}
-		if(columnFiltering.hasFilter(5)){
+		if(columnFiltering.hasFilter(STATUS_DATA, -1)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_STATUS_FILTER);
 		}
-		if(columnFiltering.hasFilter(6)){
+		if(columnFiltering.hasFilter(USER_DATA, -1)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
 		}
-		if(columnFiltering.hasFilter(7)){
+		if(columnFiltering.hasFilter(LASTEXEC_DATA, -1)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER);				
 		}
 
@@ -512,29 +535,32 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 			query.setParameter("userLogin", filtering.getFilter(), StringType.INSTANCE);
 		}
 
-		if(columnFiltering.hasFilter(0)){
-			query.setParameter(PROJECT_FILTER, "%"+columnFiltering.getFilter(0)+"%", StringType.INSTANCE);
+		if(columnFiltering.hasFilter(PROJECT_DATA, -1)){
+			query.setParameter(PROJECT_FILTER, "%"+columnFiltering.getFilter(PROJECT_DATA, -1)+"%", StringType.INSTANCE);
 		}
-		if(columnFiltering.hasFilter(1)){
-			query.setParameter(REFERENCE_FILTER, "%"+columnFiltering.getFilter(1)+"%", StringType.INSTANCE);
+		if(columnFiltering.hasFilter(MODE_DATA, -1)){
+			query.setParameter(MODE_FILTER, "%"+columnFiltering.getFilter(MODE_DATA, -1)+"%", StringType.INSTANCE);
 		} 
-		if(columnFiltering.hasFilter(2)){
-			query.setParameter(TESTCASE_FILTER, "%"+columnFiltering.getFilter(2)+"%", StringType.INSTANCE);
+		if(columnFiltering.hasFilter(REFERENCE_DATA, -1)){
+			query.setParameter(REFERENCE_FILTER, "%"+columnFiltering.getFilter(REFERENCE_DATA, -1)+"%", StringType.INSTANCE);
+		} 
+		if(columnFiltering.hasFilter(TESTCASE_DATA, -1)){
+			query.setParameter(TESTCASE_FILTER, "%"+columnFiltering.getFilter(TESTCASE_DATA, -1)+"%", StringType.INSTANCE);
 		}
-		if(columnFiltering.hasFilter(3)){
-			query.setParameter(WEIGHT_FILTER, columnFiltering.getFilter(3), StringType.INSTANCE);
+		if(columnFiltering.hasFilter(WEIGHT_DATA, -1)){
+			query.setParameter(WEIGHT_FILTER, columnFiltering.getFilter(WEIGHT_DATA, -1), StringType.INSTANCE);
 		}
-		if(columnFiltering.hasFilter(4)){
-			query.setParameter(DATASET_FILTER, "%"+columnFiltering.getFilter(4)+"%", StringType.INSTANCE);
+		if(columnFiltering.hasFilter(DATASET_DATA, -1)){
+			query.setParameter(DATASET_FILTER, "%"+columnFiltering.getFilter(DATASET_DATA, -1)+"%", StringType.INSTANCE);
 		}
-		if(columnFiltering.hasFilter(5)){
-			query.setParameter(STATUS_FILTER, columnFiltering.getFilter(5), StringType.INSTANCE);
+		if(columnFiltering.hasFilter(STATUS_DATA, -1)){
+			query.setParameter(STATUS_FILTER, columnFiltering.getFilter(STATUS_DATA, -1), StringType.INSTANCE);
 		}
-		if(columnFiltering.hasFilter(6)){
-			query.setParameter(USER_FILTER, Long.parseLong(columnFiltering.getFilter(6)), LongType.INSTANCE);
+		if(columnFiltering.hasFilter(USER_DATA, -1)){
+			query.setParameter(USER_FILTER, Long.parseLong(columnFiltering.getFilter(USER_DATA, -1)), LongType.INSTANCE);
 		}
-		if(columnFiltering.hasFilter(7)){
-			String dates = columnFiltering.getFilter(7);
+		if(columnFiltering.hasFilter(LASTEXEC_DATA, -1)){
+			String dates = columnFiltering.getFilter(LASTEXEC_DATA, -1);
 			if(dates.contains("-")){
 				String[] dateArray = dates.split("-");
 				Date startDate;

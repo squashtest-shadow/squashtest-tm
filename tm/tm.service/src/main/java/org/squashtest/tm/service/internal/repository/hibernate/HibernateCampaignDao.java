@@ -61,6 +61,14 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 	private static final String USER_FILTER = "userFilter";
 	private static final String WEIGHT_FILTER = "weightFilter";
 	private static final String MODE_FILTER = "modeFilter";
+	
+	private static final String PROJECT_DATA = "project-name";
+	private static final String REFERENCE_DATA = "reference";
+	private static final String TESTCASE_DATA = "tc-name";	
+	private static final String USER_DATA = "assigned-user";
+	private static final String WEIGHT_DATA = "importance";
+	private static final String MODE_DATA = "exec-mode";
+	
 	/*
 	 * Because it is impossible to sort over the indices of ordered collection in a criteria query 
 	 * we must then build an hql string which will let us do that. 
@@ -153,24 +161,25 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 	private String buildIndexedTestPlanQueryString(PagingAndMultiSorting sorting, ColumnFiltering filtering){
 		
 		StringBuilder hqlbuilder = new StringBuilder(HQL_INDEXED_TEST_PLAN);
-		if(filtering.hasFilter(0)){
+		if(filtering.hasFilter(PROJECT_DATA, -1)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_PROJECT_FILTER);
 		}
-		if(filtering.hasFilter(1)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER);
-		}
-		if(filtering.hasFilter(2)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER);
-		}
-		if(filtering.hasFilter(3)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
-		}
-		if(filtering.hasFilter(4)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER);
-		}
-		if(filtering.hasFilter(5)){
+		if(filtering.hasFilter(MODE_DATA, -1)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_MODE_FILTER);
 		}
+		if(filtering.hasFilter(REFERENCE_DATA, -1)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER);
+		}
+		if(filtering.hasFilter(TESTCASE_DATA, -1)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER);
+		}
+		if(filtering.hasFilter(USER_DATA, -1)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
+		}
+		if(filtering.hasFilter(WEIGHT_DATA, -1)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER);
+		}
+
 		
 		
 		// tune the sorting to make hql happy
@@ -185,25 +194,25 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 private String buildIndexedTestPlanQueryStringWithoutSorting(ColumnFiltering filtering){
 		
 		StringBuilder hqlbuilder = new StringBuilder(HQL_INDEXED_TEST_PLAN);
-		if(filtering.hasFilter(0)){
+		if(filtering.hasFilter(PROJECT_DATA, -1)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_PROJECT_FILTER);
 		}
-		if(filtering.hasFilter(1)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER);
-		}
-		if(filtering.hasFilter(2)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER);
-		}
-		if(filtering.hasFilter(3)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
-		}
-		if(filtering.hasFilter(4)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER);
-		}
-		if(filtering.hasFilter(5)){
+		if(filtering.hasFilter(MODE_DATA, -1)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_MODE_FILTER);
 		}
-		
+		if(filtering.hasFilter(REFERENCE_DATA, -1)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER);
+		}
+		if(filtering.hasFilter(TESTCASE_DATA, -1)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER);
+		}
+		if(filtering.hasFilter(USER_DATA, -1)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
+		}
+		if(filtering.hasFilter(WEIGHT_DATA, -1)){
+			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER);
+		}
+	
 		return hqlbuilder.toString();
 	}
 	
@@ -217,24 +226,25 @@ private String buildIndexedTestPlanQueryStringWithoutSorting(ColumnFiltering fil
 		
 		query.setParameter("campaignId", campaignId, LongType.INSTANCE);
 		
-		if(filtering.hasFilter(0)){
-			query.setParameter(PROJECT_FILTER, "%"+filtering.getFilter(0)+"%", StringType.INSTANCE);
+		if(filtering.hasFilter(PROJECT_DATA, -1)){
+			query.setParameter(PROJECT_FILTER, "%"+filtering.getFilter(PROJECT_DATA, -1)+"%", StringType.INSTANCE);
 		}
-		if(filtering.hasFilter(1)){
-			query.setParameter(REFERENCE_FILTER, "%"+filtering.getFilter(1)+"%", StringType.INSTANCE);
+		if(filtering.hasFilter(MODE_DATA, -1)){
+			query.setParameter(MODE_FILTER, filtering.getFilter(MODE_DATA, -1), StringType.INSTANCE);
+		}
+		if(filtering.hasFilter(REFERENCE_DATA, -1)){
+			query.setParameter(REFERENCE_FILTER, "%"+filtering.getFilter(REFERENCE_DATA, -1)+"%", StringType.INSTANCE);
 		} 
-		if(filtering.hasFilter(2)){
-			query.setParameter(TESTCASE_FILTER, "%"+filtering.getFilter(2)+"%", StringType.INSTANCE);
+		if(filtering.hasFilter(TESTCASE_DATA, -1)){
+			query.setParameter(TESTCASE_FILTER, "%"+filtering.getFilter(TESTCASE_DATA, -1)+"%", StringType.INSTANCE);
 		}
-		if(filtering.hasFilter(3)){
-			query.setParameter(USER_FILTER, Long.parseLong(filtering.getFilter(3)), LongType.INSTANCE);
+		if(filtering.hasFilter(USER_DATA, -1)){
+			query.setParameter(USER_FILTER, Long.parseLong(filtering.getFilter(USER_DATA, -1)), LongType.INSTANCE);
 		}
-		if(filtering.hasFilter(4)){
-			query.setParameter(WEIGHT_FILTER, filtering.getFilter(4), StringType.INSTANCE);
+		if(filtering.hasFilter(WEIGHT_DATA, -1)){
+			query.setParameter(WEIGHT_FILTER, filtering.getFilter(WEIGHT_DATA, -1), StringType.INSTANCE);
 		}
-		if(filtering.hasFilter(5)){
-			query.setParameter(MODE_FILTER, filtering.getFilter(5), StringType.INSTANCE);
-		}
+
 
 		PagingUtils.addPaging(query, sorting);
 		
@@ -377,25 +387,25 @@ private String buildIndexedTestPlanQueryStringWithoutSorting(ColumnFiltering fil
 		
 		query.setParameter("campaignId", campaignId, LongType.INSTANCE);
 		
-		if(filtering.hasFilter(0)){
-			query.setParameter(PROJECT_FILTER, "%"+filtering.getFilter(0)+"%", StringType.INSTANCE);
+		if(filtering.hasFilter(PROJECT_DATA, -1)){
+			query.setParameter(PROJECT_FILTER, "%"+filtering.getFilter(PROJECT_DATA, -1)+"%", StringType.INSTANCE);
 		}
-		if(filtering.hasFilter(1)){
-			query.setParameter(REFERENCE_FILTER, "%"+filtering.getFilter(1)+"%", StringType.INSTANCE);
+		if(filtering.hasFilter(MODE_DATA, -1)){
+			query.setParameter(MODE_FILTER, filtering.getFilter(MODE_DATA, -1), StringType.INSTANCE);
+		}
+		if(filtering.hasFilter(REFERENCE_DATA, -1)){
+			query.setParameter(REFERENCE_FILTER, "%"+filtering.getFilter(REFERENCE_DATA, -1)+"%", StringType.INSTANCE);
 		} 
-		if(filtering.hasFilter(2)){
-			query.setParameter(TESTCASE_FILTER, "%"+filtering.getFilter(2)+"%", StringType.INSTANCE);
+		if(filtering.hasFilter(TESTCASE_DATA, -1)){
+			query.setParameter(TESTCASE_FILTER, "%"+filtering.getFilter(TESTCASE_DATA, -1)+"%", StringType.INSTANCE);
 		}
-		if(filtering.hasFilter(3)){
-			query.setParameter(USER_FILTER, Long.parseLong(filtering.getFilter(3)), LongType.INSTANCE);
+		if(filtering.hasFilter(USER_DATA, -1)){
+			query.setParameter(USER_FILTER, Long.parseLong(filtering.getFilter(USER_DATA, -1)), LongType.INSTANCE);
 		}
-		if(filtering.hasFilter(4)){
-			query.setParameter(WEIGHT_FILTER, filtering.getFilter(4), StringType.INSTANCE);
+		if(filtering.hasFilter(WEIGHT_DATA, -1)){
+			query.setParameter(WEIGHT_FILTER, filtering.getFilter(WEIGHT_DATA, -1), StringType.INSTANCE);
 		}
-		if(filtering.hasFilter(5)){
-			query.setParameter(MODE_FILTER, filtering.getFilter(5), StringType.INSTANCE);
-		}
-		
+
 		return query.list().size();
 	}
 }

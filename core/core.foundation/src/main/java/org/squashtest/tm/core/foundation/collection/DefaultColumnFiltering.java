@@ -42,4 +42,24 @@ public final class DefaultColumnFiltering implements ColumnFiltering{
 	public boolean hasFilter(Integer index) {
 		return false;
 	}
+
+	@Override
+	public String getFilter(String mDataProp) {
+		return "";
+	}
+
+	@Override
+	public boolean hasFilter(String mDataProp) {
+		return false;
+	}
+
+	@Override
+	public boolean hasFilter(String mDataProp, int offset) {
+		return false;
+	}
+
+	@Override
+	public String getFilter(String mDataProp, int offset) {
+		return "";
+	}
 }

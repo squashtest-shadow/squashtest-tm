@@ -30,6 +30,7 @@
 
 <%@ attribute name="assignableUsers" type="java.lang.Object" description="a map of users paired by id -> login. The id must be a string."%>
 <%@ attribute name="weights" type="java.lang.Object" description="a map of weights paired by id -> internationalized text. The id must be a string."%>	
+<%@ attribute name="modes" type="java.lang.Object" description="a map of modes paired by id -> internationalized text. The id must be a string."%>	
 <%@ attribute name="iteration" type="java.lang.Object" description="the instance of iteration" %>
 
 
@@ -212,7 +213,8 @@
 				basic : {
 					iterationId : ${iteration.id},
 					assignableUsers : ${ json:serialize(assignableUsers) },
-					weights : ${ json:serialize(weights)}
+					weights : ${ json:serialize(weights)},
+					modes : ${ json:serialize(modes)}
 				}
 			};
 			

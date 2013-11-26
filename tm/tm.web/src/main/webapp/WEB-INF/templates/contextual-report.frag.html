@@ -221,7 +221,9 @@
 									<li th:each="picker : *{pickers}">
 										<div th:if="'PROJECT_PICKER' == ${picker.type.name()}"
 											th:object="${picker}" class="report-selector">
-											<label th:for="*{name}" th:text="*{label}">Projects</label> <select
+											<label th:if="${!projectMultiselect}" th:for="*{name}" th:text="*{label}">Projects</label>
+											<label th:if="${projectMultiselect}" th:for="*{name}" th:text="#{report.form.project-picker.select-projects}">Projects</label>
+											 <select
 												th:if="${!projectMultiselect}" th:id="*{name}"
 												class="rpt-projects-crit-container"
 												th:attr="data-id-opened=*{name}">
