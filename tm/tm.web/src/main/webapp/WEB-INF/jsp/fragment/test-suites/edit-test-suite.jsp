@@ -113,15 +113,7 @@
 	function renameTestSuiteSuccess(data){
 		var evt = new EventRename(identity, data.newName);
 		squashtm.workspace.eventBus.fire(null, evt);		
-		refreshTestSuiteInfos();
 	}
-	
-	
-	/* Bind any changeable element to this handler to refresh the general informations */	
-	function refreshTestSuiteInfos(){
-		$('#general-informations-panel').load('${testSuiteInfoUrl}');	
-	}
-
 	
 	/*post a request to duplicate the test suite*/
 	function duplicateTestSuite(){
@@ -262,8 +254,7 @@
 	<div id="tabs-1">
 		<c:if test="${ writable }">
 			<comp:rich-jeditable targetUrl="${ testSuiteUrl }"
-				componentId="test-suite-description"
-				submitCallback="refreshTestSuiteInfos" />
+				componentId="test-suite-description"/>
 		</c:if>
 
 		<comp:toggle-panel id="test-suite-description-panel"
