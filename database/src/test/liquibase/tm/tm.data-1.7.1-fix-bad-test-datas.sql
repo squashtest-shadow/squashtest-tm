@@ -49,7 +49,7 @@ where EXECUTION_ID=1;
 delete from ITERATION_TEST_PLAN_ITEM 
 where ITEM_TEST_PLAN_ID = 1;
 
-delete ISSUE_LIST
+delete from ISSUE_LIST
 where ISSUE_LIST_ID in (1,79)
 ;
 
