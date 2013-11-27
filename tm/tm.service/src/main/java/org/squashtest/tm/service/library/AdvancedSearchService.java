@@ -64,9 +64,13 @@ public interface AdvancedSearchService {
 	
 	PagedCollectionHolder<List<TestCase>> searchForTestCases(AdvancedSearchModel model, PagingAndMultiSorting sorting);
 	
+	PagedCollectionHolder<List<TestCase>> searchForTestCasesThroughRequirementModel(AdvancedSearchModel model, PagingAndMultiSorting sorting);
+	
 	PagedCollectionHolder<List<RequirementVersion>> searchForRequirementVersions(AdvancedSearchModel searchModel, PagingAndMultiSorting paging, MessageSource source, Locale locale);
 	
 	List<TestCase> searchForTestCases(AdvancedSearchModel model);
+
+	List<TestCase> searchForTestCasesThroughRequirementModel(AdvancedSearchModel model);
 	
 	List<RequirementVersion> searchForRequirementVersions(AdvancedSearchModel model);
 
@@ -82,4 +86,6 @@ public interface AdvancedSearchService {
 	SearchExportCSVModel exportTestCaseSearchResultsToCSV(AdvancedSearchModel model);
 
 	SearchExportCSVModel exportRequirementVersionSearchResultsToCSV(AdvancedSearchModel model);
+
+
 }

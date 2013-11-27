@@ -103,6 +103,7 @@ public class AdvancedSearchController {
 	private static final String REQUIREMENT = "requirement";
 	private static final String SEARCH_MODEL = "searchModel";
 	private static final String SEARCH_DOMAIN = "searchDomain";
+	private static final String TESTCASE_VIA_REQUIREMENT = "testcaseViaRequirement";
 	
 	@Inject
 	private AdvancedSearchService advancedSearchService;
@@ -201,9 +202,12 @@ public class AdvancedSearchController {
 
 		initModelForPage(model, associateResultWithType, id);
 		model.addAttribute(SEARCH_DOMAIN, searchDomain);
+		if(TESTCASE_VIA_REQUIREMENT.equals(searchDomain)){
+			searchDomain = REQUIREMENT;
+		}
 		return searchDomain+"-search-input.html";
 	}
-	
+
 	private void initModelForPage(Model model, String associateResultWithType,
 			Long id) {
 		if (StringUtils.isNotBlank(associateResultWithType)) {
@@ -226,7 +230,10 @@ public class AdvancedSearchController {
 		initModelForPage(model, associateResultWithType, id);
 		model.addAttribute(SEARCH_MODEL, searchModel);
 		model.addAttribute(SEARCH_DOMAIN, searchDomain);
-
+		
+		if(TESTCASE_VIA_REQUIREMENT.equals(searchDomain)){
+			searchDomain = REQUIREMENT;
+		}
 		return searchDomain+"-search-input.html";
 	}
 
@@ -257,6 +264,19 @@ public class AdvancedSearchController {
 		return "requirement-search-result.html";
 	}
 	
+	@RequestMapping(value = "/results", method = RequestMethod.POST, params = TESTCASE_VIA_REQUIREMENT)
+	public String getTestCaseThroughRequirementSearchResultPage(Model model,
+			@RequestParam String searchModel,
+			@RequestParam(required = false) String associateResultWithType,
+			@RequestParam(required = false) Long id) {
+
+		initModelForPage(model, associateResultWithType, id);
+		model.addAttribute(SEARCH_MODEL, searchModel);
+		model.addAttribute(SEARCH_DOMAIN, TESTCASE_VIA_REQUIREMENT);
+		
+		return "test-case-search-result.html";
+	}
+	
 	private boolean isInAssociationContext(String associateResultWithType) {
 		boolean isInAssociationContext = false;
 
@@ -267,6 +287,39 @@ public class AdvancedSearchController {
 		return isInAssociationContext;
 	}
 
+	@RequestMapping(value = "/table", method = RequestMethod.POST, params = {
+			"model", TESTCASE_VIA_REQUIREMENT, RequestParams.S_ECHO_PARAM })
+	@ResponseBody
+	public DataTableModel getTestCaseThroughRequirementTableModel(final DataTableDrawParameters params,
+			final Locale locale, @RequestParam(value = "model") String model,
+			@RequestParam(required = false) String associateResultWithType,
+			@RequestParam(required = false) Long id) throws JsonParseException,
+			JsonMappingException, IOException {
+
+		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model,
+				AdvancedSearchModel.class);
+
+		PagingAndMultiSorting paging = new DataTableMultiSorting(params,
+				testCaseSearchResultMapper);
+
+		PagedCollectionHolder<List<TestCase>> holder = advancedSearchService
+				.searchForTestCasesThroughRequirementModel(searchModel, paging);
+
+		boolean isInAssociationContext = isInAssociationContext(associateResultWithType);
+
+		Set<Long> ids = null;
+
+		if (isInAssociationContext) {
+			ids = getIdsOfTestCasesAssociatedWithObjects(
+					associateResultWithType, id);
+		}
+
+		return new TestCaseSearchResultDataTableModelHelper(locale,
+				messageSource, permissionService, iterationService,
+				isInAssociationContext, ids).buildDataModel(holder,
+				params.getsEcho());
+	}
+	
 	@RequestMapping(value = "/table", method = RequestMethod.POST, params = {
 			"model", TESTCASE, RequestParams.S_ECHO_PARAM })
 	@ResponseBody
@@ -398,7 +451,11 @@ public class AdvancedSearchController {
 	
 	
 	
-	
+	@RequestMapping(value = "/input", method = RequestMethod.GET, headers = RequestHeaders.CONTENT_JSON, params = TESTCASE_VIA_REQUIREMENT)
+	@ResponseBody
+	public SearchInputInterfaceModel getTestCaseViaRequirementSearchInputInterfaceModel(Locale locale) {
+		return getRequirementSearchInputInterfaceModel(locale);
+	}
 	
 	@RequestMapping(value = "/input", method = RequestMethod.GET, headers = RequestHeaders.CONTENT_JSON, params = REQUIREMENT)
 	@ResponseBody

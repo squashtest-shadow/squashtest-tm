@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -608,8 +609,26 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return null;
 	}
 
-	private org.apache.lucene.search.Query buildLuceneQuery(QueryBuilder qb,
-			AdvancedSearchModel model) {
+	private org.apache.lucene.search.Query buildLuceneQuery(QueryBuilder qb, List<TestCase> testcaseList) {
+		
+		org.apache.lucene.search.Query mainQuery = null;
+		org.apache.lucene.search.Query query = null;
+		
+		for(TestCase testcase : testcaseList){
+			List<String> id = new ArrayList<String>();
+			id.add(testcase.getId().toString());
+			query = buildLuceneSingleValueQuery(qb, "id", id, true);
+		
+			if (query != null && mainQuery == null) {
+				mainQuery = query;
+			} else if (query != null) {
+				mainQuery = qb.bool().should(mainQuery).should(query).createQuery();
+			}
+		}
+		return mainQuery;
+	}
+	
+	private org.apache.lucene.search.Query buildLuceneQuery(QueryBuilder qb, AdvancedSearchModel model) {
 
 		org.apache.lucene.search.Query mainQuery = null;
 		org.apache.lucene.search.Query query = null;
@@ -668,6 +687,21 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 		return hibQuery.list();
 
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TestCase> searchForTestCasesThroughRequirementModel(AdvancedSearchModel model) {
+		List<RequirementVersion> requirements = searchForRequirementVersions(model);
+		List<TestCase> result = new ArrayList<TestCase>();
+		Set<TestCase> testCases = new HashSet<TestCase>();
+		for(RequirementVersion requirement : requirements){
+			testCases.addAll(requirement.getVerifyingTestCases());
+		}
+		for(TestCase testcase : testCases){
+			result.add(testcase);
+		}
+		return result;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -807,6 +841,36 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 	
 	@Override
+	public PagedCollectionHolder<List<TestCase>> searchForTestCasesThroughRequirementModel(AdvancedSearchModel model, PagingAndMultiSorting sorting) {
+		
+		List<TestCase> testcases = searchForTestCasesThroughRequirementModel(model);
+
+		Session session = sessionFactory.getCurrentSession();
+
+		FullTextSession ftSession = Search.getFullTextSession(session);
+
+		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity(TestCase.class).get();
+
+		org.apache.lucene.search.Query luceneQuery = buildLuceneQuery(qb, testcases);
+
+		List<TestCase> result = Collections.emptyList();
+		int countAll = 0 ;
+		if(luceneQuery != null){
+			Sort sort = getTestCaseSort(sorting.getSortings());
+			org.hibernate.Query hibQuery = ftSession.createFullTextQuery(
+					luceneQuery, TestCase.class).setSort(sort);
+	
+			countAll = hibQuery.list().size();	
+			
+			
+			result = hibQuery.setFirstResult(sorting.getFirstItemIndex())
+					.setMaxResults(sorting.getPageSize()).list();
+		}
+		return new PagingBackedPagedCollectionHolder<List<TestCase>>(sorting,
+				countAll, result);
+	}
+	
+	@Override
 	public PagedCollectionHolder<List<TestCase>> searchForTestCases(
 			AdvancedSearchModel model, PagingAndMultiSorting sorting) {
 
@@ -868,18 +932,6 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		
 		boolean result = currentVersion.equals(requirementIndexVersion) 
 				&& currentVersion.equals(testcaseIndexVersion);
-
-		// TODO uncomment when requirements and campains are added to advanced
-		// search
-		/*
-		 * String campaignIndexVersion =
-		 * configurationService
-		 * .findConfiguration(CAMPAIGN_INDEXING_VERSION_KEY);
-		 * 
-		 * boolean result = currentVersion.equals(requirementIndexVersion) &&
-		 * currentVersion.equals(testcaseIndexVersion) &&
-		 * currentVersion.equals(campaignIndexVersion);
-		 */
 
 		return !result;
 	}

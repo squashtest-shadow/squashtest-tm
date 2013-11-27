@@ -34,13 +34,14 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			this.getIdsOfSelectedTableRowList =  $.proxy(this._getIdsOfSelectedTableRowList, this);
 			this.updateDisplayedValueInColumn =  $.proxy(this._updateDisplayedValueInColumn, this);
 			var model = JSON.parse($("#searchModel").text());
+			this.domain = $("#searchDomain").text();
 			this.isAssociation = !!$("#associationType").length;
 			if(this.isAssociation){
 				this.associationType = $("#associationType").text();
 				this.associationId = $("#associationId").text();
 			}
 			this.model = model;
-			new TestCaseSearchResultTable(model, this.isAssociation, this.associationType, this.associationId);
+			new TestCaseSearchResultTable(model, this.domain, this.isAssociation, this.associationType, this.associationId);
 		},
 
 		events : {
@@ -148,11 +149,11 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		modifySearch : function(){
 			
 			if(this.isAssociation){
-				this.post(squashtm.app.contextRoot + "advanced-search?searchDomain=testcase&id="+this.associationId+"&associateResultWithType="+this.associationType, {
+				this.post(squashtm.app.contextRoot + "advanced-search?searchDomain="+this.domain+"&id="+this.associationId+"&associateResultWithType="+this.associationType, {
 					searchModel : JSON.stringify(this.model)
 				});	
 			} else {
-				this.post(squashtm.app.contextRoot + "advanced-search?searchDomain=testcase", {
+				this.post(squashtm.app.contextRoot + "advanced-search?searchDomain="+this.domain, {
 					searchModel : JSON.stringify(this.model)
 				});	
 			}
@@ -178,9 +179,9 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		newSearch : function(){
 			
 			if(this.isAssociation){
-				document.location.href= squashtm.app.contextRoot +"advanced-search?searchDomain=testcase&id="+this.associationId+"&associateResultWithType="+this.associationType;
+				document.location.href= squashtm.app.contextRoot +"advanced-search?searchDomain="+this.domain+"&id="+this.associationId+"&associateResultWithType="+this.associationType;
 			} else {
-				document.location.href= squashtm.app.contextRoot +"advanced-search?searchDomain=testcase";
+				document.location.href= squashtm.app.contextRoot +"advanced-search?searchDomain="+this.domain;
 			}
 		},
 		

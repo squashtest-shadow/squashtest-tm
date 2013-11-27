@@ -22,8 +22,9 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 
 	var TestCaseSearchResultTable = Backbone.View.extend({
 		el : "#test-case-search-result-table",
-		initialize : function(model, isAssociation, associateType, associateId) {
+		initialize : function(model, domain, isAssociation, associateType, associateId) {
 			this.model = model;
+			this.domain = domain;
 			this.isAssociation = isAssociation;
 			this.associateType = associateType;
 			this.associateId = associateId;
@@ -52,7 +53,7 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 						"sAjaxSource" : squashtm.app.contextRoot + "/advanced-search/table",
 						 "fnServerParams": function ( aoData )   
 						    {  
-							 aoData.push( { "name": "testcase", "value": "testcase" } );  
+							 aoData.push( { "name": domain, "value": domain } );  
 						        aoData.push( { "name": "model", "value": JSON.stringify(model) } );  
 						        aoData.push( { "name": "associateResultWithType", "value": associateType } );  
 						        aoData.push( { "name": "id", "value":  associateId } );  
@@ -167,7 +168,7 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 						"sAjaxSource" : squashtm.app.contextRoot + "/advanced-search/table",
 						 "fnServerParams": function ( aoData )   
 						    {  
-							 aoData.push( { "name": "testcase", "value": "testcase" } );  
+							 aoData.push( { "name": domain, "value": domain } );  
 							 aoData.push( { "name": "model", "value": JSON.stringify(model) } );  
 						    }, 
 						"sServerMethod": "POST",
