@@ -32,6 +32,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
@@ -100,11 +101,14 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	}
 
 	@Override
-	// @PreAuthorize("hasPermission(#executionId, 'org.squashtest.tm.domain.execution.Execution', 'EXECUTE') "
-	// + "or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#execution, 'EXECUTE') "
+			+	"or hasRole('ROLE_ADMIN')")
 	public void deleteExecution(Execution execution) {
+		TestCase testCase = execution.getReferencedTestCase();
 		deletionHandler.deleteExecution(execution);
-		advancedSearchService.reindexTestCase(execution.getReferencedTestCase().getId());
+		if (testCase != null){
+			advancedSearchService.reindexTestCase(testCase.getId());
+		}
 	}
 
 	@Override
