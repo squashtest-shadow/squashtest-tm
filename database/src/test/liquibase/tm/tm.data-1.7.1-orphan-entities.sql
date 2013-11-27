@@ -171,17 +171,17 @@ update REQUIREMENT
 set CURRENT_VERSION_ID = 189
 where RLN_ID = 191
 ;
-update requirement
-set current_version_id = 190
-where rln_id = 193
+update REQUIREMENT
+set CURRENT_VERSION_ID = 190
+where RLN_ID = 193
 ;
 update REQUIREMENT
 set CURRENT_VERSION_ID = 192
 where RLN_ID = 195
 ;
-update requirement
-set current_version_id = 198
-where rln_id = 199
+update REQUIREMENT
+set CURRENT_VERSION_ID = 198
+where RLN_ID = 199
 ;
 
 INSERT INTO `REQUIREMENT_FOLDER` (`RLN_ID`, `RES_ID`) VALUES
@@ -364,20 +364,20 @@ INSERT INTO `REQUIREMENT_VERSION_COVERAGE` (`REQUIREMENT_VERSION_COVERAGE_ID`, `
 	================================================================*/
 
 update CAMPAIGN_TEST_PLAN_ITEM
-set test_plan_order = 6 where ctpi_id = 6
+set TEST_PLAN_ORDER = 6 where CTPI_ID = 6
 ;
 update CAMPAIGN_TEST_PLAN_ITEM
-set test_plan_order = 7 where ctpi_id = 8
+set TEST_PLAN_ORDER = 7 where CTPI_ID = 8
 ;
 
 update ITEM_TEST_PLAN_LIST
 set ITEM_TEST_PLAN_ORDER =  6
-where item_test_plan_id = 33
+where ITEM_TEST_PLAN_ID = 33
 ;
 
-update item_test_plan_list
+update ITEM_TEST_PLAN_LIST
 set ITEM_TEST_PLAN_ORDER = 7
-where item_test_plan_id = 34
+where ITEM_TEST_PLAN_ID = 34
 ;
 
 
