@@ -430,7 +430,7 @@
 		</preConditions>
 		<comment>delete executions</comment>
 		<sql>
-			delete from item_test_plan_execution
+			delete from ITEM_TEST_PLAN_EXECUTION
 			where ITEM_TEST_PLAN_ID in (select ID from ENTITIES_TO_DELETE where NAME = 'ITPI')
 			;
 		
