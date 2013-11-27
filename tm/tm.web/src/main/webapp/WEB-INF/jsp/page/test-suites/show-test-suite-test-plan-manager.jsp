@@ -78,7 +78,7 @@
 					  .collect(function(elt){return $(elt).attr('resid');});
 			}
 			else{
-				//that line is especially wtf, see seach-panel.tag and search-panel-by-requirement.tag
+				//that line is especially wtf, see seach-panel.tag
 				//to understand what I mean.
 				tab = getIdSelection();
 			}

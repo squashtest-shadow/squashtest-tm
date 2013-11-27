@@ -162,10 +162,7 @@
 				<div id="tabbed-pane">
 					<ul>
 						<li class="tab" > <a href="#tree-pane"><f:message key="tabbed_panel.tree.pane.label"/></a></li>
-						<li class="tab"> <a href="#search-pane"><f:message key="tabbed_panel.search.pane.label"/></a></li>
-						<c:if test="${ isRequirementPaneSearchOn eq 'true'}">
-							<li class="tab"> <a href="#requirement-search-pane"><f:message key="tabbed_panel.requirement.pane.label"/></a></li>
-						</c:if>						
+						<li class="tab"> <a href="#search-pane"><f:message key="tabbed_panel.search.pane.label"/></a></li>					
 					</ul>
 					
 					<div id="tree-pane" <c:if test="${ highlightedWorkspace == 'requirement'}"> class="requirement-tree-pane"</c:if> >
@@ -182,12 +179,6 @@
 						</c:otherwise>
 						</c:choose>
 					</div>
-					
-					<c:if test="${ isRequirementPaneSearchOn eq 'true'}">
-					<div id="requirement-search-pane">
-						<layout:search-panel-by-requirement />
-					</div>
-					</c:if>
 				</div>
 			</div>
 		</div>
@@ -243,9 +234,6 @@
 					<ul>
 						<li class="tab" > <a href="#tree-pane"><f:message key="tabbed_panel.tree.pane.label"/></a></li>
 						<li class="tab"> <a href="#search-pane"><f:message key="tabbed_panel.search.pane.label"/></a></li>
-						<c:if test="${ isRequirementPaneSearchOn eq 'true'}">
-							<li class="tab"> <a href="#requirement-search-pane"><f:message key="tabbed_panel.requirement.pane.label"/></a></li>
-						</c:if>
 					</ul>
 
 					<div id="tree-pane" <c:if test="${ highlightedWorkspace == 'requirement'}"> class="requirement-tree-pane"</c:if> >
@@ -263,15 +251,10 @@
 						</c:choose>
 					</div>
 					
-					<c:if test="${ isRequirementPaneSearchOn eq 'true'}">
-					<div id="requirement-search-pane">
-						<layout:search-panel-by-requirement />
-					</div>
-					</c:if>
 					</div>	
 				</div>
 			</div>
-		</div>
+	
 		
 		<script type="text/javascript">
 			$(function(){
