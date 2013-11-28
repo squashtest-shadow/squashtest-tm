@@ -25,7 +25,15 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
+	
+
 	<changeSet id="tm-1.8.0.issue-2933-tc-01" author="mpagnon">
+	<preConditions onFail="CONTINUE">
+		<and>
+			<tableExists tableName="ENTITIES_TO_DELETE" />
+			<tableExists tableName="IS_TO_DELETE" />
+		</and>
+	</preConditions>
 		<comment>save ids of test case folders to delete</comment>
 		<sql>
 			insert into ENTITIES_TO_DELETE
@@ -52,6 +60,9 @@
 	<!-- =========== FOLDER =========== -->
 	<changeSet id="tm-1.8.0.issue-2933-tc-02" author="mpagnon">
 		<preConditions onFail="CONTINUE" onFailMessage="No orphan test case folder">
+			<and>
+			<tableExists tableName="ENTITIES_TO_DELETE" />
+			<tableExists tableName="IS_TO_DELETE" />
 			<not>
 				<sqlCheck expectedResult="0">
 					select TOTAL from IS_TO_DELETE
@@ -59,6 +70,7 @@
 					;
 				</sqlCheck>
 			</not>
+			</and>
 		</preConditions>
 		<comment>save ids of children test_case_folders</comment>
 		<sql>
@@ -116,7 +128,9 @@
 	<!-- =========== TEST_CASE =========== -->
 	<changeSet id="tm-1.8.0.issue-2933-tc-03" author="mpagnon">
 		<preConditions onFail="CONTINUE" onFailMessage="No test case to delete">
-			<not>
+			<and>
+			<tableExists tableName="ENTITIES_TO_DELETE" />
+			<tableExists tableName="IS_TO_DELETE" /><not>
 				<sqlCheck expectedResult="0">
 					select TOTAL from IS_TO_DELETE
 					where NAME = 'TEST_CASE_FOLDER'
@@ -129,6 +143,7 @@
 					;
 				</sqlCheck>
 			</not>
+			</and>
 		</preConditions>
 		<comment>empty ids of requirement_version_coverage to delete from requirements deletion</comment>
 		<sql>
@@ -247,6 +262,8 @@
 	<changeSet id="tm-1.8.0.issue-2933-tc-04" author="mpagnon">
 		<preConditions onFail="CONTINUE" onFailMessage="No requirement version coverage to delete">
 			<and>
+			<tableExists tableName="ENTITIES_TO_DELETE" />
+			<tableExists tableName="IS_TO_DELETE" />
 				<not>
 					<sqlCheck expectedResult="0">
 						select TOTAL from IS_TO_DELETE
@@ -292,6 +309,8 @@
 	<changeSet id="tm-1.8.0.issue-2933-tc-05-mysql" author="mpagnon">
 		<preConditions onFail="CONTINUE" onFailMessage="Not mysql database or No campaign iteration items to delete">
 			<and>
+			<tableExists tableName="ENTITIES_TO_DELETE" />
+			<tableExists tableName="IS_TO_DELETE" />
 				<dbms type="mysql" />
 				<not>
 					<sqlCheck expectedResult="0">
@@ -371,6 +390,8 @@
 	<changeSet id="tm-1.8.0.issue-2933-tc-05-h2" author="mpagnon">
 		<preConditions onFail="CONTINUE" onFailMessage="Not h2 database or No campaign iteration items to delete">
 			<and>
+			<tableExists tableName="ENTITIES_TO_DELETE" />
+			<tableExists tableName="IS_TO_DELETE" />
 				<dbms type="h2" />
 				<not>
 					<sqlCheck expectedResult="0">
@@ -449,6 +470,8 @@
 		<changeSet id="tm-1.8.0.issue-2933-tc-06" author="mpagnon">
 		<preConditions onFail="CONTINUE" onFailMessage="No dataset to delete">
 			<and>
+			<tableExists tableName="ENTITIES_TO_DELETE" />
+			<tableExists tableName="IS_TO_DELETE" />
 				<not>
 					<sqlCheck expectedResult="0">
 						select TOTAL from IS_TO_DELETE
@@ -493,6 +516,8 @@
 	<changeSet id="tm-1.8.0.issue-2933-tc-07" author="mpagnon">
 		<preConditions onFail="CONTINUE" onFailMessage="No parameter to delete">
 			<and>
+			<tableExists tableName="ENTITIES_TO_DELETE" />
+			<tableExists tableName="IS_TO_DELETE" />
 				<not>
 					<sqlCheck expectedResult="0">
 						select TOTAL from IS_TO_DELETE
@@ -531,6 +556,8 @@
 	<changeSet id="tm-1.8.0.issue-2933-tc-08" author="mpagnon">
 		<preConditions onFail="CONTINUE" onFailMessage="No Automated test to delete">
 			<and>
+			<tableExists tableName="ENTITIES_TO_DELETE" />
+			<tableExists tableName="IS_TO_DELETE" />
 				<not>
 					<sqlCheck expectedResult="0">
 						select TOTAL from IS_TO_DELETE
@@ -571,6 +598,8 @@
 	<changeSet id="tm-1.8.0.issue-2933-tc-09" author="mpagnon">
 		<preConditions onFail="CONTINUE" onFailMessage="No test step to delete">
 			<and>
+			<tableExists tableName="ENTITIES_TO_DELETE" />
+			<tableExists tableName="IS_TO_DELETE" />
 				<not>
 					<sqlCheck expectedResult="0">
 						select TOTAL from IS_TO_DELETE
@@ -649,6 +678,8 @@
 	<changeSet id="tm-1.8.0.issue-2933-tc-10" author="mpagnon">
 		<preConditions onFail="CONTINUE" onFailMessage="No step calling a to-delete test case">
 			<and>
+			<tableExists tableName="ENTITIES_TO_DELETE" />
+			<tableExists tableName="IS_TO_DELETE" />
 				<sqlCheck expectedResult="1">
 					select count(1) from IS_TO_DELETE
 					where NAME = 'CALLING_STEP'
@@ -698,6 +729,8 @@
 	<changeSet id="tm-1.8.0.issue-2933-tc-11-mysql" author="mpagnon">
 		<preConditions onFail="CONTINUE" onFailMessage="Not mysql or No step calling a to-delete test case">
 			<and>
+			<tableExists tableName="ENTITIES_TO_DELETE" />
+			<tableExists tableName="IS_TO_DELETE" />
 				<dbms type="mysql" />
 				<sqlCheck expectedResult="1">
 					select count(1) from IS_TO_DELETE
@@ -758,6 +791,8 @@
 	<changeSet id="tm-1.8.0.issue-2933-tc-11-h2" author="mpagnon">
 		<preConditions onFail="CONTINUE" onFailMessage="Not h2 or No step calling a to-delete test case">
 			<and>
+			<tableExists tableName="ENTITIES_TO_DELETE" />
+			<tableExists tableName="IS_TO_DELETE" />
 				<dbms type="h2" />
 				<sqlCheck expectedResult="1">
 					select count(1) from IS_TO_DELETE
@@ -819,6 +854,8 @@
 	<changeSet id="tm-1.8.0.issue-2933-tc-12" author="mpagnon">
 		<preConditions onFail="CONTINUE" onFailMessage="No test case to delete">
 			<and>
+			<tableExists tableName="ENTITIES_TO_DELETE" />
+			<tableExists tableName="IS_TO_DELETE" />
 				<not>
 					<sqlCheck expectedResult="0">
 						select TOTAL from IS_TO_DELETE
@@ -861,13 +898,16 @@
 	<!-- =========== FOLDER =========== -->
 	<changeSet id="tm-1.8.0.issue-2933-tc-13" author="mpagnon">
 		<preConditions onFail="CONTINUE" onFailMessage="No test case folder to delete.">
+			<and>
+			<tableExists tableName="ENTITIES_TO_DELETE" />
+			<tableExists tableName="IS_TO_DELETE" />
 			<not>
 					<sqlCheck expectedResult="0">
 						select TOTAL from IS_TO_DELETE
 						where NAME = 'TEST_CASE_FOLDER'
 						;
 					</sqlCheck>
-				</not>
+				</not></and>
 		</preConditions>
 		<comment>delete tcln_relationship_closure for test case folder</comment>		
 		<sql>

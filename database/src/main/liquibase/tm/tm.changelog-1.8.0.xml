@@ -283,7 +283,7 @@
 	</changeSet>	
 	
 	<!-- ========================================INCLUDE CHANGELOG================================================ -->
-		<include file="tm.changelog-1.8.0-issue-2933/tm.changelog-1.8.0-issue-2933-master.xml" relativeToChangelogFile="true" />
+		<include file="tm.changelog-1.8.0-issue-2933-master.xml" relativeToChangelogFile="true" />
  	<!-- ========================================================================================================= -->
  	
 </databaseChangeLog>

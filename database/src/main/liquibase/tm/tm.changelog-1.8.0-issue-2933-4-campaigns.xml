@@ -25,9 +25,16 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
-
+	
+	
 	<!-- =========== /CAMPAIGN LIBRARY NODES =========== -->
 	<changeSet id="tm-1.8.0.issue-2933-camp-01" author="mpagnon">
+		<preConditions onFail="CONTINUE">
+			<and>
+				<tableExists tableName="ENTITIES_TO_DELETE" />
+				<tableExists tableName="IS_TO_DELETE" />
+			</and>
+		</preConditions>
 		<comment>save ids of campaign folders to delete</comment>
 		<sql>
 			insert into ENTITIES_TO_DELETE
@@ -36,9 +43,7 @@
 			folder.CLN_ID
 			from CAMPAIGN_FOLDER folder
 			where folder.CLN_ID not in (
-			select DESCENDANT_ID from CLN_RELATIONSHIP
-			)
-			and folder.CLN_ID not in (
+			select DESCENDANT_ID from CLN_RELATIONSHIP UNION
 			select CONTENT_ID from CAMPAIGN_LIBRARY_CONTENT
 			)
 			;
@@ -56,6 +61,9 @@
 	</changeSet>
 	<changeSet id="tm-1.8.0.issue-2933-camp-02" author="mpagnon">
 		<preConditions onFail="CONTINUE" onFailMessage="No campaign folder to delete">
+		<and>
+				<tableExists tableName="ENTITIES_TO_DELETE" />
+				<tableExists tableName="IS_TO_DELETE" />
 			<not>
 				<sqlCheck expectedResult="0">
 					select TOTAL from IS_TO_DELETE
@@ -63,6 +71,7 @@
 					;
 				</sqlCheck>
 			</not>
+		</and>
 		</preConditions>
 		<comment>save is of children campaign_folders</comment>
 		<sql>
@@ -107,6 +116,8 @@
 	<changeSet id="tm-1.8.0.issue-2933-camp-03" author="mpagnon">
 		<preConditions onFail="CONTINUE" onFailMessage="No campaign to delete">
 			<and>
+				<tableExists tableName="ENTITIES_TO_DELETE" />
+				<tableExists tableName="IS_TO_DELETE" />
 				<sqlCheck expectedResult="1">
 					select count(1) from IS_TO_DELETE
 					where NAME = 'CAMPAIGN'
@@ -161,6 +172,8 @@
 	<changeSet id="tm-1.8.0.issue-2933-camp-04" author="mpagnon">
 		<preConditions onFail="CONTINUE" onFailMessage="No iteration to delete">
 			<and>
+				<tableExists tableName="ENTITIES_TO_DELETE" />
+				<tableExists tableName="IS_TO_DELETE" />
 				<sqlCheck expectedResult="1">
 					select count(1) from IS_TO_DELETE
 					where NAME = 'ITERATION'
@@ -237,6 +250,8 @@
 	<changeSet id="tm-1.8.0.issue-2933-camp-05" author="mpagnon">
 		<preConditions onFail="CONTINUE" onFailMessage="No iteration test plan item to delete">
 			<and>
+				<tableExists tableName="ENTITIES_TO_DELETE" />
+				<tableExists tableName="IS_TO_DELETE" />
 				<sqlCheck expectedResult="1">
 					select count(1) from IS_TO_DELETE
 					where NAME = 'ITPI'
@@ -274,6 +289,8 @@
 	<changeSet id="tm-1.8.0.issue-2933-camp-06" author="mpagnon">
 		<preConditions onFail="CONTINUE" onFailMessage="No execution to delete">
 			<and>
+				<tableExists tableName="ENTITIES_TO_DELETE" />
+				<tableExists tableName="IS_TO_DELETE" />
 				<sqlCheck expectedResult="1">
 					select count(1) from IS_TO_DELETE
 					where NAME = 'EXECUTION'
@@ -340,7 +357,10 @@
 	</changeSet>
 	<changeSet id="tm-1.8.0.issue-2933-camp-07" author="mpagnon">
 		<preConditions onFail="CONTINUE" onFailMessage="No automated execution extender to delete">
-			<not>
+			<and>
+				<tableExists tableName="ENTITIES_TO_DELETE" />
+				<tableExists tableName="IS_TO_DELETE" />
+				<not>
 				<sqlCheck expectedResult="0">
 					select count(1)
 					from ENTITIES_TO_DELETE
@@ -348,6 +368,7 @@
 					;
 				</sqlCheck>
 			</not>
+			</and>
 		</preConditions>
 		<comment>delete automated_execution_extender</comment>
 		<sql>
@@ -365,7 +386,9 @@
 
 	<changeSet id="tm-1.8.0.issue-2933-camp-08" author="mpagnon">
 		<preConditions onFail="CONTINUE" onFailMessage="No execution step to delete">
-			<and>
+				<and>
+				<tableExists tableName="ENTITIES_TO_DELETE" />
+				<tableExists tableName="IS_TO_DELETE" />
 				<sqlCheck expectedResult="1">
 					select count(1) from IS_TO_DELETE
 					where NAME = 'EXECUTION_STEP'
@@ -414,6 +437,8 @@
 	<changeSet id="tm-1.8.0.issue-2933-camp-09" author="mpagnon">
 		<preConditions onFail="CONTINUE" onFailMessage="No execution to delete">
 			<and>
+				<tableExists tableName="ENTITIES_TO_DELETE" />
+				<tableExists tableName="IS_TO_DELETE" />
 				<sqlCheck expectedResult="1">
 					select count(1) from IS_TO_DELETE
 					where NAME = 'EXECUTION'
@@ -454,6 +479,8 @@
 	<changeSet id="tm-1.8.0.issue-2933-camp-10" author="mpagnon">
 		<preConditions onFail="CONTINUE" onFailMessage="No iteration test plan item to delete">
 			<and>
+				<tableExists tableName="ENTITIES_TO_DELETE" />
+				<tableExists tableName="IS_TO_DELETE" />
 				<sqlCheck expectedResult="1">
 					select count(1) from IS_TO_DELETE
 					where NAME = 'ITPI'
@@ -490,6 +517,8 @@
 	<changeSet id="tm-1.8.0.issue-2933-camp-11" author="mpagnon">
 		<preConditions onFail="CONTINUE" onFailMessage="No test suite to delete">
 			<and>
+				<tableExists tableName="ENTITIES_TO_DELETE" />
+				<tableExists tableName="IS_TO_DELETE" />
 				<sqlCheck expectedResult="1">
 					select count(1) from IS_TO_DELETE
 					where NAME = 'TEST_SUITE'
@@ -541,6 +570,8 @@
 	<changeSet id="tm-1.8.0.issue-2933-camp-12" author="mpagnon">
 		<preConditions onFail="CONTINUE" onFailMessage="No iteration to delete">
 			<and>
+				<tableExists tableName="ENTITIES_TO_DELETE" />
+				<tableExists tableName="IS_TO_DELETE" />
 				<sqlCheck expectedResult="1">
 					select count(1) from IS_TO_DELETE
 					where NAME = 'ITERATION'
@@ -571,6 +602,8 @@
 	<changeSet id="tm-1.8.0.issue-2933-camp-13" author="mpagnon">
 		<preConditions onFail="CONTINUE" onFailMessage="No campaign to delete">
 			<and>
+				<tableExists tableName="ENTITIES_TO_DELETE" />
+				<tableExists tableName="IS_TO_DELETE" />
 				<sqlCheck expectedResult="1">
 					select count(1) from IS_TO_DELETE
 					where NAME = 'CAMPAIGN'
@@ -612,13 +645,16 @@
 	</changeSet>
 	<changeSet id="tm-1.8.0.issue-2933-camp-14" author="mpagnon">
 		<preConditions onFail="CONTINUE" onFailMessage="No campaign folder to delete">
-			<not>
+			<and>
+				<tableExists tableName="ENTITIES_TO_DELETE" />
+				<tableExists tableName="IS_TO_DELETE" />
+				<not>
 				<sqlCheck expectedResult="0">
 					select TOTAL from IS_TO_DELETE
 					where NAME = 'CAMPAIGN_FOLDER'
 					;
 				</sqlCheck>
-			</not>
+			</not></and>
 		</preConditions>
 		<sql>
 			delete from CLN_RELATIONSHIP

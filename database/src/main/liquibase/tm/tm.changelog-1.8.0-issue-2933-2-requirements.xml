@@ -25,10 +25,14 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
-
-
 	<!-- =========== REQUIREMENT LIBRARY NODES =========== -->
 	<changeSet id="tm-1.8.0.issue-2933-req-01" author="mpagnon">
+		<preConditions onFail="CONTINUE">
+		<and>
+			<tableExists tableName="ENTITIES_TO_DELETE" />
+			<tableExists tableName="IS_TO_DELETE" />
+			</and>
+		</preConditions>
 		<comment>save ids of requirements nodes to delete</comment>
 		<sql>
 			insert into ENTITIES_TO_DELETE
@@ -36,9 +40,8 @@
 			select 'RLN', rln.RLN_ID
 			from REQUIREMENT_LIBRARY_NODE rln
 			where rln.RLN_ID not in (select
-			DESCENDANT_ID from RLN_RELATIONSHIP )
-			and rln.RLN_ID not in (select
-			CONTENT_ID from REQUIREMENT_LIBRARY_CONTENT)
+			DESCENDANT_ID from RLN_RELATIONSHIP UNION
+			select CONTENT_ID from REQUIREMENT_LIBRARY_CONTENT)
 			;
 		</sql>
 		<comment>store info if exist requirement nodes to delete</comment>
@@ -56,13 +59,16 @@
 	<changeSet id="tm-1.8.0.issue-2933-req-02" author="mpagnon">
 		<preConditions onFail="CONTINUE"
 			onFailMessage="No orphan requirement library node.">
+			<and>
+			<tableExists tableName="ENTITIES_TO_DELETE" />
+			<tableExists tableName="IS_TO_DELETE" />
 			<not>
 				<sqlCheck expectedResult="0">
 					select count(1) from IS_TO_DELETE
 					where NAME = 'RLN'
 					;
 				</sqlCheck>
-			</not>
+			</not></and>
 		</preConditions>
 		<comment>add ids of children</comment>
 		<sql>
@@ -126,6 +132,8 @@
 	<changeSet id="tm-1.8.0.issue-2933-req-03" author="mpagnon">
 		<preConditions onFail="CONTINUE" onFailMessage="No orphan requirement library node.">
 			<and>
+			<tableExists tableName="ENTITIES_TO_DELETE" />
+			<tableExists tableName="IS_TO_DELETE" />
 				<not>
 					<sqlCheck expectedResult="0">
 						select TOTAL from IS_TO_DELETE
@@ -170,13 +178,15 @@
 
 	<changeSet id="tm-1.8.0.issue-2933-req-04" author="mpagnon">
 		<preConditions onFail="CONTINUE" onFailMessage="No orphan requirement library node.">
-			<not>
+			<and>
+			<tableExists tableName="ENTITIES_TO_DELETE" />
+			<tableExists tableName="IS_TO_DELETE" /><not>
 				<sqlCheck expectedResult="0">
 					select TOTAL from IS_TO_DELETE
 					where NAME = 'RLN'
 					;
 				</sqlCheck>
-			</not>
+			</not></and>
 		</preConditions>
 		
 

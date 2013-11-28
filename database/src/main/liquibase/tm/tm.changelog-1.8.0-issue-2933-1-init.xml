@@ -27,6 +27,43 @@
 
 	<!-- =========== CREATE STORING TABLES=========== -->
 	<changeSet id="tm-1.8.0.issue-2933-init-01" author="mpagnon">
+		<preConditions onFail="CONTINUE">
+			<and>
+				<not>
+					<sqlCheck expectedResult="0">
+						select count(1)
+						from REQUIREMENT_LIBRARY_NODE rln
+						where rln.RLN_ID not in (
+						select DESCENDANT_ID from RLN_RELATIONSHIP UNION
+						select CONTENT_ID from REQUIREMENT_LIBRARY_CONTENT)
+						;
+					</sqlCheck>
+				</not>
+				<not>
+					<sqlCheck expectedResult="0">
+						select select count(1)
+						from TEST_CASE_FOLDER folder
+						where folder.TCLN_ID not in (
+						select DESCENDANT_ID from TCLN_RELATIONSHIP
+						UNION
+						select CONTENT_ID from TEST_CASE_LIBRARY_CONTENT
+						)
+						;
+					</sqlCheck>
+				</not>
+				<not>
+					<sqlCheck expectedResult="0">
+						select select count(1)
+						from CAMPAIGN_FOLDER folder
+						where folder.CLN_ID not in (
+						select DESCENDANT_ID from CLN_RELATIONSHIP UNION
+						select CONTENT_ID from CAMPAIGN_LIBRARY_CONTENT
+						)
+						;
+					</sqlCheck>
+				</not>
+			</and>
+		</preConditions>
 		<comment>create table to store ids of orphan entities to delete</comment>
 		<createTable tableName="ENTITIES_TO_DELETE">
 			<column name="NAME" type="VARCHAR(30)"></column>
