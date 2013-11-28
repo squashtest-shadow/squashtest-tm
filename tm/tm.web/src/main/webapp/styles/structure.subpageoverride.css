@@ -116,7 +116,7 @@
 
 .sub-page-title{
 	float:left;
-	max-width : 80%;
+	max-width : 70%;
 }
 
 .sub-page-title h2 {
@@ -127,6 +127,8 @@
 
 .sub-page-buttons{
 	float:right;
+	max-width : 30%;
+	overflow: hidden;
 }
 
 .sub-page-list-panel {
