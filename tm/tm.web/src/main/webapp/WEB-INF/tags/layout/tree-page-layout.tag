@@ -162,13 +162,18 @@
 				<div id="tabbed-pane">
 					<ul>
 						<li class="tab" > <a href="#tree-pane"><f:message key="tabbed_panel.tree.pane.label"/></a></li>
+						<c:if test="${ highlightedWorkspace == 'campaign'}">
+						<c:if test="${empty linkable}">
 						<li class="tab"> <a href="#search-pane"><f:message key="tabbed_panel.search.pane.label"/></a></li>					
+						</c:if>
+						</c:if>
 					</ul>
 					
 					<div id="tree-pane" <c:if test="${ highlightedWorkspace == 'requirement'}"> class="requirement-tree-pane"</c:if> >
 						<jsp:invoke fragment="tree" />
 					</div>
 					
+					<c:if test="${ highlightedWorkspace == 'campaign'}">
 					<div id="search-pane">
 					<c:choose>
 					<c:when test="${not empty linkable}">
@@ -179,6 +184,7 @@
 						</c:otherwise>
 						</c:choose>
 					</div>
+					</c:if>
 				</div>
 			</div>
 		</div>
@@ -233,23 +239,28 @@
 				<div id="tabbed-pane">
 					<ul>
 						<li class="tab" > <a href="#tree-pane"><f:message key="tabbed_panel.tree.pane.label"/></a></li>
+						<c:if test="${ highlightedWorkspace == 'campaign'}">
+						<c:if test="${empty linkable}">
 						<li class="tab"> <a href="#search-pane"><f:message key="tabbed_panel.search.pane.label"/></a></li>
+						</c:if>
+						</c:if>
 					</ul>
 
 					<div id="tree-pane" <c:if test="${ highlightedWorkspace == 'requirement'}"> class="requirement-tree-pane"</c:if> >
 						<jsp:invoke fragment="tree" />
 					</div>
 					
+
 					<div id="search-pane">
 					<c:choose>
 						<c:when test="${not empty linkable}">
-						<layout:search-panel workspace="${ highlightedWorkspace }" linkable="${ linkable }" />
 						</c:when>
 						<c:otherwise>
 						<layout:search-panel workspace="${ highlightedWorkspace }"/>
 						</c:otherwise>
 						</c:choose>
 					</div>
+
 					
 					</div>	
 				</div>

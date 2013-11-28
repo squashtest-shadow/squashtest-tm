@@ -33,29 +33,50 @@
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 <%@ taglib prefix="tree" tagdir="/WEB-INF/tags/jstree" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <div id="tree_element_menu" class="tree-top-toolbar">
+
 	<div class="button-group">
-		<a id="search-tree-button"  class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only" role="button" aria-disabled="false" title="<f:message key='tree.button.search.label' />...">
+
+		<c:choose>
+		<c:when test="${workspaceType == 'test-case' && elementType != 'requirement'}">
+		<a id="search-tree-button" class="buttonmenu"><f:message key="tree.button.search.label"/>...</a>
+		<ul id="search-tree-menu" class="not-displayed">
+			<li id="test-case-search-button" 	class="cursor-pointer"><a ><f:message key="search.button.label" />...</a></li>
+			<li id="search-by-requirement-button"  class="cursor-pointer"><a ><f:message key="search.button.byrequirement.label" />...</a></li>
+		</ul>
+		</c:when>
+		<c:otherwise>
+				<a id="search-tree-button"  class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only" role="button" aria-disabled="false" title="<f:message key='tree.button.search.label' />...">
 			<span class="ui-button-icon-primary ui-icon ui-icon-search"></span>
 			<span class="ui-button-text"><f:message key="tree.button.search.label" />...</span>
 		</a>
+		</c:otherwise>
+		</c:choose>
+		
 	</div>
+	
+	
 </div>
 
 <tree:_html-tree treeId="${ id }" />
 <script type="text/javascript">
 
 	var conf = {
+		domain : "${elementType}",
 		model : ${ json:serialize(rootModel) },
 		workspace : "${workspaceType}",
 		treeselector : "#${id}"
 	}
 	
 	$(function(){
+		
 		require( ["tree"], function(initTree){
 			initTree.initLinkableTree(conf);				
-		});		
+		});	
+		
+		require(['jquery.squash.buttonmenu'], function(){
 		
 		if(conf.workspace === "requirement"){
 			$("#search-tree-button").on('click', function(){
@@ -64,6 +85,31 @@
 	
 			$("#search-tree-button-old").on('click', function(){
 				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=requirement&id=${elementId}&associateResultWithType=${elementType}";
+			});
+		} else if(conf.domain != "requirement"){
+			
+			$("#search-tree-button").buttonmenu({
+					button : {
+						text : false,
+						icons : {
+							primary : "ui-icon-search"
+						}
+					}});
+			
+			$("#test-case-search-button").on('click', function(){
+				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=testcase&id=${elementId}&associateResultWithType=${elementType}";
+			});
+	
+			$("#test-case-search-button-old").on('click', function(){
+				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=testcase&id=${elementId}&associateResultWithType=${elementType}";
+			});
+			
+			$("#search-by-requirement-button").on('click', function(){
+				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=testcaseViaRequirement&id=${elementId}&associateResultWithType=${elementType}";
+			});
+	
+			$("#search-by-requirement-button-old").on('click', function(){
+				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=testcaseViaRequirement&id=${elementId}&associateResultWithType=${elementType}";
 			});
 		} else {
 			$("#search-tree-button").on('click', function(){
@@ -74,6 +120,8 @@
 				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=testcase&id=${elementId}&associateResultWithType=${elementType}";
 			});
 		}
+		
+		});	
 	});
 	
 </script>

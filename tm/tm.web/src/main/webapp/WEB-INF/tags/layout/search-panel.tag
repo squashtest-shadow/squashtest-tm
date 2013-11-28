@@ -553,10 +553,7 @@
 		</tr>
 		</c:if>
 		
-		<c:if test="${((workspace eq 'test-case' || workspace eq 'requirement' || linkable eq 'test-case' )&& linkable != 'requirement')}">		
-			<a id="search-tree-button-old" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only" role="button" aria-disabled="false" title="Rechercher..."><span class="ui-button-icon-primary ui-icon ui-icon-search"></span><span class="ui-button-text">Rechercher...</span></a>	
-		</c:if>
-		
+
 		<c:if test="${!((workspace eq 'test-case' || workspace eq 'requirement' || linkable eq 'test-case' )&& linkable != 'requirement')}">
 
 		<tr>
@@ -574,7 +571,8 @@
 	</table>
 </div>
 
-
+<c:if test="${!((workspace eq 'test-case' || workspace eq 'requirement' || linkable eq 'test-case' )&& linkable != 'requirement')}">		
 <div id="search">
 	<div id="search-result-pane"></div>
 </div>
+</c:if>

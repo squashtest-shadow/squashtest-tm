@@ -24,6 +24,9 @@ require([ "common" ], function(common) {
 		var goBack = function() {
 			
 			var searchDomain = $("#searchDomain").text();
+			if("testcaseViaRequirement" === searchDomain){
+				searchDomain = "testcase";
+			}
 			var associationType = $("#associationType").text();
 			var associationId = $("#associationId").text();
 			if(!!associationType){

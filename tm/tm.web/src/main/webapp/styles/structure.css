@@ -318,8 +318,6 @@ span.search-text {
 
 #search-input {
 	max-height: 7.8cm;
-	overflow-y: auto;
-	overflow-x: hidden;
 	padding: 0;
 	position: relative;
 	top: -0.9cm;

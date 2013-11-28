@@ -51,6 +51,10 @@ div.main-menubar a {
 	padding-bottom : 95px;
 }
 
+#advanced-search-input-form-panel-column1.testcaseViaRequirement div.search-toggle-panel {
+	padding-bottom : 95px;
+}
+
 #advanced-search-input-form-panel-column1 div.search-toggle-panel:last-child {
 	padding-bottom : 0px;
 }
@@ -64,6 +68,9 @@ div.main-menubar a {
 	padding-bottom : 46px;
 }
 
+#advanced-search-input-form-panel-column2.testcaseViaRequirement div.search-toggle-panel {
+	padding-bottom : 10px;
+}
 
 #advanced-search-input-form-panel-column2 div.search-toggle-panel:last-child {
 	padding-bottom : 0px;

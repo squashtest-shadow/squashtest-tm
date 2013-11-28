@@ -104,8 +104,10 @@
 				<div id="sub-page-title" class="sub-page-title">
 					<h2 th:if="!${associateResult}"
 						th:text="#{title.search.requirement}">Recherche d'exigences</h2>
-					<h2 th:if="${associateResult}"
+					<h2 th:if="${associateResult} and ${searchDomain}!='testcaseViaRequirement'"
 						th:text="#{title.search.requirement.assoc}">Recherche d'exigences</h2>
+					<h2 th:if="${associateResult} and ${searchDomain}=='testcaseViaRequirement'"
+						th:text="#{title.search.testcase.viarequirement.assoc}">Recherche d'exigences</h2>
 				</div>
 
 				<div id="sub-page-buttons" class="sub-page-buttons">
