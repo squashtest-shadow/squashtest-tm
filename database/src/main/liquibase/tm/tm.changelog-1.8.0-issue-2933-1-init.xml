@@ -41,11 +41,10 @@
 				</not>
 				<not>
 					<sqlCheck expectedResult="0">
-						select select count(1)
+						select count(1)
 						from TEST_CASE_FOLDER folder
 						where folder.TCLN_ID not in (
-						select DESCENDANT_ID from TCLN_RELATIONSHIP
-						UNION
+						select DESCENDANT_ID from TCLN_RELATIONSHIP	UNION
 						select CONTENT_ID from TEST_CASE_LIBRARY_CONTENT
 						)
 						;
@@ -53,7 +52,7 @@
 				</not>
 				<not>
 					<sqlCheck expectedResult="0">
-						select select count(1)
+						select count(1)
 						from CAMPAIGN_FOLDER folder
 						where folder.CLN_ID not in (
 						select DESCENDANT_ID from CLN_RELATIONSHIP UNION
