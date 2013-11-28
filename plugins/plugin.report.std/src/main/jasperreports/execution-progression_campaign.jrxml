@@ -252,9 +252,9 @@
 		<fieldDescription><![CDATA[fPercentageStatusFailure]]></fieldDescription>
 	</field>
 	<detail>
-		<band height="40" splitType="Stretch">
+		<band height="20">
 			<componentElement>
-				<reportElement key="table" style="table" x="0" y="0" width="736" height="20" isRemoveLineWhenBlank="true">
+				<reportElement key="table" style="table" stretchType="RelativeToBandHeight" x="0" y="0" width="736" height="20" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[(($F{iterations}!=null) &&($F{iterations}.size()>0))]]></printWhenExpression>
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
@@ -320,8 +320,10 @@
 					</datasetRun>
 					<jr:column width="113">
 						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
-							<textField>
-								<reportElement x="0" y="0" width="113" height="20"/>
+							<textField isStretchWithOverflow="true">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="113" height="20">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
 								<textElement verticalAlignment="Middle">
 									<font size="9" isBold="true"/>
 								</textElement>
@@ -332,8 +334,10 @@
 					</jr:column>
 					<jr:column width="65">
 						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
-							<textField pattern="">
-								<reportElement x="0" y="0" width="65" height="20"/>
+							<textField isStretchWithOverflow="true" pattern="">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="65" height="20">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="9" isBold="true"/>
 								</textElement>
@@ -344,8 +348,10 @@
 					</jr:column>
 					<jr:column width="65">
 						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
-							<textField pattern="">
-								<reportElement x="0" y="0" width="65" height="20"/>
+							<textField isStretchWithOverflow="true" pattern="">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="65" height="20">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="9" isBold="true"/>
 								</textElement>
@@ -356,8 +362,10 @@
 					</jr:column>
 					<jr:column width="65">
 						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
-							<textField pattern="" isBlankWhenNull="true">
-								<reportElement x="0" y="0" width="65" height="20"/>
+							<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="65" height="20">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="9" isBold="true"/>
 								</textElement>
@@ -368,8 +376,10 @@
 					</jr:column>
 					<jr:column width="65">
 						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
-							<textField pattern="">
-								<reportElement x="0" y="0" width="65" height="20"/>
+							<textField isStretchWithOverflow="true" pattern="">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="65" height="20">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="9" isBold="true"/>
 								</textElement>
@@ -380,15 +390,19 @@
 					</jr:column>
 					<jr:column width="41">
 						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
-							<textField>
-								<reportElement x="0" y="0" width="20" height="20"/>
+							<textField isStretchWithOverflow="true">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="20">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{campaign_iCountStatusReady}]]></textFieldExpression>
 							</textField>
-							<textField pattern="#,##0 %">
-								<reportElement x="20" y="0" width="21" height="20" forecolor="#999999"/>
+							<textField isStretchWithOverflow="true" pattern="#,##0 %">
+								<reportElement stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="20" forecolor="#999999">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
 								<textElement textAlignment="Justified" verticalAlignment="Middle">
 									<font size="7"/>
 								</textElement>
@@ -399,15 +413,19 @@
 					</jr:column>
 					<jr:column width="41">
 						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
-							<textField>
-								<reportElement x="0" y="0" width="20" height="20"/>
+							<textField isStretchWithOverflow="true">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="20">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{campaign_iCountStatusRunning}]]></textFieldExpression>
 							</textField>
-							<textField pattern="#,##0 %">
-								<reportElement x="20" y="0" width="21" height="20" forecolor="#999999"/>
+							<textField isStretchWithOverflow="true" pattern="#,##0 %">
+								<reportElement stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="20" forecolor="#999999">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
 								<textElement textAlignment="Justified" verticalAlignment="Middle">
 									<font size="7"/>
 								</textElement>
@@ -418,15 +436,19 @@
 					</jr:column>
 					<jr:column width="41">
 						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
-							<textField>
-								<reportElement x="0" y="0" width="20" height="20"/>
+							<textField isStretchWithOverflow="true">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="20">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{campaign_iCountStatusUntestable}]]></textFieldExpression>
 							</textField>
-							<textField pattern="#,##0 %">
-								<reportElement x="20" y="0" width="21" height="20" forecolor="#999999"/>
+							<textField isStretchWithOverflow="true" pattern="#,##0 %">
+								<reportElement stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="20" forecolor="#999999">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
 								<textElement textAlignment="Justified" verticalAlignment="Middle">
 									<font size="7"/>
 								</textElement>
@@ -437,15 +459,19 @@
 					</jr:column>
 					<jr:column width="41">
 						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
-							<textField>
-								<reportElement x="0" y="0" width="20" height="20"/>
+							<textField isStretchWithOverflow="true">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="20">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{campaign_iCountStatusBloqued}]]></textFieldExpression>
 							</textField>
-							<textField pattern="#,##0 %">
-								<reportElement x="20" y="0" width="21" height="20" forecolor="#999999"/>
+							<textField isStretchWithOverflow="true" pattern="#,##0 %">
+								<reportElement stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="20" forecolor="#999999">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
 								<textElement textAlignment="Justified" verticalAlignment="Middle">
 									<font size="7"/>
 								</textElement>
@@ -456,15 +482,19 @@
 					</jr:column>
 					<jr:column width="41">
 						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
-							<textField>
-								<reportElement x="0" y="0" width="20" height="20" forecolor="#FB3333"/>
+							<textField isStretchWithOverflow="true">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="20" forecolor="#FB3333">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{campaign_iCountStatusFailure}]]></textFieldExpression>
 							</textField>
-							<textField pattern="#,##0 %">
-								<reportElement x="20" y="0" width="21" height="20" forecolor="#999999"/>
+							<textField isStretchWithOverflow="true" pattern="#,##0 %">
+								<reportElement stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="20" forecolor="#999999">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
 								<textElement textAlignment="Justified" verticalAlignment="Middle">
 									<font size="7"/>
 								</textElement>
@@ -475,15 +505,19 @@
 					</jr:column>
 					<jr:column width="41">
 						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
-							<textField>
-								<reportElement x="0" y="0" width="20" height="20" forecolor="#009900"/>
+							<textField isStretchWithOverflow="true">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="20" forecolor="#009900">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="9"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{campaign_iCountStatusSuccess}]]></textFieldExpression>
 							</textField>
-							<textField pattern="#,##0 %">
-								<reportElement x="20" y="0" width="21" height="20" forecolor="#999999"/>
+							<textField isStretchWithOverflow="true" pattern="#,##0 %">
+								<reportElement stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="20" forecolor="#999999">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
 								<textElement textAlignment="Justified" verticalAlignment="Middle">
 									<font size="7"/>
 								</textElement>
@@ -494,8 +528,10 @@
 					</jr:column>
 					<jr:column width="51">
 						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
-							<textField>
-								<reportElement x="0" y="0" width="50" height="20"/>
+							<textField isStretchWithOverflow="true">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="50" height="20">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="9" isBold="true"/>
 								</textElement>
@@ -506,8 +542,10 @@
 					</jr:column>
 					<jr:column width="63">
 						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
-							<textField>
-								<reportElement x="0" y="0" width="63" height="20"/>
+							<textField isStretchWithOverflow="true">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="63" height="20">
+									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
+								</reportElement>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="9" isBold="true"/>
 								</textElement>
@@ -518,8 +556,10 @@
 					</jr:column>
 				</jr:table>
 			</componentElement>
+		</band>
+		<band height="20">
 			<subreport>
-				<reportElement x="0" y="20" width="736" height="20" isRemoveLineWhenBlank="true"/>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="736" height="20" isRemoveLineWhenBlank="true"/>
 				<subreportParameter name="REPORT_RESOURCE_BUNDLE">
 					<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
 				</subreportParameter>
