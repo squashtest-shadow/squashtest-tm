@@ -92,6 +92,10 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 	
 	private static final String HQL_INDEXED_TEST_PLAN_USER_FILTER =
 			"and CampaignTestPlanItem.user.id = :userFilter ";
+
+	private static final String HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER =
+			"and CampaignTestPlanItem.user is null ";
+	
 	
 	private static final String HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER =
 			"and TestCase.importance = :weightFilter ";
@@ -174,7 +178,11 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER);
 		}
 		if(filtering.hasFilter(USER_DATA, -1)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
+			if("0".equals(filtering.getFilter(USER_DATA, -1))){
+				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER);
+			} else {
+				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
+			}
 		}
 		if(filtering.hasFilter(WEIGHT_DATA, -1)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER);
@@ -207,7 +215,11 @@ private String buildIndexedTestPlanQueryStringWithoutSorting(ColumnFiltering fil
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER);
 		}
 		if(filtering.hasFilter(USER_DATA, -1)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
+			if("0".equals(filtering.getFilter(USER_DATA, -1))){
+				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER);
+			} else {
+				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
+			}
 		}
 		if(filtering.hasFilter(WEIGHT_DATA, -1)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER);
@@ -238,7 +250,7 @@ private String buildIndexedTestPlanQueryStringWithoutSorting(ColumnFiltering fil
 		if(filtering.hasFilter(TESTCASE_DATA, -1)){
 			query.setParameter(TESTCASE_FILTER, "%"+filtering.getFilter(TESTCASE_DATA, -1)+"%", StringType.INSTANCE);
 		}
-		if(filtering.hasFilter(USER_DATA, -1)){
+		if(filtering.hasFilter(USER_DATA, -1) && !"0".equals(filtering.getFilter(USER_DATA, -1))){
 			query.setParameter(USER_FILTER, Long.parseLong(filtering.getFilter(USER_DATA, -1)), LongType.INSTANCE);
 		}
 		if(filtering.hasFilter(WEIGHT_DATA, -1)){
@@ -399,7 +411,7 @@ private String buildIndexedTestPlanQueryStringWithoutSorting(ColumnFiltering fil
 		if(filtering.hasFilter(TESTCASE_DATA, -1)){
 			query.setParameter(TESTCASE_FILTER, "%"+filtering.getFilter(TESTCASE_DATA, -1)+"%", StringType.INSTANCE);
 		}
-		if(filtering.hasFilter(USER_DATA, -1)){
+		if(filtering.hasFilter(USER_DATA, -1)  && !"0".equals(filtering.getFilter(USER_DATA, -1))){
 			query.setParameter(USER_FILTER, Long.parseLong(filtering.getFilter(USER_DATA, -1)), LongType.INSTANCE);
 		}
 		if(filtering.hasFilter(WEIGHT_DATA, -1)){

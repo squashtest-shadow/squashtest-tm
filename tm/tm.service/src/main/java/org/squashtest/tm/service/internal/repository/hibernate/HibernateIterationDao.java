@@ -124,9 +124,12 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 	
 	private static final String HQL_INDEXED_TEST_PLAN_STATUS_FILTER =
 			"and IterationTestPlanItem.executionStatus = :statusFilter ";
-	
+
 	private static final String HQL_INDEXED_TEST_PLAN_USER_FILTER =
-			"and IterationTestPlanItem.user = :userFilter ";
+			"and IterationTestPlanItem.user.id = :userFilter ";
+	
+	private static final String HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER =
+			"and IterationTestPlanItem.user is null ";
 
 	private static final String HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER =
 			"and IterationTestPlanItem.lastExecutedOn between :startDate and :endDate ";
@@ -386,7 +389,11 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_STATUS_FILTER);
 		}
 		if(columnFiltering.hasFilter(USER_DATA, -2)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
+			if("0".equals(columnFiltering.getFilter(USER_DATA, -2))){
+				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER);
+			} else {
+				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
+			}
 		}
 		if(columnFiltering.hasFilter(LASTEXEC_DATA, -2)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER);				
@@ -444,7 +451,7 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 		if(columnFiltering.hasFilter(STATUS_DATA, -2)){
 			query.setParameter(STATUS_FILTER, columnFiltering.getFilter(STATUS_DATA, -2), StringType.INSTANCE);
 		}
-		if(columnFiltering.hasFilter(USER_DATA, -2)){
+		if(columnFiltering.hasFilter(USER_DATA, -2) && !"0".equals(columnFiltering.getFilter(USER_DATA, -2))){
 			query.setParameter(USER_FILTER, Long.parseLong(columnFiltering.getFilter(USER_DATA, -2)), LongType.INSTANCE);
 		}
 		if(columnFiltering.hasFilter(LASTEXEC_DATA, -2)){
@@ -524,7 +531,11 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_STATUS_FILTER);
 		}
 		if(columnFiltering.hasFilter(USER_DATA, -2)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
+			if("0".equals(columnFiltering.getFilter(USER_DATA, -2))){
+				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER);
+			} else {
+				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
+			}
 		}
 		if(columnFiltering.hasFilter(LASTEXEC_DATA, -2)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER);				
@@ -568,7 +579,7 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 		if(columnFiltering.hasFilter(STATUS_DATA, -2)){
 			query.setParameter(STATUS_FILTER, columnFiltering.getFilter(STATUS_DATA, -2), StringType.INSTANCE);
 		}
-		if(columnFiltering.hasFilter(USER_DATA, -2)){
+		if(columnFiltering.hasFilter(USER_DATA, -2) && !"0".equals(columnFiltering.getFilter(USER_DATA, -2))){
 			query.setParameter(USER_FILTER, Long.parseLong(columnFiltering.getFilter(USER_DATA, -2)), LongType.INSTANCE);
 		}
 		if(columnFiltering.hasFilter(LASTEXEC_DATA, -2)){

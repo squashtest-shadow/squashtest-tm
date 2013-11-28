@@ -112,8 +112,11 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 			"and TestCase.executionMode = :modeFilter ";
 	
 	private static final String HQL_INDEXED_TEST_PLAN_USER_FILTER =
-			"and IterationTestPlanItem.user = :userFilter ";
+			"and IterationTestPlanItem.user.id = :userFilter ";
 
+	private static final String HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER =
+			"and IterationTestPlanItem.user is null ";
+	
 	private static final String HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER =
 			"and IterationTestPlanItem.lastExecutedOn between :startDate and :endDate ";
 	
@@ -366,7 +369,11 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_STATUS_FILTER);
 		}
 		if(columnFiltering.hasFilter(USER_DATA, -1)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
+			if("0".equals(columnFiltering.getFilter(USER_DATA, -1))){
+				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER);
+			} else {
+				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
+			}
 		}
 		if(columnFiltering.hasFilter(LASTEXEC_DATA, -1)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER);				
@@ -408,7 +415,7 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 		if(columnFiltering.hasFilter(STATUS_DATA, -1)){
 			query.setParameter(STATUS_FILTER, columnFiltering.getFilter(STATUS_DATA, -1), StringType.INSTANCE);
 		}
-		if(columnFiltering.hasFilter(USER_DATA, -1)){
+		if(columnFiltering.hasFilter(USER_DATA, -1) && !"0".equals(columnFiltering.getFilter(USER_DATA, -1))){
 			query.setParameter(USER_FILTER, Long.parseLong(columnFiltering.getFilter(USER_DATA, -1)), LongType.INSTANCE);
 		}
 		if(columnFiltering.hasFilter(LASTEXEC_DATA, -1)){
@@ -521,7 +528,11 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_STATUS_FILTER);
 		}
 		if(columnFiltering.hasFilter(USER_DATA, -1)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
+			if("0".equals(columnFiltering.getFilter(USER_DATA, -1))){
+				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER);
+			} else {
+				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
+			}
 		}
 		if(columnFiltering.hasFilter(LASTEXEC_DATA, -1)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER);				
@@ -556,7 +567,7 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 		if(columnFiltering.hasFilter(STATUS_DATA, -1)){
 			query.setParameter(STATUS_FILTER, columnFiltering.getFilter(STATUS_DATA, -1), StringType.INSTANCE);
 		}
-		if(columnFiltering.hasFilter(USER_DATA, -1)){
+		if(columnFiltering.hasFilter(USER_DATA, -1) && !"0".equals(columnFiltering.getFilter(USER_DATA, -1))){
 			query.setParameter(USER_FILTER, Long.parseLong(columnFiltering.getFilter(USER_DATA, -1)), LongType.INSTANCE);
 		}
 		if(columnFiltering.hasFilter(LASTEXEC_DATA, -1)){
