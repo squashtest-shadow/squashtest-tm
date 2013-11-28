@@ -360,8 +360,7 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 		
 	}
 	
-	private String buildIndexedTestPlanQueryString(PagingAndMultiSorting sorting, Filtering filtering, ColumnFiltering columnFiltering){
-		
+	private StringBuilder buildTestPlanQueryBody(Filtering filtering, ColumnFiltering columnFiltering){
 		StringBuilder hqlbuilder = new StringBuilder();
 		
 		String hql = filtering.isDefined() ? hqlUserFilteredIndexedTestPlan : hqlFullIndexedTestPlan;
@@ -405,6 +404,13 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TESTSUITE_FILTER);
 		}
 		
+		return hqlbuilder;
+	}
+	
+	private String buildIndexedTestPlanQueryString(PagingAndMultiSorting sorting, Filtering filtering, ColumnFiltering columnFiltering){
+		
+		StringBuilder hqlbuilder = buildTestPlanQueryBody(filtering, columnFiltering);
+		
 		// tune the sorting to make hql happy
 		LevelImplementorSorter wrapper= new LevelImplementorSorter(sorting);
 		wrapper.map("TestCase.importance", TestCaseImportance.class);
@@ -419,65 +425,7 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 		
 		String queryString = buildIndexedTestPlanQueryString(sorting, filtering, columnFiltering);
 				
-		Query query = currentSession().createQuery(queryString);
-		
-		query.setParameter("iterationId", iterationId, LongType.INSTANCE);
-		
-		if (filtering.isDefined()){
-			query.setParameter("userLogin", filtering.getFilter(), StringType.INSTANCE);
-		}
-		
-		if(columnFiltering.hasFilter(PROJECT_DATA, -1)){
-			query.setParameter(PROJECT_FILTER, "%"+columnFiltering.getFilter(PROJECT_DATA, -1)+"%", StringType.INSTANCE);
-		}
-		if(columnFiltering.hasFilter(MODE_DATA, -1)){
-			query.setParameter(MODE_FILTER, "%"+columnFiltering.getFilter(MODE_DATA, -1)+"%", StringType.INSTANCE);
-		}
-		if(columnFiltering.hasFilter(REFERENCE_DATA, -1)){
-			query.setParameter(REFERENCE_FILTER, "%"+columnFiltering.getFilter(REFERENCE_DATA, -1)+"%", StringType.INSTANCE);
-		} 
-		if(columnFiltering.hasFilter(TESTCASE_DATA, -1)){
-			query.setParameter(TESTCASE_FILTER, "%"+columnFiltering.getFilter(TESTCASE_DATA, -1)+"%", StringType.INSTANCE);
-		}
-		if(columnFiltering.hasFilter(WEIGHT_DATA, -1)){
-			query.setParameter(WEIGHT_FILTER, columnFiltering.getFilter(WEIGHT_DATA, -1), StringType.INSTANCE);
-		}
-		if(columnFiltering.hasFilter(DATASET_DATA, -1)){
-			query.setParameter(DATASET_FILTER, "%"+columnFiltering.getFilter(DATASET_DATA, -1)+"%", StringType.INSTANCE);
-		}
-		if(columnFiltering.hasFilter(TESTSUITE_DATA, -1)){
-			query.setParameter(TESTSUITE_FILTER, "%"+columnFiltering.getFilter(TESTSUITE_DATA, -1)+"%", StringType.INSTANCE);
-		}
-		if(columnFiltering.hasFilter(STATUS_DATA, -2)){
-			query.setParameter(STATUS_FILTER, columnFiltering.getFilter(STATUS_DATA, -2), StringType.INSTANCE);
-		}
-		if(columnFiltering.hasFilter(USER_DATA, -2) && !"0".equals(columnFiltering.getFilter(USER_DATA, -2))){
-			query.setParameter(USER_FILTER, Long.parseLong(columnFiltering.getFilter(USER_DATA, -2)), LongType.INSTANCE);
-		}
-		if(columnFiltering.hasFilter(LASTEXEC_DATA, -2)){
-			String dates = columnFiltering.getFilter(LASTEXEC_DATA, -2);
-			if(dates.contains("-")){
-				String[] dateArray = dates.split("-");
-				Date startDate;
-				try {
-					startDate = new SimpleDateFormat(DATE_FORMAT).parse(dateArray[0].trim());
-					Date endDate = new SimpleDateFormat(DATE_FORMAT).parse(dateArray[1].trim());
-					query.setParameter(START_DATE, startDate, DateType.INSTANCE);
-					query.setParameter(END_DATE, nextDay(endDate), DateType.INSTANCE);
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
-			} else {
-				Date date;
-				try {
-					date = new SimpleDateFormat(DATE_FORMAT).parse(dates.trim());
-					query.setParameter(START_DATE, date, DateType.INSTANCE);
-					query.setParameter(END_DATE, nextDay(date), DateType.INSTANCE);
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+		Query query = assignParameterValuesToTestPlanQuery(queryString, iterationId, filtering, columnFiltering);
 		
 		PagingUtils.addPaging(query, sorting);
 		
@@ -501,53 +449,9 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 		}
 	}
 
-	@Override
-	public long countTestPlans(Long iterationId, Filtering filtering, ColumnFiltering columnFiltering) {
-
-		StringBuilder hqlbuilder = new StringBuilder();
-		
-		String hql = filtering.isDefined() ? hqlUserFilteredIndexedTestPlan : hqlFullIndexedTestPlan;
-		hqlbuilder.append(hql);
-		
-		if(columnFiltering.hasFilter(PROJECT_DATA, -1)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_PROJECT_FILTER);
-		}
-		if(columnFiltering.hasFilter(MODE_DATA, -1)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_MODE_FILTER);
-		}		
-		if(columnFiltering.hasFilter(REFERENCE_DATA, -1)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER);
-		}
-		if(columnFiltering.hasFilter(TESTCASE_DATA, -1)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER);
-		}
-		if(columnFiltering.hasFilter(WEIGHT_DATA, -1)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER);
-		}
-		if(columnFiltering.hasFilter(DATASET_DATA, -1)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_DATASET_FILTER);
-		}
-		if(columnFiltering.hasFilter(STATUS_DATA, -2)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_STATUS_FILTER);
-		}
-		if(columnFiltering.hasFilter(USER_DATA, -2)){
-			if("0".equals(columnFiltering.getFilter(USER_DATA, -2))){
-				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER);
-			} else {
-				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
-			}
-		}
-		if(columnFiltering.hasFilter(LASTEXEC_DATA, -2)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER);				
-		}
-		
-		hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TEMPLATE_END);
-		
-		if(columnFiltering.hasFilter(TESTSUITE_DATA, -1)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TESTSUITE_FILTER);
-		}
-		
-		Query query = currentSession().createQuery(hqlbuilder.toString());
+	private Query assignParameterValuesToTestPlanQuery(String queryString, Long iterationId, Filtering filtering, ColumnFiltering columnFiltering){
+	
+		Query query = currentSession().createQuery(queryString);
 		
 		query.setParameter("iterationId", iterationId, LongType.INSTANCE);
 		
@@ -606,6 +510,16 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 				}
 			}
 		}
+		
+		return query;
+	}
+	
+	@Override
+	public long countTestPlans(Long iterationId, Filtering filtering, ColumnFiltering columnFiltering) {
+
+		StringBuilder hqlbuilder = buildTestPlanQueryBody(filtering, columnFiltering);
+		
+		Query query = assignParameterValuesToTestPlanQuery(hqlbuilder.toString(), iterationId, filtering, columnFiltering);
 
 		return query.list().size();
 	}

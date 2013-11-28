@@ -164,31 +164,7 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 
 	private String buildIndexedTestPlanQueryString(PagingAndMultiSorting sorting, ColumnFiltering filtering){
 		
-		StringBuilder hqlbuilder = new StringBuilder(HQL_INDEXED_TEST_PLAN);
-		if(filtering.hasFilter(PROJECT_DATA, -1)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_PROJECT_FILTER);
-		}
-		if(filtering.hasFilter(MODE_DATA, -1)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_MODE_FILTER);
-		}
-		if(filtering.hasFilter(REFERENCE_DATA, -1)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER);
-		}
-		if(filtering.hasFilter(TESTCASE_DATA, -1)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER);
-		}
-		if(filtering.hasFilter(USER_DATA, -1)){
-			if("0".equals(filtering.getFilter(USER_DATA, -1))){
-				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER);
-			} else {
-				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
-			}
-		}
-		if(filtering.hasFilter(WEIGHT_DATA, -1)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER);
-		}
-
-		
+		StringBuilder hqlbuilder = buildIndexedTestPlanQueryBody(filtering);
 		
 		// tune the sorting to make hql happy
 		LevelImplementorSorter wrapper= new LevelImplementorSorter(sorting);
@@ -199,8 +175,14 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 		return hqlbuilder.toString();
 	}
 	
-private String buildIndexedTestPlanQueryStringWithoutSorting(ColumnFiltering filtering){
+	private String buildIndexedTestPlanQueryStringWithoutSorting(ColumnFiltering filtering){
 		
+		StringBuilder hqlbuilder = buildIndexedTestPlanQueryBody(filtering);
+	
+		return hqlbuilder.toString();
+	}
+	
+	private StringBuilder buildIndexedTestPlanQueryBody(ColumnFiltering filtering){
 		StringBuilder hqlbuilder = new StringBuilder(HQL_INDEXED_TEST_PLAN);
 		if(filtering.hasFilter(PROJECT_DATA, -1)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_PROJECT_FILTER);
@@ -224,16 +206,23 @@ private String buildIndexedTestPlanQueryStringWithoutSorting(ColumnFiltering fil
 		if(filtering.hasFilter(WEIGHT_DATA, -1)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER);
 		}
-	
-		return hqlbuilder.toString();
+		
+		return hqlbuilder;
 	}
-	
 
 	private List<Object[]> _findIndexedTestPlan(final long campaignId, PagingAndMultiSorting sorting, ColumnFiltering filtering){
 		
-		
 		String queryString = buildIndexedTestPlanQueryString(sorting, filtering);
 		
+		Query query = assignParameterValuesToTestPlanQuery(queryString, campaignId, filtering);
+
+		PagingUtils.addPaging(query, sorting);
+		
+		return query.list();
+	}
+	
+	private Query assignParameterValuesToTestPlanQuery(String queryString, long campaignId, ColumnFiltering filtering){
+	
 		Query query = currentSession().createQuery(queryString);
 		
 		query.setParameter("campaignId", campaignId, LongType.INSTANCE);
@@ -250,17 +239,24 @@ private String buildIndexedTestPlanQueryStringWithoutSorting(ColumnFiltering fil
 		if(filtering.hasFilter(TESTCASE_DATA, -1)){
 			query.setParameter(TESTCASE_FILTER, "%"+filtering.getFilter(TESTCASE_DATA, -1)+"%", StringType.INSTANCE);
 		}
-		if(filtering.hasFilter(USER_DATA, -1) && !"0".equals(filtering.getFilter(USER_DATA, -1))){
+		if(filtering.hasFilter(USER_DATA, -1)  && !"0".equals(filtering.getFilter(USER_DATA, -1))){
 			query.setParameter(USER_FILTER, Long.parseLong(filtering.getFilter(USER_DATA, -1)), LongType.INSTANCE);
 		}
 		if(filtering.hasFilter(WEIGHT_DATA, -1)){
 			query.setParameter(WEIGHT_FILTER, filtering.getFilter(WEIGHT_DATA, -1), StringType.INSTANCE);
 		}
-
-
-		PagingUtils.addPaging(query, sorting);
 		
-		return query.list();
+		return query;
+	}
+	
+	@Override
+	public long countFilteredTestPlanById(long campaignId, ColumnFiltering filtering) {
+		
+		String queryString = buildIndexedTestPlanQueryStringWithoutSorting(filtering);
+		
+		Query query = assignParameterValuesToTestPlanQuery(queryString, campaignId, filtering);
+
+		return query.list().size();
 	}
 	
 	@Override
@@ -390,34 +386,5 @@ private String buildIndexedTestPlanQueryStringWithoutSorting(ColumnFiltering fil
 		return buildIndexedItems(tuples);
 	}
 
-	@Override
-	public long countFilteredTestPlanById(long campaignId, ColumnFiltering filtering) {
-		
-		String queryString = buildIndexedTestPlanQueryStringWithoutSorting(filtering);
-		
-		Query query = currentSession().createQuery(queryString);
-		
-		query.setParameter("campaignId", campaignId, LongType.INSTANCE);
-		
-		if(filtering.hasFilter(PROJECT_DATA, -1)){
-			query.setParameter(PROJECT_FILTER, "%"+filtering.getFilter(PROJECT_DATA, -1)+"%", StringType.INSTANCE);
-		}
-		if(filtering.hasFilter(MODE_DATA, -1)){
-			query.setParameter(MODE_FILTER, filtering.getFilter(MODE_DATA, -1), StringType.INSTANCE);
-		}
-		if(filtering.hasFilter(REFERENCE_DATA, -1)){
-			query.setParameter(REFERENCE_FILTER, "%"+filtering.getFilter(REFERENCE_DATA, -1)+"%", StringType.INSTANCE);
-		} 
-		if(filtering.hasFilter(TESTCASE_DATA, -1)){
-			query.setParameter(TESTCASE_FILTER, "%"+filtering.getFilter(TESTCASE_DATA, -1)+"%", StringType.INSTANCE);
-		}
-		if(filtering.hasFilter(USER_DATA, -1)  && !"0".equals(filtering.getFilter(USER_DATA, -1))){
-			query.setParameter(USER_FILTER, Long.parseLong(filtering.getFilter(USER_DATA, -1)), LongType.INSTANCE);
-		}
-		if(filtering.hasFilter(WEIGHT_DATA, -1)){
-			query.setParameter(WEIGHT_FILTER, filtering.getFilter(WEIGHT_DATA, -1), StringType.INSTANCE);
-		}
 
-		return query.list().size();
-	}
 }

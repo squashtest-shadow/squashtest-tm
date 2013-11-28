@@ -339,7 +339,8 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 
 	}
 
-	private List<Object[]> _findIndexedTestPlan(final long suiteId, PagingAndMultiSorting sorting, Filtering filtering, ColumnFiltering columnFiltering) {
+	private StringBuilder buildTestPlanQueryBody(Filtering filtering, ColumnFiltering columnFiltering){
+		
 		StringBuilder hqlbuilder = new StringBuilder(HQL_INDEXED_TEST_PLAN);
 
 		// check if we want to filter on the user login
@@ -379,14 +380,12 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER);				
 		}
 		
-		// tune the sorting to make hql happy
-		LevelImplementorSorter wrapper = new LevelImplementorSorter(sorting);
-		wrapper.map("TestCase.importance", TestCaseImportance.class);
-		wrapper.map("IterationTestPlanItem.executionStatus", ExecutionStatus.class);
-
-		SortingUtils.addOrder(hqlbuilder, wrapper);
-
-		Query query = currentSession().createQuery(hqlbuilder.toString());
+		return hqlbuilder;
+	}
+	
+	private Query assignParameterValuesToTestPlanQuery(String queryString, Long suiteId, Filtering filtering, ColumnFiltering columnFiltering){
+		
+		Query query = currentSession().createQuery(queryString);
 
 		query.setParameter("suiteId", suiteId, LongType.INSTANCE);
 
@@ -442,6 +441,22 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 				}
 			}
 		}
+		
+		return query;
+	}
+	
+	private List<Object[]> _findIndexedTestPlan(final long suiteId, PagingAndMultiSorting sorting, Filtering filtering, ColumnFiltering columnFiltering) {
+		
+		StringBuilder hqlbuilder = buildTestPlanQueryBody(filtering, columnFiltering);
+				
+		// tune the sorting to make hql happy
+		LevelImplementorSorter wrapper = new LevelImplementorSorter(sorting);
+		wrapper.map("TestCase.importance", TestCaseImportance.class);
+		wrapper.map("IterationTestPlanItem.executionStatus", ExecutionStatus.class);
+
+		SortingUtils.addOrder(hqlbuilder, wrapper);
+
+		Query query = assignParameterValuesToTestPlanQuery(hqlbuilder.toString(), suiteId, filtering, columnFiltering);
 		
 		PagingUtils.addPaging(query, sorting);
 
@@ -499,101 +514,10 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 	@Override
 	public long countTestPlans(Long suiteId, Filtering filtering, ColumnFiltering columnFiltering) {
 		
-		StringBuilder hqlbuilder = new StringBuilder(HQL_INDEXED_TEST_PLAN);
 
-		// check if we want to filter on the user login
-		if (filtering.isDefined()) {
-			hqlbuilder.append("and User.login = :userLogin ");
-		}
-
-		if(columnFiltering.hasFilter(PROJECT_DATA, -1)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_PROJECT_FILTER);
-		}
-		if(columnFiltering.hasFilter(MODE_DATA, -1)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_MODE_FILTER);
-		}
-		if(columnFiltering.hasFilter(REFERENCE_DATA, -1)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER);
-		}
-		if(columnFiltering.hasFilter(TESTCASE_DATA, -1)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER);
-		}
-		if(columnFiltering.hasFilter(WEIGHT_DATA, -1)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER);
-		}
-		if(columnFiltering.hasFilter(DATASET_DATA, -1)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_DATASET_FILTER);
-		}
-		if(columnFiltering.hasFilter(STATUS_DATA, -1)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_STATUS_FILTER);
-		}
-		if(columnFiltering.hasFilter(USER_DATA, -1)){
-			if("0".equals(columnFiltering.getFilter(USER_DATA, -1))){
-				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER);
-			} else {
-				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
-			}
-		}
-		if(columnFiltering.hasFilter(LASTEXEC_DATA, -1)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER);				
-		}
-
-		Query query = currentSession().createQuery(hqlbuilder.toString());
-
-		query.setParameter("suiteId", suiteId, LongType.INSTANCE);
-
-		if (filtering.isDefined()) {
-			query.setParameter("userLogin", filtering.getFilter(), StringType.INSTANCE);
-		}
-
-		if(columnFiltering.hasFilter(PROJECT_DATA, -1)){
-			query.setParameter(PROJECT_FILTER, "%"+columnFiltering.getFilter(PROJECT_DATA, -1)+"%", StringType.INSTANCE);
-		}
-		if(columnFiltering.hasFilter(MODE_DATA, -1)){
-			query.setParameter(MODE_FILTER, "%"+columnFiltering.getFilter(MODE_DATA, -1)+"%", StringType.INSTANCE);
-		} 
-		if(columnFiltering.hasFilter(REFERENCE_DATA, -1)){
-			query.setParameter(REFERENCE_FILTER, "%"+columnFiltering.getFilter(REFERENCE_DATA, -1)+"%", StringType.INSTANCE);
-		} 
-		if(columnFiltering.hasFilter(TESTCASE_DATA, -1)){
-			query.setParameter(TESTCASE_FILTER, "%"+columnFiltering.getFilter(TESTCASE_DATA, -1)+"%", StringType.INSTANCE);
-		}
-		if(columnFiltering.hasFilter(WEIGHT_DATA, -1)){
-			query.setParameter(WEIGHT_FILTER, columnFiltering.getFilter(WEIGHT_DATA, -1), StringType.INSTANCE);
-		}
-		if(columnFiltering.hasFilter(DATASET_DATA, -1)){
-			query.setParameter(DATASET_FILTER, "%"+columnFiltering.getFilter(DATASET_DATA, -1)+"%", StringType.INSTANCE);
-		}
-		if(columnFiltering.hasFilter(STATUS_DATA, -1)){
-			query.setParameter(STATUS_FILTER, columnFiltering.getFilter(STATUS_DATA, -1), StringType.INSTANCE);
-		}
-		if(columnFiltering.hasFilter(USER_DATA, -1) && !"0".equals(columnFiltering.getFilter(USER_DATA, -1))){
-			query.setParameter(USER_FILTER, Long.parseLong(columnFiltering.getFilter(USER_DATA, -1)), LongType.INSTANCE);
-		}
-		if(columnFiltering.hasFilter(LASTEXEC_DATA, -1)){
-			String dates = columnFiltering.getFilter(LASTEXEC_DATA, -1);
-			if(dates.contains("-")){
-				String[] dateArray = dates.split("-");
-				Date startDate;
-				try {
-					startDate = new SimpleDateFormat(DATE_FORMAT).parse(dateArray[0].trim());
-					Date endDate = new SimpleDateFormat(DATE_FORMAT).parse(dateArray[1].trim());
-					query.setParameter(START_DATE, startDate, DateType.INSTANCE);
-					query.setParameter(END_DATE, nextDay(endDate), DateType.INSTANCE);
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
-			} else {
-				Date date;
-				try {
-					date = new SimpleDateFormat(DATE_FORMAT).parse(dates.trim());
-					query.setParameter(START_DATE, date, DateType.INSTANCE);
-					query.setParameter(END_DATE, nextDay(date), DateType.INSTANCE);
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+		StringBuilder hqlbuilder = buildTestPlanQueryBody(filtering, columnFiltering);
+		
+		Query query = assignParameterValuesToTestPlanQuery(hqlbuilder.toString(), suiteId, filtering, columnFiltering);
 
 		return query.list().size();
 	}
