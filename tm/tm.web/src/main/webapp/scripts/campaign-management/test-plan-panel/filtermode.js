@@ -19,10 +19,10 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery",  "jquery.squash.rangedatepicker" ], function($, rangedatepicker){
+define(["jquery"], function($){
 
 	function _hideFilterFields(_bNoredraw) {
-		var table = $("#iteration-test-plans-table").squashTable(),
+		var table = $("#test-cases-table").squashTable(),
 			settings = table.fnSettings();
 		table.find(".th_input").hide();
 		
@@ -37,7 +37,7 @@ define(["jquery",  "jquery.squash.rangedatepicker" ], function($, rangedatepicke
 	}
 
 	function _showFilterFields() {
-		var table = $("#iteration-test-plans-table").squashTable(),
+		var table = $("#test-cases-table").squashTable(),
 			settings = table.fnSettings();
 		
 		table.find(".th_input").show();
@@ -70,22 +70,20 @@ define(["jquery",  "jquery.squash.rangedatepicker" ], function($, rangedatepicke
 			
 			th.append(combo);
 		}
+		
 
-
-		$("#iteration-test-plans-table_filter").hide();
+		$("#test-cases-table_filter").hide();
 		
 		var users = initconf.basic.assignableUsers,
-			statuses = initconf.messages.executionStatus,
 			weights = initconf.basic.weights,
 			modes = initconf.basic.modes;
 		
-		var table = $("#iteration-test-plans-table");
+		var table = $("#test-cases-table");
 		
-
 		
-		table.find('.tp-th-project-name,.tp-th-reference,.tp-th-name,.tp-th-dataset,.tp-th-suite')
-			 .append("<input class='th_input filter_input'/>");
 		
+		table.find('.tp-th-project-name,.tp-th-reference,.tp-th-name')
+			.append("<input class='th_input filter_input'/>");
 		
 		
 		var execmodeTH = table.find("th.tp-th-exec-mode"),
@@ -95,17 +93,11 @@ define(["jquery",  "jquery.squash.rangedatepicker" ], function($, rangedatepicke
 		
 
 		_createCombo(execmodeTH, "#filter-mode-combo", modes);
-		_createCombo(statusTH, "#filter-status-combo", statuses);
 		_createCombo(assigneeTH, "#filter-user-combo", users);
 		_createCombo(importanceTH, "#filter-weight-combo", weights);
+
 		
-		table.find('.tp-th-exec-on').append("<div class='rangedatepicker th_input'>"
-								+ "<input class='rangedatepicker-input' readonly='readonly'/>"
-								+ "<div class='rangedatepicker-div' style='position:absolute;top:auto;left:auto;z-index:1;'></div>"
-								+ "<input type='hidden' class='rangedatepicker-hidden-input filter_input'/>"
-								+ "</div>");
-
-
+		
 		$(".th_input").click(function(event) {
 			event.stopPropagation();
 		}).keypress(function(event){
@@ -127,7 +119,6 @@ define(["jquery",  "jquery.squash.rangedatepicker" ], function($, rangedatepicke
 				.fnFilter(this.value, $(".filter_input").index(this));
 		});
 
-		rangedatepicker.init();
 		
 		_hideFilterFields(true);
 	}

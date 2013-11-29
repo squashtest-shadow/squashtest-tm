@@ -22,7 +22,7 @@
 define(["jquery",  "jquery.squash.rangedatepicker" ], function($, rangedatepicker){
 
 	function _hideFilterFields(_bNoredraw) {
-		var table = $("#iteration-test-plans-table").squashTable(),
+		var table = $("#test-suite-test-plans-table").squashTable(),
 			settings = table.fnSettings();
 		table.find(".th_input").hide();
 		
@@ -37,7 +37,7 @@ define(["jquery",  "jquery.squash.rangedatepicker" ], function($, rangedatepicke
 	}
 
 	function _showFilterFields() {
-		var table = $("#iteration-test-plans-table").squashTable(),
+		var table = $("#test-suite-test-plans-table").squashTable(),
 			settings = table.fnSettings();
 		
 		table.find(".th_input").show();
@@ -71,21 +71,18 @@ define(["jquery",  "jquery.squash.rangedatepicker" ], function($, rangedatepicke
 			th.append(combo);
 		}
 
+		$("#test-suite-test-plans-table_filter").hide();
 
-		$("#iteration-test-plans-table_filter").hide();
-		
 		var users = initconf.basic.assignableUsers,
 			statuses = initconf.messages.executionStatus,
 			weights = initconf.basic.weights,
 			modes = initconf.basic.modes;
-		
+	
 		var table = $("#iteration-test-plans-table");
 		
 
-		
-		table.find('.tp-th-project-name,.tp-th-reference,.tp-th-name,.tp-th-dataset,.tp-th-suite')
+		table.find('.tp-th-project-name,.tp-th-reference,.tp-th-name,.tp-th-dataset')
 			 .append("<input class='th_input filter_input'/>");
-		
 		
 		
 		var execmodeTH = table.find("th.tp-th-exec-mode"),
@@ -93,7 +90,6 @@ define(["jquery",  "jquery.squash.rangedatepicker" ], function($, rangedatepicke
 			statusTH = table.find('.tp-th-status'),
 			assigneeTH = table.find('.tp-th-assignee');
 		
-
 		_createCombo(execmodeTH, "#filter-mode-combo", modes);
 		_createCombo(statusTH, "#filter-status-combo", statuses);
 		_createCombo(assigneeTH, "#filter-user-combo", users);
@@ -105,7 +101,7 @@ define(["jquery",  "jquery.squash.rangedatepicker" ], function($, rangedatepicke
 								+ "<input type='hidden' class='rangedatepicker-hidden-input filter_input'/>"
 								+ "</div>");
 
-
+		
 		$(".th_input").click(function(event) {
 			event.stopPropagation();
 		}).keypress(function(event){

@@ -48,8 +48,8 @@
  * 
  */
 
-define(['jquery', './sortmode', 'squashtable', 'jeditable'],
-        function($, smode) {
+define(['jquery', './sortmode', './filtermode', 'squashtable', 'jeditable'],
+        function($, smode, filtermode) {
 
 	function createTableConfiguration(conf){
 		
@@ -105,92 +105,6 @@ define(['jquery', './sortmode', 'squashtable', 'jeditable'],
 		}
 	}
 
-	function _hideFilterFields(){
-		$(".th_input", $("#test-cases-table")).hide();
-		$(".th_input", $("#test-cases-table")).each(function(){
-			$("#test-cases-table").squashTable().fnFilter("", $(".th_input").index(this));
-		});
-		
-	}
-	
-	function _showFilterFields(){
-		$(".th_input", $("#test-cases-table")).show();
-		$(".th_input", $("#test-cases-table")).each(function(){
-			$("#test-cases-table").squashTable().fnFilter(this.value, $(".th_input").index(this));
-		});
-		
-	}
-	
-	function _initializeFilterFields(initconf){	
-		
-		var users = initconf.basic.assignableUsers;
-		var weights = initconf.basic.weights;
-		var modes = initconf.basic.modes;
-		var offset = 0;
-		
-		$($("th", $("#test-cases-table"))[1]).append("<input class='th_input'/>");
-		if($($($("th", $("#test-cases-table"))[2])).hasClass("exec-mode")){
-			$($("th", $("#test-cases-table"))[2]).append(
-					"<select id='filter-mode-combo' class='th_input'/>");
-			offset = 1;
-		}
-		$($("th", $("#test-cases-table"))[2+offset]).append("<input class='th_input'/>");
-		$($("th", $("#test-cases-table"))[3+offset]).append("<input class='th_input'/>");
-		$($("th", $("#test-cases-table"))[4+offset]).append("<select id='filter-user-combo' class='th_input'/>");
-		$($("th", $("#test-cases-table"))[5+offset]).append("<select id='filter-weight-combo' class='th_input'/>");
-		$("#test-cases-table_filter").hide();
-		
-		
-		var nullOption = new Option("", "");
-		$(nullOption).html("");
-		
-		$("#filter-user-combo", $("#test-cases-table")).append(nullOption);
-		$.each(users, function(index,value){
-			var o = new Option(value, index);
-			$(o).html(value);
-			$("#filter-user-combo", $("#test-cases-table")).append(o);
-		});
-
-		nullOption = new Option("", "");
-		$(nullOption).html("");
-		
-		$("#filter-weight-combo", $("#test-cases-table")).append(nullOption);
-		$.each(weights, function(index,value){
-			var o = new Option(value, index);
-			$(o).html(value);
-			$("#filter-weight-combo", $("#test-cases-table")).append(o);
-		});
-		
-		nullOption = new Option("", "");
-		$(nullOption).html("");
-		
-		$("#filter-mode-combo", $("#test-cases-table")).append(nullOption);	
-		$.each(modes, function(index,value){
-			var o = new Option(value, index);
-			$(o).html(value);
-			$("#filter-mode-combo", $("#test-cases-table")).append(o);
-		});
-		
-		$(".th_input").click(function(event){
-			event.stopPropagation();
-		});
-
-		$(".th_input").keypress(function(event){
-			if (event.which == 13 )
-			{
-				event.stopPropagation();
-				event.preventDefault();
-				event.target.blur();
-				event.target.focus();
-			}
-		});
-		
-		$(".th_input").change( function () {
-			 $("#test-cases-table").squashTable().fnFilter(this.value, $(".th_input").index(this));
-		});
-
-		_hideFilterFields();
-	}
 	
 	// **************** MAIN ****************
 	
@@ -206,9 +120,9 @@ define(['jquery', './sortmode', 'squashtable', 'jeditable'],
 			table.data('sortmode', sortmode);
 			this.lockSortMode = sortmode._lockSortMode;
 			this.unlockSortMode = sortmode._unlockSortMode;	
-			this.hideFilterFields = _hideFilterFields;
-			this.showFilterFields = _showFilterFields;
-			_initializeFilterFields(enhconf);
+			this.hideFilterFields = filtermode.hideFilterFields;
+			this.showFilterFields = filtermode.showFilterFields;
+			filtermode.initializeFilterFields(enhconf);
 		}
 	};
 	

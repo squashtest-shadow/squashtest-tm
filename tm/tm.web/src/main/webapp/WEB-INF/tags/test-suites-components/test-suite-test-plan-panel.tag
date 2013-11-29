@@ -114,19 +114,19 @@
 			<thead>
 				<tr>
 					<th	class="no-user-select" data-def="map=entity-index, select, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>
-					<th class="no-user-select" data-def="map=project-name, sortable"><f:message key="label.project" /></th>
+					<th class="no-user-select tp-th-project-name" data-def="map=project-name, sortable"><f:message key="label.project" /></th>
 					<%-- exec mode icon --%>
 					<c:if test="${ testSuite.project.testAutomationEnabled }">
-					<th title=<f:message key="label.Mode" /> class="no-user-select" data-def="map=exec-mode, sortable, narrow, center, sClass=exec-mode">&nbsp;</th>
+					<th title=<f:message key="label.Mode" /> class="no-user-select tp-th-exec-mode" data-def="map=exec-mode, sortable, narrow, center, sClass=exec-mode">&nbsp;</th>
 					</c:if>
 					<%-- exec mode icon --%>
-					<th class="no-user-select" data-def="map=reference, sortable"><f:message key="label.Reference" /></th>
-					<th class="no-user-select" data-def="map=tc-name, sortable, sClass=toggle-row"><f:message key="iteration.executions.table.column-header.test-case.label" /></th>
-					<th class="no-user-select" data-def="map=importance, sortable"><f:message key="iteration.executions.table.column-header.importance.label" /></th>
-					<th class="no-user-select" data-def="map=dataset, sortable, sWidth=10%"><f:message key="label.Dataset" /></th>
-					<th	class="no-user-select" data-def="map=status, sortable, sWidth=10%, sClass=status-combo"><f:message key="iteration.executions.table.column-header.status.label" /></th>
-					<th	class="no-user-select" data-def="map=assignee-login, sortable, sWidth=10%, sClass=assignee-combo"><f:message key="iteration.executions.table.column-header.user.label" /></th>
-					<th class="no-user-select" data-def="map=last-exec-on, sortable, sWidth=10%, sClass=exec-on"><f:message key="iteration.executions.table.column-header.execution-date.label" /></th>
+					<th class="no-user-select tp-th-reference" data-def="map=reference, sortable"><f:message key="label.Reference" /></th>
+					<th class="no-user-select tp-th-name" data-def="map=tc-name, sortable, sClass=toggle-row"><f:message key="iteration.executions.table.column-header.test-case.label" /></th>
+					<th class="no-user-select tp-th-importance" data-def="map=importance, sortable"><f:message key="iteration.executions.table.column-header.importance.label" /></th>
+					<th class="no-user-select tp-th-dataset" data-def="map=dataset, sortable, sWidth=10%"><f:message key="label.Dataset" /></th>
+					<th	class="no-user-select tp-th-status" data-def="map=status, sortable, sWidth=10%, sClass=status-combo"><f:message key="iteration.executions.table.column-header.status.label" /></th>
+					<th	class="no-user-select tp-th-assignee" data-def="map=assignee-login, sortable, sWidth=10%, sClass=assignee-combo"><f:message key="iteration.executions.table.column-header.user.label" /></th>
+					<th class="no-user-select tp-th-exec-on" data-def="map=last-exec-on, sortable, sWidth=10%, sClass=exec-on"><f:message key="iteration.executions.table.column-header.execution-date.label" /></th>
 					<th	class="no-user-select" data-def="map=empty-execute-holder, narrow, center, sClass=execute-button">&nbsp;</th>
 					<th class="no-user-select" data-def="map=empty-delete-holder${deleteBtnClause}">&nbsp;</th>
 				</tr>
