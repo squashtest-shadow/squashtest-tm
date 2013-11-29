@@ -79,7 +79,7 @@ data-def='datakeys-id=entity-id ,ajaxsource=${ stepVerifiedRequirementsUrl }'>
 			<th data-def="select, map=entity-index">#</th>
 			<th data-def="sClass=link-checkbox, map=empty-link-checkbox, narrow" style="width:32px;">&nbsp;</th>
 			<th data-def="sortable, map=project"><f:message key="label.project" /></th>
-			<th data-def="sortable, map=entity-id"><f:message key="report.requirementexport.id"/></th>
+			<th data-def="sortable, map=entity-id"><f:message key="label.versionId"/></th>
 			<th data-def="sortable, map=reference"><f:message key="label.Reference"/></th>
 			<th data-def="sortable, map=name, link=${requirementVersionsUrl}/{entity-id}/info"><f:message key="requirement.name.label" /></th>
 			<th data-def="sClass=versionNumber, sortable, map=versionNumber"><f:message key="requirement-version.version-number.label" /></th>
