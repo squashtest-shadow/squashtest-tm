@@ -32,7 +32,10 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
+
+
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
+
 <c:set var="editable" value="${ false }" />
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE"
 	domainObject="${ execution }">
@@ -101,6 +104,8 @@
 			<f:message var="completedMessage" key="execute.alert.test.complete" />
 			<f:message var="endTestSuiteMessage" key="squashtm.action.exception.testsuite.end" />
 			<script type="text/javascript">						
+			require(["squash.basicwidgets", "page-components/step-information-panel"], function(basicwidg, infopanel){
+			
 				var isOer = ${ not empty hasNextTestCase };
 				var hasNextTestCase = ${ (not empty hasNextTestCase) and hasNextTestCase };
 				var hasNextStep = ${ (not empty hasNextStep) and hasNextStep };
@@ -116,7 +121,7 @@
 			
 				function refreshExecStepInfos(){
 					refreshParent();
-					$("#execution-information-fragment").load("${executeInfos}/general");
+					infopanel.refresh();
 				}
 			
 				function testComplete() {	
@@ -302,9 +307,7 @@
 				}
 				
 				$(function(){
-					
-					require(["squash.basicwidgets"], function(basicwidg){
-						
+											
 						basicwidg.init();
 						
 						initNextButton();
@@ -448,9 +451,7 @@
 					</div>
 
 					<div id="execute-evaluation-rightside">
-						<div id="execution-information-fragment">
-							<comp:step-information-panel auditableEntity="${executionStep}" />
-						</div>
+						<comp:step-information-panel auditableEntity="${executionStep}" entityUrl="${executeInfos}/general"/>
 					</div>
 					<div style="clear: both; visibility: hidden"></div>
 				</div>

@@ -52,6 +52,7 @@ import org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService;
 import org.squashtest.tm.service.campaign.TestSuiteFinder;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.web.internal.controller.RequestHeaders;
+import org.squashtest.tm.web.internal.model.json.JsonStepInfo;
 
 /**
  * 
@@ -399,8 +400,9 @@ public class TestSuiteExecutionRunnerController {
 	}
 
 	@RequestMapping(value = RequestMappingPattern.INDEXED_STEP + "/general", method = RequestMethod.GET)
-	public ModelAndView getMenuInfos(@PathVariable long executionId, @PathVariable int stepIndex) {
-		return executionProcessingController.getMenuInfos(executionId, stepIndex);
+	@ResponseBody
+	public JsonStepInfo getBasicInfos(@PathVariable long executionId, @PathVariable int stepIndex) {
+		return executionProcessingController.getBasicInfos(executionId, stepIndex);
 	}
 
 	@RequestMapping(value = RequestMappingPattern.INDEXED_STEP, method = RequestMethod.GET, params = "optimized", headers = RequestHeaders.CONTENT_JSON)

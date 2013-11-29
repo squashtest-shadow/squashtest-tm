@@ -22,24 +22,34 @@
 --%>
 <%@ tag description="general information panel for an auditable entity. Client can add more info in the body of this tag" body-content="scriptless" %>
 <%@ attribute name="auditableEntity" required="true" type="java.lang.Object" description="The entity which general information we want to show" %>
+<%@ attribute name="entityUrl" description="REST url representing the entity. If set, this component will pull itself from entityUrl/general" %>
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-	<f:message var="dateFormat" key="squashtm.dateformat" />
+	<f:message var="rawDateFormat" key="squashtm.dateformat.iso" />
+	<f:message var="displayDateFormat" key="squashtm.dateformat" />
+	<f:message var="neverLabel" key="label.lower.Never"/>
 
-	<label for="last-executed-on" ><f:message key="label.LastExecutionOn" /></label>
-	<c:choose>
-	<c:when test="${not empty auditableEntity.lastExecutedOn }">
-	<span id="last-executed-on">
-		<f:formatDate value="${ auditableEntity.lastExecutedOn }" pattern="${dateFormat}" /> 
-	</span>
-	<br/>
-	<span id="last-executed-by">
-		<f:message key="label.By" /> : ${ auditableEntity.lastExecutedBy }
-	</span>
-	</c:when>
-	<c:otherwise>
-	(<f:message key="label.lower.Never" />)
-	</c:otherwise>
-	</c:choose>
-	<br />
+	<div id="general-information-panel" class="information-panel" 
+		data-def="url=${entityUrl}, never=${neverLabel}, format=${displayDateFormat}">
+		
+		<div id="last-executed-on">		
+			<div>	
+				<label><f:message key="label.LastExecutionOn" /></label>
+				<span class="datetime" ><f:formatDate value="${ auditableEntity.lastExecutedOn }" pattern="${rawDateFormat}" timeZone="UTC"/></span>
+			</div>
+			<div>
+				<label><f:message key="label.By" /></label>
+				<span class="author">${auditableEntity.lastExecutedBy}</span>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		$(function(){
+			require(["page-components/step-information-panel"], function(infopanel){
+				infopanel.init();
+			});
+		});
+	</script>

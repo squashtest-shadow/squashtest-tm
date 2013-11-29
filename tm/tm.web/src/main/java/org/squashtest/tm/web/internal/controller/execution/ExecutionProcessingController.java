@@ -38,6 +38,7 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
+import org.squashtest.tm.web.internal.model.json.JsonStepInfo;
 
 @Controller
 @RequestMapping("/execute/{executionId}")
@@ -151,16 +152,15 @@ public class ExecutionProcessingController {
 	// ************************* other stuffs ********************************************
 
 	@RequestMapping(value = "/step/index/{stepIndex}/general", method = RequestMethod.GET)
-	public ModelAndView getMenuInfos(@PathVariable long executionId, @PathVariable int stepIndex) {
+	@ResponseBody
+	public JsonStepInfo getBasicInfos(@PathVariable long executionId, @PathVariable int stepIndex) {
 
 		ExecutionStep executionStep = executionProcService.findStepAt(executionId, stepIndex);
 
-		ModelAndView mav = new ModelAndView(STEP_INFORMATION_FRAGMENT);
-
-		mav.addObject("auditableEntity", executionStep);
-		mav.addObject("withoutCreationInfo", true);
-
-		return mav;
+		return new JsonStepInfo(
+			executionStep.getLastExecutedOn(),
+			executionStep.getLastExecutedBy()
+		);
 
 	}
 

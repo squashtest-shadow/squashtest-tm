@@ -174,9 +174,7 @@
 		</div>
 	
 		<div id="execute-evaluation-rightside">
-			<div id="execution-information-fragment">
-				<comp:step-information-panel auditableEntity="${executionStep}"/>
-			</div>
+			<comp:step-information-panel auditableEntity="${executionStep}" />			
 		</div>
 		
 		<c:if test="${not empty denormalizedFieldValues }">
