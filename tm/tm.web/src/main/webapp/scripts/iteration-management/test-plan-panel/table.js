@@ -57,11 +57,11 @@
  */
 
 define(
-		[ 'jquery', 'squash.translator', './exec-runner', './sortmode',
-		  'jquery.squash.rangedatepicker', 'squash.dateutils', 'squash.statusfactory',
+		[ 'jquery', 'squash.translator', './exec-runner', './sortmode', './filtermode',
+		 'squash.dateutils', 'squash.statusfactory',
 		  'test-automation/automated-suite-overview',
 		  'squashtable', 'jeditable', 'jquery.squash.buttonmenu' ],
-		function($, translator, execrunner, smode, rangedatepicker, dateutils, statusfactory, autosuitedialog) {
+		function($, translator, execrunner, smode, filtermode, dateutils, statusfactory, autosuitedialog) {
 
 			// ****************** TABLE CONFIGURATION **************
 
@@ -157,123 +157,6 @@ define(
 					$td.find('.execute-arrow').click(_conf.automatedHandler);
 				}
 
-			}
-
-			function _hideFilterFields() {
-				$(".th_input", $("#iteration-test-plans-table")).hide();
-				$(".filter_input", $("#iteration-test-plans-table")).each(function(){
-					$("#iteration-test-plans-table").squashTable().fnFilter("", $(".filter_input").index(this));
-				});
-			}
-
-			function _showFilterFields() {
-				$(".th_input", $("#iteration-test-plans-table")).show();
-				$(".filter_input", $("#iteration-test-plans-table")).each(function(){
-						$("#iteration-test-plans-table").squashTable().fnFilter(this.value, $(".filter_input").index(this));
-				});
-			}
-
-			function _initializeFilterFields(initconf) {
-
-				var users = initconf.basic.assignableUsers;
-				var statuses = initconf.messages.executionStatus;
-				var weights = initconf.basic.weights;
-				var modes = initconf.basic.modes;
-				var offset = 0;
-				
-				
-				$($("th", $("#iteration-test-plans-table"))[1]).append(
-						"<input class='th_input filter_input'/>");		
-				if($($($("th[data-def]", $("#iteration-test-plans-table")))[2]).hasClass("exec-mode")){
-					$($("th", $("#iteration-test-plans-table"))[2]).append(
-					"<select id='filter-mode-combo' class='th_input filter_input'/>");
-					offset = 1;
-				}
-				$($("th", $("#iteration-test-plans-table"))[2+offset]).append(
-						"<input class='th_input filter_input'/>");
-				$($("th", $("#iteration-test-plans-table"))[3+offset]).append(
-						"<input class='th_input filter_input'/>");
-				$($("th", $("#iteration-test-plans-table"))[4+offset]).append(
-						"<select id='filter-weight-combo' class='th_input filter_input'/>");
-				$($("th", $("#iteration-test-plans-table"))[5+offset]).append(
-						"<input class='th_input filter_input'/>");
-				$($("th", $("#iteration-test-plans-table"))[6+offset]).append(
-						"<input class='th_input filter_input'/>");
-				$($("th", $("#iteration-test-plans-table"))[7+offset]).append(
-						"<select id='filter-status-combo' class='th_input filter_input'/>");
-				$($("th", $("#iteration-test-plans-table"))[8+offset]).append(
-				"<select id='filter-user-combo' class='th_input filter_input'/>");
-				$($("th", $("#iteration-test-plans-table"))[9+offset])
-						.append(
-								"<div class='rangedatepicker th_input'>"
-										+ "<input class='rangedatepicker-input' readonly='readonly'/>"
-										+ "<div class='rangedatepicker-div' style='position:absolute;top:auto;left:auto;z-index:1;'></div>"
-										+ "<input type='hidden' class='rangedatepicker-hidden-input filter_input'/>"
-										+ "</div>");
-
-				$("#iteration-test-plans-table_filter").hide();
-	
-				var nullOption = new Option("", "");
-				$(nullOption).html("");
-				$("#filter-status-combo", $("#iteration-test-plans-table")).append(nullOption);
-				
-				$.each(statuses, function(index, value) {
-					var o = new Option(value, index);
-					$(o).html(value);
-					$("#filter-status-combo", $("#iteration-test-plans-table"))
-							.append(o);
-				});
-
-				nullOption = new Option("", "");
-				$(nullOption).html("");
-				$("#filter-user-combo", $("#iteration-test-plans-table")).append(nullOption);
-				
-				$.each(users, function(index, value) {
-					var o = new Option(value, index);
-					$(o).html(value);
-					$("#filter-user-combo", $("#iteration-test-plans-table"))
-							.append(o);
-				});
-
-				nullOption = new Option("", "");
-				$(nullOption).html("");
-				$("#filter-weight-combo", $("#iteration-test-plans-table")).append(nullOption);
-				
-				$.each(weights, function(index, value) {
-					var o = new Option(value, index);
-					$(o).html(value);
-					$("#filter-weight-combo", $("#iteration-test-plans-table"))
-							.append(o);
-				});
-
-				$(".th_input").click(function(event) {
-					event.stopPropagation();
-				});
-				
-				$(".th_input").keypress(function(event){
-					if (event.which == 13 )
-					{
-						event.stopPropagation();
-						event.preventDefault();
-						event.target.blur();
-						event.target.focus();
-					}
-				});
-				
-				$("#iteration-test-plans-table th").hover(function(event) {
-					event.stopPropagation();
-				});
-			
-				$(".filter_input").change(
-						function() {
-							$("#iteration-test-plans-table").squashTable()
-									.fnFilter(this.value,
-											$(".filter_input").index(this));
-						});
-
-				rangedatepicker.init();
-				
-				_hideFilterFields();
 			}
 
 			function createTableConfiguration(initconf) {
@@ -510,9 +393,10 @@ define(
 					table.data('sortmode', sortmode);
 					this.lockSortMode = sortmode._lockSortMode;
 					this.unlockSortMode = sortmode._unlockSortMode;
-					this.hideFilterFields = _hideFilterFields;
-					this.showFilterFields = _showFilterFields;
-					_initializeFilterFields(enhconf);
+					
+					this.hideFilterFields = filtermode.hideFilterFields;
+					this.showFilterFields = filtermode.showFilterFields;
+					filtermode.initializeFilterFields(enhconf);
 				}
 			};
 
