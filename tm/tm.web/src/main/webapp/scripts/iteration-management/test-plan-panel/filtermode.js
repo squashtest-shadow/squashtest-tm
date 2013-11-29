@@ -136,6 +136,6 @@ define(["jquery",  "jquery.squash.rangedatepicker" ], function($, rangedatepicke
 		initializeFilterFields : _initializeFilterFields,
 		hideFilterFields : _hideFilterFields,
 		showFilterFields : _showFilterFields
-	}
+	};
 
 });
