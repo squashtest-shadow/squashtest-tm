@@ -52,8 +52,8 @@ public final class JsTreeHelper {
 	public static MultiMap mapIdsByType(String[] domNodesIds) {
 		MultiMap res = new MultiValueMap();
 
-		Pattern pattern = Pattern.compile("#(\\w+)-(\\d+)");
-
+		Pattern pattern = Pattern.compile("(\\w+)-(\\d+)");
+		
 		for (String domNodeId : domNodesIds) {
 			Matcher matcher = pattern.matcher(domNodeId);
 

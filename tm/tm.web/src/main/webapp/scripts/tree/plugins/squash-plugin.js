@@ -134,6 +134,7 @@ define(['jquery', 'jstree', './tree-node', 'jquery.squash'], function($){
 				// ripped from the 'cookie' plugin : override the initially selected nodes.
 				if (!! tree.data.squash.opened && tree.data.squash.opened.length >0){
 					this.data.ui.to_select = tree.data.squash.opened;
+					$.cookie("jstree_select", this.data.ui.to_select.join(","), {});
 				}
 				
 				/*
