@@ -88,6 +88,12 @@ define(
 
 				$statustd.html(html); // remember : this will insert a <span>
 										// in the process
+				
+				//execution date
+				var date = data['last-exec-on'],
+					format = translator.get('squashtm.dateformat');
+				
+				$row.find('.exec-on').text(dateutils.format(date, format));
 
 				// assignee (read)
 				var $assigneetd = $row.find('.assignee-combo');
