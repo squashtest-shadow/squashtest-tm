@@ -70,7 +70,7 @@
 		<!-- no suffix because it's already in view name  -->
     <property name="templateMode" value="HTML5" />
     <property name="characterEncoding" value="UTF-8" />
-    <property name="cacheable" value="@is.war.deploy@" /> <!-- this is a maven placeholder -->
+    <property name="cacheable" value="${is.war.deploy}" />
   </bean>
 
   <bean id="thymeleaf.fragment.templateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
@@ -78,7 +78,7 @@
     <property name="suffix" value=".html" />
     <property name="templateMode" value="HTML5" />
     <property name="characterEncoding" value="UTF-8" />
-    <property name="cacheable" value="@is.war.deploy@" /> <!-- this is a maven placeholder -->
+    <property name="cacheable" value="${is.war.deploy}" /> 
   </bean>
 
   <bean id="thymeleaf.templateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
