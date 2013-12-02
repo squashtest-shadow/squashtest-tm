@@ -99,7 +99,9 @@ define(
 
 				// execution status (edit)
 				var statusurl = _conf.testplanUrl + data['entity-id'];
-				$row.find('.status-combo').children().first().editable(statusurl, {
+				var statusElt = $row.find('.status-combo').children().first();
+				statusElt.addClass('cursor-arrow');
+				statusElt.editable(statusurl, {
 					type : 'select',
 					data : _conf.jsonStatuses,
 					name : 'status',
@@ -109,7 +111,9 @@ define(
 
 				// assignee (edit)
 				var assigneeurl = _conf.testplanUrl + data['entity-id'];
-				$row.find('.assignee-combo').children().first().editable(assigneeurl, {
+				var assigneeElt = $row.find('.assignee-combo').children().first();
+				assigneeElt.addClass('cursor-arrow');
+				assigneeElt.editable(assigneeurl, {
 					type : 'select',
 					data : _conf.jsonAssignableUsers,
 					name : 'assignee',
@@ -176,7 +180,7 @@ define(
 							statuses = JSON.parse(settings.data);
 						
 						$span.attr('class', 
-								'exec-status-label exec-status-' + itp.executionStatus.toLowerCase());
+								'cursor-arrow exec-status-label exec-status-' + itp.executionStatus.toLowerCase());
 						
 						$span.text(statuses[itp.executionStatus]);
 						
