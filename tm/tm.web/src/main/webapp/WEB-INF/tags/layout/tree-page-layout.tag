@@ -169,7 +169,7 @@
 						</c:if>
 					</ul>
 					
-					<div id="tree-pane" <c:if test="${ highlightedWorkspace == 'requirement'}"> class="requirement-tree-pane"</c:if> >
+					<div id="tree-pane"  >
 						<jsp:invoke fragment="tree" />
 					</div>
 					
@@ -178,11 +178,11 @@
 					<c:choose>
 					<c:when test="${not empty linkable}">
 						<layout:search-panel workspace="${ highlightedWorkspace }" linkable="${ linkable }" />
-						</c:when>
-						<c:otherwise>
+					</c:when>
+					<c:otherwise>
 						<layout:search-panel workspace="${ highlightedWorkspace }"/>
-						</c:otherwise>
-						</c:choose>
+					</c:otherwise>
+					</c:choose>
 					</div>
 					</c:if>
 				</div>
@@ -246,26 +246,29 @@
 						</c:if>
 					</ul>
 
-					<div id="tree-pane" <c:if test="${ highlightedWorkspace == 'requirement'}"> class="requirement-tree-pane"</c:if> >
+					<div id="tree-pane"  >
 						<jsp:invoke fragment="tree" />
 					</div>
 					
 
+					<c:if test="${ highlightedWorkspace == 'campaign'}">
 					<div id="search-pane">
 					<c:choose>
-						<c:when test="${not empty linkable}">
-						</c:when>
-						<c:otherwise>
+					<c:when test="${not empty linkable}">
+						<layout:search-panel workspace="${ highlightedWorkspace }" linkable="${ linkable }" />
+					</c:when>
+					<c:otherwise>
 						<layout:search-panel workspace="${ highlightedWorkspace }"/>
-						</c:otherwise>
-						</c:choose>
+					</c:otherwise>
+					</c:choose>
 					</div>
+					</c:if>
 
 					
 					</div>	
 				</div>
 			</div>
-	
+		
 		
 		<script type="text/javascript">
 			$(function(){

@@ -36,9 +36,8 @@
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 
-<%@ attribute name="workspace" description="Optional page foot"
-	required="true"%>
-<%@ attribute name="linkable" description="Optional page foot"%>
+<%@ attribute name="workspace" 	required="true"%>
+<%@ attribute name="linkable" %>
 
 <s:url var="searchUrl" value="/search/${workspace}s" />
 <s:url var="breadCrumbUrl" value="/search/${workspace}s/breadcrumb" />

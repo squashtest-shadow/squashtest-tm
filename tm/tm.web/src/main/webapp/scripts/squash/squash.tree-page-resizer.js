@@ -85,7 +85,7 @@ define(
 							var pos = confObj.helper.width();
 
 							confObj.leftPanel.width(pos - 10);
-							confObj.rightPanel.css('left', pos + 60 + "px");
+							confObj.rightPanel.css('left', pos + 10 + "px");
 						}
 					});
 				} else /* if (position==='relative' || position==='static') */{
