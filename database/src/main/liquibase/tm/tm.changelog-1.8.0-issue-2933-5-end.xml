@@ -28,20 +28,6 @@
 	
 	<!-- =========== ATTACHMENTS =========== -->
 	<changeSet id="tm-1.8.0.issue-2933-101" author="mpagnon">
-		<preConditions onFail="CONTINUE" onFailMessage="No attachment list to delete">
-			<and>
-				<tableExists tableName="ENTITIES_TO_DELETE" />
-				<tableExists tableName="IS_TO_DELETE" />
-				<not>
-					<sqlCheck expectedResult="0">
-						select count(1)
-						from
-						ENTITIES_TO_DELETE where NAME = 'ATTACHMENT_LIST'
-						;
-					</sqlCheck>
-				</not>
-			</and>
-		</preConditions>
 		<comment>save attachment_content ids</comment>
 		<sql>
 			insert into ENTITIES_TO_DELETE
@@ -79,20 +65,6 @@
 	<!-- =========== /ATTACHMENTS =========== -->
 	<!-- =========== CUSTOM FIELDS =========== -->
 	<changeSet id="tm-1.8.0.issue-2933-end-01" author="mpagnon">
-		<preConditions onFail="CONTINUE" onFailMessage="No custom field values to delete">
-			<and>
-				<tableExists tableName="ENTITIES_TO_DELETE" />
-				<tableExists tableName="IS_TO_DELETE" />
-			<not>
-				<sqlCheck expectedResult="0">
-					select count(1)
-					from
-					ENTITIES_TO_DELETE where NAME = 'CUSTOM_FIELD_VALUE'
-					;
-				</sqlCheck>
-			</not>
-		</and>
-		</preConditions>
 		<comment>delete cuf values</comment>
 		<sql>
 			delete from CUSTOM_FIELD_VALUE
@@ -107,12 +79,6 @@
 
 	<!-- =========== DELETE STORING TABLES =========== -->
 	<changeSet id="tm-1.8.0.issue-2933-end-02" author="mpagnon">
-		<preConditions onFail="CONTINUE">
-			<and>
-				<tableExists tableName="ENTITIES_TO_DELETE" />
-				<tableExists tableName="IS_TO_DELETE" />
-			</and>		
-		</preConditions>
 		<comment>delete storage tables</comment>
 		<dropTable tableName="ENTITIES_TO_DELETE" />
 		<dropTable tableName="IS_TO_DELETE" />

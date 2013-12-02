@@ -28,23 +28,20 @@
 	
 
 	<changeSet id="tm-1.8.0.issue-2933-tc-01" author="mpagnon">
-	<preConditions onFail="CONTINUE">
-		<and>
-			<tableExists tableName="ENTITIES_TO_DELETE" />
-			<tableExists tableName="IS_TO_DELETE" />
-		</and>
-	</preConditions>
+	
 		<comment>save ids of test case folders to delete</comment>
 		<sql>
 			insert into ENTITIES_TO_DELETE
 			(NAME, ID)
 			select 'TEST_CASE_FOLDER', folder.TCLN_ID
 			from TEST_CASE_FOLDER folder
-			where folder.TCLN_ID not in (
-				select DESCENDANT_ID from TCLN_RELATIONSHIP  UNION
-				select CONTENT_ID from TEST_CASE_LIBRARY_CONTENT
+			where not exists (
+				select 1  from TCLN_RELATIONSHIP where DESCENDANT_ID = folder.TCLN_ID UNION
+				select 1  from TEST_CASE_LIBRARY_CONTENT where CONTENT_ID = folder.TCLN_ID
 			)
 			;
+			
+			
 		</sql>
 		<comment>store info if exist test case folders to delete</comment>
 		<sql>
@@ -59,19 +56,7 @@
 
 	<!-- =========== FOLDER =========== -->
 	<changeSet id="tm-1.8.0.issue-2933-tc-02" author="mpagnon">
-		<preConditions onFail="CONTINUE" onFailMessage="No orphan test case folder">
-			<and>
-			<tableExists tableName="ENTITIES_TO_DELETE" />
-			<tableExists tableName="IS_TO_DELETE" />
-			<not>
-				<sqlCheck expectedResult="0">
-					select TOTAL from IS_TO_DELETE
-					where NAME = 'TEST_CASE_FOLDER'
-					;
-				</sqlCheck>
-			</not>
-			</and>
-		</preConditions>
+		
 		<comment>save ids of children test_case_folders</comment>
 		<sql>
 			insert into ENTITIES_TO_DELETE
@@ -89,11 +74,12 @@
 			(NAME, ID)
 			select distinct 'TEST_CASE', testcase.TCLN_ID
 			from TEST_CASE testcase
-			where testcase.TCLN_ID not in (
-				select DESCENDANT_ID from TCLN_RELATIONSHIP  UNION
-				select CONTENT_ID from TEST_CASE_LIBRARY_CONTENT
+			where not exists (
+				select 1  from TCLN_RELATIONSHIP where DESCENDANT_ID = testcase.TCLN_ID UNION
+				select 1  from TEST_CASE_LIBRARY_CONTENT where CONTENT_ID = testcase.TCLN_ID
 			)
 			;
+			
 			
 			insert into ENTITIES_TO_DELETE
 			(NAME, ID)
@@ -127,24 +113,7 @@
 	
 	<!-- =========== TEST_CASE =========== -->
 	<changeSet id="tm-1.8.0.issue-2933-tc-03" author="mpagnon">
-		<preConditions onFail="CONTINUE" onFailMessage="No test case to delete">
-			<and>
-			<tableExists tableName="ENTITIES_TO_DELETE" />
-			<tableExists tableName="IS_TO_DELETE" /><not>
-				<sqlCheck expectedResult="0">
-					select TOTAL from IS_TO_DELETE
-					where NAME = 'TEST_CASE_FOLDER'
-					;
-				</sqlCheck>
-			</not><not>
-				<sqlCheck expectedResult="0">
-					select TOTAL from IS_TO_DELETE
-					where NAME = 'TEST_CASE'
-					;
-				</sqlCheck>
-			</not>
-			</and>
-		</preConditions>
+		
 		<comment>empty ids of requirement_version_coverage to delete from requirements deletion</comment>
 		<sql>
 			delete from ENTITIES_TO_DELETE
@@ -245,61 +214,36 @@
 		<sql>
 			update EXECUTION
 			set TCLN_ID = null
-			where TCLN_ID in (select ID
-			from ENTITIES_TO_DELETE where NAME = 'TEST_CASE')
+			where exists (select 1
+			from ENTITIES_TO_DELETE where NAME = 'TEST_CASE' and ID = EXECUTION.TCLN_ID )
 			;
 		</sql>
 		<comment>set tcln_id to null on iteration_test_plan_item</comment>
 		<sql>
 			update ITERATION_TEST_PLAN_ITEM
 			set TCLN_ID = null
-			where TCLN_ID in (select ID from ENTITIES_TO_DELETE where NAME = 'TEST_CASE')
+			where exists (select ID from ENTITIES_TO_DELETE where NAME = 'TEST_CASE' and ID = ITERATION_TEST_PLAN_ITEM.TCLN_ID)
 			;
 		</sql>
 	</changeSet>
 	
 	<!-- =========== REQUIREMENT_VERSION_COVERAGE =========== -->
 	<changeSet id="tm-1.8.0.issue-2933-tc-04" author="mpagnon">
-		<preConditions onFail="CONTINUE" onFailMessage="No requirement version coverage to delete">
-			<and>
-			<tableExists tableName="ENTITIES_TO_DELETE" />
-			<tableExists tableName="IS_TO_DELETE" />
-				<not>
-					<sqlCheck expectedResult="0">
-						select TOTAL from IS_TO_DELETE
-						where NAME = 'TEST_CASE_FOLDER'
-						;
-					</sqlCheck>
-				</not>
-				<not>
-					<sqlCheck expectedResult="0">
-						select TOTAL from IS_TO_DELETE
-						where NAME = 'TEST_CASE'
-						;
-					</sqlCheck>
-				</not>
-				<not>
-					<sqlCheck expectedResult="0">
-						select count(1)
-						from ENTITIES_TO_DELETE
-						where NAME = 'REQUIREMENT_VERSION_COVERAGE'
-						;
-					</sqlCheck>
-				</not>
-			</and>
-		</preConditions>
+		
 		<comment>delete verifying_steps</comment>
 		<sql>
 			delete from VERIFYING_STEPS
-			where REQUIREMENT_VERSION_COVERAGE_ID in (
-				select ID from ENTITIES_TO_DELETE where NAME = 'REQUIREMENT_VERSION_COVERAGE'
+			where  exists (
+				select 1 from ENTITIES_TO_DELETE where NAME = 'REQUIREMENT_VERSION_COVERAGE'
+				and REQUIREMENT_VERSION_COVERAGE_ID = ID
 			)
 			;
 		</sql>
 		<sql>
 			delete from REQUIREMENT_VERSION_COVERAGE
-			where REQUIREMENT_VERSION_COVERAGE_ID in (
-				select ID from ENTITIES_TO_DELETE where NAME = 'REQUIREMENT_VERSION_COVERAGE'
+			where  exists (
+				select 1 from ENTITIES_TO_DELETE where NAME = 'REQUIREMENT_VERSION_COVERAGE'
+				and REQUIREMENT_VERSION_COVERAGE.REQUIREMENT_VERSION_COVERAGE_ID = ID
 			)
 			;
 		</sql>
@@ -307,38 +251,15 @@
 	
 	<!-- =========== CAMPAIGN_TEST_PLAN_ITEM =========== -->
 	<changeSet id="tm-1.8.0.issue-2933-tc-05-mysql" author="mpagnon">
-		<preConditions onFail="CONTINUE" onFailMessage="Not mysql database or No campaign iteration items to delete">
-			<and>
-			<tableExists tableName="ENTITIES_TO_DELETE" />
-			<tableExists tableName="IS_TO_DELETE" />
+		<preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST" onFailMessage="Not mysql ">
+			
 				<dbms type="mysql" />
-				<not>
-					<sqlCheck expectedResult="0">
-						select TOTAL from IS_TO_DELETE
-						where NAME = 'TEST_CASE_FOLDER'
-						;
-					</sqlCheck>
-				</not>
-				<not>
-					<sqlCheck expectedResult="0">
-						select TOTAL from IS_TO_DELETE
-						where NAME = 'TEST_CASE'
-						;
-					</sqlCheck>
-				</not>
-				<not>
-					<sqlCheck expectedResult="0">
-						select count(1) from ENTITIES_TO_DELETE
-						where NAME = 'CTPI_CAMPAIGN'
-						;
-					</sqlCheck>
-				</not>
-			</and>
+				
 		</preConditions>
 		<comment>delete campaign_test_plan_item</comment>
 		<sql>
 			delete from CAMPAIGN_TEST_PLAN_ITEM
-			where TEST_CASE_ID in (select ID from ENTITIES_TO_DELETE where NAME = 'TEST_CASE');
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_CASE' and CAMPAIGN_TEST_PLAN_ITEM.TEST_CASE_ID = ID);
 		</sql>
 		<comment>reorder test plan of campaign where deletion of campaign_test_plan_item occurred</comment>
 		<sql>
@@ -353,8 +274,8 @@
 			(CAMPAIGN_ID, CTPI_ID, TEST_PLAN_ORDER)
 			select CAMPAIGN_ID, CTPI_ID, @rownum:=@rownum+1 as globindex
 			from CAMPAIGN_TEST_PLAN_ITEM
-			where CAMPAIGN_ID in (
-				select ID from ENTITIES_TO_DELETE where NAME = 'CTPI_CAMPAIGN'
+			where  exists (
+				select ID from ENTITIES_TO_DELETE where NAME = 'CTPI_CAMPAIGN'and ID = CAMPAIGN_TEST_PLAN_ITEM.CAMPAIGN_ID
 			)
 			group by CAMPAIGN_ID, CTPI_ID, globindex
 			order by TEST_PLAN_ORDER;
@@ -388,38 +309,15 @@
 	</changeSet>
 	
 	<changeSet id="tm-1.8.0.issue-2933-tc-05-h2" author="mpagnon">
-		<preConditions onFail="CONTINUE" onFailMessage="Not h2 database or No campaign iteration items to delete">
-			<and>
-			<tableExists tableName="ENTITIES_TO_DELETE" />
-			<tableExists tableName="IS_TO_DELETE" />
+		<preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST" onFailMessage="Not h2 database ">
+			
 				<dbms type="h2" />
-				<not>
-					<sqlCheck expectedResult="0">
-						select TOTAL from IS_TO_DELETE
-						where NAME = 'TEST_CASE_FOLDER'
-						;
-					</sqlCheck>
-				</not>
-				<not>
-					<sqlCheck expectedResult="0">
-						select TOTAL from IS_TO_DELETE
-						where NAME = 'TEST_CASE'
-						;
-					</sqlCheck>
-				</not>
-				<not>
-					<sqlCheck expectedResult="0">
-						select count(1) from ENTITIES_TO_DELETE
-						where NAME = 'CTPI_CAMPAIGN'
-						;
-					</sqlCheck>
-				</not>
-			</and>
+				
 		</preConditions>
 		<comment>delete campaign_test_plan_item</comment>
 		<sql>
 			delete from CAMPAIGN_TEST_PLAN_ITEM
-			where TEST_CASE_ID in (select ID from ENTITIES_TO_DELETE where NAME = 'TEST_CASE');
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_CASE' and CAMPAIGN_TEST_PLAN_ITEM.TEST_CASE_ID = ID);
 		</sql>
 		<comment>reorder test plan of campaign where deletion of campaign_test_plan_item occurred</comment>
 		<sql>
@@ -436,7 +334,7 @@
 			(CAMPAIGN_ID, CTPI_ID, TEST_PLAN_ORDER)
 			select CAMPAIGN_ID, CTPI_ID, set(@rn, @rn+1) as globindex
 			from CAMPAIGN_TEST_PLAN_ITEM
-			where CAMPAIGN_ID in (select ID from ENTITIES_TO_DELETE where NAME = 'CTPI_CAMPAIGN')
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'CTPI_CAMPAIGN' and ID = CAMPAIGN_TEST_PLAN_ITEM.CAMPAIGN_ID)
 			group by CAMPAIGN_ID, CTPI_ID, globindex
 			order by TEST_PLAN_ORDER;
 
@@ -468,48 +366,22 @@
 	
 	<!-- =========== DATASET - PARAMETERS =========== -->
 		<changeSet id="tm-1.8.0.issue-2933-tc-06" author="mpagnon">
-		<preConditions onFail="CONTINUE" onFailMessage="No dataset to delete">
-			<and>
-			<tableExists tableName="ENTITIES_TO_DELETE" />
-			<tableExists tableName="IS_TO_DELETE" />
-				<not>
-					<sqlCheck expectedResult="0">
-						select TOTAL from IS_TO_DELETE
-						where NAME = 'TEST_CASE_FOLDER'
-						;
-					</sqlCheck>
-				</not>
-				<not>
-					<sqlCheck expectedResult="0">
-						select TOTAL from IS_TO_DELETE
-						where NAME = 'TEST_CASE'
-						;
-					</sqlCheck>
-				</not>
-				<not>
-					<sqlCheck expectedResult="0">
-						select count(1) from
-						ENTITIES_TO_DELETE
-						where NAME = 'DATASET';
-					</sqlCheck>
-				</not>
-			</and>
-		</preConditions>
+		
 		<comment>set dataset to null in referenced entity</comment>
 		<sql>
 			update ITERATION_TEST_PLAN_ITEM 
 			set DATASET_ID = null
-			where DATASET_ID in (select ID from ENTITIES_TO_DELETE where NAME ='DATASET');
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME ='DATASET' and ID = ITERATION_TEST_PLAN_ITEM.DATASET_ID);
 		</sql>
 		<comment>delete dataset_param_value where dataset id</comment>
 		<sql>
 			delete from DATASET_PARAM_VALUE
-			where DATASET_ID in (select ID from ENTITIES_TO_DELETE where NAME = 'DATASET');
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'DATASET' and DATASET_PARAM_VALUE.DATASET_ID = ID);
 		</sql>
 		<comment>delete dataset</comment>
 		<sql>
 			delete from DATASET
-			where DATASET_ID in (select ID from ENTITIES_TO_DELETE where NAME = 'DATASET');
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'DATASET' and ID = DATASET.DATASET_ID);
 		</sql>
 	</changeSet>
 	
@@ -543,86 +415,35 @@
 		<comment>delete dataset_param_value where param_id</comment>
 		<sql>
 			delete from DATASET_PARAM_VALUE
-			where PARAM_ID in (select ID from ENTITIES_TO_DELETE where NAME = 'PARAMETER');
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'PARAMETER' and ID = DATASET_PARAM_VALUE.PARAM_ID);
 		</sql>
 		<comment>delete parameters</comment>
 		<sql>
 			delete from PARAMETER
-			where PARAM_ID in (select ID from ENTITIES_TO_DELETE where NAME = 'PARAMETER');
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'PARAMETER' and PARAMETER.PARAM_ID = ID);
 		</sql>
 	</changeSet>
 	
 	<!-- =========== AUTOMATED_TEST =========== -->
 	<changeSet id="tm-1.8.0.issue-2933-tc-08" author="mpagnon">
-		<preConditions onFail="CONTINUE" onFailMessage="No Automated test to delete">
-			<and>
-			<tableExists tableName="ENTITIES_TO_DELETE" />
-			<tableExists tableName="IS_TO_DELETE" />
-				<not>
-					<sqlCheck expectedResult="0">
-						select TOTAL from IS_TO_DELETE
-						where NAME = 'TEST_CASE_FOLDER'
-						;
-					</sqlCheck>
-				</not>
-				<not>
-					<sqlCheck expectedResult="0">
-						select TOTAL from IS_TO_DELETE
-						where NAME = 'TEST_CASE'
-						;
-					</sqlCheck>
-				</not>
-				<not>
-					<sqlCheck expectedResult="0">
-						select count(1) from ENTITIES_TO_DELETE
-						where NAME = 'AUTOMATED_TEST';
-					</sqlCheck>
-				</not>
-			</and>
-		</preConditions>
+		
 		<comment>delete automated_execution_extender</comment>
 		<sql>
 			delete from AUTOMATED_EXECUTION_EXTENDER
-			where TEST_ID in (select ID from ENTITIES_TO_DELETE where NAME = 'AUTOMATED_TEST')
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'AUTOMATED_TEST' and AUTOMATED_EXECUTION_EXTENDER.TEST_ID = ID)
 			;
 		</sql>
 		<comment>delete automated_suite where not exist automated_execution_extender linked to it</comment>
 		<sql>
 			delete from AUTOMATED_SUITE
-			where SUITE_ID not in (select SUITE_ID from AUTOMATED_EXECUTION_EXTENDER)
+			where not exists (select 1 from AUTOMATED_EXECUTION_EXTENDER where AUTOMATED_EXECUTION_EXTENDER.SUITE_ID = AUTOMATED_SUITE.SUITE_ID)
 			;
 		</sql>
 	</changeSet>
 	
 	<!-- =========== TEST STEP =========== -->
 	<changeSet id="tm-1.8.0.issue-2933-tc-09" author="mpagnon">
-		<preConditions onFail="CONTINUE" onFailMessage="No test step to delete">
-			<and>
-			<tableExists tableName="ENTITIES_TO_DELETE" />
-			<tableExists tableName="IS_TO_DELETE" />
-				<not>
-					<sqlCheck expectedResult="0">
-						select TOTAL from IS_TO_DELETE
-						where NAME = 'TEST_CASE_FOLDER'
-						;
-					</sqlCheck>
-				</not>
-				<not>
-					<sqlCheck expectedResult="0">
-						select TOTAL from IS_TO_DELETE
-						where NAME = 'TEST_CASE'
-						;
-					</sqlCheck>
-				</not>
-				<not>
-					<sqlCheck expectedResult="0">
-						select count(1) from ENTITIES_TO_DELETE
-						where NAME = 'TEST_STEP'
-						;
-					</sqlCheck>
-				</not>
-			</and>
-		</preConditions>
+		
 		<comment>save ids of step cufs values to delete</comment>
 		<sql>
 			insert into ENTITIES_TO_DELETE
@@ -638,7 +459,7 @@
 		<sql>
 			update EXECUTION_STEP
 			set TEST_STEP_ID = null
-			where TEST_STEP_ID in (select ID from ENTITIES_TO_DELETE where NAME = 'TEST_STEP')
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_STEP' and ID = EXECUTION_STEP.TEST_STEP_ID)
 			;
 		</sql>
 		<comment>save ids of steps attachment_list</comment>
@@ -654,46 +475,29 @@
 		<comment>delete test_case_steps </comment>
 		<sql>
 			delete from TEST_CASE_STEPS
-			where TEST_CASE_ID in (select ID from ENTITIES_TO_DELETE where NAME = 'TEST_CASE')
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_CASE' and TEST_CASE_STEPS.TEST_CASE_ID = ID)
 			;
 		</sql>
 		<comment>delete call_step </comment>
 		<sql>delete from CALL_TEST_STEP
-			where TEST_STEP_ID in (select ID from ENTITIES_TO_DELETE where NAME = 'TEST_STEP')
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_STEP' and CALL_TEST_STEP.TEST_STEP_ID = ID)
 			;
 		</sql>
 		<comment>delete action_step</comment>
 		<sql>delete from ACTION_TEST_STEP
-			where TEST_STEP_ID in (select ID from ENTITIES_TO_DELETE where NAME = 'TEST_STEP')
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_STEP' and ACTION_TEST_STEP.TEST_STEP_ID = ID)
 			;
 		</sql>
 		<comment>delete test step</comment>
 		<sql>delete from TEST_STEP
-			where TEST_STEP_ID in (select ID from ENTITIES_TO_DELETE where NAME = 'TEST_STEP')
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_STEP' and TEST_STEP.TEST_STEP_ID = ID)
 			;
 		</sql>
 	</changeSet>
 	
 	<!-- =========== CALLING TEST STEP =========== -->
 	<changeSet id="tm-1.8.0.issue-2933-tc-10" author="mpagnon">
-		<preConditions onFail="CONTINUE" onFailMessage="No step calling a to-delete test case">
-			<and>
-			<tableExists tableName="ENTITIES_TO_DELETE" />
-			<tableExists tableName="IS_TO_DELETE" />
-				<sqlCheck expectedResult="1">
-					select count(1) from IS_TO_DELETE
-					where NAME = 'CALLING_STEP'
-					;
-				</sqlCheck>
-				<not>
-					<sqlCheck expectedResult="0">
-						select TOTAL from IS_TO_DELETE
-						where NAME = 'CALLING_STEP'
-						;
-					</sqlCheck>
-				</not>
-			</and>
-		</preConditions>
+		
 		<comment>save ids of calling test case</comment>
 		<sql>
 			insert into ENTITIES_TO_DELETE
@@ -715,36 +519,20 @@
 		<comment>delete test_step and call_test_step</comment>
 		<sql>
 			delete from CALL_TEST_STEP
-			where TEST_STEP_ID in (select ID from ENTITIES_TO_DELETE where NAME = 'CALLING_STEP')
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'CALLING_STEP' and ID = CALL_TEST_STEP.TEST_STEP_ID)
 			;
 			delete from TEST_CASE_STEPS
-			where STEP_ID in (select ID from ENTITIES_TO_DELETE where NAME = 'CALLING_STEP')
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'CALLING_STEP' and ID = TEST_CASE_STEPS.STEP_ID)
 			;
 			delete from TEST_STEP
-			where TEST_STEP_ID in (select ID from ENTITIES_TO_DELETE where NAME = 'CALLING_STEP')
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'CALLING_STEP' and ID = TEST_STEP.TEST_STEP_ID)
 			;
 		</sql>
 	</changeSet>
 	
 	<changeSet id="tm-1.8.0.issue-2933-tc-11-mysql" author="mpagnon">
-		<preConditions onFail="CONTINUE" onFailMessage="Not mysql or No step calling a to-delete test case">
-			<and>
-			<tableExists tableName="ENTITIES_TO_DELETE" />
-			<tableExists tableName="IS_TO_DELETE" />
+		<preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST" onFailMessage="Not mysql">
 				<dbms type="mysql" />
-				<sqlCheck expectedResult="1">
-					select count(1) from IS_TO_DELETE
-					where NAME = 'CALLING_STEP'
-					;
-				</sqlCheck>
-				<not>
-					<sqlCheck expectedResult="0">
-						select TOTAL from IS_TO_DELETE
-						where NAME = 'CALLING_STEP'
-						;
-					</sqlCheck>
-				</not>
-			</and>
 		</preConditions>
 		<comment>reorder steps of calling test case</comment>
 		<sql>
@@ -761,7 +549,7 @@
 			(TEST_CASE_ID, STEP_ID, STEP_ORDER)
 			select TEST_CASE_ID, STEP_ID, @rownum:=@rownum+1 as globindex
 			from TEST_CASE_STEPS
-			where TEST_CASE_ID in (select ID from ENTITIES_TO_DELETE where NAME = 'tcs_CAMPAIGN')
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'tcs_CAMPAIGN' and ID = TEST_CASE_STEPS.TEST_CASE_ID)
 			group by TEST_CASE_ID, STEP_ID, globindex
 			order by STEP_ORDER;
 
@@ -789,24 +577,8 @@
 	</changeSet>
 	
 	<changeSet id="tm-1.8.0.issue-2933-tc-11-h2" author="mpagnon">
-		<preConditions onFail="CONTINUE" onFailMessage="Not h2 or No step calling a to-delete test case">
-			<and>
-			<tableExists tableName="ENTITIES_TO_DELETE" />
-			<tableExists tableName="IS_TO_DELETE" />
+		<preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST" onFailMessage="Not h2 ">
 				<dbms type="h2" />
-				<sqlCheck expectedResult="1">
-					select count(1) from IS_TO_DELETE
-					where NAME = 'CALLING_STEP'
-					;
-				</sqlCheck>
-				<not>
-					<sqlCheck expectedResult="0">
-						select TOTAL from IS_TO_DELETE
-						where NAME = 'CALLING_STEP'
-						;
-					</sqlCheck>
-				</not>
-			</and>
 		</preConditions>
 		<comment>reorder steps of calling test case</comment>
 		<sql>
@@ -821,7 +593,7 @@
 			(TEST_CASE_ID, STEP_ID, STEP_ORDER)
 			select TEST_CASE_ID, STEP_ID, set(@rn, @rn+1) as globindex
 			from TEST_CASE_STEPS
-			where TEST_CASE_ID in (select ID from ENTITIES_TO_DELETE where NAME = 'CALLING_TEST_CASE')
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'CALLING_TEST_CASE' and TEST_CASE_STEPS.TEST_CASE_ID = ID)
 			group by TEST_CASE_ID, STEP_ID, globindex
 			order by STEP_ORDER;
 
@@ -852,82 +624,52 @@
 	
 	<!-- =========== TEST CASE =========== -->
 	<changeSet id="tm-1.8.0.issue-2933-tc-12" author="mpagnon">
-		<preConditions onFail="CONTINUE" onFailMessage="No test case to delete">
-			<and>
-			<tableExists tableName="ENTITIES_TO_DELETE" />
-			<tableExists tableName="IS_TO_DELETE" />
-				<not>
-					<sqlCheck expectedResult="0">
-						select TOTAL from IS_TO_DELETE
-						where NAME = 'TEST_CASE_FOLDER'
-						;
-					</sqlCheck>
-				</not>
-				<not>
-					<sqlCheck expectedResult="0">
-						select TOTAL from IS_TO_DELETE
-						where NAME = 'TEST_CASE'
-						;
-					</sqlCheck>
-				</not>
-			</and>
-		</preConditions>
+		
 		<comment>delete tcln_relationship_closure for test case</comment>
 		<sql>
 			delete from TCLN_RELATIONSHIP_CLOSURE 
-			where DESCENDANT_ID in (select ID from ENTITIES_TO_DELETE where NAME = 'TEST_CASE');
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_CASE' and ID = TCLN_RELATIONSHIP_CLOSURE.DESCENDANT_ID);
 		</sql>
 		<comment>delete tcln_relationship for test case </comment>
 		<sql>
 			delete from TCLN_RELATIONSHIP
-			where DESCENDANT_ID in (select ID from ENTITIES_TO_DELETE where NAME = 'TEST_CASE');
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_CASE' and ID = TCLN_RELATIONSHIP.DESCENDANT_ID);
 		</sql>
 		<comment>delete test_cases</comment>
 		<sql>
 			delete from TEST_CASE
-			where TCLN_ID in (select ID from ENTITIES_TO_DELETE where NAME = 'TEST_CASE')
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_CASE' and ID = TEST_CASE.TCLN_ID)
 			;
 		</sql>
 		<comment>delete test_case_library_node</comment>
 		<sql>
 			delete from TEST_CASE_LIBRARY_NODE 
-			where TCLN_ID in (select ID from ENTITIES_TO_DELETE where NAME = 'TEST_CASE');
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_CASE' and ID = TEST_CASE_LIBRARY_NODE.TCLN_ID);
 		</sql>
 	</changeSet>
 	
 	<!-- =========== FOLDER =========== -->
 	<changeSet id="tm-1.8.0.issue-2933-tc-13" author="mpagnon">
-		<preConditions onFail="CONTINUE" onFailMessage="No test case folder to delete.">
-			<and>
-			<tableExists tableName="ENTITIES_TO_DELETE" />
-			<tableExists tableName="IS_TO_DELETE" />
-			<not>
-					<sqlCheck expectedResult="0">
-						select TOTAL from IS_TO_DELETE
-						where NAME = 'TEST_CASE_FOLDER'
-						;
-					</sqlCheck>
-				</not></and>
-		</preConditions>
+		
 		<comment>delete tcln_relationship_closure for test case folder</comment>		
 		<sql>
 			delete from TCLN_RELATIONSHIP_CLOSURE 
-			where DESCENDANT_ID in (select ID from ENTITIES_TO_DELETE where NAME = 'TEST_CASE_FOLDER');
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_CASE_FOLDER' and ID = TCLN_RELATIONSHIP_CLOSURE.DESCENDANT_ID);
 		</sql>
 		<comment>delete tcln_relationship for test case folder</comment>
 		<sql>
 			delete from TCLN_RELATIONSHIP
-			where DESCENDANT_ID in (select ID from ENTITIES_TO_DELETE where NAME = 'TEST_CASE_FOLDER');
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_CASE_FOLDER' and ID = TCLN_RELATIONSHIP.DESCENDANT_ID);
 		</sql>
 		<comment>delete test_case_folder</comment>
 		<sql>
 			delete from TEST_CASE_FOLDER
-			where TCLN_ID in (select ID from ENTITIES_TO_DELETE where NAME = 'TEST_CASE_FOLDER');
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_CASE_FOLDER' and ID = TEST_CASE_FOLDER.TCLN_ID);
 		</sql>
 		<comment>delete test_case_library_node</comment>
 		<sql>
 			delete from TEST_CASE_LIBRARY_NODE 
-			where TCLN_ID in (select ID from ENTITIES_TO_DELETE where NAME = 'TEST_CASE_FOLDER');
+			where exists (select 1 from ENTITIES_TO_DELETE where NAME = 'TEST_CASE_FOLDER' and ID = TEST_CASE_LIBRARY_NODE.TCLN_ID);
 		</sql>
 	</changeSet>
 

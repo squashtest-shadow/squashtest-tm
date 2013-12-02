@@ -68,7 +68,7 @@
   
 
 	<!-- ========================================INCLUDE CHANGELOG================================================ -->
-	<include file="../../../main/liquibase/tm/tm.changelog-1.8.0.xml" relativeToChangelogFile="true" />
+	<include file="../../../main/liquibase/tm/tm.changelog-upgrade-to-1.8.0.xml" relativeToChangelogFile="true" />
 	<!-- ========================================================================================================= -->
 	
 	<changeSet id="tm-1.8.0.issue-2688-test-01" author="mpagnon">

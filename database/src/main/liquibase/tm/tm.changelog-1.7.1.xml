@@ -51,12 +51,10 @@
 		<comment>Store the ids of the ghost executions</comment>
 		<sql>
 			insert into ENTITIES_TO_DELETE (ENTITY_NAME, ENTITY_ID)
-			select 'EXECUTION', E.EXECUTION_ID
-			from EXECUTION E
-			where E.EXECUTION_ID NOT IN (
-			select ITPE.EXECUTION_ID 
-			from ITEM_TEST_PLAN_EXECUTION ITPE
-			);
+			select distinct 'EXECUTION', E.EXECUTION_ID
+			from EXECUTION E left outer join ITEM_TEST_PLAN_EXECUTION ITPE
+			on E.EXECUTION_ID = ITPE.EXECUTION_ID
+			where ITPE.EXECUTION_ID is null;
 		</sql>
 	</changeSet>
 	<changeSet id="tm-1.7.1.issue-2873-03" author="mpagnon">
@@ -113,10 +111,11 @@
 		<comment>DELETE Issues of execution and execution steps to delete</comment>
 		<delete tableName="ISSUE">
 			<where>
-				ISSUE_LIST_ID IN (
-				select ENTITY_ID
+				exists (
+				select 1
 				from ENTITIES_TO_DELETE
 				where ENTITY_NAME = 'ISSUE_LIST'
+				and ENTITY_ID = ISSUE_LIST_ID
 				);
 			</where>
 		</delete>
@@ -125,10 +124,11 @@
 		<comment>DELETE Automated execution extender of executions to delete</comment>
 		<delete tableName="AUTOMATED_EXECUTION_EXTENDER">
 			<where>
-				MASTER_EXECUTION_ID IN (
-				select	ENTITY_ID 
+				 exists (
+				select	1 
 				from ENTITIES_TO_DELETE
-				where ENTITY_NAME = 'EXECUTION')
+				where ENTITY_NAME = 'EXECUTION'
+				and ENTITY_ID = MASTER_EXECUTION_ID)
 			</where>
 		</delete>
 	</changeSet>
@@ -136,9 +136,10 @@
 		<comment>DELETE automated suites that are not linked to any automated execution extender</comment>
 		<delete tableName="AUTOMATED_SUITE">
 			<where>
-				SUITE_ID NOT IN (
-				select AUTOMATED_EXECUTION_EXTENDER.SUITE_ID
-				from AUTOMATED_EXECUTION_EXTENDER)
+				 not exists (
+				select 1
+				from AUTOMATED_EXECUTION_EXTENDER
+				where AUTOMATED_SUITE.SUITE_ID = AUTOMATED_EXECUTION_EXTENDER.SUITE_ID)
 			</where>
 		</delete>
 
@@ -147,18 +148,20 @@
 		<comment>Delete execution steps of ghost executions</comment>
 		<delete tableName="EXECUTION_EXECUTION_STEPS">
 			<where>
-				EXECUTION_STEP_ID IN (
-				select ENTITY_ID 
+				 exists (
+				select 1 
 				from ENTITIES_TO_DELETE
-				where ENTITY_NAME = 'EXECUTION_STEP')
+				where ENTITY_NAME = 'EXECUTION_STEP'
+				and ENTITY_ID = EXECUTION_STEP_ID)
 			</where>
 		</delete>
 		<delete tableName="EXECUTION_STEP">
 			<where>
-				EXECUTION_STEP_ID IN (
-				select ENTITY_ID 
+				 exists (
+				select 1 
 				from ENTITIES_TO_DELETE
-				where ENTITY_NAME = 'EXECUTION_STEP')
+				where ENTITY_NAME = 'EXECUTION_STEP'
+				and EXECUTION_STEP_ID = ENTITY_ID)
 			</where>
 		</delete>
 	</changeSet>
@@ -166,10 +169,11 @@
 		<comment>Delete ghost executions</comment>
 		<delete tableName="EXECUTION">
 			<where>
-				EXECUTION_ID IN (
-				select ENTITY_ID 
+				 exists (
+				select 1 
 				from ENTITIES_TO_DELETE
-				where ENTITY_NAME = 'EXECUTION')
+				where ENTITY_NAME = 'EXECUTION'
+				and EXECUTION_ID = ENTITY_ID)
 			</where>
 		</delete>
 	</changeSet>
@@ -177,27 +181,30 @@
 		<comment>DELETE Attachments of execution and execution steps to delete</comment>
 		<delete tableName="ATTACHMENT">
 			<where>
-				ATTACHMENT_LIST_ID IN (
-				select ENTITY_ID
+				 exists (
+				select 1
 				from ENTITIES_TO_DELETE
 				where ENTITY_NAME = 'ATTACHMENT_LIST'
+				and ENTITY_ID = ATTACHMENT_LIST_ID
 				);
 			</where>
 		</delete>
 		<delete tableName="ATTACHMENT_CONTENT">
 			<where>
-				ATTACHMENT_CONTENT_ID NOT IN (
-				select CONTENT_ID
+				 not exists (
+				select 1
 				from ATTACHMENT
+				where CONTENT_ID = ATTACHMENT_CONTENT_ID
 				);
 			</where>
 		</delete>
 		<delete tableName="ATTACHMENT_LIST">
 			<where>
-				ATTACHMENT_LIST_ID IN (
-				select ENTITY_ID
+				 exists (
+				select 1
 				from ENTITIES_TO_DELETE
 				where ENTITY_NAME = 'ATTACHMENT_LIST'
+				and ATTACHMENT_LIST_ID = ENTITY_ID
 				);
 			</where>
 		</delete>
@@ -206,10 +213,11 @@
 		<comment>DELETE issue lists of executions and execution-steps to delete</comment>
 		<delete tableName="ISSUE_LIST">
 			<where>
-				ISSUE_LIST_ID IN (
-				select ENTITY_ID 
+				 exists (
+				select 1 
 				from ENTITIES_TO_DELETE
-				where ENTITY_NAME ='ISSUE_LIST')
+				where ENTITY_NAME ='ISSUE_LIST'
+				and ENTITY_ID = ISSUE_LIST_ID)
 			</where>
 		</delete>
 	</changeSet>

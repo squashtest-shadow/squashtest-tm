@@ -27,22 +27,19 @@
 
 	<!-- =========== REQUIREMENT LIBRARY NODES =========== -->
 	<changeSet id="tm-1.8.0.issue-2933-req-01" author="mpagnon">
-		<preConditions onFail="CONTINUE">
-		<and>
-			<tableExists tableName="ENTITIES_TO_DELETE" />
-			<tableExists tableName="IS_TO_DELETE" />
-			</and>
-		</preConditions>
+		
 		<comment>save ids of requirements nodes to delete</comment>
 		<sql>
 			insert into ENTITIES_TO_DELETE
 			(NAME, ID)
 			select 'RLN', rln.RLN_ID
 			from REQUIREMENT_LIBRARY_NODE rln
-			where rln.RLN_ID not in (select
-			DESCENDANT_ID from RLN_RELATIONSHIP UNION
-			select CONTENT_ID from REQUIREMENT_LIBRARY_CONTENT)
+			where not exists (
+			select 1 from RLN_RELATIONSHIP  where RLN_RELATIONSHIP.DESCENDANT_ID = rln.RLN_ID UNION
+			select 1 from REQUIREMENT_LIBRARY_CONTENT where REQUIREMENT_LIBRARY_CONTENT.CONTENT_ID = rln.RLN_ID 
+			)
 			;
+			
 		</sql>
 		<comment>store info if exist requirement nodes to delete</comment>
 		<sql>
@@ -57,19 +54,7 @@
 	</changeSet>
 
 	<changeSet id="tm-1.8.0.issue-2933-req-02" author="mpagnon">
-		<preConditions onFail="CONTINUE"
-			onFailMessage="No orphan requirement library node.">
-			<and>
-			<tableExists tableName="ENTITIES_TO_DELETE" />
-			<tableExists tableName="IS_TO_DELETE" />
-			<not>
-				<sqlCheck expectedResult="0">
-					select count(1) from IS_TO_DELETE
-					where NAME = 'RLN'
-					;
-				</sqlCheck>
-			</not></and>
-		</preConditions>
+		
 		<comment>add ids of children</comment>
 		<sql>
 			insert into ENTITIES_TO_DELETE
@@ -130,26 +115,7 @@
 	</changeSet>
 
 	<changeSet id="tm-1.8.0.issue-2933-req-03" author="mpagnon">
-		<preConditions onFail="CONTINUE" onFailMessage="No orphan requirement library node.">
-			<and>
-			<tableExists tableName="ENTITIES_TO_DELETE" />
-			<tableExists tableName="IS_TO_DELETE" />
-				<not>
-					<sqlCheck expectedResult="0">
-						select TOTAL from IS_TO_DELETE
-						where NAME = 'RLN'
-						;
-					</sqlCheck>
-				</not>
-				<not>
-					<sqlCheck expectedResult="0">
-						select TOTAL from IS_TO_DELETE
-						where NAME = 'REQUIREMENT_VERSION_COVERAGE'
-						;
-					</sqlCheck>
-				</not>
-			</and>
-		</preConditions>
+		
 		<comment>delete verifying_steps</comment>
 		<sql>
 			delete from REQUIREMENT_VERSION_COVERAGE
@@ -177,19 +143,7 @@
 	</changeSet>
 
 	<changeSet id="tm-1.8.0.issue-2933-req-04" author="mpagnon">
-		<preConditions onFail="CONTINUE" onFailMessage="No orphan requirement library node.">
-			<and>
-			<tableExists tableName="ENTITIES_TO_DELETE" />
-			<tableExists tableName="IS_TO_DELETE" /><not>
-				<sqlCheck expectedResult="0">
-					select TOTAL from IS_TO_DELETE
-					where NAME = 'RLN'
-					;
-				</sqlCheck>
-			</not></and>
-		</preConditions>
 		
-
 		<comment>save ids of requirement_version cufs values to delete</comment>
 		<sql>
 			insert into ENTITIES_TO_DELETE
@@ -240,91 +194,93 @@
 		<comment>delete requirement_creation</comment>
 		<sql>
 			delete from REQUIREMENT_CREATION
-			where EVENT_ID in (select ID from
-			ENTITIES_TO_DELETE where NAME = 'REQUIREMENT_AUDIT_EVENT')
+			where exists (select 1 from	ENTITIES_TO_DELETE 
+			where NAME = 'REQUIREMENT_AUDIT_EVENT'
+			and ENTITIES_TO_DELETE.ID  = REQUIREMENT_CREATION.EVENT_ID
+			)
 			;
 		</sql>
 		<comment>delete requirement_property_change</comment>
 		<sql>
 			delete from REQUIREMENT_PROPERTY_CHANGE
-			where EVENT_ID in (select
-			ID from ENTITIES_TO_DELETE where NAME = 'REQUIREMENT_AUDIT_EVENT')
+			where exists (select 1 
+			from ENTITIES_TO_DELETE where NAME = 'REQUIREMENT_AUDIT_EVENT' and REQUIREMENT_PROPERTY_CHANGE.EVENT_ID = ENTITIES_TO_DELETE.ID )
 			;
 		</sql>
 		<comment>delete requirement_audit_event</comment>
 		<sql>
 			delete from REQUIREMENT_AUDIT_EVENT
-			where EVENT_ID in (select ID
-			from ENTITIES_TO_DELETE where NAME = 'REQUIREMENT_AUDIT_EVENT')
+			where exists (select 1
+			from ENTITIES_TO_DELETE where NAME = 'REQUIREMENT_AUDIT_EVENT' and ID = REQUIREMENT_AUDIT_EVENT.EVENT_ID)
 			;
 		</sql>
 		<comment>set current_version to null</comment>
 		<sql>
 			update REQUIREMENT 
 			set CURRENT_VERSION_ID = null
-			where RLN_ID in  (select ID
-			from ENTITIES_TO_DELETE where NAME = 'RLN')
+			where exists  (select 1
+			from ENTITIES_TO_DELETE where NAME = 'RLN' and ID = REQUIREMENT.RLN_ID)
 			;
 		</sql>
 		<comment>delete requirement_version</comment>
 		<sql>
 			delete from REQUIREMENT_VERSION
-			where RES_ID in (select ID from
-			ENTITIES_TO_DELETE where NAME = 'RESOURCE')
+			where exists (select 1 from
+			ENTITIES_TO_DELETE where NAME = 'RESOURCE' and ID = REQUIREMENT_VERSION.RES_ID)
 			;
 		</sql>
 
 		<comment>delete rln_relationship</comment>
 		<sql>
 			delete from RLN_RELATIONSHIP
-			where DESCENDANT_ID in (select ID
+			where exists (select 1
 			from
-			ENTITIES_TO_DELETE where NAME = 'RLN')
+			ENTITIES_TO_DELETE where NAME = 'RLN' and ID = RLN_RELATIONSHIP.DESCENDANT_ID)
 			;
 		</sql>
 		<comment>delete rln_relationship_closure </comment>
 		<sql>
 			delete from RLN_RELATIONSHIP_CLOSURE
-			where DESCENDANT_ID in
-			(select ID from
-			ENTITIES_TO_DELETE where NAME = 'RLN')
+			where  exists
+			(select 1 from
+			ENTITIES_TO_DELETE where NAME = 'RLN' and RLN_RELATIONSHIP_CLOSURE.DESCENDANT_ID = ID)
 			;
 		</sql>
 		<comment>delete requirement_folder</comment>
 		<sql>
 			delete from REQUIREMENT_FOLDER
-			where RLN_ID in (select ID from
-			ENTITIES_TO_DELETE where NAME = 'RLN')
+			where  exists (select 1 from
+			ENTITIES_TO_DELETE where NAME = 'RLN' and ID = REQUIREMENT_FOLDER.RLN_ID)
 			;
 		</sql>
 		<comment>delete requirement</comment>
 		<sql>
 			delete from REQUIREMENT
-			where RLN_ID in (select ID from
-			ENTITIES_TO_DELETE where NAME = 'RLN')
+			where  exists (select 1 from
+			ENTITIES_TO_DELETE where NAME = 'RLN' and ID = REQUIREMENT.RLN_ID)
 			;
 		</sql>
 		<comment>delete requirement_library_node</comment>
 		<sql>
 			delete from REQUIREMENT_LIBRARY_NODE
-			where RLN_ID in (select ID
+			where exists (select 1
 			from
-			ENTITIES_TO_DELETE where NAME = 'RLN')
+			ENTITIES_TO_DELETE where NAME = 'RLN' and ID = REQUIREMENT_LIBRARY_NODE.RLN_ID)
 			;
 		</sql>
 		<comment>delete simple_resource</comment>
 		<sql>
 			delete from SIMPLE_RESOURCE
-			where RES_ID in (select ID from
-			ENTITIES_TO_DELETE where NAME = 'RESOURCE')
+			where exists (select 1 from
+			ENTITIES_TO_DELETE where NAME = 'RESOURCE' and ID = SIMPLE_RESOURCE.RES_ID)
 			;
 		</sql>
 		<comment>delete resources</comment>
 		<sql>
 			delete from RESOURCE
-			where RES_ID in (select ID from
+			where exists (select ID from
 			ENTITIES_TO_DELETE where NAME =
-			'RESOURCE')
+			'RESOURCE' and RESOURCE.RES_ID = ID)
 			;
 		</sql>
 	</changeSet>

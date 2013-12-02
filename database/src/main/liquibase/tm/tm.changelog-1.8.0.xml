@@ -25,32 +25,6 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 	
-	<changeSet id="tm-1.8.0.issue-1846-01" author="mpagnon">
-		<preConditions 
-		onFailMessage="Your database still have logicaly deleted entities. 
-		Please run the following script :
-		 https://ci.squashtest.org/mantis/file_download.php?file_id=1559&amp;type=bug on your database prior to this upgrade." onError="HALT" >
-			<and>
-				<sqlCheck expectedResult="0">
-				select count(1) from CAMPAIGN_LIBRARY_NODE
-				where DELETED_ON is not null;
-				</sqlCheck>
-				<sqlCheck expectedResult="0">
-				select count(1) from TEST_CASE_LIBRARY_NODE
-				where DELETED_ON is not null;
-				</sqlCheck>
-				<sqlCheck expectedResult="0">
-				select count(1) from REQUIREMENT_LIBRARY_NODE
-				where DELETED_ON is not null;
-				</sqlCheck>
-				<sqlCheck expectedResult="0">
-				select count(1) from ITERATION 
-				where DELETED_ON is not null;
-				</sqlCheck>
-			</and>
-		</preConditions>
-		<comment>precondition prior to remove the DELETED_ON columns</comment>
-	</changeSet>
 	
 	
 	
@@ -282,9 +256,6 @@
 	
 	</changeSet>	
 	
-	<!-- ========================================INCLUDE CHANGELOG================================================ -->
-		<include file="tm.changelog-1.8.0-issue-2933-master.xml" relativeToChangelogFile="true" />
- 	<!-- ========================================================================================================= -->
- 	
+	
 </databaseChangeLog>
  
