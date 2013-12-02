@@ -93,7 +93,11 @@ define(
 				var date = data['last-exec-on'],
 					format = translator.get('squashtm.dateformat');
 				
-				$row.find('.exec-on').text(dateutils.format(date, format));
+				if(!!date){
+					$row.find('.exec-on').text(dateutils.format(date, format));
+				} else {
+					$row.find('.exec-on').text(translator.get('label.lower.Never'));
+				}
 
 				// assignee (read)
 				var $assigneetd = $row.find('.assignee-combo');

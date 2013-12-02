@@ -48,7 +48,7 @@ DEV NOTES :
 					 	 
 		<div id="general-information-panel" class="information-panel" th:attr="data-def='url='+${url}+', never='+${neverLabel}+', format='+${displayDateformat}">
 					 
-			<span th:text="#{label.CreatedOn}+'  '">created on </span>
+			<span th:text="#{label.CreatedOn}+'&nbsp;:&nbsp;'">created on </span>
 			
 			<span id="created-on">
 				<span class="datetime" th:text="${#dates.format(entity.createdOn, rawDateformat)}">2013-11-25T15:39:00</span>
@@ -57,10 +57,14 @@ DEV NOTES :
 			
 			<br/>
 			
-			<span th:text="#{label.UpdatedOn}+'  '">updated on </span>
-			<span id="last-modified-on">
+			<span th:text="#{label.UpdatedOn}+'&nbsp;:&nbsp;'">updated on </span>
+			<span th:if="${entity.lastModifiedOn}" id="last-modified-on">
 				<span class="datetime" th:text="${#dates.format(entity.lastModifiedOn, rawDateformat)}"></span>
 				<span class="author" th:text="${entity.lastModifiedBy}"></span>
+			</span>
+			<span th:unless="${entity.lastModifiedOn}" id="last-modified-on">
+				<span class="datetime" th:text="#{label.lower.Never}"></span>
+				<span class="author"></span>
 			</span>
 			
 			<br />
