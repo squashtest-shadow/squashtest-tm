@@ -401,12 +401,6 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	}
 
-	@Override
-	public TestPlanStatistics getIterationStatistics(long iterationId) {
-		return iterationDao.getIterationStatistics(iterationId);
-	}
-
-
 
 	@Override
 	public AutomatedSuite createAndStartAutomatedSuite(List<IterationTestPlanItem> testPlanItems) {

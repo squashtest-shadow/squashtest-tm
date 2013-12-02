@@ -34,7 +34,7 @@ define(['jquery', 'workspace.event-bus' ], function($, eventBus) {
 			eventBus.onContextual('context.content-modified', function(evt, args){	
 				
 				$("#iteration-test-plans-table").squashTable().refresh();           
-               refreshStatistics();
+				
                 if (args && args.newDates){
 	                actualStart.refreshAutoDate(args.newDates.newStartDate);
 	                actualEnd.refreshAutoDate(args.newDates.newEndDate);

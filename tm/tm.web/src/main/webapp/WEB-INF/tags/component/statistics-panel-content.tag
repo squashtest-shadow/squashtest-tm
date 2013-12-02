@@ -39,10 +39,10 @@
 								<th class="ui-state-default"><f:message key="label.numberOfTestCases" /></th>
 								<th class="ui-state-default"><f:message key="label.successful" /></th>
 								<th class="ui-state-default"><f:message key="label.plur.failed" /></th>
-								<th class="ui-state-default"><f:message key="label.running" /></th>
+								<th class="ui-state-default"><f:message key="label.Running" /></th>
 								<th class="ui-state-default"><f:message key="label.plur.blocked" /></th>								
 								<th class="ui-state-default"><f:message key="label.plur.untestable" /></th>
-								<th class="ui-state-default"><f:message key="label.ready" /></th>
+								<th class="ui-state-default"><f:message key="label.Ready" /></th>
 							</tr>
 						</thead>
 						<tbody>

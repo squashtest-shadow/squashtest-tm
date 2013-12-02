@@ -137,14 +137,12 @@ public class IterationModificationController {
 	private void populateIterationModel(Model model, long iterationId){
 		
 		Iteration iteration = iterationModService.findById(iterationId);
-		TestPlanStatistics statistics = iterationModService.getIterationStatistics(iterationId);
 		boolean hasCUF = cufValueService.hasCustomFields(iteration);
 		DataTableModel attachmentsModel = attachmentHelper.findPagedAttachments(iteration);
 		Map<String, String> assignableUsers = getAssignableUsers(iterationId);
 		Map<String, String> weights = getWeights();
 		
 		model.addAttribute(ITERATION_KEY, iteration);
-		model.addAttribute("statistics", statistics);
 		model.addAttribute("hasCUF", hasCUF);		
 		model.addAttribute("attachmentsModel", attachmentsModel);		
 		model.addAttribute("assignableUsers", assignableUsers);
@@ -200,17 +198,7 @@ public class IterationModificationController {
 		
 		return mav;
 	}
-	
-	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
-	public ModelAndView refreshStats(@PathVariable long iterationId) {
 
-		TestPlanStatistics iterationStatistics = iterationModService.getIterationStatistics(iterationId);
-
-		ModelAndView mav = new ModelAndView("fragment/generics/statistics-fragment");
-		mav.addObject("statisticsEntity", iterationStatistics);
-
-		return mav;
-	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=iteration-description", VALUE })
 	@ResponseBody

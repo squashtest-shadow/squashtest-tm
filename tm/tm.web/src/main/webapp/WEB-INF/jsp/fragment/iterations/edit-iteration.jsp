@@ -50,9 +50,7 @@
 <s:url var="iterationTestPlanUrl" value="/iterations/{iterId}/test-plan">
 	<s:param name="iterId" value="${iteration.id}" />
 </s:url>
-<s:url var="iterationStatisticsUrl" value="/iterations/{iterId}/statistics">
-	<s:param name="iterId" value="${iteration.id}" />
-</s:url>
+
 <s:url var="iterationDashboardStatisticsUrl" value="/iterations/{iterId}/dashboard-statistics">
 	<s:param name="iterId" value="${iteration.id}" />
 </s:url>
@@ -312,8 +310,6 @@
 			</jsp:attribute>
 		</comp:toggle-panel>
 		
-		<%-- ------------------ statistiques --------------------------- --%>
-		<comp:statistics-panel statisticsEntity="${ statistics }" statisticsUrl="${ iterationStatisticsUrl }"/>
 	</div>
 	
 	<%-- ------------------ test plan ------------------------------ --%>
