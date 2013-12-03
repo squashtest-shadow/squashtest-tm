@@ -87,7 +87,7 @@ define(
 				if(!!date){
 					$row.find('.exec-on').text(dateutils.format(date, format));
 				} else {
-					$row.find('.exec-on').text(translator.get('label.lower.Never'));
+					$row.find('.exec-on').text('-');
 				}
 
 				// assignee (read)
