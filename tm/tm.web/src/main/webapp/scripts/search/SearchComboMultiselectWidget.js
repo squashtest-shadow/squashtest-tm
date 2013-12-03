@@ -57,6 +57,7 @@ define([ "jquery", "jqueryui" ], function($) {
 								$("select", this.element.children())).attr("selected",
 								"selected");
 					}
+					$($(this.element.children()[0]).children()[0]).attr('checked', true);
 				}
 			}
 		},
