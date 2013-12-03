@@ -82,12 +82,12 @@ that page won't be editable if
 <script type="text/javascript">
 	function renameRequirementSuccess(data){
 		var evt = new EventRename(identity, data.newName);
-		squashtm.workspace.contextualContent.fire(null, evt);
+		squashtm.workspace.eventBus.fire(null, evt);
 	}
 	
 	function updateReferenceInTitle(reference){
 		var evt = new EventUpdateReference(identity, reference);
-		squashtm.workspace.contextualContent.fire(null, evt);	
+		squashtm.workspace.eventBus.fire(null, evt);	
 	}
 	
 	
