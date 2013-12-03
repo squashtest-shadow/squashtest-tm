@@ -61,6 +61,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.campaign.CustomIterationModificationService;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
@@ -346,27 +347,30 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		return iteration.getPlannedTestCase();
 	}
 
-	// FIXME : security
-	@Override
-	@Deprecated
-	public void updateTestCaseLastExecutedByAndOn(IterationTestPlanItem givenTestPlan, Date lastExecutedOn,
-			String lastExecutedBy) {
-		givenTestPlan.setLastExecutedBy(lastExecutedBy);
-		givenTestPlan.setLastExecutedOn(lastExecutedOn);
-		givenTestPlan.setUser(userDao.findUserByLogin(lastExecutedBy));
 
-	}
 
 	@Override
 	// FIXME : security. Note that the user should either have the right to execute executions, has role admin, or has
 	// role ta_server
-	public void updateExecutionMetadata(IterationTestPlanItem item) {
+	public void updateMetadata(IterationTestPlanItem item) {
 		Execution execution = item.getLatestExecution();
 		if (execution != null) {
 			item.setLastExecutedBy(execution.getLastExecutedBy());
 			item.setLastExecutedOn(execution.getLastExecutedOn());
 			item.setUser(userDao.findUserByLogin(execution.getLastExecutedBy()));
 		}
+	}
+	
+	/*
+	 * Instead of using data from an actual execution (like {@link #updateMetadata(IterationTestPlanItem)}, 
+	 * we update those data according to arbitrary parameters like the thread initiator and now().  
+	 * @param item
+	 */
+	private void arbitraryUpdateMetadata(IterationTestPlanItem item){
+		String login = UserContextHolder.getUsername();
+		item.setLastExecutedBy(login);
+		item.setLastExecutedOn(new Date());
+		item.setUser(userDao.findUserByLogin(login));
 	}
 
 	@Override
@@ -464,10 +468,11 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	}
 
 	@Override
-	public void assignExecutionStatusToTestPlanItem(long iterationTestPlanItemId, String statusName) {
+	public void forceExecutionStatus(long iterationTestPlanItemId, String statusName) {
 
-		IterationTestPlanItem testPlanItem = findTestPlanItem(iterationTestPlanItemId);
+		IterationTestPlanItem testPlanItem = findTestPlanItem(iterationTestPlanItemId);		
 		testPlanItem.setExecutionStatus(ExecutionStatus.valueOf(statusName));
+		arbitraryUpdateMetadata(testPlanItem);
 	}
 
 	/**

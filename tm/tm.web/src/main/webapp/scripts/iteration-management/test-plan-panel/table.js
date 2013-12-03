@@ -189,18 +189,28 @@ define(
 					
 					submitStatusClbk : function(json, settings) {
 						
-						var itp = JSON.parse(json),
-							format = translator.get('squashtm.dateformat'),
-							$span = $(this), 
-							$execon= $span.parents('tr:first').find("td.exec-on"),
+						// must update the execution status, the execution date and the assignee
+						var itp = JSON.parse(json);
+						
+						// 1/ the status
+						var $statusspan = $(this), 
 							statuses = JSON.parse(settings.data);
 						
-						$span.attr('class', 'cursor-arrow exec-status-label exec-status-' + itp.executionStatus.toLowerCase());
+						$statusspan.attr('class', 'cursor-arrow exec-status-label exec-status-' + itp.executionStatus.toLowerCase());						
+						$statusspan.text(statuses[itp.executionStatus]);
 						
-						$span.text(statuses[itp.executionStatus]);
-						
+						// 2/ the date format
+						var format = translator.get('squashtm.dateformat'),
+							$execon= $statusspan.parents('tr:first').find("td.exec-on");
+	
 						var newdate = dateutils.format(itp.lastExecutedOn, format);
 						$execon.text(newdate);
+						
+						// 3/ user assigned
+						$statusspan.parents('tr:first')
+									.find('td.assignee-combo')
+									.children().first().
+									text(itp.assignee);
 					},
 
 					jsonAssignableUsers : JSON.stringify(initconf.basic.assignableUsers),

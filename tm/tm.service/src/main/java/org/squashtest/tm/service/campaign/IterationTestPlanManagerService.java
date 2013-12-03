@@ -71,6 +71,7 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 
 	void changeTestPlanPosition(long iterationId, int newPosition, List<Long> itemIds);
 	
+	
 	void reorderTestPlan(long iterationId, MultiSorting newSorting);
 
 	/**
@@ -105,24 +106,14 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 */
 	boolean removeTestPlanFromIteration(long testPlanItemId);
 
-	/**
-	 * Update item test plan lastExecuted data (by and on) (for the moment they're constants)
-	 * 
-	 * @param givenTestPlan
-	 *            : the test plan to update
-	 * @param executionDate
-	 *            : the execution date
-	 */
-	@Deprecated
-	void updateTestCaseLastExecutedByAndOn(IterationTestPlanItem givenTestPlan, Date lastExecutedOn,
-			String lastExecutedBy);
+
 
 	/**
 	 * Will update the item test plan execution metadata using the last execution data.
 	 * 
 	 * @param execution
 	 */
-	void updateExecutionMetadata(IterationTestPlanItem item);
+	void updateMetadata(IterationTestPlanItem item);
 
 	/**
 	 * Assign User with Execute Access to a TestPlan item.
@@ -157,12 +148,13 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	List<ExecutionStatus> getExecutionStatusList();
 
 	/**
-	 * Assigns an execution status to a test plan item Overrides the current execution status
+	 * Assigns an execution status to a test plan item. Overrides the current execution status, and other executions 
+	 * metadata.
 	 * 
 	 * @param iterationTestPlanItemId
 	 * @param statusName
 	 */
-	void assignExecutionStatusToTestPlanItem(long iterationTestPlanItemId, String statusName);
+	void forceExecutionStatus(long iterationTestPlanItemId, String statusName);
 
 	/**
 	 * Creates a fragment of test plan, containing either :

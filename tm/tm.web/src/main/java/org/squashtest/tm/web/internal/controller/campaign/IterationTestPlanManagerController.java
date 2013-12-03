@@ -255,7 +255,7 @@ public class IterationTestPlanManagerController {
 										  @PathVariable("iterationId") long iterationId,
 										  @RequestParam("status") String status) {
 		
-		iterationTestPlanManagerService.assignExecutionStatusToTestPlanItem(testPlanId, status);
+		iterationTestPlanManagerService.forceExecutionStatus(testPlanId, status);
 		IterationTestPlanItem item = iterationTestPlanManagerService.findTestPlanItem(testPlanId);
 		
 		return createJsonITPI(item);
@@ -274,6 +274,7 @@ public class IterationTestPlanManagerController {
 					name,
 					item.getLastExecutedOn(),
 					item.getLastExecutedBy(),
+					item.getUser(),
 					item.isTestCaseDeleted(),
 					item.isAutomated()
 				);

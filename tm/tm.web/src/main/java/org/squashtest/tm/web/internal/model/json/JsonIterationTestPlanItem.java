@@ -24,6 +24,7 @@ import java.util.Date;
 
 import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.users.User;
 
 
 public class JsonIterationTestPlanItem{
@@ -32,29 +33,32 @@ public class JsonIterationTestPlanItem{
 	private String name;
 	private String lastExecutedOn;	//format ISO 8601 aka ATOM 
 	private String lastExecutedBy;
+	private String assignee;
 	private boolean isTestCaseDeleted;
 	private boolean isAutomated;
 	
 	public JsonIterationTestPlanItem(long id, ExecutionStatus executionStatus,
-			String name, String lastExecutedOn, String lastExecutedBy, boolean isTestCaseDeleted, boolean isAutomated) {
+			String name, String lastExecutedOn, String lastExecutedBy, String assignee, boolean isTestCaseDeleted, boolean isAutomated) {
 		super();
 		this.id = id;
 		this.executionStatus = executionStatus;
 		this.name = name;
 		this.lastExecutedOn = lastExecutedOn;
 		this.lastExecutedBy = lastExecutedBy;
+		this.assignee = assignee;
 		this.isTestCaseDeleted = isTestCaseDeleted;
 		this.isAutomated = isAutomated;
 	}
 	
 	public JsonIterationTestPlanItem(long id, ExecutionStatus executionStatus,
-			String name, Date lastExecutedOn, String lastExecutedBy, boolean isTestCaseDeleted, boolean isAutomated) {
+			String name, Date lastExecutedOn, String lastExecutedBy, User assignee, boolean isTestCaseDeleted, boolean isAutomated) {
 		super();
 		this.id = id;
 		this.executionStatus = executionStatus;
 		this.name = name;
 		this.lastExecutedOn = toISO8601(lastExecutedOn);
 		this.lastExecutedBy = lastExecutedBy;
+		this.assignee = (assignee != null) ? assignee.getLogin() : "";
 		this.isTestCaseDeleted = isTestCaseDeleted;
 		this.isAutomated = isAutomated;
 	}
@@ -118,5 +122,13 @@ public class JsonIterationTestPlanItem{
 
 	public void setAutomated(boolean isAutomated) {
 		this.isAutomated = isAutomated;
+	}
+	
+	public void setAssignee(String login){
+		this.assignee = login;
+	}
+	
+	public String getAssignee(){
+		return this.assignee;
 	}
 }

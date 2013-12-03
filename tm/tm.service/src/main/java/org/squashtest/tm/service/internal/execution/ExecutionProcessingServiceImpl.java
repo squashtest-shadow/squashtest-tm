@@ -220,7 +220,7 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 
 		// forward to the test plan
 		IterationTestPlanItem testPlan = execution.getTestPlan();	
-		testPlanService.updateExecutionMetadata(testPlan);
+		testPlanService.updateMetadata(testPlan);
 
 	}
 	
@@ -235,7 +235,7 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 		
 		// forward to the test plan
 		IterationTestPlanItem testPlan = execution.getTestPlan();	
-		testPlanService.updateExecutionMetadata(testPlan);
+		testPlanService.updateMetadata(testPlan);
 	}
 
 	/***

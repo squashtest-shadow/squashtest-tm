@@ -149,10 +149,6 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 
 	public void setExecutionStatus(ExecutionStatus executionStatus) {
 		this.executionStatus = executionStatus;
-
-		// since 1.8, also sets the following :
-		setLastExecutedOn(new Date());
-		setLastExecutedBy(UserContextHolder.getUsername());
 	}
 
 	/**

@@ -291,7 +291,7 @@ public class TestSuiteTestPlanManagerController {
 	public @ResponseBody
 	JsonIterationTestPlanItem setTestPlanItemStatus(@PathVariable("testPlanId") long testPlanId, @RequestParam("status") String status) {
 		LOGGER.debug("change status test plan item #{} to {}", testPlanId, status);
-		iterationTestPlanManagerService.assignExecutionStatusToTestPlanItem(testPlanId, status);
+		iterationTestPlanManagerService.forceExecutionStatus(testPlanId, status);
 		IterationTestPlanItem item = iterationTestPlanManagerService.findTestPlanItem(testPlanId);
 		
 		return createJsonITPI(item);
@@ -366,6 +366,7 @@ public class TestSuiteTestPlanManagerController {
 					name,
 					item.getLastExecutedOn(),
 					item.getLastExecutedBy(),
+					item.getUser(),
 					item.isTestCaseDeleted(),
 					item.isAutomated()
 				);
