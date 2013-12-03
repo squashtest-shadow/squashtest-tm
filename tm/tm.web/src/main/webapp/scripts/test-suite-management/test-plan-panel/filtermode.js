@@ -78,7 +78,7 @@ define(["jquery",  "jquery.squash.rangedatepicker" ], function($, rangedatepicke
 			weights = initconf.basic.weights,
 			modes = initconf.basic.modes;
 	
-		var table = $("#iteration-test-plans-table");
+		var table = $("#test-suite-test-plans-table");
 		
 
 		table.find('.tp-th-project-name,.tp-th-reference,.tp-th-name,.tp-th-dataset')
