@@ -219,11 +219,11 @@
 								<th class="status-color-untestable" colspan="4"><f:message key="label.NeverExecuted"/></th>
 							</tr>
 							<tr>				
-								<th title="${TestSuiteLabel}" class="status-color-campaign" style="width:10%">${TestSuiteLabel}<%--<f:message key="shortLabel.TestSuite"/> --%></th>
+								<th title="${TestSuiteLabel}" style="width:10%">${TestSuiteLabel}<%--<f:message key="shortLabel.TestSuite"/> --%></th>
 								<th style="border:none;"></th>
-								<th title="${TotalLabel}" class="status-color-campaign"><f:message key="shortLabel.Total"/></th>
-								<th title="${ToDoLabel}" class="status-color-campaign"><f:message key="shortLabel.ToDo"/></th>
-							    <th title="${DoneLabel}" class="status-color-campaign"><f:message key="shortLabel.Done"/></th>
+								<th title="${TotalLabel}" ><f:message key="shortLabel.Total"/></th>
+								<th title="${ToDoLabel}" ><f:message key="shortLabel.ToDo"/></th>
+							    <th title="${DoneLabel}" ><f:message key="shortLabel.Done"/></th>
 								<th style="border:none;"></th>
 								<th title="${ToExecuteLabel}" class="status-color-ready"><f:message key="shortLabel.Ready"/></th>
 								<th title="${RunningLabel}" class="status-color-running"><f:message key="shortLabel.Running"/></th>															    								
@@ -232,17 +232,17 @@
 								<th title="${BlockedLabel}" class="status-color-blocked"><f:message key="shortLabel.Blocked"/></th>								
 								<th title="${NonExecutableLabel}" class="status-color-untestable"><f:message key="shortLabel.NonExecutable"/></th>
 								<th style="border:none;"></th>
-								<th title="${ProgressLabel}" class="status-color-campaign"><f:message key="shortLabel.ExecutionProgress"/></th>								
-								<th title="${SuccessRateLabel}" class="status-color-campaign"><f:message key="shortLabel.SuccessRate"/></th>
-								<th title="${FailureRateLabel}" class="status-color-campaign"><f:message key="shortLabel.FailureRate"/></th>
+								<th title="${ProgressLabel}"><f:message key="shortLabel.ExecutionProgress"/></th>								
+								<th title="${SuccessRateLabel}"><f:message key="shortLabel.SuccessRate"/></th>
+								<th title="${FailureRateLabel}"><f:message key="shortLabel.FailureRate"/></th>
 								<th style="border:none;"></th>
-								<th title="${ProgressVsPrevLabel}" class="status-color-campaign" style="width:8%"><f:message key="shortLabel.ExecutionProgressComparedToPrev"/></th>
-								<th title="${ToDoVsPrevLabel}" class="status-color-campaign" style="width:8%"><f:message key="shortLabel.ToDoComparedToPrev"/></th>
+								<th title="${ProgressVsPrevLabel}" style="width:8%"><f:message key="shortLabel.ExecutionProgressComparedToPrev"/></th>
+								<th title="${ToDoVsPrevLabel}" style="width:8%"><f:message key="shortLabel.ToDoComparedToPrev"/></th>
 								<th style="border:none;"></th>								
-								<th title="${VeryHighLabel}" class="status-color-campaign"><f:message key="shortLabel.VeryHigh"/></th>
-								<th title="${HighLabel}" class="status-color-campaign"><f:message key="shortLabel.High"/></th>
-								<th title="${MediumLabel}" class="status-color-campaign"><f:message key="shortLabel.Medium"/></th>								
-								<th title="${LowLabel}"class="status-color-campaign"><f:message key="shortLabel.Low"/></th>
+								<th title="${VeryHighLabel}"><f:message key="shortLabel.VeryHigh"/></th>
+								<th title="${HighLabel}" ><f:message key="shortLabel.High"/></th>
+								<th title="${MediumLabel}" ><f:message key="shortLabel.Medium"/></th>								
+								<th title="${LowLabel}"><f:message key="shortLabel.Low"/></th>
 							</tr>
 						</thead>
 				
