@@ -35,6 +35,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.lucene.analysis.SimpleAnalyzer;
 import org.apache.lucene.document.DateTools;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
