@@ -74,6 +74,10 @@ define(["moment", "squash.translator"], function(moment, translator) {
 	
 	return {
 		
+		/*
+		 * This format is public, hence uses the official Java format. 
+		 * The corresponding moment.js-compatible format would be obtained using _javaToJSFormat on it.
+		 */
 		ISO_8601 : "yyyy-MM-dd'T'HH:mm:ss.SSSZ",
 		
 		
@@ -87,7 +91,7 @@ define(["moment", "squash.translator"], function(moment, translator) {
 		*/
 		format : function(value, toFormat, fromFormat) {
 		
-			var _fromFormat = _javaToJSFormat(fromFormat)
+			var _fromFormat = _javaToJSFormat(fromFormat),
 				_date = this.parse(value, _fromFormat),
 				_toFormat = _javaToJSFormat(toFormat);
 			
