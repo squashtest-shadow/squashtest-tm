@@ -19,9 +19,36 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-define(["jquery", "backbone", "squash.attributeparser", "jquery.throttle-debounce"],
-		function($, Backbone, attrparser){
+/*
+ * This view can be subclassed for fun and profit by any view based on JqPlot. It supplies convenient and predefined
+ * mechanisms that will handle the conditions under which a view can be actually rendered.
+ * 
+ * Indeed a jqplot view can only be successfully rendered when the HTML container has non null dimensions, however isn't 
+ * possible when that container is not displayed. To work around this, the following rules apply :
+ * 
+ *  - when the model changes or the window is resized, the view "requests" a rendering.
+ *  - when the view is visible or becomes visible, the view "performs" the rendering if a "request" was emitted since the last "perform".
+ * 
+ * See ._bindEvents() for details regarding implementation. Also, when a "request" is issued, if the view is visible, the rendering is 
+ * immediately "performed".
+ * 
+ * =================================================
+ * 
+ *  Subclasses must implement :
+ *  - getSeries : must return a series of data as jqplot expects it to be,
+ *  - getConf : a configuration object that will customize the rendering.
+ *  
+ *  Services supplied are : 
+ *  - embedded support for 'data-def' clauses,
+ *  - binding/unbinding update and destroy events,
+ *  - safe rendering methods.
+ *  
+ *  Events listened to (on the event bus) : 
+ *  - dashboard.appear : when an external sources triggers that event, the view will perform the rendering
+ * 
+ */
+define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "jquery.throttle-debounce"],
+		function($, Backbone, attrparser, eventbus){
 	
 	return Backbone.View.extend({
 		
@@ -39,15 +66,20 @@ define(["jquery", "backbone", "squash.attributeparser", "jquery.throttle-debounc
 		
 		// ************************* core functions *********************
 		
+		options : {
+			requestRedering : true
+		},
+		
 		initialize : function(){			
 			//configure
 			this._readDOM();
 			
 			//create. This may abort if the model is not available yet.
-			this.render();
+			this._requestRender();
 			
-			//events
+			// events
 			this._bindEvents();
+			
 		},
 		
 		
@@ -60,23 +92,48 @@ define(["jquery", "backbone", "squash.attributeparser", "jquery.throttle-debounc
 			
 		},
 		
-		
 		_bindEvents : function(){
 			
-			var self = this;
-			$(window).on('resize', $.debounce(250, function(){
-				self.render();
-			}));
+			// 1) request rendering on resize. 
+			// Note : uses a debounced and proxied version of _requestRender, 
+			// to limit the firing rate of 'resize' event.
+			this._wrappedRequestRender = $.debounce(250, $.proxy(this._requestRender, this));
+			$(window).on('resize', this._wrappedRequestRender);
 			
+			// 2) request rendering on model changed. 
 			var modelchangeevt = "change";
 			if (this.options['model-attribute']!== undefined){
 				modelchangeevt+=":"+this.options['model-attribute'];
-			}
+			}			
+			this.listenTo(this.model, modelchangeevt, this._requestRender);
 			
-			this.listenTo(this.model, modelchangeevt, this.render);
+			// 3) render when eventually possible
+			eventbus.onContextual("dashboard.appear", $.proxy(this._performRender, this));
+			
+			
+			// 4) destroys itself properly when the content is removed
+			var removeOnClear = $.proxy(function() {
+				this.remove();
+			}, this);
+			eventbus.onContextual('contextualcontent.clear', removeOnClear);
+			
 		},
 		
-
+		_requestRender : function(){
+			this.options.requestRendering = true;
+			
+			if (this.$el.is(':visible')){
+				this._performRender();
+			}
+		},
+		
+		_performRender : function(){
+			if (this.options.requestRendering === true){
+				this.render();
+				this.options.requestRendering = false;
+			}
+		},
+		
 		render : function(){
 			
 			if (! this.model.isAvailable()){
@@ -91,6 +148,7 @@ define(["jquery", "backbone", "squash.attributeparser", "jquery.throttle-debounc
 		},
 		
 		draw : function(series, conf){
+			
 			if (this.plot === undefined){	
 				var viewId = this.$el.find('.dashboard-item-view').attr('id');
 				this.plot = $.jqplot(viewId, series, conf);
@@ -100,14 +158,18 @@ define(["jquery", "backbone", "squash.attributeparser", "jquery.throttle-debounc
 				conf.data = series;
 				this.plot.replot(conf);
 			}
+			
 		},
 		
 		remove : function(){
+			this.undelegateEvents();
 			if (!! this.plot){
 				this.plot.destroy();
 			}
+			$(window).off('resize', this._wrappedRequestRender);
 			Backbone.View.prototype.remove.call(this);
 		}
+
 		
 	});
 	

@@ -163,7 +163,7 @@
 						
 						<div class="dashboard-item-meta">					
 						<div class="dashboard-item-legend">
-											<div>
+						<div>
 							<span class="serie serie0"><f:message key="test-case.importance.VERY_HIGH" /></span>
 						</div>
 						<div>

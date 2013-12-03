@@ -35,14 +35,14 @@
  * 
  */
 define(
-		[ "jquery", 'squash.attributeparser', 'workspace.event-bus',
+		[ "jquery", 'squash.attributeparser', 
 				"./basic-objects/model",
 				"./basic-objects/model-cache",
 				"./basic-objects/refresh-button",
 				"./basic-objects/timestamp-label",
 				"./basic-objects/figleaf-view",
 		        "backbone"],
-		function($, attrparser, eventBus, StatModel, cache, RefreshButton, Timestamp, FigLeafView, Backbone) {
+		function($, attrparser, StatModel, cache, RefreshButton, Timestamp, FigLeafView, Backbone) {
 
 			var SuperMasterView = Backbone.View.extend({
 								
@@ -58,8 +58,8 @@ define(
 							el : self.el.find('.dashboard-timestamp').get(0),
 							model : self.bbModel
 						})
-
-					];},
+					];
+				},
 					
 				initFigleaves : function(){
 					var self = this;
@@ -101,19 +101,7 @@ define(
 					
 					self.initFigleaves();
 					self.initViews();
-					
-					// this hook will ensure the destruction of the
-					// views.
-					var removeOnClear = function() {
-						for ( var i = 0; i < self.views.length; i++) {
-							self.views[i].undelegateEvents();
-							self.views[i].remove();
-						}
-						// unbind this hook itself.
-						eventBus.off('contextualcontent.clear', removeOnClear);
-					};
 
-					eventBus.on('contextualcontent.clear', removeOnClear);
 
 				}
 			});

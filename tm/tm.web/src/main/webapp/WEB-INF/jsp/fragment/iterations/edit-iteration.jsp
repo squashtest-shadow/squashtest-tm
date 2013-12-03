@@ -395,7 +395,12 @@
 				var fragConf = {
 					beforeLoad : Frag.confHelper.fnCacheRequests,
 					active : 2,
-					cookie : "iteration-tab-cookie"
+					cookie : "iteration-tab-cookie",
+					activate : function(event, ui){
+						if (ui.newPanel.is('#dashboard-iteration')){
+							eventBus.trigger('dashboard.appear');
+						}
+					}
 				};
 				Frag.init(fragConf);
 				
