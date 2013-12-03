@@ -64,6 +64,9 @@ define(["jquery", "jqueryui"], function($){
 					'name' : id,
 					'value' : options[i].code
 				});
+				if(options[i].selected){
+					opt.attr("checked", true);
+				}
 				var row = $("<tr style='vertical-align:top'>");
 				var td1 = $('<td>');
 				var td2 = $('<td>');

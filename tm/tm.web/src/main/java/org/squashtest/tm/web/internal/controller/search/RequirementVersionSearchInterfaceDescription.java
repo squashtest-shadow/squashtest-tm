@@ -181,7 +181,7 @@ public class RequirementVersionSearchInterfaceDescription {
 		.addPossibleValue(new SearchInputPossibleValueModel(
 				messageSource.internationalize(
 						"search.requirement.allVersions",
-						locale), EMPTY));
+						locale), EMPTY, true));
 		
 		versionField
 				.addPossibleValue(new SearchInputPossibleValueModel(

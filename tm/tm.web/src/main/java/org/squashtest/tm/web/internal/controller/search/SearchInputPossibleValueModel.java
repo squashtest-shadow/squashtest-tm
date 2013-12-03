@@ -23,17 +23,24 @@ package org.squashtest.tm.web.internal.controller.search;
 public class SearchInputPossibleValueModel {
 
 	private String value;
-	
+
 	private String code;
-	
-	
-	public SearchInputPossibleValueModel(){
-		
+
+	private boolean selected = false;
+
+	public SearchInputPossibleValueModel() {
+
 	}
-	
-	public SearchInputPossibleValueModel(String value, String code){
+
+	public SearchInputPossibleValueModel(String value, String code) {
 		this.value = value;
 		this.code = code;
+	}
+
+	public SearchInputPossibleValueModel(String value, String code, boolean selected) {
+		this.value = value;
+		this.code = code;
+		this.selected = selected;
 	}
 
 	public String getValue() {
@@ -50,6 +57,14 @@ public class SearchInputPossibleValueModel {
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public boolean isSelected() {
+		return selected;
+	}
+
+	public void setSelected(boolean selected) {
+		this.selected = selected;
 	}
 
 }
