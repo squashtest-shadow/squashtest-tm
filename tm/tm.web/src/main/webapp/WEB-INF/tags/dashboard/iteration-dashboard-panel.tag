@@ -219,18 +219,18 @@
 								<th class="status-color-untestable" colspan="4"><f:message key="label.NeverExecuted"/></th>
 							</tr>
 							<tr>				
-								<th title="${TestSuiteLabel}" class="status-color-campaign" style="width:10%"><f:message key="shortLabel.TestSuite"/></th>
+								<th title="${TestSuiteLabel}" class="status-color-campaign" style="width:10%">${TestSuiteLabel}<%--<f:message key="shortLabel.TestSuite"/> --%></th>
 								<th style="border:none;"></th>
 								<th title="${TotalLabel}" class="status-color-campaign"><f:message key="shortLabel.Total"/></th>
 								<th title="${ToDoLabel}" class="status-color-campaign"><f:message key="shortLabel.ToDo"/></th>
 							    <th title="${DoneLabel}" class="status-color-campaign"><f:message key="shortLabel.Done"/></th>
 								<th style="border:none;"></th>
-								<th title="${ToExecuteLabel}" class="status-color-campaign"><f:message key="shortLabel.Ready"/></th>
-								<th title="${RunningLabel}" class="status-color-campaign"><f:message key="shortLabel.Running"/></th>															    								
-								<th title="${SuccessLabel}" class="status-color-campaign"><f:message key="shortLabel.Success"/></th>
-								<th title="${FailureLabel}" class="status-color-campaign"><f:message key="shortLabel.Failure"/></th>
-								<th title="${BlockedLabel}" class="status-color-campaign"><f:message key="shortLabel.Blocked"/></th>								
-								<th title="${NonExecutableLabel}" class="status-color-campaign"><f:message key="shortLabel.NonExecutable"/></th>
+								<th title="${ToExecuteLabel}" class="status-color-ready"><f:message key="shortLabel.Ready"/></th>
+								<th title="${RunningLabel}" class="status-color-running"><f:message key="shortLabel.Running"/></th>															    								
+								<th title="${SuccessLabel}" class="status-color-success"><f:message key="shortLabel.Success"/></th>
+								<th title="${FailureLabel}" class="status-color-failure"><f:message key="shortLabel.Failure"/></th>
+								<th title="${BlockedLabel}" class="status-color-blocked"><f:message key="shortLabel.Blocked"/></th>								
+								<th title="${NonExecutableLabel}" class="status-color-untestable"><f:message key="shortLabel.NonExecutable"/></th>
 								<th style="border:none;"></th>
 								<th title="${ProgressLabel}" class="status-color-campaign"><f:message key="shortLabel.ExecutionProgress"/></th>								
 								<th title="${SuccessRateLabel}" class="status-color-campaign"><f:message key="shortLabel.SuccessRate"/></th>
