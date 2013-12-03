@@ -39,13 +39,13 @@ import org.osgi.framework.Bundle;
 /**
  * 
  * This is a copy-pasta from the file DefaultFileLocatorHelper.
- * Everything is the same but the line 157 that has been commented.
+ * Everything is the same but the line 158 that has been commented.
  * (see [Issue 2870])
  * @author mpagnon
  *
  */
 public class FileLocatorHelperImpl implements BundleFileLocatorHelper {
-
+	// NOSONAR:START copy pasta from DefaultFileLocatorHelper 
     // hack to locate the file-system directly from the bundle.
     // support equinox, felix and nuxeo's osgi implementations.
     // not tested on nuxeo and felix just yet.
@@ -358,6 +358,6 @@ public class FileLocatorHelperImpl implements BundleFileLocatorHelper {
         }
         return url;
     }
-
+ // NOSONAR:END Copy pasta from DefaultFileLocatorHelperImpl
 
 }
