@@ -218,7 +218,7 @@
 			<jsp:attribute name="body">
 				<div id="campaign-custom-fields-content" class="display-table">
 <c:if test="${hasCUF}">
-				<div class="waiting-loading full-size-hack"></div>
+				<div class="waiting-loading full-size-hack minimal-height"></div>
 </c:if>
 				</div>
 			</jsp:attribute>
