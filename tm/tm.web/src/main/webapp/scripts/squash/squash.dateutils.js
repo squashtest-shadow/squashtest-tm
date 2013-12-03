@@ -31,6 +31,8 @@ define(["moment", "squash.translator"], function(moment, translator) {
  *		------------|-----------------------|-----------------------
  *		y			|		Y				|	cardinalities are the same
  *		d			|		D				|	cardinalities are the same
+ *		'T'			|		T				|	cardinalities are the same
+ *		Z			|		ZZ				|	1 java 'Z' = 2 js 'Z'. Note : this one is not the iso 8601 but the rfc 822 timezone indicator
  *
  *
  * For future, if we need to implement them some day : 
@@ -42,7 +44,7 @@ define(["moment", "squash.translator"], function(moment, translator) {
  */
 	function _javaToJSFormat(javaFormat){
 		if (javaFormat !== undefined){
-			return javaFormat.replace(/y/g, 'Y').replace(/d/g, 'D');
+			return javaFormat.replace(/y/g, 'Y').replace(/d/g, 'D').replace(/'T'/g, 'T').replace(/Z/g, 'ZZ');
 		}
 		else{
 			return undefined;
@@ -72,6 +74,8 @@ define(["moment", "squash.translator"], function(moment, translator) {
 	
 	return {
 		
+		ISO_8601 : "yyyy-MM-dd'T'HH:mm:ss.SSSZ",
+		
 		
 		/*
 		* Accepts : 
@@ -83,7 +87,8 @@ define(["moment", "squash.translator"], function(moment, translator) {
 		*/
 		format : function(value, toFormat, fromFormat) {
 		
-			var _date = this.parse(value, fromFormat),
+			var _fromFormat = _javaToJSFormat(fromFormat)
+				_date = this.parse(value, _fromFormat),
 				_toFormat = _javaToJSFormat(toFormat);
 			
 			var	_momentInstance = moment(_date);
