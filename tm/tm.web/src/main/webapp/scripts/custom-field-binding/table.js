@@ -199,7 +199,7 @@ define(
 
 					deleteButtons : {
 						url : settings.deleteUrl + "/{id}",
-						popupmessage : "<div class='display-table-row'><div class='display-table-cell warning-cell'><div class='delete-node-dialog-warning'></div></div><div class='display-table-cell'>"+settings.deleteMessageFirst+"<span class='red-warning-message'>"+settings.deleteMessageSecond+"</span>"+settings.deleteMessageThird+"<span class='bold-warning-message'>"+settings.deleteMessageFourth+"</span></div></div>",
+						popupmessage : "<div class='display-table-row'><div class='display-table-cell warning-cell'><div class='delete-node-dialog-warning'></div></div><div class='display-table-cell'>"+settings.deleteMessageFirst+"<span class='red-warning-message'> "+settings.deleteMessageSecond+"</span>"+settings.deleteMessageThird+"<span class='bold-warning-message'> "+settings.deleteMessageFourth+"</span></div></div>",
 						tooltip : settings.deleteTooltip,
 						success : function() {
 							$(settings.selector).squashTable().refresh();

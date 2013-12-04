@@ -59,7 +59,10 @@ define([ "require", "./panel", "./table", "./popup" ], function(require, Panel,
 			deferLoading : settings.tableDeferLoading,
 			oklabel : settings.oklabel,
 			cancellabel : settings.cancellabel,
-			deleteMessage : settings.tableDeleteMessage,
+			deleteMessageFirst : settings.tableDeleteMessageFirst,
+			deleteMessageSecond : settings.tableDeleteMessageSecond,
+			deleteMessageThird : settings.tableDeleteMessageThird,
+			deleteMessageFourth : settings.tableDeleteMessageFourth,
 			deleteTooltip : settings.tableDeleteTooltip,
 			renderingLocations : settings.tableRenderingLocations
 		};
