@@ -147,9 +147,9 @@ define([ "jquery", "underscore", "jqueryui" ],function($, _) {
 			}
 
 			// sort new content
-			var sorted = items.sort(function(a, b) {
-				var textA = getItemDomText(a.get(0));
-				var textB = getItemDomText(b.get(0));
+			var sorted = Array.prototype.sort.call(items, function(a, b) {
+				var textA = a.text();
+				var textB = b.text();
 				return (textA < textB) ? -1 : 1;
 			});
 
