@@ -202,6 +202,7 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 			BindableEntity entity = templateCustomFieldBinding.getBoundEntity();
 			long customFieldId = templateCustomFieldBinding.getCustomField().getId();
 			CustomFieldBinding newBinding = new CustomFieldBinding();
+			newBinding.setRenderingLocations( templateCustomFieldBinding.copyRenderingLocations());
 			addNewCustomFieldBinding(projectId, entity, customFieldId, newBinding);
 		}
 
