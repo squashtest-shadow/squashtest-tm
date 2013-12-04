@@ -84,7 +84,7 @@ define([
 			highlight.template = handlebars.compile(
 					'<div style="font-size:12px">' +
 						'<p><label>{{dateLabel}}</label> {{dateValue}}</p>' +
-						'<p><label>{{pointLabel}}</label> {{pointValue}}</p>' +
+						'<p><label>{{pointLabel}}</label> {{pointValue}} ({{progression}})</p>' +
 					'</div>');
 			
 			this.options.highlight = highlight;
@@ -239,17 +239,26 @@ define([
 					tooltipLocation : 'n',					
 					tooltipContentEditor : function(str, seriesIndex, pointIndex){
 						
+						// compute date and count to date
 						var point = series[seriesIndex][pointIndex],
 							currentDate = point[0],
 							decimal = (seriesIndex === 0) ? 1 : 0,
 							currentValue = point[1].toFixed(decimal),
 							opts = bbview.options.highlight;
 						
+						// compute progression wrt the total planned test count when the campaign ends.
+						var planned = series[0],
+							totalTests = ( planned.length>0 ) ? planned[planned.length - 1][1] : NaN,
+							progression =  currentValue * 100 / totalTests,
+							strProgression = ( isFinite(progression) ) ? progression.toFixed(0)+'%' : '100%';							
+							
+						
 						var model = {
 							dateLabel : opts.messages.dateLabel,
 							dateValue : dateutils.format(currentDate, bbview.options.dateformat),
 							pointLabel : (seriesIndex===0) ? opts.messages.scheduledTestcount : opts.messages.actualTestcount,
-							pointValue : currentValue
+							pointValue : currentValue,
+							progression : strProgression
 						};
 						
 						return opts.template(model);
