@@ -20,9 +20,10 @@
  */
 package org.squashtest.tm.api.wizard;
 
-import org.squashtest.tm.core.foundation.exception.SimpleException;
+import org.squashtest.tm.core.foundation.exception.ActionException;
 
-public class WizardValidationException extends RuntimeException implements SimpleException {
+public class WizardValidationException extends ActionException
+{
 	private static final long serialVersionUID = 1L;
 
 	public WizardValidationException() {
@@ -39,6 +40,11 @@ public class WizardValidationException extends RuntimeException implements Simpl
 
 	public WizardValidationException(Throwable arg0) {
 		super(arg0);
+	}
+	
+	@Override
+	public String getI18nKey() {
+		return null;
 	}
 	
 	

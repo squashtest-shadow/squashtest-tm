@@ -101,13 +101,17 @@ public class HandlerActionExceptionResolver extends AbstractHandlerExceptionReso
 
 	private String getLocalizedMessage(Locale locale, ActionException actionEx) {
 		String key = actionEx.getI18nKey();
-		String message = messageSource.getMessage(key, actionEx.messageArgs(), locale);
-		if (message != null) {
-			return message;
-		} else {
-			return messageSource.getMessage("error.generic.label", null, locale);
+		String message = null;
+		if(key == null  && actionEx.getMessage() != null && !actionEx.getMessage().isEmpty()){
+			message = actionEx.getMessage();
+		}		
+		else if(key != null){
+			message = messageSource.getMessage(key, actionEx.messageArgs(), locale);
 		}
-
+		if(message == null){
+			message = messageSource.getMessage("error.generic.label", null, locale);
+		}
+		return message;
 	}
 
 	private boolean exceptionIsHandled(Exception ex) {

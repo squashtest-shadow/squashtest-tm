@@ -108,7 +108,7 @@ define(
 							// we will handle potential exceptions locally
 							};
 							$.ajax(ajaxConf).fail(function(xhr) {
-								squashtm.notification.showInfo(xhr.responseText);
+								squashtm.notification.handleJsonResponseError(xhr);
 								self.remove(model, {
 									silent : true
 								});
