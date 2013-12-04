@@ -125,7 +125,9 @@ requirejs.config({
 				"workspace.tree-event-handler" : "workspace/workspace.tree-event-handler",
 				"workspace.permissions-rules-broker" : "workspace/workspace.permissions-rules-broker",
 				"workspace.contextual-content" : "workspace/workspace.contextual-content",
-				"workspace.event-bus" : "workspace/workspace.event-bus"
+				"workspace.event-bus" : "workspace/workspace.event-bus",
+				//for plugin compatibility purposes
+				"jquery.squash.datatables" : "plugin-compatibility/jquery.squash.datatable"
 				
 			},
 			shim : {
