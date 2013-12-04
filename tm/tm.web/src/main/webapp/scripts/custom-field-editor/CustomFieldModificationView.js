@@ -540,7 +540,7 @@ define(
 
 								deleteButtons : {
 									url : cfMod.optionsTable.ajaxSource	+ "/{opt-label}",
-									popupmessage : cfMod.optionsTable.deleteConfirmMessage,
+									popupmessage : "<div class='display-table-row'><div class='display-table-cell warning-cell'><div class='delete-node-dialog-warning'></div></div><div class='display-table-cell'>"+cfMod.optionsTable.deleteConfirmMessage+"</div></div>",
 									tooltip : cfMod.optionsTable.deleteTooltip,
 									success : function(data) {
 										self.optionsTable.refresh();

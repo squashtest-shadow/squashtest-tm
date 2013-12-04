@@ -199,7 +199,7 @@ define(
 
 					deleteButtons : {
 						url : settings.deleteUrl + "/{id}",
-						popupmessage : settings.deleteMessage,
+						popupmessage : "<div class='display-table-row'><div class='display-table-cell warning-cell'><div class='delete-node-dialog-warning'></div></div><div class='display-table-cell'>"+settings.deleteMessage+"</div></div>",
 						tooltip : settings.deleteTooltip,
 						success : function() {
 							$(settings.selector).squashTable().refresh();

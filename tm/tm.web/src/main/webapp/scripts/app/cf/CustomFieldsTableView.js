@@ -107,7 +107,7 @@ define(
 
 								deleteButtons : {
 									url : cfTable.ajaxSource + "/{entity-id}",
-									popupmessage : cfTable.deleteConfirmMessage,
+									popupmessage : "<div class='display-table-row'><div class='display-table-cell warning-cell'><div class='delete-node-dialog-warning'></div></div><div class='display-table-cell'>"+cfTable.deleteConfirmMessage+"</div></div>",
 									tooltip : cfTable.deleteTooltip,
 									success : function(data) {
 										self.table.refresh();

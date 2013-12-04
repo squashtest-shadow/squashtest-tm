@@ -246,10 +246,15 @@
 
 
 						<div id="delete-warning-pane" class="not-displayed popup-dialog"
-							title="Delete" th:title="#{label.Demete}">
-							<div class="alert">
+							title="Delete" th:title="#{label.Delete}">
+							<div class="display-table-row">
+            					<div class="display-table-cell warning-cell">
+                					<div class="delete-node-dialog-warning"></div>
+            					</div>
+            					<div class="display-table-cell">
 								<span th:text="#{message.team.remove}">Do you wanna
 									remove team ?</span>
+								</div>
 							</div>
 							<div class="popup-dialog-buttonpane">
 								<input class="confirm" type="button" value="Proceed"

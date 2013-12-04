@@ -45,25 +45,6 @@
   		contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
 		localizedDateFormat : /*[[ #{squashtm.dateformatShort.datepicker} ]]*/"dd/mm/yy",
 		locale : /*[[ #{squashtm.locale} ]]*/"fr",
-  		cfTable : {
-  			languageUrl : /*[[ @{/datatables/messages} ]]*/"http://localhost:8080/squash/datatables/messages",
-  			displayLength : /*[[ ${customFieldsPageSize} ]]*/50,
-  			ajaxSource : /*[[ @{/administration/custom-fields} ]]*/"http://localhost:8080/squash/administration/custom-fields",
-  			confirmLabel: /*[[ #{label.Confirm} ]]*/ 'Confirmer',
-			cancelLabel: /*[[ #{label.Cancel} ]]*/ 'Annuler',
-			deleteTooltip: /*[[ #{label.Delete} ]]*/ 'Delete',
-			deleteConfirmMessage : /*[[ #{message.customField.remove} ]]*/ 'Remove',
-			customFieldUrl : /*[[ @{/custom-fields} ]]*/ "http://localhost:8080/squash/custom-fields",
-  		},
-		messages: {
-			"message.optionAlreadyDefined": /*[[ #{message.optionAlreadyDefined} ]]*/ "Option is already defined", 
-			"message.optionCodeAlreadyDefined": /*[[ #{message.optionCodeAlreadyDefined} ]]*/ "Code is already defined", 
-			"message.optionCodeInvalidPattern" : /*[[ #{message.optionCodeInvalidPattern} ]]*/ "Code must have only letters, numbers and under-scores",
-			"message.defaultOptionMandatory": /*[[ #{message.defaultOptionMandatory} ]]*/ "Default option is mandatory when field is not optional", 
-			"message.defaultValueMandatory": /*[[ #{message.defaultValueMandatory} ]]*/ "Default value is mandatory when field is not optional", 
-			"message.notBlank": /*[[ #{message.notBlank} ]]*/ "Value should not be blank", 
-		},
-
 		menuBarConf: {
     	}, 
     	notificationConf: {

@@ -200,10 +200,14 @@
 		<f:message var="deleteUsersTitle" key="title.delete-users" />
 		<div id="delete-user-popup" class="popup-dialog not-displayed" title="${deleteUsersTitle}">
 			
-			<div class="alert">
-				<span><f:message key="message.user.remove"/></span>
+			<div class="display-table-row">
+	            <div class="display-table-cell warning-cell">
+	                <div class="delete-node-dialog-warning"></div>
+	            </div>
+	            <div class="display-table-cell">
+					<span><f:message key="message.user.remove"/></span>
+				</div>
 			</div>
-		
 			<div class="popup-dialog-buttonpane">
 			    <input class="confirm" type="button" value="<f:message key='label.Confirm' />" />
 			    <input class="cancel" type="button" value="<f:message key='label.Cancel' />" />				
@@ -223,7 +227,7 @@
 		squashtm.app.teamsManager = {
 			table : {
 				deleteButtons : {
-					popupmessage : "<f:message key='message.confirmDeleteTeam' />",
+					popupmessage : "<div class='display-table-row'><div class='display-table-cell warning-cell'><div class='delete-node-dialog-warning'></div></div><div class='display-table-cell'><f:message key='message.confirmDeleteTeam' /></div></div>",
 					tooltip : "<f:message key='label.deleteTeam' />"
 				}
 			}

@@ -1218,11 +1218,11 @@ div.information-panel p {
 /* ------------------>>> Tree Popups <<<--------------------*/
 /* ---------------------------------------------------------*/
 
-#delete-node-dialog .warning-cell{
+.warning-cell{
 	vertical-align: middle;
 }
 
-#delete-node-dialog .delete-node-dialog-warning{
+.delete-node-dialog-warning{
 	background-image : url('../images/messagebox_confirm.png');  /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 	width : 72px;
