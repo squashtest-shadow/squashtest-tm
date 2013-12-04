@@ -205,7 +205,10 @@
 	                <div class="delete-node-dialog-warning"></div>
 	            </div>
 	            <div class="display-table-cell">
-					<span><f:message key="message.user.remove"/></span>
+					<span> <f:message key="message.user.remove.first"/></span>
+					<span class="red-warning-message" > <f:message key="message.user.remove.second"/></span>
+					<span> <f:message key="message.user.remove.third"/></span>
+					<span class="bold-warning-message"> <f:message key="message.user.remove.fourth"/></span>
 				</div>
 			</div>
 			<div class="popup-dialog-buttonpane">

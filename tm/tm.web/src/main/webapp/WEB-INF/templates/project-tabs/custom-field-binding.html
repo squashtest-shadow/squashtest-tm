@@ -102,7 +102,10 @@
     			mainSelector : "#test-cases-binding-manager", 
     			panelTitle : /*[[ #{project.cufbinding.test-cases.panel.title}  ]]*/"test case bindings",
     			tableDeferLoading : /*[[ ${testCaseBindings.size()} ]]*/ 3,	
-       			tableDeleteMessage : /*[[#{message.customfieldbinding.unbind.message(#{label.customField.bindableEntity.TEST_CASE})}]]*/ "Retirer les champs personalisés sélectionnées de ce projet ?",
+       			tableDeleteMessageFirst : /*[[#{message.customfieldbinding.unbind.message.first}]]*/ "Retirer les champs personalisés sélectionnées de ce projet ?",
+       			tableDeleteMessageSecond : /*[[#{message.customfieldbinding.unbind.message.second(#{label.customField.bindableEntity.TEST_CASE})}]]*/ "Retirer les champs personalisés sélectionnées de ce projet ?",
+       			tableDeleteMessageThird : /*[[#{message.customfieldbinding.unbind.message.third}]]*/ "Retirer les champs personalisés sélectionnées de ce projet ?",
+       			tableDeleteMessageFourth : /*[[#{message.customfieldbinding.unbind.message.fourth}]]*/ "Retirer les champs personalisés sélectionnées de ce projet ?",
        			tableDeleteTooltip : /*[[#{message.customfieldbinding.unbind.tooltip}]]*/ 'retirer',
        			tableRenderingLocations : []
 	    	},

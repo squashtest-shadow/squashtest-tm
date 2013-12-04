@@ -414,8 +414,10 @@
                 <div class="delete-node-dialog-warning"></div>
             </div>
             <div class="display-table-cell">
-			<span th:text="#{message.user.remove}">Do you wanna remove
-				user ?</span>
+				<span th:text="#{message.user.remove.first}"/>
+				<span class="red-warning-message" th:text="#{message.user.remove.second}"/>
+				<span th:text="#{message.user.remove.third}"/>
+				<span class="bold-warning-message" th:text="#{message.user.remove.fourth}"/>
 			</div>
 		</div>
 		<div class="popup-dialog-buttonpane">

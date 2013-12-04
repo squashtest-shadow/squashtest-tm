@@ -60,7 +60,10 @@
 				ajaxSource : /*[[ @{'/custom-fields/'+${customField.id}+'/options'} ]]*/"http://localhost:8080/squash/custom-fields/1/options",
 				displayLength : /*[[ ${customFieldOptionsPageSize} ]]*/50,
 				deleteTooltip : /*[[ #{label.Remove} ]]*/'Remove',
-				deleteConfirmMessage : /*[[ #{message.customFieldOption.remove} ]]*/'Remove ?',
+				deleteConfirmMessageFirst : /*[[ #{message.customFieldOption.remove.first} ]]*/'Remove ?',
+				deleteConfirmMessageSecond : /*[[ #{message.customFieldOption.remove.second} ]]*/'Remove ?',
+				deleteConfirmMessageThird : /*[[ #{message.customFieldOption.remove.third} ]]*/'Remove ?',
+				deleteConfirmMessageFourth : /*[[ #{message.customFieldOption.remove.fourth} ]]*/'Remove ?',			
 				renameCufOptionTitle : /*[[#{title.renameCufOption}]]*/'Rename custom field option',
 				changeOptionCodeTitle : /*[[#{title.changeCufOptionCode}]]*/'Change custom field option code',
 				addCufOptionTitle : /*[[#{title.addCufOption}]]*/'Add custom field option',
@@ -251,7 +254,10 @@
 	                <div class="delete-node-dialog-warning"></div>
 	            </div>
 	            <div class="display-table-cell">
-	              <span th:text="#{message.customField.remove}">Do you wanna remove custom field ?</span>
+	              <span th:text="#{message.customField.remove.first}">Do you wanna remove custom field ?</span>
+	               <span class="red-warning-message" th:text="#{message.customField.remove.second}"></span>
+	                <span th:text="#{message.customField.remove.third}"></span>
+	                 <span class="bold-warning-message" th:text="#{message.customField.remove.fourth}"></span>
 	            </div>
             </div>
             <div class="popup-dialog-buttonpane">

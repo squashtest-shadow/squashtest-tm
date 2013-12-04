@@ -252,8 +252,10 @@
                 					<div class="delete-node-dialog-warning"></div>
             					</div>
             					<div class="display-table-cell">
-								<span th:text="#{message.team.remove}">Do you wanna
-									remove team ?</span>
+									<span th:text="#{message.team.remove.first}"/>
+									<span class="red-warning-message" th:text="#{message.team.remove.second}"/>
+									<span th:text="#{message.team.remove.third}"/>
+									<span class="bold-warning-message" th:text="#{message.team.remove.fourth}"/>
 								</div>
 							</div>
 							<div class="popup-dialog-buttonpane">
