@@ -279,7 +279,7 @@ define([
 		},
 		
 		
-		// ************************************* ERROR HANDLING SECTION ******************************
+		// ****************** ERROR HANDLING SECTION ******************************
 		
 		initErrorHandling : function(){
 			this.iterPopup = $(".dashboard-cumulative-progression-iterpopup");
@@ -296,6 +296,15 @@ define([
 			
 			var msg = getMessage(model.errors[0]);
 			this.$el.find('.cumulative-progression-errormsg').text(msg);
+			
+			// if no planning popup is available, hide the <a>details</a> link
+			var detailLink = this.$el.find('.dashboard-cumulative-progression-details');
+			if (document.getElementById("iteration-planning-popup") !== null){
+				detailLink.show();
+			}
+			else{
+				detailLink.hide();
+			}
 		},
 		
 		openDetails : function(){
@@ -391,7 +400,7 @@ define([
 	
 
 	
-	//**************************************** RETURN + STUFFS *************************************************
+	//***************************** RETURN + STUFFS **************************************
 	
 	
 	function getMessage(msgOrObj){
