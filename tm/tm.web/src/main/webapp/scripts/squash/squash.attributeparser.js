@@ -21,9 +21,9 @@
 define(['jquery'], function($) {
 	
 	/*it is written that way so that only the first '=' will match 
-	 as a separator, allowing '=' to be a valid part of the value as well.
-	 It could have been written as 'atom.split(/\s*=(.+)?/,2);' but IE8 definitely 
-	 didn't want it. */
+	as a separator, allowing '=' to be a valid part of the value as well.
+	It could have been written as 'atom.split(/\s*=(.+)?/,2);' but IE8 definitely 
+	didn't want it. */
 	function _parseAssignation(atom) {
 		
 		var name, value;
@@ -32,13 +32,13 @@ define(['jquery'], function($) {
 		
 		//'unary' assignation : set 'true' as value
 		if (posequals === -1){
-			name = $.trim(atom),
+			name = $.trim(atom);
 			value = true;
 		}
 		//'binary' assignation
 		else{
 			var members = [ atom.substr(0, posequals), atom.substr(posequals+1)];
-			name = $.trim(members[0]),
+			name = $.trim(members[0]);
 			value = $.trim(members[1]);
 		}
 		

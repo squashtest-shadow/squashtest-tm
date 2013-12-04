@@ -193,19 +193,29 @@
  * Coonfiguration as follow : 
  * 
  * {
- * 	toggleRows : {
- * 		'<css-selector-1>' : url where to load the content of an expanded row when the elements selected by 'css-selector-1' 
- * 							are clicked.
+ *   toggleRows : {
+ *       '<css-selector-1>' : url where to load the content of an expanded row when the elements selected by 'css-selector-1' 
+ *                           are clicked.
  * 
- *		'<css-selector-2>' : function(table, jqExpandedRow, jqNewRow){
- * 			this function will load the content of an expanded row when the elements selected 
- * 			by 'css-selector-2' are clicked.
+ *     '<css-selector-2>' : function(table, jqExpandedRow, jqNewRow){
+ *          this function will load the content of an expanded row when the elements selected 
+ *          by 'css-selector-2' are clicked.
  *			},
- *		...(more of them)
- * 		}
- * 	}
+ *       ...(more of them)
+ *      }
+ *  }
  * 
  * }
+ * ============== Add Tooltip to a cell =======================================
+ * 
+ * -tooltips : it the property 'tooltips' is set, then tooltips will be added to the cells matching the given td selectors
+ * example :
+ * 
+ * tooltips = [
+ * {tdSelector : "td.suites",
+ *  value : "the value", function(row, data){return data["suitesTooltip"]}
+ * }
+ * ]
  * 
  * ============== Add Buttons to a cell =======================================
  * 
@@ -237,7 +247,7 @@
  * .uiIcon : litteral or function(row, data) if the button is to be a jqueryUi icon, set this property to the wanted icon name. 
  * 
  * .condition : boolean or function(row, data). Says if the button is added to the row. if this property is not set
- * 				the button will be added everywhere
+ *              the button will be added everywhere
  * 
  * .disabled : a boolean or a function(row, data). Return the boolean saying if the button needs to be disabled or not.
  * 
@@ -767,6 +777,36 @@ define(["jquery",
 					
 					//append 
 					$cell.empty().append(instance);
+				});
+		};
+
+	}
+	
+	function _configureTooltips() {
+		var self = this;
+		//console.log("tooltip configuration for table : "+self.selector);
+		var tooltips = this.squashSettings.tooltips;
+		if (!tooltips) {
+			//console.log("no tooltips to configure");
+			return;
+		}
+		var len=tooltips.length
+		//console.log(len+" tooltips to configure");
+		for (var i=0; i<len; i++){
+			
+			var tooltip = tooltips[i];
+			var cells = self.find(tooltip.tdSelector);
+			
+			cells.each(function(i, cell) {
+				
+					var	$cell = $(cell),
+						row = $cell.parent("tr")[0],
+						data = self.fnGetData(row);
+					
+					// find value if function
+					var value = ($.isFunction(tooltip.value) ) ? tooltip.value(row, data) : tooltip.value;
+
+					$cell.attr('title', value);
 				});
 		};
 
@@ -1322,6 +1362,7 @@ define(["jquery",
 		aDrawCallbacks.push(_enableTableDragAndDrop);
 		aDrawCallbacks.push(_restoreTableSelection);
 		aDrawCallbacks.push(_applyFilteredStyle);
+		aDrawCallbacks.push(_configureTooltips);
 		
 		
 		var userDrawCallback = datatableEffective.fnDrawCallback;
@@ -1531,6 +1572,24 @@ define(["jquery",
 						delegate : selector,
 						tooltip : $(selector).prev().find('span.ui-dialog-title').text()
 					};
+				},
+				'tooltip': function(conf, assignation){
+					var cls = 'tooltip-' + Math.random().toString().substr(2, 3);
+					conf.current.sClass += ' ' + cls;
+					conf.squash.tooltips = conf.squash.tooltips || [];
+					conf.squash.tooltips.push({
+						value : assignation.value,
+						tdSelector : 'td.'+cls
+					});
+				},
+				'tooltip-target': function(conf, assignation){
+					var cls = 'tooltip-' + Math.random().toString().substr(2, 3);
+					conf.current.sClass += ' ' + cls;
+					conf.squash.tooltips = conf.squash.tooltips || [];
+					conf.squash.tooltips.push({
+						value : function(row, data){return data[assignation.value];},
+						tdSelector : 'td.'+cls
+					});
 				},
 				'link' : function(conf, assignation) {
 					var cls = 'link-' + Math.random().toString().substr(2, 3);

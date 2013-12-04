@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.campaign.TestSuite;
 
 /**
@@ -38,9 +39,18 @@ public final class TestSuiteHelper {
 	private TestSuiteHelper() {
 		super();
 	}
-
-	public static String buildEllipsedSuiteNameList(List<TestSuite> unsortedSuites, int maxLength) {
-		
+	
+	public static String buildSuiteNameList(List<TestSuite> unsortedSuites){
+		String testSuiteNames = buildNameList(unsortedSuites).toString();
+		return testSuiteNames;
+	}
+	
+	public static String buildEllipsedSuiteNameList(List<TestSuite> unsortedSuites, int maxLength) {		
+		StringBuilder testSuiteNames = buildNameList(unsortedSuites);
+		return ellipseString(testSuiteNames, maxLength);
+	}
+	
+	private static StringBuilder buildNameList(List<TestSuite> unsortedSuites){
 		List<TestSuite> sortedSuites = new ArrayList<TestSuite>(unsortedSuites);
 		Collections.sort(sortedSuites, new Comparator<TestSuite>(){
 			@Override
@@ -50,20 +60,19 @@ public final class TestSuiteHelper {
 		});
 		
 		if (sortedSuites.isEmpty()) {
-			return "";
+			return new StringBuilder("");
 		}
 
 		StringBuilder testSuiteNames = new StringBuilder();
 		if (!sortedSuites.isEmpty()) {
 			int i = 0;
 			while (i < sortedSuites.size() - 1) {
-				testSuiteNames.append(sortedSuites.get(i).getName().replace("<", "&lt;").replace(">", "&gt;")).append(", ");
+				testSuiteNames.append(sortedSuites.get(i).getName()).append(", ");
 				i++;
 			}
-			testSuiteNames.append(sortedSuites.get(i).getName().replace("<", "&lt;").replace(">", "&gt;"));
+			testSuiteNames.append(sortedSuites.get(i).getName());
 		}
-
-		return ellipseString(testSuiteNames, maxLength);
+		return testSuiteNames; 
 	}
 
 	private static String ellipseString(StringBuilder builder, int maxLength) {

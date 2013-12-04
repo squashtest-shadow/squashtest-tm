@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
@@ -99,13 +100,16 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 		}
 		// test suite name
 		String testSuiteNameList = "";
+		String testSuiteNameListTot = "";
 		// test suite name
 		List<Long> testSuiteIdsList;
 		if (item.getTestSuites().isEmpty()) {
 			testSuiteNameList = formatNoData(locale);
+			testSuiteNameListTot = formatNoData(locale);
 			testSuiteIdsList = Collections.emptyList();
 		} else {
-			testSuiteNameList = TestSuiteHelper.buildEllipsedSuiteNameList(item.getTestSuites(), 20);
+			testSuiteNameList = HtmlUtils.htmlEscape(TestSuiteHelper.buildEllipsedSuiteNameList(item.getTestSuites(), 20));
+			testSuiteNameListTot = TestSuiteHelper.buildSuiteNameList(item.getTestSuites());
 			testSuiteIdsList = IdentifiedUtil.extractIds(item.getTestSuites());
 		}
 		
@@ -119,6 +123,7 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 		res.put("tc-name", testCaseName);
 		res.put("importance", importance);
 		res.put("suite", testSuiteNameList);
+		res.put("suitesTot", testSuiteNameListTot);
 		res.put("suiteIds", testSuiteIdsList);
 		res.put("status",item.getExecutionStatus());
 		res.put("assignee-id", assigneeId);
