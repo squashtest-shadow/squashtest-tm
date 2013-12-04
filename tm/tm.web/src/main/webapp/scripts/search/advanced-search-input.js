@@ -18,13 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
+define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squashtm.notification", "underscore",
 		"app/util/StringUtil", "./SearchTextfieldWidget", "./SearchTextareaWidget", 
 		"./SearchMultiselectWidget", "./SearchDateWidget", "./SearchRangeWidget", 
 		"./SearchExistsWidget", "./SearchCheckboxWidget", "./SearchComboMultiselectWidget", "./SearchRadioWidget", 
 		"jquery.squash", "jqueryui", "jquery.squash.togglepanel", "squashtable",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
-		"jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, translator, _,
+		"jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, translator, notification, _,
 		StringUtil, SearchTextfieldWidget, SearchTextareaWidget, SearchMultiselectWidget, 
 		SearchDateWidget, SearchRangeWidget, SearchExistsWidget, SearchCheckboxWidget, SearchComboMultiselectWidget, SearchRadioWidget) {
 
@@ -273,6 +273,12 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 		showResults : function() {
 			
 			this.extractSearchModel();
+			
+			if (this.emptyCriteria()){
+				var message = translator.get('search.validate.empty.label');
+				notification.showInfo(message);
+				return;
+			}
 
 			if(!!$("#associationType").length){
 				
@@ -303,6 +309,24 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "underscore",
 			};
 			this.$("#"+id).togglePanel(infoSettings);
 			$("a", $("#"+id).parent()).removeClass("tg-link").addClass(css.toString());
+		},
+		
+		emptyCriteria : function(){
+			var hasCriteria = false;
+			$.each(this.model.fields, function(namename,field){ 
+				// we must distinguish singlevalued and multivalued fields
+				// singlevalued fields define a property 'value', while multivalued fields define a property 'values'.
+				// a singlevalued field is empty if the property 'value' is empty, 
+				// a multivalued field is empty if the property 'values' is null.
+				// 
+				if ( field.value !== undefined && field.value !== "" ){
+					hasCriteria = true;
+				}
+				else if (field.values !== undefined && field.values !== null){
+					hasCriteria = true;
+				}
+			});
+			return !hasCriteria;
 		}
 
 	});
