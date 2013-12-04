@@ -230,7 +230,7 @@
 		squashtm.app.teamsManager = {
 			table : {
 				deleteButtons : {
-					popupmessage : "<div class='display-table-row'><div class='display-table-cell warning-cell'><div class='delete-node-dialog-warning'></div></div><div class='display-table-cell'><f:message key='message.confirmDeleteTeam' /></div></div>",
+					popupmessage : "<div class='display-table-row'><div class='display-table-cell warning-cell'><div class='delete-node-dialog-warning'></div></div><div class='display-table-cell'><f:message key='message.team.remove.first'/><span class='red-warning-message'> <f:message key='message.team.remove.second'/> </span><f:message key='message.team.remove.third'/><span class='bold-warning-message'> <f:message key='message.team.remove.fourth'/> </span></div></div>",
 					tooltip : "<f:message key='label.deleteTeam' />"
 				}
 			}
