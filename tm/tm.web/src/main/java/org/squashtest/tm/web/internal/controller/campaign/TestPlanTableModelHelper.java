@@ -125,7 +125,7 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 		res.put("suite", testSuiteNameList);
 		res.put("suitesTot", testSuiteNameListTot);
 		res.put("suiteIds", testSuiteIdsList);
-		res.put("status",item.getExecutionStatus());
+		res.put("status",item.getExecutionStatus().getCanonicalStatus());	// as of issue 2956, we now restrict the status to the canonical status only
 		res.put("assignee-id", assigneeId);
 		res.put("assignee-login", assigneeLogin);
 		res.put("last-exec-on", IsoDateUtils.formatIso8601DateTime(item.getLastExecutedOn()));

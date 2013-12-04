@@ -166,8 +166,15 @@ define(["jquery", "squash.statusfactory", "squash.translator",
 			
 			_updateview : function(){
 				var data = this.options.suite;
+				var executions = data.executions, 
+					progress = data.percentage;
 				
-				var executions = data.executions;
+				// the progressbar
+				var executionTerminated = progress / 100 * executions.length;
+				$("#execution-auto-progress-bar").progressbar("value", progress);
+				$("#execution-auto-progress-amount").text(executionTerminated + "/" + executions.length);
+				
+				
 				for (var i=0; i< executions.length; i++){
 					var exec = executions[i];
 					var elt = $("#execution-info-"+exec.id);					

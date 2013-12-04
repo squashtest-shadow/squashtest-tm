@@ -67,7 +67,7 @@
 			var $row = $(row);
 			
 			var $exectd = $row.find('.exec-mode').text('');
-			if (data['exec-mode'] === "A") {
+			if (data['exec-mode'] === "M") {
 				$exectd.append('<span class"exec-mode-icon exec-mode-manual"/>').attr('title', '');
 			} else {
 				var label =  "<f:message key="label.automatedExecution"/>";

@@ -1529,7 +1529,10 @@ define(["jquery",
 			},
 			columns : {
 				'invisible' : function(conf, assignation) {
-					conf.current.bVisible = false;
+					conf.current.bVisible = ! (assignation.value === "true");
+				},
+				'visible' : function(conf, assignation){
+					conf.current.bVisible = (assignation.value === "true");
 				},
 				'sortable' : function(conf, assignation) {
 					conf.current.bSortable = true;

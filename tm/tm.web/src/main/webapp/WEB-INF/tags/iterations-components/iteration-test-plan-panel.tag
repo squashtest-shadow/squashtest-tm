@@ -119,11 +119,7 @@
 		<tr>
 			<th class="no-user-select" data-def="map=entity-index, select, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>
 			<th class="no-user-select tp-th-project-name" data-def="map=project-name, sortable"><f:message key="label.project" /></th>
-			<%-- exec mode icon --%>
-			<c:if test="${ iteration.project.testAutomationEnabled }">
-				<th title=<f:message key="label.Mode" /> class="no-user-select tp-th-exec-mode" data-def="map=exec-mode, sortable, narrow, center, sClass=exec-mode">&nbsp;</th>
-			</c:if>
-			<%-- exec mode icon --%>
+			<th title=<f:message key="label.Mode" /> class="no-user-select tp-th-exec-mode" data-def="map=exec-mode, sortable, narrow, center, visible=${iteration.project.testAutomationEnabled}, sClass=exec-mode">&nbsp;</th>
 			<th class="no-user-select tp-th-reference" data-def="map=reference, sortable"><f:message key="label.Reference"/></th>
 			<th class="no-user-select tp-th-name" data-def="map=tc-name, sortable, sClass=toggle-row"><f:message key="iteration.executions.table.column-header.test-case.label" /></th>
 			<th class="no-user-select tp-th-importance" data-def="map=importance, sortable"><f:message key="iteration.executions.table.column-header.importance.label" /></th>
