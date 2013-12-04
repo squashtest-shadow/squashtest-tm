@@ -1218,7 +1218,7 @@ div.information-panel p {
 /* ------------------>>> Tree Popups <<<--------------------*/
 /* ---------------------------------------------------------*/
 
-.warning-cell{
+.warning-cell, .display-table-cell.warning-cell{
 	vertical-align: middle;
 }
 
