@@ -357,7 +357,7 @@
 							"from Campaign c join c.iterations iter join iter.testPlans itp join itp.referencedTestCase tc where c.id = :id and (itp.executionStatus = 'READY' or itp.executionStatus = 'RUNNING') group by tc.importance"),		
 							
 		@NamedQuery(name="CampaignStatistics.findScheduledIterations", 
-					query = "select new org.squashtest.tm.service.statistics.campaign.ScheduledIteration(iter.id as id, iter.name as name, size(iter.testPlans) as testplanCount, " +
+					query = "select new org.squashtest.tm.service.statistics.campaign.ScheduledIteration(iter.id as id, iter.name as name, iter.testPlans.size as testplanCount, " +
 							"iter.scheduledPeriod.scheduledStartDate as scheduledStart, iter.scheduledPeriod.scheduledEndDate as scheduledEnd) " +
 							"from Campaign c join c.iterations iter where c.id = :id group by iter order by index(iter)"),
 
