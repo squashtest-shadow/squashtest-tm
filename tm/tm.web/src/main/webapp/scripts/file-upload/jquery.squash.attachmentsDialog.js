@@ -45,7 +45,7 @@ define(["jquery", "squash.attributeparser", "handlebars", "jquery.squash.formdia
 	$.widget("squash.attachmentsDialog", $.squash.formDialog,{
 
 		options : {
-			width : 435,
+			width : 400,
 			url : undefined 
 		},
 
