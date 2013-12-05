@@ -231,11 +231,19 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui',
 
 		},
 
+		// due to a bug in IE9 the input type "select" is cleanedup separately from the others
 		cleanup : function() {
-			this.element.find(':input,textarea').each(function() {
+			var elt = this.element;
+			
+			elt.find(':input,textarea').not('select').each(function() {
 				$(this).val('');
 			});
-			this.element.find('.error-message').each(function(){
+			
+			elt.find('select').each(function(){
+				$(this).find('option').first().prop('selected', true);
+			});			
+			
+			elt.find('.error-message').each(function(){
 				$(this).text('');
 			});
 		},
