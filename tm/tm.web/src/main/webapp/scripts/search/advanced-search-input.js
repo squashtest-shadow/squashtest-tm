@@ -53,8 +53,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 						var source = $("#toggle-panel-template").html();
 						if(source){
 							var template = Handlebars.compile(source);
-							var context = {"toggle-panel-id": val.id+"-panel-id", 
-									       "toggle-panel-table-id": val.id+"-panel-table-id"};
+							var context = {"toggle-panel-id": val.id+"-panel-id", "toggle-panel-table-id": val.id+"-panel-table-id"};
 							var tableid = val.id+"-panel-table-id";
 							var html = template(context);
 							$("#advanced-search-input-form-panel-"+val.location).append(html);
@@ -70,22 +69,30 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 								field = val.fields[i];
 								if(field.inputType == "textfield"){
 									self.makeTextField(tableid, field.id, field.title, searchModel[field.id], field.ignoreBridge);
+									
 								} else if (field.inputType == "textarea"){
 									self.makeTextArea(tableid, field.id, field.title, searchModel[field.id]);
+									
 								} else if (field.inputType == "multiselect"){
 									self.makeMultiselect(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
+									
 								} else if (field.inputType == "combomultiselect"){
 									self.makeComboMultiselect(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
+									
 								} else if (field.inputType == "range"){
 									self.makeRangeField(tableid, field.id, field.title, searchModel[field.id]);
+									
 								} else if (field.inputType == "exists"){
 									self.makeExistsField(tableid, field.id, field.title, field.possibleValues,searchModel[field.id]);
+									
 								} else if (field.inputType == "date"){
 									self.makeDateField(tableid, field.id, field.title, searchModel[field.id]);
 								} else if (field.inputType == "checkbox"){
 									self.makeCheckboxField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
+									
 								} else if (field.inputType == "radiobutton"){
 									self.makeRadioField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id], field.ignoreBridge);
+									
 								} 
 							}
 							self.makeTogglePanel(val.id+"-panel-id",val.title,val.open,val.cssClasses);
@@ -101,8 +108,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 			
 			var source = $("#radio-button-template").html();
 			var template = Handlebars.compile(source);
-			var context = {"text-radio-id": textFieldId, 
-				           "text-radio-title": title};
+			var context = {"text-radio-id": textFieldId, "text-radio-title": title};
 			var html = template(context);
 			$("#"+tableId).append(html);
 			var escapedId = textFieldId.replace(/\./g, "\\.");
@@ -118,8 +124,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 			
 			var source = $("#range-template").html();
 			var template = Handlebars.compile(source);
-			var context = {"text-range-id": textFieldId, 
-				           "text-range-title": title};
+			var context = {"text-range-id": textFieldId, "text-range-title": title};
 			var html = template(context);
 			$("#"+tableId).append(html);
 			var escapedId = textFieldId.replace(/\./g, "\\.");
@@ -133,8 +138,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 			var title = textFieldTitle;
 			var source = $("#exists-template").html();
 			var template = Handlebars.compile(source);
-			var context = {"text-exists-id": textFieldId, 
-				           "text-exists-title": title};
+			var context = {"text-exists-id": textFieldId, "text-exists-title": title};
 			var html = template(context);
 			$("#"+tableId).append(html);
 			var escapedId = textFieldId.replace(/\./g, "\\.");
@@ -148,8 +152,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 			var title = textFieldTitle;
 			var source = $("#date-template").html();
 			var template = Handlebars.compile(source);
-			var context = {"text-date-id": textFieldId, 
-				           "text-date-title": title};
+			var context = {"text-date-id": textFieldId, "text-date-title": title};
 			var html = template(context);
 			$("#"+tableId).append(html);
 			var escapedId = textFieldId.replace(/\./g, "\\.");
@@ -163,8 +166,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 			var title = textFieldTitle;
 			var source = $("#checkbox-template").html();
 			var template = Handlebars.compile(source);
-			var context = {"text-checkbox-id": textFieldId, 
-				           "text-checkbox-title": title};
+			var context = {"text-checkbox-id": textFieldId, "text-checkbox-title": title};
 			var html = template(context);
 			$("#"+tableId).append(html);
 			var escapedId = textFieldId.replace(/\./g, "\\.");
@@ -179,8 +181,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 			var title = textFieldTitle;
 			var source = $("#textfield-template").html();
 			var template = Handlebars.compile(source);
-			var context = {"text-field-id": textFieldId, 
-				           "text-field-title": title};
+			var context = {"text-field-id": textFieldId, "text-field-title": title};
 			var html = template(context);
 			$("#"+tableId).append(html);
 			var escapedId = textFieldId.replace(/\./g, "\\.");
@@ -194,8 +195,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 			var title = textFieldTitle;
 			var source = $("#textarea-template").html();
 			var template = Handlebars.compile(source);
-			var context = {"text-area-id": textFieldId, 
-				           "text-area-title": title};
+			var context = {"text-area-id": textFieldId, "text-area-title": title};
 			var html = template(context);
 			$("#"+tableId).append(html);
 			var escapedId = textFieldId.replace(/\./g, "\\.");
@@ -209,8 +209,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 			var title = textFieldTitle;
 			var source = $("#multiselect-template").html();
 			var template = Handlebars.compile(source);
-			var context = {"multiselect-id": textFieldId, 
-				           "multiselect-title": title};
+			var context = {"multiselect-id": textFieldId, "multiselect-title": title};
 			var html = template(context);
 			$("#"+tableId).append(html);
 			var escapedId = textFieldId.replace(/\./g, "\\.");
@@ -224,8 +223,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 			var title = textFieldTitle;
 			var source = $("#combomultiselect-template").html();
 			var template = Handlebars.compile(source);
-			var context = {"combomultiselect-id": textFieldId, 
-				           "combomultiselect-title": title};
+			var context = {"combomultiselect-id": textFieldId, "combomultiselect-title": title};
 			var html = template(context);
 			$("#"+tableId).append(html);
 			var escapedId = textFieldId.replace(/\./g, "\\.");

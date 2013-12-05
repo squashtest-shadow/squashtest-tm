@@ -24,63 +24,62 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:th="http://www.thymeleaf.org">
 <head>
-<title th:text="#{tabbed_panel.search.pane.new.label}">Test case
-	search</title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<script th:remove="all" type="text/javascript"
-	src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
-<script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
-<script type="text/javascript" th:inline="javascript">
-	var squashtm = {};
-	squashtm.app = {
-		contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
-		localizedDateFormat : /*[[ #{squashtm.dateformatShort.datepicker} ]]*/"dd/mm/yy",
-		locale : /*[[ #{squashtm.locale} ]]*/"fr",
-		projectFilterConf : {
-			url : /*[[ @{/global-filter/filter} ]]*/'/global-filter/filter',
-			title : /*[[ #{dialog.settings.filter.title} ]]*/'Filtre de projets',
-			confirmLabel : /*[[ #{label.Confirm} ]]*/'Confirmer',
-			cancelLabel : /*[[ #{label.Cancel} ]]*/'Annuler',
-		},
-		menuBarConf : {
-			boxSelector : "#menu-toggle-filter-ckbox",
-			url : /*[[ @{/global-filter/filter-status} ]]*/'/global-filter/filter-status',
-			linkSelector : "#menu-project-filter-link",
-			enabledTxt : /*[[ #{workspace.menubar.filter.enabled.label} ]]*/'Actif',
-			disabledTxt : /*[[ #{workspace.menubar.filter.disabled.label} ]]*/'Inactif',
-			enabledCallbacks : [ function() {
-				$("div.tree-filter-reminder-div > span").removeClass(
-						"not-displayed");
-			} ]
-		},
-		notificationConf : {
-			infoTitle : /*[[ #{popup.title.info} ]]*/'Info',
-			errorTitle : /*[[ #{popup.title.error} ]]*/'Erreur'
-		}
-	};
-</script>
-<script data-main="../../scripts/advanced-search-input.js"
-	th:attr="data-main=@{/scripts/advanced-search-input.js}"
-	src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
-	
-</script>
-<!-- common head -->
-<link rel="stylesheet" type="text/css" media="all"
-	href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css"
-	sq:css="squash.core.css" />
-<link rel="shortcut icon" type="image/x-icon" media="all"
-	href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico"
-	th:href="@{/images/favicon.ico}" />
-<link rel="stylesheet" type="text/css" media="all"
-	href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.grey.css"
-	sq:css="squash.blue.css" />
-<!-- /common head -->
-<link rel="stylesheet" type="text/css" media="all"
-	href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.override.css"
-	sq:css="squash.core.override.css" />
-<link rel="stylesheet" type="text/css" media="all"
-	href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.subpageoverride.css"
-	sq:css="squash.subpage.override.css" />
+  <title th:text="#{tabbed_panel.search.pane.new.label}">Test case
+  	search</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <script th:remove="all" type="text/javascript"
+  	src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+  <script type="text/javascript" th:inline="javascript">
+  	var squashtm = {};
+  	squashtm.app = {
+  		contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
+  		localizedDateFormat : /*[[ #{squashtm.dateformatShort.datepicker} ]]*/"dd/mm/yy",
+  		locale : /*[[ #{squashtm.locale} ]]*/"fr",
+  		projectFilterConf : {
+  			url : /*[[ @{/global-filter/filter} ]]*/'/global-filter/filter',
+  			title : /*[[ #{dialog.settings.filter.title} ]]*/'Filtre de projets',
+  			confirmLabel : /*[[ #{label.Confirm} ]]*/'Confirmer',
+  			cancelLabel : /*[[ #{label.Cancel} ]]*/'Annuler',
+  		},
+  		menuBarConf : {
+  			boxSelector : "#menu-toggle-filter-ckbox",
+  			url : /*[[ @{/global-filter/filter-status} ]]*/'/global-filter/filter-status',
+  			linkSelector : "#menu-project-filter-link",
+  			enabledTxt : /*[[ #{workspace.menubar.filter.enabled.label} ]]*/'Actif',
+  			disabledTxt : /*[[ #{workspace.menubar.filter.disabled.label} ]]*/'Inactif',
+  			enabledCallbacks : [ function() {
+  				$("div.tree-filter-reminder-div > span").removeClass(
+  						"not-displayed");
+  			} ]
+  		},
+  		notificationConf : {
+  			infoTitle : /*[[ #{popup.title.info} ]]*/'Info',
+  			errorTitle : /*[[ #{popup.title.error} ]]*/'Erreur'
+  		}
+  	};
+  </script>
+  <!-- common head -->
+  <link rel="stylesheet" type="text/css" media="all"
+  	href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css"
+  	sq:css="squash.core.css" />
+  <link rel="shortcut icon" type="image/x-icon" media="all"
+  	href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico"
+  	th:href="@{/images/favicon.ico}" />
+  <link rel="stylesheet" type="text/css" media="all"
+  	href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.grey.css"
+  	sq:css="squash.blue.css" />
+  <!-- /common head -->
+  <link rel="stylesheet" type="text/css" media="all"
+  	href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.override.css"
+  	sq:css="squash.core.override.css" />
+  <link rel="stylesheet" type="text/css" media="all"
+  	href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.subpageoverride.css"
+  	sq:css="squash.subpage.override.css" />
+  <script data-main="../../scripts/advanced-search-input.js"
+    th:attr="data-main=@{/scripts/advanced-search-input.js}"
+    src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"> 
+  </script>
 </head>
 <body>
 	<div id="navigation" th:include="navbar.frag :: navbar">NAVBAR</div>
