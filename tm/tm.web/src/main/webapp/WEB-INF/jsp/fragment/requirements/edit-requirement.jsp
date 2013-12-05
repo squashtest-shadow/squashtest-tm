@@ -96,7 +96,7 @@ that page won't be editable if
 		$.post("${requirementUrl}", {id:"requirement-category", value : value})
 		.done(function(response){
 			var evt = new EventUpdateCategory(identity, value.toLowerCase());
-			squashtm.workspace.contextualContent.fire(null, evt);
+			squashtm.workspace.eventBus.fire(null, evt);
 		});
 		
 		//in the mean time, must return immediately
