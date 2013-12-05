@@ -758,8 +758,10 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 				   "versions".equals(fieldName) || "testcases".equals(fieldName) || 
 				   "attachments".equals(fieldName)){
 					sortFieldArray[i] =  new SortField(fieldName, SortField.LONG, isReverse);
-				} if("category".equals(fieldName)){
+				} else if("category".equals(fieldName)){
 					sortFieldArray[i] =  new SortField(fieldName, new RequirementVersionCategoryComparatorSource(source, locale), isReverse);
+				} else if("reference".equals(fieldName)){
+					sortFieldArray[i] = new SortField(fieldName+"Sort", SortField.STRING, isReverse);
 				} else {
 					sortFieldArray[i] = new SortField(fieldName, SortField.STRING, isReverse);
 				}
@@ -802,6 +804,8 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 						|| "iterations".equals(fieldName)
 						|| "attachments".equals(fieldName)) {
 					sortFieldArray[i] = new SortField(fieldName, SortField.LONG, isReverse);
+				} else if("reference".equals(fieldName)){
+					sortFieldArray[i] = new SortField(fieldName+"Sort", SortField.STRING, isReverse);
 				} else {
 					sortFieldArray[i] = new SortField(fieldName, SortField.STRING, isReverse);
 				}

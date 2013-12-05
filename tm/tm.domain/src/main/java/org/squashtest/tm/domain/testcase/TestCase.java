@@ -54,6 +54,7 @@ import org.hibernate.search.annotations.ClassBridge;
 import org.hibernate.search.annotations.ClassBridges;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
+import org.hibernate.search.annotations.Fields;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
 import org.slf4j.Logger;
@@ -147,7 +148,14 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private final int version = 1;
 
 	@NotNull
-	@Field
+	@Fields({
+		@Field(),
+		@Field(
+			name="referenceSort", 
+			analyze=Analyze.NO, 
+			store=Store.YES
+		)
+	})
 	@Size(min = 0, max = 50)
 	private String reference = "";
 
