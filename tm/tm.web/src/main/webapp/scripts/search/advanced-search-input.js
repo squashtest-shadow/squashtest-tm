@@ -19,14 +19,12 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squashtm.notification", "underscore",
-		"app/util/StringUtil", "./SearchTextfieldWidget", "./SearchTextareaWidget", 
+    "./SearchTextfieldWidget", "./SearchTextareaWidget", 
 		"./SearchMultiselectWidget", "./SearchDateWidget", "./SearchRangeWidget", 
 		"./SearchExistsWidget", "./SearchCheckboxWidget", "./SearchComboMultiselectWidget", "./SearchRadioWidget", 
 		"jquery.squash", "jqueryui", "jquery.squash.togglepanel", "squashtable",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
-		"jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, translator, notification, _,
-		StringUtil, SearchTextfieldWidget, SearchTextareaWidget, SearchMultiselectWidget, 
-		SearchDateWidget, SearchRangeWidget, SearchExistsWidget, SearchCheckboxWidget, SearchComboMultiselectWidget, SearchRadioWidget) {
+		"jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, translator, notification, _) {
 
 	var TestCaseSearchInputPanel = Backbone.View.extend({
 
@@ -277,24 +275,20 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 				notification.showInfo(message);
 				return;
 			}
+			
+			var searchModel = JSON.stringify(this.model);
+			var queryString = "searchModel=" + encodeURIComponent(searchModel);
 
-			if(!!$("#associationType").length){
-				
+			if(!!$("#associationType").length){				
 				var associateResultWithType = $("#associationType").text();
+				queryString += "&associateResultWithType=" + encodeURIComponent(associateResultWithType);
+
 				var id = $("#associationId").text();
+				queryString += "&id=" + encodeURIComponent(id);
 				
-				this.post(squashtm.app.contextRoot + "/advanced-search/results?"+$("#searchDomain").text(), {
-					searchModel : JSON.stringify(this.model),
-					associateResultWithType : associateResultWithType,
-					id : id
-				});	
-				
-				
-			} else {
-				this.post(squashtm.app.contextRoot + "advanced-search/results?"+$("#searchDomain").text(), {
-					searchModel : JSON.stringify(this.model)
-				});	
 			}
+				
+			document.location.href = squashtm.app.contextRoot + "advanced-search/results?"+$("#searchDomain").text() + "&" + queryString;
 		},
 
 		makeTogglePanel : function(id, key, open, css) {

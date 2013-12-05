@@ -228,7 +228,7 @@ public class AdvancedSearchController {
 		return searchDomain + "-search-input.html";
 	}
 
-	@RequestMapping(value = "/results", method = RequestMethod.POST, params = TESTCASE)
+	@RequestMapping(value = "/results", params = TESTCASE)
 	public String getTestCaseSearchResultPage(Model model, @RequestParam String searchModel,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
 
@@ -239,7 +239,7 @@ public class AdvancedSearchController {
 		return "test-case-search-result.html";
 	}
 
-	@RequestMapping(value = "/results", method = RequestMethod.POST, params = REQUIREMENT)
+	@RequestMapping(value = "/results", params = REQUIREMENT)
 	public String getRequirementSearchResultPage(Model model, @RequestParam String searchModel,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
 
@@ -250,7 +250,7 @@ public class AdvancedSearchController {
 		return "requirement-search-result.html";
 	}
 
-	@RequestMapping(value = "/results", method = RequestMethod.POST, params = TESTCASE_VIA_REQUIREMENT)
+	@RequestMapping(value = "/results", params = TESTCASE_VIA_REQUIREMENT)
 	public String getTestCaseThroughRequirementSearchResultPage(Model model, @RequestParam String searchModel,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
 
