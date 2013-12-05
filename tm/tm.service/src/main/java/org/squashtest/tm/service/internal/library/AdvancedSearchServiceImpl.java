@@ -753,7 +753,8 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 					fieldName = fieldName.replaceFirst("Project.", "requirement.project.");
 				}
 				
-				if("requirement.id".equals(fieldName) || "version".equals(fieldName) || 
+				if("requirement.id".equals(fieldName) || "versionNumber".equals(fieldName) || 
+				    "id".equals(fieldName) ||
 				   "versions".equals(fieldName) || "testcases".equals(fieldName) || 
 				   "attachments".equals(fieldName)){
 					sortFieldArray[i] =  new SortField(fieldName, SortField.LONG, isReverse);

@@ -78,6 +78,7 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 	@ClassBridge(
 		name="attachments",
 		store=Store.YES,
+		analyze=Analyze.NO,
 		impl=RequirementVersionAttachmentBridge.class
 	),
 	@ClassBridge(
@@ -89,11 +90,13 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 	@ClassBridge(
 		name="isCurrentVersion",
 		store=Store.YES,
+		analyze=Analyze.NO,
 		impl=RequirementVersionCurrentVersionBridge.class	
 	),
 	@ClassBridge(
 		name="testcases",
 		store=Store.YES,
+		analyze=Analyze.NO,
 		impl=RequirementVersionTestcaseBridge.class	
 	),
 	@ClassBridge(
