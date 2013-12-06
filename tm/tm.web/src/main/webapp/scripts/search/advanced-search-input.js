@@ -46,62 +46,71 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 
 		getInputInterfaceModel : function() {
 			var self = this;
+			
+			// compiles the panel template
+			var source = self.$("#toggle-panel-template").html();
+			
+			if (!source) { // could this really happen without being a bug ?
+				return;
+			}
+			
+			var template = Handlebars.compile(source);
+			
+			// parses the search model if any
+			var marshalledSearchModel = self.$("#searchModel").text();
+			var searchModel = {};
+			
+			if(marshalledSearchModel){
+				searchModel = JSON.parse(marshalledSearchModel).fields;
+			}
+			
+			var searchDomain = self.$("#searchDomain").text();
+			
 			var result = $.ajax({
 				url : squashtm.app.contextRoot + "/advanced-search/input?"+this.$("#searchDomain").text(),
 				data : "nodata",
 				dataType : "json"
 			}).success(function(json) {
-				$.each(json, function(key, value) {
-					$.each(value, function(key, val){
-						var source = self.$("#toggle-panel-template").html();
-						if(source){
-							var template = Handlebars.compile(source);
-							var context = {"toggle-panel-id": val.id+"-panel-id", "toggle-panel-table-id": val.id+"-panel-table-id"};
-							var tableid = val.id+"-panel-table-id";
-							var html = template(context);
-							self.$("#advanced-search-input-form-panel-"+val.location).append(html);
-							self.$("#advanced-search-input-form-panel-"+val.location).addClass(self.$("#searchDomain").text());
+				
+				$.each(json.panels || {}, function(index, panel) {
+					var context = {"toggle-panel-id": panel.id+"-panel-id", "toggle-panel-table-id": panel.id+"-panel-table-id"};
+					var tableid = panel.id+"-panel-table-id";
+					var html = template(context);
+					self.$("#advanced-search-input-form-panel-"+panel.location).append(html);
+					self.$("#advanced-search-input-form-panel-"+panel.location).addClass(searchDomain);
+					
+					for (var i = 0, field; i < panel.fields.length; i++){
+						field = panel.fields[i];
 
-							var searchModel = {};
-							var $searchModel = self.$("#searchModel");
-							if($searchModel.text()){
-								searchModel = JSON.parse($searchModel.text()).fields;
-							}
+						if(field.inputType === "textfield"){
+							self.makeTextField(tableid, field.id, field.title, searchModel[field.id], field.ignoreBridge);
 							
-							for (var i = 0, field; i < val.fields.length; i++){
-								field = val.fields[i];
-
-								if(field.inputType === "textfield"){
-									self.makeTextField(tableid, field.id, field.title, searchModel[field.id], field.ignoreBridge);
-									
-								} else if (field.inputType === "textarea"){
-									self.makeTextArea(tableid, field.id, field.title, searchModel[field.id]);
-									
-								} else if (field.inputType === "multiselect"){
-									self.makeMultiselect(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
-									
-								} else if (field.inputType === "combomultiselect"){
-									self.makeComboMultiselect(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
-									
-								} else if (field.inputType === "range"){
-									self.makeRangeField(tableid, field.id, field.title, searchModel[field.id]);
-									
-								} else if (field.inputType === "exists"){
-									self.makeExistsField(tableid, field.id, field.title, field.possibleValues,searchModel[field.id]);
-									
-								} else if (field.inputType === "date"){
-									self.makeDateField(tableid, field.id, field.title, searchModel[field.id]);
-								} else if (field.inputType === "checkbox"){
-									self.makeCheckboxField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
-									
-								} else if (field.inputType === "radiobutton"){
-									self.makeRadioField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id], field.ignoreBridge);
-									
-								} 
-							}
-							self.makeTogglePanel(val.id+"-panel-id",val.title,val.open,val.cssClasses);
-						}
-					});
+						} else if (field.inputType === "textarea"){
+							self.makeTextArea(tableid, field.id, field.title, searchModel[field.id]);
+							
+						} else if (field.inputType === "multiselect"){
+							self.makeMultiselect(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
+							
+						} else if (field.inputType === "combomultiselect"){
+							self.makeComboMultiselect(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
+							
+						} else if (field.inputType === "range"){
+							self.makeRangeField(tableid, field.id, field.title, searchModel[field.id]);
+							
+						} else if (field.inputType === "exists"){
+							self.makeExistsField(tableid, field.id, field.title, field.possibleValues,searchModel[field.id]);
+							
+						} else if (field.inputType === "date"){
+							self.makeDateField(tableid, field.id, field.title, searchModel[field.id]);
+						} else if (field.inputType === "checkbox"){
+							self.makeCheckboxField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
+							
+						} else if (field.inputType === "radiobutton"){
+							self.makeRadioField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id], field.ignoreBridge);
+							
+						} 
+					}
+					self.makeTogglePanel(panel.id+"-panel-id",panel.title,panel.open,panel.cssClasses);
 				});
 			});
 		},
