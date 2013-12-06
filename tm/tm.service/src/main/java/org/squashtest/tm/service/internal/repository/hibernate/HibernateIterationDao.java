@@ -51,6 +51,7 @@ import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
@@ -116,8 +117,11 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 	private static final String HQL_INDEXED_TEST_PLAN_DATASET_FILTER =
 			"and Dataset like :datasetFilter ";
 
-	private static final String HQL_INDEXED_TEST_PLAN_MODE_FILTER =
-			"and TestCase.executionMode = :modeFilter ";
+	private static final String HQL_INDEXED_TEST_PLAN_MODEAUTO_FILTER =
+			"and TestCase.automatedTest is not null ";
+	
+	private static final String HQL_INDEXED_TEST_PLAN_MODEMANUAL_FILTER =
+			"and TestCase.automatedTest is null ";
 	
 	private static final String HQL_INDEXED_TEST_PLAN_TESTSUITE_FILTER =
 			"having group_concat(TestSuite.name, 'order by', TestSuite.name) like :testsuiteFilter ";
@@ -370,7 +374,12 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_PROJECT_FILTER);
 		}
 		if(columnFiltering.hasFilter(MODE_DATA)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_MODE_FILTER);
+			if (columnFiltering.getFilter(MODE_DATA).equals(TestCaseExecutionMode.MANUAL.toString())){
+				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_MODEMANUAL_FILTER);
+			}
+			else{
+				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_MODEAUTO_FILTER);
+			}
 		}
 		if(columnFiltering.hasFilter(REFERENCE_DATA)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER);
@@ -462,9 +471,6 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 		if(columnFiltering.hasFilter(PROJECT_DATA)){
 			query.setParameter(PROJECT_FILTER, "%"+columnFiltering.getFilter(PROJECT_DATA)+"%", StringType.INSTANCE);
 		}
-		if(columnFiltering.hasFilter(MODE_DATA)){
-			query.setParameter(MODE_FILTER, "%"+columnFiltering.getFilter(MODE_DATA)+"%", StringType.INSTANCE);
-		} 
 		if(columnFiltering.hasFilter(REFERENCE_DATA)){
 			query.setParameter(REFERENCE_FILTER, "%"+columnFiltering.getFilter(REFERENCE_DATA)+"%", StringType.INSTANCE);
 		} 
