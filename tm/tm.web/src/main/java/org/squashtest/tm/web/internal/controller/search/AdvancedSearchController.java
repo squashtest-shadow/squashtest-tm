@@ -36,6 +36,8 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -95,7 +97,12 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 @Controller
 @RequestMapping("/advanced-search")
 public class AdvancedSearchController {
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(AdvancedSearchController.class);
+	
+	private static interface FormModelBuilder {
+		SearchInputInterfaceModel build(Locale locale);
+	}
+	
 	private static final String TEXTFIELD = "textfield";
 	private static final String DATE = "date";
 	private static final String COMBOMULTISELECT = "combomultiselect";
@@ -104,6 +111,31 @@ public class AdvancedSearchController {
 	private static final String SEARCH_MODEL = "searchModel";
 	private static final String SEARCH_DOMAIN = "searchDomain";
 	private static final String TESTCASE_VIA_REQUIREMENT = "testcaseViaRequirement";
+	
+	private Map<String, FormModelBuilder> formModelBuilder = new HashMap<String, AdvancedSearchController.FormModelBuilder>();
+	
+	{
+		formModelBuilder.put(TESTCASE, new FormModelBuilder() {
+			@Override
+			public SearchInputInterfaceModel build(Locale locale) {
+				return getTestCaseSearchInputInterfaceModel(locale);
+			}
+		});
+
+		formModelBuilder.put(TESTCASE_VIA_REQUIREMENT, new FormModelBuilder() {
+			@Override
+			public SearchInputInterfaceModel build(Locale locale) {
+				return getTestCaseViaRequirementSearchInputInterfaceModel(locale);
+			}
+		});
+
+		formModelBuilder.put(REQUIREMENT, new FormModelBuilder() {
+			@Override
+			public SearchInputInterfaceModel build(Locale locale) {
+				return getRequirementSearchInputInterfaceModel(locale);
+			}
+		});
+	}
 
 	@Inject
 	private AdvancedSearchService advancedSearchService;
@@ -192,14 +224,23 @@ public class AdvancedSearchController {
 			.mapAttribute("requirement-modified-by", "modifiedBy", RequirementVersion.class);
 
 	@RequestMapping(method = RequestMethod.GET)
-	public String getTestCaseSearchTab(Model model, @RequestParam String searchDomain,
-			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
+	public String showSearchPage(Model model, @RequestParam String searchDomain,
+			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id, Locale locale) {
 
 		initModelForPage(model, associateResultWithType, id);
 		model.addAttribute(SEARCH_DOMAIN, searchDomain);
 		if (TESTCASE_VIA_REQUIREMENT.equals(searchDomain)) {
 			searchDomain = REQUIREMENT;
 		}
+		
+		FormModelBuilder builder = formModelBuilder.get(searchDomain);
+		
+		if (builder != null) {
+			model.addAttribute("formModel", builder.build(locale));
+		} else {
+			LOGGER.error("Could not find a FormModelBuilder for search domain : {}. This is either caused by a bug or a hand-written request", searchDomain);
+		}
+		
 		return searchDomain + "-search-input.html";
 	}
 
@@ -214,18 +255,11 @@ public class AdvancedSearchController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public String getTestCaseSearchTab(Model model, @RequestParam String searchDomain,
+	public String showSearchPageFilledWithParams(Model model, @RequestParam String searchDomain,
 			@RequestParam String searchModel, @RequestParam(required = false) String associateResultWithType,
-			@RequestParam(required = false) Long id) {
-
-		initModelForPage(model, associateResultWithType, id);
+			@RequestParam(required = false) Long id, Locale locale) {
 		model.addAttribute(SEARCH_MODEL, searchModel);
-		model.addAttribute(SEARCH_DOMAIN, searchDomain);
-
-		if (TESTCASE_VIA_REQUIREMENT.equals(searchDomain)) {
-			searchDomain = REQUIREMENT;
-		}
-		return searchDomain + "-search-input.html";
+		return showSearchPage(model, searchDomain, associateResultWithType, id, locale);
 	}
 
 	@RequestMapping(value = "/results", params = TESTCASE)
@@ -413,13 +447,14 @@ public class AdvancedSearchController {
 	@RequestMapping(value = "/input", method = RequestMethod.GET, headers = RequestHeaders.CONTENT_JSON, params = TESTCASE_VIA_REQUIREMENT)
 	@ResponseBody
 	public SearchInputInterfaceModel getTestCaseViaRequirementSearchInputInterfaceModel(Locale locale) {
+		// TODO should no longer be called through HTTP, put it private
 		return getRequirementSearchInputInterfaceModel(locale);
 	}
 
 	@RequestMapping(value = "/input", method = RequestMethod.GET, headers = RequestHeaders.CONTENT_JSON, params = REQUIREMENT)
 	@ResponseBody
 	public SearchInputInterfaceModel getRequirementSearchInputInterfaceModel(Locale locale) {
-
+		// TODO should no longer be called through HTTP, put it private
 		SearchInputInterfaceModel model = new SearchInputInterfaceModel();
 
 		// Information
@@ -452,7 +487,7 @@ public class AdvancedSearchController {
 	@RequestMapping(value = "/input", method = RequestMethod.GET, headers = RequestHeaders.CONTENT_JSON, params = TESTCASE)
 	@ResponseBody
 	public SearchInputInterfaceModel getTestCaseSearchInputInterfaceModel(Locale locale) {
-
+		// TODO should no longer be called through HTTP, put it private
 		SearchInputInterfaceModel model = new SearchInputInterfaceModel();
 
 		// Information

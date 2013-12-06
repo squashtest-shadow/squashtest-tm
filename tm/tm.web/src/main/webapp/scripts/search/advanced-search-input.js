@@ -66,13 +66,8 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 			
 			var searchDomain = self.$("#searchDomain").text();
 			
-			var result = $.ajax({
-				url : squashtm.app.contextRoot + "/advanced-search/input?"+this.$("#searchDomain").text(),
-				data : "nodata",
-				dataType : "json"
-			}).success(function(json) {
-				
-				$.each(json.panels || {}, function(index, panel) {
+			var formBuilder = function(formModel) {
+				$.each(formModel.panels || {}, function(index, panel) {
 					var context = {"toggle-panel-id": panel.id+"-panel-id", "toggle-panel-table-id": panel.id+"-panel-table-id"};
 					var tableid = panel.id+"-panel-table-id";
 					var html = template(context);
@@ -112,7 +107,25 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 					}
 					self.makeTogglePanel(panel.id+"-panel-id",panel.title,panel.open,panel.cssClasses);
 				});
-			});
+			};
+			
+			this._processModel(formBuilder);
+			
+		},
+		
+		_processModel : function(formBuilder) {
+			if (!!squashtm.app.searchFormModel) {
+				formBuilder(squashtm.app.searchFormModel);
+				
+			} else { // TODO legacy, remove that in Squash 1.9
+				$.ajax({
+					url : squashtm.app.contextRoot + "/advanced-search/input?"+this.$("#searchDomain").text(),
+					data : "nodata",
+					dataType : "json"
+				}).success(function() {
+					formBuilder(squashtm.app.searchFormModel);
+				});
+			}
 		},
 		
 		/**
@@ -185,11 +198,13 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 		},
 			
 		makeTextField : function(tableId, textFieldId, textFieldTitle, enteredValue, ignoreBridge) {
-			var context = {"text-field-id": textFieldId, "text-field-title": textFieldTitle};
+			var context = {
+				"text-field-id": textFieldId, 
+				"text-field-title": textFieldTitle, 
+				fieldValue : !!enteredValue ? enteredValue.value : ""
+			};
 			var $fieldDom = this._appendFieldDom(tableId, textFieldId, this._compileTemplate("#textfield-template", context));
 			$fieldDom.searchTextFieldWidget({"ignoreBridge" : ignoreBridge});
-			$fieldDom.append($fieldDom.searchTextFieldWidget("createDom", "F"+textFieldId));
-			$fieldDom.searchTextFieldWidget("fieldvalue", enteredValue);
 		},
 		
 		makeTextArea : function(tableId, textFieldId, textFieldTitle, enteredValue) {

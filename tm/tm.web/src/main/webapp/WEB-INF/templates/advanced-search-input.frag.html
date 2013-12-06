@@ -133,7 +133,9 @@
               <script id="textfield-template" type="text/x-handlebars-template">
 				<div class="display-table-row">
                   	<label for="{{text-field-id}}" class="display-table-cell">{{text-field-title}}</label>
-                    <div id="{{text-field-id}}" class="search-input"/>
+                    <div id="{{text-field-id}}" class="search-input">
+                      <input type="text" data-widgetname="TextField" data-fieldid="F{{text-field-id}}" value="{{fieldValue}}" class="search-input" />
+                    </div>
                 </div>
 				</script>
 
