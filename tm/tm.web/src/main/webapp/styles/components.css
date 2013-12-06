@@ -1022,10 +1022,10 @@ predefined for future evolutions :
 	left : 10px;
 }
 
-.dashboard-legend-sample-color {
+.dashboard-legend-sample-color, .dashboard-legend-icon{
 	height : 15px;
 	width : 15px;
-	display : inline-block;
+	display : inline-block;	
 }
 
 .dashboard-item-legend span{
@@ -1056,6 +1056,21 @@ predefined for future evolutions :
 	border : 1px solid black;
 }
 
+.dashboard-donut-lvl1 {
+	background-image : url('../images/circle-d1.png');/** sprite-ref: sprites-icons; */
+}
+
+.dashboard-donut-lvl2 {
+	background-image : url('../images/circle-d2.png');/** sprite-ref: sprites-icons; */
+}
+
+.dashboard-donut-lvl3 {
+	background-image : url('../images/circle-d3.png');/** sprite-ref: sprites-icons; */
+}
+
+.dashboard-donut-lvl4 {
+	background-image : url('../images/circle-d4.png');/** sprite-ref: sprites-icons; */
+}
 
 /****************************************
  some fixes for the buttonmenu

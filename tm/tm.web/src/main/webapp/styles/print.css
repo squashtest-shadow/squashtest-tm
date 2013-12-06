@@ -171,6 +171,6 @@ body {
 	display : inline-block;
 }
 
-.serie{
-	display : none;
+.no-print{
+	display:none !important;
 }

@@ -162,19 +162,23 @@
 						
 						
 						<div class="dashboard-item-meta">					
-						<div class="dashboard-item-legend">
-						<div>
-							<span class="serie serie0"><f:message key="test-case.importance.VERY_HIGH" /></span>
-						</div>
-						<div>
-							<span class="serie serie1"><f:message key="test-case.importance.HIGH" /></span>
-						</div>
-						<div>
-							<span class="serie serie2"><f:message key="test-case.importance.MEDIUM" /></span>
-						</div>
-						<div>
-							<span class="serie serie3"><f:message key="test-case.importance.LOW" /></span>
-						</div>
+							<div class="dashboard-item-legend">
+								<div class="no-print">
+									<div class="dashboard-legend-icon dashboard-donut-lvl4"></div>
+									<span class="serie serie0"><f:message key="test-case.importance.VERY_HIGH" /></span>
+								</div>
+								<div class="no-print">
+									<div class="dashboard-legend-icon dashboard-donut-lvl3"></div>
+									<span class="serie serie1"><f:message key="test-case.importance.HIGH" /></span>
+								</div>
+								<div class="no-print">
+									<div class="dashboard-legend-icon dashboard-donut-lvl2"></div>
+									<span class="serie serie2"><f:message key="test-case.importance.MEDIUM" /></span>
+								</div>
+								<div class="no-print">
+									<div class="dashboard-legend-icon dashboard-donut-lvl1"></div>
+									<span class="serie serie3"><f:message key="test-case.importance.LOW" /></span>
+								</div>
 						
 							
 								<div>
