@@ -142,7 +142,9 @@
               <script id="textarea-template" type="text/x-handlebars-template">
 				<div class="display-table-row">
                   	<label for="{{text-area-id}}" class="display-table-cell">{{text-area-title}}</label>
-                    <div id="{{text-area-id}}" class="search-input"/>
+                    <div id="{{text-area-id}}" class="search-input">
+                      <textarea data-widgetname="TextArea" data-fieldid="F{{text-field-id}}" rows="2" class="search-input">{{fieldValue}}</textarea>
+                    </div>
                 </div>
 				</script>
 

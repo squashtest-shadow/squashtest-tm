@@ -208,11 +208,13 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 		},
 		
 		makeTextArea : function(tableId, textFieldId, textFieldTitle, enteredValue) {
-			var context = {"text-area-id": textFieldId, "text-area-title": textFieldTitle};
+			var context = {
+				"text-area-id": textFieldId, 
+				"text-area-title": textFieldTitle, 
+				fieldValue : !!enteredValue ? enteredValue.value : ""
+			};
 			var $fieldDom = this._appendFieldDom(tableId, textFieldId, this._compileTemplate("#textarea-template", context));
 			$fieldDom.searchTextAreaWidget();
-			$fieldDom.append($fieldDom.searchTextAreaWidget("createDom", "F"+textFieldId));
-			$fieldDom.searchTextAreaWidget("fieldvalue", enteredValue);
 		},
 		
 		makeMultiselect : function(tableId, textFieldId, textFieldTitle, options, enteredValue) {

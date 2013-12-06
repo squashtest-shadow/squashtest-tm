@@ -19,44 +19,31 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "jqueryui"], function($){
+define([ "jquery", "jqueryui" ], function($) {
 
 	var searchwidget = $.widget("search.searchTextAreaWidget", {
-		
 		options : {
 			ignoreBridge : false
 		},
-		
-		_create : function(){
+
+		_create : function() {
 			this._super();
 		},
-		
-		
-		
-		fieldvalue : function(value){
-			
-			if(!value){
-			var text = $(this.element.children()[0]).val();
-			var id = $(this.element).attr("id");
-			return {"type" : "TEXT",
-					"value" : text,
-					"ignoreBridge" : this.options.ignoreBridge};
-		} else {
-			$(this.element.children()[0]).val(value.value);
-		}
 
-		}, 
-		
-		createDom : function(id){
-		
-			return $('<textarea/>', {
-				'data-widgetname' : 'TextArea',
-				'data-fieldid' : id,
-				'rows' : 2,
-				'style' : "resize:none",
-				'class' : "search-input"
-			});
+		fieldvalue : function(value) {
+			if (!value) {
+				var text = $(this.element.children()[0]).val();
+				var id = $(this.element).attr("id");
+				return {
+					"type" : "TEXT",
+					"value" : text,
+					"ignoreBridge" : this.options.ignoreBridge
+				};
+			} else {
+				$(this.element.children()[0]).val(value.value);
+			}
 		}
-	 });
+	});
+	
 	return searchwidget;
 });

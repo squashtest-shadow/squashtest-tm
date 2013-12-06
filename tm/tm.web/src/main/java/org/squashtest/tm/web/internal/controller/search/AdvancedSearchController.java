@@ -343,8 +343,7 @@ public class AdvancedSearchController {
 
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, testCaseSearchResultMapper);
 
-		PagedCollectionHolder<List<TestCase>> holder = advancedSearchService
-				.searchForTestCases(searchModel, paging, locale);
+		PagedCollectionHolder<List<TestCase>> holder = advancedSearchService.searchForTestCases(searchModel, paging, locale);
 
 		boolean isInAssociationContext = isInAssociationContext(associateResultWithType);
 

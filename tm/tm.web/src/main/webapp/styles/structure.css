@@ -232,7 +232,9 @@ div.sub-page div.table-tab-wrap .dataTables_footer{
 .search-input {
 	width: 200px;
 }
-
+textarea.search-input {
+	resize: none;
+}
 .shorter-search-input {
 	width: 180px;
 }
