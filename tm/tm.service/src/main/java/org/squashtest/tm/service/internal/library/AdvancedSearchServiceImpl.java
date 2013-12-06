@@ -35,7 +35,6 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.lucene.analysis.SimpleAnalyzer;
 import org.apache.lucene.document.DateTools;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
@@ -390,17 +389,24 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			
 			org.apache.lucene.search.Query query;
 
-			if (ignoreBridge) {
+			if (value.contains("*")){
+				query = qb
+						.bool()
+						.must(qb.keyword().wildcard().onField(fieldName).ignoreFieldBridge()
+								.matching(value).createQuery()).createQuery();
+			} else {
+			
+			/*if (ignoreBridge) {*/
 				query = qb
 						.bool()
 						.must(qb.phrase().onField(fieldName).ignoreFieldBridge()
 								.sentence(value).createQuery()).createQuery();
-			} else {
+			/*} else {
 				query = qb
 						.bool()
 						.must(qb.phrase().onField(fieldName).sentence(value)
 								.createQuery()).createQuery();
-			}
+			}*/}
 			
 			if (query != null && mainQuery == null) {
 				mainQuery = query;
