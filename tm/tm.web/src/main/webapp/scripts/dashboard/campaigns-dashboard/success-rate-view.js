@@ -49,15 +49,15 @@ define(["../basic-objects/donut-view"], function(DonutView){
 		},
 		
 		_sumAllSuccess : function(model){
-			return 	model.nbVeryHighSuccess + model.nbHighSuccess  + model.nbMediumSuccess + model.nbLowSuccess;			
+			return model.nbVeryHighSuccess + model.nbHighSuccess  + model.nbMediumSuccess + model.nbLowSuccess;
 		},
 		
 		_sumAllFailures : function(model){
-			return model.nbVeryHighFailure + model.nbHighFailure + model.nbMediumFailure + model.nbLowFailure;				
+			return model.nbVeryHighFailure + model.nbHighFailure + model.nbMediumFailure + model.nbLowFailure;
 		},
 		
 		_sumAllOther : function(model){
-			return model.nbVeryHighOther + model.nbHighOther + model.nbMediumOther + model.nbLowOther;			
+			return model.nbVeryHighOther + model.nbHighOther + model.nbMediumOther + model.nbLowOther;
 		},
 		
 		getSeries : function(){

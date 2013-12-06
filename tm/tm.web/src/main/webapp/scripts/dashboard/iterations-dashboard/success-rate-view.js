@@ -43,19 +43,19 @@ define(["../basic-objects/donut-view"], function(DonutView){
 				percentFailures = (total !== 0) ? totalFailures * 100 / total : 0;
 			
 			this.$el.find('.success-rate-total-success').text(percentSuccess.toFixed(0)+'%');
-			this.$el.find('.success-rate-total-failure').text(percentFailures.toFixed(0)+'%');			
+			this.$el.find('.success-rate-total-failure').text(percentFailures.toFixed(0)+'%');
 		},
 		
 		_sumAllSuccess : function(model){
-			return 	model.nbVeryHighSuccess + model.nbHighSuccess  + model.nbMediumSuccess + model.nbLowSuccess;			
+			return model.nbVeryHighSuccess + model.nbHighSuccess  + model.nbMediumSuccess + model.nbLowSuccess;
 		},
 		
 		_sumAllFailures : function(model){
-			return model.nbVeryHighFailure + model.nbHighFailure + model.nbMediumFailure + model.nbLowFailure;				
+			return model.nbVeryHighFailure + model.nbHighFailure + model.nbMediumFailure + model.nbLowFailure;
 		},
 		
 		_sumAllOther : function(model){
-			return model.nbVeryHighOther + model.nbHighOther + model.nbMediumOther + model.nbLowOther;			
+			return model.nbVeryHighOther + model.nbHighOther + model.nbMediumOther + model.nbLowOther;
 		},
 			
 		getSeries : function(){
