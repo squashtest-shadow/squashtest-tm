@@ -137,7 +137,7 @@
 						<div class="dashboard-item-meta">
 						
 							<div class="dashboard-item-subplot">
-								<span style="font-weight:bold;size:1.3em;"><f:message key="label.Global"/></span>
+								<span style="font-weight:bold;size:1.3em;"><f:message key="label.GlobalRates"/></span>
 								
 								<div class="dashboard-subplot-legend success-rate-total-success" 
 									 style="background-color:#99CC00; color:black;"></div>
@@ -150,33 +150,33 @@
 						
 							<div class="dashboard-item-legend">
 							
-								<div class="no-print">
+								<div>
 									<div class="dashboard-legend-icon dashboard-donut-lvl4"></div>
 									<span class="serie serie0"><f:message key="test-case.importance.VERY_HIGH" /></span>
 								</div>
 								
-								<div class="no-print">
+								<div>
 									<div class="dashboard-legend-icon dashboard-donut-lvl3"></div>
 									<span class="serie serie1"><f:message key="test-case.importance.HIGH" /></span>
 								</div>
 								
-								<div class="no-print">
+								<div>
 									<div class="dashboard-legend-icon dashboard-donut-lvl2"></div>
 									<span class="serie serie2"><f:message key="test-case.importance.MEDIUM" /></span>
 								</div>
 								
-								<div class="no-print">
+								<div>
 									<div class="dashboard-legend-icon dashboard-donut-lvl1"></div>
 									<span class="serie serie3"><f:message key="test-case.importance.LOW" /></span>
 								</div>
 						
 								<div>
 									<div class="dashboard-legend-sample-color" style="background-color:#99CC00"></div>
-									<span><f:message key="execution.execution-status.SUCCESS" /></span>
+									<span><f:message key="label.SuccessRate" /></span>
 								</div>
 								<div>
 									<div class="dashboard-legend-sample-color" style="background-color:#FF3300"></div>
-									<span><f:message key="execution.execution-status.FAILURE" /></span>
+									<span><f:message key="label.FailureRate" /></span>
 								</div>
 								<div>
 									<div class="dashboard-legend-sample-color" style="background-color:#969696"></div>

@@ -1020,7 +1020,6 @@ predefined for future evolutions :
 .dashboard-item-subplot{
 	position: absolute;
 	top: 40px;
-	border: 1px solid lightgray;
 	width: 90%;
 	padding: 5px;
 }

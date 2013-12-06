@@ -153,20 +153,19 @@ body {
 }
 
 .dashboard-item-meta{
-	width : 100%;
-	height : 40px;
-	float : none;
+	width: 100%;
+	height: auto;
+	float: none;
+	position: absolute;
+	bottom: 0;
 }
 
 
 .dashboard-item-subplot{
-	position: relative;
+	position: static;
 	display: inline-block;
-	top: -100%;		/* this directive makes the subplot render inside the chart view even when its underlying box model overflows the bottom */
 	width : auto;
 	margin-left:1em;
-	border: none;
-	max-height: 0; /* this directive nullify the box model and prevents the trigger of an ugly overflow-y:auto on the parent container*/
 }
 
 .dashboard-item-legend{
@@ -177,7 +176,7 @@ body {
 	bottom : 0;
 	left : 0;	
 	display:inline-block;	
-	vertical-align:top;
+	vertical-align:bottom;
 }
 
 .dashboard-item-legend > div{
