@@ -74,6 +74,8 @@
 				where ACTIVE=0
 			);
 			
+			update ITERATION_TEST_PLAN_ITEM SET USER_ID = NULL WHERE USER_ID IN (SELECT PARTY_ID FROM CORE_USER WHERE active = 0);
+			
 			delete from CORE_USER where active = 0;
 			
 			delete from CORE_PARTY where PARTY_ID not in
