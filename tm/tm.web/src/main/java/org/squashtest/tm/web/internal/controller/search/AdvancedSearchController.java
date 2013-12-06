@@ -318,7 +318,7 @@ public class AdvancedSearchController {
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, testCaseSearchResultMapper);
 
 		PagedCollectionHolder<List<TestCase>> holder = advancedSearchService.searchForTestCasesThroughRequirementModel(
-				searchModel, paging);
+				.searchForTestCasesThroughRequirementModel(searchModel, paging, locale);
 
 		boolean isInAssociationContext = isInAssociationContext(associateResultWithType);
 
@@ -344,7 +344,8 @@ public class AdvancedSearchController {
 
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, testCaseSearchResultMapper);
 
-		PagedCollectionHolder<List<TestCase>> holder = advancedSearchService.searchForTestCases(searchModel, paging);
+		PagedCollectionHolder<List<TestCase>> holder = advancedSearchService
+				.searchForTestCases(searchModel, paging, locale);
 
 		boolean isInAssociationContext = isInAssociationContext(associateResultWithType);
 

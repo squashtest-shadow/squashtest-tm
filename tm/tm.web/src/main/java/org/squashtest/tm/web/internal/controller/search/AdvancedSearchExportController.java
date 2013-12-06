@@ -27,6 +27,7 @@ import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
@@ -60,14 +61,14 @@ public class AdvancedSearchExportController {
 	public @ResponseBody
 	void exportRequirementVersionAdvancedSearchResult(
 			HttpServletResponse response,
-			@RequestParam(value = "searchModel") String searchModel)
+			@RequestParam(value = "searchModel") String searchModel, final Locale locale)
 			throws IOException {
 
 		AdvancedSearchModel parsedSearchModel = new ObjectMapper().readValue(
 				searchModel, AdvancedSearchModel.class);
 
 		SearchExportCSVModel model = advancedSearchService
-				.exportRequirementVersionSearchResultsToCSV(parsedSearchModel);
+				.exportRequirementVersionSearchResultsToCSV(parsedSearchModel, locale);
 
 		// prepare the response
 		response.setContentType("application/octet-stream");
@@ -96,7 +97,7 @@ public class AdvancedSearchExportController {
 			"export=csv", "testcase" })
 	public @ResponseBody
 	void exportTestCaseAdvancedSearchResult(HttpServletResponse response,
-			@RequestParam(value = "searchModel") String searchModel)
+			@RequestParam(value = "searchModel") String searchModel, final Locale locale)
 			throws IOException {
 
 		BufferedWriter writer = null;
@@ -105,7 +106,7 @@ public class AdvancedSearchExportController {
 			AdvancedSearchModel parsedSearchModel = new ObjectMapper()
 					.readValue(searchModel, AdvancedSearchModel.class);
 			SearchExportCSVModel model = advancedSearchService
-					.exportTestCaseSearchResultsToCSV(parsedSearchModel);
+					.exportTestCaseSearchResultsToCSV(parsedSearchModel, locale);
 
 			// prepare the response
 			writer = new BufferedWriter(new OutputStreamWriter(

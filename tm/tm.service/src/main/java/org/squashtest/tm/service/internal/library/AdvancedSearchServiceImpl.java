@@ -380,7 +380,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	private org.apache.lucene.search.Query buildLuceneSingleValueQuery(
 			QueryBuilder qb, String fieldName, List<String> values,
-			boolean ignoreBridge) {
+			boolean ignoreBridge, Locale locale) {
 
 
 		org.apache.lucene.search.Query mainQuery = null;
@@ -393,7 +393,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 				query = qb
 						.bool()
 						.must(qb.keyword().wildcard().onField(fieldName).ignoreFieldBridge()
-								.matching(value).createQuery()).createQuery();
+								.matching(value.toLowerCase(locale)).createQuery()).createQuery();
 			} else {
 			
 			/*if (ignoreBridge) {*/
@@ -497,7 +497,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	
 	private org.apache.lucene.search.Query buildQueryForSingleCriterium(
 			String fieldKey, AdvancedSearchFieldModel fieldModel,
-			QueryBuilder qb, boolean ignoreBridge) {
+			QueryBuilder qb, boolean ignoreBridge, Locale locale) {
 
 		AdvancedSearchSingleFieldModel singleModel = (AdvancedSearchSingleFieldModel) fieldModel;
 		if (singleModel.getValue() != null
@@ -505,7 +505,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			List<String> inputs = parseInput(singleModel.getValue());
 	
 			return buildLuceneSingleValueQuery(qb, fieldKey,
-					inputs, ignoreBridge);
+					inputs, ignoreBridge, locale);
 		}
 
 		return null;
@@ -616,7 +616,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return null;
 	}
 
-	private org.apache.lucene.search.Query buildLuceneQuery(QueryBuilder qb, List<TestCase> testcaseList) {
+	private org.apache.lucene.search.Query buildLuceneQuery(QueryBuilder qb, List<TestCase> testcaseList, Locale locale) {
 		
 		org.apache.lucene.search.Query mainQuery = null;
 		org.apache.lucene.search.Query query = null;
@@ -624,7 +624,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		for(TestCase testcase : testcaseList){
 			List<String> id = new ArrayList<String>();
 			id.add(testcase.getId().toString());
-			query = buildLuceneSingleValueQuery(qb, "id", id, true);
+			query = buildLuceneSingleValueQuery(qb, "id", id, true, locale);
 		
 			if (query != null && mainQuery == null) {
 				mainQuery = query;
@@ -635,7 +635,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return mainQuery;
 	}
 	
-	private org.apache.lucene.search.Query buildLuceneQuery(QueryBuilder qb, AdvancedSearchModel model) {
+	private org.apache.lucene.search.Query buildLuceneQuery(QueryBuilder qb, AdvancedSearchModel model, Locale locale) {
 
 		org.apache.lucene.search.Query mainQuery = null;
 		org.apache.lucene.search.Query query = null;
@@ -650,7 +650,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			boolean ignoreBridge = fieldModel.isIgnoreBridge();
 
 			if (AdvancedSearchFieldModel.SINGLE.equals(type)) {
-				query = buildQueryForSingleCriterium(fieldKey, fieldModel, qb, ignoreBridge);
+				query = buildQueryForSingleCriterium(fieldKey, fieldModel, qb, ignoreBridge, locale);
 
 			} else if (AdvancedSearchFieldModel.LIST.equals(type)) {
 				query = buildQueryForListCriterium(fieldKey, fieldModel, qb);
@@ -678,7 +678,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<TestCase> searchForTestCases(AdvancedSearchModel model) {
+	public List<TestCase> searchForTestCases(AdvancedSearchModel model, Locale locale) {
 
 		Session session = sessionFactory.getCurrentSession();
 
@@ -687,7 +687,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder()
 				.forEntity(TestCase.class).get();
 
-		org.apache.lucene.search.Query luceneQuery = buildLuceneQuery(qb, model);
+		org.apache.lucene.search.Query luceneQuery = buildLuceneQuery(qb, model, locale);
 
 		org.hibernate.Query hibQuery = ftSession.createFullTextQuery(
 				luceneQuery, TestCase.class);
@@ -698,8 +698,8 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<TestCase> searchForTestCasesThroughRequirementModel(AdvancedSearchModel model) {
-		List<RequirementVersion> requirements = searchForRequirementVersions(model);
+	public List<TestCase> searchForTestCasesThroughRequirementModel(AdvancedSearchModel model, Locale locale) {
+		List<RequirementVersion> requirements = searchForRequirementVersions(model, locale);
 		List<TestCase> result = new ArrayList<TestCase>();
 		Set<TestCase> testCases = new HashSet<TestCase>();
 		for(RequirementVersion requirement : requirements){
@@ -713,7 +713,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<RequirementVersion> searchForRequirementVersions(AdvancedSearchModel model) {
+	public List<RequirementVersion> searchForRequirementVersions(AdvancedSearchModel model, Locale locale) {
 
 		Session session = sessionFactory.getCurrentSession();
 
@@ -722,7 +722,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder()
 				.forEntity(RequirementVersion.class).get();
 
-		org.apache.lucene.search.Query luceneQuery = buildLuceneQuery(qb, model);
+		org.apache.lucene.search.Query luceneQuery = buildLuceneQuery(qb, model, locale);
 
 		org.hibernate.Query hibQuery = ftSession.createFullTextQuery(
 				luceneQuery, RequirementVersion.class);
@@ -833,7 +833,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder()
 				.forEntity(RequirementVersion.class).get();
 
-		org.apache.lucene.search.Query luceneQuery = buildLuceneQuery(qb, model);
+		org.apache.lucene.search.Query luceneQuery = buildLuceneQuery(qb, model, locale);
 
 		List<RequirementVersion> result = Collections.emptyList();
 		int countAll = 0 ;
@@ -853,9 +853,9 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 	
 	@Override
-	public PagedCollectionHolder<List<TestCase>> searchForTestCasesThroughRequirementModel(AdvancedSearchModel model, PagingAndMultiSorting sorting) {
+	public PagedCollectionHolder<List<TestCase>> searchForTestCasesThroughRequirementModel(AdvancedSearchModel model, PagingAndMultiSorting sorting, Locale locale) {
 		
-		List<TestCase> testcases = searchForTestCasesThroughRequirementModel(model);
+		List<TestCase> testcases = searchForTestCasesThroughRequirementModel(model, locale);
 
 		Session session = sessionFactory.getCurrentSession();
 
@@ -863,7 +863,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity(TestCase.class).get();
 
-		org.apache.lucene.search.Query luceneQuery = buildLuceneQuery(qb, testcases);
+		org.apache.lucene.search.Query luceneQuery = buildLuceneQuery(qb, testcases, locale);
 
 		List<TestCase> result = Collections.emptyList();
 		int countAll = 0 ;
@@ -884,7 +884,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	
 	@Override
 	public PagedCollectionHolder<List<TestCase>> searchForTestCases(
-			AdvancedSearchModel model, PagingAndMultiSorting sorting) {
+			AdvancedSearchModel model, PagingAndMultiSorting sorting, Locale locale) {
 
 		Session session = sessionFactory.getCurrentSession();
 
@@ -893,7 +893,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder()
 				.forEntity(TestCase.class).get();
 
-		org.apache.lucene.search.Query luceneQuery = buildLuceneQuery(qb, model);
+		org.apache.lucene.search.Query luceneQuery = buildLuceneQuery(qb, model, locale);
 
 		List<TestCase> result = Collections.emptyList();
 		int countAll = 0 ;
@@ -913,22 +913,22 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 
 	@Override
-	public SearchExportCSVModel exportTestCaseSearchResultsToCSV(AdvancedSearchModel searchModel) {
+	public SearchExportCSVModel exportTestCaseSearchResultsToCSV(AdvancedSearchModel searchModel, Locale locale) {
 
 		TestCaseSearchExportCSVModelImpl model = testCaseSearchExportCSVModelProvider.get();
 
-		List<TestCase> testCases = this.searchForTestCases(searchModel);
+		List<TestCase> testCases = this.searchForTestCases(searchModel, locale);
 		model.setTestCases(testCases);
 		model.setIterationService(iterationService);
 		return model;
 	}
 
 	@Override
-	public SearchExportCSVModel exportRequirementVersionSearchResultsToCSV(AdvancedSearchModel searchModel) {
+	public SearchExportCSVModel exportRequirementVersionSearchResultsToCSV(AdvancedSearchModel searchModel, Locale locale) {
 
 		RequirementVersionSearchExportCSVModelImpl model = requirementVersionSearchExportCSVModelProvider.get();
 
-		List<RequirementVersion> requirementVersions = this.searchForRequirementVersions(searchModel);
+		List<RequirementVersion> requirementVersions = this.searchForRequirementVersions(searchModel, locale);
 		model.setRequirementVersions(requirementVersions);
 		return model;
 	}

@@ -62,17 +62,17 @@ public interface AdvancedSearchService {
 	//Querying
 	List<CustomField> findAllQueryableCustomFieldsByBoundEntityType(BindableEntity entity);
 	
-	PagedCollectionHolder<List<TestCase>> searchForTestCases(AdvancedSearchModel model, PagingAndMultiSorting sorting);
+	PagedCollectionHolder<List<TestCase>> searchForTestCases(AdvancedSearchModel model, PagingAndMultiSorting sorting, Locale locale);
 	
-	PagedCollectionHolder<List<TestCase>> searchForTestCasesThroughRequirementModel(AdvancedSearchModel model, PagingAndMultiSorting sorting);
+	PagedCollectionHolder<List<TestCase>> searchForTestCasesThroughRequirementModel(AdvancedSearchModel model, PagingAndMultiSorting sorting, Locale locale);
 	
 	PagedCollectionHolder<List<RequirementVersion>> searchForRequirementVersions(AdvancedSearchModel searchModel, PagingAndMultiSorting paging, MessageSource source, Locale locale);
 	
-	List<TestCase> searchForTestCases(AdvancedSearchModel model);
+	List<TestCase> searchForTestCases(AdvancedSearchModel model, Locale locale);
 
-	List<TestCase> searchForTestCasesThroughRequirementModel(AdvancedSearchModel model);
+	List<TestCase> searchForTestCasesThroughRequirementModel(AdvancedSearchModel model, Locale locale);
 	
-	List<RequirementVersion> searchForRequirementVersions(AdvancedSearchModel model);
+	List<RequirementVersion> searchForRequirementVersions(AdvancedSearchModel model, Locale locale);
 
 	List<String> findAllUsersWhoModifiedTestCases();
 
@@ -83,9 +83,9 @@ public interface AdvancedSearchService {
 	List<String> findAllUsersWhoModifiedRequirementVersions();
 	
 	//Exporting
-	SearchExportCSVModel exportTestCaseSearchResultsToCSV(AdvancedSearchModel model);
+	SearchExportCSVModel exportTestCaseSearchResultsToCSV(AdvancedSearchModel model, Locale locale);
 
-	SearchExportCSVModel exportRequirementVersionSearchResultsToCSV(AdvancedSearchModel model);
+	SearchExportCSVModel exportRequirementVersionSearchResultsToCSV(AdvancedSearchModel model, Locale locale);
 
 
 }
