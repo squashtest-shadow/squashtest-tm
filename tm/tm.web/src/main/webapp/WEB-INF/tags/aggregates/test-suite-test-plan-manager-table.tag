@@ -49,11 +49,7 @@
 		<tr>
 			<th data-def="map=entity-index, select, sClass=drag-handle, narrow">&nbsp;</th>
 			<th data-def="map=project-name"><f:message key="label.project" /></th>
-			<%-- exec mode icon --%>
-			<c:if test="${ testSuite.iteration.project.testAutomationEnabled }">
-				<th title=<f:message key="label.Mode" /> class="no-user-select" data-def="map=exec-mode, sortable, narrow, center, sClass=exec-mode">&nbsp;</th>
-			</c:if>
-			<%-- exec mode icon --%>
+			<th title=<f:message key="label.Mode" /> class="no-user-select" data-def="map=exec-mode, sortable, narrow, center, visible=${testSuite.iteration.project.testAutomationEnabled}, sClass=exec-mode">&nbsp;</th>
 			<th data-def="map=reference"><f:message key="label.Reference"/></th>
 			<th data-def="map=tc-name, link=${testcaseUrl}"><f:message key="iteration.executions.table.column-header.test-case.label" /></th>
 			<th data-def="map=importance"><f:message key="iteration.executions.table.column-header.importance.label" /></th>

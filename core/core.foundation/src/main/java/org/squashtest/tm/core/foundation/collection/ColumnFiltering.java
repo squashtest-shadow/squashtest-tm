@@ -46,8 +46,10 @@ public interface ColumnFiltering {
 
 	boolean hasFilter(Integer index);
 	
+	@Deprecated
 	boolean hasFilter(String mDataProp, int offset);
 	
+	@Deprecated
 	String getFilter(String mDataProp, int offset);
 }
 

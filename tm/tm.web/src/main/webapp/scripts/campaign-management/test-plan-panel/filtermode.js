@@ -115,8 +115,15 @@ define(["jquery"], function($){
 		});
 	
 		$(".filter_input").change(function() {
-			table.squashTable()
-				.fnFilter(this.value, $(".filter_input").index(this));
+			var sTable = table.squashTable(),
+				settings = sTable.fnSettings(),
+				api = settings.oApi,
+				headers = table.find('th');
+			
+			var visiIndex =  headers.index($(this).parent()),
+				realIndex = api._fnVisibleToColumnIndex( settings, visiIndex );
+			
+			sTable.fnFilter(this.value, realIndex);
 		});
 
 		

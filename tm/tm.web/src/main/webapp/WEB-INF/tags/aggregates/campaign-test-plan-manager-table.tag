@@ -43,7 +43,7 @@
 		<tr>
 			<th data-def="map=entity-index, select,center, sClass=drag-handle">#</th>
 			<th data-def="map=project-name"><f:message key="label.project" /></th>
-			<th data-def="map=exec-mode, center, sClass=exec-mode"><f:message key="label.Mode" /></th>
+			<th data-def="map=exec-mode, center, visible=${iteration.project.testAutomationEnabled}, sClass=exec-mode"><f:message key="label.Mode" /></th>
 			<th data-def="map=reference"><f:message key="label.Reference"/></th>
 			<th data-def="map=tc-name, link=${testCaseUrl}"><f:message key="test-case.name.label" /></th>
 			<th data-def="map=assigned-user, sWidth=10%"><f:message key="test-case.user.combo.label" /></th>

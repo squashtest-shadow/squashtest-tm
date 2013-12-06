@@ -57,9 +57,7 @@
 		<tr>
 			<th class="no-user-select" data-def="map=entity-index, select, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>
 			<th class="no-user-select tp-th-project-name" data-def="map=project-name, sortable"><f:message key="label.project" /></th>
-			<c:if test="${ campaign.project.testAutomationEnabled }">
-			<th class="no-user-select tp-th-exec-mode" data-def="map=exec-mode, sortable, center, sClass=exec-mode"><f:message key="label.Mode" /></th>
-			</c:if>
+			<th class="no-user-select tp-th-exec-mode" data-def="map=exec-mode, sortable, center, visible=${campaign.project.testAutomationEnabled}, sClass=exec-mode"><f:message key="label.Mode" /></th>
 			<th class="no-user-select tp-th-reference" data-def="map=reference, sortable"><f:message key="label.Reference"/></th>
 			<th class="no-user-select tp-th-name" data-def="map=tc-name, sortable, link=${testCaseUrl}"><f:message key="test-case.name.label" /></th>
 			<th class="no-user-select tp-th-assignee" data-def="map=assigned-user, sortable, sWidth=10%"><f:message key="test-case.user.combo.label" /></th>

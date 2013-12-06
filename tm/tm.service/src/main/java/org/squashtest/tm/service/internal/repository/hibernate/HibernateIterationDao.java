@@ -366,41 +366,41 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 		String hql = filtering.isDefined() ? hqlUserFilteredIndexedTestPlan : hqlFullIndexedTestPlan;
 		hqlbuilder.append(hql);
 		
-		if(columnFiltering.hasFilter(PROJECT_DATA, -1)){
+		if(columnFiltering.hasFilter(PROJECT_DATA)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_PROJECT_FILTER);
 		}
-		if(columnFiltering.hasFilter(MODE_DATA, -1)){
+		if(columnFiltering.hasFilter(MODE_DATA)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_MODE_FILTER);
 		}
-		if(columnFiltering.hasFilter(REFERENCE_DATA, -1)){
+		if(columnFiltering.hasFilter(REFERENCE_DATA)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER);
 		}
-		if(columnFiltering.hasFilter(TESTCASE_DATA, -1)){
+		if(columnFiltering.hasFilter(TESTCASE_DATA)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER);
 		}
-		if(columnFiltering.hasFilter(WEIGHT_DATA, -1)){
+		if(columnFiltering.hasFilter(WEIGHT_DATA)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER);
 		}
-		if(columnFiltering.hasFilter(DATASET_DATA, -1)){
+		if(columnFiltering.hasFilter(DATASET_DATA)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_DATASET_FILTER);
 		}
-		if(columnFiltering.hasFilter(STATUS_DATA, -2)){
+		if(columnFiltering.hasFilter(STATUS_DATA)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_STATUS_FILTER);
 		}
-		if(columnFiltering.hasFilter(USER_DATA, -2)){
-			if("0".equals(columnFiltering.getFilter(USER_DATA, -2))){
+		if(columnFiltering.hasFilter(USER_DATA)){
+			if("0".equals(columnFiltering.getFilter(USER_DATA))){
 				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER);
 			} else {
 				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
 			}
 		}
-		if(columnFiltering.hasFilter(LASTEXEC_DATA, -2)){
+		if(columnFiltering.hasFilter(LASTEXEC_DATA)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER);				
 		}
 		
 		hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TEMPLATE_END);
 		
-		if(columnFiltering.hasFilter(TESTSUITE_DATA, -1)){
+		if(columnFiltering.hasFilter(TESTSUITE_DATA)){
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TESTSUITE_FILTER);
 		}
 		
@@ -459,35 +459,35 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 			query.setParameter("userLogin", filtering.getFilter(), StringType.INSTANCE);
 		}
 		
-		if(columnFiltering.hasFilter(PROJECT_DATA, -1)){
-			query.setParameter(PROJECT_FILTER, "%"+columnFiltering.getFilter(PROJECT_DATA, -1)+"%", StringType.INSTANCE);
+		if(columnFiltering.hasFilter(PROJECT_DATA)){
+			query.setParameter(PROJECT_FILTER, "%"+columnFiltering.getFilter(PROJECT_DATA)+"%", StringType.INSTANCE);
 		}
-		if(columnFiltering.hasFilter(MODE_DATA, -1)){
-			query.setParameter(MODE_FILTER, "%"+columnFiltering.getFilter(MODE_DATA, -1)+"%", StringType.INSTANCE);
+		if(columnFiltering.hasFilter(MODE_DATA)){
+			query.setParameter(MODE_FILTER, "%"+columnFiltering.getFilter(MODE_DATA)+"%", StringType.INSTANCE);
 		} 
-		if(columnFiltering.hasFilter(REFERENCE_DATA, -1)){
-			query.setParameter(REFERENCE_FILTER, "%"+columnFiltering.getFilter(REFERENCE_DATA, -1)+"%", StringType.INSTANCE);
+		if(columnFiltering.hasFilter(REFERENCE_DATA)){
+			query.setParameter(REFERENCE_FILTER, "%"+columnFiltering.getFilter(REFERENCE_DATA)+"%", StringType.INSTANCE);
 		} 
-		if(columnFiltering.hasFilter(TESTCASE_DATA, -1)){
-			query.setParameter(TESTCASE_FILTER, "%"+columnFiltering.getFilter(TESTCASE_DATA, -1)+"%", StringType.INSTANCE);
+		if(columnFiltering.hasFilter(TESTCASE_DATA)){
+			query.setParameter(TESTCASE_FILTER, "%"+columnFiltering.getFilter(TESTCASE_DATA)+"%", StringType.INSTANCE);
 		}
-		if(columnFiltering.hasFilter(WEIGHT_DATA, -1)){
-			query.setParameter(WEIGHT_FILTER, columnFiltering.getFilter(WEIGHT_DATA, -1), StringType.INSTANCE);
+		if(columnFiltering.hasFilter(WEIGHT_DATA)){
+			query.setParameter(WEIGHT_FILTER, columnFiltering.getFilter(WEIGHT_DATA), StringType.INSTANCE);
 		}
-		if(columnFiltering.hasFilter(DATASET_DATA, -1)){
-			query.setParameter(DATASET_FILTER, "%"+columnFiltering.getFilter(DATASET_DATA, -1)+"%", StringType.INSTANCE);
+		if(columnFiltering.hasFilter(DATASET_DATA)){
+			query.setParameter(DATASET_FILTER, "%"+columnFiltering.getFilter(DATASET_DATA)+"%", StringType.INSTANCE);
 		}
-		if(columnFiltering.hasFilter(TESTSUITE_DATA, -1)){
-			query.setParameter(TESTSUITE_FILTER, "%"+columnFiltering.getFilter(TESTSUITE_DATA, -1)+"%", StringType.INSTANCE);
+		if(columnFiltering.hasFilter(TESTSUITE_DATA)){
+			query.setParameter(TESTSUITE_FILTER, "%"+columnFiltering.getFilter(TESTSUITE_DATA)+"%", StringType.INSTANCE);
 		}
-		if(columnFiltering.hasFilter(STATUS_DATA, -2)){
-			query.setParameter(STATUS_FILTER, columnFiltering.getFilter(STATUS_DATA, -2), StringType.INSTANCE);
+		if(columnFiltering.hasFilter(STATUS_DATA)){
+			query.setParameter(STATUS_FILTER, columnFiltering.getFilter(STATUS_DATA), StringType.INSTANCE);
 		}
-		if(columnFiltering.hasFilter(USER_DATA, -2) && !"0".equals(columnFiltering.getFilter(USER_DATA, -2))){
-			query.setParameter(USER_FILTER, Long.parseLong(columnFiltering.getFilter(USER_DATA, -2)), LongType.INSTANCE);
+		if(columnFiltering.hasFilter(USER_DATA) && !"0".equals(columnFiltering.getFilter(USER_DATA))){
+			query.setParameter(USER_FILTER, Long.parseLong(columnFiltering.getFilter(USER_DATA)), LongType.INSTANCE);
 		}
-		if(columnFiltering.hasFilter(LASTEXEC_DATA, -2)){
-			String dates = columnFiltering.getFilter(LASTEXEC_DATA, -2);
+		if(columnFiltering.hasFilter(LASTEXEC_DATA)){
+			String dates = columnFiltering.getFilter(LASTEXEC_DATA);
 			if(dates.contains("-")){
 				String[] dateArray = dates.split("-");
 				Date startDate;
