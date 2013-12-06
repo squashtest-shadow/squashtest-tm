@@ -115,20 +115,8 @@
 	</changeSet>
 
 	<changeSet id="tm-1.8.0.issue-2933-req-03" author="mpagnon">
-		
+	
 		<comment>delete verifying_steps</comment>
-		<sql>
-			delete from REQUIREMENT_VERSION_COVERAGE
-			where
-			REQUIREMENT_VERSION_COVERAGE_ID in
-			(
-			select ID from ENTITIES_TO_DELETE
-			where NAME =
-			'REQUIREMENT_VERSION_COVERAGE'
-			)
-			;
-		</sql>
-		<comment>delete requirement_version_coverages</comment>
 		<sql>
 			delete from VERIFYING_STEPS
 			where REQUIREMENT_VERSION_COVERAGE_ID
@@ -140,6 +128,20 @@
 			)
 			;
 		</sql>
+			
+		<comment>delete requirement_version_coverages</comment>
+		<sql>
+			delete from REQUIREMENT_VERSION_COVERAGE
+			where
+			REQUIREMENT_VERSION_COVERAGE_ID in
+			(
+			select ID from ENTITIES_TO_DELETE
+			where NAME =
+			'REQUIREMENT_VERSION_COVERAGE'
+			)
+			;
+		</sql>
+
 	</changeSet>
 
 	<changeSet id="tm-1.8.0.issue-2933-req-04" author="mpagnon">
