@@ -22,6 +22,42 @@ define(["../basic-objects/donut-view"], function(DonutView){
 
 	return DonutView.extend({
 		
+		render : function(){
+			if (! this.model.isAvailable()){
+				return;
+			}
+			
+			DonutView.prototype.render.call(this);
+			this._renderSubplot();
+		},
+		
+		_renderSubplot : function(){
+
+			var model = this.model.get('iterationTestCaseSuccessRateStatistics');
+			
+			var totalSuccess = this._sumAllSuccess(model),
+				totalFailures = this._sumAllFailures(model),
+				total = totalSuccess + totalFailures + this._sumAllOther(model);
+			
+			var percentSuccess = (total !== 0 ) ? totalSuccess * 100 / total : 0,
+				percentFailures = (total !== 0) ? totalFailures * 100 / total : 0;
+			
+			this.$el.find('.success-rate-total-success').text(percentSuccess.toFixed(0)+'%');
+			this.$el.find('.success-rate-total-failure').text(percentFailures.toFixed(0)+'%');			
+		},
+		
+		_sumAllSuccess : function(model){
+			return 	model.nbVeryHighSuccess + model.nbHighSuccess  + model.nbMediumSuccess + model.nbLowSuccess;			
+		},
+		
+		_sumAllFailures : function(model){
+			return model.nbVeryHighFailure + model.nbHighFailure + model.nbMediumFailure + model.nbLowFailure;				
+		},
+		
+		_sumAllOther : function(model){
+			return model.nbVeryHighOther + model.nbHighOther + model.nbMediumOther + model.nbLowOther;			
+		},
+			
 		getSeries : function(){
 			var stats = this.model.get('iterationTestCaseSuccessRateStatistics');
 			return [ [["",stats.nbVeryHighSuccess], ["",stats.nbVeryHighFailure], ["",stats.nbVeryHighOther]],

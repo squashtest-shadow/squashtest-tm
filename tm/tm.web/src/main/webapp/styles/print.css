@@ -134,7 +134,7 @@ body {
 @media print{
 	.toggle-panel{
 		page-break-inside: avoid;  
-	}	
+	}		
 }
 
 .toggle-panel > h3{
@@ -158,19 +158,36 @@ body {
 	float : none;
 }
 
+
+.dashboard-item-subplot{
+	position: relative;
+	display: inline-block;
+	top: -100%;		/* this directive makes the subplot render inside the chart view even when its underlying box model overflows the bottom */
+	width : auto;
+	margin-left:1em;
+	border: none;
+	max-height: 0; /* this directive nullify the box model and prevents the trigger of an ugly overflow-y:auto on the parent container*/
+}
+
 .dashboard-item-legend{
 	margin-left:1em;
 	margin-right : 1em;
 	margin-bottom : 1em;
 	position : relative;		
 	bottom : 0;
-	left : 0;		
+	left : 0;	
+	display:inline-block;	
+	vertical-align:top;
 }
 
 .dashboard-item-legend > div{
 	display : inline-block;
 }
 
+/**
+ we don't want that in a @media print clause because we want the user to preview in the browser
+ how the page will be printed. That's why the .no-print class belongs to the global media
+*/
 .no-print{
 	display:none !important;
 }

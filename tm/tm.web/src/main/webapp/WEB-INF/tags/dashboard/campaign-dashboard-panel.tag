@@ -121,8 +121,6 @@
 						</div>
 						
 						<div class="dashboard-item-meta">					
-							
-						
 							<div class="dashboard-item-legend">
 								<div>
 									<div class="dashboard-legend-sample-color" style="background-color:#BDD3FF"></div>
@@ -160,8 +158,18 @@
 							<div id="dashboard-success-rate-view" class="dashboard-item-view"></div>
 						</div>
 						
-						
-						<div class="dashboard-item-meta">					
+						<div class="dashboard-item-meta">		
+
+							<div class="dashboard-item-subplot">
+								<span style="font-weight:bold;size:1.3em;"><f:message key="label.Global"/></span>
+								
+								<div class="dashboard-subplot-legend success-rate-total-success" 
+									 style="background-color:#99CC00; color:black;"></div>
+								
+								<div class="dashboard-subplot-legend success-rate-total-failure"
+									 style="background-color:#FF3300; color:white;"></div>							
+							</div>		
+							
 							<div class="dashboard-item-legend">
 								<div class="no-print">
 									<div class="dashboard-legend-icon dashboard-donut-lvl4"></div>
