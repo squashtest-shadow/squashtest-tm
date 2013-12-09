@@ -132,6 +132,22 @@ public class DummyLabelFormatter implements LabelFormatter<DummyEnum> {
 			default : return "default"
 		}		
 	}
+
+	/**
+	 * @see org.squashtest.tm.web.internal.helper.LabelFormatter#escapeHtml()
+	 */
+	@Override
+	public LabelFormatter<DummyEnum> escapeHtml() {
+		return this;
+	}
+
+	/**
+	 * @see org.squashtest.tm.web.internal.helper.LabelFormatter#plainText()
+	 */
+	@Override
+	public LabelFormatter<DummyEnum> plainText() {
+		return this;
+	}
 	
 }
 

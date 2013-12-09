@@ -33,10 +33,17 @@ import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 
 @Component
 @Scope("prototype")
+@Deprecated
+/**
+ * 
+ * @deprecated looks like a strict duplicate of InternationalisableLabelFormatter
+ *
+ */
 public class LabelFormatterWithoutOrder implements LabelFormatter<Internationalizable> {
 
 	private final MessageSource messageSource;
 	private Locale locale = Locale.getDefault();
+	private boolean escapeHtml = true;
 
 	/**
 	 * @param messageSource
@@ -46,16 +53,34 @@ public class LabelFormatterWithoutOrder implements LabelFormatter<Internationali
 		super();
 		this.messageSource = messageSource;
 	}
-	
+
 	@Override
 	public LabelFormatter<Internationalizable> useLocale(Locale locale) {
 		this.locale = locale;
 		return this;
 	}
-	
+
 	@Override
 	public String formatLabel(Internationalizable toFormat) {
-		String label = messageSource.getMessage(toFormat.getI18nKey(), null, locale); 
-		return StringEscapeUtils.escapeHtml(label);
+		String label = messageSource.getMessage(toFormat.getI18nKey(), null, locale);
+		return escapeHtml ? StringEscapeUtils.escapeHtml(label) : label;
+	}
+
+	/**
+	 * @see org.squashtest.tm.web.internal.helper.LabelFormatter#escapeHtml()
+	 */
+	@Override
+	public LabelFormatter<Internationalizable> escapeHtml() {
+		escapeHtml = true;
+		return this;
+	}
+
+	/**
+	 * @see org.squashtest.tm.web.internal.helper.LabelFormatter#plainText()
+	 */
+	@Override
+	public LabelFormatter<Internationalizable> plainText() {
+		escapeHtml = false;
+		return this;
 	}
 }

@@ -39,6 +39,20 @@ public interface LabelFormatter<T> {
 	LabelFormatter<T> useLocale(@NotNull Locale locale);
 
 	/**
+	 * From now on, produces escaped html.
+	 * 
+	 * @return
+	 */
+	LabelFormatter<T> escapeHtml();
+
+	/**
+	 * From now on, produces plain (unescaped) text.
+	 * 
+	 * @return
+	 */
+	LabelFormatter<T> plainText();
+
+	/**
 	 * 
 	 * @param toFormat
 	 *            object we want to create a formatted label. Should not be null.

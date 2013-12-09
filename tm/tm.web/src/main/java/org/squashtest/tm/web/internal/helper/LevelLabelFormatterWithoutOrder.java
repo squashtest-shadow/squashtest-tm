@@ -41,6 +41,10 @@ import org.squashtest.tm.domain.Level;
 public class LevelLabelFormatterWithoutOrder implements LabelFormatter<Level> {
 	private final MessageSource messageSource;
 	private Locale locale = Locale.getDefault();
+	/**
+	 * should produce escaped html or not (plain text). inited to true for backward compatibility
+	 */
+	private boolean escapeHtml = true;
 
 	/**
 	 * @param messageSource
@@ -68,6 +72,24 @@ public class LevelLabelFormatterWithoutOrder implements LabelFormatter<Level> {
 	@Override
 	public String formatLabel(Level toFormat) {
 		String label = messageSource.getMessage(toFormat.getI18nKey(), null, locale);
-		return StringEscapeUtils.escapeHtml(label);
+		return escapeHtml ? StringEscapeUtils.escapeHtml(label) : label;
+	}
+
+	/**
+	 * @see org.squashtest.tm.web.internal.helper.LabelFormatter#escapeHtml()
+	 */
+	@Override
+	public LabelFormatter<Level> escapeHtml() {
+		escapeHtml = true;
+		return this;
+	}
+
+	/**
+	 * @see org.squashtest.tm.web.internal.helper.LabelFormatter#plainText()
+	 */
+	@Override
+	public LabelFormatter<Level> plainText() {
+		escapeHtml = false;
+		return this;
 	}
 }
