@@ -25,6 +25,16 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
 		"jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, translator, notification, _) {
 	
+	/**
+	 * handlebars helper. substitutes {{selected}} with selected="selected" when this.selected === true
+	 */ 
+	Handlebars.registerHelper("selected", function() {
+		if (this.selected === true) {
+			return 'selected="selected"';
+		} 
+		return "";
+	});
+	
 	function fieldValue(fieldType, value) {
 		if (!value) {
 			var text = $(this.element.children()[0]).val();
@@ -50,7 +60,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 		},
 
 		fieldvalue : function(value) {
-			fieldValue("TEXT", value);
+			fieldValue.call(this, "TEXT", value);
 		}
 	});
 
@@ -65,7 +75,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 		},
 
 		fieldvalue : function(value) {
-			fieldValue("SINGLE", value);
+			fieldValue.call(this,"SINGLE", value);
 		}
 	});
 
@@ -190,7 +200,6 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 				return template(context);
 		},
 
-		
 		_appendFieldDom : function(tableId, textFieldId, fieldHtml) {
 			this.$("#"+tableId).append(fieldHtml);
 			var escapedId = textFieldId.replace(/\./g, "\\.");
@@ -233,6 +242,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 		},
 			
 		makeCheckboxField : function(tableId, textFieldId, textFieldTitle, options, enteredValue) {
+			// FIXME I cannot find the matching template ?!
 			var context = {"text-checkbox-id": textFieldId, "text-checkbox-title": textFieldTitle};
 			var $fieldDom = this._appendFieldDom(tableId, textFieldId, this._compileTemplate("#checkbox-template", context));
 			$fieldDom.searchCheckboxWidget();
@@ -262,11 +272,15 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 		},
 		
 		makeMultiselect : function(tableId, textFieldId, textFieldTitle, options, enteredValue) {
-			var context = {"multiselect-id": textFieldId, "multiselect-title": textFieldTitle};
+			// adds a "selected" property to options
+			enteredValue = enteredValue || {};
+			// no enteredValue.values means 'select everything'
+			_.each(options, function(option) {
+				option.selected = (!enteredValue.values) || _.contains(enteredValue.values, option.code);
+			});
+			var context = {"multiselect-id": textFieldId, "multiselect-title": textFieldTitle, options: options};
 			var $fieldDom = this._appendFieldDom(tableId, textFieldId, this._compileTemplate("#multiselect-template", context));
 			$fieldDom.searchMultiSelectWidget();
-			$fieldDom.append($fieldDom.searchMultiSelectWidget("createDom", "F"+textFieldId, options));
-			$fieldDom.searchMultiSelectWidget("fieldvalue", enteredValue);
 		},
 			
 		makeComboMultiselect : function(tableId, textFieldId, textFieldTitle, options, enteredValue) {

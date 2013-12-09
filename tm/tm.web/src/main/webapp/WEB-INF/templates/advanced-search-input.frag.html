@@ -148,12 +148,20 @@
                 </div>
 				</script>
 
-              <script id="multiselect-template" type="text/x-handlebars-template">
-				<div class="display-table-row">
-                  	<label for="{{multiselect-id}}" class="display-table-cell">{{multiselect-title}}</label>
-                    <div id="{{multiselect-id}}" class="search-input"/>
-                </div>
-				</script>
+            <script id="multiselect-template" type="text/x-handlebars-template">
+            {{!--<![CDATA[--}}
+            <div class="display-table-row">
+              <label for="{{multiselect-id}}" class="display-table-cell">{{multiselect-title}}</label>
+              <div id="{{multiselect-id}}" class="search-input">
+                <select data-widgetname="MultiSelect" data-fieldid="F{{multiselect-id}}" multiple="multiple" class="search-input">
+                {{#each options}}
+                  <option value="{{this.code}}" {{selected}}>{{this.value}}</option>
+                {{/each}}
+                </select>
+              </div>
+            </div>
+            {{!--]]>--}}
+			</script>
 
               <script id="date-template" type="text/x-handlebars-template">
 				<div class="display-table-row">
