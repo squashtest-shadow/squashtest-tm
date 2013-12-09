@@ -18,14 +18,58 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squashtm.notification", "underscore",
-    "./SearchTextfieldWidget", "./SearchTextareaWidget", 
+define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squashtm.notification", "underscore", 
 		"./SearchMultiselectWidget", "./SearchDateWidget", "./SearchRangeWidget", 
 		"./SearchExistsWidget", "./SearchCheckboxWidget", "./SearchComboMultiselectWidget", "./SearchRadioWidget", 
 		"jquery.squash", "jqueryui", "jquery.squash.togglepanel", "squashtable",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
 		"jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, translator, notification, _) {
+	
+	function fieldValue(fieldType, value) {
+		if (!value) {
+			var text = $(this.element.children()[0]).val();
+			var id = $(this.element).attr("id");
+			return {
+				"type" : fieldType,
+				"value" : text,
+				"ignoreBridge" : this.options.ignoreBridge
+			};
+		} else {
+			$(this.element.children()[0]).val(value.value);
+		}
+	}
+	
+	// text area widget
+	var searchTextAreaWidget = $.widget("search.searchTextAreaWidget", {
+		options : {
+			ignoreBridge : false
+		},
 
+		_create : function() {
+			this._super();
+		},
+
+		fieldvalue : function(value) {
+			fieldValue("TEXT", value);
+		}
+	});
+
+	// text field widget
+	var searchTextFieldWidget = $.widget("search.searchTextFieldWidget", {
+
+		options : {
+			ignoreBridge : false
+		},
+
+		_create : function() {
+		},
+
+		fieldvalue : function(value) {
+			fieldValue("SINGLE", value);
+		}
+	});
+
+	
 	var TestCaseSearchInputPanel = Backbone.View.extend({
 
 		el : "#advanced-search-input-panel",
