@@ -115,7 +115,7 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 			"and TestCase.importance = :weightFilter ";
 	
 	private static final String HQL_INDEXED_TEST_PLAN_DATASET_FILTER =
-			"and Dataset like :datasetFilter ";
+			"and Dataset.name like :datasetFilter ";
 
 	private static final String HQL_INDEXED_TEST_PLAN_MODEAUTO_FILTER =
 			"and TestCase.automatedTest is not null ";
