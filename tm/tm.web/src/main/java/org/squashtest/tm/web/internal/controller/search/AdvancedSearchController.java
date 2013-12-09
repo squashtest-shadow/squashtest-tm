@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonParseException;
@@ -78,13 +77,6 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.controller.RequestHeaders;
 import org.squashtest.tm.web.internal.controller.RequestParams;
-import org.squashtest.tm.web.internal.controller.requirement.RequirementCategoryComboDataBuilder;
-import org.squashtest.tm.web.internal.controller.requirement.RequirementCriticalityComboDataBuilder;
-import org.squashtest.tm.web.internal.controller.requirement.RequirementStatusComboDataBuilder;
-import org.squashtest.tm.web.internal.controller.testcase.TestCaseImportanceJeditableComboDataBuilder;
-import org.squashtest.tm.web.internal.controller.testcase.TestCaseNatureJeditableComboDataBuilder;
-import org.squashtest.tm.web.internal.controller.testcase.TestCaseStatusJeditableComboDataBuilder;
-import org.squashtest.tm.web.internal.controller.testcase.TestCaseTypeJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
@@ -98,11 +90,11 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 @RequestMapping("/advanced-search")
 public class AdvancedSearchController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AdvancedSearchController.class);
-	
+
 	private static interface FormModelBuilder {
 		SearchInputInterfaceModel build(Locale locale);
 	}
-	
+
 	private static final String TEXTFIELD = "textfield";
 	private static final String DATE = "date";
 	private static final String COMBOMULTISELECT = "combomultiselect";
@@ -111,9 +103,9 @@ public class AdvancedSearchController {
 	private static final String SEARCH_MODEL = "searchModel";
 	private static final String SEARCH_DOMAIN = "searchDomain";
 	private static final String TESTCASE_VIA_REQUIREMENT = "testcaseViaRequirement";
-	
+
 	private Map<String, FormModelBuilder> formModelBuilder = new HashMap<String, AdvancedSearchController.FormModelBuilder>();
-	
+
 	{
 		formModelBuilder.put(TESTCASE, new FormModelBuilder() {
 			@Override
@@ -162,27 +154,6 @@ public class AdvancedSearchController {
 	private TestcaseSearchInterfaceDescription testcaseVersionSearchInterfaceDescription;
 
 	@Inject
-	private Provider<TestCaseImportanceJeditableComboDataBuilder> importanceComboBuilderProvider;
-
-	@Inject
-	private Provider<TestCaseNatureJeditableComboDataBuilder> natureComboBuilderProvider;
-
-	@Inject
-	private Provider<TestCaseTypeJeditableComboDataBuilder> typeComboBuilderProvider;
-
-	@Inject
-	private Provider<TestCaseStatusJeditableComboDataBuilder> statusComboBuilderProvider;
-
-	@Inject
-	private Provider<RequirementCriticalityComboDataBuilder> criticalityComboBuilderProvider;
-
-	@Inject
-	private Provider<RequirementCategoryComboDataBuilder> categoryComboBuilderProvider;
-
-	@Inject
-	private Provider<RequirementStatusComboDataBuilder> reqStatusComboBuilderProvider;
-
-	@Inject
 	private CampaignTestPlanManagerService campaignTestPlanManagerService;
 
 	@Inject
@@ -225,22 +196,25 @@ public class AdvancedSearchController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showSearchPage(Model model, @RequestParam String searchDomain,
-			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id, Locale locale) {
+			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
+			Locale locale) {
 
 		initModelForPage(model, associateResultWithType, id);
 		model.addAttribute(SEARCH_DOMAIN, searchDomain);
 		if (TESTCASE_VIA_REQUIREMENT.equals(searchDomain)) {
 			searchDomain = REQUIREMENT;
 		}
-		
+
 		FormModelBuilder builder = formModelBuilder.get(searchDomain);
-		
+
 		if (builder != null) {
 			model.addAttribute("formModel", builder.build(locale));
 		} else {
-			LOGGER.error("Could not find a FormModelBuilder for search domain : {}. This is either caused by a bug or a hand-written request", searchDomain);
+			LOGGER.error(
+					"Could not find a FormModelBuilder for search domain : {}. This is either caused by a bug or a hand-written request",
+					searchDomain);
 		}
-		
+
 		return searchDomain + "-search-input.html";
 	}
 
@@ -317,7 +291,8 @@ public class AdvancedSearchController {
 
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, testCaseSearchResultMapper);
 
-		PagedCollectionHolder<List<TestCase>> holder = advancedSearchService.searchForTestCasesThroughRequirementModel(searchModel, paging, locale);
+		PagedCollectionHolder<List<TestCase>> holder = advancedSearchService.searchForTestCasesThroughRequirementModel(
+				searchModel, paging, locale);
 
 		boolean isInAssociationContext = isInAssociationContext(associateResultWithType);
 
@@ -343,7 +318,8 @@ public class AdvancedSearchController {
 
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, testCaseSearchResultMapper);
 
-		PagedCollectionHolder<List<TestCase>> holder = advancedSearchService.searchForTestCases(searchModel, paging, locale);
+		PagedCollectionHolder<List<TestCase>> holder = advancedSearchService.searchForTestCases(searchModel, paging,
+				locale);
 
 		boolean isInAssociationContext = isInAssociationContext(associateResultWithType);
 
