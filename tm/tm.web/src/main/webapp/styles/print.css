@@ -37,13 +37,22 @@
     font-style: italic;
 }
 
-table,td,tr,th {
+table.greystyle-table, table.greystyle-table td, table.greystyle-table tr, table.greystyle-table th {
 	border: 1px solid grey;
 	border-collapse: collapse;
 	margin: 1%;
 }
 
-th {
+
+table.greystyle-table {
+	background: none repeat scroll 0 0 transparent;
+    font-size: 100%;
+    margin: auto;
+    width: 96%;
+}
+
+
+table.greystyle-table th{
 	background: none repeat scroll 0 0 #EEEEEE;
 	border: 1.5px solid grey;
 	min-width: 2em;
@@ -55,12 +64,6 @@ th.small {
 
 tr.selected {
     border: 2px solid grey;
-}
-table {
-	    background: none repeat scroll 0 0 transparent;
-    font-size: 100%;
-    margin: auto;
-    width: 96%;
 }
 
 
