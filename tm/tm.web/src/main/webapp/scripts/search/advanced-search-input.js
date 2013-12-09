@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squashtm.notification", "underscore", 
-		"./SearchMultiselectWidget", "./SearchDateWidget", "./SearchRangeWidget", 
+		"./SearchDateWidget", "./SearchRangeWidget", 
 		"./SearchExistsWidget", "./SearchCheckboxWidget", "./SearchComboMultiselectWidget", "./SearchRadioWidget", 
 		"jquery.squash", "jqueryui", "jquery.squash.togglepanel", "squashtable",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
@@ -66,7 +66,6 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 
 	// text field widget
 	var searchTextFieldWidget = $.widget("search.searchTextFieldWidget", {
-
 		options : {
 			ignoreBridge : false
 		},
@@ -79,7 +78,30 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 		}
 	});
 
-	
+	//multi select list
+	var searchwidget = $.widget("search.searchMultiSelectWidget", {
+		options : {},
+		
+		_create : function(){
+			this._super();
+		},
+		
+		fieldvalue : function(value){
+			if(!value){
+				var text = $(this.element.children()[0]).val();
+				var id = $(this.element).attr("id");
+				return {"type" : "LIST", "values" : text};
+			} else { // no longer used afaik
+				$("option", $(this.element.children()[0])).removeAttr("selected");
+				if (!!value.values){
+					for (var i=0, len = value.values.length; i<len;i++){
+						$("option[value='"+value.values[i]+"']", $(this.element.children()[0])).attr("selected", "selected");
+					}
+				}
+			}
+		}
+	});
+
 	var TestCaseSearchInputPanel = Backbone.View.extend({
 
 		el : "#advanced-search-input-panel",
