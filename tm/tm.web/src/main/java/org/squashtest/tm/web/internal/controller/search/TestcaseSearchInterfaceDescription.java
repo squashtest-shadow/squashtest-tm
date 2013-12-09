@@ -68,42 +68,36 @@ public class TestcaseSearchInterfaceDescription {
 
 	@Inject
 	private AdvancedSearchService advancedSearchService;
-	
+
 	private ProjectFilterModificationService projectFilterService;
 
 	@ServiceReference
-	public void setProjectFilterModificationService(
-			ProjectFilterModificationService service) {
+	public void setProjectFilterModificationService(ProjectFilterModificationService service) {
 		this.projectFilterService = service;
 	}
 
 	public SearchInputPanelModel createGeneralInfoPanel(Locale locale) {
 		SearchInputPanelModel panel = new SearchInputPanelModel();
-		panel.setTitle(messageSource.internationalize(
-				"search.testcase.generalinfos.panel.title", locale));
+		panel.setTitle(messageSource.internationalize("search.testcase.generalinfos.panel.title", locale));
 		panel.setOpen(true);
 		panel.setId("general-information");
 		panel.setLocation("column1");
 		panel.addCssClass("search-icon-information");
 
-		SearchInputFieldModel idField = new SearchInputFieldModel("id",
-				messageSource.internationalize("label.id", locale), TEXTFIELD);
+		SearchInputFieldModel idField = new SearchInputFieldModel("id", messageSource.internationalize("label.id",
+				locale), TEXTFIELD);
 		panel.addField(idField);
-		SearchInputFieldModel referenceField = new SearchInputFieldModel(
-				"reference", messageSource.internationalize("label.reference",
-						locale), TEXTFIELD);
+		SearchInputFieldModel referenceField = new SearchInputFieldModel("reference", messageSource.internationalize(
+				"label.reference", locale), TEXTFIELD);
 		panel.addField(referenceField);
-		SearchInputFieldModel labelField = new SearchInputFieldModel("name",
-				messageSource.internationalize("label.Label", locale),
-				TEXTFIELD);
+		SearchInputFieldModel labelField = new SearchInputFieldModel("name", messageSource.internationalize(
+				"label.Label", locale), TEXTFIELD);
 		panel.addField(labelField);
-		SearchInputFieldModel descriptionField = new SearchInputFieldModel(
-				"description", messageSource.internationalize(
-						"label.Description", locale), TEXTAREA);
+		SearchInputFieldModel descriptionField = new SearchInputFieldModel("description",
+				messageSource.internationalize("label.Description", locale), TEXTAREA);
 		panel.addField(descriptionField);
-		SearchInputFieldModel prerequisiteField = new SearchInputFieldModel(
-				"prerequisite", messageSource.internationalize(
-						"test-case.prerequisite.label", locale), TEXTAREA);
+		SearchInputFieldModel prerequisiteField = new SearchInputFieldModel("prerequisite",
+				messageSource.internationalize("test-case.prerequisite.label", locale), TEXTAREA);
 		panel.addField(prerequisiteField);
 
 		return panel;
@@ -111,68 +105,60 @@ public class TestcaseSearchInterfaceDescription {
 
 	public SearchInputPanelModel createAttributePanel(Locale locale) {
 		SearchInputPanelModel panel = new SearchInputPanelModel();
-		panel.setTitle(messageSource.internationalize(
-				"search.testcase.attributes.panel.title", locale));
+		panel.setTitle(messageSource.internationalize("search.testcase.attributes.panel.title", locale));
 		panel.setOpen(true);
 		panel.setId("attributes");
 		panel.setLocation("column1");
 		panel.addCssClass("search-icon-attributes");
 
-		SearchInputFieldModel importanceField = new SearchInputFieldModel(
-				"importance", messageSource.internationalize(
-						"test-case.importance.label", locale), MULTISELECT);
+		SearchInputFieldModel importanceField = new SearchInputFieldModel("importance", messageSource.internationalize(
+				"test-case.importance.label", locale), MULTISELECT);
 		panel.addField(importanceField);
 
-		Map<String, String> map = importanceComboBuilderProvider.get()
-				.useLocale(locale).buildMap();
+		Map<String, String> map = importanceComboBuilderProvider.get().useLocale(locale).buildMap();
 
 		int i = 1;
 		for (Entry<String, String> entry : map.entrySet()) {
-			SearchInputPossibleValueModel importanceOption = new SearchInputPossibleValueModel(
-					entry.getValue(), i + "-" + entry.getKey());
+			SearchInputPossibleValueModel importanceOption = new SearchInputPossibleValueModel(entry.getValue(), i
+					+ "-" + entry.getKey());
 			importanceField.addPossibleValue(importanceOption);
 			i++;
 		}
 
-		SearchInputFieldModel natureField = new SearchInputFieldModel("nature",
-				messageSource
-						.internationalize("test-case.nature.label", locale),
-				MULTISELECT);
+		SearchInputFieldModel natureField = new SearchInputFieldModel("nature", messageSource.internationalize(
+				"test-case.nature.label", locale), MULTISELECT);
 		panel.addField(natureField);
 
 		map = natureComboBuilderProvider.get().useLocale(locale).buildMap();
 
 		for (Entry<String, String> entry : map.entrySet()) {
-			SearchInputPossibleValueModel natureOption = new SearchInputPossibleValueModel(
-					entry.getValue(), entry.getKey());
+			SearchInputPossibleValueModel natureOption = new SearchInputPossibleValueModel(entry.getValue(),
+					entry.getKey());
 			natureField.addPossibleValue(natureOption);
 		}
 
-		SearchInputFieldModel typeField = new SearchInputFieldModel("type",
-				messageSource.internationalize("test-case.type.label", locale),
-				MULTISELECT);
+		SearchInputFieldModel typeField = new SearchInputFieldModel("type", messageSource.internationalize(
+				"test-case.type.label", locale), MULTISELECT);
 		panel.addField(typeField);
 
 		map = typeComboBuilderProvider.get().useLocale(locale).buildMap();
 
 		for (Entry<String, String> entry : map.entrySet()) {
-			SearchInputPossibleValueModel typeOption = new SearchInputPossibleValueModel(
-					entry.getValue(), entry.getKey());
+			SearchInputPossibleValueModel typeOption = new SearchInputPossibleValueModel(entry.getValue(),
+					entry.getKey());
 			typeField.addPossibleValue(typeOption);
 		}
 
-		SearchInputFieldModel statusField = new SearchInputFieldModel("status",
-				messageSource
-						.internationalize("test-case.status.label", locale),
-				MULTISELECT);
+		SearchInputFieldModel statusField = new SearchInputFieldModel("status", messageSource.internationalize(
+				"test-case.status.label", locale), MULTISELECT);
 		panel.addField(statusField);
 
 		map = statusComboBuilderProvider.get().useLocale(locale).buildMap();
 
 		int j = 1;
 		for (Entry<String, String> entry : map.entrySet()) {
-			SearchInputPossibleValueModel statusOption = new SearchInputPossibleValueModel(
-					entry.getValue(), j + "-" + entry.getKey());
+			SearchInputPossibleValueModel statusOption = new SearchInputPossibleValueModel(entry.getValue(), j + "-"
+					+ entry.getKey());
 			statusField.addPossibleValue(statusOption);
 			j++;
 		}
@@ -183,55 +169,36 @@ public class TestcaseSearchInterfaceDescription {
 
 		SearchInputPanelModel panel = new SearchInputPanelModel();
 
-		panel.setTitle(messageSource.internationalize(
-				"search.testcase.association.panel.title", locale));
+		panel.setTitle(messageSource.internationalize("search.testcase.association.panel.title", locale));
 		panel.setOpen(true);
 		panel.setId("association");
 		panel.setLocation("column2");
 		panel.addCssClass("search-icon-associations");
 
-		SearchInputFieldModel requirementsField = new SearchInputFieldModel(
-				"requirements",
-				messageSource
-						.internationalize(
-								"search.testcase.association.requirement.label",
-								locale), RANGE);
+		SearchInputFieldModel requirementsField = new SearchInputFieldModel("requirements",
+				messageSource.internationalize("search.testcase.association.requirement.label", locale), RANGE);
 		panel.addField(requirementsField);
 
-		SearchInputFieldModel iterationsField = new SearchInputFieldModel(
-				"iterations", messageSource.internationalize(
-						"search.testcase.association.iteration.label", locale),
-				EXISTS);
+		SearchInputFieldModel iterationsField = new SearchInputFieldModel("iterations", messageSource.internationalize(
+				"search.testcase.association.iteration.label", locale), EXISTS);
 		panel.addField(iterationsField);
 
-		iterationsField.addPossibleValue(new SearchInputPossibleValueModel(
-				messageSource.internationalize(
-						"search.testcase.association.iteration.atleastone",
-						locale), ATLEASTONE));
-		iterationsField.addPossibleValue(new SearchInputPossibleValueModel(
-				messageSource.internationalize(
-						"search.testcase.association.iteration.none", locale),
-				NONE));
+		iterationsField.addPossibleValue(new SearchInputPossibleValueModel(messageSource.internationalize(
+				"search.testcase.association.iteration.atleastone", locale), ATLEASTONE));
+		iterationsField.addPossibleValue(new SearchInputPossibleValueModel(messageSource.internationalize(
+				"search.testcase.association.iteration.none", locale), NONE));
 
-		SearchInputFieldModel executionsField = new SearchInputFieldModel(
-				"executions", messageSource.internationalize(
-						"search.testcase.association.execution.label", locale),
-				EXISTS);
+		SearchInputFieldModel executionsField = new SearchInputFieldModel("executions", messageSource.internationalize(
+				"search.testcase.association.execution.label", locale), EXISTS);
 		panel.addField(executionsField);
 
-		executionsField.addPossibleValue(new SearchInputPossibleValueModel(
-				messageSource.internationalize(
-						"search.testcase.association.execution.atleastone",
-						locale), ATLEASTONE));
-		executionsField.addPossibleValue(new SearchInputPossibleValueModel(
-				messageSource.internationalize(
-						"search.testcase.association.execution.none", locale),
-				NONE));
+		executionsField.addPossibleValue(new SearchInputPossibleValueModel(messageSource.internationalize(
+				"search.testcase.association.execution.atleastone", locale), ATLEASTONE));
+		executionsField.addPossibleValue(new SearchInputPossibleValueModel(messageSource.internationalize(
+				"search.testcase.association.execution.none", locale), NONE));
 
-		SearchInputFieldModel issuesField = new SearchInputFieldModel("issues",
-				messageSource.internationalize(
-						"search.testcase.association.issue.label", locale),
-				RANGE);
+		SearchInputFieldModel issuesField = new SearchInputFieldModel("issues", messageSource.internationalize(
+				"search.testcase.association.issue.label", locale), RANGE);
 		panel.addField(issuesField);
 
 		return panel;
@@ -240,23 +207,20 @@ public class TestcaseSearchInterfaceDescription {
 	public SearchInputPanelModel createPerimeterPanel(Locale locale) {
 
 		SearchInputPanelModel panel = new SearchInputPanelModel();
-		panel.setTitle(messageSource.internationalize(
-				"search.testcase.perimeter.panel.title", locale));
+		panel.setTitle(messageSource.internationalize("search.testcase.perimeter.panel.title", locale));
 		panel.setOpen(true);
 		panel.setId("perimeter");
 		panel.setLocation("column2");
 		panel.addCssClass("search-icon-perimeter");
 
-		SearchInputFieldModel projectField = new SearchInputFieldModel(
-				"project.id", messageSource.internationalize(
-						"search.testcase.perimeter.field.title", locale),
-				MULTISELECT);
+		SearchInputFieldModel projectField = new SearchInputFieldModel("project.id", messageSource.internationalize(
+				"search.testcase.perimeter.field.title", locale), MULTISELECT);
 		panel.addField(projectField);
 
 		List<Project> projects = this.projectFilterService.getAllProjects();
 		for (Project project : projects) {
-			SearchInputPossibleValueModel projectOption = new SearchInputPossibleValueModel(
-					project.getName(), project.getId().toString());
+			SearchInputPossibleValueModel projectOption = new SearchInputPossibleValueModel(project.getName(), project
+					.getId().toString());
 			projectField.addPossibleValue(projectOption);
 		}
 
@@ -266,167 +230,116 @@ public class TestcaseSearchInterfaceDescription {
 	public SearchInputPanelModel createRequirementPerimeterPanel(Locale locale) {
 
 		SearchInputPanelModel panel = new SearchInputPanelModel();
-		panel.setTitle(messageSource.internationalize(
-				"search.testcase.perimeter.panel.title", locale));
+		panel.setTitle(messageSource.internationalize("search.testcase.perimeter.panel.title", locale));
 		panel.setOpen(true);
 		panel.setId("perimeter");
 		panel.setLocation("column2");
 		panel.addCssClass("search-icon-perimeter");
 
-		SearchInputFieldModel projectField = new SearchInputFieldModel(
-				"requirement.project.id", messageSource.internationalize(
-						"search.testcase.perimeter.field.title", locale),
-				MULTISELECT);
+		SearchInputFieldModel projectField = new SearchInputFieldModel("requirement.project.id",
+				messageSource.internationalize("search.testcase.perimeter.field.title", locale), MULTISELECT);
 		panel.addField(projectField);
 
 		List<Project> projects = this.projectFilterService.getAllProjects();
 		for (Project project : projects) {
-			SearchInputPossibleValueModel projectOption = new SearchInputPossibleValueModel(
-					project.getName(), project.getId().toString());
+			SearchInputPossibleValueModel projectOption = new SearchInputPossibleValueModel(project.getName(), project
+					.getId().toString());
 			projectField.addPossibleValue(projectOption);
 		}
 
 		return panel;
 	}
-	
+
 	public SearchInputPanelModel createContentPanel(Locale locale) {
 
 		SearchInputPanelModel panel = new SearchInputPanelModel();
-		panel.setTitle(messageSource.internationalize(
-				"search.testcase.content.panel.title", locale));
+		panel.setTitle(messageSource.internationalize("search.testcase.content.panel.title", locale));
 		panel.setOpen(true);
 		panel.setId("content");
 		panel.setLocation("column2");
 		panel.addCssClass("search-icon-content");
 
-		SearchInputFieldModel teststepField = new SearchInputFieldModel(
-				"steps", messageSource.internationalize(
-						"search.testcase.content.teststep.label", locale),
-				RANGE);
+		SearchInputFieldModel teststepField = new SearchInputFieldModel("steps", messageSource.internationalize(
+				"search.testcase.content.teststep.label", locale), RANGE);
 		panel.addField(teststepField);
 
-		SearchInputFieldModel parameterField = new SearchInputFieldModel(
-				"parameters", messageSource.internationalize(
-						"search.testcase.content.parameter.label", locale),
-				EXISTS);
+		SearchInputFieldModel parameterField = new SearchInputFieldModel("parameters", messageSource.internationalize(
+				"search.testcase.content.parameter.label", locale), EXISTS);
 		panel.addField(parameterField);
 
-		parameterField
-				.addPossibleValue(new SearchInputPossibleValueModel(
-						messageSource.internationalize(
-								"search.testcase.content.parameter.atleastone",
-								locale), ATLEASTONE));
-		parameterField
-				.addPossibleValue(new SearchInputPossibleValueModel(
-						messageSource.internationalize(
-								"search.testcase.content.parameter.none",
-								locale), NONE));
+		parameterField.addPossibleValue(new SearchInputPossibleValueModel(messageSource.internationalize(
+				"search.testcase.content.parameter.atleastone", locale), ATLEASTONE));
+		parameterField.addPossibleValue(new SearchInputPossibleValueModel(messageSource.internationalize(
+				"search.testcase.content.parameter.none", locale), NONE));
 
-		SearchInputFieldModel datasetField = new SearchInputFieldModel(
-				"datasets", messageSource.internationalize(
-						"search.testcase.content.dataset.label", locale),
-				EXISTS);
+		SearchInputFieldModel datasetField = new SearchInputFieldModel("datasets", messageSource.internationalize(
+				"search.testcase.content.dataset.label", locale), EXISTS);
 		panel.addField(datasetField);
 
-		datasetField.addPossibleValue(new SearchInputPossibleValueModel(
-				messageSource.internationalize(
-						"search.testcase.content.dataset.atleastone", locale),
-				ATLEASTONE));
-		datasetField.addPossibleValue(new SearchInputPossibleValueModel(
-				messageSource.internationalize(
-						"search.testcase.content.dataset.none", locale), NONE));
+		datasetField.addPossibleValue(new SearchInputPossibleValueModel(messageSource.internationalize(
+				"search.testcase.content.dataset.atleastone", locale), ATLEASTONE));
+		datasetField.addPossibleValue(new SearchInputPossibleValueModel(messageSource.internationalize(
+				"search.testcase.content.dataset.none", locale), NONE));
 
-		SearchInputFieldModel callstepField = new SearchInputFieldModel(
-				"callsteps", messageSource.internationalize(
-						"search.testcase.content.callstep.label", locale),
-				EXISTS);
+		SearchInputFieldModel callstepField = new SearchInputFieldModel("callsteps", messageSource.internationalize(
+				"search.testcase.content.callstep.label", locale), EXISTS);
 		panel.addField(callstepField);
 
-		callstepField.addPossibleValue(new SearchInputPossibleValueModel(
-				messageSource.internationalize(
-						"search.testcase.content.callstep.atleastone", locale),
-				ATLEASTONE));
-		callstepField
-				.addPossibleValue(new SearchInputPossibleValueModel(
-						messageSource
-								.internationalize(
-										"search.testcase.content.callstep.none",
-										locale), NONE));
+		callstepField.addPossibleValue(new SearchInputPossibleValueModel(messageSource.internationalize(
+				"search.testcase.content.callstep.atleastone", locale), ATLEASTONE));
+		callstepField.addPossibleValue(new SearchInputPossibleValueModel(messageSource.internationalize(
+				"search.testcase.content.callstep.none", locale), NONE));
 
-		SearchInputFieldModel attachmentField = new SearchInputFieldModel(
-				"attachments", messageSource.internationalize(
-						"search.testcase.content.attachment.label", locale),
-				EXISTS);
+		SearchInputFieldModel attachmentField = new SearchInputFieldModel("attachments",
+				messageSource.internationalize("search.testcase.content.attachment.label", locale), EXISTS);
 		panel.addField(attachmentField);
 
-		attachmentField
-				.addPossibleValue(new SearchInputPossibleValueModel(
-						messageSource
-								.internationalize(
-										"search.testcase.content.attachment.atleastone",
-										locale), ATLEASTONE));
-		attachmentField.addPossibleValue(new SearchInputPossibleValueModel(
-				messageSource.internationalize(
-						"search.testcase.content.attachment.none", locale),
-				NONE));
+		attachmentField.addPossibleValue(new SearchInputPossibleValueModel(messageSource.internationalize(
+				"search.testcase.content.attachment.atleastone", locale), ATLEASTONE));
+		attachmentField.addPossibleValue(new SearchInputPossibleValueModel(messageSource.internationalize(
+				"search.testcase.content.attachment.none", locale), NONE));
 
 		return panel;
 	}
 
-	
 	public SearchInputPanelModel createTestCaseHistoryPanel(Locale locale) {
 
 		SearchInputPanelModel panel = new SearchInputPanelModel();
-		panel.setTitle(messageSource.internationalize(
-				"search.testcase.history.panel.title", locale));
+		panel.setTitle(messageSource.internationalize("search.testcase.history.panel.title", locale));
 		panel.setOpen(true);
 		panel.setId("history");
 		panel.setLocation("column3");
 		panel.addCssClass("search-icon-history");
 
-		SearchInputFieldModel createdByField = new SearchInputFieldModel(
-				"createdBy", messageSource.internationalize(
-						"search.testcase.history.createdBy.label", locale),
-				MULTISELECT);
+		SearchInputFieldModel createdByField = new SearchInputFieldModel("createdBy", messageSource.internationalize(
+				"search.testcase.history.createdBy.label", locale), MULTISELECT);
 		panel.addField(createdByField);
 
-		List<String> users = advancedSearchService
-				.findAllUsersWhoCreatedTestCases();
+		List<String> users = advancedSearchService.findAllUsersWhoCreatedTestCases();
 		for (String user : users) {
-			createdByField.addPossibleValue(new SearchInputPossibleValueModel(
-					user, user));
+			createdByField.addPossibleValue(new SearchInputPossibleValueModel(user, user));
 		}
 
-		SearchInputFieldModel createdOnField = new SearchInputFieldModel(
-				"createdOn", messageSource.internationalize(
-						"search.testcase.history.createdOn.label", locale),
-				DATE);
+		SearchInputFieldModel createdOnField = new SearchInputFieldModel("createdOn", messageSource.internationalize(
+				"search.testcase.history.createdOn.label", locale), DATE);
 		panel.addField(createdOnField);
 
-		SearchInputFieldModel modifiedByField = new SearchInputFieldModel(
-				"modifiedBy", messageSource.internationalize(
-						"search.testcase.history.modifiedBy.label", locale),
-				MULTISELECT);
+		SearchInputFieldModel modifiedByField = new SearchInputFieldModel("modifiedBy", messageSource.internationalize(
+				"search.testcase.history.modifiedBy.label", locale), MULTISELECT);
 		panel.addField(modifiedByField);
 
 		users = advancedSearchService.findAllUsersWhoModifiedTestCases();
 		for (String user : users) {
 			if (user == null || "".equals(user.trim())) {
-				modifiedByField
-						.addPossibleValue(new SearchInputPossibleValueModel(
-								messageSource.internationalize(
-										"label.NeverModified", locale), ""));
+				modifiedByField.addPossibleValue(new SearchInputPossibleValueModel(messageSource.internationalize(
+						"label.NeverModified", locale), ""));
 			} else {
-				modifiedByField
-						.addPossibleValue(new SearchInputPossibleValueModel(
-								user, user));
+				modifiedByField.addPossibleValue(new SearchInputPossibleValueModel(user, user));
 			}
 		}
 
-		SearchInputFieldModel modifiedOnField = new SearchInputFieldModel(
-				"modifiedOn", messageSource.internationalize(
-						"search.testcase.history.modifiedOn.label", locale),
-				DATE);
+		SearchInputFieldModel modifiedOnField = new SearchInputFieldModel("modifiedOn", messageSource.internationalize(
+				"search.testcase.history.modifiedOn.label", locale), DATE);
 		panel.addField(modifiedOnField);
 
 		return panel;

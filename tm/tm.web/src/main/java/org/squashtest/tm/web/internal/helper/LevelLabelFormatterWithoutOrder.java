@@ -33,8 +33,12 @@ import org.squashtest.tm.domain.Level;
 
 @Component
 @Scope("prototype")
+@Deprecated
+/**
+ * @deprecated Strict duplicate of InternationalisableLabelFormatter, replace with it.
+ *
+ */
 public class LevelLabelFormatterWithoutOrder implements LabelFormatter<Level> {
-
 	private final MessageSource messageSource;
 	private Locale locale = Locale.getDefault();
 
@@ -63,7 +67,7 @@ public class LevelLabelFormatterWithoutOrder implements LabelFormatter<Level> {
 	 */
 	@Override
 	public String formatLabel(Level toFormat) {
-		String label = messageSource.getMessage(toFormat.getI18nKey(), null, locale); 
+		String label = messageSource.getMessage(toFormat.getI18nKey(), null, locale);
 		return StringEscapeUtils.escapeHtml(label);
 	}
 }

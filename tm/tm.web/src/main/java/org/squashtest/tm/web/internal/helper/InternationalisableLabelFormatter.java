@@ -44,36 +44,36 @@ import org.squashtest.tm.domain.Level;
 @Component
 @Scope("prototype")
 public class InternationalisableLabelFormatter implements LabelFormatter<Internationalizable> {
-		private final MessageSource messageSource;
-		private Locale locale = Locale.getDefault();
+	private final MessageSource messageSource;
+	private Locale locale = Locale.getDefault();
 
-		/**
-		 * @param messageSource
-		 */
-		@Inject
-		public InternationalisableLabelFormatter(@NotNull MessageSource messageSource) {
-			super();
-			this.messageSource = messageSource;
-		}
-
-		/**
-		 * 
-		 * @see org.squashtest.tm.web.internal.helper.LabelFormatter#useLocale(java.util.Locale)
-		 */
-		@Override
-		public LabelFormatter<Internationalizable> useLocale(Locale locale) {
-			this.locale = locale;
-			return this;
-		}
-
-		/**
-		 * 
-		 * @see org.squashtest.tm.web.internal.helper.LabelFormatter#formatLabel(java.lang.Object)
-		 */
-		@Override
-		public String formatLabel(Internationalizable toFormat) {
-			String label = messageSource.getMessage(toFormat.getI18nKey(), null, locale); 
-			return StringEscapeUtils.escapeHtml(label);
-		}
-
+	/**
+	 * @param messageSource
+	 */
+	@Inject
+	public InternationalisableLabelFormatter(@NotNull MessageSource messageSource) {
+		super();
+		this.messageSource = messageSource;
 	}
+
+	/**
+	 * 
+	 * @see org.squashtest.tm.web.internal.helper.LabelFormatter#useLocale(java.util.Locale)
+	 */
+	@Override
+	public LabelFormatter<Internationalizable> useLocale(Locale locale) {
+		this.locale = locale;
+		return this;
+	}
+
+	/**
+	 * 
+	 * @see org.squashtest.tm.web.internal.helper.LabelFormatter#formatLabel(java.lang.Object)
+	 */
+	@Override
+	public String formatLabel(Internationalizable toFormat) {
+		String label = messageSource.getMessage(toFormat.getI18nKey(), null, locale);
+		return StringEscapeUtils.escapeHtml(label);
+	}
+
+}
