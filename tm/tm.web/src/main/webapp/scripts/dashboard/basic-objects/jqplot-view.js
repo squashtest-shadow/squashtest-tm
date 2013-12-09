@@ -47,8 +47,8 @@
  *  - dashboard.appear : when an external sources triggers that event, the view will perform the rendering
  * 
  */
-define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "jquery.throttle-debounce"],
-		function($, Backbone, attrparser, eventbus){
+define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "underscore"],
+		function($, Backbone, attrparser, eventbus, _){
 	
 	return Backbone.View.extend({
 		
@@ -97,7 +97,7 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 			// 1) request rendering on resize. 
 			// Note : uses a debounced and proxied version of _requestRender, 
 			// to limit the firing rate of 'resize' event.
-			this._wrappedRequestRender = $.debounce(250, $.proxy(this._requestRender, this));
+			this._wrappedRequestRender = _.debounce($.proxy(this._requestRender, this), 250);
 			$(window).on('resize', this._wrappedRequestRender);
 			
 			// 2) request rendering on model changed. 

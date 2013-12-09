@@ -69,7 +69,7 @@
  * 
  */
 
-define(["jquery", "./jqplot-view",  "jqplot-donut", "jquery.throttle-debounce","jqplot-highlight"], 
+define(["jquery", "./jqplot-view", "jqplot-donut", "jqplot-highlight"], 
 		function($, JqplotView){
 
 	

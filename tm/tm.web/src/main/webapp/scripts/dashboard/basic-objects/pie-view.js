@@ -70,7 +70,7 @@
  */
 
 define(["jquery", "./jqplot-view", "iesupport/am-I-ie8", "./ie8-special-pie-renderer", 
-        "jqplot-pie", "jquery.throttle-debounce"], function($, JqplotView, isIE8, specialHandler){
+        "jqplot-pie"], function($, JqplotView, isIE8, specialHandler){
 
 	
 	

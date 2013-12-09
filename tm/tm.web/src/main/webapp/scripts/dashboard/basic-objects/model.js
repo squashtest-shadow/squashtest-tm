@@ -40,7 +40,7 @@
  *	"passive" : the model will be synchronized only when requested to.  
  *	"tree-listener" : Will listen to the tree and trigger synchronization everytime the node selection changes. Incidentally, will force 'includeTreeSelection' to true.
  */
-define(["jquery", "backbone", "underscore", './model-cache', "tree", "workspace.event-bus", "jquery.throttle-debounce"], 
+define(["jquery", "backbone", "underscore", './model-cache', "tree", "workspace.event-bus"], 
 		function($, Backbone, _, cache, zetree, eventBus){
 
 	return Backbone.Model.extend({
@@ -103,9 +103,9 @@ define(["jquery", "backbone", "underscore", './model-cache', "tree", "workspace.
 				 * Synchronize when tree selection changes
 				 * we debounce the function so that it will fire only when the user is done with selecting nodes in the tree.
 				 */
-				var syncOnSelect = $.debounce(500, function(){
+				var syncOnSelect = _.debounce(function(){
 					self.fetch();
-				});
+				}, 500);
 				
 				/* 
 				 * Unbind events when the model is destroyed.

@@ -88,7 +88,6 @@ requirejs.config({
 				"jstree" : "jquery/jquery.jstree",
 				"jform" : "jquery/jquery.form",
 				"jquery.dialog-patch" : "jquery/jquery.dialog-patch",
-				"jquery.throttle-debounce" : "jquery/jquery.ba-throttle-debounce.min",
 				"jquery.generateId" : "jquery/jquery.generateId",
 				"jquery.hotkeys" : "jquery/jquery.hotkeys-0.8",
 				"jquery.timepicker" : "jquery/jquery-ui-timepicker-addon",
@@ -165,7 +164,6 @@ requirejs.config({
 					exports : "jqueryui"
 				},
 				"jform" : [ "jquery" ],
-				"jquery.throttle-debounce" : ["jquery"],
 				"jqueryui" : [ "jquery" ],
 				"datatables" : [ "jqueryui" ],
 				"jquery.dialog-patch" : [ "jqueryui" ],
