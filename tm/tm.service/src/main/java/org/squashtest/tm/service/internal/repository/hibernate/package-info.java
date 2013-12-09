@@ -382,8 +382,8 @@
 
 		@NamedQuery(name="IterationStatistics.testSuiteStatistics", 
 		query = "select ts.name, tp.executionStatus, tc.importance, count(tc.importance), iter.scheduledPeriod.scheduledStartDate, iter.scheduledPeriod.scheduledEndDate " +
-		         "from TestSuite ts join ts.testPlan tp join ts.iteration iter join tp.referencedTestCase tc where iter.id = :id group by ts.name, tp.executionStatus, tc.importance order by ts.name, tp.executionStatus, tc.importance" ),
-
+		         //"from TestSuite ts join ts.testPlan tp join ts.iteration iter join tp.referencedTestCase tc where iter.id = :id group by ts.name, tp.executionStatus, tc.importance order by ts.name, tp.executionStatus, tc.importance" ),
+		         "from Iteration iter join iter.testSuites ts left join ts.testPlan tp left join tp.referencedTestCase tc where iter.id = :id group by ts.name, tp.executionStatus, tc.importance, iter.scheduledPeriod.scheduledStartDate, iter.scheduledPeriod.scheduledEndDate order by ts.name, tp.executionStatus, tc.importance"),
 		
 
 				

@@ -142,6 +142,26 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 	}
 	
 	
+	
+	/*
+	 * A few comments about test suites having an empty test plan or referencing test case(s) that were deleted.
+	 * 
+	 *  We want to report the test suites with the following rules :
+	 *  a) test suites with an empty test plan must be reported anyway,
+	 *  b) deleted test cases must be excluded of the statistics.
+	 *  
+	 *  This implies that we must detect those exceptions. We can achieve that thanks to the following behavior :
+	 * 
+	 * 1/ By the virtue of "left outer join" there always will be at least one row in the resultset for each test suite
+	 * even when its test plan is empty. In that later case the ExecutionStatus will be null. 
+	 * 
+	 * 2/ When the test plan is not empty but contains one or several deleted test cases there will be a row for them anyway. 
+	 * In that later case the TestCaseImportance will be null.
+	 * 
+	 * 
+	 * (non-Javadoc)
+	 * @see org.squashtest.tm.service.campaign.IterationStatisticsService#gatherTestSuiteTestInventoryStatistics(long)
+	 */
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
 			+ "or hasRole('ROLE_ADMIN')")
@@ -159,10 +179,8 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 		
 		for (Object[] tuple : res){
 
+			// basic information on the test suite : we always want them.			
 			String suiteName = (String)tuple[0];
-			ExecutionStatus status = (ExecutionStatus)tuple[1];
-			TestCaseImportance importance = (TestCaseImportance)tuple[2];
-			Long howmany = (Long)tuple[3];
 			Date scheduledStart = (Date)tuple[4];
 			Date scheduledEnd = (Date)tuple[5];
 			
@@ -174,6 +192,27 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 				result.add(newStatistics);
 			}
 			
+
+			previousSuiteName = suiteName;
+			
+			/* 
+			 * corner cases as discussed in the comments above. We skip the rest of that iteration if :
+			 * 
+			 * 1/ (status == null) because it means that the test plan is empty,
+			 * 2/ (importance == null) because means that those test cases were deleted 
+			 * 		
+			 */
+			ExecutionStatus status = (ExecutionStatus)tuple[1];
+			TestCaseImportance importance = (TestCaseImportance)tuple[2];		
+			Long howmany = (Long)tuple[3];
+
+			if (status == null || importance == null){
+				continue;
+			}
+			
+			/*
+			 * In any other cases we can process the row
+			 */
 			switch(status){
 				case UNTESTABLE : 	newStatistics.addNbUntestable(howmany.intValue()); break;   
 				case BLOCKED : 		newStatistics.addNbBlocked(howmany.intValue()); break;
@@ -189,7 +228,6 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 				case ERROR : 		newStatistics.addNbFailure(howmany.intValue()); break;
 			}
 			
-			previousSuiteName = suiteName;
 		}
 		
 		return result;
