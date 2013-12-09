@@ -37,7 +37,6 @@ define(['jquery', 'workspace.event-bus' ], function($, eventBus) {
 				
 				refreshExecButtons();			
 				refreshStatistics();	
-				refreshTestSuiteInfos();	
                 
 			});		
 			
