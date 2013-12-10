@@ -341,12 +341,12 @@
 
 		//Campaign Statistics
 		@NamedQuery(name="CampaignStatistics.testinventory", 
-					query=	"select iter.id as iterid, iter.name as name, itp.executionStatus as status, count(itp) as num " +
-							"from Campaign c join c.iterations iter join iter.testPlans itp where c.id = :id group by iter, itp.executionStatus order by iter"),
+					query=	"select iter.id as iterid, iter.name as name, itp.executionStatus as status, count(tc) as num " +
+							"from Campaign c join c.iterations iter left join iter.testPlans itp left join itp.referencedTestCase tc where c.id = :id group by iter, itp.executionStatus order by iter"),
 		
 		@NamedQuery(name="CampaignStatistics.globaltestinventory", 
 					query = "select itp.executionStatus, count(itp.executionStatus) " +
-							"from Campaign c join c.iterations iter join iter.testPlans itp where c.id = :id group by itp.executionStatus"),
+							"from Campaign c join c.iterations iter join iter.testPlans itp where c.id = :id and itp.referencedTestCase is not null group by itp.executionStatus"),
 					
 		@NamedQuery(name="CampaignStatistics.successRate", 
 					query = "select tc.importance, itp.executionStatus, count(tc.importance) " +
@@ -357,19 +357,20 @@
 							"from Campaign c join c.iterations iter join iter.testPlans itp join itp.referencedTestCase tc where c.id = :id and (itp.executionStatus = 'READY' or itp.executionStatus = 'RUNNING') group by tc.importance"),		
 							
 		@NamedQuery(name="CampaignStatistics.findScheduledIterations", 
-					query = "select new org.squashtest.tm.service.statistics.campaign.ScheduledIteration(iter.id as id, iter.name as name, iter.testPlans.size as testplanCount, " +
+					query = "select new org.squashtest.tm.service.statistics.campaign.ScheduledIteration(iter.id as id, iter.name as name, "+
+							"(select count(itp1) from Iteration it1 join it1.testPlans itp1 where it1.id = iter.id and itp1.referencedTestCase is not null) as testplanCount, " +
 							"iter.scheduledPeriod.scheduledStartDate as scheduledStart, iter.scheduledPeriod.scheduledEndDate as scheduledEnd) " +
 							"from Campaign c join c.iterations iter where c.id = :id group by iter order by index(iter)"),
 
 		@NamedQuery(name="CampaignStatistics.findExecutionsHistory",
 					query="select itp.lastExecutedOn from IterationTestPlanItem itp where itp.iteration.campaign.id = :id " +
-							"and itp.lastExecutedOn is not null and itp.executionStatus not in (:nonterminalStatuses) order by itp.lastExecutedOn"),
+							"and itp.lastExecutedOn is not null and itp.executionStatus not in (:nonterminalStatuses) and itp.referencedTestCase is not null order by itp.lastExecutedOn"),
 		
 		//Iteration Statistics
 			
 		@NamedQuery(name="IterationStatistics.globaltestinventory", 
 		query = "select itp.executionStatus, count(itp.executionStatus) " +
-				"from Iteration iter join iter.testPlans itp where iter.id = :id group by itp.executionStatus"),
+				"from Iteration iter join iter.testPlans itp where iter.id = :id and itp.referencedTestCase is not null group by itp.executionStatus"),
 				
 		@NamedQuery(name="IterationStatistics.nonexecutedTestcaseImportance", 
 		query = "select tc.importance, count(tc.importance) " +
@@ -382,8 +383,9 @@
 
 		@NamedQuery(name="IterationStatistics.testSuiteStatistics", 
 		query = "select ts.name, tp.executionStatus, tc.importance, count(tc.importance), iter.scheduledPeriod.scheduledStartDate, iter.scheduledPeriod.scheduledEndDate " +
-		         //"from TestSuite ts join ts.testPlan tp join ts.iteration iter join tp.referencedTestCase tc where iter.id = :id group by ts.name, tp.executionStatus, tc.importance order by ts.name, tp.executionStatus, tc.importance" ),
-		         "from Iteration iter join iter.testSuites ts left join ts.testPlan tp left join tp.referencedTestCase tc where iter.id = :id group by ts.name, tp.executionStatus, tc.importance, iter.scheduledPeriod.scheduledStartDate, iter.scheduledPeriod.scheduledEndDate order by ts.name, tp.executionStatus, tc.importance"),
+		         "from Iteration iter join iter.testSuites ts left join ts.testPlan tp left join tp.referencedTestCase tc "+
+				 "where iter.id = :id group by ts.name, tp.executionStatus, tc.importance, iter.scheduledPeriod.scheduledStartDate, iter.scheduledPeriod.scheduledEndDate "+
+		         "order by ts.name, tp.executionStatus, tc.importance"),
 		
 
 				

@@ -38,7 +38,7 @@ public final class ScheduledIteration{
 	
 	private long id;
 	private String name;
-	private int testplanCount;
+	private long testplanCount;
 	private Date scheduledStart;
 	private Date scheduledEnd;
 	
@@ -50,7 +50,7 @@ public final class ScheduledIteration{
 	}
 	
 	
-	public ScheduledIteration(long id, String name, int testplanCount,
+	public ScheduledIteration(long id, String name, long testplanCount,
 			Date scheduledStart, Date scheduledEnd) {
 		super();
 		this.id = id;
@@ -79,11 +79,11 @@ public final class ScheduledIteration{
 	}
 	
 	
-	public int getTestplanCount() {
+	public long getTestplanCount() {
 		return testplanCount;
 	}
 
-	public void setTestplanCount(int testplanCount) {
+	public void setTestplanCount(long testplanCount) {
 		this.testplanCount = testplanCount;
 	}
 

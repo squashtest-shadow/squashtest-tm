@@ -134,6 +134,10 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 			ExecutionStatus status = (ExecutionStatus)tuple[2];
 			Long howmany = (Long)tuple[3];
 			
+			if (status == null){
+				continue;	// status == null iif the test plan is empty 
+			}
+			
 			switch(status){
 			case UNTESTABLE : newStatistics.setNbUntestable(howmany.intValue()); break;   
 			case BLOCKED : newStatistics.setNbBlocked(howmany.intValue()); break;
