@@ -20,11 +20,10 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<div th:fragment="messages" th:remove="tag">
 
-<script th:inline="javascript">
+<script th:fragment="env-setup" th:remove="tag">
 /*<![CDATA[*/
-	squashtm = squashtm || {};
+	var squashtm = squashtm || {};
 	squashtm.message = squashtm.message || {};
 	
 	squashtm.message.confirm = /*[[#{label.Confirm}]]*/;
@@ -32,8 +31,10 @@
 	squashtm.message.placeholder =  /*[[#{rich-edit.placeholder}]]*/;
 	squashtm.message.intoTitle = /*[[#{popup.title.info}]]*/;
 	squashtm.message.errorTitle = /*[[#{popup.title.error}]]*/;
+	
+	squashtm.app = squashtm.app || {};
+	squashtm.app.contextRoot = /*[[@{/}]]*/;
            
 /*]]>*/
 </script>
 
-</div>

@@ -28,6 +28,7 @@ USAGE :
 	the next fragment accepts the following variables in its context :
 		- auditableEntity : an object representing the entity we want the general informations. MANDATORY.
 		- entityUrl : rest url of that entity. If set, this component will pull the informations itself from entityUrl/general. Defaults to null.
+		- noscript : boolean. If defined and true, the script tag below won't be included.
 
 DEV NOTES :
 
@@ -71,7 +72,7 @@ DEV NOTES :
 			
 		
 		</div>
-		<script th:inline="javascript" type="text/javascript">
+		<script th:inline="javascript" type="text/javascript" th:unless="${noscript==true}">
 		/*<![CDATA[*/
 		  require(["common"], function(){
 			  require(["jquery", "page-components/general-information-panel"], function($, general){

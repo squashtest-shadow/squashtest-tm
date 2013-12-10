@@ -19,8 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function(common) {
-	require([ "domReady" ], function(domReady) {
+	require([ "domReady", "page-components/general-information-panel" ], function(domReady, geninfo) {
 		domReady(function() {
+			geninfo.init();
 			window.print();
 		});
 	});
