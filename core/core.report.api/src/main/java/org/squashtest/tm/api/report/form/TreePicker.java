@@ -27,7 +27,7 @@ import org.springframework.util.Assert;
  * @author Gregory Fouquet
  * 
  */
-public class TreePicker extends Picker implements InitializingBean{
+public class TreePicker extends BasicInput implements InitializingBean {
 	private NodeType pickedNodeType;
 
 	/**
@@ -58,7 +58,7 @@ public class TreePicker extends Picker implements InitializingBean{
 	 */
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		Assert.notNull(pickedNodeType, "pickedNodeType should not be initialized");
+		Assert.notNull(pickedNodeType, "pickedNodeType was not initialized. You shoud set it with a value from the NodeType enum");
 
 	}
 

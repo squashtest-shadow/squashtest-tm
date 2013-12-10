@@ -18,8 +18,34 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.api.report.form;
 
-public abstract class Picker extends BasicInput {
+package org.squashtest.tm.api.report.form
 
+import org.squashtest.tm.api.report.form.ContainerOption;
+import org.squashtest.tm.api.report.form.Input;
+
+import spock.lang.Specification
+
+/**
+ * @author Gregory
+ *
+ */
+class ContainerOptionTest extends Specification {
+	Input contained = Mock()
+	ContainerOption container = new ContainerOption()
+	
+	
+	def "should give access to contained"() {
+		given:
+		container.content = contained
+		
+		and:
+		contained.name >> "containedId"
+		
+		when:
+		container.initialize()
+		
+		then:
+		container.givesAccessTo == "containedId"
+	}
 }

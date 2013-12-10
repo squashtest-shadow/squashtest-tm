@@ -21,6 +21,7 @@
 package org.squashtest.tm.api.report.form;
 
 /**
+ * Represents the different types of Input. They should also be managed on the client side (javascript).
  * @author Gregory Fouquet
  *
  */
@@ -33,7 +34,6 @@ public enum InputType {
 	CHECKBOXES_GROUP, 
 	TREE_PICKER, 
 	PROJECT_PICKER,
-	COMPLEX_SELECTOR,
 	BASIC_INPUT_BLOCK, 
 	PROJECT_INPUT_BLOCK,
 	DATE_INPUT_BLOCK

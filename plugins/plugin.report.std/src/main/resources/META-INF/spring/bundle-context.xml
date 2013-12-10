@@ -70,7 +70,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="form">
 			<list>
 				<!-- campain selection mode (all / tree) -->
-				<bean class="org.squashtest.tm.api.report.form.ComplexSelector">
+				<bean class="org.squashtest.tm.api.report.form.RadioButtonGroup">
 					<property name="name" value="campaignSelectionMode" />
 					<property name="labelKey" value="report.criteria.panel.campaignlist.selection.label" />
 					<property name="options">
@@ -81,17 +81,11 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 								<property name="value" value="EVERYTHING" />
 							</bean>
 
-							<bean class="org.squashtest.tm.api.report.form.OptionInput">
+							<bean class="org.squashtest.tm.api.report.form.composite.TreePickerOption">
 								<property name="labelKey" value="report.criteria.panel.campaignlist.selection.selected.label" />
-								<property name="value" value="TREE_PICKER" />
-								<property name="givesAccessTo" value="campaignIds" />
-								<property name="selector">
-									<bean class="org.squashtest.tm.api.report.form.TreePicker">
-										<property name="labelKey" value="report.criteria.panel.campaignlist.picker.label" />
-										<property name="name" value="campaignIds" />
-										<property name="pickedNodeType" value="CAMPAIGN" />
-									</bean>		
-								</property>
+								<property name="pickerLabelKey" value="report.criteria.panel.campaignlist.picker.label" />
+								<property name="pickerName" value="campaignIds" />
+								<property name="pickedNodeType" value="CAMPAIGN" />
 							</bean>
 						</list>
 					</property>

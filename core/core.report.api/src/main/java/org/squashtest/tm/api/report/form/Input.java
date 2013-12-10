@@ -21,6 +21,7 @@
 package org.squashtest.tm.api.report.form;
 
 /**
+ * An input is a component with which the user can interact to define a value 
  * @author Gregory Fouquet
  * 
  */

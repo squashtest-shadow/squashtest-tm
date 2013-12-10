@@ -31,9 +31,9 @@ public class OptionInput extends Labelled {
 	private String value = "";
 	private boolean defaultSelected = false;
 	private String givesAccessTo = "none";
-	private Picker selector = null;
-	
+
 	/**
+	 *  
 	 * @param value
 	 *            the value to set
 	 */
@@ -47,10 +47,9 @@ public class OptionInput extends Labelled {
 	public String getValue() {
 		return value;
 	}
-	
-	
+
 	public void setGivesAccessTo(String givesAccessTo) {
-		if(givesAccessTo !=null && !givesAccessTo.equals("")){
+		if (givesAccessTo != null && !givesAccessTo.equals("")) {
 			this.givesAccessTo = givesAccessTo;
 		}
 	}
@@ -61,7 +60,6 @@ public class OptionInput extends Labelled {
 	public String getGivesAccessTo() {
 		return givesAccessTo;
 	}
-
 
 	/**
 	 * Callback - should be called by a {@link OptionsGroup} then this object is added to the group.
@@ -80,7 +78,8 @@ public class OptionInput extends Labelled {
 	}
 
 	/**
-	 * @param defaultChecked the defaultChecked to set
+	 * @param defaultChecked
+	 *            the defaultChecked to set
 	 */
 	public void setDefaultSelected(boolean defaultChecked) {
 		this.defaultSelected = defaultChecked;
@@ -93,11 +92,4 @@ public class OptionInput extends Labelled {
 		return defaultSelected;
 	}
 
-	public Picker getSelector() {
-		return selector;
-	}
-
-	public void setSelector(Picker selector) {
-		this.selector = selector;
-	}
 }
