@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(['jquery', 'workspace.contextual-content', 'workspace/workspace.import-popup'], function($, ctxt){
+define(['jquery', 'workspace.event-bus', 'workspace/workspace.import-popup'], function($, eventBus){
 	
 	$.widget("squash.linksimportDialog", $.squash.importDialog, {
 		
@@ -129,7 +129,7 @@ define(['jquery', 'workspace.contextual-content', 'workspace/workspace.import-po
 		
 		
 		dialog.on('linksimportdialogok', function(){
-			ctxt.fire(undefined, {evt_name : 'tc-req-links-updated'});
+			eventBus.fire(undefined, {evt_name : 'tc-req-links-updated'});
 		});
 		
 		
