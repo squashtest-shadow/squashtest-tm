@@ -69,9 +69,7 @@
  	<div class="issue-report-dialog">
  	
  		<div class="pleasewait" >
- 			<div class="waiting-loading full-size-hack centered" >
- 				<div style="font-size: 1.5em; margin-top : 300px;"><f:message	key="squashtm.processing" /></div>
- 			</div>			
+ 			<comp:waiting-pane/>		
  		</div>
 		
 	 	<div class="content">	

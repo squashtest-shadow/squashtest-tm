@@ -243,7 +243,7 @@
 			<jsp:attribute name="body">
 				<div id="iteration-custom-fields-content" class="display-table">
 <c:if test="${hasCUF}">
-				<div class="waiting-loading full-size-hack minimal-height"></div>
+				<comp:waiting-pane/>
 </c:if>
 				</div>
 			</jsp:attribute>

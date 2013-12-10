@@ -301,8 +301,8 @@
 		<f:message var="noUserSelectedError" key="error.permissions.noUserSelected" />		
 		<div id="add-permission-dialog" class="popup-dialog not-displayed">
 		
-			<div data-def="state=loading" class="waiting-loading full-size-hack">
-				<div><f:message key="message.PleaseWait"/></div>
+			<div data-def="state=loading">
+				<comp:waiting-pane/>
 			</div>
 			
 			<div data-def="state=normal" class="display-table">

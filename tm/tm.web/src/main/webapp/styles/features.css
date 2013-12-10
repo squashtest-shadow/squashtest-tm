@@ -177,6 +177,7 @@ tr.nodrop td.drag-handle {
 	min-height : 50px;
 	opacity: 0.2;	
 	filter: alpha(opacity=20);
+	overflow-y:hidden;
 }
 
 .processing-indicator{

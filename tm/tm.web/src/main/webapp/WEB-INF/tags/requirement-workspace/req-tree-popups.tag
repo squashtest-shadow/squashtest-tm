@@ -158,7 +158,9 @@
 
 <div id="delete-node-dialog" class="popup-dialog not-displayed" title="${deleteNodeTitle}">
 	
-	<div class="waiting-loading full-size-hack" data-def="state=pleasewait"></div>
+	<div data-def="state=pleasewait">	
+ 		<comp:waiting-pane/>	
+	</div>
 	
 	<div class="not-displayed" data-def="state=confirm">
 	
@@ -252,9 +254,8 @@
 		<span style="display:block"><f:message key="dialog.import.confirm.message"/></span>
 	</div>
 	
-	<div data-def="state=progression" style="vertical-align:middle;">
-		<div class="loading" ></div>
-		<span style="font-size:1.5em;"><f:message key="squashtm.processing"/></span>			
+	<div data-def="state=progression">
+		<comp:waiting-pane/>		
 	</div>
 	
 	<div class="import-summary" data-def="state=summary">
@@ -324,9 +325,8 @@
 		<span style="display:block"><f:message key="dialog.import.confirm.message"/></span>
 	</div>
 	
-	<div data-def="state=progression" style="vertical-align:middle;">
-		<div class="loading"></div>
-		<span style="font-size:1.5em;"><f:message key="squashtm.processing"/></span>			
+	<div data-def="state=progression" >
+		<comp:waiting-pane/>			
 	</div>
 	
 		

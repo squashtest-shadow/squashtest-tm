@@ -191,10 +191,8 @@
 	
 	<jsp:attribute name="body">
 	
- 		<div class="ta-projectsadd-pleasewait" style="vertical-align:middle;">
- 			<div class="waiting-loading full-size-hack centered" >
- 				<div style="font-size: 1.5em; margin-top : 300px;"><f:message	key="squashtm.processing" /></div>
- 			</div>	
+ 		<div class="ta-projectsadd-pleasewait" >
+ 			<comp:waiting-pane/>
  		</div>
 	
 

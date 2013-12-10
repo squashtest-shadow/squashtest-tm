@@ -62,10 +62,8 @@
 	<jsp:attribute name="body">
 	<div class="ta-picker-structure-maindiv">
 	
-	 	<div class="structure-pleasewait" style="vertical-align:middle;">
- 			<div class="waiting-loading full-size-hack centered">
- 				<div style="font-size:1.5em;margin-top:300px;"><f:message key="squashtm.processing"/></div>
- 			</div>			
+	 	<div class="structure-pleasewait">
+ 			<comp:waiting-pane/>		
  		</div>
 	
 		<div class="structure-error">

@@ -218,7 +218,7 @@
 			<jsp:attribute name="body">
 				<div id="campaign-custom-fields-content" class="display-table">
 <c:if test="${hasCUF}">
-				<div class="waiting-loading full-size-hack minimal-height"></div>
+				<comp:waiting-pane/>
 </c:if>
 				</div>
 			</jsp:attribute>
@@ -304,8 +304,8 @@
 			</table>
 		</div>
 		
-		<div data-def="state=loading" class="waiting-loading full-size-hack centered" >		
- 				<div style="font-size: 1.5em; margin-top : 300px;"><f:message	key="squashtm.processing" /></div>
+		<div data-def="state=loading" >		
+ 				<comp:waiting-pane />
 		</div>
 		
 		<div class="popup-dialog-buttonpane">
