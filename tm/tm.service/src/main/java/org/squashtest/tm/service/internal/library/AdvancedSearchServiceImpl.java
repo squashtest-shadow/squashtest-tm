@@ -429,15 +429,15 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			
 			org.apache.lucene.search.Query query;
 	
-			if (ignoreBridge) {
+			/*if (ignoreBridge) {*/
 				query = qb
 						.bool()
 						.must(qb.phrase().onField(fieldName).ignoreFieldBridge().sentence(value).createQuery()).createQuery();
-			} else {
+			/*} else {
 				query = qb
 						.bool()
 						.must(qb.phrase().onField(fieldName).sentence(value).createQuery()).createQuery();
-			}
+			}*/
 			
 			if (query != null && mainQuery == null) {
 				mainQuery = query;
