@@ -168,7 +168,7 @@ public final class ScheduledIteration{
 				throw new IllegalArgumentException(SCHED_ITER_MISSING_DATES_I18N);
 			}
 			
-			if (currDate.before(prevDate)){
+			if (! currDate.after(prevDate)){
 				throw new IllegalArgumentException(SCHED_ITER_OVERLAP_DATES_I18N);
 			}
 		}
