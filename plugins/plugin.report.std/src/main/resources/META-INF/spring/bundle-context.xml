@@ -70,7 +70,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="form">
 			<list>
 				<!-- campain selection mode (all / tree) -->
-				<bean class="org.squashtest.tm.api.report.form.RadioButtonGroup">
+				<bean class="org.squashtest.tm.api.report.form.RadioButtonsGroup">
 					<property name="name" value="campaignSelectionMode" />
 					<property name="labelKey" value="report.criteria.panel.campaignlist.selection.label" />
 					<property name="options">
@@ -90,11 +90,11 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 						</list>
 					</property>
 				</bean>
-   				<!-- Scheduled start date picker -->
-   				<bean class="org.squashtest.tm.api.report.form.DateInputBlock">
-   					<property name="name" value="dateInputBlock" />
-					<property name="labelKey" value="campaign.dateblock.label" />
-					<property name="dates">
+<!-- Scheduled start date picker -->
+   				<bean class="org.squashtest.tm.api.report.form.InputsGroup">
+<!--    					<property name="name" value="dateInputBlock" />
+ -->					<property name="labelKey" value="campaign.dateblock.label" />
+					<property name="inputs">
 						<list>
 									<bean class="org.squashtest.tm.api.report.form.DateInput">
 					<property name="name" value="scheduledStart" />
@@ -225,10 +225,10 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		</property>
 		<property name="form">
 			<list>
-				<bean class="org.squashtest.tm.api.report.form.ProjectInputBlock">
-					<property name="name" value="perimeter" />
-					<property name="labelKey" value="report.coverage.criteria.selectionMode.label" />
-					<property name="pickers">
+				<bean class="org.squashtest.tm.api.report.form.InputsGroup">
+<!-- 					<property name="name" value="perimeter" />
+ -->					<property name="labelKey" value="report.coverage.criteria.selectionMode.label" />
+					<property name="inputs">
 						<list>
 							<bean class="org.squashtest.tm.api.report.form.ProjectPicker">
 								<property name="name" value="projectIds" />

@@ -18,41 +18,61 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.squashtest.tm.api.report.form;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.squashtest.tm.core.foundation.i18n.Labelled;
 
-public class DateInputBlock extends Labelled implements Input{
-	
-	private String name;
-	private List<DateInput> dates;
-	
+/**
+ * This input holds other inputs but has no value.
+ * 
+ * @author Gregory Fouquet
+ * 
+ */
+public class InputsGroup extends Labelled implements Input {
+	private List<Input> inputs = Collections.emptyList();
+
 	/**
-	 * @return the name
+	 * 
 	 */
-	public String getName() {
-		return name;
-	}
-	/**
-	 * @param name
-	 *            the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
+	public InputsGroup() {
+		super();
 	}
 
-	public List<DateInput> getDates() {
-		return dates;
+	/**
+	 * @see org.squashtest.tm.api.report.form.Input#getName()
+	 */
+	@Override
+	public String getName() {
+		return "";
 	}
-	
-	public void setDates(List<DateInput> dates) {
-		this.dates = dates;
-	}
-	
+
+	/**
+	 * @see org.squashtest.tm.api.report.form.Input#getType()
+	 */
 	@Override
 	public InputType getType() {
-		return InputType.DATE_INPUT_BLOCK;
+		return InputType.INPUTS_GROUP;
 	}
+
+	/**
+	 * The inputs hold by this container.
+	 * 
+	 * @param inputs
+	 *            the options to set
+	 */
+	public void setInputs(List<Input> inputs) {
+		this.inputs = inputs;
+	}
+
+	/**
+	 * @return the options
+	 */
+	public List<Input> getInputs() {
+		return inputs;
+	}
+
 }

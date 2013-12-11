@@ -150,6 +150,8 @@
             <div th:case="'RADIO_BUTTONS_GROUP'">
               <label th:text="*{label}">Radio buttons group</label>
               <ul>
+                <span th:remove="all">this copy-pasta implementation is so wrong. 
+                  we should use js template or modularize this view some more</span>
                 <li th:each="opt : *{options}" th:with="radioId = ${opt.givesAccessTo} + '-binder'">
                   <input id="radioId" name="rpt-radio-crit" type="radio"
                     th:value="${opt.value}" data-grouped="true" th:id="${radioId}"
@@ -172,8 +174,8 @@
                     <div th:case="'PROJECT_PICKER'" th:object="${opt.content}" class="report-selector">
                       <select th:if="${!projectMultiselect}" th:id="*{name}" class="rpt-projects-crit-container"
                         th:attr="data-id-opened=*{name}"></select>
-                      <select th:if="${projectMultiselect}" multiple="multiple" th:id="*{name}" class="rpt-projects-crit-container"
-                        th:attr="data-id-opened=*{name}"></select>
+                      <select th:if="${projectMultiselect}" multiple="multiple" th:id="*{name}" 
+                        class="rpt-projects-crit-container" th:attr="data-id-opened=*{name}"></select>
                     </div>
                       
                     <div th:case="*">
@@ -187,13 +189,10 @@
             <div th:case="'CHECKBOXES_GROUP'">
               <label th:text="*{label}">Checkboxes group</label>
               <ul>
-                <li th:each="opt : *{options}"
-                  th:with="checkboxId = ${opt.givesAccessTo} + '-binder'"><input
-                  id="checkboxId" name="rpt-cbxes-crit" type="checkbox"
-                  th:value="${opt.value}" data-grouped="true"
-                  th:id="${checkboxId}" th:name="${opt.name}"
-                  th:checked="${opt.defaultSelected}" /> <label for="checkboxId"
-                  th:for="${checkboxId}" th:text="${opt.label}">Checkbox</label>
+                <li th:each="opt : *{options}" th:with="checkboxId = ${opt.givesAccessTo} + '-binder'">
+                  <input id="checkboxId" name="rpt-cbxes-crit" type="checkbox" th:value="${opt.value}" 
+                    data-grouped="true" th:id="${checkboxId}" th:name="${opt.name}" th:checked="${opt.defaultSelected}" />
+                  <label for="checkboxId" th:for="${checkboxId}" th:text="${opt.label}">Checkbox</label>
                 </li>
               </ul>
             </div>
@@ -230,63 +229,66 @@
               </div>
             </div>
 
-            <div th:case="'DATE_INPUT_BLOCK'">
-              <label th:text="*{label}">Radio buttons group</label>
+            <div th:case="'INPUTS_GROUP'">
+              <label th:text="*{label}">Group of inputs</label>
               <ul>
-                <li th:each="date : *{dates}"><label th:for="${date.name}"
-                  th:text="${date.label}">Date criteria</label> <span
-                  class="rpt-date-crit" th:id="${date.name}"
-                  th:name="${date.name}" th:text="#{squashtm.nodata}"
-                  data-locale="fr" th:attr="data-locale=#{squashtm.locale}">01-02-2012</span>
-                </li>
-              </ul>
-            </div>
-            
-            <div th:case="'PROJECT_INPUT_BLOCK'">
-              <label th:text="*{label}">Radio buttons group</label>
-              <ul>
-                <li th:each="picker : *{pickers}">
-                  <div th:if="'PROJECT_PICKER' == ${picker.type.name()}"
-                    th:object="${picker}" class="report-selector">
+                <span th:remove="all">this copy-pasta implementation is so wrong. 
+                  we should use js template or modularize this view some more</span>
+                <li th:each="input : *{inputs}" th:switch="${input.type.name()}" th:object="${input}">
+                  <span th:case="'DATE'">
+                    <label th:for="*{name}" th:text="*{label}">Date criteria</label>
+                    <span class="rpt-date-crit" th:id="${input.name}" 
+                      th:name="*{name}" th:text="#{squashtm.nodata}" 
+                      data-locale="fr" th:attr="data-locale=#{squashtm.locale}">01-02-2012</span>
+                  </span>
+                  <div th:case="'PROJECT_PICKER'" class="report-selector">
                     <label th:if="${!projectMultiselect}" th:for="*{name}" th:text="*{label}">Projects</label>
-                    <label th:if="${projectMultiselect}" th:for="*{name}" th:text="#{report.form.project-picker.select-projects}">Projects</label>
-                     <select
-                      th:if="${!projectMultiselect}" th:id="*{name}"
-                      class="rpt-projects-crit-container"
-                      th:attr="data-id-opened=*{name}">
-                    </select> <select th:if="${projectMultiselect}" multiple="multiple"
-                      th:id="*{name}" class="rpt-projects-crit-container"
-                      th:attr="data-id-opened=*{name}">
+                    <label th:if="${projectMultiselect}" th:for="*{name}" 
+                      th:text="#{report.form.project-picker.select-projects}">Projects</label>
+                     <select th:if="${!projectMultiselect}" th:id="*{name}"
+                      class="rpt-projects-crit-container" th:attr="data-id-opened=*{name}">
                     </select>
+                    <select th:if="${projectMultiselect}" multiple="multiple" th:id="*{name}" 
+                      class="rpt-projects-crit-container" th:attr="data-id-opened=*{name}">
+                    </select>
+                  </div>
+                  <div th:case="*">
+                    Unsupported type : ${opt.content.type.name()}
                   </div>
                 </li>
               </ul>
             </div>
+          </div>
+          
               
             <div th:remove="all">
-              <span> <label for="rpt-text-crit">Text criteria</label> <input
-                name="rpt-text-crit" type="text" value="" />
+              <span>
+                <label for="rpt-text-crit">Text criteria</label>
+                <input name="rpt-text-crit" type="text" value="" />
               </span>
             </div>
+            
             <div th:remove="all">
-              <span> <input name="rpt-chk-crit" type="checkbox"
-                value="chk-val" /> <label for="rpt-chk-crit">Checkbox
-                  criteria</label>
+              <span>
+                <input name="rpt-chk-crit" type="checkbox" value="chk-val" />
+                <label for="rpt-chk-crit">Checkbox criteria</label>
               </span>
             </div>
+            
             <div th:remove="all">
               <div>
                 <span>Radio buttons group</span>
                 <ul>
-                  <li><input name="rpt-radio-crit" type="radio"
-                    value="radio-val-0" data-grouped="true" /> <label
-                    for="rpt-radio-crit">Option 0</label> <input
-                    name="rpt-radio-crit" type="radio" value="radio-val-1"
-                    data-grouped="true" /> <label for="rpt-radio-crit">Option
-                      1</label></li>
+                  <li>
+                    <input name="rpt-radio-crit" type="radio" value="radio-val-0" data-grouped="true" />
+                    <label for="rpt-radio-crit">Option 0</label>
+                    <input name="rpt-radio-crit" type="radio" value="radio-val-1" data-grouped="true" />
+                    <label for="rpt-radio-crit">Option 1</label>
+                  </li>
                 </ul>
               </div>
             </div>
+            
             <div th:remove="all">
               <div>
                 <span>Checkboxes group</span>
@@ -315,6 +317,7 @@
 
               </span>
             </div>
+            
             <div th:remove="all">
               <div id="rpt-tree-crit-dialog" title="Nodes criteria"
                 class="rpt-tree-crit-dialog popup-dialog is-contextual not-displayed"
@@ -372,7 +375,6 @@
               value="Generate"
               th:value="#{report.criteria.panel.button.generate.label}" />
             <div class="unsnap"></div>
-          </div>
           </div>
 
           <div id="invalid-perimeter" class="popup-dialog not-displayed"
