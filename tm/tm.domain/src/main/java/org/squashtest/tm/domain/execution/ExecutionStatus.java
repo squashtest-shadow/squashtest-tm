@@ -272,6 +272,26 @@ public enum ExecutionStatus implements Internationalizable, Level {
 			return BLOCKED;
 		}
 		
+	},
+	
+	NOT_RUN(8){
+		@Override
+		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
+			throw new UnsupportedOperationException("ExecutionStatus.TA_ERROR#resolveStatus(...) should never have been invoked. That exception cleary results from faulty logic. If you read this message please "+
+			"report the issue at https://ci.squashtest.org/mantis/ Please put [ExecutionStatus - unsupported operation] as title for your report and explain what you did. Also please check that it hadn't been reported "+
+			"already. Thanks for your help and happy Squash !");
+		}
+		
+		@Override
+		public boolean isCanonical() {
+			return false;
+		}		
+		
+		@Override
+		public ExecutionStatus getCanonicalStatus() {
+			return BLOCKED;
+		}
+		
 	};
 
 	
