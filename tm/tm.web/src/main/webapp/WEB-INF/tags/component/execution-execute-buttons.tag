@@ -60,6 +60,7 @@
 		// because an execution rarely walks back to 'ready' status, so I'll be lazy here
 		
 		$("#execute-execution-button").val('<f:message key="execution.execute.resume.button.label" />');
+		$("#ieo-execution-button").val("<f:message key='execution.execute.IEO.resume.button.label' />");
 	}
 
 	$(function() {
