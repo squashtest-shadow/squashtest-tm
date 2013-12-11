@@ -713,7 +713,7 @@ public class AdvancedSearchController {
 		possibleValues
 				.add(new SearchInputPossibleValueModel(messageSource.internationalize("label.Empty", locale), ""));
 		for (CustomFieldOption option : selectField.getOptions()) {
-			possibleValues.add(new SearchInputPossibleValueModel(option.getLabel(), option.getCode()));
+			possibleValues.add(new SearchInputPossibleValueModel(option.getLabel(), option.getLabel()));
 		}
 		SearchInputFieldModel model = new SearchInputFieldModel();
 		model.setInputType(COMBOMULTISELECT);
