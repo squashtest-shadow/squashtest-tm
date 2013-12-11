@@ -65,12 +65,13 @@ public class ContainerOption<I extends Input> extends OptionInput {
 
 	public void setGivesAccessTo(String s) {
 		// this kinda breaks the LSP but we have no choice because of unwanted inheritance.
-		throw new RuntimeException(
+		throw new IllegalArgumentException(
 				"This property is automatically set according to the option's content. You should not try to manually set it");
 	}
 
 	/**
-	 * @param content the content to set
+	 * @param content
+	 *            the content to set
 	 */
 	public void setContent(I content) {
 		this.content = content;

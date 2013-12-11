@@ -48,7 +48,7 @@ public class TreePickerOption extends ContainerOption<TreePicker> {
 	 */
 	@Override
 	public void setContent(TreePicker content) {
-		throw new RuntimeException(
+		throw new IllegalArgumentException(
 				"Content cannot be set, it is automatically set to TreePicker. Remove the <property name=\"content\" /> tag");
 	}
 
@@ -58,7 +58,7 @@ public class TreePickerOption extends ContainerOption<TreePicker> {
 	 * @see org.squashtest.tm.api.report.form.OptionInput#setValue(java.lang.String)
 	 */
 	@Override
-	public void setValue(String value) {
+	public void setValue(String value) { // NOSONAR I do want to override for doc purposes
 		// overriden for doc only
 		super.setValue(value);
 	}

@@ -46,7 +46,7 @@ public class ProjectPickerOption extends ContainerOption<ProjectPicker> {
 	 */
 	@Override
 	public void setContent(ProjectPicker content) {
-		throw new RuntimeException(
+		throw new IllegalArgumentException(
 				"Content cannot be set, it is automatically set to ProjetPicker. Remove the <property name=\"content\" /> tag");
 	}
 
@@ -74,10 +74,11 @@ public class ProjectPickerOption extends ContainerOption<ProjectPicker> {
 
 	/**
 	 * This is the value of the container option. It is automatically set to a sensible "PROJECT_PICKER" value
+	 * 
 	 * @see org.squashtest.tm.api.report.form.OptionInput#setValue(java.lang.String)
 	 */
 	@Override
-	public void setValue(String value) {
+	public void setValue(String value) { // NOSONAR I do want to override for doc purposes
 		// overriden for doc only
 		super.setValue(value);
 	}
