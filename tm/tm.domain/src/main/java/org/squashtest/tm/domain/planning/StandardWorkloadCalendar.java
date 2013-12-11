@@ -23,6 +23,7 @@ package org.squashtest.tm.domain.planning;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.joda.time.DateTimeConstants;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 
@@ -36,34 +37,40 @@ public class StandardWorkloadCalendar implements WorkloadCalendar {
 		return (isWeekend(date)) ? WEEKEND_DAY_WORKLOAD : BUSINESS_DAY_WORKLOAD;
 	}
 
-
-	@Override	
-	public float getWorkload(Date start, Date end) {
+	@Override
+	public float getWorkload(Date start, Date end){
+		return getWorkload(new LocalDate(start), new LocalDate(end));
+	}
+	
+	
+	
+	/*
+	 * We use Joda time, that uses the ISO 8601 format. As such sunday is the last day of a week, not the first day.
+	 */	
+	public float getWorkload(LocalDate start, LocalDate end){
 		
-		if (end.before(start)){
+		if (end.isBefore(start)){
 			throw new IllegalArgumentException("the end date should not predate the start date");
 		}
 		
-		Date restart = (isWeekend(start)) ? toNextMonday(start) : start;
+		LocalDate lstart = skipWeekendToMonday(start);
+		LocalDate lend = truncateWeekendToLastFriday(end);
 		
-		LocalDate lstart = new LocalDate(restart);
-		LocalDate lend = new LocalDate(end).plusDays(1);	//we add 1 day because end dates are inclusive
-
-		int daysbetween = Days.daysBetween(lstart, lend).getDays();
-		
-		//because of the next monday trick, the start could now happen after the end
-		//in that case, we return workload of WEEKEND_DAY_WORKLOAD (because this happens
-		//only when both dates are weekend days)
-		if (daysbetween <0){
-			return WEEKEND_DAY_WORKLOAD;
-		}else{
-		
-			int nbweeks = daysbetween / 7;
-			int remainder = daysbetween % 7;
-			
-			return nbweeks * (5* BUSINESS_DAY_WORKLOAD /*+ 2 * WEEKEND_DAY_WORKLOAD*/) + Math.min(remainder, 5) * BUSINESS_DAY_WORKLOAD;
+		// the following arises iif both days where in the weekend of the same week
+		if (lend.isBefore(lstart)){
+			return Days.daysBetween(start, end).getDays() * WEEKEND_DAY_WORKLOAD;
 		}
+
+		int daysbetween = Days.daysBetween(lstart, lend).getDays() +1;
+		int adjustedDaysbetween = daysbetween + (lstart.getDayOfWeek()-1);
+		int nbWeekend = adjustedDaysbetween / 7;
+		int nbweekdays = daysbetween - (nbWeekend*2);
+		
+		return nbweekdays * BUSINESS_DAY_WORKLOAD;
+		
 	}
+	
+
 	
 	private boolean isWeekend(Date date){
 		Calendar c = Calendar.getInstance();	// XXX thread safety ?
@@ -72,23 +79,35 @@ public class StandardWorkloadCalendar implements WorkloadCalendar {
 		return (day == Calendar.SATURDAY || day == Calendar.SUNDAY);
 	}	
 	
-	private Date toNextMonday(Date date){
-		Calendar c = Calendar.getInstance(); //XXX thread safety ?
-		c.setTime(date);
-		c.add(Calendar.WEEK_OF_YEAR, 1);
-		c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-		return c.getTime();
-	}
-
-	/*
 	private boolean isWeekend(LocalDate date){
 		return (date.getDayOfWeek() == DateTimeConstants.SATURDAY || date.getDayOfWeek() == DateTimeConstants.SUNDAY);
 	}
 	
-	private LocalDate toNextMonday(LocalDate date){
-		return date.plusWeeks(1).withDayOfWeek(DateTimeConstants.MONDAY);
-	}*/
-
-
 	
+	private LocalDate skipWeekendToMonday(LocalDate date){
+		if (isWeekend(date)){
+			return date.plusWeeks(1).withDayOfWeek(DateTimeConstants.MONDAY);
+		}
+		else{
+			return date;
+		}
+	}
+	
+	private LocalDate truncateWeekendToLastFriday(LocalDate date){
+		if (isWeekend(date)){
+			return date.withDayOfWeek(DateTimeConstants.FRIDAY);
+		}
+		else{
+			return date;
+		}
+	}
+	
+	private LocalDate nextMonday(LocalDate date){
+		return date.plusWeeks(1).withDayOfWeek(DateTimeConstants.MONDAY);
+	}
+
+	private LocalDate lastSunday(LocalDate date){
+		return date.minusWeeks(1).withDayOfWeek(DateTimeConstants.SUNDAY);
+	}
+
 }
