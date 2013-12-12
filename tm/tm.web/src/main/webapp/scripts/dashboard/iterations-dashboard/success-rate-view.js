@@ -21,6 +21,16 @@
 define(["../basic-objects/donut-view"], function(DonutView){
 
 	return DonutView.extend({
+
+
+		getSeries : function(){
+			var stats = this.model.get('iterationTestCaseSuccessRateStatistics');
+			return [ [["",stats.nbVeryHighSuccess], ["",stats.nbVeryHighFailure], ["",stats.nbVeryHighOther]],
+					 [["",stats.nbHighSuccess], ["",stats.nbHighFailure], ["",stats.nbHighOther]], 
+					 [["",stats.nbMediumSuccess], ["",stats.nbMediumFailure], ["",stats.nbMediumOther]], 
+			         [["",stats.nbLowSuccess], ["",stats.nbLowFailure], ["",stats.nbLowOther]]
+			];
+		}, 
 		
 		render : function(){
 			if (! this.model.isAvailable()){
@@ -29,6 +39,9 @@ define(["../basic-objects/donut-view"], function(DonutView){
 			
 			DonutView.prototype.render.call(this);
 			this._renderSubplot();
+			
+			// also, take care that the subplot and legend do not overlap
+			this.adjustFontsize();
 		},
 		
 		_renderSubplot : function(){
@@ -57,14 +70,45 @@ define(["../basic-objects/donut-view"], function(DonutView){
 		_sumAllOther : function(model){
 			return model.nbVeryHighOther + model.nbHighOther + model.nbMediumOther + model.nbLowOther;
 		},
+		
+
+		// ************** code managing font size for the legend and subplot ***************
+		
+		adjustFontsize : function(){
 			
-		getSeries : function(){
-			var stats = this.model.get('iterationTestCaseSuccessRateStatistics');
-			return [ [["",stats.nbVeryHighSuccess], ["",stats.nbVeryHighFailure], ["",stats.nbVeryHighOther]],
-					 [["",stats.nbHighSuccess], ["",stats.nbHighFailure], ["",stats.nbHighOther]], 
-					 [["",stats.nbMediumSuccess], ["",stats.nbMediumFailure], ["",stats.nbMediumOther]], 
-			         [["",stats.nbLowSuccess], ["",stats.nbLowFailure], ["",stats.nbLowOther]]
-			];
+			var meta = this.$el.find('.dashboard-item-meta'),
+				subplot = this.$el.find('.dashboard-item-subplot'),
+				legend = this.$el.find('.dashboard-item-legend');
+		
+			meta.find('div').css({'font-size' : '1.0em'});
+			
+			var adjusted = true,
+				newsize = 0.98;
+			
+			while (adjusted === true && newsize > 0.75){
+				adjusted = this._resizeIfNeeded(meta, subplot, legend, newsize+'em');
+				newsize = newsize - 0.02;
+			}
+			
+		},
+		
+		_resizeIfNeeded : function(meta, subplot, legend, size){
+			var changed = true;
+			
+			var bottomSubplot = subplot.position().top + subplot.height();
+			var legendTop = legend.position().top;
+			
+			if (legendTop < bottomSubplot){
+				meta.find('div').css({'font-size' : size});
+				changed = true;
+			}
+			else {
+				changed = false;
+			}
+			
+			return changed;
 		}
+
+		
 	});
 });
