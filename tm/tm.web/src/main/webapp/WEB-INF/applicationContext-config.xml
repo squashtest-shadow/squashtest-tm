@@ -35,7 +35,7 @@
       <array>
         <ref bean="squash.tm.auth.config" />
         <ref bean="squash.tm.uploadfilter.config" />
-        <ref bean="squash.tm.report.config" />
+        <ref bean="squash.tm.config.file" />
       </array>
     </property>
   </bean>

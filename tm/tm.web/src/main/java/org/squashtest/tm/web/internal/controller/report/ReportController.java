@@ -57,7 +57,7 @@ public class ReportController {
 	private ReportsRegistry reportsRegistry;
 
 	@Inject
-	@Value("${tm.report.project.multiselect}")
+	@Value("${report.criteria.project.multiselect:false}")
 	private boolean projectMultiselect;
 
 	/**
@@ -141,12 +141,4 @@ public class ReportController {
 		return generateReportView(namespace, index, viewIndex, format, form);
 	}
 	
-	public boolean isProjectMultiselect() {
-		return projectMultiselect;
-	}
-
-	public void setProjectMultiselect(boolean projectMultiselect) {
-		this.projectMultiselect = projectMultiselect;
-	}
-
 }
