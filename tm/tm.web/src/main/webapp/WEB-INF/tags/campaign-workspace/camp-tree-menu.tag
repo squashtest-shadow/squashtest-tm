@@ -73,7 +73,7 @@
 	</div>
 	</c:if>	
 	
-	<div class="button-group">
+	<div class="button-group snap-right">
 		<a id="delete-node-tree-button" ><f:message key="tree.button.delete.label" />...</a>
 	</div>
 </div>
