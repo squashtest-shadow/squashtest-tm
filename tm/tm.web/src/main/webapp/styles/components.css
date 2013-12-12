@@ -973,6 +973,13 @@ predefined for future evolutions :
 	width : 15px;
 }
 
+.dashboard-item-view .jqplot-data-label{
+	color : black;
+}
+
+/*
+ * The rules defined from now are for our own classes now. 
+ */ 
 .dashboard-item {
 	width : 48%;
 	height : 300px;	
