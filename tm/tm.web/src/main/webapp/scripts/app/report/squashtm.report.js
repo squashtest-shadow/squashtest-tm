@@ -28,8 +28,7 @@ var squashtm = squashtm || {};
  * @author Gregory Fouquet
  */
 define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "jqueryui", "jeditable", "jeditable.datepicker",
-		"jquery.squash", "jquery.squash.projectpicker", "jquery.cookie",
-		"datepicker/require.jquery.squash.datepicker-locales" ], function($, RWS, treebuilder) {
+		"jquery.squash", "jquery.cookie", "datepicker/require.jquery.squash.datepicker-locales" ], function($, RWS, treebuilder) {
 	var config = {
 		contextPath : "",
 		dateFormat : "dd/mm/yy",
@@ -140,7 +139,8 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "jqueryui", "j
 			};
 		});
 
-		if (dropdown.attr('name')) {
+		if (dropdown.attr('name')) { 
+			// ^^^^ why on earth name would be missing ? when it happens, sounds like a report config bug to me so it should not be managed here 
 			formState[dropdown.attr('name')] = state;
 		}
 	}

@@ -138,9 +138,10 @@
                 th:attr="data-locale=#{squashtm.locale}">01-02-2012</span>
             </div>
             
-            <div th:case="'DROPDOWN_LIST'">
+            <div th:case="'DROPDOWN_LIST'" class="rpt-drop">
               <label for="rpt-drop-crit" th:for="*{name}" th:text="*{label}">Dropdown
-                criteria</label> <select name="rpt-drop-crit" th:name="*{name}" size="1">
+                criteria</label>
+              <select name="rpt-drop-crit" th:name="*{name}" size="1">
                 <option th:each="opt : *{options}" th:name="${opt.name}"
                   th:value="${opt.value}" th:selected="${opt.defaultSelected}"
                   th:text="${opt.label}">Option</option>
@@ -241,12 +242,12 @@
                       th:name="*{name}" th:text="#{squashtm.nodata}" 
                       data-locale="fr" th:attr="data-locale=#{squashtm.locale}">01-02-2012</span>
                   </span>
-                  <div th:case="'PROJECT_PICKER'" class="report-selector">
+                  <div th:case="'PROJECT_PICKER'" class="report-selector rpt-projects-crit-container rpt-projects">
                     <label th:if="${!projectMultiselect}" th:for="*{name}" th:text="*{label}">Projects</label>
                     <label th:if="${projectMultiselect}" th:for="*{name}" 
                       th:text="#{report.form.project-picker.select-projects}">Projects</label>
                      <select th:if="${!projectMultiselect}" th:id="*{name}"
-                      class="rpt-projects-crit-container" th:attr="data-id-opened=*{name}">
+                      class="rpt-projects-crit" th:attr="data-id-opened=*{name}, data-single-select=${!projectMultiselect}">
                     </select>
                     <select th:if="${projectMultiselect}" multiple="multiple" th:id="*{name}" 
                       class="rpt-projects-crit-container" th:attr="data-id-opened=*{name}">
