@@ -387,9 +387,14 @@
 					nameHandler.referenceHidden = "#requirement-raw-reference";
 					
 					eventBus.addContextualListener(nameHandler);
+					
 					$("#print-requirement-version-button").click(function(){
 						window.open("${requirementUrl}?format=printable", "_blank");
 					});
+					
+					//****** tabs configuration *******
+					
+					$('.fragment-tabs').tabs();
 					
 				});
 			});
