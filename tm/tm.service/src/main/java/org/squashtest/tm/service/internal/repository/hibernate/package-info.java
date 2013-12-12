@@ -302,6 +302,7 @@
 		@NamedQuery(name = "CustomFieldBinding.findAllAlike", query="select cfb2 from CustomFieldBinding cfb1, CustomFieldBinding cfb2 where cfb1.id = ?1 and cfb1.boundProject = cfb2.boundProject and cfb1.boundEntity = cfb2.boundEntity order by cfb2.position"),
 		
 		//CustomFieldValue
+		@NamedQuery(name = "CustomFieldValue.findBoundEntityId", query="select cfv.boundEntityId from CustomFieldValue cfv where cfv.id = :customFieldValueId"),
 		@NamedQuery(name = "CustomFieldValue.findAllCustomValues", query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfv.boundEntityId = ?1 and cfv.boundEntityType = ?2 order by cfb.position asc"),
 		@NamedQuery(name = "CustomFieldValue.batchedFindAllCustomValuesFor", query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfv.boundEntityId in (:entityIds) and cfv.boundEntityType = :entityType order by cfv.boundEntityId asc, cfb.position asc"),
 		@NamedQuery(name = "CustomFieldValue.batchedRestrictedFindAllCustomValuesFor", query="select cfv from CustomFieldValue cfv join cfv.binding cfb join cfb.customField cf where cfv.boundEntityId in (:entityIds) and cfv.boundEntityType = :entityType " +

@@ -258,7 +258,11 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		CustomFieldValue changedValue = customFieldValueDao.findById(customFieldValueId);
 
 		BoundEntity boundEntity = boundEntityDao.findBoundEntity(changedValue);
-	
+		
+		Long boundEntityId = customFieldValueDao.findBoundEntityId(customFieldValueId); 
+		
+		
+		
 		if (!permissionService.hasMoreThanRead(boundEntity)) {
 			throw new AccessDeniedException("access is denied");
 		}
@@ -266,10 +270,10 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		changedValue.setValue(newValue);
 		
 		if(BindableEntity.TEST_CASE.equals(boundEntity.getBoundEntityType())){
-			advancedSearchService.reindexTestCase(boundEntity.getBoundEntityId());
+			advancedSearchService.reindexTestCase(boundEntityId);
 		}
 		if(BindableEntity.REQUIREMENT_VERSION.equals(boundEntity.getBoundEntityType())){
-			advancedSearchService.reindexRequirementVersion(boundEntity.getBoundEntityId());
+			advancedSearchService.reindexRequirementVersion(boundEntityId);
 		}
 	}
 

@@ -217,7 +217,7 @@ public interface CustomFieldValueDao {
 	}
 
 
-
+	Long findBoundEntityId(@QueryParam("customFieldValueId") Long customFieldValueId);
 
 
 	
