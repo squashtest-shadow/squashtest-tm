@@ -279,7 +279,7 @@ define([
 			x2ticks.push(axisStart);
 			for (i=0;i<len;i++){
 				var iter = iterations[i],
-					label = labeltpl.replace('{{this.name}}', iter.name);
+					label = labeltpl.replace('{{this.name}}', (i+1)+" - "+iter.name);
 				x2ticks.push([iter.scheduledStart, iter.scheduledEnd, label]);
 			}
 			x2ticks.push(axisEnd);
