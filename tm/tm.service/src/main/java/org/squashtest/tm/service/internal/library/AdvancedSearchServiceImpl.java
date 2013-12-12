@@ -761,7 +761,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 				
 				if("requirement.id".equals(fieldName) || "versionNumber".equals(fieldName) || 
 				    "id".equals(fieldName) ||
-				   "versions".equals(fieldName) || "testcases".equals(fieldName) || 
+				   "requirement.versions".equals(fieldName) || "testcases".equals(fieldName) || 
 				   "attachments".equals(fieldName)){
 					sortFieldArray[i] =  new SortField(fieldName, SortField.LONG, isReverse);
 				} else if("category".equals(fieldName)){
