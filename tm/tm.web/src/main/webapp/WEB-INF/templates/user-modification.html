@@ -388,7 +388,10 @@
 		<div class="no-more-teams"
 			th:text="#{message.allTeamsAlreadyLinkedToUser}">no more teams
 			to bind</div>
-		<div class="no-selected-teams" th:text="#{message.noTeamSelected}"></div>
+			<div class="no-team"
+			th:text="#{message.user.link.noTeam}">no teams
+			to bind</div>
+		<div class="no-selected-teams" th:text="#{message.noTeamSelected}">no selected team</div>
 		<div class="popup-dialog-buttonpane">
 			<input class="confirm" type="button" value="confirm"
 				th:value="#{label.Confirm}" /> <input class="cancel" type="button"
@@ -458,6 +461,7 @@
 			th:text="#{message.AllProjectsAlreadyLinkedToUser}">no more teams
 			to bind
 		</div>
+		
 		<div class="popup-dialog-buttonpane">
 			<input class="confirm" type="button" value="confirm"
 				th:value="#{label.Confirm}" /> <input class="cancel" type="button"

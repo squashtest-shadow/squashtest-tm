@@ -146,17 +146,17 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 					url : UMod.user.url.simple + "non-associated-teams",
 					dataType : 'json'
 				}).success(function(json) {
-					if (json.length > 0) {
-						var source = _.map(json, function(team) {
+					if(json.status != 'ok'){
+						dialog.activate(json.status);
+					}else {
+						var teams = json.teams;
+						var source = _.map(teams, function(team) {
 							return team.name;
 						});
 						input.autocomplete("option", "source", source);
-						dialog.nonAssociatedTeams = json;
+						dialog.nonAssociatedTeams = teams;
 						dialog.activate('main');
-					} else {
-						dialog.activate('no-more-teams');
-					}
-
+					} 
 				});
 			});
 

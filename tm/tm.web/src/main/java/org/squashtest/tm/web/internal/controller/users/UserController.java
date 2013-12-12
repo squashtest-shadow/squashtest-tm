@@ -46,6 +46,7 @@ import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.AdministrationService;
+import org.squashtest.tm.service.user.TeamFinderService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
@@ -73,6 +74,8 @@ public class UserController {
 	private AdministrationService service;
 
 	@Inject
+	private TeamFinderService teamFinder;
+	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
 
 	private static final String USER_ID_URL = "/{userId}";
@@ -81,15 +84,13 @@ public class UserController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
-	
-	@RequestMapping(value =  USER_ID_URL + "/general", method = RequestMethod.GET, produces="application/json")
+	@RequestMapping(value = USER_ID_URL + "/general", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
-	public JsonGeneralInfo refreshGeneralInfos(@PathVariable(USER_ID) long userId){
+	public JsonGeneralInfo refreshGeneralInfos(@PathVariable(USER_ID) long userId) {
 		User user = service.findUserById(userId);
-		return new JsonGeneralInfo((AuditableMixin)user);
-		
-	}
+		return new JsonGeneralInfo((AuditableMixin) user);
 
+	}
 
 	// ************************************ team section ************************
 
@@ -112,10 +113,22 @@ public class UserController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = USER_ID_URL + "/non-associated-teams", headers = "Accept=application/json")
 	@ResponseBody
-	public Collection<TeamModel> getNonAssociatedTeams(@PathVariable(USER_ID) long userId) {
+	public Map<String, Object> getNonAssociatedTeams(@PathVariable(USER_ID) long userId) {
 		LOGGER.info("Find teams where user #{} is not a member.", userId);
-		List<Team> nonAssociatedTeams = service.findAllNonAssociatedTeams(userId);
-		return CollectionUtils.collect(nonAssociatedTeams, new TeamModelCreator());
+		Map<String, Object> result = new HashMap<String, Object>();
+		long teamTot = teamFinder.countAll();
+		if (teamTot <= 0) {
+			result.put("status", "no-team");
+		} else {
+			List<Team> nonAssociatedTeams = service.findAllNonAssociatedTeams(userId);
+			if (nonAssociatedTeams.isEmpty()) {
+				result.put("status", "no-more-teams");
+			} else {
+				result.put("status", "ok");
+				result.put("teams", CollectionUtils.collect(nonAssociatedTeams, new TeamModelCreator()));
+			}
+		}
+		return result;
 	}
 
 	@RequestMapping(value = USER_ID_URL + "/teams/{ids}", method = RequestMethod.PUT)

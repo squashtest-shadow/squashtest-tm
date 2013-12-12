@@ -159,4 +159,12 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 
 		aclService.updateDerivedPermissions(memberId);
 	}
+
+	/**
+	 * @see CustomTeamFinderService#countAll()
+	 */
+	@Override
+	public long countAll() {
+		return teamDao.count();
+	}
 }

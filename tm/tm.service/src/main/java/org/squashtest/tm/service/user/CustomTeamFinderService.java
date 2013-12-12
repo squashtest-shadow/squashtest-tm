@@ -27,18 +27,26 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
+
 /**
-* Holder for non dynamically generated find methods for {@link Team}
+ * Holder for non dynamically generated find methods for {@link Team}
+ * 
  * @author mpagnon
- *
+ * 
  */
 public interface CustomTeamFinderService {
 
 	PagedCollectionHolder<List<Team>> findAllFiltered(PagingAndSorting sorting, Filtering filtering);
-	
 
 	List<User> findAllNonMemberUsers(long teamId);
-	
-	
+
 	PagedCollectionHolder<List<User>> findAllTeamMembers(long teamId, PagingAndSorting sorting, Filtering filtering);
+
+	/**
+	 * Will count all Teams in the database.
+	 * (could not manage to make this a dynamic method)
+	 * 
+	 * @return the total number of teams in the database.
+	 */
+	long countAll();
 }
