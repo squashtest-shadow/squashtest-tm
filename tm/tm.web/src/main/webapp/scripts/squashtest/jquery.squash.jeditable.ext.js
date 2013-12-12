@@ -63,8 +63,10 @@
 			cols : 80,
 			onblur : function() {
 			},
+			// abort edit if clicked on a hyperlink (being the tag itself or its content)
 			onedit : function(settings, editable, evt){
-				return ! $(evt.target).is('a');
+				var $target = $(evt.target);
+				return ! ( $target.is('a') || $target.parents('a').length > 0);  
 			}
 		},
 
