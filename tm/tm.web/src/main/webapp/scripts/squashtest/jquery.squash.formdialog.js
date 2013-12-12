@@ -147,8 +147,10 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui',
 			listeners.push(handler);
 		},
 
+		// FIXME : is this method ever used ?
 		cancel : function(event) {
-			if (!this.close()) {
+			var isclose = this.close();
+			if (isclose === false) {
 				return;
 			}
 
@@ -211,8 +213,7 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui',
 
 			// declares custom events
 			self._on({
-				"click .ui-dialog-buttonpane :input" : self._triggerCustom,
-				"click .ui-dialog-titlebar-close" : self.cancel
+				"click .ui-dialog-buttonpane :input" : self._triggerCustom
 			});
 
 			// autoremove when parent container is removed

@@ -48,7 +48,7 @@ define(["jquery", "squash.statusfactory", "squash.translator",
 				
 				// events 
 				this.onOwnBtn('mainclose', function(){
-					self._mainclose();
+					self.close();
 				});
 				
 				this.onOwnBtn('warningok', function(){
@@ -60,15 +60,21 @@ define(["jquery", "squash.statusfactory", "squash.translator",
 				});
 			},
 			
-			_mainclose : function(){
+			close : function(){
 				
-				// check : if the suite wasn't finished, we must tell the user
+				// check : if the suite wasn't finished, we must let the user confirm
 				var suite = this.options.suite;
-				if (!! suite && suite.percentage < 100){
+				if (!! suite && suite.percentage < 100 && this.getState() !== 'warning'){
 					this.setState('warning');
+					return false;
 				}
+				// else we actually close that dialog
 				else{
-					this.close();
+					this._super();
+					if (!! this.options.intervalId ){
+						clearInterval(this.options.intervalId);
+					}
+					this._cleancontent();
 				}
 				
 			}, 
@@ -76,14 +82,7 @@ define(["jquery", "squash.statusfactory", "squash.translator",
 			unclose : function (){
 				this.setState('main');
 			},
-			
-			close : function(){
-				this._super();
-				if (!! this.options.intervalId ){
-					clearInterval(this.options.intervalId);
-				}
-				this._cleancontent();
-			},
+
 			
 			_cleancontent : function(){
 				
