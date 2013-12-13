@@ -40,6 +40,10 @@
  * 
  */
 
+/*
+ * Override of jstree.dnd.start_drag. In order to handle vertical and horizontal scrolling the plugin needs to initialize 
+ * some variables and that phase is buggy.  * 
+ */
 define(['jquery'], function($){
 	
 	return function(){
@@ -113,6 +117,27 @@ define(['jquery'], function($){
 
 		};
 		
-	};
-	
+		var old_start_drag = $.jstree._fn.start_drag;
+		
+		$.jstree._fn.start_drag =  function (obj, e) {
+			
+			old_start_drag.call(this, obj, e);
+			
+			/*
+			 * The following code from the "super" method is changed. See comments that goes along.
+			 * 
+			 * this.data.dnd.cof = cnt.children("ul").offset();
+			 * this.data.dnd.cw = parseInt(cnt.width(),10);
+			 * this.data.dnd.ch = parseInt(cnt.height(),10);
+			 */
+			
+			var cnt = this.get_container();
+			
+			this.data.dnd.cof = cnt.offset();		// because the children("ul") could be hidden because of the scrolling down, leading to unreachable offset values
+			this.data.dnd.cw = parseInt(cnt.width(),10) - 15; //this margin of 15 compensates for the space eaten by scrollbars when they are visible  
+			this.data.dnd.ch = parseInt(cnt.height(),10)- 15; //this margin of 15 compensates for the space eaten by scrollbars when they are visible  
+			this.data.dnd.active = true;
+		
+		};
+	}
 });
