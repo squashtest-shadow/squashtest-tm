@@ -23,71 +23,67 @@ package org.squashtest.tm.service.internal.customfield;
 import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
 
-
 /**
- * That interface is called so because it should remain private to this bundle. The reason is that the methods will not be secured. 
+ * That interface is called so because it should remain private to this bundle. The reason is that the methods will not
+ * be secured.
  * 
  * @author bsiri
- *
+ * 
  */
 public interface PrivateCustomFieldValueService extends CustomFieldValueManagerService {
 
-	
 	/**
 	 * Will create a custom field value for all the entities affected by the given binding
 	 * 
 	 * @param binding
 	 */
 	void cascadeCustomFieldValuesCreation(CustomFieldBinding binding);
-	
-	
+
 	/**
 	 * Will remove the custom field values corresponding to the given binding
 	 * 
 	 * @param binding
 	 */
 	void cascadeCustomFieldValuesDeletion(CustomFieldBinding binding);
-	
-	
+
 	/**
 	 * Will remove the custom field values corresponding to the bindings, given their ids.
 	 * 
 	 * @param binding
 	 */
-	void cascadeCustomFieldValuesDeletion(List<Long> customFieldBindingIds);	
-	
-	
+	void cascadeCustomFieldValuesDeletion(List<Long> customFieldBindingIds);
+
 	/**
-	 * Will create all the custom field values for one entity. 
+	 * Will create all the custom field values for one entity.
 	 * 
 	 * @param entity
 	 */
 	void createAllCustomFieldValues(BoundEntity entity);
-	
 
-	
-		
 	/**
 	 * will delete all the custom field vales for one entity
 	 * 
 	 * @param entity
 	 */
 	void deleteAllCustomFieldValues(BoundEntity entity);
-	
 
 	/**
 	 * Will delete all the custom field values for multiple BoundEntities
-	 * @param entityType the BindableEntity that all of the BoundEntity must share
-	 * @param entityIds the ids of those BoundEntities
+	 * 
+	 * @param entityType
+	 *            the BindableEntity that all of the BoundEntity must share
+	 * @param entityIds
+	 *            the ids of those BoundEntities
 	 */
 	void deleteAllCustomFieldValues(BindableEntity entityType, List<Long> entityIds);
-	
 
 	/**
 	 * Will copy the custom field values from an entity to another entity, creating them in the process
@@ -95,34 +91,33 @@ public interface PrivateCustomFieldValueService extends CustomFieldValueManagerS
 	 * @param entity
 	 */
 	void copyCustomFieldValues(BoundEntity source, BoundEntity recipient);
-	
-	
+
 	/**
 	 * Will copy the custom field values from an entity to another entity. It assumes that the custom field values
-	 * already exists for both, and will simply invoke {@link CustomFieldValue#setValue(String)} from one to the other. 
+	 * already exists for both, and will simply invoke {@link CustomFieldValue#setValue(String)} from one to the other.
 	 * 
 	 * 
 	 * @param source
 	 * @param dest
 	 */
 	void copyCustomFieldValuesContent(BoundEntity source, BoundEntity recipient);
-	
-	
+
 	/**
-	 * Will ensure that the custom field values of an entity are consistent with the custom fields bound to the project it belongs to, at the time when the method is invoked.
-	 * Indeed inconsistencies arise when an entity is moved from one project to another. This method will fix these inconsistencies in three steps : 
+	 * Will ensure that the custom field values of an entity are consistent with the custom fields bound to the project
+	 * it belongs to, at the time when the method is invoked. Indeed inconsistencies arise when an entity is moved from
+	 * one project to another. This method will fix these inconsistencies in three steps :
 	 * <ol>
-	 * 	<li>creating the custom field values corresponding to the bindings of the current project,</li>
-	 * 	<li>copy the custom field values from the former project into those of the new project if any matching values are found,</li>
-	 * 	<li>delete the custom field values from the former project.</li>
+	 * <li>creating the custom field values corresponding to the bindings of the current project,</li>
+	 * <li>copy the custom field values from the former project into those of the new project if any matching values are
+	 * found,</li>
+	 * <li>delete the custom field values from the former project.</li>
 	 * <ol>
-	 *    
+	 * 
 	 * 
 	 * @param entity
 	 */
 	void migrateCustomFieldValues(BoundEntity entity);
-	
-	
+
 	/**
 	 * Same as {@link #migrateCustomFieldValues(BoundEntity)}, batched version.
 	 * 

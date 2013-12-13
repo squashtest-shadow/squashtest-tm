@@ -258,7 +258,6 @@ that page won't be editable if
 	<c:if test="${writable }">
 		<comp:rich-jeditable targetUrl="${ requirementUrl }" componentId="requirement-description" />
 		<%-- make requirement-reference editable --%>
-		<%-- TODO put at end of page, maybe componentize --%>
 		<comp:simple-jeditable targetUrl="${ requirementUrl }" componentId="requirement-reference" submitCallback="updateReferenceInTitle" maxLength="50" />
 	</c:if>
 <%--------------------------- General Informations section ------------------------------------%>

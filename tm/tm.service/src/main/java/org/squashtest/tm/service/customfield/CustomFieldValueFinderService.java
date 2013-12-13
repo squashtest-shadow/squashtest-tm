@@ -42,8 +42,8 @@ public interface CustomFieldValueFinderService {
 	List<CustomFieldValue> findAllCustomFieldValues(BoundEntity boundEntity);
 
 	/**
-	 * Same as {@link #findAllCustomFieldValues(BoundEntity)}, using a List of entities instead.
-	 * This method is pure convenience, to fetch custom fields in bulk (and soften the db queries overhead).
+	 * Same as {@link #findAllCustomFieldValues(BoundEntity)}, using a List of entities instead. This method is pure
+	 * convenience, to fetch custom fields in bulk (and soften the db queries overhead).
 	 * 
 	 * The order of the result is arbitrary.
 	 * 
@@ -51,10 +51,9 @@ public interface CustomFieldValueFinderService {
 	 * @return
 	 */
 	List<CustomFieldValue> findAllCustomFieldValues(Collection<? extends BoundEntity> boundEntities);
-	
-	
+
 	/**
-	 * Same as {@link #findAllCustomFieldValues(Collection)}, but only the values refering to one of the custom fields 
+	 * Same as {@link #findAllCustomFieldValues(Collection)}, but only the values refering to one of the custom fields
 	 * given as argument will be retained.
 	 * 
 	 * 
@@ -62,9 +61,9 @@ public interface CustomFieldValueFinderService {
 	 * @param restrictedToThoseCustomfields
 	 * @return
 	 */
-	List<CustomFieldValue> findAllCustomFieldValues(Collection<? extends BoundEntity> boundEntities, Collection<CustomField> restrictedToThoseCustomfields);
-	
-	
+	List<CustomFieldValue> findAllCustomFieldValues(Collection<? extends BoundEntity> boundEntities,
+			Collection<CustomField> restrictedToThoseCustomfields);
+
 	/**
 	 * Tells whether the given bound entity has custom fields or not.
 	 * 
@@ -91,8 +90,15 @@ public interface CustomFieldValueFinderService {
 	 * @param bindableEntity
 	 * @return
 	 */
-	List<CustomFieldValue> findAllCustomFieldValues(Long boundEntityId, BindableEntity bindableEntity);
-	
-	
-	
+	List<CustomFieldValue> findAllCustomFieldValues(long boundEntityId, BindableEntity bindableEntity);
+
+	/**
+	 * Tells if the CF values of the given entity are editable, according to both security rules and sensible business
+	 * rules.
+	 * 
+	 * @param boundEntityId
+	 * @param bindableEntity
+	 * @return
+	 */
+	boolean areValuesEditable(long boundEntityId, BindableEntity bindableEntity);
 }

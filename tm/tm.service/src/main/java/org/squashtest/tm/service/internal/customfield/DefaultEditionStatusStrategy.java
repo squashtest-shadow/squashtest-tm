@@ -18,16 +18,34 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.customfield;
 
-public interface CustomFieldValueManagerService extends CustomFieldValueFinderService {
+package org.squashtest.tm.service.internal.customfield;
+
+
+import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.customfield.BindableEntity;
+
+/**
+ * ValueEditionStrategy which only checks for ACLs
+ * 
+ * @author Gregory Fouquet
+ * 
+ */
+@Component
+class DefaultEditionStatusStrategy extends ValueEditionStatusHelper implements ValueEditionStatusStrategy {
+	/**
+	 * 
+	 */
+	public DefaultEditionStatusStrategy() {
+		super();
+	}
 
 	/**
-	 * Will update the value of a {@link CustomFieldValue} using its Id. The service will check that the requestor has
-	 * the correct credentials.
-	 * 
-	 * @param customFieldValueId
-	 * @param newValue
+	 * @see org.squashtest.tm.service.internal.customfield.ValueEditionStatusStrategy#isEditable(long, org.squashtest.tm.domain.customfield.BindableEntity)
 	 */
-	void changeValue(long customFieldValueId, String newValue);
+	@Override
+	public boolean isEditable(long boundEntityId, BindableEntity bindableEntity) {
+		return userHasPermission(boundEntityId, bindableEntity);
+	}
+
 }

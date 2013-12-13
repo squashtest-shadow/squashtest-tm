@@ -18,16 +18,35 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.customfield;
 
-public interface CustomFieldValueManagerService extends CustomFieldValueFinderService {
+package org.squashtest.tm.service.internal.customfield;
+
+import javax.inject.Inject;
+
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+
+/**
+ * 
+ * @author Gregory Fouquet
+ * 
+ */
+abstract class ValueEditionStatusHelper implements ValueEditionStatusStrategy {
+
+	@Inject
+	private PermissionEvaluationService permissionEvaluator;
 
 	/**
-	 * Will update the value of a {@link CustomFieldValue} using its Id. The service will check that the requestor has
-	 * the correct credentials.
 	 * 
-	 * @param customFieldValueId
-	 * @param newValue
 	 */
-	void changeValue(long customFieldValueId, String newValue);
+	public ValueEditionStatusHelper() {
+		super();
+	}
+
+	protected final boolean userHasPermission(long boundEntityId, BindableEntity bindableEntity) {
+		boolean hasPermission = permissionEvaluator.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", boundEntityId,
+				bindableEntity.getReferencedClass().getName());
+		return hasPermission;
+	}
+
 }

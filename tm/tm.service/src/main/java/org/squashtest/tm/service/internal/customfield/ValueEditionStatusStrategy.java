@@ -18,16 +18,17 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.customfield;
 
-public interface CustomFieldValueManagerService extends CustomFieldValueFinderService {
+package org.squashtest.tm.service.internal.customfield;
 
-	/**
-	 * Will update the value of a {@link CustomFieldValue} using its Id. The service will check that the requestor has
-	 * the correct credentials.
-	 * 
-	 * @param customFieldValueId
-	 * @param newValue
-	 */
-	void changeValue(long customFieldValueId, String newValue);
+import org.squashtest.tm.domain.customfield.BindableEntity;
+
+/**
+ * Strategy for computing a CF value edition status.
+ * 
+ * @author Gregory Fouquet
+ * 
+ */
+interface ValueEditionStatusStrategy {
+	boolean isEditable(long boundEntityId, BindableEntity bindableEntity);
 }

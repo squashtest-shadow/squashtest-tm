@@ -18,16 +18,35 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.customfield;
 
-public interface CustomFieldValueManagerService extends CustomFieldValueFinderService {
+package org.squashtest.tm.service.internal.customfield
 
-	/**
-	 * Will update the value of a {@link CustomFieldValue} using its Id. The service will check that the requestor has
-	 * the correct credentials.
-	 * 
-	 * @param customFieldValueId
-	 * @param newValue
-	 */
-	void changeValue(long customFieldValueId, String newValue);
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+
+import spock.lang.Specification
+
+/**
+ * @author Gregory
+ *
+ */
+class DefaultEditionStatusStrategyTest extends Specification {
+	DefaultEditionStatusStrategy strategy = new DefaultEditionStatusStrategy()
+	PermissionEvaluationService permEvaluator = Mock()
+	
+	def setup() {
+		use(ReflectionCategory) {
+			ValueEditionStatusHelper.set field: "permissionEvaluator", of: strategy, to: permEvaluator
+		}
+	}
+	
+	def "should be editable"() {
+		given:
+		permEvaluator.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", 0, TestCase.name) >> true
+		
+		expect: 
+		strategy.isEditable(0, BindableEntity.TEST_CASE)
+	}
 }

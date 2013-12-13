@@ -46,15 +46,8 @@ import org.squashtest.tm.web.internal.model.customfield.CustomFieldValueModel;
 @Controller
 @RequestMapping("/custom-fields/values")
 public class CustomFieldValuesController {
-
-	/**
-	 * 
-	 */
 	private static final String BOUND_ENTITY_TYPE = "boundEntityType";
 
-	/**
-	 * 
-	 */
 	private static final String BOUND_ENTITY_ID = "boundEntityId";
 
 	@Inject
@@ -71,7 +64,7 @@ public class CustomFieldValuesController {
 
 	@RequestMapping(method = RequestMethod.GET, params = { BOUND_ENTITY_ID, BOUND_ENTITY_TYPE }, headers = RequestHeaders.CONTENT_JSON)
 	@ResponseBody
-	public List<CustomFieldValueModel> getCustomFieldValuesForEntity(@RequestParam(BOUND_ENTITY_ID) Long id,
+	public List<CustomFieldValueModel> getCustomFieldValuesForEntity(@RequestParam(BOUND_ENTITY_ID) long id,
 			@RequestParam(BOUND_ENTITY_TYPE) BindableEntity entityType) {
 
 		List<CustomFieldValue> values = managerService.findAllCustomFieldValues(id, entityType);
@@ -81,13 +74,11 @@ public class CustomFieldValuesController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, params = { BOUND_ENTITY_ID, BOUND_ENTITY_TYPE })
-	public ModelAndView getCustomFieldValuesPanel(@RequestParam(BOUND_ENTITY_ID) Long id,
+	public ModelAndView getCustomFieldValuesPanel(@RequestParam(BOUND_ENTITY_ID) long id,
 			@RequestParam(BOUND_ENTITY_TYPE) BindableEntity entityType, Locale locale) {
 
 		List<CustomFieldValue> values = managerService.findAllCustomFieldValues(id, entityType);
-
-		boolean editable = permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", id, entityType
-				.getReferencedClass().getName());
+		boolean editable = managerService.areValuesEditable(id, entityType);
 
 		CustomFieldValueConfigurationBean conf = new CustomFieldValueConfigurationBean(values);
 

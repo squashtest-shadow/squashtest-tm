@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -48,6 +49,10 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 @Service("squashtest.tm.service.CustomFieldValueManagerService")
 @Transactional
 public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldValueService {
+	@Inject @Named("defaultEditionStatusStrategy")
+	private ValueEditionStatusStrategy defaultEditionStatusStrategy;
+	@Inject @Named("requirementBoundEditionStatusStrategy")
+	private ValueEditionStatusStrategy requirementBoundEditionStatusStrategy;
 
 	@Inject
 	private CustomFieldValueDao customFieldValueDao;
@@ -60,7 +65,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 	@Inject
 	private PermissionEvaluationService permissionService;
-	
+
 	@Inject
 	private AdvancedSearchService advancedSearchService;
 
@@ -92,7 +97,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<CustomFieldValue> findAllCustomFieldValues(Long boundEntityId, BindableEntity bindableEntity) {
+	public List<CustomFieldValue> findAllCustomFieldValues(long boundEntityId, BindableEntity bindableEntity) {
 
 		BoundEntity boundEntity = boundEntityDao.findBoundEntity(boundEntityId, bindableEntity);
 
@@ -154,10 +159,10 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 			CustomFieldValue value = binding.createNewValue();
 			value.setBoundEntity(entity);
 			customFieldValueDao.persist(value);
-			if(BindableEntity.TEST_CASE.equals(entity.getBoundEntityType())){
+			if (BindableEntity.TEST_CASE.equals(entity.getBoundEntityType())) {
 				advancedSearchService.reindexTestCase(entity.getBoundEntityId());
 			}
-			if(BindableEntity.REQUIREMENT_VERSION.equals(entity.getBoundEntityType())){
+			if (BindableEntity.REQUIREMENT_VERSION.equals(entity.getBoundEntityType())) {
 				advancedSearchService.reindexRequirementVersion(entity.getBoundEntityId());
 			}
 		}
@@ -172,12 +177,12 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	public void cascadeCustomFieldValuesDeletion(List<Long> customFieldBindingIds) {
 
 		List<CustomFieldValue> allValues = customFieldValueDao.findAllCustomValuesOfBindings(customFieldBindingIds);
-		for(CustomFieldValue value : allValues){
+		for (CustomFieldValue value : allValues) {
 			BoundEntity boundEntity = boundEntityDao.findBoundEntity(value);
-			if(BindableEntity.TEST_CASE.equals(boundEntity.getBoundEntityType())){
+			if (BindableEntity.TEST_CASE.equals(boundEntity.getBoundEntityType())) {
 				advancedSearchService.reindexTestCase(boundEntity.getBoundEntityId());
 			}
-			if(BindableEntity.REQUIREMENT_VERSION.equals(boundEntity.getBoundEntityType())){
+			if (BindableEntity.REQUIREMENT_VERSION.equals(boundEntity.getBoundEntityType())) {
 				advancedSearchService.reindexRequirementVersion(boundEntity.getBoundEntityId());
 			}
 		}
@@ -195,11 +200,11 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 				CustomFieldValue value = binding.createNewValue();
 				value.setBoundEntity(entity);
 				customFieldValueDao.persist(value);
-				
-				if(BindableEntity.TEST_CASE.equals(entity.getBoundEntityType())){
+
+				if (BindableEntity.TEST_CASE.equals(entity.getBoundEntityType())) {
 					advancedSearchService.reindexTestCase(entity.getBoundEntityId());
 				}
-				if(BindableEntity.REQUIREMENT_VERSION.equals(entity.getBoundEntityType())){
+				if (BindableEntity.REQUIREMENT_VERSION.equals(entity.getBoundEntityType())) {
 					advancedSearchService.reindexRequirementVersion(entity.getBoundEntityId());
 				}
 			}
@@ -258,21 +263,19 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		CustomFieldValue changedValue = customFieldValueDao.findById(customFieldValueId);
 
 		BoundEntity boundEntity = boundEntityDao.findBoundEntity(changedValue);
-		
-		Long boundEntityId = customFieldValueDao.findBoundEntityId(customFieldValueId); 
-		
-		
-		
+
+		Long boundEntityId = customFieldValueDao.findBoundEntityId(customFieldValueId);
+
 		if (!permissionService.hasMoreThanRead(boundEntity)) {
 			throw new AccessDeniedException("access is denied");
 		}
 
 		changedValue.setValue(newValue);
-		
-		if(BindableEntity.TEST_CASE.equals(boundEntity.getBoundEntityType())){
+
+		if (BindableEntity.TEST_CASE.equals(boundEntity.getBoundEntityType())) {
 			advancedSearchService.reindexTestCase(boundEntityId);
 		}
-		if(BindableEntity.REQUIREMENT_VERSION.equals(boundEntity.getBoundEntityType())){
+		if (BindableEntity.REQUIREMENT_VERSION.equals(boundEntity.getBoundEntityType())) {
 			advancedSearchService.reindexRequirementVersion(boundEntityId);
 		}
 	}
@@ -330,6 +333,28 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 			idList.add(entity.getBoundEntityId());
 		}
 		return segregatedEntities;
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.customfield.CustomFieldValueFinderService#areValuesEditable(long,
+	 *      org.squashtest.tm.domain.customfield.BindableEntity)
+	 */
+	@Override
+	public boolean areValuesEditable(long boundEntityId, BindableEntity bindableEntity) {
+		return editableStrategy(bindableEntity).isEditable(boundEntityId, bindableEntity);
+	}
+
+	/**
+	 * @param bindableEntity
+	 * @return
+	 */
+	private ValueEditionStatusStrategy editableStrategy(BindableEntity bindableEntity) {
+		switch (bindableEntity) {
+		case REQUIREMENT_VERSION:
+			return requirementBoundEditionStatusStrategy;
+		default:
+			return defaultEditionStatusStrategy;
+		}
 	}
 
 }
