@@ -171,14 +171,13 @@
                       <input th:id="*{name} + '-open'" type="button" class="button rpt-tree-crit-open"
                         th:value="#{report.form.tree-picker.button.label}" th:attr="data-id-opened=*{name} + '-dialog'" />
                     </div>
-  
-                    <div th:case="'PROJECT_PICKER'" th:object="${opt.content}" class="report-selector">
-                      <select th:if="${!projectMultiselect}" th:id="*{name}" class="rpt-projects-crit-container"
-                        th:attr="data-id-opened=*{name}"></select>
-                      <select th:if="${projectMultiselect}" multiple="multiple" th:id="*{name}" 
-                        class="rpt-projects-crit-container" th:attr="data-id-opened=*{name}"></select>
+
+                    <div th:case="'PROJECT_PICKER'" th:object="${opt.content}" class="report-selector rpt-projects-crit-container rpt-projects">
+                      <select th:id="*{name}" th:name="*{name}" class="rpt-projects-crit" 
+                        th:attr="data-multi-select=${projectMultiselect}">
+                      </select>
                     </div>
-                      
+                    
                     <div th:case="*">
                       Unsupported type : ${opt.content.type.name()}
                     </div>
@@ -213,21 +212,11 @@
             </div>
             
             <div th:case="'PROJECT_PICKER'">
-              <div th:id="*{name}"
-                th:title="#{report.form.project-picker.dialog.title}"
-                class="rpt-projects-crit-container project-picker popup-dialog not-displayed">
-                <div class="project-item-template not-displayed">
-                  <div class="project-item ">
-                    <input type="radio" name="project" class="project-checkbox" />
-                    <span class="project-name"></span>
-                  </div>
-                </div>
-                <label th:for="*{name} + '-open'" th:text="*{label}">Projects</label>
-                <input th:id="*{name} + '-open'" type="button"
-                  class="button rpt-projects-crit-open"
-                  th:value="#{report.form.project-picker.button.label}"
-                  th:attr="data-id-opened=*{name}" />
-              </div>
+              <label th:for="*{name}" 
+                th:text="${projectMultiselect}?#{report.form.project-picker.select-projects}:*{label}">Projects</label>
+              <select th:id="*{name}" th:name="*{name}" class="rpt-projects-crit" 
+                th:attr="data-multi-select=${projectMultiselect}">
+              </select>
             </div>
 
             <div th:case="'INPUTS_GROUP'">
@@ -243,14 +232,10 @@
                       data-locale="fr" th:attr="data-locale=#{squashtm.locale}">01-02-2012</span>
                   </span>
                   <div th:case="'PROJECT_PICKER'" class="report-selector rpt-projects-crit-container rpt-projects">
-                    <label th:if="${!projectMultiselect}" th:for="*{name}" th:text="*{label}">Projects</label>
-                    <label th:if="${projectMultiselect}" th:for="*{name}" 
-                      th:text="#{report.form.project-picker.select-projects}">Projects</label>
-                     <select th:if="${!projectMultiselect}" th:id="*{name}"
-                      class="rpt-projects-crit" th:attr="data-id-opened=*{name}, data-single-select=${!projectMultiselect}">
-                    </select>
-                    <select th:if="${projectMultiselect}" multiple="multiple" th:id="*{name}" 
-                      class="rpt-projects-crit-container" th:attr="data-id-opened=*{name}">
+                    <label th:for="*{name}" 
+                      th:text="${projectMultiselect}?#{report.form.project-picker.select-projects}:*{label}">Projects</label>
+                    <select th:id="*{name}" th:name="*{name}" class="rpt-projects-crit" 
+                      th:attr="data-multi-select=${projectMultiselect}">
                     </select>
                   </div>
                   <div th:case="*">

@@ -27,8 +27,8 @@ var squashtm = squashtm || {};
  * 
  * @author Gregory Fouquet
  */
-define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "jqueryui", "jeditable", "jeditable.datepicker",
-		"jquery.squash", "jquery.cookie", "datepicker/require.jquery.squash.datepicker-locales" ], function($, RWS, treebuilder) {
+define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", "jqueryui", "jeditable", "jeditable.datepicker",
+		"jquery.squash", "jquery.cookie", "datepicker/require.jquery.squash.datepicker-locales" ], function($, RWS, treebuilder, _) {
 	var config = {
 		contextPath : "",
 		dateFormat : "dd/mm/yy",
@@ -127,23 +127,21 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "jqueryui", "j
 		});
 	}
 
-	function onListItemSelected() {
-		var dropdown = $(this);
-		var options = dropdown.find("option");
-
-		var state = $.map(options, function(item, index) {
-			return {
-				value : item.value,
-				selected : item.selected,
-				type : 'DROPDOWN_LIST'
-			};
-		});
-
-		if (dropdown.attr('name')) { 
-			// ^^^^ why on earth name would be missing ? when it happens, sounds like a report config bug to me so it should not be managed here 
-			formState[dropdown.attr('name')] = state;
-		}
+	function onListItemSelected(listType) {
+		return function() {
+			var dropdown = $(this);
+			var options = dropdown.find("option");
+	
+			formState[this.name] =  _.map(options, function(option) {
+				return {
+					value : option.value,
+					selected : option.selected,
+					type : listType
+				};
+			});
+		};
 	}
+	
 
 	function onTextBlurred() {
 		formState[this.name] = {
@@ -171,8 +169,8 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "jqueryui", "j
 	}
 
 	function initDropdowns(panel) {
-		var dropdowns = panel.find('select');
-		dropdowns.change(onListItemSelected);
+		var dropdowns = panel.find(".rpt-drop select");
+		dropdowns.change(onListItemSelected("DROPDOWN_LIST"));
 		dropdowns.change();
 
 		if (preferences) {
@@ -588,72 +586,52 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "jqueryui", "j
 		}
 	}
 
-	function onProjectPickerChanged() {
-		var picker = $(this);
-
-		var options = $("option", picker);
-
-		formState[this.id] = $.map(options, function(option) {
-			return {
-				value : option.value,
-				selected : option.selected,
-				type : "PROJECT_PICKER"
-			};
-		});
-	}
-
-	function initProjectPickerCallback() {
-
-		var picker = $(this);
+	function initProjectPickers(panel) {
 		var url = config.contextPath + "/projects?format=picker";
-		var formid = this.id;
 
-		// load options
-		$.getJSON(url).done(function(data) {
-			$.each(data.projectData, function(index, value) {
-				if (index === 0) {
-					picker.append("<option selected='selected' value='" + value[0] + "'>" + value[1] + "</option>");
-				} else {
-					picker.append("<option value='" + value[0] + "'>" + value[1] + "</option>");
+		panel.find(".rpt-projects > select").each(function() {
+			var $picker = $(this);
+			
+			if($picker.data("multi-select") === true) {
+				$picker.attr("multiple", "multiple");
+			}
+			
+			var inputId = this.name;
+			
+			// load options
+			// TODO duh, we perform the same request once per picker...
+			$.getJSON(url).done(function(data) {
+				
+				var optionsHtml = _.reduce(data.projectData, function(memo, project) {
+					var selected = (memo === "") ? "selected = '' " : "";
+					return memo += "<option " + selected + "value='" + project[0] + "'>" + project[1] + "</option>";
+				}, "");
+				
+				$picker.append(optionsHtml);
+				$picker.change(onListItemSelected("PROJECT_PICKER"));
+				$picker.change();
+				
+				if (preferences) {
+					var name = $picker.attr("name");
+					var preferenceForName = preferences[name];
+					options = $picker.find("option");
+					
+					$.each(options, function(index, option) {
+						$.each(preferenceForName, function(index, element) {
+							var value = element.value;
+							if (option.value == value && element.selected) {
+								$(option).attr("selected", true);
+							} else if (option.value == value && !element.selected) {
+								$(option).attr("selected", false);
+							}
+						});
+					});
+					
+					$picker.change();
 				}
 			});
-
-			var options = $("option", picker);
-
-			formState[formid] = $.map(options, function(option) {
-				return {
-					value : option.value,
-					selected : option.selected,
-					type : "PROJECT_PICKER"
-				};
-			});
-
-			if (preferences) {
-				var name = picker[0].id;
-				var preferenceForName = preferences[name];
-				options = $("option", picker[0]);
-
-				$.each(options, function(index, option) {
-					$.each(preferenceForName, function(index, element) {
-						var value = element.value;
-						if (option.value == value && element.selected) {
-							$(option).attr("selected", true);
-						} else if (option.value == value && !element.selected) {
-							$(option).attr("selected", false);
-						}
-					});
-				});
-
-				picker.change();
-			}
 		});
-
-		picker.change(onProjectPickerChanged);
-
-	}
-
-	function initProjectPickers(panel) {
-		panel.find(".rpt-projects-crit-container").each(initProjectPickerCallback);
+		
 	}
 
 	function init(settings) {
@@ -661,6 +639,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "jqueryui", "j
 		resetState();
 		config = $.extend(config, settings);
 		// Get user preferences if they exist
+		// TODO essayer de set le formstate avec les preferences
 		preferences = JSON.parse($.cookie(config.reportUrl + "-prefs"));
 
 		var panel = $("#report-criteria-panel");
