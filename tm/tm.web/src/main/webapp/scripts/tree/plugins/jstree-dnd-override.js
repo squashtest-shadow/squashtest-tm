@@ -139,5 +139,5 @@ define(['jquery'], function($){
 			this.data.dnd.active = true;
 		
 		};
-	}
+	};
 });
