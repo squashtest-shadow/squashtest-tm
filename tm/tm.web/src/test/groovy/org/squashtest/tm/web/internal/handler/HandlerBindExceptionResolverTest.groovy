@@ -81,18 +81,7 @@ class HandlerBindExceptionResolverTest extends Specification {
 		res == null
 	}
 	
-	def "should say that the client accepts json"() {
-		given:
-		HttpServletRequest req = Mock()
-		req.getHeaders("Accept") >> new IteratorEnumeration(['foo/bar, application/json, text/javascript'].iterator())
-
-				when:
-		def res = resolver.clientAcceptsJson(req)
-		
-		then: 
-		res == true
-	}
-
+	
 		def "returned model should contain a fieldValidationErrors"() {
 		given:
 		FieldError err = Mock()
