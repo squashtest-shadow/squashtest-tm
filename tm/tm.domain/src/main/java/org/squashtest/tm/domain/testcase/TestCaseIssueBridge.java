@@ -22,11 +22,13 @@ package org.squashtest.tm.domain.testcase;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.search.SessionFieldBridge;
 
 public class TestCaseIssueBridge extends SessionFieldBridge{
@@ -47,12 +49,20 @@ public class TestCaseIssueBridge extends SessionFieldBridge{
 	
 	private Long findNumberOfIssues(Session session, Long id){
 		
-		return (Long) session.createCriteria(Execution.class)
+		Long issuesOnExecutions = (Long) session.createCriteria(Execution.class)
 				.add(Restrictions.eq("referencedTestCase.id", id))
 				.createCriteria("issueList")
 				.createCriteria("issues")
 				.setProjection(Projections.rowCount())
 				.uniqueResult();
+				
+		Criteria parentCriteria = session.createCriteria(ExecutionStep.class);
+		parentCriteria.createCriteria("execution").add(Restrictions.eq("referencedTestCase.id", id));
+		parentCriteria.createCriteria("issueList").createCriteria("issues");
+
+		Long issuesOnExecutionSteps = (Long) parentCriteria.setProjection(Projections.rowCount()).uniqueResult();
+		
+		return issuesOnExecutions+issuesOnExecutionSteps;
 	}
 
 	@Override
