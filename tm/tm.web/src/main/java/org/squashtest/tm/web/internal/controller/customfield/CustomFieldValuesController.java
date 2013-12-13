@@ -27,7 +27,6 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import org.springframework.context.MessageSource;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,8 +57,10 @@ public class CustomFieldValuesController {
 	 */
 	private static final String BOUND_ENTITY_ID = "boundEntityId";
 
+	@Inject
 	private CustomFieldValueManagerService managerService;
 
+	@Inject
 	private PermissionEvaluationService permissionService;
 
 	@Inject
@@ -67,16 +68,6 @@ public class CustomFieldValuesController {
 
 	@Inject
 	private MessageSource messageSource;
-
-	@ServiceReference
-	public void setManagerService(CustomFieldValueManagerService managerService) {
-		this.managerService = managerService;
-	}
-
-	@ServiceReference
-	public void setPermissionService(PermissionEvaluationService permissionService) {
-		this.permissionService = permissionService;
-	}
 
 	@RequestMapping(method = RequestMethod.GET, params = { BOUND_ENTITY_ID, BOUND_ENTITY_TYPE }, headers = RequestHeaders.CONTENT_JSON)
 	@ResponseBody
