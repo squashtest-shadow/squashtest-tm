@@ -58,9 +58,10 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 		final String automationMode = item.isAutomated() ? "A" : "M";
 
 		//assigne
-		User assignee = item.getUser();
+		//String assigneeLogin = formatString(item.getLastExecutedBy(), locale); commented because of 3009
+		String assigneeLogin = formatString(null, locale);	// we want the "null" login before checking if there is an actual assignee
 		Long assigneeId = User.NO_USER_ID;
-		String assigneeLogin = formatString(item.getLastExecutedBy(), locale);		
+		User assignee = item.getUser();	
 		if  (assignee  != null) {
 			assigneeId = assignee.getId();
 			assigneeLogin = assignee.getLogin();

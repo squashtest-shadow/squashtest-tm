@@ -57,6 +57,20 @@
 		<dropColumn tableName="ITERATION" columnName="DELETED_ON"/>
 	</changeSet>
 	
+		
+	<changeSet author="bsiri" id="tm-1.8.0.issue-3009-01">
+		<comment>
+			As of 1.8.0 anyone that executes a test becomes de facto its assignee. This changeset will update the iteration 
+			test plan items and assign it to the last executor (if any) if it hasn't an assignee already
+		</comment>
+		
+		<sql>
+			update ITERATION_TEST_PLAN_ITEM itpi
+			set itpi.USER_ID = (select cu.PARTY_ID from CORE_USER cu where cu.LOGIN = itpi.LAST_EXECUTED_BY)
+			where itpi.USER_ID IS NULL
+		</sql>
+	
+	</changeSet>
 	
 	<changeSet id="core-1.8.0-feat-2699-00" author="bsiri">
 		<comment>actually remove user accounts that were deactivated</comment>
@@ -257,6 +271,7 @@
 		</sql>
 	
 	</changeSet>	
+
 	
 	
 </databaseChangeLog>
