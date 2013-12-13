@@ -68,11 +68,11 @@ public class HandlerActionExceptionResolver extends AbstractHandlerExceptionReso
 
 	private ModelAndView handleException(HttpServletRequest request, HttpServletResponse response, Exception ex) {
 		ActionException actionEx = (ActionException) ex; // NOSONAR Type was checked earlier
-		if (clientAcceptsMIME(request, MimeType.APPLICATION_JSON) || clientAcceptsMIME(request, MimeType.ANYTHING)) {
+		if (ExceptionResolverUtils.clientAcceptsMIME(request, MimeType.APPLICATION_JSON) || ExceptionResolverUtils.clientAcceptsMIME(request, MimeType.ANYTHING)) {
 			return formatJsonResponse(response, actionEx, request.getLocale());
 		}
 
-		else if (clientAcceptsMIME(request, MimeType.TEXT_PLAIN)) {
+		else if (ExceptionResolverUtils.clientAcceptsMIME(request, MimeType.TEXT_PLAIN)) {
 			return formatPlainTextResponse(response, actionEx, request.getLocale());
 
 		}
@@ -120,16 +120,7 @@ public class HandlerActionExceptionResolver extends AbstractHandlerExceptionReso
 	}
 
 	@SuppressWarnings("unchecked")
-	private boolean clientAcceptsMIME(HttpServletRequest request, MimeType type) {
-		Enumeration<String> e = request.getHeaders("Accept");
-		while (e.hasMoreElements()) {
-			String header = e.nextElement();
-			if (StringUtils.containsIgnoreCase(StringUtils.trimToEmpty(header), type.requestHeaderValue())) {
-				return true;
-			}
-		}
-		return false;
-	}
+	
 
 	/* **************** inner class ***************** */
 	private static class PlainTextView extends AbstractView {

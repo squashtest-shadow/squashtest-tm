@@ -60,7 +60,7 @@ public class HandlerBindExceptionResolver extends AbstractHandlerExceptionResolv
 	@Override
 	protected ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response, Object handler,
 			Exception ex) {
-		if (exceptionIsHandled(ex) && clientAcceptsJson(request)) {
+		if (exceptionIsHandled(ex) && ExceptionResolverUtils.clientAcceptsMIME(request, MimeType.APPLICATION_JSON)) {
 			response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
 
 			BindException bex = (BindException) ex; // NOSONAR Type was checked earlier
@@ -87,16 +87,4 @@ public class HandlerBindExceptionResolver extends AbstractHandlerExceptionResolv
 		return ex instanceof BindException;
 	}
 
-	@SuppressWarnings("unchecked")
-	private boolean clientAcceptsJson(HttpServletRequest request) {
-		Enumeration<String> e = request.getHeaders("Accept");
-
-		while (e.hasMoreElements()) {
-			String header = e.nextElement();
-			if (StringUtils.containsIgnoreCase(StringUtils.trimToEmpty(header), MimeType.APPLICATION_JSON.requestHeaderValue())) {
-				return true;
-			}
-		}
-		return false;
-	}
 }

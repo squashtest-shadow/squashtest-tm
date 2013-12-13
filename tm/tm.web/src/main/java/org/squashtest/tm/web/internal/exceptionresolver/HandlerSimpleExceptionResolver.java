@@ -67,11 +67,11 @@ public class HandlerSimpleExceptionResolver extends AbstractHandlerExceptionReso
 		response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
 		String message = simpleEx.getMessage();
 
-		if (clientAcceptsMIME(request, MimeType.APPLICATION_JSON)) {
+		if (ExceptionResolverUtils.clientAcceptsMIME(request, MimeType.APPLICATION_JSON)) {
 			return formatJsonResponse(message);
 		}
 
-		else if (clientAcceptsMIME(request, MimeType.TEXT_PLAIN)) {
+		else if (ExceptionResolverUtils.clientAcceptsMIME(request, MimeType.TEXT_PLAIN)) {
 			return formatPlainTextResponse(message);
 
 		}
@@ -93,17 +93,6 @@ public class HandlerSimpleExceptionResolver extends AbstractHandlerExceptionReso
 		return SimpleException.class.isAssignableFrom(ex.getClass());
 	}
 
-	@SuppressWarnings("unchecked")
-	private boolean clientAcceptsMIME(HttpServletRequest request, MimeType type) {
-		Enumeration<String> e = request.getHeaders("Accept");
-		while (e.hasMoreElements()) {
-			String header = e.nextElement();
-			if (StringUtils.containsIgnoreCase(StringUtils.trimToEmpty(header), type.requestHeaderValue())) {
-				return true;
-			}
-		}
-		return false;
-	}
 
 	/* **************** inner class ***************** */
 	private static class PlainTextView extends AbstractView {

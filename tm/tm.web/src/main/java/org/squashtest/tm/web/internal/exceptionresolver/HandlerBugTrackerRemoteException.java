@@ -42,7 +42,7 @@ public class HandlerBugTrackerRemoteException extends AbstractHandlerExceptionRe
 	@Override
 	protected ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response, Object handler,
 			Exception ex) {
-		if (exceptionIsHandled(ex) && clientAcceptsJson(request)) {
+		if (exceptionIsHandled(ex) && ExceptionResolverUtils.clientAcceptsMIME(request, MimeType.APPLICATION_JSON)) {
 			response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
 
 			BugTrackerRemoteException remoteException = (BugTrackerRemoteException) ex; // NOSONAR Type was previously
@@ -67,16 +67,5 @@ public class HandlerBugTrackerRemoteException extends AbstractHandlerExceptionRe
 		return ex instanceof BugTrackerRemoteException;
 	}
 
-	private boolean clientAcceptsJson(HttpServletRequest request) {
-		Enumeration<String> e = request.getHeaders("Accept");
-
-		while (e.hasMoreElements()) {
-			String header = e.nextElement();
-			if (StringUtils.containsIgnoreCase(StringUtils.trimToEmpty(header), MimeType.APPLICATION_JSON.requestHeaderValue())) {
-				return true;
-			}
-		}
-		return false;
-	}
 
 }

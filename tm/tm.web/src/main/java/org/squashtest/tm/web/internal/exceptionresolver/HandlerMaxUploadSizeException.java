@@ -51,13 +51,13 @@ public class HandlerMaxUploadSizeException extends AbstractHandlerExceptionResol
 			MaxUploadSizeExceededException mex = (MaxUploadSizeExceededException) ex; // NOSONAR Type was checked
 																						// earlier
 
-			if (clientAcceptsMIME(request, MimeType.APPLICATION_JSON)) {
+			if (ExceptionResolverUtils.clientAcceptsMIME(request, MimeType.APPLICATION_JSON)) {
 				return handleAsJson(mex);
-			} else if (clientAcceptsMIME(request, MimeType.TEXT_PLAIN)) {
+			} else if (ExceptionResolverUtils.clientAcceptsMIME(request, MimeType.TEXT_PLAIN)) {
 				return handleAsText(mex);
 			}
 			// special delivery for IE
-			else if (clientAcceptsMIME(request, MimeType.ANYTHING)) {
+			else if (ExceptionResolverUtils.clientAcceptsMIME(request, MimeType.ANYTHING)) {
 				return handleAsText(mex);
 			}
 		}
@@ -92,16 +92,4 @@ public class HandlerMaxUploadSizeException extends AbstractHandlerExceptionResol
 		return ex instanceof MaxUploadSizeExceededException;
 	}
 
-	@SuppressWarnings("unchecked")
-	private boolean clientAcceptsMIME(HttpServletRequest request, MimeType type) {
-		Enumeration<String> e = request.getHeaders("Accept");
-
-		while (e.hasMoreElements()) {
-			String header = e.nextElement();
-			if (StringUtils.containsIgnoreCase(StringUtils.trimToEmpty(header), type.requestHeaderValue())) {
-				return true;
-			}
-		}
-		return false;
-	}
 }

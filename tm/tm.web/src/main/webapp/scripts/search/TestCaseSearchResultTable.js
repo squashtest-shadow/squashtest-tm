@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "jquery.squash.jeditable", "jquery.cookie" ], function($, Backbone, translator) {
+define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable","squashtable", "jqueryui", "jquery.squash.jeditable", "jquery.cookie" ], function($, Backbone, translator, SimpleJEditable) {
 
 	var TestCaseSearchResultTable = Backbone.View.extend({
 		el : "#test-case-search-result-table",
@@ -51,13 +51,13 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 						},
 					    "bServerSide": true,  
 						"sAjaxSource" : squashtm.app.contextRoot + "/advanced-search/table",
-						 "fnServerParams": function ( aoData )   
-						    {  
-							 aoData.push( { "name": domain, "value": domain } );  
-						        aoData.push( { "name": "model", "value": JSON.stringify(model) } );  
-						        aoData.push( { "name": "associateResultWithType", "value": associateType } );  
-						        aoData.push( { "name": "id", "value":  associateId } );  
-						    }, 
+						"fnServerParams": function ( aoData )   
+							{
+								aoData.push( { "name": domain, "value": domain } );
+								aoData.push( { "name": "model", "value": JSON.stringify(model) } );
+								aoData.push( { "name": "associateResultWithType", "value": associateType } );
+								aoData.push( { "name": "id", "value":  associateId } );
+						    },
 						"sServerMethod": "POST",
 						"bDeferRender" : true,
 						"bFilter" : false,
@@ -164,13 +164,13 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 						"oLanguage" : {
 							"sUrl" : squashtm.app.contextRoot + "/datatables/messages"
 						},
-					    "bServerSide": true,  
+						"bServerSide": true,
 						"sAjaxSource" : squashtm.app.contextRoot + "/advanced-search/table",
-						 "fnServerParams": function ( aoData )   
-						    {  
-							 aoData.push( { "name": domain, "value": domain } );  
-							 aoData.push( { "name": "model", "value": JSON.stringify(model) } );  
-						    }, 
+						"fnServerParams": function ( aoData )
+							{
+								aoData.push( { "name": domain, "value": domain } );
+								aoData.push( { "name": "model", "value": JSON.stringify(model) } );
+							},
 						"sServerMethod": "POST",
 						"bDeferRender" : true,
 						"bFilter" : false,
@@ -351,17 +351,20 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 		},
 		
 		_addSimpleEditableToReference : function(row, data) {
-			var ok = translator.get("rich-edit.button.ok.label");
-			var cancel = translator.get("label.Cancel");
-			var placeholder = translator.get("rich-edit.placeholder");
+			var component = $("td.editable_ref", row);
 			var url = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
-			
-			$(".editable_ref", row).editable(url,{
-				"placeholder" : placeholder,
-				"submit" : ok,
-				"cancel" : cancel,
-				"submitdata" : function(value, settings) {
-					return {"id": "test-case-reference"};
+			new SimpleJEditable({
+				language : {
+					richEditPlaceHolder : translator.get("rich-edit.placeholder"),
+					okLabel : translator.get("rich-edit.button.ok.label"),
+					cancelLabel : translator.get("label.Cancel")
+				},
+				targetUrl : url,
+				component : component,
+				jeditableSettings : {
+					"submitdata" : function(value, settings) {
+						return {"id": "test-case-reference"};
+					}
 				}
 			});
 		},
@@ -371,18 +374,23 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 		},
 		
 		_addSimpleEditableToLabel : function(row, data) {
-			var ok = translator.get("rich-edit.button.ok.label");
-			var cancel = translator.get("label.Cancel");
-			var placeholder = translator.get("rich-edit.placeholder");
+			var component = $('td.editable_label', row);
 			var url = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
-			$(".editable_label", row).editable(url,{
-				"placeholder" : placeholder,
-				"submit" : ok,
-				"cancel" : cancel,	
-				"submitdata" : function(value, settings) {
-					return {"id": "test-case-newname"};
+			new SimpleJEditable({
+				language : {
+					richEditPlaceHolder : translator.get("rich-edit.placeholder"),
+					okLabel : translator.get("rich-edit.button.ok.label"),
+					cancelLabel : translator.get("label.Cancel")
+				},
+				targetUrl : url,
+				component : component,
+				jeditableSettings : {
+					"submitdata" : function(value, settings) {
+						return {"id": "test-case-newname"};
+					}
 				}
 			});
+			
 		},
 	
 		_tableRowCallback : function(row, data, displayIndex) {
@@ -408,8 +416,8 @@ define([ "jquery", "backbone", "squash.translator", "squashtable", "jqueryui", "
 			var $cell = $(".search-open-interface2-holder",row);
 			$cell.append('<span class="search-open-interface2"></span>')
 			.click(function(){
-		        window.location = squashtm.app.contextRoot + "/test-cases/" + id + "/info";
-		    });
+				window.location = squashtm.app.contextRoot + "/test-cases/" + id + "/info";
+			});
 		},
 		
 		_addIconToAssociatedToColumn : function(row, data) {

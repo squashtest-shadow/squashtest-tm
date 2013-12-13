@@ -52,7 +52,7 @@ public class HandlerCompositeDomainExceptionResolver extends AbstractHandlerExce
 	protected ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response, Object handler,
 			Exception ex) {
 
-		if (exceptionIsHandled(ex) && clientAcceptsJson(request)) {
+		if (exceptionIsHandled(ex) && ExceptionResolverUtils.clientAcceptsMIME(request, MimeType.APPLICATION_JSON)) {
 			response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
 
 			CompositeDomainException cdex = (CompositeDomainException) ex; // NOSONAR Type was checked earlier
@@ -81,17 +81,4 @@ public class HandlerCompositeDomainExceptionResolver extends AbstractHandlerExce
 		return ex instanceof CompositeDomainException;
 	}
 
-	@SuppressWarnings("unchecked")
-	private boolean clientAcceptsJson(HttpServletRequest request) {
-		Enumeration<String> e = request.getHeaders("Accept");
-
-		while (e.hasMoreElements()) {
-			String header = e.nextElement();
-			if (StringUtils.containsIgnoreCase(StringUtils.trimToEmpty(header),
-					MimeType.APPLICATION_JSON.requestHeaderValue())) {
-				return true;
-			}
-		}
-		return false;
-	}
 }
