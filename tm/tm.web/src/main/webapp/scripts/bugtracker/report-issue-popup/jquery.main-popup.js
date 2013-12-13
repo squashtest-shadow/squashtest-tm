@@ -18,7 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload", "jqueryui"], function($, DefaultFieldView, AdvancedFieldView, fileUploadUtils){
+define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload", "workspace.event-bus", "jqueryui"], 
+		function($, DefaultFieldView, AdvancedFieldView, fileUploadUtils, eventBus){
 
 	
 
@@ -142,8 +143,10 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 		- reportUrl : the url where to GET empty/POST filled bug reports
 		- findUrl : the url where to GET remote issues
 		
-		- callback : any callback function. Can accept one argument : the json status of the operation.
-
+		
+		events : 
+			context.bug-reported : triggered when a bug is successfully reported/attached
+		
 		******************
 
 		Implementation detail about 'reportUrl' : 
@@ -159,7 +162,6 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 		this.mdlTemplate=null;				
 	
 		//urls
-//		this.reportUrl = settings.reportUrl;
 		this.searchUrl = settings.searchUrl;
 		this.bugTrackerId = settings.bugTrackerId;
 		
@@ -185,10 +187,7 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 		this.error = $(".issue-report-error", this);
 		this.error.popupError();
 		
-		
-		//a callback when the post is a success
-//		this.callback=settings.callback;
-			
+	
 			
 		//bind the spans standing for label for the radio buttons
 		//(actual labels would have been preferable except for the default style)
@@ -438,13 +437,11 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 				
 				var model = this.model.toJSON();
 				
-			var xhr = this.postHelper.postIssue(model, this.reportUrl);
-				
-			xhr.done(function(){
+				var xhr = this.postHelper.postIssue(model, this.reportUrl);
+					
+				xhr.done(function(json){
 					self.dialog('close');
-					if (self.callback){
-						self.callback.apply(self, arguments);
-					}
+					eventBus.trigger('context.bug-reported', json);
 				})
 				.fail(bugReportError);
 			}
@@ -456,7 +453,6 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 		
 		this.open = function(settings){
 			this.reportUrl = settings.reportUrl;
-			this.callback=settings.callback;
 			self.postButton.focus();
 			self.reportRadio.click();
 			this.dialog("open");

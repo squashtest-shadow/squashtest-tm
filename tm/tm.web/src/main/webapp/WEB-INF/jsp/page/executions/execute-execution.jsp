@@ -104,7 +104,7 @@
 			<f:message var="completedMessage" key="execute.alert.test.complete" />
 			<f:message var="endTestSuiteMessage" key="squashtm.action.exception.testsuite.end" />
 			<script type="text/javascript">						
-			require(["squash.basicwidgets", "page-components/step-information-panel"], function(basicwidg, infopanel){
+			require(["squash.basicwidgets", "page-components/step-information-panel","workspace.event-bus"], function(basicwidg, infopanel, eventBus ){
 			
 				var isOer = ${ not empty hasNextTestCase };
 				var hasNextTestCase = ${ (not empty hasNextTestCase) and hasNextTestCase };
@@ -344,7 +344,12 @@
 						$(window).unload( refreshParent );
 						
 						//issue #2069
-						noBackspaceNavigation();					
+						noBackspaceNavigation();		
+						
+						//issue 3083 : propagate the information to the parent context
+						eventBus.onContextual('context.bug-reported', function(event, json){
+							window.opener.squashtm.workspace.eventBus.trigger(event, json )
+						});
 					
 					});
 					

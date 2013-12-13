@@ -235,11 +235,6 @@
 		return false;
 	}
 
-	function issueReportSuccess(json) {
-		displayNewIssue(json);
-		refreshIssueTable();
-	}
-
 	function loginSuccessOpenReport(bugtrackerReportSettings) {
 		enableIssueTable();
 		refreshIssueTable();
@@ -367,18 +362,23 @@ check that in the next <script></script> tags
 
 <script type="text/javascript">
 	$(function() {
-		require(["squash.basicwidgets"], function(basicwidg){
+		require(["squash.basicwidgets", "workspace.event-bus"], function(basicwidg, eventBus){
 			basicwidg.init();
 			<c:if test="${executable}">
 			$("#issue-report-dialog-openbutton").squashButton().click(function() {
 				$(this).removeClass("ui-state-focus ui-state-hover");
-				checkAndReportIssue( {reportUrl:"${entityUrl}/new-issue", callback:issueReportSuccess} );
+				checkAndReportIssue( {reportUrl:"${entityUrl}/new-issue" } );
 			});
 			</c:if>
 
 			$("#issue-login-button").click(function() {
 				$(this).removeClass("ui-state-focus ui-state-hover");
 				bugTrackerLogin();
+			});
+			
+			eventBus.onContextual('context.bug-reported', function(evt, json){
+				displayNewIssue(json);
+				refreshIssueTable();
 			});
 		});
 	});
