@@ -162,10 +162,15 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 			postDate = $.datepicker.formatDate(postDateFormat, date);
 		}
 
-		formState[this.id] = {
-			value : postDate,
-			type : 'DATE'
-		};
+		if (value === "" || value === undefined || value === null){
+			delete formState[this.id];
+		}
+		else{
+			formState[this.id] = {
+				value : postDate,
+				type : 'DATE'
+			};
+		}
 	}
 
 	function initDropdowns(panel) {
