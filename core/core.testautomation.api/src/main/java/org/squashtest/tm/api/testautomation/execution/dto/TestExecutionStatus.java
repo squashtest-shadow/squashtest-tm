@@ -59,6 +59,8 @@ public class TestExecutionStatus implements Serializable {
 	/** Explanation message if any (mostly, short versions of error messages). */
 	@NotNull
 	private String statusMessage = "";
+	
+	private String resultUrl = null;
 
 	/**
 	 * @return Name of the test.
@@ -160,5 +162,13 @@ public class TestExecutionStatus implements Serializable {
 	 */
 	public void setStatusMessage(String statusMessage) {
 		this.statusMessage = statusMessage == null ? "" : statusMessage;
+	}
+	
+	public void setResultUrl(String resultUrl){
+		this.resultUrl = resultUrl;
+	}
+	
+	public String getResultUrl(){
+		return resultUrl;
 	}
 }
