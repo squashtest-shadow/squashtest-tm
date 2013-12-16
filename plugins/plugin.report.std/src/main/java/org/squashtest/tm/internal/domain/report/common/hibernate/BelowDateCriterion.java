@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.internal.domain.report.common.hibernate;
 
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -49,13 +50,10 @@ public class BelowDateCriterion extends ReportCriterion{
 	}
 	
 
-	private Date makeDate(){
+	private Date makeDate() throws ParseException{
 		Object[] values = getParameters();
-		if (values.length!=1) { throw new IllegalArgumentException("Criterion of type "+this.getClass().getSimpleName()+" cannot have more than one argument");}
-		String strDate = values[0].toString();
-		Long lDate = Long.parseLong(strDate);
-		
-		Date date = new Date(lDate);
+		if (values.length!=1){ throw new IllegalArgumentException("Criterion of type "+this.getClass().getSimpleName()+" cannot have more than one argument");}
+		Date date = (Date)(values[0]);	
 		
 		Calendar calendar = GregorianCalendar.getInstance();
 		
