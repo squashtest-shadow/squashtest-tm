@@ -695,7 +695,7 @@
 		</createIndex>
 
 		<addUniqueConstraint tableName="TEST_AUTOMATION_SERVER"
-			columnNames="BASE_URL, LOGIN, PASSWORD, KIND" constraintName="uni_autotest_server" />
+			columnNames="BASE_URL, LOGIN" constraintName="uni_autotest_server" />
 
 	</changeSet>
 
