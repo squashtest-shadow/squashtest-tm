@@ -533,11 +533,6 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 	function onConfirmTreePickerDialog() {
 		var self = $(this);
 		self.dialog("close");
-		// dialog issue [Issue 1064]
-		self.dialog().ajaxSuccess(function() {
-			self.dialog('close');
-		});
-		// end issue
 		var tree = self.find('.rpt-tree-crit');
 		var nodes = tree.jstree('get_selected');
 
@@ -553,6 +548,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 
 		dialog.createPopup({
 			height : 500,
+			closeOnSuccess: false, 
 			buttons : [ {
 				text : config.okLabel,
 				click : onConfirmTreePickerDialog
@@ -567,11 +563,6 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 		panel.find('.rpt-tree-crit-open').click(function() {
 			var dialogId = $(this).data('id-opened');
 			var treePickerPopup = $("#" + dialogId);
-			// dialog issue [Issue 1064]
-			treePickerPopup.dialog().ajaxSuccess(function() {
-				treePickerPopup.dialog('open');
-			});
-			// end issue
 			treePickerPopup.dialog('open');
 		});
 
