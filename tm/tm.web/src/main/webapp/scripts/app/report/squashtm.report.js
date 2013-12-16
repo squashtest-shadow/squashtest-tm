@@ -420,7 +420,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 
 		if (isPerimeterValid()) {
 			// stores preferences in browser datastore
-			$.cookie(config.reportUrl + "-prefs", JSON.stringify(formState));
+			sessionStorage[config.reportUrl + "-prefs"] = JSON.stringify(formState);
 
 			// collapses the form
 			$("#report-criteria-panel").togglePanel("closeContent");
@@ -645,7 +645,10 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 		config = $.extend(config, settings);
 		// Get user preferences if they exist
 		// TODO essayer de set le formstate avec les preferences
-		preferences = JSON.parse($.cookie(config.reportUrl + "-prefs"));
+		var stored = sessionStorage[config.reportUrl + "-prefs"];
+		if (!!stored) {
+			preferences = JSON.parse(stored);
+		}
 
 		var panel = $("#report-criteria-panel");
 		panel.togglePanel({});
