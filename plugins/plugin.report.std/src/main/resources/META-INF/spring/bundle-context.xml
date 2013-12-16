@@ -154,7 +154,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		class="org.squashtest.tm.api.report.spring.view.jasperreports.JasperReportsExtMultiFormatView">
 		<property name="url" value="classpath:jasperreports/execution-progression.jasper" />
 		<property name="reportDataKey" value="data" />
-		<property name="reportFileName" value="Report-execution-progression-list-${date:ddMMyyyyHHmm}"/>
+		<property name="reportFileName" value="Report-execution-progression-overview-${date:ddMMyyyyHHmm}"/>
 		<property name="subReportUrls">
 			<map>
 				<entry key="executionProgressionCampaign" value="classpath:jasperreports/execution-progression_campaign.jasper" />
@@ -174,7 +174,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		class="org.squashtest.tm.api.report.spring.view.jasperreports.JasperReportsExtMultiFormatView">
 		<property name="url" value="classpath:jasperreports/execution-progression-view0.jasper" />
 		<property name="reportDataKey" value="data" />
-		<property name="reportFileName" value="Report-execution-progression-overview-${date:ddMMyyyyHHmm}"/>
+		<property name="reportFileName" value="Report-execution-progression-list-${date:ddMMyyyyHHmm}"/>
 		<property name="subReportUrls">
 			<map>
 				<entry key="subReportCampaign" value="classpath:jasperreports/execution-progression-view0_campaign.jasper" />
@@ -271,7 +271,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	<bean id="requirementCoverage1"
 		class="org.squashtest.tm.api.report.spring.view.jasperreports.JasperReportsExtMultiFormatView">
 		<property name="url" value="classpath:jasperreports/requirement-coverage-overview.jasper" />
-		<property name="reportFileName" value="Report-requirements-coverage-1-${date:ddMMyyyyHHmm}"/>
+		<property name="reportFileName" value="Report-requirements-coverage-overview-${date:ddMMyyyyHHmm}"/>
 		<property name="reportDataKey" value="data" />
 		<property name="exporterParameters">
 			<map>
@@ -286,7 +286,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		class="org.squashtest.tm.api.report.spring.view.jasperreports.JasperReportsExtMultiFormatView">
 		<property name="url" value="classpath:jasperreports/requirement-coverage_projects.jasper" />
 		<property name="reportDataKey" value="data" />
-		<property name="reportFileName" value="Report-requirements-coverage-2-${date:ddMMyyyyHHmm}"/>
+		<property name="reportFileName" value="Report-requirements-coverage-list-${date:ddMMyyyyHHmm}"/>
 		<property name="subReportUrls">
 			<map>
 				<entry key="subReportParamName" value="classpath:jasperreports/requirement-coverage_requirements.jasper" />
