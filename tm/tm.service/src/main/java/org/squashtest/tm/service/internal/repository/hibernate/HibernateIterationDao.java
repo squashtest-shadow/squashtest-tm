@@ -65,7 +65,6 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	private static final String REFERENCE_FILTER = "referenceFilter";
 	private static final String TESTCASE_FILTER = "testcaseFilter";	
 	private static final String WEIGHT_FILTER = "weightFilter";
-	private static final String MODE_FILTER = "modeFilter";
 	private static final String DATASET_FILTER = "datasetFilter";
 	private static final String TESTSUITE_FILTER = "testsuiteFilter";
 	private static final String STATUS_FILTER = "statusFilter";
@@ -74,6 +73,8 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	private static final String END_DATE = "endDate";
 	private static final String DATE_FORMAT = "dd/MM/yyyy";
 	
+	// TODO these strings come from UI but are hidden deep plus they are defined in HCD and HTSD. They should be
+	// factored out.
 	private static final String PROJECT_DATA = "project-name";
 	private static final String REFERENCE_DATA = "reference";
 	private static final String TESTCASE_DATA = "tc-name";	

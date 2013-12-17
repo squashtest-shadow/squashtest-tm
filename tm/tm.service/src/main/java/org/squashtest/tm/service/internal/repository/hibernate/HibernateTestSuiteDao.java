@@ -69,8 +69,9 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 	private static final String START_DATE = "startDate";
 	private static final String END_DATE = "endDate";
 	private static final String DATE_FORMAT = "dd/MM/yyyy";
-	private static final String MODE_FILTER = "modeFilter";
 	
+	// TODO these strings come from UI but are hidden deep plus they are defined in HID and HCD. They should be
+	// factored out.
 	private static final String PROJECT_DATA = "project-name";
 	private static final String REFERENCE_DATA = "reference";
 	private static final String TESTCASE_DATA = "tc-name";	
@@ -324,7 +325,7 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 
 	@Override
 	public List<IterationTestPlanItem> findTestPlan(long suiteId, PagingAndMultiSorting sorting, Filtering filtering, ColumnFiltering columnFiltering) {
-		List<Object[]> tuples = _findIndexedTestPlan(suiteId, sorting, filtering, columnFiltering);
+		List<Object[]> tuples = findIndexedTestPlanAsTuples(suiteId, sorting, filtering, columnFiltering);
 		return buildItems(tuples);
 	}
 
@@ -339,7 +340,7 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 	public List<IndexedIterationTestPlanItem> findIndexedTestPlan(final long suiteId, PagingAndMultiSorting sorting,
 			Filtering filtering, ColumnFiltering columnFiltering) {
 
-		List<Object[]> tuples = _findIndexedTestPlan(suiteId, sorting, filtering, columnFiltering);
+		List<Object[]> tuples = findIndexedTestPlanAsTuples(suiteId, sorting, filtering, columnFiltering);
 		return buildIndexedItems(tuples);
 
 	}
@@ -452,7 +453,8 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 		return query;
 	}
 	
-	private List<Object[]> _findIndexedTestPlan(final long suiteId, PagingAndMultiSorting sorting, Filtering filtering, ColumnFiltering columnFiltering) {
+	@SuppressWarnings("unchecked")
+	private List<Object[]> findIndexedTestPlanAsTuples(final long suiteId, PagingAndMultiSorting sorting, Filtering filtering, ColumnFiltering columnFiltering) {
 		
 		StringBuilder hqlbuilder = buildTestPlanQueryBody(filtering, columnFiltering);
 				
