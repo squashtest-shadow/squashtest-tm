@@ -60,7 +60,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 		},
 
 		fieldvalue : function(value) {
-			fieldValue.call(this, "TEXT", value);
+			return fieldValue.call(this, "TEXT", value);
 		}
 	});
 
@@ -74,7 +74,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 		},
 
 		fieldvalue : function(value) {
-			fieldValue.call(this,"SINGLE", value);
+			return fieldValue.call(this,"SINGLE", value);
 		}
 	});
 
