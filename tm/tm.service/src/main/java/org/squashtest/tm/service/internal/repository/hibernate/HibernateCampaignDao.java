@@ -81,28 +81,20 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 			"left outer join CampaignTestPlanItem.user as User "+
 			"where Campaign.id = :campaignId ";
 	
-	private static final String HQL_INDEXED_TEST_PLAN_PROJECT_FILTER =
-			"and Project.name like :projectFilter ";
+	private static final String HQL_INDEXED_TEST_PLAN_PROJECT_FILTER = "and Project.name like :projectFilter ";
 
-	private static final String HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER =
-			"and TestCase.reference like :referenceFilter ";
-	
-	private static final String HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER =
-			"and TestCase.name like :testcaseFilter ";
-	
-	private static final String HQL_INDEXED_TEST_PLAN_USER_FILTER =
-			"and CampaignTestPlanItem.user.id = :userFilter ";
+	private static final String HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER = "and TestCase.reference like :referenceFilter ";
 
-	private static final String HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER =
-			"and CampaignTestPlanItem.user is null ";
-	
-	
-	private static final String HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER =
-			"and TestCase.importance = :weightFilter ";
-	
-	private static final String HQL_INDEXED_TEST_PLAN_MODE_FILTER =
-			"and TestCase.executionMode = :modeFilter ";
-	
+	private static final String HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER = "and TestCase.name like :testcaseFilter ";
+
+	private static final String HQL_INDEXED_TEST_PLAN_USER_FILTER = "and CampaignTestPlanItem.user.id = :userFilter ";
+
+	private static final String HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER = "and CampaignTestPlanItem.user is null ";
+
+	private static final String HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER = "and TestCase.importance = :weightFilter ";
+
+	private static final String HQL_INDEXED_TEST_PLAN_MODE_FILTER = "and TestCase.executionMode = :modeFilter ";
+
 	@Override
 	public Campaign findByIdWithInitializedIterations(long campaignId) {
 		Campaign c = findById(campaignId);
@@ -121,11 +113,11 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 			}
 
 		};
-		
+
 		return executeListNamedQuery("campaign.findTestPlanFiltered", callback, filter);
 
 	}
-	
+
 	@Override
 	public List<CampaignTestPlanItem> findTestPlan(long campaignId, PagingAndMultiSorting sorting) {
 		List<Object[]> tuples = _findIndexedTestPlan(campaignId, sorting);
@@ -142,123 +134,124 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 	public List<IndexedCampaignTestPlanItem> findIndexedTestPlan(long campaignId, PagingAndSorting sorting) {
 		return findIndexedTestPlan(campaignId, new SingleToMultiSortingAdapter(sorting));
 	}
-	
-	private List<Object[]> _findIndexedTestPlan(final long campaignId, PagingAndMultiSorting sorting){
-		
+
+	private List<Object[]> _findIndexedTestPlan(final long campaignId, PagingAndMultiSorting sorting) {
+
 		StringBuilder hqlbuilder = new StringBuilder(HQL_INDEXED_TEST_PLAN);
 
 		// tune the sorting to make hql happy
-		LevelImplementorSorter wrapper= new LevelImplementorSorter(sorting);
+		LevelImplementorSorter wrapper = new LevelImplementorSorter(sorting);
 		wrapper.map("TestCase.importance", TestCaseImportance.class);
-		
+
 		SortingUtils.addOrder(hqlbuilder, wrapper);
-		
+
 		Query query = currentSession().createQuery(hqlbuilder.toString());
-		
+
 		query.setParameter("campaignId", campaignId, LongType.INSTANCE);
-		
+
 		PagingUtils.addPaging(query, sorting);
-		
+
 		return query.list();
 	}
 
-	private String buildIndexedTestPlanQueryString(PagingAndMultiSorting sorting, ColumnFiltering filtering){
-		
+	private String buildIndexedTestPlanQueryString(PagingAndMultiSorting sorting, ColumnFiltering filtering) {
+
 		StringBuilder hqlbuilder = buildIndexedTestPlanQueryBody(filtering);
-		
+
 		// tune the sorting to make hql happy
-		LevelImplementorSorter wrapper= new LevelImplementorSorter(sorting);
+		LevelImplementorSorter wrapper = new LevelImplementorSorter(sorting);
 		wrapper.map("TestCase.importance", TestCaseImportance.class);
-		
+
 		SortingUtils.addOrder(hqlbuilder, wrapper);
-		
+
 		return hqlbuilder.toString();
 	}
-	
-	private String buildIndexedTestPlanQueryStringWithoutSorting(ColumnFiltering filtering){
-		
+
+	private String buildIndexedTestPlanQueryStringWithoutSorting(ColumnFiltering filtering) {
+
 		StringBuilder hqlbuilder = buildIndexedTestPlanQueryBody(filtering);
-	
+
 		return hqlbuilder.toString();
 	}
-	
-	private StringBuilder buildIndexedTestPlanQueryBody(ColumnFiltering filtering){
+
+	private StringBuilder buildIndexedTestPlanQueryBody(ColumnFiltering filtering) {
 		StringBuilder hqlbuilder = new StringBuilder(HQL_INDEXED_TEST_PLAN);
-		if(filtering.hasFilter(PROJECT_DATA)){
+		if (filtering.hasFilter(PROJECT_DATA)) {
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_PROJECT_FILTER);
 		}
-		if(filtering.hasFilter(MODE_DATA)){
+		if (filtering.hasFilter(MODE_DATA)) {
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_MODE_FILTER);
 		}
-		if(filtering.hasFilter(REFERENCE_DATA)){
+		if (filtering.hasFilter(REFERENCE_DATA)) {
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER);
 		}
-		if(filtering.hasFilter(TESTCASE_DATA)){
+		if (filtering.hasFilter(TESTCASE_DATA)) {
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER);
 		}
-		if(filtering.hasFilter(USER_DATA)){
-			if("0".equals(filtering.getFilter(USER_DATA))){
+		if (filtering.hasFilter(USER_DATA)) {
+			if ("0".equals(filtering.getFilter(USER_DATA))) {
 				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER);
 			} else {
 				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
 			}
 		}
-		if(filtering.hasFilter(WEIGHT_DATA)){
+		if (filtering.hasFilter(WEIGHT_DATA)) {
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER);
 		}
-		
+
 		return hqlbuilder;
 	}
 
-	private List<Object[]> _findIndexedTestPlan(final long campaignId, PagingAndMultiSorting sorting, ColumnFiltering filtering){
-		
+	private List<Object[]> _findIndexedTestPlan(final long campaignId, PagingAndMultiSorting sorting,
+			ColumnFiltering filtering) {
+
 		String queryString = buildIndexedTestPlanQueryString(sorting, filtering);
-		
+
 		Query query = assignParameterValuesToTestPlanQuery(queryString, campaignId, filtering);
 
 		PagingUtils.addPaging(query, sorting);
-		
+
 		return query.list();
 	}
-	
-	private Query assignParameterValuesToTestPlanQuery(String queryString, long campaignId, ColumnFiltering filtering){
-	
+
+	private Query assignParameterValuesToTestPlanQuery(String queryString, long campaignId, ColumnFiltering filtering) {
+
 		Query query = currentSession().createQuery(queryString);
-		
+
 		query.setParameter("campaignId", campaignId, LongType.INSTANCE);
-		
-		if(filtering.hasFilter(PROJECT_DATA)){
-			query.setParameter(PROJECT_FILTER, "%"+filtering.getFilter(PROJECT_DATA)+"%", StringType.INSTANCE);
+
+		if (filtering.hasFilter(PROJECT_DATA)) {
+			query.setParameter(PROJECT_FILTER, "%" + filtering.getFilter(PROJECT_DATA) + "%", StringType.INSTANCE);
 		}
-		if(filtering.hasFilter(MODE_DATA)){
+		if (filtering.hasFilter(MODE_DATA)) {
 			query.setParameter(MODE_FILTER, filtering.getFilter(MODE_DATA), StringType.INSTANCE);
 		}
-		if(filtering.hasFilter(REFERENCE_DATA)){
-			query.setParameter(REFERENCE_FILTER, "%"+filtering.getFilter(REFERENCE_DATA)+"%", StringType.INSTANCE);
-		} 
-		if(filtering.hasFilter(TESTCASE_DATA)){
-			query.setParameter(TESTCASE_FILTER, "%"+filtering.getFilter(TESTCASE_DATA)+"%", StringType.INSTANCE);
+		if (filtering.hasFilter(REFERENCE_DATA)) {
+			query.setParameter(REFERENCE_FILTER, "%" + filtering.getFilter(REFERENCE_DATA) + "%", StringType.INSTANCE);
 		}
-		if(filtering.hasFilter(USER_DATA)  && !"0".equals(filtering.getFilter(USER_DATA))){
+		if (filtering.hasFilter(TESTCASE_DATA)) {
+			query.setParameter(TESTCASE_FILTER, "%" + filtering.getFilter(TESTCASE_DATA) + "%", StringType.INSTANCE);
+		}
+		if (filtering.hasFilter(USER_DATA) && !"0".equals(filtering.getFilter(USER_DATA))) {
 			query.setParameter(USER_FILTER, Long.parseLong(filtering.getFilter(USER_DATA)), LongType.INSTANCE);
 		}
-		if(filtering.hasFilter(WEIGHT_DATA)){
+		if (filtering.hasFilter(WEIGHT_DATA)) {
 			query.setParameter(WEIGHT_FILTER, filtering.getFilter(WEIGHT_DATA), StringType.INSTANCE);
 		}
-		
+
 		return query;
 	}
-	
+
 	@Override
 	public long countFilteredTestPlanById(long campaignId, ColumnFiltering filtering) {
-		
+
 		String queryString = buildIndexedTestPlanQueryStringWithoutSorting(filtering);
-		
+
 		Query query = assignParameterValuesToTestPlanQuery(queryString, campaignId, filtering);
 
 		return query.list().size();
 	}
-	
+
 	@Override
 	public long countTestPlanById(long campaignId) {
 		return (Long) executeEntityNamedQuery("campaign.countTestCasesById", idParameter(campaignId));
@@ -297,7 +290,7 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 		SetQueryParametersCallback newCallBack1 = new ContainerIdNameStartParameterCallback(libraryId, nameStart);
 		return executeListNamedQuery("campaign.findNamesInLibraryStartingWith", newCallBack1);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<CampaignLibraryNode> findAllByNameContaining(final String tokenInName, boolean groupByProject) {
@@ -322,21 +315,20 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 
 	@Override
 	public TestPlanStatistics findCampaignStatistics(long campaignId) {
-		
-			Map<String, Integer> statusMap = new HashMap<String, Integer>();
 
-			fillStatusMapWithQueryResult(campaignId, statusMap);
+		Map<String, Integer> statusMap = new HashMap<String, Integer>();
 
-			return new TestPlanStatistics(statusMap);
-		}
+		fillStatusMapWithQueryResult(campaignId, statusMap);
 
-		
+		return new TestPlanStatistics(statusMap);
+	}
+
 	private void fillStatusMapWithQueryResult(final long campaignId, Map<String, Integer> statusMap) {
-		//Add Total number of TestCases
+		// Add Total number of TestCases
 		Integer nbTestPlans = countIterationsTestPlanItems(campaignId).intValue();
 		statusMap.put(TestPlanStatistics.TOTAL_NUMBER_OF_TEST_CASE_KEY, nbTestPlans);
-		
-		//Add number of testCase for each ExecutionStatus
+
+		// Add number of testCase for each ExecutionStatus
 		SetQueryParametersCallback newCallBack = idParameter(campaignId);
 		List<Object[]> result = executeListNamedQuery("campaign.countStatuses", newCallBack);
 		for (Object[] objTab : result) {
@@ -350,41 +342,41 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 	}
 
 	@Override
-	public long countRunningOrDoneExecutions(long campaignId){
+	public long countRunningOrDoneExecutions(long campaignId) {
 		return (Long) executeEntityNamedQuery("campaign.countRunningOrDoneExecutions", idParameter(campaignId));
 	}
 
 	// ******************** utils ***************************
-	
-	private List<CampaignTestPlanItem> buildItems(List<Object[]> tuples){
-		
+
+	private List<CampaignTestPlanItem> buildItems(List<Object[]> tuples) {
+
 		List<CampaignTestPlanItem> items = new ArrayList<CampaignTestPlanItem>(tuples.size());
-		
-		for (Object[] tuple : tuples){
+
+		for (Object[] tuple : tuples) {
 			CampaignTestPlanItem ctpi = (CampaignTestPlanItem) tuple[1];
 			items.add(ctpi);
 		}
-		
+
 		return items;
 	}
-	
-	private List<IndexedCampaignTestPlanItem> buildIndexedItems(List<Object[]> tuples){
+
+	private List<IndexedCampaignTestPlanItem> buildIndexedItems(List<Object[]> tuples) {
 		List<IndexedCampaignTestPlanItem> indexedItems = new ArrayList<IndexedCampaignTestPlanItem>(tuples.size());
-		
-		for (Object[] tuple : tuples){
-			Integer index = (Integer)tuple[0];
+
+		for (Object[] tuple : tuples) {
+			Integer index = (Integer) tuple[0];
 			CampaignTestPlanItem ctpi = (CampaignTestPlanItem) tuple[1];
 			indexedItems.add(new IndexedCampaignTestPlanItem(index, ctpi));
 		}
-		
+
 		return indexedItems;
 	}
 
 	@Override
-	public List<IndexedCampaignTestPlanItem> findFilteredIndexedTestPlan(long campaignId, PagingAndMultiSorting sorting, ColumnFiltering filtering) {
+	public List<IndexedCampaignTestPlanItem> findFilteredIndexedTestPlan(long campaignId,
+			PagingAndMultiSorting sorting, ColumnFiltering filtering) {
 		List<Object[]> tuples = _findIndexedTestPlan(campaignId, sorting, filtering);
 		return buildIndexedItems(tuples);
 	}
-
 
 }
