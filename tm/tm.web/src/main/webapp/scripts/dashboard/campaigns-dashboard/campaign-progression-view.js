@@ -270,7 +270,7 @@ define([
 		createX2ticks : function(axisStart, axisEnd){
 			var iterations = this._getModelData().scheduledIterations;
 			
-			var labeltpl = '<div style="background-color:black; color:white; font-weight:bold; "><span>{{this.name}}</span></div>';
+			var labeltpl = '<div style="background-color:black; color:white; font-size:0.96em"><span>{{this.name}}</span></div>';
 			
 			var x2ticks = [], 
 				i=0, 
