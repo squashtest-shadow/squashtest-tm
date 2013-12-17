@@ -270,18 +270,26 @@ define([
 		createX2ticks : function(axisStart, axisEnd){
 			var iterations = this._getModelData().scheduledIterations;
 			
-			var labeltpl = '<div style="background-color:black; color:white; font-size:0.96em"><span>{{this.name}}</span></div>';
+			var labeltpl = '<div style="background-color:black; color:white; font-size:0.96em;"><span>{{this.name}}</span></div>';
 			
 			var x2ticks = [], 
 				i=0, 
 				len = iterations.length;
 			
-			x2ticks.push(axisStart);
+			x2ticks.push(axisStart);			
 			for (i=0;i<len;i++){
 				var iter = iterations[i],
-					label = labeltpl.replace('{{this.name}}', (i+1)+" - "+iter.name);
-				x2ticks.push([iter.scheduledStart, iter.scheduledEnd, label]);
-			}
+					label = labeltpl.replace('{{this.name}}', (i+1)+" - "+iter.name)
+					_start = iter.scheduledStart,
+					_end = iter.scheduledEnd;
+				
+				// in case the iteration starts and ends the same day we need 
+				// to add a few hours or face the risk of having a 0-width label
+				if (_start === _end){
+					_end = _end + 72000000;	//aka +20 hours
+				}
+				x2ticks.push([_start, _end, label]);
+			}			
 			x2ticks.push(axisEnd);
 			
 			return x2ticks;

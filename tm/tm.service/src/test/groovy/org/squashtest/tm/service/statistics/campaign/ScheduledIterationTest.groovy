@@ -20,111 +20,13 @@
  */
 package org.squashtest.tm.service.statistics.campaign
 
-import java.text.SimpleDateFormat;
-
-import org.squashtest.tm.service.statistics.campaign.ScheduledIteration;
-import org.squashtest.tm.service.statistics.campaign.ScheduledIteration.ScheduledDatesIterator;
+import java.text.SimpleDateFormat
 
 import spock.lang.Specification
-import spock.lang.Unroll;
 
 class ScheduledIterationTest extends Specification {
 	
 	SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy")
-
-	// *********** ScheduledDatesIterator test *****************
-	
-	def "should say that empty collection has no next"(){
-		
-		given :
-			def datesIter = new ScheduledDatesIterator([])
-			
-		when :
-			def res = datesIter.hasNext()
-			
-		then : 
-			res == false
-		
-	}
-	
-	def "should say that when it has been asked for a start date, an end date will follow"(){
-		
-		given :
-			def datesIter = new ScheduledDatesIterator([new ScheduledIteration()])
-			datesIter.next()
-			
-		when :
-			def res = datesIter.hasNext()
-		
-		then :
-			res == true
-	}
-	
-	def "should say that there is another iteration to process "(){
-		
-		given :
-			def datesIter = new ScheduledDatesIterator([new ScheduledIteration(), new ScheduledIteration()])
-			datesIter.next()
-			datesIter.next()
-		
-		when :
-			def res = datesIter.hasNext()
-		
-		
-		then :
-			res == true
-	}
-	
-	def "should say that there is no more dates to process"(){
-		
-		given :
-			def datesIter = new ScheduledDatesIterator([new ScheduledIteration(), new ScheduledIteration()])
-			datesIter.next()
-			datesIter.next()
-			datesIter.next()
-			datesIter.next()
-			
-		
-		when :
-			def res = datesIter.hasNext()
-		
-		then :
-			res == false
-	}
-	
-	def "should return the dates in correct order"(){
-		
-		given :
-			def refDate = new Date()
-			def date1 = refDate.plus(1)
-			def date2 = refDate.plus(2)
-			def date3 = refDate.plus(3)
-			def date4 = refDate.plus(4)
-			def date5 = refDate.plus(5)
-			def date6 = refDate.plus(6)
-			def date7 = refDate.plus(7)
-			def date8 = refDate.plus(8)
-			
-		and :
-			def collection = [
-				new ScheduledIteration(1l, "1", 0, date1, date2),
-				new ScheduledIteration(2l, "2", 0, date3, date4),
-				new ScheduledIteration(3l, "3", 0, date5, date6),
-				new ScheduledIteration(4l, "4", 0, date7, date8),				
-				]
-		
-		and :
-			def iter = new ScheduledDatesIterator(collection)
-		
-		when :
-			def res = []
-			while (iter.hasNext()) res << iter.next() 	
-		
-		then :
-			res == [date1, date2, date3, date4, date5, date6, date7, date8]
-		
-		
-	} 
 	
 	
 	// ******************** ScheduledIteration test *******************
@@ -190,7 +92,7 @@ class ScheduledIterationTest extends Specification {
 	}
 	
 	
-	def "should say that some dates are overlapping"(){
+	def "should say that some dates are overlapping (1)"(){
 		
 		given :
 				
@@ -221,6 +123,54 @@ class ScheduledIterationTest extends Specification {
 			ex.message == ScheduledIteration.SCHED_ITER_OVERLAP_DATES_I18N
 	}
 	
+	
+	def "should say that some dates are overlapping (2)"(){
+		
+		given :
+			def refDate = new Date()
+			def date1 = refDate.plus(1)
+			def date2 = refDate.plus(2)
+			def date3 = refDate.plus(2)
+			def date4 = refDate.plus(4)
+		
+		and :
+			def collection = [
+				new ScheduledIteration(1l, "1", 0, date1, date2),
+				new ScheduledIteration(2l, "2", 0, date3, date4)
+			]
+		
+		
+		when :
+			ScheduledIteration.checkIterationsDatesIntegrity(collection)
+		
+		then :
+			IllegalArgumentException ex = thrown(IllegalArgumentException)
+			ex.message == ScheduledIteration.SCHED_ITER_OVERLAP_DATES_I18N
+	}
+	
+	def "should say that iterations 1 day long are ok"(){
+		
+		given :
+			def refDate = new Date()
+			def date1 = refDate.plus(0)
+			def date2 = refDate.plus(0)
+			def date3 = refDate.plus(2)
+			def date4 = refDate.plus(4)
+		
+		and :
+			def collection = [
+				new ScheduledIteration(1l, "1", 0, date1, date2),
+				new ScheduledIteration(2l, "2", 0, date3, date4)
+			]
+		
+		
+		when :
+			ScheduledIteration.checkIterationsDatesIntegrity(collection)
+		
+		then :
+			notThrown Exception
+	}
+	
 	def "should say that empty lists are not ok"(){
 		given :
 			def collection = []
@@ -244,6 +194,11 @@ class ScheduledIterationTest extends Specification {
 			IllegalArgumentException e = thrown(IllegalArgumentException)
 			e.message == ScheduledIteration.SCHED_ITER_MISSING_DATES_I18N
 	}
+	
+	
+	
+	
+	
 	
 	def "should compute the cumulative number of tests per day wrt workload"(){
 		

@@ -144,72 +144,34 @@ public final class ScheduledIteration{
 	// ********************** static part *************************
 	
 	public static void checkIterationsDatesIntegrity(Collection<ScheduledIteration> iterations){
+
+		Date prevEnd = null;
+		Date start = null;
+		Date end = null;
 		
-		ScheduledDatesIterator datesIterator = new ScheduledDatesIterator(iterations);
-		
-		Date prevDate;
-		Date currDate;
-		
-		if (! datesIterator.hasNext()){
+		if (iterations.isEmpty()){
 			throw new IllegalArgumentException(SCHED_ITER_NO_ITERATIONS_I18N);
 		}
 		
-		currDate = datesIterator.next();
-		if (currDate == null){
-			throw new IllegalArgumentException(SCHED_ITER_MISSING_DATES_I18N);
-		}
-		
-		while (datesIterator.hasNext()){
+		for (ScheduledIteration iter : iterations){
 			
-			prevDate = currDate;
-			currDate = datesIterator.next();
+			start = iter.scheduledStart;
+			end = iter.scheduledEnd;
 			
-			if (currDate == null){
+			if (start == null || end == null){
 				throw new IllegalArgumentException(SCHED_ITER_MISSING_DATES_I18N);
 			}
 			
-			if (! currDate.after(prevDate)){
+			if (end.before(start)){
 				throw new IllegalArgumentException(SCHED_ITER_OVERLAP_DATES_I18N);
 			}
-		}
-		
-	}
-	
-	
-	private static final class ScheduledDatesIterator implements Iterator<Date>{
-		
-		private Iterator<ScheduledIteration> iterator;
-		
-		private boolean isCurrentdateAStartdate = false;
-		private ScheduledIteration currentIteration;
-		
-		ScheduledDatesIterator(Collection<ScheduledIteration> iterations){
-			iterator = iterations.iterator();
-		}
-		
-		@Override
-		public boolean hasNext() {
-			return (isCurrentdateAStartdate || iterator.hasNext());
-		}
-		
-		@Override
-		public Date next() {
-			Date result;
-			if (isCurrentdateAStartdate){
-				result = currentIteration.scheduledEnd;
-				isCurrentdateAStartdate = false;
+			
+			if (prevEnd != null && ! start.after(prevEnd)){
+				throw new IllegalArgumentException(SCHED_ITER_OVERLAP_DATES_I18N);
 			}
-			else{
-				currentIteration = iterator.next();
-				result = currentIteration.scheduledStart;
-				isCurrentdateAStartdate = true;
-			}
-			return result;
-		}
-		@Override
-		public void remove() {
-			throw new UnsupportedOperationException();
+			
+			prevEnd = end;
 		}
 	}
-	
+
 }
