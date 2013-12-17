@@ -43,80 +43,71 @@ public class CUFBridge extends SessionFieldBridge implements ParameterizedBridge
 	private SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 	private String type = "";
-	
-	private List<CustomFieldValue> findCufValuesForType(Session session, Object value, String type){
-		
-		BindableEntity entityType = null; 
+
+	private List<CustomFieldValue> findCufValuesForType(Session session, Object value, String type) {
+
+		BindableEntity entityType = null;
 		Long id = null;
-		
-		if("testcase".equals(type)){
+
+		if ("testcase".equals(type)) {
 			TestCase testcase = (TestCase) value;
 			id = testcase.getId();
 			entityType = BindableEntity.TEST_CASE;
-			
-		} else if ("requirement".equals(type)){
+
+		} else if ("requirement".equals(type)) {
 			RequirementVersion requirement = (RequirementVersion) value;
 			id = requirement.getId();
 			entityType = BindableEntity.REQUIREMENT_VERSION;
 		}
-				
-		return (List<CustomFieldValue>) session
-				.createCriteria(CustomFieldValue.class) 
-				.add(Restrictions.eq("boundEntityId", id))
-				.add(Restrictions.eq("boundEntityType", entityType)).list();
+
+		return (List<CustomFieldValue>) session.createCriteria(CustomFieldValue.class)
+				.add(Restrictions.eq("boundEntityId", id)).add(Restrictions.eq("boundEntityType", entityType)).list();
 	}
 
 	@Override
 	public void setParameterValues(Map<String, String> parameters) {
-		if(parameters.containsKey("type")){
+		if (parameters.containsKey("type")) {
 			this.type = (String) parameters.get("type");
 		}
 	}
 
 	@Override
-	protected void writeFieldToDocument(String name, Session session, Object value, Document document, LuceneOptions luceneOptions) {
-		
+	protected void writeFieldToDocument(String name, Session session, Object value, Document document,
+			LuceneOptions luceneOptions) {
+
 		List<CustomFieldValue> cufValues = findCufValuesForType(session, value, type);
 
 		for (CustomFieldValue cufValue : cufValues) {
-			
+
 			InputType inputType = cufValue.getBinding().getCustomField().getInputType();
+			String code = cufValue.getBinding().getCustomField().getCode();
+			String val = null;
 			
-			if(org.squashtest.tm.domain.customfield.InputType.DATE_PICKER.equals(inputType)){
-				String code = cufValue.getBinding().getCustomField().getCode();
+			switch (inputType) {
+			case DATE_PICKER:
 				Date inputDate = null;
 				try {
 					inputDate = inputFormat.parse(cufValue.getValue());
-					Field field = new Field(code, dateFormat.format(inputDate), luceneOptions.getStore(),
-						    luceneOptions.getIndex(), luceneOptions.getTermVector() );
-						    field.setBoost( luceneOptions.getBoost());
-						    document.add(field);
+					val = dateFormat.format(inputDate);
+
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
-			} else if(org.squashtest.tm.domain.customfield.InputType.DROPDOWN_LIST.equals(inputType)) {
-
-				String code = cufValue.getBinding().getCustomField().getCode();
-				String val = cufValue.getValue();
-				if("".equals(val)){
+				break;
+			case DROPDOWN_LIST:
+				val = cufValue.getValue();
+				if ("".equals(val)) {
 					val = "$NO_VALUE";
 				}
-				
-				Field field = new Field(code, val,
-						luceneOptions.getStore(), luceneOptions.getIndex(),
-						luceneOptions.getTermVector());
-				field.setBoost(luceneOptions.getBoost());
-				document.add(field);		
-				
-			} else {
-
-				String code = cufValue.getBinding().getCustomField().getCode();
-				Field field = new Field(code, cufValue.getValue(),
-						luceneOptions.getStore(), luceneOptions.getIndex(),
-						luceneOptions.getTermVector());
-				field.setBoost(luceneOptions.getBoost());
-				document.add(field);				
-			} 
+				break;
+			default:
+				val = cufValue.getValue();
+			}
+			
+			Field field = new Field(code, val, luceneOptions.getStore(), luceneOptions.getIndex(),
+					luceneOptions.getTermVector());
+			field.setBoost(luceneOptions.getBoost());
+			document.add(field);
 		}
 	}
 
