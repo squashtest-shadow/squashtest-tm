@@ -36,7 +36,7 @@ define(["../basic-objects/table-view"], function(TableView){
 				var total = _nbterm + m.nbReady + m.nbRunning;
 				var progress = (total>0) ? (_nbterm * 100 / total).toFixed(0) + ' %' : '0%';
 				var rowdata = [
-				               m.iterationName,
+				               '#'+(i+1)+' - '+m.iterationName,
 				               m.nbReady,
 				               m.nbRunning,
 				               m.nbSuccess + m.nbWarning,
