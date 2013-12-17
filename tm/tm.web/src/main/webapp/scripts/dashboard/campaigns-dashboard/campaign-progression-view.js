@@ -279,12 +279,12 @@ define([
 			x2ticks.push(axisStart);			
 			for (i=0;i<len;i++){
 				var iter = iterations[i],
-					label = labeltpl.replace('{{this.name}}', (i+1)+" - "+iter.name)
+					label = labeltpl.replace('{{this.name}}', (i+1)+" - "+iter.name),
 					_start = iter.scheduledStart,
 					_end = iter.scheduledEnd;
 				
 				// in case the iteration starts and ends the same day we need 
-				// to add a few hours or face the risk of having a 0-width label
+				// to add a few hours or we'll have a 0-width label
 				if (_start === _end){
 					_end = _end + 72000000;	//aka +20 hours
 				}
