@@ -1244,16 +1244,7 @@ define(["jquery",
 		// well, no big deal
 	}
 
-	/*
-	 * temporary hack here : due to multiple inclusions of that file, the variable $.fn.squashTable.instances might be
-	 * redefined. Thus previously existing instances of a datatable would be lost (and we don't want that).
-	 * 
-	 * So we're saving it in case it already exists, and rebind it below.
-	 */
-	var existingInstances;
-	if ($.fn.squashTable) {
-		existingInstances = $.fn.squashTable.instances;
-	}
+
 
 	$.fn.squashTable = function(datatableSettings, squashSettings) {
 
@@ -1267,32 +1258,7 @@ define(["jquery",
 		 * *********************************************************** */
 
 		if (arguments.length === 0) {
-			//first, let's try to see if this selector is actually the key of this table in the hash 
-			var rettable = $.fn.squashTable.instances[this.selector];
-			if (rettable !== undefined){
-				return rettable;
-			}
-			
-			//if not found, try looking over all the maps if one entry has this id
-			var id = this.attr('id');
-			if (id){
-				for (var _t in $.fn.squashTable.instances){
-					var _tt = $.fn.squashTable.instances[_t];
-					if (_tt.attr('id') === id){
-						return _tt;
-					}
-				}			
-			}
-			
-			//if not found, try looking over all the maps if one entry satisfies this selector
-			for (var _t in $.fn.squashTable.instances){
-				var _tt = $.fn.squashTable.instances[_t];
-				if (_tt.is(this.selector)){
-					return _tt;
-				}
-			}
-			//else well, too bad.
-			return undefined;
+			return this.data('squashtableInstance');
 		}
 
 		/* *************************************************************
@@ -1460,7 +1426,7 @@ define(["jquery",
 
 		// ---------------- store the new instance ---------------------
 
-		$.fn.squashTable.instances[this.selector] = this;
+		this.data('squashtableInstance', this);
 
 		// ---------------- now call the base plugin -------------------
 
@@ -1487,7 +1453,6 @@ define(["jquery",
 		return this;
 	};
 
-	$.fn.squashTable.instances = existingInstances || {}; // end of the hack
 
 	// *********************** static methods ***************************
 
