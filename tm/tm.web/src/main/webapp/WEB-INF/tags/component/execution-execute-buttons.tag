@@ -31,24 +31,24 @@
 
 <c:choose>
 	<c:when test="${execution.executionStatus == 'READY'}">
-		<f:message var="executeBtnLabel"
-			key="execution.execute.start.button.label" />
+		<f:message var="executeBtnLabel" key="execution.execute.start.button.label" />
+		<f:message var="execIEOBtnLabel" key="execution.execute.IEO.button.label"/>
 	</c:when>
 	<c:otherwise>
-		<f:message var="executeBtnLabel"
-			key="execution.execute.resume.button.label" />
+		<f:message var="executeBtnLabel" key="execution.execute.resume.button.label" />
+		<f:message var="execIEOBtnLabel" key="execution.execute.IEO.resume.button.label" />
 	</c:otherwise>
 </c:choose>
 
-<input type="button"
-	value="<f:message key="execution.execute.IEO.button.label" />"
-	id="ieo-execution-button" />
+<input type="button" value="${execIEOBtnLabel}" id="ieo-execution-button" />
+
 <form action="${ runnerUrl }?optimized=true&suitemode=false" method="post"
 	name="execute-test-case-form" target="optimized-execution-runner"
 	class="not-displayed">
 	<input type="submit" value='' name="optimized"
 		id="start-optimized-button" />
 </form>
+
 <input type="button" value="${executeBtnLabel}"
 	id="execute-execution-button" />
 
