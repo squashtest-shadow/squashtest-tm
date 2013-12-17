@@ -358,7 +358,7 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_PROJECT_FILTER);
 		}
 		if(columnFiltering.hasFilter(MODE_DATA)){
-			if (columnFiltering.getFilter(MODE_DATA).equals(TestCaseExecutionMode.MANUAL.toString())){
+			if (TestCaseExecutionMode.MANUAL.name().equals(columnFiltering.getFilter(MODE_DATA))){
 				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_MODEMANUAL_FILTER);
 			}
 			else{
