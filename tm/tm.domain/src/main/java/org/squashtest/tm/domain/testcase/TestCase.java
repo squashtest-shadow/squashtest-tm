@@ -111,7 +111,14 @@ import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedExcepti
 				name="cufs",
 				store=Store.YES,
 				impl=CUFBridge.class,
-				params = {@org.hibernate.search.annotations.Parameter(name="type", value="testcase")}
+				params = {@org.hibernate.search.annotations.Parameter(name="type", value="testcase"),  @org.hibernate.search.annotations.Parameter(name="inputType", value="ALL")}
+		),
+		@ClassBridge(
+				name="cufs",
+				store=Store.YES,
+				analyze=Analyze.NO,
+				impl=CUFBridge.class,
+				params = {@org.hibernate.search.annotations.Parameter(name="type", value="testcase"), @org.hibernate.search.annotations.Parameter(name="inputType", value="DROPDOWN_LIST")}
 		),
 		@ClassBridge(
 			name="createdBy",

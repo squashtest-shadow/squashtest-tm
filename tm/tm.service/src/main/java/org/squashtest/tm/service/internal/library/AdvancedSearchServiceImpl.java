@@ -364,7 +364,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			
 			org.apache.lucene.search.Query query = qb
 					.bool()
-					.should(qb.keyword().onField(fieldName).ignoreFieldBridge()
+					.should(qb.keyword().onField(fieldName).ignoreFieldBridge().ignoreAnalyzer()
 							.matching(value).createQuery()).createQuery();
 
 			if (query != null && mainQuery == null) {

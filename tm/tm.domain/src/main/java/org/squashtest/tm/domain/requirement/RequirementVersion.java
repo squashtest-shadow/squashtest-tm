@@ -81,12 +81,19 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 		store=Store.YES,
 		analyze=Analyze.NO,
 		impl=RequirementVersionAttachmentBridge.class
+	),	
+	@ClassBridge(
+			name="cufs",
+			store=Store.YES,
+			impl=CUFBridge.class,
+			params = {@org.hibernate.search.annotations.Parameter(name="type", value="requirement"),  @org.hibernate.search.annotations.Parameter(name="inputType", value="ALL")}
 	),
 	@ClassBridge(
-		name="cufs",
-		store=Store.YES,
-		impl=CUFBridge.class,
-		params = {@org.hibernate.search.annotations.Parameter(name="type", value="requirement")}
+			name="cufs",
+			store=Store.YES,
+			analyze=Analyze.NO,
+			impl=CUFBridge.class,
+			params = {@org.hibernate.search.annotations.Parameter(name="type", value="requirement"), @org.hibernate.search.annotations.Parameter(name="inputType", value="DROPDOWN_LIST")}
 	),
 	@ClassBridge(
 		name="isCurrentVersion",

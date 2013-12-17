@@ -28,8 +28,10 @@ import java.util.Map;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.SimpleExpression;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.hibernate.search.bridge.ParameterizedBridge;
 import org.squashtest.tm.domain.customfield.BindableEntity;
@@ -43,8 +45,10 @@ public class CUFBridge extends SessionFieldBridge implements ParameterizedBridge
 	private SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 	private String type = "";
+	private String inputType = "";
 
-	private List<CustomFieldValue> findCufValuesForType(Session session, Object value, String type) {
+	@SuppressWarnings("unchecked")
+	private List<CustomFieldValue> findCufValuesForType(Session session, Object value) {
 
 		BindableEntity entityType = null;
 		Long id = null;
@@ -59,9 +63,17 @@ public class CUFBridge extends SessionFieldBridge implements ParameterizedBridge
 			id = requirement.getId();
 			entityType = BindableEntity.REQUIREMENT_VERSION;
 		}
-
-		return (List<CustomFieldValue>) session.createCriteria(CustomFieldValue.class)
-				.add(Restrictions.eq("boundEntityId", id)).add(Restrictions.eq("boundEntityType", entityType)).list();
+		Criteria crit = session.createCriteria(CustomFieldValue.class).createAlias("binding", "binding").createAlias("binding.customField","cuf");
+		crit.add(Restrictions.eq("boundEntityId", id)).add(Restrictions.eq("boundEntityType", entityType));
+		
+		SimpleExpression typeDropDownList = Restrictions.eq("cuf.inputType", InputType.DROPDOWN_LIST);
+		if(inputType != null &&  inputType.equals(InputType.DROPDOWN_LIST.name())){
+			crit.add(typeDropDownList);
+		}else{
+			crit.add(Restrictions.not(typeDropDownList));
+		}
+		return crit.list();
+		
 	}
 
 	@Override
@@ -69,13 +81,16 @@ public class CUFBridge extends SessionFieldBridge implements ParameterizedBridge
 		if (parameters.containsKey("type")) {
 			this.type = (String) parameters.get("type");
 		}
+		if (parameters.containsKey("inputType")) {
+			this.inputType = (String) parameters.get("inputType");
+		}
 	}
 
 	@Override
 	protected void writeFieldToDocument(String name, Session session, Object value, Document document,
 			LuceneOptions luceneOptions) {
 
-		List<CustomFieldValue> cufValues = findCufValuesForType(session, value, type);
+		List<CustomFieldValue> cufValues = findCufValuesForType(session, value);
 
 		for (CustomFieldValue cufValue : cufValues) {
 
