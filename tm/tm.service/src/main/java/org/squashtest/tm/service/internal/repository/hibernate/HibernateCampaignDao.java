@@ -44,6 +44,7 @@ import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.campaign.IndexedCampaignTestPlanItem;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
@@ -60,7 +61,6 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 	private static final String TESTCASE_FILTER = "testcaseFilter";	
 	private static final String USER_FILTER = "userFilter";
 	private static final String WEIGHT_FILTER = "weightFilter";
-	private static final String MODE_FILTER = "modeFilter";
 	
 	private static final String PROJECT_DATA = "project-name";
 	private static final String REFERENCE_DATA = "reference";
@@ -93,7 +93,9 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 
 	private static final String HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER = "and TestCase.importance = :weightFilter ";
 
-	private static final String HQL_INDEXED_TEST_PLAN_MODE_FILTER = "and TestCase.executionMode = :modeFilter ";
+	private static final String HQL_INDEXED_TEST_PLAN_MODEAUTO_FILTER = "and TestCase.automatedTest is not null ";
+
+	private static final String HQL_INDEXED_TEST_PLAN_MODEMANUAL_FILTER = "and TestCase.automatedTest is null ";
 
 	@Override
 	public Campaign findByIdWithInitializedIterations(long campaignId) {
@@ -120,13 +122,13 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 
 	@Override
 	public List<CampaignTestPlanItem> findTestPlan(long campaignId, PagingAndMultiSorting sorting) {
-		List<Object[]> tuples = _findIndexedTestPlan(campaignId, sorting);
+		List<Object[]> tuples = findIndexedTestPlanAsTuples(campaignId, sorting);
 		return buildItems(tuples);
 	}
 
 	@Override
 	public List<IndexedCampaignTestPlanItem> findIndexedTestPlan(long campaignId, PagingAndMultiSorting sorting) {
-		List<Object[]> tuples = _findIndexedTestPlan(campaignId, sorting);
+		List<Object[]> tuples = findIndexedTestPlanAsTuples(campaignId, sorting);
 		return buildIndexedItems(tuples);
 	}
 
@@ -135,7 +137,8 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 		return findIndexedTestPlan(campaignId, new SingleToMultiSortingAdapter(sorting));
 	}
 
-	private List<Object[]> _findIndexedTestPlan(final long campaignId, PagingAndMultiSorting sorting) {
+	@SuppressWarnings("unchecked")
+	private List<Object[]> findIndexedTestPlanAsTuples(final long campaignId, PagingAndMultiSorting sorting) {
 
 		StringBuilder hqlbuilder = new StringBuilder(HQL_INDEXED_TEST_PLAN);
 
@@ -180,7 +183,11 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_PROJECT_FILTER);
 		}
 		if (filtering.hasFilter(MODE_DATA)) {
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_MODE_FILTER);
+			if (TestCaseExecutionMode.MANUAL.name().equals(filtering.getFilter(MODE_DATA))) {
+				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_MODEMANUAL_FILTER);
+			} else {
+				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_MODEAUTO_FILTER);
+			}
 		}
 		if (filtering.hasFilter(REFERENCE_DATA)) {
 			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER);
@@ -202,7 +209,8 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 		return hqlbuilder;
 	}
 
-	private List<Object[]> _findIndexedTestPlan(final long campaignId, PagingAndMultiSorting sorting,
+	@SuppressWarnings("unchecked")
+	private List<Object[]> findIndexedTestPlanAsTuples(final long campaignId, PagingAndMultiSorting sorting,
 			ColumnFiltering filtering) {
 
 		String queryString = buildIndexedTestPlanQueryString(sorting, filtering);
@@ -222,9 +230,6 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 
 		if (filtering.hasFilter(PROJECT_DATA)) {
 			query.setParameter(PROJECT_FILTER, "%" + filtering.getFilter(PROJECT_DATA) + "%", StringType.INSTANCE);
-		}
-		if (filtering.hasFilter(MODE_DATA)) {
-			query.setParameter(MODE_FILTER, filtering.getFilter(MODE_DATA), StringType.INSTANCE);
 		}
 		if (filtering.hasFilter(REFERENCE_DATA)) {
 			query.setParameter(REFERENCE_FILTER, "%" + filtering.getFilter(REFERENCE_DATA) + "%", StringType.INSTANCE);
@@ -375,7 +380,7 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 	@Override
 	public List<IndexedCampaignTestPlanItem> findFilteredIndexedTestPlan(long campaignId,
 			PagingAndMultiSorting sorting, ColumnFiltering filtering) {
-		List<Object[]> tuples = _findIndexedTestPlan(campaignId, sorting, filtering);
+		List<Object[]> tuples = findIndexedTestPlanAsTuples(campaignId, sorting, filtering);
 		return buildIndexedItems(tuples);
 	}
 

@@ -22,12 +22,16 @@ package org.squashtest.tm.service.internal.repository.hibernate
 
 import javax.inject.Inject
 
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestPlanStatus;
+import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.service.internal.repository.CampaignDao
 import org.unitils.dbunit.annotation.DataSet
 
+import spock.lang.Unroll;
 import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
@@ -70,6 +74,30 @@ class HibernateCampaignDaoIT extends DbunitDaoSpecification {
 		result.nbFailure == 0
 		result.status == TestPlanStatus.READY
 	}
+	
+	@Unroll
+	@DataSet("HibernateCampaignDaoIT.campaign with test plan.xml")
+	def "should find test plan filtered by auto-mode: #autoMode"() {
+		given: 
+		PagingAndMultiSorting sort = Mock()
+		sort.sortings >> []
+		
+		and:
+		ColumnFiltering filt = Mock()
+		filt.hasFilter(HibernateCampaignDao.MODE_DATA) >> active
+		filt.getFilter(HibernateCampaignDao.MODE_DATA) >> filter
+		
+		expect:
+		campaignDao.findFilteredIndexedTestPlan(10L, sort, filt).collect { it.item.id } == expectedId
+		
+		where:
+		active   | filter                          | expectedId
+		true	 | TestCaseExecutionMode.AUTOMATED | [1010L]
+		true	 | TestCaseExecutionMode.MANUAL    | [1020L]
+		false	 | null                            | [1010L, 1020L]
+	} 
 }	
+
+
 
 

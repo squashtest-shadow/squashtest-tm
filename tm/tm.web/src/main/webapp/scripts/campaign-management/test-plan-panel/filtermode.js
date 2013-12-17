@@ -120,7 +120,7 @@ define(["jquery"], function($){
 				api = settings.oApi,
 				headers = table.find('th');
 			
-			var visiIndex =  headers.index($(this).parent()),
+			var visiIndex =  headers.index($(this).parents('th:first')),
 				realIndex = api._fnVisibleToColumnIndex( settings, visiIndex );
 			
 			sTable.fnFilter(this.value, realIndex);
