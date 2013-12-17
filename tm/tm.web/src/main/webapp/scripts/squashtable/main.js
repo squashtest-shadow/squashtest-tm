@@ -1272,17 +1272,27 @@ define(["jquery",
 			if (rettable !== undefined){
 				return rettable;
 			}
-			//if not found, try looking over all the maps if one satisfies this selector
-			else{
+			
+			//if not found, try looking over all the maps if one entry has this id
+			var id = this.attr('id');
+			if (id){
 				for (var _t in $.fn.squashTable.instances){
 					var _tt = $.fn.squashTable.instances[_t];
-					if (_tt.is(this.selector)){
+					if (_tt.attr('id') === id){
 						return _tt;
 					}
-				}
-				//else well, too bad.
-				return undefined;
+				}			
 			}
+			
+			//if not found, try looking over all the maps if one entry satisfies this selector
+			for (var _t in $.fn.squashTable.instances){
+				var _tt = $.fn.squashTable.instances[_t];
+				if (_tt.is(this.selector)){
+					return _tt;
+				}
+			}
+			//else well, too bad.
+			return undefined;
 		}
 
 		/* *************************************************************
