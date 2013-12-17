@@ -41,7 +41,12 @@ define([ "jquery", "./simple-tree-conf/conf-factory",
 		initWorkspaceTree : function(settings) {
 			pluginsFactory.configure("workspace-tree");
 			var conf = wkspConf.generate(settings);
-			var instance = $(settings.treeselector).jstree(conf);
+			var treeDiv = $(settings.treeselector);
+			//trick for [Issue 2886]
+			treeDiv.bind("loaded.jstree", function(event, data){
+					treeDiv.jstree("save_cookie", "open_node");
+				});
+			var instance = treeDiv.jstree(conf);
 			squashtm.tree = instance;
 		},
 
