@@ -55,7 +55,7 @@ define(['squash.translator', './table', './popups' ], function(translator, table
 		});
 		
 		conf.urls = {
-			testplanUrl : baseURL + '/campaigns/'+conf.basic.campaignId+'/test-plan'
+			testplanUrl : baseURL + '/campaigns/'+conf.basic.campaignId+'/test-plan/'
 		};
 		
 		return conf;
@@ -63,11 +63,20 @@ define(['squash.translator', './table', './popups' ], function(translator, table
 	}
 	
 	function _bindButtons(conf){
+		
+		
+		if (conf.permissions.editable){
+			$("#assign-users-button").on('click', function(){
+				$("#camp-test-plan-batch-assign").formDialog('open');
+			});
+		}
+		
 		if (conf.permissions.reorderable){
 			$("#reorder-test-plan-button").squashButton().on('click', function(){
 				$("#camp-test-plan-reorder-dialog").confirmDialog('open');
 			});
 		}	
+		
 		
 		$("#filter-test-plan-button").squashButton().on('click', function(){
 			

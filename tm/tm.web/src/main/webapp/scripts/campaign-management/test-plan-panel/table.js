@@ -59,18 +59,43 @@ define(['jquery', './sortmode', './filtermode', 'squashtable', 'jeditable'],
 			
 			var $exectd = $row.find('.exec-mode').text('');
 			if (data['exec-mode'] === "M") {
-				$exectd.append('<span class"exec-mode-icon exec-mode-manual"/>').attr('title', '');
+				$exectd.append('<span class="exec-mode-icon exec-mode-manual"/>').attr('title', '');
 			} else {
 				$exectd.append('<span class="exec-mode-icon exec-mode-automated"/>').attr('title',
 						conf.messages.automatedExecutionTooltip);
 			}
+		
+			// assignee			
+			$row.find('.assignee-combo').wrapInner('<span/>');
+			
+			if (conf.permissions.editable){
+				var assignableUsers = conf.basic.assignableUsers;
+				var assigneeurl = conf.urls.testplanUrl + data['entity-id'];
+				var $assigneeelt = $row.find('.assignee-combo').children().first();
+				$assigneeelt.addClass('cursor-arrow');
+				$assigneeelt.editable(
+					assigneeurl,{
+						type : 'select', 
+						data : assignableUsers,
+						name : 'assignee',
+						onblur : 'cancel',
+						callback : function(value, settings){
+							$(this).text(assignableUsers[value]);
+						}
+				});
+			}
+			
 			
 		};
 
 		var drawCallback = function(){
-			if (conf.permissions.editable){
-				addLoginListToTestPlan();
-			}
+
+			// make all <select> elements autosubmit on selection
+			// change.
+			this.on('change', 'select', function() {
+				$(this).submit();
+			});
+
 			//sort mode
 			var settings = this.fnSettings();
 			var aaSorting = settings.aaSorting;		

@@ -42,6 +42,7 @@
 <c:url var="testCaseUrl" value="/test-cases/{tc-id}/info" />
 <c:url var="dtMessagesUrl" value="/datatables/messages" />
 
+<f:message var="assignLabel"	key="label.Assign"/>
 <f:message var="confirmLabel"	key="label.Confirm"/>
 <f:message var="cancelLabel"	key="label.Cancel"/>
 <f:message var="reorderLabel"	key="label.Reorder" />
@@ -60,7 +61,7 @@
 			<th class="no-user-select tp-th-exec-mode" data-def="map=exec-mode, sortable, center, visible=${campaign.project.testAutomationEnabled}, sClass=exec-mode"><f:message key="label.Mode" /></th>
 			<th class="no-user-select tp-th-reference" data-def="map=reference, sortable"><f:message key="label.Reference"/></th>
 			<th class="no-user-select tp-th-name" data-def="map=tc-name, sortable, link=${testCaseUrl}"><f:message key="test-case.name.label" /></th>
-			<th class="no-user-select tp-th-assignee" data-def="map=assigned-user, sortable, sWidth=10%"><f:message key="test-case.user.combo.label" /></th>
+			<th class="no-user-select tp-th-assignee" data-def="map=assigned-user, sortable, sWidth=10%, sClass=assignee-combo"><f:message key="test-case.user.combo.label" /></th>
 			<th class="no-user-select tp-th-importance" data-def="map=importance, sortable"><f:message key="test-case.importance.combo.label" /></th>
 			<th class="no-user-select" data-def="map=empty-delete-holder${deleteBtnClause}">&nbsp;</th>				
 		</tr>
@@ -80,6 +81,26 @@
 	</div>
 </div>
 
+
+
+<div id="camp-test-plan-batch-assign" class="not-displayed popup-dialog" title="<f:message key="label.AssignUser"/>">
+	<div data-def="state=assign">
+		<span><f:message key="message.AssignTestCaseToUser"/></span>
+		<select class="batch-select">
+			<c:forEach var="user" items="${assignableUsers}">
+			<option value="${user.key}">${user.value}</option>		
+			</c:forEach>
+		</select>
+	</div>	
+	<span data-def="state=empty-selec"><f:message key="message.EmptyTableSelection"/></span>
+	
+	<div class="popup-dialog-buttonpane"> 
+		<input type="button" value="${assignLabel}" data-def="state=assign, mainbtn=assign, evt=confirm"/>
+		<input type="button" value="${cancelLabel}" data-def="mainbtn=empty-select, evt=cancel"/>
+	</div>
+</div>
+
+
 <script type="text/javascript">
 
 
@@ -92,82 +113,13 @@
 		table.refresh();
 		table.deselectRows();
 	}
-	
-	<c:if test="${ editable }">
-	function addLoginListToTestPlan(){
-			
-		var table = $("#test-cases-table").squashTable();
-		
-		//look first at the cache
-		var assignableList = table.data('assignable-list');
-		
-		if (assignableList!=null){
-			table.$('td.assignable-combo').loginCombo();
-		}
-		
-		$.get("${assignableUsersUrl}", "json")
-		.success(function(json){
-			table.data('assignable-list', json);
-			table.$('td.assignable-combo').loginCombo();
-		});
-
-	}
-	</c:if>
 
 	
     require([ "common" ], function () {
     	  require([ "jquery", "domReady", 
     	            "campaign-management", 
     	            "jqueryui", "squashtable" ], function ($, domReady, manager) {
-    	    <c:if test="${ editable }">
-    	    $.fn.loginCombo = function(assignableList){
-    	    	
-    	    	if (this.length==0) return;
-    	    	var squashTable=$("#test-cases-table").squashTable();
-    	    	var assignableList = squashTable.data('assignable-list');
-    	    	if (! assignableList) return;
-    	    	
-    	    	//create the template
-    	    	var template=$('<select/>');
-    	    	for (var i=0;i<assignableList.length;i++){
-    	    		var opt = '<option value="'+assignableList[i].id+'">'+assignableList[i].login+'</option>';
-    	    		template.append(opt);
-    	    	}
-    	    	
-    	    	template.change(function(){
-    	    		$.ajax({
-    	    			type : 'POST',
-    	    			url : this.getAttribute('data-assign-url'),
-    	    			data : "userId=" + this.value,
-    	    			dataType : 'json'
-    	    		});
-    	    	});
-    	    		
-    	    	this.each(function(){
-    	    		
-    	    		var cloneSelect = template.clone(true);
-    	    		
-    	    		var jqTd = $(this);
-    	    		var row = this.parentNode;
-    	    		
-    	    		
-    	    		//sets the change url
-    	    		var tpId = squashTable.getODataId(row);
-    	    		var dataUrl = "${campaignUrl}/test-plan/"+tpId+"/assign-user";
-    	    		
-    	    		cloneSelect.attr('data-assign-url', dataUrl);
-    	    	
-    	    		//selects the assigned user
-    	    		var assignedTo = squashTable.fnGetData(row)['assigned-to'] || "0";
-    	    		cloneSelect.val(assignedTo);
-    	    		
-    	    		
-    	    		//append the content
-    	    		jqTd.empty().append(cloneSelect);
-    	    		
-    	    	});	
-    	    }
-    	    </c:if>
+
     
     	    domReady(function() {
 				//multiple deletion

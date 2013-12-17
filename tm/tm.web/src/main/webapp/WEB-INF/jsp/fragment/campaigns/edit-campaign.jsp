@@ -50,7 +50,6 @@
 <c:url var="assignableUsersUrl" value="/campaigns/${campaign.id}/assignable-users" />
 <c:url var="campaignStatisticsUrl" value="/campaigns/${campaign.id}/dashboard-statistics" />
 <c:url var="campaignStatisticsPrintUrl" value="/campaigns/${campaign.id}/dashboard"/>
-<c:url var="assignTestCasesUrl" value="/campaigns/${campaign.id}/batch-assign-user" />
 <c:url var="testCaseManagerUrl"	value="/campaigns/${campaign.id}/test-plan/manager" />
 <c:url var="workspaceUrl" value="/campaign-workspace/#" />
 <c:url var="btEntityUrl" value="/bugtracker/campaign/${campaign.id}" />
@@ -366,7 +365,7 @@
 			
 			<c:if test="${ linkable }">
 			<span class="group">
-				<button id="assign-test-case-button" class="button" data-icon="ui-icon-person" title="${tooltipAssign}" >${assignLabel}</button>
+				<button id="assign-users-button" class="button" data-icon="ui-icon-person" title="${tooltipAssign}" >${assignLabel}</button>
 			</span>
 			<span class="group">
 				<button id="test-case-button" class="button" data-icon="ui-icon-plusthick" title="${tooltipAddTPI}">${associateLabel}</button>
@@ -446,62 +445,6 @@
 
 </div>
 </csst:jq-tab>
-
-
-<%--------------------------- Assign User popup -------------------------------------%>
-
-
-<pop:popup id="batch-assign-test-case"
-	titleKey="label.AssignUser" isContextual="true"
-	openedBy="assign-test-case-button" closeOnSuccess="false">
-	<jsp:attribute name="buttons">
-		
-			<f:message var="label" key="label.AssignUser" />
-			'${ label }': function() {
-				var url = "${ assignTestCasesUrl }";
-				var table = $( '#test-cases-table' ).squashTable();
-				var ids = table.getSelectedIds();
-
-				var user = $(".batch-select", this).val();
-			
-				$.post(url, { itemIds: ids, userId: user}, function(){
-					table.refresh();
-					$("#batch-assign-test-case").dialog('close');
-				});
-				
-			},			
-			<pop:cancel-button />
-		</jsp:attribute>
-	<jsp:attribute name="body">
-			<f:message var="emptyMessage"
-			key="message.EmptyTableSelection" />
-			<script type="text/javascript">
-				$("#batch-assign-test-case").bind("dialogopen",function(event, ui) {
-						var table = $('#test-cases-table').squashTable();
-						var ids = table.getSelectedIds();
-						if (ids.length > 0) {
-							var pop = this;
-							$.get("${assignableUsersUrl}","json")
-								.success(function(jsonList) {var select = $(".batch-select",pop);
-									select.empty();
-									for ( var i = 0; i < jsonList.length; i++) {
-										select.append('<option value="'+jsonList[i].id+'">'
-														+ jsonList[i].login
-														+ '</option>');
-									}
-								});
-						} else {
-							$.squash.openMessage("<f:message key='popup.title.error' />","${emptyMessage}");
-							$(this).dialog('close');
-						}
-					});
-			</script>
-			<span><f:message key="message.AssignTestCaseToUser" />
-		</span>
-			<select class="batch-select"></select>
-			
-		</jsp:attribute>
-</pop:popup>
 
 
 

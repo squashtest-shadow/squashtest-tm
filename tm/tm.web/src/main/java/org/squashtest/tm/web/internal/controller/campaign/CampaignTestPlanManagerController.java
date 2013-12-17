@@ -182,12 +182,13 @@ public class CampaignTestPlanManagerController {
 	}
 	
 
-	@RequestMapping(value = "/campaigns/{campaignId}/batch-assign-user", method = RequestMethod.POST, params = {
-			ITEMS_IDS_REQUEST_PARAM, "userId" })
+
+	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/{testPlanIds}", method = RequestMethod.POST, params = {"assignee"})
 	public @ResponseBody
-	void assignUserToCampaignTestPlanItems(@RequestParam(ITEMS_IDS_REQUEST_PARAM) List<Long> itemsIds,
-			@PathVariable long campaignId, @RequestParam long userId) {
-		testPlanManager.assignUserToTestPlanItems(itemsIds, campaignId, userId);
+	Long assignUserToCampaignTestPlanItem(@PathVariable("testPlanIds") List<Long> testPlanIds, @PathVariable("campaignId") long campaignId,
+			@RequestParam("assignee") long assignee) {
+		testPlanManager.assignUserToTestPlanItems(testPlanIds, campaignId, assignee);
+		return assignee;
 	}
 
 	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/{itemIds}/position/{newIndex}", method = RequestMethod.POST)
