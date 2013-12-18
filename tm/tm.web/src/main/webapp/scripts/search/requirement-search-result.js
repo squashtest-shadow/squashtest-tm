@@ -32,6 +32,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		initialize : function() {
 			this.configureModifyResultsDialog();
 			this.getIdsOfSelectedTableRowList =  $.proxy(this._getIdsOfSelectedTableRowList, this);
+			this.getIdsOfEditableSelectedTableRowList = $.proxy(this._getIdsOfEditableSelectedTableRowList, this);
 			this.updateDisplayedValueInColumn =  $.proxy(this._updateDisplayedValueInColumn, this);
 			var model = JSON.parse($("#searchModel").text());
 			this.isAssociation = !!$("#associationType").length;
@@ -146,20 +147,22 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 		},
 		
 		
-		validateSelection : function(dataTable) {
+		
+		_getIdsOfSelectedTableRowList : function(dataTable) {
 			var rows = dataTable.fnGetNodes();
+			var ids = [];
+			
 			$( rows ).each(function(index, row) {
 				if ($( row ).attr('class').search('selected') != -1) {
 					var data = dataTable.fnGetData(row);
-					if(!data["editable"]){
-						var noWritingRightsDialog = $("#warning-no-writing-rights").messageDialog();
-						noWritingRightsDialog.messageDialog('open');
-					}
+					ids.push(data["requirement-id"]);
 				}
 			});
+			
+			return ids;
 		},
 		
-		_getIdsOfSelectedTableRowList : function(dataTable) {
+		_getIdsOfEditableSelectedTableRowList : function(dataTable) {
 			var rows = dataTable.fnGetNodes();
 			var ids = [];
 			
@@ -262,12 +265,19 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 					function() {
 						var table = $('#requirement-search-result-table').dataTable();
 						var ids = self.getIdsOfSelectedTableRowList(table);
+						var editableIds = self.getIdsOfEditableSelectedTableRowList(table);
 						if(ids.length === 0) {
 							var noLineSelectedDialog = $("#no-selected-lines").messageDialog();
 							noLineSelectedDialog.messageDialog('open');
 							$(this).confirmDialog('close');
+						}else if (editableIds.length === 0){
+							var noWritingRightsEditableDialog = $("#no-selected-editable-lines").messageDialog();
+							noWritingRightsEditableDialog.messageDialog('open');
+							$(this).confirmDialog('close');
+						}else if (editableIds.length < ids.length){
+							var noWritingRightsDialog = $("#warning-no-writing-rights").messageDialog();
+							noWritingRightsDialog.messageDialog('open');
 						}
-						self.validateSelection(table);
 					});
 
 			addModifyResultDialog.activate = function(arg) {
