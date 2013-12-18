@@ -122,12 +122,16 @@ define([ 'jquery', 'underscore', 'jquery.squash.formdialog' ], function($, _) {
 			if (_.isArray(xhrs) && xhrs.length > 1) {
 				return $.when.apply($, xhrs).done(function() {
 					callback.call(self, arguments);
+				}).fail(function(){
+					self.close();	// other error handling mechanism should kick in
 				});
 			}
 			// case of a single xhr : the result will be an array, that we transform in an array of array as expected
 			else {
 				return $.when(xhrs).done(function() {
 					callback.call(self, [ arguments ]);
+				}).fail(function(){
+					self.close();	// other error handling mechanism should kick in
 				});
 			}
 		},

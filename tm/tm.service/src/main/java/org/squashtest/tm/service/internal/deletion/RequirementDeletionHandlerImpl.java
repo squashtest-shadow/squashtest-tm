@@ -31,6 +31,7 @@ import javax.inject.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.core.foundation.exception.ActionException;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.WhichNodeVisitor;
@@ -38,6 +39,7 @@ import org.squashtest.tm.domain.library.WhichNodeVisitor.NodeType;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
 import org.squashtest.tm.service.deletion.Node;
 import org.squashtest.tm.service.deletion.NodeMovement;
 import org.squashtest.tm.service.deletion.OperationReport;
@@ -137,23 +139,27 @@ public class RequirementDeletionHandlerImpl extends
 	// renamed if so.
 	private OperationReport rewireChildrenRequirements(List<Long> requirements) {
 
-		if (!requirements.isEmpty()) {
-			OperationReport rewireReport = new OperationReport();
-
-			List<Object[]> pairedParentChildren = requirementDao.findAllParentsOf(requirements);
-
-			for (Object[] pair : pairedParentChildren) {
-
-				NodeContainer<Requirement> parent = (NodeContainer<Requirement>) pair[0];
-				Requirement requirement = (Requirement) pair[1];
-
-				renameContentIfNeededThenAttach(parent, requirement, rewireReport);
-
+		try{
+			if (!requirements.isEmpty()) {
+				OperationReport rewireReport = new OperationReport();
+	
+				List<Object[]> pairedParentChildren = requirementDao.findAllParentsOf(requirements);
+	
+				for (Object[] pair : pairedParentChildren) {
+	
+					NodeContainer<Requirement> parent = (NodeContainer<Requirement>) pair[0];
+					Requirement requirement = (Requirement) pair[1];
+	
+					renameContentIfNeededThenAttach(parent, requirement, rewireReport);
+	
+				}
+	
+				return rewireReport;
+			} else {
+				return new OperationReport();
 			}
-
-			return rewireReport;
-		} else {
-			return new OperationReport();
+		}catch(IllegalRequirementModificationException ex){
+			throw new ImpossibleSuppression(ex);
 		}
 	}
 
@@ -277,6 +283,35 @@ public class RequirementDeletionHandlerImpl extends
 		NodeMovement nodeMovement = new NodeMovement(new Node(parent.getId(), strtype), movedNodesLog);
 		report.addMoved(nodeMovement);
 
+	}
+	
+	
+	private static final class ImpossibleSuppression extends ActionException{
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 4901610054565947807L;
+		private static final String impossibleSuppressionException = "squashtm.action.exception.impossiblerequirementsuppression.label";
+		
+		
+		public ImpossibleSuppression(Exception ex){
+			super(ex);
+		}
+		
+		public ImpossibleSuppression(String message){
+			super(message);
+		}
+		
+		public ImpossibleSuppression(){
+			
+		}
+		
+		@Override
+		public String getI18nKey() {
+			return impossibleSuppressionException;
+		}
+		
 	}
 
 }
