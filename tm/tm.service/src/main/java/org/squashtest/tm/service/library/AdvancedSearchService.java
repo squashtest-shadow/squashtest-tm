@@ -50,7 +50,9 @@ public interface AdvancedSearchService {
 	
 	void reindexRequirementVersion(Long requirementVersionId);
 	
-	void reindexRequirementVersions(List<RequirementVersion> requirementVersionList);
+	void reindexRequirementVersions(List<RequirementVersion> requirementVersionList);	
+
+	void reindexRequirementVersionsByIds(List<Long> requirementVersionsIds);
 	
 	//Indexing All
 	void indexAll();
@@ -86,6 +88,7 @@ public interface AdvancedSearchService {
 	SearchExportCSVModel exportTestCaseSearchResultsToCSV(AdvancedSearchModel model, Locale locale);
 
 	SearchExportCSVModel exportRequirementVersionSearchResultsToCSV(AdvancedSearchModel model, Locale locale);
+
 
 
 }

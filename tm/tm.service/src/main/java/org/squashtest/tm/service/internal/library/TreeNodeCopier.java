@@ -67,6 +67,7 @@ import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageD
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
+import org.squashtest.tm.service.library.AdvancedSearchService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
@@ -102,6 +103,8 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 	private PermissionEvaluationService permissionService;
 	@Inject
 	private RequirementVersionCoverageDao requirementVersionCoverageDao;
+	@Inject
+	private AdvancedSearchService advancedSearchService;
 
 	private NodeContainer<? extends TreeNode> destination;
 	private TreeNode copy;
@@ -344,11 +347,21 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 	
 	private void copyRequirementVersionCoverages(RequirementVersion sourceVersion, RequirementVersion copyVersion) {
 		List<RequirementVersionCoverage> copies = sourceVersion.createRequirementVersionCoveragesForCopy(copyVersion);
+		indexRequirementVersionCoverageCopies(copies);
 		requirementVersionCoverageDao.persist(copies);
+		
+	}
+
+	private void indexRequirementVersionCoverageCopies(List<RequirementVersionCoverage> copies) {
+		for(RequirementVersionCoverage copy : copies){
+			advancedSearchService.reindexTestCase(copy.getVerifyingTestCase().getId());
+			advancedSearchService.reindexRequirementVersion(copy.getVerifiedRequirementVersion().getId());
+		}
 	}
 
 	private void copyRequirementVersionCoverage(TestCase source, TestCase copyTestCase) {
 		List<RequirementVersionCoverage> copies = source.createRequirementVersionCoveragesForCopy(copyTestCase);
+		indexRequirementVersionCoverageCopies(copies);
 		requirementVersionCoverageDao.persist(copies);
 	}
 

@@ -196,6 +196,14 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 	
 	@Override
+	public void reindexRequirementVersionsByIds(List<Long> requirementVersionsIds) {
+		for(Long id : requirementVersionsIds){
+			reindexRequirementVersion(id);
+		}
+		
+	}
+	
+	@Override
 	public void indexRequirementVersions(){
 
 		Session session = sessionFactory.getCurrentSession();

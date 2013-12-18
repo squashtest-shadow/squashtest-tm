@@ -47,6 +47,7 @@ import org.squashtest.tm.service.internal.repository.TestStepDao
 import org.squashtest.tm.service.internal.requirement.VerifiedRequirementsManagerServiceImpl
 import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder
 import org.squashtest.tm.service.internal.testcase.TestCaseImportanceManagerServiceImpl
+import org.squashtest.tm.service.library.AdvancedSearchService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 import spock.lang.Specification
@@ -64,6 +65,7 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 	ProjectFilterModificationServiceImpl projectFilterModificationService = Mock()
 	LibrarySelectionStrategy<RequirementLibrary, RequirementLibraryNode> libraryStrategy = Mock()
 	PermissionEvaluationService permissionService = Mock()
+	AdvancedSearchService advancedSearchService = Mock()
 
 	def setup() {
 		CollectionAssertions.declareContainsExactly()
@@ -75,7 +77,8 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 		service.testCaseImportanceManagerService = testCaseImportanceManagerService
 		service.requirementVersionCoverageDao = requirementVersionCoverageDao
 		service.callTreeFinder = callTreeFinder
-		service.permissionService = permissionService;
+		service.permissionService = permissionService
+		service.advancedSearchService = advancedSearchService
 		permissionService.hasRoleOrPermissionOnObject(_, _, _) >> true
 	}
 
