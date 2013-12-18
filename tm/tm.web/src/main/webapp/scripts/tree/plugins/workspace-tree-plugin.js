@@ -437,7 +437,9 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 				refresh_selected : function() {
 					var self = this;
 					var selected = this.get_selected();
-					selected.all('refresh');
+					if(selected.length > 0){ 
+						selected.all('refresh');
+					}
 				},
 				
 				_getRules : function(){				
