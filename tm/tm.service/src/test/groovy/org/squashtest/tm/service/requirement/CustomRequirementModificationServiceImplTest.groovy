@@ -29,6 +29,7 @@ import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
 import org.squashtest.tm.service.internal.repository.RequirementDao
 import org.squashtest.tm.service.internal.requirement.CustomRequirementModificationServiceImpl
+import org.squashtest.tm.service.library.AdvancedSearchService;
 
 import spock.lang.Specification
 
@@ -38,10 +39,12 @@ class CustomRequirementModificationServiceImplTest extends Specification {
 	SessionFactory sessionFactory = Mock()
 	Session currentSession = Mock()
 	PrivateCustomFieldValueService customFieldService = Mock()
-	
+	AdvancedSearchService advancedSearchService = Mock()
+		
 	def setup() {
 		service.requirementDao = requirementDao
 		service.sessionFactory = sessionFactory
+		service.advancedSearchService = advancedSearchService;
 		
 		sessionFactory.currentSession >> currentSession
 		service.customFieldValueService = customFieldService
