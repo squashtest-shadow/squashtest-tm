@@ -33,31 +33,32 @@ define(["jquery",  "squash.configmanager", "jqueryui", "jeditable.datepicker"],
 		},
 
 		fieldvalue : function(value){
-			
+			var toFormat = $.datepicker.ISO_8601;
 			if(!value){
-			var checked = $($("input",$($(this.element.children()[0])))[0]).prop("checked");
-			var startDate = $($("input",$($(this.element.children()[0])))[1]).datepicker('getDate');
-			var endDate = $($("input",$($(this.element.children()[0])))[2]).datepicker('getDate');
-			var id = $(this.element).attr("id");
-			if(checked){
+				var blockInputs =$("input",$($(this.element.children()[0])));
+				var checked = $(blockInputs[0]).prop("checked");
+				var startDate = $(blockInputs[1]).datepicker('getDate');
+				var endDate = $(blockInputs[2]).datepicker('getDate');
+				var id = $(this.element).attr("id");
+				if(checked){
 				
-				var toFormat = "yy-mm-dd";
-				var formattedStartDate = $.datepicker.formatDate(toFormat, startDate);
-				var formattedEndDate = $.datepicker.formatDate(toFormat, endDate);
-				
-				return {"type" : "TIME_INTERVAL",
-						"startDate" : formattedStartDate,
-						"endDate" : formattedEndDate};
+					
+					var formattedStartDate = $.datepicker.formatDate(toFormat, startDate);
+					var formattedEndDate = $.datepicker.formatDate(toFormat, endDate);
+					
+					return {"type" : "TIME_INTERVAL",
+							"startDate" : formattedStartDate,
+							"endDate" : formattedEndDate};
 				} else {
 					return null;
 				}
 			} else {
 				$($("input",$($(this.element.children()[0])))[0]).attr('checked', 'checked');
 				if(!!value.startDate){
-					$($("input",$($(this.element.children()[0])))[1]).datepicker('setDate', new Date(value.startDate));
+					$($("input",$($(this.element.children()[0])))[1]).datepicker('setDate',  $.datepicker.parseDate(toFormat, value.startDate ));
 				}
 				if(!!value.endDate){
-					$($("input",$($(this.element.children()[0])))[2]).datepicker('setDate', new Date(value.endDate));
+					$($("input",$($(this.element.children()[0])))[2]).datepicker('setDate',  $.datepicker.parseDate(toFormat, value.endDate ));
 				}
 			}
 		}, 
@@ -69,6 +70,6 @@ define(["jquery",  "squash.configmanager", "jqueryui", "jeditable.datepicker"],
 			$($("input",$($(this.element.children()[0])))[1]).datepicker(pickerconf);
 			$($("input",$($(this.element.children()[0])))[2]).datepicker(pickerconf);	
 		}
-	 });
+	});
 	return searchwidget;
 });
