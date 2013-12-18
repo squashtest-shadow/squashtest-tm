@@ -51,11 +51,11 @@
 	<c:if test="${ statisticsEntity.status == 'RUNNING' || statisticsEntity.status == 'READY'}">
 		<input type="button" id="start-resume-button" class="button run-menu" value="${startResumeLabel}"/>		
 		<ul class="not-displayed">
-			<li>
-				<a id="start-suite-optimized-button" ><f:message key="test-suite.execution.optimized.label" /> </a>
-			</li>
-			<li>
+			<li class="cursor-pointer">
 				<a id="start-suite-classic-button" ><f:message key='test-suite.execution.classic.label' /> </a>
+			</li>		
+			<li class="cursor-pointer">
+				<a id="start-suite-optimized-button" ><f:message key="test-suite.execution.optimized.label" /> </a>
 			</li>
 		</ul>
 	
@@ -72,11 +72,11 @@
 		<f:message var="restartSuiteButton" key="test-suite.execution.restart.label"/>
 		<input type="button" id="restart-button" class="button run-menu" value="${restartSuiteButton}"/>		
 		<ul class="not-displayed">
-			<li>
-				<a id="restart-suite-optimized-button" class="exec" ><f:message key="test-suite.execution.optimized.label" /> </a>
-			</li>
-			<li>
+			<li class="cursor-pointer">
 				<a id="restart-suite-classic-button" ><f:message key='test-suite.execution.classic.label' /> </a>
+			</li>	
+			<li class="cursor-pointer">
+				<a id="restart-suite-optimized-button" class="exec" ><f:message key="test-suite.execution.optimized.label" /> </a>
 			</li>
 		</ul>
 		
