@@ -1,0 +1,7 @@
+Bundle-ManifestVersion: 2
+Bundle-Name: ${bundle.name}
+Bundle-SymbolicName: ${bundle.symbolicName}
+Bundle-Classpath: .
+Excluded-Exports: *.internal*
+Unversioned-Imports: *
+Bundle-Activator: ${bundle.activator}
