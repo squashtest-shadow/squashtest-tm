@@ -3,11 +3,11 @@
 	<parent>
 		<groupId>org.squashtest.tm</groupId>
 		<artifactId>squashtest-csp-core</artifactId>
-		<version>1.8.0.RC7-SNAPSHOT</version>
+		<version>1.8.0.RC7</version>
 	</parent>
 	<groupId>org.squashtest.tm</groupId>
 	<artifactId>squashtest-csp-launcher</artifactId>
-	<version>1.8.0.RC7-SNAPSHOT</version>
+	<version>1.8.0.RC7</version>
 	<name>squashtest-csp-launcher</name>
 	<description>Squashtest CSP easy launcher</description>
 
