@@ -266,7 +266,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 		
 		createCustomFieldValues(child.getCurrentVersion());
 		initCustomFieldValues(child.getCurrentVersion(), newRequirement.getCustomFields());
-		advancedSearchService.reindexRequirementVersion(requirementId);
+		advancedSearchService.reindexRequirementVersion(parent.getCurrentVersion().getId());
 		advancedSearchService.reindexRequirementVersions(child.getRequirementVersions());
 		
 		return child;
