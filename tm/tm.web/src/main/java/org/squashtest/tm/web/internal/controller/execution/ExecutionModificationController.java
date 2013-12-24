@@ -28,6 +28,7 @@ package org.squashtest.tm.web.internal.controller.execution;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -52,11 +53,14 @@ import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.customfield.CustomField;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueFinder;
 import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -66,6 +70,8 @@ import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentT
 import org.squashtest.tm.web.internal.controller.widget.AoColumnDef;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
+import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
@@ -94,6 +100,15 @@ public class ExecutionModificationController {
 	@Inject
 	private InternationalizationHelper messageSource;
 
+	// ****** custom field services ******************
+
+	@Inject
+	private CustomFieldHelperService cufHelperService;
+
+	@Inject
+	private CustomFieldJsonConverter converter;
+
+	// ****** /custom field services ******************
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getExecution(@PathVariable long executionId) {
@@ -118,6 +133,10 @@ public class ExecutionModificationController {
 			firstStepDfvsLabels = Collections.emptyList();
 		}
 
+		boolean hasCUF = cufHelperService.hasCustomFields(execution);
+		List<CustomFieldValue> customFieldValues = cufHelperService.newHelper(execution).getCustomFieldValues();
+		
+		
 		ModelAndView mav = new ModelAndView("page/campaign-libraries/show-execution");
 		mav.addObject("execution", execution);
 		mav.addObject("executionRank", Integer.valueOf(rank + 1));
@@ -125,11 +144,21 @@ public class ExecutionModificationController {
 		mav.addObject("stepsAoColumnDefs", JsonHelper.serialize(columnDefs));
 		mav.addObject("stepsDfvsLabels", firstStepDfvsLabels);
 		mav.addObject("attachmentSet", attachmentHelper.findAttachments(execution));
+		mav.addObject("hasCUF", hasCUF);
+		mav.addObject("executionCufValues", customFieldValues);
 		
 		return mav;
 
 	}
 
+	private List<CustomFieldModel> convertToJsonCustomField(Collection<CustomField> customFields) {
+		List<CustomFieldModel> models = new ArrayList<CustomFieldModel>(customFields.size());
+		for (CustomField field : customFields) {
+			models.add(converter.toJson(field));
+		}
+		return models;
+	}
+	
 	private List<AoColumnDef> findColumnDefForSteps(Execution execution, List<DenormalizedFieldValue> firstStepDfv) {
 		List<AoColumnDef> columnDefs;
 		List<String> firstStepDfvCode = new ArrayList<String>();

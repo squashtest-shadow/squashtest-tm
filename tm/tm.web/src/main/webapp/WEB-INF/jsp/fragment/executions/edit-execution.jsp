@@ -35,7 +35,6 @@
 
 
 
-
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <c:set var="editable" value="${ false }" />
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
@@ -74,6 +73,9 @@
 <s:url var="btEntityUrl" value="/bugtracker/execution/{id}">
 	<s:param name="id" value="${execution.id}" />
 </s:url>
+
+<c:url var="customFieldsValuesURL" value="/custom-fields/values" />
+
 
 <%-------------------------- /urls ------------------------------%>
 <script type="text/javascript">
@@ -413,6 +415,16 @@
 			$("#execution-execution-steps-table").squashTable(tableSettings, squashSettings);
 			
 			
+			//**** cuf sections ************
+			
+			<c:if test="${hasCUF}">
+			//load the custom fields
+			$.get("${customFieldsValuesURL}?boundEntityId=${execution.boundEntityId}&boundEntityType=${execution.boundEntityType}")
+			.success(function(data){
+				$("#execution-information-table").append(data);
+			});
+			</c:if>
+			
 			// ************** bugtracker section ******************************
 		 	
 		 	$("#bugtracker-section-div").load("${btEntityUrl}");
@@ -434,3 +446,4 @@
 
 </div>
 
+		

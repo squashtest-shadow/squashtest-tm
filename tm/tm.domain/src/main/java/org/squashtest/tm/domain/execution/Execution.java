@@ -63,6 +63,8 @@ import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.bugtracker.IssueList;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
 import org.squashtest.tm.domain.library.HasExecutionStatus;
@@ -86,7 +88,7 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Auditable
 @Entity
-public class Execution implements AttachmentHolder, IssueDetector, Identified, HasExecutionStatus, DenormalizedFieldHolder {
+public class Execution implements AttachmentHolder, IssueDetector, Identified, HasExecutionStatus, DenormalizedFieldHolder, BoundEntity {
 	
 	private static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
 	
@@ -621,6 +623,18 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 			}
 		}
 		return -1;
+	}
+
+	// ***************** (detached) custom field section *************
+
+	@Override
+	public Long getBoundEntityId() {
+		return getId();
+	}
+
+	@Override
+	public BindableEntity getBoundEntityType() {
+		return BindableEntity.EXECUTION;
 	}
 	
 }

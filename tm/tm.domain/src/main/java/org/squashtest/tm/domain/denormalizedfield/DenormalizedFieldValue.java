@@ -86,6 +86,11 @@ public class DenormalizedFieldValue {
 	@Column(updatable = false)
 	private InputType inputType;
 
+	//protected boolean optional = true;
+
+	@Size(min = 0, max = 255)
+	protected String defaultValue;
+
 	@NotBlank
 	@Size(min = 0, max = 255)
 	private String label = "";
@@ -231,6 +236,23 @@ public class DenormalizedFieldValue {
 		return toReturn;
 	}
 
+	public String getDefaultValue() {
+		return defaultValue;
+	}
+
+	public Date getDefaultValueAsDate() {
+		// TODO copypasta, slap this into utility class
+		if (this.inputType == InputType.DATE_PICKER) {
+			try {
+				return IsoDateUtils.parseIso8601Date(defaultValue);
+			} catch (ParseException e) {
+				LOGGER.warn(e.getMessage(), e);
+			}
+		}
+		return null;
+
+	}
+	
 	public Set<RenderingLocation> getRenderingLocations() {
 		return renderingLocations;
 	}
@@ -239,4 +261,7 @@ public class DenormalizedFieldValue {
 		this.renderingLocations = renderingLocations;
 	}
 
+	public void accept(DenormalizedFieldVisitor visitor) {
+		visitor.visit(this);
+	}
 }

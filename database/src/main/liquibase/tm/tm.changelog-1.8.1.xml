@@ -60,6 +60,15 @@
 		</update>
 	</changeSet>
 	
+	<changeSet id="tm-1.8.1.feature-3120-03" author="flaurens">
+		<comment>Adding default value column to denormalized field value table</comment>
+		<addColumn tableName="DENORMALIZED_FIELD_VALUE">
+            <column name="DEFAULT_VALUE" type="VARCHAR(255)">
+                <constraints nullable="true" />
+            </column>
+		</addColumn>
+	</changeSet>
+	
 	
 
 	<changeSet id="tm-1.8.1-feat-3127-01" author="bsiri">
