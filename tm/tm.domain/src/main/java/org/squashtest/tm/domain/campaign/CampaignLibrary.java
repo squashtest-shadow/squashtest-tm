@@ -25,9 +25,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -59,10 +57,8 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 	@OneToOne(mappedBy = "campaignLibrary")
 	private GenericProject project;
 	
-	@ElementCollection
-	@CollectionTable(name = "CAMPAIGN_LIBRARY_PLUGINS", joinColumns = @JoinColumn(name = "LIBRARY_ID"))
-	@Column(name = "PLUGIN_ID")
-	private Set<String> enabledPlugins = new HashSet<String>(5);
+	@OneToMany(cascade = { CascadeType.ALL })
+	private Set<CampaignLibraryPluginBinding> enabledPlugins = new HashSet<CampaignLibraryPluginBinding>(5);
 	
 	
 	public void setId(Long id) {
@@ -104,26 +100,52 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 	
 	// ***************************** PluginReferencer section ****************************
 	
+	
 	@Override
 	public Set<String> getEnabledPlugins() {
-		return enabledPlugins;
+		Set<String> pluginIds = new HashSet<String>(enabledPlugins.size());
+		for (CampaignLibraryPluginBinding binding : enabledPlugins){
+			pluginIds.add(binding.getPluginId());
+		}
+		return pluginIds;
 	}
+
+	
+	@Override
+	public Set<CampaignLibraryPluginBinding> getAllPluginBindings() {
+		return enabledPlugins;
+	}	
 	
 	@Override
 	public void enablePlugin(String pluginId) {
-		enabledPlugins.add(pluginId);
+		if (! isPluginEnabled(pluginId)){
+			CampaignLibraryPluginBinding newBinding = new CampaignLibraryPluginBinding(pluginId);
+			enabledPlugins.add(newBinding);
+		}
 	}
 	
 	@Override
 	public void disablePlugin(String pluginId) {
-		enabledPlugins.remove(pluginId);
+		CampaignLibraryPluginBinding binding = getPluginBinding(pluginId);
+		if (binding != null){
+			enabledPlugins.remove(binding);
+		}
+	}
+	
+	@Override
+	public CampaignLibraryPluginBinding getPluginBinding(String pluginId) {
+		for (CampaignLibraryPluginBinding binding : enabledPlugins){
+			if (binding.getPluginId().equals(pluginId)){
+				return binding;
+			}
+		}
+		return null;
 	}
 	
 	@Override
 	public boolean isPluginEnabled(String pluginId) {
-		return (enabledPlugins.contains(pluginId));
+		return (getPluginBinding(pluginId) != null);
 	}
-
 	
 	/* ***************************** SelfClassAware section ******************************* */
 

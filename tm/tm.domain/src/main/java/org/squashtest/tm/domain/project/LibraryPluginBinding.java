@@ -22,9 +22,12 @@ package org.squashtest.tm.domain.project;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -35,17 +38,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyColumn;
 
 
-/**
- * Abstract entity representing a parameterized association between a library and a plugin. The model for this entity 
- * is definitely not satisfactory : for instance it should own the reference to the bound plugin among others. The 
- * defect in the model are mostly motivated by technical constraints.
- * 
- * @author bsiri
- *
- */
-
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "LIBRARY_TYPE", discriminatorType = DiscriminatorType.STRING)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class LibraryPluginBinding  {
 
 	@Id
@@ -53,18 +48,53 @@ public abstract class LibraryPluginBinding  {
 	@Column(name = "PLUGIN_BINDING_ID")
 	private long id;
 	
+	@Column
+	private String pluginId;	
+	
+	
 	@ElementCollection
 	@CollectionTable(name = "LIBRARY_PLUGIN_BINDING_PROPERTY", joinColumns = @JoinColumn(name = "PLUGIN_BINDING_ID"))
 	@MapKeyColumn(name = "PLUGIN_BINDING_KEY")
 	@Column(name = "PLUGIN_BINDING_VALUE")
 	private Map<String, String> properties = new HashMap<String, String>(2);
 
+	
+	public LibraryPluginBinding(){
+		super();
+	}
+	
+	public LibraryPluginBinding(String pluginId){
+		super();
+		this.pluginId = pluginId;
+	}
 
 	public long getId() {
 		return id;
 	}
+
+
+	public String getPluginId() {
+		return pluginId;
+	}
+
+
+	public void setPluginId(String pluginId) {
+		this.pluginId = pluginId;
+	}
+
+	public String getProperty(String propertyName){
+		return properties.get(propertyName);
+	}
 	
-	public abstract String getPluginId();
+	public void setProperty(String propertyName, String propertyValue){
+		properties.put(propertyName, propertyValue);
+	}
 	
-	public abstract void setPluginId(String pluginId);
+	public Set<String> listProperties(){
+		return properties.keySet();
+	}
+	
+	public Map<String, String> getProperties(){
+		return properties;
+	}
 }

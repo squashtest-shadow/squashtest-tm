@@ -18,49 +18,23 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.library;
+package org.squashtest.tm.domain.testcase;
 
-import java.util.Set;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
 import org.squashtest.tm.domain.project.LibraryPluginBinding;
 
-public interface PluginReferencer<BIND extends LibraryPluginBinding> {
-	
-	/**
-	 * @return the set of plugin ids that are enabled for this instance.
-	 */
-	Set<String> getEnabledPlugins();
-	
-	
-	/**
-	 * @param pluginId
-	 * @return the binding for this plugin or null if not found
-	 */
-	BIND getPluginBinding(String pluginId);
-	
-	/**
-	 * @return the binding of all the plugin bindings
-	 */
-	Set<BIND> getAllPluginBindings();
-	
-	/**
-	 * tells this instance that the plugin referenced by pluginId is now enabled 
-	 * @param pluginId
-	 */
-	void enablePlugin(String pluginId);
-	
-	/**
-	 * tells this instance that the plugin referenced by pluginId is now disabled 
-	 * @param pluginId
-	 */
-	void disablePlugin(String pluginId);
-	
-	
-	/**
-	 * tells whether the given plugin is enabled for this instance.
-	 * @param pluginId
-	 * @return
-	 */
-	boolean isPluginEnabled(String pluginId);
+@Entity
+@DiscriminatorValue("T")
+public class TestCaseLibraryPluginBinding extends LibraryPluginBinding {
+
+	public TestCaseLibraryPluginBinding() {
+		super();
+	}
+
+	public TestCaseLibraryPluginBinding(String pluginId) {
+		super(pluginId);
+	}
 	
 }

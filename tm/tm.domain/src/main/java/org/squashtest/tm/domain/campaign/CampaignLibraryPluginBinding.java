@@ -18,31 +18,23 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.testcase;
+package org.squashtest.tm.domain.campaign;
 
-import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.PrimaryKeyJoinColumn;
 
 import org.squashtest.tm.domain.project.LibraryPluginBinding;
 
 @Entity
-@PrimaryKeyJoinColumn(name = "PLUGIN_BINDING_ID")
-public class TestCaseLibraryPlugin extends LibraryPluginBinding {
+@DiscriminatorValue("C")
+public class CampaignLibraryPluginBinding extends LibraryPluginBinding {
 
-	@Column
-	private String pluginId;
-
-	@Override
-	public String getPluginId() {
-		return pluginId;
+	public CampaignLibraryPluginBinding() {
+		super();
 	}
 
-	@Override
-	public void setPluginId(String pluginId) {
-		this.pluginId = pluginId;
+	public CampaignLibraryPluginBinding(String pluginId) {
+		super(pluginId);
 	}
-	
-	
-	
+
 }

@@ -105,7 +105,7 @@ class DriveNodeBuilderTest extends Specification {
 		JsTreeNode res = builder.setModel(library).build();
 
 		then:
-		res.attr["wizards"].collect { it } ==  ["foo", "bar"]
+		res.attr["wizards"].collect { it } as Set ==  ["foo", "bar"] as Set
 	}
 	
 	def "should build an expanded node"() {
