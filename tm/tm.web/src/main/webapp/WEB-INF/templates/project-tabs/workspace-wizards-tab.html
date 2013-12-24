@@ -51,11 +51,23 @@
 							<td class="not-displayed">plugin id (not displayed)</td>
 							<td class="narrow" th:text="#{label.Enabled}"></td>
 							<td th:text="#{label.PluginName}"></td>
+							<td><!-- configuration (header should remain empty at runtime)  --></td>
 						</tr>
 					</thead>
 					
-					<tbody class="y-scollable medium-height">
-						<!--  populated via js -->
+					<tbody class="y-scollable medium-height not-displayed">
+						<!--  the following rows are templates and will be replaced by actual rows when the widget initialize -->
+						
+						<tr class="template-emptyrow">
+							<td colspan="4" th:text="#{generics.datatable.zeroRecords}">empty</td>
+						</tr>
+						
+						<tr class="template-datarow cursor-arrow">
+							<td class="not-displayed">{{this.id}}</td>
+							<td class="centered narrow"><input type="checkbox" class="plugin-enabled"/></td>
+							<td>{{this.displayableName}}</td>
+							<td><span style="text-decoration:underline" class="wizard-configure disabled-transparent" th:text="#{label.Configure}">configure</span></td>						
+						</tr>
 					</tbody>
 					
 				</table>
@@ -63,6 +75,7 @@
 
 		</div>
 	</div>
+	
 		
 	<script type="text/javascript" th:inline="javascript">
 	/*<![CDATA[*/
