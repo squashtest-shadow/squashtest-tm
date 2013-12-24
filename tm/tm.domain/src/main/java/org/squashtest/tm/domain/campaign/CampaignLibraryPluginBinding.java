@@ -22,6 +22,7 @@ package org.squashtest.tm.domain.campaign;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 import org.squashtest.tm.domain.project.LibraryPluginBinding;
 

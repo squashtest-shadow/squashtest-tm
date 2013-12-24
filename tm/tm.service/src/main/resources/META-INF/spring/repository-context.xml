@@ -134,6 +134,12 @@
 		        
 		          <!-- Denormalized Fields -->
         <value>org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue</value>
+        
+        <!--  library plugins -->
+        <value>org.squashtest.tm.domain.project.LibraryPluginBinding</value>
+        <value>org.squashtest.tm.domain.campaign.CampaignLibraryPluginBinding</value>
+        <value>org.squashtest.tm.domain.testcase.TestCaseLibraryPluginBinding</value>
+        <value>org.squashtest.tm.domain.requirement.RequirementLibraryPluginBinding</value>
       </list>
     </property>
     

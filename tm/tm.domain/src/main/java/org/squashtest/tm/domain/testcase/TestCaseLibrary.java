@@ -34,6 +34,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import org.hibernate.annotations.Where;
 import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.project.GenericLibrary;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -56,7 +57,9 @@ public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> {
 	@OneToOne(mappedBy = "testCaseLibrary")
 	private GenericProject project;
 		
-	@OneToMany(cascade = { CascadeType.ALL })
+	@OneToMany(cascade = { CascadeType.ALL } )	
+	@JoinColumn(name="LIBRARY_ID")
+	@Where(clause="LIBRARY_TYPE = 'T'")
 	private Set<TestCaseLibraryPluginBinding> enabledPlugins = new HashSet<TestCaseLibraryPluginBinding>(5);
 
 	public Set<TestCaseLibraryNode> getRootContent() {

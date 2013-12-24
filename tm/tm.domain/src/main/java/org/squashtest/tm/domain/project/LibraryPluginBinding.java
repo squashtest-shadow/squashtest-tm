@@ -36,11 +36,13 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyColumn;
+import javax.persistence.Table;
 
 
 @Entity
 @DiscriminatorColumn(name = "LIBRARY_TYPE", discriminatorType = DiscriminatorType.STRING)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Table(name="LIBRARY_PLUGIN_BINDING")
 public abstract class LibraryPluginBinding  {
 
 	@Id
