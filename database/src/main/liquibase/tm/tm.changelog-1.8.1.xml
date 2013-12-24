@@ -77,7 +77,8 @@
 		<comment>creation of  TEST_CASE_LIBRARY_PLUGIN_BINDING</comment>
 		
 		<createTable tableName="TEST_CASE_LIBRARY_PLUGIN_BINDING">	
-			<column name="PLUGIN_BINDING_ID" type="BIGINT" remarks="primary key, also foreign key to LIBRARY_PLUGIN_BINDING">
+			<column name="PLUGIN_BINDING_ID" type="BIGINT" remarks="primary key, also foreign key to LIBRARY_PLUGIN_BINDING. 
+						This id is purely technical and we will often prefer to reference a plugin by its PLUGIN_ID (for a given library)">
 				<constraints primaryKey="true" nullable="false" primaryKeyName="pk_tclib_plugin" 
 							foreignKeyName="fk_tclibplugin_libplugin" references="LIBRARY_PLUGIN_BINDING(PLUGIN_BINDING_ID)"/>
 			</column>
@@ -107,7 +108,8 @@
 		
 		<createTable tableName="REQUIREMENT_LIBRARY_PLUGIN_BINDING">	
 			
-			<column name="PLUGIN_BINDING_ID" type="BIGINT" remarks="primary key, also foreign key to LIBRARY_PLUGIN_BINDING">
+			<column name="PLUGIN_BINDING_ID" type="BIGINT" remarks="primary key, also foreign key to LIBRARY_PLUGIN_BINDING. 
+						This id is purely technical and we will often prefer to reference a plugin by its PLUGIN_ID (for a given library)">
 				<constraints primaryKey="true" nullable="false" primaryKeyName="pk_reqlib_plugin" 
 							foreignKeyName="fk_reqlibplugin_libplugin" references="LIBRARY_PLUGIN_BINDING(PLUGIN_BINDING_ID)"/>
 			</column>
@@ -138,7 +140,8 @@
 		
 		<createTable tableName="CAMPAIGN_LIBRARY_PLUGIN_BINDING">	
 			
-			<column name="PLUGIN_BINDING_ID" type="BIGINT" remarks="primary key, also foreign key to LIBRARY_PLUGIN_BINDING">
+			<column name="PLUGIN_BINDING_ID" type="BIGINT" remarks="primary key, also foreign key to LIBRARY_PLUGIN_BINDING. 
+						This id is purely technical and we will often prefer to reference a plugin by its PLUGIN_ID (for a given library)">
 				<constraints primaryKey="true" nullable="false" primaryKeyName="pk_camlib_plugin" 
 							foreignKeyName="fk_camlibplugin_libplugin" references="LIBRARY_PLUGIN_BINDING(PLUGIN_BINDING_ID)"/>
 			</column>
@@ -191,19 +194,5 @@
 		</createTable>
 	
 	</changeSet>		
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 </databaseChangeLog>
