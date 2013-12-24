@@ -70,8 +70,9 @@
 				<constraints nullable="false" primaryKey="true"/>
 			</column>		      
 			
-			<column name="LIBRARY_ID" type="BIGINT" remarks="ID of the library">
-				<constraints nullable="false"/>
+			<column name="LIBRARY_ID" type="BIGINT" 
+					remarks="ID of the library. It is explicitely nullable because hibernate will first create the row then update this column.">
+				<constraints nullable="true"/>
 			</column>
 			
 			<column name="LIBRARY_TYPE" type="CHAR(1)" remarks="discriminator of the library. T: test case library, R : requirement library, C : campaign library">
