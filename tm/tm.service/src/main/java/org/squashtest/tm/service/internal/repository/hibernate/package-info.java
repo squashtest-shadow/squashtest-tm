@@ -310,6 +310,8 @@
 																							 "order by cfv.boundEntityId , cfb.position asc"),		
 		@NamedQuery(name = "CustomFieldValue.findAllCustomValuesOfBinding" , query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfb.id = ?1 order by cfb.position asc"),
 		@NamedQuery(name = "CustomFieldValue.findAllCustomValuesOfBindings", query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfb.id in ( :bindingIds )"),
+		@NamedQuery(name = "CustomFieldValue.findAllForEntityAndRenderingLocation", query="select cfv from CustomFieldValue cfv join cfv.binding cfb join cfb.renderingLocations rl where cfv.boundEntityId = ?1 and cfv.boundEntityType = ?2 and rl = ?3 order by cfb.position asc"),
+		
 		@NamedQuery(name = "CustomFieldValue.deleteAll", query="delete CustomFieldValue where id in (:ids)"),
 		@NamedQuery(name = "CustomFieldValue.deleteAllForBinding", query = "delete CustomFieldValue cv1 where cv1 in (select cv2 from CustomFieldValue cv2 join cv2.binding cfb where cfb.id = :bindingId )"),
 		@NamedQuery(name = "CustomFieldValue.deleteAllForEntity",  query = "delete CustomFieldValue cv where cv.boundEntityId = :entityId and cv.boundEntityType = :entityType"),

@@ -132,7 +132,7 @@ public enum BindableEntity implements Internationalizable {
 		
 		@Override
 		public RenderingLocation[] getValidRenderingLocations() {
-			return new RenderingLocation[0];
+			return new RenderingLocation[] { RenderingLocation.STEP_TABLE };
 		}
 	};
 

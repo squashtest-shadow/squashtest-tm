@@ -27,6 +27,9 @@ import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.RenderingLocation;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 
 public interface CustomFieldValueFinderService {
 
@@ -101,4 +104,7 @@ public interface CustomFieldValueFinderService {
 	 * @return
 	 */
 	boolean areValuesEditable(long boundEntityId, BindableEntity bindableEntity);
+
+	
+	List<CustomFieldValue> findAllForEntityAndRenderingLocation(BoundEntity boundEntity, RenderingLocation renderingLocation);	
 }

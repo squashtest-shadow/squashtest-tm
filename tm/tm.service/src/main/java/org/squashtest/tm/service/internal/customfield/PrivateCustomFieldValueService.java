@@ -64,7 +64,7 @@ public interface PrivateCustomFieldValueService extends CustomFieldValueManagerS
 	 * 
 	 * @param entity
 	 */
-	void createAllCustomFieldValues(BoundEntity entity);
+	void createAllCustomFieldValues(BoundEntity entity, Long projectId);
 
 	/**
 	 * will delete all the custom field vales for one entity
