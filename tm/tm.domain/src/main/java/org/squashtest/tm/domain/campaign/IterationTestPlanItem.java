@@ -61,7 +61,6 @@ import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.NotAutomatedException;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
-import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.security.annotation.InheritsAcls;
 
 @Entity

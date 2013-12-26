@@ -21,7 +21,6 @@
 package org.squashtest.tm.web.internal.controller.testcase.steps;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,7 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
-import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;

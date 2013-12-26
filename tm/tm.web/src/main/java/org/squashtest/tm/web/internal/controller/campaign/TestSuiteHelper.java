@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.campaign.TestSuite;
 
 /**
