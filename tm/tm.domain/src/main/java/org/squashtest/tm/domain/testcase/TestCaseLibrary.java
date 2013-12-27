@@ -57,7 +57,7 @@ public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> {
 	@OneToOne(mappedBy = "testCaseLibrary")
 	private GenericProject project;
 		
-	@OneToMany(cascade = { CascadeType.ALL } )	
+	@OneToMany(cascade = { CascadeType.ALL}, orphanRemoval=true)
 	@JoinColumn(name="LIBRARY_ID")
 	@Where(clause="LIBRARY_TYPE = 'T'")
 	private Set<TestCaseLibraryPluginBinding> enabledPlugins = new HashSet<TestCaseLibraryPluginBinding>(5);

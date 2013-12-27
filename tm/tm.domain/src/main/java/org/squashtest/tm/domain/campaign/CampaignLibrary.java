@@ -35,6 +35,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import org.apache.commons.lang.NullArgumentException;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Where;
 import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.project.GenericLibrary;
@@ -58,7 +59,7 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 	@OneToOne(mappedBy = "campaignLibrary")
 	private GenericProject project;
 	
-	@OneToMany(cascade = { CascadeType.ALL })
+	@OneToMany(cascade = { CascadeType.ALL}, orphanRemoval=true)
 	@JoinColumn(name="LIBRARY_ID")
 	@Where(clause="LIBRARY_TYPE = 'C'")	
 	private Set<CampaignLibraryPluginBinding> enabledPlugins = new HashSet<CampaignLibraryPluginBinding>(5);
