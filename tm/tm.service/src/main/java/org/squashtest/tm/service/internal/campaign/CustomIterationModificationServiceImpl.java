@@ -211,7 +211,6 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@PreAuthorize(PERMISSION_EXECUTE_ITEM + OR_HAS_ROLE_ADMIN)
 	public Execution addExecution(long testPlanItemId) {
 		IterationTestPlanItem item = testPlanDao.findTestPlanItem(testPlanItemId);
-
 		return addExecution(item);
 	}
 
@@ -357,7 +356,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	private void createCustomFieldsForExecutionAndExecutionSteps(Execution execution){
 		customFieldValuesService.createAllCustomFieldValues(execution, execution.getProject().getId());
-		for (ExecutionStep step : executionDao.findExecutionSteps(execution.getId())) {
+		for (ExecutionStep step : execution.getSteps()) {
 			customFieldValuesService.createAllCustomFieldValues(step, execution.getProject().getId());
 		}
 	}

@@ -33,11 +33,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService;
+import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueFinder;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
@@ -77,6 +79,9 @@ public class ExecutionRunnerControllerHelper {
 	@Inject
 	private DenormalizedFieldValueFinder denormalizedFieldValueFinder;
 
+	@Inject
+	private CustomFieldValueFinderService customFieldValueFinderService;
+	
 	private ExecutionStep findStepAtIndex(long executionId, int stepIndex) {
 
 		int stepCount = executionProcessingService.findTotalNumberSteps(executionId);
@@ -109,6 +114,7 @@ public class ExecutionRunnerControllerHelper {
 
 		Set<ExecutionStatus> statusSet = Collections.emptySet();
 		List<DenormalizedFieldValue> denormalizedFieldValues = Collections.emptyList();
+		List<CustomFieldValue> customFieldValues = Collections.emptyList();
 		Set<Attachment> attachments = Collections.emptySet();
 		
 		//TODO : check why we could want to process that page while part of the model is null (it should fail earlier when the DB cannot find this step)
@@ -116,12 +122,14 @@ public class ExecutionRunnerControllerHelper {
 			stepOrder = executionStep.getExecutionStepOrder();
 			statusSet = executionStep.getLegalStatusSet();
 			denormalizedFieldValues = denormalizedFieldValueFinder.findAllForEntity(executionStep);
+			customFieldValues = customFieldValueFinderService.findAllCustomFieldValues(executionStep);
 			attachments = attachmentHelper.findAttachments(executionStep);
 		}
 
 		model.addAttribute("execution", execution);
 		model.addAttribute("executionStep", executionStep);
 		model.addAttribute("denormalizedFieldValues", denormalizedFieldValues);
+		model.addAttribute("customFieldValues", customFieldValues);
 		model.addAttribute("totalSteps", total);
 		model.addAttribute("executionStatus", statusSet);
 		model.addAttribute("hasNextStep", stepOrder != (total - 1));

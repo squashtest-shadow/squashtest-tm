@@ -423,6 +423,17 @@
 					</jsp:attribute>
 				</comp:toggle-panel></span>
 				</c:if>
+				<c:if test="${not empty customFieldValues }">
+				<span id="custom-fields"><comp:toggle-panel id="custom-fields-panel" titleKey="title.step.fields" 
+					open="true">
+				<jsp:attribute name="body"> 
+						<div class="display-table">
+							<comp:custom-field-values-list customFieldValues="${ customFieldValues }" />
+						</div>
+					</jsp:attribute>
+				</comp:toggle-panel></span>
+				</c:if>
+				
 				<comp:toggle-panel id="execution-action-panel"
 					titleKey="execute.panel.action.title" 
 					open="true">
