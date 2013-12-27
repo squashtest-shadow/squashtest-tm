@@ -135,7 +135,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		} 
 		iterationDao.persistIterationAndTestPlan(iteration);
 		campaign.addIteration(iteration);
-		customFieldValueService.createAllCustomFieldValues(iteration, iteration.getProject().getId());
+		customFieldValueService.createAllCustomFieldValues(iteration, iteration.getProject());
 		return campaign.getIterations().size() - 1;
 	}
 
@@ -292,7 +292,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	public void addTestSuite(Iteration iteration, TestSuite suite) {
 		suiteDao.persist(suite);
 		iteration.addTestSuite(suite);
-		customFieldValueService.createAllCustomFieldValues(suite, suite.getProject().getId());
+		customFieldValueService.createAllCustomFieldValues(suite, suite.getProject());
 	}
 
 	@Override
@@ -355,9 +355,9 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	}
 
 	private void createCustomFieldsForExecutionAndExecutionSteps(Execution execution){
-		customFieldValuesService.createAllCustomFieldValues(execution, execution.getProject().getId());
+		customFieldValuesService.createAllCustomFieldValues(execution, execution.getProject());
 		for (ExecutionStep step : execution.getSteps()) {
-			customFieldValuesService.createAllCustomFieldValues(step, execution.getProject().getId());
+			customFieldValuesService.createAllCustomFieldValues(step, execution.getProject());
 		}
 	}
 	
