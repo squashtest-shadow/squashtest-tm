@@ -48,7 +48,6 @@
 				<table>
 					<thead>
 						<tr>
-							<td class="not-displayed">plugin id (not displayed)</td>
 							<td class="narrow" th:text="#{label.Enabled}"></td>
 							<td th:text="#{label.PluginName}"></td>
 							<td><!-- configuration (header should remain empty at runtime)  --></td>
@@ -59,11 +58,10 @@
 						<!--  the following rows are templates and will be replaced by actual rows when the widget initialize -->
 						
 						<tr class="template-emptyrow">
-							<td colspan="4" th:text="#{generics.datatable.zeroRecords}">empty</td>
+							<td colspan="3" th:text="#{generics.datatable.zeroRecords}">empty</td>
 						</tr>
 						
-						<tr class="template-datarow cursor-arrow">
-							<td class="not-displayed">{{this.id}}</td>
+						<tr class="template-datarow cursor-arrow" data-pluginid="{{this.id}}">
 							<td class="centered narrow"><input type="checkbox" class="plugin-enabled"/></td>
 							<td>{{this.displayableName}}</td>
 							<td><span style="text-decoration:underline" class="wizard-configure disabled-transparent" th:text="#{label.Configure}">configure</span></td>						
@@ -74,7 +72,27 @@
 			</div>
 
 		</div>
+		
+		
+		<div id="wizard-configure-dialog" class="not-display popup-dialog" th:title="#{label.Configure}">
+		
+			<div data-def="state=configure">
+				<h4 th:text="#{label.AvailableOptions}">availableOptions :</h4>
+				<div class="wizard-options display-table"></div>
+			</div>
+			
+			<div data-def="state=noconf">
+				<span th:text="#{message.noWizardConfNeeded}">no conf available</span>
+			</div>
+		
+			<div class="popup-dialog-buttonpane">
+				<input type="button" class="button" data-def="evt=confirm, state=configure, mainbtn=configure" th:value="#{label.Confirm}"/>
+				<input type="button" class="button" data-def="evt=cancel, state=configure noconf, mainbtn=noconf" th:value="#{label.Cancel}"/>
+			</div>
+		</div>
+		
 	</div>
+	
 	
 		
 	<script type="text/javascript" th:inline="javascript">
