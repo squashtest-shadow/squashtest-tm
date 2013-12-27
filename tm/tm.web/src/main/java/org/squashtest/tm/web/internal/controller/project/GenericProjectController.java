@@ -396,6 +396,7 @@ public class GenericProjectController {
 	public void setEnabledWizardProperties(@PathVariable("projectId") long projectId, @PathVariable("wizardId") String wizardId, 
 			@RequestBody Map<String, String> configuration){
 		WorkspaceWizard wizard = wizardManager.findById(wizardId);
+		wizard.validate(new EntityReference(EntityType.PROJECT, projectId), configuration);
 		projectManager.setWizardConfiguration(projectId, wizard.getDisplayWorkspace(), wizardId, configuration);
 	}
 	
