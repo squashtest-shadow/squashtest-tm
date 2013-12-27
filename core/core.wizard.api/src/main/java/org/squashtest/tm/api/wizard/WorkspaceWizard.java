@@ -47,6 +47,13 @@ public interface WorkspaceWizard extends WizardPlugin {
 	 */
 	MenuItem getWizardMenu();
 	
+	
+	/**
+	 * Asks the plugin to validate against an EntityReference. Must either succeed, or throw a {@link WizardValidationException}.
+	 * 
+	 * @param reference to a given object
+	 */
+	void validate(EntityReference reference) throws WizardValidationException;
 
 	/**
 	 * Asks the plugin to validate against an EntityReference and for the given configuration. Must either succeed, or throw a {@link WizardValidationException}.
