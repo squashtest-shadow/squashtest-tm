@@ -401,7 +401,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	
 	@Override
-	@PreAuthorize(IS_ADMIN_OR_MANAGER)
+	// this information is read-only and public, no need for security
 	public Map<String, String> getWizardConfiguration(long projectId, WorkspaceType workspace, String wizardId) {
 		PluginReferencer library = findLibrary(projectId, workspace);
 		LibraryPluginBinding binding = library.getPluginBinding(wizardId);
@@ -414,6 +414,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	}
 	
 	@Override
+	@PreAuthorize(IS_ADMIN_OR_MANAGER)
 	public void setWizardConfiguration(long projectId, WorkspaceType workspace,
 			String wizardId, Map<String, String> configuration) {
 		
