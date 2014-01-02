@@ -40,7 +40,7 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
-import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueFinder;
+import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 
@@ -77,7 +77,7 @@ public class ExecutionRunnerControllerHelper {
 	private MessageSource messageSource;
 
 	@Inject
-	private DenormalizedFieldValueFinder denormalizedFieldValueFinder;
+	private DenormalizedFieldValueManager denormalizedFieldValueFinder;
 
 	@Inject
 	private CustomFieldValueFinderService customFieldValueFinderService;

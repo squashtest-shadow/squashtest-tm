@@ -36,6 +36,7 @@ import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 
 @Component
 public class CustomFieldJsonConverter {
@@ -70,7 +71,7 @@ public class CustomFieldJsonConverter {
 		return bindingModel;
 
 	}
-
+	
 	public BindableEntityModel toJson(BindableEntity entity) {
 
 		BindableEntityModel model = new BindableEntityModel();
@@ -115,6 +116,22 @@ public class CustomFieldJsonConverter {
 		return model;
 	}
 
+	
+	public CustomFieldValueModel toJson(DenormalizedFieldValue value) {
+		
+		CustomFieldValueModel model = new CustomFieldValueModel();
+	
+		//CustomFieldBindingModel bindingModel = toJson(value.);
+
+		model.setId(value.getId());
+		model.setBoundEntityId(value.getDenormalizedFieldHolderId());
+		//model.setBinding(bindingModel);
+		model.setValue(value.getValue());
+
+		return model;
+		
+	}
+	
 	public CustomFieldValueModel toJson(CustomFieldValue value) {
 
 		CustomFieldValueModel model = new CustomFieldValueModel();

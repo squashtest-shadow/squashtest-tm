@@ -62,7 +62,7 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
-import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueFinder;
+import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
 import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -93,7 +93,7 @@ public class ExecutionModificationController {
 	private PermissionEvaluationService permissionEvaluationService;
 
 	@Inject
-	private DenormalizedFieldValueFinder denormalizedFieldValueFinder;
+	private DenormalizedFieldValueManager denormalizedFieldValueFinder;
 	
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentHelper;
@@ -272,11 +272,11 @@ public class ExecutionModificationController {
 	private static class ExecutionStepDataTableModelHelper extends DataTableModelBuilder<ExecutionStep> {
 		private Locale locale;
 		private InternationalizationHelper messageSource;
-		private DenormalizedFieldValueFinder dfvFinder;
+		private DenormalizedFieldValueManager dfvFinder;
 		private CustomFieldValueFinderService cufValueService;
 
 		private ExecutionStepDataTableModelHelper(Locale locale, InternationalizationHelper messageSource,
-				DenormalizedFieldValueFinder dfvFinder, CustomFieldValueFinderService cufValueService) {
+				DenormalizedFieldValueManager dfvFinder, CustomFieldValueFinderService cufValueService) {
 			this.locale = locale;
 			this.messageSource = messageSource;
 			this.dfvFinder = dfvFinder;
@@ -337,7 +337,7 @@ public class ExecutionModificationController {
 
 	private static final class ManualExecutionStepDataTableModelHelper extends ExecutionStepDataTableModelHelper {
 		private ManualExecutionStepDataTableModelHelper(Locale locale, InternationalizationHelper messageSource,
-				DenormalizedFieldValueFinder dfvFinder, CustomFieldValueFinderService cufValueService) {
+				DenormalizedFieldValueManager dfvFinder, CustomFieldValueFinderService cufValueService) {
 			super(locale, messageSource, dfvFinder, cufValueService);
 		}
 
@@ -369,7 +369,7 @@ public class ExecutionModificationController {
 
 	private static final class AutomatedExecutionStepDataTableModelHelper extends ExecutionStepDataTableModelHelper {
 		private AutomatedExecutionStepDataTableModelHelper(Locale locale, InternationalizationHelper messageSource,
-				DenormalizedFieldValueFinder dfvFinder, CustomFieldValueFinderService cufValueService) {
+				DenormalizedFieldValueManager dfvFinder, CustomFieldValueFinderService cufValueService) {
 			super(locale, messageSource, dfvFinder, cufValueService);
 		}
 
