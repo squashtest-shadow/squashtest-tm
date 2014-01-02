@@ -35,10 +35,12 @@ import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedSingleSelectField;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
@@ -74,9 +76,13 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 	public void createAllDenormalizedFieldValues(BoundEntity source, DenormalizedFieldHolder destination) {
 		List<CustomFieldValue> customFieldValues = customFieldValueDao.findAllCustomValues(source.getBoundEntityId(), source.getBoundEntityType());
 		for (CustomFieldValue customFieldValue : customFieldValues) {
-			DenormalizedFieldValue dfv = new DenormalizedFieldValue(customFieldValue, destination.getDenormalizedFieldHolderId(), destination.getDenormalizedFieldHolderType());
-			denormalizedFieldValueDao.persist(dfv);
-			
+			if(customFieldValue.getCustomField().getInputType().equals(InputType.DROPDOWN_LIST)){
+				DenormalizedSingleSelectField dfv = new DenormalizedSingleSelectField(customFieldValue, destination.getDenormalizedFieldHolderId(), destination.getDenormalizedFieldHolderType());
+				denormalizedFieldValueDao.persist(dfv);
+			} else {
+				DenormalizedFieldValue dfv = new DenormalizedFieldValue(customFieldValue, destination.getDenormalizedFieldHolderId(), destination.getDenormalizedFieldHolderType());
+				denormalizedFieldValueDao.persist(dfv);
+			}
 		}
 	}
 
@@ -99,14 +105,27 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 				value = projectCufValue.getValue();
 			}
 			lastBindingPosition = binding.getPosition();
-			DenormalizedFieldValue dfv = new DenormalizedFieldValue(value, binding, destinationStep.getDenormalizedFieldHolderId(), destinationStep.getDenormalizedFieldHolderType());
-			denormalizedFieldValueDao.persist(dfv);
+			
+			if(projectCufValue.getCustomField().getInputType().equals(InputType.DROPDOWN_LIST)){
+				DenormalizedSingleSelectField dfv = new DenormalizedSingleSelectField(value, binding, destinationStep.getDenormalizedFieldHolderId(), destinationStep.getDenormalizedFieldHolderType());
+				denormalizedFieldValueDao.persist(dfv);
+			} else {
+				DenormalizedFieldValue dfv = new DenormalizedFieldValue(value, binding, destinationStep.getDenormalizedFieldHolderId(), destinationStep.getDenormalizedFieldHolderType());
+				denormalizedFieldValueDao.persist(dfv);
+			}
 		}
 		//add remaining fields
 		int newBindingPosition = lastBindingPosition +1;
 		for(CustomFieldValue remainingCufValue : sourceStepCustomFieldValues){
-			DenormalizedFieldValue dfv = new DenormalizedFieldValue(remainingCufValue, newBindingPosition,  destinationStep.getDenormalizedFieldHolderId(), destinationStep.getDenormalizedFieldHolderType());
-			denormalizedFieldValueDao.persist(dfv);
+			
+			if(remainingCufValue.getCustomField().getInputType().equals(InputType.DROPDOWN_LIST)){
+				DenormalizedSingleSelectField dfv = new DenormalizedSingleSelectField(remainingCufValue, newBindingPosition,  destinationStep.getDenormalizedFieldHolderId(), destinationStep.getDenormalizedFieldHolderType());
+				denormalizedFieldValueDao.persist(dfv);
+			} else {
+				DenormalizedFieldValue dfv = new DenormalizedFieldValue(remainingCufValue, newBindingPosition,  destinationStep.getDenormalizedFieldHolderId(), destinationStep.getDenormalizedFieldHolderType());
+				denormalizedFieldValueDao.persist(dfv);
+			}
+			
 			newBindingPosition++;
 		}
 		

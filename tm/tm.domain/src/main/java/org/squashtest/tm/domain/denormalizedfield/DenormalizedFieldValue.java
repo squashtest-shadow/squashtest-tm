@@ -27,12 +27,17 @@ import java.util.Set;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
@@ -50,6 +55,7 @@ import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
+import org.squashtest.tm.validation.constraint.HasDefaultAsRequired;
 
 @NamedQueries(value = {
 		@NamedQuery(name = "DenormalizedFieldValue.deleteAllForEntity", query = "delete DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId = :entityId and dfv.denormalizedFieldHolderType = :entityType"),
@@ -59,6 +65,9 @@ import org.squashtest.tm.domain.customfield.RenderingLocation;
 		@NamedQuery(name = "DenormalizedFieldValue.findDFVForEntitiesAndLocations", query = "select dfv from DenormalizedFieldValue dfv join dfv.renderingLocations rl where dfv.denormalizedFieldHolderId in (:entityIds) and dfv.denormalizedFieldHolderType = :entityType and rl in (:locations) order by dfv.position") 
 		})
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "FIELD_TYPE", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorValue("CF")
 public class DenormalizedFieldValue {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DenormalizedFieldValue.class);
@@ -85,11 +94,6 @@ public class DenormalizedFieldValue {
 	@Enumerated(EnumType.STRING)
 	@Column(updatable = false)
 	private InputType inputType;
-
-	//protected boolean optional = true;
-
-	@Size(min = 0, max = 255)
-	protected String defaultValue;
 
 	@NotBlank
 	@Size(min = 0, max = 255)
@@ -234,23 +238,6 @@ public class DenormalizedFieldValue {
 			}
 		}
 		return toReturn;
-	}
-
-	public String getDefaultValue() {
-		return defaultValue;
-	}
-
-	public Date getDefaultValueAsDate() {
-		// TODO copypasta, slap this into utility class
-		if (this.inputType == InputType.DATE_PICKER) {
-			try {
-				return IsoDateUtils.parseIso8601Date(defaultValue);
-			} catch (ParseException e) {
-				LOGGER.warn(e.getMessage(), e);
-			}
-		}
-		return null;
-
 	}
 	
 	public Set<RenderingLocation> getRenderingLocations() {

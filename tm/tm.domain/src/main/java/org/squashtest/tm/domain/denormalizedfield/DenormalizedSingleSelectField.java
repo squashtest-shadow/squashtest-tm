@@ -36,7 +36,10 @@ import javax.validation.Valid;
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 import org.squashtest.tm.domain.customfield.CustomField;
+import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.CustomFieldOption;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.exception.WrongStringSizeException;
 import org.squashtest.tm.exception.customfield.CodeAlreadyExistsException;
 import org.squashtest.tm.exception.customfield.CodeDoesNotMatchesPatternException;
@@ -48,7 +51,7 @@ import org.squashtest.tm.exception.customfield.OptionAlreadyExistException;
  * @author Frederic Laurens
  */
 
-@NamedQueries({ @NamedQuery(name = "singleSelectField.findById", query = "from SingleSelectField ssf where ssf.id = :id"), })
+@NamedQueries({ @NamedQuery(name = "denormalizedSingleSelectField.findById", query = "from DenormalizedSingleSelectField dssf where dssf.id = :id"), })
 @Entity
 @DiscriminatorValue("SSF")
 public class DenormalizedSingleSelectField extends DenormalizedFieldValue {
@@ -66,6 +69,33 @@ public class DenormalizedSingleSelectField extends DenormalizedFieldValue {
 		super();
 	}
 
+	public DenormalizedSingleSelectField(CustomFieldValue customFieldValue, Long denormalizedFieldHolderId,
+			DenormalizedFieldHolderType denormalizedFieldHolderType) {
+		super(customFieldValue, denormalizedFieldHolderId, denormalizedFieldHolderType);
+		SingleSelectField singleSelectField = (SingleSelectField) customFieldValue.getCustomField();
+		for(CustomFieldOption option : singleSelectField.getOptions()){
+			this.addOption(option);
+		}
+	}
+	
+	public DenormalizedSingleSelectField(String value, CustomFieldBinding binding, Long denormalizedFieldHolderId,
+			DenormalizedFieldHolderType denormalizedFieldHolderType) {
+		super(value, binding, denormalizedFieldHolderId, denormalizedFieldHolderType);
+		SingleSelectField singleSelectField = (SingleSelectField) binding.getCustomField();
+		for(CustomFieldOption option : singleSelectField.getOptions()){
+			this.addOption(option);
+		}
+	}
+	
+	public DenormalizedSingleSelectField(CustomFieldValue customFieldValue, int newBindingPosition,
+			Long denormalizedFieldHolderId, DenormalizedFieldHolderType denormalizedFieldHolderType) {
+		super(customFieldValue, newBindingPosition, denormalizedFieldHolderId, denormalizedFieldHolderType);
+		SingleSelectField singleSelectField = (SingleSelectField) customFieldValue.getCustomField();
+		for(CustomFieldOption option : singleSelectField.getOptions()){
+			this.addOption(option);
+		}
+	}
+	
 	/**
 	 * Will check if label and the code are available among the existing options. If so, will add the new option at the
 	 * end of the list. Else will throw a NameAlreadyInUseException or CodeAlreadyExistsException.

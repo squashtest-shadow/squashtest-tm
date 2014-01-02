@@ -134,7 +134,8 @@
 		        
 		          <!-- Denormalized Fields -->
         <value>org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue</value>
-        
+        <value>org.squashtest.tm.domain.denormalizedfield.DenormalizedSingleSelectField</value>
+                
         <!--  library plugins -->
         <value>org.squashtest.tm.domain.project.LibraryPluginBinding</value>
         <value>org.squashtest.tm.domain.campaign.CampaignLibraryPluginBinding</value>
