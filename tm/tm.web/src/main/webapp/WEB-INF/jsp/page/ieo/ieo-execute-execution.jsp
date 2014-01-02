@@ -64,6 +64,9 @@
 	<s:param name="ieo" value="true"/>
 </s:url>
 
+<c:url var="customFieldsValuesURL" value="/custom-fields/values" />
+<c:url var="denormalizedFieldsValuesURL" value="/denormalized-fields/values" />
+
 	<comp:sq-css name="squash.purple.css" />	
 </head>
 
@@ -146,6 +149,19 @@
 				
 			});
 	
+			<c:if test="${not empty denormalizedFieldValues }">
+			$.get("${denormalizedFieldsValuesURL}?denormalizedFieldHolderId=${executionStep.boundEntityId}&denormalizedFieldHolderType=${executionStep.boundEntityType}")
+				.success(function(data){$("#dfv-information-table").append(data);
+			});	
+			</c:if>
+			
+			<c:if test="${not empty customFieldValues }">
+			$.get("${customFieldsValuesURL}?boundEntityId=${executionStep.boundEntityId}&boundEntityType=${executionStep.boundEntityType}")
+				.success(function(data){$("#cuf-information-table").append(data);
+			});
+			</c:if>
+		
+			
 		});
 	</script> 
 	<div id="execute-header" >
@@ -178,25 +194,23 @@
 		</div>
 		
 		<c:if test="${not empty denormalizedFieldValues }">
-		<span id="denormalized-fields">
+
 		<comp:toggle-panel id="denormalized-fields-panel" titleKey="title.step.fields" open="true">
 		<jsp:attribute name="body"> 
-				<div class="display-table">
-					<comp:denormalized-field-values-list denormalizedFieldValues="${ denormalizedFieldValues }" />
+				<div id="dfv-information-table" class="display-table">
 				</div>
 			</jsp:attribute>
 		</comp:toggle-panel>
-		</span>
+
 		</c:if>		
 		<c:if test="${not empty customFieldValues }">
-		<span id="custom-fields"><comp:toggle-panel id="custom-fields-panel" titleKey="title.step.fields" 
+		<comp:toggle-panel id="custom-fields-panel" titleKey="title.step.fields" 
 					open="true">
 			<jsp:attribute name="body"> 
-				<div class="display-table">
-					<comp:custom-field-values-list customFieldValues="${ customFieldValues }" />
+				<div id="cuf-information-table" class="display-table">
 				</div>
 			</jsp:attribute>
-		</comp:toggle-panel></span>
+		</comp:toggle-panel>
 		</c:if>
 				
 		<comp:toggle-panel id="execution-action-panel" titleKey="execute.panel.action.title"  open="true">

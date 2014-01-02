@@ -60,6 +60,7 @@ import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
@@ -140,6 +141,10 @@ public class ExecutionModificationController {
 		boolean hasCUF = cufHelperService.hasCustomFields(execution);
 		List<CustomFieldValue> customFieldValues = cufHelperService.newHelper(execution).getCustomFieldValues();
 		
+		CustomFieldHelper<ExecutionStep> helper = cufHelperService.newHelper(execution.getSteps())
+				.setRenderingLocations(RenderingLocation.STEP_TABLE).restrictToCommonFields();
+		
+		List<CustomFieldModel> cufDefinitions = convertToJsonCustomField(helper.getCustomFieldConfiguration());
 		
 		ModelAndView mav = new ModelAndView("page/campaign-libraries/show-execution");
 		mav.addObject("execution", execution);
@@ -150,6 +155,7 @@ public class ExecutionModificationController {
 		mav.addObject("attachmentSet", attachmentHelper.findAttachments(execution));
 		mav.addObject("hasCUF", hasCUF);
 		mav.addObject("executionCufValues", customFieldValues);
+		mav.addObject("cufDefinitions", cufDefinitions);
 		
 		return mav;
 

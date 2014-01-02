@@ -336,7 +336,7 @@
 	<script type="text/javascript">
 	
 	$(function(){
-		require(["page-components/execution-information-panel", "squashtable", "jquery.squash.jeditable"], function(infopanel){
+		require(["page-components/execution-information-panel", "custom-field-values", "squashtable", "jquery.squash.jeditable"], function(infopanel, cufValuesManager){
 			
 			
 			// ************** execution table *********************
@@ -410,6 +410,13 @@
 						}
 					}
 				];
+			
+			//var cufColumnPosition = 4;
+			//var cufTableHandler = cufValuesManager.cufTableSupport;
+			//var cufDefinitions = "${cufDefinitions}";
+			// first we must process the DOM table for cufs
+			//cufTableHandler.decorateDOMTable($("#execution-execution-steps-table"), cufDefinitions, cufColumnPosition);
+
 			
 			$("#execution-execution-steps-table").squashTable(tableSettings, squashSettings);
 			
