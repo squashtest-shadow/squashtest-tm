@@ -24,7 +24,8 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-	
+<%@ taglib uri="http://org.squashtest.tm/taglib/workspace-utils" prefix="wu" %>
+		
 <div id="tree_element_menu" class="tree-top-toolbar unstyled-pane">
 	<div class="button-group">
 		<a id="tree-create-button"  	class="buttonmenu"><f:message key="label.create"/>...</a>
@@ -46,6 +47,9 @@
 			<li id="import-excel-tree-button" class="ui-state-disabled cursor-pointer"><a ><f:message key="label.Import" />...</a></li>
 			<li id="import-links-excel-tree-button" class="ui-state-disabled cursor-pointer"><a ><f:message key="tree.button.import.links.label" />...</a></li>
 			<li id="export-tree-button" class="ui-state-disabled cursor-pointer"><a  ><f:message key='label.Export'/>...</a></li>
+<c:forEach var="plugin"	items="${wu:getExportPlugins(pageContext.servletContext, 'REQUIREMENT_WORKSPACE')}" varStatus="pluginsts">
+			<li id="export-plugin-${pluginsts.index}" class="ui-state-disabled cursor-pointer export-plugin" data-module="${plugin.javascriptModuleName}"><a>${plugin.name}...</a></li>
+</c:forEach>
 		</ul>		
 	</div>
 
