@@ -106,7 +106,7 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 			}
 			lastBindingPosition = binding.getPosition();
 			
-			if(projectCufValue.getCustomField().getInputType().equals(InputType.DROPDOWN_LIST)){
+			if(binding.getCustomField().getInputType().equals(InputType.DROPDOWN_LIST)){
 				DenormalizedSingleSelectField dfv = new DenormalizedSingleSelectField(value, binding, destinationStep.getDenormalizedFieldHolderId(), destinationStep.getDenormalizedFieldHolderType());
 				denormalizedFieldValueDao.persist(dfv);
 			} else {
