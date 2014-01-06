@@ -27,6 +27,7 @@ package org.squashtest.tm.web.internal.controller.execution;
  */
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -50,6 +51,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
+import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
@@ -280,7 +282,8 @@ public class ExecutionModificationController {
 		private InternationalizationHelper messageSource;
 		private DenormalizedFieldValueManager dfvFinder;
 		private CustomFieldValueFinderService cufValueService;
-
+		private Map<Long, Map<String, CustomFieldValueTableModel>> customFieldValuesById;
+		
 		private ExecutionStepDataTableModelHelper(Locale locale, InternationalizationHelper messageSource,
 				DenormalizedFieldValueManager dfvFinder, CustomFieldValueFinderService cufValueService) {
 			this.locale = locale;
@@ -307,9 +310,92 @@ public class ExecutionModificationController {
 			res.put(DataTableModelConstants.DEFAULT_NB_ATTACH_KEY, item.getAttachmentList().size());
 			res.put(DataTableModelConstants.DEFAULT_ATTACH_LIST_ID_KEY, item.getAttachmentList().getId());
 			res.put("run-step-button", "");
+			List<CustomFieldValue> cufValues = cufValueService.findAllForEntityAndRenderingLocation(item, RenderingLocation.STEP_TABLE);
+			usingCustomFields(cufValues, cufValues.size());
+			appendCustomFields(res);
 			return res;
 		}
 
+		private void appendCustomFields(Map<String, Object> item) {
+			Map<String, CustomFieldValueTableModel> cufValues = getCustomFieldsFor((Long) item.get("entity-id"));
+			item.put("customFields", cufValues);
+
+		}
+	
+		public void usingCustomFields(Collection<CustomFieldValue> cufValues, int nbFieldsPerEntity) {
+			customFieldValuesById = new HashMap<Long, Map<String, CustomFieldValueTableModel>>();
+
+			for (CustomFieldValue value : cufValues) {
+				Long entityId = value.getBoundEntityId();
+				Map<String, CustomFieldValueTableModel> values = customFieldValuesById.get(entityId);
+
+				if (values == null) {
+					values = new HashMap<String, CustomFieldValueTableModel>(nbFieldsPerEntity);
+					customFieldValuesById.put(entityId, values);
+				}
+
+				values.put(value.getCustomField().getCode(), new CustomFieldValueTableModel(value));
+
+			}
+		}
+
+		private Map<String, CustomFieldValueTableModel> getCustomFieldsFor(Long id) {
+			if (customFieldValuesById == null) {
+				return new HashMap<String, CustomFieldValueTableModel>();
+			}
+
+			Map<String, CustomFieldValueTableModel> values = customFieldValuesById.get(id);
+
+			if (values == null) {
+				values = new HashMap<String, CustomFieldValueTableModel>();
+			}
+			return values;
+
+		}
+		
+		protected static class CustomFieldValueTableModel {
+			private static final Logger LOGGER = LoggerFactory.getLogger(CustomFieldValueTableModel.class);
+
+			private String value;
+			private Long id;
+
+			public String getValue() {
+				return value;
+			}
+
+			public void setValue(String value) {
+				this.value = value;
+			}
+
+			public Long getId() {
+				return id;
+			}
+
+			public void setId(Long id) {
+				this.id = id;
+			}
+
+			public CustomFieldValueTableModel() {
+				super();
+			}
+
+			public Date getValueAsDate() {
+				try {
+					return IsoDateUtils.parseIso8601Date(value);
+				} catch (ParseException e) {
+					LOGGER.debug("Unable to parse date {} of custom field #{}", value, id);
+				}
+
+				return null;
+			}
+
+			private CustomFieldValueTableModel(CustomFieldValue value) {
+				this.id = value.getId();
+				this.value = value.getValue();
+			}
+
+		}
+		
 		private void addDenormalizedFieldValues(ExecutionStep item, Map<String, Object> res) {
 			List<DenormalizedFieldValue> stepDfvs = dfvFinder.findAllForEntityAndRenderingLocation(item,
 					RenderingLocation.STEP_TABLE);

@@ -32,7 +32,7 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
-
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
@@ -342,7 +342,8 @@
 			// ************** execution table *********************
 			var tableSettings = {
 				"sAjaxSource": "${executionStepsUrl}", 
-				"aoColumnDefs": ${stepsAoColumnDefs}
+				"aoColumnDefs": ${stepsAoColumnDefs},
+				"cufDefinitions": ${ json:marshall(cufDefinitions) }
 			};
 			
 			var squashSettings = {
@@ -411,12 +412,15 @@
 					}
 				];
 			
-			//var cufColumnPosition = 4;
-			//var cufTableHandler = cufValuesManager.cufTableSupport;
-			//var cufDefinitions = "${cufDefinitions}";
-			// first we must process the DOM table for cufs
-			//cufTableHandler.decorateDOMTable($("#execution-execution-steps-table"), cufDefinitions, cufColumnPosition);
+			
+		
+			
+			var cufColumnPosition = 2;
+			var cufTableHandler = cufValuesManager.cufTableSupport;
+			cufTableHandler.decorateDOMTable($("#execution-execution-steps-table"), tableSettings.cufDefinitions, cufColumnPosition);
 
+			datatableSettings = cufTableHandler.decorateTableSettings(tableSettings, tableSettings.cufDefinitions,
+					cufColumnPosition, true);
 			
 			$("#execution-execution-steps-table").squashTable(tableSettings, squashSettings);
 			

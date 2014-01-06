@@ -260,7 +260,9 @@ define([ "jquery", "./cuf-values-utils", "./jquery-cuf-values" ], function($, ut
 		var addendumCallback = createCufValuesDrawCallback(cufDefinitions, editable);
 
 		tableSettings.fnDrawCallback = function() {
-			oldDrawCallback.apply(this, arguments);
+			if(!!oldDrawCallback){
+				oldDrawCallback.apply(this, arguments);
+			}
 			addendumCallback.call(this);
 		};
 
