@@ -99,7 +99,7 @@ public class DenormalizedFieldValuesController {
 		List<CustomFieldValueModel> models = new LinkedList<CustomFieldValueModel>();
 
 		for (DenormalizedFieldValue value : values) {
-			CustomFieldValueModel model = converter.toJson(value);
+			CustomFieldValueModel model = converter.toCustomFieldValueJsonModel(value);
 			models.add(model);
 		}
 
