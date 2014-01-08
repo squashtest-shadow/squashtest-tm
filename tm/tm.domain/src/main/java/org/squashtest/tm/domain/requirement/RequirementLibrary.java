@@ -58,7 +58,7 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 	@OneToOne(mappedBy = "requirementLibrary")
 	private GenericProject project;	
 	
-	@OneToMany(cascade = { CascadeType.ALL}, orphanRemoval=true)
+	@OneToMany(cascade = { CascadeType.ALL })	
 	@JoinColumn(name="LIBRARY_ID")
 	@Where(clause="LIBRARY_TYPE = 'R'")
 	private Set<RequirementLibraryPluginBinding> enabledPlugins = new HashSet<RequirementLibraryPluginBinding>(5);
