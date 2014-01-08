@@ -127,44 +127,33 @@ public class ExecutionModificationController {
 		
 		// step properties
 		List<AoColumnDef> columnDefs;
-		List<String> firstStepDfvsLabels;
-
-		/*if (!execution.getSteps().isEmpty()) {
-			List<DenormalizedFieldValue> firstStepDfv = denormalizedFieldValueFinder.findAllForEntityAndRenderingLocation(execution.getSteps().get(0), RenderingLocation.STEP_TABLE);
-			List<CustomFieldValue> firstStepCustomFieldValue = cufValueService.findAllForEntityAndRenderingLocation(execution.getSteps().get(0), RenderingLocation.STEP_TABLE);
-			columnDefs = findDfvColumnDefForSteps(execution, firstStepDfv, firstStepCustomFieldValue);
-			firstStepDfvsLabels = extractLabels(firstStepDfv, firstStepCustomFieldValue);
-
-		} else {
-			columnDefs = findDfvColumnDefForSteps(execution, null, null);
-			firstStepDfvsLabels = Collections.emptyList();
-		}*/
-
-		//TODO
-		columnDefs = findDfvColumnDefForSteps(execution, null, null);
 		
 		boolean hasCUF = cufHelperService.hasCustomFields(execution);
 		List<CustomFieldValue> customFieldValues = cufHelperService.newHelper(execution).getCustomFieldValues();
+		columnDefs = findColumnDefForSteps(execution);
+		List<CustomFieldModel> dfvDefinitions = Collections.emptyList();
 		
-		CustomFieldHelper<ExecutionStep> helper = cufHelperService.newHelper(execution.getSteps())
-				.setRenderingLocations(RenderingLocation.STEP_TABLE).restrictToCommonFields();
-		
-		List<CustomFieldModel> cufDefinitions = convertToJsonCustomField(helper.getCustomFieldConfiguration());
-		
-		
-		List<DenormalizedFieldValue> firstStepDfv = denormalizedFieldValueFinder.findAllForEntityAndRenderingLocation(execution.getSteps().get(0), RenderingLocation.STEP_TABLE);
-		List<CustomFieldModel> dfvDefinitions = convertToJsonCustomField(firstStepDfv);
+		if (!execution.getSteps().isEmpty()) {
+	
+			CustomFieldHelper<ExecutionStep> helper = cufHelperService.newHelper(execution.getSteps())
+					.setRenderingLocations(RenderingLocation.STEP_TABLE).restrictToCommonFields();
+			
+			List<CustomFieldModel> cufDefinitions = convertToJsonCustomField(helper.getCustomFieldConfiguration());
+			
+			List<DenormalizedFieldValue> firstStepDfv = denormalizedFieldValueFinder.findAllForEntityAndRenderingLocation(execution.getSteps().get(0), RenderingLocation.STEP_TABLE);
+			dfvDefinitions = convertToJsonCustomField(firstStepDfv);
+			dfvDefinitions.addAll(cufDefinitions);
+		}		
 		
 		ModelAndView mav = new ModelAndView("page/campaign-libraries/show-execution");
 		mav.addObject("execution", execution);
 		mav.addObject("executionRank", Integer.valueOf(rank + 1));
 		mav.addObject("denormalizedFieldValues", values);
 		mav.addObject("stepsAoColumnDefs", JsonHelper.serialize(columnDefs));
-		//mav.addObject("stepsDfvsLabels", firstStepDfvsLabels);
 		mav.addObject("attachmentSet", attachmentHelper.findAttachments(execution));
 		mav.addObject("hasCUF", hasCUF);
 		mav.addObject("executionCufValues", customFieldValues);
-		dfvDefinitions.addAll(cufDefinitions);
+
 		mav.addObject("cufDefinitions", dfvDefinitions);
 		return mav;
 
@@ -187,50 +176,13 @@ public class ExecutionModificationController {
 	}
 			
 	
-	private List<AoColumnDef> findDfvColumnDefForSteps(Execution execution, List<DenormalizedFieldValue> firstStepDfv, List<CustomFieldValue> firstStepCfv) {
-		List<AoColumnDef> columnDefs;
-		List<String> firstStepDfvCode = new ArrayList<String>();
-		if (firstStepDfv != null) {
-			firstStepDfvCode = extractDfvCodes(firstStepDfv);
-		}
-		List<String> firstStepCfvCode = new ArrayList<String>();
-		if(firstStepCfv != null){
-			firstStepCfvCode = extractCfvCodes(firstStepCfv);
-		}
-		
+	private List<AoColumnDef> findColumnDefForSteps(Execution execution) {
+		List<AoColumnDef> columnDefs;		
 		boolean editable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "EXECUTE", execution);
 		boolean isBugtrackerConnected = execution.getProject().isBugtrackerConnected();
-		columnDefs = new ExecutionStepTableColumnDefHelper().getAoColumnDfvDefs(firstStepDfvCode, firstStepCfvCode, editable, isBugtrackerConnected);
+		columnDefs = new ExecutionStepTableColumnDefHelper().getAoColumnDfvDefs(editable, isBugtrackerConnected);
 		return columnDefs;
 	}
-
-	private List<String> extractLabels(List<DenormalizedFieldValue> dfvs, List<CustomFieldValue> cfvs) {
-		List<String> labels = new ArrayList<String>(dfvs.size());
-		for (DenormalizedFieldValue dfv : dfvs) {
-			labels.add(dfv.getLabel());
-		}
-		for(CustomFieldValue cfv : cfvs){
-			labels.add(cfv.getCustomField().getLabel());
-		}
-		return labels;
-	}
-
-	private List<String> extractCfvCodes(List<CustomFieldValue> cfvs) {
-		List<String> codes = new ArrayList<String>(cfvs.size());
-		for(CustomFieldValue cfv : cfvs){
-			codes.add(cfv.getCustomField().getCode());
-		}
-		return codes;
-	}
-	
-	private List<String> extractDfvCodes(List<DenormalizedFieldValue> dfvs) {
-		List<String> codes = new ArrayList<String>(dfvs.size());
-		for (DenormalizedFieldValue dfv : dfvs) {
-			codes.add(dfv.getCode());
-		}
-		return codes;
-	}
-	
 
 	@RequestMapping(value = "/steps", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
@@ -273,21 +225,9 @@ public class ExecutionModificationController {
 			columns.addAll(baseColumns);
 		}
 
-		private List<AoColumnDef> getAoColumnDfvDefs(List<String> dfvCodes, List<String> cfvCodes, boolean editable, boolean isBugtrackerConnected) {
+		private List<AoColumnDef> getAoColumnDfvDefs(boolean editable, boolean isBugtrackerConnected) {
 			columns.get(columns.size() - 2).setbVisible(editable);
 			columns.get(columns.size() - 4).setbVisible(editable && isBugtrackerConnected);
-			if (!dfvCodes.isEmpty() || !cfvCodes.isEmpty()) {
-				List<AoColumnDef> dfvColumns = new ArrayList<AoColumnDef>(dfvCodes.size()+cfvCodes.size());
-				for (String dfvCode : dfvCodes) {
-					AoColumnDef aoColumn = new AoColumnDef(true, false, "dfv", null, "dfv-" + dfvCode);
-					dfvColumns.add(aoColumn);
-				}
-				for (String cfvCode : cfvCodes) {
-					AoColumnDef aoColumn = new AoColumnDef(true, false, "cfv", null, "cfv-" + cfvCode);
-					dfvColumns.add(aoColumn);
-				}
-				columns.addAll(2, dfvColumns);
-			}
 			addATargets(columns);
 			return columns;
 		}
@@ -315,8 +255,6 @@ public class ExecutionModificationController {
 			Map<String, Object> res = new HashMap<String, Object>();
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, item.getExecutionStepOrder() + 1);
-			//addDenormalizedFieldValues(item, res);
-			//addCustomFieldValues(item,res);
 			res.put("action", item.getAction());
 			res.put("expected", item.getExpectedResult());
 			res.put("last-exec-on", formatDate(item.getLastExecutedOn(), locale));
@@ -455,33 +393,6 @@ public class ExecutionModificationController {
 				this.value = value.getValue();
 			}
 		}
-		
-		/*
-		private void addDenormalizedFieldValues(ExecutionStep item, Map<String, Object> res) {
-			List<DenormalizedFieldValue> stepDfvs = dfvFinder.findAllForEntityAndRenderingLocation(item,
-					RenderingLocation.STEP_TABLE);
-			for (DenormalizedFieldValue stepDfv : stepDfvs) {
-				String dfvValue = stepDfv.getValue();
-				Date date = stepDfv.getValueAsDate();
-				if (date != null) {
-					messageSource.localizeShortDate(date, locale);
-				}
-				res.put("dfv-" + stepDfv.getCode(), dfvValue);
-			}
-		}*/
-		
-		/*
-		private void addCustomFieldValues(ExecutionStep item, Map<String, Object> res){
-			List<CustomFieldValue> stepCufs = cufValueService.findAllForEntityAndRenderingLocation(item, RenderingLocation.STEP_TABLE);
-			for (CustomFieldValue stepCuf : stepCufs) {
-				String cufValue = stepCuf.getValue();
-				Date date = stepCuf.getValueAsDate();
-				if (date != null) {
-					messageSource.localizeShortDate(date, locale);
-				}
-				res.put("cfv-" + stepCuf.getCustomField().getCode(), cufValue);
-			}
-		}*/
 
 		private String formatDate(Date date, Locale locale) {
 			return messageSource.localizeDate(date, locale);
@@ -596,7 +507,6 @@ public class ExecutionModificationController {
 		IterationTestPlanItem testPlan = execution.getTestPlan();
 		Iteration iteration = testPlan.getIteration();
 		executionModService.deleteExecution(execution);
-		// final IterationTestPlanItem reTestPlanItem = testPlan;
 		final Long reNewStartDate;
 		if (iteration.getActualStartDate() != null) {
 			reNewStartDate = iteration.getActualStartDate().getTime();
