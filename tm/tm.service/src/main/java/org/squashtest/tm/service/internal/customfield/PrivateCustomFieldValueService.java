@@ -23,6 +23,8 @@ package org.squashtest.tm.service.internal.customfield;
 import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;

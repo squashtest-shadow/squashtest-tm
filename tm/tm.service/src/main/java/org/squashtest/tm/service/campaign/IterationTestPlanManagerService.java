@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.campaign;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
