@@ -83,21 +83,6 @@ public class ProjectDeletionHandlerIT extends DbunitServiceSpecification {
 		1*objectIdentityService.removeObjectIdentity(1L,Project.class)
 	}
 	
-	@DataSet("ProjectDeletionHandlerTest.should delete project and libraries.xml")
-	def "should delete project and plugins"(){
-		
-		when :
-			newSQLQuery("select * from LIBRARY_PLUGIN_BINDING_PROPERTY").list().size() == 3
-			def result = deletionHandler.deleteProject(1)
-			
-		then :
-			allDeleted ("RequirementLibraryPluginBinding", [12L])
-			allDeleted ("TestCaseLibraryPluginBinding", [11L, 12L])
-			allDeleted ("CampaignLibraryPluginBinding", [31L])
-			
-			newSQLQuery("select * from LIBRARY_PLUGIN_BINDING_PROPERTY").list().size() == 0
-			
-		
-	}
+	
 	
 }
