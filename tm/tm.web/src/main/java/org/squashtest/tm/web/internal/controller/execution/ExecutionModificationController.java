@@ -353,26 +353,22 @@ public class ExecutionModificationController {
 			private String value;
 			private Long id;
 
+			@SuppressWarnings("unused")
 			public String getValue() {
 				return value;
 			}
 
-			public void setValue(String value) {
-				this.value = value;
-			}
-
+			@SuppressWarnings("unused")
 			public Long getId() {
 				return id;
 			}
 
-			public void setId(Long id) {
-				this.id = id;
-			}
-
+			@SuppressWarnings("unused")
 			public CustomFieldValueTableModel() {
 				super();
 			}
 
+			@SuppressWarnings("unused")
 			public Date getValueAsDate() {
 				try {
 					return IsoDateUtils.parseIso8601Date(value);
