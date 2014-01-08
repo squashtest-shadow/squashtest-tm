@@ -263,7 +263,7 @@
 		</sql>
 		<comment>reorder test plan of campaign where deletion of campaign_test_plan_item occurred</comment>
 		<sql>
-			create temporary table CAMPAIGN_TEST_PLAN_ITEM_TEMP(
+			create table CAMPAIGN_TEST_PLAN_ITEM_TEMP(
 			CAMPAIGN_ID BIGINT NOT NULL,
 			CTPI_ID BIGINT NOT NULL,
 			TEST_PLAN_ORDER INT NOT NULL
@@ -280,7 +280,7 @@
 			group by CAMPAIGN_ID, CTPI_ID, globindex
 			order by TEST_PLAN_ORDER;
 
-			create temporary table CAMPAIGN_TEST_PLAN_ITEM_TEMP2 
+			create table CAMPAIGN_TEST_PLAN_ITEM_TEMP2 
 			(
 			CAMPAIGN_ID
 			BIGINT NOT NULL,
@@ -300,8 +300,8 @@
 				where ctpit1.CTPI_ID = ctpi.CTPI_ID
 				and ctpit2.CAMPAIGN_ID = ctpit1.CAMPAIGN_ID
 				and ctpit1.TEST_PLAN_ORDER > ctpit2.TEST_PLAN_ORDER
-			);
-
+			)
+			where ctpi.CTPI_ID in (select DISTINCT ctpi3.CTPI_ID from CAMPAIGN_TEST_PLAN_ITEM_TEMP ctpi3);
 
 			drop table CAMPAIGN_TEST_PLAN_ITEM_TEMP;
 			drop table CAMPAIGN_TEST_PLAN_ITEM_TEMP2;
@@ -321,7 +321,7 @@
 		</sql>
 		<comment>reorder test plan of campaign where deletion of campaign_test_plan_item occurred</comment>
 		<sql>
-			create temporary table CAMPAIGN_TEST_PLAN_ITEM_TEMP
+			create table CAMPAIGN_TEST_PLAN_ITEM_TEMP
 			(
 			CAMPAIGN_ID
 			BIGINT NOT NULL,
@@ -338,7 +338,7 @@
 			group by CAMPAIGN_ID, CTPI_ID, globindex
 			order by TEST_PLAN_ORDER;
 
-			create temporary table CAMPAIGN_TEST_PLAN_ITEM_TEMP2 
+			create table CAMPAIGN_TEST_PLAN_ITEM_TEMP2 
 			(
 			CAMPAIGN_ID
 			BIGINT NOT NULL,
@@ -356,7 +356,8 @@
 				where ctpit1.CTPI_ID = ctpi.CTPI_ID
 				and ctpit2.CAMPAIGN_ID = ctpit1.CAMPAIGN_ID
 				and ctpit1.TEST_PLAN_ORDER > ctpit2.TEST_PLAN_ORDER
-			);
+			)
+			where ctpi.CTPI_ID in (select DISTINCT ctpi3.CTPI_ID from CAMPAIGN_TEST_PLAN_ITEM_TEMP ctpi3);
 
 
 			drop table CAMPAIGN_TEST_PLAN_ITEM_TEMP;
@@ -536,7 +537,7 @@
 		</preConditions>
 		<comment>reorder steps of calling test case</comment>
 		<sql>
-			create temporary table TEST_CASE_STEPS_TEMP(
+			create table TEST_CASE_STEPS_TEMP(
 			TEST_CASE_ID
 			BIGINT
 			NOT NULL,
@@ -553,7 +554,7 @@
 			group by TEST_CASE_ID, STEP_ID, globindex
 			order by STEP_ORDER;
 
-			create temporary table TEST_CASE_STEPS_TEMP2 (
+			create table TEST_CASE_STEPS_TEMP2 (
 			TEST_CASE_ID BIGINT NOT NULL,
 			STEP_ID BIGINT NOT NULL,
 			STEP_ORDER INT NOT NULL
@@ -569,7 +570,8 @@
 				where tcst1.STEP_ID = tcs.STEP_ID
 				and tcst2.TEST_CASE_ID = tcst1.TEST_CASE_ID
 				and tcst1.STEP_ORDER > tcst2.STEP_ORDER
-			);
+			)
+			where tcs.STEP_ID in (select DISTINCT tcst3.STEP_ID from TEST_CASE_STEPS_TEMP tcst3);
 
 			drop table TEST_CASE_STEPS_TEMP;
 			drop table TEST_CASE_STEPS_TEMP2;
@@ -582,7 +584,7 @@
 		</preConditions>
 		<comment>reorder steps of calling test case</comment>
 		<sql>
-			create temporary table TEST_CASE_STEPS_TEMP(
+			create table TEST_CASE_STEPS_TEMP(
 			TEST_CASE_ID BIGINT NOT NULL,
 			STEP_ID BIGINT NOT NULL,
 			STEP_ORDER INT NOT NULL
@@ -597,7 +599,7 @@
 			group by TEST_CASE_ID, STEP_ID, globindex
 			order by STEP_ORDER;
 
-			create temporary table TEST_CASE_STEPS_TEMP2 (
+			create table TEST_CASE_STEPS_TEMP2 (
 			TEST_CASE_ID BIGINT NOT NULL,
 			STEP_ID BIGINT NOT NULL,
 			STEP_ORDER INT NOT NULL
@@ -613,8 +615,8 @@
 				where tcst1.STEP_ID = tcs.STEP_ID
 				and tcst2.TEST_CASE_ID = tcst1.TEST_CASE_ID
 				and tcst1.STEP_ORDER > tcst2.STEP_ORDER
-			);
-
+			)
+ 			where tcs.STEP_ID in (select DISTINCT tcst3.STEP_ID from TEST_CASE_STEPS_TEMP tcst3);
 
 			drop table TEST_CASE_STEPS_TEMP;
 			drop table TEST_CASE_STEPS_TEMP2;
