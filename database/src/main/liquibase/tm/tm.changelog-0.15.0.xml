@@ -521,7 +521,6 @@
 
 		<comment>Cette table gere les cas de test proprement dits. Une entree dans cette table indique que l'element reference dans la table TEST_CASE_LIBRARY_NODE par la cle primaire (egalement cle etrangere) est de type cas de test.</comment>
 		<createTable tableName="TEST_CASE">
-			
 			<column name="TCLN_ID" type="BIGINT"
 			remarks="cle primaire, qui est aussi une cle etrangere vers la table TEST_CASE_LIBRARY_NODE. Ne doit donc pas etre autogeneree.">
 				<constraints primaryKey="true" nullable="false" primaryKeyName="PK_TEST_CASSE"

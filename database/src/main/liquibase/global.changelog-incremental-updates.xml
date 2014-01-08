@@ -42,6 +42,5 @@
 	<include file="upgrade/upgrade.changelog-up-to-1.6.0.xml" relativeToChangelogFile="true" />
 	<include file="upgrade/upgrade.changelog-up-to-1.7.0.xml" relativeToChangelogFile="true" />
 	<include file="upgrade/upgrade.changelog-up-to-1.7.1.xml" relativeToChangelogFile="true" />
-	<include file="upgrade/upgrade.changelog-up-to-1.8.0.xml" relativeToChangelogFile="true" />
-	<include file="upgrade/upgrade.changelog-up-to-1.8.1.xml" relativeToChangelogFile="true" />								
+	<include file="upgrade/upgrade.changelog-up-to-1.8.0.xml" relativeToChangelogFile="true" />						
 </databaseChangeLog> 
