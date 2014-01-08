@@ -40,14 +40,12 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.internal.repository.BoundEntityDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao.CustomFieldValuesPair;
 import org.squashtest.tm.service.library.AdvancedSearchService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
-
 
 @Service("squashtest.tm.service.CustomFieldValueManagerService")
 @Transactional
@@ -194,11 +192,8 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	}
 
 	@Override
-	public void createAllCustomFieldValues(BoundEntity entity, Project project) {
-		if(project == null){
-			project = entity.getProject();
-		}
-		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForProjectAndEntity(project.getId(), entity.getBoundEntityType());
+	public void createAllCustomFieldValues(BoundEntity entity, Long projectId) {
+		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForProjectAndEntity(projectId, entity.getBoundEntityType());
 
 		for (CustomFieldBinding binding : bindings) {
 			if (!foundValue(binding, entity)) {

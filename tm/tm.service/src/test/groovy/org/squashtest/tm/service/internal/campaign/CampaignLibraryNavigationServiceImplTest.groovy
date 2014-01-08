@@ -26,7 +26,6 @@ import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.CampaignFolder
 import org.squashtest.tm.domain.campaign.CampaignLibrary
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode
-import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.exception.DuplicateNameException
 import org.squashtest.tm.service.campaign.IterationModificationService
 import org.squashtest.tm.service.internal.campaign.CampaignLibraryNavigationServiceImpl
@@ -186,10 +185,7 @@ class CampaignLibraryNavigationServiceImplTest extends Specification {
 
 	def "should add campaign to campaign folder"(){
 		given:
-		Project project = Mock()
-		project.getId() >> 1L;
 		Campaign campaign = Mock()
-		campaign.getProject() >> project;
 		and:
 		CampaignFolder container = Mock()
 		container.isContentNameAvailable(_) >> true
@@ -221,10 +217,7 @@ class CampaignLibraryNavigationServiceImplTest extends Specification {
 
 	def "sould add campaign to campaign library"(){
 		given:
-		Project project = Mock()
-		project.getId() >> 1L;
 		Campaign campaign = Mock()
-		campaign.getProject() >> project;
 		and:
 		CampaignLibrary container = Mock()
 		container.isContentNameAvailable(_) >> true

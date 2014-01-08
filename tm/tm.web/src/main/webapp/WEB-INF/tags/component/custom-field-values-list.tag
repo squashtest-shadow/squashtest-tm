@@ -29,7 +29,7 @@
 
 <c:forEach var="cfv" items="${ customFieldValues }">
 	<div class="display-table-row">
-		<label class="display-table-cell" for="cfv-${ cfv.binding.customField.id }">${ cfv.binding.customField.label }</label>
+		<label class="display-table-cell" for="cfv-${ cfv.id }">${ cfv.label }</label>
 		<div class="display-table-cell">${ cfv.value }</div>
 	</div>
 </c:forEach>

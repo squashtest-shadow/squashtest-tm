@@ -170,10 +170,6 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		public void setId(Long newId){
 			overId=newId;
 		}
-		public Project getProject(){
-			Project project = new Project();
-			return project;
-		} 
 	}
 	
 	class MockActionStep extends ActionTestStep{
