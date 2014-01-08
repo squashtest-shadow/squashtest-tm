@@ -139,11 +139,6 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 		this.displayWorkspace = displayWorkspace;
 	}
 
-	
-	public void validate(EntityReference reference){
-		// defaults : allways passes
-	}
-	
 	/**
 	 * This default validation always passes.
 	 * 
