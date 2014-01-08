@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.api.wizard;
 
-import java.util.Map;
-
 import org.squashtest.tm.api.plugin.EntityReference;
 import org.squashtest.tm.api.widget.MenuItem;
 import org.squashtest.tm.api.workspace.WorkspaceType;
@@ -49,10 +47,10 @@ public interface WorkspaceWizard extends WizardPlugin {
 	
 
 	/**
-	 * Asks the plugin to validate against an EntityReference and for the given configuration. Must either succeed, or throw a {@link WizardValidationException}.
+	 * Asks the plugin to validate against an EntityReference. Must either succeed, or throw a {@link WizardValidationException}.
 	 * 
 	 * @param reference to a given object
 	 */
-	void validate(EntityReference reference, Map<String, String> configuration) throws WizardValidationException;
+	void validate(EntityReference reference) throws WizardValidationException;
 	
 }

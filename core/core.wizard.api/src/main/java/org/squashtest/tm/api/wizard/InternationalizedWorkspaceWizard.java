@@ -145,7 +145,7 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 	 * @see org.squashtest.tm.api.wizard.WorkspaceWizard#validate(EntityReference)
 	 */
 	@Override
-	public void validate(EntityReference reference, Map<String, String> conf) {
+	public void validate(EntityReference reference) {
 		// defaults : allways passes
 	}
 
