@@ -32,7 +32,6 @@ import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.library.NodeVisitor
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.domain.testcase.TestCaseLibraryPluginBinding;
 import org.squashtest.tm.exception.DuplicateNameException
 import org.squashtest.tm.service.library.LibraryNavigationService
 import org.squashtest.tm.security.annotation.AclConstrainedObject
@@ -244,14 +243,6 @@ class DummyLibrary implements Library<DummyNode> {
 	@Override
 	public boolean isPluginEnabled(String pluginId) {
 		return false;
-	}
-	
-	public Set<TestCaseLibraryPluginBinding> getAllPluginBindings(){
-		return [] as Set
-	}
-	
-	public TestCaseLibraryPluginBinding getPluginBinding(String pluginId) {
-		return null;
 	}
 }
 

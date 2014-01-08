@@ -25,7 +25,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -56,8 +58,10 @@ public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> {
 	@OneToOne(mappedBy = "testCaseLibrary")
 	private GenericProject project;
 		
-	@OneToMany(cascade = { CascadeType.ALL })
-	private Set<TestCaseLibraryPluginBinding> enabledPlugins = new HashSet<TestCaseLibraryPluginBinding>(5);
+	@ElementCollection
+	@CollectionTable(name = "TEST_CASE_LIBRARY_PLUGINS", joinColumns = @JoinColumn(name = "LIBRARY_ID"))
+	@Column(name = "PLUGIN_ID")
+	private Set<String> enabledPlugins = new HashSet<String>(5);
 
 	public Set<TestCaseLibraryNode> getRootContent() {
 		return rootContent;
@@ -91,48 +95,22 @@ public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> {
 	
 	@Override
 	public Set<String> getEnabledPlugins() {
-		Set<String> pluginIds = new HashSet<String>(enabledPlugins.size());
-		for (TestCaseLibraryPluginBinding binding : enabledPlugins){
-			pluginIds.add(binding.getPluginId());
-		}
-		return pluginIds;
-	}
-
-	
-	@Override
-	public Set<TestCaseLibraryPluginBinding> getAllPluginBindings() {
 		return enabledPlugins;
-	}	
+	}
 	
 	@Override
 	public void enablePlugin(String pluginId) {
-		if (! isPluginEnabled(pluginId)){
-			TestCaseLibraryPluginBinding newBinding = new TestCaseLibraryPluginBinding(pluginId);
-			enabledPlugins.add(newBinding);
-		}
+		enabledPlugins.add(pluginId);
 	}
 	
 	@Override
 	public void disablePlugin(String pluginId) {
-		TestCaseLibraryPluginBinding binding = getPluginBinding(pluginId);
-		if (binding != null){
-			enabledPlugins.remove(binding);
-		}
-	}
-	
-	@Override
-	public TestCaseLibraryPluginBinding getPluginBinding(String pluginId) {
-		for (TestCaseLibraryPluginBinding binding : enabledPlugins){
-			if (binding.getPluginId().equals(pluginId)){
-				return binding;
-			}
-		}
-		return null;
+		enabledPlugins.remove(pluginId);
 	}
 	
 	@Override
 	public boolean isPluginEnabled(String pluginId) {
-		return (getPluginBinding(pluginId) != null);
+		return (enabledPlugins.contains(pluginId));
 	}
 
 	/* ***************************** SelfClassAware section ******************************* */
