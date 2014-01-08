@@ -29,16 +29,12 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.api.export.ExportPlugin;
-import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.project.ProjectFinder;
-import org.squashtest.tm.web.internal.export.ExportPluginManager;
-import org.squashtest.tm.web.internal.export.ExportPluginRegistry;
 import org.squashtest.tm.web.internal.model.jquery.FilterModel;
 
 /**
@@ -62,14 +58,6 @@ public class WorkspaceHelper extends SimpleTagSupport{
 		return bugtrackerService.findDistinctBugTrackersForProjects(projectsIds);
 	}
 	
-	public static Collection<ExportPlugin> getExportPlugins(ServletContext context, String workspaceName){
-		
-		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(context);
-		WorkspaceType workspace = WorkspaceType.valueOf(workspaceName);
-		
-		ExportPluginManager manager = wac.getBean(ExportPluginManager.class);
-		return manager.findAllByWorkspace(workspace);
-	}
 	
 	public static FilterModel getProjectFilter(ServletContext context){		
 		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(context);		
