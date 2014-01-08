@@ -85,7 +85,6 @@ class WorkspaceWizardManagerImplTest extends Specification {
 			void validate(EntityReference ref){
 				
 			}
-			Map getProperties() { return [:]}
 		}, Collections.emptyMap()
 
 		manager.registerWizard new WorkspaceWizard() {
@@ -110,7 +109,6 @@ class WorkspaceWizardManagerImplTest extends Specification {
 			void validate(EntityReference ref){
 				
 			}
-			Map getProperties() { return [:]}
 		}, Collections.emptyMap()
 		
 		manager.registerWizard new WorkspaceWizard() {
@@ -135,7 +133,6 @@ class WorkspaceWizardManagerImplTest extends Specification {
 			void validate(EntityReference ref){
 				
 			}
-			Map getProperties() { return [:]}
 		}, Collections.emptyMap()
 		
 		when:

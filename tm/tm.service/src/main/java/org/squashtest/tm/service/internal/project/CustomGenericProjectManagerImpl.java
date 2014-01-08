@@ -20,10 +20,8 @@
  */
 package org.squashtest.tm.service.internal.project;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -49,7 +47,6 @@ import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.library.PluginReferencer;
 import org.squashtest.tm.domain.project.AdministrableProject;
 import org.squashtest.tm.domain.project.GenericProject;
-import org.squashtest.tm.domain.project.LibraryPluginBinding;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
@@ -398,33 +395,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		PluginReferencer library = findLibrary(projectId, workspace);
 		library.disablePlugin(wizardId);
 	}
-
 	
-	@Override
-	@PreAuthorize(IS_ADMIN_OR_MANAGER)
-	public Map<String, String> getWizardConfiguration(long projectId, WorkspaceType workspace, String wizardId) {
-		PluginReferencer library = findLibrary(projectId, workspace);
-		LibraryPluginBinding binding = library.getPluginBinding(wizardId);
-		if (binding != null){
-			return binding.getProperties();
-		}
-		else{
-			return new HashMap<String, String>();
-		}
-	}
-	
-	@Override
-	public void setWizardConfiguration(long projectId, WorkspaceType workspace,
-			String wizardId, Map<String, String> configuration) {
-		
-		PluginReferencer library = findLibrary(projectId, workspace);
-		if (! library.isPluginEnabled(wizardId)){
-			library.enablePlugin(wizardId);
-		}
-		
-		LibraryPluginBinding binding = library.getPluginBinding(wizardId);
-		binding.setProperties(configuration);
-	}
 	
 	
 	// **************** private stuffs **************

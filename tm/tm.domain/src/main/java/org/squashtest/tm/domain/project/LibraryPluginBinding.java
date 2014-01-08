@@ -92,10 +92,6 @@ public abstract class LibraryPluginBinding  {
 		properties.put(propertyName, propertyValue);
 	}
 	
-	public void setProperties(Map<String, String> properties){
-		this.properties = properties;
-	}
-	
 	public Set<String> listProperties(){
 		return properties.keySet();
 	}

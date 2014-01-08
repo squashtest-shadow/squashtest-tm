@@ -19,9 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(
-		[ "jquery", "backbone", "underscore", "jquery.squash.togglepanel", "jqueryui", "jquery.squash.formdialog" ],
-		
-		function($, Backbone, _) {
+		[ "jquery", "backbone", "jquery.squash.togglepanel", "jqueryui" ],
+		function($, Backbone) {
 			var WizardPanelView = Backbone.View.extend({
 
 				self : this,
@@ -31,15 +30,11 @@ define(
 				
 				initialize : function() {
 					this.$el.togglePanel();
-					this._initWizardlist();
-				},
-				
-				_initWizardlist : function(){
 					var body = this.$el.find('tbody');
 					this.emptyrowTemplate = body.find('.template-emptyrow').clone().wrap('<div/>').parent().html();
 					this.datarowTemplate = body.find('.template-datarow').clone().wrap('<div/>').parent().html();
 					body.empty();
-					body.removeClass('not-displayed');				
+					body.removeClass('not-displayed');
 				},
 
 				events : {
@@ -125,8 +120,8 @@ define(
 
 					var $target = $(event.target),
 						isSelected = $target.prop('checked'),
-						tr = $target.parents('tr'),
-						id = tr.data('pluginid');
+						id = $target.parent('td').prev().text(),
+						tr = $target.parents('tr');
 
 					if (isSelected) {
 						this.collection.add({
@@ -152,72 +147,12 @@ define(
 						return;
 					}					
 					else{
-						var id = $target.parents('tr').data('pluginid');
-						var dialog = $("#wizard-configure-dialog");
-						dialog.data('pluginid', id);
-						dialog.formDialog('open');
+						// let's go configure
+						console.log('item enabled : TODO configure it');
 					}
 				}
 
 			});
-			
-			
-			function initConfdialog(settings){
-				var dialog = $("#wizard-configure-dialog");
-				dialog.formDialog({
-					open : function(){
-						var $this = $(this);
-						
-						$this.formDialog('setState','configure');
-						
-						var conflist = $this.find('.wizard-options');
-						conflist.empty();
-						
-						var id = $this.data('pluginid');
-						var url = settings.projectUrl+'/'+id+'/configuration';
-						
-						$.getJSON(url).done(function(conf){
-							if (_.isEmpty(conf)){
-								$this.formDialog('setState','noconf');
-							}
-							else{
-								for (var ppt in conf){
-									conflist.append("<div class='wizard-option display-table-row'><span class='display-table-cell'>"+ppt+"</span><input class='display-table-cell' type='text' value='"+conf[ppt]+"'/></div>");
-								}
-								$this.formDialog('setState','configure');
-							}
-						});
-					}
-				});
-				
-				dialog.on('formdialogconfirm', function(){
-					var id = dialog.data('pluginid');
-					var url = settings.projectUrl+'/'+id+'/configuration';
-					var options = {};
-					
-					var optelts = dialog.find('.wizard-options .wizard-option');
-					optelts.each(function(){
-						var $this = $(this);
-						var key = $this.find('span').text();
-						var value = $this.find('input').val();
-						options[key] = value;
-					});
-					
-					$.ajax({
-						url : url,
-						type : 'POST',
-						data : JSON.stringify(options),
-						contentType  : 'application/json'
-					}).done(function(){
-						dialog.formDialog('close');
-					});
-					
-				});
-				
-				dialog.on('formdialogcancel', function(){
-					dialog.formDialog('close');
-				});
-			}
 
 			function initWizardTabView(settings) {
 
@@ -267,8 +202,6 @@ define(
 					collection : enabledCollection,
 					available : settings.availableWizards
 				});
-				
-				initConfdialog(settings);
 
 				panelView.render();
 

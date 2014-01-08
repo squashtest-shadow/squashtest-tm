@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.api.plugin;
 
-import java.util.Map;
-
 /**
  * @author Gregory Fouquet
  *
@@ -49,17 +47,5 @@ public interface Plugin {
 	 * @return the file name (eg a .jar) from which comes this plugin
 	 */
 	String getFilename();
-	
-	
-	/**
-	 * <p>Declares which properties, if any, are used by this plugin for configuration purposes. This map should never be null.</p>
-	 * <p>For each entry the key is the property name, and the value is the default value. If there is no default value for a property 
-	 * then blank or null is fine.</p>
-	 * <p>Depending on what kind of plugin it is (see subinterfaces and/or implementation), these properties will be either global for global plugin, or local if this plugin has 
-	 * a specific scope (for instance, a per-project configuration).</p> 
-	 * 
-	 * @return a Map
-	 */
-	Map<String, String> getProperties();
 
 }
