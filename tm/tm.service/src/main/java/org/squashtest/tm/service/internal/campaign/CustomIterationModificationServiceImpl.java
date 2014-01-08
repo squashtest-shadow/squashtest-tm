@@ -41,6 +41,7 @@ import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
@@ -107,8 +108,6 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@Inject private AdvancedSearchService advancedSearchService;
 
 	@Inject private IterationStatisticsService statisticsService;
-	
-	@Inject private PrivateCustomFieldValueService customFieldValuesService;
 	
 	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToIterationStrategy")
@@ -347,21 +346,12 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		// has no id yet. this is caused by weird mapping (https://hibernate.onjira.com/browse/HHH-5732)
 		executionDao.persist(execution);
 		item.addExecution(execution);
-		
-		createCustomFieldsForExecutionAndExecutionSteps(execution);
 		createDenormalizedFieldsForExecutionAndExecutionSteps(execution);
 		advancedSearchService.reindexTestCase(item.getReferencedTestCase().getId());
 		
 		return execution;
 	}
 
-	private void createCustomFieldsForExecutionAndExecutionSteps(Execution execution){
-		customFieldValuesService.createAllCustomFieldValues(execution);
-		for (ExecutionStep step : execution.getSteps()) {
-			customFieldValuesService.createAllCustomFieldValues(step);
-		}
-	}
-	
 	private void createDenormalizedFieldsForExecutionAndExecutionSteps(Execution execution) {
 		LOGGER.debug("Create denormalized fields for Execution {}", execution.getId());
 		TestCase sourceTC = execution.getReferencedTestCase();
