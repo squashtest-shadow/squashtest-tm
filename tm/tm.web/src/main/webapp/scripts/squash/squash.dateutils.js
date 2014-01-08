@@ -80,7 +80,6 @@ define(["moment", "squash.translator"], function(moment, translator) {
 		 */
 		ISO_8601 : "yyyy-MM-dd'T'HH:mm:ss.SSSZ",
 		
-		ISO_8601_SHORT : "yyyy-MM-dd",
 		
 		/*
 		* Accepts : 
