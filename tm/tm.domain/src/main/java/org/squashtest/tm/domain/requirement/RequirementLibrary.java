@@ -34,7 +34,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import org.hibernate.annotations.Where;
 import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.project.GenericLibrary;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -58,9 +57,7 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 	@OneToOne(mappedBy = "requirementLibrary")
 	private GenericProject project;	
 	
-	@OneToMany(cascade = { CascadeType.ALL })	
-	@JoinColumn(name="LIBRARY_ID")
-	@Where(clause="LIBRARY_TYPE = 'R'")
+	@OneToMany(cascade = { CascadeType.ALL })
 	private Set<RequirementLibraryPluginBinding> enabledPlugins = new HashSet<RequirementLibraryPluginBinding>(5);
 	
 	public void setId(Long id) {
