@@ -188,7 +188,7 @@
 		</comp:toggle-panel>
 		</span>
 		</c:if>		
-
+		
 		<comp:toggle-panel id="execution-action-panel" titleKey="execute.panel.action.title"  open="true">
 			<jsp:attribute name="body">
 				<div id="execution-action" class="load-links-right-frame">${executionStep.action}</div>

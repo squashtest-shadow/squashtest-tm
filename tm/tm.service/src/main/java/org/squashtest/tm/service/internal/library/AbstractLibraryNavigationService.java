@@ -242,7 +242,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	// ************************* custom field values *************************
 
 	protected void createCustomFieldValues(BoundEntity entity) {
-		customFieldValuesService.createAllCustomFieldValues(entity, entity.getProject().getId());
+		customFieldValuesService.createAllCustomFieldValues(entity);
 	}
 
 	protected void createCustomFieldValues(Collection<? extends BoundEntity> entities) {

@@ -39,7 +39,6 @@ import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.service.internal.repository.BoundEntityDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao;
@@ -192,8 +191,9 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	}
 
 	@Override
-	public void createAllCustomFieldValues(BoundEntity entity, Long projectId) {
-		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForProjectAndEntity(projectId, entity.getBoundEntityType());
+	public void createAllCustomFieldValues(BoundEntity entity) {
+		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForProjectAndEntity(entity.getProject()
+				.getId(), entity.getBoundEntityType());
 
 		for (CustomFieldBinding binding : bindings) {
 			if (!foundValue(binding, entity)) {
@@ -355,11 +355,6 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		default:
 			return defaultEditionStatusStrategy;
 		}
-	}
-
-	@Override
-	public List<CustomFieldValue> findAllForEntityAndRenderingLocation(BoundEntity boundEntity, RenderingLocation renderingLocation) {
-		return customFieldValueDao.findAllForEntityAndRenderingLocation(boundEntity.getBoundEntityId(), boundEntity.getBoundEntityType(), renderingLocation);
 	}
 
 }
