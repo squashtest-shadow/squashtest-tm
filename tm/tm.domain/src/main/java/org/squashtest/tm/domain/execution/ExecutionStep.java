@@ -58,8 +58,6 @@ import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.bugtracker.IssueList;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
-import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
 import org.squashtest.tm.domain.library.HasExecutionStatus;
@@ -74,7 +72,7 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Entity
 @Auditable
-public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepVisitor, Identified, HasExecutionStatus, DenormalizedFieldHolder, BoundEntity {
+public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepVisitor, Identified, HasExecutionStatus, DenormalizedFieldHolder {
 	
 	private static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
 	private static final String PARAM_PATTERN = "(\\Q${\\E([A-Za-z0-9_-]+)\\Q}\\E)";
@@ -346,15 +344,4 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 		return DenormalizedFieldHolderType.EXECUTION_STEP;
 	}
 	
-	// ***************** (detached) custom field section *************
-
-	@Override
-	public Long getBoundEntityId() {
-		return getId();
-	}
-
-	@Override
-	public BindableEntity getBoundEntityType() {
-		return BindableEntity.EXECUTION_STEP;
-	}
 }

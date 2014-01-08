@@ -26,8 +26,6 @@ import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
-import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -112,28 +110,6 @@ public enum BindableEntity implements Internationalizable {
 			return new RenderingLocation[0];
 		}
 
-	},
-	EXECUTION(){
-		@Override
-		public Class<?> getReferencedClass() {
-			return Execution.class;
-		};
-		
-		@Override
-		public RenderingLocation[] getValidRenderingLocations() {
-			return new RenderingLocation[0];
-		}
-	},
-	EXECUTION_STEP(){
-		@Override
-		public Class<?> getReferencedClass() {
-			return ExecutionStep.class;
-		};
-		
-		@Override
-		public RenderingLocation[] getValidRenderingLocations() {
-			return new RenderingLocation[0];
-		}
 	};
 
 	private static final String I18N_NAMESPACE = "label.customField.bindableEntity.";

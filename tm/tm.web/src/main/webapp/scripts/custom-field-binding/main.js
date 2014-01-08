@@ -44,14 +44,6 @@ define([ "jquery", "./entity-manager" ], function(jquery, EntityManager) {
 		return $.extend({}, conf.general, conf.tsSettings);
 	}
 
-	function makeExecConf(conf) {
-		return $.extend({}, conf.general, conf.execSettings);
-	}
-	
-	function makeExecStepConf(conf) {
-		return $.extend({}, conf.general, conf.execStepSettings);
-	}
-	
 	var manager = {
 
 		setConfig : function(conf) {
@@ -77,7 +69,7 @@ define([ "jquery", "./entity-manager" ], function(jquery, EntityManager) {
 			var campConf = makeCampConf(this.config);
 			new EntityManager(campConf);
 
-			// iteration
+			// iterartion
 			var iterConf = makeIterConf(this.config);
 			new EntityManager(iterConf);
 
@@ -85,13 +77,6 @@ define([ "jquery", "./entity-manager" ], function(jquery, EntityManager) {
 			var tsConf = makeTSConf(this.config);
 			new EntityManager(tsConf);
 
-			// execution
-			var execConf = makeExecConf(this.config);
-			new EntityManager(execConf);
-			
-			// execution step
-			var execStepConf = makeExecStepConf(this.config);
-			new EntityManager(execStepConf);
 		}
 	};
 
