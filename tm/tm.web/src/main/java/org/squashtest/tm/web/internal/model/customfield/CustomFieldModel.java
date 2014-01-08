@@ -38,8 +38,6 @@ public class CustomFieldModel {
 	
 	private InputTypeModel inputType;
 
-	private boolean isDenormalized;
-	
 	public long getId() {
 		return id;
 	}
@@ -105,14 +103,6 @@ public class CustomFieldModel {
 
 	public void setFriendlyOptional(String friendlyOptional) {
 		this.friendlyOptional = friendlyOptional;
-	}
-
-	public boolean isDenormalized() {
-		return isDenormalized;
-	}
-
-	public void setDenormalized(boolean isDenormalized) {
-		this.isDenormalized = isDenormalized;
 	}
 	
 	

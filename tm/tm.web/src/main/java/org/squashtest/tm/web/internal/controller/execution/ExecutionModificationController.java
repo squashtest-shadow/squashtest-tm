@@ -129,7 +129,7 @@ public class ExecutionModificationController {
 		List<AoColumnDef> columnDefs;
 		List<String> firstStepDfvsLabels;
 
-		/*if (!execution.getSteps().isEmpty()) {
+		if (!execution.getSteps().isEmpty()) {
 			List<DenormalizedFieldValue> firstStepDfv = denormalizedFieldValueFinder.findAllForEntityAndRenderingLocation(execution.getSteps().get(0), RenderingLocation.STEP_TABLE);
 			List<CustomFieldValue> firstStepCustomFieldValue = cufValueService.findAllForEntityAndRenderingLocation(execution.getSteps().get(0), RenderingLocation.STEP_TABLE);
 			columnDefs = findDfvColumnDefForSteps(execution, firstStepDfv, firstStepCustomFieldValue);
@@ -138,11 +138,8 @@ public class ExecutionModificationController {
 		} else {
 			columnDefs = findDfvColumnDefForSteps(execution, null, null);
 			firstStepDfvsLabels = Collections.emptyList();
-		}*/
+		}
 
-		//TODO
-		columnDefs = findDfvColumnDefForSteps(execution, null, null);
-		
 		boolean hasCUF = cufHelperService.hasCustomFields(execution);
 		List<CustomFieldValue> customFieldValues = cufHelperService.newHelper(execution).getCustomFieldValues();
 		
@@ -151,21 +148,17 @@ public class ExecutionModificationController {
 		
 		List<CustomFieldModel> cufDefinitions = convertToJsonCustomField(helper.getCustomFieldConfiguration());
 		
-		
-		List<DenormalizedFieldValue> firstStepDfv = denormalizedFieldValueFinder.findAllForEntityAndRenderingLocation(execution.getSteps().get(0), RenderingLocation.STEP_TABLE);
-		List<CustomFieldModel> dfvDefinitions = convertToJsonCustomField(firstStepDfv);
-		
 		ModelAndView mav = new ModelAndView("page/campaign-libraries/show-execution");
 		mav.addObject("execution", execution);
 		mav.addObject("executionRank", Integer.valueOf(rank + 1));
 		mav.addObject("denormalizedFieldValues", values);
 		mav.addObject("stepsAoColumnDefs", JsonHelper.serialize(columnDefs));
-		//mav.addObject("stepsDfvsLabels", firstStepDfvsLabels);
+		mav.addObject("stepsDfvsLabels", firstStepDfvsLabels);
 		mav.addObject("attachmentSet", attachmentHelper.findAttachments(execution));
 		mav.addObject("hasCUF", hasCUF);
 		mav.addObject("executionCufValues", customFieldValues);
-		dfvDefinitions.addAll(cufDefinitions);
-		mav.addObject("cufDefinitions", dfvDefinitions);
+		mav.addObject("cufDefinitions", cufDefinitions);
+		
 		return mav;
 
 	}
@@ -178,15 +171,6 @@ public class ExecutionModificationController {
 		return models;
 	}
 		
-	private List<CustomFieldModel> convertToJsonCustomField(List<DenormalizedFieldValue> denormalizedFields) {
-		List<CustomFieldModel> models = new ArrayList<CustomFieldModel>(denormalizedFields.size());
-		for (DenormalizedFieldValue field : denormalizedFields) {
-			models.add(converter.toCustomFieldJsonModel(field));
-		}
-		return models;
-	}
-			
-	
 	private List<AoColumnDef> findDfvColumnDefForSteps(Execution execution, List<DenormalizedFieldValue> firstStepDfv, List<CustomFieldValue> firstStepCfv) {
 		List<AoColumnDef> columnDefs;
 		List<String> firstStepDfvCode = new ArrayList<String>();
@@ -299,7 +283,6 @@ public class ExecutionModificationController {
 		private DenormalizedFieldValueManager dfvFinder;
 		private CustomFieldValueFinderService cufValueService;
 		private Map<Long, Map<String, CustomFieldValueTableModel>> customFieldValuesById;
-		private Map<Long, Map<String, CustomFieldValueTableModel>> denormalizedFieldValuesById;
 		
 		private ExecutionStepDataTableModelHelper(Locale locale, InternationalizationHelper messageSource,
 				DenormalizedFieldValueManager dfvFinder, CustomFieldValueFinderService cufValueService) {
@@ -315,8 +298,8 @@ public class ExecutionModificationController {
 			Map<String, Object> res = new HashMap<String, Object>();
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, item.getExecutionStepOrder() + 1);
-			//addDenormalizedFieldValues(item, res);
-			//addCustomFieldValues(item,res);
+			addDenormalizedFieldValues(item, res);
+			addCustomFieldValues(item,res);
 			res.put("action", item.getAction());
 			res.put("expected", item.getExpectedResult());
 			res.put("last-exec-on", formatDate(item.getLastExecutedOn(), locale));
@@ -327,12 +310,9 @@ public class ExecutionModificationController {
 			res.put(DataTableModelConstants.DEFAULT_NB_ATTACH_KEY, item.getAttachmentList().size());
 			res.put(DataTableModelConstants.DEFAULT_ATTACH_LIST_ID_KEY, item.getAttachmentList().getId());
 			res.put("run-step-button", "");
-			List<DenormalizedFieldValue> dfvValues = dfvFinder.findAllForEntityAndRenderingLocation(item, RenderingLocation.STEP_TABLE);
 			List<CustomFieldValue> cufValues = cufValueService.findAllForEntityAndRenderingLocation(item, RenderingLocation.STEP_TABLE);
 			usingCustomFields(cufValues, cufValues.size());
-			usingDenormalizedFields(dfvValues, dfvValues.size());
 			appendCustomFields(res);
-			appendDenormalizedFields(res);
 			return res;
 		}
 
@@ -341,35 +321,13 @@ public class ExecutionModificationController {
 			item.put("customFields", cufValues);
 
 		}
-
-		private void appendDenormalizedFields(Map<String, Object> item) {
-			Map<String, CustomFieldValueTableModel> denormalizedValues = getDenormalizedFieldsFor((Long) item.get("entity-id"));
-			item.put("denormalizedFields", denormalizedValues);
-		}
-		
-		public void usingDenormalizedFields(Collection<DenormalizedFieldValue> dfvValues, int nbFieldsPerEntity) {
-			denormalizedFieldValuesById = new HashMap<Long, Map<String, CustomFieldValueTableModel>>();
-
-			for (DenormalizedFieldValue value : dfvValues) {
-				Long entityId = value.getDenormalizedFieldHolderId();
-				Map<String, CustomFieldValueTableModel> values = denormalizedFieldValuesById.get(entityId);
-
-				if (values == null) {
-					values = new HashMap<String, CustomFieldValueTableModel>(nbFieldsPerEntity);
-					denormalizedFieldValuesById.put(entityId, values);
-				}
-
-				values.put(value.getCode(), new CustomFieldValueTableModel(value));
-
-			}
-		}
-
-		public void usingCustomFields(List<CustomFieldValue> cufValues, int nbFieldsPerEntity) {
+	
+		public void usingCustomFields(Collection<CustomFieldValue> cufValues, int nbFieldsPerEntity) {
 			customFieldValuesById = new HashMap<Long, Map<String, CustomFieldValueTableModel>>();
 
 			for (CustomFieldValue value : cufValues) {
 				Long entityId = value.getBoundEntityId();
-				Map<String, CustomFieldValueTableModel> values =  customFieldValuesById.get(entityId);
+				Map<String, CustomFieldValueTableModel> values = customFieldValuesById.get(entityId);
 
 				if (values == null) {
 					values = new HashMap<String, CustomFieldValueTableModel>(nbFieldsPerEntity);
@@ -387,20 +345,6 @@ public class ExecutionModificationController {
 			}
 
 			Map<String, CustomFieldValueTableModel> values = customFieldValuesById.get(id);
-
-			if (values == null) {
-				values = new HashMap<String, CustomFieldValueTableModel>();
-			}
-			return values;
-
-		}
-
-		private Map<String, CustomFieldValueTableModel> getDenormalizedFieldsFor(Long id) {
-			if (denormalizedFieldValuesById == null) {
-				return new HashMap<String, CustomFieldValueTableModel>();
-			}
-
-			Map<String, CustomFieldValueTableModel> values = denormalizedFieldValuesById.get(id);
 
 			if (values == null) {
 				values = new HashMap<String, CustomFieldValueTableModel>();
@@ -450,13 +394,8 @@ public class ExecutionModificationController {
 				this.value = value.getValue();
 			}
 
-			private CustomFieldValueTableModel(DenormalizedFieldValue value) {
-				this.id = value.getId();
-				this.value = value.getValue();
-			}
 		}
 		
-		/*
 		private void addDenormalizedFieldValues(ExecutionStep item, Map<String, Object> res) {
 			List<DenormalizedFieldValue> stepDfvs = dfvFinder.findAllForEntityAndRenderingLocation(item,
 					RenderingLocation.STEP_TABLE);
@@ -468,9 +407,8 @@ public class ExecutionModificationController {
 				}
 				res.put("dfv-" + stepDfv.getCode(), dfvValue);
 			}
-		}*/
+		}
 		
-		/*
 		private void addCustomFieldValues(ExecutionStep item, Map<String, Object> res){
 			List<CustomFieldValue> stepCufs = cufValueService.findAllForEntityAndRenderingLocation(item, RenderingLocation.STEP_TABLE);
 			for (CustomFieldValue stepCuf : stepCufs) {
@@ -481,7 +419,7 @@ public class ExecutionModificationController {
 				}
 				res.put("cfv-" + stepCuf.getCustomField().getCode(), cufValue);
 			}
-		}*/
+		}
 
 		private String formatDate(Date date, Locale locale) {
 			return messageSource.localizeDate(date, locale);

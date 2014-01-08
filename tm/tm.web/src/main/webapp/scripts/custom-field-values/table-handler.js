@@ -35,27 +35,14 @@ define([ "jquery", "./cuf-values-utils", "./jquery-cuf-values" ], function($, ut
 		for (i = 0; i < total; i++) {
 
 			var code = cufDefinitions[i].code;
-			var newColumn;
-			
-			if(cufDefinitions[i].denormalized){
-				newColumn = {
-						'bVisible' : true,
-						'bSortable' : false,
-						'mDataProp' : "denormalizedFields." + code + ".value",
-						'sClass' : 'denormalized-field-value denormalized-field-' + code,
-						'sWidth' : "5em",
-						'aTargets' : [ 'denormalized-field-' + code ]
-					};
-			} else {
-				newColumn = {
-					'bVisible' : true,
-					'bSortable' : false,
-					'mDataProp' : "customFields." + code + ".value",
-					'sClass' : 'custom-field-value custom-field-' + code,
-					'sWidth' : "5em",
-					'aTargets' : [ 'custom-field-' + code ]
-				};
-			}
+			var newColumn = {
+				'bVisible' : true,
+				'bSortable' : false,
+				'mDataProp' : "customFields." + code + ".value",
+				'sClass' : 'custom-field-value custom-field-' + code,
+				'sWidth' : "5em",
+				'aTargets' : [ 'custom-field-' + code ]
+			};
 			columns.push(newColumn);
 
 		}
@@ -122,24 +109,6 @@ define([ "jquery", "./cuf-values-utils", "./jquery-cuf-values" ], function($, ut
 			});
 		};
 	}
-	
-	function makeDenormalizedPostFunction(cufCode, table) {
-		return function(value) {
-
-			var row = $(this).parents('tr').get(0);
-			var cufId = table.fnGetData(row).denormalizedFields[cufCode].id;
-
-			var url = squashtm.app.contextRoot + "/denormalized-fields/values/" + cufId;
-
-			return $.ajax({
-				url : url,
-				type : 'POST',
-				data : {
-					value : value
-				}
-			});
-		};
-	}
 
 	function createCufValuesDrawCallback(cufDefinitions, editable) {
 
@@ -175,27 +144,6 @@ define([ "jquery", "./cuf-values-utils", "./jquery-cuf-values" ], function($, ut
 
 			}
 
-		
-			var dfvCells = table.find('td.denormalized-field-value').filter(function() {
-				return (table.fnGetData(this) !== null);
-			});
-
-			// now wrap the content with a span
-			dfvCells.wrapInner('<span/>');
-
-			for ( var code1 in defMap) {
-
-				var def1 = defMap[code1];
-				var spans1 = table.find('td.denormalized-field-' + code1 + '>span');
-
-				utils.staticRendering(spans1, def1);
-
-				if (isEditable) {
-					var postFunction1 = makeDenormalizedPostFunction(code1, table);
-					spans1.customField(def1, postFunction1);
-				}
-
-			}
 		};
 	}
 
@@ -337,12 +285,7 @@ define([ "jquery", "./cuf-values-utils", "./jquery-cuf-values" ], function($, ut
 
 		for (i = 0; i < length; i++) {
 			var def = cufDefinitions[i];
-			var newTD;
-			if(cufDefinitions[i].denormalized){
-				newTD = $('<th class="denormalized-field-' + def.code + '">' + def.label + '</th>'); 
-			} else {
-				newTD = $('<th class="custom-field-' + def.code + '">' + def.label + '</th>');
-			}
+			var newTD = $('<th class="custom-field-' + def.code + '">' + def.label + '</th>');
 			newTDSet = newTDSet.add(newTD);
 		}
 
