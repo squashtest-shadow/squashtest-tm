@@ -304,7 +304,7 @@
 
 
 
-  <osgi:service ref="squashtest.tm.service.DenormalizedFieldValueManager" interface="org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager" />
+  <osgi:service ref="squashtest.tm.service.DenormalizedFieldValueFinder" interface="org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueFinder" />
 
 
   <!-- ====== SERVICES CONSUMED BY THIS BUNDLE ====== -->

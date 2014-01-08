@@ -75,7 +75,7 @@
 </s:url>
 
 <c:url var="customFieldsValuesURL" value="/custom-fields/values" />
-<c:url var="denormalizedFieldsValuesURL" value="/denormalized-fields/values" />
+
 
 <%-------------------------- /urls ------------------------------%>
 <script type="text/javascript">
@@ -190,6 +190,7 @@
 				<label class="display-table-cell" for="testcase-status"><f:message key="test-case.status.label" /></label>
 				<div id="testcase-status" class="display-table-cell"><comp:level-message level="${ execution.status }"/></div>
 			</div>
+			<comp:denormalized-field-values-list denormalizedFieldValues="${ denormalizedFieldValues }" />
 		</div>
 	</jsp:attribute>
 	</comp:toggle-panel>
@@ -415,19 +416,14 @@
 			
 			
 			//**** cuf sections ************
-
+			
+			<c:if test="${hasCUF}">
 			//load the custom fields
-			$.get("${denormalizedFieldsValuesURL}?denormalizedFieldHolderId=${execution.boundEntityId}&denormalizedFieldHolderType=${execution.boundEntityType}")
+			$.get("${customFieldsValuesURL}?boundEntityId=${execution.boundEntityId}&boundEntityType=${execution.boundEntityType}")
 			.success(function(data){
 				$("#execution-information-table").append(data);
-				<c:if test="${hasCUF}">
-				//load the custom fields
-				$.get("${customFieldsValuesURL}?boundEntityId=${execution.boundEntityId}&boundEntityType=${execution.boundEntityType}")
-				.success(function(data){
-					$("#execution-information-table").append(data);
-				});
-				</c:if>
-			});		
+			});
+			</c:if>
 			
 			// ************** bugtracker section ******************************
 		 	

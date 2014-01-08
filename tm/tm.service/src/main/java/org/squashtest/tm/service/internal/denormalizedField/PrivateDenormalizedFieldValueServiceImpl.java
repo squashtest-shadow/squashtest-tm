@@ -29,7 +29,6 @@ import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
@@ -42,19 +41,16 @@ import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.service.internal.repository.BoundEntityDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao;
 import org.squashtest.tm.service.internal.repository.DenormalizedFieldValueDao;
-import org.squashtest.tm.service.library.AdvancedSearchService;
-import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 /**
  * 
  * @author mpagnon
  *
  */
-@Service("squashtest.tm.service.DenormalizedFieldValueManager")
+@Service("squashtest.tm.service.DenormalizedFieldValueFinder")
 public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormalizedFieldValueService {
 	@Inject
 	private CustomFieldValueDao customFieldValueDao;
@@ -62,13 +58,6 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 	private CustomFieldBindingDao customFieldBindingDao;
 	@Inject
 	private DenormalizedFieldValueDao denormalizedFieldValueDao;
-	@Inject
-	private PermissionEvaluationService permissionService;
-
-
-	public void setPermissionService(PermissionEvaluationService permissionService) {
-		this.permissionService = permissionService;
-	}
 	
 	@Override
 	public void createAllDenormalizedFieldValues(BoundEntity source, DenormalizedFieldHolder destination) {
@@ -160,18 +149,5 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 				return denormalizedFieldValueDao.findDFVForEntitiesAndLocations(type, entityIds, nullOrLocations);
 			}
 		}
-	}
-
-	@Override
-	public List<DenormalizedFieldValue> findAllForEntity(Long denormalizedFieldHolderId, DenormalizedFieldHolderType denormalizedFieldHolderType) {
-		return denormalizedFieldValueDao.findDFVForEntity(denormalizedFieldHolderId, denormalizedFieldHolderType);
-	}
-
-	@Override
-	public void changeValue(long denormalizedFieldValueId, String newValue) {
-		
-		DenormalizedFieldValue changedValue = denormalizedFieldValueDao.findById(denormalizedFieldValueId);
-
-		changedValue.setValue(newValue);
 	}
 }

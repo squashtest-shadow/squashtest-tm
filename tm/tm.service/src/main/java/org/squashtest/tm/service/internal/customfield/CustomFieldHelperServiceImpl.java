@@ -36,7 +36,7 @@ import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
 import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
-import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
+import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueFinder;
 
 /**
  * Read the definition of {@link Helper} instead
@@ -56,7 +56,7 @@ public class CustomFieldHelperServiceImpl implements CustomFieldHelperService {
 	private CustomFieldValueManagerService cufValuesService;
 	
 	@Inject 
-	private DenormalizedFieldValueManager denormalizedFinder;
+	private DenormalizedFieldValueFinder denormalizedFinder;
 
 	/*
 	 * (non-Javadoc)

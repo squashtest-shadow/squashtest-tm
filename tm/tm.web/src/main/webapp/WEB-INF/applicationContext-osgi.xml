@@ -369,9 +369,9 @@
 	<osgi:reference id="squashtest.tm.service.CustomFieldHelperService" bean-name="squashtest.tm.service.CustomFieldHelperService"
 					cardinality="1..1" interface="org.squashtest.tm.service.customfield.CustomFieldHelperService" />
 
-	<osgi:reference id="squashtest.tm.service.DenormalizedFieldValueManager"
-		bean-name="squashtest.tm.service.DenormalizedFieldValueManager"
-		interface="org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager"
+	<osgi:reference id="squashtest.tm.service.DenormalizedFieldValueFinder"
+		bean-name="squashtest.tm.service.DenormalizedFieldValueFinder"
+		interface="org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueFinder"
 		availability="mandatory" />
 
 	<osgi:reference id="squashtest.tm.service.CampaignsWorkspaceService"

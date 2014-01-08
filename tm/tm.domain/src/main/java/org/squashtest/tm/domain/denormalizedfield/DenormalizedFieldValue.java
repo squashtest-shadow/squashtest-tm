@@ -264,10 +264,4 @@ public class DenormalizedFieldValue {
 	public void accept(DenormalizedFieldVisitor visitor) {
 		visitor.visit(this);
 	}
-	
-
-	public void setValue(String value) {
-		this.value = value;
-	}
-
 }

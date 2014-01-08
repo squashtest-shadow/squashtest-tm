@@ -37,7 +37,7 @@ import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.service.customfield.CustomFieldHelper;
-import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
+import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueFinder;
 
 /**
  * This version exists for the {@link DenormalizedFieldHolder}, which are structurally equivalent to 
@@ -54,7 +54,7 @@ import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager
  */
 public class DenormalizedFieldHelper<X extends DenormalizedFieldHolder>{
 	
-	private DenormalizedFieldValueManager dcufFinder;
+	private DenormalizedFieldValueFinder dcufFinder;
 	
 
 	// ************ attributes ******************
@@ -76,7 +76,7 @@ public class DenormalizedFieldHelper<X extends DenormalizedFieldHolder>{
 		this.entities = entities;
 	}
 	
-	public void setDenormalizedFieldValueFinder(DenormalizedFieldValueManager finder){
+	public void setDenormalizedFieldValueFinder(DenormalizedFieldValueFinder finder){
 		this.dcufFinder = finder;
 	}
 	

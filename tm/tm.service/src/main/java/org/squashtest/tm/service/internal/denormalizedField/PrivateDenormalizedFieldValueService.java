@@ -26,7 +26,7 @@ import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
+import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueFinder;
 
 
 /**
@@ -36,7 +36,7 @@ import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager
  *
  */
 @Transactional
-public interface PrivateDenormalizedFieldValueService extends DenormalizedFieldValueManager {
+public interface PrivateDenormalizedFieldValueService extends DenormalizedFieldValueFinder {
 
 	
 	/**
