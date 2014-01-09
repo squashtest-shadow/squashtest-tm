@@ -73,3 +73,23 @@ function EventUpdateCategory(target, newCategory) {
 }
 
 EventUpdateCategory.prototype = new SquashEvent();
+
+//'update-status', inheriting base event
+function EventUpdateStatus(target, newStatus) {
+	this.base = SquashEvent;
+	this.base('update-status');
+	this.evt_target = target;
+	this.evt_newstatus = newStatus;
+}
+
+EventUpdateStatus.prototype = new SquashEvent();
+
+//'update-importance', inheriting base event
+function EventUpdateImportance(target, newImportance) {
+	this.base = SquashEvent;
+	this.base('update-importance');
+	this.evt_target = target;
+	this.evt_newimpt = newImportance;
+}
+
+EventUpdateImportance.prototype = new SquashEvent();

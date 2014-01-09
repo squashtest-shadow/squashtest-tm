@@ -42,6 +42,36 @@
 
 
 <c:if test="${ writable }">
+<script type="text/javascript">
+	var identity = { obj_id : ${testCase.id}, obj_restype : "test-cases"  };
+
+	//for technical reasons we handle directly the ajax operation when choosing a status.
+	function postUpdateStatus(value, settings){
+		$.post("${testCaseUrl}", {id:"test-case-status", value : value})
+		.done(function(response){
+			var evt = new EventUpdateStatus(identity, value.toLowerCase());
+			squashtm.workspace.eventBus.fire(null, evt);
+		});
+		
+		//in the mean time, must return immediately
+		var data = JSON.parse(settings.data);
+		return data[value];
+	}
+
+	//for technical reasons we handle directly the ajax operation when choosing an importance.
+	function postUpdateImportance(value, settings){
+		$.post("${testCaseUrl}", {id:"test-case-importance", value : value})
+		.done(function(response){
+			var evt = new EventUpdateImportance(identity, value.toLowerCase());
+			squashtm.workspace.eventBus.fire(null, evt);
+		});
+		
+		//in the mean time, must return immediately
+		var data = JSON.parse(settings.data);
+		return data[value];
+	}
+
+</script>
 <comp:rich-jeditable   targetUrl="${ testCaseUrl }" 
 					   componentId="test-case-description" />
 
@@ -52,7 +82,7 @@
 
 <comp:select-jeditable componentId="test-case-importance"
 					   jsonData="${ testCaseImportanceComboJson }"
-					   targetUrl="${ testCaseUrl }" />
+					   targetFunction="postUpdateImportance" />
 
 <comp:select-jeditable componentId="test-case-nature"
 					   jsonData="${ testCaseNatureComboJson }" 
@@ -64,7 +94,7 @@
 
 <comp:select-jeditable componentId="test-case-status"
 						jsonData="${ testCaseStatusComboJson }" 
-						targetUrl="${ testCaseUrl }" />
+						targetFunction="postUpdateStatus" />
 </c:if>
 
 

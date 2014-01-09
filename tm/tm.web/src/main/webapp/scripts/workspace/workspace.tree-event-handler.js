@@ -73,6 +73,12 @@ define([ 'jquery', 'tree' ], function($, tree) {
 			case "update-category":
 				updateEventUpdateCategory(event, otree);
 				break;
+			case "update-status":
+				updateEventUpdateStatus(event, otree);
+				break;
+			case "update-importance":
+				updateEventUpdateImportance(event, otree);
+				break;
 			case "contextualcontent.clear":
 				break; // bail out, default induces bugs
 			default:
@@ -150,5 +156,29 @@ define([ 'jquery', 'tree' ], function($, tree) {
 		}
 
 		target.setAttr('category', event.evt_newcat);
+	}	
+	function updateEventUpdateImportance(event, tree) {
+		var target = tree.findNodes({
+			restype : event.evt_target.obj_restype,
+			resid : event.evt_target.obj_id
+		});
+
+		if (target.length === 0) {
+			return;
+		}
+
+		target.setAttr('importance', event.evt_newimpt);
+	}
+	function updateEventUpdateStatus(event, tree) {
+		var target = tree.findNodes({
+			restype : event.evt_target.obj_restype,
+			resid : event.evt_target.obj_id
+		});
+
+		if (target.length === 0) {
+			return;
+		}
+
+		target.setAttr('status', event.evt_newstatus);
 	}	
 });
