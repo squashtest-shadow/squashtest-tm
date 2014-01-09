@@ -66,6 +66,7 @@ HibernateEntityDao<LIBRARY> implements LibraryDao<LIBRARY, NODE>{
 		return executeListNamedQuery(entityClassName + ".findAllRootContentById", callback);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public LIBRARY findByRootContent(final NODE node) {
 		SetQueryParametersCallback callback = new SetQueryParametersCallback() {

@@ -40,6 +40,7 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.DefaultSorting;
@@ -415,8 +416,8 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		Criteria crit = currentSession().createCriteria(TestCase.class, "TestCase");
 		crit.createAlias("requirementVersionCoverages", "rvc");
 		crit.createAlias("rvc.verifiedRequirementVersion", "RequirementVersion");
-		crit.createAlias("RequirementVersion.requirement", "Requirement", Criteria.LEFT_JOIN);
-		crit.createAlias("project", "Project", Criteria.LEFT_JOIN);
+		crit.createAlias("RequirementVersion.requirement", "Requirement", JoinType.LEFT_OUTER_JOIN);
+		crit.createAlias("project", "Project", JoinType.LEFT_OUTER_JOIN);
 
 		List<Sorting> effectiveSortings = createEffectiveSorting(sorting);
 		if(!sorting.shouldDisplayAll()){	

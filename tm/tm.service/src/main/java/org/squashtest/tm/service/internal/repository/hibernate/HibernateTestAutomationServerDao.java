@@ -106,6 +106,7 @@ public class HibernateTestAutomationServerDao implements
 	}
 
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<TestAutomationProject> findAllHostedProjects(long serverId) {
 		Session session = sessionFactory.getCurrentSession();

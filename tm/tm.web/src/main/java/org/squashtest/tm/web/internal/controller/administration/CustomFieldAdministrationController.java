@@ -105,7 +105,7 @@ public class CustomFieldAdministrationController {
 	 * A Mapping for custom fields table sortable columns : maps the table column index to an entity property. NB:
 	 * column index is of all table's columns (displayed or not)
 	 */
-	private final DatatableMapper customFieldTableMapper = new NameBasedMapper(3)
+	private final DatatableMapper<String> customFieldTableMapper = new NameBasedMapper(3)
 			.mapAttribute(NAME, NAME, CustomField.class)
 			.mapAttribute(LABEL, LABEL, CustomField.class)
 			.mapAttribute("input-type", INPUT_TYPE, CustomField.class);

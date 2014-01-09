@@ -38,6 +38,7 @@ import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.tm.domain.resource.Resource;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.exception.library.CannotMoveInHimselfException;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
@@ -67,7 +68,7 @@ import org.squashtest.tm.service.security.SecurityCheckableObject;
 public class FirstLayerTreeNodeMover implements PasteOperation {
 	@Inject
 	@Qualifier("squashtest.tm.repository.RequirementLibraryNodeDao")
-	private LibraryNodeDao<RequirementLibraryNode> requirementLibraryNodeDao;
+	private LibraryNodeDao<RequirementLibraryNode<Resource>> requirementLibraryNodeDao;
 	@Inject
 	@Qualifier("squashtest.tm.repository.TestCaseLibraryNodeDao")
 	private LibraryNodeDao<TestCaseLibraryNode> testCaseLibraryNodeDao;

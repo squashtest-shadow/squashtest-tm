@@ -127,7 +127,7 @@ public class AttachmentManagerController {
 	/* ******************************* private stuffs ***************************** */
 
 	
-	private PagingAndSorting createPaging(final DataTableDrawParameters params, final DatatableMapper mapper) {
+	private PagingAndSorting createPaging(final DataTableDrawParameters params, final DatatableMapper<String> mapper) {
 		return new DataTableSorting(params, mapper);
 	}
 

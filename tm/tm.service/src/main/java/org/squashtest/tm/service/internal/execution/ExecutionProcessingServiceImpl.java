@@ -203,7 +203,7 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 	@PreAuthorize("hasPermission(#execution, 'EXECUTE') or hasRole('ROLE_ADMIN')")
 	@Override
 	public void updateExecutionMetadata(Execution execution) {
-		
+		LOGGER.debug("update the executed by/on for given execution and it's test plan.");
 		String lastExecutedBy = null;
 		Date lastExecutedOn = null;
 		

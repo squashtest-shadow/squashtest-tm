@@ -119,7 +119,6 @@ public class HandlerActionExceptionResolver extends AbstractHandlerExceptionReso
 		return ActionException.class.isAssignableFrom(ex.getClass());
 	}
 
-	@SuppressWarnings("unchecked")
 	
 
 	/* **************** inner class ***************** */

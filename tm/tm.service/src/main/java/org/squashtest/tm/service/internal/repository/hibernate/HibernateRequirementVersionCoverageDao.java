@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
@@ -54,19 +55,19 @@ public class HibernateRequirementVersionCoverageDao extends HibernateEntityDao<R
 	private Criteria createFindAllCoverageCriteria() {
 		Criteria crit = currentSession().createCriteria(RequirementVersionCoverage.class, "RequirementVersionCoverage");
 		crit.createAlias("RequirementVersionCoverage.verifiedRequirementVersion", "RequirementVersion");
-		crit.createAlias("RequirementVersion.requirement", "Requirement", Criteria.LEFT_JOIN);
+		crit.createAlias("RequirementVersion.requirement", "Requirement", JoinType.LEFT_OUTER_JOIN);
 		crit.createAlias("RequirementVersionCoverage.verifyingTestCase", "TestCase");
-		crit.createAlias("Requirement.project", "Project", Criteria.LEFT_JOIN);
+		crit.createAlias("Requirement.project", "Project", JoinType.LEFT_OUTER_JOIN);
 
 		return crit;
 	}
 
 	private Criteria createFindAllVerifiedCriteria(PagingAndSorting pagingAndSorting) {
 		Criteria crit = currentSession().createCriteria(RequirementVersion.class, "RequirementVersion");
-		crit.createAlias("requirement", "Requirement", Criteria.LEFT_JOIN);
+		crit.createAlias("requirement", "Requirement", JoinType.LEFT_OUTER_JOIN);
 		crit.createAlias("requirementVersionCoverages", "rvc");
 		crit.createAlias("rvc.verifyingTestCase", "TestCase");
-		crit.createAlias("requirement.project", "Project", Criteria.LEFT_JOIN);
+		crit.createAlias("requirement.project", "Project", JoinType.LEFT_OUTER_JOIN);
 
 		PagingUtils.addPaging(crit, pagingAndSorting);
 		SortingUtils.addOrder(crit, pagingAndSorting);
@@ -74,6 +75,7 @@ public class HibernateRequirementVersionCoverageDao extends HibernateEntityDao<R
 		return crit;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<RequirementVersion> findDistinctRequirementVersionsByTestCases(Collection<Long> testCaseIds,
 			PagingAndSorting pagingAndSorting) {
