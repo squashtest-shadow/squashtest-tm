@@ -72,7 +72,6 @@
 	}
 
 	function sendUpdateImportanceEvent(value){
-		console.log("sendUpdateImportanceEvent value = "+value);
 		var evt = new EventUpdateImportance(identity, value.toLowerCase());
 		squashtm.workspace.eventBus.fire(null, evt);
 	}

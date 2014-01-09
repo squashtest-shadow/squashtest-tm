@@ -33,6 +33,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 			this.requirementsTableDrawCallback = $.proxy(this._requirementsTableDrawCallback, this);
 			this.requirementsTableRowCallback = $.proxy(this._requirementsTableRowCallback, this);
 			this.removeSelectedRequirements = $.proxy(this._removeSelectedRequirements, this);
+			this.sendReqCoverUpdateEvent = $.proxy(this._sendReqCoverUpdateEvent, this);
 			this.confirmRemoveRequirements = $.proxy(this._confirmRemoveRequirements, this);
 			this.addSelectEditableToVersionNumber = $.proxy(this._addSelectEditableToVersionNumber, this);
 			this.refresh = $.proxy(this._refresh, this);
@@ -84,6 +85,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 				// selection for first drawing
 				// on pre-filled tables.
 				this.table.restoreTableSelection();
+				this.sendReqCoverUpdateEvent();
 			}
 		},
 
@@ -140,7 +142,20 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 			}).done(self.refresh);
 
 		},
-
+		
+		_sendReqCoverUpdateEvent : function(){
+			if(typeof identity === "undefined"){
+			return;
+			}
+				var rows = this.table._fnGetTrNodes().length;
+				var reqCoverStatus = "ko";
+				if(rows){
+					reqCoverStatus = "ok";
+				}
+				var evt = new EventUpdateReqCoverage(identity, reqCoverStatus);
+				squashtm.workspace.eventBus.fire(null, evt);
+		},
+		
 		configureRemoveRequirementDialogs : function() {
 			// confirmRemoveRequirementDialog
 			this.confirmRemoveRequirementDialog = $("#remove-verified-requirement-version-dialog").confirmDialog();

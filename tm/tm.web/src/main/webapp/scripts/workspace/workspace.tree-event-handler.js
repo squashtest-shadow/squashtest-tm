@@ -79,6 +79,9 @@ define([ 'jquery', 'tree' ], function($, tree) {
 			case "update-importance":
 				updateEventUpdateImportance(event, otree);
 				break;
+			case "update-reqCoverage":
+				updateEventUpdateReqCoverage(event, otree);
+				break;
 			case "contextualcontent.clear":
 				break; // bail out, default induces bugs
 			default:
@@ -180,5 +183,17 @@ define([ 'jquery', 'tree' ], function($, tree) {
 		}
 
 		target.setAttr('status', event.evt_newstatus);
-	}	
+	}
+	function updateEventUpdateReqCoverage(event, tree) {
+		var target = tree.findNodes({
+			restype : event.evt_target.obj_restype,
+			resid : event.evt_target.obj_id
+		});
+
+		if (target.length === 0) {
+			return;
+		}
+
+		target.setAttr('req', event.evt_newreqCoverage);
+	}
 });
