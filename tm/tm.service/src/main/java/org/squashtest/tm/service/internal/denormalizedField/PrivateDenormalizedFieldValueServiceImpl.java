@@ -48,6 +48,7 @@ import org.squashtest.tm.service.internal.repository.BoundEntityDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao;
 import org.squashtest.tm.service.internal.repository.DenormalizedFieldValueDao;
+import org.squashtest.tm.service.internal.repository.DenormalizedFieldValueDeletionDao;
 import org.squashtest.tm.service.library.AdvancedSearchService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
@@ -64,6 +65,8 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 	private CustomFieldBindingDao customFieldBindingDao;
 	@Inject
 	private DenormalizedFieldValueDao denormalizedFieldValueDao;
+	@Inject
+	private DenormalizedFieldValueDeletionDao denormalizedFieldValueDeletionDao;
 	@Inject
 	private PermissionEvaluationService permissionService;
 
@@ -88,8 +91,10 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 
 	@Override
 	public void deleteAllDenormalizedFieldValues(DenormalizedFieldHolder entity) {
-		denormalizedFieldValueDao.deleteAllForEntity(entity.getDenormalizedFieldHolderId(), entity.getDenormalizedFieldHolderType());
-
+		List<DenormalizedFieldValue> dfvs = denormalizedFieldValueDao.findDFVForEntity(entity.getDenormalizedFieldHolderId(), entity.getDenormalizedFieldHolderType());
+		for(DenormalizedFieldValue dfv : dfvs){
+			denormalizedFieldValueDeletionDao.removeDenormalizedFieldValue(dfv);
+		}
 	}
 
 	@Override
