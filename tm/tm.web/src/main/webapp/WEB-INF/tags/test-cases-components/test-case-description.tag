@@ -71,6 +71,12 @@
 		return data[value];
 	}
 
+	function sendUpdateImportanceEvent(value){
+		console.log("sendUpdateImportanceEvent value = "+value);
+		var evt = new EventUpdateImportance(identity, value.toLowerCase());
+		squashtm.workspace.eventBus.fire(null, evt);
+	}
+
 </script>
 <comp:rich-jeditable   targetUrl="${ testCaseUrl }" 
 					   componentId="test-case-description" />
@@ -129,7 +135,9 @@
 						associatedSelectJeditableId="test-case-importance"
 						url="${ importanceAutoUrl }"
 						isAuto="${ testCase.importanceAuto }"
-						paramName="importanceAuto" />
+						paramName="importanceAuto" 
+						autoCallBack="sendUpdateImportanceEvent"
+						/>
 				</c:if>
 			</div>
 		</div>

@@ -26,9 +26,9 @@
 <%@ attribute name="isAuto" required="true"%>
 <%@ attribute name="url" required="true"%>
 <%@ attribute name="paramName" required="true" description="the name of the parameter being posted"%>
-
-<%-- <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"  %> --%>
-<%-- <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %> --%>
+<%@ attribute name="autoCallBack" required="false" description="the name of the function to call when changed to auto (param = value : the new value for the associated input)" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"  %>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <input type="checkbox" id="${associatedSelectJeditableId}-auto"
 	style="vertical-align: middle; position: relative;" /><label for="${associatedSelectJeditableId}-auto" class="afterDisabled">auto</label>
@@ -66,22 +66,25 @@
 			$.ajax({
 				type : 'POST',
 				data : "${paramName}"+"="+isAuto.toString(),
-				success : function(deducedValue){sel_postStateSuccess(deducedValue,  isAuto);},
+				success : function(jsonEnumValue){sel_postStateSuccess(jsonEnumValue,  isAuto);},
 				error : function(){sel_postStateFailed();},
-				dataType : "text",
+				dataType : "json",
 				url : '${url}'			
 			});		
 		};
-		function sel_postStateSuccess(deducedValue, isAuto){
+		function sel_postStateSuccess(jsonEnumValue, isAuto){
 			if (isAuto){
-				sel_postStateIsAutoSuccess(deducedValue);
+				sel_postStateIsAutoSuccess(jsonEnumValue);
 			}
 		};
-		function sel_postStateIsAutoSuccess(deducedValue){
-			$("#${associatedSelectJeditableId}").html(deducedValue);	
+		function sel_postStateIsAutoSuccess(jsonEnumValue){
+			$("#${associatedSelectJeditableId}").html(jsonEnumValue.localizedValue);
+			<c:if test="${not empty autoCallBack}">
+			${autoCallBack}(jsonEnumValue.value);
+			</c:if>
 		};
 		function sel_postStateFailed(){
-			$.squash.openMessage("<f:message key='popup.title.error' />", "<f:message key='error.generic.label'");
+			$.squash.openMessage("<f:message key='popup.title.error' />", "<f:message key='error.generic.label'/>");
 			
 		};
 

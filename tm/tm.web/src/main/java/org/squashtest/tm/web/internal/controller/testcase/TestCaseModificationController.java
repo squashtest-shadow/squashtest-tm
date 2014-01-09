@@ -101,6 +101,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
+import org.squashtest.tm.web.internal.model.json.JsonEnumValue;
 import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
@@ -344,11 +345,11 @@ public class TestCaseModificationController {
 
 	@RequestMapping(value = "/importanceAuto", method = RequestMethod.POST, params = { "importanceAuto" })
 	@ResponseBody
-	public String changeImportanceAuto(@PathVariable long testCaseId,
+	public JsonEnumValue changeImportanceAuto(@PathVariable long testCaseId,
 			@RequestParam(value = "importanceAuto") boolean auto, Locale locale) {
 		testCaseModificationService.changeImportanceAuto(testCaseId, auto);
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
-		return formatImportance(testCase.getImportance(), locale);
+		return new JsonEnumValue(testCase.getImportance().toString(), formatImportance(testCase.getImportance(), locale)) ;
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-prerequisite", VALUE })
