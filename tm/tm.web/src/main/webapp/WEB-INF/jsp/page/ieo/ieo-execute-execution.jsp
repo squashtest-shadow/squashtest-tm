@@ -193,25 +193,14 @@
 			<comp:step-information-panel auditableEntity="${executionStep}" />			
 		</div>
 		
-		<c:if test="${not empty denormalizedFieldValues }">
-
-		<comp:toggle-panel id="denormalized-fields-panel" titleKey="title.step.fields" open="true">
-		<jsp:attribute name="body"> 
-				<div id="dfv-information-table" class="display-table">
-				</div>
-			</jsp:attribute>
-		</comp:toggle-panel>
-
-		</c:if>		
-		<c:if test="${not empty customFieldValues }">
-		<comp:toggle-panel id="custom-fields-panel" titleKey="title.step.fields" 
-					open="true">
-			<jsp:attribute name="body"> 
-				<div id="cuf-information-table" class="display-table">
-				</div>
-			</jsp:attribute>
-		</comp:toggle-panel>
-		</c:if>
+        <c:if test="${ (not empty customFieldValues) or (not empty denormalizedFieldValues) }">
+          <comp:toggle-panel id="custom-fields-panel" titleKey="title.step.fields" open="true">
+            <jsp:attribute name="body"> 
+              <div id="dfv-information-table" class="display-table"></div>
+              <div id="cuf-information-table" class="display-table"></div>
+            </jsp:attribute>
+          </comp:toggle-panel>
+        </c:if>
 				
 		<comp:toggle-panel id="execution-action-panel" titleKey="execute.panel.action.title"  open="true">
 			<jsp:attribute name="body">
