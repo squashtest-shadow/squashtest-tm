@@ -46,7 +46,7 @@ import org.squashtest.tm.web.internal.model.customfield.CustomFieldValueModel;
 @Controller
 @RequestMapping("/denormalized-fields/values")
 public class DenormalizedFieldValuesController {
-	
+
 	private static final String DENORMALIZED_FIELD_HOLDER_TYPE = "denormalizedFieldHolderType";
 
 	private static final String DENORMALIZED_FIELD_HOLDER_ID = "denormalizedFieldHolderId";
@@ -65,7 +65,8 @@ public class DenormalizedFieldValuesController {
 
 	@RequestMapping(method = RequestMethod.GET, params = { DENORMALIZED_FIELD_HOLDER_ID, DENORMALIZED_FIELD_HOLDER_TYPE }, headers = RequestHeaders.CONTENT_JSON)
 	@ResponseBody
-	public List<CustomFieldValueModel> getDenormalizedFieldValuesForEntity(@RequestParam(DENORMALIZED_FIELD_HOLDER_ID) long id,
+	public List<CustomFieldValueModel> getDenormalizedFieldValuesForEntity(
+			@RequestParam(DENORMALIZED_FIELD_HOLDER_ID) long id,
 			@RequestParam(DENORMALIZED_FIELD_HOLDER_TYPE) DenormalizedFieldHolderType entityType) {
 
 		List<DenormalizedFieldValue> values = denormalizedFieldValueFinder.findAllForEntity(id, entityType);
@@ -94,7 +95,7 @@ public class DenormalizedFieldValuesController {
 	public void updateDenormalizedValue(@PathVariable long id, @RequestParam("value") String value) {
 		denormalizedFieldValueFinder.changeValue(id, value);
 	}
-	
+
 	private List<CustomFieldValueModel> valuesToJson(List<DenormalizedFieldValue> values) {
 		List<CustomFieldValueModel> models = new LinkedList<CustomFieldValueModel>();
 

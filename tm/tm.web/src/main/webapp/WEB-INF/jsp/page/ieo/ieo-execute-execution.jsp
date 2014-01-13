@@ -87,6 +87,9 @@
 		</c:otherwise>
 	</c:choose>
 	</c:if>
+    <script id="df-post-label" type="text/squash">
+      <f:message key="label.fromTestCase" />
+    </script>
 	<script type="text/javascript">
 		
 		$(function(){
@@ -149,11 +152,17 @@
 				
 			});
 	
-			<c:if test="${not empty denormalizedFieldValues }">
-			$.get("${denormalizedFieldsValuesURL}?denormalizedFieldHolderId=${executionStep.boundEntityId}&denormalizedFieldHolderType=${executionStep.boundEntityType}")
-				.success(function(data){$("#dfv-information-table").append(data);
-			});	
-			</c:if>
+            <c:if test="${not empty denormalizedFieldValues }">
+            var postLabel = " (" + $("#df-post-label").text() +")";
+            
+            $.get("${denormalizedFieldsValuesURL}?denormalizedFieldHolderId=${executionStep.boundEntityId}&denormalizedFieldHolderType=${executionStep.boundEntityType}")
+              .success(function(data){
+                $("#dfv-information-table")
+                  .append(data)
+                  .find("label")
+                  .append(postLabel);
+            });
+            </c:if>
 			
 			<c:if test="${not empty customFieldValues }">
 			$.get("${customFieldsValuesURL}?boundEntityId=${executionStep.boundEntityId}&boundEntityType=${executionStep.boundEntityType}")

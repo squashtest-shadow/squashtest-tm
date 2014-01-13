@@ -105,6 +105,9 @@
 		<body class="execute-html-body">
 			<f:message var="completedMessage" key="execute.alert.test.complete" />
 			<f:message var="endTestSuiteMessage" key="squashtm.action.exception.testsuite.end" />
+          <script id="df-post-label" type="text/squash">
+            <f:message key="label.fromTestCase" />
+          </script>
 			<script type="text/javascript">						
 			require(["squash.basicwidgets", "page-components/step-information-panel","workspace.event-bus"], function(basicwidg, infopanel, eventBus ){
 			
@@ -355,18 +358,24 @@
 					
 					});
 					
-					<c:if test="${not empty denormalizedFieldValues }">
-						$.get("${denormalizedFieldsValuesURL}?denormalizedFieldHolderId=${executionStep.boundEntityId}&denormalizedFieldHolderType=${executionStep.boundEntityType}")
-							.success(function(data){$("#dfv-information-table").append(data);
-						});
-					</c:if>
-	
-					<c:if test="${not empty customFieldValues }">
-						$.get("${customFieldsValuesURL}?boundEntityId=${executionStep.boundEntityId}&boundEntityType=${executionStep.boundEntityType}")
-							.success(function(data){$("#cuf-information-table").append(data);
-						});
-					</c:if>
-						
+                    <c:if test="${not empty denormalizedFieldValues }">
+                    $.get("${denormalizedFieldsValuesURL}?denormalizedFieldHolderId=${executionStep.boundEntityId}&denormalizedFieldHolderType=${executionStep.boundEntityType}")
+                      .success(function(data){
+                        var postLabel = " (" + $("#df-post-label").text() +")";
+                        
+                        $("#dfv-information-table")
+                          .append(data)
+                          .find("label")
+                          .append(postLabel);
+                      });
+                    </c:if>
+
+                    <c:if test="${not empty customFieldValues }">
+                    $.get("${customFieldsValuesURL}?boundEntityId=${executionStep.boundEntityId}&boundEntityType=${executionStep.boundEntityType}")
+                      .success(function(data){
+                        $("#cuf-information-table").append(data);
+                      });
+                    </c:if>
 				
 				});	
 			</script>
@@ -422,7 +431,6 @@
 							</c:otherwise>
 							</c:choose>
 						</td>
-	
 					</tr>
 				</table>
 			</div>
