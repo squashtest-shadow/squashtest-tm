@@ -96,7 +96,7 @@ public class TestCaseExecutionsController {
 		model.addAttribute("testCaseId", testCaseId);
 		model.addAttribute("execs", executions);
 
-		return "test-case-executions-tab.html";
+		return "test-cases-tabs/executions-tab.html";
 	}
 
 	/**
