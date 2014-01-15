@@ -40,36 +40,17 @@
 
 <%-- Attention ! si vous refactorez cette page vous pouvez utiliser la version thymeleaf de la table des test-steps : templates/verified-requirements-bloc.frag.html --%>
 	
-	<c:choose>
-	<c:when test="${includeIndirectlyVerified}">
+	<c:if test="${not includeIndirectlyVerified}">
 	<script type="text/javascript" th:inline="javascript">
-		require([ "common" ], function(common) {
-			require([ "jquery",  "domReady","verified-requirements/TestCaseVerifiedRequirementsPanel", "workspace.event-bus" ], function($, domReady, TestCaseVerifiedRequirementsPanel, eventBus) {
-				domReady(function() {
-					
-					var panel = new TestCaseVerifiedRequirementsPanel();
-					eventBus.onContextual("testStepsTable.removedSteps", panel.table.refresh);
-					
-				});
+	require([ "common" ], function(common) {
+		require([ "jquery",  "domReady","verified-requirements/TestCaseDirectVerifiedRequirementsTable" ], function($, domReady, TestCaseDirectVerifiedRequirementsTable) {
+			domReady(function() {
+				squashtm.verifiedRequirementsTable = new TestCaseDirectVerifiedRequirementsTable();
 			});
 		});
+	});
 		</script>
-	</c:when>
-	<c:otherwise>
-	<script type="text/javascript" th:inline="javascript">
-		require([ "common" ], function(common) {
-			require([ "jquery",  "domReady","verified-requirements/TestCaseDirectVerifiedRequirementsTable" ], function($, domReady, TestCaseDirectVerifiedRequirementsTable) {
-				domReady(function() {
-					
-					squashtm.verifiedRequirementsTable = new TestCaseDirectVerifiedRequirementsTable();
-					
-					
-				});
-			});
-		});
-		</script>
-	</c:otherwise>
-	</c:choose>
+	</c:if>
 	<script type="text/javascript" th:inline="javascript">
 			if (!squashtm) {
 				var squashtm = {};

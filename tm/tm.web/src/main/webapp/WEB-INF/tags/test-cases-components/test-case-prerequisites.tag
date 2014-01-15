@@ -27,13 +27,6 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 
 <%@ attribute name="testCase" required="true" type="java.lang.Object"  description="the testcase" %>
-<%@ attribute name="writable"  required="true" type="java.lang.Boolean"  description="if the user has write permission on this test case" %>
-
-<c:url var="testCaseUrl" 					value="/test-cases/${testCase.id}"/>
-
-<c:if test="${ writable }">
-<comp:rich-jeditable targetUrl="${ testCaseUrl }" componentId="test-case-prerequisite" />
-</c:if>
 
 <comp:toggle-panel id="test-case-prerequisite-panel" titleKey="generics.prerequisite.title" 
 				   open="${ not empty testCase.prerequisite }">

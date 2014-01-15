@@ -28,13 +28,14 @@ squashtm.message = squashtm.message || {};
 squashtm.message.cancel = "<f:message key='label.Cancel'/>";
 squashtm.message.placeholder = "<f:message key='rich-edit.placeholder'/>";
 squashtm.message.confirm = "<f:message key='label.Confirm'/>";		
-squashtm.message.infoTitle = "<f:message key='popup.title.info'/>";		
+squashtm.message.infoTitle = "<f:message key='popup.title.info'/>";
 squashtm.message.errorTitle = "<f:message key='popup.title.error'/>";	
 
 
 // ------------------- prefilled translator cache ---------------------------------------------------- 
 
 var _langcache = {	
+	'error.generic.label' : "<f:message key ='error.generic.label'/>",
 	'execution.execution-status.UNTESTABLE' : "<f:message key='execution.execution-status.UNTESTABLE'/>",
 	'execution.execution-status.BLOCKED' : "<f:message key='execution.execution-status.BLOCKED'/>",
 	'execution.execution-status.FAILURE' : "<f:message key='execution.execution-status.FAILURE'/>",
@@ -51,6 +52,7 @@ var _langcache = {
 	'squashtm.dateformat' : "<f:message key='squashtm.dateformat'/>",
 	'squashtm.dateformat.iso' : "<f:message key='squashtm.dateformat.iso'/>",
 	'squashtm.dateformatShort.datepicker' : "<f:message key='squashtm.dateformatShort.datepicker'/>"
+	
 };
 
 squashtm.message.cache = _langcache;

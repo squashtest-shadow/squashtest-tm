@@ -27,31 +27,69 @@
  */
 
 define([ "jquery", "jquery.squash.jeditable" ], function($) {
-
+	/*
+	 * settings = {
+	 *  target (target url or target function)
+	 *  componentId
+	 *  ...(jeditable settings)
+	 * }
+	 */
 	var SelectJEditable = function(settings) {
-		var language = settings.language;
-		var targetUrl = settings.targetUrl;
+		var self = this;
+		this.settings = settings;
+		var target = settings.target;
+		var getUrl = settings.getUrl;
 		var componentId = settings.componentId;
 		var component = $('#' + componentId);
+		this.component = component;
 		var txt = component.text();
 		component.text($.trim(txt));
-
+		
 		var defaultSettings = {
 			type : 'select',
-			placeholder : language.richEditPlaceHolder,
-			submit : language.okLabel,
-			cancel : language.cancelLabel,
+			placeholder : squashtm.message.cache['rich-edit.language.value'],
+			submit : squashtm.message.cache['label.Ok'],
+			cancel :  squashtm.message.cache['label.Cancel'],
 			onblur : function() {
 				// this disable the onBlur handler, which would close the
 				// jeditable
 				// when clicking in the rich editor (since it considers the click as
 				// out of the editing zone)
 			},
+			
 			indicator : '<div class="processing-indicator"/>'
+			
 		};
-
+		this.getSelectedOption = function(){
+			var option = "";
+              $.each(settings.jeditableSettings.data, function(key, value){
+				if($("<span/>").html(value).text() == component.text()){
+					option = key;
+					}
+              });
+              return option;
+		};
+		
+		if(settings.getUrl){
+			this.refresh = function(){
+				$.ajax({
+					type :"get",
+					url : settings.getUrl
+				}).then(function(value){
+					component.html(value);
+					$(self).trigger("selectJEditable.refresh");
+				});
+			};
+		}else{
+			this.refresh = function(){
+				if(console){
+					console.log("refresh not suported because SelectJEditable.settings.getUrl undefined");
+				}
+				return;
+			};
+		}
 		var effectiveSettings = $.extend(true, {}, settings.jeditableSettings, defaultSettings);
-		this.instance = $(component).editable(targetUrl, effectiveSettings).addClass("editable");
+		this.instance = $(component).editable(target, effectiveSettings).addClass("editable");
 
 	};
 	return SelectJEditable;

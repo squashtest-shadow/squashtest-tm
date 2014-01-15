@@ -331,7 +331,7 @@ define(
 											okLabel : cfMod.okLabel,
 											cancelLabel : cfMod.cancelLabel
 										},
-										targetUrl : cfMod.customFieldUrl,
+										target : cfMod.customFieldUrl,
 										componentId : "cuf-default-value",
 										jeditableSettings : {
 											callback : self.enableOptionalChange,

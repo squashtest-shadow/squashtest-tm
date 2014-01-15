@@ -131,13 +131,13 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 	}
 
 	function save_dt_view (oSettings, oData, testCaseId) {
-		 var id = $(".test-steps-table")[0].id;
-		 localStorage.setItem( 'DataTables_'+window.location.pathname+"_"+id, JSON.stringify(oData) );
+		var id = $(".test-steps-table")[0].id;
+		localStorage.setItem( 'DataTables_'+window.location.pathname+"_"+id, JSON.stringify(oData) );
 	}
 		
 	function load_dt_view (oSettings, testCaseId) {
-	     var id = $(".test-steps-table")[0].id;
-		 return JSON.parse( localStorage.getItem('DataTables_'+window.location.pathname+"_"+id) );
+		var id = $(".test-steps-table")[0].id;
+		return JSON.parse( localStorage.getItem('DataTables_'+window.location.pathname+"_"+id) );
 	}
 		
 	function reset_dt_view(testCaseId) {
@@ -206,7 +206,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 			aaData : settings.basic.tableData,
 			bStateSave : true,
 			fnStateSave: function(oSettings, oData) { save_dt_view(oSettings, oData); },
-		    fnStateLoad: function(oSettings) { return load_dt_view(oSettings); },
+			fnStateLoad: function(oSettings) { return load_dt_view(oSettings); },
 			sAjaxSource : urls.tableAjaxUrl,
 			fnDrawCallback : stepsTableDrawCallback,
 			fnCreatedRow : stepsTableCreatedRowCallback,

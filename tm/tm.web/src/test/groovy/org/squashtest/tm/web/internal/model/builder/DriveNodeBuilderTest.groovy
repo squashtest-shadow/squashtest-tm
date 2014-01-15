@@ -30,7 +30,9 @@ import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
+import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
@@ -114,6 +116,9 @@ class DriveNodeBuilderTest extends Specification {
 		TestCase tc = Mock()
 		def visitor
 		tc.accept({ visitor = it }) >> { visitor.visit(tc) }
+		tc.getStatus() >> TestCaseStatus.WORK_IN_PROGRESS
+		tc.getImportance() >> TestCaseImportance.LOW
+		tc.getRequirementVersionCoverages() >> []
 		library.addContent tc
 		
 		and:

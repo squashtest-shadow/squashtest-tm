@@ -41,6 +41,7 @@
 <c:url var="testCaseUrl" 					value="/test-cases/${testCase.id}"/>
 <c:url var="executionsTabUrl"				value="/test-cases/${testCase.id}/executions?tab="/>
 <c:url var="stepTabUrl"						value="/test-cases/${testCase.id}/steps/panel" />
+ <c:url var="importanceAutoUrl" 				value="/test-cases/${testCase.id}/importanceAuto"/>
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <%-- 
@@ -93,7 +94,7 @@
 	<%--  ------------------ main tab panel --------------------------------- --%>
 	<ul class="tab-menu">
 		<li>
-			<a href="#tabs-1"><f:message key="tabs.label.information" /></a>
+			<a href="#tab-tc-informations"><f:message key="tabs.label.information" /></a>
 		</li>
 		<li>
 			<a href="${stepTabUrl}"><f:message key="tabs.label.steps" /></a>
@@ -102,7 +103,7 @@
 			<a href="${testCaseUrl}/parameters/panel"><f:message key="label.parameters" /></a>
 		</li>
 		<li>
-			<a href="#tabs-3"><f:message key="label.Attachments" />
+			<a href="#tabs-tc-attachments"><f:message key="label.Attachments" />
 			<c:if test="${ testCase.attachmentList.notEmpty }">
 				<span class="hasAttach">!</span>
 			</c:if> 
@@ -113,23 +114,20 @@
 		</li>
 	</ul>
 	
+		
 
-	<div id="tabs-1">
+	<div id="tab-tc-informations">
 			
 		<%-- ------------------------- Description Panel ------------------------- --%>
 	
 		<tc:test-case-description 	testCase="${testCase}" 
-									testCaseNatureComboJson="${testCaseNatureComboJson}"
 									testCaseImportanceLabel="${testCaseImportanceLabel}"
-									testCaseImportanceComboJson="${testCaseImportanceComboJson}" 
-									testCaseTypeComboJson="${testCaseTypeComboJson}"
-									testCaseTypeStatusJson="${testCaseTypeStatusJson}"
 									writable="${writable}"/>
 		
 
 		<%----------------------------------- Prerequisites -----------------------------------------------%>
 
-		<tc:test-case-prerequisites testCase="${testCase}" writable="${writable}" />
+		<tc:test-case-prerequisites testCase="${testCase}" />
 
 
 		<%--------------------------- Verified Requirements section ------------------------------------%>
@@ -147,7 +145,7 @@
 	<%-- ------------------------- /Description Panel ------------------------- --%>
 	<%------------------------------ Attachments  ---------------------------------------------%>	
 	
-	<at:attachment-tab tabId="tabs-3"  entity="${ testCase }"  editable="${ attachable }" tableModel="${attachmentsModel}"/>
+	<at:attachment-tab tabId="tabs-tc-attachments"  entity="${ testCase }"  editable="${ attachable }" tableModel="${attachmentsModel}"/>
 	
 	<%------------------------------ /Attachments  ---------------------------------------------%>
 
@@ -179,5 +177,30 @@
 
 <%-- ===================================== /Test Automation code  ===============================  --%>
 
-
+<script type="text/javascript" th:inline="javascript">
+	/*<![CDATA[*/
+	var squashtm = squashtm || {};
+  	squashtm.app = squashtm.app || {} ;	 
+	require([ "domReady", "test-case-management" ],
+			function(domReady, testCaseManagement) {
+					var settings = {
+							urls : {
+								testCaseUrl : "${testCaseUrl}",
+								importanceAutoUrl : "${importanceAutoUrl}"
+							},
+							writable : ${writable},
+							testCaseImportanceComboJson : ${testCaseImportanceComboJson},
+							testCaseNatureComboJson : ${testCaseNatureComboJson},
+							testCaseStatusComboJson : ${testCaseStatusComboJson},
+							testCaseTypeComboJson : ${testCaseTypeComboJson},							
+							importanceAuto : ${testCase.importanceAuto},
+							testCaseId : ${testCase.id}
+					};
+					
+				domReady(function() {
+					testCaseManagement.initInfosTab(settings);
+				});
+			});
+	/*]]>*/
+</script>
 

@@ -67,12 +67,7 @@
 		squashtm.workspace.eventBus.fire(null, evt);		
 	};	
 	
-	function updateReferenceInTitle(newRef){
-		var identity = { obj_id : ${testCase.id}, obj_restype : "test-cases"  };
-		var evt = new EventUpdateReference(identity, newRef);
-		squashtm.workspace.eventBus.fire(null, evt);		
-	};
-
+	
 	
 	$(function(){
 		

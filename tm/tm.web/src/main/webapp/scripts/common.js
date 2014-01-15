@@ -79,11 +79,13 @@ requirejs.config({
 				"ckeditor" : "ckeditor/ckeditor",
 				"jquery.ckeditor" : "ckeditor/adapters/jquery",
 				//jeditable
-				"jeditable" : "jquery/jquery.jeditable.mini.authored",
+				"jeditable" : "jquery/jquery.jeditable.authored",
+//				"jeditable" : "jquery/jquery.jeditable.mini.authored",
 				"jeditable.ckeditor" : "jquery/jquery.jeditable.ckeditor",
 				"jeditable.datepicker" : "jquery/jquery.jeditable.datepicker",
 				"jeditable.simpleJEditable" : "squashtest/classes/SimpleJEditable",
 				"jeditable.selectJEditable" : "squashtest/classes/SelectJEditable",
+				"jeditable.selectJEditableAuto" : "squashtest/classes/SelectJEditableAuto",
 				//jquery
 				"jstree" : "jquery/jquery.jstree",
 				"jform" : "jquery/jquery.form",

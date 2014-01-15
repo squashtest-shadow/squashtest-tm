@@ -23,71 +23,7 @@
 <%@ tag language="java" pageEncoding="utf-8"%>
 
 <%@ attribute name="associatedSelectJeditableId" required="true"%>
-<%@ attribute name="isAuto" required="true"%>
-<%@ attribute name="url" required="true"%>
-<%@ attribute name="paramName" required="true" description="the name of the parameter being posted"%>
-<%@ attribute name="autoCallBack" required="false" description="the name of the function to call when changed to auto (param = value : the new value for the associated input)" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"  %>
-<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
+<%-- to activate javascript : create a new  squashtest/classes/SelectJEditableAuto (use require ""jquery.squash.selectJEditableAuto") --%>
 <input type="checkbox" id="${associatedSelectJeditableId}-auto"
 	style="vertical-align: middle; position: relative;" /><label for="${associatedSelectJeditableId}-auto" class="afterDisabled">auto</label>
-
-<script type="text/javascript">
-	$(function() {
-		var sel_checkbx = $('#${associatedSelectJeditableId}-auto');
-		
-		sel_checkbx.prop('checked', ${isAuto});
-		
-		if (sel_checkbx.prop('checked')){
-			sel_setAutoMode();
-		}
-		
-		sel_checkbx.change(function(){
-			var sel_isAuto = $(this).prop('checked');
-			if (sel_isAuto){
-				$('#${associatedSelectJeditableId}').find("[type='cancel']").trigger('click');
-				sel_setAutoMode();
-			}else{
-				sel_setManualMode();
-				$('#${associatedSelectJeditableId}').trigger('click');
-			}
-			sel_postState(this,sel_isAuto);
-		});		
-		
-		function sel_setAutoMode(){
-			$('#${associatedSelectJeditableId}').editable('disable');
-		};
-		function sel_setManualMode(){
-			$('#${associatedSelectJeditableId}').editable('enable');
-		};
-		
-		function sel_postState(checkbx, isAuto){
-			$.ajax({
-				type : 'POST',
-				data : "${paramName}"+"="+isAuto.toString(),
-				success : function(jsonEnumValue){sel_postStateSuccess(jsonEnumValue,  isAuto);},
-				error : function(){sel_postStateFailed();},
-				dataType : "json",
-				url : '${url}'			
-			});		
-		};
-		function sel_postStateSuccess(jsonEnumValue, isAuto){
-			if (isAuto){
-				sel_postStateIsAutoSuccess(jsonEnumValue);
-			}
-		};
-		function sel_postStateIsAutoSuccess(jsonEnumValue){
-			$("#${associatedSelectJeditableId}").html(jsonEnumValue.localizedValue);
-			<c:if test="${not empty autoCallBack}">
-			${autoCallBack}(jsonEnumValue.value);
-			</c:if>
-		};
-		function sel_postStateFailed(){
-			$.squash.openMessage("<f:message key='popup.title.error' />", "<f:message key='error.generic.label'/>");
-			
-		};
-
-	})
-	
-</script>

@@ -351,6 +351,8 @@ public class TestCaseModificationController {
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
 		return new JsonEnumValue(testCase.getImportance().toString(), formatImportance(testCase.getImportance(), locale)) ;
 	}
+	
+	
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-prerequisite", VALUE })
 	@ResponseBody

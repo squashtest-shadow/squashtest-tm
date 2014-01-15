@@ -33,6 +33,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 			VRBS = squashtm.app.verifiedRequirementsBlocSettings;
 			this.table = new VerifiedRequirementsTable();
 			this.configureButtons.call(this);
+			
 		},
 
 		events : {},

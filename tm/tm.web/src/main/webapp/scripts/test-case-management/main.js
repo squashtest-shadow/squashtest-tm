@@ -18,18 +18,23 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "./step-table-panel", "./parameters/ParametersTab"], function($, stepTablePanel, ParametersTab) {
+define([ "jquery", "./step-table-panel", "./parameters/ParametersTab", "./infos/InfosTab"], function($, stepTablePanel, ParametersTab, InfosTab) {
 
 	var initStepTablePanel = function(settings) {
 		stepTablePanel.init(settings);
 	};	
 	
-	var initParametersPanel = function(settings) {
+	var initParametersTab = function(settings) {
 		new ParametersTab({settings : settings});
+	};
+	
+	var initInfosTab = function(settings){
+		new InfosTab({settings : settings});
 	};
 
 	return {
 		initStepTablePanel : initStepTablePanel,
-		initParametersPanel: initParametersPanel
+		initParametersTab: initParametersTab,
+		initInfosTab : initInfosTab
 	};
 });

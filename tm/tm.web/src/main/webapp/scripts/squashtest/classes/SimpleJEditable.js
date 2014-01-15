@@ -19,9 +19,15 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "jquery.squash.jeditable" ], function($) {
-
+/*
+ * settings = {
+ *  targetUrl
+ *  componentId or component
+ *  submitCallback [function(value, settings)]
+ *  jeditableSettings
+ * }
+ */
 	var SimpleJEditable = function(settings) {
-		var language = settings.language;
 		var targetUrl = settings.targetUrl;
 		var component;
 		if (settings.componentId) {
@@ -37,9 +43,9 @@ define([ "jquery", "jquery.squash.jeditable" ], function($) {
 			type : 'text',
 			cols : 80,
 			max_size : 20,
-			placeholder : language.richEditPlaceHolder,
-			submit : language.okLabel,
-			cancel : language.cancelLabel,
+			placeholder : squashtm.message.cache['rich-edit.language.value'],
+			submit : squashtm.message.cache['label.Ok'],
+			cancel :  squashtm.message.cache['label.Cancel'],
 			onblur : function() {
 				// this disable the onBlur handler, which would close the
 				// jeditable
@@ -58,7 +64,21 @@ define([ "jquery", "jquery.squash.jeditable" ], function($) {
 				$(spanError).on("mouseover",function(){ spanError.fadeOut('slow').remove(); });
 			}
 		};
-
+		
+		if(settings.submitCallback){
+			if(!settings.jeditableSettings){
+				settings.jeditableSettings = {
+						callback : function(value, settings){
+							value = $("<span/>").html(value).text();
+							settings.submitCallback(value, settings);
+						}
+				};
+			}
+		}
+		
+		this.refresh = function(){
+			
+		};
 		var effectiveSettings = $.extend(true, {}, settings.jeditableSettings, defaultSettings);
 		this.instance = $(component).editable(targetUrl, effectiveSettings).addClass("editable");
 

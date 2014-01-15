@@ -30,77 +30,11 @@
 
 <%@ attribute name="testCase" required="true" type="java.lang.Object"  description="the testcase" %>
 <%@ attribute name="writable"  required="true" type="java.lang.Boolean"  description="if the user has write permission on this test case" %>
-<%@ attribute name="testCaseImportanceComboJson"  required="true" type="java.lang.Object"  description="the json formatted list of importances" %>
-<%@ attribute name="testCaseNatureComboJson"  required="true" type="java.lang.Object"  description="the json formatted list of natures" %>
-<%@ attribute name="testCaseTypeComboJson"  required="true" type="java.lang.Object"  description="the json formatted list of types" %>
-<%@ attribute name="testCaseTypeStatusJson"  required="true" type="java.lang.Object"  description="the json formatted list of status" %>
 <%@ attribute name="testCaseImportanceLabel"  required="true" type="java.lang.String"  description="a label related to test case importance, not sure to remember what." %>
 
 
 <c:url var="testCaseUrl" 					value="/test-cases/${testCase.id}"/>
-<c:url var="importanceAutoUrl" 				value="/test-cases/${testCase.id}/importanceAuto"/>
 
-
-<c:if test="${ writable }">
-<script type="text/javascript">
-	var identity = { obj_id : ${testCase.id}, obj_restype : "test-cases"  };
-
-	//for technical reasons we handle directly the ajax operation when choosing a status.
-	function postUpdateStatus(value, settings){
-		$.post("${testCaseUrl}", {id:"test-case-status", value : value})
-		.done(function(response){
-			var evt = new EventUpdateStatus(identity, value.toLowerCase());
-			squashtm.workspace.eventBus.fire(null, evt);
-		});
-		
-		//in the mean time, must return immediately
-		var data = JSON.parse(settings.data);
-		return data[value];
-	}
-
-	//for technical reasons we handle directly the ajax operation when choosing an importance.
-	function postUpdateImportance(value, settings){
-		$.post("${testCaseUrl}", {id:"test-case-importance", value : value})
-		.done(function(response){
-			var evt = new EventUpdateImportance(identity, value.toLowerCase());
-			squashtm.workspace.eventBus.fire(null, evt);
-		});
-		
-		//in the mean time, must return immediately
-		var data = JSON.parse(settings.data);
-		return data[value];
-	}
-
-	function sendUpdateImportanceEvent(value){
-		var evt = new EventUpdateImportance(identity, value.toLowerCase());
-		squashtm.workspace.eventBus.fire(null, evt);
-	}
-
-</script>
-<comp:rich-jeditable   targetUrl="${ testCaseUrl }" 
-					   componentId="test-case-description" />
-
-<comp:simple-jeditable targetUrl="${ testCaseUrl }"	
-					   componentId="test-case-reference"
-					   submitCallback="updateReferenceInTitle" 
-					   maxLength="50" />
-
-<comp:select-jeditable componentId="test-case-importance"
-					   jsonData="${ testCaseImportanceComboJson }"
-					   targetFunction="postUpdateImportance" />
-
-<comp:select-jeditable componentId="test-case-nature"
-					   jsonData="${ testCaseNatureComboJson }" 
-					   targetUrl="${ testCaseUrl }" />
-
-<comp:select-jeditable componentId="test-case-type"
-					   jsonData="${ testCaseTypeComboJson }" 
-					   targetUrl="${ testCaseUrl }" />
-
-<comp:select-jeditable componentId="test-case-status"
-						jsonData="${ testCaseStatusComboJson }" 
-						targetFunction="postUpdateStatus" />
-</c:if>
 
 
 <comp:toggle-panel id="test-case-description-panel"
@@ -130,13 +64,7 @@
 			<div class="display-table-cell">
 				<span id="test-case-importance">${testCaseImportanceLabel}</span>
 				<c:if test="${ writable }">
-				<comp:select-jeditable-auto
-						associatedSelectJeditableId="test-case-importance"
-						url="${ importanceAutoUrl }"
-						isAuto="${ testCase.importanceAuto }"
-						paramName="importanceAuto" 
-						autoCallBack="sendUpdateImportanceEvent"
-						/>
+					<comp:select-jeditable-auto associatedSelectJeditableId="test-case-importance" />
 				</c:if>
 			</div>
 		</div>
