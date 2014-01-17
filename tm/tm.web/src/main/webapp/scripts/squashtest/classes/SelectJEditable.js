@@ -47,7 +47,7 @@ define([ "jquery", "jquery.squash.jeditable" ], function($) {
 		
 		var defaultSettings = {
 			type : 'select',
-			placeholder : squashtm.message.cache['rich-edit.language.value'],
+			placeholder :squashtm.message.placeholder,
 			submit : squashtm.message.cache['label.Ok'],
 			cancel :  squashtm.message.cache['label.Cancel'],
 			onblur : function() {

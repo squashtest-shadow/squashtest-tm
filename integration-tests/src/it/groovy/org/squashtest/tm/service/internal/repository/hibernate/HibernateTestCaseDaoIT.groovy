@@ -526,7 +526,16 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 	}
 	
 	
-	
+	@DataSet("HibernateTestCaseDaoIT.should find tc imp w impAuto.xml")
+	def "should find tc imp w impAuto"(){
+		given : def testIds = [1L, 2L, 3L, 4L]
+		when : Map<Long, TestCaseImportance> result = testCaseDao.findAllTestCaseImportanceWithImportanceAuto(testIds)
+		then : result.size() == 2L
+		result.containsKey(1L)
+		result.containsKey(3L)
+		result.get(1L) == TestCaseImportance.LOW
+		result.get(3L) == TestCaseImportance.MEDIUM
+	}
 	
 	// ************* scaffolding ************
 	

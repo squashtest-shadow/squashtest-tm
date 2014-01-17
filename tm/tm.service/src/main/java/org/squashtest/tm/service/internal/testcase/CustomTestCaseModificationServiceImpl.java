@@ -20,9 +20,13 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -48,6 +52,7 @@ import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
@@ -56,6 +61,7 @@ import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueSer
 import org.squashtest.tm.service.internal.library.NodeManagementService;
 import org.squashtest.tm.service.internal.repository.ActionTestStepDao;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
+import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
 import org.squashtest.tm.service.internal.testautomation.service.InsecureTestAutomationManagementService;
@@ -89,7 +95,10 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Inject
 	private TestStepDao testStepDao;
-
+	
+	@Inject
+	private RequirementVersionDao requirementVersionDao;
+	
 	@Inject
 	@Named("squashtest.tm.service.internal.TestCaseManagementService")
 	private NodeManagementService<TestCase, TestCaseLibraryNode, TestCaseFolder> testCaseManagementService;
@@ -411,6 +420,37 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	public TestCase findTestCaseFromStep(long testStepId) {
 		return testCaseDao.findTestCaseByTestStepId(testStepId);
+	}
+
+	
+	/**
+	 * @see org.squashtest.tm.service.testcase.CustomTestCaseFinder#findImpTCWithImpAuto(Collection)
+	 */
+	@Override
+	public Map<Long, TestCaseImportance> findImpTCWithImpAuto(Collection<Long> testCaseIds) {
+		return testCaseDao.findAllTestCaseImportanceWithImportanceAuto(testCaseIds);
+	}
+	
+	/**
+	 * @see org.squashtest.tm.service.testcase.CustomTestCaseFinder#findCallingTCids(long, Collection)
+	 */
+	@Override
+	public Set<Long> findCallingTCids(long updatedId, Collection<Long> callingCandidates) {
+		List<Long> callingCandidatesClone = new ArrayList<Long>(callingCandidates);
+		List<Long> callingLayer = testCaseDao.findAllTestCasesIdsCallingTestCases(Arrays.asList(Long
+				.valueOf(updatedId)));
+		Set<Long> callingTCToUpdate = new HashSet<Long>();
+		while (!callingLayer.isEmpty() && !callingCandidatesClone.isEmpty()) {
+			// filter found calling test cases
+			callingLayer.retainAll(callingCandidatesClone);
+			// save
+			callingTCToUpdate.addAll(callingLayer);
+			// reduce test case of interest
+			callingCandidatesClone.removeAll(callingLayer);
+			//go next layer
+			callingLayer = testCaseDao.findAllTestCasesIdsCallingTestCases(callingLayer);
+		}
+		return callingTCToUpdate;
 	}
 
 }

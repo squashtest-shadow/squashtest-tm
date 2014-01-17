@@ -18,35 +18,52 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.web.internal.controller.testcase;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
-import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
-import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 
-@DynamicDao(entity = TestCase.class)
-public interface TestCaseDao extends CustomTestCaseDao {
-	TestCase findByIdWithInitializedSteps(long testCaseId);
+public class TestCaseTreeIconsUpdate {
+	private long id;
+	private String req = "same";
+	private String importance = "same";
 
-	/**
-	 * Counts the calling test steps of a test case
-	 * 
-	 * @param testCaseId
-	 * @return
-	 */
-	long countCallingTestSteps(long testCaseId);
-
-	List<Long> findAllDistinctTestCasesIdsCalledByTestCase(long testCaseId);
-
-	List<Long> findAllDistinctTestCasesIdsCallingTestCase(long testCaseId);
-
-	List<Long> findAllTestCaseIdsByLibraries(@QueryParam("libraryIds") Collection<Long> libraryIds);
-
+	public TestCaseTreeIconsUpdate(long id, boolean req, TestCaseImportance importance) {
+		super();
+		this.id = id;
+		doSetReq(req);
+		doSetImportance(importance);
+	}
+	public TestCaseTreeIconsUpdate(long id, TestCaseImportance importance) {
+		super();
+		this.id = id;
+		doSetImportance(importance);
+	}
+	
+	public TestCaseTreeIconsUpdate(long id ,boolean req) {
+		super();
+		this.id = id;
+		doSetReq(req);
+	}
+	public long getId() {
+		return id;
+	}
+	public String getReq() {
+		return req;
+	}
+	private void doSetReq(boolean req) {
+		if(req){
+			this.req = "ok";
+		}else{
+			this.req = "ko";
+		}
+	}
+	public String getImportance() {
+		return importance;
+	}
+	private void doSetImportance(TestCaseImportance importance) {
+		this.importance = importance.toString().toLowerCase();
+	}
+	
 	
 }
+

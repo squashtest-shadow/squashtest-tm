@@ -23,6 +23,9 @@ package org.squashtest.tm.web.internal.controller.testcase;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -33,6 +36,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.json.JsonTestCase;
@@ -61,18 +66,21 @@ public class TestCaseController {
 	@Inject
 	private TestCaseFinder finder;
 
-
 	@Inject
 	private Provider<TestCaseImportanceJeditableComboDataBuilder> importanceComboBuilderProvider;
 
 	@Inject
 	private Provider<TestCaseNatureJeditableComboDataBuilder> natureComboBuilderProvider;
-	
+
 	@Inject
 	private Provider<TestCaseStatusJeditableComboDataBuilder> statusComboBuilderProvider;
-	
+
 	@Inject
 	private Provider<TestCaseTypeJeditableComboDataBuilder> typeComboBuilderProvider;
+	
+	@Inject
+	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
+
 	/**
 	 * Fetches and returns a list of json test cases from their ids
 	 * 
@@ -124,7 +132,60 @@ public class TestCaseController {
 		consolidatedIds.addAll(folderIds);
 		return buildJsonTestCasesFromAncestorIds(consolidatedIds, locale);
 	}
-	
+
+	/**
+	 * @see ...\scripts\workspace\workspace.tree-event-handler.js Request when a tree node has it's requirement property
+	 *      updated, the importance and requirement property of the calling test cases must be updated to.
+	 * 
+	 */
+	@RequestMapping(method = RequestMethod.GET, params = { "openedNodesIds[]", "reqChanged", "updatedId" })
+	public @ResponseBody
+	List<TestCaseTreeIconsUpdate> getTestCaseTreeInfosToUpdate(	@RequestParam("openedNodesIds[]") List<Long> openedNodesIds, @RequestParam("reqChanged") Boolean reqChanged,
+			@RequestParam("updatedId") long updatedId) {
+
+		openedNodesIds.remove(updatedId);
+		List<TestCaseTreeIconsUpdate> result = new ArrayList<TestCaseTreeIconsUpdate>();
+		Set<Long> callingOpenedNodesIds = finder.findCallingTCids(updatedId, openedNodesIds);
+		Map<Long, TestCaseImportance> importancesToUpdate = finder.findImpTCWithImpAuto(callingOpenedNodesIds);
+		if (reqChanged) {
+			// if the test-case 'isRequirementCovered' property did not change, it won't change for the calling test
+			// cases either : therefore it is only necessary to check if the importance of the calling test cases
+			// changed.
+			for (Entry<Long, TestCaseImportance> importanceToUpdate : importancesToUpdate.entrySet()) {
+				result.add(new TestCaseTreeIconsUpdate(importanceToUpdate.getKey(), importanceToUpdate.getValue()));
+			}
+		} else {
+			// if the test-case 'isRequirementCovered' property did change we will have to find the test-cases that need
+			// to have their "isRequirementCovered" property updated and merge the infos with the ones that need their
+			// "importance" updated
+			
+			//find isReqCovered
+			Map<Long, Boolean> areReqCoveredToUpdate = verifiedRequirementsManagerService.findisReqCoveredOfCallingTCWhenisReqCoveredChanged(
+					updatedId, callingOpenedNodesIds);
+			//merge
+			//go through importances to update and merge with matching reqCover to update
+			for (Entry<Long, TestCaseImportance> importanceToUpdate : importancesToUpdate.entrySet()) {
+				Long testCaseId = importanceToUpdate.getKey();
+				TestCaseImportance imp = importanceToUpdate.getValue();
+				Boolean isReqCovered = areReqCoveredToUpdate.get(testCaseId);
+				if (isReqCovered != null) {
+					result.add(new TestCaseTreeIconsUpdate(testCaseId, isReqCovered, imp));
+					areReqCoveredToUpdate.remove(testCaseId);
+				} else {
+					result.add(new TestCaseTreeIconsUpdate(testCaseId, imp));
+				}
+			}
+			//add remaining req to update
+			for(Entry<Long, Boolean> isReqCoveredToUpdate : areReqCoveredToUpdate.entrySet()){
+				Long testCaseId = isReqCoveredToUpdate.getKey();
+				Boolean isReqCovered = isReqCoveredToUpdate.getValue();
+				result.add(new TestCaseTreeIconsUpdate(testCaseId, isReqCovered));
+			}
+		}
+		return result;
+
+	}
+
 	@RequestMapping(value = "/importance-combo-data", method = RequestMethod.GET)
 	@ResponseBody
 	public String buildImportanceComboData(Locale locale) {
@@ -136,13 +197,13 @@ public class TestCaseController {
 	public String buildStatusComboData(Locale locale) {
 		return statusComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
-	
+
 	@RequestMapping(value = "/type-combo-data", method = RequestMethod.GET)
 	@ResponseBody
 	public String buildTypeComboData(Locale locale) {
 		return typeComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
-	
+
 	@RequestMapping(value = "/nature-combo-data", method = RequestMethod.GET)
 	@ResponseBody
 	public String buildNatureComboData(Locale locale) {

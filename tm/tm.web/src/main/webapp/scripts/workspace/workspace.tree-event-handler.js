@@ -193,7 +193,44 @@ define([ 'jquery', 'tree' ], function($, tree) {
 		if (target.length === 0) {
 			return;
 		}
-
-		target.setAttr('req', event.evt_newreqCoverage);
+		var oldReq = target.attr('req');
+		var newReq = event.evt_newreqCoverage;
+		target.setAttr('req', newReq);
+		if(event.evt_target.obj_restype == "test-cases"){
+			updateCallingTestCasesNodes(newReq, oldReq, tree, event.evt_target.obj_id);
+		}
+	}
+	function updateCallingTestCasesNodes(newReq, oldReq, tree, updatedId){
+		//if a test case change it's requirements then it's calling test cases might be newly bound/unbound to requirements or might have their importance changed.
+		console.log("updateCallingTestCasesNodes newReq="+newReq);
+		var target = tree.findNodes({restype : "test-cases"});
+		var nodeIds = target.map(function(index, item){ return item.getAttribute("resid");});
+		$.ajax({
+			url:squashtm.app.contextRoot+"/test-cases/",
+			type:"get",
+			data: {
+				openedNodesIds :  nodeIds.toArray(),
+				reqChanged : oldReq == newReq,
+				updatedId : updatedId
+			},
+			dataType: "json"
+		}).then(function(testCaseTreeIconsUpdate){
+			
+			$.each(testCaseTreeIconsUpdate, function(key, value){
+				var target2 = tree.findNodes({
+					restype : "test-cases",
+					resid : value.id
+				});
+				if (!target2 || target2.length === 0) {
+					return;
+				}
+				if(value.req != 'same'){
+					target2.setAttr('req', value.req);
+				}
+				if(value.importance != 'same'){
+					target2.setAttr('importance', value.importance);
+				}
+			});
+		});
 	}
 });

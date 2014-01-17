@@ -30,6 +30,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNodeVisitor;
+import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
@@ -43,6 +44,10 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
 @Component
 @Scope("prototype")
 public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestCaseLibraryNode> {
+	
+	
+	protected VerifiedRequirementsManagerService verifiedRequirementsManagerService;
+
 	/**
 	 * This visitor is used to populate custom attributes of the {@link JsTreeNode} currently built
 	 * 
@@ -63,11 +68,11 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 			addLeafAttributes("test-case", "test-cases");
 			builtNode.addAttr("status", visited.getStatus().toString().toLowerCase());
 			builtNode.addAttr("importance", visited.getImportance().toString().toLowerCase());
-			String req = "ok";
-			if(visited.getRequirementVersionCoverages().isEmpty()){
-				req = "ko";
+			String req = "ko";
+			if (!visited.getRequirementVersionCoverages().isEmpty() || verifiedRequirementsManagerService.testCaseHasUndirectRequirementCoverage(visited.getId())) {
+				req = "ok";
 			}
-			builtNode.addAttr("req",req);
+			builtNode.addAttr("req", req);
 			if (visited.getReference() != null && visited.getReference().length() > 0) {
 				builtNode.setTitle(visited.getReference() + " - " + visited.getName());
 				builtNode.addAttr("reference", visited.getReference());
@@ -119,12 +124,11 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 			if (visited.hasContent()) {
 				builtNode.setState(State.open);
 
-				TestCaseLibraryTreeNodeBuilder childrenBuilder = new TestCaseLibraryTreeNodeBuilder(permissionEvaluationService);
-				
+				TestCaseLibraryTreeNodeBuilder childrenBuilder = new TestCaseLibraryTreeNodeBuilder(
+						permissionEvaluationService, verifiedRequirementsManagerService);
+
 				List<JsTreeNode> children = new JsTreeNodeListBuilder<TestCaseLibraryNode>(childrenBuilder)
-						.expand(getExpansionCandidates())
-						.setModel(visited.getOrderedContent())
-						.build();
+						.expand(getExpansionCandidates()).setModel(visited.getOrderedContent()).build();
 
 				builtNode.setChildren(children);
 			}
@@ -133,8 +137,9 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 	}
 
 	@Inject
-	public TestCaseLibraryTreeNodeBuilder(PermissionEvaluationService permissionEvaluationService) {
+	public TestCaseLibraryTreeNodeBuilder(PermissionEvaluationService permissionEvaluationService, VerifiedRequirementsManagerService verifiedRequirementsManagerService) {
 		super(permissionEvaluationService);
+		this.verifiedRequirementsManagerService = verifiedRequirementsManagerService;
 	}
 
 	/**
@@ -155,6 +160,5 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 	protected void doAddChildren(JsTreeNode node, TestCaseLibraryNode model) {
 		model.accept(new ChildrenPopulator(node));
 	}
-
 
 }

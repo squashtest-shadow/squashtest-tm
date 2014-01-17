@@ -31,7 +31,7 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "jedit
 					this.updateReferenceInTree = $.proxy(this._updateReferenceInTree, this);
 					this.postImportance = $.proxy(this._postImportance, this);
 					this.postStatus = $.proxy(this._postStatus, this);
-					this.updateStatusInTree = $.proxy(this._updateStatusInTree);
+					this.updateStatusInTree = $.proxy(this._updateStatusInTree, this);
 					this.refreshImportanceIfAuto = $.proxy(this._refreshImportanceIfAuto,this);
 					this.updateImportanceInTree = $.proxy(this._updateImportanceInTree, this);
 					this.onRefreshImportance = $.proxy(this._onRefreshImportance, this);
@@ -143,6 +143,7 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "jedit
 				},
 				
 				_updateStatusInTree : function(value){
+					var self = this;
 					var evt = new EventUpdateStatus(self.identity, value.toLowerCase());
 					squashtm.workspace.eventBus.fire(null, evt);
 				},

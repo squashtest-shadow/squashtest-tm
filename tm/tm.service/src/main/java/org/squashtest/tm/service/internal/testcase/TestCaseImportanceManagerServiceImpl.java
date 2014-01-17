@@ -62,7 +62,6 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 		Set<Long> calleesIds = callTreeFinder.getTestCaseCallTree(testCaseId);
 		calleesIds.add(testCaseId);
 		return requirementDao.findDistinctRequirementsCriticalitiesVerifiedByTestCases(calleesIds);
-
 	}
 
 	/**

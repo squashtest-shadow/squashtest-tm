@@ -27,6 +27,11 @@ import org.hibernate.transform.ResultTransformer;
 
 public class SqLIdResultTransformer implements ResultTransformer {
 		
+		/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1809533393460762214L;
+
 		@Override
 		public Object transformTuple(Object[] tuple, String[] aliases) {
 			return ((BigInteger)tuple[0]).longValue();

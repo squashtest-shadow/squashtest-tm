@@ -28,6 +28,8 @@ define([ "jquery", "jquery.squash.jeditable" ], function($) {
  * }
  */
 	var SimpleJEditable = function(settings) {
+		var self = this;
+		this.settings = settings;
 		var targetUrl = settings.targetUrl;
 		var component;
 		if (settings.componentId) {
@@ -43,7 +45,7 @@ define([ "jquery", "jquery.squash.jeditable" ], function($) {
 			type : 'text',
 			cols : 80,
 			max_size : 20,
-			placeholder : squashtm.message.cache['rich-edit.language.value'],
+			placeholder : squashtm.message.placeholder,
 			submit : squashtm.message.cache['label.Ok'],
 			cancel :  squashtm.message.cache['label.Cancel'],
 			onblur : function() {
@@ -65,15 +67,15 @@ define([ "jquery", "jquery.squash.jeditable" ], function($) {
 			}
 		};
 		
-		if(settings.submitCallback){
-			if(!settings.jeditableSettings){
-				settings.jeditableSettings = {
-						callback : function(value, settings){
-							value = $("<span/>").html(value).text();
-							settings.submitCallback(value, settings);
-						}
-				};
-			}
+		if(!settings.jeditableSettings){
+			settings.jeditableSettings = {};
+		}
+	
+		if(settings.submitCallback){			
+			settings.jeditableSettings.callback = function(value, settings2){
+				value = $("<span/>").html(value).text();
+				self.settings.submitCallback(value, settings2);
+			};
 		}
 		
 		this.refresh = function(){

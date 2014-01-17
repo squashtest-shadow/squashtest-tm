@@ -22,6 +22,8 @@ package org.squashtest.tm.service.testcase;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 
@@ -29,6 +31,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestStep;
 
 /**
@@ -52,11 +55,10 @@ public interface CustomTestCaseFinder {
 	 *            the Id of the called test case.
 	 * @param sorting
 	 *            the sorting parameters.
-	 * @return a non null but possibly empty PagedCollectionHolder wrapping the list of first-level calling test
-	 *         cases.
+	 * @return a non null but possibly empty PagedCollectionHolder wrapping the list of first-level calling test cases.
 	 */
 	PagedCollectionHolder<List<TestCase>> findCallingTestCases(long testCaseId, PagingAndSorting sorting);
-	
+
 	/**
 	 * Fetches all the test cases which have at least one ancestor from the given list. If ancestorID is a folder id,
 	 * fetches all its descendant test cases. If it is a test cases id, fetches the given test case.
@@ -65,13 +67,40 @@ public interface CustomTestCaseFinder {
 	 * @return
 	 */
 	List<TestCase> findAllByAncestorIds(@NotNull Collection<Long> ancestorIds);
-	
+
 	/**
 	 * Fetches all the test cases calling the one matching the given id param.
+	 * 
 	 * @param calleeId
 	 * @return all calling test cases
 	 */
 	List<TestCase> findAllCallingTestCases(long calleeId);
-	
+
 	TestCase findTestCaseFromStep(long testStepId);
+
+	/**
+	 * Will find the ids and importance of the given test cases with importanceAuto = true
+	 * 
+	 * @param testCaseIds
+	 *            : the id of the testCases
+	 * @return a map with :
+	 *         <ul>
+	 *         <li>key : the id of the test case</li>
+	 *         <li>value : it's {@link TestCaseImportance}</li>
+	 *         </ul>
+	 */
+	Map<Long, TestCaseImportance> findImpTCWithImpAuto(Collection<Long> testCaseIds);
+
+
+	/**
+	 * willgo through the list of test-case to update and retain the ones that are calling the updated test case.
+	 * 
+	 * @param updatedId
+	 *            : the id of the test case we want the calling test cases of
+	 * @param callingCandidates
+	 *            : the ids of potential calling test cases we are interested in
+	 * @return the set of test case ids that are calling(direclty or indireclty) the updated one and whose ids are in
+	 *         the callingCadidates list.
+	 */
+	Set<Long> findCallingTCids(long updatedId, Collection<Long> callingCandidates);
 }

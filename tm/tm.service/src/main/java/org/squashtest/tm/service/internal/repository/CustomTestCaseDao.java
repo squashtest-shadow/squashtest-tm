@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -30,6 +31,7 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.testcase.TestCaseSearchCriteria;
 import org.squashtest.tm.domain.testcase.TestStep;
@@ -64,10 +66,8 @@ public interface CustomTestCaseDao extends EntityDao<TestCase> {
 	 * @return
 	 */
 	List<TestCaseLibraryNode> findAllByNameContaining(String tokenInName, boolean groupByProject);
-	
-	
+
 	List<Long> findAllTestCaseIdsByNodeIds(Collection<Long> nodeIds);
-	
 
 	/***
 	 * This method returns the test step's associated TestCase
@@ -112,9 +112,15 @@ public interface CustomTestCaseDao extends EntityDao<TestCase> {
 	 */
 	List<Long> findAllTestCasesIdsCalledByTestCases(List<Long> testCasesIds);
 
+	/**
+	 * Finds all the ids of the test cases that are calling the ones matching the testCasesIds parameter
+	 * 
+	 * @param testCasesIds
+	 *            : the ids of the called test cases
+	 * @return the ids of the calling test cases.
+	 */
 	List<Long> findAllTestCasesIdsCallingTestCases(List<Long> testCasesIds);
 
-	
 	/**
 	 * returns the test cases having at least one call test step referencing the given test case.
 	 * 
@@ -210,5 +216,12 @@ public interface CustomTestCaseDao extends EntityDao<TestCase> {
 	List<TestCase> findAllLinkedToIteration(List<Long> nodeIds);
 
 	List<TestStep> findAllStepsByIdFiltered(long testCaseId, Paging filter);
-
+	/**
+	 * Will return all ids and importanceof test cases among the given ones that have the property importanceAuto to true.
+	 * 
+	 * @param testCasesIds
+	 *            : the ids of the testCases to filter
+	 * @return the filter result with ids of test case having their importanceAuto to true.
+	 */
+	Map<Long, TestCaseImportance> findAllTestCaseImportanceWithImportanceAuto(Collection<Long> testCaseIds);
 }

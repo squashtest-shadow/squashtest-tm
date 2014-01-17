@@ -23,9 +23,11 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ListUtils;
@@ -50,6 +52,7 @@ import org.squashtest.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.testcase.TestCaseSearchCriteria;
 import org.squashtest.tm.domain.testcase.TestStep;
@@ -129,9 +132,9 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	}
 
 	private static final class SetIdsParameter implements SetQueryParametersCallback {
-		private List<Long> testCasesIds;
+		private Collection<Long> testCasesIds;
 
-		private SetIdsParameter(List<Long> testCasesIds) {
+		private SetIdsParameter(Collection<Long> testCasesIds) {
 			this.testCasesIds = testCasesIds;
 		}
 
@@ -652,10 +655,24 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		query.setResultTransformer(new SqLIdResultTransformer());
 		return query.list();
 	}
+	
+	
 
 	@Override
 	public List<TestCase> findAllLinkedToIteration(List<Long> nodeIds) {
 		return executeListNamedQuery("testCase.findAllLinkedToIteration", new SetIdsParameter(nodeIds));
 	}
 
+	@Override
+	public Map<Long, TestCaseImportance> findAllTestCaseImportanceWithImportanceAuto(Collection<Long> testCaseIds) {
+		List<Object[]> resultList = executeListNamedQuery("testCase.findAllTCImpWithImpAuto", new SetIdsParameter(testCaseIds));
+		Map<Long, TestCaseImportance> resultMap = new HashMap<Long, TestCaseImportance>(resultList.size());
+		for(Object [] resultEntry : resultList){
+			Long id = (Long) resultEntry[0];
+			TestCaseImportance imp = (TestCaseImportance) resultEntry[1];
+			resultMap.put(id, imp);
+		}
+		return resultMap;
+	}
+	
 }

@@ -51,27 +51,31 @@ public interface VerifiedRequirementsManagerService {
 	 */
 	Collection<VerifiedRequirementException> addVerifiedRequirementsToTestCase(List<Long> requirementsIds,
 			long testCaseId);
-	
+
 	/**
-	 * Adds a list of requirement-versions to the ones verified by the step's test case and bind them to the step. If the version  already verified by the test case, it is only bound to the step.
-	 * If a sister version is already bound to the test case the version is not added.
+	 * Adds a list of requirement-versions to the ones verified by the step's test case and bind them to the step. If
+	 * the version already verified by the test case, it is only bound to the step. If a sister version is already bound
+	 * to the test case the version is not added.
 	 * 
 	 * @param requirementsIds
-	 * @param testStepId : the id of the concerned {@link ActionTestStep}
-	 * @return 
+	 * @param testStepId
+	 *            : the id of the concerned {@link ActionTestStep}
+	 * @return
 	 */
 	Collection<VerifiedRequirementException> addVerifiedRequirementsToTestStep(List<Long> requirementsIds,
 			long testStepId);
-	
+
 	/**
-	 * Adds a list of requirement-versions to the ones verified by a test case. If the version or a sister is already verified, the requirement is not added and nothing
-	 * special happens.
+	 * Adds a list of requirement-versions to the ones verified by a test case. If the version or a sister is already
+	 * verified, the requirement is not added and nothing special happens.
 	 * 
-	 * @param requirementVersionsByTestCase : list of requirementVersions mapped by test-case
-	 * @return 
+	 * @param requirementVersionsByTestCase
+	 *            : list of requirementVersions mapped by test-case
+	 * @return
 	 */
-	Collection<VerifiedRequirementException> addVerifyingRequirementVersionsToTestCase(Map<TestCase, List<RequirementVersion>> requirementVersionsByTestCase);
-	
+	Collection<VerifiedRequirementException> addVerifyingRequirementVersionsToTestCase(
+			Map<TestCase, List<RequirementVersion>> requirementVersionsByTestCase);
+
 	/**
 	 * Removes a list of requirements from the ones verified by a test case. If a requirement is not verified by the
 	 * test case, nothing special happens.
@@ -89,7 +93,7 @@ public interface VerifiedRequirementsManagerService {
 	 * @param requirementsIds
 	 */
 	void removeVerifiedRequirementVersionFromTestCase(long requirementVersionId, long testCaseId);
-	
+
 	/**
 	 * Removes a requirement from the step but not from the test case. If the requirement was not previously verified by
 	 * the test step, nothing special happens.
@@ -98,55 +102,107 @@ public interface VerifiedRequirementsManagerService {
 	 * @param requirementsIds
 	 */
 	void removeVerifiedRequirementVersionsFromTestStep(List<Long> requirementVersionsIds, long testStepId);
-	
+
 	/**
-	 * Removes a requirement version from the given test case and replaces it with the wanted version
-	 * if the same version is selected as was previously attached, nothing happens
+	 * Removes a requirement version from the given test case and replaces it with the wanted version if the same
+	 * version is selected as was previously attached, nothing happens
 	 * 
 	 * @param testCaseId
 	 * @param oldVerifiedRequirementVersionId
 	 * @param newVerifiedRequirementVersionId
 	 * @throws RequirementVersionNotLinkableException
 	 */
-	int changeVerifiedRequirementVersionOnTestCase(long oldVerifiedRequirementVersionId, long newVerifiedRequirementVersionId, long testCaseId);
+	int changeVerifiedRequirementVersionOnTestCase(long oldVerifiedRequirementVersionId,
+			long newVerifiedRequirementVersionId, long testCaseId);
 
 	/**
-	 * Returns the filtered list of {@link VerifiedRequirement}s directly verified by a test case.
-	 * The non directly verified requirements (by called test-cases) are NOT included in the result.
+	 * Returns the filtered list of {@link VerifiedRequirement}s directly verified by a test case. The non directly
+	 * verified requirements (by called test-cases) are NOT included in the result.
 	 * 
-	 * @param testCaseId : the id of the concerned {@link TestCase}.
-	 * @param pas: the {@link PagingAndSorting} to organize the result with
-	 * @return a {@link PagedCollectionHolder} of {@link VerifiedRequirement} containing directly verified requirements for the test case of the given id.
+	 * @param testCaseId
+	 *            : the id of the concerned {@link TestCase}.
+	 * @param pas
+	 *            : the {@link PagingAndSorting} to organize the result with
+	 * @return a {@link PagedCollectionHolder} of {@link VerifiedRequirement} containing directly verified requirements
+	 *         for the test case of the given id.
 	 */
 	PagedCollectionHolder<List<VerifiedRequirement>> findAllDirectlyVerifiedRequirementsByTestCaseId(long testCaseId,
 			PagingAndSorting pas);
 
-	/**	
-	 * Returns all {@link VerifiedRequirement} for the TestCase matching the given id. VerifiedRequirements verified by the {@link CallTestStep}s of the TestCase will be included.
-	 * @param testCaseId : the id of the concerned {@link TestCase}
-	 * @param pas : the {@link PagingAndSorting} to organize the result with
-	 * @return a {@link PagedCollectionHolder} of {@link VerifiedRequirement} containing directly and non directly (call steps) verified requirements for the test case of the given id.
+	/**
+	 * Returns all {@link VerifiedRequirement} for the TestCase matching the given id. VerifiedRequirements verified by
+	 * the {@link CallTestStep}s of the TestCase will be included.
+	 * 
+	 * @param testCaseId
+	 *            : the id of the concerned {@link TestCase}
+	 * @param pas
+	 *            : the {@link PagingAndSorting} to organize the result with
+	 * @return a {@link PagedCollectionHolder} of {@link VerifiedRequirement} containing directly and non directly (call
+	 *         steps) verified requirements for the test case of the given id.
 	 */
 	PagedCollectionHolder<List<VerifiedRequirement>> findAllVerifiedRequirementsByTestCaseId(long testCaseId,
 			PagingAndSorting pas);
-	/**	
-	 * Returns all {@link VerifiedRequirement} for the TestCase matching the given id. VerifiedRequirements verified by the {@link CallTestStep}s of the TestCase will be included.
-	 * @param testCaseId : the id of the concerned {@link TestCase}
-	 * @return a List of {@link VerifiedRequirement} containing directly and non directly (call steps) verified requirements for the test case of the given id.
+
+	/**
+	 * Returns all {@link VerifiedRequirement} for the TestCase matching the given id. VerifiedRequirements verified by
+	 * the {@link CallTestStep}s of the TestCase will be included.
+	 * 
+	 * @param testCaseId
+	 *            : the id of the concerned {@link TestCase}
+	 * @return a List of {@link VerifiedRequirement} containing directly and non directly (call steps) verified
+	 *         requirements for the test case of the given id.
 	 */
 	List<VerifiedRequirement> findAllVerifiedRequirementsByTestCaseId(long testCaseId);
+
 	/**
-	 * Will find all {@link RequirementVersion} verified by the test case containing the step of the given id.
-	 * The result will be paged according to the given {@link PagingAndSorting} param.
+	 * Will go through the given calling test cases. If they do not have direct requirement coverage, will return their
+	 * new 'isRequirementCovered' property.
 	 * 
-	 * @param testStepId : the id of the concerned {@link TestStep}
-	 * @param paging : the {@link PagingAndSorting} to organize the result with
+	 * @param updatedTestCaseId
+	 *            : the id of the test case that has just been updated and might impact the 'calling' test cases
+	 *            properties
+	 * @param callingIds
+	 *            : the ids of the calling test cases (direclty or indirectly) we want the 'isRequirementCovered'
+	 *            property of.
+	 * 
+	 * @return a map with :
+	 *         <ul>
+	 *         <li>key : the id of the test case</li>
+	 *         <li>value : true if the test-case has direct or indirect verified requirement.</li>
+	 *         </ul>
+	 */
+	Map<Long, Boolean> findisReqCoveredOfCallingTCWhenisReqCoveredChanged(long updatedTestCaseId,
+			Collection<Long> callingIds);
+
+	/**
+	 * Will find all {@link RequirementVersion} verified by the test case containing the step of the given id. The
+	 * result will be paged according to the given {@link PagingAndSorting} param.
+	 * 
+	 * @param testStepId
+	 *            : the id of the concerned {@link TestStep}
+	 * @param paging
+	 *            : the {@link PagingAndSorting} to organize the result with
 	 * @return the list of verified requirements, paged and sorted.
 	 */
 	PagedCollectionHolder<List<VerifiedRequirement>> findAllDirectlyVerifiedRequirementsByTestStepId(long testStepId,
 			PagingAndSorting paging);
 
+	/**
+	 * Will check if the test case matching the given id is linked directly to at least one requirement.
+	 * 
+	 * @param testCaseId
+	 *            : the id of the test case to check the direct requirement coverage of
+	 * @return true if the test case matching the given id is linked to at least one requirement
+	 */
+	boolean testCaseHasUndirectRequirementCoverage(long testCaseId);
 
+	/**
+	 * Will check if one called test case is covered by a requirement
+	 * 
+	 * @param testCaseId
+	 *            : the id of the test case to check the called test case of
+	 * @return true if one called test case is linked to a requirement
+	 */
+	boolean testCaseHasDirectCoverage(long testCaseId);
 
-	
 }

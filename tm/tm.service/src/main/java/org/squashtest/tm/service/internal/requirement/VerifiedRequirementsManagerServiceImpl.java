@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -339,8 +340,56 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 		return  buildVerifiedRequirementList(
 				mainTestCase, pagedVersionVerifiedByCalles);
 	}
+
 	
+	/**
+	 * @see org.squashtest.tm.service.internal.requirement.VerifiedRequirementsManagerService#findisReqCoveredOfCallingTCWhenisReqCoveredChanged(long,
+	 *      List)
+	 */
+	@Override
+	public Map<Long, Boolean> findisReqCoveredOfCallingTCWhenisReqCoveredChanged(long updatedTestCaseId,
+			Collection<Long> toUpdateIds) {
+		Map<Long, Boolean>result ;
+		result = new HashMap<Long, Boolean>(toUpdateIds.size());
+		if(testCaseHasDirectCoverage(updatedTestCaseId)|| testCaseHasUndirectRequirementCoverage(updatedTestCaseId)){
+			//set isReqCovered = true for all calling test cases
+			for(Long id : toUpdateIds){
+				result.put(id, Boolean.valueOf(true));
+			}
+		}else{
+			//check each calling testCase to see if their status changed
+			for(Long id : toUpdateIds){
+				Boolean value = testCaseHasDirectCoverage(id)|| testCaseHasUndirectRequirementCoverage(id);
+				result.put(id, value);
+			}
+		}
+		
+		return result;
+	}
 	
+	/**
+	 * @see org.squashtest.tm.service.internal.requirement.VerifiedRequirementsManagerService#testCaseHasUndirectRequirementCoverage(long)
+	 */
+	@Override
+	public boolean testCaseHasUndirectRequirementCoverage(long updatedTestCaseId) {
+		List<Long> calledTestCaseIds  = testCaseDao.findAllDistinctTestCasesIdsCalledByTestCase(updatedTestCaseId);
+		if(!calledTestCaseIds.isEmpty()){
+			for(Long id : calledTestCaseIds){
+				if(testCaseHasDirectCoverage(id)||testCaseHasUndirectRequirementCoverage(id)){
+					return true;
+				}
+			}
+		}		
+		return false;
+	}
+	/**
+	 * @see org.squashtest.tm.service.internal.requirement.VerifiedRequirementsManagerService#testCaseHasDirectCoverage(long)
+	 */
+	@Override
+	public boolean testCaseHasDirectCoverage(long updatedTestCaseId) {
+		return  requirementVersionDao.countVerifiedByTestCase(updatedTestCaseId)>0;
+	}
+
 	private List<VerifiedRequirement> buildVerifiedRequirementList(
 			final TestCase main , List<RequirementVersion> pagedVersionVerifiedByCalles) {
 
