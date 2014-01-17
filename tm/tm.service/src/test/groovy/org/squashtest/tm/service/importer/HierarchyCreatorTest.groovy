@@ -77,15 +77,15 @@ class HierarchyCreatorTest extends Specification {
 			def van = importer.pathMap.getMappedElement("/melvin/van")
 			van instanceof TestCaseFolder
 			van.getName() == "van"
-			van.getContent() == [peebles] as Set
+			van.getContent() == [peebles]
 			
 			def melvin = importer.pathMap.getMappedElement("/melvin")
 			melvin instanceof TestCaseFolder
 			melvin.getName() == "melvin"
-			melvin.getContent() == [van] as Set
+			melvin.getContent() == [van]
 			
 			def root = importer.pathMap.getMappedElement("/")
-			root.getContent() == [melvin] as Set
+			root.getContent() == [melvin] 
 		
 	}
 	
@@ -121,7 +121,7 @@ class HierarchyCreatorTest extends Specification {
 			tc instanceof TestCase
 			tc.getName() == "peebles"
 			
-			parent.getContent() == [tc] as Set
+			parent.getContent() == [tc] 
 	}
 		
 }

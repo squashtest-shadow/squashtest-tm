@@ -20,8 +20,10 @@
  */
 package org.squashtest.tm.domain.campaign;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -35,6 +37,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderColumn;
 
 import org.apache.commons.lang.NullArgumentException;
 import org.squashtest.tm.domain.library.NodeContainerVisitor;
@@ -53,8 +56,9 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 	private Long id;
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@OrderColumn(name = "CONTENT_ORDER")
 	@JoinTable(name = "CAMPAIGN_LIBRARY_CONTENT", joinColumns = @JoinColumn(name = "LIBRARY_ID"), inverseJoinColumns = @JoinColumn(name = "CONTENT_ID"))
-	private final Set<CampaignLibraryNode> rootContent = new HashSet<CampaignLibraryNode>();
+	private final List<CampaignLibraryNode> rootContent = new ArrayList<CampaignLibraryNode>();
 
 	@OneToOne(mappedBy = "campaignLibrary")
 	private GenericProject project;
@@ -74,12 +78,12 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 		return id;
 	}
 
-	public Set<CampaignLibraryNode> getRootContent() {
+	public List<CampaignLibraryNode> getRootContent() {
 		return rootContent;
 	}
 	
 	@Override
-	public Set<CampaignLibraryNode> getContent(){
+	public List<CampaignLibraryNode> getContent(){
 		return getRootContent();
 	}
 

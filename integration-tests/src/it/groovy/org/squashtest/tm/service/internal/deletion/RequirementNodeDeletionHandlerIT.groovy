@@ -176,7 +176,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		result.removed.collect{it.resid}.containsAll([3L])
 		
 		result.moved.collect{ [it.dest.resid, it.dest.rel] } == [[1L, "drive"]]
-		result.moved.collect{ it.moved.collect {it.resid }  as Set } == [[32L, 31L]  as Set] 
+		result.moved.collect{ it.moved.collect {it.resid }  } == [[31L,32L]] 
 		
 		result.renamed == []
 

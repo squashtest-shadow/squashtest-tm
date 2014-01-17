@@ -482,7 +482,7 @@ class IterationTest extends Specification {
 		iteration.testSuites = [
 			new TestSuite(name:"suite1"),
 			new TestSuite(name:"suite2")
-		]as Set
+		]
 
 		when :
 		def res =iteration.checkSuiteNameAvailable("suite3")
@@ -496,7 +496,7 @@ class IterationTest extends Specification {
 		iteration.testSuites = [
 			new TestSuite(name:"suite1"),
 			new TestSuite(name:"suite2")
-		]as Set
+		]
 
 		when :
 		def res =iteration.checkSuiteNameAvailable("suite2")
@@ -510,7 +510,7 @@ class IterationTest extends Specification {
 		iteration.testSuites = [
 			new TestSuite(name:"suite1"),
 			new TestSuite(name:"suite2")
-		]as Set
+		]
 
 		when :
 		def suite = new TestSuite(name:"suite3")
@@ -526,7 +526,7 @@ class IterationTest extends Specification {
 		iteration.testSuites = [
 			new TestSuite(name:"suite1"),
 			new TestSuite(name:"suite2")
-		]as Set
+		]
 
 		when :
 		def suite = new TestSuite(name:"suite2")

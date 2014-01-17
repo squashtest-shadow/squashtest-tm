@@ -77,10 +77,10 @@ class RequirementLibraryMerger {
 
 		requirementMerger.merge(organizedPseudoReqNodes.get(root), library);
 
-		Set<RequirementLibraryNode> rootContent = root.getContent();
+		List<RequirementLibraryNode> rootContent = root.getContent();
 		for (RequirementLibraryNode node : rootContent) {
 			RequirementFolder folder = (RequirementFolder) node;
-			Set<RequirementLibraryNode> nodes = copyContent(folder);
+			List<RequirementLibraryNode> nodes = copyContent(folder);
 			folder.emptyContent();
 			folderMerger.merge(folder, library);
 			RequirementFolder persisted = folderMerger.persisted;
@@ -93,11 +93,11 @@ class RequirementLibraryMerger {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private void mergeContent(Set<RequirementLibraryNode> nodes, RequirementFolder persisted,
+	private void mergeContent(List<RequirementLibraryNode> nodes, RequirementFolder persisted,
 			Map<RequirementFolder, List<PseudoRequirement>> organizedPseudoReqNodes) {
 		for (RequirementLibraryNode node : nodes) {
 			RequirementFolder folder = (RequirementFolder) node;
-			Set<RequirementLibraryNode> nodes2 = copyContent(folder);
+			List<RequirementLibraryNode> nodes2 = copyContent(folder);
 			folder.emptyContent();// must empty content so that subfolders don't get persisted along with their parents
 									// (need to do it one by one)
 			folderMerger.merge(folder, persisted);
@@ -136,7 +136,7 @@ class RequirementLibraryMerger {
 		}
 
 		@SuppressWarnings("rawtypes")
-		protected Set<RequirementLibraryNode> getDestinationContent() {
+		protected List<RequirementLibraryNode> getDestinationContent() {
 			if (destLibrary != null) {
 				return destLibrary.getRootContent();
 			} else {
@@ -146,7 +146,7 @@ class RequirementLibraryMerger {
 
 		@SuppressWarnings("rawtypes")
 		protected List<String> getNamesAtDestination() {
-			Set<RequirementLibraryNode> nodes = null;
+			List<RequirementLibraryNode> nodes = null;
 			if (destLibrary != null) {
 				nodes = destLibrary.getRootContent();
 			} else {
@@ -271,9 +271,9 @@ class RequirementLibraryMerger {
 
 	/* ******************************** util functions ************************************* */
 	@SuppressWarnings("rawtypes")
-	private Set<RequirementLibraryNode> copyContent(RequirementFolder folder) {
-		Set<RequirementLibraryNode> copy = new HashSet<RequirementLibraryNode>();
-		Set<RequirementLibraryNode> source = folder.getContent();
+	private List<RequirementLibraryNode> copyContent(RequirementFolder folder) {
+		List<RequirementLibraryNode> copy = new ArrayList<RequirementLibraryNode>();
+		List<RequirementLibraryNode> source = folder.getContent();
 		for (RequirementLibraryNode node : source) {
 			copy.add(node);
 		}
@@ -281,7 +281,7 @@ class RequirementLibraryMerger {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private static List<String> collectNames(Set<RequirementLibraryNode> set) {
+	private static List<String> collectNames(List<RequirementLibraryNode> set) {
 		List<String> res = new LinkedList<String>();
 
 		for (RequirementLibraryNode node : set) {
@@ -301,8 +301,8 @@ class RequirementLibraryMerger {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private static RequirementLibraryNode getByName(Set<RequirementLibraryNode> set, String needle) {
-		for (RequirementLibraryNode node : set) {
+	private static RequirementLibraryNode getByName(List<RequirementLibraryNode> list, String needle) {
+		for (RequirementLibraryNode node : list) {
 			if (node.getName().equals(needle)) {
 				return node;
 			}

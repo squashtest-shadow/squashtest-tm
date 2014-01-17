@@ -20,8 +20,10 @@
  */
 package org.squashtest.tm.domain.testcase;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -35,6 +37,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderColumn;
 
 import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.project.GenericLibrary;
@@ -52,8 +55,9 @@ public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> {
 	private Long id;
 
 	@OneToMany(cascade = { CascadeType.ALL })
+	@OrderColumn(name = "CONTENT_ORDER")
 	@JoinTable(name = "TEST_CASE_LIBRARY_CONTENT", joinColumns = @JoinColumn(name = "LIBRARY_ID"), inverseJoinColumns = @JoinColumn(name = "CONTENT_ID"))
-	private final Set<TestCaseLibraryNode> rootContent = new HashSet<TestCaseLibraryNode>();
+	private final List<TestCaseLibraryNode> rootContent = new ArrayList<TestCaseLibraryNode>();
 
 	@OneToOne(mappedBy = "testCaseLibrary")
 	private GenericProject project;
@@ -63,11 +67,11 @@ public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> {
 	@Column(name = "PLUGIN_ID")
 	private Set<String> enabledPlugins = new HashSet<String>(5);
 
-	public Set<TestCaseLibraryNode> getRootContent() {
+	public List<TestCaseLibraryNode> getRootContent() {
 		return rootContent;
 	}
 	@Override
-	public Set<TestCaseLibraryNode> getContent(){
+	public List<TestCaseLibraryNode> getContent(){
 		return getRootContent();
 	}
 	@Override

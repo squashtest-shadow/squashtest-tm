@@ -39,6 +39,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
+import javax.persistence.OrderColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 
@@ -89,10 +90,11 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	
 	
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
+	@OrderColumn(name = "CONTENT_ORDER")
 	@JoinTable(name = "RLN_RELATIONSHIP", joinColumns = @JoinColumn(name = "ANCESTOR_ID"), inverseJoinColumns = @JoinColumn(name = "DESCENDANT_ID"))
 	@Field(analyze=Analyze.NO, store=Store.YES)
 	@FieldBridge(impl = CountElementsInCollectionBridge.class)
-	private final Set<Requirement> children = new HashSet<Requirement>();
+	private final List<Requirement> children = new ArrayList<Requirement>();
 
 
 	protected Requirement() {
@@ -404,7 +406,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	}
 
 	@Override
-	public Set<Requirement> getContent() {
+	public List<Requirement> getContent() {
 		return children;
 	}
 	

@@ -441,7 +441,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		ancestors | expected 
 		[10L]     | [10L]
 		[50L]     | [30L]
-		[40L]     | [20L, 30L]
+		[40L]     | [30L,20L]
 		[20L, 40L]     | [20L, 30L]
 	}
 }

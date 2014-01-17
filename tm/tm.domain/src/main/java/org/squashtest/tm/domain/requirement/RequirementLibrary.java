@@ -20,8 +20,10 @@
  */
 package org.squashtest.tm.domain.requirement;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -35,6 +37,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderColumn;
 
 import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.project.GenericLibrary;
@@ -53,8 +56,9 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 	private Long id;
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@OrderColumn(name = "CONTENT_ORDER")
 	@JoinTable(name = "REQUIREMENT_LIBRARY_CONTENT", joinColumns = @JoinColumn(name = "LIBRARY_ID"), inverseJoinColumns = @JoinColumn(name = "CONTENT_ID"))
-	private final Set<RequirementLibraryNode> rootContent = new HashSet<RequirementLibraryNode>();
+	private final List<RequirementLibraryNode> rootContent = new ArrayList<RequirementLibraryNode>();
 
 	@OneToOne(mappedBy = "requirementLibrary")
 	private GenericProject project;	
@@ -74,12 +78,12 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 	}
 
 	@Override
-	public Set<RequirementLibraryNode> getContent() {
+	public List<RequirementLibraryNode> getContent() {
 		return rootContent;
 
 	}
 	
-	public Set<RequirementLibraryNode> getRootContent() {
+	public List<RequirementLibraryNode> getRootContent() {
 		return rootContent;
 
 	}

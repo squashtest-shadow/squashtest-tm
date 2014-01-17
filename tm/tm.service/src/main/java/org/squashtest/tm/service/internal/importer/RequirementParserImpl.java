@@ -265,7 +265,7 @@ public class RequirementParserImpl implements RequirementParser {
 	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
-	private RequirementFolder getFolderByName(String name, Set<RequirementLibraryNode> content) {
+	private RequirementFolder getFolderByName(String name, List<RequirementLibraryNode> content) {
 		for (RequirementLibraryNode requirementFolder : content) {
 			if (requirementFolder.getName().equals(name)) {
 				return (RequirementFolder) requirementFolder;

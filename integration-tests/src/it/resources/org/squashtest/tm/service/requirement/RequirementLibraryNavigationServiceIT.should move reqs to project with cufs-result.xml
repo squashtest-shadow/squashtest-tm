@@ -21,7 +21,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.8.0.result.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.9.0.result.dtd">
 <dataset>
 
 <CUSTOM_FIELD_VALUE BOUND_ENTITY_ID="102" BOUND_ENTITY_TYPE="REQUIREMENT_VERSION" CFB_ID="2" VALUE="current-cuf"/>

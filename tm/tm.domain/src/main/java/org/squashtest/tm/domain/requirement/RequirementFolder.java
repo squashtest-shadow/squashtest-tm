@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.requirement;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -32,6 +33,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
@@ -56,8 +58,9 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 	private final FolderSupport<RequirementLibraryNode, RequirementFolder> folderSupport = new FolderSupport<RequirementLibraryNode, RequirementFolder>(this);
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
+	@OrderColumn(name = "CONTENT_ORDER")
 	@JoinTable(name = "RLN_RELATIONSHIP", joinColumns = @JoinColumn(name = "ANCESTOR_ID"), inverseJoinColumns = @JoinColumn(name = "DESCENDANT_ID"))
-	private final Set<RequirementLibraryNode> content = new HashSet<RequirementLibraryNode>();
+	private final List<RequirementLibraryNode> content = new ArrayList<RequirementLibraryNode>();
 
 	@OneToOne(cascade = { CascadeType.ALL })
 	@NotNull
@@ -76,7 +79,7 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 		resource = new SimpleResource();
 	}
 	@Override
-	public Set<RequirementLibraryNode> getContent() {
+	public List<RequirementLibraryNode> getContent() {
 		return content;
 	}
 

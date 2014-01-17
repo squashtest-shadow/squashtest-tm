@@ -47,7 +47,7 @@ public interface NodeContainer<NODE extends TreeNode> extends Identified{
 
 	boolean isContentNameAvailable(String name);
 	
-	Set<NODE> getContent();
+	List<NODE> getContent();
 	
 	/**
 	 * Will return the ordered (if order there is) content nodes.

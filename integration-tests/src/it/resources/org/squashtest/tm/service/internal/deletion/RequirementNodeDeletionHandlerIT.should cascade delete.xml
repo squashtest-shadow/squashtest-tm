@@ -25,7 +25,7 @@
 	depends on NodeDeletionDao.general.dbsetup.xml
 
  -->
-<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.8.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.9.0.dtd">
 <dataset>
 
 	<!--  ============================ attachment lists (unattached to anything) ===================== -->
@@ -164,16 +164,16 @@
 	
 	<!-- ============================ 	req_relationship ================================================ -->
 	
-	<REQUIREMENT_LIBRARY_CONTENT LIBRARY_ID="1" CONTENT_ID="1" />
-	<REQUIREMENT_LIBRARY_CONTENT LIBRARY_ID="1" CONTENT_ID="3" />
+	<REQUIREMENT_LIBRARY_CONTENT LIBRARY_ID="1" CONTENT_ID="1" CONTENT_ORDER="0"/>
+	<REQUIREMENT_LIBRARY_CONTENT LIBRARY_ID="1" CONTENT_ID="3" CONTENT_ORDER="1"/>
 	
 	
-	<RLN_RELATIONSHIP ANCESTOR_ID="1" DESCENDANT_ID="11" /> <!--  TCFOLDER 1 CONTAINS R11 -->
-	<RLN_RELATIONSHIP ANCESTOR_ID="1" DESCENDANT_ID="12" /> <!--  TCFOLDER 1 CONTAINS R12 -->
+	<RLN_RELATIONSHIP ANCESTOR_ID="1" DESCENDANT_ID="11" CONTENT_ORDER="0"/> <!--  TCFOLDER 1 CONTAINS R11 -->
+	<RLN_RELATIONSHIP ANCESTOR_ID="1" DESCENDANT_ID="12" CONTENT_ORDER="1"/> <!--  TCFOLDER 1 CONTAINS R12 -->
 	
-	<RLN_RELATIONSHIP ANCESTOR_ID="3" DESCENDANT_ID="31" /> <!--  REQ 3 CONTAINS REQ31 -->
-	<RLN_RELATIONSHIP ANCESTOR_ID="3" DESCENDANT_ID="32" /> <!--  REQ 3 CONTAINS REQ32 -->
-	<RLN_RELATIONSHIP ANCESTOR_ID="31" DESCENDANT_ID="311" /> <!--  REQ 31 CONTAINS REQ311 -->
+	<RLN_RELATIONSHIP ANCESTOR_ID="3" DESCENDANT_ID="31" CONTENT_ORDER="0"/> <!--  REQ 3 CONTAINS REQ31 -->
+	<RLN_RELATIONSHIP ANCESTOR_ID="3" DESCENDANT_ID="32" CONTENT_ORDER="1"/> <!--  REQ 3 CONTAINS REQ32 -->
+	<RLN_RELATIONSHIP ANCESTOR_ID="31" DESCENDANT_ID="311" CONTENT_ORDER="0"/> <!--  REQ 31 CONTAINS REQ311 -->
 	
 	
 	<!-- ============================ 	req_audit_events ================================================ -->

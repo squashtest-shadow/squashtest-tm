@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2014 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+	
+	<changeSet id="tm-1.9.0" author="flaurens">
+		<comment>Update TM database version number</comment>
+		<update tableName="CORE_CONFIG">
+			<column name="VALUE" value="1.9.0" />
+			<where>STR_KEY = 'squashtest.tm.database.version'</where>
+		</update>
+	</changeSet>
+	
+	<changeSet id="tm-1.9.0.feature-3138-1" author="flaurens">
+		<comment>Adding columns to order descendants in node relationship tables</comment>
+		<addColumn tableName="CLN_RELATIONSHIP">
+			<column name="CONTENT_ORDER" type="INT">
+				<constraints nullable="true" />
+			</column>
+		</addColumn>
+		<addColumn tableName="RLN_RELATIONSHIP">
+			<column name="CONTENT_ORDER" type="INT">
+				<constraints nullable="true" />
+			</column>
+		</addColumn>
+		<addColumn tableName="TCLN_RELATIONSHIP">
+			<column name="CONTENT_ORDER" type="INT">
+				<constraints nullable="true" />
+			</column>
+		</addColumn>
+		<addColumn tableName="REQUIREMENT_LIBRARY_CONTENT">
+			<column name="CONTENT_ORDER" type="INT">
+				<constraints nullable="true" />
+			</column>
+		</addColumn>
+		<addColumn tableName="TEST_CASE_LIBRARY_CONTENT">
+			<column name="CONTENT_ORDER" type="INT">
+				<constraints nullable="true" />
+			</column>
+		</addColumn>
+		<addColumn tableName="CAMPAIGN_LIBRARY_CONTENT">
+			<column name="CONTENT_ORDER" type="INT">
+				<constraints nullable="true" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<!--
+	<changeSet id="tm-1.9.0.feature-3138-2" author="flaurens">
+		<comment>Creating default order which is identical with the alphabetical order</comment>
+        <sql>
+        create table TEMP_TCLN_CONTENT_ORDER(CONTENT_ORDER BIGINT NOT NULL, ANCESTOR_ID BIGINT NOT NULL, DESCENDANT_ID BIGINT NOT NULL, DUMMY BIGINT NOT NULL);
+		
+		insert into TEMP_TCLN_CONTENT_ORDER (CONTENT_ORDER, ANCESTOR_ID, DESCENDANT_ID, DUMMY)
+		select if(@prevtcs=ANCESTOR_ID, 
+				    @rownum:=@rownum+1, 
+				    @rownum:=0) as RANK,
+		          tclnr.ANCESTOR_ID, tclnr.DESCENDANT_ID, (@prevtcs:=ANCESTOR_ID)
+		from tcln_relationship tclnr
+		join test_case_library_node tcln on tclnr.DESCENDANT_ID = tcln.TCLN_ID, 
+		(SELECT @rownum:=0) r, (SELECT @prevtcs:=0) s
+		order by tclnr.ANCESTOR_ID, tcln.NAME;    
+		
+		update TCLN_RELATIONSHIP
+		set CONTENT_ORDER = (select TEMP_TCLN_CONTENT_ORDER.CONTENT_ORDER
+		                     from TEMP_TCLN_CONTENT_ORDER
+		                     where TEMP_TCLN_CONTENT_ORDER.ANCESTOR_ID = TCLN_RELATIONSHIP.ANCESTOR_ID
+		                     and TEMP_TCLN_CONTENT_ORDER.DESCENDANT_ID = TCLN_RELATIONSHIP.DESCENDANT_ID);
+		
+		drop table TEMP_TCLN_CONTENT_ORDER;    
+        </sql>
+-->
+
+</databaseChangeLog>

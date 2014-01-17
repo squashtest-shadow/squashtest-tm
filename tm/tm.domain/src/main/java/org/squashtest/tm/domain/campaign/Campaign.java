@@ -403,10 +403,10 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	}
 
 	@Override
-	public Set<Iteration> getContent() {
-		Set<Iteration> iterationsSet = new HashSet<Iteration>();
-		iterationsSet.addAll(getIterations());
-		return iterationsSet;
+	public List<Iteration> getContent() {
+		List<Iteration> iterationList = new ArrayList<Iteration>();
+		iterationList.addAll(getIterations());
+		return iterationList;
 	}
 	
 	@Override

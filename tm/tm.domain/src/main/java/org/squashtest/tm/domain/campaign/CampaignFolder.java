@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.campaign;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -30,6 +31,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Transient;
 
@@ -52,12 +54,14 @@ public class CampaignFolder extends CampaignLibraryNode implements Folder<Campai
 	private final FolderSupport<CampaignLibraryNode, CampaignFolder> folderSupport = new FolderSupport<CampaignLibraryNode, CampaignFolder>(this);
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
+	@OrderColumn(name = "CONTENT_ORDER")
 	@JoinTable(name = "CLN_RELATIONSHIP", joinColumns = @JoinColumn(name = "ANCESTOR_ID"), inverseJoinColumns = @JoinColumn(name = "DESCENDANT_ID"))
-	private final Set<CampaignLibraryNode> content = new HashSet<CampaignLibraryNode>();
+	private final List<CampaignLibraryNode> content = new ArrayList<CampaignLibraryNode>();
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignLibrary.class);
 
 	@Override
-	public Set<CampaignLibraryNode> getContent() {
+	public List<CampaignLibraryNode> getContent() {
 		return content;
 	}
 

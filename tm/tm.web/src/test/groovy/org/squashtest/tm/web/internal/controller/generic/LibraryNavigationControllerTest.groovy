@@ -141,7 +141,7 @@ class DummyFolder  extends DummyNode  implements Folder<DummyNode>{
 	public void addContent(DummyNode contentToAdd) throws DuplicateNameException, NullArgumentException {}
 	@Override
 	public boolean isContentNameAvailable(String name) {}
-	Set getContent() {}
+	List getContent() {}
 	Collection getOrderedContent() {}
 	@Override
 	void addContent(LibraryNode node) {}
@@ -185,7 +185,7 @@ class DummyLibrary implements Library<DummyNode> {
 	Set getRootContent() {}
 	void accept(NodeContainerVisitor visitor) {}
 	@Override
-	Set getContent(){
+	List getContent(){
 		return null;
 	}
 	@Override

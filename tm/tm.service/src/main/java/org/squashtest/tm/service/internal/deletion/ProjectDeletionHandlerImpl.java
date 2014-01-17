@@ -176,7 +176,7 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 	}
 
 	private void deleteLibraryContent(Library<? extends LibraryNode> library, NodeDeletionHandler<?, ?> deletionHandler) {
-		Set<? extends LibraryNode> folders = library.getContent();
+		List<? extends LibraryNode> folders = library.getContent();
 		if (!folders.isEmpty()) {
 			List<Long> nodesIds = retrieveNodesids(folders);
 			deletionHandler.deleteNodes(nodesIds);
@@ -184,7 +184,7 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 
 	}
 
-	private List<Long> retrieveNodesids(Set<? extends LibraryNode> folders) {
+	private List<Long> retrieveNodesids(List<? extends LibraryNode> folders) {
 		List<Long> result = new ArrayList<Long>();
 		for (LibraryNode libraryNode : folders) {
 			result.add(libraryNode.getId());

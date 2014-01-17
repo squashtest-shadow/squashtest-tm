@@ -131,7 +131,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinTable(name = "ITERATION_TEST_SUITE", joinColumns = @JoinColumn(name = ITERATION_ID), inverseJoinColumns = @JoinColumn(name = "TEST_SUITE_ID"))
-	private Set<TestSuite> testSuites = new HashSet<TestSuite>();
+	private List<TestSuite> testSuites = new ArrayList<TestSuite>();
 
 	/**
 	 * flattened list of the executions
@@ -432,7 +432,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	 * ********************************* TEST SUITE *********************************************
 	 */
 
-	public Set<TestSuite> getTestSuites() {
+	public List<TestSuite> getTestSuites() {
 		return testSuites;
 	}
 
@@ -713,7 +713,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	 * @see org.squashtest.tm.domain.library.NodeContainer#getContent()
 	 */
 	@Override
-	public Set<TestSuite> getContent() {
+	public List<TestSuite> getContent() {
 		return getTestSuites();
 	}
 

@@ -21,7 +21,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.8.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.9.0.dtd">
 <dataset>
 
 	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="555"/>
@@ -42,7 +42,7 @@
 		CREATED_ON="2010-02-01" CREATED_BY="DBU" ATTACHMENT_LIST_ID="10" PROJECT_ID="1"/>
 	<CAMPAIGN CLN_ID="10" ACTUAL_START_AUTO="TRUE"
 		ACTUAL_END_AUTO="TRUE"  />
-	<CLN_RELATIONSHIP ANCESTOR_ID="1" DESCENDANT_ID="10" />
+	<CLN_RELATIONSHIP ANCESTOR_ID="1" DESCENDANT_ID="10" CONTENT_ORDER="0"/>
 	
 	<!-- campaign 11 -->
 	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="11" />
@@ -50,7 +50,7 @@
 		CREATED_ON="2010-02-02" CREATED_BY="gte" ATTACHMENT_LIST_ID="11" PROJECT_ID="1" />
 	<CAMPAIGN CLN_ID="11" ACTUAL_START_AUTO="FALSE"
 		ACTUAL_END_AUTO="TRUE" />
-	<CLN_RELATIONSHIP ANCESTOR_ID="1" DESCENDANT_ID="11" />
+	<CLN_RELATIONSHIP ANCESTOR_ID="1" DESCENDANT_ID="11" CONTENT_ORDER="1"/>
 	
 	
 	<!-- destination folder -->

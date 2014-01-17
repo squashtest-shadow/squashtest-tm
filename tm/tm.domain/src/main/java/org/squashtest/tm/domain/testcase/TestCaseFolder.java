@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.testcase;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -30,6 +31,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Transient;
 
@@ -54,8 +56,9 @@ public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCa
 	private final FolderSupport<TestCaseLibraryNode, TestCaseFolder> folderSupport = new FolderSupport<TestCaseLibraryNode, TestCaseFolder>(this);
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
+	@OrderColumn(name = "CONTENT_ORDER")
 	@JoinTable(name = "TCLN_RELATIONSHIP", joinColumns = @JoinColumn(name = "ANCESTOR_ID"), inverseJoinColumns = @JoinColumn(name = "DESCENDANT_ID"))
-	private final Set<TestCaseLibraryNode> content = new HashSet<TestCaseLibraryNode>();
+	private final List<TestCaseLibraryNode> content = new ArrayList<TestCaseLibraryNode>();
 
 	@Override
 	public void addContent(TestCaseLibraryNode node) {
@@ -63,7 +66,7 @@ public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCa
 	}
 
 	@Override
-	public Set<TestCaseLibraryNode> getContent() {
+	public List<TestCaseLibraryNode> getContent() {
 		return content;
 	}
 
