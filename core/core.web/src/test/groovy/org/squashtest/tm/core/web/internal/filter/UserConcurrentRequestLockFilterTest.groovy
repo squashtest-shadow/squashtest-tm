@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.filter
+package org.squashtest.tm.core.web.internal.filter
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.squashtest.tm.web.internal.filter.UserConcurrentRequestLockFilter;
+import org.squashtest.tm.core.web.filter.UserConcurrentRequestLockFilter;
 
 import spock.lang.Specification;
 

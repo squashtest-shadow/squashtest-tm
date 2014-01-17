@@ -18,109 +18,104 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.utils;
+package org.squashtest.tm.core.web.internal.utils;
 
 
 
-import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
+import org.squashtest.tm.core.web.util.HTMLCleanupUtils;
 
 import spock.lang.Specification;
 
 
 public class HTMLCleanupUtilsTest extends Specification {
-	
+
 	def "should remove all html tags"(){
-		
+
 		given :
-			def dirtyString = "<p>first paragraph</p><p><ul><li>secondParagraph</li></ul></p>";
-			def stripped = "first paragraph\r\n\r\n    * secondParagraph"
+		def dirtyString = "<p>first paragraph</p><p><ul><li>secondParagraph</li></ul></p>";
+		def stripped = "first paragraph\r\n\r\n    * secondParagraph"
 		when :
-			def result = HTMLCleanupUtils.htmlToText(dirtyString);
-		
-		
+		def result = HTMLCleanupUtils.htmlToText(dirtyString);
+
+
 		then :
-			result == stripped
-		
+		result == stripped
 	}
-	
+
 	def "should gracfully handle null arguments when removing html tags"(){
 		given :
-			String dirtyString= null;
-		
-		when :
-			def result = HTMLCleanupUtils.htmlToText(dirtyString);
-		
-		then :
-			result == "";
-	}
-		
-	def "should escape html"(){	
-	
-		given :
-			def dirtyString = "<p style=\"color:green\"><div><ul><li>line1</li><li>line2</li>toto</div></p>";
-			def escaped = "&lt;p style=&quot;color:green&quot;&gt;&lt;div&gt;&lt;ul&gt;&lt;li&gt;line1&lt;/li&gt;&lt;li&gt;line2&lt;/li&gt;toto&lt;/div&gt;&lt;/p&gt;"
+		String dirtyString= null;
 
-		
 		when :
-			def result = HTMLCleanupUtils.forceHtmlEscape(dirtyString);
-		
+		def result = HTMLCleanupUtils.htmlToText(dirtyString);
+
 		then :
-			result==escaped
-		
+		result == "";
 	}
-	
+
+	def "should escape html"(){
+
+		given :
+		def dirtyString = "<p style=\"color:green\"><div><ul><li>line1</li><li>line2</li>toto</div></p>";
+		def escaped = "&lt;p style=&quot;color:green&quot;&gt;&lt;div&gt;&lt;ul&gt;&lt;li&gt;line1&lt;/li&gt;&lt;li&gt;line2&lt;/li&gt;toto&lt;/div&gt;&lt;/p&gt;"
+
+
+		when :
+		def result = HTMLCleanupUtils.forceHtmlEscape(dirtyString);
+
+		then :
+		result==escaped
+	}
+
 	def "should not escape html twice" (){
 		given :
 		def dirtyString = "&lt;p style=&quot;color:green&quot;&gt;&lt;div&gt;&lt;ul&gt;&lt;li&gt;line1&lt;/li&gt;&lt;li&gt;line2&lt;/li&gt;toto&lt;/div&gt;&lt;/p&gt;"
 
 		def escaped = "&lt;p style=&quot;color:green&quot;&gt;&lt;div&gt;&lt;ul&gt;&lt;li&gt;line1&lt;/li&gt;&lt;li&gt;line2&lt;/li&gt;toto&lt;/div&gt;&lt;/p&gt;"
 
-		
+
 		when :
-			def result = HTMLCleanupUtils.forceHtmlEscape(dirtyString);
-		
+		def result = HTMLCleanupUtils.forceHtmlEscape(dirtyString);
+
 		then :
-			result==escaped
-		
+		result==escaped
 	}
-	
+
 	def "should gracfully handle null arguments when escaping html"(){
 		given :
-			String dirtyString= null;
-		
+		String dirtyString= null;
+
 		when :
-			def result = HTMLCleanupUtils.forceHtmlEscape(dirtyString);
-		
+		def result = HTMLCleanupUtils.forceHtmlEscape(dirtyString);
+
 		then :
-			result == "";
+		result == "";
 	}
-	
+
 	def "should strip javascript tags"(){
-		
-		given :
-			def dirtyString = "<p style=\"color:green\"><div><ul><li>line1</li><li>line2</li>toto</div><script "+
-							  "type=\"text/javascript\">alert('naive xss');</script></p>";
-			def stripped = "<p style=\"color:green\"><div><ul><li>line1</li><li>line2</li>toto</div></p>"
 
-		
+		given :
+		def dirtyString = "<p style=\"color:green\"><div><ul><li>line1</li><li>line2</li>toto</div><script "+
+				"type=\"text/javascript\">alert('naive xss');</script></p>";
+		def stripped = "<p style=\"color:green\"><div><ul><li>line1</li><li>line2</li>toto</div></p>"
+
+
 		when :
-			def result = HTMLCleanupUtils.stripJavascript(dirtyString);
-		
+		def result = HTMLCleanupUtils.stripJavascript(dirtyString);
+
 		then :
-			result==stripped
-			
+		result==stripped
 	}
 
-	
+
 	def "should gracfully handle null arguments when stripping javascript"(){
 		given :
-			String dirtyString= null;
-		
+		String dirtyString= null;
+
 		when :
-			def result = HTMLCleanupUtils.stripJavascript(dirtyString);
-		
+		def result = HTMLCleanupUtils.stripJavascript(dirtyString);
+
 		then :
-			result == "";
+		result == "";
 	}
-	
 }

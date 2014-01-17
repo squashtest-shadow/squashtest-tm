@@ -82,9 +82,14 @@
       <artifactId>core.wizard.api</artifactId>
       <version>${project.version}</version>
     </dependency>
-     <dependency>
+    <dependency>
       <groupId>org.squashtest.tm</groupId>
       <artifactId>core.application.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.web</artifactId>
       <version>${project.version}</version>
     </dependency>
 

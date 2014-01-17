@@ -30,7 +30,7 @@
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
   <context:component-scan base-package="org.squashtest.tm" use-default-filters="false">
-    <context:include-filter type="annotation" expression="org.squashtest.tm.web.internal.annotation.ApplicationComponent" />
+    <context:include-filter type="annotation" expression="org.squashtest.tm.core.web.annotation.ApplicationComponent" />
   </context:component-scan>
 
 		<!-- we need to configure this bean here because  component-scan occurs when *-servlet.xml is read, which is later -->
@@ -99,9 +99,4 @@
     </property>
   </bean>
 
-  <beans profile="eclipse">
-    <context:component-scan base-package="target/classes/org.squashtest.tm" use-default-filters="false">
-      <context:include-filter type="annotation" expression="org.squashtest.tm.web.internal.annotation.ApplicationComponent" />
-    </context:component-scan>    
-  </beans>
 </beans>

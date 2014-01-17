@@ -74,6 +74,8 @@ Import-Package: javax.servlet.jsp.jstl.core;version=${jstl.version},\
 	org.springframework.web.filter;version="${spring.version.range}",\
 	org.springframework.web.multipart.commons;version="${spring.version.range}",\
 	org.squashtest.csp.core.bugtracker.web,\
+	org.squashtest.tm.core.web.filter,\
+	org.squashtest.tm.core.web.security.authentication,\
 	org.squashtest.tm.security.acls,\
 	org.tuckey.web.filters.urlrewrite,\
 	org.hibernate.engine.jdbc,\

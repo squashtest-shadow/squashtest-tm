@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.util;
+package org.squashtest.tm.core.web.util;
 
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.OutputDocument;
