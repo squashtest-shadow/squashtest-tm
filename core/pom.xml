@@ -9,7 +9,6 @@
 
   <groupId>org.squashtest.tm</groupId>
   <artifactId>squashtest-csp-core</artifactId>
-  <version>1.9.0.M1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>squashtest-csp-core</name>
   <description>Core components of Squash TM (webapp core, api...)</description>

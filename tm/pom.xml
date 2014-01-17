@@ -8,7 +8,6 @@
   </parent>
   <groupId>org.squashtest.tm</groupId>
   <artifactId>squashtest-csp-tm</artifactId>
-  <version>1.9.0.M1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>squashtest-csp-tm</name>
   <description>Umbrella project for the CSP Test Management module</description>
