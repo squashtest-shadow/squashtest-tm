@@ -225,7 +225,7 @@
  * buttons = [
  *  { tooltip : "tooltip",
  * 
- * class : "classa",
+ * cssclass : "classa",
  * 
  * condition : true, false, function(row, data){return data["isThat"];};
  * 
@@ -849,6 +849,7 @@ define(["jquery",
 				// the following trick will open a dialog instance regardless of the actual 
 				// implementation used (the original jquery dialog or one of ours).
 				var _delegate = $(conf.delegate);
+				
 				var _rowid = self.getODataId(jqRow.get(0));
 				_delegate.data('entity-id', _rowid);
 				var _data = _delegate.data();

@@ -85,9 +85,10 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	 *            the id of the step after which we'll insert the copy of a step, may be null.
 	 * @param copiedTestStepId
 	 *            the id of the testStep to copy.
+	 * @return true if the copied step is instance of CallStep
 	 * 
 	 */
-	void pasteCopiedTestStep(long testCaseId, long idToCopyAfter, long copiedTestStepId);
+	boolean pasteCopiedTestStep(long testCaseId, long idToCopyAfter, long copiedTestStepId);
 
 	/**
 	 * will insert a test step into a test case script at the last position
@@ -96,9 +97,9 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	 *            the id of the test case.
 	 * @param copiedTestStepId
 	 *            the id of the testStep to copy.
-	 * 
+	 * @return true if copied step is instance of CallStep
 	 */
-	void pasteCopiedTestStepToLastIndex(long testCaseId, long copiedTestStepId);
+	boolean pasteCopiedTestStepToLastIndex(long testCaseId, long copiedTestStepId);
 
 	/**
 	 * will change the test case importance too if auto is true.

@@ -253,21 +253,28 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	public void pasteCopiedTestStep(long testCaseId, long idToCopyAfter, long copiedTestStepId) {
+	public boolean pasteCopiedTestStep(long testCaseId, long idToCopyAfter, long copiedTestStepId) {
 		Integer position = testStepDao.findPositionOfStep(idToCopyAfter) + 1;
-		pasteTestStepAtPosition(testCaseId, copiedTestStepId, position);
+		return pasteTestStepAtPosition(testCaseId, copiedTestStepId, position);
 	}
 
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	public void pasteCopiedTestStepToLastIndex(long testCaseId, long copiedTestStepId) {
-		pasteTestStepAtPosition(testCaseId, copiedTestStepId, null);
+	public boolean pasteCopiedTestStepToLastIndex(long testCaseId, long copiedTestStepId) {
+		return pasteTestStepAtPosition(testCaseId, copiedTestStepId, null);
 
 	}
 
 	// FIXME il faut vérifier un éventuel cycle ! // pour l'instant vérifié au
 	// niveau du controller
-	private void pasteTestStepAtPosition(long testCaseId, long copiedTestStepId, Integer position) {
+	/**
+	 * 
+	 * @param testCaseId
+	 * @param copiedTestStepId
+	 * @param position
+	 * @return true if copied step is instance of CallTestStep
+	 */
+	private boolean pasteTestStepAtPosition(long testCaseId, long copiedTestStepId, Integer position) {
 		TestStep original = testStepDao.findById(copiedTestStepId);
 		TestStep copyStep = original.createCopy();
 		testStepDao.persist(copyStep);
@@ -288,7 +295,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		}
 
 		copyStep.accept(new TestStepCustomFieldCopier(original));
-
+		return copyStep instanceof CallTestStep;
 	}
 
 	private final class TestStepCustomFieldCopier implements TestStepVisitor {

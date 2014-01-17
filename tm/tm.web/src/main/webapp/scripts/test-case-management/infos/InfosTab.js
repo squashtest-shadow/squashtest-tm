@@ -42,7 +42,10 @@ define([ "jquery", "backbone", "underscore", "./GeneralInfosPanel", "./Prerequis
 			this.verifiedRequirementsPanel = new TestCaseVerifiedRequirementsPanel();
 			this.listenTo(this.verifiedRequirementsPanel.table, "verifiedrequirementversions.refresh", this.generalInfosPanel.refreshImportanceIfAuto);
 			this.listenTo(this.verifiedRequirementsPanel.table, "verifiedrequirementversions.tableDrawn", this.sendUpdateReqToTree);
-			eventBus.onContextual("testStepsTable.removedSteps", this.verifiedRequirementsPanel.table.refresh);
+			//eventBus.onContextual("testStepsTable.removedSteps", this.verifiedRequirementsPanel.table.refresh);
+			//todo remove below and add event when delete row in test step if called step
+			eventBus.onContextual("testStepsTable.pastedCallSteps", this.verifiedRequirementsPanel.table.refresh);
+			eventBus.onContextual("testStepsTable.deletedCallSteps", this.verifiedRequirementsPanel.table.refresh);
 		},
 		
 		events : {},

@@ -64,8 +64,8 @@
  * 
  */
 
-define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "squash.translator", 'workspace.event-bus' ], function($, TableCollapser,
-		cufValuesManager, translator, eventBus) {
+define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "squash.translator", 'workspace.event-bus', "./popups", 'jquery.squash.formdialog' ], function($, TableCollapser,
+		cufValuesManager, translator, eventBus, popups) {
  
 	// ************************* configuration functions
 	// ************************************
@@ -76,11 +76,10 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		return {
 			dropUrl : tcUrl + "/steps/move",
 			attachments : ctxUrl + "/attach-list/{attach-list-id}/attachments/manager?workspace=test-case",
-			singleDelete : tcUrl + "/steps/{step-id}",
 			steps : ctxUrl + "test-steps/",
-			multiDelete : tcUrl + "/steps",
 			callTC : ctxUrl + "/test-cases/{called-tc-id}/info",
 			pasteStep : tcUrl + "/steps",
+			deleteStep : tcUrl +"/steps",
 			addStep : tcUrl + "/steps/add",
 			editActionUrl : tcUrl + "/steps/{step-id}/action",
 			editResultUrl : tcUrl + "/steps/{step-id}/result",
@@ -375,10 +374,8 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 				enableDnD : true,
 
 				deleteButtons : {
-					url : urls.singleDelete,
-					popupmessage : language.deleteSingleConfirm,
-					tooltip : language.deleteTitle,
-					success : removeStepSuccess
+					delegate : "#delete-test-step-dialog",
+					tooltip : language.deleteTitle
 				},
 
 				richEditables : {
@@ -590,7 +587,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 					data : data,
 					url : pasteUrl,
 					dataType : "json",
-					success : refresh
+					success : pasteSuccess
 				});
 
 				$("#paste-step").removeClass('ui-state-focus');
@@ -599,34 +596,25 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 			}
 		}
 	}
+	
+	function pasteSuccess (pastedCallSteps){
+		if(pastedCallSteps){
+			eventBus.trigger("testStepsTable.pastedCallSteps");
+		}
+		refresh();
+	}
 
 	function initDeleteAllStepsButtons(language, urls) {
 
 	
 		$("#delete-all-steps-button").bind(
-				'click',
-				function() {
-
-					var table = $("#test-steps-table-"+urls.testCaseId).squashTable();
-					var ids = table.getSelectedIds();
-
-					if (!ids.length) {
-						$.squash.openMessage(language.errorTitle, language.noStepSelected);
-					} else {
-						var promise = oneShotConfirm(language.deleteTitle, language.deleteMultipleConfirm,
-								language.oklabel, language.cancellabel);
-
-						promise.done(function() {
-							$.ajax({
-								url : urls.multiDelete + "/" + ids.join(','),
-								type : 'DELETE',
-								dataType : "json"
-							}).success(refresh);
-						});
-					}
+				'click',function(){
+					$("#delete-test-step-dialog").formDialog('open');
 				});
 	}
-
+	
+	
+	
 	function initCallStepButton(urls) {
 
 	
@@ -768,7 +756,17 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 		// the js table
 		initTable(settings);
-
+		
+		//the popups
+		var conf = {};
+		conf.permissions = {};
+		conf.permissions.writable = settings.permissions.isWritable;
+		conf.urls = {};
+		conf.urls.testCaseStepsUrl = urls.deleteStep;
+		conf.testCaseId = settings.basic.testCaseId;
+		conf.stepsTablePanel = this;
+		popups.init(conf);
+		
 		// toolbar
 		if (permissions.isWritable) {
 			initTableToolbar(language, urls);
@@ -781,7 +779,8 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 	}
 
 	return {
-		init : init
+		init : init,
+		refreshTable : refresh
 	};
 
 });
