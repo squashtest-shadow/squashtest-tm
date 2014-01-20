@@ -39,7 +39,7 @@
 		var settings = {
 			url : '${ targetUrl }',
 			ckeditor : <c:choose> <c:when test="${ not empty welcome}"> { customConfig : '${ ckeWelcomeMessageConfigUrl }', language: '<f:message key="rich-edit.language.value" />' } </c:when>
-			<c:otherwise> { customConfig : '${ ckeConfigUrl }', language: '<f:message key="rich-edit.language.value" />' } </c:otherwise> </c:choose>,				//same comment
+			<c:otherwise> { customConfig : '${ ckeConfigUrl }', language: '<f:message key="rich-edit.language.value" />' } </c:otherwise> </c:choose>,
 			placeholder: '<f:message key="rich-edit.placeholder" />',
 			submit: '<f:message key="rich-edit.button.ok.label" />',
 			cancel: '<f:message key="label.Cancel" />',	
