@@ -95,11 +95,10 @@ function EventUpdateImportance(target, newImportance) {
 EventUpdateImportance.prototype = new SquashEvent();
 
 //'update-reqCoverage', inheriting base event
-function EventUpdateReqCoverage(target, newReqCoverage) {
+function EventUpdateReqCoverage(target) {
 	this.base = SquashEvent;
 	this.base('update-reqCoverage');
 	this.evt_target = target;
-	this.evt_newreqCoverage = newReqCoverage;
 }
 
 EventUpdateReqCoverage.prototype = new SquashEvent();

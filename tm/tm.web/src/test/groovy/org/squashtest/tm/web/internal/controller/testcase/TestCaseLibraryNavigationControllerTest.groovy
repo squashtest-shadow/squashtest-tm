@@ -20,12 +20,17 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
+import java.util.Map;
+
 import javax.inject.Provider
 
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
+import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
@@ -37,18 +42,19 @@ import spock.lang.Specification
 class TestCaseLibraryNavigationControllerTest extends Specification {
 	TestCaseLibraryNavigationController controller = new TestCaseLibraryNavigationController()
 	TestCaseLibraryNavigationService testCaseLibraryNavigationService = Mock()
-
+	VerifiedRequirementsManagerService verifiedRequirementManagerService = Mock()
 	Provider driveNodeBuilder = Mock();
 	Provider testCaseLibraryTreeNodeBuilder = Mock();
-
+	PermissionEvaluationService permissionEvaluationService = Mock()
 	def setup() {
 		controller.testCaseLibraryNavigationService = testCaseLibraryNavigationService
 
 		controller.driveNodeBuilder = driveNodeBuilder
 		controller.testCaseLibraryTreeNodeBuilder = testCaseLibraryTreeNodeBuilder
+		verifiedRequirementManagerService.testCaseHasUndirectRequirementCoverage(_)>>false
 
-		driveNodeBuilder.get() >> new DriveNodeBuilder(Mock(PermissionEvaluationService), null)
-		testCaseLibraryTreeNodeBuilder.get() >> new TestCaseLibraryTreeNodeBuilder(Mock(PermissionEvaluationService))
+		driveNodeBuilder.get() >> new DriveNodeBuilder(permissionEvaluationService, null)
+		testCaseLibraryTreeNodeBuilder.get() >> new TestCaseLibraryTreeNodeBuilder(permissionEvaluationService, verifiedRequirementManagerService)
 	}
 
 	def "should return root nodes of library"() {
@@ -126,25 +132,45 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 
 	def "should create test case at root of library and return test case edition view"() {
 		given:
-		TestCaseFormModel tcfm = new TestCaseFormModel(name:"test case")				
-			
+		TestCaseFormModel tcfm = Mock()
+		TestCase tc = Mock()
+		def visitor
+		tc.accept({ visitor = it }) >> { visitor.visit(tc) }
+		tc.getStatus() >> TestCaseStatus.WORK_IN_PROGRESS
+		tc.getImportance() >> TestCaseImportance.LOW
+		tc.getRequirementVersionCoverages() >> []
+		tc.getId()>>23L
+		tc.getName()>>"test case"
+		tcfm.getTestCase() >> tc 		
+		Map<Long, String> customFieldValues = [:]
+		tcfm.getCustomFields()>>customFieldValues
 		when:
 		def res = controller.addNewTestCaseToLibraryRootContent(10, tcfm)
 
 		then:
-		1 * testCaseLibraryNavigationService.addTestCaseToLibrary(10, {it.name == "test case"}, [:])
+		1 * testCaseLibraryNavigationService.addTestCaseToLibrary(10, {it.getName() == "test case"}, [:])
 		res.attr['name'] == "test case"
 	}
 
 	def "should create test case in folder and return test case model"() {
 		given:
-		TestCaseFormModel tcfm = new TestCaseFormModel(name:"test case")
-
+		TestCaseFormModel tcfm = Mock()
+		TestCase tc = Mock()
+		def visitor
+		tc.accept({ visitor = it }) >> { visitor.visit(tc) }
+		tc.getStatus() >> TestCaseStatus.WORK_IN_PROGRESS
+		tc.getImportance() >> TestCaseImportance.LOW
+		tc.getRequirementVersionCoverages() >> []
+		tc.getId()>>23L
+		tc.getName()>>"test case"
+		tcfm.getTestCase() >> tc 
+		Map<Long, String> customFieldValues = [:]
+		tcfm.getCustomFields()>>customFieldValues
 		when:
 		def res = controller.addNewTestCaseToFolder(10, tcfm)
 
 		then:
-		1 * testCaseLibraryNavigationService.addTestCaseToFolder(10, {it.name == "test case"}, [:])
+		1 * testCaseLibraryNavigationService.addTestCaseToFolder(10, {it.getName() == "test case"}, [:])
 		res.attr['name'] == "test case"
 	}
 }

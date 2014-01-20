@@ -41,22 +41,17 @@ define([ "jquery", "backbone", "underscore", "./GeneralInfosPanel", "./Prerequis
 			
 			this.verifiedRequirementsPanel = new TestCaseVerifiedRequirementsPanel();
 			this.listenTo(this.verifiedRequirementsPanel.table, "verifiedrequirementversions.refresh", this.generalInfosPanel.refreshImportanceIfAuto);
-			this.listenTo(this.verifiedRequirementsPanel.table, "verifiedrequirementversions.tableDrawn", this.sendUpdateReqToTree);
+			this.listenTo(this.verifiedRequirementsPanel.table, "verifiedrequirementversions.refresh", this.sendUpdateReqToTree);
 			//eventBus.onContextual("testStepsTable.removedSteps", this.verifiedRequirementsPanel.table.refresh);
 			//todo remove below and add event when delete row in test step if called step
-			eventBus.onContextual("testStepsTable.pastedCallSteps", this.verifiedRequirementsPanel.table.refresh);
-			eventBus.onContextual("testStepsTable.deletedCallSteps", this.verifiedRequirementsPanel.table.refresh);
+			eventBus.onContextual("testStepsTable.pastedCallSteps", this.verifiedRequirementsPanel.table.refreshRestore);
+			eventBus.onContextual("testStepsTable.deletedCallSteps", this.verifiedRequirementsPanel.table.refreshRestore);
 		},
 		
 		events : {},
 		
 		_sendUpdateReqToTree : function(){
-			var rows = this.verifiedRequirementsPanel.table.getRowNumber();
-			var reqCoverStatus = "ko";
-			if(rows){
-				reqCoverStatus = "ok";
-			}
-			var evt = new EventUpdateReqCoverage(this.identity, reqCoverStatus);
+			var evt = new EventUpdateReqCoverage(this.identity);
 			squashtm.workspace.eventBus.fire(null, evt);
 		}
 	});

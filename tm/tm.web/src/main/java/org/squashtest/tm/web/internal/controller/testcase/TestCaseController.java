@@ -138,12 +138,21 @@ public class TestCaseController {
 	 *      updated, the importance and requirement property of the calling test cases must be updated to.
 	 * 
 	 */
-	@RequestMapping(method = RequestMethod.GET, params = { "openedNodesIds[]", "reqChanged", "updatedId" })
+	@RequestMapping(method = RequestMethod.GET, params = { "openedNodesIds[]", "oldReq", "updatedId" })
 	public @ResponseBody
-	List<TestCaseTreeIconsUpdate> getTestCaseTreeInfosToUpdate(	@RequestParam("openedNodesIds[]") List<Long> openedNodesIds, @RequestParam("reqChanged") Boolean reqChanged,
+	List<TestCaseTreeIconsUpdate> getTestCaseTreeInfosToUpdate(	@RequestParam("openedNodesIds[]") List<Long> openedNodesIds, @RequestParam("oldReq") String oldReq,
 			@RequestParam("updatedId") long updatedId) {
 
 		openedNodesIds.remove(updatedId);
+		boolean newReq = verifiedRequirementsManagerService.testCaseHasDirectCoverage(updatedId) || verifiedRequirementsManagerService.testCaseHasUndirectRequirementCoverage(updatedId);
+		boolean oldReqbool =false;
+		if(oldReq == "ok"){
+			oldReqbool = true;
+		}
+		boolean reqChanged = true;
+		if(newReq == oldReqbool){
+			reqChanged = false;
+		}
 		List<TestCaseTreeIconsUpdate> result = new ArrayList<TestCaseTreeIconsUpdate>();
 		Set<Long> callingOpenedNodesIds = finder.findCallingTCids(updatedId, openedNodesIds);
 		Map<Long, TestCaseImportance> importancesToUpdate = finder.findImpTCWithImpAuto(callingOpenedNodesIds);
@@ -162,6 +171,7 @@ public class TestCaseController {
 			//find isReqCovered
 			Map<Long, Boolean> areReqCoveredToUpdate = verifiedRequirementsManagerService.findisReqCoveredOfCallingTCWhenisReqCoveredChanged(
 					updatedId, callingOpenedNodesIds);
+			areReqCoveredToUpdate.put(updatedId, newReq);
 			//merge
 			//go through importances to update and merge with matching reqCover to update
 			for (Entry<Long, TestCaseImportance> importanceToUpdate : importancesToUpdate.entrySet()) {

@@ -33,6 +33,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
@@ -42,11 +43,12 @@ import spock.lang.Unroll;
 
 class DriveNodeBuilderTest extends Specification {
 	PermissionEvaluationService permissionEvaluationService = Mock()
+	VerifiedRequirementsManagerService verifiedRequirementsManagerService = Mock()
 	Provider nodeBuilderPovider = Mock()
 	DriveNodeBuilder builder = new DriveNodeBuilder(permissionEvaluationService, nodeBuilderPovider)
 
 	def setup() {
-		nodeBuilderPovider.get() >> new TestCaseLibraryTreeNodeBuilder(permissionEvaluationService)
+		nodeBuilderPovider.get() >> new TestCaseLibraryTreeNodeBuilder(permissionEvaluationService, verifiedRequirementsManagerService)
 	}
 	
 	def "should build root node of test case library"() {
@@ -119,6 +121,7 @@ class DriveNodeBuilderTest extends Specification {
 		tc.getStatus() >> TestCaseStatus.WORK_IN_PROGRESS
 		tc.getImportance() >> TestCaseImportance.LOW
 		tc.getRequirementVersionCoverages() >> []
+		tc.getId()>>23L
 		library.addContent tc
 		
 		and:

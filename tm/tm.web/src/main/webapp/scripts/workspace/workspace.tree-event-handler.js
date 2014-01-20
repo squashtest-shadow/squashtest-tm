@@ -194,15 +194,13 @@ define([ 'jquery', 'tree' ], function($, tree) {
 			return;
 		}
 		var oldReq = target.attr('req');
-		var newReq = event.evt_newreqCoverage;
-		target.setAttr('req', newReq);
 		if(event.evt_target.obj_restype == "test-cases"){
 			updateCallingTestCasesNodes(newReq, oldReq, tree, event.evt_target.obj_id);
 		}
 	}
 	function updateCallingTestCasesNodes(newReq, oldReq, tree, updatedId){
 		//if a test case change it's requirements then it's calling test cases might be newly bound/unbound to requirements or might have their importance changed.
-		console.log("updateCallingTestCasesNodes newReq="+newReq);
+		
 		var target = tree.findNodes({restype : "test-cases"});
 		var nodeIds = target.map(function(index, item){ return item.getAttribute("resid");});
 		$.ajax({
@@ -210,7 +208,7 @@ define([ 'jquery', 'tree' ], function($, tree) {
 			type:"get",
 			data: {
 				openedNodesIds :  nodeIds.toArray(),
-				reqChanged : oldReq == newReq,
+				oldReq : oldReq ,
 				updatedId : updatedId
 			},
 			dataType: "json"

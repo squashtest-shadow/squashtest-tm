@@ -69,7 +69,8 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 			builtNode.addAttr("status", visited.getStatus().toString().toLowerCase());
 			builtNode.addAttr("importance", visited.getImportance().toString().toLowerCase());
 			String req = "ko";
-			if (!visited.getRequirementVersionCoverages().isEmpty() || verifiedRequirementsManagerService.testCaseHasUndirectRequirementCoverage(visited.getId())) {
+			if (!visited.getRequirementVersionCoverages().isEmpty() || 
+					verifiedRequirementsManagerService.testCaseHasUndirectRequirementCoverage(visited.getId())) {
 				req = "ok";
 			}
 			builtNode.addAttr("req", req);

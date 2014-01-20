@@ -36,6 +36,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 			this.confirmRemoveRequirements = $.proxy(this._confirmRemoveRequirements, this);
 			this.addSelectEditableToVersionNumber = $.proxy(this._addSelectEditableToVersionNumber, this);
 			this.refresh = $.proxy(this._refresh, this);
+			this.refreshRestore = $.proxy(this._refreshRestore, this);
 			this.getRowNumber = $.proxy(this._getRowNumber, this);
 			this.configureTable.call(this);
 			this.configurePopups.call(this);
@@ -204,6 +205,12 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 		_refresh : function() {
 			var self = this;
 			this.table.refresh();
+			self.trigger("verifiedrequirementversions.refresh");
+		},
+		
+		_refreshRestore : function() {
+			var self = this;
+			this.table.refreshRestore();
 			self.trigger("verifiedrequirementversions.refresh");
 		},
 		

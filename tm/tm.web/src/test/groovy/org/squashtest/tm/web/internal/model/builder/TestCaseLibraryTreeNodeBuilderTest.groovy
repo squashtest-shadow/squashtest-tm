@@ -26,6 +26,7 @@ import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
+import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseFolderModificationController;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State
@@ -34,7 +35,7 @@ import spock.lang.Specification
 
 
 class TestCaseLibraryTreeNodeBuilderTest extends Specification {
-	TestCaseLibraryTreeNodeBuilder builder = new TestCaseLibraryTreeNodeBuilder(Mock(PermissionEvaluationService))
+	TestCaseLibraryTreeNodeBuilder builder = new TestCaseLibraryTreeNodeBuilder(Mock(PermissionEvaluationService), Mock(VerifiedRequirementsManagerService))
 
 	def "should build a TestCase tree node"() {
 		given:
