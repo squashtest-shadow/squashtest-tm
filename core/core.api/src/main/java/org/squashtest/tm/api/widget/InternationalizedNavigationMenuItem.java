@@ -23,33 +23,32 @@ package org.squashtest.tm.api.widget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.squashtest.tm.api.security.acls.AccessRule;
-import org.squashtest.tm.api.widget.access.AccessRuleBuilder;
 import org.squashtest.tm.core.foundation.i18n.Labelled;
 import org.squashtest.tm.core.foundation.lang.Assert;
 
 /**
- * Implementation of {@link MenuItem} which provides internationalized properties using the context's message source.
- * Has to be configured using Spring.
+ * Implementation of {@link NavigationButton} which provides internationalized properties using the context's message
+ * source. Has to be configured using Spring.
  * 
- * @author Gregory Fouquet
+ * @author mpagnon
  * 
  */
-public class InternationalizedMenuItem extends Labelled implements MenuItem, InitializingBean {
-	private static final Logger LOGGER = LoggerFactory.getLogger(InternationalizedMenuItem.class);
+public class InternationalizedNavigationMenuItem extends Labelled implements NavigationButton, InitializingBean {
+	private static final Logger LOGGER = LoggerFactory.getLogger(InternationalizedNavigationMenuItem.class);
 
 	private String tooltipKey;
 	private String url;
-	private AccessRule accessRule;
+	private String imageOnUrl;
+	private String imageOffUrl;
 
-	public InternationalizedMenuItem() {
+	public InternationalizedNavigationMenuItem() {
 		super();
 	}
 
 	/**
 	 * Tooltip is internationalized.
 	 * 
-	 * @see org.squashtest.tm.api.widget.MenuItem#getTooltip()
+	 * @see org.squashtest.tm.api.widget.NavigationButton#getTooltip()
 	 */
 	@Override
 	public String getTooltip() {
@@ -57,7 +56,7 @@ public class InternationalizedMenuItem extends Labelled implements MenuItem, Ini
 	}
 
 	/**
-	 * @see org.squashtest.tm.api.widget.MenuItem#getUrl()
+	 * @see org.squashtest.tm.api.widget.NavigationButton#getUrl()
 	 */
 	@Override
 	public String getUrl() {
@@ -83,36 +82,7 @@ public class InternationalizedMenuItem extends Labelled implements MenuItem, Ini
 	private void checkBeanState() {
 		Assert.propertyNotBlank(url, "url property should not be blank");
 		Assert.propertyNotBlank(tooltipKey, "tooltipKey property should not be null");
-		initializeAccessRule();
-		Assert.propertyNotNull(accessRule, "accessRule property should not be null");
-	}
 
-	/**
-	 * Anybody can access this widget. Override to customize.
-	 * 
-	 * @return
-	 */
-	private void initializeAccessRule() {
-		if (accessRule == null) {
-			accessRule = AccessRuleBuilder.anybody();
-			LOGGER.debug("Access rule set to anybody");
-		}
-	}
-
-	/**
-	 * @see org.squashtest.tm.api.widget.MenuItem#getAccessRule()
-	 */
-	@Override
-	public AccessRule getAccessRule() {
-		return accessRule;
-	}
-
-	/**
-	 * @param accessRule
-	 *            the accessRule to set
-	 */
-	public void setAccessRule(AccessRule accessRule) {
-		this.accessRule = accessRule;
 	}
 
 	/**
@@ -120,17 +90,41 @@ public class InternationalizedMenuItem extends Labelled implements MenuItem, Ini
 	 */
 	@Override
 	public final void afterPropertiesSet() {
-		doInitialize();
 		checkBeanState();
 
 	}
 
 	/**
-	 * Hook whichcan be overriden by subclasses do perform further initialization.
+	 * @see NavigationButton#getImageOnUrl()
 	 */
-	protected void doInitialize() {
-		// NOOP
-
+	@Override
+	public String getImageOnUrl() {
+		return imageOnUrl;
 	}
 
+	/**
+	 * 
+	 * @param onImageUrl
+	 *            : the image of the activated button to set
+	 */
+	public void setImageOnUrl(String onImageUrl) {
+		this.imageOnUrl = onImageUrl;
+	}
+
+	/**
+	 * @see NavigationButton#getImageOffUrl()
+	 */
+	@Override
+	public String getImageOffUrl() {
+		return imageOffUrl;
+	}
+
+	/**
+	 * 
+	 * @param offImageUrl
+	 *            : the image of the inactive button to set
+	 */
+	public void setImageOffUrl(String offImageUrl) {
+		this.imageOffUrl = offImageUrl;
+	}
 }

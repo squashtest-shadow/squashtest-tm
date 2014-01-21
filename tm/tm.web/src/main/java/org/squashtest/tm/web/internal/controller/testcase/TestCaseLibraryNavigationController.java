@@ -63,14 +63,14 @@ import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.builder.TestCaseLibraryTreeNodeBuilder;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
-import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
+import org.squashtest.tm.core.web.util.HTMLCleanupUtils;
 
 @Controller
 @RequestMapping("/test-case-browser")
 public class TestCaseLibraryNavigationController extends
 		LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode> {
 	public static final Logger LOGGER = LoggerFactory.getLogger(TestCaseLibraryNavigationController.class);
-	
+
 	@Inject
 	private Provider<TestCaseLibraryTreeNodeBuilder> testCaseLibraryTreeNodeBuilder;
 
@@ -80,17 +80,17 @@ public class TestCaseLibraryNavigationController extends
 
 	@Inject
 	private TestCaseLibraryNavigationService testCaseLibraryNavigationService;
-	
+
 	private static final String JASPER_EXPORT_FILE = "/WEB-INF/reports/test-case-export.jasper";
 
-	
+
 
 	@Override
 	protected LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode> getLibraryNavigationService() {
 		return testCaseLibraryNavigationService;
 	}
 
-	
+
 
 	@Override
 	protected String getShowLibraryViewName() {
@@ -101,7 +101,7 @@ public class TestCaseLibraryNavigationController extends
 	protected JsTreeNode createTreeNodeFromLibraryNode(TestCaseLibraryNode node) {
 		return testCaseLibraryTreeNodeBuilder.get().setNode(node).build();
 	}
-	
+
 
 	@InitBinder("add-test-case")
 	public void addTestCaseBinder(WebDataBinder binder){
@@ -109,16 +109,16 @@ public class TestCaseLibraryNavigationController extends
 		validator.setMessageSource(getMessageSource());
 		binder.setValidator(validator);
 	}
-	
-	
+
+
 
 	@RequestMapping(value = "/drives/{libraryId}/content/new-test-case", method = RequestMethod.POST)
 	public @ResponseBody
 	JsTreeNode addNewTestCaseToLibraryRootContent(@PathVariable long libraryId,
 			@Valid @ModelAttribute("add-test-case") TestCaseFormModel testCaseModel){
-		
+
 		TestCase testCase = testCaseModel.getTestCase();
-		
+
 		Map<Long, String> customFieldValues = testCaseModel.getCustomFields();
 
 		testCaseLibraryNavigationService.addTestCaseToLibrary(libraryId, testCase, customFieldValues);
@@ -126,20 +126,20 @@ public class TestCaseLibraryNavigationController extends
 		return createTreeNodeFromLibraryNode(testCase);
 	}
 
-	
+
 	@RequestMapping(value = "/folders/{folderId}/content/new-test-case", method = RequestMethod.POST)
 	public @ResponseBody JsTreeNode addNewTestCaseToFolder(@PathVariable long folderId,
 			@Valid @ModelAttribute("add-test-case") TestCaseFormModel testCaseModel){
-		
+
 		TestCase testCase = testCaseModel.getTestCase();
-		
+
 		Map<Long, String> customFieldValues = testCaseModel.getCustomFields();
-		
+
 		testCaseLibraryNavigationService.addTestCaseToFolder(folderId, testCase, customFieldValues);
 
 		return createTreeNodeFromLibraryNode(testCase);
 	}
-	
+
 
 
 
@@ -171,18 +171,18 @@ public class TestCaseLibraryNavigationController extends
 
 		return listBuilder.setModel(linkableLibraries).build();
 	}
-	
+
 	@RequestMapping(value = "/nodes/{nodeIds}/{exportformat}", method = RequestMethod.GET, params="name")
 	public @ResponseBody
 	void exportTestCases(@PathVariable("nodeIds") List<Long> ids, @RequestParam("name") String filename, @PathVariable("exportformat") String exportformat,
 			HttpServletResponse response, Locale locale) {
-		
+
 		List<ExportTestCaseData> dataSource = testCaseLibraryNavigationService.findTestCasesToExportFromNodes(ids);
 		escapePrerequisiteAndSteps(dataSource);
 		printExport(dataSource, filename,JASPER_EXPORT_FILE, response, locale, exportformat);
 
 	}
-	
+
 
 
 	@RequestMapping(value = "/drives/{libIds}/{exportformat}", method = RequestMethod.GET, params="name")
@@ -191,7 +191,7 @@ public class TestCaseLibraryNavigationController extends
 			HttpServletResponse response, Locale locale) {
 
 		List<ExportTestCaseData> dataSource = testCaseLibraryNavigationService.findTestCasesToExportFromLibrary(libIds);
-		
+
 		escapePrerequisiteAndSteps(dataSource);
 		printExport(dataSource, filename,JASPER_EXPORT_FILE, response, locale, exportformat);
 
@@ -203,50 +203,50 @@ public class TestCaseLibraryNavigationController extends
 			String htmlPrerequisite = data.getPrerequisite();
 			String prerequisite = HTMLCleanupUtils.htmlToText(htmlPrerequisite);
 			data.setPrerequisite(prerequisite);
-			
+
 			//escape first step
 			String htmlFirstAction = data.getFirstAction();
 			String firstAction = HTMLCleanupUtils.htmlToText(htmlFirstAction);
 			data.setFirstAction(firstAction);
-			
+
 			String htmlFirstResult = data.getFirstExpectedResult();
 			String firstResult = HTMLCleanupUtils.htmlToText(htmlFirstResult);
 			data.setFirstExpectedResult(firstResult);
-			
+
 			//escape other steps
 			for(ExportTestStepData step : data.getSteps()){
 				String htmlAction = step.getAction();
 				String action = HTMLCleanupUtils.htmlToText(htmlAction);
 				step.setAction(action);
-				
+
 				String htmlExpectedResult = step.getExpectedResult();
 				String expectedResult = HTMLCleanupUtils.htmlToText(htmlExpectedResult);
 				step.setExpectedResult(expectedResult);
 			}
-			
+
 		}
 	}
 
-	
+
 	// ****************************** statistics section *******************************
-	
+
 	@RequestMapping (value = "/statistics", method = RequestMethod.GET, produces="application/json", params = {"libraries", "nodes"})
-	public @ResponseBody TestCaseStatisticsBundle getStatisticsAsJson(@RequestParam(value="libraries", defaultValue="") Collection<Long> libraryIds, 
+	public @ResponseBody TestCaseStatisticsBundle getStatisticsAsJson(@RequestParam(value="libraries", defaultValue="") Collection<Long> libraryIds,
 																	  @RequestParam(value="nodes", defaultValue="") Collection<Long> nodeIds){
-		
+
 		return testCaseLibraryNavigationService.getStatisticsForSelection(libraryIds, nodeIds);
 	}
-	
+
 	@RequestMapping (value = "/dashboard", method = RequestMethod.GET, produces="text/html", params = {"libraries", "nodes"})
-	public String getDashboard(Model model, @RequestParam("libraries") Collection<Long> libraryIds, 
+	public String getDashboard(Model model, @RequestParam("libraries") Collection<Long> libraryIds,
 											@RequestParam("nodes") Collection<Long> nodeIds){
-		
+
 		TestCaseStatisticsBundle stats = testCaseLibraryNavigationService.getStatisticsForSelection(libraryIds, nodeIds);
-		
+
 		model.addAttribute("statistics", stats);
-		
+
 		return "fragment/test-cases/test-cases-dashboard";
 	}
-	
+
 
 }

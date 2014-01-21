@@ -24,7 +24,7 @@ import org.apache.commons.collections.MultiMap;
 import org.springframework.stereotype.Controller;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
 import org.squashtest.tm.api.security.acls.AccessRule;
-import org.squashtest.tm.api.widget.MenuItem;
+import org.squashtest.tm.api.widget.WorkspaceTreeMenuItem;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.web.internal.controller.campaign.CampaignWorkspaceController;
 import org.squashtest.tm.web.internal.controller.report.ReportWorkspaceController;
@@ -51,7 +51,7 @@ class WorkspaceControllerTest extends Specification {
 		
 		WorkspaceWizard w1 = Mock()
 		w1.getId() >> "gdlf"
-		MenuItem m1 = Mock()
+		WorkspaceTreeMenuItem m1 = Mock()
 		m1.getLabel() >> "gandalf"
 		m1.getTooltip() >> "the grey sorcerer"
 		m1.getUrl() >> "middle-earth"
@@ -60,7 +60,7 @@ class WorkspaceControllerTest extends Specification {
 		
 		WorkspaceWizard w2 = Mock()
 		w2.getId() >> "grcm"
-		MenuItem m2 = Mock()
+		WorkspaceTreeMenuItem m2 = Mock()
 		m2.getLabel() >> "garcimore"
 		m2.getTooltip() >> "ptet ca marche"
 		m2.getUrl() >> "tf1"

@@ -1,0 +1,6 @@
+insert into ATTACHMENT_CONTENT (ATTACHMENT_CONTENT_ID, STREAM_CONTENT) values
+(1, '73747265616d20636f6e74656e74');
+
+
+insert into ATTACHMENT (ATTACHMENT_ID, NAME, `TYPE`, `SIZE`, ADDED_ON, CONTENT_ID, ATTACHMENT_LIST_ID) values
+(1, 'campaign attachment name.txt', 'txt', 14, '2013-11-04', 1, 893);

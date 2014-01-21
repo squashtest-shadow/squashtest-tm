@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.filter;
+package org.squashtest.tm.core.web.filter;
 
 import java.io.IOException;
 import java.util.concurrent.locks.ReadWriteLock;

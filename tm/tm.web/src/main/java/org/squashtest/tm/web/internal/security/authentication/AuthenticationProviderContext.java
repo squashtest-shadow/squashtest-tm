@@ -31,11 +31,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
 import org.squashtest.tm.core.foundation.lang.Assert;
-import org.squashtest.tm.web.internal.annotation.ApplicationComponent;
+import org.squashtest.tm.core.web.annotation.ApplicationComponent;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 @ApplicationComponent
 public class AuthenticationProviderContext {
@@ -56,7 +56,7 @@ public class AuthenticationProviderContext {
 	private List<AuthenticationProviderFeatures> providersFeatures = new ArrayList<AuthenticationProviderFeatures>();
 
 	/**
-	 * 
+	 *
 	 */
 	public AuthenticationProviderContext() {
 		super();

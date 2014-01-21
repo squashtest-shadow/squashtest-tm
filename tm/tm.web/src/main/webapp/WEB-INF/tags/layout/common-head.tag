@@ -21,5 +21,20 @@
 
 --%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
 <comp:sq-css name="squash.core.css" />
 <link type="image/x-icon" rel="shortcut icon" href="${ pageContext.servletContext.contextPath }/images/favicon.ico"/>
+<style>
+ 	<c:if test="${not empty navigationButtons }"> 
+ 		<c:forEach var="navigationButton" items="${ navigationButtons }" varStatus="stat"> 
+ 		.navigation-${stat.index} { 
+ 		    background-image: url("${navigationButton.imageOffUrl}"); 
+ 		} 		
+		
+ 		.navigation-${stat.index}:hover, .navigation-${stat.index}.navigation-selected { 
+ 		 background-image: url("${navigationButton.imageOnUrl}"); 
+ 		} 
+ 		</c:forEach> 
+ 	</c:if> 
+</style>

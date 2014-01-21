@@ -44,7 +44,7 @@ import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.search.SearchExportCSVModel;
 import org.squashtest.tm.domain.search.SearchExportCSVModel.Row;
 import org.squashtest.tm.service.library.AdvancedSearchService;
-import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
+import org.squashtest.tm.core.web.util.HTMLCleanupUtils;
 
 @Controller
 @RequestMapping("/advanced-search")

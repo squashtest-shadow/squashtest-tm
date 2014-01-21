@@ -121,7 +121,7 @@
 	<!-- ====== USER CONCURRENT REQUEST QUEUE ====== -->
 	<filter>
 		<filter-name>userConcurrentRequestLocker</filter-name>
-		<filter-class>org.squashtest.tm.web.internal.filter.UserConcurrentRequestLockFilter</filter-class>
+		<filter-class>org.squashtest.tm.core.web.filter.UserConcurrentRequestLockFilter</filter-class>
 	</filter>
 
 	<filter-mapping>
@@ -134,7 +134,7 @@
   <!-- ====== FIXES IE8 ACCEPT HEADER ====== -->
   <filter>
     <filter-name>IE8AcceptHeaderFixerFilter</filter-name>
-    <filter-class>org.squashtest.tm.web.internal.filter.IE8AcceptHeaderFixerFilter</filter-class>
+    <filter-class>org.squashtest.tm.core.web.filter.IE8AcceptHeaderFixerFilter</filter-class>
   </filter>
 
   <filter-mapping>
