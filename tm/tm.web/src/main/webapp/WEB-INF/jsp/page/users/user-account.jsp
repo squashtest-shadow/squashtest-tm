@@ -69,11 +69,11 @@
 				<c:out value="${ user.login }" escapeXml="true" />
 			</h2>
 		</div>
-		<div style="float: right;"><f:message var="back" key="label.Back" /> 
+		<div class="snap-right"><f:message var="back" key="label.Back" /> 
 			<input id="back" type="button" value="${ back }" class="button"/>
 		</div>
 
-		<div style="clear: both;"></div>
+		<div class="unsnap"></div>
 	
 	</div>
 	

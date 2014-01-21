@@ -129,7 +129,7 @@
 				<span>${title}</span>
 			</h2>
 		</div>						
-		<div style="clear:both;"></div>
+		<div class="unsnap"></div>
 	</jsp:attribute>
 	
 	<jsp:attribute name="subPageTitle">

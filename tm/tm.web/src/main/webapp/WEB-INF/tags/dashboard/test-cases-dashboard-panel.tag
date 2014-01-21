@@ -167,7 +167,7 @@
 						</div>
 					</div>
 					
-					<div style="clear:both;"> </div>			
+					<div class="unsnap"> </div>			
 					<span class="dashboard-summary"><f:message key="dashboard.test-cases.summary"/></span>
 				
 				</div>

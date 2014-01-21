@@ -38,11 +38,11 @@
 	<div style="float: left; height: 100%;">
 	<h2><span><f:message key="label.CurrentAttachments"/>&nbsp;:&nbsp;</span></h2>
 	</div>	
-	<div style="float: right;">
+	<div class="snap-right">
 		<f:message var="back" key="label.Back" /> 
 		<input id="back" type="button" value="${ back }" class="button" onClick="history.back();"/>
 	</div>
-	<div style="clear: both;"></div>
+	<div class="unsnap"></div>
 	
 </div>
 
@@ -55,7 +55,7 @@
 			<f:message var="uploadAttachment" key="label.UploadAttachment" />
 			<input id="add-attachment-button" type="button" value="${uploadAttachment}" class="button"/>
 		</div>
-		<div style="clear: both;"></div>
+		<div class="unsnap"></div>
 	</div>
 	
 	<%---------------------------------Attachments table ------------------------------------------------%>

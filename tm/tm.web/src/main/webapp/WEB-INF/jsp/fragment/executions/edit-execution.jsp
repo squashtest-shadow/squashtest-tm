@@ -95,7 +95,7 @@
 	</div>
 
 
-	<div style="clear: both;"></div>
+	<div class="unsnap"></div>
 </div>
 
 <div class="fragment-body">
@@ -112,7 +112,7 @@
 					id="delete-execution-button" />
 			</c:if>
 		</div>
-		<div style="clear: both;"></div>
+		<div class="unsnap"></div>
     <c:if test="${ editable }">
       <comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ executionUrl }" />
     </c:if>

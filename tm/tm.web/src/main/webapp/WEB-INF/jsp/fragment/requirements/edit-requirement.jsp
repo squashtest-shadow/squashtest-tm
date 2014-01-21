@@ -226,7 +226,7 @@ require(["common"], function() {
 			<span id="requirement-raw-name" style="display:none"><c:out value="${ requirement.name }" escapeXml="true"/></span>
 		</h2>
 	</div>
-	<div style="clear:both;"></div>		
+	<div class="unsnap"></div>		
 </div>
 <%-- ----------------------------------- /TITLE ----------------------------------------------%>
 <%-- ----------------------------------- AUDIT & TOOLBAR  ----------------------------------------------%>	
@@ -246,7 +246,7 @@ require(["common"], function() {
 		<input type="button" value="<f:message key='label.print'/>" id="print-requirement-version-button" class="button"/>
 	</div>	
 
-	<div style="clear:both;"></div>	
+	<div class="unsnap"></div>	
 	<c:if test="${ moreThanReadOnly	 }">
 	<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ requirementUrl }" />
 	</c:if>

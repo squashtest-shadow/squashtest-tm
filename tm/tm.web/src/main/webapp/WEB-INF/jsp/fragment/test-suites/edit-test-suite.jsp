@@ -160,7 +160,7 @@
 		</h2>
 	</div>
 
-	<div style="clear: both;"></div>
+	<div class="unsnap"></div>
 	<c:if test="${ writable }">
 		<pop:popup id="rename-test-suite-dialog"
 			titleKey="dialog.testsuites.rename.title" isContextual="true"
@@ -227,7 +227,7 @@
 				style="display: inline-block;" />
 		</c:if>
 	</div>
-	<div style="clear: both;"></div>
+	<div class="unsnap"></div>
 	<c:if test="${ moreThanReadOnly }">
 		<comp:opened-object otherViewers="${ otherViewers }"
 			objectUrl="${ testSuiteUrl }"  />

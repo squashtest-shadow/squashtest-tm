@@ -132,6 +132,6 @@ var myDatePicker;
 		</c:choose>
 
 	</div>
-	<div style="clear: both;"></div>
+	<div class="unsnap"></div>
 
 </div>

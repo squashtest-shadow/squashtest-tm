@@ -97,7 +97,7 @@
 		</h2>
 	</div>
 
-	<div style="clear: both;"></div>
+	<div class="unsnap"></div>
 	<c:if test="${writable}">
 		<pop:popup id="rename-campaign-dialog"
 			titleKey="dialog.rename-campaign.title" isContextual="true"
@@ -154,7 +154,7 @@
 		</c:if>
 
 	</div>
-	<div style="clear: both;"></div>
+	<div class="unsnap"></div>
 	<c:if test="${ moreThanReadOnly }">
 		<comp:opened-object otherViewers="${ otherViewers }"
 			objectUrl="${ campaignUrl }" />
