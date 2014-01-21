@@ -26,7 +26,7 @@
 
  -->
 
-<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.8.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.9.0.dtd">
 <dataset>
 
 	<!--  ============================ attachment lists (unattached to anything) ===================== -->
@@ -103,8 +103,8 @@
 	
 	<!-- ============================ tcln_relationship ================================================ -->
 	
-	<TCLN_RELATIONSHIP ANCESTOR_ID="1" DESCENDANT_ID="11" /> <!--  TCFOLDER 1 CONTAINS TC1 -->
-	<TCLN_RELATIONSHIP ANCESTOR_ID="1" DESCENDANT_ID="12" /> <!--  TCFOLDER 1 CONTAINS T2 -->
+	<TCLN_RELATIONSHIP ANCESTOR_ID="1" DESCENDANT_ID="11" CONTENT_ORDER="0"/> <!--  TCFOLDER 1 CONTAINS TC1 -->
+	<TCLN_RELATIONSHIP ANCESTOR_ID="1" DESCENDANT_ID="12" CONTENT_ORDER="1"/> <!--  TCFOLDER 1 CONTAINS T2 -->
 	
 	
 	

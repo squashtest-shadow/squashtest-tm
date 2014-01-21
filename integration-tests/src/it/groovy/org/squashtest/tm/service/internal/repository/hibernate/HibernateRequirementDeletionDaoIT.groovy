@@ -83,7 +83,7 @@ class HibernateRequirementDeletionDaoIT extends DbunitDaoSpecification {
 		
 		deletionDao.removeEntities([10L, 30L])
 		
-		deletionDao.removeAttachmentsLists(requirementAttachmentIds)
+		//deletionDao.removeAttachmentsLists(requirementAttachmentIds)
 		
 		//then find all
 		def resReqVers = versionDao.findAllByIds([10L, 11L, 12L, 13L, 14L, 15L, 20L, 21L, 22L, 23L, 24L, 25L, 30L, 40L])

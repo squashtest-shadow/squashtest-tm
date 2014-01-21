@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -34,6 +35,12 @@ import org.hibernate.SQLQuery;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
+import org.squashtest.tm.domain.attachment.AttachmentList;
+import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseFolder;
+import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.internal.repository.TestCaseDeletionDao;
 
 /*
@@ -54,17 +61,47 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 	public void removeEntities(final List<Long> entityIds) {
 		if (!entityIds.isEmpty()) {
 
-			Query query = getSession().createSQLQuery(NativeQueries.TESTCASE_SQL_REMOVEFROMFOLDER);
-			query.setParameterList("ancIds", entityIds, LongType.INSTANCE);
-			query.setParameterList("descIds", entityIds, LongType.INSTANCE);
-			query.executeUpdate();
-
-			executeDeleteSQLQuery(NativeQueries.TESTCASE_SQL_REMOVEFROMLIBRARY, TEST_CASES_IDS, entityIds);
-
-			executeDeleteSQLQuery(NativeQueries.TESTCASEFOLDER_SQL_REMOVE, "nodeIds", entityIds);
-			executeDeleteSQLQuery(NativeQueries.TESTCASE_SQL_REMOVE, "nodeIds", entityIds);
-			executeDeleteSQLQuery(NativeQueries.TESTCASELIBRARYNODE_SQL_REMOVE, "nodeIds", entityIds);
-
+			Query query = null;
+			for(Long entityId : entityIds){
+				
+				query = getSession().getNamedQuery("testCaseLibraryNode.findById");
+				query.setParameter("libraryNodeId", entityId);
+				TestCaseLibraryNode node = (TestCaseLibraryNode) query.uniqueResult();
+				
+				query = getSession().getNamedQuery("testCaseLibraryNode.findParentLibraryIfExists");
+				query.setParameter("libraryNodeId", entityId);
+				TestCaseLibrary library = (TestCaseLibrary) query.uniqueResult();
+				if(library != null){
+					ListIterator<TestCaseLibraryNode> iterator = library.getContent().listIterator();
+					while (iterator.hasNext()) {
+						TestCaseLibraryNode tcln = iterator.next();
+						if (tcln.getId().equals(node.getId())) {
+							iterator.remove();
+							break;
+						}
+					}
+				}
+				
+				query = getSession().getNamedQuery("testCaseLibraryNode.findParentFolderIfExists");
+				query.setParameter("libraryNodeId", entityId);
+				TestCaseFolder folder = (TestCaseFolder) query.uniqueResult();
+				if(folder != null){
+					ListIterator<TestCaseLibraryNode> iterator = folder.getContent().listIterator();
+					while (iterator.hasNext()) {
+						TestCaseLibraryNode tcln = iterator.next();
+						if (tcln.getId().equals(node.getId())) {
+							iterator.remove();
+							break;
+						}
+					}
+				}
+			
+				if(node!=null){
+					AttachmentList attachments = node.getAttachmentList();
+					getSession().delete(node);
+					removeAttachmentList(attachments);
+				}
+			}
 		}
 
 	}

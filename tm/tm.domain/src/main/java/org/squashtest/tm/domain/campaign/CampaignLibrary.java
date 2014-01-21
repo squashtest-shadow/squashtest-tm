@@ -55,7 +55,7 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 	@Column(name = "CL_ID")
 	private Long id;
 
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
 	@OrderColumn(name = "CONTENT_ORDER")
 	@JoinTable(name = "CAMPAIGN_LIBRARY_CONTENT", joinColumns = @JoinColumn(name = "LIBRARY_ID"), inverseJoinColumns = @JoinColumn(name = "CONTENT_ID"))
 	private final List<CampaignLibraryNode> rootContent = new ArrayList<CampaignLibraryNode>();

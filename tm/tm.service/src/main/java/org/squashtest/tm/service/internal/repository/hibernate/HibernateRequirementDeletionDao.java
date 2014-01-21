@@ -24,11 +24,18 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.hibernate.Query;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
+import org.squashtest.tm.domain.requirement.RequirementFolder;
+import org.squashtest.tm.domain.requirement.RequirementLibrary;
+import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.tm.domain.testcase.TestCaseFolder;
+import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.internal.repository.RequirementDeletionDao;
 
 @Repository
@@ -53,9 +60,8 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 		if (!entityIds.isEmpty()) {
 			
 			// Unbinds the nodes from their parent container
-			removeNodesFromFolders(entityIds);
-			executeDeleteSQLQuery(NativeQueries.REQUIREMENT_SQL_REMOVE_FROM_LIBRARY, REQUIREMENT_IDS, entityIds);
-			
+			List<RequirementLibraryNode> nodesToRemove = removeNodesFromFoldersOrLibraries(entityIds);
+
 			// Retrieval of the Resource or SimpleResource that those entities refers to.
 			List<Long> requirementVersionIds = findAllVersionsIdsFromRequirements(entityIds);
 			List<Long> folderResourceIds = findAllSimpleResourceIdsFromFolders(entityIds);
@@ -71,13 +77,14 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 			
 			executeDeleteSQLQuery(NativeQueries.SIMPLE_RESOURCE_SQL_REMOVE, SIMPLE_RESOURCE_IDS, folderResourceIds);
 			executeDeleteSQLQuery(NativeQueries.RESOURCE_SQL_REMOVE, RESOURCE_IDS, folderResourceIds);	
-			
-			// Now we can remove the nodes
-			executeDeleteSQLQuery(NativeQueries.REQUIREMENT_SQL_REMOVE, NODE_IDS, entityIds);
-			executeDeleteSQLQuery(NativeQueries.REQUIREMENT_FOLDER_SQL_REMOVE, NODE_IDS, entityIds);
-			executeDeleteSQLQuery(NativeQueries.REQUIREMENTLIBRARYNODE_SQL_REMOVE, NODE_IDS, entityIds);
-		
 
+
+			// Now we can remove the nodes
+			for(RequirementLibraryNode node : nodesToRemove){
+				if(node != null){
+					getSession().delete(node);
+				}
+			}
 		}
 	}
 
@@ -107,11 +114,46 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 		return folderResourceIds;
 	}
 
-	private void removeNodesFromFolders(List<Long> entityIds) {
-		Query query = getSession().createSQLQuery(NativeQueries.REQUIREMENT_SQL_REMOVE_FROM_FOLDER);
-		query.setParameterList("ancIds", entityIds, LongType.INSTANCE);
-		query.setParameterList("descIds", entityIds, LongType.INSTANCE);
-		query.executeUpdate();
+	private List<RequirementLibraryNode> removeNodesFromFoldersOrLibraries(List<Long> entityIds) {
+
+		List<RequirementLibraryNode> nodesToRemove = new ArrayList<RequirementLibraryNode>();
+		for(Long entityId : entityIds){
+			
+			Query query = getSession().getNamedQuery("requirementLibraryNode.findById");
+			query.setParameter("libraryNodeId", entityId);
+			RequirementLibraryNode node = (RequirementLibraryNode) query.uniqueResult();
+			nodesToRemove.add(node);
+			
+			query = getSession().getNamedQuery("requirementLibraryNode.findParentLibraryIfExists");
+			query.setParameter("libraryNodeId", entityId);
+			RequirementLibrary library = (RequirementLibrary) query.uniqueResult();
+			if(library != null){
+				ListIterator<RequirementLibraryNode> iterator = library.getContent().listIterator();
+				while (iterator.hasNext()) {
+					RequirementLibraryNode tcln = iterator.next();
+					if (tcln.getId().equals(node.getId())) {
+						iterator.remove();
+						break;
+					}
+				}
+			}
+			
+			query = getSession().getNamedQuery("requirementLibraryNode.findParentFolderIfExists");
+			query.setParameter("libraryNodeId", entityId);
+			RequirementFolder folder = (RequirementFolder) query.uniqueResult();
+			if(folder != null){
+				ListIterator<RequirementLibraryNode> iterator = folder.getContent().listIterator();
+				while (iterator.hasNext()) {
+					RequirementLibraryNode tcln = iterator.next();
+					if (tcln.getId().equals(node.getId())) {
+						iterator.remove();
+						break;
+					}
+				}
+			}
+		}
+		
+		return nodesToRemove;
 	}
 	
 	

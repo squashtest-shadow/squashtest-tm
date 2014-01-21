@@ -202,8 +202,8 @@ public class RequirementDeletionHandlerImpl extends
 
 			
 			// finally delete the attachment lists
-			requirementAttachmentIds.addAll(requirementFolderAttachmentIds);
-			deletionDao.removeAttachmentsLists(requirementAttachmentIds);
+			//requirementAttachmentIds.addAll(requirementFolderAttachmentIds);
+			//deletionDao.removeAttachmentsLists(requirementAttachmentIds);
 
 			testCaseImportanceManager.changeImportanceAfterRequirementDeletion();
 

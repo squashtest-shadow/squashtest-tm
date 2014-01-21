@@ -230,7 +230,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	@Basic(optional = false)
+	@Basic(optional = true)
 	@Column(name = "EXECUTION_MODE")
 	private TestCaseExecutionMode executionMode = TestCaseExecutionMode.MANUAL;
 

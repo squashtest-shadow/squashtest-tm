@@ -23,10 +23,17 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.hibernate.Query;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
+import org.squashtest.tm.domain.campaign.CampaignFolder;
+import org.squashtest.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
+import org.squashtest.tm.domain.testcase.TestCaseFolder;
+import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.internal.repository.CampaignDeletionDao;
 
 @Repository
@@ -36,32 +43,48 @@ public class HibernateCampaignDeletionDao extends HibernateDeletionDao
 	@Override
 	public void removeEntities(List<Long> entityIds) {
 		if (!entityIds.isEmpty()) {
-			
-			Query query=getSession().createSQLQuery(NativeQueries.CAMPAIGN_SQL_REMOVEFROMFOLDER);
-			query.setParameterList("ancIds", entityIds, LongType.INSTANCE);
-			query.setParameterList("descIds", entityIds, LongType.INSTANCE);
-			query.executeUpdate();
-			
-			query=getSession().createSQLQuery(NativeQueries.CAMPAIGN_SQL_REMOVEFROMLIBRARY);
-			query.setParameterList("campaignIds", entityIds, LongType.INSTANCE);
-			query.executeUpdate();		
-			
-			query = getSession().createSQLQuery(
-					NativeQueries.CAMPAIGNFOLDER_SQL_REMOVE);
-			query.setParameterList("nodeIds", entityIds, new LongType());
-			query.executeUpdate();
 
-			query = getSession().createSQLQuery(
-					NativeQueries.CAMPAIGN_SQL_REMOVE);
-			query.setParameterList("nodeIds", entityIds, new LongType());
-			query.executeUpdate();
-
-			query = getSession().createSQLQuery(
-					NativeQueries.CAMPAIGNLIBRARYNODE_SQL_REMOVE);
-			query.setParameterList("nodeIds", entityIds, new LongType());
-			query.executeUpdate();
+			Query query = null;
+			for(Long entityId : entityIds){
+				
+				query = getSession().getNamedQuery("campaignLibraryNode.findById");
+				query.setParameter("libraryNodeId", entityId);
+				CampaignLibraryNode node = (CampaignLibraryNode) query.uniqueResult();
+				
+				query = getSession().getNamedQuery("campaignLibraryNode.findParentLibraryIfExists");
+				query.setParameter("libraryNodeId", entityId);
+				CampaignLibrary library = (CampaignLibrary) query.uniqueResult();
+				if(library != null){
+					ListIterator<CampaignLibraryNode> iterator = library.getContent().listIterator();
+					while (iterator.hasNext()) {
+						CampaignLibraryNode tcln = iterator.next();
+						if (tcln.getId().equals(node.getId())) {
+							iterator.remove();
+							break;
+						}
+					}
+				}
+				
+				query = getSession().getNamedQuery("campaignLibraryNode.findParentFolderIfExists");
+				query.setParameter("libraryNodeId", entityId);
+				CampaignFolder folder = (CampaignFolder) query.uniqueResult();
+				if(folder != null){
+					ListIterator<CampaignLibraryNode> iterator = folder.getContent().listIterator();
+					while (iterator.hasNext()) {
+						CampaignLibraryNode tcln = iterator.next();
+						if (tcln.getId().equals(node.getId())) {
+							iterator.remove();
+							break;
+						}
+					}
+				}
 			
-			
+				if(node != null){
+					getSession().delete(node);
+				}
+			}
+								
+	
 		}
 	}
 	
