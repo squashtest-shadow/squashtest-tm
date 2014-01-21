@@ -260,15 +260,15 @@
  * 
  */
 
-
 define(["jquery",
-        "squash.statusfactory",
+        "squash.KeyEventListener", 
+        "squash.statusfactory",  
         "datatables", 
         "./squashtable.defaults", 
         "./squashtable.pagination", 
         "./squashtable.dnd", 
-        "jquery.squash.oneshotdialog", 
-        "squashtest/classes/KeyEventListener"], function($, statusfactory){
+        "jquery.squash.oneshotdialog"
+        ], function($, KeyEventListener, statusfactory){
 	
 	if (!! $.fn.squashTable ){
 		return ;

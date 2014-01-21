@@ -24,7 +24,11 @@
 
 
 <script type="text/javascript">
-	$(function(){
-		squashtm.keyEventListener =  new KeyEventListener();
-	});
+require([ "common" ], function() {
+  require(["jquery", "squash.KeyEventListener"], function($, KeyEventListener) {
+  	$(function(){
+  		squashtm.keyEventListener =  new KeyEventListener();
+  	});
+  });	
+});
 </script>

@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define([ "jquery", "squash.translator", "datepicker/require.jquery.squash.datepicker-locales" ], function($, translator, regionale) {
+define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-locales" ], function($, translator, regionale) {
 
 	function stdCkeditor() {
 		var lang = translator.get('rich-edit.language.value');

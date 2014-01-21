@@ -19,8 +19,6 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(['jquery' ], function($) {
-
-	
 	function _dryRunStart(url){
 		return $.ajax({
 			url : url,

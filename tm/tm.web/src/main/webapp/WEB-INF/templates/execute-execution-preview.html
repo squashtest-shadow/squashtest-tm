@@ -176,23 +176,20 @@ documentation :
 	
 	<script type="text/javascript" th:inline="javascript">
 	//<![CDATA[
-	
-	require(["domReady", "execution-processing", 'squash.basicwidgets'], function(domReady, executionProcessing, basic){
-		domReady(function(){
-			
-			requirejs.config({
-				
-				config : {
-					"execution-processing/init-preview" : /*[[${config}]]*/{}
-				}
-				
-			})
-			
-			executionProcessing.initPreview();
-			basic.init();
-		});		
+	require(["common"], function() {
+    	require(["domReady", "execution-processing", 'squash.basicwidgets'], function(domReady, executionProcessing, basic){
+  			requirejs.config({
+  				config : {
+  					"execution-processing/init-preview" : /*[[${config}]]*/{}
+  				}
+  			});
+  			
+    		domReady(function(){
+    			executionProcessing.initPreview();
+    			basic.init();
+    		});		
+    	});
 	});
-		
 	//]]>
 	</script>
 

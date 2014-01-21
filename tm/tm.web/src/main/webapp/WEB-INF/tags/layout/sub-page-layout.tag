@@ -46,13 +46,14 @@
 <%@ attribute name="foot" fragment="true"
   description="Pseudo html foot fragment where one can put inlined script and js libraries imports"%>
 <%@ attribute name="footer" fragment="true" description="Optional page foot"%>
+<%@ attribute name="main" required="false" %>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 
-<layout:common-import-outer-frame-layout highlightedWorkspace="${highlightedWorkspace}" titleKey="${titleKey}">
+<layout:common-import-outer-frame-layout highlightedWorkspace="${highlightedWorkspace}" titleKey="${titleKey}" main="${ main }">
 
   <jsp:attribute name="head">	
 		<jsp:invoke fragment="head" />

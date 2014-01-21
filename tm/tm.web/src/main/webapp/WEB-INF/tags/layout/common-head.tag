@@ -21,5 +21,5 @@
 
 --%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
-<comp:sq-css name="squash.core.css" />
 <link type="image/x-icon" rel="shortcut icon" href="${ pageContext.servletContext.contextPath }/images/favicon.ico"/>
+<comp:sq-css name="squash.core.css" />

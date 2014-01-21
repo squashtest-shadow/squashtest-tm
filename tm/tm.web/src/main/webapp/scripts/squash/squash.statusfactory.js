@@ -28,7 +28,6 @@
  *
  */
 define(["squash.translator"], function(translator){
-	
 	return {
 		
 		/*
@@ -96,6 +95,4 @@ define(["squash.translator"], function(translator){
 		})
 		
 	};
-	
-	
 });

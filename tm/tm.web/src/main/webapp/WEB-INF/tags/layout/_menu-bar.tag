@@ -103,3 +103,6 @@
 		<input type="button" value="${cancelLabel}"/>
 	</div>
 </div>
+<script type="text/javascript" >
+publish("load.projectFilter");
+</script>

@@ -288,6 +288,7 @@
             <exclude>**/styles/jqplot/**/*.*</exclude>
             <exclude>**/styles/switchButton/*.*</exclude>
             <exclude>**/styles/**/thymol.js</exclude>
+            <exclude>**/r.js</exclude>
             <exclude>**/styles/**/bootstrap*.css</exclude> 
             
 	    <!-- generated stylesheets -->
@@ -540,5 +541,19 @@
       </releases>
     </repository>
   </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>squashtest-snapshot</id>
+      <name>SquashTest snapshot repository</name>
+      <url>http://repo.squashtest.org/maven2/snapshots</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
 
 </project>

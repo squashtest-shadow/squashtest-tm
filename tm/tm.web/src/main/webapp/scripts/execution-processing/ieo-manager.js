@@ -67,14 +67,17 @@ define([ "jquery", "jquery.squash.messagedialog" ], function($) {
 		}, this);
 
 		var refreshParent = $.proxy(function() {
-			try {
-				window.opener.squashtm.execution.refresh(); // should be defined in the calling context.
-			} catch (anyex) {
-				window.opener.location.href = window.opener.location.href;
+			if (!!window.opener) {
+				try {
+					window.opener.squashtm.execution.refresh(); // should be defined in the calling context.
+				} catch (anyex) {
+					window.opener.location.href = window.opener.location.href;
+				}
+				if (window.opener.progressWindow) {
+					window.opener.progressWindow.close();
+				}
 			}
-			if (window.opener.progressWindow) {
-				window.opener.progressWindow.close();
-			}
+			// when url is input in browser location bar, there is no opener
 		}, this);
 
 		var testComplete = $.proxy(function() {

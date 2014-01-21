@@ -20,7 +20,7 @@
  */
 
 /**
- * Controller for the notification area. self initializes when "load.menuBar" event is published
+ * Controller for the notification area. 
  */
 var squashtm = squashtm || {};
 

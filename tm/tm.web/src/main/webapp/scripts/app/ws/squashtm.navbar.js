@@ -21,9 +21,9 @@
 var squashtm = squashtm || {};
 
 define([ "jquery", "jquery.squash.buttonmenu" ], function($) {
-
 	squashtm.navbar = {
-		init : function(linkName) {
+		init : function() {
+			var linkName = $("#navigation").data("hilight");
 			$("#"+linkName+"-link").addClass('navigation-selected');
 			$("#bugtracker-link").buttonmenu({preskinned:true});
 		}

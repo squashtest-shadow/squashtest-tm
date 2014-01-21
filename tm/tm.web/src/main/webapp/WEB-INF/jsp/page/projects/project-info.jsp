@@ -62,7 +62,7 @@
 	<s:param name="projectId" 	    value="${adminproject.project.id}" />
 </s:url>
 
-<layout:info-page-layout titleKey="workspace.project.info.title" isSubPaged="true">
+<layout:info-page-layout titleKey="workspace.project.info.title" isSubPaged="true" main="project-page">
 	<jsp:attribute name="head">	
 		<comp:sq-css name="squash.grey.css" />	
 	</jsp:attribute>
@@ -370,8 +370,8 @@
 
 <!-- ------------------------------------END RENAME POPUP------------------------------------------------------- -->
 <script type="text/javascript">
-
-	
+require(["common"], function() {
+	require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "project", "squashtable", "jquery.squash.formdialog"], function($, projectsManager, Frag){
 	/* popup renaming success handler */
 	function renameProjectSuccess(data) {
 		$('#project-name-header').html(data.newName);
@@ -394,18 +394,13 @@
 		
 	}
 	
+	$(function() {
+		 		init(projectsManager, Frag);	
+	});
+	
 	function refreshTableAndPopup(){
 		$("#user-permissions-table").squashTable().refresh();		
 	}
-	
-	$(function() {
-
-		require(["common"], function(){
-		 	require(["projects-manager", "jquery.squash.fragmenttabs", "project", "squashtable", "jquery.squash.formdialog"], function(projectsManager, Frag){
-		 		init(projectsManager, Frag);	
-		 	});			
-		});
-	});
 	
 	function init(projectsManager, Frag){
 		
@@ -531,5 +526,5 @@
 		$('#delete-project-button').button().click(deleteProject);		
 	});
 	</sec:authorize>
-
+});
 </script>

@@ -33,7 +33,11 @@
 	pageEncoding="utf-8"%>
 
 <%-- used for copy/paste of steps --%>
-<script type="text/javascript"	src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.cookie.js"></script>
+<script>
+require(["common"], function() {
+	require(["jquery.cookie"]);
+})
+</script>
 
 <%------------------------------------- URLs ----------------------------------------------%>
 

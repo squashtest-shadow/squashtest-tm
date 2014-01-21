@@ -33,8 +33,6 @@
 	
 	<jsp:attribute name="head">
 		<comp:sq-css name="squash.green.css" />
-		<comp:rich-jeditable-header />
-				
 		
 		<script type="text/javascript">
 			var squashtm = squashtm || {};
@@ -64,7 +62,8 @@
 		<wkp:tc-tree-popups importableLibraries="${editableLibraries}"/>
 		
 		<script type="text/javascript">
-		
+		require( ["common"], function(){
+			require(["jquery", "tc-workspace"], function($, initWkp) {
 			var conf = {
 				tree : {
 					model : ${ json:serialize(rootModel) },
@@ -82,7 +81,8 @@
 					});
 				});						
 			});
-			
+			});						
+		});
 		</script>
 	
 	</jsp:attribute>

@@ -40,7 +40,7 @@
 <c:set var="visibleBugtrackers" value="${wu:getVisibleBugtrackers(pageContext.servletContext)}"/>
 <c:set var="hideClass"			value="${empty visibleBugtrackers ? 'not-displayed' : ''}"/>
 
-<div id="navigation">
+<div id="navigation" data-hilight="${ highlighted }">
 	<div id="test_mgt_nav">
 		<a id="home-link" 		 	class="navigation-link navigation-home" 		href="${rootctxt}/home-workspace/"			title="${homeTitle}"></a>
 		<a id="requirement-link" 	class="navigation-link navigation-requirement"	href="${rootctxt}/requirement-workspace/"	title="${reqTitle}"></a>
@@ -63,4 +63,7 @@
 	
 	<div id="nav_logo" class="vertical-logo"></div>
 </div>
+<script type="text/javascript">
+publish("load.navBar");
+</script>
 

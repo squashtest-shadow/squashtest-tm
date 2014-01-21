@@ -40,33 +40,6 @@ the data. Prototype is : function my_function(strParamName, iDate)"%>
 <%@ attribute name="editable" type="java.lang.Boolean" required="false" description="if specified, will tell whether the component is editable or not. Default is true." %>
 
 
-<c:if test="${ (empty editable) or editable}">
-<script type="text/javascript">
-
-	var myDatePicker;
-	
-
-	$(function(){
-		var controls ={
-			datepick : $('#${datePickerId}'),
-			datelabel : $('#${datePickerId}-label')
-		};
-		
-		var params ={
-			paramName : "${paramName}",
-			initialDate : "${initialDate}"
-			<c:if test="${not empty url}" >,url :  "${url}"</c:if>
-			<c:if test="${not empty updateFunction}">,updateFunction : ${updateFunction} </c:if>
-			<c:if test="${not empty postCallback}">,callback : ${postCallback}</c:if>
-		};
-		myDatePicker = new SquashDatePicker(controls, params);
-	});
-	
-</script>
-</c:if>
-
-
-
 <f:message var="label" key="${fmtLabel}" />
 <f:message var="dateFormat" key="squashtm.dateformatShort" />
 <div >
@@ -77,6 +50,27 @@ the data. Prototype is : function my_function(strParamName, iDate)"%>
 	
 	<c:if test="${ (empty editable) or editable }" >
 			<input id="${datePickerId}" type="text" class="date-hidden"/>			
+            <script type="text/javascript">
+            require(["common"], function() {
+              require(["jquery", "jquery.squash.datepicker"], function() {
+                 var myDatePicker;
+                
+                  var controls ={
+                    datepick : $('#${datePickerId}'),
+                    datelabel : $('#${datePickerId}-label')
+                  };
+                  
+                  var params ={
+                    paramName : "${paramName}",
+                    initialDate : "${initialDate}"
+                    <c:if test="${not empty url}" >,url :  "${url}"</c:if>
+                    <c:if test="${not empty updateFunction}">,updateFunction : ${updateFunction} </c:if>
+                    <c:if test="${not empty postCallback}">,callback : ${postCallback}</c:if>
+                  };
+                  myDatePicker = new SquashDatePicker(controls, params);
+              });
+            }); 
+            </script>
 	</c:if>
 	
 	<c:choose>

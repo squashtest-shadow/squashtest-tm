@@ -22,7 +22,7 @@ require([ "common" ], function(common) {
 	require([ "jquery", "app/cf/CustomFieldsTableView", "app/ws/squashtm.workspace", "domReady" ], function($,
 			CustomFieldsTableView, WS, domReady) {
 		domReady(function() {
-			WS.init("");
+			WS.init();
 			new CustomFieldsTableView();
 			$("#back").button().click(function() {
 				document.location.href = squashtm.app.contextRoot + "/administration";

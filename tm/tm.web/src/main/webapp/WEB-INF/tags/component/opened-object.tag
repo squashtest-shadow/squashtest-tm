@@ -30,19 +30,20 @@
 <div style="color: #7E0426; display: block; text-align: center;"><p><f:message key="squashtm.generic.opened-object.quit.message"/></p></div>
 </c:if>
 <script>
-	$(function(){		
-
-		function releaseEntity (){
-			 $.ajax({
-					type : 'DELETE',
-					url : '${objectUrl}'+'/opened-entity',
-					async : false
-			});
-		}
-			 
-		require(["jquery","workspace.event-bus"], function($, eventBus){
-			window.onbeforeunload = releaseEntity;
+require(["common"], function() {
+	require(["jquery","workspace.event-bus"], function($, eventBus){
+    	function releaseEntity (){
+    		 $.ajax({
+    				type : 'DELETE',
+    				url : '${objectUrl}'+'/opened-entity',
+    				async : false
+    		});
+    	}
+		window.onbeforeunload = releaseEntity;
+		
+		$(function(){		
 			eventBus.onContextual('contextualcontent.clear', releaseEntity);
 		});
 	});
+});
 </script>

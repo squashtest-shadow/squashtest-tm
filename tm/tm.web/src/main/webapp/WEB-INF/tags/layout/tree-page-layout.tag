@@ -83,38 +83,37 @@
 
 <c:set var="tabbedPaneScript" >
 	<script type="text/javascript">
+	require( ["common"], function(){
+		require(["jquery", "squash/squash.tree-page-resizer", "jqueryui"], function($, resizer){
 		
-		<%--  
-			In test plan management, there's the classic search interface and the possibility to find test plan by requirement.
-			In this case, there's two div used to display the results. 
-			Here we define which tab is currently used with selectedTab.
-			selectedTab is used in show-iteration-test-plan-manager, search-panel*...
-		--%>
-		//The selected pane number. Always the first one (0) by default
-		selectedTab = 0;
+    		<%--  
+    			In test plan management, there's the classic search interface and the possibility to find test plan by requirement.
+    			In this case, there's two div used to display the results. 
+    			Here we define which tab is currently used with selectedTab.
+    			selectedTab is used in show-iteration-test-plan-manager, search-panel*...
+    		--%>
+    		//The selected pane number. Always the first one (0) by default
+    		selectedTab = 0;
+    
 
-		$(function(){
-			$( "#tabbed-pane" ).tabs();
-			
-			require( ["common"], function(){
-				require(["squash/squash.tree-page-resizer"], function(resizer){
-					
-					var conf = {
-						leftSelector : "#tree-panel-left",
-						rightSelector : "#contextual-content"
-					}
-					
-					resizer.init(conf);
+			$(function(){
+    			$( "#tabbed-pane" ).tabs();
+    
+    			var conf = {
+    				leftSelector : "#tree-panel-left",
+    				rightSelector : "#contextual-content"
+    			}
+    			
+    			resizer.init(conf);
+
+    			$("#tree-panel-left").on("tabsselect", "#tabbed-pane", function(event, ui) {
+					//change the number of the selected pane 
+					 selectedTab =  ui.index;
 				});
+    		});
 				
-			});
-			
-			$( "#tabbed-pane" ).bind( "tabsselect", function(event, ui) {
-				  //change the number of the selected pane 
-				 selectedTab =  ui.index;
-				 
-			});			
 		});
+	});
 	</script>	
 </c:set>
 
@@ -190,11 +189,13 @@
 		</div>
 		
 		<script type="text/javascript">
+		require([ "jquery" ], function() {
 			$(function(){
 				require(['workspace.contextual-content'], function(){
 						//noop
 				});
-			});		
+			});
+		});
 		</script>
 			
 		<div id="contextual-content">
@@ -271,11 +272,13 @@
 		
 		
 		<script type="text/javascript">
+		require([ "jquery" ], function() {
 			$(function(){
 				require(['workspace.contextual-content'], function(){
 										//noop
 				});
 			});		
+		});
 		</script>
 		
 		<div id="contextual-content">

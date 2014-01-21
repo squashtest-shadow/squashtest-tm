@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'squash.translator', 'datepicker/require.jquery.squash.datepicker-locales',
+define(['jquery', 'squash.translator', 'datepicker/jquery.squash.datepicker-locales',
 		'jeditable.datepicker'], function($, translator, regionale){
 	
 	return {

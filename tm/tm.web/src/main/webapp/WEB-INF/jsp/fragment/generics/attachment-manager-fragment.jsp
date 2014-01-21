@@ -78,14 +78,16 @@
 	</div>
 	
 	<script type="text/javascript">
-		$(function(){
-			require(["file-upload"], function(upload){
+	require(["common"], function() {
+		require(["jquery", "file-upload"], function($, upload){
+			$(function(){
 				upload.initAttachmentsManager({
 					baseURL : "${baseURL}",
 					aaData : ${json:serialize(attachmentsModel.aaData)}
 				});
 			});
 		});	
+	});
 	</script>
 
 </div>

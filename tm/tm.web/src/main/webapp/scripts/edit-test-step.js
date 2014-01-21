@@ -28,7 +28,7 @@ require([ "common" ], function(common) {
 
 				domReady(function() {
 					basic.init();
-					WS.init("");
+					WS.init();
 					new TestStepModificationView();
 					$("#close").button().on("click", closeWindow);
 

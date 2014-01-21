@@ -27,11 +27,10 @@
 <%@ attribute name="cacheRequests" type="java.lang.Boolean"  required="false"  description="boolean. if set, will cache the ajax calls to the server to prevent multiple reload. Note that unfortunately it will void any 'beforeLoad' attribute. Default is false." %>
 
  
-<script type="text/javascript" src="<c:url value='/scripts/squash/squash.fragmenttabs.js' />"></script>
-
 <script type="text/javascript">
-	$(function() {
-		require(["jquery","jquery.squash.fragmenttabs"], function($,Frag){
+require(["common"], function() {
+  require(["jquery","jquery.squash.fragmenttabs"], function($, Frag){
+		$(function() {
 			var init = {};
 			
 			<c:if test="${not empty beforeLoad}">
@@ -44,4 +43,5 @@
 			Frag.init(init);
 		});
 	});
+});
 </script>

@@ -25,7 +25,7 @@
  * 
  */
 
-define([ 'jquery', 'workspace.event-bus', 'jqueryui' ], function($, eventBus) {
+define([ "app/pubsub", "jquery", "workspace.event-bus", "jqueryui" ], function(ps, $, eventBus) {
 
 	squashtm = squashtm || {};
 	squashtm.workspace = squashtm.workspace || {};
@@ -33,7 +33,6 @@ define([ 'jquery', 'workspace.event-bus', 'jqueryui' ], function($, eventBus) {
 	if (squashtm.workspace.contextualContent !== undefined) {
 		return squashtm.workspace.contextualContent;
 	} else {
-
 		$.fn.contextualContent = function() {
 
 			this.currentUrl = "";
@@ -81,13 +80,12 @@ define([ 'jquery', 'workspace.event-bus', 'jqueryui' ], function($, eventBus) {
 					return defer.promise();
 				} else {
 					abortIfRunning();
-					
+
 					this.currentUrl = url;
-					this.currentXhr = $.get(url, params, 'html')
-									   .success(function(html){
-											cleanContent();	
-											self.html(html);
-									   });
+					this.currentXhr = $.get(url, params, 'html').success(function(html) {
+						cleanContent();
+						self.html(html);
+					});
 
 					return this.currentXhr;
 				}

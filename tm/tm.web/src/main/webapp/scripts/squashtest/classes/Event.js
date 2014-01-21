@@ -102,3 +102,13 @@ function EventUpdateReqCoverage(target) {
 }
 
 EventUpdateReqCoverage.prototype = new SquashEvent();
+
+squashtm = squashtm || {};
+squashtm.events = squashtm.event || {};
+squashtm.events.EventPaste = EventPaste;
+squashtm.events.EventRename = EventRename;
+squashtm.events.EventUpdateReference = EventUpdateReference;
+squashtm.events.EventUpdateCategory = EventUpdateCategory;
+squashtm.events.EventUpdateStatus = EventUpdateStatus;
+squashtm.events.EventUpdateImportance = EventUpdateImportance;
+squashtm.events.EventUpdateReqCoverage = EventUpdateReqCoverage;

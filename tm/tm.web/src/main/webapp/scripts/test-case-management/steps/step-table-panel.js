@@ -64,7 +64,7 @@
  * 
  */
 
-define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "squash.translator", 'workspace.event-bus', "./popups", 'jquery.squash.formdialog' ], function($, TableCollapser,
+define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "squash.translator", "workspace.event-bus", "./popups", "jquery.squash.formdialog", "squashtable" ], function($, TableCollapser,
 		cufValuesManager, translator, eventBus, popups) {
  
 	// ************************* configuration functions
@@ -114,19 +114,19 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 	function specializeCellClasses(table) {
 
-		var actionRows = table.find('tr.action-step-row');
-		var callRows = table.find('tr.call-step-row');
+		var actionRows = table.find("tr.action-step-row");
+		var callRows = table.find("tr.call-step-row");
 
 		// remove useless classes for action step rows
-		actionRows.find('td.called-tc-cell').removeClass('called-tc-cell');
+		actionRows.find("td.called-tc-cell").removeClass("called-tc-cell");
 
 		// remove useless classes for call step rows
-		callRows.find('td.rich-edit-action').removeClass('rich-edit-action');
-		callRows.find('td.rich-edit-result').removeClass('rich-edit-result');
-		callRows.find('td.has-attachment-cell').removeClass('has-attachment-cell');
-		callRows.find('td.custom-field-value').removeClass(); // remove
+		callRows.find("td.rich-edit-action").removeClass("rich-edit-action");
+		callRows.find("td.rich-edit-result").removeClass("rich-edit-result");
+		callRows.find("td.has-attachment-cell").removeClass("has-attachment-cell");
+		callRows.find("td.custom-field-value").removeClass(); // remove
 
-		callRows.find('td.called-tc-cell').next().remove().end().attr('colspan', 2);
+		callRows.find("td.called-tc-cell").next().remove().end().attr("colspan", 2);
 	}
 
 	function save_dt_view (oSettings, oData, testCaseId) {
@@ -151,7 +151,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		specializeCellClasses(this);
 
 		// collapser
-		var collapser = this.data('collapser');
+		var collapser = this.data("collapser");
 		if (collapser) {
 			collapser.refreshTable();
 		}
@@ -215,74 +215,74 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 				'bVisible' : false,
 				'bSortable' : false,
 				'aTargets' : [ 0 ],
-				'mDataProp' : 'step-id'
+				'mDataProp' : "step-id"
 			}, {
 				'bVisible' : true,
 				'bSortable' : false,
 				'aTargets' : [ 1 ],
-				'mDataProp' : 'step-index',
-				'sClass' : 'select-handle centered ' + dragClass,
-				'sWidth' : '2em'
+				'mDataProp' : "step-index",
+				'sClass' : "select-handle centered " + dragClass,
+				'sWidth' : "2em"
 			}, {
 				'bVisible' : true,
 				'bSortable' : false,
 				'aTargets' : [ 2 ],
-				'mDataProp' : 'attach-list-id',
-				'sClass' : 'centered has-attachment-cell '+ attachButtonClass,
-				'sWidth' : '2em'
+				'mDataProp' : "attach-list-id",
+				'sClass' : "centered has-attachment-cell "+ attachButtonClass,
+				'sWidth' : "2em"
 			}, {
 				'bVisible' : true,
 				'bSortable' : false,
 				'aTargets' : [ 3 ],
-				'mDataProp' : 'empty-requirements-holder',
-				'sClass' : 'centered requirements-button '+ linkButtonClass,
-				'sWidth' : '2em'
+				'mDataProp' : "empty-requirements-holder",
+				'sClass' : "centered requirements-button "+ linkButtonClass,
+				'sWidth' : "2em"
 			}, {
 				'bVisible' : true,
 				'bSortable' : false,
 				'aTargets' : [ 4 ],
-				'mDataProp' : 'step-action',
-				'sClass' : 'called-tc-cell collapsible ' + editActionClass
+				'mDataProp' : "step-action",
+				'sClass' : "called-tc-cell collapsible " + editActionClass
 			}, {
 				'bVisible' : true,
 				'bSortable' : false,
 				'aTargets' : [ 5 ],
-				'mDataProp' : 'step-result',
-				'sClass' : 'collapsible ' + editResultClass
+				'mDataProp' : "step-result",
+				'sClass' : "collapsible " + editResultClass
 			}, {
 				'bVisible' : false,
 				'bSortable' : false,
 				'aTargets' : [ 6 ],
-				'mDataProp' : 'nb-attachments'
+				'mDataProp' : "nb-attachments"
 			}, {
 				'bVisible' : false,
 				'bSortable' : false,
 				'aTargets' : [ 7 ],
-				'mDataProp' : 'step-type'
+				'mDataProp' : "step-type"
 			}, {
 				'bVisible' : false,
 				'bSortable' : false,
 				'aTargets' : [ 8 ],
-				'mDataProp' : 'called-tc-id'
+				'mDataProp' : "called-tc-id"
 			}, {
 				'bVisible' : true,
 				'bSortable' : false,
 				'aTargets' : [ 9 ],
-				'mDataProp' : 'empty-browse-holder',
-				'sClass' : 'centered browse-button',
-				'sWidth' : '2em'
+				'mDataProp' : "empty-browse-holder",
+				'sClass' : "centered browse-button",
+				'sWidth' : "2em"
 			}, {
 				'bVisible' : true,
 				'bSortable' : false,
 				'aTargets' : [ 10 ],
-				'mDataProp' : 'empty-delete-holder',
-				'sClass' : 'centered ' + deleteClass,
-				'sWidth' : '2em'
+				'mDataProp' : "empty-delete-holder",
+				'sClass' : "centered " + deleteClass,
+				'sWidth' : "2em"
 			}, {
 				'bVisible' : false,
 				'bSortable' : false,
 				'aTargets' : [ 11 ],
-				'mDataProp' : 'has-requirements'
+				'mDataProp' : "has-requirements"
 			} ]
 
 		};
@@ -311,8 +311,8 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		var squashSettings = {
 
 			dataKeys : {
-				entityId : 'step-id',
-				entityIndex : 'step-index'
+				entityId : "step-id",
+				entityIndex : "step-index"
 			},
 
 			enableHover : true,
@@ -328,7 +328,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 			bindLinks : {
 				list : [ {
-					targetClass : 'called-tc-cell',
+					targetClass : "called-tc-cell",
 					url : urls.callTC
 				} ]
 			},
@@ -341,13 +341,13 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 					var row = cell.parentNode.parentNode;
 					var stepId = table.getODataId(row);
 					var url = urls.steps + stepId;
-					window.open(url, '_blank');
+					window.open(url, "_blank");
 					window.focus();
 				}
 			}, {
 				tooltip : language.requirements,
 				tdSelector : "td.requirements-button",
-				'cssclass' : 'icon-entity',
+				'cssclass' : "icon-entity",
 				uiIcon : function(row, data) {
 					return (data["has-requirements"]) ? "icon-requirement" : "icon-requirement-off";
 				},
@@ -425,24 +425,24 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 	function addTestStepSuccess() {
 		var dialog = $("#add-test-step-dialog");
 		if (dialog.dialog("isOpen")) {
-			dialog.dialog('close');
+			dialog.dialog("close");
 		}
 		refresh();
 	}
 
 	function addTestStepSuccessAnother() {
-		CKEDITOR.instances["add-test-step-action"].setData('');
-		CKEDITOR.instances["add-test-step-result"].setData('');
+		CKEDITOR.instances["add-test-step-action"].setData("");
+		CKEDITOR.instances["add-test-step-result"].setData("");
 
 		var dialog = $("#add-test-step-dialog");
-		dialog.data('cuf-values-support').reset();
+		dialog.data("cuf-values-support").reset();
 
 		refresh();
 	}
 
 	function readAddStepParams() {
 
-		var cufSupport = $("#add-test-step-dialog").data('cuf-values-support');
+		var cufSupport = $("#add-test-step-dialog").data("cuf-values-support");
 
 		var params = {};
 		params.action = $("#add-test-step-action").val();
@@ -459,9 +459,9 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		function postStep(data) {
 			return $.ajax({
 				url : urls.addStep,
-				type : 'POST',
+				type : "POST",
 				data : data,
-				dataType : 'json'
+				dataType : "json"
 			});
 		}
 
@@ -494,7 +494,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 			}, {
 				'text' : language.cancellabel,
 				'click' : function() {
-					$("#add-test-step-dialog").dialog('close');
+					$("#add-test-step-dialog").dialog("close");
 				}
 			} ]
 
@@ -513,9 +513,9 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 			table : cufTable
 		});
 		cufValuesSupport.reloadPanel();
-		dialog.data('cuf-values-support', cufValuesSupport);
+		dialog.data("cuf-values-support", cufValuesSupport);
 
-		dialog.on('dialogopen', function() {
+		dialog.on("dialogopen", function() {
 			cufValuesSupport.reset();
 		});
 	}
@@ -528,26 +528,26 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		var table = $("#test-steps-table-"+urls.testCaseId).squashTable();
 
 		
-		$("#copy-step").bind('click', function() {
+		$("#copy-step").bind("click", function() {
 			var stepIds = table.getSelectedIds();
 			if (!stepIds.length) {
 				$.squash.openMessage(language.errorTitle, language.noStepSelected);
 			} else {
 				var oPath = {
-					path : '/'
+					path : "/"
 				};
-				$.cookie('squash-test-step-ids', stepIds.toString(), oPath);
-				$.cookie('squash-test-step-project', urls.projectId, oPath);
+				$.cookie("squash-test-step-ids", stepIds.toString(), oPath);
+				$.cookie("squash-test-step-project", urls.projectId, oPath);
 			}
 
 		});
 
 		$("#paste-step").bind(
-				'click',
+				"click",
 				function() {
 
-					var cookieIds = $.cookie('squash-test-step-ids');
-					var cookieProject = $.cookie('squash-test-step-project');
+					var cookieIds = $.cookie("squash-test-step-ids");
+					var cookieProject = $.cookie("squash-test-step-project");
 					var currentProject = urls.projectId;
 
 					if (parseInt(cookieProject, 10) !== currentProject) {
@@ -583,14 +583,14 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 				}
 
 				$.ajax({
-					type : 'POST',
+					type : "POST",
 					data : data,
 					url : pasteUrl,
 					dataType : "json",
 					success : pasteSuccess
 				});
 
-				$("#paste-step").removeClass('ui-state-focus');
+				$("#paste-step").removeClass("ui-state-focus");
 			} catch (damn) {
 				$.squash.openMessage(language.errorTitle, damn);
 			}
@@ -620,8 +620,8 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 	
 		$("#add-call-step-button").click(function() {
 			var url = document.URL;
-			$.cookie('call-step-manager-referer', url, {
-				path : '/'
+			$.cookie("call-step-manager-referer", url, {
+				path : "/"
 			});
 			document.location.href = urls.callStepManagerUrl;
 		});
@@ -669,12 +669,12 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		return {
 			open : function(collapser) {
 				var collapsibleCells = $(collapser.collapsibleCells);
-				collapsibleCells.addClass('editable').off("click", openEdit).editable('enable');
+				collapsibleCells.addClass("editable").off("click", openEdit).editable("enable");
 			},
 
 			close : function(collapser) {
 				var collapsibleCells = $(collapser.collapsibleCells);
-				collapsibleCells.removeClass('editable').on("click", openEdit).editable('disable');
+				collapsibleCells.removeClass("editable").on("click", openEdit).editable("disable");
 			}
 		};
 	}
@@ -684,14 +684,14 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 	
 		var collapser;
 
-		var collapseButton = $('#collapse-steps-button');
+		var collapseButton = $("#collapse-steps-button");
 
-		var table = $('#test-steps-table-'+urls.testCaseId);
+		var table = $("#test-steps-table");
 
 		// begin
 
 		var cellSelector = function(row) {
-			return $(row).find('td.collapsible').not('called-tc-id').get();
+			return $(row).find("td.collapsible").not("called-tc-id").get();
 		};
 
 		collapser = new TableCollapser(table, cellSelector);
@@ -699,19 +699,19 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		// button handlers
 
 		var buttonOpenHandler = $.proxy(function() {
-			this.squashButton('option', 'icons', {
-				primary : 'ui-icon-zoomout'
+			this.squashButton("option", "icons", {
+				primary : "ui-icon-zoomout"
 			});
-			this.attr('title', language.btnCollapse);
-			this.squashButton('option', 'label', language.btnCollapse);
+			this.attr("title", language.btnCollapse);
+			this.squashButton("option", "label", language.btnCollapse);
 		}, collapseButton);
 
 		var buttonCloseHandler = $.proxy(function() {
-			$this.squashButton('option', 'icons', {
-				primary : 'ui-icon-zoomin'
+			$this.squashButton("option", "icons", {
+				primary : "ui-icon-zoomin"
 			});
-			$this.attr('title', language.btnExpand);
-			$this.squashButton('option', 'label', language.btnExpand);
+			$this.attr("title", language.btnExpand);
+			$this.squashButton("option", "label", language.btnExpand);
 
 		}, collapseButton);
 
@@ -740,7 +740,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		});
 
 		// end
-		table.data('collapser', collapser);
+		table.data("collapser", collapser);
 
 	}
 
@@ -779,7 +779,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 	}
 
 	return {
-		init : init,
+		init : init
 		refreshTable : refresh
 	};
 

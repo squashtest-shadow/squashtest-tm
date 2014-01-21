@@ -27,7 +27,7 @@
 	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.blue.css" sq:css="squash.blue.css" />
 </head>
 <body>
-	<div id="workspace" th:fragment="navbar">
+	<div id="workspace" th:fragment="navbar" th:attr="data-hilight=${hilightedWorkspace}" >
 		<div id="test_mgt_nav" th:with="bugtrackers = ${#workspace.visibleBugtrackers()}">
 			<a id="home-link" 			class="navigation-link navigation-home" 			href="home-workspace.html" th:href="@{/home-workspace/}" th:title="#{workspace.home.button.label}"></a>
 			<a id="requirement-link" 	class="navigation-link navigation-requirement" 		href="requirement-workspace.html" th:href="@{/requirement-workspace/}" th:title="#{workspace.requirement.button.label}"></a>

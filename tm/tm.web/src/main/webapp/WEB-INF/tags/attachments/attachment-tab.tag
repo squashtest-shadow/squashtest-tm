@@ -64,14 +64,16 @@
 </c:if>		
 
 	<script type="text/javascript">
-		$(function(){
-			require(["file-upload"], function(upload){
+	require(["common"], function() {
+		require(["jquery", "file-upload"], function($, upload){
+			$(function(){
 				upload.initAttachmentsManager({
 					baseURL : "${baseURL}",
 					aaData : ${json:serialize(tableModel.aaData)}
 				});
 			});
-		});	
+		});
+	});
 	</script>
 
 </div>

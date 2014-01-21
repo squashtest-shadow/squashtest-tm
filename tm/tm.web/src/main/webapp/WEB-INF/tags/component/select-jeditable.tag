@@ -44,21 +44,20 @@
 </c:if>
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
 <script type="text/javascript">
-
-	$(function() {
-		$( '#${ componentId }' ).editable( ${target}, {
-			type: 'select',	
-			placeholder: '<f:message key="rich-edit.placeholder" />',
-			submit: '<f:message key="rich-edit.button.ok.label" />',
-			cancel: '<f:message key="label.Cancel" />',	
-			onblur : function() {}, <%-- prevents the widget to return to unediting state on blur event --%> 					
-			<c:if test="${ not empty submitCallback }" >callback : function(value, settings){${submitCallback}(value, settings);},</c:if>
-			<c:if test="${not empty jsonData}">data : JSON.stringify(${jsonData}),</c:if>
-			<c:if test="${not empty jsonUrl}">loadurl : '${jsonUrl}',</c:if>
-			<c:if test="${not empty onSubmit}">onsubmit : ${onSubmit},</c:if>
-			indicator : '<span class="processing-indicator" />'
-			
-		}).addClass("editable");
-	})
-	
+require(["common"], function() {
+  require(["jquery"], function($) {
+    $( '#${ componentId }' ).editable( ${target}, {
+      type: 'select',  
+      placeholder: '<f:message key="rich-edit.placeholder" />',
+      submit: '<f:message key="rich-edit.button.ok.label" />',
+      cancel: '<f:message key="label.Cancel" />',  
+      onblur : function() {}, <%-- prevents the widget to return to unediting state on blur event --%>           
+      <c:if test="${ not empty submitCallback }" >callback : function(value, settings){${submitCallback}(value, settings);},</c:if>
+      <c:if test="${not empty jsonData}">data : JSON.stringify(${jsonData}),</c:if>
+      <c:if test="${not empty jsonUrl}">loadurl : '${jsonUrl}',</c:if>
+      <c:if test="${not empty onSubmit}">onsubmit : ${onSubmit},</c:if>
+      indicator : '<span class="processing-indicator" />'
+    }).addClass("editable");
+  });
+});
 </script>

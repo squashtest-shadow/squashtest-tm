@@ -19,13 +19,17 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "squashtable" ], function($) {
+	var selector = "#user-permissions-table";
 	// ***************** user-permissions-table section
 	// *****************************
 	// ************* combo boxes *******************
+	function refreshTableAndPopup(){
+		$(selector).squashTable().refresh();		
+	}
 
 	function bindSelectChange(settings) {
 
-		$("#user-permissions-table").on(
+		$(selector).on(
 				'change',
 				'td.permissions-cell select',
 				function() {
@@ -164,7 +168,7 @@ define([ "jquery", "squashtable" ], function($) {
 
 		};
 
-		$("#user-permissions-table").squashTable(datatableSettings, squashSettings);
+		$(selector).squashTable(datatableSettings, squashSettings);
 
 		bindSelectChange(settings);
 	}

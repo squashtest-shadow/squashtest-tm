@@ -18,8 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-(function($) {
-
+define(["jquery", "jqueryui"], function($) {
 	$.widget("squash.popupError", {
 
 		_create : function() {
@@ -64,5 +63,6 @@
 		}
 
 	});
-
-}(jQuery));
+	
+	return $.fn.popupError;
+});

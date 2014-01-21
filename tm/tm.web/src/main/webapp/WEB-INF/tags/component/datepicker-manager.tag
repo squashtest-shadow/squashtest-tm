@@ -30,18 +30,11 @@
   </style>
 
 
-<c:if test="${not empty locale }">
-	<c:choose> 
-		<c:when test="${locale=='fr'}">
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/datepicker/jquery.ui.datepicker-fr.js"></script>
-		</c:when>
-		<c:when test="${locale=='de'}">
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/datepicker/jquery.ui.datepicker-de.js"></script>
-		</c:when>
-	</c:choose>
-</c:if>
-
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/datepicker/jquery.squash.datepicker-auto.js"></script>
-<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/datepicker/jquery.squash.datepicker.js"></script>
-
+<script type="text/javascript">
+require(["common"], function() {
+	require(["datepicker/jquery.squash.datepicker-locales", "jquery.squash.datepicker", "jquery.squash.datepicker-auto"], function() {
+		// noop
+	});
+});
+</script>
 

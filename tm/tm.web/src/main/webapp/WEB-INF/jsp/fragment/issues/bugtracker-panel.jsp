@@ -361,6 +361,8 @@ check that in the next <script></script> tags
 
 
 <script type="text/javascript">
+require([ "common" ], function() {
+  require([ "jquery", "squash.basicwidgets" ], function($, basicwidg) {
 	$(function() {
 		require(["squash.basicwidgets", "workspace.event-bus"], function(basicwidg, eventBus){
 			basicwidg.init();
@@ -382,4 +384,5 @@ check that in the next <script></script> tags
 			});
 		});
 	});
+});
 </script>

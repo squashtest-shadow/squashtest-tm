@@ -29,11 +29,10 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup" %>
 
-<layout:info-page-layout titleKey="workspace.home.title" highlightedWorkspace="home">
+<layout:info-page-layout titleKey="workspace.home.title" highlightedWorkspace="home" main="home-workspace">
 	<jsp:attribute  name="head">	
 		<comp:sq-css name="squash.blue.css" />	
 		<comp:sq-css name="squash.core.override.css" />	
-		
 	</jsp:attribute>
 	
 	<jsp:attribute name="titlePane">

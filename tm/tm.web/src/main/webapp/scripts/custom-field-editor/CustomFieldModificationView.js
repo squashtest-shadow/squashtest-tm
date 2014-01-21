@@ -26,7 +26,8 @@ define(
 				"squashtable", "jquery.squash.oneshotdialog",
 				"jquery.squash.messagedialog", "jquery.squash.confirmdialog",
 				"jeditable.datepicker",
-				"datepicker/require.jquery.squash.datepicker-locales" ],
+				"datepicker/jquery.squash.datepicker-locales", 
+				"squashtest/jquery.squash.popuperror" ],
 		function($, NewCustomFieldOptionDialog, Backbone, _, SimpleJEditable,SelectJEditable, StringUtil) {
 			var cfMod = squashtm.app.cfMod;
 			/*

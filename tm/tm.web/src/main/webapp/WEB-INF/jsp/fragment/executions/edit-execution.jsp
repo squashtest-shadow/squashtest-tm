@@ -76,45 +76,6 @@
 </s:url>
 
 <%-------------------------- /urls ------------------------------%>
-<script type="text/javascript">
-	/* display the execution name. Used for extern calls (like from the page who will include this fragment)
-	*  will refresh the general informations as well*/
-	function nodeSetName(name){
-		var fullname = name;
-		$('#execution-name').html(fullname);		
-	}
-	
-	/* renaming success handler */
-	function renameExecutionSuccess(data){
-		nodeSetName(data.newName);
-						
-		$( '#rename-execution-dialog' ).dialog( 'close' );
-	}
-	
-	/* deletion success handler */
-	function deleteExecutionSuccess(){
-		$( '#delete-execution-confirm' ).dialog( 'close' );
-// 		document.location.href="${ parentUrl }" ;
-		history.back();
-	}
-	
-	/* deletion failure handler */
-	function deleteExecutionFailure(xhr){
-		$.squash.openMessage("<f:message key='popup.title.error' />", xhr.statusText);		
-	}
-
-	/* simple initialization for simple components */
-	$(function(){
-		$('#delete-execution-button').button();
-
-		$("#back").button().click(function(){
-			history.back();
-		});
-		
-		
-	});
-
-</script>
 
 <div
 	class="ui-widget-header ui-state-default ui-corner-all fragment-header">
@@ -299,10 +260,7 @@
 	<div id="bugtracker-section-div"></div>
 
 	<%------------------------------ /bugs section -------------------------------%>
-
 	<%--------------------------- Deletion confirmation popup -------------------------------------%>
-
-
 	<pop:popup id="delete-execution-confirm"
 		titleKey="dialog.delete-execution.title" isContextual="true"
 		openedBy="delete-execution-button">
@@ -333,10 +291,46 @@
 	<f:message var="statusReady" key="execution.execution-status.READY" />
 
 	<script type="text/javascript">
+	var squashtm = squashtm || {};
 	
-	$(function(){
-		require(["page-components/execution-information-panel", "squashtable", "jquery.squash.jeditable"], function(infopanel){
+	require(["common"], function() {
+		require(["jquery", "page-components/execution-information-panel", "squashtable", "jquery.squash.jeditable"], function($, infopanel) {			
+			/* display the execution name. Used for extern calls (like from the page who will include this fragment)
+			*  will refresh the general informations as well*/
+			function nodeSetName(name){
+				var fullname = name;
+				$('#execution-name').html(fullname);		
+			}
 			
+			/* renaming success handler */
+			function renameExecutionSuccess(data){
+				nodeSetName(data.newName);
+								
+				$( '#rename-execution-dialog' ).dialog( 'close' );
+			}
+			
+			/* deletion success handler */
+			function deleteExecutionSuccess(){
+				$( '#delete-execution-confirm' ).dialog( 'close' );
+//		 		document.location.href="${ parentUrl }" ;
+				history.back();
+			}
+			
+			/* deletion failure handler */
+			function deleteExecutionFailure(xhr){
+				$.squash.openMessage("<f:message key='popup.title.error' />", xhr.statusText);		
+			}
+
+			squashtm.execution = squashtm.execution || {}
+			squashtm.execution.deleteExecutionSuccess = deleteExecutionSuccess;
+			squashtm.execution.deleteExecutionFailure = deleteExecutionFailure;
+
+			$('#delete-execution-button').button();
+
+			$("#back").button().click(function(){
+				history.back();
+			});
+
 			
 			// ************** execution table *********************
 			var tableSettings = {
@@ -424,10 +418,9 @@
 		 	squashtm.execution.refresh = $.proxy(function(){
 		 		$("#execution-execution-steps-table").squashTable().refresh();
 		 		infopanel.refresh();
-		 		//see execution-execute-button.tag
-		 		updateBtnlabelFromTable();
+		 		//see execution-execute-button.tag	
+        squashtm.execution.updateBtnlabelFromTable();
 		 	}, window);
-
 		});
 	});
 	</script>

@@ -50,7 +50,7 @@
 
 <script type="text/javascript">
 	var require = require || {};
-	require.baseUrl = "../../../scripts";
+//	require.baseUrl = "../../../scripts";
 </script>
 </head>
 <body th:remove="tag">
@@ -223,6 +223,7 @@
 					value="Cancel" th:value="#{label.Cancel}" />
 			</div>
 		</div>
+	</div>
 		<!-- ==================== initialisation ==================== -->
 
 		<script type="text/javascript" th:inline="javascript">
@@ -232,9 +233,8 @@
 	  	squashtm.app.messages = squashtm.app.messages || {};
 	  	squashtm.app.messages["message.notBlank"] = /*[[ #{message.notBlank} ]]*/ "Value should not be blank";
 	  	
-			require(
-					[ "domReady", "test-case-management" ],
-					function(domReady, testCaseManagement) {
+  	require(["common"], function() {
+		require([ "domReady", "test-case-management" ], function(domReady, testCaseManagement) {
 							var settings = {
 								basic : {
 									testCaseUrl : /*[[@{/test-cases/__${testCase.id}__}]]*/"/squash/test-cases/1",
@@ -272,13 +272,13 @@
 								}
 							};
 							
-						domReady(function() {		
-							testCaseManagement.initParametersTab(settings);
-						})
-					});
-			/*]]>*/
-		</script>
-		<!-- ==================== /initialisation ==================== -->
-	</div>
+//			domReady(function() {		
+				testCaseManagement.initParametersPanel(settings);
+//			});
+		});
+  	});
+	/*]]>*/
+	</script>
+	<!-- ==================== /initialisation ==================== -->
 </body>
 </html>

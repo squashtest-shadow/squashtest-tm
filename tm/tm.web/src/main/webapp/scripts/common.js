@@ -18,6 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+var CKEDITOR_BASEPATH = "/${bundle.contextPath}/scripts/ckeditor/";
+
 requirejs.config({
 			packages : [
 				"execution-processing",
@@ -59,14 +62,14 @@ requirejs.config({
 				 * "jquery/my.module" will be interpolated as
 				 * "/lib/jquery/../my.module"
 				 */
-				"datatables" : "datatables/jquery.dataTables.min",
+				"datatables" : "datatables/jquery.dataTables",
 				//lib
 				"domReady" : "lib/require/domReady",
-				"jquery" : "lib/jquery/jquery-1.8.3.min",
-				"jqueryui" : "lib/jquery/jquery-ui-1.9.0.custom.min",
+				"jquery" : "lib/jquery/jquery-1.8.3",
+				"jqueryui" : "lib/jquery/jquery-ui-1.9.0.custom",
 				"handlebars" : "lib/handlebars/handlebars-1.0.0.rc3",
-				"underscore" : "lib/underscore/underscore-1.4.4-min",
-				"backbone" : "lib/backbone/backbone-1.0.0-min",
+				"underscore" : "lib/underscore/underscore-1.4.4",
+				"backbone" : "lib/backbone/backbone-1.0.0",
 				"jqplot-core" : "lib/jqplot/jquery.jqplot.min",
 				"jqplot-pie" : "lib/jqplot/plugins/jqplot.pieRenderer.min",
 				"jqplot-donut" : "lib/jqplot/plugins/jqplot.donutRenderer",
@@ -80,7 +83,6 @@ requirejs.config({
 				"jquery.ckeditor" : "ckeditor/adapters/jquery",
 				//jeditable
 				"jeditable" : "jquery/jquery.jeditable.authored",
-//				"jeditable" : "jquery/jquery.jeditable.mini.authored",
 				"jeditable.ckeditor" : "jquery/jquery.jeditable.ckeditor",
 				"jeditable.datepicker" : "jquery/jquery.jeditable.datepicker",
 				"jeditable.simpleJEditable" : "squashtest/classes/SimpleJEditable",
@@ -94,7 +96,7 @@ requirejs.config({
 				"jquery.hotkeys" : "jquery/jquery.hotkeys-0.8",
 				"jquery.timepicker" : "jquery/jquery-ui-timepicker-addon",
 				"jquery.cookie" : "jquery/jquery.cookie",
-				"jquery.tagit" : "jquery/tag-it.min",
+				"jquery.tagit" : "jquery/tag-it",
 				//squashtest
 				"jquery.squash" : "squashtest/jquery.squash.plugin",
 				"jquery.squash.rangedatepicker" : "squashtest/jquery.squash.rangedatepicker",
@@ -110,9 +112,11 @@ requirejs.config({
 				"jquery.squash.formdialog" : "squashtest/jquery.squash.formdialog",
 				"jquery.switchButton" : "jquery/jquery.switchButton",
 				"jquery.squash.add-attachment-popup" : "squashtest/add-attachment-popup",
-				//squash
+				"jquery.squash.datepicker" : "datepicker/jquery.squash.datepicker",
+				"jquery.squash.datepicker-auto" : "datepicker/jquery.squash.datepicker-auto",
 				"jquery.squash.projectpicker" : "squash/jquery.squash.projectpicker",
 				"jquery.squash.fragmenttabs" : "squash/squash.fragmenttabs",
+				//squash
 				"squash.cssloader" : "squash/squash.cssloader",
 				"squash.translator" : "squash/squash.translator",
 				"squash.resizer" : "squash/squash.tree-page-resizer",
@@ -128,8 +132,10 @@ requirejs.config({
 				"workspace.contextual-content" : "workspace/workspace.contextual-content",
 				"workspace.event-bus" : "workspace/workspace.event-bus",
 				//for plugin compatibility purposes
-				"jquery.squash.datatables" : "plugin-compatibility/jquery.squash.datatable"
-				
+				"jquery.squash.datatables" : "plugin-compatibility/jquery.squash.datatable",
+				// contextual content
+				"squash.KeyEventListener" : "squashtest/classes/KeyEventListener",
+				"squash.events" : "squashtest/classes/Event"
 			},
 			shim : {
 				"ckeditor" : {
@@ -170,8 +176,16 @@ requirejs.config({
 				"datatables" : [ "jqueryui" ],
 				"jquery.dialog-patch" : [ "jqueryui" ],
 				"jquery.squash" : {
-					deps : [ "jquery" ],
+					deps : [ "jquery", "jqueryui" ],
 					exports : "squashtm.popup"
+				},
+				"jquery.squash.datepicker" : {
+					deps : [ "jquery", "jqueryui" ], 
+					exports : "SquashDatePicker" // this is a constructor
+				}, 
+				"jquery.squash.datepicker-auto" : {
+					deps : [ "jquery", "jqueryui" ], 
+					exports : "DatePickerAuto" // this is a constructor
 				},
 				"jquery.squash.fragmenttabs" : {
 					deps : [ "jquery", "jqueryui" ],
@@ -207,7 +221,7 @@ requirejs.config({
 				},
 				"jquery.cookie" : {
 					deps : [ "jquery" ],
-					exports : "jqueryCookie"
+					exports : "jQuery.cookie"
 				},
 				"handlebars" : {
 					deps : [ "jquery" ],
@@ -225,23 +239,25 @@ requirejs.config({
 					exports : "tagit"
 				},
 				"jquery.switchButton" : ["jquery", "jqueryui"],
-
+				// jqplot
 				"jqplot-core" : ["jquery"],
-				
 				"jqplot-pie" : ["jquery", "jqplot-core"],
-				
 				"jqplot-donut" : ["jquery", "jqplot-core"],
-				
 				"jqplot-dates" : ["jquery", "jqplot-core"],
-				
 				"jqplot-category" : ["jquery", "jqplot-core"],
-				
-				"jqplot-highlight" :{
+				"jqplot-highlight" : {
 					deps : ["jquery", "jqplot-core"],
 					init : function($){
 						$.jqplot.config.enablePlugins = true;
 						return $;
 					}
+				}, 
+				"squash.KeyEventListener" : {
+					deps : [ "jquery" ], 
+					exports : "KeyEventListener" // this is a constructor
+				}, 
+				"squash.events" : {
+					exports : "squashtm.events"
 				}
 			}
 		});

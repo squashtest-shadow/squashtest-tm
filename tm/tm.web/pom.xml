@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>squashtest-csp-tm</artifactId>
@@ -23,13 +24,15 @@
     <smartsprites.version>1.7</smartsprites.version>
     <thyleleaf.springsec.version>2.0.0</thyleleaf.springsec.version>
     <jasperreports.build.outputDirectory>${project.build.directory}/jasperreports/compiled</jasperreports.build.outputDirectory>
-    <smartprites-wro4j-exchangedir>${project.build.directory}/web-optimization</smartprites-wro4j-exchangedir>  
+    <smartprites-wro4j-exchangedir>${project.build.directory}/web-optimization</smartprites-wro4j-exchangedir>
     <smartsprites.inputDir>src/main/webapp/styles</smartsprites.inputDir>
     <smartsprites.outputDir>${smartprites-wro4j-exchangedir}</smartsprites.outputDir>
     <wro4j.inputDir>${smartprites-wro4j-exchangedir}</wro4j.inputDir>
     <wro4j.css.outputDirectory>${project.build.directory}/processed-css</wro4j.css.outputDirectory>
     <sprites.packageDirectory>images</sprites.packageDirectory>
+    <rjs.outputDirectory>${project.build.directory}/optimized-js</rjs.outputDirectory>
     <css.packageDirectory>styles</css.packageDirectory>
+    <js.packageDirectory>scripts</js.packageDirectory>
 
     <!-- Default jacoco dont record any coverage data -->
     <sonar.java.coveragePlugin>cobertura</sonar.java.coveragePlugin>
@@ -378,7 +381,7 @@
       <artifactId>org.springframework.test</artifactId>
     </dependency>
     <!-- ====== /SPRING INTEGRATION TEST SUPPORT ====== -->
-    
+
 
   </dependencies>
   <build>
@@ -460,12 +463,13 @@
               <targetPath>WEB-INF/reports</targetPath>
             </resource>
             <resource>
-            	<directory>${smartprites-wro4j-exchangedir}/images</directory>
-            	<targetPath>${sprites.packageDirectory}</targetPath>
+              <directory>${smartprites-wro4j-exchangedir}/images</directory>
+              <targetPath>${sprites.packageDirectory}</targetPath>
             </resource>
             <resource>
               <directory>${wro4j.css.outputDirectory}</directory>
               <targetPath>${css.packageDirectory}</targetPath>
+              <!-- filter, motherlover ! -->
             </resource>
             <resource>
               <directory>${project.build.outputDirectory}/META-INF</directory>
@@ -476,8 +480,8 @@
               <includes>
                 <include>urlrewrite.xml</include>
                 <include>webdefault.xml</include>
-                 <include>squash-tm-servlet.xml</include>
-               </includes>
+                <include>squash-tm-servlet.xml</include>
+              </includes>
               <filtering>true</filtering>
               <targetPath>WEB-INF</targetPath>
             </resource>
@@ -493,7 +497,7 @@
 
 	<!-- =========== web resources optimization (spritemap, css minification etc in that order) ============= -->
 
-	<plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
         <executions>
@@ -510,38 +514,38 @@
                 <resource>
                   <directory>src/main/webapp</directory>
                   <includes>
-                  	<include>images/**</include>
-                  	<include>styles/**</include>
+                    <include>images/**</include>
+                    <include>styles/**</include>
                   </includes>
                 </resource>
               </resources>
             </configuration>
           </execution>
-      	</executions>     
-    </plugin>
-	
-	<plugin>
-		<groupId>net.jangaroo</groupId>
-		<artifactId>smartsprites-maven-plugin</artifactId>
-		<version>${smartsprites.version}</version>
-		
-		<configuration>
-			<rootDirPath>${smartsprites.inputDir}</rootDirPath>
-			<outputDirPath>${smartsprites.outputDir}/styles</outputDirPath>
-		</configuration>
-		
-		<executions>
-			<execution>
-				<id>smartsprites</id>
-				<phase>process-sources</phase>
-				<goals>
-					<goal>createSprites</goal>
-				</goals>
-			</execution>
-		</executions>
-		
-	</plugin>
-            
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>net.jangaroo</groupId>
+        <artifactId>smartsprites-maven-plugin</artifactId>
+        <version>${smartsprites.version}</version>
+
+        <configuration>
+          <rootDirPath>${smartsprites.inputDir}</rootDirPath>
+          <outputDirPath>${smartsprites.outputDir}/styles</outputDirPath>
+        </configuration>
+
+        <executions>
+          <execution>
+            <id>smartsprites</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>createSprites</goal>
+            </goals>
+          </execution>
+        </executions>
+
+      </plugin>
+
 
       <plugin>
         <groupId>ro.isdc.wro4j</groupId>
@@ -557,7 +561,7 @@
             </goals>
             <configuration>
               <!-- dont break line or add spaces or maven will scream in horror -->
-              <targetGroups>squash.core,squash.blue,squash.green,squash.grey,squash.purple,squash.wine,squash.blue.green,squash.green.blue,squash.tree,squash.core.override,squash.subpage.override,squash.print</targetGroups>              
+              <targetGroups>squash.core,squash.blue,squash.green,squash.grey,squash.purple,squash.wine,squash.blue.green,squash.green.blue,squash.tree,squash.core.override,squash.subpage.override,squash.print</targetGroups>
               <minimize>true</minimize>
               <contextFolder>${wro4j.inputDir}</contextFolder>
               <cssDestinationFolder>${wro4j.css.outputDirectory}</cssDestinationFolder>
@@ -646,6 +650,43 @@
       </plugin>
 
       <!-- ====== /INTEGRATION TESTS ====== -->
+
+      <plugin>
+        <groupId>com.github.skwakman.nodejs-maven-plugin</groupId>
+        <artifactId>nodejs-maven-plugin</artifactId>
+        <version>1.0.2</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>extract</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <targetDirectory>
+            ${project.build.directory}/nodejs/
+          </targetDirectory>
+        </configuration>
+      </plugin>
+      <plugin>
+        <!-- r.js optimization. can be skipped with -Drequirejs.optimize.skip=true -->
+        <groupId>com.github.bringking</groupId>
+        <artifactId>requirejs-maven-plugin</artifactId>
+        <version>2.0.3</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>optimize</goal>
+            </goals>
+            <phase>prepare-package</phase>
+            <configuration>
+              <filterConfig>true</filterConfig>
+              <configFile>src/main/webapp/app.build.js</configFile>
+              <skip>false</skip>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
@@ -834,15 +875,30 @@
                   <resources>
                     <resource>
                       <directory>${wro4j.css.outputDirectory}</directory>
+                      <filtering>true</filtering>
                     </resource>
                   </resources>
                 </configuration>
               </execution>
- 
-              
+
+              <execution>
+                <id>copy-optimized-js</id>
+                <phase>process-resources</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+
+                <configuration>
+                  <outputDirectory>${js.packageDirectory}</outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>${rjs.outputDirectory}/scripts</directory>
+                      <filtering>true</filtering>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
             </executions>
-            
-            
           </plugin>
         </plugins>
       </build>

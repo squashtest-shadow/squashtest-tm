@@ -23,7 +23,7 @@ require([ "common" ], function() {
 			"app/report/squashtm.reportworkspace", "domReady" ], function($,
 			WS, ReportWorkspace, domReady) {
 		domReady(function() {
-			WS.init("report");
+			WS.init();
 			ReportWorkspace.init(squashtm.app.reportWorkspaceConf);
 		});
 	});
