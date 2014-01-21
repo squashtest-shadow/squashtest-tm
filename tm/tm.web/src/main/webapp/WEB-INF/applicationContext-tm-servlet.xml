@@ -99,4 +99,9 @@
     </property>
   </bean>
 
+  <beans profile="eclipse">
+    <context:component-scan base-package="target/classes/org.squashtest.tm" use-default-filters="false">
+      <context:include-filter type="annotation" expression="org.squashtest.tm.core.web.annotation.ApplicationComponent" />
+    </context:component-scan>    
+  </beans>
 </beans>
