@@ -39,7 +39,7 @@ define([ 'jquery', 'tree' ], function($, tree) {
 
 	function TreeEventHandler() {
 
-		// Lazily initialised, see below
+		// Lazily initialized, see below
 		this.tree = null;
 
 		this.setTree = function(tree) {
@@ -185,32 +185,47 @@ define([ 'jquery', 'tree' ], function($, tree) {
 		target.setAttr('status', event.evt_newstatus);
 	}
 	function updateEventUpdateReqCoverage(event, tree) {
-		var target = tree.findNodes({
-			restype : event.evt_target.obj_restype,
-			resid : event.evt_target.obj_id
+		var openedNodes  = tree.findNodes({restype : "test-cases"});
+		var targetIds = event.evt_target.ids;
+		var openedTargetIds = targetIds.filter(function(index){
+			var itemId = targetIds[index];
+			for(var i = 0; i < openedNodes.length; i++){
+				if( itemId == openedNodes[i].getAttribute('resid')){
+					return true;
+				}
+			}
+			return false;
 		});
+		var mapIdOldReq = {};
+		$.each(targetIds, function(index, item){
+			var treeNode = tree.findNodes({
+				restype : "test-cases",
+				resid : item
+			});
+			if (treeNode.length !== 0) {
+				var oldReq = treeNode.attr('isreqcovered');
+				mapIdOldReq[item] = oldReq;
+			}
+		});
+		
 
-		if (target.length === 0) {
-			return;
-		}
-		var oldReq = target.attr('req');
-		if(event.evt_target.obj_restype == "test-cases"){
-			updateCallingTestCasesNodes(newReq, oldReq, tree, event.evt_target.obj_id);
-		}
+		
+		
+		updateCallingTestCasesNodes( tree, mapIdOldReq);
 	}
-	function updateCallingTestCasesNodes(newReq, oldReq, tree, updatedId){
+	function updateCallingTestCasesNodes( tree, mapIdOldReq){
 		//if a test case change it's requirements then it's calling test cases might be newly bound/unbound to requirements or might have their importance changed.
 		
 		var target = tree.findNodes({restype : "test-cases"});
 		var nodeIds = target.map(function(index, item){ return item.getAttribute("resid");});
 		$.ajax({
-			url:squashtm.app.contextRoot+"/test-cases/",
-			type:"get",
-			data: {
+			url:squashtm.app.contextRoot+"/test-cases/tree-infos",
+			type:"post",
+			contentType: "application/json",
+			data: JSON.stringify({
 				openedNodesIds :  nodeIds.toArray(),
-				oldReq : oldReq ,
-				updatedId : updatedId
-			},
+				updatedIdsAndOldReq : mapIdOldReq
+			}),
 			dataType: "json"
 		}).then(function(testCaseTreeIconsUpdate){
 			
@@ -222,8 +237,8 @@ define([ 'jquery', 'tree' ], function($, tree) {
 				if (!target2 || target2.length === 0) {
 					return;
 				}
-				if(value.req != 'same'){
-					target2.setAttr('req', value.req);
+				if(value.isreqcovered != 'same'){
+					target2.setAttr('isreqcovered', value.isreqcovered);
 				}
 				if(value.importance != 'same'){
 					target2.setAttr('importance', value.importance);

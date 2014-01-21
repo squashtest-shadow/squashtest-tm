@@ -99,7 +99,9 @@ class VerifyingTestCaseManagerControllerTest extends Specification {
 		tc.id >> 2
 		RequirementVersion req = Mock()
 		RequirementAlreadyVerifiedException ex = new RequirementAlreadyVerifiedException(req, tc)
-		verifyingTestCaseManager.addVerifyingTestCasesToRequirementVersion([1, 2], 10) >> [ex]
+		Map<String, Collection<?>> rejectionsAndIds =  Mock();
+		rejectionsAndIds.get(VerifyingTestCaseManagerService.REJECTION_KEY) >> [ex]
+		verifyingTestCaseManager.addVerifyingTestCasesToRequirementVersion([1, 2], 10) >> rejectionsAndIds
 		mockVerifyingTestCaseService()
 
 		when:

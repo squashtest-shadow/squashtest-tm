@@ -33,7 +33,6 @@ define([ "jquery", "backbone", "underscore", "./GeneralInfosPanel", "./Prerequis
 				settings : this.settings,
 				parentTab : this
 			});
-			this.identity = { obj_id : this.settings.testCaseId, obj_restype : "test-cases"  };
 			this.prerequisitePanel = new PrerequisitePanel({
 				settings : this.settings,
 				parentTab : this
@@ -51,7 +50,7 @@ define([ "jquery", "backbone", "underscore", "./GeneralInfosPanel", "./Prerequis
 		events : {},
 		
 		_sendUpdateReqToTree : function(){
-			var evt = new EventUpdateReqCoverage(this.identity);
+			var evt = new EventUpdateReqCoverage([this.settings.testCaseId]);
 			squashtm.workspace.eventBus.fire(null, evt);
 		}
 	});

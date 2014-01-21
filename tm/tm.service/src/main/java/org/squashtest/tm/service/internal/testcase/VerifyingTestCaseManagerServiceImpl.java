@@ -24,8 +24,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -38,6 +40,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
+import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
@@ -92,18 +95,21 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 
 	@Override
 	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'LINK') or hasRole('ROLE_ADMIN')")
-	public Collection<VerifiedRequirementException> addVerifyingTestCasesToRequirementVersion(List<Long> testCasesIds,
+	public Map<String, Collection<?>> addVerifyingTestCasesToRequirementVersion(List<Long> testCasesIds,
 			long requirementVersionId) {
 		// nodes are returned unsorted
 		List<TestCaseLibraryNode> nodes = testCaseLibraryNodeDao.findAllByIds(testCasesIds);
 
 		List<TestCase> testCases = new TestCaseNodeWalker().walk(nodes);
-
+		List<Long> ids = IdentifiedUtil.extractIds(testCases);
+		Collection<VerifiedRequirementException> rejections= Collections.emptyList();
 		if (!testCases.isEmpty()) {
-			return doAddVerifyingTestCasesToRequirementVersion(testCases, requirementVersionId);
+			rejections = doAddVerifyingTestCasesToRequirementVersion(testCases, requirementVersionId);
 		}
-
-		return Collections.emptyList();
+		Map<String, Collection<?>> result = new HashMap<String, Collection<?>>(2);
+		result.put(IDS_KEY, ids);
+		result.put(REJECTION_KEY, rejections);
+		return result;
 	}
 
 	private Collection<VerifiedRequirementException> doAddVerifyingTestCasesToRequirementVersion(

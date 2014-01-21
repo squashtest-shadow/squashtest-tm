@@ -53,9 +53,6 @@ public final class VerifiedRequirementActionSummaryBuilder {
 	 * @return
 	 */
 	public static Map<String, Object> buildAddActionSummary(Collection<VerifiedRequirementException> rejections) {
-		if (rejections.isEmpty()) {
-			return Collections.emptyMap();
-		}
 		Map<String, Object> summary = new HashMap<String, Object>();
 
 		for (VerifiedRequirementException rejection : rejections) {

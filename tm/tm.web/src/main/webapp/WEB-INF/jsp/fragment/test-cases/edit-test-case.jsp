@@ -185,7 +185,8 @@ require(["common"], function() {
 	/*<![CDATA[*/
 	var squashtm = squashtm || {};
   	squashtm.app = squashtm.app || {} ;	 
-	require([ "domReady", "test-case-management" ],
+    require([ "common" ], function() {
+        require([ "domReady", "test-case-management" ],
 			function(domReady, testCaseManagement) {
 					var settings = {
 							urls : {
@@ -205,6 +206,7 @@ require(["common"], function() {
 					testCaseManagement.initInfosTab(settings);
 				});
 			});
+    });
 	/*]]>*/
 </script>
 

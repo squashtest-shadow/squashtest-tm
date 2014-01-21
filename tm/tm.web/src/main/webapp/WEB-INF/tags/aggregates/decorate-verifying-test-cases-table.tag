@@ -113,6 +113,8 @@
     					dataType : 'json'
     				}).success(function(){
     					table.refresh();
+					var evt = new EventUpdateReqCoverage(ids);
+					squashtm.workspace.eventBus.fire(null, evt);
     				})
     			});
     			</c:if>			
