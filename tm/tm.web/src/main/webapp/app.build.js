@@ -28,6 +28,7 @@
 	skipDirOptimize: true,  // only want to minify the build layers specified in modules options and not the rest of the JS files in the build output directory
 	generateSourceMaps : true, // maps enables modern browsers to fetch pretty source files from ugly ones 
 	preserveLicenseComments: false,
+	// for each module, we have to tell which are the top level dependencies in the "include" field
 	modules : [ {
 		name : "common", 
 		include: [
@@ -74,11 +75,15 @@
 		  				"squash.session-pinger",
 		  				"jquery.squash.tagit",
 		  				"workspace.contextual-content",
+		  				"app/pubsub"
 		          ]
 	}, {
-		name: "report-workspace", 
+		name: "login-page", 
+		include: ["jquery","app/pubsub","app/ws/squashtm.notification","jqueryui","jquery.squash.squashbutton"],
 		exclude: [
 			"common"
 		] 
+	}, {
+		name: "pubsub-boot"
 	} ]
 })
