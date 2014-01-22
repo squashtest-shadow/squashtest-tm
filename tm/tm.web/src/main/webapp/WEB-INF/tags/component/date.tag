@@ -23,9 +23,10 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ attribute name="value" required="true" type="java.util.Date" %>
+<%@ attribute name="noValueKey" required="false" type="java.lang.String" description="optional message key to use when there is no date to print" %>
 <c:choose>
   <c:when test="${ empty value }">
-    <f:message key="squashtm.nodata" />
+    <f:message key="${ not empty noValueKey ? noValueKey : 'squashtm.dateformat' }" />
   </c:when>
   <c:otherwise>
     <f:message var="pattern" key="squashtm.dateformat" />
