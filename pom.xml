@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squash-tm-parent</artifactId>
-    <version>1.5</version>
+    <version>1.6-SNAPSHOT</version>
   </parent>
 
   <artifactId>squash-tm</artifactId>
@@ -320,6 +320,7 @@
             <!-- jetty config for dev -->
             <exclude>**/provision/**/etc/jetty.xml</exclude>
             <exclude>**/provision/**/etc/jetty*.xml</exclude>
+            <exclude>tm/tm.web/scripts/**</exclude>
           </excludes>
           <mapping>
             <tag>DYNASCRIPT_STYLE</tag>
