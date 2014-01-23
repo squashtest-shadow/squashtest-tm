@@ -187,7 +187,7 @@ define([ 'jquery', 'tree' ], function($, tree) {
 	function updateEventUpdateReqCoverage(event, tree) {
 		var openedNodes  = tree.findNodes({restype : "test-cases"});
 		var targetIds = event.evt_target.ids;
-		var openedTargetIds = targetIds.filter(function(index){
+		var openedTargetIds = $(targetIds).filter(function(index){
 			var itemId = targetIds[index];
 			for(var i = 0; i < openedNodes.length; i++){
 				if( itemId == openedNodes[i].getAttribute('resid')){
