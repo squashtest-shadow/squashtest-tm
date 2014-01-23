@@ -779,7 +779,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 	}
 
 	return {
-		init : init
+		init : init,
 		refreshTable : refresh
 	};
 
