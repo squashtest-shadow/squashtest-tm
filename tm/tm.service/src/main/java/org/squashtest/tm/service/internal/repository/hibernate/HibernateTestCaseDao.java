@@ -227,6 +227,9 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> findAllTestCasesIdsCallingTestCases(List<Long> testCasesIds) {
+		if(testCasesIds.isEmpty()){
+			return Collections.emptyList();
+		}
 		Query query = currentSession().getNamedQuery("testCase.findAllTestCasesIdsCallingTestCases");
 		query.setParameterList("testCasesIds", testCasesIds);
 		return query.list();
@@ -665,8 +668,11 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 
 	@Override
 	public Map<Long, TestCaseImportance> findAllTestCaseImportanceWithImportanceAuto(Collection<Long> testCaseIds) {
+		Map<Long, TestCaseImportance> resultMap = new HashMap<Long, TestCaseImportance>();
+		if(testCaseIds.isEmpty()){
+			return resultMap;
+		}
 		List<Object[]> resultList = executeListNamedQuery("testCase.findAllTCImpWithImpAuto", new SetIdsParameter(testCaseIds));
-		Map<Long, TestCaseImportance> resultMap = new HashMap<Long, TestCaseImportance>(resultList.size());
 		for(Object [] resultEntry : resultList){
 			Long id = (Long) resultEntry[0];
 			TestCaseImportance imp = (TestCaseImportance) resultEntry[1];

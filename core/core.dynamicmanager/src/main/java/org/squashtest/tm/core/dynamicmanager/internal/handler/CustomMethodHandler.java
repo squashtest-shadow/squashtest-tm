@@ -40,7 +40,7 @@ public class CustomMethodHandler implements DynamicComponentInvocationHandler {
 	}
 
 	@Override
-	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable { // NOSONAR : I dont choose what JDK interfaces throw
+	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable { // NOSONAR : I don't choose what JDK interfaces throw
 		return method.invoke(customImplementation(), args);
 	}
 
