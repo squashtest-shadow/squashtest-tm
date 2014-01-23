@@ -75,15 +75,13 @@
 		  				"squash.session-pinger",
 		  				"jquery.squash.tagit",
 		  				"workspace.contextual-content",
-		  				"app/pubsub"
-		          ]
+		  				]
 	}, {
 		name: "login-page", 
-		include: ["jquery","app/pubsub","app/ws/squashtm.notification","jqueryui","jquery.squash.squashbutton"],
+		include: ["jquery",
+		          "app/ws/squashtm.notification","jqueryui","jquery.squash.squashbutton"],
 		exclude: [
 			"common"
 		] 
-	}, {
-		name: "pubsub-boot"
 	} ]
 })

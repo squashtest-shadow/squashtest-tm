@@ -35,8 +35,8 @@ define([ "jquery" ], function($) {
 	};
 
 	window.subscribe = function(event) {
-		
 		proxy.on.apply(proxy, arguments);
+		
 		$(document.eventsQueue).each(function(index) {
 			if (this[0] === event) {
 				proxy.trigger.apply(proxy, this);
