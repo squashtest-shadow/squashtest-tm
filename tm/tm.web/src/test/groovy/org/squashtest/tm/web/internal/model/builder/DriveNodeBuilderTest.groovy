@@ -22,33 +22,38 @@ package org.squashtest.tm.web.internal.model.builder;
 
 import static org.junit.Assert.*
 
-import javax.inject.Provider;
+import javax.inject.Provider
 
-import org.apache.commons.collections.MultiMap;
-import org.apache.commons.collections.map.MultiValueMap;
+import org.apache.commons.collections.MultiMap
+import org.apache.commons.collections.map.MultiValueMap
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
-import org.squashtest.tm.domain.library.Library;
+import org.squashtest.tm.domain.library.Library
 import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
-import org.squashtest.tm.domain.testcase.TestCaseStatus;
-import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
+import org.squashtest.tm.domain.testcase.TestCaseStatus
+import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService
 import org.squashtest.tm.service.security.PermissionEvaluationService
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
+import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State
 
 import spock.lang.Specification
-import spock.lang.Unroll;
+import spock.lang.Unroll
 
 class DriveNodeBuilderTest extends Specification {
 	PermissionEvaluationService permissionEvaluationService = Mock()
 	VerifiedRequirementsManagerService verifiedRequirementsManagerService = Mock()
 	Provider nodeBuilderPovider = Mock()
 	DriveNodeBuilder builder = new DriveNodeBuilder(permissionEvaluationService, nodeBuilderPovider)
-
+	InternationalizationHelper internationalizationHelper = Mock()
 	def setup() {
-		nodeBuilderPovider.get() >> new TestCaseLibraryTreeNodeBuilder(permissionEvaluationService, verifiedRequirementsManagerService)
+		internationalizationHelper.internationalize(_,_)>> ""
+		internationalizationHelper.internationalizeYesNo(false, _)>>"non"
+		internationalizationHelper.internationalizeYesNo(true, _)>>"oui"
+		internationalizationHelper.getMessage(_, _, _, _)>>"message"
+		nodeBuilderPovider.get() >> new TestCaseLibraryTreeNodeBuilder(permissionEvaluationService, verifiedRequirementsManagerService, internationalizationHelper)
 	}
 	
 	def "should build root node of test case library"() {
