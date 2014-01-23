@@ -90,7 +90,7 @@
     <property name="additionalDialects">
       <set>
         <bean class="org.thymeleaf.extras.springsecurity3.dialect.SpringSecurityDialect" />
-        <bean class="org.squashtest.tm.web.thymeleaf.dialect.SquashDialect" />
+        <bean class="org.squashtest.tm.web.thymeleaf.dialect.SquashTMDialect" />
       </set>
     </property>
   </bean>

@@ -12,6 +12,10 @@
   <packaging>bundle</packaging>
   <name>core.web</name>
 
+  <properties>
+    <thymeleaf.version>2.0.14.B</thymeleaf.version>
+  </properties>
+
   <dependencies>
     <!-- ====== SQUASHTEST ====== -->
     <dependency>
@@ -85,6 +89,46 @@
       <artifactId>org.springframework.security.acls</artifactId>
     </dependency>
     <!-- ====== /SPRING SECURITY ====== -->
+    <!-- ====== THYMELEAF ====== -->
+    <dependency>
+      <groupId>org.thymeleaf</groupId>
+      <artifactId>org.squashtest.org.thymeleaf</artifactId>
+      <version>${thymeleaf.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+<!--     <dependency> -->
+<!--       <groupId>org.thymeleaf</groupId> -->
+<!--       <artifactId>org.squashtest.org.thymeleaf.spring3</artifactId> -->
+<!--       <version>${thymeleaf.version}</version> -->
+<!--       <exclusions> -->
+<!--         <exclusion> -->
+<!--           <groupId>org.slf4j</groupId> -->
+<!--           <artifactId>slf4j-api</artifactId> -->
+<!--         </exclusion> -->
+<!--       </exclusions> -->
+<!--     </dependency> -->
+<!--     <dependency> -->
+<!--       <groupId>org.thymeleaf.extras</groupId> -->
+<!--       <artifactId>org.squashtest.org.thymeleaf.extras.springsecurity3</artifactId> -->
+<!--       <version>${thyleleaf.springsec.version}</version> -->
+<!--       <exclusions> -->
+<!--         <exclusion> -->
+<!--           <groupId>org.slf4j</groupId> -->
+<!--           <artifactId>slf4j-api</artifactId> -->
+<!--         </exclusion> -->
+<!--       </exclusions> -->
+<!--     </dependency> -->
+<!--     <dependency> -->
+<!--       <groupId>net.sourceforge.nekohtml</groupId> -->
+<!--       <artifactId>org.squashtest.net.sourceforge.nekohtml</artifactId> -->
+<!--       <version>1.9.18.B</version> -->
+<!--     </dependency> -->
+    <!-- ====== /THYMELEAF ====== -->
     <!-- ====== LOGGING ====== -->
     <dependency>
       <groupId>org.slf4j</groupId>

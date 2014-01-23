@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.web.thymeleaf.processor.attr;
+package org.squashtest.tm.core.web.thymeleaf.processor.attr;
 
 import java.util.List;
 

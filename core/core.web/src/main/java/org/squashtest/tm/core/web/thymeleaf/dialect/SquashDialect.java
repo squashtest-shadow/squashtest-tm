@@ -19,32 +19,24 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.web.thymeleaf.dialect;
+package org.squashtest.tm.core.web.thymeleaf.dialect;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
-
-import org.squashtest.tm.web.thymeleaf.processor.attr.SquashCssAttrProcessor;
-import org.squashtest.tm.web.thymeleaf.processor.attr.SquashTogglePanelAttrProcessor;
-import org.squashtest.tm.web.thymeleaf.processor.attr.SquashUnsafeHtmlAttrProcessor;
-import org.thymeleaf.context.IContext;
-import org.thymeleaf.context.IProcessingContext;
-import org.thymeleaf.context.IWebContext;
+import org.squashtest.tm.core.web.thymeleaf.processor.attr.SquashCssAttrProcessor;
+import org.squashtest.tm.core.web.thymeleaf.processor.attr.SquashTogglePanelAttrProcessor;
+import org.squashtest.tm.core.web.thymeleaf.processor.attr.SquashUnsafeHtmlAttrProcessor;
 import org.thymeleaf.dialect.AbstractDialect;
-import org.thymeleaf.dialect.IExpressionEnhancingDialect;
 import org.thymeleaf.processor.IProcessor;
 
 /**
  * Squash dialect for Thmymeleaf
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
-public class SquashDialect extends AbstractDialect implements IExpressionEnhancingDialect {
+public class SquashDialect extends AbstractDialect {
 
 	/**
 	 * @see org.thymeleaf.dialect.IDialect#getPrefix()
@@ -74,28 +66,5 @@ public class SquashDialect extends AbstractDialect implements IExpressionEnhanci
 		return processors;
 	}
 
-	
-	/* partly ripped from SpringSecutiryDialect*/
-	@Override	
-	public Map<String, Object> getAdditionalExpressionObjects(IProcessingContext processingContext) {
-        final IContext context = processingContext.getContext();
-        final IWebContext webContext =
-                (context instanceof IWebContext? (IWebContext)context : null);
-        
-        final Map<String, Object> extensions = new HashMap<String, Object>(1);
-        
-        if (webContext != null){
-        	final ServletContext servletContext = webContext.getServletContext();
-        	final WorkspaceHelper wHelper = new WorkspaceHelper(servletContext);
-        	
-        	extensions.put("workspace", wHelper);
-        	
-        }
-        
-        return extensions;
-		
-	}
-	
-	
 
 }

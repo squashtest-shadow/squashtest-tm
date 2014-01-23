@@ -217,7 +217,7 @@
 	<!-- ================ Squash version variable ====================== -->
 
 	<context-param>
-		<param-name>squashTMVersion</param-name>
+		<param-name>projectVersion</param-name>
 		<param-value>${project.version}</param-value>
 	</context-param>
 	

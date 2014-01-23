@@ -19,11 +19,11 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.web.thymeleaf.processor.attr;
+package org.squashtest.tm.core.web.thymeleaf.processor.attr;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squashtest.tm.web.internal.context.ServletContextParameters;
+import org.squashtest.tm.core.web.context.ServletContextParameters;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.context.IContext;
 import org.thymeleaf.context.IWebContext;
@@ -36,9 +36,9 @@ import org.thymeleaf.util.PrefixUtils;
  * Processes <code>sq:css</code> attributes. Attribute value is expected to be the unqualified name of a stylesheet
  * (e.g. <code>squash.core.css</code>). The processor reads this value and substitutes the <code>sq:css</code> attribute
  * with a <code>href</code> pointing to the stylesheet.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class SquashCssAttrProcessor extends AbstractSingleAttributeModifierAttrProcessor {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SquashCssAttrProcessor.class);
@@ -129,8 +129,7 @@ public class SquashCssAttrProcessor extends AbstractSingleAttributeModifierAttrP
 		if (context instanceof IWebContext) {
 			IWebContext webContext = (IWebContext) context;
 			String squashVersion = webContext.getServletContext().getInitParameter(
-					ServletContextParameters.SQUASH_TM_VERSION);
-
+					ServletContextParameters.PROJECT_VERSION);
 			if (squashVersion != null) {
 				versionPathToken = '-' + squashVersion;
 			}

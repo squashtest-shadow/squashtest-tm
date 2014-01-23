@@ -94,7 +94,7 @@
 			</div>
 			
 			<div id="admin-stats">
-				<div class="admin-stats-table"><label ><f:message key="label.version"/></label><span >${initParam["squashTMVersion"]}</span></div>
+				<div class="admin-stats-table"><label ><f:message key="label.version"/></label><span >${initParam["projectVersion"]}</span></div>
 				<div class="admin-stats-table"><label><f:message key="label.statistics"/></label>
 					<div>
 						<div><label><f:message key="label.projects"/></label><span>${adminStats.projectsNumber }</span></div>

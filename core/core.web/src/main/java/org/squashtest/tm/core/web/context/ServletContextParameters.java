@@ -19,23 +19,23 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.web.internal.context;
+package org.squashtest.tm.core.web.context;
 
 /**
  * This class enumerates the keys of the init parameters of the servlet context (i.e. <code><context-param></code>
  * elements defined in <code>web.xml</code>.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public final class ServletContextParameters {
 
 	/**
-	 * 
+	 *
 	 */
 	private ServletContextParameters() {
 		super();
 	}
 
-	public static final String SQUASH_TM_VERSION = "squashTMVersion";
+	public static final String PROJECT_VERSION = "projectVersion";
 }
