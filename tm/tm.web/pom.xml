@@ -29,6 +29,7 @@
     <wro4j.css.outputDirectory>${project.build.directory}/processed-css</wro4j.css.outputDirectory>
     <sprites.packageDirectory>images</sprites.packageDirectory>
     <rjs.outputDirectory>${project.build.directory}/optimized-js</rjs.outputDirectory>
+    <rjs.optimizer>uglify2</rjs.optimizer>
     <css.packageDirectory>styles</css.packageDirectory>
     <js.packageDirectory>scripts</js.packageDirectory>
 
@@ -778,6 +779,7 @@
         <logger.urlRewriteFilter>DEBUG</logger.urlRewriteFilter>
         <is.dev.stage>true</is.dev.stage>
         <is.war.deploy>false</is.war.deploy>
+        <rjs.optimizer>none</rjs.optimizer>
       </properties>
     </profile>
 
