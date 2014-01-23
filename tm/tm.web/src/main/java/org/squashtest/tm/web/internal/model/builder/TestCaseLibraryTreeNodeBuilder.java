@@ -21,17 +21,22 @@
 package org.squashtest.tm.web.internal.model.builder;
 
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNodeVisitor;
+import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
 
@@ -47,7 +52,8 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 	
 	
 	protected VerifiedRequirementsManagerService verifiedRequirementsManagerService;
-
+	protected InternationalizationHelper internationalizationHelper;
+	
 	/**
 	 * This visitor is used to populate custom attributes of the {@link JsTreeNode} currently built
 	 * 
@@ -65,12 +71,27 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 		 */
 		@Override
 		public void visit(TestCase visited) {
-			addLeafAttributes("test-case", "test-cases");
-			builtNode.addAttr("status", visited.getStatus().toString().toLowerCase());
-			builtNode.addAttr("importance", visited.getImportance().toString().toLowerCase());
+			//gather test cases infos
+			TestCaseStatus status = visited.getStatus();
+			TestCaseImportance importance = visited.getImportance();
 			Boolean isreqcovered = (!visited.getRequirementVersionCoverages().isEmpty() || 
 					verifiedRequirementsManagerService.testCaseHasUndirectRequirementCoverage(visited.getId())) ;
+			
+			//build tooltip
+			Locale locale = LocaleContextHolder.getLocale();
+			String localizedStatus = internationalizationHelper.internationalize(status, locale);
+			String localizedImportance = internationalizationHelper.internationalize(importance, locale);
+			String localizedIsReqCovered = internationalizationHelper.internationalizeYesNo(isreqcovered, locale);
+			String[] args = {localizedStatus, localizedImportance, localizedIsReqCovered};
+			String tooltip = internationalizationHelper.getMessage("label.tree.testCase.tooltip",args,visited.getId().toString(), locale);
+			
+			//set test case attributes
+			addLeafAttributes("test-case", "test-cases");
+			builtNode.addAttr("status", status.toString().toLowerCase());
+			builtNode.addAttr("importance", importance.toString().toLowerCase());
 			builtNode.addAttr("isreqcovered", isreqcovered.toString());
+			builtNode.addAttr("title", tooltip);
+			
 			if (visited.getReference() != null && visited.getReference().length() > 0) {
 				builtNode.setTitle(visited.getReference() + " - " + visited.getName());
 				builtNode.addAttr("reference", visited.getReference());
@@ -123,8 +144,7 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 				builtNode.setState(State.open);
 
 				TestCaseLibraryTreeNodeBuilder childrenBuilder = new TestCaseLibraryTreeNodeBuilder(
-						permissionEvaluationService, verifiedRequirementsManagerService);
-
+						permissionEvaluationService, verifiedRequirementsManagerService, internationalizationHelper);
 				List<JsTreeNode> children = new JsTreeNodeListBuilder<TestCaseLibraryNode>(childrenBuilder)
 						.expand(getExpansionCandidates()).setModel(visited.getOrderedContent()).build();
 
@@ -135,9 +155,11 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 	}
 
 	@Inject
-	public TestCaseLibraryTreeNodeBuilder(PermissionEvaluationService permissionEvaluationService, VerifiedRequirementsManagerService verifiedRequirementsManagerService) {
+	public TestCaseLibraryTreeNodeBuilder(PermissionEvaluationService permissionEvaluationService, VerifiedRequirementsManagerService verifiedRequirementsManagerService, InternationalizationHelper internationalizationHelper) {
 		super(permissionEvaluationService);
 		this.verifiedRequirementsManagerService = verifiedRequirementsManagerService;
+		this.internationalizationHelper = internationalizationHelper;
+		
 	}
 
 	/**
@@ -158,5 +180,8 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 	protected void doAddChildren(JsTreeNode node, TestCaseLibraryNode model) {
 		model.accept(new ChildrenPopulator(node));
 	}
+	
+	
 
+	
 }
