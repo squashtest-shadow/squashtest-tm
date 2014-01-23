@@ -85,36 +85,40 @@
 				
 <script type="text/javascript">
 	$(function() {
-		require(["squashtable"], function(){
-			var table =$("#verifying-test-cases-table").squashTable({
-				'aaData' : ${json:serialize(model.aaData)}
-			}, {});
-			
-			<c:if test="${editable}">
-			var removeDialog = $("#remove-verifying-test-case-dialog").confirmDialog();
-			
-			$( '#${batchRemoveButtonId}' ).click(function() {
-				var table = $( '#verifying-test-cases-table' ).squashTable();
-				var ids = table.getSelectedIds();
-				
-				if (ids.length > 0) {
-					removeDialog.confirmDialog('open');
-				}else{
-					$.squash.openMessage("${titleError}","${emptyMessage}");
-				}
-			});
-			
-			removeDialog.on('confirmdialogconfirm', function(){
-				var ids = table.getSelectedIds();
-				$.ajax({
-					url : "${verifyingTestCasesUrl}/"+ids.join(','),
-					type : 'DELETE',
-					dataType : 'json'
-				}).success(function(){
-					table.refresh();
-				})
-			});
-			</c:if>			
+		require([ "common" ], function() {
+    		require(["jquery", "squashtable"], function($){
+    			var table = $("#verifying-test-cases-table").squashTable({
+    				'aaData' : ${json:serialize(model.aaData)}
+    			}, {});
+    			
+    			<c:if test="${editable}">
+    			var removeDialog = $("#remove-verifying-test-case-dialog").confirmDialog();
+    			
+    			$( '#${batchRemoveButtonId}' ).click(function() {
+    				var table = $( '#verifying-test-cases-table' ).squashTable();
+    				var ids = table.getSelectedIds();
+    				
+    				if (ids.length > 0) {
+    					removeDialog.confirmDialog('open');
+    				}else{
+    					$.squash.openMessage("${titleError}","${emptyMessage}");
+    				}
+    			});
+    			
+    			removeDialog.on('confirmdialogconfirm', function(){
+    				var ids = table.getSelectedIds();
+    				$.ajax({
+    					url : "${verifyingTestCasesUrl}/"+ids.join(','),
+    					type : 'DELETE',
+    					dataType : 'json'
+    				}).success(function(){
+    					table.refresh();
+					var evt = new EventUpdateReqCoverage(ids);
+					squashtm.workspace.eventBus.fire(null, evt);
+    				})
+    			});
+    			</c:if>			
+    		});
 		});
 	});
 </script>

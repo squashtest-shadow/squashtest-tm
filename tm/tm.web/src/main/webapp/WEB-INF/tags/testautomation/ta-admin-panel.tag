@@ -222,10 +222,9 @@
 ==================================== --%>
 
 <script type="text/javascript">
-	$(function(){
-		
-		require(["jquery", "squashtable"], function($){
-
+require(["common"], function() {
+	require(["jquery", "squashtest/classes/TestAutomationProjectManager", "squashtest/classes/TestAutomationAddProjectPopup", "squashtable"], function($, TestAutomationProjectManager, TestAutomationAddProjectPopup){
+		$(function(){
 			//************************** manager setup ********************
 			
 			if (! squashtm.testautomation){
@@ -301,5 +300,5 @@
 		});
 		
 	});
-
+});
 </script>

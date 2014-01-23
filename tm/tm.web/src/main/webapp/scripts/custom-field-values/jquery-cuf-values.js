@@ -19,9 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(
-		[ "jquery", "./cuf-values-utils", 'squash.configmanager', "jqueryui",
-				'jquery.squash.jeditable', "jeditable.datepicker",
-				"datepicker/require.jquery.squash.datepicker-locales" ],
+		[ "jquery", "./cuf-values-utils", "squash.configmanager", "jqueryui",
+				"jquery.squash.jeditable", "jeditable.datepicker",
+				"datepicker/jquery.squash.datepicker-locales" ],
 		function($, utils, confman) {
 
 			function buildPostFunction(idOrURLOrPostfunction, postProcess) {

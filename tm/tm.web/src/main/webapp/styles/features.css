@@ -242,7 +242,7 @@ td.double-narrow{
 /** *********** display options ********** */
 
 
-.not-displayed {
+.not-displayed, .date-hidden {
 	display: none;
 }
 

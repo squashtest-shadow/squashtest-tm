@@ -23,202 +23,202 @@
  */
  /** sprite: sprites-icons; sprite-image: url('../images/sprites-icons.png'); sprite-layout: vertical */
 
-li[rel="test-case"][status="approved"][importance="high"][req="ok"] > a > .jstree-icon {
+li[rel="test-case"][status="approved"][importance="high"][isreqcovered="true"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/approvedhighok.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="approved"][importance="high"][req="ko"] > a > .jstree-icon {
+li[rel="test-case"][status="approved"][importance="high"][isreqcovered="false"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/approvedhighko.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="approved"][importance="low"][req="ok"] > a > .jstree-icon {
+li[rel="test-case"][status="approved"][importance="low"][isreqcovered="true"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/approvedlowok.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="approved"][importance="low"][req="ko"] > a > .jstree-icon {
+li[rel="test-case"][status="approved"][importance="low"][isreqcovered="false"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/approvedlowko.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="approved"][importance="medium"][req="ok"] > a > .jstree-icon {
+li[rel="test-case"][status="approved"][importance="medium"][isreqcovered="true"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/approvedmediumok.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="approved"][importance="medium"][req="ko"] > a > .jstree-icon {
+li[rel="test-case"][status="approved"][importance="medium"][isreqcovered="false"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/approvedmediumko.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="approved"][importance="very_high"][req="ok"] > a > .jstree-icon {
+li[rel="test-case"][status="approved"][importance="very_high"][isreqcovered="true"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/approvedvery_highok.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="approved"][importance="very_high"][req="ko"] > a > .jstree-icon {
+li[rel="test-case"][status="approved"][importance="very_high"][isreqcovered="false"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/approvedvery_highko.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="obsolete"][importance="high"][req="ok"] > a > .jstree-icon {
+li[rel="test-case"][status="obsolete"][importance="high"][isreqcovered="true"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/obsoletehighok.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="obsolete"][importance="high"][req="ko"] > a > .jstree-icon {
+li[rel="test-case"][status="obsolete"][importance="high"][isreqcovered="false"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/obsoletehighko.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="obsolete"][importance="low"][req="ok"] > a > .jstree-icon {
+li[rel="test-case"][status="obsolete"][importance="low"][isreqcovered="true"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/obsoletelowok.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="obsolete"][importance="low"][req="ko"] > a > .jstree-icon {
+li[rel="test-case"][status="obsolete"][importance="low"][isreqcovered="false"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/obsoletelowko.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="obsolete"][importance="medium"][req="ok"] > a > .jstree-icon {
+li[rel="test-case"][status="obsolete"][importance="medium"][isreqcovered="true"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/obsoletemediumok.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="obsolete"][importance="medium"][req="ko"] > a > .jstree-icon {
+li[rel="test-case"][status="obsolete"][importance="medium"][isreqcovered="false"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/obsoletemediumko.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="obsolete"][importance="very_high"][req="ok"] > a > .jstree-icon {
+li[rel="test-case"][status="obsolete"][importance="very_high"][isreqcovered="true"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/obsoletevery_highok.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="obsolete"][importance="very_high"][req="ko"] > a > .jstree-icon {
+li[rel="test-case"][status="obsolete"][importance="very_high"][isreqcovered="false"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/obsoletevery_highko.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="to_be_updated"][importance="high"][req="ok"] > a > .jstree-icon {
+li[rel="test-case"][status="to_be_updated"][importance="high"][isreqcovered="true"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/to_be_updatedhighok.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="to_be_updated"][importance="high"][req="ko"] > a > .jstree-icon {
+li[rel="test-case"][status="to_be_updated"][importance="high"][isreqcovered="false"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/to_be_updatedhighko.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="to_be_updated"][importance="low"][req="ok"] > a > .jstree-icon {
+li[rel="test-case"][status="to_be_updated"][importance="low"][isreqcovered="true"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/to_be_updatedlowok.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="to_be_updated"][importance="low"][req="ko"] > a > .jstree-icon {
+li[rel="test-case"][status="to_be_updated"][importance="low"][isreqcovered="false"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/to_be_updatedlowko.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="to_be_updated"][importance="medium"][req="ok"] > a > .jstree-icon {
+li[rel="test-case"][status="to_be_updated"][importance="medium"][isreqcovered="true"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/to_be_updatedmediumok.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="to_be_updated"][importance="medium"][req="ko"] > a > .jstree-icon {
+li[rel="test-case"][status="to_be_updated"][importance="medium"][isreqcovered="false"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/to_be_updatedmediumko.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="to_be_updated"][importance="very_high"][req="ok"] > a > .jstree-icon {
+li[rel="test-case"][status="to_be_updated"][importance="very_high"][isreqcovered="true"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/to_be_updatedvery_highok.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="to_be_updated"][importance="very_high"][req="ko"] > a > .jstree-icon {
+li[rel="test-case"][status="to_be_updated"][importance="very_high"][isreqcovered="false"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/to_be_updatedvery_highko.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="under_review"][importance="high"][req="ok"] > a > .jstree-icon {
+li[rel="test-case"][status="under_review"][importance="high"][isreqcovered="true"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/under_reviewhighok.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="under_review"][importance="high"][req="ko"] > a > .jstree-icon {
+li[rel="test-case"][status="under_review"][importance="high"][isreqcovered="false"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/under_reviewhighko.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="under_review"][importance="low"][req="ok"] > a > .jstree-icon {
+li[rel="test-case"][status="under_review"][importance="low"][isreqcovered="true"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/under_reviewlowok.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="under_review"][importance="low"][req="ko"] > a > .jstree-icon {
+li[rel="test-case"][status="under_review"][importance="low"][isreqcovered="false"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/under_reviewlowko.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="under_review"][importance="medium"][req="ok"] > a > .jstree-icon {
+li[rel="test-case"][status="under_review"][importance="medium"][isreqcovered="true"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/under_reviewmediumok.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="under_review"][importance="medium"][req="ko"] > a > .jstree-icon {
+li[rel="test-case"][status="under_review"][importance="medium"][isreqcovered="false"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/under_reviewmediumko.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="under_review"][importance="very_high"][req="ok"] > a > .jstree-icon {
+li[rel="test-case"][status="under_review"][importance="very_high"][isreqcovered="true"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/under_reviewvery_highok.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="under_review"][importance="very_high"][req="ko"] > a > .jstree-icon {
+li[rel="test-case"][status="under_review"][importance="very_high"][isreqcovered="false"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/under_reviewvery_highko.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="work_in_progress"][importance="high"][req="ok"] > a > .jstree-icon {
+li[rel="test-case"][status="work_in_progress"][importance="high"][isreqcovered="true"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/work_in_progresshighok.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="work_in_progress"][importance="high"][req="ko"] > a > .jstree-icon {
+li[rel="test-case"][status="work_in_progress"][importance="high"][isreqcovered="false"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/work_in_progresshighko.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="work_in_progress"][importance="low"][req="ok"] > a > .jstree-icon {
+li[rel="test-case"][status="work_in_progress"][importance="low"][isreqcovered="true"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/work_in_progresslowok.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="work_in_progress"][importance="low"][req="ko"] > a > .jstree-icon {
+li[rel="test-case"][status="work_in_progress"][importance="low"][isreqcovered="false"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/work_in_progresslowko.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="work_in_progress"][importance="medium"][req="ok"] > a > .jstree-icon {
+li[rel="test-case"][status="work_in_progress"][importance="medium"][isreqcovered="true"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/work_in_progressmediumok.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="work_in_progress"][importance="medium"][req="ko"] > a > .jstree-icon {
+li[rel="test-case"][status="work_in_progress"][importance="medium"][isreqcovered="false"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/work_in_progressmediumko.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="work_in_progress"][importance="very_high"][req="ok"] > a > .jstree-icon {
+li[rel="test-case"][status="work_in_progress"][importance="very_high"][isreqcovered="true"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/work_in_progressvery_highok.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;
 }
-li[rel="test-case"][status="work_in_progress"][importance="very_high"][req="ko"] > a > .jstree-icon {
+li[rel="test-case"][status="work_in_progress"][importance="very_high"][isreqcovered="false"] > a > .jstree-icon {
 background-image: url("../images/tc_icons/work_in_progressvery_highko.png");  /** sprite-ref: sprites-icons; */
 width: 42px;
 height: 14px;

@@ -203,7 +203,7 @@ public class VerifiedRequirementsManagerController {
 	public @ResponseBody
 	void removeVerifiedRequirementVersionsFromTestCase(@PathVariable List<Long> requirementVersionsIds,
 			@PathVariable long testCaseId) {
-		verifiedRequirementsManagerService.removeVerifiedRequirementVersionsFromTestCase(requirementVersionsIds,
+		 verifiedRequirementsManagerService.removeVerifiedRequirementVersionsFromTestCase(requirementVersionsIds,
 				testCaseId);
 
 	}

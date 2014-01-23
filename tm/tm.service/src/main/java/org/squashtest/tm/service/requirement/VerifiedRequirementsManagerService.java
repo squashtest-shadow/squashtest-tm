@@ -155,7 +155,7 @@ public interface VerifiedRequirementsManagerService {
 	List<VerifiedRequirement> findAllVerifiedRequirementsByTestCaseId(long testCaseId);
 
 	/**
-	 * Will go through the given calling test cases. If they do not have direct requirement coverage, will return their
+	 * Will go through the given calling test cases. and will return their
 	 * new 'isRequirementCovered' property.
 	 * 
 	 * @param updatedTestCaseId

@@ -32,7 +32,7 @@ require([ "common" ], function(common) {
 		};
 
 		domReady(function() {
-			WS.init("");
+			WS.init();
 			var view = new UserModificationView();
 			$("#back").button().on("click", goBackInHistory);
 			view.on("user.delete", goBack);

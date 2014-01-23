@@ -33,7 +33,11 @@
 	pageEncoding="utf-8"%>
 
 <%-- used for copy/paste of steps --%>
-<script type="text/javascript"	src="${ pageContext.servletContext.contextPath }/scripts/jquery/jquery.cookie.js"></script>
+<script>
+require(["common"], function() {
+	require(["jquery.cookie"]);
+})
+</script>
 
 <%------------------------------------- URLs ----------------------------------------------%>
 
@@ -181,7 +185,8 @@
 	/*<![CDATA[*/
 	var squashtm = squashtm || {};
   	squashtm.app = squashtm.app || {} ;	 
-	require([ "domReady", "test-case-management" ],
+    require([ "common" ], function() {
+        require([ "domReady", "test-case-management" ],
 			function(domReady, testCaseManagement) {
 					var settings = {
 							urls : {
@@ -201,6 +206,7 @@
 					testCaseManagement.initInfosTab(settings);
 				});
 			});
+    });
 	/*]]>*/
 </script>
 

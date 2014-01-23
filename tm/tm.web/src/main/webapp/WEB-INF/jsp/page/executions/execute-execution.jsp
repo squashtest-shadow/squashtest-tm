@@ -61,9 +61,6 @@
 			<layout:common-head />
 			<layout:_common-script-import highlightedWorkspace=""/>
 			
-			<comp:rich-jeditable-header />
-
-
 			<%-- cautious : below are used StepIndexes and StepIds. Dont get confused. --%>
 			<s:url var="executeNext" value="${ currentStepsUrl }/index/{stepIndex}?optimized=${param.optimized}">
 				<s:param name="stepIndex" value="${executionStep.executionStepOrder+1}" />
@@ -104,19 +101,22 @@
 			<f:message var="completedMessage" key="execute.alert.test.complete" />
 			<f:message var="endTestSuiteMessage" key="squashtm.action.exception.testsuite.end" />
 			<script type="text/javascript">						
-			require(["squash.basicwidgets", "page-components/step-information-panel","workspace.event-bus"], function(basicwidg, infopanel, eventBus ){
+			require(["common"], function() {
+				require(["jquery", "squash.basicwidgets", "page-components/step-information-panel","workspace.event-bus"], function($, basicwidg, infopanel, eventBus ) {
 			
 				var isOer = ${ not empty hasNextTestCase };
 				var hasNextTestCase = ${ (not empty hasNextTestCase) and hasNextTestCase };
 				var hasNextStep = ${ (not empty hasNextStep) and hasNextStep };
 	
 				function refreshParent(){
-					if (window.opener.squashtm.execution){
+					if (!!window.opener) {
+                                        if (window.opener.squashtm.execution){
 						window.opener.squashtm.execution.refresh();
 					}
 					if (window.opener.progressWindow) {
 						window.opener.progressWindow.close();
 					}
+                                        }
 				}
 			
 				function refreshExecStepInfos(){
@@ -350,10 +350,10 @@
 						eventBus.onContextual('context.bug-reported', function(event, json){
 							window.opener.squashtm.workspace.eventBus.trigger(event, json )
 						});
-					
-					});
-					
-				});	
+						});
+						
+					});	
+				});
 			</script>
 
 			<div id="execute-header">
@@ -465,13 +465,15 @@
 
 				<%------------------------------ bugs section -------------------------------%>
 				<%-- this section is loaded asynchronously. The bugtracker might be out of reach indeed. --%>
-				<script type="text/javascript">
-				 	$(function(){
-				 		$("#bugtracker-section-div").load("${btEntityUrl}");
-				 	});
-				</script>
-				<div id="bugtracker-section-div"></div>
-
+        		<div id="bugtracker-section-div">
+        		</div>
+        		 <script type="text/javascript">
+        		 require(["common"], function() {
+        			 require(["jquery"], function($) {
+        		 		$("#bugtracker-section-div").load("${btEntityUrl}");
+        			 });
+        		 });
+        		</script>
 				<%------------------------------ /bugs section -------------------------------%>
 	
 				

@@ -54,9 +54,6 @@
 	<layout:common-head />		
 	<layout:_common-script-import highlightedWorkspace=""/>		
 
-	<comp:rich-jeditable-header />
-	
-
 <%-- cautious : below are used StepIndexes and StepIds. Dont get confused. --%>
 <s:url var="executeComment" value="/execute/{execId}/step/{stepId}">
 	<s:param name="execId" value="${execution.id}" />
@@ -85,10 +82,9 @@
 	</c:choose>
 	</c:if>
 	<script type="text/javascript">
-		
-		$(function(){
-			
-			require(["squash.basicwidgets"], function(basicwidg){
+	require(["common"], function() {
+		require(["jquery", "squash.basicwidgets", "jqueryui"], function($, basicwidg){
+			$(function(){
 				basicwidg.init();
 				
 				$("#execute-next-button").button({
@@ -120,14 +116,14 @@
 				});			
 
 				
-				$("div.load-links-right-frame a").live('click', function(event){
+				$("div.load-links-right-frame a").live("click", function(event){
 					event.preventDefault();
 					var url = $(this).attr('href'); 
 					parent.squashtm.ieomanager.fillRightPane(url);
 					return false;				
 				});
 				
-				$("#bugtracker-section-div a").live('click', function(){
+				$("#bugtracker-section-div a").live("click", function(){
 					$(this).attr('target', "${bugLinkTarget}");
 				});			
 
@@ -147,6 +143,7 @@
 			});
 	
 		});
+	});
 	</script> 
 	<div id="execute-header" >
 			<table style="width: 100%; table-layout: fixed; white-space: nowrap;">
@@ -228,13 +225,15 @@
 		<%--
 			this section is loaded asynchronously. The bugtracker might be out of reach indeed.
 		 --%>	
-		 <script type="text/javascript">
-		 	$(function(){
-		 		$("#bugtracker-section-div").load("${btEntityUrl}");
-		 	});
-		 </script>
 		<div id="bugtracker-section-div">
 		</div>
+		 <script type="text/javascript">
+		 require(["common"], function() {
+			 require(["jquery"], function($) {
+		 		$("#bugtracker-section-div").load("${btEntityUrl}");
+			 });
+		 });
+		</script>
 		
 		<%------------------------------ /bugs section -------------------------------%>
 	</div>

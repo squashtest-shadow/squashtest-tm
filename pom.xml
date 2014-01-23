@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squash-tm-parent</artifactId>
-    <version>1.5</version>
+    <version>1.6-SNAPSHOT</version>
   </parent>
 
   <artifactId>squash-tm</artifactId>
@@ -288,6 +288,7 @@
             <exclude>**/styles/jqplot/**/*.*</exclude>
             <exclude>**/styles/switchButton/*.*</exclude>
             <exclude>**/styles/**/thymol.js</exclude>
+            <exclude>**/r.js</exclude>
             <exclude>**/styles/**/bootstrap*.css</exclude> 
             
 	    <!-- generated stylesheets -->
@@ -319,6 +320,7 @@
             <!-- jetty config for dev -->
             <exclude>**/provision/**/etc/jetty.xml</exclude>
             <exclude>**/provision/**/etc/jetty*.xml</exclude>
+            <exclude>tm/tm.web/scripts/**</exclude>
           </excludes>
           <mapping>
             <tag>DYNASCRIPT_STYLE</tag>
@@ -540,5 +542,19 @@
       </releases>
     </repository>
   </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>squashtest-snapshot</id>
+      <name>SquashTest snapshot repository</name>
+      <url>http://repo.squashtest.org/maven2/snapshots</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
 
 </project>

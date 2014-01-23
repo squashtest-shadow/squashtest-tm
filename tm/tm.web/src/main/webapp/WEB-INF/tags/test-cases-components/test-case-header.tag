@@ -54,5 +54,5 @@
 		</h2>
 	</div>
 
-	<div style="clear: both;"></div>
+	<div class="unsnap"></div>
 </div>

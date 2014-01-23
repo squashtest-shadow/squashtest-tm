@@ -52,7 +52,8 @@
 
 <c:if test="${ (empty editable) or editable }">
 	<script type="text/javascript">
-
+require(["common"], function() {
+	require(["jquery", "jquery.squash.datepicker-auto"], function() {
 <c:choose>
 <c:when test="${ not empty jsVarName }">
 	var ${jsVarName};
@@ -85,7 +86,9 @@ var myDatePicker;
 		</c:otherwise>
 		</c:choose>
 		
+	});		
 	});
+});
 </script>
 </c:if>
 
@@ -129,6 +132,6 @@ var myDatePicker;
 		</c:choose>
 
 	</div>
-	<div style="clear: both;"></div>
+	<div class="unsnap"></div>
 
 </div>

@@ -24,13 +24,13 @@ import org.squashtest.tm.domain.testcase.TestCaseImportance;
 
 public class TestCaseTreeIconsUpdate {
 	private long id;
-	private String req = "same";
+	private String isreqcovered = "same";
 	private String importance = "same";
 
-	public TestCaseTreeIconsUpdate(long id, boolean req, TestCaseImportance importance) {
+	public TestCaseTreeIconsUpdate(long id, boolean isreqcovered, TestCaseImportance importance) {
 		super();
 		this.id = id;
-		doSetReq(req);
+		doSetReq(isreqcovered);
 		doSetImportance(importance);
 	}
 	public TestCaseTreeIconsUpdate(long id, TestCaseImportance importance) {
@@ -39,23 +39,19 @@ public class TestCaseTreeIconsUpdate {
 		doSetImportance(importance);
 	}
 	
-	public TestCaseTreeIconsUpdate(long id ,boolean req) {
+	public TestCaseTreeIconsUpdate(long id ,boolean isreqcovered) {
 		super();
 		this.id = id;
-		doSetReq(req);
+		doSetReq(isreqcovered);
 	}
 	public long getId() {
 		return id;
 	}
-	public String getReq() {
-		return req;
+	public String getIsreqcovered() {
+		return isreqcovered;
 	}
-	private void doSetReq(boolean req) {
-		if(req){
-			this.req = "ok";
-		}else{
-			this.req = "ko";
-		}
+	private void doSetReq(boolean isreqcovered) {
+		this.isreqcovered  = ""+isreqcovered;
 	}
 	public String getImportance() {
 		return importance;

@@ -23,7 +23,7 @@ println('hello groovy')
 fileName = 'src/main/webapp/styles/testCaseTreeIcons.css'
 statuses = ["approved", "obsolete", "to_be_updated", "under_review", "work_in_progress"]
 importances = ["high", "low", "medium", "very_high"]
-requirement = ["ok", "ko"]
+requirement = ["true", "false"]
 
 File f = new File(fileName)
 boolean isNew = f.createNewFile()
@@ -39,7 +39,7 @@ for(status in statuses){
         for (req in requirement){
             println('process combination : '+status+' '+importance+' '+req)
             iconName = ""+status+importance+req+".png"            
-            f.append('li[rel="test-case"][status="'+status+'"][importance="'+importance+'"][req="'+req+'"] > a > .jstree-icon {\n')
+            f.append('li[rel="test-case"][status="'+status+'"][importance="'+importance+'"][isreqcovered="'+req+'"] > a > .jstree-icon {\n')
             f.append('background-image: url("../images/tc_icons/'+iconName+'");  /** sprite-ref: sprites-icons; */\n')
 			f.append('width: 42px;\n')
 			f.append('height: 14px;\n')

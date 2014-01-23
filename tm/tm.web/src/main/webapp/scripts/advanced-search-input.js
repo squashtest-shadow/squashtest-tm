@@ -51,7 +51,7 @@ require([ "common" ], function(common) {
 		};
 
 		domReady(function() {
-			WS.init("");
+			WS.init();
 			var view = new AdvancedSearchView();
 			$("#back").button().on("click", goBack);
 		});

@@ -53,7 +53,12 @@
 	id="execute-execution-button" />
 
 <script>
-	function updateBtnlabelFromTable(){
+		var squashtm = squashtm || {};
+require(["common"], function() {
+	require(["jquery", "jqueryui", "jeditable.ckeditor"], function($) {
+	<%-- shitty patch for shitty practice --%>
+		squashtm.execution = squashtm.execution || {};
+	squashtm.execution.updateBtnlabelFromTable = function() {
 		
 		// Issue 2961
 		// 99.9% of the time we want the btn to display "resume" when statuses are updated
@@ -62,8 +67,8 @@
 		$("#execute-execution-button").val('<f:message key="execution.execute.resume.button.label" />');
 		$("#ieo-execution-button").val("<f:message key='execution.execute.IEO.resume.button.label' />");
 	}
-
-	$(function() {
+	
+	
 		var dryRunStart = function() {
 			return $.ajax({
 				url : '${ runnerUrl }',
@@ -74,7 +79,7 @@
 				}
 			});
 		};
-
+		
 		var startResumeClassic = function() {
 			var url = "${ runnerUrl }";
 			var data = {
@@ -86,11 +91,11 @@
 			};
 			$.open(url, data, winDef);
 		};
-
+		
 		var startResumeOptimized = function() {
-			$('#start-optimized-button').trigger('click');
+			$("#start-optimized-button").trigger("click");
 		};
-
+		
 		$("#execute-execution-button").button().click(function() {
 			dryRunStart().done(startResumeClassic);
 		});
@@ -99,4 +104,5 @@
 			dryRunStart().done(startResumeOptimized);
 		});
 	});
+});
 </script>

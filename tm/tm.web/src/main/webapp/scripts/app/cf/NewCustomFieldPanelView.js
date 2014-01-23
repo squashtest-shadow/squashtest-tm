@@ -20,7 +20,7 @@
  */
 define(
 		[ "jquery", "backbone", "handlebars", "app/lnf/SquashDatatablesLnF", "app/lnf/Forms",
-				"jquery.squash.confirmdialog", "datepicker/require.jquery.squash.datepicker-locales" ],
+				"jquery.squash.confirmdialog", "datepicker/jquery.squash.datepicker-locales" ],
 		function($, Backbone, Handlebars, SD, Forms) {
 			/*
 			 * Defines the controller for the new custom field panel.

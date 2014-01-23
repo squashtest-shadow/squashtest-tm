@@ -28,7 +28,7 @@
 
 define(
 		[ "jquery", "./cuf-values-utils", "squash.configmanager", "jqueryui",
-				'jquery.squash.jeditable', "jeditable.datepicker"],
+				"jquery.squash.jeditable", "jeditable.datepicker"],
 		function($, utils, confman) {
 
 			function noPostFn(value) {

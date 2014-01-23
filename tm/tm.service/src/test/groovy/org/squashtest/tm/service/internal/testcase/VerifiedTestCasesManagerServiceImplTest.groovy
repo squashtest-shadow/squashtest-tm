@@ -42,6 +42,7 @@ import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao
 import org.squashtest.tm.service.internal.testcase.TestCaseImportanceManagerServiceImpl
 import org.squashtest.tm.service.internal.testcase.VerifyingTestCaseManagerServiceImpl
 import org.squashtest.tm.service.library.AdvancedSearchService
+import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService
 
 import spock.lang.Specification
@@ -108,7 +109,7 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 
 		then:
 		requirementVersion.verifyingTestCases.containsExactly([tc5, tc15])
-		rejected == []
+		rejected.get(VerifyingTestCaseManagerService.REJECTION_KEY) == []
 	}
 
 	def "should not add TestCase to test case's verified requirements"() {
@@ -132,7 +133,7 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 
 		then:
 		requirementVersion.verifyingTestCases.containsExactly([])
-		rejected*.verifyingTestCase == [tc5]
+		rejected.get(VerifyingTestCaseManagerService.REJECTION_KEY)*.verifyingTestCase == [tc5]
 	}
 
 	def "should remove requirements from test case's verified requirements"() {

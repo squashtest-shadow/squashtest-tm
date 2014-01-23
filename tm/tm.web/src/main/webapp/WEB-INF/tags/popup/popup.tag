@@ -48,50 +48,52 @@
 <f:message var="title" key="${ titleKey }"/>
 
 <script type="text/javascript">
-$(function() {
-	
-	var params = {
-		selector : "#${id}",
-		title : "${title}",
-		<c:if test="${not empty openedBy}">
-		openedBy : "#${openedBy}",
-		</c:if>
-		<c:if test="${not empty isContextual and isContextual}">
-		isContextual : true,
-		</c:if>
-		<c:if test="${ not empty usesRichEdit and not usesRichEdit}">
-		usesRichEdit : false,
-		</c:if>
-		<c:if test="${ not empty closeOnSuccess }">
-		closeOnSuccess : ${closeOnSuccess},
-		</c:if>
-		ckeditor : {
-			styleUrl : "${ckeConfigUrl}",
-			lang : "${ckeLang}"
-		},
-		
-		<%--  
-			button settings using fragments. Buttons can also be defined as additionalSetup.
-		 --%>
-		<c:if test="${not empty buttons}">
-		buttons: {
-			<jsp:invoke fragment="buttons" />
-		}
-		</c:if>
-		<c:if test="${not empty buttonsArray}">
-		buttons : [
-			<jsp:invoke fragment="buttonsArray" />           
-		]
-		</c:if>
-		
-		<c:if test="${not empty additionalSetup}">
-		,
-		<jsp:invoke fragment="additionalSetup"/>
-		</c:if>
-	}
-	
-	squashtm.popup.create(params);
-	
+require(["common"], function() {
+	require(["jquery", "jquery.squash"], function($, popup) {
+		$(function() {
+			var params = {
+				selector : "#${id}",
+				title : "${title}",
+				<c:if test="${not empty openedBy}">
+				openedBy : "#${openedBy}",
+				</c:if>
+				<c:if test="${not empty isContextual and isContextual}">
+				isContextual : true,
+				</c:if>
+				<c:if test="${ not empty usesRichEdit and not usesRichEdit}">
+				usesRichEdit : false,
+				</c:if>
+				<c:if test="${ not empty closeOnSuccess }">
+				closeOnSuccess : ${closeOnSuccess},
+				</c:if>
+				ckeditor : {
+					styleUrl : "${ckeConfigUrl}",
+					lang : "${ckeLang}"
+				},
+				
+				<%--  
+					button settings using fragments. Buttons can also be defined as additionalSetup.
+				 --%>
+				<c:if test="${not empty buttons}">
+				buttons: {
+					<jsp:invoke fragment="buttons" />
+				}
+				</c:if>
+				<c:if test="${not empty buttonsArray}">
+				buttons : [
+					<jsp:invoke fragment="buttonsArray" />           
+				]
+				</c:if>
+				
+				<c:if test="${not empty additionalSetup}">
+				,
+				<jsp:invoke fragment="additionalSetup"/>
+				</c:if>
+			}
+			
+			popup.create(params);
+		});
+	});
 });
 </script>
 

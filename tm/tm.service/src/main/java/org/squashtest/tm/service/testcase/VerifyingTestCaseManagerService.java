@@ -22,6 +22,7 @@ package org.squashtest.tm.service.testcase;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -33,15 +34,17 @@ import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
 
 /**
  * Service for management of Requirements verified by a {@link TestCase}
- *
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
 public interface VerifyingTestCaseManagerService {
+	final String REJECTION_KEY = "REJECTION";
+	final String IDS_KEY = "IDS";
 
 	/**
 	 * Returns the collection of {@link RequirementLibrary}s which Requirements can be linked by a {@link TestCase}
-	 *
+	 * 
 	 * @return
 	 */
 	List<TestCaseLibrary> findLinkableTestCaseLibraries();
@@ -49,27 +52,31 @@ public interface VerifyingTestCaseManagerService {
 	/**
 	 * Adds a list of test cases to the ones verified by a requirement. If a test-case is already verified, nothing
 	 * special happens.
-	 *
+	 * 
 	 * @param requirementsIds
 	 * @param testCaseId
-	 * @return test cases which could not be added.
+	 * @return a map with
+	 *         <ul>
+	 *         <li>key : {@link #REJECTION_KEY} , value : Collection of VerifiedRequirementException</li>
+	 *         <li>key : {@link #IDS_KEY}, value : Collection of associated TestCases Ids (including test cases
+	 *         contained by selected folders</li>
+	 *         </ul>
 	 */
-	Collection<VerifiedRequirementException> addVerifyingTestCasesToRequirementVersion(List<Long> testCaseIds,
-			long requirementVersionId);
-	
+	Map<String, Collection<?>> addVerifyingTestCasesToRequirementVersion(List<Long> testCaseIds, long requirementVersionId);
+
 	/**
-	 * Removes a list of test-cases from the ones verified by a requirment. If a test-case is not verified by the
-	 * test case, nothing special happens.
-	 *
+	 * Removes a list of test-cases from the ones verified by a requirment. If a test-case is not verified by the test
+	 * case, nothing special happens.
+	 * 
 	 * @param testCaseId
 	 * @param requirementsIds
 	 */
 	void removeVerifyingTestCasesFromRequirementVersion(List<Long> testCaseIds, long requirementVersionId);
 
 	/**
-	 * Removes a test-case from the ones verified by a requirement. If the test-case was not previously verified by
-	 * the requirment, nothing special happens.
-	 *
+	 * Removes a test-case from the ones verified by a requirement. If the test-case was not previously verified by the
+	 * requirment, nothing special happens.
+	 * 
 	 * @param testCaseId
 	 * @param requirementsIds
 	 */
@@ -83,7 +90,7 @@ public interface VerifyingTestCaseManagerService {
 	@Transactional(readOnly = true)
 	PagedCollectionHolder<List<TestCase>> findAllByRequirementVersion(long requirementId,
 			PagingAndSorting pagingAndSorting);
-	
+
 	/**
 	 * 
 	 * @param requirementVersionId
@@ -91,7 +98,5 @@ public interface VerifyingTestCaseManagerService {
 	 */
 	@Transactional(readOnly = true)
 	List<TestCase> findAllByRequirementVersion(long requirementVersionId);
-
-	
 
 }

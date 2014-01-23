@@ -124,14 +124,17 @@ public class VerifyingTestCaseManagerController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases/{testCaseIds}", method = RequestMethod.POST)
 	public @ResponseBody
 	Map<String, Object> addVerifyingTestCasesToRequirement(@PathVariable("testCaseIds") List<Long> testCasesIds, @PathVariable long requirementVersionId) {
-
-		Collection<VerifiedRequirementException> rejections = 
+		Map<String, Collection<?>> rejectionsAndIds =  
 				verifyingTestCaseManager.addVerifyingTestCasesToRequirementVersion(testCasesIds, requirementVersionId);
-
-		return buildSummary(rejections);
+		Collection<VerifiedRequirementException> rejections = (Collection<VerifiedRequirementException>) rejectionsAndIds.get(VerifyingTestCaseManagerService.REJECTION_KEY);
+		Collection<Long> ids = (Collection<Long>) rejectionsAndIds.get(VerifyingTestCaseManagerService.IDS_KEY);
+		Map<String, Object>  result = buildSummary(rejections);
+		result.put("linkedIds" , ids);
+		return result;
 	}
 
 	private Map<String, Object> buildSummary(Collection<VerifiedRequirementException> rejections) {

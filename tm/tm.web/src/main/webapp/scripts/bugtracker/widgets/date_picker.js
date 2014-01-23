@@ -25,7 +25,7 @@
  * 2 - java format : the prefered one. The property of the conf object is rendering.inputType.meta['format'].
  *  
  */
-define(["jquery", "../domain/FieldValue", "squash.configmanager","squash.dateutils",  "jqueryui"], function($, FieldValue, confman, dateutils){
+define(["jquery", "../domain/FieldValue", "squash.configmanager", "squash.dateutils", "jqueryui"], function($, FieldValue, confman, dateutils){
 
 
 	return {

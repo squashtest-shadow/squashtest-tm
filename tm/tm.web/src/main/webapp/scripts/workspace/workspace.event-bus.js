@@ -43,7 +43,7 @@
  * 
  */
 
-define([ 'jquery' ], function($) {
+define([ "jquery" ], function($) {
 
 	squashtm = squashtm || {};
 	squashtm.workspace = squashtm.workspace || {};
@@ -174,7 +174,6 @@ define([ 'jquery' ], function($) {
 			}
 			
 		});
-
 		
 		return squashtm.workspace.eventBus;
 

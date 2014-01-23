@@ -80,30 +80,39 @@ that page won't be editable if
 
 <c:if test="${writable}">
 <script type="text/javascript">
-	function renameRequirementSuccess(data){
-		var evt = new EventRename(identity, data.newName);
-		squashtm.workspace.eventBus.fire(null, evt);
-	}
-	
-	function updateReferenceInTitle(reference){
-		var evt = new EventUpdateReference(identity, reference);
-		squashtm.workspace.eventBus.fire(null, evt);	
-	}
-	
-	
-	//for technical reasons we handle directly the ajax operation when choosing a category.
-	function postUpdateCategory(value, settings){
-		$.post("${requirementUrl}", {id:"requirement-category", value : value})
-		.done(function(response){
-			var evt = new EventUpdateCategory(identity, value.toLowerCase());
-			squashtm.workspace.eventBus.fire(null, evt);
-		});
-		
-		//in the mean time, must return immediately
-		var data = JSON.parse(settings.data);
-		return data[value];
-	}
+var squashtm = squashtm || {};
 
+require(["common"], function() {
+  require(["jquery", "squash.events", "workspace.event-bus"], function($, events, eventBus) {
+    function renameRequirementSuccess(data){
+      var evt = new events.EventRename(identity, data.newName);
+      eventBus.fire(null, evt);
+    }
+
+    function updateReferenceInTitle(reference){
+      var evt = new events.EventUpdateReference(identity, reference);
+      eventBus.fire(null, evt);  
+    }
+
+    //for technical reasons we handle directly the ajax operation when choosing a category.
+    function postUpdateCategory(value, settings){
+      $.post("${requirementUrl}", {id:"requirement-category", value : value})
+      .done(function(response){
+        var evt = new events.EventUpdateCategory(identity, value.toLowerCase());
+        eventBus.fire(null, evt);
+      });
+
+      //in the mean time, must return immediately
+      var data = JSON.parse(settings.data);
+      return data[value];
+    }
+    
+    squashtm.requirement = squashtm.requirement || {}
+    squashtm.requirement.renameRequirementSuccess = renameRequirementSuccess;
+    squashtm.requirement.updateReferenceInTitle = updateReferenceInTitle;
+    squashtm.requirement.postUpdateCategory = postUpdateCategory;
+  });
+});
 </script>
 </c:if>
 
@@ -217,7 +226,7 @@ that page won't be editable if
 			<span id="requirement-raw-name" style="display:none"><c:out value="${ requirement.name }" escapeXml="true"/></span>
 		</h2>
 	</div>
-	<div style="clear:both;"></div>		
+	<div class="unsnap"></div>		
 </div>
 <%-- ----------------------------------- /TITLE ----------------------------------------------%>
 <%-- ----------------------------------- AUDIT & TOOLBAR  ----------------------------------------------%>	
@@ -237,7 +246,7 @@ that page won't be editable if
 		<input type="button" value="<f:message key='label.print'/>" id="print-requirement-version-button" class="button"/>
 	</div>	
 
-	<div style="clear:both;"></div>	
+	<div class="unsnap"></div>	
 	<c:if test="${ moreThanReadOnly	 }">
 	<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ requirementUrl }" />
 	</c:if>
@@ -258,7 +267,7 @@ that page won't be editable if
 	<c:if test="${writable }">
 		<comp:rich-jeditable targetUrl="${ requirementUrl }" componentId="requirement-description" />
 		<%-- make requirement-reference editable --%>
-		<comp:simple-jeditable targetUrl="${ requirementUrl }" componentId="requirement-reference" submitCallback="updateReferenceInTitle" maxLength="50" />
+		<comp:simple-jeditable targetUrl="${ requirementUrl }" componentId="requirement-reference" submitCallback="squashtm.requirement.updateReferenceInTitle" maxLength="50" />
 	</c:if>
 <%--------------------------- General Informations section ------------------------------------%>
 	<comp:toggle-panel id="requirement-information-panel" titleKey="requirement.panel.general-informations.title"  open="true" >
@@ -297,7 +306,7 @@ that page won't be editable if
 						<c:choose>
 							<c:when test="${writable }">
 								<div id="requirement-category"><s:message code="${ requirement.category.i18nKey }" htmlEscape="true" /></div>
-								<comp:select-jeditable componentId="requirement-category" jsonData="${categoryList}" targetFunction="postUpdateCategory"/>
+								<comp:select-jeditable componentId="requirement-category" jsonData="${categoryList}" targetFunction="squashtm.requirement.postUpdateCategory"/>
 							</c:when>
 							<c:otherwise>
 								<s:message code="${ requirement.category.i18nKey }" htmlEscape="true" />
@@ -381,7 +390,7 @@ that page won't be editable if
 				<f:message var="label" key="dialog.rename-requirement.title" />
 				'${ label }': function() {
 					var url = "${ requirementUrl }";
-					<jq:ajaxcall  url="url" dataType="json" httpMethod="POST" useData="true" successHandler="renameRequirementSuccess">		
+					<jq:ajaxcall  url="url" dataType="json" httpMethod="POST" useData="true" successHandler="squashtm.requirement.renameRequirementSuccess">		
 						<jq:params-bindings newName="#rename-requirement-input" />
 					</jq:ajaxcall>					
 				},			

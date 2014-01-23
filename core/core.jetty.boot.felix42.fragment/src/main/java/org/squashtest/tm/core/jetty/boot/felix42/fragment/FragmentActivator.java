@@ -1,4 +1,4 @@
-/*
+/**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2013 Henix, henix.fr
  *
@@ -18,34 +18,41 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-/**
- * this unit contains the various code directly related to the tag <component:_menu-bar>
- * 
- * requires jquery to be loaded prior use.
- * 
- * 
- * @author bsiri
- * @author Gregory Fouquet
- */
+
+package org.squashtest.tm.core.jetty.boot.felix42.fragment;
+
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
 
 /**
- * The parameters of that function will be passed as they are to more specific
- * init functions, see code below. Dont forget to add your own parameters in
- * that list, please do not overload the existing one.
- * 
+ * @author Gregory
+ *
  */
-var squashtm = squashtm || {};
+public class FragmentActivator extends Object implements BundleActivator {
 
-define([ "jquery" ], function($) {
-
-
-	function initMainMenuBar(objFilter) {
-		//nothing left to do here, but that might change later
+	/**
+	 * 
+	 */
+	public FragmentActivator() {
+		// TODO Auto-generated constructor stub
 	}
 
-	squashtm.menubar = {
-		init : initMainMenuBar
-	};
+	/**
+	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
+	 */
+	@Override
+	public void start(BundleContext context) throws Exception {
+		// TODO Auto-generated method stub
 
-	return squashtm.menubar;
-});
+	}
+
+	/**
+	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 */
+	@Override
+	public void stop(BundleContext context) throws Exception {
+		// TODO Auto-generated method stub
+
+	}
+
+}

@@ -29,6 +29,7 @@
 <%@ attribute name="accessDenied" %>
 <%@ attribute name="footer" fragment="true" description="Optional page foot" %>
 <%@ attribute name="titleKey" required="true" %>
+<%@ attribute name="main" required="false" %>
 <%@ attribute name="isSubPaged" required="false"  description="boolean. if set to true, the layout will be applied in a sub-paged form. Basically
 it will insert sub-page-layout.tag between the top template and this one." %>
 <%@ attribute name="highlightedWorkspace" required="false" description="Workspace which should be highlighted. Values : test-case, campaign, requirement. Empty for no workspace highlight" %>
@@ -45,15 +46,17 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 
 <c:choose>
 <c:when test="${not empty isSubPaged and isSubPaged }">
-<layout:sub-page-layout highlightedWorkspace="${ highlightedWorkspace }" titleKey="${ titleKey }">
+<layout:sub-page-layout highlightedWorkspace="${ highlightedWorkspace }" titleKey="${ titleKey }" main="${ main }">
 	<jsp:attribute name="head" >
 		<jsp:invoke fragment="head"/>
 		<script type="text/javascript">
-			$(function() {
-				$( ".deactivated-form" ).submit(function() {
-					return false;
-				});
-			});
+		require([ "common" ], function() {
+    		require([ "jquery" ], function($) {
+    			$(document).on("submit", ".deactivated-form", function() {
+    				return false;
+    			});
+    		});			
+		});
 		</script>
 	</jsp:attribute>
 	
@@ -76,11 +79,15 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 			
 	<jsp:attribute name="content">
 		<script type="text/javascript">
-			$(function(){
-				require(['workspace.contextual-content'], function(){
-					//noop
-				});
-			});		
+		require([ "common" ], function() {
+    		require([ "jquery" ], function() {
+    			$(function(){
+    				require(['workspace.contextual-content'], function(){
+    					//noop
+    				});
+    			});					
+    		});
+		});
 		</script>	
 		<div id="information-content" class="unstyled">
 			<jsp:invoke fragment="informationContent" />
@@ -89,15 +96,17 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 </layout:sub-page-layout>
 </c:when>
 <c:otherwise>
-<layout:common-import-outer-frame-layout highlightedWorkspace="${ highlightedWorkspace }" titleKey="${ titleKey }">
+<layout:common-import-outer-frame-layout highlightedWorkspace="${ highlightedWorkspace }" titleKey="${ titleKey }" main="${ main }">
 	<jsp:attribute name="head" >	
 		<jsp:invoke fragment="head"/>
 		<script type="text/javascript">
-			$(function() {
-				$( ".deactivated-form" ).submit(function() {
-					return false;
-				});
-			});
+		require([ "common" ], function() {
+    		require([ "jquery" ], function($) {
+    			$(document).on("submit", ".deactivated-form", function() {
+    				return false;
+    			});
+    		});
+		});
 		</script>
 	</jsp:attribute>
 	
@@ -111,11 +120,15 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 
 	<jsp:attribute name="content">
 		<script type="text/javascript">
-			$(function(){
-				require(['workspace.contextual-content'], function(){
-					//noop
-				});
-			});		
+		require([ "common" ], function() {
+    		require([ "jquery" ], function($) {
+    			$(function(){
+    				require(['workspace.contextual-content'], function(){
+    					//noop
+    				});
+    			});		
+    		});
+		});
 		</script>
 		<div id="information-content" class="unstyled">
 			<jsp:invoke fragment="informationContent" />

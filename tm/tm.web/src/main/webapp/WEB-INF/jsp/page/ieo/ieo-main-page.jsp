@@ -46,14 +46,9 @@
 
 
 <head>
-
-	
 	<layout:common-head />		
-	<layout:_common-script-import highlightedWorkspace=""/>
 	<comp:sq-css name="squash.purple.css" />
-
-	<script type="text/javascript" src="${ pageContext.servletContext.contextPath }/scripts/common.js"></script>
-		
+	<layout:_common-script-import highlightedWorkspace="" />
 </head>
 
 <body id="ieo-body">
@@ -124,20 +119,21 @@
 	</c:if>
 	
 	<script type="text/javascript">
-		require(["domReady", "execution-processing"], function(domReady, execProcessing){
+	require(["common"], function() {
+		require(["jquery", "domReady", "execution-processing"], function($, domReady, execProcessing){
+			requirejs.config({
+				config : {
+					'execution-processing/init-ieo' : ${json:serialize(config)}
+				}
+			});
+			
 			domReady(function(){
-				
 				$("#open-address-dialog-button").button();
 				
-				requirejs.config({
-					config : {
-						'execution-processing/init-ieo' : ${json:serialize(config)}
-					}
-				
-				});
 				execProcessing.initIEO();
 			});
 		});
+	});
 	</script>
 </body>
 </html>

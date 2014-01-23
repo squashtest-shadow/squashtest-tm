@@ -34,7 +34,7 @@ require([ "common" ], function(common) {
 		};
 
 		domReady(function() {
-			WS.init("");
+			WS.init();
 			var view = new TestCaseSearchResultView();
 			$("#back").button().on("click", goBack);
 		});

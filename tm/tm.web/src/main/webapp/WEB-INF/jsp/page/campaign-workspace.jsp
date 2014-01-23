@@ -33,9 +33,6 @@
 	
 	<jsp:attribute name="head">
 		<comp:sq-css name="squash.purple.css" />
-		<comp:rich-jeditable-header />
-				
-		
 		<script type="text/javascript">
 			var squashtm = squashtm || {};
 			squashtm.app = squashtm.app || {};

@@ -133,7 +133,7 @@
 		</h2>
 	</div>
 
-	<div style="clear: both;"></div>
+	<div class="unsnap"></div>
 	<c:if test="${ writable }">
 		<pop:popup id="rename-iteration-dialog"
 			titleKey="dialog.rename-iteration.title" isContextual="true"
@@ -193,7 +193,7 @@
 		</c:if>
 		
 	</div>
-	<div style="clear: both;"></div>
+	<div class="unsnap"></div>
 	<c:if test="${ moreThanReadOnly }">
 		<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ iterationUrl }"/>
 	</c:if>

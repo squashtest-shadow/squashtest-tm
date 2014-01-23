@@ -34,23 +34,22 @@
 <c:url var="ckeWelcomeMessageConfigUrl" value="/styles/ckeditor/welcome-message-ckeditor-config.js" />
 
 <script type="text/javascript">
-	$(function() {
-		
-		var settings = {
-			url : '${ targetUrl }',
-			ckeditor : <c:choose> <c:when test="${ not empty welcome}"> { customConfig : '${ ckeWelcomeMessageConfigUrl }', language: '<f:message key="rich-edit.language.value" />' } </c:when>
-			<c:otherwise> { customConfig : '${ ckeConfigUrl }', language: '<f:message key="rich-edit.language.value" />' } </c:otherwise> </c:choose>,
-			placeholder: '<f:message key="rich-edit.placeholder" />',
-			submit: '<f:message key="rich-edit.button.ok.label" />',
-			cancel: '<f:message key="label.Cancel" />',	
-			indicator : '<span class="processing-indicator" />'
-								
-		}
-		
-		require(['jquery', 'jqueryui', 'jeditable', 'ckeditor', 'jeditable.ckeditor'], function(){
-			$('#${componentId}').richEditable(settings).addClass("editable");			
-		});
-		
-	})
+require(["common"], function() {
+	var settings = {
+		url : '${ targetUrl }',
+		ckeditor : <c:choose> <c:when test="${ not empty welcome}"> { customConfig : '${ ckeWelcomeMessageConfigUrl }', language: '<f:message key="rich-edit.language.value" />' } </c:when>
+		<c:otherwise> { customConfig : '${ ckeConfigUrl }', language: '<f:message key="rich-edit.language.value" />' } </c:otherwise> </c:choose>,
+		placeholder: '<f:message key="rich-edit.placeholder" />',
+		submit: '<f:message key="rich-edit.button.ok.label" />',
+		cancel: '<f:message key="label.Cancel" />',	
+		indicator : '<span class="processing-indicator" />'
+	}
+	
+	require(["jquery", "jquery.squash.jeditable"], function($){
+		$(function() {
+			$('#${componentId}').richEditable(settings).addClass("editable");
+		});	
+	});
+});
 	
 </script>

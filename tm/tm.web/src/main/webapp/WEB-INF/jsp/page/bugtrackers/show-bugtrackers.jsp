@@ -59,7 +59,7 @@
 
 
 <div class="fragment-body">
-	<input style="float: right;" type="button" value='<f:message key="label.AddBugtracker" />' id="new-bugtracker-button"/>
+	<input class="snap-right" type="button" value='<f:message key="label.AddBugtracker" />' id="new-bugtracker-button"/>
 	<div style="clear:both"></div>
 	
 	<table id="bugtrackers-table" data-def="ajaxsource=${bugtrackersUrl}, hover, pre-sort=1-asc">

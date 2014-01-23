@@ -28,3 +28,54 @@ require([ "common" ], function(common) {
 		});
 	});
 });
+/*<![CDATA[*/
+var squashtm = squashtm || {};
+	squashtm.app = squashtm.app || {} ;
+	squashtm.app.messages = squashtm.app.messages || {};
+	squashtm.app.messages["message.notBlank"] = 'ne peut pas \u00EAtre vide';
+	
+	require(["common"], function() {
+	require([ "domReady", "test-case-management" ], function(domReady, testCaseManagement) {
+		var settings = {
+			basic : {
+				testCaseUrl : '\/squash\/test-cases\/238',
+				testCaseId : 238,
+				projectId : 14,
+				parametersUrl : '\/squash\/parameters',
+				datasetsUrl : '\/squash\/datasets',
+				testCaseDatasetsUrl : '\/squash\/test-cases\/238\/datasets',
+				dataTableLanguageUrl : '\/squash\/datatables\/messages',
+				ckeConfigUrl : '\/squash\/styles\/ckeditor\/ckeditor-config.js',
+				indicatorURl : '\/squash\/scripts\/jquery\/indicator.gif',
+				parameterValuesUrl : '\/squash\/dataset-parameter-values' 
+			},
+
+			language : {
+				cancellabel : 'Annuler',
+				add : 'Ajouter',
+				ckeLang : 'fr',
+				placeholder : '(Cliquer pour \u00E9diter...)',
+				submit : 'Valider',
+				edit : '\u00C9diter',
+				remove : 'Supprimer',
+				parametersPanelTitle : 'Param\u00E8tres',
+				datasetsPanelTitle : 'Jeux de donn\u00E9es'
+			},
+			
+			datasetsAoColumnDefs : '[{\"bVisible\":false,\"bSortable\":false,\"sClass\":\"\",\"sWidth\":null,\"aTargets\":[0],\"mDataProp\":\"entity-id\"},{\"bVisible\":true,\"bSortable\":false,\"sClass\":\"select-handle centered\",\"sWidth\":\"2em\",\"aTargets\":[1],\"mDataProp\":\"entity-index\"},{\"bVisible\":true,\"bSortable\":true,\"sClass\":\"dataset-name\",\"sWidth\":null,\"aTargets\":[2],\"mDataProp\":\"name\"},{\"bVisible\":true,\"bSortable\":false,\"sClass\":\"delete-button\",\"sWidth\":\"2em\",\"aTargets\":[3],\"mDataProp\":\"empty-delete-holder\"}]',
+			
+			permissions : {
+				isWritable : true 
+			}, 
+			
+			parameters: {
+				tabIndex: 2
+			}
+		};
+						
+		domReady(function() {		
+			testCaseManagement.initParametersPanel(settings);
+		});
+	});
+	});
+/*]]>*/

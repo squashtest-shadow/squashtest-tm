@@ -28,7 +28,7 @@ var squashtm = squashtm || {};
  * @author Gregory Fouquet
  */
 define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", "jqueryui", "jeditable", "jeditable.datepicker",
-		"jquery.squash", "jquery.cookie", "datepicker/require.jquery.squash.datepicker-locales" ], function($, RWS, treebuilder, _) {
+		"jquery.squash", "jquery.cookie", "datepicker/jquery.squash.datepicker-locales" ], function($, RWS, treebuilder, _) {
 	var config = {
 		contextPath : "",
 		dateFormat : "dd/mm/yy",

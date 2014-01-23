@@ -66,16 +66,17 @@
 		</div></div>
 	<jsp:invoke fragment="footer" />
 </body>
-	<comp:rich-jeditable-header />
 <layout:_init_workspace_variables />
 <jsp:invoke fragment="foot" />
   <script type="text/javascript">
+  require(["common"], function() {
+	require(["jquery", "squash.basicwidgets"], function($, basic){
     	$(function() {
-    		require(["squash.basicwidgets"], function(basic){
-    			basic.init();
-    		});
-      		$(".unstyled").fadeIn("fast", function() { $(this).removeClass("unstyled"); });
-    	});
+  			basic.init();
+  		});
+  		$(".unstyled").fadeIn("fast", function() { $(this).removeClass("unstyled"); });
+  	});
+  });
  
 </script>
 </html>

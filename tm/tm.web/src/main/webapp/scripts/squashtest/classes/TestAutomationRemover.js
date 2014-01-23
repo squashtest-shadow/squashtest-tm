@@ -27,29 +27,34 @@
  - messages : 
  - noTestSelected : message that must be displayed when nothing is selected
  */
-function TestAutomationRemover(settings) {
+define("TestAutomationRemover", ["jquery", "jquery.squash.confirmdialog"], function() {
+	function TestAutomationRemover(settings) {
 
-	var link = $(settings.linkSelector);
-	var automatedTestRemovalUrl = settings.automatedTestRemovalUrl;
-	var successCallback = settings.successCallback;
-	var confirmDialog = $(settings.confirmPopupSelector);
-	confirmDialog.confirmDialog({
-		confirm : sendRemovalRequest
-	});
-
-	link.click(function() {
-		confirmDialog.confirmDialog("open");
-		return false;
-	});
-
-	function sendRemovalRequest() {
-		return $.ajax({
-			url : automatedTestRemovalUrl,
-			type : 'DELETE',
-			dataType : 'json'
-		}).done(function() {
-			successCallback();
-			confirmDialog.confirmDialog("close");
+		var link = $(settings.linkSelector);
+		var automatedTestRemovalUrl = settings.automatedTestRemovalUrl;
+		var successCallback = settings.successCallback;
+		var confirmDialog = $(settings.confirmPopupSelector);
+		
+		confirmDialog.confirmDialog({
+			confirm : sendRemovalRequest
 		});
+
+		link.click(function() {
+			confirmDialog.confirmDialog("open");
+			return false;
+		});
+
+		function sendRemovalRequest() {
+			return $.ajax({
+				url : automatedTestRemovalUrl,
+				type : 'DELETE',
+				dataType : 'json'
+			}).done(function() {
+				successCallback();
+				confirmDialog.confirmDialog("close");
+			});
+		}
 	}
-}
+
+	return TestAutomationRemover;
+});

@@ -21,7 +21,7 @@
 require([ "common" ], function(common) {
 	require([ "jquery", "app/ws/squashtm.workspace", "search/index-administration-view", "domReady" ], function($, WS, IndexAdministrationView, domReady) {
 		domReady(function() {
-			WS.init("");
+			WS.init();
 			var view = new IndexAdministrationView();
 			$("#back").button().click(function() {
 				document.location.href = squashtm.app.contextRoot + "/administration";

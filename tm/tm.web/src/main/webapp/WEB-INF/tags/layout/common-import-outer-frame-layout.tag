@@ -46,6 +46,7 @@
 
 <%@ attribute name="titleKey" required="true" %>
 <%@ attribute name="highlightedWorkspace" required="true" %>
+<%@ attribute name="main" required="false" %>
 
 <%@ attribute name="head" fragment="true" description="Additional html head fragment" %>
 <%@ attribute name="titlePane" fragment="true" description="the title pane" %>
@@ -71,7 +72,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 	
 		<title><f:message key="${ titleKey }"/></title>
 		<layout:common-head />		
-		<layout:_common-script-import highlightedWorkspace="${ highlightedWorkspace }"/>
+		<layout:_common-script-import highlightedWorkspace="${ highlightedWorkspace }" main="${ main }" />
 		<jsp:invoke fragment="head" />
 	</head>
 	<body>
@@ -88,7 +89,11 @@
 						note about the sticked </div><div> below : IT DOES MATTER
 						if you insert any separator character between them the rendering will be altered for Chrome.
 					 --%>
-					</div><div class="main-menubar unstyled">
+					</div>
+                    <script type="text/javascript">
+                      publish("load.notification");
+                    </script>
+                    <div class="main-menubar unstyled">
 						<layout:_menu-bar />
 					</div>
 				
@@ -99,18 +104,19 @@
 		</div>
 		<jsp:invoke fragment="footer" />	
 	</body>
-	<comp:rich-jeditable-header />
 	<layout:_init_workspace_variables />
 	<jsp:invoke fragment="foot" />
     <script type="text/javascript">
-    	$(function() {
-    		require(["squash.basicwidgets"], function(basicwidg){
+    require([ "common" ], function() {
+      require([ "jquery", "squash.basicwidgets" ], function($, basicwidg){
+      	$(function() {
     			basicwidg.init();
-        		$(".unstyled").fadeIn("fast", function() { $(this).removeClass("unstyled"); });    		
+        		$(".unstyled").fadeIn("fast", function() { $(this).removeClass("unstyled"); });
         		$.ajaxSetup({
         			scriptCharset : "utf-8"
         		});
-    		});
-    	});
+      	});
+      });
+    });
     </script>
 </html>

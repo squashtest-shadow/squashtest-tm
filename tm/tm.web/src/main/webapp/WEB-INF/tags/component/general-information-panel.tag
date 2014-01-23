@@ -53,8 +53,8 @@
 	
 </div>
 	<script type="text/javascript">
-		$(function(){
-			require(["page-components/general-information-panel"], function(general){
+	require(["common"], function() {
+			require(["jquery", "page-components/general-information-panel"], function($, general){
 				general.init();
 			});
 		});

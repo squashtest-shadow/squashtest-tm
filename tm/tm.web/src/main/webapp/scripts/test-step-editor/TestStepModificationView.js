@@ -21,7 +21,7 @@
 define([ "jquery", "backbone", "./TestStepInfoModel", "../verified-requirements/TestStepVerifiedRequirementsPanel",
 		"app/lnf/Forms", "jquery.squash", "jqueryui", "jquery.ckeditor", "jeditable",
 		"ckeditor", "jeditable.ckeditor", "jquery.squash.jeditable", "jquery.squash.squashbutton",
-		"datepicker/require.jquery.squash.datepicker-locales" ], function($, Backbone, TestStepInfoModel,
+		"datepicker/jquery.squash.datepicker-locales" ], function($, Backbone, TestStepInfoModel,
 		VerifiedRequirementsPanel, Forms) {
 	var editTCS = squashtm.app.editTCS;
 	/*

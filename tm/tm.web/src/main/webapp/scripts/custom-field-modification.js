@@ -27,7 +27,7 @@ require([ "common" ], function(common) {
 		};
 
 		domReady(function() {
-			WS.init("");
+			WS.init();
 			var view = new CustomFieldModificationView();
 			$("#back").button().on("click", goBack);
 			view.on("customfield.delete", goBack);

@@ -52,7 +52,7 @@
 	</c:if>
 		<input type="button" value="<f:message key='label.print'/>" id="print-test-case-button" class="button"/>
 	</div>
-	<div style="clear: both;"></div>
+	<div class="unsnap"></div>
 	<c:if test="${ moreThanReadOnly }">
 		<comp:opened-object otherViewers="${ otherViewers }"
 							objectUrl="${ testCaseUrl }" />

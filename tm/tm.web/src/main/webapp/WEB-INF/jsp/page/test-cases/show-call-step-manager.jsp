@@ -53,9 +53,6 @@
 
 	<jsp:attribute name="head">
 		<comp:sq-css name="squash.green.css" />
-
-		<comp:rich-jeditable-header />	
-		
 		<script type="text/javascript">
 		
 			function navigateBackFromCallStepManager(){
