@@ -22,31 +22,31 @@
  * COntroller for the login page
  */
 require([ "common" ], function() {
-	require([ "jquery", "app/pubsub", "app/ws/squashtm.notification", "jqueryui", "jquery.squash.squashbutton" ], function(
-			$, ps, WTF) {
-	ps.subscribe("load.notification", function() {
-		WTF.init(squashtm.app.notificationConf);
-	});
-	
-	ps.subscribe("load.loginForm", function() {
-		$.squash.decorateButtons();
-		$("#j_username").focus();
-	});
-	
-		$(document).on('keydown', 'body', function(event) {
-			var e;
-			if (event.which != "") {
-				e = event.which;
-			} else if (event.charCode != "") {
-				e = event.charCode;
-			} else if (event.keyCode != "") {
-				e = event.keyCode;
-			}
+	require([ "jquery", "app/pubsub", "app/ws/squashtm.notification", "jqueryui", "jquery.squash.squashbutton" ],
+			function($, ps, WTF) {
+				ps.subscribe("load.notification", function() {
+					WTF.init(squashtm.app.notificationConf);
+				});
 
-			if (e == 13) {
-				$('#login-form-button-set input').click();
-			}
-		});
-		
-	});
+				ps.subscribe("load.loginForm", function() {
+					$.squash.decorateButtons();
+					$("#j_username").focus();
+				});
+
+				$(document).on('keydown', 'body', function(event) {
+					var e;
+					if (event.which != "") {
+						e = event.which;
+					} else if (event.charCode != "") {
+						e = event.charCode;
+					} else if (event.keyCode != "") {
+						e = event.keyCode;
+					}
+
+					if (e == 13) {
+						$('#login-form-button-set input').click();
+					}
+				});
+
+			});
 });
