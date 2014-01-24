@@ -53,16 +53,14 @@
 		bean-name="squashtest.core.security.ObjectIdentityRetrievalStrategy"
 		interface="org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy"
 		availability="mandatory" />
-		
-	<osgi:reference 
-	  	id="squashtest.tm.service.ProjectFilterModificationService" 
-	  	bean-name="squashtest.tm.service.ProjectFilterModificationService"	  	
-	  	interface="org.squashtest.tm.service.project.ProjectFilterModificationService" 
-	  	availability="mandatory"/>
+
+	<osgi:reference
+		id="squashtest.tm.service.ProjectFilterModificationService" bean-name="squashtest.tm.service.ProjectFilterModificationService"
+		interface="org.squashtest.tm.service.project.ProjectFilterModificationService"
+		availability="mandatory" />
 
 	<osgi:reference id="squashtest.core.security.AclService"
-		bean-name="squashtest.core.security.AclService" 
-		interface="org.springframework.security.acls.model.AclService"
+		bean-name="squashtest.core.security.AclService" interface="org.springframework.security.acls.model.AclService"
 		availability="mandatory" />
 
 	<osgi:reference id="squashtest.core.configuration.ConfigurationService"
@@ -124,7 +122,7 @@
 			<value>org.squashtest.tm.service.testcase.TestStepModificationService</value>
 		</osgi:interfaces>
 	</osgi:reference>
-	
+
 	<osgi:reference id="squashtest.tm.service.AttachmentManagerService"
 		bean-name="squashtest.tm.service.AttachmentManagerService"
 		cardinality="1..1">
@@ -133,14 +131,18 @@
 			<value>org.squashtest.tm.service.attachment.AttachmentFinderService</value>
 		</osgi:interfaces>
 	</osgi:reference>
-	
-	<osgi:reference id="squashtest.tm.service.VerifyingTestCaseManagerService" bean-name="squashtest.tm.service.VerifyingTestCaseManagerService" 
-	interface="org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService"	cardinality="1..1" />
-	
-	<osgi:reference id="squashtest.tm.service.RequirementVersionManagerService" bean-name="squashtest.tm.service.RequirementVersionManagerService" 
-	interface="org.squashtest.tm.service.requirement.RequirementVersionManagerService"	cardinality="1..1"/>
-	
-	
+
+	<osgi:reference id="squashtest.tm.service.VerifyingTestCaseManagerService"
+		bean-name="squashtest.tm.service.VerifyingTestCaseManagerService"
+		interface="org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService"
+		cardinality="1..1" />
+
+	<osgi:reference
+		id="squashtest.tm.service.RequirementVersionManagerService" bean-name="squashtest.tm.service.RequirementVersionManagerService"
+		interface="org.squashtest.tm.service.requirement.RequirementVersionManagerService"
+		cardinality="1..1" />
+
+
 	<osgi:reference id="squashtest.tm.service.ParameterModificationService"
 		bean-name="squashtest.tm.service.ParameterModificationService"
 		availability="mandatory">
@@ -149,11 +151,12 @@
 			<value>org.squashtest.tm.service.testcase.ParameterFinder</value>
 		</osgi:interfaces>
 	</osgi:reference>
-	
-<osgi:reference id="squashtest.tm.service.DatasetModificationService"
+
+	<osgi:reference id="squashtest.tm.service.DatasetModificationService"
 		bean-name="squashtest.tm.service.DatasetModificationService"
-		availability="mandatory" interface="org.squashtest.tm.service.testcase.DatasetModificationService"/>
-		
+		availability="mandatory"
+		interface="org.squashtest.tm.service.testcase.DatasetModificationService" />
+
 	<osgi:reference id="squashtest.tm.service.RequirementModificationService"
 		bean-name="squashtest.tm.service.RequirementModificationService"
 		interface="org.squashtest.tm.service.requirement.RequirementModificationService"
@@ -177,8 +180,13 @@
 	<osgi:reference
 		id="squashtest.tm.service.VerifiedRequirementsManagerService"
 		bean-name="squashtest.tm.service.VerifiedRequirementsManagerService"
-		interface="org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService"
-		availability="mandatory" />
+		availability="mandatory">
+		<osgi:interfaces>
+			<value>org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService</value>
+			<value>org.squashtest.tm.service.requirement.VerifiedRequirementsFinderService</value>
+		</osgi:interfaces>
+	</osgi:reference>
+
 
 
 	<osgi:reference id="squashtest.tm.service.CampaignModificationService"
@@ -198,7 +206,7 @@
 			<value>org.squashtest.tm.service.campaign.IterationFinder</value>
 		</osgi:interfaces>
 	</osgi:reference>
-	
+
 	<osgi:reference id="squashtest.tm.service.IterationTestPlanManagerService"
 		bean-name="squashtest.tm.service.IterationTestPlanManagerService"
 		cardinality="1..1">
@@ -206,7 +214,7 @@
 			<value>org.squashtest.tm.service.campaign.IterationTestPlanManagerService</value>
 			<value>org.squashtest.tm.service.campaign.IterationTestPlanFinder</value>
 		</osgi:interfaces>
-	</osgi:reference>	
+	</osgi:reference>
 
 	<osgi:reference
 		id="squashtest.tm.service.CampaignLibraryNavigationService" bean-name="squashtest.tm.service.CampaignLibraryNavigationService"
@@ -230,7 +238,7 @@
 	<osgi:reference id="squashtest.tm.service.AdvancedSearchService"
 		bean-name="squashtest.tm.service.AdvancedSearchService" interface="org.squashtest.tm.service.library.AdvancedSearchService"
 		availability="mandatory" />
-		
+
 	<osgi:reference id="squashtest.core.security.PermissionEvaluationService"
 		bean-name="squashtest.core.security.PermissionEvaluationService"
 		interface="org.squashtest.tm.service.security.PermissionEvaluationService"
@@ -316,11 +324,11 @@
 			<value>org.squashtest.tm.service.campaign.TestSuiteFinder</value>
 		</osgi:interfaces>
 	</osgi:reference>
-	
+
 	<osgi:reference id="squashtest.tm.service.TestSuiteTestPlanManagerService"
 		bean-name="squashtest.tm.service.TestSuiteTestPlanManagerService"
 		interface="org.squashtest.tm.service.campaign.TestSuiteTestPlanManagerService"
-		availability="mandatory"  />
+		availability="mandatory" />
 
 	<osgi:reference
 		id="squashtest.tm.service.testautomation.AutomatedExecutionManagerService"
@@ -356,7 +364,7 @@
 			<value>org.squashtest.tm.service.customfield.CustomFieldValueManagerService</value>
 		</osgi:interfaces>
 	</osgi:reference>
-	
+
 	<osgi:reference id="squashtest.tm.service.ExecutionModificationService"
 		bean-name="squashtest.tm.service.ExecutionModificationService"
 		cardinality="1..1">
@@ -364,10 +372,12 @@
 			<value>org.squashtest.tm.service.execution.ExecutionModificationService</value>
 			<value>org.squashtest.tm.service.execution.ExecutionFinder</value>
 		</osgi:interfaces>
-	</osgi:reference>	
-	
-	<osgi:reference id="squashtest.tm.service.CustomFieldHelperService" bean-name="squashtest.tm.service.CustomFieldHelperService"
-					cardinality="1..1" interface="org.squashtest.tm.service.customfield.CustomFieldHelperService" />
+	</osgi:reference>
+
+	<osgi:reference id="squashtest.tm.service.CustomFieldHelperService"
+		bean-name="squashtest.tm.service.CustomFieldHelperService"
+		cardinality="1..1"
+		interface="org.squashtest.tm.service.customfield.CustomFieldHelperService" />
 
 	<osgi:reference id="squashtest.tm.service.DenormalizedFieldValueFinder"
 		bean-name="squashtest.tm.service.DenormalizedFieldValueFinder"
@@ -377,21 +387,30 @@
 	<osgi:reference id="squashtest.tm.service.CampaignsWorkspaceService"
 		bean-name="squashtest.tm.service.CampaignsWorkspaceService" interface="org.squashtest.tm.service.library.WorkspaceService"
 		availability="mandatory" />
-    
-  <osgi:reference id="squashtest.tm.service.TestCasesWorkspaceService"
-    bean-name="squashtest.tm.service.TestCasesWorkspaceService" interface="org.squashtest.tm.service.library.WorkspaceService"
-    availability="mandatory" />
 
-  <osgi:reference id="squashtest.tm.service.RequirementsWorkspaceService"
-    bean-name="squashtest.tm.service.RequirementsWorkspaceService" interface="org.squashtest.tm.service.library.WorkspaceService"
-    availability="mandatory" />
+	<osgi:reference id="squashtest.tm.service.TestCasesWorkspaceService"
+		bean-name="squashtest.tm.service.TestCasesWorkspaceService" interface="org.squashtest.tm.service.library.WorkspaceService"
+		availability="mandatory" />
 
-    <osgi:reference id="squashtest.tm.service.TestSuiteExecutionProcessingService" bean-name="squashtest.tm.service.TestSuiteExecutionProcessingService" interface="org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService" />
-    
-    <osgi:reference id="squashtest.tm.service.ExecutionProcessingService" bean-name="squashtest.tm.service.ExecutionProcessingService" interface="org.squashtest.tm.service.execution.ExecutionProcessingService" />
+	<osgi:reference id="squashtest.tm.service.RequirementsWorkspaceService"
+		bean-name="squashtest.tm.service.RequirementsWorkspaceService"
+		interface="org.squashtest.tm.service.library.WorkspaceService"
+		availability="mandatory" />
+
+	<osgi:reference
+		id="squashtest.tm.service.TestSuiteExecutionProcessingService"
+		bean-name="squashtest.tm.service.TestSuiteExecutionProcessingService"
+		interface="org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService" />
+
+	<osgi:reference id="squashtest.tm.service.ExecutionProcessingService"
+		bean-name="squashtest.tm.service.ExecutionProcessingService"
+		interface="org.squashtest.tm.service.execution.ExecutionProcessingService" />
 
 
-	<osgi:reference  id="squashtest.tm.service.audit.RequirementAuditTrailService"  bean-name="squashtest.tm.service.audit.RequirementAuditTrailService" interface="org.squashtest.tm.service.audit.RequirementAuditTrailService" />
+	<osgi:reference
+		id="squashtest.tm.service.audit.RequirementAuditTrailService"
+		bean-name="squashtest.tm.service.audit.RequirementAuditTrailService"
+		interface="org.squashtest.tm.service.audit.RequirementAuditTrailService" />
 
 
 	<osgi:list id="squash.tm.report.ReportPlugins" interface="org.squashtest.tm.api.report.ReportPlugin"
@@ -415,9 +434,11 @@
 	<osgix:cm-properties id="squash.tm.uploadfilter.config"
 		persistent-id="org.squashtest.csp.tm.web.uploadfilter.config" />
 
-	<!-- kind of sad but squash.tm.config is already defined, hence the ".file" at the end -->
-	<osgix:cm-properties id="squash.tm.config.file" persistent-id="squash.tm.cfg" />
-		
+	<!-- kind of sad but squash.tm.config is already defined, hence the ".file" 
+		at the end -->
+	<osgix:cm-properties id="squash.tm.config.file"
+		persistent-id="squash.tm.cfg" />
+
 	<!-- pretty much the same problem here. To be specific, that thing should 
 		be instanciated here in core.service. the reason is that due to the rigid 
 		configuration of Spring security, we had to declare it, along with the main 
@@ -431,18 +452,20 @@
 	<osgi:reference id="squashtest.core.security.JdbcUserDetailsManager"
 		bean-name="squashtest.core.security.JdbcUserDetailsManager"
 		availability="optional">
-      <osgi:interfaces>
-        <value>org.springframework.security.provisioning.UserDetailsManager</value>
-        <value>org.squashtest.tm.service.security.UserDetailsService</value>
-      </osgi:interfaces>
-    </osgi:reference>
+		<osgi:interfaces>
+			<value>org.springframework.security.provisioning.UserDetailsManager</value>
+			<value>org.squashtest.tm.service.security.UserDetailsService</value>
+		</osgi:interfaces>
+	</osgi:reference>
 
-  <osgi:reference id="authenticationProvider.internal" bean-name="squash.security.authenticationProvider.internal"
-    availability="optional">
-    <osgi:interfaces>
-      <value>org.springframework.security.authentication.AuthenticationProvider</value>
-    </osgi:interfaces>
-  </osgi:reference>
+	<osgi:reference id="authenticationProvider.internal"
+		bean-name="squash.security.authenticationProvider.internal"
+		availability="optional">
+		<osgi:interfaces>
+			<value>org.springframework.security.authentication.AuthenticationProvider</value>
+		</osgi:interfaces>
+	</osgi:reference>
 
-    <osgi:reference id="squashtest.core.security.PermissionEvaluator" bean-name="squashtest.core.security.PermissionEvaluator" interface="org.springframework.security.access.PermissionEvaluator" />
+	<osgi:reference id="squashtest.core.security.PermissionEvaluator"
+		bean-name="squashtest.core.security.PermissionEvaluator" interface="org.springframework.security.access.PermissionEvaluator" />
 </beans>

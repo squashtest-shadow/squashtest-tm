@@ -41,7 +41,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
+import org.squashtest.tm.service.requirement.VerifiedRequirementsFinderService;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.json.JsonTestCase;
@@ -83,7 +83,7 @@ public class TestCaseController {
 	private Provider<TestCaseTypeJeditableComboDataBuilder> typeComboBuilderProvider;
 
 	@Inject
-	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
+	private VerifiedRequirementsFinderService verifiedRequirementsFinderService;
 
 	/**
 	 * Fetches and returns a list of json test cases from their ids
@@ -169,7 +169,7 @@ public class TestCaseController {
 			// in the meantime the calling nodes 'isReqCoveredProperty'
 			Set<Long> callingOpenedNodesIds = finder.findCallingTCids(idChange, openedNodesIds);
 			callingOpenedNodesIds.removeAll(newIsReqCoveredIdsAndCalling);
-			newIsReqCoveredById.putAll(verifiedRequirementsManagerService
+			newIsReqCoveredById.putAll(verifiedRequirementsFinderService
 					.findisReqCoveredOfCallingTCWhenisReqCoveredChanged(idChange, callingOpenedNodesIds));
 
 
@@ -216,8 +216,8 @@ public class TestCaseController {
 		for (Entry<Long, Boolean> entry : updatedIdsAndOldReq.entrySet()) {
 			long id = entry.getKey();
 			boolean oldReqbool = updatedIdsAndOldReq.get(id);
-			boolean newReq = verifiedRequirementsManagerService.testCaseHasDirectCoverage(id)
-					|| verifiedRequirementsManagerService.testCaseHasUndirectRequirementCoverage(id);
+			boolean newReq = verifiedRequirementsFinderService.testCaseHasDirectCoverage(id)
+					|| verifiedRequirementsFinderService.testCaseHasUndirectRequirementCoverage(id);
 			if (newReq != oldReqbool) {// then 'isReqCovered' changed
 				result.put(id, newReq);
 			}
