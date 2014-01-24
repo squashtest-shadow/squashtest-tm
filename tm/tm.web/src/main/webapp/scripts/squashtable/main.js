@@ -1011,7 +1011,7 @@ define(["jquery",
 	}
 
 	function _applyFilteredStyle() {
-		var isFiltered = (this.fnSettings().oPreviousSearch.sSearch.length > 0);
+		var isFiltered = this.fnSettings() && this.fnSettings().oPreviousSearch && (this.fnSettings().oPreviousSearch.sSearch.length > 0);
 		if (isFiltered) {
 			this.find('th.datatable-filterable').addClass('datatable-filtered');
 		} else {
@@ -1029,7 +1029,7 @@ define(["jquery",
 		
 		var template = $('<div><span class="small-right-arrow"></span></div>');
 		
-		for (selector in toggleSettings){
+		for (var selector in toggleSettings) {
 			
 			// adds a draw callback. It will be then executed every time the table is reloaded 
 			this.drawcallbacks.push(function(){		

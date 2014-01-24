@@ -49,15 +49,6 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 <layout:sub-page-layout highlightedWorkspace="${ highlightedWorkspace }" titleKey="${ titleKey }" main="${ main }">
   <jsp:attribute name="head" >
     <jsp:invoke fragment="head"/>
-    <script type="text/javascript">
-    require([ "common" ], function() {
-        require([ "jquery" ], function($) {
-          $(document).on("submit", ".deactivated-form", function() {
-            return false;
-          });
-        });
-    });
-    </script>
   </jsp:attribute>
 
   <jsp:attribute name="titlePane">  
@@ -78,17 +69,6 @@ it will insert sub-page-layout.tag between the top template and this one." %>
   </jsp:attribute>
 
   <jsp:attribute name="content">
-    <script type="text/javascript">
-    require([ "common" ], function() {
-        require([ "jquery" ], function() {
-          $(function(){
-            require(['workspace.contextual-content'], function(){
-              //noop
-            });
-          });
-        });
-    });
-    </script>  
     <div id="information-content" class="unstyled">
       <jsp:invoke fragment="informationContent" />
     </div>
@@ -99,15 +79,6 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 <layout:common-import-outer-frame-layout highlightedWorkspace="${ highlightedWorkspace }" titleKey="${ titleKey }" main="${ main }">
   <jsp:attribute name="head" >  
     <jsp:invoke fragment="head"/>
-    <script type="text/javascript">
-    require([ "common" ], function() {
-        require([ "jquery" ], function($) {
-          $(document).on("submit", ".deactivated-form", function() {
-            return false;
-          });
-        });
-    });
-    </script>
   </jsp:attribute>
   
   <jsp:attribute name="titlePane">  
@@ -119,17 +90,6 @@ it will insert sub-page-layout.tag between the top template and this one." %>
   </jsp:attribute>    
 
   <jsp:attribute name="content">
-    <script type="text/javascript">
-    require([ "common" ], function() {
-        require([ "jquery" ], function($) {
-          $(function(){
-            require(['workspace.contextual-content'], function(){
-              //noop
-            });
-          });    
-        });
-    });
-    </script>
     <div id="information-content" class="unstyled">
       <jsp:invoke fragment="informationContent" />
     </div>

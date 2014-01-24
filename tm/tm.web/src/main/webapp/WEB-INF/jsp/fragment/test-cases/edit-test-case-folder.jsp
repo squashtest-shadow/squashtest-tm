@@ -87,10 +87,10 @@
 
 	var identity = { obj_id : ${folder.id}, obj_restype : 'test-cases'  };
 	
-	require(["domReady", "require"], function(domReady, require){
-		domReady(function(){
+	require(["common"], function(){
 			require(["jquery", "squash.basicwidgets","contextual-content-handlers", "workspace.event-bus", "test-case-folder-management"], 
 					function($, basic, contentHandlers, eventBus, TCFM){
+		$(function(){
 				
 				basic.init();
 				

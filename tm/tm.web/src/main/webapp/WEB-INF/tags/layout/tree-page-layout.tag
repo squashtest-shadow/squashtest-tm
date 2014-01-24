@@ -189,12 +189,14 @@
 		</div>
 		
 		<script type="text/javascript">
+		require([ "common" ], function() {
 		require([ "jquery" ], function() {
 			$(function(){
 				require(['workspace.contextual-content'], function(){
 						//noop
 				});
 			});
+		});
 		});
 		</script>
 			
@@ -272,12 +274,14 @@
 		
 		
 		<script type="text/javascript">
+		require([ "common" ], function() {
 		require([ "jquery" ], function() {
 			$(function(){
 				require(['workspace.contextual-content'], function(){
 										//noop
 				});
 			});		
+		});
 		});
 		</script>
 		

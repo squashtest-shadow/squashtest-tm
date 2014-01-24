@@ -78,89 +78,79 @@
 	<jsp:attribute name="foot">
 
 		<script type="text/javascript">
-		 require([ "common" ], function() {
-		        require([ "domReady",'workspace.event-bus', 'workspace.tree-event-handler'],
-					function(domReady,eventBus, treehandler) {
-		        	eventBus.addPermanentListener(treehandler);
-						//the case 'get ids from the research tab' is disabled here, waiting for refactoring. 
-						function getTestCasesIds(){
-							var ids =  [];
-							var nodes = $( '#linkable-test-cases-tree' ).jstree('get_selected').not(':library').treeNode();
-							if (nodes.length>0){
-								ids = nodes.all('getResId');
-							}
+require([ "common" ], function() {
+	require([ "jquery", "jqueryui", "jquery.squash.messagedialog", "squashtable" ], function($) {
+		$(function() {
+			//the case 'get ids from the research tab' is disabled here, waiting for refactoring. 
+			function getTestCasesIds(){
+				var ids =  [];
+				var nodes = $( '#linkable-test-cases-tree' ).jstree('get_selected').not(':library').treeNode();
+				if (nodes.length>0){
+					ids = nodes.all('getResId');
+				}
+			
+				return $.map(ids, function(id){ return parseInt(id);});
+			}
+			
+			$( "#add-summary-dialog" ).messageDialog();
+
+			var summaryMessages = {
+				alreadyVerifiedRejections: "<f:message key='requirement-version.verifying-test-case.already-verified-rejection' />",
+				notLinkableRejections: "<f:message key='requirement-version.verifying-test-case.not-linkable-rejection' />"
+			};
+
+			var showAddSummary = function(summary) {
+				if (summary) {
+					var summaryRoot = $( "#add-summary-dialog > ul" );
+					summaryRoot.empty();
+					
+					for(var rejectionType in summary) {
+						var message = summaryMessages[rejectionType];
 						
-							return $.map(ids, function(id){ return parseInt(id);});
+						if (message) {
+							summaryRoot.append('<li>' + message + '</li>');
 						}
-						
-						$( "#add-summary-dialog" ).messageDialog();
-		
-						var summaryMessages = {
-							alreadyVerifiedRejections: "<f:message key='requirement-version.verifying-test-case.already-verified-rejection' />",
-							notLinkableRejections: "<f:message key='requirement-version.verifying-test-case.not-linkable-rejection' />"
-						};
-						
-						var showAddSummary = function(summary) {
-							if (summary) {
-								var summaryRoot = $( "#add-summary-dialog > ul" );
-								summaryRoot.empty();
-								
-								for(rejectionType in summary) {
-									var message = summaryMessages[rejectionType];
-									
-									if (message) {
-										summaryRoot.append('<li>' + message + '</li>');
-									}
-								}
-								
-								if (summaryRoot.children().length > 0) {
-									$( "#add-summary-dialog" ).messageDialog("open");
-								}
-							}					
-						};
-						
-						$( '#add-items-button' ).click(function() {
-							
-							var tree = $('#linkable-test-cases-tree');
-							var table = $("#verifying-test-cases-table").squashTable();
-							var ids = getTestCasesIds();
-							
-							if (ids.length > 0) {
-								$.ajax({
-									url : '${ verifyingTestCasesUrl }/'+ids.join(','),
-									type : 'POST', 
-									dataType :'json'
-								})
-								.success(function(data){
-									showAddSummary(data);
-									table.refresh();
-									sendUpdateTree(data.linkedIds);						
-								});
-							}
-							
-							tree.jstree('deselect_all');
-						});
-						
-						$("#remove-items-button").click(function(){
-							var table = $("#verifying-test-cases-table").squashTable();
-							var ids = table.getSelectedIds();
-							$.ajax({
-								url : '${verifyingTestCasesUrl}/'+ids.join(','),
-								type : 'DELETE',
-								dataType : 'json'
-							}).success(function(linkedIds){
-								table.refresh();
-								sendUpdateTree(ids);
-								
-							});
-						});
-						
-						function sendUpdateTree(ids){
-							var evt = new EventUpdateReqCoverage(ids);
-							squashtm.workspace.eventBus.fire(null, evt);
-						}
-		        });
-		 });
+					}
+				}
+					
+				if (summaryRoot.children().length > 0) {
+					$( "#add-summary-dialog" ).messageDialog("open");
+				}
+			};
+			
+			$( '#add-items-button' ).click(function() {
+				var tree = $('#linkable-test-cases-tree');
+				var table = $("#verifying-test-cases-table").squashTable();
+				var ids = getTestCasesIds();
+				
+				if (ids.length > 0) {
+					$.ajax({
+						url : '${ verifyingTestCasesUrl }/'+ids.join(','),
+						type : 'POST', 
+						dataType :'json'
+					})
+					.success(function(data){
+						showAddSummary(data);
+						table.refresh();
+					});
+				}
+				tree.jstree('deselect_all');
+			});
+			
+			$("#remove-items-button").click(function(){
+				var table = $("#verifying-test-cases-table").squashTable();
+				var ids = table.getSelectedIds();
+				$.ajax({
+					url : '${verifyingTestCasesUrl}/'+ids.join(','),
+					type : 'DELETE',
+					dataType : 'json'
+				}).success(function(){
+					table.refresh();
+				});
+			});
+		});
+	});
+});
 		</script>	
 	</jsp:attribute>
 	

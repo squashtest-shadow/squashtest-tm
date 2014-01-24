@@ -53,7 +53,7 @@
 					type : "POST",
 					dataType : "json",
 					data : { 'newName' : newName}
-				}).success(renameTestCaseSuccess);			
+				}).success(squashtm.testCase.renameTestCaseSuccess);			
 			},
 			
 			<pop:cancel-button />

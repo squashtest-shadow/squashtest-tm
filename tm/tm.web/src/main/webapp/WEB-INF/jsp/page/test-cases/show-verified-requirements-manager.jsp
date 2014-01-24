@@ -46,7 +46,8 @@
 		
 		<c:url var="addVerifiedRequirementsUrl" value="/test-cases/${ testCase.id }/verified-requirements" />
 		<script type="text/javascript">
-			
+	require([ "common" ], function() {
+		require([ "jquery", "jqueryui", "jquery.squash.messagedialog", "datatables" ], function($) {
 			function getRequirementsIds(){
 				var tab =  [];
 				var selected = $( "#tabbed-pane" ).tabs('option', 'selected');
@@ -115,6 +116,8 @@
 					tree.jstree('deselect_all');
 				});				
 			});				
+		});
+	});
 		</script>
 	</jsp:attribute>
 	

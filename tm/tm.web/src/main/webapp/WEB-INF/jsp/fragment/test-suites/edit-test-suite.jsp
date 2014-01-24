@@ -318,6 +318,8 @@
 		<input:cancel />
 	</div>
 <script>
+require([ "common" ], function() {
+	require([ "jquery" ], function($) {
 	$(function(){
 		var confirmHandler = function() {
 			dialog.confirmDialog("close");
@@ -332,6 +334,8 @@
 			return false;
 		});
 	});
+	});
+});
 </script>
 
 </c:if>
@@ -340,10 +344,10 @@
 
 	var identity = { obj_id : ${testSuite.id}, obj_restype : "test-suites"  };
 
-	require(["domReady", "require"], function(domReady, require){
-		domReady(function(){	
+	require(["common"], function(){
 			require(["jquery", "squash.basicwidgets", "workspace.event-bus", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", "test-suite-management"], 
 					function($, basicwidg, eventBus, contentHandlers, Frag, bugtracker, tsmanagement){
+		$(function(){	
 				
 				basicwidg.init();
 				
