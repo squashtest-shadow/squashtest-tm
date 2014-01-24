@@ -48,25 +48,7 @@
 		<script type="text/javascript">
 	require([ "common" ], function() {
 		require([ "jquery", "jqueryui", "jquery.squash.messagedialog", "datatables" ], function($) {
-			function getRequirementsIds(){
-				var tab =  [];
-				var selected = $( "#tabbed-pane" ).tabs('option', 'selected');
-				var tree = $( '#linkable-requirements-tree' );
-				if (selected == 0){
-					tab = tree.jstree('get_selected')
-						  .not(':library')
-						  .collect(function(elt){return $(elt).attr('resid');});
-				}
-				if (selected == 1){
-					var table = $( '#search-result-datatable' ).dataTable();
-					tab = table.find('tbody tr.ui-state-row-selected').map(function(){
-						return table.fnGetData(this)[0];
-					}).get();
-				}
-				
-				return tab;
-			}
-		
+
 			$(function() {
 				$( "#add-summary-dialog" ).messageDialog();
 				
@@ -100,16 +82,15 @@
 					<%-- uh, dependency on something defined in decorate-verified-requirements-table --%>
 					squashtm.verifiedRequirementsTable.refresh();
 				};
+				
 				<%-- verified requirements removal --%>
 				$('#remove-items-button').click(function(){
 					squashtm.verifiedRequirementsTable.removeSelectedRequirements();
 				});
+				
 				<%-- verified requirements addition --%>
 				$( '#add-items-button' ).click(function() {
-					var tree = $( '#linkable-requirements-tree' );
-					var ids = [];
-					ids = getRequirementsIds();
-			
+					ids = ("#linkable-requirements-tree").jstree('get_selected').not(':library').treeNode().all('getResId');			
 					if (ids.length > 0) {
 						$.post('${ addVerifiedRequirementsUrl }', { requirementsIds: ids}, addHandler);
 					}

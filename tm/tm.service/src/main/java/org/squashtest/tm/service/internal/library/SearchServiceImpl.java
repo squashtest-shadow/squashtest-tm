@@ -33,40 +33,22 @@ import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.project.ProjectResource;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
-import org.squashtest.tm.domain.requirement.RequirementFolder;
-import org.squashtest.tm.domain.requirement.RequirementLibrary;
-import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
-import org.squashtest.tm.domain.requirement.RequirementSearchCriteria;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.tm.domain.testcase.TestCaseLibrary;
-import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
-import org.squashtest.tm.domain.testcase.TestCaseSearchCriteria;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
-import org.squashtest.tm.service.internal.repository.RequirementDao;
-import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.library.SearchService;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
-import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
-import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 
 @Service("squashtest.tm.service.SearchService")
 @Transactional(readOnly = true)
 public class SearchServiceImpl implements SearchService {
 
-	@Inject
-	private TestCaseDao testCaseDao;
-	@Inject
-	private TestCaseLibraryNavigationService testCaseLibraryNavigationService;
+
 	@Inject
 	private CampaignDao campaignDao;
+	
 	@Inject
 	private CampaignLibraryNavigationService campaignLibraryNavigationService;
-	@Inject
-	private RequirementDao requirementDao;
-	@Inject
-	private RequirementLibraryNavigationService requirementLibraryNavigationService;
+
 	@Inject
 	private ProjectFilterModificationService projectFilterModificationService;
 
@@ -92,68 +74,7 @@ public class SearchServiceImpl implements SearchService {
 		return applyProjectFilter(list);
 	}
 
-	@Override
-	@PostFilter(FILTRED_READ_OR_ADMIN)
-	public List<TestCaseLibraryNode> findTestCaseByName(String aName, boolean groupByProject) {
-		List<TestCaseLibraryNode> list = testCaseDao.findAllByNameContaining(aName, groupByProject);
-		return applyProjectFilter(list);
-	}
 
-	@Override
-	@PostFilter(FILTRED_READ_OR_ADMIN)
-	public List<TestCaseLibraryNode> findTestCase(TestCaseSearchCriteria criteria) {
-		List<TestCaseLibraryNode> list = testCaseDao.findBySearchCriteria(criteria);
-		return applyProjectFilter(list);
-	}
-
-	@Override
-	@PostFilter(FILTRED_READ_OR_ADMIN)
-	public List<RequirementLibraryNode> findAllBySearchCriteria(RequirementSearchCriteria criteria) {
-		List<RequirementLibraryNode> list = requirementDao.findAllBySearchCriteria(criteria);
-		return applyProjectFilter(list);
-	}
-
-	@Override
-	@PostFilter(FILTRED_READ_OR_ADMIN)
-	public List<RequirementLibraryNode> findAllBySearchCriteriaOrderByProject(RequirementSearchCriteria criteria) {
-		List<RequirementLibraryNode> list = requirementDao.findAllBySearchCriteriaOrderByProject(criteria);
-		return applyProjectFilter(list);
-	}
-
-	@Override
-	@PostFilter(FILTRED_READ_OR_ADMIN)
-	public List<TestCase> findTestCaseByRequirement(RequirementSearchCriteria criteria, boolean isProjectOrdered) {
-		List<TestCase> list = testCaseDao.findAllByRequirement(criteria, isProjectOrdered);
-		// get calling test cases
-		findCallingTestCase(list);
-		return applyProjectFilter(list);
-	}
-
-	/***
-	 * This method complete a given test case list with all calling test cases.
-	 * 
-	 * @param originalList
-	 *            the original test case list you want to complete
-	 * @return the completed test case list
-	 */
-	private List<TestCase> findCallingTestCase(List<TestCase> originalList) {
-		// Initiate the filtered list with tc to add
-		List<TestCase> testCaseToAddList = new ArrayList<TestCase>();
-		// browse the original tc list
-		for (TestCase currentTestCase : originalList) {
-			// find calling test cases
-			List<TestCase> callingTestCasesList = testCaseDao.findAllCallingTestCases(currentTestCase.getId(), null);
-			for (TestCase callingTestcase : callingTestCasesList) {
-				// add the new tc, avoid duplicates
-				if (!originalList.contains(callingTestcase)) {
-					testCaseToAddList.add(callingTestcase);
-				}
-			}
-		}
-		// Merge the lists
-		originalList.addAll(testCaseToAddList);
-		return originalList;
-	}
 
 	protected <PR extends ProjectResource<?>> List<PR> applyProjectFilter(List<PR> initialList) {
 		ProjectFilter pf = projectFilterModificationService.findProjectFilterByUserLogin();
@@ -176,79 +97,11 @@ public class SearchServiceImpl implements SearchService {
 		return filtered;
 	}
 
+	
+	
 	// -------------------------------------TODO mutualize duplicated code
-	@Override
-	public List<String> findBreadCrumbForRequirement(String className, Long nodeId, String rejex) {
-		RequirementLibraryNode node = null;
-		if (className.endsWith("Folder")) {
-			node = requirementLibraryNavigationService.findFolder(nodeId);
-		} else {
-			node = requirementLibraryNavigationService.findRequirement(nodeId);
-		}
 
-		return findBreadCrumbOfRequirementNode(node, requirementLibraryNavigationService, rejex);
-	}
 
-	private List<String> findBreadCrumbOfRequirementNode(RequirementLibraryNode node,
-			RequirementLibraryNavigationService libraryNavigationService, String rejex) {
-		List<String> result = new ArrayList<String>();
-		result.add(node.getClass().getSimpleName() + rejex + node.getId());
-		RequirementFolder parent = libraryNavigationService.findParentIfExists(node);
-		fillBreadCrumbListUntillLibraryForRequirement(node, libraryNavigationService, rejex, result, parent);
-
-		return result;
-	}
-
-	private void fillBreadCrumbListUntillLibraryForRequirement(RequirementLibraryNode node,
-			RequirementLibraryNavigationService libraryNavigationService, String rejex, List<String> result,
-			RequirementFolder parent) {
-		RequirementLibraryNode root = node;
-		RequirementFolder ancestor = parent;
-		while (ancestor != null) {
-			result.add(ancestor.getClass().getSimpleName() + rejex + ancestor.getId());
-			root = ancestor;
-			ancestor = libraryNavigationService.findParentIfExists(root);
-		}
-		RequirementLibrary library = libraryNavigationService.findLibraryOfRootNodeIfExist(root);
-		result.add(library.getClassSimpleName() + rejex + library.getId());
-	}
-
-	@Override
-	public List<String> findBreadCrumbForTestCase(String className, Long nodeId, String rejex) {
-		TestCaseLibraryNode node = null;
-		if (className.endsWith("Folder")) {
-			node = testCaseLibraryNavigationService.findFolder(nodeId);
-		} else {
-			node = testCaseLibraryNavigationService.findTestCase(nodeId);
-		}
-
-		return findBreadCrumbOfTestCaseNode(node, testCaseLibraryNavigationService, rejex);
-	}
-
-	private List<String> findBreadCrumbOfTestCaseNode(TestCaseLibraryNode node,
-			TestCaseLibraryNavigationService libraryNavigationService, String rejex) {
-		List<String> result = new ArrayList<String>();
-		result.add(node.getClass().getSimpleName().split("_")[0] + rejex + node.getId());
-		TestCaseFolder parent = libraryNavigationService.findParentIfExists(node);
-		fillBreadCrumbListUntillLibraryForTestCase(node, libraryNavigationService, rejex, result, parent);
-
-		return result;
-	}
-
-	private void fillBreadCrumbListUntillLibraryForTestCase(TestCaseLibraryNode node,
-			TestCaseLibraryNavigationService libraryNavigationService, String rejex, List<String> result,
-			TestCaseFolder parent) {
-		TestCaseLibraryNode root = node;
-		TestCaseFolder ancestor = parent;
-
-		while (ancestor != null) {
-			result.add(ancestor.getClass().getSimpleName() + rejex + ancestor.getId());
-			root = ancestor;
-			ancestor = libraryNavigationService.findParentIfExists(root);
-		}
-		TestCaseLibrary library = libraryNavigationService.findLibraryOfRootNodeIfExist(root);
-		result.add(library.getClassSimpleName() + rejex + library.getId());
-	}
 
 	@Override
 	public List<String> findBreadCrumbForCampaign(String className, Long id, String rejex) {

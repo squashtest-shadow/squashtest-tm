@@ -62,7 +62,7 @@
 		a one shot operation. Those operations are proposed in a dedicated action panel.
 		That action panel already propose a 'go back' button."	 %>
 
-<%-- tree-page-layout speecifics --%>
+<%-- tree-page-layout specifics --%>
 
 <%@ attribute name="isSubPaged" required="false"  
 	description="boolean. if set to true, the layout will be applied in a sub-paged form. Basically it will insert sub-page-layout.tag between the top template and this one." %>
@@ -72,14 +72,13 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="sq" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"  %>
 <%@ taglib prefix="tree" tagdir="/WEB-INF/tags/jstree" %>
-<%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables" %>
 
 <c:url var="path" value="${ pageContext.servletContext.contextPath }"/>
 
+<c:set var="usesObsoleteSearch" value="${(highlightedWorkspace == 'campaign') and (empty linkable)}" />
 
 <c:set var="tabbedPaneScript" >
 	<script type="text/javascript">
@@ -161,10 +160,8 @@
 				<div id="tabbed-pane">
 					<ul>
 						<li class="tab" > <a href="#tree-pane"><f:message key="tabbed_panel.tree.pane.label"/></a></li>
-						<c:if test="${ highlightedWorkspace == 'campaign'}">
-						<c:if test="${empty linkable}">
-						<li class="tab"> <a href="#search-pane"><f:message key="tabbed_panel.search.pane.label"/></a></li>					
-						</c:if>
+						<c:if test="${usesObsoleteSearch}">						
+						<li class="tab"> <a href="#search-pane"><f:message key="tabbed_panel.search.pane.label"/></a></li>	
 						</c:if>
 					</ul>
 					
@@ -172,16 +169,9 @@
 						<jsp:invoke fragment="tree" />
 					</div>
 					
-					<c:if test="${ highlightedWorkspace == 'campaign'}">
+					<c:if test="${usesObsoleteSearch}">
 					<div id="search-pane">
-					<c:choose>
-					<c:when test="${not empty linkable}">
-						<layout:search-panel workspace="${ highlightedWorkspace }" linkable="${ linkable }" />
-					</c:when>
-					<c:otherwise>
-						<layout:search-panel workspace="${ highlightedWorkspace }"/>
-					</c:otherwise>
-					</c:choose>
+						<layout:camp-search-panel/>
 					</div>
 					</c:if>
 				</div>
@@ -242,10 +232,8 @@
 				<div id="tabbed-pane">
 					<ul>
 						<li class="tab" > <a href="#tree-pane"><f:message key="tabbed_panel.tree.pane.label"/></a></li>
-						<c:if test="${ highlightedWorkspace == 'campaign'}">
-						<c:if test="${empty linkable}">
-						<li class="tab"> <a href="#search-pane"><f:message key="tabbed_panel.search.pane.label"/></a></li>
-						</c:if>
+						<c:if test="${usesObsoleteSearch}">						
+						<li class="tab"> <a href="#search-pane"><f:message key="tabbed_panel.search.pane.label"/></a></li>						
 						</c:if>
 					</ul>
 
@@ -254,16 +242,9 @@
 					</div>
 					
 
-					<c:if test="${ highlightedWorkspace == 'campaign'}">
+					<c:if test="${ usesObsoleteSearch }">
 					<div id="search-pane">
-					<c:choose>
-					<c:when test="${not empty linkable}">
-						<layout:search-panel workspace="${ highlightedWorkspace }" linkable="${ linkable }" />
-					</c:when>
-					<c:otherwise>
-						<layout:search-panel workspace="${ highlightedWorkspace }"/>
-					</c:otherwise>
-					</c:choose>
+						<layout:camp-search-panel/>
 					</div>
 					</c:if>
 
