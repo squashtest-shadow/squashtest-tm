@@ -35,8 +35,6 @@
 <c:url var="customFieldsUrl" value="administration/custom-fields" />
 <c:url var="indexUrl" value="/administration/indexes" />
 
-<f:message var="dateFormat" key="squashtm.dateformat" />
-
 <layout:info-page-layout titleKey="label.administration">
   <jsp:attribute name="head">  
     <comp:sq-css name="squash.grey.css" />  
@@ -136,7 +134,6 @@
               <label><f:message key="label.testCases" /></label>
               <span id="tc-last-index">
                 <comp:date value="${ adminStats.testcaseIndexingDate }" noValueKey="label.lower.Never" />
-                <f:formatDate value="${ adminStats.testcaseIndexingDate }" pattern="${ dateFormat }" /> 
               </span>
             </div>
           </div>
