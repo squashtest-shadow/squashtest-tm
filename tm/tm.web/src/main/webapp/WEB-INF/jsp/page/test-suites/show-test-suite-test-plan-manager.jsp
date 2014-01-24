@@ -44,24 +44,28 @@
 	<comp:sq-css name="squash.purple.css" />
 
 	<script type="text/javascript">
-		selection = [];
-		$(function(){
-
-			$( '#add-items-button' ).click(function() {
-				var tree = $( '#linkable-test-cases-tree' );
-				var ids = getTestCasesIds();
-				if (ids.length > 0) {
-					$.post('${ testPlanUrl }', { testCasesIds: ids})
-					.done(function(){
-						$("#test-plans-table").squashTable().refresh();
-					})
-				}
-				tree.jstree('deselect_all'); //todo : each panel should define that method too.
-				firstIndex = null;
-				lastIndex = null;
+	require(["common"], function() {
+		require(["jquery"], function($) {
+			selection = [];
+			$(function(){
+	
+				$( '#add-items-button' ).click(function() {
+					var tree = $( '#linkable-test-cases-tree' );
+					var ids = getTestCasesIds();
+					if (ids.length > 0) {
+						$.post('${ testPlanUrl }', { testCasesIds: ids})
+						.done(function(){
+							$("#test-plans-table").squashTable().refresh();
+						})
+					}
+					tree.jstree('deselect_all'); //todo : each panel should define that method too.
+					firstIndex = null;
+					lastIndex = null;
+				});
+				
 			});
-			
 		});
+	});
 		
 		<%-- test-case addition --%>
 		
@@ -130,11 +134,15 @@
 	
 <jsp:attribute name="contextualContent">		
 	<script type="text/javascript">
-		$(function(){
-			$("#back").button().click(function(){
-				document.location.href="${backUrl}";
+	require(["common"], function() {
+		require(["jquery"], function($) {
+			$(function(){
+				$("#back").button().click(function(){
+					document.location.href="${backUrl}";
+				});
 			});
 		});
+	});
 	</script>
 	
 	<div style="overflow:hidden;height:100%;">

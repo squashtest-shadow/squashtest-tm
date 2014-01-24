@@ -56,7 +56,8 @@
 	<a id="delete-test-case-button"  class="delete-test-case-button"><f:message key="test-case.verified_requirement_item.remove.button.label" /></a>
 </div> 
 <script type="text/javascript">
-
+require(["common"], function(){
+require(["jquery","squashtable"], function($){
 	var tableSettings = { 
 		"fnRowCallback" : function(row, data, displayIndex) {
 			
@@ -89,7 +90,7 @@
 
 	$(function() {
 
-		require(["jquery","squashtable"], function($){
+		
 			$("#test-cases-table").squashTable(tableSettings, squashSettings);
 			
 			<%-- selected test-case removal --%>
@@ -98,15 +99,15 @@
 				var ids = table.getSelectedIds();
 				
 				if (ids.length > 0) {
-					$.post('${ campaignUrl }/test-plan', { action: 'remove', itemIds: ids })
-					.done(function(){
+					$.post('${ campaignUrl }/test-plan', { action: 'remove', itemIds: ids }).done(function(){
 						table.refresh();
-					})
+					});
 				}
 			});
 			
-		})
+		});
 	});
+});
 	
 </script>
 

@@ -57,11 +57,14 @@
 <at:attachment-bloc editable="${ editable }" workspaceName="${ workspaceName }" attachListId="${ library.attachmentList.id}" attachmentSet="${attachments}"/>
 
 <script type="text/javascript">
-	$(function(){
-		require(["squash.basicwidgets"], function(basic){
+require(["common"], function() {
+	require(["jquery", "file-upload", "squash.basicwidgets"], function($, upload, basic){
+			$(function(){
 			basic.init();
-		})
-	});
+			});
+		});
+});
+	
 </script>
 </div>
 

@@ -91,8 +91,6 @@
 	require(["common"], function() {
 		require(["jquery"], function($) {
 			
-		});
-	});
 		$(function(){
 
 			var pickerSettings = {
@@ -121,6 +119,9 @@
 			
 			
 		});
+
+		});
+	});
 	</script>
 </c:if>
 			

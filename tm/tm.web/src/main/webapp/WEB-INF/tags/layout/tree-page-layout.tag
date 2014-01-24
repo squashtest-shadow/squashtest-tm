@@ -189,7 +189,7 @@
 		</div>
 		
 		<script type="text/javascript">
-		require([ "common" ], function() {
+		require( ["common"], function(){
 		require([ "jquery" ], function() {
 			$(function(){
 				require(['workspace.contextual-content'], function(){
@@ -274,7 +274,7 @@
 		
 		
 		<script type="text/javascript">
-		require([ "common" ], function() {
+		require( ["common"], function(){
 		require([ "jquery" ], function() {
 			$(function(){
 				require(['workspace.contextual-content'], function(){

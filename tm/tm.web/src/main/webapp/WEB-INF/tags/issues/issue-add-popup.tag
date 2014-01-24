@@ -116,9 +116,9 @@
 
 <%-- state manager code of the popup --%>
 <script type="text/javascript">
-	
+require( ["common"], function(){
+		require(["jquery","bugtracker"], function($){
 	$(function(){
-		require(["bugtracker"], function(){
 			 
 			var conf = {					
 				searchUrl : "${remoteIssues}",
@@ -131,4 +131,5 @@
 			
 		});	
 	});
+});
 </script>

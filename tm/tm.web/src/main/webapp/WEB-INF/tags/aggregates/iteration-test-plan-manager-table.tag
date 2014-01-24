@@ -56,7 +56,8 @@
 
 
 <script type="text/javascript">
-	
+require([ "common" ], function() {
+	require(["jquery", "squashtable"], function($){
 	var tableSettings = { 
 		"fnRowCallback" : function(row, data, displayIndex) {
 			
@@ -89,7 +90,7 @@
 	
 	
 	$(function() {		
-		require(["jquery", "squashtable"], function($){
+		
 			
 			$("#test-plans-table").squashTable(tableSettings, squashSettings);
 			
@@ -116,5 +117,6 @@
 			});			
 		});
 	});
+});
 	
 </script>

@@ -48,18 +48,20 @@
 	<jsp:attribute name="informationContent">	
 	
 	<script type="text/javascript">
-			$(function(){
-				require(["squash.basicwidgets"], function(basic){
+		require(["common"], function() {
+				require(["jquery","squash.basicwidgets"], function($basic){
+					$(function(){
 					basic.init();
 					$("#back").click(function(){
 						history.back();
 					});
 				});
 			});
-			function changePasswordCallback(){
-				<f:message var="passSuccess" key="user.account.changepass.success" />
-				squashtm.notification.showInfo("${passSuccess}");
-			}
+		});
+		function changePasswordCallback(){
+			<f:message var="passSuccess" key="user.account.changepass.success" />
+			squashtm.notification.showInfo("${passSuccess}");
+		}
 	</script>
 	<div id="user-login-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
 	

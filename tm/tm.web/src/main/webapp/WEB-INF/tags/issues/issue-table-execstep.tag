@@ -66,8 +66,9 @@
 
 
 <script type="text/javascript">
+require( ["common"], function(){
+		require(["jquery","issue-tables"], function($,it){
 	$(function(){
-		require(["issue-tables"], function(it){
 			it.initTestStepIssueTable({
 				target : '#issue-table',
 				urls : {
@@ -80,4 +81,5 @@
 			});
 		});
 	});
+});
 </script>

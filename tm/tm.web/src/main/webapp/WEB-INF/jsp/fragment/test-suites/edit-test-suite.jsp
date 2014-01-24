@@ -320,20 +320,20 @@
 <script>
 require([ "common" ], function() {
 	require([ "jquery" ], function($) {
-	$(function(){
-		var confirmHandler = function() {
-			dialog.confirmDialog("close");
-			duplicateTestSuite().done(function(json){
-				duplicateTestSuiteSuccess(json);
+		$(function(){
+			var confirmHandler = function() {
+				dialog.confirmDialog("close");
+				duplicateTestSuite().done(function(json){
+					duplicateTestSuiteSuccess(json);
+				});
+			};
+			var dialog = $( "#confirm-duplicate-test-suite-dialog" );
+			dialog.confirmDialog({confirm: confirmHandler});
+			$('#duplicate-test-suite-button').click(function(){
+				dialog.confirmDialog( "open" );
+				return false;
 			});
-		};
-		var dialog = $( "#confirm-duplicate-test-suite-dialog" );
-		dialog.confirmDialog({confirm: confirmHandler});
-		$('#duplicate-test-suite-button').click(function(){
-			dialog.confirmDialog( "open" );
-			return false;
 		});
-	});
 	});
 });
 </script>

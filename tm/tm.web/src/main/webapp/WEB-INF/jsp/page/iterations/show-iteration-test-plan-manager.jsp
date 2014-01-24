@@ -44,6 +44,8 @@
 	<comp:sq-css name="squash.purple.css" />
 
 	<script type="text/javascript">
+	require(["common"], function() {
+		require(["jquery"], function($) {
 		selection = [];
 		$(function(){
 			
@@ -84,6 +86,8 @@
 			}
 			return tab;
 		}		
+		});
+		});
 	</script>	
 		<%-- 
 			tree js 
@@ -126,11 +130,15 @@
 	
 <jsp:attribute name="contextualContent">		
 	<script type="text/javascript">
-		$(function(){
-			$("#back").button().click(function(){
-				document.location.href="${backUrl}";
+	require(["common"], function() {
+		require(["jquery"], function($) {
+			$(function(){
+				$("#back").button().click(function(){
+					document.location.href="${backUrl}";
+				});
 			});
 		});
+	});
 	</script>
 	
 	<div style="overflow:hidden;height:100%;">

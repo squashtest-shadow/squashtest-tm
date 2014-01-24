@@ -61,7 +61,8 @@
 		<wkp:camp-tree-popups/>
 		
 		<script type="text/javascript">
-		
+		require(["common"], function() {
+			require(["jquery"], function($) {
 			var conf = {
 				tree : {
 					model : ${ json:serialize(rootModel) },
@@ -79,6 +80,8 @@
 					});
 				});						
 			});
+			});
+		});
 		</script>
 	
 	</jsp:attribute>

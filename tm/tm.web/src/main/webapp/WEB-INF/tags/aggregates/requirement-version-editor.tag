@@ -365,70 +365,87 @@
 </c:if>
 <%-- ----------------------------------- Other ----------------------------------------------%>
 <script type="text/javascript">
+require( ["common"], function(){
+	require( ["jquery"], function($){
 var identity = { obj_id : ${requirementVersion.id}, obj_restype : "requirements"  };
 
-require(["common"], function(){
-  require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "workspace.event-bus"], 
-    function($, basic, contentHandlers, eventBus){
+	$(function(){
+		
+		var identity = { obj_id : ${requirementVersion.id}, obj_restype : "requirements"  };
 
-    $(function(){
-      basic.init();
-      
-      var nameHandler = contentHandlers.getNameAndReferenceHandler();
-      
-      nameHandler.identity = identity;
-      nameHandler.nameDisplay = "#requirement-name";
-      nameHandler.nameHidden = "#requirement-raw-name";
-      nameHandler.referenceHidden = "#requirement-raw-reference";
-      
-      eventBus.addContextualListener(nameHandler);
-      
-      $("#print-requirement-version-button").click(function(){
-      	window.open("${requirementUrl}?format=printable", "_blank");
-      });
-      
-      //****** tabs configuration *******
-      
-      $('.fragment-tabs').tabs();
+		require(["domReady", "require"], function(domReady, require){
+			domReady(function(){
+				require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "workspace.event-bus"], 
+						function($, basic, contentHandlers, eventBus){
+					
+					basic.init();
+					
+					var nameHandler = contentHandlers.getNameAndReferenceHandler();
+					
+					nameHandler.identity = identity;
+					nameHandler.nameDisplay = "#requirement-name";
+					nameHandler.nameHidden = "#requirement-raw-name";
+					nameHandler.referenceHidden = "#requirement-raw-reference";
+					
+					eventBus.addContextualListener(nameHandler);
+					
+					$("#print-requirement-version-button").click(function(){
+						window.open("${requirementUrl}?format=printable", "_blank");
+					});
+					
+					//****** tabs configuration *******
+					
+					$('.fragment-tabs').tabs();
+					
+				});
+			});
+		});
+		
+		
+		
+		$( "#rename-requirement-dialog" ).bind( "dialogopen", function(event, ui) {
+			var name = $('#requirement-raw-name').text();
+			$("#rename-requirement-input").val(name);
+		});
+		
+		$("#verifying-test-case-button").button().click(function(){
+			document.location.href="${ verifyingTCManagerUrl }" ;	
+		});
+		
+		<c:if test="${hasCUF}">
+		<%-- loading the custom field panel --%>
+		$.get("${customFieldsValuesURL}?boundEntityId=${requirementVersion.boundEntityId}&boundEntityType=${requirementVersion.boundEntityType}")
+		.success(function(data){
+			$("#edit-requirement-table").append(data);
+		});			
+		</c:if>
+    	
+		
 
-      $( "#rename-requirement-dialog" ).bind( "dialogopen", function(event, ui) {
-      	var name = $('#requirement-raw-name').text();
-      	$("#rename-requirement-input").val(name);
-      });
-      
-      $("#verifying-test-case-button").button().click(function(){
-      	document.location.href="${ verifyingTCManagerUrl }" ;	
-      });
-
-      <c:if test="${hasCUF}">
-      <%-- loading the custom field panel --%>
-      $.get("${customFieldsValuesURL}?boundEntityId=${requirementVersion.boundEntityId}&boundEntityType=${requirementVersion.boundEntityType}")
-      .success(function(data){
-      	$("#edit-requirement-table").append(data);
-      });			
-      </c:if>
-      
-      squashtm = squashtm || {};
+	});
+	   squashtm = squashtm || {};
       squashtm.requirementVersion = squashtm.requirementVersion || {} 
-      
-      <c:if test="${ writable }">
-      function renameRequirementSuccess(data){
-      	var evt = new squashtm.events.EventRename(identity, $('#rename-requirement-input').val());
-      	squashtm.workspace.eventBus.fire(null, evt);
-      	
-      };	
-      
-      squashtm.requirementVersion.renameRequirementSuccess = renameRequirementSuccess;
-      
-      function updateReferenceInTitle(newRef){
-      	var evt = new squashtm.events.EventUpdateReference(identity, newRef);
-      	squashtm.workspace.eventBus.fire(null, evt);		
-      };
-      
-      squashtm.requirementVersion.updateReferenceInTitle = updateReferenceInTitle;
-      </c:if>
-    });
-  });
+
+	<c:if test="${ writable }">
+	function renameRequirementSuccess(data){
+		var evt = new squasthm.EventRename(identity, $('#rename-requirement-input').val());
+		squashtm.workspace.eventBus.fire(null, evt);
+		
+	};	
+	 squashtm.requirementVersion.renameRequirementSuccess = renameRequirementSuccess;
+     
+	function updateReferenceInTitle(newRef){
+		var evt = new squatm.events.EventUpdateReference(identity, newRef);
+		squashtm.workspace.eventBus.fire(null, evt);		
+	};
+	squashtm.requirementVersion.updateReferenceInTitle = updateReferenceInTitle;
+     
+	</c:if>
+	
+
+	});
 });
+
+	
 </script>
 <!------------------------------------------ /SCRIPTS ------------------------------------------------------>

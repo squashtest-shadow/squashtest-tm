@@ -349,8 +349,9 @@ require(["common"], function() {
     			$("#verifying-test-case-button").button().click(function(){
     				document.location.href="${verifyingTCManagerUrl}" ;	
     			});
-    		});
 		});
+    	
+	});
 	});
 	</script>
 

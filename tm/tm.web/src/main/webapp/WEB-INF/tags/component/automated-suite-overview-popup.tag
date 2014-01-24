@@ -77,11 +77,14 @@
 </div>
 
 <script type="text/javascript">
-	$(function(){
-		require(["test-automation/automated-suite-overview"], function(overview){
+require( ["common"], function(){
+
+		require(["jquery","test-automation/automated-suite-overview"], function(overview){
+			$(function(){
 			overview.init();
 		});
 	});
+});
 </script>
 
 <!-- *************************/POPUP*********************** -->

@@ -92,7 +92,9 @@
 
 
 <script type="text/javascript">
-
+require( ["common"], function(){
+	require( ["jquery"], function($){
+}
 	$(function(){
 		$("#${popupId}").bind( "dialogclose", cleanUp);
 	});
@@ -201,5 +203,5 @@
 		
 	}
 
-
+});
 </script>

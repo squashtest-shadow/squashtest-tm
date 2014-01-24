@@ -50,7 +50,8 @@
 		<comp:sq-css name="squash.purple.css" />
 
 		<script type="text/javascript">
-			
+require(["common"], function(){
+	require(["jquery"], function($){
 			//todo : get that wtf thing straight. 
 			//each panel (tree, search tc, search by req) should define a method getSelected()
 			//the present function should only call the one belonging to the currently selected panel.
@@ -97,6 +98,8 @@
 					lastIndex = null;
 				});
 			});
+		});
+	});
 		</script>
 	</jsp:attribute>
 	

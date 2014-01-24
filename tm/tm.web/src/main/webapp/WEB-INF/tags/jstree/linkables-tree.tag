@@ -62,6 +62,8 @@
 
 <tree:_html-tree treeId="${ id }" />
 <script type="text/javascript">
+require( ["common"], function(){
+	require( ["jquery"], function($){
 
 	var conf = {
 		domain : "${elementType}",
@@ -70,57 +72,60 @@
 		treeselector : "#${id}"
 	}
 	
-	require(["common"], function() {
-		require( ["jquery", "tree", "jquery.squash.buttonmenu"], function($, initTree){
-			$(function(){		
-				initTree.initLinkableTree(conf);
-				
-				if(conf.workspace === "requirement"){
-					$("#search-tree-button").on('click', function(){
-						document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=requirement&id=${elementId}&associateResultWithType=${elementType}";
-					});
-			
-					$("#search-tree-button-old").on('click', function(){
-						document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=requirement&id=${elementId}&associateResultWithType=${elementType}";
-					});
-				} else if (conf.domain != "requirement") {
-					
-					$("#search-tree-button").buttonmenu({
-							button : {
-								text : false,
-								icons : {
-									primary : "ui-icon-search"
-								}
-							}
-					});
-					
-					$("#test-case-search-button").on('click', function(){
-						document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=testcase&id=${elementId}&associateResultWithType=${elementType}";
-					});
-			
-					$("#test-case-search-button-old").on('click', function(){
-						document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=testcase&id=${elementId}&associateResultWithType=${elementType}";
-					});
-					
-					$("#search-by-requirement-button").on('click', function(){
-						document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=testcaseViaRequirement&id=${elementId}&associateResultWithType=${elementType}";
-					});
-			
-					$("#search-by-requirement-button-old").on('click', function(){
-						document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=testcaseViaRequirement&id=${elementId}&associateResultWithType=${elementType}";
-					});
-				} else {
-					$("#search-tree-button").on('click', function(){
-						document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=testcase&id=${elementId}&associateResultWithType=${elementType}";
-					});
-			
-					$("#search-tree-button-old").on('click', function(){
-						document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=testcase&id=${elementId}&associateResultWithType=${elementType}";
-					});
-				}
+	$(function(){
+		
+		require( ["tree"], function(initTree){
+			initTree.initLinkableTree(conf);				
+		});	
+		
+		require(['jquery.squash.buttonmenu'], function(){
+		
+		if(conf.workspace === "requirement"){
+			$("#search-tree-button").on('click', function(){
+				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=requirement&id=${elementId}&associateResultWithType=${elementType}";
 			});
+	
+			$("#search-tree-button-old").on('click', function(){
+				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=requirement&id=${elementId}&associateResultWithType=${elementType}";
+			});
+		} else if(conf.domain != "requirement"){
+			
+			$("#search-tree-button").buttonmenu({
+					button : {
+						text : false,
+						icons : {
+							primary : "ui-icon-search"
+						}
+					}});
+			
+			$("#test-case-search-button").on('click', function(){
+				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=testcase&id=${elementId}&associateResultWithType=${elementType}";
+			});
+	
+			$("#test-case-search-button-old").on('click', function(){
+				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=testcase&id=${elementId}&associateResultWithType=${elementType}";
+			});
+			
+			$("#search-by-requirement-button").on('click', function(){
+				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=testcaseViaRequirement&id=${elementId}&associateResultWithType=${elementType}";
+			});
+	
+			$("#search-by-requirement-button-old").on('click', function(){
+				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=testcaseViaRequirement&id=${elementId}&associateResultWithType=${elementType}";
+			});
+		} else {
+			$("#search-tree-button").on('click', function(){
+				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=testcase&id=${elementId}&associateResultWithType=${elementType}";
+			});
+	
+			$("#search-tree-button-old").on('click', function(){
+				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=testcase&id=${elementId}&associateResultWithType=${elementType}";
+			});
+		}
+		
 		});	
 	});
-
+	});
+});
 	
 </script>

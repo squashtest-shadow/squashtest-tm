@@ -108,8 +108,10 @@
 			</div>	
 			
 				
+				
 			<script type="text/javascript">
 			require(["common"], function() {
+				
 					require(['jquery', 'workspace.contextual-content', 'squashtable'], function($, ctxcontent){
 				$(function(){
 						var table = $("#versions-table").squashTable({
