@@ -36,7 +36,7 @@
     
     <!-- Used to set jetty config props -->
     <is.dev.stage>false</is.dev.stage>
-    <is.war.deploy>false</is.war.deploy>
+    <is.war.deploy>true</is.war.deploy>
     
     <!-- google says static resources should be cached 1 week -->
     <client.cache.max.age>604800</client.cache.max.age>
