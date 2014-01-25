@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function(common) {
-	require([ "jquery", "search/advanced-search-input", "app/ws/squashtm.workspace", "domReady" ], function($,
-			AdvancedSearchView, WS, domReady) {
+	require([ "jquery", "search/advanced-search-input", "app/ws/squashtm.workspace" ], function($,
+			AdvancedSearchView, WS) {
 		var goBack = function() {
 			
 			var searchDomain = $("#searchDomain").text();
@@ -50,7 +50,7 @@ require([ "common" ], function(common) {
 			}
 		};
 
-		domReady(function() {
+		$(function() {
 			WS.init();
 			var view = new AdvancedSearchView();
 			$("#back").button().on("click", goBack);

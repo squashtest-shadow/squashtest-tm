@@ -62,7 +62,7 @@
 	<input class="snap-right" type="button" value='<f:message key="label.AddBugtracker" />' id="new-bugtracker-button"/>
 	<div style="clear:both"></div>
 	
-	<table id="bugtrackers-table" data-def="ajaxsource=${bugtrackersUrl}, hover, pre-sort=1-asc">
+	<table id="bugtrackers-table" class="unstyled-table" data-def="ajaxsource=${bugtrackersUrl}, hover, pre-sort=1-asc">
 		<thead>
 			<tr>
 				<th data-def="map=index, select">#</th>
@@ -133,12 +133,14 @@
 
 		
 	<script type="text/javascript">
+require(["common"], function() {
+	require(["jquery", "squashtable"], function($){					
 		$(function() {		
-			require(["jquery", "squashtable"], function($){					
-				$('#new-bugtracker-button').button();				
-				$("#bugtrackers-table").squashTable({},{});						
-			});				
+			$('#new-bugtracker-button').button();				
+			$("#bugtrackers-table").squashTable({},{});						
 		});				
+	});				
+});				
 	</script>
 </div>
 </jsp:attribute>

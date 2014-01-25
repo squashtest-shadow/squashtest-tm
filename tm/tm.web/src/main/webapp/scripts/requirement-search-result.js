@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function(common) {
-	require([ "jquery", "search/requirement-search-result", "app/ws/squashtm.workspace", "domReady" ], function($,
-			TestCaseSearchResultView, WS, domReady) {
+	require([ "jquery", "search/requirement-search-result", "app/ws/squashtm.workspace" ], function($,
+			TestCaseSearchResultView, WS) {
 		var goBack = function() {
 			var associationType = $("#associationType").text();
 			var associationId = $("#associationId").text();
@@ -33,7 +33,7 @@ require([ "common" ], function(common) {
 			}
 		};
 
-		domReady(function() {
+		$(function() {
 			WS.init();
 			var view = new TestCaseSearchResultView();
 			$("#back").button().on("click", goBack);

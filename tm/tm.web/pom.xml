@@ -23,6 +23,7 @@
     <smartprites-wro4j-exchangedir>${project.build.directory}/web-optimization</smartprites-wro4j-exchangedir>
     <smartsprites.inputDir>src/main/webapp/styles</smartsprites.inputDir>
     <smartsprites.outputDir>${smartprites-wro4j-exchangedir}</smartsprites.outputDir>
+    <wro4j.skip>false</wro4j.skip>
     <wro4j.inputDir>${smartprites-wro4j-exchangedir}</wro4j.inputDir>
     <wro4j.css.outputDirectory>${project.build.directory}/processed-css</wro4j.css.outputDirectory>
     <sprites.packageDirectory>images</sprites.packageDirectory>
@@ -526,6 +527,7 @@
               <goal>run</goal>
             </goals>
             <configuration>
+              <skip>${wro4j.skip}</skip>
               <!-- dont break line or add spaces or maven will scream in horror -->
               <targetGroups>squash.core,squash.blue,squash.green,squash.grey,squash.purple,squash.wine,squash.blue.green,squash.green.blue,squash.tree,squash.core.override,squash.subpage.override,squash.print</targetGroups>
               <minimize>true</minimize>

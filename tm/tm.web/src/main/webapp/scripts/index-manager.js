@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function(common) {
-	require([ "jquery", "app/ws/squashtm.workspace", "search/index-administration-view", "domReady" ], function($, WS, IndexAdministrationView, domReady) {
-		domReady(function() {
+	require([ "jquery", "app/ws/squashtm.workspace", "search/index-administration-view" ], function($, WS, IndexAdministrationView) {
+		$(function() {
 			WS.init();
 			var view = new IndexAdministrationView();
 			$("#back").button().click(function() {

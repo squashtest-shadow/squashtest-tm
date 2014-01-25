@@ -20,13 +20,13 @@
  */
 require([ "common" ], function(common) {
 	require([ "jquery", "custom-field-editor/CustomFieldModificationView",
-			"app/ws/squashtm.workspace", "domReady" ], function($,
-			CustomFieldModificationView, WS, domReady) {
+			"app/ws/squashtm.workspace" ], function($,
+			CustomFieldModificationView, WS) {
 		var goBack = function() {
 			document.location.href = squashtm.app.contextRoot + "/administration/custom-fields";
 		};
 
-		domReady(function() {
+		$(function() {
 			WS.init();
 			var view = new CustomFieldModificationView();
 			$("#back").button().on("click", goBack);

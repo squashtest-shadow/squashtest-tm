@@ -19,9 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function(common) {
-	require([ "jquery", "app/cf/CustomFieldsTableView", "app/ws/squashtm.workspace", "domReady" ], function($,
-			CustomFieldsTableView, WS, domReady) {
-		domReady(function() {
+	require([ "jquery", "app/cf/CustomFieldsTableView", "app/ws/squashtm.workspace" ], function($,
+			CustomFieldsTableView, WS) {
+		$(function() {
 			WS.init();
 			new CustomFieldsTableView();
 			$("#back").button().click(function() {

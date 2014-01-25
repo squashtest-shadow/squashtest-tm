@@ -19,7 +19,6 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "./user-list-page" ], function(fnInitUserListPage) {
-
 	return {
 		initUserListPage : fnInitUserListPage
 	};

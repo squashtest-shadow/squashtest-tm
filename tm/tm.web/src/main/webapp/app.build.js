@@ -29,61 +29,133 @@
 	generateSourceMaps : true, // maps enables modern browsers to fetch pretty source files from ugly ones 
 	preserveLicenseComments: false,
 	optimizeCss: "none", // already done by wro
-	// for each module, we have to tell which are the top level dependencies in the "include" field
+	
+	// add the modules to optimize below. rjs will pick up dependencies.
+	// you should explicitly exclude the "common" module
+	// you should explicitly include nested require directives (cf. the "login-page" example)
 	modules : [ {
 		name : "common", 
+		// List common dependencies here. Only need to list
+		// top level dependencies, "include" will find
+		// nested dependencies.
 		include: [
-		  				// shimmed
-		  				"jqueryui",
-		  				"datatables",
-		  				"handlebars",
-		  				"underscore",
-		  				"backbone",
-		  				"ckeditor",
-		  				"jquery.ckeditor",
-		  				"jeditable",
-		  				"jeditable.ckeditor",
-		  				"jeditable.datepicker",
-		  				"jeditable.simpleJEditable",
-		  				"jeditable.selectJEditable",
-		  				"jstree",
-		  				"jform",
-		  				"jquery.generateId",
-		  				"jquery.hotkeys",
-		  				"jquery.timepicker",
-		  				"jquery.squash",
-		  				"jquery.squash.fragmenttabs",
-		  				"jquery.squash.togglepanel",
-		  				"jquery.squash.messagedialog",
-		  				"jquery.squash.confirmdialog",
-		  				"jquery.squash.oneshotdialog",
-		  				"jquery.squash.squashbutton",
-		  				"jquery.squash.jeditable",
-		  				"jquery.squash.projectpicker",
-		  				"jquery.cookie",
-		  				"jquery.tagit",
-		  				"jquery.switchButton",
-		  				"jqplot-core",
-		  				"jqplot-pie",
-		  				"squash.KeyEventListener",
-		  				"squash.events",
-		  				// AMD
-		  				"domReady",
-		  				"jquery",
-		  				"squash.cssloader",
-		  				"squash.translator",
-		  				"squash.resizer",
-		  				"squash.session-pinger",
-		  				"jquery.squash.tagit",
-		  				// TODO remove this one ?
-		  				"workspace.contextual-content",
-		  				]
+			// shimmed
+			"jqueryui",
+			"datatables",
+			"handlebars",
+			"underscore",
+			"backbone",
+			"ckeditor",
+			"jquery.ckeditor",
+			"jeditable",
+			"jeditable.ckeditor",
+			"jeditable.datepicker",
+			"jeditable.simpleJEditable",
+			"jeditable.selectJEditable",
+			"jstree",
+			"jform",
+			"jquery.generateId",
+			"jquery.hotkeys",
+			"jquery.timepicker",
+			"jquery.squash",
+			"jquery.squash.fragmenttabs",
+			"jquery.squash.togglepanel",
+			"jquery.squash.messagedialog",
+			"jquery.squash.confirmdialog",
+			"jquery.squash.oneshotdialog",
+			"jquery.squash.squashbutton",
+			"jquery.squash.jeditable",
+			"jquery.squash.projectpicker",
+			"jquery.cookie",
+			"jquery.tagit",
+			"jquery.switchButton",
+			"jqplot-core",
+			"jqplot-pie",
+			"squash.KeyEventListener",
+			"squash.events",
+			// AMD
+			"domReady",
+			"jquery",
+			"squash.cssloader",
+			"squash.translator",
+			"squash.resizer",
+			"squash.session-pinger",
+			"jquery.squash.tagit",
+			// TODO remove this one ?
+			"workspace.contextual-content",
+		]
 	}, {
 		name: "login-page", 
-		include: ["jquery",
-		          "app/ws/squashtm.notification","jqueryui","jquery.squash.squashbutton"],
-		exclude: [
-			"common"
-		] 
-	} ]
+		// we have to tell rjs which dependencies to include because 
+		// they are not "top level" dependencies, which prevents rjs to discover them.
+		include: [ 
+			"jquery", 
+			"app/pubsub", 
+			"app/ws/squashtm.notification", 
+			"jqueryui", 
+			"jquery.squash.squashbutton" 
+		],
+		exclude: [ "common" ] 
+	}, {
+		name: "advanced-search-input",
+		include: [ "search/advanced-search-input", "app/ws/squashtm.workspace" ], 
+		exclude: [ "common" ] 
+//	}, {
+//		name: "bugtracker",
+//		exclude: [ "common", "squashtable", "file-upload" ]
+	}, {
+		name: "custom-field-manager",
+		include: [ "app/cf/CustomFieldsTableView", "app/ws/squashtm.workspace" ], 
+		exclude: [ "common" ] 
+	}, {
+		name: "custom-field-modification",
+		include: [ "custom-field-editor/CustomFieldModificationView", "app/ws/squashtm.workspace" ], 
+		exclude: [ "common" ] 
+	}, {
+		name: "edit-test-step",
+		include: [ "jquery", "squash.basicwidgets", "test-step-editor/TestStepModificationView", "app/ws/squashtm.workspace" ], 
+		exclude: [ "common" ] 
+//	}, {
+//		name: "execution-processing",
+//		exclude: [ "common" ] 
+//	}, {
+//		name: "file-upload",
+//		exclude: [ "common" ] 
+	}, {
+		name: "home-workspace",
+		include: [ "app/ws/squashtm.workspace" ], 
+		exclude: [ "common" ] 
+	}, {
+		name: "index-manager",
+		include: [ "app/ws/squashtm.workspace", "search/index-administration-view" ], 
+		exclude: [ "common" ] 
+	}, {
+		name: "legacy-ws-page",
+		include: [ "jquery", "app/ws/squashtm.workspace" ], 
+		exclude: [ "common" ] 
+	}, {
+		name: "print",
+		include: [ "domReady", "page-components/general-information-panel" ], 
+		exclude: [ "common" ] 
+//	}, {
+//		name: "project",
+//		exclude: [ "common" ] 
+//	}, {
+//		name: "projects-manager",
+//		exclude: [ "common", "squashtable" ] 
+	}, {
+		name: "project-page",
+		include: [  ], 
+		exclude: [ "common" ] 
+	}, {
+		name: "report-workspace",
+		include: [ "app/ws/squashtm.workspace", "app/report/squashtm.reportworkspace" ],
+		exclude: [ "common" ] 
+//	}, {
+//		name: "squashtable",
+//		exclude: [ "common" ] 
+//	}, {
+//		name: "tree",
+//		exclude: [ "common" ] 
+	}	]
 })
