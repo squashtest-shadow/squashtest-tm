@@ -73,7 +73,7 @@
 			};
 		</script>
 
-<table id="verified-requirements-table" 
+<table id="verified-requirements-table" class="unstyled-table"
 data-def='datakeys-id=entity-id ,ajaxsource=${ verifiedRequirementsTableUrl }'>
 	<thead>
 		<tr>

@@ -47,7 +47,7 @@
 
 
 	<jsp:attribute name="body">
-		<table id="calling-test-case-table" data-def="ajaxsource=${modelUrl}, 
+		<table id="calling-test-case-table" class="unstyled-table" data-def="ajaxsource=${modelUrl}, 
 													  datakeys-id=tc-id, pagesize=10, pre-sort=4, deferloading=${model.iTotalRecords}">
 			<thead>
 				<tr>

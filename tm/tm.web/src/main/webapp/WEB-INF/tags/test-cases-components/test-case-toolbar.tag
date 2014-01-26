@@ -48,9 +48,9 @@
 	<div class="toolbar-button-panel">
 	<c:if test="${ writable }">
 		<input type="button" value="<f:message key='test-case.button.rename.label' />"
-				id="rename-test-case-button" class="button" />
+				id="rename-test-case-button" class="sq-button" />
 	</c:if>
-		<input type="button" value="<f:message key='label.print'/>" id="print-test-case-button" class="button"/>
+		<input type="button" value="<f:message key='label.print'/>" id="print-test-case-button" class="sq-button"/>
 	</div>
 	<div class="unsnap"></div>
 	<c:if test="${ moreThanReadOnly }">
