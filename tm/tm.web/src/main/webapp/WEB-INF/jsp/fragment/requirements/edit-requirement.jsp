@@ -235,12 +235,12 @@ require(["common"], function() {
 
 	<div class="toolbar-button-panel">
 		<c:if test="${ writable }">
-			<input type="button" value='<f:message key="requirement.button.rename.label" />' id="rename-requirement-button" class="button"/> 
+			<input type="button" value='<f:message key="requirement.button.rename.label" />' id="rename-requirement-button" class="sq-button"/> 
 		</c:if>
 		<c:if test="${ creatable }">
-			<input type="button" value='<f:message key="requirement.button.new-version.label" />' id="new-version-button" class="button"/>		
+			<input type="button" value='<f:message key="requirement.button.new-version.label" />' id="new-version-button" class="sq-button"/>		
 		</c:if>
-		<input type="button" value="<f:message key='label.print'/>" id="print-requirement-version-button" class="button"/>
+		<input type="button" value="<f:message key='label.print'/>" id="print-requirement-version-button" class="sq-button"/>
 	</div>	
 
 	<div class="unsnap"></div>	
@@ -359,8 +359,8 @@ require(["common"], function() {
 				<f:message var="removeLabel" key="label.removeRequirementsAssociation"/>
 				
 				
-				<input id="verifying-test-case-button" type="button" class="button" value="${ associateLabel }"/>
-				<input id="remove-verifying-test-case-button" type="button" class="button" value="${ removeLabel }"/>
+				<input id="verifying-test-case-button" type="button" class="sq-button" value="${ associateLabel }"/>
+				<input id="remove-verifying-test-case-button" type="button" class="sq-button" value="${ removeLabel }"/>
 			</c:if>
 		</jsp:attribute>
 
