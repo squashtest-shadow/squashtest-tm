@@ -18,7 +18,18 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-@import url("tabbed-pane.grey.css");
+/*
+ * VARIABLES
+ */
+@glass-bg-url: url("jquery/ui/images/ui-bg_glass_45_808080_1x400.png");
+@active-background: #808080;
+@active-border: #999999;
+@hover-background: @active-background;
+@hover-border: @active-border;
+/*
+ * IMPORTS
+ */
+@import url("tabbed-pane.less");
 @import url("jquery/ui/jquery-ui-1.9.1.custom.grey.css");
 @import url("datatables.grey.css");
 @import url("csswidgets.less");
