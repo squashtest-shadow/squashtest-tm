@@ -1,0 +1,84 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2013 Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+@import url("tabbed-pane.blue.css");
+@import url("jquery/ui/jquery-ui-1.9.1.custom.blue.css");
+@import url("datatables.blue.css");
+
+/**
+ * .sq-button skins a simple button, with text inside it
+ * Those tags which handle the "disabled" attribute are managed using a pseudo-class. 
+ * Those who don't (such as <a>) should use the .sq-disabled class along with programmatic disabling
+ */
+.sq-button {
+	.ui-button; 
+	.sq-widget; 
+	.ui-state-default; 
+	.ui-corner-all;
+	
+	input& { padding: .4em 1em; }
+	
+	/* buttons and as are .ui-button-text-only and contain a span.ui-button-text reproduced below */
+	button&, a& {
+		//display: block; 
+		line-height: 1.4;
+		padding: .4em 1em;
+	}
+	
+	&:hover {
+		//.ui-button:hover;
+		.ui-state-hover;
+	}
+	
+	&:active {
+		//.ui-button:active;
+		.ui-state-active;
+	}
+	
+	&:focus {
+		//.ui-button:focus;
+		.ui-state-focus;
+	}
+	&.link {
+		//.ui-button:link;
+	}
+	
+	&:disabled, &.sq-disabled { .ui-state-disabled; }
+	
+	&:visited {
+		//.ui-button:visited;
+	}
+}
+/**
+ * PRIVATE STUFF - NOT TO BE USED IN HTML CODE
+ **/
+/* Private "rewrite" of .ui-widget, because there are rules not possible to "mix in" */
+.sq-widget {
+	.ui-widget;
+	
+	.sq-widget { font-size: 1em; }
+	
+	input, select, textarea, button {
+		font-family: Verdana,Arial,sans-serif; 
+		font-size: 1em;
+	}
+}
+
+ 

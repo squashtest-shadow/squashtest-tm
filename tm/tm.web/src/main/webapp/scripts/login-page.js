@@ -29,7 +29,6 @@ require([ "common" ], function() {
 				});
 
 				ps.subscribe("load.loginForm", function() {
-					$.squash.decorateButtons();
 					$("#j_username").focus();
 				});
 

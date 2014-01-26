@@ -80,7 +80,7 @@
 
 	<!-- These groups produce squash's various themed css -->
 	<group name="squash.blue">
-		<css>/styles/master.blue.css</css>
+		<css>/styles/master.blue.less</css>
 	</group>
 	<group name="squash.green">
 		<css>/styles/master.green.css</css>
