@@ -24,9 +24,9 @@ define([ "jquery", "domReady", "./show-projects/ProjectsManager",
 
 	function initShowProjects() {
 		domReady(function() {
-			$(".deactivated-form").submit(function() {
-				return false;
-			});
+//			$(".deactivated-form").submit(function() {
+//				return false;
+//			});
 			$("#new-project-button").button();
 			$("#new-project-from-template-button").button();
 

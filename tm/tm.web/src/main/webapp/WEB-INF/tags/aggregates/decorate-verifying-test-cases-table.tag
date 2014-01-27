@@ -84,9 +84,9 @@
 				
 				
 <script type="text/javascript">
-	$(function() {
-		require([ "common" ], function() {
-    		require(["jquery", "squashtable"], function($){
+	require([ "common" ], function() {
+  		require(["jquery", "squashtable"], function($){
+			$(function() {
     			var table = $("#verifying-test-cases-table").squashTable({
     				'aaData' : ${json:serialize(model.aaData)}
     			}, {});

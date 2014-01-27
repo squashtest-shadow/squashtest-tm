@@ -369,12 +369,12 @@
 	var identity = { obj_id : ${iteration.id}, obj_restype : "iterations"  };
 	
 	
-	require(["domReady", "require"], function(domReady, require){
-		domReady(function(){
+	require(["common"], function(){
 			require(["jquery", "squash.basicwidgets", "contextual-content-handlers", 
 			         "jquery.squash.fragmenttabs", "bugtracker", "workspace.event-bus", 
 			         "iteration-management"], 
 					function($, basicwidg, contentHandlers, Frag, bugtracker, eventBus, itermanagement, basic){
+		$(function(){
 
 				basicwidg.init();
 				

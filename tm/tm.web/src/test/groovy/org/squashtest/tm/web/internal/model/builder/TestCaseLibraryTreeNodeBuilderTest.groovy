@@ -29,14 +29,23 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseFolderModificationController;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State
 
 import spock.lang.Specification
 
 
 class TestCaseLibraryTreeNodeBuilderTest extends Specification {
-	TestCaseLibraryTreeNodeBuilder builder = new TestCaseLibraryTreeNodeBuilder(Mock(PermissionEvaluationService), Mock(VerifiedRequirementsManagerService))
-
+	PermissionEvaluationService permissionEvaluationService = Mock()
+	VerifiedRequirementsManagerService verifiedRequirementsManagerService = Mock()
+	InternationalizationHelper internationalizationHelper = Mock()
+	TestCaseLibraryTreeNodeBuilder builder = new TestCaseLibraryTreeNodeBuilder(permissionEvaluationService, verifiedRequirementsManagerService, internationalizationHelper)
+	def setup() {
+		internationalizationHelper.internationalize(_,_)>> ""
+		internationalizationHelper.internationalizeYesNo(false, _)>>"non"
+		internationalizationHelper.internationalizeYesNo(true, _)>>"oui"
+		internationalizationHelper.getMessage(_, _, _, _)>>"message"
+	}
 	def "should build a TestCase tree node"() {
 		given:
 		TestCase node  = new TestCase(name: "tc")

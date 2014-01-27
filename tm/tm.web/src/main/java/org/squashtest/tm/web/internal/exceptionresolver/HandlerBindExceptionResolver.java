@@ -72,7 +72,6 @@ public class HandlerBindExceptionResolver extends AbstractHandlerExceptionResolv
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	private List<FieldValidationErrorModel> buildFieldValidationErrors(BindException bex) {
 		List<FieldValidationErrorModel> ves = new ArrayList<FieldValidationErrorModel>();
 		List<FieldError> oes = bex.getFieldErrors();

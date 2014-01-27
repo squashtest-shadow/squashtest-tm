@@ -318,20 +318,24 @@
 		<input:cancel />
 	</div>
 <script>
-	$(function(){
-		var confirmHandler = function() {
-			dialog.confirmDialog("close");
-			duplicateTestSuite().done(function(json){
-				duplicateTestSuiteSuccess(json);
+require([ "common" ], function() {
+	require([ "jquery" ], function($) {
+		$(function(){
+			var confirmHandler = function() {
+				dialog.confirmDialog("close");
+				duplicateTestSuite().done(function(json){
+					duplicateTestSuiteSuccess(json);
+				});
+			};
+			var dialog = $( "#confirm-duplicate-test-suite-dialog" );
+			dialog.confirmDialog({confirm: confirmHandler});
+			$('#duplicate-test-suite-button').click(function(){
+				dialog.confirmDialog( "open" );
+				return false;
 			});
-		};
-		var dialog = $( "#confirm-duplicate-test-suite-dialog" );
-		dialog.confirmDialog({confirm: confirmHandler});
-		$('#duplicate-test-suite-button').click(function(){
-			dialog.confirmDialog( "open" );
-			return false;
 		});
 	});
+});
 </script>
 
 </c:if>
@@ -340,10 +344,10 @@
 
 	var identity = { obj_id : ${testSuite.id}, obj_restype : "test-suites"  };
 
-	require(["domReady", "require"], function(domReady, require){
-		domReady(function(){	
+	require(["common"], function(){
 			require(["jquery", "squash.basicwidgets", "workspace.event-bus", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", "test-suite-management"], 
 					function($, basicwidg, eventBus, contentHandlers, Frag, bugtracker, tsmanagement){
+		$(function(){	
 				
 				basicwidg.init();
 				

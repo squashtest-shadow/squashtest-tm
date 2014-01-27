@@ -33,6 +33,7 @@ import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
 import org.squashtest.tm.web.internal.model.builder.TestCaseLibraryTreeNodeBuilder
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State
@@ -46,16 +47,21 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 	Provider driveNodeBuilder = Mock();
 	Provider testCaseLibraryTreeNodeBuilder = Mock();
 	PermissionEvaluationService permissionEvaluationService = Mock()
+	InternationalizationHelper internationalizationHelper = Mock()
 	def setup() {
 		controller.testCaseLibraryNavigationService = testCaseLibraryNavigationService
 
 		controller.driveNodeBuilder = driveNodeBuilder
 		controller.testCaseLibraryTreeNodeBuilder = testCaseLibraryTreeNodeBuilder
 		verifiedRequirementManagerService.testCaseHasUndirectRequirementCoverage(_)>>false
-
+		
 		driveNodeBuilder.get() >> new DriveNodeBuilder(permissionEvaluationService, null)
-		testCaseLibraryTreeNodeBuilder.get() >> new TestCaseLibraryTreeNodeBuilder(permissionEvaluationService, verifiedRequirementManagerService)
-	}
+		testCaseLibraryTreeNodeBuilder.get() >> new TestCaseLibraryTreeNodeBuilder(permissionEvaluationService, verifiedRequirementManagerService, internationalizationHelper)
+		internationalizationHelper.internationalize(_,_)>> ""
+		internationalizationHelper.internationalizeYesNo(false, _)>>"non";
+		internationalizationHelper.internationalizeYesNo(true, _)>>"oui";
+		internationalizationHelper.getMessage(_, _, _, _)>>"message";
+		}
 
 	def "should return root nodes of library"() {
 		given:

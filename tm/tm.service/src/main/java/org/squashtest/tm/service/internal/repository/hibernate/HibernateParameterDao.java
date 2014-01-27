@@ -54,6 +54,7 @@ public class HibernateParameterDao implements CustomParameterDao {
 	}
 
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Parameter> findAllByNameAndTestCases(String name, List<Long> testcaseIds){
 

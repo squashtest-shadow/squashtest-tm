@@ -89,14 +89,13 @@
 						note about the sticked </div><div> below : IT DOES MATTER
 						if you insert any separator character between them the rendering will be altered for Chrome.
 					 --%>
-					</div>
-                    <script type="text/javascript">
-                      publish("load.notification");
-                    </script>
-                    <div class="main-menubar unstyled">
+					</div><div class="main-menubar unstyled">
 						<layout:_menu-bar />
 					</div>
 				
+                    <script type="text/javascript">
+                      publish("load.notification");
+                    </script>
 				</div>
 			</div>
 			

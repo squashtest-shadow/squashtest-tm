@@ -78,6 +78,7 @@ public class HibernateTeamDao extends HibernateEntityDao<Team> implements Custom
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private List<Team> criteriaFindSortedTeams(PagingAndSorting paging, Filtering filter) {
 		Session session = currentSession();
 		Criteria crit = session.createCriteria(Team.class, "Team");
@@ -107,6 +108,7 @@ public class HibernateTeamDao extends HibernateEntityDao<Team> implements Custom
 				.add(Restrictions.like("Team.audit.lastModifiedBy", filter, MatchMode.ANYWHERE));
 	}
 
+	@SuppressWarnings("unchecked")
 	private List<Team> hqlFindSortedTeams(PagingAndSorting paging, Filtering filter) {
 
 		String sQuery = HQL_FIND_TEAMS_BASE;

@@ -23,31 +23,10 @@ package org.squashtest.tm.service.library;
 import java.util.List;
 
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
-import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
-import org.squashtest.tm.domain.requirement.RequirementSearchCriteria;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
-import org.squashtest.tm.domain.testcase.TestCaseSearchCriteria;
 
 public interface SearchService {
 
 	List<CampaignLibraryNode> findCampaignByName(String aName, boolean groupByProject);
-
-	@Deprecated
-	// since 12/02/17, remove it if you see this comment and if task 384-04 is done.
-	List<TestCaseLibraryNode> findTestCaseByName(String aName, boolean groupByProject);
-
-	List<TestCaseLibraryNode> findTestCase(TestCaseSearchCriteria criteria);
-
-	List<RequirementLibraryNode> findAllBySearchCriteria(RequirementSearchCriteria criteria);
-
-	List<RequirementLibraryNode> findAllBySearchCriteriaOrderByProject(RequirementSearchCriteria criteria);
-
-	List<TestCase> findTestCaseByRequirement(RequirementSearchCriteria criteria, boolean isProjectOrdered);
-
-	List<String> findBreadCrumbForRequirement(String className, Long id, String rejex);
-
-	List<String> findBreadCrumbForTestCase(String className, Long id, String rejex);
 
 	List<String> findBreadCrumbForCampaign(String className, Long id, String rejex);
 }

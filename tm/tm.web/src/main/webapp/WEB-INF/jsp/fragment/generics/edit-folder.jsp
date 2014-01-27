@@ -68,10 +68,10 @@
 
 	var identity = { obj_id : ${folder.id}, obj_restype : '${su:camelCaseToHyphened(folder.class.simpleName)}s'  };
 	
-	require(["domReady", "require"], function(domReady, require){
-		domReady(function(){
+	require(["common"], function(){
 			require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "workspace.event-bus"], 
 					function($, basic, contentHandlers, eventBus){
+		$(function(){
 				
 				basic.init();
 				

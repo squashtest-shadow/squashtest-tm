@@ -18,9 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "app/pubsub", "app/ws/squashtm.navbar", "app/ws/squashtm.projectfilter", "app/ws/squashtm.notification",
-		"squash.session-pinger" ], function($, ps, NavBar, ProjectFilter, WTF, SSP) {
-	
+define([ "jquery", "app/pubsub", "app/ws/squashtm.navbar", "app/ws/squashtm.projectfilter",
+		"app/ws/squashtm.notification", "squash.session-pinger" ], function($, ps, NavBar, ProjectFilter, WTF, SSP) {
+
 	ps.subscribe("load.navBar", NavBar.init);
 	ps.subscribe("load.projectFilter", ProjectFilter.init);
 	ps.subscribe("load.notification", function() {
@@ -30,12 +30,11 @@ define([ "jquery", "app/pubsub", "app/ws/squashtm.navbar", "app/ws/squashtm.proj
 	/* session ping */
 	new SSP();
 
-	function init(highlightedWorkspace) {
+	function init() {
 		/* Try to prevent FOUCs */
 		$(".unstyled").fadeIn("fast", function() {
 			$(this).removeClass("unstyled");
 		});
-
 	}
 
 	return {

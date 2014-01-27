@@ -37,6 +37,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.service.library.FolderModificationService;
+import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 
 public abstract class FolderModificationController<FOLDER extends Folder<?>> {
 	
@@ -80,7 +81,7 @@ public abstract class FolderModificationController<FOLDER extends Folder<?>> {
 
 		getFolderModificationService().renameFolder(folderId, newName);
 		final String reNewName = newName;
-		return new Object(){ public String newName = reNewName ; };
+		return new RenameModel(reNewName);
 
 	}
 

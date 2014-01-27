@@ -19,40 +19,14 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Provides the publisher / subscriber pattern 
- * 
- * Adds the publish, subscribe and unsubscribe methods to the global
- * namespace.
- * 
- * 
- * Needs to be bootstrapped by loading the pubsub-boot.js file *before* require kicks in.
+ * Controller used by "legacy" workspace pages, which means a page without a specific controller and in most case init
+ * code in <script> tags.
  */
-define([ "jquery" ], function($) {
-	var proxy = $({});
-
-	window.publish = function() {
-		proxy.trigger.apply(proxy, arguments);
-	};
-
-	window.subscribe = function(event) {
-		proxy.on.apply(proxy, arguments);
-		
-		$(document.eventsQueue).each(function(index) {
-			if (this[0] === event) {
-				proxy.trigger.apply(proxy, this);
-				document.eventsQueue.splice(index, 1);
-				return false;
-			}
+require([ "common" ], function() {
+	require([ "jquery", "app/ws/squashtm.workspace" ], function($, WS) {
+		$(function() {
+			// somewhat broken attempt to prevent FOUCs
+			WS.init();
 		});
-	};
-
-	window.unsubscribe = function() {
-		proxy.off.apply(proxy, arguments);
-	};
-
-	return {
-		publish : window.publish,
-		subscribe : window.subscribe,
-		unsubscribe : window.unsubscribe
-	};
+	});
 });

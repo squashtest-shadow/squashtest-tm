@@ -6,7 +6,6 @@ src/META-INF$
 /generated/
 \.DS_Store$
 ^core/core.api/META-INF$
-pom\.xml\.versionsBackup$
 acceptance-tests/META-INF$
 osgi-integration-test/META-INF$
 osgi-integration-tests/META-INF$
@@ -127,8 +126,6 @@ core/core.aspect/META-INF/*
 ^config/
 tm/config/META-INF/*
 ^provision/config$
-\.orig$
-\.rej$
 integration-tests/META-INF/*
 core/core.jetty.boot.felix42.fragment/META-INF$
 core/core.application.api/META-INF/*

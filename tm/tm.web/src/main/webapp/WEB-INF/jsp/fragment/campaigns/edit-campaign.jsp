@@ -454,12 +454,12 @@
 	var identity = { obj_id : ${campaign.id}, obj_restype : "campaigns"  };
 
 	
-	require(["domReady", "require"], function(domReady, require){
-		domReady(function(){
+	require(["common"], function(){
 			require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs", 
 			         "bugtracker", 'workspace.event-bus', "campaign-management",
 			         "jqueryui"], 
 					function($, basicwidg, contentHandlers, Frag, bugtracker, eventBus, campmanager){
+		$(function(){
 				
 				basicwidg.init();
 				
@@ -468,7 +468,7 @@
 				nameHandler.identity = identity;
 				nameHandler.nameDisplay = "#campaign-name";
 				
-				eventBus.addContextualListener(nameHandler);				
+				eventBus.addContextualListener(nameHandler);
 		
 				
 				//****** tabs configuration ***********

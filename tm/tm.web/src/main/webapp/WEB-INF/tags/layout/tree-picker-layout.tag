@@ -117,22 +117,26 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 		<f:message var ="addLabel" key="label.Add" />
 		<f:message var ="removeLabel" key="subpage.association.button.disassociate.label" />
 		<script type="text/javascript">
-			$(function(){				
-				$("#add-items-button").button({
-					disabled : false,
-					text : "${addLabel}",
-					icons : {
-						primary : "ui-icon-seek-next"
-					}
-				});		
-				$("#remove-items-button").button({
-					disabled : false,
-					text : "${removeLabel}",
-					icons : {
-						primary : "ui-icon-seek-prev"
-					}
-				});	
-			});
+require([ "common" ], function() {
+	require([ "jquery", "jqueryui" ], function($) {
+		$(function(){
+			$("#add-items-button").button({
+				disabled : false,
+				text : "${addLabel}",
+				icons : {
+					primary : "ui-icon-seek-next"
+				}
+			});		
+			$("#remove-items-button").button({
+				disabled : false,
+				text : "${removeLabel}",
+				icons : {
+					primary : "ui-icon-seek-prev"
+				}
+			});	
+		});
+	});
+});
 		</script>
 	</jsp:attribute>
 </layout:tree-page-layout>

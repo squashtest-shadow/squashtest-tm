@@ -343,11 +343,16 @@ require(["common"], function() {
 
 	<%--------------------------- verifying TestCase section ------------------------------------%>
 	<script type="text/javascript">
-		$(function(){
-			$("#verifying-test-case-button").button().click(function(){
-				document.location.href="${verifyingTCManagerUrl}" ;	
-			});
+	require([ "common" ], function() {
+		require([ "jquery" ], function($) {
+    		$(function(){
+    			$("#verifying-test-case-button").button().click(function(){
+    				document.location.href="${verifyingTCManagerUrl}" ;	
+    			});
 		});
+    	
+	});
+	});
 	</script>
 
 	<comp:toggle-panel id="verifying-requirement-panel" titleKey="requirement.verifying_test-case.panel.title" open="true">
@@ -398,11 +403,15 @@ require(["common"], function() {
 			</jsp:attribute>
 			<jsp:attribute name="body">
 				<script type="text/javascript">
+		require([ "common" ], function() {
+			require([ "jquery" ], function($) {
 				$( "#rename-requirement-dialog" ).bind( "dialogopen", function(event, ui) {
 					var name = $.trim($('#requirement-raw-name').text());
 					$("#rename-requirement-input").val(name);
 					
 				});
+			});
+		});
 				</script>
 				<label><f:message key="dialog.rename.label" /></label>
 				<input type="text" id="rename-requirement-input" maxlength="255" size="50" /><br/>
@@ -420,8 +429,10 @@ require(["common"], function() {
 	</div>
 	<s:url var="createNewVersionUrl" value="/requirements/${requirement.id}/versions/new" />
 	<script type="text/javascript">
+require([ "common" ], function() {
+	require([ "jquery" ], function($) {
 		$(function() {
-			var confirmHandler = function() {				
+			var confirmHandler = function() {
 				$.ajax({
 					type : "post",
 					url : "${ createNewVersionUrl }"
@@ -438,6 +449,8 @@ require(["common"], function() {
 				return false;
 			});
 		});
+	});
+});	
 	</script>		
 	</c:if>	
 
@@ -475,11 +488,10 @@ require(["common"], function() {
 
 	var identity = { obj_id : ${requirement.id}, obj_restype : "requirements"  };
 	
-	require(["domReady", "require"], function(domReady, require){
-		domReady(function(){
-			require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "workspace.event-bus", "jquery.squash.fragmenttabs"], 
+	require(["common"], function(){
+		require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "workspace.event-bus", "jquery.squash.fragmenttabs"], 
 					function($, basicwidg,  contentHandlers, eventBus, Frag){
-				
+		$(function(){
 				basicwidg.init();
 				
 				var nameHandler = contentHandlers.getNameAndReferenceHandler();
@@ -515,7 +527,6 @@ require(["common"], function() {
 					$("#edit-requirement-table").append(data);
 				});
 		    	</c:if>
-				
 			});
 		});
 	});

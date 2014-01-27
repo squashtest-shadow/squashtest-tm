@@ -63,24 +63,20 @@
 		
 		<script type="text/javascript">
 		require( ["common"], function(){
-			require(["jquery", "tc-workspace"], function($, initWkp) {
-			var conf = {
-				tree : {
-					model : ${ json:serialize(rootModel) },
-					workspace : "test-case",
-					treeselector : "#tree",
-					selectedNode : "${selectedNode}"
-				}
-			};
-						
-			$(function(){
-				require( ["common"], function(){
-					require(['tc-workspace', 'jquery.cookie'], function(initWkp) {
-						$.cookie("workspace-prefs", null, {path:'/'});
-						initWkp.init(conf);		
-					});
-				});						
-			});
+			require(["jquery", "tc-workspace",'jquery.cookie'], function($, initWkp) {
+				var conf = {
+					tree : {
+						model : ${ json:serialize(rootModel) },
+						workspace : "test-case",
+						treeselector : "#tree",
+						selectedNode : "${selectedNode}"
+					}
+				};
+							
+				$(function(){
+					$.cookie("workspace-prefs", null, {path:'/'});
+					initWkp.init(conf);		
+				});
 			});						
 		});
 		</script>

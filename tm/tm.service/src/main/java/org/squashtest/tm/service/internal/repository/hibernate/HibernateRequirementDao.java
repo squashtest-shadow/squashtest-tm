@@ -328,6 +328,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> findAllRequirementsIdsByLibrary(long libraryId) {
 		Session session = currentSession();

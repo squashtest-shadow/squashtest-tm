@@ -37,14 +37,10 @@ class SearchServiceImplTest extends Specification {
 
 	SearchServiceImpl service = new SearchServiceImpl();
 
-	RequirementDao requirementDao = Mock();
 	CampaignDao campaignDao = Mock();
-	TestCaseDao testCaseDao = Mock();
 	ProjectFilterModificationService projService = Mock(); 
 
 	def setup() {
-		service.testCaseDao = testCaseDao
-		service.requirementDao = requirementDao
 		service.campaignDao = campaignDao
 		service.projectFilterModificationService = projService
 	}
@@ -68,43 +64,5 @@ class SearchServiceImplTest extends Specification {
 		found == [campaign1, campaign2]
 	}
 	
-	def "should return a TestCase with name matching the given String" () {
-		given:
-		TestCase testCase1 = Mock();
-		TestCase testCase2 = Mock();
-		testCaseDao.findAllByNameContaining("testCase", false) >> [testCase1, testCase2]
-		
-		and :
-		
-		ProjectFilter filter = Mock()
-		filter.getActivated() >> false
-		projService.findProjectFilterByUserLogin() >> filter
-		
-		when:
-		def found = service.findTestCaseByName("testCase", false)
-		
-		then:
-		found == [testCase1, testCase2]
-	}
-	
-	def "should return a TestCase matching the criteria" (){
-		given: 
-		TestCase testCase1 = Mock()
-		TestCase testCase2 = Mock()
-		TestCase testCase3 = Mock()
-		TestCaseSearchCriteria criteria = Mock()
-		testCaseDao.findBySearchCriteria(criteria) >> [testCase1, testCase2]
-		
-		and: 
-		
-		ProjectFilter filter = Mock()
-		filter.getActivated() >> false
-		projService.findProjectFilterByUserLogin() >> filter
-		
-		when: 
-		def found = service.findTestCase(criteria)
-		
-		then:
-		found == [testCase1, testCase2]
-	}
+
 }

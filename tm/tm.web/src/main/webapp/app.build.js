@@ -24,10 +24,11 @@
 	mainConfigFile: "${project.basedir}/src/main/webapp/scripts/common.js",
 	baseUrl : "scripts", // where the js files are supposed to be inside appDir
 	dir : "${rjs.outputDirectory}", // output of optimizer
-	optimize: "uglify2",
+	optimize: "${rjs.optimizer}",
 	skipDirOptimize: true,  // only want to minify the build layers specified in modules options and not the rest of the JS files in the build output directory
 	generateSourceMaps : true, // maps enables modern browsers to fetch pretty source files from ugly ones 
 	preserveLicenseComments: false,
+	optimizeCss: "none", // already done by wro
 	// for each module, we have to tell which are the top level dependencies in the "include" field
 	modules : [ {
 		name : "common", 
@@ -74,16 +75,15 @@
 		  				"squash.resizer",
 		  				"squash.session-pinger",
 		  				"jquery.squash.tagit",
+		  				// TODO remove this one ?
 		  				"workspace.contextual-content",
-		  				"app/pubsub"
-		          ]
+		  				]
 	}, {
 		name: "login-page", 
-		include: ["jquery","app/pubsub","app/ws/squashtm.notification","jqueryui","jquery.squash.squashbutton"],
+		include: ["jquery",
+		          "app/ws/squashtm.notification","jqueryui","jquery.squash.squashbutton"],
 		exclude: [
 			"common"
 		] 
-	}, {
-		name: "pubsub-boot"
 	} ]
 })

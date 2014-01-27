@@ -40,6 +40,7 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.DefaultSorting;
@@ -227,6 +228,9 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> findAllTestCasesIdsCallingTestCases(List<Long> testCasesIds) {
+		if(testCasesIds.isEmpty()){
+			return Collections.emptyList();
+		}
 		Query query = currentSession().getNamedQuery("testCase.findAllTestCasesIdsCallingTestCases");
 		query.setParameterList("testCasesIds", testCasesIds);
 		return query.list();
@@ -412,8 +416,8 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		Criteria crit = currentSession().createCriteria(TestCase.class, "TestCase");
 		crit.createAlias("requirementVersionCoverages", "rvc");
 		crit.createAlias("rvc.verifiedRequirementVersion", "RequirementVersion");
-		crit.createAlias("RequirementVersion.requirement", "Requirement", Criteria.LEFT_JOIN);
-		crit.createAlias("project", "Project", Criteria.LEFT_JOIN);
+		crit.createAlias("RequirementVersion.requirement", "Requirement", JoinType.LEFT_OUTER_JOIN);
+		crit.createAlias("project", "Project", JoinType.LEFT_OUTER_JOIN);
 
 		List<Sorting> effectiveSortings = createEffectiveSorting(sorting);
 		if(!sorting.shouldDisplayAll()){	
@@ -665,8 +669,11 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 
 	@Override
 	public Map<Long, TestCaseImportance> findAllTestCaseImportanceWithImportanceAuto(Collection<Long> testCaseIds) {
+		Map<Long, TestCaseImportance> resultMap = new HashMap<Long, TestCaseImportance>();
+		if(testCaseIds.isEmpty()){
+			return resultMap;
+		}
 		List<Object[]> resultList = executeListNamedQuery("testCase.findAllTCImpWithImpAuto", new SetIdsParameter(testCaseIds));
-		Map<Long, TestCaseImportance> resultMap = new HashMap<Long, TestCaseImportance>(resultList.size());
 		for(Object [] resultEntry : resultList){
 			Long id = (Long) resultEntry[0];
 			TestCaseImportance imp = (TestCaseImportance) resultEntry[1];

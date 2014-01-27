@@ -65,37 +65,40 @@
 </table>
 
 <script type="text/javascript">
-
-	$(function(){
-
-		var issueTableRowCallback = function(row, data, displayIndex) {
-			var correctAssignee = (data["issue-assignee"]!=="") ? data["issue-assignee"] : "${interfaceDescriptor.tableNoAssigneeLabel}";
-			var td=$(row).find("td:eq(4)");
-			$(td).html(correctAssignee);
+require( ["common"], function(){
+	require( ["jquery","squashtable"], function($, datatable){
+		$(function(){
 	
-			td =  $(row).find("td:eq(5)");
-			var linkText = $(row).find("td:eq(5)").text();
-			var link = $('<a></a>');
-			link.attr('href', "${pageContext.servletContext.contextPath}"+data["issue-owner-url"]);
-			link.text(linkText);
-			$(td).html(link);
-			$(row).find("td:eq(5) a").on("click", function(){
-				var currentTab = $(".fragment-tabs").tabs("option", "active");
-				$.cookie("iteration-tab-cookie", currentTab, { expires: 1, path: '/' });
-			});
-
-			return row;
-		};
+			var issueTableRowCallback = function(row, data, displayIndex) {
+				var correctAssignee = (data["issue-assignee"]!=="") ? data["issue-assignee"] : "${interfaceDescriptor.tableNoAssigneeLabel}";
+				var td=$(row).find("td:eq(4)");
+				$(td).html(correctAssignee);
 		
-		require(["squashtable"], function(datatable){
-			$("#issue-table").squashTable(
-				{
-					'fnRowCallback' : issueTableRowCallback,
-					${freeSettings}
-				},
-				{}
-			);
+				td =  $(row).find("td:eq(5)");
+				var linkText = $(row).find("td:eq(5)").text();
+				var link = $('<a></a>');
+				link.attr('href', "${pageContext.servletContext.contextPath}"+data["issue-owner-url"]);
+				link.text(linkText);
+				$(td).html(link);
+				$(row).find("td:eq(5) a").on("click", function(){
+					var currentTab = $(".fragment-tabs").tabs("option", "active");
+					$.cookie("iteration-tab-cookie", currentTab, { expires: 1, path: '/' });
+				});
+	
+				return row;
+			};
+			
+			
+				$("#issue-table").squashTable(
+					{
+						'fnRowCallback' : issueTableRowCallback,
+						${freeSettings}
+					},
+					{}
+				);
+			
 		});
 	});
+});
 </script>
 

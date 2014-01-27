@@ -70,8 +70,10 @@
 </div>
 
 <script type="text/javascript">
-	$(function(){
-		require(["squash.basicwidgets","test-case-library-management"], function(basicwidg, TCLM){
+require(["common"], function() {
+
+		require(["jquery","squash.basicwidgets","test-case-library-management"], function($,basicwidg, TCLM){
+			$(function(){
 			basicwidg.init();
 			TCLM.initDashboardPanel({
 				master : '#dashboard-master',
@@ -79,6 +81,7 @@
 			});			
 		});	
 	});
+});
 </script>
 
 

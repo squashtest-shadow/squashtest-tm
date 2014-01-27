@@ -48,8 +48,9 @@
 
 
 <script type="text/javascript">
+require(["common"], function() {
+		require(["jquery","test-case-folder-management"], function($,TCF){
 	$(function(){
-		require(["test-case-folder-management"], function(TCF){
 			TCF.initDashboardPanel({
 				master : '#dashboard-master',
 				model : ${json:serialize(statistics)},
@@ -57,4 +58,5 @@
 			});			
 		});	
 	});
+});
 </script>

@@ -176,7 +176,12 @@
     </osgi:interfaces>
   </osgi:service>
 
-  <osgi:service ref="squashtest.tm.service.VerifiedRequirementsManagerService" interface="org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService" />
+  <osgi:service ref="squashtest.tm.service.VerifiedRequirementsManagerService" >
+  <osgi:interfaces>
+      <value>org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService</value>
+      <value>org.squashtest.tm.service.requirement.VerifiedRequirementsFinderService</value>
+    </osgi:interfaces>
+  </osgi:service>
 
   <osgi:service ref="squashtest.tm.service.VerifyingTestCaseManagerService" interface="org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService" />
 

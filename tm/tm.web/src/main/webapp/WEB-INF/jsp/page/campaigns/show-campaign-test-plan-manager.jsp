@@ -50,24 +50,19 @@
 		<comp:sq-css name="squash.purple.css" />
 
 		<script type="text/javascript">
-			
+require(["common"], function(){
+	require(["jquery"], function($){
 			//todo : get that wtf thing straight. 
 			//each panel (tree, search tc, search by req) should define a method getSelected()
 			//the present function should only call the one belonging to the currently selected panel.
 			function getTestCasesIds(){
-				var tab =  [];
 				var selected = $( "#tabbed-pane" ).tabs('option', 'selected');
 				var tree = $( '#linkable-test-cases-tree' );
-				if (selected == 0){
-					tab = tree.jstree('get_selected')
+
+				var tab = tree.jstree('get_selected')
 						  .not(':library')
 						  .collect(function(elt){return $(elt).attr('resid');});
-				}
-				else{
-					//that line is especially wtf, see seach-panel.tag and search-panel-by-requirement.tag
-					//to understand what I mean.
-					tab = getIdSelection();
-				}
+
 				return tab;
 			}
 			
@@ -97,6 +92,8 @@
 					lastIndex = null;
 				});
 			});
+		});
+	});
 		</script>
 	</jsp:attribute>
 	

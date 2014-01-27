@@ -197,7 +197,7 @@ div.sub-page div.search-panel-wrap .search-panel-footer{
 	right: 127px;
 }
 
-#search-result-datatable .search-items, #by-req-search-result-datatable .search-items{
+#search-result-datatable .search-items {
 	cursor:default;
 }
 
@@ -294,13 +294,6 @@ select.th_input {
 	overflow: auto;
 }
 
-.search-div-requirement {
-	top: 8cm;
-}
-
-.search-div-testcase {
-	top: 8cm;
-}
 
 .search-div-campaign {
 	top: 3cm;

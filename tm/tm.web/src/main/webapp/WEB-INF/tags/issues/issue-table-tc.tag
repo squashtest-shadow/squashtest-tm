@@ -65,8 +65,9 @@
 
 
 <script type="text/javascript">
+require( ["common"], function(){
+		require(["jquery","squashtable"], function($){
 	$(function(){
-		require(["squashtable"], function(){
 			$("#issue-table").squashTable({
 				fnRowCallback : function(row, data){
 					var correctAssignee = (data["assignee"]!=="") ? data["assignee"] : "${interfaceDescriptor.tableNoAssigneeLabel}";
@@ -79,4 +80,5 @@
 			{});
 		});
 	});
+});
 </script>

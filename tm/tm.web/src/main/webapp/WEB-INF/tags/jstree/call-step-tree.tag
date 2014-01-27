@@ -28,6 +28,8 @@
 <tree:_html-tree treeId="tree" />
 
 <script type="text/javascript">
+require( ["common"], function(){
+	require( ["jquery"], function($){
 	var conf = {
 		model : ${ json:serialize(rootModel) },
 		workspace : "test-case",
@@ -40,5 +42,5 @@
 			treeInit.initCallStepTree(conf);
 		});
 	});
-
+});
 </script>		

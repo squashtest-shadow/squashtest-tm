@@ -62,6 +62,8 @@
 
 <tree:_html-tree treeId="${ id }" />
 <script type="text/javascript">
+require( ["common"], function(){
+	require( ["jquery"], function($){
 
 	var conf = {
 		domain : "${elementType}",
@@ -123,5 +125,7 @@
 		
 		});	
 	});
+	});
+});
 	
 </script>

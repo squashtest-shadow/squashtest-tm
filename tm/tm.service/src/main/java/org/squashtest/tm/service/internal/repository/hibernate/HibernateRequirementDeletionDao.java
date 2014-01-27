@@ -81,6 +81,7 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private List<Long> findAllVersionsIdsFromRequirements(List<Long> entityIds) {
 		List<BigInteger> requirementVersionIdsBigInt = executeSelectSQLQuery(
 				NativeQueries.REQUIREMENT_VERSION_FIND_ID_FROM_REQUIREMENT, REQUIREMENT_IDS, entityIds);

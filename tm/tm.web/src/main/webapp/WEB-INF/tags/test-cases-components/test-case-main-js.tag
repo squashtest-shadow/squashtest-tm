@@ -45,7 +45,16 @@
 <%-- ----------------------------------------- Remaining of the javascript initialization ----------------------------- --%>
 
 <script type="text/javascript">
-
+require([ "common" ], function() {
+	require(["jquery", 
+	   			"squash.basicwidgets", 
+	   			"contextual-content-handlers", 
+	   			"jquery.squash.fragmenttabs", 
+	   			"bugtracker", 
+	   			"workspace.event-bus", 
+	   			"jqueryui", 
+	   			"squashtable"], 
+	   				function($, basic, contentHandlers, Frag, bugtracker, eventBus){
 	function refreshTCImportance(){
 		$.ajax({
 			type : 'GET',
@@ -67,7 +76,9 @@
 		squashtm.workspace.eventBus.fire(null, evt);		
 	};	
 	
-	
+	squashtm = squashtm || {};
+	squashtm.testCase = squashtm.testCase || {};
+	squashtm.testCase.renameTestCaseSuccess = renameTestCaseSuccess;
 	
 	$(function(){
 		
@@ -80,63 +91,52 @@
 		
 					
 		//init the renaming listener
-		require(["jquery", 
-			"squash.basicwidgets", 
-			"contextual-content-handlers", 
-			"jquery.squash.fragmenttabs", 
-			"bugtracker", 
-			"workspace.event-bus", 
-			"jqueryui", 
-			"squashtable"], 
-				function($, basic, contentHandlers, Frag, bugtracker, eventBus){
-			basic.init();
-			
-			var identity = { obj_id : ${testCase.id}, obj_restype : "test-cases"  };
-			
-			var nameHandler = contentHandlers.getNameAndReferenceHandler();
-			
-			nameHandler.identity = identity;
-			nameHandler.nameDisplay = "#test-case-name";
-			nameHandler.nameHidden = "#test-case-raw-name";
-			nameHandler.referenceHidden = "#test-case-raw-reference";
-			
-			eventBus.addContextualListener(nameHandler);
-			
-			//****** tabs configuration *******
-			
-			var fragConf = {
-				beforeLoad : Frag.confHelper.fnCacheRequests,	
-				cookie : "testcase-tab-cookie"
-			};
-			Frag.init(fragConf);
-			
-			// ******** calling test cases ***************************
-	
-			var callingTcConf = {
-				'aaData' : ${json:serialize(callingTestCasesModel.aaData)}
-			}
-			
-			var table = $("#calling-test-case-table").squashTable(callingTcConf, {});
-			
-			<c:if test="${testCase.project.bugtrackerConnected }">
-			// ********* bugtracker ************
-			bugtracker.btPanel.load({
-				url : "${btEntityUrl}",
-				label : "${tabIssueLabel}"
-			});
-			</c:if>
-			
-			
-			// ***** other events from the contextual content ********			
-			eventBus.onContextual('tc-req-links-updated', function(){
-				$("#verified-requirements-table").squashTable().refresh();
-				try{
-					$("#test-steps-table").squashTable().refresh();
-				}catch(notloadedyet){
-					//no problems
-				}			
-			});
-			
+		basic.init();
+		
+		var identity = { obj_id : ${testCase.id}, obj_restype : "test-cases"  };
+		
+		var nameHandler = contentHandlers.getNameAndReferenceHandler();
+		
+		nameHandler.identity = identity;
+		nameHandler.nameDisplay = "#test-case-name";
+		nameHandler.nameHidden = "#test-case-raw-name";
+		nameHandler.referenceHidden = "#test-case-raw-reference";
+		
+		eventBus.addContextualListener(nameHandler);
+		
+		//****** tabs configuration *******
+		
+		var fragConf = {
+			beforeLoad : Frag.confHelper.fnCacheRequests,	
+			cookie : "testcase-tab-cookie"
+		};
+		Frag.init(fragConf);
+		
+		// ******** calling test cases ***************************
+
+		var callingTcConf = {
+			'aaData' : ${json:serialize(callingTestCasesModel.aaData)}
+		}
+		
+		var table = $("#calling-test-case-table").squashTable(callingTcConf, {});
+		
+		<c:if test="${testCase.project.bugtrackerConnected }">
+		// ********* bugtracker ************
+		bugtracker.btPanel.load({
+			url : "${btEntityUrl}",
+			label : "${tabIssueLabel}"
+		});
+		</c:if>
+		
+		
+		// ***** other events from the contextual content ********			
+		eventBus.onContextual('tc-req-links-updated', function(){
+			$("#verified-requirements-table").squashTable().refresh();
+			try{
+				$("#test-steps-table").squashTable().refresh();
+			}catch(notloadedyet){
+				//no problems
+			}			
 		});
 		
 		//**** cuf sections ************
@@ -158,10 +158,9 @@
 		$("#print-test-case-button").click(function(){
 			window.open("${testCaseUrl}?format=printable", "_blank");
 		});
-		
-		
 	});
-
 	
+	});
+});
 </script>
 

@@ -102,10 +102,10 @@
 <f:message var="deleteTitle" key="dialog.delete-test-suite.title" />
 
 <script type="text/javascript">
+require( ["common"], function(){
 	
+	require(["jquery","iteration-management"], function($,main){
 $(function(){	
-	
-	require(["iteration-management"], function(main){
 		
 		var initData = [
 						<c:forEach var="suite" items="${suiteList}" varStatus="status">
@@ -157,5 +157,5 @@ $(function(){
 		$("#${popupId} .main-div-suites").removeClass("not-displayed");
 	});
 });
-
+});
 </script>

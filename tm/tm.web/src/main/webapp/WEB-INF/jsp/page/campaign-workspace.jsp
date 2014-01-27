@@ -61,7 +61,8 @@
 		<wkp:camp-tree-popups/>
 		
 		<script type="text/javascript">
-		
+		require(["common"], function() {
+			require(["jquery"], function($) {
 			var conf = {
 				tree : {
 					model : ${ json:serialize(rootModel) },
@@ -70,16 +71,17 @@
 					selectedNode : "${selectedNode}"
 				}
 			}
-		
-		
-			$(function(){
-				require( ["common"], function(){
-					require(['camp-workspace', 'jquery.cookie'], function(initWkp) {
+			
+			require( ["common"], function(){
+				require(["jquery", 'camp-workspace', 'jquery.cookie'], function($, initWkp) {
+					$(function(){
 						$.cookie("workspace-prefs", null, {path:'/'});
 						initWkp.init(conf);						
 					});
 				});						
 			});
+			});
+		});
 		</script>
 	
 	</jsp:attribute>

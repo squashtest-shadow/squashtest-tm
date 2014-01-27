@@ -66,15 +66,17 @@
 		
 	<script type="text/javascript" th:inline="javascript">
 	/*<![CDATA[*/
-		$(function(){
-			require(["projects-manager"], function(manager){
-				manager.projectInfo.initWizardsTab({
-					projectUrl : /*[[@{/generic-projects/__${projectId}__/wizards}]]*/"/generic-projects/14/wizards",
-					availableWizards : /*[[${availableWizards}]]*/[],
-					enabledWizards : /*[[${enabledWizards}]]*/[]
-				});
-			});
-		});		          
+	        require(["common"], function() {
+			require(["jquery","projects-manager"], function(manager){
+				$(function(){
+						manager.projectInfo.initWizardsTab({
+							projectUrl : /*[[@{/generic-projects/__${projectId}__/wizards}]]*/"/generic-projects/14/wizards",
+							availableWizards : /*[[${availableWizards}]]*/[],
+							enabledWizards : /*[[${enabledWizards}]]*/[]
+						});
+					});
+				});		
+	         });
 	/*]]>*/
 	</script>
 </div>

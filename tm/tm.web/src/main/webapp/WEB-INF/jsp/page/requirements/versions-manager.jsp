@@ -108,9 +108,12 @@
 			</div>	
 			
 				
+				
 			<script type="text/javascript">
-				$(function(){
+			require(["common"], function() {
+				
 					require(['jquery', 'workspace.contextual-content', 'squashtable'], function($, ctxcontent){
+				$(function(){
 						var table = $("#versions-table").squashTable({
 							// select the initially selected version 
 							fnInitComplete : function(){
@@ -148,7 +151,8 @@
 							}
 						});
 					});
-				});		
+				});
+			});
 			</script>
 		</div>
 	

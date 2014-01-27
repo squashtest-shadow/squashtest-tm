@@ -87,12 +87,14 @@
 	
 	
 	<script type="text/javascript">
-		$(function(){
-			require(["page-components/execution-information-panel"], function(panel){
+	require( ["common"], function(){
+		require(["jquery","page-components/execution-information-panel"], function($,panel){
+			$(function(){
 				panel.init();
 			});
 		});
-	
+	});
+});
 	</script>
 	
 </div>

@@ -47,9 +47,11 @@
 	</div>
 
 	<script type="text/javascript">
+	require( ["common"], function(){
+			require(["jquery","page-components/step-information-panel"], function($,infopanel){
 		$(function(){
-			require(["page-components/step-information-panel"], function(infopanel){
 				infopanel.init();
 			});
 		});
+	});
 	</script>

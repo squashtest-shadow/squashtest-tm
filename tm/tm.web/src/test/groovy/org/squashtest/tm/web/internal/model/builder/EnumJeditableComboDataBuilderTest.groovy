@@ -118,6 +118,7 @@ public class DummyEnumComparator implements Comparator<DummyEnum> {
 
 public class DummyLabelFormatter implements LabelFormatter<DummyEnum> {
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public LabelFormatter useLocale(Locale locale) {
 		// NOOP

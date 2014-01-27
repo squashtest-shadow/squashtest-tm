@@ -53,16 +53,6 @@ require.baseUrl = "${pageContext.servletContext.contextPath}/scripts";
 <script  charset="utf-8" src="<c:url value='/scripts/require.js' />" data-main="${ main }"></script>
   </c:when>
   <c:otherwise>
-<script  charset="utf-8" src="<c:url value='/scripts/require.js' />"></script>
-<script  charset="utf-8" src="<c:url value='/scripts/common.js' />"></script>
+<script  charset="utf-8" src="<c:url value='/scripts/require.js' />"  data-main="legacy-ws-page"></script>
   </c:otherwise>
 </c:choose>
-<script type="text/javascript">
-  require([ "common" ], function() {
-    require([ "domReady", "app/ws/squashtm.workspace" ], function(domReady, WS) {
-      	domReady(function() {
-            WS.init();
-      });
-    });  	
-  });
-</script>

@@ -94,6 +94,7 @@ public class HibernateSqlQueryRunner implements SqlQueryRunner {
 	/**
 	 * @see org.squashtest.tm.api.repository.SqlQueryRunner#executeUniqueSelect(java.lang.String)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T executeUniqueSelect(String selectQuery) {
 		return (T) executeQuery(selectQuery, EXECUTE_SINGLE);
@@ -102,6 +103,7 @@ public class HibernateSqlQueryRunner implements SqlQueryRunner {
 	/**
 	 * @see org.squashtest.tm.api.repository.SqlQueryRunner#executeSelect(java.lang.String, java.util.Map)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> List<T> executeSelect(String selectQuery, Map<String, ?> namedParameters) {
 		return (List<T>) executeQuery(selectQuery, new NamedParamsListExecution(namedParameters));
@@ -110,6 +112,7 @@ public class HibernateSqlQueryRunner implements SqlQueryRunner {
 	/**
 	 * @see org.squashtest.tm.api.repository.SqlQueryRunner#executeUniqueSelect(java.lang.String, java.util.Map)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T executeUniqueSelect(String selectQuery, Map<String, ?> namedParameters) {
 		return (T) executeQuery(selectQuery, new NamedParamsUniqueResultExecution(namedParameters));

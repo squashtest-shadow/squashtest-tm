@@ -122,7 +122,7 @@
 		<comp:rich-jeditable targetUrl="${ requirementUrl }" componentId="requirement-description" />
 		<%-- make requirement-reference editable --%>
 		<%-- TODO put at end of page, maybe componentize --%>
-		<comp:simple-jeditable targetUrl="${ requirementUrl }" componentId="requirement-reference" submitCallback="updateReferenceInTitle" maxLength="50" />
+		<comp:simple-jeditable targetUrl="${ requirementUrl }" componentId="requirement-reference" submitCallback="squashtm.requirementVersion.updateReferenceInTitle" maxLength="50" />
 	</c:if>
 
 	<comp:toggle-panel id="requirement-information-panel" titleKey="requirement.panel.general-informations.title" open="true" >
@@ -265,7 +265,7 @@
 				<f:message var="label" key="dialog.rename-requirement.title" />
 				'${ label }': function() {
 					var url = "${ pageUrl }" + $('#requirement-id').text();
-					<jq:ajaxcall  url="url" dataType="json" httpMethod="POST" useData="true" successHandler="renameRequirementSuccess">		
+					<jq:ajaxcall  url="url" dataType="json" httpMethod="POST" useData="true" successHandler="squashtm.requirementVersion.renameRequirementSuccess">		
 						<jq:params-bindings newName="#rename-requirement-input" />
 					</jq:ajaxcall>					
 				},			
@@ -365,8 +365,9 @@
 </c:if>
 <%-- ----------------------------------- Other ----------------------------------------------%>
 <script type="text/javascript">
-
-	var identity = { obj_id : ${requirementVersion.id}, obj_restype : "requirements"  };
+require( ["common"], function(){
+	require( ["jquery"], function($){
+var identity = { obj_id : ${requirementVersion.id}, obj_restype : "requirements"  };
 
 	$(function(){
 		
@@ -422,22 +423,28 @@
 		
 
 	});
-	
+	   squashtm = squashtm || {};
+      squashtm.requirementVersion = squashtm.requirementVersion || {} 
+
 	<c:if test="${ writable }">
 	function renameRequirementSuccess(data){
-		var evt = new EventRename(identity, $('#rename-requirement-input').val());
+		var evt = new squasthm.EventRename(identity, $('#rename-requirement-input').val());
 		squashtm.workspace.eventBus.fire(null, evt);
 		
 	};	
-	
+	 squashtm.requirementVersion.renameRequirementSuccess = renameRequirementSuccess;
+     
 	function updateReferenceInTitle(newRef){
-		var evt = new EventUpdateReference(identity, newRef);
+		var evt = new squatm.events.EventUpdateReference(identity, newRef);
 		squashtm.workspace.eventBus.fire(null, evt);		
 	};
+	squashtm.requirementVersion.updateReferenceInTitle = updateReferenceInTitle;
+     
 	</c:if>
 	
 
-
+	});
+});
 
 	
 </script>

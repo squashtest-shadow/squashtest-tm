@@ -62,7 +62,7 @@
 		
 		<script type="text/javascript">
 		require( ["common"], function(){
-			require(['req-workspace'], function(initWkp) {
+			require(["jquery","req-workspace"], function($,initWkp) {
 			var conf = {
 				tree : {
 					model : ${ json:serialize(rootModel) },

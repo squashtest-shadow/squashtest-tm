@@ -19,8 +19,6 @@
     <project.stage>RELEASE</project.stage> <!-- overridable by activating the profile development -->
     <spring.version.range>[3,4)</spring.version.range>
     <springdm.version.range>[2,3)</springdm.version.range>
-    <wro4j.version>1.6.3</wro4j.version>
-    <smartsprites.version>1.7</smartsprites.version>
     <jasperreports.build.outputDirectory>${project.build.directory}/jasperreports/compiled</jasperreports.build.outputDirectory>
     <smartprites-wro4j-exchangedir>${project.build.directory}/web-optimization</smartprites-wro4j-exchangedir>
     <smartsprites.inputDir>src/main/webapp/styles</smartsprites.inputDir>
@@ -29,6 +27,7 @@
     <wro4j.css.outputDirectory>${project.build.directory}/processed-css</wro4j.css.outputDirectory>
     <sprites.packageDirectory>images</sprites.packageDirectory>
     <rjs.outputDirectory>${project.build.directory}/optimized-js</rjs.outputDirectory>
+    <rjs.optimizer>uglify2</rjs.optimizer>
     <css.packageDirectory>styles</css.packageDirectory>
     <js.packageDirectory>scripts</js.packageDirectory>
 
@@ -177,7 +176,6 @@
     <dependency>
       <groupId>org.springframework.osgi</groupId>
       <artifactId>spring-osgi-web</artifactId>
-      <version>${springdm.version}</version>
       <scope>runtime</scope>
     </dependency>
     <!-- ====== /SPRING DM WEB CONTEXT ====== -->
@@ -510,7 +508,6 @@
       <plugin>
         <groupId>net.jangaroo</groupId>
         <artifactId>smartsprites-maven-plugin</artifactId>
-        <version>${smartsprites.version}</version>
 
         <configuration>
           <rootDirPath>${smartsprites.inputDir}</rootDirPath>
@@ -533,7 +530,6 @@
       <plugin>
         <groupId>ro.isdc.wro4j</groupId>
         <artifactId>wro4j-maven-plugin</artifactId>
-        <version>${wro4j.version}</version>
 
         <executions>
           <execution>
@@ -637,7 +633,6 @@
       <plugin>
         <groupId>com.github.skwakman.nodejs-maven-plugin</groupId>
         <artifactId>nodejs-maven-plugin</artifactId>
-        <version>1.0.2</version>
         <executions>
           <execution>
             <goals>
@@ -655,7 +650,6 @@
         <!-- r.js optimization. can be skipped with -Drequirejs.optimize.skip=true -->
         <groupId>com.github.bringking</groupId>
         <artifactId>requirejs-maven-plugin</artifactId>
-        <version>2.0.3</version>
         <executions>
           <execution>
             <goals>
@@ -665,7 +659,7 @@
             <configuration>
               <filterConfig>true</filterConfig>
               <configFile>src/main/webapp/app.build.js</configFile>
-              <nodeExecutable>${project.build.directory}/nodejs/node.exe</nodeExecutable>
+              <nodeExecutable>${project.build.directory}/nodejs/${node.executable}</nodeExecutable>
             </configuration>
           </execution>
         </executions>
@@ -692,7 +686,6 @@
           <plugin>
             <groupId>ro.isdc.wro4j</groupId>
             <artifactId>wro4j-maven-plugin</artifactId>
-            <version>${wro4j.version}</version>
 
             <executions>
               <execution>
@@ -721,7 +714,6 @@
           <plugin>
             <groupId>ro.isdc.wro4j</groupId>
             <artifactId>wro4j-maven-plugin</artifactId>
-            <version>${wro4j.version}</version>
 
             <executions>
               <execution>
@@ -792,6 +784,7 @@
         <logger.urlRewriteFilter>DEBUG</logger.urlRewriteFilter>
         <is.dev.stage>true</is.dev.stage>
         <is.war.deploy>false</is.war.deploy>
+        <rjs.optimizer>none</rjs.optimizer>
       </properties>
     </profile>
 
@@ -885,6 +878,30 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+    
+    <profile>
+      <id>windows</id>
+      <activation>
+        <os>
+        <family>windows</family>
+        </os>
+      </activation>
+      <properties>
+        <node.executable>node.exe</node.executable>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>unix</id>
+      <activation>
+        <os>
+        <family>unix</family>
+        </os>
+      </activation>
+      <properties>
+        <node.executable>node</node.executable>
+      </properties>
     </profile>
   </profiles>
 </project>

@@ -54,14 +54,16 @@
 	<jsp:attribute name="head">
 		<comp:sq-css name="squash.green.css" />
 		<script type="text/javascript">
-		
+		require([ "common" ], function() {
+			require([ "domReady", "jquery" ], function(domReady, $) { 
+				
 			function navigateBackFromCallStepManager(){
 				var url = $.cookie('call-step-manager-referer');
 				document.location.href=url;
 			}
 		
 		
-			$(function(){
+			domReady(function(){
 				$("#call-step-associate-button").click(associationAction);
 			});
 			
@@ -106,7 +108,8 @@
 			}
 
 			
-
+			});
+		});
 			
 		</script>
 		

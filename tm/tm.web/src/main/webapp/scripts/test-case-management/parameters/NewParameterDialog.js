@@ -116,6 +116,7 @@ define([ "jquery", "backbone", "app/lnf/Forms", 'workspace.event-bus',
 		},
 
 		_initializeCkeditorTermination : function() {
+			var self = this;
 			
 			eventBus.onContextual('contextualcontent.clear', function(event) {
 				self.$textAreas.ckeditorGet().destroy();
