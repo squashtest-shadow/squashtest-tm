@@ -19,8 +19,6 @@
     <project.stage>RELEASE</project.stage> <!-- overridable by activating the profile development -->
     <spring.version.range>[3,4)</spring.version.range>
     <springdm.version.range>[2,3)</springdm.version.range>
-    <wro4j.version>1.6.3</wro4j.version>
-    <smartsprites.version>1.7</smartsprites.version>
     <jasperreports.build.outputDirectory>${project.build.directory}/jasperreports/compiled</jasperreports.build.outputDirectory>
     <smartprites-wro4j-exchangedir>${project.build.directory}/web-optimization</smartprites-wro4j-exchangedir>
     <smartsprites.inputDir>src/main/webapp/styles</smartsprites.inputDir>
@@ -497,7 +495,6 @@
       <plugin>
         <groupId>net.jangaroo</groupId>
         <artifactId>smartsprites-maven-plugin</artifactId>
-        <version>${smartsprites.version}</version>
 
         <configuration>
           <rootDirPath>${smartsprites.inputDir}</rootDirPath>
@@ -520,7 +517,6 @@
       <plugin>
         <groupId>ro.isdc.wro4j</groupId>
         <artifactId>wro4j-maven-plugin</artifactId>
-        <version>${wro4j.version}</version>
 
         <executions>
           <execution>
@@ -624,7 +620,6 @@
       <plugin>
         <groupId>com.github.skwakman.nodejs-maven-plugin</groupId>
         <artifactId>nodejs-maven-plugin</artifactId>
-        <version>1.0.4</version>
         <executions>
           <execution>
             <goals>
@@ -642,7 +637,6 @@
         <!-- r.js optimization. can be skipped with -Drequirejs.optimize.skip=true -->
         <groupId>com.github.bringking</groupId>
         <artifactId>requirejs-maven-plugin</artifactId>
-        <version>2.0.3</version>
         <executions>
           <execution>
             <goals>
@@ -679,7 +673,6 @@
           <plugin>
             <groupId>ro.isdc.wro4j</groupId>
             <artifactId>wro4j-maven-plugin</artifactId>
-            <version>${wro4j.version}</version>
 
             <executions>
               <execution>
@@ -708,7 +701,6 @@
           <plugin>
             <groupId>ro.isdc.wro4j</groupId>
             <artifactId>wro4j-maven-plugin</artifactId>
-            <version>${wro4j.version}</version>
 
             <executions>
               <execution>
