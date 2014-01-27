@@ -178,6 +178,10 @@ div.toolbar span.group {
 	margin-left: 20px;
 }
 
+div.toolbar span.group.sq-reset {
+	font-size: 1.25em; /* the inverse of .toolbar - required for sq-btn */
+}
+
 div.search-panel-wrap{
 	position: absolute;
 	width: 100%;

@@ -131,13 +131,10 @@
 				<input type="text" id="rename-campaign-name" maxlength="255" size="50" />
 				<br />
 				<comp:error-message forField="name" />	
-		
 			</jsp:attribute>
 		</pop:popup>
 	</c:if>
 </div>
-
-
 
 <div id="campaign-toolbar" class="toolbar-class ui-corner-all ">
 	<div class="toolbar-information-panel">
@@ -356,20 +353,30 @@
 			<f:message var="tooltipAssign" key="tooltips.AssignUserToTPI" />
 
 			<c:if test="${ writable }">
-				<span class="group left-buttons">
-				<button id="filter-test-plan-button" class="button" data-icon="ui-icon-refresh" title="${reorderTooltip}">${filterLabel}</button>
-				<button id="reorder-test-plan-button" class="button" data-icon="ui-icon-refresh" title="${reorderTooltip}">${reorderLabel}</button>
+				<span class="group left-buttons sq-reset">
+				<button id="filter-test-plan-button" class="sq-button btn-sm" title="${reorderTooltip}">
+          <span class="ui-icon ui-icon-refresh"></span>${filterLabel}
+        </button>
+				<button id="reorder-test-plan-button" class="sq-button btn-sm" title="${reorderTooltip}">
+          <span class="ui-icon ui-icon-refresh"></span>${reorderLabel}
+        </button>
 				<span id="test-plan-sort-mode-message" class="not-displayed sort-mode-message" title="${tooltipSortmode}">${messageSortmode}</span>
 				</span>
 			</c:if>
 			
 			<c:if test="${ linkable }">
-			<span class="group">
-				<button id="assign-users-button" class="button" data-icon="ui-icon-person" title="${tooltipAssign}" >${assignLabel}</button>
+			<span class="group sq-reset">
+				<button id="assign-users-button" class="sq-button btn-sm" title="${tooltipAssign}" >
+          <span class="ui-icon ui-icon-person"></span>${assignLabel}
+        </button>
 			</span>
-			<span class="group">
-				<button id="test-case-button" class="button" data-icon="ui-icon-plusthick" title="${tooltipAddTPI}">${associateLabel}</button>
-				<button id="remove-test-case-button" class="button" data-icon="ui-icon-trash" title="${tooltipRemoveTPI}">${removeLabel}</button>
+			<span class="group sq-reset">
+				<button id="test-case-button" class="sq-button btn-sm" title="${tooltipAddTPI}">
+          <span class="ui-icon ui-icon-plusthick"></span>${associateLabel}
+        </button>
+				<button id="remove-test-case-button" class="sq-button btn-sm" title="${tooltipRemoveTPI}">
+          <span class="ui-icon ui-icon-trash"></span>${removeLabel}
+        </button>
 			</span>
 			</c:if>
 		</div>

@@ -2,46 +2,113 @@
  * .sq-button skins a simple button, with text inside it
  * Those tags which handle the "disabled" attribute are managed using a pseudo-class. 
  * Those who don't (such as <a>) should use the .sq-disabled class along with programmatic disabling
+ * 
+ * When one wants to add an icon, it needs to be declared as : <span class"ui-icon ui-icon-name"></span>
+ * When there is no text inside the button, it needs to have the .sq-button.icon class
+ * 
+ * Should produce 28px high buttons
  */
 .sq-button {
+	@padding-hz: 1em;
+	
 	.ui-button; 
 	.sq-widget; 
 	.ui-state-default; 
 	.ui-corner-all;
 	
-	input& { padding: .4em 1em; }
+	line-height: 1.4em;
+	vertical-align: baseline;
 	
-	/* buttons and as are .ui-button-text-only and contain a span.ui-button-text reproduced below */
-	button&, a& {
-		//display: block; 
-		line-height: 1.4;
-		padding: .4em 1em;
+	input& {
+		padding: .4em @padding-hz;
+	}
+	
+	button& {
+		padding: .3em @padding-hz;	
+	}
+	
+	a& {
+		padding: .45em @padding-hz;
+	}
+	
+	.ui-icon { 
+		display: inline-block;
+		vertical-align: text-bottom;
+		background-image: url(jquery/ui/images/ui-icons_ffffff_256x240.png);
 	}
 	
 	&:hover {
-		//.ui-button:hover;
 		.ui-state-hover;
 	}
 	
-	&:active {
-		//.ui-button:active;
+	&:active, &:active:focus, &.active {
 		.ui-state-active;
 	}
 	
 	&:focus {
-		//.ui-button:focus;
 		.ui-state-focus;
 	}
-	&.link {
-		//.ui-button:link;
+	
+	&:disabled, &.disabled { 
+		.ui-state-disabled;
+		
+		.ui-icon { filter:Alpha(Opacity=35); }
 	}
 	
-	&:disabled, &.sq-disabled { .ui-state-disabled; }
-	
-	&:visited {
-		//.ui-button:visited;
+	/**
+	 * Target height : 23px
+	 */
+	&.btn-sm {
+		font-size: 0.9em;
+	}
+	button&.btn-sm {
+		padding-top: .1em;	
+		padding-bottom: .2em;	
+	}
+	a&.btn-sm {
+		padding-top: .2em;
+		padding-bottom: .3em;
 	}
 }
+
+/** 
+ * To be used for a button with no text. Should produce a 28 * 28 button.
+ */
+.sq-icon-btn {
+	.sq-button;
+	
+	button& {
+		padding: .35em .2em;	
+	}
+	
+	a& {
+		padding: .42em .45em;
+	}
+	
+	button&.btn-sm {
+		padding-left: 0;	
+		padding-right: 0;	
+	}
+	
+	a&.btn-sm {
+		padding-left: .25em;	
+		padding-right: .25em;	
+	}
+
+	/**
+	 * Target height : 20px
+	 */
+	&.btn-xs {
+		font-size: 0.7em;	
+	}	
+	button&.btn-xs {
+		padding: 0;	
+	}
+	a&.btn-xs {
+		padding: .1em;	
+	}
+}
+
 /**
  * PRIVATE STUFF - NOT TO BE USED IN HTML CODE
  **/
@@ -52,7 +119,7 @@
 	.sq-widget { font-size: 1em; }
 	
 	input, select, textarea, button {
-		font-family: Verdana,Arial,sans-serif; 
+		font-family: Verdana, Arial, sans-serif; 
 		font-size: 1em;
 	}
 }

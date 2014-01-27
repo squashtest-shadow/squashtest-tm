@@ -46,7 +46,7 @@
 	
 	<jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back" />
-		<input type="button" class="sq-button" value="${backButtonLabel}" onClick="document.location.href= '${administrationUrl}'"/>	
+		<input type="button" class="button" value="${backButtonLabel}" onClick="document.location.href= '${administrationUrl}'"/>	
 	</jsp:attribute>
 	<jsp:attribute name="informationContent">
 		<c:url var="bugtrackersUrl" value="/administration/bugtrackers/list" />
@@ -97,7 +97,7 @@
 		<pop:cancel-button />
 	</jsp:attribute>
 			<jsp:attribute name="body">
-				<table>
+				<table class="unstyled-table">
 					<tr>
 						<td><label for="add-bugtracker-name"><f:message
 							key="label.Name" /></label></td>
