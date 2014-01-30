@@ -54,7 +54,7 @@ public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> {
 	@Column(name = "TCL_ID")
 	private Long id;
 
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
 	@OrderColumn(name = "CONTENT_ORDER")
 	@JoinTable(name = "TEST_CASE_LIBRARY_CONTENT", joinColumns = @JoinColumn(name = "LIBRARY_ID"), inverseJoinColumns = @JoinColumn(name = "CONTENT_ID"))
 	private final List<TestCaseLibraryNode> rootContent = new ArrayList<TestCaseLibraryNode>();

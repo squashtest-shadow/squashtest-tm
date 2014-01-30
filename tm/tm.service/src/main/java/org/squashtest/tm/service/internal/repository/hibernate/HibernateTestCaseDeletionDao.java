@@ -97,9 +97,8 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 				}
 			
 				if(node!=null){
-					AttachmentList attachments = node.getAttachmentList();
 					getSession().delete(node);
-					removeAttachmentList(attachments);
+					getSession().flush();
 				}
 			}
 		}

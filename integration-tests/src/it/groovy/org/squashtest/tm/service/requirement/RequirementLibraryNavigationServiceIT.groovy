@@ -35,6 +35,7 @@ import org.squashtest.tm.exception.library.CannotMoveInHimselfException;
 import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
 import org.squashtest.tm.service.DbunitServiceSpecification;
+import org.squashtest.tm.service.internal.requirement.RequirementNodeDeletionHandler;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService
 import org.unitils.dbunit.annotation.DataSet
 import org.unitils.dbunit.annotation.ExpectedDataSet;
@@ -49,6 +50,10 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@Inject
 	RequirementLibraryNavigationService navService;
 
+	
+	@Inject
+	private RequirementNodeDeletionHandler deletionHandler;
+	
 	private int requirementId = 10
 
 	def setup() {
@@ -298,6 +303,57 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		query.setParameter("id", entityId)
 
 		return query.list()
+	}
+	
+	@DataSet("RequirementLibraryNavigationServiceIT.should remove reqs after move.xml")
+	def "should remove requirement without move 1"(){
+
+		when:
+		deletionHandler.deleteNodes([10L]);
+		
+		then:
+		! found("requirement", "rln_id", 10L);
+	}
+	
+	@DataSet("RequirementLibraryNavigationServiceIT.should remove reqs after move.xml")
+	def "should remove requirement without move 2"(){
+
+		when:
+		deletionHandler.deleteNodes([20L]);
+		
+		then:
+		! found("requirement", "rln_id", 20L);
+	}
+	
+	
+	@DataSet("RequirementLibraryNavigationServiceIT.should remove reqs after move.xml")
+	def "should remove requirement after move 1"(){
+		given:
+		Long[] reqIds = [20L]
+		navService.moveNodesToRequirement(10L, reqIds);
+		reqIds = [30L]
+		navService.moveNodesToRequirement(20L, reqIds);
+		
+		when:
+		deletionHandler.deleteNodes([20L]);
+		
+		then:
+		! found("requirement", "rln_id", 20L);
+	}
+	
+	@DataSet("RequirementLibraryNavigationServiceIT.should remove reqs after move.xml")
+	def "should remove requirement after move 2"(){
+		given:
+		Long[] reqIds = [10L]
+		navService.moveNodesToRequirement(20L, reqIds);
+		reqIds = [30L]
+		navService.moveNodesToRequirement(10L, reqIds);
+		
+		when:
+		deletionHandler.deleteNodes([10L]);
+		
+		then:
+		! found("requirement", "rln_id", 10L);
 	}
 }
 

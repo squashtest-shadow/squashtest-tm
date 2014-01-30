@@ -44,11 +44,13 @@
 		@NamedQuery(name = "testCaseLibraryNode.findParentLibraryIfExists", query = "select lib from TestCaseLibrary as lib join lib.rootContent lcontent where lcontent.id= :libraryNodeId "),
 		@NamedQuery(name = "testCaseLibraryNode.findParentFolderIfExists", query = "select fold from TestCaseFolder as fold join fold.content fcontent where fcontent.id = :libraryNodeId "),
 		@NamedQuery(name = "testCaseLibraryNode.remove", query = "delete TestCaseLibraryNode tcln where tcln.id in (:nodeIds)"),
+		@NamedQuery(name = "testCaseLibraryNode.findAttachmentListId", query = "select tcln.attachmentList.id from TestCaseLibraryNode tcln where tcln.id = :libraryNodeId "),
 
 		//RequirementLibraryNode
 		@NamedQuery(name = "requirementLibraryNode.findById", query = "select rln from RequirementLibraryNode as rln where rln.id = :libraryNodeId "),
 		@NamedQuery(name = "requirementLibraryNode.findParentLibraryIfExists", query = "select lib from RequirementLibrary as lib join lib.rootContent lcontent where lcontent.id= :libraryNodeId "),
 		@NamedQuery(name = "requirementLibraryNode.findParentFolderIfExists", query = "select fold from RequirementFolder as fold join fold.content fcontent where fcontent.id = :libraryNodeId "),
+		@NamedQuery(name = "requirementLibraryNode.findParentRequirementIfExists", query = "select req from Requirement as req join req.children fcontent where fcontent.id = :libraryNodeId "),
 		@NamedQuery(name = "requirementLibraryNode.remove", query = "delete RequirementLibraryNode rln where rln.id in (:nodeIds)"),
 
 		//CampaignLibraryNode

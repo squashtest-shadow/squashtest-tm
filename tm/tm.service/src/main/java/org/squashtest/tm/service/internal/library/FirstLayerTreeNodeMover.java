@@ -195,6 +195,7 @@ public class FirstLayerTreeNodeMover implements PasteOperation {
 
 
 	private <TN extends TreeNode> void moveNode(TN toMove, NodeContainer<TN> destination, NodeContainer<TN> toMoveParent) {
+		campaignDao.flush();
 		toMoveParent.removeContent(toMove);
 		campaignDao.flush();
 		destination.addContent(toMove);

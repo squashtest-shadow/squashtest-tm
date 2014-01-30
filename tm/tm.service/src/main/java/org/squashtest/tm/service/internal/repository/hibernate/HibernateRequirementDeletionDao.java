@@ -27,24 +27,17 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.hibernate.Query;
-import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
+import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
-import org.squashtest.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.tm.domain.testcase.TestCaseLibrary;
-import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.internal.repository.RequirementDeletionDao;
 
 @Repository
 public class HibernateRequirementDeletionDao extends HibernateDeletionDao implements RequirementDeletionDao {
 
-	private static final String NODE_IDS = "nodeIds";
-	private static final String REQUIREMENT_VERSION_IDS = "requirementVersionIds";
-	private static final String RESOURCE_IDS = "resourceIds";	
-	private static final String SIMPLE_RESOURCE_IDS = "simpleResourceIds";
 	private static final String REQUIREMENT_IDS = "requirementIds";
 	private static final String FOLDER_IDS = "folderIds";
 
@@ -62,56 +55,14 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 			// Unbinds the nodes from their parent container
 			List<RequirementLibraryNode> nodesToRemove = removeNodesFromFoldersOrLibraries(entityIds);
 
-			// Retrieval of the Resource or SimpleResource that those entities refers to.
-			List<Long> requirementVersionIds = findAllVersionsIdsFromRequirements(entityIds);
-			List<Long> folderResourceIds = findAllSimpleResourceIdsFromFolders(entityIds);
-
-			// Remove the foreign keys between the Requirements and their Resource, and between the RequirementFolders 
-			// and their SimpleResource
-			executeDeleteSQLQuery(NativeQueries.REQUIREMENT_SET_NULL_REQUIREMENT_VERSION, REQUIREMENT_IDS, entityIds);
-			executeDeleteSQLQuery(NativeQueries.REQUIREMENT_FOLDER_SET_NULL_SIMPLE_RESOURCE, FOLDER_IDS, entityIds);
-
-			// Delete the resources
-			executeDeleteSQLQuery(NativeQueries.REQUIREMENT_VERSION_SQL_REMOVE, REQUIREMENT_VERSION_IDS,requirementVersionIds);
-			executeDeleteSQLQuery(NativeQueries.RESOURCE_SQL_REMOVE, RESOURCE_IDS, requirementVersionIds);
-			
-			executeDeleteSQLQuery(NativeQueries.SIMPLE_RESOURCE_SQL_REMOVE, SIMPLE_RESOURCE_IDS, folderResourceIds);
-			executeDeleteSQLQuery(NativeQueries.RESOURCE_SQL_REMOVE, RESOURCE_IDS, folderResourceIds);	
-
-
 			// Now we can remove the nodes
 			for(RequirementLibraryNode node : nodesToRemove){
 				if(node != null){
 					getSession().delete(node);
+					getSession().flush();
 				}
 			}
 		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private List<Long> findAllVersionsIdsFromRequirements(List<Long> entityIds) {
-		List<BigInteger> requirementVersionIdsBigInt = executeSelectSQLQuery(
-				NativeQueries.REQUIREMENT_VERSION_FIND_ID_FROM_REQUIREMENT, REQUIREMENT_IDS, entityIds);
-
-		List<Long> requirementVersionIds = new ArrayList<Long>(requirementVersionIdsBigInt.size());
-
-		for (BigInteger bigIntId : requirementVersionIdsBigInt) {
-			requirementVersionIds.add(bigIntId.longValue());
-		}
-
-		return requirementVersionIds;
-	}
-	
-	private List<Long> findAllSimpleResourceIdsFromFolders(List<Long> entityIds){
-		List<BigInteger> folderResourceIdsBigInt = executeSelectSQLQuery(NativeQueries.SIMPLE_RESOURCE_FIND_ID_FROM_FOLDER, FOLDER_IDS, entityIds);
-		
-		List<Long> folderResourceIds = new ArrayList<Long>(folderResourceIdsBigInt.size());
-
-		for (BigInteger bigIntId : folderResourceIdsBigInt) {
-			folderResourceIds.add(bigIntId.longValue());
-		}
-
-		return folderResourceIds;
 	}
 
 	private List<RequirementLibraryNode> removeNodesFromFoldersOrLibraries(List<Long> entityIds) {
@@ -145,6 +96,20 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 				ListIterator<RequirementLibraryNode> iterator = folder.getContent().listIterator();
 				while (iterator.hasNext()) {
 					RequirementLibraryNode tcln = iterator.next();
+					if (tcln.getId().equals(node.getId())) {
+						iterator.remove();
+						break;
+					}
+				}
+			}
+			
+			query = getSession().getNamedQuery("requirementLibraryNode.findParentRequirementIfExists");
+			query.setParameter("libraryNodeId", entityId);
+			Requirement requirement = (Requirement) query.uniqueResult();
+			if(requirement!= null){
+				ListIterator<Requirement> iterator = requirement.getContent().listIterator();
+				while (iterator.hasNext()) {
+					Requirement tcln = iterator.next();
 					if (tcln.getId().equals(node.getId())) {
 						iterator.remove();
 						break;

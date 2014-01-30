@@ -53,7 +53,7 @@ public class CampaignFolder extends CampaignLibraryNode implements Folder<Campai
 	@Transient
 	private final FolderSupport<CampaignLibraryNode, CampaignFolder> folderSupport = new FolderSupport<CampaignLibraryNode, CampaignFolder>(this);
 
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
 	@OrderColumn(name = "CONTENT_ORDER")
 	@JoinTable(name = "CLN_RELATIONSHIP", joinColumns = @JoinColumn(name = "ANCESTOR_ID"), inverseJoinColumns = @JoinColumn(name = "DESCENDANT_ID"))
 	private final List<CampaignLibraryNode> content = new ArrayList<CampaignLibraryNode>();

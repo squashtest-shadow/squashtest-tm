@@ -81,6 +81,7 @@ public class HibernateCampaignDeletionDao extends HibernateDeletionDao
 			
 				if(node != null){
 					getSession().delete(node);
+					getSession().flush();
 				}
 			}
 								

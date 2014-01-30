@@ -456,8 +456,8 @@
         <database.dialect>mysql</database.dialect>
         <database.drivername>com.mysql.jdbc.Driver</database.drivername>
 		    	<database.schemaName>squashtest_it</database.schemaName>
-        <database.username>tester</database.username>
-        <database.password>_tester</database.password>
+        <database.username>root</database.username>
+        <database.password></database.password>
         <database.typefactory>org.dbunit.ext.mysql.MySqlDataTypeFactory</database.typefactory>
       </properties>
     </profile>

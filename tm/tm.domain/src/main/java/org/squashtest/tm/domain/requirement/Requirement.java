@@ -26,9 +26,7 @@ import static org.squashtest.tm.domain.requirement.RequirementStatus.OBSOLETE;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.TreeMap;
 
 import javax.persistence.CascadeType;
@@ -89,7 +87,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	private List<RequirementVersion> versions = new ArrayList<RequirementVersion>();
 	
 	
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE, CascadeType.REFRESH})
 	@OrderColumn(name = "CONTENT_ORDER")
 	@JoinTable(name = "RLN_RELATIONSHIP", joinColumns = @JoinColumn(name = "ANCESTOR_ID"), inverseJoinColumns = @JoinColumn(name = "DESCENDANT_ID"))
 	@Field(analyze=Analyze.NO, store=Store.YES)

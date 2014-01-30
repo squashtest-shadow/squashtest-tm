@@ -125,7 +125,7 @@ public class RequirementDeletionHandlerImpl extends
 		// because we don't need to re-compute which folders should be deleted by transitivity.
 		OperationReport rewiredRequirements = rewireChildrenRequirements(separatedIds[1]);
 		globalReport.mergeWith(rewiredRequirements);
-
+		deletionDao.flush();
 		OperationReport deletedRequirements = batchDeleteNodes(separatedIds[1]);
 		deletionDao.flush();
 		globalReport.mergeWith(deletedRequirements);
@@ -151,9 +151,9 @@ public class RequirementDeletionHandlerImpl extends
 					Requirement requirement = (Requirement) pair[1];
 	
 					renameContentIfNeededThenAttach(parent, requirement, rewireReport);
-	
+					
 				}
-	
+
 				return rewireReport;
 			} else {
 				return new OperationReport();
@@ -202,8 +202,8 @@ public class RequirementDeletionHandlerImpl extends
 
 			
 			// finally delete the attachment lists
-			//requirementAttachmentIds.addAll(requirementFolderAttachmentIds);
-			//deletionDao.removeAttachmentsLists(requirementAttachmentIds);
+			requirementAttachmentIds.addAll(requirementFolderAttachmentIds);
+			deletionDao.removeAttachmentsLists(requirementAttachmentIds);
 
 			testCaseImportanceManager.changeImportanceAfterRequirementDeletion();
 
@@ -282,7 +282,7 @@ public class RequirementDeletionHandlerImpl extends
 
 		NodeMovement nodeMovement = new NodeMovement(new Node(parent.getId(), strtype), movedNodesLog);
 		report.addMoved(nodeMovement);
-
+		deletionDao.flush();
 	}
 	
 	

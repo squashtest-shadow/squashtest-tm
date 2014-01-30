@@ -242,5 +242,14 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		req311.name ==~ /possible nameclash-\d.*/
 	
 	/*}*/
+
+	@DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.xml")
+	def "should delete a requirement in a hierarchy"(){
+		when :
+		deletionHandler.deleteNodes([15l])
+		then :
+		! found(Requirement.class, 15l)
+	}
 	
+
 }
