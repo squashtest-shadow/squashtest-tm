@@ -55,6 +55,7 @@
 <f:message var="HighLabel" key="test-case.importance.HIGH"/>
 <f:message var="MediumLabel" key="test-case.importance.MEDIUM"/>
 <f:message var="LowLabel" key="test-case.importance.LOW"/>
+<f:message var="testsWithoutSuite" key="dashboard.iteration.tests-without-suite"/>
 
 
 <f:message var="refreshLabel" key="label.Refresh" />
@@ -269,7 +270,8 @@
 								<td colspan="19" class="std-border"><f:message key="generics.datatable.zeroRecords"/></td>
 							</tr>
 							<tr class="dashboard-table-template-datarow">
-								<td class="std-border light-border">{{this.[0]}}</td>
+								<!--  the following columns displays conditional style and content, for the tests belonging to no test suite -->
+								<td class="std-border light-border {{#unless this.[0]}}nota-bene{{/unless}}">{{this.[0]}}{{#unless this.[0]}}${testsWithoutSuite}{{/unless}} </td>
 								<td style="border:none;"></td>
 								<td class="std-border light-border">{{this.[1]}}</td>
 								<td class="std-border light-border" style="color:blue;">{{this.[2]}}</td>

@@ -117,6 +117,11 @@ select option,select {
 	float: right;
 }
 
+.nota-bene{
+	font-style: italic;
+	color : #9D9D9D;
+}
+
 .unsnap {
 	clear: both;
 }

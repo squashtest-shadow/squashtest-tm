@@ -78,6 +78,7 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 				case READY 	 : result.addNbReady(howmany.intValue()); break;
 				case WARNING : result.addNbSuccess(howmany.intValue()); break;   
 				case ERROR : result.addNbFailure(howmany.intValue()); break;
+				case NOT_RUN : result.addNbBlocked(howmany.intValue()); break;
 			}
 		}
 		
@@ -169,10 +170,27 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 
 		List<TestSuiteTestInventoryStatistics> result = new LinkedList<TestSuiteTestInventoryStatistics>();
 		
-		//get the data
+		
+		// ****************** gather the model *******************
+		
+		// get the test suites and their tests
 		Query query = sessionFactory.getCurrentSession().getNamedQuery("IterationStatistics.testSuiteStatistics");
 		query.setParameter(ID, iterationId);
 		List<Object[]> res = query.list();
+		
+		// get tests that belongs to no test suite
+		Query requery = sessionFactory.getCurrentSession().getNamedQuery("IterationStatistics.testSuiteStatistics-testsLeftover");
+		requery.setParameter(ID, iterationId);
+		List<Object[]> reres = requery.list();
+		
+		// merge the second list into the first. The first element of the tuple must be set to '--' - see the reason in IterationStatistics.testSuiteStatistics-testsLeftover
+		for (Object[] retuple : reres){
+			retuple[0]=null;
+			res.add(retuple);
+		}
+		
+		
+		// ************* processing *********************
 		
 		TestSuiteTestInventoryStatistics newStatistics = new TestSuiteTestInventoryStatistics();
 		String previousSuiteName = "";
@@ -196,7 +214,7 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 			previousSuiteName = suiteName;
 			
 			/* 
-			 * corner cases as discussed in the comments above. We skip the rest of that iteration if :
+			 * corner cases as discussed in the comments above. We skip the rest of that test suite if :
 			 * 
 			 * 1/ (status == null) because it means that the test plan is empty,
 			 * 2/ (importance == null) because means that those test cases were deleted 
@@ -226,6 +244,7 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 									break;
 				case WARNING : 		newStatistics.addNbSuccess(howmany.intValue()); break;   
 				case ERROR : 		newStatistics.addNbFailure(howmany.intValue()); break;
+				case NOT_RUN : 		newStatistics.addNbBlocked(howmany.intValue()); break;
 			}
 			
 		}

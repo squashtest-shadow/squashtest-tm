@@ -147,6 +147,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 			case READY 	 : newStatistics.setNbReady(howmany.intValue()); break;
 			case WARNING : newStatistics.setNbWarning(howmany.intValue()); break;   
 			case ERROR : newStatistics.setNbError(howmany.intValue()); break;
+			case NOT_RUN : newStatistics.setNbBlocked(howmany.intValue()); break;
 			}
 			
 		}
@@ -181,6 +182,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 				case READY 	 : result.addNbReady(howmany.intValue()); break;
 				case WARNING : result.addNbSuccess(howmany.intValue()); break;   
 				case ERROR : result.addNbFailure(howmany.intValue()); break;
+				case NOT_RUN : result.addNbBlocked(howmany.intValue()); break;
 			}
 		}
 		

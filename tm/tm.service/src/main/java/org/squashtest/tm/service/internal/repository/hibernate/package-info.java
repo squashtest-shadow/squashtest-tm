@@ -388,7 +388,15 @@
 		         "order by ts.name, tp.executionStatus, tc.importance"),
 		
 
-				
+		// that query is complementary of the one above, and will bring the tests that belongs to no test suite.
+		// note : the first occurent of 'tp.executionStatus' is actually a placeholder for 'null', because HQL doesn't support select NULL
+ 		@NamedQuery(name="IterationStatistics.testSuiteStatistics-testsLeftover", 
+		query = "select tp.executionStatus, tp.executionStatus, tc.importance, count(tc.importance), iter.scheduledPeriod.scheduledStartDate, iter.scheduledPeriod.scheduledEndDate " +
+		         "from Iteration iter join iter.testPlans tp left join tp.referencedTestCase tc "+
+				 "where iter.id = :id and tp.testSuites is empty "+
+		         "group by tp.executionStatus, tc.importance, iter.scheduledPeriod.scheduledStartDate, iter.scheduledPeriod.scheduledEndDate "+
+		         "order by tp.executionStatus, tc.importance"),
+		
 				
 		/* ********************************************** batch deletion-related queries **************************************************** */
 
