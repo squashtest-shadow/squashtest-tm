@@ -23,9 +23,13 @@
  * 
  * requires : - jquery - jqueryui - jquery cookie plugin
  */
-var squashtm = squashtm || {};
 
-squashtm.fragmenttabs = (function($, window) {
+define(["jquery", "jqueryui", "jquery.cookie"], function($){
+	
+	
+	squashtm = squashtm || {};
+	
+	
 	function calculateTopTableWrap() {
 		var tableWrap = $(
 				' div.fragment-tabs > div.table-tab > div.table-tab-wrap ')
@@ -110,4 +114,4 @@ squashtm.fragmenttabs = (function($, window) {
 			}
 		}
 	};
-})(jQuery, window);
+});

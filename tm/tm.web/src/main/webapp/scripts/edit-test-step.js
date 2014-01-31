@@ -19,9 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function(common) {
-	require([ "jquery", "squash.basicwidgets", "test-step-editor/TestStepModificationView",
+	require([ "domReady", "jquery", "squash.basicwidgets", "test-step-editor/TestStepModificationView",
 			"app/ws/squashtm.workspace" ],
-			function($, basic, TestStepModificationView, WS) {
+			function(domReady, $, basic, TestStepModificationView, WS) {
 				var closeWindow = function() {
 					window.close();
 				};

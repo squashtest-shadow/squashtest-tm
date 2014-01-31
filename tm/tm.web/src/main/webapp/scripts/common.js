@@ -188,10 +188,6 @@ requirejs.config({
 					deps : [ "jquery", "jqueryui" ], 
 					exports : "DatePickerAuto" // this is a constructor
 				},
-				"jquery.squash.fragmenttabs" : {
-					deps : [ "jquery", "jqueryui" ],
-					exports : "squashtm.fragmenttabs"
-				},
 				"jquery.squash.togglepanel" : {
 					deps : [ "jquery", "jqueryui", "jquery.squash.squashbutton" ],
 					exports : "jquerySquashtmTogglepanel"

@@ -197,27 +197,30 @@
 </div> <!-- /test plan panel end -->
 
 <script type="text/javascript">
-	$(function() {
-
-		require(['iteration-management'], function(iterInit){
-			var conf = {
-				permissions : {
-					linkable : ${linkable},
-					editable : ${editable},
-					executable : ${executable},
-					reorderable : ${reorderable}
-				},
-				basic : {
-					iterationId : ${iteration.id},
-					assignableUsers : ${ json:serialize(assignableUsers) },
-					weights : ${ json:serialize(weights)},
-					modes : ${ json:serialize(modes)}
-				}
-			};
+	require(["common"], function(){
+		require(["domReady", "iteration-management"], function(domReady, iterInit){
 			
-			iterInit.initTestPlanPanel(conf);
-		});
+			domReady(function(){
+				var conf = {
+						permissions : {
+							linkable : ${linkable},
+							editable : ${editable},
+							executable : ${executable},
+							reorderable : ${reorderable}
+						},
+						basic : {
+							iterationId : ${iteration.id},
+							assignableUsers : ${ json:serialize(assignableUsers) },
+							weights : ${ json:serialize(weights)},
+							modes : ${ json:serialize(modes)}
+						}
+					};
 					
+				iterInit.initTestPlanPanel(conf);			
+			});
 			
+		});
 	});
+
+
 </script>

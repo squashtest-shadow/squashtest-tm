@@ -55,6 +55,8 @@ define(["jquery", "underscore", "workspace.storage"], function($,_, storage){
 	var serviceURL = squashtm.app.contextRoot+"/localization/filler";
 	
 	//initialization
+	squashtm = squashtm || {};
+	squashtm.message = squashtm.message || {};
 	var KEY = "squashtm.message-"+squashtm.app.locale;
 	squashtm.message.cache = storage.get(KEY) || squashtm.message.cache || {};
 
