@@ -21,13 +21,13 @@
 package org.squashtest.tm.web.internal.security.authentication;
 
 import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatures;
-import org.squashtest.tm.web.internal.annotation.ApplicationComponent;
+import org.squashtest.tm.core.web.annotation.ApplicationComponent;
 
 /**
  * Features of Squash internal (db-based) authentication provider.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @ApplicationComponent
 public class InternalAuthenticationProviderFeatures implements AuthenticationProviderFeatures {

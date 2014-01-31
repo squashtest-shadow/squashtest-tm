@@ -21,7 +21,7 @@
 package org.squashtest.tm.api.wizard;
 
 import org.squashtest.tm.api.plugin.EntityReference;
-import org.squashtest.tm.api.widget.MenuItem;
+import org.squashtest.tm.api.widget.WorkspaceTreeMenuItem;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 
 /**
@@ -39,11 +39,11 @@ public interface WorkspaceWizard extends WizardPlugin {
 	WorkspaceType getDisplayWorkspace();
 
 	/**
-	 * {@link MenuItem} which should be used to generate a menu in the workspace's wizard menu.
+	 * {@link WorkspaceTreeMenuItem} which should be used to generate a menu in the workspace's wizard menu.
 	 * 
 	 * @return
 	 */
-	MenuItem getWizardMenu();
+	WorkspaceTreeMenuItem getWizardMenu();
 	
 
 	/**

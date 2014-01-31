@@ -21,7 +21,7 @@
 package org.squashtest.tm.web.internal.wizard;
 
 import org.squashtest.tm.api.plugin.EntityReference;
-import org.squashtest.tm.api.widget.MenuItem;
+import org.squashtest.tm.api.widget.WorkspaceTreeMenuItem;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import static org.squashtest.tm.api.workspace.WorkspaceType.*;
@@ -70,7 +70,7 @@ class WorkspaceWizardManagerImplTest extends Specification {
 			WorkspaceType getDisplayWorkspace() {
 				CAMPAIGN_WORKSPACE
 			}
-			MenuItem getWizardMenu() {
+			WorkspaceTreeMenuItem getWizardMenu() {
 				
 			}
 			String getName() {
@@ -94,7 +94,7 @@ class WorkspaceWizardManagerImplTest extends Specification {
 			WorkspaceType getDisplayWorkspace() {
 				REQUIREMENT_WORKSPACE
 			}
-			MenuItem getWizardMenu() {
+			WorkspaceTreeMenuItem getWizardMenu() {
 				
 			}
 			String getName() {
@@ -118,7 +118,7 @@ class WorkspaceWizardManagerImplTest extends Specification {
 			WorkspaceType getDisplayWorkspace() {
 				TEST_CASE_WORKSPACE
 			}
-			MenuItem getWizardMenu() {
+			WorkspaceTreeMenuItem getWizardMenu() {
 				
 			}
 			String getName() {

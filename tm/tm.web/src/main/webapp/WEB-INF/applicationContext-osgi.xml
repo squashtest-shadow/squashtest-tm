@@ -425,6 +425,11 @@
 		<osgi:listener ref="squash.tm.report.WorkspaceWizardManager"
 			bind-method="registerWizard" unbind-method="unregisterWizard" />
 	</osgi:list>
+	
+	<osgi:list id="squash.tm.wizard.ApplicationPlugins" interface="org.squashtest.tm.api.application.ApplicationPlugin">
+		<osgi:listener ref="squash.tm.report.ApplicationPluginManager"
+			bind-method="registerApplicationPlugin" unbind-method="unregisterApplicationPlugin" />
+	</osgi:list>
 
 	<osgix:cm-properties id="squash.tm.auth.config"
 		persistent-id="org.squashtest.csp.core.auth.config" />
