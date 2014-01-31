@@ -37,6 +37,7 @@
 <script type="text/javascript">
 	var squashtm = {};
 	squashtm.app = {
+		locale : "<f:message key='squashtm.locale'/>",
 		contextRoot : "${pageContext.servletContext.contextPath}",
 		notificationConf : {
 			infoTitle : "<f:message key='popup.title.info' />",

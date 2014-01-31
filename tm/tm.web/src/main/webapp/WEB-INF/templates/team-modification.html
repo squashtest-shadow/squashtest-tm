@@ -32,6 +32,7 @@
 <script type="text/javascript" th:inline="javascript">
 	var squashtm = {};
 	squashtm.app = {
+		locale : /*[[#{squashtm.locale}]]*/,
 		contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
 		teamMod : {
 			teamUrl : /*[[ @{/administration/teams/__${team.id}__} ]]*/"http://localhost:8080/administration/teams/1",

@@ -51,6 +51,7 @@
 			}
 			if (!squashtm.app) {
 				squashtm.app = {
+					locale : "<f:message key='squashtm.locale'/>",
 					contextRoot : "${root}",
 				};
 			}

@@ -34,18 +34,14 @@
  *	}
  * 
  */
-define(['jquery'], function($){
+define(['jquery', 'workspace.storage'], function($, storage){
 	
 	
 	function SortMode(conf) {
 
 		var isLocked = false;
 		
-		this.storage = localStorage || {
-			setItem : function(){},
-			getItem : function(){},
-			removeItem : function(){}
-		};
+		this.storage = storage;
 		
 		// **************** configuration ******************
 		
@@ -114,9 +110,9 @@ define(['jquery'], function($){
 		// ******************** I/O ******************** 
 		
 		this.loadaaSorting = function(){
-			var sorting = this.storage.getItem(this.key);
+			var sorting = this.storage.get(this.key);
 			if (!! sorting){
-				return JSON.parse(sorting);
+				return sorting;
 			}
 			else{
 				return StaticSortMode.defaultSorting();
@@ -132,11 +128,11 @@ define(['jquery'], function($){
 				trimedSorting.push( [_buf[0], _buf[1]] );
 			}
 			
-			this.storage.setItem(this.key, JSON.stringify(trimedSorting));
+			this.storage.set(this.key, trimedSorting);
 		};
 		
 		this._deleteaaSorting = function(){
-			this.storage.removeItem(this.key);
+			this.storage.remove(this.key);
 		};
 		
 	}

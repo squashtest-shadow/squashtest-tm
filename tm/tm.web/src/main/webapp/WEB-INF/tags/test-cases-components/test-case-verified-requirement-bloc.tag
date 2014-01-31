@@ -43,7 +43,8 @@
 			}
 			if (!squashtm.app) {
 				squashtm.app = {
-					contextRoot : "${root}",
+					locale : "<f:message key='squashtm.locale'/>",
+					contextRoot : "${root}"
 				};
 			}
 			squashtm.app.verifiedRequirementsBlocSettings = {

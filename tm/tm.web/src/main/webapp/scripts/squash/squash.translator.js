@@ -47,18 +47,16 @@
  *	}
  *  
  *  
- *  //TODO : implement a cache.
  * 
  */
-define(["jquery", "underscore"], function($,_){
+define(["jquery", "underscore", "workspace.storage"], function($,_, storage){
 	
 	
 	var serviceURL = squashtm.app.contextRoot+"/localization/filler";
 	
 	//initialization
-	squashtm = squashtm || {};
-	squashtm.message = squashtm.message || {};
-	squashtm.message.cache = squashtm.message.cache || {};
+	var KEY = "squashtm.message-"+squashtm.app.locale;
+	squashtm.message.cache = storage.get(KEY) || squashtm.message.cache || {};
 
 	
 	// ************ ajax functions *************
@@ -134,7 +132,8 @@ define(["jquery", "underscore"], function($,_){
 	
 	
 	//the structure of those objects are expected to be rigorously identical.
-	function _cache(keys, values){
+	// the parameter _shouldstore is used internally.
+	function _cache(keys, values, _shouldstore){
 		
 		var _i18nkey;
 		var _i18nvalue;
@@ -149,11 +148,13 @@ define(["jquery", "underscore"], function($,_){
 			}
 			//if it's an object, let's cache its properties 
 			else{
-				_cache(keys[ppt], values[ppt]);
+				_cache(keys[ppt], values[ppt], false);
 			}
 		}
 		
-		
+		if (_shouldstore !== false){
+			storage.set(KEY, squashtm.message.cache);
+		}
 	}
 	
 	

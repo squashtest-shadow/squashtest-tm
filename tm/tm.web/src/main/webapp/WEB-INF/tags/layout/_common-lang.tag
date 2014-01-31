@@ -21,6 +21,12 @@
 
 --%>
 
+<%-- 
+NOTE :  
+	the prefilled translator cache is now useless because every data fetched by the 
+	squash translator are now saved in the localStorage object.
+--%>
+
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 // -------------------- some shorthands for locale in .js---------------------------------------------

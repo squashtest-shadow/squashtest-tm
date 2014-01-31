@@ -48,6 +48,7 @@
 		var squashtm = {};
 		squashtm.app = {
 			contextRoot: "${pageContext.servletContext.contextPath}",
+			locale : "<f:message key='squashtm.locale'/>"
 		}
 		<layout:_common-lang/>
 		</script>

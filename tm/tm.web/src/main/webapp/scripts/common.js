@@ -131,6 +131,7 @@ requirejs.config({
 				"workspace.permissions-rules-broker" : "workspace/workspace.permissions-rules-broker",
 				"workspace.contextual-content" : "workspace/workspace.contextual-content",
 				"workspace.event-bus" : "workspace/workspace.event-bus",
+				"workspace.storage" : "workspace/workspace.storage",
 				//for plugin compatibility purposes
 				"jquery.squash.datatables" : "plugin-compatibility/jquery.squash.datatable",
 				// contextual content

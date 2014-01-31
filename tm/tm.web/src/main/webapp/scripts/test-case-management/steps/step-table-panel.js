@@ -64,8 +64,9 @@
  * 
  */
 
-define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "squash.translator", "workspace.event-bus", "./popups", "jquery.squash.formdialog", "squashtable" ], function($, TableCollapser,
-		cufValuesManager, translator, eventBus, popups) {
+define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "squash.translator", "workspace.event-bus", 
+         "./popups", 'workspace.storage', "jquery.squash.formdialog", "squashtable" ], function($, TableCollapser,
+		cufValuesManager, translator, eventBus, popups, storage) {
  
 	// ************************* configuration functions
 	// ************************************
@@ -131,17 +132,17 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 	function save_dt_view (oSettings, oData, testCaseId) {
 		var id = $(".test-steps-table")[0].id;
-		localStorage.setItem( 'DataTables_'+window.location.pathname+"_"+id, JSON.stringify(oData) );
+		storage.set( 'DataTables_'+window.location.pathname+"_"+id, oData );
 	}
 		
 	function load_dt_view (oSettings, testCaseId) {
 		var id = $(".test-steps-table")[0].id;
-		return JSON.parse( localStorage.getItem('DataTables_'+window.location.pathname+"_"+id) );
+		return storage.get('DataTables_'+window.location.pathname+"_"+id);
 	}
 		
 	function reset_dt_view(testCaseId) {
 		var id = $(".test-steps-table")[0].id;
-		localStorage.removeItem('DataTables_'+window.location.pathname+"_"+id);
+		storage.remove('DataTables_'+window.location.pathname+"_"+id);
 	}
 		
 	function stepsTableDrawCallback() {
@@ -198,7 +199,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		}
 
 		var id = $(".test-steps-table")[0].id;
-		var savedData = JSON.parse( localStorage.getItem('DataTables_'+window.location.pathname+"_"+id));
+		var savedData = storage.get('DataTables_'+window.location.pathname+"_"+id);
 				 
 		// create the settings
 		var datatableSettings = {
@@ -301,7 +302,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 			datatableSettings.oSearch = savedData.oSearch;
 			$.cookie(cookieName, null, { path: '/' });
 		} else {
-			localStorage.removeItem('DataTables_'+window.location.pathname+"_"+id);
+			storage.remove('DataTables_'+window.location.pathname+"_"+id);
 		}
 		
 		// decorate the settings with the cuf values support
