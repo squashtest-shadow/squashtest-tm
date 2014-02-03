@@ -169,11 +169,7 @@
 						<jsp:invoke fragment="tree" />
 					</div>
 					
-					<c:if test="${usesObsoleteSearch}">
-					<div id="search-pane">
-						<layout:camp-search-panel/>
-					</div>
-					</c:if>
+					
 				</div>
 			</div>
 		</div>
@@ -242,11 +238,7 @@
 					</div>
 					
 
-					<c:if test="${ usesObsoleteSearch }">
-					<div id="search-pane">
-						<layout:camp-search-panel/>
-					</div>
-					</c:if>
+					
 
 					
 					</div>	
