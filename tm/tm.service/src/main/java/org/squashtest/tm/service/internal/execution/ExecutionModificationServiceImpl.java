@@ -33,12 +33,12 @@ import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionH
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
-import org.squashtest.tm.service.library.AdvancedSearchService;
 
 @Service("squashtest.tm.service.ExecutionModificationService")
 public class ExecutionModificationServiceImpl implements ExecutionModificationService {
@@ -53,7 +53,7 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	private CampaignNodeDeletionHandler deletionHandler;
 
 	@Inject 
-	private AdvancedSearchService advancedSearchService;
+	private IndexationService indexationService;
 	
 	@Override
 	public Execution findAndInitExecution(Long executionId) {
@@ -107,7 +107,7 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 		TestCase testCase = execution.getReferencedTestCase();
 		deletionHandler.deleteExecution(execution);
 		if (testCase != null){
-			advancedSearchService.reindexTestCase(testCase.getId());
+			indexationService.reindexTestCase(testCase.getId());
 		}
 	}
 

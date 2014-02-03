@@ -43,7 +43,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.search.SearchExportCSVModel;
 import org.squashtest.tm.domain.search.SearchExportCSVModel.Row;
-import org.squashtest.tm.service.library.AdvancedSearchService;
+import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
+import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 @Controller
@@ -51,7 +52,10 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 public class AdvancedSearchExportController {
 
 	@Inject
-	private AdvancedSearchService advancedSearchService;
+	private TestCaseAdvancedSearchService testCaseAdvancedSearchService;
+	
+	@Inject
+	private RequirementVersionAdvancedSearchService requirementVersionAdvancedSearchService;
 
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(AdvancedSearchExportController.class);
@@ -67,7 +71,7 @@ public class AdvancedSearchExportController {
 		AdvancedSearchModel parsedSearchModel = new ObjectMapper().readValue(
 				searchModel, AdvancedSearchModel.class);
 
-		SearchExportCSVModel model = advancedSearchService
+		SearchExportCSVModel model = requirementVersionAdvancedSearchService
 				.exportRequirementVersionSearchResultsToCSV(parsedSearchModel, locale);
 
 		// prepare the response
@@ -105,7 +109,7 @@ public class AdvancedSearchExportController {
 		try {
 			AdvancedSearchModel parsedSearchModel = new ObjectMapper()
 					.readValue(searchModel, AdvancedSearchModel.class);
-			SearchExportCSVModel model = advancedSearchService
+			SearchExportCSVModel model = testCaseAdvancedSearchService
 					.exportTestCaseSearchResultsToCSV(parsedSearchModel, locale);
 
 			// prepare the response

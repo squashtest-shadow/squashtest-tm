@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.library;
+package org.squashtest.tm.service.internal.testcase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +27,7 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
 
 @Component("squashtest.tm.service.TestCaseLibrarySelectionStrategy")
 public class TestCaseLibrarySelectionStrategyImpl implements LibrarySelectionStrategy<TestCaseLibrary, TestCaseLibraryNode> {

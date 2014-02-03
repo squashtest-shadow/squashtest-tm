@@ -18,28 +18,18 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.administration;
+package org.squashtest.tm.service.advancedsearch;
 
-import javax.inject.Inject;
+import java.util.List;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.squashtest.tm.service.advancedsearch.IndexationService;
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.CustomField;
 
 
-@Controller
-@RequestMapping("/administration/indexes")
-public class IndexAdministrationController {
 
-	@Inject
-	private IndexationService indexationService;
+public interface AdvancedSearchService {
 	
-	@RequestMapping(method = RequestMethod.GET)
-	public String showManager(Model model) {
-		model.addAttribute("indexModel", indexationService.findIndexModel());
-		model.addAttribute("indexedOnPreviousVersion", indexationService.isIndexedOnPreviousVersion());
-		return "index-manager.html";
-	}
+	List<CustomField> findAllQueryableCustomFieldsByBoundEntityType(BindableEntity entity);
+	
+
 }

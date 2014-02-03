@@ -18,36 +18,37 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.library;
+package org.squashtest.tm.service.requirement;
 
-import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 
-import org.apache.lucene.search.FieldComparator;
-import org.apache.lucene.search.FieldComparatorSource;
 import org.springframework.context.MessageSource;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.search.AdvancedSearchModel;
+import org.squashtest.tm.domain.search.SearchExportCSVModel;
 
-public class RequirementVersionCategoryComparatorSource extends FieldComparatorSource{
 
-	private static final long serialVersionUID = 1L;
-	private MessageSource source;
-	private Locale locale;
+
+public interface RequirementVersionAdvancedSearchService {
+
 	
-	public MessageSource getSource() {
-		return source;
-	}
+	
+	//Querying
+	
+	
+	PagedCollectionHolder<List<RequirementVersion>> searchForRequirementVersions(AdvancedSearchModel searchModel, PagingAndMultiSorting paging, MessageSource source, Locale locale);
+	
+	List<RequirementVersion> searchForRequirementVersions(AdvancedSearchModel model, Locale locale);
 
-	public Locale getLocale() {
-		return locale;
-	}
+	List<String> findAllUsersWhoCreatedRequirementVersions();
+	
+	List<String> findAllUsersWhoModifiedRequirementVersions();
+	
+	//Exporting
+	SearchExportCSVModel exportRequirementVersionSearchResultsToCSV(AdvancedSearchModel model, Locale locale);
 
-	public RequirementVersionCategoryComparatorSource(MessageSource source, Locale locale) {
-		this.source = source;
-		this.locale = locale;
-	}
 
-	@Override
-	public FieldComparator<?> newComparator(String fieldname, int numHits, int sortPos, boolean reversed) throws IOException {
-		return new RequirementVersionCategoryComparator(numHits, fieldname, this.source, this.locale);
-	}
 }

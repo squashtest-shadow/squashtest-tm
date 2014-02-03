@@ -32,10 +32,10 @@ import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.library.NodeManagementService;
 import org.squashtest.tm.service.internal.repository.RequirementDao;
-import org.squashtest.tm.service.library.AdvancedSearchService;
 import org.squashtest.tm.service.requirement.CustomRequirementModificationService;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 
@@ -54,7 +54,7 @@ public class CustomRequirementModificationServiceImpl implements CustomRequireme
 	private SessionFactory sessionFactory;
 	
 	@Inject
-	private AdvancedSearchService advancedSearchService;
+	private IndexationService indexationService;
 
 	@SuppressWarnings("rawtypes")
 	@Inject
@@ -80,7 +80,7 @@ public class CustomRequirementModificationServiceImpl implements CustomRequireme
 		req.increaseVersion();
 		sessionFactory.getCurrentSession().persist(req.getCurrentVersion());	
 		RequirementVersion newVersion = req.getCurrentVersion();
-		advancedSearchService.reindexRequirementVersions(req.getRequirementVersions());
+		indexationService.reindexRequirementVersions(req.getRequirementVersions());
 		customFieldValueService.copyCustomFieldValues(previousVersion, newVersion);
 	}
 	

@@ -21,7 +21,6 @@
 package org.squashtest.tm.web.internal.helper;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 

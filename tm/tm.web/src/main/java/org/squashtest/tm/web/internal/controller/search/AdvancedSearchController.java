@@ -70,10 +70,11 @@ import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.campaign.TestSuiteTestPlanManagerService;
-import org.squashtest.tm.service.library.AdvancedSearchService;
+import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.controller.RequestHeaders;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -130,7 +131,10 @@ public class AdvancedSearchController {
 	}
 
 	@Inject
-	private AdvancedSearchService advancedSearchService;
+	private TestCaseAdvancedSearchService testCaseAdvancedSearchService;
+	
+	@Inject
+	private RequirementVersionAdvancedSearchService requirementVersionAdvancedSearchService;
 
 	@Inject
 	private PermissionEvaluationService permissionService;
@@ -291,7 +295,7 @@ public class AdvancedSearchController {
 
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, testCaseSearchResultMapper);
 
-		PagedCollectionHolder<List<TestCase>> holder = advancedSearchService.searchForTestCasesThroughRequirementModel(
+		PagedCollectionHolder<List<TestCase>> holder = testCaseAdvancedSearchService.searchForTestCasesThroughRequirementModel(
 				searchModel, paging, locale);
 
 		boolean isInAssociationContext = isInAssociationContext(associateResultWithType);
@@ -318,7 +322,7 @@ public class AdvancedSearchController {
 
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, testCaseSearchResultMapper);
 
-		PagedCollectionHolder<List<TestCase>> holder = advancedSearchService.searchForTestCases(searchModel, paging,
+		PagedCollectionHolder<List<TestCase>> holder = testCaseAdvancedSearchService.searchForTestCases(searchModel, paging,
 				locale);
 
 		boolean isInAssociationContext = isInAssociationContext(associateResultWithType);
@@ -345,7 +349,7 @@ public class AdvancedSearchController {
 
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, requirementSearchResultMapper);
 
-		PagedCollectionHolder<List<RequirementVersion>> holder = advancedSearchService.searchForRequirementVersions(
+		PagedCollectionHolder<List<RequirementVersion>> holder = requirementVersionAdvancedSearchService.searchForRequirementVersions(
 				searchModel, paging, messageSource, locale);
 
 		boolean isInAssociationContext = isInAssociationContext(associateResultWithType);
@@ -646,7 +650,7 @@ public class AdvancedSearchController {
 	}
 
 	public SearchInputPanelModel getCustomFielModel(Locale locale, BindableEntity bindableEntity) {
-		List<CustomField> customFields = advancedSearchService
+		List<CustomField> customFields = testCaseAdvancedSearchService
 				.findAllQueryableCustomFieldsByBoundEntityType(bindableEntity);
 		return convertToSearchInputPanelModel(customFields, locale);
 	}

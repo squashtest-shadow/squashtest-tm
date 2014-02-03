@@ -51,6 +51,8 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
+import org.squashtest.tm.service.advancedsearch.AdvancedSearchService;
+import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.campaign.CustomIterationModificationService;
 import org.squashtest.tm.service.campaign.IterationStatisticsService;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
@@ -67,7 +69,6 @@ import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 import org.squashtest.tm.service.internal.testautomation.service.InsecureTestAutomationManagementService;
-import org.squashtest.tm.service.library.AdvancedSearchService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
@@ -105,7 +106,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	
 	@Inject	private PrivateDenormalizedFieldValueService denormalizedFieldValueService;
 	
-	@Inject private AdvancedSearchService advancedSearchService;
+	@Inject private IndexationService indexationService;
 
 	@Inject private IterationStatisticsService statisticsService;
 	
@@ -347,7 +348,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		executionDao.persist(execution);
 		item.addExecution(execution);
 		createDenormalizedFieldsForExecutionAndExecutionSteps(execution);
-		advancedSearchService.reindexTestCase(item.getReferencedTestCase().getId());
+		indexationService.reindexTestCase(item.getReferencedTestCase().getId());
 		
 		return execution;
 	}

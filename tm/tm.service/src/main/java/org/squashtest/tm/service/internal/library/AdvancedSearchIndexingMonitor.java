@@ -31,6 +31,7 @@ import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoringForRequireme
 import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoringForTestcases;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.configuration.ConfigurationService;
+import org.squashtest.tm.service.internal.advancedsearch.IndexationServiceImpl;
 
 
 public class AdvancedSearchIndexingMonitor implements MassIndexerProgressMonitor {
@@ -128,15 +129,15 @@ public class AdvancedSearchIndexingMonitor implements MassIndexerProgressMonitor
 
 	private void updateRequirementVersionIndexingDateAndVersion(){
 		Date indexingDate = new Date();
-		this.configurationService.updateConfiguration(AdvancedSearchServiceImpl.REQUIREMENT_INDEXING_DATE_KEY, dateFormat.format(indexingDate));
-		String currentVersion = this.configurationService.findConfiguration(AdvancedSearchServiceImpl.SQUASH_VERSION_KEY);
-		this.configurationService.updateConfiguration(AdvancedSearchServiceImpl.REQUIREMENT_INDEXING_VERSION_KEY, currentVersion);
+		this.configurationService.updateConfiguration(IndexationServiceImpl.REQUIREMENT_INDEXING_DATE_KEY, dateFormat.format(indexingDate));
+		String currentVersion = this.configurationService.findConfiguration(IndexationServiceImpl.SQUASH_VERSION_KEY);
+		this.configurationService.updateConfiguration(IndexationServiceImpl.REQUIREMENT_INDEXING_VERSION_KEY, currentVersion);
 	}
 	
 	private void updateTestCaseIndexingDateAndVersion(){
 		Date indexingDate = new Date();
-		this.configurationService.updateConfiguration(AdvancedSearchServiceImpl.TESTCASE_INDEXING_DATE_KEY, dateFormat.format(indexingDate));
-		String currentVersion = this.configurationService.findConfiguration(AdvancedSearchServiceImpl.SQUASH_VERSION_KEY);
-		this.configurationService.updateConfiguration(AdvancedSearchServiceImpl.TESTCASE_INDEXING_VERSION_KEY, currentVersion);
+		this.configurationService.updateConfiguration(IndexationServiceImpl.TESTCASE_INDEXING_DATE_KEY, dateFormat.format(indexingDate));
+		String currentVersion = this.configurationService.findConfiguration(IndexationServiceImpl.SQUASH_VERSION_KEY);
+		this.configurationService.updateConfiguration(IndexationServiceImpl.TESTCASE_INDEXING_VERSION_KEY, currentVersion);
 	}
 }

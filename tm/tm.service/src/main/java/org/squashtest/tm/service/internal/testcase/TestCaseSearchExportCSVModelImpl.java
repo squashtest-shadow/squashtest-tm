@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.library;
+package org.squashtest.tm.service.internal.testcase;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.search.SearchExportCSVModel;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.service.campaign.IterationModificationService;
+import org.squashtest.tm.service.campaign.IterationFinder;
 
 @Component
 @Scope("prototype")
@@ -57,21 +57,21 @@ public class TestCaseSearchExportCSVModelImpl implements SearchExportCSVModel{
 		this.testCases = testCases;
 	}
 
-	public IterationModificationService getIterationService() {
+	public IterationFinder getIterationService() {
 		return iterationService;
 	}
 
-	public void setIterationService(IterationModificationService iterationService) {
+	public void setIterationService(IterationFinder iterationService) {
 		this.iterationService = iterationService;
 	}
 
-	private IterationModificationService iterationService;
+	private IterationFinder iterationService;
 
 	public TestCaseSearchExportCSVModelImpl(){
 		super();
 	}
 	
-	public TestCaseSearchExportCSVModelImpl(List<TestCase> testCases, IterationModificationService iterationService){
+	public TestCaseSearchExportCSVModelImpl(List<TestCase> testCases, IterationFinder iterationService){
 		this.testCases = testCases;
 		this.iterationService = iterationService;
 	}

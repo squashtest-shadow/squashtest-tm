@@ -26,7 +26,6 @@ import javax.inject.Provider;
 
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.LevelComparator;
-import org.squashtest.tm.service.library.AdvancedSearchService;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.web.internal.helper.InternationalisableLabelFormatter;
 import org.squashtest.tm.web.internal.helper.InternationalizableComparator;
@@ -60,8 +59,7 @@ public abstract class SearchInterfaceDescription {
 	@Inject
 	private Provider<InternationalisableLabelFormatter> internationalizableLabelFormatter;
 
-	@Inject
-	private AdvancedSearchService advancedSearchService;
+	
 
 	@Inject
 	private ProjectFilterModificationService projectFilterService;
@@ -97,12 +95,6 @@ public abstract class SearchInterfaceDescription {
 		return messageSource;
 	}
 
-	/**
-	 * @return the advancedSearchService
-	 */
-	protected final AdvancedSearchService getAdvancedSearchService() {
-		return advancedSearchService;
-	}
 
 	/**
 	 * @return the projectFilterService

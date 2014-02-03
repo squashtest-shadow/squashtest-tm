@@ -48,7 +48,6 @@ import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.audit.AuditableMixin;
-import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.tm.domain.requirement.Requirement;

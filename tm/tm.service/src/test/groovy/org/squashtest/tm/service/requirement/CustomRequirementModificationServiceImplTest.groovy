@@ -22,14 +22,14 @@ package org.squashtest.tm.service.requirement;
 
 import static org.junit.Assert.*
 
-import org.hibernate.SessionFactory
 import org.hibernate.Session
+import org.hibernate.SessionFactory
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementVersion
+import org.squashtest.tm.service.advancedsearch.IndexationService
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
 import org.squashtest.tm.service.internal.repository.RequirementDao
 import org.squashtest.tm.service.internal.requirement.CustomRequirementModificationServiceImpl
-import org.squashtest.tm.service.library.AdvancedSearchService;
 
 import spock.lang.Specification
 
@@ -39,12 +39,12 @@ class CustomRequirementModificationServiceImplTest extends Specification {
 	SessionFactory sessionFactory = Mock()
 	Session currentSession = Mock()
 	PrivateCustomFieldValueService customFieldService = Mock()
-	AdvancedSearchService advancedSearchService = Mock()
+	IndexationService indexationService = Mock()
 		
 	def setup() {
 		service.requirementDao = requirementDao
 		service.sessionFactory = sessionFactory
-		service.advancedSearchService = advancedSearchService;
+		service.indexationService = indexationService;
 		
 		sessionFactory.currentSession >> currentSession
 		service.customFieldValueService = customFieldService

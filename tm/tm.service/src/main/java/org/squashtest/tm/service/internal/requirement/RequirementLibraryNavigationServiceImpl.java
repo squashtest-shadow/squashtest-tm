@@ -49,6 +49,8 @@ import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.library.NameAlreadyExistsAtDestinationException;
 import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
+import org.squashtest.tm.service.advancedsearch.AdvancedSearchService;
+import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.importer.ImportRequirementTestCaseLinksSummary;
 import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.internal.importer.RequirementImporter;
@@ -61,7 +63,6 @@ import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.RequirementDao;
 import org.squashtest.tm.service.internal.repository.RequirementFolderDao;
 import org.squashtest.tm.service.internal.repository.RequirementLibraryDao;
-import org.squashtest.tm.service.library.AdvancedSearchService;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
@@ -91,7 +92,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@Inject
 	private RequirementImporter requirementImporter;
 	@Inject
-	private AdvancedSearchService advancedSearchService;
+	private IndexationService indexationService;
 	@Inject
 	private ProjectFilterModificationService projectFilterModificationService;
 	@Inject
@@ -266,8 +267,8 @@ public class RequirementLibraryNavigationServiceImpl extends
 		
 		createCustomFieldValues(child.getCurrentVersion());
 		initCustomFieldValues(child.getCurrentVersion(), newRequirement.getCustomFields());
-		advancedSearchService.reindexRequirementVersion(parent.getCurrentVersion().getId());
-		advancedSearchService.reindexRequirementVersions(child.getRequirementVersions());
+		indexationService.reindexRequirementVersion(parent.getCurrentVersion().getId());
+		indexationService.reindexRequirementVersions(child.getRequirementVersions());
 		
 		return child;
 	}
@@ -284,8 +285,8 @@ public class RequirementLibraryNavigationServiceImpl extends
 		requirementDao.persist(newRequirement);
 		createCustomFieldValues(newRequirement.getCurrentVersion());
 
-		advancedSearchService.reindexRequirementVersion(requirementId);
-		advancedSearchService.reindexRequirementVersions(newRequirement.getRequirementVersions());
+		indexationService.reindexRequirementVersion(requirementId);
+		indexationService.reindexRequirementVersions(newRequirement.getRequirementVersions());
 		return newRequirement;
 	}
 	

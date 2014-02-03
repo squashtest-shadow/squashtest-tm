@@ -62,6 +62,8 @@ import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.security.UserContextHolder;
+import org.squashtest.tm.service.advancedsearch.AdvancedSearchService;
+import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.campaign.CustomIterationModificationService;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
@@ -73,7 +75,6 @@ import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.internal.testcase.TestCaseNodeWalker;
-import org.squashtest.tm.service.library.AdvancedSearchService;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
@@ -106,7 +107,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	private UserDao userDao;
 
 	@Inject
-	private AdvancedSearchService advancedSearchService;
+	private IndexationService indexationService;
 
 	@Inject
 	private UserAccountService userService;
@@ -222,7 +223,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 			testPlan.add(IterationTestPlanItem.createUnparameterizedTestPlanItem(testCase));
 		}
 
-		advancedSearchService.reindexTestCase(testCase.getId());
+		indexationService.reindexTestCase(testCase.getId());
 	}
 
 	@Override
@@ -320,7 +321,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 		// unless the test case was deleted, we need to re-index its statistics
 		if (testCase != null) {
-			advancedSearchService.reindexTestCase(testCase.getId());
+			indexationService.reindexTestCase(testCase.getId());
 		}
 	}
 

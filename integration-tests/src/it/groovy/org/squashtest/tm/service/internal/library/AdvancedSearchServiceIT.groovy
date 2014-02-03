@@ -20,28 +20,18 @@
  */
 package org.squashtest.tm.service.internal.library
 
-import java.text.SimpleDateFormat;
+import javax.inject.Inject
 
-import javax.inject.Inject;
-
-import org.hibernate.SessionFactory;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
-import org.squashtest.tm.domain.search.AdvancedSearchModel;
-import org.squashtest.tm.domain.search.AdvancedSearchRangeFieldModel;
-import org.squashtest.tm.domain.search.AdvancedSearchSingleFieldModel;
-import org.squashtest.tm.domain.search.AdvancedSearchTextFieldModel;
-import org.squashtest.tm.domain.search.AdvancedSearchTimeIntervalFieldModel;
-import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.domain.testcase.TestCaseImportance
-import org.squashtest.tm.service.DbunitServiceSpecification;
-import org.squashtest.tm.service.library.AdvancedSearchService
-import org.squashtest.tm.service.project.ProjectTemplateManagerService;
-import org.squashtest.tm.service.testcase.TestCaseModificationService
+import org.apache.poi.hssf.record.formula.functions.T
+import org.hibernate.SessionFactory
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.service.DbunitServiceSpecification
+import org.squashtest.tm.service.advancedsearch.IndexationService
 import org.squashtest.tm.service.testcase.TestCaseFinder
-import org.unitils.dbunit.annotation.DataSet;
+import org.squashtest.tm.service.testcase.TestCaseModificationService
+import org.unitils.dbunit.annotation.DataSet
 
-import spock.unitils.UnitilsSupport;
+import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
 @Transactional
@@ -52,7 +42,7 @@ class AdvancedSearchServiceIT extends DbunitServiceSpecification {
 	SessionFactory sessionFactory;
 	
 	@Inject 
-	AdvancedSearchService service;
+	IndexationService service;
 	
 	@Inject
 	TestCaseModificationService testCaseService;

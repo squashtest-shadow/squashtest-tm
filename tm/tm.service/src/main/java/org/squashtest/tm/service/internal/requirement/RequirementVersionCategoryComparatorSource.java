@@ -18,27 +18,36 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.library;
+package org.squashtest.tm.service.internal.requirement;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
+import java.util.Locale;
 
-import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.requirement.RequirementLibrary;
-import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
+import org.apache.lucene.search.FieldComparator;
+import org.apache.lucene.search.FieldComparatorSource;
+import org.springframework.context.MessageSource;
 
-@SuppressWarnings("rawtypes")
-@Component("squashtest.tm.service.RequirementLibrarySelectionStrategy")
-public class RequirementLibrarySelectionStrategyImpl implements LibrarySelectionStrategy<RequirementLibrary, RequirementLibraryNode> {
+public class RequirementVersionCategoryComparatorSource extends FieldComparatorSource{
 
-	@Override
-	public List<RequirementLibrary> getSpecificLibraries(List<Project> givenProjectList) {
-		List<RequirementLibrary> toReturn = new ArrayList<RequirementLibrary>();
-		for (Project project : givenProjectList) {
-			toReturn.add(project.getRequirementLibrary());
-		}
-		return toReturn;
+	private static final long serialVersionUID = 1L;
+	private MessageSource source;
+	private Locale locale;
+	
+	public MessageSource getSource() {
+		return source;
 	}
 
+	public Locale getLocale() {
+		return locale;
+	}
+
+	public RequirementVersionCategoryComparatorSource(MessageSource source, Locale locale) {
+		this.source = source;
+		this.locale = locale;
+	}
+
+	@Override
+	public FieldComparator<?> newComparator(String fieldname, int numHits, int sortPos, boolean reversed) throws IOException {
+		return new RequirementVersionCategoryComparator(numHits, fieldname, this.source, this.locale);
+	}
 }

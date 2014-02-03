@@ -18,26 +18,36 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.library;
+package org.squashtest.tm.service.advancedsearch;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.campaign.CampaignLibrary;
-import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
-import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.library.IndexModel;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testcase.TestCase;
 
-@Component("squashtest.tm.service.CampaignLibrarySelectionStrategy")
-public class CampaignLibrarySelectionStrategyImpl implements LibrarySelectionStrategy<CampaignLibrary, CampaignLibraryNode> {
+public interface IndexationService {
 
-	@Override
-	public List<CampaignLibrary> getSpecificLibraries(List<Project> givenProjectList) {
-		List<CampaignLibrary> toReturn = new ArrayList<CampaignLibrary>();
-		for (Project project : givenProjectList) {
-			toReturn.add(project.getCampaignLibrary());
-		}
-		return toReturn;
-	}
+	void indexAll();
+
+	IndexModel findIndexModel();
+
+	Boolean isIndexedOnPreviousVersion();
+
+	// Indexing Requirement Versions
+	void indexRequirementVersions();
+
+	void reindexRequirementVersion(Long requirementVersionId);
+
+	void reindexRequirementVersions(List<RequirementVersion> requirementVersionList);
+
+	void reindexRequirementVersionsByIds(List<Long> requirementVersionsIds);
+
+	// Indexing Test Cases
+	void indexTestCases();
+
+	void reindexTestCase(Long testCaseId);
+
+	void reindexTestCases(List<TestCase> testCaseList);
 
 }

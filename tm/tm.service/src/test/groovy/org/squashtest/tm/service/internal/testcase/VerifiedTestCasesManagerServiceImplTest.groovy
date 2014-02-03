@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.testcase
 
-import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.projectfilter.ProjectFilter
@@ -32,6 +31,7 @@ import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
 import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException
+import org.squashtest.tm.service.advancedsearch.IndexationService
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy
 import org.squashtest.tm.service.internal.project.ProjectFilterModificationServiceImpl
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao
@@ -39,10 +39,6 @@ import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageD
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao
-import org.squashtest.tm.service.internal.testcase.TestCaseImportanceManagerServiceImpl
-import org.squashtest.tm.service.internal.testcase.VerifyingTestCaseManagerServiceImpl
-import org.squashtest.tm.service.library.AdvancedSearchService
-import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService
 
 import spock.lang.Specification
@@ -60,7 +56,7 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 	LibraryNodeDao<TestCaseLibraryNode> nodeDao = Mock()
 	TestCaseImportanceManagerServiceImpl testCaseImportanceServiceImpl = Mock()
 	RequirementVersionCoverageDao requirementVersionCoverageDao = Mock()
-	AdvancedSearchService advancedSearchService = Mock()
+	IndexationService indexationService = Mock()
 
 	def setup() {
 		CollectionAssertions.declareContainsExactly()
@@ -73,7 +69,7 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 		service.testCaseLibraryNodeDao = testCaseLibraryNodeDao
 		service.testCaseImportanceManagerService = testCaseImportanceServiceImpl
 		service.requirementVersionCoverageDao = requirementVersionCoverageDao
-		service.advancedSearchService = advancedSearchService
+		service.indexationService = indexationService
 	}
 
 	def "should find libraries of linkable test Case"() {

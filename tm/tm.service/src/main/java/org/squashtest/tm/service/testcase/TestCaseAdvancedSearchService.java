@@ -18,77 +18,41 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.library;
+package org.squashtest.tm.service.testcase;
 
 import java.util.List;
 import java.util.Locale;
 
-import org.springframework.context.MessageSource;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
-import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.customfield.CustomField;
-import org.squashtest.tm.domain.library.IndexModel;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.search.SearchExportCSVModel;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.service.advancedsearch.AdvancedSearchService;
 
 
 
-public interface AdvancedSearchService {
+public interface TestCaseAdvancedSearchService extends AdvancedSearchService{
 
-	//Indexing Test Cases
-	void indexTestCases();
-	
-	void reindexTestCase(Long testCaseId);
-
-	void reindexTestCases(List<TestCase> testCaseList);
-
-	//Indexing Requirement Versions
-	void indexRequirementVersions();
-	
-	void reindexRequirementVersion(Long requirementVersionId);
-	
-	void reindexRequirementVersions(List<RequirementVersion> requirementVersionList);	
-
-	void reindexRequirementVersionsByIds(List<Long> requirementVersionsIds);
-	
-	//Indexing All
-	void indexAll();
-	
-	IndexModel findIndexModel();
-	
-	Boolean isIndexedOnPreviousVersion();
 	
 	//Querying
-	List<CustomField> findAllQueryableCustomFieldsByBoundEntityType(BindableEntity entity);
 	
 	PagedCollectionHolder<List<TestCase>> searchForTestCases(AdvancedSearchModel model, PagingAndMultiSorting sorting, Locale locale);
 	
 	PagedCollectionHolder<List<TestCase>> searchForTestCasesThroughRequirementModel(AdvancedSearchModel model, PagingAndMultiSorting sorting, Locale locale);
 	
-	PagedCollectionHolder<List<RequirementVersion>> searchForRequirementVersions(AdvancedSearchModel searchModel, PagingAndMultiSorting paging, MessageSource source, Locale locale);
-	
 	List<TestCase> searchForTestCases(AdvancedSearchModel model, Locale locale);
 
 	List<TestCase> searchForTestCasesThroughRequirementModel(AdvancedSearchModel model, Locale locale);
 	
-	List<RequirementVersion> searchForRequirementVersions(AdvancedSearchModel model, Locale locale);
-
 	List<String> findAllUsersWhoModifiedTestCases();
 
 	List<String> findAllUsersWhoCreatedTestCases();
-
-	List<String> findAllUsersWhoCreatedRequirementVersions();
-	
-	List<String> findAllUsersWhoModifiedRequirementVersions();
 	
 	//Exporting
 	SearchExportCSVModel exportTestCaseSearchResultsToCSV(AdvancedSearchModel model, Locale locale);
 
-	SearchExportCSVModel exportRequirementVersionSearchResultsToCSV(AdvancedSearchModel model, Locale locale);
-
+	
 
 
 }

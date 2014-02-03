@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.bugtracker
 
+import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.csp.core.bugtracker.domain.BTIssue
 import org.squashtest.csp.core.bugtracker.domain.BTProject
 import org.squashtest.csp.core.bugtracker.domain.BugTracker
@@ -30,10 +31,9 @@ import org.squashtest.tm.domain.bugtracker.IssueList
 import org.squashtest.tm.domain.bugtracker.IssueOwnership
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.service.advancedsearch.IndexationService
 import org.squashtest.tm.service.internal.bugtracker.BugTrackersLocalServiceImpl
-import org.squashtest.tm.service.internal.library.AdvancedSearchServiceImpl
 import org.squashtest.tm.service.internal.repository.IssueDao
-import org.squashtest.tm.service.library.AdvancedSearchService;
 
 import spock.lang.Specification
 
@@ -41,7 +41,7 @@ class BugTrackersLocalServiceImplTest extends Specification {
 
 	IssueDao issueDao = Mock()
 	BugTrackersService remoteService = Mock()
-	AdvancedSearchService advancedSearchService = Mock();
+	IndexationService indexationService = Mock();
 
 	BugTrackersLocalServiceImpl service = new BugTrackersLocalServiceImpl();
 
@@ -49,7 +49,7 @@ class BugTrackersLocalServiceImplTest extends Specification {
 	def setup(){
 		service.issueDao = issueDao;
 		service.remoteBugTrackersService = remoteService;
-		service.advancedSearchService = advancedSearchService;
+		service.indexationService = indexationService;
 	}
 
 

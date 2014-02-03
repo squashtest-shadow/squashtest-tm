@@ -20,13 +20,12 @@
  */
 package org.squashtest.tm.service.internal.campaign
 
-import spock.lang.Specification
 import org.squashtest.tm.domain.attachment.Attachment
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
-import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.domain.testcase.Dataset
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode
 import org.squashtest.tm.domain.testcase.TestCaseImportance
@@ -34,17 +33,18 @@ import org.squashtest.tm.domain.testcase.TestCaseNature
 import org.squashtest.tm.domain.testcase.TestCaseStatus
 import org.squashtest.tm.domain.testcase.TestCaseType
 import org.squashtest.tm.domain.users.User
-import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
-import org.squashtest.tm.service.internal.campaign.CustomIterationModificationServiceImpl
+import org.squashtest.tm.service.advancedsearch.IndexationService
+import org.squashtest.tm.service.campaign.IterationTestPlanManagerService
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService
 import org.squashtest.tm.service.internal.repository.CampaignDao
 import org.squashtest.tm.service.internal.repository.ExecutionDao
-import org.squashtest.tm.service.internal.repository.IterationTestPlanDao
 import org.squashtest.tm.service.internal.repository.IterationDao
+import org.squashtest.tm.service.internal.repository.IterationTestPlanDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker
-import org.squashtest.tm.service.library.AdvancedSearchService
+
+import spock.lang.Specification
 
 class CustomIterationModificationServiceImplTest extends Specification {
 	CustomIterationModificationServiceImpl service = new CustomIterationModificationServiceImpl()
@@ -61,7 +61,7 @@ class CustomIterationModificationServiceImplTest extends Specification {
 	PrivateDenormalizedFieldValueService denormalizedFieldValueService = Mock();
 	
 	IterationTestPlanManagerService iterationTestPlanManager = Mock()
-	AdvancedSearchService advancedSearchService = Mock()
+	IndexationService indexationService = Mock()
 	
 	def setup() {
 		service.executionDao = execDao
@@ -72,7 +72,7 @@ class CustomIterationModificationServiceImplTest extends Specification {
 		service.customFieldValueService = customFieldService
 		service.denormalizedFieldValueService = denormalizedFieldValueService
 		service.iterationTestPlanManager = iterationTestPlanManager
-		service.advancedSearchService = advancedSearchService
+		service.indexationService = indexationService
 	}
 
 	def "should add unparameterized iteration to campaign with test plan"() {

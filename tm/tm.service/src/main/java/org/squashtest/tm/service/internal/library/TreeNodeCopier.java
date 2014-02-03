@@ -53,6 +53,8 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
+import org.squashtest.tm.service.advancedsearch.AdvancedSearchService;
+import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.internal.campaign.IterationTestPlanManager;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
@@ -67,7 +69,6 @@ import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageD
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
-import org.squashtest.tm.service.library.AdvancedSearchService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
@@ -104,7 +105,7 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 	@Inject
 	private RequirementVersionCoverageDao requirementVersionCoverageDao;
 	@Inject
-	private AdvancedSearchService advancedSearchService;
+	private IndexationService indexationService;
 
 	private NodeContainer<? extends TreeNode> destination;
 	private TreeNode copy;
@@ -354,8 +355,8 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 
 	private void indexRequirementVersionCoverageCopies(List<RequirementVersionCoverage> copies) {
 		for(RequirementVersionCoverage copy : copies){
-			advancedSearchService.reindexTestCase(copy.getVerifyingTestCase().getId());
-			advancedSearchService.reindexRequirementVersion(copy.getVerifiedRequirementVersion().getId());
+			indexationService.reindexTestCase(copy.getVerifyingTestCase().getId());
+			indexationService.reindexRequirementVersion(copy.getVerifiedRequirementVersion().getId());
 		}
 	}
 

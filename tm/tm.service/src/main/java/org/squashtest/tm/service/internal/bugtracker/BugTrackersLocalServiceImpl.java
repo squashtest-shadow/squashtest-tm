@@ -65,6 +65,8 @@ import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.IssueAlreadyBoundException;
+import org.squashtest.tm.service.advancedsearch.AdvancedSearchService;
+import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
@@ -76,7 +78,6 @@ import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
-import org.squashtest.tm.service.library.AdvancedSearchService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
@@ -118,7 +119,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	private ProjectDao projectDao;
 	
 	@Inject
-	private AdvancedSearchService advancedSearchService;
+	private IndexationService indexationService;
 	
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
@@ -180,7 +181,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		issueDao.persist(sqIssue);
 
 		TestCase testCase = this.findTestCaseRelatedToIssue(sqIssue.getId());
-		this.advancedSearchService.reindexTestCase(testCase.getId());
+		this.indexationService.reindexTestCase(testCase.getId());
 		
 		return createdIssue;
 	}
@@ -259,7 +260,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 			issueDao.persist(issue);
 			
 			TestCase testCase = this.findTestCaseRelatedToIssue(issue.getId());
-			this.advancedSearchService.reindexTestCase(testCase.getId());
+			this.indexationService.reindexTestCase(testCase.getId());
 
 		}
 		
@@ -274,7 +275,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		Issue issue = issueDao.findById(id);
 		TestCase testCase = this.findTestCaseRelatedToIssue(issue.getId());
 		issueDao.remove(issue);
-		this.advancedSearchService.reindexTestCase(testCase.getId());
+		this.indexationService.reindexTestCase(testCase.getId());
 	}
 
 	/* ------------------------ExecutionStep--------------------------------------- */

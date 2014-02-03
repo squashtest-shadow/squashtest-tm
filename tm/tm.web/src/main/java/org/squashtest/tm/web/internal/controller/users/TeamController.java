@@ -51,7 +51,6 @@ import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.audit.AuditableMixin;
-import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.project.ProjectPermission;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;

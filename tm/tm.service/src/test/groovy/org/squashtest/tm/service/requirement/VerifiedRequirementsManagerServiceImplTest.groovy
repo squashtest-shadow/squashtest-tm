@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.requirement
 
-import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
@@ -36,6 +35,7 @@ import org.squashtest.tm.domain.testcase.RequirementVersionCoverage
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
 import org.squashtest.tm.domain.testcase.TestStep
+import org.squashtest.tm.service.advancedsearch.IndexationService
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy
 import org.squashtest.tm.service.internal.project.ProjectFilterModificationServiceImpl
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao
@@ -47,8 +47,7 @@ import org.squashtest.tm.service.internal.repository.TestStepDao
 import org.squashtest.tm.service.internal.requirement.VerifiedRequirementsManagerServiceImpl
 import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder
 import org.squashtest.tm.service.internal.testcase.TestCaseImportanceManagerServiceImpl
-import org.squashtest.tm.service.library.AdvancedSearchService;
-import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.security.PermissionEvaluationService
 
 import spock.lang.Specification
 
@@ -65,7 +64,7 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 	ProjectFilterModificationServiceImpl projectFilterModificationService = Mock()
 	LibrarySelectionStrategy<RequirementLibrary, RequirementLibraryNode> libraryStrategy = Mock()
 	PermissionEvaluationService permissionService = Mock()
-	AdvancedSearchService advancedSearchService = Mock()
+	IndexationService indexationService = Mock()
 
 	def setup() {
 		CollectionAssertions.declareContainsExactly()
@@ -78,7 +77,7 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 		service.requirementVersionCoverageDao = requirementVersionCoverageDao
 		service.callTreeFinder = callTreeFinder
 		service.permissionService = permissionService
-		service.advancedSearchService = advancedSearchService
+		service.indexationService = indexationService
 		permissionService.hasRoleOrPermissionOnObject(_, _, _) >> true
 	}
 

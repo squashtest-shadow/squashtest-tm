@@ -18,28 +18,27 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.administration;
+package org.squashtest.tm.service.internal.campaign;
 
-import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.squashtest.tm.service.advancedsearch.IndexationService;
+import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
 
+@Component("squashtest.tm.service.CampaignLibrarySelectionStrategy")
+public class CampaignLibrarySelectionStrategyImpl implements LibrarySelectionStrategy<CampaignLibrary, CampaignLibraryNode> {
 
-@Controller
-@RequestMapping("/administration/indexes")
-public class IndexAdministrationController {
-
-	@Inject
-	private IndexationService indexationService;
-	
-	@RequestMapping(method = RequestMethod.GET)
-	public String showManager(Model model) {
-		model.addAttribute("indexModel", indexationService.findIndexModel());
-		model.addAttribute("indexedOnPreviousVersion", indexationService.isIndexedOnPreviousVersion());
-		return "index-manager.html";
+	@Override
+	public List<CampaignLibrary> getSpecificLibraries(List<Project> givenProjectList) {
+		List<CampaignLibrary> toReturn = new ArrayList<CampaignLibrary>();
+		for (Project project : givenProjectList) {
+			toReturn.add(project.getCampaignLibrary());
+		}
+		return toReturn;
 	}
+
 }

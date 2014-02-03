@@ -25,14 +25,19 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.inject.Inject;
+
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementCategory;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
+import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
 
 @Component
 public class RequirementVersionSearchInterfaceDescription extends SearchInterfaceDescription {
+	@Inject
+	private RequirementVersionAdvancedSearchService advancedSearchService;
 
 	public SearchInputPanelModel createRequirementInformationPanel(Locale locale) {
 		SearchInputPanelModel panel = new SearchInputPanelModel();
@@ -215,7 +220,7 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 				.internationalize("search.testcase.history.createdBy.label", locale), MULTISELECT);
 		panel.addField(createdByField);
 
-		List<String> users = getAdvancedSearchService().findAllUsersWhoCreatedRequirementVersions();
+		List<String> users = advancedSearchService.findAllUsersWhoCreatedRequirementVersions();
 		for (String user : users) {
 			createdByField.addPossibleValue(new SearchInputPossibleValueModel(user, user));
 		}
@@ -228,7 +233,7 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 				.internationalize("search.testcase.history.modifiedBy.label", locale), MULTISELECT);
 		panel.addField(modifiedByField);
 
-		users = getAdvancedSearchService().findAllUsersWhoModifiedRequirementVersions();
+		users = advancedSearchService.findAllUsersWhoModifiedRequirementVersions();
 		for (String user : users) {
 			if (user == null || "".equals(user.trim())) {
 				modifiedByField.addPossibleValue(new SearchInputPossibleValueModel(getMessageSource().internationalize(

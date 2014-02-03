@@ -49,13 +49,14 @@ import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
 import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
+import org.squashtest.tm.service.advancedsearch.AdvancedSearchService;
+import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
-import org.squashtest.tm.service.library.AdvancedSearchService;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
@@ -75,7 +76,7 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	@Inject
 	private RequirementVersionCoverageDao requirementVersionCoverageDao;
 	@Inject
-	private AdvancedSearchService advancedSearchService;
+	private IndexationService indexationService;
 	@Inject
 	private ProjectFilterModificationService projectFilterModificationService;
 	@Inject
@@ -129,8 +130,8 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 			try {
 				RequirementVersionCoverage coverage = new RequirementVersionCoverage(requirementVersion, testCase);
 				requirementVersionCoverageDao.persist(coverage);
-				advancedSearchService.reindexTestCase(testCase.getId());
-				advancedSearchService.reindexRequirementVersion(requirementVersion.getId());
+				indexationService.reindexTestCase(testCase.getId());
+				indexationService.reindexRequirementVersion(requirementVersion.getId());
 			} catch (RequirementAlreadyVerifiedException ex) {
 				rejections.add(ex);
 				iterator.remove();
@@ -156,8 +157,8 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 				requirementVersionCoverageDao.delete(coverage);
 			}
 			
-			advancedSearchService.reindexTestCases(testCases);
-			advancedSearchService.reindexRequirementVersion(requirementVersionId);
+			indexationService.reindexTestCases(testCases);
+			indexationService.reindexRequirementVersion(requirementVersionId);
 			
 			testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromReq(testCasesIds,
 					requirementVersionId);

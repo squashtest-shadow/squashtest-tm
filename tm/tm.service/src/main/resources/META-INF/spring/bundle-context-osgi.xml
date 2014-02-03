@@ -231,9 +231,11 @@
 
   <osgi:service ref="squashtest.tm.service.SearchService" interface="org.squashtest.tm.service.library.SearchService" />
 
-  <osgi:service ref="squashtest.tm.service.AdvancedSearchService" interface="org.squashtest.tm.service.library.AdvancedSearchService" />
+  <osgi:service ref="squashtest.tm.service.IndexationService" interface="org.squashtest.tm.service.advancedsearch.IndexationService" />
 
-  <osgi:service ref="squashtest.tm.service.AdvancedSearchService" interface="org.squashtest.tm.service.library.AdvancedSearchService" />
+  <osgi:service ref="squashtest.tm.service.TestCaseAdvancedSearchService" interface="org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService" />
+ 
+  <osgi:service ref="squashtest.tm.service.RequirementVersionAdvancedSearchService" interface="org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService" />
 
   <osgi:service ref="squashtest.tm.service.UserAccountService" interface="org.squashtest.tm.service.user.UserAccountService" />
 

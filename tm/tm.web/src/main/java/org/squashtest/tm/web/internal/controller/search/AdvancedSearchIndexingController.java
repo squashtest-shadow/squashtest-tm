@@ -29,32 +29,32 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoring;
 import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoringForRequirementVersions;
 import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoringForTestcases;
-import org.squashtest.tm.service.library.AdvancedSearchService;
+import org.squashtest.tm.service.advancedsearch.IndexationService;
 
 @Controller
 @RequestMapping("/advanced-search")
 public class AdvancedSearchIndexingController {
 
 	@Inject
-	private AdvancedSearchService advancedSearchService;
+	private IndexationService indexationService;
 
 	@RequestMapping(value = "/index-all", method = RequestMethod.POST)
 	@ResponseBody
 	public void indexAll(){
-		advancedSearchService.indexAll();
+		indexationService.indexAll();
 	} 
 	
 	@RequestMapping(value = "/index-requirements", method = RequestMethod.POST)
 	@ResponseBody
 	public void indexRequirements(){
-		advancedSearchService.indexRequirementVersions();
+		indexationService.indexRequirementVersions();
 	} 	
 	
 	
 	@RequestMapping(value = "/index-testcases", method = RequestMethod.POST)
 	@ResponseBody
 	public void indexTestCases(){
-		advancedSearchService.indexTestCases();
+		indexationService.indexTestCases();
 	} 
 
 	@RequestMapping(value = "/index-campaigns", method = RequestMethod.POST)

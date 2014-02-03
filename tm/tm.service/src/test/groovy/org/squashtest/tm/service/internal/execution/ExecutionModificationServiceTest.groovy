@@ -33,18 +33,16 @@ import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.domain.testcase.TestCaseNature
 import org.squashtest.tm.domain.testcase.TestCaseStatus
 import org.squashtest.tm.domain.testcase.TestCaseType
+import org.squashtest.tm.service.advancedsearch.IndexationService
 import org.squashtest.tm.service.internal.campaign.CustomIterationModificationServiceImpl
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService
-import org.squashtest.tm.service.internal.execution.ExecutionModificationServiceImpl
-import org.squashtest.tm.service.internal.execution.ExecutionProcessingServiceImpl
 import org.squashtest.tm.service.internal.repository.CampaignDao
 import org.squashtest.tm.service.internal.repository.ExecutionDao
 import org.squashtest.tm.service.internal.repository.ExecutionStepDao
-import org.squashtest.tm.service.internal.repository.IterationTestPlanDao
 import org.squashtest.tm.service.internal.repository.IterationDao
+import org.squashtest.tm.service.internal.repository.IterationTestPlanDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker
-import org.squashtest.tm.service.library.AdvancedSearchService
 
 import spock.lang.Specification
 
@@ -53,7 +51,7 @@ public class ExecutionModificationServiceTest extends Specification {
 	ExecutionModificationServiceImpl service = new ExecutionModificationServiceImpl()
 	ExecutionProcessingServiceImpl procservice = new ExecutionProcessingServiceImpl()
 	CustomIterationModificationServiceImpl iterService = new CustomIterationModificationServiceImpl()
-	AdvancedSearchService advancedSearchService = Mock()
+	IndexationService indexationService = Mock()
 
 	ExecutionDao execDao = Mock()
 	ExecutionStepDao execStepDao = Mock()
@@ -77,7 +75,7 @@ public class ExecutionModificationServiceTest extends Specification {
 		iterService.testPlanDao = testPlanDao
 		iterService.iterationDao = iterationDao
 		iterService.executionDao = execDao
-		iterService.advancedSearchService = advancedSearchService
+		iterService.indexationService = indexationService
 
 		iterService.testCaseCyclicCallChecker = checker
 		iterService.denormalizedFieldValueService = denormalizedFieldValueService

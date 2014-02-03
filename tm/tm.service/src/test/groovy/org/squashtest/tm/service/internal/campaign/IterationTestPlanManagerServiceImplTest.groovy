@@ -21,22 +21,19 @@
 package org.squashtest.tm.service.internal.campaign;
 
 
-import java.util.Collections;
-
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
-import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.Dataset
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
 import org.squashtest.tm.domain.users.User
+import org.squashtest.tm.service.advancedsearch.IndexationService
 import org.squashtest.tm.service.internal.repository.DatasetDao
 import org.squashtest.tm.service.internal.repository.IterationDao
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao
-import org.squashtest.tm.service.library.AdvancedSearchService
 
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -49,7 +46,7 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 	IterationDao iterDao = Mock()
 	IterationTestPlanDao itemDao = Mock()
 	DatasetDao datasetDao = Mock()
-	AdvancedSearchService advancedSearchService = Mock()
+	IndexationService indexationService = Mock()
 	CampaignNodeDeletionHandler deletionHandler = Mock()
 
 	def setup(){
@@ -57,7 +54,7 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 		service.iterationDao = iterDao
 		service.iterationTestPlanDao = itemDao
 		service.datasetDao = datasetDao
-		service.advancedSearchService = advancedSearchService
+		service.indexationService = indexationService
 		service.deletionHandler = deletionHandler
 		
 	}

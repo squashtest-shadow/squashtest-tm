@@ -226,8 +226,16 @@
 		interface="org.squashtest.tm.service.campaign.CampaignTestPlanManagerService"
 		availability="mandatory" />
 
-	<osgi:reference id="squashtest.tm.service.AdvancedSearchService"
-		bean-name="squashtest.tm.service.AdvancedSearchService" interface="org.squashtest.tm.service.library.AdvancedSearchService"
+	<osgi:reference id="squashtest.tm.service.IndexationService"
+		bean-name="squashtest.tm.service.IndexationService" interface="org.squashtest.tm.service.advancedsearch.IndexationService"
+		availability="mandatory" />
+		
+			<osgi:reference id="squashtest.tm.service.TestCaseAdvancedSearchService"
+		bean-name="squashtest.tm.service.TestCaseAdvancedSearchService" interface="org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService"
+		availability="mandatory" />
+		
+			<osgi:reference id="squashtest.tm.service.RequirementVersionAdvancedSearchService"
+		bean-name="squashtest.tm.service.RequirementVersionAdvancedSearchService" interface="org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService"
 		availability="mandatory" />
 
 
@@ -235,9 +243,7 @@
 		bean-name="squashtest.tm.service.SearchService" interface="org.squashtest.tm.service.library.SearchService"
 		availability="mandatory" />
 
-	<osgi:reference id="squashtest.tm.service.AdvancedSearchService"
-		bean-name="squashtest.tm.service.AdvancedSearchService" interface="org.squashtest.tm.service.library.AdvancedSearchService"
-		availability="mandatory" />
+	
 
 	<osgi:reference id="squashtest.core.security.PermissionEvaluationService"
 		bean-name="squashtest.core.security.PermissionEvaluationService"

@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.users;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +31,6 @@ import org.apache.commons.collections.Transformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -41,7 +39,6 @@ import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.audit.AuditableMixin;
-import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.security.PermissionEvaluationService;

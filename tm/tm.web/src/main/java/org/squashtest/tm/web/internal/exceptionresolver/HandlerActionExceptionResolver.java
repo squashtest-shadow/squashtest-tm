@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.exceptionresolver;
 
-import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
 
@@ -28,7 +27,6 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;

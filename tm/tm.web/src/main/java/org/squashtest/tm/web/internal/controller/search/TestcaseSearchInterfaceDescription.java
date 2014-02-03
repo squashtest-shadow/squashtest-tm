@@ -25,16 +25,21 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.inject.Inject;
+
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.testcase.TestCaseType;
+import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
 
 @Component
 public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescription {
-
+	@Inject
+	private TestCaseAdvancedSearchService advancedSearchService;
+	
 	public SearchInputPanelModel createGeneralInfoPanel(Locale locale) {
 		SearchInputPanelModel panel = new SearchInputPanelModel();
 		panel.setTitle(getMessageSource().internationalize("search.testcase.generalinfos.panel.title", locale));
@@ -274,7 +279,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 				"search.testcase.history.createdBy.label", locale), MULTISELECT);
 		panel.addField(createdByField);
 
-		List<String> users = getAdvancedSearchService().findAllUsersWhoCreatedTestCases();
+		List<String> users = advancedSearchService.findAllUsersWhoCreatedTestCases();
 		for (String user : users) {
 			createdByField.addPossibleValue(new SearchInputPossibleValueModel(user, user));
 		}
@@ -287,7 +292,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 				"search.testcase.history.modifiedBy.label", locale), MULTISELECT);
 		panel.addField(modifiedByField);
 
-		users = getAdvancedSearchService().findAllUsersWhoModifiedTestCases();
+		users = advancedSearchService.findAllUsersWhoModifiedTestCases();
 		for (String user : users) {
 			if (user == null || "".equals(user.trim())) {
 				modifiedByField.addPossibleValue(new SearchInputPossibleValueModel(getMessageSource().internationalize(

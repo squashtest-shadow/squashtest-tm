@@ -39,11 +39,12 @@ import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.service.advancedsearch.AdvancedSearchService;
+import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
 import org.squashtest.tm.service.internal.repository.AttachmentContentDao;
 import org.squashtest.tm.service.internal.repository.AttachmentDao;
 import org.squashtest.tm.service.internal.repository.AttachmentListDao;
-import org.squashtest.tm.service.library.AdvancedSearchService;
 
 /*
  * FIXME !
@@ -71,7 +72,7 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	private AttachmentListDao attachmentListDao;
 	
 	@Inject
-	private AdvancedSearchService advancedSearchService; 
+	private IndexationService indexationService; 
 
 	@Override
 	public Long addAttachment(Long attachmentListId, Attachment attachment) {
@@ -90,12 +91,12 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 		
 		TestCase testCase = attachmentListDao.findAssociatedTestCaseIfExists(attachmentListId);
 		if(testCase != null){
-			this.advancedSearchService.reindexTestCase(testCase.getId());
+			this.indexationService.reindexTestCase(testCase.getId());
 		}
 		
 		RequirementVersion requirementVersion = attachmentListDao.findAssociatedRequirementVersionIfExists(attachmentListId);
 		if( requirementVersion != null){
-			this.advancedSearchService.reindexRequirementVersion(requirementVersion.getId());
+			this.indexationService.reindexRequirementVersion(requirementVersion.getId());
 		}
 		
 		return attachment.getId();
@@ -143,12 +144,12 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 		
 		TestCase testCase = attachmentListDao.findAssociatedTestCaseIfExists(attachmentListId);
 		if(testCase != null){
-			this.advancedSearchService.reindexTestCase(testCase.getId());
+			this.indexationService.reindexTestCase(testCase.getId());
 		}
 		
 		RequirementVersion requirementVersion = attachmentListDao.findAssociatedRequirementVersionIfExists(attachmentListId);
 		if( requirementVersion != null){
-			this.advancedSearchService.reindexRequirementVersion(requirementVersion.getId());
+			this.indexationService.reindexRequirementVersion(requirementVersion.getId());
 		}
 	}
 
@@ -177,12 +178,12 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 		
 		TestCase testCase = attachmentListDao.findAssociatedTestCaseIfExists(attachmentListId);
 		if(testCase != null){
-			this.advancedSearchService.reindexTestCase(testCase.getId());
+			this.indexationService.reindexTestCase(testCase.getId());
 		}
 		
 		RequirementVersion requirementVersion = attachmentListDao.findAssociatedRequirementVersionIfExists(attachmentListId);
 		if( requirementVersion != null){
-			this.advancedSearchService.reindexRequirementVersion(requirementVersion.getId());
+			this.indexationService.reindexRequirementVersion(requirementVersion.getId());
 		}
 		
 	}
