@@ -30,16 +30,17 @@
 <script type="text/javascript">
 require( ["common"], function(){
 	require( ["jquery"], function($){
-	var conf = {
-		model : ${ json:serialize(rootModel) },
-		workspace : "test-case",
-		treeselector : "#tree"
-				
-	}
-
-	$(function(){
-		require(['tree'], function(treeInit){
-			treeInit.initCallStepTree(conf);
+		var conf = {
+			model : ${ json:serialize(rootModel) },
+			workspace : "test-case",
+			treeselector : "#tree"
+					
+		}
+	
+		$(function(){
+			require(['tree'], function(treeInit){
+				treeInit.initCallStepTree(conf);
+			});
 		});
 	});
 });
