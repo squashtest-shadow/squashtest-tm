@@ -21,160 +21,193 @@
 package org.squashtest.tm.service.statistics.iteration;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.planning.StandardWorkloadCalendar;
 import org.squashtest.tm.domain.planning.WorkloadCalendar;
 
 public class TestSuiteTestInventoryStatistics {
 
-    private String testsuiteName = "";
-    private Date scheduledStart;
-    private Date scheduledEnd;
-    
-    private int nbReady = 0;
-    private  int nbRunning = 0;
-    private  int nbSuccess = 0;
-    private int nbFailure = 0;
-    private int nbBlocked = 0;
-    private int nbUntestable = 0;
+	private String testsuiteName = "";
+	private Date scheduledStart;
+	private Date scheduledEnd;
 
-    private int nbVeryHigh = 0;
-    private int nbHigh = 0;
-    private int nbMedium = 0;
-    private int nbLow = 0;
-	
-    public String getTestsuiteName() {
+	private Map<ExecutionStatus, Integer> statusesNb;
+	private int nbVeryHigh = 0;
+	private int nbHigh = 0;
+	private int nbMedium = 0;
+	private int nbLow = 0;
+
+	public TestSuiteTestInventoryStatistics() {
+		initStatusesNb();
+	}
+
+	private void initStatusesNb() {
+		statusesNb = new HashMap<ExecutionStatus, Integer>(ExecutionStatus.getCanonicalStatusSet().size());
+		for (ExecutionStatus status : ExecutionStatus.getCanonicalStatusSet()) {
+			statusesNb.put(status, 0);
+		}
+	}
+
+	public String getTestsuiteName() {
 		return testsuiteName;
 	}
+
 	public void setTestsuiteName(String testsuiteName) {
 		this.testsuiteName = testsuiteName;
 	}
+
 	public int getNbTotal() {
-		return nbReady+nbRunning+nbSuccess+nbFailure+nbBlocked+nbUntestable;
+		int tot = 0;
+		for (Entry<ExecutionStatus, Integer> statusNb : statusesNb.entrySet()) {
+			tot += statusNb.getValue();
+		}
+		return tot;
 	}
+
 	public int getNbToExecute() {
-		return nbReady+nbRunning;
+		return getNbReady() + getNbRunning();
 	}
+
 	public int getNbExecuted() {
-		return nbSuccess+nbFailure+nbBlocked+nbUntestable;
+		return getNbSuccess() + getNbFailure() + getNbBlocked() + getNbUntestable();
 	}
+
 	public int getNbReady() {
-		return nbReady;
+		return statusesNb.get(ExecutionStatus.READY);
 	}
-	public void addNbReady(int nbReady) {
-		this.nbReady += nbReady;
-	}
+
 	public int getNbRunning() {
-		return nbRunning;
+		return statusesNb.get(ExecutionStatus.RUNNING);
 	}
-	public void addNbRunning(int nbRunning) {
-		this.nbRunning += nbRunning;
-	}
+
 	public int getNbSuccess() {
-		return nbSuccess;
+		return statusesNb.get(ExecutionStatus.SUCCESS);
 	}
-	public void addNbSuccess(int nbSuccess) {
-		this.nbSuccess += nbSuccess;
-	}
+
 	public int getNbFailure() {
-		return nbFailure;
+		return statusesNb.get(ExecutionStatus.FAILURE);
 	}
-	public void addNbFailure(int nbFailure) {
-		this.nbFailure += nbFailure;
-	}
+
 	public int getNbBlocked() {
-		return nbBlocked;
+		return statusesNb.get(ExecutionStatus.BLOCKED);
 	}
-	public void addNbBlocked(int nbBlocked) {
-		this.nbBlocked += nbBlocked;
-	}
+
 	public int getNbUntestable() {
-		return nbUntestable;
+		return statusesNb.get(ExecutionStatus.UNTESTABLE);
 	}
-	public void addNbUntestable(int nbUntestable) {
-		this.nbUntestable += nbUntestable;
-	}
+
 	public float getPcProgress() {
-		return Math.round(((float) getNbExecuted() / (float) getNbTotal())*10000)/(float) 100;
+		return Math.round(((float) getNbExecuted() / (float) getNbTotal()) * 10000) / (float) 100;
 	}
+
 	public float getPcSuccess() {
-		return  Math.round(((float) getNbSuccess() / (float) getNbTotal())*10000)/ (float) 100;
+		return Math.round(((float) getNbSuccess() / (float) getNbTotal()) * 10000) / (float) 100;
 	}
+
 	public float getPcFailure() {
-		return  Math.round(((float) getNbFailure() / (float) getNbTotal())*10000)/ (float) 100;
+		return Math.round(((float) getNbFailure() / (float) getNbTotal()) * 10000) / (float) 100;
 	}
+
 	public float getPcPrevProgress() {
-		if(nbOfTestsToExecuteToDate(scheduledStart, scheduledEnd, new Date(), getNbTotal()) != 0.0f){
-			return Math.round(((float) getNbExecuted() / nbOfTestsToExecuteToDate(scheduledStart, scheduledEnd, new Date(), getNbTotal()))*10000)/ (float) 100;
+		if (nbOfTestsToExecuteToDate(scheduledStart, scheduledEnd, new Date(), getNbTotal()) != 0.0f) {
+			return Math.round(((float) getNbExecuted() / nbOfTestsToExecuteToDate(scheduledStart, scheduledEnd,
+					new Date(), getNbTotal())) * 10000) / (float) 100;
 		} else {
 			return getPcProgress();
 		}
-		
+
 	}
+
 	public int getNbPrevToExecute() {
-		return ((int) nbOfTestsToExecuteToDate(scheduledStart, scheduledEnd,  new Date(), getNbTotal()) - getNbExecuted());
+		return ((int) nbOfTestsToExecuteToDate(scheduledStart, scheduledEnd, new Date(), getNbTotal()) - getNbExecuted());
 	}
+
 	public int getNbVeryHigh() {
 		return nbVeryHigh;
 	}
+
 	public void addNbVeryHigh(int nbVeryHigh) {
 		this.nbVeryHigh += nbVeryHigh;
 	}
+
 	public int getNbHigh() {
 		return nbHigh;
 	}
+
 	public void addNbHigh(int nbHigh) {
 		this.nbHigh += nbHigh;
 	}
+
 	public int getNbMedium() {
 		return nbMedium;
 	}
+
 	public void addNbMedium(int nbMedium) {
 		this.nbMedium += nbMedium;
 	}
+
 	public int getNbLow() {
 		return nbLow;
 	}
+
 	public void addNbLow(int nbLow) {
 		this.nbLow += nbLow;
 	}
-	
-	private float nbOfTestsToExecuteToDate(Date scheduledStart, Date scheduledEnd, Date currentDate, int nbTests){
-		
+
+	private float nbOfTestsToExecuteToDate(Date scheduledStart, Date scheduledEnd, Date currentDate, int nbTests) {
+
 		float result = 0.0f;
-		
-		//if current date is before the start of the previsional schedule
-		if(scheduledStart == null || scheduledEnd==null || currentDate.before(scheduledStart)){
+
+		// if current date is before the start of the previsional schedule
+		if (scheduledStart == null || scheduledEnd == null || currentDate.before(scheduledStart)) {
 			result = 0.0f;
-		//if current date is after the end of the execution schedule
-		} else if(currentDate.after(scheduledEnd)){
+			// if current date is after the end of the execution schedule
+		} else if (currentDate.after(scheduledEnd)) {
 			result = nbTests;
 		} else {
-			
-			//Get total number of business days
+
+			// Get total number of business days
 			WorkloadCalendar workloadCalendar = new StandardWorkloadCalendar();
 			float totalNumberOfBusinessDays = workloadCalendar.getWorkload(scheduledStart, scheduledEnd);
 
-			//Get number of open days before current date
+			// Get number of open days before current date
 			float numberOfSpentBusinessDays = workloadCalendar.getWorkload(scheduledStart, currentDate);
-			
-			//Compute percentage of already spent time 
+
+			// Compute percentage of already spent time
 			float spentTime = numberOfSpentBusinessDays / totalNumberOfBusinessDays;
-			
+
 			result = nbTests * spentTime;
 		}
 		return result;
 	}
+
 	public Date getScheduledStart() {
 		return scheduledStart;
 	}
+
 	public void setScheduledStart(Date scheduledStart) {
 		this.scheduledStart = scheduledStart;
 	}
+
 	public Date getScheduledEnd() {
 		return scheduledEnd;
 	}
+
 	public void setScheduledEnd(Date scheduledEnd) {
 		this.scheduledEnd = scheduledEnd;
+	}
+
+	public void addNumber(int nb, ExecutionStatus status) {
+		Integer thisNb = statusesNb.get(status);
+		if (thisNb != null) {
+			thisNb += nb;
+			statusesNb.put(status, thisNb);
+		} else {
+			statusesNb.put(status, Integer.valueOf(nb));
+		}
 	}
 }

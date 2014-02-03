@@ -20,88 +20,76 @@
  */
 package org.squashtest.tm.service.statistics.campaign;
 
-public final class IterationTestInventoryStatistics{
-	
+import java.util.HashMap;
+import java.util.Map;
+
+import org.squashtest.tm.domain.execution.ExecutionStatus;
+
+public final class IterationTestInventoryStatistics {
+
 	private String iterationName;
-	private int nbReady;
-	private int nbRunning;
-	private int nbSuccess;
-	private int nbFailure;
-	private int nbBlocked;
-	private int nbUntestable;
-	private int nbWarning;
-	private int nbError;
-	
+	private Map<ExecutionStatus, Integer> statistics;
+
+	public IterationTestInventoryStatistics() {
+		initStatistics();
+	}
+
+	private void initStatistics() {
+		statistics = new HashMap<ExecutionStatus, Integer>(ExecutionStatus.values().length);
+		for (ExecutionStatus status : ExecutionStatus.values()) {
+			statistics.put(status, 0);
+		}
+
+	}
+
 	public String getIterationName() {
 		return iterationName;
 	}
-	
+
 	public void setIterationName(String iterationName) {
 		this.iterationName = iterationName;
 	}
-	
+
 	public int getNbReady() {
-		return nbReady;
+		return this.statistics.get(ExecutionStatus.READY);
 	}
-	
-	public void setNbReady(int nbReady) {
-		this.nbReady = nbReady;
-	}
-	
+
 	public int getNbRunning() {
-		return nbRunning;
+		return this.statistics.get(ExecutionStatus.RUNNING);
 	}
-	
-	public void setNbRunning(int nbRunning) {
-		this.nbRunning = nbRunning;
-	}
-	
+
 	public int getNbSuccess() {
-		return nbSuccess;
+		return this.statistics.get(ExecutionStatus.SUCCESS);
 	}
-	
-	public void setNbSuccess(int nbSuccess) {
-		this.nbSuccess = nbSuccess;
-	}
+
 	public int getNbFailure() {
-		return nbFailure;
+		return this.statistics.get(ExecutionStatus.FAILURE);
 	}
-	
-	public void setNbFailure(int nbFailure) {
-		this.nbFailure = nbFailure;
-	}
-	
+
 	public int getNbBlocked() {
-		return nbBlocked;
+		return this.statistics.get(ExecutionStatus.BLOCKED);
 	}
-	public void setNbBlocked(int nbBlocked) {
-		this.nbBlocked = nbBlocked;
-	}
-	
+
 	public int getNbUntestable() {
-		return nbUntestable;
-	}
-	
-	public void setNbUntestable(int nbUntestable) {
-		this.nbUntestable = nbUntestable;
+		return this.statistics.get(ExecutionStatus.UNTESTABLE);
 	}
 
 	public int getNbWarning() {
-		return nbWarning;
-	}
-
-	public void setNbWarning(int nbWarning) {
-		this.nbWarning = nbWarning;
+		return this.statistics.get(ExecutionStatus.WARNING);
 	}
 
 	public int getNbError() {
-		return nbError;
+		return this.statistics.get(ExecutionStatus.ERROR);
 	}
 
-	public void setNbError(int nbError) {
-		this.nbError = nbError;
+	public int getNbNotRun() {
+		return this.statistics.get(ExecutionStatus.NOT_RUN);
 	}
-	
-	
-	
+
+	public void setNumber(int intValue, ExecutionStatus status) {
+
+		this.statistics.put(status, Integer.valueOf(intValue));
+
+	}
+
 }

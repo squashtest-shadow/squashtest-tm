@@ -137,18 +137,8 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 			if (status == null){
 				continue;	// status == null iif the test plan is empty 
 			}
+			newStatistics.setNumber(howmany.intValue(), status);
 			
-			switch(status){
-			case UNTESTABLE : newStatistics.setNbUntestable(howmany.intValue()); break;   
-			case BLOCKED : newStatistics.setNbBlocked(howmany.intValue()); break;
-			case FAILURE : newStatistics.setNbFailure(howmany.intValue()); break;   
-			case SUCCESS : newStatistics.setNbSuccess(howmany.intValue()); break;
-			case RUNNING : newStatistics.setNbRunning(howmany.intValue()); break;   
-			case READY 	 : newStatistics.setNbReady(howmany.intValue()); break;
-			case WARNING : newStatistics.setNbWarning(howmany.intValue()); break;   
-			case ERROR : newStatistics.setNbError(howmany.intValue()); break;
-			case NOT_RUN : newStatistics.setNbBlocked(howmany.intValue()); break;
-			}
 			
 		}
 		
@@ -172,18 +162,8 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 			
 			ExecutionStatus status = (ExecutionStatus)tuple[0];
 			Long howmany = (Long)tuple[1];
-			
-			switch(status){
-				case UNTESTABLE : result.addNbUntestable(howmany.intValue()); break;   
-				case BLOCKED : result.addNbBlocked(howmany.intValue()); break;
-				case FAILURE : result.addNbFailure(howmany.intValue()); break;   
-				case SUCCESS : result.addNbSuccess(howmany.intValue()); break;
-				case RUNNING : result.addNbRunning(howmany.intValue()); break;   
-				case READY 	 : result.addNbReady(howmany.intValue()); break;
-				case WARNING : result.addNbSuccess(howmany.intValue()); break;   
-				case ERROR : result.addNbFailure(howmany.intValue()); break;
-				case NOT_RUN : result.addNbBlocked(howmany.intValue()); break;
-			}
+
+			result.addNumber(howmany.intValue(), status.getCanonicalStatus());
 		}
 		
 		return result;

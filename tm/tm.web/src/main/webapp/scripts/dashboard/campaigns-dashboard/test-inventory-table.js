@@ -41,7 +41,7 @@ define(["../basic-objects/table-view"], function(TableView){
 				               m.nbRunning,
 				               m.nbSuccess + m.nbWarning,
 				               m.nbFailure,
-				               m.nbBlocked + m.nbError,
+				               m.nbBlocked + m.nbError + m.nbNotRun,
 				               m.nbUntestable,
 				               total,
 				               progress

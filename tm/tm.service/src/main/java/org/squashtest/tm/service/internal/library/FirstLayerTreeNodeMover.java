@@ -130,7 +130,6 @@ public class FirstLayerTreeNodeMover implements PasteOperation {
 	protected void processNodes(TreeNode toMove){
 		NodeType visitedType = whichVisitor.getTypeOf(toMove);
 
-
 		switch(visitedType){
 			case CAMPAIGN_FOLDER : 
 				visitLibraryNode((LibraryNode)toMove, campaignLibraryDao, campaignFolderDao); 

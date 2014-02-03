@@ -20,51 +20,62 @@
  */
 package org.squashtest.tm.service.statistics.campaign;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.squashtest.tm.domain.execution.ExecutionStatus;
+
+
 public class CampaignTestCaseStatusStatistics {
 
-	private int nbReady = 0;
-	private int nbRunning = 0;
-	private int nbSuccess = 0;
-	private int nbFailure = 0;
-	private int nbBlocked = 0;
-	private int nbUntestable = 0;
 	
+	private Map<ExecutionStatus, Integer> statistics ;
+	public CampaignTestCaseStatusStatistics() {
+		initStatistics();
+	}
+	
+	private void initStatistics() {
+		statistics = new HashMap<ExecutionStatus, Integer>(ExecutionStatus.getCanonicalStatusSet().size());
+		for(ExecutionStatus status: ExecutionStatus.getCanonicalStatusSet()){
+			statistics.put(status, 0);
+		}
+		
+	}
+
+	public void addNumber(int nb, ExecutionStatus status){
+		Integer thisNb = statistics.get(status);
+		if(thisNb != null){
+			thisNb += nb;
+			statistics.put(status, thisNb);
+		}else{
+			statistics.put(status, Integer.valueOf(nb));
+		}
+	}
+
 	public int getNbReady() {
-		return nbReady;
+		return statistics.get(ExecutionStatus.READY);
 	}
-	public void addNbReady(int nbReady) {
-		this.nbReady += nbReady;
-	}
+	
 	public int getNbRunning() {
-		return nbRunning;
+		return statistics.get(ExecutionStatus.RUNNING);
 	}
-	public void addNbRunning(int nbRunning) {
-		this.nbRunning += nbRunning;
-	}
+	
 	public int getNbSuccess() {
-		return nbSuccess;
+		return statistics.get(ExecutionStatus.SUCCESS);
 	}
-	public void addNbSuccess(int nbSuccess) {
-		this.nbSuccess += nbSuccess;
-	}
+	
 	public int getNbFailure() {
-		return nbFailure;
+		return statistics.get(ExecutionStatus.FAILURE);
 	}
-	public void addNbFailure(int nbFailure) {
-		this.nbFailure += nbFailure;
-	}
+	
 	public int getNbBlocked() {
-		return nbBlocked;
+		return statistics.get(ExecutionStatus.BLOCKED);
 	}
-	public void addNbBlocked(int nbBlocked) {
-		this.nbBlocked += nbBlocked;
-	}
+	
 	public int getNbUntestable() {
-		return nbUntestable;
+		return statistics.get(ExecutionStatus.UNTESTABLE);
 	}
-	public void addNbUntestable(int nbUntestable) {
-		this.nbUntestable += nbUntestable;
-	}
+	
 	
 
 }

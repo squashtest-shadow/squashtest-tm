@@ -69,17 +69,8 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 			ExecutionStatus status = (ExecutionStatus)tuple[0];
 			Long howmany = (Long)tuple[1];
 			
-			switch(status){
-				case UNTESTABLE : result.addNbUntestable(howmany.intValue()); break;   
-				case BLOCKED : result.addNbBlocked(howmany.intValue()); break;
-				case FAILURE : result.addNbFailure(howmany.intValue()); break;   
-				case SUCCESS : result.addNbSuccess(howmany.intValue()); break;
-				case RUNNING : result.addNbRunning(howmany.intValue()); break;   
-				case READY 	 : result.addNbReady(howmany.intValue()); break;
-				case WARNING : result.addNbSuccess(howmany.intValue()); break;   
-				case ERROR : result.addNbFailure(howmany.intValue()); break;
-				case NOT_RUN : result.addNbBlocked(howmany.intValue()); break;
-			}
+			result.addNumber(howmany.intValue(), status.getCanonicalStatus());
+			
 		}
 		
 		return result;
@@ -231,20 +222,11 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 			/*
 			 * In any other cases we can process the row
 			 */
-			switch(status){
-				case UNTESTABLE : 	newStatistics.addNbUntestable(howmany.intValue()); break;   
-				case BLOCKED : 		newStatistics.addNbBlocked(howmany.intValue()); break;
-				case FAILURE : 		newStatistics.addNbFailure(howmany.intValue()); break;   
-				case SUCCESS : 		newStatistics.addNbSuccess(howmany.intValue()); break;
-				case RUNNING : 		newStatistics.addNbRunning(howmany.intValue()); 
-									addImportance(newStatistics, importance, howmany); 
-									break;  
-				case READY 	 : 		newStatistics.addNbReady(howmany.intValue()); 
-									addImportance(newStatistics, importance, howmany); 
-									break;
-				case WARNING : 		newStatistics.addNbSuccess(howmany.intValue()); break;   
-				case ERROR : 		newStatistics.addNbFailure(howmany.intValue()); break;
-				case NOT_RUN : 		newStatistics.addNbBlocked(howmany.intValue()); break;
+			newStatistics.addNumber(howmany.intValue(), status.getCanonicalStatus());
+			
+			if(status.equals(ExecutionStatus.RUNNING) || status.equals(ExecutionStatus.READY)){
+				addImportance(newStatistics, importance, howmany); 
+				
 			}
 			
 		}
