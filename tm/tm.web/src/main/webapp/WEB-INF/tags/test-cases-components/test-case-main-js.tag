@@ -45,6 +45,10 @@
 <%-- ----------------------------------------- Remaining of the javascript initialization ----------------------------- --%>
 
 <script type="text/javascript">
+
+
+var identity = { resid : ${testCase.id}, restype : "test-cases"  };
+
 require([ "common" ], function() {
 	require(["jquery", 
 	   			"squash.basicwidgets", 
@@ -71,7 +75,7 @@ require([ "common" ], function() {
 	}
 	
 	function renameTestCaseSuccess(data){
-		eventBus.trigger('node.rename', { identity : {resid:${testCase.id}, rel : "test-case"}, newName : data.newName});
+		eventBus.trigger('node.rename', { identity : identity, newName : data.newName});
 	};	
 	
 	squashtm = squashtm || {};
@@ -91,7 +95,6 @@ require([ "common" ], function() {
 		basic.init();
 		
 		//init the renaming listener
-		var identity = { resid : ${testCase.id}, rel : "test-case"  };
 		
 		var nameHandler = contentHandlers.getNameAndReferenceHandler();
 		

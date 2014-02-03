@@ -103,7 +103,7 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "jeditable.s
 						
 						$(this.importanceEditable).on("selectJEditable.refresh", this.onRefreshImportance);
 					}
-					this.identity = { resid : this.settings.testCaseId, rel : "test-case"  };
+					this.identity = { resid : this.settings.testCaseId, restype : "test-cases"  };
 					
 				},
 				

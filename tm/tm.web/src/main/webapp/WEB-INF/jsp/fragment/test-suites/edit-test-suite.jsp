@@ -111,7 +111,7 @@
 <script type="text/javascript">
 
 	function renameTestSuiteSuccess(data){
-		squashtm.workspace.eventBus.fire('node.rename', {identity : {resid : ${testSuite.id}, rel :"test-suite"}, newName : data.newName});		
+		squashtm.workspace.eventBus.trigger('node.rename', {identity : {resid : ${testSuite.id}, restype :"test-suites"}, newName : data.newName});		
 	}
 	
 	/*post a request to duplicate the test suite*/
