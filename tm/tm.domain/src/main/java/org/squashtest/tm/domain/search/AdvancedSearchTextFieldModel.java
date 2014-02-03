@@ -22,7 +22,7 @@ package org.squashtest.tm.domain.search;
 
 public class AdvancedSearchTextFieldModel implements AdvancedSearchFieldModel{
 
-	private String type = AdvancedSearchFieldModel.TEXT;
+	private AdvancedSearchFieldModelType type = AdvancedSearchFieldModelType.TEXT;
 
 	private String value;
 	
@@ -33,12 +33,8 @@ public class AdvancedSearchTextFieldModel implements AdvancedSearchFieldModel{
 	}
 
 	@Override
-	public String getType() {
+	public AdvancedSearchFieldModelType getType() {
 		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
 	}
 
 	public void setValue(String value) {

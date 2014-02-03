@@ -22,7 +22,7 @@ package org.squashtest.tm.domain.search;
 
 public class AdvancedSearchSingleFieldModel implements AdvancedSearchFieldModel{
 
-	private String type = AdvancedSearchFieldModel.SINGLE;
+	private AdvancedSearchFieldModelType type = AdvancedSearchFieldModelType.SINGLE;
 	
 	private String value;
 
@@ -33,12 +33,8 @@ public class AdvancedSearchSingleFieldModel implements AdvancedSearchFieldModel{
 	private boolean ignoreBridge = false;
 	
 	@Override
-	public String getType() {
+	public AdvancedSearchFieldModelType getType() {
 		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
 	}
 
 	public void setValue(String value) {

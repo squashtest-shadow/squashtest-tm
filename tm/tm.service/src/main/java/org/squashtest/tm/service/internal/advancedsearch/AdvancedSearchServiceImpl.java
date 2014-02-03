@@ -37,6 +37,7 @@ import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
 import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.search.AdvancedSearchRangeFieldModel;
@@ -315,37 +316,35 @@ public  class AdvancedSearchServiceImpl implements AdvancedSearchService{
 		List<String> tokens = new ArrayList<String>();
 		boolean inDoubleQuoteContext = false;
 		char[] input = textInput.toCharArray();
+		
 		int start = 0;
-
-		for(int i=0; i<input.length; i++){
-			
-			//if we encounter a double quote at the very start 
-			if(i == 0){
-				if(input[i] == '"'){
-					inDoubleQuoteContext = true;
-					start = i+1;
-				}
-			} else {				
-				//if we encounter a blank while NOT in the context of a double quote
-				if(input[i] == ' ' && input[i-1] != ' ' && !inDoubleQuoteContext){
-					addToTokens(tokens, textInput.substring(start, i).trim());
-					start = i+1;
-				}
-				
-				//if we encounter a double quote while in the context of a double quote
-				else if(input[i] == '"' && input[i-1] != '\\' && inDoubleQuoteContext){	
-					addToTokens(tokens, textInput.substring(start, i).trim());
-					inDoubleQuoteContext = false;
-					start = i+1;
-				}
-				
-				//if we encounter a double quote while NOT in the context of a double quote
-				else if(input[i] == '"' && input[i-1] != '\\' && !inDoubleQuoteContext){
-					addToTokens(tokens, textInput.substring(start, i).trim());
-					inDoubleQuoteContext = true;
-					start = i+1;
-				}
+		//if we encounter a double quote at the very start 
+		if(input[0] == '"'){
+			inDoubleQuoteContext = true;
+			start = 1;
+		}
+		
+		for(int i=1; i<input.length; i++){
+			//if we encounter a blank while NOT in the context of a double quote
+			if(input[i] == ' ' && input[i-1] != ' ' && !inDoubleQuoteContext){
+				addToTokens(tokens, textInput.substring(start, i).trim());
+				start = i+1;
 			}
+			
+			//if we encounter a double quote while in the context of a double quote
+			else if(input[i] == '"' && input[i-1] != '\\' && inDoubleQuoteContext){	
+				addToTokens(tokens, textInput.substring(start, i).trim());
+				inDoubleQuoteContext = false;
+				start = i+1;
+			}
+			
+			//if we encounter a double quote while NOT in the context of a double quote
+			else if(input[i] == '"' && input[i-1] != '\\' && !inDoubleQuoteContext){
+				addToTokens(tokens, textInput.substring(start, i).trim());
+				inDoubleQuoteContext = true;
+				start = i+1;
+			}
+			
 		}
 		
 		if(input[input.length-1] != '"' && input[input.length-1] != ' '){
@@ -425,25 +424,28 @@ public  class AdvancedSearchServiceImpl implements AdvancedSearchService{
 
 			AdvancedSearchFieldModel fieldModel = model.getFields().get(
 					fieldKey);
-			String type = fieldModel.getType();
+			AdvancedSearchFieldModelType type = fieldModel.getType();
 			boolean ignoreBridge = fieldModel.isIgnoreBridge();
-
-			if (AdvancedSearchFieldModel.SINGLE.equals(type)) {
-				query = buildQueryForSingleCriterium(fieldKey, fieldModel, qb, ignoreBridge, locale);
-
-			} else if (AdvancedSearchFieldModel.LIST.equals(type)) {
-				query = buildQueryForListCriterium(fieldKey, fieldModel, qb);
-
-			} else if (AdvancedSearchFieldModel.TEXT.equals(type)) {
-				query = buildQueryForTextCriterium(fieldKey, fieldModel, qb, ignoreBridge);
-
-			} else if (AdvancedSearchFieldModel.RANGE.equals(type)) {
-				query = buildQueryForRangeCriterium(fieldKey, fieldModel, qb);
-
-			} else if (AdvancedSearchFieldModel.TIME_INTERVAL.equals(type)) {
-				query = buildQueryForTimeIntervalCriterium(fieldKey,
-						fieldModel, qb);
+			
+			switch (type) {
+				case SINGLE:
+					query = buildQueryForSingleCriterium(fieldKey, fieldModel, qb, ignoreBridge, locale);
+					break;
+				case LIST:
+					query = buildQueryForListCriterium(fieldKey, fieldModel, qb);
+					break;
+				case TEXT:
+					query = buildQueryForTextCriterium(fieldKey, fieldModel, qb, ignoreBridge);
+					break;
+				case RANGE:
+					query = buildQueryForRangeCriterium(fieldKey, fieldModel, qb);
+					break;
+				case TIME_INTERVAL:
+					query = buildQueryForTimeIntervalCriterium(fieldKey, fieldModel, qb);
+				default:
+					break;
 			}
+			
 
 			if (query != null && mainQuery == null) {
 				mainQuery = query;

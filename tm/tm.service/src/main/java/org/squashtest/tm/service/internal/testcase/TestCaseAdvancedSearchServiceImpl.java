@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.testcase;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -48,7 +49,6 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.search.SearchExportCSVModel;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.service.campaign.IterationFinder;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
@@ -71,10 +71,10 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 	@Inject
 	private TestCaseDao testCaseDao;
-	
+
 	@Inject
 	private IterationModificationService iterationService;
-	
+
 	@Inject
 	private RequirementVersionAdvancedSearchService requirementSearchService;
 
@@ -86,7 +86,9 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			new SortField("reference", SortField.STRING, false), new SortField("importance", SortField.STRING, false),
 			new SortField("label", SortField.STRING, false) };
 
-	
+	private final static List<String> longSortableFields = Arrays.asList("requirements", "steps", "id", "iterations",
+			"attachments");
+
 	@Override
 	public List<String> findAllUsersWhoCreatedTestCases() {
 		List<Project> readableProjects = projectFinder.findAllReadable();
@@ -141,43 +143,43 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 	private Sort getTestCaseSort(List<Sorting> sortings) {
 
-		boolean isReverse = true;
-		Sort sort = null;
-
 		if (sortings == null || sortings.size() == 0) {
+			return new Sort(DEFAULT_SORT_TESTCASES);
+		}
 
-			sort = new Sort(DEFAULT_SORT_TESTCASES);
+		boolean isReverse = true;
+		SortField[] sortFieldArray = new SortField[sortings.size()];
 
-		} else {
-			SortField[] sortFieldArray = new SortField[sortings.size()];
+		for (int i = 0; i < sortings.size(); i++) {
 
-			for (int i = 0; i < sortings.size(); i++) {
-
-				if (SortOrder.ASCENDING.equals(sortings.get(i).getSortOrder())) {
-					isReverse = false;
-				}
-
-				String fieldName = sortings.get(i).getSortedAttribute();
-
-				if (fieldName.startsWith("TestCase.")) {
-					fieldName = fieldName.replaceFirst("TestCase.", "");
-				} else if (fieldName.startsWith("Project.")) {
-					fieldName = fieldName.replaceFirst("Project.", "project.");
-				}
-
-				if ("id".equals(fieldName) || "requirements".equals(fieldName) || "steps".equals(fieldName)
-						|| "iterations".equals(fieldName) || "attachments".equals(fieldName)) {
-					sortFieldArray[i] = new SortField(fieldName, SortField.LONG, isReverse);
-				} else if ("reference".equals(fieldName)) {
-					sortFieldArray[i] = new SortField(fieldName + "Sort", SortField.STRING, isReverse);
-				} else {
-					sortFieldArray[i] = new SortField(fieldName, SortField.STRING, isReverse);
-				}
+			if (SortOrder.ASCENDING.equals(sortings.get(i).getSortOrder())) {
+				isReverse = false;
 			}
 
-			sort = new Sort(sortFieldArray);
+			String fieldName = sortings.get(i).getSortedAttribute();
+
+			fieldName = formatSortFieldName(fieldName);
+
+			if (longSortableFields.contains(fieldName)) {
+				sortFieldArray[i] = new SortField(fieldName, SortField.LONG, isReverse);
+			} else if ("reference".equals(fieldName)) {
+				sortFieldArray[i] = new SortField(fieldName + "Sort", SortField.STRING, isReverse);
+			} else {
+				sortFieldArray[i] = new SortField(fieldName, SortField.STRING, isReverse);
+			}
 		}
-		return sort;
+
+		return new Sort(sortFieldArray);
+
+	}
+
+	private String formatSortFieldName(String fieldName) {
+		if (fieldName.startsWith("TestCase.")) {
+			fieldName = fieldName.replaceFirst("TestCase.", "");
+		} else if (fieldName.startsWith("Project.")) {
+			fieldName = fieldName.replaceFirst("Project.", "project.");
+		}
+		return fieldName;
 	}
 
 	@Override

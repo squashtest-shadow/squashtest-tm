@@ -25,7 +25,7 @@ import java.util.List;
 
 public class AdvancedSearchListFieldModel implements AdvancedSearchFieldModel{
 
-	private String type = AdvancedSearchFieldModel.LIST;
+	private AdvancedSearchFieldModelType type = AdvancedSearchFieldModelType.LIST;
 	
 	private List<String> values = new ArrayList<String>();
 	
@@ -36,7 +36,7 @@ public class AdvancedSearchListFieldModel implements AdvancedSearchFieldModel{
 	}
 	
 	@Override
-	public String getType(){
+	public AdvancedSearchFieldModelType getType(){
 		return this.type;
 	}
 

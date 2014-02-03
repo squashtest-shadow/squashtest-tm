@@ -24,7 +24,7 @@ import java.util.Date;
 
 public class AdvancedSearchTimeIntervalFieldModel implements AdvancedSearchFieldModel{
 
-	private String type = AdvancedSearchFieldModel.TIME_INTERVAL;
+	private AdvancedSearchFieldModelType type = AdvancedSearchFieldModelType.TIME_INTERVAL;
 
 	private Date startDate;
 	
@@ -33,7 +33,7 @@ public class AdvancedSearchTimeIntervalFieldModel implements AdvancedSearchField
 	private boolean ignoreBridge = false;
 	
 	@Override
-	public String getType() {
+	public AdvancedSearchFieldModelType getType() {
 		return this.type;
 	}
 
@@ -53,9 +53,7 @@ public class AdvancedSearchTimeIntervalFieldModel implements AdvancedSearchField
 		this.endDate = endDate;
 	}
 
-	public void setType(String type) {
-		this.type = type;
-	}
+	
 	
 	@Override
 	public boolean isIgnoreBridge() {

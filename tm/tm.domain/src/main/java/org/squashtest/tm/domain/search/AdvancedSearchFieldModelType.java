@@ -20,39 +20,6 @@
  */
 package org.squashtest.tm.domain.search;
 
-public class AdvancedSearchRangeFieldModel implements AdvancedSearchFieldModel{
-
-	private AdvancedSearchFieldModelType type = AdvancedSearchFieldModelType.RANGE;
-	
-	private Integer minValue;
-	
-	private Integer maxValue;
-
-	private boolean ignoreBridge = false;
-	
-	@Override
-	public AdvancedSearchFieldModelType getType() {
-		return this.type;
-	}
-
-	public Integer getMinValue() {
-		return minValue;
-	}
-
-	public void setMinValue(Integer minValue) {
-		this.minValue = minValue;
-	}
-
-	public Integer getMaxValue() {
-		return maxValue;
-	}
-
-	public void setMaxValue(Integer maxValue) {
-		this.maxValue = maxValue;
-	}
-	
-	@Override
-	public boolean isIgnoreBridge() {
-		return this.ignoreBridge;
-	}
+public enum AdvancedSearchFieldModelType {
+ SINGLE, LIST,TEXT, TIME_INTERVAL,RANGE;
 }

@@ -21,9 +21,12 @@
 package org.squashtest.tm.service.internal.requirement;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -52,38 +55,36 @@ import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
 
 @Service("squashtest.tm.service.RequirementVersionAdvancedSearchService")
-public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements RequirementVersionAdvancedSearchService {
+public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
+		RequirementVersionAdvancedSearchService {
 
 	@Inject
 	private SessionFactory sessionFactory;
-	
+
 	@Inject
 	private ProjectDao projectDao;
 
-	
 	@Inject
 	private Provider<RequirementVersionSearchExportCSVModelImpl> requirementVersionSearchExportCSVModelProvider;
 
-	
 	@Inject
 	private ConfigurationService configurationService;
-	
-	
-	
-	
-	private final static SortField[] DEFAULT_SORT_REQUIREMENTS = new SortField[]{
-			new SortField("requirement.project.name", SortField.STRING, false),
-			new SortField("reference", SortField.STRING, false),
-			new SortField("criticality", SortField.STRING, false),
-			new SortField("category", SortField.STRING, false),
-			new SortField("status", SortField.STRING, false),
-			new SortField("label", SortField.STRING, false)
-	};
-	
-	
-	
 
+	private final static SortField[] DEFAULT_SORT_REQUIREMENTS = new SortField[] {
+			new SortField("requirement.project.name", SortField.STRING, false),
+			new SortField("reference", SortField.STRING, false), new SortField("criticality", SortField.STRING, false),
+			new SortField("category", SortField.STRING, false), new SortField("status", SortField.STRING, false),
+			new SortField("label", SortField.STRING, false) };
 	
+	private final static List<String> longSortableFields = Arrays.asList(
+			  "requirement.id", 
+			  "versionNumber", 
+			  "id", 
+			  "requirement.versions",
+			  "testcases",
+			  "attachments"
+			);
+
 	@Override
 	public List<String> findAllUsersWhoCreatedRequirementVersions() {
 		List<Project> readableProjects = projectFinder.findAllReadable();
@@ -93,7 +94,6 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 		}
 		return projectDao.findUsersWhoCreatedRequirementVersions(projectIds);
 	}
-	
 
 	@Override
 	public List<String> findAllUsersWhoModifiedRequirementVersions() {
@@ -104,9 +104,6 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 		}
 		return projectDao.findUsersWhoModifiedRequirementVersions(projectIds);
 	}
-	
-
-	
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -116,99 +113,92 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 		FullTextSession ftSession = Search.getFullTextSession(session);
 
-		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder()
-				.forEntity(RequirementVersion.class).get();
+		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity(RequirementVersion.class).get();
 
 		org.apache.lucene.search.Query luceneQuery = buildLuceneQuery(qb, model, locale);
 
-		org.hibernate.Query hibQuery = ftSession.createFullTextQuery(
-				luceneQuery, RequirementVersion.class);
+		org.hibernate.Query hibQuery = ftSession.createFullTextQuery(luceneQuery, RequirementVersion.class);
 
 		return hibQuery.list();
 
 	}
 	
-	private Sort getRequirementVersionSort(List<Sorting> sortings, MessageSource source, Locale locale){
-		boolean isReverse = true;
-		Sort sort = null;
-
-				
-		if(sortings == null || sortings.size() == 0){
-			
-			sort = new Sort(DEFAULT_SORT_REQUIREMENTS);
-		} else {
-		
-		SortField[] sortFieldArray = new SortField[sortings.size()];
-		
-		for (int i=0; i<sortings.size(); i++) {
 	
+	private Sort getRequirementVersionSort(List<Sorting> sortings, MessageSource source, Locale locale) {
+
+		if (sortings == null || sortings.size() == 0) {
+			return new Sort(DEFAULT_SORT_REQUIREMENTS);
+		}
+
+		boolean isReverse = true;
+		SortField[] sortFieldArray = new SortField[sortings.size()];
+
+		for (int i = 0; i < sortings.size(); i++) {
+
 			if (SortOrder.ASCENDING.equals(sortings.get(i).getSortOrder())) {
 				isReverse = false;
-			} 
-	
-				String fieldName = sortings.get(i).getSortedAttribute();
-			
-				if(fieldName.startsWith("RequirementVersion.")){
-					fieldName = fieldName.replaceFirst("RequirementVersion.", "");
-				} else if(fieldName.startsWith("Requirement.")){
-					fieldName = fieldName.replaceFirst("Requirement.", "requirement.");
-				} else if(fieldName.startsWith("Project.")){
-					fieldName = fieldName.replaceFirst("Project.", "requirement.project.");
-				}
-				
-				if("requirement.id".equals(fieldName) || "versionNumber".equals(fieldName) || 
-				    "id".equals(fieldName) ||
-				   "requirement.versions".equals(fieldName) || "testcases".equals(fieldName) || 
-				   "attachments".equals(fieldName)){
-					sortFieldArray[i] =  new SortField(fieldName, SortField.LONG, isReverse);
-				} else if("category".equals(fieldName)){
-					sortFieldArray[i] =  new SortField(fieldName, new RequirementVersionCategoryComparatorSource(source, locale), isReverse);
-				} else if("reference".equals(fieldName)){
-					sortFieldArray[i] = new SortField(fieldName+"Sort", SortField.STRING, isReverse);
-				} else {
-					sortFieldArray[i] = new SortField(fieldName, SortField.STRING, isReverse);
-				}
 			}
-			
-			sort = new Sort(sortFieldArray);
+
+			String fieldName = sortings.get(i).getSortedAttribute();
+
+			fieldName = formatSortedFieldName(fieldName);
+
+			if (longSortableFields.contains(fieldName)) {
+				sortFieldArray[i] = new SortField(fieldName, SortField.LONG, isReverse);
+			} else if ("category".equals(fieldName)) {
+				sortFieldArray[i] = new SortField(fieldName, new RequirementVersionCategoryComparatorSource(source,
+						locale), isReverse);
+			} else if ("reference".equals(fieldName)) {
+				sortFieldArray[i] = new SortField(fieldName + "Sort", SortField.STRING, isReverse);
+			} else {
+				sortFieldArray[i] = new SortField(fieldName, SortField.STRING, isReverse);
+			}
 		}
-		return sort;
+
+		return new Sort(sortFieldArray);
+
 	}
-	
-	
-	
+
+	private String formatSortedFieldName(String fieldName) {
+		if (fieldName.startsWith("RequirementVersion.")) {
+			fieldName = fieldName.replaceFirst("RequirementVersion.", "");
+		} else if (fieldName.startsWith("Requirement.")) {
+			fieldName = fieldName.replaceFirst("Requirement.", "requirement.");
+		} else if (fieldName.startsWith("Project.")) {
+			fieldName = fieldName.replaceFirst("Project.", "requirement.project.");
+		}
+		return fieldName;
+	}
+
 	@Override
-	public PagedCollectionHolder<List<RequirementVersion>> searchForRequirementVersions(
-			AdvancedSearchModel model, PagingAndMultiSorting sorting, MessageSource source, Locale locale) {
-		
+	public PagedCollectionHolder<List<RequirementVersion>> searchForRequirementVersions(AdvancedSearchModel model,
+			PagingAndMultiSorting sorting, MessageSource source, Locale locale) {
+
 		Session session = sessionFactory.getCurrentSession();
 
 		FullTextSession ftSession = Search.getFullTextSession(session);
 
-		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder()
-				.forEntity(RequirementVersion.class).get();
+		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity(RequirementVersion.class).get();
 
 		org.apache.lucene.search.Query luceneQuery = buildLuceneQuery(qb, model, locale);
 
 		List<RequirementVersion> result = Collections.emptyList();
-		int countAll = 0 ;
-		if(luceneQuery != null){
+		int countAll = 0;
+		if (luceneQuery != null) {
 			Sort sort = getRequirementVersionSort(sorting.getSortings(), source, locale);
-			org.hibernate.Query hibQuery = ftSession.createFullTextQuery(
-					luceneQuery, RequirementVersion.class).setSort(sort);
-	
-			countAll = hibQuery.list().size();	
-			
-			
-			result = hibQuery.setFirstResult(sorting.getFirstItemIndex())
-					.setMaxResults(sorting.getPageSize()).list();
+			org.hibernate.Query hibQuery = ftSession.createFullTextQuery(luceneQuery, RequirementVersion.class)
+					.setSort(sort);
+
+			countAll = hibQuery.list().size();
+
+			result = hibQuery.setFirstResult(sorting.getFirstItemIndex()).setMaxResults(sorting.getPageSize()).list();
 		}
-		return new PagingBackedPagedCollectionHolder<List<RequirementVersion>>(sorting,
-				countAll, result);
+		return new PagingBackedPagedCollectionHolder<List<RequirementVersion>>(sorting, countAll, result);
 	}
-	
+
 	@Override
-	public SearchExportCSVModel exportRequirementVersionSearchResultsToCSV(AdvancedSearchModel searchModel, Locale locale) {
+	public SearchExportCSVModel exportRequirementVersionSearchResultsToCSV(AdvancedSearchModel searchModel,
+			Locale locale) {
 
 		RequirementVersionSearchExportCSVModelImpl model = requirementVersionSearchExportCSVModelProvider.get();
 
@@ -216,6 +206,5 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 		model.setRequirementVersions(requirementVersions);
 		return model;
 	}
-	
-	
+
 }
