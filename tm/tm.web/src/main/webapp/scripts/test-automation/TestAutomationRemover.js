@@ -27,7 +27,7 @@
  - messages : 
  - noTestSelected : message that must be displayed when nothing is selected
  */
-define("TestAutomationRemover", ["jquery", "jquery.squash.confirmdialog"], function() {
+define(["jquery", "jquery.squash.confirmdialog"], function() {
 	function TestAutomationRemover(settings) {
 
 		var link = $(settings.linkSelector);

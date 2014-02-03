@@ -27,7 +27,7 @@
  - messages : 
  - noTestSelected : message that must be displayed when nothing is selected
  */
-define("TestAutomationPicker", ["jquery", "squashtest/jquery.squash.popuperror"], function() {
+define(["jquery", "squashtest/jquery.squash.popuperror"], function() {
 	function TestAutomationPicker(settings) {
 		var self = this;
 	

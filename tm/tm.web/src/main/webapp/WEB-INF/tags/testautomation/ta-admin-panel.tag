@@ -223,7 +223,7 @@
 
 <script type="text/javascript">
 require(["common"], function() {
-	require(["jquery", "squashtest/classes/TestAutomationProjectManager", "squashtest/classes/TestAutomationAddProjectPopup", "squashtable"], function($, TestAutomationProjectManager, TestAutomationAddProjectPopup){
+	require(["jquery", "test-automation/TestAutomationProjectManager", "test-automation/TestAutomationAddProjectPopup", "squashtable"], function($, TestAutomationProjectManager, TestAutomationAddProjectPopup){
 		$(function(){
 			//************************** manager setup ********************
 			

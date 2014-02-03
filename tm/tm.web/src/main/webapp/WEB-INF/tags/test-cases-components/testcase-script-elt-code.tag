@@ -89,7 +89,8 @@
 </script>
 	<script type="text/javascript">
 	require(["common"], function() {
-		require(["jquery"], function($) {
+		require(["jquery", "test-automation/TestAutomationPicker", "test-automation/TestAutomationRemover"], 
+				function($, TestAutomationPicker, TestAutomationRemover) {
 			
 		$(function(){
 

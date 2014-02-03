@@ -149,6 +149,12 @@
 				<label class="display-table-cell" for="testcase-status"><f:message key="test-case.status.label" /></label>
 				<div id="testcase-status" class="display-table-cell"><comp:level-message level="${ execution.status }"/></div>
 			</div>
+<c:if test="${execution.automated}">
+			<div class="display-table-row">
+				<label class="display-table-cell" for="automated-script"><f:message key="test-case.testautomation.section.label" /></label>
+				<div class="display-table-cell" id="automated-script" >${ execution.automatedExecutionExtender.automatedTest.name }</div>
+			</div>
+</c:if>			
 			<comp:denormalized-field-values-list denormalizedFieldValues="${ denormalizedFieldValues }" />
 		</div>
 	</jsp:attribute>
