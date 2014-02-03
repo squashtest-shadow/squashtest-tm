@@ -79,8 +79,9 @@
 
 		<script type="text/javascript">
 require([ "common" ], function() {
-	require([ "jquery", "jqueryui", "jquery.squash.messagedialog", "squashtable" ], function($) {
+	require([ "jquery","workspace.event-bus", "workspace.tree-event-handler", "jqueryui", "jquery.squash.messagedialog", "squashtable" ], function($, eventBus, treehandler) {
 		$(function() {
+			eventBus.addPermanentListener(treehandler);
 			//the case 'get ids from the research tab' is disabled here, waiting for refactoring. 
 			function getTestCasesIds(){
 				var ids =  [];
@@ -132,6 +133,7 @@ require([ "common" ], function() {
 					.success(function(data){
 						showAddSummary(data);
 						table.refresh();
+						sendUpdateTree(data.linkedIds);	
 					});
 				}
 				tree.jstree('deselect_all');
@@ -146,8 +148,14 @@ require([ "common" ], function() {
 					dataType : 'json'
 				}).success(function(){
 					table.refresh();
+					sendUpdateTree(ids);	
 				});
 			});
+			
+			function sendUpdateTree(ids){
+					var evt = new EventUpdateReqCoverage(ids);
+					squashtm.workspace.eventBus.fire(null, evt);
+			}
 		});
 	});
 });
