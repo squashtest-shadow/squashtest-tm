@@ -85,11 +85,11 @@
 	
 	<script type="text/javascript">
 
-	var identity = { obj_id : ${folder.id}, obj_restype : 'test-cases'  };
+	var identity = { resid : ${folder.id}, restype : 'test-case-folders'  };
 	
 	require(["common"], function(){
-			require(["jquery", "squash.basicwidgets","contextual-content-handlers", "workspace.event-bus", "test-case-folder-management"], 
-					function($, basic, contentHandlers, eventBus, TCFM){
+			require(["jquery", "squash.basicwidgets","contextual-content-handlers",  "test-case-folder-management"], 
+					function($, basic, contentHandlers, TCFM){
 		$(function(){
 				
 				basic.init();
@@ -98,8 +98,7 @@
 				
 				nameHandler.identity = identity;
 				nameHandler.nameDisplay = "#folder-name";
-				
-				eventBus.addContextualListener(nameHandler);				
+						
 				
 				//init the dashboard
 				TCFM.initDashboardPanel({

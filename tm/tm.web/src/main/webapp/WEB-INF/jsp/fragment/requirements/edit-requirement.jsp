@@ -85,13 +85,11 @@ var squashtm = squashtm || {};
 require(["common"], function() {
   require(["jquery", "squash.events", "workspace.event-bus"], function($, events, eventBus) {
     function renameRequirementSuccess(data){
-      var evt = new events.EventRename(identity, data.newName);
-      eventBus.fire(null, evt);
+    	eventBus.trigger('node.rename', { identity : identity, newName : data.newName});    	
     }
 
     function updateReferenceInTitle(reference){
-      var evt = new events.EventUpdateReference(identity, reference);
-      eventBus.fire(null, evt);  
+    	eventBus.trigger('node.update-reference', { identity : identity, newRef : reference});  
     }
 
     //for technical reasons we handle directly the ajax operation when choosing a category.
@@ -486,7 +484,7 @@ require([ "common" ], function() {
 
 <script type="text/javascript">
 
-	var identity = { obj_id : ${requirement.id}, obj_restype : "requirements"  };
+	var identity = { resid : ${requirement.id}, restype : "requirements"  };
 	
 	require(["common"], function(){
 		require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "workspace.event-bus", "jquery.squash.fragmenttabs"], 
@@ -501,7 +499,7 @@ require([ "common" ], function() {
 				nameHandler.nameHidden = "#requirement-raw-name";
 				nameHandler.referenceHidden = "#requirement-raw-reference";
 				
-				eventBus.addContextualListener(nameHandler);
+		
 
 				//****** tabs configuration *******
 				

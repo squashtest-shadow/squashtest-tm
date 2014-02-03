@@ -156,7 +156,8 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "jeditable.s
 				},
 				
 				_updateReferenceInTree : function (newRef){
-					eventBus.trigger('node.update-reference', {identity : self.identity}, newRef : newRef);		
+					var self = this;
+					eventBus.trigger('node.update-reference', {identity : self.identity, newRef : newRef});		
 				}
 
 			});

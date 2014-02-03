@@ -49,11 +49,7 @@ define(['jquery', 'tree', 'workspace.event-bus', '../permissions-rules', 'jquery
 			
 			$.post(url, {newName : name}, null, 'json')
 			.done(function(){
-				var event = new EventRename(
-					new SquashEventObject(node.getResId(), node.getResType()),
-					name
-				);
-				eventBus.fire(null, event);
+				eventBus.trigger("node.rename", { identity : node.getIdentity(), newName : name});
 				dialog.formDialog('close');
 			});
 			

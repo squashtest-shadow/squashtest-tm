@@ -111,8 +111,7 @@
 <script type="text/javascript">
 
 	function renameTestSuiteSuccess(data){
-		var evt = new EventRename(identity, data.newName);
-		squashtm.workspace.eventBus.fire(null, evt);		
+		squashtm.workspace.eventBus.fire('node.rename', {identity : {resid : ${testSuite.id}, rel :"test-suite"}, newName : data.newName});		
 	}
 	
 	/*post a request to duplicate the test suite*/
@@ -342,7 +341,7 @@ require([ "common" ], function() {
  <f:message key="tabs.label.issues" var="tabIssueLabel"/>
 <script>
 
-	var identity = { obj_id : ${testSuite.id}, obj_restype : "test-suites"  };
+	var identity = { resid : ${testSuite.id}, restype : "test-suites"  };
 
 	require(["common"], function(){
 			require(["jquery", "squash.basicwidgets", "workspace.event-bus", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", "test-suite-management"], 
@@ -356,7 +355,7 @@ require([ "common" ], function() {
 				nameHandler.identity = identity;
 				nameHandler.nameDisplay = "#test-suite-name";
 				
-				eventBus.addContextualListener(nameHandler);
+				
 
 				// todo : uniform the event handling.
 				tsmanagement.initEvents();

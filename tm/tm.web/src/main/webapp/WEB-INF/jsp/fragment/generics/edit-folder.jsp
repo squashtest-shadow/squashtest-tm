@@ -66,11 +66,11 @@
 
 <script type="text/javascript">
 
-	var identity = { obj_id : ${folder.id}, obj_restype : '${su:camelCaseToHyphened(folder.class.simpleName)}s'  };
+	var identity = { resid : ${folder.id}, restype : '${su:camelCaseToHyphened(folder.class.simpleName)}s'  };
 	
 	require(["common"], function(){
-			require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "workspace.event-bus"], 
-					function($, basic, contentHandlers, eventBus){
+			require(["jquery", "squash.basicwidgets", "contextual-content-handlers"], 
+					function($, basic, contentHandlers){
 		$(function(){
 				
 				basic.init();
@@ -80,7 +80,7 @@
 				nameHandler.identity = identity;
 				nameHandler.nameDisplay = "#folder-name";
 				
-				eventBus.addContextualListener(nameHandler);				
+				
 				
 			});
 		});

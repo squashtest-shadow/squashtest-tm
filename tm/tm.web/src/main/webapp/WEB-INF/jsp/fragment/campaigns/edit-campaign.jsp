@@ -451,7 +451,7 @@
  <f:message key="tabs.label.issues" var="tabIssueLabel"/>
 <script type="text/javascript">
 
-	var identity = { obj_id : ${campaign.id}, obj_restype : "campaigns"  };
+	var identity = { resid : ${campaign.id}, restype : "campaigns"  };
 
 	
 	require(["common"], function(){
@@ -468,9 +468,7 @@
 				nameHandler.identity = identity;
 				nameHandler.nameDisplay = "#campaign-name";
 				
-				eventBus.addContextualListener(nameHandler);
-		
-				
+								
 				//****** tabs configuration ***********
 				
 				var fragConf = {
@@ -511,8 +509,7 @@
 	});
 	
 	function renameCampaignSuccess(data){
-		var evt = new EventRename(identity, data.newName);
-		squashtm.workspace.eventBus.fire(null, evt);		
+		squashtm.workspace.eventBus.trigger('node.rename', { identity : identity, newName : data.newName});		
 	};					
 	
 </script>

@@ -367,7 +367,7 @@
 <script type="text/javascript">
 require( ["common"], function(){
 	require( ["jquery"], function($){
-var identity = { obj_id : ${requirementVersion.id}, obj_restype : "requirements"  };
+var identity = { resid : ${requirementVersion.id}, restype : "requirements"  };
 
 	$(function(){
 		
@@ -386,8 +386,6 @@ var identity = { obj_id : ${requirementVersion.id}, obj_restype : "requirements"
 					nameHandler.nameDisplay = "#requirement-name";
 					nameHandler.nameHidden = "#requirement-raw-name";
 					nameHandler.referenceHidden = "#requirement-raw-reference";
-					
-					eventBus.addContextualListener(nameHandler);
 					
 					$("#print-requirement-version-button").click(function(){
 						window.open("${requirementUrl}?format=printable", "_blank");
@@ -428,15 +426,13 @@ var identity = { obj_id : ${requirementVersion.id}, obj_restype : "requirements"
 
 	<c:if test="${ writable }">
 	function renameRequirementSuccess(data){
-		var evt = new squasthm.EventRename(identity, $('#rename-requirement-input').val());
-		squashtm.workspace.eventBus.fire(null, evt);
+		squashtm.workspace.eventBus.trigger('node.rename', {identity : identity, newName : data.newName});
 		
 	};	
 	 squashtm.requirementVersion.renameRequirementSuccess = renameRequirementSuccess;
      
 	function updateReferenceInTitle(newRef){
-		var evt = new squatm.events.EventUpdateReference(identity, newRef);
-		squashtm.workspace.eventBus.fire(null, evt);		
+		squashtm.workspace.eventBus.trigger('node.update-reference', {identity : identity, newName : newRef});	
 	};
 	squashtm.requirementVersion.updateReferenceInTitle = updateReferenceInTitle;
      

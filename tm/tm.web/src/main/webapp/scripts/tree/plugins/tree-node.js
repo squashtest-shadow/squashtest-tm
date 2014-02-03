@@ -201,7 +201,7 @@ define(['jquery'], function($){
 		this.getIdentity = function(){
 			return {
 				resid : this.reference.attr('resid'),
-				rel : this.reference.attr('rel')
+				restype : this.reference.attr('restype')
 			};
 		};
 

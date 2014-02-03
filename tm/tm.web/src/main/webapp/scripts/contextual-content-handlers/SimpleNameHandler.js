@@ -31,7 +31,7 @@ define([ 'jquery', 'workspace.event-bus' ], function($, eventBus) {
 		};
 
 		this.isMe = function(target) {
-			return (this.identity.resid == target.resid) && (this.identity.rel == target.rel);
+			return (this.identity.resid == target.resid) && (this.identity.restype == target.restype);
 		};
 		
 		var self = this;

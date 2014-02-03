@@ -149,7 +149,7 @@ define([ 'jquery', 'tree', 'workspace.event-bus' ], function($, tree, eventBus) 
 			return;
 		}
 
-		target.setReference(event.newRef);
+		target.setReference(data.newRef);
 	}
 	
 	function updateEventUpdateCategory(event, tree) {

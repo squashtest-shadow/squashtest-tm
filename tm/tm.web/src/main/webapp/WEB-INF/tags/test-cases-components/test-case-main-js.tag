@@ -71,7 +71,7 @@ require([ "common" ], function() {
 	}
 	
 	function renameTestCaseSuccess(data){
-		eventBus.trigger('node.rename', { identity : {resid:${testCase.id, rel : "test-case"}}, newName : data.newName});
+		eventBus.trigger('node.rename', { identity : {resid:${testCase.id}, rel : "test-case"}, newName : data.newName});
 	};	
 	
 	squashtm = squashtm || {};

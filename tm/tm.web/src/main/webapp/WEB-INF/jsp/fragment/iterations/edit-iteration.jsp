@@ -359,7 +359,7 @@
  <f:message key="tabs.label.issues" var="tabIssueLabel"/>
 <script type="text/javascript">
 
-	var identity = { obj_id : ${iteration.id}, obj_restype : "iterations"  };
+	var identity = { resid : ${iteration.id}, restype : "iterations"  };
 	
 	
 	require(["common"], function(){
@@ -377,8 +377,7 @@
 				
 				nameHandler.identity = identity;
 				nameHandler.nameDisplay = "#iteration-name";
-				
-				eventBus.addContextualListener(nameHandler);
+
 				
 				// todo : uniform the event handling.
 				itermanagement.initEvents();
@@ -438,8 +437,7 @@
 
 	/* renaming success handler */
 	function renameIterationSuccess(data) {
-		var evt = new EventRename(identity, data.newName);
-		squashtm.workspace.eventBus.fire(null, evt);	
+		squashtm.workspace.eventBus.trigger('node.rename', { identity : identity, newName : data.newName});		
 	}
 	
 </script>
