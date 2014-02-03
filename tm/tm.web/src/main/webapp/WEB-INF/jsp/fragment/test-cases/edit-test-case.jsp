@@ -135,7 +135,7 @@ require(["common"], function() {
 
 
 		<%--------------------------- Verified Requirements section ------------------------------------%>
-		
+
 		<tc:test-case-verified-requirement-bloc linkable="${ linkable }" testCase="${testCase}"  containerId="contextual-content"/>
 
 

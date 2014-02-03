@@ -24,7 +24,12 @@ var CKEDITOR_BASEPATH = "/${bundle.contextPath}/scripts/ckeditor/";
 requirejs.config({
 			packages : [
 				"execution-processing",
-				"contextual-content-handlers",
+				//"contextual-content-handlers",
+				{
+					name : "contextual-content-handlers",
+					main : 'main',
+					location : 'http://localhost/scripts/scripts/contextual-content-handlers'
+				},
 				"bugtracker",
 				"file-upload",
 				"squashtable",
@@ -47,7 +52,12 @@ requirejs.config({
 				"test-suite-management",
 				"campaign-management",
 				//workspaces
-				"tc-workspace",
+				//"tc-workspace",
+				{
+					name : "tc-workspace",
+					main : "main",
+					location : "http://localhost/scripts/scripts/tc-workspace" 
+				},
 				"req-workspace",
 				"camp-workspace"
 			],
@@ -127,7 +137,8 @@ requirejs.config({
 				"squash.statusfactory" : "squash/squash.statusfactory",
 				//workspace
 				"workspace.tree-node-copier" : "workspace/workspace.tree-node-copier",
-				"workspace.tree-event-handler" : "workspace/workspace.tree-event-handler",
+				//"workspace.tree-event-handler" : "workspace/workspace.tree-event-handler",
+				"workspace.tree-event-handler" : "http://localhost/scripts/scripts/workspace/workspace.tree-event-handler",
 				"workspace.permissions-rules-broker" : "workspace/workspace.permissions-rules-broker",
 				"workspace.contextual-content" : "workspace/workspace.contextual-content",
 				"workspace.event-bus" : "workspace/workspace.event-bus",

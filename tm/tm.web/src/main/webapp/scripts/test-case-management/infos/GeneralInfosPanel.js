@@ -19,8 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "jeditable.selectJEditable", "jeditable.selectJEditableAuto", "jquery.squash.jeditable"],
-		function($, Backbone, _ , SimpleJEditable, SelectJEditable, SelectJEditableAuto) {
+define([ "jquery", "backbone", "underscore", "workspace.event-bus", "jeditable.simpleJEditable", "jeditable.selectJEditable", 
+         "jeditable.selectJEditableAuto", "jquery.squash.jeditable"],
+		function($, Backbone, _ , eventBus, SimpleJEditable, SelectJEditable, SelectJEditableAuto) {
 	
 			var GeneralInfosPanel = Backbone.View.extend({
 				
@@ -102,7 +103,7 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "jedit
 						
 						$(this.importanceEditable).on("selectJEditable.refresh", this.onRefreshImportance);
 					}
-					this.identity = { obj_id : this.settings.testCaseId, obj_restype : "test-cases"  };
+					this.identity = { resid : this.settings.testCaseId, rel : "test-case"  };
 					
 				},
 				
@@ -155,9 +156,7 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "jedit
 				},
 				
 				_updateReferenceInTree : function (newRef){
-					var self = this;
-					var evt = new EventUpdateReference(self.identity, newRef);
-					squashtm.workspace.eventBus.fire(null, evt);		
+					eventBus.trigger('node.update-reference', {identity : self.identity}, newRef : newRef);		
 				}
 
 			});

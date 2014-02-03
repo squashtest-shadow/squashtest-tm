@@ -184,6 +184,11 @@ define(['jquery'], function($){
 		this.getDomType = function() {
 			return this.reference.attr('rel');
 		};
+		
+		// equivalent to getDomType
+		this.getRel = function(){
+			return this.reference.attr('rel');
+		};
 
 		this.getResId = function() {
 			return this.reference.attr('resid');
@@ -191,6 +196,13 @@ define(['jquery'], function($){
 
 		this.getResType = function() {
 			return this.reference.attr('restype');
+		};
+		
+		this.getIdentity = function(){
+			return {
+				resid : this.reference.attr('resid'),
+				rel : this.reference.attr('rel')
+			};
 		};
 
 		this.isEditable = function() {

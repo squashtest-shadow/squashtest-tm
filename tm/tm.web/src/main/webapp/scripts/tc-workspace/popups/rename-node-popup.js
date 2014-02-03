@@ -48,12 +48,8 @@ define(['jquery', 'tree', 'workspace.event-bus', '../permissions-rules', 'jquery
 			var name = dialog.find("#rename-tree-node-text").val();
 			
 			$.post(url, {newName : name}, null, 'json')
-			.done(function(){
-				var event = new EventRename(
-					new SquashEventObject(node.getResId(), node.getResType()),
-					name
-				);
-				eventBus.fire(null, event);
+			.done(function(){				
+				eventBus.trigger("node.rename", { identity : node.getIdentity(), newName : name});
 				dialog.formDialog('close');
 			});
 			

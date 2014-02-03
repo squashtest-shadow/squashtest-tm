@@ -25,7 +25,7 @@
  * in this same package directory.
  */
 
-define([ 'jquery', 'tree' ], function($, tree) {
+define([ 'jquery', 'tree', 'workspace.event-bus' ], function($, tree, eventBus) {
 
 	squashtm = squashtm || {};
 	squashtm.workspace = squashtm.workspace || {};
@@ -52,6 +52,16 @@ define([ 'jquery', 'tree' ], function($, tree) {
 			}
 			return this.tree;
 		};
+		
+		var self = this;
+		
+		eventBus.on('node.rename', function(evt, data){
+			updateEventRename(data, self.getTree());
+		});
+		
+		eventBus.on('node.update-reference', function(evt, data){
+			updateEventUpdateReference(data, self.getTree());
+		});
 
 		this.update = function(event) {
 
@@ -120,32 +130,26 @@ define([ 'jquery', 'tree' ], function($, tree) {
 
 	}
 
-	function updateEventRename(event, tree) {
+	function updateEventRename(data, tree) {
 
-		var target = tree.findNodes({
-			restype : event.evt_target.obj_restype,
-			resid : event.evt_target.obj_id
-		});
+		var target = tree.findNodes(data.identity);
 
 		if (target.length === 0) {
 			return;
 		}
 
-		target.setName(event.evt_newname);
+		target.setName(data.newName);
 
 	}
 
-	function updateEventUpdateReference(event, tree) {
-		var target = tree.findNodes({
-			restype : event.evt_target.obj_restype,
-			resid : event.evt_target.obj_id
-		});
+	function updateEventUpdateReference(data, tree) {
+		var target = tree.findNodes(data.identity);
 
 		if (target.length === 0) {
 			return;
 		}
 
-		target.setReference(event.evt_newref);
+		target.setReference(event.newRef);
 	}
 	
 	function updateEventUpdateCategory(event, tree) {

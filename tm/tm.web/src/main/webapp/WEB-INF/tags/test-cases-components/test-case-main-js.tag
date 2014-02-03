@@ -71,9 +71,7 @@ require([ "common" ], function() {
 	}
 	
 	function renameTestCaseSuccess(data){
-		var identity = { obj_id : ${testCase.id}, obj_restype : "test-cases"  };
-		var evt = new EventRename(identity, data.newName);
-		squashtm.workspace.eventBus.fire(null, evt);		
+		eventBus.trigger('node.rename', { identity : {resid:${testCase.id, rel : "test-case"}}, newName : data.newName});
 	};	
 	
 	squashtm = squashtm || {};
@@ -89,11 +87,11 @@ require([ "common" ], function() {
 			
 		});
 		
-					
-		//init the renaming listener
+		
 		basic.init();
 		
-		var identity = { obj_id : ${testCase.id}, obj_restype : "test-cases"  };
+		//init the renaming listener
+		var identity = { resid : ${testCase.id}, rel : "test-case"  };
 		
 		var nameHandler = contentHandlers.getNameAndReferenceHandler();
 		
@@ -102,7 +100,7 @@ require([ "common" ], function() {
 		nameHandler.nameHidden = "#test-case-raw-name";
 		nameHandler.referenceHidden = "#test-case-raw-reference";
 		
-		eventBus.addContextualListener(nameHandler);
+		
 		
 		//****** tabs configuration *******
 		

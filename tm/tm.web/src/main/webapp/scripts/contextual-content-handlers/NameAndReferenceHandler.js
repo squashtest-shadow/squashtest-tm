@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ 'jquery' ], function($) {
+define([ 'jquery', 'workspace.event-bus' ], function($, eventBus) {
 
 	return function() {
 
@@ -54,28 +54,26 @@ define([ 'jquery' ], function($) {
 		};
 
 		this.isMe = function(target) {
-			return (this.identity.obj_id == target.obj_id) && (this.identity.obj_restype == target.obj_restype);
+			return (this.identity.resid == target.resid) && (this.identity.rel == target.rel);
 		};
 
-		this.update = function(evt) {
-			switch (evt.evt_name) {
-			case "rename":
-				if (this.isMe(evt.evt_target)) {
-					this._rename(evt.evt_newname);
-				}
-				
-				break;
-
-			case "update-reference":
-				if (this.isMe(evt.evt_target)) {
-					this._updateReference(evt.evt_newref);
-				}
-				
-				break;
-			default:
-				break;
+		var self = this;
+		
+		eventBus.onContextual('node.rename', function(evt, data){
+			var target = data.identity;
+			if (self.isMe(target)){
+				self._rename(data.newName);
 			}
-		};
+		});
+		
+		eventBus.onContextual('node.update-reference', function(evt, data){
+			var target = data.identity;
+			if (self.isMe(target)){
+				self._updateReference(data.newRef);
+			}			
+		});
+		
+
 
 	};
 
