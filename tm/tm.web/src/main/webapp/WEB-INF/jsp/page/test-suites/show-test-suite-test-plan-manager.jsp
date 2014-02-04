@@ -135,7 +135,7 @@
 <jsp:attribute name="contextualContent">		
 	<script type="text/javascript">
 	require(["common"], function() {
-		require(["jquery"], function($) {
+		require(["jquery", "jqueryui"], function($) {
 			$(function(){
 				$("#back").button().click(function(){
 					document.location.href="${backUrl}";

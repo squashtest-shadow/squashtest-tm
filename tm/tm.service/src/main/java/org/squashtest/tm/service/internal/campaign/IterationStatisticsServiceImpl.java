@@ -193,7 +193,7 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 			Date scheduledStart = (Date)tuple[4];
 			Date scheduledEnd = (Date)tuple[5];
 			
-			if(!previousSuiteName.equals(suiteName)){
+			if(! sameSuite(previousSuiteName, suiteName)){
 				newStatistics = new TestSuiteTestInventoryStatistics();
 				newStatistics.setTestsuiteName(suiteName);
 				newStatistics.setScheduledStart(scheduledStart);
@@ -232,6 +232,11 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 		}
 		
 		return result;
+	}
+	
+	private boolean sameSuite(String name1, String name2){
+		return  (name1 == null && name2 == null) ||
+				(name1 != null && name1.equals(name2));
 	}
 	
 	private void addImportance(TestSuiteTestInventoryStatistics newStatistics, TestCaseImportance importance, Long howmany){

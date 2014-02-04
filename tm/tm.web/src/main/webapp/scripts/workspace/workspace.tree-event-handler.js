@@ -104,7 +104,7 @@ define([ 'jquery', 'tree', 'workspace.event-bus' ], function($, tree, eventBus) 
 	// the more informations in data, the more accurate it is treated
 	function updateEventAdd(data, tree) {
 		
-		if (data.parent === undefined){
+		if (data === undefined || data.parent === undefined){
 			tree.refresh_selected();
 			return;
 		}

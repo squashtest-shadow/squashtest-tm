@@ -219,6 +219,9 @@
 						
 							<div class="dashboard-item-legend">
 								<div>
+									<div> wat </div>								
+								</div>
+								<div>
 									<div class="dashboard-legend-sample-color" style="background-color:#FCEDB6"></div>
 									<span><f:message key="test-case.importance.LOW" /></span>
 								</div>
