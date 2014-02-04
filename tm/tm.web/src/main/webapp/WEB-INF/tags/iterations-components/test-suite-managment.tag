@@ -39,6 +39,7 @@
 <%@ taglib prefix="s"		uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="comp" 	tagdir="/WEB-INF/tags/component" %>	
 <%@ taglib prefix="fn"		uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 
  
 <s:url var="baseSuiteUrl" value="/test-suites" /> 
@@ -114,9 +115,9 @@ $(function(){
 					];
 	
 		var tableListener = {
-				update : function(evt){
+				redraw : function(evt_name){
 					//"add" is none of our business.
-					if ((evt===undefined) || (evt.evt_name=="node.remove") || (evt.evt_name=="node.rename") || (evt.evt_name =="node.bind")){
+					if ((evt_name===undefined) || (evt_name=="node.remove") || (evt_name=="node.rename") || (evt_name =="node.bind")){
 						$('#iteration-test-plans-table').squashTable().refreshRestore();	
 					}
 				}

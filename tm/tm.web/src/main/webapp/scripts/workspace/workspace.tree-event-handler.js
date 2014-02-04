@@ -62,7 +62,13 @@ define([ 'jquery', 'tree', 'workspace.event-bus' ], function($, tree, eventBus) 
 		eventBus.on('node.update-reference', function(evt, data){
 			updateEventUpdateReference(data, self.getTree());
 		});
+		
+		eventBus.on('node.add node.remove', function(evt, data){
+			self.getTree().refresh_selected();
+		});
 
+		
+		
 		this.update = function(event) {
 
 			var otree = this.getTree();

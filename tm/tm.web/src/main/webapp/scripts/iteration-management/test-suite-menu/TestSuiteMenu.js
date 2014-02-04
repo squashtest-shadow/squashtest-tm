@@ -205,14 +205,9 @@ define([ "jquery", "underscore", "jqueryui" ],function($, _) {
 		 * ******************************
 		 */
 
-		this.update = function(evt) {
-			if ((evt === undefined) || (evt.evt_name == "node.rename")
-					|| (evt.evt_name == "node.remove")
-					|| (evt.evt_name == "node.refresh")) {
+		this.redraw = function(evt_name) {
+			if ((evt_name !== "node.bind") || (evt_name == "node.rename")){
 				initializeContent();
-
-			} else if (evt.evt_name == "node.add") {
-				addSuiteToMenuContent(evt);
 			}
 		};
 
@@ -365,7 +360,7 @@ define([ "jquery", "underscore", "jqueryui" ],function($, _) {
 
 		this.datatableSelector = settings.datatableSelector;
 		this.model = settings.model;
-		this.model.addListener(this);
+		this.model.addView(this);
 
 		this.instance = $(settings.instanceSelector);
 		this.testSuiteNewStatuses = new TestSuiteMenuNewStatuses();

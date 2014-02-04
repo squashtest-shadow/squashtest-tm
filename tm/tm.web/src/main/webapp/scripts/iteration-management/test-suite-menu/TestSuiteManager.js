@@ -149,7 +149,7 @@ define([ "jquery", "jqueryui" ], function($) {
 
 		var self = this;
 
-		this.model.addListener(this);
+		this.model.addView(this);
 
 		/* ****** private ********* */
 
@@ -227,33 +227,32 @@ define([ "jquery", "jqueryui" ], function($) {
 		this.deselectAllItems = function() {
 			getAllItems().removeClass("suite-selected ui-widget-header ui-state-default");
 		};
+		
 
-		this.update = function(evt) {
+		this.redraw = function(evt_name) {
 
-			// the only evt ignored is "bind"
-			if ((evt === undefined) || (evt.evt_name == "node.add") || (evt.evt_name == "node.rename") ||
-					(evt.evt_name == "node.remove") || (evt.evt_name == "node.refresh")) {
+			// save state
+			var selected = this.getSelectedIds();
 
-				// save state
-				var selected = this.getSelectedIds();
+			// rebuild
+			var modelData = this.model.getData();
+			this.panel.empty();
 
-				// rebuild
-				var modelData = this.model.getData();
-				this.panel.empty();
-
-				for ( var i in modelData) {
-					appendItem(modelData[i]);
-				}
-
-				sortSuiteList();
-
-				// restore state
-				this.selectItems(selected);
-
-				this.manager.updatePopupState();
+			for ( var i in modelData) {
+				appendItem(modelData[i]);
 			}
+
+			sortSuiteList();
+
+			// restore state
+			this.selectItems(selected);
+
+			this.manager.updatePopupState();
+		
 		};
 
+		
+		
 		this.panel.delegate('.suite-div', 'click', function() {
 			if (!self.manager.ctrlPressed) {
 				self.deselectAllItems();
@@ -350,6 +349,8 @@ define([ "jquery", "jqueryui" ], function($) {
 				}
 			});
 		}, self);
+		
+	
 
 		/* ******************** init code ****************************** */
 
@@ -416,7 +417,7 @@ define([ "jquery", "jqueryui" ], function($) {
 		this.view = new TestSuiteManagerView(viewSettings);
 
 		bindCtrl();
-		this.view.update();
+		this.view.redraw();
 
 	}
 

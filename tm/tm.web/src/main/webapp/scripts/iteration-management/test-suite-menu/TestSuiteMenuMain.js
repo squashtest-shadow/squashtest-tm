@@ -64,7 +64,7 @@ define(
 						settings.menuSettings);
 
 				squashtm.testSuiteManagement.testSuiteModel
-						.addListener(settings.tableListener);
+						.addView(settings.tableListener);
 
 			};
 		});

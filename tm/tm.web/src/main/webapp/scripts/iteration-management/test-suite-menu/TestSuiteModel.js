@@ -42,7 +42,7 @@ define([ "jquery", "workspace.event-bus", "jqueryui" ], function($, eventBus) {
 			this.data = [];
 		}
 
-		this.listeners = [];
+		this.views = [];
 
 		var self = this;
 
@@ -86,44 +86,19 @@ define([ "jquery", "workspace.event-bus", "jqueryui" ], function($, eventBus) {
 			});
 		};
 
-		var notifyListeners = $.proxy(function(evt) {
-			for ( var i = 0; i < this.listeners.length; i++) {
-				this.listeners[i].update(evt);
+		var redrawViews = $.proxy(function(evt) {
+			for ( var i = 0; i < this.views.length; i++) {
+				this.views[i].redraw(evt);
 			}
-		}, self);
-
-		var notifyContextualContent = $.proxy(function(evt) {
-			this.eventBus.fire(this, evt);			
 		}, self);
 		
-		var notifyBind = $.proxy(function(){
-			var evt = {
-					evt_name : "node.bind"
-			};
-			notifyListeners(evt);
-			notifyContextualContent(evt);
-		});
-		/* ************** public interface (slave) **************** */
-
-		this.update = function(event) {
-			// the event 'contextualcontent.clear' means that the page will be
-			// flushed (and so will be this object)
-			if (event.evt_name && event.evt_name == "contextualcontent.clear"){
-				return;
-			}
-			
-			// in any other case we refetch the data. Perhaps we will refine
-			// this
-			// later.
-			this.getModel();
-		};
 
 		/* ************** public interface (master) *************** */
 
-		this.addListener = function(listener) {
-			this.listeners.push(listener);
+		this.addView = function(view) {
+			this.views.push(view);
 		};
-
+		
 		this.getData = function() {
 			return this.data;
 		};
@@ -139,12 +114,7 @@ define([ "jquery", "workspace.event-bus", "jqueryui" ], function($, eventBus) {
 				dataType : 'json'
 			}).success(function(json) {
 				self.data.push(json);
-				var evt = {
-					evt_name : "node.add",
-					newSuite : json
-				};
-				notifyListeners(evt);
-				notifyContextualContent(evt);
+				eventBus.trigger("node.add");
 			});
 		};
 
@@ -159,16 +129,11 @@ define([ "jquery", "workspace.event-bus", "jqueryui" ], function($, eventBus) {
 				dataType : 'json'
 			}).success(function(json) {
 				renameSuite(json);
-				var evt = {
-					evt_name : "node.rename",
-					evt_target : {
-						obj_id : toSend.id,
-						obj_restype : "test-suites"
-					},
-					evt_newname : toSend.name
+				var id = {
+					resid : toSend.id,
+					restype : "test-suites"
 				};
-				notifyListeners(evt);
-				notifyContextualContent(evt);
+				eventBus.trigger("node.rename", {identity : id, newName : toSend.name});
 			});
 		};
 
@@ -183,11 +148,7 @@ define([ "jquery", "workspace.event-bus", "jqueryui" ], function($, eventBus) {
 				dataType : 'json'
 			}).success(function(json) {
 				removeSuites(json);
-				var evt = {
-					evt_name : "node.remove"
-				};
-				notifyListeners(evt);
-				notifyContextualContent(evt);
+				eventBus.trigger("node.remove");
 			});
 		};
 
@@ -200,7 +161,7 @@ define([ "jquery", "workspace.event-bus", "jqueryui" ], function($, eventBus) {
 				data :  { 'itemIds[]' : toSend['test-plan-items']},
 				dataType : 'json'
 			}).success(function(json) {
-				notifyBind();
+				eventBus.trigger("node.bind");
 			});
 		};
 		
@@ -213,21 +174,22 @@ define([ "jquery", "workspace.event-bus", "jqueryui" ], function($, eventBus) {
 					'unboundSuiteIds[]' : toSend['unbound-test-suites']},
 				dataType : 'json'
 			}).success(function(json){
-				notifyBind();
+				eventBus.trigger("node.bind");
 			});
 		};
 		
 		this.getModel = function() {
 			_getModel().success(function() {
-				notifyListeners({
-					evt_name : "node.refresh"
-				});
+				redrawViews();
 			});
 		};
 
-		// register to the contextual content manager if exists
+		
+		// ************** other events **********
 
-		this.eventBus.addContextualListener(this);
+		eventBus.onContextual('node.add node.rename node.remove node.refresh node.bind', function(evt){
+			self.getModel();
+		});
 
 	}
 
