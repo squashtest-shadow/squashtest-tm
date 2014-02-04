@@ -91,7 +91,7 @@ public class HibernateTeamDao extends HibernateEntityDao<Team> implements Custom
 
 		/* add filtering */
 		if (filter.isDefined()) {
-			crit = crit.add(_addFiltering(filter));
+			crit = crit.add(addFiltering(filter));
 		}
 
 		/* result range */
@@ -101,7 +101,7 @@ public class HibernateTeamDao extends HibernateEntityDao<Team> implements Custom
 
 	}
 
-	private Criterion _addFiltering(Filtering filtering) {
+	private Criterion addFiltering(Filtering filtering) {
 		String filter = filtering.getFilter();
 		return Restrictions.disjunction().add(Restrictions.like("Team.name", filter, MatchMode.ANYWHERE))
 				.add(Restrictions.like("Team.audit.createdBy", filter, MatchMode.ANYWHERE))

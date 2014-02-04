@@ -31,7 +31,7 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 
 /**
- * Service that aims at managing the test cases of a campaign (i.e. its test plan)
+ * Service that aims at managing the test cases of a test suite (i.e. its test plan)
  * 
  * @author François Gaillard
  */
@@ -136,6 +136,14 @@ public interface TestSuiteTestPlanManagerService {
 	void detachTestPlanFromTestSuite(List<Long> testPlanIds, long suiteId);
 
 	boolean detachTestPlanFromTestSuiteAndRemoveFromIteration(List<Long> testPlanIds, long suiteId);
+
+	/**
+	 * Will find the distinct ids of the test cases referenced in the suite matching the given id 
+	 * @param suiteId : the id of the concerned TestSuite
+	 * @return the distinct ids of the TestCases referenced in the suite's test plan.
+	 */
+	@Transactional(readOnly = true)
+	List<Long> findPlannedTestCasesIds(Long suiteId);
 
 
 	

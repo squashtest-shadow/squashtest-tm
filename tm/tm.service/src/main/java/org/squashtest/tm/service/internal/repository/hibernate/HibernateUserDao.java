@@ -74,7 +74,7 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 		
 		/* create the query with respect to the filtering */
 		if (filter.isDefined()){ 
-			crit = crit.add(_filterUsers(filter));
+			crit = crit.add(filterUsers(filter));
 		}
 		
 		/* add ordering */
@@ -97,7 +97,7 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 	
 	
 
-	private Criterion _filterUsers(Filtering oFilter){
+	private Criterion filterUsers(Filtering oFilter){
 		
 		String filter = oFilter.getFilter();
 		return Restrictions.disjunction()
@@ -193,7 +193,7 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 		
 		/* add filtering */
 		if  (filtering.isDefined()){
-			crit = crit.add(_filterMembers(filtering));
+			crit = crit.add(filterMembers(filtering));
 		}
 
 		/* result range */
@@ -204,7 +204,7 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 		
 	}
 	
-	private Criterion _filterMembers(Filtering filtering){
+	private Criterion filterMembers(Filtering filtering){
 		String filter = filtering.getFilter();
 		return Restrictions.disjunction()
 						  .add(Restrictions.like("User.firstName", filter, MatchMode.ANYWHERE))

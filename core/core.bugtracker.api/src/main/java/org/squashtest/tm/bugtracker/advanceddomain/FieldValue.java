@@ -119,14 +119,14 @@ public class FieldValue implements RemotePriority, RemoteVersion, RemoteCategory
 	}
 
 	
-	private String _getName(){
+	private String doGetName(){
 		if (scalar!=null){
 			return scalar+", ";
 		}
 		else{
 			StringBuilder builder = new StringBuilder();
 			for (int i=0;i<composite.length;i++){
-				builder.append(composite[i]._getName()+", ");
+				builder.append(composite[i].doGetName()+", ");
 			}
 			return builder.toString();
 		}		
@@ -134,7 +134,7 @@ public class FieldValue implements RemotePriority, RemoteVersion, RemoteCategory
 		
 	@Override
 	public String getName() {
-		return _getName().replaceFirst(",\\s*$", "");
+		return doGetName().replaceFirst(",\\s*$", "");
 	}
 	
 	public void setName(String name){

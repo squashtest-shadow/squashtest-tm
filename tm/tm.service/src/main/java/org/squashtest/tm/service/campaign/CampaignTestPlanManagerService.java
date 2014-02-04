@@ -139,4 +139,11 @@ public interface CampaignTestPlanManagerService {
 	 * @return
 	 */
 	CampaignTestPlanItem findById(long itemId);
+	
+	/**
+	 * Will find the distinct ids of test cases referenced in the campaign test plan.
+	 * @param campaignId : the id of the concerned Campaign
+	 * @return : the distinct ids of the TestCases referenced by the campaign.
+	 */
+	List<Long> findPlannedTestCasesIds(Long campaignId);
 }

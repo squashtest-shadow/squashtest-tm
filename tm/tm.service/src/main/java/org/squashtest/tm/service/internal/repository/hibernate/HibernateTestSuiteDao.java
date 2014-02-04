@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.hibernate.Query;
 import org.hibernate.type.DateType;
@@ -61,7 +62,7 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 
 	private static final String PROJECT_FILTER = "projectFilter";
 	private static final String REFERENCE_FILTER = "referenceFilter";
-	private static final String TESTCASE_FILTER = "testcaseFilter";	
+	private static final String TESTCASE_FILTER = "testcaseFilter";
 	private static final String WEIGHT_FILTER = "weightFilter";
 	private static final String DATASET_FILTER = "datasetFilter";
 	private static final String STATUS_FILTER = "statusFilter";
@@ -69,13 +70,13 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 	private static final String START_DATE = "startDate";
 	private static final String END_DATE = "endDate";
 	private static final String DATE_FORMAT = "dd/MM/yyyy";
-	
+
 	// TODO these strings come from UI but are hidden deep plus they are defined in HID and HCD. They should be
 	// factored out.
 	private static final String PROJECT_DATA = "project-name";
 	private static final String REFERENCE_DATA = "reference";
-	private static final String TESTCASE_DATA = "tc-name";	
-	private static final String WEIGHT_DATA= "importance";
+	private static final String TESTCASE_DATA = "tc-name";
+	private static final String WEIGHT_DATA = "importance";
 	private static final String DATASET_DATA = "dataset";
 	private static final String STATUS_DATA = "status";
 	private static final String USER_DATA = "assignee-login";
@@ -92,41 +93,28 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 			+ "left outer join IterationTestPlanItem.referencedDataset as Dataset "
 			+ "left outer join IterationTestPlanItem.user as User " + "where TestSuite.id = :suiteId ";
 
-	private static final String HQL_INDEXED_TEST_PLAN_PROJECT_FILTER =
-			"and Project.name like :projectFilter ";
+	private static final String HQL_INDEXED_TEST_PLAN_PROJECT_FILTER = "and Project.name like :projectFilter ";
 
-	private static final String HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER =
-			"and TestCase.reference like :referenceFilter ";
-	
-	private static final String HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER =
-			"and TestCase.name like :testcaseFilter ";
-	
-	private static final String HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER =
-			"and TestCase.importance = :weightFilter ";
-	
-	private static final String HQL_INDEXED_TEST_PLAN_DATASET_FILTER =
-			"and Dataset.name like :datasetFilter ";
+	private static final String HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER = "and TestCase.reference like :referenceFilter ";
 
-	private static final String HQL_INDEXED_TEST_PLAN_STATUS_FILTER =
-			"and IterationTestPlanItem.executionStatus = :statusFilter ";
+	private static final String HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER = "and TestCase.name like :testcaseFilter ";
 
+	private static final String HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER = "and TestCase.importance = :weightFilter ";
 
-	private static final String HQL_INDEXED_TEST_PLAN_MODEAUTO_FILTER =
-			"and TestCase.automatedTest is not null ";
-	
-	private static final String HQL_INDEXED_TEST_PLAN_MODEMANUAL_FILTER =
-			"and TestCase.automatedTest is null ";
-	
-	private static final String HQL_INDEXED_TEST_PLAN_USER_FILTER =
-			"and IterationTestPlanItem.user.id = :userFilter ";
+	private static final String HQL_INDEXED_TEST_PLAN_DATASET_FILTER = "and Dataset.name like :datasetFilter ";
 
-	private static final String HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER =
-			"and IterationTestPlanItem.user is null ";
-	
-	private static final String HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER =
-			"and IterationTestPlanItem.lastExecutedOn between :startDate and :endDate ";
-	
-	
+	private static final String HQL_INDEXED_TEST_PLAN_STATUS_FILTER = "and IterationTestPlanItem.executionStatus = :statusFilter ";
+
+	private static final String HQL_INDEXED_TEST_PLAN_MODEAUTO_FILTER = "and TestCase.automatedTest is not null ";
+
+	private static final String HQL_INDEXED_TEST_PLAN_MODEMANUAL_FILTER = "and TestCase.automatedTest is null ";
+
+	private static final String HQL_INDEXED_TEST_PLAN_USER_FILTER = "and IterationTestPlanItem.user.id = :userFilter ";
+
+	private static final String HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER = "and IterationTestPlanItem.user is null ";
+
+	private static final String HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER = "and IterationTestPlanItem.lastExecutedOn between :startDate and :endDate ";
+
 	@Override
 	public List<TestSuite> findAllByIterationId(final long iterationId) {
 
@@ -191,7 +179,6 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 		return fillTestPlanStatistics(nbTestPlans, result);
 	}
 
-
 	@Override
 	public TestPlanStatistics getTestSuiteStatistics(long testSuiteId, String userLogin) {
 		// Add Total number of TestCases
@@ -200,7 +187,7 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 		// Add number of testCase for each ExecutionStatus
 		SetQueryParametersCallback newCallBack = new IdId2LoginParameterCallback(testSuiteId, userLogin);
 		List<Object[]> result = executeListNamedQuery("testSuite.countStatusesForUser", newCallBack);
-		
+
 		return fillTestPlanStatistics(nbTestPlans, result);
 	}
 
@@ -212,7 +199,6 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 		}
 		return new TestPlanStatistics(statusMap);
 	}
-	
 
 	private static class IdId2ParameterCallback implements SetQueryParametersCallback {
 		private long id;
@@ -283,7 +269,7 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 		return newCallBack;
 	}
 
-	private SetQueryParametersCallback IdAndLoginParameter(final long id, final String login) {
+	private SetQueryParametersCallback idAndLoginParameter(final long id, final String login) {
 
 		return new SetQueryParametersCallback() {
 			@Override
@@ -324,7 +310,8 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 	}
 
 	@Override
-	public List<IterationTestPlanItem> findTestPlan(long suiteId, PagingAndMultiSorting sorting, Filtering filtering, ColumnFiltering columnFiltering) {
+	public List<IterationTestPlanItem> findTestPlan(long suiteId, PagingAndMultiSorting sorting, Filtering filtering,
+			ColumnFiltering columnFiltering) {
 		List<Object[]> tuples = findIndexedTestPlanAsTuples(suiteId, sorting, filtering, columnFiltering);
 		return buildItems(tuples);
 	}
@@ -345,8 +332,34 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 
 	}
 
-	private StringBuilder buildTestPlanQueryBody(Filtering filtering, ColumnFiltering columnFiltering){
-		
+	private static final Map<String, String> SIMPLE_FILTER_CLAUSES = new HashMap<String, String>();
+	static {
+		SIMPLE_FILTER_CLAUSES.put(PROJECT_DATA, HQL_INDEXED_TEST_PLAN_PROJECT_FILTER);
+		SIMPLE_FILTER_CLAUSES.put(REFERENCE_DATA, HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER);
+		SIMPLE_FILTER_CLAUSES.put(TESTCASE_DATA, HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER);
+		SIMPLE_FILTER_CLAUSES.put(WEIGHT_DATA, HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER);
+		SIMPLE_FILTER_CLAUSES.put(DATASET_DATA, HQL_INDEXED_TEST_PLAN_DATASET_FILTER);
+		SIMPLE_FILTER_CLAUSES.put(STATUS_DATA, HQL_INDEXED_TEST_PLAN_STATUS_FILTER);
+		SIMPLE_FILTER_CLAUSES.put(LASTEXEC_DATA, HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER);
+	}
+
+	private static final Map<String, Map<String, String>> VALUE_DEPENDENT_FILTER_CLAUSES = new HashMap<String, Map<String, String>>();
+	private static final String VDFC_DEFAULT_KEY = "VDFC_DEFAULT_KEY";
+	static {
+		Map<String, String> modeDataMap = new HashMap<String, String>(2);
+		modeDataMap.put(TestCaseExecutionMode.MANUAL.name(), HQL_INDEXED_TEST_PLAN_MODEMANUAL_FILTER);
+		modeDataMap.put(VDFC_DEFAULT_KEY, HQL_INDEXED_TEST_PLAN_MODEAUTO_FILTER);
+		VALUE_DEPENDENT_FILTER_CLAUSES.put(MODE_DATA, modeDataMap);
+
+		Map<String, String> userData = new HashMap<String, String>(2);
+		userData.put("0", HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER);
+		userData.put(VDFC_DEFAULT_KEY, HQL_INDEXED_TEST_PLAN_USER_FILTER);
+		VALUE_DEPENDENT_FILTER_CLAUSES.put(USER_DATA, userData);
+
+	}
+
+	private StringBuilder buildTestPlanQueryBody(Filtering filtering, ColumnFiltering columnFiltering) {
+
 		StringBuilder hqlbuilder = new StringBuilder(HQL_INDEXED_TEST_PLAN);
 
 		// check if we want to filter on the user login
@@ -354,48 +367,33 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 			hqlbuilder.append("and User.login = :userLogin ");
 		}
 
-		if(columnFiltering.hasFilter(PROJECT_DATA)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_PROJECT_FILTER);
-		}
-		if(columnFiltering.hasFilter(MODE_DATA)){
-			if (TestCaseExecutionMode.MANUAL.name().equals(columnFiltering.getFilter(MODE_DATA))){
-				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_MODEMANUAL_FILTER);
-			}
-			else{
-				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_MODEAUTO_FILTER);
+		// additional where clauses
+		for (Entry<String, String> simpleFilterClause : SIMPLE_FILTER_CLAUSES.entrySet()) {
+			String filterName = simpleFilterClause.getKey();
+			String filterClause = simpleFilterClause.getValue();
+			if (columnFiltering.hasFilter(filterName)) {
+				hqlbuilder.append(filterClause);
 			}
 		}
-		if(columnFiltering.hasFilter(REFERENCE_DATA)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER);
-		}
-		if(columnFiltering.hasFilter(TESTCASE_DATA)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER);
-		}
-		if(columnFiltering.hasFilter(WEIGHT_DATA)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER);
-		}
-		if(columnFiltering.hasFilter(DATASET_DATA)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_DATASET_FILTER);
-		}
-		if(columnFiltering.hasFilter(STATUS_DATA)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_STATUS_FILTER);
-		}
-		if(columnFiltering.hasFilter(USER_DATA)){
-			if("0".equals(columnFiltering.getFilter(USER_DATA))){
-				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER);
-			} else {
-				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
+
+		for (Entry<String, Map<String, String>> valueDependantFilterClause : VALUE_DEPENDENT_FILTER_CLAUSES.entrySet()) {
+			String filterName = valueDependantFilterClause.getKey();
+			Map<String, String> clausesByValues = valueDependantFilterClause.getValue();
+			if (columnFiltering.hasFilter(filterName)) {
+				String filterValue = columnFiltering.getFilter(filterName);
+				String clause = clausesByValues.get(filterValue);
+				if (clause == null) {
+					clause = clausesByValues.get(VDFC_DEFAULT_KEY);
+				}
 			}
 		}
-		if(columnFiltering.hasFilter(LASTEXEC_DATA)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER);				
-		}
-		
+
 		return hqlbuilder;
 	}
-	
-	private Query assignParameterValuesToTestPlanQuery(String queryString, Long suiteId, Filtering filtering, ColumnFiltering columnFiltering){
-		
+
+	private Query assignParameterValuesToTestPlanQuery(String queryString, Long suiteId, Filtering filtering,
+			ColumnFiltering columnFiltering) {
+
 		Query query = currentSession().createQuery(queryString);
 
 		query.setParameter("suiteId", suiteId, LongType.INSTANCE);
@@ -404,30 +402,32 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 			query.setParameter("userLogin", filtering.getFilter(), StringType.INSTANCE);
 		}
 
-		if(columnFiltering.hasFilter(PROJECT_DATA)){
-			query.setParameter(PROJECT_FILTER, "%"+columnFiltering.getFilter(PROJECT_DATA)+"%", StringType.INSTANCE);
+		if (columnFiltering.hasFilter(PROJECT_DATA)) {
+			query.setParameter(PROJECT_FILTER, "%" + columnFiltering.getFilter(PROJECT_DATA) + "%", StringType.INSTANCE);
 		}
-		if(columnFiltering.hasFilter(REFERENCE_DATA)){
-			query.setParameter(REFERENCE_FILTER, "%"+columnFiltering.getFilter(REFERENCE_DATA)+"%", StringType.INSTANCE);
-		} 
-		if(columnFiltering.hasFilter(TESTCASE_DATA)){
-			query.setParameter(TESTCASE_FILTER, "%"+columnFiltering.getFilter(TESTCASE_DATA)+"%", StringType.INSTANCE);
+		if (columnFiltering.hasFilter(REFERENCE_DATA)) {
+			query.setParameter(REFERENCE_FILTER, "%" + columnFiltering.getFilter(REFERENCE_DATA) + "%",
+					StringType.INSTANCE);
 		}
-		if(columnFiltering.hasFilter(WEIGHT_DATA)){
+		if (columnFiltering.hasFilter(TESTCASE_DATA)) {
+			query.setParameter(TESTCASE_FILTER, "%" + columnFiltering.getFilter(TESTCASE_DATA) + "%",
+					StringType.INSTANCE);
+		}
+		if (columnFiltering.hasFilter(WEIGHT_DATA)) {
 			query.setParameter(WEIGHT_FILTER, columnFiltering.getFilter(WEIGHT_DATA), StringType.INSTANCE);
 		}
-		if(columnFiltering.hasFilter(DATASET_DATA)){
-			query.setParameter(DATASET_FILTER, "%"+columnFiltering.getFilter(DATASET_DATA)+"%", StringType.INSTANCE);
+		if (columnFiltering.hasFilter(DATASET_DATA)) {
+			query.setParameter(DATASET_FILTER, "%" + columnFiltering.getFilter(DATASET_DATA) + "%", StringType.INSTANCE);
 		}
-		if(columnFiltering.hasFilter(STATUS_DATA)){
+		if (columnFiltering.hasFilter(STATUS_DATA)) {
 			query.setParameter(STATUS_FILTER, columnFiltering.getFilter(STATUS_DATA), StringType.INSTANCE);
 		}
-		if(columnFiltering.hasFilter(USER_DATA) && !"0".equals(columnFiltering.getFilter(USER_DATA))){
+		if (columnFiltering.hasFilter(USER_DATA) && !"0".equals(columnFiltering.getFilter(USER_DATA))) {
 			query.setParameter(USER_FILTER, Long.parseLong(columnFiltering.getFilter(USER_DATA)), LongType.INSTANCE);
 		}
-		if(columnFiltering.hasFilter(LASTEXEC_DATA)){
+		if (columnFiltering.hasFilter(LASTEXEC_DATA)) {
 			String dates = columnFiltering.getFilter(LASTEXEC_DATA);
-			if(dates.contains("-")){
+			if (dates.contains("-")) {
 				String[] dateArray = dates.split("-");
 				Date startDate;
 				try {
@@ -449,15 +449,16 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 				}
 			}
 		}
-		
+
 		return query;
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	private List<Object[]> findIndexedTestPlanAsTuples(final long suiteId, PagingAndMultiSorting sorting, Filtering filtering, ColumnFiltering columnFiltering) {
-		
+	private List<Object[]> findIndexedTestPlanAsTuples(final long suiteId, PagingAndMultiSorting sorting,
+			Filtering filtering, ColumnFiltering columnFiltering) {
+
 		StringBuilder hqlbuilder = buildTestPlanQueryBody(filtering, columnFiltering);
-				
+
 		// tune the sorting to make hql happy
 		LevelImplementorSorter wrapper = new LevelImplementorSorter(sorting);
 		wrapper.map("TestCase.importance", TestCaseImportance.class);
@@ -466,26 +467,26 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 		SortingUtils.addOrder(hqlbuilder, wrapper);
 
 		Query query = assignParameterValuesToTestPlanQuery(hqlbuilder.toString(), suiteId, filtering, columnFiltering);
-		
+
 		PagingUtils.addPaging(query, sorting);
 
 		return query.list();
 	}
 
-	private Date nextDay(Date day){
-		Calendar cal = Calendar.getInstance(); 
-	    cal.setTime(day);
-	    cal.add(Calendar.DAY_OF_YEAR, 1);
-	    return cal.getTime();
+	private Date nextDay(Date day) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(day);
+		cal.add(Calendar.DAY_OF_YEAR, 1);
+		return cal.getTime();
 	}
-	
+
 	@Override
 	public long countTestPlans(Long suiteId, Filtering filtering) {
 		if (!filtering.isDefined()) {
 			return countTestPlanItems(suiteId);
 		} else {
 			return (Long) executeEntityNamedQuery("testSuite.countTestPlansFiltered",
-					IdAndLoginParameter(suiteId, filtering.getFilter()));
+					idAndLoginParameter(suiteId, filtering.getFilter()));
 		}
 	}
 
@@ -522,12 +523,16 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 
 	@Override
 	public long countTestPlans(Long suiteId, Filtering filtering, ColumnFiltering columnFiltering) {
-		
 
 		StringBuilder hqlbuilder = buildTestPlanQueryBody(filtering, columnFiltering);
-		
+
 		Query query = assignParameterValuesToTestPlanQuery(hqlbuilder.toString(), suiteId, filtering, columnFiltering);
 
 		return query.list().size();
+	}
+
+	@Override
+	public List<Long> findPlannedTestCasesIds(Long suiteId) {
+		return executeListNamedQuery("TestSuite.findReferencedTestCasesIds",  idParameter(suiteId));
 	}
 }

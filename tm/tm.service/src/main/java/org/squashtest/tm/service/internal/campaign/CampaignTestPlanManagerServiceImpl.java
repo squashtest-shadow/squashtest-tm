@@ -280,4 +280,11 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 		return campaignTestPlanItemDao.findById(itemId);
 	}
 
+	@Override
+	@PreAuthorize(CAN_READ_TEST_PLAN)
+	@Transactional(readOnly = true)
+	public List<Long> findPlannedTestCasesIds(Long campaignId) {
+		return campaignTestPlanItemDao.findPlannedTestCasesIdsByCampaignId(campaignId);
+	}
+
 }

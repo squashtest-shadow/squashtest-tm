@@ -45,6 +45,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
+import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
@@ -385,28 +386,20 @@ public class AdvancedSearchController {
 
 		if (REQUIREMENT.equals(associateResultWithType)) {
 			List<TestCase> testCases = verifyingTestCaseManagerService.findAllByRequirementVersion(id);
-			for (TestCase testCase : testCases) {
-				ids.add(testCase.getId());
-			}
+			List<Long> tcIds = IdentifiedUtil.extractIds(testCases);
+			ids.addAll(tcIds);
+			
 		} else if ("campaign".equals(associateResultWithType)) {
 			Campaign campaign = this.campaignTestPlanManagerService.findCampaign(id);
-			for (CampaignTestPlanItem item : campaign.getTestPlan()) {
-				if (item.getReferencedTestCase() != null) {
-					ids.add(item.getReferencedTestCase().getId());
-				}
-			}
+			List<Long> referencedTestCasesIds = this.campaignTestPlanManagerService.findPlannedTestCasesIds(id);
+			ids.addAll(referencedTestCasesIds);
 		} else if ("iteration".equals(associateResultWithType)) {
 			List<TestCase> testCases = this.iterationTestPlanManagerService.findPlannedTestCases(id);
-			for (TestCase testCase : testCases) {
-				ids.add(testCase.getId());
-			}
+			List<Long> tcIds = IdentifiedUtil.extractIds(testCases);
+			ids.addAll(tcIds);
 		} else if ("testsuite".equals(associateResultWithType)) {
-			TestSuite testSuite = this.testSuiteTestPlanManagerService.findTestSuite(id);
-			for (IterationTestPlanItem item : testSuite.getTestPlan()) {
-				if (item.getReferencedTestCase() != null) {
-					ids.add(item.getReferencedTestCase().getId());
-				}
-			}
+			List<Long> referencedTestCasesIds = this.testSuiteTestPlanManagerService.findPlannedTestCasesIds(id);
+			ids.addAll(referencedTestCasesIds);
 		}
 
 		return ids;

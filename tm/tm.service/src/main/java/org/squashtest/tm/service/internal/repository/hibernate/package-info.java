@@ -117,6 +117,9 @@
 		@NamedQuery(name = "testSuite.findLaunchableTestPlan", query = "select tp from TestSuite ts join ts.testPlan tp join tp.testSuites tss where ts.id = ?1 and ?2 = tss.id and ((tp.referencedTestCase is not null) or (tp.executions is not empty)) order by index(tp)"),
 		@NamedQuery(name = "testSuite.countTestPlansFiltered", query = "select count(tps) from TestSuite ts join ts.testPlan tps where ts.id = :suiteId and tps.user.login = :userLogin"),
 		@NamedQuery(name = "testSuite.findProjectIdBySuiteId", query  = "select project.id from TestSuite ts join ts.iteration it join it.campaign camp join camp.project project where ts.id = ?1"),
+	
+		@NamedQuery(name = "TestSuite.findReferencedTestCasesIds", query = "select distinct tc.id from TestSuite ts join ts.testPlan tpi join tpi.referencedTestCase tc where ts.id = ?1"),
+		
 		//TestCase
 		@NamedQuery(name = "testCase.findAllByIdListOrderedByName", query = "from TestCase tc where id in (:testCasesIds) order by tc.name asc"),
 		@NamedQuery(name = "testCase.findById", query = "from TestCase tc left join fetch tc.steps left join fetch tc.requirementVersionCoverages where tc.id = :testCaseId"),
@@ -181,8 +184,10 @@
 		@NamedQuery(name = "Dataset.removeAllByTestCaseIds", query = "delete Dataset ds where ds.testCase.id in (:testCaseIds)"),
 		@NamedQuery(name = "Dataset.removeAllValuesByTestCaseIds", query = "delete DatasetParamValue dpv where dpv.dataset in (select ds from Dataset ds where ds.testCase.id in (:testCaseIds))"),
 		@NamedQuery(name = "dataset.removeDatasetFromItsIterationTestPlanItems", query = "update IterationTestPlanItem set referencedDataset = null where referencedDataset in (from Dataset dataset where dataset.id = :datasetId) "),
+		
 		//CampaignTestPlanItem
-
+		@NamedQuery(name = "CampaignTestPlanItem.findPlannedTestCasesIdsByCampaignId", query="select distinct tc.id from Campaign c join c.testPlan tpi join tpi.referencedTestCase tc where c.id = ?1"),
+		
 		//Execution
 		@NamedQuery(name = "execution.countStatus", query = "select count(exSteps.executionStatus) from Execution as execution join execution.steps as exSteps where execution.id =:execId and exSteps.executionStatus=:status"),
 		@NamedQuery(name = "execution.countSteps", query = "select count(steps) from Execution ex join ex.steps as steps where ex.id = :executionId"),

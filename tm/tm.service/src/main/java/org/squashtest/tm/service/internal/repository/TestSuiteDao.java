@@ -28,4 +28,5 @@ public interface TestSuiteDao extends CustomTestSuiteDao {
  
 	long countTestPlanItems(long testSuiteId);
 
+
 }

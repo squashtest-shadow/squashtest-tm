@@ -430,7 +430,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 	 * @return : the new execution status when possible, or null if it wasn't. The later usually means that a call to the database is needed.
 	 */
 	public ExecutionStatus deduceNewStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus){
-		return this.getCanonicalStatus()._deduceNewStatus(formerExecutionStatus.getCanonicalStatus(), formerStepStatus.getCanonicalStatus());
+		return this.getCanonicalStatus().doDeduceNewStatus(formerExecutionStatus.getCanonicalStatus(), formerStepStatus.getCanonicalStatus());
 	}
 	
 	/* *************************** class-private instance method (assumes canonical form) ******************** */
@@ -451,7 +451,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 	
 	
 	
-	protected ExecutionStatus _deduceNewStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
+	protected ExecutionStatus doDeduceNewStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 
 		ExecutionStatus newStatus;
 

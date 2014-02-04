@@ -244,7 +244,7 @@ public class TestCaseModificationController {
 		mav.addObject("testCaseStatusComboJson", buildStatusComboData(locale));
 		mav.addObject("testCaseStatusLabel", formatStatus(testCase.getStatus(), locale));
 		mav.addObject("attachmentsModel", attachmentHelper.findPagedAttachments(testCase));
-		mav.addObject("callingTestCasesModel", _getCallingTestCaseTableModel(testCase.getId(), new DefaultPagingAndSorting("TestCase.name"), ""));
+		mav.addObject("callingTestCasesModel", getCallingTestCaseTableModel(testCase.getId(), new DefaultPagingAndSorting("TestCase.name"), ""));
 		mav.addObject("hasCUF", hasCUF);
 	}
 
@@ -445,11 +445,11 @@ public class TestCaseModificationController {
 
 		PagingAndSorting paging = createPaging(params, referencingTestCaseMapper);
 
-		return _getCallingTestCaseTableModel(testCaseId, paging, params.getsEcho());
+		return getCallingTestCaseTableModel(testCaseId, paging, params.getsEcho());
 
 	}
 	
-	private DataTableModel _getCallingTestCaseTableModel(long testCaseId, PagingAndSorting paging, String sEcho){
+	private DataTableModel getCallingTestCaseTableModel(long testCaseId, PagingAndSorting paging, String sEcho){
 		
 		PagedCollectionHolder<List<TestCase>> holder = testCaseModificationService.findCallingTestCases(testCaseId,
 				paging);

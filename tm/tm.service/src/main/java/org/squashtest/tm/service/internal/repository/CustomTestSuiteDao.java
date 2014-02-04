@@ -78,7 +78,8 @@ public interface CustomTestSuiteDao extends EntityDao<TestSuite> {
 	@Deprecated
 	List<IterationTestPlanItem> findAllTestPlanItemsPaged(long testSuiteId, Paging paging);
 
-	List<IterationTestPlanItem> findTestPlan(long suiteId, PagingAndMultiSorting sorting, Filtering filter, ColumnFiltering columnFiltering);
+	List<IterationTestPlanItem> findTestPlan(long suiteId, PagingAndMultiSorting sorting, Filtering filter,
+			ColumnFiltering columnFiltering);
 
 	/**
 	 * Returns the paged list of [index, IterationTestPlanItem] wrapped in an {@link IndexedIterationTestPlanItem}
@@ -99,11 +100,21 @@ public interface CustomTestSuiteDao extends EntityDao<TestSuite> {
 	 * @param filtering
 	 * @return
 	 */
-	List<IndexedIterationTestPlanItem> findIndexedTestPlan(long suiteId, PagingAndSorting sorting, Filtering filter, ColumnFiltering columnFiltering);
+	List<IndexedIterationTestPlanItem> findIndexedTestPlan(long suiteId, PagingAndSorting sorting, Filtering filter,
+			ColumnFiltering columnFiltering);
 
 	long countTestPlans(Long suiteId, Filtering filtering);
 
 	long countTestPlans(Long suiteId, Filtering filtering, ColumnFiltering columnFiltering);
-	
+
 	long findProjectIdBySuiteId(long suiteId);
+
+	/**
+	 * Will find the distinct ids of the test cases referenced in the suite matching the given id
+	 * 
+	 * @param suiteId
+	 *            : the id of the concerned TestSuite
+	 * @return the distinct ids of the TestCases referenced in the suite's test plan.
+	 */
+	List<Long> findPlannedTestCasesIds(Long suiteId);
 }

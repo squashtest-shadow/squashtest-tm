@@ -280,8 +280,8 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	public Collection<Long> findTestCaseIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds){
 		
 		// filter out unreadable entities		
-		Collection<Long> effectiveLibIds = _collectSecReadableIds(libraryIds, "org.squashtest.tm.domain.testcase.TestCaseLibrary");
-		Collection<Long> effectiveNodeIds = _collectSecReadableIds(nodeIds, "org.squashtest.tm.domain.testcase.TestCaseLibraryNode");			
+		Collection<Long> effectiveLibIds = collectSecReadableIds(libraryIds, "org.squashtest.tm.domain.testcase.TestCaseLibrary");
+		Collection<Long> effectiveNodeIds = collectSecReadableIds(nodeIds, "org.squashtest.tm.domain.testcase.TestCaseLibraryNode");			
 
 		// get all the test cases
 		Collection<Long> tcIds = new ArrayList<Long>();
@@ -297,7 +297,7 @@ public class TestCaseLibraryNavigationServiceImpl extends
 		
 	}
 	
-	private Collection<Long> _collectSecReadableIds(Collection<Long> original, String entityType){
+	private Collection<Long> collectSecReadableIds(Collection<Long> original, String entityType){
 		Collection<Long> effective = new ArrayList<Long>();
 		for (Long id : original){
 			if (permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "READ", id, entityType)){

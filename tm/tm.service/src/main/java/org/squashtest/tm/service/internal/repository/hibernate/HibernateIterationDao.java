@@ -29,7 +29,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.codehaus.jackson.map.ser.impl.SimpleFilterProvider;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -255,7 +257,7 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 	}
 	
 	
-	private SetQueryParametersCallback IdAndLoginParameter(final long id, final String login){
+	private SetQueryParametersCallback idAndLoginParameter(final long id, final String login){
 		
 		return new SetQueryParametersCallback() {			
 			@Override
@@ -365,49 +367,60 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 		
 	}
 	
+	private static final Map<String, String> SIMPLE_FILTER_CLAUSES = new HashMap<String, String>();
+	static {
+		SIMPLE_FILTER_CLAUSES.put(PROJECT_DATA, HQL_INDEXED_TEST_PLAN_PROJECT_FILTER);
+		SIMPLE_FILTER_CLAUSES.put(REFERENCE_DATA, HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER);
+		SIMPLE_FILTER_CLAUSES.put(TESTCASE_DATA, HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER);
+		SIMPLE_FILTER_CLAUSES.put(WEIGHT_DATA, HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER);
+		SIMPLE_FILTER_CLAUSES.put(DATASET_DATA, HQL_INDEXED_TEST_PLAN_DATASET_FILTER);
+		SIMPLE_FILTER_CLAUSES.put(STATUS_DATA, HQL_INDEXED_TEST_PLAN_STATUS_FILTER);
+		SIMPLE_FILTER_CLAUSES.put(LASTEXEC_DATA, HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER);
+	}
+	
+	private static final Map<String, Map<String, String>> VALUE_DEPENDENT_FILTER_CLAUSES = new HashMap<String, Map<String, String>>();
+	private static final String VDFC_DEFAULT_KEY = "VDFC_DEFAULT_KEY";
+	static {
+		Map<String, String> modeDataMap = new HashMap<String, String>(2);
+		modeDataMap.put(TestCaseExecutionMode.MANUAL.name(), HQL_INDEXED_TEST_PLAN_MODEMANUAL_FILTER);
+		modeDataMap.put(VDFC_DEFAULT_KEY, HQL_INDEXED_TEST_PLAN_MODEAUTO_FILTER);
+		VALUE_DEPENDENT_FILTER_CLAUSES.put(MODE_DATA,modeDataMap );
+		
+		Map<String, String> userData = new HashMap<String, String>(2);
+		userData.put("0", HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER);
+		userData.put(VDFC_DEFAULT_KEY, HQL_INDEXED_TEST_PLAN_USER_FILTER);
+		VALUE_DEPENDENT_FILTER_CLAUSES.put(USER_DATA,userData );
+		
+	}
 	private StringBuilder buildTestPlanQueryBody(Filtering filtering, ColumnFiltering columnFiltering){
 		StringBuilder hqlbuilder = new StringBuilder();
 		
 		String hql = filtering.isDefined() ? hqlUserFilteredIndexedTestPlan : hqlFullIndexedTestPlan;
 		hqlbuilder.append(hql);
 		
-		if(columnFiltering.hasFilter(PROJECT_DATA)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_PROJECT_FILTER);
-		}
-		if(columnFiltering.hasFilter(MODE_DATA)){
-			if (TestCaseExecutionMode.MANUAL.name().equals(columnFiltering.getFilter(MODE_DATA))){
-				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_MODEMANUAL_FILTER);
+		//additional where clauses
+		for(Entry<String, String> simpleFilterClause : SIMPLE_FILTER_CLAUSES.entrySet()){
+			String filterName = simpleFilterClause.getKey();
+			String filterClause = simpleFilterClause.getValue();
+			if(columnFiltering.hasFilter(filterName)){
+				hqlbuilder.append(filterClause);
 			}
-			else{
-				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_MODEAUTO_FILTER);
-			}
-		}
-		if(columnFiltering.hasFilter(REFERENCE_DATA)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER);
-		}
-		if(columnFiltering.hasFilter(TESTCASE_DATA)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER);
-		}
-		if(columnFiltering.hasFilter(WEIGHT_DATA)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER);
-		}
-		if(columnFiltering.hasFilter(DATASET_DATA)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_DATASET_FILTER);
-		}
-		if(columnFiltering.hasFilter(STATUS_DATA)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_STATUS_FILTER);
-		}
-		if(columnFiltering.hasFilter(USER_DATA)){
-			if("0".equals(columnFiltering.getFilter(USER_DATA))){
-				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER);
-			} else {
-				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
-			}
-		}
-		if(columnFiltering.hasFilter(LASTEXEC_DATA)){
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER);				
 		}
 		
+		for(Entry<String, Map<String, String>> valueDependantFilterClause : VALUE_DEPENDENT_FILTER_CLAUSES.entrySet()){
+			String filterName = valueDependantFilterClause.getKey();
+			Map<String, String> clausesByValues  = valueDependantFilterClause.getValue();
+			if(columnFiltering.hasFilter(filterName)){
+				String filterValue = columnFiltering.getFilter(filterName);
+				String clause =  clausesByValues.get(filterValue);
+				if(clause == null){
+					clause = clausesByValues.get(VDFC_DEFAULT_KEY);
+				}
+			}
+		}
+	
+		
+		//group by
 		hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TEMPLATE_END);
 		
 		if(columnFiltering.hasFilter(TESTSUITE_DATA)){
@@ -455,7 +468,7 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 			return (Long) executeEntityNamedQuery("iteration.countTestPlans", idParameter(iterationId));
 		}
 		else{
-			return (Long) executeEntityNamedQuery("iteration.countTestPlansFiltered", IdAndLoginParameter(iterationId, filtering.getFilter()));
+			return (Long) executeEntityNamedQuery("iteration.countTestPlansFiltered", idAndLoginParameter(iterationId, filtering.getFilter()));
 		}
 	}
 
@@ -494,31 +507,36 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 			query.setParameter(USER_FILTER, Long.parseLong(columnFiltering.getFilter(USER_DATA)), LongType.INSTANCE);
 		}
 		if(columnFiltering.hasFilter(LASTEXEC_DATA)){
-			String dates = columnFiltering.getFilter(LASTEXEC_DATA);
-			if(dates.contains("-")){
-				String[] dateArray = dates.split("-");
-				Date startDate;
-				try {
-					startDate = new SimpleDateFormat(DATE_FORMAT).parse(dateArray[0].trim());
-					Date endDate = new SimpleDateFormat(DATE_FORMAT).parse(dateArray[1].trim());
-					query.setParameter(START_DATE, startDate, DateType.INSTANCE);
-					query.setParameter(END_DATE, nextDay(endDate), DateType.INSTANCE);
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
-			} else {
-				Date date;
-				try {
-					date = new SimpleDateFormat(DATE_FORMAT).parse(dates.trim());
-					query.setParameter(START_DATE, date, DateType.INSTANCE);
-					query.setParameter(END_DATE, nextDay(date), DateType.INSTANCE);
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
-			}
+			setQueryStartAndEndDateParameters(columnFiltering, query);
 		}
 		
 		return query;
+	}
+
+	private void setQueryStartAndEndDateParameters(ColumnFiltering columnFiltering, Query query) {
+		String dates = columnFiltering.getFilter(LASTEXEC_DATA);
+		Date startDate = null;
+		Date endDate = null;
+		if(dates.contains("-")){
+			String[] dateArray = dates.split("-");
+			try {
+				startDate = new SimpleDateFormat(DATE_FORMAT).parse(dateArray[0].trim());
+				endDate = new SimpleDateFormat(DATE_FORMAT).parse(dateArray[1].trim());
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			
+		} else {
+			try {
+				startDate = new SimpleDateFormat(DATE_FORMAT).parse(dates.trim());
+				endDate = nextDay(startDate);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			
+		}
+		query.setParameter(START_DATE, startDate, DateType.INSTANCE);
+		query.setParameter(END_DATE, endDate, DateType.INSTANCE);
 	}
 	
 	@Override

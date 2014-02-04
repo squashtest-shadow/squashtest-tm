@@ -228,5 +228,14 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 
 		return delegateIterationTestPlanManagerService.removeTestPlansFromIterationObj(testPlanIds, iteration);
 	}
+	
+	/**
+	 * @see TestSuiteTestPlanManagerService#findPlannedTestCasesIds(Long)
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public	List<Long> findPlannedTestCasesIds(Long suiteId) {
+		return testSuiteDao.findPlannedTestCasesIds(suiteId);
+	}
 
 }

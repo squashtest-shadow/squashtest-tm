@@ -167,4 +167,17 @@ class HibernateTestSuiteDaoIT extends DbunitDaoSpecification {
 		projectId == 2L;
 	}
 	
+	@DataSet("HibernateTestSuiteDaoIT.should find test case ids.xml")
+	def "should find test cases ids"(){
+		given :
+		def suiteId = 1L
+		
+		when : 
+		def result = testSuiteDao.findPlannedTestCasesIds(suiteId)
+		
+		then : 
+		result.size() == 2;
+		result.containsAll([1L, 2L]);
+	}
+	
 }
