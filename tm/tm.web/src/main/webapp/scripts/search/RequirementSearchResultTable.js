@@ -187,27 +187,27 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 							"aTargets" : [ 3 ],
 							"mDataProp" : "requirement-reference",
 							"bSortable" : true,
-							"sClass" : "editable_ref"
+							"sClass" : "editable editable_ref"
 						}, {
 							"aTargets" : [ 4 ],
 							"mDataProp" : "requirement-label",
 							"bSortable" : true,
-							"sClass" : "editable_label"
+							"sClass" : "editable editable_label"
 						}, {
 							"aTargets" : [ 5 ],
 							"mDataProp" : "requirement-criticality",
 							"bSortable" : true,
-							"sClass" : "editable_criticality"
+							"sClass" : "editable editable_criticality"
 						}, {
 							"aTargets" : [ 6 ],
 							"mDataProp" : "requirement-category",
 							"bSortable" : true,
-							"sClass" : "editable_category"
+							"sClass" : "editable editable_category"
 						}, {
 							"aTargets" : [ 7 ],
 							"mDataProp" : "requirement-status",
 							"bSortable" : true,
-							"sClass" : "editable_status"
+							"sClass" : "editable editable_status"
 						}, {
 							"aTargets" : [ 8 ],
 							"mDataProp" : "requirement-version",
@@ -366,8 +366,9 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 				this.addSelectEditableToCriticality(row,data);
 				this.addSelectEditableToCategory(row,data);
 				this.addSelectEditableToStatus(row,data);
+			}else{
+				$(row).addClass("nonEditableRow");
 			}
-
 			this.addInterfaceLevel2Link(row,data);
 			this.addTreeLink(row,data);
 	
