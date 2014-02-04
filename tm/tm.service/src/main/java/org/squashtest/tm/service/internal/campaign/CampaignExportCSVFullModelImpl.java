@@ -392,9 +392,9 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 				
 				for (CustomField model : tcCUFModel) {
 					String strValue = getValue(tcValues, model);
-					CellImpl _c = new CellImpl(strValue);
-					dataCells.add(_c);
-					cachedItpcellCuf.add(_c);
+					CellImpl cell = new CellImpl(strValue);
+					dataCells.add(cell);
+					cachedItpcellCuf.add(cell);
 				}				
 				cachedItpcellReady = true;
 			}

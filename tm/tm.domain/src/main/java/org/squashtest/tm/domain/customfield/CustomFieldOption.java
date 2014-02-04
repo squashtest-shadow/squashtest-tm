@@ -84,8 +84,8 @@ public class CustomFieldOption {
 		return result;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
+	@Override//NOSONAR code generation, assumed to be safe
+	public boolean equals(Object obj) { // GENERATED:START
 		if (this == obj) {
 			return true;
 		}
@@ -104,6 +104,6 @@ public class CustomFieldOption {
 			return false;
 		}
 		return true;
-	}
+	}// GENERATED:END
 
 }

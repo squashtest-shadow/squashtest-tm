@@ -143,13 +143,13 @@ public class DenormalizedFieldHelper<X extends DenormalizedFieldHolder>{
 		
 		Map<String, CustomField> cfMap = new HashMap<String, CustomField>();
 		
-		CustomField _cf;
+		CustomField customField;
 		for (DenormalizedFieldValue dfv : values){
 			if ( cfMap.get(dfv.getCode()) == null){
-				_cf = new CustomField(dfv.getInputType());
-				_cf.setCode(dfv.getCode());
-				_cf.setLabel(dfv.getLabel());
-				cfMap.put(_cf.getCode(), _cf);
+				customField = new CustomField(dfv.getInputType());
+				customField.setCode(dfv.getCode());
+				customField.setLabel(dfv.getLabel());
+				cfMap.put(customField.getCode(), customField);
 			}			
 		}
 		

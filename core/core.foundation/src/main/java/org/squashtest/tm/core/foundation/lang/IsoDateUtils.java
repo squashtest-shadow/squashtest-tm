@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.core.foundation.lang;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -28,21 +27,15 @@ import java.util.TimeZone;
 
 public class IsoDateUtils {
 	
-	private static final DateFormat ISO_DATE;
-	private static final DateFormat ISO_DATETIME;
+	private static final String ISO_DATE = "yyyy-MM-dd";
+	private static final String ISO_DATETIME = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+	private static final TimeZone TZ = TimeZone.getTimeZone("UTC");
 	
 	
-	static {
-		TimeZone tz = TimeZone.getTimeZone("UTC");
+	
+	private IsoDateUtils(){
 		
-		ISO_DATE = new SimpleDateFormat("yyyy-MM-dd");
-		ISO_DATE.setTimeZone(tz);
-		
-		ISO_DATETIME = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-		ISO_DATETIME.setTimeZone(tz);
 	}
-
-	private IsoDateUtils(){}
 	
 	/**
 	 * @param date
@@ -52,10 +45,16 @@ public class IsoDateUtils {
 		if (date == null){
 			return null;
 		} else{
-			return ISO_DATE.format(date);
+			return formatDate(date, ISO_DATE);
 		}
 	}
 	
+	private static String formatDate(Date date, String format) {
+		SimpleDateFormat sdf = new SimpleDateFormat(format);
+		sdf.setTimeZone(TZ);
+		return sdf.format(date);
+	}
+
 	/**
 	 * @param date
 	 * @return returns that date formatted according to the ISO 8601 DateTime (with time and timezone info)
@@ -65,7 +64,7 @@ public class IsoDateUtils {
 			return null;
 		}
 		else{
-			return ISO_DATETIME.format(date);
+			return formatDate(date, ISO_DATETIME);
 		}
 	}
 	
@@ -78,7 +77,7 @@ public class IsoDateUtils {
 			return null;
 		}
 		else{
-			return ISO_DATE.parse(strDate);
+			return parseDate(strDate, ISO_DATE);
 		}
 	}
 	
@@ -91,10 +90,15 @@ public class IsoDateUtils {
 			return null;
 		}
 		else{
-			return ISO_DATETIME.parse(strDatetime);
+			return parseDate(strDatetime, ISO_DATETIME);
 		}
 	}
 	
+
+	private static Date parseDate(String strDatetime, String format) throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat(format);
+		return sdf.parse(strDatetime);
+	}
 
 	/**
 	 * 

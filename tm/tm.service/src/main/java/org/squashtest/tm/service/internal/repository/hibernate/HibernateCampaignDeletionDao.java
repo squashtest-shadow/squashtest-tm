@@ -71,11 +71,11 @@ public class HibernateCampaignDeletionDao extends HibernateDeletionDao
 		List<Long> folderIds = new ArrayList<Long>();
 		List<Long> campaignIds = new ArrayList<Long>();
 		
-		List<BigInteger> _folderIds = executeSelectSQLQuery(
+		List<BigInteger> filtredFolderIds = executeSelectSQLQuery(
 						NativeQueries.CAMPAIGNLIBRARYNODE_SQL_FILTERFOLDERIDS, "campaignIds", originalIds);
 		
 		for (Long oId : originalIds){
-			if (_folderIds.contains(BigInteger.valueOf(oId))){
+			if (filtredFolderIds.contains(BigInteger.valueOf(oId))){
 				folderIds.add(oId);
 			}
 			else{

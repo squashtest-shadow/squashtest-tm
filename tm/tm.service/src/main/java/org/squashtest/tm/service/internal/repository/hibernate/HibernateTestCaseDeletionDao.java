@@ -291,11 +291,11 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 		List<Long> folderIds = new ArrayList<Long>();
 		List<Long> testcaseIds = new ArrayList<Long>();
 		
-		List<BigInteger> _folderIds = executeSelectSQLQuery(
+		List<BigInteger> filtredFolderIds = executeSelectSQLQuery(
 						NativeQueries.TESTCASELIBRARYNODE_SQL_FILTERFOLDERIDS, "testcaseIds", originalIds);
 		
 		for (Long oId : originalIds){
-			if (_folderIds.contains(BigInteger.valueOf(oId))){
+			if (filtredFolderIds.contains(BigInteger.valueOf(oId))){
 				folderIds.add(oId);
 			}
 			else{

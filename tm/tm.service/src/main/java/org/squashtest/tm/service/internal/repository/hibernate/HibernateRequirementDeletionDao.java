@@ -121,11 +121,11 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 		List<Long> folderIds = new ArrayList<Long>();
 		List<Long> requirementIds = new ArrayList<Long>();
 		
-		List<BigInteger> _folderIds = executeSelectSQLQuery(
+		List<BigInteger> filtredFolderIds = executeSelectSQLQuery(
 						NativeQueries.REQUIREMENTLIBRARYNODE_SQL_FILTERFOLDERIDS, REQUIREMENT_IDS, originalIds);
 		
 		for (Long oId : originalIds){
-			if (_folderIds.contains(BigInteger.valueOf(oId))){
+			if (filtredFolderIds.contains(BigInteger.valueOf(oId))){
 				folderIds.add(oId);
 			}
 			else{
