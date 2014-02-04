@@ -39,7 +39,7 @@ public class AdvancedSearchIndexingMonitor implements MassIndexerProgressMonitor
 	private ConfigurationService configurationService;
 	private List<Class> indexedDomains;
 	
-	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm");
+	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 
 	public AdvancedSearchIndexingMonitor(List<Class> classes, ConfigurationService configurationService){
 		this.configurationService = configurationService;
