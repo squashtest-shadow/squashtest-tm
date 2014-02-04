@@ -23,7 +23,6 @@ package org.squashtest.tm.service.statistics.campaign;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.squashtest.tm.domain.planning.StandardWorkloadCalendar;

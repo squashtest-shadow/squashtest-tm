@@ -31,7 +31,6 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.codehaus.jackson.map.ser.impl.SimpleFilterProvider;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;

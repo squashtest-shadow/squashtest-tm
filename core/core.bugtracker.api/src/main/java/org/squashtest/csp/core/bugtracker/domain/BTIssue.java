@@ -23,7 +23,6 @@ package org.squashtest.csp.core.bugtracker.domain;
 import java.util.Date;
 
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
-import org.squashtest.tm.bugtracker.definition.RemoteProject;
 
 /**
  * Bug-tracker-agnostic representation of an issue / ticket

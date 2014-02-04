@@ -22,13 +22,10 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
 import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseImportance;
 
 @DynamicDao(entity = TestCase.class)
 public interface TestCaseDao extends CustomTestCaseDao {
