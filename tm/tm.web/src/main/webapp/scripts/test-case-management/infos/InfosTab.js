@@ -50,8 +50,7 @@ define([ "jquery", "backbone", "underscore", "./GeneralInfosPanel", "./Prerequis
 		events : {},
 		
 		_sendUpdateReqToTree : function(){
-			var evt = new EventUpdateReqCoverage([this.settings.testCaseId]);
-			squashtm.workspace.eventBus.fire(null, evt);
+			eventBus.trigger("node.update-reqCoverage", {targetIds : [this.settings.testCaseId]});
 		}
 	});
 	return ParametersTab;

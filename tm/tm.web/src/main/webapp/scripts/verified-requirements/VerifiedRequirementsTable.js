@@ -20,7 +20,7 @@
  */
 define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squash", "jqueryui",
 		"jquery.squash.togglepanel", "squashtable", "jquery.squash.oneshotdialog",
-		"jquery.squash.messagedialog", "jquery.squash.confirmdialog" ], function($, Backbone, _, StringUtil) {
+		"jquery.squash.messagedialog", "jquery.squash.confirmdialog", "jeditable" ], function($, Backbone, _, StringUtil) {
 	var VRTS = squashtm.app.verifiedRequirementsTableSettings;
 	var VerifiedRequirementsTable = Backbone.View.extend({
 

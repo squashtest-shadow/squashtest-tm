@@ -45,7 +45,7 @@
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
 <script type="text/javascript">
 require(["common"], function() {
-  require(["jquery"], function($) {
+  require(["jquery", "jeditable"], function($) {
     $( '#${ componentId }' ).editable( ${target}, {
       type: 'select',  
       placeholder: '<f:message key="rich-edit.placeholder" />',

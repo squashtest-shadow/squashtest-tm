@@ -85,7 +85,7 @@
 				
 <script type="text/javascript">
 	require([ "common" ], function() {
-  		require(["jquery", "squashtable"], function($){
+  		require(["jquery", 'workspace.event-bus', "squashtable"], function($, eventBus){
 			$(function() {
     			var table = $("#verifying-test-cases-table").squashTable({
     				'aaData' : ${json:serialize(model.aaData)}
@@ -113,8 +113,7 @@
     					dataType : 'json'
     				}).success(function(){
     					table.refresh();
-					var evt = new EventUpdateReqCoverage(ids);
-					squashtm.workspace.eventBus.fire(null, evt);
+    					eventBus.workspace.trigger("node.update-reqCoverage", {targetIds : ids});
     				})
     			});
     			</c:if>			

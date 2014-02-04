@@ -55,148 +55,86 @@ define([ 'jquery', 'tree', 'workspace.event-bus' ], function($, tree, eventBus) 
 		
 		var self = this;
 		
+		// ********* generic attribute changed handler ************
+		 
+		/* Note that this approach might not be sufficient for 
+		 * all cases, for instance a new name and a new reference 
+		 * because of their special display.
+		 */
+		eventBus.on('node.attribute-changed', function(evt, data){
+			var node = self.getTree().findNodes(data.identity);
+			if (node.length !== 0){
+				node.setAttr(data.attribute, data.value);			
+			}
+		});
+		
+		// ********** other handlers ****************
+		
 		eventBus.on('node.rename', function(evt, data){
-			updateEventRename(data, self.getTree());
+			var node = self.getTree().findNodes(data.identity);
+			if (node.length !== 0){
+				node.setName(data.newName);			
+			}
 		});
 		
 		eventBus.on('node.update-reference', function(evt, data){
-			updateEventUpdateReference(data, self.getTree());
+			var node = self.getTree().findNodes(data.identity);
+			if (node.length !== 0){
+				node.setReference(data.newRef);			
+			}
 		});
 		
-		eventBus.on('node.add node.remove', function(evt, data){
+		eventBus.on('node.update-reqCoverage', function(evt, data){
+			updateEventUpdateReqCoverage(data, self.getTree());
+		});
+		
+		eventBus.on('node.add', function(evt, data){
+			updateEventAdd(data, self.getTree());	
+		});
+
+		eventBus.on('node.remove', function(evt, data){
 			self.getTree().refresh_selected();
 		});
-
 		
-		
-		this.update = function(event) {
-
-			var otree = this.getTree();
-
-			// todo : make something smarter
-			// ^^^ yeah that would be nice
-			switch (event.evt_name) {
-			case "paste":
-				updateEventPaste(event, otree);
-				break;
-			case "rename":
-			case "node.rename" :
-				updateEventRename(event, otree);
-				break;
-			case "update-reference":
-				updateEventUpdateReference(event, otree);
-				break;
-			case "update-category":
-				updateEventUpdateCategory(event, otree);
-				break;
-			case "update-status":
-				updateEventUpdateStatus(event, otree);
-				break;
-			case "update-importance":
-				updateEventUpdateImportance(event, otree);
-				break;
-			case "update-reqCoverage":
-				updateEventUpdateReqCoverage(event, otree);
-				break;
-			case "contextualcontent.clear":
-				break; // bail out, default induces bugs
-			default:
-				otree.refresh_selected();
-				break;
-			}
-		};
 
 	}
 
 	/* *************************** update Events ********************* */
-
-	function updateEventPaste(event, tree) {
-
-		var destination = tree.findNodes({
-			restype : event.evt_destination.obj_restype,
-			resid : event.evt_destination.obj_id
-		});
-
-		destination.getChildren().each(function() {
-			tree.jstree('delete_node', this);
-		});
-
-		destination.load().done(function() {
-			if (!destination.isOpen()) {
-				destination.open();
-			}
-			if (event instanceof EventDuplicate) {
-				var duplicate = tree.findNodes({
-					restype : event.evt_duplicate.obj_restype,
-					resid : event.evt_duplicate.obj_id
-				});
-				duplicate.select();
-			}
-		});
-
-	}
-
-	function updateEventRename(data, tree) {
-
-		var target = tree.findNodes(data.identity);
-
-		if (target.length === 0) {
-			return;
-		}
-
-		target.setName(data.newName);
-
-	}
-
-	function updateEventUpdateReference(data, tree) {
-		var target = tree.findNodes(data.identity);
-
-		if (target.length === 0) {
-			return;
-		}
-
-		target.setReference(data.newRef);
-	}
 	
-	function updateEventUpdateCategory(event, tree) {
-		var target = tree.findNodes({
-			restype : event.evt_target.obj_restype,
-			resid : event.evt_target.obj_id
-		});
-
-		if (target.length === 0) {
+	// the more informations in data, the more accurate it is treated
+	function updateEventAdd(data, tree) {
+		
+		if (data.parent === undefined){
+			tree.refresh_selected();
 			return;
 		}
-
-		target.setAttr('category', event.evt_newcat);
-	}	
-	function updateEventUpdateImportance(event, tree) {
-		var target = tree.findNodes({
-			restype : event.evt_target.obj_restype,
-			resid : event.evt_target.obj_id
+		
+		
+		var parent = tree.findNodes(data.parent);
+		parent.getChildren().each(function(){
+			tree.delete_node(this);
 		});
+		
+		parent.load().done(function(){
+			if (!parent.isOpen()){
+				parent.open();
+			}
 
-		if (target.length === 0) {
-			return;
-		}
-
-		target.setAttr('importance', event.evt_newimpt);
+			if (data.child){
+				var child = tree.findNodes(data.child);
+				if (child){
+					child.select();
+				}
+			}
+		});
+		
 	}
-	function updateEventUpdateStatus(event, tree) {
-		var target = tree.findNodes({
-			restype : event.evt_target.obj_restype,
-			resid : event.evt_target.obj_id
-		});
 
-		if (target.length === 0) {
-			return;
-		}
 
-		target.setAttr('status', event.evt_newstatus);
-	}
-	function updateEventUpdateReqCoverage(event, tree) {
+	
+	function updateEventUpdateReqCoverage(data, tree) {
 		var openedNodes  = tree.findNodes({restype : "test-cases"});
-		var targetIds = event.evt_target.ids;
+		var targetIds = data.targetIds;
 		var openedTargetIds = $(targetIds).filter(function(index){
 			var itemId = targetIds[index];
 			for(var i = 0; i < openedNodes.length; i++){
@@ -219,10 +157,10 @@ define([ 'jquery', 'tree', 'workspace.event-bus' ], function($, tree, eventBus) 
 		});
 		
 
-		
-		
 		updateCallingTestCasesNodes( tree, mapIdOldReq);
 	}
+	
+	
 	function updateCallingTestCasesNodes( tree, mapIdOldReq){
 		//if a test case change it's requirements then it's calling test cases might be newly bound/unbound to requirements or might have their importance changed.
 		

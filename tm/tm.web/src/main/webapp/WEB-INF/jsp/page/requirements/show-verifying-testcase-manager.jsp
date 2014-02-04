@@ -153,8 +153,7 @@ require([ "common" ], function() {
 			});
 			
 			function sendUpdateTree(ids){
-					var evt = new EventUpdateReqCoverage(ids);
-					squashtm.workspace.eventBus.fire(null, evt);
+				eventBus.workspace.trigger("node.update-reqCoverage", {targetIds : ids});
 			}
 		});
 	});

@@ -90,7 +90,8 @@
 				
 				<%-- verified requirements addition --%>
 				$( '#add-items-button' ).click(function() {
-					ids = ("#linkable-requirements-tree").jstree('get_selected').not(':library').treeNode().all('getResId');			
+					var tree = $("#linkable-requirements-tree");
+					ids = tree.jstree('get_selected').not(':library').treeNode().all('getResId');			
 					if (ids.length > 0) {
 						$.post('${ addVerifiedRequirementsUrl }', { requirementsIds: ids}, addHandler);
 					}

@@ -76,8 +76,6 @@ define(["jquery", 'tree','./permissions-rules', 'workspace.contextual-content', 
 			
 			var tree = zetree.get();
 			
-			eventBus.addPermanentListener(treehandler);
-			
 			tree.on('select_node.jstree deselect_node.jstree', function(){
 				loadFragment(tree);
 			});

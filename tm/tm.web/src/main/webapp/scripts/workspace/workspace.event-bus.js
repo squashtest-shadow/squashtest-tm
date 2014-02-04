@@ -20,11 +20,8 @@
  */
 
 /*
- * Event bus used for communications between different parts of the workspace.
- * 
- * At the moment this documentation was written you can listen and publish events in two ways :
- * - using the old school API : see addPermanentListener(), addContextualListener(), fire()
- * - using the new API : onContextual() + the rest of jquery API
+ * Event bus used for communications between different parts of the workspace. 
+ * It uses the jQuery event API. 
  * 
  * 
  * 
@@ -32,13 +29,12 @@
  * every listeners living in that part of the document must be unregistered. When clearContextualListeners() 
  * is invoked, the bus will trigger for all listeners the event 'contextualcontent.clear', 
  * then remove the contextual listeners. A contextual listener is a listener that had been registered
- * using addContextualListener() or onContextual() .
+ * using onContextual() .
  * 
  * See code for the rest.
  * 
  * 
- * TODO : migrate the shitty old API I designed some times ago 
- * to jQuery or Backbone events. Also, the Backbone object is a fine candidate
+ * TODO : consider the Backbone object as a candidate
  * for event bus-ing as it extends Backbone.Event. 
  * 
  */
@@ -55,47 +51,8 @@ define([ "jquery" ], function($) {
 
 		squashtm.workspace.eventBus = $.extend($({}), {
 
-			// *********** for old school API : *************
-			
-			oldschool_listeners : [],
-			oldschool_permanentListeners : [],
-			
-			// listeners registered here stay as long as the page
-			addPermanentListener : function(listener) {
-				this.oldschool_listeners.push(listener);
-				this.oldschool_permanentListeners.push(listener);
-			},
-			
-			// listeners registered here are wiped when event 'contextualcontent.clear'
-			// is triggered because they don't belong to the permanent listeners
-			addContextualListener : function(listener){
-				this.oldschool_listeners.push(listener);
-			},
-						
-			fire : function(origin, event) {
-				
-				//jquery event
-				this.trigger(event.evt_name, event);
-				
-				// all school events
-				this._fire(origin, event);
-				
-			},
-			
-			_fire : function(origin, event){				
-				
-				for ( var i=0, len = this.oldschool_listeners.length; i<len;i++) {
-					var listener = this.oldschool_listeners[i];
-					if (listener !== origin) {
-						listener.update(event);
-					}
-				}
-			},
-			
-			// ********************* new API ***********
-			
 
-			newschool_contextualListeners : [],
+			contextualListeners : [],
 			
 			// Registers listeners that will be removed when 'contextualcontent.clear' is fired.
 			// All but the 'data' parameter of the method call will be saved for later reference.
@@ -109,7 +66,7 @@ define([ "jquery" ], function($) {
 					offParams.splice(dataParamIndex, 1);
 				}
 
-				this.newschool_contextualListeners.push(offParams);	
+				this.contextualListeners.push(offParams);	
 				
 				// now register the event
 				this.on.apply(this, arguments);
@@ -154,23 +111,17 @@ define([ "jquery" ], function($) {
 			},
 			
 			clearContextualListeners : function(){
-						
-				// notify then wipe the oldschool contextual listeners, this is done by reassigning 
-				// the permanent listeners only.
-				this._fire(null, { evt_name : 'contextualcontent.clear'} );
-				
-				this.oldschool_listeners = this.oldschool_permanentListeners.slice(0);
-				
+					
 				// notify then wipe the jquery style contextual listeners, then empty the list of contextual listeners :
 				this.trigger('contextualcontent.clear');
 				
-				var offparams = this.newschool_contextualListeners;
+				var offparams = this.contextualListeners;
 				for (var i=0;i<offparams.length;i++){
 					var params = offparams[i]; 
 					this.off.apply(this, params);
 				}
 				
-				this.newschool_contextualListeners = [];
+				this.contextualListeners = [];
 			}
 			
 		});

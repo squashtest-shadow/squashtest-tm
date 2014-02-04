@@ -72,7 +72,6 @@
 			"jqplot-core",
 			"jqplot-pie",
 			"squash.KeyEventListener",
-			"squash.events",
 			// AMD
 			"domReady",
 			"jquery",

@@ -132,11 +132,16 @@
 			$.squash.openMessage('<f:message key="test-suite.duplicate.success.title" />', '<f:message key="test-suite.duplicate.success.message" />');
 			</c:when>
 			<c:otherwise>
-				var destination = new SquashEventObject(${testSuite.iteration.id}, "iterations");
-				var duplicate = new SquashEventObject( idOfDuplicate, "test-suites");
-				var source = new SquashEventObject(${testSuite.id}, "test-suites");
-				var evt = new EventDuplicate(destination, duplicate, source);
-				squashtm.workspace.eventBus.fire(null, evt);
+				squashtm.workspace.eventBus.trigger('node.add', {
+					parent : {
+						resid : ${testSuite.iteration.id},
+						rel : "iteration"
+					},
+					child :{
+						resid : idOfDuplicate,
+						rel : "test-suite" 
+					} 
+				});
 			</c:otherwise>
 		</c:choose>
 		

@@ -145,14 +145,13 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "jeditable.s
 				
 				_updateStatusInTree : function(value){
 					var self = this;
-					var evt = new EventUpdateStatus(self.identity, value.toLowerCase());
-					squashtm.workspace.eventBus.fire(null, evt);
+					eventBus.trigger('node.attribute-changed', {identity : self.identity, attribute : 'status', value : value.toLowerCase()});
+					
 				},
 				
 				_updateImportanceInTree : function(value){
 					var self = this;
-					var evt = new EventUpdateImportance(self.identity, value.toLowerCase());
-					squashtm.workspace.eventBus.fire(null, evt);	
+					eventBus.trigger('node.attribute-changed', {identity : self.identity, attribute : 'importance', value : value.toLowerCase()});
 				},
 				
 				_updateReferenceInTree : function (newRef){

@@ -83,7 +83,7 @@ that page won't be editable if
 var squashtm = squashtm || {};
 
 require(["common"], function() {
-  require(["jquery", "squash.events", "workspace.event-bus"], function($, events, eventBus) {
+  require(["jquery", "workspace.event-bus"], function($,  eventBus) {
     function renameRequirementSuccess(data){
     	eventBus.trigger('node.rename', { identity : identity, newName : data.newName});    	
     }
@@ -96,8 +96,7 @@ require(["common"], function() {
     function postUpdateCategory(value, settings){
       $.post("${requirementUrl}", {id:"requirement-category", value : value})
       .done(function(response){
-        var evt = new events.EventUpdateCategory(identity, value.toLowerCase());
-        eventBus.fire(null, evt);
+    	eventBus.trigger("node.attribute-changed", {identity : identity, attribute : 'category', value : value.toLowerCase()});
       });
 
       //in the mean time, must return immediately

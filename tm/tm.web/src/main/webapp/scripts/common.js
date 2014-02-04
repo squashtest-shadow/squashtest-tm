@@ -135,8 +135,7 @@ requirejs.config({
 				//for plugin compatibility purposes
 				"jquery.squash.datatables" : "plugin-compatibility/jquery.squash.datatable",
 				// contextual content
-				"squash.KeyEventListener" : "squashtest/classes/KeyEventListener",
-				"squash.events" : "squashtest/classes/Event"
+				"squash.KeyEventListener" : "squashtest/classes/KeyEventListener"
 			},
 			shim : {
 				"ckeditor" : {
@@ -252,9 +251,6 @@ requirejs.config({
 				"squash.KeyEventListener" : {
 					deps : [ "jquery" ], 
 					exports : "KeyEventListener" // this is a constructor
-				}, 
-				"squash.events" : {
-					exports : "squashtm.events"
 				}
 			}
 		});
