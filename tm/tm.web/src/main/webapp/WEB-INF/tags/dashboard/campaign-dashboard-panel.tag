@@ -41,6 +41,8 @@
 <f:message var="buttonOK" key="label.Ok"/>
 <f:message var="dateformatSupershort" key="squashtm.dateformatSupershort" />		
 <f:message var="dateformatJs" key="squashtm.dateformatShort" />
+<f:message var="testWeightHelper" key="dashboard.campaigns.importance.helper"/>
+<f:message var="campaignProgressHelper" key="dashboard.campaigns.progression.helper"/>
 
 <div id="dashboard-master" data-def="url=${url}">
 
@@ -66,6 +68,12 @@
 			<%-- first dashboard : cumulative progression of this campaign --%>
 					
 			<comp:toggle-panel id="" title="${advanceTitle}">
+				
+				<jsp:attribute name="panelButtons">
+					<div class="icon-helper" title="${campaignProgressHelper}"> </div>	
+				</jsp:attribute>
+				
+				
 				<jsp:attribute name="body">
 								
 				<div id="dashboard-cumulative-progression" data-def="model-attribute=campaignProgressionStatistics, dateformat=${dateformatSupershort}">
@@ -86,7 +94,7 @@
 						
 						<table class="iterpopup-content" >
 							<thead>
-								<tr >
+								<tr>
 									<th><f:message key="label.Name"/></th>
 									<th><f:message key="dialog.label.iteration.scheduled_start.label"/></th>
 									<th><f:message key="dialog.label.iteration.scheduled_end.label"/></th>
@@ -216,11 +224,12 @@
 						
 						<div class="dashboard-item-meta">					
 							
+							<div class="dashboard-item-subplot">
+								<div class="icon-helper" title="${testWeightHelper}"></div>		
+							</div>
 						
 							<div class="dashboard-item-legend">
-								<div>
-									<div> wat </div>								
-								</div>
+	
 								<div>
 									<div class="dashboard-legend-sample-color" style="background-color:#FCEDB6"></div>
 									<span><f:message key="test-case.importance.LOW" /></span>

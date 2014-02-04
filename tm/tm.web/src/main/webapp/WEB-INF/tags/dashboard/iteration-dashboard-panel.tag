@@ -56,6 +56,7 @@
 <f:message var="MediumLabel" key="test-case.importance.MEDIUM"/>
 <f:message var="LowLabel" key="test-case.importance.LOW"/>
 <f:message var="testsWithoutSuite" key="dashboard.iteration.tests-without-suite"/>
+<f:message var="testWeightHelper" key="dashboard.campaigns.importance.helper"/>
 
 
 <f:message var="refreshLabel" key="label.Refresh" />
@@ -198,6 +199,9 @@
 						
 						<div class="dashboard-item-meta">					
 							
+							<div class="dashboard-item-subplot">
+								<div class="icon-helper" title="${testWeightHelper}"></div>		
+							</div>
 						
 							<div class="dashboard-item-legend">
 								<div>

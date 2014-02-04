@@ -220,6 +220,13 @@ tr.nodrop td.drag-handle {
 	cursor : pointer;
 }
 
+.icon-helper{
+	cursor : help;
+	background-image: url("../images/icon-help.png"); /** sprite-ref: sprites-icons; */	
+	height : 16px;
+	width : 16px;
+}
+
 span.little-text {
 	font-size: 8px;
 }
