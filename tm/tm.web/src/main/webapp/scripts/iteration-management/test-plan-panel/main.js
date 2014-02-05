@@ -89,12 +89,12 @@ define(['squash.translator', './table', './popups'], function(translator, table,
 		}
 		
 		if (conf.permissions.reorderable){
-			$("#reorder-test-plan-button").squashButton().on('click', function(){
+			$("#reorder-test-plan-button").on('click', function(){
 				$("#iter-test-plan-reorder-dialog").confirmDialog('open');
 			});
 		}
 		
-		$("#filter-test-plan-button").squashButton().on('click', function(){
+		$("#filter-test-plan-button").on('click', function(){
 		
 			if(filterOn){
 				table.hideFilterFields();

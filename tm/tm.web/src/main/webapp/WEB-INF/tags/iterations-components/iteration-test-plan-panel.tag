@@ -57,7 +57,7 @@
 
 <%-- ==================== THE TOOLBAR ==================== --%>
 
-<div class="toolbar">
+<div class="cf">
 
 	<f:message var="tooltipSortmode" 	key="tooltips.TestPlanSortMode"/>
 	<f:message var="messageSortmode"	key="message.TestPlanSortMode"/>
@@ -74,37 +74,56 @@
 	<f:message var="tooltipAddSuite"    key="tooltips.AddTSToTPI"/>
 	
 	<c:if test="${ reorderable }">
-		<span class="group left-buttons">
-		<button id="filter-test-plan-button" class="button" title="${reorderTooltip}" data-icon="ui-icon-refresh">${filterLabel}</button>
-		<button id="reorder-test-plan-button" class="button" title="${reorderTooltip}" data-icon="ui-icon-refresh">${reorderLabel}</button>
-		<span id="test-plan-sort-mode-message" class="not-displayed sort-mode-message" title="${tooltipSortmode}">${messageSortmode}</span>
-		</span>
+  <div class="left btn-toolbar">
+    <span class="btn-group">
+      <button id="filter-test-plan-button" class="sq-button btn-sm" title="${reorderTooltip}">
+        <span class="ui-icon ui-icon-refresh"></span>
+        ${filterLabel}
+      </button>
+      <button id="reorder-test-plan-button" class="sq-button btn-sm" title="${reorderTooltip}">
+        <span class="ui-icon ui-icon-refresh"></span>
+        ${reorderLabel}
+      </button>
+      <span id="test-plan-sort-mode-message" class="not-displayed sort-mode-message" title="${tooltipSortmode}">${messageSortmode}</span>
+    </span>
+  </div>
 	</c:if>
 	
 	
-	<c:if test="${ linkable }">		
-		<button id="manage-test-suites-buttonmenu" 	data-icon="ui-icon-tag" 	title="${tooltipAddSuite}"	class="buttonmenu" >${manageTS}</button>
-		<ul id="manage-test-suites-menu" class="not-displayed">
-			
-			<li class="suite-manager-controls suite-manager-newsection ui-menu-item">
-				<input type="text" id="suite-manager-menu-input" />
-				<button id="suite-manager-menu-button" class="button"><f:message key="label.create"/></button>
-			</li>
-			
-			<li class="suite-manager-buttonpane suite-manager-newsection ui-menu-item">
-				<div class="snap-right">
-					<input type="button" id="suite-manager-menu-ok-button" 		role="button" class="button" value="${okLabel}" />
-					<input type="button" id="suite-manager-menu-cancel-button"	role="button" class="button" value="${cancelLabel}" />
-				</div>
-			</li> 		 
-		</ul>
-		<span class="group">
-		<button id="assign-users-button" data-icon="ui-icon-person" class="button" title="${tooltipAssign}" >${assignLabel}</button>
-		</span>
-		<span class="group">
-		<button id="navigate-test-plan-manager"	data-icon="ui-icon-plusthick" class="button" title="${tooltipAddTPI}">${associateLabel}</button>
-		<button id="remove-test-plan-button" data-icon="ui-icon-trash" class="button" title="${tooltipRemoveTPI}" >${removeLabel}</button>
-		</span>
+	<c:if test="${ linkable }">
+  <div class="right btn-toolbar">
+    <div class="btn-group">
+      <button id="manage-test-suites-buttonmenu" 	data-icon="ui-icon-tag" 	title="${tooltipAddSuite}"	class="buttonmenu sq-button btn-sm" >${manageTS}</button>
+      <ul id="manage-test-suites-menu" class="not-displayed">
+        <li class="suite-manager-controls suite-manager-newsection ui-menu-item">
+          <input type="text" id="suite-manager-menu-input" />
+          <button id="suite-manager-menu-button" class="button"><f:message key="label.create"/></button>
+        </li>
+        <li class="suite-manager-buttonpane suite-manager-newsection ui-menu-item">
+          <div class="snap-right">
+            <input type="button" id="suite-manager-menu-ok-button" 		role="button" class="button" value="${okLabel}" />
+            <input type="button" id="suite-manager-menu-cancel-button"	role="button" class="button" value="${cancelLabel}" />
+          </div>
+        </li> 		 
+      </ul>
+    </div>
+    <span class="btn-group">
+      <button id="assign-users-button" class="sq-button btn-sm" title="${tooltipAssign}">
+        <span class="ui-icon ui-icon-person"></span>
+        ${assignLabel}
+      </button>
+    </span>
+    <span class="btn-group">
+      <button id="navigate-test-plan-manager" class="sq-button btn-sm" title="${tooltipAddTPI}">
+        <span class="ui-icon ui-icon-plusthick"></span>
+        ${associateLabel}
+      </button>
+      <button id="remove-test-plan-button" class="sq-button btn-sm" title="${tooltipRemoveTPI}" >
+        <span class="ui-icon ui-icon-trash"></span>
+        ${removeLabel}
+      </button>
+    </span>
+  </div>
 	</c:if>
 </div>
 
