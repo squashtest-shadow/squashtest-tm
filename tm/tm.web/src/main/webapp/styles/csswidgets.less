@@ -45,10 +45,12 @@
 		.ui-state-active;
 	}
 	
-	&:focus {
+	/* .btn-focus marks "focusable" buttons */
+	&.btn-focus:focus {
 		.ui-state-focus;
 	}
 	
+	/* disable state. it can be achieved on elemens which cannot be disabled with .disabled */
 	&:disabled, &.disabled { 
 		.ui-state-disabled;
 		

@@ -51,6 +51,7 @@
   
   <h3>Bouton avec texte seul</h3>
   <input type="submit" value="input:submit" class="sq-button" onclick="alert('submit')" />
+  <input type="submit" value="input:submit" class="sq-button btn-focus" onclick="alert('submit')" />
   <input type="submit" value="input:submit:disabled" class="sq-button" disabled="" onclick="alert('submit')" />
   
   <input type="button" value="input:button" class="sq-button" onclick="alert('submit')" />
@@ -135,99 +136,85 @@
   
   <h2>Toolbar</h2>
   <h3>toolbar alignée à gauche</h3>
-  <style>
-    .btn-toolbar-left {
-      display: block;
-/*       text-align: left;
-      float: left;
- */    }
-    .btn-toolbar-right {
-      display: block;
-/*       text-align: right;
-      float: right;
- */    }
-    .btn-toolbar-right .btn-group, .btn-group-right {
-      display: block;
-      float: right;
-      margin-right: 2em;
-    }
-    .btn-toolbar-left .btn-group, .btn-group-left {
-      display: block;
-      float: left;
-      margin-right: 2em;
-    }
-    .clearfix:after, .clearfix:before {
-      content: "";
-      display: table;
-    }
-    .clearfix:after {
-      clear: both;
-    }
-    
-  </style>
   <div>
-  <div class="btn-toolbar-left clearfix">
-    <div class="btn-group">
-      <input type="submit" value="btn1" class="sq-button" onclick="alert('submit')" />
-      <input type="submit" value="brn2" class="sq-button" onclick="alert('submit')" />
-    </div>
-    <div class="btn-group">
-      <input type="submit" value="btn3" class="sq-button" onclick="alert('submit')" />
-      <input type="submit" value="btn4" class="sq-button" onclick="alert('submit')" />
+    <h4>.btn-toolbar avec 2 groupes de boutons</h4>
+    <div class="btn-toolbar">
+      <div class="btn-group">
+        <input type="submit" value="btn1" class="sq-button" onclick="alert('submit')" />
+        <input type="submit" value="brn2" class="sq-button" onclick="alert('submit')" />
+      </div>
+      <div class="btn-group">
+        <input type="submit" value="btn3" class="sq-button" onclick="alert('submit')" />
+        <input type="submit" value="btn4" class="sq-button" onclick="alert('submit')" />
+      </div>
     </div>
   </div>
+  <div>
+    <h4>.btn-toolbar.left avec 2 groupes de boutons</h4>
+    <div class="btn-toolbar left">
+      <div class="btn-group">
+        <input type="submit" value="btn1" class="sq-button" onclick="alert('submit')" />
+        <input type="submit" value="brn2" class="sq-button" onclick="alert('submit')" />
+      </div>
+      <div class="btn-group">
+        <input type="submit" value="btn3" class="sq-button" onclick="alert('submit')" />
+        <input type="submit" value="btn4" class="sq-button" onclick="alert('submit')" />
+      </div>
+    </div>
+  </div>
+  <div>
+    <h4>.btn-toolbar avec des boutons en vrac</h4>
+    <div class="btn-toolbar">
+        <input type="submit" value="btn1" class="sq-button" onclick="alert('submit')" />
+        <input type="submit" value="brn2" class="sq-button" onclick="alert('submit')" />
+        <input type="submit" value="btn3" class="sq-button" onclick="alert('submit')" />
+        <input type="submit" value="btn4" class="sq-button" onclick="alert('submit')" />
+    </div>
   </div>
   <h3>toolbar alignée à droite</h3>
-  <div class="btn-toolbar-right clearfix">
-    <div class="btn-group">
-      <input type="submit" value="btn1" class="sq-button" onclick="alert('submit')" />
-      <input type="submit" value="brn2" class="sq-button" onclick="alert('submit')" />
-    </div>
-    <div class="btn-group">
-      <input type="submit" value="btn3" class="sq-button" onclick="alert('submit')" />
-      <input type="submit" value="btn4" class="sq-button" onclick="alert('submit')" />
-    </div>
-  </div>
-  <h3>toolbars à droite et à gauche</h3>
-  <div class="clearfix">
-  <div class="btn-toolbar-left">
-    <div class="btn-group">
-      <input type="submit" value="btn1" class="sq-button" onclick="alert('submit')" />
-      <input type="submit" value="brn2" class="sq-button" onclick="alert('submit')" />
-    </div>
-    <div class="btn-group">
-      <input type="submit" value="btn3" class="sq-button" onclick="alert('submit')" />
-      <input type="submit" value="btn4" class="sq-button" onclick="alert('submit')" />
+  <div>
+    <h4>.btn-toolbar.right avec des boutons en vrac</h4>
+    <div class="btn-toolbar right">
+        <input type="submit" value="btn1" class="sq-button" onclick="alert('submit')" />
+        <input type="submit" value="brn2" class="sq-button" onclick="alert('submit')" />
+        <input type="submit" value="btn3" class="sq-button" onclick="alert('submit')" />
+        <input type="submit" value="btn4" class="sq-button" onclick="alert('submit')" />
     </div>
   </div>
-  <div class="btn-toolbar-right">
-    <div class="btn-group">
-      <input type="submit" value="btn1" class="sq-button" onclick="alert('submit')" />
-      <input type="submit" value="brn2" class="sq-button" onclick="alert('submit')" />
-    </div>
-    <div class="btn-group">
-      <input type="submit" value="btn3" class="sq-button" onclick="alert('submit')" />
-      <input type="submit" value="btn4" class="sq-button" onclick="alert('submit')" />
+  <div>
+    <h4>.btn-toolbar.right avec des boutons en vrac</h4>
+    <div class="btn-toolbar right">
+      <div class="btn-group">
+        <input type="submit" value="btn1" class="sq-button" onclick="alert('submit')" />
+        <input type="submit" value="brn2" class="sq-button" onclick="alert('submit')" />
+      </div>
+      <div class="btn-group">
+        <input type="submit" value="btn3" class="sq-button" onclick="alert('submit')" />
+        <input type="submit" value="btn4" class="sq-button" onclick="alert('submit')" />
+      </div>
     </div>
   </div>
-  </div>
-  <h3>toolbars à droite et à gauche 1 toolbar</h3>
-  <div class="btn-toolbar clearfix">
-    <div class="btn-group-left">
-      <input type="submit" value="btn1" class="sq-button" onclick="alert('submit')" />
-      <input type="submit" value="brn2" class="sq-button" onclick="alert('submit')" />
+  <h3>toolbars à droite et à gauche. il faut l'emballer dans un .cf !</h3>
+  <div class="cf">
+    <div class="btn-toolbar left">
+      <div class="btn-group">
+        <input type="submit" value="btn1" class="sq-button" onclick="alert('submit')" />
+        <input type="submit" value="brn2" class="sq-button" onclick="alert('submit')" />
+      </div>
+      <div class="btn-group">
+        <input type="submit" value="btn3" class="sq-button" onclick="alert('submit')" />
+        <input type="submit" value="btn4" class="sq-button" onclick="alert('submit')" />
+      </div>
     </div>
-    <div class="btn-group-left">
-      <input type="submit" value="btn3" class="sq-button" onclick="alert('submit')" />
-      <input type="submit" value="btn4" class="sq-button" onclick="alert('submit')" />
-    </div>
-    <div class="btn-group-right">
-      <input type="submit" value="btn1" class="sq-button" onclick="alert('submit')" />
-      <input type="submit" value="brn2" class="sq-button" onclick="alert('submit')" />
-    </div>
-    <div class="btn-group-right">
-      <input type="submit" value="btn3" class="sq-button" onclick="alert('submit')" />
-      <input type="submit" value="btn4" class="sq-button" onclick="alert('submit')" />
+    <div class="btn-toolbar right">
+      <div class="btn-group">
+        <input type="submit" value="btn1" class="sq-button" onclick="alert('submit')" />
+        <input type="submit" value="brn2" class="sq-button" onclick="alert('submit')" />
+      </div>
+      <div class="btn-group">
+        <input type="submit" value="btn3" class="sq-button" onclick="alert('submit')" />
+        <input type="submit" value="btn4" class="sq-button" onclick="alert('submit')" />
+      </div>
     </div>
   </div>
 
