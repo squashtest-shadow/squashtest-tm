@@ -23,9 +23,8 @@ package org.squashtest.tm.domain.requirement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -57,10 +56,10 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 	@Transient
 	private final FolderSupport<RequirementLibraryNode, RequirementFolder> folderSupport = new FolderSupport<RequirementLibraryNode, RequirementFolder>(this);
 
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE, CascadeType.REFRESH})
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
 	@OrderColumn(name = "CONTENT_ORDER")
 	@JoinTable(name = "RLN_RELATIONSHIP", joinColumns = @JoinColumn(name = "ANCESTOR_ID"), inverseJoinColumns = @JoinColumn(name = "DESCENDANT_ID"))
-	private final List<RequirementLibraryNode> content = new ArrayList<RequirementLibraryNode>();
+	private List<RequirementLibraryNode> content = new ArrayList<RequirementLibraryNode>();
 
 	@OneToOne(cascade = { CascadeType.ALL })
 	@NotNull
@@ -96,7 +95,7 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 	@Override
 	public void removeContent(RequirementLibraryNode contentToRemove) throws NullArgumentException {
 		content.remove(contentToRemove);
-
+		content = new ArrayList<RequirementLibraryNode>(content);
 	}
 
 	@Override

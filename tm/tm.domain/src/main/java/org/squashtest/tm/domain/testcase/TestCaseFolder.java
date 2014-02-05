@@ -22,9 +22,8 @@ package org.squashtest.tm.domain.testcase;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -55,10 +54,10 @@ public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCa
 	@Transient
 	private final FolderSupport<TestCaseLibraryNode, TestCaseFolder> folderSupport = new FolderSupport<TestCaseLibraryNode, TestCaseFolder>(this);
 
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+	@OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	@OrderColumn(name = "CONTENT_ORDER")
 	@JoinTable(name = "TCLN_RELATIONSHIP", joinColumns = @JoinColumn(name = "ANCESTOR_ID"), inverseJoinColumns = @JoinColumn(name = "DESCENDANT_ID"))
-	private final List<TestCaseLibraryNode> content = new ArrayList<TestCaseLibraryNode>();
+	private List<TestCaseLibraryNode> content = new ArrayList<TestCaseLibraryNode>();
 
 	@Override
 	public void addContent(TestCaseLibraryNode node) {
@@ -89,6 +88,7 @@ public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCa
 	@Override
 	public void removeContent(TestCaseLibraryNode node) throws NullArgumentException {
 		content.remove(node);
+		content = new ArrayList<TestCaseLibraryNode>(content);
 
 	}
 	@Override

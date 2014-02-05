@@ -87,12 +87,12 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	private List<RequirementVersion> versions = new ArrayList<RequirementVersion>();
 	
 	
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE, CascadeType.REFRESH})
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
 	@OrderColumn(name = "CONTENT_ORDER")
 	@JoinTable(name = "RLN_RELATIONSHIP", joinColumns = @JoinColumn(name = "ANCESTOR_ID"), inverseJoinColumns = @JoinColumn(name = "DESCENDANT_ID"))
 	@Field(analyze=Analyze.NO, store=Store.YES)
 	@FieldBridge(impl = CountElementsInCollectionBridge.class)
-	private final List<Requirement> children = new ArrayList<Requirement>();
+	private List<Requirement> children = new ArrayList<Requirement>();
 
 
 	protected Requirement() {
@@ -384,6 +384,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 			NullArgumentException {
 		checkContentNameAvailable(child);
 		children.add(child);
+		children = new ArrayList<Requirement>(children);
 		child.notifyAssociatedWithProject(this.getProject());
 	}
 	
@@ -422,6 +423,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	public void removeContent(Requirement exChild)
 			throws NullArgumentException {
 		children.remove(exChild);
+		children = new ArrayList<Requirement>(children);
 	}
 
 	@Override

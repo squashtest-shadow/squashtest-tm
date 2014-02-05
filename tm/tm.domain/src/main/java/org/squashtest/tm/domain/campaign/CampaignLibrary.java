@@ -55,10 +55,10 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 	@Column(name = "CL_ID")
 	private Long id;
 
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE})
 	@OrderColumn(name = "CONTENT_ORDER")
 	@JoinTable(name = "CAMPAIGN_LIBRARY_CONTENT", joinColumns = @JoinColumn(name = "LIBRARY_ID"), inverseJoinColumns = @JoinColumn(name = "CONTENT_ID"))
-	private final List<CampaignLibraryNode> rootContent = new ArrayList<CampaignLibraryNode>();
+	private List<CampaignLibraryNode> rootContent = new ArrayList<CampaignLibraryNode>();
 
 	@OneToOne(mappedBy = "campaignLibrary")
 	private GenericProject project;
@@ -93,6 +93,7 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 			throw new NullArgumentException("CampaignLibrary : cannot remove null node");
 		}
 		rootContent.remove(node);
+		rootContent = new ArrayList<CampaignLibraryNode>(rootContent);
 	}
 
 	@Override

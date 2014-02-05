@@ -55,10 +55,10 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 	@Column(name = "RL_ID")
 	private Long id;
 
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE, CascadeType.REFRESH})
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
 	@OrderColumn(name = "CONTENT_ORDER")
 	@JoinTable(name = "REQUIREMENT_LIBRARY_CONTENT", joinColumns = @JoinColumn(name = "LIBRARY_ID"), inverseJoinColumns = @JoinColumn(name = "CONTENT_ID"))
-	private final List<RequirementLibraryNode> rootContent = new ArrayList<RequirementLibraryNode>();
+	private List<RequirementLibraryNode> rootContent = new ArrayList<RequirementLibraryNode>();
 
 	@OneToOne(mappedBy = "requirementLibrary")
 	private GenericProject project;	
@@ -101,7 +101,7 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 	@Override
 	public void removeContent(RequirementLibraryNode node) {
 		rootContent.remove(node);
-
+		rootContent = new ArrayList<RequirementLibraryNode>(rootContent);
 	}
 	
 	

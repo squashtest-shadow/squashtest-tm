@@ -116,9 +116,9 @@ public class RequirementDeletionHandlerImpl extends
 		List<Long>[] separatedIds = deletionDao.separateFolderFromRequirementIds(targetIds);
 
 		// the folderIds are treated as usual.
-		OperationReport deletedFolders = super.deleteNodes(separatedIds[0]);
-		deletionDao.flush();
-		globalReport.mergeWith(deletedFolders);
+		//OperationReport deletedFolders = super.deleteNodes(separatedIds[0]);
+		//deletionDao.flush();
+		//globalReport.mergeWith(deletedFolders);
 
 		// the requirements get a special treatment : first we rewire the children requirements 
 		// when a parent requirement is removed, second we bypass super#deleteNodes
@@ -126,7 +126,8 @@ public class RequirementDeletionHandlerImpl extends
 		OperationReport rewiredRequirements = rewireChildrenRequirements(separatedIds[1]);
 		globalReport.mergeWith(rewiredRequirements);
 		deletionDao.flush();
-		OperationReport deletedRequirements = batchDeleteNodes(separatedIds[1]);
+		
+		OperationReport deletedRequirements = batchDeleteNodes(targetIds);
 		deletionDao.flush();
 		globalReport.mergeWith(deletedRequirements);
 
@@ -151,9 +152,9 @@ public class RequirementDeletionHandlerImpl extends
 					Requirement requirement = (Requirement) pair[1];
 	
 					renameContentIfNeededThenAttach(parent, requirement, rewireReport);
-					
+	
 				}
-
+	
 				return rewireReport;
 			} else {
 				return new OperationReport();
@@ -282,7 +283,7 @@ public class RequirementDeletionHandlerImpl extends
 
 		NodeMovement nodeMovement = new NodeMovement(new Node(parent.getId(), strtype), movedNodesLog);
 		report.addMoved(nodeMovement);
-		deletionDao.flush();
+
 	}
 	
 	

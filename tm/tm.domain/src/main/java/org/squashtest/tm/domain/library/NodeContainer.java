@@ -22,7 +22,6 @@ package org.squashtest.tm.domain.library;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang.NullArgumentException;
 import org.squashtest.tm.domain.Identified;
