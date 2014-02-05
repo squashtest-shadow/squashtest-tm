@@ -19,7 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 body {
-	font-family: Arial, Verdana, Helvetica, sans-serif;
-	font-style:normal;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-style: normal;
+	font-weight: normal;
 	font-size: 66.66%;
 }
