@@ -23,8 +23,6 @@
  *  object. The configuration is :
  *  
  *  conf : {
- *		preskinned : if true, will not alter the look of the button.
- *		button : { button configuration },
  *		menu : {  menu configuration },
  *		zindex : a user-defined z-index value, to make sure your menu will be displayed above any other elements.
  *					default is 3000,
@@ -47,7 +45,7 @@
  * 
  */
 
-define([ 'jquery', 'jqueryui', 'jquery.squash.squashbutton' ], function($) {
+define([ 'jquery', 'jqueryui' ], function($) {
 
 	// prevent double loading
 	if (!! $.squash.buttonmenu){
@@ -60,8 +58,6 @@ define([ 'jquery', 'jqueryui', 'jquery.squash.squashbutton' ], function($) {
 	
 	$.widget('squash.buttonmenu', {
 		options : {
-			preskinned : false,
-			button : {},
 			menu : {
 				zindex : 3000
 			},
@@ -106,10 +102,6 @@ define([ 'jquery', 'jqueryui', 'jquery.squash.squashbutton' ], function($) {
 			this._menuCssTweak();
 			this._bindLi();
 
-			// jqueryfication
-			if (! settings.preskinned){
-				button.squashButton(settings.button);
-			}
 			
 			menu.menu(settings.menu);
 
@@ -226,7 +218,6 @@ define([ 'jquery', 'jqueryui', 'jquery.squash.squashbutton' ], function($) {
 		
 		_destroy : function(){
 			delete $.squash.buttonmenu._opened[this.uuid];
-			this.element.squashButton('destroy');
 			this.element.next().menu('destroy');
 			this._super();
 		}

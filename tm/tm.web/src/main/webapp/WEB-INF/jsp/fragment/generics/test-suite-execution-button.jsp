@@ -25,13 +25,4 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f" %>
 <?xml version="1.0" encoding="utf-8" ?>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
-<script type="text/javascript">
-	$(function() {
-		$( ".run-menu" )
-		.click(function(){
-			$(this).removeClass("ui-state-focus ui-state-hover");
-		});
-	});
-</script>
-
 <comp:test-suite-execution-button testSuiteId="${ testSuiteId }" statisticsEntity="${ statisticsEntity }" />

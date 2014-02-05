@@ -22,38 +22,12 @@
 
 define(['jquery', './utils', './permissions-rules',
         'workspace/WorkspaceWizardMenu',
-        'jquery.squash.buttonmenu', 
-        'jquery.squash.squashbutton'], function($, utils, permissions, WizardMenu){
+        'jquery.squash.buttonmenu'], function($, utils, permissions, WizardMenu){
 	
 
 	function createWidgets(){
-		
-		var createconf = utils.btnconf("ui-icon ui-icon-plusthick");
-		var copyconf = utils.btnconf("ui-icon-copy");
-		var pasteconf = utils.btnconf("ui-icon-clipboard");
-		var renameconf = utils.btnconf("ui-icon-pencil");
-		var importconf = utils.btnconf("ui-icon-transferthick-e-w");
-		var deleteconf = utils.btnconf("ui-icon-trash");
-		var searchconf = utils.btnconf("ui-icon-search");
-		
-		$("#tree-create-button").buttonmenu({
-			button : createconf
-		});	
-		
-		$("#copy-node-tree-button").squashButton(copyconf);
-		
-		$("#paste-node-tree-button").squashButton(pasteconf);
-		
-		$("#rename-node-tree-button").squashButton(renameconf);
-		
-		$("#tree-import-button").buttonmenu({
-			button : importconf
-		});		
-		
-		$("#search-tree-button").squashButton(searchconf);
-		
-		$("#delete-node-tree-button").squashButton(deleteconf);
-				
+		$("#tree-create-button").buttonmenu();
+		$("#tree-import-button").buttonmenu();
 	}
 	
 	function decorateEnablingMethods(buttons){
@@ -139,12 +113,12 @@ define(['jquery', './utils', './permissions-rules',
 		
 
 	}
-	
+
 	
 	// the wizard menu is a bit different from the rest, hence the init code
 	// is put appart
 	function createWizardMenu(){
-
+		
 		var wizards = squashtm.app.testCaseWorkspace.wizards;
 		
 		if (!!wizards && wizards.length>0){
@@ -163,8 +137,8 @@ define(['jquery', './utils', './permissions-rules',
 				wmenu.refreshSelection(data.inst.get_selected());
 			});
 		}
-		
 	}
+	
 	
 	
 	function init(){

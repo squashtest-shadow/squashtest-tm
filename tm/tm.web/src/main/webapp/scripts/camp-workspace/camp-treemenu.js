@@ -22,36 +22,12 @@
 
 define(['jquery', './utils', './permissions-rules',
         'workspace/WorkspaceWizardMenu',
-        'jquery.squash.buttonmenu', 
-        'jquery.squash.squashbutton'], function($, utils, permissions, WizardMenu){
+        'jquery.squash.buttonmenu'], function($, utils, permissions, WizardMenu){
 
 
 	function createWidgets(){
-		
-		var createconf = utils.btnconf("ui-icon ui-icon-plusthick");
-		var copyconf = utils.btnconf("ui-icon-copy");
-		var pasteconf = utils.btnconf("ui-icon-clipboard");
-		var renameconf = utils.btnconf("ui-icon-pencil");
-		var importconf = utils.btnconf("ui-icon-transferthick-e-w");
-		var deleteconf = utils.btnconf("ui-icon-trash");
-		
-		
-		$("#tree-create-button").buttonmenu({
-			button : createconf
-		});	
-		
-		$("#copy-node-tree-button").squashButton(copyconf);
-		
-		$("#paste-node-tree-button").squashButton(pasteconf);
-		
-		$("#rename-node-tree-button").squashButton(renameconf);
-		
-		$("#tree-import-button").buttonmenu({
-			button : importconf
-		});		
-		
-		$("#delete-node-tree-button").squashButton(deleteconf);
-				
+		$("#tree-create-button").buttonmenu();
+		$("#tree-import-button").buttonmenu();
 	}
 	
 	function decorateEnablingMethods(buttons){

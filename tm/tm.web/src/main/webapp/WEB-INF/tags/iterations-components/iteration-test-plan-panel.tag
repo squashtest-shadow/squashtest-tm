@@ -93,7 +93,10 @@
 	<c:if test="${ linkable }">
   <div class="right btn-toolbar">
     <div class="btn-group">
-      <button id="manage-test-suites-buttonmenu" 	data-icon="ui-icon-tag" 	title="${tooltipAddSuite}"	class="buttonmenu sq-button btn-sm" >${manageTS}</button>
+      <button id="manage-test-suites-buttonmenu" title="${tooltipAddSuite}"	class="buttonmenu sq-button btn-sm" >
+        <span class="ui-icon ui-icon-tag"></span>
+        ${manageTS}
+      </button>
       <ul id="manage-test-suites-menu" class="not-displayed">
         <li class="suite-manager-controls suite-manager-newsection ui-menu-item">
           <input type="text" id="suite-manager-menu-input" />
@@ -101,8 +104,8 @@
         </li>
         <li class="suite-manager-buttonpane suite-manager-newsection ui-menu-item">
           <div class="snap-right">
-            <input type="button" id="suite-manager-menu-ok-button" 		role="button" class="button" value="${okLabel}" />
-            <input type="button" id="suite-manager-menu-cancel-button"	role="button" class="button" value="${cancelLabel}" />
+            <input type="button" id="suite-manager-menu-ok-button" 		role="button" class="sq-button btn-sm" value="${okLabel}" />
+            <input type="button" id="suite-manager-menu-cancel-button"	role="button" class="sq-button btn-sm" value="${cancelLabel}" />
           </div>
         </li> 		 
       </ul>

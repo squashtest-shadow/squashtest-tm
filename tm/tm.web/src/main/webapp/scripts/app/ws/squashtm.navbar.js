@@ -25,7 +25,7 @@ define([ "jquery", "jquery.squash.buttonmenu" ], function($) {
 		init : function() {
 			var linkName = $("#navigation").data("hilight");
 			$("#"+linkName+"-link").addClass('navigation-selected');
-			$("#bugtracker-link").buttonmenu({preskinned:true});
+			$("#bugtracker-link").buttonmenu();
 		}
 	};
 

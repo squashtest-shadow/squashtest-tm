@@ -41,17 +41,18 @@
 
 		<c:choose>
 		<c:when test="${workspaceType == 'test-case' && elementType != 'requirement'}">
-		<a id="search-tree-button" class="buttonmenu"><f:message key="tree.button.search.label"/>...</a>
+    <a id="search-tree-button" class="buttonmenu sq-icon-btn" title="<f:message key='tree.button.search.label'/>...">
+      <span class="ui-icon ui-icon-search"></span>
+    </a>
 		<ul id="search-tree-menu" class="not-displayed">
 			<li id="test-case-search-button" 	class="cursor-pointer"><a ><f:message key="search.button.label" />...</a></li>
 			<li id="search-by-requirement-button"  class="cursor-pointer"><a ><f:message key="search.button.byrequirement.label" />...</a></li>
 		</ul>
 		</c:when>
 		<c:otherwise>
-				<a id="search-tree-button"  class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only" role="button" aria-disabled="false" title="<f:message key='tree.button.search.label' />...">
-			<span class="ui-button-icon-primary ui-icon ui-icon-search"></span>
-			<span class="ui-button-text"><f:message key="tree.button.search.label" />...</span>
-		</a>
+    <a id="search-tree-button" class="sq-icon-btn" title="<f:message key='tree.button.search.label' />...">
+      <span class="ui-icon ui-icon-search"></span>
+    </a>
 		</c:otherwise>
 		</c:choose>
 		
@@ -90,13 +91,7 @@ require( ["common"], function(){
 			});
 		} else if(conf.domain != "requirement"){
 			
-			$("#search-tree-button").buttonmenu({
-					button : {
-						text : false,
-						icons : {
-							primary : "ui-icon-search"
-						}
-					}});
+			$("#search-tree-button").buttonmenu();
 			
 			$("#test-case-search-button").on('click', function(){
 				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=testcase&id=${elementId}&associateResultWithType=${elementType}";

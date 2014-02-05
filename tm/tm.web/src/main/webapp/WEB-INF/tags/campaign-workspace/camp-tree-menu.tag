@@ -27,7 +27,9 @@
 	
 <div id="tree_element_menu" class="tree-top-toolbar unstyled-pane">
 	<div class="button-group">
-		<a id="tree-create-button"  	class="buttonmenu"><f:message key="label.create"/>...</a>
+    <a id="tree-create-button" class="buttonmenu sq-icon-btn" title="<f:message key='label.create'/>...">
+      <span class="ui-icon ui-icon-plusthick"></span>
+    </a>
 		<ul id="tree-create-menu" class="not-displayed">
 			<li id="new-folder-tree-button" 	  	class="ui-state-disabled cursor-pointer"><a ><f:message key="tree.button.new-folder.label" />...</a></li>
 			<li id="new-campaign-tree-button"  		class="ui-state-disabled cursor-pointer"><a ><f:message key="tree.button.new-campaign.label" />...</a></li>
@@ -36,14 +38,22 @@
 	</div>
 	
 	<div class="button-group">
-		<a id="copy-node-tree-button"   ><f:message key='tree.button.copy-node.label' /></a>
-		<a id="paste-node-tree-button"  ><f:message key="tree.button.paste-node.label" /></a>
+    <a id="copy-node-tree-button" class="sq-icon-btn" title="<f:message key='tree.button.copy-node.label' />">
+      <span class="ui-icon ui-icon-copy"></span>
+    </a>
+    <a id="paste-node-tree-button" class="sq-icon-btn" title="<f:message key='tree.button.paste-node.label' />">
+      <span class="ui-icon ui-icon-clipboard"></span>
+    </a>
 	</div>	
 	
 	<div class="button-group">
-		<a  id="rename-node-tree-button"   ><f:message key="tree.button.rename-node.label" />...</a>		
-	
-		<a  id="tree-import-button"  class="buttonmenu"><f:message key="squashtm.treemenu.import.label"/>...</a>
+    <a  id="rename-node-tree-button" class="sq-icon-btn" title="<f:message key='tree.button.rename-node.label' />...">
+      <span class="ui-icon ui-icon-pencil"></span>
+    </a>		
+
+    <a  id="tree-import-button"  class="buttonmenu sq-icon-btn" title="<f:message key='squashtm.treemenu.import.label'/>...">
+      <span class="ui-icon ui-icon-transferthick-e-w"></span>
+    </a>
 		<ul id="tree-import-menu" class="not-displayed">
 			<li id="export-L-tree-button" class="ui-state-disabled cursor-pointer"><a ><f:message key="label.Export.Campaign.Light" />...</a></li>
 			<li id="export-S-tree-button" class="ui-state-disabled cursor-pointer"><a ><f:message key="label.Export.Campaign.Standard" />...</a></li>
@@ -53,27 +63,31 @@
 	
 	<c:if test="${ not empty wizards }">
 	<div id="wizard-tree-pane" class="button-group">
-		<a id="wizard-tree-button" class="buttonmenu"  data-icon="ui-icon-star" data-text="false"><f:message key="label.wizards" />...</a>
-		<script id="ws-wizard-tree-menu-template" type="text/x-handlebars-template">		
+    <a id="wizard-tree-button" class="buttonmenu sq-icon-btn" title="<f:message key='label.wizards' />...">
+    <span clmass="ui-icon ui-icon-star"></span>
+    </a>
+    <script id="ws-wizard-tree-menu-template" type="text/x-handlebars-template">		
 		<ul id="ws-wizard-tree-menu">
 			{{#each wizards}}
 			<li id="{{this.name}}" class="ui-state-disabled cursor-pointer"><a  title="{{this.tooltip}}">{{this.label}}...</a></li>
 			{{/each}}
 		</ul>	
-	</script>
-	<script id="start-ws-wizard-form-template" type="text/x-handlebars-template">
+    </script>
+    <script id="start-ws-wizard-form-template" type="text/x-handlebars-template">
 		<form id="start-ws-wizard-form" action="{{url}}" method="post"> 
 			{{#each nodes}}
 			<input type="hidden" name="{{this.type}}" value="{{this.id}}" />
 			{{/each}}
 		</form>
-	</script>
-		<div id="start-ws-wizard-container" class="not-displayed">
-		</div>
+    </script>
+    <div id="start-ws-wizard-container" class="not-displayed">
+    </div>
 	</div>
 	</c:if>	
 	
 	<div class="button-group snap-right">
-		<a id="delete-node-tree-button" ><f:message key="tree.button.delete.label" />...</a>
+    <a id="delete-node-tree-button" class="sq-icon-btn" title="<f:message key='tree.button.delete.label' />...">
+      <span class="ui-icon ui-icon-trash"></span>
+    </a>
 	</div>
 </div>

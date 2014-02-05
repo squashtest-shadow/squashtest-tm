@@ -57,7 +57,7 @@ define([ "jquery", "backbone", "handlebars", "underscore", "jqueryui", "jquery.s
 			this.menu.buttonmenu();
 			
 			if (this.collection.length === 0){
-				this.menu.buttonmenu("disable");
+				this.menu.prop("disabled", true);
 			}
 			
 

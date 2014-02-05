@@ -144,7 +144,6 @@ define(
 				// to be skinned as a regular jquery button
 				else if (isManual) {
 					$td.find('.buttonmenu').buttonmenu({
-						preskinned : true,
 						anchor : "right"
 					});
 					$td.on('click', '.run-menu-item', _conf.manualHandler);

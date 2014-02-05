@@ -82,7 +82,7 @@
 <div id="iteration-suite-auto-execution-button" style="display: inline-block;">
 
 	 <f:message var="autoExecLabel" key="iteration.suite.execution.auto.label"/>
-	<input id="execute-auto-button" class="button run-menu" type="button" value="${autoExecLabel}" />
+	<input id="execute-auto-button" class="run-menu sq-button" type="button" value="${autoExecLabel}" />
 	<ul class="not-displayed">
 		<li>
 			<a id="execute-auto-execute-all" >
