@@ -232,7 +232,6 @@ define([
 				series: [
 				         {color: '#AABEE6', fillColor : '#BDD3FF'},
 				         {color: '#9C69E6', fillColor : '#AD75FF'}
-				         
 				],
 				highlighter : {
 					tooltipAxes: 'y',

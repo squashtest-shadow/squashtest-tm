@@ -38,7 +38,7 @@
 		
 		<jsp:attribute name="panelButtons">
 			<span class="dashboard-timestamp not-displayed"><f:message key="dashboard.meta.timestamp.label"/></span> 
-			<input type="button" class="dashboard-refresh-button button" role="button" value="${refreshLabel}"/>
+			<input type="button" class="dashboard-refresh-button sq-btn btn-sm" role="button" value="${refreshLabel}"/>
 		</jsp:attribute>
 		
 		<jsp:attribute name="body">

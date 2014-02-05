@@ -19,20 +19,56 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(['require', 'iesupport/am-I-ie8'],function(require, isIE8){
-	
-	var dependencies = ['squash.attributeparser', './main-view'];
-	
-	if (isIE8){
-		dependencies.push('excanvas');
-	}
-	
-	return {
-		init : function(settings){
-			require(dependencies, function(attrparser, CampDashboardView){
-				new CampDashboardView(settings);
-			});
-		}
-	};
-	
-});
+define([ "require", "iesupport/am-I-ie8", "./campaign-progression-view", "./test-inventory-table",
+		"./nonexecuted-testcase-importance-pie", "./testcase-status-pie", "./success-rate-view", "../SuperMasterView" ],
+		function(require, isIE8, ProgressionPlot, InventoryTable, ImportancePie, StatusPie, SuccessRateDonut,
+				SuperMasterView) {
+
+			function initCharts() {
+				return [ new ProgressionPlot({
+					el : this.$("#dashboard-cumulative-progression"),
+					model : this.model
+				}),
+
+				new ImportancePie({
+					el : this.$("#dashboard-nonexecuted-testcase-importance"),
+					model : this.model
+				}),
+
+				new StatusPie({
+					el : this.$("#dashboard-testcase-status"),
+					model : this.model
+				}),
+
+				new SuccessRateDonut({
+					el : this.$("#dashboard-success-rate"),
+					model : this.model
+				}),
+
+				new InventoryTable({
+					el : this.$("#dashboard-test-inventory"),
+					model : this.model
+				}) ];
+			}
+
+			function doInit(settings) {
+				new SuperMasterView({
+					el : "#dashboard-master",
+					settings : settings,
+					initCharts : initCharts
+				});
+			}
+
+			return {
+				init : function(settings) {
+					if (isIE8) {
+						require([ "excanvas" ], function() {
+							doInit(settings);
+						});
+					} else {
+						doInit(settings);
+					}
+				}
+			};
+
+		});

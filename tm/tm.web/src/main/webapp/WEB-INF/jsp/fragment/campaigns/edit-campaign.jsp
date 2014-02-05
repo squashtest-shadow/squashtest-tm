@@ -118,6 +118,8 @@
 			</jsp:attribute>
 			<jsp:attribute name="body">
 				<script type="text/javascript">
+				require(["common"], function() {
+					require(["jquery"], function($) {
 					$("#rename-campaign-dialog").bind("dialogopen",
 						function(event, ui) {
 							var name = $.trim($('#campaign-name').text());
@@ -125,6 +127,8 @@
 
 						}
 					);
+					});
+				});
 				</script>			
 				<label><f:message key="dialog.rename.label" />
 				</label>
@@ -162,7 +166,7 @@
 <csst:jq-tab>
 <div class="fragment-tabs fragment-body">
 	<ul class="tab-menu">
-		<li><a href="#dashboard-campaign"><f:message key="title.Dashboard"/>
+		<li><a href="#campaign-dashboard"><f:message key="title.Dashboard"/>
 		</a>
 		</li>
 		<li><a href="#tabs-1"><f:message key="tabs.label.information" />
@@ -416,6 +420,8 @@
 			<f:message var="emptyMessage"
 					key="message.EmptyTableSelection" />			
 		<script type="text/javascript">
+		require(["common"], function() {
+			require(["jquery"], function($) {
 				$("#delete-multiple-test-cases-dialog").bind( "dialogopen", function(event, ui){
 					var _id =  $("#delete-multiple-test-cases-dialog").data("entity-id");
 					
@@ -436,6 +442,9 @@
 					
 					 this.selIds = ids;
 				});
+				
+			});
+		});
 			</script>
 		<f:message key="dialog.remove-testcase-associations.message" />
 	</jsp:attribute>
@@ -450,7 +459,7 @@
 	
 	
 	<%------------------------------- Dashboard ---------------------------------------------------%>
-	<div id="dashboard-campaign">
+	<div id="campaign-dashboard">
 		<dashboard:campaign-dashboard-panel url="${campaignStatisticsUrl}" printUrl="${campaignStatisticsPrintUrl}"/>
 	</div>
 
@@ -486,7 +495,7 @@
 					beforeLoad : Frag.confHelper.fnCacheRequests,
 					cookie : "iteration-tab-cookie",
 					activate : function(event, ui){
-						if (ui.newPanel.is('#dashboard-campaign')){
+						if (ui.newPanel.is('#campaign-dashboard')){
 							eventBus.trigger('dashboard.appear');
 						}
 					}

@@ -19,20 +19,54 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(['require', 'iesupport/am-I-ie8'],function(require, isIE8){
-	
-	var dependencies = ['squash.attributeparser', './main-view'];
-	
-	if (isIE8){
-		dependencies.push('excanvas');
+define([ "require", "iesupport/am-I-ie8", "./nonexecuted-testcase-importance-pie", "./testcase-status-pie",
+		"./success-rate-view", "./test-inventory-table", "dashboard/SuperMasterView" ], function(require, isIE8,
+		ImportancePie, StatusPie, SuccessRateDonut, InventoryTable, SuperMasterView) {
+
+	var dependencies = ["squash.attributeparser"];
+
+	if (isIE8) {
+		dependencies.push("excanvas");
 	}
-	
+
+	function doInit(settings) {
+		new SuperMasterView({
+			el : "#dashboard-master",
+			settings : settings, 
+			initCharts : initCharts
+		});
+	}
+
+	function initCharts() {
+		return [
+
+		new ImportancePie({
+			el : this.$("#dashboard-nonexecuted-testcase-importance"),
+			model : this.model
+		}),
+
+		new StatusPie({
+			el : this.$("#dashboard-testcase-status"),
+			model : this.model
+		}),
+
+		new SuccessRateDonut({
+			el : this.$("#dashboard-success-rate"),
+			model : this.model
+		}),
+
+		new InventoryTable({
+			el : this.$("#dashboard-test-inventory"),
+			model : this.model
+		}) ];
+	}
+
 	return {
-		init : function(settings){
-			require(dependencies, function(attrparser, IterDashboardView){
-				new IterDashboardView(settings);
+		init : function(settings) {
+			require(dependencies, function(attrparser, IterDashboardView) {
+				doInit(settings);
 			});
 		}
 	};
-	
+
 });
