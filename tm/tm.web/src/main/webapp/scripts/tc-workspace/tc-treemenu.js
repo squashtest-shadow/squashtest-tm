@@ -60,11 +60,11 @@ define(['jquery', './utils', './permissions-rules',
 		var i=0, len = buttons.length;
 		
 		function btnenable(){
-			this.squashButton('enable');
+			this.prop("disabled", false);
 		}
 		
 		function btndisable(){
-			this.squashButton('disable');
+			this.prop("disabled", true);
 		}
 		
 		function itemenable(){

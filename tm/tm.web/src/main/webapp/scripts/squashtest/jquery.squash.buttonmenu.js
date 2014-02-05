@@ -151,12 +151,12 @@ define([ 'jquery', 'jqueryui', 'jquery.squash.squashbutton' ], function($) {
 		},
 
 		enable : function(){
-			this.element.squashButton('enable');
+			this.element.prop("disabled", false);
 		},
 		
 		disable : function(selector){
 			this.close();
-			this.element.squashButton('disable');
+			this.element.prop("disabled", true);
 		},
 				
 		open : function(){

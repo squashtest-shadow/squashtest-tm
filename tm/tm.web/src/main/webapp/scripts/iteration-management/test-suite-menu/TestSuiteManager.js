@@ -81,14 +81,14 @@ define([ "jquery", "jqueryui" ], function($) {
 		var defaultState = $.proxy(function() {
 			this.input.removeAttr('disabled');
 			this.input.val(this.defaultMessage);
-			this.button.squashButton('disable');
+			this.button.prop("disabled", true);
 		}, self);
 
 		var editState = $.proxy(function() {
 			this.input.removeClass('manager-control-ready');
 			this.onfocus();
 			this.input.val('');
-			this.button.squashButton('enable');
+			this.button.prop("disabled", false);
 		}, self);
 
 		/* ************* handlers ******** */
@@ -121,9 +121,9 @@ define([ "jquery", "jqueryui" ], function($) {
 		var updateBtn = function() {
 			var button = self.button;
 			if (!self.input.val().length || self.input.val() == self.manager.create.control.defaultMessage) {
-				button.squashButton('disable');
+				button.prop("disabled", true);
 			} else {
-				button.squashButton('enable');
+				button.prop("disabled", false);
 			}
 		};
 
@@ -278,15 +278,15 @@ define([ "jquery", "jqueryui" ], function($) {
 			switch (allItems.size()) {
 			case 0:
 				this.rename.control.deactivate();
-				this.remove.button.squashButton('disable');
-				this.rename.control.button.squashButton('disable');
+				this.remove.button.prop("disabled", true);
+				this.rename.control.button.prop("disabled", true);
 				break;
 			case 1:
 				this.rename.control.reset();
 				var itemText = allItems.eq(0).find('span').text();
 				this.rename.control.setText(itemText);
-				this.remove.button.squashButton('enable');
-				this.rename.control.button.squashButton('enable');
+				this.remove.button.prop("disabled", false);
+				this.rename.control.button.prop("disabled", false);
 				break;
 			default:
 				this.rename.control.deactivate();

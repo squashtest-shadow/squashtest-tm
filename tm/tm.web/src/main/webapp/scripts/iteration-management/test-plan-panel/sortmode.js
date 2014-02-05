@@ -79,7 +79,7 @@ define(['jquery', 'workspace.storage'], function($, storage){
 			$("#test-plan-sort-mode-message").show();
 			$("#iteration-test-plans-table").find('.select-handle').removeClass('drag-handle');
 			if (this.reorderable){
-				$("#reorder-test-plan-button").squashButton('enable');
+				$("#reorder-test-plan-button").prop("disabled", false);
 			}
 		};
 		
@@ -87,7 +87,7 @@ define(['jquery', 'workspace.storage'], function($, storage){
 			$("#test-plan-sort-mode-message").hide();
 			$("#iteration-test-plans-table").find('.select-handle').addClass('drag-handle');
 			
-			$("#reorder-test-plan-button").squashButton('disable');
+			$("#reorder-test-plan-button").prop("disabled", true);
 			
 		};
 		
