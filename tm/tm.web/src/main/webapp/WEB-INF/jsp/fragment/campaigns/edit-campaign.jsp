@@ -361,7 +361,7 @@
           <button id="reorder-test-plan-button" class="sq-button btn-sm" title="${reorderTooltip}">
             <span class="ui-icon ui-icon-refresh"></span>${reorderLabel}
           </button>
-          <span id="test-plan-sort-mode-message" class="not-displayed sort-mode-message" title="${tooltipSortmode}">${messageSortmode}</span>
+          <span id="test-plan-sort-mode-message" class="not-displayed sort-mode-message small" title="${tooltipSortmode}">${messageSortmode}</span>
         </div>
       </div>
 			</c:if>

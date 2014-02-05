@@ -84,7 +84,7 @@
         <span class="ui-icon ui-icon-refresh"></span>
         ${reorderLabel}
       </button>
-      <span id="test-plan-sort-mode-message" class="not-displayed sort-mode-message" title="${tooltipSortmode}">${messageSortmode}</span>
+      <span id="test-plan-sort-mode-message" class="not-displayed sort-mode-message small" title="${tooltipSortmode}">${messageSortmode}</span>
     </span>
   </div>
 	</c:if>
