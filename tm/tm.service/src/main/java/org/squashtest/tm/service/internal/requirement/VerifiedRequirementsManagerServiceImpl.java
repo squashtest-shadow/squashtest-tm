@@ -288,8 +288,7 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 		if (!nodes.isEmpty()) {
 			List<Requirement> requirements = new RequirementNodeWalker().walk(nodes);
 				if (!requirements.isEmpty()) {
-					List<RequirementVersion> requirementVersions = extractVersions(requirements);
-					return requirementVersions;
+					return extractVersions(requirements);
 				}
 		}
 		return Collections.emptyList();

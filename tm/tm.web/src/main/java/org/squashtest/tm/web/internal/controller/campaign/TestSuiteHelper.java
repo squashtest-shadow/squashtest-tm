@@ -40,8 +40,7 @@ public final class TestSuiteHelper {
 	}
 	
 	public static String buildSuiteNameList(List<TestSuite> unsortedSuites){
-		String testSuiteNames = buildNameList(unsortedSuites).toString();
-		return testSuiteNames;
+		return buildNameList(unsortedSuites).toString();
 	}
 	
 	public static String buildEllipsedSuiteNameList(List<TestSuite> unsortedSuites, int maxLength) {		

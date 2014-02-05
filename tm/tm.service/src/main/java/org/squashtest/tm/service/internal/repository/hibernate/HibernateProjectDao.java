@@ -48,25 +48,21 @@ public class HibernateProjectDao extends HibernateEntityDao<Project> implements 
 	
 	@Override
 	public List<String> findUsersWhoCreatedTestCases(List<Long> projectIds){
-		 List<String> users = executeListNamedQuery("Project.findAllUsersWhoCreatedTestCases", idParameters(projectIds));
-		 return users;
+		 return executeListNamedQuery("Project.findAllUsersWhoCreatedTestCases", idParameters(projectIds));
 	}
 	
 	@Override
 	public List<String> findUsersWhoModifiedTestCases(List<Long> projectIds){
-		 List<String> users = executeListNamedQuery("Project.findAllUsersWhoModifiedTestCases", idParameters(projectIds));
-		 return users;
+		 return executeListNamedQuery("Project.findAllUsersWhoModifiedTestCases", idParameters(projectIds));
 	}
 	
 	@Override
 	public List<String> findUsersWhoCreatedRequirementVersions(List<Long> projectIds){
-		 List<String> users = executeListNamedQuery("Project.findAllUsersWhoCreatedRequirementVersions", idParameters(projectIds));
-		 return users;
+		 return executeListNamedQuery("Project.findAllUsersWhoCreatedRequirementVersions", idParameters(projectIds));
 	}
 	
 	@Override
 	public List<String> findUsersWhoModifiedRequirementVersions(List<Long> projectIds){
-		 List<String> users = executeListNamedQuery("Project.findAllUsersWhoModifiedRequirementVersions", idParameters(projectIds));
-		 return users;
+		 return executeListNamedQuery("Project.findAllUsersWhoModifiedRequirementVersions", idParameters(projectIds));
 	}
 }

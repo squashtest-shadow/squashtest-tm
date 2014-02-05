@@ -38,6 +38,8 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.DateType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
@@ -58,9 +60,11 @@ import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.IterationDao;
+import org.squashtest.tm.service.internal.requirement.RequirementLibraryNavigationServiceImpl;
 
 @Repository
 public class HibernateIterationDao extends HibernateEntityDao<Iteration> implements IterationDao {
+	private static final Logger LOGGER = LoggerFactory.getLogger(HibernateIterationDao.class);
 
 	private static final String PROJECT_FILTER = "projectFilter";
 	private static final String REFERENCE_FILTER = "referenceFilter";
@@ -522,7 +526,7 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 				startDate = new SimpleDateFormat(DATE_FORMAT).parse(dateArray[0].trim());
 				endDate = new SimpleDateFormat(DATE_FORMAT).parse(dateArray[1].trim());
 			} catch (ParseException e) {
-				e.printStackTrace();
+				LOGGER.error(e.getMessage(), e);
 			}
 			
 		} else {
@@ -530,7 +534,7 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 				startDate = new SimpleDateFormat(DATE_FORMAT).parse(dates.trim());
 				endDate = nextDay(startDate);
 			} catch (ParseException e) {
-				e.printStackTrace();
+				LOGGER.error(e.getMessage(), e);
 			}
 			
 		}

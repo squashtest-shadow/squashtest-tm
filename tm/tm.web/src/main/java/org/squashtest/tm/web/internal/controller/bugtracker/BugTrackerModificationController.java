@@ -121,8 +121,7 @@ public class BugTrackerModificationController {
 		for (String kind : bugtrackerKinds) {
 			mapKinds.put(kind, kind);
 		}
-		String jsonBugtrackerKinds = JsonHelper.serialize(mapKinds);
-		return jsonBugtrackerKinds;
+		return JsonHelper.serialize(mapKinds);
 	}
 
 }

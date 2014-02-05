@@ -25,7 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-public class IsoDateUtils {
+public final class IsoDateUtils {
 	
 	private static final String ISO_DATE = "yyyy-MM-dd";
 	private static final String ISO_DATETIME = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";

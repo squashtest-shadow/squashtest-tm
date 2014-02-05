@@ -174,12 +174,13 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	}
 
 	private String formatSortFieldName(String fieldName) {
+		String result = fieldName;
 		if (fieldName.startsWith("TestCase.")) {
-			fieldName = fieldName.replaceFirst("TestCase.", "");
+			result = fieldName.replaceFirst("TestCase.", "");
 		} else if (fieldName.startsWith("Project.")) {
-			fieldName = fieldName.replaceFirst("Project.", "project.");
+			result = fieldName.replaceFirst("Project.", "project.");
 		}
-		return fieldName;
+		return result;
 	}
 
 	@Override

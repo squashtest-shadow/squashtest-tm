@@ -72,7 +72,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 			new SortField("requirement.project.name", SortField.STRING, false),
 			new SortField("reference", SortField.STRING, false), new SortField("criticality", SortField.STRING, false),
 			new SortField("category", SortField.STRING, false), new SortField("status", SortField.STRING, false),
-			new SortField("label", SortField.STRING, false) };
+			new SortField("labelUpperCased", SortField.STRING, false) };
 	
 	private final static List<String> longSortableFields = Arrays.asList(
 			  "requirement.id", 
@@ -158,14 +158,15 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 	}
 
 	private String formatSortedFieldName(String fieldName) {
+		String result = fieldName;
 		if (fieldName.startsWith("RequirementVersion.")) {
-			fieldName = fieldName.replaceFirst("RequirementVersion.", "");
+			result = fieldName.replaceFirst("RequirementVersion.", "");
 		} else if (fieldName.startsWith("Requirement.")) {
-			fieldName = fieldName.replaceFirst("Requirement.", "requirement.");
+			result = fieldName.replaceFirst("Requirement.", "requirement.");
 		} else if (fieldName.startsWith("Project.")) {
-			fieldName = fieldName.replaceFirst("Project.", "requirement.project.");
+			result = fieldName.replaceFirst("Project.", "requirement.project.");
 		}
-		return fieldName;
+		return result;
 	}
 
 	@Override

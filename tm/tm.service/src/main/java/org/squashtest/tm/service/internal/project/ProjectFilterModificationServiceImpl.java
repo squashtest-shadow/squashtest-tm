@@ -95,8 +95,7 @@ public class ProjectFilterModificationServiceImpl implements ProjectFilterModifi
 	
 	private ProjectFilter findPersistentProjectFilter(){
 		String userLogin = userContextService.getUsername();
-		ProjectFilter toReturn = projectFilterDao.findProjectFilterByUserLogin(userLogin);
-		return toReturn;
+		return projectFilterDao.findProjectFilterByUserLogin(userLogin);
 	}
 	
 	private ProjectFilter createDefaultProjectFilter(){

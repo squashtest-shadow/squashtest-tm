@@ -34,6 +34,8 @@ import org.hibernate.Query;
 import org.hibernate.type.DateType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.Filtering;
@@ -60,6 +62,8 @@ import org.squashtest.tm.service.internal.repository.CustomTestSuiteDao;
 @Repository("CustomTestSuiteDao")
 public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> implements CustomTestSuiteDao {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(HibernateTestSuiteDao.class);
+	
 	private static final String PROJECT_FILTER = "projectFilter";
 	private static final String REFERENCE_FILTER = "referenceFilter";
 	private static final String TESTCASE_FILTER = "testcaseFilter";
@@ -436,7 +440,7 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 					query.setParameter(START_DATE, startDate, DateType.INSTANCE);
 					query.setParameter(END_DATE, nextDay(endDate), DateType.INSTANCE);
 				} catch (ParseException e) {
-					e.printStackTrace();
+					LOGGER.error(e.getMessage(), e);
 				}
 			} else {
 				Date date;
@@ -445,7 +449,7 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 					query.setParameter(START_DATE, date, DateType.INSTANCE);
 					query.setParameter(END_DATE, nextDay(date), DateType.INSTANCE);
 				} catch (ParseException e) {
-					e.printStackTrace();
+					LOGGER.error(e.getMessage(), e);
 				}
 			}
 		}

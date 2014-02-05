@@ -48,6 +48,8 @@ import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.library.NodeVisitor;
@@ -55,6 +57,7 @@ import org.squashtest.tm.domain.search.CountElementsInCollectionBridge;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.NoVerifiableRequirementVersionException;
 import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
+import org.squashtest.tm.service.internal.repository.hibernate.HibernateTestSuiteDao;
 
 /**
  * Entity requirement
@@ -70,6 +73,8 @@ import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
 @Indexed
 @PrimaryKeyJoinColumn(name = "RLN_ID")
 public class Requirement extends RequirementLibraryNode<RequirementVersion> implements NodeContainer<Requirement> {
+	private static final Logger LOGGER = LoggerFactory.getLogger(Requirement.class);
+	
 	/**
 	 * The resource of this requirement is the latest version of the requirement.
 	 */
@@ -366,6 +371,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 		try {
 			return versions.get(versionIndexInDescVersionList);
 		} catch (IndexOutOfBoundsException e) {
+			LOGGER.error(e.getMessage(), e);
 			throw new EntityNotFoundException("Version #" + versionNumber + " of Requirement #" + this.getId()
 					+ " do not exist");
 		}

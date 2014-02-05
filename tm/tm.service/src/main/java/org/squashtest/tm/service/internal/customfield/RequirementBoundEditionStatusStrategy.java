@@ -60,7 +60,6 @@ class RequirementBoundEditionStatusStrategy extends ValueEditionStatusHelper imp
 
 	private boolean entityIsEditable(long boundEntityId) {
 		RequirementVersion ver = (RequirementVersion) sessionFactory.getCurrentSession().load(RequirementVersion.class, boundEntityId);
-		boolean entityEditable = ver.isModifiable();
-		return entityEditable;
+		return ver.isModifiable();
 	}
 }
