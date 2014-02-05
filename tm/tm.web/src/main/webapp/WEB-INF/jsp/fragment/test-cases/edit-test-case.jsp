@@ -186,8 +186,8 @@ require(["common"], function() {
 	var squashtm = squashtm || {};
   	squashtm.app = squashtm.app || {} ;	 
     require([ "common" ], function() {
-        require([ "domReady", "test-case-management" ],
-			function(domReady, testCaseManagement) {
+        require([ "jquery", "test-case-management" ],
+			function($, testCaseManagement) {
 					var settings = {
 							urls : {
 								testCaseUrl : "${testCaseUrl}",
@@ -202,7 +202,7 @@ require(["common"], function() {
 							testCaseId : ${testCase.id}
 					};
 					
-				domReady(function() {
+				$(function() {
 					testCaseManagement.initInfosTab(settings);
 				});
 			});
