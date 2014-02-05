@@ -119,6 +119,8 @@
  * toggle panel
  */
 .sq-tg {
+	.ui-helper-reset; // because jq-ui has the habit of breaking shit when widgets are nested 
+	
 	margin-bottom: 1.5 * @normal-font;
 	
 	& .tg-head {

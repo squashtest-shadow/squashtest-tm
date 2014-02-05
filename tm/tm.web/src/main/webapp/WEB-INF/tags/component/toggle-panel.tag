@@ -31,26 +31,20 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 
-<c:set var="headerclass" value="${not empty open and not open ? 'ui-state-active ui-corner-all' : 'tg-open ui-state-focus ui-corner-top' }"/>
-<c:set var="styleContentdisplay" value="${not empty open and not open ? 'display:none;' : ''}"/>
+<c:set var="headerclass" value="${not empty open and not open ? 'collapse' : 'expand' }"/>
 
 <c:if test="${ not empty titleKey }">
 	<f:message var="title" key="${ titleKey }" />
 </c:if>
 
-<div class="toggle-panel ui-accordion ui-widget ui-helper-reset ui-accordion-icons">
-	<h3 class="ui-accordion-header ui-helper-reset ui-state-default ${headerclass}">
-		<div style="overflow:hidden">
-			<div class="snap-left">
-				<a class="tg-link">${title}</a>
-			</div>
-			<div class="snap-right">
-				<jsp:invoke fragment="panelButtons"/>
-			</div>
-		</div>		
-	</h3>
-	<div id="${id}" class="toggle-panel-main ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active" 
-		 data-init-open="${open}" data-prerendered="true" style="${styleContentdisplay}">
+<div class="${ headerclass } sq-tg">
+	<div class="tg-head">
+		<h3>${title}</h3>
+		<div class="tg-toolbar">
+			<jsp:invoke fragment="panelButtons"/>
+		</div>
+	</div>
+	<div id="${id}" class="tg-body">
 		<jsp:invoke fragment="body"/>
 	</div>
 </div>
