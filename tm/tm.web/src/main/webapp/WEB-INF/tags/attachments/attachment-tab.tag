@@ -44,11 +44,11 @@
 	<div class="toolbar" >
 	<c:if test="${ editable }">
 			<f:message var="uploadAttachment" key="label.UploadAttachment" />
-			<input id="add-attachment-button" type="button" value="${uploadAttachment}" class="sq-button"/>
+			<input id="add-attachment-button" type="button" value="${uploadAttachment}" class="sq-btn"/>
 			<f:message var="renameAttachment" key="label.Rename" />
-			<input type="button" value="${renameAttachment}" id="rename-attachment-button" class="sq-button" />
+			<input type="button" value="${renameAttachment}" id="rename-attachment-button" class="sq-btn" />
 			<f:message var="removeAttachment" key="label.Delete" />
-			<input type="button" value="${removeAttachment}" id="delete-attachment-button" class="sq-button" />
+			<input type="button" value="${removeAttachment}" id="delete-attachment-button" class="sq-btn" />
 	</c:if>
 	</div>
 	

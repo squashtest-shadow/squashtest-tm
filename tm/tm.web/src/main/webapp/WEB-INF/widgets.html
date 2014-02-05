@@ -50,69 +50,69 @@
   <h2>Réécriture de $().button / $().squashButton</h2>
   
   <h3>Bouton avec texte seul</h3>
-  <input type="submit" value="input:submit" class="sq-button" onclick="alert('submit')" />
-  <input type="submit" value="input:submit" class="sq-button btn-focus" onclick="alert('submit')" />
-  <input type="submit" value="input:submit:disabled" class="sq-button" disabled="" onclick="alert('submit')" />
+  <input type="submit" value="input:submit" class="sq-btn" onclick="alert('submit')" />
+  <input type="submit" value="input:submit" class="sq-btn btn-focus" onclick="alert('submit')" />
+  <input type="submit" value="input:submit:disabled" class="sq-btn" disabled="" onclick="alert('submit')" />
   
-  <input type="button" value="input:button" class="sq-button" onclick="alert('submit')" />
-  <input type="button" value="input:button:disabled" class="sq-button" disabled="" onclick="alert('submit')" />
+  <input type="button" value="input:button" class="sq-btn" onclick="alert('submit')" />
+  <input type="button" value="input:button:disabled" class="sq-btn" disabled="" onclick="alert('submit')" />
   
-  <button class="sq-button" onclick="alert('submit')">button</button>
-  <button class="sq-button" disabled="" onclick="alert('submit')">button:disabled</button>
+  <button class="sq-btn" onclick="alert('submit')">button</button>
+  <button class="sq-btn" disabled="" onclick="alert('submit')">button:disabled</button>
   
-  <a href="http://www.google.com" class="sq-button">link</a>
-  <a href="http://www.google.com" class="sq-button disabled">link.disabled</a>
+  <a href="http://www.google.com" class="sq-btn">link</a>
+  <a href="http://www.google.com" class="sq-btn disabled">link.disabled</a>
   
-  <span class="sq-button">span</span>
+  <span class="sq-btn">span</span>
   
-  <div class="sq-button">div</div>
+  <div class="sq-btn">div</div>
 
   <h3>Bouton avec icone</h3>  
-  <input type="submit" value="input:submit" class="sq-button" onclick="alert('submit')" />
-  <button class="sq-button" onclick="alert('submit')">
+  <input type="submit" value="input:submit" class="sq-btn" onclick="alert('submit')" />
+  <button class="sq-btn" onclick="alert('submit')">
     <span class="ui-icon ui-icon-info"></span>
     button
   </button>
-  <button class="sq-button" onclick="alert('submit')">
+  <button class="sq-btn" onclick="alert('submit')">
     <span class="ui-icon ui-icon-info"></span>
     button
     <span class="ui-icon ui-icon-shuffle"></span>
   </button>
-  <button class="sq-button" onclick="alert('submit')">button<span class="ui-icon ui-icon-info"></span></button>
+  <button class="sq-btn" onclick="alert('submit')">button<span class="ui-icon ui-icon-info"></span></button>
   <button class="sq-icon-btn" title="button.sq-icon-btn" onclick="alert('submit')"><span class="ui-icon ui-icon-info"></span></button>
   
-  <a href="#" class="sq-button" onclick="alert('click')">
+  <a href="#" class="sq-btn" onclick="alert('click')">
     <span class="ui-icon ui-icon-info"></span>link<span class="ui-icon ui-icon-shuffle"></span>
   </a>
   <a href="#" class="sq-icon-btn" title="link.sq-icon-btn" onclick="alert('click')">
     <span class="ui-icon ui-icon-info"></span>
   </a>
-  <a href="http://www.google.com" class="sq-button disabled">
+  <a href="http://www.google.com" class="sq-btn disabled">
    <span class="ui-icon ui-icon-info"></span>link<span class="ui-icon ui-icon-shuffle"></span>
   </a>
-  <button class="sq-button" disabled="" onclick="alert('submit')"><span class="ui-icon ui-icon-info"></span>button</button>
+  <button class="sq-btn" disabled="" onclick="alert('submit')"><span class="ui-icon ui-icon-info"></span>button</button>
   
   <h3>Override des regles nazes qu'on a fait</h3>
   <div class="ui-widget toolbar">
     <span class="group sq-reset">
-      <input type="submit" value="input:submit" class="sq-button btn-sm" onclick="alert('submit')" />
-      <button class="sq-button btn-sm" onclick="alert('submit')">
+      <input type="submit" value="input:submit" class="sq-btn btn-sm" onclick="alert('submit')" />
+      <button class="sq-btn btn-sm" onclick="alert('submit')">
         <span class="ui-icon ui-icon-info">&nbsp;</span>
         button
       </button>
-      <a href="#" class="sq-button btn-sm" onclick="alert('click')">
+      <a href="#" class="sq-btn btn-sm" onclick="alert('click')">
         <span class="ui-icon ui-icon-info"></span>link<span class="ui-icon ui-icon-shuffle"></span>
       </a>
     </span>
   </div>
   
   <h3>Betit bouton</h3>
-  <input type="submit" value="input:submit" class="sq-button btn-sm" onclick="alert('submit')" />
-  <button class="sq-button btn-sm" onclick="alert('submit')">
+  <input type="submit" value="input:submit" class="sq-btn btn-sm" onclick="alert('submit')" />
+  <button class="sq-btn btn-sm" onclick="alert('submit')">
     <span class="ui-icon ui-icon-info">a</span>
     button
   </button>
-  <a href="#" class="sq-button btn-sm" onclick="alert('click')">
+  <a href="#" class="sq-btn btn-sm" onclick="alert('click')">
     <span class="ui-icon ui-icon-info"></span>link<span class="ui-icon ui-icon-shuffle"></span>
   </a>
   <button class="sq-icon-btn btn-sm" title="button.sq-icon-btn" onclick="alert('submit')"><span class="ui-icon ui-icon-info"></span></button>
@@ -121,12 +121,12 @@
   </a>
   
   <h3>Bouton extra small (ne marche que pour les btns sans texte)</h3>
-  <input type="submit" value="input:submit" class="sq-button btn-xs" onclick="alert('submit')" />
-  <button class="sq-button btn-xs" onclick="alert('submit')">
+  <input type="submit" value="input:submit" class="sq-btn btn-xs" onclick="alert('submit')" />
+  <button class="sq-btn btn-xs" onclick="alert('submit')">
     <span class="ui-icon ui-icon-info"></span>
     button
   </button>
-  <a href="#" class="sq-button btn-xs" onclick="alert('click')">
+  <a href="#" class="sq-btn btn-xs" onclick="alert('click')">
     <span class="ui-icon ui-icon-info"></span>link.btn-xs<span class="ui-icon ui-icon-shuffle"></span>
   </a>
   <button class="sq-icon-btn btn-xs" title="button.sq-icon-btn.btn-xs" onclick="alert('submit')"><span class="ui-icon ui-icon-info"></span></button>
@@ -140,12 +140,12 @@
     <h4>.btn-toolbar avec 2 groupes de boutons</h4>
     <div class="btn-toolbar">
       <div class="btn-group">
-        <input type="submit" value="btn1" class="sq-button" onclick="alert('submit')" />
-        <input type="submit" value="brn2" class="sq-button" onclick="alert('submit')" />
+        <input type="submit" value="btn1" class="sq-btn" onclick="alert('submit')" />
+        <input type="submit" value="brn2" class="sq-btn" onclick="alert('submit')" />
       </div>
       <div class="btn-group">
-        <input type="submit" value="btn3" class="sq-button" onclick="alert('submit')" />
-        <input type="submit" value="btn4" class="sq-button" onclick="alert('submit')" />
+        <input type="submit" value="btn3" class="sq-btn" onclick="alert('submit')" />
+        <input type="submit" value="btn4" class="sq-btn" onclick="alert('submit')" />
       </div>
     </div>
   </div>
@@ -153,44 +153,44 @@
     <h4>.btn-toolbar.left avec 2 groupes de boutons</h4>
     <div class="btn-toolbar left">
       <div class="btn-group">
-        <input type="submit" value="btn1" class="sq-button" onclick="alert('submit')" />
-        <input type="submit" value="brn2" class="sq-button" onclick="alert('submit')" />
+        <input type="submit" value="btn1" class="sq-btn" onclick="alert('submit')" />
+        <input type="submit" value="brn2" class="sq-btn" onclick="alert('submit')" />
       </div>
       <div class="btn-group">
-        <input type="submit" value="btn3" class="sq-button" onclick="alert('submit')" />
-        <input type="submit" value="btn4" class="sq-button" onclick="alert('submit')" />
+        <input type="submit" value="btn3" class="sq-btn" onclick="alert('submit')" />
+        <input type="submit" value="btn4" class="sq-btn" onclick="alert('submit')" />
       </div>
     </div>
   </div>
   <div>
     <h4>.btn-toolbar avec des boutons en vrac</h4>
     <div class="btn-toolbar">
-        <input type="submit" value="btn1" class="sq-button" onclick="alert('submit')" />
-        <input type="submit" value="brn2" class="sq-button" onclick="alert('submit')" />
-        <input type="submit" value="btn3" class="sq-button" onclick="alert('submit')" />
-        <input type="submit" value="btn4" class="sq-button" onclick="alert('submit')" />
+        <input type="submit" value="btn1" class="sq-btn" onclick="alert('submit')" />
+        <input type="submit" value="brn2" class="sq-btn" onclick="alert('submit')" />
+        <input type="submit" value="btn3" class="sq-btn" onclick="alert('submit')" />
+        <input type="submit" value="btn4" class="sq-btn" onclick="alert('submit')" />
     </div>
   </div>
   <h3>toolbar alignée à droite</h3>
   <div>
     <h4>.btn-toolbar.right avec des boutons en vrac</h4>
     <div class="btn-toolbar right">
-        <input type="submit" value="btn1" class="sq-button" onclick="alert('submit')" />
-        <input type="submit" value="brn2" class="sq-button" onclick="alert('submit')" />
-        <input type="submit" value="btn3" class="sq-button" onclick="alert('submit')" />
-        <input type="submit" value="btn4" class="sq-button" onclick="alert('submit')" />
+        <input type="submit" value="btn1" class="sq-btn" onclick="alert('submit')" />
+        <input type="submit" value="brn2" class="sq-btn" onclick="alert('submit')" />
+        <input type="submit" value="btn3" class="sq-btn" onclick="alert('submit')" />
+        <input type="submit" value="btn4" class="sq-btn" onclick="alert('submit')" />
     </div>
   </div>
   <div>
     <h4>.btn-toolbar.right avec des boutons en vrac</h4>
     <div class="btn-toolbar right">
       <div class="btn-group">
-        <input type="submit" value="btn1" class="sq-button" onclick="alert('submit')" />
-        <input type="submit" value="brn2" class="sq-button" onclick="alert('submit')" />
+        <input type="submit" value="btn1" class="sq-btn" onclick="alert('submit')" />
+        <input type="submit" value="brn2" class="sq-btn" onclick="alert('submit')" />
       </div>
       <div class="btn-group">
-        <input type="submit" value="btn3" class="sq-button" onclick="alert('submit')" />
-        <input type="submit" value="btn4" class="sq-button" onclick="alert('submit')" />
+        <input type="submit" value="btn3" class="sq-btn" onclick="alert('submit')" />
+        <input type="submit" value="btn4" class="sq-btn" onclick="alert('submit')" />
       </div>
     </div>
   </div>
@@ -198,22 +198,22 @@
   <div class="cf">
     <div class="btn-toolbar left">
       <div class="btn-group">
-        <input type="submit" value="btn1" class="sq-button" onclick="alert('submit')" />
-        <input type="submit" value="brn2" class="sq-button" onclick="alert('submit')" />
+        <input type="submit" value="btn1" class="sq-btn" onclick="alert('submit')" />
+        <input type="submit" value="brn2" class="sq-btn" onclick="alert('submit')" />
       </div>
       <div class="btn-group">
-        <input type="submit" value="btn3" class="sq-button" onclick="alert('submit')" />
-        <input type="submit" value="btn4" class="sq-button" onclick="alert('submit')" />
+        <input type="submit" value="btn3" class="sq-btn" onclick="alert('submit')" />
+        <input type="submit" value="btn4" class="sq-btn" onclick="alert('submit')" />
       </div>
     </div>
     <div class="btn-toolbar right">
       <div class="btn-group">
-        <input type="submit" value="btn1" class="sq-button" onclick="alert('submit')" />
-        <input type="submit" value="brn2" class="sq-button" onclick="alert('submit')" />
+        <input type="submit" value="btn1" class="sq-btn" onclick="alert('submit')" />
+        <input type="submit" value="brn2" class="sq-btn" onclick="alert('submit')" />
       </div>
       <div class="btn-group">
-        <input type="submit" value="btn3" class="sq-button" onclick="alert('submit')" />
-        <input type="submit" value="btn4" class="sq-button" onclick="alert('submit')" />
+        <input type="submit" value="btn3" class="sq-btn" onclick="alert('submit')" />
+        <input type="submit" value="btn4" class="sq-btn" onclick="alert('submit')" />
       </div>
     </div>
   </div>

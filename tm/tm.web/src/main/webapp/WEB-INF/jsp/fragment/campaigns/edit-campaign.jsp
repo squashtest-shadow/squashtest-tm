@@ -355,10 +355,10 @@
 			<c:if test="${ writable }">
       <div class="left btn-toolbar">
         <div class="btn-group">
-          <button id="filter-test-plan-button" class="sq-button btn-sm" title="${reorderTooltip}">
+          <button id="filter-test-plan-button" class="sq-btn btn-sm" title="${reorderTooltip}">
             <span class="ui-icon ui-icon-refresh"></span>${filterLabel}
           </button>
-          <button id="reorder-test-plan-button" class="sq-button btn-sm" title="${reorderTooltip}">
+          <button id="reorder-test-plan-button" class="sq-btn btn-sm" title="${reorderTooltip}">
             <span class="ui-icon ui-icon-refresh"></span>${reorderLabel}
           </button>
           <span id="test-plan-sort-mode-message" class="not-displayed sort-mode-message small" title="${tooltipSortmode}">${messageSortmode}</span>
@@ -369,15 +369,15 @@
 			<c:if test="${ linkable }">
       <div class="right btn-toolbar">
         <span class="btn-group">
-          <button id="assign-users-button" class="sq-button btn-sm" title="${tooltipAssign}" >
+          <button id="assign-users-button" class="sq-btn btn-sm" title="${tooltipAssign}" >
             <span class="ui-icon ui-icon-person"></span>${assignLabel}
           </button>
         </span>
         <span class="btn-group">
-          <button id="test-case-button" class="sq-button btn-sm" title="${tooltipAddTPI}">
+          <button id="test-case-button" class="sq-btn btn-sm" title="${tooltipAddTPI}">
             <span class="ui-icon ui-icon-plusthick"></span>${associateLabel}
           </button>
-          <button id="remove-test-case-button" class="sq-button btn-sm" title="${tooltipRemoveTPI}">
+          <button id="remove-test-case-button" class="sq-btn btn-sm" title="${tooltipRemoveTPI}">
             <span class="ui-icon ui-icon-trash"></span>${removeLabel}
           </button>
         </span>

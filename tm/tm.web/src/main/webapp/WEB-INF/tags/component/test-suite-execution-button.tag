@@ -49,7 +49,7 @@
 <div id="test-suite-execution-button" style="display: inline-block;">
 
 	<c:if test="${ statisticsEntity.status == 'RUNNING' || statisticsEntity.status == 'READY'}">
-		<input type="button" id="start-resume-button" class="sq-button run-menu" value="${startResumeLabel}"/>		
+		<input type="button" id="start-resume-button" class="sq-btn run-menu" value="${startResumeLabel}"/>		
 		<ul class="not-displayed">
 			<li class="cursor-pointer">
 				<a id="start-suite-classic-button" ><f:message key='test-suite.execution.classic.label' /> </a>
@@ -70,7 +70,7 @@
 	<c:if test="${ statisticsEntity.status != 'READY' }">
 	
 		<f:message var="restartSuiteButton" key="test-suite.execution.restart.label"/>
-		<input type="button" id="restart-button" class="sq-button run-menu" value="${restartSuiteButton}"/>		
+		<input type="button" id="restart-button" class="sq-btn run-menu" value="${restartSuiteButton}"/>		
 		<ul class="not-displayed">
 			<li class="cursor-pointer">
 				<a id="restart-suite-classic-button" ><f:message key='test-suite.execution.classic.label' /> </a>

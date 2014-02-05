@@ -101,7 +101,7 @@
         <div id="login-form-button-pane" class="ui-dialog-buttonpane  ui-widget-content ui-helper-clearfix">
           <div id="login-form-button-set">
             <s:message var="submitLabel" code="dialog.authentication.button.submit.label" />
-            <input type="submit" value="${ submitLabel }" class="sq-button" />
+            <input type="submit" value="${ submitLabel }" class="sq-btn" />
           </div>
         </div>
       </sf:form>

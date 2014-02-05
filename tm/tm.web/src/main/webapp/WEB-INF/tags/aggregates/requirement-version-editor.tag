@@ -97,10 +97,10 @@
 
 	<div class="toolbar-button-panel">
 		<c:if test="${ writable }">
-			<input type="button" value='<f:message key="requirement.button.rename.label" />' id="rename-requirement-button" class="sq-button" />
+			<input type="button" value='<f:message key="requirement.button.rename.label" />' id="rename-requirement-button" class="sq-btn" />
 		</c:if>
 		<input type="button" value="<f:message key='label.print'/>"
-			id="print-requirement-version-button" class="sq-button" />
+			id="print-requirement-version-button" class="sq-btn" />
 	</div>
 
 
@@ -208,8 +208,8 @@
 				<f:message var="associateLabel" key="requirement.verifying_test-case.manage.button.label"/>
 				<f:message var="removeLabel" key="label.removeRequirementsAssociation"/>
 				
-				<input id="verifying-test-case-button" type="button" class="sq-button" value="${ associateLabel }"/>
-				<input id="remove-verifying-test-case-button" type="button" class="sq-button" value="${ removeLabel }"/>
+				<input id="verifying-test-case-button" type="button" class="sq-btn" value="${ associateLabel }"/>
+				<input id="remove-verifying-test-case-button" type="button" class="sq-btn" value="${ removeLabel }"/>
 			</c:if>
 		</jsp:attribute>
 

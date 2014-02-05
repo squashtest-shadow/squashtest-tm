@@ -76,11 +76,11 @@
 	<c:if test="${ reorderable }">
   <div class="left btn-toolbar">
     <span class="btn-group">
-      <button id="filter-test-plan-button" class="sq-button btn-sm" title="${reorderTooltip}">
+      <button id="filter-test-plan-button" class="sq-btn btn-sm" title="${reorderTooltip}">
         <span class="ui-icon ui-icon-refresh"></span>
         ${filterLabel}
       </button>
-      <button id="reorder-test-plan-button" class="sq-button btn-sm" title="${reorderTooltip}">
+      <button id="reorder-test-plan-button" class="sq-btn btn-sm" title="${reorderTooltip}">
         <span class="ui-icon ui-icon-refresh"></span>
         ${reorderLabel}
       </button>
@@ -93,7 +93,7 @@
 	<c:if test="${ linkable }">
   <div class="right btn-toolbar">
     <div class="btn-group">
-      <button id="manage-test-suites-buttonmenu" title="${tooltipAddSuite}"	class="buttonmenu sq-button btn-sm" >
+      <button id="manage-test-suites-buttonmenu" title="${tooltipAddSuite}"	class="buttonmenu sq-btn btn-sm" >
         <span class="ui-icon ui-icon-tag"></span>
         ${manageTS}
       </button>
@@ -104,24 +104,24 @@
         </li>
         <li class="suite-manager-buttonpane suite-manager-newsection ui-menu-item">
           <div class="snap-right">
-            <input type="button" id="suite-manager-menu-ok-button" 		role="button" class="sq-button btn-sm" value="${okLabel}" />
-            <input type="button" id="suite-manager-menu-cancel-button"	role="button" class="sq-button btn-sm" value="${cancelLabel}" />
+            <input type="button" id="suite-manager-menu-ok-button" 		role="button" class="sq-btn btn-sm" value="${okLabel}" />
+            <input type="button" id="suite-manager-menu-cancel-button"	role="button" class="sq-btn btn-sm" value="${cancelLabel}" />
           </div>
         </li> 		 
       </ul>
     </div>
     <span class="btn-group">
-      <button id="assign-users-button" class="sq-button btn-sm" title="${tooltipAssign}">
+      <button id="assign-users-button" class="sq-btn btn-sm" title="${tooltipAssign}">
         <span class="ui-icon ui-icon-person"></span>
         ${assignLabel}
       </button>
     </span>
     <span class="btn-group">
-      <button id="navigate-test-plan-manager" class="sq-button btn-sm" title="${tooltipAddTPI}">
+      <button id="navigate-test-plan-manager" class="sq-btn btn-sm" title="${tooltipAddTPI}">
         <span class="ui-icon ui-icon-plusthick"></span>
         ${associateLabel}
       </button>
-      <button id="remove-test-plan-button" class="sq-button btn-sm" title="${tooltipRemoveTPI}" >
+      <button id="remove-test-plan-button" class="sq-btn btn-sm" title="${tooltipRemoveTPI}" >
         <span class="ui-icon ui-icon-trash"></span>
         ${removeLabel}
       </button>

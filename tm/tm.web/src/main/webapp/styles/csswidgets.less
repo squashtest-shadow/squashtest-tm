@@ -1,14 +1,14 @@
 /**
- * .sq-button skins a simple button, with text inside it
+ * .sq-btn skins a simple button, with text inside it
  * Those tags which handle the "disabled" attribute are managed using a pseudo-class. 
  * Those who don't (such as <a>) should use the .sq-disabled class along with programmatic disabling
  * 
  * When one wants to add an icon, it needs to be declared as : <span class"ui-icon ui-icon-name"></span>
- * When there is no text inside the button, it needs to have the .sq-button.icon class
+ * When there is no text inside the button, it needs to have the .sq-btn.icon class
  * 
  * Should produce 28px high buttons
  */
-.sq-button {
+.sq-btn {
 	@padding-hz: 1em;
 	
 	.ui-button; 
@@ -77,7 +77,7 @@
  * To be used for a button with no text. Should produce a 28 * 28 button.
  */
 .sq-icon-btn {
-	.sq-button;
+	.sq-btn;
 	
 	button& {
 		padding: .35em .2em;	
