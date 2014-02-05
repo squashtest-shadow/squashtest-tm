@@ -72,13 +72,13 @@ define(['squash.translator', './table', './popups' ], function(translator, table
 		}
 		
 		if (conf.permissions.reorderable){
-			$("#reorder-test-plan-button").squashButton().on('click', function(){
+			$("#reorder-test-plan-button").on('click', function(){
 				$("#camp-test-plan-reorder-dialog").confirmDialog('open');
 			});
 		}	
 		
 		
-		$("#filter-test-plan-button").squashButton().on('click', function(){
+		$("#filter-test-plan-button").on('click', function(){
 			
 			if(filterOn){
 				filterOn = false;
@@ -111,7 +111,7 @@ define(['squash.translator', './table', './popups' ], function(translator, table
 			popups.init(conf);
 			filterOn = false;
 		}
-	}
+	};
 	
 	
 });

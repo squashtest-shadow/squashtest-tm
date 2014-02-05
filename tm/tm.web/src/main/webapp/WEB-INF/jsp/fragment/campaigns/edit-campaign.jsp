@@ -339,7 +339,7 @@
 		});
 		</script>
 
-		<div class="toolbar">
+		<div class="cf">
 			<f:message var="tooltipSortmode" key="tooltips.TestPlanSortMode" />
 			<f:message var="messageSortmode" key="message.TestPlanSortMode" />
 			<f:message var="associateLabel" key="label.Add" />
@@ -353,31 +353,35 @@
 			<f:message var="tooltipAssign" key="tooltips.AssignUserToTPI" />
 
 			<c:if test="${ writable }">
-				<span class="group left-buttons sq-reset">
-				<button id="filter-test-plan-button" class="sq-button btn-sm" title="${reorderTooltip}">
-          <span class="ui-icon ui-icon-refresh"></span>${filterLabel}
-        </button>
-				<button id="reorder-test-plan-button" class="sq-button btn-sm" title="${reorderTooltip}">
-          <span class="ui-icon ui-icon-refresh"></span>${reorderLabel}
-        </button>
-				<span id="test-plan-sort-mode-message" class="not-displayed sort-mode-message" title="${tooltipSortmode}">${messageSortmode}</span>
-				</span>
+      <div class="left btn-toolbar">
+        <div class="btn-group">
+          <button id="filter-test-plan-button" class="sq-button btn-sm" title="${reorderTooltip}">
+            <span class="ui-icon ui-icon-refresh"></span>${filterLabel}
+          </button>
+          <button id="reorder-test-plan-button" class="sq-button btn-sm" title="${reorderTooltip}">
+            <span class="ui-icon ui-icon-refresh"></span>${reorderLabel}
+          </button>
+          <span id="test-plan-sort-mode-message" class="not-displayed sort-mode-message" title="${tooltipSortmode}">${messageSortmode}</span>
+        </div>
+      </div>
 			</c:if>
 			
 			<c:if test="${ linkable }">
-			<span class="group sq-reset">
-				<button id="assign-users-button" class="sq-button btn-sm" title="${tooltipAssign}" >
-          <span class="ui-icon ui-icon-person"></span>${assignLabel}
-        </button>
-			</span>
-			<span class="group sq-reset">
-				<button id="test-case-button" class="sq-button btn-sm" title="${tooltipAddTPI}">
-          <span class="ui-icon ui-icon-plusthick"></span>${associateLabel}
-        </button>
-				<button id="remove-test-case-button" class="sq-button btn-sm" title="${tooltipRemoveTPI}">
-          <span class="ui-icon ui-icon-trash"></span>${removeLabel}
-        </button>
-			</span>
+      <div class="right btn-toolbar">
+        <span class="btn-group">
+          <button id="assign-users-button" class="sq-button btn-sm" title="${tooltipAssign}" >
+            <span class="ui-icon ui-icon-person"></span>${assignLabel}
+          </button>
+        </span>
+        <span class="btn-group">
+          <button id="test-case-button" class="sq-button btn-sm" title="${tooltipAddTPI}">
+            <span class="ui-icon ui-icon-plusthick"></span>${associateLabel}
+          </button>
+          <button id="remove-test-case-button" class="sq-button btn-sm" title="${tooltipRemoveTPI}">
+            <span class="ui-icon ui-icon-trash"></span>${removeLabel}
+          </button>
+        </span>
+      </div>
 			</c:if>
 		</div>
 		<div class="table-tab-wrap">
