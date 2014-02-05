@@ -24,8 +24,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<link rel="stylesheet" type="text/css" href="../styles/squash.core.css" /> 
-<link rel="stylesheet" type="text/css" href="../styles/squash.blue.css" /> 
+<link rel="stylesheet" type="text/css" href="../styles/squash.core.css" />
+<link rel="stylesheet" type="text/css" href="../styles/squash.blue.css" />
 </head>
 <body class="nav-up-layout">
   <div id="nav-bar" class="ui-helper-clearfix">
@@ -37,229 +37,198 @@
         <layout:_ajax-notifications cssClass="snap-right" />
         <div class="horizontal-logo" />
       </div>
-      <script type="text/javascript">
-        publish("load.notification");
-      </script>
     </div>
   </div>
-  
+
 
   <div id="main-pane">
-  <h1>Page de test pour les widgets jquery réécrits en CSS</h1>
-  
-  <h2>Réécriture de $().button / $().squashButton</h2>
-  
-  <h3>Bouton avec texte seul</h3>
-  <input type="submit" value="input:submit" class="sq-btn" onclick="alert('submit')" />
-  <input type="submit" value="input:submit" class="sq-btn btn-focus" onclick="alert('submit')" />
-  <input type="submit" value="input:submit:disabled" class="sq-btn" disabled="" onclick="alert('submit')" />
-  
-  <input type="button" value="input:button" class="sq-btn" onclick="alert('submit')" />
-  <input type="button" value="input:button:disabled" class="sq-btn" disabled="" onclick="alert('submit')" />
-  
-  <button class="sq-btn" onclick="alert('submit')">button</button>
-  <button class="sq-btn" disabled="" onclick="alert('submit')">button:disabled</button>
-  
-  <a href="http://www.google.com" class="sq-btn">link</a>
-  <a href="http://www.google.com" class="sq-btn disabled">link.disabled</a>
-  
-  <span class="sq-btn">span</span>
-  
-  <div class="sq-btn">div</div>
+    <h1>Page de test pour les widgets jquery réécrits en CSS</h1>
 
-  <h3>Bouton avec icone</h3>  
-  <input type="submit" value="input:submit" class="sq-btn" onclick="alert('submit')" />
-  <button class="sq-btn" onclick="alert('submit')">
-    <span class="ui-icon ui-icon-info"></span>
-    button
-  </button>
-  <button class="sq-btn" onclick="alert('submit')">
-    <span class="ui-icon ui-icon-info"></span>
-    button
-    <span class="ui-icon ui-icon-shuffle"></span>
-  </button>
-  <button class="sq-btn" onclick="alert('submit')">button<span class="ui-icon ui-icon-info"></span></button>
-  <button class="sq-icon-btn" title="button.sq-icon-btn" onclick="alert('submit')"><span class="ui-icon ui-icon-info"></span></button>
-  
-  <a href="#" class="sq-btn" onclick="alert('click')">
-    <span class="ui-icon ui-icon-info"></span>link<span class="ui-icon ui-icon-shuffle"></span>
-  </a>
-  <a href="#" class="sq-icon-btn" title="link.sq-icon-btn" onclick="alert('click')">
-    <span class="ui-icon ui-icon-info"></span>
-  </a>
-  <a href="http://www.google.com" class="sq-btn disabled">
-   <span class="ui-icon ui-icon-info"></span>link<span class="ui-icon ui-icon-shuffle"></span>
-  </a>
-  <button class="sq-btn" disabled="" onclick="alert('submit')"><span class="ui-icon ui-icon-info"></span>button</button>
-    
-  <h3>Betit bouton</h3>
-  <input type="submit" value="input:submit" class="sq-btn btn-sm" onclick="alert('submit')" />
-  <button class="sq-btn btn-sm" onclick="alert('submit')">
-    <span class="ui-icon ui-icon-info">a</span>
-    button
-  </button>
-  <button class="sq-btn btn-sm" onclick="alert('submit')">
-    button w/o icon : please use input instead
-  </button>
-  <a href="#" class="sq-btn btn-sm" onclick="alert('click')">
-    <span class="ui-icon ui-icon-info"></span>link<span class="ui-icon ui-icon-shuffle"></span>
-  </a>
-  <a href="#" class="sq-btn btn-sm" onclick="alert('click')">
-    link
-  </a>
-  <button class="sq-icon-btn btn-sm" title="button.sq-icon-btn" onclick="alert('submit')"><span class="ui-icon ui-icon-info"></span></button>
-  <a href="#" class="sq-icon-btn btn-sm" title="link.sq-icon-btn" onclick="alert('click')">
-    <span class="ui-icon ui-icon-info"></span>
-  </a>
-  
-  <h3>Bouton extra small (ne marche que pour les btns sans texte)</h3>
-  <input type="submit" value="input:submit" class="sq-btn btn-xs" onclick="alert('submit')" />
-  <button class="sq-btn btn-xs" onclick="alert('submit')">
-    <span class="ui-icon ui-icon-info"></span>
-    button
-  </button>
-  <a href="#" class="sq-btn btn-xs" onclick="alert('click')">
-    <span class="ui-icon ui-icon-info"></span>link.btn-xs<span class="ui-icon ui-icon-shuffle"></span>
-  </a>
-  <button class="sq-icon-btn btn-xs" title="button.sq-icon-btn.btn-xs" onclick="alert('submit')"><span class="ui-icon ui-icon-info"></span></button>
-  <a href="#" class="sq-icon-btn btn-xs" title="link.sq-icon-btn.btn-xs" onclick="alert('click')">
-    <span class="ui-icon ui-icon-info"></span>
-  </a>
-  
-  <h2>Toolbar</h2>
-  <h3>toolbar alignée à gauche</h3>
-  <div>
-    <h4>.btn-toolbar avec 2 groupes de boutons</h4>
-    <div class="btn-toolbar">
-      <div class="btn-group">
-        <input type="submit" value="btn1" class="sq-btn" onclick="alert('submit')" />
-        <input type="submit" value="brn2" class="sq-btn" onclick="alert('submit')" />
-      </div>
-      <div class="btn-group">
-        <input type="submit" value="btn3" class="sq-btn" onclick="alert('submit')" />
-        <input type="submit" value="btn4" class="sq-btn" onclick="alert('submit')" />
-      </div>
-    </div>
-  </div>
-  <div>
-    <h4>.btn-toolbar.left avec 2 groupes de boutons</h4>
-    <div class="btn-toolbar left">
-      <div class="btn-group">
-        <input type="submit" value="btn1" class="sq-btn" onclick="alert('submit')" />
-        <input type="submit" value="brn2" class="sq-btn" onclick="alert('submit')" />
-      </div>
-      <div class="btn-group">
-        <input type="submit" value="btn3" class="sq-btn" onclick="alert('submit')" />
-        <input type="submit" value="btn4" class="sq-btn" onclick="alert('submit')" />
-      </div>
-    </div>
-  </div>
-  <div>
-    <h4>.btn-toolbar avec des boutons en vrac</h4>
-    <div class="btn-toolbar">
-        <input type="submit" value="btn1" class="sq-btn" onclick="alert('submit')" />
-        <input type="submit" value="brn2" class="sq-btn" onclick="alert('submit')" />
-        <input type="submit" value="btn3" class="sq-btn" onclick="alert('submit')" />
-        <input type="submit" value="btn4" class="sq-btn" onclick="alert('submit')" />
-    </div>
-  </div>
-  <h3>toolbar alignée à droite</h3>
-  <div>
-    <h4>.btn-toolbar.right avec des boutons en vrac</h4>
-    <div class="btn-toolbar right">
-        <input type="submit" value="btn1" class="sq-btn" onclick="alert('submit')" />
-        <input type="submit" value="brn2" class="sq-btn" onclick="alert('submit')" />
-        <input type="submit" value="btn3" class="sq-btn" onclick="alert('submit')" />
-        <input type="submit" value="btn4" class="sq-btn" onclick="alert('submit')" />
-    </div>
-  </div>
-  <div>
-    <h4>.btn-toolbar.right avec des boutons en vrac</h4>
-    <div class="btn-toolbar right">
-      <div class="btn-group">
-        <input type="submit" value="btn1" class="sq-btn" onclick="alert('submit')" />
-        <input type="submit" value="brn2" class="sq-btn" onclick="alert('submit')" />
-      </div>
-      <div class="btn-group">
-        <input type="submit" value="btn3" class="sq-btn" onclick="alert('submit')" />
-        <input type="submit" value="btn4" class="sq-btn" onclick="alert('submit')" />
-      </div>
-    </div>
-  </div>
-  <h3>toolbars à droite et à gauche. il faut l'emballer dans un .cf !</h3>
-  <div class="cf">
-    <div class="btn-toolbar left">
-      <div class="btn-group">
-        <input type="submit" value="btn1" class="sq-btn" onclick="alert('submit')" />
-        <input type="submit" value="brn2" class="sq-btn" onclick="alert('submit')" />
-      </div>
-      <div class="btn-group">
-        <input type="submit" value="btn3" class="sq-btn" onclick="alert('submit')" />
-        <input type="submit" value="btn4" class="sq-btn" onclick="alert('submit')" />
-      </div>
-    </div>
-    <div class="btn-toolbar right">
-      <div class="btn-group">
-        <input type="submit" value="btn1" class="sq-btn" onclick="alert('submit')" />
-        <input type="submit" value="brn2" class="sq-btn" onclick="alert('submit')" />
-      </div>
-      <div class="btn-group">
-        <input type="submit" value="btn3" class="sq-btn" onclick="alert('submit')" />
-        <input type="submit" value="btn4" class="sq-btn" onclick="alert('submit')" />
-      </div>
-    </div>
-  </div>
+    <h2>Réécriture de $().button / $().squashButton</h2>
 
-    <s:message var="dialogTitle" code="dialog.authentication.title" />
-    <div id="login-fom" class="ui-dialog ui-widget ui-widget-content ui-corner-all"
-      style="margin-left:auto; margin-right:auto; margin-top: 5%; width: 300px; position: relative; height: auto;">
-      <sf:form action="j_spring_security_check" method="POST">
-        <div id="login-form-body" class="ui-dialog-content ui-widget-content">
-          <table class="ui-widget">
-            <tr>
-              <td>
-                <label for="j_username"><s:message code="dialog.authentication.login.label" /></label>
-              </td>
-              <td>
-                <input id="j_username" name="j_username" size="20" maxlength="50" type="text" value="${ sessionScope.SPRING_SECURITY_LAST_USERNAME }" />
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <label for="j_password"><s:message code="dialog.authentication.password.label" /></label>
-              </td>
-              <td>
-                <input id="j_password" name="j_password" size="20" maxlength="50" type="password" />
-              </td>
-            </tr>
-            <tr>
-              <td colspan="2"><c:if test="${ not empty sessionScope.SPRING_SECURITY_LAST_EXCEPTION }">
-                  <div id="auth-error" class="ui-state-error ui-corner-all">
-                    <span class="ui-icon ui-icon-info" style="float: left; margin-right: 0.3em;"></span>
-                    <span><f:message key="page.authentication.error.message" /></span>
-                  </div>
-                </c:if></td>
-            </tr>
-          </table>
+    <h3>Bouton avec texte seul</h3>
+    <input type="submit" value="input:submit" class="sq-btn" onclick="alert('submit')" /> <input type="submit"
+      value="input:submit" class="sq-btn btn-focus" onclick="alert('submit')" /> <input type="submit"
+      value="input:submit:disabled" class="sq-btn" disabled="" onclick="alert('submit')" /> <input type="button"
+      value="input:button" class="sq-btn" onclick="alert('submit')" /> <input type="button"
+      value="input:button:disabled" class="sq-btn" disabled="" onclick="alert('submit')" />
+
+    <button class="sq-btn" onclick="alert('submit')">button</button>
+    <button class="sq-btn" disabled="" onclick="alert('submit')">button:disabled</button>
+
+    <a href="http://www.google.com" class="sq-btn">link</a> <a href="http://www.google.com" class="sq-btn disabled">link.disabled</a>
+
+    <span class="sq-btn">span</span>
+
+    <div class="sq-btn">div</div>
+
+    <h3>Bouton avec icone</h3>
+    <input type="submit" value="input:submit" class="sq-btn" onclick="alert('submit')" />
+    <button class="sq-btn" onclick="alert('submit')">
+      <span class="ui-icon ui-icon-info"></span> button
+    </button>
+    <button class="sq-btn" onclick="alert('submit')">
+      <span class="ui-icon ui-icon-info"></span> button <span class="ui-icon ui-icon-shuffle"></span>
+    </button>
+    <button class="sq-btn" onclick="alert('submit')">
+      button<span class="ui-icon ui-icon-info"></span>
+    </button>
+    <button class="sq-icon-btn" title="button.sq-icon-btn" onclick="alert('submit')">
+      <span class="ui-icon ui-icon-info"></span>
+    </button>
+
+    <a href="#" class="sq-btn" onclick="alert('click')"> <span class="ui-icon ui-icon-info"></span>link<span
+      class="ui-icon ui-icon-shuffle"></span>
+    </a> <a href="#" class="sq-icon-btn" title="link.sq-icon-btn" onclick="alert('click')"> <span
+      class="ui-icon ui-icon-info"></span>
+    </a> <a href="http://www.google.com" class="sq-btn disabled"> <span class="ui-icon ui-icon-info"></span>link<span
+      class="ui-icon ui-icon-shuffle"></span>
+    </a>
+    <button class="sq-btn" disabled="" onclick="alert('submit')">
+      <span class="ui-icon ui-icon-info"></span>button
+    </button>
+
+    <h3>Betit bouton</h3>
+    <input type="submit" value="input:submit" class="sq-btn btn-sm" onclick="alert('submit')" />
+    <button class="sq-btn btn-sm" onclick="alert('submit')">
+      <span class="ui-icon ui-icon-info">a</span> button
+    </button>
+    <button class="sq-btn btn-sm" onclick="alert('submit')">button w/o icon : please use input instead</button>
+    <a href="#" class="sq-btn btn-sm" onclick="alert('click')"> <span class="ui-icon ui-icon-info"></span>link<span
+      class="ui-icon ui-icon-shuffle"></span>
+    </a> <a href="#" class="sq-btn btn-sm" onclick="alert('click')"> link </a>
+    <button class="sq-icon-btn btn-sm" title="button.sq-icon-btn" onclick="alert('submit')">
+      <span class="ui-icon ui-icon-info"></span>
+    </button>
+    <a href="#" class="sq-icon-btn btn-sm" title="link.sq-icon-btn" onclick="alert('click')"> <span
+      class="ui-icon ui-icon-info"></span>
+    </a>
+
+    <h3>Bouton extra small (ne marche que pour les btns sans texte)</h3>
+    <input type="submit" value="input:submit" class="sq-btn btn-xs" onclick="alert('submit')" />
+    <button class="sq-btn btn-xs" onclick="alert('submit')">
+      <span class="ui-icon ui-icon-info"></span> button
+    </button>
+    <a href="#" class="sq-btn btn-xs" onclick="alert('click')"> <span class="ui-icon ui-icon-info"></span>link.btn-xs<span
+      class="ui-icon ui-icon-shuffle"></span>
+    </a>
+    <button class="sq-icon-btn btn-xs" title="button.sq-icon-btn.btn-xs" onclick="alert('submit')">
+      <span class="ui-icon ui-icon-info"></span>
+    </button>
+    <a href="#" class="sq-icon-btn btn-xs" title="link.sq-icon-btn.btn-xs" onclick="alert('click')"> <span
+      class="ui-icon ui-icon-info"></span>
+    </a>
+
+    <h2>Toolbar</h2>
+    <h3>toolbar alignée à gauche</h3>
+    <div>
+      <h4>.btn-toolbar avec 2 groupes de boutons</h4>
+      <div class="btn-toolbar">
+        <div class="btn-group">
+          <input type="submit" value="btn1" class="sq-btn" onclick="alert('submit')" /> <input type="submit"
+            value="brn2" class="sq-btn" onclick="alert('submit')" />
         </div>
+        <div class="btn-group">
+          <input type="submit" value="btn3" class="sq-btn" onclick="alert('submit')" /> <input type="submit"
+            value="btn4" class="sq-btn" onclick="alert('submit')" />
+        </div>
+      </div>
+    </div>
+    <h4>.btn-toolbar.left avec 2 groupes de boutons</h4>
+    <div class="cf">
+      <div class="btn-toolbar left">
+        <div class="btn-group">
+          <input type="submit" value="btn1" class="sq-btn" onclick="alert('submit')" /> <input type="submit"
+            value="brn2" class="sq-btn" onclick="alert('submit')" />
+        </div>
+        <div class="btn-group">
+          <input type="submit" value="btn3" class="sq-btn" onclick="alert('submit')" /> <input type="submit"
+            value="btn4" class="sq-btn" onclick="alert('submit')" />
+        </div>
+      </div>
+    </div>
+    <div>
+      <h4>.btn-toolbar avec des boutons en vrac</h4>
+      <div class="btn-toolbar">
+        <input type="submit" value="btn1" class="sq-btn" onclick="alert('submit')" /> <input type="submit" value="brn2"
+          class="sq-btn" onclick="alert('submit')" /> <input type="submit" value="btn3" class="sq-btn"
+          onclick="alert('submit')" /> <input type="submit" value="btn4" class="sq-btn" onclick="alert('submit')" />
+      </div>
+    </div>
+    <h3>toolbar alignée à droite</h3>
+    <div>
+      <h4>.btn-toolbar.right avec des boutons en vrac</h4>
+      <div class="btn-toolbar right">
+        <input type="submit" value="btn1" class="sq-btn" onclick="alert('submit')" /> <input type="submit" value="brn2"
+          class="sq-btn" onclick="alert('submit')" /> <input type="submit" value="btn3" class="sq-btn"
+          onclick="alert('submit')" /> <input type="submit" value="btn4" class="sq-btn" onclick="alert('submit')" />
+      </div>
+    </div>
+    <div>
+      <h4>.btn-toolbar.right avec des boutons en vrac</h4>
+      <div class="btn-toolbar right">
+        <div class="btn-group">
+          <input type="submit" value="btn1" class="sq-btn" onclick="alert('submit')" /> <input type="submit"
+            value="brn2" class="sq-btn" onclick="alert('submit')" />
+        </div>
+        <div class="btn-group">
+          <input type="submit" value="btn3" class="sq-btn" onclick="alert('submit')" /> <input type="submit"
+            value="btn4" class="sq-btn" onclick="alert('submit')" />
+        </div>
+      </div>
+    </div>
+    <h3>toolbars à droite et à gauche. il faut l'emballer dans un .cf !</h3>
+    <div class="cf">
+      <div class="btn-toolbar left">
+        <div class="btn-group">
+          <input type="submit" value="btn1" class="sq-btn" onclick="alert('submit')" /> <input type="submit"
+            value="brn2" class="sq-btn" onclick="alert('submit')" />
+        </div>
+        <div class="btn-group">
+          <input type="submit" value="btn3" class="sq-btn" onclick="alert('submit')" /> <input type="submit"
+            value="btn4" class="sq-btn" onclick="alert('submit')" />
+        </div>
+      </div>
+      <div class="btn-toolbar right">
+        <div class="btn-group">
+          <input type="submit" value="btn1" class="sq-btn" onclick="alert('submit')" /> <input type="submit"
+            value="brn2" class="sq-btn" onclick="alert('submit')" />
+        </div>
+        <div class="btn-group">
+          <input type="submit" value="btn3" class="sq-btn" onclick="alert('submit')" /> <input type="submit"
+            value="btn4" class="sq-btn" onclick="alert('submit')" />
+        </div>
+      </div>
+    </div>
 
-        <div id="login-form-button-pane" class="ui-dialog-buttonpane  ui-widget-content ui-helper-clearfix">
-          <div id="login-form-button-set">
-            <s:message var="submitLabel" code="dialog.authentication.button.submit.label" />
+    <h2>Réécriture de $().togglePanel</h2>
+    <div>
+      <div class="expand sq-tg">
+        <div class="tg-head">
+          <h3 class="">Titleeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee</h3>
+          <div class="tg-toolbar">
+            <input type="submit" value="btn1" class="sq-btn" onclick="alert('submit')" />
+            <input type="submit" value="brn2" class="sq-btn" onclick="alert('submit')" />
           </div>
         </div>
-      </sf:form>
-      <script type="text/javascript">
-        publish("load.loginForm");
-      </script>
-    </div>
-
-    <c:if test="${ not empty welcomeMessage }">
-      <div id="welcome-message" class="ui-widget ui-widget-content ui-corner-all"
-        style="margin: auto; margin-top: 2%; padding-left: 0.5em; padding-right: 0.5em; width: 80%">
-        <p>${ welcomeMessage }</p>
+        <div class="tg-body">This is the opened body</div>
       </div>
-    </c:if>
-  </div>
+      <div class="collapse sq-tg">
+        <div class="tg-head">
+          <h3>Title</h3>
+          <div class="tg-toolbar">
+            <input type="submit" value="btn1" class="sq-btn btn-sm" onclick="alert('submit')" /> <input type="submit"
+              value="brn2" class="sq-btn btn-sm" onclick="alert('submit')" />
+          </div>
+        </div>
+        <div class="tg-body">This is the closed body</div>
+      </div>
+      <div class="expand sq-tg">
+        <div class="tg-head">
+          <h3 class="">Titleeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee</h3>
+        </div>
+        <div class="tg-body">This is the opened body</div>
+      </div>
+    </div>
 </body>
 </html>

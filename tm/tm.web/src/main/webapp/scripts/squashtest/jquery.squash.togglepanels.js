@@ -19,6 +19,28 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 (function($) {
+	// the über-new toggle-panel: each .sq-tg is automatically turned into a toggle panel
+	$(document).on("click", ".sq-tg .tg-head", function(event) {
+		var $target = $(event.target);
+		
+		if ($target.parent(".tg-toolbar").length > 0) {
+			// click from within the toolbar -> bail out
+			return;
+		} // else do the toggling.
+		
+		event.stopImmediatePropagation();
+		
+		var $panel = $target.parent(".sq-tg");
+		
+		$panel.find(".tg-body").toggle("blind", 500, function() {
+			$panel.toggleClass("collapse");
+			$panel.toggleClass("expand");
+			
+			$panel.find(".tg-toolbar .sq-btn").prop("disabled", $panel.is(".collapse"));			
+		});
+		
+	});
+
 	$.widget("ui.togglePanel",{
 		
 		options : {
@@ -47,7 +69,7 @@
 				// buttons
 				panelHead.find('.snap-right')
 							.children()
-							.filter('input')
+							.filter('input.button')
 							.squashButton()
 							.click(function(event) {
 								event.stopPropagation();
@@ -56,6 +78,13 @@
 
 				// click event
 				panelHead.click(function(event) {
+					var $target = $(event.target);
+					// don't toggle if the click was targetted at some kind of button
+					// TODO maybe better, enforce a .btn-group panel and check that instead
+					if ($target.is("input[type='button'], button, a")) {
+						return;
+					}
+					
 					event.stopImmediatePropagation();
 					widget.toggleContent();
 				});

@@ -8,6 +8,8 @@
  * 
  * Should produce 28px high buttons
  */
+@import "features.less"
+ 
 .sq-btn {
 	@padding-hz: 1em;
 	
@@ -52,9 +54,7 @@
 	
 	/* disable state. it can be achieved on elemens which cannot be disabled with .disabled */
 	&:disabled, &.disabled { 
-		.ui-state-disabled;
-		
-		.ui-icon { filter:Alpha(Opacity=35); }
+		.btn-disabled;
 	}
 	
 	/**
@@ -116,6 +116,84 @@
 }
 
 /**
+ * toggle panel
+ */
+.sq-tg {
+	margin-bottom: 1.5 * @normal-font;
+	
+	& .tg-head {
+		.cf;
+		.ui-state-default;
+		
+		// inlined .ui-accordion .ui-accordion-header
+		display: block; 
+		cursor: pointer; 
+		position: relative; 
+		margin-top: 2px; 
+		padding: .5em .5em .5em .7em; 
+		zoom: 1;
+		
+		& h3 {
+			.ui-helper-reset; 
+			
+			display: block;
+			float: left;
+			text-align: left;
+			padding: .1em .7em; // with that, text is more or less vertical-aligned at middle
+			font-size: @normal-font;
+			font-weight: normal;
+		}
+		& .tg-toolbar {
+			display: block;
+			float: right;
+			text-align: right;
+			
+			// meh... we have to redefine buttons height 
+			// for them to look good^h^h as before
+			.sq-btn {
+				padding-top: .15em;
+				padding-bottom: .15em;
+			}
+		}
+	}
+	&.expand .tg-head {
+		.ui-state-focus; 
+		.ui-corner-top;
+		
+	}
+	&.collapse .tg-head {
+		.ui-state-active;
+		.ui-corner-all;
+		
+		.tg-toolbar .sq-btn, .tg-toolbar .sq-icon-btn {
+		// head buttons should look disabled when panel is collapsed
+		.btn-disabled;
+		}
+	}
+	
+	& .tg-body {
+		.ui-widget-content;
+		.ui-corner-bottom;
+		
+		// inlined .ui-accordion.ui-accordion-content
+		//padding: 1em 2.2em; 
+		border-top: 0; 
+		overflow: auto; 
+		zoom: 1;
+
+		font-size: @normal-font;
+		
+		padding: 0.7em;
+		overflow: auto;
+		
+	}
+	&.collapse .tg-body {
+		display: none;
+		
+	}
+}
+
+/**
  * PRIVATE STUFF - NOT TO BE USED IN HTML CODE
  **/
 /* Private "rewrite" of .ui-widget, because there are rules not possible to "mix in" */
@@ -128,4 +206,9 @@
 		font-family: Verdana, Arial, sans-serif; 
 		font-size: 1em;
 	}
+}
+.btn-disabled {
+	.ui-state-disabled;
+	
+	.ui-icon { filter:Alpha(Opacity=35); }
 }
