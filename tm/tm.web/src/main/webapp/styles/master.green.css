@@ -29,6 +29,7 @@
 /*
  * IMPORTS
  */
+@import url(master.css);
 @import url("tabbed-pane.less");
 @import url("jquery/ui/jquery-ui-1.9.1.custom.green.css");
 @import url("datatables.green.css");

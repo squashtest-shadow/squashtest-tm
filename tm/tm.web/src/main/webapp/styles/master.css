@@ -19,7 +19,6 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /* MASTER STYLESHEET */
-@import url("structure.css");
 @import url("features.css");
 @import url("typography.css");
 @import url("components.css");

@@ -38,9 +38,9 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 			
 		
-		<comp:sq-css name="squash.core.css" />
 		<link type="image/x-icon" rel="shortcut icon" href="${ pageContext.servletContext.contextPath }/images/favicon.ico"/>
-		<link type="text/css" rel="stylesheet" href="${ pageContext.servletContext.contextPath }/styles/print.css"/>
+		<comp:sq-css name="squash.core.css" />
+    <comp:sq-css name="squash.print.css" />
 
 		<script type="text/javascript">
 		var require = require || {};
