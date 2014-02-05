@@ -19,6 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /* MASTER STYLESHEET */
+@import "global-properties.less";
 @import url("features.css");
 @import url(features.less);
 @import url("typography.css");
