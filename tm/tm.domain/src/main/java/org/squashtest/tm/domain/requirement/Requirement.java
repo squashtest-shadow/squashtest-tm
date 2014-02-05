@@ -57,7 +57,6 @@ import org.squashtest.tm.domain.search.CountElementsInCollectionBridge;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.NoVerifiableRequirementVersionException;
 import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
-import org.squashtest.tm.service.internal.repository.hibernate.HibernateTestSuiteDao;
 
 /**
  * Entity requirement

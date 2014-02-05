@@ -31,6 +31,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.search.annotations.Fields;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.Store;
@@ -38,6 +39,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.search.UpperCasedStringBridge;
 
 /**
  * Generic superclass for library nodes.
@@ -55,7 +57,13 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 	@NotBlank
 	@Fields({
 		@Field,
-		@Field(name="label", analyze=Analyze.NO, store=Store.YES)
+		@Field(name="label", analyze=Analyze.NO, store=Store.YES),
+		@Field(
+				name="labelUpperCased", 
+				analyze=Analyze.NO, 
+				store=Store.YES,
+				bridge=@FieldBridge(impl = UpperCasedStringBridge.class)
+			),
 	})
 	@Size(min = 0, max = 255)
 	private String name;
