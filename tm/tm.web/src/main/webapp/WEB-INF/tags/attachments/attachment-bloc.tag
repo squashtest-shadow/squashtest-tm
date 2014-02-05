@@ -40,9 +40,9 @@
 	<jsp:attribute name="panelButtons">
 		<c:if test="${ editable }">
 			<f:message var="uploadAttachment" key="label.UploadAttachment" />
-			<input id="upload-attachment-button" type="button" value="${uploadAttachment}" class="button" />
+			<input id="upload-attachment-button" type="button" value="${uploadAttachment}" class="sq-btn" />
 			<f:message var="manageAttachment" key="label.Organize" />
-			<input id="manage-attachment-bloc-button" type="button" value="${manageAttachment}" class="button" />
+			<input id="manage-attachment-bloc-button" type="button" value="${manageAttachment}" class="sq-btn" />
 		</c:if>
 	</jsp:attribute>	
 	

@@ -177,12 +177,12 @@
 		<c:if test="${ writable }">
 			<input type="button"
 				value=' <f:message key="iteration.test-plan.testsuite.manage.label"/>'
-				id="manage-test-suites-button" class="button" />
+				id="manage-test-suites-button" class="sq-btn" />
 		</c:if>
 		<c:if test="${ writable }">
 			<input type="button"
 				value='<f:message key="iteration.button.rename.label" />'
-				id="rename-iteration-button" class="button" />
+				id="rename-iteration-button" class="sq-btn" />
 		</c:if>
 		
 	</div>

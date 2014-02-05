@@ -40,7 +40,7 @@
 	</div>	
 	<div class="snap-right">
 		<f:message var="back" key="label.Back" /> 
-		<input id="back" type="button" value="${ back }" class="button" onClick="history.back();"/>
+		<input id="back" type="button" value="${ back }" class="sq-btn" onClick="history.back();"/>
 	</div>
 	<div class="unsnap"></div>
 	
@@ -53,7 +53,7 @@
 		<div class="toolbar-information-panel"></div>
 		<div class="toolbar-button-panel">
 			<f:message var="uploadAttachment" key="label.UploadAttachment" />
-			<input id="add-attachment-button" type="button" value="${uploadAttachment}" class="button"/>
+			<input id="add-attachment-button" type="button" value="${uploadAttachment}" class="sq-btn"/>
 		</div>
 		<div class="unsnap"></div>
 	</div>
@@ -64,9 +64,9 @@
 	<comp:toggle-panel id="attachment-table-panel" titleKey="label.CurrentAttachments"  open="true" >
 		<jsp:attribute name="panelButtons">	
 			<f:message var="renameAttachment" key="label.Rename" />
-			<input type="button" value="${renameAttachment}" id="rename-attachment-button" class="button" />
+			<input type="button" value="${renameAttachment}" id="rename-attachment-button" class="sq-btn" />
 			<f:message var="removeAttachment" key="label.Delete" />
-			<input type="button" value="${removeAttachment}" id="delete-attachment-button" class="button" />
+			<input type="button" value="${removeAttachment}" id="delete-attachment-button" class="sq-btn" />
 		</jsp:attribute>
 		<jsp:attribute name="body">
 			<at:attachment-table editable="${true}" baseURL="${baseURL}" />					

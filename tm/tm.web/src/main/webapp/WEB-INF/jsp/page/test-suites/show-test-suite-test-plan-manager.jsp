@@ -137,7 +137,7 @@
 	require(["common"], function() {
 		require(["jquery", "jqueryui"], function($) {
 			$(function(){
-				$("#back").button().click(function(){
+				$("#back").click(function(){
 					document.location.href="${backUrl}";
 				});
 			});

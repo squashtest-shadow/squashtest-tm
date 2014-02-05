@@ -31,7 +31,7 @@
  */
 
 define(["jquery", "squash.translator", "./jquery.squash.attachmentsDialog", 
-        "jquery.squash.confirmdialog", "jquery.squash.squashbutton", "squashtable"], 
+        "jquery.squash.confirmdialog", "squashtable"], 
 		function($,  translator){
 	
 	function getMessages(){
@@ -111,7 +111,7 @@ define(["jquery", "squash.translator", "./jquery.squash.attachmentsDialog",
 		var renameButton = $("#rename-attachment-button");
 		var uploadButton = $("#add-attachment-button");
 		
-		deleteButton.squashButton().on('click', function(){
+		deleteButton.on('click', function(){
 			if (table.getSelectedRows().size()>0){
 				$("#delete-attachment-dialog").confirmDialog('open');
 			}
@@ -122,7 +122,7 @@ define(["jquery", "squash.translator", "./jquery.squash.attachmentsDialog",
 		});
 		
 		
-		renameButton.squashButton().on('click', function(){
+		renameButton.on('click', function(){
 			var selectedIds = table.getSelectedIds();
 			if (selectedIds.length !== 1){
 				var messages = getMessages();
@@ -143,7 +143,7 @@ define(["jquery", "squash.translator", "./jquery.squash.attachmentsDialog",
 		});
 		
 		
-		uploadButton.squashButton().on('click', function(){
+		uploadButton.on('click', function(){
 			$("#add-attachments-dialog").attachmentsDialog('open');
 		}); 
 	}

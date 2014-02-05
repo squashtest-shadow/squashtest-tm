@@ -36,7 +36,7 @@ require([ "common" ], function(common) {
 		$(function() {
 			WS.init();
 			var view = new TestCaseSearchResultView();
-			$("#back").button().on("click", goBack);
+			$("#back").on("click", goBack);
 		});
 
 	});

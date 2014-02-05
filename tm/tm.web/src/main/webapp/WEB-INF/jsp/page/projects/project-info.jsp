@@ -406,7 +406,7 @@ require(["common"], function() {
 		
 		
 		// back button
-		$("#back").button().click(clickProjectBackButton);
+		$("#back").click(clickProjectBackButton);
 		
 
 		// rename popup

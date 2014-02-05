@@ -91,7 +91,7 @@
 
 	<div class="snap-right">
 		<f:message var="back" key="label.Back" />
-		<input id="back" type="button" value="${ back }" class="button" />
+		<input id="back" type="button" value="${ back }" class="sq-btn" />
 	</div>
 
 
@@ -333,7 +333,7 @@
 
 			$('#delete-execution-button').button();
 
-			$("#back").button().click(function(){
+			$("#back").click(function(){
 				history.back();
 			});
 

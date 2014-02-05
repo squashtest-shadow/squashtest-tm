@@ -72,7 +72,7 @@ require(["common"], function(){
 
 				<%-- back button --%>
 				
-				$("#back").button().click(function(){
+				$("#back").click(function(){
 					history.back();
 				});
 				

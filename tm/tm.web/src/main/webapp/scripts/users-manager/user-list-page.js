@@ -221,7 +221,7 @@ define([ "jquery", "squash.translator", "jquery.squash.fragmenttabs", "squashtab
 			}			
 		});
 		
-		$("#back").button().click(function() {
+		$("#back").click(function() {
 			document.location.href = settings.urls.backUrl;
 		});
 	}

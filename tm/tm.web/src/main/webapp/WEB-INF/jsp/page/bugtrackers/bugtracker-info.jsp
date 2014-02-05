@@ -134,7 +134,7 @@
 $(function() {
 		require(["squash.basicwidgets"], function(basic){
 			basic.init();
-			$("#back").button().click(clickBugtackerBackButton);
+			$("#back").click(clickBugtackerBackButton);
 			$("#bugtracker-iframeFriendly-checkbx").change(clickBugTrackerIframeFriendly);
 		});
 });

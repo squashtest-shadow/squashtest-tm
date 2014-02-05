@@ -29,7 +29,7 @@ require([ "common" ], function(common) {
 		$(function() {
 			WS.init();
 			var view = new CustomFieldModificationView();
-			$("#back").button().on("click", goBack);
+			$("#back").on("click", goBack);
 			view.on("customfield.delete", goBack);
 		});
 

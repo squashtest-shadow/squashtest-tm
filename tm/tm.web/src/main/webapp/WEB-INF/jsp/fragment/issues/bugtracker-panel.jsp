@@ -292,7 +292,7 @@
 		<c:if test="${ executable }">
 				<f:message var="issueReportOpenButtonLabel"
 				key="issue.button.opendialog.label" />
-				<input type="button" class="button"
+				<input type="button" class="sq-btn"
 				id="issue-report-dialog-openbutton"
 				value="${issueReportOpenButtonLabel}" />
 		</c:if>
@@ -306,7 +306,7 @@
 			<span><f:message key="issue.panel.needscredentials.label" />
 			</span>			
 			<f:message var="loginButtonLabel" key="label.LogIn" />
-			<input type="button" class="button" id="issue-login-button"
+			<input type="button" class="sq-btn" id="issue-login-button"
 				value="${loginButtonLabel}" />
 		</div>
 	<c:choose>
@@ -367,7 +367,7 @@ require([ "common" ], function() {
 		require(["squash.basicwidgets", "workspace.event-bus"], function(basicwidg, eventBus){
 			basicwidg.init();
 			<c:if test="${executable}">
-			$("#issue-report-dialog-openbutton").squashButton().click(function() {
+			$("#issue-report-dialog-openbutton").click(function() {
 				$(this).removeClass("ui-state-focus ui-state-hover");
 				checkAndReportIssue( {reportUrl:"${entityUrl}/new-issue" } );
 			});

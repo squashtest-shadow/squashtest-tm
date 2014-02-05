@@ -23,7 +23,7 @@ require([ "common" ], function(common) {
 		$(function() {
 			WS.init();
 			var view = new IndexAdministrationView();
-			$("#back").button().click(function() {
+			$("#back").click(function() {
 				document.location.href = squashtm.app.contextRoot + "/administration";
 			});
 			

@@ -24,7 +24,7 @@ require([ "common" ], function(common) {
 		$(function() {
 			WS.init();
 			new CustomFieldsTableView();
-			$("#back").button().click(function() {
+			$("#back").click(function() {
 				document.location.href = squashtm.app.contextRoot + "/administration";
 			});
 		});

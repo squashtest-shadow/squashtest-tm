@@ -33,7 +33,7 @@ require([ "common" ], function(common) {
 		domReady(function() {
 			WS.init();
 			var view = new TeamModificationView();
-			$("#back").button().on("click", goBackInHistory);
+			$("#back").on("click", goBackInHistory);
 			view.on("team.delete", goBack);
 		});
 
