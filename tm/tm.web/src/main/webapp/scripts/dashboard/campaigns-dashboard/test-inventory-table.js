@@ -20,7 +20,7 @@
  */
 
 
-define(["../basic-objects/table-view"], function(TableView){
+define(["../basic-objects/table-view", "squash.translator"], function(TableView, translator){
 	
 	return TableView.extend({
 		
@@ -30,23 +30,53 @@ define(["../basic-objects/table-view"], function(TableView){
 			var data = [],
 				i = 0,
 				len = inventory.length;
-			for (i=0;i<len;i++){
-				var m = inventory[i];
-				var _nbterm = m.nbSuccess + m.nbFailure + m.nbBlocked + m.nbUntestable + m.nbWarning + m.nbError;
-				var total = _nbterm + m.nbReady + m.nbRunning;
-				var progress = (total>0) ? (_nbterm * 100 / total).toFixed(0) + ' %' : '0%';
-				var rowdata = [
-				               '#'+(i+1)+' - '+m.iterationName,
-				               m.nbReady,
-				               m.nbRunning,
-				               m.nbSuccess + m.nbWarning,
-				               m.nbFailure,
-				               m.nbBlocked + m.nbError + m.nbNotRun,
-				               m.nbUntestable,
-				               total,
-				               progress
-				               ];
-				data.push(rowdata);
+			
+			if (len > 0){
+				var totals = [
+					translator.get('dashboard.meta.labels.total'),	//name
+					0, // ready
+					0, // running
+					0, // success
+					0, // failure
+					0, // blocked
+					0, // untestable
+					0, // total
+					"" // progress
+				],
+				total_nbterm = 0,
+				total_total = 0;
+				
+				for (i=0;i<len;i++){
+					
+					// compute stats
+					var m = inventory[i];
+					var _nbterm = m.nbSuccess + m.nbFailure + m.nbBlocked + m.nbUntestable + m.nbWarning + m.nbError;
+					var total = _nbterm + m.nbReady + m.nbRunning;
+					var progress = (total>0) ? (_nbterm * 100 / total).toFixed(0) + ' %' : '0%';
+					var rowdata = [
+					               '#'+(i+1)+' - '+m.iterationName,
+					               m.nbReady,
+					               m.nbRunning,
+					               m.nbSuccess + m.nbWarning,
+					               m.nbFailure,
+					               m.nbBlocked + m.nbError + m.nbNotRun,
+					               m.nbUntestable,
+					               total,
+					               progress
+					];
+					data.push(rowdata);
+					
+					// save the totals
+					total_nbterm += _nbterm;
+					total_total += total;
+					for (var j=1; j<8; j++){
+						totals[j]+=rowdata[j];
+					}
+				}
+				
+				// finalize the totals and add them to the data
+				totals[8] = (total_total>0) ? (total_nbterm * 100 / total_total).toFixed(0) + ' %' : '0%';
+				data.push(totals);
 			}
 			
 			return data;
