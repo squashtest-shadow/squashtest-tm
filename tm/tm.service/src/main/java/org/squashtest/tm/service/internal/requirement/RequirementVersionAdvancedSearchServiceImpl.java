@@ -74,7 +74,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 			new SortField("category", SortField.STRING, false), new SortField("status", SortField.STRING, false),
 			new SortField("labelUpperCased", SortField.STRING, false) };
 	
-	private final static List<String> longSortableFields = Arrays.asList(
+	private final static List<String> LONG_SORTABLE_FIELDS = Arrays.asList(
 			  "requirement.id", 
 			  "versionNumber", 
 			  "id", 
@@ -141,7 +141,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 			fieldName = formatSortedFieldName(fieldName);
 
-			if (longSortableFields.contains(fieldName)) {
+			if (LONG_SORTABLE_FIELDS.contains(fieldName)) {
 				sortFieldArray[i] = new SortField(fieldName, SortField.LONG, isReverse);
 			} else if ("category".equals(fieldName)) {
 				sortFieldArray[i] = new SortField(fieldName, new RequirementVersionCategoryComparatorSource(source,

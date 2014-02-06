@@ -62,7 +62,7 @@ public class IndexationServiceImpl extends AdvancedSearchServiceImpl implements 
 	public final static String TESTCASE_INDEXING_VERSION_KEY = "lastindexing.testcase.version";
 	public final static String CAMPAIGN_INDEXING_VERSION_KEY = "lastindexing.campaign.version";
 
-	public SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 
 	@Override
 	public IndexModel findIndexModel() {

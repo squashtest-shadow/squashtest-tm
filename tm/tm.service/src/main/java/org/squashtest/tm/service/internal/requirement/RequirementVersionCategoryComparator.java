@@ -28,78 +28,79 @@ import org.apache.lucene.search.FieldCache;
 import org.apache.lucene.search.FieldComparator;
 import org.springframework.context.MessageSource;
 
-public class RequirementVersionCategoryComparator extends FieldComparator{ 
+public class RequirementVersionCategoryComparator extends FieldComparator {
 
-    private String[] values; 
-    private String[] currentReaderValues; 
-    private final String field; 
-    private String bottom; 
+	private String[] values;
+	private String[] currentReaderValues;
+	private final String field;
+	private String bottom;
 	private static final String I18N_KEY_ROOT = "requirement.category.";
-	private MessageSource source; 
+	private MessageSource source;
 	private Locale locale;
 
+	RequirementVersionCategoryComparator(int numHits, String field, MessageSource source, Locale locale) {
+		values = new String[numHits];
+		this.field = field;
+		this.source = source;
+		this.locale = locale;
+	}
 
-    RequirementVersionCategoryComparator(int numHits, String field, MessageSource source, Locale locale) { 
-      values = new String[numHits]; 
-      this.field = field; 
-      this.source = source;
-      this.locale = locale;
-    } 
+	@Override
+	public int compare(int slot1, int slot2) {
+		final String val1 = values[slot1];
+		final String val2 = values[slot2];
 
-    @Override 
-    public int compare(int slot1, int slot2) { 
-      final String val1 = values[slot1]; 
-      final String val2 = values[slot2]; 
+		int result = 0;
+		if (val1 == null) {
+			if (val2 != null) {
+				result = -1;
+			}
+		} else if (val2 == null) {
+			result = 1;
+		} else {
+			String internationalizedVal1 = source.getMessage(I18N_KEY_ROOT + val1, null, locale);
+			String internationalizedVal2 = source.getMessage(I18N_KEY_ROOT + val2, null, locale);
+			result = internationalizedVal1.compareTo(internationalizedVal2);
+		}
+		return result;
+	}
 
-           
-      if (val1 == null) { 
-        if (val2 == null) { 
-          return 0; 
-        } 
-        return -1; 
-      } else if (val2 == null) { 
-        return 1; 
-      } 
+	@Override
+	public int compareBottom(int doc) {
+		final String val2 = currentReaderValues[doc];
 
-      String internationalizedVal1 = source.getMessage(I18N_KEY_ROOT+val1, null, locale);
-      String internationalizedVal2 = source.getMessage(I18N_KEY_ROOT+val2, null, locale);
-      return internationalizedVal1.compareTo(internationalizedVal2); 
-    } 
+		int result = 0;
+		if (bottom == null) {
+			if (val2 != null) {
+				result = -1;
+			}
+		} else if (val2 == null) {
+			result = 1;
+		} else {
+			String internationalizedVal2 = source.getMessage(I18N_KEY_ROOT + val2, null, locale);
+			result = bottom.compareTo(internationalizedVal2);
+		}
 
-    @Override 
-    public int compareBottom(int doc) { 
-      final String val2 = currentReaderValues[doc]; 
+		return result;
+	}
 
-      if (bottom == null) { 
-        if (val2 == null) { 
-          return 0; 
-        } 
-        return -1; 
-      } else if (val2 == null) { 
-        return 1; 
-      } 
-      
-      String internationalizedVal2 = source.getMessage(I18N_KEY_ROOT+val2, null, locale);
-      return bottom.compareTo(internationalizedVal2); 
-    } 
+	@Override
+	public void copy(int slot, int doc) {
+		values[slot] = currentReaderValues[doc];
+	}
 
-    @Override 
-    public void copy(int slot, int doc) { 
-      values[slot] = currentReaderValues[doc]; 
-    } 
+	@Override
+	public void setNextReader(IndexReader reader, int docBase) throws IOException {
+		currentReaderValues = FieldCache.DEFAULT.getStrings(reader, field);
+	}
 
-    @Override 
-    public void setNextReader(IndexReader reader, int docBase) throws IOException { 
-      currentReaderValues = FieldCache.DEFAULT.getStrings(reader, field); 
-    } 
-    
-    @Override 
-    public void setBottom(final int bottom) { 
-      this.bottom = values[bottom]; 
-    } 
+	@Override
+	public void setBottom(final int bottom) {
+		this.bottom = values[bottom];
+	}
 
-    @Override 
-    public Comparable<?> value(int slot) { 
-      return values[slot]; 
-    } 
-  } 
+	@Override
+	public Comparable<?> value(int slot) {
+		return values[slot];
+	}
+}

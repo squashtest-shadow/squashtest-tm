@@ -387,7 +387,6 @@ public class AdvancedSearchController {
 			ids.addAll(tcIds);
 			
 		} else if ("campaign".equals(associateResultWithType)) {
-			Campaign campaign = this.campaignTestPlanManagerService.findCampaign(id);
 			List<Long> referencedTestCasesIds = this.campaignTestPlanManagerService.findPlannedTestCasesIds(id);
 			ids.addAll(referencedTestCasesIds);
 		} else if ("iteration".equals(associateResultWithType)) {

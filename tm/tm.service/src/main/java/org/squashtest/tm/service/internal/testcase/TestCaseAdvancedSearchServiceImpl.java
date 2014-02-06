@@ -86,7 +86,7 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			new SortField("reference", SortField.STRING, false), new SortField("importance", SortField.STRING, false),
 			new SortField("label", SortField.STRING, false) };
 
-	private final static List<String> longSortableFields = Arrays.asList("requirements", "steps", "id", "iterations",
+	private final static List<String> LONG_SORTABLE_FIELDS = Arrays.asList("requirements", "steps", "id", "iterations",
 			"attachments");
 
 	@Override
@@ -151,16 +151,14 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		SortField[] sortFieldArray = new SortField[sortings.size()];
 
 		for (int i = 0; i < sortings.size(); i++) {
-
 			if (SortOrder.ASCENDING.equals(sortings.get(i).getSortOrder())) {
 				isReverse = false;
 			}
 
 			String fieldName = sortings.get(i).getSortedAttribute();
-
 			fieldName = formatSortFieldName(fieldName);
 
-			if (longSortableFields.contains(fieldName)) {
+			if (LONG_SORTABLE_FIELDS.contains(fieldName)) {
 				sortFieldArray[i] = new SortField(fieldName, SortField.LONG, isReverse);
 			} else if ("reference".equals(fieldName)) {
 				sortFieldArray[i] = new SortField(fieldName + "Sort", SortField.STRING, isReverse);
@@ -170,7 +168,6 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		}
 
 		return new Sort(sortFieldArray);
-
 	}
 
 	private String formatSortFieldName(String fieldName) {
