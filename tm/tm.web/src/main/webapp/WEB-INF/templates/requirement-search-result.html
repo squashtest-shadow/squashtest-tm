@@ -45,7 +45,7 @@
       contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
     localizedDateFormat : /*[[ #{squashtm.dateformatShort.datepicker} ]]*/"dd/mm/yy",
     locale : /*[[ #{squashtm.locale} ]]*/"fr",
-      projectFilterConf: {
+    projectFilterConf: {
       url: /*[[ @{/global-filter/filter} ]]*/ '/global-filter/filter',
       title: /*[[ #{dialog.settings.filter.title} ]]*/ 'Filtre de projets',
       confirmLabel: /*[[ #{label.Confirm} ]]*/ 'Confirmer',
@@ -59,10 +59,15 @@
         disabledTxt: /*[[ #{workspace.menubar.filter.disabled.label} ]]*/ 'Inactif',
         enabledCallbacks: [ function(){ $("div.tree-filter-reminder-div > span").removeClass("not-displayed");} ]
       }, 
-      notificationConf: {
+     notificationConf: {
         infoTitle: /*[[ #{popup.title.info} ]]*/ 'Info', 
         errorTitle: /*[[ #{popup.title.error} ]]*/ 'Erreur'
-      }
+      },
+     requirementSearchResultConf: {
+    	 messages : {
+    		 nonEditableTooltip : /*[[ #{tooltips.nonEditable}]]*/ 'non editable'
+    	 }
+     }
     };
   </script>
   <script data-main="../../scripts/requirement-search-result.js" th:attr="data-main=@{/scripts/requirement-search-result.js}"
@@ -151,7 +156,7 @@
 				<div id="searchModel" class="not-displayed" th:text="${searchModel}"></div>
 				<div th:if="${associateResult}" id="associationType" class="not-displayed" th:text="${associateResultWithType}"></div>
 				<div th:if="${associateResult}" id="associationId" class="not-displayed" th:text="${associateId}"></div>
-
+				
 				<div id="search-results" class="toggle-panel">
 					<div id="search-results-panel" class="toggle-panel-main table-tab-wrap">
 						<table id="requirement-search-result-table"

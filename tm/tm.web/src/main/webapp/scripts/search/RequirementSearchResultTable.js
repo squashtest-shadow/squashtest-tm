@@ -38,11 +38,12 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 			this.getTableRowId = $.proxy(this._getTableRowId, this);
 			this.tableRowCallback = $.proxy(this._tableRowCallback, this);
 
-			var self;
-			
+			var self = this;
+			var tableConf ;
+			var squashConf;
 			if(isAssociation){
 				
-				self = this, tableConf = {
+				tableConf = {
 						"oLanguage" : {
 							"sUrl" : squashtm.app.contextRoot + "/datatables/messages"
 						},
@@ -146,13 +147,15 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 							"bSortable" : false
 						} ],
 						"sDom" : 'ft<"dataTables_footer"lip>'
-					}, squashConf = {
+					};
+				
+				squashConf = {
 						enableHover : true
 					};
 				
 				this.$el.squashTable(tableConf, squashConf);
 			} else {
-				self = this, tableConf = {
+				tableConf = {
 						"oLanguage" : {
 							"sUrl" : squashtm.app.contextRoot + "/datatables/messages"
 						},
@@ -255,9 +258,11 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 							"bSortable" : false
 						} ],
 						"sDom" : 'ft<"dataTables_footer"lip>'
-					}, squashConf = {
-						enableHover : true
 					};
+				
+				squashConf = {
+					enableHover : true
+				};
 				
 				this.$el.squashTable(tableConf, squashConf);
 			}
@@ -275,7 +280,8 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 			var urlGET = squashtm.app.contextRoot + "/requirements/criticality-combo-data";
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
-			$('.editable_criticality', row).editable(urlPOST, {
+			var component =$('.editable_criticality', row); 
+			component.editable(urlPOST, {
 						type : 'select',
 						submit : ok,
 						cancel : cancel,
@@ -284,6 +290,7 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 							return {"id": "requirement-criticality"};
 						}
 					});
+			return component;
 		},
 		
 		_addSelectEditableToCategory : function(row, data) {
@@ -292,7 +299,8 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 			var urlGET = squashtm.app.contextRoot + "/requirements/category-combo-data";
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
-			$('.editable_category', row).editable(urlPOST, {
+			var component = $('.editable_category', row);
+			component.editable(urlPOST, {
 				type : 'select',
 				submit : ok,
 				cancel : cancel,
@@ -301,6 +309,7 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 					return {"id": "requirement-category"};
 				}
 			});
+			return component;
 		},
 		
 		_addSelectEditableToStatus : function(row, data) {
@@ -309,7 +318,8 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 			var urlGET = squashtm.app.contextRoot + "/requirements/status-combo-data";
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
-			$('.editable_status', row).editable(urlPOST, {
+			var component = $('.editable_status', row);
+			component.editable(urlPOST, {
 				type : 'select',
 				submit : ok,
 				cancel : cancel,
@@ -318,6 +328,7 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 					return {"id": "requirement-status"};
 				}
 			});
+			return component;
 		},
 		
 		_addSimpleEditableToReference : function(row, data) {
@@ -337,6 +348,7 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 					}
 				}
 			});
+			return component;
 			
 		},
 		
@@ -357,10 +369,11 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 					}
 				}
 			});
+			return component;
 		},
 	
 		_tableRowCallback : function(row, data, displayIndex) {
-			if(data["editable"]){
+			if(data.editable){
 				this.addSimpleEditableToReference(row,data);
 				this.addSimpleEditableToLabel(row,data);
 				this.addSelectEditableToCriticality(row,data);
@@ -368,6 +381,7 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 				this.addSelectEditableToStatus(row,data);
 			}else{
 				$(row).addClass("nonEditableRow");
+				$(row).attr('title', squashtm.app.requirementSearchResultConf.messages.nonEditableTooltip);
 			}
 			this.addInterfaceLevel2Link(row,data);
 			this.addTreeLink(row,data);
