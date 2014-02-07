@@ -67,7 +67,7 @@
 	<script type="text/javascript" th:inline="javascript">
 	/*<![CDATA[*/
 	        require(["common"], function() {
-			require(["jquery","projects-manager"], function(manager){
+			require(["jquery","projects-manager"], function($,manager){
 				$(function(){
 						manager.projectInfo.initWizardsTab({
 							projectUrl : /*[[@{/generic-projects/__${projectId}__/wizards}]]*/"/generic-projects/14/wizards",

@@ -57,7 +57,7 @@
 	
 	<jsp:attribute name="subPageButtons">
 			<f:message var="back" key="label.Back" /> 
-				<input id="back" type="button" value="${ back }" />
+				<input id="back" type="button" value="${ back }" class="sq-btn" />
 	</jsp:attribute>
 	<jsp:attribute name="informationContent">	
 			<div class="fragment-tabs fragment-body">

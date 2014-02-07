@@ -123,6 +123,7 @@
 	
 	margin-bottom: 1.5 * @normal-font;
 	
+	
 	& .tg-head {
 		.cf;
 		.ui-state-default;
@@ -152,10 +153,15 @@
 			
 			// meh... we have to redefine buttons height 
 			// for them to look good^h^h as before
+			input {
+				.sq-btn;
+			}
 			.sq-btn {
 				padding-top: .15em;
 				padding-bottom: .15em;
+				font-size: @small-font;
 			}
+			
 		}
 	}
 	&.expand .tg-head {

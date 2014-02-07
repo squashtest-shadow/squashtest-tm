@@ -72,7 +72,7 @@
 			</h2>
 		</div>
 		<div class="snap-right"><f:message var="back" key="label.Back" /> 
-			<input id="back" type="button" value="${ back }" class="button"/>
+			<input id="back" type="button" value="${ back }" class="sq-btn" />
 		</div>
 
 		<div class="unsnap"></div>

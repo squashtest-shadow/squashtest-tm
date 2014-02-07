@@ -247,7 +247,7 @@
 				titleKey="label.Permissions" open="true">
 	
 				<jsp:attribute name="panelButtons">
-					<input id="add-permission-button" title="${addButtonTitle}"	type="button" value="+" class="button" />
+					<input id="add-permission-button" title="${addButtonTitle}"	type="button" value="+" class="sq-btn" />
 				</jsp:attribute>
 				
 				<jsp:attribute name="body">
