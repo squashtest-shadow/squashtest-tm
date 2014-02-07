@@ -25,7 +25,7 @@ define([ "jquery", "jquery.squash.togglepanel" ], function($) {
 		var instance = $(settings.selector);
 		var button = instance.prev().find('input');
 
-		instance.togglePanel(settings);
+		//instance.togglePanel(settings);
 
 		// *********** decorate the attributes ******
 
