@@ -48,7 +48,7 @@
 define([ 'jquery', 'jqueryui' ], function($) {
 
 	// prevent double loading
-	if (!! $.squash.buttonmenu){
+	if ($.squash && $.squash.buttonmenu){
 		return;
 	}
 

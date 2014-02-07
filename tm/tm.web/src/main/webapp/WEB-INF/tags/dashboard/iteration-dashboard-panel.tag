@@ -193,7 +193,7 @@
 
 					<div id="dashboard-nonexecuted-testcase-importance" class="dashboard-narrow-item dashboard-pie" data-def="model-attribute=iterationNonExecutedTestCaseImportanceStatistics">
 						
-						<h2 class="dashboard-item-title"><f:message key="dashboard.campaigns.importance.title"/></h2>
+						<h2 class="dashboard-item-title"><f:message key="dashboard.campaigns.importance.title"/><div class="icon-helper no-print small-margin-left" title="${testWeightHelper}"></div></h2>
 						
 						<div class="dashboard-figures">
 							<div id="dashboard-nonexecuted-testcase-importance-view" class="dashboard-item-view"></div>
@@ -201,9 +201,7 @@
 						
 						<div class="dashboard-item-meta">					
 							
-							<div class="dashboard-item-subplot">
-								<div class="icon-helper" title="${testWeightHelper}"></div>		
-							</div>
+					
 						
 							<div class="dashboard-item-legend">
 								<div>

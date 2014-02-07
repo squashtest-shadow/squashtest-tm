@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["moment", "squash.translator"], function(moment, translator) {
+define(["moment"], function(moment) {
 	
 /*
  * This implementation is incomplete and WILL need improvement if we desire exotic formats like 'day in year' and such.
@@ -59,7 +59,7 @@ define(["moment", "squash.translator"], function(moment, translator) {
 	
 		// if not supplied, defaults to the ... defaults.
 		if (_locale === null || _locale === undefined){
-			_locale = translator.get('squashtm.locale');
+			_locale = squashtm.app.locale;
 		}
 		
 		// if still undefined, arbitrarily defaults to globish
