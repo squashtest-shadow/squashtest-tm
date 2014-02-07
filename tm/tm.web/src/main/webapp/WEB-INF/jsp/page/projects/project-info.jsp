@@ -371,7 +371,7 @@
 <!-- ------------------------------------END RENAME POPUP------------------------------------------------------- -->
 <script type="text/javascript">
 require(["common"], function() {
-	require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "project", "squashtable", "jquery.squash.formdialog"], function($, projectsManager, Frag){
+require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "project", "squashtable", "jquery.squash.formdialog"], function($, projectsManager, Frag){
 	/* popup renaming success handler */
 	function renameProjectSuccess(data) {
 		$('#project-name-header').html(data.newName);
@@ -526,5 +526,6 @@ require(["common"], function() {
 		$('#delete-project-button').button().click(deleteProject);		
 	});
 	</sec:authorize>
+});
 });
 </script>

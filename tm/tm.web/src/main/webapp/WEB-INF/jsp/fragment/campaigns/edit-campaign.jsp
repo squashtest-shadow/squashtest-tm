@@ -231,7 +231,7 @@
 		<comp:toggle-panel id="datepicker-panel" titleKey="label.Planning"	open="true">
 			<jsp:attribute name="panelButtons">
 				<c:if test="${writable}">
-				<input id="iteration-planning-button" type="button" role="button" value="${iterationPlanningButton}"/>
+				<input id="iteration-planning-button" class="sq-btn" type="button" role="button" value="${iterationPlanningButton}"/>
 				</c:if>
 			</jsp:attribute>
 			<jsp:attribute name="body">
