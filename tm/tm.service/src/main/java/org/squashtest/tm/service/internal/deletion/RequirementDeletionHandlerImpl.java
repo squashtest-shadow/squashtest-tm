@@ -51,6 +51,7 @@ import org.squashtest.tm.service.internal.repository.RequirementDao;
 import org.squashtest.tm.service.internal.repository.RequirementDeletionDao;
 import org.squashtest.tm.service.internal.repository.RequirementFolderDao;
 import org.squashtest.tm.service.internal.requirement.RequirementNodeDeletionHandler;
+import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 
 @Component("squashtest.tm.service.deletion.RequirementNodeDeletionHandler")
 public class RequirementDeletionHandlerImpl extends
@@ -74,6 +75,9 @@ public class RequirementDeletionHandlerImpl extends
 	@Inject
 	private PrivateCustomFieldValueService customValueService;
 
+	@Inject
+	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
+	
 	@Override
 	protected FolderDao<RequirementFolder, RequirementLibraryNode> getFolderDao() {
 		return folderDao;
@@ -116,9 +120,9 @@ public class RequirementDeletionHandlerImpl extends
 		List<Long>[] separatedIds = deletionDao.separateFolderFromRequirementIds(targetIds);
 
 		// the folderIds are treated as usual.
-		//OperationReport deletedFolders = super.deleteNodes(separatedIds[0]);
-		//deletionDao.flush();
-		//globalReport.mergeWith(deletedFolders);
+		OperationReport deletedFolders = super.deleteNodes(separatedIds[0]);
+		deletionDao.flush();
+		globalReport.mergeWith(deletedFolders);
 
 		// the requirements get a special treatment : first we rewire the children requirements 
 		// when a parent requirement is removed, second we bypass super#deleteNodes
@@ -127,7 +131,7 @@ public class RequirementDeletionHandlerImpl extends
 		globalReport.mergeWith(rewiredRequirements);
 		deletionDao.flush();
 		
-		OperationReport deletedRequirements = batchDeleteNodes(targetIds);
+		OperationReport deletedRequirements = batchDeleteNodes(separatedIds[1]);
 		deletionDao.flush();
 		globalReport.mergeWith(deletedRequirements);
 
@@ -190,14 +194,14 @@ public class RequirementDeletionHandlerImpl extends
 			List<Long> requirementAttachmentIds = deletionDao.findRequirementAttachmentListIds(ids);
 			List<Long> requirementFolderAttachmentIds = deletionDao.findRequirementFolderAttachmentListIds(ids);
 
-			// remove binds to other entities
-			deletionDao.removeTestStepsCoverageByRequirementVersionIds(allVersionIds);
-			deletionDao.removeFromVerifiedRequirementLists(ids);
-
 			// remove the changelog
 			deletionDao.deleteRequirementAuditEvents(ids);
 
+			// remove binds to other entities
+			deletionDao.removeTestStepsCoverageByRequirementVersionIds(allVersionIds);
+			//deletionDao.removeFromVerifiedRequirementLists(ids);
 			
+
 			// remove the elements now
 			deletionDao.removeEntities(ids);
 
@@ -256,6 +260,7 @@ public class RequirementDeletionHandlerImpl extends
 
 		// detach the children from their old parent.
 		toBeDeleted.getContent().clear();
+		parent.removeContent(toBeDeleted);
 
 		// flushing here ensures that the DB calls will be carried on in the proper order.
 		deletionDao.flush();

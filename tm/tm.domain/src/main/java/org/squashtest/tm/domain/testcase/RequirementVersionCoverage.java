@@ -78,7 +78,6 @@ public class RequirementVersionCoverage implements Identified {
 	//@Field(analyze=Analyze.NO, store=Store.YES)
 	private TestCase verifyingTestCase;
 
-	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "VERIFIED_REQ_VERSION_ID", referencedColumnName = "RES_ID")
 	//@Field(analyze=Analyze.NO, store=Store.YES)

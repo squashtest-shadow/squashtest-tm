@@ -27,25 +27,17 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.hibernate.Query;
-import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
-import org.squashtest.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.tm.domain.testcase.TestCaseLibrary;
-import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.internal.repository.RequirementDeletionDao;
 
 @Repository
 public class HibernateRequirementDeletionDao extends HibernateDeletionDao implements RequirementDeletionDao {
 
-	private static final String NODE_IDS = "nodeIds";
-	private static final String REQUIREMENT_VERSION_IDS = "requirementVersionIds";
-	private static final String RESOURCE_IDS = "resourceIds";	
-	private static final String SIMPLE_RESOURCE_IDS = "simpleResourceIds";
 	private static final String REQUIREMENT_IDS = "requirementIds";
 	private static final String FOLDER_IDS = "folderIds";
 
@@ -61,7 +53,6 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 		if (!entityIds.isEmpty()) {
 
 			Query query = null;
-	@SuppressWarnings("unchecked")
 			for(Long entityId : entityIds){
 				
 				query = getSession().getNamedQuery("requirementLibraryNode.findById");
@@ -76,7 +67,7 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 					while (iterator.hasNext()) {
 						RequirementLibraryNode tcln = iterator.next();
 						if (tcln.getId().equals(node.getId())) {
-							iterator.remove();
+							library.removeContent(tcln);
 							break;
 						}
 					}
@@ -90,7 +81,7 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 					while (iterator.hasNext()) {
 						RequirementLibraryNode tcln = iterator.next();
 						if (tcln.getId().equals(node.getId())) {
-							iterator.remove();
+							folder.removeContent(tcln);
 							break;
 						}
 					}
@@ -104,7 +95,7 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 					while (iterator.hasNext()) {
 						Requirement tcln = iterator.next();
 						if (tcln.getId().equals(node.getId())) {
-							iterator.remove();
+							requirement.removeContent(tcln);
 							break;
 						}
 					}

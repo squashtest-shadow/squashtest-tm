@@ -395,4 +395,8 @@
     ]]>
     </sql>
   </changeSet>
+      
+  <changeSet id="tm-1.9.0.feature-3138-8" author="flaurens">
+    <dropNotNullConstraint tableName="REQUIREMENT_VERSION_COVERAGE" columnName="VERIFIED_REQ_VERSION_ID" columnDataType="BIGINT(20)"/>
+  </changeSet>
 </databaseChangeLog>

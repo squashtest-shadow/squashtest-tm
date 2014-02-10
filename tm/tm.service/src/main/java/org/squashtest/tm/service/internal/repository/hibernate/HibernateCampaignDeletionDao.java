@@ -59,7 +59,7 @@ public class HibernateCampaignDeletionDao extends HibernateDeletionDao
 					while (iterator.hasNext()) {
 						CampaignLibraryNode tcln = iterator.next();
 						if (tcln.getId().equals(node.getId())) {
-							iterator.remove();
+							library.removeContent(tcln);
 							break;
 						}
 					}
@@ -73,7 +73,7 @@ public class HibernateCampaignDeletionDao extends HibernateDeletionDao
 					while (iterator.hasNext()) {
 						CampaignLibraryNode tcln = iterator.next();
 						if (tcln.getId().equals(node.getId())) {
-							iterator.remove();
+							folder.removeContent(tcln);
 							break;
 						}
 					}

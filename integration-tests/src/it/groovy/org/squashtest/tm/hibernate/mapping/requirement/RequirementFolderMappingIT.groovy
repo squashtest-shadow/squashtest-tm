@@ -118,7 +118,7 @@ class RequirementFolderMappingIT extends HibernateMappingSpecification {
 			def truc = it.get(Requirement, req1.id)
 			
 			
-			content.remove(truc)
+			obj.removeContent(truc);
 			it.delete truc
 		}
 		

@@ -76,7 +76,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 					while (iterator.hasNext()) {
 						TestCaseLibraryNode tcln = iterator.next();
 						if (tcln.getId().equals(node.getId())) {
-							iterator.remove();
+							library.removeContent(tcln);
 							break;
 						}
 					}
@@ -90,7 +90,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 					while (iterator.hasNext()) {
 						TestCaseLibraryNode tcln = iterator.next();
 						if (tcln.getId().equals(node.getId())) {
-							iterator.remove();
+							folder.removeContent(tcln);
 							break;
 						}
 					}
