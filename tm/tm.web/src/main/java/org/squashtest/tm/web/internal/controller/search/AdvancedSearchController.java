@@ -47,7 +47,6 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.audit.AuditableMixin;
-import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldOption;
