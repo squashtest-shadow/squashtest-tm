@@ -1,6 +1,6 @@
 /*
  *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2013 Henix, henix.fr
+ *     Copyright (C) 2010 - 2014 Henix, henix.fr
  *
  *     See the NOTICE file distributed with this work for additional
  *     information regarding copyright ownership.
@@ -18,7 +18,6 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 /*
  * This helper will render pie charts that should display either 0% or 100% while the current browser is IE8. 
  * Indeed such charts just won't display. However the expected result is relatively simple to render by other 

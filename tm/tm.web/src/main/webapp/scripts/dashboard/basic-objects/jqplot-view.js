@@ -1,6 +1,6 @@
 /*
  *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2013 Henix, henix.fr
+ *     Copyright (C) 2010 - 2014 Henix, henix.fr
  *
  *     See the NOTICE file distributed with this work for additional
  *     information regarding copyright ownership.
@@ -18,7 +18,6 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 /*
  * This view can be subclassed for fun and profit by any view based on JqPlot. It supplies convenient and predefined
  * mechanisms that will handle the conditions under which a view can be actually rendered.

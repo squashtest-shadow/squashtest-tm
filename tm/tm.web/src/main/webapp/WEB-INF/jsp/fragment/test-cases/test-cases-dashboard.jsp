@@ -1,7 +1,7 @@
 <%--
 
         This file is part of the Squashtest platform.
-        Copyright (C) 2010 - 2013 Henix, henix.fr
+        Copyright (C) 2010 - 2014 Henix, henix.fr
 
         See the NOTICE file distributed with this work for additional
         information regarding copyright ownership.
@@ -20,7 +20,6 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>

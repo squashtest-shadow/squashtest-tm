@@ -1,6 +1,6 @@
 /*
  *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2013 Henix, henix.fr
+ *     Copyright (C) 2010 - 2014 Henix, henix.fr
  *
  *     See the NOTICE file distributed with this work for additional
  *     information regarding copyright ownership.
@@ -18,7 +18,6 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 /*
  * This section handles the transition between phase 1 and phase 2, ie all the operations between 
  * the moment the user presses "submit" and the end of the download :

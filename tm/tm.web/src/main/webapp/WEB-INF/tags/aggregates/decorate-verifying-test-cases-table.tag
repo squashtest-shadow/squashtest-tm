@@ -1,7 +1,7 @@
 <%--
 
         This file is part of the Squashtest platform.
-        Copyright (C) 2010 - 2013 Henix, henix.fr
+        Copyright (C) 2010 - 2014 Henix, henix.fr
 
         See the NOTICE file distributed with this work for additional
         information regarding copyright ownership.
@@ -20,7 +20,6 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-
 <%@ tag body-content="empty" description="jqueryfies a verified reqs table" %>
 <%@ attribute name="batchRemoveButtonId" required="true" description="html id of button for batch removal of test cases" %>
 <%@ attribute name="editable" type="java.lang.Boolean" description="Right to edit content. Default to false." %>

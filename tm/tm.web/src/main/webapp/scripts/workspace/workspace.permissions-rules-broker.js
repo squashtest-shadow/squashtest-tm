@@ -1,6 +1,6 @@
 /*
  *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2013 Henix, henix.fr
+ *     Copyright (C) 2010 - 2014 Henix, henix.fr
  *
  *     See the NOTICE file distributed with this work for additional
  *     information regarding copyright ownership.
@@ -18,7 +18,6 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 /*
  * This object will retrieve the permissions rules associated to this workspace. It will be an instance of 'tc-workspace/permissions-rules', 
  * 'req-workspace/permissions-rules' or 'camp-workspace/permissions-rules', provided that one has been instanciated already. 
