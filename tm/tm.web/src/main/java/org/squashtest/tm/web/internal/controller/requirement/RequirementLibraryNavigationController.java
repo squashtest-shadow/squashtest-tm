@@ -158,6 +158,16 @@ public class RequirementLibraryNavigationController extends
 		}
 	}
 
+	@RequestMapping(value = "/requirements/{requirementId}/content/{nodeIds}/{position}", method = RequestMethod.PUT)
+	public @ResponseBody
+	void moveNode(@PathVariable("nodeIds") Long[] nodeIds, @PathVariable("requirementId") long requirementId, @PathVariable("position") int position) {
+		try {
+			requirementLibraryNavigationService.moveNodesToRequirement(requirementId, nodeIds, position);
+		} catch (AccessDeniedException ade) {
+			throw new RightsUnsuficientsForOperationException(ade);
+		}
+	}
+	
 	@RequestMapping(value = "/requirements/{requirementId}/content", method = RequestMethod.GET)
 	public @ResponseBody
 	List<JsTreeNode> getChildrenRequirementsTreeModel(@PathVariable("requirementId") long requirementId) {

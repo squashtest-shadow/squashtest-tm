@@ -53,6 +53,8 @@ public interface RequirementLibraryNavigationService extends
 	List<Requirement> copyNodesToRequirement(long requirementId, Long[] sourceNodesIds);
 	
 	void moveNodesToRequirement(long requirementId, Long[] nodeIds);
+
+	void moveNodesToRequirement(long requirementId, Long[] nodeIds, int position);
 	
 	Requirement findRequirement(long reqId);
 	/**

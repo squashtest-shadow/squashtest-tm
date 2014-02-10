@@ -387,6 +387,15 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 		children = new ArrayList<Requirement>(children);
 		child.notifyAssociatedWithProject(this.getProject());
 	}
+
+	@Override
+	public void addContent(@NotNull Requirement child, int position) throws DuplicateNameException,
+			NullArgumentException {
+		checkContentNameAvailable(child);
+		children.add(position, child);
+		children = new ArrayList<Requirement>(children);
+		child.notifyAssociatedWithProject(this.getProject());
+	}
 	
 	private void checkContentNameAvailable(Requirement child) throws DuplicateNameException {
 		if (!isContentNameAvailable(child.getName())) {

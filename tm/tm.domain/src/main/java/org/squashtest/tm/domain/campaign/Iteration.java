@@ -443,6 +443,16 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 		suite.setIteration(this);
 	}
 
+	public void addTestSuite(TestSuite suite, int position) {
+		if (!checkSuiteNameAvailable(suite.getName())) {
+			throw new DuplicateNameException("cannot add suite to iteration " + getName() + " : suite named "
+					+ suite.getName() + " already exists");
+		}
+		testSuites.add(position, suite);
+		suite.setIteration(this);
+	}
+
+	
 	public boolean checkSuiteNameAvailable(String name) {
 		for (TestSuite suite : testSuites) {
 			if (suite.getName().equals(name)) {
@@ -697,9 +707,14 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	@Override
 	public void addContent(@NotNull TestSuite testSuite) throws DuplicateNameException, NullArgumentException {
 		this.addTestSuite((TestSuite) testSuite);
-
 	}
 
+	@Override
+	public void addContent(@NotNull TestSuite testSuite, int position) throws DuplicateNameException, NullArgumentException {
+		this.addTestSuite((TestSuite) testSuite, position);
+
+	}
+	
 	@Override
 	public boolean isContentNameAvailable(String name) {
 		return checkSuiteNameAvailable(name);

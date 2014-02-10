@@ -31,6 +31,9 @@ public interface PasteOperation {
 	 */
 	TreeNode performOperation(TreeNode source, NodeContainer<TreeNode> destination);
 
+	TreeNode performOperation(TreeNode source, NodeContainer<TreeNode> destination, int position);
+
+	
 	/**
 	 * will say if the operation allows to go process node's childrens after operation.
 	 * see {@link TreeNodeCopier#visit(org.squashtest.tm.domain.campaign.Iteration)} for an example of when it is not ok.

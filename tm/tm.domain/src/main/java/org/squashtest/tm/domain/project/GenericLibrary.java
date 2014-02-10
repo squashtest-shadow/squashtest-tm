@@ -89,6 +89,26 @@ public abstract class GenericLibrary<NODE extends LibraryNode> implements Librar
 		});
 	}
 
+	@Override
+	public void addContent(@NotNull final NODE node, int position) throws UnsupportedOperationException {
+		checkContentNameAvailable(node);
+		getContent().add(position, node);
+
+		getProject().accept(new ProjectVisitor() {
+			public void visit(Project project) {
+				node.notifyAssociatedWithProject(project);
+
+			}
+
+			@Override
+			public void visit(ProjectTemplate projectTemplate) {
+				// should not happen. If so, programming error.
+				throw new UnsupportedOperationException(LibraryNodeUtils.toString(node) + " cannot be added to "
+						+ ProjectUtils.toString(projectTemplate));
+
+			}
+		});
+	}
 	/**
 	 * checks that content name has not been already given. Throws exception otherwise.
 	 * 

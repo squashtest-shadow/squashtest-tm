@@ -32,7 +32,6 @@
 define(['jquery'], function($){
 
 	// *********************** functions ************************************
-	
 	// 'library' and 'folder' are still named 'library' and 'folder'. Others 
 	// will be renamed according to their subtypes.
 	function _getSemiSpecializedTypeName(node){
@@ -97,7 +96,7 @@ define(['jquery'], function($){
 		switch (this.getDomType()) {
 			case "drive" :	
 			case "folder":
-			case "requirement" :	url += '/content/{nodeIds}'; break;
+			case "requirement" :	url += '/content/{nodeIds}/{position}'; break;
 			default : throw "move aborted : node type '"+this.getDomType()+"' cannot receive moved content.";
 		}
 		

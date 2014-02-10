@@ -227,7 +227,7 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 	// ******************************* node move operations ****************************
 	
 	/*
-	 * 
+	 *
 	 * @param data : the move_node object @param url : the url to post to.
 	 */
 	function moveNodes(data) {
@@ -236,7 +236,8 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 			nodeData = data.rslt,
 			nodes = nodeData.o,
 			target = nodeData.np;
-
+			position = nodeData.cp;
+			
 		// first check if we don't need to perform an
 		// operation
 		if (nodeData.o.length === 0) {
@@ -252,8 +253,8 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 
 		var rawurl = $(target).treeNode().getMoveUrl();
 		var nodeIds = $(nodes).treeNode().all('getResId').join(',');
-		var url = rawurl.replace('{nodeIds}', nodeIds);
-
+		var url = rawurl.replace('{nodeIds}', nodeIds).replace('{position}', position);
+		
 		tree.open_node(target);
 
 		return $.ajax({

@@ -86,6 +86,12 @@ public class CampaignFolder extends CampaignLibraryNode implements Folder<Campai
 		folderSupport.addContent(node);
 	}
 
+
+	@Override
+	public void addContent(CampaignLibraryNode node, int position) {
+		folderSupport.addContent(node, position);
+	}
+	
 	@Override
 	public boolean isContentNameAvailable(String name) {
 		return folderSupport.isContentNameAvailable(name);

@@ -313,6 +313,22 @@ public class RequirementLibraryNavigationServiceImpl extends
 		}
 	}
 
+	@Override
+	public void moveNodesToRequirement(long requirementId, Long[] nodeIds, int position) {
+		if (nodeIds.length == 0) {
+			return;
+		}
+		try {
+			PasteStrategy<Requirement, Requirement> pasteStrategy = getPasteToRequirementStrategy();
+			makeMoverStrategy(pasteStrategy);
+			pasteStrategy.pasteNodes(requirementId, Arrays.asList(nodeIds), position);
+		} catch (NullArgumentException dne) {
+			throw new NameAlreadyExistsAtDestinationException(dne);
+		} catch (DuplicateNameException dne) {
+			throw new NameAlreadyExistsAtDestinationException(dne);
+		}
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ExportRequirementData> findRequirementsToExportFromLibrary(List<Long> libraryIds) {

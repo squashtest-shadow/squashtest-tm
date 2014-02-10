@@ -122,6 +122,26 @@ public class FirstLayerTreeNodeMover implements PasteOperation {
 		return movedNode;
 	}
 
+	public TreeNode performOperation(TreeNode toMove, NodeContainer<TreeNode> destination, int position) {
+		//initialize attributes
+		this.destination = destination;
+		movedNode = null;
+		//check destination's hierarchy doesn't contain node to move
+		checkNotMovedInHimself(toMove);
+		//project changed ? 
+		Project sourceProject = toMove.getProject();
+		GenericProject destinationProject = destination.getProject();
+		this.projectChanged = changedProject(sourceProject, destinationProject);
+		
+		//process
+		processNodes(toMove, position);		
+		
+		if(projectChanged){
+			movedNode.accept(treeNodeUpdater);
+		}
+		return movedNode;
+	}
+	
 	@Override
 	public boolean isOkToGoDeeper() {
 		return this.projectChanged;
@@ -157,6 +177,35 @@ public class FirstLayerTreeNodeMover implements PasteOperation {
 		
 	}
 
+	protected void processNodes(TreeNode toMove, int position){
+		NodeType visitedType = whichVisitor.getTypeOf(toMove);
+
+		switch(visitedType){
+			case CAMPAIGN_FOLDER : 
+				visitLibraryNode((LibraryNode)toMove, campaignLibraryDao, campaignFolderDao, position); 
+				break;
+			case REQUIREMENT_FOLDER : 
+				visitLibraryNode((LibraryNode)toMove, requirementLibraryDao, requirementFolderDao, position); 
+				break;
+			case TEST_CASE_FOLDER : 
+				visitLibraryNode((LibraryNode)toMove, testCaseLibraryDao, testCaseFolderDao, position);	
+				break;
+			case CAMPAIGN : 
+				visitLibraryNode((LibraryNode)toMove, campaignLibraryDao, campaignFolderDao, position); 
+				break;
+			case TEST_CASE :
+				visitLibraryNode((LibraryNode)toMove, testCaseLibraryDao, testCaseFolderDao, position);
+				break;			
+			case REQUIREMENT : //special
+				visitWhenNodeIsRequirement((Requirement)toMove, position);
+				break;	
+			case ITERATION :
+			case TEST_SUITE :
+				break;
+			default : throw new IllegalArgumentException("Libraries cannot be copied nor moved !");
+		}
+		
+	}
 	@SuppressWarnings("unchecked")
 	private <LN extends LibraryNode> void visitLibraryNode(LN node, LibraryDao<?,?> libraryDao,
 			FolderDao<?,?> folderDao) {
@@ -168,6 +217,19 @@ public class FirstLayerTreeNodeMover implements PasteOperation {
 		
 		node.notifyAssociatedWithProject((Project)destination.getProject());
 		moveNode(node, (NodeContainer<LN>) destination, parent);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private <LN extends LibraryNode> void visitLibraryNode(LN node, LibraryDao<?,?> libraryDao,
+			FolderDao<?,?> folderDao, int position) {
+		
+		NodeContainer<LN> parent = findFolderOrLibraryParent(node, libraryDao, folderDao);
+		
+		PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(destination, "CREATE"), new SecurityCheckableObject(
+				parent, "DELETE"), new SecurityCheckableObject(node, "READ"));
+		
+		node.notifyAssociatedWithProject((Project)destination.getProject());
+		moveNode(node, (NodeContainer<LN>) destination, parent, position);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -185,6 +247,21 @@ public class FirstLayerTreeNodeMover implements PasteOperation {
 		moveNode((LN)node, (NodeContainer<LN>) destination,(NodeContainer<LN>) parent);
 	}
 
+	@SuppressWarnings("unchecked")
+	private  <LN extends LibraryNode>  void visitWhenNodeIsRequirement(Requirement node, int position) {
+		
+		NodeContainer<Requirement> parent = findFolderOrLibraryParent(node, requirementLibraryDao, requirementFolderDao);
+		if (parent == null){
+			parent = requirementDao.findByContent(node);
+		}
+		
+		PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(destination, "CREATE"), new SecurityCheckableObject(
+				parent, "DELETE"), new SecurityCheckableObject(node, "READ"));
+		
+		node.notifyAssociatedWithProject((Project)destination.getProject());
+		moveNode((LN)node, (NodeContainer<LN>) destination,(NodeContainer<LN>) parent, position);
+	}
+	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private <LN extends LibraryNode> NodeContainer<LN> findFolderOrLibraryParent(LN node, LibraryDao libraryDao,
 			FolderDao folderDao) {
@@ -202,7 +279,13 @@ public class FirstLayerTreeNodeMover implements PasteOperation {
 		movedNode = toMove;
 	}
 
-
+	private <TN extends TreeNode> void moveNode(TN toMove, NodeContainer<TN> destination, NodeContainer<TN> toMoveParent, int position) {
+		campaignDao.flush();
+		toMoveParent.removeContent(toMove);
+		campaignDao.flush();
+		destination.addContent(toMove, position);
+		movedNode = toMove;
+	}
 
 	/**
 	 * Checks if node1's project is the same as node2's.

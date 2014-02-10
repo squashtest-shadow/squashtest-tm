@@ -66,6 +66,10 @@ public interface LibraryNavigationService<LIBRARY extends Library<? extends NODE
 
 	void moveNodesToLibrary(long destinationId, Long[] targetId);
 
+	void moveNodesToFolder(long destinationId, Long[] targetId, int position);
+
+	void moveNodesToLibrary(long destinationId, Long[] targetId, int position);
+	
 	void addFolderToLibrary(long destinationId, FOLDER newFolder);
 
 	void addFolderToFolder(long destinationId, FOLDER newFolder);

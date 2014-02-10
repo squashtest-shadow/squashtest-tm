@@ -44,6 +44,7 @@ public class NextLayerFeeder implements NodeVisitor  {
 	private Map<NodeContainer<TreeNode>, Collection<TreeNode>> nextLayer;
 	private TreeNode destination ;
 	private Collection<? extends TreeNode> outputList;
+	private int position;
 	
 	/**
 	 * This method is used with the {@linkplain PasteStrategy} that goes through a three generation by generation (or layer by layer).<br>
@@ -75,6 +76,14 @@ public class NextLayerFeeder implements NodeVisitor  {
 		source.accept(this);
 	}
 
+	public void feedNextLayer(TreeNode destination,TreeNode source, Map<NodeContainer<TreeNode>, Collection<TreeNode>> nextLayer , Collection<? extends TreeNode> outputList, int position){
+		this.nextLayer = nextLayer;
+		this.destination = destination;
+		this.outputList = outputList;
+		this.position = position; 
+		source.accept(this);
+	}
+	
 	@Override
 	public void visit(CampaignFolder campaignFolder) {
 		saveNextToCopy(campaignFolder, (CampaignFolder) destination);

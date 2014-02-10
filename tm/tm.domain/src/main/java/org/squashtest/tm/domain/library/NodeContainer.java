@@ -44,6 +44,14 @@ public interface NodeContainer<NODE extends TreeNode> extends Identified{
 	 */
 	void addContent(NODE node) throws DuplicateNameException, NullArgumentException;
 
+	/**
+	 * Adds new content to this container at the given position. Should refuse to add null content, should refuse to add content with duplicate
+	 * name.
+	 * 
+	 * @param node
+	 */
+	void addContent(NODE node, int position) throws DuplicateNameException, NullArgumentException;
+	
 	boolean isContentNameAvailable(String name);
 	
 	List<NODE> getContent();

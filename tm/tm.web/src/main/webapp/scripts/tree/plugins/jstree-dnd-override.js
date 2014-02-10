@@ -83,9 +83,9 @@ define(['jquery'], function($){
 
 			// here we override the function. if the profile matches the one of
 			// a container, we force r to "inside"
-			if (this.data.dnd.before && this.data.dnd.inside && this.data.dnd.after) {
+			/*if (this.data.dnd.before && this.data.dnd.inside && this.data.dnd.after) {
 				r = "inside";
-			}
+			}*/
 
 			pos = rtl ? (this.data.dnd.off.right - 18) : (this.data.dnd.off.left + 10);
 

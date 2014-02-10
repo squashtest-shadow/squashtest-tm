@@ -123,6 +123,31 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 
 		return outputList;
 	}
+	
+	public List<NODE> pasteNodes(long containerId, List<Long> list, int position) {
+
+		// fetch
+		CONTAINER container = containerDao.findById(containerId);		
+
+		// proceed : will process the nodes layer by layer.
+		init(list.size());
+
+		// process the first layer and memorize processed entities
+		processFirstLayer(container, list, position);
+
+		// loop on all following generations
+		while (!nextLayer.isEmpty()) {
+
+			removeProcessedNodesFromCache();
+
+			shiftToNextLayer();
+
+			processLayer();
+
+		}
+
+		return outputList;
+	}
 
 	private void init(int nbCopiedNodes) {
 		firstOperation= createFirstLayerOperation();
@@ -175,6 +200,21 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 		
 	}
 
+	@SuppressWarnings("unchecked")
+	private void processFirstLayer(CONTAINER container, List<Long> list, int position) {
+		for (Long id : list) {
+			NODE srcNode = nodeDao.findById(id);
+			NODE outputNode = (NODE) firstOperation.performOperation(srcNode, (NodeContainer<TreeNode>) container, position);
+			outputList.add(outputNode);
+			if (firstOperation.isOkToGoDeeper()) {
+				position++;
+				appendNextLayerNodes(srcNode, outputNode, position);
+			}			
+		}
+		
+	}
+
+	
 	private void processLayer() {
 
 		for (Entry<NodeContainer<TreeNode>, Collection<TreeNode>> sourceEntry : sourceLayer.entrySet()) {
@@ -212,6 +252,9 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 		feeder.feedNextLayer( destNode,sourceNode, this.nextLayer, this.outputList);
 	}
 
-
+	private void appendNextLayerNodes(TreeNode sourceNode, TreeNode destNode, int position) {
+		NextLayerFeeder feeder = nextLayerFeederOperationFactory.getObject();
+		feeder.feedNextLayer( destNode,sourceNode, this.nextLayer, this.outputList, position);
+	}
 }
 

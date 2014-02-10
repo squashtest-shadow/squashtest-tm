@@ -140,12 +140,15 @@ class DummyFolder  extends DummyNode  implements Folder<DummyNode>{
 	@Override
 	public void addContent(DummyNode contentToAdd) throws DuplicateNameException, NullArgumentException {}
 	@Override
+	public void addContent(DummyNode contentToAdd, int position) throws DuplicateNameException, NullArgumentException {}
+	@Override
 	public boolean isContentNameAvailable(String name) {}
 	List getContent() {}
 	Collection getOrderedContent() {}
 	@Override
 	void addContent(LibraryNode node) {}
-	 void accept(NodeContainerVisitor visitor) {}
+	void addContent(LibraryNode node, int position) {}
+	void accept(NodeContainerVisitor visitor) {}
 	@Override
 	void removeContent(LibraryNode node){}
 	@Override
@@ -219,6 +222,9 @@ class DummyLibrary implements Library<DummyNode> {
 	}
 	@Override
 	public void addContent(DummyNode contentToAdd) throws DuplicateNameException, NullArgumentException {
+	}
+	@Override
+	public void addContent(DummyNode contentToAdd, int position) throws DuplicateNameException, NullArgumentException {
 	}
 	@Override
 	public AttachmentList getAttachmentList() {

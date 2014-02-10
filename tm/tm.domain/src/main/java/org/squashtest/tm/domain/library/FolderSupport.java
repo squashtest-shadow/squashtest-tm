@@ -57,6 +57,12 @@ public class FolderSupport<NODE extends LibraryNode, FOLDER extends Folder<NODE>
 		node.notifyAssociatedWithProject(folder.getProject());
 	}
 
+	public void addContent(NODE node, int position) {
+		checkContentNameAvailable(node);
+		folder.getContent().add(position, node);
+		node.notifyAssociatedWithProject(folder.getProject());
+	}
+	
 	private void checkContentNameAvailable(NODE candidateContent) throws DuplicateNameException {
 		if (!isContentNameAvailable(candidateContent.getName())) {
 			throw new DuplicateNameException(candidateContent.getName(), candidateContent.getName());

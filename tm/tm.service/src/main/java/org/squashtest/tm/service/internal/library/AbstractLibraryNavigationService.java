@@ -305,6 +305,39 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 
 	}
 
+	@Override
+	public void moveNodesToFolder(long destinationId, Long[] targetIds, int position) {
+		if (targetIds.length == 0) {
+			return;
+		}
+		try {
+			PasteStrategy<FOLDER, NODE> pasteStrategy = getPasteToFolderStrategy();
+			makeMoverStrategy(pasteStrategy);
+			pasteStrategy.pasteNodes(destinationId, Arrays.asList(targetIds), position);
+		} catch (NullArgumentException dne) {
+			throw new NameAlreadyExistsAtDestinationException(dne);
+		} catch (DuplicateNameException dne) {
+			throw new NameAlreadyExistsAtDestinationException(dne);
+		}
+
+	}
+
+	@Override
+	public void moveNodesToLibrary(long destinationId, Long[] targetIds, int position) {
+		if (targetIds.length == 0) {
+			return;
+		}
+		try {
+			PasteStrategy<LIBRARY, NODE> pasteStrategy = getPasteToLibraryStrategy();
+			makeMoverStrategy(pasteStrategy);
+			pasteStrategy.pasteNodes(destinationId, Arrays.asList(targetIds), position);
+		} catch (NullArgumentException dne) {
+			throw new NameAlreadyExistsAtDestinationException(dne);
+		} catch (DuplicateNameException dne) {
+			throw new NameAlreadyExistsAtDestinationException(dne);
+		}
+
+	}
 	/* ********************************* copy operations ****************************** */
 
 	@Override

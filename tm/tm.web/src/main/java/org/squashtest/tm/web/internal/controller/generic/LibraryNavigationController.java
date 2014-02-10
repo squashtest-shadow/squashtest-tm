@@ -220,17 +220,18 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	}
 	
 	
-	@RequestMapping(value = "/{destinationType}/{destinationId}/content/{nodeIds}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/{destinationType}/{destinationId}/content/{nodeIds}/{position}", method = RequestMethod.PUT)
 	public @ResponseBody
 	void moveNodes(@PathVariable("nodeIds") Long[] nodeIds, 
 				  @PathVariable("destinationId") long destinationId, 
-				  @PathVariable("destinationType") String destType) {
+				  @PathVariable("destinationType") String destType,
+				  @PathVariable("position") int position) {
 		try{
 			if (destType.equals("folders")){
-				getLibraryNavigationService().moveNodesToFolder(destinationId, nodeIds);
+				getLibraryNavigationService().moveNodesToFolder(destinationId, nodeIds, position);
 			}
 			else if (destType.equals("drives")){
-				getLibraryNavigationService().moveNodesToLibrary(destinationId, nodeIds);
+				getLibraryNavigationService().moveNodesToLibrary(destinationId, nodeIds, position);
 			}
 			else{
 				throw new IllegalArgumentException("move nodes : specified destination type doesn't exists : "+destType);

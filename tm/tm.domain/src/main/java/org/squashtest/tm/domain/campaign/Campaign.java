@@ -219,6 +219,14 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 		iteration.setCampaign(this);
 	}
 
+	public void addIteration(@NotNull Iteration iteration, int position) {
+		if(!isContentNameAvailable(iteration.getName())){
+			throw new DuplicateNameException(iteration.getName(), iteration.getName());
+		}
+		getIterations().add(position, iteration);
+		iteration.setCampaign(this);
+	}
+	
 	private ScheduledTimePeriod getScheduledPeriod() {
 		// Hibernate workaround : when STP fields are null, component is set to null
 		if (scheduledPeriod == null) {
@@ -424,6 +432,12 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 		
 	}
 
+	@Override
+	public void addContent(Iteration iteration, int position) throws DuplicateNameException, NullArgumentException {
+		addIteration(iteration, position);
+		
+	}
+	
 	@Override
 	public void removeContent(Iteration contentToRemove) throws NullArgumentException {
 		removeIteration(contentToRemove);

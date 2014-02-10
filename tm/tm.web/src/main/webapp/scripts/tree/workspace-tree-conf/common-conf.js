@@ -34,9 +34,9 @@ define(function(){
 	return {
 		generate : function(settings){
 	
-	
+
 			return { 
-				"plugins" : ["json_data", "ui", "types", "sort",  "hotkeys", "dnd", "cookies", "themes", "squash", "workspace_tree" ],
+				"plugins" : ["json_data", "ui", "types", "hotkeys", "dnd", "cookies", "themes", "squash", "workspace_tree" ],
 				
 				"json_data" : { 
 					"data" : settings.model, 
