@@ -217,7 +217,7 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 		panel.addCssClass("search-icon-history-blue");
 
 		SearchInputFieldModel createdByField = new SearchInputFieldModel("createdBy", getMessageSource()
-				.internationalize("search.testcase.history.createdBy.label", locale), MULTISELECT);
+				.internationalize("search.testcase.history.createdBy.label", locale), MULTIAUTOCOMPLETE);
 		panel.addField(createdByField);
 
 		List<String> users = advancedSearchService.findAllUsersWhoCreatedRequirementVersions();
@@ -230,7 +230,7 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 		panel.addField(createdOnField);
 
 		SearchInputFieldModel modifiedByField = new SearchInputFieldModel("modifiedBy", getMessageSource()
-				.internationalize("search.testcase.history.modifiedBy.label", locale), MULTISELECT);
+				.internationalize("search.testcase.history.modifiedBy.label", locale), MULTIAUTOCOMPLETE);
 		panel.addField(modifiedByField);
 
 		users = advancedSearchService.findAllUsersWhoModifiedRequirementVersions();

@@ -276,7 +276,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 		panel.addCssClass("search-icon-history");
 
 		SearchInputFieldModel createdByField = new SearchInputFieldModel("createdBy", getMessageSource().internationalize(
-				"search.testcase.history.createdBy.label", locale), MULTISELECT);
+				"search.testcase.history.createdBy.label", locale), MULTIAUTOCOMPLETE);
 		panel.addField(createdByField);
 
 		List<String> users = advancedSearchService.findAllUsersWhoCreatedTestCases();
@@ -289,7 +289,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 		panel.addField(createdOnField);
 
 		SearchInputFieldModel modifiedByField = new SearchInputFieldModel("modifiedBy", getMessageSource().internationalize(
-				"search.testcase.history.modifiedBy.label", locale), MULTISELECT);
+				"search.testcase.history.modifiedBy.label", locale), MULTIAUTOCOMPLETE);
 		panel.addField(modifiedByField);
 
 		users = advancedSearchService.findAllUsersWhoModifiedTestCases();

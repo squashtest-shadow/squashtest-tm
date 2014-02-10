@@ -20,7 +20,7 @@
  */
 define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squashtm.notification", "underscore", 
 		"./SearchDateWidget", "./SearchRangeWidget", 
-		"./SearchExistsWidget", "./SearchCheckboxWidget", "./SearchComboMultiselectWidget", "./SearchRadioWidget", 
+		"./SearchExistsWidget","./SearchMultiAutocompleteWidget", "./SearchMultiSelectWidget", "./SearchCheckboxWidget", "./SearchComboMultiselectWidget", "./SearchRadioWidget", 
 		"jquery.squash", "jqueryui", "jquery.squash.togglepanel", "squashtable",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
 		"jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, translator, notification, _) {
@@ -78,29 +78,7 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 		}
 	});
 
-	//multi select list
-	var searchwidget = $.widget("search.searchMultiSelectWidget", {
-		options : {},
-		
-		_create : function(){
-			this._super();
-		},
-		
-		fieldvalue : function(value){
-			if(!value){
-				var text = $(this.element.children()[0]).val();
-				var id = $(this.element).attr("id");
-				return {"type" : "LIST", "values" : text};
-			} else { // no longer used afaik
-				$("option", $(this.element.children()[0])).removeAttr("selected");
-				if (!!value.values){
-					for (var i=0, len = value.values.length; i<len;i++){
-						$("option[value='"+value.values[i]+"']", $(this.element.children()[0])).attr("selected", "selected");
-					}
-				}
-			}
-		}
-	});
+	
 
 	var TestCaseSearchInputPanel = Backbone.View.extend({
 
@@ -152,34 +130,41 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 					
 					for (var i = 0, field; i < panel.fields.length; i++){
 						field = panel.fields[i];
-
-						if(field.inputType === "textfield"){
-							self.makeTextField(tableid, field.id, field.title, searchModel[field.id], field.ignoreBridge);
-							
-						} else if (field.inputType === "textarea"){
-							self.makeTextArea(tableid, field.id, field.title, searchModel[field.id]);
-							
-						} else if (field.inputType === "multiselect"){
-							self.makeMultiselect(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
-							
-						} else if (field.inputType === "combomultiselect"){
-							self.makeComboMultiselect(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
-							
-						} else if (field.inputType === "range"){
-							self.makeRangeField(tableid, field.id, field.title, searchModel[field.id]);
-							
-						} else if (field.inputType === "exists"){
-							self.makeExistsField(tableid, field.id, field.title, field.possibleValues,searchModel[field.id]);
-							
-						} else if (field.inputType === "date"){
-							self.makeDateField(tableid, field.id, field.title, searchModel[field.id]);
-						} else if (field.inputType === "checkbox"){
-							self.makeCheckboxField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
-							
-						} else if (field.inputType === "radiobutton"){
-							self.makeRadioField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id], field.ignoreBridge);
-							
-						} 
+						var inputType = field.inputType.toLowerCase();
+						switch(inputType)
+						{
+							case "textfield" : 
+								self.makeTextField(tableid, field.id, field.title, searchModel[field.id], field.ignoreBridge);
+								break;
+							case "textarea":
+								self.makeTextArea(tableid, field.id, field.title, searchModel[field.id]);
+								break;
+							case "multiselect" : 
+								self.makeMultiselect(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
+								break;
+							case "multiautocomplete":
+								self.makeMultiAutocomplete(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
+								break;
+							case "combomultiselect":
+								self.makeComboMultiselect(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
+								break;
+							case "range" :
+								self.makeRangeField(tableid, field.id, field.title, searchModel[field.id]);
+								break;
+							case "exists" :
+								self.makeExistsField(tableid, field.id, field.title, field.possibleValues,searchModel[field.id]);
+								break;
+							case "date":
+								self.makeDateField(tableid, field.id, field.title, searchModel[field.id]);
+								break;
+							case "checkbox":
+								self.makeCheckboxField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
+								break;
+							case  "radiobutton":
+								self.makeRadioField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id], field.ignoreBridge);
+								break;
+						}
+						
 					}
 					self.makeTogglePanel(panel.id+"-panel-id",panel.title,panel.open,panel.cssClasses);
 				});
@@ -222,94 +207,110 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 				return template(context);
 		},
 
-		_appendFieldDom : function(tableId, textFieldId, fieldHtml) {
+		_appendFieldDom : function(tableId, fieldId, fieldHtml) {
 			this.$("#"+tableId).append(fieldHtml);
-			var escapedId = textFieldId.replace(/\./g, "\\.");
+			var escapedId = fieldId.replace(/\./g, "\\.");
 			return this.$("#" + escapedId);
 		}, 
 		
-		makeRadioField : function(tableId, textFieldId, textFieldTitle, options, enteredValue, ignoreBridge) {
-			var context = {"text-radio-id": textFieldId, "text-radio-title": textFieldTitle};
-			var $fieldDom = this._appendFieldDom(tableId, textFieldId, this._compileTemplate("#radio-button-template", context));
+		makeRadioField : function(tableId, fieldId, fieldTitle, options, enteredValue, ignoreBridge) {
+			var context = {"text-radio-id": fieldId, "text-radio-title": fieldTitle};
+			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#radio-button-template", context));
 			
 			$fieldDom.searchRadioWidget({"ignoreBridge" : ignoreBridge});
-			$fieldDom.searchRadioWidget("createDom", "F"+textFieldId, options);
+			$fieldDom.searchRadioWidget("createDom", "F"+fieldId, options);
 			$fieldDom.searchRadioWidget("fieldvalue", enteredValue);
 				
 		},
 		
-		makeRangeField : function(tableId, textFieldId, textFieldTitle, enteredValue) {
-			var context = {"text-range-id": textFieldId, "text-range-title": textFieldTitle};
-			var $fieldDom = this._appendFieldDom(tableId, textFieldId, this._compileTemplate("#range-template", context));
+		makeRangeField : function(tableId, fieldId, fieldTitle, enteredValue) {
+			var context = {"text-range-id": fieldId, "text-range-title": fieldTitle};
+			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#range-template", context));
 
 			$fieldDom.searchRangeWidget();
 			$fieldDom.searchRangeWidget("fieldvalue", enteredValue);
 			
 		},
 		
-		makeExistsField : function(tableId, textFieldId, textFieldTitle, options, enteredValue) {
-			var context = {"text-exists-id": textFieldId, "text-exists-title": textFieldTitle};
-			var $fieldDom = this._appendFieldDom(tableId, textFieldId, this._compileTemplate("#exists-template", context));
+		makeExistsField : function(tableId, fieldId, fieldTitle, options, enteredValue) {
+			var context = {"text-exists-id": fieldId, "text-exists-title": fieldTitle};
+			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#exists-template", context));
 			$fieldDom.searchExistsWidget();
-			$fieldDom.searchExistsWidget("createDom", "F"+textFieldId, options);
+			$fieldDom.searchExistsWidget("createDom", "F"+fieldId, options);
 			$fieldDom.searchExistsWidget("fieldvalue", enteredValue);
 		},
 			
-		makeDateField : function(tableId, textFieldId, textFieldTitle, enteredValue) {
-			var context = {"text-date-id": textFieldId, "text-date-title": textFieldTitle};
-			var $fieldDom = this._appendFieldDom(tableId, textFieldId, this._compileTemplate("#date-template", context));
+		makeDateField : function(tableId, fieldId, fieldTitle, enteredValue) {
+			var context = {"text-date-id": fieldId, "text-date-title": fieldTitle};
+			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#date-template", context));
 			$fieldDom.searchDateWidget();
-			$fieldDom.searchDateWidget("createDom", "F"+textFieldId);
+			$fieldDom.searchDateWidget("createDom", "F"+fieldId);
 			$fieldDom.searchDateWidget("fieldvalue", enteredValue);
 		},
 			
-		makeCheckboxField : function(tableId, textFieldId, textFieldTitle, options, enteredValue) {
+		makeCheckboxField : function(tableId, fieldId, fieldTitle, options, enteredValue) {
 			// FIXME I cannot find the matching template ?!
-			var context = {"text-checkbox-id": textFieldId, "text-checkbox-title": textFieldTitle};
-			var $fieldDom = this._appendFieldDom(tableId, textFieldId, this._compileTemplate("#checkbox-template", context));
+			var context = {"text-checkbox-id": fieldId, "text-checkbox-title": fieldTitle};
+			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#checkbox-template", context));
 			$fieldDom.searchCheckboxWidget();
-			$fieldDom.searchCheckboxWidget("createDom", "F"+textFieldId, options);
+			$fieldDom.searchCheckboxWidget("createDom", "F"+fieldId, options);
 			$fieldDom.searchCheckboxWidget("fieldvalue", enteredValue);
 			
 		},
 			
-		makeTextField : function(tableId, textFieldId, textFieldTitle, enteredValue, ignoreBridge) {
+		makeTextField : function(tableId, fieldId, fieldTitle, enteredValue, ignoreBridge) {
 			var context = {
-				"text-field-id": textFieldId, 
-				"text-field-title": textFieldTitle, 
+				"text-field-id": fieldId, 
+				"text-field-title": fieldTitle, 
 				fieldValue : !!enteredValue ? enteredValue.value : ""
 			};
-			var $fieldDom = this._appendFieldDom(tableId, textFieldId, this._compileTemplate("#textfield-template", context));
+			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#textfield-template", context));
 			$fieldDom.searchTextFieldWidget({"ignoreBridge" : ignoreBridge});
 		},
 		
-		makeTextArea : function(tableId, textFieldId, textFieldTitle, enteredValue) {
+		makeTextArea : function(tableId, fieldId, fieldTitle, enteredValue) {
 			var context = {
-				"text-area-id": textFieldId, 
-				"text-area-title": textFieldTitle, 
+				"text-area-id": fieldId, 
+				"text-area-title": fieldTitle, 
 				fieldValue : !!enteredValue ? enteredValue.value : ""
 			};
-			var $fieldDom = this._appendFieldDom(tableId, textFieldId, this._compileTemplate("#textarea-template", context));
+			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#textarea-template", context));
 			$fieldDom.searchTextAreaWidget();
 		},
 		
-		makeMultiselect : function(tableId, textFieldId, textFieldTitle, options, enteredValue) {
+		makeMultiselect : function(tableId, fieldId, fieldTitle, options, enteredValue) {
 			// adds a "selected" property to options
 			enteredValue = enteredValue || {};
 			// no enteredValue.values means 'select everything'
 			_.each(options, function(option) {
 				option.selected = (!enteredValue.values) || _.contains(enteredValue.values, option.code);
 			});
-			var context = {"multiselect-id": textFieldId, "multiselect-title": textFieldTitle, options: options};
-			var $fieldDom = this._appendFieldDom(tableId, textFieldId, this._compileTemplate("#multiselect-template", context));
+			var context = {"multiselect-id": fieldId, "multiselect-title": fieldTitle, options: options};
+			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#multiselect-template", context));
 			$fieldDom.searchMultiSelectWidget();
 		},
+		makeMultiAutocomplete : function(tableId, fieldId, fieldTitle, options, enteredValue) {
+//			// adds a "selected" property to options
+//			enteredValue = enteredValue || {};
+//			// no enteredValue.values means 'select everything'
+//			_.each(options, function(option) {
+//				option.selected = (!enteredValue.values) || _.contains(enteredValue.values, option.code);
+//			});
+//			var context = {"multiselect-id": fieldId, "multiselect-title": fieldTitle, options: options};
+//			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#multiselect-template", context));
+//			$fieldDom.searchMultiSelectWidget();			
+			var context = {"multiautocomplete-id": fieldId, "multiautocomplete-title": fieldTitle};
+			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#multiautocomplete-template", context));
+			$fieldDom.searchMultiAutocompleteWidget({fieldId : fieldId, options : options});
+			$fieldDom.searchMultiAutocompleteWidget("fieldvalue", enteredValue);
 			
-		makeComboMultiselect : function(tableId, textFieldId, textFieldTitle, options, enteredValue) {
-			var context = {"combomultiselect-id": textFieldId, "combomultiselect-title": textFieldTitle};
-			var $fieldDom = this._appendFieldDom(tableId, textFieldId, this._compileTemplate("#combomultiselect-template", context));
+		},
+			
+		makeComboMultiselect : function(tableId, fieldId, fieldTitle, options, enteredValue) {
+			var context = {"combomultiselect-id": fieldId, "combomultiselect-title": fieldTitle};
+			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#combomultiselect-template", context));
 			$fieldDom.searchComboMultiSelectWidget();
-			$fieldDom.searchComboMultiSelectWidget("createDom", "F"+textFieldId, options);
+			$fieldDom.searchComboMultiSelectWidget("createDom", "F"+fieldId, options);
 			$fieldDom.searchComboMultiSelectWidget("fieldvalue", enteredValue);
 		},
 		
@@ -326,8 +327,9 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 				var field = $("#"+escapedKey).data("search"+type+"Widget");
 				if(field && !!field.fieldvalue()){
 					var value = field.fieldvalue();
-					var jsonKey  = key;
-					jsonVariable[jsonKey] = value;
+					if( value ) {
+						jsonVariable[key] = value;
+					}
 				}
 			}
 			this.model = {fields : jsonVariable};
