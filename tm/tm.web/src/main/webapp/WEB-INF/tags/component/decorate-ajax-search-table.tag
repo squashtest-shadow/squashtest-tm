@@ -33,6 +33,8 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <script type="text/javascript">
+require(["common"], function() {
+	require(["jquery", "squashtable"], function($){
 	$(function() {
 		var dataTable = $( "#${ tableId }" ).dataTable({
 			"oLanguage":{
@@ -66,6 +68,7 @@
 		
 		//bindHover(dataTable);
 	});
-	
+	});
+});	
 	
 </script>

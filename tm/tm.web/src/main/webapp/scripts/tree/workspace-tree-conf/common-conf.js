@@ -34,7 +34,76 @@ define(function(){
 	return {
 		generate : function(settings){
 	
-
+			if(!settings.alphabeticalOrder) {
+			return { 
+				"plugins" : ["json_data", "ui", "types", "sort", "hotkeys", "dnd", "cookies", "themes", "squash", "workspace_tree" ],
+				
+				"json_data" : { 
+					"data" : settings.model, 
+					"ajax" : {
+						"url": function (node) {
+							return node.treeNode().getContentUrl();
+						} 
+					}
+				},
+				
+				"core" : { 
+					"animation" : 0
+				},
+				
+				"ui": {
+					"disable_selecting_children" : true,
+					"select_multiple_modifier" : "ctrl",
+					"select_prev_on_delete" : false
+				},
+				
+				"hotkeys" : {
+					"del" : function(){
+								this.get_container().trigger('suppr.squashtree');
+							},
+					"f2" : function(){
+								this.get_container().trigger('rename.squashtree');
+							},
+					"ctrl+c" : function(){
+								this.get_container().trigger('copy.squashtree');
+							},
+					"ctrl+v" : function(){
+								this.get_container().trigger('paste.squashtree');
+							},
+							
+					
+					"up" : false, 
+					"ctrl+up" : false, 
+					"shift+up" : false, 
+					"down" : false, 
+					"ctrl+down" : false, 
+					"shift+down" : false, 
+					"left" : false, 
+					"ctrl+left" : false, 
+					"shift+left" : false, 
+					"right" : false, 
+					"ctrl+right" : false,
+					"shift+right" : false, 
+					"space" : false, 
+					"ctrl+space" : false, 
+					"shift+space" : false							
+							
+				},
+				
+				"themes" : {
+					"theme" : "squashtest",
+					"dots" : true,
+					"icons" : true,
+					"url" : baseURL+"/styles/squash.tree.css"
+				},
+				
+				"squash" : {
+					rootUrl : baseURL,
+					opened : (!!settings.selectedNode) ? [settings.selectedNode] : []
+				}
+				
+			};
+		} else {
 			return { 
 				"plugins" : ["json_data", "ui", "types", "hotkeys", "dnd", "cookies", "themes", "squash", "workspace_tree" ],
 				
@@ -104,6 +173,6 @@ define(function(){
 				
 			};
 		}
+	}
 	};
-
 });

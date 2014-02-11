@@ -92,6 +92,7 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 		visitor.visit(this);
 	}
 	
+
 	@Override
 	public void removeContent(RequirementLibraryNode contentToRemove) throws NullArgumentException {
 		content.remove(contentToRemove);

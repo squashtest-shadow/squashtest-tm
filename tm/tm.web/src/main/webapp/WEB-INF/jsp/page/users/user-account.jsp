@@ -49,7 +49,7 @@
 	
 	<script type="text/javascript">
 		require(["common"], function() {
-				require(["jquery","squash.basicwidgets"], function($basic){
+				require(["jquery","squash.basicwidgets"], function($, basic){
 					$(function(){
 					basic.init();
 					$("#back").click(function(){
@@ -131,6 +131,30 @@
 			</jsp:attribute>
 		</comp:toggle-panel>		
 		
+		<comp:toggle-panel id="tree-order-panel" titleKey="user.account.basicinfo.label" open="true" >
+			<jsp:attribute name="body">
+				<div class="display-table">
+				<div class="display-table-row">
+						<label><f:message key="label.Name"/></label>
+						<div class="display-table-cell">
+							<select></select>
+						</div>
+				</div>
+			    <div class="display-table-row">
+						<label><f:message key="label.Name"/></label>
+						<div class="display-table-cell">
+							<span><select></select></span>
+						</div>
+				</div>
+				<div class="display-table-row">
+										<label><f:message key="label.Name"/></label>
+						<div class="display-table-cell">
+							<span><select></select></span>
+						</div>
+				</div>
+				</div>
+			</jsp:attribute>
+		</comp:toggle-panel>
 	</div>
     <c:if test="${ not authenticationProvider.managedPassword }">
 	<comp:user-account-password-popup openerId="change-password-button" url="${userAccountUrl}" successCallback="changePasswordCallback"/>
