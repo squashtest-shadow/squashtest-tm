@@ -34,9 +34,12 @@ define(function(){
 	return {
 		generate : function(settings){
 	
-			if(!settings.alphabeticalOrder) {
+			var workspace = settings.workspace;
+			var treepref = sessionStorage[workspace+"-tree-pref"];
+			
+			if(treepref == 1) {
 			return { 
-				"plugins" : ["json_data", "ui", "types", "sort", "hotkeys", "dnd", "cookies", "themes", "squash", "workspace_tree" ],
+				"plugins" : ["json_data", "ui", "types", "hotkeys", "dnd", "cookies", "themes", "squash", "workspace_tree" ],
 				
 				"json_data" : { 
 					"data" : settings.model, 
@@ -105,7 +108,7 @@ define(function(){
 			};
 		} else {
 			return { 
-				"plugins" : ["json_data", "ui", "types", "hotkeys", "dnd", "cookies", "themes", "squash", "workspace_tree" ],
+				"plugins" : ["json_data", "ui", "types", "sort", "hotkeys", "dnd", "cookies", "themes", "squash", "workspace_tree" ],
 				
 				"json_data" : { 
 					"data" : settings.model, 

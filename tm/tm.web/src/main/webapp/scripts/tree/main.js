@@ -38,7 +38,7 @@ define([ "jquery", "./simple-tree-conf/conf-factory",
 
 	return {
 		initWorkspaceTree : function(settings) {
-			pluginsFactory.configure("workspace-tree");
+			pluginsFactory.configure("workspace-tree", settings);
 			var conf = wkspConf.generate(settings);
 			var treeDiv = $(settings.treeselector);
 			//trick for [Issue 2886]

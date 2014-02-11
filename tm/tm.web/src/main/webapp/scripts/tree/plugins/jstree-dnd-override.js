@@ -32,7 +32,7 @@
  * the drop profile is true, true, true. - For leaves, the profile is true, false, true.
  * 
  * The drop profile is unfortunately not configurable. Also, comparing the drop profile is the only way to
- * differenciate a leaf from the rest.
+ * differentiate a leaf from the rest.
  * 
  * The present function will identify the hovered node and return the following marker position : - for leaves -> no
  * modification - for folders, libraries, other nodes that can contain nodes -> force 'inside'.
@@ -45,7 +45,7 @@
  */
 define(['jquery'], function($){
 	
-	return function(){
+	return function(settings){
 		
 		var overridenM;
 
@@ -81,11 +81,18 @@ define(['jquery'], function($){
 				$.vakata.dnd.helper.children("ins").attr("class", "jstree-invalid");
 			}
 
+			var pref = this.data.squash.pref;
+			
+			var workspace = settings.workspace;
+			var treepref = sessionStorage[workspace+"-tree-pref"];
+			
+			if(treepref != 1){
 			// here we override the function. if the profile matches the one of
 			// a container, we force r to "inside"
-			/*if (this.data.dnd.before && this.data.dnd.inside && this.data.dnd.after) {
-				r = "inside";
-			}*/
+				if (this.data.dnd.before && this.data.dnd.inside && this.data.dnd.after) {
+					r = "inside";
+				}
+			}
 
 			pos = rtl ? (this.data.dnd.off.right - 18) : (this.data.dnd.off.left + 10);
 

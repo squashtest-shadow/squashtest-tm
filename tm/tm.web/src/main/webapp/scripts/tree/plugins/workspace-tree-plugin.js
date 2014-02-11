@@ -235,9 +235,11 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 		var tree = data.inst,
 			nodeData = data.rslt,
 			nodes = nodeData.o,
-			target = nodeData.np;
-			position = nodeData.cp;
-			
+			target = nodeData.np,
+			position = nodeData.cp,
+			action = nodeData.p;
+
+				
 		// first check if we don't need to perform an
 		// operation
 		if (nodeData.o.length === 0) {
@@ -253,7 +255,13 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 
 		var rawurl = $(target).treeNode().getMoveUrl();
 		var nodeIds = $(nodes).treeNode().all('getResId').join(',');
-		var url = rawurl.replace('{nodeIds}', nodeIds).replace('{position}', position);
+		var url;
+		
+		if(action === "inside"){
+			url = rawurl.replace('{nodeIds}', nodeIds).replace('/{position}', "");
+		} else {
+			url = rawurl.replace('{nodeIds}', nodeIds).replace('{position}', position);
+		}
 		
 		tree.open_node(target);
 

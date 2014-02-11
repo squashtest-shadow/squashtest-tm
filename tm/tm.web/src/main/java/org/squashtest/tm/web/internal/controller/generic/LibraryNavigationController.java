@@ -219,6 +219,27 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		return createJsTreeModel(nodeList);
 	}
 	
+	@RequestMapping(value = "/{destinationType}/{destinationId}/content/{nodeIds}", method = RequestMethod.PUT)
+	public @ResponseBody
+	void moveNodes(@PathVariable("nodeIds") Long[] nodeIds, 
+				  @PathVariable("destinationId") long destinationId, 
+				  @PathVariable("destinationType") String destType) {
+		
+		try{
+			if (destType.equals("folders")){
+				getLibraryNavigationService().moveNodesToFolder(destinationId, nodeIds);
+			}
+			else if (destType.equals("drives")){
+				getLibraryNavigationService().moveNodesToLibrary(destinationId, nodeIds);
+			}
+			else{
+				throw new IllegalArgumentException("move nodes : specified destination type doesn't exists : "+destType);
+			}
+		}catch(AccessDeniedException ade){
+			throw new RightsUnsuficientsForOperationException(ade);
+		}
+		
+	}
 	
 	@RequestMapping(value = "/{destinationType}/{destinationId}/content/{nodeIds}/{position}", method = RequestMethod.PUT)
 	public @ResponseBody
@@ -226,6 +247,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 				  @PathVariable("destinationId") long destinationId, 
 				  @PathVariable("destinationType") String destType,
 				  @PathVariable("position") int position) {
+		
 		try{
 			if (destType.equals("folders")){
 				getLibraryNavigationService().moveNodesToFolder(destinationId, nodeIds, position);

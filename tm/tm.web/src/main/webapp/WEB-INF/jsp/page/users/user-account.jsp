@@ -56,12 +56,40 @@
 						history.back();
 					});
 				});
+					
+					if(sessionStorage["requirement-tree-pref"] == 1){
+						$('#user-preferences-tree-requirement option:eq(1)').prop('selected', true);
+					}
+					
+					if(sessionStorage["test-case-tree-pref"] == 1){
+						$('#user-preferences-tree-test-case option:eq(1)').prop('selected', true);
+					}
+					
+					if(sessionStorage["campaign-tree-pref"] == 1){
+						$('#user-preferences-tree-campaign option:eq(1)').prop('selected', true);
+					}
+					
+					$("#user-preferences-tree-requirement").change(function(){
+						sessionStorage["requirement-tree-pref"] = $("#user-preferences-tree-requirement").val();
+					});
+					
+					$("#user-preferences-tree-test-case").change(function(){
+						sessionStorage["test-case-tree-pref"] = $("#user-preferences-tree-test-case").val();
+					});
+					
+					$("#user-preferences-tree-campaign").change(function(){
+						sessionStorage["campaign-tree-pref"] = $("#user-preferences-tree-campaign").val();
+					});
+					
 			});
 		});
 		function changePasswordCallback(){
 			<f:message var="passSuccess" key="user.account.changepass.success" />
 			squashtm.notification.showInfo("${passSuccess}");
 		}
+		
+
+		
 	</script>
 	<div id="user-login-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
 	
@@ -131,25 +159,38 @@
 			</jsp:attribute>
 		</comp:toggle-panel>		
 		
-		<comp:toggle-panel id="tree-order-panel" titleKey="user.account.basicinfo.label" open="true" >
+		<comp:toggle-panel id="tree-order-panel" titleKey="user-preferences.tree-order.title" open="true" >
 			<jsp:attribute name="body">
 				<div class="display-table">
 				<div class="display-table-row">
-						<label><f:message key="label.Name"/></label>
+						<label><f:message key="user-preferences.tree-order.requirement.title"/></label>
 						<div class="display-table-cell">
-							<select></select>
+							<select id="user-preferences-tree-requirement">
+								<option value="0"><f:message key="user-preferences.tree-order.alphabetical"/></option>
+								<option value="1"><f:message key="user-preferences.tree-order.custom"/></option>
+							</select>
 						</div>
 				</div>
 			    <div class="display-table-row">
-						<label><f:message key="label.Name"/></label>
+						<label><f:message key="user-preferences.tree-order.testcase.title"/></label>
 						<div class="display-table-cell">
-							<span><select></select></span>
+							<span>
+							<select id="user-preferences-tree-test-case">
+								<option value="0"><f:message key="user-preferences.tree-order.alphabetical"/></option>
+								<option value="1"><f:message key="user-preferences.tree-order.custom"/></option>
+							</select>
+							</span>
 						</div>
 				</div>
 				<div class="display-table-row">
-										<label><f:message key="label.Name"/></label>
+										<label><f:message key="user-preferences.tree-order.campaign.title"/></label>
 						<div class="display-table-cell">
-							<span><select></select></span>
+							<span>
+							<select id="user-preferences-tree-campaign">
+								<option value="0"><f:message key="user-preferences.tree-order.alphabetical"/></option>
+								<option value="1"><f:message key="user-preferences.tree-order.custom"/></option>
+							</select>
+							</span>
 						</div>
 				</div>
 				</div>

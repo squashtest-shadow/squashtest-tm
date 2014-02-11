@@ -24,11 +24,11 @@ define(['jquery', './jstree-dnd-override','./squash-plugin', './workspace-tree-p
 
 	return {
 		
-		configure : function(type){
+		configure : function(type, settings){
 			switch(type){
 			
 			case 'workspace-tree' : 
-				applyDndOverride();
+				applyDndOverride(settings);
 				applySquashPlugin();
 				applyWorkspacePlugin();
 				break;
