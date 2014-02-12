@@ -18,14 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.testautomation.thread;
+package org.squashtest.tm.service.internal.testautomation;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.squashtest.tm.service.internal.testautomation.tasks.FetchTestListTask;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 
 

@@ -79,10 +79,10 @@
 <script type="text/javascript">
 require( ["common"], function(){
 
-		require(["jquery","test-automation/automated-suite-overview"], function(overview){
+		require(["jquery","test-automation/automated-suite-overview"], function($,overview){
 			$(function(){
-			overview.init();
-		});
+				overview.init();
+			});
 	});
 });
 </script>

@@ -64,7 +64,7 @@ import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
-import org.squashtest.tm.service.internal.testautomation.service.InsecureTestAutomationManagementService;
+import org.squashtest.tm.service.internal.testautomation.InsecureTestAutomationManagementService;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.tm.service.testcase.CustomTestCaseModificationService;
 import org.squashtest.tm.service.testcase.ParameterModificationService;

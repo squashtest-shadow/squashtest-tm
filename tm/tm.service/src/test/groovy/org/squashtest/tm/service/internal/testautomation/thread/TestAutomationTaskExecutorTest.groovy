@@ -23,9 +23,9 @@ package org.squashtest.tm.service.internal.testautomation.thread
 import java.util.concurrent.Future
 
 import org.springframework.core.task.AsyncTaskExecutor
-import org.squashtest.tm.service.internal.testautomation.tasks.FetchTestListTask
-import org.squashtest.tm.service.internal.testautomation.thread.FetchTestListFuture
-import org.squashtest.tm.service.internal.testautomation.thread.TestAutomationTaskExecutor
+import org.squashtest.tm.service.internal.testautomation.FetchTestListTask
+import org.squashtest.tm.service.internal.testautomation.FetchTestListFuture
+import org.squashtest.tm.service.internal.testautomation.TestAutomationTaskExecutor
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent
 
 import spock.lang.Specification

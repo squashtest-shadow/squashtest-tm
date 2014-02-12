@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.testautomation.tasks;
+package org.squashtest.tm.service.internal.testautomation;
 
 import java.util.Collection;
 
@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.tm.service.internal.testautomation.service.TestAutomationConnectorRegistry;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector;
 

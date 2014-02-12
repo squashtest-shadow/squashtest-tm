@@ -21,7 +21,7 @@
 package org.squashtest.tm.service.testautomation
 
 import org.squashtest.tm.domain.execution.ExecutionStatus
-import org.squashtest.tm.service.internal.testautomation.service.AutomatedExecutionManagerServiceImpl
+import org.squashtest.tm.service.internal.testautomation.AutomatedExecutionManagerServiceImpl
 
 import spock.lang.Specification
 import spock.lang.Unroll

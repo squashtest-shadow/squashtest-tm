@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.testautomation.service;
+package org.squashtest.tm.service.internal.testautomation;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -48,14 +48,11 @@ import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.tm.service.internal.repository.AutomatedExecutionExtenderDao;
 import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
 import org.squashtest.tm.service.internal.repository.AutomatedTestDao;
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
 import org.squashtest.tm.service.internal.repository.TestAutomationServerDao;
-import org.squashtest.tm.service.internal.repository.testautomation.AutomatedExecutionExtenderDao;
-import org.squashtest.tm.service.internal.testautomation.tasks.FetchTestListTask;
-import org.squashtest.tm.service.internal.testautomation.thread.FetchTestListFuture;
-import org.squashtest.tm.service.internal.testautomation.thread.TestAutomationTaskExecutor;
 import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
 import org.squashtest.tm.service.testautomation.TestAutomationCallbackService;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;

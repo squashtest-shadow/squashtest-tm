@@ -22,7 +22,7 @@ package org.squashtest.tm.service.internal.campaign;
 
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
-import org.squashtest.tm.service.internal.testautomation.service.InsecureTestAutomationManagementService;
+import org.squashtest.tm.service.internal.testautomation.InsecureTestAutomationManagementService;
 /**
  * 
  * This class has been created to avoid [Issue 1531]

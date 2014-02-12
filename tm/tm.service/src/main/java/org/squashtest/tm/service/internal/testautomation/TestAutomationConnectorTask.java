@@ -18,26 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.testautomation.thread;
+package org.squashtest.tm.service.internal.testautomation;
 
-import java.util.concurrent.Future;
-
-import org.springframework.core.task.AsyncTaskExecutor;
-import org.squashtest.tm.service.internal.testautomation.tasks.FetchTestListTask;
-import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
+import java.util.concurrent.Callable;
 
 
-public class TestAutomationTaskExecutor {
-	
-	private AsyncTaskExecutor executor;
-	
-	public TestAutomationTaskExecutor(AsyncTaskExecutor executor){
-		this.executor = executor;
-	}
-	
-	public FetchTestListFuture sumbitFetchTestListTask(FetchTestListTask task){
-		Future<TestAutomationProjectContent> future = executor.submit(task);
-		return new FetchTestListFuture(task, future);
-	}
+/**
+ * 
+ * For now that interface exists for the only purpose of registering a logger for it. 
+ * 
+ * @author bsiri
+ *
+ */
+public interface TestAutomationConnectorTask<T> extends Callable<T> {
+
+	T buildFailedResult(Exception thrownException);
 	
 }

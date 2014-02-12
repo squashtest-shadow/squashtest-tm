@@ -205,7 +205,7 @@ define(["jquery", "squash.statusfactory", "squash.translator",
 			}
 			return squashtm.context.autosuiteOverview;
 		}
-	}
+	};
 	
 	
 });

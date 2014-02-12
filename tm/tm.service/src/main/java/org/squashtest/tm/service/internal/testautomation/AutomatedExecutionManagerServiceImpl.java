@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.testautomation.service;
+package org.squashtest.tm.service.internal.testautomation;
 
 import java.net.URL;
 import java.util.List;
@@ -32,7 +32,7 @@ import org.squashtest.tm.api.testautomation.execution.dto.TestExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
-import org.squashtest.tm.service.internal.repository.testautomation.AutomatedExecutionExtenderDao;
+import org.squashtest.tm.service.internal.repository.AutomatedExecutionExtenderDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testautomation.AutomatedExecutionManagerService;
 import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
