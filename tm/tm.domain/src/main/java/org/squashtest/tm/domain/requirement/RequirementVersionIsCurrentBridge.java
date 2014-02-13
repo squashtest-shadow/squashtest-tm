@@ -23,28 +23,28 @@ package org.squashtest.tm.domain.requirement;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.squashtest.tm.domain.search.SessionFieldBridge;
 
-public class RequirementVersionCurrentVersionBridge extends SessionFieldBridge{
+public class RequirementVersionIsCurrentBridge extends SessionFieldBridge {
 
 	@Override
-	protected void writeFieldToDocument(String name, Session session, Object value, Document document, LuceneOptions luceneOptions){
-		
-		RequirementVersion requirement = (RequirementVersion) value;
-		requirement = (RequirementVersion) session.createCriteria(RequirementVersion.class).add(Restrictions.eq("id", requirement.getId())).uniqueResult(); //NOSONAR session is never null
-		
-		int val = 0;
-		RequirementVersion currentVersion = requirement.getRequirement().getCurrentVersion();
-		if(currentVersion.getId().equals(requirement.getId()) && currentVersion.isNotObsolete()){
-			val = 1;
-		} 
-		
-		Field field = new Field(name, String.valueOf(val), luceneOptions.getStore(),
-		   luceneOptions.getIndex(), luceneOptions.getTermVector() );
-		   field.setBoost( luceneOptions.getBoost());
-		
+	protected void writeFieldToDocument(String name, Session session, Object value, Document document,
+			LuceneOptions luceneOptions) {
+		String hql = "select count(cur) from Requirement r join r.resource cur where cur.id = :id and cur.status != :obsolete";
+
+		RequirementVersion reqVer = (RequirementVersion) value;
+
+		long isActiveCurrent = (Long) session.createQuery(hql)
+				.setReadOnly(true)
+				.setParameter("id", reqVer.getId())
+				.setParameter("obsolete", RequirementStatus.OBSOLETE)
+				.uniqueResult();
+
+		Field field = new Field(name, String.valueOf(isActiveCurrent), luceneOptions.getStore(), luceneOptions.getIndex(),
+				luceneOptions.getTermVector());
+		field.setBoost(luceneOptions.getBoost());
+
 		document.add(field);
 	}
 }

@@ -100,7 +100,7 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 		name="isCurrentVersion",
 		store=Store.YES,
 		analyze=Analyze.NO,
-		impl=RequirementVersionCurrentVersionBridge.class	
+		impl=RequirementVersionIsCurrentBridge.class	
 	),
 	@ClassBridge(
 		name="testcases",
