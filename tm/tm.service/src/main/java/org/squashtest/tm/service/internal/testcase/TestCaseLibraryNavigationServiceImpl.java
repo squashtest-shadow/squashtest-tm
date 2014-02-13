@@ -144,16 +144,32 @@ public class TestCaseLibraryNavigationServiceImpl extends
 		// proceed
 		List<String> names = getLibraryNodeDao().getParentsName(entityId);
 
-		return "/" + node.getProject().getName() + "/" + formatPath(names);
+		return "/" + node.getProject().getName().replaceAll("/", "\\/") + "/" + formatPath(names);
 
 	}
 
 	private String formatPath(List<String> names) {
 		StringBuilder builder = new StringBuilder();
 		for (String name : names) {
-			builder.append("/").append(name);
+			builder.append("/").append(name.replaceAll("/", "\\/"));
 		}
 		return builder.toString();
+	}
+	
+	@Override
+	public List<String> getPathsAsString(List<Long> ids) {
+		return getLibraryNodeDao().getPathsAsString(ids);
+	}
+	
+	
+	@Override
+	public List<TestCaseLibraryNode> findNodesByPath(List<String> paths) {
+		return getLibraryNodeDao().findNodesByPath(paths);
+	}
+	
+	@Override
+	public List<Long> findNodeIdsByPath(List<String> paths) {
+		return getLibraryNodeDao().findNodeIdsByPath(paths);
 	}
 
 	@Override

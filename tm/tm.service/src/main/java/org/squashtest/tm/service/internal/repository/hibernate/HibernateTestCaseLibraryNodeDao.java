@@ -20,6 +20,10 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.hibernate.SQLQuery;
@@ -50,4 +54,42 @@ public class HibernateTestCaseLibraryNodeDao extends HibernateEntityDao<TestCase
 		query.setParameter("nodeId", entityId, LongType.INSTANCE);
 		return query.list();
 	}
+	
+
+	@Override
+	public List<String> getPathsAsString(List<Long> ids) {
+		
+		if (! ids.isEmpty()){
+			SQLQuery query = currentSession().createSQLQuery(NativeQueries.TCLN_GET_PATHS_AS_STRING);
+			query.setParameterList("nodeIds", ids, LongType.INSTANCE);
+			List<Object[]>  result = query.list();
+			
+			// now ensures that the results are returned in the correct order
+			String[] toReturn = new String[ids.size()];
+			
+			for (Object[] res : result){
+				Long id = ((BigInteger) res[0]).longValue();
+				toReturn[ids.indexOf(id)] =  (String)res[1];
+			}
+			
+			return Arrays.asList(toReturn);
+		}
+		else{
+			
+			return Collections.emptyList();
+		}
+	}
+
+	@Override
+	public List<TestCaseLibraryNode> findNodesByPath(List<String> path) {
+		throw new UnsupportedOperationException("unimplemented yet");
+	}
+
+	@Override
+	public List<Long> findNodeIdsByPath(List<String> path) {
+		throw new UnsupportedOperationException("unimplemented yet");
+	}
+	
+	
+	
 }

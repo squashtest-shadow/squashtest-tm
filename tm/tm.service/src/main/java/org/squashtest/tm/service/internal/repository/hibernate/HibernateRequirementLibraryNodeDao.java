@@ -26,6 +26,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 
 @SuppressWarnings("rawtypes")
@@ -49,6 +50,21 @@ public class HibernateRequirementLibraryNodeDao extends HibernateEntityDao<Requi
 		query.setResultTransformer(new SqLIdResultTransformer());
 		query.setParameter("nodeId", entityId, LongType.INSTANCE);
 		return query.list();
+	}
+	
+	@Override
+	public List<String> getPathsAsString(List<Long> ids) {
+		throw new UnsupportedOperationException("not implemented yet");
+	}
+
+	@Override
+	public List<TestCaseLibraryNode> findNodesByPath(List<String> path) {
+		throw new UnsupportedOperationException("not implemented yet");
+	}
+	
+	@Override
+	public List<Long> findNodeIdsByPath(List<String> path) {
+		throw new UnsupportedOperationException("not implemented yet");
 	}
 	
 }

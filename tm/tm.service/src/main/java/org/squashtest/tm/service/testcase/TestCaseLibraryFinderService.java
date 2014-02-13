@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
 
 /**
@@ -45,11 +46,41 @@ public interface TestCaseLibraryFinderService {
 
 	/**
 	 * Returns the path of a TestCaseLibraryNode given its id. The format is standard, beginning with /&lt;project-name&gt;
+	 * Item separator is '/'. If an item name contains a '\', it will be escaped as '\/'.
 	 * 
 	 * @param entityId the id of the node.
 	 * @return the path of that node.
 	 */
 	String getPathAsString(long entityId);	
+	
+	
+	/**
+	 * Same than above, multiple results.
+	 * 
+	 * @param ids
+	 * @return
+	 */
+	List<String> getPathsAsString(List<Long> ids);
+	
+	
+	
+	/**
+	 * Given a list of path, begining with /project, returns the list of nodes their refer to. If a '/' is encountered 
+	 * it will be considered as a separator, unless escaped as '\/'.
+	 * 
+	 * @param path
+	 * @return
+	 */
+	List<TestCaseLibraryNode> findNodesByPath(List<String> path); 
+	
+	
+	/**
+	 * Same than above but returns only the ids
+	 * 
+	 * @param path
+	 * @return
+	 */
+	List<Long> findNodeIdsByPath(List<String> path);
 	
 	
 	/**

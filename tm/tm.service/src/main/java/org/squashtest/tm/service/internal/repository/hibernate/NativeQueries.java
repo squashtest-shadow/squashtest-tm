@@ -197,6 +197,21 @@ public final class NativeQueries {
 	public static final String TCLN_FIND_SORTED_PARENT_NAMES = "select tcln.name "+TCLN_FIND_SORTED_PARENTS;
 	public static final String TCLN_FIND_SORTED_PARENT_IDS = "select tcln.tcln_id " +TCLN_FIND_SORTED_PARENTS;
 	
+
+
+	public static final String TCLN_GET_PATHS_AS_STRING = 
+			"select clos.descendant_id, concat('/', replace(p.name, '\\/', '\\\\/'), '/', "+
+						"group_concat(replace(tcln.name, '\\/', '\\\\/') order by clos.depth desc separator '/')) as path "+
+			"from TEST_CASE_LIBRARY_NODE tcln "+
+			"inner join PROJECT p on tcln.project_id = p.project_id "+
+			"inner join TCLN_RELATIONSHIP_CLOSURE clos on clos.ancestor_id = tcln.tcln_id "+
+			"where clos.descendant_id in (:nodeIds) "+
+			"group by clos.descendant_id";
+	
+	/*public static final TCLN_FIND_NODE_IDS_BY_PATH = 
+			"select "*/
+	
+	
 	public static final String RLN_FIND_SORTED_PARENT_NAMES = "select rs.name from RESOURCE rs "+
 			  "join REQUIREMENT_FOLDER rf "+
               "on rs.res_id = rf.res_id "+

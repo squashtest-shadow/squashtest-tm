@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.repository;
 import java.util.List;
 
 import org.squashtest.tm.domain.library.LibraryNode;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 
 public interface LibraryNodeDao<NODE extends LibraryNode> extends EntityDao<NODE>{
 
@@ -42,4 +43,38 @@ public interface LibraryNodeDao<NODE extends LibraryNode> extends EntityDao<NODE
 	 * @return ids of all entity parents sorted from elder to younger.
 	 */
 	List<Long> getParentsIds(long entityId);
+	
+	
+	
+	/**
+	 * Same than above, multiple results.
+	 * 
+	 * @param ids
+	 * @return
+	 */
+	List<String> getPathsAsString(List<Long> ids);
+	
+	
+	
+	/**
+	 * Given a list of path, begining with /project, returns the list of nodes their refer to. If a '/' is encountered 
+	 * it will be considered as a separator, unless escaped as '\/'.
+	 * 
+	 * @param path
+	 * @return
+	 */
+	List<TestCaseLibraryNode> findNodesByPath(List<String> path); 
+	
+	
+	
+	
+	/**
+	 * Same than above but returns only the ids
+	 * 
+	 * @param path
+	 * @return
+	 */
+	List<Long> findNodeIdsByPath(List<String> path);
+	
+	
 }
