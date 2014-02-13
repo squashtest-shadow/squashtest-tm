@@ -49,9 +49,8 @@ public interface VerifiedRequirementsManagerService extends VerifiedRequirements
 			long testCaseId);
 
 	/**
-	 * Adds a list of requirement-versions to the ones verified by the step's test case and bind them to the step. If
-	 * the version already verified by the test case, it is only bound to the step. If a sister version is already bound
-	 * to the test case the version is not added.
+	 * Adds a list of requirement's current requirement-versions to the ones verified by the step's test case and bind them to the step. If the version  already verified by the test case, it is only bound to the step.
+	 * If a sister version is already bound to the test case the version is not added.
 	 * 
 	 * @param requirementsIds
 	 * @param testStepId
@@ -60,7 +59,16 @@ public interface VerifiedRequirementsManagerService extends VerifiedRequirements
 	 */
 	Collection<VerifiedRequirementException> addVerifiedRequirementsToTestStep(List<Long> requirementsIds,
 			long testStepId);
-
+			
+	/**
+	 * Adds the requirement-version to the ones verified by the step's test case and bind it to the step. If the version is already verified by the test case, it is only bound to the step.
+	 * If a sister version is already bound to the test case the version is not added.
+	 * @param requirementVersionId
+	 * @param testStepId
+	 * @return
+	 */
+	Collection<VerifiedRequirementException> addVerifiedRequirementVersionToTestStep(long requirementVersionId,
+			long testStepId);
 	/**
 	 * Adds a list of requirement-versions to the ones verified by a test case. If the version or a sister is already
 	 * verified, the requirement is not added and nothing special happens.
@@ -91,7 +99,7 @@ public interface VerifiedRequirementsManagerService extends VerifiedRequirements
 	void removeVerifiedRequirementVersionFromTestCase(long requirementVersionId, long testCaseId);
 
 	/**
-	 * Removes a requirement from the step but not from the test case. If the requirement was not previously verified by
+	 * Removes a requirement version from the step but not from the test case. If the requirement version was not previously verified by
 	 * the test step, nothing special happens.
 	 * 
 	 * @param testStepId
@@ -110,6 +118,7 @@ public interface VerifiedRequirementsManagerService extends VerifiedRequirements
 	 */
 	int changeVerifiedRequirementVersionOnTestCase(long oldVerifiedRequirementVersionId,
 			long newVerifiedRequirementVersionId, long testCaseId);
+
 
 
 }

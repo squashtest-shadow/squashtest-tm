@@ -173,7 +173,7 @@ public class VerifiedRequirementsManagerController {
 	Map<String, Object> addVerifiedRequirementToTestStep(@PathVariable long requirementVersionId,
 			@PathVariable long testStepId) {
 		Collection<VerifiedRequirementException> rejections = verifiedRequirementsManagerService
-				.addVerifiedRequirementsToTestStep(Arrays.asList(requirementVersionId), testStepId);
+				.addVerifiedRequirementVersionToTestStep(requirementVersionId, testStepId);
 
 		return buildSummary(rejections);
 
