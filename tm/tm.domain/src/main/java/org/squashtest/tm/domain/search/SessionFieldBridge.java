@@ -29,12 +29,15 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.search.bridge.FieldBridge;
 import org.hibernate.search.bridge.LuceneOptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Configurable;
 
 @Configurable
 public abstract class SessionFieldBridge implements FieldBridge{
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(SessionFieldBridge.class);
+	
 	@Inject
 	private BeanFactory beanFactory;
 
@@ -49,7 +52,11 @@ public abstract class SessionFieldBridge implements FieldBridge{
 	
 	@Override
 	public void set(String name, Object value, Document document, LuceneOptions luceneOptions) {
-
+		long start = 0;
+		if (LOGGER.isDebugEnabled()) {
+			start = System.nanoTime();
+		}
+		
 		Session currentSession = null;
 		Session session = null;
 		Transaction tx = null;
@@ -73,6 +80,16 @@ public abstract class SessionFieldBridge implements FieldBridge{
 			session.close();
 		} else {
 			writeFieldToDocument(name, session, value, document, luceneOptions);
+		}
+		
+		if (LOGGER.isDebugEnabled()) {
+			long end = System.nanoTime();
+			int timeInMilliSec = Math.round((end - start) / 1000000);
+			LOGGER.trace(this.getClass().getSimpleName() + ".set(..) took {} ms", timeInMilliSec);
+			final int threshold = 10;
+			if (timeInMilliSec > threshold) {
+				LOGGER.trace("BEWARE : " + this.getClass().getSimpleName() + ".set(..) took more than {} ms", timeInMilliSec, threshold);
+			}
 		}
 	}
 }

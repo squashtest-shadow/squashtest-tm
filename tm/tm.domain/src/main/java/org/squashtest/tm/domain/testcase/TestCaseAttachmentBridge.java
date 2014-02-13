@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.domain.testcase;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.squashtest.tm.domain.search.SessionFieldBridge;
 
@@ -32,25 +32,21 @@ public class TestCaseAttachmentBridge extends SessionFieldBridge{
 
 	private static final Integer EXPECTED_LENGTH = 7;
 	
-	private String padRawValue(int rawValue){
-		String rawValueAsString = String.valueOf(rawValue);
-		StringBuilder builder = new StringBuilder();
-		int length = rawValueAsString.length();
-		int zeroesToAdd = EXPECTED_LENGTH - length;
-		for(int i=0; i<zeroesToAdd; i++){
-			builder.append("0");
-		}
-		builder.append(rawValueAsString);
-		return builder.toString();
+	private String padRawValue(long rawValue){
+		return StringUtils.leftPad(Long.toString(rawValue), EXPECTED_LENGTH, '0');
 	}
 	
 	@Override
 	protected void writeFieldToDocument(String name, Session session, Object value, Document document, LuceneOptions luceneOptions){
+		// should be named query
+		String attCountHql = "select count(att) from TestCase tc join tc.attachmentList al join al.attachments att where tc.id = :id";
 		
-		TestCase testcase = (TestCase) value;
-		testcase = (TestCase) session.createCriteria(TestCase.class).add(Restrictions.eq("id", testcase.getId())).uniqueResult(); //NOSONAR session is never null
+//		TestCase testcase = (TestCase) value;
+//		testcase = (TestCase) session.createCriteria(TestCase.class).add(Restrictions.eq("id", testcase.getId())).uniqueResult(); //NOSONAR session is never null
+
+		long attCount = (Long) session.createQuery(attCountHql).setParameter("id", ((TestCase) value).getId()).setReadOnly(true).uniqueResult();
 		
-		Field field = new Field(name,  padRawValue(testcase.getAttachmentList().size()), luceneOptions.getStore(),
+		Field field = new Field(name,  padRawValue(attCount), luceneOptions.getStore(),
 	    luceneOptions.getIndex(), luceneOptions.getTermVector() );
 	    field.setBoost( luceneOptions.getBoost());
 	    document.add(field);
