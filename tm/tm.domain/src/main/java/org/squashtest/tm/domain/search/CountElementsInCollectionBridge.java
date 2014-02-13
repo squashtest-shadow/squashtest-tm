@@ -22,6 +22,7 @@ package org.squashtest.tm.domain.search;
 
 import java.util.Collection;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.search.bridge.StringBridge;
 
 public class CountElementsInCollectionBridge implements StringBridge {
@@ -29,14 +30,7 @@ public class CountElementsInCollectionBridge implements StringBridge {
 	private static final int EXPECTED_LENGTH = 7;
 	
 	private String padRawValue(String rawValue){
-		StringBuilder builder = new StringBuilder();
-		int length = rawValue.length();
-		int zeroesToAdd = EXPECTED_LENGTH - length;
-		for(int i=0; i<zeroesToAdd; i++){
-			builder.append("0");
-		}
-		builder.append(rawValue);
-		return builder.toString();
+		return StringUtils.leftPad(rawValue, EXPECTED_LENGTH, '0');
 	}
 	
 	@Override

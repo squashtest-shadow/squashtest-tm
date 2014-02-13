@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.requirement;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.hibernate.Session;
@@ -32,15 +33,7 @@ public class RequirementVersionAttachmentBridge extends SessionFieldBridge{
 	private static final Integer EXPECTED_LENGTH = 7;
 	
 	private String padRawValue(int rawValue){
-		String rawValueAsString = String.valueOf(rawValue);
-		StringBuilder builder = new StringBuilder();
-		int length = rawValueAsString.length();
-		int zeroesToAdd = EXPECTED_LENGTH - length;
-		for(int i=0; i<zeroesToAdd; i++){
-			builder.append("0");
-		}
-		builder.append(rawValueAsString);
-		return builder.toString();
+		return StringUtils.leftPad(Long.toString(rawValue), EXPECTED_LENGTH, '0');
 	}
 	
 	@Override
