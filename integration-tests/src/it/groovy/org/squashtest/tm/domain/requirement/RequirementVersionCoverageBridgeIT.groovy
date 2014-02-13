@@ -18,12 +18,11 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.testcase
+package org.squashtest.tm.domain.requirement
 
 import javax.inject.Inject;
 
 import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Field.Index;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.Field.TermVector;
@@ -31,8 +30,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.service.internal.repository.hibernate.DbunitDaoSpecification;
-import org.squashtest.tm.service.internal.repository.hibernate.HibernateDaoSpecification
+import org.squashtest.tm.domain.testcase.TestCaseAttachmentBridge;
+import org.squashtest.tm.service.internal.repository.hibernate.DbunitDaoSpecification
 import org.unitils.dbunit.annotation.DataSet;
 
 import spock.unitils.UnitilsSupport;
@@ -43,19 +42,19 @@ import spock.unitils.UnitilsSupport;
  */
 @UnitilsSupport
 @Transactional
-class TestCaseAttachmentBridgeIT extends DbunitDaoSpecification {
-	TestCaseAttachmentBridge bridge = new TestCaseAttachmentBridge()
+class RequirementVersionCoverageBridgeIT extends DbunitDaoSpecification {
+	RequirementVersionCoverageBridge bridge = new RequirementVersionCoverageBridge()
 	
 	@Inject SessionFactory sessionFactory
 	
 	LuceneOptions lucene = Mock()
 	Document doc = new Document()
-	
-	@DataSet("TestCaseBridgeIT.dataset.xml")
-	def "should index the test case's attachemnt count"() {
+
+	@DataSet("RequirementVersionBridgeIT.dataset.xml")
+	def "should index the verifying test cases count"() {
 		given:
 		Session session = sessionFactory.currentSession
-		TestCase tc = session.load(TestCase, 10L)
+		RequirementVersion req = session.load(RequirementVersion, 10L)
 		
 		and:
 		lucene.getStore() >> Mock(Store)
@@ -63,11 +62,12 @@ class TestCaseAttachmentBridgeIT extends DbunitDaoSpecification {
 		lucene.getTermVector() >> Mock(TermVector)
 		
 		when:
-		bridge.writeFieldToDocument("foo", session, tc, doc, lucene)
+		bridge.writeFieldToDocument("foo", session, req, doc, lucene)
 		
 		then:
 		doc.fields.size() == 1
 		doc.fields[0].name == "foo"
 		doc.fields[0].fieldsData == "0000002"
 	}
+
 }

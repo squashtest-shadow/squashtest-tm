@@ -24,30 +24,31 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.squashtest.tm.domain.search.SessionFieldBridge;
 
-public class RequirementVersionTestcaseBridge extends SessionFieldBridge{
-
+public class RequirementVersionCoverageBridge extends SessionFieldBridge {
 	private static final Integer EXPECTED_LENGTH = 7;
-	
-	private String padRawValue(int rawValue){
+
+	private String padRawValue(long rawValue) {
 		return StringUtils.leftPad(Long.toString(rawValue), EXPECTED_LENGTH, '0');
 	}
-	
+
 	@Override
-	protected void writeFieldToDocument(String name, Session session,
-			Object value, Document document, LuceneOptions luceneOptions) {
+	protected void writeFieldToDocument(String name, Session session, Object value, Document document,
+			LuceneOptions luceneOptions) {
+		String hql = "select count(cov) from RequirementVersion rv join rv.requirementVersionCoverages cov where rv.id = :id";
 		
-		RequirementVersion requirement = (RequirementVersion) value;
-		requirement = (RequirementVersion) session.createCriteria(RequirementVersion.class).add(Restrictions.eq("id", requirement.getId())).uniqueResult();
-		
-		Field field = new Field(name, padRawValue(requirement.getVerifyingTestCases().size()), luceneOptions.getStore(),
-		   luceneOptions.getIndex(), luceneOptions.getTermVector() );
-		   field.setBoost( luceneOptions.getBoost());
-		
+		RequirementVersion req = (RequirementVersion) value;
+		long coverageSize = (Long) session.createQuery(hql)
+				.setReadOnly(true)
+				.setParameter("id", req.getId())
+				.uniqueResult();
+
+		Field field = new Field(name, padRawValue(coverageSize), luceneOptions.getStore(), luceneOptions.getIndex(),
+				luceneOptions.getTermVector());
+		field.setBoost(luceneOptions.getBoost());
+
 		document.add(field);
 	}
 }
-

@@ -46,6 +46,7 @@ import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.search.annotations.Fields;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.Parameter;
 import org.hibernate.search.annotations.Store;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.audit.AuditableMixin;
@@ -86,14 +87,14 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 			name="cufs",
 			store=Store.YES,
 			impl=CUFBridge.class,
-			params = {@org.hibernate.search.annotations.Parameter(name="type", value="requirement"),  @org.hibernate.search.annotations.Parameter(name="inputType", value="ALL")}
+			params = {@Parameter(name="type", value="requirement"),  @Parameter(name="inputType", value="ALL")}
 	),
 	@ClassBridge(
 			name="cufs",
 			store=Store.YES,
 			analyze=Analyze.NO,
 			impl=CUFBridge.class,
-			params = {@org.hibernate.search.annotations.Parameter(name="type", value="requirement"), @org.hibernate.search.annotations.Parameter(name="inputType", value="DROPDOWN_LIST")}
+			params = {@Parameter(name="type", value="requirement"), @Parameter(name="inputType", value="DROPDOWN_LIST")}
 	),
 	@ClassBridge(
 		name="isCurrentVersion",
@@ -105,7 +106,7 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 		name="testcases",
 		store=Store.YES,
 		analyze=Analyze.NO,
-		impl=RequirementVersionTestcaseBridge.class	
+		impl=RequirementVersionCoverageBridge.class	
 	),
 	@ClassBridge(
 		name="createdBy",
@@ -149,14 +150,7 @@ public class RequirementVersion extends Resource implements BoundEntity{
 	 * The requirement reference. It should usually be set by the Requirement.
 	 */
 	@NotNull
-	@Fields({
-		@Field(),
-		@Field(
-			name="referenceSort", 
-			analyze=Analyze.NO, 
-			store=Store.YES
-		)
-	})
+	@Fields({ @Field(), @Field(name = "referenceSort", analyze = Analyze.NO, store = Store.YES)	})
 	@Size(min = 0, max = 50)
 	private String reference = "";
 
