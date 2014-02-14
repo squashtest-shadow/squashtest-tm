@@ -27,28 +27,30 @@ import org.hibernate.Session;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.squashtest.tm.domain.search.SessionFieldBridge;
 
-
-public class TestCaseAttachmentBridge extends SessionFieldBridge{
+public class TestCaseAttachmentBridge extends SessionFieldBridge {
 
 	private static final Integer EXPECTED_LENGTH = 7;
-	
-	private String padRawValue(long rawValue){
+
+	private String padRawValue(long rawValue) {
 		return StringUtils.leftPad(Long.toString(rawValue), EXPECTED_LENGTH, '0');
 	}
-	
-	@Override
-	protected void writeFieldToDocument(String name, Session session, Object value, Document document, LuceneOptions luceneOptions){
-		// should be named query
-		String attCountHql = "select count(att) from TestCase tc join tc.attachmentList al join al.attachments att where tc.id = :id";
-		
-//		TestCase testcase = (TestCase) value;
-//		testcase = (TestCase) session.createCriteria(TestCase.class).add(Restrictions.eq("id", testcase.getId())).uniqueResult(); //NOSONAR session is never null
 
-		long attCount = (Long) session.createQuery(attCountHql).setParameter("id", ((TestCase) value).getId()).setReadOnly(true).uniqueResult();
+	@Override
+	protected void writeFieldToDocument(String name, Session session, Object value, Document document,
+			LuceneOptions luceneOptions) {
+		// should be named query
+		String hql = "select count(att) from TestCase tc join tc.attachmentList al join al.attachments att where tc.id = :id";
+
+		TestCase tc = (TestCase) value;
+		long attCount = (Long) session.createQuery(hql)
+				.setParameter("id", tc.getId())
+				.setReadOnly(true)
+				.uniqueResult();
+
+		Field field = new Field(name, padRawValue(attCount), luceneOptions.getStore(), luceneOptions.getIndex(),
+				luceneOptions.getTermVector());
+		field.setBoost(luceneOptions.getBoost());
 		
-		Field field = new Field(name,  padRawValue(attCount), luceneOptions.getStore(),
-	    luceneOptions.getIndex(), luceneOptions.getTermVector() );
-	    field.setBoost( luceneOptions.getBoost());
-	    document.add(field);
+		document.add(field);
 	}
 }

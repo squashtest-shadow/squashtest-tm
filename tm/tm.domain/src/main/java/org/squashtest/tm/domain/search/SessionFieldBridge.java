@@ -33,6 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.squashtest.csp.core.bugtracker.domain.Identifiable;
+import org.squashtest.tm.domain.Identified;
 
 @Configurable
 public abstract class SessionFieldBridge implements FieldBridge{
@@ -85,10 +87,10 @@ public abstract class SessionFieldBridge implements FieldBridge{
 		if (LOGGER.isDebugEnabled()) {
 			long end = System.nanoTime();
 			int timeInMilliSec = Math.round((end - start) / 1000000);
-			LOGGER.trace(this.getClass().getSimpleName() + ".set(..) took {} ms", timeInMilliSec);
+			LOGGER.trace(this.getClass().getSimpleName() + ".set(..) took {} ms for entity {}", timeInMilliSec, ((Identified)value).getId());
 			final int threshold = 10;
 			if (timeInMilliSec > threshold) {
-				LOGGER.trace("BEWARE : " + this.getClass().getSimpleName() + ".set(..) took more than {} ms", timeInMilliSec, threshold);
+				LOGGER.trace("BEWARE : " + this.getClass().getSimpleName() + ".set(..) took more than {} ms", threshold);
 			}
 		}
 	}

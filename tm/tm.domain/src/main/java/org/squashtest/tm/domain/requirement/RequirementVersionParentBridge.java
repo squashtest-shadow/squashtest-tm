@@ -32,10 +32,10 @@ public class RequirementVersionParentBridge extends SessionFieldBridge{
 	@Override
 	protected void writeFieldToDocument(String name, Session session, Object value, Document document, LuceneOptions luceneOptions){
 		
-		RequirementVersion requirement =  (RequirementVersion) value;
-		requirement = (RequirementVersion) session.createCriteria(RequirementVersion.class).add(Restrictions.eq("id", requirement.getId())).uniqueResult(); //NOSONAR session is never null
+		RequirementVersion reqVer =  (RequirementVersion) value;
+		reqVer = (RequirementVersion) session.createCriteria(RequirementVersion.class).add(Restrictions.eq("id", reqVer.getId())).uniqueResult(); //NOSONAR session is never null
 		
-		Requirement parent = (Requirement) session.createCriteria(Requirement.class).createAlias("children", "ch").add(Restrictions.eq("ch.id", requirement.getId())).uniqueResult();
+		Requirement parent = (Requirement) session.createCriteria(Requirement.class).createAlias("children", "ch").add(Restrictions.eq("ch.id", reqVer.getId())).uniqueResult();
 		
 		Integer val = 0;
 		if(parent != null){
