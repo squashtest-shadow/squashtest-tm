@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
 import org.squashtest.tm.service.DbunitServiceSpecification;
-import org.squashtest.tm.service.internal.testautomation.service.InsecureTestAutomationManagementService
+import org.squashtest.tm.service.internal.testautomation.InsecureTestAutomationManagementService
 import org.squashtest.tm.service.testautomation.TestAutomationFinderService
 import org.unitils.dbunit.annotation.DataSet
 
