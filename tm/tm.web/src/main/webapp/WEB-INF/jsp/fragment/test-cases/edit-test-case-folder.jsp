@@ -103,7 +103,7 @@
 				//init the dashboard
 				TCFM.initDashboardPanel({
 					master : '#dashboard-master',
-					cacheKey : 'tcfold${folder.id}'
+					cacheKey : 'dashboard-tcfold${folder.id}'
 				});
 				
 			});

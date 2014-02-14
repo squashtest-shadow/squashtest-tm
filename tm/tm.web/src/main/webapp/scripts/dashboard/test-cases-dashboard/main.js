@@ -30,9 +30,9 @@
  * 
  */
 
-define([ "require", "iesupport/am-I-ie8", "dashboard/basic-objects/model", "dashboard/basic-objects/model-cache",
+define([ "require", "iesupport/am-I-ie8", "dashboard/basic-objects/model", 
 		"dashboard/basic-objects/timestamp-label", "dashboard/SuperMasterView", "./summary", "./bound-requirements-pie",
-		"./status-pie", "./importance-pie", "./size-pie" ], function(require, isIE8, StatModel, cache, Timestamp,
+		"./status-pie", "./importance-pie", "./size-pie" ], function(require, isIE8, StatModel, Timestamp,
 		SuperMasterView, Summary, BoundReqPie, StatusPie, ImportancePie, SizePie) {
 
 	var dependencies = [ "squash.attributeparser" ];

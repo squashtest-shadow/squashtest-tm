@@ -77,7 +77,7 @@ require(["common"], function() {
 			basicwidg.init();
 			TCLM.initDashboardPanel({
 				master : '#dashboard-master',
-				cacheKey : 'tclib${library.id}'
+				cacheKey : 'dashboard-tclib${library.id}'
 			});			
 		});	
 	});
