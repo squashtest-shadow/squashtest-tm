@@ -33,7 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.squashtest.csp.core.bugtracker.domain.Identifiable;
 import org.squashtest.tm.domain.Identified;
 
 @Configurable
