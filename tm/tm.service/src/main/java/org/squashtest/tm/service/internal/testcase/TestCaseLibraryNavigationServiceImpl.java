@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.testcase;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -135,26 +136,9 @@ public class TestCaseLibraryNavigationServiceImpl extends
 
 	@Override
 	public String getPathAsString(long entityId) {
-		// get
-		TestCaseLibraryNode node = getLibraryNodeDao().findById(entityId);
-
-		// check
-		checkPermission(new SecurityCheckableObject(node, "READ"));
-
-		// proceed
-		List<String> names = getLibraryNodeDao().getParentsName(entityId);
-
-		return "/" + node.getProject().getName().replaceAll("/", "\\/") + "/" + formatPath(names);
-
+		return (getPathsAsString(Arrays.asList(new Long[]{entityId}))).get(0);
 	}
 
-	private String formatPath(List<String> names) {
-		StringBuilder builder = new StringBuilder();
-		for (String name : names) {
-			builder.append("/").append(name.replaceAll("/", "\\/"));
-		}
-		return builder.toString();
-	}
 	
 	@Override
 	public List<String> getPathsAsString(List<Long> ids) {

@@ -198,10 +198,25 @@ public final class NativeQueries {
 	public static final String TCLN_FIND_SORTED_PARENT_IDS = "select tcln.tcln_id " +TCLN_FIND_SORTED_PARENTS;
 	
 
+	/* 
+	 * The PATH_SEPARATOR is not '/' because we couldn't distinguish with slashes guenuinely part of 
+	 * a name. Of course to disambiguate we could have used MySQL / H2 function replace(targetstr, orig, replace) 
+	 * and escape the '/' but the functions don't work the same way on both database and what works in one 
+	 * doesn't work on the other.
+	 * 
+	 * So the separator is not / but some other improbable character, that I hope 
+	 * improbable enough in the context of a normal use of Squash. 
+	 * Currently it's the ASCII character "US", or "Unit separator", aka "Information separator one", 
+	 * that was precisely intended for similar purpose back in the prehistoric era.
+	 * 
+	 * It's up to the caller to then post process the chain and replace that character
+	 * by anything it sees fit.
+	 */ 
+	public static final String PATH_SEPARATOR = "\u001F";
 
 	public static final String TCLN_GET_PATHS_AS_STRING = 
-			"select clos.descendant_id, concat('/', replace(p.name, '\\/', '\\\\/'), '/', "+
-						"group_concat(replace(tcln.name, '\\/', '\\\\/') order by clos.depth desc separator '/')) as path "+
+			"select clos.descendant_id, concat('"+PATH_SEPARATOR+"', p.name, '"+PATH_SEPARATOR+"', "+
+						"group_concat(tcln.name order by clos.depth desc separator '"+PATH_SEPARATOR+"')) as path "+
 			"from TEST_CASE_LIBRARY_NODE tcln "+
 			"inner join PROJECT p on tcln.project_id = p.project_id "+
 			"inner join TCLN_RELATIONSHIP_CLOSURE clos on clos.ancestor_id = tcln.tcln_id "+

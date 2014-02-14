@@ -63,13 +63,19 @@ public class HibernateTestCaseLibraryNodeDao extends HibernateEntityDao<TestCase
 			SQLQuery query = currentSession().createSQLQuery(NativeQueries.TCLN_GET_PATHS_AS_STRING);
 			query.setParameterList("nodeIds", ids, LongType.INSTANCE);
 			List<Object[]>  result = query.list();
-			
+						
 			// now ensures that the results are returned in the correct order
+			// also post process the resulting string to escape the '/' in 
+			// node names and reinstate '/' as the legitimate path separator
+			
+			// See NativeQueries.PATH_SEPARATOR and the associated comment
 			String[] toReturn = new String[ids.size()];
 			
 			for (Object[] res : result){
 				Long id = ((BigInteger) res[0]).longValue();
-				toReturn[ids.indexOf(id)] =  (String)res[1];
+				String path = (String)res[1];
+				path = path.replaceAll("\\/", "\\\\/").replaceAll(NativeQueries.PATH_SEPARATOR, "/");
+				toReturn[ids.indexOf(id)] = path;
 			}
 			
 			return Arrays.asList(toReturn);
@@ -83,7 +89,15 @@ public class HibernateTestCaseLibraryNodeDao extends HibernateEntityDao<TestCase
 	@Override
 	public List<TestCaseLibraryNode> findNodesByPath(List<String> path) {
 		List<Long> ids = findNodeIdsByPath(path);
-		return findAllByIds(ids);
+		List<TestCaseLibraryNode>  result = findAllByIds(ids);
+		
+		// post process the result to ensure the correct order of the result
+		TestCaseLibraryNode[] toReturn = new TestCaseLibraryNode[ids.size()];
+		for (TestCaseLibraryNode node :  result){
+			toReturn[ids.indexOf(node.getId())] = node;
+		}
+		
+		return Arrays.asList(toReturn);
 	}
 
 	@Override

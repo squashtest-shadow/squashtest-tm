@@ -276,6 +276,8 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	}
 	
 	
+
+	
 	def findCufValuesForEntity(BindableEntity tctype, long tcId){
 		Query query = session.createQuery("from CustomFieldValue cv where cv.boundEntityType = :type and cv.boundEntityId = :id")
 		query.setParameter("id", tcId)

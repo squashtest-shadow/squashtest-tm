@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
@@ -28,6 +30,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.service.library.FolderModificationService;
@@ -67,6 +70,12 @@ public class TestCaseFolderModificationController extends FolderModificationCont
 		mav.setViewName("fragment/test-cases/edit-test-case-folder");
 		
 		return mav;
+	}
+	
+	@RequestMapping(value="/test/{ids}", method = RequestMethod.GET)
+	@ResponseBody
+	public List<String> getPath(@PathVariable("ids") List<Long> ids){
+		return libraryFinderService.getPathsAsString(ids);
 	}
 
 }
