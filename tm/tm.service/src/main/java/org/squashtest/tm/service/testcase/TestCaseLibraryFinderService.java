@@ -54,8 +54,13 @@ public interface TestCaseLibraryFinderService {
 	String getPathAsString(long entityId);	
 	
 	
+	
 	/**
-	 * Same than above, multiple results.
+	 * <p>Given a list of ids of library NODE, return the path of those nodes.  The path starts with /&lt;projectname&gt;. 
+	 * The path is slash-separated '/'. If one of the elements in the path uses a '/', it will be escaped as '\/'.</p>
+	 * 
+	 * <p>The order of the result is consistent with the order of the input. If an element could not be found 
+	 * (an invalid id for instance), the corresponding path in the result is NULL.</p>
 	 * 
 	 * @param ids
 	 * @return
@@ -64,23 +69,31 @@ public interface TestCaseLibraryFinderService {
 	
 	
 	
+	
+	
 	/**
-	 * Given a list of path, begining with /project, returns the list of nodes their refer to. If a '/' is encountered 
-	 * it will be considered as a separator, unless escaped as '\/'.
+	 * <p>Given a list of paths of library NODE, return the ids of those nodes.  The path starts with /&lt;projectname&gt;. 
+	 * Like in {@link #getPathsAsString(List)} a path is slash-separated '/', but this time names containing a '/' don't need 
+	 * escaping (you may use escaped or unescaped names as will). </p>
+	 * 
+	 * <p>The order of the result is consistent with the order of the input. If an element could not be found 
+	 * (an invalid path for instance), the corresponding id in the result is NULL.</p>
+	 * 
+	 * @param path
+	 * @return
+	 */
+	List<Long> findNodeIdsByPath(List<String> path);
+	
+	
+	
+	/**
+	 * Same than above, but returns the entities instead.
 	 * 
 	 * @param path
 	 * @return
 	 */
 	List<TestCaseLibraryNode> findNodesByPath(List<String> path); 
 	
-	
-	/**
-	 * Same than above but returns only the ids
-	 * 
-	 * @param path
-	 * @return
-	 */
-	List<Long> findNodeIdsByPath(List<String> path);
 	
 	
 	/**

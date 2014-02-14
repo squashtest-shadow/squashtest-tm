@@ -26,7 +26,6 @@ import org.hibernate.SQLQuery;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
-import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 
 @Repository("squashtest.tm.repository.CampaignLibraryNodeDao")
@@ -55,7 +54,7 @@ public class HibernateCampaignLibraryNodeDao extends HibernateEntityDao<Campaign
 	}
 
 	@Override
-	public List<TestCaseLibraryNode> findNodesByPath(List<String> path) {
+	public List<CampaignLibraryNode> findNodesByPath(List<String> path) {
 		throw new UnsupportedOperationException("not implemented yet");
 	}
 

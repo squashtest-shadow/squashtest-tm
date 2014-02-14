@@ -82,14 +82,41 @@ public class HibernateTestCaseLibraryNodeDao extends HibernateEntityDao<TestCase
 
 	@Override
 	public List<TestCaseLibraryNode> findNodesByPath(List<String> path) {
-		throw new UnsupportedOperationException("unimplemented yet");
+		List<Long> ids = findNodeIdsByPath(path);
+		return findAllByIds(ids);
 	}
 
 	@Override
-	public List<Long> findNodeIdsByPath(List<String> path) {
-		throw new UnsupportedOperationException("unimplemented yet");
+	public List<Long> findNodeIdsByPath(List<String> paths) {
+		if (!paths.isEmpty()){
+			// process the paths parameter : we don't want escaped '/' in there
+			List<String> effectiveParameters = unescapeSlashes(paths);
+			
+			SQLQuery query = currentSession().createSQLQuery(NativeQueries.TCLN_FIND_NODE_IDS_BY_PATH);
+			query.setParameterList("paths", effectiveParameters);
+			List<Object[]>  result = query.list();
+			
+			// now ensures that the results are returned in the correct order
+			Long[] toReturn = new Long[effectiveParameters.size()];
+			
+			for (Object[] res : result){
+				String path = (String) res[0];
+				toReturn[effectiveParameters.indexOf(path)] =  ((BigInteger)res[1]).longValue();
+			}
+			
+			return Arrays.asList(toReturn);
+		}
+		else{
+			return Collections.emptyList();
+		}
 	}
 	
-	
+	private List<String> unescapeSlashes(List<String> paths){
+		List<String> unescaped = new ArrayList<String>(paths.size());
+		for (String orig : paths){
+			unescaped.add(orig.replaceAll("\\\\/", "/"));
+		}
+		return unescaped;
+	}
 	
 }

@@ -208,8 +208,17 @@ public final class NativeQueries {
 			"where clos.descendant_id in (:nodeIds) "+
 			"group by clos.descendant_id";
 	
-	/*public static final TCLN_FIND_NODE_IDS_BY_PATH = 
-			"select "*/
+	
+	// note that in this query we don't want escaped '/' like in query TCLN_GET_PATHS_AS_STRING
+	public static final String TCLN_FIND_NODE_IDS_BY_PATH = 
+		"select concat('/', p.name, '/', "+ 
+					"group_concat(tcln.name order by clos.depth desc separator '/')) as concatenated, "+
+		"clos.descendant_id as tcln_id "+		
+		"from TEST_CASE_LIBRARY_NODE tcln "+ 
+		"inner join PROJECT p on tcln.project_id = p.project_id "+
+		"inner join TCLN_RELATIONSHIP_CLOSURE clos on clos.ancestor_id = tcln.tcln_id "+ 
+		"group by clos.descendant_id "+
+		"having concatenated in (:paths)";
 	
 	
 	public static final String RLN_FIND_SORTED_PARENT_NAMES = "select rs.name from RESOURCE rs "+
