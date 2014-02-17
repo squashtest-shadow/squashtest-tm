@@ -20,22 +20,84 @@
  */
 package org.squashtest.tm.service.internal.batchexport;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.testcase.TestCaseNature;
+import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.domain.testcase.TestCaseType;
 
-public class TestCaseExportModel {
+
+public class ExportModel {
+	
+	
+	private List<TestCaseModel> testCases = new LinkedList<TestCaseModel>();
+	
+	private List<TestStepModel> testSteps = new LinkedList<TestStepModel>();
+	
+	private List<ParameterModel> parameters = new LinkedList<ParameterModel>();
+	
+	private List<DatasetModel> datasets = new LinkedList<DatasetModel>();
 	
 	
 	
 	
+	public ExportModel(){
+		super();
+	}
 	
+	public void setTestCases(List<TestCaseModel> models){
+		this.testCases = models;
+	}
 	
+	public void setTestSteps(List<TestStepModel> models){
+		this.testSteps = models;
+	}
 	
+	public void setParameters(List<ParameterModel> models){
+		this.parameters = models;
+	}
 	
+	public void setDatasets(List<DatasetModel> models){
+		this.datasets = models;
+	}
 	
+	public void addTestCaseModel(TestCaseModel model){
+		testCases.add(model);
+	}
 	
-	public static final class TestCaseModel {
+	public void addTestStepModel(TestStepModel model){
+		testSteps.add(model);
+	}
+	
+	public void addParameterModel(ParameterModel model){
+		parameters.add(model);
+	}
+	
+	public void addDatasetModel(DatasetModel model){
+		datasets.add(model);
+	}
+	
+	public List<TestCaseModel> getTestCases() {
+		return testCases;
+	}
+
+	public List<TestStepModel> getTestSteps() {
+		return testSteps;
+	}
+
+	public List<ParameterModel> getParameters() {
+		return parameters;
+	}
+
+	public List<DatasetModel> getDatasets() {
+		return datasets;
+	}
+
+	static final class TestCaseModel {
 		
 		private Long projectId;
 		private String projectName;
@@ -45,18 +107,18 @@ public class TestCaseExportModel {
 		private String reference;
 		private String name;
 		private boolean weightAuto;
-		private String weight;
-		private String nature;
-		private String type;
-		private String status;
+		private TestCaseImportance weight;
+		private TestCaseNature nature;
+		private TestCaseType type;
+		private TestCaseStatus status;
 		private String description;
 		private String prerequisite;
-		private int nbReq;
-		private int nbCaller;
-		private int nbAttachments;
-		private String createdOn;
+		private Integer nbReq;
+		private Long nbCaller;
+		private Integer nbAttachments;
+		private Date createdOn;
 		private String createdBy;
-		private String lastModifiedOn;
+		private Date lastModifiedOn;
 		private String lastModifiedBy;
 		private List<CustomField> cufs = new LinkedList<CustomField>();
 		
@@ -64,175 +126,225 @@ public class TestCaseExportModel {
 			super();
 		}
 		
-		
+
+		// that monster constructor will be used by Hibernate in a hql query
+		public TestCaseModel(
+				Long projectId, 
+				String projectName, 
+				Integer order,
+				Long id, 
+				String reference, 
+				String name, 
+				Boolean weightAuto,
+				TestCaseImportance weight, 
+				TestCaseNature nature,
+				TestCaseType type, 
+				TestCaseStatus status, 
+				String description,
+				String prerequisite, 
+				Integer nbReq, 
+				Long nbCaller,
+				Integer nbAttachments, 
+				Date createdOn, 
+				String createdBy,
+				Date lastModifiedOn, 
+				String lastModifiedBy) {
+			
+			
+			super();
+			this.projectId = projectId;
+			this.projectName = projectName;
+			this.order = order;
+			this.id = id;
+			this.reference = reference;
+			this.name = name;
+			this.weightAuto = weightAuto;
+			this.weight = weight;
+			this.nature = nature;
+			this.type = type;
+			this.status = status;
+			this.description = description;
+			this.prerequisite = prerequisite;
+			this.nbReq = nbReq;
+			this.nbCaller = nbCaller;
+			this.nbAttachments = nbAttachments;
+			this.createdOn = createdOn;
+			this.createdBy = createdBy;
+			this.lastModifiedOn = lastModifiedOn;
+			this.lastModifiedBy = lastModifiedBy;
+		}
+
+
+
+
 		public Long getProjectId() {
 			return projectId;
 		}
-		
+
 		public void setProjectId(Long projectId) {
 			this.projectId = projectId;
 		}
-		
+
 		public String getProjectName() {
 			return projectName;
 		}
-		
+
 		public void setProjectName(String projectName) {
 			this.projectName = projectName;
 		}
-		
+
 		public String getPath() {
 			return path;
 		}
-		
+
 		public void setPath(String path) {
 			this.path = path;
 		}
-		
+
 		public Integer getOrder() {
 			return order;
 		}
-		
+
 		public void setOrder(Integer order) {
 			this.order = order;
 		}
-		
+
 		public Long getId() {
 			return id;
 		}
-		
+
 		public void setId(Long id) {
 			this.id = id;
 		}
-		
+
 		public String getReference() {
 			return reference;
 		}
-		
+
 		public void setReference(String reference) {
 			this.reference = reference;
 		}
-		
+
 		public String getName() {
 			return name;
 		}
-		
+
 		public void setName(String name) {
 			this.name = name;
 		}
-		
+
 		public boolean isWeightAuto() {
 			return weightAuto;
 		}
-		
+
 		public void setWeightAuto(boolean weightAuto) {
 			this.weightAuto = weightAuto;
 		}
-		
-		public String getWeight() {
+
+		public TestCaseImportance getWeight() {
 			return weight;
 		}
-		
-		public void setWeight(String weight) {
+
+		public void setWeight(TestCaseImportance weight) {
 			this.weight = weight;
 		}
-		
-		public String getNature() {
+
+		public TestCaseNature getNature() {
 			return nature;
 		}
-		
-		public void setNature(String nature) {
+
+		public void setNature(TestCaseNature nature) {
 			this.nature = nature;
 		}
-		
-		public String getType() {
+
+		public TestCaseType getType() {
 			return type;
 		}
-		
-		public void setType(String type) {
+
+		public void setType(TestCaseType type) {
 			this.type = type;
 		}
-		
-		public String getStatus() {
+
+		public TestCaseStatus getStatus() {
 			return status;
 		}
-		
-		public void setStatus(String status) {
+
+		public void setStatus(TestCaseStatus status) {
 			this.status = status;
 		}
-		
+
 		public String getDescription() {
 			return description;
 		}
-		
+
 		public void setDescription(String description) {
 			this.description = description;
 		}
-		
+
 		public String getPrerequisite() {
 			return prerequisite;
 		}
-		
+
 		public void setPrerequisite(String prerequisite) {
 			this.prerequisite = prerequisite;
 		}
-		
-		public int getNbReq() {
+
+		public Integer getNbReq() {
 			return nbReq;
 		}
-		
-		public void setNbReq(int nbReq) {
+
+		public void setNbReq(Integer nbReq) {
 			this.nbReq = nbReq;
 		}
-		
-		public int getNbCaller() {
+
+		public Long getNbCaller() {
 			return nbCaller;
 		}
-		
-		public void setNbCaller(int nbCaller) {
+
+		public void setNbCaller(Long nbCaller) {
 			this.nbCaller = nbCaller;
 		}
-		
-		public int getNbAttachments() {
+
+		public Integer getNbAttachments() {
 			return nbAttachments;
 		}
-		
-		public void setNbAttachments(int nbAttachments) {
+
+		public void setNbAttachments(Integer nbAttachments) {
 			this.nbAttachments = nbAttachments;
 		}
-		
-		public String getCreatedOn() {
+
+		public Date getCreatedOn() {
 			return createdOn;
 		}
-		
-		public void setCreatedOn(String createdOn) {
+
+		public void setCreatedOn(Date createdOn) {
 			this.createdOn = createdOn;
 		}
-		
+
 		public String getCreatedBy() {
 			return createdBy;
 		}
-		
+
 		public void setCreatedBy(String createdBy) {
 			this.createdBy = createdBy;
 		}
-		
-		public String getLastModifiedOn() {
+
+		public Date getLastModifiedOn() {
 			return lastModifiedOn;
 		}
-		
-		public void setLastModifiedOn(String lastModifiedOn) {
+
+		public void setLastModifiedOn(Date lastModifiedOn) {
 			this.lastModifiedOn = lastModifiedOn;
 		}
-		
+
 		public String getLastModifiedBy() {
 			return lastModifiedBy;
 		}
-		
+
 		public void setLastModifiedBy(String lastModifiedBy) {
 			this.lastModifiedBy = lastModifiedBy;
 		}
-		
+
 		public void addCuf(CustomField cuf){
 			cufs.add(cuf);
 		}
@@ -244,7 +356,7 @@ public class TestCaseExportModel {
 	}
 	
 	
-	public static final class TestStepModel{
+	static final class TestStepModel{
 		
 		private String tcOwnerPath;
 		private long tcOwnerId;
@@ -364,7 +476,7 @@ public class TestCaseExportModel {
 	}
 	
 	
-	public static final class ParameterModel{
+	static final class ParameterModel{
 		
 		private String tcOwnerPath;
 		private long tcOwnerId;
@@ -431,7 +543,7 @@ public class TestCaseExportModel {
 	}
 	
 	
-	public static final class DatasetModel{
+	static final class DatasetModel{
 		
 		private String tcOwnerPath;
 		private long ownerId;
@@ -531,51 +643,49 @@ public class TestCaseExportModel {
 	}
 	
 	
-	public static final class CustomField{
+	static final class CustomField{
 		
+		Long ownerId;
+		BindableEntity ownerType;
 		String code;
 		String value;
 		Datatype type;
+	
 		
-		
-		public CustomField(String code, String value) {
+		public CustomField(Long ownerId, BindableEntity ownerType, String code, String value, String type) {
 			super();
-			this.code = code;
-			this.value = value;
-			this.type = Datatype.PLAIN_TEXT;
-		}
-
-
-		public CustomField(String code, String value, Datatype type) {
-			super();
-			this.code = code;
-			this.value = value;
-			this.type = type;
-		}
-		
-		public CustomField(String code, String value, String type) {
-			super();
+			this.ownerId = ownerId;
+			this.ownerType = ownerType;
 			this.code = code;
 			this.value = value;
 			this.type = Datatype.valueOf(type);
 		}
 		
 		
+		
+		public Long getOwnerId(){
+			return this.ownerId;
+		}
+		
+		public BindableEntity getOwnerType(){
+			return ownerType;
+		}
+		
 		public String getCode() {
 			return code;
 		}
+		
 		public String getValue() {
 			return value;
 		}
+		
 		public Datatype getType() {
 			return type;
 		}
 		
-		
-		
 	}
 	
-	public static enum Datatype{
+	static enum Datatype{
 		PLAIN_TEXT,
 		HTML,
 		DATE;

@@ -112,7 +112,7 @@
 		@NamedQuery(name = "iteration.findAllExecutionsByTestCase", query = "select exec from Iteration it join it.testPlans tp join tp.executions exec where it.id = :iterationId and exec.referencedTestCase.id = :testCaseId"),
 		@NamedQuery(name = "iteration.findAllExecutionsByTestPlan", query = "select exec from Iteration it join it.testPlans tp join tp.executions exec where it.id = :iterationId and tp.id = :testPlanId"),
 		@NamedQuery(name = "iteration.countRunningOrDoneExecutions", query = "select count(tps) from Iteration iter join iter.testPlans tps join tps.executions exes where iter.id =:iterationId and exes.executionStatus <> 'READY'"),
-		
+
 		//TestSuite
 		@NamedQuery(name = "TestSuite.findAllTestPlanItemsPaged", query = "select tp from TestSuite ts join ts.testPlan tp join tp.testSuites tss where ts.id = ?1 and ts.id = tss.id order by index(tp)"),
 		@NamedQuery(name = "TestSuite.countTestPlanItems", query = "select count(tp) from TestSuite ts join ts.testPlan tp join tp.testSuites tss where ts.id = ?1 and ts.id = tss.id"),
@@ -158,6 +158,43 @@
 		@NamedQuery(name = "testCase.findUnsortedAllByVerifiedRequirementVersion", query = "select tc from TestCase tc join tc.requirementVersionCoverages rvc join rvc.verifiedRequirementVersion vr where vr.id = :requirementVersionId"),
 		@NamedQuery(name = "testCase.findAllExecutions", query = "select exec from Execution exec join exec.referencedTestCase tc where tc.id = :testCaseId"),
 		@NamedQuery(name = "testCase.findAllTCImpWithImpAuto", query = "select tc.id, tc.importance from TestCase tc where tc.id in (:testCasesIds) and tc.importanceAuto = true"),
+		
+		@NamedQuery(name = "testCase.excelExportDataFromFolder", query = 
+			"select new org.squashtest.tm.service.internal.batchexport.ExportModel$TestCaseModel("+
+					"p.id, p.name, index(tc), tc.id, tc.reference, tc.name, tc.importanceAuto, tc.importance, tc.nature, "+
+					"tc.type, tc.status, tc.description, tc.prerequisite, size(tc.requirementVersionCoverages), "+
+					"("+
+						"select count(distinct caller) from TestCase caller join caller.steps steps join steps.calledTestCase called where steps.class = CallTestStep and called.id = tc.id"+
+					"), "+
+					"size(tc.attachmentList.attachments), tc.audit.createdOn, tc.audit.createdBy, tc.audit.lastModifiedOn, tc.audit.lastModifiedBy) "+
+					"from TestCaseFolder f join f.content tc join tc.project p "+
+					"where tc.id in (:testCaseIds) "+
+					"group by tc"
+
+		),
+		
+		@NamedQuery(name = "testCase.excelExportDataFromLibrary", query = 
+			"select new org.squashtest.tm.service.internal.batchexport.ExportModel$TestCaseModel("+
+					"p.id, p.name, index(tc), tc.id, tc.reference, tc.name, tc.importanceAuto, tc.importance, tc.nature, "+
+					"tc.type, tc.status, tc.description, tc.prerequisite, size(tc.requirementVersionCoverages), "+
+					"("+
+						"select count(distinct caller) from TestCase caller join caller.steps steps join steps.calledTestCase called where steps.class = CallTestStep and called.id = tc.id"+
+					"), "+
+					"size(tc.attachmentList.attachments), tc.audit.createdOn, tc.audit.createdBy, tc.audit.lastModifiedOn, tc.audit.lastModifiedBy) "+
+					"from TestCaseLibrary tcl join tcl.rootContent tc join tc.project p "+
+					"where tc.id in (:testCaseIds) "	+
+					"group by tc"
+		),
+		
+		@NamedQuery(name = "testCase.excelExportCUF", query= 
+			"select cf.boundEntityId, "+
+					"new org.squashtest.tm.service.internal.batchexport.ExportModel$CustomField(" +
+					"cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cf.inputType) "+
+			"from CustomFieldValue cfv join cfv.binding binding join binding.customField cf "+
+			"where cfv.boundEntityId in (:tcIds) and cfv.boundEntityType = 'TEST_CASE'"			
+		),
+	
+		
 		
 		//Campaign
 		@NamedQuery(name = "campaign.findNamesInCampaignStartingWith", query = "select i.name from Campaign c join c.iterations i where c.id = :containerId and i.name like :nameStart"),
@@ -338,6 +375,7 @@
 																				 " and copy.binding = orig.binding"
 																			),
 		@NamedQuery(name = "CustomFieldValue.findAllCustomFieldValueOfBindingAndEntity", query="select cv from CustomFieldValue cv join cv.binding binding where binding.id = ?1 and cv.boundEntityId = ?2 and cv.boundEntityType = ?3 "),
+		
 		
 		//BoundEntity
 		@NamedQuery(name = "BoundEntityDao.findAllTestCasesForProject", query="select tc from TestCase tc where tc.project.id = :projectId"),

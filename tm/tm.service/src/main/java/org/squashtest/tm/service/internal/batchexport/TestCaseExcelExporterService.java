@@ -25,14 +25,23 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
+import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 
 @Service
-public class TestCaseLibraryNodeExcelExporterService {
+public class TestCaseExcelExporterService {
 
 	@Inject
-	private SessionFactory sessionFactory;
+	private ExportDao exportDao;
+	
+	
+	@Inject
+	@Qualifier("squashtest.tm.repository.TestCaseLibraryNodeDao")
+	private LibraryNodeDao<TestCaseLibraryNode> nodeDao;
+
 	
 	public File exportAsExcel(List<Long> testCaseIds){
 		
@@ -41,5 +50,19 @@ public class TestCaseLibraryNodeExcelExporterService {
 	}
 	
 	
+	private void addPaths(List<Long> ids, ExportModel models){
+		
+		List<String> paths = nodeDao.getPathsAsString(ids);
+		
+		// add the path to the test cases 
+		for (TestCaseModel model : models.getTestCases()){
+			Long id = model.getId();
+			int index = ids.indexOf(id);
+			String path = paths.get(index);
+			model.setPath(path);
+		}
+		
+	}
 	
+
 }
