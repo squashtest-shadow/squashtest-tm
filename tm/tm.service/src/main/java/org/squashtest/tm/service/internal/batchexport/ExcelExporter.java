@@ -1,0 +1,240 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2014 Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.squashtest.tm.service.internal.batchexport;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
+import org.squashtest.tm.domain.customfield.InputType;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
+
+
+/**
+ * @author bsiri
+ *
+ */
+class ExcelExporter {
+
+	
+	private static final String DS_SHEET  = "DATASETS";
+	private static final String PRM_SHEET = "PARAMETERS";
+	private static final String ST_SHEET  = "STEPS";
+	private static final String TC_SHEET  = "TEST_CASES";
+	
+	// that map will remember which test case id corresponds to which path
+	private Map<String, Long> idByPath = new HashMap<String, Long>();
+	
+	// that map will remember which column index is 
+	private Map<String, Integer> cufColumnsByCode = new HashMap<String, Integer>();
+	
+	private Integer nextTCcufColIndex = 22; // that is the number of basic columns in that export.	
+	//private Integer nextSTcufColIndex = 0;
+	
+	private DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
+	
+	private Workbook workbook;
+	
+	
+	public ExcelExporter(){
+		super();
+		createWorkbook();
+		createHeaders();
+	}
+	
+	
+	public void appendToWorkbook(ExportModel model){
+		
+		appendTestCases(model);
+		
+	}
+	
+	
+	public File print() {
+		try{
+			File temp = File.createTempFile("tc_export_", "xls");
+			temp.deleteOnExit();
+			
+			FileOutputStream fos = new FileOutputStream(temp);
+			workbook.write(fos);
+			fos.close();
+			
+			return temp;
+		}catch(IOException ex){
+			throw new RuntimeException(ex);
+		}
+	}
+	
+	
+	private void appendTestCases(ExportModel model){
+		
+		List<TestCaseModel> models = model.getTestCases();
+		Sheet tcSheet = workbook.getSheet(TC_SHEET);
+		Row r;
+		int rIdx = tcSheet.getLastRowNum()+1;
+		int cIdx = 0;
+		
+		for (TestCaseModel tcm : models){
+			
+			r = tcSheet.createRow(rIdx);
+			
+			idByPath.put(tcm.getPath(), tcm.getId());
+			
+			r.createCell(cIdx++).setCellValue(tcm.getProjectId());
+			r.createCell(cIdx++).setCellValue(tcm.getProjectName());
+			r.createCell(cIdx++).setCellValue(tcm.getPath());
+			r.createCell(cIdx++).setCellValue(tcm.getOrder());
+			r.createCell(cIdx++).setCellValue(tcm.getId());
+			r.createCell(cIdx++).setCellValue(tcm.getReference());
+			r.createCell(cIdx++).setCellValue(tcm.getName());
+			r.createCell(cIdx++).setCellValue(tcm.getWeightAuto());
+			r.createCell(cIdx++).setCellValue(tcm.getWeight().toString());
+			r.createCell(cIdx++).setCellValue(tcm.getNature().toString());
+			r.createCell(cIdx++).setCellValue(tcm.getType().toString());
+			r.createCell(cIdx++).setCellValue(tcm.getStatus().toString());
+			r.createCell(cIdx++).setCellValue(tcm.getDescription());
+			r.createCell(cIdx++).setCellValue(tcm.getPrerequisite());
+			r.createCell(cIdx++).setCellValue(tcm.getNbReq());
+			r.createCell(cIdx++).setCellValue(tcm.getNbCaller());
+			r.createCell(cIdx++).setCellValue(tcm.getNbAttachments());
+			r.createCell(cIdx++).setCellValue(format(tcm.getCreatedOn()));
+			r.createCell(cIdx++).setCellValue(tcm.getCreatedBy());
+			r.createCell(cIdx++).setCellValue(format(tcm.getLastModifiedOn()));
+			r.createCell(cIdx++).setCellValue(tcm.getLastModifiedBy());
+					
+			appendCustomFields(r, tcm);
+			
+			rIdx++;
+			cIdx=0;
+		}
+	}
+	
+	
+	private void appendCustomFields(Row r, TestCaseModel tcm){
+		
+		for (CustomField cuf : tcm.getCufs()){
+			
+			String code = "TC_CUF_"+cuf.getCode();
+			Integer idx = cufColumnsByCode.get(code);
+			
+			// if unknown : register it
+			if (idx == null){
+				idx = registerTCCuf(code);
+			}
+			
+			Cell c = r.createCell(idx);
+			String value = (cuf.getType() == InputType.DATE_PICKER) ? format(cuf.getValue()) : cuf.getValue();
+			c.setCellValue(value);
+		}
+		
+	}
+	
+	
+	private int registerTCCuf(String code){
+		
+		int cufindex = nextTCcufColIndex;
+		cufColumnsByCode.put(code, nextTCcufColIndex);
+		
+		Sheet tcSheet = workbook.getSheet(TC_SHEET);
+		Row headers = tcSheet.getRow(0);
+		int nextIdx = headers.getLastCellNum() +1;
+		headers.createCell(nextIdx).setCellValue(code);
+		
+		nextTCcufColIndex++;
+		return cufindex;
+	}
+	
+	private String format(String date){
+		if (date == null ){
+			return "";
+		}
+		try{
+			return format(IsoDateUtils.parseIso8601Date(date));
+		}
+		catch(ParseException ex){
+			throw new RuntimeException(ex);
+		}
+	}
+	
+	private String format(Date date){
+		if (date==null){
+			return "";
+		}
+		else{
+			return df.format(date);
+		}
+	}
+	
+	
+	// for now we care only of Excel 2003
+	private void createWorkbook(){
+		Workbook workbook = new HSSFWorkbook();
+		workbook.createSheet(TC_SHEET);
+		workbook.createSheet(ST_SHEET);
+		workbook.createSheet(PRM_SHEET);
+		workbook.createSheet(DS_SHEET);
+		
+		this.workbook = workbook;
+	}
+	
+	private void createHeaders(){
+		Sheet tcSheet = workbook.getSheet(TC_SHEET);
+		Row h = tcSheet.createRow(0);
+		
+		int cIdx = 0;
+		h.createCell(cIdx++).setCellValue("PROJECT_ID");
+		h.createCell(cIdx++).setCellValue("PROJECT_NAME");
+		h.createCell(cIdx++).setCellValue("TC_PATH");
+		h.createCell(cIdx++).setCellValue("TC_NUM");
+		h.createCell(cIdx++).setCellValue("TC_ID");
+		h.createCell(cIdx++).setCellValue("TC_REFERENCE");
+		h.createCell(cIdx++).setCellValue("TC_NAME");
+		h.createCell(cIdx++).setCellValue("TC_WEIGHT_AUTO");
+		h.createCell(cIdx++).setCellValue("TC_WEIGHT");
+		h.createCell(cIdx++).setCellValue("TC_NATURE");
+		h.createCell(cIdx++).setCellValue("TC_TYPE");
+		h.createCell(cIdx++).setCellValue("TC_STATUS");
+		h.createCell(cIdx++).setCellValue("TC_DESCRIPTION");
+		h.createCell(cIdx++).setCellValue("TC_PREREQUISITE");
+		h.createCell(cIdx++).setCellValue("TC_#_REQ");
+		h.createCell(cIdx++).setCellValue("TC_#_CALLED_BY");
+		h.createCell(cIdx++).setCellValue("TC_#_ATTACHMENT");
+		h.createCell(cIdx++).setCellValue("TC_CREATED_ON");
+		h.createCell(cIdx++).setCellValue("TC_CREATED_BY");
+		h.createCell(cIdx++).setCellValue("TC_LAST_MODIFIED_ON");
+		h.createCell(cIdx++).setCellValue("TC_LAST_MODIFIED_BY");
+		
+	}
+
+}

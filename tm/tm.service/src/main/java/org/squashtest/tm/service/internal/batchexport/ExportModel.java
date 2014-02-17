@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
@@ -106,7 +107,7 @@ public class ExportModel {
 		private Long id;
 		private String reference;
 		private String name;
-		private boolean weightAuto;
+		private int weightAuto;
 		private TestCaseImportance weight;
 		private TestCaseNature nature;
 		private TestCaseType type;
@@ -158,7 +159,7 @@ public class ExportModel {
 			this.id = id;
 			this.reference = reference;
 			this.name = name;
-			this.weightAuto = weightAuto;
+			this.weightAuto = weightAuto ? 1 : 0;
 			this.weight = weight;
 			this.nature = nature;
 			this.type = type;
@@ -233,11 +234,11 @@ public class ExportModel {
 			this.name = name;
 		}
 
-		public boolean isWeightAuto() {
+		public int getWeightAuto() {
 			return weightAuto;
 		}
 
-		public void setWeightAuto(boolean weightAuto) {
+		public void setWeightAuto(int weightAuto) {
 			this.weightAuto = weightAuto;
 		}
 
@@ -649,16 +650,16 @@ public class ExportModel {
 		BindableEntity ownerType;
 		String code;
 		String value;
-		Datatype type;
+		InputType type;
 	
 		
-		public CustomField(Long ownerId, BindableEntity ownerType, String code, String value, String type) {
+		public CustomField(Long ownerId, BindableEntity ownerType, String code, String value, InputType type) {
 			super();
 			this.ownerId = ownerId;
 			this.ownerType = ownerType;
 			this.code = code;
 			this.value = value;
-			this.type = Datatype.valueOf(type);
+			this.type = type;
 		}
 		
 		
@@ -679,16 +680,12 @@ public class ExportModel {
 			return value;
 		}
 		
-		public Datatype getType() {
+		public InputType getType(){
 			return type;
 		}
+
 		
 	}
-	
-	static enum Datatype{
-		PLAIN_TEXT,
-		HTML,
-		DATE;
-	}
+
 
 }

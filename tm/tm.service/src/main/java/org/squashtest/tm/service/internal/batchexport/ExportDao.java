@@ -30,21 +30,19 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.type.LongType;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
 
 @Component
-@Scope("prototype")
 public class ExportDao {
 
 	@Inject
 	private SessionFactory factory;
 
 	
-	public ExportDao(SessionFactory factory){
-		this.factory = factory;
+	public ExportDao(){
+		super();
 	}
 	
 	

@@ -187,8 +187,7 @@
 		),
 		
 		@NamedQuery(name = "testCase.excelExportCUF", query= 
-			"select cf.boundEntityId, "+
-					"new org.squashtest.tm.service.internal.batchexport.ExportModel$CustomField(" +
+			"select new org.squashtest.tm.service.internal.batchexport.ExportModel$CustomField(" +
 					"cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cf.inputType) "+
 			"from CustomFieldValue cfv join cfv.binding binding join binding.customField cf "+
 			"where cfv.boundEntityId in (:tcIds) and cfv.boundEntityType = 'TEST_CASE'"			

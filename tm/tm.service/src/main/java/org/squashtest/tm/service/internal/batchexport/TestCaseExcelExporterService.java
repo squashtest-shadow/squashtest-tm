@@ -45,7 +45,25 @@ public class TestCaseExcelExporterService {
 	
 	public File exportAsExcel(List<Long> testCaseIds){
 		
-		return null;
+		// let's chunk the job by batches of 20 test cases 
+		List<Long> ids;
+		int idx=0;
+		ExcelExporter exporter = new ExcelExporter();
+		
+		
+		while (idx < testCaseIds.size()){
+			
+			ids = testCaseIds.subList(idx, idx+20);
+			
+			ExportModel model = exportDao.findModel(testCaseIds); 
+			addPaths(testCaseIds, model);
+			
+			exporter.appendToWorkbook(model);
+			
+			idx = idx+20;
+		}
+		
+		return exporter.print();
 		
 	}
 	
