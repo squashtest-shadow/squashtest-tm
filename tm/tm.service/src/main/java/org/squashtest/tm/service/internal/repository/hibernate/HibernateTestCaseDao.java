@@ -219,7 +219,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Long> findAllTestCasesIdsCalledByTestCases(List<Long> testCasesIds) {
+	public List<Long> findAllTestCasesIdsCalledByTestCases(Collection<Long> testCasesIds) {
 		Query query = currentSession().getNamedQuery("testCase.findAllTestCasesIdsCalledByTestCases");
 		query.setParameterList("testCasesIds", testCasesIds);
 		return query.list();

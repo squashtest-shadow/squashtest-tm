@@ -30,11 +30,11 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.type.LongType;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
 
-@Component
+@Repository
 public class ExportDao {
 
 	@Inject

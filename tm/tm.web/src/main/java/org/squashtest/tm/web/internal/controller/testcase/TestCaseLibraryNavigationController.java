@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
@@ -35,6 +37,7 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
@@ -196,6 +199,22 @@ public class TestCaseLibraryNavigationController extends
 		printExport(dataSource, filename,JASPER_EXPORT_FILE, response, locale, exportformat);
 
 	}
+	
+	@RequestMapping(value = "/content/xls", produces="application/octet-stream", method = RequestMethod.GET, params={"filename", "libraries", "nodes", "calls"})
+	@ResponseBody
+	public FileSystemResource exportAsExcel(@RequestParam("filename") String filename, @RequestParam("libraries") List<Long> libraryIds, 
+							@RequestParam("nodes") List<Long> nodeIds, @RequestParam("calls") Boolean includeCalledTests, HttpServletResponse response) throws FileNotFoundException{
+		
+		
+		response.setContentType("application/octet-stream");
+		response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".xls");
+		
+		File export = testCaseLibraryNavigationService.exportTestCaseAsExcel(libraryIds, nodeIds, includeCalledTests);
+		return new FileSystemResource(export);
+		
+	}
+	
+	
 
 	private void escapePrerequisiteAndSteps(List<ExportTestCaseData> dataSource) {
 		for (ExportTestCaseData data : dataSource) {

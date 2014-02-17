@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -68,6 +69,32 @@ public class TestCaseCallTreeFinder {
 
 		return calleesIds;
 	}
+	
+	/**
+	 * same as {@link #getTestCaseCallTree(Long)}, but for multiple test cases
+	 * 
+	 * @param tcIds
+	 * @return
+	 */
+	public Set<Long> getTestCaseCallTree(Collection<Long> tcIds){
+		
+		Set<Long> result = new HashSet<Long>();
+		
+		Collection<Long> process = tcIds;
+		List<Long> next;
+		
+		while(! process.isEmpty()){
+			next = testCaseDao.findAllTestCasesIdsCalledByTestCases(process);
+			next.removeAll(result);	// remove results that were already processed
+			
+			result.addAll(next);
+			process = next;
+			
+		}
+		
+		return result;
+	}
+	
 	
 	public Set<Long> getTestCaseCallers(Long rootTcId) {
 		

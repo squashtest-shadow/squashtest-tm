@@ -114,9 +114,9 @@ public class ExportModel {
 		private TestCaseStatus status;
 		private String description;
 		private String prerequisite;
-		private Integer nbReq;
+		private Long nbReq;
 		private Long nbCaller;
-		private Integer nbAttachments;
+		private Long nbAttachments;
 		private Date createdOn;
 		private String createdBy;
 		private Date lastModifiedOn;
@@ -143,9 +143,9 @@ public class ExportModel {
 				TestCaseStatus status, 
 				String description,
 				String prerequisite, 
-				Integer nbReq, 
+				Long nbReq, 
 				Long nbCaller,
-				Integer nbAttachments, 
+				Long nbAttachments, 
 				Date createdOn, 
 				String createdBy,
 				Date lastModifiedOn, 
@@ -290,11 +290,11 @@ public class ExportModel {
 			this.prerequisite = prerequisite;
 		}
 
-		public Integer getNbReq() {
+		public Long getNbReq() {
 			return nbReq;
 		}
 
-		public void setNbReq(Integer nbReq) {
+		public void setNbReq(Long nbReq) {
 			this.nbReq = nbReq;
 		}
 
@@ -306,11 +306,11 @@ public class ExportModel {
 			this.nbCaller = nbCaller;
 		}
 
-		public Integer getNbAttachments() {
+		public Long getNbAttachments() {
 			return nbAttachments;
 		}
 
-		public void setNbAttachments(Integer nbAttachments) {
+		public void setNbAttachments(Long nbAttachments) {
 			this.nbAttachments = nbAttachments;
 		}
 

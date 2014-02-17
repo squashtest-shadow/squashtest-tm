@@ -102,6 +102,7 @@ public interface CustomTestCaseDao extends EntityDao<TestCase> {
 	 * @return a structure described just like above.
 	 */
 	List<Object[]> findTestCasesHavingCallerDetails(Collection<Long> testCaseIds);
+	
 
 	/**
 	 * Finds all the ids of the test cases called by a given list of test cases.
@@ -109,7 +110,7 @@ public interface CustomTestCaseDao extends EntityDao<TestCase> {
 	 * @param testCaseId
 	 * @return
 	 */
-	List<Long> findAllTestCasesIdsCalledByTestCases(List<Long> testCasesIds);
+	List<Long> findAllTestCasesIdsCalledByTestCases(Collection<Long> testCasesIds);
 
 	/**
 	 * Finds all the ids of the test cases that are calling the ones matching the testCasesIds parameter

@@ -48,19 +48,21 @@ public class TestCaseExcelExporterService {
 		// let's chunk the job by batches of 20 test cases 
 		List<Long> ids;
 		int idx=0;
+		int max = Math.min(idx+20, testCaseIds.size());
 		ExcelExporter exporter = new ExcelExporter();
 		
 		
 		while (idx < testCaseIds.size()){
 			
-			ids = testCaseIds.subList(idx, idx+20);
+			ids = testCaseIds.subList(idx, max);
 			
-			ExportModel model = exportDao.findModel(testCaseIds); 
+			ExportModel model = exportDao.findModel(ids); 
 			addPaths(testCaseIds, model);
 			
 			exporter.appendToWorkbook(model);
 			
 			idx = idx+20;
+			max = Math.min(idx+20, testCaseIds.size());
 		}
 		
 		return exporter.print();

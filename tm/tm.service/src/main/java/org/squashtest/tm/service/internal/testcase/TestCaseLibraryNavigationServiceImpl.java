@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,6 +45,7 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
 import org.squashtest.tm.service.importer.ImportSummary;
+import org.squashtest.tm.service.internal.batchexport.TestCaseExcelExporterService;
 import org.squashtest.tm.service.internal.importer.TestCaseImporter;
 import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
@@ -97,6 +99,12 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	
 	@Inject
 	private TestCaseStatisticsService statisticsService;
+	
+	@Inject
+	private TestCaseCallTreeFinder calltreeService;
+	
+	@Inject
+	private TestCaseExcelExporterService excelService;
 
 	@Override
 	protected NodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> getDeletionHandler() {
@@ -265,6 +273,18 @@ public class TestCaseLibraryNavigationServiceImpl extends
 		PermissionsUtils.checkPermission(permissionService, nodesIds, "EXPORT", TestCaseLibraryNode.class.getName());
 		List<ExportTestCaseData> testCases = testCaseDao.findTestCaseToExportFromNodes(nodesIds);
 		return (List<ExportTestCaseData>) setFullFolderPath(testCases);
+	}
+	
+	@Override
+	public File exportTestCaseAsExcel(List<Long> libraryIds,
+			List<Long> nodeIds, boolean includeCalledTests) {
+		
+		Collection<Long> allIds = findTestCaseIdsFromSelection(libraryIds, nodeIds);
+		if (includeCalledTests){
+			allIds.addAll(calltreeService.getTestCaseCallTree(allIds));
+		}
+		
+		return excelService.exportAsExcel(new ArrayList<Long>(allIds));
 	}
 	
 	
