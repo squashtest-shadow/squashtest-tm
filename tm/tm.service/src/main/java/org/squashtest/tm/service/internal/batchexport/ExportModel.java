@@ -98,7 +98,7 @@ public class ExportModel {
 		return datasets;
 	}
 
-	public static final class TestCaseModel {
+	public static final class TestCaseModel implements Comparable<TestCaseModel>{
 		
 		private Long projectId;
 		private String projectName;
@@ -175,9 +175,11 @@ public class ExportModel {
 			this.lastModifiedBy = lastModifiedBy;
 		}
 
-
-
-
+				@Override
+		public int compareTo(TestCaseModel tc) {
+			return getPath().compareTo(tc.getPath());
+		}
+		
 		public Long getProjectId() {
 			return projectId;
 		}
@@ -353,28 +355,50 @@ public class ExportModel {
 		public List<CustomField> getCufs() {
 			return cufs;
 		}
-		
+
+
 	}
 	
 	
-	public static final class TestStepModel{
+	public static final class TestStepModel implements Comparable<TestStepModel>{
 		
 		private String tcOwnerPath;
 		private long tcOwnerId;
 		private long id;
 		private int order;
-		private boolean isCallStep;
+		private Integer isCallStep;
 		private String action;
 		private String result;
-		private int nbReq;
-		private int nbAttach;
+		private Long nbReq;
+		private Long nbAttach;
 		private List<CustomField> cufs = new LinkedList<CustomField>();
+
 		
-		
-		public TestStepModel(){
+		public TestStepModel(long tcOwnerId, long id, int order,
+				Integer isCallStep, String action, String result, Long nbReq,
+				Long nbAttach) {
 			super();
+			this.tcOwnerId = tcOwnerId;
+			this.id = id;
+			this.order = order;
+			this.isCallStep = isCallStep;
+			this.action = action;
+			this.result = result;
+			this.nbReq = nbReq;
+			this.nbAttach = nbAttach;
 		}
 
+		@Override
+		public int compareTo(TestStepModel step2) {
+			int comp1 = getTcOwnerPath().compareTo(step2.getTcOwnerPath());
+			if (comp1 == 0){
+				return getOrder() - step2.getOrder();
+			}
+			else{
+				return comp1;
+			}
+		}
+		
 
 		public String getTcOwnerPath() {
 			return tcOwnerPath;
@@ -416,12 +440,12 @@ public class ExportModel {
 		}
 
 
-		public boolean isCallStep() {
+		public Integer getIsCallStep() {
 			return isCallStep;
 		}
 
 
-		public void setCallStep(boolean isCallStep) {
+		public void setIsCallStep(Integer isCallStep) {
 			this.isCallStep = isCallStep;
 		}
 
@@ -446,22 +470,22 @@ public class ExportModel {
 		}
 
 
-		public int getNbReq() {
+		public Long getNbReq() {
 			return nbReq;
 		}
 
 
-		public void setNbReq(int nbReq) {
+		public void setNbReq(Long nbReq) {
 			this.nbReq = nbReq;
 		}
 
 
-		public int getNbAttach() {
+		public Long getNbAttach() {
 			return nbAttach;
 		}
 
 
-		public void setNbAttach(int nbAttach) {
+		public void setNbAttach(Long nbAttach) {
 			this.nbAttach = nbAttach;
 		}
 

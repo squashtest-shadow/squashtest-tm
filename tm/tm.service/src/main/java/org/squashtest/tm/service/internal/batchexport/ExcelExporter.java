@@ -39,6 +39,7 @@ import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.TestStepModel;
 
 
 /**
@@ -52,17 +53,11 @@ class ExcelExporter {
 	private static final String PRM_SHEET = "PARAMETERS";
 	private static final String ST_SHEET  = "STEPS";
 	private static final String TC_SHEET  = "TEST_CASES";
-	
-	// that map will remember which test case id corresponds to which path
-	private Map<String, Long> idByPath = new HashMap<String, Long>();
+
 	
 	// that map will remember which column index is 
 	private Map<String, Integer> cufColumnsByCode = new HashMap<String, Integer>();
-	
-	private Integer nextTCcufColIndex = 22; // that is the number of basic columns in that export.	
-	//private Integer nextSTcufColIndex = 0;
-	
-	private DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
+
 	
 	private Workbook workbook;
 	
@@ -77,6 +72,7 @@ class ExcelExporter {
 	public void appendToWorkbook(ExportModel model){
 		
 		appendTestCases(model);
+		appendTestSteps(model);
 		
 	}
 	
@@ -109,8 +105,6 @@ class ExcelExporter {
 			
 			r = tcSheet.createRow(rIdx);
 			
-			idByPath.put(tcm.getPath(), tcm.getId());
-			
 			r.createCell(cIdx++).setCellValue(tcm.getProjectId());
 			r.createCell(cIdx++).setCellValue(tcm.getProjectName());
 			r.createCell(cIdx++).setCellValue(tcm.getPath());
@@ -133,47 +127,75 @@ class ExcelExporter {
 			r.createCell(cIdx++).setCellValue(format(tcm.getLastModifiedOn()));
 			r.createCell(cIdx++).setCellValue(tcm.getLastModifiedBy());
 					
-			appendCustomFields(r, tcm);
+			appendCustomFields(r, "TC_CUF_", tcm.getCufs());
 			
 			rIdx++;
 			cIdx=0;
 		}
 	}
 	
-	
-	private void appendCustomFields(Row r, TestCaseModel tcm){
+	private void appendTestSteps(ExportModel model){
 		
-		for (CustomField cuf : tcm.getCufs()){
+		List<TestStepModel> models = model.getTestSteps();
+		Sheet tcSheet = workbook.getSheet(ST_SHEET);
+		
+		Row r;
+		int rIdx = tcSheet.getLastRowNum()+1;
+		int cIdx = 0;
+		
+		for (TestStepModel tsm : models){
 			
-			String code = "TC_CUF_"+cuf.getCode();
+			r = tcSheet.createRow(rIdx);
+			
+			r.createCell(cIdx++).setCellValue(tsm.getTcOwnerPath());
+			r.createCell(cIdx++).setCellValue(tsm.getTcOwnerId());
+			r.createCell(cIdx++).setCellValue(tsm.getId());
+			r.createCell(cIdx++).setCellValue(tsm.getOrder());
+			r.createCell(cIdx++).setCellValue(tsm.getIsCallStep());
+			r.createCell(cIdx++).setCellValue(tsm.getAction());
+			r.createCell(cIdx++).setCellValue(tsm.getResult());
+			r.createCell(cIdx++).setCellValue(tsm.getNbReq());
+			r.createCell(cIdx++).setCellValue(tsm.getNbAttach());
+					
+			appendCustomFields(r, "TC_STEP_CUF_", tsm.getCufs());
+			
+			rIdx++;
+			cIdx=0;
+		}		
+	}
+	
+
+
+	private void appendCustomFields(Row r, String codePrefix, List<CustomField> cufs){
+		
+		for (CustomField cuf : cufs){
+			
+			String code = codePrefix + cuf.getCode();
 			Integer idx = cufColumnsByCode.get(code);
 			
 			// if unknown : register it
 			if (idx == null){
-				idx = registerTCCuf(code);
+				idx = registerCuf(r.getSheet(), code);
 			}
 			
 			Cell c = r.createCell(idx);
 			String value = (cuf.getType() == InputType.DATE_PICKER) ? format(cuf.getValue()) : cuf.getValue();
 			c.setCellValue(value);
 		}
-		
 	}
 	
 	
-	private int registerTCCuf(String code){
+	private int registerCuf(Sheet sheet, String code){
 		
-		int cufindex = nextTCcufColIndex;
-		cufColumnsByCode.put(code, nextTCcufColIndex);
-		
-		Sheet tcSheet = workbook.getSheet(TC_SHEET);
-		Row headers = tcSheet.getRow(0);
-		int nextIdx = headers.getLastCellNum() +1;
+		Row headers = sheet.getRow(0);
+		int nextIdx = headers.getLastCellNum();
 		headers.createCell(nextIdx).setCellValue(code);
 		
-		nextTCcufColIndex++;
-		return cufindex;
+		cufColumnsByCode.put(code, nextIdx);
+		
+		return nextIdx;
 	}
+	
 	
 	private String format(String date){
 		if (date == null ){
@@ -186,16 +208,17 @@ class ExcelExporter {
 			throw new RuntimeException(ex);
 		}
 	}
+
 	
 	private String format(Date date){
 		if (date==null){
 			return "";
 		}
 		else{
-			return df.format(date);
+			return IsoDateUtils.formatIso8601Date(date);
 		}
 	}
-	
+
 	
 	// for now we care only of Excel 2003
 	private void createWorkbook(){
@@ -235,6 +258,19 @@ class ExcelExporter {
 		h.createCell(cIdx++).setCellValue("TC_LAST_MODIFIED_ON");
 		h.createCell(cIdx++).setCellValue("TC_LAST_MODIFIED_BY");
 		
+		
+		Sheet stSheet = workbook.getSheet(ST_SHEET);
+		h = stSheet.createRow(0);
+		cIdx = 0;
+		h.createCell(cIdx++).setCellValue("TC_OWNER_PATH");
+		h.createCell(cIdx++).setCellValue("TC_OWNER_ID");
+		h.createCell(cIdx++).setCellValue("TC_STEP_ID");
+		h.createCell(cIdx++).setCellValue("TC_STEP_NUM");
+		h.createCell(cIdx++).setCellValue("TC_STEP_IS_CALL_STEP");
+		h.createCell(cIdx++).setCellValue("TC_STEP_ACTION");
+		h.createCell(cIdx++).setCellValue("TC_STEP_EXPECTED_RESULT");
+		h.createCell(cIdx++).setCellValue("TC_STEP_#_REQ");
+		h.createCell(cIdx++).setCellValue("TC_STEP_#_ATTACHMENT");
 	}
 
 }

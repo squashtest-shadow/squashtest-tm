@@ -213,6 +213,28 @@
 		@NamedQuery(name = "testStep.findOrderedListById", query = "select step from TestCase testCase inner join testCase.steps step where step.id in (:testStepIds) order by index(step)"),
 		@NamedQuery(name = "testStep.findPositionOfStep", query = "select index(tsteps) from TestCase tc join tc.steps tsteps where tsteps.id = :stepId"),
 		@NamedQuery(name = "testStep.stringIsFoundInStepsOfTestCase", query = "select count(steps) from TestCase tc join tc.steps steps where tc.id = :testCaseId and (steps.action like :stringToFind or steps.expectedResult like :stringToFind ) "),
+		@NamedQuery(name = "testStep.excelExportActionSteps", 
+					query = "select tc.id, st.id, index(st), 0, st.action, st.expectedResult, count(distinct req), count(attach) " +
+							"from TestCase tc inner join tc.steps st inner join st.attachmentList atlist left join atlist.attachments attach left join st.requirementVersionCoverages "+
+							"where st.class = ActionTestStep "+
+							"and tc.id in (:testCaseIds) "+
+							"group by tc"
+		),
+		@NamedQuery(name = "testStep.excelExportCallSteps", 
+					query = "select tc.id, st.id, index(st), 1, cast(st.calledTestCase as String), '', count(distinct req), count(attach) " +
+							"from TestCase tc inner join tc.steps st inner join st.attachmentList atlist left join atlist.attachments attach left join st.requirementVersionCoverages "+
+							"where st.class = ActionTestStep "+
+							"and tc.id in (:testCaseIds) "+
+							"group by tc"
+		),
+		@NamedQuery(name = "testStep.excelExportCUF", query= 
+			"select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cf.inputType "+
+			"from CustomFieldValue cfv join cfv.binding binding join binding.customField cf "+
+			"where cfv.boundEntityId in ("+
+				"select st.id from TestCase tc inner join tc.steps st where tc.id in (:testCaseIds)"+
+			") "+
+			"and cfv.boundEntityType = 'TEST_STEP'"			
+		),		
 		
 		//TestParameters
 		@NamedQuery(name = "parameter.findAllByTestCases", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id in (:testCaseIds) order by testCase.name,  parameter.name "),

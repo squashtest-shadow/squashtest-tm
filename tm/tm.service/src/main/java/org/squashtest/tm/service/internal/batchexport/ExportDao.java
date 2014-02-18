@@ -21,6 +21,8 @@
 package org.squashtest.tm.service.internal.batchexport;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -33,6 +35,7 @@ import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.TestStepModel;
 import org.squashtest.tm.service.internal.repository.hibernate.EasyConstructorResultTransformer;
 
 @Repository
@@ -54,8 +57,7 @@ public class ExportDao {
 		List<TestCaseModel> tclnModels = findTestCaseModels(tclnIds);
 		
 		model.setTestCases(tclnModels);
-		
-		
+				
 		return model;
 		
 	}
@@ -93,7 +95,7 @@ public class ExportDao {
 			
 			while (cufIter.hasNext()){
 				CustomField cuf = cufIter.next();
-				if (id == cuf.getOwnerId()){
+				if (id.equals(cuf.getOwnerId())){
 					model.addCuf(cuf);
 					cufIter.remove();
 				}
@@ -103,6 +105,50 @@ public class ExportDao {
 		// end
 		return models;
 	
+	}
+	
+	
+	private List<TestStepModel> getStepsModel(List<Long> tcIds){
+		
+		Session session = factory.getCurrentSession();
+		List<TestStepModel> models = new ArrayList<TestStepModel>(tcIds.size());
+		List<TestStepModel> buffer;
+		
+		Query q1 = session.getNamedQuery("testStep.excelExportActionSteps");
+		q1.setParameterList("testCaseIds", tcIds, LongType.INSTANCE);
+		q1.setResultTransformer(new EasyConstructorResultTransformer(TestStepModel.class));
+		buffer = q1.list();
+		models.addAll(buffer);
+		
+		Query q2 = session.getNamedQuery("testCase.excelExportCallSteps"); 
+		q2.setParameterList("testCaseIds", tcIds, LongType.INSTANCE);
+		q2.setResultTransformer(new EasyConstructorResultTransformer(TestStepModel.class));
+		buffer = q2.list();		
+		models.addAll(buffer);
+		
+		//get the cufs
+		Query q3 = session.getNamedQuery("testStep.excelExportCUF");
+		q3.setParameterList("tcIds", tcIds, LongType.INSTANCE);
+		q3.setResultTransformer(new EasyConstructorResultTransformer(CustomField.class));
+		List<CustomField> cufModels = q3.list();
+		
+		// add them to the test case models
+		for (TestStepModel model : models){
+			Long id = model.getId();
+			ListIterator<CustomField> cufIter = cufModels.listIterator();
+			
+			while (cufIter.hasNext()){
+				CustomField cuf = cufIter.next();
+				if (id.equals(cuf.getOwnerId())){
+					model.addCuf(cuf);
+					cufIter.remove();
+				}
+			}
+		}	
+	
+		
+		// done
+		return models;
 	}
 	
  
