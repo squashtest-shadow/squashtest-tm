@@ -98,7 +98,7 @@ public class ExportModel {
 		return datasets;
 	}
 
-	static final class TestCaseModel {
+	public static final class TestCaseModel {
 		
 		private Long projectId;
 		private String projectName;
@@ -357,7 +357,7 @@ public class ExportModel {
 	}
 	
 	
-	static final class TestStepModel{
+	public static final class TestStepModel{
 		
 		private String tcOwnerPath;
 		private long tcOwnerId;
@@ -477,7 +477,7 @@ public class ExportModel {
 	}
 	
 	
-	static final class ParameterModel{
+	public static final class ParameterModel{
 		
 		private String tcOwnerPath;
 		private long tcOwnerId;
@@ -544,7 +544,7 @@ public class ExportModel {
 	}
 	
 	
-	static final class DatasetModel{
+	public static final class DatasetModel{
 		
 		private String tcOwnerPath;
 		private long ownerId;
@@ -644,7 +644,7 @@ public class ExportModel {
 	}
 	
 	
-	static final class CustomField{
+	public static final class CustomField{
 		
 		Long ownerId;
 		BindableEntity ownerType;

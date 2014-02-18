@@ -33,6 +33,7 @@ import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
+import org.squashtest.tm.service.internal.repository.hibernate.EasyConstructorResultTransformer;
 
 @Repository
 public class ExportDao {
@@ -65,22 +66,25 @@ public class ExportDao {
 		List<TestCaseModel> models = new ArrayList<TestCaseModel>(tclnIds.size());
 		List<TestCaseModel> buffer;
 		
-		
+
 		// get the models
-		Query q = session.getNamedQuery("testCase.excelExportDataFromFolder"); 
-		q.setParameterList("testCaseIds", tclnIds, LongType.INSTANCE);
-		buffer = q.list();		
+		Query q1 = session.getNamedQuery("testCase.excelExportDataFromFolder"); 
+		q1.setParameterList("testCaseIds", tclnIds, LongType.INSTANCE);
+		q1.setResultTransformer(new EasyConstructorResultTransformer(TestCaseModel.class));
+		buffer = q1.list();		
 		models.addAll(buffer);
 		
-		q = session.getNamedQuery("testCase.excelExportDataFromLibrary"); 
-		q.setParameterList("testCaseIds", tclnIds, LongType.INSTANCE);
-		buffer = q.list();		
+		Query q2 = session.getNamedQuery("testCase.excelExportDataFromLibrary"); 
+		q2.setParameterList("testCaseIds", tclnIds, LongType.INSTANCE);
+		q2.setResultTransformer(new EasyConstructorResultTransformer(TestCaseModel.class));
+		buffer = q2.list();		
 		models.addAll(buffer);
 		
 		//get the cufs
-		q = session.getNamedQuery("testCase.excelExportCUF");
-		q.setParameterList("tcIds", tclnIds, LongType.INSTANCE);
-		List<CustomField> cufModels = q.list();
+		Query q3 = session.getNamedQuery("testCase.excelExportCUF");
+		q3.setParameterList("tcIds", tclnIds, LongType.INSTANCE);
+		q3.setResultTransformer(new EasyConstructorResultTransformer(CustomField.class));
+		List<CustomField> cufModels = q3.list();
 		
 		// add them to the test case models
 		for (TestCaseModel model : models){

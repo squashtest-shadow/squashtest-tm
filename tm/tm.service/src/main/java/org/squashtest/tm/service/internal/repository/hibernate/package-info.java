@@ -160,13 +160,12 @@
 		@NamedQuery(name = "testCase.findAllTCImpWithImpAuto", query = "select tc.id, tc.importance from TestCase tc where tc.id in (:testCasesIds) and tc.importanceAuto = true"),
 		
 		@NamedQuery(name = "testCase.excelExportDataFromFolder", query = 
-			"select new org.squashtest.tm.service.internal.batchexport.ExportModel$TestCaseModel("+
-					"p.id, p.name, index(tc), tc.id, tc.reference, tc.name, tc.importanceAuto, tc.importance, tc.nature, "+
+			"select p.id, p.name, index(tc), tc.id, tc.reference, tc.name, tc.importanceAuto, tc.importance, tc.nature, "+
 					"tc.type, tc.status, tc.description, tc.prerequisite, count(req), "+
 					"("+
 						"select count(distinct caller) from TestCase caller join caller.steps steps join steps.calledTestCase called where steps.class = CallTestStep and called.id = tc.id"+
 					"), "+
-					"count(attach), tc.audit.createdOn, tc.audit.createdBy, tc.audit.lastModifiedOn, tc.audit.lastModifiedBy) "+
+					"count(attach), tc.audit.createdOn, tc.audit.createdBy, tc.audit.lastModifiedOn, tc.audit.lastModifiedBy "+
 					"from TestCaseFolder f join f.content tc join tc.project p inner join tc.attachmentList atlist left join atlist.attachments attach left join tc.requirementVersionCoverages req "+
 					"where tc.id in (:testCaseIds) "+
 					"group by tc"
@@ -174,21 +173,19 @@
 		),
 		
 		@NamedQuery(name = "testCase.excelExportDataFromLibrary", query = 
-			"select new org.squashtest.tm.service.internal.batchexport.ExportModel$TestCaseModel("+
-					"p.id, p.name, index(tc), tc.id, tc.reference, tc.name, tc.importanceAuto, tc.importance, tc.nature, "+
+			"select p.id, p.name, index(tc), tc.id, tc.reference, tc.name, tc.importanceAuto, tc.importance, tc.nature, "+
 					"tc.type, tc.status, tc.description, tc.prerequisite, count(req), "+
 					"("+
 						"select count(distinct caller) from TestCase caller join caller.steps steps join steps.calledTestCase called where steps.class = CallTestStep and called.id = tc.id"+
 					"), "+
-					"count(attach), tc.audit.createdOn, tc.audit.createdBy, tc.audit.lastModifiedOn, tc.audit.lastModifiedBy) "+
+					"count(attach), tc.audit.createdOn, tc.audit.createdBy, tc.audit.lastModifiedOn, tc.audit.lastModifiedBy "+
 					"from TestCaseLibrary tcl join tcl.rootContent tc join tc.project p inner join tc.attachmentList atlist left join atlist.attachments attach left join tc.requirementVersionCoverages req "+
 					"where tc.id in (:testCaseIds) "	+
 					"group by tc"
 		),
 		
 		@NamedQuery(name = "testCase.excelExportCUF", query= 
-			"select new org.squashtest.tm.service.internal.batchexport.ExportModel$CustomField(" +
-					"cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cf.inputType) "+
+			"select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cf.inputType "+
 			"from CustomFieldValue cfv join cfv.binding binding join binding.customField cf "+
 			"where cfv.boundEntityId in (:tcIds) and cfv.boundEntityType = 'TEST_CASE'"			
 		),
