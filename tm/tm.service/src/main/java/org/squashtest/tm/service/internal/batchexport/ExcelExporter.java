@@ -22,9 +22,7 @@ package org.squashtest.tm.service.internal.batchexport;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +36,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.ParameterModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestStepModel;
 
@@ -73,7 +72,7 @@ class ExcelExporter {
 		
 		appendTestCases(model);
 		appendTestSteps(model);
-		
+		appendParameters(model);
 	}
 	
 	
@@ -137,15 +136,15 @@ class ExcelExporter {
 	private void appendTestSteps(ExportModel model){
 		
 		List<TestStepModel> models = model.getTestSteps();
-		Sheet tcSheet = workbook.getSheet(ST_SHEET);
+		Sheet stSheet = workbook.getSheet(ST_SHEET);
 		
 		Row r;
-		int rIdx = tcSheet.getLastRowNum()+1;
+		int rIdx = stSheet.getLastRowNum()+1;
 		int cIdx = 0;
 		
 		for (TestStepModel tsm : models){
 			
-			r = tcSheet.createRow(rIdx);
+			r = stSheet.createRow(rIdx);
 			
 			r.createCell(cIdx++).setCellValue(tsm.getTcOwnerPath());
 			r.createCell(cIdx++).setCellValue(tsm.getTcOwnerId());
@@ -164,7 +163,29 @@ class ExcelExporter {
 		}		
 	}
 	
-
+	private void appendParameters(ExportModel model){
+		
+		List<ParameterModel> models = model.getParameters();
+		Sheet pSheet = workbook.getSheet(PRM_SHEET);
+		
+		Row r;
+		int rIdx = pSheet.getLastRowNum()+1;
+		int cIdx = 0;
+		
+		for (ParameterModel pm : models){
+			r = pSheet.createRow(rIdx);
+			
+			r.createCell(cIdx++).setCellValue(pm.getTcOwnerPath());
+			r.createCell(cIdx++).setCellValue(pm.getTcOwnerId());
+			r.createCell(cIdx++).setCellValue(pm.getId());
+			r.createCell(cIdx++).setCellValue(pm.getName());
+			r.createCell(cIdx++).setCellValue(pm.getDescription());
+			
+			rIdx++;
+			cIdx=0;
+		}
+	}
+	
 
 	private void appendCustomFields(Row r, String codePrefix, List<CustomField> cufs){
 		
@@ -271,6 +292,16 @@ class ExcelExporter {
 		h.createCell(cIdx++).setCellValue("TC_STEP_EXPECTED_RESULT");
 		h.createCell(cIdx++).setCellValue("TC_STEP_#_REQ");
 		h.createCell(cIdx++).setCellValue("TC_STEP_#_ATTACHMENT");
+		
+		
+		Sheet pSheet = workbook.getSheet(PRM_SHEET);
+		h = pSheet.createRow(0);
+		cIdx = 0;
+		h.createCell(cIdx++).setCellValue("TC_OWNER_PATH");
+		h.createCell(cIdx++).setCellValue("TC_OWNER_ID");
+		h.createCell(cIdx++).setCellValue("TC_PARAM_ID");
+		h.createCell(cIdx++).setCellValue("TC_PARAM_NAME");
+		h.createCell(cIdx++).setCellValue("TC_PARAM_DESCRIPTION");
 	}
 
 }

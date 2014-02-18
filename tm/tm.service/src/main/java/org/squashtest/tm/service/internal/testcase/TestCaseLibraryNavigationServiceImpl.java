@@ -276,6 +276,7 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	}
 	
 	@Override
+	@Transactional(readOnly=true)
 	public File exportTestCaseAsExcel(List<Long> libraryIds,
 			List<Long> nodeIds, boolean includeCalledTests) {
 		

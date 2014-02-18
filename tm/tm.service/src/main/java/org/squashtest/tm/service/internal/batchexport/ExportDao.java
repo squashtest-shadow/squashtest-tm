@@ -26,12 +26,14 @@ import java.util.ListIterator;
 
 import javax.inject.Inject;
 
+import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.ParameterModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestStepModel;
 import org.squashtest.tm.service.internal.repository.hibernate.EasyConstructorResultTransformer;
@@ -54,9 +56,11 @@ public class ExportDao {
 		
 		List<TestCaseModel> tclnModels = findTestCaseModels(tclnIds);
 		List<TestStepModel> stepModels = findStepsModel(tclnIds);
+		List<ParameterModel> paramModels = findParametersModel(tclnIds);
 		
 		model.setTestCases(tclnModels);
 		model.setTestSteps(stepModels);
+		model.setParameters(paramModels);
 				
 		return model;
 		
@@ -64,7 +68,7 @@ public class ExportDao {
 	
 	private List<TestCaseModel> findTestCaseModels(List<Long> tclnIds){
 		
-		Session session = factory.getCurrentSession();
+		Session session = getStatelessSession();
 		List<TestCaseModel> models = new ArrayList<TestCaseModel>(tclnIds.size());
 		List<TestCaseModel> buffer;
 		
@@ -110,7 +114,7 @@ public class ExportDao {
 	
 	private List<TestStepModel> findStepsModel(List<Long> tcIds){
 		
-		Session session = factory.getCurrentSession();
+		Session session = getStatelessSession();
 		List<TestStepModel> models = new ArrayList<TestStepModel>(tcIds.size());
 		List<TestStepModel> buffer;
 		
@@ -151,6 +155,18 @@ public class ExportDao {
 		return models;
 	}
 	
- 
+	private List<ParameterModel> findParametersModel(List<Long> tcIds){
+		Query q = getStatelessSession().getNamedQuery("parameter.excelExport");
+		q.setParameterList("testCaseIds", tcIds);
+		q.setResultTransformer(new EasyConstructorResultTransformer(ParameterModel.class));
+		return q.list();
+	}
+	
+	
+	private Session getStatelessSession(){
+		Session s = factory.getCurrentSession();
+		s.setFlushMode(FlushMode.MANUAL);
+		return s;
+	}
 	
 }

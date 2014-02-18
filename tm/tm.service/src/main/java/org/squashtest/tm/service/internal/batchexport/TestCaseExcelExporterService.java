@@ -32,6 +32,7 @@ import javax.inject.Inject;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.ParameterModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestStepModel;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
@@ -92,6 +93,7 @@ public class TestCaseExcelExporterService {
 
 		addPathsForTestCase(pathById, models);
 		addPathsForTestSteps(pathById, models);
+		addPathsForParameters(pathById, models);
 
 	}
 	
@@ -104,7 +106,7 @@ public class TestCaseExcelExporterService {
 		}
 		
 	}
-	
+
 	private void addPathsForTestSteps(Map<Long, String> pathById, ExportModel models){
 		
 		
@@ -143,10 +145,21 @@ public class TestCaseExcelExporterService {
 		}
 	}
 
+	
+	private void addPathsForParameters(Map<Long, String> pathById, ExportModel models){
+		for (ParameterModel model : models.getParameters()){
+			Long id = model.getTcOwnerId();
+			String path = pathById.get(id);
+			model.setTcOwnerPath(path);
+		}
+	}
+	
+	
 
 	private void sort(ExportModel models){
 		Collections.sort(models.getTestCases());
 		Collections.sort(models.getTestSteps());
+		Collections.sort(models.getParameters());
 	}
 	
 

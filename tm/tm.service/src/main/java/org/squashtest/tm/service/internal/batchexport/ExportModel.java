@@ -508,7 +508,7 @@ public class ExportModel {
 	}
 	
 	
-	public static final class ParameterModel{
+	public static final class ParameterModel implements Comparable<ParameterModel>{
 		
 		private String tcOwnerPath;
 		private long tcOwnerId;
@@ -517,10 +517,27 @@ public class ExportModel {
 		private String description;
 		
 		
-		public ParameterModel(){
+	
+
+		public ParameterModel(long tcOwnerId, long id, String name,
+				String description) {
 			super();
+			this.tcOwnerId = tcOwnerId;
+			this.id = id;
+			this.name = name;
+			this.description = description;
 		}
 
+		@Override
+		public int compareTo(ParameterModel param) {
+			int comp1 = getTcOwnerPath().compareTo(param.getTcOwnerPath());
+			if (comp1 == 0){
+				return getName().compareTo(param.getName());
+			}
+			else{
+				return comp1;
+			}
+		}
 
 		public String getTcOwnerPath() {
 			return tcOwnerPath;
