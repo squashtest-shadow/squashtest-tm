@@ -374,9 +374,16 @@ public class ExportModel {
 		private List<CustomField> cufs = new LinkedList<CustomField>();
 
 		
-		public TestStepModel(long tcOwnerId, long id, int order,
-				Integer isCallStep, String action, String result, Long nbReq,
+		public TestStepModel(
+				long tcOwnerId, 
+				long id, 
+				int order,
+				Integer isCallStep, 
+				String action, 
+				String result, 
+				Long nbReq,
 				Long nbAttach) {
+			
 			super();
 			this.tcOwnerId = tcOwnerId;
 			this.id = id;

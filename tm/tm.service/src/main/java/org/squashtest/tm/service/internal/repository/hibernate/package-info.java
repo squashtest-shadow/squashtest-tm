@@ -215,17 +215,17 @@
 		@NamedQuery(name = "testStep.stringIsFoundInStepsOfTestCase", query = "select count(steps) from TestCase tc join tc.steps steps where tc.id = :testCaseId and (steps.action like :stringToFind or steps.expectedResult like :stringToFind ) "),
 		@NamedQuery(name = "testStep.excelExportActionSteps", 
 					query = "select tc.id, st.id, index(st), 0, st.action, st.expectedResult, count(distinct req), count(attach) " +
-							"from TestCase tc inner join tc.steps st inner join st.attachmentList atlist left join atlist.attachments attach left join st.requirementVersionCoverages "+
+							"from TestCase tc inner join tc.steps st inner join st.attachmentList atlist left join atlist.attachments attach left join st.requirementVersionCoverages req "+
 							"where st.class = ActionTestStep "+
 							"and tc.id in (:testCaseIds) "+
-							"group by tc"
+							"group by st"
 		),
 		@NamedQuery(name = "testStep.excelExportCallSteps", 
-					query = "select tc.id, st.id, index(st), 1, cast(st.calledTestCase as String), '', count(distinct req), count(attach) " +
-							"from TestCase tc inner join tc.steps st inner join st.attachmentList atlist left join atlist.attachments attach left join st.requirementVersionCoverages "+
-							"where st.class = ActionTestStep "+
+					query = "select tc.id, st.id, index(st), 1, cast(st.calledTestCase.id as string), '', 0l, 0l " +
+							"from TestCase tc inner join tc.steps st "+
+							"where st.class = CallTestStep "+
 							"and tc.id in (:testCaseIds) "+
-							"group by tc"
+							"group by st"
 		),
 		@NamedQuery(name = "testStep.excelExportCUF", query= 
 			"select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cf.inputType "+

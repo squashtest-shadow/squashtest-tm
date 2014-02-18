@@ -21,8 +21,6 @@
 package org.squashtest.tm.service.internal.batchexport;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -55,8 +53,10 @@ public class ExportDao {
 		ExportModel model = new ExportModel();
 		
 		List<TestCaseModel> tclnModels = findTestCaseModels(tclnIds);
+		List<TestStepModel> stepModels = findStepsModel(tclnIds);
 		
 		model.setTestCases(tclnModels);
+		model.setTestSteps(stepModels);
 				
 		return model;
 		
@@ -108,7 +108,7 @@ public class ExportDao {
 	}
 	
 	
-	private List<TestStepModel> getStepsModel(List<Long> tcIds){
+	private List<TestStepModel> findStepsModel(List<Long> tcIds){
 		
 		Session session = factory.getCurrentSession();
 		List<TestStepModel> models = new ArrayList<TestStepModel>(tcIds.size());
@@ -120,7 +120,7 @@ public class ExportDao {
 		buffer = q1.list();
 		models.addAll(buffer);
 		
-		Query q2 = session.getNamedQuery("testCase.excelExportCallSteps"); 
+		Query q2 = session.getNamedQuery("testStep.excelExportCallSteps"); 
 		q2.setParameterList("testCaseIds", tcIds, LongType.INSTANCE);
 		q2.setResultTransformer(new EasyConstructorResultTransformer(TestStepModel.class));
 		buffer = q2.list();		
@@ -128,7 +128,7 @@ public class ExportDao {
 		
 		//get the cufs
 		Query q3 = session.getNamedQuery("testStep.excelExportCUF");
-		q3.setParameterList("tcIds", tcIds, LongType.INSTANCE);
+		q3.setParameterList("testCaseIds", tcIds, LongType.INSTANCE);
 		q3.setResultTransformer(new EasyConstructorResultTransformer(CustomField.class));
 		List<CustomField> cufModels = q3.list();
 		
