@@ -25,8 +25,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -259,20 +261,17 @@ public class TestCaseLibraryNavigationServiceImpl extends
 
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<ExportTestCaseData> findTestCasesToExportFromLibrary(List<Long> ids) {
-		PermissionsUtils.checkPermission(permissionService, ids, "EXPORT", TestCaseLibrary.class.getName());
-		List<ExportTestCaseData> testCases = testCaseDao.findTestCaseToExportFromLibrary(ids);
-		return (List<ExportTestCaseData>) setFullFolderPath(testCases);
-	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<ExportTestCaseData> findTestCasesToExportFromNodes(List<Long> nodesIds) {
-		PermissionsUtils.checkPermission(permissionService, nodesIds, "EXPORT", TestCaseLibraryNode.class.getName());
-		List<ExportTestCaseData> testCases = testCaseDao.findTestCaseToExportFromNodes(nodesIds);
+	@Transactional(readOnly=true)
+	public List<ExportTestCaseData> findTestCasesToExport(List<Long> libraryIds, List<Long> nodeIds, boolean includeCalledTests){
+
+		Collection<Long> allIds = findTestCaseIdsFromSelection(libraryIds, nodeIds, includeCalledTests);
+		allIds = securityFilterIds(allIds, "org.squashtest.tm.domain.testcase.TestCase", "EXPORT");
+		
+		List<ExportTestCaseData> testCases = testCaseDao.findTestCaseToExportFromNodes(new ArrayList<Long>(allIds));
 		return (List<ExportTestCaseData>) setFullFolderPath(testCases);
+		
 	}
 	
 	@Override
@@ -280,10 +279,8 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	public File exportTestCaseAsExcel(List<Long> libraryIds,
 			List<Long> nodeIds, boolean includeCalledTests) {
 		
-		Collection<Long> allIds = findTestCaseIdsFromSelection(libraryIds, nodeIds);
-		if (includeCalledTests){
-			allIds.addAll(calltreeService.getTestCaseCallTree(allIds));
-		}
+		Collection<Long> allIds = findTestCaseIdsFromSelection(libraryIds, nodeIds, includeCalledTests);
+		allIds = securityFilterIds(allIds, "org.squashtest.tm.domain.testcase.TestCase", "EXPORT");
 		
 		return excelService.exportAsExcel(new ArrayList<Long>(allIds));
 	}
@@ -298,30 +295,42 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	}
 	
 	
+	@Override
 	public Collection<Long> findTestCaseIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds){
+		return findTestCaseIdsFromSelection(libraryIds, nodeIds, false);
+	}
+	
+	@Override
+	public Collection<Long> findTestCaseIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds, boolean includeCalledTests){
 		
-		// filter out unreadable entities		
-		Collection<Long> effectiveLibIds = collectSecReadableIds(libraryIds, "org.squashtest.tm.domain.testcase.TestCaseLibrary");
-		Collection<Long> effectiveNodeIds = collectSecReadableIds(nodeIds, "org.squashtest.tm.domain.testcase.TestCaseLibraryNode");			
-
 		// get all the test cases
 		Collection<Long> tcIds = new ArrayList<Long>();
 		
-		if (! effectiveLibIds.isEmpty()){
-			tcIds.addAll(testCaseDao.findAllTestCaseIdsByLibraries(effectiveLibIds));	
+		if (! libraryIds.isEmpty()){
+			tcIds.addAll(testCaseDao.findAllTestCaseIdsByLibraries(libraryIds));	
 		}
-		if (! effectiveNodeIds.isEmpty()){
-			tcIds.addAll(testCaseDao.findAllTestCaseIdsByNodeIds(effectiveNodeIds));
+		if (! nodeIds.isEmpty()){
+			tcIds.addAll(testCaseDao.findAllTestCaseIdsByNodeIds(nodeIds));
 		}
+		if (includeCalledTests){
+			tcIds.addAll(calltreeService.getTestCaseCallTree(tcIds));
+		}
+
+		// filter out duplicates
+		Set<Long> set = new HashSet<Long>(tcIds);
+		tcIds = new ArrayList<Long>(set);
 		
+		// sec check
+		tcIds = securityFilterIds(tcIds, "org.squashtest.tm.domain.testcase.TestCase", "READ");
+
 		return tcIds;
 		
 	}
 	
-	private Collection<Long> collectSecReadableIds(Collection<Long> original, String entityType){
+	private Collection<Long> securityFilterIds(Collection<Long> original, String entityType, String permission){
 		Collection<Long> effective = new ArrayList<Long>();
 		for (Long id : original){
-			if (permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "READ", id, entityType)){
+			if (permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", permission, id, entityType)){
 				effective.add(id);
 			}	
 		}

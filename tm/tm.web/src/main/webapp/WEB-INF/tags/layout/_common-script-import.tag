@@ -51,9 +51,9 @@ require.baseUrl = "${pageContext.servletContext.contextPath}/scripts";
 <script type="text/javascript" src="<c:url value='/scripts/pubsub-boot.js' />"></script>
 <c:choose>
   <c:when test="${ not empty main }">
-<script  charset="utf-8" src="<c:url value='/scripts/require.js' />" data-main="${ main }"></script>
+<script  charset="utf-8" src="<c:url value='/scripts/require-min.js' />" data-main="${ main }"></script>
   </c:when>
   <c:otherwise>
-<script  charset="utf-8" src="<c:url value='/scripts/require.js' />"  data-main="legacy-ws-page"></script>
+<script  charset="utf-8" src="<c:url value='/scripts/require-min.js' />"  data-main="legacy-ws-page"></script>
   </c:otherwise>
 </c:choose>

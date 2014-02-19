@@ -37,8 +37,7 @@ define(['jquery', 'tree',
 			
 			this.onOwnBtn('confirm', function(){
 				self.confirm();
-			});
-			
+			});			
 		}, 
 		
 		open : function(){
@@ -47,7 +46,7 @@ define(['jquery', 'tree',
 			var selection = this.options.tree.jstree('get_selected');
 			if (selection.length>0){
 				var name = this._createName();
-				$('#export-name-input').val(name);
+				$('#export-test-case-filename').val(name);
 				this.setState('main');
 			}
 			else{
@@ -59,24 +58,36 @@ define(['jquery', 'tree',
 			return this.options.nameprefix+"-"+ dateutils.format(new Date(), this.options.dateformat);
 		},
 		
-		_createUrl : function(nodes, name, format){
-			var url = squashtm.app.contextRoot+'/test-case-browser/';
-			if (nodes.is(':library')){
-				url += "drives/"+nodes.all('getResId').join(',')+"/"+format+"?name="+name;
-			}
-			else{
-				url += "nodes/"+nodes.all('getResId').join(',')+"/"+format+"?name="+name;
-			}
+		_createUrl : function(nodes, type, filename, includeCalls){
 			
-			return url;
+			var url = squashtm.app.contextRoot+'/test-case-browser/content/'+type;
+			
+			var libIds = nodes.filter(':library').map(function(){
+				return $(this).attr('resid');
+			}).get().join(',');
+			var nodeIds = nodes.not(':library').map(function(){
+				return $(this).attr('resid');
+			}).get().join(',');
+			
+			var params = {
+				'filename' : filename,
+				'libraries' : libIds,
+				'nodes' : nodeIds,
+				'calls' : includeCalls
+			};
+			
+			return url+"?"+$.param(params);
 		},
+		
 		
 		confirm : function(){
 			var nodes = this.options.tree.jstree('get_selected');
-			if ((nodes.length>0) && (nodes.areSameLibs())){
-				var filename = $("#export-name-input").val();
-				var exportFormat = $("#export-option").val();
-				var url = this._createUrl(nodes, filename, exportFormat);
+			if ((nodes.length>0) ){
+				var filename = $("#export-test-case-filename").val();
+				var includeCalls = $("#export-test-case-includecalls").prop('checked');
+				var type = this.element.find('input[name="format"]:checked').data('val');
+				
+				var url = this._createUrl(nodes, type, filename, includeCalls);
 				document.location.href = url;
 				this.close();
 			}

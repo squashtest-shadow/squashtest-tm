@@ -143,7 +143,6 @@ tr.nodrop td.drag-handle {
 	margin-top: 1.6em;
 }
 
-
 .no-user-select{
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
@@ -436,3 +435,17 @@ ul.squash-tagit li.invalid{
 div.ui-effects-explode{
 	z-index : 50000;
 }
+
+/* ---------------------------------------------------------*/
+/* ------------------>>> panel format <<<-------------------*/
+/* ---------------------------------------------------------*/
+
+.grey-round-panel{
+	background-color : #E6E6E6;
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
+	border-radius: 8px;
+	padding : 0.5em 0.5em;
+}
+
+

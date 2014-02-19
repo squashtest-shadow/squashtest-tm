@@ -112,25 +112,16 @@ public interface TestCaseLibraryNavigationService extends
 	 */
 	ImportSummary importExcelTestCase(InputStream archiveStream, long libraryId, String encoding);
 
-	/**
-	 * Will find all test cases found in the given projects and return their information as a list of
-	 * {@linkplain ExportTestCaseData}
-	 * 
-	 * @param libraryIds
-	 *            ids of {@linkplain Project}
-	 * @return a list of {@linkplain ExportTestCaseData}
-	 */
-	List<ExportTestCaseData> findTestCasesToExportFromLibrary(List<Long> ids);
 
 	/**
-	 * Will find all test cases of the given ids and contained in folders of the given ids, and return their
+	 * Will find all test cases in the library and node ids supplied in arguments, and return their
 	 * information as a list of {@linkplain ExportTestCaseData}
 	 * 
 	 * @param nodesIds
 	 *            ids of {@linkplain TestCaseLibraryNode}
 	 * @return a list of {@linkplain ExportTestCaseData}
 	 */
-	List<ExportTestCaseData> findTestCasesToExportFromNodes(@NotNull List<Long> nodesIds);
+	List<ExportTestCaseData> findTestCasesToExport(List<Long> libraryIds, List<Long> nodeIds, boolean includeCalledTests);
 	
 	/**
 	 * <p>Will export a selection of test cases as an Excel 2003 (.xls) spreadsheet. 

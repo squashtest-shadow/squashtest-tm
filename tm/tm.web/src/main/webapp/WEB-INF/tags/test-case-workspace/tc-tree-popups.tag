@@ -404,38 +404,52 @@
 
 <div id="export-test-case-dialog" class="popup-dialog not-displayed" title="${exportLabel}" data-def="nameprefix=${exportnamePrefix}, dateformat=${dateexportFormat}">
 
-	<div data-def="state=main">
+	<div data-def="state=main" class="std-margin-top">
 					
-		<div class="display-table" style="width:100%">
-		<div style="display:table-column-group">
-		    <div style="display:table-column" ></div>
-		    <div style="display:table-column; width:70%" ></div>
-		  </div>
-			<div class="display-table-row">
-			<label><f:message key="dialog.rename.label" /></label>
-			<div class="display-table-cell" ><input type="text" id="export-name-input" style="width:100%"/></div>
+		<span ><f:message key="test-case.export.dialog.message"/></span>
+		
+		<div class="std-padding std-margin-top">
+		
+			<div class="grey-round-panel snap-left" style="width:43%;">
+				<input type="radio" name="format" data-val="xls" class="centered" checked="checked"/><span style="text-decoration:underline;">Excel</span>
+				<p class="nota-bene">
+					<f:message key="test-case.export.dialog.excel.description"/>
+				</p>			
 			</div>
-			<div class="display-table-row">		
-			<label><f:message key="label.ExportFormat" />
-			</label><div class="display-table-cell"><select id="export-option" >
-				<option value="csv">csv</option>
-				<option value="xls">xls</option>
-			</select></div>
+		
+			<div class="grey-round-panel snap-right" style="width:43%;">
+				<input type="radio" name="format" data-val="csv" class="centered"/><span style="text-decoration:underline;">CSV</span>
+				<p class="nota-bene">
+					<f:message key="test-case.export.dialog.csv.description"/>
+				</p>			
 			</div>
-		</div>	
+		
+			<div class="unsnap"></div>
+		
+		</div>
+		
+		<div class="std-margin-top">
+			<span><f:message key="test-case.export.dialog.filename"/></span>
+			<input type="text" id="export-test-case-filename" size="255" style="width:350px"/>
+		</div>
+		
+		<div class="std-margin-top">
+			<input type="checkbox" id="export-test-case-includecalls"/>
+			<span><f:message key="test-case.export.dialog.includecall"/></span>
+			<p class="nota-bene">
+				<f:message key="test-case.export.dialog.includecall.description"/>
+			</p>
+		</div>
+		
 	</div>
 	
-	<div data-def="state=crossproerror">
-		<span><f:message key="message.exportTestCaseCrossProjectError"/></span>	
-	</div>
-	
-	<div data-def="state=nonodeserror">
+	<div data-def="state=nonodeserror" class="std-margin-top">
 		<span><f:message key="message.exportTestCaseNoNodeSelected"/></span>
 	</div>
 
 	<div class="popup-dialog-buttonpane">
 		<input type="button" value="${exportLabel}"		data-def="evt=confirm, mainbtn=main"/>
-		<input type="button" value="${cancelLabel}"		data-def="evt=cancel, mainbtn=crossproerror, mainbtn=nonodeserror" />
+		<input type="button" value="${cancelLabel}"		data-def="evt=cancel, mainbtn=nonodeserror" />
 	</div>
 </div>
 

@@ -175,30 +175,22 @@ public class TestCaseLibraryNavigationController extends
 		return listBuilder.setModel(linkableLibraries).build();
 	}
 	
-	@RequestMapping(value = "/nodes/{nodeIds}/{exportformat}", method = RequestMethod.GET, params="name")
-	public @ResponseBody
-	void exportTestCases(@PathVariable("nodeIds") List<Long> ids, @RequestParam("name") String filename, @PathVariable("exportformat") String exportformat,
-			HttpServletResponse response, Locale locale) {
-		
-		List<ExportTestCaseData> dataSource = testCaseLibraryNavigationService.findTestCasesToExportFromNodes(ids);
-		escapePrerequisiteAndSteps(dataSource);
-		printExport(dataSource, filename,JASPER_EXPORT_FILE, response, locale, exportformat);
 
-	}
 	
-
-
-	@RequestMapping(value = "/drives/{libIds}/{exportformat}", method = RequestMethod.GET, params="name")
-	public @ResponseBody
-	void exportLibrary(@PathVariable("libIds") List<Long> libIds, @RequestParam("name") String filename, @PathVariable("exportformat") String exportformat,
-			HttpServletResponse response, Locale locale) {
-
-		List<ExportTestCaseData> dataSource = testCaseLibraryNavigationService.findTestCasesToExportFromLibrary(libIds);
+	@RequestMapping(value = "/content/csv", produces="application/octet-stream", method = RequestMethod.GET, params={"filename", "libraries", "nodes", "calls"})
+	@ResponseBody
+	public void exportAsCsv(Locale locale, @RequestParam("filename") String filename, @RequestParam("libraries") List<Long> libraryIds, 
+			@RequestParam("nodes") List<Long> nodeIds, @RequestParam("calls") Boolean includeCalledTests, HttpServletResponse response) throws FileNotFoundException{
 		
+		response.setContentType("application/octet-stream");
+		response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".xls");
+		
+		List<ExportTestCaseData> dataSource = testCaseLibraryNavigationService.findTestCasesToExport(libraryIds, nodeIds, includeCalledTests);
 		escapePrerequisiteAndSteps(dataSource);
-		printExport(dataSource, filename,JASPER_EXPORT_FILE, response, locale, exportformat);
-
+		
+		printExport(dataSource, filename, JASPER_EXPORT_FILE, response, locale, "csv");
 	}
+		
 	
 	@RequestMapping(value = "/content/xls", produces="application/octet-stream", method = RequestMethod.GET, params={"filename", "libraries", "nodes", "calls"})
 	@ResponseBody

@@ -108,10 +108,25 @@ public interface TestCaseLibraryFinderService {
 	 */
 	TestCaseStatisticsBundle getStatisticsForSelection(Collection<Long> libraryIds, Collection<Long> nodeIds);
 	
+	
 	/**
 	 * Passing the ids of some selected TestCaseLibrary and TestCaseLibraryNodes (in separate collections), 
-	 * will return the ids of the TestCases encompassed by this selection. The test case ids that cannot be accessed
+	 * will return the ids of the TestCases encompassed by this selection. If includeCalledTests is true, 
+	 * every test cases being called directly or indirectly will be included.
+	 *  
+	 * If  The test case ids that cannot be accessed
 	 * for security reason will be filtered out.
+	 * 
+	 * @param libraryIds
+	 * @param nodeIds
+	 * @param includeCalledTests
+	 * @return
+	 */
+	Collection<Long> findTestCaseIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds, boolean includeCalledTests);
+	
+	
+	/**
+	 * same as {@link #findTestCaseIdsFromSelection(Collection, Collection)}, with includedCalledTests = false
 	 * 
 	 * @param libraryIds
 	 * @param nodeIds
