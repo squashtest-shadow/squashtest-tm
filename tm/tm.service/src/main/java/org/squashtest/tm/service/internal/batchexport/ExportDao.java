@@ -33,6 +33,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.DatasetModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.ParameterModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestStepModel;
@@ -57,11 +58,13 @@ public class ExportDao {
 		List<TestCaseModel> tclnModels = findTestCaseModels(tclnIds);
 		List<TestStepModel> stepModels = findStepsModel(tclnIds);
 		List<ParameterModel> paramModels = findParametersModel(tclnIds);
+		List<DatasetModel> datasetModels = findDatasetsModel(tclnIds);
 		
 		model.setTestCases(tclnModels);
 		model.setTestSteps(stepModels);
 		model.setParameters(paramModels);
-				
+		model.setDatasets(datasetModels);		
+		
 		return model;
 		
 	}
@@ -74,23 +77,14 @@ public class ExportDao {
 		
 
 		// get the models
-		Query q1 = session.getNamedQuery("testCase.excelExportDataFromFolder"); 
-		q1.setParameterList("testCaseIds", tclnIds, LongType.INSTANCE);
-		q1.setResultTransformer(new EasyConstructorResultTransformer(TestCaseModel.class));
-		buffer = q1.list();		
+		buffer = findModels(session, "testCase.excelExportDataFromFolder", tclnIds, TestCaseModel.class);
 		models.addAll(buffer);
 		
-		Query q2 = session.getNamedQuery("testCase.excelExportDataFromLibrary"); 
-		q2.setParameterList("testCaseIds", tclnIds, LongType.INSTANCE);
-		q2.setResultTransformer(new EasyConstructorResultTransformer(TestCaseModel.class));
-		buffer = q2.list();		
+		buffer = findModels(session, "testCase.excelExportDataFromLibrary", tclnIds, TestCaseModel.class);
 		models.addAll(buffer);
 		
 		//get the cufs
-		Query q3 = session.getNamedQuery("testCase.excelExportCUF");
-		q3.setParameterList("tcIds", tclnIds, LongType.INSTANCE);
-		q3.setResultTransformer(new EasyConstructorResultTransformer(CustomField.class));
-		List<CustomField> cufModels = q3.list();
+		List<CustomField> cufModels = findModels(session, "testCase.excelExportCUF", tclnIds, CustomField.class);
 		
 		// add them to the test case models
 		for (TestCaseModel model : models){
@@ -118,23 +112,15 @@ public class ExportDao {
 		List<TestStepModel> models = new ArrayList<TestStepModel>(tcIds.size());
 		List<TestStepModel> buffer;
 		
-		Query q1 = session.getNamedQuery("testStep.excelExportActionSteps");
-		q1.setParameterList("testCaseIds", tcIds, LongType.INSTANCE);
-		q1.setResultTransformer(new EasyConstructorResultTransformer(TestStepModel.class));
-		buffer = q1.list();
+		
+		buffer = findModels(session, "testStep.excelExportActionSteps", tcIds, TestStepModel.class);
 		models.addAll(buffer);
 		
-		Query q2 = session.getNamedQuery("testStep.excelExportCallSteps"); 
-		q2.setParameterList("testCaseIds", tcIds, LongType.INSTANCE);
-		q2.setResultTransformer(new EasyConstructorResultTransformer(TestStepModel.class));
-		buffer = q2.list();		
+		buffer = findModels(session, "testStep.excelExportCallSteps", tcIds, TestStepModel.class);	
 		models.addAll(buffer);
 		
 		//get the cufs
-		Query q3 = session.getNamedQuery("testStep.excelExportCUF");
-		q3.setParameterList("testCaseIds", tcIds, LongType.INSTANCE);
-		q3.setResultTransformer(new EasyConstructorResultTransformer(CustomField.class));
-		List<CustomField> cufModels = q3.list();
+		List<CustomField> cufModels = findModels(session, "testStep.excelExportCUF", tcIds, CustomField.class);
 		
 		// add them to the test case models
 		for (TestStepModel model : models){
@@ -156,12 +142,21 @@ public class ExportDao {
 	}
 	
 	private List<ParameterModel> findParametersModel(List<Long> tcIds){
-		Query q = getStatelessSession().getNamedQuery("parameter.excelExport");
-		q.setParameterList("testCaseIds", tcIds);
-		q.setResultTransformer(new EasyConstructorResultTransformer(ParameterModel.class));
-		return q.list();
+		return findModels(getStatelessSession(), "parameter.excelExport", tcIds, ParameterModel.class);
 	}
 	
+	
+	private List<DatasetModel> findDatasetsModel(List<Long> tcIds){
+		return findModels(getStatelessSession(), "dataset.excelExport", tcIds, DatasetModel.class);
+	}
+	
+	
+	private <R> List<R> findModels(Session session, String query, List<Long> tcIds, Class<R> resclass){
+		Query q = session.getNamedQuery(query);
+		q.setParameterList("testCaseIds", tcIds, LongType.INSTANCE);
+		q.setResultTransformer(new EasyConstructorResultTransformer(resclass));
+		return q.list();
+	}
 	
 	private Session getStatelessSession(){
 		Session s = factory.getCurrentSession();

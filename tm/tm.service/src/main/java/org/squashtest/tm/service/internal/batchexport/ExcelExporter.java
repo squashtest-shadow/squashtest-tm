@@ -36,6 +36,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.DatasetModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.ParameterModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestStepModel;
@@ -73,6 +74,7 @@ class ExcelExporter {
 		appendTestCases(model);
 		appendTestSteps(model);
 		appendParameters(model);
+		appendDatasets(model);
 	}
 	
 	
@@ -184,6 +186,33 @@ class ExcelExporter {
 			rIdx++;
 			cIdx=0;
 		}
+	}
+	
+	private void appendDatasets(ExportModel model){
+		
+		List<DatasetModel> models = model.getDatasets();
+		Sheet dsSheet = workbook.getSheet(DS_SHEET);
+		
+		Row r ;
+		int rIdx = dsSheet.getLastRowNum()+1;
+		int cIdx =0;
+		
+		for (DatasetModel dm : models){
+			r = dsSheet.createRow(rIdx);
+		
+			r.createCell(cIdx++).setCellValue(dm.getTcOwnerPath());
+			r.createCell(cIdx++).setCellValue(dm.getOwnerId());
+			r.createCell(cIdx++).setCellValue(dm.getId());
+			r.createCell(cIdx++).setCellValue(dm.getName());
+			r.createCell(cIdx++).setCellValue(dm.getParamOwnerPath());
+			r.createCell(cIdx++).setCellValue(dm.getParamOwnerId());
+			r.createCell(cIdx++).setCellValue(dm.getParamName());
+			r.createCell(cIdx++).setCellValue(dm.getParamValue());
+			
+			rIdx++;
+			cIdx=0;
+		}
+		
 	}
 	
 
@@ -302,6 +331,20 @@ class ExcelExporter {
 		h.createCell(cIdx++).setCellValue("TC_PARAM_ID");
 		h.createCell(cIdx++).setCellValue("TC_PARAM_NAME");
 		h.createCell(cIdx++).setCellValue("TC_PARAM_DESCRIPTION");
+		
+		
+		Sheet dsSheet = workbook.getSheet(DS_SHEET);
+		h = dsSheet.createRow(0);
+		cIdx = 0 ;
+		h.createCell(cIdx++).setCellValue("TC_OWNER_PATH");
+		h.createCell(cIdx++).setCellValue("TC_OWNER_ID");
+		h.createCell(cIdx++).setCellValue("TC_DATASET_ID");
+		h.createCell(cIdx++).setCellValue("TC_DATASET_NAME");
+		h.createCell(cIdx++).setCellValue("TC_PARAM_OWNER_PATH");
+		h.createCell(cIdx++).setCellValue("TC_PARAM_OWNER_ID");
+		h.createCell(cIdx++).setCellValue("TC_DATASET_PARAM_NAME");
+		h.createCell(cIdx++).setCellValue("TC_DATASET_PARAM_VALUE");		
+		
 	}
 
 }

@@ -32,6 +32,7 @@ import javax.inject.Inject;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.DatasetModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.ParameterModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestStepModel;
@@ -70,7 +71,7 @@ public class TestCaseExcelExporterService {
 			
 			exporter.appendToWorkbook(model);
 			
-			idx = idx+20;
+			idx = max;
 			max = Math.min(idx+20, testCaseIds.size());
 		}
 		
@@ -94,6 +95,7 @@ public class TestCaseExcelExporterService {
 		addPathsForTestCase(pathById, models);
 		addPathsForTestSteps(pathById, models);
 		addPathsForParameters(pathById, models);
+		addPathsForDatasets(pathById, models);
 
 	}
 	
@@ -155,11 +157,50 @@ public class TestCaseExcelExporterService {
 	}
 	
 	
+	private void addPathsForDatasets(Map<Long, String> pathById, ExportModel models){
+		
+		List<DatasetModel>  unresolvedPOwnerPath = new LinkedList<DatasetModel>();
+		List<Long> pOwnerIds = new LinkedList<Long>();
+		
+		for (DatasetModel model : models.getDatasets()){
+			
+			Long id = model.getOwnerId();
+			String path = pathById.get(id);
+			model.setTcOwnerPath(path);
+			
+			// also needs the path for the param owner. Like for the test steps 
+			// the param owner path may be unknown yet so we need
+			// to see if further resolution is required.
+			
+			Long pOwnerId = model.getParamOwnerId();
+			if (pathById.containsKey(pOwnerId)){
+				String pOwnerPath = pathById.get(pOwnerId);
+				model.setParamOwnerPath(pOwnerPath);
+			}else{
+				unresolvedPOwnerPath.add(model);
+				pOwnerIds.add(pOwnerId);
+			}
+		}
+		
+		// now resolve the param owner paths left over
+		if (! pOwnerIds.isEmpty()){
+			populatePathsCache(pathById, pOwnerIds);
+			for (DatasetModel model : unresolvedPOwnerPath){
+				Long ownId = model.getParamOwnerId();
+				String path = pathById.get(ownId);
+				model.setParamOwnerPath(path);
+			}
+		}
+		
+	}
+	
+	
 
 	private void sort(ExportModel models){
 		Collections.sort(models.getTestCases());
 		Collections.sort(models.getTestSteps());
 		Collections.sort(models.getParameters());
+		Collections.sort(models.getDatasets());
 	}
 	
 

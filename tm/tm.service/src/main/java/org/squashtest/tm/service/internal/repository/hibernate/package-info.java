@@ -187,7 +187,7 @@
 		@NamedQuery(name = "testCase.excelExportCUF", query= 
 			"select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cf.inputType "+
 			"from CustomFieldValue cfv join cfv.binding binding join binding.customField cf "+
-			"where cfv.boundEntityId in (:tcIds) and cfv.boundEntityType = 'TEST_CASE'"			
+			"where cfv.boundEntityId in (:testCaseIds) and cfv.boundEntityType = 'TEST_CASE'"			
 		),
 	
 		
@@ -252,6 +252,9 @@
 		@NamedQuery(name = "Dataset.removeAllByTestCaseIds", query = "delete Dataset ds where ds.testCase.id in (:testCaseIds)"),
 		@NamedQuery(name = "Dataset.removeAllValuesByTestCaseIds", query = "delete DatasetParamValue dpv where dpv.dataset in (select ds from Dataset ds where ds.testCase.id in (:testCaseIds))"),
 		@NamedQuery(name = "dataset.removeDatasetFromItsIterationTestPlanItems", query = "update IterationTestPlanItem set referencedDataset = null where referencedDataset in (from Dataset dataset where dataset.id = :datasetId) "),
+		@NamedQuery(name = "dataset.excelExport", query = "select tc.id, ds.id, ds.name, tcown.id, param.name, pvalue.paramValue from TestCase tc " +
+															"join tc.datasets ds join ds.parameterValues pvalue join pvalue.parameter param join param.testCase tcown " +
+															"where tc.id in (:testCaseIds)"),
 		
 		//CampaignTestPlanItem
 		@NamedQuery(name = "CampaignTestPlanItem.findPlannedTestCasesIdsByCampaignId", query="select distinct tc.id from Campaign c join c.testPlan tpi join tpi.referencedTestCase tc where c.id = ?1"),

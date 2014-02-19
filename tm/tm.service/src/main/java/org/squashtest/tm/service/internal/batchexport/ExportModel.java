@@ -592,7 +592,7 @@ public class ExportModel {
 	}
 	
 	
-	public static final class DatasetModel{
+	public static final class DatasetModel implements Comparable<DatasetModel>{
 		
 		private String tcOwnerPath;
 		private long ownerId;
@@ -604,8 +604,27 @@ public class ExportModel {
 		private String paramValue;
 		
 		
-		public DatasetModel(){
+		
+
+		public DatasetModel(long ownerId, long id, String name,
+				long paramOwnerId, String paramName, String paramValue) {
 			super();
+			this.ownerId = ownerId;
+			this.id = id;
+			this.name = name;
+			this.paramOwnerId = paramOwnerId;
+			this.paramName = paramName;
+			this.paramValue = paramValue;
+		}
+		
+		@Override
+		public int compareTo(DatasetModel other) {
+			int comp1 = getTcOwnerPath().compareTo(other.getTcOwnerPath());
+			int comp2 = getName().compareTo(other.getName());
+			int comp3 = getParamName().compareTo(other.getParamName());
+			return (comp1 != 0) ? comp1 :
+					(comp2 != 0) ? comp2 :
+						comp3;
 		}
 
 
