@@ -229,8 +229,9 @@ public class TestCaseTestStepsController {
 
 	@RequestMapping(value = "/{stepIds}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public void deleteSteps(@PathVariable("stepIds") List<Long> stepIds, @PathVariable long testCaseId) {
-		testCaseModificationService.removeListOfSteps(testCaseId, stepIds);
+	public int deleteSteps(@PathVariable("stepIds") List<Long> stepIds, @PathVariable long testCaseId) {
+		List<TestStep> teststeps = testCaseModificationService.removeListOfSteps(testCaseId, stepIds);
+		return teststeps.size();
 	}
 
 	@RequestMapping(value = "/{stepId}/action", method = RequestMethod.POST, params = { "id", VALUE }, produces = "text/plain;charset=UTF-8")

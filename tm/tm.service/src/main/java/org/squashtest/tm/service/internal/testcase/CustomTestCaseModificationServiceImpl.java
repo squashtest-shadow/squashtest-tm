@@ -232,14 +232,14 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	public void removeListOfSteps(long testCaseId, List<Long> testStepIds) {
+	public List<TestStep> removeListOfSteps(long testCaseId, List<Long> testStepIds) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
 
 		for (Long id : testStepIds) {
 			TestStep step = testStepDao.findById(id);
 			deletionHandler.deleteStep(testCase, step);
 		}
-
+		return testCase.getSteps();
 	}
 
 	@Override

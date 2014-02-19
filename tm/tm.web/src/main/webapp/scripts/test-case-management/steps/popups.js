@@ -62,12 +62,15 @@ define(['jquery', 'workspace.event-bus', 'jqueryui', 'jquery.squash.confirmdialo
 				type : 'delete',
 				dataType : 'json'
 			})
-			.done(function(unauthorized){
+			.done(function(testStepsSize){
 				if(calledStepsDeleted){
 					eventBus.trigger("testStepsTable.deletedCallSteps");
 				}
 				eventBus.trigger("testStepsTable.removedSteps");
 				conf.stepsTablePanel.refreshTable();
+				if(testStepsSize == "0"){
+					eventBus.trigger("testStepsTable.noMoreSteps");
+				}
 			});
 			
 			$(this).formDialog('close');

@@ -77,12 +77,14 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 			Boolean isreqcovered = (!visited.getRequirementVersionCoverages().isEmpty() || 
 					verifiedRequirementsManagerService.testCaseHasUndirectRequirementCoverage(visited.getId())) ;
 			
+			Boolean hasSteps = !visited.getSteps().isEmpty();
 			//build tooltip
 			Locale locale = LocaleContextHolder.getLocale();
 			String localizedStatus = internationalizationHelper.internationalize(status, locale);
 			String localizedImportance = internationalizationHelper.internationalize(importance, locale);
 			String localizedIsReqCovered = internationalizationHelper.internationalizeYesNo(isreqcovered, locale);
-			String[] args = {localizedStatus, localizedImportance, localizedIsReqCovered};
+			String localizedHasSteps = internationalizationHelper.internationalize("tootltip.tree.testCase.hasSteps."+hasSteps,locale);
+			String[] args = {localizedStatus, localizedImportance, localizedIsReqCovered, localizedHasSteps};
 			String tooltip = internationalizationHelper.getMessage("label.tree.testCase.tooltip",args,visited.getId().toString(), locale);
 			
 			//set test case attributes
@@ -91,6 +93,7 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 			builtNode.addAttr("importance", importance.toString().toLowerCase());
 			builtNode.addAttr("isreqcovered", isreqcovered.toString());
 			builtNode.addAttr("title", tooltip);
+			builtNode.addAttr("hassteps", hasSteps.toString());
 			
 			if (visited.getReference() != null && visited.getReference().length() > 0) {
 				builtNode.setTitle(visited.getReference() + " - " + visited.getName());

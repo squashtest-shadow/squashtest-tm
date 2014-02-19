@@ -28,6 +28,7 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 
 
@@ -74,7 +75,7 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 
 	void removeStepFromTestCase(long testCaseId, long testStepId);
 
-	void removeListOfSteps(long testCaseId, List<Long> testStepIds);
+	List<TestStep> removeListOfSteps(long testCaseId, List<Long> testStepIds);
 
 	/**
 	 * will insert a test step into a test case script, possibly after a step (the position), given their Ids.

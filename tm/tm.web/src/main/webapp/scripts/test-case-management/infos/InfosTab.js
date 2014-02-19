@@ -28,6 +28,7 @@ define([ "jquery", "backbone", "underscore", "./GeneralInfosPanel", "./Prerequis
 			var self = this;
 			this.settings = this.options.settings;
 			this.sendUpdateReqToTree = $.proxy(this._sendUpdateReqToTree, this);
+			this.sendUpdateHasStepsToTree = $.proxy(this._sendUpdateHasStepsToTree, this);
 			this.generalInfosPanel = new GeneralInfosPanel({
 				settings : this.settings,
 				parentTab : this
@@ -40,16 +41,20 @@ define([ "jquery", "backbone", "underscore", "./GeneralInfosPanel", "./Prerequis
 			this.verifiedRequirementsPanel = new TestCaseVerifiedRequirementsPanel();
 			this.listenTo(this.verifiedRequirementsPanel.table, "verifiedrequirementversions.refresh", this.generalInfosPanel.refreshImportanceIfAuto);
 			this.listenTo(this.verifiedRequirementsPanel.table, "verifiedrequirementversions.refresh", this.sendUpdateReqToTree);
-			//eventBus.onContextual("testStepsTable.removedSteps", this.verifiedRequirementsPanel.table.refresh);
-			//todo remove below and add event when delete row in test step if called step
 			eventBus.onContextual("testStepsTable.pastedCallSteps", this.verifiedRequirementsPanel.table.refreshRestore);
 			eventBus.onContextual("testStepsTable.deletedCallSteps", this.verifiedRequirementsPanel.table.refreshRestore);
+			eventBus.onContextual("testStepsTable.noMoreSteps", function(){self.sendUpdateHasStepsToTree(false);});
+			eventBus.onContextual("testStepsTable.stepAdded", function(){self.sendUpdateHasStepsToTree(true);});
 		},
 		
 		events : {},
 		
 		_sendUpdateReqToTree : function(){
 			eventBus.trigger("node.update-reqCoverage", {targetIds : [this.settings.testCaseId]});
+		},
+		
+		_sendUpdateHasStepsToTree : function(hasSteps){
+			eventBus.trigger("node.attribute-changed", {identity : { resid : this.settings.testCaseId, restype : "test-cases"  }, attribute : 'hassteps', value : ""+hasSteps});
 		}
 	});
 	return ParametersTab;

@@ -23,203 +23,355 @@
  */
  /** sprite: sprites-icons; sprite-image: url('../images/sprites-icons.png'); sprite-layout: vertical */
 
-li[rel="test-case"][status="approved"][importance="high"][isreqcovered="true"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/approvedhighok.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="false"][importance="very_high"] > a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 0px; 
+															 sprite-margin-left: 240px*/
+background-position : -240px -0px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="approved"][importance="high"][isreqcovered="false"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/approvedhighko.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="false"][importance="high"] > a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 16px; 
+															 sprite-margin-left: 240px*/
+background-position : -240px -16px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="approved"][importance="low"][isreqcovered="true"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/approvedlowok.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="false"][importance="medium"] > a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 32px; 
+															 sprite-margin-left: 240px*/
+background-position : -240px -32px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="approved"][importance="low"][isreqcovered="false"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/approvedlowko.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="false"][importance="low"] > a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 48px; 
+															 sprite-margin-left: 240px*/
+background-position : -240px -48px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="approved"][importance="medium"][isreqcovered="true"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/approvedmediumok.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="true"][importance="very_high"][status="work_in_progress"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 0px; 
+															 sprite-margin-left: 0px*/
+background-position : -0px -0px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="approved"][importance="medium"][isreqcovered="false"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/approvedmediumko.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="true"][importance="high"][status="work_in_progress"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 16px; 
+															 sprite-margin-left: 0px*/
+background-position : -0px -16px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="approved"][importance="very_high"][isreqcovered="true"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/approvedvery_highok.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="true"][importance="medium"][status="work_in_progress"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 32px; 
+															 sprite-margin-left: 0px*/
+background-position : -0px -32px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="approved"][importance="very_high"][isreqcovered="false"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/approvedvery_highko.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="true"][importance="low"][status="work_in_progress"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 48px; 
+															 sprite-margin-left: 0px*/
+background-position : -0px -48px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="obsolete"][importance="high"][isreqcovered="true"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/obsoletehighok.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="true"][importance="very_high"][status="under_review"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 0px; 
+															 sprite-margin-left: 24px*/
+background-position : -24px -0px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="obsolete"][importance="high"][isreqcovered="false"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/obsoletehighko.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="true"][importance="high"][status="under_review"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 16px; 
+															 sprite-margin-left: 24px*/
+background-position : -24px -16px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="obsolete"][importance="low"][isreqcovered="true"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/obsoletelowok.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="true"][importance="medium"][status="under_review"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 32px; 
+															 sprite-margin-left: 24px*/
+background-position : -24px -32px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="obsolete"][importance="low"][isreqcovered="false"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/obsoletelowko.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="true"][importance="low"][status="under_review"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 48px; 
+															 sprite-margin-left: 24px*/
+background-position : -24px -48px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="obsolete"][importance="medium"][isreqcovered="true"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/obsoletemediumok.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="true"][importance="very_high"][status="approved"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 0px; 
+															 sprite-margin-left: 48px*/
+background-position : -48px -0px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="obsolete"][importance="medium"][isreqcovered="false"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/obsoletemediumko.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="true"][importance="high"][status="approved"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 16px; 
+															 sprite-margin-left: 48px*/
+background-position : -48px -16px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="obsolete"][importance="very_high"][isreqcovered="true"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/obsoletevery_highok.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="true"][importance="medium"][status="approved"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 32px; 
+															 sprite-margin-left: 48px*/
+background-position : -48px -32px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="obsolete"][importance="very_high"][isreqcovered="false"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/obsoletevery_highko.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="true"][importance="low"][status="approved"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 48px; 
+															 sprite-margin-left: 48px*/
+background-position : -48px -48px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="to_be_updated"][importance="high"][isreqcovered="true"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/to_be_updatedhighok.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="true"][importance="very_high"][status="obsolete"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 0px; 
+															 sprite-margin-left: 72px*/
+background-position : -72px -0px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="to_be_updated"][importance="high"][isreqcovered="false"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/to_be_updatedhighko.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="true"][importance="high"][status="obsolete"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 16px; 
+															 sprite-margin-left: 72px*/
+background-position : -72px -16px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="to_be_updated"][importance="low"][isreqcovered="true"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/to_be_updatedlowok.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="true"][importance="medium"][status="obsolete"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 32px; 
+															 sprite-margin-left: 72px*/
+background-position : -72px -32px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="to_be_updated"][importance="low"][isreqcovered="false"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/to_be_updatedlowko.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="true"][importance="low"][status="obsolete"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 48px; 
+															 sprite-margin-left: 72px*/
+background-position : -72px -48px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="to_be_updated"][importance="medium"][isreqcovered="true"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/to_be_updatedmediumok.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="true"][importance="very_high"][status="to_be_updated"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 0px; 
+															 sprite-margin-left: 96px*/
+background-position : -96px -0px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="to_be_updated"][importance="medium"][isreqcovered="false"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/to_be_updatedmediumko.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="true"][importance="high"][status="to_be_updated"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 16px; 
+															 sprite-margin-left: 96px*/
+background-position : -96px -16px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="to_be_updated"][importance="very_high"][isreqcovered="true"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/to_be_updatedvery_highok.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="true"][importance="medium"][status="to_be_updated"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 32px; 
+															 sprite-margin-left: 96px*/
+background-position : -96px -32px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="to_be_updated"][importance="very_high"][isreqcovered="false"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/to_be_updatedvery_highko.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="true"][importance="low"][status="to_be_updated"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 48px; 
+															 sprite-margin-left: 96px*/
+background-position : -96px -48px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="under_review"][importance="high"][isreqcovered="true"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/under_reviewhighok.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="false"][importance="very_high"][status="work_in_progress"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 0px; 
+															 sprite-margin-left: 120px*/
+background-position : -120px -0px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="under_review"][importance="high"][isreqcovered="false"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/under_reviewhighko.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="false"][importance="high"][status="work_in_progress"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 16px; 
+															 sprite-margin-left: 120px*/
+background-position : -120px -16px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="under_review"][importance="low"][isreqcovered="true"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/under_reviewlowok.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="false"][importance="medium"][status="work_in_progress"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 32px; 
+															 sprite-margin-left: 120px*/
+background-position : -120px -32px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="under_review"][importance="low"][isreqcovered="false"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/under_reviewlowko.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="false"][importance="low"][status="work_in_progress"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 48px; 
+															 sprite-margin-left: 120px*/
+background-position : -120px -48px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="under_review"][importance="medium"][isreqcovered="true"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/under_reviewmediumok.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="false"][importance="very_high"][status="under_review"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 0px; 
+															 sprite-margin-left: 144px*/
+background-position : -144px -0px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="under_review"][importance="medium"][isreqcovered="false"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/under_reviewmediumko.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="false"][importance="high"][status="under_review"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 16px; 
+															 sprite-margin-left: 144px*/
+background-position : -144px -16px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="under_review"][importance="very_high"][isreqcovered="true"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/under_reviewvery_highok.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="false"][importance="medium"][status="under_review"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 32px; 
+															 sprite-margin-left: 144px*/
+background-position : -144px -32px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="under_review"][importance="very_high"][isreqcovered="false"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/under_reviewvery_highko.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="false"][importance="low"][status="under_review"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 48px; 
+															 sprite-margin-left: 144px*/
+background-position : -144px -48px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="work_in_progress"][importance="high"][isreqcovered="true"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/work_in_progresshighok.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="false"][importance="very_high"][status="approved"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 0px; 
+															 sprite-margin-left: 168px*/
+background-position : -168px -0px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="work_in_progress"][importance="high"][isreqcovered="false"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/work_in_progresshighko.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="false"][importance="high"][status="approved"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 16px; 
+															 sprite-margin-left: 168px*/
+background-position : -168px -16px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="work_in_progress"][importance="low"][isreqcovered="true"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/work_in_progresslowok.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="false"][importance="medium"][status="approved"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 32px; 
+															 sprite-margin-left: 168px*/
+background-position : -168px -32px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="work_in_progress"][importance="low"][isreqcovered="false"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/work_in_progresslowko.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="false"][importance="low"][status="approved"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 48px; 
+															 sprite-margin-left: 168px*/
+background-position : -168px -48px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="work_in_progress"][importance="medium"][isreqcovered="true"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/work_in_progressmediumok.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="false"][importance="very_high"][status="obsolete"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 0px; 
+															 sprite-margin-left: 192px*/
+background-position : -192px -0px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="work_in_progress"][importance="medium"][isreqcovered="false"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/work_in_progressmediumko.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="false"][importance="high"][status="obsolete"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 16px; 
+															 sprite-margin-left: 192px*/
+background-position : -192px -16px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="work_in_progress"][importance="very_high"][isreqcovered="true"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/work_in_progressvery_highok.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="false"][importance="medium"][status="obsolete"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 32px; 
+															 sprite-margin-left: 192px*/
+background-position : -192px -32px ;
+width: 24px;
+height: 16px;
 }
-li[rel="test-case"][status="work_in_progress"][importance="very_high"][isreqcovered="false"] > a > .jstree-icon {
-background-image: url("../images/tc_icons/work_in_progressvery_highko.png");  /** sprite-ref: sprites-icons; */
-width: 42px;
-height: 14px;
+li[rel="test-case"][hasSteps="true"][isreqcovered="false"][importance="low"][status="obsolete"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 48px; 
+															 sprite-margin-left: 192px*/
+background-position : -192px -48px ;
+width: 24px;
+height: 16px;
+}
+li[rel="test-case"][hasSteps="true"][isreqcovered="false"][importance="very_high"][status="to_be_updated"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 0px; 
+															 sprite-margin-left: 216px*/
+background-position : -216px -0px ;
+width: 24px;
+height: 16px;
+}
+li[rel="test-case"][hasSteps="true"][isreqcovered="false"][importance="high"][status="to_be_updated"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 16px; 
+															 sprite-margin-left: 216px*/
+background-position : -216px -16px ;
+width: 24px;
+height: 16px;
+}
+li[rel="test-case"][hasSteps="true"][isreqcovered="false"][importance="medium"][status="to_be_updated"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 32px; 
+															 sprite-margin-left: 216px*/
+background-position : -216px -32px ;
+width: 24px;
+height: 16px;
+}
+li[rel="test-case"][hasSteps="true"][isreqcovered="false"][importance="low"][status="to_be_updated"]> a > .jstree-icon {
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
+															 sprite-margin-top: 48px; 
+															 sprite-margin-left: 216px*/
+background-position : -216px -48px ;
+width: 24px;
+height: 16px;
 }

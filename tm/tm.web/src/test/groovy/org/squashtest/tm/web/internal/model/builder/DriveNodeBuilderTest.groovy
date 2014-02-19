@@ -125,6 +125,7 @@ class DriveNodeBuilderTest extends Specification {
 		tc.accept({ visitor = it }) >> { visitor.visit(tc) }
 		tc.getStatus() >> TestCaseStatus.WORK_IN_PROGRESS
 		tc.getImportance() >> TestCaseImportance.LOW
+		tc.getSteps()>>[]
 		tc.getRequirementVersionCoverages() >> []
 		tc.getId()>>23L
 		library.addContent tc

@@ -104,11 +104,6 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		$(".test-steps-table").squashTable().refresh();
 	}
 
-	function removeStepSuccess(testCaseId) {
-		refresh();
-		eventBus.trigger("testStepsTable.removedSteps");
-	}
-
 	function stepsTableCreatedRowCallback(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
 		nRow.className += (aData['step-type'] === "action") ? " action-step-row" : " call-step-row";
 	}
@@ -428,6 +423,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		if (dialog.dialog("isOpen")) {
 			dialog.dialog("close");
 		}
+		eventBus.trigger("testStepsTable.stepAdded");
 		refresh();
 	}
 
@@ -437,7 +433,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 		var dialog = $("#add-test-step-dialog");
 		dialog.data("cuf-values-support").reset();
-
+		eventBus.trigger("testStepsTable.stepAdded");
 		refresh();
 	}
 
@@ -602,6 +598,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		if(pastedCallSteps){
 			eventBus.trigger("testStepsTable.pastedCallSteps");
 		}
+		eventBus.trigger("testStepsTable.stepAdded");
 		refresh();
 	}
 

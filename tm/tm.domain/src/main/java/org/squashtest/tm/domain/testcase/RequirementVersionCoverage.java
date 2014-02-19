@@ -222,6 +222,7 @@ public class RequirementVersionCoverage implements Identified {
 		RequirementVersionCoverage rvcCopy = new RequirementVersionCoverage(this.verifiedRequirementVersion);
 		// set verifying test case
 		rvcCopy.setVerifyingTestCase(tcCopy);
+		tcCopy.addRequirementCoverage(rvcCopy);
 		// set verifying steps
 		List<ActionTestStep> stepToVerify = new ArrayList<ActionTestStep>(this.verifyingSteps.size());
 		for (ActionTestStep step : this.verifyingSteps) {
