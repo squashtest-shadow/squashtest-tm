@@ -40,6 +40,7 @@ import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService
 import org.squashtest.tm.service.project.GenericProjectManagerService
 import org.unitils.dbunit.annotation.DataSet
 import org.unitils.dbunit.annotation.ExpectedDataSet;
+import org.squashtest.tm.service.internal.repository.CampaignFolderDao;
 
 import spock.unitils.UnitilsSupport
 
@@ -54,6 +55,9 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	
 	@Inject
 	private CampaignLibrariesCrudService libcrud
+
+	@Inject
+	private CampaignFolderDao folderDao
 	
 	@Inject GenericProjectManagerService genericProjectManager
 	
@@ -486,6 +490,46 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		return p
 	}
 
+	@DataSet("CampaignLibraryNavigationServiceIT.should move to same project at right position.xml")
+	def "should move folder with campaigns to the right position - first"(){
+		given:
+		Long[] sourceIds = [1L]
+		Long destinationId = 2L
+		
+		when:
+		navService.moveNodesToFolder(destinationId, sourceIds, 0)
+		
+		then:
+		CampaignFolder parentFolder = (CampaignFolder) folderDao.findById(2L);
+		parentFolder.content.collect {it.id} == [1L, 20L, 21L];
+	}
 	
+	@DataSet("CampaignLibraryNavigationServiceIT.should move to same project at right position.xml")
+	def "should move folder with campaigns to the right position - middle"(){
+		given:
+		Long[] sourceIds = [1L]
+		Long destinationId = 2L
+		
+		when:
+		navService.moveNodesToFolder(destinationId, sourceIds, 1)
+		
+		then:
+		CampaignFolder parentFolder = (CampaignFolder) folderDao.findById(2L);
+		parentFolder.content.collect {it.id} == [20L, 1L, 21L];
+	}
+	
+	@DataSet("CampaignLibraryNavigationServiceIT.should move to same project at right position.xml")
+	def "should move folder with campaigns to the right position - last"(){
+		given:
+		Long[] sourceIds = [1L]
+		Long destinationId = 2L
+		
+		when:
+		navService.moveNodesToFolder(destinationId, sourceIds, 2)
+		
+		then:
+		CampaignFolder parentFolder = (CampaignFolder) folderDao.findById(2L);
+		parentFolder.content.collect {it.id} == [20L, 21L, 1L];
+	}
 	
 }
