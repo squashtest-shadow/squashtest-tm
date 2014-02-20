@@ -39,6 +39,7 @@ import org.squashtest.tm.service.DbunitServiceSpecification;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
 import org.unitils.dbunit.annotation.DataSet
 import org.unitils.dbunit.annotation.ExpectedDataSet;
+import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
 
 import spock.lang.Unroll;
 import spock.unitils.UnitilsSupport
@@ -51,6 +52,9 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
 	@Inject
 	private TestCaseLibraryNavigationService navService
+	
+	@Inject
+	private TestCaseFolderDao libraryDao
 	
 	@DataSet("TestCaseLibraryNavigationServiceIT.should copy paste folder with test-cases.xml")
 	def "should copy paste folder with test-cases"(){
@@ -68,6 +72,49 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		folderCopy.content.find {it.name == "test-case10"} != null
 		folderCopy.content.find {it.name == "test-case11"} != null		
 	}
+	
+	@DataSet("TestCaseLibraryNavigationServiceIT.should move to same project at right position.xml")
+	def "should move folder with test-cases to the right position - first"(){
+		given:
+		Long[] sourceIds = [1L]
+		Long destinationId = 2L
+		
+		when:
+		navService.moveNodesToFolder(destinationId, sourceIds, 0)
+		
+		then:
+		TestCaseFolder parentFolder = (TestCaseFolder) libraryDao.findById(2L);
+		parentFolder.content.collect {it.id} == [1L, 20L, 21L];
+	}
+	
+	@DataSet("TestCaseLibraryNavigationServiceIT.should move to same project at right position.xml")
+	def "should move folder with test-cases to the right position - middle"(){
+		given:
+		Long[] sourceIds = [1L]
+		Long destinationId = 2L
+		
+		when:
+		navService.moveNodesToFolder(destinationId, sourceIds, 1)
+		
+		then:
+		TestCaseFolder parentFolder = (TestCaseFolder) libraryDao.findById(2L);
+		parentFolder.content.collect {it.id} == [20L, 1L, 21L];
+	}
+	
+	@DataSet("TestCaseLibraryNavigationServiceIT.should move to same project at right position.xml")
+	def "should move folder with test-cases to the right position - last"(){
+		given:
+		Long[] sourceIds = [1L]
+		Long destinationId = 2L
+		
+		when:
+		navService.moveNodesToFolder(destinationId, sourceIds, 2)
+		
+		then:
+		TestCaseFolder parentFolder = (TestCaseFolder) libraryDao.findById(2L);
+		parentFolder.content.collect {it.id} == [20L, 21L, 1L];
+	}
+	
 	
 	@DataSet("TestCaseLibraryNavigationServiceIT.should copy paste tc with parameters and datasets.xml")
 	def "should copy paste tc with parameters and datasets"(){

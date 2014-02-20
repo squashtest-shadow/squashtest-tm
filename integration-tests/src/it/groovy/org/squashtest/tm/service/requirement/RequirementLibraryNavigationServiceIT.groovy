@@ -39,6 +39,7 @@ import org.squashtest.tm.service.internal.requirement.RequirementNodeDeletionHan
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService
 import org.unitils.dbunit.annotation.DataSet
 import org.unitils.dbunit.annotation.ExpectedDataSet;
+import org.squashtest.tm.service.internal.repository.RequirementFolderDao;
 
 import spock.unitils.UnitilsSupport
 
@@ -50,6 +51,8 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@Inject
 	RequirementLibraryNavigationService navService;
 
+	@Inject
+	RequirementFolderDao folderDao;
 	
 	@Inject
 	private RequirementNodeDeletionHandler deletionHandler;
@@ -355,5 +358,49 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		then:
 		! found("requirement", "rln_id", 10L);
 	}
+	
+	@DataSet("RequirementLibraryNavigationServiceIT.should move to same project at right position.xml")
+	def "should move folder with requirements to the right position - first"(){
+		given:
+		Long[] sourceIds = [1L]
+		Long destinationId = 2L
+		
+		when:
+		navService.moveNodesToFolder(destinationId, sourceIds, 0)
+		
+		then:
+		RequirementFolder parentFolder = (RequirementFolder) folderDao.findById(2L);
+		parentFolder.content.collect {it.id} == [1L, 20L, 21L];
+	}
+	
+	@DataSet("RequirementLibraryNavigationServiceIT.should move to same project at right position.xml")
+	def "should move folder with requirements to the right position - middle"(){
+		given:
+		Long[] sourceIds = [1L]
+		Long destinationId = 2L
+		
+		when:
+		navService.moveNodesToFolder(destinationId, sourceIds, 1)
+		
+		then:
+		RequirementFolder parentFolder = (RequirementFolder) folderDao.findById(2L);
+		parentFolder.content.collect {it.id} == [20L, 1L, 21L];
+	}
+	
+	@DataSet("RequirementLibraryNavigationServiceIT.should move to same project at right position.xml")
+	def "should move folder with requirements to the right position - last"(){
+		given:
+		Long[] sourceIds = [1L]
+		Long destinationId = 2L
+		
+		when:
+		navService.moveNodesToFolder(destinationId, sourceIds, 2)
+		
+		then:
+		RequirementFolder parentFolder = (RequirementFolder) folderDao.findById(2L);
+		parentFolder.content.collect {it.id} == [20L, 21L, 1L];
+	}
+	
+
 }
 
