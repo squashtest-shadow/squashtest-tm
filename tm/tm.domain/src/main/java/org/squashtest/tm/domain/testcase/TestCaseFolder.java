@@ -66,7 +66,11 @@ public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCa
 
 	@Override
 	public void addContent(TestCaseLibraryNode node, int position) {
-		folderSupport.addContent(node, position);
+		if(position >= content.size()){
+			folderSupport.addContent(node);
+		} else {
+			folderSupport.addContent(node, position);
+		}
 	}
 	
 	@Override

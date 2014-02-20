@@ -106,7 +106,11 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 
 	@Override
 	public void addContent(RequirementLibraryNode node, int position) {
-		folderSupport.addContent(node, position);
+		if(position >= content.size()){
+			folderSupport.addContent(node);
+		} else {
+			folderSupport.addContent(node, position);
+		}
 	}
 	
 	@Override

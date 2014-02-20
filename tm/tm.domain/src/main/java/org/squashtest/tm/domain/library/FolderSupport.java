@@ -59,7 +59,11 @@ public class FolderSupport<NODE extends LibraryNode, FOLDER extends Folder<NODE>
 
 	public void addContent(NODE node, int position) {
 		checkContentNameAvailable(node);
-		folder.getContent().add(position, node);
+		if(position >= folder.getContent().size()){
+			folder.addContent(node);
+		} else {
+			folder.getContent().add(position, node);
+		}
 		node.notifyAssociatedWithProject(folder.getProject());
 	}
 	

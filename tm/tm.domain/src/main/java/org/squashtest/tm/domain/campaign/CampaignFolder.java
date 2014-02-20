@@ -89,7 +89,11 @@ public class CampaignFolder extends CampaignLibraryNode implements Folder<Campai
 
 	@Override
 	public void addContent(CampaignLibraryNode node, int position) {
-		folderSupport.addContent(node, position);
+		if(position >= content.size()){
+			folderSupport.addContent(node);
+		} else {
+			folderSupport.addContent(node, position);
+		}
 	}
 	
 	@Override

@@ -92,8 +92,12 @@ public abstract class GenericLibrary<NODE extends LibraryNode> implements Librar
 	@Override
 	public void addContent(@NotNull final NODE node, int position) throws UnsupportedOperationException {
 		checkContentNameAvailable(node);
-		getContent().add(position, node);
-
+		if(position >= getContent().size()){
+			getContent().add(node);
+		} else {
+			getContent().add(position, node);
+		}
+		
 		getProject().accept(new ProjectVisitor() {
 			public void visit(Project project) {
 				node.notifyAssociatedWithProject(project);

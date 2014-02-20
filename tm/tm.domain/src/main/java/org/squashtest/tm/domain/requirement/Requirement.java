@@ -392,7 +392,11 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	public void addContent(@NotNull Requirement child, int position) throws DuplicateNameException,
 			NullArgumentException {
 		checkContentNameAvailable(child);
-		children.add(position, child);
+		if(position >= children.size()){
+			children.add(child);
+		} else {
+			children.add(position, child);
+		}
 		children = new ArrayList<Requirement>(children);
 		child.notifyAssociatedWithProject(this.getProject());
 	}
