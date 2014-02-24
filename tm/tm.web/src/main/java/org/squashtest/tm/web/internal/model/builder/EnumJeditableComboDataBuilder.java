@@ -72,6 +72,13 @@ public class EnumJeditableComboDataBuilder<T extends Enum<?>> {
 	private T selectedItem;
 
 	/**
+	 * Optional context
+	 */
+	private Object context;
+	
+
+
+	/**
 	 * The list of items used as the model for the combobox.
 	 * 
 	 * @param model
@@ -191,5 +198,14 @@ public class EnumJeditableComboDataBuilder<T extends Enum<?>> {
 	 */
 	protected final T getSelectedItem() {
 		return selectedItem;
+	}
+
+	public  EnumJeditableComboDataBuilder<T> useContext(Object context) {
+		this.context = context;
+		return this;
+	}
+
+	public Object getContext() {
+		return context;
 	}
 }

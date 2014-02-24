@@ -23,10 +23,14 @@
 <%@ tag body-content="empty" description="Outputs a combobox of execution statuses with no selection" %>
 <%@ attribute name="id" required="true" description="The html id of the combo" %>
 <%@ attribute name="name" required="true" description="The name attribute of the combo" %>
+<%@ attribute name="allowsUntestable" required="true" description="Wether the status untestable is allowed" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <select id="${ id }" name="${ name }" class="execution-status-combo-class">
-	<option value="UNTESTABLE" class="exec-status-option exec-status-untestable"><f:message key="execution.execution-status.UNTESTABLE" /></option>
+	<c:if test="${allowsUntestable}">
+		<option value="UNTESTABLE" class="exec-status-option exec-status-untestable"><f:message key="execution.execution-status.UNTESTABLE" /></option>
+	</c:if>
 	<option value="BLOCKED" class="exec-status-option exec-status-blocked"><f:message key="execution.execution-status.BLOCKED" /></option>
 	<option value="FAILURE" class="exec-status-option exec-status-failure"><f:message key="execution.execution-status.FAILURE" /></option>
 	<option value="SUCCESS" class="exec-status-option exec-status-success"><f:message key="execution.execution-status.SUCCESS" /></option>

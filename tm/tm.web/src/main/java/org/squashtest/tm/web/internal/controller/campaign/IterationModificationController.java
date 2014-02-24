@@ -71,6 +71,7 @@ import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionVie
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseImportanceJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseModeJeditableComboDataBuilder;
+import org.squashtest.tm.web.internal.controller.testcase.executions.ExecutionStatusJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
@@ -115,7 +116,9 @@ public class IterationModificationController {
 
 	@Inject
 	private Provider<TestCaseModeJeditableComboDataBuilder> modeComboBuilderProvider;
-														
+
+	@Inject
+	private Provider<ExecutionStatusJeditableComboDataBuilder> executionStatusComboBuilderProvider;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showIteration(Model model, @PathVariable long iterationId) {
@@ -146,8 +149,14 @@ public class IterationModificationController {
 		model.addAttribute("assignableUsers", assignableUsers);
 		model.addAttribute("weights", weights);
 		model.addAttribute("modes", getModes());
+		model.addAttribute("statuses", getStatuses(iteration.getProject().getId()));
 	}
 
+	private Map<String, String> getStatuses(long projectId){
+		Locale locale = LocaleContextHolder.getLocale();
+		return executionStatusComboBuilderProvider.get().useContext(projectId).useLocale(locale).buildMap();
+	}
+	
 	private Map<String, String> getModes(){
 		Locale locale = LocaleContextHolder.getLocale();
 		return modeComboBuilderProvider.get().useLocale(locale).buildMap();

@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.project;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -44,6 +46,7 @@ import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionH
 import org.squashtest.tm.core.foundation.collection.Pagings;
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.library.PluginReferencer;
 import org.squashtest.tm.domain.project.AdministrableProject;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -396,6 +399,63 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		library.disablePlugin(wizardId);
 	}
 	
+	// ************************** status configuration section ****************************
+	
+	@Override
+	public void enableExecutionStatus(long projectId, ExecutionStatus executionStatus) {
+		GenericProject project = genericProjectDao.findById(projectId);
+		checkManageProjectOrAdmin(project);
+		switch(executionStatus){
+			case UNTESTABLE :	project.setAllowsNonTestableStatus(true); break;
+			default:	break; 
+		}
+			
+	}
+
+
+	@Override
+	public void disableExecutionStatus(long projectId, ExecutionStatus executionStatus) {
+		GenericProject project = genericProjectDao.findById(projectId);
+		checkManageProjectOrAdmin(project);
+		switch(executionStatus){
+		case UNTESTABLE :	project.setAllowsNonTestableStatus(false); break;
+		default:	break; 
+	}
+	}
+
+
+	@Override
+	public List<ExecutionStatus> enabledExecutionStatuses(long projectId) {
+		GenericProject project = genericProjectDao.findById(projectId);
+		checkManageProjectOrAdmin(project);
+		List<ExecutionStatus> statuses = new ArrayList<ExecutionStatus>();
+		statuses.addAll(Arrays.asList(ExecutionStatus.values())); 
+		if(!project.isAllowsNonTestableStatus()){
+			statuses.remove(ExecutionStatus.UNTESTABLE);
+		}
+		//always disables statuses
+		statuses.remove(ExecutionStatus.ERROR);
+		statuses.remove(ExecutionStatus.NOT_RUN);
+		statuses.remove(ExecutionStatus.WARNING);
+		return statuses;
+	}
+
+
+	@Override
+	public List<ExecutionStatus> disabledExecutionStatuses(long projectId) {
+		GenericProject project = genericProjectDao.findById(projectId);
+		checkManageProjectOrAdmin(project);
+		List<ExecutionStatus> statuses = new ArrayList<ExecutionStatus>();
+		if(!project.isAllowsNonTestableStatus()){
+			statuses.add(ExecutionStatus.UNTESTABLE);
+			
+			//always disables statuses
+			statuses.add(ExecutionStatus.ERROR);
+			statuses.add(ExecutionStatus.NOT_RUN);
+			statuses.add(ExecutionStatus.WARNING);
+		}
+		return statuses;
+	}
 	
 	
 	// **************** private stuffs **************
@@ -422,5 +482,4 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 			return permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "MANAGEMENT", object);
 		}
 	}
-	
 }

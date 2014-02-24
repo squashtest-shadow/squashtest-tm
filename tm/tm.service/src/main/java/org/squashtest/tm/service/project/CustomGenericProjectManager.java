@@ -27,6 +27,7 @@ import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.users.Party;
@@ -130,4 +131,34 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder{
 	 * enables the given wizard for the given workspace of the given project
 	 */
 	void disableWizardForWorkspace(long projectId, WorkspaceType workspace, String wizardId);
+	
+	// ***************************** status management *************************
+	
+	/**
+	 * Enables an execution status for a project
+	 * @param projectId
+	 * @param executionStatus
+	 */
+	void enableExecutionStatus(long projectId, ExecutionStatus executionStatus);
+	
+	/**
+	 * Disables an execution status for a project
+	 * @param projectId
+	 * @param executionStatus
+	 */
+	void disableExecutionStatus(long projectId, ExecutionStatus executionStatus);
+	
+	/**
+	 * Returns the list of enabled execution statuses given a project.
+	 * @param projectId
+	 * @return
+	 */
+	List<ExecutionStatus> enabledExecutionStatuses(long projectId);
+	
+	/**
+	 * Returns the list of disabled execution statuses given a project. 
+	 * @param projectId
+	 * @return
+	 */
+	List<ExecutionStatus> disabledExecutionStatuses(long projectId);
 }

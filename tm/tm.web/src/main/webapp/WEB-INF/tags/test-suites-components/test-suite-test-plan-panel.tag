@@ -39,6 +39,8 @@
 	description="a map of weights paired by id -> internationalized text. The id must be a string."%>	
 <%@ attribute name="modes" type="java.lang.Object" 
 	description="a map of modes paired by id -> internationalized text. The id must be a string."%>	
+<%@ attribute name="statuses" type="java.lang.Object" 
+	description="a map of execution statuses paired by id -> internationalized text. The id must be a string."%>	
 <%@ attribute name="testSuite" type="java.lang.Object"
 	description="the instance of test suite"%>
 
@@ -250,7 +252,8 @@
 					testsuiteId : ${testSuite.id},
 					assignableUsers : ${ json:serialize(assignableUsers) },
 					weights : ${ json:serialize(weights)},
-					modes : ${ json:serialize(modes)}
+					modes : ${ json:serialize(modes)},
+					statuses :  ${ json:serialize(statuses)}
 				}
 			};
 			

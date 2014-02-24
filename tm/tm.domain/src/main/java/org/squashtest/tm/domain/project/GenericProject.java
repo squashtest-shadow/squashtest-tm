@@ -92,6 +92,9 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	@Field(analyze=Analyze.NO, store=Store.YES)
 	private String name;
 
+	@Column(name = "NON_TESTABLE_STATUS")
+	private boolean allowsNonTestableStatus = true;
+	
 	private boolean active = true;
 
 	// FIXME remove lazy, sometimes we dont want to load all of this stuff
@@ -294,4 +297,12 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	}
 
 	public abstract void accept(ProjectVisitor visitor);
+
+	public boolean isAllowsNonTestableStatus() {
+		return allowsNonTestableStatus;
+	}
+
+	public void setAllowsNonTestableStatus(boolean allowsNonTestableStatus) {
+		this.allowsNonTestableStatus = allowsNonTestableStatus;
+	}	
 }

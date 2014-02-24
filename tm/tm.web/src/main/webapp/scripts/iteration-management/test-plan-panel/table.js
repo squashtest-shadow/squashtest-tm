@@ -183,7 +183,7 @@ define(
 
 					testplanUrl : initconf.urls.testplanUrl,
 
-					jsonStatuses : JSON.stringify(initconf.messages.executionStatus),
+					jsonStatuses : JSON.stringify(initconf.basic.statuses),
 					
 					submitStatusClbk : function(json, settings) {
 						

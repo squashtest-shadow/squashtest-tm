@@ -388,10 +388,12 @@
 								<f:message key="execute.header.status.label" />
 							</label> 
 							<c:choose>
-							<c:when test="${editable }"><comp:execution-status-combo name="executionStatus" id="execution-status-combo" />
+							<c:when test="${editable }"><comp:execution-status-combo name="executionStatus" id="execution-status-combo" allowsUntestable="${allowsUntestable}"/>
+							<c:if test="${allowsUntestable}">
 							<button id="execute-untestable-button">
 								<f:message key="execute.header.button.untestable.title" />
 							</button>
+							</c:if>
 							<button id="execute-blocked-button">
 								<f:message key="execute.header.button.blocked.title" />
 							</button>							

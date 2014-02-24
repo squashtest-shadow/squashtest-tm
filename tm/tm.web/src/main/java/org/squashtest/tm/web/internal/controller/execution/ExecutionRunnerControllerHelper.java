@@ -126,6 +126,7 @@ public class ExecutionRunnerControllerHelper {
 		model.addAttribute("executionStatus", statusSet);
 		model.addAttribute("hasNextStep", stepOrder != (total - 1));
 		model.addAttribute("attachments", attachments);
+		model.addAttribute("allowsUntestable", execution.getProject().isAllowsNonTestableStatus());
 
 		addCurrentStepUrl(execution.getId(), model);
 	}

@@ -276,25 +276,22 @@
 			</comp:toggle-panel>
 			<%-----------------------------------END USERS PANEL -----------------------------------------------%>
 			<%----------------------------------------STATUS----------------------------------------------------%>
-			<comp:toggle-panel id="project-status-panel" titleKey="label.StatusAdministration" open="true">
+			<comp:toggle-panel id="project-status-panel" titleKey="label.status.options" open="true">
 				<jsp:attribute name="body">
 					<div id="project-description-table" class="display-table">
 						<div class="display-table-row">
 							<div class="display-table-cell">  
+								<label for="toggle-nontestable-checkbox" class="display-table-cell">
+									<f:message key="label.status.options.optional" />
+								</label>
 							</div>
 							<div class="display-table-cell">  
+								<span class="display-table-cell exec-status-label exec-status-untestable">
+									<f:message key="execution.execution-status.UNTESTABLE" />
+								</span>
 							</div>
 							<div class="display-table-cell">                  		
-	                  			<input id="toggle-activation-checkbox" type="checkbox" data-def="width=35, on_label=Active, off_label=Inactive" checked="checked" style="display: none;"><span class="switch-button-label off">Inactive</span><div class="switch-button-background" style="width: 35px; height: 11px; position: relative; top: 6px;"><div class="switch-button-button" style="width: 12px; height: 11px; left: 22px;"></div></div><span class="switch-button-label on">Active</span><div style="clear: left;"></div>
-	                  		</div>
-						</div>
-						<div class="display-table-row">
-							<div class="display-table-cell">  
-							</div>
-							<div class="display-table-cell">  
-							</div>
-							<div class="display-table-cell">                  		
-	                  			<input id="toggle-activation-checkbox" type="checkbox" data-def="width=35, on_label=Active, off_label=Inactive" checked="checked" style="display: none;"><span class="switch-button-label off">Inactive</span><div class="switch-button-background" style="width: 35px; height: 11px; position: relative; top: 6px;"><div class="switch-button-button" style="width: 12px; height: 11px; left: 22px;"></div></div><span class="switch-button-label on">Active</span><div style="clear: left;"></div>
+	                  			<input id="toggle-nontestable-checkbox" type="checkbox" data-def="width=35, on_label=<f:message key="label.status.options.allowed" />, off_label=<f:message key="label.status.options.forbidden" />" checked="checked" style="display: none;"><span class="switch-button-label off"><f:message key="label.status.options.forbidden"/></span><div class="switch-button-background" style="width: 35px; height: 11px; position: relative; top: 6px;"><div class="switch-button-button" style="width: 12px; height: 11px; left: 22px;"></div></div><span class="switch-button-label on"><f:message key="label.status.options.allowed" /></span><div style="clear: left;"></div>
 	                  		</div>
 						</div>
 					</div>

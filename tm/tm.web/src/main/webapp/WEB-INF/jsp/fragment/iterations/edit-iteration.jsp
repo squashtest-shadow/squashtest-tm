@@ -307,7 +307,7 @@
 	
 	<%-- ------------------ test plan ------------------------------ --%>
 	
-	<it:iteration-test-plan-panel iteration="${iteration}" assignableUsers="${assignableUsers}" weights="${weights}" modes="${modes}"
+	<it:iteration-test-plan-panel iteration="${iteration}" assignableUsers="${assignableUsers}" weights="${weights}" modes="${modes}" statuses="${statuses}"
 								  linkable="${linkable}"   editable="${writable}"  executable="${executable}" reorderable="${linkable}"/>
 	
 	<%-- ------------------ /test plan ----------------------------- --%>

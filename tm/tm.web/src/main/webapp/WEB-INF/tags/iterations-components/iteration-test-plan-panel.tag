@@ -31,8 +31,8 @@
 <%@ attribute name="assignableUsers" type="java.lang.Object" description="a map of users paired by id -> login. The id must be a string."%>
 <%@ attribute name="weights" type="java.lang.Object" description="a map of weights paired by id -> internationalized text. The id must be a string."%>	
 <%@ attribute name="modes" type="java.lang.Object" description="a map of modes paired by id -> internationalized text. The id must be a string."%>	
+<%@ attribute name="statuses" type="java.lang.Object" description="a map of execution statuses paired by id -> internationalized text. The id must be a string."%>
 <%@ attribute name="iteration" type="java.lang.Object" description="the instance of iteration" %>
-
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
@@ -234,7 +234,8 @@
 							iterationId : ${iteration.id},
 							assignableUsers : ${ json:serialize(assignableUsers) },
 							weights : ${ json:serialize(weights)},
-							modes : ${ json:serialize(modes)}
+							modes : ${ json:serialize(modes)},
+							statuses : ${ json:serialize(statuses)}
 						}
 					};
 					
