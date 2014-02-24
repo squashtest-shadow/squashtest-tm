@@ -174,6 +174,7 @@ public class ProjectAdministrationController {
 		}
 		comboDataMap.put(-1L, messageSource.getMessage(PROJECT_BUGTRACKER_NAME_UNDEFINED, null, locale));
 		return comboDataMap;
+
 	}
 
 }

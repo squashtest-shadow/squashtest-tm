@@ -47,6 +47,7 @@ import org.squashtest.tm.core.foundation.collection.Pagings;
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.library.PluginReferencer;
 import org.squashtest.tm.domain.project.AdministrableProject;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -63,6 +64,7 @@ import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.internal.repository.BugTrackerBindingDao;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
+import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.PartyDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
@@ -98,6 +100,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	private UserDao userDao;
 	@Inject
 	private PartyDao partyDao;
+	@Inject
+	private ExecutionDao executionDao;
 	@Inject
 	private ObjectIdentityService objectIdentityService;
 	@Inject
@@ -458,6 +462,25 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	}
 	
 	
+	@Override
+	public void replaceExecutionStatus(long projectId, ExecutionStatus source, ExecutionStatus target) {
+		List<ExecutionStep> steps = executionDao.findAllExecutionStepWithStatus(projectId, source);
+		for(ExecutionStep step : steps){
+			step.setExecutionStatus(target);
+		}
+	}
+	
+	@Override
+	public boolean isExecutionStatusEnabledForProject(long projectId, ExecutionStatus executionStatus) {
+		List<ExecutionStatus> statuses = disabledExecutionStatuses(projectId);
+		if(statuses.contains(executionStatus)){
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	
 	// **************** private stuffs **************
 	
 	private PluginReferencer findLibrary(long projectId, WorkspaceType workspace){
@@ -482,4 +505,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 			return permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "MANAGEMENT", object);
 		}
 	}
+
+
+
 }

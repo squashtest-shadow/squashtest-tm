@@ -55,6 +55,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
@@ -433,5 +434,22 @@ public class GenericProjectController {
 			return data;
 		}
 	}
+	
+	@RequestMapping(value = PROJECT_ID_URL + "/disable-execution-status/{executionStatus}", method = RequestMethod.POST)
+	@ResponseBody
+	public void disableExecutionStatusOnProject(@PathVariable long projectId, @PathVariable String executionStatus){
+		projectManager.disableExecutionStatus(projectId, ExecutionStatus.valueOf(executionStatus));
+	}
 
+	@RequestMapping(value = PROJECT_ID_URL + "/enable-execution-status/{executionStatus}", method = RequestMethod.POST)
+	@ResponseBody
+	public void enableExecutionStatusOnProject(@PathVariable long projectId, @PathVariable String executionStatus){
+		projectManager.enableExecutionStatus(projectId, ExecutionStatus.valueOf(executionStatus));
+	}
+	
+	@RequestMapping(value = PROJECT_ID_URL + "/is-enabled-execution-status/{executionStatus}", method = RequestMethod.GET)
+	@ResponseBody
+	public boolean isExecutionStatusEnabledForProject(@PathVariable long projectId, @PathVariable String executionStatus){
+		return projectManager.isExecutionStatusEnabledForProject(projectId, ExecutionStatus.valueOf(executionStatus));
+	}
 }

@@ -161,4 +161,20 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder{
 	 * @return
 	 */
 	List<ExecutionStatus> disabledExecutionStatuses(long projectId);
+	
+	/**
+	 * Replaces an execution status with another within a project
+	 * @param source
+	 * @param target
+	 */
+	void replaceExecutionStatus(long projectId, ExecutionStatus source, ExecutionStatus target);
+
+
+	/**
+	 * Returns true if a given execution status is enabled for a given project, false otherwise
+	 * @param projectId
+	 * @param executionStatus
+	 * @return
+	 */
+	boolean isExecutionStatusEnabledForProject(long projectId, ExecutionStatus executionStatus);
 }

@@ -291,7 +291,7 @@
 								</span>
 							</div>
 							<div class="display-table-cell">                  		
-	                  			<input id="toggle-nontestable-checkbox" type="checkbox" data-def="width=35, on_label=<f:message key="label.status.options.allowed" />, off_label=<f:message key="label.status.options.forbidden" />" checked="checked" style="display: none;"><span class="switch-button-label off"><f:message key="label.status.options.forbidden"/></span><div class="switch-button-background" style="width: 35px; height: 11px; position: relative; top: 6px;"><div class="switch-button-button" style="width: 12px; height: 11px; left: 22px;"></div></div><span class="switch-button-label on"><f:message key="label.status.options.allowed" /></span><div style="clear: left;"></div>
+	                  			<input id="toggle-nontestable-checkbox" type="checkbox" data-def="width=35, on_label=<f:message key="label.status.options.allowed" />, off_label=<f:message key="label.status.options.forbidden" />" checked="checked" style="display: none;"/>
 	                  		</div>
 						</div>
 					</div>
@@ -335,11 +335,11 @@
 					<span class="display-table-cell"><f:message key="label.Permission"/></span>
 					<div class="display-table-cell">
 						<select id="permission-input">
-<c:forEach items="${availablePermissions}" var="permission">
+						<c:forEach items="${availablePermissions}" var="permission">
 							<option value="${permission.qualifiedName}" id="${permission.simpleName}">
 								<f:message	key="user.project-rights.${permission.simpleName}.label" />
 							</option>
-</c:forEach>
+						</c:forEach>
 						</select>
 					</div>
 				</div>
@@ -358,6 +358,30 @@
 		</div>
 
 		<%----------------------------------- /add User Popup-----------------------------------------------%>
+	
+		<%------------------------------------replace status popup ------------------------------------------%>
+
+		<div id="replace-status-dialog" class="popup-dialog not-displayed">
+		
+			<div data-def="state=loading">
+				<comp:waiting-pane/>
+			</div>
+			
+			<div data-def="state=normal" class="display-table">
+				<div class="display-table-row">
+					<span class="display-table-cell">
+						<f:message key="label.Status"/>
+					</span>
+					<div class="display-table-cell">
+						<select id="status-input">
+						</select>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+
+		<%-----------------------------------/replace status popup ------------------------------------------%>
 	
 	</jsp:attribute>
 </layout:info-page-layout>
@@ -392,7 +416,7 @@
 <!-- ------------------------------------END RENAME POPUP------------------------------------------------------- -->
 <script type="text/javascript">
 require(["common"], function() {
-require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "project", "squashtable", "jquery.squash.formdialog"], function($, projectsManager, Frag){
+require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.attributeparser", "project", "squashtable", "jquery.squash.formdialog", "jquery.switchButton"], function($, projectsManager, Frag, attrparser){
 	/* popup renaming success handler */
 	function renameProjectSuccess(data) {
 		$('#project-name-header').html(data.newName);
@@ -417,12 +441,67 @@ require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "project", 
 	
 	$(function() {
 		 		init(projectsManager, Frag);	
+		 		configureActivation();
+		 		$("#toggle-nontestable-checkbox").change(function(){
+		 			toggleUntestableActivation();
+		 		}); 
 	});
 	
 	function refreshTableAndPopup(){
 		$("#user-permissions-table").squashTable().refresh();		
 	}
 	
+	function configureActivation(){
+
+		var activCbx = $("#toggle-nontestable-checkbox"),
+			activConf = attrparser.parse(activCbx.data('def'));
+		
+		activCbx.switchButton(activConf);
+		
+		//a bit of css tweak now
+		activCbx.siblings('.switch-button-background').css({position : 'relative', top : '6px'});
+		
+		$.ajax({
+			type: 'GET',
+			 url: "${projectUrl}/is-enabled-execution-status/UNTESTABLE",
+			 success : function(data){
+				 if(!data){
+					 $("#toggle-nontestable-checkbox").switchButton({
+						  checked: false
+					});
+				 }
+			 }
+		});
+		
+		
+	}
+	
+	
+	function toggleUntestableActivation(){
+		var shouldActivate = $("#toggle-nontestable-checkbox").prop('checked');
+		if (shouldActivate){
+			activateUntestable();
+		}
+		else{
+			deactivateUntestable();
+		}
+			
+	}	
+	
+	function activateUntestable(){
+		$.ajax({
+			type: 'POST',
+			 url: "${projectUrl}/enable-execution-status/UNTESTABLE",
+		});
+	}
+	
+	function deactivateUntestable(){
+		$.ajax({
+			type: 'POST',
+			 url: "${projectUrl}/disable-execution-status/UNTESTABLE",
+		});
+	}
+
 	function init(projectsManager, Frag){
 		
 		
@@ -491,7 +570,7 @@ require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "project", 
 		$("#add-permission-button").squashButton().on('click', function(){
 			permpopup.formDialog('open');
 		});
-		
+	
 
 		//user permissions table
 		var permSettings = {

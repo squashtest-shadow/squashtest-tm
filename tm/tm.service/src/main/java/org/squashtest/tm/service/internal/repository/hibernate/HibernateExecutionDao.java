@@ -164,6 +164,23 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 		return execution.getSteps().subList(startIndex, lastIndex);
 
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ExecutionStep> findAllExecutionStepWithStatus(Long projectId, ExecutionStatus source) {
+
+		Criteria crit = currentSession().createCriteria(ExecutionStep.class, "ExecutionStep");
+		crit.createAlias("execution", "Execution", JoinType.LEFT_OUTER_JOIN);
+		crit.createAlias("Execution.testPlan.iteration", "Iteration", JoinType.LEFT_OUTER_JOIN);
+		crit.createAlias("Iteration.campaign", "Campaign", JoinType.LEFT_OUTER_JOIN);
+		crit.createAlias("Campaign.project", "Project", JoinType.LEFT_OUTER_JOIN);
+		crit.createAlias("executionStatus", "ExecutionStatus");
+		crit.add(Restrictions.eq("Project.id", Long.valueOf(projectId)));
+		crit.add(Restrictions.eq("ExecutionStatus", source));
+		
+		return crit.list();
+	};
+	
 
 	@Override
 	public List<IssueDetector> findAllIssueDetectorsForExecution(Long execId) {
@@ -250,5 +267,5 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 			query.setLong("execId", executionId);
 			query.setParameter("status", status);
 		}
-	};
+	}
 }

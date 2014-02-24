@@ -26,6 +26,7 @@ import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 
@@ -45,6 +46,8 @@ public interface ExecutionDao extends EntityDao<Execution> {
 
 	List<ExecutionStep> findStepsFiltered(Long executionId, Paging filter);
 
+	List<ExecutionStep> findAllExecutionStepWithStatus(Long projectId, ExecutionStatus source);
+	
 	List<IssueDetector> findAllIssueDetectorsForExecution(Long execId);
 
 	long countExecutionSteps(long executionId);
