@@ -29,6 +29,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.context.MessageSource;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
+import org.squashtest.tm.bugtracker.definition.RemotePriority;
+import org.squashtest.tm.bugtracker.definition.RemoteStatus;
+import org.squashtest.tm.bugtracker.definition.RemoteUser;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
@@ -56,10 +59,10 @@ public final class BugTrackerControllerHelper {
 	 * 	=============================================<br>
 	 *  |    Step 1/N<br>
 	 *  =============================================<br>
-	 * 	-------------------Action---------------------<br>
+	 * 	-Action-<br>
 	 * 	action description<br>
 	 * 	<br>
-	 * 	----------------Expected Result---------------<br>
+	 * 	Expected Result-<br>
 	 * 	expected result description<br>
 	 * 	<br>
 	 * 	<br>
@@ -242,26 +245,55 @@ public final class BugTrackerControllerHelper {
 
 		@Override
 		public Map<String, String> buildItemData(IssueOwnership<RemoteIssueDecorator> ownership) {
-			
+
 			Map<String, String> result = new HashMap<String, String>(7);
-			
+
 			RemoteIssue issue = ownership.getIssue();
-			String strUrl = bugTrackersLocalService.getIssueUrl(ownership.getIssue().getId(), ownership.getOwner().getBugTracker()).toExternalForm();
+			String strUrl = bugTrackersLocalService.getIssueUrl(ownership.getIssue().getId(),
+					ownership.getOwner().getBugTracker()).toExternalForm();
 			String ownerName = nameBuilder.buildName(ownership.getOwner());
 			String ownerPath = nameBuilder.buildURLPath(ownership.getOwner());
-			
+
 			result.put("issue-url", strUrl);
 			result.put("issue-id", issue.getId());
 			result.put("issue-summary", issue.getSummary());
-			result.put("issue-priority", issue.getPriority().getName());
-			result.put("issue-status", issue.getStatus().getName());
-			result.put("issue-assignee", issue.getAssignee().getName());
+			result.put("issue-priority", findPriority(issue));
+			result.put("issue-status", findStatus(issue));
+			result.put("issue-assignee", findAssignee(issue));
 			result.put("issue-owner", ownerName);
 			result.put("issue-owner-url", ownerPath);
-			
+
 			return result;
-			
+
 		}
+
+	}
+
+	private static String findAssignee(RemoteIssue issue) {
+		String assignee = "";
+		RemoteUser remoteUser = issue.getAssignee();
+		if (remoteUser != null) {
+			assignee = remoteUser.getName();
+		}
+		return assignee;
+	}
+
+	private static String findStatus(RemoteIssue issue) {
+		String status = "";
+		RemoteStatus remoteStatus = issue.getStatus();
+		if (remoteStatus != null) {
+			status = remoteStatus.getName();
+		}
+		return status;
+	}
+
+	private static String findPriority(RemoteIssue issue) {
+		String priority = "";
+		RemotePriority remotePriority = issue.getPriority();
+		if (remotePriority != null) {
+			priority = remotePriority.getName();
+		}
+		return priority;
 	}
 
 	/**
@@ -294,19 +326,20 @@ public final class BugTrackerControllerHelper {
 		public Map<String, Object> buildItemData(IssueOwnership<RemoteIssueDecorator> ownership) {
 			RemoteIssue issue = ownership.getIssue();
 			Map<String, Object> row = new HashMap<String, Object>(8);
-			
-			String url = bugTrackersLocalService.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker()).toExternalForm();
+
+			String url = bugTrackersLocalService.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
+					.toExternalForm();
 			String issueOwner = nameBuilder.buildName(ownership.getOwner());
-			
+
 			row.put("url", url);
 			row.put("remote-id", issue.getId());
 			row.put("summary", issue.getSummary());
-			row.put("priority", issue.getPriority().getName());
-			row.put("status", issue.getStatus().getName());
-			row.put("assignee", issue.getAssignee().getName());
+			row.put("priority", findPriority(issue));
+			row.put("status", findStatus(issue));
+			row.put("assignee", findAssignee(issue));
 			row.put("execution", issueOwner);
 			row.put("execution-id", ownership.getExecution().getId());
-			
+
 			return row;
 		}
 	}
@@ -347,11 +380,12 @@ public final class BugTrackerControllerHelper {
 			result.put("issue-url",
 					bugTrackersLocalService.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
 							.toExternalForm());
+
 			result.put("remote-id", issue.getId());
 			result.put("summary", issue.getSummary());
-			result.put("priority", issue.getPriority().getName());
-			result.put("status", issue.getStatus().getName());
-			result.put("assignee", issue.getAssignee().getName());
+			result.put("priority", findPriority(issue));
+			result.put("status", findStatus(issue));
+			result.put("assignee", findAssignee(issue));
 			result.put("owner", nameBuilder.buildName(ownership.getOwner()));
 			result.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, "");
 			result.put("local-id", issue.getIssueId());
@@ -390,7 +424,7 @@ public final class BugTrackerControllerHelper {
 
 			result.put("remote-id", issue.getId());
 			result.put("summary", issue.getSummary());
-			result.put("priority", issue.getPriority().getName());
+			result.put("priority", findPriority(issue));
 			result.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, "");
 			result.put("local-id", issue.getIssueId());
 
@@ -409,9 +443,10 @@ public final class BugTrackerControllerHelper {
 		void setLocale(Locale locale);
 
 		String buildName(IssueDetector bugged);
-		
+
 		/**
-		 * Returns the path of the issue detector. You'll have to find the protocol, address and application context by yourself.
+		 * Returns the path of the issue detector. You'll have to find the protocol, address and application context by
+		 * yourself.
 		 * 
 		 * @param bugged
 		 * @return
@@ -425,9 +460,9 @@ public final class BugTrackerControllerHelper {
 	 * 
 	 */
 	private abstract static class IssueOwnershipAbstractNameBuilder implements IssueOwnershipNameBuilder {
-		
+
 		// TODO : use a visitor instead of instanceof
-		
+
 		protected Locale locale;
 		protected MessageSource messageSource;
 
@@ -455,19 +490,19 @@ public final class BugTrackerControllerHelper {
 
 			return name;
 		}
-		
+
 		@Override
 		public String buildURLPath(IssueDetector bugged) {
-			
-			Execution exec = (bugged instanceof ExecutionStep) ? ((ExecutionStep)bugged).getExecution() : (Execution)bugged;
-			
-			return "/executions/"+exec.getId();
+
+			Execution exec = (bugged instanceof ExecutionStep) ? ((ExecutionStep) bugged).getExecution()
+					: (Execution) bugged;
+
+			return "/executions/" + exec.getId();
 		}
 
 		abstract String buildStepName(ExecutionStep executionStep);
 
 		abstract String buildExecName(Execution execution);
-		
 
 	}
 
@@ -503,7 +538,7 @@ public final class BugTrackerControllerHelper {
 	private static final class ExecutionModelOwnershipNamebuilder extends IssueOwnershipAbstractNameBuilder {
 		@Override
 		public String buildExecName(Execution bugged) {
-			if(bugged == null){
+			if (bugged == null) {
 				return "";
 			} else {
 				return bugged.getName();
@@ -544,8 +579,8 @@ public final class BugTrackerControllerHelper {
 		}
 
 	}
-	
-	public static String findOwnerDescForTestCase(IssueDetector bugged, MessageSource messageSource, Locale locale){
+
+	public static String findOwnerDescForTestCase(IssueDetector bugged, MessageSource messageSource, Locale locale) {
 		TestCaseModelOwnershipNamebuilder nameBuilder = new TestCaseModelOwnershipNamebuilder();
 		nameBuilder.setMessageSource(messageSource);
 		nameBuilder.setLocale(locale);
