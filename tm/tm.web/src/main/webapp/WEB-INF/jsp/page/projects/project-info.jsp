@@ -361,24 +361,29 @@
 	
 		<%------------------------------------replace status popup ------------------------------------------%>
 
-		<div id="replace-status-dialog" class="popup-dialog not-displayed">
+		<div id="replace-status-dialog" class="popup-dialog not-displayed" title="<f:message key="label.status.options.popup.label"/>">
 		
 			<div data-def="state=loading">
 				<comp:waiting-pane/>
 			</div>
+		
 			
 			<div data-def="state=normal" class="display-table">
 				<div class="display-table-row">
-					<span class="display-table-cell">
-						<f:message key="label.Status"/>
-					</span>
-					<div class="display-table-cell">
-						<select id="status-input">
-						</select>
-					</div>
+					${untestablePopupMessage}
+				</div>
+				<div class="display-table-row">
+					<f:message key="label.Status"/>
+					<select id="status-input">
+					</select>
 				</div>
 			</div>
 			
+			<div class="popup-dialog-buttonpane">
+				<input type="button" value="<f:message key='label.Confirm'/>" data-def="state=normal, mainbtn=normal, evt=confirm"/>
+				<input type="button" value="<f:message key='label.Cancel' />" data-def="state=normal loading, mainbtn=loading, evt=cancel" />
+				<input type="button" value="<f:message key='label.Ok'    />"  data-def="state=allbound noselect, mainbtn=allbound noselect, evt=cancel"/>
+			</div>
 		</div>
 
 		<%-----------------------------------/replace status popup ------------------------------------------%>
@@ -476,6 +481,47 @@ require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.att
 		
 	}
 	
+	// status popup
+	var statuspopup = $("#replace-status-dialog"); 
+	statuspopup.formDialog();
+	
+	statuspopup.on('formdialogopen', function(){
+		
+		statuspopup.formDialog('setState', 'normal');
+			
+			$.getJSON("${projectUrl}/execution-status/UNTESTABLE").done(function(json){
+					$.each(json, function(key){
+						var o = new Option(key, json[key]);
+						$(o).html(key);
+						$("#status-input").append(o);
+					});
+				statuspopup.formDialog('setState', "normal");
+		});
+	});
+	
+	statuspopup.on('formdialogcancel', function(){
+		 $("#toggle-nontestable-checkbox").switchButton({
+			  checked: true
+		});
+		$("#status-input").html("");
+		statuspopup.formDialog('close');
+	});
+	
+	statuspopup.on('formdialogconfirm', function(){
+		var target = $("#status-input").val();
+		$.ajax({
+			type: 'POST',
+			url: "${projectUrl}/replace-execution-status",
+			data : {
+				sourceExecutionStatus : "UNTESTABLE",
+				targetExecutionStatus : target,
+				success : function(){
+					deactivateUntestable();
+					statuspopup.formDialog('close');
+				}
+			}
+		});
+	});
 	
 	function toggleUntestableActivation(){
 		var shouldActivate = $("#toggle-nontestable-checkbox").prop('checked');
@@ -483,7 +529,20 @@ require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.att
 			activateUntestable();
 		}
 		else{
-			deactivateUntestable();
+			$.ajax({
+				type: 'GET',
+				 url: "${projectUrl}/execution-status-is-used/UNTESTABLE",
+				 success : function(data){
+						if(data){
+							statuspopup.formDialog('open');
+						}
+						else {
+						 	deactivateUntestable();
+						}
+				 }
+			});
+			
+
 		}
 			
 	}	
@@ -515,6 +574,8 @@ require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.att
 			$("#rename-project-input").val(name);
 	
 		});
+
+
 		
 		// permissions popup
 		var permpopup = $("#add-permission-dialog"); 

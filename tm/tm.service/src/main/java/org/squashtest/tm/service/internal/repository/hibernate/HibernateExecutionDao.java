@@ -29,6 +29,7 @@ import java.util.Map;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.springframework.stereotype.Repository;
@@ -167,19 +168,57 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ExecutionStep> findAllExecutionStepWithStatus(Long projectId, ExecutionStatus source) {
+	public List<ExecutionStep> findAllExecutionStepsWithStatus(Long projectId, ExecutionStatus executionStatus) {
 
 		Criteria crit = currentSession().createCriteria(ExecutionStep.class, "ExecutionStep");
 		crit.createAlias("execution", "Execution", JoinType.LEFT_OUTER_JOIN);
 		crit.createAlias("Execution.testPlan.iteration", "Iteration", JoinType.LEFT_OUTER_JOIN);
 		crit.createAlias("Iteration.campaign", "Campaign", JoinType.LEFT_OUTER_JOIN);
 		crit.createAlias("Campaign.project", "Project", JoinType.LEFT_OUTER_JOIN);
-		crit.createAlias("executionStatus", "ExecutionStatus");
 		crit.add(Restrictions.eq("Project.id", Long.valueOf(projectId)));
-		crit.add(Restrictions.eq("ExecutionStatus", source));
+		crit.add(Restrictions.eq("executionStatus", executionStatus));
 		
 		return crit.list();
 	};
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<IterationTestPlanItem> findAllIterationTestPlanItemsWithStatus(Long projectId, ExecutionStatus executionStatus) {
+
+		Criteria crit = currentSession().createCriteria(IterationTestPlanItem.class, "TestPlan");
+		crit.createAlias("iteration", "Iteration", JoinType.LEFT_OUTER_JOIN);
+		crit.createAlias("Iteration.campaign", "Campaign", JoinType.LEFT_OUTER_JOIN);
+		crit.createAlias("Campaign.project", "Project", JoinType.LEFT_OUTER_JOIN);
+		crit.add(Restrictions.eq("Project.id", Long.valueOf(projectId)));
+		crit.add(Restrictions.eq("executionStatus", executionStatus));
+		
+		return crit.list();
+	};
+	
+	
+	@Override
+	public boolean hasStepOrExecutionWithStatus(long projectId, ExecutionStatus executionStatus) {
+		Criteria crit = currentSession().createCriteria(ExecutionStep.class, "ExecutionStep");
+		crit.createAlias("execution", "Execution", JoinType.LEFT_OUTER_JOIN);
+		crit.createAlias("Execution.testPlan.iteration", "Iteration", JoinType.LEFT_OUTER_JOIN);
+		crit.createAlias("Iteration.campaign", "Campaign", JoinType.LEFT_OUTER_JOIN);
+		crit.createAlias("Campaign.project", "Project", JoinType.LEFT_OUTER_JOIN);
+		crit.add(Restrictions.eq("Project.id", Long.valueOf(projectId)));
+		crit.add(Restrictions.eq("executionStatus", executionStatus));
+		int stepResult = crit.list().size();
+		
+		Criteria execs = currentSession().createCriteria(Execution.class, "Execution");
+		execs.createAlias("testPlan", "TestPlan", JoinType.LEFT_OUTER_JOIN);
+		execs.createAlias("TestPlan.iteration", "Iteration", JoinType.LEFT_OUTER_JOIN);
+		execs.createAlias("Iteration.campaign", "Campaign", JoinType.LEFT_OUTER_JOIN);
+		execs.createAlias("Campaign.project", "Project", JoinType.LEFT_OUTER_JOIN);
+		execs.add(Restrictions.eq("Project.id", Long.valueOf(projectId)));
+		execs.add(Restrictions.eq("TestPlan.executionStatus", executionStatus));
+		
+		int execResult = execs.list().size();
+		
+		return  stepResult + execResult > 0;
+	}
 	
 
 	@Override
@@ -268,4 +307,8 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 			query.setParameter("status", status);
 		}
 	}
+
+
+
+
 }

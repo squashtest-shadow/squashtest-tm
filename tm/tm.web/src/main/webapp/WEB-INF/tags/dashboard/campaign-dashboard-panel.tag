@@ -152,10 +152,12 @@
 									<div class="dashboard-legend-sample-color" style="background-color:#FFCC00"></div>
 									<span><f:message key="execution.execution-status.BLOCKED" /></span>
 								</div>
+								<c:if test="${allowsUntestable}">
 								<div>
 									<div class="dashboard-legend-sample-color" style="background-color:#969696"></div>
 									<span><f:message key="execution.execution-status.UNTESTABLE" /></span>
 								</div>
+								</c:if>
 							</div>
 						</div>
 					</div>
@@ -265,7 +267,9 @@
 								<th class="status-color-success"><span><f:message key="label.Success"/></span></th>
 								<th class="status-color-failure"><span><f:message key="label.Failure"/></span></th>
 								<th class="status-color-blocked"><span><f:message key="label.Blocked"/></span></th>
+									<c:if test="${allowsUntestable}">
 								<th class="status-color-untestable std-border"><span><f:message key="label.Untestable"/></span></th>
+								</c:if>
 								<th ><span><f:message key="dashboard.campaigns.testinventory.legend.testnumber"/></span></th>
 								<th ><span><f:message key="dashboard.campaigns.testinventory.legend.advancementexecution"/></span></th>
 							</tr>
@@ -282,7 +286,9 @@
 								<td class="std-border light-border">{{this.[3]}}</td>
 								<td class="std-border light-border">{{this.[4]}}</td>
 								<td class="std-border light-border">{{this.[5]}}</td>
-								<td class="std-border light-border">{{this.[6]}}</td>
+								<c:if test="${allowsUntestable}">
+									<td class="std-border light-border">{{this.[6]}}</td>
+								</c:if>
 								<td class="std-border light-border" style="font-weight:bold;">{{this.[7]}}</td>
 								<td class="std-border light-border"style="font-weight:bold;">{{this.[8]}}</td>
 							</tr>

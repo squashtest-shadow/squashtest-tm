@@ -33,10 +33,14 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -54,6 +58,7 @@ import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
+
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -104,6 +109,7 @@ public class GenericProjectController {
 	@Inject
 	private WorkspaceWizardManager wizardManager;
 
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(GenericProjectController.class);
 
 	private static final String PROJECT_ID = "projectId";
@@ -181,6 +187,10 @@ public class GenericProjectController {
 		return new Active(isActive);
 	}
 
+	public void setTaskExecutor(TaskExecutor taskExecutor){
+		this.taskExecutor = taskExecutor;
+	}
+	
 	private static final class Active {
 		private Boolean active;
 
@@ -451,5 +461,54 @@ public class GenericProjectController {
 	@ResponseBody
 	public boolean isExecutionStatusEnabledForProject(@PathVariable long projectId, @PathVariable String executionStatus){
 		return projectManager.isExecutionStatusEnabledForProject(projectId, ExecutionStatus.valueOf(executionStatus));
+	}
+	
+	@RequestMapping(value = PROJECT_ID_URL + "/execution-status-is-used/{executionStatus}", method = RequestMethod.GET)
+	@ResponseBody
+	public boolean executionStatusUsedByProject(@PathVariable long projectId, @PathVariable String executionStatus){
+		return projectManager.executionStatusUsedByProject(projectId, ExecutionStatus.valueOf(executionStatus));
+	}
+	
+	@RequestMapping(value = PROJECT_ID_URL + "/execution-status/{executionStatus}", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String, Object> getStatusPopup(@PathVariable long projectId, @PathVariable String executionStatus, final Locale locale) {
+		List<ExecutionStatus> statuses = projectManager.enabledExecutionStatuses(projectId);
+		ExecutionStatus status = ExecutionStatus.valueOf(executionStatus);
+		statuses.remove(status);
+		Map<String, Object> options = new HashMap<String, Object>();
+		for(ExecutionStatus st : statuses){
+			options.put(messageSource.internationalize(st.getI18nKey(), locale), st.name());
+		}
+		return options;
+		
+	}
+	
+	@RequestMapping(value = PROJECT_ID_URL + "/replace-execution-status", method = RequestMethod.POST)
+	@ResponseBody
+	public void replaceStatusWithinProject(@PathVariable long projectId, @RequestParam String sourceExecutionStatus, @RequestParam String targetExecutionStatus) {
+		ExecutionStatus source = ExecutionStatus.valueOf(sourceExecutionStatus);
+		ExecutionStatus target = ExecutionStatus.valueOf(targetExecutionStatus);
+		Runnable replacer = new AsynchronousReplaceExecutionStatus(projectId, source, target);
+		replacer.run();
+	}
+	
+	private class AsynchronousReplaceExecutionStatus implements Runnable{
+		
+		private Long projectId;
+		private ExecutionStatus sourceExecutionStatus;
+		private ExecutionStatus targetExecutionStatus;
+		
+
+		public AsynchronousReplaceExecutionStatus(Long projectId, ExecutionStatus sourceExecutionStatus, ExecutionStatus targetExecutionStatus) {
+			super();
+			this.projectId = projectId;
+			this.sourceExecutionStatus = sourceExecutionStatus;
+			this.targetExecutionStatus = targetExecutionStatus;
+		}
+
+		@Override
+		public void run() {
+			projectManager.replaceExecutionStatus(projectId, sourceExecutionStatus, targetExecutionStatus);
+		}
 	}
 }

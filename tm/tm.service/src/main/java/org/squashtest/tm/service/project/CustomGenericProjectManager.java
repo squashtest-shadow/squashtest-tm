@@ -177,4 +177,6 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder{
 	 * @return
 	 */
 	boolean isExecutionStatusEnabledForProject(long projectId, ExecutionStatus executionStatus);
+	
+	boolean executionStatusUsedByProject(long projectId,  ExecutionStatus executionStatus);
 }

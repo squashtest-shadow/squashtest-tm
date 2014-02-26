@@ -121,10 +121,12 @@
 									<div class="dashboard-legend-sample-color" style="background-color:#FFCC00"></div>
 									<span><f:message key="execution.execution-status.BLOCKED" /></span>
 								</div>
+								<c:if test="${allowsUntestable}">
 								<div>
 									<div class="dashboard-legend-sample-color" style="background-color:#969696"></div>
 									<span><f:message key="execution.execution-status.UNTESTABLE" /></span>
 								</div>
+								</c:if>
 							</div>
 						</div>
 					</div>
@@ -253,7 +255,9 @@
 								<th title="${SuccessLabel}" class="status-color-success"><f:message key="shortLabel.Success"/></th>
 								<th title="${FailureLabel}" class="status-color-failure"><f:message key="shortLabel.Failure"/></th>
 								<th title="${BlockedLabel}" class="status-color-blocked"><f:message key="shortLabel.Blocked"/></th>								
+								<c:if test="${allowsUntestable}">
 								<th title="${NonExecutableLabel}" class="status-color-untestable"><f:message key="shortLabel.NonExecutable"/></th>
+								</c:if>
 								<th style="border:none;"></th>
 								<th title="${ProgressLabel}"><f:message key="shortLabel.ExecutionProgress"/></th>								
 								<th title="${SuccessRateLabel}"><f:message key="shortLabel.SuccessRate"/></th>
@@ -286,7 +290,9 @@
 								<td class="std-border light-border">{{this.[6]}}</td>
 								<td class="std-border light-border">{{this.[7]}}</td>
 								<td class="std-border light-border">{{this.[8]}}</td>
+								<c:if test="${allowsUntestable}">
 								<td class="std-border light-border">{{this.[9]}}</td>
+								</c:if>
 								<td style="border:none;"></td>
 								<td class="std-border light-border">{{this.[10]}}%</td>								
 								<td class="std-border light-border">{{this.[11]}}%</td>
@@ -306,6 +312,5 @@
 				</jsp:attribute>
 			</comp:toggle-panel>
 		</div>
-	
 	</div>
 </div>

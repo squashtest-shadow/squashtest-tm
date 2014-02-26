@@ -29,6 +29,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -67,8 +68,10 @@ public class ProjectAdministrationController {
 	@Inject
 	private BugTrackerFinderService bugtrackerFinderService;
 	@Inject
-	private InternationalizationHelper messageSource;
-
+	private InternationalizationHelper internationalizationHelper;
+	@Inject
+	private MessageSource messageSource;
+	
 	@Inject
 	private WorkspaceWizardManager wizardManager;
 	
@@ -104,7 +107,7 @@ public class ProjectAdministrationController {
 		List<PartyProjectPermissionsBean> partyProjectPermissionsBean = projectFinder
 				.findPartyPermissionsBeanByProject(new DefaultPagingAndSorting("login", 25),
 						DefaultFiltering.NO_FILTERING, projectId).getPagedItems();
-		Collection<Object> partyPermissions = new PartyPermissionDatatableModelHelper(locale, messageSource)
+		Collection<Object> partyPermissions = new PartyPermissionDatatableModelHelper(locale, internationalizationHelper)
 				.buildRawModel(partyProjectPermissionsBean);
 
 		List<PermissionGroup> availablePermissions = projectFinder.findAllPossiblePermission();
@@ -128,12 +131,13 @@ public class ProjectAdministrationController {
 		mav.addObject("userPermissions", partyPermissions);
 		mav.addObject("availablePermissions", availablePermissions);
 		mav.addObject("attachments", attachmentsHelper.findAttachments(adminProject.getProject()));
-
+		mav.addObject("untestablePopupMessage", makeUntestablePopupMesssage(locale));
+		
 		return mav;
 	}
 
 	// ********************** Wizard administration section ************
-
+	
 	@RequestMapping(value = "{projectId}/wizards")
 	public String getWizardsManager(@PathVariable("projectId") Long projectId, Model model) {
 
@@ -160,7 +164,7 @@ public class ProjectAdministrationController {
 
 		for (WorkspaceWizard wizard : wizards) {
 			WorkspaceWizardModel model = new WorkspaceWizardModel(wizard);
-			model.setType(messageSource.getMessage("label.Wizard", null, locale));
+			model.setType(internationalizationHelper.getMessage("label.Wizard", null, locale));
 			output.add(model);
 		}
 
@@ -172,9 +176,15 @@ public class ProjectAdministrationController {
 		for (BugTracker b : bugtrackerFinderService.findAll()) {
 			comboDataMap.put(b.getId(), b.getName());
 		}
-		comboDataMap.put(-1L, messageSource.getMessage(PROJECT_BUGTRACKER_NAME_UNDEFINED, null, locale));
+		comboDataMap.put(-1L, internationalizationHelper.getMessage(PROJECT_BUGTRACKER_NAME_UNDEFINED, null, locale));
 		return comboDataMap;
 
 	}
 
+	private String makeUntestablePopupMesssage(Locale locale){
+		String variableText = messageSource.getMessage("execution.execution-status.UNTESTABLE", null, locale);
+		String text = messageSource.getMessage("label.status.options.popup.text", null, locale);
+		text = text.replace("{0}", variableText);
+		return text;
+	}
 }

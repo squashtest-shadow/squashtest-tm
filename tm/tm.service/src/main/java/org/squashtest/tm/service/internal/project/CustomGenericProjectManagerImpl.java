@@ -46,6 +46,8 @@ import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionH
 import org.squashtest.tm.core.foundation.collection.Pagings;
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.library.PluginReferencer;
@@ -464,9 +466,13 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	
 	@Override
 	public void replaceExecutionStatus(long projectId, ExecutionStatus source, ExecutionStatus target) {
-		List<ExecutionStep> steps = executionDao.findAllExecutionStepWithStatus(projectId, source);
+		List<ExecutionStep> steps = executionDao.findAllExecutionStepsWithStatus(projectId, source);
 		for(ExecutionStep step : steps){
 			step.setExecutionStatus(target);
+		}
+		List<IterationTestPlanItem> testPlanItems = executionDao.findAllIterationTestPlanItemsWithStatus(projectId, source);
+		for(IterationTestPlanItem testPlanItem : testPlanItems){
+			testPlanItem.setExecutionStatus(target);
 		}
 	}
 	
@@ -480,7 +486,11 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		}
 	}
 
-	
+	@Override
+	public boolean executionStatusUsedByProject(long projectId, ExecutionStatus executionStatus) {
+		return executionDao.hasStepOrExecutionWithStatus(projectId, executionStatus);
+	}
+
 	// **************** private stuffs **************
 	
 	private PluginReferencer findLibrary(long projectId, WorkspaceType workspace){
@@ -505,6 +515,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 			return permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "MANAGEMENT", object);
 		}
 	}
+
 
 
 

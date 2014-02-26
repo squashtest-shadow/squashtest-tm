@@ -25,6 +25,7 @@ import java.util.List;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStatusReport;
@@ -46,7 +47,11 @@ public interface ExecutionDao extends EntityDao<Execution> {
 
 	List<ExecutionStep> findStepsFiltered(Long executionId, Paging filter);
 
-	List<ExecutionStep> findAllExecutionStepWithStatus(Long projectId, ExecutionStatus source);
+	List<ExecutionStep> findAllExecutionStepsWithStatus(Long projectId, ExecutionStatus source);
+	
+	List<IterationTestPlanItem> findAllIterationTestPlanItemsWithStatus(Long projectId, ExecutionStatus source);
+	
+	boolean hasStepOrExecutionWithStatus(long projectId, ExecutionStatus executionStatus);
 	
 	List<IssueDetector> findAllIssueDetectorsForExecution(Long execId);
 
@@ -86,5 +91,6 @@ public interface ExecutionDao extends EntityDao<Execution> {
 	 * @return
 	 */
 	boolean wasNeverRan(Long executionId);
+
 
 }
