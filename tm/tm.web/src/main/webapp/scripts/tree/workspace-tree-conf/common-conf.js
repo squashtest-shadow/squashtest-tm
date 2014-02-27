@@ -35,7 +35,7 @@ define(function(){
 		generate : function(settings){
 	
 			var workspace = settings.workspace;
-			var treepref = sessionStorage[workspace+"-tree-pref"];
+			var treepref = localStorage[workspace+"-tree-pref"];
 			
 			if(treepref == 1) {
 			return { 

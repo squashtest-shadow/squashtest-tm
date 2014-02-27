@@ -84,7 +84,7 @@ define(['jquery'], function($){
 			var pref = this.data.squash.pref;
 			
 			var workspace = settings.workspace;
-			var treepref = sessionStorage[workspace+"-tree-pref"];
+			var treepref = localStorage[workspace+"-tree-pref"];
 			
 			if(treepref != 1){
 			// here we override the function. if the profile matches the one of

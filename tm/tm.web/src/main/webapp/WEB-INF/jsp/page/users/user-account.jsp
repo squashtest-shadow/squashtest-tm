@@ -57,28 +57,28 @@
 					});
 				});
 					
-					if(sessionStorage["requirement-tree-pref"] == 1){
+					if(localStorage["requirement-tree-pref"] == 1){
 						$('#user-preferences-tree-requirement option:eq(1)').prop('selected', true);
 					}
 					
-					if(sessionStorage["test-case-tree-pref"] == 1){
+					if(localStorage["test-case-tree-pref"] == 1){
 						$('#user-preferences-tree-test-case option:eq(1)').prop('selected', true);
 					}
 					
-					if(sessionStorage["campaign-tree-pref"] == 1){
+					if(localStorage["campaign-tree-pref"] == 1){
 						$('#user-preferences-tree-campaign option:eq(1)').prop('selected', true);
 					}
 					
 					$("#user-preferences-tree-requirement").change(function(){
-						sessionStorage["requirement-tree-pref"] = $("#user-preferences-tree-requirement").val();
+						localStorage["requirement-tree-pref"] = $("#user-preferences-tree-requirement").val();
 					});
 					
 					$("#user-preferences-tree-test-case").change(function(){
-						sessionStorage["test-case-tree-pref"] = $("#user-preferences-tree-test-case").val();
+						localStorage["test-case-tree-pref"] = $("#user-preferences-tree-test-case").val();
 					});
 					
 					$("#user-preferences-tree-campaign").change(function(){
-						sessionStorage["campaign-tree-pref"] = $("#user-preferences-tree-campaign").val();
+						localStorage["campaign-tree-pref"] = $("#user-preferences-tree-campaign").val();
 					});
 					
 			});
