@@ -38,11 +38,9 @@ public class TestCaseAttachmentBridge extends SessionFieldBridge {
 	@Override
 	protected void writeFieldToDocument(String name, Session session, Object value, Document document,
 			LuceneOptions luceneOptions) {
-		// should be named query
-		String hql = "select count(att) from TestCase tc join tc.attachmentList al join al.attachments att where tc.id = :id";
 
 		TestCase tc = (TestCase) value;
-		long attCount = (Long) session.createQuery(hql)
+		long attCount = (Long) session.getNamedQuery("testCase.countAttachments")
 				.setParameter("id", tc.getId())
 				.setReadOnly(true)
 				.uniqueResult();

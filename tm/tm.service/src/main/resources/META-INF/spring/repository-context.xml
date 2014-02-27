@@ -50,6 +50,7 @@
         <value>org.squashtest.tm.service.internal.repository.hibernate</value>
         <value>org.squashtest.tm.service.internal.hibernate</value>
         <value>org.squashtest.tm.infrastructure.hibernate</value>
+        <value>org.squashtest.tm.domain.search</value>
       </list>
     </property>
    

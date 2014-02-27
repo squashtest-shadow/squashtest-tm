@@ -33,9 +33,9 @@ public class RequirementVersionHasParentBridge extends SessionFieldBridge {
 			LuceneOptions luceneOptions) {
 
 		RequirementVersion reqVer = (RequirementVersion) value;
-		String hql = "select count(r) from Requirement r join r.children c join c.versions v where v.id = :id";
-
-		long parentsCount = (Long) session.createQuery(hql).setReadOnly(true).setParameter("id", reqVer.getId())
+		long parentsCount = (Long) session.getNamedQuery("requirementVersion.countParentRequirement")
+				.setReadOnly(true)
+				.setParameter("id", reqVer.getId())
 				.uniqueResult();
 		String hasParent = parentsCount > 0 ? "1" : "0";
 

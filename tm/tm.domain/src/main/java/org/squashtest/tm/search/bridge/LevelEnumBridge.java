@@ -27,16 +27,10 @@ import org.squashtest.tm.domain.Level;
 /**
  * StringBridge which indexes a {@link Level} enum using the pattern "<level>-<name>"
  * 
- * TODO I wish it could be a AppliedOnTypeAwareBridge + TwoWayStringBridge but it dont seem to work due to
- * "ignoreBridge" directives on queries. HAve to investigate on why this ignoreBridge.
- * 
  * @author Gregory Fouquet
  * 
  */
 public class LevelEnumBridge implements StringBridge {
-//	@SuppressWarnings("rawtypes")
-//	private Class<? extends Enum> targetClass;
-
 	/**
 	 * 
 	 */
@@ -48,25 +42,4 @@ public class LevelEnumBridge implements StringBridge {
 	public String objectToString(Object value) {
 		return ((Level) value).getLevel() + "-" + ((Enum<?>) value).name();
 	}
-
-	/**
-	 * @see org.hibernate.search.bridge.TwoWayStringBridge#stringToObject(java.lang.String)
-	 */
-	// @SuppressWarnings("unchecked")
-	// @Override
-	// public Object stringToObject(String str) {
-	// String name = str.substring(str.indexOf('-') + 1);
-	//
-	// return Enum.valueOf(targetClass, name);
-	// }
-
-	/**
-	 * @see org.hibernate.search.bridge.AppliedOnTypeAwareBridge#setAppliedOnType(java.lang.Class)
-	 */
-	// @SuppressWarnings("unchecked")
-	// @Override
-	// public void setAppliedOnType(Class<?> returnType) {
-	// targetClass = (Class<? extends Enum<?>>) returnType;
-	//
-	// }
 }

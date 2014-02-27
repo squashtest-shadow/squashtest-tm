@@ -31,11 +31,9 @@ public class RequirementVersionIsCurrentBridge extends SessionFieldBridge {
 	@Override
 	protected void writeFieldToDocument(String name, Session session, Object value, Document document,
 			LuceneOptions luceneOptions) {
-		String hql = "select count(cur) from Requirement r join r.resource cur where cur.id = :id and cur.status != :obsolete";
-
 		RequirementVersion reqVer = (RequirementVersion) value;
 
-		long isActiveCurrent = (Long) session.createQuery(hql)
+		long isActiveCurrent = (Long) session.getNamedQuery("requirementVersion.countCurrentVersion")
 				.setReadOnly(true)
 				.setParameter("id", reqVer.getId())
 				.setParameter("obsolete", RequirementStatus.OBSOLETE)

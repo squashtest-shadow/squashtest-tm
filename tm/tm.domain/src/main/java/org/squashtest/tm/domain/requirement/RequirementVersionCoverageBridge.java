@@ -37,10 +37,8 @@ public class RequirementVersionCoverageBridge extends SessionFieldBridge {
 	@Override
 	protected void writeFieldToDocument(String name, Session session, Object value, Document document,
 			LuceneOptions luceneOptions) {
-		String hql = "select count(cov) from RequirementVersion rv join rv.requirementVersionCoverages cov where rv.id = :id";
-		
 		RequirementVersion req = (RequirementVersion) value;
-		long coverageSize = (Long) session.createQuery(hql)
+		long coverageSize = (Long) session.getNamedQuery("requirementVersion.countCoverage")
 				.setReadOnly(true)
 				.setParameter("id", req.getId())
 				.uniqueResult();

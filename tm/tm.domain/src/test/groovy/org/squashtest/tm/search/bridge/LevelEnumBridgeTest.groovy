@@ -39,11 +39,4 @@ class LevelEnumBridgeTest extends Specification {
 		bridge.objectToString(RequirementCriticality.CRITICAL) == RequirementCriticality.CRITICAL.level + "-CRITICAL" 
 	}
 
-	def "should coerce String into Level"() {
-		given: 
-		bridge.setAppliedOnType(RequirementCriticality)
-		
-		expect:
-		bridge.stringToObject(RequirementCriticality.CRITICAL.level + "-CRITICAL") == RequirementCriticality.CRITICAL 
-	}
 }

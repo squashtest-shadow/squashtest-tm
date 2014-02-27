@@ -37,12 +37,9 @@ public class RequirementVersionAttachmentBridge extends SessionFieldBridge{
 	
 	@Override
 	protected void writeFieldToDocument(String name, Session session, Object value, Document document, LuceneOptions luceneOptions){
-		
 		RequirementVersion reqVer =  (RequirementVersion) value;
 		
-		String hql = "select count(att) from RequirementVersion rv join rv.attachmentList al join al.attachments att where rv.id = :id";
-		
-		long count = (Long) session.createQuery(hql)
+		long count = (Long) session.getNamedQuery("requirementVersion.countAttachments")
 				.setReadOnly(true)
 				.setParameter("id", reqVer.getId())
 				.uniqueResult();
