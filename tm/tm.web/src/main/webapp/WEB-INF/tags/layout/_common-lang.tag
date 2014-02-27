@@ -44,6 +44,7 @@ var _langcache = {
 	'execution.execution-status.UNTESTABLE' : "<f:message key='execution.execution-status.UNTESTABLE'/>",
 	'execution.execution-status.BLOCKED' : "<f:message key='execution.execution-status.BLOCKED'/>",
 	'execution.execution-status.FAILURE' : "<f:message key='execution.execution-status.FAILURE'/>",
+	'execution.execution-status.SETTLED' : "<f:message key='execution.execution-status.SETTLED'/>",
 	'execution.execution-status.SUCCESS' : "<f:message key='execution.execution-status.SUCCESS'/>",
 	'execution.execution-status.RUNNING' : "<f:message key='execution.execution-status.RUNNING'/>",
 	'execution.execution-status.READY' : "<f:message key='execution.execution-status.READY'/>",

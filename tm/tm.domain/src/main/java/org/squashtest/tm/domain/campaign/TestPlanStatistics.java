@@ -72,6 +72,10 @@ public class TestPlanStatistics {
 		return findIntValue(ExecutionStatus.UNTESTABLE.name());
 	}
 
+	public int getNbSettled() {
+		return findIntValue(ExecutionStatus.SETTLED.name());
+	}
+	
 	public int getNbBlocked() {
 		return findIntValue(ExecutionStatus.BLOCKED.name())+ findIntValue(ExecutionStatus.ERROR.name());
 	}
@@ -128,6 +132,6 @@ public class TestPlanStatistics {
 	}
 
 	private void computeDone() {
-		nbDone = getNbUntestable()  + getNbBlocked() +  getNbFailure() + getNbSuccess() ;
+		nbDone = getNbSettled() + getNbUntestable()  + getNbBlocked() +  getNbFailure() + getNbSuccess() ;
 	}
 }

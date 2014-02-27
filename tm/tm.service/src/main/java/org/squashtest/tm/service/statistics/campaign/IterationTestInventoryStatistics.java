@@ -77,6 +77,10 @@ public final class IterationTestInventoryStatistics {
 	public int getNbWarning() {
 		return this.statistics.get(ExecutionStatus.WARNING);
 	}
+	
+	public int getNbSettled() {
+		return this.statistics.get(ExecutionStatus.SETTLED);
+	}
 
 	public int getNbError() {
 		return this.statistics.get(ExecutionStatus.ERROR);

@@ -113,6 +113,12 @@
 									<div class="dashboard-legend-sample-color" style="background-color:#99CC00"></div>
 									<span><f:message key="execution.execution-status.SUCCESS" /></span>
 								</div>
+								<c:if test="${allowsSettled}">
+								<div>
+									<div class="dashboard-legend-sample-color" style="background-color:#969696"></div>
+									<span><f:message key="execution.execution-status.SETTLED" /></span>
+								</div>
+								</c:if>
 								<div>
 									<div class="dashboard-legend-sample-color" style="background-color:#FF3300"></div>
 									<span><f:message key="execution.execution-status.FAILURE" /></span>

@@ -33,6 +33,9 @@
 	</c:if>
 	<option value="BLOCKED" class="exec-status-option exec-status-blocked"><f:message key="execution.execution-status.BLOCKED" /></option>
 	<option value="FAILURE" class="exec-status-option exec-status-failure"><f:message key="execution.execution-status.FAILURE" /></option>
+		<c:if test="${allowsSettled}">
+		<option value="SETTLED" class="exec-status-option exec-status-settled"><f:message key="execution.execution-status.SETTLED" /></option>
+	</c:if>
 	<option value="SUCCESS" class="exec-status-option exec-status-success"><f:message key="execution.execution-status.SUCCESS" /></option>
 	<option value="READY" class="exec-status-option exec-status-ready"><f:message key="execution.execution-status.READY" /></option>
 </select >				

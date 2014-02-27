@@ -290,6 +290,7 @@
 	</pop:popup>
 
 	<%--------------------------- /Deletion confirmation popup -------------------------------------%>
+	<f:message var="statusSettled" key="execution.execution-status.SETTLED" />
 	<f:message var="statusUntestable" key="execution.execution-status.UNTESTABLE" />
 	<f:message var="statusBlocked" key="execution.execution-status.BLOCKED" />
 	<f:message var="statusFailure" key="execution.execution-status.FAILURE" />

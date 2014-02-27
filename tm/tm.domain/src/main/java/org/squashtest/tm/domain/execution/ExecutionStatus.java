@@ -100,7 +100,24 @@ import org.squashtest.tm.domain.Level;
 public enum ExecutionStatus implements Internationalizable, Level {
 	
 
-	UNTESTABLE(8) {
+	SETTLED(10){
+		@Override
+		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
+			return needsComputation();
+		}
+		
+		@Override
+		public boolean isCanonical() {
+			return true;
+		}
+		
+		@Override
+		public ExecutionStatus getCanonicalStatus() {
+			return SETTLED;
+		}
+	},
+	
+	UNTESTABLE(9) {
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 			return needsComputation();
@@ -496,16 +513,19 @@ public enum ExecutionStatus implements Internationalizable, Level {
 		else if(report.areAllUntestable()) {
 			newStatus = ExecutionStatus.UNTESTABLE;
 		}
+		else if(report.areAllSettledOrUntestable()){
+			newStatus = ExecutionStatus.SETTLED;
+		}
 		else if (report.hasError()){
 			newStatus = ExecutionStatus.ERROR;
 		}
 		else if (report.getFailure() > 0) {
 			newStatus = ExecutionStatus.FAILURE;
 		} 
-		else if (report.areAllSuccessOrUntestable()) {
+		else if (report.areAllSuccessOrUntestableOrSettled()) {
 			newStatus = ExecutionStatus.SUCCESS;
 		} 
-		else if (report.hasSuccess() || report.hasWarning()) {
+		else if (report.hasSuccess() || report.hasWarning() || report.hasSettled()) {
 			newStatus = ExecutionStatus.RUNNING;
 		} 
 		else {

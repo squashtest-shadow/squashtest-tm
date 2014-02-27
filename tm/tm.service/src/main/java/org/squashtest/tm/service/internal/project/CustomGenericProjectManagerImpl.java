@@ -441,7 +441,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		GenericProject project = genericProjectDao.findById(projectId);
 		checkManageProjectOrAdmin(project);
 		switch(executionStatus){
-			case UNTESTABLE :	project.setAllowsNonTestableStatus(true); break;
+			case UNTESTABLE :	project.setAllowsUntestableStatus(true); break;
+			case SETTLED : project.setAllowsSettledStatus(true); break;
 			default:	break; 
 		}
 			
@@ -453,7 +454,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		GenericProject project = genericProjectDao.findById(projectId);
 		checkManageProjectOrAdmin(project);
 		switch(executionStatus){
-		case UNTESTABLE :	project.setAllowsNonTestableStatus(false); break;
+		case UNTESTABLE :	project.setAllowsUntestableStatus(false); break;
+		case SETTLED : project.setAllowsSettledStatus(false); break;
 		default:	break; 
 	}
 	}
@@ -465,8 +467,11 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		checkManageProjectOrAdmin(project);
 		List<ExecutionStatus> statuses = new ArrayList<ExecutionStatus>();
 		statuses.addAll(Arrays.asList(ExecutionStatus.values())); 
-		if(!project.isAllowsNonTestableStatus()){
+		if(!project.isAllowsUntestableStatus()){
 			statuses.remove(ExecutionStatus.UNTESTABLE);
+		}
+		if(!project.isAllowsSettledStatus()){
+			statuses.remove(ExecutionStatus.SETTLED);
 		}
 		//always disables statuses
 		statuses.remove(ExecutionStatus.ERROR);
@@ -481,14 +486,17 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		GenericProject project = genericProjectDao.findById(projectId);
 		checkManageProjectOrAdmin(project);
 		List<ExecutionStatus> statuses = new ArrayList<ExecutionStatus>();
-		if(!project.isAllowsNonTestableStatus()){
+		if(!project.isAllowsUntestableStatus()){
 			statuses.add(ExecutionStatus.UNTESTABLE);
-			
-			//always disables statuses
-			statuses.add(ExecutionStatus.ERROR);
-			statuses.add(ExecutionStatus.NOT_RUN);
-			statuses.add(ExecutionStatus.WARNING);
 		}
+		if(!project.isAllowsSettledStatus()){
+			statuses.add(ExecutionStatus.SETTLED);
+		}
+		//always disables statuses
+		statuses.add(ExecutionStatus.ERROR);
+		statuses.add(ExecutionStatus.NOT_RUN);
+		statuses.add(ExecutionStatus.WARNING);
+		
 		return statuses;
 	}
 	

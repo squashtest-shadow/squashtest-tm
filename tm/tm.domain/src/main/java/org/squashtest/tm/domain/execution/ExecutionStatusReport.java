@@ -34,9 +34,18 @@ public class ExecutionStatusReport {
 	private int ready = 0;
 	private int warning = 0;
 	private int error = 0;
+	private int settled = 0;
 	
 	private int getTotal() {
-		return untestable + bloqued + failure + success + running + ready + warning + error;
+		return untestable + bloqued + failure + success + running + ready + warning + error + settled;
+	}
+
+	public int getSettled() {
+		return settled;
+	}
+
+	public void setSettled(int settled) {
+		this.settled = settled;
 	}
 
 	public int getUntestable() {
@@ -145,6 +154,10 @@ public class ExecutionStatusReport {
 		return success > 0;
 	}
 
+	public boolean hasSettled() {
+		return settled > 0;
+	}
+	
 	public boolean hasWarning() {
 		return warning > 0;
 	}
@@ -163,15 +176,21 @@ public class ExecutionStatusReport {
 
 	}
 
-
-	public boolean areAllSuccessOrUntestable() {
-		if (countAggregatedSuccess() + untestable == getTotal()) {
+	public boolean areAllSettledOrUntestable(){
+		if(untestable + settled == getTotal()) {
 			return true;
 		}
 		return false;
 	}
 
-	public ExecutionStatusReport(int untestable, int bloqued, int failure, int success, int running, int ready) {
+	public boolean areAllSuccessOrUntestableOrSettled() {
+		if (countAggregatedSuccess() + untestable + settled == getTotal()) {
+			return true;
+		}
+		return false;
+	}
+
+	public ExecutionStatusReport(int untestable, int bloqued, int failure, int success, int running, int ready, int settled) {
 		super();
 		this.untestable = untestable;
 		this.bloqued = bloqued;
@@ -179,10 +198,11 @@ public class ExecutionStatusReport {
 		this.success = success;
 		this.running = running;
 		this.ready = ready;
+		this.settled = settled;
 	}
 
 	public ExecutionStatusReport(int untestable, int bloqued, int failure, int success, int running, int ready,
-			int warning, int error) {
+			int warning, int error, int settled) {
 		super();
 		this.untestable = untestable;
 		this.bloqued = bloqued;
@@ -192,6 +212,7 @@ public class ExecutionStatusReport {
 		this.ready = ready;
 		this.warning = warning;
 		this.error = error;
+		this.settled = settled;
 	}
 	
 }
