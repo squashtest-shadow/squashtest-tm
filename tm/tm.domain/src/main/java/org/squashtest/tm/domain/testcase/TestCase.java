@@ -94,11 +94,7 @@ import org.squashtest.tm.search.bridge.LevelEnumBridge;
 	@ClassBridge(name = "cufs", store = Store.YES, analyze = Analyze.NO, impl = CUFBridge.class, params = {
 		@org.hibernate.search.annotations.Parameter(name = "type", value = "testcase"),
 		@org.hibernate.search.annotations.Parameter(name = "inputType", value = "DROPDOWN_LIST") 
-	}),
-	@ClassBridge(name = "createdBy", store = Store.YES, analyze = Analyze.NO, impl = AuditableBridgeCreatedBy.class),
-	@ClassBridge(name = "modifiedBy", store = Store.YES, analyze = Analyze.NO, impl = AuditableBridgeModifiedBy.class),
-	@ClassBridge(name = "createdOn", store = Store.YES, analyze = Analyze.NO, impl = AuditableBridgeCreatedOn.class),
-	@ClassBridge(name = "modifiedOn", store = Store.YES, analyze = Analyze.NO, impl = AuditableBridgeModifiedOn.class) 
+	})
 })
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
 public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, BoundEntity {

@@ -38,7 +38,6 @@ public interface AuditableMixin {
 
 	String getLastModifiedBy();
 	
-	
 	void setCreatedBy(String createdBy);
 
 	void setCreatedOn(Date createdOn);

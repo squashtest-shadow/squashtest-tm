@@ -29,6 +29,8 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
+import org.hibernate.search.annotations.IndexedEmbedded;
+
 /**
  * This aspect adds the {@link AuditableMixin} mixin to entities annotated with @Audidable
  * 
@@ -78,7 +80,7 @@ public aspect AuditableMixinAspect {
 	
 	
 	
-	@Embedded @Access(AccessType.PROPERTY)
+	@Embedded @Access(AccessType.PROPERTY) @IndexedEmbedded(prefix = "")
 	public AuditableSupport AuditableMixin.getAudit() {
 		return this.audit;
 	}

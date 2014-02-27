@@ -55,10 +55,6 @@ import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.resource.Resource;
 import org.squashtest.tm.domain.search.CUFBridge;
-import org.squashtest.tm.domain.testcase.AuditableBridgeCreatedBy;
-import org.squashtest.tm.domain.testcase.AuditableBridgeCreatedOn;
-import org.squashtest.tm.domain.testcase.AuditableBridgeModifiedBy;
-import org.squashtest.tm.domain.testcase.AuditableBridgeModifiedOn;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
@@ -86,10 +82,6 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 				@Parameter(name = "inputType", value = "DROPDOWN_LIST") }),
 		@ClassBridge(name = "isCurrentVersion", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionIsCurrentBridge.class),
 		@ClassBridge(name = "testcases", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionCoverageBridge.class),
-		@ClassBridge(name = "createdBy", store = Store.YES, analyze = Analyze.NO, impl = AuditableBridgeCreatedBy.class),
-		@ClassBridge(name = "modifiedBy", store = Store.YES, analyze = Analyze.NO, impl = AuditableBridgeModifiedBy.class),
-		@ClassBridge(name = "createdOn", store = Store.YES, analyze = Analyze.NO, impl = AuditableBridgeCreatedOn.class),
-		@ClassBridge(name = "modifiedOn", store = Store.YES, analyze = Analyze.NO, impl = AuditableBridgeModifiedOn.class),
 		@ClassBridge(name = "parent", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionHasParentBridge.class) })
 public class RequirementVersion extends Resource implements BoundEntity {
 
