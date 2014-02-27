@@ -30,33 +30,32 @@
 		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
 
-	<!-- Scans the classpath of this application for @Components to deploy as 
-		beans -->
+  <!-- Scans the classpath of this application for @Components to deploy as beans -->
   <context:component-scan base-package="org.squashtest.tm">
     <context:exclude-filter type="annotation" expression="org.springframework.context.annotation.Configuration" />
-    <context:exclude-filter type="annotation" expression="org.squashtest.tm.web.internal.annotation.ApplicationComponent" />
+    <context:exclude-filter type="annotation" expression="org.squashtest.tm.core.web.annotation.ApplicationComponent" />
   </context:component-scan>
 
   <!-- placeholder configurer does not seem to be inherited from parent, we need it here too -->
   <context:property-placeholder properties-ref="squash.tm.config" />
-		
-	<!-- Configures the @Controller programming model -->
+
+  <!-- Configures the @Controller programming model -->
   <mvc:annotation-driven validator="validator" />
 
   <bean id="validator" class="org.springframework.validation.beanvalidation.CustomValidatorBean">
     <property name="validatorFactory" ref="javax.validation.ValidatorFactory" />
   </bean>
 
-	<!-- Injects OSGi services in Controllers -->
+  <!-- Injects OSGi services in Controllers -->
   <bean class="org.springframework.osgi.extensions.annotation.ServiceReferenceInjectionBeanPostProcessor" />
-  
-  <!-- We need this for Spring to resolve @ExpressionHandler methods. Order prop makes these handlers supersede application-wide handlers -->
+
+  <!-- We need this for Spring to resolve @ExpressionHandler methods. Order prop makes these handlers supersede application-wide 
+    handlers -->
   <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerExceptionResolver">
     <property name="order" value="1" />
   </bean>
 
-	<!-- Resolves view names to protected .jsp resources within the /WEB-INF/jsp 
-		directory -->
+  <!-- Resolves view names to protected .jsp resources within the /WEB-INF/jsp directory -->
   <bean name="jsp.viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
     <property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
     <property name="prefix" value="/WEB-INF/jsp/" />
@@ -64,10 +63,10 @@
     <property name="order" value="2" />
   </bean>
 
-	<!-- Thymeleaf Spring dialect -->
+  <!-- Thymeleaf Spring dialect -->
   <bean id="thymeleaf.view.templateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
     <property name="prefix" value="/WEB-INF/templates/" />
-		<!-- no suffix because it's already in view name  -->
+    <!-- no suffix because it's already in view name -->
     <property name="templateMode" value="HTML5" />
     <property name="characterEncoding" value="UTF-8" />
     <property name="cacheable" value="${is.war.deploy}" />
@@ -91,23 +90,24 @@
     <property name="additionalDialects">
       <set>
         <bean class="org.thymeleaf.extras.springsecurity3.dialect.SpringSecurityDialect" />
-        <bean class="org.squashtest.tm.web.thymeleaf.dialect.SquashDialect" />
+        <bean class="org.squashtest.tm.web.thymeleaf.dialect.SquashTMDialect" />
       </set>
     </property>
   </bean>
 
-	<!-- Thymeleaf view resolver -->
+  <!-- Thymeleaf view resolver -->
   <bean id="thymeleaf.viewResolver" class="org.thymeleaf.spring3.view.ThymeleafViewResolver">
     <property name="templateEngine" ref="thymeleaf.templateEngine" />
  	<property name="characterEncoding" value="UTF-8" />
 	<property name="contentType" value="text/html; charset=UTF-8" />
     <property name="order" value="1" />
-		<!-- Thymeleaf view names end with html cos we need to differenciate from jsps -->
+    <!-- Thymeleaf view names end with html cos we need to differenciate from jsps -->
     <property name="viewNames" value="*.html" />
   </bean>
 
   <!-- static resources (optimized headers) -->
-  <!-- Placeholders below are interpolated by maven. The @placeholder@ syntax would be clearer but it does not work in this file -->
+  <!-- Placeholders below are interpolated by maven. The @placeholder@ syntax would be clearer but it does not work in this 
+    file -->
   <mvc:resources location="/images/" mapping="/images/**" cache-period="${client.cache.max.age}" />
   <mvc:resources location="/scripts/" mapping="/scripts/**" cache-period="${client.cache.max.age}" />
   <mvc:resources location="/styles/" mapping="/styles/**" cache-period="${client.cache.max.age}" />
@@ -167,14 +167,41 @@
       <mvc:mapping path="/test-suites/*/*/test-plan-manager" />
       <bean class="org.squashtest.tm.web.internal.interceptor.openedentity.TestSuiteViewInterceptor" />
     </mvc:interceptor>
+
     <mvc:interceptor>
       <mvc:mapping path="/executions/*" />
       <mvc:mapping path="/executions/*/info" />
       <bean class="org.squashtest.tm.web.internal.interceptor.openedentity.ExecutionViewInterceptor" />
     </mvc:interceptor>
+
+    <mvc:interceptor>
+      <mvc:mapping path="/home-workspace" />
+      <mvc:mapping path="/test-case-workspace" />
+      <mvc:mapping path="/requirement-workspace" />
+      <mvc:mapping path="/campaign-workspace" />
+      <mvc:mapping path="/report-workspace" />
+      <mvc:mapping path="/advanced-search?searchDomain=*" />
+      <mvc:mapping path="/test-cases/*/verified-requirement-versions/manager" />
+      <mvc:mapping path="/requirement-versions/*/verifying-test-cases/manager" />
+      <mvc:mapping path="/requirements/*/versions/manager" />
+      <mvc:mapping path="/attach-list/*/attachments/manager*" />
+      <mvc:mapping path="/user-account" />
+      <mvc:mapping path="/**/info" />
+      <mvc:mapping path="/campaigns/*/test-plan/manager" />
+      <mvc:mapping path="/**/test-plan-manager" />
+      <mvc:mapping path="/administration" />
+      <mvc:mapping path="/administration/projects" />
+      <mvc:mapping path="/administration/users/list" />
+      <mvc:mapping path="/administration/bugtrackers" />
+      <mvc:mapping path="/administration/custom-fields" />
+      <mvc:mapping path="/configuration/login-message" />
+      <mvc:mapping path="/configuration/welcome-message" />
+      <mvc:mapping path="/administration/indexes" />
+      <bean class="org.squashtest.tm.web.internal.interceptor.NavigationMenuInterceptor" />
+    </mvc:interceptor>
   </mvc:interceptors>
-  
-  <!--  DRIVE NODE BUILDERS -->
+
+  <!-- DRIVE NODE BUILDERS -->
   <bean id="testCaseLibraryTreeNodeBuilder.provider" class="org.springframework.beans.factory.config.ProviderCreatingFactoryBean">
     <property name="targetBeanName" value="testCaseLibraryTreeNodeBuilder" />
   </bean>
@@ -201,14 +228,13 @@
   <bean id="campaign.driveNodeBuilder" class="org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder" scope="prototype">
     <constructor-arg ref="squashtest.core.security.PermissionEvaluationService" />
     <constructor-arg ref="campaignLibraryTreeNodeBuilder.provider" />
-  </bean>  
-  <!--  DRIVE NODE BUILDERS -->
+  </bean>
+  <!-- DRIVE NODE BUILDERS -->
 
   <beans profile="eclipse">
     <context:component-scan base-package="target/classes/org.squashtest.tm">
       <context:exclude-filter type="annotation" expression="org.springframework.context.annotation.Configuration" />
-      <context:exclude-filter type="annotation"
-        expression="org.squashtest.tm.web.internal.annotation.ApplicationComponent" />
+      <context:exclude-filter type="annotation" expression="org.squashtest.tm.core.web.annotation.ApplicationComponent" />
     </context:component-scan>
   </beans>
 </beans>

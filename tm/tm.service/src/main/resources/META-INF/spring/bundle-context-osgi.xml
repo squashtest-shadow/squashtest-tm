@@ -86,7 +86,9 @@
   <osgi:service ref="squashtest.tm.hibernate.TransactionManager" interface="org.springframework.transaction.PlatformTransactionManager" />
 
   <osgi:service ref="squashtest.tm.persistence.hibernate.SessionFactory" interface="org.hibernate.SessionFactory" />
-
+  
+  <osgi:service ref="squashtest.core.persistence.jdbc.DataSource" interface="javax.sql.DataSource"/>
+  
   <osgi:service ref="squashtest.core.security.AdministratorAuthenticationService" interface="org.squashtest.tm.service.security.UserAuthenticationService" />
 
   <!-- ====== API SERVICES ====== -->

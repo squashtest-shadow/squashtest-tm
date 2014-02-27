@@ -26,7 +26,7 @@ import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.osgi.context.BundleContextAware;
 import org.squashtest.tm.api.plugin.EntityReference;
-import org.squashtest.tm.api.widget.MenuItem;
+import org.squashtest.tm.api.widget.WorkspaceTreeMenuItem;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.i18n.ContextBasedInternationalized;
 import org.squashtest.tm.core.foundation.lang.Assert;
@@ -39,7 +39,7 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 		BeanNameAware, BundleContextAware {
 
 	private WorkspaceType displayWorkspace;
-	private MenuItem wizardMenu;
+	private WorkspaceTreeMenuItem wizardMenu;
 	private String id;
 
 	private String filename;
@@ -67,7 +67,7 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 	 * @see org.squashtest.tm.api.wizard.WorkspaceWizard#getWizardMenu()
 	 */
 	@Override
-	public MenuItem getWizardMenu() {
+	public WorkspaceTreeMenuItem getWizardMenu() {
 		return wizardMenu;
 	}
 
@@ -118,7 +118,7 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 	 * @param wizardMenu
 	 *            the wizardMenu to set
 	 */
-	public void setWizardMenu(MenuItem wizardMenu) {
+	public void setWizardMenu(WorkspaceTreeMenuItem wizardMenu) {
 		this.wizardMenu = wizardMenu;
 	}
 

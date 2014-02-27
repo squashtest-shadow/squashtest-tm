@@ -22,7 +22,7 @@ package org.squashtest.tm.api.widget
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.squashtest.tm.api.widget.InternationalizedMenuItem;
+import org.squashtest.tm.api.widget.InternationalizedWorkspaceTreeMenuItem;
 import org.squashtest.tm.core.foundation.i18n.Labelled;
 
 import spock.lang.Specification
@@ -33,7 +33,7 @@ import spock.lang.Unroll;
  *
  */
 class InternationalizedMenuItemTest extends Specification {
-	InternationalizedMenuItem item = new InternationalizedMenuItem()
+	InternationalizedWorkspaceTreeMenuItem item = new InternationalizedWorkspaceTreeMenuItem()
 	def tooltipKey = "tooltip.key"
 	MessageSource messageSource = Mock()
 	

@@ -71,13 +71,13 @@ import org.squashtest.tm.web.internal.model.builder.IterationNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.builder.TestSuiteNodeBuilder;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
-import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
+import org.squashtest.tm.core.web.util.HTMLCleanupUtils;
 
 /**
  * Controller which processes requests related to navigation in a {@link CampaignLibrary}.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @Controller
 @RequestMapping(value = "/campaign-browser")
@@ -85,12 +85,12 @@ public class CampaignLibraryNavigationController extends
 		LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignLibraryNavigationController.class);
-	
+
 
 	@Inject
 	@Named("campaign.driveNodeBuilder")
 	private Provider<DriveNodeBuilder<CampaignLibraryNode>> driveNodeBuilder;
-	
+
 	@Inject
 	private Provider<IterationNodeBuilder> iterationNodeBuilder;
 	@Inject
@@ -323,10 +323,10 @@ public class CampaignLibraryNavigationController extends
 		return createCopiedTestSuitesModel(testSuiteList);
 
 	}
-	
-	
+
+
 	@RequestMapping(value="/export-campaign/{campaignId}", method = RequestMethod.GET, params = "export=csv")
-	
+
 	public @ResponseBody
 	void exportCampaign(@PathVariable("campaignId") long campaignId, @RequestParam(value = "exportType",defaultValue="S") String exportType, HttpServletResponse response) {
 
@@ -344,7 +344,7 @@ public class CampaignLibraryNavigationController extends
 
 			response.setHeader("Content-Disposition", "attachment; filename=" + "EXPORT_CPG_"+exportType+"_"+campaign.getName().replace(" ", "_")
 					+"_"+sdf.format(new Date()) + ".csv");
-	
+
 			// print
 			Row header = model.getHeader();
 			writer.write(header.toString() + "\n");

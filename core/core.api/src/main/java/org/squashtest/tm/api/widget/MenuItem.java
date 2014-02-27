@@ -20,12 +20,11 @@
  */
 package org.squashtest.tm.api.widget;
 
-import org.squashtest.tm.api.security.acls.AccessRule;
 
 /**
  * Describes a menu item.
  * 
- * @author Gregory Fouquet
+ * @author mpagnon
  * 
  */
 public interface MenuItem {
@@ -44,16 +43,9 @@ public interface MenuItem {
 	String getTooltip();
 
 	/**
-	 * Should return the CONTEXT RELATIVE URL bound to this menu item.
+	 * Should return the URL bound to this menu item.
 	 * 
 	 * @return
 	 */
 	String getUrl();
-
-	/**
-	 * Should return the access rule for this menu item.
-	 * 
-	 * @return
-	 */
-	AccessRule getAccessRule();
 }

@@ -100,7 +100,7 @@
     <beans:property name="loginFormUrl" value="/login.jsp" />
   </beans:bean>
 
-  <beans:bean id="accessDeniedHandler" class="org.squashtest.tm.web.internal.security.authentication.SquashAccessDeniedHandler">
+  <beans:bean id="accessDeniedHandler" class="org.squashtest.tm.core.web.security.authentication.SquashAccessDeniedHandler">
     <beans:property name="errorPage" value="/squash/accessDenied" />
   </beans:bean>
 
@@ -118,12 +118,12 @@
     </beans:property>
   </beans:bean>
 
-  <beans:bean id="authenticationProcessingFilterEntryPoint" class="org.squashtest.tm.web.internal.security.authentication.RedirectEntryPoint">
+  <beans:bean id="authenticationProcessingFilterEntryPoint" class="org.squashtest.tm.core.web.security.authentication.RedirectEntryPoint">
     <beans:property name="loginFormUrl" value="/login" />
     <beans:property name="forceHttps" value="${authentication.application.forcehttps:false}" />
   </beans:bean>
 
-  <beans:bean id="htmlSanitizationFilter" class="org.squashtest.tm.web.internal.filter.HtmlSanitizationFilter" />
+  <beans:bean id="htmlSanitizationFilter" class="org.squashtest.tm.core.web.filter.HtmlSanitizationFilter" />
 
   <authentication-manager alias="squashtest.core.security.AuthenticationManager">
     <authentication-provider ref="authenticationProvider.${authentication.provider:internal}" />

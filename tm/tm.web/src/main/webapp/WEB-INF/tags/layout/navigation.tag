@@ -47,6 +47,7 @@
 		<a id="campaign-link"	 	class="navigation-link navigation-campaign"		href="${rootctxt}/campaign-workspace/"		title="${campTitle}"></a>
 		
 		<a id="bugtracker-link"	 	class="navigation-link navigation-bugtracker ${hideClass}" 	title="${bugTitle}"></a>
+		
 		<ul class="not-displayed width:130px;">
 		<c:forEach var="bugtracker" items="${visibleBugtrackers}">
 			<li>
@@ -55,9 +56,17 @@
 				<a id="bugtracker-${bugtracker.id }" href="${btUrl}" ${targetClause}>${bugtracker.name}</a>			
 			</li>
 		</c:forEach>
-		</ul>		
-		
-		<a id="report-link"	 	class="navigation-link navigation-report" 			href="${rootctxt}/report-workspace"			title="${repoTitle}"></a>
+		</ul>
+
+		<a id="report-link" class="navigation-link navigation-report"
+			href="${rootctxt}/report-workspace" title="${repoTitle}"></a>
+		<c:if test="${ not empty navigationButtons }">
+		<c:forEach var="navigationButton" items="${ navigationButtons }" varStatus="stat">
+			<a id="${ stat.index }" class="navigation-link navigation-${stat.index }" 
+			href="${navigationButton.url }" title="${navigationButton.tooltip }">
+			</a>
+		</c:forEach>
+		</c:if>
 	</div>
 	
 	<div id="nav_logo" class="vertical-logo"></div>
