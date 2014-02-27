@@ -72,14 +72,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 
 	private String padRawValue(Integer rawValue) {
-		StringBuilder builder = new StringBuilder();
-		int length = Integer.toString(rawValue).length();
-		int zeroesToAdd = EXPECTED_LENGTH - length;
-		for (int i = 0; i < zeroesToAdd; i++) {
-			builder.append("0");
-		}
-		builder.append(Integer.toString(rawValue));
-		return builder.toString();
+		return StringUtils.leftPad(rawValue.toString(), EXPECTED_LENGTH, '0');
 	}
 
 	private org.apache.lucene.search.Query buildLuceneRangeQuery(QueryBuilder qb, String fieldName, Integer minValue,
