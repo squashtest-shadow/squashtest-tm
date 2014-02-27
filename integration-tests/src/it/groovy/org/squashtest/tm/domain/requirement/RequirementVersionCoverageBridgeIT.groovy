@@ -30,6 +30,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.BridgeSpecification;
 import org.squashtest.tm.domain.testcase.TestCaseAttachmentBridge;
 import org.squashtest.tm.service.internal.repository.hibernate.DbunitDaoSpecification
 import org.unitils.dbunit.annotation.DataSet;
@@ -42,24 +43,13 @@ import spock.unitils.UnitilsSupport;
  */
 @UnitilsSupport
 @Transactional
-class RequirementVersionCoverageBridgeIT extends DbunitDaoSpecification {
+class RequirementVersionCoverageBridgeIT extends BridgeSpecification {
 	RequirementVersionCoverageBridge bridge = new RequirementVersionCoverageBridge()
 	
-	@Inject SessionFactory sessionFactory
-	
-	LuceneOptions lucene = Mock()
-	Document doc = new Document()
-
 	@DataSet("RequirementVersionBridgeIT.dataset.xml")
 	def "should index the verifying test cases count"() {
 		given:
-		Session session = sessionFactory.currentSession
 		RequirementVersion req = session.load(RequirementVersion, 10L)
-		
-		and:
-		lucene.getStore() >> Mock(Store)
-		lucene.getIndex() >> Mock(Index)
-		lucene.getTermVector() >> Mock(TermVector)
 		
 		when:
 		bridge.writeFieldToDocument("foo", session, req, doc, lucene)

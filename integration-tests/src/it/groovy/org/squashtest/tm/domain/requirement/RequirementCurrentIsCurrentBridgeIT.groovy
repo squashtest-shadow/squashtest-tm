@@ -30,6 +30,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.BridgeSpecification;
 import org.squashtest.tm.domain.testcase.TestCaseAttachmentBridge;
 import org.squashtest.tm.service.internal.repository.hibernate.DbunitDaoSpecification
 import org.unitils.dbunit.annotation.DataSet;
@@ -43,25 +44,15 @@ import spock.unitils.UnitilsSupport;
  */
 @UnitilsSupport
 @Transactional
-class RequirementCurrentIsCurrentBridgeIT extends DbunitDaoSpecification {
+class RequirementCurrentIsCurrentBridgeIT extends BridgeSpecification {
 	RequirementVersionIsCurrentBridge bridge = new RequirementVersionIsCurrentBridge()
 	
-	@Inject SessionFactory sessionFactory
-	
-	LuceneOptions lucene = Mock()
-	Document doc = new Document()
-
 	@DataSet("RequirementVersionBridgeIT.dataset.xml")
 	@Unroll
 	def "requirement version #reqVerId is current active one : #current"() {
 		given:
 		Session session = sessionFactory.currentSession
 		RequirementVersion req = session.load(RequirementVersion, reqVerId)
-		
-		and:
-		lucene.getStore() >> Mock(Store)
-		lucene.getIndex() >> Mock(Index)
-		lucene.getTermVector() >> Mock(TermVector)
 		
 		when:
 		bridge.writeFieldToDocument("foo", session, req, doc, lucene)
