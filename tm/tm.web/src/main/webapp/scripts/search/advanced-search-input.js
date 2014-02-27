@@ -290,15 +290,6 @@ define([ "jquery", "backbone", "handlebars", "squash.translator", "app/ws/squash
 			$fieldDom.searchMultiSelectWidget();
 		},
 		makeMultiAutocomplete : function(tableId, fieldId, fieldTitle, options, enteredValue) {
-//			// adds a "selected" property to options
-//			enteredValue = enteredValue || {};
-//			// no enteredValue.values means 'select everything'
-//			_.each(options, function(option) {
-//				option.selected = (!enteredValue.values) || _.contains(enteredValue.values, option.code);
-//			});
-//			var context = {"multiselect-id": fieldId, "multiselect-title": fieldTitle, options: options};
-//			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#multiselect-template", context));
-//			$fieldDom.searchMultiSelectWidget();			
 			var context = {"multiautocomplete-id": fieldId, "multiautocomplete-title": fieldTitle};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#multiautocomplete-template", context));
 			$fieldDom.searchMultiAutocompleteWidget({fieldId : fieldId, options : options});

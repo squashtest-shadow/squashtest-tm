@@ -28,32 +28,33 @@ public class SearchInputFieldModel {
 	private String title;
 
 	private String inputType;
-	
+
 	private String id;
 
 	private boolean ignoreBridge = false;
-	
+
 	private List<SearchInputPossibleValueModel> possibleValues = new ArrayList<SearchInputPossibleValueModel>();
-	
-	public SearchInputFieldModel(){
+
+	public SearchInputFieldModel() {
 	}
-	
-	public SearchInputFieldModel(String id, String title, String inputType){
+
+	public SearchInputFieldModel(String id, String title, String inputType) {
 		this.id = id;
 		this.title = title;
 		this.inputType = inputType;
 	}
 
-	public SearchInputFieldModel(String id, String title, String inputType, List<SearchInputPossibleValueModel> possibleValues){
+	public SearchInputFieldModel(String id, String title, String inputType,
+			List<SearchInputPossibleValueModel> possibleValues) {
 		this(id, title, inputType);
 		this.possibleValues = possibleValues;
 	}
-	
-	public void addPossibleValue(SearchInputPossibleValueModel value){
+
+	public void addPossibleValue(SearchInputPossibleValueModel value) {
 		this.possibleValues.add(value);
 	}
-	
-	public void addPossibleValue(String value, String code){
+
+	public void addPossibleValue(String value, String code) {
 		this.possibleValues.add(new SearchInputPossibleValueModel(value, code));
 	}
 
@@ -95,5 +96,15 @@ public class SearchInputFieldModel {
 
 	public void setIgnoreBridge(boolean ignoreBridge) {
 		this.ignoreBridge = ignoreBridge;
+	}
+
+	/**
+	 * adds the given values to the current possible values.
+	 * 
+	 * @param values
+	 */
+	public void addPossibleValues(List<SearchInputPossibleValueModel> values) {
+		possibleValues.addAll(values);
+
 	}
 }

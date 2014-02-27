@@ -31,6 +31,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.hibernate.Session;
@@ -119,7 +120,7 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity(TestCase.class).get();
 
-		org.apache.lucene.search.Query luceneQuery = buildLuceneQuery(qb, model, locale);
+		Query luceneQuery = buildLuceneQuery(qb, model, locale);
 
 		org.hibernate.Query hibQuery = ftSession.createFullTextQuery(luceneQuery, TestCase.class);
 
@@ -192,7 +193,7 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity(TestCase.class).get();
 
-		org.apache.lucene.search.Query luceneQuery = buildLuceneQuery(qb, testcases, locale);
+		Query luceneQuery = buildLuceneQuery(qb, testcases, locale);
 
 		List<TestCase> result = Collections.emptyList();
 		int countAll = 0;
@@ -217,7 +218,7 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity(TestCase.class).get();
 
-		org.apache.lucene.search.Query luceneQuery = buildLuceneQuery(qb, model, locale);
+		Query luceneQuery = buildLuceneQuery(qb, model, locale);
 
 		List<TestCase> result = Collections.emptyList();
 		int countAll = 0;

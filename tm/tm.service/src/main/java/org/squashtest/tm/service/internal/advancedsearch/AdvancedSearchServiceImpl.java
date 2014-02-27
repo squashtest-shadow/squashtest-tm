@@ -31,6 +31,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.document.DateTools;
+import org.apache.lucene.search.Query;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
@@ -75,10 +76,10 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return StringUtils.leftPad(rawValue.toString(), EXPECTED_LENGTH, '0');
 	}
 
-	private org.apache.lucene.search.Query buildLuceneRangeQuery(QueryBuilder qb, String fieldName, Integer minValue,
+	private Query buildLuceneRangeQuery(QueryBuilder qb, String fieldName, Integer minValue,
 			Integer maxValue) {
 
-		org.apache.lucene.search.Query query = null;
+		Query query = null;
 
 		if (minValue == null) {
 
@@ -110,10 +111,10 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return query;
 	}
 
-	private org.apache.lucene.search.Query buildLuceneValueInListQuery(QueryBuilder qb, String fieldName,
+	private Query buildLuceneValueInListQuery(QueryBuilder qb, String fieldName,
 			List<String> values) {
 
-		org.apache.lucene.search.Query mainQuery = null;
+		Query mainQuery = null;
 
 		for (String value : values) {
 
@@ -121,7 +122,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 				value = "$NO_VALUE";
 			}
 
-			org.apache.lucene.search.Query query = qb
+			Query query = qb
 					.bool()
 					.should(qb.keyword().onField(fieldName).ignoreFieldBridge().ignoreAnalyzer().matching(value)
 							.createQuery()).createQuery();
@@ -136,14 +137,14 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return qb.bool().must(mainQuery).createQuery();
 	}
 
-	private org.apache.lucene.search.Query buildLuceneSingleValueQuery(QueryBuilder qb, String fieldName,
+	private Query buildLuceneSingleValueQuery(QueryBuilder qb, String fieldName,
 			List<String> values, Locale locale) {
 
-		org.apache.lucene.search.Query mainQuery = null;
+		Query mainQuery = null;
 
 		for (String value : values) {
 
-			org.apache.lucene.search.Query query;
+			Query query;
 
 			if (value.contains("*")) {
 				query = qb
@@ -167,13 +168,13 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return mainQuery;
 	}
 
-	private org.apache.lucene.search.Query buildLuceneTextQuery(QueryBuilder qb, String fieldName, List<String> values) {
+	private Query buildLuceneTextQuery(QueryBuilder qb, String fieldName, List<String> values) {
 
-		org.apache.lucene.search.Query mainQuery = null;
+		Query mainQuery = null;
 
 		for (String value : values) {
 
-			org.apache.lucene.search.Query query;
+			Query query;
 
 			query = qb.bool().must(qb.phrase().onField(fieldName).ignoreFieldBridge().sentence(value).createQuery())
 					.createQuery();
@@ -186,10 +187,10 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return mainQuery;
 	}
 
-	private org.apache.lucene.search.Query buildLuceneTimeIntervalQuery(QueryBuilder qb, String fieldName,
+	private Query buildLuceneTimeIntervalQuery(QueryBuilder qb, String fieldName,
 			Date startdate, Date enddate) {
 
-		org.apache.lucene.search.Query query = qb
+		Query query = qb
 				.bool()
 				.must(qb.range().onField(fieldName).ignoreFieldBridge()
 						.from(DateTools.dateToString(startdate, DateTools.Resolution.DAY))
@@ -198,10 +199,10 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return query;
 	}
 
-	private org.apache.lucene.search.Query buildLuceneTimeIntervalWithoutStartQuery(QueryBuilder qb, String fieldName,
+	private Query buildLuceneTimeIntervalWithoutStartQuery(QueryBuilder qb, String fieldName,
 			Date enddate) {
 
-		org.apache.lucene.search.Query query = qb
+		Query query = qb
 				.bool()
 				.must(qb.range().onField(fieldName).ignoreFieldBridge()
 						.below(DateTools.dateToString(enddate, DateTools.Resolution.DAY)).createQuery()).createQuery();
@@ -209,10 +210,10 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return query;
 	}
 
-	private org.apache.lucene.search.Query buildLuceneTimeIntervalWithoutEndQuery(QueryBuilder qb, String fieldName,
+	private Query buildLuceneTimeIntervalWithoutEndQuery(QueryBuilder qb, String fieldName,
 			Date startdate) {
 
-		org.apache.lucene.search.Query query = qb
+		Query query = qb
 				.bool()
 				.must(qb.range().onField(fieldName).ignoreFieldBridge()
 						.above(DateTools.dateToString(startdate, DateTools.Resolution.DAY)).createQuery())
@@ -221,7 +222,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return query;
 	}
 
-	private org.apache.lucene.search.Query buildQueryForSingleCriterium(String fieldKey,
+	private Query buildQueryForSingleCriterium(String fieldKey,
 			AdvancedSearchFieldModel fieldModel, QueryBuilder qb, Locale locale) {
 
 		AdvancedSearchSingleFieldModel singleModel = (AdvancedSearchSingleFieldModel) fieldModel;
@@ -234,7 +235,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return null;
 	}
 
-	private org.apache.lucene.search.Query buildQueryForListCriterium(String fieldKey,
+	private Query buildQueryForListCriterium(String fieldKey,
 			AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
 
 		AdvancedSearchListFieldModel listModel = (AdvancedSearchListFieldModel) fieldModel;
@@ -300,7 +301,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return charAtPosition == ' ' && charBeforePosition != ' ' && !inDoubleQuoteContext;
 	}
 
-	private org.apache.lucene.search.Query buildQueryForTextCriterium(String fieldKey,
+	private Query buildQueryForTextCriterium(String fieldKey,
 			AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
 		AdvancedSearchTextFieldModel textModel = (AdvancedSearchTextFieldModel) fieldModel;
 		if (textModel.getValue() != null && !"".equals(textModel.getValue().trim())) {
@@ -311,7 +312,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return null;
 	}
 
-	private org.apache.lucene.search.Query buildQueryForRangeCriterium(String fieldKey,
+	private Query buildQueryForRangeCriterium(String fieldKey,
 			AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
 		AdvancedSearchRangeFieldModel rangeModel = (AdvancedSearchRangeFieldModel) fieldModel;
 		if (rangeModel.getMinValue() != null || rangeModel.getMaxValue() != null) {
@@ -321,12 +322,12 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return null;
 	}
 
-	private org.apache.lucene.search.Query buildQueryForTimeIntervalCriterium(String fieldKey,
+	private Query buildQueryForTimeIntervalCriterium(String fieldKey,
 			AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
 		AdvancedSearchTimeIntervalFieldModel intervalModel = (AdvancedSearchTimeIntervalFieldModel) fieldModel;
 		Date startDate = intervalModel.getStartDate();
 		Date endDate = intervalModel.getEndDate();
-		org.apache.lucene.search.Query query = null;
+		Query query = null;
 		if (startDate != null) {
 			if (endDate != null) {
 				query = buildLuceneTimeIntervalQuery(qb, fieldKey, startDate, endDate);
@@ -342,11 +343,11 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return query;
 	}
 
-	protected org.apache.lucene.search.Query buildLuceneQuery(QueryBuilder qb, List<TestCase> testcaseList,
+	protected Query buildLuceneQuery(QueryBuilder qb, List<TestCase> testcaseList,
 			Locale locale) {
 
-		org.apache.lucene.search.Query mainQuery = null;
-		org.apache.lucene.search.Query query = null;
+		Query mainQuery = null;
+		Query query = null;
 
 		for (TestCase testcase : testcaseList) {
 			List<String> id = new ArrayList<String>();
@@ -362,9 +363,9 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return mainQuery;
 	}
 
-	protected org.apache.lucene.search.Query buildLuceneQuery(QueryBuilder qb, AdvancedSearchModel model, Locale locale) {
+	protected Query buildLuceneQuery(QueryBuilder qb, AdvancedSearchModel model, Locale locale) {
 
-		org.apache.lucene.search.Query mainQuery = null;
+		Query mainQuery = null;
 
 		Set<String> fieldKeys = model.getFields().keySet();
 
@@ -373,7 +374,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			AdvancedSearchFieldModel fieldModel = model.getFields().get(fieldKey);
 			AdvancedSearchFieldModelType type = fieldModel.getType();
 
-			org.apache.lucene.search.Query query = buildQueryDependingOnType(qb, locale, fieldKey, fieldModel, type);
+			Query query = buildQueryDependingOnType(qb, locale, fieldKey, fieldModel, type);
 
 			if (query != null) {
 				if (mainQuery == null) {
@@ -387,9 +388,9 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return mainQuery;
 	}
 
-	private org.apache.lucene.search.Query buildQueryDependingOnType(QueryBuilder qb, Locale locale, String fieldKey,
+	private Query buildQueryDependingOnType(QueryBuilder qb, Locale locale, String fieldKey,
 			AdvancedSearchFieldModel fieldModel, AdvancedSearchFieldModelType type) {
-		org.apache.lucene.search.Query query = null;
+		Query query = null;
 		switch (type) {
 		case SINGLE:
 			query = buildQueryForSingleCriterium(fieldKey, fieldModel, qb, locale);

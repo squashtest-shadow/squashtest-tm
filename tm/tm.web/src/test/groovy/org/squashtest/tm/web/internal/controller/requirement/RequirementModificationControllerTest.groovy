@@ -40,7 +40,7 @@ import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
 import org.squashtest.tm.service.requirement.RequirementModificationService
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
-import org.squashtest.tm.web.internal.helper.InternationalisableLabelFormatter
+import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter
 import org.squashtest.tm.web.internal.helper.LabelFormatter
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -54,7 +54,7 @@ class RequirementModificationControllerTest extends Specification {
 	RequirementModificationService requirementModificationService= Mock()
 	InternationalizationHelper i18nHelper = Mock()
 	LabelFormatter formatter = new LevelLabelFormatter(i18nHelper)
-	LabelFormatter internationalformatter = new InternationalisableLabelFormatter(i18nHelper)
+	LabelFormatter internationalformatter = new InternationalizableLabelFormatter(i18nHelper)
 	Provider criticalityBuilderProvider = criticalityBuilderProvider()
 	Provider categoryBuilderProvider = categoryBuilderProvider()
 	Provider statusBuilderProvider = statusBuilderProvider()

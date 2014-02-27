@@ -22,13 +22,11 @@ package org.squashtest.tm.web.internal.controller.search;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementCategory;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
@@ -78,41 +76,25 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 				.internationalize("requirement.criticality.label", locale), MULTISELECT);
 		panel.addField(criticalityField);
 
-		Map<String, String> map = levelComboBuilder(RequirementCriticality.values()).useLocale(locale).buildMap();
-
-		int i = 1;
-		for (Entry<String, String> entry : map.entrySet()) {
-			SearchInputPossibleValueModel importanceOption = new SearchInputPossibleValueModel(entry.getValue(), i
-					+ "-" + entry.getKey());
-			criticalityField.addPossibleValue(importanceOption);
-			i++;
-		}
+		List<SearchInputPossibleValueModel> importanceOptions = levelComboBuilder(RequirementCriticality.values())
+				.useLocale(locale).build();
+		criticalityField.addPossibleValues(importanceOptions);
 
 		SearchInputFieldModel categoryField = new SearchInputFieldModel("category", getMessageSource()
 				.internationalize("requirement.category.label", locale), MULTISELECT);
 		panel.addField(categoryField);
 
-		map = internationalizableComboBuilder(RequirementCategory.values()).useLocale(locale).buildMap();
-
-		for (Entry<String, String> entry : map.entrySet()) {
-			SearchInputPossibleValueModel natureOption = new SearchInputPossibleValueModel(entry.getValue(),
-					entry.getKey());
-			categoryField.addPossibleValue(natureOption);
-		}
+		List<SearchInputPossibleValueModel> natureOptions = internationalizableComboBuilder(
+				RequirementCategory.values()).useLocale(locale).build();
+		categoryField.addPossibleValues(natureOptions);
 
 		SearchInputFieldModel statusField = new SearchInputFieldModel("status", getMessageSource().internationalize(
 				"requirement.status.combo.label", locale), MULTISELECT);
 		panel.addField(statusField);
 
-		map = levelComboBuilder(RequirementStatus.values()).useLocale(locale).buildMap();
-
-		int j = 1;
-		for (Entry<String, String> entry : map.entrySet()) {
-			SearchInputPossibleValueModel statusOption = new SearchInputPossibleValueModel(entry.getValue(), j + "-"
-					+ entry.getKey());
-			statusField.addPossibleValue(statusOption);
-			j++;
-		}
+		List<SearchInputPossibleValueModel> statusOptions = levelComboBuilder(RequirementStatus.values()).useLocale(
+				locale).build();
+		statusField.addPossibleValues(statusOptions);
 
 		return panel;
 	}
@@ -130,11 +112,11 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 		versionField.setIgnoreBridge(true);
 		panel.addField(versionField);
 
-		versionField.addPossibleValue(new SearchInputPossibleValueModel(getMessageSource().internationalize(
-				"search.requirement.allVersions", locale), EMPTY, true));
-
-		versionField.addPossibleValue(new SearchInputPossibleValueModel(getMessageSource().internationalize(
-				"search.requirement.onlyLastVersion", locale), ATLEASTONE));
+		OptionBuilder optionBuilder = optionBuilder(locale);
+		versionField.addPossibleValue(optionBuilder.labelI18nKey("search.requirement.allVersions").optionKey(EMPTY)
+				.selected().build());
+		versionField.addPossibleValue(optionBuilder.labelI18nKey("search.requirement.onlyLastVersion")
+				.optionKey(ATLEASTONE).build());
 
 		return panel;
 	}
@@ -151,20 +133,21 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 		SearchInputFieldModel descriptionField = new SearchInputFieldModel("hasDescription", "", EXISTS);
 		panel.addField(descriptionField);
 
-		descriptionField.addPossibleValue(new SearchInputPossibleValueModel(getMessageSource().internationalize(
-				"search.requirement.emptyDescription", locale), NONE));
+		OptionBuilder optionBuilder = optionBuilder(locale);
+		descriptionField.addPossibleValue(optionBuilder.labelI18nKey("search.requirement.emptyDescription")
+				.optionKey(NONE).build());
 
-		descriptionField.addPossibleValue(new SearchInputPossibleValueModel(getMessageSource().internationalize(
-				"search.requirement.nonemptyDescription", locale), ATLEASTONE));
+		descriptionField.addPossibleValue(optionBuilder.labelI18nKey("search.requirement.nonemptyDescription")
+				.optionKey(ATLEASTONE).build());
 
 		SearchInputFieldModel attachmentField = new SearchInputFieldModel("attachments", getMessageSource()
 				.internationalize("search.testcase.content.attachment.label", locale), EXISTS);
 		panel.addField(attachmentField);
 
-		attachmentField.addPossibleValue(new SearchInputPossibleValueModel(getMessageSource().internationalize(
-				"search.testcase.content.attachment.atleastone", locale), ATLEASTONE));
-		attachmentField.addPossibleValue(new SearchInputPossibleValueModel(getMessageSource().internationalize(
-				"search.testcase.content.attachment.none", locale), NONE));
+		attachmentField.addPossibleValue(optionBuilder.labelI18nKey("search.testcase.content.attachment.atleastone")
+				.optionKey(ATLEASTONE).build());
+		attachmentField.addPossibleValue(optionBuilder.labelI18nKey("search.testcase.content.attachment.none")
+				.optionKey(NONE).build());
 
 		return panel;
 	}
@@ -188,21 +171,24 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 				EXISTS);
 		panel.addField(childRequirementsField);
 
-		childRequirementsField.addPossibleValue(new SearchInputPossibleValueModel(getMessageSource().internationalize(
-				"search.requirement.association.childRequirement.atleastone", locale), ATLEASTONE));
+		OptionBuilder optionBuilder = optionBuilder(locale);
+		childRequirementsField.addPossibleValue(optionBuilder
+				.labelI18nKey("search.requirement.association.childRequirement.atleastone").optionKey(ATLEASTONE)
+				.build());
 
-		childRequirementsField.addPossibleValue(new SearchInputPossibleValueModel(getMessageSource().internationalize(
-				"search.requirement.association.childRequirement.none", locale), NONE));
+		childRequirementsField.addPossibleValue(optionBuilder
+				.labelI18nKey("search.requirement.association.childRequirement.none").optionKey(NONE).build());
 
 		SearchInputFieldModel parentRequirementsField = new SearchInputFieldModel("parent", getMessageSource()
 				.internationalize("search.requirement.association.parentRequirement.label", locale), EXISTS);
 		panel.addField(parentRequirementsField);
 
-		parentRequirementsField.addPossibleValue(new SearchInputPossibleValueModel(getMessageSource().internationalize(
-				"search.requirement.association.parentRequirement.atleastone", locale), ATLEASTONE));
+		parentRequirementsField.addPossibleValue(optionBuilder
+				.labelI18nKey("search.requirement.association.parentRequirement.atleastone").optionKey(ATLEASTONE)
+				.build());
 
-		parentRequirementsField.addPossibleValue(new SearchInputPossibleValueModel(getMessageSource().internationalize(
-				"search.requirement.association.parentRequirement.none", locale), NONE));
+		parentRequirementsField.addPossibleValue(optionBuilder
+				.labelI18nKey("search.requirement.association.parentRequirement.none").optionKey(NONE).build());
 
 		return panel;
 	}
@@ -216,13 +202,15 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 		panel.setLocation("column3");
 		panel.addCssClass("search-icon-history-blue");
 
+		OptionBuilder optionBuilder = optionBuilder(locale);
+
 		SearchInputFieldModel createdByField = new SearchInputFieldModel("createdBy", getMessageSource()
 				.internationalize("search.testcase.history.createdBy.label", locale), MULTIAUTOCOMPLETE);
 		panel.addField(createdByField);
 
 		List<String> users = advancedSearchService.findAllUsersWhoCreatedRequirementVersions();
 		for (String user : users) {
-			createdByField.addPossibleValue(new SearchInputPossibleValueModel(user, user));
+			createdByField.addPossibleValue(optionBuilder.label(user).optionKey(user).build());
 		}
 
 		SearchInputFieldModel createdOnField = new SearchInputFieldModel("createdOn", getMessageSource()
@@ -235,11 +223,11 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 
 		users = advancedSearchService.findAllUsersWhoModifiedRequirementVersions();
 		for (String user : users) {
-			if (user == null || "".equals(user.trim())) {
-				modifiedByField.addPossibleValue(new SearchInputPossibleValueModel(getMessageSource().internationalize(
-						"label.NeverModified", locale), ""));
+			if (StringUtils.isBlank(user)) {
+				modifiedByField.addPossibleValue(optionBuilder.labelI18nKey("label.NeverModified").optionKey("")
+						.build());
 			} else {
-				modifiedByField.addPossibleValue(new SearchInputPossibleValueModel(user, user));
+				modifiedByField.addPossibleValue(optionBuilder.label(user).optionKey(user).build());
 			}
 		}
 
@@ -251,25 +239,7 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 	}
 
 	public SearchInputPanelModel createRequirementPerimeterPanel(Locale locale) {
-
-		SearchInputPanelModel panel = new SearchInputPanelModel();
-		panel.setTitle(getMessageSource().internationalize("search.testcase.perimeter.panel.title", locale));
-		panel.setOpen(true);
-		panel.setId("perimeter");
-		panel.setLocation("column2");
-		panel.addCssClass("search-icon-perimeter-blue");
-
-		SearchInputFieldModel projectField = new SearchInputFieldModel("requirement.project.id", getMessageSource()
-				.internationalize("search.testcase.perimeter.field.title", locale), MULTISELECT);
-		panel.addField(projectField);
-
-		List<Project> projects = this.getProjectFilterService().getAllProjects();
-		for (Project project : projects) {
-			SearchInputPossibleValueModel projectOption = new SearchInputPossibleValueModel(project.getName(), project
-					.getId().toString());
-			projectField.addPossibleValue(projectOption);
-		}
-
-		return panel;
+		return perimeterPanelBuilder(locale).cssClass("search-icon-perimeter-blue").htmlId("requirement.project.id")
+				.build();
 	}
 }

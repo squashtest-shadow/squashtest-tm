@@ -85,6 +85,7 @@ public class ExpandedTestCase {
 	 */
 	private RequirementCriticality calculateMaxCriticality() {
 		// Each level is represented by a number. 3 is the lowest one
+		// FIXME what if we add a criticality given this method is not covered by tests ?! max criticality should not be hardcoded !
 		int level = 3;
 
 		// check if there's a stronger criticality and if this criticality is part of the ones selected for the research

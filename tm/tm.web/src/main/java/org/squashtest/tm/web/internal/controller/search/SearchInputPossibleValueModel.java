@@ -21,9 +21,14 @@
 package org.squashtest.tm.web.internal.controller.search;
 
 public class SearchInputPossibleValueModel {
-
+	/**
+	 * the option's label
+	 */
 	private String value;
 
+	/**
+	 * the thing that is posted
+	 */
 	private String code;
 
 	private boolean selected = false;
@@ -33,8 +38,7 @@ public class SearchInputPossibleValueModel {
 	}
 
 	public SearchInputPossibleValueModel(String value, String code) {
-		this.value = value;
-		this.code = code;
+		this(value, code, false);
 	}
 
 	public SearchInputPossibleValueModel(String value, String code, boolean selected) {

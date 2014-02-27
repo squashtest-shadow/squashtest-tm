@@ -18,16 +18,25 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.testcase;
+package org.squashtest.tm.domain.search;
 
+import java.util.Collection;
+
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.search.bridge.StringBridge;
 
-public class TestCaseStatusBridge  implements StringBridge {
-
+public class CollectionSizeBridge implements StringBridge {
+	
+	private static final int EXPECTED_LENGTH = 7;
+	
+	private String padRawValue(String rawValue){
+		return StringUtils.leftPad(rawValue, EXPECTED_LENGTH, '0');
+	}
+	
 	@Override
 	public String objectToString(Object value) {
-		TestCaseStatus status = (TestCaseStatus) value;
-		return status.getLevel()+"-"+status.name();
+		Collection<?> collection = (Collection<?>) value;
+		return padRawValue(Integer.toString(collection.size()));
 	}
-
 }
+

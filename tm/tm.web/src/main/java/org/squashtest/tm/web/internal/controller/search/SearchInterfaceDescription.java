@@ -20,14 +20,23 @@
  */
 package org.squashtest.tm.web.internal.controller.search;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.LevelComparator;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
-import org.squashtest.tm.web.internal.helper.InternationalisableLabelFormatter;
-import org.squashtest.tm.web.internal.helper.InternationalizableComparator;
+import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
@@ -39,6 +48,163 @@ import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilde
  * 
  */
 public abstract class SearchInterfaceDescription {
+	/**
+	 * Compares formatted label using the thread-bound locale when instanciated -> not thread safe.
+	 * 
+	 * @author Gregory Fouquet
+	 * 
+	 * @param <T>
+	 */
+	private class InternationalizableComparator implements Comparator<Internationalizable> {
+		private InternationalizableLabelFormatter helper = (InternationalizableLabelFormatter) internationalizableLabelFormatter
+				.get().useLocale(LocaleContextHolder.getLocale());
+
+		@Override
+		public int compare(Internationalizable o1, Internationalizable o2) {
+			String name1 = helper.formatLabel(o1);
+			String name2 = helper.formatLabel(o2);
+
+			return name1.compareTo(name2);
+		}
+	}
+
+	/**
+	 * Builder for options aka {@link SearchInputPossibleValueModel}
+	 * 
+	 * @author Gregory Fouquet
+	 * 
+	 */
+	protected class OptionBuilder {
+		private final Locale locale;
+		private String label;
+		private String key;
+		private boolean selected;
+
+		private OptionBuilder(Locale locale) {
+			super();
+			this.locale = locale;
+		}
+
+		public OptionBuilder labelI18nKey(String i18nKey) {
+			this.label = messageSource.internationalize(i18nKey, locale);
+			return this;
+		}
+
+		public OptionBuilder label(String label) {
+			this.label = label;
+			return this;
+		}
+
+		public OptionBuilder optionKey(String key) {
+			this.key = key;
+			return this;
+		}
+
+		public SearchInputPossibleValueModel build() {
+			SearchInputPossibleValueModel res = new SearchInputPossibleValueModel(label, key, selected);
+			reset();
+			return res;
+		}
+
+		private void reset() {
+			selected = false;
+		}
+
+		public OptionBuilder selected() {
+			selected = true;
+			return this;
+		}
+	};
+
+	protected class OptionListBuilder {
+		private final EnumJeditableComboDataBuilder<?> delegateBuilder;
+		private Locale locale;
+
+		private OptionListBuilder(EnumJeditableComboDataBuilder<?> delegateBuilder) {
+			super();
+			this.delegateBuilder = delegateBuilder;
+		}
+
+		public OptionListBuilder useLocale(Locale locale) {
+			delegateBuilder.useLocale(locale);
+			this.locale = locale;
+			return this;
+		}
+
+		public List<SearchInputPossibleValueModel> build() {
+			Map<String, String> map = delegateBuilder.buildMap();
+			return decorate(map);
+
+		}
+
+		private List<SearchInputPossibleValueModel> decorate(Map<String, String> map) {
+			OptionBuilder optionBuilder = new OptionBuilder(locale);
+			ArrayList<SearchInputPossibleValueModel> res = new ArrayList<SearchInputPossibleValueModel>(map.size());
+
+			for (Entry<String, String> entry : map.entrySet()) {
+				res.add(optionBuilder.optionKey(entry.getKey()).label(entry.getValue()).build());
+			}
+
+			return res;
+		}
+	}
+
+	protected class PerimeterPanelBuilder {
+		private final Locale locale;
+		private String cssClass;
+		private String htmlId;
+
+		private PerimeterPanelBuilder(Locale locale) {
+			super();
+			this.locale = locale;
+		}
+
+		/**
+		 * the css class of the panel
+		 * 
+		 * @param cssClass
+		 * @return
+		 */
+		public PerimeterPanelBuilder cssClass(String cssClass) {
+			this.cssClass = cssClass;
+			return this;
+		}
+
+		/**
+		 * the html id of the search field
+		 * 
+		 * @param id
+		 * @return
+		 */
+		public PerimeterPanelBuilder htmlId(String id) {
+			this.htmlId = id;
+			return this;
+		}
+
+		public SearchInputPanelModel build() {
+			SearchInputPanelModel panel = new SearchInputPanelModel();
+			panel.setTitle(messageSource.internationalize("search.testcase.perimeter.panel.title", locale));
+			panel.setOpen(true);
+			panel.setId("perimeter");
+			panel.setLocation("column2");
+			panel.addCssClass(cssClass);
+
+			SearchInputFieldModel projectField = new SearchInputFieldModel(htmlId, messageSource.internationalize(
+					"search.testcase.perimeter.field.title", locale), MULTISELECT);
+			panel.addField(projectField);
+
+			OptionBuilder optionBuilder = optionBuilder(locale);
+			List<Project> projects = projectFilterService.getAllProjects();
+			for (Project project : projects) {
+				SearchInputPossibleValueModel projectOption = optionBuilder.label(project.getName())
+						.optionKey(project.getId().toString()).build();
+				projectField.addPossibleValue(projectOption);
+			}
+
+			return panel;
+		}
+	}
+
 	protected static final String TEXTFIELD = "textfield";
 	protected static final String TEXTAREA = "textarea";
 	protected static final String RANGE = "range";
@@ -57,9 +223,7 @@ public abstract class SearchInterfaceDescription {
 	@Inject
 	private Provider<LevelLabelFormatter> levelLabelFormatter;
 	@Inject
-	private Provider<InternationalisableLabelFormatter> internationalizableLabelFormatter;
-
-	
+	private Provider<InternationalizableLabelFormatter> internationalizableLabelFormatter;
 
 	@Inject
 	private ProjectFilterModificationService projectFilterService;
@@ -71,20 +235,28 @@ public abstract class SearchInterfaceDescription {
 		super();
 	}
 
-	protected final <T extends Enum<?> & Level> EnumJeditableComboDataBuilder<T> levelComboBuilder(T[] values) {
-		EnumJeditableComboDataBuilder<T> builder = new EnumJeditableComboDataBuilder<T>();
+	protected final <T extends Enum<?> & Level> OptionListBuilder levelComboBuilder(T[] values) {
+		return new OptionListBuilder(delegateLevelComboBuilder(values));
+	}
+
+	protected final <T extends Enum<?> & Level> EnumJeditableComboDataBuilder<T> delegateLevelComboBuilder(T[] values) {
+		EnumJeditableComboDataBuilder<T> builder = new LevelComboDataBuilder<T>();
 		builder.setLabelFormatter(levelLabelFormatter.get().plainText());
 		builder.setModel(values);
 		builder.setModelComparator(LevelComparator.getInstance());
 		return builder;
 	}
 
-	protected final <T extends Enum<?> & Level> EnumJeditableComboDataBuilder<T> internationalizableComboBuilder(
+	protected final <T extends Enum<?> & Level> OptionListBuilder internationalizableComboBuilder(T[] values) {
+		return new OptionListBuilder(delegateInternationalizableComboBuilder(values));
+	}
+
+	protected final <T extends Enum<?> & Level> EnumJeditableComboDataBuilder<T> delegateInternationalizableComboBuilder(
 			T[] values) {
 		EnumJeditableComboDataBuilder<T> builder = new EnumJeditableComboDataBuilder<T>();
 		builder.setLabelFormatter(internationalizableLabelFormatter.get().plainText());
 		builder.setModel(values);
-		builder.setModelComparator(new InternationalizableComparator(messageSource));
+		builder.setModelComparator(new InternationalizableComparator());
 		return builder;
 	}
 
@@ -95,12 +267,11 @@ public abstract class SearchInterfaceDescription {
 		return messageSource;
 	}
 
-
-	/**
-	 * @return the projectFilterService
-	 */
-	protected final ProjectFilterModificationService getProjectFilterService() {
-		return projectFilterService;
+	protected final OptionBuilder optionBuilder(Locale locale) {
+		return new OptionBuilder(locale);
 	}
 
+	public PerimeterPanelBuilder perimeterPanelBuilder(Locale locale) {
+		return new PerimeterPanelBuilder(locale);
+	}
 }

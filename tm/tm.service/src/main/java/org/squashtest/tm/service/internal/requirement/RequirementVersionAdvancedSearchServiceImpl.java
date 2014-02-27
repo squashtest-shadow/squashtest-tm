@@ -29,6 +29,7 @@ import java.util.Locale;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.hibernate.Session;
@@ -113,7 +114,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity(RequirementVersion.class).get();
 
-		org.apache.lucene.search.Query luceneQuery = buildLuceneQuery(qb, model, locale);
+		Query luceneQuery = buildLuceneQuery(qb, model, locale);
 
 		org.hibernate.Query hibQuery = ftSession.createFullTextQuery(luceneQuery, RequirementVersion.class);
 
@@ -169,6 +170,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public PagedCollectionHolder<List<RequirementVersion>> searchForRequirementVersions(AdvancedSearchModel model,
 			PagingAndMultiSorting sorting, MessageSource source, Locale locale) {
@@ -179,7 +181,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity(RequirementVersion.class).get();
 
-		org.apache.lucene.search.Query luceneQuery = buildLuceneQuery(qb, model, locale);
+		Query luceneQuery = buildLuceneQuery(qb, model, locale);
 
 		List<RequirementVersion> result = Collections.emptyList();
 		int countAll = 0;

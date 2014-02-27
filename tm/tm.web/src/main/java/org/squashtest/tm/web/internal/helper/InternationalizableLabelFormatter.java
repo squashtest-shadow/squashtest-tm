@@ -30,10 +30,9 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
-import org.squashtest.tm.domain.Level;
 
 /**
- * Formats {@link Level} items so that they are displayed in a combobox as
+ * Formats {@link Internationalizable} items so that they are displayed in a combobox as
  * <code>"<item level> - <localized item message>"</code>
  * 
  * Objects of this class are not thread-safe
@@ -43,7 +42,7 @@ import org.squashtest.tm.domain.Level;
  */
 @Component
 @Scope("prototype")
-public class InternationalisableLabelFormatter implements LabelFormatter<Internationalizable> {
+public class InternationalizableLabelFormatter implements LabelFormatter<Internationalizable> {
 	private final MessageSource messageSource;
 	private Locale locale = Locale.getDefault();
 	private boolean escapeHtml = true;
@@ -52,7 +51,7 @@ public class InternationalisableLabelFormatter implements LabelFormatter<Interna
 	 * @param messageSource
 	 */
 	@Inject
-	public InternationalisableLabelFormatter(@NotNull MessageSource messageSource) {
+	public InternationalizableLabelFormatter(@NotNull MessageSource messageSource) {
 		super();
 		this.messageSource = messageSource;
 	}

@@ -64,6 +64,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
 import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
 import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException;
+import org.squashtest.tm.search.bridge.LevelEnumBridge;
 import org.squashtest.tm.security.annotation.InheritsAcls;
 
 /**
@@ -77,103 +78,51 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 @PrimaryKeyJoinColumn(name = "RES_ID")
 @InheritsAcls(constrainedClass = Requirement.class, collectionName = "versions")
 @ClassBridges({
-	@ClassBridge(
-		name="attachments",
-		store=Store.YES,
-		analyze=Analyze.NO,
-		impl=RequirementVersionAttachmentBridge.class
-	),	
-	@ClassBridge(
-			name="cufs",
-			store=Store.YES,
-			impl=CUFBridge.class,
-			params = {@Parameter(name="type", value="requirement"),  @Parameter(name="inputType", value="ALL")}
-	),
-	@ClassBridge(
-			name="cufs",
-			store=Store.YES,
-			analyze=Analyze.NO,
-			impl=CUFBridge.class,
-			params = {@Parameter(name="type", value="requirement"), @Parameter(name="inputType", value="DROPDOWN_LIST")}
-	),
-	@ClassBridge(
-		name="isCurrentVersion",
-		store=Store.YES,
-		analyze=Analyze.NO,
-		impl=RequirementVersionIsCurrentBridge.class	
-	),
-	@ClassBridge(
-		name="testcases",
-		store=Store.YES,
-		analyze=Analyze.NO,
-		impl=RequirementVersionCoverageBridge.class	
-	),
-	@ClassBridge(
-		name="createdBy",
-		store=Store.YES,
-		analyze=Analyze.NO,
-		impl=AuditableBridgeCreatedBy.class	
-	),
-	@ClassBridge(
-		name="modifiedBy",
-		store=Store.YES,
-		analyze=Analyze.NO,
-		impl=AuditableBridgeModifiedBy.class	
-	),
-	@ClassBridge(
-		name="createdOn",
-		store=Store.YES,
-		analyze=Analyze.NO,
-		impl=AuditableBridgeCreatedOn.class
-	),
-	@ClassBridge(
-		name="modifiedOn",
-		store=Store.YES,
-		analyze=Analyze.NO,
-		impl=AuditableBridgeModifiedOn.class
-	),
-	@ClassBridge(
-		name="parent",
-		store=Store.YES,
-		analyze=Analyze.NO,
-		impl=RequirementVersionParentBridge.class
-	)
-})
-public class RequirementVersion extends Resource implements BoundEntity{
-	
+		@ClassBridge(name = "attachments", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionAttachmentBridge.class),
+		@ClassBridge(name = "cufs", store = Store.YES, impl = CUFBridge.class, params = {
+				@Parameter(name = "type", value = "requirement"), @Parameter(name = "inputType", value = "ALL") }),
+		@ClassBridge(name = "cufs", store = Store.YES, analyze = Analyze.NO, impl = CUFBridge.class, params = {
+				@Parameter(name = "type", value = "requirement"),
+				@Parameter(name = "inputType", value = "DROPDOWN_LIST") }),
+		@ClassBridge(name = "isCurrentVersion", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionIsCurrentBridge.class),
+		@ClassBridge(name = "testcases", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionCoverageBridge.class),
+		@ClassBridge(name = "createdBy", store = Store.YES, analyze = Analyze.NO, impl = AuditableBridgeCreatedBy.class),
+		@ClassBridge(name = "modifiedBy", store = Store.YES, analyze = Analyze.NO, impl = AuditableBridgeModifiedBy.class),
+		@ClassBridge(name = "createdOn", store = Store.YES, analyze = Analyze.NO, impl = AuditableBridgeCreatedOn.class),
+		@ClassBridge(name = "modifiedOn", store = Store.YES, analyze = Analyze.NO, impl = AuditableBridgeModifiedOn.class),
+		@ClassBridge(name = "parent", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionParentBridge.class) })
+public class RequirementVersion extends Resource implements BoundEntity {
+
 	@NotNull
 	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE })
-	@JoinColumn(name="VERIFIED_REQ_VERSION_ID")
-	private Set<RequirementVersionCoverage> requirementVersionCoverages= new HashSet<RequirementVersionCoverage>();
+	@JoinColumn(name = "VERIFIED_REQ_VERSION_ID")
+	private Set<RequirementVersionCoverage> requirementVersionCoverages = new HashSet<RequirementVersionCoverage>();
 
 	/***
 	 * The requirement reference. It should usually be set by the Requirement.
 	 */
 	@NotNull
-	@Fields({ @Field(), @Field(name = "referenceSort", analyze = Analyze.NO, store = Store.YES)	})
+	@Fields({ @Field(), @Field(name = "referenceSort", analyze = Analyze.NO, store = Store.YES) })
 	@Size(min = 0, max = 50)
 	private String reference = "";
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	@Field(analyze=Analyze.NO, store=Store.YES)
-	@FieldBridge(impl = RequirementCriticalityBridge.class)
+	@Field(analyze = Analyze.NO, store = Store.YES)
+	@FieldBridge(impl = LevelEnumBridge.class)
 	private RequirementCriticality criticality = RequirementCriticality.UNDEFINED;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	@Field(analyze=Analyze.NO, store=Store.YES)
-	@FieldBridge(impl = RequirementCategoryBridge.class)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	private RequirementCategory category = RequirementCategory.UNDEFINED;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "REQUIREMENT_STATUS")
-	@Field(analyze=Analyze.NO, store=Store.YES)
-	@FieldBridge(impl = RequirementStatusBridge.class)
+	@Field(analyze = Analyze.NO, store = Store.YES)
+	@FieldBridge(impl = LevelEnumBridge.class)
 	private RequirementStatus status = RequirementStatus.WORK_IN_PROGRESS;
-
-	
 
 	@NotNull
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
@@ -181,7 +130,7 @@ public class RequirementVersion extends Resource implements BoundEntity{
 	@IndexedEmbedded
 	private Requirement requirement;
 
-	@Field(analyze=Analyze.NO, store=Store.YES)	
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	private int versionNumber = 1;
 
 	public RequirementVersion() {
@@ -204,8 +153,8 @@ public class RequirementVersion extends Resource implements BoundEntity{
 	 * Returns an UNMODIFIABLE VIEW of the verifying test cases.
 	 */
 	public Set<TestCase> getVerifyingTestCases() {
-		Set<TestCase> testCases  = new HashSet<TestCase>();
-		for(RequirementVersionCoverage coverage : this.requirementVersionCoverages){
+		Set<TestCase> testCases = new HashSet<TestCase>();
+		for (RequirementVersionCoverage coverage : this.requirementVersionCoverages) {
 			testCases.add(coverage.getVerifyingTestCase());
 		}
 		return Collections.unmodifiableSet(testCases);
@@ -342,10 +291,10 @@ public class RequirementVersion extends Resource implements BoundEntity{
 	/* package-private */void setRequirement(Requirement requirement) {
 		this.requirement = requirement;
 	}
-	
+
 	/**
-	 * Will create a copy of the requirement version with all attributes, and attachments.
-	 * Does not copy requirementVersionCoverages.
+	 * Will create a copy of the requirement version with all attributes, and attachments. Does not copy
+	 * requirementVersionCoverages.
 	 * 
 	 * @return the requirement-version copy.
 	 */
@@ -358,8 +307,6 @@ public class RequirementVersion extends Resource implements BoundEntity{
 
 		return copy;
 	}
-
-	
 
 	private void attachCopiesOfAttachmentsTo(RequirementVersion copy) {
 		for (Attachment attachment : this.getAttachmentList().getAllAttachments()) {
@@ -398,8 +345,8 @@ public class RequirementVersion extends Resource implements BoundEntity{
 	}
 
 	/**
-	 * Factory methiod which creates a {@link RequirementVersion} from a memento objet which holds the new object's target
-	 * state. This method overrides any {@link RequirementStatus} workflow check.
+	 * Factory methiod which creates a {@link RequirementVersion} from a memento objet which holds the new object's
+	 * target state. This method overrides any {@link RequirementStatus} workflow check.
 	 * 
 	 * @param memento
 	 * @return
@@ -421,14 +368,14 @@ public class RequirementVersion extends Resource implements BoundEntity{
 
 		return res;
 	}
-	
+
 	// ***************** (detached) custom field section *************
-	
+
 	@Override
 	public Long getBoundEntityId() {
 		return getId();
 	}
-	
+
 	@Override
 	public BindableEntity getBoundEntityType() {
 		return BindableEntity.REQUIREMENT_VERSION;
@@ -436,44 +383,48 @@ public class RequirementVersion extends Resource implements BoundEntity{
 
 	@Override
 	public Project getProject() {
-		if(requirement != null){
+		if (requirement != null) {
 			return requirement.getProject();
-		}else{
+		} else {
 			return null;
 		}
 	}
 
 	/**
 	 * Simply add the coverage to this.requirementVersionCoverage
+	 * 
 	 * @param coverage
 	 */
 	public void addRequirementCoverage(RequirementVersionCoverage coverage) {
 		this.requirementVersionCoverages.add(coverage);
 	}
-	
-	
-	public RequirementVersionCoverage getRequirementVersionCoverageOrNullFor(TestCase testCase){
-		for (RequirementVersionCoverage coverage : this.requirementVersionCoverages){
-			if (coverage.getVerifyingTestCase().getId().equals(testCase.getId())){
+
+	public RequirementVersionCoverage getRequirementVersionCoverageOrNullFor(TestCase testCase) {
+		for (RequirementVersionCoverage coverage : this.requirementVersionCoverages) {
+			if (coverage.getVerifyingTestCase().getId().equals(testCase.getId())) {
 				return coverage;
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Simply remove the RequirementVersionCoverage from this.requirementVersionCoverages.
-	 * @param requirementVersionCoverage : the entity to remove from this requirement version's {@link RequirementVersionCoverage}s list.
+	 * 
+	 * @param requirementVersionCoverage
+	 *            : the entity to remove from this requirement version's {@link RequirementVersionCoverage}s list.
 	 * @throws RequirementVersionNotLinkableException
 	 */
 	public void removeRequirementVersionCoverage(RequirementVersionCoverage requirementVersionCoverage) {
 		checkLinkable();
 		this.requirementVersionCoverages.remove(requirementVersionCoverage);
-		
+
 	}
-	
+
 	/**
-	 * Will create a copy of this.requirementVersionCoverages. Each {@link RequirementVersionCoverage} having, instead of this the copyVersion param as their verifiedRequirementVersion. 
+	 * Will create a copy of this.requirementVersionCoverages. Each {@link RequirementVersionCoverage} having, instead
+	 * of this the copyVersion param as their verifiedRequirementVersion.
+	 * 
 	 * @param copyVersion
 	 * @return the copies of {@link RequirementVersionCoverage}s
 	 * @throws RequirementVersionNotLinkableException
@@ -481,8 +432,8 @@ public class RequirementVersion extends Resource implements BoundEntity{
 	 */
 	public List<RequirementVersionCoverage> createRequirementVersionCoveragesForCopy(RequirementVersion copyVersion) {
 		List<RequirementVersionCoverage> copies = new ArrayList<RequirementVersionCoverage>();
-		for(RequirementVersionCoverage coverage : this.requirementVersionCoverages){
-			RequirementVersionCoverage verifyingCopy = coverage.copyForRequirementVersion(copyVersion); 
+		for (RequirementVersionCoverage coverage : this.requirementVersionCoverages) {
+			RequirementVersionCoverage verifyingCopy = coverage.copyForRequirementVersion(copyVersion);
 			copies.add(verifyingCopy);
 		}
 		return (copies);
@@ -495,7 +446,5 @@ public class RequirementVersion extends Resource implements BoundEntity{
 	public void setRequirementVersionCoverages(Set<RequirementVersionCoverage> requirementVersionCoverages) {
 		this.requirementVersionCoverages = requirementVersionCoverages;
 	}
-	
-	
-	
+
 }

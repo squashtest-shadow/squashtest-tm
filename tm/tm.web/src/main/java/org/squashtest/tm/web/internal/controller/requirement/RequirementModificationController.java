@@ -61,7 +61,7 @@ import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.audittrail.RequirementAuditEventTableModelBuilder;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
-import org.squashtest.tm.web.internal.helper.InternationalisableLabelFormatter;
+import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -90,7 +90,7 @@ public class RequirementModificationController {
 	@Inject
 	private Provider<LevelLabelFormatter> levelFormatterProvider;
 	@Inject
-	private Provider<InternationalisableLabelFormatter> internationalizableFormatterProvider;
+	private Provider<InternationalizableLabelFormatter> internationalizableFormatterProvider;
 	
 	@Inject
 	private CustomFieldValueFinderService cufValueService;
@@ -304,7 +304,7 @@ public class RequirementModificationController {
 	 *            the locale with the chosen language
 	 * @return the category in the chosen language
 	 */
-	private static String formatCategory(RequirementCategory category, Locale locale, Provider<InternationalisableLabelFormatter> internationalizableFormatterProvider) {
+	private static String formatCategory(RequirementCategory category, Locale locale, Provider<InternationalizableLabelFormatter> internationalizableFormatterProvider) {
 		return internationalizableFormatterProvider.get().useLocale(locale).formatLabel(category);
 	}
 
@@ -343,9 +343,9 @@ public class RequirementModificationController {
 	private static final class RequirementVersionDataTableModel extends DataTableModelBuilder<RequirementVersion> {
 		private Locale locale;
 		private Provider<LevelLabelFormatter> levelFormatterProvider;
-		private Provider<InternationalisableLabelFormatter> internationalizableFormatterProvider;
+		private Provider<InternationalizableLabelFormatter> internationalizableFormatterProvider;
 
-		private RequirementVersionDataTableModel(Locale locale, Provider<LevelLabelFormatter> levelFormatterProvider, Provider<InternationalisableLabelFormatter> internationalizableFormatterProvider) {
+		private RequirementVersionDataTableModel(Locale locale, Provider<LevelLabelFormatter> levelFormatterProvider, Provider<InternationalizableLabelFormatter> internationalizableFormatterProvider) {
 			this.locale = locale;
 			this.levelFormatterProvider = levelFormatterProvider;
 			this.internationalizableFormatterProvider = internationalizableFormatterProvider;

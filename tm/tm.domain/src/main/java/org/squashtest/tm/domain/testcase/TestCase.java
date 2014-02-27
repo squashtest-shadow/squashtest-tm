@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -68,12 +67,13 @@ import org.squashtest.tm.domain.library.NodeVisitor;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.CUFBridge;
-import org.squashtest.tm.domain.search.CountElementsInCollectionBridge;
+import org.squashtest.tm.domain.search.CollectionSizeBridge;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.exception.UnallowedTestAssociationException;
 import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
 import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
+import org.squashtest.tm.search.bridge.LevelEnumBridge;
 
 /**
  * @author Gregory Fouquet
@@ -82,68 +82,23 @@ import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedExcepti
 @Entity
 @Indexed
 @ClassBridges({
-		@ClassBridge(
-			name="attachments",
-			store=Store.YES,
-			impl=TestCaseAttachmentBridge.class
-		),
-		@ClassBridge(
-				name="callsteps",
-				store=Store.YES,
-				impl=TestCaseCallStepBridge.class
-		),
-		@ClassBridge(
-				name="iterations",
-				store=Store.YES,
-				impl=TestCaseIterationBridge.class
-		),
-		@ClassBridge(
-				name="executions",
-				store=Store.YES,
-				impl=TestCaseExecutionBridge.class
-		),
-		@ClassBridge(
-				name="issues",
-				store=Store.YES,
-				impl=TestCaseIssueBridge.class
-		),
-		@ClassBridge(
-				name="cufs",
-				store=Store.YES,
-				impl=CUFBridge.class,
-				params = {@org.hibernate.search.annotations.Parameter(name="type", value="testcase"),  @org.hibernate.search.annotations.Parameter(name="inputType", value="ALL")}
-		),
-		@ClassBridge(
-				name="cufs",
-				store=Store.YES,
-				analyze=Analyze.NO,
-				impl=CUFBridge.class,
-				params = {@org.hibernate.search.annotations.Parameter(name="type", value="testcase"), @org.hibernate.search.annotations.Parameter(name="inputType", value="DROPDOWN_LIST")}
-		),
-		@ClassBridge(
-			name="createdBy",
-			store=Store.YES,
-			analyze=Analyze.NO,
-			impl=AuditableBridgeCreatedBy.class	
-		),
-		@ClassBridge(
-			name="modifiedBy",
-			store=Store.YES,
-			analyze=Analyze.NO,
-			impl=AuditableBridgeModifiedBy.class	
-		),
-		@ClassBridge(
-			name="createdOn",
-			store=Store.YES,
-			analyze=Analyze.NO,
-			impl=AuditableBridgeCreatedOn.class
-		),
-		@ClassBridge(
-			name="modifiedOn",
-			store=Store.YES,
-			analyze=Analyze.NO,
-			impl=AuditableBridgeModifiedOn.class
-		)
+	@ClassBridge(name = "attachments", store = Store.YES, impl = TestCaseAttachmentBridge.class),
+	@ClassBridge(name = "callsteps", store = Store.YES, impl = TestCaseCallStepBridge.class),
+	@ClassBridge(name = "iterations", store = Store.YES, impl = TestCaseIterationBridge.class),
+	@ClassBridge(name = "executions", store = Store.YES, impl = TestCaseExecutionBridge.class),
+	@ClassBridge(name = "issues", store = Store.YES, impl = TestCaseIssueBridge.class),
+	@ClassBridge(name = "cufs", store = Store.YES, impl = CUFBridge.class, params = {
+		@org.hibernate.search.annotations.Parameter(name = "type", value = "testcase"),
+		@org.hibernate.search.annotations.Parameter(name = "inputType", value = "ALL") 
+	}),
+	@ClassBridge(name = "cufs", store = Store.YES, analyze = Analyze.NO, impl = CUFBridge.class, params = {
+		@org.hibernate.search.annotations.Parameter(name = "type", value = "testcase"),
+		@org.hibernate.search.annotations.Parameter(name = "inputType", value = "DROPDOWN_LIST") 
+	}),
+	@ClassBridge(name = "createdBy", store = Store.YES, analyze = Analyze.NO, impl = AuditableBridgeCreatedBy.class),
+	@ClassBridge(name = "modifiedBy", store = Store.YES, analyze = Analyze.NO, impl = AuditableBridgeModifiedBy.class),
+	@ClassBridge(name = "createdOn", store = Store.YES, analyze = Analyze.NO, impl = AuditableBridgeCreatedOn.class),
+	@ClassBridge(name = "modifiedOn", store = Store.YES, analyze = Analyze.NO, impl = AuditableBridgeModifiedOn.class) 
 })
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
 public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, BoundEntity {
@@ -157,11 +112,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@NotNull
 	@Fields({
 		@Field(),
-		@Field(
-			name="referenceSort", 
-			analyze=Analyze.NO, 
-			store=Store.YES
-		)
+		@Field(name = "referenceSort", analyze = Analyze.NO, store = Store.YES)	
 	})
 	@Size(min = 0, max = 50)
 	private String reference = "";
@@ -174,14 +125,14 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@OrderColumn(name = "STEP_ORDER")
 	@JoinTable(name = "TEST_CASE_STEPS", joinColumns = @JoinColumn(name = "TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "STEP_ID"))
-	@FieldBridge(impl = CountElementsInCollectionBridge.class)
+	@FieldBridge(impl = CollectionSizeBridge.class)
 	@Field(analyze=Analyze.NO, store=Store.YES)
 	private final List<TestStep> steps = new ArrayList<TestStep>();
 
 	@NotNull
 	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE })
 	@JoinColumn(name = "VERIFYING_TEST_CASE_ID")
-	@FieldBridge(impl = CountElementsInCollectionBridge.class)
+	@FieldBridge(impl = CollectionSizeBridge.class)
 	@Field(name="requirements",analyze=Analyze.NO, store=Store.YES)
 	private Set<RequirementVersionCoverage> requirementVersionCoverages = new HashSet<RequirementVersionCoverage>(0);
 
@@ -189,49 +140,43 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "testCase")
 	@OrderBy("name")
 	@Field(analyze=Analyze.NO, store=Store.YES)
-	@FieldBridge(impl = CountElementsInCollectionBridge.class)
+	@FieldBridge(impl = CollectionSizeBridge.class)
 	private Set<Parameter> parameters = new HashSet<Parameter>(0);
 
 	@NotNull
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "testCase")
 	@OrderBy("name")
 	@Field(analyze=Analyze.NO, store=Store.YES)
-	@FieldBridge(impl = CountElementsInCollectionBridge.class)
+	@FieldBridge(impl = CollectionSizeBridge.class)
 	private Set<Dataset> datasets = new HashSet<Dataset>(0);
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	@Basic(optional=false)
 	@Field(analyze=Analyze.NO, store=Store.YES)
-	@FieldBridge(impl = TestCaseImportanceBridge.class)
+	@FieldBridge(impl = LevelEnumBridge.class)
 	private TestCaseImportance importance = LOW;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	@Basic(optional = false)
 	@Column(name = "TC_NATURE")
 	@Field(analyze=Analyze.NO, store=Store.YES)
 	private TestCaseNature nature = TestCaseNature.UNDEFINED;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	@Basic(optional = false)
 	@Column(name = "TC_TYPE")
 	@Field(analyze=Analyze.NO, store=Store.YES)
 	private TestCaseType type = TestCaseType.UNDEFINED;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	@Basic(optional = false)
 	@Column(name = "TC_STATUS")
 	@Field(analyze=Analyze.NO, store=Store.YES)
-	@FieldBridge(impl = TestCaseStatusBridge.class)
+	@FieldBridge(impl = LevelEnumBridge.class)
 	private TestCaseStatus status = TestCaseStatus.WORK_IN_PROGRESS;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	@Basic(optional = true)
-	@Column(name = "EXECUTION_MODE")
 	private TestCaseExecutionMode executionMode = TestCaseExecutionMode.MANUAL;
 
 	/**

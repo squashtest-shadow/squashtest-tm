@@ -64,7 +64,7 @@ import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.controller.audittrail.RequirementAuditEventTableModelBuilder;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
-import org.squashtest.tm.web.internal.helper.InternationalisableLabelFormatter;
+import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
@@ -89,7 +89,7 @@ public class RequirementVersionManagerController {
 	@Inject
 	private Provider<LevelLabelFormatter> levelFormatterProvider;
 	@Inject
-	private Provider<InternationalisableLabelFormatter> internationalizableFormatterProvider;
+	private Provider<InternationalizableLabelFormatter> internationalizableFormatterProvider;
 	@Inject
 	private InternationalizationHelper i18nHelper;
 	

@@ -18,17 +18,29 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.requirement;
 
-import org.hibernate.search.bridge.StringBridge;
+package org.squashtest.tm.web.internal.controller.search;
 
-public class RequirementCategoryBridge implements StringBridge {
-	
+import org.squashtest.tm.domain.Level;
+import org.squashtest.tm.web.internal.controller.search.SearchInterfaceDescription.OptionListBuilder;
+import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
+
+/**
+ * Specialization of EnumJeditableComboDataBuilder to produce a key suitable for the search panel. Sort of a lazy
+ * hack, for we should build SearchInputPossibleValueModel instead.
+ * 
+ * @author Gregory Fouquet
+ * 
+ * @param <T>
+ * @see OptionListBuilder
+ */
+class LevelComboDataBuilder<T extends Enum<?> & Level> extends EnumJeditableComboDataBuilder<T> {
+	/**
+	 * @see org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder#itemKey(java.lang.Enum)
+	 */
 	@Override
-	public String objectToString(Object value) {
-		RequirementCategory category = (RequirementCategory) value;
-		return category.name();
+	protected String itemKey(T item) {
+		return item.getLevel() + "-" + item.name();
 	}
 
 }
-

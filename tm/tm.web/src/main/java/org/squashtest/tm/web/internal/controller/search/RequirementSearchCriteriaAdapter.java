@@ -32,9 +32,9 @@ import org.squashtest.tm.domain.requirement.VerificationCriterion;
 
 /**
  * Adapts a {@link RequirementSearchParams} into a {@link RequirementSearchCriteria}
- *
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
 public class RequirementSearchCriteriaAdapter implements RequirementSearchCriteria {
 	private final RequirementSearchParams params;
@@ -44,17 +44,18 @@ public class RequirementSearchCriteriaAdapter implements RequirementSearchCriter
 	private final List<RequirementCategory> categories = new ArrayList<RequirementCategory>(
 			RequirementCategory.values().length);
 
-	public RequirementSearchCriteriaAdapter(RequirementSearchParams params, boolean[] criticalitiesSelection, boolean[] categoriesSelection) {
+	public RequirementSearchCriteriaAdapter(RequirementSearchParams params, boolean[] criticalitiesSelection,
+			boolean[] categoriesSelection) {
 		super();
 		this.params = params;
-		int j=0;
-		for (int i = criticalitiesSelection.length -1 ; i >= 0; i--) {
+		int j = 0;
+		for (int i = criticalitiesSelection.length - 1; i >= 0; i--) {
 			if (criticalitiesSelection[j]) {
 				criticalities.add(RequirementCriticality.valueOf(i));
 			}
 			j++;
 		}
-		for (int i = 0 ; i < categoriesSelection.length ; i++) {
+		for (int i = 0; i < categoriesSelection.length; i++) {
 			if (categoriesSelection[i]) {
 				categories.add(RequirementCategory.valueOf(i));
 			}
@@ -75,6 +76,7 @@ public class RequirementSearchCriteriaAdapter implements RequirementSearchCriter
 	public Collection<RequirementCriticality> getCriticalities() {
 		return criticalities;
 	}
+
 	@Override
 	public Collection<RequirementCategory> getCategories() {
 		return categories;
@@ -91,7 +93,7 @@ public class RequirementSearchCriteriaAdapter implements RequirementSearchCriter
 
 	@Override
 	public boolean libeleIsOnlyCriteria() {
-		return (!StringUtils.isNotBlank(getReference()))&& getCriticalities().isEmpty() && getCategories().isEmpty();
+		return (StringUtils.isBlank(getReference())) && getCriticalities().isEmpty() && getCategories().isEmpty();
 	}
 
 }

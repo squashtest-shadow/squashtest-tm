@@ -18,17 +18,32 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.requirement;
 
-import org.hibernate.search.bridge.StringBridge;
+package org.squashtest.tm.search.bridge;
 
-public class RequirementCriticalityBridge implements StringBridge {
+import org.jgroups.protocols.relay.Relayer.Bridge;
+import org.squashtest.tm.domain.requirement.RequirementCriticality;
 
-	@Override
-	public String objectToString(Object value) {
-		RequirementCriticality criticality = (RequirementCriticality) value;
-		return (criticality.getLevel()+1)+"-"+criticality.name();
+import spock.lang.Specification;
+import spock.lang.Unroll;
+
+/**
+ * @author Gregory Fouquet
+ *
+ */
+class LevelEnumBridgeTest extends Specification {
+	LevelEnumBridge bridge = new LevelEnumBridge()
+
+	def "should coerce Level into String"() {
+		expect:
+		bridge.objectToString(RequirementCriticality.CRITICAL) == RequirementCriticality.CRITICAL.level + "-CRITICAL" 
 	}
 
+	def "should coerce String into Level"() {
+		given: 
+		bridge.setAppliedOnType(RequirementCriticality)
+		
+		expect:
+		bridge.stringToObject(RequirementCriticality.CRITICAL.level + "-CRITICAL") == RequirementCriticality.CRITICAL 
+	}
 }
-

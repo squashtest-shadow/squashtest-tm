@@ -53,7 +53,7 @@ class InternationalisableLabelFormatterTest extends Specification {
 		label == formatter.formatLabel(level)
 		
 		where: 
-		clazz << [	InternationalisableLabelFormatter, LabelFormatterWithoutOrder, LevelLabelFormatter, LevelLabelFormatterWithoutOrder ]
+		clazz << [	InternationalizableLabelFormatter, LabelFormatterWithoutOrder, LevelLabelFormatter, LevelLabelFormatterWithoutOrder ]
 		label << [ "&eacute;chapp&eacute;", "&eacute;chapp&eacute;", "1-&eacute;chapp&eacute;", "&eacute;chapp&eacute;" ] 
 	}
 	@Unroll
@@ -75,7 +75,7 @@ class InternationalisableLabelFormatterTest extends Specification {
 		label == formatter.formatLabel(level)
 		
 		where: 
-		clazz << [	InternationalisableLabelFormatter, LabelFormatterWithoutOrder, LevelLabelFormatter, LevelLabelFormatterWithoutOrder ]
+		clazz << [	InternationalizableLabelFormatter, LabelFormatterWithoutOrder, LevelLabelFormatter, LevelLabelFormatterWithoutOrder ]
 		label << [ "&eacute;chapp&eacute;", "&eacute;chapp&eacute;", "1-&eacute;chapp&eacute;", "&eacute;chapp&eacute;" ] 
 	}
 	@Unroll
@@ -97,7 +97,7 @@ class InternationalisableLabelFormatterTest extends Specification {
 		label == formatter.formatLabel(level)
 		
 		where: 
-		clazz << [	InternationalisableLabelFormatter, LabelFormatterWithoutOrder, LevelLabelFormatter, LevelLabelFormatterWithoutOrder ]
+		clazz << [	InternationalizableLabelFormatter, LabelFormatterWithoutOrder, LevelLabelFormatter, LevelLabelFormatterWithoutOrder ]
 		label << [ "échappé", "échappé", "1-échappé", "échappé" ] 
 	}
 }

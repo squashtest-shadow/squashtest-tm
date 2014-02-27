@@ -56,15 +56,9 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 
 	@NotBlank
 	@Fields({
-		@Field,
-		@Field(name="label", analyze=Analyze.NO, store=Store.YES),
-		@Field(
-				name="labelUpperCased", 
-				analyze=Analyze.NO, 
-				store=Store.YES,
-				bridge=@FieldBridge(impl = UpperCasedStringBridge.class)
-			),
-	})
+			@Field,
+			@Field(name = "label", analyze = Analyze.NO, store = Store.YES),
+			@Field(name = "labelUpperCased", analyze = Analyze.NO, store = Store.YES, bridge = @FieldBridge(impl = UpperCasedStringBridge.class)), })
 	@Size(min = 0, max = 255)
 	private String name;
 
