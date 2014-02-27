@@ -55,6 +55,7 @@ import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.resource.Resource;
 import org.squashtest.tm.domain.search.CUFBridge;
+import org.squashtest.tm.domain.search.CollectionSizeBridge;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
@@ -81,13 +82,13 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 				@Parameter(name = "type", value = "requirement"),
 				@Parameter(name = "inputType", value = "DROPDOWN_LIST") }),
 		@ClassBridge(name = "isCurrentVersion", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionIsCurrentBridge.class),
-		@ClassBridge(name = "testcases", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionCoverageBridge.class),
 		@ClassBridge(name = "parent", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionHasParentBridge.class) })
 public class RequirementVersion extends Resource implements BoundEntity {
 
 	@NotNull
-	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE })
-	@JoinColumn(name = "VERIFIED_REQ_VERSION_ID")
+	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE }, mappedBy = "verifiedRequirementVersion")
+	@Field(name="testcases",  analyze = Analyze.NO, store = Store.YES)
+	@FieldBridge(impl=CollectionSizeBridge.class)
 	private Set<RequirementVersionCoverage> requirementVersionCoverages = new HashSet<RequirementVersionCoverage>();
 
 	/***
@@ -385,6 +386,8 @@ public class RequirementVersion extends Resource implements BoundEntity {
 	/**
 	 * Simply add the coverage to this.requirementVersionCoverage
 	 * 
+	 * THIS DOES NOT SET THE coverage->version SIDE OF THE ASSOCIATION ! ONE SHOULD RATHER CALL coverage.setVerifiedRequirementVersion(..)   
+	 * 
 	 * @param coverage
 	 */
 	public void addRequirementCoverage(RequirementVersionCoverage coverage) {
@@ -432,11 +435,7 @@ public class RequirementVersion extends Resource implements BoundEntity {
 	}
 
 	public Set<RequirementVersionCoverage> getRequirementVersionCoverages() {
-		return requirementVersionCoverages;
-	}
-
-	public void setRequirementVersionCoverages(Set<RequirementVersionCoverage> requirementVersionCoverages) {
-		this.requirementVersionCoverages = requirementVersionCoverages;
+		return Collections.unmodifiableSet(requirementVersionCoverages);
 	}
 
 }

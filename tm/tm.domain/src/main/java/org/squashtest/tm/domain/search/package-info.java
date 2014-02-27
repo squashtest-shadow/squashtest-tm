@@ -32,7 +32,6 @@
 	// returns either 0 or 1 when the given version is the current version of the requirement
 	@NamedQuery(name = "requirementVersion.countCurrentVersion", query = "select count(cur) from Requirement r join r.resource cur where cur.id = :id and cur.status != :obsolete"),
 	@NamedQuery(name = "requirementVersion.countAttachments", query = "select count(att) from RequirementVersion rv join rv.attachmentList al join al.attachments att where rv.id = :id"),
-	@NamedQuery(name = "requirementVersion.countCoverage", query = "select count(cov) from RequirementVersion rv join rv.requirementVersionCoverages cov where rv.id = :id"), 
 
 	// ====== TestCase queries ======
 	@NamedQuery(name = "testCase.countAttachments", query = "select count(att) from TestCase tc join tc.attachmentList al join al.attachments att where tc.id = :id"), 
