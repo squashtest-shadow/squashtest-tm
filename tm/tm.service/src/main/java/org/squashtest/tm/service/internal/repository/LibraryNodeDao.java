@@ -23,7 +23,6 @@ package org.squashtest.tm.service.internal.repository;
 import java.util.List;
 
 import org.squashtest.tm.domain.library.LibraryNode;
-import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 
 public interface LibraryNodeDao<NODE extends LibraryNode> extends EntityDao<NODE>{
 

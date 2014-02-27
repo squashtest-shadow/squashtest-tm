@@ -23,7 +23,6 @@ package org.squashtest.tm.web.internal.controller.testcase.requirement;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;

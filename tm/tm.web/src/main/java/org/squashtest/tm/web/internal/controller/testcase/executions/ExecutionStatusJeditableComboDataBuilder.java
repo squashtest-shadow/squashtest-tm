@@ -21,14 +21,11 @@
 package org.squashtest.tm.web.internal.controller.testcase.executions;
 
 import java.util.List;
-import java.util.Map;
-
 import javax.inject.Inject;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.service.project.CustomGenericProjectManager;
-import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatterWithoutOrder;
 import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
