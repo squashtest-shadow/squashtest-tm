@@ -23,29 +23,26 @@ package org.squashtest.tm.domain.requirement;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.squashtest.tm.domain.search.SessionFieldBridge;
 
-public class RequirementVersionParentBridge extends SessionFieldBridge{
+public class RequirementVersionHasParentBridge extends SessionFieldBridge {
 
 	@Override
-	protected void writeFieldToDocument(String name, Session session, Object value, Document document, LuceneOptions luceneOptions){
-		
-		RequirementVersion reqVer =  (RequirementVersion) value;
-		reqVer = (RequirementVersion) session.createCriteria(RequirementVersion.class).add(Restrictions.eq("id", reqVer.getId())).uniqueResult(); //NOSONAR session is never null
-		
-		Requirement parent = (Requirement) session.createCriteria(Requirement.class).createAlias("children", "ch").add(Restrictions.eq("ch.id", reqVer.getId())).uniqueResult();
-		
-		Integer val = 0;
-		if(parent != null){
-			val = 1;
-		}
-		
-		Field field = new Field(name, String.valueOf(val), luceneOptions.getStore(),
-		   luceneOptions.getIndex(), luceneOptions.getTermVector() );
-		   field.setBoost( luceneOptions.getBoost());
-		
+	protected void writeFieldToDocument(String name, Session session, Object value, Document document,
+			LuceneOptions luceneOptions) {
+
+		RequirementVersion reqVer = (RequirementVersion) value;
+		String hql = "select count(r) from Requirement r join r.children c join c.versions v where v.id = :id";
+
+		long parentsCount = (Long) session.createQuery(hql).setReadOnly(true).setParameter("id", reqVer.getId())
+				.uniqueResult();
+		String hasParent = parentsCount > 0 ? "1" : "0";
+
+		Field field = new Field(name, hasParent, luceneOptions.getStore(), luceneOptions.getIndex(),
+				luceneOptions.getTermVector());
+		field.setBoost(luceneOptions.getBoost());
+
 		document.add(field);
 	}
 }
