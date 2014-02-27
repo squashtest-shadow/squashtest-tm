@@ -83,21 +83,18 @@ public class HibernateBoundEntityDao implements BoundEntityDao {
 	}
 	
 	
-	//uh, a bit sloppy here
 	@Override
 	public BoundEntity findBoundEntity(CustomFieldValue customFieldValue) {
-		return findAllForBinding(customFieldValue.getBinding()).get(0);
+		return findBoundEntity(customFieldValue.getBoundEntityId(), customFieldValue.getBoundEntityType());
 	}
 	
 	@Override
-	public BoundEntity findBoundEntity(Long boundEntityId,
-			BindableEntity entityType) {
-	
+	public BoundEntity findBoundEntity(Long boundEntityId, BindableEntity entityType) {
+
 		Class<?> entityClass = entityType.getReferencedClass();
-		return (BoundEntity)factory.getCurrentSession().load(entityClass, boundEntityId);
-		
-	}
-	
+		return (BoundEntity) factory.getCurrentSession().load(entityClass, boundEntityId);
+
+	}	
 	
 	@Override
 	public boolean hasCustomField(Long boundEntityId, BindableEntity entityType) {
