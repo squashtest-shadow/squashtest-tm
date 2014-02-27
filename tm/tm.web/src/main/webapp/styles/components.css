@@ -254,35 +254,16 @@ the display:block trick will implicitly add that property */
 	display: block;
 }
 
-.project-filter-list {
-	overflow-y: auto;
-	max-height: 7cm;
+
+.project-filter-controls ul li:hover {
+    text-decoration: underline;
 }
 
-.project-filter-controls {
-	text-align: center;
-	vertical-align: middle;
-	padding-top: 1.5em;
-	padding-bottom: 1.5em;
-}
 
-.project-item {
-	padding-top: 5px;
-	padding-bottom: 5px;
-}
-
-.project-filter-controls a {
-	margin-left: 2em;;
-	margin-right: 2em;
-	color: #656565;
-}
-
-.project-item.even {
-	background-color: #C0C0C0;
-}
-
-.project-item.odd {
-	background-color: #E0E0E0;
+.project-filter-controls ul {
+	color : #555555;
+    font-size: smaller;
+    padding-left: 20px;
 }
 
 /******************************

@@ -61,7 +61,7 @@ public class ProjectController {
 		FilterModel model = new FilterModel();
 
 		for (Project project : projects) {
-			model.addProject(project.getId(), project.getName());
+			model.addProject(project.getId(), project.getName(), project.getLabel());
 		}
 
 		return model;

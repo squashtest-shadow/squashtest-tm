@@ -104,7 +104,7 @@
 //		exclude: [ "common", "squashtable", "file-upload" ]
 	}, {
 		name: "custom-field-manager",
-		include: [ "app/cf/CustomFieldsTableView", "app/ws/squashtm.workspace" ], 
+		include: [ "custom-field-manager/CustomFieldsTableView", "app/ws/squashtm.workspace" ], 
 		exclude: [ "common" ] 
 	}, {
 		name: "custom-field-modification",

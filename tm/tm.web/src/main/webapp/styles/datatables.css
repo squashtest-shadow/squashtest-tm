@@ -28,8 +28,11 @@
  
  /** sprite: sprites-icons; sprite-image: url('../images/sprites-icons.png'); sprite-layout: vertical */
  
+ div.dataTables_wrapper .dataTables_scrollHead{
+ background:none;
+ }
  
-div.dataTables_wrapper div.ui-widget-header{
+div.dataTables_wrapper div.ui-widget-header {
 	background-image: url("jquery/ui/images/ui-bg_highlight-soft_75_cccccc_1x100.png");
 	background-color : #CCCCCC;
 	background-repeat : repeat-x;
@@ -37,7 +40,7 @@ div.dataTables_wrapper div.ui-widget-header{
 	background-attachment : scroll;
     border: 1px solid #AAAAAA;
     color: #222222;
-	
+
 }
 
 div.dataTables_wrapper th.ui-state-default, div.dataTables_wrapper td.drag-handle, td.select-handle {

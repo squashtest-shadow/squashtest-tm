@@ -121,8 +121,6 @@
             <input:confirm />
             <input:cancel />
           </div>
-
-
  					</c:if>
 					<f:message var="rename" key="project.button.rename.label" />
 					<input type="button" value="${ rename }" id="rename-project-button"
@@ -159,7 +157,7 @@
 					<div id="project-description-table" class="display-table">
 						<div class="display-table-row">
 							<label for="project-label" class="display-table-cell">
-							<f:message key="project.label.label" />
+							<f:message key="label.tag" />
 							</label>
 							<div class="display-table-cell" id="project-label">${ adminproject.project.label }</div>
 						</div>

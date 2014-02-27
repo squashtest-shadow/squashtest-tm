@@ -584,50 +584,50 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 
 	function initProjectPickers(panel) {
 		var url = config.contextPath + "/projects?format=picker";
-
-		panel.find(".rpt-projects > select").each(function() {
-			var $picker = $(this);
-			
-			if($picker.data("multi-select") === true) {
-				$picker.attr("multiple", "multiple");
-			}
-			
-			var inputId = this.name;
-			
-			// load options
-			// TODO duh, we perform the same request once per picker...
-			$.getJSON(url).done(function(data) {
-				
-				var optionsHtml = _.reduce(data.projectData, function(memo, project) {
-					var selected = (memo === "") ? "selected = '' " : "";
-					return memo += "<option " + selected + "value='" + project[0] + "'>" + project[1] + "</option>";
-				}, "");
-				
-				$picker.append(optionsHtml);
-				$picker.change(onListItemSelected("PROJECT_PICKER"));
-				$picker.change();
-				
-				if (preferences) {
-					var name = $picker.attr("name");
-					var preferenceForName = preferences[name];
-					options = $picker.find("option");
-					
-					$.each(options, function(index, option) {
-						$.each(preferenceForName, function(index, element) {
-							var value = element.value;
-							if (option.value == value && element.selected) {
-								$(option).attr("selected", true);
-							} else if (option.value == value && !element.selected) {
-								$(option).attr("selected", false);
-							}
-						});
-					});
-					
-					$picker.change();
-				}
-			});
-		});
 		
+		
+		
+		
+//		$.getJSON(url).done(function(data) {
+//				
+//			var optionsHtml = _.reduce(data.projectData, function(memo, project) {
+//				var selected = (memo === "") ? "selected = '' " : "";
+//				return memo += "<option " + selected + "value='" + project[0] + "'>" + project[1] + "</option>";
+//			}, "");
+//			
+//			panel.find(".rpt-projects > select").each(function() {
+//				var $picker = $(this);
+//				
+//				if($picker.data("multi-select") === true) {
+//					$picker.attr("multiple", "multiple");
+//				}
+//				
+//				var inputId = this.name;
+//			
+//				$picker.append(optionsHtml);
+//				$picker.change(onListItemSelected("PROJECT_PICKER"));
+//				$picker.change();
+//				
+//				if (preferences) {
+//					var name = $picker.attr("name");
+//					var preferenceForName = preferences[name];
+//					options = $picker.find("option");
+//					
+//					$.each(options, function(index, option) {
+//						$.each(preferenceForName, function(index, element) {
+//							var value = element.value;
+//							if (option.value == value && element.selected) {
+//								$(option).attr("selected", true);
+//							} else if (option.value == value && !element.selected) {
+//								$(option).attr("selected", false);
+//							}
+//						});
+//					});
+//				
+//					$picker.change();
+//				});
+//			}
+//		});
 	}
 
 	function init(settings) {

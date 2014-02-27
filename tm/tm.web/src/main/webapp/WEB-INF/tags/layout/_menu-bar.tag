@@ -66,35 +66,45 @@
 
 <%-- ====== project filter popup ========  --%>
 
-
 <div id="project-filter-popup" class="project-picker popup-dialog not-displayed" style="display:none" title="${filterPopupTitle}" data-url="${filterUrl}">
 	<div id="dialog-settings-filter-maincontent">			
+		<div id="dialog-settings-filter-projectlist" class="project-filter-list dataTables_wrapper">
+			<table>
+				<thead>
+					<tr>
+						<th width="25px" class="th-check ui-state-default"> </th>
+						<th class="th-name ui-state-default"><f:message key="label.Name"/></th>
+						<th class="th-type ui-state-default"><f:message key="label.tag"/></th>
+					</tr>
+				</thead>
+				<tbody class="available-fields">
+					<c:forEach var="item" items="${filter.projectData}" varStatus="status" >
+					<c:set var="checkedClause" value="${item[2] ? 'checked=\"checked\"' : ''}" />
+					<tr>
+						<td class="td-check" data-id="5"><input type="checkbox" class="project-checkbox" 
+									id="project-checkbox-${item[0]}"  
+									value="${item[0]}" 
+									data-previous-checked="${item[2]}" 
+									${checkedClause}/></td>
+						<td class="project-name">${item[1]}</td>
+						<td class="project-label">${item[3]}</td>
+						</tr>
+					</c:forEach>
+				</tbody>					
+			</table>
+		</div>
 		<div id="dialog-settings-filter-controls" class="project-filter-controls">
-			<a id="dialog-settings-filter-selectall"  class="project-picker-selall cursor-pointer">
-				<f:message key="dialog.settings.filter.controls.selectall"/>
-			</a>
-			<a id="dialog-settings-filter-deselectall"  class="project-picker-deselall cursor-pointer">
-				<f:message key="dialog.settings.filter.controls.deselectall"/>
-			</a>
-			<a id="dialog-settings-filter-invertselect" class="project-picker-invsel cursor-pointer">
-				<f:message key="dialog.settings.filter.controls.invertselect"/>
-			</a>				
-		</div>	
-		<hr/>
-		<div id="dialog-settings-filter-projectlist" class="project-filter-list">
-		
-<c:forEach var="item" items="${filter.projectData}" varStatus="status" >
-			<div class="project-item ${(status.count % 2 == 0) ? 'odd' : 'even' }">
-				<c:set var="checkedClause" value="${item[2] ? 'checked=\"checked\"' : ''}" />
-				<input type="checkbox" class="project-checkbox" 
-										id="project-checkbox-${item[0]}"  
-										value="${item[0]}" 
-										data-previous-checked="${item[2]}" 
-										${checkedClause}/> 
-				<span class="project-name" >${item[1]}</span>
-			</div>
-</c:forEach>
-		
+			<ul>
+				<li id="dialog-settings-filter-selectall"  class="project-picker-selall cursor-pointer">
+					<f:message key="dialog.settings.filter.controls.selectall"/>
+				</li>
+				<li id="dialog-settings-filter-deselectall"  class="project-picker-deselall cursor-pointer">
+					<f:message key="dialog.settings.filter.controls.deselectall"/>
+				</li>
+				<li id="dialog-settings-filter-invertselect" class="project-picker-invsel cursor-pointer">
+					<f:message key="dialog.settings.filter.controls.invertselect"/>
+				</li>
+			</ul>				
 		</div>
 		<div class="unsnap not-displayed"></div>
 	</div>

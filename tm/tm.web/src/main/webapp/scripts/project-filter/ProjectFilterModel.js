@@ -18,26 +18,38 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "app/pubsub", "app/ws/squashtm.navbar", "project-filter/ProjectFilter",
-		"app/ws/squashtm.notification", "squash.session-pinger" ], function($, ps, NavBar, ProjectFilter, WTF, SSP) {
+define([ "jquery", "backbone", "app/util/StringUtil", "underscore" ], function($, Backbone, StringUtil, _) {
 
-	ps.subscribe("load.navBar", NavBar.init);
-	ps.subscribe("load.projectFilter", ProjectFilter.init);
-	ps.subscribe("load.notification", function() {
-		WTF.init(squashtm.app.notificationConf);
+	/*
+	 * Defines the model for the list of filtered projects
+	 */
+	var ProjectFilterModel = Backbone.Model.extend({
+
+		defaults : {
+			projectIds :[]
+		},
+		
+		allProjectIds : [],
+		initiallySelectedIds : [],
+		
+		select : function(ids) {
+			this.attributes.projectIds = _.union(this.attributes.projectIds, ids);
+			
+		},
+		deselect : function(ids) {
+			this.attributes.projectIds = _.difference(this.attributes.projectIds, ids);
+		},
+				
+		changeProjectState : function(id, checked) {
+			if(checked){
+				this.attributes.projectIds.push(id);
+			}else{
+				this.attributes.projectIds = _.without(this.projectIds, id);
+			}
+			
+		}
+
 	});
 
-	/* session ping */
-	new SSP();
-
-	function init() {
-		/* Try to prevent FOUCs */
-		$(".unstyled").fadeIn("fast", function() {
-			$(this).removeClass("unstyled");
-		});
-	}
-
-	return {
-		init : init
-	};
+	return ProjectFilterModel;
 });

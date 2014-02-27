@@ -54,7 +54,8 @@ public class FilterModel {
 			projectData[i] = new Object[]{
 				project.getId(),
 				project.getName(),
-				filter.isProjectSelected(project)
+				filter.isProjectSelected(project),
+				project.getLabel()
 			};
 			
 			i++;
@@ -68,7 +69,8 @@ public class FilterModel {
 	public Object[] getProjectData() {
 		return projectData.toArray();
 	}
-	public void setProjectData(Object[][] projectData) {
+	
+	private void setProjectData(Object[][] projectData) {
 		this.projectData = new ArrayList<Object[]>(projectData.length);
 		for(Object[] project : projectData) {
 			this.projectData.add(project);
@@ -80,8 +82,8 @@ public class FilterModel {
 	public void setEnabled(boolean activated) {
 		this.enabled = activated;
 	}
-	public void addProject(long id, String name) {
-		projectData.add(new Object[] {id, name, false});
+	public void addProject(long id, String name, String label) {
+		projectData.add(new Object[] {id, name, false, label});
 	}
 	
 }

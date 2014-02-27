@@ -19,15 +19,15 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(
-		[ "jquery", "backbone", "app/cf/NewCustomFieldPanelView",
-				"app/cf/NewCustomFieldModel", "squashtable",
+		[ "jquery", "backbone", "./NewCustomFieldPanelView",
+				"./NewCustomFieldModel", "squashtable",
 				"jqueryui" ],
 		function($, Backbone, NewCustomFieldPanelView, NewCustomFieldModel) {
 			var cfTable = squashtm.app.cfTable;
 			/*
 			 * Defines the controller for the custom fields table.
 			 */
-			var CustomFieldTableView = Backbone.View
+			var CustomFieldsTableView = Backbone.View
 					.extend({
 						el : "#cf-table-pane",
 						initialize : function() {
@@ -161,5 +161,5 @@ define(
 									discardAndRefresh);
 						}
 					});
-			return CustomFieldTableView;
+			return CustomFieldsTableView;
 		});

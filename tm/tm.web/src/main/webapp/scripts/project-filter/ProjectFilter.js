@@ -23,61 +23,16 @@
  */
 var squashtm = squashtm || {};
 
-define([ "jquery", "jquery.squash.projectpicker" ],
-		function($) {
+define([ "jquery", "./ProjectFilterPopup" ],
+		function($, ProjectFilterPopup) {
 			var popupSelector = "#project-filter-popup";
 			var popupOpener = "#menu-project-filter-link";
-			var projectFilterUrl;
-
-			function extractId(strDomId) {
-				var idTemplate = "project-checkbox-";
-				var templateLength = idTemplate.length;
-				var extractedId = strDomId.substring(templateLength);
-				return extractedId;
-			}
-
-			function getSelectedProjectIds(containerId) {
-				var selectedBoxes = $("#dialog-settings-filter-projectlist .project-checkbox:checked");
-				var zeids = [];
-				var i;
-
-				for (i = 0; i < selectedBoxes.length; i++) {
-					var jqBox = $(selectedBoxes[i]);
-
-					zeids.push(extractId(jqBox.attr('id')));
-				}
-
-				return zeids;
-			}
-
-			function newFilterSuccess() {
-				$(popupSelector).projectPicker('close');
-				window.location.reload();
-			}
-
-			/**
-			 * code managing the data transmissions
-			 */
-			function sendNewFilter() {
-				var ids = getSelectedProjectIds();
-				$.post(projectFilterUrl, {
-					projectIds : ids
-				}, newFilterSuccess);
-
-			}
 
 			function init() {
-				projectFilterUrl = $("#project-filter-popup").data('url');
-
-				var picker = $(popupSelector).projectPicker({
-					url : projectFilterUrl, 
-					loadOnce : "never",
-					width : 400,
-					confirm : sendNewFilter
-				});
-
+				var projectFilterPopup = new ProjectFilterPopup({el :"#project-filter-popup"});
+				
 				$(popupOpener).click(function() {
-					picker.projectPicker("open");
+					projectFilterPopup.open();
 				});
 				
 				$("#menu-toggle-filter-ckbox").click(function(){
@@ -102,9 +57,9 @@ define([ "jquery", "jquery.squash.projectpicker" ],
 			/**
 			 * public module
 			 */
-			squashtm.projectfilter = {
+			return  {
 				init : init
 			};
 
-			return squashtm.projectfilter;
+			
 		});
