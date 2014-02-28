@@ -22,6 +22,7 @@ package org.squashtest.tm.service.project;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.api.workspace.WorkspaceType;
@@ -171,14 +172,14 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder{
 	 * @param projectId
 	 * @return
 	 */
-	List<ExecutionStatus> enabledExecutionStatuses(long projectId);
+	Set<ExecutionStatus> enabledExecutionStatuses(long projectId);
 	
 	/**
 	 * Returns the list of disabled execution statuses given a project. 
 	 * @param projectId
 	 * @return
 	 */
-	List<ExecutionStatus> disabledExecutionStatuses(long projectId);
+	Set<ExecutionStatus> disabledExecutionStatuses(long projectId);
 	
 	/**
 	 * Replaces an execution status with another within a project

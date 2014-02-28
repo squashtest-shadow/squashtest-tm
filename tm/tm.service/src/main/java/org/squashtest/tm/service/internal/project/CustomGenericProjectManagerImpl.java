@@ -23,9 +23,12 @@ package org.squashtest.tm.service.internal.project;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -150,7 +153,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		else{
 			resultset = findSortedActualProjects(unpaged, filter);
 		}
-		
+
 		// filter on permissions
 		List<? extends GenericProject> securedResultset = new LinkedList<GenericProject>(resultset);
 		CollectionUtils.filter(securedResultset, new IsManagerOnObject());
@@ -440,12 +443,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	public void enableExecutionStatus(long projectId, ExecutionStatus executionStatus) {
 		GenericProject project = genericProjectDao.findById(projectId);
 		checkManageProjectOrAdmin(project);
-		switch(executionStatus){
-			case UNTESTABLE :	project.setAllowsUntestableStatus(true); break;
-			case SETTLED : project.setAllowsSettledStatus(true); break;
-			default:	break; 
-		}
-			
+		project.getCampaignLibrary().enableStatus(executionStatus);
 	}
 
 
@@ -453,51 +451,27 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	public void disableExecutionStatus(long projectId, ExecutionStatus executionStatus) {
 		GenericProject project = genericProjectDao.findById(projectId);
 		checkManageProjectOrAdmin(project);
-		switch(executionStatus){
-		case UNTESTABLE :	project.setAllowsUntestableStatus(false); break;
-		case SETTLED : project.setAllowsSettledStatus(false); break;
-		default:	break; 
-	}
+		project.getCampaignLibrary().disableStatus(executionStatus);
 	}
 
 
 	@Override
-	public List<ExecutionStatus> enabledExecutionStatuses(long projectId) {
+	public Set<ExecutionStatus> enabledExecutionStatuses(long projectId) {
 		GenericProject project = genericProjectDao.findById(projectId);
 		checkManageProjectOrAdmin(project);
-		List<ExecutionStatus> statuses = new ArrayList<ExecutionStatus>();
+		Set<ExecutionStatus> statuses = new HashSet<ExecutionStatus>();
 		statuses.addAll(Arrays.asList(ExecutionStatus.values())); 
-		if(!project.isAllowsUntestableStatus()){
-			statuses.remove(ExecutionStatus.UNTESTABLE);
-		}
-		if(!project.isAllowsSettledStatus()){
-			statuses.remove(ExecutionStatus.SETTLED);
-		}
-		//always disables statuses
-		statuses.remove(ExecutionStatus.ERROR);
-		statuses.remove(ExecutionStatus.NOT_RUN);
-		statuses.remove(ExecutionStatus.WARNING);
+		Set<ExecutionStatus> disabledStatuses = project.getCampaignLibrary().getDisabledStatuses();
+		statuses.removeAll(disabledStatuses);
 		return statuses;
 	}
 
 
 	@Override
-	public List<ExecutionStatus> disabledExecutionStatuses(long projectId) {
+	public Set<ExecutionStatus> disabledExecutionStatuses(long projectId) {
 		GenericProject project = genericProjectDao.findById(projectId);
 		checkManageProjectOrAdmin(project);
-		List<ExecutionStatus> statuses = new ArrayList<ExecutionStatus>();
-		if(!project.isAllowsUntestableStatus()){
-			statuses.add(ExecutionStatus.UNTESTABLE);
-		}
-		if(!project.isAllowsSettledStatus()){
-			statuses.add(ExecutionStatus.SETTLED);
-		}
-		//always disables statuses
-		statuses.add(ExecutionStatus.ERROR);
-		statuses.add(ExecutionStatus.NOT_RUN);
-		statuses.add(ExecutionStatus.WARNING);
-		
-		return statuses;
+		return project.getCampaignLibrary().getDisabledStatuses();
 	}
 	
 	
@@ -515,7 +489,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	
 	@Override
 	public boolean isExecutionStatusEnabledForProject(long projectId, ExecutionStatus executionStatus) {
-		List<ExecutionStatus> statuses = disabledExecutionStatuses(projectId);
+		Set<ExecutionStatus> statuses = disabledExecutionStatuses(projectId);
 		if(statuses.contains(executionStatus)){
 			return false;
 		} else {

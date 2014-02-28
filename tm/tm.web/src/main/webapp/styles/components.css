@@ -206,6 +206,11 @@ table.datepicker-table td.datepicker-table-col {
 	background-repeat : no-repeat;
 }
 
+.ui-button .ui-icon.exec-status-settled,
+.exec-status-settled{
+	background-image: url("../images/Icon_LightGreen.png");  /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
 
 .ui-button .ui-icon.execute-stop {
 	background-image: url("../images/Button_Exec_stop.png");  /** sprite-ref: sprites-icons; */

@@ -281,7 +281,7 @@
 					<div id="project-description-table" class="display-table">
 						<div class="display-table-row">
 							<div class="display-table-cell">  
-								<label for="toggle-nontestable-checkbox" class="display-table-cell">
+								<label for="toggle-UNTESTABLE-checkbox" class="display-table-cell">
 									<f:message key="label.status.options.optional" />
 								</label>
 							</div>
@@ -291,7 +291,19 @@
 								</span>
 							</div>
 							<div class="display-table-cell">                  		
-	                  			<input id="toggle-nontestable-checkbox" type="checkbox" data-def="width=35, on_label=<f:message key="label.status.options.allowed" />, off_label=<f:message key="label.status.options.forbidden" />" checked="checked" style="display: none;"/>
+	                  			<input id="toggle-UNTESTABLE-checkbox" type="checkbox" data-def="width=35, on_label=<f:message key="label.status.options.allowed" />, off_label=<f:message key="label.status.options.forbidden" />" checked="checked" style="display: none;"/>
+	                  		</div>
+						</div>
+						<div class="display-table-row">
+							<div class="display-table-cell">  
+							</div>
+							<div class="display-table-cell">  
+								<span class="display-table-cell exec-status-label exec-status-settled">
+									<f:message key="execution.execution-status.SETTLED" />
+								</span>
+							</div>
+							<div class="display-table-cell">                  		
+	                  			<input id="toggle-SETTLED-checkbox" type="checkbox" data-def="width=35, on_label=<f:message key="label.status.options.allowed" />, off_label=<f:message key="label.status.options.forbidden" />" checked="checked" style="display: none;"/>
 	                  		</div>
 						</div>
 					</div>
@@ -446,9 +458,13 @@ require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.att
 	
 	$(function() {
 		 		init(projectsManager, Frag);	
-		 		configureActivation();
-		 		$("#toggle-nontestable-checkbox").change(function(){
-		 			toggleUntestableActivation();
+		 		configureActivation("UNTESTABLE");
+		 		configureActivation("SETTLED");
+		 		$("#toggle-UNTESTABLE-checkbox").change(function(){
+		 			toggleStatusActivation("UNTESTABLE");
+		 		}); 
+		 		$("#toggle-SETTLED-checkbox").change(function(){
+		 			toggleStatusActivation("SETTLED");
 		 		}); 
 	});
 	
@@ -456,9 +472,9 @@ require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.att
 		$("#user-permissions-table").squashTable().refresh();		
 	}
 	
-	function configureActivation(){
+	function configureActivation(status){
 
-		var activCbx = $("#toggle-nontestable-checkbox"),
+		var activCbx = $("#toggle-"+status+"-checkbox"),
 			activConf = attrparser.parse(activCbx.data('def'));
 		
 		activCbx.switchButton(activConf);
@@ -468,10 +484,10 @@ require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.att
 		
 		$.ajax({
 			type: 'GET',
-			 url: "${projectUrl}/is-enabled-execution-status/UNTESTABLE",
+			 url: "${projectUrl}/is-enabled-execution-status/"+status,
 			 success : function(data){
 				 if(!data){
-					 $("#toggle-nontestable-checkbox").switchButton({
+					 $("#toggle-"+status+"-checkbox").switchButton({
 						  checked: false
 					});
 				 }
@@ -500,7 +516,7 @@ require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.att
 	});
 	
 	statuspopup.on('formdialogcancel', function(){
-		 $("#toggle-nontestable-checkbox").switchButton({
+		 $("#toggle-UNTESTABLE-checkbox").switchButton({
 			  checked: true
 		});
 		$("#status-input").html("");
@@ -513,7 +529,7 @@ require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.att
 			type: 'POST',
 			url: "${projectUrl}/replace-execution-status",
 			data : {
-				sourceExecutionStatus : "UNTESTABLE",
+				sourceExecutionStatus : source,
 				targetExecutionStatus : target,
 				success : function(){
 					deactivateUntestable();
@@ -523,21 +539,21 @@ require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.att
 		});
 	});
 	
-	function toggleUntestableActivation(){
-		var shouldActivate = $("#toggle-nontestable-checkbox").prop('checked');
+	function toggleStatusActivation(status){
+		var shouldActivate = $("#toggle-"+status+"-checkbox").prop('checked');
 		if (shouldActivate){
-			activateUntestable();
+			activateStatus(status);
 		}
 		else{
 			$.ajax({
 				type: 'GET',
-				 url: "${projectUrl}/execution-status-is-used/UNTESTABLE",
+				 url: "${projectUrl}/execution-status-is-used/"+status,
 				 success : function(data){
 						if(data){
 							statuspopup.formDialog('open');
 						}
 						else {
-						 	deactivateUntestable();
+						 	deactivateStatus(status);
 						}
 				 }
 			});
@@ -547,17 +563,17 @@ require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.att
 			
 	}	
 	
-	function activateUntestable(){
+	function activateStatus(status){
 		$.ajax({
 			type: 'POST',
-			 url: "${projectUrl}/enable-execution-status/UNTESTABLE",
+			 url: "${projectUrl}/enable-execution-status/"+status,
 		});
 	}
 	
-	function deactivateUntestable(){
+	function deactivateStatus(status){
 		$.ajax({
 			type: 'POST',
-			 url: "${projectUrl}/disable-execution-status/UNTESTABLE",
+			 url: "${projectUrl}/disable-execution-status/"+status,
 		});
 	}
 

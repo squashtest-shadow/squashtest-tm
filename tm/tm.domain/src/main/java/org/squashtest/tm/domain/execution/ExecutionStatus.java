@@ -115,6 +115,16 @@ public enum ExecutionStatus implements Internationalizable, Level {
 		public ExecutionStatus getCanonicalStatus() {
 			return SETTLED;
 		}
+		
+		@Override
+		public boolean canBeDisabled(){
+			return true;
+		}
+		
+		@Override
+		public boolean defaultEnabled(){
+			return false;
+		}
 	},
 	
 	UNTESTABLE(9) {
@@ -131,6 +141,16 @@ public enum ExecutionStatus implements Internationalizable, Level {
 		@Override
 		public ExecutionStatus getCanonicalStatus() {
 			return UNTESTABLE;
+		}
+		
+		@Override
+		public boolean canBeDisabled(){
+			return true;
+		}
+		
+		@Override
+		public boolean defaultEnabled(){
+			return true;
 		}
 	},
 	
@@ -269,6 +289,11 @@ public enum ExecutionStatus implements Internationalizable, Level {
 		public ExecutionStatus getCanonicalStatus() {
 			return SUCCESS;
 		}
+		
+		@Override
+		public boolean defaultEnabled() {
+			return false;
+		}
 	},
 	
 	ERROR(7){
@@ -289,6 +314,10 @@ public enum ExecutionStatus implements Internationalizable, Level {
 			return BLOCKED;
 		}
 		
+		@Override
+		public boolean defaultEnabled() {
+			return false;
+		}
 	},
 	
 	NOT_RUN(8){
@@ -309,6 +338,10 @@ public enum ExecutionStatus implements Internationalizable, Level {
 			return BLOCKED;
 		}
 		
+		@Override
+		public boolean defaultEnabled() {
+			return false;
+		}
 	};
 
 	
@@ -364,6 +397,14 @@ public enum ExecutionStatus implements Internationalizable, Level {
 	// some private static final Object isAmbiguous, needsComputation would have been nicer but impracticable here 
 	// in the context of an enum.
 	
+	public boolean defaultEnabled() {
+		return true;
+	}
+
+	public boolean canBeDisabled() {
+		return false;
+	}
+
 	protected ExecutionStatus isAmbiguous(){
 		return null;
 	}

@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
@@ -482,7 +483,7 @@ public class GenericProjectController {
 	@RequestMapping(value = PROJECT_ID_URL + "/execution-status/{executionStatus}", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<String, Object> getStatusPopup(@PathVariable long projectId, @PathVariable String executionStatus, final Locale locale) {
-		List<ExecutionStatus> statuses = projectManager.enabledExecutionStatuses(projectId);
+		Set<ExecutionStatus> statuses = projectManager.enabledExecutionStatuses(projectId);
 		ExecutionStatus status = ExecutionStatus.valueOf(executionStatus);
 		statuses.remove(status);
 		Map<String, Object> options = new HashMap<String, Object>();

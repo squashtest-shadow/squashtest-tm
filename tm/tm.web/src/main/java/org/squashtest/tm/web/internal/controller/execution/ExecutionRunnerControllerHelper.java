@@ -134,8 +134,8 @@ public class ExecutionRunnerControllerHelper {
 		model.addAttribute("executionStatus", statusSet);
 		model.addAttribute("hasNextStep", stepOrder != (total - 1));
 		model.addAttribute("attachments", attachments);
-		model.addAttribute("allowsUntestable", execution.getProject().isAllowsUntestableStatus());
-		model.addAttribute("allowsSettled", execution.getProject().isAllowsSettledStatus());
+		model.addAttribute("allowsUntestable", execution.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
+		model.addAttribute("allowsSettled", execution.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
 
 		
 		addCurrentStepUrl(execution.getId(), model);

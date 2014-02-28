@@ -21,6 +21,8 @@
 package org.squashtest.tm.web.internal.controller.testcase.executions;
 
 import java.util.List;
+import java.util.Set;
+
 import javax.inject.Inject;
 
 import org.springframework.context.annotation.Scope;
@@ -49,7 +51,7 @@ public class ExecutionStatusJeditableComboDataBuilder extends EnumJeditableCombo
 		public  EnumJeditableComboDataBuilder<ExecutionStatus> useContext(Object context){
 			super.useContext(context);
 			Long projectId = (Long) getContext();
-			List<ExecutionStatus> statuses = projectManager.enabledExecutionStatuses(projectId);
+			Set<ExecutionStatus> statuses = projectManager.enabledExecutionStatuses(projectId);
 			setModel(statuses.toArray(new ExecutionStatus[statuses.size()]));
 			return this;
 		}

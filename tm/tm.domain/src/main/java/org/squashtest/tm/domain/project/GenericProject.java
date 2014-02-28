@@ -91,12 +91,6 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	@Size(min = 0, max = 255)
 	@Field(analyze=Analyze.NO, store=Store.YES)
 	private String name;
-
-	@Column(name = "UNTESTABLE_STATUS")
-	private boolean allowsUntestableStatus = true;
-
-	@Column(name = "SETTLED_STATUS")
-	private boolean allowsSettledStatus = false;
 	
 	private boolean active = true;
 
@@ -301,19 +295,4 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 
 	public abstract void accept(ProjectVisitor visitor);
 
-	public boolean isAllowsUntestableStatus() {
-		return allowsUntestableStatus;
-	}
-
-	public void setAllowsUntestableStatus(boolean allowsUntestableStatus) {
-		this.allowsUntestableStatus = allowsUntestableStatus;
-	}	
-	
-	public boolean isAllowsSettledStatus() {
-		return allowsSettledStatus;
-	}
-
-	public void setAllowsSettledStatus(boolean allowsSettledStatus) {
-		this.allowsSettledStatus = allowsSettledStatus;
-	}	
 }

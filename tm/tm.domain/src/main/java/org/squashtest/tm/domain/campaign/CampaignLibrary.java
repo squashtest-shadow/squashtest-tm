@@ -29,6 +29,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -40,6 +42,7 @@ import javax.persistence.OrderColumn;
 import org.apache.commons.lang.NullArgumentException;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Where;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.project.GenericLibrary;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -67,6 +70,17 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 	@JoinColumn(name="LIBRARY_ID")
 	@Where(clause="LIBRARY_TYPE = 'C'")	
 	private Set<CampaignLibraryPluginBinding> enabledPlugins = new HashSet<CampaignLibraryPluginBinding>(5);
+
+	@ElementCollection
+	@Enumerated(EnumType.STRING)
+	@JoinTable(name = "DISABLED_EXECUTION_STATUS", joinColumns= @JoinColumn(name = "CL_ID"))
+	@Column(name = "EXECUTION_STATUS")
+	private Set<ExecutionStatus> disabledStatuses = new HashSet<ExecutionStatus>(){{
+	    add(ExecutionStatus.WARNING);
+	    add(ExecutionStatus.ERROR);
+	    add(ExecutionStatus.NOT_RUN);
+	    add(ExecutionStatus.SETTLED);
+	}};
 	
 	
 	public void setId(Long id) {
@@ -106,6 +120,29 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 		this.project = p;
 	}
 
+	public Set<ExecutionStatus> getDisabledStatuses() {
+		return disabledStatuses;
+	}
+
+	public void setDisabledStatuses(Set<ExecutionStatus> disabledStatuses) {
+		this.disabledStatuses = disabledStatuses;
+	}
+	
+	public void enableStatus(ExecutionStatus executionStatus){
+		if(executionStatus.canBeDisabled()){
+			this.disabledStatuses.remove(executionStatus);
+		}
+	}
+	
+	public void disableStatus(ExecutionStatus executionStatus){
+		if(executionStatus.canBeDisabled()){
+			this.disabledStatuses.add(executionStatus);
+		}
+	}
+	
+	public boolean allowsStatus(ExecutionStatus executionStatus){
+		return !this.disabledStatuses.contains(executionStatus);
+	}
 	
 	// ***************************** PluginReferencer section ****************************
 	
@@ -183,4 +220,6 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 	public Collection<CampaignLibraryNode> getOrderedContent() {
 		return rootContent;
 	}
+
+
 }
