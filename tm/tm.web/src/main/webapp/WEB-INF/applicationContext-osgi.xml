@@ -385,9 +385,9 @@
 		cardinality="1..1"
 		interface="org.squashtest.tm.service.customfield.CustomFieldHelperService" />
 
-	<osgi:reference id="squashtest.tm.service.DenormalizedFieldValueFinder"
-		bean-name="squashtest.tm.service.DenormalizedFieldValueFinder"
-		interface="org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueFinder"
+	<osgi:reference id="squashtest.tm.service.DenormalizedFieldValueManager"
+		bean-name="squashtest.tm.service.DenormalizedFieldValueManager"
+		interface="org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager"
 		availability="mandatory" />
 
 	<osgi:reference id="squashtest.tm.service.CampaignsWorkspaceService"
@@ -430,6 +430,11 @@
 	<osgi:list id="squash.tm.wizard.WorkspaceWizards" interface="org.squashtest.tm.api.wizard.WorkspaceWizard">
 		<osgi:listener ref="squash.tm.report.WorkspaceWizardManager"
 			bind-method="registerWizard" unbind-method="unregisterWizard" />
+	</osgi:list>
+	
+	<osgi:list id="squash.tm.wizard.ExportPlugins" interface="org.squashtest.tm.api.export.ExportPlugin">
+		<osgi:listener ref="squash.tm.report.ExportPluginManager"
+			bind-method="registerPlugin" unbind-method="unregisterPlugin" />
 	</osgi:list>
 
 	<osgix:cm-properties id="squash.tm.auth.config"

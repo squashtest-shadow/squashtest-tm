@@ -19,79 +19,205 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(
-		[ "jquery", "backbone", "jquery.squash.togglepanel", "jqueryui" ],
-		function($, Backbone) {
-			var WizardPanelView = Backbone.View
-					.extend({
+		[ "jquery", "backbone", "underscore", "jquery.squash.togglepanel", "jqueryui", "jquery.squash.formdialog" ],
+		
+		function($, Backbone, _) {
+			var WizardPanelView = Backbone.View.extend({
 
-						self : this,
+				self : this,
 
-						initialize : function() {
-							this.$el.togglePanel();
-						},
+				emptyrowTemplate: undefined,
+				datarowTemplate: undefined,
+				
+				initialize : function() {
+					this.$el.togglePanel();
+					this._initWizardlist();
+				},
+				
+				_initWizardlist : function(){
+					var body = this.$el.find('tbody');
+					this.emptyrowTemplate = body.find('.template-emptyrow').clone().wrap('<div/>').parent().html();
+					this.datarowTemplate = body.find('.template-datarow').clone().wrap('<div/>').parent().html();
+					body.empty();
+					body.removeClass('not-displayed');				
+				},
 
-						events : {
-							'click tr' : 'tickCheckbox',
-							'change input.plugin-enabled' : 'updateModel'
-						},
+				events : {
+					'click tr' : 'tickCheckbox',
+					'click span.wizard-configure' : 'configureWizard',
+					'change input.plugin-enabled' : 'updateModel'
+				},
 
-						render : function() {
+				render : function() {
 
-							var tbody = this.$el.find('table tbody'), model = this.options.model, i = 0, available = this.options.available, // TODO
-							// load through ajax on render
-							availableLength = available.length, collection = this.collection;
+					var tbody = this.$el.find('table tbody'), 
+						model = this.options.model, 
+						i = 0, 
+						available = this.options.available, // TODO load through ajax on render
+						availableLength = available.length, 
+						collection = this.collection;
 
-							tbody.empty();
+					tbody.empty();
+					var rows = $();
+					
+					if (available.length === 0){
+						rows = rows.add(this.emptyrowTemplate());
+					}
+					else{
+						for ( var j = 0; j < availableLength; j++) {
+							var item = available[j];
+							var newhtml = this.datarowTemplate.replace('{{this.id}}', item.id)
+												.replace('{{this.displayableName}}', item.displayableName);
+							
+							var newRow = $(newhtml);
 
-							var rows = $();
-							for ( var j = 0; j < availableLength; j++) {
-
-								var item = available[j];
-								var newRow = $('<tr class="cursor-arrow"/>');
-
-								newRow.append($('<td class="not-displayed">' + item.id + '</td>'));
-								newRow
-										.append($('<td class="centered narrow"><input type="checkbox" class="plugin-enabled"/></td>'));
-								newRow.append($('<td>' + item.displayableName + '</td>'));
-
-								if (collection.get(item.id) !== undefined) {
-									newRow.find('input.plugin-enabled').prop('checked', true);
-								}
-								rows = rows.add(newRow);
-
+							// check if this wizard is enabled
+							if (collection.get(item.id) !== undefined) {
+								this.toggleRowState(newRow);
 							}
+							rows = rows.add(newRow);
 
-							tbody.append(rows);
-
-						},
-
-						tickCheckbox : function(event) {
-							var $checkbox = $(event.currentTarget).find('input.plugin-enabled');
-							if (!$(event.target).is('input.plugin-enabled')) {
-								var state = $checkbox.prop('checked');
-								$checkbox.prop('checked', !state);
-								this.updateModel({
-									target : $checkbox.get(0)
-								});
-							}
-						},
-
-						updateModel : function(event) {
-
-							var $target = $(event.target);
-							var isSelected = $target.prop('checked');
-							var id = $target.parent('td').prev().text();
-
-							if (isSelected) {
-								this.collection.add({
-									id : id
-								});
-							} else {
-								this.collection.remove(id);
-							}
 						}
+					}
 
+					tbody.append(rows);
+
+				},
+
+				tickCheckbox : function(event) {
+					var $checkbox = $(event.currentTarget).find('input.plugin-enabled');
+					if (!$(event.target).is('input.plugin-enabled')) {
+						var state = $checkbox.prop('checked');
+						$checkbox.prop('checked', !state);
+						this.updateModel({
+							target : $checkbox.get(0)
+						});
+					}
+				},
+				
+				activateRow : function(row){
+					row.find('input.plugin-enabled').prop('checked', true);
+					row.find('.wizard-configure').removeClass('disabled-transparent').addClass('cursor-pointer');
+				},
+				
+				deactivateRow : function(row){
+					row.find('input.plugin-enabled').prop('checked', false);
+					row.find('.wizard-configure').addClass('disabled-transparent').removeClass('cursor-pointer');
+				},
+				
+				toggleRowState : function(row){
+					var chbox = row.find('input.plugin-enabled'),
+						confspan = row.find('.wizard-configure'),
+						enabled = chbox.prop('checked');
+					
+					if (enabled){
+						// deactivate
+						this.deactivateRow(row);
+					}
+					else{
+						// activate
+						this.activateRow(row);
+					}
+					
+				},
+
+				updateModel : function(event) {
+
+					var $target = $(event.target),
+						isSelected = $target.prop('checked'),
+						tr = $target.parents('tr'),
+						id = tr.data('pluginid');
+
+					if (isSelected) {
+						this.collection.add({
+							id : id
+						});
+						this.activateRow(tr);
+					} else {
+						this.collection.remove(id);
+						this.deactivateRow(tr);
+					}
+					
+				},
+				
+				configureWizard : function(event){
+
+					//we don't want to trigger a click on the 'tr' level
+					event.stopImmediatePropagation();
+					
+					var $target = $(event.currentTarget);
+
+					// open the configuration popup only if the link is enabled
+					if ($target.hasClass('disabled-transparent')){
+						return;
+					}					
+					else{
+						var id = $target.parents('tr').data('pluginid');
+						var dialog = $("#wizard-configure-dialog");
+						dialog.data('pluginid', id);
+						dialog.formDialog('open');
+					}
+				}
+
+			});
+			
+			
+			function initConfdialog(settings){
+				var dialog = $("#wizard-configure-dialog");
+				dialog.formDialog({
+					open : function(){
+						var $this = $(this);
+						
+						$this.formDialog('setState','configure');
+						
+						var conflist = $this.find('.wizard-options');
+						conflist.empty();
+						
+						var id = $this.data('pluginid');
+						var url = settings.projectUrl+'/'+id+'/configuration';
+						
+						$.getJSON(url).done(function(conf){
+							if (_.isEmpty(conf)){
+								$this.formDialog('setState','noconf');
+							}
+							else{
+								for (var ppt in conf){
+									conflist.append("<div class='wizard-option display-table-row'><span class='display-table-cell'>"+ppt+"</span><input class='display-table-cell' type='text' value='"+conf[ppt]+"'/></div>");
+								}
+								$this.formDialog('setState','configure');
+							}
+						});
+					}
+				});
+				
+				dialog.on('formdialogconfirm', function(){
+					var id = dialog.data('pluginid');
+					var url = settings.projectUrl+'/'+id+'/configuration';
+					var options = {};
+					
+					var optelts = dialog.find('.wizard-options .wizard-option');
+					optelts.each(function(){
+						var $this = $(this);
+						var key = $this.find('span').text();
+						var value = $this.find('input').val();
+						options[key] = value;
 					});
+					
+					$.ajax({
+						url : url,
+						type : 'POST',
+						data : JSON.stringify(options),
+						contentType  : 'application/json'
+					}).done(function(){
+						dialog.formDialog('close');
+					});
+					
+				});
+				
+				dialog.on('formdialogcancel', function(){
+					dialog.formDialog('close');
+				});
+			}
 
 			function initWizardTabView(settings) {
 
@@ -141,6 +267,8 @@ define(
 					collection : enabledCollection,
 					available : settings.availableWizards
 				});
+				
+				initConfdialog(settings);
 
 				panelView.render();
 

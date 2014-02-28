@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.project;
 
 import java.util.List;
+import java.util.Map;
 
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.api.workspace.WorkspaceType;
@@ -131,6 +132,23 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder{
 	 * enables the given wizard for the given workspace of the given project
 	 */
 	void disableWizardForWorkspace(long projectId, WorkspaceType workspace, String wizardId);
+	
+	
+	/**
+	 * Returns the configuration of a given wizard for a given project. Returns an empty map if 
+	 * the wizard is not bound to this project.
+	 */
+	Map<String, String> getWizardConfiguration(long projectId, WorkspaceType workspace, String wizardId);
+	
+	/**
+	 * Applies the given configuration to a wizard for a given project. If the wizard wasn't enabled for this project already, it will be during the process.
+	 * 
+	 * @param projectId
+	 * @param workspace
+	 * @param wizardId
+	 * @param configuration
+	 */
+	void setWizardConfiguration(long projectId, WorkspaceType workspace, String wizardId, Map<String, String> configuration);
 	
 	// ***************************** status management *************************
 	

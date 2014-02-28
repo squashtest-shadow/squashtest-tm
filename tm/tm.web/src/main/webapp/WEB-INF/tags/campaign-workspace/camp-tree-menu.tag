@@ -24,6 +24,7 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib uri="http://org.squashtest.tm/taglib/workspace-utils" prefix="wu" %>
 	
 <div id="tree_element_menu" class="tree-top-toolbar unstyled-pane">
 	<div class="button-group">
@@ -58,6 +59,9 @@
 			<li id="export-L-tree-button" class="ui-state-disabled cursor-pointer"><a ><f:message key="label.Export.Campaign.Light" />...</a></li>
 			<li id="export-S-tree-button" class="ui-state-disabled cursor-pointer"><a ><f:message key="label.Export.Campaign.Standard" />...</a></li>
 			<li id="export-F-tree-button" class="ui-state-disabled cursor-pointer"><a ><f:message key='label.Export.Campaign.Full'/>...</a></li>
+<c:forEach var="plugin"	items="${wu:getExportPlugins(pageContext.servletContext, 'CAMPAIGN_WORKSPACE')}" varStatus="pluginsts">
+			<li id="export-plugin-${pluginsts.index}" class="ui-state-disabled cursor-pointer export-plugin" data-module="${plugin.javascriptModuleName}"><a>${plugin.name}...</a></li>
+</c:forEach>
 		</ul>	
 	</div>
 	

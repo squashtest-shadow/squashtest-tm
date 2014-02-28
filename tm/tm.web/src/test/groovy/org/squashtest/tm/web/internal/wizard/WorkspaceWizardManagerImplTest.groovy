@@ -82,9 +82,13 @@ class WorkspaceWizardManagerImplTest extends Specification {
 			String getFilename(){
 				return "myjar"
 			}
+			void validate(EntityReference ref, Map<String, String> conf){
+				
+			}
 			void validate(EntityReference ref){
 				
 			}
+			Map getProperties() { return [:]}
 		}, Collections.emptyMap()
 
 		manager.registerWizard new WorkspaceWizard() {
@@ -106,9 +110,13 @@ class WorkspaceWizardManagerImplTest extends Specification {
 			String getFilename(){
 				return "myjar"
 			}
+			void validate(EntityReference ref, Map<String, String> conf){
+				
+			}
 			void validate(EntityReference ref){
 				
 			}
+			Map getProperties() { return [:]}
 		}, Collections.emptyMap()
 		
 		manager.registerWizard new WorkspaceWizard() {
@@ -130,9 +138,13 @@ class WorkspaceWizardManagerImplTest extends Specification {
 			String getFilename(){
 				return "myjar"
 			}
+			void validate(EntityReference ref, Map<String, String> conf){
+				
+			}
 			void validate(EntityReference ref){
 				
 			}
+			Map getProperties() { return [:]}
 		}, Collections.emptyMap()
 		
 		when:

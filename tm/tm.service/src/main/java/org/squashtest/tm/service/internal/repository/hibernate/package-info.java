@@ -398,6 +398,8 @@
 																							 "order by cfv.boundEntityId , cfb.position asc"),		
 		@NamedQuery(name = "CustomFieldValue.findAllCustomValuesOfBinding" , query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfb.id = ?1 order by cfb.position asc"),
 		@NamedQuery(name = "CustomFieldValue.findAllCustomValuesOfBindings", query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfb.id in ( :bindingIds )"),
+		@NamedQuery(name = "CustomFieldValue.findAllForEntityAndRenderingLocation", query="select cfv from CustomFieldValue cfv join cfv.binding cfb join cfb.renderingLocations rl where cfv.boundEntityId = ?1 and cfv.boundEntityType = ?2 and rl = ?3 order by cfb.position asc"),
+		
 		@NamedQuery(name = "CustomFieldValue.deleteAll", query="delete CustomFieldValue where id in (:ids)"),
 		@NamedQuery(name = "CustomFieldValue.deleteAllForBinding", query = "delete CustomFieldValue cv1 where cv1 in (select cv2 from CustomFieldValue cv2 join cv2.binding cfb where cfb.id = :bindingId )"),
 		@NamedQuery(name = "CustomFieldValue.deleteAllForEntity",  query = "delete CustomFieldValue cv where cv.boundEntityId = :entityId and cv.boundEntityType = :entityType"),
@@ -418,6 +420,8 @@
 		@NamedQuery(name = "BoundEntityDao.findAllIterationsForProject", query="select i from Iteration i join i.campaign c where c.project.id = :projectId"),
 		@NamedQuery(name = "BoundEntityDao.findAllTestSuitesForProject", query="select ts from TestSuite ts join ts.iteration i join i.campaign c where c.project.id = :projectId"),
 		@NamedQuery(name = "BoundEntityDao.findAllTestStepsForProject", query="select ts from TestCase tc join tc.steps ts where tc.project.id = :projectId and ts.class = ActionTestStep"),		
+		@NamedQuery(name = "BoundEntityDao.findAllExecutionsForProject", query="select exec from Execution exec join exec.testPlan tp join tp.iteration i join i.campaign c where c.project.id = :projectId"),		
+		@NamedQuery(name = "BoundEntityDao.findAllExecutionStepsForProject", query="select execst from ExecutionStep execst join execst.execution exe join exe.testPlan tp join tp.iteration i join i.campaign c where c.project.id = :projectId"),						
 		@NamedQuery(name = "BoundEntityDao.hasCustomFields", query="select count(cfv) from CustomFieldValue cfv where cfv.boundEntityId = :boundEntityId and cfv.boundEntityType = :boundEntityType"),
 		
 		//Administration

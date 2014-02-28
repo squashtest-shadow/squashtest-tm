@@ -59,7 +59,6 @@ public interface VerifiedRequirementsManagerService extends VerifiedRequirements
 	 */
 	Collection<VerifiedRequirementException> addVerifiedRequirementsToTestStep(List<Long> requirementsIds,
 			long testStepId);
-			
 	/**
 	 * Adds the requirement-version to the ones verified by the step's test case and bind it to the step. If the version is already verified by the test case, it is only bound to the step.
 	 * If a sister version is already bound to the test case the version is not added.

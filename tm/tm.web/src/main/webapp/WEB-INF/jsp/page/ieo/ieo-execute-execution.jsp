@@ -61,6 +61,9 @@
 	<s:param name="ieo" value="true"/>
 </s:url>
 
+<c:url var="customFieldsValuesURL" value="/custom-fields/values" />
+<c:url var="denormalizedFieldsValuesURL" value="/denormalized-fields/values" />
+
 	<comp:sq-css name="squash.purple.css" />	
 </head>
 
@@ -81,6 +84,9 @@
 		</c:otherwise>
 	</c:choose>
 	</c:if>
+    <script id="df-post-label" type="text/squash">
+      <f:message key="label.fromTestCase" />
+    </script>
 	<script type="text/javascript">
 	require(["common"], function() {
 		require(["jquery", "squash.basicwidgets", "jqueryui"], function($, basicwidg){
@@ -142,6 +148,25 @@
 				
 			});
 	
+            <c:if test="${not empty denormalizedFieldValues }">
+            var postLabel = " (" + $("#df-post-label").text().trim() +")";
+            
+            $.get("${denormalizedFieldsValuesURL}?denormalizedFieldHolderId=${executionStep.boundEntityId}&denormalizedFieldHolderType=${executionStep.boundEntityType}")
+              .success(function(data){
+                $("#dfv-information-table")
+                  .append(data)
+                  .find("label")
+                  .append(postLabel);
+            });
+            </c:if>
+			
+			<c:if test="${not empty customFieldValues }">
+			$.get("${customFieldsValuesURL}?boundEntityId=${executionStep.boundEntityId}&boundEntityType=${executionStep.boundEntityType}")
+				.success(function(data){$("#cuf-information-table").append(data);
+			});
+			</c:if>
+		
+			
 		});
 	});
 	</script> 
@@ -174,18 +199,15 @@
 			<comp:step-information-panel auditableEntity="${executionStep}" />			
 		</div>
 		
-		<c:if test="${not empty denormalizedFieldValues }">
-		<span id="denormalized-fields">
-		<comp:toggle-panel id="denormalized-fields-panel" titleKey="title.step.fields" open="true">
-		<jsp:attribute name="body"> 
-				<div class="display-table">
-					<comp:denormalized-field-values-list denormalizedFieldValues="${ denormalizedFieldValues }" />
-				</div>
-			</jsp:attribute>
-		</comp:toggle-panel>
-		</span>
-		</c:if>		
-		
+        <c:if test="${ (not empty customFieldValues) or (not empty denormalizedFieldValues) }">
+          <comp:toggle-panel id="custom-fields-panel" titleKey="title.step.fields" open="true">
+            <jsp:attribute name="body"> 
+              <div id="dfv-information-table" class="display-table"></div>
+              <div id="cuf-information-table" class="display-table"></div>
+            </jsp:attribute>
+          </comp:toggle-panel>
+        </c:if>
+				
 		<comp:toggle-panel id="execution-action-panel" titleKey="execute.panel.action.title"  open="true">
 			<jsp:attribute name="body">
 				<div id="execution-action" class="load-links-right-frame">${executionStep.action}</div>

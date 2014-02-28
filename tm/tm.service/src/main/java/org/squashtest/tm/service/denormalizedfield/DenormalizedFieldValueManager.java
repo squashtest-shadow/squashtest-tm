@@ -24,8 +24,10 @@ import java.util.Collection;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 
 /**
@@ -33,8 +35,8 @@ import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
  * @author mpagnon
  *
  */
-@Transactional(readOnly=true)
-public interface DenormalizedFieldValueFinder {
+@Transactional
+public interface DenormalizedFieldValueManager {
 
 	/**
 	 * Will return all {@link DenormalizedFieldValue} attached to the given {@link DenormalizedFieldHolder} ordered by dfv.position asc.
@@ -65,4 +67,8 @@ public interface DenormalizedFieldValueFinder {
 	 */
 	List<DenormalizedFieldValue> findAllForEntities(Collection<DenormalizedFieldHolder> entities, Collection<RenderingLocation> nullOrlocations);
 	
+	
+	List<DenormalizedFieldValue> findAllForEntity(Long id, DenormalizedFieldHolderType entityType);
+
+	void changeValue(long id, String value);
 }

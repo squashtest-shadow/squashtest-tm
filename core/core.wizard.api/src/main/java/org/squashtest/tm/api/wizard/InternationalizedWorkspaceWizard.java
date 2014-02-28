@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.api.wizard;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
 
 import org.osgi.framework.BundleContext;
@@ -55,6 +58,12 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 	 */
 	private String nameKey;
 
+	
+	@Override
+	public Map<String, String> getProperties(){
+		return new HashMap<String, String>();
+	}
+	
 	/**
 	 * @see org.squashtest.tm.api.wizard.WorkspaceWizard#getDisplayWorkspace()
 	 */
@@ -130,13 +139,18 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 		this.displayWorkspace = displayWorkspace;
 	}
 
+	
+	public void validate(EntityReference reference){
+		// defaults : allways passes
+	}
+	
 	/**
 	 * This default validation always passes.
 	 * 
 	 * @see org.squashtest.tm.api.wizard.WorkspaceWizard#validate(EntityReference)
 	 */
 	@Override
-	public void validate(EntityReference reference) {
+	public void validate(EntityReference reference, Map<String, String> conf) {
 		// defaults : allways passes
 	}
 

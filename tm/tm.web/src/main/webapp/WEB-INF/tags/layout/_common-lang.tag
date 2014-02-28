@@ -57,7 +57,6 @@ var _langcache = {
 	'squashtm.dateformat' : "<f:message key='squashtm.dateformat'/>",
 	'squashtm.dateformat.iso' : "<f:message key='squashtm.dateformat.iso'/>",
 	'squashtm.dateformatShort.datepicker' : "<f:message key='squashtm.dateformatShort.datepicker'/>"
-	
 };
 
 squashtm.message.cache = _langcache;

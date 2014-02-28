@@ -32,8 +32,7 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
-
-
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
@@ -74,6 +73,9 @@
 <s:url var="btEntityUrl" value="/bugtracker/execution/{id}">
 	<s:param name="id" value="${execution.id}" />
 </s:url>
+
+<c:url var="customFieldsValuesURL" value="/custom-fields/values" />
+<c:url var="denormalizedFieldsValuesURL" value="/denormalized-fields/values" />
 
 <%-------------------------- /urls ------------------------------%>
 
@@ -155,7 +157,6 @@
 				<div class="display-table-cell" id="automated-script" >${ execution.automatedExecutionExtender.automatedTest.name }</div>
 			</div>
 </c:if>			
-			<comp:denormalized-field-values-list denormalizedFieldValues="${ denormalizedFieldValues }" />
 		</div>
 	</jsp:attribute>
 	</comp:toggle-panel>
@@ -300,7 +301,7 @@
 	var squashtm = squashtm || {};
 	
 	require(["common"], function() {
-		require(["jquery", "page-components/execution-information-panel", "squashtable", "jquery.squash.jeditable"], function($, infopanel) {			
+		require(["jquery", "page-components/execution-information-panel", "custom-field-values", "squashtable", "jquery.squash.jeditable"], function($, infopanel, cufValuesManager) {			
 			/* display the execution name. Used for extern calls (like from the page who will include this fragment)
 			*  will refresh the general informations as well*/
 			function nodeSetName(name){
@@ -342,6 +343,7 @@
 			var tableSettings = {
 				"sAjaxSource": "${executionStepsUrl}", 
 				"aoColumnDefs": ${stepsAoColumnDefs}
+				"cufDefinitions": ${ json:marshall(cufDefinitions) }
 			};
 			
 			var squashSettings = {
@@ -410,8 +412,33 @@
 					}
 				];
 			
+			
+		
+			
+			var cufColumnPosition = 2;
+			var cufTableHandler = cufValuesManager.cufTableSupport;
+			cufTableHandler.decorateDOMTable($("#execution-execution-steps-table"), tableSettings.cufDefinitions, cufColumnPosition);
+
+			datatableSettings = cufTableHandler.decorateTableSettings(tableSettings, tableSettings.cufDefinitions,
+					cufColumnPosition, true);
+			
 			$("#execution-execution-steps-table").squashTable(tableSettings, squashSettings);
 			
+			
+			//**** cuf sections ************
+
+			//load the custom fields
+			$.get("${denormalizedFieldsValuesURL}?denormalizedFieldHolderId=${execution.boundEntityId}&denormalizedFieldHolderType=${execution.boundEntityType}")
+			.success(function(data){
+				$("#execution-information-table").append(data);
+				<c:if test="${hasCUF}">
+				//load the custom fields
+				$.get("${customFieldsValuesURL}?boundEntityId=${execution.boundEntityId}&boundEntityType=${execution.boundEntityType}")
+				.success(function(data){
+					$("#execution-information-table").append(data);
+				});
+				</c:if>
+			});		
 			
 			// ************** bugtracker section ******************************
 		 	

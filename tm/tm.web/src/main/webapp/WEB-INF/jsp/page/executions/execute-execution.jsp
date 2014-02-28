@@ -33,6 +33,8 @@
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 
+<c:url var="customFieldsValuesURL" value="/custom-fields/values" />
+<c:url var="denormalizedFieldsValuesURL" value="/denormalized-fields/values" />
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 
@@ -100,6 +102,9 @@
 		<body class="execute-html-body">
 			<f:message var="completedMessage" key="execute.alert.test.complete" />
 			<f:message var="endTestSuiteMessage" key="squashtm.action.exception.testsuite.end" />
+          <script id="df-post-label" type="text/squash">
+            <f:message key="label.fromTestCase" />
+          </script>
 			<script type="text/javascript">						
 			require(["common"], function() {
 				require(["jquery", "squash.basicwidgets", "page-components/step-information-panel","workspace.event-bus"], function($, basicwidg, infopanel, eventBus ) {
@@ -352,6 +357,25 @@
 						});
 						});
 						
+                    <c:if test="${not empty denormalizedFieldValues }">
+                    $.get("${denormalizedFieldsValuesURL}?denormalizedFieldHolderId=${executionStep.boundEntityId}&denormalizedFieldHolderType=${executionStep.boundEntityType}")
+                      .success(function(data){
+                        var postLabel = " (" + $("#df-post-label").text().trim() +")";
+                        
+                        $("#dfv-information-table")
+                          .append(data)
+                          .find("label")
+                          .append(postLabel);
+                      });
+                    </c:if>
+
+                    <c:if test="${not empty customFieldValues }">
+                    $.get("${customFieldsValuesURL}?boundEntityId=${executionStep.boundEntityId}&boundEntityType=${executionStep.boundEntityType}")
+                      .success(function(data){
+                        $("#cuf-information-table").append(data);
+                      });
+                    </c:if>
+				
 					});	
 				});
 			</script>
@@ -415,16 +439,14 @@
 			</div>
 
 			<div id="execute-body" class="execute-fragment-body">
-				<c:if test="${not empty denormalizedFieldValues }">
-				<span id="denormalized-fields"><comp:toggle-panel id="denormalized-fields-panel" titleKey="title.step.fields" 
-					open="true">
-				<jsp:attribute name="body"> 
-						<div class="display-table">
-							<comp:denormalized-field-values-list denormalizedFieldValues="${ denormalizedFieldValues }" />
-						</div>
-					</jsp:attribute>
-				</comp:toggle-panel></span>
-				</c:if>
+        <c:if test="${ (not empty customFieldValues) or (not empty denormalizedFieldValues) }">
+          <comp:toggle-panel id="custom-fields-panel" titleKey="title.step.fields" open="true">
+            <jsp:attribute name="body"> 
+              <div id="dfv-information-table" class="display-table"></div>
+              <div id="cuf-information-table" class="display-table"></div>
+            </jsp:attribute>
+          </comp:toggle-panel>
+        </c:if>
 				<comp:toggle-panel id="execution-action-panel"
 					titleKey="execute.panel.action.title" 
 					open="true">

@@ -27,9 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -39,6 +37,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 
+import org.hibernate.annotations.Where;
 import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.project.GenericLibrary;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -63,10 +62,10 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 	@OneToOne(mappedBy = "requirementLibrary")
 	private GenericProject project;	
 	
-	@ElementCollection
-	@CollectionTable(name = "REQUIREMENT_LIBRARY_PLUGINS", joinColumns = @JoinColumn(name = "LIBRARY_ID"))
-	@Column(name = "PLUGIN_ID")
-	private Set<String> enabledPlugins = new HashSet<String>(5);
+	@OneToMany(cascade = { CascadeType.ALL}, orphanRemoval=true)
+	@JoinColumn(name="LIBRARY_ID")
+	@Where(clause="LIBRARY_TYPE = 'R'")
+	private Set<RequirementLibraryPluginBinding> enabledPlugins = new HashSet<RequirementLibraryPluginBinding>(5);
 	
 	public void setId(Long id) {
 		this.id = id;
@@ -109,25 +108,49 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 	
 	@Override
 	public Set<String> getEnabledPlugins() {
-		return enabledPlugins;
+		Set<String> pluginIds = new HashSet<String>(enabledPlugins.size());
+		for (RequirementLibraryPluginBinding binding : enabledPlugins){
+			pluginIds.add(binding.getPluginId());
+		}
+		return pluginIds;
 	}
+
+	
+	@Override
+	public Set<RequirementLibraryPluginBinding> getAllPluginBindings() {
+		return enabledPlugins;
+	}	
 	
 	@Override
 	public void enablePlugin(String pluginId) {
-		enabledPlugins.add(pluginId);
+		if (! isPluginEnabled(pluginId)){
+			RequirementLibraryPluginBinding newBinding = new RequirementLibraryPluginBinding(pluginId);
+			enabledPlugins.add(newBinding);
+		}
 	}
 	
 	@Override
 	public void disablePlugin(String pluginId) {
-		enabledPlugins.remove(pluginId);
+		RequirementLibraryPluginBinding binding = getPluginBinding(pluginId);
+		if (binding != null){
+			enabledPlugins.remove(binding);
+		}
+	}
+	
+	@Override
+	public RequirementLibraryPluginBinding getPluginBinding(String pluginId) {
+		for (RequirementLibraryPluginBinding binding : enabledPlugins){
+			if (binding.getPluginId().equals(pluginId)){
+				return binding;
+			}
+		}
+		return null;
 	}
 	
 	@Override
 	public boolean isPluginEnabled(String pluginId) {
-		return (enabledPlugins.contains(pluginId));
+		return (getPluginBinding(pluginId) != null);
 	}
-
-	
 
 	/* ***************************** SelfClassAware section ******************************* */
 

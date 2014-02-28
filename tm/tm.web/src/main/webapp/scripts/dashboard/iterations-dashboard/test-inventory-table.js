@@ -109,18 +109,3 @@ define(["../basic-objects/table-view", "squash.translator"], function(TableView,
 	});
 	
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

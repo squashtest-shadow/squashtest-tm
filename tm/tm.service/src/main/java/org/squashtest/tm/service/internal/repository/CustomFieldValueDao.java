@@ -30,6 +30,7 @@ import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.RenderingLocation;
 
 @DynamicDao(entity = CustomFieldValue.class, hasCustomImplementation = false)
 public interface CustomFieldValueDao {
@@ -220,5 +221,5 @@ public interface CustomFieldValueDao {
 	Long findBoundEntityId(@QueryParam("customFieldValueId") Long customFieldValueId);
 
 
-	
+	List<CustomFieldValue> findAllForEntityAndRenderingLocation(long entityId, BindableEntity entityType, RenderingLocation renderingLocation);
 }

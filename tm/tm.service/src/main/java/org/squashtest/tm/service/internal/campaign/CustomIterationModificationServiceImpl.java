@@ -108,6 +108,8 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 	@Inject private IterationStatisticsService statisticsService;
 	
+	@Inject private PrivateCustomFieldValueService customFieldValuesService;
+	
 	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToIterationStrategy")
 	private Provider<PasteStrategy<Iteration, TestSuite>> pasteToIterationStrategyProvider;
@@ -133,7 +135,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		} 
 		iterationDao.persistIterationAndTestPlan(iteration);
 		campaign.addIteration(iteration);
-		customFieldValueService.createAllCustomFieldValues(iteration);
+		customFieldValueService.createAllCustomFieldValues(iteration, iteration.getProject());
 		return campaign.getIterations().size() - 1;
 	}
 
@@ -209,7 +211,6 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	@PreAuthorize(PERMISSION_EXECUTE_ITEM + OR_HAS_ROLE_ADMIN)
 	public Execution addExecution(long testPlanItemId) {
 		IterationTestPlanItem item = testPlanDao.findTestPlanItem(testPlanItemId);
-
 		return addExecution(item);
 	}
 
@@ -291,7 +292,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	public void addTestSuite(Iteration iteration, TestSuite suite) {
 		suiteDao.persist(suite);
 		iteration.addTestSuite(suite);
-		customFieldValueService.createAllCustomFieldValues(suite);
+		customFieldValueService.createAllCustomFieldValues(suite, suite.getProject());
 	}
 
 	@Override
@@ -345,12 +346,21 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		// has no id yet. this is caused by weird mapping (https://hibernate.onjira.com/browse/HHH-5732)
 		executionDao.persist(execution);
 		item.addExecution(execution);
+		
+		createCustomFieldsForExecutionAndExecutionSteps(execution);
 		createDenormalizedFieldsForExecutionAndExecutionSteps(execution);
 		indexationService.reindexTestCase(item.getReferencedTestCase().getId());
 		
 		return execution;
 	}
 
+	private void createCustomFieldsForExecutionAndExecutionSteps(Execution execution){
+		customFieldValuesService.createAllCustomFieldValues(execution, execution.getProject());
+		for (ExecutionStep step : execution.getSteps()) {
+			customFieldValuesService.createAllCustomFieldValues(step, execution.getProject());
+		}
+	}
+	
 	private void createDenormalizedFieldsForExecutionAndExecutionSteps(Execution execution) {
 		LOGGER.debug("Create denormalized fields for Execution {}", execution.getId());
 		TestCase sourceTC = execution.getReferencedTestCase();

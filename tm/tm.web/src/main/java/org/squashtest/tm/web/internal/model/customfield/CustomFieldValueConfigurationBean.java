@@ -27,6 +27,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,8 @@ import org.squashtest.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedSingleSelectField;
 
 public class CustomFieldValueConfigurationBean {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomFieldValueConfigurationBean.class);
@@ -48,6 +51,34 @@ public class CustomFieldValueConfigurationBean {
 	public CustomFieldValueConfigurationBean(List<ConfigurationBean> configuration) {
 		super();
 		this.configurationBeans = configuration;
+	}
+
+	public CustomFieldValueConfigurationBean(Collection<DenormalizedFieldValue> values, boolean denormalized) {
+	
+		for (DenormalizedFieldValue value : values) {
+
+			InputType iType = value.getInputType();
+
+			ConfigurationBean newConf;
+
+			switch (iType) {
+			case DROPDOWN_LIST:
+				newConf = new SingleSelectItem(value);
+				break;
+			case CHECKBOX:
+				newConf = new CheckboxItem(value);
+				break;
+			case DATE_PICKER:
+				newConf = new DatePickerItem(value);
+				break;
+			default:
+				newConf = new PlainTextItem(value);
+				break;
+
+			}
+
+			configurationBeans.add(newConf);
+		}
 	}
 
 	public CustomFieldValueConfigurationBean(Collection<CustomFieldValue> values) {
@@ -109,6 +140,13 @@ public class CustomFieldValueConfigurationBean {
 			super();
 		}
 
+		public DefaultItem(DenormalizedFieldValue value) {
+			this.id = value.getId();
+			this.value = value.getValue();
+			this.label = value.getLabel();
+			this.optional = true;
+		}
+		
 		public DefaultItem(CustomFieldValue value) {
 			this.id = value.getId();
 			this.value = value.getValue();
@@ -164,6 +202,10 @@ public class CustomFieldValueConfigurationBean {
 			super();
 		}
 
+		public PlainTextItem(DenormalizedFieldValue value) {
+			super(value);
+		}
+
 		public PlainTextItem(CustomFieldValue value) {
 			super(value);
 		}
@@ -181,6 +223,10 @@ public class CustomFieldValueConfigurationBean {
 
 		public CheckboxItem() {
 			super();
+		}
+
+		public CheckboxItem(DenormalizedFieldValue value) {
+			super(value);
 		}
 
 		public CheckboxItem(CustomFieldValue value) {
@@ -204,6 +250,11 @@ public class CustomFieldValueConfigurationBean {
 
 		public DatePickerItem() {
 			super();
+		}
+
+		public DatePickerItem(DenormalizedFieldValue value) {
+			super(value);
+
 		}
 
 		public DatePickerItem(CustomFieldValue value) {
@@ -253,6 +304,18 @@ public class CustomFieldValueConfigurationBean {
 			super();
 		}
 
+		public SingleSelectItem(DenormalizedFieldValue value) {
+			super(value);
+
+			DenormalizedSingleSelectField select = (DenormalizedSingleSelectField) value;
+
+			for (CustomFieldOption option : select.getOptions()) {
+				this.addOption(option);
+			}
+
+			this.setSelected(value.getValue());
+		}
+		
 		public SingleSelectItem(CustomFieldValue value) {
 			super(value);
 

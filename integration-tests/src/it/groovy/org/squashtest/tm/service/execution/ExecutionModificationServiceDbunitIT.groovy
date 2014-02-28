@@ -59,11 +59,12 @@ class ExecutionModificationServiceDbunitIT extends DbunitServiceSpecification {
 		def exec1 = listExec.get(0)
 		def exec2 = listExec.get(1)
 		def exec3 = listExec.get(2)
+		
 		//Get one execution step for each execution
 		def exec1Step1 = exec1.getSteps().get(0)
 		def exec2Step1 = exec2.getSteps().get(0)
 		def exec3Step1 = exec3.getSteps().get(0)
-
+		
 		when:
 		//you change the status of a step in the first execution, the item test plan is not updated
 		//the getLastUpdatedBy and on are null

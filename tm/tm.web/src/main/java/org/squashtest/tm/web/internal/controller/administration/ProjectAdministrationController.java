@@ -158,6 +158,7 @@ public class ProjectAdministrationController {
 
 	}
 
+
 	private Collection<WorkspaceWizardModel> toWizardModel(Collection<WorkspaceWizard> wizards) {
 		Locale locale = LocaleContextHolder.getLocale();
 		List<WorkspaceWizardModel> output = new ArrayList<WorkspaceWizardModel>(wizards.size());

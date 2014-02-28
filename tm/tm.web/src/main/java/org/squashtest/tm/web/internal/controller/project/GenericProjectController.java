@@ -105,7 +105,6 @@ public class GenericProjectController {
 	@Inject
 	private WorkspaceWizardManager wizardManager;
 
-	
 	private static final Logger LOGGER = LoggerFactory.getLogger(GenericProjectController.class);
 
 	private static final String PROJECT_ID = "projectId";
@@ -372,8 +371,6 @@ public class GenericProjectController {
 	@ResponseBody
 	public void enableWizard(@PathVariable long projectId, @PathVariable String wizardId) {
 		WorkspaceWizard wizard = wizardManager.findById(wizardId);
-
-		wizard.validate(new EntityReference(EntityType.PROJECT, projectId));
 		projectManager.enableWizardForWorkspace(projectId, wizard.getDisplayWorkspace(), wizardId);
 
 	}
@@ -384,6 +381,27 @@ public class GenericProjectController {
 		WorkspaceWizard wizard = wizardManager.findById(wizardId);
 		projectManager.disableWizardForWorkspace(projectId, wizard.getDisplayWorkspace(), wizardId);
 	}
+
+	
+	@RequestMapping(value = PROJECT_ID_URL + "/wizards/{wizardId}/configuration", method = RequestMethod.GET, produces="application/json")
+	@ResponseBody 
+	public Map<String, String> getEnabledWizardProperties(@PathVariable("projectId") long projectId, @PathVariable("wizardId") String wizardId){
+		WorkspaceWizard wizard = wizardManager.findById(wizardId);
+		Map<String, String> conf = wizard.getProperties();
+		Map<String, String> configuration = projectManager.getWizardConfiguration(projectId, wizard.getDisplayWorkspace(), wizardId);
+		conf.putAll(configuration);
+		return conf;
+	}
+	
+	@RequestMapping(value = PROJECT_ID_URL +  "/wizards/{wizardId}/configuration", method = RequestMethod.POST, consumes="application/json")
+	@ResponseBody
+	public void setEnabledWizardProperties(@PathVariable("projectId") long projectId, @PathVariable("wizardId") String wizardId, 
+			@RequestBody Map<String, String> configuration){
+		WorkspaceWizard wizard = wizardManager.findById(wizardId);
+		wizard.validate(new EntityReference(EntityType.PROJECT, projectId), configuration);
+		projectManager.setWizardConfiguration(projectId, wizard.getDisplayWorkspace(), wizardId, configuration);
+	}
+	
 
 	// ********************** other stuffs *****************************
 

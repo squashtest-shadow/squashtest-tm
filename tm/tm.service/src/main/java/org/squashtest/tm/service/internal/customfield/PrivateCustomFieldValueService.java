@@ -27,6 +27,7 @@ import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
 
 /**
@@ -64,7 +65,7 @@ public interface PrivateCustomFieldValueService extends CustomFieldValueManagerS
 	 * 
 	 * @param entity
 	 */
-	void createAllCustomFieldValues(BoundEntity entity);
+	void createAllCustomFieldValues(BoundEntity entity, Project project);
 
 	/**
 	 * will delete all the custom field vales for one entity

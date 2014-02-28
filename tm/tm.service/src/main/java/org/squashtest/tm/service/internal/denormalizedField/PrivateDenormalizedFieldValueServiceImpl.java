@@ -34,23 +34,27 @@ import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedSingleSelectField;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao;
 import org.squashtest.tm.service.internal.repository.DenormalizedFieldValueDao;
+import org.squashtest.tm.service.internal.repository.DenormalizedFieldValueDeletionDao;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 /**
  * 
  * @author mpagnon
  *
  */
-@Service("squashtest.tm.service.DenormalizedFieldValueFinder")
+@Service("squashtest.tm.service.DenormalizedFieldValueManager")
 public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormalizedFieldValueService {
 	@Inject
 	private CustomFieldValueDao customFieldValueDao;
@@ -58,21 +62,36 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 	private CustomFieldBindingDao customFieldBindingDao;
 	@Inject
 	private DenormalizedFieldValueDao denormalizedFieldValueDao;
+	@Inject
+	private DenormalizedFieldValueDeletionDao denormalizedFieldValueDeletionDao;
+	@Inject
+	private PermissionEvaluationService permissionService;
+
+
+	public void setPermissionService(PermissionEvaluationService permissionService) {
+		this.permissionService = permissionService;
+	}
 	
 	@Override
 	public void createAllDenormalizedFieldValues(BoundEntity source, DenormalizedFieldHolder destination) {
 		List<CustomFieldValue> customFieldValues = customFieldValueDao.findAllCustomValues(source.getBoundEntityId(), source.getBoundEntityType());
 		for (CustomFieldValue customFieldValue : customFieldValues) {
-			DenormalizedFieldValue dfv = new DenormalizedFieldValue(customFieldValue, destination.getDenormalizedFieldHolderId(), destination.getDenormalizedFieldHolderType());
-			denormalizedFieldValueDao.persist(dfv);
-			
+			if(customFieldValue.getCustomField().getInputType().equals(InputType.DROPDOWN_LIST)){
+				DenormalizedSingleSelectField dfv = new DenormalizedSingleSelectField(customFieldValue, destination.getDenormalizedFieldHolderId(), destination.getDenormalizedFieldHolderType());
+				denormalizedFieldValueDao.persist(dfv);
+			} else {
+				DenormalizedFieldValue dfv = new DenormalizedFieldValue(customFieldValue, destination.getDenormalizedFieldHolderId(), destination.getDenormalizedFieldHolderType());
+				denormalizedFieldValueDao.persist(dfv);
+			}
 		}
 	}
 
 	@Override
 	public void deleteAllDenormalizedFieldValues(DenormalizedFieldHolder entity) {
-		denormalizedFieldValueDao.deleteAllForEntity(entity.getDenormalizedFieldHolderId(), entity.getDenormalizedFieldHolderType());
-
+		List<DenormalizedFieldValue> dfvs = denormalizedFieldValueDao.findDFVForEntity(entity.getDenormalizedFieldHolderId(), entity.getDenormalizedFieldHolderType());
+		for(DenormalizedFieldValue dfv : dfvs){
+			denormalizedFieldValueDeletionDao.removeDenormalizedFieldValue(dfv);
+		}
 	}
 
 	@Override
@@ -88,14 +107,27 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 				value = projectCufValue.getValue();
 			}
 			lastBindingPosition = binding.getPosition();
-			DenormalizedFieldValue dfv = new DenormalizedFieldValue(value, binding, destinationStep.getDenormalizedFieldHolderId(), destinationStep.getDenormalizedFieldHolderType());
-			denormalizedFieldValueDao.persist(dfv);
+			
+			if(binding.getCustomField().getInputType().equals(InputType.DROPDOWN_LIST)){
+				DenormalizedSingleSelectField dfv = new DenormalizedSingleSelectField(value, binding, destinationStep.getDenormalizedFieldHolderId(), destinationStep.getDenormalizedFieldHolderType());
+				denormalizedFieldValueDao.persist(dfv);
+			} else {
+				DenormalizedFieldValue dfv = new DenormalizedFieldValue(value, binding, destinationStep.getDenormalizedFieldHolderId(), destinationStep.getDenormalizedFieldHolderType());
+				denormalizedFieldValueDao.persist(dfv);
+			}
 		}
 		//add remaining fields
 		int newBindingPosition = lastBindingPosition +1;
 		for(CustomFieldValue remainingCufValue : sourceStepCustomFieldValues){
-			DenormalizedFieldValue dfv = new DenormalizedFieldValue(remainingCufValue, newBindingPosition,  destinationStep.getDenormalizedFieldHolderId(), destinationStep.getDenormalizedFieldHolderType());
-			denormalizedFieldValueDao.persist(dfv);
+			
+			if(remainingCufValue.getCustomField().getInputType().equals(InputType.DROPDOWN_LIST)){
+				DenormalizedSingleSelectField dfv = new DenormalizedSingleSelectField(remainingCufValue, newBindingPosition,  destinationStep.getDenormalizedFieldHolderId(), destinationStep.getDenormalizedFieldHolderType());
+				denormalizedFieldValueDao.persist(dfv);
+			} else {
+				DenormalizedFieldValue dfv = new DenormalizedFieldValue(remainingCufValue, newBindingPosition,  destinationStep.getDenormalizedFieldHolderId(), destinationStep.getDenormalizedFieldHolderType());
+				denormalizedFieldValueDao.persist(dfv);
+			}
+			
 			newBindingPosition++;
 		}
 		
@@ -149,5 +181,18 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 				return denormalizedFieldValueDao.findDFVForEntitiesAndLocations(type, entityIds, nullOrLocations);
 			}
 		}
+	}
+
+	@Override
+	public List<DenormalizedFieldValue> findAllForEntity(Long denormalizedFieldHolderId, DenormalizedFieldHolderType denormalizedFieldHolderType) {
+		return denormalizedFieldValueDao.findDFVForEntity(denormalizedFieldHolderId, denormalizedFieldHolderType);
+	}
+
+	@Override
+	public void changeValue(long denormalizedFieldValueId, String newValue) {
+		
+		DenormalizedFieldValue changedValue = denormalizedFieldValueDao.findById(denormalizedFieldValueId);
+
+		changedValue.setValue(newValue);
 	}
 }

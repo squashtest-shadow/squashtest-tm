@@ -22,12 +22,26 @@ package org.squashtest.tm.domain.library;
 
 import java.util.Set;
 
-public interface PluginReferencer {
+import org.squashtest.tm.domain.project.LibraryPluginBinding;
+
+public interface PluginReferencer<BIND extends LibraryPluginBinding> {
 	
 	/**
 	 * @return the set of plugin ids that are enabled for this instance.
 	 */
 	Set<String> getEnabledPlugins();
+	
+	
+	/**
+	 * @param pluginId
+	 * @return the binding for this plugin or null if not found
+	 */
+	BIND getPluginBinding(String pluginId);
+	
+	/**
+	 * @return the binding of all the plugin bindings
+	 */
+	Set<BIND> getAllPluginBindings();
 	
 	/**
 	 * tells this instance that the plugin referenced by pluginId is now enabled 

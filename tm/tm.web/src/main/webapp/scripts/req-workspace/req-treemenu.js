@@ -140,10 +140,31 @@ define(['jquery', './utils', './permissions-rules',
 	}
 	
 	
+	
+	function initExportPlugins(){
+		var plugins = $("#tree_element_menu .export-plugin");
+		var modules = plugins.map(function(idx, elt){
+			var modulename = $(elt).data('module');
+			return require.toUrl(modulename);
+		}).get();
+		var items = plugins.get();
+		
+		require(modules, function(){
+			var i, len = modules.length;
+			for (i=0;i<len;i++){
+				var module = arguments[i],
+					item = items[i];
+				module.init(item);
+			}
+		});
+	}
+	
+	
 	function init(){
 		createWidgets();
 		bindTreeEvents();
 		createWizardMenu();
+		initExportPlugins();
 		
 		$("#tree_element_menu").removeClass("unstyled-pane");
 	}

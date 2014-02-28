@@ -47,6 +47,8 @@ public interface DenormalizedFieldValueDao {
 	 */
 	void persist(DenormalizedFieldValue newValue);
 
+	DenormalizedFieldValue findById(long denormalizedFieldHolderId);
+	
 	/**
 	 * Delete all the denormalized field values related to a DenormalizedFieldHolder, identified by its id and
 	 * DenormalizedFieldHolderType
@@ -90,5 +92,6 @@ public interface DenormalizedFieldValueDao {
 								@QueryParam("entityType") DenormalizedFieldHolderType denormalizedFieldHolderType,
 								@QueryParam("entityIds") Collection<Long> entities, 
 								@QueryParam("locations") Collection<RenderingLocation> locations);
+
 
 }

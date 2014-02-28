@@ -36,6 +36,8 @@ import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedSingleSelectField;
 
 @Component
 public class CustomFieldJsonConverter {
@@ -70,7 +72,7 @@ public class CustomFieldJsonConverter {
 		return bindingModel;
 
 	}
-
+	
 	public BindableEntityModel toJson(BindableEntity entity) {
 
 		BindableEntityModel model = new BindableEntityModel();
@@ -104,7 +106,47 @@ public class CustomFieldJsonConverter {
 		return model;
 
 	}
+	
 
+	public CustomFieldModel toCustomFieldJsonModel(DenormalizedFieldValue field) {
+
+		CustomFieldModel model;
+
+		switch (field.getInputType()) {
+		
+		case DATE_PICKER:
+			model = createDatePickerFieldModel(field);
+			break;
+		
+		case DROPDOWN_LIST:
+			model = createSingleSelectFieldModel((DenormalizedSingleSelectField) field);
+			break;
+
+		default:
+			model = createDefaultCustomFieldModel(field);
+			break;
+		}
+
+		return model;
+
+	}
+	
+
+	private CustomFieldModel createSingleSelectFieldModel(DenormalizedSingleSelectField field){
+		
+		SingleSelectFieldModel model = new SingleSelectFieldModel();
+
+		populateCustomFieldModel(model, field);
+
+		for (CustomFieldOption option : field.getOptions()) {
+			CustomFieldOptionModel newOption = new CustomFieldOptionModel();
+			newOption.setLabel(option.getLabel());
+			model.addOption(newOption);
+		}
+
+		return model;
+	}
+	
 	public InputTypeModel toJson(InputType type) {
 
 		InputTypeModel model = new InputTypeModel();
@@ -115,6 +157,78 @@ public class CustomFieldJsonConverter {
 		return model;
 	}
 
+	private CustomFieldModel populateCustomFieldModel(CustomFieldModel customFieldModel, DenormalizedFieldValue value) {
+	
+		InputTypeModel inputTypeModel = new InputTypeModel();
+		inputTypeModel.setEnumName(value.getInputType().name());
+		inputTypeModel.setFriendlyName(value.getInputType().name());
+		
+		customFieldModel.setCode(value.getCode());
+		customFieldModel.setId(value.getId());
+		customFieldModel.setInputType(inputTypeModel);
+		customFieldModel.setLabel(value.getLabel());
+		customFieldModel.setOptional(true);
+		customFieldModel.setDenormalized(true);
+		
+		return customFieldModel;
+	}
+	
+	private CustomFieldModel createDefaultCustomFieldModel(DenormalizedFieldValue value) {
+
+		CustomFieldModel customFieldModel = new CustomFieldModel();
+		populateCustomFieldModel(customFieldModel, value);
+		
+		return customFieldModel;
+	}
+	
+	private CustomFieldModel createDatePickerFieldModel(DenormalizedFieldValue value) {
+		
+		Locale locale = LocaleContextHolder.getLocale();
+		DatePickerFieldModel model = new DatePickerFieldModel();
+		populateCustomFieldModel(model, value);
+		
+		model.setFormat(getMessage("squashtm.dateformatShort.datepicker"));
+		model.setLocale(locale.toString());
+		
+		return model;
+	}
+	
+	public CustomFieldValueModel toCustomFieldValueJsonModel(DenormalizedFieldValue value) {
+		
+		CustomFieldValueModel model = new CustomFieldValueModel();
+	
+		CustomFieldBindingModel bindingModel = new CustomFieldBindingModel();
+		bindingModel.setPosition(value.getPosition());
+		bindingModel.setRenderingLocations(toJson(value.getRenderingLocations()));
+		
+		InputTypeModel inputTypeModel = new InputTypeModel();
+		inputTypeModel.setEnumName(value.getInputType().name());
+		inputTypeModel.setFriendlyName(value.getInputType().name());
+		
+		CustomFieldModel customFieldModel = new CustomFieldModel();
+		customFieldModel.setCode(value.getCode());
+		customFieldModel.setId(value.getId());
+		customFieldModel.setInputType(inputTypeModel);
+		customFieldModel.setLabel(value.getLabel());
+		customFieldModel.setOptional(true);
+		customFieldModel.setDenormalized(true);
+		bindingModel.setCustomField(customFieldModel);
+		
+		BindableEntityModel bindableEntityModel = new BindableEntityModel();
+		bindableEntityModel.setEnumName(value.getDenormalizedFieldHolderType().name());
+		bindableEntityModel.setFriendlyName(value.getDenormalizedFieldHolderType().name());
+		bindingModel.setBoundEntity(bindableEntityModel);
+		
+
+		model.setId(value.getId());
+		model.setBoundEntityId(value.getDenormalizedFieldHolderId());
+		model.setBinding(bindingModel);
+		model.setValue(value.getValue());
+
+		return model;
+		
+	}
+	
 	public CustomFieldValueModel toJson(CustomFieldValue value) {
 
 		CustomFieldValueModel model = new CustomFieldValueModel();
