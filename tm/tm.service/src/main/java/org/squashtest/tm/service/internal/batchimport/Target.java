@@ -20,24 +20,21 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import org.squashtest.tm.api.plugin.EntityType;
 
-public class Target {
-	private EntityType type;
-	private String path;
+
+public abstract class Target {
 	
-	public Target(EntityType type, String path) {
-		super();
-		this.type = type;
-		this.path = path;
-	}
+	private long id;
+	
+	
+	public abstract EntityType getType();
 
-	public EntityType getType() {
-		return type;
+	public long getId() {
+		return id;
 	}
-
-	public String getPath() {
-		return path;
+	
+	public void setId(long id) {
+		this.id = id;
 	}
 	
 	

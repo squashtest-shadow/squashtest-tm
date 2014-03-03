@@ -20,37 +20,57 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import java.util.List;
+public class TestCaseTarget extends Target{
 
-public abstract class Instruction {
+	private String path;
+	private Integer order;
 	
-	private int line;
-	private ImportMode mode;
-	
-	
-	/**
-	 * Must "execute" I agree, but more importantly must validate.
-	 * 
-	 * @param facility
-	 * @return
-	 */
-	public abstract List<LogEntry> execute(Facility facility);
-
-	public int getLine() {
-		return line;
+	@Override
+	public EntityType getType() {
+		return EntityType.TEST_CASE;
 	}
 
-	public void setLine(int line) {
-		this.line = line;
+	public String getPath() {
+		return path;
 	}
 
-	public ImportMode getMode() {
-		return mode;
+	public void setPath(String path) {
+		this.path = path;
 	}
 
-	public void setMode(ImportMode mode) {
-		this.mode = mode;
-	}	
+	public Integer getOrder() {
+		return order;
+	}
+
+	public void setOrder(Integer order) {
+		this.order = order;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((path == null) ? 0 : path.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TestCaseTarget other = (TestCaseTarget) obj;
+		if (path == null) {
+			if (other.path != null)
+				return false;
+		} else if (!path.equals(other.path))
+			return false;
+		return true;
+	}
+	
 	
 	
 }

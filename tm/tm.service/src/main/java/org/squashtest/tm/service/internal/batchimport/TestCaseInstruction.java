@@ -21,36 +21,48 @@
 package org.squashtest.tm.service.internal.batchimport;
 
 import java.util.List;
+import java.util.Map;
 
-public abstract class Instruction {
-	
-	private int line;
-	private ImportMode mode;
-	
-	
-	/**
-	 * Must "execute" I agree, but more importantly must validate.
-	 * 
-	 * @param facility
-	 * @return
-	 */
-	public abstract List<LogEntry> execute(Facility facility);
+import org.squashtest.tm.domain.testcase.TestCase;
 
-	public int getLine() {
-		return line;
+public class TestCaseInstruction extends Instruction {
+
+
+	private TestCaseTarget target; // indicates the "coordinates" of the test case  
+	
+	private TestCase testCase;
+	private Map<String, String> customFields;
+	
+	@Override
+	public List<LogEntry> execute(Facility facility) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-	public void setLine(int line) {
-		this.line = line;
+	public TestCaseTarget getTarget() {
+		return target;
 	}
 
-	public ImportMode getMode() {
-		return mode;
+	public void setTarget(TestCaseTarget target) {
+		this.target = target;
 	}
 
-	public void setMode(ImportMode mode) {
-		this.mode = mode;
-	}	
+	public TestCase getTestCase() {
+		return testCase;
+	}
+
+	public void setTestCase(TestCase testCase) {
+		this.testCase = testCase;
+	}
+
+	public Map<String, String> getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(Map<String, String> customFields) {
+		this.customFields = customFields;
+	}
 	
 	
+
 }

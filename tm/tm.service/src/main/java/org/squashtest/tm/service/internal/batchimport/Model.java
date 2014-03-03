@@ -20,37 +20,31 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-public abstract class Instruction {
+import javax.inject.Inject;
+
+import org.hibernate.SessionFactory;
+import org.springframework.stereotype.Repository;
+import org.squashtest.tm.domain.testcase.TestCase;
+
+
+@Repository
+public class Model {
+
+	@Inject
+	private SessionFactory sessionFactory;
 	
-	private int line;
-	private ImportMode mode;
+	private Map<TestCaseTarget, Long> testCasesByTarget = new HashMap<TestCaseTarget, Long>();
 	
+	public Long getTestCaseId(TestCaseTarget target){
+		return null;
+	}
 	
-	/**
-	 * Must "execute" I agree, but more importantly must validate.
-	 * 
-	 * @param facility
-	 * @return
-	 */
-	public abstract List<LogEntry> execute(Facility facility);
-
-	public int getLine() {
-		return line;
+	public TestCase getTestCase(TestCaseTarget target){
+		return null;
 	}
-
-	public void setLine(int line) {
-		this.line = line;
-	}
-
-	public ImportMode getMode() {
-		return mode;
-	}
-
-	public void setMode(ImportMode mode) {
-		this.mode = mode;
-	}	
 	
 	
 }

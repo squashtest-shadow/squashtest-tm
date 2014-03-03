@@ -22,35 +22,33 @@ package org.squashtest.tm.service.internal.batchimport;
 
 import java.util.List;
 
-public abstract class Instruction {
-	
-	private int line;
-	private ImportMode mode;
-	
-	
-	/**
-	 * Must "execute" I agree, but more importantly must validate.
-	 * 
-	 * @param facility
-	 * @return
-	 */
-	public abstract List<LogEntry> execute(Facility facility);
+import org.squashtest.tm.domain.testcase.DatasetParamValue;
 
-	public int getLine() {
-		return line;
+public class ParameterInstruction extends Instruction {
+
+	private ParameterTarget target;
+	private DatasetParamValue paramValue;
+	
+	@Override
+	public List<LogEntry> execute(Facility facility) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-	public void setLine(int line) {
-		this.line = line;
+	public ParameterTarget getTarget() {
+		return target;
 	}
 
-	public ImportMode getMode() {
-		return mode;
+	public void setTarget(ParameterTarget target) {
+		this.target = target;
 	}
 
-	public void setMode(ImportMode mode) {
-		this.mode = mode;
-	}	
-	
-	
+	public DatasetParamValue getParamValue() {
+		return paramValue;
+	}
+
+	public void setParamValue(DatasetParamValue paramValue) {
+		this.paramValue = paramValue;
+	}
+
 }

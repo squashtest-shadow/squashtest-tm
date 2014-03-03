@@ -20,37 +20,22 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import java.util.List;
+import java.util.Map;
 
-public abstract class Instruction {
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestStep;
+
+public interface Facility {
+
+	void createTestCase(TestCase testCase, Map<String, String> cufValues);
+	void updateTestCase(long testCaseId, TestCase testCaseData, Map<String, String> cufValues);
+	void deleteTestCase(long testCaseId);
+	void deleteTestCase(TestCase testCase);
 	
-	private int line;
-	private ImportMode mode;
 	
-	
-	/**
-	 * Must "execute" I agree, but more importantly must validate.
-	 * 
-	 * @param facility
-	 * @return
-	 */
-	public abstract List<LogEntry> execute(Facility facility);
-
-	public int getLine() {
-		return line;
-	}
-
-	public void setLine(int line) {
-		this.line = line;
-	}
-
-	public ImportMode getMode() {
-		return mode;
-	}
-
-	public void setMode(ImportMode mode) {
-		this.mode = mode;
-	}	
-	
+	void addTestStep(long testCaseId, TestStep testStep, Map<String, String> cufValues);
+	void updateTestStep(long testStepId, TestStep testStepData);
+	void deleteTestStep(long testStepId);
+	void deleteTestStep(TestStep testStep);
 	
 }

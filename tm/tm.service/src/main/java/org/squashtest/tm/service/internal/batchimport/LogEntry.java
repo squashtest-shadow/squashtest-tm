@@ -20,10 +20,68 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-public class LogEntry {
+public class LogEntry implements Comparable<LogEntry>{
 
 	private int line;
-	private ImportMode mode;
 	private Target target;
+	private ImportMode mode;
+	private ImportStatus status;
+	private String i18nError;
+	private String i18nImpact;
 	
+	
+	@Override
+	public int compareTo(LogEntry o) {
+		return line - o.line;
+	}
+
+	public int getLine() {
+		return line;
+	}
+	
+	public void setLine(int line) {
+		this.line = line;
+	}
+	
+	public ImportMode getMode() {
+		return mode;
+	}
+	
+	public void setMode(ImportMode mode) {
+		this.mode = mode;
+	}
+	
+	public Target getTarget() {
+		return target;
+	}
+	
+	public void setTarget(Target target) {
+		this.target = target;
+	}
+	
+	public ImportStatus getStatus() {
+		return status;
+	}
+	
+	public void setStatus(ImportStatus status) {
+		this.status = status;
+	}
+	
+	public String getI18nError() {
+		return i18nError;
+	}
+	
+	public void setI18nError(String i18nError) {
+		this.i18nError = i18nError;
+	}
+	
+	public String getI18nImpact() {
+		return i18nImpact;
+	}
+	
+	public void setI18nImpact(String i18nImpact) {
+		this.i18nImpact = i18nImpact;
+	}
+	
+
 }

@@ -20,37 +20,32 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import java.util.List;
+import java.io.File;
 
-public abstract class Instruction {
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Component;
+
+@Component
+public class Sequencer {
+
+	private ImportLog log = new ImportLog();
 	
-	private int line;
-	private ImportMode mode;
+	@Inject
+	private SimulationFacility simulator;
+	
+	@Inject
+	private FacilityImpl facilityImpl;
 	
 	
-	/**
-	 * Must "execute" I agree, but more importantly must validate.
-	 * 
-	 * @param facility
-	 * @return
-	 */
-	public abstract List<LogEntry> execute(Facility facility);
-
-	public int getLine() {
-		return line;
+	public ImportLog simulateImport(File excelFile){
+		return null;
 	}
-
-	public void setLine(int line) {
-		this.line = line;
+	
+	public ImportLog performImport(File excelFile){
+		return null;
 	}
-
-	public ImportMode getMode() {
-		return mode;
-	}
-
-	public void setMode(ImportMode mode) {
-		this.mode = mode;
-	}	
+	
 	
 	
 }
