@@ -56,6 +56,7 @@ import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IterationModificationService;
@@ -150,6 +151,9 @@ public class IterationModificationController {
 		model.addAttribute("weights", weights);
 		model.addAttribute("modes", getModes());
 		model.addAttribute("statuses", getStatuses(iteration.getProject().getId()));
+		model.addAttribute("allowsSettled", iteration.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
+		model.addAttribute("allowsUntestable", iteration.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
+		
 	}
 
 	private Map<String, String> getStatuses(long projectId){

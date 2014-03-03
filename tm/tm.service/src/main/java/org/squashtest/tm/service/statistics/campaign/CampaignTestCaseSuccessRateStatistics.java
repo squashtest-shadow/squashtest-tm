@@ -80,19 +80,23 @@ public class CampaignTestCaseSuccessRateStatistics {
 
 	public int getNbVeryHighSuccess() {
 		return getValue(testsOfVeryHighImportance, ExecutionStatus.SUCCESS)+
-				getValue(testsOfVeryHighImportance, ExecutionStatus.WARNING);
+				getValue(testsOfVeryHighImportance, ExecutionStatus.WARNING)+
+				getValue(testsOfVeryHighImportance, ExecutionStatus.SETTLED);
 	}
 	public int getNbHighSuccess() {
 		return getValue(testsOfHighImportance, ExecutionStatus.SUCCESS)+
-				getValue(testsOfHighImportance, ExecutionStatus.WARNING);
+				getValue(testsOfHighImportance, ExecutionStatus.WARNING)+
+				getValue(testsOfHighImportance, ExecutionStatus.SETTLED);
 	}
 	public int getNbMediumSuccess() {
 		return getValue(testsOfMediumImportance, ExecutionStatus.SUCCESS)+
-				getValue(testsOfMediumImportance, ExecutionStatus.WARNING);
+				getValue(testsOfMediumImportance, ExecutionStatus.WARNING)+
+			    getValue(testsOfMediumImportance, ExecutionStatus.SETTLED);
 	}
 	public int getNbLowSuccess() {
 		return getValue(testsOfLowImportance, ExecutionStatus.SUCCESS)+
-				getValue(testsOfLowImportance, ExecutionStatus.WARNING);
+				getValue(testsOfLowImportance, ExecutionStatus.WARNING)+
+				getValue(testsOfLowImportance, ExecutionStatus.SETTLED);
 	}
 	public int getNbVeryHighFailure() {
 		return getValue(testsOfVeryHighImportance, ExecutionStatus.FAILURE)+

@@ -112,10 +112,12 @@
 		<parameter name="iteration_iCountStatusRunning" class="java.lang.Integer" isForPrompting="false"/>
 		<parameter name="iteration_iCountStatusBloqued" class="java.lang.Integer" isForPrompting="false"/>
 		<parameter name="iteration_iCountStatusFailure" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="iteration_iCountStatusSettled" class="java.lang.Integer" isForPrompting="false"/>
 		<parameter name="iteration_fPercentageStatusReady" class="java.lang.Float" isForPrompting="false"/>
 		<parameter name="iteration_fPercentageStatusSuccess" class="java.lang.Float" isForPrompting="false"/>
 		<parameter name="iteration_fPercentageStatusBloqued" class="java.lang.Float" isForPrompting="false"/>
 		<parameter name="iteration_fPercentageStatusRunning" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="iteration_fPercentageStatusSettled" class="java.lang.Float" isForPrompting="false"/>
 		<parameter name="iteration_fPercentageStatusUntestable" class="java.lang.Float" isForPrompting="false"/>
 		<parameter name="iteration_fPercentageStatusFailure" class="java.lang.Float" isForPrompting="false"/>
 		<parameter name="iteration_fPercentageProgress" class="java.lang.Float" isForPrompting="false"/>
@@ -147,11 +149,17 @@
 		<field name="fPercentageStatusUntestable" class="java.lang.Float">
 			<fieldDescription><![CDATA[fPercentageStatusUntestable]]></fieldDescription>
 		</field>
+		<field name="fPercentageStatusSettled" class="java.lang.Float">
+			<fieldDescription><![CDATA[fPercentageStatusSettled]]></fieldDescription>
+		</field>
 		<field name="fPercentageStatusFailure" class="java.lang.Float">
 			<fieldDescription><![CDATA[fPercentageStatusFailure]]></fieldDescription>
 		</field>
 		<field name="iCountStatusSuccess" class="java.lang.Integer">
 			<fieldDescription><![CDATA[iCountStatusSuccess]]></fieldDescription>
+		</field>
+		<field name="iCountStatusSettled" class="java.lang.Integer">
+			<fieldDescription><![CDATA[iCountStatusSettled]]></fieldDescription>
 		</field>
 		<field name="iCountStatusReady" class="java.lang.Integer">
 			<fieldDescription><![CDATA[iCountStatusReady]]></fieldDescription>
@@ -217,6 +225,9 @@
 	<field name="iCountStatusFailure" class="java.lang.Integer">
 		<fieldDescription><![CDATA[iCountStatusFailure]]></fieldDescription>
 	</field>
+	<field name="iCountStatusSettled" class="java.lang.Integer">
+		<fieldDescription><![CDATA[iCountStatusSettled]]></fieldDescription>
+	</field>
 	<field name="fPercentageStatusReady" class="java.lang.Float">
 		<fieldDescription><![CDATA[fPercentageStatusReady]]></fieldDescription>
 	</field>
@@ -228,6 +239,9 @@
 	</field>
 	<field name="fPercentageStatusRunning" class="java.lang.Float">
 		<fieldDescription><![CDATA[fPercentageStatusRunning]]></fieldDescription>
+	</field>
+	<field name="fPercentageStatusSettled" class="java.lang.Float">
+		<fieldDescription><![CDATA[fPercentageStatusSettled]]></fieldDescription>
 	</field>
 	<field name="fPercentageStatusUntestable" class="java.lang.Float">
 		<fieldDescription><![CDATA[fPercentageStatusUntestable]]></fieldDescription>
@@ -283,6 +297,9 @@
 						<datasetParameter name="iteration_iCountStatusFailure">
 							<datasetParameterExpression><![CDATA[$F{iCountStatusFailure}]]></datasetParameterExpression>
 						</datasetParameter>
+						<datasetParameter name="iteration_iCountStatusSettled">
+							<datasetParameterExpression><![CDATA[$F{iCountStatusSettled}]]></datasetParameterExpression>
+						</datasetParameter>
 						<datasetParameter name="iteration_fPercentageStatusReady">
 							<datasetParameterExpression><![CDATA[$F{fPercentageStatusReady}]]></datasetParameterExpression>
 						</datasetParameter>
@@ -300,6 +317,9 @@
 						</datasetParameter>
 						<datasetParameter name="iteration_fPercentageStatusFailure">
 							<datasetParameterExpression><![CDATA[$F{fPercentageStatusFailure}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iteration_fPercentageStatusSettled">
+							<datasetParameterExpression><![CDATA[$F{fPercentageStatusSettled}]]></datasetParameterExpression>
 						</datasetParameter>
 						<datasetParameter name="iteration_fPercentageProgress">
 							<datasetParameterExpression><![CDATA[$F{fPercentageProgress}]]></datasetParameterExpression>
@@ -517,6 +537,29 @@
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
 					</jr:column>
+					<jr:column width="41" uuid="d8b758c0-f7c7-48ae-9233-35a4ab73e652">
+						<jr:columnHeader style="table_TD" height="20" rowSpan="1">
+							<textField isStretchWithOverflow="true">
+								<reportElement uuid="48937fc1-25a3-4d78-9cb1-bd90156a327b" stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="20" forecolor="#009900">
+									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{iteration_iCountStatusSettled}]]></textFieldExpression>
+							</textField>
+							<textField isStretchWithOverflow="true" pattern="#,##0 %">
+								<reportElement uuid="73e96de6-0760-4cd6-b7bd-8d2e6c10ae85" stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="20" forecolor="#999999">
+									<property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+								</reportElement>
+								<textElement textAlignment="Justified" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$P{iteration_fPercentageStatusSettled}]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
+					</jr:column>					
 					<jr:column width="50" uuid="e3a11fcb-bed6-45eb-82f8-5f3d4dbbdc40">
 						<jr:columnHeader style="table_TD" height="20" rowSpan="1">
 							<textField isStretchWithOverflow="true">
@@ -762,6 +805,37 @@
 									<font size="7" isBold="false"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{fPercentageStatusSuccess}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="41" uuid="eb25a90b-7ed6-42e6-9cab-f3ae62334571">
+						<jr:columnHeader style="table 1_TH" height="0" rowSpan="1">
+							<box>
+								<pen lineColor="#FFFFFF"/>
+								<topPen lineColor="#FFFFFF"/>
+								<leftPen lineColor="#FFFFFF"/>
+								<bottomPen lineColor="#FFFFFF"/>
+								<rightPen lineColor="#FFFFFF"/>
+							</box>
+						</jr:columnHeader>
+						<jr:detailCell style="table 1_TD" height="18" rowSpan="1">
+							<textField pattern="">
+								<reportElement uuid="8eafc89a-804e-4abd-9e92-03bd2cfff5ba" stretchType="RelativeToBandHeight" x="0" y="0" width="20" height="18" forecolor="#61BE61">
+									<property name="net.sf.jasperreports.print.keep.full.text" value=""/>
+								</reportElement>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9" isBold="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{iCountStatusSettled}]]></textFieldExpression>
+							</textField>
+							<textField pattern="#,##0 %">
+								<reportElement uuid="e123d68f-e86a-48ba-bc6e-1d61730c8456" stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="18" forecolor="#999999">
+									<property name="net.sf.jasperreports.print.keep.full.text" value=""/>
+								</reportElement>
+								<textElement textAlignment="Justified" verticalAlignment="Middle">
+									<font size="7" isBold="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{fPercentageStatusSettled}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>

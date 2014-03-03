@@ -41,6 +41,7 @@ squashtm.message.errorTitle = "<f:message key='popup.title.error'/>";
 
 var _langcache = {	
 	'error.generic.label' : "<f:message key ='error.generic.label'/>",
+	'execution.execution-status.SETTLED' : "<f:message key='execution.execution-status.SETTLED'/>",
 	'execution.execution-status.UNTESTABLE' : "<f:message key='execution.execution-status.UNTESTABLE'/>",
 	'execution.execution-status.BLOCKED' : "<f:message key='execution.execution-status.BLOCKED'/>",
 	'execution.execution-status.FAILURE' : "<f:message key='execution.execution-status.FAILURE'/>",

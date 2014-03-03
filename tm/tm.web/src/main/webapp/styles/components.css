@@ -208,7 +208,7 @@ table.datepicker-table td.datepicker-table-col {
 
 .ui-button .ui-icon.exec-status-settled,
 .exec-status-settled{
-	background-image: url("../images/Icon_LightGreen.png");  /** sprite-ref: sprites-icons; */
+	background-image: url("../images/Icon_GreenWhite.png");  /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
 
@@ -227,6 +227,10 @@ table.datepicker-table td.datepicker-table-col {
 
 .status-color-success{
 	background-color : #99CC00;
+}
+
+.status-color-settled{
+	background-color : #99FF99;
 }
 
 .status-color-failure{

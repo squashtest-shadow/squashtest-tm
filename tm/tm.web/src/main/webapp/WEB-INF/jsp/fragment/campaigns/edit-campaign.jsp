@@ -460,7 +460,7 @@
 	
 	<%------------------------------- Dashboard ---------------------------------------------------%>
 	<div id="campaign-dashboard">
-		<dashboard:campaign-dashboard-panel url="${campaignStatisticsUrl}" printUrl="${campaignStatisticsPrintUrl}"/>
+		<dashboard:campaign-dashboard-panel url="${campaignStatisticsUrl}" printUrl="${campaignStatisticsPrintUrl}" allowsSettled="${allowsSettled}" allowsUntestable="${allowsUntestable}" />
 	</div>
 
 </div>

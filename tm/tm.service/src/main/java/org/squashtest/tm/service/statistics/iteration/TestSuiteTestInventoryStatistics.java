@@ -73,7 +73,7 @@ public class TestSuiteTestInventoryStatistics {
 	}
 
 	public int getNbExecuted() {
-		return getNbSuccess() + getNbFailure() + getNbBlocked() + getNbUntestable();
+		return getNbSuccess() + getNbFailure() + getNbBlocked() + getNbUntestable() + getNbSettled();
 	}
 
 	public int getNbReady() {
@@ -88,6 +88,10 @@ public class TestSuiteTestInventoryStatistics {
 		return statusesNb.get(ExecutionStatus.SUCCESS);
 	}
 
+	public int getNbSettled() {
+		return statusesNb.get(ExecutionStatus.SETTLED);
+	}
+	
 	public int getNbFailure() {
 		return statusesNb.get(ExecutionStatus.FAILURE);
 	}
@@ -105,7 +109,7 @@ public class TestSuiteTestInventoryStatistics {
 	}
 
 	public float getPcSuccess() {
-		return Math.round(((float) getNbSuccess() / (float) getNbTotal()) * 10000) / (float) 100;
+		return Math.round(((float) (getNbSuccess() + getNbSettled()) / (float) getNbTotal()) * 10000) / (float) 100;
 	}
 
 	public float getPcFailure() {

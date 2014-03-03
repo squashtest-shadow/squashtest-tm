@@ -34,3 +34,4 @@ public final class RequestHeaders {
 	 */
 	public static final String CONTENT_JSON = "Accept=application/json, text/javascript";
 }
+

@@ -314,7 +314,7 @@
 
 	<%------------------------------- Dashboard ---------------------------------------------------%>
 	<div id="dashboard-iteration">
-		<dashboard:iteration-dashboard-panel url="${iterationDashboardStatisticsUrl}" printUrl="${iterationStatisticsPrintUrl}"/>
+		<dashboard:iteration-dashboard-panel url="${iterationDashboardStatisticsUrl}" printUrl="${iterationStatisticsPrintUrl}" allowsSettled="${allowsSettled}" allowsUntestable="${allowsUntestable}" />
 	</div>
 
 

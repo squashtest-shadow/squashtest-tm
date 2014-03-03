@@ -55,6 +55,7 @@ import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.CampaignModificationService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
@@ -142,6 +143,8 @@ public class CampaignModificationController {
 		model.addAttribute("assignableUsers", getAssignableUsers(campaignId));
 		model.addAttribute("weights", getWeights());
 		model.addAttribute("modes", getModes());
+		model.addAttribute("allowsSettled", campaign.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
+		model.addAttribute("allowsUntestable", campaign.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
 		
 		return model;
 	}

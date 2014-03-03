@@ -112,6 +112,7 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 		}
 
 		report.setUntestable(statusMap.get(ExecutionStatus.UNTESTABLE.name()));
+		report.setSettled(statusMap.get(ExecutionStatus.SETTLED.name()));
 		report.setBloqued(statusMap.get(ExecutionStatus.BLOCKED.name()));
 		report.setFailure(statusMap.get(ExecutionStatus.FAILURE.name()));
 		report.setSuccess(statusMap.get(ExecutionStatus.SUCCESS.name()));

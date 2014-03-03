@@ -28,6 +28,8 @@
 
 
 <%@ attribute name="url" required="true" description="url where to get the data" %>
+<%@ attribute name="allowsSettled" required="true" description="whether execution status settled is allowed" %>
+<%@ attribute name="allowsUntestable" required="true" description="whether execution status  untestable is allowed" %>
 <%@ attribute name="printUrl" required="false" description="url where to fetch an html version" %>
 <%@ attribute name="printmode" required="false" type="java.lang.Boolean" 
 			description="if set to true, renders in print mode. This means among other things that the toolbar will not be rendered." %>
@@ -115,7 +117,7 @@
 								</div>
 								<c:if test="${allowsSettled}">
 								<div>
-									<div class="dashboard-legend-sample-color" style="background-color:#969696"></div>
+									<div class="dashboard-legend-sample-color" style="background-color:#99FF99"></div>
 									<span><f:message key="execution.execution-status.SETTLED" /></span>
 								</div>
 								</c:if>
@@ -245,7 +247,7 @@
 								<th style="border:none;"></th>
 								<th class="status-color-untestable" colspan="3"><f:message key="label.Synthesis"/></th>
 								<th style="border:none;"></th>
-								<th class="status-color-untestable" colspan="13"><f:message key="label.ExecutionProgress"/> </th>
+								<th class="status-color-untestable" colspan="14"><f:message key="label.ExecutionProgress"/> </th>
 								<th style="border:none;"></th>
 								<th class="status-color-untestable" colspan="4"><f:message key="label.NeverExecuted"/></th>
 							</tr>
@@ -259,10 +261,13 @@
 								<th title="${ToExecuteLabel}" class="status-color-ready"><f:message key="shortLabel.Ready"/></th>
 								<th title="${RunningLabel}" class="status-color-running"><f:message key="shortLabel.Running"/></th>															    								
 								<th title="${SuccessLabel}" class="status-color-success"><f:message key="shortLabel.Success"/></th>
+								<c:if test="${allowsSettled}">
+									<th title="${SettledLabel}" class="status-color-settled"><f:message key="shortLabel.Settled"/></th>
+								</c:if>
 								<th title="${FailureLabel}" class="status-color-failure"><f:message key="shortLabel.Failure"/></th>
 								<th title="${BlockedLabel}" class="status-color-blocked"><f:message key="shortLabel.Blocked"/></th>								
 								<c:if test="${allowsUntestable}">
-								<th title="${NonExecutableLabel}" class="status-color-untestable"><f:message key="shortLabel.NonExecutable"/></th>
+									<th title="${NonExecutableLabel}" class="status-color-untestable"><f:message key="shortLabel.NonExecutable"/></th>
 								</c:if>
 								<th style="border:none;"></th>
 								<th title="${ProgressLabel}"><f:message key="shortLabel.ExecutionProgress"/></th>								
@@ -294,23 +299,26 @@
 								<td class="std-border light-border">{{this.[4]}}</td>
 								<td class="std-border light-border">{{this.[5]}}</td>
 								<td class="std-border light-border">{{this.[6]}}</td>
-								<td class="std-border light-border">{{this.[7]}}</td>
+								<c:if test="${allowsSettled}">
+									<td class="std-border light-border">{{this.[7]}}</td>
+								</c:if>
 								<td class="std-border light-border">{{this.[8]}}</td>
-								<c:if test="${allowsUntestable}">
 								<td class="std-border light-border">{{this.[9]}}</td>
+								<c:if test="${allowsUntestable}">
+									<td class="std-border light-border">{{this.[10]}}</td>
 								</c:if>
 								<td style="border:none;"></td>
-								<td class="std-border light-border">{{this.[10]}}%</td>								
-								<td class="std-border light-border">{{this.[11]}}%</td>
+								<td class="std-border light-border">{{this.[11]}}%</td>								
 								<td class="std-border light-border">{{this.[12]}}%</td>
-								<td class="std-border light-border"></td>
 								<td class="std-border light-border">{{this.[13]}}%</td>
-								<td class="std-border light-border">{{this.[14]}}</td>
+								<td class="std-border light-border"></td>
+								<td class="std-border light-border">{{this.[14]}}%</td>
+								<td class="std-border light-border">{{this.[15]}}</td>
 								<td style="border:none;"></td>
-								<td class="std-border light-border">{{this.[15]}}</td>								
-								<td class="std-border light-border">{{this.[16]}}</td>
+								<td class="std-border light-border">{{this.[16]}}</td>								
 								<td class="std-border light-border">{{this.[17]}}</td>
 								<td class="std-border light-border">{{this.[18]}}</td>
+								<td class="std-border light-border">{{this.[19]}}</td>
 							</tr>
 						</tbody>			
 					</table>		

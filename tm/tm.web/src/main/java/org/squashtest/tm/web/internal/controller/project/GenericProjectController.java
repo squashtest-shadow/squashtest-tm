@@ -38,6 +38,7 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -106,6 +107,7 @@ public class GenericProjectController {
 	@Inject
 	private WorkspaceWizardManager wizardManager;
 
+	private TaskExecutor taskExecutor;
 	private static final Logger LOGGER = LoggerFactory.getLogger(GenericProjectController.class);
 
 	private static final String PROJECT_ID = "projectId";
@@ -140,6 +142,10 @@ public class GenericProjectController {
 
 		return new ProjectDataTableModelHelper(locale, messageSource).buildDataModel(holder, params.getsEcho());
 
+	}
+
+	public void setTaskExecutor(TaskExecutor taskExecutor){
+		this.taskExecutor = taskExecutor;
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "isTemplate=false")
@@ -500,7 +506,7 @@ public class GenericProjectController {
 		ExecutionStatus source = ExecutionStatus.valueOf(sourceExecutionStatus);
 		ExecutionStatus target = ExecutionStatus.valueOf(targetExecutionStatus);
 		Runnable replacer = new AsynchronousReplaceExecutionStatus(projectId, source, target);
-		replacer.run();
+		taskExecutor.execute(replacer);
 	}
 	
 	private class AsynchronousReplaceExecutionStatus implements Runnable{

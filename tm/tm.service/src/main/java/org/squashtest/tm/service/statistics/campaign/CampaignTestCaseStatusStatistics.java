@@ -76,6 +76,9 @@ public class CampaignTestCaseStatusStatistics {
 		return statistics.get(ExecutionStatus.UNTESTABLE);
 	}
 	
+	public int getNbSettled() {
+		return statistics.get(ExecutionStatus.SETTLED);
+	}
 	
 
 }

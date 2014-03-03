@@ -47,6 +47,7 @@ define(['squash.translator', './table', './popups'], function(translator, table,
 		
 		conf.messages = translator.get({
 			executionStatus : {
+				SETTLED : "execution.execution-status.SETTLED",
 				UNTESTABLE : "execution.execution-status.UNTESTABLE",
 				BLOCKED : "execution.execution-status.BLOCKED",
 				FAILURE : "execution.execution-status.FAILURE",

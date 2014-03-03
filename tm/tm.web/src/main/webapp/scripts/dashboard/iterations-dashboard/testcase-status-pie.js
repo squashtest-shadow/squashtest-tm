@@ -24,7 +24,7 @@ define(["../basic-objects/pie-view"], function(PieView){
 		
 		getSeries : function(){
 			var stats = this.model.get('iterationTestCaseStatusStatistics');
-			return [ stats.nbReady, stats.nbRunning, stats.nbSuccess, stats.nbFailure, stats.nbBlocked, stats.nbUntestable ];
+			return [ stats.nbReady, stats.nbRunning, stats.nbSuccess, stats.nbSettled, stats.nbFailure, stats.nbBlocked, stats.nbUntestable ];
 		}
 	});
 });

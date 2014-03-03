@@ -35,6 +35,7 @@
  *		messages : {
  *			executionStatus : {
  *				UNTESTABLE : i18n label,
+ *				SETTLED : i18n label,
  *				BLOCKED : i18n label,
  *				FAILURE : i18n label,
  *				SUCCESS : i18n label,

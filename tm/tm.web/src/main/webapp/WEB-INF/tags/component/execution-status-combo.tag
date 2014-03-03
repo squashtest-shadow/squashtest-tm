@@ -24,6 +24,7 @@
 <%@ attribute name="id" required="true" description="The html id of the combo" %>
 <%@ attribute name="name" required="true" description="The name attribute of the combo" %>
 <%@ attribute name="allowsUntestable" required="true" description="Wether the status untestable is allowed" %>
+<%@ attribute name="allowsSettled" required="true" description="Wether the status settled is allowed" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
