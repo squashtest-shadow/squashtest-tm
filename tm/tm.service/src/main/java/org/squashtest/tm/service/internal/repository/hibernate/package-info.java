@@ -167,7 +167,7 @@
 		@NamedQuery(name = "testCase.removeAllActionSteps", query = "delete ActionTestStep ats where ats.id in (:stepIds)"),
 		
 		@NamedQuery(name = "testCase.excelExportDataFromFolder", query = 
-			"select p.id, p.name, index(tc), tc.id, tc.reference, tc.name, tc.importanceAuto, tc.importance, tc.nature, "+
+			"select p.id, p.name, index(tc)+1, tc.id, tc.reference, tc.name, tc.importanceAuto, tc.importance, tc.nature, "+
 					"tc.type, tc.status, tc.description, tc.prerequisite, count(req), "+
 					"("+
 						"select count(distinct caller) from TestCase caller join caller.steps steps join steps.calledTestCase called where steps.class = CallTestStep and called.id = tc.id"+
@@ -180,7 +180,7 @@
 		),
 		
 		@NamedQuery(name = "testCase.excelExportDataFromLibrary", query = 
-			"select p.id, p.name, index(tc), tc.id, tc.reference, tc.name, tc.importanceAuto, tc.importance, tc.nature, "+
+			"select p.id, p.name, index(tc)+1, tc.id, tc.reference, tc.name, tc.importanceAuto, tc.importance, tc.nature, "+
 					"tc.type, tc.status, tc.description, tc.prerequisite, count(req), "+
 					"("+
 						"select count(distinct caller) from TestCase caller join caller.steps steps join steps.calledTestCase called where steps.class = CallTestStep and called.id = tc.id"+
@@ -222,14 +222,14 @@
 		@NamedQuery(name = "testStep.stringIsFoundInStepsOfTestCase", query = "select count(steps) from TestCase tc join tc.steps steps where tc.id = :testCaseId and (steps.action like :stringToFind or steps.expectedResult like :stringToFind ) "),
 		@NamedQuery(name = "testStep.findAllAttachmentLists", query = "select step.attachmentList.id from ActionTestStep step where step.id in (:testStepIds)"),
 		@NamedQuery(name = "testStep.excelExportActionSteps", 
-					query = "select tc.id, st.id, index(st), 0, st.action, st.expectedResult, count(distinct req), count(attach) " +
+					query = "select tc.id, st.id, index(st)+1, 0, st.action, st.expectedResult, count(distinct req), count(attach) " +
 							"from TestCase tc inner join tc.steps st inner join st.attachmentList atlist left join atlist.attachments attach left join st.requirementVersionCoverages req "+
 							"where st.class = ActionTestStep "+
 							"and tc.id in (:testCaseIds) "+
 							"group by st"
 		),
 		@NamedQuery(name = "testStep.excelExportCallSteps", 
-					query = "select tc.id, st.id, index(st), 1, cast(st.calledTestCase.id as string), '', 0l, 0l " +
+					query = "select tc.id, st.id, index(st)+1, 1, cast(st.calledTestCase.id as string), '', 0l, 0l " +
 							"from TestCase tc inner join tc.steps st "+
 							"where st.class = CallTestStep "+
 							"and tc.id in (:testCaseIds) "+
