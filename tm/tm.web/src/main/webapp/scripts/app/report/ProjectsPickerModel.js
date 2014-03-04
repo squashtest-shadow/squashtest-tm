@@ -18,49 +18,36 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-/**
- * requires : * jquery.squash.projectpicker.js
- */
-var squashtm = squashtm || {};
+define([ "jquery", "backbone", "app/util/StringUtil", "underscore" ], function($, Backbone, StringUtil, _) {
 
-define([ "jquery", "./ProjectFilterPopup" ],
-		function($, ProjectFilterPopup) {
-	
-			var popupSelector = "#project-filter-popup";
-			var popupOpener = "#menu-project-filter-link";
+	/*
+	 * Defines the model for the list of filtered projects
+	 */
+	var ProjectFilterModel = Backbone.Model.extend({
 
-			function init() {
-				var projectFilterPopup = new ProjectFilterPopup({el :"#project-filter-popup"});
+		defaults : {
+			projectIds :[]
+		},
+		
+		
+		select : function(ids) {
+			this.attributes.projectIds = _.union(this.attributes.projectIds, ids);
+			
+		},
+		deselect : function(ids) {
+			this.attributes.projectIds = _.difference(this.attributes.projectIds, ids);
+		},
 				
-				$(popupOpener).click(function() {
-					projectFilterPopup.open();
-				});
-				
-				$("#menu-toggle-filter-ckbox").click(function(){
-					
-					function postStatus(enabled){
-						$.post(squashtm.app.contextRoot+'/global-filter/filter-status', { isEnabled : enabled })
-						.done(function(){
-							window.location.reload();
-						});
-					}
-					
-					if ($(this).is(':checked')){
-						postStatus(true);
-					}
-					else{
-						postStatus(false);
-					}
-				});
+		changeProjectState : function(id, checked) {
+			if(checked){
+				this.attributes.projectIds.push(id);
+			}else{
+				this.attributes.projectIds = _.without(this.attributes.projectIds, id);
 			}
 			
+		}
 
-			/**
-			 * public module
-			 */
-			return  {
-				init : init
-			};
+	});
 
-			
-		});
+	return ProjectFilterModel;
+});

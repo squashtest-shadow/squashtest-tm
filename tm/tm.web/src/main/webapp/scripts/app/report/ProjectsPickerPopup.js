@@ -31,9 +31,9 @@
  * 
  * Methods : open, close
  */
- define([ "jquery",  "./ProjectFilterModel","underscore", "squashtable", "jqueryui", "jquery.squash.confirmdialog"],
+ define([ "jquery",  "./ProjectsPickerModel", "underscore", "squashtable", "jqueryui", "jquery.squash.confirmdialog"],
 		function($, ProjectFilterModel, _) {
-	//TODO mutualize what can be with app/report/ProjectsPickerPopup and SingleProjectPickerPopup
+	 //TODO mutualize what can be with ProjectFilterPopup and SingleProjectPickerPopup
 	function eachCheckbox($domPicker, eachCallback) {
 			var $boxes = $domPicker.find("table .project-checkbox");
 			$boxes.each(eachCallback);
@@ -51,24 +51,33 @@
 				"click .project-picker-deselall" : "deselectAllProjects",
 				"click .project-picker-invsel" : "invertAllProjects"
 			},
-		 
+			
 			initialize :function(){
-			var self = this;
+				
 			this.filterTable = $.proxy(this._filterTable, this);
+			this.updateResult = $.proxy(this._updateResult, this);
+			var self = this;			
+			self.attributes.name = self.$el.attr("id");
 			// process initial state
+			self.attributes.allProjectIds = [];
+			var projects = [];
 			var ids =[];
-			this.$el.find("table tbody tr").each(function() {
-				var $checkbox = $(this).find(".project-checkbox");
-				var checked = $checkbox.checked;
-				$checkbox.data("previous-checked", checked);
-				var id = $checkbox.val();
-				if(checked){
-					ids.put(id);
-				}
-			});
+			if(this.attributes.preferences){
+				var projectsPrefs = this.attributes.preferences[self.attributes.name];
+				var projectsPrefsSelected = _.filter(projectsPrefs, function(project){return project.selected;});
+				ids = _.pluck(projectsPrefsSelected, "value");
+			}
+				this.$el.find("table tbody tr").each(function() {
+					var $checkbox = $(this).find(".project-checkbox");
+					var id = $checkbox.val();
+					var checked = _.contains(ids, id);
+					$checkbox.data("previous-checked", checked);
+					$checkbox.checked = checked;
+					self.attributes.allProjectIds.push(id);
+				});
+			
 			// set model
-			var url  = this.$el.data("url");
-			self.model = new ProjectFilterModel({projectIds : ids},{url : url});
+			self.model = new ProjectFilterModel({projectIds : ids});
 			
 			// init confirm dialog
 			this.$el.confirmDialog({
@@ -86,6 +95,8 @@
 					"sDom" : '<"H"lfr>t',
 				});
 			
+			this.updateResult();
+			
 			},
 			
 			open : function(){
@@ -102,9 +113,30 @@
 				}
 			},
 			confirm : function(){
-				this.model.save(null,{
-					success : function(){window.location.reload();}
+				var self = this;
+				this.table.fnFilter( '' );
+				self.attributes.formState[self.attributes.name] =  _.map(self.attributes.allProjectIds, function(projectId) {
+					var selected = _.contains(self.model.attributes.projectIds, projectId);
+					return {
+						value : projectId,
+						selected : selected,
+						type : "PROJECT_PICKER"
+					};
 				});
+				self.updateResult();
+			},
+			
+			_updateResult : function(){
+				var self= this;
+				if(self.model.attributes.projectIds.length > 1){
+					self.attributes.$result.text(self.attributes.$result.data("multiple-value-text"));
+				}else if (self.model.attributes.projectIds.length == 1){
+					var projectId = self.model.attributes.projectIds[0];
+					var projectName = this.$el.find('table td .project-checkbox[value='+projectId+']').parent().parent().find(".project-name").text();
+					self.attributes.$result.text(projectName);
+				}else{
+					self.attributes.$result.text('');
+				}
 			},
 			
 			cancel : function(){
@@ -116,12 +148,6 @@
 			},
 			
 			
-	 
-			dialogConfig : {
-				autoOpen : false,
-				resizable : false,
-				modal : true
-			},
 		
 			selectAllProjects : function() {
 				var ids = eachCheckbox(this.$el, function() {
@@ -153,7 +179,7 @@
 					
 				});
 				this.model.select(selectIds);
-				this.model.select(deselectIds);
+				this.model.deselect(deselectIds);
 			},
 			
 			notifyModel : function(event){

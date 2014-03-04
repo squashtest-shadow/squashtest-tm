@@ -20,14 +20,21 @@
  */
 package org.squashtest.tm.service.project;
 
+import java.util.List;
+
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 import org.squashtest.tm.domain.project.Project;
 
-@Transactional
-@DynamicManager(name = "squashtest.tm.service.ProjectManagerService", entity = Project.class)
-public interface ProjectManagerService extends CustomProjectModificationService, ProjectFinder {
-	
+/**
+ * @author mpagnon
+ * 
+ */
+@Transactional(readOnly = true)
+public interface CustomProjectFinder {
+
+	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
+	List<Project> findAllReadable();
 	
 
 }

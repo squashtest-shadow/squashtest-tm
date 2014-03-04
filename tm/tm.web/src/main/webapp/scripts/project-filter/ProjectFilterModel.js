@@ -44,7 +44,7 @@ define([ "jquery", "backbone", "app/util/StringUtil", "underscore" ], function($
 			if(checked){
 				this.attributes.projectIds.push(id);
 			}else{
-				this.attributes.projectIds = _.without(this.projectIds, id);
+				this.attributes.projectIds = _.without(this.attributes.projectIds, id);
 			}
 			
 		}

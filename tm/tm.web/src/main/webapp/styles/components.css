@@ -274,6 +274,15 @@ the display:block trick will implicitly add that property */
     font-size: smaller;
     padding-left: 20px;
 }
+.project-picker .filter-warning {
+    color: #FF0000;
+    left: 280px;
+    position: absolute;
+    top: 10px;
+}
+.rpt-projects-crit-result{
+	padding-right : 8px;
+}
 
 /******************************
 	import section

@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.internal.controller.report;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -40,7 +41,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.api.report.Report;
 import org.squashtest.tm.api.report.criteria.Criteria;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
+import org.squashtest.tm.web.internal.model.jquery.FilterModel;
 import org.squashtest.tm.web.internal.report.ReportsRegistry;
 import org.squashtest.tm.web.internal.report.criteria.FormToCriteriaConverter;
 
@@ -56,6 +60,9 @@ public class ReportController {
 	@Inject
 	private ReportsRegistry reportsRegistry;
 
+	@Inject
+	private ProjectFinder projectFinder;
+	
 	@Inject
 	@Value("${report.criteria.project.multiselect:false}")
 	private boolean projectMultiselect;
@@ -74,7 +81,13 @@ public class ReportController {
 	public String showReportPanel(@PathVariable String namespace, @PathVariable int index, Model model) {
 		populateModelWithReport(namespace, index, model);
 		model.addAttribute("projectMultiselect", projectMultiselect);
+		model.addAttribute("projectFilterModel", findProjectsModels());
 		return "report-panel.html";
+	}
+
+	private FilterModel findProjectsModels() {
+		List<Project> projects = projectFinder.findAllOrderedByName();
+		return new FilterModel(projects);
 	}
 
 	private void populateModelWithReport(String namespace, int index, Model model) {
@@ -140,5 +153,5 @@ public class ReportController {
 		Map<String, Object> form = JsonHelper.deserialize(data);
 		return generateReportView(namespace, index, viewIndex, format, form);
 	}
-	
+
 }

@@ -54,19 +54,6 @@ public class ProjectController {
 	
 	@Inject private GenericProjectManagerService projectManager;
 
-	@RequestMapping(method = RequestMethod.GET, params = "format=picker")
-	@ResponseBody
-	public FilterModel getProjectPickerModel() {
-		List<Project> projects = projectService.findAllOrderedByName();
-		FilterModel model = new FilterModel();
-
-		for (Project project : projects) {
-			model.addProject(project.getId(), project.getName(), project.getLabel());
-		}
-
-		return model;
-	}
-	
 	@RequestMapping(value= "/{projectId}", method=RequestMethod.PUT)
 	@ResponseStatus(HttpStatus.CREATED)
 	public @ResponseBody void coerceTemplateIntoProject(@RequestBody Map<String, Object> payload, @PathVariable long projectId) {

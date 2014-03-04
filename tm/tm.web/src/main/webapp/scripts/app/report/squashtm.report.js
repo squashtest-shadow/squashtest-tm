@@ -27,8 +27,8 @@ var squashtm = squashtm || {};
  * 
  * @author Gregory Fouquet
  */
-define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", "jqueryui", "jeditable", "jeditable.datepicker",
-		"jquery.squash", "jquery.cookie", "datepicker/jquery.squash.datepicker-locales" ], function($, RWS, treebuilder, _) {
+define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", "./ProjectsPickerPopup", "./SingleProjectPickerPopup", "jqueryui", "jeditable", "jeditable.datepicker",
+		"jquery.squash", "jquery.cookie", "datepicker/jquery.squash.datepicker-locales" ], function($, RWS, treebuilder, _, ProjectsPickerPopup, SingleProjectPickerPopup) {
 	var config = {
 		contextPath : "",
 		dateFormat : "dd/mm/yy",
@@ -477,6 +477,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 			activate : onViewTabSelected
 		});
 	}
+	/** ==================================================================== TREE PIKER */
 	/**
 	 * Converts a NODE_TYPE into a workspace-type
 	 */
@@ -581,54 +582,32 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 			});
 		}
 	}
-
+	
+	
+	/** ==================================================================== / TREE PIKER */
+	/** ==================================================================== PROJECT PIKER */
 	function initProjectPickers(panel) {
-		var url = config.contextPath + "/projects?format=picker";
+		panel.find('.rpt-projects-crit-open').each(function(){
+			var dialogId = $(this).data('id-opened');
+			var dialogSelect = "#" + dialogId;
+			var resultId = $(this).data('id-result');
+			var resultSelect = "#" + resultId;
+			var $result = $(resultSelect);
+			var $dialog = $(dialogSelect);
+			var multiSelect = $dialog.data("multi-select");
+			var projectPickerPopup ;
+			if(multiSelect){
+				projectPickerPopup = new ProjectsPickerPopup({el : dialogSelect, attributes :{ formState : formState, preferences : preferences, $result : $result } });
+			}
+			else{
+				projectPickerPopup = new SingleProjectPickerPopup({el : dialogSelect,  attributes :{ formState : formState,  preferences : preferences, $result : $result  }});
+			}
+			$(this).click(function(){projectPickerPopup.open();});
+		});
 		
-		
-		
-		
-//		$.getJSON(url).done(function(data) {
-//				
-//			var optionsHtml = _.reduce(data.projectData, function(memo, project) {
-//				var selected = (memo === "") ? "selected = '' " : "";
-//				return memo += "<option " + selected + "value='" + project[0] + "'>" + project[1] + "</option>";
-//			}, "");
-//			
-//			panel.find(".rpt-projects > select").each(function() {
-//				var $picker = $(this);
-//				
-//				if($picker.data("multi-select") === true) {
-//					$picker.attr("multiple", "multiple");
-//				}
-//				
-//				var inputId = this.name;
-//			
-//				$picker.append(optionsHtml);
-//				$picker.change(onListItemSelected("PROJECT_PICKER"));
-//				$picker.change();
-//				
-//				if (preferences) {
-//					var name = $picker.attr("name");
-//					var preferenceForName = preferences[name];
-//					options = $picker.find("option");
-//					
-//					$.each(options, function(index, option) {
-//						$.each(preferenceForName, function(index, element) {
-//							var value = element.value;
-//							if (option.value == value && element.selected) {
-//								$(option).attr("selected", true);
-//							} else if (option.value == value && !element.selected) {
-//								$(option).attr("selected", false);
-//							}
-//						});
-//					});
-//				
-//					$picker.change();
-//				});
-//			}
-//		});
 	}
+	
+/** ==================================================================== /PROJECT PIKER */
 
 	function init(settings) {
 

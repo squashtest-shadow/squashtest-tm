@@ -31,44 +31,42 @@
  * 
  * Methods : open, close
  */
- define([ "jquery",  "./ProjectFilterModel","underscore", "squashtable", "jqueryui", "jquery.squash.confirmdialog"],
-		function($, ProjectFilterModel, _) {
-	//TODO mutualize what can be with app/report/ProjectsPickerPopup and SingleProjectPickerPopup
-	function eachCheckbox($domPicker, eachCallback) {
-			var $boxes = $domPicker.find("table .project-checkbox");
-			$boxes.each(eachCallback);
-			return _.pluck($boxes, 'value');
-	}
-		
+ define([ "jquery",  "squashtable", "jqueryui", "jquery.squash.confirmdialog"],
+		function($) {
+	 
 	
+		
+	//TODO mutualize what can be with ProjectFilterPopup and ProjectsPickerPopup
 		var ProjectFilterPopup = Backbone.View.extend({
 		 
 			events : {
 				"confirmdialogcancel" : "cancel",
 				"confirmdialogconfirm" : "confirm",
-				"click .project-checkbox" : "notifyModel",
-				"click .project-picker-selall" : "selectAllProjects",
-				"click .project-picker-deselall" : "deselectAllProjects",
-				"click .project-picker-invsel" : "invertAllProjects"
+				"click .project-checkbox" : "setSelected",
+			
 			},
-		 
+			
+			
 			initialize :function(){
-			var self = this;
-			this.filterTable = $.proxy(this._filterTable, this);
+			var self = this;			
+			self.attributes.name = self.$el.attr("id");
 			// process initial state
-			var ids =[];
-			this.$el.find("table tbody tr").each(function() {
-				var $checkbox = $(this).find(".project-checkbox");
-				var checked = $checkbox.checked;
-				$checkbox.data("previous-checked", checked);
-				var id = $checkbox.val();
-				if(checked){
-					ids.put(id);
-				}
-			});
-			// set model
-			var url  = this.$el.data("url");
-			self.model = new ProjectFilterModel({projectIds : ids},{url : url});
+			self.attributes.allProjectIds = [];
+			this.updateResult = $.proxy(this._updateResult, this);
+			this.filterTable = $.proxy(this._filterTable, this);
+			this.updateChecked = $.proxy(this._updateChecked, this);
+			if(this.attributes.preferences){
+				self.attributes.selectedId =  _.findWhere(this.attributes.preferences[self.attributes.name], {selected:true}).value;
+			}
+			
+				this.$el.find("table tbody tr").each(function() {
+					var $checkbox = $(this).find(".project-checkbox");
+					var id = $checkbox.val();
+					var checked = self.attributes.selectedId == id;
+					$checkbox.data("previous-checked", checked);
+					$checkbox.prop("checked", checked);
+					self.attributes.allProjectIds.push(id);
+				});
 			
 			// init confirm dialog
 			this.$el.confirmDialog({
@@ -84,8 +82,9 @@
 					"bAutoWidth" : true,
 					"bRetrieve" : false,
 					"sDom" : '<"H"lfr>t',
+					"fnDrawCallback" : self.updateChecked
 				});
-			
+			self.updateResult();
 			},
 			
 			open : function(){
@@ -93,18 +92,49 @@
 				this.table.fnAdjustColumnSizing();
 			},
 			_filterTable : function(event){
-				var warning = this.$el.find(".filter-warning")
+				var self = this;
+				var warning = this.$el.find(".filter-warning");
 				var filterText = this.$el.find('div.dataTables_filter input').val();
 				if(filterText){
 					warning.show();
 				}else{
 					warning.hide();
 				}
+				
+			},
+			_updateChecked : function(){
+				var self = this;
+				//To fix problem when check another radio button while previously checked was hidden.
+				this.$el.find("table tbody tr").each(function() {
+					var $checkbox = $(this).find(".project-checkbox");
+					var id = $checkbox.val();
+					var checked = self.attributes.selectedId == id;					
+					$checkbox.prop("checked", checked);
+				});
 			},
 			confirm : function(){
-				this.model.save(null,{
-					success : function(){window.location.reload();}
+				var self = this;
+				this.table.fnFilter( '' );
+				self.attributes.formState[self.attributes.name] =  _.map(self.attributes.allProjectIds, function(projectId) {
+					var selected = self.attributes.selectedId == projectId;
+					return {
+						value : projectId,
+						selected : selected,
+						type : "PROJECT_PICKER"
+					};
 				});
+				this.updateResult();
+			},
+			
+			_updateResult : function(){
+				var self = this;
+				if(self.attributes.selectedId){
+					var projectId = self.attributes.selectedId;
+					var projectName = this.$el.find('table td .project-checkbox[value='+projectId+']').parent().parent().find(".project-name").text();
+					self.attributes.$result.text(projectName);
+				}else{
+					self.attributes.$result.text('');
+				}
 			},
 			
 			cancel : function(){
@@ -114,51 +144,10 @@
 					this.checked = previous;
 				});
 			},
-			
-			
-	 
-			dialogConfig : {
-				autoOpen : false,
-				resizable : false,
-				modal : true
-			},
-		
-			selectAllProjects : function() {
-				var ids = eachCheckbox(this.$el, function() {
-					this.checked = true;
-				});
-				this.model.select(ids);
-			},
-		
-			deselectAllProjects : function () {
-				
-				var ids = eachCheckbox(this.$el, function() {
-					this.checked = false;
-				});
-				this.model.deselect(ids);
-			},
-		
-			invertAllProjects : function () {
-				var selectIds = [];
-				var deselectIds = [];
-				eachCheckbox(this.$el, function() {
-					if(this.checked){
-						this.checked = false;
-						deselectIds.push(this.value);
-					}else{
-						this.checked = true;
-						selectIds.push(this.value);
-						
-					}
-					
-				});
-				this.model.select(selectIds);
-				this.model.select(deselectIds);
-			},
-			
-			notifyModel : function(event){
-				var checkbox = event.currentTarget;
-				this.model.changeProjectState(checkbox.value, checkbox.checked);				
+				 
+			setSelected : function(event){
+				var radio = event.currentTarget;
+				this.attributes.selectedId = radio.value ;
 			}
 		});
 	 

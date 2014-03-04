@@ -30,7 +30,7 @@ import org.squashtest.tm.domain.project.ProjectTemplate;
  * @author mpagnon
  * 
  */
-public interface CustomProjectModificationService extends ProjectFinder {	
+public interface CustomProjectModificationService extends CustomProjectFinder {	
 	/**
 	 * Will persist the new {@linkplain Project} and add settings copied from a given {@linkplain ProjectTemplate}.
 	 * 

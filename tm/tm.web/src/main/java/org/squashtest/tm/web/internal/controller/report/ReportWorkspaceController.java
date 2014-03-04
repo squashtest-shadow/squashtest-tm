@@ -42,7 +42,7 @@ public class ReportWorkspaceController {
 
 		return "report-workspace.html";
 	}
-	
+
 	@ModelAttribute("hilightedWorkspace")
 	String getHighlightedWorkspace() {
 		return "report";
