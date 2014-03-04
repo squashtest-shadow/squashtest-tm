@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -65,6 +67,20 @@ final class Utils {
 		else{
 			throw new IllegalArgumentException("couldn't find a valid project name in path '"+path+"'. It might be malformed.");
 		}
+	}
+	
+	static List<String> extractProjectNames(List<String> pathes){
+		List<String> res = new LinkedList<String>();
+		for (String p : pathes){
+			Matcher matcher = projectPattern.matcher(p);
+			if (matcher.matches()){
+				res.add( matcher.group(1) );
+			}
+			else{
+				res.add(null);
+			}
+		}
+		return res;
 	}
 
 	static String extractTestCaseName(String path){
