@@ -254,10 +254,13 @@
 									<div >
 										<a th:text="#{user.project-rights.title.label}" >Permissions</a>
 									</div>
-									<div> <input
-											id="add-permission-button" th:title="${addButtonTitle}"
-											title="add" type="button" value="+" class="button" /></div>
-								</div>		
+                    <div>
+                      <button id="add-permission-button" th:title="${addButtonTitle}" title="add"
+                        class="sq-icon-btn btn-sm">
+                        <span class="ui-icon ui-icon-plus">+</span>
+                      </button>
+                    </div>
+                  </div>		
 							</h3>
 						
 							<div id="project-permission-panel" >
@@ -298,15 +301,16 @@
 						<div id="teams" >
 							<h3 >
 								<div>
-									<div >
-										<a th:text="#{label.teams}" >Teams</a>
-									</div>
-									<div> <input
-									type="button" id="add-team-button" value="+"></input> <input
-									type="button" id="remove-teams-button"
-									th:value="#{label.unsubscribeToTeams}"></input>
-									</div>
-								</div>		
+                    <div>
+                      <a th:text="#{label.teams}">Teams</a>
+                    </div>
+                    <div>
+                      <button id="add-team-button" class="sq-icon-btn btn-sm">
+                        <span class="ui-icon ui-icon-plus">+</span>
+                      </button>
+                      <input type="button" id="remove-teams-button" th:value="#{label.unsubscribeToTeams}" class="sq-btn btn-sm"></input>
+                    </div>
+                  </div>		
 							</h3>
 						
 						<div id="teams-panel" >
