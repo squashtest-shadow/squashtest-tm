@@ -245,7 +245,9 @@
 				titleKey="label.Permissions" open="true">
 	
 				<jsp:attribute name="panelButtons">
-					<input id="add-permission-button" title="${addButtonTitle}"	type="button" value="+" class="sq-btn" />
+        <button id="add-permission-button" title="${addButtonTitle}" class="sq-icon-btn btn-sm">
+          <span class="ui-icon ui-icon-plus">+</span>
+        </button>
 				</jsp:attribute>
 				
 				<jsp:attribute name="body">
@@ -626,7 +628,7 @@ require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.att
 		});
 		
 		// permission mgt
-		$("#add-permission-button").squashButton().on('click', function(){
+		$("#add-permission-button").on('click', function(){
 			permpopup.formDialog('open');
 		});
 	

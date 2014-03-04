@@ -127,7 +127,9 @@
 			<fieldset class="ta-projects-block  ta-block">
 				<legend>
 					<f:message key="project.testauto.projectsblock.title" />
-					<input id="ta-projectsblock-add-button" title="${addTAProjectLabel}" type="button" class="sq-btn btn-sm" value="+"/>
+        <button id="ta-projectsblock-add-button" title="${addTAProjectLabel}" class="sq-icon-btn btn-sm">
+          <span class="ui-icon ui-icon-plus"></span>
+        </button>
 				</legend>
 
 				
