@@ -319,7 +319,6 @@
 			/* deletion success handler */
 			function deleteExecutionSuccess(){
 				$( '#delete-execution-confirm' ).dialog( 'close' );
-//		 		document.location.href="${ parentUrl }" ;
 				history.back();
 			}
 			
@@ -339,10 +338,10 @@
 			});
 
 			
-			// ************** execution table *********************
+			// ==== execution table ====
 			var tableSettings = {
 				"sAjaxSource": "${executionStepsUrl}", 
-				"aoColumnDefs": ${stepsAoColumnDefs}
+				"aoColumnDefs": ${stepsAoColumnDefs}, 
 				"cufDefinitions": ${ json:marshall(cufDefinitions) }
 			};
 			
@@ -425,7 +424,7 @@
 			$("#execution-execution-steps-table").squashTable(tableSettings, squashSettings);
 			
 			
-			//**** cuf sections ************
+			//==== cuf sections ====
 
 			//load the custom fields
 			$.get("${denormalizedFieldsValuesURL}?denormalizedFieldHolderId=${execution.boundEntityId}&denormalizedFieldHolderType=${execution.boundEntityType}")
@@ -440,12 +439,12 @@
 				</c:if>
 			});		
 			
-			// ************** bugtracker section ******************************
+			// ==== bugtracker section ====
 		 	
 		 	$("#bugtracker-section-div").load("${btEntityUrl}");
 			
 			
-		 	// ************** handle for refershing the page (called by the execution popup) ******************
+		 	// ==== handle for refershing the page (called by the execution popup) ====
 		 	
 		 	squashtm.execution = squashtm.execution || {};
 		 	squashtm.execution.refresh = $.proxy(function(){
