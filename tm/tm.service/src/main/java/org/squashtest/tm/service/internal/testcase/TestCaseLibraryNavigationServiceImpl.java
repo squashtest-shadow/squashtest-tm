@@ -165,6 +165,17 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	}
 
 	@Override
+	public long findNodeIdByPath(String path) {
+		return getLibraryNodeDao().findNodeIdByPath(path);
+	}
+
+	@Override
+	public TestCaseLibraryNode findNodesByPath(String path) {
+		return getLibraryNodeDao().findNodesByPath(path);
+	}
+
+	
+	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary' , 'CREATE' )"
 			+ "or hasRole('ROLE_ADMIN')")
 	public void addTestCaseToLibrary(long libraryId, TestCase testCase) {
@@ -354,5 +365,6 @@ public class TestCaseLibraryNavigationServiceImpl extends
 		
 		return parents;
 	}
+
 
 }

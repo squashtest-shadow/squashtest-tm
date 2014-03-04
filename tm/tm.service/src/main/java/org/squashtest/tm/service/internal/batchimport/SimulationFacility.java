@@ -25,21 +25,30 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.hibernate.SessionFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 
 @Component
+@Scope("prototype")
 public class SimulationFacility implements Facility{
 
 	@Inject
-	private SessionFactory sessionFactory;
+	protected SessionFactory sessionFactory;
+	
+	@Inject
+	private Model model;
 	
 	
+	public Model getModel(){
+		return model;
+	}
+
+
 	@Override
 	public void createTestCase(TestCase testCase, Map<String, String> cufValues) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override

@@ -65,5 +65,15 @@ public class HibernateRequirementLibraryNodeDao extends HibernateEntityDao<Requi
 	public List<Long> findNodeIdsByPath(List<String> path) {
 		throw new UnsupportedOperationException("not implemented yet");
 	}
+
+	@Override
+	public long findNodeIdByPath(String path) {
+		throw new UnsupportedOperationException("not implemented yet");
+	}
+
+	@Override
+	public RequirementLibraryNode findNodesByPath(String path) {
+		throw new UnsupportedOperationException("not implemented yet");
+	}
 	
 }

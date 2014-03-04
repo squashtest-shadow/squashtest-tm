@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.batchimport;
 import java.io.File;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import org.springframework.stereotype.Component;
 
@@ -32,10 +33,11 @@ public class Sequencer {
 	private ImportLog log = new ImportLog();
 	
 	@Inject
-	private SimulationFacility simulator;
+	private Provider<SimulationFacility> simulatorProvider;
 	
 	@Inject
-	private FacilityImpl facilityImpl;
+	private Provider<FacilityImpl> facilityImplProvider;
+
 	
 	
 	public ImportLog simulateImport(File excelFile){

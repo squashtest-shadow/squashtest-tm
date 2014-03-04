@@ -22,6 +22,7 @@ package org.squashtest.tm.service.testcase;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
@@ -84,7 +85,14 @@ public interface TestCaseLibraryFinderService {
 	 */
 	List<Long> findNodeIdsByPath(List<String> path);
 	
-	
+	/**
+	 * Same as {@link #findNodeIdsByPath(List)}, for one test case only. Throws {@link NoSuchElementException} if 
+	 * not found.
+	 *  
+	 * @param path
+	 * @return
+	 */
+	long findNodeIdByPath(String path);
 	
 	/**
 	 * Same than above, but returns the entities instead.
@@ -94,6 +102,15 @@ public interface TestCaseLibraryFinderService {
 	 */
 	List<TestCaseLibraryNode> findNodesByPath(List<String> path); 
 	
+	
+	/**
+	 * Same than above, but for one path only. Throws {@link NoSuchElementException} if 
+	 * not found.
+	 * 
+	 * @param path
+	 * @return
+	 */
+	TestCaseLibraryNode findNodesByPath(String path);
 	
 	
 	/**

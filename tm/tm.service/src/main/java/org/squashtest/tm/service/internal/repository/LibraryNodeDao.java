@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.squashtest.tm.domain.library.LibraryNode;
 
@@ -75,6 +76,16 @@ public interface LibraryNodeDao<NODE extends LibraryNode> extends EntityDao<NODE
 	List<Long> findNodeIdsByPath(List<String> path);
 	
 	
+	/**
+	 * Same as {@link #findNodeIdsByPath(List)}, for one test case only. Throws {@link NoSuchElementException} if 
+	 * not found.
+	 *  
+	 * @param path
+	 * @return
+	 */
+	long findNodeIdByPath(String path);
+	
+	
 	
 	/**
 	 * Same than above, but returns the entities instead.
@@ -84,6 +95,14 @@ public interface LibraryNodeDao<NODE extends LibraryNode> extends EntityDao<NODE
 	 */
 	List<NODE> findNodesByPath(List<String> path); 
 	
-
+	
+	/**
+	 * Same than above, but for one path only. Throws {@link NoSuchElementException} if 
+	 * not found.
+	 * 
+	 * @param path
+	 * @return
+	 */
+	NODE findNodesByPath(String path);
 	
 }

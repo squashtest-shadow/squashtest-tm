@@ -22,21 +22,15 @@ package org.squashtest.tm.service.internal.batchimport;
 
 import java.util.Map;
 
-import javax.inject.Inject;
-
-import org.hibernate.SessionFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 
 @Component
-public class FacilityImpl implements Facility {
+@Scope("prototype")
+public class FacilityImpl extends SimulationFacility {
 
-	@Inject
-	private SessionFactory sessionFactory;
-	
-	@Inject
-	private SimulationFacility simulation;
 	
 	@Override
 	public void createTestCase(TestCase testCase, Map<String, String> cufValues) {

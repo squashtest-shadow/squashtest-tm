@@ -26,6 +26,8 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 
 public interface Facility {
+	
+	Model getModel();
 
 	void createTestCase(TestCase testCase, Map<String, String> cufValues);
 	void updateTestCase(long testCaseId, TestCase testCaseData, Map<String, String> cufValues);

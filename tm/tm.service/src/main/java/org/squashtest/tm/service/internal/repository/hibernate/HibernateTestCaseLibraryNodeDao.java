@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.type.LongType;
@@ -125,6 +126,43 @@ public class HibernateTestCaseLibraryNodeDao extends HibernateEntityDao<TestCase
 		}
 	}
 	
+	
+	@Override
+	public long findNodeIdByPath(String path) {
+		String effectiveParameters = unescapeSlashes(path);
+		
+		SQLQuery query = currentSession().createSQLQuery(NativeQueries.TCLN_FIND_NODE_IDS_BY_PATH);
+		query.setParameterList("paths", Arrays.asList(new String[]{effectiveParameters}));
+		List<Object[]>  result = query.list();
+		
+		if (! result.isEmpty()){
+			BigInteger id = (BigInteger)result.get(0)[1];
+			return id.longValue();
+		}
+		else{
+			throw new NoSuchElementException("test case library node at path "+path+" doesn't exist");
+		}
+		
+	}
+
+	@Override
+	public TestCaseLibraryNode findNodesByPath(String path) {
+		String effectiveParameters = unescapeSlashes(path);
+		
+		SQLQuery query = currentSession().createSQLQuery(NativeQueries.TCLN_FIND_NODE_IDS_BY_PATH);
+		query.setParameterList("paths", Arrays.asList(new String[]{effectiveParameters}));
+		List<Object[]>  result = query.list();
+		
+		if (! result.isEmpty()){
+			BigInteger id = (BigInteger)result.get(0)[1];
+			return findById(id.longValue());
+		}
+		else{
+			throw new NoSuchElementException("test case library node at path "+path+" doesn't exist");
+		}
+	}
+	
+	
 	private List<String> unescapeSlashes(List<String> paths){
 		List<String> unescaped = new ArrayList<String>(paths.size());
 		for (String orig : paths){
@@ -133,4 +171,9 @@ public class HibernateTestCaseLibraryNodeDao extends HibernateEntityDao<TestCase
 		return unescaped;
 	}
 	
+	private String unescapeSlashes(String path){
+		return path.replaceAll("\\\\/", "/");
+	}
+
+
 }
