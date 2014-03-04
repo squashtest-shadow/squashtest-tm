@@ -334,6 +334,8 @@
 		<f:message var="noUserSelectedError" key="error.permissions.noUserSelected" />		
 		<div id="add-permission-dialog" class="popup-dialog not-displayed">
 		
+			<input type="hidden" id="source-status"></input>
+			
 			<div data-def="state=loading">
 				<comp:waiting-pane/>
 			</div>
@@ -525,6 +527,7 @@ require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.att
 	
 	statuspopup.on('formdialogconfirm', function(){
 		var target = $("#status-input").val();
+		var source = $("#source-status").val();
 		$.ajax({
 			type: 'POST',
 			url: "${projectUrl}/replace-execution-status",
@@ -532,7 +535,7 @@ require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.att
 				sourceExecutionStatus : source,
 				targetExecutionStatus : target,
 				success : function(){
-					deactivateUntestable();
+					deactivateStatus(source);
 					statuspopup.formDialog('close');
 				}
 			}
@@ -550,6 +553,7 @@ require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.att
 				 url: "${projectUrl}/execution-status-is-used/"+status,
 				 success : function(data){
 						if(data){
+							$("#source-status").val(status);
 							statuspopup.formDialog('open');
 						}
 						else {

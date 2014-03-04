@@ -412,7 +412,7 @@
 								<f:message key="execute.header.status.label" />
 							</label> 
 							<c:choose>
-							<c:when test="${editable }"><comp:execution-status-combo name="executionStatus" id="execution-status-combo" allowsUntestable="${allowsUntestable}"/>
+							<c:when test="${editable }"><comp:execution-status-combo name="executionStatus" id="execution-status-combo" allowsUntestable="${allowsUntestable}" allowsSettled="${allowsSettled}"/>
 							<c:if test="${allowsUntestable}">
 							<button id="execute-untestable-button">
 								<f:message key="execute.header.button.untestable.title" />

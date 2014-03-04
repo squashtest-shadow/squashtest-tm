@@ -107,6 +107,7 @@ public class GenericProjectController {
 	@Inject
 	private WorkspaceWizardManager wizardManager;
 
+	@Inject
 	private TaskExecutor taskExecutor;
 	private static final Logger LOGGER = LoggerFactory.getLogger(GenericProjectController.class);
 
@@ -142,10 +143,6 @@ public class GenericProjectController {
 
 		return new ProjectDataTableModelHelper(locale, messageSource).buildDataModel(holder, params.getsEcho());
 
-	}
-
-	public void setTaskExecutor(TaskExecutor taskExecutor){
-		this.taskExecutor = taskExecutor;
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "isTemplate=false")

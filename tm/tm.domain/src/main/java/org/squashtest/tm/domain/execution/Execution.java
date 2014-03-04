@@ -100,6 +100,7 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 		set.add(ExecutionStatus.RUNNING);
 		set.add(ExecutionStatus.READY);
 		set.add(ExecutionStatus.UNTESTABLE);
+		set.add(ExecutionStatus.SETTLED);
 		LEGAL_EXEC_STATUS = Collections.unmodifiableSet(set);		
 	}
 	

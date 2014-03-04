@@ -30,6 +30,7 @@ import java.util.Map.Entry;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
@@ -160,6 +161,8 @@ public class HibernateExecutionProgressQuery extends HibernateReportQuery {
 				ExProgressProjectDto projectDto = new ExProgressProjectDto();
 				projectDto.setName(project.getName());
 				projectDto.setId(project.getId());
+				projectDto.setAllowsSettled(project.getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
+				projectDto.setAllowsUntestable(project.getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
 				projectMap.put(project.getId(), projectDto);
 			}
 			

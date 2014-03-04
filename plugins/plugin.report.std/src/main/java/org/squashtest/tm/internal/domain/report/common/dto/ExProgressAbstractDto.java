@@ -23,6 +23,7 @@ package org.squashtest.tm.internal.domain.report.common.dto;
 import java.util.List;
 
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.internal.domain.report.common.dto.ExProgressCampaignStatus;
 
 
 public abstract class ExProgressAbstractDto {
@@ -34,7 +35,7 @@ public abstract class ExProgressAbstractDto {
 	protected Integer iCountStatusSuccess = 0;
 	protected Integer iCountStatusUntestable = 0;	
 	protected Integer iCountStatusSettled = 0;
-	
+
 	public ExProgressAbstractDto(){
 		super();
 	}
@@ -216,5 +217,6 @@ public abstract class ExProgressAbstractDto {
 			this.iCountStatusSettled += dto.getiCountStatusSettled();
 		}
 	}
+
 	
 }
