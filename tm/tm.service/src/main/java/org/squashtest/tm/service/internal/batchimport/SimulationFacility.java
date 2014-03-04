@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -46,53 +47,71 @@ public class SimulationFacility implements Facility{
 	}
 
 
+
+	/**
+	 * <p>Must check the following errors : </p>
+	 * <ul>
+	 * 	<li>mandatory fields path, name have a value</li>
+	 * 	<li>path is well formed</li>
+	 * 	<li>mandatory cufs must have a value if no default is available</li>
+	 * 	<li>the project actually exists</li>
+	 * 	<li>can create in the project</li>
+	 * 	<li>there won't be no name clash</li>
+	 * 	<li>the test case doesn't exist yet,</li>
+	 * 	<li>it has a non empty name</li>
+	 * 	<li>name and path are consistent</li>
+	 * </ul>
+	 * 
+	 * <p>Must check the following warnings :</p>
+	 * <ul>
+	 * 	<li>mandatory cufs of type list will default to the default value when no value is given</li>
+	 * 	<li>cufs of type list will default to the default value when the imported value is invalid</li>
+	 * 	<li>when some fields have a size exceeding the size, they will be truncated to that limit</li>
+	 * 	<li>mandatory cufs will default to default value if no value is imported</li>
+	 * </ul>
+	 */
 	@Override
-	public void createTestCase(TestCase testCase, Map<String, String> cufValues) {
-		// TODO Auto-generated method stub
+	public List<LogEntry> createTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
+		throw new UnsupportedOperationException("not implemented yet"); 
 	}
 
 	@Override
-	public void updateTestCase(long testCaseId, TestCase testCaseData,
+	public List<LogEntry> updateTestCase(long testCaseId, TestCase testCaseData,
 			Map<String, String> cufValues) {
-		// TODO Auto-generated method stub
+
+		throw new UnsupportedOperationException("not implemented yet"); 
 		
 	}
 
 	@Override
-	public void deleteTestCase(long testCaseId) {
-		// TODO Auto-generated method stub
-		
+	public List<LogEntry> deleteTestCase(long testCaseId) {
+		throw new UnsupportedOperationException("not implemented yet"); 
 	}
 
 	@Override
-	public void deleteTestCase(TestCase testCase) {
-		// TODO Auto-generated method stub
-		
+	public List<LogEntry> deleteTestCase(TestCase testCase) {
+		throw new UnsupportedOperationException("not implemented yet"); 
 	}
 
 	@Override
-	public void addTestStep(long testCaseId, TestStep testStep,
+	public List<LogEntry> addTestStep(TestStepTarget target, TestStep testStep,
 			Map<String, String> cufValues) {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException("not implemented yet"); 
 	}
 
 	@Override
-	public void updateTestStep(long testStepId, TestStep testStepData) {
-		// TODO Auto-generated method stub
-		
+	public List<LogEntry> updateTestStep(long testStepId, TestStep testStepData) {
+		throw new UnsupportedOperationException("not implemented yet"); 
 	}
 
 	@Override
-	public void deleteTestStep(long testStepId) {
-		// TODO Auto-generated method stub
-		
+	public List<LogEntry> deleteTestStep(long testStepId) {
+		throw new UnsupportedOperationException("not implemented yet"); 
 	}
 
 	@Override
-	public void deleteTestStep(TestStep testStep) {
-		// TODO Auto-generated method stub
-		
+	public List<LogEntry> deleteTestStep(TestStep testStep) {
+		throw new UnsupportedOperationException("not implemented yet"); 
 	}
 
 }

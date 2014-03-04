@@ -26,11 +26,11 @@ public class LogParseErrorInstruction extends Instruction {
 
 	private Target target;
 	
-	private LogEntry logEntry;
+	private List<LogEntry> entries;
 	
 	@Override
 	public List<LogEntry> execute(Facility facility) {
-		return logEntry;
+		return entries;
 	}
 
 	public Target getTarget() {
@@ -41,12 +41,7 @@ public class LogParseErrorInstruction extends Instruction {
 		this.target = target;
 	}
 
-	public LogEntry getLogEntry() {
-		return logEntry;
+	public void setEntries(List<LogEntry> entries){
+		this.entries = entries;
 	}
-
-	public void setLogEntry(LogEntry logEntry) {
-		this.logEntry = logEntry;
-	}
-
 }

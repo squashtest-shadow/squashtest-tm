@@ -91,6 +91,15 @@ public class Model {
 		
 	}
 	
+	public boolean testCaseExists(TestCaseTarget target){
+		Long id = getTestCaseId(target);
+		return (id != null);
+	}
+	
+	public void updateTarget(TestCaseTarget target, Long id){
+		testCaseIdsByTarget.put(target, id);
+	}
+	
 	
 	/**
 	 * When you have a batch of test cases you might need later on, it's better 

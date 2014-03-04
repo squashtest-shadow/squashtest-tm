@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.context.annotation.Scope;
@@ -33,53 +34,45 @@ public class FacilityImpl extends SimulationFacility {
 
 	
 	@Override
-	public void createTestCase(TestCase testCase, Map<String, String> cufValues) {
-		// TODO Auto-generated method stub
-
+	public List<LogEntry> createTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
+		throw new UnsupportedOperationException("not implemented yet"); 
 	}
 
 	@Override
-	public void updateTestCase(long testCaseId, TestCase testCaseData,
+	public List<LogEntry> updateTestCase(long testCaseId, TestCase testCaseData,
 			Map<String, String> cufValues) {
-		// TODO Auto-generated method stub
-
+		throw new UnsupportedOperationException("not implemented yet"); 
 	}
 
 	@Override
-	public void deleteTestCase(long testCaseId) {
-		// TODO Auto-generated method stub
-
+	public List<LogEntry> deleteTestCase(long testCaseId) {
+		throw new UnsupportedOperationException("not implemented yet"); 
 	}
 
 	@Override
-	public void deleteTestCase(TestCase testCase) {
-		// TODO Auto-generated method stub
-
+	public List<LogEntry> deleteTestCase(TestCase testCase) {
+		throw new UnsupportedOperationException("not implemented yet"); 
 	}
 
 	@Override
-	public void addTestStep(long testCaseId, TestStep testStep,
+	public List<LogEntry> addTestStep(TestStepTarget target, TestStep testStep,
 			Map<String, String> cufValues) {
-		// TODO Auto-generated method stub
-
+		throw new UnsupportedOperationException("not implemented yet"); 
 	}
 
 	@Override
-	public void updateTestStep(long testStepId, TestStep testStepData) {
-		// TODO Auto-generated method stub
-
+	public List<LogEntry> updateTestStep(long testStepId, TestStep testStepData) {
+		throw new UnsupportedOperationException("not implemented yet"); 
 	}
 
 	@Override
-	public void deleteTestStep(long testStepId) {
-		// TODO Auto-generated method stub
-
+	public List<LogEntry> deleteTestStep(long testStepId) {
+		throw new UnsupportedOperationException("not implemented yet"); 
 	}
 
 	@Override
-	public void deleteTestStep(TestStep testStep) {
-		// TODO Auto-generated method stub
-
+	public List<LogEntry> deleteTestStep(TestStep testStep) {
+		throw new UnsupportedOperationException("not implemented yet"); 
 	}
 
 }

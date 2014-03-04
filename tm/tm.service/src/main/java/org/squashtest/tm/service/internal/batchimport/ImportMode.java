@@ -25,5 +25,6 @@ public enum ImportMode {
 	REPLACE,
 	UPDATE,
 	MERGE,
-	DELETE;	
+	DELETE,
+	CREATE_MERGE;
 }
