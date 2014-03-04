@@ -870,7 +870,7 @@
 
               <execution>
                 <id>copy-optimized-js</id>
-                <phase>process-resources</phase>
+                <phase>package</phase>
                 <goals>
                   <goal>copy-resources</goal>
                 </goals>
@@ -913,6 +913,44 @@
       <properties>
         <node.executable>node</node.executable>
       </properties>
+    </profile>
+    
+    <profile>
+      <!-- this profile does stuff when rjs is asked to be skipped -->
+      <id>no-rjs</id>
+      <activation>
+        <property>
+          <name>requirejs.optimize.skip</name>
+        </property>
+      </activation>
+      
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-resources-plugin</artifactId>
+            <executions>
+              <execution>
+                <!-- when we skip js optimization, build breaks because of missing directory. hence this. -->
+                <id>create-optimized-js-dir</id>
+                <phase>prepare-package</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+    
+                <configuration>
+                  <outputDirectory>${rjs.js.outputDirectory}</outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>src/main/assembly</directory>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 </project>
