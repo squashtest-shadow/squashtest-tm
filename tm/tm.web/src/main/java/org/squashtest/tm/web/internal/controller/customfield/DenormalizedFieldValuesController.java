@@ -80,7 +80,7 @@ public class DenormalizedFieldValuesController {
 			@RequestParam(DENORMALIZED_FIELD_HOLDER_TYPE) DenormalizedFieldHolderType entityType, Locale locale) {
 
 		List<DenormalizedFieldValue> values = denormalizedFieldValueFinder.findAllForEntity(id, entityType);
-		CustomFieldValueConfigurationBean conf = new CustomFieldValueConfigurationBean(values, true);
+		CustomFieldValueConfigurationBean conf = CustomFieldValueConfigurationBean.createFromDenormalized(values);
 
 		ModelAndView mav = new ModelAndView("denormalized-field-values-panel.html");
 		mav.addObject("editable", true);

@@ -80,7 +80,7 @@ public class CustomFieldValuesController {
 		List<CustomFieldValue> values = managerService.findAllCustomFieldValues(id, entityType);
 		boolean editable = managerService.areValuesEditable(id, entityType);
 
-		CustomFieldValueConfigurationBean conf = new CustomFieldValueConfigurationBean(values);
+		CustomFieldValueConfigurationBean conf = CustomFieldValueConfigurationBean.createFromValues(values);
 
 		ModelAndView mav = new ModelAndView("custom-field-values-panel.html");
 		mav.addObject("editable", editable);

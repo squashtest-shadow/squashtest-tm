@@ -77,17 +77,14 @@ public class TestStepController {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String showStepInfos(@PathVariable long testStepId, Model model) {
-		
 		LOGGER.info("Show Test Step initiated");
 		LOGGER.debug("Find and show TestStep #{}", testStepId);
 		TestStep testStep = testStepService.findById(testStepId);
 		TestStepView testStepView = new TestStepViewBuilder().buildTestStepView(testStep);
-		
-		
+
 		model.addAttribute("testStepView", testStepView);
 		model.addAttribute("workspace", "test-case");
-		
-		
+
 		// ------------------------------------RIGHTS PART
 		// waiting for [Task 1843]
 		boolean writable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", testStep);
@@ -96,34 +93,33 @@ public class TestStepController {
 		model.addAttribute("attachable", attachable); // right to modify steps
 		boolean linkable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "LINK", testStep);
 		model.addAttribute("linkable", linkable); // right to bind steps to requirement
-		
+
 		// end waiting for [Task 1843]
-		// ------------------------------------ATTACHMENT  AND CUF PART
+		// ------------------------------------ATTACHMENT AND CUF PART
 		boolean hasCUF = false;
 		List<CustomFieldValue> values = Collections.emptyList();
-		//Properties for ActionTestStep only
+		// Properties for ActionTestStep only
 		if (testStepView.getActionStep() != null) {
-			//attachments
+			// attachments
 			model.addAttribute("attachableEntity", testStepView.getActionStep());
 			Set<Attachment> attachments = attachmentHelper.findAttachments(testStepView.getActionStep());
 			model.addAttribute("attachmentSet", attachments);
-			
-			//cufs
+
+			// cufs
 			values = cufValueFinder.findAllCustomFieldValues(testStepView.getActionStep().getBoundEntityId(),
-					testStepView.getActionStep().getBoundEntityType());hasCUF = cufValueFinder.hasCustomFields(testStepView.getActionStep());
-			//verified requirements
+					testStepView.getActionStep().getBoundEntityType());
+			hasCUF = cufValueFinder.hasCustomFields(testStepView.getActionStep());
+			// verified requirements
 			RequirementVerifierView requirementVerifierView = new RequirementVerifierView(testStepView.getActionStep());
 			model.addAttribute("requirementVerifier", requirementVerifierView);
-		}
-		
-		
-		else{
+			
+		} else {
 			values = Collections.emptyList();
 		}
-		CustomFieldValueConfigurationBean conf =  new CustomFieldValueConfigurationBean(values);
+		
+		CustomFieldValueConfigurationBean conf = CustomFieldValueConfigurationBean.createFromValues(values);
 		model.addAttribute("configuration", conf);
-		
-		
+
 		model.addAttribute("hasCUF", hasCUF);
 
 		return "edit-test-step.html";

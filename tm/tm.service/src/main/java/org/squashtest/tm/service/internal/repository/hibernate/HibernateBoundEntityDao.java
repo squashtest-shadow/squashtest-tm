@@ -20,7 +20,19 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import static org.squashtest.tm.domain.customfield.BindableEntity.CAMPAIGN;
+import static org.squashtest.tm.domain.customfield.BindableEntity.EXECUTION;
+import static org.squashtest.tm.domain.customfield.BindableEntity.EXECUTION_STEP;
+import static org.squashtest.tm.domain.customfield.BindableEntity.ITERATION;
+import static org.squashtest.tm.domain.customfield.BindableEntity.REQUIREMENT_VERSION;
+import static org.squashtest.tm.domain.customfield.BindableEntity.TEST_CASE;
+import static org.squashtest.tm.domain.customfield.BindableEntity.TEST_STEP;
+import static org.squashtest.tm.domain.customfield.BindableEntity.TEST_SUITE;
+
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -46,6 +58,22 @@ public class HibernateBoundEntityDao implements BoundEntityDao {
 	private static final String TEST_STEP_QUERY_NAME = "BoundEntityDao.findAllTestStepsForProject";
 	private static final String EXECUTION_QUERY_NAME = "BoundEntityDao.findAllExecutionsForProject";
 	private static final String EXECUTION_STEP_QUERY_NAME = "BoundEntityDao.findAllExecutionStepsForProject";
+	
+	private static final Map<BindableEntity, String> BOUND_ENTITIES_IN_PROJECT_QUERY; 
+	
+	static {
+		Map<BindableEntity, String> queriesByBindable = new HashMap<BindableEntity, String>();
+		queriesByBindable.put(TEST_CASE, TEST_CASE_QUERY_NAME);
+		queriesByBindable.put(REQUIREMENT_VERSION, REQUIREMENT_QUERY_NAME);
+		queriesByBindable.put(CAMPAIGN, CAMPAIGN_QUERY_NAME);
+		queriesByBindable.put(ITERATION, ITERATION_QUERY_NAME);
+		queriesByBindable.put(TEST_SUITE, TEST_SUITE_QUERY_NAME);
+		queriesByBindable.put(TEST_STEP, TEST_STEP_QUERY_NAME);
+		queriesByBindable.put(EXECUTION, EXECUTION_QUERY_NAME);
+		queriesByBindable.put(EXECUTION_STEP, EXECUTION_STEP_QUERY_NAME);
+		
+		BOUND_ENTITIES_IN_PROJECT_QUERY = Collections.unmodifiableMap(queriesByBindable);
+	}
 
 	@Inject
 	private SessionFactory factory;
@@ -54,42 +82,18 @@ public class HibernateBoundEntityDao implements BoundEntityDao {
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<BoundEntity> findAllForBinding(CustomFieldBinding customFieldBinding) {
-		
-		String queryName = "";
-		switch(customFieldBinding.getBoundEntity()){
-		case TEST_CASE 			 : queryName = TEST_CASE_QUERY_NAME; 
-								   break;
-		
-		case REQUIREMENT_VERSION : queryName = REQUIREMENT_QUERY_NAME;
-								   break;
-									
-		case CAMPAIGN			 : queryName =CAMPAIGN_QUERY_NAME;
-									break;
-									
-		case ITERATION			 : queryName =ITERATION_QUERY_NAME;
-									break;
-		
-		case TEST_SUITE			: queryName = TEST_SUITE_QUERY_NAME;
-									break;
-									
-		case TEST_STEP			: queryName = TEST_STEP_QUERY_NAME;
-									break;
-		
-		case EXECUTION 			: queryName = EXECUTION_QUERY_NAME;
-									break;
-
-		case EXECUTION_STEP 	: queryName = EXECUTION_STEP_QUERY_NAME;
-									break;
-		
-		}
-		
-		Session session  = factory.getCurrentSession();
-		Query q = session.getNamedQuery(queryName);
+		BindableEntity boundType = customFieldBinding.getBoundEntity();
+		String queryName = BOUND_ENTITIES_IN_PROJECT_QUERY.get(boundType);
+		Query q = currentSession().getNamedQuery(queryName);
 		q.setParameter("projectId", customFieldBinding.getBoundProject().getId());
 		
 		return q.list();
 	}
-	
+
+
+	private Session currentSession() {
+		return factory.getCurrentSession();
+	}
 	
 	@Override
 	public BoundEntity findBoundEntity(CustomFieldValue customFieldValue) {
@@ -100,14 +104,14 @@ public class HibernateBoundEntityDao implements BoundEntityDao {
 	public BoundEntity findBoundEntity(Long boundEntityId, BindableEntity entityType) {
 
 		Class<?> entityClass = entityType.getReferencedClass();
-		return (BoundEntity) factory.getCurrentSession().load(entityClass, boundEntityId);
+		return (BoundEntity) currentSession().load(entityClass, boundEntityId);
 
 	}	
 	
 	@Override
 	public boolean hasCustomField(Long boundEntityId, BindableEntity entityType) {
 		
-		Query query = factory.getCurrentSession().getNamedQuery("BoundEntityDao.hasCustomFields");
+		Query query = currentSession().getNamedQuery("BoundEntityDao.hasCustomFields");
 		query.setParameter("boundEntityId", boundEntityId, LongType.INSTANCE);
 		query.setParameter("boundEntityType", entityType);
 		

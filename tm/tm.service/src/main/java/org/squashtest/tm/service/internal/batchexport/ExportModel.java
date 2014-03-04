@@ -34,7 +34,6 @@ import org.squashtest.tm.domain.testcase.TestCaseType;
 
 public class ExportModel {
 	
-	
 	private List<TestCaseModel> testCases = new LinkedList<TestCaseModel>();
 	
 	private List<TestStepModel> testSteps = new LinkedList<TestStepModel>();
@@ -175,7 +174,7 @@ public class ExportModel {
 			this.lastModifiedBy = lastModifiedBy;
 		}
 
-				@Override
+		@Override
 		public int compareTo(TestCaseModel tc) {
 			return getPath().compareTo(tc.getPath());
 		}

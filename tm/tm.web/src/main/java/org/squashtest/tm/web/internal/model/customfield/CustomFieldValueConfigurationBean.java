@@ -21,13 +21,14 @@
 package org.squashtest.tm.web.internal.model.customfield;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
+import javax.validation.constraints.NotNull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,71 +43,76 @@ import org.squashtest.tm.domain.denormalizedfield.DenormalizedSingleSelectField;
 public class CustomFieldValueConfigurationBean {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomFieldValueConfigurationBean.class);
 
-	private List<ConfigurationBean> configurationBeans = new LinkedList<ConfigurationBean>();
+	public static CustomFieldValueConfigurationBean createFromValues(Collection<CustomFieldValue> values) {
+		List<ConfigurationBean> configurationBeans = new ArrayList<CustomFieldValueConfigurationBean.ConfigurationBean>(
+				values.size());
+		
+		for (CustomFieldValue value : values) {
+			InputType iType = value.getBinding().getCustomField().getInputType();
+			ConfigurationBean newConf;
+
+			switch (iType) {
+			case DROPDOWN_LIST:
+				newConf = new SingleSelectItem(value);
+				break;
+			case CHECKBOX:
+				newConf = new CheckboxItem(value);
+				break;
+			case DATE_PICKER:
+				newConf = new DatePickerItem(value);
+				break;
+			default:
+				newConf = new PlainTextItem(value);
+				break;
+
+			}
+
+			configurationBeans.add(newConf);
+		}
+		
+		return new CustomFieldValueConfigurationBean(configurationBeans);
+	}
+
+	public static CustomFieldValueConfigurationBean createFromDenormalized(Collection<DenormalizedFieldValue> values) {
+		List<ConfigurationBean> configurationBeans = new ArrayList<CustomFieldValueConfigurationBean.ConfigurationBean>(
+				values.size());
+		
+		for (DenormalizedFieldValue value : values) {
+			InputType iType = value.getInputType();
+			ConfigurationBean newConf;
+
+			switch (iType) {
+			case DROPDOWN_LIST:
+				newConf = new SingleSelectItem(value);
+				break;
+			case CHECKBOX:
+				newConf = new CheckboxItem(value);
+				break;
+			case DATE_PICKER:
+				newConf = new DatePickerItem(value);
+				break;
+			default:
+				newConf = new PlainTextItem(value);
+				break;
+
+			}
+
+			configurationBeans.add(newConf);
+		}
+		
+		return new CustomFieldValueConfigurationBean(configurationBeans);
+	}
+
+	private List<ConfigurationBean> configurationBeans;
 
 	public CustomFieldValueConfigurationBean() {
 		super();
+		configurationBeans = new ArrayList<CustomFieldValueConfigurationBean.ConfigurationBean>();
 	}
 
-	public CustomFieldValueConfigurationBean(List<ConfigurationBean> configuration) {
+	public CustomFieldValueConfigurationBean(@NotNull List<ConfigurationBean> configuration) {
 		super();
 		this.configurationBeans = configuration;
-	}
-
-	public CustomFieldValueConfigurationBean(Collection<DenormalizedFieldValue> values, boolean denormalized) {
-	
-		for (DenormalizedFieldValue value : values) {
-
-			InputType iType = value.getInputType();
-
-			ConfigurationBean newConf;
-
-			switch (iType) {
-			case DROPDOWN_LIST:
-				newConf = new SingleSelectItem(value);
-				break;
-			case CHECKBOX:
-				newConf = new CheckboxItem(value);
-				break;
-			case DATE_PICKER:
-				newConf = new DatePickerItem(value);
-				break;
-			default:
-				newConf = new PlainTextItem(value);
-				break;
-
-			}
-
-			configurationBeans.add(newConf);
-		}
-	}
-
-	public CustomFieldValueConfigurationBean(Collection<CustomFieldValue> values) {
-
-		for (CustomFieldValue value : values) {
-
-			InputType iType = value.getBinding().getCustomField().getInputType();
-
-			ConfigurationBean newConf;
-
-			switch (iType) {
-			case DROPDOWN_LIST:
-				newConf = new SingleSelectItem(value);
-				break;
-			case CHECKBOX:
-				newConf = new CheckboxItem(value);
-				break;
-			case DATE_PICKER:
-				newConf = new DatePickerItem(value);
-				break;
-			default:
-				newConf = new PlainTextItem(value);
-				break;
-
-			}
-
-			configurationBeans.add(newConf);
-		}
 	}
 
 	public List<ConfigurationBean> getConfigurationBeans() {
@@ -129,6 +135,9 @@ public class CustomFieldValueConfigurationBean {
 		String getType();
 	}
 
+	/**
+	 * This has to be public for it to be processable by thymeleaf
+	 */
 	public static abstract class DefaultItem implements ConfigurationBean {
 
 		private String label;
@@ -146,7 +155,7 @@ public class CustomFieldValueConfigurationBean {
 			this.label = value.getLabel();
 			this.optional = true;
 		}
-		
+
 		public DefaultItem(CustomFieldValue value) {
 			this.id = value.getId();
 			this.value = value.getValue();
@@ -194,6 +203,9 @@ public class CustomFieldValueConfigurationBean {
 
 	}
 
+	/**
+	 * This has to be public for it to be processable by thymeleaf
+	 */
 	public static class PlainTextItem extends DefaultItem {
 
 		private static final String INPUT_TYPE = "text";
@@ -217,6 +229,9 @@ public class CustomFieldValueConfigurationBean {
 
 	}
 
+	/**
+	 * This has to be public for it to be processable by thymeleaf
+	 */
 	public static class CheckboxItem extends DefaultItem {
 
 		private static final String INPUT_TYPE = "checkbox";
@@ -244,6 +259,9 @@ public class CustomFieldValueConfigurationBean {
 
 	}
 
+	/**
+	 * This has to be public for it to be processable by thymeleaf
+	 */
 	public static class DatePickerItem extends DefaultItem {
 
 		private static final String INPUT_TYPE = "datepicker";
@@ -285,6 +303,9 @@ public class CustomFieldValueConfigurationBean {
 
 	}
 
+	/**
+	 * This has to be public for it to be processable by thymeleaf
+	 */
 	public static class SingleSelectItem extends DefaultItem {
 
 		private static final String SELECTED = "selected";
@@ -315,7 +336,7 @@ public class CustomFieldValueConfigurationBean {
 
 			this.setSelected(value.getValue());
 		}
-		
+
 		public SingleSelectItem(CustomFieldValue value) {
 			super(value);
 
@@ -340,7 +361,7 @@ public class CustomFieldValueConfigurationBean {
 			data.put(option.getLabel(), option.getLabel());
 		}
 
-		public final  void setSelected(CustomFieldOption option) {
+		public final void setSelected(CustomFieldOption option) {
 			data.put(SELECTED, option.getLabel());
 		}
 
