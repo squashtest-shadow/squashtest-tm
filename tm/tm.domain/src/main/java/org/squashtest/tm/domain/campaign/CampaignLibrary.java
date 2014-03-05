@@ -41,7 +41,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 
 import org.apache.commons.lang.NullArgumentException;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Where;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.library.NodeContainerVisitor;
@@ -76,12 +75,7 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 	@Enumerated(EnumType.STRING)
 	@JoinTable(name = "DISABLED_EXECUTION_STATUS", joinColumns= @JoinColumn(name = "CL_ID"))
 	@Column(name = "EXECUTION_STATUS")
-	private Set<ExecutionStatus> disabledStatuses = new HashSet<ExecutionStatus>(){{
-	    add(ExecutionStatus.WARNING);
-	    add(ExecutionStatus.ERROR);
-	    add(ExecutionStatus.NOT_RUN);
-	    add(ExecutionStatus.SETTLED);
-	}};
+	private Set<ExecutionStatus> disabledStatuses = new HashSet<ExecutionStatus>(ExecutionStatus.DEFAULT_DISABLED_STATUSES);
 	
 	
 	public void setId(Long id) {

@@ -45,6 +45,7 @@ import org.squashtest.tm.domain.Level;
  * <li><u>new execution status</u> : the new ExecutionStatus of the considered Execution. It is what is being computed there.</li>
  * </ul>
  * 
+ * Rem : {@link Level} seems to be used for sorting purposes (which might not be so good a thing) 
  * 
  * @author bsiri
  *
@@ -354,6 +355,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 	private static final Set<ExecutionStatus> CANONICAL_STATUSES;
 	private static final Set<ExecutionStatus> TERMINAL_STATUSES;
 	private static final Set<ExecutionStatus> NON_TERMINAL_STATUSES;
+	public static final Set<ExecutionStatus> DEFAULT_DISABLED_STATUSES;
 	
 	private final int level;
 	
@@ -384,6 +386,15 @@ public enum ExecutionStatus implements Internationalizable, Level {
 		terms.add(UNTESTABLE);
 		
 		NON_TERMINAL_STATUSES = Collections.unmodifiableSet(nonTerms);
+		
+		Set<ExecutionStatus> disabled = new HashSet<ExecutionStatus>();
+		for (ExecutionStatus status : values()) {
+			if (!status.defaultEnabled()) {
+				disabled.add(status);
+			}
+		}
+		
+		DEFAULT_DISABLED_STATUSES = Collections.unmodifiableSet(disabled);
 		
 	}
 	
