@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import java.util.List;
 
 import org.squashtest.tm.domain.testcase.Dataset;
 
@@ -30,7 +29,7 @@ public class DatasetInstruction extends Instruction{
 	private Dataset dataset;
 	
 	@Override
-	public List<LogEntry> execute(Facility facility) {
+	public LogTrain execute(Facility facility) {
 		// TODO Auto-generated method stub
 		return null;
 	}

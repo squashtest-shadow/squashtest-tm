@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import java.util.List;
 
 public abstract class Instruction {
 	
@@ -34,7 +33,7 @@ public abstract class Instruction {
 	 * @param facility
 	 * @return
 	 */
-	public abstract List<LogEntry> execute(Facility facility);
+	public abstract LogTrain execute(Facility facility);
 
 	public int getLine() {
 		return line;

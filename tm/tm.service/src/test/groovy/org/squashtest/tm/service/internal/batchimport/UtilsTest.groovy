@@ -87,4 +87,22 @@ class UtilsTest extends Specification{
 			"/\\/yeah\\//yo\\/yo/tu\\/tu\\/"			|	3	|	["\\/yeah\\/", "yo\\/yo", "tu\\/tu\\/"]
 		
 	}
+	
+	
+	def "should return uniques project names"(){
+		
+		given :
+			def paths = [
+					"/project 1/toto/titi",
+					"/project \\/2/toto/titi",
+					"/project 1/tata",
+					"/project \\/2//bob, mike"
+				]
+		
+		when :
+			def res = Utils.extractProjectNames(paths)
+		
+		then :
+			res == ["project 1", "project \\/2"]
+	}
 }

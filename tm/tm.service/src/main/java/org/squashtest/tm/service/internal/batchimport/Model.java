@@ -24,9 +24,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -90,14 +93,167 @@ public class Model {
 	private TestCaseLibraryFinderService finderService;
 	
 	
-	private Map<TestCaseTarget, Long> testCaseIdsByTarget = new HashMap<TestCaseTarget, Long>();
+	private Map<TestCaseTarget, TargetStatus> testCaseStatusByTarget = new HashMap<TestCaseTarget, TargetStatus>();
 	
-	private Map<String, Long> projectIdsByName = new HashMap<String, Long>();
+	private Map<String, TargetStatus> projectStatusByName = new HashMap<String, TargetStatus>();
 	
 	private MultiValueMap tcCufsPerProjectname = new MultiValueMap();
 	
 	private MultiValueMap stepCufsPerProjectname = new MultiValueMap();
 	
+	
+	
+	// ************************** status managment *****************************************
+	
+	public TargetStatus getStatus(TestCaseTarget target){
+		
+		if (! testCaseStatusByTarget.containsKey(target)){
+			init(target);
+		}
+		
+		return testCaseStatusByTarget.get(target);
+		
+	}
+	
+	public void setExists(TestCaseTarget target, Long id){
+		testCaseStatusByTarget.put(target, new TargetStatus(ModelizedStatus.EXISTS, id));
+	}
+	
+	public void setToBeCreated(TestCaseTarget target){
+		testCaseStatusByTarget.put(target, new TargetStatus(ModelizedStatus.TO_BE_CREATED));
+	}
+	
+	public void setToBeDeleted(TestCaseTarget target){
+		testCaseStatusByTarget.put(target, new TargetStatus(ModelizedStatus.TO_BE_DELETED));
+	}
+
+	public void setDeleted(TestCaseTarget target){
+		testCaseStatusByTarget.put(target, new TargetStatus(ModelizedStatus.NOT_EXISTS));
+	}
+
+	// ************************** accessors *****************************************
+	
+	// may return null;
+	public Long getTestCaseId(TestCaseTarget target){
+		TargetStatus status = getStatus(target);
+		return status.id;
+	}
+	
+	public TestCase getTestCase(TestCaseTarget target){
+		Long id = getTestCaseId(target);
+		if (id == null){
+			return null;
+		}
+		else{
+			return (TestCase) sessionFactory.getCurrentSession().load(TestCase.class, id);
+		}
+	}
+	
+	// ************************** loading code **************************************
+	
+	public void init(TestCaseTarget target){
+		init(Arrays.asList(new TestCaseTarget[] { target }));
+	}
+	
+	public void init(List<TestCaseTarget> targets){
+		// ensures unicity
+		List<TestCaseTarget> uniqueTargets = uniqueList(targets);
+		
+		// init the test cases
+		initTestCases(uniqueTargets);
+		
+		// init the projects
+		initProjects(uniqueTargets);
+
+	}
+
+	
+
+	private void initTestCases(List<TestCaseTarget> initialTargets){
+		
+		// filter out the test cases we already know of
+		List<TestCaseTarget> targets = new LinkedList<TestCaseTarget>();
+		for (TestCaseTarget target : initialTargets){
+			if (! testCaseStatusByTarget.containsKey(target)){
+				targets.add(target);
+			}
+		}
+		
+		// exit if they are all known
+		if (targets.isEmpty()){
+			return;
+		}
+		
+		// collect their paths
+		List<String> paths = CollectionUtils.transform(targets, TestCasePathCollector.INSTANCE);
+	
+		// find their ids
+		List<Long> ids = finderService.findNodeIdsByPath(paths);
+		
+		// now store them as 
+		for (int i=0; i< paths.size(); i++){
+			
+			TestCaseTarget t = targets.get(i);
+			Long id = ids.get(i);
+			
+			ModelizedStatus existence = (id == null) ? ModelizedStatus.NOT_EXISTS : ModelizedStatus.EXISTS;
+			TargetStatus status = new TargetStatus(existence, id);
+			
+			testCaseStatusByTarget.put(t,status);
+		}
+	}
+	
+
+	private void initProjects(List<TestCaseTarget> targets){
+		
+		List<String> allNames = collectProjects(targets);
+		
+		// filter out projects we already know of
+		List<String> projectNames = new LinkedList<String>();
+		for (String name : allNames){
+			if (! projectStatusByName.containsKey(name)){
+				projectNames.add(name);
+			}
+		}
+		
+		// exit if they are all known
+		if (projectNames.isEmpty()){
+			return;
+		}
+		
+		// now begin
+		List<Project> projects = loadProjects(projectNames);
+		
+		// add the projects that were found 
+		for (Project p : projects){
+			TargetStatus status =  new TargetStatus(ModelizedStatus.EXISTS, p.getId());
+			projectStatusByName.put(p.getName(), status);			
+			initCufs(p.getName());
+		}
+		
+		// add the projects that weren't found
+		Set<String> knownProjects = projectStatusByName.keySet();
+		for (String name : projectNames){
+			if (! knownProjects.contains(name)){
+				projectStatusByName.put(name, new TargetStatus(ModelizedStatus.NOT_EXISTS));
+			}
+		}
+
+	}
+	
+	// assumes that the project exists and that we have its ID
+	private void initCufs(String projectName){
+		
+		Long projectId = projectStatusByName.get(projectName).id;
+		
+		List<CustomField> tccufs = cufDao.findAllBoundCustomFields(projectId, BindableEntity.TEST_CASE) ;
+		tcCufsPerProjectname.putAll(projectName, tccufs);
+		
+		List<CustomField> stcufs = cufDao.findAllBoundCustomFields(projectId, BindableEntity.TEST_STEP) ;
+		stepCufsPerProjectname.putAll(projectName, stcufs);
+		
+
+	}
 	
 
 	/**
@@ -106,7 +262,7 @@ public class Model {
 	 * @param target
 	 * @return
 	 */
-	public Long getTestCaseId(TestCaseTarget target){
+	/*public Long getTestCaseId(TestCaseTarget target){
 		
 		if (! testCaseIdsByTarget.containsKey(target)){
 			initTargets(Arrays.asList(new TestCaseTarget[]{target}));
@@ -186,7 +342,7 @@ public class Model {
 	 * 
 	 * @param targets
 	 */
-	@SuppressWarnings("unchecked")
+	/*@SuppressWarnings("unchecked")
 	public void initTargets(List<TestCaseTarget> targets){
 		
 		List<TestCaseTarget> uniques = uniqueList(targets);
@@ -241,15 +397,85 @@ public class Model {
 		
 	}
 	
-	private List<Project> initProjects(List<String> names){
+
+	
+*/
+	
+	// *************************** private methods *************************************
+
+	private <OBJ extends Object> List<OBJ> uniqueList(Collection<OBJ> orig){
+		Set<OBJ> filtered =  new LinkedHashSet<OBJ>(orig);
+		return new ArrayList<OBJ>(filtered);
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	private List<String> collectProjects(List<TestCaseTarget> targets){		
+		List<String> paths = CollectionUtils.transform(targets, TestCasePathCollector.INSTANCE);
+		return Utils.extractProjectNames(paths);
+	}
+	
+	private List<Project> loadProjects(List<String> names){
 		Query q = sessionFactory.getCurrentSession().getNamedQuery("Project.findAllByName");  
 		q.setParameterList("names", names);
 		return q.list();
 	}
 	
-	private <OBJ extends Object> List<OBJ> uniqueList(Collection<OBJ> orig){
-		Set<OBJ> filtered =  new LinkedHashSet(orig);
-		return new ArrayList<OBJ>(filtered);
+	
+	// ************************ internal declarations **********************************
+	
+	
+	static enum ModelizedStatus{
+		EXISTS,				// means : exists now in the database
+		TO_BE_CREATED,		// means : will be created later on in the process
+		TO_BE_DELETED,		// means : will be deleted later on in the process
+		NOT_EXISTS;			// means : at this point, doesn't exists either in DB nor in anything planned later in the process
 	}
+	
+
+
+	public static class TargetStatus{
+				
+		ModelizedStatus status = null;
+		Long id = null;
+
+		
+		TargetStatus(ModelizedStatus status){
+			if (status == ModelizedStatus.EXISTS){
+				throw new IllegalArgumentException("internal error : a TargetStatus representing an actually existent target should specify an id");
+			}
+			this.status = status;
+		}
+		
+		TargetStatus (ModelizedStatus status, Long id){
+			this.status = status;
+			this.id = id;
+		}
+
+		public ModelizedStatus getStatus() {
+			return status;
+		}
+
+		public Long getId() {
+			return id;
+		}
+		
+	}
+	
+	
+	private static class TestCasePathCollector implements Transformer{
+		
+		static TestCasePathCollector INSTANCE = new TestCasePathCollector();
+		
+		private TestCasePathCollector(){
+			super();
+		}
+		
+		@Override
+		public Object transform(Object value) {
+			return ((TestCaseTarget)value).getPath();
+		}
+	}
+	
 	
 }

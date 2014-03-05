@@ -20,8 +20,11 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -70,7 +73,7 @@ final class Utils {
 	}
 	
 	static List<String> extractProjectNames(List<String> pathes){
-		List<String> res = new LinkedList<String>();
+		Set<String> res = new HashSet<String>();
 		for (String p : pathes){
 			Matcher matcher = projectPattern.matcher(p);
 			if (matcher.matches()){
@@ -80,7 +83,7 @@ final class Utils {
 				res.add(null);
 			}
 		}
-		return res;
+		return new ArrayList<String>(res);
 	}
 
 	static String extractTestCaseName(String path){

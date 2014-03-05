@@ -20,16 +20,15 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import java.util.List;
 
 public class LogParseErrorInstruction extends Instruction {
 
 	private Target target;
 	
-	private List<LogEntry> entries;
+	private LogTrain entries;
 	
 	@Override
-	public List<LogEntry> execute(Facility facility) {
+	public LogTrain execute(Facility facility) {
 		return entries;
 	}
 
@@ -41,7 +40,7 @@ public class LogParseErrorInstruction extends Instruction {
 		this.target = target;
 	}
 
-	public void setEntries(List<LogEntry> entries){
+	public void setEntries(LogTrain entries){
 		this.entries = entries;
 	}
 }

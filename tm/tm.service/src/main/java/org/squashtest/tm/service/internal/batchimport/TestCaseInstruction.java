@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import java.util.List;
 import java.util.Map;
 
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -34,7 +33,7 @@ public class TestCaseInstruction extends Instruction {
 	private Map<String, String> customFields;
 	
 	@Override
-	public List<LogEntry> execute(Facility facility) {
+	public LogTrain execute(Facility facility) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -20,37 +20,35 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import java.util.LinkedList;
+import java.util.List;
 
-import org.squashtest.tm.domain.testcase.ActionTestStep;
+class LogTrain {
 
-public class ActionStepInstruction extends Instruction {
-
-	private TestStepTarget target;
-	private ActionTestStep testStep;
+	private List<LogEntry> entries = new LinkedList<LogEntry>();
+	private boolean criticalErrors = false;
 	
-	@Override
-	public LogTrain execute(Facility facility) {
-		// TODO Auto-generated method stub
-		return null;
+	void addEntry(LogEntry entry){
+		entries.add(entry);
+		if (entry.getStatus() == ImportStatus.FAILURE){
+			criticalErrors = true;
+		}
 	}
-
-	public TestStepTarget getTarget() {
-		return target;
+	
+	void addEntries(List<LogEntry> entries){
+		for (LogEntry entry : entries){
+			addEntry(entry);
+		}
 	}
-
-	public void setTarget(TestStepTarget target) {
-		this.target = target;
-	}
-
-	public ActionTestStep getTestStep() {
-		return testStep;
-	}
-
-	public void setTestStep(ActionTestStep testStep) {
-		this.testStep = testStep;
+	
+	List<LogEntry> getEntries(){
+		return entries;
 	}
 	
 	
+	boolean hasCriticalErrors(){
+		return criticalErrors;
+	}
 	
-
+	
 }

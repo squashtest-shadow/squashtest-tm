@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -71,12 +70,12 @@ public class SimulationFacility implements Facility{
 	 * </ul>
 	 */
 	@Override
-	public List<LogEntry> createTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
+	public LogTrain createTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
 		throw new UnsupportedOperationException("not implemented yet"); 
 	}
 
 	@Override
-	public List<LogEntry> updateTestCase(long testCaseId, TestCase testCaseData,
+	public LogTrain updateTestCase(long testCaseId, TestCase testCaseData,
 			Map<String, String> cufValues) {
 
 		throw new UnsupportedOperationException("not implemented yet"); 
@@ -84,33 +83,33 @@ public class SimulationFacility implements Facility{
 	}
 
 	@Override
-	public List<LogEntry> deleteTestCase(long testCaseId) {
+	public LogTrain deleteTestCase(long testCaseId) {
 		throw new UnsupportedOperationException("not implemented yet"); 
 	}
 
 	@Override
-	public List<LogEntry> deleteTestCase(TestCase testCase) {
+	public LogTrain deleteTestCase(TestCase testCase) {
 		throw new UnsupportedOperationException("not implemented yet"); 
 	}
 
 	@Override
-	public List<LogEntry> addTestStep(TestStepTarget target, TestStep testStep,
+	public LogTrain addTestStep(TestStepTarget target, TestStep testStep,
 			Map<String, String> cufValues) {
 		throw new UnsupportedOperationException("not implemented yet"); 
 	}
 
 	@Override
-	public List<LogEntry> updateTestStep(long testStepId, TestStep testStepData) {
+	public LogTrain updateTestStep(long testStepId, TestStep testStepData) {
 		throw new UnsupportedOperationException("not implemented yet"); 
 	}
 
 	@Override
-	public List<LogEntry> deleteTestStep(long testStepId) {
+	public LogTrain deleteTestStep(long testStepId) {
 		throw new UnsupportedOperationException("not implemented yet"); 
 	}
 
 	@Override
-	public List<LogEntry> deleteTestStep(TestStep testStep) {
+	public LogTrain deleteTestStep(TestStep testStep) {
 		throw new UnsupportedOperationException("not implemented yet"); 
 	}
 

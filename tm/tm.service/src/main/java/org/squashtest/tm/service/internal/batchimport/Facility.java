@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import java.util.List;
 import java.util.Map;
 
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -30,15 +29,15 @@ public interface Facility {
 	
 	Model getModel();
 
-	List<LogEntry> createTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues);
-	List<LogEntry> updateTestCase(long testCaseId, TestCase testCaseData, Map<String, String> cufValues);
-	List<LogEntry> deleteTestCase(long testCaseId);
-	List<LogEntry> deleteTestCase(TestCase testCase);
+	LogTrain createTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues);
+	LogTrain updateTestCase(long testCaseId, TestCase testCaseData, Map<String, String> cufValues);
+	LogTrain deleteTestCase(long testCaseId);
+	LogTrain deleteTestCase(TestCase testCase);
 	
 	
-	List<LogEntry> addTestStep(TestStepTarget target, TestStep testStep, Map<String, String> cufValues);
-	List<LogEntry> updateTestStep(long testStepId, TestStep testStepData);
-	List<LogEntry> deleteTestStep(long testStepId);
-	List<LogEntry> deleteTestStep(TestStep testStep);
+	LogTrain addTestStep(TestStepTarget target, TestStep testStep, Map<String, String> cufValues);
+	LogTrain updateTestStep(long testStepId, TestStep testStepData);
+	LogTrain deleteTestStep(long testStepId);
+	LogTrain deleteTestStep(TestStep testStep);
 	
 }

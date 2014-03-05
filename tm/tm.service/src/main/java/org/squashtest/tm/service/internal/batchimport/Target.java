@@ -23,19 +23,7 @@ package org.squashtest.tm.service.internal.batchimport;
 
 
 public abstract class Target {
-	
-	private long id;
-	
-	
-	public abstract EntityType getType();
 
-	public long getId() {
-		return id;
-	}
-	
-	public void setId(long id) {
-		this.id = id;
-	}
-	
+	public abstract EntityType getType();	
 	
 }

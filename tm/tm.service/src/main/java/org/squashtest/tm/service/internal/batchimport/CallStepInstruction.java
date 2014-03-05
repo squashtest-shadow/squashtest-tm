@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import java.util.List;
 
 public class CallStepInstruction extends Instruction{
 
@@ -28,7 +27,7 @@ public class CallStepInstruction extends Instruction{
 	private TestCaseTarget calledTC;	
 	
 	@Override
-	public List<LogEntry> execute(Facility facility) {
+	public LogTrain execute(Facility facility) {
 		// TODO Auto-generated method stub
 		return null;
 	}

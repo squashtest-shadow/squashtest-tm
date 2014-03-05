@@ -53,6 +53,11 @@ public class ImportLog {
 		logEntriesPerType.put(logEntry.getTarget().getType(), logEntry);
 	}
 
+	public void addLogTrain(LogTrain train){
+		for (LogEntry entry : train.getEntries()){
+			logEntriesPerType.put(entry.getTarget().getType(), entry);
+		}
+	}
 
 	public Collection<LogEntry> findAllFor(EntityType type){
 		return logEntriesPerType.getCollection(type);
