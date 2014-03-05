@@ -26,8 +26,6 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 	
 	
-	
-	
 	<!-- DO NOT FORGET TO UPDATE VERSION IN CORE_CONFIG ! -->
 	<!-- OK BOSS ! -->
 	<changeSet id="tm-1.8.0" author="mpagnon">

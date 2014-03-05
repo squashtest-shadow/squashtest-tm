@@ -432,8 +432,8 @@
     <changeSet id="tm-1.9.0-issue-3236-01" author="flaurens">
       <sql><![CDATA[
 		update DENORMALIZED_FIELD_VALUE dfv
-		set dfv.FIELD_TYPE = "CF"
-		where dfv.FIELD_TYPE = ""
+		set dfv.FIELD_TYPE = 'CF'
+		where dfv.FIELD_TYPE = ''
 	]]>
     </sql>
   </changeSet>
