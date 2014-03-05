@@ -415,16 +415,16 @@
     <comment>Inserting default disabled execution statuses for existing libraries</comment>
     <sql><![CDATA[
    	insert into DISABLED_EXECUTION_STATUS (CL_ID, EXECUTION_STATUS)
-	select cl_id, 'ERROR' from campaign_library;
+	select cl_id, 'ERROR' from CAMPAIGN_LIBRARY;
 		
 	insert into DISABLED_EXECUTION_STATUS (CL_ID, EXECUTION_STATUS)
-	select cl_id, 'WARNING' from campaign_library;
+	select cl_id, 'WARNING' from CAMPAIGN_LIBRARY;
 
 	insert into DISABLED_EXECUTION_STATUS (CL_ID, EXECUTION_STATUS)
-	select cl_id, 'NOT_RUN' from campaign_library;
+	select cl_id, 'NOT_RUN' from CAMPAIGN_LIBRARY;
 
 	insert into DISABLED_EXECUTION_STATUS (CL_ID, EXECUTION_STATUS)
-	select cl_id, 'SETTLED' from campaign_library;
+	select cl_id, 'SETTLED' from CAMPAIGN_LIBRARY;
 	]]>
     </sql>
    </changeSet>
