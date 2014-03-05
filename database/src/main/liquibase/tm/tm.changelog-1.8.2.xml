@@ -133,4 +133,13 @@
     <dropTable tableName="CAMPAIGN_LIBRARY_PLUGINS"/>
   </changeSet>
   
+  <changeSet id="tm-1.8.2-issue-3236-01" author="flaurens">
+      <sql><![CDATA[
+		update DENORMALIZED_FIELD_VALUE
+		set FIELD_TYPE = "CF"
+		where FIELD_TYPE = ""
+	]]>
+    </sql>
+  </changeSet>
+  
 </databaseChangeLog>
