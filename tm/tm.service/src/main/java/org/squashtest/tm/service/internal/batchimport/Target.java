@@ -26,4 +26,6 @@ public abstract class Target {
 
 	public abstract EntityType getType();	
 	
+	public abstract boolean isWellFormed();
+	
 }

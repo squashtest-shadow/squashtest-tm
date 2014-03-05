@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import org.apache.commons.lang.StringUtils;
+
 public class DatasetTarget extends Target {
 
 	private TestCaseTarget testCase;
@@ -78,6 +80,9 @@ public class DatasetTarget extends Target {
 		return true;
 	}
 	
-	
+	@Override
+	public boolean isWellFormed() {
+		return testCase.isWellFormed() && (! StringUtils.isBlank(name));
+	}
 
 }

@@ -243,6 +243,7 @@
 			") "+
 			"and cfv.boundEntityType = 'TEST_STEP'"			
 		),
+		@NamedQuery(name = "testStep.findOrderedTypesByTcId", query="select case when st.class = ActionTestStep then 'ACTION' else 'CALL' end as steptype from TestCase tc join tc.steps st where tc.id = :tcId order by index(st)"),
 		
 		//TestParameters
 		@NamedQuery(name = "parameter.findAllByTestCases", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id in (:testCaseIds) order by testCase.name,  parameter.name "),

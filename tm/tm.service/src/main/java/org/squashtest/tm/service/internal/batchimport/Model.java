@@ -24,12 +24,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -40,6 +38,7 @@ import net.sf.cglib.core.Transformer;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.hibernate.type.LongType;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.customfield.BindableEntity;
@@ -51,34 +50,6 @@ import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
 
 
 
-/**
- * Useful methods :
- *
- * -- about test cases :
- *
- * public boolean testCaseExists(TestCaseTarget target)
- * public Long getTestCaseId(TestCaseTarget target)
- * public TestCase getTestCase(TestCaseTarget target)
- * 
- * -- about projects and custom fields 
- * 
- * public Long getProjectId(String projectName)
- * public Collection<CustomField> getTestCaseCufsForProject(String projectName) 
- * public Collection<CustomField> getStepCufsForProject(String projectName)
- * public Collection<CustomField> getTestCaseCufs(TestCaseTarget target)
- * public Collection<CustomField> getStepCufs(TestStepTarget target)
- * 
- * -- for simulation of yet unknown test cases :
- * 
- * public void registerTarget(TestCaseTarget target, Long id)
- * public void removeTarget(TestCaseTarget target)
- * 
- * 
- * 
- * 
- * @author bsiri
- *
- */
 @Repository
 @Scope("prototype")
 public class Model {
@@ -93,9 +64,38 @@ public class Model {
 	private TestCaseLibraryFinderService finderService;
 	
 	
-	private Map<TestCaseTarget, TargetStatus> testCaseStatusByTarget = new HashMap<TestCaseTarget, TargetStatus>();
 	
 	private Map<String, TargetStatus> projectStatusByName = new HashMap<String, TargetStatus>();
+	
+	
+	/* ***********************************************************************************************************************************
+	 * 
+	 * testCaseStatusByTarget :
+	 * 
+	 * Maps a reference to a TestCase (namely a TestCaseTarget). It keeps track of its status (see ModelizedStatus) and 
+	 * possibly its id (when there is a concrete instance of it in the database). 
+	 * 
+	 * Because a test case might be referenced multiple time, once a test case is loaded in that map it'll stay there.  
+	 * 
+	 * ***********************************************************************************************************************************/
+	private Map<TestCaseTarget, TargetStatus> testCaseStatusByTarget = new HashMap<TestCaseTarget, TargetStatus>();
+
+	
+	/* ***********************************************************************************************************************************
+	 * 
+	 * stepStatusByTarget : 
+	 * 
+	 * Maps a test case (given its target) to a list of step models. We only care of their position (because they are identified by position) 
+	 * and their type (because we want to detect potential attempts of modifications of an action step whereas the target is actually a call step 
+	 * and conversely).
+	 * 
+	 * TODO : maybe implement it as a LRU cache that doesn't scrap step lists that were modified (ie "dirty" data that
+	 * 		differs from the DB content).
+	 * 
+	 * ***********************************************************************************************************************************/
+	
+	private Map<TestCaseTarget, List<StepType>> testCaseStepsByTarget = new HashMap<TestCaseTarget, List<StepType>>();
+	
 	
 	private MultiValueMap tcCufsPerProjectname = new MultiValueMap();
 	
@@ -103,7 +103,7 @@ public class Model {
 	
 	
 	
-	// ************************** status managment *****************************************
+	// ************************** Test Case status management ****************************************
 	
 	public TargetStatus getStatus(TestCaseTarget target){
 		
@@ -116,31 +116,39 @@ public class Model {
 	}
 	
 	public void setExists(TestCaseTarget target, Long id){
-		testCaseStatusByTarget.put(target, new TargetStatus(ModelizedStatus.EXISTS, id));
+		testCaseStatusByTarget.put(target, new TargetStatus(Existence.EXISTS, id));
 	}
 	
 	public void setToBeCreated(TestCaseTarget target){
-		testCaseStatusByTarget.put(target, new TargetStatus(ModelizedStatus.TO_BE_CREATED));
+		testCaseStatusByTarget.put(target, new TargetStatus(Existence.TO_BE_CREATED));		
 	}
 	
 	public void setToBeDeleted(TestCaseTarget target){
-		testCaseStatusByTarget.put(target, new TargetStatus(ModelizedStatus.TO_BE_DELETED));
+		testCaseStatusByTarget.put(target, new TargetStatus(Existence.TO_BE_DELETED));
+		if (testCaseStepsByTarget.containsKey(target)){
+			testCaseStepsByTarget.get(target).clear();
+		}		
 	}
 
 	public void setDeleted(TestCaseTarget target){
-		testCaseStatusByTarget.put(target, new TargetStatus(ModelizedStatus.NOT_EXISTS));
+		testCaseStatusByTarget.put(target, new TargetStatus(Existence.NOT_EXISTS, null));
+		if (testCaseStepsByTarget.containsKey(target)){
+			testCaseStepsByTarget.get(target).clear();
+		}
+		
 	}
 
-	// ************************** accessors *****************************************
+	// ************************** Test Case accessors *****************************************
 	
-	// may return null;
-	public Long getTestCaseId(TestCaseTarget target){
+	// may return null
+	public Long getId(TestCaseTarget target){
 		TargetStatus status = getStatus(target);
 		return status.id;
 	}
 	
-	public TestCase getTestCase(TestCaseTarget target){
-		Long id = getTestCaseId(target);
+	
+	public TestCase get(TestCaseTarget target){
+		Long id = getId(target);
 		if (id == null){
 			return null;
 		}
@@ -149,6 +157,98 @@ public class Model {
 		}
 	}
 	
+	
+	// ************************ Test Step management ********************************
+
+	/**
+	 * Adds a step of the specified type to the model. Not to the database.
+	 * 
+	 * @param target
+	 * @param type
+	 * @return
+	 */
+	// returns the index at which the step was created
+	public Integer add(TestStepTarget target, StepType type){
+		
+		TestCaseTarget tc = target.getTestCase();
+		Integer index = target.getIndex();
+		
+		if (! testCaseStatusByTarget.containsKey(tc)){
+			init(tc);
+		}
+		
+		List<StepType> types = testCaseStepsByTarget.get(tc);
+		
+		if (index == null || index >= types.size()){
+			index = types.size();
+		}
+		
+		types.add(index, type);
+		
+		return index;
+	}
+	
+	
+	public void remove(TestStepTarget target){
+		
+		if (! stepExists(target)){
+			throw new IllegalArgumentException("cannot remove non existant step '"+target+"'");
+		}
+		
+		TestCaseTarget tc = target.getTestCase();
+		Integer index = target.getIndex();
+		
+		if (! testCaseStatusByTarget.containsKey(tc)){
+			init(tc);
+		}
+		
+		List<StepType> types = testCaseStepsByTarget.get(tc);
+		
+		types.remove(index);
+		
+	}
+	
+	// ************************ Test Step accessors *********************************
+	
+	public boolean stepExists(TestStepTarget target){
+		
+		TestCaseTarget tc = target.getTestCase();
+		Integer index = target.getIndex();
+		
+		if (! testCaseStatusByTarget.containsKey(tc)){
+			init(tc);
+		}
+		
+		List<StepType> types = testCaseStepsByTarget.get(tc);
+		
+		// if index is defined just check it is within range
+		// otherwise it doesn't exist.
+		return (index != null) ? (types.size() > index) : false;
+		
+	}
+	
+	
+	// returns null if the step is unknown
+	public StepType getType(TestStepTarget target){
+		
+		TestCaseTarget tc = target.getTestCase();
+		Integer index = target.getIndex();
+		
+		if (! testCaseStatusByTarget.containsKey(tc)){
+			init(tc);
+		}
+		
+		List<StepType> types = testCaseStepsByTarget.get(tc);
+		
+		if (index != null && types.size() > index){
+			return types.get(index);
+		}
+		else{
+			return null;
+		}
+	}
+	
+
 	// ************************** loading code **************************************
 	
 	public void init(TestCaseTarget target){
@@ -161,6 +261,9 @@ public class Model {
 		
 		// init the test cases
 		initTestCases(uniqueTargets);
+		
+		// init the steps
+		initTestSteps(uniqueTargets);
 		
 		// init the projects
 		initProjects(uniqueTargets);
@@ -190,17 +293,41 @@ public class Model {
 		// find their ids
 		List<Long> ids = finderService.findNodeIdsByPath(paths);
 		
-		// now store them as 
+		// now store them 
 		for (int i=0; i< paths.size(); i++){
 			
 			TestCaseTarget t = targets.get(i);
 			Long id = ids.get(i);
-			
-			ModelizedStatus existence = (id == null) ? ModelizedStatus.NOT_EXISTS : ModelizedStatus.EXISTS;
+		
+			Existence existence = (id == null) ? Existence.NOT_EXISTS : Existence.EXISTS;
 			TargetStatus status = new TargetStatus(existence, id);
 			
 			testCaseStatusByTarget.put(t,status);
 		}
+	}
+	
+	private void initTestSteps(List<TestCaseTarget> targets){
+		
+		for (TestCaseTarget target : targets){
+
+			// do not double process the steps
+			if ( testCaseStepsByTarget.containsKey( target ) ){
+				continue;
+			}
+			
+			TargetStatus status = getStatus(target);
+			List<StepType> types = null;
+			if (status.id != null && status.status != Existence.TO_BE_DELETED){
+				types = loadStepTypes(status.id);
+			}
+			else{
+				types = new ArrayList<StepType>();
+			}
+			
+			testCaseStepsByTarget.put(target, types);
+			
+		}
+		
 	}
 	
 
@@ -226,7 +353,7 @@ public class Model {
 		
 		// add the projects that were found 
 		for (Project p : projects){
-			TargetStatus status =  new TargetStatus(ModelizedStatus.EXISTS, p.getId());
+			TargetStatus status =  new TargetStatus(Existence.EXISTS, p.getId());
 			projectStatusByName.put(p.getName(), status);			
 			initCufs(p.getName());
 		}
@@ -235,7 +362,7 @@ public class Model {
 		Set<String> knownProjects = projectStatusByName.keySet();
 		for (String name : projectNames){
 			if (! knownProjects.contains(name)){
-				projectStatusByName.put(name, new TargetStatus(ModelizedStatus.NOT_EXISTS));
+				projectStatusByName.put(name, new TargetStatus(Existence.NOT_EXISTS));
 			}
 		}
 
@@ -256,151 +383,6 @@ public class Model {
 	}
 	
 
-	/**
-	 * returns null if not found
-	 * 
-	 * @param target
-	 * @return
-	 */
-	/*public Long getTestCaseId(TestCaseTarget target){
-		
-		if (! testCaseIdsByTarget.containsKey(target)){
-			initTargets(Arrays.asList(new TestCaseTarget[]{target}));
-		}
-		
-		return testCaseIdsByTarget.get(target);
-		
-	}
-	
-	
-	public TestCase getTestCase(TestCaseTarget target){
-		
-		Long id = getTestCaseId(target);
-		if (id == null) {
-			return null;
-		}
-		else{
-			return (TestCase)sessionFactory.getCurrentSession().load(TestCase.class, id);
-		}
-		
-	}
-	
-	
-	public Collection<CustomField> getTestCaseCufsForProject(String projectName){
-		if (! projectIdsByName.containsKey(projectName)){
-			initProjectsAndTheRest("/"+projectName+"/a");	//awful hack that transforms that in a valid path, therefore it can be processed.
-		}
-		return tcCufsPerProjectname.getCollection(projectName);
-	}
-	
-	public Collection<CustomField> getStepCufsForProject(String projectName){
-		if (! projectIdsByName.containsKey(projectName)){
-			initProjectsAndTheRest("/"+projectName+"/a");	//awful hack that transforms that in a valid path, therefore it can be processed.
-		}
-		return stepCufsPerProjectname.getCollection(projectName);
-	}
-	
-	public Collection<CustomField> getTestCaseCufs(TestCaseTarget target){
-		return getTestCaseCufsForProject(Utils.extractProjectName(target.getPath()));
-	}
-	
-	public Collection<CustomField> getStepCufs(TestStepTarget target){
-		return getStepCufsForProject(Utils.extractProjectName(target.getTestCase().getPath()));
-	}
-	
-	public Long getProjectId(String projectName){
-		if (!projectIdsByName.containsKey(projectName)){
-			initProjectsAndTheRest("/"+projectName+"/a");	//awful hack that transforms that in a valid path, therefore it can be processed.
-		}
-		return projectIdsByName.get(projectName);
-	}
-	
-	
-	public boolean testCaseExists(TestCaseTarget target){
-		Long id = getTestCaseId(target);
-		return (id != null);
-	}
-	
-	
-	// that method is useful if a previously non existant TestCaseTarget has been created since (either for real or simulation)
-	public void registerTarget(TestCaseTarget target, Long id){
-		testCaseIdsByTarget.put(target, id);
-		String projectName = Utils.extractProjectName(target.getPath());
-		if (! projectIdsByName.containsKey(projectName)){
-			initProjectsAndTheRest(target.getPath());
-		}
-	}
-	
-	public void removeTarget(TestCaseTarget target){
-		testCaseIdsByTarget.remove(target);
-	}
-	
-	
-	/**
-	 * When you have a batch of test cases you might need later on, it's better 
-	 * to load them all at once. That's what this method is for.
-	 * 
-	 * @param targets
-	 */
-	/*@SuppressWarnings("unchecked")
-	public void initTargets(List<TestCaseTarget> targets){
-		
-		List<TestCaseTarget> uniques = uniqueList(targets);
-		
-		List<String> paths = CollectionUtils.transform(uniques, new Transformer() {
-			@Override
-			public Object transform(Object value) {
-				return ((TestCaseTarget)value).getPath();
-			}
-		});
-		
-		List<Long> ids = finderService.findNodeIdsByPath(paths);
-		for (int i=0; i< uniques.size(); i++){
-			TestCaseTarget t = uniques.get(i);
-			testCaseIdsByTarget.put(t, ids.get(i));
-		}
-		
-		initProjectsAndTheRest(paths);
-	}
-	
-	
-	
-	
-	// ************************** private stuffs ***********************************
-	
-	
-	private void initProjectsAndTheRest(String path){
-		initProjectsAndTheRest(Arrays.asList(new String[]{path}));
-	}
-	
-	private void initProjectsAndTheRest(List<String> paths){
-		
-		List<String> projectNames = Utils.extractProjectNames(paths);
-		List<String> uniqueNames = uniqueList(projectNames);
-		
-	
-		List<Project> projects = initProjects(uniqueNames);
-		
-		for (Project p : projects){
-			
-			if (! projectIdsByName.containsKey(p.getName())){
-				projectIdsByName.put(p.getName(), p.getId());
-				
-				List<CustomField> tccufs = cufDao.findAllBoundCustomFields(p.getId(), BindableEntity.TEST_CASE) ;
-				tcCufsPerProjectname.putAll(p.getName(), tccufs);
-				
-				List<CustomField> stcufs = cufDao.findAllBoundCustomFields(p.getId(), BindableEntity.TEST_STEP) ;
-				stepCufsPerProjectname.putAll(p.getName(), stcufs);
-			}
-		}
-		
-		
-	}
-	
-
-	
-*/
-	
 	// *************************** private methods *************************************
 
 	private <OBJ extends Object> List<OBJ> uniqueList(Collection<OBJ> orig){
@@ -421,11 +403,29 @@ public class Model {
 		return q.list();
 	}
 	
+	private List<StepType> loadStepTypes(Long tcId){
+		Query query = sessionFactory.getCurrentSession().getNamedQuery("testStep.findOrderedTypesByTcId");
+		query.setParameter("tcId", tcId, LongType.INSTANCE);
+		List<String> types = query.list();
+		List<StepType> res = new ArrayList<StepType>(types.size());
+		for (String type : types){
+			res.add(StepType.valueOf(type));
+		}
+		return res;
+	}	
 	
-	// ************************ internal declarations **********************************
+	// ************************ internal types for TestCase Management **********************************
 	
 	
-	static enum ModelizedStatus{
+	/**
+	 * That enum sort of represent the level of existence of a test case. It can be either physically present, or virtually present, or virtually non existent,
+	 * or default to physically non existant. It helps us keeping track of the fate of a test case during the import process (which is, remember, essentially 
+	 * a batch processing).
+	 * 
+	 * @author bsiri
+	 *
+	 */
+	static enum Existence{
 		EXISTS,				// means : exists now in the database
 		TO_BE_CREATED,		// means : will be created later on in the process
 		TO_BE_DELETED,		// means : will be deleted later on in the process
@@ -433,26 +433,25 @@ public class Model {
 	}
 	
 
-
 	public static class TargetStatus{
 				
-		ModelizedStatus status = null;
+		Existence status = null;
 		Long id = null;
 
 		
-		TargetStatus(ModelizedStatus status){
-			if (status == ModelizedStatus.EXISTS){
+		TargetStatus(Existence status){
+			if (status == Existence.EXISTS){
 				throw new IllegalArgumentException("internal error : a TargetStatus representing an actually existent target should specify an id");
 			}
 			this.status = status;
 		}
 		
-		TargetStatus (ModelizedStatus status, Long id){
+		TargetStatus (Existence status, Long id){
 			this.status = status;
 			this.id = id;
 		}
 
-		public ModelizedStatus getStatus() {
+		public Existence getStatus() {
 			return status;
 		}
 
@@ -477,5 +476,14 @@ public class Model {
 		}
 	}
 	
+	// ********************************** Internal types for Test Step management *************************
+	
+
+	static enum StepType {
+		ACTION,
+		CALL;
+	}
+	
+
 	
 }

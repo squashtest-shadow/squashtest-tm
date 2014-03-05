@@ -70,7 +70,16 @@ public class TestCaseTarget extends Target{
 			return false;
 		return true;
 	}
+
+
+	@Override
+	public String toString(){
+		return path;
+	}
 	
-	
+	@Override
+	public boolean isWellFormed() {
+		return Utils.isPathWellFormed(path);
+	}
 	
 }

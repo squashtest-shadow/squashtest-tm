@@ -75,6 +75,14 @@ public class TestStepTarget extends Target{
 		return true;
 	}
 	
+	@Override
+	public String toString(){
+		return testCase.toString()+"/steps/"+index;
+	}
 	
+	@Override
+	public boolean isWellFormed() {
+		return testCase.isWellFormed() && (index == null || index >= 0); 
+	}
 	
 }
