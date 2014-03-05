@@ -423,7 +423,7 @@
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font size="9" isItalic="true"/>
 									</textElement>
-									<textFieldExpression class="java.lang.String"><![CDATA[$P{allowsUntestable} ? $R{report.executionprogression.main.untestable.label} : new String("")]]></textFieldExpression>
+									<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.untestable.label}]]></textFieldExpression>
 								</textField>
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
@@ -471,7 +471,7 @@
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font size="9" isItalic="true"/>
 									</textElement>
-									<textFieldExpression class="java.lang.String"><![CDATA[$P{allowsSettled} ? $R{report.executionprogression.main.settled.label} : new String("")]]></textFieldExpression>
+									<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.settled.label}]]></textFieldExpression>
 								</textField>
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
@@ -584,11 +584,11 @@
 						</datasetParameter>
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource(1)]]></dataSourceExpression>
 					</datasetRun>
-					<jr:columnGroup width="373">
-						<jr:column width="373">
+					<jr:columnGroup width="333">
+						<jr:column width="333">
 							<jr:columnHeader height="19" rowSpan="1">
 								<textField>
-									<reportElement mode="Opaque" x="0" y="0" width="373" height="19" forecolor="#FFFFFF" backcolor="#77132E"/>
+									<reportElement mode="Opaque" x="0" y="0" width="333" height="19" forecolor="#FFFFFF" backcolor="#77132E"/>
 									<textElement verticalAlignment="Middle">
 										<font size="9" isBold="true"/>
 									</textElement>
@@ -801,10 +801,10 @@
 						</datasetParameter>
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource(1)]]></dataSourceExpression>
 					</datasetRun>
-					<jr:column width="373">
+					<jr:column width="333">
 						<jr:columnHeader height="20" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="373" height="20"/>
+								<reportElement x="0" y="0" width="333" height="20"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font size="9"/>
 								</textElement>
@@ -984,9 +984,9 @@
 						</datasetParameter>
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource(1)]]></dataSourceExpression>
 					</datasetRun>
-					<jr:columnGroup width="372">
+					<jr:columnGroup width="333">
 						<jr:columnHeader height="30" rowSpan="1"/>
-						<jr:column width="372">
+						<jr:column width="333">
 							<jr:columnHeader style="table_CH" height="20" rowSpan="1"/>
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
 						</jr:column>
@@ -1035,7 +1035,7 @@
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font size="9" isItalic="true"/>
 									</textElement>
-									<textFieldExpression class="java.lang.String"><![CDATA[$P{allowsUntestable} ? $R{report.executionprogression.main.untestable.label} : new String("")]]></textFieldExpression>
+									<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.untestable.label}]]></textFieldExpression>
 								</textField>
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
@@ -1083,7 +1083,7 @@
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font size="9" isItalic="true"/>
 									</textElement>
-									<textFieldExpression class="java.lang.String"><![CDATA[$P{allowsSettled} ? $R{report.executionprogression.main.settled.label} : new String("")]]></textFieldExpression>
+									<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.settled.label}]]></textFieldExpression>
 								</textField>
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
