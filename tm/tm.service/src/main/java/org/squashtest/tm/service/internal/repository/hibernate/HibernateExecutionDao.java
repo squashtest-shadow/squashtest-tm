@@ -105,21 +105,9 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 			SetQueryParametersCallback newCallBack = new CountStepStatusByExecutionParamSetter(executionId, fStatus);
 
 			Long lResult = executeEntityNamedQuery("execution.countStatus", newCallBack);
-
-			Integer result = lResult.intValue();
-
-			statusMap.put(status.name(), result);
+			
+			report.set(status, lResult.intValue());
 		}
-
-		report.setUntestable(statusMap.get(ExecutionStatus.UNTESTABLE.name()));
-		report.setSettled(statusMap.get(ExecutionStatus.SETTLED.name()));
-		report.setBloqued(statusMap.get(ExecutionStatus.BLOCKED.name()));
-		report.setFailure(statusMap.get(ExecutionStatus.FAILURE.name()));
-		report.setSuccess(statusMap.get(ExecutionStatus.SUCCESS.name()));
-		report.setRunning(statusMap.get(ExecutionStatus.RUNNING.name()));
-		report.setReady(statusMap.get(ExecutionStatus.READY.name()));
-		report.setWarning(statusMap.get(ExecutionStatus.WARNING.name()));
-		report.setError(statusMap.get(ExecutionStatus.ERROR.name()));
 
 		return report;
 	}

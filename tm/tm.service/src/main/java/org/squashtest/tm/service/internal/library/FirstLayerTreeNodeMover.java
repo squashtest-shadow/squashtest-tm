@@ -76,7 +76,7 @@ import org.squashtest.tm.service.security.SecurityCheckableObject;
 @Component
 @Scope("prototype")
 public class FirstLayerTreeNodeMover implements PasteOperation {
-	private static class NodeCollaborators {
+	private static final class NodeCollaborators {
 		private final LibraryDao<?,?> libraryDao;
 		private final FolderDao<?,?> folderDao;
 		private final LibraryNodeDao<?> nodeDao;

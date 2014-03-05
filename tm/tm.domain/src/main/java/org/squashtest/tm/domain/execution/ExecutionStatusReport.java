@@ -20,199 +20,85 @@
  */
 package org.squashtest.tm.domain.execution;
 
-/** 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import javax.validation.constraints.NotNull;
+
+/**
  * Bean to hold the occurrence of execution steps status from a list of execution steps.
- *
+ * 
  */
 public class ExecutionStatusReport {
+	private Map<ExecutionStatus, Integer> statusCount = new HashMap<ExecutionStatus, Integer>(
+			ExecutionStatus.values().length);
 
-	private int untestable = 0;
-	private int bloqued = 0;
-	private int failure = 0;
-	private int success = 0;
-	private int running = 0;
-	private int ready = 0;
-	private int warning = 0;
-	private int error = 0;
-	private int settled = 0;
-	
-	private int getTotal() {
-		return untestable + bloqued + failure + success + running + ready + warning + error + settled;
-	}
-
-	public int getSettled() {
-		return settled;
-	}
-
-	public void setSettled(int settled) {
-		this.settled = settled;
-	}
-
-	public int getUntestable() {
-		return untestable;
-	}
-
-	public void setUntestable(int untestable) {
-		this.untestable = untestable;
-	}
-
-	public int getBloqued() {
-		return bloqued;
-	}
-
-	public void setBloqued(int bloqued) {
-		this.bloqued = bloqued;
-	}
-
-	public int getFailure() {
-		return failure;
-	}
-
-	public void setFailure(int failure) {
-		this.failure = failure;
-	}
-
-	public int getSuccess() {
-		return success;
-	}
-
-	public void setSuccess(int success) {
-		this.success = success;
-	}
-
-	public int getRunning() {
-		return running;
-	}
-
-	public void setRunning(int running) {
-		this.running = running;
-	}
-
-	public int getReady() {
-		return ready;
-	}
-
-	public void setReady(int ready) {
-		this.ready = ready;
-	}
-
-	public int getWarning() {
-		return warning;
-	}
-
-	public void setWarning(int warning) {
-		this.warning = warning;
-	}
-
-	public int getError() {
-		return error;
-	}
-
-	public void setError(int error) {
-		this.error = error;
-	}
-
-	public boolean areAllUntestable() {
-		if (untestable == getTotal()) {
-			return true;
-		}
-		return false;
-	}
-
-	public boolean areAllSuccess() {
-		if (countAggregatedSuccess() == getTotal()) {
-			return true;
-		}
-		return false;
-	}
-
-	public boolean hasUntestable() {
-		return untestable > 0;
-	}
-
-	public boolean hasBlocked() {
-		return bloqued > 0;
-	}
-
-	public boolean hasError() {
-		return error > 0;
-	}
-
-	public boolean hasFailure() {
-		return failure > 0;
-	}
-
-	public boolean hasRunning() {
-		return running > 0;
-	}
-
-	public boolean hasReady() {
-		return ready > 0;
-	}
-
-	public boolean hasSuccess() {
-		return success > 0;
-	}
-
-	public boolean hasSettled() {
-		return settled > 0;
-	}
-	
-	public boolean hasWarning() {
-		return warning > 0;
-	}
-
-	public boolean hasAggregatedBlocked() {
-		return (hasBlocked() || hasError());
-	}
-
-	public boolean hasAggregatedSuccess() {
-		return (hasSuccess() || hasWarning());
-	}
-	private int countAggregatedSuccess(){
-		return success + warning;
-	}
 	public ExecutionStatusReport() {
-
-	}
-
-	public boolean areAllSettledOrUntestable(){
-		if(untestable + settled == getTotal()) {
-			return true;
-		}
-		return false;
-	}
-
-	public boolean areAllSuccessOrUntestableOrSettled() {
-		if (countAggregatedSuccess() + untestable + settled == getTotal()) {
-			return true;
-		}
-		return false;
-	}
-
-	public ExecutionStatusReport(int untestable, int bloqued, int failure, int success, int running, int ready, int settled) {
 		super();
-		this.untestable = untestable;
-		this.bloqued = bloqued;
-		this.failure = failure;
-		this.success = success;
-		this.running = running;
-		this.ready = ready;
-		this.settled = settled;
+		for (ExecutionStatus status : ExecutionStatus.values()) {
+			statusCount.put(status, 0);
+		}
 	}
 
-	public ExecutionStatusReport(int untestable, int bloqued, int failure, int success, int running, int ready,
-			int warning, int error, int settled) {
-		super();
-		this.untestable = untestable;
-		this.bloqued = bloqued;
-		this.failure = failure;
-		this.success = success;
-		this.running = running;
-		this.ready = ready;
-		this.warning = warning;
-		this.error = error;
-		this.settled = settled;
+	private int getTotal() {
+		int total = 0;
+
+		for (Integer partial : statusCount.values()) {
+			total += partial;
+		}
+
+		return total;
 	}
-	
+
+	public void set(@NotNull ExecutionStatus status, int count) {
+		statusCount.put(status, count);
+	}
+
+	/**
+	 * Tells if there is at least 1 given status.
+	 * 
+	 * @param status
+	 * @return
+	 */
+	public boolean has(@NotNull ExecutionStatus status) {
+		return statusCount.get(status) > 0;
+	}
+
+	/**
+	 * Tells if all the counted statuses are of the given ones.
+	 * 
+	 * @param statuses
+	 * @return
+	 */
+	public boolean allOf(@NotNull ExecutionStatus... statuses) {
+		Set<ExecutionStatus> uniqueStatuses = new HashSet<ExecutionStatus>(Arrays.asList(statuses));
+
+		int expectedCount = 0;
+		for (ExecutionStatus status : uniqueStatuses) {
+			expectedCount += statusCount.get(status);
+		}
+		return expectedCount == getTotal();
+	}
+
+	/**
+	 * @param success
+	 * @param warning
+	 * @param settled
+	 * @return
+	 */
+	public boolean anyOf(@NotNull ExecutionStatus... statuses) {
+		boolean found = false;
+		
+		for (ExecutionStatus status : statuses) {
+			if (has(status)) {
+				found = true;
+				break;
+			}
+		}
+		
+		return found;
+	}
 }
