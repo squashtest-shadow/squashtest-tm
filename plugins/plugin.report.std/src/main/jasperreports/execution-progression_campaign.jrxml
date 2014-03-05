@@ -125,6 +125,8 @@
 		<parameter name="campaign_fPercentageStatusUntestable" class="java.lang.Float" isForPrompting="false"/>
 		<parameter name="campaign_fPercentageStatusFailure" class="java.lang.Float" isForPrompting="false"/>
 		<parameter name="campaign_fPercentageStatusSettled" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="campaign_allowsSettled" class="java.lang.Boolean" isForPrompting="false"/>
+		<parameter name="campaign_allowsUntestable" class="java.lang.Boolean" isForPrompting="false"/>		
 		<queryString>
 			<![CDATA[]]>
 		</queryString>
@@ -188,6 +190,12 @@
 		<field name="scheduledStartDate" class="java.util.Date">
 			<fieldDescription><![CDATA[scheduledStartDate]]></fieldDescription>
 		</field>
+		<field name="allowsSettled" class="java.lang.Boolean">
+			<fieldDescription><![CDATA[allowsSettled]]></fieldDescription>
+		</field>
+		<field name="allowsUntestable" class="java.lang.Boolean">
+			<fieldDescription><![CDATA[allowsUntestable]]></fieldDescription>
+		</field>		
 	</subDataset>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["C:\\Documents and Settings\\bsiri\\Mes documents\\reports\\"]]></defaultValueExpression>
@@ -262,6 +270,12 @@
 	<field name="fPercentageStatusFailure" class="java.lang.Float">
 		<fieldDescription><![CDATA[fPercentageStatusFailure]]></fieldDescription>
 	</field>
+	<field name="allowsSettled" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[allowsSettled]]></fieldDescription>
+	</field>
+	<field name="allowsUntestable" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[allowsUntestable]]></fieldDescription>
+	</field>
 	<detail>
 		<band height="20">
 			<componentElement>
@@ -333,6 +347,12 @@
 						<datasetParameter name="campaign_fPercentageStatusSettled">
 							<datasetParameterExpression><![CDATA[$F{fPercentageStatusSettled}]]></datasetParameterExpression>
 						</datasetParameter>
+						<datasetParameter name="campaign_allowsSettled">
+							<datasetParameterExpression><![CDATA[$F{allowsSettled}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="campaign_allowsUntestable">
+							<datasetParameterExpression><![CDATA[$F{allowsUntestable}]]></datasetParameterExpression>
+						</datasetParameter>
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{iterations})]]></dataSourceExpression>
 					</datasetRun>
 					<jr:column width="113">
@@ -349,10 +369,10 @@
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
 					</jr:column>
-					<jr:column width="65">
+					<jr:column width="55">
 						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
 							<textField isStretchWithOverflow="true" pattern="">
-								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="65" height="20">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="55" height="20">
 									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
 								</reportElement>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -363,10 +383,10 @@
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
 					</jr:column>
-					<jr:column width="65">
+					<jr:column width="55">
 						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
 							<textField isStretchWithOverflow="true" pattern="">
-								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="65" height="20">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="55" height="20">
 									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
 								</reportElement>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -377,10 +397,10 @@
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
 					</jr:column>
-					<jr:column width="65">
+					<jr:column width="55">
 						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
 							<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="65" height="20">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="55" height="20">
 									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
 								</reportElement>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -391,10 +411,10 @@
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
 					</jr:column>
-					<jr:column width="65">
+					<jr:column width="55">
 						<jr:columnHeader style="table_CH" height="20" rowSpan="1">
 							<textField isStretchWithOverflow="true" pattern="">
-								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="65" height="20">
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="55" height="20">
 									<property name="net.sf.jasperreport.print.keep.full.text" value="true"/>
 								</reportElement>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -460,7 +480,7 @@
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="9"/>
 								</textElement>
-								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{campaign_iCountStatusUntestable}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{campaign_allowsUntestable} ? $P{campaign_iCountStatusUntestable} : new String("")]]></textFieldExpression>
 							</textField>
 							<textField isStretchWithOverflow="true" pattern="#,##0 %">
 								<reportElement stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="20" forecolor="#999999">
@@ -469,7 +489,7 @@
 								<textElement textAlignment="Justified" verticalAlignment="Middle">
 									<font size="7"/>
 								</textElement>
-								<textFieldExpression class="java.lang.Float"><![CDATA[$P{campaign_fPercentageStatusUntestable}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.Float"><![CDATA[$P{campaign_allowsUntestable} ? $P{campaign_fPercentageStatusUntestable} : new String("")]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
@@ -552,7 +572,7 @@
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="9"/>
 								</textElement>
-								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{campaign_iCountStatusSettled}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{campaign_allowsSettled} ? $P{campaign_iCountStatusSettled} : new String("")]]></textFieldExpression>
 							</textField>
 							<textField isStretchWithOverflow="true" pattern="#,##0 %">
 								<reportElement stretchType="RelativeToBandHeight" x="20" y="0" width="21" height="20" forecolor="#999999">
@@ -561,7 +581,7 @@
 								<textElement textAlignment="Justified" verticalAlignment="Middle">
 									<font size="7"/>
 								</textElement>
-								<textFieldExpression class="java.lang.Float"><![CDATA[$P{campaign_fPercentageStatusSettled}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.Float"><![CDATA[$P{campaign_allowsSettled} ? $P{campaign_fPercentageStatusSettled} : new String("")]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>

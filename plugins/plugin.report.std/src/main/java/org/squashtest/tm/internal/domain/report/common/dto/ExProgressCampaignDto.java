@@ -83,4 +83,12 @@ public class ExProgressCampaignDto extends ExProgressScheduledAbstractDto {
 		return this;
 	}
 
+	public boolean isAllowsSettled() {
+		return this.getProject().isAllowsSettled();
+	}
+
+	public boolean isAllowsUntestable() {
+		return this.getProject().isAllowsUntestable();
+	}
+
 }

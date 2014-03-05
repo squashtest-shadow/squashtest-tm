@@ -93,5 +93,12 @@ public class ExProgressIterationDto extends ExProgressScheduledAbstractDto {
 		this.testSuites = testSuites;
 	}
 
-	
+	public boolean isAllowsSettled() {
+		return this.getCampaign().getProject().isAllowsSettled();
+	}
+
+	public boolean isAllowsUntestable() {
+		return this.getCampaign().getProject().isAllowsUntestable();
+	}
+
 }

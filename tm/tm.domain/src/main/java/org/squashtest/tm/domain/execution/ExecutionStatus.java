@@ -568,9 +568,6 @@ public enum ExecutionStatus implements Internationalizable, Level {
 		} 
 		else if (report.hasSuccess() || report.hasWarning() || report.hasSettled()) {
 			newStatus = ExecutionStatus.RUNNING;
-		} 
-		else {
-			newStatus = ExecutionStatus.READY;
 		}
 
 		return newStatus;
