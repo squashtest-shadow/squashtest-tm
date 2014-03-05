@@ -399,16 +399,16 @@
   <changeSet id="tm-1.9.0.feature-3138-8" author="flaurens">
     <dropNotNullConstraint tableName="REQUIREMENT_VERSION_COVERAGE" columnName="VERIFIED_REQ_VERSION_ID" columnDataType="BIGINT(20)"/>
   </changeSet>
-  
+
   <changeSet id="tm-1.9.0.feature-3211-1" author="flaurens">
-	<createTable tableName="DISABLED_EXECUTION_STATUS">
-		<column name="CL_ID" type="BIGINT">
-			<constraints nullable="false" references="CAMPAIGN_LIBRARY(CL_ID)" foreignKeyName="FK_DISABLED_EXECUTION_STATUS_CAMPAIGN_LIBRARY" />
-		</column>
-		<column name="EXECUTION_STATUS" type="java.sql.Types.VARCHAR(255)">
-			<constraints nullable="false"></constraints>
-		</column>
-	</createTable>
+    <createTable tableName="DISABLED_EXECUTION_STATUS">
+      <column name="CL_ID" type="BIGINT">
+        <constraints nullable="false" references="CAMPAIGN_LIBRARY(CL_ID)" foreignKeyName="FK_DISABLED_EXEC_STATUS_CL_ID" />
+      </column>
+      <column name="EXECUTION_STATUS" type="java.sql.Types.VARCHAR(255)">
+        <constraints nullable="false"></constraints>
+      </column>
+    </createTable>
   </changeSet>
   
    <changeSet id="tm-1.9.0.feature-3211-2" author="flaurens">
