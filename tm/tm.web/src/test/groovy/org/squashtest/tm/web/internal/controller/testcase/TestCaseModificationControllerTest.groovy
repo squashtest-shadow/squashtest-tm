@@ -33,8 +33,8 @@ import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.service.customfield.CustomFieldHelperService
 import org.squashtest.tm.service.testcase.TestCaseModificationService
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper
+import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter
-import org.squashtest.tm.web.internal.helper.LevelLabelFormatterWithoutOrder
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel
@@ -65,8 +65,8 @@ class TestCaseModificationControllerTest extends Specification {
 	LevelLabelFormatter levelLabelFormatter = Mock()
 	Provider<LevelLabelFormatter> levelLabelFormatterProvider = Mock()
 
-	LevelLabelFormatterWithoutOrder levelLabelFormatterWithoutOrder = Mock()
-	Provider<LevelLabelFormatterWithoutOrder> levelLabelFormatterWithoutOrderProvider = Mock()
+	InternationalizableLabelFormatter levelLabelFormatterWithoutOrder = Mock()
+	Provider<InternationalizableLabelFormatter> levelLabelFormatterWithoutOrderProvider = Mock()
 	ServiceAwareAttachmentTableModelHelper attachmHelper = Mock()
 	
 	CustomFieldHelperService cufHelperService = Mock()
@@ -93,7 +93,7 @@ class TestCaseModificationControllerTest extends Specification {
 		
 		
 		setupLevelLabelFormatterWithoutOrder()
-		controller.levelLabelFormatterWithoutOrderProvider = levelLabelFormatterWithoutOrderProvider
+		controller.labelFormatter = levelLabelFormatterWithoutOrderProvider
 		
 		controller.cufHelperService = cufHelperService
 		

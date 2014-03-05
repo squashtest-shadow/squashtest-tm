@@ -91,8 +91,8 @@ import org.squashtest.tm.web.internal.controller.testcase.parameters.ParametersD
 import org.squashtest.tm.web.internal.controller.testcase.parameters.TestCaseDatasetsController;
 import org.squashtest.tm.web.internal.controller.testcase.parameters.TestCaseParametersController.ParameterNameComparator;
 import org.squashtest.tm.web.internal.controller.testcase.steps.TestStepsTableModelBuilder;
+import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
-import org.squashtest.tm.web.internal.helper.LevelLabelFormatterWithoutOrder;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.combo.OptionTag;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
@@ -174,7 +174,7 @@ public class TestCaseModificationController {
 	private Provider<LevelLabelFormatter> levelLabelFormatterProvider;
 
 	@Inject
-	private Provider<LevelLabelFormatterWithoutOrder> levelLabelFormatterWithoutOrderProvider;
+	private Provider<InternationalizableLabelFormatter> labelFormatter;
 
 	@Inject
 	private BugTrackersLocalService bugTrackersLocalService;
@@ -414,11 +414,11 @@ public class TestCaseModificationController {
 	}
 
 	private String formatNature(TestCaseNature nature, Locale locale) {
-		return levelLabelFormatterWithoutOrderProvider.get().useLocale(locale).formatLabel(nature);
+		return labelFormatter.get().useLocale(locale).formatLabel(nature);
 	}
 
 	private String formatType(TestCaseType type, Locale locale) {
-		return levelLabelFormatterWithoutOrderProvider.get().useLocale(locale).formatLabel(type);
+		return labelFormatter.get().useLocale(locale).formatLabel(type);
 	}
 
 	private String formatStatus(TestCaseStatus status, Locale locale) {

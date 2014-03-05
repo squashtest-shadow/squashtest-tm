@@ -49,7 +49,7 @@ import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilde
  */
 @Component
 @Scope("prototype")
-public class RequirementCriticalityComboDataBuilder extends EnumJeditableComboDataBuilder<RequirementCriticality> {
+public class RequirementCriticalityComboDataBuilder extends EnumJeditableComboDataBuilder<RequirementCriticality,RequirementCriticalityComboDataBuilder> {
 	
 	private InternationalizableComparator comparator = new InternationalizableComparator();
 	

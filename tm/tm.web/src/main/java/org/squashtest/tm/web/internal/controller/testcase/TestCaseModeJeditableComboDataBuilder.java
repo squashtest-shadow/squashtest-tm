@@ -25,12 +25,12 @@ import javax.inject.Inject;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
-import org.squashtest.tm.web.internal.helper.LabelFormatterWithoutOrder;
+import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter;
 import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
 
 @Component
 @Scope("prototype")
-public class TestCaseModeJeditableComboDataBuilder extends EnumJeditableComboDataBuilder<TestCaseExecutionMode> {
+public class TestCaseModeJeditableComboDataBuilder extends EnumJeditableComboDataBuilder<TestCaseExecutionMode, TestCaseModeJeditableComboDataBuilder> {
 
 	public TestCaseModeJeditableComboDataBuilder() {
 		super();
@@ -41,7 +41,7 @@ public class TestCaseModeJeditableComboDataBuilder extends EnumJeditableComboDat
 	}
 
 	@Inject
-	public void setLabelFormatter(LabelFormatterWithoutOrder formatter) {
+	public void setLabelFormatter(InternationalizableLabelFormatter formatter) {
 		super.setLabelFormatter(formatter);
 	}
 }

@@ -22,7 +22,6 @@
 package org.squashtest.tm.web.internal.controller.search;
 
 import org.squashtest.tm.domain.Level;
-import org.squashtest.tm.web.internal.controller.search.SearchInterfaceDescription.OptionListBuilder;
 import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
 
 /**
@@ -34,7 +33,7 @@ import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilde
  * @param <T>
  * @see OptionListBuilder
  */
-class LevelComboDataBuilder<T extends Enum<?> & Level> extends EnumJeditableComboDataBuilder<T> {
+class LevelComboDataBuilder<T extends Enum<?> & Level, B extends LevelComboDataBuilder<T, B>> extends EnumJeditableComboDataBuilder<T, B> {
 	/**
 	 * @see org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder#itemKey(java.lang.Enum)
 	 */

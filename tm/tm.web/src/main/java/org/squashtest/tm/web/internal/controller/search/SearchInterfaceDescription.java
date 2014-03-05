@@ -117,10 +117,10 @@ public abstract class SearchInterfaceDescription {
 	};
 
 	protected class OptionListBuilder {
-		private final EnumJeditableComboDataBuilder<?> delegateBuilder;
+		private final EnumJeditableComboDataBuilder<?, ?> delegateBuilder;
 		private Locale locale;
 
-		private OptionListBuilder(EnumJeditableComboDataBuilder<?> delegateBuilder) {
+		private OptionListBuilder(EnumJeditableComboDataBuilder<?, ?> delegateBuilder) {
 			super();
 			this.delegateBuilder = delegateBuilder;
 		}
@@ -239,8 +239,8 @@ public abstract class SearchInterfaceDescription {
 		return new OptionListBuilder(delegateLevelComboBuilder(values));
 	}
 
-	protected final <T extends Enum<?> & Level> EnumJeditableComboDataBuilder<T> delegateLevelComboBuilder(T[] values) {
-		EnumJeditableComboDataBuilder<T> builder = new LevelComboDataBuilder<T>();
+	protected final <T extends Enum<?> & Level, B extends LevelComboDataBuilder<T, B>> EnumJeditableComboDataBuilder<T, B> delegateLevelComboBuilder(T[] values) {
+		EnumJeditableComboDataBuilder<T, B> builder = new LevelComboDataBuilder<T, B>();
 		builder.setLabelFormatter(levelLabelFormatter.get().plainText());
 		builder.setModel(values);
 		builder.setModelComparator(LevelComparator.getInstance());
@@ -251,9 +251,9 @@ public abstract class SearchInterfaceDescription {
 		return new OptionListBuilder(delegateInternationalizableComboBuilder(values));
 	}
 
-	protected final <T extends Enum<?> & Level> EnumJeditableComboDataBuilder<T> delegateInternationalizableComboBuilder(
+	protected final <T extends Enum<?> & Level, B extends EnumJeditableComboDataBuilder<T, B>> EnumJeditableComboDataBuilder<T, B> delegateInternationalizableComboBuilder(
 			T[] values) {
-		EnumJeditableComboDataBuilder<T> builder = new EnumJeditableComboDataBuilder<T>();
+		EnumJeditableComboDataBuilder<T, B> builder = new EnumJeditableComboDataBuilder<T, B>();
 		builder.setLabelFormatter(internationalizableLabelFormatter.get().plainText());
 		builder.setModel(values);
 		builder.setModelComparator(new InternationalizableComparator());

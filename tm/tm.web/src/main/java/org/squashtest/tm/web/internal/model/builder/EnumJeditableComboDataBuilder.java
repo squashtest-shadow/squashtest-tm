@@ -48,7 +48,7 @@ import org.squashtest.tm.web.internal.helper.LabelFormatter;
  * @author Gregory Fouquet
  * 
  */
-public class EnumJeditableComboDataBuilder<T extends Enum<?>> {
+public class EnumJeditableComboDataBuilder<T extends Enum<?>, B extends EnumJeditableComboDataBuilder<T, B>> {
 	/**
 	 * The locale that should be used to format the labels.
 	 */
@@ -70,13 +70,6 @@ public class EnumJeditableComboDataBuilder<T extends Enum<?>> {
 	 * The optional selected item.
 	 */
 	private T selectedItem;
-
-	/**
-	 * Optional context
-	 */
-	private Object context;
-	
-
 
 	/**
 	 * The list of items used as the model for the combobox.
@@ -164,7 +157,7 @@ public class EnumJeditableComboDataBuilder<T extends Enum<?>> {
 			comboData.put("selected", selectedItem.name());
 		}
 	}
-
+	
 	private void sortModelIfRequired() {
 		if (modelComparator != null) {
 			Collections.sort(model, modelComparator);
@@ -181,14 +174,16 @@ public class EnumJeditableComboDataBuilder<T extends Enum<?>> {
 	 *            The item to select. Can be <code>null</code>.
 	 * @return
 	 */
-	public EnumJeditableComboDataBuilder<T> selectItem(T selectedItem) {
+	@SuppressWarnings("unchecked")
+	public B selectItem(T selectedItem) {
 		this.selectedItem = selectedItem;
-		return this;
+		return (B) this;
 	}
 
-	public EnumJeditableComboDataBuilder<T> useLocale(Locale locale) {
+	@SuppressWarnings("unchecked")
+	public B useLocale(Locale locale) {
 		this.locale = locale;
-		return this;
+		return (B) this;
 	}
 
 	/**
@@ -200,12 +195,4 @@ public class EnumJeditableComboDataBuilder<T extends Enum<?>> {
 		return selectedItem;
 	}
 
-	public  EnumJeditableComboDataBuilder<T> useContext(Object context) {
-		this.context = context;
-		return this;
-	}
-
-	public Object getContext() {
-		return context;
-	}
 }

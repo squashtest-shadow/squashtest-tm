@@ -53,6 +53,10 @@ public class ExecutionStatusReport {
 		return total;
 	}
 
+	public int get(@NotNull ExecutionStatus status) {
+		return statusCount.get(status);
+	}
+
 	public void set(@NotNull ExecutionStatus status, int count) {
 		statusCount.put(status, count);
 	}

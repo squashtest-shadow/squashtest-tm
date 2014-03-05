@@ -35,20 +35,18 @@ import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.service.HibernateServiceSpecification;
+import org.squashtest.tm.service.HibernateServiceSpecification
 import org.squashtest.tm.service.campaign.CampaignLibrariesCrudService
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService
 import org.squashtest.tm.service.campaign.CampaignModificationService
 import org.squashtest.tm.service.campaign.IterationModificationService
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService
-import org.squashtest.tm.service.execution.ExecutionModificationService
-import org.squashtest.tm.service.execution.ExecutionProcessingService
 import org.squashtest.tm.service.project.GenericProjectManagerService
 import org.squashtest.tm.service.testcase.TestCaseLibrariesCrudService
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
 import org.squashtest.tm.service.testcase.TestCaseModificationService
 
-import spock.lang.Unroll;
+import static org.squashtest.tm.domain.execution.ExecutionStatus.*
 
 
 @NotThreadSafe
@@ -322,7 +320,7 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 
 		then :
 
-		report.ready==5;
+		report.get(READY)==5;
 	}
 
 	def "should set an execution status for an execution to UNTESTABLE"(){
@@ -332,7 +330,8 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		def execution = execList.get(execList.size()-1)
 
 		when :
-		ExecutionStatusReport report = new ExecutionStatusReport(3, 0, 0, 0, 0, 0, 0);
+		ExecutionStatusReport report = new ExecutionStatusReport();
+		report.set(UNTESTABLE, 1)
 
 		procservice.setExecutionStatus(execution.id, report);
 
@@ -350,8 +349,11 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		def execution = execList.get(execList.size()-1)
 
 		when :
-		ExecutionStatusReport report = new ExecutionStatusReport(1, 1, 0, 4, 0, 0, 0);
-
+		ExecutionStatusReport report = new ExecutionStatusReport();
+		report.set(UNTESTABLE, 1)
+		report.set(BLOCKED, 1)
+		report.set(SUCCESS, 4)
+		
 		procservice.setExecutionStatus(execution.id, report);
 
 		def reExec = execService.findAndInitExecution(execution.id);
@@ -368,7 +370,10 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		def execution = execList.get(execList.size()-1)
 
 		when :
-		ExecutionStatusReport report = new ExecutionStatusReport(1, 0,1, 4, 0, 0, 0);
+		ExecutionStatusReport report = new ExecutionStatusReport();
+		report.set(UNTESTABLE, 1)
+		report.set(FAILURE, 1)
+		report.set(SUCCESS, 4)
 
 		procservice.setExecutionStatus(execution.id, report);
 
@@ -386,7 +391,9 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		def execution = execList.get(execList.size()-1)
 
 		when :
-		ExecutionStatusReport report = new ExecutionStatusReport(1, 0, 0, 5, 0, 0, 0);
+		ExecutionStatusReport report = new ExecutionStatusReport();
+		report.set(UNTESTABLE, 1)
+		report.set(SUCCESS, 5)
 
 		procservice.setExecutionStatus(execution.id, report);
 
@@ -404,8 +411,12 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		def execution = execList.get(execList.size()-1)
 
 		when :
-		ExecutionStatusReport report = new ExecutionStatusReport(1, 0, 0, 1,3, 1, 0);
-
+		ExecutionStatusReport report = new ExecutionStatusReport();
+		report.set(UNTESTABLE, 1)
+		report.set(SUCCESS, 1)
+		report.set(RUNNING, 3)
+		report.set(READY, 1)
+		
 		procservice.setExecutionStatus(execution.id, report);
 
 		def reExec = execService.findAndInitExecution(execution.id);
@@ -422,7 +433,9 @@ class ExecutionModificationServiceIT extends HibernateServiceSpecification {
 		def execution = execList.get(execList.size()-1)
 
 		when :
-		ExecutionStatusReport report = new ExecutionStatusReport(1, 0, 0, 0, 0, 5, 0);
+		ExecutionStatusReport report = new ExecutionStatusReport();
+		report.set(UNTESTABLE, 1)
+		report.set(READY, 5)
 
 		procservice.setExecutionStatus(execution.id, report);
 
