@@ -51,7 +51,7 @@ class ExecutionStepTest extends Specification {
 	
 	def "Should replace the parameters"(){
 		given:
-		String toTest = '''Activation de ${param1} compte ${param1} Zenbox'''
+		String toTest = '''Activation sur serveur ${srv} de ${param1} compte ${param1} Zenbox avec cle '${cleprincipale}' par la passerelle standard : ${param1}-Z'''
 		ActionTestStep actionStep = new ActionTestStep(action: "", expectedResult: "")
 		
 		Attachment attach1 = new Attachment("name")
@@ -59,6 +59,8 @@ class ExecutionStepTest extends Specification {
 		ExecutionStep execStep = new ExecutionStep(actionStep)
 		execStep.dataset = new HashMap<String, String>();
 		execStep.dataset.put("param1", "value 1");
+		execStep.dataset.put("srv", "http://192.168.2.24:8080/");
+		execStep.dataset.put("cleprincipale", "A")
 		
 		when :
 		
@@ -66,7 +68,7 @@ class ExecutionStepTest extends Specification {
 		
 		then :
 		
-		result == '''Activation de value 1 compte value 1 Zenbox'''
+		result == '''Activation sur serveur http://192.168.2.24:8080/ de value 1 compte value 1 Zenbox avec cle 'A' par la passerelle standard : value 1-Z'''
 		
    
 		
