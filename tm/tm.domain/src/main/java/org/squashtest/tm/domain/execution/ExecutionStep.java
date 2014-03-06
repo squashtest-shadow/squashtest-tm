@@ -310,8 +310,10 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	    		int endParamChain = matcher.end(1);
 	    		String beforeParam = builder.substring(0, startParamChain);
 	    		String afterParam = builder.substring(endParamChain);
-	    		
-	    		result = beforeParam +paramValue+afterParam;
+	    		StringBuilder resultBuilder = new StringBuilder(beforeParam);
+	    		resultBuilder.append(paramValue);
+	    		resultBuilder.append(afterParam);
+	    		result = resultBuilder.toString();
 	    		matcher = pattern.matcher(result);
 		    }
 		}
