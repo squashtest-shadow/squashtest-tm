@@ -30,7 +30,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class Sequencer {
 
-	private ImportLog log = new ImportLog();
 	
 	@Inject
 	private Provider<SimulationFacility> simulatorProvider;
@@ -38,13 +37,28 @@ public class Sequencer {
 	@Inject
 	private Provider<FacilityImpl> facilityImplProvider;
 
+	@Inject
+	private Provider<Model> modelProvider;
 	
 	
 	public ImportLog simulateImport(File excelFile){
+		SimulationFacility simulator = simulatorProvider.get();
+		Model model = modelProvider.get();
+		simulator.setModel(model);
+		
 		return null;
 	}
 	
 	public ImportLog performImport(File excelFile){
+		SimulationFacility simulator = simulatorProvider.get();
+		FacilityImpl impl = facilityImplProvider.get();
+		
+		Model model = modelProvider.get();
+		simulator.setModel(model);
+		impl.setModel(model);
+		impl.setSimulator(simulator);
+		
+		
 		return null;
 	}
 	

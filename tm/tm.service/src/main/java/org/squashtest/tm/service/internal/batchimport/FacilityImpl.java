@@ -22,6 +22,9 @@ package org.squashtest.tm.service.internal.batchimport;
 
 import java.util.Map;
 
+import javax.inject.Inject;
+
+import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -29,9 +32,32 @@ import org.squashtest.tm.domain.testcase.TestStep;
 
 @Component
 @Scope("prototype")
-public class FacilityImpl extends SimulationFacility {
+public class FacilityImpl implements Facility {
+
+	@Inject
+	private SessionFactory sessionFactory;
+	
+	private SimulationFacility simulator;
+	
+	private Model model;
 
 	
+	public SimulationFacility getSimulator() {
+		return simulator;
+	}
+
+	public void setSimulator(SimulationFacility simulator) {
+		this.simulator = simulator;
+	}
+
+	public Model getModel() {
+		return model;
+	}
+
+	public void setModel(Model model) {
+		this.model = model;
+	}
+
 	@Override
 	public LogTrain createTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
 		throw new UnsupportedOperationException("not implemented yet"); 

@@ -35,10 +35,14 @@ import org.squashtest.tm.domain.testcase.TestStep;
 public class SimulationFacility implements Facility{
 
 	@Inject
-	protected SessionFactory sessionFactory;
+	private SessionFactory sessionFactory;
 	
-	@Inject
+	
 	private Model model;
+	
+	public void setModel(Model model){
+		this.model = model;
+	}
 	
 	
 	public Model getModel(){
