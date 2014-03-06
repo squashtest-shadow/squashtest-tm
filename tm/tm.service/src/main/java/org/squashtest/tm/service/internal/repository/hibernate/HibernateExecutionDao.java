@@ -47,6 +47,15 @@ import org.squashtest.tm.service.internal.repository.ExecutionDao;
 @Repository
 public class HibernateExecutionDao extends HibernateEntityDao<Execution> implements ExecutionDao {
 
+	private static final String EXECUTION_COUNT_STATUS = "execution.countStatus";
+	private static final String CAMPAIGN = "Campaign";
+	private static final String CAMPAIGN_PROJECT = "Campaign.project";
+	private static final String ITERATION = "Iteration";
+	private static final String PROJECT = "Project";
+	private static final String PROJECT_ID = "Project.id";
+	private static final String ITERATION_CAMPAIGN = "Iteration.campaign";
+	private static final String EXECUTION_STATUS = "executionStatus";
+	
 	/*
 	 * as long as the ordering of a collection is managed by @OrderColumn, but you can't explicitely reference the
 	 * ordering column in the join table, initialize the collection itself is the only solution
@@ -104,7 +113,7 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 
 			SetQueryParametersCallback newCallBack = new CountStepStatusByExecutionParamSetter(executionId, fStatus);
 
-			Long lResult = executeEntityNamedQuery("execution.countStatus", newCallBack);
+			Long lResult = executeEntityNamedQuery(EXECUTION_COUNT_STATUS, newCallBack);
 			
 			report.set(status, lResult.intValue());
 		}
@@ -116,14 +125,14 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	public long countSuccess(final long executionId) {
 		SetQueryParametersCallback newCallBack = new CountStepStatusByExecutionParamSetter(executionId, ExecutionStatus.SUCCESS);
 		
-		return (Long)executeEntityNamedQuery("execution.countStatus", newCallBack); 
+		return (Long)executeEntityNamedQuery(EXECUTION_COUNT_STATUS, newCallBack); 
 	}
 
 	@Override
 	public long countReady(final long executionId) {
 		SetQueryParametersCallback newCallBack = new CountStepStatusByExecutionParamSetter(executionId, ExecutionStatus.READY); 
 			
-		return (Long)executeEntityNamedQuery("execution.countStatus", newCallBack);
+		return (Long)executeEntityNamedQuery(EXECUTION_COUNT_STATUS, newCallBack);
 	}
 
 	/*
@@ -160,11 +169,11 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 
 		Criteria crit = currentSession().createCriteria(ExecutionStep.class, "ExecutionStep");
 		crit.createAlias("execution", "Execution", JoinType.LEFT_OUTER_JOIN);
-		crit.createAlias("Execution.testPlan.iteration", "Iteration", JoinType.LEFT_OUTER_JOIN);
-		crit.createAlias("Iteration.campaign", "Campaign", JoinType.LEFT_OUTER_JOIN);
-		crit.createAlias("Campaign.project", "Project", JoinType.LEFT_OUTER_JOIN);
-		crit.add(Restrictions.eq("Project.id", Long.valueOf(projectId)));
-		crit.add(Restrictions.eq("executionStatus", executionStatus));
+		crit.createAlias("Execution.testPlan.iteration", ITERATION, JoinType.LEFT_OUTER_JOIN);
+		crit.createAlias(ITERATION_CAMPAIGN, CAMPAIGN, JoinType.LEFT_OUTER_JOIN);
+		crit.createAlias(CAMPAIGN_PROJECT, PROJECT, JoinType.LEFT_OUTER_JOIN);
+		crit.add(Restrictions.eq(PROJECT_ID, Long.valueOf(projectId)));
+		crit.add(Restrictions.eq(EXECUTION_STATUS, executionStatus));
 		
 		return crit.list();
 	};
@@ -174,11 +183,11 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	public List<IterationTestPlanItem> findAllIterationTestPlanItemsWithStatus(Long projectId, ExecutionStatus executionStatus) {
 
 		Criteria crit = currentSession().createCriteria(IterationTestPlanItem.class, "TestPlan");
-		crit.createAlias("iteration", "Iteration", JoinType.LEFT_OUTER_JOIN);
-		crit.createAlias("Iteration.campaign", "Campaign", JoinType.LEFT_OUTER_JOIN);
-		crit.createAlias("Campaign.project", "Project", JoinType.LEFT_OUTER_JOIN);
-		crit.add(Restrictions.eq("Project.id", Long.valueOf(projectId)));
-		crit.add(Restrictions.eq("executionStatus", executionStatus));
+		crit.createAlias("iteration", ITERATION, JoinType.LEFT_OUTER_JOIN);
+		crit.createAlias(ITERATION_CAMPAIGN, CAMPAIGN, JoinType.LEFT_OUTER_JOIN);
+		crit.createAlias(CAMPAIGN_PROJECT, PROJECT, JoinType.LEFT_OUTER_JOIN);
+		crit.add(Restrictions.eq(PROJECT_ID, Long.valueOf(projectId)));
+		crit.add(Restrictions.eq(EXECUTION_STATUS, executionStatus));
 		
 		return crit.list();
 	};
@@ -188,19 +197,19 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	public boolean hasStepOrExecutionWithStatus(long projectId, ExecutionStatus executionStatus) {
 		Criteria crit = currentSession().createCriteria(ExecutionStep.class, "ExecutionStep");
 		crit.createAlias("execution", "Execution", JoinType.LEFT_OUTER_JOIN);
-		crit.createAlias("Execution.testPlan.iteration", "Iteration", JoinType.LEFT_OUTER_JOIN);
-		crit.createAlias("Iteration.campaign", "Campaign", JoinType.LEFT_OUTER_JOIN);
-		crit.createAlias("Campaign.project", "Project", JoinType.LEFT_OUTER_JOIN);
-		crit.add(Restrictions.eq("Project.id", Long.valueOf(projectId)));
+		crit.createAlias("Execution.testPlan.iteration", ITERATION, JoinType.LEFT_OUTER_JOIN);
+		crit.createAlias(ITERATION_CAMPAIGN, CAMPAIGN, JoinType.LEFT_OUTER_JOIN);
+		crit.createAlias(CAMPAIGN_PROJECT, PROJECT, JoinType.LEFT_OUTER_JOIN);
+		crit.add(Restrictions.eq(PROJECT_ID, Long.valueOf(projectId)));
 		crit.add(Restrictions.eq("executionStatus", executionStatus));
 		int stepResult = crit.list().size();
 		
 		Criteria execs = currentSession().createCriteria(Execution.class, "Execution");
 		execs.createAlias("testPlan", "TestPlan", JoinType.LEFT_OUTER_JOIN);
-		execs.createAlias("TestPlan.iteration", "Iteration", JoinType.LEFT_OUTER_JOIN);
-		execs.createAlias("Iteration.campaign", "Campaign", JoinType.LEFT_OUTER_JOIN);
-		execs.createAlias("Campaign.project", "Project", JoinType.LEFT_OUTER_JOIN);
-		execs.add(Restrictions.eq("Project.id", Long.valueOf(projectId)));
+		execs.createAlias("TestPlan.iteration", ITERATION, JoinType.LEFT_OUTER_JOIN);
+		execs.createAlias(ITERATION_CAMPAIGN, CAMPAIGN, JoinType.LEFT_OUTER_JOIN);
+		execs.createAlias(CAMPAIGN_PROJECT, PROJECT, JoinType.LEFT_OUTER_JOIN);
+		execs.add(Restrictions.eq(PROJECT_ID, Long.valueOf(projectId)));
 		execs.add(Restrictions.eq("TestPlan.executionStatus", executionStatus));
 		
 		int execResult = execs.list().size();
@@ -246,9 +255,9 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	@Override
 	public List<Execution> findAllByTestCaseId(long testCaseId, PagingAndSorting pas) {
 		Criteria crit = currentSession().createCriteria(Execution.class, "Execution");
-		crit.createAlias("testPlan.iteration", "Iteration", JoinType.LEFT_OUTER_JOIN);
-		crit.createAlias("Iteration.campaign", "Campaign", JoinType.LEFT_OUTER_JOIN);
-		crit.createAlias("Campaign.project", "Project", JoinType.LEFT_OUTER_JOIN);
+		crit.createAlias("testPlan.iteration", ITERATION, JoinType.LEFT_OUTER_JOIN);
+		crit.createAlias(ITERATION_CAMPAIGN, CAMPAIGN, JoinType.LEFT_OUTER_JOIN);
+		crit.createAlias(CAMPAIGN_PROJECT, PROJECT, JoinType.LEFT_OUTER_JOIN);
 		crit.createAlias("referencedTestCase", "TestCase", JoinType.LEFT_OUTER_JOIN);
 		crit.createAlias("testPlan.testSuites", "TestSuite", JoinType.LEFT_OUTER_JOIN);
 
