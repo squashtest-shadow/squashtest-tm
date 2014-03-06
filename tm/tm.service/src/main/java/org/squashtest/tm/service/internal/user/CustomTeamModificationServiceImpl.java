@@ -40,6 +40,7 @@ import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
 import org.squashtest.tm.service.internal.repository.TeamDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService;
+import org.squashtest.tm.service.user.CustomTeamFinderService;
 import org.squashtest.tm.service.user.CustomTeamModificationService;
 
 @Service("CustomTeamModificationService")

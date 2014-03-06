@@ -21,7 +21,6 @@
 package org.squashtest.tm.web.internal.controller.project;
 
 import java.text.MessageFormat;
-import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -42,7 +41,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.service.project.ProjectManagerService;
-import org.squashtest.tm.web.internal.model.jquery.FilterModel;
 
 @Controller
 @RequestMapping("/projects")

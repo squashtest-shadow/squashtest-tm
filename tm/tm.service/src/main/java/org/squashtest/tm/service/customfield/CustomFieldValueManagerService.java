@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.customfield;
 
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
+
 public interface CustomFieldValueManagerService extends CustomFieldValueFinderService {
 
 	/**

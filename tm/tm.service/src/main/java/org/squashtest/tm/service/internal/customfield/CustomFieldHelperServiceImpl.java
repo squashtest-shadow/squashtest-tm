@@ -39,7 +39,7 @@ import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
 
 /**
- * Read the definition of {@link Helper} instead
+ * Read the definition of Helper instead
  * 
  * 
  * @author bsiri

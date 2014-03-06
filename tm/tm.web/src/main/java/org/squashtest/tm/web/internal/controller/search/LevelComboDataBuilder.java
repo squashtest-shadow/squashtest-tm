@@ -22,6 +22,7 @@
 package org.squashtest.tm.web.internal.controller.search;
 
 import org.squashtest.tm.domain.Level;
+import org.squashtest.tm.web.internal.controller.search.SearchInterfaceDescription.OptionListBuilder;
 import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
 
 /**
