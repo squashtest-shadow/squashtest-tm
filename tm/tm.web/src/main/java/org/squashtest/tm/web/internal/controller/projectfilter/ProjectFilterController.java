@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.projectfilter;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 

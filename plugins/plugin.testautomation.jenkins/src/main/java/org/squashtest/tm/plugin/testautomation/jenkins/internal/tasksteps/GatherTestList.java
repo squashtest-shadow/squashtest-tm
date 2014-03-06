@@ -22,7 +22,6 @@ package org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps;
 
 import java.util.Collection;
 
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.TestList;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser;

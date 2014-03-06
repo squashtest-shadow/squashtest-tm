@@ -23,8 +23,6 @@ package org.squashtest.tm.internal.domain.report.common.dto;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.squashtest.tm.domain.campaign.TestSuite;
-
 public class ExProgressTestSuiteDto extends ExProgressAbstractDto{
 	private ExProgressIterationDto iteration;
 	private List<ExProgressTestPlanDto> testPlans = new LinkedList<ExProgressTestPlanDto>();

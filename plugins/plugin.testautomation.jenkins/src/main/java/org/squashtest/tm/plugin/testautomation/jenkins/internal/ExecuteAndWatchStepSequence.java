@@ -24,14 +24,12 @@ import static org.squashtest.tm.plugin.testautomation.jenkins.internal.BuildStag
 
 import java.util.NoSuchElementException;
 
-import org.apache.commons.httpclient.methods.PostMethod;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.AbstractBuildProcessor;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildStep;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.StepEventListener;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.StepSequence;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.GetBuildID;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.StartBuild;
-import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 
 
 class ExecuteAndWatchStepSequence extends HttpBasedStepSequence implements StepSequence {
