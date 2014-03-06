@@ -92,7 +92,7 @@
 					"bScrollCollapse": true,
 					"bAutoWidth" : true,
 					"bRetrieve" : false,
-					"sDom" : '<"H"lfr>t',
+					"sDom" : '<"H"lfr>t'
 				});
 			
 			this.updateResult();
@@ -104,7 +104,7 @@
 				this.table.fnAdjustColumnSizing();
 			},
 			_filterTable : function(event){
-				var warning = this.$el.find(".filter-warning")
+				var warning = this.$el.find(".filter-warning");
 				var filterText = this.$el.find('div.dataTables_filter input').val();
 				if(filterText){
 					warning.show();

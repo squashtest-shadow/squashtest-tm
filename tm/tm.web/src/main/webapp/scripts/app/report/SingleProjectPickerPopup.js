@@ -42,7 +42,7 @@
 			events : {
 				"confirmdialogcancel" : "cancel",
 				"confirmdialogconfirm" : "confirm",
-				"click .project-checkbox" : "setSelected",
+				"click .project-checkbox" : "setSelected"
 			
 			},
 			
