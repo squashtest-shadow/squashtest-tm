@@ -124,7 +124,7 @@ public class FirstLayerTreeNodeMover implements PasteOperation {
 	private Map<NodeType, NodeCollaborators> collaboratorsByType = new HashMap<NodeType, NodeCollaborators>();
 
 	@PostConstruct
-	protected void init() {
+	public void init() {
 		NodeCollaborators nc = new NodeCollaborators(campaignLibraryDao, campaignFolderDao, campaignLibraryNodeDao);
 		collaboratorsByType.put(CAMPAIGN_FOLDER, nc);
 		collaboratorsByType.put(CAMPAIGN, nc);

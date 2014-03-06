@@ -37,87 +37,101 @@ import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
+
 @Component
 @Scope("prototype")
-public class NextLayerFeeder implements NodeVisitor  {
-	
+public class NextLayerFeeder implements NodeVisitor {
+
 	private Map<NodeContainer<TreeNode>, Collection<TreeNode>> nextLayer;
-	private TreeNode destination ;
+	private TreeNode destination;
 	private Collection<? extends TreeNode> outputList;
-	private int position;
-	
+
 	/**
-	 * This method is used with the {@linkplain PasteStrategy} that goes through a three generation by generation (or layer by layer).<br>
+	 * This method is used with the {@linkplain PasteStrategy} that goes through a three generation by generation (or
+	 * layer by layer).<br>
 	 * It will feed the next layer to process (nextLayer) with the children of the processed node (source).<br>
 	 * <br>
 	 * The next layer maps these next layer nodes with their future destination.<br>
-	 * The future destination is the result of a {@linkplain PasteOperation} on the source node. Hence destination and source are of the same type.<br>
-	 *  <br>
-	 * 	This method doesn't add output nodes to next layer so that we avoid infinite loops when a node is copied and pasted in himself.<br>
-	 *  example : 1 node <code> A (containing C) </code><br>
-	 *  <code> copy A into A </code> should lead to <code> A (containing A' + C) </code> with <code> A' containing C'.</code><br>
-	 *  When we process the first layer, A is copied as A' into A.<br>
-	 *  Then we fill the next layer to copy that is the <code> content of A = A' + C </code>.<br>
-	 *  We don't want to copy A' that is already the result of the copy. It would lead to infinite loop : copy A' into A', A'' into A'' ...<br>
-	 *  Thus we need to fill the next generation without A'.<br><br> 
-	 *  
-	 * <u>Why can't we fill the next layer before copying ? </u>
-	 * We need to fill the next layer node by node because we have to remember the node destination and to know it it is allowed to go deeper on the node (both  depend on the operation).
-	 *  <br><br>
-	 * @param destination : the result of a {@linkplain PasteOperation} on the source node
-	 * @param source : The TreeNode in which a paste operation has been processed.
-	 * @param nextLayer : a map to fill with an entry of new source-nodes mapped by their destination
-	 * @param outputList : the output list of the paste strategy.
+	 * The future destination is the result of a {@linkplain PasteOperation} on the source node. Hence destination and
+	 * source are of the same type.<br>
+	 * <br>
+	 * This method doesn't add output nodes to next layer so that we avoid infinite loops when a node is copied and
+	 * pasted in himself.<br>
+	 * example : 1 node <code> A (containing C) </code><br>
+	 * <code> copy A into A </code> should lead to <code> A (containing A' + C) </code> with
+	 * <code> A' containing C'.</code><br>
+	 * When we process the first layer, A is copied as A' into A.<br>
+	 * Then we fill the next layer to copy that is the <code> content of A = A' + C </code>.<br>
+	 * We don't want to copy A' that is already the result of the copy. It would lead to infinite loop : copy A' into
+	 * A', A'' into A'' ...<br>
+	 * Thus we need to fill the next generation without A'.<br>
+	 * <br>
+	 * 
+	 * <u>Why can't we fill the next layer before copying ? </u> We need to fill the next layer node by node because we
+	 * have to remember the node destination and to know it it is allowed to go deeper on the node (both depend on the
+	 * operation). <br>
+	 * <br>
+	 * 
+	 * @param destination
+	 *            : the result of a {@linkplain PasteOperation} on the source node
+	 * @param source
+	 *            : The TreeNode in which a paste operation has been processed.
+	 * @param nextLayer
+	 *            : a map to fill with an entry of new source-nodes mapped by their destination
+	 * @param outputList
+	 *            : the output list of the paste strategy.
 	 */
-	public void feedNextLayer(TreeNode destination,TreeNode source, Map<NodeContainer<TreeNode>, Collection<TreeNode>> nextLayer , Collection<? extends TreeNode> outputList){
+	public void feedNextLayer(TreeNode destination, TreeNode source,
+			Map<NodeContainer<TreeNode>, Collection<TreeNode>> nextLayer, Collection<? extends TreeNode> outputList) {
 		this.nextLayer = nextLayer;
 		this.destination = destination;
 		this.outputList = outputList;
 		source.accept(this);
 	}
 
-	public void feedNextLayer(TreeNode destination,TreeNode source, Map<NodeContainer<TreeNode>, Collection<TreeNode>> nextLayer , Collection<? extends TreeNode> outputList, int position){
+	public void feedNextLayer(TreeNode destination, TreeNode source,
+			Map<NodeContainer<TreeNode>, Collection<TreeNode>> nextLayer, Collection<? extends TreeNode> outputList,
+			int position) {
 		this.nextLayer = nextLayer;
 		this.destination = destination;
 		this.outputList = outputList;
-		this.position = position; 
 		source.accept(this);
 	}
-	
+
 	@Override
 	public void visit(CampaignFolder campaignFolder) {
 		saveNextToCopy(campaignFolder, (CampaignFolder) destination);
-		
+
 	}
 
 	@Override
 	public void visit(RequirementFolder requirementFolder) {
 		saveNextToCopy(requirementFolder, (RequirementFolder) destination);
-		
+
 	}
 
 	@Override
 	public void visit(TestCaseFolder testCaseFolder) {
 		saveNextToCopy(testCaseFolder, (TestCaseFolder) destination);
-		
+
 	}
 
 	@Override
 	public void visit(Campaign campaign) {
 		saveNextToCopy(campaign, (Campaign) destination);
-		
+
 	}
 
 	@Override
 	public void visit(Iteration iteration) {
 		saveNextToCopy(iteration, (Iteration) destination);
-		
+
 	}
 
 	@Override
 	public void visit(TestSuite testSuite) {
 		// nope
-		
+
 	}
 
 	@Override
@@ -127,17 +141,16 @@ public class NextLayerFeeder implements NodeVisitor  {
 
 	@Override
 	public void visit(TestCase testCase) {
-		// nope		
+		// nope
 	}
-	
+
 	@SuppressWarnings("unchecked")
-		private void saveNextToCopy(NodeContainer<? extends TreeNode> source, NodeContainer<? extends TreeNode> destination) {
-			if (source.hasContent()) {
-				Collection<TreeNode> sourceContent = new ArrayList<TreeNode>(source.getOrderedContent());
-				sourceContent.removeAll(outputList);
-				nextLayer.put((NodeContainer<TreeNode>) destination, sourceContent);
-			}
+	private void saveNextToCopy(NodeContainer<? extends TreeNode> source, NodeContainer<? extends TreeNode> destination) {
+		if (source.hasContent()) {
+			Collection<TreeNode> sourceContent = new ArrayList<TreeNode>(source.getOrderedContent());
+			sourceContent.removeAll(outputList);
+			nextLayer.put((NodeContainer<TreeNode>) destination, sourceContent);
 		}
-	 
+	}
 
 }

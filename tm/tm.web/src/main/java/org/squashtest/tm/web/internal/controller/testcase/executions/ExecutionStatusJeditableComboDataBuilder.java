@@ -36,7 +36,7 @@ import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilde
 public class ExecutionStatusJeditableComboDataBuilder extends
 		EnumJeditableComboDataBuilder<ExecutionStatus, ExecutionStatusJeditableComboDataBuilder> {
 	@Inject
-	CustomGenericProjectManager projectManager;
+	private CustomGenericProjectManager projectManager;
 
 	public ExecutionStatusJeditableComboDataBuilder() {
 		super();

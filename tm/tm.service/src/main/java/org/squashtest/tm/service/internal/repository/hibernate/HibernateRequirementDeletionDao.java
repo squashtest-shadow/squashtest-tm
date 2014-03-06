@@ -72,26 +72,6 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 		}
 	}
 
-	private List<RequirementLibraryNode> removeNodesFromFoldersOrLibraries(List<Long> entityIds) {
-
-		List<RequirementLibraryNode> nodesToRemove = new ArrayList<RequirementLibraryNode>();
-		for(Long entityId : entityIds){
-			
-			Query query = getSession().getNamedQuery("requirementLibraryNode.findById");
-			query.setParameter("libraryNodeId", entityId);
-			RequirementLibraryNode node = (RequirementLibraryNode) query.uniqueResult();
-			nodesToRemove.add(node);
-			
-			removeEntitiesFromParentLibraryIfExists(entityId, node);
-			
-			removeEntitiesFromParentFolderIfExists(entityId, node);
-			
-			removeEntitiesFromParentRequirementIfExists(entityId, node);
-		}
-		
-		return nodesToRemove;
-	}
-	
 
 	
 	private void removeEntitiesFromParentLibraryIfExists(Long entityId, RequirementLibraryNode node){
@@ -160,11 +140,7 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 			}
 		}
 		
-		List<Long>[] result = new List[2];
-		result[0] = folderIds;
-		result[1] = requirementIds;
-		
-		return result;
+		return new List[] {folderIds, requirementIds};
 	}
 	
 	
@@ -181,6 +157,7 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 	}
 
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> findRequirementFolderAttachmentListIds(
 			List<Long> folderIds) {

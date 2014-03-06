@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.batchexport;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,56 +32,51 @@ import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.testcase.TestCaseType;
 
-
 public class ExportModel {
-	
 	private List<TestCaseModel> testCases = new LinkedList<TestCaseModel>();
-	
+
 	private List<TestStepModel> testSteps = new LinkedList<TestStepModel>();
-	
+
 	private List<ParameterModel> parameters = new LinkedList<ParameterModel>();
-	
+
 	private List<DatasetModel> datasets = new LinkedList<DatasetModel>();
-	
-	
-	
-	
-	public ExportModel(){
+
+	public ExportModel() {
 		super();
 	}
-	
-	public void setTestCases(List<TestCaseModel> models){
+
+	public void setTestCases(List<TestCaseModel> models) {
 		this.testCases = models;
 	}
-	
-	public void setTestSteps(List<TestStepModel> models){
+
+	public void setTestSteps(List<TestStepModel> models) {
 		this.testSteps = models;
 	}
-	
-	public void setParameters(List<ParameterModel> models){
+
+	public void setParameters(List<ParameterModel> models) {
 		this.parameters = models;
 	}
-	
-	public void setDatasets(List<DatasetModel> models){
+
+	public void setDatasets(List<DatasetModel> models) {
 		this.datasets = models;
 	}
-	
-	public void addTestCaseModel(TestCaseModel model){
+
+	public void addTestCaseModel(TestCaseModel model) {
 		testCases.add(model);
 	}
-	
-	public void addTestStepModel(TestStepModel model){
+
+	public void addTestStepModel(TestStepModel model) {
 		testSteps.add(model);
 	}
-	
-	public void addParameterModel(ParameterModel model){
+
+	public void addParameterModel(ParameterModel model) {
 		parameters.add(model);
 	}
-	
-	public void addDatasetModel(DatasetModel model){
+
+	public void addDatasetModel(DatasetModel model) {
 		datasets.add(model);
 	}
-	
+
 	public List<TestCaseModel> getTestCases() {
 		return testCases;
 	}
@@ -97,8 +93,15 @@ public class ExportModel {
 		return datasets;
 	}
 
-	public static final class TestCaseModel implements Comparable<TestCaseModel>{
-		
+	public static final class TestCaseModel {
+		public static final Comparator<TestCaseModel> COMPARATOR = new Comparator<ExportModel.TestCaseModel>() {
+			@Override
+			public int compare(TestCaseModel o1, TestCaseModel o2) {
+				return o1.getPath().compareTo(o2.getPath());
+
+			}
+		};
+
 		private Long projectId;
 		private String projectName;
 		private String path;
@@ -121,36 +124,17 @@ public class ExportModel {
 		private Date lastModifiedOn;
 		private String lastModifiedBy;
 		private List<CustomField> cufs = new LinkedList<CustomField>();
-		
-		public TestCaseModel(){
+
+		public TestCaseModel() {
 			super();
 		}
-		
 
 		// that monster constructor will be used by Hibernate in a hql query
-		public TestCaseModel(
-				Long projectId, 
-				String projectName, 
-				Integer order,
-				Long id, 
-				String reference, 
-				String name, 
-				Boolean weightAuto,
-				TestCaseImportance weight, 
-				TestCaseNature nature,
-				TestCaseType type, 
-				TestCaseStatus status, 
-				String description,
-				String prerequisite, 
-				Long nbReq, 
-				Long nbCaller,
-				Long nbAttachments, 
-				Date createdOn, 
-				String createdBy,
-				Date lastModifiedOn, 
-				String lastModifiedBy) {
-			
-			
+		public TestCaseModel(Long projectId, String projectName, Integer order, Long id, String reference, String name,
+				Boolean weightAuto, TestCaseImportance weight, TestCaseNature nature, TestCaseType type,
+				TestCaseStatus status, String description, String prerequisite, Long nbReq, Long nbCaller,
+				Long nbAttachments, Date createdOn, String createdBy, Date lastModifiedOn, String lastModifiedBy) {
+
 			super();
 			this.projectId = projectId;
 			this.projectName = projectName;
@@ -174,11 +158,6 @@ public class ExportModel {
 			this.lastModifiedBy = lastModifiedBy;
 		}
 
-		@Override
-		public int compareTo(TestCaseModel tc) {
-			return getPath().compareTo(tc.getPath());
-		}
-		
 		public Long getProjectId() {
 			return projectId;
 		}
@@ -347,20 +326,29 @@ public class ExportModel {
 			this.lastModifiedBy = lastModifiedBy;
 		}
 
-		public void addCuf(CustomField cuf){
+		public void addCuf(CustomField cuf) {
 			cufs.add(cuf);
 		}
-		
+
 		public List<CustomField> getCufs() {
 			return cufs;
 		}
 
-
 	}
-	
-	
-	public static final class TestStepModel implements Comparable<TestStepModel>{
-		
+
+	public static final class TestStepModel {
+		public static final Comparator<TestStepModel> COMPARATOR = new Comparator<ExportModel.TestStepModel>() {
+			@Override
+			public int compare(TestStepModel o1, TestStepModel o2) {
+				int comp1 = o1.getTcOwnerPath().compareTo(o2.getTcOwnerPath());
+				if (comp1 == 0) {
+					return o1.getOrder() - o2.getOrder();
+				} else {
+					return comp1;
+				}
+			}
+		};
+
 		private String tcOwnerPath;
 		private long tcOwnerId;
 		private long id;
@@ -372,17 +360,9 @@ public class ExportModel {
 		private Long nbAttach;
 		private List<CustomField> cufs = new LinkedList<CustomField>();
 
-		
-		public TestStepModel(
-				long tcOwnerId, 
-				long id, 
-				int order,
-				Integer isCallStep, 
-				String action, 
-				String result, 
-				Long nbReq,
-				Long nbAttach) {
-			
+		public TestStepModel(long tcOwnerId, long id, int order, Integer isCallStep, String action, String result,
+				Long nbReq, Long nbAttach) {
+
 			super();
 			this.tcOwnerId = tcOwnerId;
 			this.id = id;
@@ -394,132 +374,108 @@ public class ExportModel {
 			this.nbAttach = nbAttach;
 		}
 
-		@Override
-		public int compareTo(TestStepModel step2) {
-			int comp1 = getTcOwnerPath().compareTo(step2.getTcOwnerPath());
-			if (comp1 == 0){
-				return getOrder() - step2.getOrder();
-			}
-			else{
-				return comp1;
-			}
-		}
-		
-
 		public String getTcOwnerPath() {
 			return tcOwnerPath;
 		}
-
 
 		public void setTcOwnerPath(String tcOwnerPath) {
 			this.tcOwnerPath = tcOwnerPath;
 		}
 
-
 		public long getTcOwnerId() {
 			return tcOwnerId;
 		}
-
 
 		public void setTcOwnerId(long tcOwnerId) {
 			this.tcOwnerId = tcOwnerId;
 		}
 
-
 		public long getId() {
 			return id;
 		}
-
 
 		public void setId(long id) {
 			this.id = id;
 		}
 
-
 		public int getOrder() {
 			return order;
 		}
-
 
 		public void setOrder(int order) {
 			this.order = order;
 		}
 
-
 		public Integer getIsCallStep() {
 			return isCallStep;
 		}
-
 
 		public void setIsCallStep(Integer isCallStep) {
 			this.isCallStep = isCallStep;
 		}
 
-
 		public String getAction() {
 			return action;
 		}
-
 
 		public void setAction(String action) {
 			this.action = action;
 		}
 
-
 		public String getResult() {
 			return result;
 		}
-
 
 		public void setResult(String result) {
 			this.result = result;
 		}
 
-
 		public Long getNbReq() {
 			return nbReq;
 		}
-
 
 		public void setNbReq(Long nbReq) {
 			this.nbReq = nbReq;
 		}
 
-
 		public Long getNbAttach() {
 			return nbAttach;
 		}
-
 
 		public void setNbAttach(Long nbAttach) {
 			this.nbAttach = nbAttach;
 		}
 
-		public void addCuf(CustomField cuf){
+		public void addCuf(CustomField cuf) {
 			cufs.add(cuf);
 		}
 
 		public List<CustomField> getCufs() {
 			return cufs;
 		}
-		
-		
+
 	}
-	
-	
-	public static final class ParameterModel implements Comparable<ParameterModel>{
-		
+
+	public static final class ParameterModel {
+		public static final Comparator<ParameterModel> COMPARATOR = new Comparator<ExportModel.ParameterModel>() {
+			@Override
+			public int compare(ParameterModel o1, ParameterModel o2) {
+				int comp1 = o1.getTcOwnerPath().compareTo(o2.getTcOwnerPath());
+				if (comp1 == 0) {
+					return o1.getName().compareTo(o2.getName());
+				} else {
+					return comp1;
+				}
+			}
+		};
+
 		private String tcOwnerPath;
 		private long tcOwnerId;
 		private long id;
 		private String name;
 		private String description;
-		
-		
-	
 
-		public ParameterModel(long tcOwnerId, long id, String name,
-				String description) {
+		public ParameterModel(long tcOwnerId, long id, String name, String description) {
 			super();
 			this.tcOwnerId = tcOwnerId;
 			this.id = id;
@@ -527,72 +483,59 @@ public class ExportModel {
 			this.description = description;
 		}
 
-		@Override
-		public int compareTo(ParameterModel param) {
-			int comp1 = getTcOwnerPath().compareTo(param.getTcOwnerPath());
-			if (comp1 == 0){
-				return getName().compareTo(param.getName());
-			}
-			else{
-				return comp1;
-			}
-		}
-
 		public String getTcOwnerPath() {
 			return tcOwnerPath;
 		}
-
 
 		public void setTcOwnerPath(String tcOwnerPath) {
 			this.tcOwnerPath = tcOwnerPath;
 		}
 
-
 		public long getTcOwnerId() {
 			return tcOwnerId;
 		}
-
 
 		public void setTcOwnerId(long tcOwnerId) {
 			this.tcOwnerId = tcOwnerId;
 		}
 
-
 		public long getId() {
 			return id;
 		}
-
 
 		public void setId(long id) {
 			this.id = id;
 		}
 
-
 		public String getName() {
 			return name;
 		}
-
 
 		public void setName(String name) {
 			this.name = name;
 		}
 
-
 		public String getDescription() {
 			return description;
 		}
 
-
 		public void setDescription(String description) {
 			this.description = description;
 		}
-		
-		
+
 	}
-	
-	
-	public static final class DatasetModel implements Comparable<DatasetModel>{
-		
+
+	public static final class DatasetModel  {
+		public static final Comparator<DatasetModel> COMPARATOR = new Comparator<ExportModel.DatasetModel>() {
+			@Override
+			public int compare(DatasetModel o1, DatasetModel o2) {
+				int comp1 = o1.getTcOwnerPath().compareTo(o2.getTcOwnerPath());
+				int comp2 = o1.getName().compareTo(o2.getName());
+				int comp3 = o1.getParamName().compareTo(o2.getParamName());
+				return (comp1 != 0) ? comp1 : (comp2 != 0) ? comp2 : comp3;
+			}
+		};
+
 		private String tcOwnerPath;
 		private long ownerId;
 		private long id;
@@ -601,12 +544,8 @@ public class ExportModel {
 		private long paramOwnerId;
 		private String paramName;
 		private String paramValue;
-		
-		
-		
 
-		public DatasetModel(long ownerId, long id, String name,
-				long paramOwnerId, String paramName, String paramValue) {
+		public DatasetModel(long ownerId, long id, String name, long paramOwnerId, String paramName, String paramValue) {
 			super();
 			this.ownerId = ownerId;
 			this.id = id;
@@ -615,110 +554,80 @@ public class ExportModel {
 			this.paramName = paramName;
 			this.paramValue = paramValue;
 		}
-		
-		@Override
-		public int compareTo(DatasetModel other) {
-			int comp1 = getTcOwnerPath().compareTo(other.getTcOwnerPath());
-			int comp2 = getName().compareTo(other.getName());
-			int comp3 = getParamName().compareTo(other.getParamName());
-			return (comp1 != 0) ? comp1 :
-					(comp2 != 0) ? comp2 :
-						comp3;
-		}
-
 
 		public String getTcOwnerPath() {
 			return tcOwnerPath;
 		}
 
-
 		public void setTcOwnerPath(String tcOwnerPath) {
 			this.tcOwnerPath = tcOwnerPath;
 		}
-
 
 		public long getOwnerId() {
 			return ownerId;
 		}
 
-
 		public void setOwnerId(long ownerId) {
 			this.ownerId = ownerId;
 		}
-
 
 		public long getId() {
 			return id;
 		}
 
-
 		public void setId(long id) {
 			this.id = id;
 		}
-
 
 		public String getName() {
 			return name;
 		}
 
-
 		public void setName(String name) {
 			this.name = name;
 		}
-
 
 		public String getParamOwnerPath() {
 			return paramOwnerPath;
 		}
 
-
 		public void setParamOwnerPath(String paramOwnerPath) {
 			this.paramOwnerPath = paramOwnerPath;
 		}
-
 
 		public long getParamOwnerId() {
 			return paramOwnerId;
 		}
 
-
 		public void setParamOwnerId(long paramOwnerId) {
 			this.paramOwnerId = paramOwnerId;
 		}
-
 
 		public String getParamName() {
 			return paramName;
 		}
 
-
 		public void setParamName(String paramName) {
 			this.paramName = paramName;
 		}
-
 
 		public String getParamValue() {
 			return paramValue;
 		}
 
-
 		public void setParamValue(String paramValue) {
 			this.paramValue = paramValue;
 		}
-		
-		
+
 	}
-	
-	
-	public static final class CustomField{
-		
+
+	public static final class CustomField {
 		Long ownerId;
 		BindableEntity ownerType;
 		String code;
 		String value;
 		InputType type;
-	
-		
+
 		public CustomField(Long ownerId, BindableEntity ownerType, String code, String value, InputType type) {
 			super();
 			this.ownerId = ownerId;
@@ -727,31 +636,27 @@ public class ExportModel {
 			this.value = value;
 			this.type = type;
 		}
-		
-		
-		
-		public Long getOwnerId(){
+
+		public Long getOwnerId() {
 			return this.ownerId;
 		}
-		
-		public BindableEntity getOwnerType(){
+
+		public BindableEntity getOwnerType() {
 			return ownerType;
 		}
-		
+
 		public String getCode() {
 			return code;
 		}
-		
+
 		public String getValue() {
 			return value;
 		}
-		
-		public InputType getType(){
+
+		public InputType getType() {
 			return type;
 		}
 
-		
 	}
-
 
 }

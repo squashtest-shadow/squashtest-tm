@@ -272,13 +272,13 @@ class ExcelExporter {
 	
 	// for now we care only of Excel 2003
 	private void createWorkbook(){
-		Workbook workbook = new HSSFWorkbook();
-		workbook.createSheet(TC_SHEET);
-		workbook.createSheet(ST_SHEET);
-		workbook.createSheet(PRM_SHEET);
-		workbook.createSheet(DS_SHEET);
+		Workbook wb = new HSSFWorkbook();
+		wb.createSheet(TC_SHEET);
+		wb.createSheet(ST_SHEET);
+		wb.createSheet(PRM_SHEET);
+		wb.createSheet(DS_SHEET);
 		
-		this.workbook = workbook;
+		this.workbook = wb;
 	}
 	
 	private void createHeaders(){

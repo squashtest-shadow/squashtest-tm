@@ -488,11 +488,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@Override
 	public boolean isExecutionStatusEnabledForProject(long projectId, ExecutionStatus executionStatus) {
 		Set<ExecutionStatus> statuses = disabledExecutionStatuses(projectId);
-		if(statuses.contains(executionStatus)){
-			return false;
-		} else {
-			return true;
-		}
+		return !statuses.contains(executionStatus);
 	}
 
 	@Override
