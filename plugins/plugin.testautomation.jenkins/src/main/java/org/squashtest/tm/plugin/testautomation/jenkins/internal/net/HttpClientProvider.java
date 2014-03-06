@@ -123,6 +123,9 @@ public class HttpClientProvider {
 
 		@Override	
 		public boolean equals(Object obj) { 
+			
+			// GENERATED:START 
+			
 			if (this == obj){
 				return true;
 			}
@@ -161,6 +164,8 @@ public class HttpClientProvider {
 				return false;
 			}
 			return true;
+			
+			// GENERATED:END
 		}
 		
 	}

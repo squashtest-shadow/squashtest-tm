@@ -180,6 +180,7 @@ public class FirstLayerTreeNodeMover implements PasteOperation {
 	protected void processNodes(TreeNode toMove, int position){
 		NodeType visitedType = whichVisitor.getTypeOf(toMove);
 
+		// IGNOREVIOLATIONS:START the cyclomatic complexity here is perfectly manageable by a standard instance of homo computernicus 
 		switch(visitedType){
 			case CAMPAIGN_FOLDER : 
 				visitLibraryNode((LibraryNode)toMove, campaignLibraryDao, campaignFolderDao, position); 
@@ -204,6 +205,7 @@ public class FirstLayerTreeNodeMover implements PasteOperation {
 				break;
 			default : throw new IllegalArgumentException("Libraries cannot be copied nor moved !");
 		}
+		// IGNOREVIOLATIONS:END 
 		
 	}
 	@SuppressWarnings("unchecked")
