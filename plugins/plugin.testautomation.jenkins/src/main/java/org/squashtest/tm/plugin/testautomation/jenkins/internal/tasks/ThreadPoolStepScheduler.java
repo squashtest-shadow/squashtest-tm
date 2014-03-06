@@ -22,6 +22,7 @@ package org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks;
 
 import java.util.Date;
 import java.util.concurrent.ScheduledFuture;
+import org.springframework.scheduling.TaskScheduler;
 
 public class ThreadPoolStepScheduler implements StepScheduler{
 
