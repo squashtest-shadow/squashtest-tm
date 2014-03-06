@@ -133,7 +133,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 		try {
 			authService.changeAuthenticatedUserPassword(oldPass, newPass);
 		} catch (BadCredentialsException bce) {
-			throw new WrongPasswordException("wrong password");
+			throw new WrongPasswordException("wrong password", bce);
 		}
 
 	}

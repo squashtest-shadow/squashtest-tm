@@ -114,20 +114,13 @@ public class GenericProjectController {
 	private static final String PROJECT_ID_URL = "/{projectId}";
 	private static final String PROJECT_BUGTRACKER_NAME_UNDEFINED = "project.bugtracker.name.undefined";
 
-	private DatatableMapper<String> allProjectsMapper = new NameBasedMapper(9)
-			.map("name", "name")
-			.map("label", "label")
-			.map("active", "active")
-			.map("created-on", "audit.createdOn")
-			.map("created-by", "audit.createdBy")
-			.map("last-mod-on", "audit.lastModifiedOn")
+	private DatatableMapper<String> allProjectsMapper = new NameBasedMapper(9).map("name", "name")
+			.map("label", "label").map("active", "active").map("created-on", "audit.createdOn")
+			.map("created-by", "audit.createdBy").map("last-mod-on", "audit.lastModifiedOn")
 			.map("last-mod-by", "audit.lastModifiedBy");
 
-	private DatatableMapper<String> partyPermissionMapper = new NameBasedMapper(5)
-			.map("party-index", "index")
-			.map("party-id", "id")
-			.map("party-name", "name")
-			.map("party-type", "type")
+	private DatatableMapper<String> partyPermissionMapper = new NameBasedMapper(5).map("party-index", "index")
+			.map("party-id", "id").map("party-name", "name").map("party-type", "type")
 			.map("permission-group.qualifiedName", "qualifiedName");
 
 	@RequestMapping(value = "", params = RequestParams.S_ECHO_PARAM, method = RequestMethod.GET)
@@ -243,14 +236,13 @@ public class GenericProjectController {
 		}
 	}
 
-	@RequestMapping(value = PROJECT_ID_URL + "/general", method = RequestMethod.GET, produces="application/json")
+	@RequestMapping(value = PROJECT_ID_URL + "/general", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public JsonGeneralInfo refreshGeneralInfos(@PathVariable long projectId) {
 
 		GenericProject project = projectManager.findById(projectId);
-		return new JsonGeneralInfo((AuditableMixin)project);
+		return new JsonGeneralInfo((AuditableMixin) project);
 	}
-	
 
 	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.DELETE)
 	@ResponseBody
@@ -259,22 +251,22 @@ public class GenericProjectController {
 	}
 
 	// ********************************** Permission Popup *******************************
-	
+
 	@RequestMapping(value = PROJECT_ID_URL + "/unbound-parties", method = RequestMethod.GET)
 	@ResponseBody
 	public List<Map<String, Object>> getPermissionPopup(@PathVariable long projectId) {
 
 		List<Party> partyList = projectManager.findPartyWithoutPermissionByProject(projectId);
-		
-		List<Map<String, Object>> partiesModel = new ArrayList<Map<String,Object>>(partyList.size());
-		for (Party p : partyList){
+
+		List<Map<String, Object>> partiesModel = new ArrayList<Map<String, Object>>(partyList.size());
+		for (Party p : partyList) {
 			Map<String, Object> newModel = new HashMap<String, Object>();
 			newModel.put("label", p.getName());
 			newModel.put("value", p.getName());
 			newModel.put("id", p.getId());
 			partiesModel.add(newModel);
 		}
-		
+
 		return partiesModel;
 
 	}
@@ -331,7 +323,8 @@ public class GenericProjectController {
 	public DataTableModel getProjectsTableModel(@PathVariable long projectId, final DataTableDrawParameters params) {
 		List<TestAutomationProject> taProjects = projectManager.findBoundTestAutomationProjects(projectId);
 
-		PagedCollectionHolder<List<TestAutomationProject>> holder = new SinglePageCollectionHolder<List<TestAutomationProject>>(taProjects);
+		PagedCollectionHolder<List<TestAutomationProject>> holder = new SinglePageCollectionHolder<List<TestAutomationProject>>(
+				taProjects);
 
 		return new TestAutomationTableModel().buildDataModel(holder, params.getsEcho());
 
@@ -348,11 +341,14 @@ public class GenericProjectController {
 				form = it.next();
 				projectManager.bindTestAutomationProject(projectId, form.toTestAutomationProject());
 			}
-		} catch (MalformedURLException ex) {
+		} catch (MalformedURLException mue) {
 			// quick and dirty validation
+			LOGGER.error(mue.getMessage(), mue);
 			BindException be = new BindException(new TestAutomationServer(), "ta-project");
 			be.rejectValue("baseURL", null, messageSource.internationalize("error.url.malformed", locale));
-			throw be;
+			throw be;// NOSONAR : No way to pass
+			// original exception to
+			// BindException constructor
 		}
 	}
 
@@ -385,26 +381,26 @@ public class GenericProjectController {
 		projectManager.disableWizardForWorkspace(projectId, wizard.getDisplayWorkspace(), wizardId);
 	}
 
-	
-	@RequestMapping(value = PROJECT_ID_URL + "/wizards/{wizardId}/configuration", method = RequestMethod.GET, produces="application/json")
-	@ResponseBody 
-	public Map<String, String> getEnabledWizardProperties(@PathVariable("projectId") long projectId, @PathVariable("wizardId") String wizardId){
+	@RequestMapping(value = PROJECT_ID_URL + "/wizards/{wizardId}/configuration", method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public Map<String, String> getEnabledWizardProperties(@PathVariable("projectId") long projectId,
+			@PathVariable("wizardId") String wizardId) {
 		WorkspaceWizard wizard = wizardManager.findById(wizardId);
 		Map<String, String> conf = wizard.getProperties();
-		Map<String, String> configuration = projectManager.getWizardConfiguration(projectId, wizard.getDisplayWorkspace(), wizardId);
+		Map<String, String> configuration = projectManager.getWizardConfiguration(projectId,
+				wizard.getDisplayWorkspace(), wizardId);
 		conf.putAll(configuration);
 		return conf;
 	}
-	
-	@RequestMapping(value = PROJECT_ID_URL +  "/wizards/{wizardId}/configuration", method = RequestMethod.POST, consumes="application/json")
+
+	@RequestMapping(value = PROJECT_ID_URL + "/wizards/{wizardId}/configuration", method = RequestMethod.POST, consumes = "application/json")
 	@ResponseBody
-	public void setEnabledWizardProperties(@PathVariable("projectId") long projectId, @PathVariable("wizardId") String wizardId, 
-			@RequestBody Map<String, String> configuration){
+	public void setEnabledWizardProperties(@PathVariable("projectId") long projectId,
+			@PathVariable("wizardId") String wizardId, @RequestBody Map<String, String> configuration) {
 		WorkspaceWizard wizard = wizardManager.findById(wizardId);
 		wizard.validate(new EntityReference(EntityType.PROJECT, projectId), configuration);
 		projectManager.setWizardConfiguration(projectId, wizard.getDisplayWorkspace(), wizardId, configuration);
 	}
-	
 
 	// ********************** other stuffs *****************************
 
@@ -457,62 +453,64 @@ public class GenericProjectController {
 			return data;
 		}
 	}
-	
+
 	@RequestMapping(value = PROJECT_ID_URL + "/disable-execution-status/{executionStatus}", method = RequestMethod.POST)
 	@ResponseBody
-	public void disableExecutionStatusOnProject(@PathVariable long projectId, @PathVariable String executionStatus){
+	public void disableExecutionStatusOnProject(@PathVariable long projectId, @PathVariable String executionStatus) {
 		projectManager.disableExecutionStatus(projectId, ExecutionStatus.valueOf(executionStatus));
 	}
 
 	@RequestMapping(value = PROJECT_ID_URL + "/enable-execution-status/{executionStatus}", method = RequestMethod.POST)
 	@ResponseBody
-	public void enableExecutionStatusOnProject(@PathVariable long projectId, @PathVariable String executionStatus){
+	public void enableExecutionStatusOnProject(@PathVariable long projectId, @PathVariable String executionStatus) {
 		projectManager.enableExecutionStatus(projectId, ExecutionStatus.valueOf(executionStatus));
 	}
-	
+
 	@RequestMapping(value = PROJECT_ID_URL + "/is-enabled-execution-status/{executionStatus}", method = RequestMethod.GET)
 	@ResponseBody
-	public boolean isExecutionStatusEnabledForProject(@PathVariable long projectId, @PathVariable String executionStatus){
+	public boolean isExecutionStatusEnabledForProject(@PathVariable long projectId, @PathVariable String executionStatus) {
 		return projectManager.isExecutionStatusEnabledForProject(projectId, ExecutionStatus.valueOf(executionStatus));
 	}
-	
+
 	@RequestMapping(value = PROJECT_ID_URL + "/execution-status-is-used/{executionStatus}", method = RequestMethod.GET)
 	@ResponseBody
-	public boolean executionStatusUsedByProject(@PathVariable long projectId, @PathVariable String executionStatus){
+	public boolean executionStatusUsedByProject(@PathVariable long projectId, @PathVariable String executionStatus) {
 		return projectManager.executionStatusUsedByProject(projectId, ExecutionStatus.valueOf(executionStatus));
 	}
-	
+
 	@RequestMapping(value = PROJECT_ID_URL + "/execution-status/{executionStatus}", method = RequestMethod.GET)
 	@ResponseBody
-	public Map<String, Object> getStatusPopup(@PathVariable long projectId, @PathVariable String executionStatus, final Locale locale) {
+	public Map<String, Object> getStatusPopup(@PathVariable long projectId, @PathVariable String executionStatus,
+			final Locale locale) {
 		Set<ExecutionStatus> statuses = projectManager.enabledExecutionStatuses(projectId);
 		ExecutionStatus status = ExecutionStatus.valueOf(executionStatus);
 		statuses.remove(status);
 		Map<String, Object> options = new HashMap<String, Object>();
-		for(ExecutionStatus st : statuses){
+		for (ExecutionStatus st : statuses) {
 			options.put(messageSource.internationalize(st.getI18nKey(), locale), st.name());
 		}
 		return options;
-		
+
 	}
-	
+
 	@RequestMapping(value = PROJECT_ID_URL + "/replace-execution-status", method = RequestMethod.POST)
 	@ResponseBody
-	public void replaceStatusWithinProject(@PathVariable long projectId, @RequestParam String sourceExecutionStatus, @RequestParam String targetExecutionStatus) {
+	public void replaceStatusWithinProject(@PathVariable long projectId, @RequestParam String sourceExecutionStatus,
+			@RequestParam String targetExecutionStatus) {
 		ExecutionStatus source = ExecutionStatus.valueOf(sourceExecutionStatus);
 		ExecutionStatus target = ExecutionStatus.valueOf(targetExecutionStatus);
 		Runnable replacer = new AsynchronousReplaceExecutionStatus(projectId, source, target);
 		taskExecutor.execute(replacer);
 	}
-	
-	private class AsynchronousReplaceExecutionStatus implements Runnable{
-		
+
+	private class AsynchronousReplaceExecutionStatus implements Runnable {
+
 		private Long projectId;
 		private ExecutionStatus sourceExecutionStatus;
 		private ExecutionStatus targetExecutionStatus;
-		
 
-		public AsynchronousReplaceExecutionStatus(Long projectId, ExecutionStatus sourceExecutionStatus, ExecutionStatus targetExecutionStatus) {
+		public AsynchronousReplaceExecutionStatus(Long projectId, ExecutionStatus sourceExecutionStatus,
+				ExecutionStatus targetExecutionStatus) {
 			super();
 			this.projectId = projectId;
 			this.sourceExecutionStatus = sourceExecutionStatus;

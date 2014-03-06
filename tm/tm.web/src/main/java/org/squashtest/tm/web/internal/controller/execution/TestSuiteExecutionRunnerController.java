@@ -128,7 +128,7 @@ public class TestSuiteExecutionRunnerController {
 		try {
 			testSuiteExecutionRunner.startResume(testSuiteId);
 		} catch (TestPlanItemNotExecutableException e) {
-			throw new TestPlanTerminatedOrNoStepsException();
+			throw new TestPlanTerminatedOrNoStepsException(e);
 		}
 	}
 
