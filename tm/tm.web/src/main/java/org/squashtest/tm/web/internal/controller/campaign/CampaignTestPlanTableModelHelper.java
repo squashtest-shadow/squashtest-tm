@@ -78,11 +78,6 @@ final class CampaignTestPlanTableModelHelper extends DataTableModelBuilder<Index
 	}
 	
 
-	private String formatExecutionMode(TestCaseExecutionMode mode, Locale locale) {
-		return messageSource.internationalize(mode+"-short", locale);
-	}
-
-
 	private String formatImportance(TestCaseImportance importance, Locale locale) {
 		return messageSource.internationalize(importance, locale);
 	}

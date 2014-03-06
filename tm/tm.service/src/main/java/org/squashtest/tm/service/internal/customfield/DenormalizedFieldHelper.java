@@ -156,13 +156,6 @@ public class DenormalizedFieldHelper<X extends DenormalizedFieldHolder>{
 		customFields = new ArrayList(cfMap.values());
 	}
 	
-	private <Y> void retainUniques(Collection<Y> argument) {
-		Set<Y> set = new LinkedHashSet<Y>(argument);
-		argument.clear();
-		argument.addAll(set);
-	}
-
-	
 	private boolean isInited() {
 		return customFields != null;
 	}

@@ -102,12 +102,4 @@ public class StandardWorkloadCalendar implements WorkloadCalendar {
 		}
 	}
 	
-	private LocalDate nextMonday(LocalDate date){
-		return date.plusWeeks(1).withDayOfWeek(DateTimeConstants.MONDAY);
-	}
-
-	private LocalDate lastSunday(LocalDate date){
-		return date.minusWeeks(1).withDayOfWeek(DateTimeConstants.SUNDAY);
-	}
-
 }
