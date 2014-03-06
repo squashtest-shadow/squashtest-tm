@@ -77,7 +77,10 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepVisitor, Identified, HasExecutionStatus, DenormalizedFieldHolder, BoundEntity {
 	
 	private static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
-	private static final String PARAM_PATTERN = "(\\Q${\\E([A-Za-z0-9_-]+)\\Q}\\E)";
+	
+	private static final String PARAM_PREFIX = "\\Q${\\E";
+	private static final String PARAM_SUFFIX = "\\Q}\\E";
+	private static final String PARAM_PATTERN = PARAM_PREFIX + "([A-Za-z0-9_-]+)" + PARAM_SUFFIX;
 	private static final String NO_PARAM = "&lt;no_value&gt;";
 	static {
 		Set<ExecutionStatus> set = new HashSet<ExecutionStatus>();
@@ -290,32 +293,52 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 
 	private String valueParams(String content){
 		
-		String result = content;
+		String result = null;
 		
-		if(result != null){
+		if(content != null){
+			
+			StringBuilder builder = new StringBuilder(content);
 			
 		    Pattern pattern = Pattern.compile(PARAM_PATTERN);
-		    Matcher matcher = pattern.matcher(result);
-		        
-		    while(matcher.find()){ 
-		    	StringBuilder builder = new StringBuilder(result);
-		    	String paramName = matcher.group(2);
-		    	String paramValue = dataset.get(paramName);
+		    Matcher matcher = pattern.matcher(content);		
+		    
+		    // each time a replacement occurs in the stringbuilder deviates 
+		    // a bit further from string scanned by the matcher.
+		    //
+		    // Consequently the more the string is modified the more the length might be altered,
+		    // which leads to inconsistencies in the position of a given substring in the original string
+		    // and the modified string.
+		    //
+		    // Thus, the following variable keeps track
+		    // of the modifications to adjust the start and end position 
+		    // 
+		    int offset = 0;
+			
+		    while (matcher.find()){
+		    	String paramName = matcher.group(1);
 		    	
+		    	String paramValue = dataset.get(paramName);		    	
 		    	if( paramValue == null|| paramValue.length() == 0) {
 		    		paramValue = NO_PARAM;
 		    	}
 		    	
-		    	int startParamChain = matcher.start(1);
-	    		int endParamChain = matcher.end(1);
-	    		String beforeParam = builder.substring(0, startParamChain);
-	    		String afterParam = builder.substring(endParamChain);
-	    		
-	    		result = beforeParam +paramValue+afterParam;
-	    		matcher = pattern.matcher(result);
+		    	int start = matcher.start();
+		    	int end = matcher.end();
+
+		    	builder.replace(start + offset, end + offset, paramValue);
+		    	
+		    	offset += paramValue.length() - (end - start);	
+
 		    }
+		    
+		    result = builder.toString();
+		}
+		else{
+			result = content;
 		}
 	    return result;
+
+
 	}
 	
 	@Override
