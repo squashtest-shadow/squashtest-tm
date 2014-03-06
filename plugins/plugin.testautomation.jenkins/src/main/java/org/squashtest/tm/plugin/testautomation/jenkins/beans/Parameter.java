@@ -85,7 +85,7 @@ public class Parameter {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(Object obj) {// GENERATED:START
 		if (this == obj){
 			return true;
 		}
@@ -111,7 +111,7 @@ public class Parameter {
 			return false;
 		}
 		return true;
-	}
+	}// GENERATED:END
 
 	
 }

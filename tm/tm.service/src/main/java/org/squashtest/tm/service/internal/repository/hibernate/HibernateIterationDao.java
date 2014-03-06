@@ -476,6 +476,8 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 
 	private Query assignParameterValuesToTestPlanQuery(String queryString, Long iterationId, Filtering filtering, ColumnFiltering columnFiltering){
 	
+		// IGNOREVIOLATIONS:START the cyclomatic complexity here is perfectly manageable by a normal human being
+		
 		Query query = currentSession().createQuery(queryString);
 		
 		query.setParameter("iterationId", iterationId, LongType.INSTANCE);
@@ -513,7 +515,10 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 		}
 		
 		return query;
+		
+		// IGNOREVIOLATIONS:END
 	}
+	
 
 	private void setQueryStartAndEndDateParameters(ColumnFiltering columnFiltering, Query query) {
 		String dates = columnFiltering.getFilter(LASTEXEC_DATA);
