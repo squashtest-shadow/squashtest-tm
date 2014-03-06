@@ -118,7 +118,7 @@ public class BundleClassLoaderHelperImpl implements BundleClassLoaderHelper {
 				getWiring_method.setAccessible(true);
 			}
 
-			Object wiring = getWiring_method.invoke(currentRevision);
+			Object wiring = getWiring_method.invoke(currentRevision);	// NOSONAR the code above guarantees that an exception would be thrown before that line 
 
 			if (getClassLoader_method == null && wiring != null) {
 				try {

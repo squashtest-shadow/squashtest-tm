@@ -160,13 +160,13 @@ public class JasperReportsExtMultiFormatView extends JasperReportsMultiFormatVie
 	public void setReportFileName(String reportFileName) {
 		if (reportFileName != null) {
 			Properties contentDispositionMappings = getContentDispositionMappings();
-			if (reportFileName != null) {
-				for (Entry<Object, Object> mappingsEntry : contentDispositionMappings.entrySet()) {
-					String val = (String) mappingsEntry.getValue();
-					String val2 = val.replace("report", reportFileName);
-					mappingsEntry.setValue(val2);
-				}
+			
+			for (Entry<Object, Object> mappingsEntry : contentDispositionMappings.entrySet()) {
+				String val = (String) mappingsEntry.getValue();
+				String val2 = val.replace("report", reportFileName);
+				mappingsEntry.setValue(val2);
 			}
+			
 		}
 		this.reportFileName = reportFileName;
 	}

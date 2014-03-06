@@ -85,7 +85,7 @@ public abstract class SessionFieldBridge implements FieldBridge{
 		
 		if (LOGGER.isDebugEnabled()) {
 			long end = System.nanoTime();
-			int timeInMilliSec = Math.round((end - start) / 1000000);
+			int timeInMilliSec = Math.round((end - start) / 1000000);	// NOSONAR this is debug code anyway	
 			LOGGER.trace(this.getClass().getSimpleName() + ".set(..) took {} ms for entity {}", timeInMilliSec, ((Identified)value).getId());
 			final int threshold = 10;
 			if (timeInMilliSec > threshold) {

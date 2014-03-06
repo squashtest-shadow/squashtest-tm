@@ -69,7 +69,7 @@ public class BlobUserType implements EnhancedUserType {
 	}
 
 	@Override
-	public boolean equals(Object x, Object y) throws HibernateException {
+	public boolean equals(Object x, Object y) throws HibernateException {// NOSONAR this method actually implements a method in hibernate interface UserType
 		boolean isEqual = false;
         if (x == y) {
             isEqual = true;
