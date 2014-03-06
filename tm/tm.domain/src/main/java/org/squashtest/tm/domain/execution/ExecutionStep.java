@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.domain.execution;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -295,19 +294,11 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 		
 		if(result != null){
 			
-			Set<String> parameters = new HashSet<String>();
-			
 		    Pattern pattern = Pattern.compile(PARAM_PATTERN);
-		    Matcher matcher = pattern.matcher(result);		
-			
-		    
-		    
-			/*
-
+		    Matcher matcher = pattern.matcher(result);
+		        
 		    while(matcher.find()){ 
-
-			    StringBuilder builder = new StringBuilder(result);
-			    
+		    	StringBuilder builder = new StringBuilder(result);
 		    	String paramName = matcher.group(2);
 		    	String paramValue = dataset.get(paramName);
 		    	
@@ -324,7 +315,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	    		resultBuilder.append(afterParam);
 	    		result = resultBuilder.toString();
 	    		matcher = pattern.matcher(result);
-		    }*/
+		    }
 		}
 	    return result;
 	}
