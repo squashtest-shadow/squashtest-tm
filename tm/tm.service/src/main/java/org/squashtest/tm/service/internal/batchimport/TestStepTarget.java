@@ -25,6 +25,16 @@ public class TestStepTarget extends Target{
 	private TestCaseTarget testCase;
 	private Integer index ;
 	
+	public TestStepTarget(){
+		super();
+	}
+	
+	public TestStepTarget(TestCaseTarget testCase, Integer index){
+		super();
+		this.testCase = testCase;
+		this.index = index;
+	}
+	
 	@Override
 	public EntityType getType() {
 		return EntityType.TEST_STEP;
@@ -33,12 +43,15 @@ public class TestStepTarget extends Target{
 	public TestCaseTarget getTestCase() {
 		return testCase;
 	}
+	
 	public void setTestCase(TestCaseTarget testCase) {
 		this.testCase = testCase;
 	}
+	
 	public Integer getIndex() {
 		return index;
 	}
+	
 	public void setIndex(Integer index) {
 		this.index = index;
 	}

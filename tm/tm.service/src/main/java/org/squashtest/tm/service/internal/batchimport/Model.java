@@ -32,9 +32,9 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import net.sf.cglib.core.CollectionUtils;
-import net.sf.cglib.core.Transformer;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
@@ -203,8 +203,9 @@ public class Model {
 		}
 		
 		List<StepType> types = testCaseStepsByTarget.get(tc);
-		
-		types.remove(index);
+
+		// .intValue() desambiguate with the other method - remove(Object) -
+		types.remove(index.intValue()); 
 		
 	}
 	
@@ -288,7 +289,7 @@ public class Model {
 		}
 		
 		// collect their paths
-		List<String> paths = CollectionUtils.transform(targets, TestCasePathCollector.INSTANCE);
+		List<String> paths = collectPaths(targets);
 	
 		// find their ids
 		List<Long> ids = finderService.findNodeIdsByPath(paths);
@@ -306,6 +307,7 @@ public class Model {
 		}
 	}
 	
+	// this method assumes that the targets were all processed through initTestCases(targets) beforehand. 
 	private void initTestSteps(List<TestCaseTarget> targets){
 		
 		for (TestCaseTarget target : targets){
@@ -315,7 +317,7 @@ public class Model {
 				continue;
 			}
 			
-			TargetStatus status = getStatus(target);
+			TargetStatus status = testCaseStatusByTarget.get(target);
 			List<StepType> types = null;
 			if (status.id != null && status.status != Existence.TO_BE_DELETED){
 				types = loadStepTypes(status.id);
@@ -379,7 +381,6 @@ public class Model {
 		List<CustomField> stcufs = cufDao.findAllBoundCustomFields(projectId, BindableEntity.TEST_STEP) ;
 		stepCufsPerProjectname.putAll(projectName, stcufs);
 		
-
 	}
 	
 
@@ -391,10 +392,15 @@ public class Model {
 	}
 	
 	
-	@SuppressWarnings("unchecked")
 	private List<String> collectProjects(List<TestCaseTarget> targets){		
-		List<String> paths = CollectionUtils.transform(targets, TestCasePathCollector.INSTANCE);
+		List<String> paths = collectPaths(targets);
 		return Utils.extractProjectNames(paths);
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	private List<String> collectPaths(List<TestCaseTarget> targets){
+		return (List<String>)CollectionUtils.collect(targets, TestCasePathCollector.INSTANCE, new ArrayList<String>(targets.size()));
 	}
 	
 	private List<Project> loadProjects(List<String> names){

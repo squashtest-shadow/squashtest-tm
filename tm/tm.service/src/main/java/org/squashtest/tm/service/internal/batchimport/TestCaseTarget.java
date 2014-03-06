@@ -25,6 +25,21 @@ public class TestCaseTarget extends Target{
 	private String path;
 	private Integer order;
 	
+	public TestCaseTarget(){
+		super();
+	}
+	
+	public TestCaseTarget(String path){
+		super();
+		this.path = path;
+	}
+	
+	public TestCaseTarget(String path, Integer order){
+		super();
+		this.path = path;
+		this.order = order;
+	}
+	
 	@Override
 	public EntityType getType() {
 		return EntityType.TEST_CASE;
