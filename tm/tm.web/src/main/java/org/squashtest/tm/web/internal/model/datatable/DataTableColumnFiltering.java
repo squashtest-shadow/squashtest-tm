@@ -23,6 +23,7 @@ package org.squashtest.tm.web.internal.model.datatable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
@@ -40,8 +41,8 @@ public class DataTableColumnFiltering implements ColumnFiltering{
 	
 	public void createDataProps(){
 		Map<Integer,Object> mDataProp = params.getmDataProp();
-		for(Integer key: mDataProp.keySet()){
-			dataProps.put(mDataProp.get(key), key);
+		for(Entry<Integer, Object>entry	: mDataProp.entrySet()){
+			dataProps.put(entry.getValue(), entry.getKey());
 		}
 	}
 	
