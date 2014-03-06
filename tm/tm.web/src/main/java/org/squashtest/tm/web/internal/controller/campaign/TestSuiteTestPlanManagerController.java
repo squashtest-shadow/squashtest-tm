@@ -94,6 +94,10 @@ public class TestSuiteTestPlanManagerController {
 	private static final String NAME = "name";
 	private static final String REFERENCE = "reference";
 	private static final String IMPORTANCE = "importance";
+	private static final String ITEM_IDS = "itemIds[]";
+	private static final String STATUS = "status";
+	private static final String ITEM_ID = "itemId";
+	private static final String TESTPLAN_IDS = "testPlanIds";
 	
 	@Inject
 	private TestSuiteModificationService service;
@@ -196,7 +200,7 @@ public class TestSuiteTestPlanManagerController {
 
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{testPlanIds}", method = RequestMethod.POST, params = { "assignee" })
 	public @ResponseBody
-	long assignUserToCampaignTestPlanItem(@PathVariable("testPlanIds") List<Long> testPlanIds,
+	long assignUserToCampaignTestPlanItem(@PathVariable(TESTPLAN_IDS) List<Long> testPlanIds,
 			@PathVariable(TEST_SUITE_ID) long suiteId, @RequestParam("assignee") long assignee) {
 		iterationTestPlanManagerService.assignUserToTestPlanItems(testPlanIds, assignee);
 		return assignee;
@@ -232,7 +236,7 @@ public class TestSuiteTestPlanManagerController {
 
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{testPlanIds}", method = RequestMethod.DELETE)
 	public @ResponseBody
-	String removeTestCaseFromTestSuiteAndIteration(@PathVariable("testPlanIds") List<Long> testPlanIds,
+	String removeTestCaseFromTestSuiteAndIteration(@PathVariable(TESTPLAN_IDS) List<Long> testPlanIds,
 			@PathVariable(TEST_SUITE_ID) long suiteId) {
 		// check if a test plan was already executed and therefore not removed from the iteration
 		Boolean response = testSuiteTestPlanManagerService.detachTestPlanFromTestSuiteAndRemoveFromIteration(
@@ -242,15 +246,15 @@ public class TestSuiteTestPlanManagerController {
 
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{testPlanIds}", method = RequestMethod.DELETE, params = { "detach=true" })
 	public @ResponseBody
-	String detachTestCaseFromTestSuite(@PathVariable("testPlanIds") List<Long> testPlanIds,
+	String detachTestCaseFromTestSuite(@PathVariable(TESTPLAN_IDS) List<Long> testPlanIds,
 			@PathVariable(TEST_SUITE_ID) long suiteId) {
 		testSuiteTestPlanManagerService.detachTestPlanFromTestSuite(testPlanIds, suiteId);
 		return FALSE;
 	}
 
-	@RequestMapping(value = "/test-suites/{suiteIds}/test-plan", method = RequestMethod.POST, params = { "itemIds[]" })
+	@RequestMapping(value = "/test-suites/{suiteIds}/test-plan", method = RequestMethod.POST, params = { ITEM_IDS })
 	public @ResponseBody
-	Map<String, List<Long>> bindTestPlan(@RequestParam("itemIds[]") List<Long> itpIds,
+	Map<String, List<Long>> bindTestPlan(@RequestParam(ITEM_IDS) List<Long> itpIds,
 			@PathVariable("suiteIds") List<Long> suitesIds) {
 		LOGGER.debug("bind test plan items to test suites");
 		testSuiteTestPlanManagerService.bindTestPlanToMultipleSuites(suitesIds, itpIds);
@@ -259,10 +263,10 @@ public class TestSuiteTestPlanManagerController {
 		return result;
 	}
 
-	@RequestMapping(value = "/test-suites/test-plan", method = RequestMethod.POST, params = { "itemIds[]",
+	@RequestMapping(value = "/test-suites/test-plan", method = RequestMethod.POST, params = { ITEM_IDS,
 			"boundSuiteIds[]", "unboundSuiteIds[]" })
 	public @ResponseBody
-	void changeboundTestPlan(@RequestParam("itemIds[]") List<Long> itpIds,
+	void changeboundTestPlan(@RequestParam(ITEM_IDS) List<Long> itpIds,
 			@RequestParam("boundSuiteIds[]") List<Long> boundTestSuitesIds,
 			@RequestParam("unboundSuiteIds[]") List<Long> unboundTestSuiteIds) {
 		LOGGER.debug("bind test plan items to test suites");
@@ -270,26 +274,26 @@ public class TestSuiteTestPlanManagerController {
 		testSuiteTestPlanManagerService.unbindTestPlanToMultipleSuites(unboundTestSuiteIds, itpIds);
 	}
 	
-	@RequestMapping(value = "/test-suites/test-plan", method = RequestMethod.POST, params = { "itemIds[]", "unboundSuiteIds[]" })
+	@RequestMapping(value = "/test-suites/test-plan", method = RequestMethod.POST, params = { ITEM_IDS, "unboundSuiteIds[]" })
 	public @ResponseBody
-	void unbindTestPlans(@RequestParam("itemIds[]") List<Long> itpIds,
+	void unbindTestPlans(@RequestParam(ITEM_IDS) List<Long> itpIds,
 			@RequestParam("unboundSuiteIds[]") List<Long> unboundTestSuiteIds) {
 		LOGGER.debug("bind test plan items to test suites");
 		testSuiteTestPlanManagerService.unbindTestPlanToMultipleSuites(unboundTestSuiteIds, itpIds);
 	}
 	
-	@RequestMapping(value = "/test-suites/test-plan", method = RequestMethod.POST, params = { "itemIds[]",
+	@RequestMapping(value = "/test-suites/test-plan", method = RequestMethod.POST, params = { ITEM_IDS,
 			"boundSuiteIds[]" })
 	public @ResponseBody
-	void bindTestPlans(@RequestParam("itemIds[]") List<Long> itpIds,
+	void bindTestPlans(@RequestParam(ITEM_IDS) List<Long> itpIds,
 			@RequestParam("boundSuiteIds[]") List<Long> boundTestSuitesIds) {
 		LOGGER.debug("bind test plan items to test suites");
 		testSuiteTestPlanManagerService.bindTestPlanToMultipleSuites(boundTestSuitesIds, itpIds);
 	}
 
-	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{testPlanId}", method = RequestMethod.POST, params = { "status" })
+	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{testPlanId}", method = RequestMethod.POST, params = { STATUS })
 	public @ResponseBody
-	JsonIterationTestPlanItem setTestPlanItemStatus(@PathVariable("testPlanId") long testPlanId, @RequestParam("status") String status) {
+	JsonIterationTestPlanItem setTestPlanItemStatus(@PathVariable("testPlanId") long testPlanId, @RequestParam(STATUS) String status) {
 		LOGGER.debug("change status test plan item #{} to {}", testPlanId, status);
 		iterationTestPlanManagerService.forceExecutionStatus(testPlanId, status);
 		IterationTestPlanItem item = iterationTestPlanManagerService.findTestPlanItem(testPlanId);
@@ -299,7 +303,7 @@ public class TestSuiteTestPlanManagerController {
 
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{itemId}/executions", method = RequestMethod.GET)
 	public ModelAndView getExecutionsForTestPlan(@PathVariable(TEST_SUITE_ID) long suiteId,
-			@PathVariable("itemId") long itemId) {
+			@PathVariable(ITEM_ID) long itemId) {
 		LOGGER.debug("find model and view for executions of test plan item  #{}", itemId);
 		TestSuite testSuite = service.findById(suiteId);
 		Long iterationId = testSuite.getIteration().getId();
@@ -327,7 +331,7 @@ public class TestSuiteTestPlanManagerController {
 	// returns the ID of the newly created execution
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{itemId}/executions/new", method = RequestMethod.POST, params = { "mode=manual" })
 	public @ResponseBody
-	String addManualExecution(@PathVariable(TEST_SUITE_ID) long suiteId, @PathVariable("itemId") long itemId) {
+	String addManualExecution(@PathVariable(TEST_SUITE_ID) long suiteId, @PathVariable(ITEM_ID) long itemId) {
 		LOGGER.debug("add manual execution to item #{}", itemId);
 		TestSuite testSuite = service.findById(suiteId);
 		Long iterationId = testSuite.getIteration().getId();
@@ -341,7 +345,7 @@ public class TestSuiteTestPlanManagerController {
 
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{testPlanId}/executions/new", method = RequestMethod.POST, params = { "mode=auto" })
 	public @ResponseBody
-	AutomatedSuiteOverview addAutoExecution(@PathVariable(TEST_SUITE_ID) long suiteId, @PathVariable("itemId") long itemId,
+	AutomatedSuiteOverview addAutoExecution(@PathVariable(TEST_SUITE_ID) long suiteId, @PathVariable(ITEM_ID) long itemId,
 			Locale locale) {
 		LOGGER.debug("add automated execution to item #{}", itemId);
 		List<Long> testPlanIds = new ArrayList<Long>(1);

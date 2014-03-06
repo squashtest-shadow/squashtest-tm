@@ -85,9 +85,12 @@ public class TestCaseLibraryNavigationController extends
 	private TestCaseLibraryNavigationService testCaseLibraryNavigationService;
 	
 	private static final String JASPER_EXPORT_FILE = "/WEB-INF/reports/test-case-export.jasper";
-
+	private static final String ADD_TEST_CASE = "add-test-case";
+	private static final String FILENAME = "filename";	
+	private static final String LIBRARIES = "libraries";	
+	private static final String NODES = "nodes";	
+	private static final String CALLS = "calls";	
 	
-
 	@Override
 	protected LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode> getLibraryNavigationService() {
 		return testCaseLibraryNavigationService;
@@ -106,7 +109,7 @@ public class TestCaseLibraryNavigationController extends
 	}
 	
 
-	@InitBinder("add-test-case")
+	@InitBinder(ADD_TEST_CASE)
 	public void addTestCaseBinder(WebDataBinder binder){
 		TestCaseFormModelValidator validator = new TestCaseFormModelValidator();
 		validator.setMessageSource(getMessageSource());
@@ -118,7 +121,7 @@ public class TestCaseLibraryNavigationController extends
 	@RequestMapping(value = "/drives/{libraryId}/content/new-test-case", method = RequestMethod.POST)
 	public @ResponseBody
 	JsTreeNode addNewTestCaseToLibraryRootContent(@PathVariable long libraryId,
-			@Valid @ModelAttribute("add-test-case") TestCaseFormModel testCaseModel){
+			@Valid @ModelAttribute(ADD_TEST_CASE) TestCaseFormModel testCaseModel){
 		
 		TestCase testCase = testCaseModel.getTestCase();
 		
@@ -132,7 +135,7 @@ public class TestCaseLibraryNavigationController extends
 	
 	@RequestMapping(value = "/folders/{folderId}/content/new-test-case", method = RequestMethod.POST)
 	public @ResponseBody JsTreeNode addNewTestCaseToFolder(@PathVariable long folderId,
-			@Valid @ModelAttribute("add-test-case") TestCaseFormModel testCaseModel){
+			@Valid @ModelAttribute(ADD_TEST_CASE) TestCaseFormModel testCaseModel){
 		
 		TestCase testCase = testCaseModel.getTestCase();
 		
@@ -177,10 +180,10 @@ public class TestCaseLibraryNavigationController extends
 	
 
 	
-	@RequestMapping(value = "/content/csv", produces="application/octet-stream", method = RequestMethod.GET, params={"filename", "libraries", "nodes", "calls"})
+	@RequestMapping(value = "/content/csv", produces="application/octet-stream", method = RequestMethod.GET, params={FILENAME, LIBRARIES, NODES, CALLS})
 	@ResponseBody
-	public void exportAsCsv(Locale locale, @RequestParam("filename") String filename, @RequestParam("libraries") List<Long> libraryIds, 
-			@RequestParam("nodes") List<Long> nodeIds, @RequestParam("calls") Boolean includeCalledTests, HttpServletResponse response) throws FileNotFoundException{
+	public void exportAsCsv(Locale locale, @RequestParam(FILENAME) String filename, @RequestParam(LIBRARIES) List<Long> libraryIds, 
+			@RequestParam(NODES) List<Long> nodeIds, @RequestParam(CALLS) Boolean includeCalledTests, HttpServletResponse response) throws FileNotFoundException{
 		
 		response.setContentType("application/octet-stream");
 		response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".xls");
@@ -192,10 +195,10 @@ public class TestCaseLibraryNavigationController extends
 	}
 		
 	
-	@RequestMapping(value = "/content/xls", produces="application/octet-stream", method = RequestMethod.GET, params={"filename", "libraries", "nodes", "calls"})
+	@RequestMapping(value = "/content/xls", produces="application/octet-stream", method = RequestMethod.GET, params={FILENAME, LIBRARIES, NODES, CALLS})
 	@ResponseBody
-	public FileSystemResource exportAsExcel(@RequestParam("filename") String filename, @RequestParam("libraries") List<Long> libraryIds, 
-							@RequestParam("nodes") List<Long> nodeIds, @RequestParam("calls") Boolean includeCalledTests, HttpServletResponse response) throws FileNotFoundException{
+	public FileSystemResource exportAsExcel(@RequestParam(FILENAME) String filename, @RequestParam(LIBRARIES) List<Long> libraryIds, 
+							@RequestParam(NODES) List<Long> nodeIds, @RequestParam(CALLS) Boolean includeCalledTests, HttpServletResponse response) throws FileNotFoundException{
 		
 		
 		response.setContentType("application/octet-stream");
@@ -241,16 +244,16 @@ public class TestCaseLibraryNavigationController extends
 	
 	// ****************************** statistics section *******************************
 	
-	@RequestMapping (value = "/statistics", method = RequestMethod.GET, produces="application/json", params = {"libraries", "nodes"})
-	public @ResponseBody TestCaseStatisticsBundle getStatisticsAsJson(@RequestParam(value="libraries", defaultValue="") Collection<Long> libraryIds, 
-																	  @RequestParam(value="nodes", defaultValue="") Collection<Long> nodeIds){
+	@RequestMapping (value = "/statistics", method = RequestMethod.GET, produces="application/json", params = {LIBRARIES, NODES})
+	public @ResponseBody TestCaseStatisticsBundle getStatisticsAsJson(@RequestParam(value=LIBRARIES, defaultValue="") Collection<Long> libraryIds, 
+																	  @RequestParam(value=NODES, defaultValue="") Collection<Long> nodeIds){
 		
 		return testCaseLibraryNavigationService.getStatisticsForSelection(libraryIds, nodeIds);
 	}
 	
-	@RequestMapping (value = "/dashboard", method = RequestMethod.GET, produces="text/html", params = {"libraries", "nodes"})
-	public String getDashboard(Model model, @RequestParam("libraries") Collection<Long> libraryIds, 
-											@RequestParam("nodes") Collection<Long> nodeIds){
+	@RequestMapping (value = "/dashboard", method = RequestMethod.GET, produces="text/html", params = {LIBRARIES, NODES})
+	public String getDashboard(Model model, @RequestParam(LIBRARIES) Collection<Long> libraryIds, 
+											@RequestParam(NODES) Collection<Long> nodeIds){
 		
 		TestCaseStatisticsBundle stats = testCaseLibraryNavigationService.getStatisticsForSelection(libraryIds, nodeIds);
 		
