@@ -33,9 +33,9 @@ import org.springframework.web.servlet.view.AbstractView;
 import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
 
 @Component
-public class HandlerMaxUploadSizeException extends AbstractHandlerExceptionResolver {
+public class HandlerMaxUploadSizeExceptionResolver extends AbstractHandlerExceptionResolver {
 
-	public HandlerMaxUploadSizeException() {
+	public HandlerMaxUploadSizeExceptionResolver() {
 		super();
 	}
 

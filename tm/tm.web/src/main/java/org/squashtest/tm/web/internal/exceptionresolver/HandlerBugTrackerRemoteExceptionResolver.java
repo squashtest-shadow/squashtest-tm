@@ -34,7 +34,7 @@ import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 
 // TODO Append something after Exception in class name
 @Component
-public class HandlerBugTrackerRemoteException extends AbstractHandlerExceptionResolver {
+public class HandlerBugTrackerRemoteExceptionResolver extends AbstractHandlerExceptionResolver {
 
 
 	@Override
