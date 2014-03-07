@@ -45,6 +45,7 @@ import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
 
@@ -247,6 +248,70 @@ public class Model {
 		else{
 			return null;
 		}
+	}
+	
+	
+	// may return null
+	public Long getStepId(TestStepTarget target){
+		
+		Long tcId = getStatus(target.getTestCase()).id;
+		Integer index = target.getIndex();
+		
+		// this condition is heavily defensive and the caller code should check those beforehand
+		if (! stepExists(target) || tcId == null || index == null){
+			return null;
+		}
+
+		Query q = sessionFactory.getCurrentSession().getNamedQuery("testStep.findIdByTestCaseAndPosition");
+		q.setParameter(":tcId", tcId);
+		q.setParameter("position", index);
+		
+		return (Long)q.uniqueResult();
+		
+	}
+	
+	
+	// may return null
+	public TestStep getStep(TestStepTarget target){
+		
+		Long tcId = getStatus(target.getTestCase()).id;
+		Integer index = target.getIndex();
+		
+		// this condition is heavily defensive and the caller code should check those beforehand
+		if (! stepExists(target) || tcId == null || index == null){
+			return null;
+		}
+
+		Query q = sessionFactory.getCurrentSession().getNamedQuery("testStep.findByTestCaseAndPosition");
+		q.setParameter(":tcId", tcId);
+		q.setParameter("position", index);
+		
+		return (TestStep)q.uniqueResult();
+		
+	}
+	
+	// ************************* CUFS accessors *************************************
+	
+	@SuppressWarnings("unchecked")
+	public Collection<CustomField> getTestCaseCufs(TestCaseTarget target){
+		if (! testCaseStatusByTarget.containsKey(target)){
+			init(target);
+		}
+		String projectName = Utils.extractProjectName(target.getPath());
+		return tcCufsPerProjectname.getCollection(projectName);
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	public Collection<CustomField> getTestStepCufs(TestStepTarget target){
+		TestCaseTarget tc = target.getTestCase();
+		
+		if (! testCaseStatusByTarget.containsKey(tc)){
+			init(tc);
+		}
+		
+		String projectName = Utils.extractProjectName(tc.getPath());
+		return stepCufsPerProjectname.getCollection(projectName);
 	}
 	
 
