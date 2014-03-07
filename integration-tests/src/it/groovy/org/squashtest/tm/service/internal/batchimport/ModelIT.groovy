@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.service.DbunitServiceSpecification;
 import org.unitils.dbunit.annotation.DataSet;
 import static org.squashtest.tm.service.internal.batchimport.Model.Existence.*
+import static org.squashtest.tm.service.internal.batchimport.Model.StepType.*
 
 import spock.unitils.UnitilsSupport;
 
@@ -52,23 +53,95 @@ class ModelIT  extends DbunitServiceSpecification {
 	def "should init the requested target, some targets already exists and some do not"(){
 		
 		given : 
-			def targets = createTestCaseTargets("/Test Project-1/test 3", "/autre project/folder/TEST B", "/bob/nonexistant", "/Test Project-1/dossier 2/0 test case / with slash")
+			def targets = createTestCaseTargets("/autre project/folder/TEST B", "/Test Project-1/dossier 2/0 test case / with slash", "/nonexistant/unknown", "/Test Project-1/nonexistant")
 			
 		when :
-			model.initTestCases(targets)
+			model.init(targets)
 		
 		
 		then :
-			model.getStatus(targets[0]).status == EXISTS
-			model.getStatus(targets[1]).status == EXISTS
-			model.getStatus(targets[2]).status == NOT_EXISTS
-			model.getStatus(targets[3]).status == EXISTS
+		
+			// check now the model for the test cases
+			model.testCaseStatusByTarget[targets[0]].status == EXISTS
+			model.testCaseStatusByTarget[targets[1]].status == EXISTS
+			model.testCaseStatusByTarget[targets[2]].status == NOT_EXISTS
+			model.testCaseStatusByTarget[targets[3]].status == NOT_EXISTS
 			
-			model.getStatus(targets[0]).id == 245l
-			model.getStatus(targets[1]).id == 248l
-			model.getStatus(targets[2]).id == null
-			model.getStatus(targets[3]).id == 244l
+			model.testCaseStatusByTarget[targets[0]].id == 248l
+			model.testCaseStatusByTarget[targets[1]].id == 244l
+			model.testCaseStatusByTarget[targets[2]].id == null
+			model.testCaseStatusByTarget[targets[3]].id == null
 				
+			// now check the model for the steps
+			model.testCaseStepsByTarget[targets[0]] == [ACTION, ACTION]
+			model.testCaseStepsByTarget[targets[1]] == [ACTION, ACTION, CALL]
+			model.testCaseStepsByTarget[targets[2]] == []
+			model.testCaseStepsByTarget[targets[3]] == []
+			
+			// now check the model for the projects
+			model.projectStatusByName["Test Project-1"].status == EXISTS
+			model.projectStatusByName["autre project"].status == EXISTS
+			model.projectStatusByName["nonexistant"].status == NOT_EXISTS
+			
+			model.projectStatusByName["autre project"].id == 15l
+			model.projectStatusByName["Test Project-1"].id == 14l
+			model.projectStatusByName["nonexistant"].id == null
+			
+			// now check the custom fields
+			model.tcCufsPerProjectname["Test Project-1"].collect{ it.code } as Set == ["TXT_TC", "CK_TC"] as Set
+			model.tcCufsPerProjectname["autre project"].collect{ it.code }  as Set == ["CK_TC", "DATE"]  as Set
+			model.stepCufsPerProjectname["Test Project-1"].collect{ it.code } as Set == ["LST_ST"]  as Set
+			model.stepCufsPerProjectname["autre project"].collect{ it.code } as Set == ["DATE", "LST_ST"] as Set
+			
+	}
+	
+	
+	
+	@DataSet("batchimport.sandbox.xml")
+	def "should init on the fly a test case that wasn't init-ed early on"(){
+			
+		given :
+			def targets = createTestCaseTargets("/Test Project-1/test 3")
+		
+		when :
+			def status = model.getStatus(targets[0])
+		
+		then :
+			status.id == 245l
+			status.status == EXISTS
+			
+			def steps = model.testCaseStepsByTarget.get(targets[0]);
+			steps == [ACTION, CALL, ACTION]
+		
+	}
+	
+	
+	@DataSet("batchimport.sandbox.xml")
+	def "should tell which custom fields are supported for a test case"(){
+			
+		given :
+			def targets = createTestCaseTargets("/Test Project-1/test 3")
+		
+		when :
+			def cufs = model.getTestCaseCufs(targets[0])
+		
+		then :
+			cufs.collect{ it.code }  as Set == ["TXT_TC", "CK_TC"] as Set
+		
+	}
+	
+	@DataSet("batchimport.sandbox.xml")
+	def "should tell which custom fields are supported for a test step"(){
+			
+		given :
+			def targets = createTestCaseTargets("/autre project/TEST A")
+		
+		when :
+			def cufs = model.getTestStepCufs(new TestStepTarget(targets[0], 0))
+		
+		then :
+			cufs.collect{ it.code }  as Set == ["DATE", "LST_ST"] as Set
+		
 	}
 	
 	
