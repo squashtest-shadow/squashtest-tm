@@ -97,4 +97,8 @@ public class TestCaseTarget extends Target{
 		return Utils.isPathWellFormed(path);
 	}
 	
+	@Override
+	public String getProject() {
+		return Utils.extractProjectName(path);
+	}
 }

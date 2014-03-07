@@ -21,24 +21,100 @@
 package org.squashtest.tm.service.internal.batchimport;
 
 public class LogEntry implements Comparable<LogEntry>{
-	private int line;
+	private Integer line;
 	private Target target;
 	private ImportMode mode;
 	private ImportStatus status;
 	private String i18nError;
 	private String i18nImpact;
 	
+	private Object[] errorArgs;
+	private Object[] impactArgs;
 	
+	
+	public LogEntry() {
+		super();
+	}
+	
+	
+	
+
+	public LogEntry(Target target, ImportStatus status,
+			String i18nError) {
+		super();
+		this.target = target;
+		this.status = status;
+		this.i18nError = i18nError;
+	}
+
+
+
+
+	public LogEntry(Target target, ImportStatus status, String i18nError,
+			String i18nImpact) {
+		super();
+		this.target = target;
+		this.status = status;
+		this.i18nError = i18nError;
+		this.i18nImpact = i18nImpact;
+	}
+
+
+
+
+	public LogEntry(Integer line, Target target, ImportMode mode,
+			ImportStatus status, String i18nError, String i18nImpact) {
+		super();
+		this.line = line;
+		this.target = target;
+		this.mode = mode;
+		this.status = status;
+		this.i18nError = i18nError;
+		this.i18nImpact = i18nImpact;
+	}
+
+	
+	
+
+
+	public Object[] getErrorArgs() {
+		return errorArgs;
+	}
+
+
+
+
+	public void setErrorArgs(Object[] errorArgs) {
+		this.errorArgs = errorArgs;
+	}
+
+
+
+
+	public Object[] getImpactArgs() {
+		return impactArgs;
+	}
+
+
+
+
+	public void setImpactArgs(Object[] impactArgs) {
+		this.impactArgs = impactArgs;
+	}
+
+
+
+
 	@Override
 	public int compareTo(LogEntry o) {
 		return line - o.line;
 	}
 
-	public int getLine() {
+	public Integer getLine() {
 		return line;
 	}
 	
-	public void setLine(int line) {
+	public void setLine(Integer line) {
 		this.line = line;
 	}
 	

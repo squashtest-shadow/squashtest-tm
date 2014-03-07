@@ -41,6 +41,11 @@ class LogTrain {
 		}
 	}
 	
+	void append(LogTrain train){
+		addEntries(train.entries);
+	}
+	
+	
 	List<LogEntry> getEntries(){
 		return entries;
 	}

@@ -104,6 +104,15 @@ public class Model {
 	
 	
 	
+	// ************************** project access *****************************************************
+	
+	public TargetStatus getProjectStatus(String projectName){
+		if (! projectStatusByName.containsKey(projectName)){
+			initProject(projectName);
+		}
+		return projectStatusByName.get(projectName);
+	}
+	
 	// ************************** Test Case status management ****************************************
 	
 	public TargetStatus getStatus(TestCaseTarget target){
@@ -336,7 +345,6 @@ public class Model {
 
 	}
 
-	
 
 	private void initTestCases(List<TestCaseTarget> initialTargets){
 		
@@ -397,11 +405,18 @@ public class Model {
 		
 	}
 	
+	private void initProject(String projectName){
+		initProjectsByName(Arrays.asList(new String[]{projectName}));
+	}
 
 	private void initProjects(List<TestCaseTarget> targets){
-		
-		List<String> allNames = collectProjects(targets);
-		
+		initProjectsByName(collectProjects(targets));
+	}
+	
+
+	private void initProjectsByName(List<String> allNames){
+
+
 		// filter out projects we already know of
 		List<String> projectNames = new LinkedList<String>();
 		for (String name : allNames){

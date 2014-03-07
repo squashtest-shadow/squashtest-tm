@@ -20,14 +20,14 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+final class Messages {
 
-
-public abstract class Target {
-
-	public abstract EntityType getType();	
+	public static final String MALFORMED_PATH = "message.import.log.error.field.malformedPath";
+	public static final String NO_NAME = "message.import.log.error.mandatoryColumn";
+	public static final String PROJECT_DO_NOT_EXIST = "message.import.log.error.tc.tcPath.projectNotFound";
 	
-	public abstract boolean isWellFormed();
 	
-	public abstract String getProject();
-	
+	private Messages(){
+		super();
+	}
 }

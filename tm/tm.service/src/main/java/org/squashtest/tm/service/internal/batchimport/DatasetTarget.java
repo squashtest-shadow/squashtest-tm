@@ -84,5 +84,10 @@ public class DatasetTarget extends Target {
 	public boolean isWellFormed() {
 		return testCase.isWellFormed() && (! StringUtils.isBlank(name));
 	}
+	
+	@Override
+	public String getProject() {
+		return testCase.getProject();
+	}
 
 }

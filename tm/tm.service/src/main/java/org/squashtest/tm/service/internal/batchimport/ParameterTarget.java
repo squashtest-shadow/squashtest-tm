@@ -97,4 +97,9 @@ public class ParameterTarget extends Target{
 		return dataset.isWellFormed() && owner.isWellFormed() && (! StringUtils.isBlank(name));
 	}
 	
+	@Override
+	public String getProject() {
+		return dataset.getProject();
+	}
+	
 }

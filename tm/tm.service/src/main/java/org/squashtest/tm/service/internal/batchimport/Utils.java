@@ -57,6 +57,7 @@ final class Utils {
 	}
 	
 	
+	
 	static boolean isPathWellFormed(String path){
 		return WELL_FORMED_PATH.matcher(path).matches();
 	}
@@ -93,6 +94,12 @@ final class Utils {
 		else{
 			throw new IllegalArgumentException("couldn't find a valid test case name in path '"+path+"'. It might be malformed.");
 		}
+	}
+	
+	
+	static boolean arePathsAndNameConsistents(String path, String name){
+		String pathName = extractProjectName(path);
+		return pathName.equals(name);
 	}
 	
 	

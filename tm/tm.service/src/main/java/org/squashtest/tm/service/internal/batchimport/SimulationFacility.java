@@ -20,13 +20,17 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import java.util.Collection;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.validation.Validator;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 
@@ -34,21 +38,26 @@ import org.squashtest.tm.domain.testcase.TestStep;
 @Scope("prototype")
 public class SimulationFacility implements Facility{
 
+
 	@Inject
 	private SessionFactory sessionFactory;
 	
+	@Inject
+	private Validator validator;
 	
 	private Model model;
+	private TestCaseValidator testCaseValidator = new TestCaseValidator();
+	
 	
 	public void setModel(Model model){
 		this.model = model;
+		testCaseValidator.setModel(model);
 	}
 	
 	
 	public Model getModel(){
 		return model;
 	}
-
 
 
 	/**
@@ -60,13 +69,13 @@ public class SimulationFacility implements Facility{
 	 * 	<li>the project actually exists</li>
 	 * 	<li>can create in the project</li>
 	 * 	<li>there won't be no name clash</li>
-	 * 	<li>the test case doesn't exist yet,</li>
-	 * 	<li>it has a non empty name</li>
 	 * 	<li>name and path are consistent</li>
+	 * 	<li>format for a given field (especially lists, checkbox and dates for custom fields) are correct
 	 * </ul>
 	 * 
 	 * <p>Must check the following warnings :</p>
 	 * <ul>
+	 * 	<li>which fields having a size limit 
 	 * 	<li>mandatory cufs of type list will default to the default value when no value is given</li>
 	 * 	<li>cufs of type list will default to the default value when the imported value is invalid</li>
 	 * 	<li>when some fields have a size exceeding the size, they will be truncated to that limit</li>
@@ -75,7 +84,23 @@ public class SimulationFacility implements Facility{
 	 */
 	@Override
 	public LogTrain createTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
-		throw new UnsupportedOperationException("not implemented yet"); 
+		
+		LogTrain logs = new LogTrain();
+		
+
+		// 2 - mandatory custom fields 
+		Collection<CustomField> tcCufs = model.getTestCaseCufs(target);
+		
+		for (CustomField cuf : tcCufs){
+			
+			String importValue =  cufValues.get(cuf.getCode());
+			if (! cuf.isOptional() && StringUtils.isBlank(importValue)){
+				
+			}
+				
+		}
+		
+		
 	}
 
 	@Override
@@ -117,4 +142,16 @@ public class SimulationFacility implements Facility{
 		throw new UnsupportedOperationException("not implemented yet"); 
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	// *********************** utils ********************
+	
+
+	
+	
 }

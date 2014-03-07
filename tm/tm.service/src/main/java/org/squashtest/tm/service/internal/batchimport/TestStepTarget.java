@@ -98,4 +98,8 @@ public class TestStepTarget extends Target{
 		return testCase.isWellFormed() && (index == null || index >= 0); 
 	}
 	
+	@Override
+	public String getProject() {
+		return testCase.getProject();
+	}
 }
