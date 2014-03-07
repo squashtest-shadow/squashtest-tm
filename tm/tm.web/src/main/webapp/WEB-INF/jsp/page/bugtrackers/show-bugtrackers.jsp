@@ -97,7 +97,7 @@
 		<pop:cancel-button />
 	</jsp:attribute>
 			<jsp:attribute name="body">
-				<table class="unstyled-table">
+				<table>
 					<tr>
 						<td><label for="add-bugtracker-name"><f:message
 							key="label.Name" /></label></td>
