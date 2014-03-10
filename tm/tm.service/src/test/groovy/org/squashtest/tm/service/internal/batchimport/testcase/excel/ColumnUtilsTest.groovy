@@ -42,8 +42,9 @@ class ColumnUtilsTest extends Specification {
 		enumValues.collect { TemplateColumnUtils.coerceFromHeader(enumType, it.header) } == enumValues
 
 		where:
-		enumType            | enumValues
-		TestCaseSheetColumn | TestCaseSheetColumn.values()
-		StepSheetColumn     | StepSheetColumn.values()
+		enumType             | enumValues
+		TestCaseSheetColumn  | TestCaseSheetColumn.values()
+		StepSheetColumn      | StepSheetColumn.values()
+		ParameterSheetColumn | ParameterSheetColumn.values()
 	}
 }

@@ -40,6 +40,7 @@ import org.squashtest.tm.service.internal.batchexport.ExportModel.DatasetModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.ParameterModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestStepModel;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.ParameterSheetColumn;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.StepSheetColumn;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn;
@@ -327,11 +328,11 @@ class ExcelExporter {
 		Sheet pSheet = workbook.getSheet(PRM_SHEET);
 		h = pSheet.createRow(0);
 		cIdx = 0;
-		h.createCell(cIdx++).setCellValue("TC_OWNER_PATH");
-		h.createCell(cIdx++).setCellValue("TC_OWNER_ID");
-		h.createCell(cIdx++).setCellValue("TC_PARAM_ID");
-		h.createCell(cIdx++).setCellValue("TC_PARAM_NAME");
-		h.createCell(cIdx++).setCellValue("TC_PARAM_DESCRIPTION");
+		h.createCell(cIdx++).setCellValue(ParameterSheetColumn.TC_OWNER_PATH.header);
+		h.createCell(cIdx++).setCellValue(ParameterSheetColumn.TC_OWNER_ID.header);
+		h.createCell(cIdx++).setCellValue(ParameterSheetColumn.TC_PARAM_ID.header);
+		h.createCell(cIdx++).setCellValue(ParameterSheetColumn.TC_PARAM_NAME.header);
+		h.createCell(cIdx++).setCellValue(ParameterSheetColumn.TC_PARAM_DESCRIPTION.header);
 		
 		
 		Sheet dsSheet = workbook.getSheet(DS_SHEET);
