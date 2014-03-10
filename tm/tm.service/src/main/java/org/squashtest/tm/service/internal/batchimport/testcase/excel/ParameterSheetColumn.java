@@ -26,37 +26,31 @@ import static org.squashtest.tm.service.internal.batchimport.testcase.excel.Colu
 
 /**
  * Enumerates columns in the parameters worksheet
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
 public enum ParameterSheetColumn implements TemplateColumn {
-	ACTION,
-	TC_OWNER_PATH(MANDATORY),
-	TC_OWNER_ID(IGNORED),
-	TC_PARAM_ID(IGNORED),
-	TC_PARAM_NAME(MANDATORY),
+	ACTION, 
+	TC_OWNER_PATH(MANDATORY), 
+	TC_OWNER_ID(IGNORED), 
+	TC_PARAM_ID(IGNORED), 
+	TC_PARAM_NAME(MANDATORY), 
 	TC_PARAM_DESCRIPTION;
-	
+
 	public final String header;
 	public final ColumnProcessingMode processingMode;
-	
+
 	private ParameterSheetColumn() {
 		this.header = name();
 		processingMode = OPTIONAL;
 	}
-	private ParameterSheetColumn(String name) {
-		this(name, OPTIONAL);
-	}
-	
-	private ParameterSheetColumn(String header, ColumnProcessingMode processingMode) {
-		this.header = header;
-		this.processingMode = processingMode;
-	}
-	
+
 	private ParameterSheetColumn(ColumnProcessingMode processingMode) {
 		this.header = name();
 		this.processingMode = processingMode;
 	}
+
 	/**
 	 * @see org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateColumn#getHeader()
 	 */
@@ -64,6 +58,7 @@ public enum ParameterSheetColumn implements TemplateColumn {
 	public String getHeader() {
 		return header;
 	}
+
 	/**
 	 * @see org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateColumn#getProcessingMode()
 	 */

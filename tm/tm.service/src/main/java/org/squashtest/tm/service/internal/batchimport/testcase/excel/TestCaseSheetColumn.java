@@ -27,11 +27,11 @@ import static org.squashtest.tm.service.internal.batchimport.testcase.excel.Colu
  * Enumerates columns in the test case worksheet
  * 
  * @author Gregory Fouquet
- *
+ * 
  */
 public enum TestCaseSheetColumn implements TemplateColumn {
-	ACTION,
-	PROJECT_ID(IGNORED),
+	ACTION, 
+	PROJECT_ID(IGNORED), 
 	PROJECT_NAME(IGNORED), 
 	TC_PATH(MANDATORY), 
 	TC_NUM, 
@@ -45,34 +45,32 @@ public enum TestCaseSheetColumn implements TemplateColumn {
 	TC_STATUS, 
 	TC_DESCRIPTION, 
 	TC_PRE_REQUISITE, 
-	TC_NB_REQ("TC_#_REQ", IGNORED),
+	TC_NB_REQ("TC_#_REQ", IGNORED), 
 	TC_NB_CALLED_BY("TC_#_CALLED_BY", IGNORED), 
-	TC_NB_ATTACHMENT("TC_#_ATTACHMENT", IGNORED),
+	TC_NB_ATTACHMENT("TC_#_ATTACHMENT", IGNORED), 
 	TC_CREATED_ON, 
 	TC_CREATED_BY, 
 	TC_LAST_MODIFIED_ON(IGNORED), 
 	TC_LAST_MODIFIED_BY(IGNORED);
-	
+
 	public final String header;
 	public final ColumnProcessingMode processingMode;
-	
+
 	private TestCaseSheetColumn() {
 		this.header = name();
 		processingMode = OPTIONAL;
 	}
-	private TestCaseSheetColumn(String name) {
-		this(name, OPTIONAL);
-	}
-	
+
 	private TestCaseSheetColumn(String header, ColumnProcessingMode processingMode) {
 		this.header = header;
 		this.processingMode = processingMode;
 	}
-	
+
 	private TestCaseSheetColumn(ColumnProcessingMode processingMode) {
 		this.header = name();
 		this.processingMode = processingMode;
 	}
+
 	/**
 	 * @see org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateColumn#getHeader()
 	 */
@@ -80,6 +78,7 @@ public enum TestCaseSheetColumn implements TemplateColumn {
 	public String getHeader() {
 		return header;
 	}
+
 	/**
 	 * @see org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateColumn#getProcessingMode()
 	 */

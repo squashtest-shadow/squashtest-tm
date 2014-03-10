@@ -27,7 +27,7 @@ import static org.squashtest.tm.service.internal.batchimport.testcase.excel.Colu
 
 /**
  * @author Gregory
- *
+ * 
  */
 public enum DatasetSheetColumn implements TemplateColumn {
 	ACTION, 
@@ -39,27 +39,20 @@ public enum DatasetSheetColumn implements TemplateColumn {
 	TC_PARAM_OWNER_ID(IGNORED), 
 	TC_DATASET_PARAM_NAME(MANDATORY), 
 	TC_DATASET_PARAM_VALUE;
-	
+
 	public final String header;
 	public final ColumnProcessingMode processingMode;
-	
+
 	private DatasetSheetColumn() {
 		this.header = name();
 		processingMode = OPTIONAL;
 	}
-	private DatasetSheetColumn(String name) {
-		this(name, OPTIONAL);
-	}
-	
-	private DatasetSheetColumn(String header, ColumnProcessingMode processingMode) {
-		this.header = header;
-		this.processingMode = processingMode;
-	}
-	
+
 	private DatasetSheetColumn(ColumnProcessingMode processingMode) {
 		this.header = name();
 		this.processingMode = processingMode;
 	}
+
 	/**
 	 * @see org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateColumn#getHeader()
 	 */
@@ -67,6 +60,7 @@ public enum DatasetSheetColumn implements TemplateColumn {
 	public String getHeader() {
 		return header;
 	}
+
 	/**
 	 * @see org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateColumn#getProcessingMode()
 	 */

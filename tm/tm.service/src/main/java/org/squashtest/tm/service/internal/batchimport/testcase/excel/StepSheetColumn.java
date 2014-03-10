@@ -37,12 +37,12 @@ public enum StepSheetColumn implements TemplateColumn {
 	TC_OWNER_ID(IGNORED), 
 	TC_STEP_ID(IGNORED), 
 	TC_STEP_NUM, 
-	TC_STEP_IS_CALL_STEP,
+	TC_STEP_IS_CALL_STEP, 
 	TC_STEP_ACTION, 
 	TC_STEP_EXPECTED_RESULT, 
 	TC_STEP_NB_REQ("TC_STEP_#_REQ", IGNORED), 
 	TC_STEP_NB_ATTACHMENT("TC_STEP_#_ATTACHMENT", IGNORED);
-	
+
 	public final String header;
 	public final ColumnProcessingMode processingMode;
 
@@ -50,15 +50,12 @@ public enum StepSheetColumn implements TemplateColumn {
 		this.header = name();
 		processingMode = OPTIONAL;
 	}
-	private StepSheetColumn(String name) {
-		this(name, OPTIONAL);
-	}
-	
+
 	private StepSheetColumn(String header, ColumnProcessingMode processingMode) {
 		this.header = header;
 		this.processingMode = processingMode;
 	}
-	
+
 	private StepSheetColumn(ColumnProcessingMode processingMode) {
 		this.header = name();
 		this.processingMode = processingMode;
@@ -79,5 +76,5 @@ public enum StepSheetColumn implements TemplateColumn {
 	public ColumnProcessingMode getProcessingMode() {
 		return processingMode;
 	}
-	
+
 }
