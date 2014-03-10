@@ -40,6 +40,8 @@ import org.squashtest.tm.service.internal.batchexport.ExportModel.DatasetModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.ParameterModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestStepModel;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn;
 
 
 /**
@@ -48,13 +50,11 @@ import org.squashtest.tm.service.internal.batchexport.ExportModel.TestStepModel;
  */
 class ExcelExporter {
 
-	
-	private static final String DS_SHEET  = "DATASETS";
-	private static final String PRM_SHEET = "PARAMETERS";
-	private static final String ST_SHEET  = "STEPS";
-	private static final String TC_SHEET  = "TEST_CASES";
+	private static final String DS_SHEET  = TemplateWorksheet.DATASETS_SHEET.sheetName;
+	private static final String PRM_SHEET = TemplateWorksheet.PARAMETERS_SHEET.sheetName;
+	private static final String ST_SHEET  = TemplateWorksheet.STEPS_SHEET.sheetName;
+	private static final String TC_SHEET  = TemplateWorksheet.TEST_CASES_SHEET.sheetName;
 
-	
 	// that map will remember which column index is 
 	private Map<String, Integer> cufColumnsByCode = new HashMap<String, Integer>();
 
@@ -286,27 +286,27 @@ class ExcelExporter {
 		Row h = tcSheet.createRow(0);
 		
 		int cIdx = 0;
-		h.createCell(cIdx++).setCellValue("PROJECT_ID");
-		h.createCell(cIdx++).setCellValue("PROJECT_NAME");
-		h.createCell(cIdx++).setCellValue("TC_PATH");
-		h.createCell(cIdx++).setCellValue("TC_NUM");
-		h.createCell(cIdx++).setCellValue("TC_ID");
-		h.createCell(cIdx++).setCellValue("TC_REFERENCE");
-		h.createCell(cIdx++).setCellValue("TC_NAME");
-		h.createCell(cIdx++).setCellValue("TC_WEIGHT_AUTO");
-		h.createCell(cIdx++).setCellValue("TC_WEIGHT");
-		h.createCell(cIdx++).setCellValue("TC_NATURE");
-		h.createCell(cIdx++).setCellValue("TC_TYPE");
-		h.createCell(cIdx++).setCellValue("TC_STATUS");
-		h.createCell(cIdx++).setCellValue("TC_DESCRIPTION");
-		h.createCell(cIdx++).setCellValue("TC_PREREQUISITE");
-		h.createCell(cIdx++).setCellValue("TC_#_REQ");
-		h.createCell(cIdx++).setCellValue("TC_#_CALLED_BY");
-		h.createCell(cIdx++).setCellValue("TC_#_ATTACHMENT");
-		h.createCell(cIdx++).setCellValue("TC_CREATED_ON");
-		h.createCell(cIdx++).setCellValue("TC_CREATED_BY");
-		h.createCell(cIdx++).setCellValue("TC_LAST_MODIFIED_ON");
-		h.createCell(cIdx++).setCellValue("TC_LAST_MODIFIED_BY");
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.PROJECT_ID.columnName);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.PROJECT_NAME.columnName);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_PATH.columnName);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_NUM.columnName);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_ID.columnName);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_REFERENCE.columnName);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_NAME.columnName);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_WEIGHT_AUTO.columnName);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_WEIGHT.columnName);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_NATURE.columnName);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_TYPE.columnName);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_STATUS.columnName);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_DESCRIPTION.columnName);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_PRE_REQUISITE.columnName);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_NB_REQ.columnName);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_NB_CALLED_BY.columnName);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_NB_ATTACHMENT.columnName);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_CREATED_ON.columnName);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_CREATED_BY.columnName);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_LAST_MODIFIED_ON.columnName);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_LAST_MODIFIED_BY.columnName);
 		
 		
 		Sheet stSheet = workbook.getSheet(ST_SHEET);
