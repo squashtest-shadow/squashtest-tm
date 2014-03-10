@@ -46,5 +46,6 @@ class ColumnUtilsTest extends Specification {
 		TestCaseSheetColumn  | TestCaseSheetColumn.values()
 		StepSheetColumn      | StepSheetColumn.values()
 		ParameterSheetColumn | ParameterSheetColumn.values()
+		DatasetSheetColumn   | DatasetSheetColumn.values()
 	}
 }

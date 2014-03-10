@@ -58,6 +58,8 @@ class ExcelWorkbookParserBuilderTest extends Specification {
 		wmd.worksheetDefs[STEPS_SHEET].columnDefs.size() == StepSheetColumn.values().length
 		wmd.worksheetDefs[PARAMETERS_SHEET]
 		wmd.worksheetDefs[PARAMETERS_SHEET].columnDefs.size() == ParameterSheetColumn.values().length
+		wmd.worksheetDefs[DATASETS_SHEET]
+		wmd.worksheetDefs[DATASETS_SHEET].columnDefs.values()*.type as Set == DatasetSheetColumn.values() as Set
 
 		cleanup:
 		IOUtils.closeQuietly(is);

@@ -32,10 +32,9 @@ import java.util.Map;
  */
 public enum TemplateWorksheet {
 	TEST_CASES_SHEET("TEST_CASES", TestCaseSheetColumn.class),
-	// TODO replace dummy TestCaseSheetColumn enum by the correct one when it's defined
 	STEPS_SHEET("STEPS", StepSheetColumn.class), 
 	PARAMETERS_SHEET("PARAMETERS", ParameterSheetColumn.class), 
-	DATASETS_SHEET("DATASETS", TestCaseSheetColumn.class);
+	DATASETS_SHEET("DATASETS", DatasetSheetColumn.class);
 
 	private static final Map<String, TemplateWorksheet> ENUM_BY_SHEET_NAME = new HashMap<String, TemplateWorksheet>(
 			values().length);
