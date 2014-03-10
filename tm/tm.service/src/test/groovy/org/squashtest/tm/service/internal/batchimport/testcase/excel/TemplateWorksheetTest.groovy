@@ -21,42 +21,24 @@
 
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.squashtest.tm.exception.SheetCorruptedException;
-
 import spock.lang.Specification;
 import spock.lang.Unroll;
+
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.*
+
 
 /**
  * @author Gregory Fouquet
  *
  */
-class ExcelWorkbookParserTest extends Specification {
-	def "should create a parser for correct excel file"() {
-		given:
-		Resource xls = new ClassPathResource("batchimport/testcase/import-2269.xlsx")
-		
-		expect:
-		ExcelWorkbookParser.createParser(xls.file)
-	}
-	
+class TemplateWorksheetTest extends Specification {
 	@Unroll
-	def "should raise exception #exception for corrupted sheet #file "() {
-		given:
-		Resource xls = new ClassPathResource(file)
-		
-		when:
-		ExcelWorkbookParser.createParser(xls.file)
-		
-		then:
-		thrown(exception);
+	def "ws name #énum.sheetName should coerce as enum #énum"() {
+		expect:
+		TemplateWorksheet.coerceFromSheetName(énum.sheetName) == énum
 		
 		where:
-		file                                     | exception
-		"batchimport/testcase/garbage-file.xlsx" | SheetCorruptedException
-		"batchimport/testcase/no-header.xlsx"    | TemplateMismatchException // should be refined
-//		"batchimport/testcase/duplicate-ws.xlsx" | DuplicateWorksheetException
+		énum << TemplateWorksheet.values() 
+		
 	}
-
 }

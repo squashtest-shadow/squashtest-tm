@@ -286,27 +286,27 @@ class ExcelExporter {
 		Row h = tcSheet.createRow(0);
 		
 		int cIdx = 0;
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.PROJECT_ID.columnName);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.PROJECT_NAME.columnName);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_PATH.columnName);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_NUM.columnName);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_ID.columnName);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_REFERENCE.columnName);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_NAME.columnName);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_WEIGHT_AUTO.columnName);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_WEIGHT.columnName);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_NATURE.columnName);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_TYPE.columnName);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_STATUS.columnName);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_DESCRIPTION.columnName);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_PRE_REQUISITE.columnName);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_NB_REQ.columnName);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_NB_CALLED_BY.columnName);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_NB_ATTACHMENT.columnName);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_CREATED_ON.columnName);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_CREATED_BY.columnName);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_LAST_MODIFIED_ON.columnName);
-		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_LAST_MODIFIED_BY.columnName);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.PROJECT_ID.header);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.PROJECT_NAME.header);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_PATH.header);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_NUM.header);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_ID.header);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_REFERENCE.header);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_NAME.header);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_WEIGHT_AUTO.header);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_WEIGHT.header);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_NATURE.header);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_TYPE.header);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_STATUS.header);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_DESCRIPTION.header);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_PRE_REQUISITE.header);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_NB_REQ.header);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_NB_CALLED_BY.header);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_NB_ATTACHMENT.header);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_CREATED_ON.header);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_CREATED_BY.header);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_LAST_MODIFIED_ON.header);
+		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_LAST_MODIFIED_BY.header);
 		
 		
 		Sheet stSheet = workbook.getSheet(ST_SHEET);

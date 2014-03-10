@@ -21,21 +21,47 @@
 
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Enum of worksheet which are expected in the import file.
  * 
  * @author Gregory Fouquet
- *
+ * 
  */
 public enum TemplateWorksheet {
-	TEST_CASES_SHEET("TEST_CASES"),
-	STEPS_SHEET("STEPS"),
-	PARAMETERS_SHEET("PARAMETERS"),
-	DATASETS_SHEET("DATASETS");
-	
+	TEST_CASES_SHEET("TEST_CASES", TestCaseSheetColumn.class),
+	// TODO replace dummy TestCaseSheetColumn enum by the correct one when it's defined
+	STEPS_SHEET("STEPS", TestCaseSheetColumn.class), 
+	PARAMETERS_SHEET("PARAMETERS", TestCaseSheetColumn.class), 
+	DATASETS_SHEET("DATASETS", TestCaseSheetColumn.class);
+
+	private static final Map<String, TemplateWorksheet> ENUM_BY_SHEET_NAME = new HashMap<String, TemplateWorksheet>(
+			values().length);
+
 	public final String sheetName;
-	
-	private TemplateWorksheet(String name) {
+	public final Class<? extends Enum<?>> columnEnumType;
+
+	private <E extends Enum<?> & TemplateColumn> TemplateWorksheet(String name, Class<E> columnEnumType) {
 		this.sheetName = name;
-	}	
+		this.columnEnumType = columnEnumType;
+	}
+
+	/**
+	 * Returns the enum value matching the given sheet name.
+	 * 
+	 * @param name
+	 * @return the matching enum, <code>null</code> when no match.
+	 */
+	public static TemplateWorksheet coerceFromSheetName(String name) {
+		if (ENUM_BY_SHEET_NAME.size() == 0) {
+			synchronized (ENUM_BY_SHEET_NAME) {
+				for (TemplateWorksheet e : TemplateWorksheet.values()) {
+					ENUM_BY_SHEET_NAME.put(e.sheetName, e);
+				}
+			}
+		}
+		return ENUM_BY_SHEET_NAME.get(name);
+	}
 }

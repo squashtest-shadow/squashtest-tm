@@ -21,9 +21,12 @@
 
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.squashtest.tm.exception.SheetCorruptedException;
+import org.apache.poi.ss.formula.EvaluationCache;
+import org.codehaus.jackson.map.util.EnumValues;
+import org.hibernate.type.EnumType;
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
+import org.squashtest.tm.service.internal.customfield.DefaultEditionStatusStrategy;
+import org.squashtest.tm.service.internal.user.UserAccountServiceImpl;
 
 import spock.lang.Specification;
 import spock.lang.Unroll;
@@ -32,31 +35,14 @@ import spock.lang.Unroll;
  * @author Gregory Fouquet
  *
  */
-class ExcelWorkbookParserTest extends Specification {
-	def "should create a parser for correct excel file"() {
-		given:
-		Resource xls = new ClassPathResource("batchimport/testcase/import-2269.xlsx")
-		
-		expect:
-		ExcelWorkbookParser.createParser(xls.file)
-	}
-	
+class ColumnUtilsTest extends Specification {
 	@Unroll
-	def "should raise exception #exception for corrupted sheet #file "() {
-		given:
-		Resource xls = new ClassPathResource(file)
-		
-		when:
-		ExcelWorkbookParser.createParser(xls.file)
-		
-		then:
-		thrown(exception);
-		
-		where:
-		file                                     | exception
-		"batchimport/testcase/garbage-file.xlsx" | SheetCorruptedException
-		"batchimport/testcase/no-header.xlsx"    | TemplateMismatchException // should be refined
-//		"batchimport/testcase/duplicate-ws.xlsx" | DuplicateWorksheetException
-	}
+	def "should coerce from headers of #enumType"() {
+		expect:
+		enumValues.collect { TemplateColumnUtils.coerceFromHeader(enumType, it.header) } == enumValues
 
+		where:
+		enumType            | enumValues
+		TestCaseSheetColumn | TestCaseSheetColumn.values()
+	}
 }

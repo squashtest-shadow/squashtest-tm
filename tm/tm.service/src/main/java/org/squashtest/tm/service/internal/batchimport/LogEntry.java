@@ -21,7 +21,6 @@
 package org.squashtest.tm.service.internal.batchimport;
 
 public class LogEntry implements Comparable<LogEntry>{
-
 	private int line;
 	private Target target;
 	private ImportMode mode;
@@ -82,6 +81,35 @@ public class LogEntry implements Comparable<LogEntry>{
 	public void setI18nImpact(String i18nImpact) {
 		this.i18nImpact = i18nImpact;
 	}
+
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 47;
+		result = prime * result + line;
+		return result;
+	}
+
+	/**
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		LogEntry other = (LogEntry) obj;
+		if (line != other.line)
+			return false;
+		return true;
+	}
 	
+
 
 }

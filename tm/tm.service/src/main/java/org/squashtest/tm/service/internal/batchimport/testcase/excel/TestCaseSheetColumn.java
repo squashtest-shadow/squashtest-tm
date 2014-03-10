@@ -29,7 +29,7 @@ import static org.squashtest.tm.service.internal.batchimport.testcase.excel.Colu
  * @author Gregory Fouquet
  *
  */
-public enum TestCaseSheetColumn {
+public enum TestCaseSheetColumn implements TemplateColumn {
 	ACTION,
 	PROJECT_ID(IGNORED),
 	PROJECT_NAME(IGNORED), 
@@ -53,22 +53,31 @@ public enum TestCaseSheetColumn {
 	TC_LAST_MODIFIED_ON(IGNORED), 
 	TC_LAST_MODIFIED_BY(IGNORED);
 	
-	public final String columnName;
+	public final String header;
 	public final ColumnProcessingMode processingMode;
 	
 	private TestCaseSheetColumn() {
-		this.columnName = name();
+		this.header = name();
 		processingMode = OPTIONAL;
 	}
 	private TestCaseSheetColumn(String name) {
 		this(name, OPTIONAL);
 	}
-	private TestCaseSheetColumn(String name, ColumnProcessingMode processingMode) {
-		this.columnName = name;
+	
+	private TestCaseSheetColumn(String header, ColumnProcessingMode processingMode) {
+		this.header = header;
 		this.processingMode = processingMode;
 	}
+	
 	private TestCaseSheetColumn(ColumnProcessingMode processingMode) {
-		this.columnName = name();
+		this.header = name();
 		this.processingMode = processingMode;
+	}
+	/**
+	 * @see org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateColumn#getHeader()
+	 */
+	@Override
+	public String getHeader() {
+		return header;
 	}
 }

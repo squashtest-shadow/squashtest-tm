@@ -21,42 +21,23 @@
 
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.squashtest.tm.exception.SheetCorruptedException;
-
-import spock.lang.Specification;
-import spock.lang.Unroll;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
+ * Metadata of a test case import workbook. It collects data about the worksheets and the columns we have to process.
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
-class ExcelWorkbookParserTest extends Specification {
-	def "should create a parser for correct excel file"() {
-		given:
-		Resource xls = new ClassPathResource("batchimport/testcase/import-2269.xlsx")
-		
-		expect:
-		ExcelWorkbookParser.createParser(xls.file)
-	}
-	
-	@Unroll
-	def "should raise exception #exception for corrupted sheet #file "() {
-		given:
-		Resource xls = new ClassPathResource(file)
-		
-		when:
-		ExcelWorkbookParser.createParser(xls.file)
-		
-		then:
-		thrown(exception);
-		
-		where:
-		file                                     | exception
-		"batchimport/testcase/garbage-file.xlsx" | SheetCorruptedException
-		"batchimport/testcase/no-header.xlsx"    | TemplateMismatchException // should be refined
-//		"batchimport/testcase/duplicate-ws.xlsx" | DuplicateWorksheetException
-	}
+public class WorkbookMetaData {
+	private Map<TemplateWorksheet, WorksheetDef> worksheetDefs = new HashMap<TemplateWorksheet, WorksheetDef>();
 
+	/**
+	 * @param worksheetDef
+	 */
+	public void addWorksheetDef(WorksheetDef worksheetDef) {
+		worksheetDefs.put(worksheetDef.getWorksheetType(), worksheetDef);
+		
+	}
 }

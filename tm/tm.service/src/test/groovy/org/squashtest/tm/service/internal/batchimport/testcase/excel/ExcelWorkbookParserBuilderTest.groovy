@@ -21,42 +21,41 @@
 
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
+
+import org.apache.commons.io.IOCase;
+import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.squashtest.tm.exception.SheetCorruptedException;
 
 import spock.lang.Specification;
-import spock.lang.Unroll;
+
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.*;
 
 /**
  * @author Gregory Fouquet
  *
  */
-class ExcelWorkbookParserTest extends Specification {
-	def "should create a parser for correct excel file"() {
+class ExcelWorkbookParserBuilderTest extends Specification {
+
+	def "should create metadata"() {
 		given:
+		def builder = new ExcelWorkbookParserBuilder()
+
+		and:
 		Resource xls = new ClassPathResource("batchimport/testcase/import-2269.xlsx")
-		
-		expect:
-		ExcelWorkbookParser.createParser(xls.file)
-	}
-	
-	@Unroll
-	def "should raise exception #exception for corrupted sheet #file "() {
-		given:
-		Resource xls = new ClassPathResource(file)
-		
+		println xls.file.absolutePath
+		InputStream is = new BufferedInputStream(new FileInputStream(xls.file))
+		println is
+
 		when:
-		ExcelWorkbookParser.createParser(xls.file)
+		def wb = builder.openWorkbook(is);
+		WorkbookMetaData wmd = builder.buildMetaData(wb)
 		
 		then:
-		thrown(exception);
+		wmd.worksheetDefs[TEST_CASES_SHEET]
+		wmd.worksheetDefs[TEST_CASES_SHEET].columnDefs.size() == TestCaseSheetColumn.values().length
 		
-		where:
-		file                                     | exception
-		"batchimport/testcase/garbage-file.xlsx" | SheetCorruptedException
-		"batchimport/testcase/no-header.xlsx"    | TemplateMismatchException // should be refined
-//		"batchimport/testcase/duplicate-ws.xlsx" | DuplicateWorksheetException
+		cleanup:
+		IOUtils.closeQuietly(is);
 	}
-
 }

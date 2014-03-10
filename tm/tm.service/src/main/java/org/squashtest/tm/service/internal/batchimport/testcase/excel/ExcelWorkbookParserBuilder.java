@@ -32,6 +32,9 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
@@ -48,38 +51,97 @@ class ExcelWorkbookParserBuilder {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExcelWorkbookParserBuilder.class);
 	private final File xls;
 
-	ExcelWorkbookParserBuilder(@NotNull File xls) {
+	public ExcelWorkbookParserBuilder(@NotNull File xls) {
 		super();
 		this.xls = xls;
 	}
 
-	public ExcelWorkbookParser build() {
+	public ExcelWorkbookParser build() throws SheetCorruptedException {
 		InputStream is = null;
 		try {
 			is = new BufferedInputStream(new FileInputStream(xls));
-			Workbook workbook = WorkbookFactory.create(is);
-
 		} catch (FileNotFoundException e) {
 			IOUtils.closeQuietly(is);
 			throw new RuntimeException(e);
-			
+		}
+		Workbook wb = openWorkbook(is);
+		WorkbookMetaData wmd = buildMetaData(wb);
+
+		return new ExcelWorkbookParser();
+	}
+
+	/**
+	 * @param wb
+	 * @return
+	 */
+	private WorkbookMetaData buildMetaData(Workbook wb) {
+		WorkbookMetaData wmd = new WorkbookMetaData();
+		processSheets(wb, wmd);
+
+		return wmd;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void processSheets(Workbook wb, WorkbookMetaData wmd) {
+		for (int iSheet = 0; iSheet < wb.getNumberOfSheets(); iSheet++) {
+			Sheet ws = wb.getSheetAt(iSheet);
+			TemplateWorksheet sheetType = TemplateWorksheet.coerceFromSheetName(ws.getSheetName());
+
+			if (sheetType != null) {
+				WorksheetDef<?> wd = new WorksheetDef(sheetType);
+				wmd.addWorksheetDef(wd);
+
+				Row headerRow = ws.getRow(0);
+				// note : ws.getFirstRowNum() returns 0 even when there are no rows in sheet
+
+				if (headerRow == null) {
+					throw new TemplateMismatchException();
+				}
+
+				for (int iCell = 0; iCell < headerRow.getLastCellNum(); iCell++) {
+					Cell cell = headerRow.getCell(iCell);
+					try {
+						String header = cell.getStringCellValue();
+
+						TemplateColumn colType = TemplateColumnUtils.coerceFromHeader(sheetType.columnEnumType, header);
+
+						if (colType != null) {
+							wd.addColumnDef(new ColumnDef(colType, iCell));
+						} else {
+							// TODO PROCESS CUSTOM FIELDS HEADERS !
+							// unknown columns are ditched
+						}
+
+					} catch (IllegalStateException e) {
+						// seems this cell aint a string cell...
+						LOGGER.trace(
+								"We expected a string cell, but it was not. Not an error case so we silently skip it. Exception message : {}",
+								e.getMessage());
+					}
+				}
+			}
+		}
+	}
+
+	private Workbook openWorkbook(InputStream is) throws SheetCorruptedException {
+		try {
+			return WorkbookFactory.create(is);
+
 		} catch (InvalidFormatException e) {
 			LOGGER.info(e.getMessage());
 			IOUtils.closeQuietly(is);
 			throw new SheetCorruptedException(e);
-			
+
 		} catch (IOException e) {
 			LOGGER.info(e.getMessage());
 			IOUtils.closeQuietly(is);
 			throw new SheetCorruptedException(e);
-			
+
 		} catch (IllegalArgumentException e) {
 			LOGGER.info(e.getMessage());
 			IOUtils.closeQuietly(is);
 			throw new SheetCorruptedException(e);
-		} 
-		
-		return new ExcelWorkbookParser();
+		}
 	}
 
 }
