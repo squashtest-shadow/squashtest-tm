@@ -33,7 +33,7 @@ import java.util.Map;
 public enum TemplateWorksheet {
 	TEST_CASES_SHEET("TEST_CASES", TestCaseSheetColumn.class),
 	// TODO replace dummy TestCaseSheetColumn enum by the correct one when it's defined
-	STEPS_SHEET("STEPS", TestCaseSheetColumn.class), 
+	STEPS_SHEET("STEPS", StepSheetColumn.class), 
 	PARAMETERS_SHEET("PARAMETERS", TestCaseSheetColumn.class), 
 	DATASETS_SHEET("DATASETS", TestCaseSheetColumn.class);
 

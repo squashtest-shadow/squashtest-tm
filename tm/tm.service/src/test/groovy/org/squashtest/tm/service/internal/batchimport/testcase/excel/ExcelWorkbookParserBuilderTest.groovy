@@ -54,7 +54,9 @@ class ExcelWorkbookParserBuilderTest extends Specification {
 		then:
 		wmd.worksheetDefs[TEST_CASES_SHEET]
 		wmd.worksheetDefs[TEST_CASES_SHEET].columnDefs.size() == TestCaseSheetColumn.values().length
-		
+		wmd.worksheetDefs[STEPS_SHEET]
+		wmd.worksheetDefs[STEPS_SHEET].columnDefs.size() == StepSheetColumn.values().length
+
 		cleanup:
 		IOUtils.closeQuietly(is);
 	}

@@ -44,5 +44,6 @@ class ColumnUtilsTest extends Specification {
 		where:
 		enumType            | enumValues
 		TestCaseSheetColumn | TestCaseSheetColumn.values()
+		StepSheetColumn     | StepSheetColumn.values()
 	}
 }

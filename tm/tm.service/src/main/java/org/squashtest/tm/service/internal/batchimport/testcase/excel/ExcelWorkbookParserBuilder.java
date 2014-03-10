@@ -92,6 +92,8 @@ class ExcelWorkbookParserBuilder {
 				WorksheetDef<?> wd = new WorksheetDef(sheetType);
 				wmd.addWorksheetDef(wd);
 				populateColumnDefs(wd, ws);
+			} else {
+				LOGGER.trace("Skipping unrecognized worksheet named '{}'", ws.getSheetName());
 			}
 		}
 	}
