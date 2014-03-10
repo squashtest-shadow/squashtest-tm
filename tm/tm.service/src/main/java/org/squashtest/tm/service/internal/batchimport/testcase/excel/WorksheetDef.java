@@ -21,7 +21,9 @@
 
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.validation.constraints.NotNull;
@@ -54,5 +56,30 @@ class WorksheetDef<COL extends TemplateColumn> {
 	void addColumnDef(@NotNull ColumnDef<COL> columnDef) {
 		columnDefs.put(columnDef.getType(), columnDef);
 
+	}
+
+	/**
+	 * 
+	 */
+	void validate() throws TemplateMismatchException {
+		List<MissingMandatoryColumnMismatch> mmces = new ArrayList<MissingMandatoryColumnMismatch>();
+
+		for (TemplateColumn col : worksheetType.getColumnTypes()) {
+			if (isMandatory(col) && noColumnDef(col)) {
+				mmces.add(new MissingMandatoryColumnMismatch(col));
+			}
+		}
+
+		if (!mmces.isEmpty()) {
+			throw new TemplateMismatchException(mmces);
+		}
+	}
+
+	private boolean isMandatory(TemplateColumn col) {
+		return ColumnProcessingMode.MANDATORY.equals(col.getProcessingMode());
+	}
+
+	private boolean noColumnDef(TemplateColumn col) {
+		return columnDefs.get(col) == null;
 	}
 }

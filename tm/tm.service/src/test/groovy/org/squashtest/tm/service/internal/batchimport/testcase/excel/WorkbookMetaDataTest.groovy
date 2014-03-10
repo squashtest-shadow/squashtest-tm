@@ -21,13 +21,56 @@
 
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+import spock.lang.Specification;
+
 /**
- * Interface which describe a import template's column. Usually implemented as an enum.
- * 
  * @author Gregory Fouquet
- * 
+ *
  */
-public interface TemplateColumn {
-	String getHeader();
-	ColumnProcessingMode getProcessingMode();
+class WorkbookMetaDataTest extends Specification {
+	def "should validate"() {
+		given:
+		WorkbookMetaData wmd = new WorkbookMetaData();
+
+		wmd.addWorksheetDef(new WorksheetDef(TemplateWorksheet.TEST_CASES_SHEET) {
+					void validate() {
+						// validating sheet
+					}
+				})
+
+		when:
+		wmd.validate()
+
+		then:
+		notThrown(TemplateMismatchException)
+	}
+	def "should NOT validate"() {
+		given:
+		WorkbookMetaData wmd = new WorkbookMetaData();
+
+		wmd.addWorksheetDef(new WorksheetDef(TemplateWorksheet.TEST_CASES_SHEET) {
+					void validate() {
+						// non validation sheet
+						throw new TemplateMismatchException();
+					}
+				})
+
+		wmd.addWorksheetDef(new WorksheetDef(TemplateWorksheet.STEPS_SHEET) {
+					void validate() {
+						// non validation sheet
+						throw new TemplateMismatchException();
+					}
+				})
+
+		when:
+		wmd.validate()
+
+		then:
+		def e = thrown(TemplateMismatchException)
+		e.mismatches.size() == 2
+	}
 }

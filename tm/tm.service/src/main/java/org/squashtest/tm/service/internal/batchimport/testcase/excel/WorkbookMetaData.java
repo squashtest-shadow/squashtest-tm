@@ -21,7 +21,9 @@
 
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,13 +33,29 @@ import java.util.Map;
  * 
  */
 public class WorkbookMetaData {
-	private Map<TemplateWorksheet, WorksheetDef> worksheetDefs = new HashMap<TemplateWorksheet, WorksheetDef>();
+	private Map<TemplateWorksheet, WorksheetDef<? extends TemplateColumn>> worksheetDefs = new HashMap<TemplateWorksheet, WorksheetDef<? extends TemplateColumn>>();
 
 	/**
 	 * @param worksheetDef
 	 */
-	public void addWorksheetDef(WorksheetDef worksheetDef) {
+	public void addWorksheetDef(WorksheetDef<? extends TemplateColumn> worksheetDef) {
 		worksheetDefs.put(worksheetDef.getWorksheetType(), worksheetDef);
-		
+
+	}
+
+	public void validate() throws TemplateMismatchException {
+		List<TemplateMismatch> mismatches = new ArrayList<TemplateMismatch>();
+
+		for (WorksheetDef<?> wd : worksheetDefs.values()) {
+			try {
+				wd.validate();
+			} catch (TemplateMismatchException e) {
+				mismatches.add(e);
+			}
+		}
+
+		if (mismatches.size() > 0) {
+			throw new TemplateMismatchException(mismatches);
+		}
 	}
 }

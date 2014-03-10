@@ -80,4 +80,11 @@ public enum TestCaseSheetColumn implements TemplateColumn {
 	public String getHeader() {
 		return header;
 	}
+	/**
+	 * @see org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateColumn#getProcessingMode()
+	 */
+	@Override
+	public ColumnProcessingMode getProcessingMode() {
+		return processingMode;
+	}
 }

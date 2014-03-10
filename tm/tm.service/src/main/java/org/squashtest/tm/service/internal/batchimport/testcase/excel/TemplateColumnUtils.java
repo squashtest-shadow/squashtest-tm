@@ -82,13 +82,18 @@ final class TemplateColumnUtils {
 		return headerCache.get(header);
 	}
 
-	@SuppressWarnings("unchecked")
 	private <E extends Enum<?>> void populateCache(Class<E> enumType, Map<String, TemplateColumn> headerCache) {
-		Method valuesMethod = ReflectionUtils.findMethod(enumType, "values");
-		E[] values = (E[]) ReflectionUtils.invokeMethod(valuesMethod, enumType);
+		E[] values = values(enumType);
 
 		for (E value : values) {
 			headerCache.put(((TemplateColumn) value).getHeader(), (TemplateColumn) value);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <E extends Enum<?>> E[] values(Class<E> enumType) {
+		Method valuesMethod = ReflectionUtils.findMethod(enumType, "values");
+		E[] values = (E[]) ReflectionUtils.invokeMethod(valuesMethod, enumType);
+		return values;
 	}
 }

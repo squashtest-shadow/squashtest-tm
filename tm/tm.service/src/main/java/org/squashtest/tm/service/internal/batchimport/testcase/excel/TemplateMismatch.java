@@ -22,12 +22,9 @@
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
 /**
- * Interface which describe a import template's column. Usually implemented as an enum.
- * 
- * @author Gregory Fouquet
- * 
+ * @author Gregory
+ *
  */
-public interface TemplateColumn {
-	String getHeader();
-	ColumnProcessingMode getProcessingMode();
+public interface TemplateMismatch {
+
 }

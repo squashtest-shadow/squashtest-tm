@@ -56,7 +56,7 @@ class ExcelWorkbookParserBuilder {
 		this.xls = xls;
 	}
 
-	public ExcelWorkbookParser build() throws SheetCorruptedException {
+	public ExcelWorkbookParser build() throws SheetCorruptedException, TemplateMismatchException {
 		InputStream is = null;
 		try {
 			is = new BufferedInputStream(new FileInputStream(xls));
@@ -66,6 +66,7 @@ class ExcelWorkbookParserBuilder {
 		}
 		Workbook wb = openWorkbook(is);
 		WorkbookMetaData wmd = buildMetaData(wb);
+		wmd.validate();
 
 		return new ExcelWorkbookParser();
 	}
@@ -81,7 +82,7 @@ class ExcelWorkbookParserBuilder {
 		return wmd;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes" })
 	private void processSheets(Workbook wb, WorkbookMetaData wmd) {
 		for (int iSheet = 0; iSheet < wb.getNumberOfSheets(); iSheet++) {
 			Sheet ws = wb.getSheetAt(iSheet);
@@ -90,37 +91,51 @@ class ExcelWorkbookParserBuilder {
 			if (sheetType != null) {
 				WorksheetDef<?> wd = new WorksheetDef(sheetType);
 				wmd.addWorksheetDef(wd);
-
-				Row headerRow = ws.getRow(0);
-				// note : ws.getFirstRowNum() returns 0 even when there are no rows in sheet
-
-				if (headerRow == null) {
-					throw new TemplateMismatchException();
-				}
-
-				for (int iCell = 0; iCell < headerRow.getLastCellNum(); iCell++) {
-					Cell cell = headerRow.getCell(iCell);
-					try {
-						String header = cell.getStringCellValue();
-
-						TemplateColumn colType = TemplateColumnUtils.coerceFromHeader(sheetType.columnEnumType, header);
-
-						if (colType != null) {
-							wd.addColumnDef(new ColumnDef(colType, iCell));
-						} else {
-							// TODO PROCESS CUSTOM FIELDS HEADERS !
-							// unknown columns are ditched
-						}
-
-					} catch (IllegalStateException e) {
-						// seems this cell aint a string cell...
-						LOGGER.trace(
-								"We expected a string cell, but it was not. Not an error case so we silently skip it. Exception message : {}",
-								e.getMessage());
-					}
-				}
+				populateColumnDefs(wd, ws);
 			}
 		}
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private void populateColumnDefs(WorksheetDef<?> wd, Sheet ws) {
+		Row headerRow = findHeaderRow(ws);
+
+		if (headerRow == null) {
+			return;
+		}
+
+		for (int iCell = 0; iCell < headerRow.getLastCellNum(); iCell++) {
+			Cell cell = headerRow.getCell(iCell);
+			try {
+				String header = cell.getStringCellValue();
+
+				TemplateColumn colType = TemplateColumnUtils.coerceFromHeader(wd.getWorksheetType().columnTypesClass,
+						header);
+
+				if (colType != null) {
+					wd.addColumnDef(new ColumnDef(colType, iCell));
+				} else {
+					// TODO PROCESS CUSTOM FIELDS HEADERS !
+					// unknown columns are ditched
+				}
+
+			} catch (IllegalStateException e) {
+				// seems this cell aint a string cell...
+				LOGGER.trace(
+						"We expected a string cell, but it was not. Not an error case so we silently skip it. Exception message : {}",
+						e.getMessage());
+			}
+		}
+	}
+
+	/**
+	 * 
+	 * @param ws
+	 * @return header row or <code>null</code>
+	 */
+	private Row findHeaderRow(Sheet ws) {
+		Row headerRow = ws.getRow(0);
+		return headerRow;
 	}
 
 	private Workbook openWorkbook(InputStream is) throws SheetCorruptedException {

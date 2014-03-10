@@ -21,9 +21,8 @@
 
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.squashtest.tm.exception.SheetCorruptedException;
+import org.junit.Test;
+import org.squashtest.tm.service.internal.repository.hibernate.HibernateCustomCustomFieldBindingDao.NewBindingPosition;
 
 import spock.lang.Specification;
 import spock.lang.Unroll;
@@ -32,39 +31,47 @@ import spock.lang.Unroll;
  * @author Gregory Fouquet
  *
  */
-class ExcelWorkbookParserTest extends Specification {
+class WorksheetDefTest extends Specification {
 	@Unroll
-	def "should create a parser for correct excel file #file"() {
+	def "colset #cols should produce a valid worksheet"() {
 		given:
-		Resource xls = new ClassPathResource("batchimport/testcase/" + file)
-
-		expect:
-		ExcelWorkbookParser.createParser(xls.file)
-
-		where:
-		file << [
-			"import-2269.xlsx",
-			"ignored-headers.xlsx"
-		]
-	}
-
-	@Unroll
-	def "should raise exception #exception for corrupted sheet #file "() {
-		given:
-		Resource xls = new ClassPathResource(file)
-
+		WorksheetDef wd = new WorksheetDef(TemplateWorksheet.TEST_CASES_SHEET)
+		cols.each { wd.addColumnDef(new ColumnDef(it, 1)) }
+		
 		when:
-		ExcelWorkbookParser.createParser(xls.file)
-
+		wd.validate()
+		
 		then:
-		thrown(exception);
-
-
+		notThrown(TemplateMismatchException)
+		
 		where:
-		file                                     | exception
-		"batchimport/testcase/garbage-file.xlsx" | SheetCorruptedException
-		"batchimport/testcase/no-header.xlsx"    | TemplateMismatchException // should be refined
-		"batchimport/testcase/missing-headers.xlsx" | TemplateMismatchException // should be refined
-		//		"batchimport/testcase/duplicate-ws.xlsx" | DuplicateWorksheetException
+		cols << [
+			TestCaseSheetColumn.values(), 
+			[TestCaseSheetColumn.TC_NAME, TestCaseSheetColumn.TC_PATH]
+		] 
+		
 	}
+	
+	@Unroll
+	def "colset #cols should produce an invalid worksheet"() {
+		given:
+		WorksheetDef wd = new WorksheetDef(TemplateWorksheet.TEST_CASES_SHEET)
+		cols.each { wd.addColumnDef(new ColumnDef(it, 1)) }
+		
+		when:
+		wd.validate()
+		
+		then:
+		thrown(TemplateMismatchException)
+		
+		where:
+		cols << [
+			[],
+			[TestCaseSheetColumn.TC_PATH],
+			[TestCaseSheetColumn.TC_NAME],
+			[TestCaseSheetColumn.TC_ID] 
+		]
+		
+	}
+
 }

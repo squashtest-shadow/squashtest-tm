@@ -41,11 +41,11 @@ public enum TemplateWorksheet {
 			values().length);
 
 	public final String sheetName;
-	public final Class<? extends Enum<?>> columnEnumType;
+	public final Class<? extends Enum<?>> columnTypesClass;
 
 	private <E extends Enum<?> & TemplateColumn> TemplateWorksheet(String name, Class<E> columnEnumType) {
 		this.sheetName = name;
-		this.columnEnumType = columnEnumType;
+		this.columnTypesClass = columnEnumType;
 	}
 
 	/**
@@ -63,5 +63,10 @@ public enum TemplateWorksheet {
 			}
 		}
 		return ENUM_BY_SHEET_NAME.get(name);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <E extends TemplateColumn> E[] getColumnTypes() {
+		return (E[]) TemplateColumnUtils.values(columnTypesClass);
 	}
 }

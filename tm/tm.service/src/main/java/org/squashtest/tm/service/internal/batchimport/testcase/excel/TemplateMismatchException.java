@@ -21,18 +21,30 @@
 
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
+import java.util.Collection;
+import java.util.Collections;
+
 /**
  * Thrown when an import file doesnt' match the expected template.
  * 
  * @author Gregory Fouquet
  * 
  */
-public class TemplateMismatchException extends RuntimeException {
-	// TODO a list of stuff which dont match
-	// private final List<Whatever> mismatches
-	/**
-	 * 
-	 */
+public class TemplateMismatchException extends RuntimeException implements TemplateMismatch {
 	private static final long serialVersionUID = -3318286142079157710L;
+
+	public final Collection<? extends TemplateMismatch> mismatches; // NOSONAR guaranteed to be immutable
+	
+	
+	TemplateMismatchException() {
+		super();
+		mismatches = Collections.emptyList();
+	}
+
+
+	TemplateMismatchException(Collection<? extends TemplateMismatch> mismatches) {
+		super();
+		this.mismatches = Collections.unmodifiableCollection(mismatches);
+	}
 
 }

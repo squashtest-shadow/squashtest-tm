@@ -22,12 +22,16 @@
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
 /**
- * Interface which describe a import template's column. Usually implemented as an enum.
+ * Indicates a templates'mandatory column is not present in import file.
  * 
  * @author Gregory Fouquet
  * 
  */
-public interface TemplateColumn {
-	String getHeader();
-	ColumnProcessingMode getProcessingMode();
+public class MissingMandatoryColumnMismatch implements TemplateMismatch {
+	public final TemplateColumn missingColumn;
+
+	MissingMandatoryColumnMismatch(TemplateColumn missingColumn) {
+		super();
+		this.missingColumn = missingColumn;
+	}
 }
