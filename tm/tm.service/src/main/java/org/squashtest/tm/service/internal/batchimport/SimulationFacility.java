@@ -20,16 +20,13 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import java.util.Collection;
 import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 
@@ -89,17 +86,14 @@ public class SimulationFacility implements Facility{
 		// 1 - basic verifications
 		logs.append( testCaseValidator.basicTestCaseChecks(target, testCase, cufValues) );
 		
-		// 2 - mandatory custom fields 
-		Collection<CustomField> tcCufs = model.getTestCaseCufs(target);
+		// 2 - custom fields (create)
+		logs.append( cufValidator.checkCreateCustomFields(target, cufValues, model.getTestCaseCufs(target)));
 		
-		for (CustomField cuf : tcCufs){
-			
-			String importValue =  cufValues.get(cuf.getCode());
-			if (! cuf.isOptional() && StringUtils.isBlank(importValue)){
-				
-			}
-				
-		}
+		// 3 - other checks 
+		
+		// TODO
+		
+		return null;
 		
 		
 	}

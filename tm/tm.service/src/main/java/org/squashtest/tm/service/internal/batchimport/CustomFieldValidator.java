@@ -21,14 +21,23 @@
 package org.squashtest.tm.service.internal.batchimport;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.map.MultiValueMap;
+import org.apache.commons.lang.StringUtils;
+import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
 import org.squashtest.tm.domain.customfield.CustomField;
+import org.squashtest.tm.domain.customfield.CustomFieldOption;
+import org.squashtest.tm.domain.customfield.InputType;
+import org.squashtest.tm.domain.customfield.SingleSelectField;
 
 class CustomFieldValidator {
 	
 	private static final String TRUE = "TRUE";
 	private static final String FALSE = "FALSE";
+	
+	private MultiValueMap optionsByListCode = new MultiValueMap();
 
 	private Model model;
 	
@@ -43,39 +52,33 @@ class CustomFieldValidator {
 	
 	
 	/**
-	 * check the custom fields for the import mode UPDATE
+	 * check the custom fields for the import mode UPDATE. Empty values are legal.
 	 * 
 	 * @param cufs
 	 * @param definitions
 	 * @return
 	 */
 	LogTrain checkUpdateCustomFields(Target target, Map<String, String> cufs, Collection<CustomField> definitions){
-		
+			
 		LogTrain train = new LogTrain();
 		
 		for (CustomField cuf : definitions){
-			
+
+			LogEntry check = null;		
 			String code = cuf.getCode();
 			String value = cufs.get(code);
 			
-			LogEntry check;
-			String[] cufCodeArg = new String[]{ code };
-			
-			switch (cuf.getInputType()){
-			case PLAIN_TEXT : 
-				if (value.length() > 255){
-					check = new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_MAX_SIZE, cufCodeArg, Messages.IMPACT_MAX_SIZE, null);
-				}
-				break;
-			case CHECKBOX : 
-				if (! ( TRUE.equalsIgnoreCase(value) || FALSE.equalsIgnoreCase(value))){
-					
-				}
-				break;
+			// we only care if the value is not blank (blank is legal and means 'no change' )
+			if (! StringUtils.isBlank(value)){
+	
+				check = checkCustomField(target, code, value, cuf, Messages.IMPACT_NO_CHANGE);
+				
+				train.addEntry(check);
 			}
 		}
+
+		return train;
 		
-		return null;
 	}
 	
 	
@@ -88,15 +91,91 @@ class CustomFieldValidator {
 	 * @param definitions the list of custom fields to check against
 	 * @return
 	 */
-	LogTrain strongCustomFieldsCheck(Target target, Map<String, String> cufs, Collection<CustomField> definitions){
-		return null;
+	LogTrain checkCreateCustomFields(Target target, Map<String, String> cufs, Collection<CustomField> definitions){
+		
+		LogTrain train = new LogTrain();
+		
+		for (CustomField cuf : definitions){
+			
+			LogEntry check = null;
+			String code = cuf.getCode();
+			String value = cufs.get(code);			
+	
+			if (! StringUtils.isBlank(value)){
+				check = checkCustomField(target, code, value, cuf, Messages.IMPACT_DEFAULT_VALUE);
+			}
+			else if (! cuf.isOptional()){
+				check = new LogEntry(target, ImportStatus.WARNING, 
+						Messages.ERROR_MANDATORY_CUF, new String[]{code}, 
+						Messages.IMPACT_DEFAULT_VALUE, null);
+			}
+			//else no big deal
+			
+			train.addEntry(check);
+		}
+
+		return train;
 	}
 	
+	private LogEntry checkCustomField(Target target, String inputCode, String inputValue, CustomField cuf, String impactmsg){
+		
+		LogEntry check = null;			
+		InputType type = cuf.getInputType();
+		
+		switch (type){
+		
+		case PLAIN_TEXT : 
+			if (inputValue.length() > 255){
+				String[] cufCodeArg = new String[]{ inputCode };
+				check = new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_MAX_SIZE, cufCodeArg, Messages.IMPACT_MAX_SIZE, null);
+			}
+			break;
+
+		case CHECKBOX : 
+			if (! ( TRUE.equalsIgnoreCase(inputValue) || FALSE.equalsIgnoreCase(inputValue))){
+				String[] cufCodeArg = new String[]{ inputCode };
+				check = new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_UNPARSABLE_CHECKBOX, cufCodeArg, impactmsg, null);
+			}
+			break;
 	
-	// warning : null is not acceptable for parameter 'value'
-	private LogEntry checkCufValueFormat(Target target, String cufName, String value, CustomField cuf){
-		return null;
+		case DATE_PICKER :					
+			// if the weak check is not enough, swap for the string check
+			if (! IsoDateUtils.weakCheckIso8601Date(inputValue)){
+				String[] cufCodeArg = new String[]{ inputCode };
+				check = new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_UNPARSABLE_DATE, cufCodeArg, impactmsg, null);
+			}
+			break;
+
+		case DROPDOWN_LIST :
+			// cache the options if needed
+			registerOptions(cuf);
+			Collection<String> options = (Collection<String>)optionsByListCode.getCollection(cuf.getCode());
+			if (! options.contains(inputValue)){
+				String[] cufCodeArg = new String[]{ inputCode };
+				check = new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_UNPARSABLE_OPTION, cufCodeArg, impactmsg, null);
+			}
+			break;
+			
+
+		default :
+			check = new LogEntry(target, ImportStatus.WARNING, 
+					Messages.ERROR_UNKNOWN_CUF_TYPE, new String[]{ inputCode, cuf.getInputType().toString()}, 
+					Messages.IMPACT_NO_CHANGE, null);
+			break;
+		}
+		
+		return check;
 	}
 	
+
+	private void registerOptions(CustomField cuf){
+		String code = cuf.getCode();
+		if (! optionsByListCode.containsKey(cuf.getCode())){
+			List<CustomFieldOption> options = ((SingleSelectField)cuf).getOptions();
+			for (CustomFieldOption op : options){
+				optionsByListCode.put(code, op.getCode());
+			}
+		}
+	}
 	
 }

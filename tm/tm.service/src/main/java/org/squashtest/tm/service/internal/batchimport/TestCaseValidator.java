@@ -20,20 +20,19 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import java.util.Collection;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_NAME;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_REFERENCE;
+
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.batchimport.Model.Existence;
 import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
 
 class TestCaseValidator {
 	
-	private static final String FIELD_NAME = "TC_NAME";
-	private static final String FIELD_REF = "TC_REFERENCE";
-	
+
 
 	private Model model;
 	
@@ -67,7 +66,7 @@ class TestCaseValidator {
 	LogTrain basicTestCaseChecks(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues){
 		
 		LogTrain logs = new LogTrain();
-		String[] fieldNameErrorArgs = new String[]{FIELD_NAME};	// that variable is simple convenience for logging
+		String[] fieldNameErrorArgs = new String[]{TC_NAME.header};	// that variable is simple convenience for logging
 		
 		// 1 - path must be supplied and and well formed
 		if (! target.isWellFormed()){
@@ -94,7 +93,7 @@ class TestCaseValidator {
 		// 5 - reference, if exists, has length between 0 and 50
 		String reference = testCase.getReference();
 		if (! StringUtils.isBlank(reference) && reference.length() > 50){
-			logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_MAX_SIZE, new String[]{FIELD_REF}));
+			logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_MAX_SIZE, new String[]{TC_REFERENCE.header}));
 		}
 		
 		return logs;

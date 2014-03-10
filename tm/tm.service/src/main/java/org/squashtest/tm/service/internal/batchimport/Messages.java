@@ -22,13 +22,20 @@ package org.squashtest.tm.service.internal.batchimport;
 
 final class Messages {
 
-	public static final String ERROR_MALFORMED_PATH = "message.import.log.error.field.malformedPath";
-	public static final String ERROR_FIELD_MANDATORY = "message.import.log.error.mandatoryColumn";
-	public static final String ERROR_PROJECT_NOT_EXIST = "message.import.log.error.tc.tcPath.projectNotFound";
-	public static final String ERROR_MAX_SIZE = "message.import.log.error.field.maxSize";
+	static final String ERROR_MALFORMED_PATH = "message.import.log.error.field.malformedPath";
+	static final String ERROR_FIELD_MANDATORY = "message.import.log.error.mandatoryColumn";
+	static final String ERROR_MANDATORY_CUF = "message.import.log.error.cuf.noValueForMandatoryCuf";
+	static final String ERROR_PROJECT_NOT_EXIST = "message.import.log.error.tc.tcPath.projectNotFound";
+	static final String ERROR_MAX_SIZE = "message.import.log.error.field.maxSize";
+	static final String ERROR_UNPARSABLE_CHECKBOX = "message.import.log.error.field.notBoolean";
+	static final String ERROR_UNPARSABLE_DATE = "message.import.log.error.field.wrongDateFormat";
+	static final String ERROR_UNPARSABLE_OPTION = "message.import.log.error.listField.wrongValueForListField";
+	static final String ERROR_UNKNOWN_CUF_TYPE = "message.import.log.cuf.unknowntype";
 	
 	
-	public static final String IMPACT_MAX_SIZE = "message.import.log.impact.truncatedValue";
+	static final String IMPACT_MAX_SIZE = "message.import.log.impact.truncatedValue";
+	static final String IMPACT_DEFAULT_VALUE = "message.import.log.impact.useDefaultValue";
+	static final String IMPACT_NO_CHANGE = "message.import.log.impact.fieldNotChange";
 	
 	
 	private Messages(){
