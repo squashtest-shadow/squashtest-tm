@@ -29,14 +29,25 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.service.internal.batchimport.Model.Existence;
+import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 @Component
 @Scope("prototype")
 public class SimulationFacility implements Facility{
-
+	
+	private static final String ROLE_ADMIN = "ROLE_ADMIN";
+	private static final String PERM_CREATE = "CREATE";
+	private static final String PERM_WRITE = "WRITE";
+	private static final String LIBRARY_CLASSNAME = "org.squashtest.tm.domain.testcase.TestCaseLibrary";
+	
 
 	@Inject
 	private SessionFactory sessionFactory;
+	
+	@Inject
+	private PermissionEvaluationService permissionService;
 	
 	
 	private Model model;
@@ -82,27 +93,78 @@ public class SimulationFacility implements Facility{
 	public LogTrain createTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
 		
 		LogTrain logs = new LogTrain();
+		String path = target.getPath();
+		String name = testCase.getName();
 		
 		// 1 - basic verifications
 		logs.append( testCaseValidator.basicTestCaseChecks(target, testCase, cufValues) );
 		
 		// 2 - custom fields (create)
-		logs.append( cufValidator.checkCreateCustomFields(target, cufValues, model.getTestCaseCufs(target)));
+		logs.append( cufValidator.checkCreateCustomFields(target, cufValues, model.getTestCaseCufs(target)) );
 		
 		// 3 - other checks 
+		// 3-1 : names clash
+		TargetStatus status = model.getStatus(target);
+		if ( status.status != Existence.NOT_EXISTS){
+			logs.addEntry( new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_TC_ALREADY_EXISTS, new String[]{target.getPath()}, Messages.IMPACT_TC_WITH_SUFFIX, null));
+		}
+		// 3-2 : permissions. note about the following 'if' : the case where the project doesn't exist (and thus has no id) is already covered in the basic checks.
+		Long libid = model.getProjectStatus(target.getProject()).id;
+		if ( (libid != null) && ( ! permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, PERM_CREATE, libid, LIBRARY_CLASSNAME) ) ){
+			logs.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[]{PERM_CREATE, target.getPath()}) );
+		}
 		
-		// TODO
+		// 3-3 : name and path must be consistent
+		if (! Utils.arePathsAndNameConsistents(path, name)){
+			logs.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_INCONSISTENT_PATH_AND_NAME));
+		}
 		
-		return null;
-		
+		return logs;
 		
 	}
 
 	@Override
-	public LogTrain updateTestCase(long testCaseId, TestCase testCaseData,
+	public LogTrain updateTestCase(TestCaseTarget target, TestCase testCase,
 			Map<String, String> cufValues) {
 
-		throw new UnsupportedOperationException("not implemented yet"); 
+		LogTrain logs = new LogTrain();
+		String path = target.getPath();
+		String name = testCase.getName();
+		
+		TargetStatus status = model.getStatus(target);
+		
+		// if the test case doesn't exist
+		if (status.status == Existence.NOT_EXISTS){
+			logs.addEntry( new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_TC_NOT_FOUND, Messages.IMPACT_TC_CREATED));
+			logs.append(createTestCase(target, testCase, cufValues));
+		}
+		else{
+		
+			// 1 - basic verifications
+			logs.append( testCaseValidator.basicTestCaseChecks(target, testCase, cufValues) );
+			
+			// 2 - custom fields (create)
+			logs.append( cufValidator.checkUpdateCustomFields(target, cufValues, model.getTestCaseCufs(target)) );
+			
+			// 3 - other checks 
+			// 3-1 : check if the test case is renamed and would induce a potential name clash. arePathsAndNameConsistent() will tell us if the test case is renamed
+			if (! Utils.arePathsAndNameConsistents(path, name)){	
+				String newPath = Utils.rename(path, name);
+				TestCaseTarget newTarget = new TestCaseTarget(newPath);
+				TargetStatus newStatus = model.getStatus(newTarget);
+				if (newStatus.status != Existence.NOT_EXISTS){
+					logs.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_TC_CANT_RENAME, new String[]{path, newPath} ));
+				}
+			}
+			// 3-2 : permissions. note about the following 'if' : the case where the project doesn't exist (and thus has no id) is already covered in the basic checks.
+			Long libid = model.getProjectStatus(target.getProject()).id;
+			if ( (libid != null) && ( ! permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, PERM_CREATE, libid, LIBRARY_CLASSNAME) ) ){
+				logs.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[]{PERM_WRITE, target.getPath()}) );
+			}
+
+		}
+		
+		return logs;
 		
 	}
 

@@ -31,11 +31,18 @@ final class Messages {
 	static final String ERROR_UNPARSABLE_DATE = "message.import.log.error.field.wrongDateFormat";
 	static final String ERROR_UNPARSABLE_OPTION = "message.import.log.error.listField.wrongValueForListField";
 	static final String ERROR_UNKNOWN_CUF_TYPE = "message.import.log.cuf.unknowntype";
+	static final String ERROR_TC_ALREADY_EXISTS = "message.import.log.error.tc.alreadyexists";
+	static final String ERROR_NO_PERMISSION = "message.import.log.error.unsuficientRight";
+	static final String ERROR_INCONSISTENT_PATH_AND_NAME = "message.import.log.error.tc.inconsistentNameAndPath";
+	static final String ERROR_TC_NOT_FOUND = "message.import.log.error.tc.notFound";
+	static final String ERROR_TC_CANT_RENAME = "message.import.log.error.tc.cantrename";
 	
 	
 	static final String IMPACT_MAX_SIZE = "message.import.log.impact.truncatedValue";
 	static final String IMPACT_DEFAULT_VALUE = "message.import.log.impact.useDefaultValue";
 	static final String IMPACT_NO_CHANGE = "message.import.log.impact.fieldNotChange";
+	static final String IMPACT_TC_WITH_SUFFIX = "message.import.log.impact.tc.renamed";
+	static final String IMPACT_TC_CREATED = "message.import.log.impact.tc.created";
 	
 	
 	private Messages(){

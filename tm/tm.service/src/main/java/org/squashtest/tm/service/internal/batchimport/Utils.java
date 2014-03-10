@@ -27,6 +27,13 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
+/**
+ * Used internally mostly for operations on paths. Much like an URL instance can check if the protocol, host, path etc are corrects.
+ * 
+ * @author bsiri
+ *
+ */
 final class Utils {
 	
 	// a non terminal name is anything that ends with a (non included) slash and has non zero length. Escaped slashes are valid part of a name.
@@ -100,6 +107,20 @@ final class Utils {
 	static boolean arePathsAndNameConsistents(String path, String name){
 		String pathName = extractProjectName(path);
 		return pathName.equals(name);
+	}
+	
+	
+	/**
+	 * Returns the path with a different test case name. You can't change directory that way (using "..")  
+	 * 
+	 * @param path
+	 * @param name
+	 * @return
+	 */
+	static String rename(String path, String name) {
+		String oldname = extractTestCaseName(path);
+		String oldpatt = "\\Q"+oldname+"\\E$";
+		return path.replaceAll(oldpatt, name);
 	}
 	
 	

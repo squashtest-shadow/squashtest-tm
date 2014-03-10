@@ -30,7 +30,7 @@ public interface Facility {
 	Model getModel();
 
 	LogTrain createTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues);
-	LogTrain updateTestCase(long testCaseId, TestCase testCaseData, Map<String, String> cufValues);
+	LogTrain updateTestCase(TestCaseTarget target, TestCase testCaseData, Map<String, String> cufValues);
 	LogTrain deleteTestCase(long testCaseId);
 	LogTrain deleteTestCase(TestCase testCase);
 	

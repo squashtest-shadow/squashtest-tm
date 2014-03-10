@@ -184,7 +184,8 @@ public class TestCaseLibraryNavigationServiceImpl extends
 
 		if (!library.isContentNameAvailable(testCase.getName())) {
 			throw new DuplicateNameException(testCase.getName(), testCase.getName());
-		} else {
+		} 
+		else {
 			library.addContent(testCase);
 			testCaseDao.safePersist(testCase);
 			createCustomFieldValuesForTestCase(testCase);

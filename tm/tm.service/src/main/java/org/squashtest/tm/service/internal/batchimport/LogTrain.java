@@ -58,4 +58,17 @@ class LogTrain {
 	}
 	
 	
+	void setForAll(int lineNumber){
+		for (LogEntry entry : entries){
+			entry.setLine(lineNumber);
+		}
+	}
+	
+	void setForAll(ImportMode mode){
+		for (LogEntry entry : entries) {
+			entry.setMode(mode);
+		}
+	}
+	
+	
 }

@@ -105,4 +105,16 @@ class UtilsTest extends Specification{
 		then :
 			res == ["project 1", "project \\/2"]
 	}
+	
+	
+	@Unroll("should rename #path to #newpath")
+	def "should 'rename' a path with a new name"(){
+		expect:
+			newpath == Utils.rename(path, newname)
+		
+		where :
+			path					| 	newname			| newpath
+			"/bob/robert/toto"		|	"mike"			| "/bob/robert/mike"
+			"/home/couch"			|	"bed"			| "/home/bed"
+	}
 }

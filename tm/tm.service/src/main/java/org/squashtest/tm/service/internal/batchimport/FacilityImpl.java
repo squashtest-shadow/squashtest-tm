@@ -64,7 +64,7 @@ public class FacilityImpl implements Facility {
 	}
 
 	@Override
-	public LogTrain updateTestCase(long testCaseId, TestCase testCaseData,
+	public LogTrain updateTestCase(TestCaseTarget target, TestCase testCaseData,
 			Map<String, String> cufValues) {
 		throw new UnsupportedOperationException("not implemented yet"); 
 	}
