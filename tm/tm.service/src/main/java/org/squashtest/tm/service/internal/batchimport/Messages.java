@@ -22,9 +22,13 @@ package org.squashtest.tm.service.internal.batchimport;
 
 final class Messages {
 
-	public static final String MALFORMED_PATH = "message.import.log.error.field.malformedPath";
-	public static final String NO_NAME = "message.import.log.error.mandatoryColumn";
-	public static final String PROJECT_DO_NOT_EXIST = "message.import.log.error.tc.tcPath.projectNotFound";
+	public static final String ERROR_MALFORMED_PATH = "message.import.log.error.field.malformedPath";
+	public static final String ERROR_FIELD_MANDATORY = "message.import.log.error.mandatoryColumn";
+	public static final String ERROR_PROJECT_NOT_EXIST = "message.import.log.error.tc.tcPath.projectNotFound";
+	public static final String ERROR_MAX_SIZE = "message.import.log.error.field.maxSize";
+	
+	
+	public static final String IMPACT_MAX_SIZE = "message.import.log.impact.truncatedValue";
 	
 	
 	private Messages(){

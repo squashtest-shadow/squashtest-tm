@@ -60,6 +60,34 @@ public class LogEntry implements Comparable<LogEntry>{
 	}
 
 
+	
+
+
+	public LogEntry(Target target, ImportStatus status, String i18nError,
+			Object[] errorArgs) {
+		super();
+		this.target = target;
+		this.status = status;
+		this.i18nError = i18nError;
+		this.errorArgs = errorArgs;
+	}
+
+
+
+
+	public LogEntry(Target target, ImportStatus status,
+			String i18nError, Object[] errorArgs, String i18nImpact,
+			Object[] impactArgs) {
+		super();
+		this.target = target;
+		this.status = status;
+		this.i18nError = i18nError;
+		this.i18nImpact = i18nImpact;
+		this.errorArgs = errorArgs;
+		this.impactArgs = impactArgs;
+	}
+
+
 
 
 	public LogEntry(Integer line, Target target, ImportMode mode,

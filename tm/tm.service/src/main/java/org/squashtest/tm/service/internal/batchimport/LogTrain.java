@@ -29,9 +29,11 @@ class LogTrain {
 	private boolean criticalErrors = false;
 	
 	void addEntry(LogEntry entry){
-		entries.add(entry);
-		if (entry.getStatus() == ImportStatus.FAILURE){
-			criticalErrors = true;
+		if (entry != null){
+			entries.add(entry);
+			if (entry.getStatus() == ImportStatus.FAILURE){
+				criticalErrors = true;
+			}
 		}
 	}
 	

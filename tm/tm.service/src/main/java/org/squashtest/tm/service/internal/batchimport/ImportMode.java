@@ -22,9 +22,6 @@ package org.squashtest.tm.service.internal.batchimport;
 
 public enum ImportMode {
 	CREATE,
-	REPLACE,
 	UPDATE,
-	MERGE,
-	DELETE,
-	CREATE_MERGE;
+	DELETE;
 }

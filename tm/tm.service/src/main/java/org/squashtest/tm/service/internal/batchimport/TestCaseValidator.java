@@ -20,22 +20,24 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
 
 import org.apache.commons.lang.StringUtils;
+import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.batchimport.Model.Existence;
 import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
-import org.squashtest.tm.validation.ValidatorFactoryBean;
 
 class TestCaseValidator {
+	
+	private static final String FIELD_NAME = "TC_NAME";
+	private static final String FIELD_REF = "TC_REFERENCE";
+	
 
 	private Model model;
-	private Validator validator = ValidatorFactoryBean.getInstance().getValidator();
+	
+	//private Validator validator = ValidatorFactoryBean.getInstance().getValidator();
 
 	Model getModel() {
 		return model;
@@ -52,6 +54,7 @@ class TestCaseValidator {
 	 *  It checks : 
 	 *  - the path is well formed (failure)
 	 *  - the test case has a name (failure)
+	 *  - the test case name has length between 0 and 255
 	 *  - the project exists (failure)
 	 *  - the size of fields that are restricted in size  (warning)
 	 *  - the format of the custom fields (lists, dates and checkbox) (warning)
@@ -64,42 +67,40 @@ class TestCaseValidator {
 	LogTrain basicTestCaseChecks(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues){
 		
 		LogTrain logs = new LogTrain();
+		String[] fieldNameErrorArgs = new String[]{FIELD_NAME};	// that variable is simple convenience for logging
 		
 		// 1 - path must be supplied and and well formed
 		if (! target.isWellFormed()){
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.MALFORMED_PATH));
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MALFORMED_PATH));
 		}
 		
 		// 2 - name must be supplied
-		if (StringUtils.isBlank(testCase.getName())){
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.NO_NAME));
+		String name = testCase.getName();
+		if (StringUtils.isBlank(name)){
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_FIELD_MANDATORY, fieldNameErrorArgs));
 		}
 		
 		// 3 - the project actually exists
 		TargetStatus projectStatus = model.getProjectStatus(target.getProject()); 
 		if (projectStatus.getStatus() != Existence.EXISTS){
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.PROJECT_DO_NOT_EXIST));
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PROJECT_NOT_EXIST));
 		}
 		
-		// 4 - fields with restricted size are indeed restricted
-		
-		/*
-		 * L'utilisation d'un validateur va masquer l'origine des problèmes et simplement 
-		 * renvoyer un message d'erreur. Par exemple impossible de savoir si un champ est 
-		 * malformé à cause de sa taille, ou s'il est null etc.
-		 * 
-		 * De deux choses l'une :
-		 * 	- soit on code en dur la validation sur la taille (actuellement de 0 à 255), 
-		 *  - soit on retourne les messages de validation tel quel 
-		 */
-		
-		Set<ConstraintViolation<TestCase>> validationErrors= validator.validate(testCase);
-		for (ConstraintViolation<TestCase> violation : validationErrors){
-			violation.getConstraintDescriptor().
+		// 4 - name has length between 0 and 255		
+		if (name != null && name.length() > 255){
+			logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_MAX_SIZE, fieldNameErrorArgs, Messages.IMPACT_MAX_SIZE, null));
 		}
-		
+
+		// 5 - reference, if exists, has length between 0 and 50
+		String reference = testCase.getReference();
+		if (! StringUtils.isBlank(reference) && reference.length() > 50){
+			logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_MAX_SIZE, new String[]{FIELD_REF}));
+		}
 		
 		return logs;
 	}
+	
+	
+
 	
 }

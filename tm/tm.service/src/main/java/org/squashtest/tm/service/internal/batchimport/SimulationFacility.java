@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.validation.Validator;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.SessionFactory;
@@ -42,16 +41,16 @@ public class SimulationFacility implements Facility{
 	@Inject
 	private SessionFactory sessionFactory;
 	
-	@Inject
-	private Validator validator;
 	
 	private Model model;
 	private TestCaseValidator testCaseValidator = new TestCaseValidator();
+	private CustomFieldValidator cufValidator = new CustomFieldValidator(); 
 	
 	
 	public void setModel(Model model){
 		this.model = model;
 		testCaseValidator.setModel(model);
+		cufValidator.setModel(model);
 	}
 	
 	
@@ -87,7 +86,9 @@ public class SimulationFacility implements Facility{
 		
 		LogTrain logs = new LogTrain();
 		
-
+		// 1 - basic verifications
+		logs.append( testCaseValidator.basicTestCaseChecks(target, testCase, cufValues) );
+		
 		// 2 - mandatory custom fields 
 		Collection<CustomField> tcCufs = model.getTestCaseCufs(target);
 		
