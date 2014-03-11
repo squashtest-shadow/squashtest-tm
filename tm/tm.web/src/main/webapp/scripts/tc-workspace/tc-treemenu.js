@@ -64,9 +64,18 @@ define(['jquery', './utils', './permissions-rules',
 	
 	function bindTreeEvents(){
 		
-		var btnselector =   "#new-folder-tree-button, #new-test-case-tree-button, #copy-node-tree-button, #paste-node-tree-button, "+
-							"#rename-node-tree-button, #import-excel-tree-button, #import-links-excel-tree-button, #export-tree-button, "+
-							"#delete-node-tree-button, #search-tree-button";
+		var btnselector = [
+			"#new-folder-tree-button", 
+			"#new-test-case-tree-button", 
+			"#copy-node-tree-button", 
+			"#paste-node-tree-button", 
+			"#rename-node-tree-button", 
+			"#import-excel-tree-button", 
+			"#import-links-excel-tree-button", 
+			"#export-tree-button", 
+			"#delete-node-tree-button", 
+			"#search-tree-button"
+		].join(", ");
 		
 		var buttons = [];
 		
