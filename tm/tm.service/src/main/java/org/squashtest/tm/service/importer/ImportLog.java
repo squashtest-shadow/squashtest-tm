@@ -28,7 +28,6 @@ import java.util.SortedSet;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.squashtest.tm.service.internal.batchimport.EntityType;
 import org.squashtest.tm.service.internal.batchimport.LogEntry;
-import org.squashtest.tm.service.internal.batchimport.LogTrain;
 
 public class ImportLog {
 
@@ -59,11 +58,6 @@ public class ImportLog {
 		logEntriesPerType.put(logEntry.getTarget().getType(), logEntry);
 	}
 
-	public void addLogTrain(LogTrain train){
-		for (LogEntry entry : train.getEntries()){
-			logEntriesPerType.put(entry.getTarget().getType(), entry);
-		}
-	}
 
 	public Collection<LogEntry> findAllFor(EntityType type){
 		return logEntriesPerType.getCollection(type);

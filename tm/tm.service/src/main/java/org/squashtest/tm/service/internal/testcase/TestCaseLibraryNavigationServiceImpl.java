@@ -46,6 +46,7 @@ import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
+import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.internal.batchexport.TestCaseExcelExporterService;
 import org.squashtest.tm.service.internal.importer.TestCaseImporter;
@@ -260,6 +261,11 @@ public class TestCaseLibraryNavigationServiceImpl extends
 		}
 		// **************************end [Issue 2061]********************
 		return summary;
+	}
+	
+	@Override
+	public ImportLog importExcelTestCase(File excelFile) {
+		throw new UnsupportedOperationException("not implemented yet");
 	}
 
 	@Override
