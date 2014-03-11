@@ -24,11 +24,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.squashtest.tm.bugtracker.definition.RemoteCategory;
+import org.squashtest.tm.bugtracker.definition.RemoteFieldStub;
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemotePriority;
 import org.squashtest.tm.bugtracker.definition.RemoteStatus;
 import org.squashtest.tm.bugtracker.definition.RemoteUser;
 import org.squashtest.tm.bugtracker.definition.RemoteVersion;
+
 
 
 /*
@@ -124,22 +126,38 @@ public class AdvancedIssue implements RemoteIssue {
 
 	@Override
 	public RemoteUser getAssignee() {
-		return fieldValues.get("assignee");
+		RemoteUser user = fieldValues.get("assignee");
+		if(user == null){
+			user = new RemoteFieldStub();	
+		}
+		return user;
 	}
 
 	@Override
 	public RemotePriority getPriority() {
-		return fieldValues.get("priority");
+		RemotePriority priority = fieldValues.get("priority");
+		if(priority == null){
+			priority = new RemoteFieldStub();
+		}
+		return priority;
 	}
 
 	@Override
 	public RemoteCategory getCategory() {
-		return fieldValues.get("category");
+		RemoteCategory category =  fieldValues.get("category");
+		if(category == null){
+			category = new RemoteFieldStub();
+		}
+		return category;
 	}
 
 	@Override
 	public RemoteVersion getVersion() {
-		return fieldValues.get("version");
+		RemoteVersion version = fieldValues.get("version");
+		if(version == null){
+			version = new RemoteFieldStub();
+		}
+		return version;
 	}
 
 	@Override
