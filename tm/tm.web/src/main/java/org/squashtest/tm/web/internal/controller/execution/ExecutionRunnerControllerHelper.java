@@ -32,6 +32,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.squashtest.tm.domain.attachment.Attachment;
+import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
@@ -112,7 +113,6 @@ public class ExecutionRunnerControllerHelper {
 		int stepOrder = 0;
 		int total = execution.getSteps().size();
 
-		Set<ExecutionStatus> statusSet = Collections.emptySet();
 		List<DenormalizedFieldValue> denormalizedFieldValues = Collections.emptyList();
 		List<CustomFieldValue> customFieldValues = Collections.emptyList();
 		Set<Attachment> attachments = Collections.emptySet();
@@ -120,7 +120,6 @@ public class ExecutionRunnerControllerHelper {
 		//TODO : check why we could want to process that page while part of the model is null (it should fail earlier when the DB cannot find this step)
 		if (executionStep != null) {
 			stepOrder = executionStep.getExecutionStepOrder();
-			statusSet = executionStep.getLegalStatusSet();
 			denormalizedFieldValues = denormalizedFieldValueFinder.findAllForEntity(executionStep);
 			customFieldValues = customFieldValueFinderService.findAllCustomFieldValues(executionStep);
 			attachments = attachmentHelper.findAttachments(executionStep);
@@ -131,7 +130,6 @@ public class ExecutionRunnerControllerHelper {
 		model.addAttribute("denormalizedFieldValues", denormalizedFieldValues);
 		model.addAttribute("customFieldValues", customFieldValues);
 		model.addAttribute("totalSteps", total);
-		model.addAttribute("executionStatus", statusSet);
 		model.addAttribute("hasNextStep", stepOrder != (total - 1));
 		model.addAttribute("attachments", attachments);
 		model.addAttribute("allowsUntestable", execution.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
@@ -164,7 +162,7 @@ public class ExecutionRunnerControllerHelper {
 		populatePopupMessages(state, locale);
 		populatePrologueStatus(executionId, state);
 		populateEntitiesInfos(executionId, state, contextPath);
-
+				
 		return state;
 	}
 
@@ -229,6 +227,10 @@ public class ExecutionRunnerControllerHelper {
 		state.setCurrentStepIndex(stepOrder); // +1 here : the interface uses 1-based counter
 		state.setCurrentStepStatus(step.getExecutionStatus());
 
+		CampaignLibrary lib = step.getProject().getCampaignLibrary();		
+		state.setAllowsSettled(lib.allowsStatus(ExecutionStatus.SETTLED));
+		state.setAllowsUntestable(lib.allowsStatus(ExecutionStatus.UNTESTABLE));
+		
 	}
 
 	private void populatePopupMessages(RunnerState state, Locale locale) {
