@@ -112,7 +112,7 @@
     					dataType : 'json'
     				}).success(function(){
     					table.refresh();
-    					eventBus.workspace.trigger("node.update-reqCoverage", {targetIds : ids});
+    					eventBus.trigger("node.update-reqCoverage", {targetIds : ids});
     				})
     			});
     			</c:if>			

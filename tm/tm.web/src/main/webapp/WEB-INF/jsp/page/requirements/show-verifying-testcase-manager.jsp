@@ -81,7 +81,6 @@
 require([ "common" ], function() {
 	require([ "jquery","workspace.event-bus", "workspace.tree-event-handler", "jqueryui", "jquery.squash.messagedialog", "squashtable" ], function($, eventBus, treehandler) {
 		$(function() {
-			eventBus.addPermanentListener(treehandler);
 			//the case 'get ids from the research tab' is disabled here, waiting for refactoring. 
 			function getTestCasesIds(){
 				var ids =  [];
@@ -112,11 +111,12 @@ require([ "common" ], function() {
 							summaryRoot.append('<li>' + message + '</li>');
 						}
 					}
+					
+  					if (summaryRoot.children().length > 0) {
+  						$( "#add-summary-dialog" ).messageDialog("open");
+  					}
 				}
 					
-				if (summaryRoot.children().length > 0) {
-					$( "#add-summary-dialog" ).messageDialog("open");
-				}
 			};
 			
 			$( '#add-items-button' ).click(function() {
@@ -153,7 +153,7 @@ require([ "common" ], function() {
 			});
 			
 			function sendUpdateTree(ids){
-				eventBus.workspace.trigger("node.update-reqCoverage", {targetIds : ids});
+				eventBus.trigger("node.update-reqCoverage", {targetIds : ids});
 			}
 		});
 	});
