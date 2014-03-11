@@ -53,13 +53,15 @@ class ExcelWorkbookParserBuilderTest extends Specification {
 		
 		then:
 		wmd.worksheetDefs[TEST_CASES_SHEET]
-		wmd.worksheetDefs[TEST_CASES_SHEET].columnDefs.size() == TestCaseSheetColumn.values().length
+		wmd.worksheetDefs[TEST_CASES_SHEET].stdColumnDefs.values()*.type as Set == TestCaseSheetColumn.values() as Set
+		wmd.worksheetDefs[TEST_CASES_SHEET].customFieldDefs*.code as Set == ["<CODE1>", "<CODE2>"] as Set
 		wmd.worksheetDefs[STEPS_SHEET]
-		wmd.worksheetDefs[STEPS_SHEET].columnDefs.size() == StepSheetColumn.values().length
+		wmd.worksheetDefs[STEPS_SHEET].stdColumnDefs.values()*.type as Set == StepSheetColumn.values() as Set
+		wmd.worksheetDefs[STEPS_SHEET].customFieldDefs*.code == ["<CODE>"]
 		wmd.worksheetDefs[PARAMETERS_SHEET]
-		wmd.worksheetDefs[PARAMETERS_SHEET].columnDefs.size() == ParameterSheetColumn.values().length
+		wmd.worksheetDefs[PARAMETERS_SHEET].stdColumnDefs.values()*.type as Set == ParameterSheetColumn.values() as Set
 		wmd.worksheetDefs[DATASETS_SHEET]
-		wmd.worksheetDefs[DATASETS_SHEET].columnDefs.values()*.type as Set == DatasetSheetColumn.values() as Set
+		wmd.worksheetDefs[DATASETS_SHEET].stdColumnDefs.values()*.type as Set == DatasetSheetColumn.values() as Set
 
 		cleanup:
 		IOUtils.closeQuietly(is);

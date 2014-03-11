@@ -21,13 +21,38 @@
 
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
+import javax.validation.constraints.NotNull;
+
 /**
+ * Definition of a custom field column.
+ * 
  * @author Gregory Fouquet
  * 
  */
-public interface ColumnDef {
+public class CustomFieldColumnDef implements ColumnDef {
+	private final int index;
+	private final String code;
+	// private final TemplateCustomFieldParser parser ?
+	
+	
+	CustomFieldColumnDef(@NotNull String code, int index) {
+		super();
+		this.index = index;
+		this.code = code;
+	}
+
 	/**
 	 * @return the index
 	 */
-	int getIndex();
+	public int getIndex() {
+		return index;
+	}
+
+	/**
+	 * @return the code
+	 */
+	public String getCode() {
+		return code;
+	}
+
 }

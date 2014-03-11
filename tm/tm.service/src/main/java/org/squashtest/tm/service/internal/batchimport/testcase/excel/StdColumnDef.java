@@ -22,12 +22,32 @@
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
 /**
+ * Definition of a "standard" column in an import file. Standard columns have predifined headers and behaviour.
+ * 
  * @author Gregory Fouquet
  * 
  */
-public interface ColumnDef {
+public class StdColumnDef<COL extends TemplateColumn> implements ColumnDef {
+	private final COL type;
+	private final int index;
+
+	StdColumnDef(COL type, int index) {
+		super();
+		this.type = type;
+		this.index = index;
+	}
+
+	/**
+	 * @return the type
+	 */
+	public COL getType() {
+		return type;
+	}
+
 	/**
 	 * @return the index
 	 */
-	int getIndex();
+	public int getIndex() {
+		return index;
+	}
 }

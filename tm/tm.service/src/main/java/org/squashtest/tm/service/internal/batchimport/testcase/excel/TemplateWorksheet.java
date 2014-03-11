@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
 import java.util.HashMap;
 import java.util.Map;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateCustomFieldPattern.*;
 
 /**
  * Enum of worksheet which are expected in the import file.
@@ -31,8 +32,8 @@ import java.util.Map;
  * 
  */
 public enum TemplateWorksheet {
-	TEST_CASES_SHEET("TEST_CASES", TestCaseSheetColumn.class),
-	STEPS_SHEET("STEPS", StepSheetColumn.class), 
+	TEST_CASES_SHEET("TEST_CASES", TestCaseSheetColumn.class, TEST_CASE_CUSTOM_FIELD),
+	STEPS_SHEET("STEPS", StepSheetColumn.class, STEP_CUSTOM_FIELD), 
 	PARAMETERS_SHEET("PARAMETERS", ParameterSheetColumn.class), 
 	DATASETS_SHEET("DATASETS", DatasetSheetColumn.class);
 
@@ -41,10 +42,19 @@ public enum TemplateWorksheet {
 
 	public final String sheetName;
 	public final Class<? extends Enum<?>> columnTypesClass;
+	public final TemplateCustomFieldPattern customFieldPattern;
 
 	private <E extends Enum<?> & TemplateColumn> TemplateWorksheet(String name, Class<E> columnEnumType) {
 		this.sheetName = name;
 		this.columnTypesClass = columnEnumType;
+		this.customFieldPattern = TemplateCustomFieldPattern.NO_CUSTOM_FIELD;
+	}
+
+	private <E extends Enum<?> & TemplateColumn> TemplateWorksheet(String name, Class<E> columnEnumType,
+			TemplateCustomFieldPattern customFieldPattern) {
+		this.sheetName = name;
+		this.columnTypesClass = columnEnumType;
+		this.customFieldPattern = customFieldPattern;
 	}
 
 	/**
@@ -63,9 +73,10 @@ public enum TemplateWorksheet {
 		}
 		return ENUM_BY_SHEET_NAME.get(name);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public <E extends TemplateColumn> E[] getColumnTypes() {
 		return (E[]) TemplateColumnUtils.values(columnTypesClass);
 	}
+
 }

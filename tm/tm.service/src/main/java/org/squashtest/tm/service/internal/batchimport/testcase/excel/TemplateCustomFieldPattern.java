@@ -21,13 +21,42 @@
 
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
+ * Enum which defines custom field pattern used in import template.
+ * 
  * @author Gregory Fouquet
  * 
  */
-public interface ColumnDef {
+public enum TemplateCustomFieldPattern {
+	TEST_CASE_CUSTOM_FIELD("TC_CUF_"), STEP_CUSTOM_FIELD("TC_STEP_CUF_"), NO_CUSTOM_FIELD;
+
+	private final String prefix;
+
+	private TemplateCustomFieldPattern() {
+		prefix = null;
+	}
+
+	private TemplateCustomFieldPattern(String prefix) {
+		this.prefix = prefix;
+	}
+
 	/**
-	 * @return the index
+	 * Parses a custom field code from a column header. Headers leading to a blank code will be considered as
+	 * non-parsing and produce a <code>null</code> result.
+	 * 
+	 * @param header
+	 * @return the field code. When the header don't parse, returns <code>null</code>.
 	 */
-	int getIndex();
+	public String parseFieldCode(String header) {
+		if (prefix == null || header == null) {
+			return null;
+		}
+		if (header.startsWith(prefix)) {
+			return StringUtils.trimToNull(header.substring(prefix.length()));
+		}
+		return null;
+	}
+
 }

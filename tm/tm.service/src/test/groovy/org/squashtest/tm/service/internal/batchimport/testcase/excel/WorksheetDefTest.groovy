@@ -21,11 +21,13 @@
 
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
-import org.junit.Test;
-import org.squashtest.tm.service.internal.repository.hibernate.HibernateCustomCustomFieldBindingDao.NewBindingPosition;
 
 import spock.lang.Specification;
 import spock.lang.Unroll;
+
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.*
+
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.*
 
 /**
  * @author Gregory Fouquet
@@ -36,7 +38,7 @@ class WorksheetDefTest extends Specification {
 	def "colset #cols should produce a valid worksheet"() {
 		given:
 		WorksheetDef wd = new WorksheetDef(TemplateWorksheet.TEST_CASES_SHEET)
-		cols.each { wd.addColumnDef(new ColumnDef(it, 1)) }
+		cols.each { wd.addColumnDef(new StdColumnDef(it, 1)) }
 		
 		when:
 		wd.validate()
@@ -56,7 +58,7 @@ class WorksheetDefTest extends Specification {
 	def "colset #cols should produce an invalid worksheet"() {
 		given:
 		WorksheetDef wd = new WorksheetDef(TemplateWorksheet.TEST_CASES_SHEET)
-		cols.each { wd.addColumnDef(new ColumnDef(it, 1)) }
+		cols.each { wd.addColumnDef(new StdColumnDef(it, 1)) }
 		
 		when:
 		wd.validate()
@@ -73,5 +75,66 @@ class WorksheetDefTest extends Specification {
 		]
 		
 	}
+	
+	@Unroll
+	def "header #header should be a custom field : #isField"() {
+		given:
+		WorksheetDef wd = new WorksheetDef(TEST_CASES_SHEET)
+		
+		expect:
+		wd.isCustomFieldHeader(header) == isField
+		
+		where:
+		header                | isField
+		"TC_CUF_  "           | false 
+		"TC_CUF_"             | false 
+		null                  | false
+		"    "                | false
+		"TC_CUF_s'çz_gîobn x" | true
+		"TC_CUF_FOO"          | true
+	}
+	
+	def "should add a std column"() {
+		given:
+		WorksheetDef wd = new WorksheetDef(TEST_CASES_SHEET)
+		
+		when:
+		def col = wd.addColumnDef("TC_NAME", 10)
+		
+		then:
+		col.type == TC_NAME
+		col.index == 10
+		wd.stdColumnDefs[TC_NAME] == col
+		wd.customFieldDefs.isEmpty()
+		
+	}
 
+	def "should add a custom field column"() {
+		given:
+		WorksheetDef wd = new WorksheetDef(TEST_CASES_SHEET)
+		
+		when:
+		def col = wd.addColumnDef("TC_CUF_HANDCUF", 10)
+		
+		then:
+		col.code == "HANDCUF"
+		col.index == 10
+		wd.customFieldDefs == [col]
+		wd.stdColumnDefs.isEmpty()
+
+	}
+
+	def "should not add any column"() {
+		given:
+		WorksheetDef wd = new WorksheetDef(TEST_CASES_SHEET)
+		
+		when:
+		def col = wd.addColumnDef("NOT A KNOWN COLUMN", 10)
+		
+		then:
+		col == null
+		wd.customFieldDefs.isEmpty()
+		wd.stdColumnDefs.isEmpty()
+
+	}
 }

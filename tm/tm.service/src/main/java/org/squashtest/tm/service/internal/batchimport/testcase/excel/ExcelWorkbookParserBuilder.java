@@ -68,6 +68,8 @@ class ExcelWorkbookParserBuilder {
 		WorkbookMetaData wmd = buildMetaData(wb);
 		wmd.validate();
 
+		LOGGER.trace("Metamodel is built, will create a parser based on the metamodel");
+
 		return new ExcelWorkbookParser();
 	}
 
@@ -76,6 +78,8 @@ class ExcelWorkbookParserBuilder {
 	 * @return
 	 */
 	private WorkbookMetaData buildMetaData(Workbook wb) {
+		LOGGER.trace("Building metamodel for workbook");
+
 		WorkbookMetaData wmd = new WorkbookMetaData();
 		processSheets(wb, wmd);
 
@@ -86,14 +90,19 @@ class ExcelWorkbookParserBuilder {
 	private void processSheets(Workbook wb, WorkbookMetaData wmd) {
 		for (int iSheet = 0; iSheet < wb.getNumberOfSheets(); iSheet++) {
 			Sheet ws = wb.getSheetAt(iSheet);
-			TemplateWorksheet sheetType = TemplateWorksheet.coerceFromSheetName(ws.getSheetName());
+			String sheetName = ws.getSheetName();
+			TemplateWorksheet sheetType = TemplateWorksheet.coerceFromSheetName(sheetName);
 
 			if (sheetType != null) {
+				LOGGER.trace("Worksheet named '{}' will be added to metamodel as standard worksheet {}", sheetName,
+						sheetType);
+
 				WorksheetDef<?> wd = new WorksheetDef(sheetType);
 				wmd.addWorksheetDef(wd);
 				populateColumnDefs(wd, ws);
 			} else {
 				LOGGER.trace("Skipping unrecognized worksheet named '{}'", ws.getSheetName());
+
 			}
 		}
 	}
@@ -110,17 +119,7 @@ class ExcelWorkbookParserBuilder {
 			Cell cell = headerRow.getCell(iCell);
 			try {
 				String header = cell.getStringCellValue();
-
-				TemplateColumn colType = TemplateColumnUtils.coerceFromHeader(wd.getWorksheetType().columnTypesClass,
-						header);
-
-				if (colType != null) {
-					wd.addColumnDef(new ColumnDef(colType, iCell));
-				} else {
-					// TODO PROCESS CUSTOM FIELDS HEADERS !
-					// unknown columns are ditched
-				}
-
+				wd.addColumnDef(header, iCell);
 			} catch (IllegalStateException e) {
 				// seems this cell aint a string cell...
 				LOGGER.trace(

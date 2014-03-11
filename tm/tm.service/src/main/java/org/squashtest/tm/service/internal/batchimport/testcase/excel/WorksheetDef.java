@@ -28,6 +28,9 @@ import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Definition of a worksheet that is to be processd by the importer.
  * 
@@ -35,8 +38,11 @@ import javax.validation.constraints.NotNull;
  * 
  */
 class WorksheetDef<COL extends TemplateColumn> {
+	private static final Logger LOGGER = LoggerFactory.getLogger(WorksheetDef.class);
+
 	private final TemplateWorksheet worksheetType;
-	private final Map<COL, ColumnDef<COL>> columnDefs = new HashMap<COL, ColumnDef<COL>>();
+	private final Map<COL, StdColumnDef<COL>> stdColumnDefs = new HashMap<COL, StdColumnDef<COL>>();
+	private final List<CustomFieldColumnDef> customFieldDefs = new ArrayList<CustomFieldColumnDef>();
 
 	public WorksheetDef(@NotNull TemplateWorksheet worksheetType) {
 		super();
@@ -53,8 +59,8 @@ class WorksheetDef<COL extends TemplateColumn> {
 	/**
 	 * @param columnDef
 	 */
-	void addColumnDef(@NotNull ColumnDef<COL> columnDef) {
-		columnDefs.put(columnDef.getType(), columnDef);
+	private void addColumnDef(@NotNull StdColumnDef<COL> columnDef) {
+		stdColumnDefs.put(columnDef.getType(), columnDef);
 
 	}
 
@@ -80,6 +86,38 @@ class WorksheetDef<COL extends TemplateColumn> {
 	}
 
 	private boolean noColumnDef(TemplateColumn col) {
-		return columnDefs.get(col) == null;
+		return stdColumnDefs.get(col) == null;
+	}
+
+	public boolean isCustomFieldHeader(String header) {
+		return parseCustomFieldHeader(header) != null;
+	}
+
+	@SuppressWarnings("unchecked")
+	ColumnDef addColumnDef(String header, int colIndex) {
+		ColumnDef res = null;
+
+		COL colType = (COL) TemplateColumnUtils.coerceFromHeader(worksheetType.columnTypesClass, header);
+
+		if (colType != null) {
+			LOGGER.trace("Column named '{}' will be added to metamodel as standard column {}", header, colType);
+			res = new StdColumnDef<COL>(colType, colIndex);
+			addColumnDef((StdColumnDef<COL>) res);
+
+		} else if (isCustomFieldHeader(header)) {
+			LOGGER.trace("Column named '{}' will be added to metamodel as custom field", header);
+			res = new CustomFieldColumnDef(parseCustomFieldHeader(header), colIndex);
+			customFieldDefs.add((CustomFieldColumnDef) res);
+
+		} else {
+			LOGGER.trace("Column named '{}' will be ignored", header);
+			// else unknown columns are ditched
+		}
+
+		return res;
+	}
+
+	private String parseCustomFieldHeader(String header) {
+		return worksheetType.customFieldPattern.parseFieldCode(header);
 	}
 }
