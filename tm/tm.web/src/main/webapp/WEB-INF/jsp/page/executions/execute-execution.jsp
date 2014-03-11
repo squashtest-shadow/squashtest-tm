@@ -360,7 +360,7 @@
                     <c:if test="${not empty denormalizedFieldValues }">
                     $.get("${denormalizedFieldsValuesURL}?denormalizedFieldHolderId=${executionStep.boundEntityId}&denormalizedFieldHolderType=${executionStep.boundEntityType}")
                       .success(function(data){
-                        var postLabel = " (" + $("#df-post-label").text().trim() +")";
+                        var postLabel = " (" + $.trim($("#df-post-label").text()) +")";
                         
                         $("#dfv-information-table")
                           .append(data)

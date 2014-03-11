@@ -149,7 +149,7 @@
 			});
 	
             <c:if test="${not empty denormalizedFieldValues }">
-            var postLabel = " (" + $("#df-post-label").text().trim() +")";
+            var postLabel = " (" + $.trim($("#df-post-label").text()) +")";
             
             $.get("${denormalizedFieldsValuesURL}?denormalizedFieldHolderId=${executionStep.boundEntityId}&denormalizedFieldHolderType=${executionStep.boundEntityType}")
               .success(function(data){
