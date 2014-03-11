@@ -238,7 +238,7 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	// same for requirement import
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary', 'IMPORT') or hasRole('ROLE_ADMIN')")
-	public ImportSummary importExcelTestCase(InputStream archiveStream, long libraryId, String encoding) {
+	public ImportSummary importZipTestCase(InputStream archiveStream, long libraryId, String encoding) {
 		// **************************[Issue 2061]********************
 		// see [] save existing test cases ids
 		List<Long> alreadyExistingTestCases = testCaseDao.findAllTestCasesIdsByLibrary(libraryId);

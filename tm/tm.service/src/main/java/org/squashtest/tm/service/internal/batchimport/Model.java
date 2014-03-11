@@ -80,6 +80,21 @@ public class Model {
 	 * 
 	 * ***********************************************************************************************************************************/
 	private Map<TestCaseTarget, TargetStatus> testCaseStatusByTarget = new HashMap<TestCaseTarget, TargetStatus>();
+	
+	
+	/* ***********************************************************************************************************************************
+	 * 
+	 * renamedTestCaseMap : 
+	 * 
+	 * in some occurrences a test case could be renamed :
+	 * 	- attempts to create a test case failed and we had to rename it 
+	 *  - the test case was explicitly renamed via update
+	 *  
+	 * This map tracks the modifications so that we can still refer to a renamed test case by its original TestCaseTarget.
+	 * 
+	 * 
+	 * ***********************************************************************************************************************************/
+	//private Map<TestCaseTarget, String> renamedTestCaseMap = new HashMap<TestCaseTarget, String>();
 
 	
 	/* ***********************************************************************************************************************************
@@ -93,8 +108,7 @@ public class Model {
 	 * TODO : maybe implement it as a LRU cache that doesn't scrap step lists that were modified (ie "dirty" data that
 	 * 		differs from the DB content).
 	 * 
-	 * ***********************************************************************************************************************************/
-	
+	 * ***********************************************************************************************************************************/	
 	private Map<TestCaseTarget, List<StepType>> testCaseStepsByTarget = new HashMap<TestCaseTarget, List<StepType>>();
 	
 	
@@ -131,21 +145,29 @@ public class Model {
 	
 	public void setToBeCreated(TestCaseTarget target){
 		testCaseStatusByTarget.put(target, new TargetStatus(Existence.TO_BE_CREATED));		
+		clearSteps(target);
 	}
 	
 	public void setToBeDeleted(TestCaseTarget target){
 		testCaseStatusByTarget.put(target, new TargetStatus(Existence.TO_BE_DELETED));
-		if (testCaseStepsByTarget.containsKey(target)){
-			testCaseStepsByTarget.get(target).clear();
-		}		
+		clearSteps(target);	
 	}
 
 	public void setDeleted(TestCaseTarget target){
 		testCaseStatusByTarget.put(target, new TargetStatus(Existence.NOT_EXISTS, null));
+		clearSteps(target);
+	}
+	
+	// virtually an alias of setDeleted
+	public void setNotExists(TestCaseTarget target){
+		testCaseStatusByTarget.put(target, new TargetStatus(Existence.NOT_EXISTS, null));
+		clearSteps(target);
+	}
+	
+	private void clearSteps(TestCaseTarget target){
 		if (testCaseStepsByTarget.containsKey(target)){
 			testCaseStepsByTarget.get(target).clear();
-		}
-		
+		}	
 	}
 
 	// ************************** Test Case accessors *****************************************
@@ -166,7 +188,7 @@ public class Model {
 			return (TestCase) sessionFactory.getCurrentSession().load(TestCase.class, id);
 		}
 	}
-	
+
 	
 	// ************************ Test Step management ********************************
 
@@ -523,7 +545,7 @@ public class Model {
 				
 		Existence status = null;
 		Long id = null;
-
+		
 		
 		TargetStatus(Existence status){
 			if (status == Existence.EXISTS){

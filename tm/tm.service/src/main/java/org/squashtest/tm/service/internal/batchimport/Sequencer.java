@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.service.importer.ImportLog;
 
 @Component
 public class Sequencer {
@@ -46,6 +47,9 @@ public class Sequencer {
 		Model model = modelProvider.get();
 		simulator.setModel(model);
 		
+		// TODO : for each LogTrain, remember to use setForAll(...) to set them with 
+		// the line number and import mode.
+		
 		return null;
 	}
 	
@@ -57,6 +61,9 @@ public class Sequencer {
 		simulator.setModel(model);
 		impl.setModel(model);
 		impl.setSimulator(simulator);
+		
+		// TODO : for each LogTrain, remember to use setForAll(...) to set them with 
+		// the line number and import mode.
 		
 		
 		return null;

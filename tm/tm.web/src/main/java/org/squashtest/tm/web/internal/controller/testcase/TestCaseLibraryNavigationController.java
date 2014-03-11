@@ -153,7 +153,7 @@ public class TestCaseLibraryNavigationController extends
 
 		InputStream stream = archive.getInputStream();
 
-		ImportSummary summary =  testCaseLibraryNavigationService.importExcelTestCase(stream, projectId, zipEncoding);
+		ImportSummary summary =  testCaseLibraryNavigationService.importZipTestCase(stream, projectId, zipEncoding);
 		ModelAndView mav =  new ModelAndView("fragment/import/import-summary");
 		mav.addObject("summary", summary);
 		mav.addObject("workspace", "test-case");

@@ -60,7 +60,12 @@ public class FacilityImpl implements Facility {
 
 	@Override
 	public LogTrain createTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
-		throw new UnsupportedOperationException("not implemented yet"); 
+
+		//LogTrain train = simulator.createTestCase(target, testCase, cufValues);
+		
+		
+		throw new UnsupportedOperationException("not implemented yet");
+		
 	}
 
 	@Override

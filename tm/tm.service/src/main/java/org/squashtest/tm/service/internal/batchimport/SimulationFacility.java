@@ -67,35 +67,16 @@ public class SimulationFacility implements Facility{
 	}
 
 
-	/**
-	 * <p>Must check the following errors : </p>
-	 * <ul>
-	 * 	<li>mandatory fields path, name have a value</li>
-	 * 	<li>path is well formed</li>
-	 * 	<li>mandatory cufs must have a value if no default is available</li>
-	 * 	<li>the project actually exists</li>
-	 * 	<li>can create in the project</li>
-	 * 	<li>there won't be no name clash</li>
-	 * 	<li>name and path are consistent</li>
-	 * 	<li>format for a given field (especially lists, checkbox and dates for custom fields) are correct
-	 * </ul>
-	 * 
-	 * <p>Must check the following warnings :</p>
-	 * <ul>
-	 * 	<li>which fields having a size limit 
-	 * 	<li>mandatory cufs of type list will default to the default value when no value is given</li>
-	 * 	<li>cufs of type list will default to the default value when the imported value is invalid</li>
-	 * 	<li>when some fields have a size exceeding the size, they will be truncated to that limit</li>
-	 * 	<li>mandatory cufs will default to default value if no value is imported</li>
-	 * </ul>
-	 */
+
 	@Override
 	public LogTrain createTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
 		
 		LogTrain logs = new LogTrain();
 		String path = target.getPath();
 		String name = testCase.getName();
-		
+		TargetStatus status = model.getStatus(target);
+
+
 		// 1 - basic verifications
 		logs.append( testCaseValidator.basicTestCaseChecks(target, testCase, cufValues) );
 		
@@ -104,10 +85,10 @@ public class SimulationFacility implements Facility{
 		
 		// 3 - other checks 
 		// 3-1 : names clash
-		TargetStatus status = model.getStatus(target);
 		if ( status.status != Existence.NOT_EXISTS){
 			logs.addEntry( new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_TC_ALREADY_EXISTS, new String[]{target.getPath()}, Messages.IMPACT_TC_WITH_SUFFIX, null));
 		}
+		
 		// 3-2 : permissions. note about the following 'if' : the case where the project doesn't exist (and thus has no id) is already covered in the basic checks.
 		Long libid = model.getProjectStatus(target.getProject()).id;
 		if ( (libid != null) && ( ! permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, PERM_CREATE, libid, LIBRARY_CLASSNAME) ) ){
@@ -118,11 +99,30 @@ public class SimulationFacility implements Facility{
 		if (! Utils.arePathsAndNameConsistents(path, name)){
 			logs.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_INCONSISTENT_PATH_AND_NAME));
 		}
+
+		/*
+		 * Create TestCase : how to update the model.
+		 * 
+		 * If there were no errors, the target is set to be created. 
+		 * If there is at least one failure the target wont be created and is considered as non existent, and further operations referring 
+		 * to that test case will consequently fail (import on steps etc).   
+		 * 
+		 * Note that in case of path clash, we consider that the imported test case (target) shadows the one that already exists in the DB. 
+		 * We update the model according to the success or failure of the create operation only and the status of an already existent test case
+		 * is irrelevant.
+		 * 
+		 */
+		if (! logs.hasCriticalErrors()){
+			model.setToBeCreated(target);
+		}
+		else{
+			model.setNotExists(target);
+		}
 		
 		return logs;
 		
 	}
-
+	
 	@Override
 	public LogTrain updateTestCase(TestCaseTarget target, TestCase testCase,
 			Map<String, String> cufValues) {
@@ -136,7 +136,7 @@ public class SimulationFacility implements Facility{
 		// if the test case doesn't exist
 		if (status.status == Existence.NOT_EXISTS){
 			logs.addEntry( new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_TC_NOT_FOUND, Messages.IMPACT_TC_CREATED));
-			logs.append(createTestCase(target, testCase, cufValues));
+			logs.append( createTestCase(target, testCase, cufValues) );
 		}
 		else{
 		
@@ -163,6 +163,10 @@ public class SimulationFacility implements Facility{
 			}
 
 		}
+
+		/*
+		 * In case of an update, we don't need to change the model regardless of the success or failure of the operation.
+		 */
 		
 		return logs;
 		
@@ -200,15 +204,6 @@ public class SimulationFacility implements Facility{
 	}
 
 	
-	
-	
-	
-	
-	
-	
-	// *********************** utils ********************
-	
-
 	
 	
 }

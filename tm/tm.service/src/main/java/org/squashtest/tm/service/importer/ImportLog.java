@@ -18,19 +18,25 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.batchimport;
+package org.squashtest.tm.service.importer;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.SortedSet;
 
 import org.apache.commons.collections.map.MultiValueMap;
+import org.squashtest.tm.service.internal.batchimport.EntityType;
+import org.squashtest.tm.service.internal.batchimport.LogEntry;
+import org.squashtest.tm.service.internal.batchimport.LogTrain;
 
 public class ImportLog {
 
 	//key : EntityType, values : LogEntry
 	private MultiValueMap logEntriesPerType = MultiValueMap.decorate(new HashMap(), SortedSet.class);
 	
+	// the pointer to the excel workbook that contains the error log
+	private File fullReport = null;
 	
 	private int testCaseSuccess=0;
 	private int testCaseWarnings=0;
@@ -105,7 +111,15 @@ public class ImportLog {
 		
 	}
 	
-	
+	// that getter doesn't comply with the Java bean convention purposely. 
+	public File obtainFullReport() {
+		return fullReport;
+	}
+
+	public void setFullReport(File fullReport) {
+		this.fullReport = fullReport;
+	}
+
 	public int getTestCaseSuccess() {
 		return testCaseSuccess;
 	}

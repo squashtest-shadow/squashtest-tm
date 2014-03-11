@@ -96,7 +96,7 @@ class TestCaseImporterIT extends DbunitServiceSpecification {
 			InputStream stream = this.getClass().getClassLoader().getResourceAsStream("import/import-cas-test.zip")
 		
 		when :
-			def summary = service.importExcelTestCase(stream, 1l, "Cp858")
+			def summary = service.importZipTestCase(stream, 1l, "Cp858")
 			def stringquery = "select  count(*) "+
 			" from TEST_CASE tc"+
 			" join TEST_CASE_LIBRARY_NODE tcln on tc.TCLN_ID = tcln.TCLN_ID"+
@@ -124,7 +124,7 @@ class TestCaseImporterIT extends DbunitServiceSpecification {
 			InputStream stream = this.getClass().getClassLoader().getResourceAsStream("import/import-cas-test.zip")
 		
 		when :
-			def summary = service.importExcelTestCase(stream, 1l, "Cp858")
+			def summary = service.importZipTestCase(stream, 1l, "Cp858")
 			
 			def stringquery = "select count(*) from CUSTOM_FIELD_VALUE where BOUND_ENTITY_TYPE = 'TEST_CASE' group by BOUND_ENTITY_ID"
 			SQLQuery sqlquery = getSession().createSQLQuery(stringquery);

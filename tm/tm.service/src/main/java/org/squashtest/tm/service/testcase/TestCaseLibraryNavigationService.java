@@ -32,6 +32,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.library.LibraryNavigationService;
 
@@ -107,9 +108,20 @@ public interface TestCaseLibraryNavigationService extends
 	 *            the encoding
 	 * @return a summary of the operations.
 	 */
-	ImportSummary importExcelTestCase(InputStream archiveStream, long libraryId, String encoding);
+	ImportSummary importZipTestCase(InputStream archiveStream, long libraryId, String encoding);
 
-
+	
+	/**
+	 * Accepts an single excel file containing test case informations. Note that the structure of that 
+	 * excel file is totally different that the one contained in the zip archive consumed by 
+	 * {@link #importZipTestCase(InputStream, long, String)}
+	 * 
+	 * @param excelFile
+	 * @return
+	 */
+	ImportLog	importExcelTestCase(File excelFile);
+	
+	
 	/**
 	 * Will find all test cases in the library and node ids supplied in arguments, and return their
 	 * information as a list of {@linkplain ExportTestCaseData}
