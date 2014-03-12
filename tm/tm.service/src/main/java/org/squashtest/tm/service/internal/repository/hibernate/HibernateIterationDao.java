@@ -418,6 +418,7 @@ private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_END =
 				if(clause == null){
 					clause = clausesByValues.get(VDFC_DEFAULT_KEY);
 				}
+				hqlbuilder.append(clause);
 			}
 		}
 	
