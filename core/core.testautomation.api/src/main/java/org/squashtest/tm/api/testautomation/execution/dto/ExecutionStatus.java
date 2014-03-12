@@ -46,5 +46,9 @@ public enum ExecutionStatus {
         /**
          * The test failed due to a technical error.
          */
-        ERROR
+        ERROR,
+        /**
+         * The test is not run because prior test failed.
+         */
+        NOT_RUN
 }
