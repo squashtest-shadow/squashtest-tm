@@ -59,11 +59,11 @@
 			var ids =[];
 			this.$el.find("table tbody tr").each(function() {
 				var $checkbox = $(this).find(".project-checkbox");
-				var checked = $checkbox.checked;
+				var checked = $checkbox.is(":checked");
 				$checkbox.data("previous-checked", checked);
 				var id = $checkbox.val();
 				if(checked){
-					ids.put(id);
+					ids.push(id);
 				}
 			});
 			// set model
