@@ -190,42 +190,67 @@
     </preConditions>
     <comment>Creating default order which is identical with the alphabetical order</comment>
     <sql>
-      create table TEMP_RLN_CONTENT_ORDER(CONTENT_ORDER BIGINT NOT NULL, ANCESTOR_ID BIGINT NOT NULL, DESCENDANT_ID BIGINT NOT
-      NULL, DUMMY BIGINT NOT NULL);
+	create table TEMP_RLN_CONTENT_ORDER(CONTENT_ORDER BIGINT NOT NULL, ANCESTOR_ID BIGINT NOT NULL, DESCENDANT_ID BIGINT NOT
+	      NULL, DUMMY BIGINT NOT NULL);
+	
+		  
+	create table TMP_MAP_RLN_RESOURCE(RLN_ID BIGINT NOT NULL, 
+		NAME VARCHAR(255));
+	
+	insert into TMP_MAP_RLN_RESOURCE(rln_id, name)
+	select f.rln_id, res.name 
+	from REQUIREMENT_FOLDER f
+	inner join RESOURCE res on f.res_id = res.res_id;
+	
+	insert into TMP_MAP_RLN_RESOURCE(rln_id,  name)
+	select r.rln_id,  res.name
+	from REQUIREMENT r
+	inner join RESOURCE res on  r.current_version_id = res.res_id;
+	
+	create table CP_RLN_RELATIONSHIP 
+	select rel.* from RLN_RELATIONSHIP rel 
+	inner join TMP_MAP_RLN_RESOURCE tmp on rel.descendant_id = tmp.rln_id 
+	order by rel.ANCESTOR_ID, tmp.name;
+	
+	create table CP_LIB_CONTENT 
+	select cont.* from REQUIREMENT_LIBRARY_CONTENT cont
+	inner join TMP_MAP_RLN_RESOURCE tmp on cont.content_id = tmp.rln_id 
+	order by cont.LIBRARY_ID , tmp.name;
+	
+		  
+	insert into TEMP_RLN_CONTENT_ORDER (CONTENT_ORDER, ANCESTOR_ID, DESCENDANT_ID, DUMMY)
+	      select if(@prevtcs=ANCESTOR_ID,
+	      @rownum:=@rownum+1,
+	      @rownum:=0) as RANK,
+	      rlnr.ANCESTOR_ID, rlnr.DESCENDANT_ID, (@prevtcs:=ANCESTOR_ID)
+	      from CP_RLN_RELATIONSHIP rlnr,
+	      (SELECT @rownum:=0) r, (SELECT @prevtcs:=0) s;
+	
+	insert into TEMP_RLN_CONTENT_ORDER (CONTENT_ORDER, ANCESTOR_ID, DESCENDANT_ID, DUMMY)
+	      select if(@prevtcs=LIBRARY_ID,
+	      @rownum:=@rownum+1,
+	      @rownum:=0) as RANK,
+	      rlnr.LIBRARY_ID, rlnr.CONTENT_ID, (@prevtcs:=rlnr.LIBRARY_ID)
+	      from CP_LIB_CONTENT rlnr,
+		(SELECT @rownum:=0) r, (SELECT @prevtcs:=0) s;
+	
+	update RLN_RELATIONSHIP
+	      set CONTENT_ORDER = (select TEMP_RLN_CONTENT_ORDER.CONTENT_ORDER
+	      from TEMP_RLN_CONTENT_ORDER
+	      where TEMP_RLN_CONTENT_ORDER.ANCESTOR_ID = RLN_RELATIONSHIP.ANCESTOR_ID
+	      and TEMP_RLN_CONTENT_ORDER.DESCENDANT_ID = RLN_RELATIONSHIP.DESCENDANT_ID);
+	
+	update REQUIREMENT_LIBRARY_CONTENT
+	      set CONTENT_ORDER = (select TEMP_RLN_CONTENT_ORDER.CONTENT_ORDER
+	      from TEMP_RLN_CONTENT_ORDER
+	      where TEMP_RLN_CONTENT_ORDER.ANCESTOR_ID = REQUIREMENT_LIBRARY_CONTENT.LIBRARY_ID
+	      and TEMP_RLN_CONTENT_ORDER.DESCENDANT_ID = REQUIREMENT_LIBRARY_CONTENT.CONTENT_ID);
+	
+	drop table TEMP_RLN_CONTENT_ORDER;
+	drop table TMP_MAP_RLN_RESOURCE;
+	drop table CP_RLN_RELATIONSHIP;
+	drop table CP_LIB_CONTENT;
 
-      insert into TEMP_RLN_CONTENT_ORDER (CONTENT_ORDER, ANCESTOR_ID, DESCENDANT_ID, DUMMY)
-      select if(@prevtcs=ANCESTOR_ID,
-      @rownum:=@rownum+1,
-      @rownum:=0) as RANK,
-      rlnr.ANCESTOR_ID, rlnr.DESCENDANT_ID, (@prevtcs:=ANCESTOR_ID)
-      from RLN_RELATIONSHIP rlnr
-      join RESOURCE rln on rlnr.DESCENDANT_ID = rln.RES_ID,
-      (SELECT @rownum:=0) r, (SELECT @prevtcs:=0) s
-      order by rlnr.ANCESTOR_ID, rln.NAME;
-
-      insert into TEMP_RLN_CONTENT_ORDER (CONTENT_ORDER, ANCESTOR_ID, DESCENDANT_ID, DUMMY)
-      select if(@prevtcs=LIBRARY_ID,
-      @rownum:=@rownum+1,
-      @rownum:=0) as RANK,
-      rlnr.LIBRARY_ID, rlnr.CONTENT_ID, (@prevtcs:=LIBRARY_ID)
-      from REQUIREMENT_LIBRARY_CONTENT rlnr
-      join RESOURCE rln on rlnr.CONTENT_ID = rln.RES_ID,
-      (SELECT @rownum:=0) r, (SELECT @prevtcs:=0) s
-      order by rlnr.LIBRARY_ID, rln.NAME;
-
-      update RLN_RELATIONSHIP
-      set CONTENT_ORDER = (select TEMP_RLN_CONTENT_ORDER.CONTENT_ORDER
-      from TEMP_RLN_CONTENT_ORDER
-      where TEMP_RLN_CONTENT_ORDER.ANCESTOR_ID = RLN_RELATIONSHIP.ANCESTOR_ID
-      and TEMP_RLN_CONTENT_ORDER.DESCENDANT_ID = RLN_RELATIONSHIP.DESCENDANT_ID);
-
-      update REQUIREMENT_LIBRARY_CONTENT
-      set CONTENT_ORDER = (select TEMP_RLN_CONTENT_ORDER.CONTENT_ORDER
-      from TEMP_RLN_CONTENT_ORDER
-      where TEMP_RLN_CONTENT_ORDER.ANCESTOR_ID = REQUIREMENT_LIBRARY_CONTENT.LIBRARY_ID
-      and TEMP_RLN_CONTENT_ORDER.DESCENDANT_ID = REQUIREMENT_LIBRARY_CONTENT.CONTENT_ID);
-
-      drop table TEMP_RLN_CONTENT_ORDER;
     </sql>
   </changeSet>
 
@@ -241,6 +266,30 @@
         DESCENDANT_ID BIGINT NOT NULL, 
         DUMMY BIGINT NOT NULL
       );
+		  
+		create table TMP_MAP_RLN_RESOURCE(RLN_ID BIGINT NOT NULL, 
+		NAME VARCHAR(255));
+		      
+		insert into TMP_MAP_RLN_RESOURCE(rln_id, name)
+		select f.rln_id, res.name 
+		from REQUIREMENT_FOLDER f
+		inner join RESOURCE res on f.res_id = res.res_id;
+		
+		insert into TMP_MAP_RLN_RESOURCE(rln_id,  name)
+		select r.rln_id,  res.name
+		from REQUIREMENT r
+		inner join RESOURCE res on  r.current_version_id = res.res_id;
+		
+		create table CP_RLN_RELATIONSHIP (ancestor_id bigint not null, descendant_id bigint not null) as 
+		select rel.ancestor_id, rel.descendant_id from RLN_RELATIONSHIP rel 
+		inner join TMP_MAP_RLN_RESOURCE tmp on rel.descendant_id = tmp.rln_id 
+		order by rel.ANCESTOR_ID, tmp.name;
+		
+		create table CP_LIB_CONTENT (library_id bigint not null, content_id bigint not null) as 
+		select cont.library_id, cont.content_id  from REQUIREMENT_LIBRARY_CONTENT cont
+		inner join TMP_MAP_RLN_RESOURCE tmp on cont.content_id = tmp.rln_id 
+		order by cont.LIBRARY_ID , tmp.name;
+			
 
       set @rqrn=-1;
       set @prevrqs=0;
@@ -251,12 +300,9 @@
         rlnr.ANCESTOR_ID, 
         rlnr.DESCENDANT_ID, 
         (@prevrqs:=ANCESTOR_ID)
-      from RLN_RELATIONSHIP rlnr
-        join RESOURCE rln on rlnr.DESCENDANT_ID = rln.RES_ID, 
+      from CP_RLN_RELATIONSHIP rlnr,
         (SELECT @rqrn:=0) r, 
-        (SELECT @prevrqs:=0) s
-      order by rlnr.ANCESTOR_ID, 
-        rln.NAME;
+        (SELECT @prevrqs:=0) s;
 
       set @rqrn=-1;
       set @prevrqs=0;
@@ -265,10 +311,9 @@
     select casewhen(@prevtcs = LIBRARY_ID, set(@rqrn, @rqrn+1),
       set(@rqrn, 0)) as RANK,
               rlnr.LIBRARY_ID, rlnr.CONTENT_ID, (@prevrqs:=LIBRARY_ID)
-    from REQUIREMENT_LIBRARY_CONTENT rlnr
-    join RESOURCE rln on rlnr.CONTENT_ID = rln.RES_ID, 
-    (SELECT @rqrn:=0) r, (SELECT @prevrqs:=0) s
-    order by rlnr.LIBRARY_ID, rln.NAME;    
+      from CP_LIB_CONTENT rlnr,
+    (SELECT @rqrn:=0) r, (SELECT @prevrqs:=0) s;
+    
         
     update RLN_RELATIONSHIP
     set CONTENT_ORDER = (select TEMP_RLN_CONTENT_ORDER.CONTENT_ORDER
@@ -282,7 +327,10 @@
                          where TEMP_RLN_CONTENT_ORDER.ANCESTOR_ID = REQUIREMENT_LIBRARY_CONTENT.LIBRARY_ID
                          and TEMP_RLN_CONTENT_ORDER.DESCENDANT_ID = REQUIREMENT_LIBRARY_CONTENT.CONTENT_ID);
                          
-    drop table TEMP_RLN_CONTENT_ORDER;    
+	drop table TEMP_RLN_CONTENT_ORDER;
+	drop table TMP_MAP_RLN_RESOURCE;
+	drop table CP_RLN_RELATIONSHIP;
+	drop table CP_LIB_CONTENT; 
         ]]></sql>
   </changeSet>
 
