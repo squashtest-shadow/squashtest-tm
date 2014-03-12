@@ -51,7 +51,8 @@
 //	require.baseUrl = "../../../scripts";
 </script>
 </head>
-<body th:remove="tag">
+<body th:remove="tag"
+		th:with="isWritable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')') or #authorization.acl(testCase , 'WRITE')}">
 	<div th:remove="all">
 		<!--  
 		This snippet of html describes the template for the test step panel of the tab panel of a test case.
@@ -59,8 +60,7 @@
 			- testCase : the test case bean
 	 -->
 	</div>
-	<div id="parameters-tabs-panel" class="table-tab"
-		th:with="isWritable = ${#authorization.expression('hasRole(''ROLE_ADMIN'')') or #authorization.acl(testCase , 'WRITE')}">
+	<div id="parameters-tabs-panel" class="table-tab">
 
 
 		<!-- ==================== parameters table panel =================== -->
