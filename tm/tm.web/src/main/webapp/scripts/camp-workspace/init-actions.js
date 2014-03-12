@@ -81,15 +81,15 @@ define(["jquery", 'tree','./permissions-rules', 'workspace.contextual-content', 
 			
 			// ************* creation ***************
 			
-			$("#tree-create-menu").on('click', "#new-folder-tree-button", function(){
+			$("#new-folder-tree-button").on('click', function(){
 				$("#add-folder-dialog").formDialog('open');
 			});
 			
-			$("#tree-create-menu").on('click', "#new-campaign-tree-button", function(){
+			$("#new-campaign-tree-button").on('click', function(){
 				$("#add-campaign-dialog").formDialog('open');
 			});
 			
-			$("#tree-create-menu").on('click', "#new-iteration-tree-button", function(){
+			$("#new-iteration-tree-button").on('click', function(){
 				$("#add-iteration-dialog").formDialog('open');
 			});
 						
@@ -134,17 +134,18 @@ define(["jquery", 'tree','./permissions-rules', 'workspace.contextual-content', 
 			
 			// ****************** exports *********************
 			
-			$("#tree-import-menu").on("click", "#export-L-tree-button", function(){				
+			// NOTE : DO NOT BIND USING $("menu").on("click", "button", handler), this breaks under (true) IE8. See #3268
+			$("#export-L-tree-button").on("click", function(){				
 				var nodeId = tree.jstree("get_selected").attr("resid");				
 				document.location.href= squashtm.app.contextRoot+"/campaign-browser/export-campaign/"+nodeId+"?export=csv&exportType=L";
 			});
 			
-			$("#tree-import-menu").on("click", "#export-S-tree-button", function(){				
+			$("#export-S-tree-button").on("click", function(){				
 				var nodeId = tree.jstree("get_selected").attr("resid");				
 				document.location.href= squashtm.app.contextRoot+"/campaign-browser/export-campaign/"+nodeId+"?export=csv&exportType=S";
-			});
+			}); 
 			
-			$("#tree-import-menu").on("click", "#export-F-tree-button", function(){				
+			$("#export-F-tree-button").on("click", function(){				
 				var nodeId = tree.jstree("get_selected").attr("resid");				
 				document.location.href=  squashtm.app.contextRoot+"/campaign-browser/export-campaign/"+nodeId+"?export=csv&exportType=F";
 			});		

@@ -158,20 +158,20 @@ define(["jquery", 'tree','./permissions-rules', 'workspace.contextual-content', 
 			});
 			
 			// ****************** import tc ******************
-			
-			$("#tree-import-menu").on('click', '#import-excel-tree-button', function(){
+			// NOTE : DO NOT BIND USING $("menu").on("click", "button", handler), this breaks under (true) IE8. See #3268
+			$("#import-excel-tree-button").on('click', function(){
 				$("#import-excel-dialog").tcimportDialog('open');
 			});
 			
 			// **************** import links *****************
 			
-			$("#tree-import-menu").on('click', '#import-links-excel-tree-button', function(){
+			$("#import-links-excel-tree-button").on('click', function(){
 				$("#import-links-excel-dialog").linksimportDialog('open');
 			});
 			
 			// ******************* export ********************
 			
-			$("#tree-import-menu").on('click', '#export-tree-button', function(){
+			$("#export-tree-button").on('click', function(){
 				$("#export-test-case-dialog").exportDialog('open');
 			});
 			
