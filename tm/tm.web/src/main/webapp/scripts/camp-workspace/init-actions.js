@@ -18,21 +18,21 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", 'tree','./permissions-rules', 'workspace.contextual-content', 'workspace.event-bus', 'squash.translator' , 
-        'workspace.tree-node-copier', 'workspace.tree-event-handler'], function($, zetree, rules, ctxcontent, eventBus,  translator, copier, treehandler){
+define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", "workspace.event-bus", "squash.translator" , 
+        "workspace.tree-node-copier", "workspace.tree-event-handler"], function($, zetree, rules, ctxcontent, eventBus,  translator, copier, treehandler){
 	
 	
 	function showError(messageName){	
 		
 		var messages = translator.get({
-			'no-libraries-allowed'	: 'tree.button.copy-node.error.nolibrary',
-			'not-unique'			: 'tree.button.copy-node.error.notOneEditable',
-			'not-creatable'			: 'tree.button.copy-node.error.notOneEditable',
-			'empty-selection'		: 'tree.button.copy-node.error.nothing-to-paste',
-			'invalid-content'		: 'tree.button.copy-node.error.pastenothere',
-			'not-deletable'			: 'dialog.label.delete-node.rejected',
-			'mixed-nodes-iteration-selection' : 'tree.button.copy-node.mixediteration',
-			'mixed-nodes-testsuite-selection' : 'tree.button.copy-node.mixedsuite'
+			"no-libraries-allowed"	: "tree.button.copy-node.error.nolibrary",
+			"not-unique"			: "tree.button.copy-node.error.notOneEditable",
+			"not-creatable"			: "tree.button.copy-node.error.notOneEditable",
+			"empty-selection"		: "tree.button.copy-node.error.nothing-to-paste",
+			"invalid-content"		: "tree.button.copy-node.error.pastenothere",
+			"not-deletable"			: "dialog.label.delete-node.rejected",
+			"mixed-nodes-iteration-selection" : "tree.button.copy-node.mixediteration",
+			"mixed-nodes-testsuite-selection" : "tree.button.copy-node.mixedsuite"
 		});		
 
 		squashtm.notification.showInfo(messages[messageName]);
@@ -40,7 +40,7 @@ define(["jquery", 'tree','./permissions-rules', 'workspace.contextual-content', 
 	
 
 	function copyIfOk(tree){
-		var nodes = tree.jstree('get_selected');
+		var nodes = tree.jstree("get_selected");
 		if (rules.canCopy(nodes)){
 			copier.copyNodesToCookie();
 		}
@@ -61,7 +61,7 @@ define(["jquery", 'tree','./permissions-rules', 'workspace.contextual-content', 
 	}
 	
 	function loadFragment(tree){
-		var selected =  tree.jstree('get_selected');
+		var selected =  tree.jstree("get_selected");
 		if (selected.length == 1){
 			ctxcontent.loadWith(selected.getResourceUrl());
 		}
@@ -75,60 +75,60 @@ define(["jquery", 'tree','./permissions-rules', 'workspace.contextual-content', 
 			
 			var tree = zetree.get();
 			
-			tree.on('select_node.jstree deselect_node.jstree', function(){
+			tree.on("select_node.jstree deselect_node.jstree", function(){
 				loadFragment(tree);
 			});
 			
 			// ************* creation ***************
 			
-			$("#new-folder-tree-button").on('click', function(){
-				$("#add-folder-dialog").formDialog('open');
+			$("#new-folder-tree-button").on("click", function(){
+				$("#add-folder-dialog").formDialog("open");
 			});
 			
-			$("#new-campaign-tree-button").on('click', function(){
-				$("#add-campaign-dialog").formDialog('open');
+			$("#new-campaign-tree-button").on("click", function(){
+				$("#add-campaign-dialog").formDialog("open");
 			});
 			
-			$("#new-iteration-tree-button").on('click', function(){
-				$("#add-iteration-dialog").formDialog('open');
+			$("#new-iteration-tree-button").on("click", function(){
+				$("#add-iteration-dialog").formDialog("open");
 			});
 						
 			// *************** copy paste ****************
 			
-			$("#copy-node-tree-button").on('click', function(){
+			$("#copy-node-tree-button").on("click", function(){
 				copyIfOk(tree);
 			});
 			
-			// issue 2762 : the events 'copy.squashtree' and the native js event 'copy' (also triggered using ctrl+c) would both fire this 
+			// issue 2762 : the events "copy.squashtree" and the native js event "copy" (also triggered using ctrl+c) would both fire this 
 			// handler. Its a bug of jquery, fixed in 1.9.
 			// TODO : upgrade to jquery 1.9
-			tree.on('copy.squashtree', function(evt){
-				if (evt.namespace==='squashtree'){
+			tree.on("copy.squashtree", function(evt){
+				if (evt.namespace==="squashtree"){
 					copyIfOk(tree);
 				}
 			});
 			
-			$("#paste-node-tree-button").on('click', function(){
+			$("#paste-node-tree-button").on("click", function(){
 				pasteIfOk(tree);
 			});			
 			
-			// issue 2762 : the events 'paste.squashtree' and the native js event 'paste' (also triggered using ctrl+v) would both fire this 
+			// issue 2762 : the events "paste.squashtree" and the native js event "paste" (also triggered using ctrl+v) would both fire this 
 			// handler. Its a bug of jquery, fixed in 1.9
 			// TODO : upgrade to jquery 1.9
-			tree.on('paste.squashtree', function(evt){
-				if (evt.namespace === 'squashtree'){
+			tree.on("paste.squashtree", function(evt){
+				if (evt.namespace === "squashtree"){
 					pasteIfOk(tree);					
 				}
 			});
 			
 			// ***************** rename **********************
 			
-			$("#rename-node-tree-button").on('click', function(){
-				$("#rename-node-dialog").formDialog('open');
+			$("#rename-node-tree-button").on("click", function(){
+				$("#rename-node-dialog").formDialog("open");
 			});
 			
-			tree.on('rename.squashtree', function(){
-				$("#rename-node-dialog").formDialog('open');
+			tree.on("rename.squashtree", function(){
+				$("#rename-node-dialog").formDialog("open");
 			});
 			
 			
@@ -153,12 +153,12 @@ define(["jquery", 'tree','./permissions-rules', 'workspace.contextual-content', 
 			
 			// ***************** deletion ********************
 			
-			$("#delete-node-tree-button").on('click', function(){
-				$("#delete-node-dialog").delcampDialog('open');
+			$("#delete-node-tree-button").on("click", function(){
+				$("#delete-node-dialog").delcampDialog("open");
 			});
 			
-			tree.on('suppr.squashtree', function(){
-				$("#delete-node-dialog").delcampDialog('open');
+			tree.on("suppr.squashtree", function(){
+				$("#delete-node-dialog").delcampDialog("open");
 			});
 		}
 	};	

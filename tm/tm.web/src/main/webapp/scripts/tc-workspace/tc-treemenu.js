@@ -19,9 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(['jquery', './utils', './permissions-rules',
-        'workspace/WorkspaceWizardMenu',
-        'jquery.squash.buttonmenu'], function($, utils, permissions, WizardMenu){
+define(["jquery", "./utils", "./permissions-rules", "workspace/WorkspaceWizardMenu",
+        "jquery.squash.buttonmenu"], function($, utils, permissions, WizardMenu){
 	
 
 	function createWidgets(){
@@ -41,16 +40,16 @@ define(['jquery', './utils', './permissions-rules',
 		}
 		
 		function itemenable(){
-			this.removeClass('ui-state-disabled');
+			this.removeClass("ui-state-disabled");
 		}
 		
 		function itemdisable(){
-			this.addClass('ui-state-disabled');
+			this.addClass("ui-state-disabled");
 		}
 		
 		for (i=0;i<len;i++){
 			var jqbtn = buttons[i];
-			if (jqbtn.attr('role')==='button'){
+			if (jqbtn.attr("role")==="button"){
 				jqbtn.enable = btnenable;
 				jqbtn.disable = btndisable;
 			}
@@ -92,12 +91,12 @@ define(['jquery', './utils', './permissions-rules',
 			
 			var rules = permissions.buttonrules;
 			var arbuttons = buttons;
-			var nodes = tree.jstree('get_selected'); 
+			var nodes = tree.jstree("get_selected"); 
 			var i=0,len = buttons.length;
 			
 			for (i=0;i<len;i++){
 				var btn = arbuttons[i];
-				var id = btn.attr('id');
+				var id = btn.attr("id");
 				var rule = rules[id];
 				if (rule(nodes)){
 					btn.enable();
@@ -110,12 +109,12 @@ define(['jquery', './utils', './permissions-rules',
 			
 		}
 		
-		tree.on('select_node.jstree deselect_node.jstree deselect_all.jstree', loopupdate);
+		tree.on("select_node.jstree deselect_node.jstree deselect_all.jstree", loopupdate);
 		
 		//init the button states immediately
 		loopupdate("", {
 			rslt : {
-				obj : tree.jstree('get_selected')
+				obj : tree.jstree("get_selected")
 			}
 		});
 		
@@ -141,7 +140,7 @@ define(['jquery', './utils', './permissions-rules',
 			wmenu.refreshSelection(tree.jstree("get_selected"));
 			
 			//evt binding
-			tree.on('select_node.jstree deselect_node.jstree deselect_all.jstree', function(evt, data){
+			tree.on("select_node.jstree deselect_node.jstree deselect_all.jstree", function(evt, data){
 				wmenu.refreshSelection(data.inst.get_selected());
 			});
 		}
@@ -150,7 +149,7 @@ define(['jquery', './utils', './permissions-rules',
 	function initExportPlugins(){
 		var plugins = $("#tree_element_menu .export-plugin");
 		var modules = plugins.map(function(idx, elt){
-			var modulename = $(elt).data('module');
+			var modulename = $(elt).data("module");
 			return require.toUrl(modulename);
 		}).get();
 		var items = plugins.get();

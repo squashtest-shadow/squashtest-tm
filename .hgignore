@@ -129,6 +129,7 @@ tm/config/META-INF/*
 integration-tests/META-INF/*
 core/core.jetty.boot.felix42.fragment/META-INF$
 core/core.application.api/META-INF/*
+/\.groovy/
 syntax: glob
 integration-tests/log/IT.log
 integration-tests/src/it/resources/log4j.properties

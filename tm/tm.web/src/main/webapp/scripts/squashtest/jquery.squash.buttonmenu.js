@@ -26,10 +26,10 @@
  *		menu : {  menu configuration },
  *		zindex : a user-defined z-index value, to make sure your menu will be displayed above any other elements.
  *					default is 3000,
- *		blur : 'hide', 'nothing' or another custom function that will receive no args. Default is 'hide'.
+ *		blur : "hide", "nothing" or another custom function that will receive no args. Default is "hide".
  *		anchor : one of ["left", "right"]. Default is "left" : this means that the menu is anchored to the button via its top-left corner. 
  *				When set to "right", it would be the top-right,
- *		'no-auto-hide' : default is false. If true,  the menu will not automatically hide when an element is clicked (see behaviour below)
+ *		"no-auto-hide" : default is false. If true,  the menu will not automatically hide when an element is clicked (see behaviour below)
  *	}
  * 
  * Behaviour : 
@@ -37,15 +37,15 @@
  * - When the button is clicked, the menu will be toggled on/off.
  * - When a <li> element of the menu is clicked, the menu will be toggled off (closed) automatically 
  * - This <li> default behaviour can be overriden in two ways :
- *		1/ the element <li> has a css class 'no-auto-hide'
- *		3/ the global flag 'no-auto-hide' is true.
+ *		1/ the element <li> has a css class "no-auto-hide"
+ *		3/ the global flag "no-auto-hide" is true.
  * 
  * 
  *	@author bsiri
  * 
  */
 
-define([ 'jquery', 'jqueryui' ], function($) {
+define([ "jquery", "jqueryui" ], function($) {
 
 	// prevent double loading
 	if ($.squash && $.squash.buttonmenu){
@@ -53,17 +53,17 @@ define([ 'jquery', 'jqueryui' ], function($) {
 	}
 
 	function preventIfDisabled(){
-		return $(this).hasClass('ui-state-disabled');
+		return $(this).hasClass("ui-state-disabled");
 	}
 	
-	$.widget('squash.buttonmenu', {
+	$.widget("squash.buttonmenu", {
 		options : {
 			menu : {
 				zindex : 3000
 			},
-			blur : 'hide',
+			blur : "hide",
 			anchor : "left",
-			'no-auto-hide' : false,
+			"no-auto-hide" : false,
 			
 			// private
 			_firstInvokation : true
@@ -76,13 +76,13 @@ define([ 'jquery', 'jqueryui' ], function($) {
 				menu = this.element.next(),
 				components = btn.add(menu);
 			
-			btn.addClass('buttonmenu-button');
-			menu.addClass('buttonmenu-menu');
+			btn.addClass("buttonmenu-button");
+			menu.addClass("buttonmenu-menu");
 			
 			
-			var div = $('<div/>',{
+			var div = $("<div/>",{
 				style : "display:inline-block; position:relative;",
-				'class' : 'buttonmenu-wrapper'
+				"class" : "buttonmenu-wrapper"
 			});
 			
 			components.wrapAll(div);
@@ -106,11 +106,10 @@ define([ 'jquery', 'jqueryui' ], function($) {
 			menu.menu(settings.menu);
 
 			// events
-			button.on('click', function() {
-				if (menu.hasClass('buttonmenu-open')){
+			button.on("click", function() {
+				if (menu.hasClass("buttonmenu-open")){
 					self.close();
-				} 
-				else{
+				} else {
 					self.open();
 				}
 						
@@ -127,7 +126,7 @@ define([ 'jquery', 'jqueryui' ], function($) {
 		
 		blur : function(evt){
 			var blurhandler = this.options.blur;
-			if (blurhandler==='hide'){				
+			if (blurhandler==="hide"){				
 				this.close();				
 			}
 			else if ($.isFunction(blurhandler)){
@@ -136,7 +135,7 @@ define([ 'jquery', 'jqueryui' ], function($) {
 				}
 				catch(wtf){
 					if (window.console && window.console.log){
-						console.log('buttonmenu : problem while bluring menu '+this.selector);
+						console.log("buttonmenu : problem while bluring menu "+this.selector);
 					}
 				}
 			}
@@ -152,12 +151,12 @@ define([ 'jquery', 'jqueryui' ], function($) {
 		},
 				
 		open : function(){
-			this.element.next().addClass('buttonmenu-open').show();
+			this.element.next().addClass("buttonmenu-open").show();
 			$.squash.buttonmenu._opened[this.uuid] = this;
 		},
 		
 		close : function(){
-			this.element.next().removeClass('buttonmenu-open').hide();
+			this.element.next().removeClass("buttonmenu-open").hide();
 			delete $.squash.buttonmenu._opened[this.uuid];
 		},
 		
@@ -182,14 +181,14 @@ define([ 'jquery', 'jqueryui' ], function($) {
 		_menuCssTweak : function() {
 			var menu = this.element.next();
 			menu.hide();
-			menu.removeClass('not-displayed');
-			menu.addClass('squash-buttonmenu');
-			menu.css('position', 'absolute');
-			menu.css('overflow', 'hidden');
-			menu.css('white-space', 'nowrap');
-			menu.css('z-index', this.options.menu.zindex);
+			menu.removeClass("not-displayed");
+			menu.addClass("squash-buttonmenu");
+			menu.css("position", "absolute");
+			menu.css("overflow", "hidden");
+			menu.css("white-space", "nowrap");
+			menu.css("z-index", this.options.menu.zindex);
 			if (this.options.anchor === "right"){
-				menu.css('right', 0);
+				menu.css("right", 0);
 			}
 		},
 
@@ -198,17 +197,17 @@ define([ 'jquery', 'jqueryui' ], function($) {
 				settings = this.options,
 				menu = this.element.next();
 			
-			menu.on('click', 'li', function(evt) {
+			menu.on("click", "li", function(evt) {
 				var $li = $(this);				
 				
 				// item disabled ? event prevented !
-				if ($li.hasClass('ui-state-disabled')){
+				if ($li.hasClass("ui-state-disabled")){
 					evt.stopImmediatePropagation();
 					return false;
 				}
 				
 				// if no policy was set to prevent the menu from closing, let the menu close 
-				else if (! ($li.hasClass('no-auto-hide') || settings['no-auto-hide'])){
+				else if (! ($li.hasClass("no-auto-hide") || settings["no-auto-hide"])){
 					self.close();
 				}
 			});
@@ -218,7 +217,7 @@ define([ 'jquery', 'jqueryui' ], function($) {
 		
 		_destroy : function(){
 			delete $.squash.buttonmenu._opened[this.uuid];
-			this.element.next().menu('destroy');
+			this.element.next().menu("destroy");
 			this._super();
 		}
 
@@ -228,11 +227,11 @@ define([ 'jquery', 'jqueryui' ], function($) {
 	// other settings
 	$.squash.buttonmenu._opened = {};
 
-	$(document).on('click', function(evt){
+	$(document).on("click", function(evt){
 		var instances = $.squash.buttonmenu._opened;
 		
 		// find out if the event originated from within the menu
-		var possiblemenu = $(evt.target).parents('div.buttonmenu-wrapper').find('.buttonmenu-button').data('squashButtonmenu');
+		var possiblemenu = $(evt.target).parents("div.buttonmenu-wrapper").find(".buttonmenu-button").data("squashButtonmenu");
 		
 		for (var id in instances){
 			var inst = instances[id];
