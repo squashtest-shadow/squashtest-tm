@@ -338,7 +338,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		deleteAutomatedExecutionExtender(execution);
 		
 		denormalizedFieldValueService.deleteAllDenormalizedFieldValues(execution);
-		
+		customValueService.deleteAllCustomFieldValues(execution);
 		deletionDao.removeAttachmentList(execution.getAttachmentList());
 		deletionDao.removeEntity(execution);
 	}
@@ -434,6 +434,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 			
 			deletionDao.removeAttachmentList(step.getAttachmentList());
 			denormalizedFieldValueService.deleteAllDenormalizedFieldValues(step);
+			customValueService.deleteAllCustomFieldValues(step);
 			deletionDao.removeEntity(step);
 		}
 

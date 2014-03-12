@@ -181,11 +181,17 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		List<CustomFieldValue> allValues = customFieldValueDao.findAllCustomValuesOfBindings(customFieldBindingIds);
 		for (CustomFieldValue value : allValues) {
 			BoundEntity boundEntity = boundEntityDao.findBoundEntity(value);
-			if (BindableEntity.TEST_CASE.equals(boundEntity.getBoundEntityType())) {
-				indexationService.reindexTestCase(boundEntity.getBoundEntityId());
-			}
-			if (BindableEntity.REQUIREMENT_VERSION.equals(boundEntity.getBoundEntityType())) {
-				indexationService.reindexRequirementVersion(boundEntity.getBoundEntityId());
+			if(boundEntity != null){
+				switch(boundEntity.getBoundEntityType()){
+					case TEST_CASE :
+						indexationService.reindexTestCase(boundEntity.getBoundEntityId());
+						break;
+					case REQUIREMENT_VERSION : 
+						indexationService.reindexRequirementVersion(boundEntity.getBoundEntityId());
+						break;
+					default:
+						break;
+				}			
 			}
 		}
 		deleteCustomFieldValues(allValues);
