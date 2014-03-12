@@ -52,9 +52,12 @@
 			self.attributes.name = self.$el.attr("id");
 			// process initial state
 			self.attributes.allProjectIds = [];
+			
 			this.updateResult = $.proxy(this._updateResult, this);
 			this.filterTable = $.proxy(this._filterTable, this);
 			this.updateChecked = $.proxy(this._updateChecked, this);
+			this.updateFormState = $.proxy(this._updateFormState, this);
+			
 			if(this.attributes.preferences){
 				self.attributes.selectedId =  _.findWhere(this.attributes.preferences[self.attributes.name], {selected:true}).value;
 			}
@@ -64,7 +67,7 @@
 					var id = $checkbox.val();
 					var checked = self.attributes.selectedId == id;
 					$checkbox.data("previous-checked", checked);
-					$checkbox.prop("checked", checked);
+					$checkbox.attr("checked", checked);
 					self.attributes.allProjectIds.push(id);
 				});
 			
@@ -84,6 +87,7 @@
 					"sDom" : '<"H"lfr>t',
 					"fnDrawCallback" : self.updateChecked
 				});
+			self.updateFormState();
 			self.updateResult();
 			},
 			
@@ -91,6 +95,7 @@
 				this.$el.confirmDialog("open");
 				this.table.fnAdjustColumnSizing();
 			},
+			
 			_filterTable : function(event){
 				var self = this;
 				var warning = this.$el.find(".filter-warning");
@@ -109,12 +114,22 @@
 					var $checkbox = $(this).find(".project-checkbox");
 					var id = $checkbox.val();
 					var checked = self.attributes.selectedId == id;					
-					$checkbox.prop("checked", checked);
+					$checkbox.attr("checked", checked);
 				});
 			},
+			
 			confirm : function(){
-				var self = this;
 				this.table.fnFilter( '' );
+				this.updateFormState();
+				this.updateResult();
+			},
+			
+			/*
+			 * Will update the state of the report form
+			 */
+			_updateFormState : function(){
+				var self = this;
+				
 				self.attributes.formState[self.attributes.name] =  _.map(self.attributes.allProjectIds, function(projectId) {
 					var selected = self.attributes.selectedId == projectId;
 					return {
@@ -123,9 +138,10 @@
 						type : "PROJECT_PICKER"
 					};
 				});
-				this.updateResult();
 			},
-			
+			/*
+			 * Will update the name of the selected project next to the button that opens the popup
+			 */
 			_updateResult : function(){
 				var self = this;
 				if(self.attributes.selectedId){

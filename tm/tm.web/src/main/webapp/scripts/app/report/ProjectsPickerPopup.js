@@ -56,6 +56,7 @@
 				
 			this.filterTable = $.proxy(this._filterTable, this);
 			this.updateResult = $.proxy(this._updateResult, this);
+			this.updateFormState = $.proxy(this._updateFormState, this);
 			var self = this;			
 			self.attributes.name = self.$el.attr("id");
 			// process initial state
@@ -72,7 +73,7 @@
 					var id = $checkbox.val();
 					var checked = _.contains(ids, id);
 					$checkbox.data("previous-checked", checked);
-					$checkbox.checked = checked;
+					$checkbox.attr('checked', checked);
 					self.attributes.allProjectIds.push(id);
 				});
 			
@@ -94,7 +95,7 @@
 					"bRetrieve" : false,
 					"sDom" : '<"H"lfr>t'
 				});
-			
+			this.updateFormState();
 			this.updateResult();
 			
 			},
@@ -113,17 +114,10 @@
 				}
 			},
 			confirm : function(){
-				var self = this;
+				
 				this.table.fnFilter( '' );
-				self.attributes.formState[self.attributes.name] =  _.map(self.attributes.allProjectIds, function(projectId) {
-					var selected = _.contains(self.model.attributes.projectIds, projectId);
-					return {
-						value : projectId,
-						selected : selected,
-						type : "PROJECT_PICKER"
-					};
-				});
-				self.updateResult();
+				this.updateFormState();
+				this.updateResult();
 			},
 			
 			_updateResult : function(){
@@ -139,11 +133,23 @@
 				}
 			},
 			
+			_updateFormState : function(){
+				var self = this;
+				self.attributes.formState[self.attributes.name] =  _.map(self.attributes.allProjectIds, function(projectId) {
+					var selected = _.contains(self.model.attributes.projectIds, projectId);
+					return {
+						value : projectId,
+						selected : selected,
+						type : "PROJECT_PICKER"
+					};
+				});
+			},
+			
 			cancel : function(){
 				this.table.fnFilter( '' );
 				this.$el.find(".project-checkbox").each(function() {
 					var previous = $(this).data("previous-checked");
-					this.checked = previous;
+					$(this).attr('checked', previous);
 				});
 			},
 			
@@ -151,7 +157,7 @@
 		
 			selectAllProjects : function() {
 				var ids = eachCheckbox(this.$el, function() {
-					this.checked = true;
+					$(this).attr('checked', true);
 				});
 				this.model.select(ids);
 			},
@@ -159,7 +165,7 @@
 			deselectAllProjects : function () {
 				
 				var ids = eachCheckbox(this.$el, function() {
-					this.checked = false;
+					$(this).attr('checked', false);
 				});
 				this.model.deselect(ids);
 			},
@@ -168,11 +174,12 @@
 				var selectIds = [];
 				var deselectIds = [];
 				eachCheckbox(this.$el, function() {
-					if(this.checked){
-						this.checked = false;
+					$checkbox = $(this);
+					if($checkbox.is(":checked")){
+						$checkbox.attr('checked',false);
 						deselectIds.push(this.value);
 					}else{
-						this.checked = true;
+						$checkbox.attr('checked',true);
 						selectIds.push(this.value);
 						
 					}
@@ -183,8 +190,8 @@
 			},
 			
 			notifyModel : function(event){
-				var checkbox = event.currentTarget;
-				this.model.changeProjectState(checkbox.value, checkbox.checked);				
+				var $checkbox = $(event.currentTarget);
+				this.model.changeProjectState($checkbox.val(), $checkbox.is(':checked'));				
 			}
 		});
 	 
