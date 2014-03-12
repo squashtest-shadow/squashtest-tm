@@ -92,36 +92,32 @@
 			}
 		}
 	}
-	
-	$(function() {
+	require(["common"], function() {
+	require([ "jquery", "squashtable" ], function($) {
+		$(function() {
 
-		require(["jquery", "squashtable"], function($){
-			
 			$("#test-plans-table").squashTable(tableSettings, squashSettings);
-			
-			$( '#remove-items-button' ).click(function() {
-				var table = $( '#test-plans-table' ).squashTable();
-				var ids = table.getSelectedIds(),
-					url = "${testplanUrl}/" + ids.join(',');
-				
+
+			$('#remove-items-button').click(function() {
+				var table = $('#test-plans-table').squashTable();
+				var ids = table.getSelectedIds(), url = "${testplanUrl}/" + ids.join(',');
+
 				if (ids.length > 0) {
 					$.ajax({
 						url : url,
 						type : 'delete',
 						dataType : 'json'
-					})
-					.done(function(data){
-						if (data){
+					}).done(function(data) {
+						if (data) {
 							squashtm.notification.showInfo('${ unauthorizedDeletion }');
 						}
 						table.refresh();
 						table.deselectRows();
 					});
 				}
-				
-			});			
-		});
 
+			});
+		});
 	});
-	
+	});
 </script>
