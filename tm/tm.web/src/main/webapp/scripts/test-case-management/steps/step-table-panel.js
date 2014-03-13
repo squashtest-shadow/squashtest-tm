@@ -375,21 +375,8 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 				},
 
 				richEditables : {
-					conf : {
-						ckeditor : {
-							customConfig : urls.ckeConfigUrl,
-							language : language.ckeLang
-						},
-						placeholder : language.placeholder,
-						submit : language.submit,
-						cancel : language.cancellabel,
-						indicator : language.indicatorUrl
-					},
-
-					targets : {
-						'rich-edit-action' : urls.editActionUrl,
-						'rich-edit-result' : urls.editResultUrl
-					}
+					'rich-edit-action' : urls.editActionUrl,
+					'rich-edit-result' : urls.editResultUrl					
 				},
 
 				functions : {

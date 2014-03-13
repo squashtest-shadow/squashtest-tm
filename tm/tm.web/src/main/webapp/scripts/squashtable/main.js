@@ -153,10 +153,11 @@
  * Member name : 'richEditables'
  * 
  * If set, will attempt to turn some cells to rich editables. If undefined, nothing will happen. the property
- * 'richEditables' is an compound object and must define at least 1 member for 'target'. conf : a regular object
- * configuring the plugin $.ui.richEditable (see jquery.squash.jeditable.ext.js). targets : a map of key-values. A key
- * represents a css class and the value represents an url supporting placeholders. Any td having the given css class
- * will be turned to a rich jeditable configured with 'conf' and posting to the supplied url.
+ * 'richEditables' is an compound object and must define at least 1 member for 'target'. 
+ * 
+ * conf : a map of key-values. A key represents a css class and the value represents an url supporting placeholders. 
+ * Any td having the given css class will be turned to a rich jeditable configured with the standard condiguration 
+ * and posting to the supplied url.
  * 
  * ============== Execution status icons ======================================
  * 
@@ -263,12 +264,13 @@
 define(["jquery",
         "squash.KeyEventListener", 
         "squash.statusfactory",  
+        "squash.configmanager",
         "datatables", 
         "./squashtable.defaults", 
         "./squashtable.pagination", 
         "./squashtable.dnd", 
         "jquery.squash.oneshotdialog"
-        ], function($, KeyEventListener, statusfactory){
+        ], function($, KeyEventListener, statusfactory, confman){
 	
 	if (!! $.fn.squashTable ){
 		return ;
@@ -667,18 +669,15 @@ define(["jquery",
 	 */
 	function _configureRichEditables() {
 
-		var editableConf = this.squashSettings.richEditables;
+		var targets = this.squashSettings.richEditables;
 		var self = this;
-
-		if (!editableConf) {
-			return;
-		}
-		var baseconf = editableConf.conf;
-		var targets = editableConf.targets;
 
 		if (!targets) {
 			return;
 		}
+		
+		var baseconf = confman.getJeditableCkeditor();
+
 		for ( var css in targets) {
 
 			var cells = $('td.' + css, this);
@@ -1580,6 +1579,12 @@ define(["jquery",
 						url : assignation.value,
 						targetClass : cls
 					});
+				},
+				'rich-edit' : function(conf, assignation){
+					var cls = 'rich-ed-' + Math.random().toString().substr(2, 3);
+					conf.current.sClass += ' ' + cls;
+					conf.squash.richEditables = conf.squash.richEditables || {};
+					conf.squash.richEditables[cls] = assignation.value;
 				}
 			}
 		}

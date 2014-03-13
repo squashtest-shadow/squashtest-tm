@@ -352,16 +352,7 @@
 			
 			<c:if test="${ editable }">
 			squashSettings.richEditables = {
-				conf : {
-					ckeditor : { customConfig : '${ ckeConfigUrl }', language: '<f:message key="rich-edit.language.value" />' },
-					placeholder: '<f:message key="rich-edit.placeholder" />',
-					submit: '<f:message key="rich-edit.button.ok.label" />',
-					cancel: '<f:message key="label.Cancel" />',
-					indicator : '<div class="processing-indicator" />' 				
-				},
-				targets : {
-					"rich-editable-comment" : "${ executionStepsUrl }/{entity-id}/comment"
-				}
+				"rich-editable-comment" : "${ executionStepsUrl }/{entity-id}/comment"				
 			};
 			squashSettings.attachments = { 
 				url : "${stepAttachmentManagerUrl}/{attach-list-id}/attachments/manager?workspace=campaign"
