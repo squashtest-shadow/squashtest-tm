@@ -325,7 +325,7 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui',
 		'isrich' : function($elt, value) {
 			var randomKey = Math.random().toString().substring(3,6);
 			this.options._richeditors[randomKey]=$elt;
-			var conf = confman.getStdChkeditor();
+			var conf = confman.getStdCkeditor();
 			$elt.ckeditor(function() {
 			}, conf);
 		},

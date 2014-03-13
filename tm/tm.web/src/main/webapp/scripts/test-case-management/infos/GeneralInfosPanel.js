@@ -18,9 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "workspace.event-bus", "jeditable.simpleJEditable", "jeditable.selectJEditable", 
+define([ "jquery", "backbone", "underscore", "workspace.event-bus", "squash.configmanager", "jeditable.simpleJEditable", "jeditable.selectJEditable", 
          "jeditable.selectJEditableAuto", "jquery.squash.jeditable"],
-		function($, Backbone, _ , eventBus, SimpleJEditable, SelectJEditable, SelectJEditableAuto) {
+		function($, Backbone, _ , eventBus, confman, SimpleJEditable, SelectJEditable, SelectJEditableAuto) {
 	
 			var GeneralInfosPanel = Backbone.View.extend({
 				
@@ -37,18 +37,9 @@ define([ "jquery", "backbone", "underscore", "workspace.event-bus", "jeditable.s
 					this.onRefreshImportance = $.proxy(this._onRefreshImportance, this);
 					if(this.settings.writable){
 						
-						var richEditSettings = {
-								url : this.settings.urls.testCaseUrl,
-								ckeditor : {
-									customConfig : squashtm.app.contextRoot + "styles/ckeditor/ckeditor-config.js",
-									language : squashtm.message.cache['rich-edit.language.value']
-								},
-								placeholder : squashtm.message.placeholder,
-								submit :  squashtm.message.cache['label.Ok'],
-								cancel :  squashtm.message.cache['label.Cancel'],
-								indicator : '<div class="processing-indicator"/>'
-
-							};
+						var richEditSettings = confman.getJeditableCkeditor();
+						richEditSettings.url = this.settings.urls.testCaseUrl;
+	
 						$('#test-case-description').richEditable(richEditSettings).addClass("editable");
 						
 						this.referenceEditable = new SimpleJEditable({

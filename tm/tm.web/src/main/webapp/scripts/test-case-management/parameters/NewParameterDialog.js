@@ -99,7 +99,7 @@ define([ "jquery", "backbone", "app/lnf/Forms", 'workspace.event-bus',
 
 			function decorateArea() {
 				var $area = $(this);
-				$area.ckeditor(function() {}, confman.getStdChkeditor());
+				$area.ckeditor(function() {}, confman.getStdCkeditor());
 			}
 
 			this.$textAreas.each(decorateArea);
