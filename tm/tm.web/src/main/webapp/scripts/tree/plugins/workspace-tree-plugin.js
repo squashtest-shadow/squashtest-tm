@@ -236,7 +236,7 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 			nodeData = data.rslt,
 			nodes = nodeData.o,
 			target = nodeData.np,
-			position = nodeData.cp,
+			targetTreeNode = $(target).treeNode(),
 			action = nodeData.p;
 
 				
@@ -253,13 +253,23 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 		}
 
 
-		var rawurl = $(target).treeNode().getMoveUrl();
+		var rawurl = targetTreeNode.getMoveUrl();
 		var nodeIds = $(nodes).treeNode().all('getResId').join(',');
 		var url;
 		
 		if(action === "inside"){
 			url = rawurl.replace('{nodeIds}', nodeIds).replace('/{position}', "");
 		} else {
+			/* 
+			 * There is a quirk with the position computed by jstree : it doesn't 
+			 * exclude the moved nodes from the computation.
+			 * 
+			 * So we need to ensure a correct calculus by removing the moved nodes 
+			 * from the list of children to that we can safely compute the real index. 
+			 */
+			var childrenUpToPosition = targetTreeNode.getChildren().slice(0, nodeData.cp);
+			var position = childrenUpToPosition.not(nodes).length;
+			
 			url = rawurl.replace('{nodeIds}', nodeIds).replace('{position}', position);
 		}
 		
