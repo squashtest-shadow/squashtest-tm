@@ -109,11 +109,11 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 			
 			// ************* creation ***************
 			
-			$("#tree-create-menu").on("click", "#new-folder-tree-button", function(){
+			$("#new-folder-tree-button").on("click", function(){
 				$("#add-folder-dialog").formDialog("open");
 			});
 			
-			$("#tree-create-menu").on("click", "#new-test-case-tree-button", function(){
+			$("#new-test-case-tree-button").on("click", function(){
 				$("#add-test-case-dialog").formDialog("open");
 			});
 			
