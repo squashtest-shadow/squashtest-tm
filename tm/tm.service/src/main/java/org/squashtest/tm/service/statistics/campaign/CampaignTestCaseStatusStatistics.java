@@ -39,6 +39,8 @@ public class CampaignTestCaseStatusStatistics {
 		for(ExecutionStatus status: ExecutionStatus.getCanonicalStatusSet()){
 			statistics.put(status, 0);
 		}
+		statistics.put(ExecutionStatus.UNTESTABLE, 0);
+		statistics.put(ExecutionStatus.SETTLED, 0);
 		
 	}
 

@@ -50,6 +50,8 @@ public class TestSuiteTestInventoryStatistics {
 		for (ExecutionStatus status : ExecutionStatus.getCanonicalStatusSet()) {
 			statusesNb.put(status, 0);
 		}
+		statusesNb.put(ExecutionStatus.SETTLED, 0);
+		statusesNb.put(ExecutionStatus.UNTESTABLE, 0);
 	}
 
 	public String getTestsuiteName() {
