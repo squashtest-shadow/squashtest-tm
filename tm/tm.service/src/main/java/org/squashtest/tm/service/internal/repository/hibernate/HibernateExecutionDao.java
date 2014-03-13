@@ -27,12 +27,14 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
+import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
@@ -196,26 +198,27 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	
 	@Override
 	public boolean hasStepOrExecutionWithStatus(long projectId, ExecutionStatus executionStatus) {
-		Criteria crit = currentSession().createCriteria(ExecutionStep.class, "ExecutionStep");
-		crit.createAlias("execution", EXECUTION, JoinType.LEFT_OUTER_JOIN);
-		crit.createAlias("Execution.testPlan.iteration", ITERATION, JoinType.LEFT_OUTER_JOIN);
-		crit.createAlias(ITERATION_CAMPAIGN, CAMPAIGN, JoinType.LEFT_OUTER_JOIN);
-		crit.createAlias(CAMPAIGN_PROJECT, PROJECT, JoinType.LEFT_OUTER_JOIN);
-		crit.add(Restrictions.eq(PROJECT_ID, Long.valueOf(projectId)));
-		crit.add(Restrictions.eq("executionStatus", executionStatus));
-		int stepResult = crit.list().size();
+		Criteria itemTP = currentSession().createCriteria(Campaign.class, CAMPAIGN);
+		itemTP.createAlias("Campaign.iterations", ITERATION);
+		itemTP.createAlias("Iteration.testPlans", TEST_PLAN);
+		itemTP.createAlias(CAMPAIGN_PROJECT, PROJECT);
+		itemTP.add(Restrictions.eq(PROJECT_ID, Long.valueOf(projectId)));
+		itemTP.add(Restrictions.eq("TestPlan.executionStatus", executionStatus));
+		long itemTPResult = (Long) itemTP.setProjection(Projections.rowCount()).uniqueResult();
+		if(itemTPResult > 0){
+			return true;
+		}
+		Criteria execsSteps = currentSession().createCriteria(Campaign.class, CAMPAIGN);
+		execsSteps.createAlias("Campaign.iterations", ITERATION);
+		execsSteps.createAlias("Iteration.testPlans", TEST_PLAN);
+		execsSteps.createAlias("TestPlan.executions", EXECUTION);
+		execsSteps.createAlias("Execution.steps", "ExecutionStep");
+		execsSteps.createAlias(CAMPAIGN_PROJECT, PROJECT);
+		execsSteps.add(Restrictions.eq(PROJECT_ID, Long.valueOf(projectId)));
+		execsSteps.add(Restrictions.eq("ExecutionStep.executionStatus", executionStatus));
+		long stepResult = (Long) execsSteps.setProjection(Projections.rowCount()).uniqueResult();
 		
-		Criteria execs = currentSession().createCriteria(Execution.class, EXECUTION);
-		execs.createAlias("testPlan", TEST_PLAN, JoinType.LEFT_OUTER_JOIN);
-		execs.createAlias("TestPlan.iteration", ITERATION, JoinType.LEFT_OUTER_JOIN);
-		execs.createAlias(ITERATION_CAMPAIGN, CAMPAIGN, JoinType.LEFT_OUTER_JOIN);
-		execs.createAlias(CAMPAIGN_PROJECT, PROJECT, JoinType.LEFT_OUTER_JOIN);
-		execs.add(Restrictions.eq(PROJECT_ID, Long.valueOf(projectId)));
-		execs.add(Restrictions.eq("TestPlan.executionStatus", executionStatus));
-		
-		int execResult = execs.list().size();
-		
-		return  stepResult + execResult > 0;
+		return  stepResult > 0;
 	}
 	
 	@Override
