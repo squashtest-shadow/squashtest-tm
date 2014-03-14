@@ -123,7 +123,7 @@
 		<parameter name="iteration_fPercentageProgress" class="java.lang.Float" isForPrompting="false"/>
 		<parameter name="iteration_number" class="java.lang.Integer" isForPrompting="false"/>
 		<parameter name="iteration_allowsSettled" class="java.lang.Boolean" isForPrompting="false"/>
-		<parameter name="iteration_allowsUntestable" class="java.lang.Boolean" isForPrompting="false"/>		
+		<parameter name="iteration_allowsUntestable" class="java.lang.Boolean" isForPrompting="false"/>
 		<queryString>
 			<![CDATA[]]>
 		</queryString>
@@ -183,7 +183,7 @@
 		</field>
 		<field name="allowsUntestable" class="java.lang.Boolean">
 			<fieldDescription><![CDATA[allowsUntestable]]></fieldDescription>
-		</field>	
+		</field>
 	</subDataset>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["C:\\Documents and Settings\\bsiri\\Mes documents\\reports\\"]]></defaultValueExpression>
@@ -579,7 +579,7 @@
 							</textField>
 						</jr:columnHeader>
 						<jr:detailCell style="table_TD" height="0" rowSpan="1"/>
-					</jr:column>					
+					</jr:column>
 					<jr:column width="50" uuid="e3a11fcb-bed6-45eb-82f8-5f3d4dbbdc40">
 						<jr:columnHeader style="table_TD" height="20" rowSpan="1">
 							<textField isStretchWithOverflow="true">
@@ -617,10 +617,16 @@
 					<printWhenExpression><![CDATA[(($F{testSuites}!=null) &&($F{testSuites}.size()>0))]]></printWhenExpression>
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="IterationDataSet" uuid="54c1dacc-92b9-4bfc-9052-398798f73460">
+					<datasetRun subDataset="IterationDataSet" uuid="3d0c02de-ca05-4f22-bafa-b9d0c5a79b0f">
+						<datasetParameter name="iteration_allowsUntestable">
+							<datasetParameterExpression><![CDATA[$F{allowsUntestable}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iteration_allowsSettled">
+							<datasetParameterExpression><![CDATA[$F{allowsSettled}]]></datasetParameterExpression>
+						</datasetParameter>
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{testSuites})]]></dataSourceExpression>
 					</datasetRun>
-					<jr:column width="330" uuid="7722fdda-555d-4a6f-9687-c77eedf8fc23">
+					<jr:column width="289" uuid="7722fdda-555d-4a6f-9687-c77eedf8fc23">
 						<jr:columnHeader style="table 1_TH" height="0" rowSpan="1">
 							<box>
 								<pen lineColor="#FFFFFF"/>
@@ -632,7 +638,7 @@
 						</jr:columnHeader>
 						<jr:detailCell style="table 1_TD" height="18" rowSpan="1">
 							<textField isStretchWithOverflow="true" pattern="">
-								<reportElement uuid="c153a7d8-9d6b-48be-8055-a94e51cd0983" stretchType="RelativeToBandHeight" x="0" y="0" width="330" height="18" forecolor="#666666">
+								<reportElement uuid="c153a7d8-9d6b-48be-8055-a94e51cd0983" stretchType="RelativeToBandHeight" x="0" y="0" width="289" height="18" forecolor="#666666">
 									<property name="net.sf.jasperreports.print.keep.full.text" value=""/>
 								</reportElement>
 								<textElement verticalAlignment="Middle">

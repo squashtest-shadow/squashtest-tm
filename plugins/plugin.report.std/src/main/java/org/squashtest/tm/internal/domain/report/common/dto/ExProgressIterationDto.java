@@ -52,6 +52,7 @@ public class ExProgressIterationDto extends ExProgressScheduledAbstractDto {
 	private void fillTestSuiteInfos(Iteration iteration) {
 		for (TestSuite testSuite : iteration.getTestSuites()) {
 			ExProgressTestSuiteDto testSuiteDto = new ExProgressTestSuiteDto(testSuite);
+			testSuiteDto.setIteration(this);
 			testSuites.add(testSuiteDto);
 			Collections.sort(testSuites, new testSuiteComparator());
 		}
