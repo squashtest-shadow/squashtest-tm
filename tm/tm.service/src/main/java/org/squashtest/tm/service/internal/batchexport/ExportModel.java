@@ -125,10 +125,6 @@ public class ExportModel {
 		private String lastModifiedBy;
 		private List<CustomField> cufs = new LinkedList<CustomField>();
 
-		public TestCaseModel() {
-			super();
-		}
-
 		// that monster constructor will be used by Hibernate in a hql query
 		public TestCaseModel(Long projectId, String projectName, Integer order, Long id, String reference, String name,
 				Boolean weightAuto, TestCaseImportance weight, TestCaseNature nature, TestCaseType type,

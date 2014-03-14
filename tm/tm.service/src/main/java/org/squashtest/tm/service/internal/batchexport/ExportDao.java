@@ -151,6 +151,7 @@ public class ExportDao {
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	private <R> List<R> findModels(Session session, String query, List<Long> tcIds, Class<R> resclass){
 		Query q = session.getNamedQuery(query);
 		q.setParameterList("testCaseIds", tcIds, LongType.INSTANCE);
