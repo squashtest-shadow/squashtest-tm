@@ -35,6 +35,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -75,7 +76,7 @@ import org.squashtest.tm.service.security.SecurityCheckableObject;
  */
 @Component
 @Scope("prototype")
-public class FirstLayerTreeNodeMover implements PasteOperation {
+public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean {
 	private static final class NodeCollaborators {
 		private final LibraryDao<?,?> libraryDao;
 		private final FolderDao<?,?> folderDao;
@@ -123,7 +124,11 @@ public class FirstLayerTreeNodeMover implements PasteOperation {
 	private WhichNodeVisitor whichVisitor = new WhichNodeVisitor();
 	private Map<NodeType, NodeCollaborators> collaboratorsByType = new HashMap<NodeType, NodeCollaborators>();
 
-	@PostConstruct
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		init();
+	}
+	
 	public void init() {
 		NodeCollaborators nc = new NodeCollaborators(campaignLibraryDao, campaignFolderDao, campaignLibraryNodeDao);
 		collaboratorsByType.put(CAMPAIGN_FOLDER, nc);
@@ -368,5 +373,7 @@ public class FirstLayerTreeNodeMover implements PasteOperation {
 		}
 
 	}
+
+
 	
 }
