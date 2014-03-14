@@ -233,7 +233,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 				.internationalize("search.testcase.history.createdOn.label", locale), DATE);
 		panel.addField(createdOnField);
 
-		SearchInputFieldModel modifiedByField = new SearchInputFieldModel("modifiedBy", getMessageSource()
+		SearchInputFieldModel modifiedByField = new SearchInputFieldModel("lastModifiedBy", getMessageSource()
 				.internationalize("search.testcase.history.modifiedBy.label", locale), MULTIAUTOCOMPLETE);
 		panel.addField(modifiedByField);
 
@@ -247,7 +247,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 			}
 		}
 
-		SearchInputFieldModel modifiedOnField = new SearchInputFieldModel("modifiedOn", getMessageSource()
+		SearchInputFieldModel modifiedOnField = new SearchInputFieldModel("lastModifiedOn", getMessageSource()
 				.internationalize("search.testcase.history.modifiedOn.label", locale), DATE);
 		panel.addField(modifiedOnField);
 
