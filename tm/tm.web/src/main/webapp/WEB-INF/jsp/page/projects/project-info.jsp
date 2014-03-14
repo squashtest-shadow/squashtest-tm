@@ -377,14 +377,18 @@
 
 		<div id="replace-status-dialog" class="popup-dialog not-displayed" title="<f:message key="label.status.options.popup.label"/>">
 		
+			<!--  warning message template -->
+			<div class="replace-status-warning-template not-displayed"><f:message key="label.status.options.popup.text"/></div>
+				
 			<div data-def="state=loading">
 				<comp:waiting-pane/>
 			</div>
 		
 			
 			<div data-def="state=normal" class="display-table">
-				<div class="display-table-row">
-					${untestablePopupMessage}
+				<!--  message actually displayed -->
+				<div class="display-table-row replace-status-warning">
+					
 				</div>
 				<div class="display-table-row">
 					<f:message key="label.Status"/>
@@ -506,19 +510,26 @@ require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.att
 	statuspopup.on('formdialogopen', function(){
 		
 		statuspopup.formDialog('setState', 'normal');
+		var removedstatus = statuspopup.data('removed-status'),
+			statusname = $(".exec-status-label.exec-status-"+removedstatus.toLowerCase()).text();
+		
+		var txt = statuspopup.find('.replace-status-warning-template').text().replace('{0}',statusname);
+		statuspopup.find('.replace-status-warning').text(txt);
 			
-			$.getJSON("${projectUrl}/execution-status/UNTESTABLE").done(function(json){
-					$.each(json, function(key){
-						var o = new Option(key, json[key]);
-						$(o).html(key);
-						$("#status-input").append(o);
-					});
-				statuspopup.formDialog('setState', "normal");
+		$.getJSON("${projectUrl}/execution-status/"+removedstatus).done(function(json){
+				$("#status-input").empty();
+				$.each(json, function(key){
+					var o = new Option(key, json[key]);
+					$(o).html(key);
+					$("#status-input").append(o);
+				});
+			statuspopup.formDialog('setState', "normal");
 		});
 	});
 	
 	statuspopup.on('formdialogcancel', function(){
-		 $("#toggle-UNTESTABLE-checkbox").switchButton({
+		var removedstatus = statuspopup.data('removed-status');
+		 $("#toggle-"+removedstatus+"-checkbox").switchButton({
 			  checked: true
 		});
 		$("#status-input").html("");
@@ -554,6 +565,7 @@ require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.att
 				 success : function(data){
 						if(data){
 							$("#source-status").val(status);
+							statuspopup.data('removed-status', status);
 							statuspopup.formDialog('open');
 						}
 						else {

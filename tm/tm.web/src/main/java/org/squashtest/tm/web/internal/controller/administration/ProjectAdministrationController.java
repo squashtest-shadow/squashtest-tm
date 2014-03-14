@@ -131,7 +131,6 @@ public class ProjectAdministrationController {
 		mav.addObject("userPermissions", partyPermissions);
 		mav.addObject("availablePermissions", availablePermissions);
 		mav.addObject("attachments", attachmentsHelper.findAttachments(adminProject.getProject()));
-		mav.addObject("untestablePopupMessage", makeUntestablePopupMesssage(locale));
 		
 		return mav;
 	}
@@ -182,10 +181,4 @@ public class ProjectAdministrationController {
 
 	}
 
-	private String makeUntestablePopupMesssage(Locale locale){
-		String variableText = messageSource.getMessage("execution.execution-status.UNTESTABLE", null, locale);
-		String text = messageSource.getMessage("label.status.options.popup.text", null, locale);
-		text = text.replace("{0}", variableText);
-		return text;
-	}
 }
