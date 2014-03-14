@@ -53,7 +53,7 @@ define([ "jquery", "app/pubsub", "app/lnf/Forms", "jquery.squash.messagedialog" 
 					if (validationErrorList.length > 0) {
 						for ( var counter = 0; counter < validationErrorList.length; counter++) {
 							var fve = validationErrorList[counter];
-							if (request.label !== null) {
+							if (!! request.label ) {
 								request.label.html(fve.errorMessage);
 							} else if (!showBootstrapErrorMessage(fve) && !showLegacyErrorMessage(fve)) {
 								throw 'exception';
