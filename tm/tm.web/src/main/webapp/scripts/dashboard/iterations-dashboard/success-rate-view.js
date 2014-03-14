@@ -50,10 +50,11 @@ define(["../basic-objects/donut-view"], function(DonutView){
 			
 			var totalSuccess = this._sumAllSuccess(model),
 				totalFailures = this._sumAllFailures(model),
-				total = totalSuccess + totalFailures + this._sumAllOther(model);
-			
-			var percentSuccess = (total !== 0 ) ? totalSuccess * 100 / total : 0,
-				percentFailures = (total !== 0) ? totalFailures * 100 / total : 0;
+				total = totalSuccess + totalFailures + this._sumAllOther(model),
+				totalExecuted = this._sumAllExecuted(model);
+				
+			var percentSuccess = (totalExecuted !== 0 ) ? totalSuccess * 100 / totalExecuted : 0,
+				percentFailures = (totalExecuted !== 0) ? totalFailures * 100 / totalExecuted : 0;
 			
 			this.$el.find('.success-rate-total-success').text(percentSuccess.toFixed(0)+'%');
 			this.$el.find('.success-rate-total-failure').text(percentFailures.toFixed(0)+'%');
@@ -69,6 +70,10 @@ define(["../basic-objects/donut-view"], function(DonutView){
 		
 		_sumAllOther : function(model){
 			return model.nbVeryHighOther + model.nbHighOther + model.nbMediumOther + model.nbLowOther;
+		},
+		
+		_sumAllExecuted : function(model){
+			return model.nbVeryHighExecuted + model.nbHighExecuted + model.nbMediumExecuted + model.nbLowExecuted;
 		},
 		
 

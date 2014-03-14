@@ -138,7 +138,42 @@ public class CampaignTestCaseSuccessRateStatistics {
 				getValue(testsOfLowImportance, ExecutionStatus.RUNNING)+
 				getValue(testsOfLowImportance, ExecutionStatus.UNTESTABLE);
 	}
-	
+	public int getNbVeryHighExecuted() {
+		return getValue(testsOfVeryHighImportance, ExecutionStatus.BLOCKED)+
+				getValue(testsOfVeryHighImportance, ExecutionStatus.UNTESTABLE)+
+				getValue(testsOfVeryHighImportance, ExecutionStatus.SUCCESS)+
+				getValue(testsOfVeryHighImportance, ExecutionStatus.WARNING)+
+				getValue(testsOfVeryHighImportance, ExecutionStatus.SETTLED)+
+				getValue(testsOfVeryHighImportance, ExecutionStatus.FAILURE)+
+				getValue(testsOfVeryHighImportance, ExecutionStatus.ERROR);
+	}
+	public int getNbHighExecuted() {
+		return getValue(testsOfHighImportance, ExecutionStatus.BLOCKED)+
+				getValue(testsOfHighImportance, ExecutionStatus.UNTESTABLE)+
+				getValue(testsOfHighImportance, ExecutionStatus.SUCCESS)+
+				getValue(testsOfHighImportance, ExecutionStatus.WARNING)+
+				getValue(testsOfHighImportance, ExecutionStatus.SETTLED)+
+				getValue(testsOfHighImportance, ExecutionStatus.FAILURE)+
+				getValue(testsOfHighImportance, ExecutionStatus.ERROR);
+	}
+	public int getNbMediumExecuted() {
+		return getValue(testsOfMediumImportance, ExecutionStatus.BLOCKED)+
+				getValue(testsOfMediumImportance, ExecutionStatus.UNTESTABLE)+
+				getValue(testsOfMediumImportance, ExecutionStatus.SUCCESS)+
+				getValue(testsOfMediumImportance, ExecutionStatus.WARNING)+
+				getValue(testsOfMediumImportance, ExecutionStatus.SETTLED)+
+				getValue(testsOfMediumImportance, ExecutionStatus.FAILURE)+
+				getValue(testsOfMediumImportance, ExecutionStatus.ERROR);
+	}
+	public int getNbLowExecuted() {
+		return getValue(testsOfLowImportance, ExecutionStatus.BLOCKED)+
+				getValue(testsOfLowImportance, ExecutionStatus.UNTESTABLE)+
+				getValue(testsOfLowImportance, ExecutionStatus.SUCCESS)+
+				getValue(testsOfLowImportance, ExecutionStatus.WARNING)+
+				getValue(testsOfLowImportance, ExecutionStatus.SETTLED)+
+				getValue(testsOfLowImportance, ExecutionStatus.FAILURE)+
+				getValue(testsOfLowImportance, ExecutionStatus.ERROR);
+	}
 	public int getValue(Map<ExecutionStatus, Integer> map, ExecutionStatus status){
 		if(map.containsKey(status)){
 			return map.get(status);

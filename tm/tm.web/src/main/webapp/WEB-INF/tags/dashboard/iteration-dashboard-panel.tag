@@ -247,7 +247,7 @@
 								<th style="border:none;"></th>
 								<th class="status-color-untestable" colspan="3"><f:message key="label.Synthesis"/></th>
 								<th style="border:none;"></th>
-								<th class="status-color-untestable" colspan="14"><f:message key="label.ExecutionProgress"/> </th>
+								<th class="status-color-untestable" colspan="13"><f:message key="label.ExecutionProgress"/> </th>
 								<th style="border:none;"></th>
 								<th class="status-color-untestable" colspan="4"><f:message key="label.NeverExecuted"/></th>
 							</tr>

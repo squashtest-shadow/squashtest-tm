@@ -111,11 +111,11 @@ public class TestSuiteTestInventoryStatistics {
 	}
 
 	public float getPcSuccess() {
-		return Math.round(((float) (getNbSuccess() + getNbSettled()) / (float) getNbTotal()) * 10000) / (float) 100;
+		return Math.round(((float) (getNbSuccess() + getNbSettled()) / (float) getNbExecuted()) * 10000) / (float) 100;
 	}
 
 	public float getPcFailure() {
-		return Math.round(((float) getNbFailure() / (float) getNbTotal()) * 10000) / (float) 100;
+		return Math.round(((float) getNbFailure() / (float) getNbExecuted()) * 10000) / (float) 100;
 	}
 
 	public float getPcPrevProgress() {
