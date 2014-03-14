@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>squashtest-csp-tm</artifactId>
@@ -28,7 +29,7 @@
     <sprites.packageDirectory>images</sprites.packageDirectory>
     <rjs.outputDirectory>${project.build.directory}/optimized-js</rjs.outputDirectory>
     <rjs.js.outputDirectory>${rjs.outputDirectory}/scripts</rjs.js.outputDirectory>
-    <rjs.optimizer>uglify2</rjs.optimizer>
+    <rjs.optimizer>none</rjs.optimizer>
     <css.packageDirectory>styles</css.packageDirectory>
     <js.packageDirectory>scripts</js.packageDirectory>
 
@@ -913,7 +914,7 @@
         <node.executable>node</node.executable>
       </properties>
     </profile>
-    
+
     <profile>
       <!-- this profile does stuff when rjs is asked to be skipped -->
       <id>no-rjs</id>
@@ -922,7 +923,7 @@
           <name>requirejs.optimize.skip</name>
         </property>
       </activation>
-      
+
       <build>
         <plugins>
           <plugin>
@@ -936,7 +937,7 @@
                 <goals>
                   <goal>copy-resources</goal>
                 </goals>
-    
+
                 <configuration>
                   <outputDirectory>${rjs.js.outputDirectory}</outputDirectory>
                   <resources>
