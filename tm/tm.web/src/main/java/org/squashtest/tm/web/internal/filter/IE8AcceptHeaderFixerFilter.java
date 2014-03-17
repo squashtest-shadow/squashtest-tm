@@ -23,6 +23,8 @@ package org.squashtest.tm.web.internal.filter;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -33,23 +35,31 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
+import org.squashtest.tm.web.internal.http.ContentTypes;
+import org.squashtest.tm.web.internal.http.RequestHeaders;
+
 /**
  * When sending a request, IE8 sends a shitload of accept headers but no "text/html". This filter adds an
  * "Accept=text/html" on non-json, IE8 looking requests.
  * 
- * Typical IE8 accept header : <code>Accept: 
+ * Typical IE8 accept header : 
+ * <code>Accept: 
  * 		image/jpeg, application/x-ms-application, 
  * 		image/gif, application/xaml+xml, 
  * 		image/pjpeg, application/x-ms-xbap, 
  * 		application/x-shockwave-flash, application/msword, * / *
  * </code>
  * 
+ * IE8 accept header may look different when some things are installed on the computer or not (e.g. MS Office) so we
+ * also have a look at the user agent.
+ * 
  * @author Gregory Fouquet
  * 
  */
 public class IE8AcceptHeaderFixerFilter implements Filter {
-	private static final String ACCEPT = "Accept";
-	private static final String TEXT_HTML = "text/html";
+	private static final String ACCEPT = RequestHeaders.ACCEPT;
+	private static final String TEXT_HTML = ContentTypes.TEXT_HTML;
+	private static final Pattern IE8_AGENT_PATTERN = Pattern.compile("\\; ?MSIE ?8\\.0 ?\\;");
 
 	private static class FixedIE8AcceptWrapper extends HttpServletRequestWrapper {
 		/**
@@ -86,7 +96,7 @@ public class IE8AcceptHeaderFixerFilter implements Filter {
 			return acceptHeader;
 		}
 
-		@SuppressWarnings("rawtypes")
+		@SuppressWarnings({ "rawtypes", "unchecked" })
 		@Override
 		public Enumeration getHeaders(String name) {
 			if (ACCEPT.equals(name)) {
@@ -140,7 +150,7 @@ public class IE8AcceptHeaderFixerFilter implements Filter {
 
 		String accept = httpRequest.getHeader(ACCEPT);
 
-		if (accept.contains(TEXT_HTML) || acceptsJson(accept) || notFromIE8(accept)) {
+		if (accept.contains(TEXT_HTML) || acceptsJson(accept) || notFromIE8(httpRequest)) {
 			chainedRequest = (HttpServletRequest) request;
 		} else {
 			chainedRequest = new FixedIE8AcceptWrapper(httpRequest);
@@ -149,16 +159,29 @@ public class IE8AcceptHeaderFixerFilter implements Filter {
 		chain.doFilter(chainedRequest, response);
 	}
 
+	private boolean notFromIE8(HttpServletRequest request) {
+		// notIE8Accept is not 100% reliable, yet we try not to use the regexp-based notIE8UserAgent
+		return notIE8Accept(request.getHeader(ACCEPT)) && notIE8UserAgent(request.getHeader(RequestHeaders.USER_AGENT));
+	}
+
+	/**
+	 * @param userAgent
+	 * @return <code>true</code> when there are reasonable clues that the user agent string was issued by IE8.
+	 */
+	private boolean notIE8UserAgent(String userAgent) {
+		return !IE8_AGENT_PATTERN.matcher(userAgent).find();
+	}
+
 	/**
 	 * @param accept
-	 * @return
+	 * @return <code>true</code> when there are reasonable clues that the accept string was issued by IE8.
 	 */
-	private boolean notFromIE8(String accept) {
+	private boolean notIE8Accept(String accept) {
 		return !accept.contains("application/x-ms-application");
 	}
 
 	private boolean acceptsJson(String accept) {
-		return accept.contains("application/json") || accept.contains("text/javascript");
+		return accept.contains(ContentTypes.APPLICATION_JSON) || accept.contains(ContentTypes.TEXT_JAVASCRIPT);
 	}
 
 	/**

@@ -73,7 +73,7 @@ import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
-import org.squashtest.tm.web.internal.controller.RequestHeaders;
+import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -411,14 +411,14 @@ public class AdvancedSearchController {
 		return panel;
 	}
 
-	@RequestMapping(value = "/input", method = RequestMethod.GET, headers = RequestHeaders.CONTENT_JSON, params = TESTCASE_VIA_REQUIREMENT)
+	@RequestMapping(value = "/input", method = RequestMethod.GET, headers = AcceptHeaders.CONTENT_JSON, params = TESTCASE_VIA_REQUIREMENT)
 	@ResponseBody
 	public SearchInputInterfaceModel getTestCaseViaRequirementSearchInputInterfaceModel(Locale locale) {
 		// TODO should no longer be called through HTTP, put it private
 		return getRequirementSearchInputInterfaceModel(locale);
 	}
 
-	@RequestMapping(value = "/input", method = RequestMethod.GET, headers = RequestHeaders.CONTENT_JSON, params = REQUIREMENT)
+	@RequestMapping(value = "/input", method = RequestMethod.GET, headers = AcceptHeaders.CONTENT_JSON, params = REQUIREMENT)
 	@ResponseBody
 	public SearchInputInterfaceModel getRequirementSearchInputInterfaceModel(Locale locale) {
 		// TODO should no longer be called through HTTP, put it private
@@ -451,7 +451,7 @@ public class AdvancedSearchController {
 		return model;
 	}
 
-	@RequestMapping(value = "/input", method = RequestMethod.GET, headers = RequestHeaders.CONTENT_JSON, params = TESTCASE)
+	@RequestMapping(value = "/input", method = RequestMethod.GET, headers = AcceptHeaders.CONTENT_JSON, params = TESTCASE)
 	@ResponseBody
 	public SearchInputInterfaceModel getTestCaseSearchInputInterfaceModel(Locale locale) {
 		// TODO should no longer be called through HTTP, put it private

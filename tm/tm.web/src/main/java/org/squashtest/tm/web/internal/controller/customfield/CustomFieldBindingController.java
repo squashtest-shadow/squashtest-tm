@@ -41,7 +41,7 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService;
-import org.squashtest.tm.web.internal.controller.RequestHeaders;
+import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldBindingModel;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
@@ -70,7 +70,7 @@ public class CustomFieldBindingController {
 		this.service = service;
 	}
 
-	@RequestMapping(method = RequestMethod.GET, params = { PROJECT_ID, "!bindableEntity" }, headers = RequestHeaders.CONTENT_JSON)
+	@RequestMapping(method = RequestMethod.GET, params = { PROJECT_ID, "!bindableEntity" }, headers = AcceptHeaders.CONTENT_JSON)
 	@ResponseBody
 	public List<CustomFieldBindingModel> findAllCustomFieldsForProject(@RequestParam(PROJECT_ID) Long projectId) {
 
@@ -80,7 +80,7 @@ public class CustomFieldBindingController {
 
 	}
 
-	@RequestMapping(method = RequestMethod.GET, params = { PROJECT_ID, "bindableEntity", "!sEcho" }, headers = RequestHeaders.CONTENT_JSON)
+	@RequestMapping(method = RequestMethod.GET, params = { PROJECT_ID, "bindableEntity", "!sEcho" }, headers = AcceptHeaders.CONTENT_JSON)
 	@ResponseBody
 	public List<CustomFieldBindingModel> findAllCustomFieldsForProject(@RequestParam(PROJECT_ID) Long projectId,
 			@RequestParam("bindableEntity") BindableEntity bindableEntity) {
@@ -123,7 +123,7 @@ public class CustomFieldBindingController {
 		service.removeCustomFieldBindings(bindingIds);
 	}
 
-	@RequestMapping(value = "/available", method = RequestMethod.GET, params = { PROJECT_ID, "bindableEntity" }, headers = RequestHeaders.CONTENT_JSON)
+	@RequestMapping(value = "/available", method = RequestMethod.GET, params = { PROJECT_ID, "bindableEntity" }, headers = AcceptHeaders.CONTENT_JSON)
 	@ResponseBody
 	public List<CustomFieldModel> findAllAvailableCustomFieldsForProjectAndEntity(
 			@RequestParam(PROJECT_ID) Long projectId, @RequestParam("bindableEntity") BindableEntity bindableEntity) {

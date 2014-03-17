@@ -18,20 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller;
+
+package org.squashtest.tm.web.internal.http;
 
 /**
- * @author Gregory Fouquet
+ * Standard http request headers
  * 
+ * @author Gregory Fouquet
+ *
  */
 public final class RequestHeaders {
 	private RequestHeaders() {
 		super();
 	}
+	public static final String ACCEPT = "Accept";
+	public static final String USER_AGENT = "User-Agent";
 
-	/**
-	 * clients either accepts application/json or text/javascript content type
-	 */
-	public static final String CONTENT_JSON = "Accept=application/json, text/javascript";
 }
-
