@@ -43,7 +43,7 @@
 	<jsp:attribute name="body">		
 		<div>
 			<table id="requirement-audit-trail-table" class="unstyled-table" data-def="ajaxsource=${modelUrl}, 
-																datakeys-id=event-id, pagesize=10 ${deferloadingClause}" >
+																datakeys-id=event-id, pagesize=50 ${deferloadingClause}" >
 				<thead>
 					<tr>
 						<th data-def="map=event-date"><f:message key="label.Date" /></th>

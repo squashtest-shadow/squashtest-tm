@@ -52,7 +52,7 @@ define(['jquery','jqueryui', 'datatables'], function($){
 				'class' : 'paginate_button last'
 			});
 			var nPageTxt = $("<span />", {
-				text : parseInt((oSettings._iDisplayStart+oSettings._iDisplayLength) / oSettings._iDisplayLength, 10)
+				text : parseInt((oSettings._iDisplayStart+oSettings._iDisplayLength) / oSettings._iDisplayLength, 50)
 			});
 
 			$(nPaging).append(nFirst).append(nPrevious).append(nPageTxt).append(nNext).append(nLast);
@@ -71,7 +71,7 @@ define(['jquery','jqueryui', 'datatables'], function($){
 			nFirst.click(function() {
 				oSettings.oApi._fnPageChange(oSettings, "first");
 				fnCallbackDraw(oSettings);
-				nPageTxt.text(parseInt((oSettings._iDisplayStart+oSettings._iDisplayLength) / oSettings._iDisplayLength, 10));
+				nPageTxt.text(parseInt((oSettings._iDisplayStart+oSettings._iDisplayLength) / oSettings._iDisplayLength, 50));
 			}).bind('selectstart', function() {
 				return false;
 			});
@@ -79,7 +79,7 @@ define(['jquery','jqueryui', 'datatables'], function($){
 			nPrevious.click(function() {
 				oSettings.oApi._fnPageChange(oSettings, "previous");
 				fnCallbackDraw(oSettings);
-				nPageTxt.text(parseInt((oSettings._iDisplayStart+oSettings._iDisplayLength)/ oSettings._iDisplayLength, 10));
+				nPageTxt.text(parseInt((oSettings._iDisplayStart+oSettings._iDisplayLength)/ oSettings._iDisplayLength, 50));
 			}).bind('selectstart', function() {
 				return false;
 			});
@@ -87,7 +87,7 @@ define(['jquery','jqueryui', 'datatables'], function($){
 			nNext.click(function() {
 				oSettings.oApi._fnPageChange(oSettings, "next");
 				fnCallbackDraw(oSettings);
-				nPageTxt.text(parseInt((oSettings._iDisplayStart+oSettings._iDisplayLength) / oSettings._iDisplayLength, 10));
+				nPageTxt.text(parseInt((oSettings._iDisplayStart+oSettings._iDisplayLength) / oSettings._iDisplayLength, 50));
 			}).bind('selectstart', function() {
 				return false;
 			});
@@ -95,7 +95,7 @@ define(['jquery','jqueryui', 'datatables'], function($){
 			nLast.click(function() {
 				oSettings.oApi._fnPageChange(oSettings, "last");
 				fnCallbackDraw(oSettings);
-				nPageTxt.text(parseInt((oSettings._iDisplayStart+oSettings._iDisplayLength) / oSettings._iDisplayLength, 10));
+				nPageTxt.text(parseInt((oSettings._iDisplayStart+oSettings._iDisplayLength) / oSettings._iDisplayLength, 50));
 			}).bind('selectstart', function() {
 				return false;
 			});
