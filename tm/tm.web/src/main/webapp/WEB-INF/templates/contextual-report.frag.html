@@ -179,7 +179,7 @@
             <div th:case="'CHECKBOXES_GROUP'">
               <label th:text="*{label}">Checkboxes group</label>
               <ul>
-                <li th:each="opt : *{options}" th:with="checkboxId = ${opt.givesAccessTo} + '-binder', input = ${opt}"
+                <li th:each="opt : *{options}" th:with="checkboxId = ${opt.givesAccessTo} + '-binder', input = ${opt}, grouped=${true}"
                   th:include="contextual-report-inputs.frag :: checkbox " >CHECKBOX</li>
               </ul>
             </div>

@@ -397,7 +397,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 
 				if ("RADIO_BUTTONS_GROUP" == value[0].type) {
 					$.each(value, function(index, element) {
-						if (element.selected & element.value == "EVERYTHING") {
+						if (element.selected && element.value == "EVERYTHING") {
 							status = true;
 						}
 					});
