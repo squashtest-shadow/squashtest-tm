@@ -66,17 +66,24 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil",
 				return;
 			}
 			var id = this.associationId;
-				
+			var  targetUrl = "";	
+			var  returnUrl = "";
 			if("testcase" === this.associationType){
-				
-				$.ajax({
-					type: "POST",
-					url : squashtm.app.contextRoot + "/test-cases/" + id + "/verified-requirements",
-					data : { "requirementsIds[]" : ids }
-				}).done(function() {
-					document.location.href = squashtm.app.contextRoot + "/test-cases/" + id + "/verified-requirement-versions/manager";
-				});
+				targetUrl =  squashtm.app.contextRoot + "/test-cases/" + id + "/verified-requirements";
+				returnUrl = squashtm.app.contextRoot + "/test-cases/" + id + "/verified-requirement-versions/manager";
+			}else if ("teststep" === this.associationType){
+				targetUrl = squashtm.app.contextRoot + "/test-steps/" + id + "/verified-requirements";
+				returnUrl = squashtm.app.contextRoot + "/test-steps/" + id + "/verified-requirement-versions/manager";
 			}
+			
+			$.ajax({
+				type: "POST",
+				url :targetUrl,
+				data : { "requirementsIds[]" : ids }
+			}).done(function() {
+				document.location.href = returnUrl;
+			});
+			
 		},
 		
 		selectAllForAssocation : function(){
