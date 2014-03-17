@@ -65,6 +65,7 @@ import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseImportanceJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseModeJeditableComboDataBuilder;
+import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
@@ -74,7 +75,7 @@ import org.squashtest.tm.web.internal.model.json.JsonIteration;
 @Controller
 @RequestMapping("/campaigns/{campaignId}")
 public class CampaignModificationController {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignModificationController.class);
 
 	private static final String PLANNING_URL = "/planning";
@@ -82,7 +83,7 @@ public class CampaignModificationController {
 
 	@Inject
 	private CampaignModificationService campaignModService;
-	
+
 	@Inject
 	private IterationModificationService iterationModService;
 
@@ -91,7 +92,7 @@ public class CampaignModificationController {
 
 	@Inject
 	private InternationalizationHelper messageSource;
-	
+
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentHelper;
 
@@ -100,10 +101,10 @@ public class CampaignModificationController {
 
 	@Inject
 	private Provider<TestCaseModeJeditableComboDataBuilder> modeComboBuilderProvider;
-	
+
 	@Inject
 	private IterationTestPlanManagerService iterationTestPlanManagerService;
-	
+
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
 	public ModelAndView refreshStats(@PathVariable long campaignId) {
 
@@ -128,9 +129,9 @@ public class CampaignModificationController {
 		populateCampaignModel(campaignId, model);
 		return "fragment/campaigns/edit-campaign";
 	}
-	
-	private Model populateCampaignModel(long campaignId, Model model){
-		
+
+	private Model populateCampaignModel(long campaignId, Model model) {
+
 		Campaign campaign = campaignModService.findById(campaignId);
 		TestPlanStatistics statistics = campaignModService.findCampaignStatistics(campaignId);
 		boolean hasCUF = cufValueService.hasCustomFields(campaign);
@@ -138,55 +139,56 @@ public class CampaignModificationController {
 
 		model.addAttribute("campaign", campaign);
 		model.addAttribute("statistics", statistics);
-		model.addAttribute("hasCUF", hasCUF);		
+		model.addAttribute("hasCUF", hasCUF);
 		model.addAttribute("attachmentsModel", attachments);
 		model.addAttribute("assignableUsers", getAssignableUsers(campaignId));
 		model.addAttribute("weights", getWeights());
 		model.addAttribute("modes", getModes());
-		model.addAttribute("allowsSettled", campaign.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
-		model.addAttribute("allowsUntestable", campaign.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
-		
+		model.addAttribute("allowsSettled",
+				campaign.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
+		model.addAttribute("allowsUntestable",
+				campaign.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
+
 		return model;
 	}
 
-	private Map<String, String> getAssignableUsers(long campaignId){
-		
+	private Map<String, String> getAssignableUsers(long campaignId) {
+
 		Locale locale = LocaleContextHolder.getLocale();
-		
+
 		Campaign campaign = campaignModService.findById(campaignId);
 
 		String unassignedLabel = messageSource.internationalize("label.Unassigned", locale);
 
 		Set<User> usersSet = new HashSet<User>();
-		
-		for(Iteration iteration : campaign.getIterations()){	
+
+		for (Iteration iteration : campaign.getIterations()) {
 			usersSet.addAll(iterationTestPlanManagerService.findAssignableUserForTestPlan(iteration.getId()));
 		}
-		
+
 		List<User> usersList = new ArrayList<User>(usersSet.size());
 		usersList.addAll(usersSet);
 		Collections.sort(usersList, new UserLoginComparator());
-		
+
 		Map<String, String> jsonUsers = new LinkedHashMap<String, String>(usersList.size());
 		jsonUsers.put(User.NO_USER_ID.toString(), unassignedLabel);
-		for (User user : usersList){
+		for (User user : usersList) {
 			jsonUsers.put(user.getId().toString(), user.getLogin());
 		}
-		
+
 		return jsonUsers;
 	}
-	
-	private Map<String, String> getWeights(){
+
+	private Map<String, String> getWeights() {
 		Locale locale = LocaleContextHolder.getLocale();
 		return importanceComboBuilderProvider.get().useLocale(locale).buildMap();
 	}
-	
-	private Map<String, String> getModes(){
+
+	private Map<String, String> getModes() {
 		Locale locale = LocaleContextHolder.getLocale();
 		return modeComboBuilderProvider.get().useLocale(locale).buildMap();
 	}
-	
-	
+
 	@RequestMapping(method = RequestMethod.POST, params = { "id=campaign-description", VALUE })
 	public @ResponseBody
 	String updateDescription(@RequestParam(VALUE) String newDescription, @PathVariable long campaignId) {
@@ -220,12 +222,12 @@ public class CampaignModificationController {
 
 	}
 
-	@RequestMapping(value = "/general", method = RequestMethod.GET, produces="application/json")
+	@RequestMapping(value = "/general", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	@ResponseBody
-	public JsonGeneralInfo refreshGeneralInfos(@PathVariable long campaignId){
+	public JsonGeneralInfo refreshGeneralInfos(@PathVariable long campaignId) {
 		Campaign campaign = campaignModService.findById(campaignId);
-		return new JsonGeneralInfo((AuditableMixin)campaign);
-		
+		return new JsonGeneralInfo((AuditableMixin) campaign);
+
 	}
 
 	/*
@@ -338,76 +340,70 @@ public class CampaignModificationController {
 
 	}
 
-	
-	@RequestMapping(value = "/iterations", produces="application/json", method = RequestMethod.GET )
-	@ResponseBody  
-	public List<JsonIteration> getIterations(@PathVariable("campaignId") long campaignId){
+	@RequestMapping(value = "/iterations", produces = ContentTypes.APPLICATION_JSON, method = RequestMethod.GET)
+	@ResponseBody
+	public List<JsonIteration> getIterations(@PathVariable("campaignId") long campaignId) {
 		List<Iteration> iterations = campaignModService.findIterationsByCampaignId(campaignId);
 		return createJsonIterations(iterations);
 	}
-	
+
 	// for now, handles the scheduled dates only
-	@RequestMapping(value = "/iterations/planning", consumes="application/json", method = RequestMethod.POST)
+	@RequestMapping(value = "/iterations/planning", consumes = ContentTypes.APPLICATION_JSON, method = RequestMethod.POST)
 	@ResponseBody
-	public void setIterationsPlanning(@RequestBody JsonIteration[] iterations) throws ParseException{
+	public void setIterationsPlanning(@RequestBody JsonIteration[] iterations) throws ParseException {
 		Date date;
-		for (JsonIteration iter : iterations){
-			date = (iter.getScheduledStartDate() != null) ? IsoDateUtils.parseIso8601DateTime(iter.getScheduledStartDate()) : null;
+		for (JsonIteration iter : iterations) {
+			date = (iter.getScheduledStartDate() != null) ? IsoDateUtils.parseIso8601DateTime(iter
+					.getScheduledStartDate()) : null;
 			iterationModService.changeScheduledStartDate(iter.getId(), date);
-			date = (iter.getScheduledEndDate() != null) ? IsoDateUtils.parseIso8601DateTime(iter.getScheduledEndDate()) : null;
+			date = (iter.getScheduledEndDate() != null) ? IsoDateUtils.parseIso8601DateTime(iter.getScheduledEndDate())
+					: null;
 			iterationModService.changeScheduledEndDate(iter.getId(), date);
 		}
 	}
-	
 
 	// *************************** statistics ********************************
 
-	//URL should have been /statistics, but that was already used by another method in this controller
-	@RequestMapping (value = "/dashboard-statistics", method = RequestMethod.GET, produces="application/json"/*, params = {"date"}*/)
-	public @ResponseBody CampaignStatisticsBundle getStatisticsAsJson(@PathVariable("campaignId") long campaignId/*, @RequestParam(value="date", defaultValue="") String strDate*/){
-		
+	// URL should have been /statistics, but that was already used by another method in this controller
+	@RequestMapping(value = "/dashboard-statistics", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
+	public @ResponseBody
+	CampaignStatisticsBundle getStatisticsAsJson(@PathVariable("campaignId") long campaignId) {
 		return campaignModService.gatherCampaignStatisticsBundle(campaignId);
 	}
-	
-	@RequestMapping (value = "/dashboard", method = RequestMethod.GET, produces="text/html"/*, params = {"date"}*/)
-	public ModelAndView getDashboard(Model model, @PathVariable("campaignId") long campaignId/*, @RequestParam(value="date", defaultValue="") String strDate*/){
-		
+
+	@RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML)
+	public ModelAndView getDashboard(Model model, @PathVariable("campaignId") long campaignId) {
+
 		Campaign campaign = campaignModService.findById(campaignId);
 		CampaignStatisticsBundle bundle = campaignModService.gatherCampaignStatisticsBundle(campaignId);
-		
-		ModelAndView mav  = new ModelAndView("fragment/campaigns/campaign-dashboard");
+
+		ModelAndView mav = new ModelAndView("fragment/campaigns/campaign-dashboard");
 		mav.addObject("campaign", campaign);
 		mav.addObject("dashboardModel", bundle);
-		
+
 		return mav;
-		
-		
+
 	}
-	
-	
+
 	// **************************** private stuffs ***************************
-	
-	private List<JsonIteration> createJsonIterations(List<Iteration> iterations){
-		List<JsonIteration> jsonIters = new ArrayList<JsonIteration>(iterations.size()); 
-		for (Iteration iter : iterations){
-			
-			JsonIteration jsonIter = new JsonIteration(
-					iter.getId(), 
-					iter.getName(), 
-					iter.getScheduledStartDate(), 
+
+	private List<JsonIteration> createJsonIterations(List<Iteration> iterations) {
+		List<JsonIteration> jsonIters = new ArrayList<JsonIteration>(iterations.size());
+		for (Iteration iter : iterations) {
+
+			JsonIteration jsonIter = new JsonIteration(iter.getId(), iter.getName(), iter.getScheduledStartDate(),
 					iter.getScheduledEndDate());
-			
+
 			jsonIters.add(jsonIter);
 		}
 		return jsonIters;
 	}
-	
 
-	private static final class UserLoginComparator implements Comparator<User>{
+	private static final class UserLoginComparator implements Comparator<User> {
 		@Override
 		public int compare(User u1, User u2) {
 			return u1.getLogin().compareTo(u2.getLogin());
 		}
-		
+
 	}
 }

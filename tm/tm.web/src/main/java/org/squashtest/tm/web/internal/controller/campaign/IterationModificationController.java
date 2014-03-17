@@ -73,6 +73,7 @@ import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentT
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseImportanceJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseModeJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.controller.testcase.executions.ExecutionStatusJeditableComboDataBuilder;
+import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
@@ -191,14 +192,14 @@ public class IterationModificationController {
 	}
 
 	//URL should have been /statistics, but that was already used by another method in this controller
-	@RequestMapping (value = "/dashboard-statistics", method = RequestMethod.GET, produces="application/json"/*, params = {"date"}*/)
-	public @ResponseBody IterationStatisticsBundle getStatisticsAsJson(@PathVariable("iterationId") long iterationId/*, @RequestParam(value="date", defaultValue="") String strDate*/){
+	@RequestMapping (value = "/dashboard-statistics", method = RequestMethod.GET, produces=ContentTypes.APPLICATION_JSON)
+	public @ResponseBody IterationStatisticsBundle getStatisticsAsJson(@PathVariable("iterationId") long iterationId){
 			
 		return iterationModService.gatherIterationStatisticsBundle(iterationId);
 	}
 	
-	@RequestMapping (value = "/dashboard", method = RequestMethod.GET, produces="text/html"/*, params = {"date"}*/)
-	public ModelAndView getDashboard(Model model, @PathVariable("iterationId") long iterationId/*, @RequestParam(value="date", defaultValue="") String strDate*/){
+	@RequestMapping (value = "/dashboard", method = RequestMethod.GET, produces=ContentTypes.TEXT_HTML)
+	public ModelAndView getDashboard(Model model, @PathVariable("iterationId") long iterationId){
 			
 		Iteration iteration = iterationModService.findById(iterationId);
 		IterationStatisticsBundle bundle = iterationModService.gatherIterationStatisticsBundle(iterationId);
@@ -241,7 +242,7 @@ public class IterationModificationController {
 	}
 
 
-	@RequestMapping(value = "/general", method = RequestMethod.GET, produces="application/json")
+	@RequestMapping(value = "/general", method = RequestMethod.GET, produces=ContentTypes.APPLICATION_JSON)
 	@ResponseBody
 	public JsonGeneralInfo refreshGeneralInfos(@PathVariable long iterationId){
 		Iteration iteration = iterationModService.findById(iterationId);

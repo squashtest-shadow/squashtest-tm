@@ -45,6 +45,7 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.AdministrationService;
 import org.squashtest.tm.service.user.TeamFinderService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
@@ -81,7 +82,7 @@ public class UserController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
-	@RequestMapping(value = USER_ID_URL + "/general", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = USER_ID_URL + "/general", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	@ResponseBody
 	public JsonGeneralInfo refreshGeneralInfos(@PathVariable(USER_ID) long userId) {
 		User user = service.findUserById(userId);
@@ -107,7 +108,6 @@ public class UserController {
 		service.deassociateTeams(userId, teamIds);
 	}
 
-	@SuppressWarnings("unchecked")
 	@RequestMapping(value = USER_ID_URL + "/non-associated-teams", headers = "Accept=application/json")
 	@ResponseBody
 	public Map<String, Object> getNonAssociatedTeams(@PathVariable(USER_ID) long userId) {

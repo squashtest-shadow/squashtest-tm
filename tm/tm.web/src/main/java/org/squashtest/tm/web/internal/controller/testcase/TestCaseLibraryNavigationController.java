@@ -62,6 +62,7 @@ import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseFormModel.TestCaseFormModelValidator;
+import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.builder.TestCaseLibraryTreeNodeBuilder;
@@ -149,7 +150,7 @@ public class TestCaseLibraryNavigationController extends
 
 
 
-	@RequestMapping(value = "/import/upload", method = RequestMethod.POST, params = "upload-ticket", produces="text/html")
+	@RequestMapping(value = "/import/upload", method = RequestMethod.POST, params = "upload-ticket", produces=ContentTypes.TEXT_HTML)
 	public ModelAndView importArchive(@RequestParam("archive") MultipartFile archive,
 			@RequestParam("projectId") Long projectId, @RequestParam("zipEncoding") String zipEncoding)
 			throws IOException {
@@ -244,14 +245,14 @@ public class TestCaseLibraryNavigationController extends
 	
 	// ****************************** statistics section *******************************
 	
-	@RequestMapping (value = "/statistics", method = RequestMethod.GET, produces="application/json", params = {LIBRARIES, NODES})
+	@RequestMapping (value = "/statistics", method = RequestMethod.GET, produces=ContentTypes.APPLICATION_JSON, params = {LIBRARIES, NODES})
 	public @ResponseBody TestCaseStatisticsBundle getStatisticsAsJson(@RequestParam(value=LIBRARIES, defaultValue="") Collection<Long> libraryIds, 
 																	  @RequestParam(value=NODES, defaultValue="") Collection<Long> nodeIds){
 		
 		return testCaseLibraryNavigationService.getStatisticsForSelection(libraryIds, nodeIds);
 	}
 	
-	@RequestMapping (value = "/dashboard", method = RequestMethod.GET, produces="text/html", params = {LIBRARIES, NODES})
+	@RequestMapping (value = "/dashboard", method = RequestMethod.GET, produces=ContentTypes.TEXT_HTML, params = {LIBRARIES, NODES})
 	public String getDashboard(Model model, @RequestParam(LIBRARIES) Collection<Long> libraryIds, 
 											@RequestParam(NODES) Collection<Long> nodeIds){
 		

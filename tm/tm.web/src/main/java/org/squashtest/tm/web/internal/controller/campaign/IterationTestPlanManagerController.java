@@ -51,6 +51,7 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.campaign.IterationFinder;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
+import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -157,7 +158,7 @@ public class IterationTestPlanManagerController {
 	 * @return the list of {@link JsonTestCase} representing the iteration's planned test-cases
 	 * 
 	 */
-	@RequestMapping(value = "/iterations/{iterationId}/test-cases", method = RequestMethod.GET, headers = "Accept=application/json, text/javascript")
+	@RequestMapping(value = "/iterations/{iterationId}/test-cases", method = RequestMethod.GET, headers = AcceptHeaders.CONTENT_JSON)
 	public @ResponseBody
 	List<JsonTestCase> getJsonTestCases(@PathVariable long iterationId, Locale locale) {
 		List<TestCase> testCases = iterationFinder.findPlannedTestCases(iterationId);

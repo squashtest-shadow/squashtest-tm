@@ -72,6 +72,7 @@ import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.administration.PartyPermissionDatatableModelHelper;
 import org.squashtest.tm.web.internal.helper.ProjectHelper;
+import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
@@ -200,7 +201,7 @@ public class GenericProjectController {
 			projectManager.changeBugTracker(projectId, bugtrackerId);
 			LOGGER.debug("Project {} : bugtracker changed, new value : {}", projectId, bugtrackerId);
 		} else {
-			toReturn = messageSource.getMessage(PROJECT_BUGTRACKER_NAME_UNDEFINED, null, locale);
+			toReturn = messageSource.internationalize(PROJECT_BUGTRACKER_NAME_UNDEFINED, locale);
 			projectManager.removeBugTracker(projectId);
 		}
 		return toReturn;
@@ -236,7 +237,7 @@ public class GenericProjectController {
 		}
 	}
 
-	@RequestMapping(value = PROJECT_ID_URL + "/general", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = PROJECT_ID_URL + "/general", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	@ResponseBody
 	public JsonGeneralInfo refreshGeneralInfos(@PathVariable long projectId) {
 
@@ -381,7 +382,7 @@ public class GenericProjectController {
 		projectManager.disableWizardForWorkspace(projectId, wizard.getDisplayWorkspace(), wizardId);
 	}
 
-	@RequestMapping(value = PROJECT_ID_URL + "/wizards/{wizardId}/configuration", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = PROJECT_ID_URL + "/wizards/{wizardId}/configuration", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	@ResponseBody
 	public Map<String, String> getEnabledWizardProperties(@PathVariable("projectId") long projectId,
 			@PathVariable("wizardId") String wizardId) {
@@ -393,7 +394,7 @@ public class GenericProjectController {
 		return conf;
 	}
 
-	@RequestMapping(value = PROJECT_ID_URL + "/wizards/{wizardId}/configuration", method = RequestMethod.POST, consumes = "application/json")
+	@RequestMapping(value = PROJECT_ID_URL + "/wizards/{wizardId}/configuration", method = RequestMethod.POST, consumes = ContentTypes.APPLICATION_JSON)
 	@ResponseBody
 	public void setEnabledWizardProperties(@PathVariable("projectId") long projectId,
 			@PathVariable("wizardId") String wizardId, @RequestBody Map<String, String> configuration) {

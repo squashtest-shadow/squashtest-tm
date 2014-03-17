@@ -43,6 +43,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsFinderService;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
+import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.json.JsonTestCase;
 import org.squashtest.tm.web.internal.model.json.JsonTestCaseBuilder;
@@ -93,7 +94,7 @@ public class TestCaseController {
 	 * @return
 	 * 
 	 */
-	@RequestMapping(method = RequestMethod.GET, params = IDS, headers = "Accept=application/json, text/javascript")
+	@RequestMapping(method = RequestMethod.GET, params = IDS, headers = AcceptHeaders.CONTENT_JSON)
 	public @ResponseBody
 	List<JsonTestCase> getJsonTestCases(@RequestParam(IDS) List<Long> testCaseIds, Locale locale) {
 		List<TestCase> testCases = finder.findAllByIds(testCaseIds);
@@ -108,7 +109,7 @@ public class TestCaseController {
 	 * @return
 	 * 
 	 */
-	@RequestMapping(method = RequestMethod.GET, params = FOLDER_IDS, headers = "Accept=application/json, text/javascript")
+	@RequestMapping(method = RequestMethod.GET, params = FOLDER_IDS, headers = AcceptHeaders.CONTENT_JSON)
 	public @ResponseBody
 	List<JsonTestCase> getJsonTestCasesFromFolders(@RequestParam(FOLDER_IDS) List<Long> folderIds, Locale locale) {
 		return buildJsonTestCasesFromAncestorIds(folderIds, locale);
@@ -127,7 +128,7 @@ public class TestCaseController {
 	 * @param locale
 	 * @return
 	 */
-	@RequestMapping(method = RequestMethod.GET, params = { IDS, FOLDER_IDS }, headers = "Accept=application/json, text/javascript")
+	@RequestMapping(method = RequestMethod.GET, params = { IDS, FOLDER_IDS }, headers = AcceptHeaders.CONTENT_JSON)
 	public @ResponseBody
 	List<JsonTestCase> getJsonTestCases(@RequestParam(IDS) List<Long> testCaseIds,
 			@RequestParam(FOLDER_IDS) List<Long> folderIds, Locale locale) {

@@ -93,6 +93,7 @@ import org.squashtest.tm.web.internal.controller.testcase.parameters.TestCasePar
 import org.squashtest.tm.web.internal.controller.testcase.steps.TestStepsTableModelBuilder;
 import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
+import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.combo.OptionTag;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
@@ -121,7 +122,7 @@ public class TestCaseModificationController {
 	 */
 	private static final String NAME = "name";
 
-	private static final String TEST_CASE_ = "test case ";
+	private static final String TEST_CASE_ = "test case "; // NOSONAR generated name
 
 	private final DatatableMapper<String> referencingTestCaseMapper = new NameBasedMapper(6)
 			.mapAttribute("project-name", NAME, Project.class)
@@ -427,7 +428,7 @@ public class TestCaseModificationController {
 
 
 
-	@RequestMapping(value = "/general", method = RequestMethod.GET, produces="application/json")
+	@RequestMapping(value = "/general", method = RequestMethod.GET, produces=ContentTypes.APPLICATION_JSON)
 	@ResponseBody
 	public JsonGeneralInfo refreshGeneralInfos(@PathVariable long testCaseId){
 		TestCase testCase = testCaseModificationService.findById(testCaseId);

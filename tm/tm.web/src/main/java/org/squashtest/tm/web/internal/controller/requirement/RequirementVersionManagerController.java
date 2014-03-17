@@ -66,6 +66,7 @@ import org.squashtest.tm.web.internal.controller.audittrail.RequirementAuditEven
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
+import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
@@ -211,7 +212,7 @@ public class RequirementVersionManagerController {
 
 	}
 
-	@RequestMapping(value = "/general", method = RequestMethod.GET, produces="application/json")
+	@RequestMapping(value = "/general", method = RequestMethod.GET, produces=ContentTypes.APPLICATION_JSON)
 	@ResponseBody
 	public JsonGeneralInfo refreshGeneralInfos(@PathVariable long requirementVersionId){
 		RequirementVersion version = requirementVersionManager.findById(requirementVersionId);
@@ -287,7 +288,7 @@ public class RequirementVersionManagerController {
 
 		for (RequirementVersion version : cloneRequirementVersions) {
 			if (version.getStatus() != RequirementStatus.OBSOLETE) {
-				status = i18nHelper.getMessage("requirement.status." + version.getStatus().name(), null, locale);
+				status = i18nHelper.internationalize("requirement.status." + version.getStatus().name(), locale);
 				versionsNumbersById.put("" + version.getId(), "" + version.getVersionNumber() + " (" + status + ")");
 			}
 		}
