@@ -519,7 +519,7 @@ public class GenericProjectController {
 
 		@Override
 		public void run() {
-			projectManager.replaceExecutionStatus(projectId, sourceExecutionStatus, targetExecutionStatus);
+			projectManager.replaceExecutionStepStatus(projectId, sourceExecutionStatus, targetExecutionStatus);
 		}
 	}
 }

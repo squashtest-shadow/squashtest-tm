@@ -43,6 +43,8 @@ import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.Pagings;
+import org.squashtest.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.AdministrableProject;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
@@ -120,6 +122,12 @@ public class ProjectAdministrationController {
 		// bugtracker data
 		Map<Long, String> comboDataMap = createComboDataForBugtracker(locale);
 
+		// execution status data
+		CampaignLibrary cl = adminProject.getCampaignLibrary();
+		Map<String, Boolean> allowedStatuses = new HashMap<String, Boolean>();
+		allowedStatuses.put(ExecutionStatus.SETTLED.toString(), cl.allowsStatus(ExecutionStatus.SETTLED));
+		allowedStatuses.put(ExecutionStatus.UNTESTABLE.toString(), cl.allowsStatus(ExecutionStatus.UNTESTABLE));
+		
 		// populating model
 		ModelAndView mav = new ModelAndView("page/projects/project-info");
 
@@ -131,6 +139,8 @@ public class ProjectAdministrationController {
 		mav.addObject("userPermissions", partyPermissions);
 		mav.addObject("availablePermissions", availablePermissions);
 		mav.addObject("attachments", attachmentsHelper.findAttachments(adminProject.getProject()));
+		mav.addObject("allowedStatuses", allowedStatuses);
+		
 		
 		return mav;
 	}

@@ -116,6 +116,14 @@
 		@NamedQuery(name = "iteration.findAllExecutionsByTestPlan", query = "select exec from Iteration it join it.testPlans tp join tp.executions exec where it.id = :iterationId and tp.id = :testPlanId"),
 		@NamedQuery(name = "iteration.countRunningOrDoneExecutions", query = "select count(tps) from Iteration iter join iter.testPlans tps join tps.executions exes where iter.id =:iterationId and exes.executionStatus <> 'READY'"),
 		
+		
+		// IterationTestPlanItem
+		@NamedQuery(name = "iterationTestPlanItem.countAllStatus", query="select count(itp) from IterationTestPlanItem itpi where itpi.executionStatus = :status and itpi.iteration.campaign.project.id = :projectId"),
+		@NamedQuery(name = "iterationTestPlanItem.replaceStatus", query ="update IterationTestPlanItem item set item.executionStatus = :newStatus where item.executionStatus = :oldStatus and item.id in " +
+				  														"(select itpi.id from IterationTestPlanItem itpi where itpi.iteration.campaign.project.id = :projectId)"),
+
+
+	
 		//TestSuite
 		@NamedQuery(name = "TestSuite.findAllTestPlanItemsPaged", query = "select tp from TestSuite ts join ts.testPlan tp join tp.testSuites tss where ts.id = ?1 and ts.id = tss.id order by index(tp)"),
 		@NamedQuery(name = "TestSuite.countTestPlanItems", query = "select count(tp) from TestSuite ts join ts.testPlan tp join tp.testSuites tss where ts.id = ?1 and ts.id = tss.id"),
@@ -272,10 +280,16 @@
 		@NamedQuery(name = "execution.countSteps", query = "select count(steps) from Execution ex join ex.steps as steps where ex.id = :executionId"),
 		@NamedQuery(name = "execution.findAllByTestCaseIdOrderByRunDate", query = "select e from Execution e inner join e.referencedTestCase tc where tc.id = :testCaseId order by e.lastExecutedOn desc"),
 		@NamedQuery(name = "execution.countByTestCaseId", query = "select count(e) from Execution e inner join e.referencedTestCase tc where tc.id = :testCaseId"),
-
+		@NamedQuery(name = "execution.countAllStatus", query="select count(ex) from Execution ex where ex.executionStatus = :status and ex.testPlan.iteration.campaign.project.id = :projectId"),
+		@NamedQuery(name = "execution.findExecutionIdsHavingStepStatus", query="select distinct exec.id from Execution exec join exec.steps steps where steps.executionStatus = :status and exec.testPlan.iteration.campaign.project.id = :projectId"),
+		
 		//ExecutionStep
 		@NamedQuery(name = "executionStep.findParentNode", query = "select execution from Execution as execution join execution.steps exSteps where exSteps.id= :childId "),
+		@NamedQuery(name = "executionStep.countAllStatus", query="select count(step) from ExecutionStep step where step.executionStatus = :status and step.execution.testPlan.iteration.campaign.project.id = :projectId"),
+		@NamedQuery(name = "executionStep.replaceStatus", query ="update ExecutionStep step set step.executionStatus = :newStatus where step.executionStatus = :oldStatus and step.id in " +
+															  "(select estep.id from ExecutionStep estep where estep.execution.testPlan.iteration.campaign.project.id = :projectId)"),
 
+		
 		//Generic Project
 		@NamedQuery(name = "GenericProject.findAllOrderedByName", query = "from GenericProject fetch all properties order by name"),
 		@NamedQuery(name = "GenericProject.findProjectsFiltered", query = "from GenericProject gp where gp.name like :filter or gp.label like :filter or gp.audit.createdBy like :filter or gp.audit.lastModifiedBy like :filter"),

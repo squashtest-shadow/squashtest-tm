@@ -27,7 +27,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
-import org.hibernate.criterion.Projections;
+import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.springframework.stereotype.Repository;
@@ -166,6 +166,8 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 
 	}
 	
+	// ************** special execution status deactivation section ***************
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ExecutionStep> findAllExecutionStepsWithStatus(Long projectId, ExecutionStatus executionStatus) {
@@ -180,6 +182,17 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 		
 		return crit.list();
 	};
+	
+	@Override
+	public List<Long> findAllExecutionIdHavingStepWithStatus(Long projectId,
+			ExecutionStatus source) {
+
+		Query q = currentSession().getNamedQuery("execution.findExecutionIdsHavingStepStatus");
+		q.setParameter("status", source);
+		q.setParameter("projectId", projectId);
+		return q.list();
+		
+	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -198,28 +211,58 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	
 	@Override
 	public boolean hasStepOrExecutionWithStatus(long projectId, ExecutionStatus executionStatus) {
-		Criteria itemTP = currentSession().createCriteria(Campaign.class, CAMPAIGN);
-		itemTP.createAlias("Campaign.iterations", ITERATION);
-		itemTP.createAlias("Iteration.testPlans", TEST_PLAN);
-		itemTP.createAlias(CAMPAIGN_PROJECT, PROJECT);
-		itemTP.add(Restrictions.eq(PROJECT_ID, Long.valueOf(projectId)));
-		itemTP.add(Restrictions.eq("TestPlan.executionStatus", executionStatus));
-		long itemTPResult = (Long) itemTP.setProjection(Projections.rowCount()).uniqueResult();
-		if(itemTPResult > 0){
-			return true;
-		}
-		Criteria execsSteps = currentSession().createCriteria(Campaign.class, CAMPAIGN);
-		execsSteps.createAlias("Campaign.iterations", ITERATION);
-		execsSteps.createAlias("Iteration.testPlans", TEST_PLAN);
-		execsSteps.createAlias("TestPlan.executions", EXECUTION);
-		execsSteps.createAlias("Execution.steps", "ExecutionStep");
-		execsSteps.createAlias(CAMPAIGN_PROJECT, PROJECT);
-		execsSteps.add(Restrictions.eq(PROJECT_ID, Long.valueOf(projectId)));
-		execsSteps.add(Restrictions.eq("ExecutionStep.executionStatus", executionStatus));
-		long stepResult = (Long) execsSteps.setProjection(Projections.rowCount()).uniqueResult();
 		
-		return  stepResult > 0;
+	Session session = currentSession();
+	
+	
+		Query qStep = session.getNamedQuery("executionStep.countAllStatus");
+		qStep.setParameter("status", executionStatus);
+		qStep.setParameter("projectId", projectId);
+		Long nStep = (Long)qStep.uniqueResult();		
+		
+		Query qExec = session.getNamedQuery("execution.countAllStatus");
+		qExec.setParameter("status", executionStatus);
+		qExec.setParameter("projectId", projectId);
+		Long nExec = (Long)qStep.uniqueResult();
+		
+		Query qITP = session.getNamedQuery("iterationTestPlanItem.countAllStatus");
+		qITP.setParameter("status", executionStatus);
+		qITP.setParameter("projectId", projectId);
+		Long nITP = (Long)qStep.uniqueResult();
+		
+		return nStep + nExec + nITP > 0;
+
 	}
+	
+	@Override
+	public void replaceExecutionStepStatus(long projectId,
+			ExecutionStatus oldStatus, ExecutionStatus newStatus) {
+		
+		Session session = currentSession();
+		
+		Query qStep = session.getNamedQuery("executionStep.replaceStatus");
+		qStep.setParameter("oldStatus", oldStatus);
+		qStep.setParameter("newStatus", newStatus);
+		qStep.setParameter("projectId", projectId);	
+		qStep.executeUpdate();
+				
+	}
+	
+	@Override
+	public void replaceTestPlanStatus(long projectId,
+			ExecutionStatus oldStatus, ExecutionStatus newStatus) {
+		
+		Session session = currentSession();
+		
+		Query qStep = session.getNamedQuery("iterationTestPlanItem.replaceStatus");
+		qStep.setParameter("oldStatus", oldStatus);
+		qStep.setParameter("newStatus", newStatus);
+		qStep.setParameter("projectId", projectId);	
+		qStep.executeUpdate();
+		
+	}
+	
+	// ************** /special execution status deactivation section **************
 	
 	@Override
 	public List<IssueDetector> findAllIssueDetectorsForExecution(Long execId) {

@@ -51,6 +51,7 @@ import org.squashtest.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.library.PluginReferencer;
 import org.squashtest.tm.domain.project.AdministrableProject;
@@ -67,6 +68,7 @@ import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.exception.NoBugTrackerBindingException;
 import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.security.acls.PermissionGroup;
+import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.service.internal.repository.BugTrackerBindingDao;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
@@ -119,6 +121,9 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	private InsecureTestAutomationManagementService autotestService;
 	@Inject
 	private ProjectDeletionHandler projectDeletionHandler;
+	@Inject
+	private ExecutionProcessingService execProcessing;
+	
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomGenericProjectManagerImpl.class);
 
@@ -474,15 +479,22 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	
 	
 	@Override
-	public void replaceExecutionStatus(long projectId, ExecutionStatus source, ExecutionStatus target) {
-		List<ExecutionStep> steps = executionDao.findAllExecutionStepsWithStatus(projectId, source);
-		for(ExecutionStep step : steps){
-			step.setExecutionStatus(target);
+	public void replaceExecutionStepStatus(long projectId, ExecutionStatus source, ExecutionStatus target) {
+		
+		// save the ids of executions having steps with the source status
+		List<Long> modifiedExecutionIds = executionDao.findAllExecutionIdHavingStepWithStatus(projectId, source);
+		
+		// now modify the step statuses
+		executionDao.replaceExecutionStepStatus(projectId, source, target);
+		
+		// now update the execution status
+		for (Long id : modifiedExecutionIds){
+			ExecutionStatusReport report = execProcessing.getExecutionStatusReport(id);
+			execProcessing.setExecutionStatus(id, report);
 		}
-		List<IterationTestPlanItem> testPlanItems = executionDao.findAllIterationTestPlanItemsWithStatus(projectId, source);
-		for(IterationTestPlanItem testPlanItem : testPlanItems){
-			testPlanItem.setExecutionStatus(target);
-		}
+		
+		// finally update the item test plans
+		executionDao.replaceTestPlanStatus(projectId, source, target);
 	}
 	
 	@Override

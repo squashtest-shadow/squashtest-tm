@@ -276,6 +276,8 @@
 			</comp:toggle-panel>
 			<%-----------------------------------END USERS PANEL -----------------------------------------------%>
 			<%----------------------------------------STATUS----------------------------------------------------%>
+			<f:message var="statusAllowedLabel" key="label.status.options.allowed" />
+			<f:message var="statusForbiddenLabel" key="label.status.options.forbidden" />
 			<comp:toggle-panel id="project-status-panel" titleKey="label.status.options" open="true">
 				<jsp:attribute name="body">
 					<div id="project-description-table" class="display-table">
@@ -291,7 +293,8 @@
 								</span>
 							</div>
 							<div class="display-table-cell">                  		
-	                  			<input id="toggle-UNTESTABLE-checkbox" type="checkbox" data-def="width=35, on_label=<f:message key="label.status.options.allowed" />, off_label=<f:message key="label.status.options.forbidden" />" checked="checked" style="display: none;"/>
+	                  			<input id="toggle-UNTESTABLE-checkbox" type="checkbox" 
+	                  				data-def="width=35, on_label=${statusAllowedLabel}, off_label=${statusForbiddenLabel}, checked=${allowedStatuses['UNTESTABLE']}" style="display: none;"/>
 	                  		</div>
 						</div>
 						<div class="display-table-row">
@@ -303,7 +306,8 @@
 								</span>
 							</div>
 							<div class="display-table-cell">                  		
-	                  			<input id="toggle-SETTLED-checkbox" type="checkbox" data-def="width=35, on_label=<f:message key="label.status.options.allowed" />, off_label=<f:message key="label.status.options.forbidden" />" checked="checked" style="display: none;"/>
+	                  			<input id="toggle-SETTLED-checkbox" type="checkbox" 
+	                  				data-def="width=35,on_label=${statusAllowedLabel}, off_label=${statusForbiddenLabel}, checked=${allowedStatuses['SETTLED']}" style="display: none;"/>
 	                  		</div>
 						</div>
 					</div>
@@ -482,24 +486,12 @@ require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.att
 
 		var activCbx = $("#toggle-"+status+"-checkbox"),
 			activConf = attrparser.parse(activCbx.data('def'));
-		
+		activConf.checked = activConf.checked == 'true';
 		activCbx.switchButton(activConf);
 		
 		//a bit of css tweak now
 		activCbx.siblings('.switch-button-background').css({position : 'relative', top : '6px'});
-		
-		$.ajax({
-			type: 'GET',
-			 url: "${projectUrl}/is-enabled-execution-status/"+status,
-			 success : function(data){
-				 if(!data){
-					 $("#toggle-"+status+"-checkbox").switchButton({
-						  checked: false
-					});
-				 }
-			 }
-		});
-		
+	
 		
 	}
 	

@@ -186,7 +186,7 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder{
 	 * @param source
 	 * @param target
 	 */
-	void replaceExecutionStatus(long projectId, ExecutionStatus source, ExecutionStatus target);
+	void replaceExecutionStepStatus(long projectId, ExecutionStatus source, ExecutionStatus target);
 
 
 	/**
