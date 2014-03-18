@@ -28,6 +28,10 @@ import org.apache.lucene.search.FieldCache;
 import org.apache.lucene.search.FieldComparator;
 
 /**
+ * 
+ * UNUSED
+ * UNTESTED
+ * 
  * Heavily inspired by {@link FieldComparator}'s various String comparators.
  * 
  * @author bsiri

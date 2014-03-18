@@ -168,9 +168,6 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			else if ("reference".equals(fieldName)) {
 				sortFieldArray[i] = new SortField(fieldName + "Sort", SortField.STRING, isReverse);
 			} 
-		/*	else if (""){
-				// TODO
-			}		*/	
 			else {
 				sortFieldArray[i] = new SortField(fieldName, SortField.STRING, isReverse);
 			}

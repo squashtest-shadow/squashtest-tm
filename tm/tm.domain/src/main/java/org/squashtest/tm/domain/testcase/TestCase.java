@@ -156,12 +156,14 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TC_NATURE")
 	@Field(analyze=Analyze.NO, store=Store.YES)
+	@FieldBridge(impl = LevelEnumBridge.class)
 	private TestCaseNature nature = TestCaseNature.UNDEFINED;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TC_TYPE")
 	@Field(analyze=Analyze.NO, store=Store.YES)
+	@FieldBridge(impl = LevelEnumBridge.class)
 	private TestCaseType type = TestCaseType.UNDEFINED;
 
 	@NotNull

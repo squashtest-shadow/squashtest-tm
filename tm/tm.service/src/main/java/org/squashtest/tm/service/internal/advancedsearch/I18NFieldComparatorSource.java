@@ -26,6 +26,15 @@ import java.util.Map;
 import org.apache.lucene.search.FieldComparator;
 import org.apache.lucene.search.FieldComparatorSource;
 
+/**
+ * UNUSED
+ * UNTESTED
+ * 
+ * The factory for {@link I18nFieldComparator}
+ * 
+ * @author bsiri
+ *
+ */
 public class I18NFieldComparatorSource extends FieldComparatorSource {
 
 	/**

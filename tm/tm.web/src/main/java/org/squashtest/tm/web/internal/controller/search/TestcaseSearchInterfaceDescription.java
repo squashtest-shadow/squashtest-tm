@@ -85,7 +85,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 				"test-case.nature.label", locale), MULTISELECT);
 		panel.addField(natureField);
 
-		List<SearchInputPossibleValueModel> natureOptions = internationalizableComboBuilder(TestCaseNature.values())
+		List<SearchInputPossibleValueModel> natureOptions = levelComboBuilder(TestCaseNature.values())
 				.useLocale(locale).build();
 		natureField.addPossibleValues(natureOptions);
 
@@ -93,7 +93,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 				"test-case.type.label", locale), MULTISELECT);
 		panel.addField(typeField);
 
-		List<SearchInputPossibleValueModel> typeOptions = internationalizableComboBuilder(TestCaseType.values())
+		List<SearchInputPossibleValueModel> typeOptions = levelComboBuilder(TestCaseType.values())
 				.useLocale(locale).build();
 		typeField.addPossibleValues(typeOptions);
 
