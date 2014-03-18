@@ -40,6 +40,7 @@ import org.squashtest.tm.service.project.CustomProjectTemplateManagerService;
 public class CustomProjectTemplateManagerServiceImpl implements CustomProjectTemplateManagerService {
 	@Inject
 	private ProjectTemplateDao projectTemplateDao;
+	
 	@Override
 	@Transactional(readOnly = true)
 	public List<ProjectTemplate> findAll() {
