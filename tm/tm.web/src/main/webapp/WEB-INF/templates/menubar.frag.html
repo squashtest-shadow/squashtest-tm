@@ -101,10 +101,10 @@
 		</div>
 		
       	</div>
+<script type="text/javascript" >
+publish("load.projectFilter");
+</script>
       </div>
-      <script type="text/javascript" >
-      publish("load.projectFilter");
-      </script>
       
       <!-- NOTIFICATION AREA FRAGMENT -->
       <div class="unstyled-notification-pane" th:fragment="notification">
@@ -115,9 +115,9 @@
         <div id="generic-error-notification-area" class="ui-state-error ui-corner-all snap-right not-displayed">
           <span class="ui-icon ui-icon-alert icon"></span><span th:text="#{error.generic.label}">WTF ?!</span> &nbsp;(<a  id="show-generic-error-details" th:text="#{error.generic.button.details.label}">Details</a>)
         </div>
+<script type="text/javascript" >
+publish("load.notification");
+</script>
       </div>
-      <script type="text/javascript" >
-      publish("load.notification");
-      </script>
 </body>
 </html>
