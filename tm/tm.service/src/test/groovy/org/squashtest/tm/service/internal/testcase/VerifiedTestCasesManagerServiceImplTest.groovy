@@ -111,6 +111,7 @@ class VerifiedTestCasesManagerServiceImplTest extends Specification {
 	def "should not add TestCase to test case's verified requirements"() {
 		given:
 		RequirementVersion requirementVersion = new RequirementVersion()
+		requirementVersion.setName("foo");
 		requirementVersionDao.findById(10) >> requirementVersion
 
 		and:
