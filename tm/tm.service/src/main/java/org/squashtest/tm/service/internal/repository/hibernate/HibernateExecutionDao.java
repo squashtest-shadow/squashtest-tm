@@ -173,10 +173,10 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	public List<ExecutionStep> findAllExecutionStepsWithStatus(Long projectId, ExecutionStatus executionStatus) {
 
 		Criteria crit = currentSession().createCriteria(ExecutionStep.class, "ExecutionStep");
-		crit.createAlias("execution", EXECUTION, JoinType.LEFT_OUTER_JOIN);
-		crit.createAlias("Execution.testPlan.iteration", ITERATION, JoinType.LEFT_OUTER_JOIN);
-		crit.createAlias(ITERATION_CAMPAIGN, CAMPAIGN, JoinType.LEFT_OUTER_JOIN);
-		crit.createAlias(CAMPAIGN_PROJECT, PROJECT, JoinType.LEFT_OUTER_JOIN);
+		crit.createAlias("execution", EXECUTION, JoinType.INNER_JOIN);
+		crit.createAlias("Execution.testPlan.iteration", ITERATION, JoinType.INNER_JOIN);
+		crit.createAlias(ITERATION_CAMPAIGN, CAMPAIGN, JoinType.INNER_JOIN);
+		crit.createAlias(CAMPAIGN_PROJECT, PROJECT, JoinType.INNER_JOIN);
 		crit.add(Restrictions.eq(PROJECT_ID, Long.valueOf(projectId)));
 		crit.add(Restrictions.eq(EXECUTION_STATUS, executionStatus));
 		
@@ -200,9 +200,9 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 			ExecutionStatus executionStatus) {
 
 		Criteria crit = currentSession().createCriteria(IterationTestPlanItem.class, TEST_PLAN);
-		crit.createAlias("iteration", ITERATION, JoinType.LEFT_OUTER_JOIN);
-		crit.createAlias(ITERATION_CAMPAIGN, CAMPAIGN, JoinType.LEFT_OUTER_JOIN);
-		crit.createAlias(CAMPAIGN_PROJECT, PROJECT, JoinType.LEFT_OUTER_JOIN);
+		crit.createAlias("iteration", ITERATION, JoinType.INNER_JOIN);
+		crit.createAlias(ITERATION_CAMPAIGN, CAMPAIGN, JoinType.INNER_JOIN);
+		crit.createAlias(CAMPAIGN_PROJECT, PROJECT, JoinType.INNER_JOIN);
 		crit.add(Restrictions.eq(PROJECT_ID, Long.valueOf(projectId)));
 		crit.add(Restrictions.eq(EXECUTION_STATUS, executionStatus));
 		
