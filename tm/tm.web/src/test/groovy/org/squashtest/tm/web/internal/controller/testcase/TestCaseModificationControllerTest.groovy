@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
+import java.util.TimeZone;
+
 import javax.inject.Provider
 import javax.servlet.http.HttpServletRequest
 
@@ -204,6 +206,10 @@ class TestCaseModificationControllerTest extends Specification {
 		mixin.getCreatedBy() >> "robert"
 		testCaseModificationService.findById(10) >> testCase
 		
+		and:
+		def oldTz = TimeZone.getDefault();
+		TimeZone.setDefault(new SimpleTimeZone(0, "GMT"));
+		
 		when:
 		JsonGeneralInfo infos = controller.refreshGeneralInfos(10)
 
@@ -212,6 +218,9 @@ class TestCaseModificationControllerTest extends Specification {
 		infos.createdBy == "robert"
 		infos.modifiedOn == null
 		infos.modifiedBy == null
+		
+		cleanup:
+		TimeZone.setDefault(oldTz);
 	}
 
 	def "when showing a test case, should put importance data in the model"() {
