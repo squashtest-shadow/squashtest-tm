@@ -149,7 +149,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		this.name = name.trim();
 	}
 
 	public void setActive(boolean isActive) {

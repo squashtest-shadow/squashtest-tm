@@ -81,16 +81,17 @@ public class UserAccountServiceImpl implements UserAccountService {
 
 	@Override
 	public void modifyUserLogin(long userId, String newLogin) {
-		// fetch
+		// fetch 
+		String newtrimedLogin = newLogin.trim();
 		User user = userDao.findById(userId);
-		if (!newLogin.equals(user.getLogin())) {
-			LOGGER.debug("change login for user " + user.getLogin() + " to " + newLogin);
+		if (!newtrimedLogin.equals(user.getLogin())) {
+			LOGGER.debug("change login for user " + user.getLogin() + " to " + newtrimedLogin);
 			// check
 			checkPermissions(user);
 			// proceed
-			userDao.checkLoginAvailability(newLogin);
-			authService.changeUserlogin(newLogin, user.getLogin());
-			user.setLogin(newLogin);
+			userDao.checkLoginAvailability(newtrimedLogin);
+			authService.changeUserlogin(newtrimedLogin, user.getLogin());
+			user.setLogin(newtrimedLogin);
 		} else {
 			LOGGER.trace("no change of user login because old and new are the same");
 

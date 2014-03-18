@@ -20,5 +20,11 @@
  */
 package org.squashtest.tm.service.bugtracker;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 
-public interface CustomBugTrackerModificationService {}
+
+public interface CustomBugTrackerModificationService {
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	void changeName(long bugtrackerId, String newName);
+}

@@ -144,7 +144,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		this.name = name.trim();
 	}
 
 	@NotBlank

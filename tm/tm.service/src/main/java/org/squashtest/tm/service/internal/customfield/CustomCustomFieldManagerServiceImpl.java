@@ -124,12 +124,13 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	 */
 	@Override
 	public void changeName(long customFieldId, String newName) {
+		String trimedNewName = newName.trim();
 		CustomField customField = customFieldDao.findById(customFieldId);
 		String oldName = customField.getName();
-		if (customFieldDao.findByName(newName) != null) {
-			throw new DuplicateNameException(oldName, newName);
+		if (customFieldDao.findByName(trimedNewName) != null) {
+			throw new DuplicateNameException(oldName, trimedNewName);
 		} else {
-			customField.setName(newName);
+			customField.setName(trimedNewName);
 		}
 
 	}

@@ -90,11 +90,12 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 
 	@Override
 	public void changeName(long teamId, String name) {
-		if (!teamDao.findAllByName(name).isEmpty()) {
-			throw new NameAlreadyInUseException("Team", name);
+		String trimName = name.trim();
+		if (!teamDao.findAllByName(trimName).isEmpty()) {
+			throw new NameAlreadyInUseException("Team", trimName);
 		}
 		Team team = teamDao.findById(teamId);
-		team.setName(name);
+		team.setName(trimName);
 
 	}
 

@@ -102,17 +102,18 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 
 	@Override
 	public void setName(String name) {
-		this.name = name;
+		this.name = name.trim();
 	}
 
 	public void rename(String newName) {
-		if (!iteration.checkSuiteNameAvailable(newName)) {
-			throw new DuplicateNameException("Cannot rename suite " + name + " : new name " + newName
+		String trimedName = newName.trim();
+		if (!iteration.checkSuiteNameAvailable(trimedName)) {
+			throw new DuplicateNameException("Cannot rename suite " + name + " : new name " + trimedName
 					+ " already exists in iteration " + iteration.getName());
 		}
-		this.name = newName;
+		this.name = trimedName;
 	}
-
+	
 	public String getDescription() {
 		return description;
 	}

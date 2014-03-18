@@ -55,7 +55,7 @@ public class CustomFieldOption {
 	}
 
 	public void setLabel(String label) {
-		this.label = label;
+		this.label = label.trim();
 	}
 
 	public void setCode(String code) {

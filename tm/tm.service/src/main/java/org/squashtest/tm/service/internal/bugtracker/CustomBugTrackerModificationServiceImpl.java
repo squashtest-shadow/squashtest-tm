@@ -20,9 +20,13 @@
  */
 package org.squashtest.tm.service.internal.bugtracker;
 
+import javax.inject.Inject;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.service.bugtracker.CustomBugTrackerModificationService;
+import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 
 /**
  * 
@@ -32,6 +36,18 @@ import org.squashtest.tm.service.bugtracker.CustomBugTrackerModificationService;
 @Service("CustomBugTrackerModificationService")
 @Transactional
 public class CustomBugTrackerModificationServiceImpl implements CustomBugTrackerModificationService {
-
+	@Inject
+	private BugTrackerDao bugTrackerDao;
+	@Override
+	public void changeName(long bugtrackerId, String newName) {
+		String trimedNewName = newName.trim();
+		BugTracker bugTracker = bugTrackerDao.findById(bugtrackerId);
+		if(!bugTracker.getName().equals(trimedNewName)){
+			bugTrackerDao.checkNameAvailability(bugTracker.getName());
+			bugTracker.setName(trimedNewName);
+		}
+		
+	}
+	
 
 }

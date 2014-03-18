@@ -384,11 +384,12 @@ public class AdministrationServiceImpl implements AdministrationService {
 	 */
 	@Override
 	public User createUserFromLogin(@NotNull String login) throws LoginAlreadyExistsException {
-		if (findByLogin(login) != null) {
-			throw new LoginAlreadyExistsException("User " + login + " cannot be created because it already exists");
+		String loginTrim = login.trim();
+		if (findByLogin(loginTrim) != null) {
+			throw new LoginAlreadyExistsException("User " + loginTrim + " cannot be created because it already exists");
 		}
 
-		User user = User.createFromLogin(login);
+		User user = User.createFromLogin(loginTrim);
 		UsersGroup defaultGroup = groupDao.findByQualifiedName("squashtest.authz.group.tm.User");
 		user.setGroup(defaultGroup);
 
