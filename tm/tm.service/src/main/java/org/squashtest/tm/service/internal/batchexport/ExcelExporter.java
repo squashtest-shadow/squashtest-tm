@@ -46,7 +46,6 @@ import org.squashtest.tm.service.internal.batchimport.testcase.excel.StepSheetCo
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn;
 
-
 /**
  * @author bsiri
  *
@@ -61,16 +60,13 @@ class ExcelExporter {
 	// that map will remember which column index is 
 	private Map<String, Integer> cufColumnsByCode = new HashMap<String, Integer>();
 
-	
 	private Workbook workbook;
-	
 	
 	public ExcelExporter(){
 		super();
 		createWorkbook();
 		createHeaders();
 	}
-	
 	
 	public void appendToWorkbook(ExportModel model){
 		
@@ -79,7 +75,6 @@ class ExcelExporter {
 		appendParameters(model);
 		appendDatasets(model);
 	}
-	
 	
 	public File print() {
 		try{
@@ -95,7 +90,6 @@ class ExcelExporter {
 			throw new RuntimeException(ex);
 		}
 	}
-	
 	
 	private void appendTestCases(ExportModel model){
 		
@@ -218,7 +212,6 @@ class ExcelExporter {
 		
 	}
 	
-
 	private void appendCustomFields(Row r, String codePrefix, List<CustomField> cufs){
 		
 		for (CustomField cuf : cufs){
@@ -237,7 +230,6 @@ class ExcelExporter {
 		}
 	}
 	
-	
 	private int registerCuf(Sheet sheet, String code){
 		
 		Row headers = sheet.getRow(0);
@@ -249,30 +241,27 @@ class ExcelExporter {
 		return nextIdx;
 	}
 	
-	
 	private String format(String date){
 		if (date == null ){
 			return "";
 		}
 		try{
-			return format(IsoDateUtils.parseIso8601Date(date));
-		}
-		catch(ParseException ex){
+			// when the given date parses, we return it as is 
+			IsoDateUtils.parseIso8601Date(date);
+			return date;
+		} catch (ParseException ex) {
 			throw new RuntimeException(ex);
 		}
 	}
-
 	
 	private String format(Date date){
 		if (date==null){
 			return "";
-		}
-		else{
+		} else {
 			return IsoDateUtils.formatIso8601Date(date);
 		}
 	}
 
-	
 	// for now we care only of Excel 2003
 	private void createWorkbook(){
 		Workbook workbook = new HSSFWorkbook();
@@ -311,7 +300,6 @@ class ExcelExporter {
 		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_LAST_MODIFIED_ON.header);
 		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_LAST_MODIFIED_BY.header);
 		
-		
 		Sheet stSheet = workbook.getSheet(ST_SHEET);
 		h = stSheet.createRow(0);
 		cIdx = 0;
@@ -325,7 +313,6 @@ class ExcelExporter {
 		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_NB_REQ.header);
 		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_NB_ATTACHMENT.header);
 		
-		
 		Sheet pSheet = workbook.getSheet(PRM_SHEET);
 		h = pSheet.createRow(0);
 		cIdx = 0;
@@ -334,7 +321,6 @@ class ExcelExporter {
 		h.createCell(cIdx++).setCellValue(ParameterSheetColumn.TC_PARAM_ID.header);
 		h.createCell(cIdx++).setCellValue(ParameterSheetColumn.TC_PARAM_NAME.header);
 		h.createCell(cIdx++).setCellValue(ParameterSheetColumn.TC_PARAM_DESCRIPTION.header);
-		
 		
 		Sheet dsSheet = workbook.getSheet(DS_SHEET);
 		h = dsSheet.createRow(0);
