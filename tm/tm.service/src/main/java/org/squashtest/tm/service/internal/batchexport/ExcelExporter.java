@@ -19,6 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.batchexport;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -41,71 +42,63 @@ import org.squashtest.tm.service.internal.batchexport.ExportModel.ParameterModel
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestStepModel;
 
-
 /**
  * @author bsiri
- *
+ * 
  */
 class ExcelExporter {
 
-	
-	private static final String DS_SHEET  = "DATASETS";
+	private static final String DS_SHEET = "DATASETS";
 	private static final String PRM_SHEET = "PARAMETERS";
-	private static final String ST_SHEET  = "STEPS";
-	private static final String TC_SHEET  = "TEST_CASES";
+	private static final String ST_SHEET = "STEPS";
+	private static final String TC_SHEET = "TEST_CASES";
 
-	
-	// that map will remember which column index is 
+	// that map will remember which column index is
 	private Map<String, Integer> cufColumnsByCode = new HashMap<String, Integer>();
 
-	
 	private Workbook workbook;
-	
-	
-	public ExcelExporter(){
+
+	public ExcelExporter() {
 		super();
 		createWorkbook();
 		createHeaders();
 	}
-	
-	
-	public void appendToWorkbook(ExportModel model){
-		
+
+	public void appendToWorkbook(ExportModel model) {
+
 		appendTestCases(model);
 		appendTestSteps(model);
 		appendParameters(model);
 		appendDatasets(model);
 	}
-	
-	
+
 	public File print() {
-		try{
+		try {
 			File temp = File.createTempFile("tc_export_", "xls");
 			temp.deleteOnExit();
-			
+
 			FileOutputStream fos = new FileOutputStream(temp);
 			workbook.write(fos);
 			fos.close();
-			
+
 			return temp;
-		}catch(IOException ex){
+		} catch (IOException ex) {
 			throw new RuntimeException(ex);
 		}
 	}
-	
-	
-	private void appendTestCases(ExportModel model){
-		
+
+	private void appendTestCases(ExportModel model) {
+
 		List<TestCaseModel> models = model.getTestCases();
 		Sheet tcSheet = workbook.getSheet(TC_SHEET);
 		Row r;
-		int rIdx = tcSheet.getLastRowNum()+1;
+		int rIdx = tcSheet.getLastRowNum() + 1;
 		int cIdx = 0;
-		
-		for (TestCaseModel tcm : models){
-			
+
+		for (TestCaseModel tcm : models) {
+
 			r = tcSheet.createRow(rIdx);
-			
+
 			r.createCell(cIdx++).setCellValue(tcm.getProjectId());
 			r.createCell(cIdx++).setCellValue(tcm.getProjectName());
 			r.createCell(cIdx++).setCellValue(tcm.getPath());
@@ -127,27 +120,27 @@ class ExcelExporter {
 			r.createCell(cIdx++).setCellValue(tcm.getCreatedBy());
 			r.createCell(cIdx++).setCellValue(format(tcm.getLastModifiedOn()));
 			r.createCell(cIdx++).setCellValue(tcm.getLastModifiedBy());
-					
+
 			appendCustomFields(r, "TC_CUF_", tcm.getCufs());
-			
+
 			rIdx++;
-			cIdx=0;
+			cIdx = 0;
 		}
 	}
-	
-	private void appendTestSteps(ExportModel model){
-		
+
+	private void appendTestSteps(ExportModel model) {
+
 		List<TestStepModel> models = model.getTestSteps();
 		Sheet stSheet = workbook.getSheet(ST_SHEET);
-		
+
 		Row r;
-		int rIdx = stSheet.getLastRowNum()+1;
+		int rIdx = stSheet.getLastRowNum() + 1;
 		int cIdx = 0;
-		
-		for (TestStepModel tsm : models){
-			
+
+		for (TestStepModel tsm : models) {
+
 			r = stSheet.createRow(rIdx);
-			
+
 			r.createCell(cIdx++).setCellValue(tsm.getTcOwnerPath());
 			r.createCell(cIdx++).setCellValue(tsm.getTcOwnerId());
 			r.createCell(cIdx++).setCellValue(tsm.getId());
@@ -157,49 +150,49 @@ class ExcelExporter {
 			r.createCell(cIdx++).setCellValue(tsm.getResult());
 			r.createCell(cIdx++).setCellValue(tsm.getNbReq());
 			r.createCell(cIdx++).setCellValue(tsm.getNbAttach());
-					
+
 			appendCustomFields(r, "TC_STEP_CUF_", tsm.getCufs());
-			
+
 			rIdx++;
-			cIdx=0;
-		}		
+			cIdx = 0;
+		}
 	}
-	
-	private void appendParameters(ExportModel model){
-		
+
+	private void appendParameters(ExportModel model) {
+
 		List<ParameterModel> models = model.getParameters();
 		Sheet pSheet = workbook.getSheet(PRM_SHEET);
-		
+
 		Row r;
-		int rIdx = pSheet.getLastRowNum()+1;
+		int rIdx = pSheet.getLastRowNum() + 1;
 		int cIdx = 0;
-		
-		for (ParameterModel pm : models){
+
+		for (ParameterModel pm : models) {
 			r = pSheet.createRow(rIdx);
-			
+
 			r.createCell(cIdx++).setCellValue(pm.getTcOwnerPath());
 			r.createCell(cIdx++).setCellValue(pm.getTcOwnerId());
 			r.createCell(cIdx++).setCellValue(pm.getId());
 			r.createCell(cIdx++).setCellValue(pm.getName());
 			r.createCell(cIdx++).setCellValue(pm.getDescription());
-			
+
 			rIdx++;
-			cIdx=0;
+			cIdx = 0;
 		}
 	}
-	
-	private void appendDatasets(ExportModel model){
-		
+
+	private void appendDatasets(ExportModel model) {
+
 		List<DatasetModel> models = model.getDatasets();
 		Sheet dsSheet = workbook.getSheet(DS_SHEET);
-		
-		Row r ;
-		int rIdx = dsSheet.getLastRowNum()+1;
-		int cIdx =0;
-		
-		for (DatasetModel dm : models){
+
+		Row r;
+		int rIdx = dsSheet.getLastRowNum() + 1;
+		int cIdx = 0;
+
+		for (DatasetModel dm : models) {
 			r = dsSheet.createRow(rIdx);
-		
+
 			r.createCell(cIdx++).setCellValue(dm.getTcOwnerPath());
 			r.createCell(cIdx++).setCellValue(dm.getOwnerId());
 			r.createCell(cIdx++).setCellValue(dm.getId());
@@ -208,83 +201,78 @@ class ExcelExporter {
 			r.createCell(cIdx++).setCellValue(dm.getParamOwnerId());
 			r.createCell(cIdx++).setCellValue(dm.getParamName());
 			r.createCell(cIdx++).setCellValue(dm.getParamValue());
-			
-			rIdx++;
-			cIdx=0;
-		}
-		
-	}
-	
 
-	private void appendCustomFields(Row r, String codePrefix, List<CustomField> cufs){
-		
-		for (CustomField cuf : cufs){
-			
+			rIdx++;
+			cIdx = 0;
+		}
+
+	}
+
+	private void appendCustomFields(Row r, String codePrefix, List<CustomField> cufs) {
+
+		for (CustomField cuf : cufs) {
+
 			String code = codePrefix + cuf.getCode();
 			Integer idx = cufColumnsByCode.get(code);
-			
+
 			// if unknown : register it
-			if (idx == null){
+			if (idx == null) {
 				idx = registerCuf(r.getSheet(), code);
 			}
-			
+
 			Cell c = r.createCell(idx);
 			String value = (cuf.getType() == InputType.DATE_PICKER) ? format(cuf.getValue()) : cuf.getValue();
 			c.setCellValue(value);
 		}
 	}
-	
-	
-	private int registerCuf(Sheet sheet, String code){
-		
+
+	private int registerCuf(Sheet sheet, String code) {
+
 		Row headers = sheet.getRow(0);
 		int nextIdx = headers.getLastCellNum();
 		headers.createCell(nextIdx).setCellValue(code);
-		
+
 		cufColumnsByCode.put(code, nextIdx);
-		
+
 		return nextIdx;
 	}
-	
-	
-	private String format(String date){
-		if (date == null ){
+
+	private String format(String date) {
+		if (date == null) {
 			return "";
 		}
-		try{
-			return format(IsoDateUtils.parseIso8601Date(date));
-		}
-		catch(ParseException ex){
+		try {
+			// when the given date parses, we return it as is 
+			IsoDateUtils.parseIso8601Date(date);
+			return date;
+		} catch (ParseException ex) {
 			throw new RuntimeException(ex);
 		}
 	}
 
-	
-	private String format(Date date){
-		if (date==null){
+	private String format(Date date) {
+		if (date == null) {
 			return "";
-		}
-		else{
+		} else {
 			return IsoDateUtils.formatIso8601Date(date);
 		}
 	}
 
-	
 	// for now we care only of Excel 2003
-	private void createWorkbook(){
+	private void createWorkbook() {
 		Workbook wb = new HSSFWorkbook();
 		wb.createSheet(TC_SHEET);
 		wb.createSheet(ST_SHEET);
 		wb.createSheet(PRM_SHEET);
 		wb.createSheet(DS_SHEET);
-		
+
 		this.workbook = wb;
 	}
-	
-	private void createHeaders(){
+
+	private void createHeaders() {
 		Sheet tcSheet = workbook.getSheet(TC_SHEET);
 		Row h = tcSheet.createRow(0);
-		
+
 		int cIdx = 0;
 		h.createCell(cIdx++).setCellValue("PROJECT_ID");
 		h.createCell(cIdx++).setCellValue("PROJECT_NAME");
@@ -307,8 +295,7 @@ class ExcelExporter {
 		h.createCell(cIdx++).setCellValue("TC_CREATED_BY");
 		h.createCell(cIdx++).setCellValue("TC_LAST_MODIFIED_ON");
 		h.createCell(cIdx++).setCellValue("TC_LAST_MODIFIED_BY");
-		
-		
+
 		Sheet stSheet = workbook.getSheet(ST_SHEET);
 		h = stSheet.createRow(0);
 		cIdx = 0;
@@ -321,8 +308,7 @@ class ExcelExporter {
 		h.createCell(cIdx++).setCellValue("TC_STEP_EXPECTED_RESULT");
 		h.createCell(cIdx++).setCellValue("TC_STEP_#_REQ");
 		h.createCell(cIdx++).setCellValue("TC_STEP_#_ATTACHMENT");
-		
-		
+
 		Sheet pSheet = workbook.getSheet(PRM_SHEET);
 		h = pSheet.createRow(0);
 		cIdx = 0;
@@ -331,11 +317,10 @@ class ExcelExporter {
 		h.createCell(cIdx++).setCellValue("TC_PARAM_ID");
 		h.createCell(cIdx++).setCellValue("TC_PARAM_NAME");
 		h.createCell(cIdx++).setCellValue("TC_PARAM_DESCRIPTION");
-		
-		
+
 		Sheet dsSheet = workbook.getSheet(DS_SHEET);
 		h = dsSheet.createRow(0);
-		cIdx = 0 ;
+		cIdx = 0;
 		h.createCell(cIdx++).setCellValue("TC_OWNER_PATH");
 		h.createCell(cIdx++).setCellValue("TC_OWNER_ID");
 		h.createCell(cIdx++).setCellValue("TC_DATASET_ID");
@@ -343,8 +328,8 @@ class ExcelExporter {
 		h.createCell(cIdx++).setCellValue("TC_PARAM_OWNER_PATH");
 		h.createCell(cIdx++).setCellValue("TC_PARAM_OWNER_ID");
 		h.createCell(cIdx++).setCellValue("TC_DATASET_PARAM_NAME");
-		h.createCell(cIdx++).setCellValue("TC_DATASET_PARAM_VALUE");		
-		
+		h.createCell(cIdx++).setCellValue("TC_DATASET_PARAM_VALUE");
+
 	}
 
 }
