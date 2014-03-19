@@ -52,7 +52,7 @@
 	
 	<jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back" />
-		<input type="button" class="button" value="${backButtonLabel}" onClick="document.location.href= '${administrationUrl}'"/>	
+		<input type="button" class="sq-btn" value="${backButtonLabel}" onClick="document.location.href= '${administrationUrl}'"/>	
 	</jsp:attribute>
 	<jsp:attribute name="informationContent">
 		<script type="text/javascript">
@@ -77,10 +77,11 @@
 		<%----------------------------------- Projects Table -----------------------------------------------%>
 <div class="fragment-body unstyled">
   <sec:authorize access=" hasRole('ROLE_ADMIN')">
-  <input id="new-project-button" class="snap-right" type="button" value="<f:message key='project.button.add.label' />" />
-  <input id="new-project-from-template-button" class="snap-right" type="button" value="<f:message key='label.createFromATemplate'/>"/>
+  <div class="btn-toolbar right">
+    <input id="new-project-button" type="button" class="sq-btn" value="<f:message key='project.button.add.label' />" />
+    <input id="new-project-from-template-button" type="button" class="sq-btn" value="<f:message key='label.createFromATemplate'/>"/>
+  </div>
   </sec:authorize>
-  <div style="clear:both"></div>
   <table id="projects-table" class="unstyled-table" data-def="ajaxsource=${dtModel}, hover, datakeys-id=project-id, 
   															  deferLoading=${fn:length(projects)},
   															  filter, pre-sort=2-asc">

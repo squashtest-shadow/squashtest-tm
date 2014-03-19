@@ -23,12 +23,6 @@ define([ "jquery", "./show-projects/ProjectsManager",
 		ProjectsManager, infoManager) {
 
 	function initShowProjects() {
-		$(function() {
-			$("#new-project-button").button();
-			$("#new-project-from-template-button").button();
-
-		});
-
 		new ProjectsManager();
 	}
 
