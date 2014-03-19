@@ -67,11 +67,11 @@ public class ExProgressTestSuiteDto extends ExProgressAbstractDto{
 	
 	
 	public boolean isAllowsSettled() {
-		return this.getIteration().isAllowsSettled();
+		return this.getIteration().getCampaign().getProject().isAllowsSettled();
 	}
 
 	public boolean isAllowsUntestable() {
-		return this.getIteration().isAllowsUntestable();
+		return this.getIteration().getCampaign().getProject().isAllowsUntestable();
 	}
 	
 	
