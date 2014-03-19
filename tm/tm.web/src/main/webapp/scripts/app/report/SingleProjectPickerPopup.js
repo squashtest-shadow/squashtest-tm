@@ -31,8 +31,8 @@
  * 
  * Methods : open, close
  */
- define([ "jquery",  "squashtable", "jqueryui", "jquery.squash.confirmdialog"],
-		function($) {
+ define([ "jquery", "underscore", "squashtable", "jqueryui", "jquery.squash.confirmdialog"],
+		function($, _) {
 	 
 	
 		
@@ -59,7 +59,11 @@
 			this.updateFormState = $.proxy(this._updateFormState, this);
 			
 			if(this.attributes.preferences){
-				self.attributes.selectedId =  _.findWhere(this.attributes.preferences[self.attributes.name], {selected:true}).value;
+				var array = this.attributes.preferences[self.attributes.name];
+				var selected = _.findWhere(array, {selected:true});
+				if(selected){
+					self.attributes.selectedId =  selected.value;
+				}
 			}
 			
 				this.$el.find("table tbody tr").each(function() {

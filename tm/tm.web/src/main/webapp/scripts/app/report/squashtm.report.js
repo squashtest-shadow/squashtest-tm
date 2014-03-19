@@ -372,6 +372,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 		$.ajax({
 			type : 'post',
 			url : url,
+			dataType:'html',
 			data : JSON.stringify(formState),
 			contentType : "application/json"
 		}).done(function(html) {
@@ -385,7 +386,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 
 		$.each(formState, function(key, value) {
 
-			if (value[0]) {
+			if (value && value[0]) {
 
 				if ("PROJECT_PICKER" == value[0].type) {
 					$.each(value, function(index, element) {
