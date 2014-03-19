@@ -125,9 +125,13 @@ public class ReportController {
 	@RequestMapping(value = "/views/{viewIndex}/formats/{format}", method = RequestMethod.POST)
 	public ModelAndView generateReportView(@PathVariable String namespace, @PathVariable int index,
 			@PathVariable int viewIndex, @PathVariable String format, @RequestBody Map<String, Object> form) {
-		LOGGER.debug(form.toString());
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug(form.toString());
+		}
 		Map<String, Criteria> crit = (new FormToCriteriaConverter()).convert(form);
-		LOGGER.debug(crit.toString());
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug(crit.toString());
+		}
 
 		Report report = reportsRegistry.findReport(namespace, index);
 		return report.buildModelAndView(viewIndex, format, crit);
