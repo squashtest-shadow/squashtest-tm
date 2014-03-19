@@ -18,12 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "./project-info/project-info-manager" ], function(infoManager) {
-
-	return {
-		projectInfo : {
-			initUserPermissions : infoManager.initUserPermissions,
-			initWizardsTab : infoManager.initWizardsTab
-		}
-	};
+require(["common"], function() {
+	require([ "app/pubsub", "app/ws/squashtm.workspace", "projects-manager/show-projects/ProjectsManager" ], function(ps, WS, ProjectManagerView) {
+		
+		ps.subscribe("load.projectManager", function() {
+			new ProjectManagerView();
+		});
+		
+		WS.init();
+	});
 });

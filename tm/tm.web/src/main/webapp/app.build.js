@@ -139,12 +139,13 @@
 //	}, {
 //		name: "project",
 //		exclude: [ "common" ] 
-//	}, {
-//		name: "projects-manager",
-//		exclude: [ "common", "squashtable" ] 
+	}, {
+		name: "project-manager",
+		include: [ "app/pubsub", "projects-manager/show-projects/ProjectsManager" ], 
+		exclude: [ "common" ] 
 	}, {
 		name: "project-page",
-		include: [  ], 
+		include: [ ], 
 		exclude: [ "common" ] 
 	}, {
 		name: "report-workspace",

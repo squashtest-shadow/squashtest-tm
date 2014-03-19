@@ -23,13 +23,10 @@ define([ "jquery", "backbone", "squashtable", "jqueryui" ], function($, Backbone
 	var View = Backbone.View.extend({
 		el : "#projects-table",
 		initialize : function() {
-			var self = this, 
-				tableConf = {
+			var tableConf = {
 					"fnRowCallback" : this.projectTableRowCallback
 				}, 
-				squashConf = {
-
-				};
+				squashConf = {};
 
 			this.$el.squashTable(tableConf, squashConf);
 		},

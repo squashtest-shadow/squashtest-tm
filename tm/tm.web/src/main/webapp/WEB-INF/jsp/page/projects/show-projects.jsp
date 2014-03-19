@@ -35,72 +35,52 @@
 
 <s:url var="administrationUrl" value="/administration" />
 <s:url var="dtModel" value="/generic-projects"/>
-<s:url var="dtLanguage"	value="/datatables/messages" />
+<s:url var="dtLanguage"  value="/datatables/messages" />
 <s:url var="projectsInfo" value="/administration/projects/{project-id}/info" />
 
-<layout:info-page-layout titleKey="squashtm.project.title" isSubPaged="true">
-	<jsp:attribute  name="head">	
-		<comp:sq-css name="squash.grey.css" />
-	</jsp:attribute>
-	
-	<jsp:attribute name="titlePane">
-		<h2 class="admin"><f:message key="label.administration" /></h2>
-	</jsp:attribute>
-		<jsp:attribute name="subPageTitle">
-		<h2><f:message key="workspace.project.title" /></h2>
-	</jsp:attribute>
-	
-	<jsp:attribute name="subPageButtons">
-		<f:message var="backButtonLabel" key="label.Back" />
-		<input type="button" class="sq-btn" value="${backButtonLabel}" onClick="document.location.href= '${administrationUrl}'"/>	
-	</jsp:attribute>
-	<jsp:attribute name="informationContent">
-		<script type="text/javascript">
-		squashtm.app.projectsManager = { 
-				deferLoading: ${ fn:length(projects) }, 
-				tooltips: {
-					template: "<f:message key='label.projectTemplate' />",
-					project: "<f:message key='label.project' />"
-				},
-				messages: {
-					info : "<f:message key='popup.title.info'/>",
-					noProjectTemplateMessage : "<f:message key='message.noProjectTemplateSource'/>"
-					} 
-				
-		};
-	  require([ "common" ], function() {
-	    require([ "projects-manager" ], function(manager){
-	    	manager.showProjects.init();
-	    });
-	  });
-	  </script>		
-		<%----------------------------------- Projects Table -----------------------------------------------%>
-<div class="fragment-body unstyled">
+<layout:info-page-layout titleKey="squashtm.project.title" isSubPaged="true" main="project-manager">
+  <jsp:attribute  name="head">  
+    <comp:sq-css name="squash.grey.css" />
+  </jsp:attribute>
+  
+  <jsp:attribute name="titlePane">
+    <h2 class="admin"><f:message key="label.administration" /></h2>
+  </jsp:attribute>
+    <jsp:attribute name="subPageTitle">
+    <h2><f:message key="workspace.project.title" /></h2>
+  </jsp:attribute>
+  
+  <jsp:attribute name="subPageButtons">
+    <f:message var="backButtonLabel" key="label.Back" />
+    <input type="button" class="sq-btn" value="${backButtonLabel}" onClick="document.location.href= '${administrationUrl}'"/>  
+  </jsp:attribute>
+  <jsp:attribute name="informationContent">
+    <%----------------------------------- Projects Table -----------------------------------------------%>
+<div class="fragment-body">
   <sec:authorize access=" hasRole('ROLE_ADMIN')">
   <div class="btn-toolbar right">
     <input id="new-project-button" type="button" class="sq-btn" value="<f:message key='project.button.add.label' />" />
     <input id="new-project-from-template-button" type="button" class="sq-btn" value="<f:message key='label.createFromATemplate'/>"/>
   </div>
   </sec:authorize>
-  <table id="projects-table" class="unstyled-table" data-def="ajaxsource=${dtModel}, hover, datakeys-id=project-id, 
-  															  deferLoading=${fn:length(projects)},
-  															  filter, pre-sort=2-asc">
-  	<thead>
-  		<tr>
-  			<th data-def="map=project-id,invisible">Id(not shown)</th> 
-  			<th data-def="map=index, select, sClass=button-cell">#</th>
-  			<th data-def="map=name, sortable, link=${projectsInfo}" class="datatable-filterable"><f:message key="label.Name" /></th>
-	        <th data-def="map=raw-type, invisible">raw type (not shown)</th> 
-	        <th data-def="map=type, sClass=icon-cell type" >&nbsp;</th> 
-  			<th data-def="map=label, sortable" class="datatable-filterable"><f:message key="label.tag" /></th>
-  			<th data-def="map=active, invisible"><f:message key="label.active" /></th>
-  			<th data-def="map=created-on, sortable"><f:message key="label.CreatedOn" /></th>
-  			<th data-def="map=created-by, sortable" class="datatable-filterable"><f:message key="label.createdBy" /></th>
-  			<th data-def="map=last-mod-on, sortable"><f:message key="label.modifiedOn" /></th>	
-  			<th data-def="map=last-mod-by, sortable" class="datatable-filterable"><f:message key="label.modifiedBy" /></th>		
-  		</tr>
-  	</thead>
-  	<tbody>
+  <table id="projects-table" class="unstyled-table" 
+    data-def="ajaxsource=${dtModel}, hover, datakeys-id=project-id, deferLoading=${fn:length(projects)}, filter, pre-sort=2-asc">
+    <thead>
+      <tr>
+        <th data-def="map=project-id,invisible">Id(not shown)</th> 
+        <th data-def="map=index, select, sClass=button-cell">#</th>
+        <th data-def="map=name, sortable, link=${projectsInfo}" class="datatable-filterable"><f:message key="label.Name" /></th>
+          <th data-def="map=raw-type, invisible">raw type (not shown)</th> 
+          <th data-def="map=type, sClass=icon-cell type" >&nbsp;</th> 
+        <th data-def="map=label, sortable" class="datatable-filterable"><f:message key="label.tag" /></th>
+        <th data-def="map=active, invisible"><f:message key="label.active" /></th>
+        <th data-def="map=created-on, sortable"><f:message key="label.CreatedOn" /></th>
+        <th data-def="map=created-by, sortable" class="datatable-filterable"><f:message key="label.createdBy" /></th>
+        <th data-def="map=last-mod-on, sortable"><f:message key="label.modifiedOn" /></th>  
+        <th data-def="map=last-mod-by, sortable" class="datatable-filterable"><f:message key="label.modifiedBy" /></th>    
+      </tr>
+    </thead>
+    <tbody>
       <c:forEach var="project" items="${ projects }" varStatus="status">
       <tr>
         <td class="project-id">${ project.id }</td> 
@@ -127,21 +107,36 @@
     </tbody>
   </table>
 
+  <script type="text/javascript">
+  squashtm.app.projectsManager = { 
+    deferLoading: ${ fn:length(projects) }, 
+    tooltips: {
+      template: "<f:message key='label.projectTemplate' />",
+      project: "<f:message key='label.project' />"
+    },
+    messages: {
+      info : "<f:message key='popup.title.info'/>",
+      noProjectTemplateMessage : "<f:message key='message.noProjectTemplateSource'/>"
+      } 
+  };
+  publish("load.projectManager");
+  </script>
+
   <sec:authorize access="hasRole('ROLE_ADMIN')">
   <!--   ===========================CREATE PROJECT DIALOG=======================================  -->
   <div id="add-project-dialog" class="not-displayed popup-dialog form-horizontal" title="<f:message key='title.addProject' />">
     <table class="form-horizontal">
-    	<tr class="control-group">
-    		<td>
+      <tr class="control-group">
+        <td>
           <label class="control-label" for="add-project-name">
             <f:message key="label.Name" />
           </label>
         </td>
-    		<td class="controls">
+        <td class="controls">
           <input id="add-project-name" name="add-project-name" type="text" size="50" maxlength="255" />
-    		  <span class="help-inline">&nbsp;</span>
+          <span class="help-inline">&nbsp;</span>
         </td>
-    	</tr>
+      </tr>
       <tr class="control-group">
         <td>
           <label class="control-label" for="isTemplate"><f:message key="label.projectTemplate" /></label>
@@ -151,25 +146,24 @@
           <span class="help-inline">&nbsp;</span>
         </td>
       </tr>
-    	<tr class="control-group">
-    		<td>
+      <tr class="control-group">
+        <td>
           <label class="control-label" for="add-project-description"><f:message key="label.Description" /></label>
         </td>
-    		<td class="controls">
+        <td class="controls">
           <textarea id="add-project-description" name="add-project-description"></textarea>
           <span class="help-inline">&nbsp;</span>
         </td>
-    	</tr>
-    	<tr class="control-group">
-    		<td>
+      </tr>
+      <tr class="control-group">
+        <td>
           <label class="control-label" for="add-project-label"><f:message key="label.tag" /></label>
         </td>
-    		<td class="controls">
+        <td class="controls">
           <input id="add-project-label" name="add-project-label" type="text" size="50" maxlength="255" />
           <span class="help-inline">&nbsp;</span>
         </td>
-    	</tr>
-
+      </tr>
     </table>
     
     <div class="popup-dialog-buttonpane">
@@ -181,62 +175,62 @@
 <!--   ===========================CREATE FROM TEMPLATE DIALOG=======================================  -->
   <div id="add-project-from-template-dialog" class="not-displayed popup-dialog form-horizontal" title="<f:message key='title.addProjectFromTemplate' />">
     <table class="form-horizontal">
-    	<tr class="control-group">
-    		<td>
+      <tr class="control-group">
+        <td>
           <label class="control-label" for="add-project-from-template-name">
             <f:message key="label.Name" />
           </label>
         </td>
-    		<td class="controls">
+        <td class="controls">
           <input id="add-project-from-template-name" name="add-project-from-template-name" type="text" size="50" maxlength="255" />
-    		  <span class="help-inline">&nbsp;</span>
+          <span class="help-inline">&nbsp;</span>
         </td>
-    	</tr>
-       	<tr class="control-group">
-    		<td>
+      </tr>
+         <tr class="control-group">
+        <td>
           <label class="control-label" for="add-project-from-template-description"><f:message key="label.Description" /></label>
         </td>
-    		<td class="controls">
+        <td class="controls">
           <textarea id="add-project-from-template-description" name="add-project-from-template-description"></textarea>
           <span class="help-inline">&nbsp;</span>
         </td>
-    	</tr>
-    	<tr class="control-group">
-    		<td>
+      </tr>
+      <tr class="control-group">
+        <td>
           <label class="control-label" for="add-project-from-template-label"><f:message key="label.tag" /></label>
         </td>
-    		<td class="controls">
+        <td class="controls">
           <input id="add-project-from-template-label" name="add-project-from-template-label"  type="text" size="50" maxlength="255" />
           <span class="help-inline">&nbsp;</span>
         </td>
-    	</tr>
-    	<!--     	TEMPLATE COMBO -->    	
-    	<tr class="control-group">
-    		<td>
+      </tr>
+      <!--       TEMPLATE COMBO -->      
+      <tr class="control-group">
+        <td>
           <label class="control-label" for="add-project-from-template-tempate"><f:message key="label.projectTemplate" /></label>
         </td>
-    	<td class="controls">
+      <td class="controls">
           <div id="add-project-from-template-template" ></div>
          </td>
-    	</tr>
-    	<tr class="control-group">
-    	<td>
+      </tr>
+      <tr class="control-group">
+      <td>
           <label class="control-label" for="add-project-from-template-tempate"><f:message key="label.parametersFromTemplate" /></label>
         </td>
         <td>
-    	<!--     	 CHECKBOXES -->
-    	<input id="copyPermissions" name="copyPermissions" type="checkbox" />
+      <!--        CHECKBOXES -->
+      <input id="copyPermissions" name="copyPermissions" type="checkbox" />
           <label class=" afterDisabled" for="copyPermissions"><f:message key="label.copyPermissions" /></label>
-      	 <br/>
-      	 <input id="copyCUF"  name="copyCUF" type="checkbox" />
+         <br/>
+         <input id="copyCUF"  name="copyCUF" type="checkbox" />
          <label class=" afterDisabled" for="copyCUF"><f:message key="label.copyCUF" /></label>
-       	<br/>
+         <br/>
           <input id="copyBugtrackerBinding" name="copyBugtrackerBinding" type="checkbox" />
          <label class=" afterDisabled" for="copyBugtrackerBinding"><f:message key="label.copyBugtrackerBinding" /></label>
-      	<br/>
+        <br/>
          <input id="copyAutomatedProjects" name="copyAutomatedProjects" type="checkbox" />
           <label class=" afterDisabled" for="copyAutomatedProjects"><f:message key="label.copyAutomatedProjects" /></label>
-     	 </td>
+        </td>
       </table>
     
     <div class="popup-dialog-buttonpane">
@@ -245,11 +239,11 @@
     </div>
     
     <script id="templates-list-tpl" type="text/x-handlebars-template">
-			<select>
+      <select>
         {{#each items}}
         <option value="{{this.id}}">{{this.name}}</option>
         {{/each}}
-			</select>
+      </select>
      </script>
     
   </div>
