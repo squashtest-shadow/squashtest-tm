@@ -38,10 +38,15 @@
 							<tr>
 								<th class="ui-state-default"><f:message key="label.numberOfTestCases" /></th>
 								<th class="ui-state-default"><f:message key="label.successful" /></th>
+								<c:if test="${allowsSettled}">
+								<th class="ui-state-default"><f:message key="label.Settled" /></th>
+								</c:if>
 								<th class="ui-state-default"><f:message key="label.plur.failed" /></th>
 								<th class="ui-state-default"><f:message key="label.Running" /></th>
 								<th class="ui-state-default"><f:message key="label.plur.blocked" /></th>								
+								<c:if test="${allowsUntestable}">
 								<th class="ui-state-default"><f:message key="label.plur.untestable" /></th>
+								</c:if>
 								<th class="ui-state-default"><f:message key="label.Ready" /></th>
 							</tr>
 						</thead>
@@ -49,10 +54,15 @@
 							<tr id="stats:1" class="odd ui-state-highlight">
 								<td>${ statisticsEntity.nbTestCases }</td>
 								<td>${ statisticsEntity.nbSuccess }</td>
+								<c:if test="${allowsSettled}">
+								<td>${ statisticsEntity.nbSettled }</td>
+								</c:if>
 								<td>${ statisticsEntity.nbFailure }</td>
 								<td>${ statisticsEntity.nbRunning }</td>
 								<td>${ statisticsEntity.nbBlocked }</td>								
+								<c:if test="${allowsUntestable}">
 								<td>${ statisticsEntity.nbUntestable }</td>
+								</c:if>
 								<td>${ statisticsEntity.nbReady }</td>
 							</tr>
 						</tbody>
