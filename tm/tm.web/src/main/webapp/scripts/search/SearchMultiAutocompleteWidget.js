@@ -82,7 +82,7 @@ define(["jquery", "underscore", "jqueryui"], function($, _){
 			if(!value){//it's a get
 				var text = self.input.val();
 				var terms = self.split(text);
-				var values = _.intersection(self.availableTags, terms);
+				var values = _.difference(terms, [""]);
 				if(values.length){
 					return {"type" : "LIST", "values" : terms};
 				}
