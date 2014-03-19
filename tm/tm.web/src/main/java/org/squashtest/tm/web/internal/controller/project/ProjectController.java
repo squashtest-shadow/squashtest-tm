@@ -48,9 +48,9 @@ public class ProjectController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProjectController.class);
 	
 	@Inject
-	private ProjectManagerService projectService;
+	private ProjectManagerService projectManager;
 	
-	@Inject private GenericProjectManagerService projectManager;
+	@Inject private GenericProjectManagerService genericProjectManager;
 
 	@RequestMapping(value= "/{projectId}", method=RequestMethod.PUT)
 	@ResponseStatus(HttpStatus.CREATED)
@@ -60,15 +60,15 @@ public class ProjectController {
 			throw new IllegalArgumentException(MessageFormat.format("Cannot coerce ProjectTemplate into Project : project id {0} is not the same as template id {1}", projectId, payload.get("templateId")));
 		}
 		
-		projectManager.coerceTemplateIntoProject(projectId);
+		genericProjectManager.coerceTemplateIntoProject(projectId);
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "templateId")
 	public @ResponseBody
-	void createNewProject(@Valid @ModelAttribute("add-project-from-template") Project project,
+	void createProjectFromTemplate(@Valid @ModelAttribute("add-project-from-template") Project project,
 			@RequestParam long templateId, @RequestParam boolean copyPermissions, @RequestParam boolean copyCUF,
 			@RequestParam boolean copyBugtrackerBinding, @RequestParam boolean copyAutomatedProjects) {
-		projectService.addProjectAndCopySettingsFromTemplate(project, templateId, copyPermissions, copyCUF,
+		projectManager.addProjectAndCopySettingsFromTemplate(project, templateId, copyPermissions, copyCUF,
 				copyBugtrackerBinding, copyAutomatedProjects);
 	}
 }
