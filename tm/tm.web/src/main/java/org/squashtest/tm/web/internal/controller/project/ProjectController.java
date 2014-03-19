@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.service.project.ProjectManagerService;
 
@@ -50,25 +51,35 @@ public class ProjectController {
 	@Inject
 	private ProjectManagerService projectManager;
 	
-	@Inject private GenericProjectManagerService genericProjectManager;
+	@Inject
+	private GenericProjectManagerService genericProjectManager;
 
 	@RequestMapping(value= "/{projectId}", method=RequestMethod.PUT)
 	@ResponseStatus(HttpStatus.CREATED)
-	public @ResponseBody void coerceTemplateIntoProject(@RequestBody Map<String, Object> payload, @PathVariable long projectId) {
+	public @ResponseBody
+	void coerceTemplateIntoProject(@RequestBody Map<String, Object> payload, @PathVariable long projectId) {
 		LOGGER.trace("PUTting project/{} with payload {}", projectId, payload);
 		if (payload.get("templateId").equals(projectId)) {
-			throw new IllegalArgumentException(MessageFormat.format("Cannot coerce ProjectTemplate into Project : project id {0} is not the same as template id {1}", projectId, payload.get("templateId")));
+			throw new IllegalArgumentException(MessageFormat.format(
+					"Cannot coerce ProjectTemplate into Project : project id {0} is not the same as template id {1}",
+					projectId, payload.get("templateId")));
 		}
 		
 		genericProjectManager.coerceTemplateIntoProject(projectId);
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "templateId")
+	@ResponseStatus(value = HttpStatus.CREATED)
 	public @ResponseBody
 	void createProjectFromTemplate(@Valid @ModelAttribute("add-project-from-template") Project project,
 			@RequestParam long templateId, @RequestParam boolean copyPermissions, @RequestParam boolean copyCUF,
 			@RequestParam boolean copyBugtrackerBinding, @RequestParam boolean copyAutomatedProjects) {
-		projectManager.addProjectAndCopySettingsFromTemplate(project, templateId, copyPermissions, copyCUF,
-				copyBugtrackerBinding, copyAutomatedProjects);
+		try {
+			projectManager.addProjectAndCopySettingsFromTemplate(project, templateId, copyPermissions, copyCUF,
+					copyBugtrackerBinding, copyAutomatedProjects);
+		} catch (NameAlreadyInUseException ex) {
+			ex.setObjectName("add-project-from-template");
+			throw ex;
+		}
 	}
 }

@@ -39,6 +39,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -48,6 +49,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.api.plugin.EntityReference;
 import org.squashtest.tm.api.plugin.EntityType;
@@ -66,6 +68,7 @@ import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.exception.NoBugTrackerBindingException;
+import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
 import org.squashtest.tm.exception.user.LoginDoNotExistException;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
@@ -139,15 +142,26 @@ public class GenericProjectController {
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "isTemplate=false")
+	@ResponseStatus(value = HttpStatus.CREATED)
 	public @ResponseBody
 	void createNewProject(@Valid @ModelAttribute("add-project") Project project) {
-		projectManager.persist(project);
+		createProject(project);
+	}
+
+	private void createProject(GenericProject project) {
+		try {
+			projectManager.persist(project);
+		} catch (NameAlreadyInUseException ex) {
+			ex.setObjectName("add-project");
+			throw ex;
+		}
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "isTemplate=true")
+	@ResponseStatus(value = HttpStatus.CREATED)
 	public @ResponseBody
 	void createNewProject(@Valid @ModelAttribute("add-project") ProjectTemplate template) {
-		projectManager.persist(template);
+		createProject(template);
 	}
 
 	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = { "id=project-label", VALUE }, produces = "text/plain;charset=UTF-8")
