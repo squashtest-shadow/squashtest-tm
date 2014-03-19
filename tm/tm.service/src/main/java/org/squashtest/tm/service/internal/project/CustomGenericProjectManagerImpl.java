@@ -33,6 +33,7 @@ import javax.inject.Provider;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
@@ -65,6 +66,7 @@ import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.exception.NoBugTrackerBindingException;
 import org.squashtest.tm.exception.UnknownEntityException;
+import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
 import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.service.internal.repository.BugTrackerBindingDao;
@@ -190,7 +192,12 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@PreAuthorize(IS_ADMIN)
 	public void persist(GenericProject project) {
 		Session session = sessionFactory.getCurrentSession();
-
+		
+		if (
+		genericProjectDao.countByName(project.getName()) > 0) {
+			throw new NameAlreadyInUseException(project.getClass().getSimpleName(), project.getName());
+		}
+		
 		CampaignLibrary cl = new CampaignLibrary();
 		project.setCampaignLibrary(cl);
 		session.persist(cl);
@@ -519,5 +526,21 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		public boolean evaluate(Object object) {
 			return permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "MANAGEMENT", object);
 		}
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.project.CustomGenericProjectManager#changeName(long, java.lang.String)
+	 */
+	@PreAuthorize(IS_ADMIN_OR_MANAGER)
+	@Override
+	public void changeName(long projectId, String newName) {
+		GenericProject project = genericProjectDao.findById(projectId);
+		if (StringUtils.equals(project.getName(), newName)) {
+			return;
+		}
+		if (genericProjectDao.countByName(newName) > 0) {
+			throw new NameAlreadyInUseException(project.getClass().getSimpleName(), newName);
+		}
+		project.setName(newName);
 	}
 }

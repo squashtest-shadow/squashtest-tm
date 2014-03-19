@@ -71,7 +71,19 @@ class GenericProjectDaoIT extends DbunitDaoSpecification {
 		dao.countGenericProjects() == 4L
 	}
 	
+	@Unroll
 	@DataSet("GenericProjectDaoIT.xml")
+	def "should count #count projects for name #name" () {
+		expect:
+		dao.countByName(name) == count
+		
+		where:
+		name       | count
+		"whatever" | 0L
+		"ONE"      | 1L
+	}
+
+		@DataSet("GenericProjectDaoIT.xml")
 	def "should coerce template into a project" () {
 		when:
 		GenericProject res = dao.coerceTemplateIntoProject(4)

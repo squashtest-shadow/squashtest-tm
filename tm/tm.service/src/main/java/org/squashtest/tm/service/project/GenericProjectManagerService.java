@@ -45,9 +45,6 @@ public interface GenericProjectManagerService extends CustomGenericProjectManage
 	@PreAuthorize(ADMIN_OR_PROJECT_MANAGER)
 	void changeLabel(long projectId, String newLabel);
 
-	@PreAuthorize(ADMIN_OR_PROJECT_MANAGER)
-	void changeName(long projectId, String newName);
-
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	void changeActive(long projectId, boolean isActive);
 	
