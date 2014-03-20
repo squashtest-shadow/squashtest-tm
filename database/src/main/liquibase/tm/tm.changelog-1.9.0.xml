@@ -501,4 +501,11 @@
     </sql>
   </changeSet>
   
+  <changeSet id="tm-1.9.0-issue--01" author="flaurens">
+  		<dropNotNullConstraint
+            columnDataType="CLOB"
+            columnName="ACTION"
+            tableName="ACTION_TEST_STEP"/>
+  </changeSet>
+
 </databaseChangeLog>

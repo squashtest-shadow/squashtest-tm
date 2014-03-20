@@ -93,6 +93,19 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		teststep.expectedResult == step.expectedResult
 	}
 
+	def "should add an empty test step to test case"(){
+		given :
+		ActionTestStep step = new ActionTestStep(action: "", expectedResult: "")
+
+		when :
+		def teststep = service.addActionTestStep(testCaseId, step);
+
+		then :
+		teststep != null
+		teststep.id != null
+		teststep.action == step.action
+		teststep.expectedResult == step.expectedResult
+	}
 
 	def "should get a test step list from a test case"(){
 		given :

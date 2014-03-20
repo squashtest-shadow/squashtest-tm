@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -36,7 +35,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 
-import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
@@ -50,7 +48,6 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 @PrimaryKeyJoinColumn(name = "TEST_STEP_ID")
 public class ActionTestStep extends TestStep implements BoundEntity, AttachmentHolder {
 	@Lob
-	@Basic(optional = false)
 	private String action;
 
 	@Lob
@@ -78,7 +75,6 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 		this.action = action;
 	}
 
-	@NotBlank
 	public String getAction() {
 		return action;
 	}

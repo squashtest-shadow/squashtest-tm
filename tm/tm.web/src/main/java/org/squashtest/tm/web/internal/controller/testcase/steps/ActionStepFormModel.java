@@ -43,7 +43,7 @@ public class ActionStepFormModel {
 	/*@NotBlank
 	 * @NotNull
 	 */
-	private String action;
+	private String action="";
 	
 	private String expectedResult="";
 	
@@ -102,14 +102,12 @@ public class ActionStepFormModel {
 			
 			ActionStepFormModel model = (ActionStepFormModel) target;
 			
-			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "action", "message.notBlank", notBlank);
-			
 			for (Entry<Long, String> entry : model.getCustomFields().entrySet()){
 				String value = entry.getValue();
 				if (value.trim().isEmpty()){
 					errors.rejectValue("customFields["+entry.getKey()+"]", "message.notBlank", notBlank);
 				}
-			}		
+			}
 			
 		}
 		
