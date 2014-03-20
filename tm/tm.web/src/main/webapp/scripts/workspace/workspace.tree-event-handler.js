@@ -96,6 +96,17 @@ define([ 'jquery', 'tree', 'workspace.event-bus' ], function($, tree, eventBus) 
 			self.getTree().refresh_selected();
 		});
 		
+		
+		eventBus.on('tc-req-links-updated', function(evt, data){
+			var tree = self.getTree();
+			var openedNodes  = tree.findNodes({restype : "test-cases"});
+			var openedNodesIds = _.map(openedNodes, function(item){
+				return item.getAttribute('resid');
+			});
+			var mapIdOldReq = findMapIdOldReq(openedNodesIds, tree);
+			updateCallingTestCasesNodes( tree, mapIdOldReq);
+		});
+		
 
 	}
 
@@ -144,6 +155,13 @@ define([ 'jquery', 'tree', 'workspace.event-bus' ], function($, tree, eventBus) 
 			}
 			return false;
 		});
+		var mapIdOldReq = findMapIdOldReq(targetIds, tree);
+		
+
+		updateCallingTestCasesNodes( tree, mapIdOldReq);
+	}
+	
+	function findMapIdOldReq(targetIds, tree){
 		var mapIdOldReq = {};
 		$.each(targetIds, function(index, item){
 			var treeNode = tree.findNodes({
@@ -155,12 +173,11 @@ define([ 'jquery', 'tree', 'workspace.event-bus' ], function($, tree, eventBus) 
 				mapIdOldReq[item] = oldReq;
 			}
 		});
-		
-
-		updateCallingTestCasesNodes( tree, mapIdOldReq);
+		return mapIdOldReq;
 	}
 	
-	
+	//tree : the tree instance
+	//mapIdOldReq : a map with key=tcId, value= actual 'isreqcovered' attribute value
 	function updateCallingTestCasesNodes( tree, mapIdOldReq){
 		//if a test case change it's requirements then it's calling test cases might be newly bound/unbound to requirements or might have their importance changed.
 		
