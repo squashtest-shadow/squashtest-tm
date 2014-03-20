@@ -53,6 +53,7 @@ public class HibernateGenericProjectDao implements CustomGenericProjectDao {
 		session.flush();
 		session.evict(template);
 
+		// TODO replace PROJECt_ID by PROJECT_ID in 1.10.0 Dont seem to break (even on case sensitive mysql) yet its not correct
 		SQLQuery query = session.createSQLQuery("update PROJECT set PROJECT_TYPE = 'P' where PROJECt_ID = :id");
 		query.setParameter("id", templateId);
 		final int changedRows = query.executeUpdate();
