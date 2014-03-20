@@ -23,7 +23,6 @@ package org.squashtest.tm.service.internal.batchexport;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +34,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
-import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.DatasetModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.ParameterModel;
@@ -221,9 +219,14 @@ class ExcelExporter {
 			}
 
 			Cell c = r.createCell(idx);
-			String value = (cuf.getType() == InputType.DATE_PICKER) ? format(cuf.getValue()) : cuf.getValue();
+			String value = nullSafeValue(cuf);
 			c.setCellValue(value);
 		}
+	}
+
+	private String nullSafeValue(CustomField customField) {
+		String value = customField.getValue();
+		return value == null ? "" : value;
 	}
 
 	private int registerCuf(Sheet sheet, String code) {
@@ -235,19 +238,6 @@ class ExcelExporter {
 		cufColumnsByCode.put(code, nextIdx);
 
 		return nextIdx;
-	}
-
-	private String format(String date) {
-		if (date == null) {
-			return "";
-		}
-		try {
-			// when the given date parses, we return it as is 
-			IsoDateUtils.parseIso8601Date(date);
-			return date;
-		} catch (ParseException ex) {
-			throw new RuntimeException(ex);
-		}
 	}
 
 	private String format(Date date) {
