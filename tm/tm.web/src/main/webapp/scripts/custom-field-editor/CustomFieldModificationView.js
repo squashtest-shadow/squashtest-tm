@@ -151,6 +151,7 @@ define(
 						},
 
 						sendOptional : function(optional) {
+							var self = this;
 							return $.ajax({
 								url : cfMod.customFieldUrl + "/optional",
 								type : "post",
@@ -158,7 +159,11 @@ define(
 									'value' : optional
 								},
 								dataType : "json"
+							})
+							.fail(function(){
+								self.cancelOptionalChange();
 							});
+							
 						},
 
 						changeDefaultOption : function(event) {
@@ -391,6 +396,13 @@ define(
 
 						enableOptionalChange : function() {
 							$("#cf-optional").removeAttr("disabled");
+						},
+						
+						cancelOptionalChange : function(){
+							var opt = $("#cf-optional"),
+								active = opt.prop("checked");
+							
+							opt.prop("checked", ! active);
 						},
 
 						changeDefaultValueText : function(value) {
