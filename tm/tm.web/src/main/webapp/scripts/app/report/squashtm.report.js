@@ -368,13 +368,14 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 	}
 
 	function loadTab(tab) {
-		var url = buildViewUrl(tab.newTab.index(), "html");
+		var url = buildViewUrl(tab.newTab.index(), "html"),
+			params = JSON.stringify(formState);
+		
 		$.ajax({
-			type : 'post',
+			type : 'get',
 			url : url,
-			dataType:'html',
-			data : JSON.stringify(formState),
-			contentType : "application/json"
+			dataType : 'html',
+			data : { parameters : params }
 		}).done(function(html) {
 			tab.newPanel.html(html);
 		});
@@ -460,14 +461,11 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 		var format = $("#view-format-cmb-" + viewIndex).val();
 
 		var url = buildViewUrl(viewIndex, format);
-		var data = JSON.stringify(formState).replace(/"/g, '&quot;');
+		var data = JSON.stringify(formState);
+		data = encodeURIComponent(data);
+		
+		window.open(url+"?parameters="+data, "_blank", 'resizable=yes, scrollbars=yes');
 
-		$.open(url, {
-			data : data
-		}, {
-			name : '_blank',
-			features : 'resizable=yes, scrollbars=yes'
-		});
 	}
 
 	function initViewTabs() {

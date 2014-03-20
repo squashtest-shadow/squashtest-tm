@@ -112,30 +112,6 @@ public class ReportController {
 		return "report-viewer.html";
 	}
 
-	/**
-	 * Generates report view from a post with JSON payload
-	 * 
-	 * @param namespace
-	 * @param index
-	 * @param viewIndex
-	 * @param format
-	 * @param form
-	 * @return
-	 */
-	@RequestMapping(value = "/views/{viewIndex}/formats/{format}", method = RequestMethod.POST)
-	public ModelAndView generateReportView(@PathVariable String namespace, @PathVariable int index,
-			@PathVariable int viewIndex, @PathVariable String format, @RequestBody Map<String, Object> form) {
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug(form.toString());
-		}
-		Map<String, Criteria> crit = (new FormToCriteriaConverter()).convert(form);
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug(crit.toString());
-		}
-
-		Report report = reportsRegistry.findReport(namespace, index);
-		return report.buildModelAndView(viewIndex, format, crit);
-	}
 
 	/**
 	 * Generates report view from a standard post with a data attribute containing a serialized JSON form.
@@ -150,12 +126,16 @@ public class ReportController {
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
-	@RequestMapping(value = "/views/{viewIndex}/formats/{format}", method = RequestMethod.POST, params = { "data" })
-	public ModelAndView generateReportView(@PathVariable String namespace, @PathVariable int index,
-			@PathVariable int viewIndex, @PathVariable String format, @RequestParam String data)
+	@RequestMapping(value = "/views/{viewIndex}/formats/{format}", method = RequestMethod.GET, params = { "parameters" })
+	public ModelAndView generateReportViewUsingGet(@PathVariable String namespace, @PathVariable int index,
+			@PathVariable int viewIndex, @PathVariable String format, @RequestParam("parameters") String parameters)
 			throws JsonParseException, JsonMappingException, IOException {
-		Map<String, Object> form = JsonHelper.deserialize(data);
-		return generateReportView(namespace, index, viewIndex, format, form);
+		Map<String, Object> form = JsonHelper.deserialize(parameters);
+		Map<String, Criteria> crit = (new FormToCriteriaConverter()).convert(form);
+		
+		Report report = reportsRegistry.findReport(namespace, index);
+		return report.buildModelAndView(viewIndex, format, crit);
+		
 	}
 
 }
