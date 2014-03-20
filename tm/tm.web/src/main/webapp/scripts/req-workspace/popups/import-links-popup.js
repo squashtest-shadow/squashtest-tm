@@ -128,7 +128,7 @@ define(['jquery', 'workspace.event-bus', 'workspace/workspace.import-popup'], fu
 		
 		
 		dialog.on('linksimportdialogok', function(){
-			eventBus.trigger('tc-req-links-updated'});
+			eventBus.trigger('tc-req-links-updated');
 		});
 		
 		
