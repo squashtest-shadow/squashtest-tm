@@ -58,7 +58,8 @@ class ExecutionStatusTest extends Specification {
 			WARNING,
 			BLOCKED,
 			ERROR,
-			FAILURE] as Set
+			FAILURE,
+			SETTLED] as Set
 		nonTerminal == [RUNNING, READY] as Set
 	}
 
