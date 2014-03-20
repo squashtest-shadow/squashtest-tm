@@ -351,6 +351,7 @@
 			<f:message var="assignLabel" key="label.Assign" />
 			<f:message var="reorderLabel" key="label.Reorder" />
 			<f:message var="filterLabel" key="label.Filter" />
+            <f:message var="filterTooltip" key="tooltips.FilterTestPlan" />
 			<f:message var="reorderTooltip" key="tooltips.ReorderTestPlan" />
 			<f:message var="tooltipAddTPI" key="tooltips.AddTPIToTP" />
 			<f:message var="tooltipRemoveTPI" key="tooltips.RemoveTPIFromTP" />
@@ -359,7 +360,7 @@
 			<c:if test="${ writable }">
       <div class="left btn-toolbar">
         <div class="btn-group">
-          <button id="filter-test-plan-button" class="sq-btn btn-sm" title="${reorderTooltip}">
+          <button id="filter-test-plan-button" class="sq-btn btn-sm" title="${filterTooltip}">
             <span class="ui-icon ui-icon-refresh"></span>${filterLabel}
           </button>
           <button id="reorder-test-plan-button" class="sq-btn btn-sm" title="${reorderTooltip}">
