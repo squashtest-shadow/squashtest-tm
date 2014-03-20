@@ -1,26 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!--
 
-        This file is part of the Squashtest platform.
-        Copyright (C) 2010 - 2012 Henix, henix.fr
-
-        See the NOTICE file distributed with this work for additional
-        information regarding copyright ownership.
-
-        This is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Lesser General Public License as published by
-        the Free Software Foundation, either version 3 of the License, or
-        (at your option) any later version.
-
-        this software is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Lesser General Public License for more details.
-
-        You should have received a copy of the GNU Lesser General Public License
-        along with this software.  If not, see <http://www.gnu.org/licenses/>.
-
--->
 <!-- 
 	That file will instanciate a complete set of entity dependencies 
 
@@ -31,7 +10,7 @@
 
 -->
 
-<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.8.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.9.0.dtd">
 <dataset>
 
 	<!-- =============================== three libraries ============================================ -->
@@ -79,13 +58,13 @@
 	
 	<!-- ============================ tcln_relationship ================================================ -->
 	
-	<TCLN_RELATIONSHIP ANCESTOR_ID="1" DESCENDANT_ID="11" /> <!--  TCFOLDER 1 CONTAINS TC1 -->
-	<TCLN_RELATIONSHIP ANCESTOR_ID="1" DESCENDANT_ID="12" /> <!--  TCFOLDER 1 CONTAINS T2 -->
+	<TCLN_RELATIONSHIP ANCESTOR_ID="1" DESCENDANT_ID="11" CONTENT_ORDER="0"/> <!--  TCFOLDER 1 CONTAINS TC1 -->
+	<TCLN_RELATIONSHIP ANCESTOR_ID="1" DESCENDANT_ID="12" CONTENT_ORDER="1"/> <!--  TCFOLDER 1 CONTAINS T2 -->
 	
 	<!-- ============================ test case library content =======================================  -->
 	
-	<TEST_CASE_LIBRARY_CONTENT LIBRARY_ID="1" CONTENT_ID="1" />  <!--  TC LIBRARY 1 CONTAINS TCFOLDER 1 -->
-	<TEST_CASE_LIBRARY_CONTENT LIBRARY_ID="1" CONTENT_ID="13" />  <!--  TC LIBRARY 1 CONTAINS TCFOLDER 1 -->
+	<TEST_CASE_LIBRARY_CONTENT LIBRARY_ID="1" CONTENT_ID="1" CONTENT_ORDER="0"/>  <!--  TC LIBRARY 1 CONTAINS TCFOLDER 1 -->
+	<TEST_CASE_LIBRARY_CONTENT LIBRARY_ID="1" CONTENT_ID="13" CONTENT_ORDER="1"/>  <!--  TC LIBRARY 1 CONTAINS TCFOLDER 1 -->
 	
 	<!-- ============================ test step ======================================================== -->
 	
