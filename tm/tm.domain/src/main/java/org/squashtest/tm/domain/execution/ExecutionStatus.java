@@ -361,7 +361,9 @@ public enum ExecutionStatus implements Internationalizable, Level {
 	private static final String I18N_KEY_ROOT = "execution.execution-status.";
 
 	private static final Set<ExecutionStatus> CANONICAL_STATUSES;
+	//tests with terminal statuses are considered executed (used for setting iteration/campaign end dates automatically)
 	private static final Set<ExecutionStatus> TERMINAL_STATUSES;
+	//tests with non terminal statuses are considered not executed (used for setting iteration/campaign end dates automatically)
 	private static final Set<ExecutionStatus> NON_TERMINAL_STATUSES;
 	public static final Set<ExecutionStatus> DEFAULT_DISABLED_STATUSES;
 	
@@ -386,6 +388,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 		terms.add(WARNING);
 		terms.add(ERROR);
 		terms.add(UNTESTABLE);
+		terms.add(SETTLED);
 		
 		TERMINAL_STATUSES = Collections.unmodifiableSet(terms);	
 		
