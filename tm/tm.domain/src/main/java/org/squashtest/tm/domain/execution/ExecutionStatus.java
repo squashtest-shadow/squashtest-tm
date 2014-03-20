@@ -385,13 +385,13 @@ public enum ExecutionStatus implements Internationalizable, Level {
 		terms.add(SUCCESS);
 		terms.add(WARNING);
 		terms.add(ERROR);
+		terms.add(UNTESTABLE);
 		
 		TERMINAL_STATUSES = Collections.unmodifiableSet(terms);	
 		
 		Set<ExecutionStatus> nonTerms = new HashSet<ExecutionStatus>();
 		nonTerms.add(RUNNING);
 		nonTerms.add(READY);
-		terms.add(UNTESTABLE);
 		
 		NON_TERMINAL_STATUSES = Collections.unmodifiableSet(nonTerms);
 		
