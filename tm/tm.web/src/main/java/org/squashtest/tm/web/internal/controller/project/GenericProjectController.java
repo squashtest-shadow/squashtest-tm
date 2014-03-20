@@ -489,8 +489,8 @@ public class GenericProjectController {
 
 	@RequestMapping(value = PROJECT_ID_URL + "/execution-status-is-used/{executionStatus}", method = RequestMethod.GET)
 	@ResponseBody
-	public boolean executionStatusUsedByProject(@PathVariable long projectId, @PathVariable String executionStatus) {
-		return projectManager.executionStatusUsedByProject(projectId, ExecutionStatus.valueOf(executionStatus));
+	public boolean projectUsesExecutionStatus(@PathVariable long projectId, @PathVariable String executionStatus) {
+		return projectManager.projectUsesExecutionStatus(projectId, ExecutionStatus.valueOf(executionStatus));
 	}
 
 	@RequestMapping(value = PROJECT_ID_URL + "/execution-status/{executionStatus}", method = RequestMethod.GET)

@@ -496,8 +496,9 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	}
 
 	@Override
-	public boolean executionStatusUsedByProject(long projectId, ExecutionStatus executionStatus) {
-		return executionDao.hasStepOrExecutionWithStatus(projectId, executionStatus);
+	public boolean projectUsesExecutionStatus(long projectId, ExecutionStatus executionStatus) {
+		
+		return executionDao.projectUsesExecutionStatus(projectId, executionStatus);
 	}
 
 	// **************** private stuffs **************

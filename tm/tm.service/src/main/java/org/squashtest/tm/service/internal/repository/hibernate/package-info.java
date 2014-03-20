@@ -118,13 +118,13 @@
 		
 		
 		// IterationTestPlanItem
-		@NamedQuery(name = "iterationTestPlanItem.countAllStatus", query="select count(itp) from IterationTestPlanItem itpi where itpi.executionStatus = :status and itpi.iteration.campaign.project.id = :projectId"),
+		@NamedQuery(name = "iterationTestPlanItem.countAllStatus", query="select count(itpi) from IterationTestPlanItem itpi where itpi.executionStatus = :status and itpi.iteration.campaign.project.id = :projectId"),
 		@NamedQuery(name = "iterationTestPlanItem.replaceStatus", query ="update IterationTestPlanItem item set item.executionStatus = :newStatus where item.executionStatus = :oldStatus and item.id in " +
 				  														"(select itpi.id from IterationTestPlanItem itpi where itpi.iteration.campaign.project.id = :projectId)"),
 
 
 	
-		//TestSuite
+		// TestSuite
 		@NamedQuery(name = "TestSuite.findAllTestPlanItemsPaged", query = "select tp from TestSuite ts join ts.testPlan tp join tp.testSuites tss where ts.id = ?1 and ts.id = tss.id order by index(tp)"),
 		@NamedQuery(name = "TestSuite.countTestPlanItems", query = "select count(tp) from TestSuite ts join ts.testPlan tp join tp.testSuites tss where ts.id = ?1 and ts.id = tss.id"),
 		@NamedQuery(name = "TestSuite.countTestPlanItemsForUsers", query = "select count(tp) from TestSuite ts join ts.testPlan tp join tp.testSuites tss join tp.user user where ts.id = :id and ts.id = tss.id and user.login = :login"),

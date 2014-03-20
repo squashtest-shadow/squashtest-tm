@@ -29,6 +29,7 @@ import spock.lang.Unroll;
 import spock.unitils.UnitilsSupport;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 
 
 @UnitilsSupport
@@ -95,5 +96,25 @@ class HibernateExecutionDaoIT extends DbunitDaoSpecification {
 		"Execution.executionStatus" | SortOrder.ASCENDING  | [953, 1110, 1556]
 		"Execution.lastExecutedBy"  | SortOrder.ASCENDING  | [2150, 2562, 2971]
 		"Execution.lastExecutedOn"  | SortOrder.ASCENDING  | [494, 580, 627] 
+	}
+	
+	
+	@DataSet("HibernateExecutionDaoIT.should find if project uses exec status.xml")
+	@Unroll("should find if project #projectId uses exec status #execStatus")
+	def"should find if project uses exec status"(){
+		when:
+		def res = executionDao.projectUsesExecutionStatus(projectId, execStatus)
+		
+		then : 
+		res == expectedResult
+		
+		where :
+		projectId | execStatus                  | expectedResult
+		1         | ExecutionStatus.SETTLED  	| true // in execution step
+		1         | ExecutionStatus.UNTESTABLE	| true // in iteration test plan item
+		2		  | ExecutionStatus.UNTESTABLE  | false 
+		2         | ExecutionStatus.SETTLED 	| true // in iteration test plan
+		
+		
 	}
 }

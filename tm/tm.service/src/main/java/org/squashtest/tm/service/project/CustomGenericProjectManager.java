@@ -208,7 +208,7 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	 */
 	boolean isExecutionStatusEnabledForProject(long projectId, ExecutionStatus executionStatus);
 
-	boolean executionStatusUsedByProject(long projectId, ExecutionStatus executionStatus);
+	boolean projectUsesExecutionStatus(long projectId,  ExecutionStatus executionStatus);
 	
 	void changeName(long projectId, String newName) throws NameAlreadyInUseException;
 }

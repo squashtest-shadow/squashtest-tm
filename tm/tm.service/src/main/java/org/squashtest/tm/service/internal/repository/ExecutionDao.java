@@ -55,7 +55,7 @@ public interface ExecutionDao extends EntityDao<Execution> {
 	
 	List<IterationTestPlanItem> findAllIterationTestPlanItemsWithStatus(Long projectId, ExecutionStatus source);
 	
-	boolean hasStepOrExecutionWithStatus(long projectId, ExecutionStatus executionStatus);
+	boolean projectUsesExecutionStatus(long projectId, ExecutionStatus executionStatus);
 	
 	void replaceExecutionStepStatus(long projectId, ExecutionStatus oldStatus, ExecutionStatus newStatus);
 	

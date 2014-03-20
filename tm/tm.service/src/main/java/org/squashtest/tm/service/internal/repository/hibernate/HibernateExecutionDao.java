@@ -58,7 +58,7 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	private static final String PROJECT_ID = "Project.id";
 	private static final String ITERATION_CAMPAIGN = "Iteration.campaign";
 	private static final String EXECUTION_STATUS = "executionStatus";
-	
+
 	/*
 	 * as long as the ordering of a collection is managed by @OrderColumn, but you can't explicitely reference the
 	 * ordering column in the join table, initialize the collection itself is the only solution
@@ -115,7 +115,7 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 			SetQueryParametersCallback newCallBack = new CountStepStatusByExecutionParamSetter(executionId, fStatus);
 
 			Long lResult = executeEntityNamedQuery(EXECUTION_COUNT_STATUS, newCallBack);
-			
+
 			report.set(status, lResult.intValue());
 		}
 
@@ -126,16 +126,16 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	public long countSuccess(final long executionId) {
 		SetQueryParametersCallback newCallBack = new CountStepStatusByExecutionParamSetter(executionId,
 				ExecutionStatus.SUCCESS);
-		
-		return (Long)executeEntityNamedQuery(EXECUTION_COUNT_STATUS, newCallBack); 
+
+		return (Long) executeEntityNamedQuery(EXECUTION_COUNT_STATUS, newCallBack);
 	}
 
 	@Override
 	public long countReady(final long executionId) {
 		SetQueryParametersCallback newCallBack = new CountStepStatusByExecutionParamSetter(executionId,
 				ExecutionStatus.READY);
-			
-		return (Long)executeEntityNamedQuery(EXECUTION_COUNT_STATUS, newCallBack);
+
+		return (Long) executeEntityNamedQuery(EXECUTION_COUNT_STATUS, newCallBack);
 	}
 
 	/*
@@ -165,9 +165,9 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 		return execution.getSteps().subList(startIndex, lastIndex);
 
 	}
-	
+
 	// ************** special execution status deactivation section ***************
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ExecutionStep> findAllExecutionStepsWithStatus(Long projectId, ExecutionStatus executionStatus) {
@@ -179,21 +179,20 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 		crit.createAlias(CAMPAIGN_PROJECT, PROJECT, JoinType.INNER_JOIN);
 		crit.add(Restrictions.eq(PROJECT_ID, Long.valueOf(projectId)));
 		crit.add(Restrictions.eq(EXECUTION_STATUS, executionStatus));
-		
+
 		return crit.list();
 	};
-	
+
 	@Override
-	public List<Long> findAllExecutionIdHavingStepWithStatus(Long projectId,
-			ExecutionStatus source) {
+	public List<Long> findAllExecutionIdHavingStepWithStatus(Long projectId, ExecutionStatus source) {
 
 		Query q = currentSession().getNamedQuery("execution.findExecutionIdsHavingStepStatus");
 		q.setParameter("status", source);
 		q.setParameter("projectId", projectId);
 		return q.list();
-		
+
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<IterationTestPlanItem> findAllIterationTestPlanItemsWithStatus(Long projectId,
@@ -205,65 +204,71 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 		crit.createAlias(CAMPAIGN_PROJECT, PROJECT, JoinType.INNER_JOIN);
 		crit.add(Restrictions.eq(PROJECT_ID, Long.valueOf(projectId)));
 		crit.add(Restrictions.eq(EXECUTION_STATUS, executionStatus));
-		
+
 		return crit.list();
 	};
-	
+
 	@Override
-	public boolean hasStepOrExecutionWithStatus(long projectId, ExecutionStatus executionStatus) {
-		
-	Session session = currentSession();
-	
-	
+	public boolean projectUsesExecutionStatus(long projectId, ExecutionStatus executionStatus) {
+		return (hasExecStepWithStatus(projectId, executionStatus)
+				|| hasItemTestPlanWithStatus(projectId, executionStatus)
+				|| hasExecWithStatus(projectId, executionStatus) );
+	}
+
+	private boolean hasItemTestPlanWithStatus(long projectId, ExecutionStatus executionStatus) {
+		Session session = currentSession();
 		Query qStep = session.getNamedQuery("executionStep.countAllStatus");
 		qStep.setParameter("status", executionStatus);
 		qStep.setParameter("projectId", projectId);
-		Long nStep = (Long)qStep.uniqueResult();		
-		
+		Long nStep = (Long) qStep.uniqueResult();
+		return nStep > 0;
+	}
+
+	private boolean hasExecWithStatus(long projectId, ExecutionStatus executionStatus) {
+		Session session = currentSession();
 		Query qExec = session.getNamedQuery("execution.countAllStatus");
 		qExec.setParameter("status", executionStatus);
 		qExec.setParameter("projectId", projectId);
-		Long nExec = (Long)qStep.uniqueResult();
-		
+		Long nExec = (Long) qExec.uniqueResult();
+		return nExec > 0;
+	}
+
+	private boolean hasExecStepWithStatus(long projectId, ExecutionStatus executionStatus) {
+		Session session = currentSession();
 		Query qITP = session.getNamedQuery("iterationTestPlanItem.countAllStatus");
 		qITP.setParameter("status", executionStatus);
 		qITP.setParameter("projectId", projectId);
-		Long nITP = (Long)qStep.uniqueResult();
-		
-		return nStep + nExec + nITP > 0;
-
+		Long nITP = (Long) qITP.uniqueResult();
+		return nITP > 0;
 	}
-	
+
 	@Override
-	public void replaceExecutionStepStatus(long projectId,
-			ExecutionStatus oldStatus, ExecutionStatus newStatus) {
-		
+	public void replaceExecutionStepStatus(long projectId, ExecutionStatus oldStatus, ExecutionStatus newStatus) {
+
 		Session session = currentSession();
-		
 		Query qStep = session.getNamedQuery("executionStep.replaceStatus");
 		qStep.setParameter("oldStatus", oldStatus);
 		qStep.setParameter("newStatus", newStatus);
-		qStep.setParameter("projectId", projectId);	
+		qStep.setParameter("projectId", projectId);
 		qStep.executeUpdate();
-				
+
 	}
-	
+
 	@Override
-	public void replaceTestPlanStatus(long projectId,
-			ExecutionStatus oldStatus, ExecutionStatus newStatus) {
-		
+	public void replaceTestPlanStatus(long projectId, ExecutionStatus oldStatus, ExecutionStatus newStatus) {
+
 		Session session = currentSession();
-		
+
 		Query qStep = session.getNamedQuery("iterationTestPlanItem.replaceStatus");
 		qStep.setParameter("oldStatus", oldStatus);
 		qStep.setParameter("newStatus", newStatus);
-		qStep.setParameter("projectId", projectId);	
+		qStep.setParameter("projectId", projectId);
 		qStep.executeUpdate();
-		
+
 	}
-	
+
 	// ************** /special execution status deactivation section **************
-	
+
 	@Override
 	public List<IssueDetector> findAllIssueDetectorsForExecution(Long execId) {
 		Execution execution = findById(execId);
@@ -294,7 +299,7 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 		Query query = currentSession().getNamedQuery("execution.findAllByTestCaseIdOrderByRunDate");
 		PagingUtils.addPaging(query, paging);
 		query.setParameter("testCaseId", testCaseId);
-		
+
 		return query.list();
 	}
 
@@ -309,7 +314,7 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 		crit.createAlias("testPlan.testSuites", TEST_SUITE, JoinType.LEFT_OUTER_JOIN);
 
 		crit.add(Restrictions.eq("TestCase.id", Long.valueOf(testCaseId)));
-		
+
 		crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
 		PagingUtils.addPaging(crit, pas);
@@ -322,17 +327,17 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	public long countByTestCaseId(long testCaseId) {
 		return (Long) executeEntityNamedQuery("execution.countByTestCaseId", "testCaseId", testCaseId);
 	}
-	
+
 	@Override
 	public boolean wasNeverRan(Long executionId) {
 		return ((countExecutionSteps(executionId) - countReady(executionId)) == 0);
 	}
-	
-	private static class CountStepStatusByExecutionParamSetter implements SetQueryParametersCallback{
+
+	private static class CountStepStatusByExecutionParamSetter implements SetQueryParametersCallback {
 
 		private Long executionId;
 		private ExecutionStatus status;
-		
+
 		public CountStepStatusByExecutionParamSetter(Long executionId, ExecutionStatus status) {
 			super();
 			this.executionId = executionId;
