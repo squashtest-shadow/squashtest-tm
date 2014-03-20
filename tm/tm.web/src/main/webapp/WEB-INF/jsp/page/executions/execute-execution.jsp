@@ -107,7 +107,7 @@
           </script>
 			<script type="text/javascript">						
 			require(["common"], function() {
-				require(["jquery", "squash.basicwidgets", "page-components/step-information-panel","workspace.event-bus"], function($, basicwidg, infopanel, eventBus ) {
+				require(["jquery", "squash.basicwidgets", "page-components/step-information-panel", "workspace.event-bus"], function($, basicwidg, infopanel, eventBus ) {
 			
 				var isOer = ${ not empty hasNextTestCase };
 				var hasNextTestCase = ${ (not empty hasNextTestCase) and hasNextTestCase };
@@ -493,8 +493,9 @@
         		</div>
         		 <script type="text/javascript">
         		 require(["common"], function() {
-        			 require(["jquery"], function($) {
+        			 require(["jquery", "app/ws/squashtm.notification"], function($, wtf) {
         		 		$("#bugtracker-section-div").load("${btEntityUrl}");
+        		 		wtf.init({});
         			 });
         		 });
         		</script>

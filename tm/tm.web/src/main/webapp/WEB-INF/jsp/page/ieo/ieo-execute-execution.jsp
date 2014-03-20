@@ -251,8 +251,9 @@
 		</div>
 		 <script type="text/javascript">
 		 require(["common"], function() {
-			 require(["jquery"], function($) {
+			 require(["jquery", "app/ws/squashtm.notification"], function($, wtf) {
 		 		$("#bugtracker-section-div").load("${btEntityUrl}");
+		 		wtf.init({});
 			 });
 		 });
 		</script>
