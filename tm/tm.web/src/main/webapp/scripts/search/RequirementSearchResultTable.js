@@ -86,27 +86,27 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 							"aTargets" : [ 4 ],
 							"mDataProp" : "requirement-reference",
 							"bSortable" : true,
-							"sClass" : "editable_ref"
+							"sClass" : "editable editable_ref"
 						}, {
 							"aTargets" : [ 5 ],
 							"mDataProp" : "requirement-label",
 							"bSortable" : true,
-							"sClass" : "editable_label"
+							"sClass" : "editable editable_label"
 						}, {
 							"aTargets" : [ 6 ],
 							"mDataProp" : "requirement-criticality",
 							"bSortable" : true,
-							"sClass" : "editable_criticality"
+							"sClass" : "editable editable_criticality"
 						}, {
 							"aTargets" : [ 7 ],
 							"mDataProp" : "requirement-category",
 							"bSortable" : true,
-							"sClass" : "editable_category"
+							"sClass" : "editable editable_category"
 						}, {
 							"aTargets" : [ 8 ],
 							"mDataProp" : "requirement-status",
 							"bSortable" : true,
-							"sClass" : "editable_status"
+							"sClass" : "editable editable_status"
 						}, {
 							"aTargets" : [ 9 ],
 							"mDataProp" : "requirement-version",
