@@ -82,7 +82,7 @@ define(
 				}
 				
 				// execution status (read)
-				var status = data['status'], 
+				var status = data.status, 
 					$statustd = $row.find('.status-combo'), 
 					html = statusfactory.getHtmlFor(status);
 
@@ -226,14 +226,12 @@ define(
 
 						var $this = $(this), 
 							tpid = $this.data('tpid'), 
-							ui = ($this.is('.run-popup')) ? "popup" : "oer", newurl = initconf.urls.testplanUrl
-								+ tpid + '/executions/new';
+							ui = ($this.is('.run-popup')) ? "popup" : "oer", newurl = initconf.urls.testplanUrl + tpid + '/executions/new';
 
 						$.post(newurl, {
 							mode : 'manual'
 						}, 'json').done(function(execId) {
-							var execurl = initconf.urls.executionsUrl
-									+ execId + '/runner';
+							var execurl = initconf.urls.executionsUrl + execId + '/runner';
 							if (ui === "popup") {
 								execrunner.runInPopup(execurl);
 							} else {
@@ -314,8 +312,7 @@ define(
 					toggleRows : {
 						'td.toggle-row' : function(table, jqold, jqnew) {
 
-							var data = table.fnGetData(jqold.get(0)), url = initconf.urls.testplanUrl
-									+ data['entity-id'] + '/executions';
+							var data = table.fnGetData(jqold.get(0)), url = initconf.urls.testplanUrl + data['entity-id'] + '/executions';
 
 							jqnew.load(url, function() {
 
@@ -383,8 +380,7 @@ define(
 					squashSettings.functions = {};
 					squashSettings.functions.dropHandler = function(dropData) {
 						var ids = dropData.itemIds.join(',');
-						var url = initconf.urls.testplanUrl + '/' + ids
-								+ '/position/' + dropData.newIndex;
+						var url = initconf.urls.testplanUrl + '/' + ids + '/position/' + dropData.newIndex;
 						$.post(url, function() {
 							$("#iteration-test-plans-table").squashTable()
 									.refresh();

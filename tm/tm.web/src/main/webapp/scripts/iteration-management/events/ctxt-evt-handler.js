@@ -40,7 +40,9 @@ define(['jquery', 'workspace.event-bus' ], function($, eventBus) {
                 }
                 
 			});		
-			
+			eventBus.onContextual('node.bind', function(evt, args){	
+				$("#iteration-test-plans-table").squashTable().refresh();           
+			});
 		}		
 	};
 	
