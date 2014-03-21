@@ -33,8 +33,6 @@
 <%@ attribute name="openerId" required="true" description="the name of the control that will open that popup" %>
 <%@ attribute name="successCallback" required="false" description="if defined, that function will be called after
 																	the popup is closed." %>
-
-
 <c:choose>
 	<c:when test="${not empty id}">
 		<c:set var="popupId" value="${id}" />
@@ -45,58 +43,13 @@
 
 </c:choose>
 
-<pop:popup  id="${popupId}" openedBy="${openerId}" closeOnSuccess="false" titleKey="user.account.password.label" isContextual="true" >
-
- 	<jsp:attribute name="buttons"> 	
-		<f:message var="label" key="label.Confirm" />
-		'${ label }': function() {
-			submitPassword();
-		},			
-		<pop:cancel-button />
- 	</jsp:attribute> 
-
-	<jsp:attribute name="additionalSetup">
-		width: 420,
-	</jsp:attribute> 	
- 	
- 	<jsp:attribute name="body"> 
-		<div id="user-account-password-panel">
-			
-			<div >
-				<label><f:message key="user.account.oldpass.label"/></label>
-				<input type="password" id="oldPassword"/>
-				<comp:error-message forField="oldPassword" />
-			</div>
-		
-			<div>
-				<label ><f:message key="user.account.newpass.label"/></label>
-				<input type="password" id="newPassword"/>
-				<comp:error-message forField="newPassword" />
-			</div>
-			
-			<div>
-				<label ><f:message key="user.account.confirmpass.label"/></label>
-				<input type="password" id="user-account-confirmpass"/>
-				<comp:error-message forField="user-account-confirmpass" />
-			</div>			
-			
-		</div>
-		
-		<%-- the next comp:error is currently unused, however that might change later --%>
-		<comp:error-message forField="user-account-changepass-status"/>
- 		
- 	</jsp:attribute>
-
-
-</pop:popup>
-
-
 <script type="text/javascript">
 require( ["common"], function(){
 	require( ["jquery"], function($){
-}
+
 	$(function(){
 		$("#${popupId}").bind( "dialogclose", cleanUp);
+		$("#${popupId}").data('confirm-handler', submitPassword);
 	});
 
 
@@ -202,6 +155,57 @@ require( ["common"], function(){
 		$("#user-account-confirmpass").val('');	
 		
 	}
-
+	});
 });
 </script>
+
+
+
+<pop:popup  id="${popupId}" openedBy="${openerId}" closeOnSuccess="false" titleKey="user.account.password.label" isContextual="true" >
+
+ 	<jsp:attribute name="buttons"> 	
+		<f:message var="label" key="label.Confirm" />
+		'${ label }': function() {
+				var handler = $($("#${popupId}")).data('confirm-handler');
+				handler.call(this);	
+		},			
+		<pop:cancel-button />
+ 	</jsp:attribute> 
+
+	<jsp:attribute name="additionalSetup">
+		width: 420,
+	</jsp:attribute> 	
+ 	
+ 	<jsp:attribute name="body"> 
+		<div id="user-account-password-panel">
+			
+			<div >
+				<label><f:message key="user.account.oldpass.label"/></label>
+				<input type="password" id="oldPassword"/>
+				<comp:error-message forField="oldPassword" />
+			</div>
+		
+			<div>
+				<label ><f:message key="user.account.newpass.label"/></label>
+				<input type="password" id="newPassword"/>
+				<comp:error-message forField="newPassword" />
+			</div>
+			
+			<div>
+				<label ><f:message key="user.account.confirmpass.label"/></label>
+				<input type="password" id="user-account-confirmpass"/>
+				<comp:error-message forField="user-account-confirmpass" />
+			</div>			
+			
+		</div>
+		
+		<%-- the next comp:error is currently unused, however that might change later --%>
+		<comp:error-message forField="user-account-changepass-status"/>
+ 		
+ 	</jsp:attribute>
+
+
+</pop:popup>
+
+
+
