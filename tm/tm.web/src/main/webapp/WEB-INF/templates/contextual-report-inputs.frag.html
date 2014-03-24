@@ -118,7 +118,7 @@
   <div th:fragment="projectpicker">
     <!-- project picker popup -->
     <div id="rpt-project-crit" th:id="${input.name}" title="Projects"
-      th:title="#{report.form.project-picker.dialog.title}"
+      th:title="${projectMultiselect} ? #{report.form.project-picker.dialog.title} : #{report.form.project-picker.dialog.title.single}"
       class="rpt-projects-crit-container project-picker popup-dialog not-displayed" data-multi-select="true"
       th:attr="data-multi-select=${projectMultiselect}">
       <div id="dialog-settings-filter-maincontent">
