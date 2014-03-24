@@ -311,6 +311,15 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 					});
 				}
 			});
+		}else{
+			var checkedRadios = _.where(radios, {checked:true});
+			$.each(checkedRadios, function(index, radio){
+				var givesAccessTo = (radio.id).replace("-binder", "");
+				if (givesAccessTo !== undefined && givesAccessTo !== "none") {
+					$("#" + givesAccessTo + "-open").removeAttr("disabled");
+				}
+			});
+				
 		}
 	}
 
