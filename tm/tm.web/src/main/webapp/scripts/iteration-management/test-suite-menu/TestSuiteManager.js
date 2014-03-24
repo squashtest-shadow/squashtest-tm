@@ -368,7 +368,7 @@ define([ "jquery", "jqueryui" ], function($) {
 		var createControlSettings = {
 			manager : this,
 			panel : $(".create-suites-section", this.instance),
-			action : postNewSuite,
+			action : postNewSuite
 		};
 
 		var renameControlSettings = {
