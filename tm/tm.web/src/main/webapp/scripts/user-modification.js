@@ -19,9 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function(common) {
-	require([ "jquery", "user-editor/UserModificationView", "app/ws/squashtm.workspace", "domReady" ], function($,
-			UserModificationView, WS, domReady) {
-		
+	require([ "jquery", "user-editor/UserModificationView", "app/ws/squashtm.workspace" ], function($,
+			UserModificationView, WS) {
 		
 		var goBackInHistory = function(){
 			history.back();
@@ -31,7 +30,7 @@ require([ "common" ], function(common) {
 			document.location.href = squashtm.app.contextRoot + "/administration/users/list";
 		};
 
-		domReady(function() {
+		$(function() {
 			WS.init();
 			var view = new UserModificationView();
 			$("#back").on("click", goBackInHistory);
