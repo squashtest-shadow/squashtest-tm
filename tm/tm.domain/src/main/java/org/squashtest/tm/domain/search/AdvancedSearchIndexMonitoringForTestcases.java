@@ -51,7 +51,11 @@ public class AdvancedSearchIndexMonitoringForTestcases {
 	}
 
 	public static long getDocumentsAdded() {
-		return documentsAdded;
+		if(isIndexingOver || documentsAdded > addToTotalCount){
+			return addToTotalCount;
+		} else {
+			return documentsAdded;
+		}
 	}
 
 	public static void setDocumentsAdded(long documentsAdded) {
@@ -67,7 +71,11 @@ public class AdvancedSearchIndexMonitoringForTestcases {
 	}
 
 	public static int getDocumentsBuilt() {
-		return documentsBuilt;
+		if(isIndexingOver || documentsBuilt > entitiesLoaded){
+			return entitiesLoaded;
+		} else {
+			return documentsBuilt;
+		}
 	}
 
 	public static void setDocumentsBuilt(int documentsBuilt) {
@@ -84,8 +92,12 @@ public class AdvancedSearchIndexMonitoringForTestcases {
 
 	public static double getProgressPercentage() {
 		AdvancedSearchIndexMonitoringForTestcases.progressPercentage = Math.round(((double) AdvancedSearchIndexMonitoringForTestcases.documentsBuilt
-				*100.0 / (double) AdvancedSearchIndexMonitoringForTestcases.addToTotalCount))/100.0;
-		return AdvancedSearchIndexMonitoringForTestcases.progressPercentage;
+				*100.0 / (double) AdvancedSearchIndexMonitoringForTestcases.addToTotalCount))/100.0;	
+		if(isIndexingOver){
+			return 1;
+		} else {
+			return AdvancedSearchIndexMonitoringForTestcases.progressPercentage;
+		}
 	}
 
 	public static void setProgressPercentage(float progressPercentage) {
