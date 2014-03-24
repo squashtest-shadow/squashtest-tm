@@ -178,7 +178,7 @@ public class AdvancedSearchController {
 			.mapAttribute("test-case-iteration-nb", "iterations", TestCase.class)
 			.mapAttribute("test-case-attachment-nb", "attachments", TestCase.class)
 			.mapAttribute("test-case-created-by", "createdBy", TestCase.class)
-			.mapAttribute("test-case-modified-by", "modifiedBy", TestCase.class);
+			.mapAttribute("test-case-modified-by", "lastModifiedBy", TestCase.class);
 
 	private DatatableMapper<String> requirementSearchResultMapper = new NameBasedMapper(11)
 			.mapAttribute("project-name", "name", Project.class)
@@ -193,7 +193,7 @@ public class AdvancedSearchController {
 			.mapAttribute("requirement-testcase-nb", "testcases", RequirementVersion.class)
 			.mapAttribute("requirement-attachment-nb", "attachments", RequirementVersion.class)
 			.mapAttribute("requirement-created-by", "createdBy", RequirementVersion.class)
-			.mapAttribute("requirement-modified-by", "modifiedBy", RequirementVersion.class);
+			.mapAttribute("requirement-modified-by", "lastModifiedBy", RequirementVersion.class);
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showSearchPage(Model model, @RequestParam String searchDomain,
