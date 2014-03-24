@@ -142,10 +142,7 @@
 				}).click(function(){
 					parent.squashtm.ieomanager.navigateNextTestCase();
 				});
-				
-				if (${ not empty testPlanItemUrl }) $('#execute-next-test-case-panel').removeClass('not-displayed');		
-				if (${ (not empty testPlanItemUrl) and hasPreviousTestCase and (not hasPreviousStep) }) $('#new-test-case-label').removeClass('not-displayed');				
-				
+					
 			});
 	
             <c:if test="${not empty denormalizedFieldValues }">
@@ -179,21 +176,18 @@
 					<span id="execute-header-numbers-label">${executionStep.executionStepOrder +1} / ${totalSteps}</span>
 					<button id="execute-next-button"><f:message key="execute.header.button.next.title" /></button>
 				</td>
-				<td style="width:50px" class="centered not-displayed" id="execute-next-test-case-panel">
+				<c:if test="${not empty testPlanItemUrl}">
+				<td style="width:50px" class="centered" id="execute-next-test-case-panel">
 					<f:message  var="nextTestCaseTitle" key="execute.header.button.next-test-case.title" />
 					<button id="execute-next-test-case" name="optimized" title="${ nextTestCaseTitle }">${ nextTestCaseTitle }</button>
 				</td>
+				</c:if>
 				<td><h3 id="ieo-execution-title" class="ellipsis" >${ executionStep.execution.name }</h3></td>
 			</tr>
 			</table>
 	</div>
 	<div id="execute-body" class="execute-fragment-body">
-	
-		<div id="new-test-case-label" class="centered not-displayed">
-			<font color=red><f:message
-					key="execute.test.suite.next.test.case.label" />
-			</font>
-		</div>
+
 	
 		<div id="execute-evaluation-rightside">
 			<comp:step-information-panel auditableEntity="${executionStep}" />			
