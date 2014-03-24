@@ -152,6 +152,10 @@
 		name: "report-workspace",
 		include: [ "app/ws/squashtm.workspace", "app/report/squashtm.reportworkspace" ],
 		exclude: [ "common" ] 
+	}, {
+		name: "user-page",
+		include: [ "jquery", "user-editor/UserModificationView", "app/ws/squashtm.workspace", "app/pubsub" ],
+		exclude: [ "common" ] 
 //	}, {
 //		name: "squashtable",
 //		exclude: [ "common" ] 

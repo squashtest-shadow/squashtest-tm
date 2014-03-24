@@ -19,24 +19,21 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function(common) {
-	require([ "jquery", "user-editor/UserModificationView", "app/ws/squashtm.workspace" ], function($,
-			UserModificationView, WS) {
+	require([ "jquery", "user-editor/UserModificationView", "app/ws/squashtm.workspace", "app/pubsub" ], function($,
+			UserModificationView, WS, ps) {
+		WS.init();
 		
-		var goBackInHistory = function(){
+		$(window).on("click", "#back", function(){
 			history.back();
-		};
-		
-		var goBack = function() {
-			document.location.href = squashtm.app.contextRoot + "/administration/users/list";
-		};
-
-		$(function() {
-			WS.init();
-			var view = new UserModificationView();
-			$("#back").on("click", goBackInHistory);
-			view.on("user.delete", goBack);
-			
 		});
 
+		ps.subscribe("load.informationContent", function() {
+			var goBack = function() {
+				document.location.href = squashtm.app.contextRoot + "/administration/users/list";
+			};
+
+			var view = new UserModificationView();
+			view.on("user.delete", goBack);
+		});
 	});
 });
