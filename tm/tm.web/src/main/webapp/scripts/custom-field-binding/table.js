@@ -65,7 +65,7 @@ define(
 							var availableLocations = settings.renderingLocations;
 							var count = 0, dataLength = allData.aaData.length;
 
-							var namecollect = function(elt){ return elt.enuName; };
+							var namecollect = function(elt){ return elt.enumName; };
 							for (count = 0; count < dataLength; count++) {
 								var data = allData.aaData[count];
 
