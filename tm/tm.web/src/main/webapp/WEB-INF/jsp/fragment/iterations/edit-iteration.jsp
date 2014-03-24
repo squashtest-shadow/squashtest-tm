@@ -365,10 +365,10 @@
 	require(["common"], function(){
 			require(["jquery", "squash.basicwidgets", "contextual-content-handlers", 
 			         "jquery.squash.fragmenttabs", "bugtracker", "workspace.event-bus", 
-			         "iteration-management"], 
-					function($, basicwidg, contentHandlers, Frag, bugtracker, eventBus, itermanagement, basic){
+			         "iteration-management", "app/ws/squashtm.workspace" ], 
+					function($, basicwidg, contentHandlers, Frag, bugtracker, eventBus, itermanagement, WS){
 		$(function(){
-
+                 WS.init();
 				basicwidg.init();
 				
 				// *********** event handler ***************

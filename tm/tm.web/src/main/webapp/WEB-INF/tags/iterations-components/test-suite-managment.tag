@@ -68,8 +68,9 @@
 	<div class="main-div-suites not-displayed">
 	<c:if test="${ creatable }">
 		<div class="create-suites-section">
+            <f:message var="defaultMessage" key="dialog.testsuites.defaultmessage" />
 			<f:message var="createLabel" key="label.Add"/>
-			<input type="text" size="30"/><input type="button" class="button" value="${createLabel}"/><br/>
+			<input type="text" size="30" placeholder="${defaultMessage}"/><input type="button" class="button" value="${createLabel}"/><br/>
 			<comp:error-message forField="name" />			
 		</div>	
 		</c:if>
@@ -98,7 +99,7 @@
 			</div>
 <%-- ====================== /POPUP STRUCTURE DEFINITION  ========================= --%>
 
-<f:message var="defaultMessage" key="dialog.testsuites.defaultmessage" />
+
 <f:message var="deleteMessage" key="dialog.delete-test-suite.message" />
 <f:message var="deleteTitle" key="dialog.delete-test-suite.title" />
 
@@ -133,7 +134,6 @@ $(function(){
 		
 		var managerSettings = {
 				instance : $("#${popupId} .main-div-suites"),
-				defaultMessage : "${defaultMessage}",
 				deleteConfirmMessage : "${deleteMessage}",
 				deleteConfirmTitle : "${deleteTitle}"
 			};

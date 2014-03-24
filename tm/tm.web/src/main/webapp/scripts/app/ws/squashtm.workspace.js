@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "app/pubsub", "app/ws/squashtm.navbar", "project-filter/ProjectFilter",
-		"app/ws/squashtm.notification", "squash.session-pinger" ], function($, ps, NavBar, ProjectFilter, WTF, SSP) {
+		"app/ws/squashtm.notification", "squash.session-pinger" , "jquery.placeheld"], function($, ps, NavBar, ProjectFilter, WTF, SSP) {
 
 	ps.subscribe("load.navBar", NavBar.init);
 	ps.subscribe("load.projectFilter", ProjectFilter.init);
@@ -35,6 +35,8 @@ define([ "jquery", "app/pubsub", "app/ws/squashtm.navbar", "project-filter/Proje
 		$(".unstyled").fadeIn("fast", function() {
 			$(this).removeClass("unstyled");
 		});
+		
+		$("input[placeholder]").placeHeld();
 	}
 
 	return {

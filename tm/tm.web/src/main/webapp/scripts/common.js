@@ -108,6 +108,7 @@ requirejs.config({
 				"jquery.hotkeys" : "jquery/jquery.hotkeys-0.8",
 				"jquery.timepicker" : "jquery/jquery-ui-timepicker-addon",
 				"jquery.cookie" : "jquery/jquery.cookie",
+				"jquery.placeheld" : "jquery/jquery.placeheld",
 //				"jquery.tagit" : "jquery/tag-it",
 				"jquery.tagit" : "jquery/tag-it.min",
 				//squashtest

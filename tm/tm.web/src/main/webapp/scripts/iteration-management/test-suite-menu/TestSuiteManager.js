@@ -30,10 +30,8 @@ define([ "jquery", "jqueryui" ], function($) {
 		this.manager = settings.manager;
 		this.confirmMessage = settings.confirmMessage;
 		this.confirmTitle = settings.confirmTitle;
-		this.defaultMessage = settings.defaultMessage;
 		this.panel = settings.panel;
 		this.action = settings.action;
-		this.onfocus = settings.onfocus;
 
 		this.input = $("input[type='text']", settings.panel);
 		this.button = $("input[type='button']", settings.panel).squashButton();
@@ -72,21 +70,16 @@ define([ "jquery", "jqueryui" ], function($) {
 			this.input.val(text);
 		};
 
-		this.setDefaultText = function() {
-			this.input.val(this.defaultMessage);
-		};
-
 		/* ************* private ******** */
 
 		var defaultState = $.proxy(function() {
 			this.input.removeAttr('disabled');
-			this.input.val(this.defaultMessage);
+			this.input.val("");
 			this.button.prop("disabled", true);
 		}, self);
 
 		var editState = $.proxy(function() {
 			this.input.removeClass('manager-control-ready');
-			this.onfocus();
 			this.input.val('');
 			this.button.prop("disabled", false);
 		}, self);
@@ -120,7 +113,7 @@ define([ "jquery", "jqueryui" ], function($) {
 
 		var updateBtn = function() {
 			var button = self.button;
-			if (!self.input.val().length || self.input.val() == self.manager.create.control.defaultMessage) {
+			if (!self.input.val().length ) {
 				button.prop("disabled", true);
 			} else {
 				button.prop("disabled", false);
@@ -374,21 +367,14 @@ define([ "jquery", "jqueryui" ], function($) {
 
 		var createControlSettings = {
 			manager : this,
-			defaultMessage : settings.defaultMessage,
 			panel : $(".create-suites-section", this.instance),
 			action : postNewSuite,
-			onfocus : function() {
-				this.input.val('');
-			}
 		};
 
 		var renameControlSettings = {
 			manager : this,
-			defaultMessage : '',
 			panel : this.rename.panel = $(".rename-suites-section", this.instance),
-			action : postRenameSuite,
-			onfocus : function() {
-			}
+			action : postRenameSuite
 		};
 
 		/*
@@ -398,11 +384,8 @@ define([ "jquery", "jqueryui" ], function($) {
 			manager : this,
 			confirmMessage : settings.deleteConfirmMessage,
 			confirmTitle : settings.deleteConfirmTitle,
-			defaultMessage : settings.defaultMessage,
 			panel : this.remove.panel = $(".remove-suites-section", this.instance),
-			action : postRemoveSuites,
-			onfocus : function() {
-			}
+			action : postRemoveSuites
 		};
 
 		var viewSettings = {
