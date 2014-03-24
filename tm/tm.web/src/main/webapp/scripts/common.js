@@ -233,6 +233,7 @@ requirejs.config({
 					deps : [ "jquery" ],
 					exports : "jQuery.cookie"
 				},
+				"jquery.placeheld" : ['jquery'],
 				"handlebars" : {
 					deps : [ "jquery" ],
 					exports : "Handlebars"
