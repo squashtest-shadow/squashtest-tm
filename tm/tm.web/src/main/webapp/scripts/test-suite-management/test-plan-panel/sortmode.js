@@ -33,7 +33,7 @@
  *	}
  * 
  */
-define(['jquery', 'workspace.storage'], function($, storage){
+define(['jquery', 'workspace.storage', 'app/util/ButtonUtil'], function($, storage, ButtonUtil){
 	
 	
 	function SortMode(conf) {
@@ -78,15 +78,14 @@ define(['jquery', 'workspace.storage'], function($, storage){
 			$("#test-plan-sort-mode-message").show();
 			$("#test-suite-test-plans-table").find('.select-handle').removeClass('drag-handle');
 			if (this.reorderable){
-				$("#reorder-test-plan-button").prop("disabled", false);
+				ButtonUtil.enable($("#reorder-test-plan-button"));
 			}
 		};
 		
 		this._disableSortMode = function(){
 			$("#test-plan-sort-mode-message").hide();
 			$("#test-suite-test-plans-table").find('.select-handle').addClass('drag-handle');
-			
-			$("#reorder-test-plan-button").prop("disabled", true);
+			ButtonUtil.disable($("#reorder-test-plan-button"));
 			
 		};
 

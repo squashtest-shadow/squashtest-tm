@@ -18,18 +18,17 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "jquery.squash.confirmdialog"], function($, Backbone, _) {
-
+define([ 'jquery', 'backbone', 'underscore', 'app/util/ButtonUtil', 'jquery.squash.confirmdialog' ], function($,
+		Backbone, _, ButtonUtil) {
 
 	var IndexAdministrationView = Backbone.View.extend({
 
 		el : "#index-administration-content",
 
 		initialize : function() {
-			this.confirmIndexAll = $.proxy(this._confirmIndexAll, this);	
+			this.confirmIndexAll = $.proxy(this._confirmIndexAll, this);
 			this.configurePopups.call(this);
-			$("#refresh-index-button").attr("disabled", "disabled");
-
+			ButtonUtil.disable($("#refresh-index-button"));
 		},
 
 		events : {
@@ -39,83 +38,92 @@ define([ "jquery", "backbone", "underscore", "jquery.squash.confirmdialog"], fun
 			"click #campaign-index-button" : "indexCampaigns",
 			"click #refresh-index-button" : "refreshPage"
 		},
-		
-		configurePopups : function(){
+
+		configurePopups : function() {
 			this.confirmIndexAllDialog = $("#confirm-index-all-dialog").confirmDialog();
 			this.confirmIndexAllDialog.on("confirmdialogconfirm", $.proxy(this.indexAll, this));
 		},
-		
-		_confirmIndexAll : function(){
+
+		_confirmIndexAll : function() {
 			this.confirmIndexAllDialog.confirmDialog("open");
 		},
-		
-		indexAll : function(){
 
-			$("#index-all-button").attr("disabled", "disabled");
-			$("#requirement-index-button").attr("disabled", "disabled");
-			$("#testcase-index-button").attr("disabled", "disabled");
+		indexAll : function() {
+			ButtonUtil.disable($("#index-all-button"));
+			ButtonUtil.disable($("#requirement-index-button"));
+			ButtonUtil.disable($("#testcase-index-button"));
+			ButtonUtil.enable($("#refresh-index-button"));
+
 			$("#should-reindex-message").addClass("not-displayed");
-			$("#refresh-index-button").removeAttr("disabled");   
 			$("#monitor-percentage").removeClass("not-displayed");
 			$("#monitor-message").removeClass("not-displayed");
-			
+
 			$.ajax({
-				  type: "POST",
-				  url: squashtm.app.contextRoot + "advanced-search/index-all",
-				  data: "nodata"
-			});
-		},
-		
-		indexRequirements : function(){
-			
-			$("#index-all-button").attr("disabled", "disabled");
-			$("#requirement-index-button").attr("disabled", "disabled");
-			$("#refresh-index-button").removeAttr("disabled");  
-			$("#requirement-monitor-percentage").removeClass("not-displayed");
-			$("#requirement-monitor-message").removeClass("not-displayed");
-			
-			$.ajax({
-				  type: "POST",
-				  url: squashtm.app.contextRoot + "advanced-search/index-requirements",
-				  data: "nodata"
+				type : "POST",
+				url : squashtm.app.contextRoot + "advanced-search/index-all",
+				data : "nodata"
 			});
 		},
 
-		indexTestcases : function(){
-			
-			$("#index-all-button").attr("disabled", "disabled");
-			$("#testcase-index-button").attr("disabled", "disabled");
-			$("#refresh-index-button").removeAttr("disabled");  
+		indexRequirements : function() {
+			ButtonUtil.disable($("#index-all-button"));
+			ButtonUtil.disable($("#requirement-index-button"));
+			ButtonUtil.enable($("#refresh-index-button"));
+
+			$("#requirement-monitor-percentage").removeClass("not-displayed");
+			$("#requirement-monitor-message").removeClass("not-displayed");
+
+			$.ajax({
+				type : "POST",
+				url : squashtm.app.contextRoot + "advanced-search/index-requirements",
+				data : "nodata"
+			});
+		},
+
+		indexTestcases : function() {
+
+			ButtonUtil.disable($("#index-all-button"));
+			ButtonUtil.disable($("#testcase-index-button"));
+			ButtonUtil.enable($("#refresh-index-button"));
+
 			$("#testcase-monitor-percentage").removeClass("not-displayed");
 			$("#testcase-monitor-message").removeClass("not-displayed");
-			
+
 			$.ajax({
-				  type: "POST",
-				  url: squashtm.app.contextRoot + "advanced-search/index-testcases",
-				  data: "nodata"
+				type : "POST",
+				url : squashtm.app.contextRoot + "advanced-search/index-testcases",
+				data : "nodata"
 			});
 		},
-		
-		indexCampaigns : function(){
+
+		indexCampaigns : function() {
 			$.ajax({
-				  type: "POST",
-				  url: squashtm.app.contextRoot + "advanced-search/index-campaigns",
-				  data: "nodata"
+				type : "POST",
+				url : squashtm.app.contextRoot + "advanced-search/index-campaigns",
+				data : "nodata"
 			});
 		},
-		
-		refreshPage : function(){
+
+		refreshPage : function() {
 			$.ajax({
-				  type: "POST",
-				  url: squashtm.app.contextRoot + "advanced-search/refresh",
-				  data: "nodata"
-			}).success(function(json){	
-				$("#monitor-percentage").html(json.writtenEntities+" / "+json.totalEntities+" ("+json.progressPercentage+"%) ");
-				$("#requirement-monitor-percentage").html(json.writtenEntitiesForRequirementVersions+" / "+json.totalEntitiesForRequirementVersions+" ("+json.progressPercentageForRequirementVersions+"%) ");
-				$("#testcase-monitor-percentage").html(json.writtenEntitiesForTestcases+" / "+json.totalEntitiesForTestcases+" ("+json.progressPercentageForTestcases+"%) ");
-			});
+				type : "POST",
+				url : squashtm.app.contextRoot + "advanced-search/refresh",
+				data : "nodata"
+			}).success(
+					function(json) {
+						$("#monitor-percentage").html(
+								json.writtenEntities + " / " + json.totalEntities + " (" + json.progressPercentage +
+										"%) ");
+						$("#requirement-monitor-percentage").html(
+								json.writtenEntitiesForRequirementVersions + " / " +
+										json.totalEntitiesForRequirementVersions + " (" +
+										json.progressPercentageForRequirementVersions + "%) ");
+						$("#testcase-monitor-percentage").html(
+								json.writtenEntitiesForTestcases + " / " + json.totalEntitiesForTestcases + " (" +
+										json.progressPercentageForTestcases + "%) ");
+					});
 		}
 	});
-	
+
 	return IndexAdministrationView;
 });

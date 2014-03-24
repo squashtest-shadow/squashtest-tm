@@ -23,7 +23,7 @@
  *
  */
 
-define([ "jquery", "jqueryui" ], function($) {
+define([ 'jquery', 'jqueryui', 'jquery.squash.squashbutton' ], function($) {
 
 	function TestSuiteManagerControl(settings) {
 
@@ -57,7 +57,6 @@ define([ "jquery", "jqueryui" ], function($) {
 			defaultState();
 			this.input.addClass('manager-control-ready');
 			this.input.removeClass('manager-control-disabled');
-			this.button.removeClass('ui-state-disabled');
 		};
 
 		this.deactivate = function() {
@@ -65,8 +64,7 @@ define([ "jquery", "jqueryui" ], function($) {
 			this.input.prop('disabled', true);
 			this.input.removeClass('manager-control-ready');
 			this.input.addClass('manager-control-disabled');
-			this.button.prop('disabled', true);
-			this.button.addClass('ui-state-disabled');
+			this.button.squashButton("disable");
 		};
 
 		this.setText = function(text) {
@@ -77,14 +75,14 @@ define([ "jquery", "jqueryui" ], function($) {
 
 		var defaultState = $.proxy(function() {
 			this.input.prop('disabled', false);
-			this.button.prop("disabled", false);
+			this.button.squashButton("enable");
 			this.input.val("");
 		}, self);
 
 		var editState = $.proxy(function() {
 			this.input.removeClass('manager-control-ready');
 			this.input.val('');
-			this.button.prop("disabled", false);
+			this.button.squashButton("enable");
 		}, self);
 
 		/* ************* handlers ******** */
@@ -117,9 +115,9 @@ define([ "jquery", "jqueryui" ], function($) {
 		var updateBtn = function() {
 			var button = self.button;
 			if (!self.input.val().length ) {
-				button.prop("disabled", true);
+				button.squashButton("disable");
 			} else {
-				button.prop("disabled", false);
+				button.squashButton("enable");
 			}
 		};
 
@@ -274,19 +272,15 @@ define([ "jquery", "jqueryui" ], function($) {
 			switch (allItems.size()) {
 			case 0:
 				this.rename.control.deactivate();
-				this.remove.button.prop("disabled", true);
-				this.remove.button.addClass('ui-state-disabled');
-				this.rename.control.button.prop("disabled", true);
-				this.rename.control.button.addClass('ui-state-disabled');
+				this.remove.button.squashButton("disable");
+				this.rename.control.button.squashButton("disable");
 				break;
 			case 1:
 				this.rename.control.reset();
 				var itemText = allItems.eq(0).find('span').text();
 				this.rename.control.setText(itemText);
-				this.remove.button.prop("disabled", false);
-				this.remove.button.removeClass('ui-state-disabled');
-				this.rename.control.button.prop("disabled", false);
-				this.rename.control.button.removeClass('ui-state-disabled');
+				this.remove.button.squashButton("enable");
+				this.rename.control.button.squashButton("enable");
 				break;
 			default:
 				this.rename.control.deactivate();

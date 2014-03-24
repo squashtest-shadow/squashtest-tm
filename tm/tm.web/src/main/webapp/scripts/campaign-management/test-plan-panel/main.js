@@ -21,16 +21,16 @@
 /*
  * accepts as basic configuration : 
  * {
- * 	basic : {
- * 		campaignId : the id of the campaign
- * 	},
- * 	permissions : {
- * 		reorderable : can the test plan be reordered by the user ?
- * 		editable : is the test plan editable by the user ?
- * 	},
- * 	messages : {
- * 		allLabel : a label that means 'all' in the current locale
- * 	}
+ *	basic : {
+ *		campaignId : the id of the campaign
+ *	},
+ *	permissions : {
+ *		reorderable : can the test plan be reordered by the user ?
+ *		editable : is the test plan editable by the user ?
+ *	},
+ *	messages : {
+ *		allLabel : a label that means 'all' in the current locale
+ *	}
  * 
  * }
  * 
@@ -39,7 +39,7 @@
  * 
  */
 
-define(['squash.translator', './table', './popups' ], function(translator, table, popups) {
+define(['squash.translator', './table', './popups', 'app/util/ButtonUtil' ], function(translator, table, popups, ButtonUtil ) {
 
 	var filterOn = false;
 	
@@ -86,7 +86,7 @@ define(['squash.translator', './table', './popups' ], function(translator, table
 				$("#test-plan-sort-mode-message").show();
 				$("#test-cases-table").find('.select-handle').removeClass('drag-handle');
 				if (this.reorderable){
-					$("#reorder-test-plan-button").prop("disabled", false);
+					ButtonUtil.enable($("#reorder-test-plan-button"));
 				}
 
 			} else {
@@ -95,7 +95,7 @@ define(['squash.translator', './table', './popups' ], function(translator, table
 				table.lockSortMode();
 				$("#test-plan-sort-mode-message").hide();
 				$("#test-cases-table").find('.select-handle').addClass('drag-handle');
-				$("#reorder-test-plan-button").prop("disabled", true);
+				ButtonUtil.disable($("#reorder-test-plan-button"));
 
 			}
 		});
@@ -104,7 +104,6 @@ define(['squash.translator', './table', './popups' ], function(translator, table
 	return {	
 		init : function(origconf){			
 			var conf = enhanceConfiguration(origconf);
-
 			_bindButtons(conf);
 			table.init(conf);
 			popups.init(conf);

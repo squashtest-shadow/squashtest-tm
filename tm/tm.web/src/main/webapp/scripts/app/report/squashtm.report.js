@@ -27,8 +27,8 @@ var squashtm = squashtm || {};
  * 
  * @author Gregory Fouquet
  */
-define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", "./ProjectsPickerPopup", "./SingleProjectPickerPopup", "jqueryui", "jeditable", "jeditable.datepicker",
-		"jquery.squash", "jquery.cookie", "datepicker/jquery.squash.datepicker-locales" ], function($, RWS, treebuilder, _, ProjectsPickerPopup, SingleProjectPickerPopup) {
+define([ 'jquery', 'app/report/squashtm.reportworkspace', 'tree', 'underscore', './ProjectsPickerPopup', './SingleProjectPickerPopup','app/util/ButtonUtil', 'jqueryui', 'jeditable', 'jeditable.datepicker',
+		'jquery.squash', 'jquery.cookie', 'datepicker/jquery.squash.datepicker-locales' ], function($, RWS, treebuilder, _, ProjectsPickerPopup, SingleProjectPickerPopup, ButtonUtil) {
 	var config = {
 		contextPath : "",
 		dateFormat : "dd/mm/yy",
@@ -103,9 +103,8 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 
 		// if the option has an associated element
 		if (givesAccessTo !== undefined && givesAccessTo !== "none") {
-
 			// find the right element and activate it
-			$("#" + givesAccessTo + "-open").removeAttr("disabled");
+			ButtonUtil.enable($("#" + givesAccessTo + "-open"));
 
 		}
 
@@ -122,7 +121,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 
 			if (givesAccessTo !== undefined && givesAccessTo !== "none") {
 				// find the right element and deactivate it
-				$("#" + givesAccessTo + "-open").attr("disabled", "disabled");
+				ButtonUtil.disable($("#" + givesAccessTo + "-open"));
 			}
 		});
 	}
@@ -278,7 +277,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 
 			if (givesAccessTo !== undefined && givesAccessTo !== "none") {
 				// find the right element and deactivate it
-				$("#" + givesAccessTo + "-open").attr("disabled", "disabled");
+				ButtonUtil.disable($("#" + givesAccessTo + "-open"));
 			}
 		});
 
@@ -296,7 +295,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 								if (state.value == radio.value) {
 									state.selected = true;
 									if (givesAccessTo !== undefined && givesAccessTo !== "none") {
-										$("#" + givesAccessTo + "-open").removeAttr("disabled");
+										ButtonUtil.enable($("#" + givesAccessTo + "-open"));
 									}
 								}
 							});
@@ -316,7 +315,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 			$.each(checkedRadios, function(index, radio){
 				var givesAccessTo = (radio.id).replace("-binder", "");
 				if (givesAccessTo !== undefined && givesAccessTo !== "none") {
-					$("#" + givesAccessTo + "-open").removeAttr("disabled");
+					ButtonUtil.enable($("#" + givesAccessTo + "-open"));
 				}
 			});
 				

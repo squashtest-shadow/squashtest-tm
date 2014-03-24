@@ -239,9 +239,9 @@
 <!-- /test plan panel end -->
 
 <script type="text/javascript">
-	$(function() {
-
-		require(['test-suite-management'], function(tsInit){
+require(["common"], function(){
+	require(['test-suite-management'], function(tsInit){
+			$(function() {
 			var conf = {
 				permissions : {
 					linkable : ${linkable},
@@ -257,10 +257,9 @@
 					statuses :  ${ json:serialize(statuses)}
 				}
 			};
-			
 			tsInit.initTestPlanPanel(conf);
 		});
-				
-	});
+	});		
+});
 </script>
 
