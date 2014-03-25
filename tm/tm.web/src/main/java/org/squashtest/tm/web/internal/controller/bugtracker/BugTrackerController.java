@@ -173,24 +173,7 @@ public class BugTrackerController {
 	 * Navigation button * *
 	 * ***********************************************************************************************************
 	 */
-	/*
-	 * commented on 3th october 2013
-	 * 
-	@RequestMapping(value = "workspace-button", method = RequestMethod.GET)
-	public ModelAndView getNavButton(Locale locale) {
-		List<Project> projects = projectFinder.findAllReadable();
-		List<Long> projectsIds = IdentifiedUtil.extractIds(projects);
-		List<BugTracker> readableBugTrackers = bugTrackerFinderService.findDistinctBugTrackersForProjects(projectsIds);
-		if (readableBugTrackers.isEmpty()) {
-			LOGGER.trace("no bugtracker");
-			return new ModelAndView("fragment/issues/bugtracker-panel-empty");
-		} else {
-			LOGGER.trace("return bugtracker nav button");
-			ModelAndView mav = new ModelAndView("fragment/issues/bugtracker-nav-button");
-			mav.addObject("bugtrackers", readableBugTrackers);
-			return mav;
-		}
-	}*/
+
 
 	@RequestMapping(value = "{bugtrackerId}/workspace", method = RequestMethod.GET)
 	public ModelAndView showWorkspace(@PathVariable Long bugtrackerId) {

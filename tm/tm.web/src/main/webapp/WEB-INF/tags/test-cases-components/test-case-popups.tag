@@ -26,16 +26,13 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 
-<%@ attribute name="testCase" required="true" type="java.lang.Object"  description="the testcase" %>
 <%@ attribute name="writable"  required="true" type="java.lang.Boolean"  description="if the user has write permission on this test case" %>
-<%@ attribute name="deletable"  required="true" type="java.lang.Boolean"  description="if the user has deletion permission on this test case" %>
 
 
 <f:message var="renameDialogTitle" key="dialog.rename-test-case.title"/>
 <f:message var="renameButtonLabel" key="dialog.rename-test-case.title"/>
 <f:message var="cancelLabel" key="label.Cancel" />
 
-<c:url var="testCaseUrl" 					value="/test-cases/${testCase.id}"/>
 
 <%---------------------------- Rename test case popup ------------------------------%>
 
