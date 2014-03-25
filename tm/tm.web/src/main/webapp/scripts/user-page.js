@@ -23,9 +23,9 @@ require([ "common" ], function(common) {
 			UserModificationView, WS, ps) {
 		WS.init();
 		
-		$(window).on("click", "#back", function(){
+		var goBackInHistory = function(){
 			history.back();
-		});
+		};
 
 		ps.subscribe("load.informationContent", function() {
 			var goBack = function() {
@@ -33,6 +33,7 @@ require([ "common" ], function(common) {
 			};
 
 			var view = new UserModificationView();
+			$("#back").on("click", goBackInHistory);
 			view.on("user.delete", goBack);
 		});
 	});
