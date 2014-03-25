@@ -507,5 +507,30 @@
             columnName="ACTION"
             tableName="ACTION_TEST_STEP"/>
   </changeSet>
+  
+  <changeSet id="tm-1.9.0-issue-3140-01" author="mpagnon">
+    <sql>
+        create table TEMP_VS(
+          RVC_ID BIGINT NOT NULL,
+          TS_ID BIGINT NOT NULL
+        );
+        
+        insert into TEMP_VS(RVC_ID, TS_ID)
+        select vs.REQUIREMENT_VERSION_COVERAGE_ID, vs.TEST_STEP_ID
+        from VERIFYING_STEPS as vs
+        group by vs.REQUIREMENT_VERSION_COVERAGE_ID, vs.TEST_STEP_ID
+        ;
+        
+        delete from VERIFYING_STEPS 
+        ;
+        
+        insert into  VERIFYING_STEPS (REQUIREMENT_VERSION_COVERAGE_ID, TEST_STEP_ID)
+        select RVC_ID , TS_ID
+        from TEMP_VS
+        ;
+        
+        drop table TEMP_VS;
+    </sql>
+  </changeSet>
 
 </databaseChangeLog>

@@ -33,6 +33,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
@@ -80,8 +81,7 @@ public class RequirementVersionCoverage implements Identified {
 	private RequirementVersion verifiedRequirementVersion;
 
 	@NotNull
-	@OneToMany
-	@JoinTable(name = "VERIFYING_STEPS", joinColumns = @JoinColumn(name = "REQUIREMENT_VERSION_COVERAGE_ID"), inverseJoinColumns = @JoinColumn(name = "TEST_STEP_ID"))
+	@ManyToMany(mappedBy="requirementVersionCoverages")
 	private Set<ActionTestStep> verifyingSteps = new HashSet<ActionTestStep>();
 
 	/**
