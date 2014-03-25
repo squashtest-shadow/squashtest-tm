@@ -24,7 +24,6 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 
 <%@ attribute name="testCase" required="true" type="java.lang.Object"  description="the testcase" %>
@@ -32,43 +31,30 @@
 <%@ attribute name="deletable"  required="true" type="java.lang.Boolean"  description="if the user has deletion permission on this test case" %>
 
 
+<f:message var="renameDialogTitle" key="dialog.rename-test-case.title"/>
+<f:message var="renameButtonLabel" key="dialog.rename-test-case.title"/>
+<f:message var="cancelLabel" key="label.Cancel" />
 
 <c:url var="testCaseUrl" 					value="/test-cases/${testCase.id}"/>
 
 <%---------------------------- Rename test case popup ------------------------------%>
 
 <c:if test="${ writable }">
-	<pop:popup id="rename-test-case-dialog"
-		titleKey="dialog.rename-test-case.title" isContextual="true"
-		openedBy="rename-test-case-button">
-		
-		<jsp:attribute name="buttons">
+
+<div id="rename-test-case-dialog" title="${renameDialogTitle}" class="popup-dialog not-displayed">
 	
-			<f:message var="label" key="dialog.rename-test-case.title" />
-			
-			'${ label }': function() {
-				var newName = $("#rename-test-case-input").val();
-				$.ajax({
-					url : "${testCaseUrl}",
-					type : "POST",
-					dataType : "json",
-					data : { 'newName' : newName}
-				}).success(squashtm.testCase.renameTestCaseSuccess);			
-			},
-			
-			<pop:cancel-button />
-			
-		</jsp:attribute>
-		
-		<jsp:attribute name="body">
-				<label>
-					<f:message key="dialog.rename.label" />
-				</label>
-				<input type="text" id="rename-test-case-input" 
-					   maxlength="255"	size="50" />
-				<br />
-				<comp:error-message forField="name" />
-		</jsp:attribute>
-	</pop:popup>
+	<div>
+		<label><f:message key="dialog.rename.label" /></label>
+		<input type="text" id="rename-test-case-input"  maxlength="255"	size="50" />
+		<br />
+		<comp:error-message forField="name" />
+	</div>
+	
+	<div class="popup-dialog-buttonpane">
+		<input type="button" value="${renameButtonLabel}" data-def="evt=confirm, mainbtn"/>
+		<input type="button" value="${cancelLabel}" data-def="evt=cancel"/>
+	</div>
+</div>
+
 </c:if>
 

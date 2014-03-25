@@ -57,42 +57,48 @@ require([ "common" ], function() {
 	   			"bugtracker", 
 	   			"workspace.event-bus", 
 	   			"jqueryui", 
-	   			"squashtable"], 
+	   			"squashtable",
+	   			"jquery.squash.formdialog"], 
 	   				function($, basic, contentHandlers, Frag, bugtracker, eventBus){
-	function refreshTCImportance(){
-		$.ajax({
-			type : 'GET',
-			data : {},
-			dataType : "text",
-			url : '${getImportance}'			
-		})
-		.success(function(importance){
-			$("#test-case-importance").html(importance);	
-		})
-		.error(function(){
-			$.squash.openMessage("${popupErrorTitle}", "fail to refresh importance");
-		});
-	}
-	
-	function renameTestCaseSuccess(data){
-		eventBus.trigger('node.rename', { identity : identity, newName : data.newName});
-	};	
-	
-	squashtm = squashtm || {};
-	squashtm.testCase = squashtm.testCase || {};
-	squashtm.testCase.renameTestCaseSuccess = renameTestCaseSuccess;
-	
+
 	$(function(){
+
+		// buttons and toggle panels
+		basic.init();
 		
 		//init the rename popup
-		$( "#rename-test-case-dialog" ).bind( "dialogopen", function(event, ui) {
-			var name = $.trim($('#test-case-raw-name').text());
-			$("#rename-test-case-input").val(name);
-			
+		
+		$("#rename-test-case-dialog").formDialog();
+		
+		$("#rename-test-case-button").on('click', function(){
+			$( "#rename-test-case-dialog" ).formDialog('open');
 		});
 		
+		$( "#rename-test-case-dialog" ).on( "formdialogopen", function(event, ui) {
+			var name = $.trim($('#test-case-raw-name').text());
+			$("#rename-test-case-input").val(name);			
+		});
 		
-		basic.init();
+		$("#rename-test-case-dialog").on('formdialogconfirm', function(){
+			
+			var dialog = $("#rename-test-case-dialog");
+			var newName = $("#rename-test-case-input").val();
+			
+			$.ajax({
+				url : "${testCaseUrl}",
+				type : "POST",
+				dataType : "json",
+				data : { 'newName' : newName}
+			}).success(function(){
+				eventBus.trigger('node.rename', { identity : identity, newName : newName});
+				dialog.formDialog('close');
+			});
+		});
+		
+		$("#rename-test-case-dialog").on('formdialogcancel', function(){
+			$("#rename-test-case-dialog").formDialog('close');
+		});
+		
 		
 		//init the renaming listener
 		
@@ -121,6 +127,7 @@ require([ "common" ], function() {
 		
 		var table = $("#calling-test-case-table").squashTable(callingTcConf, {});
 		
+		
 		<c:if test="${testCase.project.bugtrackerConnected }">
 		// ********* bugtracker ************
 		bugtracker.btPanel.load({
@@ -130,7 +137,8 @@ require([ "common" ], function() {
 		</c:if>
 		
 		
-		// ***** other events from the contextual content ********			
+		// ***** other events from the contextual content ********	
+		
 		eventBus.onContextual('tc-req-links-updated', function(){
 			$("#verified-requirements-table").squashTable().refresh();
 			try{

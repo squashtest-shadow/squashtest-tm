@@ -53,6 +53,7 @@ require(["common"], function() {
 	was granted for that object. 
 --%>
 
+<c:set var="writable" value="${false }"/>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE"
 	domainObject="${ testCase }">
 	<c:set var="writable" value="${ true }" />
