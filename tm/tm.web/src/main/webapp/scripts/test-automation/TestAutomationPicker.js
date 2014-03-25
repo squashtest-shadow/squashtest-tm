@@ -22,21 +22,18 @@
  settings : 
  - selector : an appropriate selector for the popup.
  - testAutomationURL : the url where to GET - POST things.
+ - baseURL : the base url of the app.
  - successCallback : a callback if the test association succeeds. Will be given 1 argument, the path of the associated automated test.
+ - messages : 
+ - noTestSelected : message that must be displayed when nothing is selected
  */
-define(["jquery", 
-        "workspace.event-bus", 
-        "squash.translator", 
-        "tree/plugins/plugin-factory",
-        "jquery.squash.formdialog", 
-        "squashtest/jquery.squash.popuperror"
-        ], function($, eventBus, translator, treefactory) {
-	
+define(["jquery", "squashtest/jquery.squash.popuperror"], function() {
 	function TestAutomationPicker(settings) {
 		var self = this;
 	
 		var instance = $(settings.selector);
 		var testAutomationURL = settings.testAutomationURL;
+		var baseURL = settings.baseURL;
 		var successCallback = settings.successCallback;
 	
 		var pleaseWaitPanel = instance.find(".structure-pleasewait");
@@ -45,11 +42,6 @@ define(["jquery",
 	
 		var error = instance.find(".structure-error");
 		error.popupError();
-		
-		
-		// init
-		
-		instance.formDialog({height : 500});
 	
 		// cache
 		this.modelCache = undefined;
@@ -108,7 +100,6 @@ define(["jquery",
 	
 		var createTree = function() {
 	
-			treefactory.configure('simple-tree');	// will add the 'squash' plugin if doesn't exist yet
 			tree.jstree({
 				"json_data" : {
 					"data" : self.modelCache
@@ -138,7 +129,7 @@ define(["jquery",
 					"theme" : "squashtest",
 					"dots" : true,
 					"icons" : true,
-					"url" : squashtm.app.contextRoot + "/styles/squash.tree.css"
+					"url" : baseURL + "/styles/squash.tree.css"
 				},
 	
 				"core" : {
@@ -179,7 +170,7 @@ define(["jquery",
 					dataType : 'json'
 	
 				}).done(function() {
-					instance.formDialog('close');
+					instance.dialog('close');
 					if (successCallback) {
 						successCallback(tree.jstree('get_selected').getPath());
 					}
@@ -189,7 +180,7 @@ define(["jquery",
 	
 			} catch (exception) {
 				if (exception == "no-selection") {
-					error.find("span").text(translator.get('test-case.testautomation.popup.error.noselect'));
+					error.find("span").text(settings.messages.noTestSelected);
 				} else {
 					error.find("span").text(exception);
 				}
@@ -200,13 +191,13 @@ define(["jquery",
 	
 		// ************ events *********************
 	
-		instance.on('formdialogconfirm', submit);
+		instance.dialog('option').buttons[0].click = submit;
 	
-		instance.on('formdialogcancel', function() {
-			instance.formDialog('close');
-		});
+		instance.dialog('option').buttons[1].click = function() {
+			instance.dialog('close');
+		};
 	
-		instance.on("formdialogopen", function() {
+		instance.bind("dialogopen", function() {
 			if (self.modelCache === undefined) {
 				self.initAjax = init();
 			} else {
@@ -214,7 +205,7 @@ define(["jquery",
 			}
 		});
 	
-		instance.on('formdialogclose', function() {
+		instance.bind('dialogclose', function() {
 			if (self.initAjax) {
 				self.initAjax.abort();
 			}

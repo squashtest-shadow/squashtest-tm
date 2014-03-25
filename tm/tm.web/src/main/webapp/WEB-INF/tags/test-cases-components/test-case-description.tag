@@ -95,8 +95,9 @@
 		
 		<%-- Test Automation structure --%>
 		<c:if test="${testCase.project.testAutomationEnabled}">
-		<tc:testcase-test-automation testCase="${testCase}"
-										  canModify="${writable}" />	
+		<tc:testcase-script-elt-structure testCase="${testCase}"
+										  canModify="${writable}" 
+										  testCaseUrl="${testCaseUrl}" />	
 		</c:if>			
 		<%--/Test Automation structure --%>
 		
