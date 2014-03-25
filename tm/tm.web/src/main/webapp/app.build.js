@@ -67,7 +67,6 @@
 			"jquery.squash.jeditable",
 			"jquery.squash.projectpicker",
 			"jquery.cookie",
-			"jquery.placeheld",
 			"jquery.tagit",
 			"jquery.switchButton",
 			"jqplot-core",

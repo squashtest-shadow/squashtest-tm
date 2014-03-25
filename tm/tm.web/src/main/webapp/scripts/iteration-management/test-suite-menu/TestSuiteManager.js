@@ -81,7 +81,6 @@ define([ 'jquery', 'jqueryui', 'jquery.squash.squashbutton' ], function($) {
 
 		var editState = $.proxy(function() {
 			this.input.removeClass('manager-control-ready');
-			this.input.val('');
 			this.button.squashButton("enable");
 		}, self);
 
