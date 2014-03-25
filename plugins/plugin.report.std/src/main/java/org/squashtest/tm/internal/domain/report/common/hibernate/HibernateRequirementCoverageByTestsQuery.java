@@ -184,7 +184,9 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 
 	
 	private List<Object[]> findParentsNames(Session session, List<Long> ids){
-		
+		if(ids.isEmpty()){
+			return Collections.emptyList();
+		}
 		return session.createSQLQuery(FIND_REQUIREMENT_PARENT_NAMES)
 					  .setParameterList("reqIds", ids, LongType.INSTANCE)
 					  .list();
