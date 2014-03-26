@@ -324,7 +324,7 @@
 			<%----------------------------- /TEST AUTOMATION PROJECT -------------------------------------------%>					
 			<%----------------------------- ATTACHMENT -------------------------------------------%>
 			
-			<at:attachment-bloc editable="${ true }"  workspaceName="" attachListId="${adminproject.project.attachmentList.id}" attachmentSet="${attachments}"/>
+			<at:attachment-bloc editable="${ true }"  workspaceName="administration" attachListId="${adminproject.project.attachmentList.id}" attachmentSet="${attachments}"/>
 			<%----------------------------- /ATTACHMENT -------------------------------------------%>
 			
 			</div> <%-- /div#main-informations --%>		
