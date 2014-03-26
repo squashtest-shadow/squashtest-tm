@@ -398,14 +398,14 @@ define([
 				ilen = iterations.length;
 			
 			for (i=0;i<ilen;i++){
-				iterations[i][0] = new Date(iterations[i][0]);
+				iterations[i][0] = dateutils.parse(iterations[i][0]);
 			}
 			
 			var k=0,
 				klen = executions.length;
 			
 			for (k=0; k < klen; k++){
-				executions[k][0] = new Date(executions[k][0]);
+				executions[k][0] = dateutils.parse(executions[k][0]);
 			}
 		}			
 	};
