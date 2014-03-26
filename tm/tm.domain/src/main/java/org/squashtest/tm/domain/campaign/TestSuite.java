@@ -60,7 +60,7 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 @Entity
 @InheritsAcls(constrainedClass = Iteration.class, collectionName = "testSuites")
 public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, AttachmentHolder {
-
+	public static final int MAX_NAME_SIZE = 100;
 	public TestSuite() {
 		super();
 	}
@@ -71,7 +71,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	private Long id;
 
 	@NotBlank
-	@Size(min = 0, max = 100)
+	@Size(min = 0, max = MAX_NAME_SIZE)
 	private String name;
 
 	@Lob

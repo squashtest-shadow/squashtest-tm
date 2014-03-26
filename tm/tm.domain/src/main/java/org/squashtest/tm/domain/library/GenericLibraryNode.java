@@ -49,6 +49,8 @@ import org.squashtest.tm.domain.search.UpperCasedStringBridge;
  */
 @MappedSuperclass
 public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolder {
+	
+	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "PROJECT_ID")
 	@IndexedEmbedded
@@ -59,7 +61,7 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 			@Field,
 			@Field(name = "label", analyze = Analyze.NO, store = Store.YES),
 			@Field(name = "labelUpperCased", analyze = Analyze.NO, store = Store.YES, bridge = @FieldBridge(impl = UpperCasedStringBridge.class)), })
-	@Size(min = 0, max = 255)
+	@Size(min = 0, max = MAX_NAME_SIZE)
 	private String name;
 
 	@Lob

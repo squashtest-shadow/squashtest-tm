@@ -45,6 +45,7 @@ import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
+import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
@@ -152,14 +153,14 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void visit(Folder source, FolderDao dao) {
 		Folder<?> copyFolder = (Folder<?>) source.createCopy();
-		persistCopy(copyFolder, dao);
+		persistCopy(copyFolder, dao, Folder.MAX_NAME_SIZE);
 		
 	}
 
 	@Override
 	public void visit(Campaign source) {
 		Campaign copyCampaign = source.createCopy();
-		persistCopy(copyCampaign, campaignDao);
+		persistCopy(copyCampaign, campaignDao, Campaign.MAX_NAME_SIZE);
 		copyCustomFields(source, copyCampaign);
 		
 	}
@@ -195,7 +196,7 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 	@Override
 	public void visit(TestSuite source) {
 		TestSuite copyTestSuite = source.createCopy();
-		persistCopy(copyTestSuite, testSuiteDao);
+		persistCopy(copyTestSuite, testSuiteDao, TestSuite.MAX_NAME_SIZE);
 		copyCustomFields(source, copyTestSuite);
 		copyTestSuiteTestPlanToDestinationIteration(source, copyTestSuite);
 		
@@ -218,7 +219,7 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 		//create copies for requirement versions and remember version's sources
 		TreeMap<RequirementVersion, RequirementVersion> previousVersionsCopiesBySources = source
 				.addPreviousVersionsCopiesToCopy(copyRequirement);
-		persistCopy(copyRequirement, requirementDao);
+		persistCopy(copyRequirement, requirementDao, RequirementLibraryNode.MAX_NAME_SIZE);
 		//copy custom fields and requirement-version coverages for Current Version
 		copyCustomFields(source.getCurrentVersion(), copyRequirement.getCurrentVersion());
 		copyRequirementVersionCoverages(source.getCurrentVersion(), copyRequirement.getCurrentVersion());
@@ -326,8 +327,8 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T extends TreeNode> void persistCopy(T copyParam, EntityDao<T> dao) {
-		renameIfNeeded((Copiable) copyParam);
+	private <T extends TreeNode> void persistCopy(T copyParam, EntityDao<T> dao, int nameMaxSize) {
+		renameIfNeeded((Copiable) copyParam, nameMaxSize);
 		dao.persist(copyParam);
 		((NodeContainer<T>) destination).addContent(copyParam);
 		this.copy = copyParam;
@@ -335,7 +336,7 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 
 	@SuppressWarnings("unchecked")
 	private void persistTestCase(TestCase testCase) {
-		renameIfNeeded(testCase);
+		renameIfNeeded(testCase, TestCase.MAX_NAME_SIZE);
 		testCaseDao.persistTestCaseAndSteps(testCase);
 		((NodeContainer<TestCase>) destination).addContent(testCase);
 		this.copy = testCase;
@@ -343,15 +344,15 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 
 	@SuppressWarnings("unchecked")
 	private void persitIteration(Iteration copyParam) {
-		renameIfNeeded((Copiable) copyParam);
+		renameIfNeeded((Copiable) copyParam, Iteration.MAX_NAME_SIZE);
 		iterationDao.persistIterationAndTestPlan(copyParam);
 		((NodeContainer<Iteration>) destination).addContent(copyParam);
 		this.copy = copyParam;
 	}
 
-	private <T extends Copiable> void renameIfNeeded(T copyParam) {
+	private <T extends Copiable> void renameIfNeeded(T copyParam, int maxNameSize) {
 		if (!destination.isContentNameAvailable(copyParam.getName())) {
-			String newName = LibraryUtils.generateUniqueCopyName(destination.getContentNames(), copyParam.getName());
+			String newName = LibraryUtils.generateUniqueCopyName(destination.getContentNames(), copyParam.getName(), maxNameSize);
 			copyParam.setName(newName);
 		}
 	}

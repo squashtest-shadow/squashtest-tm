@@ -32,16 +32,37 @@ public final class LibraryUtils {
 	private LibraryUtils() {
 
 	}
-
-	public static int generateUniqueCopyNumber(List<String> copiesNames, String sourceName, String copyToken) {
+	public static String generateUniqueName(List<String> copiesNames, String sourceName, String token, int maxNameSize) {
+		String result = "";
+		String baseName = sourceName;
+		int newCopyNumber = generateUniqueCopyNumber(copiesNames, baseName, token, 0);
+		result =  baseName + token + newCopyNumber;
+		
+		while(result.length() > maxNameSize){
+			int extraCharsNumber = result.length() - maxNameSize;
+			baseName = substringBaseName(baseName, extraCharsNumber);
+			
+			newCopyNumber = generateUniqueCopyNumber(copiesNames, baseName, token, newCopyNumber);
+			result =  baseName + token + newCopyNumber;
+		}
+		
+		return result;
+	}
+	
+	private static int generateUniqueCopyNumber(List<String> copiesNames, String sourceName, String copyToken, int minCopyNumber) {
 		// we want to match one or more digits following the first instance of substring -Copie
 		Pattern pattern = Pattern.compile(Pattern.quote(sourceName) + copyToken + "(\\d+)");
-		return computeNonClashingIndex(pattern, copiesNames);
+		return computeNonClashingIndex(pattern, copiesNames, minCopyNumber);
 	}
 
-	public static String generateUniqueCopyName(List<String> copiesNames, String sourceName) {
-		int newCopyNumber = generateUniqueCopyNumber(copiesNames, sourceName, COPY_TOKEN);
-		return sourceName + COPY_TOKEN + newCopyNumber;
+	public static String generateUniqueCopyName(List<String> copiesNames, String sourceName, int maxNameSize) {
+		return generateUniqueName(copiesNames, sourceName, COPY_TOKEN, maxNameSize);
+		
+	}
+
+	private static String substringBaseName(String baseName, int extraCharsNumber) {
+		baseName = baseName.substring(0, baseName.length() - extraCharsNumber-3)+"...";
+		return baseName;
 	}
 
 	/**
@@ -54,21 +75,33 @@ public final class LibraryUtils {
 	 *            a non <code>null</code> collection of siblings of the source name
 	 * @return a non clashing name
 	 */
-	public static String generateNonClashingName(String source, Collection<String> siblings) {
+	public static String generateNonClashingName(String source, Collection<String> siblings, int maxNameSize) {
+		
 		if (noNameClash(source, siblings)) {
 			return source;
 		}
-
-		List<String> potentialClashes = filterPotentialClashes(source, siblings);
+		String baseName = source;
 		
-		Pattern p = Pattern.compile(Pattern.quote(source) + " \\((\\d+)\\)");
+		int index = generateNonClashingIndex(siblings, baseName, 0);
+		String result = baseName  + " (" + index + ")";
 		
-		int index = computeNonClashingIndex(p, potentialClashes);
-
-		return source + " (" + index + ")";
+		while(result.length() > maxNameSize){
+			int extraCharsNumber = result.length() - maxNameSize;
+			baseName = substringBaseName(baseName, extraCharsNumber);
+			index = generateNonClashingIndex(siblings, baseName, index);
+			result = baseName  + " (" + index + ")";
+		}
+		return result;
 	}
 
-	private static int computeNonClashingIndex(Pattern indexLookupPattern, Collection<String> potentialClashes) {
+	private static int generateNonClashingIndex(Collection<String> siblings, String baseName, int minIndex) {
+		List<String> potentialClashes = filterPotentialClashes(baseName, siblings);
+		Pattern p = Pattern.compile(Pattern.quote(baseName) + " \\((\\d+)\\)");
+		int index = computeNonClashingIndex(p, potentialClashes, minIndex);
+		return index;
+	}
+
+	private static int computeNonClashingIndex(Pattern indexLookupPattern, Collection<String> potentialClashes, int minCopyNumber) {
 		int maxIndex = 0;
 
 		for (String sibling : potentialClashes) {
@@ -79,7 +112,11 @@ public final class LibraryUtils {
 				maxIndex = Math.max(maxIndex, siblingIndex);
 			}
 		}
-		return ++maxIndex;
+		int result = ++maxIndex;
+		if(result<minCopyNumber){
+			result = minCopyNumber;
+		}
+		return result;
 	}
 
 	private static List<String> filterPotentialClashes(String source, Collection<String> siblings) {
@@ -96,4 +133,6 @@ public final class LibraryUtils {
 	private static boolean noNameClash(String name, Collection<String> siblings) {
 		return siblings.size() == 0 || !siblings.contains(name);
 	}
+
+	
 }

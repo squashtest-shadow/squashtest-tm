@@ -72,7 +72,7 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 @Entity
 public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, TreeNode, Copiable, Identified,
 		BoundEntity {
-
+	public static final int MAX_NAME_SIZE = 255;
 	private static final String ITERATION_ID = "ITERATION_ID";
 
 	@Id
@@ -84,7 +84,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	private String description;
 
 	@NotBlank
-	@Size(min = 0, max = 255)
+	@Size(min = 0, max = MAX_NAME_SIZE)
 	private String name;
 
 	@Embedded

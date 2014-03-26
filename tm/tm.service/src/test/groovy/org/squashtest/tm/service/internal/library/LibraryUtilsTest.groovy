@@ -34,7 +34,7 @@ class LibraryUtilsTest extends Specification {
 	@Unroll
 	def "should generate non clashing name '#expected' for '#clashing' among #siblings"() {
 		expect:
-		expected == LibraryUtils.generateNonClashingName(clashing, siblings)
+		expected == LibraryUtils.generateNonClashingName(clashing, siblings, 255)
 		
 		where:
 		siblings                            | clashing    | expected
@@ -67,7 +67,7 @@ class LibraryUtilsTest extends Specification {
 	@Unroll
 	def "should generate unique copy name '#expected' for '#clashing' among #siblings"() {
 		expect:
-		expected == LibraryUtils.generateUniqueCopyName(siblings, clashing)
+		expected == LibraryUtils.generateUniqueCopyName(siblings, clashing, 255)
 		
 		where:
 		siblings                            | clashing    | expected
@@ -83,4 +83,18 @@ class LibraryUtilsTest extends Specification {
 		["the lamplighter-Copie1"]             | "the lamplighter"   | "the lamplighter-Copie2"
 	}
 
+	
+	def "should generate unique substringed copy name '#expected' for '#clashing' among #siblings"() {
+		expect:
+		expected == LibraryUtils.generateUniqueCopyName(siblings, clashing, maxNameSize)
+		
+		where:
+		maxNameSize | siblings                                           | clashing                | expected
+		12          |["batman"]                                          | "batman"                | "ba...-Copie1"
+		15          |["spiderman", "spide...-Copie1"]                    | "spiderman"             | "spide...-Copie2"
+		15          |["spide...-Copie1"]          			             | "spiderman"             | "spide...-Copie2"
+		15          |["spiderman", "spide...-Copie1", "spide...-Copie9"] | "spiderman"             | "spid...-Copie10"
+		12          |["cloak", "dagger"]                                 | "iron man"              | "ir...-Copie1"
+		25          |["booster gold-Copie1"]                             | "booster gold-Copie1"   | "booster gold-Co...-Copie1"
+	}
 }

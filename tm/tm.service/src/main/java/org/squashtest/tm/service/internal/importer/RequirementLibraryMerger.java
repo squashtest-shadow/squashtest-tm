@@ -294,8 +294,7 @@ class RequirementLibraryMerger {
 	 **/
 	private static String generateUniqueName(List<String> names, String baseName) {
 		String token = "-import";
-		int importXNumber = LibraryUtils.generateUniqueCopyNumber(names, baseName, token);
-		return baseName + token + importXNumber;
+		return LibraryUtils.generateUniqueName(names, baseName, token, RequirementLibraryNode.MAX_NAME_SIZE);
 	}
 
 	@SuppressWarnings("rawtypes")

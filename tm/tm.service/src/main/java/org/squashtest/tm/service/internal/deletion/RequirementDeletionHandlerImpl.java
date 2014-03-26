@@ -243,7 +243,7 @@ public class RequirementDeletionHandlerImpl extends
 			String name = child.getName();
 
 			while (!parent.isContentNameAvailable(name)) {
-				name = LibraryUtils.generateNonClashingName(name, parent.getContentNames());
+				name = LibraryUtils.generateNonClashingName(name, parent.getContentNames(), Requirement.MAX_NAME_SIZE);
 				needsRenaming = true;
 			}
 
