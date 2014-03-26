@@ -150,7 +150,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 				query = qb
 						.bool()
 						.must(qb.keyword().wildcard().onField(fieldName).ignoreFieldBridge()
-								.matching(value.toLowerCase(locale)).createQuery()).createQuery();
+								.matching(value).createQuery()).createQuery();
 			} else {
 
 				query = qb.bool()
