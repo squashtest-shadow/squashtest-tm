@@ -89,7 +89,10 @@
     </script>
 	<script type="text/javascript">
 	require(["common"], function() {
-		require(["jquery", "squash.basicwidgets", "jqueryui"], function($, basicwidg){
+		require(["jquery", "squash.basicwidgets", 
+		         "iesupport/am-I-ie8",
+		         "execution-processing/ie8-no-close-on-enter",
+		         "jqueryui"], function($, basicwidg, isIE, noCloseOnEnter){
 			$(function(){
 				basicwidg.init();
 				
@@ -163,6 +166,10 @@
 			});
 			</c:if>
 		
+			// 2195
+			if (isIE){
+				noCloseOnEnter();				
+			}
 			
 		});
 	});
