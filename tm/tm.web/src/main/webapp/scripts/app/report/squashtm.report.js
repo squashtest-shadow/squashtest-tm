@@ -389,46 +389,75 @@ define([ 'jquery', 'app/report/squashtm.reportworkspace', 'tree', 'underscore', 
 		});
 	}
 
-	function isPerimeterValid() {
-
-		var status = false;
-
-		$.each(formState, function(key, value) {
-
-			if (value && value[0]) {
-
-				if ("PROJECT_PICKER" == value[0].type) {
-					$.each(value, function(index, element) {
-						if (element.selected) {
-							status = true;
-						}
-					});
-				}
-
-				if ("RADIO_BUTTONS_GROUP" == value[0].type) {
-					$.each(value, function(index, element) {
-						if (element.selected && element.value == "EVERYTHING") {
-							status = true;
-						}
-					});
-				}
-
-				if ("TREE_PICKER" == value[0].type) {
-					$.each(value, function(index, element) {
-						if (element.value) {
-							status = true;
-						}
-					});
-				}
-			}
+	function isPerimeterValid(formState) {
+		// first pass : do we have pickers bound to radiobuttons
+		var selectedPicker = reduceToSelectedPicker(formState);
+		
+		var checkerByControl = buildPerimeterCheckerByControl(selectedPicker);
+		
+		return undefined !== _.find(formState, function(value, key) {
+			var checker = value && value[0] ? checkerByControl[value[0].type] : undefined;
+			return !!checker && checker.call(this, value);
 		});
-
-		return status;
+	}
+	
+	function reduceToSelectedPicker(formState) {
+		return _.reduceRight(formState, function(memo, control) {
+			if (!!memo) {
+				return memo;
+			}
+			
+			var found = _.find(control, function(item) {
+				return item.type === "RADIO_BUTTONS_GROUP" && item.selected === true && (item.value === "PROJECT_PICKER" || item.value === "TREE_PICKER");
+			});
+			
+			return !!found ? found.value : undefined;
+		}, undefined);	
 	}
 
+	function buildPerimeterCheckerByControl(selectedPicker) {
+		function hasProjectPicked(pp) {
+			return undefined !== _.find(pp, function(element) {
+				return element.selected === true;
+			});
+		}
+		
+		function hasEverythingSelected(rg) {
+			return undefined !== _.find(rg, function(element) {
+				return element.selected === true && element.value == "EVERYTHING";
+			});
+		}
+		
+		function hasNodePicked(tp) {
+			return undefined !== _.find(tp, function(element) {
+				return !!element.value;
+			});
+		}
+		
+		var checkerByControl = {
+				"PROJECT_PICKER" : hasProjectPicked, 
+				"RADIO_BUTTONS_GROUP" : hasEverythingSelected,
+				"TREE_PICKER" : hasNodePicked
+				
+		};
+		
+		var res = checkerByControl;
+		
+		if (!!selectedPicker) {
+			var actualChecker = checkerByControl[selectedPicker];
+			
+			if (!!actualChecker) {
+				res = {};
+				res[selectedPicker] = actualChecker;
+			}
+		} // when selectedPicker is gibberish, we ignore it
+
+		return res;
+	}
+	
 	function generateView() {
 
-		if (isPerimeterValid()) {
+		if (isPerimeterValid(formState)) {
 			// stores preferences in browser datastore
 			sessionStorage[config.reportUrl + "-prefs"] = JSON.stringify(formState);
 
@@ -649,5 +678,10 @@ define([ 'jquery', 'app/report/squashtm.reportworkspace', 'tree', 'underscore', 
 		init : init
 	};
 
+	squashtm.report._private = {
+			isPerimeterValid : isPerimeterValid, 
+			reduceToSelectedPicker : reduceToSelectedPicker
+	};
+	
 	return squashtm.report;
 });
