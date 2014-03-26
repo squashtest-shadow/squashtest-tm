@@ -376,11 +376,21 @@ require([ "common" ], function() {
 				$(this).removeClass("ui-state-focus ui-state-hover");
 				bugTrackerLogin();
 			});
-			
-			eventBus.onContextual('context.bug-reported', function(evt, json){
+			<c:choose>
+			<c:when test="${useParentContextPopup}">
+				parent.squashtm.eventBus.onContextual('context.bug-reported', function(evt, json){
+					displayNewIssue(json);
+					refreshIssueTable();
+				});
+			</c:when>
+			<c:otherwise>
+			     eventBus.onContextual('context.bug-reported', function(evt, json){
 				displayNewIssue(json);
 				refreshIssueTable();
-			});
+			   });
+			</c:otherwise>
+			</c:choose>			
+			
 		});
 	});
 });
