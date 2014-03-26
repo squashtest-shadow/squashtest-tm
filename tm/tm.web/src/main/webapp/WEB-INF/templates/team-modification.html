@@ -282,7 +282,11 @@
 							<span th:text="#{message.NoMemberSelected}"></span>
 						</div>
 
-
+						<div id="invalid-user" class="popup-dialog not-displayed"
+							th:title="#{popup.title.info}" title="Info">
+							<span th:text="#{message.InvalidMemberSelected}"></span>
+						</div>
+								
 						<div id="add-member-dialog" class="not-displayed popup-dialog"
 							title="Add Member" th:title="#{title.AddMember}">
 							<div class="main">
@@ -296,6 +300,8 @@
 								users to bind</div>
 							<div class="no-selected-users"
 								th:text="#{message.NoMemberSelected}"></div>
+							<div class="invalid-user"
+								th:text="#{message.InvalidMemberSelected}"></div>
 							<div class="popup-dialog-buttonpane">
 								<input class="confirm" type="button" value="confirm"
 									th:value="#{label.Confirm}" /> <input class="cancel"
