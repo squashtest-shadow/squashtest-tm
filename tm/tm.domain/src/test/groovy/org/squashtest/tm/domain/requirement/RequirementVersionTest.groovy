@@ -264,6 +264,7 @@ class RequirementVersionTest extends Specification {
 
 		and:
 		Attachment attachment = new Attachment()
+		attachment.setType("txt");
 		source.attachmentList.addAttachment attachment
 
 		when:
@@ -303,6 +304,7 @@ class RequirementVersionTest extends Specification {
 
 		and:
 		Attachment attachment = new Attachment()
+		attachment.setType("txt")
 		previousVersion.attachmentList.addAttachment attachment
 
 		when:
