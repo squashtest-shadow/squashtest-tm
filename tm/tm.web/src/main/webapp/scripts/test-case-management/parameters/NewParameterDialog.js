@@ -19,19 +19,20 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "app/lnf/Forms", 'workspace.event-bus', 
-         'squash.configmanager', 
-         "jquery.squash.confirmdialog" ], function($, Backbone, Forms, eventBus, confman) {
+         'squash.configmanager', "./NewParameterModel", "jquery.squash.confirmdialog" ], 
+         function($, Backbone, Forms, eventBus, confman, NewParameterModel) {
+	
 	var NewParameterDialog = Backbone.View.extend({
 		el : "#add-parameter-dialog",
 
 		initialize : function() {
 			this.settings = this.options.settings;
-
+			
 			this.$checkboxes = this.$el.find("input:checkbox");
 			this.$textAreas = this.$el.find("textarea");
 			this.$textFields = this.$el.find("input:text");
 			this.$errorMessages = this.$el.find("span.error-message");
-
+			this.model = new NewParameterModel();
 			this._resetForm();
 		},
 
@@ -54,7 +55,18 @@ define([ "jquery", "backbone", "app/lnf/Forms", 'workspace.event-bus',
 		validate : function(event) {
 			var res = true, self = this;
 			this._populateModel();
+			var validationErrors = this.model.validateAll();
+			
 			Forms.form(this.$el).clearState();
+
+			if (validationErrors !== null) {
+				for ( var key in validationErrors) {
+					Forms.input(this.$("input[name='add-parameter-" + key + "']")).setState("error",
+							validationErrors[key]);
+				}
+
+				return false;
+			}
 
 			$.ajax({
 				type : 'post',
@@ -63,7 +75,7 @@ define([ "jquery", "backbone", "app/lnf/Forms", 'workspace.event-bus',
 				// note : we cannot use promise api with async param. see
 				// http://bugs.jquery.com/ticket/11013#comment:40
 				async : false,
-				data : self.model,
+				data : self.model.attributes,
 				error : function(jqXHR, textStatus, errorThrown) {
 					res = false;
 					event.preventDefault();
@@ -111,8 +123,10 @@ define([ "jquery", "backbone", "app/lnf/Forms", 'workspace.event-bus',
 
 		_populateModel : function() {
 			var model = this.model, $el = this.$el;
-			model.name = $el.find("#add-parameter-name").val();
-			model.description = $el.find("#add-parameter-description").val();
+			var name = $el.find("#add-parameter-name").val();
+			var description =  $el.find("#add-parameter-description").val();
+			model.attributes.name = name ;
+			model.attributes.description = description;
 		},
 
 		_initializeCkeditorTermination : function() {
