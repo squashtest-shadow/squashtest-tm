@@ -236,11 +236,11 @@
 					<div id="tree-pane"  >
 						<jsp:invoke fragment="tree" />
 					</div>
-					
-
-					
-
-					
+    					<c:if test="${usesObsoleteSearch}">
+    					<div id="search-pane">
+    						<layout:camp-search-panel/>
+    					</div>
+    					</c:if>
 					</div>	
 				</div>
 			</div>
