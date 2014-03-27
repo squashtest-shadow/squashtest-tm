@@ -83,7 +83,7 @@ class LibraryUtilsTest extends Specification {
 		["the lamplighter-Copie1"]             | "the lamplighter"   | "the lamplighter-Copie2"
 	}
 
-	
+	@Unroll
 	def "should generate unique substringed copy name '#expected' for '#clashing' among #siblings"() {
 		expect:
 		expected == LibraryUtils.generateUniqueCopyName(siblings, clashing, maxNameSize)
@@ -92,8 +92,10 @@ class LibraryUtilsTest extends Specification {
 		maxNameSize | siblings                                           | clashing                | expected
 		12          |["batman"]                                          | "batman"                | "ba...-Copie1"
 		15          |["spiderman", "spide...-Copie1"]                    | "spiderman"             | "spide...-Copie2"
+		14          |["the hulk", "the ...-Copie1",  "the...-Copie10"]   | "the hulk"              | "the ...-Copie2"
 		15          |["spide...-Copie1"]          			             | "spiderman"             | "spide...-Copie2"
 		15          |["spiderman", "spide...-Copie1", "spide...-Copie9"] | "spiderman"             | "spid...-Copie10"
+		15          |["spiderman", "spide...-Copie1", "spide...-Copie9", "spid...-Copie10"] | "spiderman"             | "spid...-Copie11"
 		12          |["cloak", "dagger"]                                 | "iron man"              | "ir...-Copie1"
 		25          |["booster gold-Copie1"]                             | "booster gold-Copie1"   | "booster gold-Co...-Copie1"
 	}
