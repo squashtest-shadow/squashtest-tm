@@ -41,8 +41,8 @@ public class UploadContentFilterUtil {
 		
 		String fileType=attachment.getType();
 		
-		for(String type : whiteList.replace(" ", "").split(",")){
-			if (type.equals(fileType)){
+		for(String type : whiteList.split(",")){
+			if (type.trim().equalsIgnoreCase(fileType)){
 				return true;
 			}
 		}
