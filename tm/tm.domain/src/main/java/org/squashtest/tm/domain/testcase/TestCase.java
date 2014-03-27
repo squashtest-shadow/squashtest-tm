@@ -106,10 +106,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private final int version = 1;
 
 	@NotNull
-	@Fields({
-		@Field(analyze = Analyze.NO, store = Store.YES),
-		@Field(name = "referenceSort", analyze = Analyze.NO, store = Store.YES)	
-	})
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@Size(min = 0, max = 50)
 	private String reference = "";
 

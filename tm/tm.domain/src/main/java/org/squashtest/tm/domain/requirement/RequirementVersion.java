@@ -95,7 +95,7 @@ public class RequirementVersion extends Resource implements BoundEntity {
 	 * The requirement reference. It should usually be set by the Requirement.
 	 */
 	@NotNull
-	@Fields({ @Field(analyze = Analyze.NO, store = Store.YES), @Field(name = "referenceSort", analyze = Analyze.NO, store = Store.YES) })
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@Size(min = 0, max = 50)
 	private String reference = "";
 

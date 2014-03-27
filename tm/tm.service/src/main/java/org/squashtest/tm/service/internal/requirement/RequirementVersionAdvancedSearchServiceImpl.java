@@ -147,8 +147,6 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 			} else if ("category".equals(fieldName)) {
 				sortFieldArray[i] = new SortField(fieldName, new RequirementVersionCategoryComparatorSource(source,
 						locale), isReverse);
-			} else if ("reference".equals(fieldName)) {
-				sortFieldArray[i] = new SortField(fieldName + "Sort", SortField.STRING, isReverse);
 			} else {
 				sortFieldArray[i] = new SortField(fieldName, SortField.STRING, isReverse);
 			}
