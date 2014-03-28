@@ -84,13 +84,7 @@ define(["../basic-objects/table-view", "squash.translator"], function(TableView,
 					for (var j=1; j<20; j++){
 						totals[j] += rowdata[j];
 					}
-					
-					// for the percentage we'd rather save a weighted value
-					totals[11] = rowdata[11] * m.nbTotal;
-					totals[12] = rowdata[12] * m.nbExecuted;
-					totals[13] = rowdata[13] * m.nbExecuted;
-					totals[14] = rowdata[14] * m.nbTotal;
-					
+
 				}
 				
 				// finalize the totals and add them to the data, mostly the percentages
@@ -101,7 +95,7 @@ define(["../basic-objects/table-view", "squash.translator"], function(TableView,
 				totals[11] = (total>0) ? ((totalExecuted / total)*100).toFixed(0) : 0.0;
 				totals[12] = (totalExecuted>0) ? ((totalSucces / totalExecuted)* 100).toFixed(0) : 0.0;
 				totals[13] = (totalExecuted>0) ? ((totals[8] / totalExecuted) * 100).toFixed(0) : 0.0;
-				totals[14] = (total>0) ? (totals[14] / total).toFixed(0) : 0.0;
+				totals[14] = (total>0) ? (totals[14] / i ).toFixed(0) : 0.0;
 				
 				data.push(totals);
 
