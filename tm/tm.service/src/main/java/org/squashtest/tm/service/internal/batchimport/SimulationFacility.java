@@ -31,6 +31,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.internal.batchimport.Model.Existence;
 import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
+import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 @Component
@@ -40,6 +41,7 @@ public class SimulationFacility implements Facility{
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";
 	private static final String PERM_CREATE = "CREATE";
 	private static final String PERM_WRITE = "WRITE";
+	private static final String PERM_DELETE = "DELETE";
 	private static final String LIBRARY_CLASSNAME = "org.squashtest.tm.domain.testcase.TestCaseLibrary";
 	
 
@@ -49,9 +51,12 @@ public class SimulationFacility implements Facility{
 	@Inject
 	private PermissionEvaluationService permissionService;
 	
+	@Inject
+	private TestCaseDao tcDao;
+	
 	
 	private Model model;
-	private TestCaseValidator testCaseValidator = new TestCaseValidator();
+	private EntityValidator testCaseValidator = new EntityValidator();
 	private CustomFieldValidator cufValidator = new CustomFieldValidator(); 
 	
 	
@@ -172,24 +177,82 @@ public class SimulationFacility implements Facility{
 		
 	}
 
-	@Override
-	public LogTrain deleteTestCase(long testCaseId) {
-		throw new UnsupportedOperationException("not implemented yet"); 
-	}
 
 	@Override
-	public LogTrain deleteTestCase(TestCase testCase) {
-		throw new UnsupportedOperationException("not implemented yet"); 
+	public LogTrain deleteTestCase(TestCaseTarget target) {
+		
+		LogTrain logs = new LogTrain();
+		
+		TargetStatus status = model.getStatus(target);
+		
+		// 1 - does the target exist
+		if (status.status == Existence.NOT_EXISTS){
+			logs.addEntry (new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_TC_NOT_FOUND));
+		}
+		
+		// 2 - can the user actually do it ?
+		Long libid = model.getProjectStatus(target.getProject()).id;
+		if ((libid != null) && (! permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, PERM_DELETE, libid, LIBRARY_CLASSNAME))){
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[]{PERM_DELETE}));
+		}
+		
+		// 3 - is the test case called by another test case ?
+		if (model.isCalled(target)){
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_REMOVE_CALLED_TC));
+		}
+		
+		// if no fatal error, update the model
+		if (! logs.hasCriticalErrors()){
+			model.setToBeDeleted(target);
+		}
+		
+		return logs;
 	}
 
+	
 	@Override
-	public LogTrain addTestStep(TestStepTarget target, TestStep testStep,
-			Map<String, String> cufValues) {
+	public LogTrain addActionStep(TestStepTarget target, TestStep testStep, Map<String, String> cufValues) {
+		
+		LogTrain logs = new LogTrain();
+		TestCaseTarget testCase = target.getTestCase();
+		Integer index;
+		
+		
+		
+		
+		
+		
+		
+		
 		throw new UnsupportedOperationException("not implemented yet"); 
 	}
+	
+	@Override
+	public LogTrain addCallStep(TestStepTarget target, TestStep testStep, TestCaseTarget calledTestCase, Map<String, String> cufValues) {
+		
+		LogTrain logs = new LogTrain();
+		TestCaseTarget testCase = target.getTestCase();
+		Integer index;
+		
+		
+		
+		
+		
+		
+		
+		
+		throw new UnsupportedOperationException("not implemented yet"); 
+	}
+	
 
 	@Override
-	public LogTrain updateTestStep(long testStepId, TestStep testStepData) {
+	public LogTrain updateActionStep(long testStepId, TestStep testStepData) {
+		throw new UnsupportedOperationException("not implemented yet"); 
+	}
+	
+
+	@Override
+	public LogTrain updateCallStep(long testStepId, TestStep testStepData, TestCaseTarget calledTestCase) {
 		throw new UnsupportedOperationException("not implemented yet"); 
 	}
 

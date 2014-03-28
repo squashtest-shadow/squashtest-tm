@@ -31,12 +31,13 @@ public interface Facility {
 
 	LogTrain createTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues);
 	LogTrain updateTestCase(TestCaseTarget target, TestCase testCaseData, Map<String, String> cufValues);
-	LogTrain deleteTestCase(long testCaseId);
-	LogTrain deleteTestCase(TestCase testCase);
+	LogTrain deleteTestCase(TestCaseTarget target);
 	
 	
-	LogTrain addTestStep(TestStepTarget target, TestStep testStep, Map<String, String> cufValues);
-	LogTrain updateTestStep(long testStepId, TestStep testStepData);
+	LogTrain addActionStep(TestStepTarget target, TestStep testStep, Map<String, String> cufValues);
+	LogTrain addCallStep(TestStepTarget target, TestStep testStep, TestCaseTarget calledTestCase, Map<String, String> cufValues);
+	LogTrain updateActionStep(long testStepId, TestStep testStepData);
+	LogTrain updateCallStep(long testStepId, TestStep testStepData, TestCaseTarget calledTestCase);
 	LogTrain deleteTestStep(long testStepId);
 	LogTrain deleteTestStep(TestStep testStep);
 	

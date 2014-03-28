@@ -22,19 +22,26 @@ package org.squashtest.tm.service.internal.batchimport;
 
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_NAME;
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_REFERENCE;
+import static org.squashtest.tm.service.internal.batchimport.Model.Existence.TO_BE_DELETED;
+import static org.squashtest.tm.service.internal.batchimport.Model.Existence.NOT_EXISTS;
+
 
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.squashtest.tm.domain.library.WhichNodeVisitor;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.service.internal.batchimport.Model.Existence;
 import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
 
-class TestCaseValidator {
-	
-
+class EntityValidator {
 
 	private Model model;
+	
 	
 	//private Validator validator = ValidatorFactoryBean.getInstance().getValidator();
 
@@ -48,7 +55,7 @@ class TestCaseValidator {
 
 
 	/**
-	 *  those checks are performed for a test case for any type of operations.
+	 *  those checks are run for a test case for any type of operations.
 	 *  
 	 *  It checks : 
 	 *  - the path is well formed (failure)
@@ -56,7 +63,6 @@ class TestCaseValidator {
 	 *  - the test case name has length between 0 and 255
 	 *  - the project exists (failure)
 	 *  - the size of fields that are restricted in size  (warning)
-	 *  - the format of the custom fields (lists, dates and checkbox) (warning)
 	 * 
 	 * @param target
 	 * @param testCase
@@ -100,6 +106,49 @@ class TestCaseValidator {
 	}
 	
 	
+	
+	/**
+	 *  those checks are run for a test step for any type of operations.
+	 *  
+	 *  It checks : 
+	 *  - the path of the test case is well formed (failure)
+	 *  - the project exists (failure)
+	 *  - the format of the custom fields (lists, dates and checkbox) (warning)
+	 * 
+	 * 
+	 * 
+	 * @param target
+	 * @param testStep
+	 * @param cufValues
+	 * @return
+	 */
+	LogTrain basicTestStepChecks(TestStepTarget target, TestStep testStep, Map<String, String> cufValues){
+		
+		LogTrain logs = new LogTrain();
+		
+		TestCaseTarget testCase = target.getTestCase();
+		
+		// 1 - test case owner path must be supplied and and well formed
+		if (! testCase.isWellFormed()){
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MALFORMED_PATH));
+		}
+		
+		// 2 - the test case must exist
+		TargetStatus tcStatus = model.getStatus(testCase);
+		if (tcStatus.status == TO_BE_DELETED || tcStatus.status == NOT_EXISTS){
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_TC_NOT_FOUND));
+		}
+		
+		// 3 - the project actually exists
+		TargetStatus projectStatus = model.getProjectStatus(target.getProject()); 
+		if (projectStatus.getStatus() != Existence.EXISTS){
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PROJECT_NOT_EXIST));
+		}
+		
+		return logs;
 
+	}
+	
+	
 	
 }

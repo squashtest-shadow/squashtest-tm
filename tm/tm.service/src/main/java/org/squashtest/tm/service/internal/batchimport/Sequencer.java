@@ -47,6 +47,7 @@ public class Sequencer {
 		Model model = modelProvider.get();
 		simulator.setModel(model);
 		
+
 		// TODO : for each LogTrain, remember to use setForAll(...) to set them with 
 		// the line number and import mode.
 		

@@ -47,6 +47,7 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
+import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
 
 
@@ -64,6 +65,8 @@ public class Model {
 	@Inject
 	private TestCaseLibraryFinderService finderService;
 	
+	@Inject
+	private TestCaseDao tcDao;
 	
 	
 	private Map<String, TargetStatus> projectStatusByName = new HashMap<String, TargetStatus>();
@@ -187,6 +190,26 @@ public class Model {
 		else{
 			return (TestCase) sessionFactory.getCurrentSession().load(TestCase.class, id);
 		}
+	}
+	
+	/*
+	 *  returns true if the test case is being called by another test case or else false.
+	 *  
+	 *  Note : the problem arises only if the test case already exists in the database 
+	 *  (test cases instructions are all processed before step-instructions are thus newly 
+	 *  imported test cases aren't bound to any test step yet).
+	 *  
+	 */
+	public boolean isCalled(TestCaseTarget target){
+		TargetStatus status = getStatus(target);
+		if (status.status == Existence.EXISTS){
+			long countcalls = tcDao.countCallingTestSteps(status.id);	//status.id can't be null if the test case exists
+			return (countcalls > 0);
+		}
+		else{
+			return false;
+		}
+		
 	}
 
 	

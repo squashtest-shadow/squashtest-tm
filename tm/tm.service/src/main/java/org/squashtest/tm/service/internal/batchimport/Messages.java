@@ -36,6 +36,7 @@ final class Messages {
 	static final String ERROR_INCONSISTENT_PATH_AND_NAME = "message.import.log.error.tc.inconsistentNameAndPath";
 	static final String ERROR_TC_NOT_FOUND = "message.import.log.error.tc.notFound";
 	static final String ERROR_TC_CANT_RENAME = "message.import.log.error.tc.cantrename";
+	static final String ERROR_REMOVE_CALLED_TC = "message.import.log.error.tc.cannotRemoveCalledTestCase";
 	
 	
 	static final String IMPACT_MAX_SIZE = "message.import.log.impact.truncatedValue";

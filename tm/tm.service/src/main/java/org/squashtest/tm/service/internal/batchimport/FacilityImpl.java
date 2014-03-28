@@ -75,34 +75,44 @@ public class FacilityImpl implements Facility {
 	}
 
 	@Override
-	public LogTrain deleteTestCase(long testCaseId) {
-		throw new UnsupportedOperationException("not implemented yet"); 
+	public LogTrain deleteTestCase(TestCaseTarget target) {
+		throw new UnsupportedOperationException("not implemented yet");
 	}
 
 	@Override
-	public LogTrain deleteTestCase(TestCase testCase) {
-		throw new UnsupportedOperationException("not implemented yet"); 
-	}
-
-	@Override
-	public LogTrain addTestStep(TestStepTarget target, TestStep testStep,
+	public LogTrain addActionStep(TestStepTarget target, TestStep testStep,
 			Map<String, String> cufValues) {
-		throw new UnsupportedOperationException("not implemented yet"); 
+		throw new UnsupportedOperationException("not implemented yet");
 	}
 
 	@Override
-	public LogTrain updateTestStep(long testStepId, TestStep testStepData) {
-		throw new UnsupportedOperationException("not implemented yet"); 
+	public LogTrain addCallStep(TestStepTarget target, TestStep testStep,
+			TestCaseTarget calledTestCase, Map<String, String> cufValues) {
+		throw new UnsupportedOperationException("not implemented yet");
+	}
+
+	@Override
+	public LogTrain updateActionStep(long testStepId, TestStep testStepData) {
+		throw new UnsupportedOperationException("not implemented yet");
+	}
+
+	@Override
+	public LogTrain updateCallStep(long testStepId, TestStep testStepData,
+			TestCaseTarget calledTestCase) {
+		throw new UnsupportedOperationException("not implemented yet");
 	}
 
 	@Override
 	public LogTrain deleteTestStep(long testStepId) {
-		throw new UnsupportedOperationException("not implemented yet"); 
+		throw new UnsupportedOperationException("not implemented yet");
 	}
 
 	@Override
 	public LogTrain deleteTestStep(TestStep testStep) {
-		throw new UnsupportedOperationException("not implemented yet"); 
+		throw new UnsupportedOperationException("not implemented yet");
 	}
+
+
+
 
 }
