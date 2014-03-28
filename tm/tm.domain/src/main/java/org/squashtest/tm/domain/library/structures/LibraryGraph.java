@@ -65,15 +65,13 @@ public class LibraryGraph<IDENT, T extends GraphNode<IDENT, T>> {
 			child = createIfNotExists(childData);
 		}
 		
-		if (parent!=null){
+		if (parent!=null && ! parent.getChildren().contains(child)){
 			parent.addChild(child);
 		}
 		
-		if (child!=null){
+		if (child!=null && ! child.getParents().contains(parent)){
 			child.addParent(parent);
 		}
-		
-		
 		
 	}
 	

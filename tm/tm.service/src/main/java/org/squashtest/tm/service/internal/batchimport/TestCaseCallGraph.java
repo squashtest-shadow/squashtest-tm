@@ -20,13 +20,29 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 
 import org.squashtest.tm.domain.library.structures.GraphNode;
 import org.squashtest.tm.domain.library.structures.LibraryGraph;
 
 class TestCaseCallGraph extends LibraryGraph<TestCaseTarget, TestCaseCallGraph.Node> {
 	
+	
+	public void addNodes(TestCaseTarget parent, TestCaseTarget child){
+		addNodes(new Node(parent), new Node(child));
+	}
+	
+	@Override
+	public void addNodes(Node parentData, Node childData) {
+		if (! wouldCreateCycle(parentData.getKey(), childData.getKey())){
+			super.addNodes(parentData, childData);
+		}
+		else{
+			throw new IllegalArgumentException("");
+		}
+	}
 	
 	/**
 	 * says if the given target is called
@@ -54,34 +70,54 @@ class TestCaseCallGraph extends LibraryGraph<TestCaseTarget, TestCaseCallGraph.N
 	 * @return
 	 */
 	boolean wouldCreateCycle(TestCaseTarget src, TestCaseTarget dest){
-		
-		// quick check : exclude self calls
-		if (src.equals(dest)){
-			return true;
+
+		boolean createsCycle = false;
+
+		// quick check : if one of either node doesn't exist it's always ok
+		if (getNode(dest) == null || getNode(src) == null){
+			createsCycle = false;
 		}
 		
-		// else we walk down the call tree of the dest
-		boolean createsCycle = false;
+		// quick check : exclude self calls
+		else if (src.equals(dest)){
+			createsCycle = true;
+		}
 		
-		LinkedList<Node> nodes = new LinkedList<Node>();
-		nodes.add(getNode(dest));
 		
-		do{
-			Node current = nodes.pop();
-			if (current.calls(src)){
-				createsCycle = true;
-				break;
-			}
-			else{
-				nodes.addAll(current.getChildren());
-			}
+		else{
+			// else we walk down the call tree of the dest
 			
-		}while(! nodes.isEmpty());		
+			// we keep track of processed nodes. It has the benefit of preventing multiple exploration of the same node.
+			// it also breaks infinite loop but this method exists precisely to prevent this to happen.
+			Set<Node> processed = new HashSet<Node>();	
+			LinkedList<Node> nodes = new LinkedList<Node>();
+			
+			Node orig = getNode(dest);
+			processed.add(orig);
+			nodes.add(orig);
+			
+			do{
+				Node current = nodes.pop();
+				if (current.calls(src)){
+					createsCycle = true;
+					break;
+				}
+				else{
+					for (Node child : current.getChildren()){
+						if (! processed.contains(child)){
+							nodes.add(child);
+							processed.add(child);
+						}
+					}
+					
+				}
+				
+			}while(! nodes.isEmpty());		
+		}
 		
 		return createsCycle;
 		
 	}
-	
 	
 	static final class Node extends GraphNode<TestCaseTarget, Node>{
 		Node(TestCaseTarget target){
