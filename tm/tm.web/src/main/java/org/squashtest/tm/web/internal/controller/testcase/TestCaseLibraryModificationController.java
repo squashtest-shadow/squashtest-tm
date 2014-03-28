@@ -67,6 +67,7 @@ public class TestCaseLibraryModificationController {
 		
 		mav.addObject("library", lib);
 		mav.addObject("attachments", attachments);
+		mav.addObject("workspaceName", "test-case");
 		
 		return mav;
 	}

@@ -54,6 +54,7 @@ public class RequirementLibraryModificationController {
 		
 		mav.addObject("library", lib);
 		mav.addObject("attachments", attachments);
+		mav.addObject("workspaceName", "requirement");
 		
 		return mav;
 	}
