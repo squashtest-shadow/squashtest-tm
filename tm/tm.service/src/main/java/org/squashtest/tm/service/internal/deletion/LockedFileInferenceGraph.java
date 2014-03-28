@@ -28,7 +28,7 @@ import org.squashtest.tm.domain.library.structures.GraphNode;
 import org.squashtest.tm.domain.library.structures.LibraryGraph;
 
 public class LockedFileInferenceGraph extends
-		LibraryGraph<LockedFileInferenceGraph.Node> {
+		LibraryGraph<Long, LockedFileInferenceGraph.Node> {
 
 	private List<Long> candidatesToDeletion;
 
@@ -214,7 +214,7 @@ public class LockedFileInferenceGraph extends
 		return false;
 	}
 
-	static class Node extends GraphNode<Node> {
+	static class Node extends GraphNode<Long, Node> {
 
 		private Boolean deletable = true;
 		private Integer parentDeletableCount = 0;

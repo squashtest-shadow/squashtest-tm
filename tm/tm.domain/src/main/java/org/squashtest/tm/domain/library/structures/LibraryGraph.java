@@ -28,7 +28,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.Transformer;
 
-public class LibraryGraph<T extends GraphNode<T>> {
+public class LibraryGraph<IDENT, T extends GraphNode<IDENT, T>> {
 
 	private List<T> nodes = new ArrayList<T>();
 	
@@ -78,7 +78,7 @@ public class LibraryGraph<T extends GraphNode<T>> {
 	}
 	
 	
-	public T getNode(Long key){
+	public T getNode(IDENT key){
 		 T toReturn = null;
 		if (key!=null){
 		
@@ -156,6 +156,7 @@ public class LibraryGraph<T extends GraphNode<T>> {
 	}
 	
 	
+	// also known as an "Edge" of the graph. Sorry for the silly name.
 	public class GraphNodePair{
 		private T parent;
 		private T child;

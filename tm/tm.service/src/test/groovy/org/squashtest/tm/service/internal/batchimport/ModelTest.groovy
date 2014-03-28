@@ -311,14 +311,16 @@ public class ModelTest extends Specification{
 	def "should add a test step of a given type to the model at the specified index"(){
 		given :
 			def tc = new TestCaseTarget("/project/bob")
+			def ctc = new TestCaseTarget("whatever")
 			def st  = new TestStepTarget(tc, 1)
 			
 			model.testCaseStatusByTarget[tc] = new TargetStatus(EXISTS, 10l)
+			model.testCaseStatusByTarget[ctc] = new TargetStatus(EXISTS, 20l)
 			model.testCaseStepsByTarget[tc] = [StepType.ACTION, StepType.ACTION, StepType.ACTION]
 		
 			
 		when :
-			model.add(st, StepType.CALL)
+			model.addCallStep(st, ctc)
 		
 		then :
 			model.testCaseStepsByTarget[tc] == [StepType.ACTION, StepType.CALL, StepType.ACTION, StepType.ACTION]
@@ -329,14 +331,16 @@ public class ModelTest extends Specification{
 		
 		given :
 			def tc = new TestCaseTarget("/project/bob")
+			def ctc = new TestCaseTarget("whatever")
 			def st  = new TestStepTarget(tc, null)
 			
 			model.testCaseStatusByTarget[tc] = new TargetStatus(EXISTS, 10l)
+			model.testCaseStatusByTarget[ctc] = new TargetStatus(EXISTS, 20l)
 			model.testCaseStepsByTarget[tc] = [StepType.ACTION, StepType.ACTION, StepType.ACTION]
 		
 			
 		when :
-			model.add(st, StepType.CALL)
+			model.addCallStep(st, ctc)
 		
 		then :
 			model.testCaseStepsByTarget[tc] == [StepType.ACTION, StepType.ACTION, StepType.ACTION, StepType.CALL]
@@ -347,14 +351,16 @@ public class ModelTest extends Specification{
 		
 		given :
 			def tc = new TestCaseTarget("/project/bob")
+			def ctc = new TestCaseTarget("whatever")
 			def st  = new TestStepTarget(tc, 18)
 			
 			model.testCaseStatusByTarget[tc] = new TargetStatus(EXISTS, 10l)
+			model.testCaseStatusByTarget[ctc] = new TargetStatus(EXISTS, 20l)
 			model.testCaseStepsByTarget[tc] = [StepType.ACTION, StepType.ACTION, StepType.ACTION]
 		
 			
 		when :
-			model.add(st, StepType.CALL)
+			model.addCallStep(st, ctc)
 		
 		then :
 			model.testCaseStepsByTarget[tc] == [StepType.ACTION, StepType.ACTION, StepType.ACTION, StepType.CALL]

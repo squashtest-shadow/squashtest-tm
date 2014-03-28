@@ -24,22 +24,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class GraphNode<T extends GraphNode<T>>{
+public class GraphNode<IDENT, T extends GraphNode<IDENT, T>>{
 	
-	private final List<T> parents = new ArrayList<T>();
-	private final List<T> children = new ArrayList<T>();
+	protected final List<T> parents = new ArrayList<T>();
+	protected final List<T> children = new ArrayList<T>();
 	
 	
 
-	private Long key;
-	private LibraryGraph<T> graph;
+	protected IDENT key;
+	protected LibraryGraph<IDENT, T> graph;
 	
 	
 	public GraphNode(){
 		
 	}
 
-	public GraphNode(Long key){
+	public GraphNode(IDENT key){
 		this.key=key;
 	}
 
@@ -61,23 +61,22 @@ public class GraphNode<T extends GraphNode<T>>{
 		if (child!=null){ children.add(child);}
 	}
 
-	public Long getKey(){
+	public IDENT getKey(){
 		return key;
 	}
 
-	public void setKey(Long key){
+	public void setKey(IDENT key){
 		this.key=key;
 	}
 
-	public LibraryGraph<T> getGraph() {
+	public LibraryGraph<IDENT, T> getGraph() {
 		return graph;
 	}
 
 
-	public void setGraph(LibraryGraph<T> graph) {
+	public void setGraph(LibraryGraph<IDENT, T> graph) {
 		this.graph = graph;
 	}
-	
 
 	
 }

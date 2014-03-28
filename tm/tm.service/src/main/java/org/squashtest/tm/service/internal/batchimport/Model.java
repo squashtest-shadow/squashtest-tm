@@ -87,21 +87,6 @@ public class Model {
 	
 	/* ***********************************************************************************************************************************
 	 * 
-	 * renamedTestCaseMap : 
-	 * 
-	 * in some occurrences a test case could be renamed :
-	 * 	- attempts to create a test case failed and we had to rename it 
-	 *  - the test case was explicitly renamed via update
-	 *  
-	 * This map tracks the modifications so that we can still refer to a renamed test case by its original TestCaseTarget.
-	 * 
-	 * 
-	 * ***********************************************************************************************************************************/
-	//private Map<TestCaseTarget, String> renamedTestCaseMap = new HashMap<TestCaseTarget, String>();
-
-	
-	/* ***********************************************************************************************************************************
-	 * 
 	 * stepStatusByTarget : 
 	 * 
 	 * Maps a test case (given its target) to a list of step models. We only care of their position (because they are identified by position) 
@@ -113,6 +98,9 @@ public class Model {
 	 * 
 	 * ***********************************************************************************************************************************/	
 	private Map<TestCaseTarget, List<StepType>> testCaseStepsByTarget = new HashMap<TestCaseTarget, List<StepType>>();
+	
+	
+	
 	
 	
 	private MultiValueMap tcCufsPerProjectname = new MultiValueMap();
@@ -201,15 +189,9 @@ public class Model {
 	 *  
 	 */
 	public boolean isCalled(TestCaseTarget target){
-		TargetStatus status = getStatus(target);
-		if (status.status == Existence.EXISTS){
-			long countcalls = tcDao.countCallingTestSteps(status.id);	//status.id can't be null if the test case exists
-			return (countcalls > 0);
-		}
-		else{
-			return false;
-		}
 		
+		//TODOOO
+		throw new UnsupportedOperationException("NOT IMPLEMENTED YET ");
 	}
 
 	
@@ -223,7 +205,27 @@ public class Model {
 	 * @return
 	 */
 	// returns the index at which the step was created
-	public Integer add(TestStepTarget target, StepType type){
+	public Integer addActionStep(TestStepTarget target){		
+		return addStep(target, StepType.ACTION);
+	}
+	
+	public Integer addCallStep(TestStepTarget target, TestCaseTarget calledTestCase){	
+	
+		
+		if (! testCaseStatusByTarget.containsKey(calledTestCase)){
+			init(calledTestCase);
+		}
+	
+		
+		Integer index =  addStep(target, StepType.CALL);
+		
+		//TODO : add the boilerplate for the call step graph once the appropriate graph is implemented
+		
+		return index;
+		
+	}
+	
+	private Integer addStep(TestStepTarget target, StepType type){
 		
 		TestCaseTarget tc = target.getTestCase();
 		Integer index = target.getIndex();
@@ -231,6 +233,7 @@ public class Model {
 		if (! testCaseStatusByTarget.containsKey(tc)){
 			init(tc);
 		}
+
 		
 		List<StepType> types = testCaseStepsByTarget.get(tc);
 		
@@ -241,6 +244,7 @@ public class Model {
 		types.add(index, type);
 		
 		return index;
+		
 	}
 	
 	
@@ -263,6 +267,7 @@ public class Model {
 		types.remove(index.intValue()); 
 		
 	}
+	
 	
 	// ************************ Test Step accessors *********************************
 	
@@ -376,6 +381,7 @@ public class Model {
 	}
 	
 	public void init(List<TestCaseTarget> targets){
+		
 		// ensures unicity
 		List<TestCaseTarget> uniqueTargets = uniqueList(targets);
 		
