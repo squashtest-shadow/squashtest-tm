@@ -96,10 +96,11 @@ define(["../basic-objects/table-view", "squash.translator"], function(TableView,
 				// finalize the totals and add them to the data, mostly the percentages
 				var total = totals[1];
 				var totalExecuted = totals[3]; 
+				var totalSucces = totals[6] + totals[7];
 				
-				totals[11] = (total>0) ? (totals[11] / total).toFixed(0) : 0.0;
-				totals[12] = (totalExecuted>0) ? (totals[12] / totalExecuted).toFixed(0) : 0.0;
-				totals[13] = (totalExecuted>0) ? (totals[13] / totalExecuted).toFixed(0) : 0.0;
+				totals[11] = (total>0) ? ((totalExecuted / total)*100).toFixed(0) : 0.0;
+				totals[12] = (totalExecuted>0) ? ((totalSucces / totalExecuted)* 100).toFixed(0) : 0.0;
+				totals[13] = (totalExecuted>0) ? ((totals[8] / totalExecuted) * 100).toFixed(0) : 0.0;
 				totals[14] = (total>0) ? (totals[14] / total).toFixed(0) : 0.0;
 				
 				data.push(totals);
