@@ -41,7 +41,7 @@ define([ "jquery", "backbone", "app/util/StringUtil" ], function($, Backbone, St
 			// hence without the following line "mqlskd slqk"
 			// would be validated even
 			// thought it has white spaces.
-			return ((!name.match(/\s+/)) && name.match(/^[A-Za-z0-9_-]*$/));
+			return ((!name.match(/\s+/)) && name.match(/^[A-Za-z0-9\_\-]*$/));
 		},
 
 		validateAll : function() {
