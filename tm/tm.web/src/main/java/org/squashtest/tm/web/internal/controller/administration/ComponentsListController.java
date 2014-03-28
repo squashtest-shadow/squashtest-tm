@@ -105,7 +105,7 @@ public class ComponentsListController {
 
 		for (Bundle bundle : bundles) {
 			List<Bundle> recipient;
-			if (bundle.getSymbolicName().startsWith("org.squashtest")) {
+			if (bundle.getSymbolicName() != null && bundle.getSymbolicName().startsWith("org.squashtest")) {
 				recipient = squashBundles;
 			} else {
 				recipient = thirdPartyBundles;
