@@ -24,7 +24,6 @@
  *      projectId : the projectId,
  *      bindableEntity : the bindable entity type,
  *      getURL : the URL from where the available custom fields are fetched,
- *      postURL : the URL where to send the data
  *      selector : the selector for the popup,
  *      title : title of that popup,
  *      oklabel : localized label for 'ok',
@@ -34,7 +33,7 @@
  * 
  * 
  */
-define([ "require", "./models", "jquery.squash" ], function(require, Model) {
+define([ "require", "./models", "app/util/ButtonUtil", "jquery.squash" ], function(require, Model, ButtonUtil) {
 
 	return function(settings) {
 
@@ -151,7 +150,7 @@ define([ "require", "./models", "jquery.squash" ], function(require, Model) {
 		};
 
 		var submit = function(event) {
-			$(event.target).button("disable");
+			ButtonUtil.disable($(event.target));
 			var payload = makePayload();
 			if (payload.length === 0) {
 				popup.dialog("close");
@@ -169,7 +168,7 @@ define([ "require", "./models", "jquery.squash" ], function(require, Model) {
 					popup.postSuccessListeners[i].update();
 				}
 			}).always(function(){
-				$(event.target).button("enable");
+				ButtonUtil.enable($(event.target));
 			});
 		};
 
