@@ -273,14 +273,10 @@
 								<th class="status-color-ready std-border"><span><f:message key="label.Ready"/></span></th>
 								<th class="status-color-running"><span><f:message key="label.Running"/></span></th>
 								<th class="status-color-success"><span><f:message key="label.Success"/></span></th>
-									<c:if test="${allowsSettled}">
-								<th class="status-color-settled std-border"><span><f:message key="label.Settled"/></span></th>		
-									</c:if>
+								<th class="${allowsSettled ? 'status-color-settled std-border' : 'status-color-settled std-border not-displayed' }"><span><f:message key="label.Settled"/></span></th>		
 								<th class="status-color-failure"><span><f:message key="label.Failure"/></span></th>
 								<th class="status-color-blocked"><span><f:message key="label.Blocked"/></span></th>
-									<c:if test="${allowsUntestable}">
-								<th class="status-color-untestable std-border"><span><f:message key="label.Untestable"/></span></th>
-								</c:if>
+								<th class="${allowsUntestable ? 'status-color-untestable std-border' : 'status-color-untestable std-border not-displayed' }"><span><f:message key="label.Untestable"/></span></th>
 								<th ><span><f:message key="dashboard.campaigns.testinventory.legend.testnumber"/></span></th>
 								<th ><span><f:message key="dashboard.campaigns.testinventory.legend.advancementexecution"/></span></th>
 							</tr>
@@ -295,14 +291,10 @@
 								<td class="std-border light-border">{{this.[1]}}</td>
 								<td class="std-border light-border">{{this.[2]}}</td>
 								<td class="std-border light-border">{{this.[3]}}</td>
-								<c:if test="${allowsSettled}">
-									<td class="std-border light-border">{{this.[4]}}</td>
-								</c:if>
+								<td class="${allowsSettled ? 'std-border light-border' : 'std-border light-border not-displayed' }">{{this.[4]}}</td>
 								<td class="std-border light-border">{{this.[5]}}</td>
 								<td class="std-border light-border">{{this.[6]}}</td>
-								<c:if test="${allowsUntestable}">
-									<td class="std-border light-border">{{this.[7]}}</td>
-								</c:if>
+								<td class="${allowsUntestable ? 'std-border light-border' : 'std-border light-border not-displayed' }">{{this.[7]}}</td>
 								<td class="std-border light-border" style="font-weight:bold;">{{this.[8]}}</td>
 								<td class="std-border light-border"style="font-weight:bold;">{{this.[9]}}</td>
 							</tr>
