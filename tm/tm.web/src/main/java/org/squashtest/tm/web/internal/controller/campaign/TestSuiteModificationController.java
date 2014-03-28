@@ -48,6 +48,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IterationTestPlanFinder;
@@ -129,6 +130,10 @@ public class TestSuiteModificationController {
 		model.addAttribute("hasCUF", hasCUF);
 		model.addAttribute("attachmentsModel", attachmentsModel);
 		model.addAttribute("assignableUsers", assignableUsers);
+		model.addAttribute("allowsSettled",
+				testSuite.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
+		model.addAttribute("allowsUntestable",
+				testSuite.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
 		model.addAttribute("weights", weights);
 		model.addAttribute("modes", getModes());
 		model.addAttribute("statuses", getStatuses(testSuite.getProject().getId()));
@@ -182,9 +187,13 @@ public class TestSuiteModificationController {
 	public ModelAndView refreshStats(@PathVariable("suiteId") long suiteId) {
 
 		TestPlanStatistics testSuiteStats = service.findTestSuiteStatistics(suiteId);
-
+		TestSuite testSuite = service.findById(suiteId);
 		ModelAndView mav = new ModelAndView("fragment/generics/statistics-fragment");
 		mav.addObject("statisticsEntity", testSuiteStats);
+		mav.addObject("allowsSettled",
+				testSuite.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
+		mav.addObject("allowsUntestable",
+				testSuite.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
 
 		return mav;
 	}

@@ -49,6 +49,7 @@
 <c:url var="campaignPlanningUrl" value="/campaigns/${campaign.id}/planning"/>
 <c:url var="assignableUsersUrl" value="/campaigns/${campaign.id}/assignable-users" />
 <c:url var="campaignStatisticsUrl" value="/campaigns/${campaign.id}/dashboard-statistics" />
+<c:url var="campaignInfoStatisticsUrl" value="/campaigns/${campaign.id}/statistics"/>
 <c:url var="campaignStatisticsPrintUrl" value="/campaigns/${campaign.id}/dashboard"/>
 <c:url var="testCaseManagerUrl"	value="/campaigns/${campaign.id}/test-plan/manager" />
 <c:url var="workspaceUrl" value="/campaign-workspace/#" />
@@ -317,7 +318,7 @@
 	
 		<%--------------------------- /Planning section ------------------------------------%>
 		<%-- ------------------ statistiques --------------------------- --%>
-		<comp:statistics-panel statisticsEntity="${ statistics }" statisticsUrl="${ campaignStatisticsUrl }"/>
+		<comp:statistics-panel statisticsEntity="${ statistics }" statisticsUrl="${ campaignInfoStatisticsUrl }"/>
 		<%-- ------------------ /statistiques --------------------------- --%>
 	</div>
 	<div id="tabs-2" class="table-tab">

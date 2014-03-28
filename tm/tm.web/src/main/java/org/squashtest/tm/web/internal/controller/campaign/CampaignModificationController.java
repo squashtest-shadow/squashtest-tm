@@ -109,8 +109,12 @@ public class CampaignModificationController {
 	public ModelAndView refreshStats(@PathVariable long campaignId) {
 
 		TestPlanStatistics campaignStatistics = campaignModService.findCampaignStatistics(campaignId);
-
+		Campaign campaign = campaignModService.findById(campaignId);
 		ModelAndView mav = new ModelAndView("fragment/generics/statistics-fragment");
+		mav.addObject("allowsSettled",
+				campaign.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
+		mav.addObject("allowsUntestable",
+				campaign.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
 		mav.addObject("statisticsEntity", campaignStatistics);
 
 		return mav;
