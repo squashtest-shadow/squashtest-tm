@@ -67,4 +67,22 @@ class ExcelWorkbookParserTest extends Specification {
 		"batchimport/testcase/missing-headers.xlsx" | TemplateMismatchException // should be refined
 		//		"batchimport/testcase/duplicate-ws.xlsx" | DuplicateWorksheetException
 	}
+
+	def "should parse file and create test case target object"() {
+		given:
+		Resource xls = new ClassPathResource("batchimport/testcase/import-2269.xlsx")
+
+		and:
+		ExcelWorkbookParser parser = ExcelWorkbookParser.createParser(xls.file)
+		
+		and:
+		def expectedPaths = (1..10).collect { "path/row$it" }
+		
+		when:
+		parser.parse()
+
+		then:
+		parser.testCaseInstructions*.target.path == expectedPaths
+
+	}
 }

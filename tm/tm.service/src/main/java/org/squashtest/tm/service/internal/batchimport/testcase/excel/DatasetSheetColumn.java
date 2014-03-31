@@ -26,7 +26,9 @@ import static org.squashtest.tm.service.internal.batchimport.testcase.excel.Colu
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.ColumnProcessingMode.OPTIONAL;
 
 /**
- * @author Gregory
+ * Enum of the columns which can be found in the datashet worksheet of an import / export workbook.
+ * 
+ * @author Gregory Fouquet
  * 
  */
 public enum DatasetSheetColumn implements TemplateColumn {

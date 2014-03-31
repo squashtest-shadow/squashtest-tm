@@ -19,14 +19,23 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.service.internal.batchimport.testcase.excel;
+package org.squashtest.tm.service.internal.batchexport;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+import spock.lang.Specification;
 
 /**
- * This holds a mismatch from the expected workbook template and the actual structure of the workbook.
- * 
  * @author Gregory Fouquet
- * 
+ *
  */
-public interface TemplateMismatch {
+class ExcelExporterTest extends Specification {
+
+	@Test
+	public void test() {
+		fail("Not yet implemented");
+	}
 
 }

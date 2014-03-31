@@ -90,6 +90,13 @@ final class TemplateColumnUtils {
 		}
 	}
 
+	/**
+	 * Retrieves an enum's values from the enum's class.
+	 * 
+	 * @param enumType
+	 *            type of the enum which values we want
+	 * @return the values of the enum
+	 */
 	@SuppressWarnings("unchecked")
 	public static <E extends Enum<?>> E[] values(Class<E> enumType) {
 		Method valuesMethod = ReflectionUtils.findMethod(enumType, "values");

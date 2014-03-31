@@ -19,14 +19,27 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.service.internal.batchimport.testcase.excel;
+package org.squashtest.tm.service.internal.batchimport.excel;
+
+import javax.validation.constraints.NotNull;
+
+import org.apache.poi.ss.usermodel.Cell;
 
 /**
- * This holds a mismatch from the expected workbook template and the actual structure of the workbook.
+ * Interface for an object which coerces a {@link Cell} into a value of VAL type
  * 
  * @author Gregory Fouquet
  * 
  */
-public interface TemplateMismatch {
-
+public interface CellValueCoercer<VAL> {
+	/**
+	 * Coerces the cell into a VAL typed value
+	 * 
+	 * @param cell
+	 *            the cell to coerce
+	 * @return
+	 * @throws CannotCoerceException
+	 *             when not possible to coerce.
+	 */
+	VAL coerce(@NotNull Cell cell) throws CannotCoerceException;
 }

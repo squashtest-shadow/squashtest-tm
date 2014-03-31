@@ -19,14 +19,15 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.service.internal.batchimport.testcase.excel;
+package org.squashtest.tm.service.internal.batchimport.excel;
+
+import org.squashtest.tm.service.internal.batchimport.Instruction;
 
 /**
- * This holds a mismatch from the expected workbook template and the actual structure of the workbook.
- * 
  * @author Gregory Fouquet
  * 
  */
-public interface TemplateMismatch {
+public interface TargetFinder<I extends Instruction, T> {
+	T find(I instruction);
 
 }

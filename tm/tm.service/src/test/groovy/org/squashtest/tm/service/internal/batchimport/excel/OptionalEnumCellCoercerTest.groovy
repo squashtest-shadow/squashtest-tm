@@ -19,14 +19,35 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.service.internal.batchimport.testcase.excel;
+package org.squashtest.tm.service.internal.batchimport.excel;
+
+import static org.junit.Assert.*;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.junit.Test;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
+
+import spock.lang.Specification;
+import spock.lang.Unroll;
 
 /**
- * This holds a mismatch from the expected workbook template and the actual structure of the workbook.
- * 
  * @author Gregory Fouquet
- * 
+ *
  */
-public interface TemplateMismatch {
-
+class OptionalEnumCellCoercerTest extends Specification {
+	@Unroll
+	def"should coerce #cellValue into #enumValue"() {
+		given: 
+		Cell cell = Mock()
+		cell.getCellType() >> cellType
+		cell.getStringCellValue() >> cellValue
+		
+		expect:
+		OptionalEnumCellCoercer.forEnum(TestCaseImportance).coerce(cell) == enumValue
+		
+		where:
+		cellValue 	| cellType 				| enumValue
+		"VERY_HIGH"	| Cell.CELL_TYPE_STRING	| TestCaseImportance.VERY_HIGH
+		""			| Cell.CELL_TYPE_BLANK	| null
+	}
 }

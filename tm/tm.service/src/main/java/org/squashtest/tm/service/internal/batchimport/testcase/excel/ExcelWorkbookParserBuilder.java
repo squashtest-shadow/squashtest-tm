@@ -56,6 +56,15 @@ class ExcelWorkbookParserBuilder {
 		this.xls = xls;
 	}
 
+	/**
+	 * Builds a parser. May throw exceptions when the workbook contains unrecoverable errors.
+	 * 
+	 * @return
+	 * @throws SheetCorruptedException
+	 *             when the excel file cannot be read
+	 * @throws TemplateMismatchException
+	 *             when the workbook does not match the expected template in an unrecoverable way.
+	 */
 	public ExcelWorkbookParser build() throws SheetCorruptedException, TemplateMismatchException {
 		InputStream is = null;
 		try {
@@ -70,7 +79,7 @@ class ExcelWorkbookParserBuilder {
 
 		LOGGER.trace("Metamodel is built, will create a parser based on the metamodel");
 
-		return new ExcelWorkbookParser();
+		return new ExcelWorkbookParser(wb, wmd);
 	}
 
 	/**
@@ -86,6 +95,12 @@ class ExcelWorkbookParserBuilder {
 		return wmd;
 	}
 
+	/**
+	 * Reads the workbook's sheets and append {@link WorksheetDef}s to the {@link WorkbookMetaData} accordingly.
+	 * 
+	 * @param wb
+	 * @param wmd
+	 */
 	@SuppressWarnings({ "rawtypes" })
 	private void processSheets(Workbook wb, WorkbookMetaData wmd) {
 		for (int iSheet = 0; iSheet < wb.getNumberOfSheets(); iSheet++) {
@@ -107,7 +122,12 @@ class ExcelWorkbookParserBuilder {
 		}
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	/**
+	 * Reads the given sheet and appends {@link ColumnDef} to the {@link WorksheetDef} accordingly.
+	 * 
+	 * @param wd
+	 * @param ws
+	 */
 	private void populateColumnDefs(WorksheetDef<?> wd, Sheet ws) {
 		Row headerRow = findHeaderRow(ws);
 
@@ -139,6 +159,13 @@ class ExcelWorkbookParserBuilder {
 		return headerRow;
 	}
 
+	/**
+	 * Opens a workbook from a stream. Potential IO errors are converted / softened into {@link SheetCorruptedException}
+	 * 
+	 * @param is
+	 * @return
+	 * @throws SheetCorruptedException
+	 */
 	private Workbook openWorkbook(InputStream is) throws SheetCorruptedException {
 		try {
 			return WorkbookFactory.create(is);

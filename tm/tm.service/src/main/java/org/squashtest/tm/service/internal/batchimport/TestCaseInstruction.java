@@ -25,13 +25,21 @@ import java.util.Map;
 import org.squashtest.tm.domain.testcase.TestCase;
 
 public class TestCaseInstruction extends Instruction {
-
-
 	private TestCaseTarget target; // indicates the "coordinates" of the test case  
 	
 	private TestCase testCase;
 	private Map<String, String> customFields;
 	
+	public TestCaseInstruction() {
+		super();
+	}
+
+	public TestCaseInstruction(TestCaseTarget target, TestCase testCase) {
+		super();
+		this.target = target;
+		this.testCase = testCase;
+	}
+
 	@Override
 	public LogTrain execute(Facility facility) {
 		// TODO Auto-generated method stub

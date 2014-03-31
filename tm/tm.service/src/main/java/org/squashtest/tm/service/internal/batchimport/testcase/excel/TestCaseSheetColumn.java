@@ -21,7 +21,11 @@
 
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.ColumnProcessingMode.*;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.ColumnProcessingMode.IGNORED;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.ColumnProcessingMode.MANDATORY;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.ColumnProcessingMode.OPTIONAL;
+
+import org.squashtest.tm.service.internal.batchimport.excel.CellValueCoercer;
 
 /**
  * Enumerates columns in the test case worksheet
@@ -57,6 +61,11 @@ public enum TestCaseSheetColumn implements TemplateColumn {
 	public final ColumnProcessingMode processingMode;
 
 	private TestCaseSheetColumn() {
+		this.header = name();
+		processingMode = OPTIONAL;
+	}
+
+	private TestCaseSheetColumn(CellValueCoercer<?> coercer) {
 		this.header = name();
 		processingMode = OPTIONAL;
 	}

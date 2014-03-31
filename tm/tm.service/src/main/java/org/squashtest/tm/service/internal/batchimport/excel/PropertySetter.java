@@ -19,14 +19,17 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.service.internal.batchimport.testcase.excel;
+package org.squashtest.tm.service.internal.batchimport.excel;
 
 /**
- * This holds a mismatch from the expected workbook template and the actual structure of the workbook.
+ * Describes a Command object which will set a property on an object.
  * 
  * @author Gregory Fouquet
- * 
+ * @param <VAL>
+ *            the type of the property to set
+ * @param <TARGET>
+ *            the type of the target (the object which holds the property)
  */
-public interface TemplateMismatch {
-
+public interface PropertySetter<VAL, TARGET> {
+	void set(VAL value, TARGET target);
 }

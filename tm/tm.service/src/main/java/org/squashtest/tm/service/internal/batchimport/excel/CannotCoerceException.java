@@ -19,14 +19,22 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.service.internal.batchimport.testcase.excel;
+package org.squashtest.tm.service.internal.batchimport.excel;
 
 /**
- * This holds a mismatch from the expected workbook template and the actual structure of the workbook.
- * 
  * @author Gregory Fouquet
- * 
+ *
  */
-public interface TemplateMismatch {
+public class CannotCoerceException extends RuntimeException {
 
+	private static final long serialVersionUID = 839887673080933124L;
+
+	public CannotCoerceException(Throwable cause) {
+		super(cause);
+	}
+
+	public CannotCoerceException(String message) {
+		super(message);
+	}
+	
 }

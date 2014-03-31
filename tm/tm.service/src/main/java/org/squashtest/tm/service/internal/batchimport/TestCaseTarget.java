@@ -62,14 +62,17 @@ public class TestCaseTarget extends Target{
 	}
 
 	@Override
+	// GENERATED:START
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = 47;
 		result = prime * result + ((path == null) ? 0 : path.hashCode());
 		return result;
 	}
+	// GENERATED:END
 
 	@Override
+	// GENERATED:START
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -85,6 +88,7 @@ public class TestCaseTarget extends Target{
 			return false;
 		return true;
 	}
+	// GENERATED:END
 
 
 	@Override

@@ -36,13 +36,22 @@ public class WorkbookMetaData {
 	private Map<TemplateWorksheet, WorksheetDef<? extends TemplateColumn>> worksheetDefs = new HashMap<TemplateWorksheet, WorksheetDef<? extends TemplateColumn>>();
 
 	/**
+	 * should not be called after build time / validation
+	 * 
 	 * @param worksheetDef
 	 */
-	public void addWorksheetDef(WorksheetDef<? extends TemplateColumn> worksheetDef) {
+	void addWorksheetDef(WorksheetDef<? extends TemplateColumn> worksheetDef) {
 		worksheetDefs.put(worksheetDef.getWorksheetType(), worksheetDef);
 
 	}
 
+	/**
+	 * Validates this {@link WorksheetDef}. Unrecoverable mismatches from template will throw an exception.
+	 * 
+	 * @throws TemplateMismatchException
+	 *             when the metadata does not match the expected template in an unrecoverable way. The exception holds
+	 *             all encountered mismatches.
+	 */
 	public void validate() throws TemplateMismatchException {
 		List<TemplateMismatch> mismatches = new ArrayList<TemplateMismatch>();
 
@@ -57,5 +66,16 @@ public class WorkbookMetaData {
 		if (mismatches.size() > 0) {
 			throw new TemplateMismatchException(mismatches);
 		}
+	}
+
+	/**
+	 * 
+	 * @param ws
+	 *            the ws template for which we want the ws def.
+	 * @return the {@link WorksheetDef} matching the given ws template or <code>null</code>
+	 */
+	@SuppressWarnings("unchecked")
+	public <COL extends TemplateColumn> WorksheetDef<COL> getWorksheetDef(TemplateWorksheet ws) {
+		return (WorksheetDef<COL>) worksheetDefs.get(ws);
 	}
 }

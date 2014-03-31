@@ -22,11 +22,11 @@
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
 /**
+ * Enumerates what we should do with a given column.
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
 public enum ColumnProcessingMode {
-	MANDATORY, 
-	OPTIONAL, 
-	IGNORED
+	MANDATORY, OPTIONAL, IGNORED
 }

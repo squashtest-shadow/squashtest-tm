@@ -22,11 +22,14 @@
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
 /**
+ * DEfinition of a column as found in an import workbook.
+ * 
  * @author Gregory Fouquet
  * 
  */
 public interface ColumnDef {
 	/**
+	 * The index of the column, i.e. its position in a row.
 	 * @return the index
 	 */
 	int getIndex();

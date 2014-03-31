@@ -19,42 +19,65 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.service.internal.batchimport.testcase.excel;
+package org.squashtest.tm.service.internal.batchimport.excel;
 
-import javax.validation.constraints.NotNull;
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+import spock.lang.Specification;
+import spock.lang.Unroll;
 
 /**
- * Definition of a custom field column.
- * 
  * @author Gregory Fouquet
- * 
+ *
  */
-public class CustomFieldColumnDef implements ColumnDef {
-	private final int index;
-	private final String code;
+class ReflectionMutatorSetterTest extends Specification {
+	class Foo {
+		private String bar = "default"
 
-	// private final TemplateCustomFieldParser parser ?
-
-	CustomFieldColumnDef(@NotNull String code, int index) {
-		super();
-		this.index = index;
-		this.code = code;
+		String getBar() {
+			bar
+		}
+		void setBar(String b) {
+			bar = b
+		}
 	}
 
-	@Override
-	/**
-	 * 
-	 * @see org.squashtest.tm.service.internal.batchimport.testcase.excel.ColumnDef#getIndex()
-	 */
-	public int getIndex() {
-		return index;
+	@Unroll
+	def "should set foo.bar to #value"() {
+		given:
+		Foo foo = new Foo()
+
+		when:
+		ReflectionMutatorSetter.forProperty("bar", String).set(value, foo)
+
+		then:
+		foo.bar == value
+
+		where:
+		value << ["baz", null]
 	}
 
-	/**
-	 * @return the code of the custom field.
-	 */
-	public String getCode() {
-		return code;
+	def "should set optional field"() {
+		given:
+		Foo foo = new Foo()
+
+		when:
+		ReflectionMutatorSetter.forOptionalProperty("bar").set("optional", foo)
+
+		then:
+		foo.bar == "optional"
 	}
 
+	def "should not set optional field to null value"() {
+		given:
+		Foo foo = new Foo()
+
+		when:
+		ReflectionMutatorSetter.forOptionalProperty("bar").set(null, foo)
+
+		then:
+		foo.bar == "default"
+	}
 }

@@ -22,13 +22,79 @@
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.validation.constraints.NotNull;
+
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.squashtest.tm.exception.SheetCorruptedException;
+import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
 
 /**
+ * Parses an excel import workbook and creates instructions.
+ * 
  * @author Gregory Fouquet
  * 
  */
 public class ExcelWorkbookParser {
-	public static final ExcelWorkbookParser createParser(File xls) {
+	/**
+	 * Factory method which should be used to create a parser.
+	 * 
+	 * @param xls
+	 * @return
+	 * @throws SheetCorruptedException
+	 *             when the excel file is unreadable
+	 * @throws TemplateMismatchException
+	 *             when the workbook does not match the template in an unrecoverable way.
+	 */
+	public static final ExcelWorkbookParser createParser(File xls) throws SheetCorruptedException,
+			TemplateMismatchException {
 		return new ExcelWorkbookParserBuilder(xls).build();
+	}
+
+	private final Workbook workbook;
+	private final WorkbookMetaData wmd;
+
+	private List<TestCaseInstruction> testCaseInstructions = new ArrayList<TestCaseInstruction>();
+
+	/**
+	 * Should be used by ExcelWorkbookParserBuilder only.
+	 * 
+	 * @param workbook
+	 * @param wmd
+	 */
+	ExcelWorkbookParser(@NotNull Workbook workbook, @NotNull WorkbookMetaData wmd) {
+		super();
+		this.workbook = workbook;
+		this.wmd = wmd;
+	}
+
+	/**
+	 * Parses the file and creates instructions accordingly.
+	 * 
+	 * @return
+	 */
+	public ExcelWorkbookParser parse() {
+		WorksheetDef<TestCaseSheetColumn> tcwd = wmd.getWorksheetDef(TemplateWorksheet.TEST_CASES_SHEET);
+		Sheet tcs = workbook.getSheet(tcwd.getSheetName());
+
+		TestCaseInstructionBuilder testCaseTargetBuilder = new TestCaseInstructionBuilder(tcwd);
+
+		for (int i = 1; i <= tcs.getLastRowNum(); i++) {
+			Row row = tcs.getRow(i);
+			testCaseInstructions.add(testCaseTargetBuilder.build(row));
+		}
+
+		return this;
+	}
+
+	/**
+	 * Releases resources hold by this parser.
+	 */
+	public void dispose() {
+		// TODO close the workbook
 	}
 }

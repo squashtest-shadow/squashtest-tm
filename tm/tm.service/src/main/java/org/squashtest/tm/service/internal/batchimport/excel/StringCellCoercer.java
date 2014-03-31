@@ -19,14 +19,33 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.service.internal.batchimport.testcase.excel;
+package org.squashtest.tm.service.internal.batchimport.excel;
+
+import org.apache.poi.ss.usermodel.Cell;
 
 /**
- * This holds a mismatch from the expected workbook template and the actual structure of the workbook.
+ * Coerces a plain string cell to a string
  * 
  * @author Gregory Fouquet
  * 
  */
-public interface TemplateMismatch {
+public class StringCellCoercer implements CellValueCoercer<String> {
+	public static final StringCellCoercer INSTANCE = new StringCellCoercer();
+
+	private StringCellCoercer() {
+		super();
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.internal.batchimport.excel.CellValueCoercer#coerce(org.apache.poi.ss.usermodel.Cell)
+	 */
+	@Override
+	public String coerce(Cell cell) {
+		try {
+			return cell.getStringCellValue();
+		} catch (IllegalStateException e) {
+			throw new CannotCoerceException(e);
+		}
+	}
 
 }

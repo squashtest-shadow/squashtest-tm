@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.validation.constraints.NotNull;
 
@@ -65,7 +66,11 @@ class WorksheetDef<COL extends TemplateColumn> {
 	}
 
 	/**
+	 * Validates this {@link WorksheetDef}. Unrecoverable mismatches from template will throw an exception.
 	 * 
+	 * @throws TemplateMismatchException
+	 *             when the metadata does not match the expected template in an unrecoverable way. The exception holds
+	 *             all encountered mismatches.
 	 */
 	void validate() throws TemplateMismatchException {
 		List<MissingMandatoryColumnMismatch> mmces = new ArrayList<MissingMandatoryColumnMismatch>();
@@ -93,6 +98,13 @@ class WorksheetDef<COL extends TemplateColumn> {
 		return parseCustomFieldHeader(header) != null;
 	}
 
+	/**
+	 * Adds a column. This should not be used after build time / validation.
+	 * 
+	 * @param header
+	 * @param colIndex
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	ColumnDef addColumnDef(String header, int colIndex) {
 		ColumnDef res = null;
@@ -119,5 +131,30 @@ class WorksheetDef<COL extends TemplateColumn> {
 
 	private String parseCustomFieldHeader(String header) {
 		return worksheetType.customFieldPattern.parseFieldCode(header);
+	}
+
+	public ColumnDef getColumnDef(COL col) {
+		return stdColumnDefs.get(col);
+	}
+
+	public List<StdColumnDef<COL>> getImportableColumnDefs() {
+		List<StdColumnDef<COL>> res = new ArrayList<StdColumnDef<COL>>(stdColumnDefs.size());
+		
+		for (Entry<COL, StdColumnDef<COL>> entry : stdColumnDefs.entrySet()) {
+			if (isMandatory(entry.getKey())) {
+				res.add(entry.getValue());
+			}
+		}
+		
+		return res;
+	}
+
+	/**
+	 * Name of the worksheet in the workbook
+	 * 
+	 * @return
+	 */
+	public String getSheetName() {
+		return worksheetType.sheetName;
 	}
 }

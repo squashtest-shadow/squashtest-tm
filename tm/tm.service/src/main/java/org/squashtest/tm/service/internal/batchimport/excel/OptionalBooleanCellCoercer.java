@@ -19,14 +19,29 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.service.internal.batchimport.testcase.excel;
+package org.squashtest.tm.service.internal.batchimport.excel;
+
+import org.apache.poi.ss.usermodel.Cell;
 
 /**
- * This holds a mismatch from the expected workbook template and the actual structure of the workbook.
+ * This class liberally coerces a cell into a Boolean. Blank cells are coerced to null.
  * 
  * @author Gregory Fouquet
  * 
  */
-public interface TemplateMismatch {
+public class OptionalBooleanCellCoercer extends LiberalBooleanCellCoercer {
+	public static final OptionalBooleanCellCoercer INSTANCE = new OptionalBooleanCellCoercer();
+
+	private OptionalBooleanCellCoercer() {
+		super();
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.internal.batchimport.excel.TypeBasedCellValueCoercer#coerceBlankCell(org.apache.poi.ss.usermodel.Cell)
+	 */
+	@Override
+	protected Boolean coerceBlankCell(Cell cell) {
+		return null;
+	}
 
 }

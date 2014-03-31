@@ -27,7 +27,7 @@ package org.squashtest.tm.service.internal.batchimport.testcase.excel;
  * @author Gregory Fouquet
  * 
  */
-public class StdColumnDef<COL extends TemplateColumn> implements ColumnDef {
+class StdColumnDef<COL extends TemplateColumn> implements ColumnDef {
 	private final COL type;
 	private final int index;
 

@@ -19,14 +19,56 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.service.internal.batchimport.testcase.excel;
+package org.squashtest.tm.service.internal.batchimport.excel;
+
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.PropertySetterRepository
+
+import spock.lang.Specification
+import spock.lang.Unroll;
 
 /**
- * This holds a mismatch from the expected workbook template and the actual structure of the workbook.
- * 
  * @author Gregory Fouquet
- * 
+ *
  */
-public interface TemplateMismatch {
+class ReflectionFieldSetterTest extends Specification {
+	class Foo {
+		private String bar = "default"
+	}
+	
+	@Unroll
+	def "should set foo.bar to #value"() {
+		given:
+		Foo foo = new Foo()
+		
+		when:
+		ReflectionFieldSetter.forField("bar").set(value, foo)
+		
+		then:
+		foo.bar == value
+		
+		where:
+		value << ["baz", null]
+	}
 
+	def "should set optional field"() {
+		given:
+		Foo foo = new Foo()
+		
+		when:
+		ReflectionFieldSetter.forOptionalField("bar").set("optional", foo)
+		
+		then:
+		foo.bar == "optional"
+	}
+	
+	def "should not set optional field to null value"() {
+		given:
+		Foo foo = new Foo()
+		
+		when:
+		ReflectionFieldSetter.forOptionalField("bar").set(null, foo)
+		
+		then:
+		foo.bar == "default"
+	}
 }

@@ -22,7 +22,6 @@ package org.squashtest.tm.web.internal.controller.testcase.export;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
