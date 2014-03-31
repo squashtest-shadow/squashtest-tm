@@ -79,7 +79,7 @@
 
 <script type="text/javascript">
   require([ "common" ], function() {
-      require(["jquery", 'workspace.event-bus', "squashtable"], function($, eventBus){
+      require(['jquery', 'workspace.event-bus', 'squashtable', 'jquery.squash.confirmdialog'], function($, eventBus){
       $(function() {
           var table = $("#verifying-test-cases-table").squashTable({
             'aaData' : ${json:serialize(model.aaData)}
