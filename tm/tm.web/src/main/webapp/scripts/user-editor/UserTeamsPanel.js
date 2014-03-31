@@ -127,8 +127,11 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 				if (name === null || name === undefined || name.length === 0) {
 					dialog.activate('no-selected-teams');
 					return false;
-				} else {
+				}else if (_.contains(addTeamDialog.find('#add-teams-input').autocomplete( "option", "source" ),name)) {
 					return true;
+				} else {
+					addTeamDialog.activate('invalid-team');
+					return false;
 				}
 			});
 
