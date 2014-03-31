@@ -152,10 +152,18 @@
 		@NamedQuery(name = "testCase.findAllLinkedToIteration", query = "select tc from IterationTestPlanItem item join item.referencedTestCase tc where tc.id in (:testCasesIds)"),
 		@NamedQuery(name = "TestCase.findAllTestCaseIdsByLibraries", query = "select tc.id from TestCase tc join tc.project p join p.testCaseLibrary tcl where tcl.id in (:libraryIds)"),
 		@NamedQuery(name = "testCase.remove", query = "delete TestCase tc where tc.id in (:nodeIds)"),
+		
 		//the two next ones are to be used together. The second one assumes that the calledIds are actually not called and wont perform checks to make sure of that.
 		//Look for this query in HibernateTestCaseDao for more details.
-		@NamedQuery(name = "testCase.findTestCasesHavingCallerDetails", query = "select distinct caller.id, caller.name, called.id, called.name from TestCase caller join caller.steps steps join steps.calledTestCase called where steps.class = CallTestStep and called.id in (:testCaseIds) group by caller, called"),
-		@NamedQuery(name = "testCase.findTestCasesHavingNoCallerDetails", query = "select nullif(1,1), nullif(1,1), called.id, called.name from TestCase called where called.id in (:nonCalledIds)"),
+		@NamedQuery(name = "testCase.findTestCasesHavingCallerDetails", query = "select new NodeReference(distinct caller.id, caller.name, false) as caller, "+
+																				"new NodeReference(called.id, called.name, false) as called" +
+																				"from TestCase caller join caller.steps steps join steps.calledTestCase called " +
+																				"where steps.class = CallTestStep and called.id in (:testCaseIds) group by caller, called"),
+																				
+		@NamedQuery(name = "testCase.findTestCasesHavingNoCallerDetails", query = "select nullif(1,1) as caller, " +
+																				  "new NodeReference(called.id, called.name, false) as called " +
+																				  "from TestCase called where called.id in (:nonCalledIds)"),
+																				  
 		@NamedQuery(name = "testCase.findCalledTestCaseOfCallSteps", query = "select distinct called.id from CallTestStep callStep join callStep.calledTestCase called where callStep.id in (:testStepsIds)"),
 		@NamedQuery(name = "testCase.countByVerifiedRequirementVersion", query = "select count(tc) from TestCase tc join tc.requirementVersionCoverages rvc join rvc.verifiedRequirementVersion vr where vr.id = :verifiedId"),
 		@NamedQuery(name = "testCase.findUnsortedAllByVerifiedRequirementVersion", query = "select tc from TestCase tc join tc.requirementVersionCoverages rvc join rvc.verifiedRequirementVersion vr where vr.id = :requirementVersionId"),
@@ -243,7 +251,8 @@
 			") "+
 			"and cfv.boundEntityType = 'TEST_STEP'"			
 		),
-		@NamedQuery(name = "testStep.findOrderedTypesByTcId", query="select case when st.class = ActionTestStep then 'ACTION' else 'CALL' end as steptype from TestCase tc join tc.steps st where tc.id = :tcId order by index(st)"),
+		@NamedQuery(name = "testStep.findBasicInfosByTcId", query="select case when st.class = ActionTestStep then 'ACTION' else 'CALL' end as steptype " +
+																	"from TestCase tc join tc.steps st where tc.id = :tcId order by index(st)"),
 		@NamedQuery(name = "testStep.findIdByTestCaseAndPosition", query="select st.id from TestCase tc join tc.steps st where tc.id = :tcId and index(st) = :position"),
 		@NamedQuery(name = "testStep.findByTestCaseAndPosition", query="select st from TestCase tc join tc.steps st where tc.id = :tcId and index(st) = :position"),		
 		

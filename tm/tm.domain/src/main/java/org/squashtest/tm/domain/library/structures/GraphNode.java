@@ -20,14 +20,14 @@
  */
 package org.squashtest.tm.domain.library.structures;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class GraphNode<IDENT, T extends GraphNode<IDENT, T>>{
 	
-	protected final List<T> parents = new ArrayList<T>();
-	protected final List<T> children = new ArrayList<T>();
+	protected final Set<T> parents = new HashSet<T>();
+	protected final Set<T> children = new HashSet<T>();
 	
 	
 
@@ -44,12 +44,12 @@ public class GraphNode<IDENT, T extends GraphNode<IDENT, T>>{
 	}
 
 
-	public List<T> getParents() {
+	public Set<T> getParents() {
 		return parents;
 	}
 
 
-	public List<T> getChildren() {
+	public Set<T> getChildren() {
 		return children;
 	}
 	
@@ -73,10 +73,32 @@ public class GraphNode<IDENT, T extends GraphNode<IDENT, T>>{
 		return graph;
 	}
 
-
-	public void setGraph(LibraryGraph<IDENT, T> graph) {
-		this.graph = graph;
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((key == null) ? 0 : key.hashCode());
+		return result;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		T other = (T) obj;
+		if (key == null) {
+			if (other.key != null)
+				return false;
+		} else if (!key.equals(other.key))
+			return false;
+		return true;
+	}
+	
+	
 
 	
 }

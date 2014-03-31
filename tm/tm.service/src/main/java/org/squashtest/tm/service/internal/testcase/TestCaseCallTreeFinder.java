@@ -20,8 +20,10 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -30,6 +32,9 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.library.NodeReference;
+import org.squashtest.tm.domain.library.structures.LibraryGraph;
+import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 
 /**
@@ -39,7 +44,9 @@ import org.squashtest.tm.service.internal.repository.TestCaseDao;
  */
 @Component
 public class TestCaseCallTreeFinder {
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseCallTreeFinder.class);
+	
 	@Inject
 	private TestCaseDao testCaseDao;
 	
@@ -96,6 +103,12 @@ public class TestCaseCallTreeFinder {
 	}
 	
 	
+	/**
+	 * Returns 
+	 * 
+	 * @param rootTcId
+	 * @return
+	 */
 	public Set<Long> getTestCaseCallers(Long rootTcId) {
 		
 		Set<Long> callerIds = new HashSet<Long>();
@@ -115,6 +128,73 @@ public class TestCaseCallTreeFinder {
 		}
 
 		return callerIds;
+	}
+	
+	/**
+	 * returns a graph of simple nodes representing the ancestry of the nodes in arguments. 
+	 * 
+	 * @param calledIds
+	 * @return
+	 */
+	public LibraryGraph<NodeReference, SimpleNode<NodeReference>> getCallerGraph(List<Long> calledIds){
+		
+		// remember which nodes were processed (so that we can spare less DB calls in the worst cases scenarios)
+		Set<Long> allIds = new HashSet<Long>();
+		allIds.addAll(calledIds);
+
+		// the temporary result variable
+		List<Object[]> allpairs = new ArrayList<Object[]>();
+
+		// a temporary buffer variable
+		List<Long> currentCalled = new LinkedList<Long>(calledIds);
+
+		// phase 1 : data collection
+		
+		while (!currentCalled.isEmpty()) {
+			
+			List<Object[]> currentPair = testCaseDao.findTestCasesHavingCallerDetails(currentCalled);
+
+			allpairs.addAll(currentPair);
+
+			/*
+			 * collect the caller ids in the currentPair for the next loop, with the following restrictions : 
+			 * 1) if the "caller" slot of the Object[] is not null, and 
+			 * 2) if that node was not already processed 
+			 * 
+			 * then we can add that id.
+			 */
+
+			List<Long> nextCalled = new LinkedList<Long>();
+
+			for (Object[] pair : currentPair) {
+				// no caller -> no need for further processing
+				if (pair[0] == null){
+					continue;
+				}
+				
+				NodeReference caller = (NodeReference)pair[0];
+				Long key = caller.getId();
+				if (! allIds.contains(key)) {
+					nextCalled.add(key);
+					allIds.add(key);
+				}
+				
+			}
+
+			currentCalled = nextCalled;
+
+		}
+		
+		// phase 2 : make that graph
+		
+		LibraryGraph<NodeReference, SimpleNode<NodeReference>> graph = new LibraryGraph<NodeReference, SimpleNode<NodeReference>>();
+		
+		for (Object[] pair : allpairs){
+			graph.addEdge(new SimpleNode<NodeReference>((NodeReference) pair[0]), new SimpleNode<NodeReference>((NodeReference)pair[1]));
+		}
+
+		return graph;
+		
 	}
 
 }

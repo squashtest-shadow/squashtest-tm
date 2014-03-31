@@ -21,29 +21,55 @@
 package org.squashtest.tm.service.internal.deletion;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
+import org.squashtest.tm.domain.library.NodeReference;
 import org.squashtest.tm.domain.library.structures.GraphNode;
 import org.squashtest.tm.domain.library.structures.LibraryGraph;
 
+
 public class LockedFileInferenceGraph extends
-		LibraryGraph<Long, LockedFileInferenceGraph.Node> {
+		LibraryGraph<NodeReference, LockedFileInferenceGraph.Node> {
 
 	private List<Long> candidatesToDeletion;
 
+	public void init(LibraryGraph<NodeReference, SimpleNode<NodeReference>> initialGraph){
+		
+		LinkedList<SimpleNode<NodeReference>> processing = 
+				new LinkedList<SimpleNode<NodeReference>>(initialGraph.getOrphans());
+		
+		Set<SimpleNode<NodeReference>> processed = new HashSet<SimpleNode<NodeReference>>();
+		
+		while (! processing.isEmpty()){
+			
+			SimpleNode<NodeReference> current = processing.pop();
+			Node newParent = new Node(current);
+			
+			for (SimpleNode<NodeReference> child : current.getChildren()){
+
+				addEdge(newParent, new Node(child));
+				
+				if (! processed.contains(child)){
+					processing.add(child);
+					processed.add(child);
+				}
+			}
+			
+			// in case the node had no children it might be useful to add itself again
+			addNode(newParent);
+		}
+		
+	}
+	
+	
+	
 	public void setCandidatesToDeletion(List<Long> candidates) {
 		this.candidatesToDeletion = candidates;
 	}
 
-	public void build(List<Object[]> rawData) {
-		// first phase : build the thing
-		for (Object[] data : rawData) {
-			Node parent = new Node((Long) data[0], (String) data[1], false);
-			Node child = new Node((Long) data[2], (String) data[3], false);
-			addNodes(parent, child);
-		}
-	}
 
 	public void reset() {
 		for (Node node : getNodes()) {
@@ -96,7 +122,7 @@ public class LockedFileInferenceGraph extends
 		reset();
 
 		for (Node orphan : getOrphans()) {
-			if (candidatesToDeletion.contains(orphan.getKey())) {
+			if (isCandidate(orphan)) {
 				orphan.setDeletable(true);
 				remainingNodes.add(orphan);
 			}
@@ -110,8 +136,7 @@ public class LockedFileInferenceGraph extends
 
 				child.increaseCounter();
 
-				boolean childShouldBeDeleted = candidatesToDeletion
-						.contains(child.getKey());
+				boolean childShouldBeDeleted = isCandidate(child);
 
 				if ((child.areAllParentsDeletable()) && (childShouldBeDeleted)) {
 					child.setDeletable(true);
@@ -152,8 +177,7 @@ public class LockedFileInferenceGraph extends
 		List<Node> lockedCandidates = new ArrayList<Node>();
 
 		for (Node node : getNodes()) {
-			if ((!node.isDeletable())
-					&& (candidatesToDeletion.contains(node.getKey()))) {
+			if (! node.isDeletable() && isCandidate(node)) {
 				lockedCandidates.add(node);
 			}
 		}
@@ -174,8 +198,7 @@ public class LockedFileInferenceGraph extends
 		List<Node> lockers = new ArrayList<Node>();
 
 		for (Node node : getNodes()) {
-			if ((!node.isDeletable())
-					&& (!candidatesToDeletion.contains(node.getKey()))) {
+			if ( ! node.isDeletable() && ! isCandidate(node)) {
 				lockers.add(node);
 			}
 		}
@@ -213,13 +236,24 @@ public class LockedFileInferenceGraph extends
 		}
 		return false;
 	}
+	
+	private boolean isCandidate (Node node){
+		return candidatesToDeletion.contains(node.getKey().getId());
+	}
 
-	static class Node extends GraphNode<Long, Node> {
+	static class Node extends GraphNode<NodeReference, Node> {
 
 		private Boolean deletable = true;
 		private Integer parentDeletableCount = 0;
-		private String name;
-
+		
+		public Node(NodeReference key){
+			super(key);
+		}
+		
+		public Node(SimpleNode<NodeReference> node){
+			super(node.getKey());
+		}
+		
 		public Boolean isDeletable() {
 			return deletable;
 		}
@@ -245,30 +279,9 @@ public class LockedFileInferenceGraph extends
 		}
 
 		public String getName() {
-			return name;
+			return key.getName();
 		}
 
-		public void setName(String name) {
-			this.name = name;
-		}
-
-		public Node() {
-			parentDeletableCount = 0;
-		}
-
-		public Node(Long key) {
-			super(key);
-		}
-
-		public Node(Long key, String name) {
-			this(key);
-			this.name = name;
-		}
-
-		public Node(Long key, String name, Boolean deletable) {
-			this(key, name);
-			this.deletable = deletable;
-		}
 
 	}
 }

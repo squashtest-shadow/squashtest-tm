@@ -30,14 +30,19 @@ import org.squashtest.tm.domain.library.structures.LibraryGraph;
 class TestCaseCallGraph extends LibraryGraph<TestCaseTarget, TestCaseCallGraph.Node> {
 	
 	
-	public void addNodes(TestCaseTarget parent, TestCaseTarget child){
-		addNodes(new Node(parent), new Node(child));
+	public boolean knowsNode(TestCaseTarget target){
+		return getNodes().contains(target);
 	}
 	
+	public void addNodes(TestCaseTarget parent, TestCaseTarget child){
+		addEdge(new Node(parent), new Node(child));
+	}
+	
+	
 	@Override
-	public void addNodes(Node parentData, Node childData) {
+	public void addEdge(Node parentData, Node childData) {
 		if (! wouldCreateCycle(parentData.getKey(), childData.getKey())){
-			super.addNodes(parentData, childData);
+			super.addEdge(parentData, childData);
 		}
 		else{
 			throw new IllegalArgumentException("");
@@ -65,7 +70,7 @@ class TestCaseCallGraph extends LibraryGraph<TestCaseTarget, TestCaseCallGraph.N
 	 * says whether that new edge would create a cycle in the graph.
 	 * 
 	 * Namely, if the src node of the edge is already transitively called
-	 * by the dest node.
+	 * by the dest node. In other words, is dest node an ancestor of src node ?
 	 * 
 	 * @return
 	 */

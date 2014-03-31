@@ -28,6 +28,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -48,6 +49,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
+import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
 
 
@@ -68,47 +70,71 @@ public class Model {
 	@Inject
 	private TestCaseDao tcDao;
 	
+	@Inject
+	private TestCaseCallTreeFinder calltreeFinder;
 	
-	private Map<String, TargetStatus> projectStatusByName = new HashMap<String, TargetStatus>();
 	
+	/* **********************************************************************************************************************************
+	 * 
+	 * The following properties are initialized all together during  init(List<TestCaseTarget>) :
+	 *
+	 * - testCaseStatusByTarget
+	 * - testCaseStepsByTarget
+	 * - projectStatusByName
+	 * - tcCufsPerProjectname
+	 * - stepCufsPerProjectname
+	 *
+	 ************************************************************************************************************************************ */
+
 	
-	/* ***********************************************************************************************************************************
-	 * 
-	 * testCaseStatusByTarget :
-	 * 
-	 * Maps a reference to a TestCase (namely a TestCaseTarget). It keeps track of its status (see ModelizedStatus) and 
-	 * possibly its id (when there is a concrete instance of it in the database). 
-	 * 
-	 * Because a test case might be referenced multiple time, once a test case is loaded in that map it'll stay there.  
-	 * 
-	 * ***********************************************************************************************************************************/
+	/* ------------------------
+	  
+	  testCaseStatusByTarget :
+	  
+	  Maps a reference to a TestCase (namely a TestCaseTarget). It keeps track of its status (see ModelizedStatus) and 
+	  possibly its id (when there is a concrete instance of it in the database). 
+	  
+	  Because a test case might be referenced multiple time, once a test case is loaded in that map it'll stay there.  
+	  
+	 --------------------------*/
 	private Map<TestCaseTarget, TargetStatus> testCaseStatusByTarget = new HashMap<TestCaseTarget, TargetStatus>();
 	
 	
-	/* ***********************************************************************************************************************************
-	 * 
-	 * stepStatusByTarget : 
-	 * 
-	 * Maps a test case (given its target) to a list of step models. We only care of their position (because they are identified by position) 
-	 * and their type (because we want to detect potential attempts of modifications of an action step whereas the target is actually a call step 
-	 * and conversely).
-	 * 
-	 * TODO : maybe implement it as a LRU cache that doesn't scrap step lists that were modified (ie "dirty" data that
-	 * 		differs from the DB content).
-	 * 
-	 * ***********************************************************************************************************************************/	
+	/* ------------------------
+	  
+	  stepStatusByTarget : 
+	  
+	  Maps a test case (given its target) to a list of step models. We only care of their position (because they are identified by position) 
+	  and their type (because we want to detect potential attempts of modifications of an action step whereas the target is actually a call step 
+	  and conversely).
+	  
+	  TODO : maybe implement it as a LRU cache that doesn't scrap step lists that were modified (ie "dirty" data that
+	  		differs from the DB content).
+	  
+	 ------------------------ */	
 	private Map<TestCaseTarget, List<StepType>> testCaseStepsByTarget = new HashMap<TestCaseTarget, List<StepType>>();
 	
-	
-	
-	
-	
+	private Map<String, TargetStatus> projectStatusByName = new HashMap<String, TargetStatus>();
+		
 	private MultiValueMap tcCufsPerProjectname = new MultiValueMap();
 	
 	private MultiValueMap stepCufsPerProjectname = new MultiValueMap();
 	
 	
+
+	/* *******************************************************************************************************
+	 * 
+	 * This property keeps track of the test case call graph. It is not initialized like the rest, it's rather 
+	 * initialized on demand (see isCalled or induceCycle)
+	 * 
+	 * ******************************************************************************************************/
+	private TestCaseCallGraph callGraph = new TestCaseCallGraph();
 	
+	
+	// ===============================================================================================
+	// ===============================================================================================
+	
+
 	// ************************** project access *****************************************************
 	
 	public TargetStatus getProjectStatus(String projectName){
@@ -190,8 +216,39 @@ public class Model {
 	 */
 	public boolean isCalled(TestCaseTarget target){
 		
-		//TODOOO
-		throw new UnsupportedOperationException("NOT IMPLEMENTED YET ");
+		if (! callGraph.knowsNode(target)){
+			initCallerGraph(target);
+		}
+
+		return callGraph.isCalled(target);
+	}
+
+	
+	// initialize from the database.
+	private void initCallerGraph(TestCaseTarget target){
+		
+		List<Long> processingIds = new LinkedList<Long>();
+		List<Long> nextIds = new LinkedList<Long>();
+		
+		try{
+			
+			long targetId = finderService.findNodeIdByPath(target.getPath());
+			processingIds.add(targetId);
+			
+			while (! processingIds.isEmpty()){
+				
+				List<Object[]> calldata = tcDao.findTestCasesHavingCallerDetails(processingIds);
+				
+				for (Object[] pair : calldata){
+					Long parentId = (Long)pair[0];
+					
+				}
+			}
+			
+		}
+		catch(NoSuchElementException ex){
+			return ;	// the target could not be found. It must be one of those new nodes being imported.
+		}
 	}
 
 	
@@ -541,12 +598,14 @@ public class Model {
 	}
 	
 	private List<StepType> loadStepTypes(Long tcId){
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("testStep.findOrderedTypesByTcId");
+		Query query = sessionFactory.getCurrentSession().getNamedQuery("testStep.findBasicInfosByTcId");
 		query.setParameter("tcId", tcId, LongType.INSTANCE);
-		List<String> types = query.list();
-		List<StepType> res = new ArrayList<StepType>(types.size());
-		for (String type : types){
-			res.add(StepType.valueOf(type));
+		List<String> stepdata = query.list();
+		
+		List<StepType> res = new ArrayList<StepType>(stepdata.size());
+		for (String strtype : stepdata){
+			res.add(StepType.valueOf(strtype));
+			
 		}
 		return res;
 	}	

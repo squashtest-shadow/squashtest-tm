@@ -20,9 +20,8 @@
  */
 package org.squashtest.tm.service.internal.batchimport
 
-import org.squashtest.tm.domain.library.structures.GraphNode;
-
 import spock.lang.Specification
+import org.squashtest.tm.service.internal.batchimport.TestCaseCallGraph.Node
 
 class TestCaseCallGraphTest extends Specification {
 
@@ -137,42 +136,46 @@ class TestCaseCallGraphTest extends Specification {
 		return new TestCaseTarget(name)
 	}
 	
+	def Node node(name){
+		return new Node(new TestCaseTarget(name))
+	}
+	
 	def TestCaseCallGraph createGraph(){
 		
 		def graph = new TestCaseCallGraph();
 		
 		// the graph says who phone calls who
-		def grandpa = new TestCaseTarget("/family/grandpa")
-		def grandma = new TestCaseTarget("/family/grandma")
+		def grandpa = node("/family/grandpa")
+		def grandma = node("/family/grandma")
 		
-		def charlie = new TestCaseTarget("/family/charlie")
-		def martha = new TestCaseTarget("/family/martha")
-		def kenny = new TestCaseTarget("/family/kenny")
-		def sally = new TestCaseTarget("/family/sally")
+		def charlie = node("/family/charlie")
+		def martha = node("/family/martha")
+		def kenny = node("/family/kenny")
+		def sally = node("/family/sally")
 		
-		def tommy = new TestCaseTarget("/family/tommy")
-		def ziggy = new TestCaseTarget("/family/ziggy")
-		def carole = new TestCaseTarget("/family/carole")
-		def jess = new TestCaseTarget("/family/jess")
-		def leonard = new TestCaseTarget("/family/leonard")
+		def tommy = node("/family/tommy")
+		def ziggy = node("/family/ziggy")
+		def carole = node("/family/carole")
+		def jess = node("/family/jess")
+		def leonard = node("/family/leonard")
 		
-		graph.addNodes grandpa, martha
-		graph.addNodes grandma, charlie
-		graph.addNodes grandpa, sally
-		graph.addNodes grandma, kenny
-		graph.addNodes grandpa, kenny
+		graph.addEdge grandpa, martha
+		graph.addEdge grandma, charlie
+		graph.addEdge grandpa, sally
+		graph.addEdge grandma, kenny
+		graph.addEdge grandpa, kenny
 		
-		graph.addNodes charlie, sally
+		graph.addEdge charlie, sally
 		
-		graph.addNodes charlie, tommy
-		graph.addNodes charlie, leonard
-		graph.addNodes martha, jess
-		graph.addNodes sally, carole
-		graph.addNodes kenny, ziggy
+		graph.addEdge charlie, tommy
+		graph.addEdge charlie, leonard
+		graph.addEdge martha, jess
+		graph.addEdge sally, carole
+		graph.addEdge kenny, ziggy
 		
-		graph.addNodes sally, martha
+		graph.addEdge sally, martha
 		
-		graph.addNodes jess, ziggy
+		graph.addEdge jess, ziggy
 		
 		return graph
 		 

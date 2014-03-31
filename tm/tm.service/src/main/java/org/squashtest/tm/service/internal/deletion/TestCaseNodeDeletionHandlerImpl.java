@@ -29,6 +29,9 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.library.NodeReference;
+import org.squashtest.tm.domain.library.structures.LibraryGraph;
+import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -45,6 +48,7 @@ import org.squashtest.tm.service.internal.repository.FolderDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDeletionDao;
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
+import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
 import org.squashtest.tm.service.internal.testcase.TestCaseNodeDeletionHandler;
 import org.squashtest.tm.service.testcase.DatasetModificationService;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
@@ -74,6 +78,9 @@ public class TestCaseNodeDeletionHandlerImpl extends
 	
 	@Inject
 	private PrivateCustomFieldValueService customValueService;
+	
+	@Inject
+	private TestCaseCallTreeFinder calltreeFinder;
 
 	@Override
 	protected FolderDao<TestCaseFolder, TestCaseLibraryNode> getFolderDao() {
@@ -109,7 +116,7 @@ public class TestCaseNodeDeletionHandlerImpl extends
 		List<Long> lockedCandidateIds = new ArrayList<Long>();
 
 		for (Node node : lockedCandidates) {
-			lockedCandidateIds.add(node.getKey());
+			lockedCandidateIds.add(node.getKey().getId());
 		}
 
 		return lockedCandidateIds;
@@ -251,60 +258,16 @@ public class TestCaseNodeDeletionHandlerImpl extends
 	}
 
 
-	/**
-	 * See {@link TestCaseDao#findTestCasesHavingCallerDetails(java.util.Collection)} for more information regarding
-	 * that mysterious Object[]
-	 * 
-	 */
-	protected List<Object[]> getAllCallerCalledPairs(List<Long> calledIds) {
-
-		List<Object[]> result = new ArrayList<Object[]>();
-
-		List<Long> currentCalled = new LinkedList<Long>(calledIds);
-
-		while (!currentCalled.isEmpty()) {
-			List<Object[]> currentPair = leafDao.findTestCasesHavingCallerDetails(currentCalled);
-
-			result.addAll(currentPair);
-
-			/*
-			 * collect the caller ids in the currentPair for the next loop, with the following restrictions : 1) if a
-			 * caller id is not null, 2) if that id ( x[0] ) wasn't part of the previous query (ie, treated already) 3)
-			 * if that id wasn't already included,
-			 * 
-			 * then we can add that id.
-			 */
-
-			List<Long> nextCalled = new LinkedList<Long>();
-
-			for (Object[] item : currentPair) {
-				Object key = item[0];
-				if ((key != null) && (!currentCalled.contains(key)) && (!nextCalled.contains(key))) {
-					nextCalled.add((Long) item[0]);
-				}
-			}
-
-			currentCalled = nextCalled;
-
-		}
-
-		return result;
-
-	}
-
 	protected LockedFileInferenceGraph initLockGraph(List<Long> candidatesId) {
 
-		// phase 1 : get the test case call dependencies
-		List<Object[]> callGraphDetails = getAllCallerCalledPairs(candidatesId);
+		LibraryGraph<NodeReference, SimpleNode<NodeReference>> calltree = calltreeFinder.getCallerGraph(candidatesId);
 
-		// phase 2 : build the graph of dependencies and resolve the locks.
 		LockedFileInferenceGraph graph = new LockedFileInferenceGraph();
-		graph.build(callGraphDetails);
+		graph.init(calltree);
 
 		graph.setCandidatesToDeletion(candidatesId);
 		graph.resolveLockedFiles();
 
-		// job done, let's return the result
 		return graph;
 	}
 	

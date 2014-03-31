@@ -21,28 +21,39 @@
 package org.squashtest.tm.domain.library.structures;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.Transformer;
 
+
+/**
+ * 
+ * 
+ * @author bsiri
+ *
+ * @param acts like a primary key. It should be immutable and should be sufficient to identify a node. String, Long, ou autre sont de bons exemples.
+ * @param <T>
+ */
 public class LibraryGraph<IDENT, T extends GraphNode<IDENT, T>> {
 
-	private List<T> nodes = new ArrayList<T>();
+	private Set<T> nodes = new HashSet<T>();
 	
 	
-	public List<T> getNodes(){
+	public Collection<T> getNodes(){
 		return nodes;
 	}
 	
-	public void setNodes( List<T> nodes){
-		this.nodes = nodes;
+	public void addNode(T node){
+		if (node != null && node.getKey() != null){
+			createIfNotExists(node);
+		}
 	}
-	
-
-	
 	
 	/**
 	 * will create either the parent or the child if they didn't exist already
@@ -52,7 +63,7 @@ public class LibraryGraph<IDENT, T extends GraphNode<IDENT, T>> {
 	 */
 	
 	
-	public void addNodes(T parentData, T childData){
+	public void addEdge(T parentData, T childData){
 		
 		T parent = null;
 		T child = null;
@@ -74,10 +85,11 @@ public class LibraryGraph<IDENT, T extends GraphNode<IDENT, T>> {
 		}
 		
 	}
-	
+		
 	
 	public T getNode(IDENT key){
 		 T toReturn = null;
+		 		 
 		if (key!=null){
 		
 			for (T node : nodes){
@@ -90,14 +102,13 @@ public class LibraryGraph<IDENT, T extends GraphNode<IDENT, T>> {
 	}
 	
 	private T createIfNotExists(T data){
-		T node = getNode(data.getKey());
 		
-		if (node==null){
-			node = data;
-			nodes.add(node);
+		if (! nodes.contains(data)){
+			nodes.add(data);
 		}
 		
-		return node;
+		return getNode(data.getKey());
+
 	}
 	
 	
@@ -194,5 +205,20 @@ public class LibraryGraph<IDENT, T extends GraphNode<IDENT, T>> {
 		return new GraphNodePair(parent, child);
 	}
 	
+	
+	
+	// ********* Simple class in which a node is solely represented by its key. The key is still whatever you need. **********
+	
+	public static final class SimpleNode<T> extends GraphNode<T, SimpleNode<T>>{
+
+		public SimpleNode() {
+			super();
+		}
+
+		public SimpleNode(T key) {
+			super(key);
+		}
+		
+	}
 	
 }

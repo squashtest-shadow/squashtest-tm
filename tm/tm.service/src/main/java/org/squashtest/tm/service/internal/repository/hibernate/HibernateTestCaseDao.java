@@ -49,6 +49,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.library.NodeReference;
 import org.squashtest.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -266,6 +267,8 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 
 	@Override
 	@SuppressWarnings("unchecked")
+	
+	
 	/*
 	 * implementation note : the following query could not use a right outer join. So we'll do the job manually. Hence
 	 * the weird things done below.
@@ -325,14 +328,15 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		}
 	}
 
+	// remember that the argument is a pair of (caller, called) of type NodeReference
 	private List<Long> getCalledDetailsIds(List<Object[]> calledDetails) {
 		List<Long> calledIds = new LinkedList<Long>();
 
-		for (Object[] called : calledDetails) {
-			Object item = called[2];
+		for (Object[] pair: calledDetails) {
+			NodeReference ref = (NodeReference) pair[1];
 
-			if (!calledIds.contains(item)) {
-				calledIds.add((Long) item);
+			if (!calledIds.contains(ref.getId())) {
+				calledIds.add(ref.getId());
 			}
 		}
 		return calledIds;

@@ -21,9 +21,13 @@
 package org.squashtest.tm.service.deletion
 
 
+import org.squashtest.tm.domain.library.NodeReference;
+import org.squashtest.tm.domain.library.structures.LibraryGraph;
+import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode;
 import org.squashtest.tm.service.internal.deletion.TestCaseNodeDeletionHandlerImpl;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
+import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
 
 import spock.lang.Specification;
 
@@ -31,31 +35,19 @@ class TestCaseNodeDeletionHandlerTest extends Specification {
 
 	TestCaseDao tcDao = Mock();
 	TestCaseFolderDao fDao = Mock();
+	TestCaseCallTreeFinder calltreeFinder = Mock();
 	
 	TestCaseNodeDeletionHandlerImpl handler = new TestCaseNodeDeletionHandlerImpl();
+	
 	
 	
 	def setup(){
 		handler.leafDao = tcDao;
 		handler.folderDao = fDao;
+		handler.calltreeFinder = calltreeFinder;
 	}
 	
-	
-	private toListOfArray(List<List<Object>> inputList){
-		def result = new ArrayList<Object[]>();
-		
-		for (List<Object> list  : inputList){
-			def array = new Object[4]
-			array[0]=list[0]
-			array[1]=list[1]
-			array[2]=list[2]
-			array[3]=list[3]
-			result.add(array)
-		}
-		
-		return result
-	}
-	
+
 	//if there is a groovy way to do that please tell me
 	private boolean containsValue(List<Object[]> list, Object[] value){
 		for (Object[] item : list){
@@ -72,72 +64,13 @@ class TestCaseNodeDeletionHandlerTest extends Specification {
 		
 	}
 	
-	
-	/*
-	 * structure : 1 calls 11 and 12,
-	 * 			   11 calls 21, 22 and 23,
-	 * 			   12 calls 22, 23 and 24
-	 * 			   23 calls 24
-	 * 			   
-	 * 	21, 22, 24 and 25 call no one.
-	 *  1 and 25 are called by no one.
-	 * 
-	 */
-	
-	def "should find all the caller/called pairs"(){
-		
-	
-		given :
-			def layer0 = [ [null, null, 1l, "1"].toArray() ]
-			def layer1 = [ [1l, "1", 11l, "11"].toArray(), [1l, "1", 12l, "12"].toArray()  ]
-			def layer2 = [ 
-							[11l, "11", 21l , "21"   ].toArray(), [11l, "11", 22l, "22"   ].toArray(), [11l, "11", 23l, "23"   ].toArray(),
-							[12l, "12", 22l , "22"   ].toArray(), [12l, "12", 23l, "23"   ].toArray(), [12l, "12", 24l, "24"   ].toArray(),
-							[23l, "23", 24l, "24"].toArray(),
-							[null, null, 25l, "25" ].toArray()
-						 ]
-		and :
-			tcDao.findTestCasesHavingCallerDetails( [21l, 22l, 23l, 24l, 25l]) >> layer2
-			tcDao.findTestCasesHavingCallerDetails( [11l, 12l]) >> layer1
-			tcDao.findTestCasesHavingCallerDetails( [1l]) >> layer0
-			
-		and :
-			def expected = layer0 + layer1 + layer2 
-			List.metaClass.containsValue = { Object[] arg -> return containsValue(delegate, arg)  }
-			
-		
-		when :
-			def result = handler.getAllCallerCalledPairs([21l, 22l, 23l, 24l, 25l])
-		
-		then :
-			 for (Object[] item in expected){
-				 result.containsValue(item)
-			 }
-		
-		
-	}
-	
-	
-	
 
-	
 	
 	
 	
 	def "should return a report about which nodes cannot be deleted and why (#1)"(){
 		given :
-			def layer0 = [ [null, null, 1l, "1"].toArray() ]
-			def layer1 = [ [1l, "1", 11l, "11"].toArray(), [1l, "1", 12l, "12"].toArray()  ]
-			def layer2 = [ 
-							[11l, "11", 21l , "21"   ].toArray(), [11l, "11", 22l, "22"   ].toArray(), [11l, "11", 23l, "23"   ].toArray(),
-							[12l, "12", 22l , "22"   ].toArray(), [12l, "12", 23l, "23"   ].toArray(), [12l, "12", 24l, "24"   ].toArray(),
-							[23l, "23", 24l, "24"].toArray(),
-							[null, null, 25l, "25" ].toArray()
-						 ]
-		and :
-			tcDao.findTestCasesHavingCallerDetails( [21l, 22l, 23l, 24l, 25l]) >> layer2
-			tcDao.findTestCasesHavingCallerDetails( [11l, 12l]) >> layer1
-			tcDao.findTestCasesHavingCallerDetails( [1l]) >> layer0
+			calltreeFinder.getCallerGraph(_) >> testGraph1()
 		
 		when :
 			def report = handler.previewLockedNodes([21l, 22l, 23l, 24l, 25l]);
@@ -152,12 +85,7 @@ class TestCaseNodeDeletionHandlerTest extends Specification {
 	
 	def "should return a report about which nodes cannot be deleted and why (#2)"(){
 		given :
-			def layer0 = [ [null, null, 1l, "1"].toArray() ]
-			def layer1 = [ [1l, "1", 11l, "11"].toArray(), [1l, "1", 12l, "12"].toArray()  ]
-
-		and :
-			tcDao.findTestCasesHavingCallerDetails( [11l, 12l]) >> layer1
-			tcDao.findTestCasesHavingCallerDetails( [1l]) >> layer0
+			calltreeFinder.getCallerGraph(_) >> testGraph2()
 		
 		when :
 			def report = handler.previewLockedNodes([11l, 12l]);
@@ -172,11 +100,7 @@ class TestCaseNodeDeletionHandlerTest extends Specification {
 	
 	def "should return no report about which nodes cannot be deleted and why (#3)"(){
 		given :
-			def layer0 = [ [null, null, 1l, "1"].toArray() ]
-			def layer1 = [ [1l, "1", 11l, "11"].toArray(), [1l, "1", 12l, "12"].toArray()  ]
-
-		and :
-			tcDao.findTestCasesHavingCallerDetails( [11l, 12l, 1l]) >> layer1 + layer0
+			calltreeFinder.getCallerGraph(_) >> testGraph2()
 		
 		when :
 			def report = handler.previewLockedNodes([11l, 12l, 1l]);
@@ -188,25 +112,14 @@ class TestCaseNodeDeletionHandlerTest extends Specification {
 	
 	def "should return really non deletable nodes (#1)"(){
 		given :
-			def layer0 = [ [null, null, 1l, "1"].toArray() ]
-			def layer1 = [ [1l, "1", 11l, "11"].toArray(), [1l, "1", 12l, "12"].toArray()  ]
-			def layer2 = [
-						[11l, "11", 21l , "21"   ].toArray(), [11l, "11", 22l, "22"   ].toArray(), [11l, "11", 23l, "23"   ].toArray(),
-						[12l, "12", 22l , "22"   ].toArray(), [12l, "12", 23l, "23"   ].toArray(), [12l, "12", 24l, "24"   ].toArray(),
-						[23l, "23", 24l, "24"].toArray(),
-						[null, null, 25l, "25" ].toArray()
-					 ]
-		and :
-			tcDao.findTestCasesHavingCallerDetails( [21l, 22l, 23l, 24l, 25l]) >> layer2
-			tcDao.findTestCasesHavingCallerDetails( [11l, 12l]) >> layer1
-			tcDao.findTestCasesHavingCallerDetails( [1l]) >> layer0
+			calltreeFinder.getCallerGraph(_) >> testGraph1()
 			
 			
 		when :
 			def reallyNonDeletables = handler.detectLockedNodes([21l, 22l, 23l, 24l, 25l])
 			
 		then :
-			reallyNonDeletables == [21l, 22l, 23l, 24l]
+			reallyNonDeletables as Set == [21l, 22l, 23l, 24l] as Set
 		
 		
 	}
@@ -214,29 +127,20 @@ class TestCaseNodeDeletionHandlerTest extends Specification {
 	
 	def "should return really non deletable nodes (#2)"(){
 		given :
-			def layer0 = [ [null, null, 1l, "1"].toArray() ]
-			def layer1 = [ [1l, "1", 11l, "11"].toArray(), [1l, "1", 12l, "12"].toArray()  ]
-
-		and :
-			tcDao.findTestCasesHavingCallerDetails( [11l, 12l]) >> layer1
-			tcDao.findTestCasesHavingCallerDetails( [1l]) >> layer0
+			calltreeFinder.getCallerGraph(_) >> testGraph2()
 		
 		when :
 			def reallyNonDeletables = handler.detectLockedNodes([11l, 12l])
 			
 		then :
-			reallyNonDeletables == [11l, 12l]
+			reallyNonDeletables as Set == [11l, 12l] as Set
 		
 	}
 	
 	
 	def "should return really non deletable nodes (#3)"(){
 		given :
-			def layer0 = [ [null, null, 1l, "1"].toArray() ]
-			def layer1 = [ [1l, "1", 11l, "11"].toArray(), [1l, "1", 12l, "12"].toArray()  ]
-
-		and :
-			tcDao.findTestCasesHavingCallerDetails( [11l, 12l, 1l]) >> layer1 + layer0
+			calltreeFinder.getCallerGraph(_) >> testGraph2()
 		
 		when :
 			def reallyNonDeletables = handler.detectLockedNodes([11l, 12l, 1l])
@@ -246,5 +150,49 @@ class TestCaseNodeDeletionHandlerTest extends Specification {
 	}
 
 	
+	// ********************************* private utilities
 	
+	NodeReference ref(id){
+		return new NodeReference(id, id?.toString(), false);
+	}
+	
+	SimpleNode node(id){
+		return (id != null) ? new SimpleNode(ref(id)) : null;
+	}
+	
+	
+	
+	LibraryGraph testGraph1(){
+
+		def layer0 = [ [ null, 1l ] ]
+		def layer1 = [ [ 1l, 11l ], [ 1l, 12l ]  ]
+		def layer2 = [
+						[ 11l, 21l ], [ 11l,  22l ], [ 11l, 23l ],
+						[ 12l, 22l ], [ 12l,  23l ], [ 12l, 24l ],
+						[ 23l, 24l ],
+						[ null, 25l ]
+					 ]
+		
+		def allData = layer0 + layer1 + layer2
+	
+
+		LibraryGraph g = new LibraryGraph()
+		allData.each{ g.addEdge(node(it[0]), node(it[1])) }
+		
+		return g
+	}
+	
+	LibraryGraph testGraph2(){
+		
+		def layer0 = [ [ null, 1l ] ]
+		def layer1 = [ [ 1l, 11l ], [ 1l, 12l ]  ]
+		
+		def allData = layer0 + layer1
+	
+
+		LibraryGraph g = new LibraryGraph()
+		allData.each{ g.addEdge(node(it[0]), node(it[1])) }
+		
+		return g
+	}
 }

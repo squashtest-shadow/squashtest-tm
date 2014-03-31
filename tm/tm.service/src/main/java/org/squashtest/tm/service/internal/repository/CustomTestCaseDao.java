@@ -27,6 +27,7 @@ import java.util.Map;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.library.NodeReference;
 import org.squashtest.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -88,11 +89,8 @@ public interface CustomTestCaseDao extends EntityDao<TestCase> {
 	List<Long> findTestCasesHavingCaller(Collection<Long> testCasesIds);
 
 	/**
-	 * Given a list of test case ids, returns a list of the following structure :
-	 * 
-	 * - caller id (null if no match), - caller name (null if no match), - called id, - called name
-	 * 
-	 * 
+	 * Given a list of test case ids, returns data about those test cases and which test cases called them.
+	 * The result is an array containing [ caller, called ] , both being of class {@link NodeReference}. 
 	 * 
 	 * Note that only first-level callers will be included if found, additional invokations will be needed to fetch all
 	 * the hierarchy.
