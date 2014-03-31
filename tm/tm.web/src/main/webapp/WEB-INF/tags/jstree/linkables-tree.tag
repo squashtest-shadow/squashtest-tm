@@ -37,7 +37,7 @@
 
 <div id="tree_element_menu" class="tree-top-toolbar">
 
-	<div class="button-group">
+	<div class="button-group snap-right">
 
 		<c:choose>
 		<c:when test="${workspaceType == 'test-case' && elementType != 'requirement'}">
