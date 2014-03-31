@@ -229,23 +229,21 @@
 
 		
 		<%----------------------------------- Custom Fields -----------------------------------------------%>
-		
-		<comp:toggle-panel id="iteration-custom-fields" 
-			titleKey="generics.customfieldvalues.title"
-			open="${hasCUF}">
-			<jsp:attribute name="body">
+
+      <comp:toggle-panel id="iteration-custom-fields" titleKey="generics.customfieldvalues.title" open="${hasCUF}">
+        <jsp:attribute name="body">
 				<div id="iteration-custom-fields-content" class="display-table">
-<c:if test="${hasCUF}">
-				<comp:waiting-pane/>
-</c:if>
+                <c:if test="${hasCUF}">
+			     	<comp:waiting-pane />
+                </c:if>
 				</div>
 			</jsp:attribute>
-		</comp:toggle-panel>
-		
-		
+      </comp:toggle-panel>
 
 
-		<%--------------------------- Planning section ------------------------------------%>
+
+
+      <%--------------------------- Planning section ------------------------------------%>
 
 		<comp:toggle-panel id="datepicker-panel"
 			titleKey="label.Planning"
