@@ -392,7 +392,7 @@ td.double-narrow{
 	background-image : url(../images/icon-user-active.png);  /** sprite-ref: sprites-icons; */
 }
 
-
+/* CONSIDER USING .disabled ON .sq-btn OR .sq-icon-btn */
 .disabled-transparent{
 	opacity : 0.35;
 	filter:alpha(opacity=35);	

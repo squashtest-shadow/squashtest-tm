@@ -20,11 +20,11 @@
  */
 define([ "jquery" ], function($) {
 	function disable($button){
-		$button.addClass("disabled-transparent");//IE8 specials
+		$button.addClass("disabled");//IE8 specials
 		$button.attr("disabled","disabled");
 	}
 	function enable($button){
-		$button.removeClass("disabled-transparent");//IE8 specials
+		$button.removeClass("disabled");//IE8 specials
 		$button.removeAttr("disabled");
 	}
 
