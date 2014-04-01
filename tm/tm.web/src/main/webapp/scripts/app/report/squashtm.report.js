@@ -412,15 +412,11 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 
 	function buildPerimeterCheckerByControl(selectedPicker) {
 		function hasProjectPicked(pp) {
-			return undefined !== _.find(pp, function(element) {
-				return element.selected === true;
-			});
+			return _.where(pp, { selected : true }).length !== 0;
 		}
 		
 		function hasEverythingSelected(rg) {
-			return undefined !== _.find(rg, function(element) {
-				return element.selected === true && element.value == "EVERYTHING";
-			});
+			return _.where(rg, { selected : true, value : "EVERYTHING"	}).length !== 0;
 		}
 		
 		function hasNodePicked(tp) {
