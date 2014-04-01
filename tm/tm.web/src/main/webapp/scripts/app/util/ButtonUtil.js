@@ -21,11 +21,11 @@
 define([ "jquery" ], function($) {
 	function disable($button){
 		$button.addClass("disabled");//IE8 specials
-		$button.attr("disabled","disabled");
+		$button.prop("disabled", true);
 	}
 	function enable($button){
 		$button.removeClass("disabled");//IE8 specials
-		$button.removeAttr("disabled");
+		$button.prop("disabled", false);
 	}
 
 	return {
