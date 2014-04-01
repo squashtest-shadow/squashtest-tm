@@ -32,6 +32,8 @@ import org.squashtest.csp.tools.unittest.assertions.ListAssertions
 import org.squashtest.tm.core.foundation.collection.Paging
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.core.foundation.collection.SortOrder;
+import org.squashtest.tm.domain.NamedReference;
+import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode;
 import org.squashtest.tm.domain.requirement.RequirementCategory
 import org.squashtest.tm.domain.requirement.RequirementCriticality
 import org.squashtest.tm.domain.requirement.RequirementSearchCriteria
@@ -178,6 +180,13 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		testCaseList.collect{it.name} == resultNames
 	}
 
+	
+	private nodepair(callerid, callername, calledid, calledname){
+		[
+			new SimpleNode(new NamedReference(callerid, callername)),
+			new SimpleNode(new NamedReference(calledid, calledname))
+		] as Object[]
+	}
 
 	@DataSet("HibernateTestCaseDaoIT.should find the calling test cases.xml")
 	def "should find the id and names of pairs of caller and called test cases"(){
@@ -192,42 +201,42 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 
 
 
-		def array1 = [
-			101,
+		def array1 = nodepair(
+			101l,
 			"first test case",
-			50,
+			50l,
 			"other bottom test case"
-		].toArray();
-		def array2 = [
-			102,
+		);
+		def array2 = nodepair(
+			102l,
 			"second test case",
-			50,
+			50l,
 			"other bottom test case"
-		].toArray();
-		def array3 = [
-			103,
+		);
+		def array3 = nodepair(
+			103l,
 			"third test case",
-			50,
+			50l,
 			"other bottom test case"
-		].toArray();
-		def array4 = [
-			101,
+		);
+		def array4 = nodepair(
+			101l,
 			"first test case",
-			100,
+			100l,
 			"bottom test case"
-		].toArray();
-		def array5 = [
-			102,
+		);
+		def array5 = nodepair(
+			102l,
 			"second test case",
-			100,
+			100l,
 			"bottom test case"
-		].toArray();
-		def array6 = [
-			103,
+		);
+		def array6 = nodepair(
+			103l,
 			"third test case",
-			100,
+			100l,
 			"bottom test case"
-		].toArray();
+		);
 
 
 		result.containsValue (array1)
@@ -251,24 +260,24 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 
 
 
-		def array1 = [
+		def array1 = nodepair(
 			null,
 			null,
-			101,
+			101l,
 			"first test case"
-		].toArray();
-		def array2 = [
+		);
+		def array2 = nodepair(
 			null,
 			null,
-			102,
+			102l,
 			"second test case"
-		].toArray();
-		def array3 = [
+		);
+		def array3 = nodepair(
 			null,
 			null,
-			103,
+			103l,
 			"third test case"
-		].toArray();
+		);
 
 
 		result.containsValue (array1)
@@ -302,7 +311,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		for (Object[] item : list){
 			boolean match = true;
 			for (int i=0;i<value.length;i++){
-				if ( item[i] != value[i]){
+				if ( item[i].equals(value[i])){
 					match=false;
 					break;
 				}

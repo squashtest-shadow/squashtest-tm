@@ -32,7 +32,7 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.library.NodeReference;
+import org.squashtest.tm.domain.NamedReference;
 import org.squashtest.tm.domain.library.structures.LibraryGraph;
 import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
@@ -136,7 +136,7 @@ public class TestCaseCallTreeFinder {
 	 * @param calledIds
 	 * @return
 	 */
-	public LibraryGraph<NodeReference, SimpleNode<NodeReference>> getCallerGraph(List<Long> calledIds){
+	public LibraryGraph<NamedReference, SimpleNode<NamedReference>> getCallerGraph(List<Long> calledIds){
 		
 		// remember which nodes were processed (so that we can spare less DB calls in the worst cases scenarios)
 		Set<Long> allIds = new HashSet<Long>();
@@ -172,7 +172,7 @@ public class TestCaseCallTreeFinder {
 					continue;
 				}
 				
-				NodeReference caller = (NodeReference)pair[0];
+				NamedReference caller = (NamedReference)pair[0];
 				Long key = caller.getId();
 				if (! allIds.contains(key)) {
 					nextCalled.add(key);
@@ -187,10 +187,10 @@ public class TestCaseCallTreeFinder {
 		
 		// phase 2 : make that graph
 		
-		LibraryGraph<NodeReference, SimpleNode<NodeReference>> graph = new LibraryGraph<NodeReference, SimpleNode<NodeReference>>();
+		LibraryGraph<NamedReference, SimpleNode<NamedReference>> graph = new LibraryGraph<NamedReference, SimpleNode<NamedReference>>();
 		
 		for (Object[] pair : allpairs){
-			graph.addEdge(new SimpleNode<NodeReference>((NodeReference) pair[0]), new SimpleNode<NodeReference>((NodeReference)pair[1]));
+			graph.addEdge(new SimpleNode<NamedReference>((NamedReference) pair[0]), new SimpleNode<NamedReference>((NamedReference)pair[1]));
 		}
 
 		return graph;

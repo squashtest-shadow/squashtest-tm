@@ -26,29 +26,29 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.squashtest.tm.domain.library.NodeReference;
+import org.squashtest.tm.domain.NamedReference;
 import org.squashtest.tm.domain.library.structures.GraphNode;
 import org.squashtest.tm.domain.library.structures.LibraryGraph;
 
 
 public class LockedFileInferenceGraph extends
-		LibraryGraph<NodeReference, LockedFileInferenceGraph.Node> {
+		LibraryGraph<NamedReference, LockedFileInferenceGraph.Node> {
 
 	private List<Long> candidatesToDeletion;
 
-	public void init(LibraryGraph<NodeReference, SimpleNode<NodeReference>> initialGraph){
+	public void init(LibraryGraph<NamedReference, SimpleNode<NamedReference>> initialGraph){
 		
-		LinkedList<SimpleNode<NodeReference>> processing = 
-				new LinkedList<SimpleNode<NodeReference>>(initialGraph.getOrphans());
+		LinkedList<SimpleNode<NamedReference>> processing = 
+				new LinkedList<SimpleNode<NamedReference>>(initialGraph.getOrphans());
 		
-		Set<SimpleNode<NodeReference>> processed = new HashSet<SimpleNode<NodeReference>>();
+		Set<SimpleNode<NamedReference>> processed = new HashSet<SimpleNode<NamedReference>>();
 		
 		while (! processing.isEmpty()){
 			
-			SimpleNode<NodeReference> current = processing.pop();
+			SimpleNode<NamedReference> current = processing.pop();
 			Node newParent = new Node(current);
 			
-			for (SimpleNode<NodeReference> child : current.getChildren()){
+			for (SimpleNode<NamedReference> child : current.getChildren()){
 
 				addEdge(newParent, new Node(child));
 				
@@ -241,16 +241,16 @@ public class LockedFileInferenceGraph extends
 		return candidatesToDeletion.contains(node.getKey().getId());
 	}
 
-	static class Node extends GraphNode<NodeReference, Node> {
+	static class Node extends GraphNode<NamedReference, Node> {
 
 		private Boolean deletable = true;
 		private Integer parentDeletableCount = 0;
 		
-		public Node(NodeReference key){
+		public Node(NamedReference key){
 			super(key);
 		}
 		
-		public Node(SimpleNode<NodeReference> node){
+		public Node(SimpleNode<NamedReference> node){
 			super(node.getKey());
 		}
 		

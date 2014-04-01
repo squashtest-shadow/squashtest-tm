@@ -21,15 +21,15 @@
 package org.squashtest.tm.service.deletion
 
 
-import org.squashtest.tm.domain.library.NodeReference;
-import org.squashtest.tm.domain.library.structures.LibraryGraph;
-import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode;
-import org.squashtest.tm.service.internal.deletion.TestCaseNodeDeletionHandlerImpl;
-import org.squashtest.tm.service.internal.repository.TestCaseDao;
-import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
-import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
+import org.squashtest.tm.domain.NamedReference;
+import org.squashtest.tm.domain.library.structures.LibraryGraph
+import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode
+import org.squashtest.tm.service.internal.deletion.TestCaseNodeDeletionHandlerImpl
+import org.squashtest.tm.service.internal.repository.TestCaseDao
+import org.squashtest.tm.service.internal.repository.TestCaseFolderDao
+import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 class TestCaseNodeDeletionHandlerTest extends Specification {
 
@@ -152,8 +152,8 @@ class TestCaseNodeDeletionHandlerTest extends Specification {
 	
 	// ********************************* private utilities
 	
-	NodeReference ref(id){
-		return new NodeReference(id, id?.toString(), false);
+	NamedReference ref(id){
+		return new NamedReference(id, id?.toString());
 	}
 	
 	SimpleNode node(id){

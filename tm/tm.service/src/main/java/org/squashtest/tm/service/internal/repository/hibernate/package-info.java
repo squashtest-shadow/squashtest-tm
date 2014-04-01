@@ -155,14 +155,14 @@
 		
 		//the two next ones are to be used together. The second one assumes that the calledIds are actually not called and wont perform checks to make sure of that.
 		//Look for this query in HibernateTestCaseDao for more details.
-		@NamedQuery(name = "testCase.findTestCasesHavingCallerDetails", query = "select new NodeReference(distinct caller.id, caller.name, false) as caller, "+
-																				"new NodeReference(called.id, called.name, false) as called" +
-																				"from TestCase caller join caller.steps steps join steps.calledTestCase called " +
-																				"where steps.class = CallTestStep and called.id in (:testCaseIds) group by caller, called"),
+		@NamedQuery(name = "testCase.findTestCasesHavingCallerDetails", 
+			query = "select new org.squashtest.tm.service.internal.repository.hibernate.HibernateTestCaseDao$NamedReferencePair(caller.id, caller.name, called.id, called.name) "+
+					"from TestCase caller join caller.steps steps join steps.calledTestCase called " +
+					"where steps.class = CallTestStep and called.id in (:testCaseIds) group by caller, called"),
 																				
-		@NamedQuery(name = "testCase.findTestCasesHavingNoCallerDetails", query = "select nullif(1,1) as caller, " +
-																				  "new NodeReference(called.id, called.name, false) as called " +
-																				  "from TestCase called where called.id in (:nonCalledIds)"),
+		@NamedQuery(name = "testCase.findTestCasesHavingNoCallerDetails", 
+			query = "select new org.squashtest.tm.service.internal.repository.hibernate.HibernateTestCaseDao$NamedReferencePair(called.id, called.name) "+
+					"from TestCase called where called.id in (:nonCalledIds)"),
 																				  
 		@NamedQuery(name = "testCase.findCalledTestCaseOfCallSteps", query = "select distinct called.id from CallTestStep callStep join callStep.calledTestCase called where callStep.id in (:testStepsIds)"),
 		@NamedQuery(name = "testCase.countByVerifiedRequirementVersion", query = "select count(tc) from TestCase tc join tc.requirementVersionCoverages rvc join rvc.verifiedRequirementVersion vr where vr.id = :verifiedId"),

@@ -28,8 +28,8 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.NamedReference;
 import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.library.NodeReference;
 import org.squashtest.tm.domain.library.structures.LibraryGraph;
 import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
@@ -260,7 +260,7 @@ public class TestCaseNodeDeletionHandlerImpl extends
 
 	protected LockedFileInferenceGraph initLockGraph(List<Long> candidatesId) {
 
-		LibraryGraph<NodeReference, SimpleNode<NodeReference>> calltree = calltreeFinder.getCallerGraph(candidatesId);
+		LibraryGraph<NamedReference, SimpleNode<NamedReference>> calltree = calltreeFinder.getCallerGraph(candidatesId);
 
 		LockedFileInferenceGraph graph = new LockedFileInferenceGraph();
 		graph.init(calltree);

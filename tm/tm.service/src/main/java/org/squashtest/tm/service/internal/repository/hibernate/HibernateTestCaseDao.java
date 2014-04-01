@@ -48,8 +48,8 @@ import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.IdentifiedUtil;
+import org.squashtest.tm.domain.NamedReference;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.library.NodeReference;
 import org.squashtest.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -288,7 +288,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 			}
 		};
 
-		List<Object[]> calledDetails = executeListNamedQuery("testCase.findTestCasesHavingCallerDetails",
+		List<NamedReferencePair> calledDetails = executeListNamedQuery("testCase.findTestCasesHavingCallerDetails",
 				firstQueryCallback);
 
 		// now we must fetch the same informations for those who aren't, so we can emulate the right outer join we need
@@ -296,21 +296,28 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		// queries.
 		List<Long> calledIds = getCalledDetailsIds(calledDetails);
 
-		if (calledIds.size() == testCaseIds.size()) {
-			return calledDetails;
+		if (calledIds.size() != testCaseIds.size()) {
+		
+	
+			// otherwise a second query is necessary.
+			final List<Long> nonCalledIds = new LinkedList<Long>(CollectionUtils.subtract(testCaseIds, calledIds));
+	
+			SetQueryParametersCallback secondQueryCallback = new SetNonCalledIdsParameter(nonCalledIds);
+	
+			List<NamedReferencePair> nonCalledDetails = executeListNamedQuery("testCase.findTestCasesHavingNoCallerDetails",
+					secondQueryCallback);
+	
+			// now we can return
+			calledDetails.addAll(nonCalledDetails);
 		}
-
-		// otherwise a second query is necessary.
-		final List<Long> nonCalledIds = new LinkedList<Long>(CollectionUtils.subtract(testCaseIds, calledIds));
-
-		SetQueryParametersCallback secondQueryCallback = new SetNonCalledIdsParameter(nonCalledIds);
-
-		List<Object[]> nonCalledDetails = executeListNamedQuery("testCase.findTestCasesHavingNoCallerDetails",
-				secondQueryCallback);
-
-		// now we can return
-		calledDetails.addAll(nonCalledDetails);
-		return calledDetails;
+		
+		// last : transform the result as specified by the contract
+		List<Object[]> result = new ArrayList<Object[]>(calledDetails.size());
+		for (NamedReferencePair pair : calledDetails){
+			result.add(new Object[]{ pair.getCaller(), pair.getCalled()} );
+		}
+		
+		return result;
 
 	}
 
@@ -328,12 +335,12 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		}
 	}
 
-	// remember that the argument is a pair of (caller, called) of type NodeReference
-	private List<Long> getCalledDetailsIds(List<Object[]> calledDetails) {
+	// remember that the argument is a pair of (caller, called) of type NamedReference
+	private List<Long> getCalledDetailsIds(List<NamedReferencePair> calledDetails) {
 		List<Long> calledIds = new LinkedList<Long>();
 
-		for (Object[] pair: calledDetails) {
-			NodeReference ref = (NodeReference) pair[1];
+		for (NamedReferencePair pair: calledDetails) {
+			NamedReference ref = pair.getCalled();
 
 			if (!calledIds.contains(ref.getId())) {
 				calledIds.add(ref.getId());
@@ -684,6 +691,46 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 			resultMap.put(id, imp);
 		}
 		return resultMap;
+	}
+	
+	
+	public static final class NamedReferencePair{
+		
+		private NamedReference caller;
+		private NamedReference called;
+	
+		public NamedReferencePair(){
+			
+		}
+		
+		public NamedReferencePair(Long calledId, String calledName){
+
+			if (calledId != null){
+				called = new NamedReference(calledId, calledName);
+			}
+		}
+		
+		public NamedReferencePair(Long callerId, String callerName, 
+						  Long calledId, String calledName){
+			
+			if (callerId != null){			
+				caller = new NamedReference(callerId, callerName);
+			}
+			if (calledId != null){
+				called = new NamedReference(calledId, calledName);
+			}
+		}
+
+		public NamedReference getCaller() {
+			return caller;
+		}
+
+		public NamedReference getCalled() {
+			return called;
+		}
+		
+		
+		
 	}
 	
 }

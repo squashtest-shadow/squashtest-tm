@@ -20,11 +20,10 @@
  */
 package org.squashtest.tm.service.deletion
 
-import org.squashtest.tm.domain.library.NodeReference
+import org.squashtest.tm.domain.NamedReference;
 import org.squashtest.tm.domain.library.structures.LibraryGraph
-import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode;
+import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode
 import org.squashtest.tm.service.internal.deletion.LockedFileInferenceGraph
-import org.squashtest.tm.service.internal.deletion.LockedFileInferenceGraph.Node
 
 import spock.lang.Specification
 
@@ -266,8 +265,8 @@ class LockedFileInferenceGraphTest extends Specification {
 	
 	// ********************************* private utilities
 	
-	NodeReference ref(id){
-		return new NodeReference(id, id?.toString(), false);
+	NamedReference ref(id){
+		return new NamedReference(id, id?.toString());
 	}
 	
 	SimpleNode node(id){
