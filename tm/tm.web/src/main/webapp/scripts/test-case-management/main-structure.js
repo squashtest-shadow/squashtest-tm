@@ -107,6 +107,6 @@ define(["jquery",
 	
 	return {
 		init : init
-	}
+	};
 	
 });
