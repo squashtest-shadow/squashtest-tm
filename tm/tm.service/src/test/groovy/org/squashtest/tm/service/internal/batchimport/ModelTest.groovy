@@ -22,13 +22,17 @@ package org.squashtest.tm.service.internal.batchimport
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.SessionFactory;
+import org.squashtest.tm.domain.NamedReference;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
+import org.squashtest.tm.domain.library.structures.LibraryGraph;
+import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.internal.batchimport.Model.Existence;
 import org.squashtest.tm.service.internal.batchimport.Model.StepType;
 import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
+import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
 import org.hibernate.Query;
 import spock.lang.Specification;
@@ -41,6 +45,7 @@ public class ModelTest extends Specification{
 	SessionFactory factory;
 	CustomFieldDao cufDao;
 	TestCaseLibraryFinderService finderService;
+	TestCaseCallTreeFinder calltreeFinder 
 	
 	Model model;
 	
@@ -49,11 +54,15 @@ public class ModelTest extends Specification{
 		factory = Mock(SessionFactory)
 		cufDao = Mock(CustomFieldDao)
 		finderService = Mock(TestCaseLibraryFinderService)
+		calltreeFinder = Mock(TestCaseCallTreeFinder)
+		
 		
 		model = new Model()
 		model.sessionFactory = factory
 		model.cufDao = cufDao
 		model.finderService = finderService
+		model.calltreeFinder = calltreeFinder
+		model.callGraph = new TestCaseCallGraph()
 		
 	}
 	
@@ -318,6 +327,9 @@ public class ModelTest extends Specification{
 			model.testCaseStatusByTarget[ctc] = new TargetStatus(EXISTS, 20l)
 			model.testCaseStepsByTarget[tc] = [StepType.ACTION, StepType.ACTION, StepType.ACTION]
 		
+		and :
+			calltreeFinder.getCallerGraph(_) >> new LibraryGraph()
+			finderService.getPathsAsString(_) >> []
 			
 		when :
 			model.addCallStep(st, ctc)
@@ -338,6 +350,9 @@ public class ModelTest extends Specification{
 			model.testCaseStatusByTarget[ctc] = new TargetStatus(EXISTS, 20l)
 			model.testCaseStepsByTarget[tc] = [StepType.ACTION, StepType.ACTION, StepType.ACTION]
 		
+		and :
+			calltreeFinder.getCallerGraph(_) >> new LibraryGraph()
+			finderService.getPathsAsString(_) >> []
 			
 		when :
 			model.addCallStep(st, ctc)
@@ -358,6 +373,9 @@ public class ModelTest extends Specification{
 			model.testCaseStatusByTarget[ctc] = new TargetStatus(EXISTS, 20l)
 			model.testCaseStepsByTarget[tc] = [StepType.ACTION, StepType.ACTION, StepType.ACTION]
 		
+		and :
+			calltreeFinder.getCallerGraph(_) >> new LibraryGraph()
+			finderService.getPathsAsString(_) >> []
 			
 		when :
 			model.addCallStep(st, ctc)
@@ -399,6 +417,60 @@ public class ModelTest extends Specification{
 		then :
 			thrown IllegalArgumentException
 		
+	}
+	
+	// ************************* call graph ****************************
+	
+	def "should replace names with path"(){
+		
+		given :
+			def nodes = [
+				new SimpleNode<NamedReference>(new NamedReference(1l, "bob")),
+				new SimpleNode<NamedReference>(new NamedReference(2l, "robert")),
+				new SimpleNode<NamedReference>(new NamedReference(3l, "mike"))
+			]
+		
+		and :
+			finderService.getPathsAsString([1l, 2l, 3l]) >> ["/project/bob", "/project/folder/robert", "/project/other/mike"]
+					
+		when :
+			model.swapNameForPath(nodes)
+		
+		then :
+			nodes.collect{ return [it.key.id, it.key.name] } as Set	== [
+					[1l, "/project/bob"],
+					[2l, "/project/folder/robert"],
+					[3l, "/project/other/mike"],
+				] as Set
+	}
+	
+	
+	def "should merge the call graph of a new node into an existing call graph"(){
+		
+		given :
+			model.callGraph = Mock(TestCaseCallGraph)
+			
+		and :
+			LibraryGraph fromdb = new LibraryGraph()
+			
+			def darry = new SimpleNode(new NamedReference(4l, "darry"))
+			def srobert = new SimpleNode(new NamedReference(3l, "robert"))
+			
+			fromdb.addEdge srobert, darry
+			calltreeFinder.getCallerGraph(_) >> fromdb
+			
+		and : 
+			finderService.findNodeIdByPath("/project/darry") >> 4l
+			finderService.getPathsAsString([3l, 4l]) >> ["/project/robert", "/project/darry" ]
+			finderService.getPathsAsString([4l, 3l]) >> ["/project/darry", "/project/robert" ]
+			
+			
+		when :
+			model.initCallerGraph(new TestCaseTarget("/project"))
+		
+		then :
+			fromdb.nodes.collect { it.key.name } as Set == ["/project/robert", "/project/darry" ] as Set
+			1 * model.callGraph.addGraph(fromdb)
 	}
 	
 	

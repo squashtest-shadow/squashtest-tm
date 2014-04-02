@@ -21,10 +21,8 @@
 package org.squashtest.tm.service.internal.deletion;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import org.squashtest.tm.domain.NamedReference;
 import org.squashtest.tm.domain.library.structures.GraphNode;
@@ -36,34 +34,17 @@ public class LockedFileInferenceGraph extends
 
 	private List<Long> candidatesToDeletion;
 
+	
 	public void init(LibraryGraph<NamedReference, SimpleNode<NamedReference>> initialGraph){
 		
-		LinkedList<SimpleNode<NamedReference>> processing = 
-				new LinkedList<SimpleNode<NamedReference>>(initialGraph.getOrphans());
-		
-		Set<SimpleNode<NamedReference>> processed = new HashSet<SimpleNode<NamedReference>>();
-		
-		while (! processing.isEmpty()){
-			
-			SimpleNode<NamedReference> current = processing.pop();
-			Node newParent = new Node(current);
-			
-			for (SimpleNode<NamedReference> child : current.getChildren()){
-
-				addEdge(newParent, new Node(child));
-				
-				if (! processed.contains(child)){
-					processing.add(child);
-					processed.add(child);
-				}
+		mergeGraph(initialGraph, new NodeTransformer<SimpleNode<NamedReference>, Node>() {
+			@Override
+			public Node createFrom(SimpleNode<NamedReference> node) {
+				return new Node(node.getKey());				
 			}
-			
-			// in case the node had no children it might be useful to add itself again
-			addNode(newParent);
-		}
+		});
 		
 	}
-	
 	
 	
 	public void setCandidatesToDeletion(List<Long> candidates) {
@@ -132,7 +113,7 @@ public class LockedFileInferenceGraph extends
 
 			Node currentNode = remainingNodes.getFirst();
 
-			for (Node child : currentNode.getChildren()) {
+			for (Node child : currentNode.getOutbounds()) {
 
 				child.increaseCounter();
 
@@ -249,10 +230,7 @@ public class LockedFileInferenceGraph extends
 		public Node(NamedReference key){
 			super(key);
 		}
-		
-		public Node(SimpleNode<NamedReference> node){
-			super(node.getKey());
-		}
+
 		
 		public Boolean isDeletable() {
 			return deletable;
@@ -275,7 +253,7 @@ public class LockedFileInferenceGraph extends
 		}
 
 		public boolean areAllParentsDeletable() {
-			return (parentDeletableCount == getParents().size());
+			return (parentDeletableCount == getInbounds().size());
 		}
 
 		public String getName() {

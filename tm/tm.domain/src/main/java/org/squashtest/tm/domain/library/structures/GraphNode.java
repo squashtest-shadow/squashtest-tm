@@ -26,8 +26,8 @@ import java.util.Set;
 
 public class GraphNode<IDENT, T extends GraphNode<IDENT, T>>{
 	
-	protected final Set<T> parents = new HashSet<T>();
-	protected final Set<T> children = new HashSet<T>();
+	protected final Set<T> inbounds = new HashSet<T>();
+	protected final Set<T> outbounds = new HashSet<T>();
 	
 	
 
@@ -44,21 +44,21 @@ public class GraphNode<IDENT, T extends GraphNode<IDENT, T>>{
 	}
 
 
-	public Set<T> getParents() {
-		return parents;
+	public Set<T> getInbounds() {
+		return inbounds;
 	}
 
 
-	public Set<T> getChildren() {
-		return children;
+	public Set<T> getOutbounds() {
+		return outbounds;
 	}
 	
-	public void addParent(T parent){
-		if (parent!=null){ parents.add(parent);}
+	public void addInbound(T inbound){
+		if (inbound!=null){ inbounds.add(inbound);}
 	}
 	
-	public void addChild(T child){
-		if (child!=null){ children.add(child);}
+	public void addOutbound(T outbound){
+		if (outbound!=null){ outbounds.add(outbound);}
 	}
 
 	public IDENT getKey(){

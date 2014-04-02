@@ -20,7 +20,8 @@
  */
 package org.squashtest.tm.domain.library.structures
 
-import org.squashtest.tm.domain.library.NodeReference;
+import org.squashtest.tm.domain.NamedReference;
+import org.squashtest.tm.domain.library.structures.LibraryGraph.NodeTransformer;
 import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode;
 
 import spock.lang.Specification
@@ -65,41 +66,106 @@ class LibraryGraphTest extends Specification {
 			def node25 = graph.getNode(ref(25l))
 			
 			
-			node1.parents.size() == 0
-			node1.children == [node11, node12] as Set
+			node1.inbounds.size() == 0
+			node1.outbounds == [node11, node12] as Set
 			
-			node11.parents == [node1] as Set
-			node11.children == [node21, node22, node23] as Set
+			node11.inbounds == [node1] as Set
+			node11.outbounds == [node21, node22, node23] as Set
 				
-			node12.parents == [node1] as Set
-			node12.children == [node22, node23, node24] as Set
+			node12.inbounds == [node1] as Set
+			node12.outbounds == [node22, node23, node24] as Set
 		
-			node21.parents == [node11] as Set
-			node21.children == [] as Set
+			node21.inbounds == [node11] as Set
+			node21.outbounds == [] as Set
 			
-			node22.parents== [node11, node12] as Set
-			node22.children == [] as Set
+			node22.inbounds== [node11, node12] as Set
+			node22.outbounds == [] as Set
 			
-			node23.parents== [node11, node12] as Set
-			node23.children == [node24] as Set
+			node23.inbounds== [node11, node12] as Set
+			node23.outbounds == [node24] as Set
 			
-			node24.parents== [node12, node23] as Set
-			node24.children == [] as Set
+			node24.inbounds== [node12, node23] as Set
+			node24.outbounds == [] as Set
 			
-			node25.parents.size() == 0
-			node25.children == [] as Set
+			node25.inbounds.size() == 0
+			node25.outbounds == [] as Set
 			
 		
 	}
 	
 	
-	NodeReference ref(id){
-		return new NodeReference(id, id?.toString(), false);
+	def "should merge a graph into another one"(){
+		
+		given :
+			def nodes1 = [[null, 1l], [1l, 2l], [1l, 3l], [3l, 4l]]
+			LibraryGraph<NamedReference, SimpleNode<NamedReference>> othergraph = new LibraryGraph()
+			nodes1.each { othergraph.addEdge(node(it[0]), node(it[1])) }		
+		
+			
+		and :
+			def nodes2 = [[null, 3l], [3l, 31l], [3l, 32l], [32l, 41l]]
+			LibraryGraph<Long, CustomNode<Long>> thisgraph = new LibraryGraph()
+			nodes2.each { thisgraph.addEdge( new CustomNode(it[0]), new CustomNode(it[1])) }
+			
+		when :
+			thisgraph.mergeGraph(othergraph, new SimpleTransformer())
+		
+		
+		then :
+			def nodes = thisgraph.getNodes()
+			nodes.size() == 7
+			
+			def node1 = thisgraph.getNode(1l)
+			def node2 = thisgraph.getNode(2l)
+			def node3 = thisgraph.getNode(3l)
+			def node4 = thisgraph.getNode(4l)
+			def node31 = thisgraph.getNode(31l)
+			def node32 = thisgraph.getNode(32l)
+			def node41 = thisgraph.getNode(41l)
+		
+			node1.inbounds.size() == 0
+			node1.outbounds as Set== [node2, node3] as Set
+			
+			node2.inbounds == [node1] as Set
+			node2.outbounds.size() == 0
+			
+			node3.inbounds as Set == [node1] as Set
+			node3.outbounds as Set == [node31, node32, node4] as Set
+			
+			node4.inbounds as Set  == [node3] as Set
+			node4.outbounds.size() == 0
+			
+			node31.inbounds as Set  == [node3] as Set
+			node31.outbounds.size() == 0
+			
+			node32.inbounds as Set  == [node3] as Set
+			node32.outbounds as Set  == [node41] as Set
+			
+			node41.inbounds as Set  == [node32] as Set
+			node41.outbounds.size() == 0
+		
+	}
+	
+	
+	
+	NamedReference ref(id){
+		return new NamedReference(id, id?.toString());
 	}
 	
 	SimpleNode node(id){
 		return (id != null) ? new SimpleNode(ref(id)) : null;
 	}
 	
+	class CustomNode extends GraphNode<Long, CustomNode>{
+		CustomNode(Long id){
+			super(id);
+		}
+	}
+	
+	class SimpleTransformer implements NodeTransformer<SimpleNode<NamedReference>, CustomNode>{
+		CustomNode createFrom(SimpleNode<NamedReference> othernode) {
+			new CustomNode(othernode.key.id)
+		};
+	}
 	
 }

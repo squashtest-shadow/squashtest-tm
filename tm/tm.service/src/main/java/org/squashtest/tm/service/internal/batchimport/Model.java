@@ -28,11 +28,9 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
 
 import javax.inject.Inject;
-
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
@@ -42,13 +40,15 @@ import org.hibernate.SessionFactory;
 import org.hibernate.type.LongType;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
+import org.squashtest.tm.domain.NamedReference;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
+import org.squashtest.tm.domain.library.structures.LibraryGraph;
+import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
-import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
 
@@ -66,9 +66,6 @@ public class Model {
 	
 	@Inject
 	private TestCaseLibraryFinderService finderService;
-	
-	@Inject
-	private TestCaseDao tcDao;
 	
 	@Inject
 	private TestCaseCallTreeFinder calltreeFinder;
@@ -125,7 +122,7 @@ public class Model {
 	/* *******************************************************************************************************
 	 * 
 	 * This property keeps track of the test case call graph. It is not initialized like the rest, it's rather 
-	 * initialized on demand (see isCalled or induceCycle)
+	 * initialized on demand (see isCalled for instance )
 	 * 
 	 * ******************************************************************************************************/
 	private TestCaseCallGraph callGraph = new TestCaseCallGraph();
@@ -206,6 +203,8 @@ public class Model {
 		}
 	}
 	
+	// ************************ test case calls code ***********************************
+	
 	/*
 	 *  returns true if the test case is being called by another test case or else false.
 	 *  
@@ -222,35 +221,58 @@ public class Model {
 
 		return callGraph.isCalled(target);
 	}
-
+	
+	public boolean wouldCreateCycle(TestStepTarget step, TestCaseTarget destTestCase){
+		TestCaseTarget srcTestCase = step.getTestCase();
+		
+		if (! callGraph.knowsNode(srcTestCase)){
+			initCallerGraph(srcTestCase);
+		}
+		
+		if (! callGraph.knowsNode(destTestCase)){
+			initCallerGraph(destTestCase);
+		}
+		
+		return callGraph.wouldCreateCycle(srcTestCase, destTestCase);
+	}
+	
 	
 	// initialize from the database.
+	// not that we don't always want the target to be fully initialized because we only care of the   
+	// caller test case graph. So we initialize that information from the DB only and 
+	// we don't need to fully fill the model with it.
 	private void initCallerGraph(TestCaseTarget target){
 		
-		List<Long> processingIds = new LinkedList<Long>();
-		List<Long> nextIds = new LinkedList<Long>();
+		Long id = finderService.findNodeIdByPath(target.getPath());
 		
-		try{
+		if (id != null){
+			LibraryGraph<NamedReference, SimpleNode<NamedReference>> targetCallers 
+				= calltreeFinder.getCallerGraph(Arrays.asList(new Long[]{id}));
 			
-			long targetId = finderService.findNodeIdByPath(target.getPath());
-			processingIds.add(targetId);
+			// some data transform now
+			Collection<SimpleNode<NamedReference>> refs = targetCallers.getNodes();
+			swapNameForPath(refs);
 			
-			while (! processingIds.isEmpty()){
-				
-				List<Object[]> calldata = tcDao.findTestCasesHavingCallerDetails(processingIds);
-				
-				for (Object[] pair : calldata){
-					Long parentId = (Long)pair[0];
-					
-				}
-			}
-			
+			// now create the graph
+			callGraph.addGraph(targetCallers);
 		}
-		catch(NoSuchElementException ex){
-			return ;	// the target could not be found. It must be one of those new nodes being imported.
+		else{
+			callGraph.addNode(target);
 		}
 	}
 
+	private void addCallGraphEdge(TestCaseTarget src, TestCaseTarget dest){
+		
+		if (! callGraph.knowsNode(src)){
+			initCallerGraph(src);
+		}
+		
+		if (! callGraph.knowsNode(dest)){
+			initCallerGraph(dest);
+		}
+		
+		callGraph.addEdge(src, dest);
+	}
 	
 	// ************************ Test Step management ********************************
 
@@ -267,18 +289,10 @@ public class Model {
 	}
 	
 	public Integer addCallStep(TestStepTarget target, TestCaseTarget calledTestCase){	
-	
 		
-		if (! testCaseStatusByTarget.containsKey(calledTestCase)){
-			init(calledTestCase);
-		}
-	
+		addCallGraphEdge(target.getTestCase(), calledTestCase);
 		
-		Integer index =  addStep(target, StepType.CALL);
-		
-		//TODO : add the boilerplate for the call step graph once the appropriate graph is implemented
-		
-		return index;
+		return addStep(target, StepType.CALL);
 		
 	}
 	
@@ -610,6 +624,30 @@ public class Model {
 		return res;
 	}	
 	
+	
+	// substitute the value of the name attribute of NamedReference so that it becomes a path instead.
+	// all references are supposed to exist in the database
+	// that's foul play but saves more bloat
+	@SuppressWarnings("unchecked")
+	private void swapNameForPath(Collection<SimpleNode<NamedReference>> references){
+		
+		// first ensures that the references will be iterated in a constant order
+		List<SimpleNode<NamedReference>> listedRefs = new ArrayList<LibraryGraph.SimpleNode<NamedReference>>(references);
+		
+		// now collect the ids. Node : the javadoc claims that the result is a new list.
+		List<Long> ids = (List<Long>)CollectionUtils.collect(listedRefs, NamedReferenceIdCollector.INSTANCE);
+		
+		List<String> paths = finderService.getPathsAsString(ids);
+		
+		for (int i=0; i < paths.size(); i++){
+			SimpleNode<NamedReference> currentNode = listedRefs.get(i);
+			Long id = ids.get(i);
+			String path = paths.get(i);
+			currentNode.setKey(new NamedReference(id, path));
+		}
+		
+	}
+	
 	// ************************ internal types for TestCase Management **********************************
 	
 	
@@ -669,6 +707,19 @@ public class Model {
 		@Override
 		public Object transform(Object value) {
 			return ((TestCaseTarget)value).getPath();
+		}
+	}
+	
+	private static class NamedReferenceIdCollector implements Transformer{
+		static NamedReferenceIdCollector INSTANCE = new NamedReferenceIdCollector();
+		
+		private NamedReferenceIdCollector(){
+			super();
+		}
+		
+		@Override
+		public Long transform(Object input) {
+			return ((SimpleNode<NamedReference>)input).getKey().getId();
 		}
 	}
 	

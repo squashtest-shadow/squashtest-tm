@@ -24,28 +24,44 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
+import org.squashtest.tm.domain.NamedReference;
 import org.squashtest.tm.domain.library.structures.GraphNode;
 import org.squashtest.tm.domain.library.structures.LibraryGraph;
 
 class TestCaseCallGraph extends LibraryGraph<TestCaseTarget, TestCaseCallGraph.Node> {
 	
 	
+	void addGraph(LibraryGraph<NamedReference, SimpleNode<NamedReference>> othergraph){
+		
+		mergeGraph(othergraph, new NodeTransformer<SimpleNode<NamedReference>, Node>() {
+			@Override
+			public Node createFrom(SimpleNode<NamedReference> node) {
+				return new Node(new TestCaseTarget(node.getKey().getName()));
+			}
+		});	
+		
+	}
+	
 	public boolean knowsNode(TestCaseTarget target){
 		return getNodes().contains(target);
 	}
 	
-	public void addNodes(TestCaseTarget parent, TestCaseTarget child){
+	public void addEdge(TestCaseTarget parent, TestCaseTarget child){
 		addEdge(new Node(parent), new Node(child));
+	}
+	
+	public void addNode(TestCaseTarget target){
+		addNode(new Node(target));
 	}
 	
 	
 	@Override
-	public void addEdge(Node parentData, Node childData) {
-		if (! wouldCreateCycle(parentData.getKey(), childData.getKey())){
-			super.addEdge(parentData, childData);
+	public void addEdge(Node src, Node dest) {
+		if (! wouldCreateCycle(src.getKey(), dest.getKey())){
+			super.addEdge(src, dest);
 		}
 		else{
-			throw new IllegalArgumentException("");
+			throw new IllegalArgumentException("cannot add to test case call graph an edge from '"+src.getKey().getPath()+"' to '"+dest.getKey().getPath()+"' : would create a cycle");
 		}
 	}
 	
@@ -58,7 +74,7 @@ class TestCaseCallGraph extends LibraryGraph<TestCaseTarget, TestCaseCallGraph.N
 	boolean isCalled(TestCaseTarget target){
 		Node n = getNode(target);
 		if (n!=null){
-			return n.getParents().isEmpty() == false;
+			return n.getInbounds().isEmpty() == false;
 		}
 		else{
 			return false;
@@ -108,7 +124,7 @@ class TestCaseCallGraph extends LibraryGraph<TestCaseTarget, TestCaseCallGraph.N
 					break;
 				}
 				else{
-					for (Node child : current.getChildren()){
+					for (Node child : current.getOutbounds()){
 						if (! processed.contains(child)){
 							nodes.add(child);
 							processed.add(child);
@@ -129,12 +145,16 @@ class TestCaseCallGraph extends LibraryGraph<TestCaseTarget, TestCaseCallGraph.N
 			super(target);
 		}
 		
+		Node(SimpleNode<NamedReference> othernode){
+			super(new TestCaseTarget(othernode.getKey().getName()));
+		}
+		
 		boolean isMe(TestCaseTarget target){
 			return target.equals(key);
 		}
 		
 		boolean calls(TestCaseTarget callee){
-			for (Node n : children){
+			for (Node n : outbounds){
 				if (n.isMe(callee)){
 					return true;
 				}

@@ -70,36 +70,36 @@ class LockedFileInferenceGraphTest extends Specification {
 			def node25 = graph.getNode(ref(25l))
 			
 			node1.name == "1"
-			node1.parents.size() == 0
-			node1.children == [node11, node12] as Set
+			node1.inbounds.size() == 0
+			node1.outbounds == [node11, node12] as Set
 			
 			node11.name == "11"
-			node11.parents == [node1] as Set
-			node11.children == [node21, node22, node23] as Set
+			node11.inbounds == [node1] as Set
+			node11.outbounds == [node21, node22, node23] as Set
 			
 			node12.name == "12"
-			node12.parents == [node1] as Set
-			node12.children == [node22, node23, node24] as Set
+			node12.inbounds == [node1] as Set
+			node12.outbounds == [node22, node23, node24] as Set
 			
 			node21.name == "21"
-			node21.parents == [node11] as Set
-			node21.children == [] as Set
+			node21.inbounds == [node11] as Set
+			node21.outbounds == [] as Set
 			
 			node22.name == "22"
-			node22.parents== [node11, node12] as Set
-			node22.children == [] as Set
+			node22.inbounds== [node11, node12] as Set
+			node22.outbounds == [] as Set
 			
 			node23.name == "23"
-			node23.parents== [node11, node12] as Set
-			node23.children == [node24] as Set
+			node23.inbounds== [node11, node12] as Set
+			node23.outbounds == [node24] as Set
 			
 			node24.name == "24"
-			node24.parents== [node12, node23] as Set
-			node24.children == [] as Set
+			node24.inbounds== [node12, node23] as Set
+			node24.outbounds == [] as Set
 
 			node25.name == "25"
-			node25.parents == [] as Set
-			node25.children == [] as Set
+			node25.inbounds == [] as Set
+			node25.outbounds == [] as Set
 		
 	}
 	

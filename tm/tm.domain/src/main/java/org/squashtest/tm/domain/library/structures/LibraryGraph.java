@@ -76,12 +76,12 @@ public class LibraryGraph<IDENT, T extends GraphNode<IDENT, T>> {
 			child = createIfNotExists(childData);
 		}
 		
-		if (parent!=null && ! parent.getChildren().contains(child)){
-			parent.addChild(child);
+		if (parent!=null && ! parent.getOutbounds().contains(child)){
+			parent.addOutbound(child);
 		}
 		
-		if (child!=null && ! child.getParents().contains(parent)){
-			child.addParent(parent);
+		if (child!=null && ! child.getInbounds().contains(parent)){
+			child.addInbound(parent);
 		}
 		
 	}
@@ -101,13 +101,13 @@ public class LibraryGraph<IDENT, T extends GraphNode<IDENT, T>> {
 		return toReturn;
 	}
 	
-	private T createIfNotExists(T data){
+	private T createIfNotExists(T node){
 		
-		if (! nodes.contains(data)){
-			nodes.add(data);
+		if (! nodes.contains(node)){
+			nodes.add(node);
 		}
 		
-		return getNode(data.getKey());
+		return getNode(node.getKey());
 
 	}
 	
@@ -119,7 +119,7 @@ public class LibraryGraph<IDENT, T extends GraphNode<IDENT, T>> {
 		CollectionUtils.filter(copy, new Predicate() {			
 			@Override
 			public boolean evaluate(Object object) {
-				return ((T)object).getParents().isEmpty();
+				return ((T)object).getInbounds().isEmpty();
 			}
 		});
 		
@@ -133,7 +133,7 @@ public class LibraryGraph<IDENT, T extends GraphNode<IDENT, T>> {
 		CollectionUtils.filter(copy, new Predicate() {			
 			@Override
 			public boolean evaluate(Object object) {
-				return ((T)object).getChildren().isEmpty();
+				return ((T)object).getOutbounds().isEmpty();
 			}
 		});
 		
@@ -164,47 +164,50 @@ public class LibraryGraph<IDENT, T extends GraphNode<IDENT, T>> {
 		return new ArrayList<X> (CollectionUtils.collect(filtered, transformer));
 	}
 	
-	
-	// also known as an "Edge" of the graph. Sorry for the silly name.
-	public class GraphNodePair{
-		private T parent;
-		private T child;
+
+	/** 
+	 * <p> Will merge the structure of a graph into this graph. This means that nodes will be created if no equivalent exist already, 
+	 * same goes for inbound/outbound edges . You must provide an implementation of {@link NodeTransformer}
+	 * in order to allow the conversion of a node from the other graph into a node acceptable for this graph.</p>
+	 * <p> The merge Nodes and edges inserted that way will not erase existing data provided if nodes having same keys are already present.</p> 
+	 * 
+	 * <p>The generics are the following : 
+	 * 	<ul>
+	 * 		<li>OIDENT : the class of the key of the other graph</li>
+	 * 		<li>ON : the type definition of a node from the other graph</li>
+	 * 		<li>OG : the type of the other graph </li>
+	 * 	</ul>
+	 * </p>
+	 * 
+	 * @param othergraph
+	 */
+	public 
+	<OIDENT, 	ON extends GraphNode<OIDENT, ON>, 	OG extends LibraryGraph<OIDENT, ON>> 
+	void mergeGraph(OG othergraph, NodeTransformer<ON,T> transformer){
 		
-		public T getParent() {
-			return parent;
-		}
+		LinkedList<ON> processing = new LinkedList<ON>(othergraph.getOrphans());
 		
-		public void setParent(T parent) {
-			this.parent = parent;
-		}
+		Set<ON> processed = new HashSet<ON>();
 		
-		public T getChild() {
-			return child;
-		}
-		
-		public void setChild(T child) {
-			this.child = child;
-		}
-		
-		public GraphNodePair(){
+		while (! processing.isEmpty()){
 			
+			ON current = processing.pop();
+			T newParent = transformer.createFrom(current);
+			
+			for (ON child : current.getOutbounds()){
+
+				addEdge(newParent, transformer.createFrom(child));
+				
+				if (! processed.contains(child)){
+					processing.add(child);
+					processed.add(child);
+				}
+			}
+			
+			// in case the node had no children it might be useful to add itself again
+			addNode(newParent);
 		}
-		
-		public GraphNodePair(T parent, T child){
-			this.parent=parent;
-			this.child=child;
-		}
-	
 	}
-	
-	public GraphNodePair newPair(){
-		return new GraphNodePair();
-	}
-	
-	public GraphNodePair newPair(T parent, T child){
-		return new GraphNodePair(parent, child);
-	}
-	
 	
 	
 	// ********* Simple class in which a node is solely represented by its key. The key is still whatever you need. **********
@@ -218,6 +221,12 @@ public class LibraryGraph<IDENT, T extends GraphNode<IDENT, T>> {
 		public SimpleNode(T key) {
 			super(key);
 		}
+		
+	}
+	
+	public static interface NodeTransformer<FORMER, NEW>{
+		
+		NEW createFrom(FORMER node);
 		
 	}
 	
