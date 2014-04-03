@@ -67,9 +67,9 @@ public interface IssueDao extends EntityDao<Issue> {
 	 * @param bugtrackerId 
 	 * 			 the id of the bug-tracker we want the issues to be connected-to
 	 * 
-	 * @return  non-null but possibly empty list of <code>Object[]</code> which have the following structure <b>[IssueList.id, Issue.remoteIssueId, Issue.id]</b>
+	 * @return  non-null but possibly empty list of <code>Issue</code> 
 	 **/
-	List<Object[]> findSortedIssuesFromIssuesLists(Collection<Long> issueListId, PagingAndSorting sorter,
+	List<Issue> findSortedIssuesFromIssuesLists(Collection<Long> issueListId, PagingAndSorting sorter,
 			Long bugTrackerId);
 	
 	/**
@@ -81,7 +81,7 @@ public interface IssueDao extends EntityDao<Issue> {
 	 * @param sorter : holds the sort parameters for the query
 	 * @return non-null but possibly empty list of <code>Object[]</code> which have the following structure <b>[IssueList.id, Issue.remoteIssueId , Issue.bugtracker.id]</b>
 	 */
-	List<Object[]> findSortedIssuesFromExecutionAndExecutionSteps(List<Long> executionIds,
+	List<Issue> findSortedIssuesFromExecutionAndExecutionSteps(List<Long> executionIds,
 			List<Long> executionStepsIds, PagingAndSorting sorter);
 
 	/**

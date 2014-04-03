@@ -21,13 +21,21 @@
 package org.squashtest.tm.service.internal.bugtracker
 
 import org.apache.commons.collections.MultiMap
+import org.squashtest.csp.core.bugtracker.domain.BTIssue;
+import org.squashtest.csp.core.bugtracker.domain.BTProject;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker
 import org.squashtest.csp.core.bugtracker.service.BugTrackersService
 import org.squashtest.tm.bugtracker.definition.RemoteIssue
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
+import org.squashtest.tm.domain.bugtracker.BugTrackerStatus;
+import org.squashtest.tm.domain.bugtracker.Issue;
+import org.squashtest.tm.domain.bugtracker.IssueList;
+import org.squashtest.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator
 import org.squashtest.tm.domain.execution.Execution
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.internal.repository.IssueDao
 import org.squashtest.tm.service.internal.repository.IterationDao
 
@@ -39,14 +47,18 @@ import spock.lang.Specification
  */
 class BugTrackersLocalServiceImplTest extends Specification {
 	BugTrackersLocalServiceImpl service = new BugTrackersLocalServiceImpl()
-	IterationDao iterationDao = Mock()
+	
 	IssueDao issueDao = Mock()
 	BugTrackersService bugTrackersService = Mock()
+	IndexationService indexationService = Mock();
+	
+	// alias
+	BugTrackersService remoteService = bugTrackersService;
 
 	def setup() {
-		service.iterationDao = iterationDao
 		service.issueDao = issueDao
 		service.remoteBugTrackersService = bugTrackersService
+		service.indexationService = indexationService;
 	}
 
 
@@ -67,8 +79,8 @@ class BugTrackersLocalServiceImplTest extends Specification {
 
 		and:
 		issueDao.findSortedIssuesFromIssuesLists({ it.containsAll([22L, 11L]) }, _, _) >> [
-			[11L, "10", 100L] as Object[],
-			[22L, "10", 200L] as Object[]
+			issue(11L, "10", 100L),
+			issue(22L, "10", 200L)
 		]
 
 		and:
@@ -107,8 +119,8 @@ class BugTrackersLocalServiceImplTest extends Specification {
 
 		and:
 		issueDao.findSortedIssuesFromIssuesLists({ it.containsAll([22L, 11L]) }, _, _) >> [
-			[11L, "10", 100L] as Object[],
-			[22L, "20", 200L] as Object[]
+			issue(11L, "10", 100L),
+			issue(22L, "20", 200L)
 		]
 
 		and:
@@ -139,10 +151,10 @@ class BugTrackersLocalServiceImplTest extends Specification {
 	def "should map local issues by remote issues using [list, remote, local] tuples"() {
 		given:
 		List tuples = []
-		tuples << ([10L, "100", 10100L] as Object[]) // issue list 10, remote ish 100 referenced by issue 10100 from list 10
-		tuples << ([10L, "200", 10200L] as Object[])
-		tuples << ([20L, "100", 20100L] as Object[])
-		tuples << ([20L, "300", 20300L] as Object[])
+		tuples << (issue(10L, "100", 10100L)) // issue list 10, remote ish 100 referenced by issue 10100 from list 10
+		tuples << (issue(10L, "200", 10200L))
+		tuples << (issue(20L, "100", 20100L))
+		tuples << (issue(20L, "300", 20300L))
 
 		when:
 		MultiMap res = service.mapLocalIssuesByRemoteIssue(tuples)
@@ -181,21 +193,7 @@ class BugTrackersLocalServiceImplTest extends Specification {
 		res.find({ it.issue == r300 && it.issueId == 20300L })
 	}
 
-	def "should filter duplicates when extracting remote ids trom tuples"() {
-		given:
-		List tuples = []
-		tuples << ([10L, "100", 10100L] as Object[]) // issue list 10, remote ish 100 referenced by issue 10100 from list 10
-		tuples << ([10L, "200", 10200L] as Object[])
-		tuples << ([20L, "100", 20100L] as Object[])
-		tuples << ([20L, "300", 20300L] as Object[])
 
-		when:
-		def res = service.extractUniqueRemoteIds(tuples)
-
-		then:
-		res.size() == 3
-		res.containsAll(["100", "200", "300"])
-	}
 
 	def "should bind issues to their owners"() {
 		given:
@@ -213,9 +211,9 @@ class BugTrackersLocalServiceImplTest extends Specification {
 
 		and:
 		List listsAndIssuesTuples = [
-			[10L, "100", 10100L] as Object[],
-			[20L, "200", 20200L] as Object[],
-			[30L, "100", 30100L] as Object[]
+			issue(10L, "100", 10100L),
+			issue(20L, "200", 20200L),
+			issue(30L, "100", 30100L)
 		]
 
 		and:
@@ -239,5 +237,153 @@ class BugTrackersLocalServiceImplTest extends Specification {
 		res.find({ it.issue == r10100 && it.owner == ex1 })
 		res.find({ it.issue == r20200 && it.owner == ex2 })
 		res.find({ it.issue == r30100 && it.owner == ex3 })
+	}
+	
+	
+	
+	def "should say bugtracker needs credentials"(){
+
+		given :
+		Project project = Mock()
+		project.isBugtrackerConnected()>> true
+		BugTracker bugTracker = Mock()
+		project.findBugTracker()>> bugTracker
+
+		remoteService.isCredentialsNeeded(bugTracker) >> true
+
+		when :
+		def status = service.checkBugTrackerStatus(project)
+
+		then :
+		status == BugTrackerStatus.BUGTRACKER_NEEDS_CREDENTIALS
+	}
+
+
+	def "should say bugtracker is ready for use"(){
+
+		given :
+		Project project = Mock()
+		project.isBugtrackerConnected()>> true
+		BugTracker bugTracker = Mock()
+		project.findBugTracker()>> bugTracker
+		remoteService.isCredentialsNeeded(bugTracker) >> false
+
+		when :
+		def status = service.checkBugTrackerStatus(project)
+
+		then :
+		status == BugTrackerStatus.BUGTRACKER_READY
+	}
+
+
+
+	def "should create an issue" () {
+
+		given :
+		BugTracker bugTracker = Mock()
+		bugTracker.getName() >> "default"
+		BTIssue btIssue = Mock()
+		btIssue.getId() >> "1"
+
+		remoteService.createIssue(_,_) >> btIssue
+
+
+		and :
+		Execution execution = Mock()
+		execution.getBugTracker() >> bugTracker
+		IssueList issueList = Mock()
+		execution.getIssueList()>> issueList
+		BTIssue issue = new BTIssue()
+
+		when :
+	
+		BTIssue reissue = service.createRemoteIssue(execution, issue)
+
+		then :
+		reissue == btIssue
+	}
+
+
+	def "should retrieve the URL of a given issue"(){
+
+		given :
+		BugTracker bugTracker = Mock()
+		URL url = new URL("http://www.mybugtracker.com/issues/1");
+		remoteService.getViewIssueUrl(_,_) >> url;
+
+		when :
+		URL geturl = service.getIssueUrl("myissue", bugTracker)
+
+
+		then :
+
+		geturl == url;
+	}
+
+
+	//TODO
+	def "should return a list of paired BTIssues, shipped as a filtered collection holder"(){
+	}
+
+	def "should find a remote project"(){
+
+		given :
+		BugTracker bugTracker = Mock()
+		BTProject project = Mock()
+		remoteService.findProject(_,_) >> project
+
+		when :
+		def reproject = service.findRemoteProject("squashbt", bugTracker)
+
+		then :
+		reproject == project
+	}
+
+	def "should set the credentials"(){
+
+		given :
+		def name ="bob"
+		def password = "bobpassword"
+		BugTracker bugTracker = Mock()
+
+
+		when :
+		service.setCredentials(name, password, bugTracker)
+
+
+		then :
+		1 * remoteService.setCredentials(name, password, bugTracker);
+	}
+
+
+	def remoteIssue(id){
+		BTIssue rIssue = Mock()
+		rIssue.getId() >> id
+		return rIssue;
+	}
+
+	def localOwnership(id){
+		IssueOwnership<Issue> ownership = Mock()
+		Issue issue = Mock()
+
+		ownership.getIssue() >> issue
+		issue.getRemoteIssueId() >> id
+
+		return ownership
+	}
+	
+	
+	def issue(listId, remoteId, localId){
+		IssueList mIL = Mock(IssueList)
+		Issue mi = Mock(Issue)
+		
+		mIL.getId() >> listId
+		mi.getIssueList() >> mIL
+		
+		mi.getRemoteIssueId() >> remoteId
+		mi.getId() >> localId
+		
+		return mi
+		
 	}
 }

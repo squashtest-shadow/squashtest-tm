@@ -51,10 +51,10 @@ public class IssueOwnership<ISSUE> {
 
 	public Execution getExecution() {
 		Execution execution = null;
-		if (owner instanceof ExecutionStep) {
+		if (ExecutionStep.class.isAssignableFrom(owner.getClass())){
 			ExecutionStep step = ((ExecutionStep) owner);
 			execution = step.getExecution();
-		} else if (owner instanceof Execution) {
+		} else if (Execution.class.isAssignableFrom(owner.getClass())){
 			execution = ((Execution) owner);
 		}
 		return execution;
