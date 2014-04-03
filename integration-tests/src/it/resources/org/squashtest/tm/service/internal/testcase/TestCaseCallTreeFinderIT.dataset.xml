@@ -27,8 +27,8 @@
 1) a call tree like the following : 
 	
 		- all the test cases are in the same project, at the root of the library.
-		- 'top test case' will call 'first level 1'
-		- 'first level 1' will call 'second level 1' and 'second level 2'
+		- 'top test case' will call 'first level 1' and 'second level 1'
+		- 'first level 1' will call 'second level 1' 1 time and 'second level 2' 2 times
 		- 'second level 1' will call 'third level 1'
 		- 'second level 2' will call 'third level 2'
 		- the third level test cases call no one.
@@ -93,8 +93,10 @@
 	<!--  the test steps -->
 	
 	<TEST_STEP TEST_STEP_ID="11" />
+	<TEST_STEP TEST_STEP_ID="131" />
 	<TEST_STEP TEST_STEP_ID="21" />
-	<TEST_STEP TEST_STEP_ID="22" />
+	<TEST_STEP TEST_STEP_ID="221" />
+	<TEST_STEP TEST_STEP_ID="222" />
 	<TEST_STEP TEST_STEP_ID="31" />
 	<TEST_STEP TEST_STEP_ID="32" />
 	
@@ -108,8 +110,10 @@
 	<!--  the call test steps -->
 	
 	<CALL_TEST_STEP TEST_STEP_ID="11" CALLED_TEST_CASE_ID="11"/>
+	<CALL_TEST_STEP TEST_STEP_ID="131" CALLED_TEST_CASE_ID="31"/>
 	<CALL_TEST_STEP TEST_STEP_ID="21" CALLED_TEST_CASE_ID="21"/>
-	<CALL_TEST_STEP TEST_STEP_ID="22" CALLED_TEST_CASE_ID="22"/>
+	<CALL_TEST_STEP TEST_STEP_ID="221" CALLED_TEST_CASE_ID="22"/>
+	<CALL_TEST_STEP TEST_STEP_ID="222" CALLED_TEST_CASE_ID="22"/>
 	<CALL_TEST_STEP TEST_STEP_ID="31" CALLED_TEST_CASE_ID="31"/>
 	<CALL_TEST_STEP TEST_STEP_ID="32" CALLED_TEST_CASE_ID="32"/>
 	
@@ -124,8 +128,10 @@
 	<!--  associate them to the test cases -->
 	
 	<TEST_CASE_STEPS TEST_CASE_ID="1" STEP_ID="11" STEP_ORDER="1"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="1" STEP_ID="131" STEP_ORDER="2"/>
 	<TEST_CASE_STEPS TEST_CASE_ID="11" STEP_ID="21" STEP_ORDER="1"/>
-	<TEST_CASE_STEPS TEST_CASE_ID="11" STEP_ID="22" STEP_ORDER="2"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="11" STEP_ID="221" STEP_ORDER="2"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="11" STEP_ID="222" STEP_ORDER="3"/>
 	<TEST_CASE_STEPS TEST_CASE_ID="21" STEP_ID="31" STEP_ORDER="1"/>
 	<TEST_CASE_STEPS TEST_CASE_ID="22" STEP_ID="32" STEP_ORDER="1"/>
 	

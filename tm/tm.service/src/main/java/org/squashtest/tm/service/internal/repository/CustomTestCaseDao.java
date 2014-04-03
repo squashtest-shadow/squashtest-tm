@@ -91,6 +91,7 @@ public interface CustomTestCaseDao extends EntityDao<TestCase> {
 	/**
 	 * Given a list of test case ids, returns data about those test cases and which test cases called them.
 	 * The result is an array containing [ caller, called ] , both being of class {@link NamedReference}. 
+	 * If a test case calls the same other test case multiple times the resultset will contain as many tuples.
 	 * 
 	 * Note that only first-level callers will be included if found, additional invokations will be needed to fetch all
 	 * the hierarchy.

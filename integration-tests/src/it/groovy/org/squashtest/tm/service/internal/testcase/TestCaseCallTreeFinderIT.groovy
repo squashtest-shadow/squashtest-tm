@@ -25,6 +25,8 @@ import javax.inject.Inject
 
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.domain.NamedReference;
+import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode;
 import org.squashtest.tm.exception.CyclicStepCallException
 import org.squashtest.tm.service.DbunitServiceSpecification;
 import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
@@ -61,5 +63,78 @@ class TestCaseCallTreefinderIT extends DbunitServiceSpecification {
 		then :				
 			callTree.containsAll(expectedTree)	
 	}
+	
+	@DataSet("TestCaseCallTreeFinderIT.dataset.xml")
+	def "should gather the caller graph of node 31"(){
+		/*
+		 * 1 -> 11
+		 * 1 -> 31
+		 * 11 -> 21
+		 * 11 -> 22 *2
+		 * 21 -> 31
+		 * 22 -> 32	
+		 */
+		
+		when :
+			def graph = callTreeFinder.getCallerGraph([31l])
+		
+		then :
+			def node1 = graph.getNode(ref(1, "top test case"))
+			def node11 = graph.getNode(ref(11, "first level 1"))
+			def node21 = graph.getNode(ref(21, "second level 1"))
+			def node31 = graph.getNode(ref(31, "third level 1"))
+			
+			testcontent (node1, [], [node11, node31])
+			testcontent (node11, [node1], [node21])
+			testcontent (node21, [node11], [node31])
+			testcontent (node31, [node21, node1], [])
+		
+	}
+	
+	@DataSet("TestCaseCallTreeFinderIT.dataset.xml")
+	def "should gather the caller graph of node 32"(){
+		/*
+		 * 1 -> 11
+		 * 1 -> 31
+		 * 11 -> 21
+		 * 11 -> 22 *2
+		 * 21 -> 31
+		 * 22 -> 32
+		 */
+		
+		when :
+			def graph = callTreeFinder.getCallerGraph([32l])
+		
+		then :
+			def node1 = graph.getNode(ref(1, "top test case"))
+			def node11 = graph.getNode(ref(11, "first level 1"))
+			def node22 = graph.getNode(ref(22, "second level 2"))
+			def node32 = graph.getNode(ref(32, "third level 2"))
+			
+			testcontent (node1, [], [node11])
+			testcontent (node11, [node1], [node22])
+			testcontent (node22, [node11], [node32])
+			testcontent (node32, [node22], [])
+			
+			node11.outbounds.count { it.equals (node22) } == 2
+			node22.inbounds.count { it.equals (node11)  } == 2
+		
+	}
+	
+	
+	def testcontent = { node, inbounds, outbounds -> 
+		node.inbounds as Set == inbounds as Set &&
+		node.outbounds as Set == outbounds as Set
+	}
+	
+	def ref = { id, name -> new NamedReference(id, name)}
+	
+	def nodepair(callerid, callername, calledid, calledname){
+		return [
+			ref (callerid, callername),
+			ref (calledid, calledname)
+		]
+	}
+	
 		
 }

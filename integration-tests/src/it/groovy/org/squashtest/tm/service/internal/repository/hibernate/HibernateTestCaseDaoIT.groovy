@@ -181,71 +181,80 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 	}
 
 	
-	private nodepair(callerid, callername, calledid, calledname){
+	private tcrefPair(callerid, callername, calledid, calledname){
 		[
-			new SimpleNode(new NamedReference(callerid, callername)),
-			new SimpleNode(new NamedReference(calledid, calledname))
+			new NamedReference(callerid, callername),
+			new NamedReference(calledid, calledname)
 		] as Object[]
 	}
 
 	@DataSet("HibernateTestCaseDaoIT.should find the calling test cases.xml")
-	def "should find the id and names of pairs of caller and called test cases"(){
-		given :
-
-		List.metaClass.containsValue = { Object[] arg -> return containsValue(delegate, arg)  }
+	def "should find pairs of caller/called nodes, including caller/called pairs occuring multiple times"(){
 
 		when :
 		def result = testCaseDao.findTestCasesHavingCallerDetails([100l, 50l]);
 		then :
-		result.size == 6
+		result.size == 9
+
+		/*
+		 * nodes 101, 102 and 103 call node 100 2 times each
+		 * nodes 101, 102 and 103 call node 50 1 time each
+		 */
 
 
-
-		def array1 = nodepair(
+		def pair1 = tcrefPair(
 			101l,
 			"first test case",
 			50l,
 			"other bottom test case"
 		);
-		def array2 = nodepair(
+		def pair2 = tcrefPair(
 			102l,
 			"second test case",
 			50l,
 			"other bottom test case"
 		);
-		def array3 = nodepair(
+		def pair3 = tcrefPair(
 			103l,
 			"third test case",
 			50l,
 			"other bottom test case"
 		);
-		def array4 = nodepair(
+		def pair4 = tcrefPair(
 			101l,
 			"first test case",
 			100l,
 			"bottom test case"
 		);
-		def array5 = nodepair(
+		def pair5 = tcrefPair(
 			102l,
 			"second test case",
 			100l,
 			"bottom test case"
 		);
-		def array6 = nodepair(
+		def pair6 = tcrefPair(
 			103l,
 			"third test case",
 			100l,
 			"bottom test case"
 		);
 
+		def compare = { 
+			op1, op2 ->
+			 op1[0].equals(op2[0]) && op1[1].equals(op2[1]) 
+		}
 
-		result.containsValue (array1)
-		result.containsValue (array2)
-		result.containsValue (array3)
-		result.containsValue (array4)
-		result.containsValue (array5)
-		result.containsValue (array6)
+		result.count { compare it, pair1 } == 1
+		result.count { compare it, pair2 } == 1
+		result.count { compare it, pair3 } == 1
+		result.count { compare it, pair4 } == 2
+		result.count { compare it, pair5 } == 2
+		result.count { compare it, pair6 } == 2
+
 	}
+	
+	
+
 
 	@DataSet("HibernateTestCaseDaoIT.should find the calling test cases.xml")
 	def "should return a list of caller/caller pair padded with null values when no caller is found"(){
@@ -260,19 +269,19 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 
 
 
-		def array1 = nodepair(
+		def array1 = tcrefPair(
 			null,
 			null,
 			101l,
 			"first test case"
 		);
-		def array2 = nodepair(
+		def array2 = tcrefPair(
 			null,
 			null,
 			102l,
 			"second test case"
 		);
-		def array3 = nodepair(
+		def array3 = tcrefPair(
 			null,
 			null,
 			103l,

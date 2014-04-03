@@ -80,7 +80,7 @@ public class LibraryGraph<IDENT, T extends GraphNode<IDENT, T>> {
 			parent.addOutbound(child);
 		}
 		
-		if (child!=null && ! child.getInbounds().contains(parent)){
+		if (child!=null){
 			child.addInbound(parent);
 		}
 		
