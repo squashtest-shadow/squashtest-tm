@@ -67,28 +67,28 @@ class LibraryGraphTest extends Specification {
 			
 			
 			node1.inbounds.size() == 0
-			node1.outbounds == [node11, node12] as Set
+			node1.outbounds as Set == [node11, node12] as Set
 			
-			node11.inbounds == [node1] as Set
-			node11.outbounds == [node21, node22, node23] as Set
+			node11.inbounds as Set == [node1] as Set
+			node11.outbounds as Set == [node21, node22, node23] as Set
 				
-			node12.inbounds == [node1] as Set
-			node12.outbounds == [node22, node23, node24] as Set
+			node12.inbounds as Set == [node1] as Set
+			node12.outbounds as Set == [node22, node23, node24] as Set
 		
-			node21.inbounds == [node11] as Set
-			node21.outbounds == [] as Set
+			node21.inbounds as Set == [node11] as Set
+			node21.outbounds as Set == [] as Set
 			
-			node22.inbounds== [node11, node12] as Set
-			node22.outbounds == [] as Set
+			node22.inbounds as Set == [node11, node12] as Set
+			node22.outbounds as Set == [] as Set
 			
-			node23.inbounds== [node11, node12] as Set
-			node23.outbounds == [node24] as Set
+			node23.inbounds  as Set == [node11, node12] as Set
+			node23.outbounds as Set  == [node24] as Set
 			
-			node24.inbounds== [node12, node23] as Set
-			node24.outbounds == [] as Set
+			node24.inbounds as Set== [node12, node23] as Set
+			node24.outbounds as Set == [] as Set
 			
 			node25.inbounds.size() == 0
-			node25.outbounds == [] as Set
+			node25.outbounds as Set  == [] as Set
 			
 		
 	}
@@ -126,7 +126,7 @@ class LibraryGraphTest extends Specification {
 			node1.inbounds.size() == 0
 			node1.outbounds as Set== [node2, node3] as Set
 			
-			node2.inbounds == [node1] as Set
+			node2.inbounds as Set == [node1] as Set
 			node2.outbounds.size() == 0
 			
 			node3.inbounds as Set == [node1] as Set

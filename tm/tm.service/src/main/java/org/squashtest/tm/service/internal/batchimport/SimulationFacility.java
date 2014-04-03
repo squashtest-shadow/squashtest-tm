@@ -357,7 +357,7 @@ public class SimulationFacility implements Facility{
 			logs.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_CYCLIC_STEP_CALLS, new Object[]{ target.getTestCase().getPath(), calledTestCase.getPath() } ));
 		}
 		
-		
+		return logs;
 	}
 
 

@@ -21,16 +21,20 @@
 package org.squashtest.tm.domain.library.structures;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedList;
 
 
 public class GraphNode<IDENT, T extends GraphNode<IDENT, T>>{
 
 	protected IDENT key;
 	
-	protected final Set<T> inbounds = new HashSet<T>();
-	protected final Set<T> outbounds = new HashSet<T>();	
+	/*
+	 * implementation note : the use of a List is important here, not because 
+	 * we need an arbitrary order, but rather because a node can appear multiple times
+	 * (edge cardinality)
+	 */
+	protected final Collection<T> inbounds = new LinkedList<T>();
+	protected final Collection<T> outbounds = new LinkedList<T>();	
 	
 	
 	public GraphNode(){
@@ -52,13 +56,13 @@ public class GraphNode<IDENT, T extends GraphNode<IDENT, T>>{
 	}
 	
 	public void addInbound(T inbound){
-		if (inbound!=null && ! inbounds.contains(inbound)){ 
+		if (inbound!=null){ 
 			inbounds.add(inbound);
 		}
 	}
 	
 	public void addOutbound(T outbound){
-		if (outbound!=null && ! outbounds.contains(outbound)){ 
+		if (outbound!=null){ 
 			outbounds.add(outbound);
 		}
 	}

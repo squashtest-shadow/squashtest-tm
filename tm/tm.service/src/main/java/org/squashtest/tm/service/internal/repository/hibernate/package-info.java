@@ -158,7 +158,7 @@
 		@NamedQuery(name = "testCase.findTestCasesHavingCallerDetails", 
 			query = "select new org.squashtest.tm.service.internal.repository.hibernate.HibernateTestCaseDao$NamedReferencePair(caller.id, caller.name, called.id, called.name) "+
 					"from TestCase caller join caller.steps steps join steps.calledTestCase called " +
-					"where steps.class = CallTestStep and called.id in (:testCaseIds) group by caller, called"),
+					"where steps.class = CallTestStep and called.id in (:testCaseIds)"),
 																				
 		@NamedQuery(name = "testCase.findTestCasesHavingNoCallerDetails", 
 			query = "select new org.squashtest.tm.service.internal.repository.hibernate.HibernateTestCaseDao$NamedReferencePair(called.id, called.name) "+
