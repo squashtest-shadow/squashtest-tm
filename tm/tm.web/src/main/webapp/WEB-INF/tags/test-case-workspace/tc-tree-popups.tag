@@ -42,6 +42,7 @@
 <f:message var="cancelLabel"		key="label.Cancel"/>
 <f:message var="confirmLabel"		key="label.Confirm"/>
 <f:message var="importLabel"		key="label.Import"/>
+<f:message var="simulateLabel"		key="label.Simulate"/>
 <f:message var="okLabel"			key="label.Ok"/>
 <f:message var="exportLabel"		key="label.Export" />
 <f:message var="dateexportFormat"	key="export.dateformat"/>
@@ -179,11 +180,39 @@
  
 <div id="import-excel-dialog" class="popup-dialog not-displayed" title="${importExcelTitle}">
 
-	<div data-def="state=parametrization">
+	<div data-def="state=parametrization" class="std-margin-top">
 		
-		<div style="margin-top:1em;margin-bottom:1em;">
+		<div>
 			<form action="${servContext}/test-case-browser/import/upload" method="POST" enctype="multipart/form-data" class="display-table">
 
+				<div class="std-padding std-margin-top">
+				
+					<div class="grey-round-panel snap-left" style="width:43%;">
+						<input type="radio" name="format" data-val="xls" class="centered" checked="checked"/><span style="text-decoration:underline;">Excel</span>
+						<p class="nota-bene">
+							<f:message key="test-case.import.dialog.excel.description"/>
+						</p>
+						<a href="" target="_blank">
+							<f:message key="test-case.import.dialog.excel.template"/>
+						</a>			
+					</div>
+				
+					<div class="grey-round-panel snap-right" style="width:43%;">
+						<input type="radio" name="format" data-val="csv" class="centered"/><span style="text-decoration:underline;">CSV</span>
+						<p class="nota-bene">
+							<f:message key="test-case.import.dialog.zip.description"/>
+						</p>			
+						<a href="" target="_blank">
+							<f:message key="test-case.import.dialog.zip.template"/>
+						</a>
+					</div>
+				
+					<div class="unsnap"></div>
+				
+				</div>
+
+				<div class="std-margin-top">
+				<div>
 				<div class="display-table-row">
 					<div class="display-table-cell"><label><f:message key="dialog.import.project.message"/></label></div>
 					<div class="display-table-cell">
@@ -196,6 +225,7 @@
 					
 					</div>
 				</div>
+
 				<div class="display-table-row">
 					<div class="display-table-cell"><label><f:message key="dialog.import-excel.test-case.filetype.message"/></label></div>
 					<div class="display-table-cell">
@@ -210,6 +240,8 @@
 							<option value="UTF8">UTF-8</option>
 						</select>
 					</div>
+				</div>
+				</div>
 				</div>
 			</form>
 		
@@ -265,6 +297,7 @@
 	<div id="import-excel-dump" class="not-displayed dump"></div>
 
 	<div class="popup-dialog-buttonpane">
+		<input type="button" value="${simulateLabel}"  data-def="evt=simulate, state=parametrization"/>
 		<input type="button" value="${importLabel}"  data-def="evt=import, state=parametrization, mainbtn=parametrization"/>
 		<input type="button" value="${confirmLabel}" data-def="evt=confirm, state=confirm, mainbtn=confirm"/>
 		<input type="button" value="${okLabel}"		 data-def="evt=ok, state=summary, mainbtn=summary"/>
