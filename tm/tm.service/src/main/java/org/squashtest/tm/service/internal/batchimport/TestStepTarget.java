@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import org.squashtest.tm.service.importer.EntityType;
+import org.squashtest.tm.service.importer.Target;
+
 public class TestStepTarget extends Target{
 
 	private TestCaseTarget testCase;

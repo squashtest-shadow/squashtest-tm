@@ -21,6 +21,8 @@
 package org.squashtest.tm.service.internal.batchimport;
 
 import org.apache.commons.lang.StringUtils;
+import org.squashtest.tm.service.importer.EntityType;
+import org.squashtest.tm.service.importer.Target;
 
 public class DatasetTarget extends Target {
 

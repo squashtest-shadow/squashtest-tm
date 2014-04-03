@@ -26,8 +26,6 @@ import java.util.HashMap;
 import java.util.SortedSet;
 
 import org.apache.commons.collections.map.MultiValueMap;
-import org.squashtest.tm.service.internal.batchimport.EntityType;
-import org.squashtest.tm.service.internal.batchimport.LogEntry;
 
 public class ImportLog {
 

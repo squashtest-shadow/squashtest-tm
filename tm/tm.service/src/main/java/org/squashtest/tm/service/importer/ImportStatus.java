@@ -18,12 +18,29 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.batchimport;
+package org.squashtest.tm.service.importer;
 
-public enum EntityType {
-	NONE,
-	TEST_CASE,
-	TEST_STEP,
-	DATASET,
-	PARAMETER;
+public enum ImportStatus {
+
+	OK(){
+		@Override
+		public String shortName() {
+			return "OK";
+		}
+	},
+	FAILURE(){
+		@Override
+		public String shortName() {
+			return "F";
+		}
+	},
+	WARNING(){
+		@Override
+		public String shortName() {
+			return "W";
+		}
+	};
+	
+	
+	public abstract String shortName();
 }

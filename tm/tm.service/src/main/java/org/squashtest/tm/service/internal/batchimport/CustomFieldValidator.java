@@ -31,6 +31,9 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
+import org.squashtest.tm.service.importer.ImportStatus;
+import org.squashtest.tm.service.importer.LogEntry;
+import org.squashtest.tm.service.importer.Target;
 
 class CustomFieldValidator {
 	

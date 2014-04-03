@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import org.squashtest.tm.service.importer.ImportMode;
+
 
 public abstract class Instruction {
 	

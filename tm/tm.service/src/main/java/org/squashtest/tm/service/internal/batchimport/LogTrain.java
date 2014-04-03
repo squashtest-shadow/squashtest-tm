@@ -23,6 +23,10 @@ package org.squashtest.tm.service.internal.batchimport;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.squashtest.tm.service.importer.ImportMode;
+import org.squashtest.tm.service.importer.ImportStatus;
+import org.squashtest.tm.service.importer.LogEntry;
+
 class LogTrain {
 
 	private List<LogEntry> entries = new LinkedList<LogEntry>();

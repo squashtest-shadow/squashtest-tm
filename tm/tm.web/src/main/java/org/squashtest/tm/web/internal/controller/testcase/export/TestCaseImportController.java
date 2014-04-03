@@ -42,8 +42,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.service.importer.ImportLog;
-import org.squashtest.tm.service.internal.batchimport.EntityType;
-import org.squashtest.tm.service.internal.batchimport.LogEntry;
+import org.squashtest.tm.service.importer.EntityType;
+import org.squashtest.tm.service.importer.LogEntry;
 
 @Controller
 @RequestMapping("/testcase-import")
