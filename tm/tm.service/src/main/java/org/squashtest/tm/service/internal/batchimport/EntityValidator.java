@@ -68,10 +68,9 @@ class EntityValidator {
 	 * 
 	 * @param target
 	 * @param testCase
-	 * @param cufValues
 	 * @return
 	 */
-	LogTrain basicTestCaseChecks(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues){
+	LogTrain basicTestCaseChecks(TestCaseTarget target, TestCase testCase){
 		
 		LogTrain logs = new LogTrain();
 		String[] fieldNameErrorArgs = new String[]{TC_NAME.header};	// that variable is simple convenience for logging
@@ -121,10 +120,9 @@ class EntityValidator {
 	 * 
 	 * @param target
 	 * @param testStep
-	 * @param cufValues
 	 * @return
 	 */
-	LogTrain basicTestStepChecks(TestStepTarget target, TestStep testStep, Map<String, String> cufValues){
+	LogTrain basicTestStepChecks(TestStepTarget target, TestStep testStep){
 		
 		LogTrain logs = new LogTrain();
 		
@@ -149,6 +147,29 @@ class EntityValidator {
 		
 		return logs;
 
+	}
+	
+	
+	LogTrain validateCallStep(TestStepTarget target, TestStep testStep, TestCaseTarget calledTestCase){
+		
+		LogTrain logs = new LogTrain();
+		
+		TargetStatus calledStatus = model.getStatus(calledTestCase);
+		
+		// 1 - the target must exist and be valid
+		if (calledStatus.status == NOT_EXISTS || calledStatus.status == TO_BE_DELETED || ! calledTestCase.isWellFormed()){
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, "message.import.log.error.tc.callStep.calledTcNotFound"));
+		}
+		
+		// 2 - there must be no cyclic calls
+		if (model.wouldCreateCycle(target, calledTestCase)){
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, 
+										"message.import.log.error.tc.callStep.cyclicCalls", 
+										new Object[]{target.getTestCase().getPath(), calledTestCase.getPath()}));
+		}
+		
+		return logs;
+		
 	}
 	
 	

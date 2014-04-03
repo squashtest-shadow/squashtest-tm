@@ -87,31 +87,28 @@ public class FacilityImpl implements Facility {
 
 	@Override
 	public LogTrain addCallStep(TestStepTarget target, TestStep testStep,
-			TestCaseTarget calledTestCase, Map<String, String> cufValues) {
-		throw new UnsupportedOperationException("not implemented yet");
-	}
-
-	@Override
-	public LogTrain updateActionStep(long testStepId, TestStep testStepData) {
-		throw new UnsupportedOperationException("not implemented yet");
-	}
-
-	@Override
-	public LogTrain updateCallStep(long testStepId, TestStep testStepData,
 			TestCaseTarget calledTestCase) {
 		throw new UnsupportedOperationException("not implemented yet");
 	}
 
 	@Override
-	public LogTrain deleteTestStep(long testStepId) {
+	public LogTrain updateActionStep(TestStepTarget target, TestStep testStep,
+			Map<String, String> cufValues) {
 		throw new UnsupportedOperationException("not implemented yet");
 	}
 
 	@Override
-	public LogTrain deleteTestStep(TestStep testStep) {
+	public LogTrain updateCallStep(TestStepTarget target, TestStep testStep,
+			TestCaseTarget calledTestCase) {
 		throw new UnsupportedOperationException("not implemented yet");
 	}
 
+	@Override
+	public LogTrain deleteTestStep(TestStepTarget target) {
+		throw new UnsupportedOperationException("not implemented yet");
+	}
+
+	
 
 
 

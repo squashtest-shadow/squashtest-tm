@@ -76,7 +76,7 @@ public class LibraryGraph<IDENT, T extends GraphNode<IDENT, T>> {
 			child = createIfNotExists(childData);
 		}
 		
-		if (parent!=null && ! parent.getOutbounds().contains(child)){
+		if (parent!=null){
 			parent.addOutbound(child);
 		}
 		

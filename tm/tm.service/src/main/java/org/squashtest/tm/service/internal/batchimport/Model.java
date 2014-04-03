@@ -165,11 +165,13 @@ public class Model {
 	public void setToBeDeleted(TestCaseTarget target){
 		testCaseStatusByTarget.put(target, new TargetStatus(Existence.TO_BE_DELETED));
 		clearSteps(target);	
+		callGraph.removeNode(target);
 	}
 
 	public void setDeleted(TestCaseTarget target){
 		testCaseStatusByTarget.put(target, new TargetStatus(Existence.NOT_EXISTS, null));
 		clearSteps(target);
+		callGraph.removeNode(target);
 	}
 	
 	// virtually an alias of setDeleted
@@ -308,7 +310,7 @@ public class Model {
 		
 		List<StepType> types = testCaseStepsByTarget.get(tc);
 		
-		if (index == null || index >= types.size()){
+		if (index == null || index >= types.size() || index < 0){
 			index = types.size();
 		}
 		
@@ -337,6 +339,11 @@ public class Model {
 		// .intValue() desambiguate with the other method - remove(Object) -
 		types.remove(index.intValue()); 
 		
+		// if that was a call step, also remove the connection from the callgraph
+		// since the graph keeps no track of the cardinality of the relationship (ie if a test A calls a test B three times), 
+		// all redundant calls will be "removed" from the model, leaving it in an inconsistent state. Shit might then 
+		// happen if a call step is then added back and includes a cycle : it could go undetected.
+		
 	}
 	
 	
@@ -355,7 +362,7 @@ public class Model {
 		
 		// if index is defined just check it is within range
 		// otherwise it doesn't exist.
-		return (index != null) ? (types.size() > index) : false;
+		return (index != null) ? (types.size() > index && index >= 0) : false;
 		
 	}
 	

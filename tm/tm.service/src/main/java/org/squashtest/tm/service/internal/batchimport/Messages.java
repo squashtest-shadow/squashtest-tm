@@ -37,6 +37,10 @@ final class Messages {
 	static final String ERROR_TC_NOT_FOUND = "message.import.log.error.tc.notFound";
 	static final String ERROR_TC_CANT_RENAME = "message.import.log.error.tc.cantrename";
 	static final String ERROR_REMOVE_CALLED_TC = "message.import.log.error.tc.cannotRemoveCalledTestCase";
+	static final String ERROR_STEPINDEX_EMPTY = "message.import.log.error.tc.tcStep.empty"; 
+	static final String ERROR_STEPINDEX_NEGATIVE = "message.import.log.error.tc.tcStep.negative";
+	static final String ERROR_STEPINDEX_OVERFLOW = "message.import.log.error.tc.tcStep.numberOverNextPosition";
+	static final String ERROR_CYCLIC_STEP_CALLS = "message.import.log.error.tc.callStep.cyclicCalls";
 	
 	
 	static final String IMPACT_MAX_SIZE = "message.import.log.impact.truncatedValue";
@@ -44,7 +48,7 @@ final class Messages {
 	static final String IMPACT_NO_CHANGE = "message.import.log.impact.fieldNotChange";
 	static final String IMPACT_TC_WITH_SUFFIX = "message.import.log.impact.tc.renamed";
 	static final String IMPACT_TC_CREATED = "message.import.log.impact.tc.created";
-	
+	static final String IMPACT_STEP_CREATED_LAST = "message.import.log.impact.testStepAddedAtMaxPosition";
 	
 	private Messages(){
 		super();

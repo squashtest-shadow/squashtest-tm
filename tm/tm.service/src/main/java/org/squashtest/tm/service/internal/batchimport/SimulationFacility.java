@@ -44,6 +44,7 @@ public class SimulationFacility implements Facility{
 	private static final String PERM_CREATE = "CREATE";
 	private static final String PERM_WRITE = "WRITE";
 	private static final String PERM_DELETE = "DELETE";
+	private static final String PERM_READ	=	"READ";
 	private static final String LIBRARY_CLASSNAME = "org.squashtest.tm.domain.testcase.TestCaseLibrary";
 	
 
@@ -58,13 +59,13 @@ public class SimulationFacility implements Facility{
 	
 	
 	private Model model;
-	private EntityValidator testCaseValidator = new EntityValidator();
+	private EntityValidator entityValidator = new EntityValidator();
 	private CustomFieldValidator cufValidator = new CustomFieldValidator(); 
 	
 	
 	public void setModel(Model model){
 		this.model = model;
-		testCaseValidator.setModel(model);
+		entityValidator.setModel(model);
 		cufValidator.setModel(model);
 	}
 	
@@ -78,14 +79,14 @@ public class SimulationFacility implements Facility{
 	@Override
 	public LogTrain createTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
 		
-		LogTrain logs = new LogTrain();
+		LogTrain logs ;
 		String path = target.getPath();
 		String name = testCase.getName();
 		TargetStatus status = model.getStatus(target);
 
 
 		// 1 - basic verifications
-		logs.append( testCaseValidator.basicTestCaseChecks(target, testCase, cufValues) );
+		logs = entityValidator.basicTestCaseChecks(target, testCase) ;
 		
 		// 2 - custom fields (create)
 		logs.append( cufValidator.checkCreateCustomFields(target, cufValues, model.getTestCaseCufs(target)) );
@@ -96,10 +97,10 @@ public class SimulationFacility implements Facility{
 			logs.addEntry( new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_TC_ALREADY_EXISTS, new String[]{target.getPath()}, Messages.IMPACT_TC_WITH_SUFFIX, null));
 		}
 		
-		// 3-2 : permissions. note about the following 'if' : the case where the project doesn't exist (and thus has no id) is already covered in the basic checks.
-		Long libid = model.getProjectStatus(target.getProject()).id;
-		if ( (libid != null) && ( ! permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, PERM_CREATE, libid, LIBRARY_CLASSNAME) ) ){
-			logs.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[]{PERM_CREATE, target.getPath()}) );
+		// 3-2 : permissions. 
+		LogEntry hasntPermission = checkPermissionOnProject(PERM_CREATE, target);
+		if ( hasntPermission != null){
+			logs.addEntry( hasntPermission );
 		}
 		
 		// 3-3 : name and path must be consistent
@@ -148,7 +149,7 @@ public class SimulationFacility implements Facility{
 		else{
 		
 			// 1 - basic verifications
-			logs.append( testCaseValidator.basicTestCaseChecks(target, testCase, cufValues) );
+			logs.append( entityValidator.basicTestCaseChecks(target, testCase) );
 			
 			// 2 - custom fields (create)
 			logs.append( cufValidator.checkUpdateCustomFields(target, cufValues, model.getTestCaseCufs(target)) );
@@ -164,9 +165,9 @@ public class SimulationFacility implements Facility{
 				}
 			}
 			// 3-2 : permissions. note about the following 'if' : the case where the project doesn't exist (and thus has no id) is already covered in the basic checks.
-			Long libid = model.getProjectStatus(target.getProject()).id;
-			if ( (libid != null) && ( ! permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, PERM_CREATE, libid, LIBRARY_CLASSNAME) ) ){
-				logs.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[]{PERM_WRITE, target.getPath()}) );
+			LogEntry hasntPermission = checkPermissionOnProject(PERM_WRITE, target);
+			if ( hasntPermission != null){
+				logs.addEntry( hasntPermission );
 			}
 
 		}
@@ -193,9 +194,9 @@ public class SimulationFacility implements Facility{
 		}
 		
 		// 2 - can the user actually do it ?
-		Long libid = model.getProjectStatus(target.getProject()).id;
-		if ((libid != null) && (! permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, PERM_DELETE, libid, LIBRARY_CLASSNAME))){
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[]{PERM_DELETE}));
+		LogEntry hasntPermission = checkPermissionOnProject(PERM_DELETE, target);
+		if ( hasntPermission != null){
+			logs.addEntry( hasntPermission );
 		}
 		
 		// 3 - is the test case called by another test case ?
@@ -215,60 +216,186 @@ public class SimulationFacility implements Facility{
 	@Override
 	public LogTrain addActionStep(TestStepTarget target, TestStep testStep, Map<String, String> cufValues) {
 		
-		LogTrain logs = new LogTrain();
-		TestCaseTarget testCase = target.getTestCase();
-		Integer index;
+		LogTrain logs ;
+		
+		// 1 - basic checks
+		logs = entityValidator.basicTestStepChecks(target, testStep);
+		
+		// 2 - custom fields (create)
+		logs.append( cufValidator.checkCreateCustomFields(target, cufValues, model.getTestStepCufs(target)) );
+				
+		// 3 - the user must be approved
+		LogEntry hasntPermission = checkPermissionOnProject(PERM_WRITE, target.getTestCase());
+		if ( hasntPermission != null){
+			logs.addEntry( hasntPermission );
+		}
+		
+		// 4 - check the index
+		LogEntry indexCheckLog = checkStepIndex(target, ImportStatus.WARNING, Messages.IMPACT_STEP_CREATED_LAST);
+		if (indexCheckLog != null){
+			logs.addEntry(indexCheckLog);
+		}
 		
 		
-		
-		
-		
-		
-		
-		
-		throw new UnsupportedOperationException("not implemented yet"); 
+		// if no fatal errors, update the model
+		if (! logs.hasCriticalErrors()){
+			model.addActionStep(target);
+		}
+
+		return logs;
+
 	}
 	
 	@Override
-	public LogTrain addCallStep(TestStepTarget target, TestStep testStep, TestCaseTarget calledTestCase, Map<String, String> cufValues) {
+	public LogTrain addCallStep(TestStepTarget target, TestStep testStep, TestCaseTarget calledTestCase) {
 		
-		LogTrain logs = new LogTrain();
-		TestCaseTarget testCase = target.getTestCase();
-		Integer index;
+		LogTrain logs;		
+		
+		// 1 - basic checks
+		logs = entityValidator.basicTestStepChecks(target, testStep);
+		
+		// 2 - call step specific checks
+		logs.append( entityValidator.validateCallStep(target, testStep, calledTestCase));
+		
+		// 3 - cufs : call steps have no cufs -> skip
+		
+		// 4.1 - the user must be approved on the source test case
+		LogEntry hasntOwnerPermission = checkPermissionOnProject(PERM_WRITE, target.getTestCase());
+		if ( hasntOwnerPermission != null){
+			logs.addEntry( hasntOwnerPermission );
+		}	
+		
+		// 4.2 - the user must be approved on the target test case
+		LogEntry hasntCallPermission = checkPermissionOnProject(PERM_READ, calledTestCase);
+		if ( hasntCallPermission != null){
+			logs.addEntry( hasntCallPermission );
+		}	
+		
+		// 5 - check the index
+		LogEntry indexCheckLog = checkStepIndex(target, ImportStatus.WARNING, Messages.IMPACT_STEP_CREATED_LAST);
+		if (indexCheckLog != null){
+			logs.addEntry(indexCheckLog);
+		}
+		
+		// 6 - no call step cycles allowed
+		if (model.wouldCreateCycle(target, calledTestCase)){
+			logs.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_CYCLIC_STEP_CALLS, new Object[]{ target.getTestCase().getPath(), calledTestCase.getPath() } ));
+		}
+		
+		// update the model if no fatal flaws were detected
+		if (! logs.hasCriticalErrors()){
+			model.addCallStep(target, calledTestCase);
+		}
+		
+		return logs;
+	}
+
+
+	@Override
+	public LogTrain updateActionStep(TestStepTarget target, TestStep testStep, Map<String, String> cufValues) {
+		
+		LogTrain logs ;
+		
+		// 1 - basic checks
+		logs = entityValidator.basicTestStepChecks(target, testStep);
+		
+		// 2 - custom fields (create)
+		logs.append( cufValidator.checkUpdateCustomFields(target, cufValues, model.getTestStepCufs(target)) );
+		
+		// 3 - the user must be approved
+		LogEntry hasntPermission = checkPermissionOnProject(PERM_WRITE, target.getTestCase());
+		if ( hasntPermission != null){
+			logs.addEntry( hasntPermission );
+		}
+		
+		// 4 - check the index
+		LogEntry indexCheckLog = checkStepIndex(target, ImportStatus.FAILURE, null);
+		if (indexCheckLog != null){
+			logs.addEntry(indexCheckLog);
+		}
+		
+		// no need to update the model 
+		
+		return logs;
+		
+	}
+
+
+	@Override
+	public LogTrain updateCallStep(TestStepTarget target, TestStep testStep, TestCaseTarget calledTestCase) {
+		
+		LogTrain logs;		
+		
+		// 1 - basic checks
+		logs = entityValidator.basicTestStepChecks(target, testStep);
+		
+		// 2 - call step specific checks
+		logs.append( entityValidator.validateCallStep(target, testStep, calledTestCase));
+		
+		// 3 - cufs : call steps have no cufs -> skip
+		
+		// 4.1 - the user must be approved on the source test case
+		LogEntry hasntOwnerPermission = checkPermissionOnProject(PERM_WRITE, target.getTestCase());
+		if ( hasntOwnerPermission != null){
+			logs.addEntry( hasntOwnerPermission );
+		}	
+		
+		// 4.2 - the user must be approved on the target test case
+		LogEntry hasntCallPermission = checkPermissionOnProject(PERM_READ, calledTestCase);
+		if ( hasntCallPermission != null){
+			logs.addEntry( hasntCallPermission );
+		}	
+		
+		// 5 - check the index
+		LogEntry indexCheckLog = checkStepIndex(target, ImportStatus.FAILURE, null);
+		if (indexCheckLog != null){
+			logs.addEntry(indexCheckLog);
+		}
+		
+		// 6 - no call step cycles allowed
+		if (model.wouldCreateCycle(target, calledTestCase)){
+			logs.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_CYCLIC_STEP_CALLS, new Object[]{ target.getTestCase().getPath(), calledTestCase.getPath() } ));
+		}
 		
 		
-		
-		
-		
-		
-		
-		
-		throw new UnsupportedOperationException("not implemented yet"); 
+	}
+
+
+	@Override
+	public LogTrain deleteTestStep(TestStepTarget target) {
+		throw new UnsupportedOperationException("not implemented yet");
 	}
 	
-
-	@Override
-	public LogTrain updateActionStep(long testStepId, TestStep testStepData) {
-		throw new UnsupportedOperationException("not implemented yet"); 
+	// checks permission on a project that may exist or not.
+	// the case where the project doesn't exist (and thus has no id) is already covered in the basic checks.
+	private LogEntry checkPermissionOnProject(String permission, TestCaseTarget target){
+		LogEntry entry = null;
+		
+		Long libid = model.getProjectStatus(target.getProject()).id;
+		if ( (libid != null) && ( ! permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, libid, LIBRARY_CLASSNAME) ) ){
+			entry = new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[]{permission, target.getPath()}) ;
+		}
+		
+		return entry;
 	}
 	
-
-	@Override
-	public LogTrain updateCallStep(long testStepId, TestStep testStepData, TestCaseTarget calledTestCase) {
-		throw new UnsupportedOperationException("not implemented yet"); 
+	private LogEntry checkStepIndex(TestStepTarget target, ImportStatus importStatus, String optionalImpact ){
+		Integer index = target.getIndex();
+		LogEntry entry = null; 
+		
+		if (index == null){
+			 entry = new LogEntry(target, importStatus, Messages.ERROR_STEPINDEX_EMPTY, optionalImpact);
+		}
+		else if (index < 0){
+			entry = new LogEntry(target, importStatus, Messages.ERROR_STEPINDEX_NEGATIVE, optionalImpact);		
+		}
+		else if (! model.stepExists(target)){
+			entry = new LogEntry(target, importStatus, Messages.ERROR_STEPINDEX_OVERFLOW, optionalImpact);		
+		}
+		
+		return entry;
 	}
 
-	@Override
-	public LogTrain deleteTestStep(long testStepId) {
-		throw new UnsupportedOperationException("not implemented yet"); 
-	}
-
-	@Override
-	public LogTrain deleteTestStep(TestStep testStep) {
-		throw new UnsupportedOperationException("not implemented yet"); 
-	}
-
-	
 	
 	
 }

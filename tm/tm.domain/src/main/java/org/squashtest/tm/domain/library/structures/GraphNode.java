@@ -20,19 +20,17 @@
  */
 package org.squashtest.tm.domain.library.structures;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 
 public class GraphNode<IDENT, T extends GraphNode<IDENT, T>>{
-	
-	protected final Set<T> inbounds = new HashSet<T>();
-	protected final Set<T> outbounds = new HashSet<T>();
-	
-	
 
 	protected IDENT key;
-	protected LibraryGraph<IDENT, T> graph;
+	
+	protected final Set<T> inbounds = new HashSet<T>();
+	protected final Set<T> outbounds = new HashSet<T>();	
 	
 	
 	public GraphNode(){
@@ -44,21 +42,33 @@ public class GraphNode<IDENT, T extends GraphNode<IDENT, T>>{
 	}
 
 
-	public Set<T> getInbounds() {
+	public Collection<T> getInbounds() {
 		return inbounds;
 	}
 
 
-	public Set<T> getOutbounds() {
+	public Collection<T> getOutbounds() {
 		return outbounds;
 	}
 	
 	public void addInbound(T inbound){
-		if (inbound!=null){ inbounds.add(inbound);}
+		if (inbound!=null && ! inbounds.contains(inbound)){ 
+			inbounds.add(inbound);
+		}
 	}
 	
 	public void addOutbound(T outbound){
-		if (outbound!=null){ outbounds.add(outbound);}
+		if (outbound!=null && ! outbounds.contains(outbound)){ 
+			outbounds.add(outbound);
+		}
+	}
+	
+	public void removeInbound(T inbound){
+		inbounds.remove(inbound);
+	}
+	
+	public void removeOutbount(T outbound){
+		outbounds.remove(outbound);
 	}
 
 	public IDENT getKey(){
@@ -69,9 +79,6 @@ public class GraphNode<IDENT, T extends GraphNode<IDENT, T>>{
 		this.key=key;
 	}
 
-	public LibraryGraph<IDENT, T> getGraph() {
-		return graph;
-	}
 
 	@Override
 	public int hashCode() {

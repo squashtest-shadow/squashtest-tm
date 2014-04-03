@@ -35,10 +35,9 @@ public interface Facility {
 	
 	
 	LogTrain addActionStep(TestStepTarget target, TestStep testStep, Map<String, String> cufValues);
-	LogTrain addCallStep(TestStepTarget target, TestStep testStep, TestCaseTarget calledTestCase, Map<String, String> cufValues);
-	LogTrain updateActionStep(long testStepId, TestStep testStepData);
-	LogTrain updateCallStep(long testStepId, TestStep testStepData, TestCaseTarget calledTestCase);
-	LogTrain deleteTestStep(long testStepId);
-	LogTrain deleteTestStep(TestStep testStep);
+	LogTrain addCallStep(TestStepTarget target, TestStep testStep, TestCaseTarget calledTestCase);
+	LogTrain updateActionStep(TestStepTarget target, TestStep testStep, Map<String, String> cufValues);
+	LogTrain updateCallStep(TestStepTarget target, TestStep testStep, TestCaseTarget calledTestCase);
+	LogTrain deleteTestStep(TestStepTarget target);
 	
 }

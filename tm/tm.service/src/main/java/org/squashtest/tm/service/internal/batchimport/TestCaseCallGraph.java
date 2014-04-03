@@ -140,6 +140,16 @@ class TestCaseCallGraph extends LibraryGraph<TestCaseTarget, TestCaseCallGraph.N
 		
 	}
 	
+	
+	void removeNode(TestCaseTarget target){
+		Node n = getNode(target);
+		if (n != null){
+			n.getInbounds().remove(n);
+			n.getOutbounds().remove(n);
+			getNodes().remove(n);
+		}
+	}
+	
 	static final class Node extends GraphNode<TestCaseTarget, Node>{
 		Node(TestCaseTarget target){
 			super(target);
