@@ -145,20 +145,43 @@ public class TestCaseLibraryNavigationController extends
 	
 
 
-
+	//TEST CASE IMPORT
 	@RequestMapping(value = "/import/upload", method = RequestMethod.POST, params = "upload-ticket", produces="text/html")
-	public ModelAndView importArchive(@RequestParam("archive") MultipartFile archive,
-			@RequestParam("projectId") Long projectId, @RequestParam("zipEncoding") String zipEncoding)
+	public ModelAndView importTestCases(
+			@RequestParam("archive") MultipartFile archive,
+			@RequestParam("projectId") Long projectId, 
+			@RequestParam("zipEncoding") String zipEncoding,
+			@RequestParam("format") String format)
 			throws IOException {
 
 		InputStream stream = archive.getInputStream();
-
-		ImportSummary summary =  testCaseLibraryNavigationService.importZipTestCase(stream, projectId, zipEncoding);
 		ModelAndView mav =  new ModelAndView("fragment/import/import-summary");
-		mav.addObject("summary", summary);
-		mav.addObject("workspace", "test-case");
+		
+		if("zip".equals(format)){
+			ImportSummary summary =  testCaseLibraryNavigationService.importZipTestCase(stream, projectId, zipEncoding);
+			mav.addObject("summary", summary);
+			mav.addObject("workspace", "test-case");
+		} else if("xls".equals(format)){
+			
+		}
 		return mav;
+	}
+	
+	@RequestMapping(value = "/import/upload/simulation", method = RequestMethod.POST, params = "upload-ticket", produces="text/html")
+	public ModelAndView simulateTestCaseImport(
+			@RequestParam("archive") MultipartFile archive,
+			@RequestParam("projectId") Long projectId, 
+			@RequestParam("zipEncoding") String zipEncoding,
+			@RequestParam("format") String format)
+			throws IOException {
 
+		InputStream stream = archive.getInputStream();
+		ModelAndView mav =  new ModelAndView("fragment/import/import-summary");
+		
+		if("xls".equals(format)){
+
+		} 
+		return mav;
 	}
 
 	@RequestMapping(value = "/drives", method = RequestMethod.GET, params = { "linkables" })

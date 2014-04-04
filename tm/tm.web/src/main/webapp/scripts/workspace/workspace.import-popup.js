@@ -73,6 +73,9 @@ define(['jquery', 'jquery.squash.formdialog', 'jform'], function($){
 		bindEvents : function(){
 			var self = this;
 			
+			// ** radio **
+			
+			
 			// ** buttons **
 	
 			this.onOwnBtn('import', function(){
@@ -148,9 +151,44 @@ define(['jquery', 'jquery.squash.formdialog', 'jform'], function($){
 		
 		// ***************** request submission code *******************
 		
+		simulate : function() {
+			this.setState('progression');
+			this.doSimulate();
+		},
+		
 		submit : function() {
 			this.setState('progression');
 			this.doSubmit();
+		},
+		
+		doSimulate : function(){
+			var self = this;
+			
+			var form = this.getForm();
+			
+			var url = form.attr('action');
+			form.ajaxSubmit({
+				url : url + '/simulation?upload-ticket=' + self.options._ticket,
+				dataType : 'text/html',
+				type : 'POST',
+				success : function(){},
+				error : function(){},
+				complete : function(xhr){
+					
+					self.options.xhr = xhr;					
+					var json = $.parseJSON($(xhr.responseText).text());
+			
+					if ('maxSize' in json){
+						self.errMaxSize(json.maxSize);
+						self.setState('error-size');
+					}
+					else{						
+						self.createSummary(json);
+						self.setState('summary');						
+					}
+				},
+				target : self.element.find('.dump').attr('id')
+			});
 		},
 		
 		doSubmit : function(){

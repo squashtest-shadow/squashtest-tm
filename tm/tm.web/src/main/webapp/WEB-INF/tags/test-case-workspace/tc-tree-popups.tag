@@ -198,7 +198,7 @@
 					</div>
 				
 					<div class="grey-round-panel snap-right" style="width:43%;">
-						<input type="radio" name="format" data-val="csv" class="centered"/><span style="text-decoration:underline;">CSV</span>
+						<input type="radio" name="format" data-val="zip" class="centered"/><span style="text-decoration:underline;">ZIP</span>
 						<p class="nota-bene">
 							<f:message key="test-case.import.dialog.zip.description"/>
 						</p>			
@@ -229,7 +229,7 @@
 				<div class="display-table-row">
 					<div class="display-table-cell"><label><f:message key="dialog.import-excel.test-case.filetype.message"/></label></div>
 					<div class="display-table-cell">
-						<input type="file" name="archive" size="20" accept="application/zip" />
+						<input type="file" name="archive" size="20" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/zip" />
 					</div>
 				</div>
 				<div class="display-table-row">
@@ -265,7 +265,7 @@
 		<comp:waiting-pane/>
 	</div>
 	
-	<div class="import-summary" data-def="state=summary">
+	<div class="import-summary" data-def="state=zip-summary">
 	
 		<div><span><f:message key="dialog.import-excel.test-case.total"/></span><span class="total-import span-bold"></span></div>
 		
@@ -285,7 +285,13 @@
 			</ul>
 		</div>
 	</div>	
+	
+	<div data-def="state=xls-simulation-summary">
+	</div>
 
+	<div data-def="state=xls-import-summary">
+	</div>
+		
 	<div data-def="state=error-size">
 		<span class="error-size"><f:message key="dialog.import.error.sizeexceeded"/></span>
 	</div>
@@ -297,7 +303,7 @@
 	<div id="import-excel-dump" class="not-displayed dump"></div>
 
 	<div class="popup-dialog-buttonpane">
-		<input type="button" value="${simulateLabel}"  data-def="evt=simulate, state=parametrization"/>
+		<input id="simulateButton" type="button" value="${simulateLabel}"  data-def="evt=simulate, state=parametrization"/>
 		<input type="button" value="${importLabel}"  data-def="evt=import, state=parametrization, mainbtn=parametrization"/>
 		<input type="button" value="${confirmLabel}" data-def="evt=confirm, state=confirm, mainbtn=confirm"/>
 		<input type="button" value="${okLabel}"		 data-def="evt=ok, state=summary, mainbtn=summary"/>

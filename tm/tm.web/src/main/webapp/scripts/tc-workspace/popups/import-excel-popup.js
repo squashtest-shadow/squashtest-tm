@@ -64,6 +64,10 @@ define(['jquery', 'tree', 'workspace/workspace.import-popup'], function($, zetre
 				}
 			});
 			
+			this.element.on('change', 'input[name="format"]', function(){
+				var value = 'toto';
+			});
+			
 			this.element.on('change', 'select[name="projectId"]', function(){
 				var projectname = $(':selected', this).text(); 
 				self.element.find('.confirm-project').text(projectname);
@@ -80,7 +84,7 @@ define(['jquery', 'tree', 'workspace/workspace.import-popup'], function($, zetre
 	function init(){
 		
 		var dialog = $("#import-excel-dialog").tcimportDialog({
-			formats : ['zip']
+			formats : ['xls','xlsx','zip']
 		});
 		
 		// ******** additional processing ***********

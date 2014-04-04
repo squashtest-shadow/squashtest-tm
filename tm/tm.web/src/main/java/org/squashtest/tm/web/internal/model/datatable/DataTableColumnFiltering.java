@@ -85,6 +85,10 @@ public class DataTableColumnFiltering implements ColumnFiltering{
 	}
 
 	@Override
+	@Deprecated
+	/**
+	 * @deprecated does not seem to be used any longer
+	 */
 	public boolean hasFilter(String mDataProp, int offset) {
 		if(this.dataProps.containsKey(mDataProp)){
 			return hasFilter(this.dataProps.get(mDataProp)+offset);
@@ -94,6 +98,10 @@ public class DataTableColumnFiltering implements ColumnFiltering{
 	}
 
 	@Override
+	@Deprecated
+	/**
+	 * @deprecated does not seem to be used any longer
+	 */
 	public String getFilter(String mDataProp, int offset) {
 		return getFilter(this.dataProps.get(mDataProp)+offset);
 	}
