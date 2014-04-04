@@ -53,7 +53,7 @@ class ModelIT  extends DbunitServiceSpecification {
 	def "should init the requested target, some targets already exists and some do not"(){
 		
 		given : 
-			def targets = createTestCaseTargets("/autre project/folder/TEST B", "/Test Project-1/dossier 2/0 test case / with slash", "/nonexistant/unknown", "/Test Project-1/nonexistant")
+			def targets = createTestCaseTargets("/autre project/folder/TEST B", "/Test Project-1/dossier 2/0 test case \\/ with slash", "/nonexistant/unknown", "/Test Project-1/nonexistant")
 			
 		when :
 			model.init(targets)
@@ -73,8 +73,9 @@ class ModelIT  extends DbunitServiceSpecification {
 			model.testCaseStatusByTarget[targets[3]].id == null
 				
 			// now check the model for the steps
-			model.testCaseStepsByTarget[targets[0]] == [ACTION, ACTION]
-			model.testCaseStepsByTarget[targets[1]] == [ACTION, ACTION, CALL]
+			model.testCaseStepsByTarget[targets[0]].collect{it.type} == [ACTION, ACTION]
+			model.testCaseStepsByTarget[targets[1]].collect{it.type} == [ACTION, ACTION, CALL]
+			model.testCaseStepsByTarget[targets[1]][2].calledTC == new TestCaseTarget("/Test Project-1/test 3");
 			model.testCaseStepsByTarget[targets[2]] == []
 			model.testCaseStepsByTarget[targets[3]] == []
 			
@@ -92,6 +93,9 @@ class ModelIT  extends DbunitServiceSpecification {
 			model.tcCufsPerProjectname["autre project"].collect{ it.code }  as Set == ["CK_TC", "DATE"]  as Set
 			model.stepCufsPerProjectname["Test Project-1"].collect{ it.code } as Set == ["LST_ST"]  as Set
 			model.stepCufsPerProjectname["autre project"].collect{ it.code } as Set == ["DATE", "LST_ST"] as Set
+			
+			// now check the call graph
+			model.isCalled(new TestCaseTarget("/Test Project-1/test 3"))
 			
 	}
 	
@@ -111,7 +115,9 @@ class ModelIT  extends DbunitServiceSpecification {
 			status.status == EXISTS
 			
 			def steps = model.testCaseStepsByTarget.get(targets[0]);
-			steps == [ACTION, CALL, ACTION]
+			steps.collect{ it.type } == [ACTION, CALL, ACTION]
+			steps[1].calledTC == new TestCaseTarget("/Test Project-1/dossier 1/test case 1")
+			
 		
 	}
 	
