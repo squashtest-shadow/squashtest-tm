@@ -43,25 +43,38 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 
 	private static final String WHERE_CLAUSE_FOR_ISSUES_FROM_EXEC_AND_EXEC_STEP =
 	// ------------------------------------Where issues is from the given Executions
-	"where issue.id in ( select issueExec.id "
+	"where Issue.id in ( select issueExec.id "
 			+ "from Execution exec "
 			// way to issue id for exec
 			+ "join exec.issueList issueListExec "
 			+ "join issueListExec.issues issueExec "
 			+ "join issueExec.bugtracker issuExecBT "
+			+ "join exec.testPlan tp " 
+			+ "join tp.iteration it " 
+			+ "join it.campaign cp "
+			+ "join cp.project proj "
+			+ "join proj.bugtrackerBinding binding "
+			+ "join binding.bugtracker projbt "
 			// restriction for execution's bugtracker
-			+ "where exec.id in :executionsIds "
-			+ "and exec.testPlan.iteration.campaign.project.bugtrackerBinding.bugtracker.id = issuExecBT.id ) "
+			+ "where exec.id in (:executionsIds) "
+			+ "and projbt.id = issuExecBT.id ) "
 			// -----------------------------------------------Or from the given ExecutionSteps
 			+ "or Issue.id in (select issueExecStep.id "
 			+ "from ExecutionStep execStep "
 			// way to issue id for execStep
-			+ "join execStep.issueList issueListExecStep " + "join issueListExecStep.issues issueExecStep "
+			+ "join execStep.issueList issueListExecStep "  
+			+ "join issueListExecStep.issues issueExecStep "
 			+ "join issueExecStep.bugtracker issueExecStepBT "
-
+			+ "join execStep.execution exec "
+			+ "join exec.testPlan tp " 
+			+ "join tp.iteration it " 
+			+ "join it.campaign cp "
+			+ "join cp.project proj "
+			+ "join proj.bugtrackerBinding binding "
+			+ "join binding.bugtracker projbt "
 			// restriction for executionStep's bugtracker
-			+ "where execStep.id in :executionStepsIds " 
-			+ "and execStep.execution.testPlan.iteration.campaign.project.bugtrackerBinding.bugtracker.id = issueExecStepBT.id) ";
+			+ "where execStep.id in (:executionStepsIds) " 
+			+ "and projbt.id = issueExecStepBT.id) ";
 
 
 	
@@ -152,7 +165,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 			List<Long> executionStepsIds, PagingAndSorting sorter) {
 		if (!executionsIds.isEmpty() && !executionStepsIds.isEmpty()) {
 
-			String queryString = "select issue from Issue issue "
+			String queryString = "select Issue from Issue Issue "
 					+ WHERE_CLAUSE_FOR_ISSUES_FROM_EXEC_AND_EXEC_STEP;
 
 			queryString += "order by " + sorter.getSortedAttribute() + " " + sorter.getSortOrder().getCode();
@@ -175,7 +188,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	@Override
 	public Integer countIssuesfromExecutionAndExecutionSteps(List<Long> executionsIds, List<Long> executionStepsIds) {
 		if (!executionsIds.isEmpty() && !executionStepsIds.isEmpty()) {
-			String queryString = "select count(Issue)  " + "from Issue issue "
+			String queryString = "select count(Issue)  " + "from Issue Issue "
 					+ WHERE_CLAUSE_FOR_ISSUES_FROM_EXEC_AND_EXEC_STEP;
 			
 			Query query = currentSession().createQuery(queryString);

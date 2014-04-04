@@ -32,6 +32,15 @@ import spock.unitils.UnitilsSupport
 @UnitilsSupport
 class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@Inject IssueDao issueDao
+	
+	
+	def expected(issue, ppt){
+		def b1 = issue.issueList.id = ppt[0] 
+		def b2 = issue.remoteIssueId == ppt[1] 
+		def b3 = issue.id == ppt[2] 
+		def b4 = (ppt[3] != null) ? (issue.bugtracker.id == ppt[3]) : true
+		return b1 && b2 && b3 && b4
+	}
 
 	@DataSet("HibernateIssueDaoIT.xml")
 	def "should return sorted issues from execs/exec-steps"(){
@@ -69,10 +78,13 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 
 		then:
 		result.size() <= 2
-		result == [
-			[100L, "11", 1L, 1L],
-			[1000L, "22", 2L, 1L]
-		]
+		
+		def issue1 = result[0]
+		def issue2 = result[1]
+		
+		expected (issue1, [100L, "11", 1L, 1L])
+		expected (issue2, [1000L, "22", 2L, 1L])
+		
 	}
 
 	@DataSet("HibernateIssueDaoIT.xml")
@@ -109,12 +121,16 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 		when: def result = issueDao.findSortedIssuesFromExecutionAndExecutionSteps(execIds, execStepIds,sorter)
 
 		then:
-		result.size() <= 7
-		result == [
-			[1000L, "22", 2L, 1L],
-			[1011L, "33", 3L, 1L],
-			[2010L, "66", 6L, 1L]
-		]
+		result.size() == 3
+		
+		def issue1 = result[0]
+		def issue2 = result[1]
+		def issue3 = result[2]
+		
+		expected (issue1, [1000L, "22", 2L, 1L])
+		expected (issue2, [1011L, "33", 3L, 1L])
+		expected (issue3, [2010L, "66", 6L, 1L])
+		
 	}
 
 	@DataSet("HibernateIssueDaoIT.xml")
@@ -171,12 +187,16 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 		when: def result = issueDao.findSortedIssuesFromIssuesLists (issueListIds, sorter, bugTrackerId)
 
 		then:
-		result.size() <= 7
-		result == [
-			[1000L, "22", 2L],
-			[1011L, "33", 3L],
-			[2010L, "66", 6L]
-		]
+		result.size() == 3
+		
+		def issue1 = result[0]
+		def issue2 = result[1]
+		def issue3 = result[2]
+		
+		expected (issue1, [1000L, "22", 2L])
+		expected (issue2, [1011L, "33", 3L])
+		expected (issue3, [2010L, "66", 6L])
+
 	}
 
 	@DataSet("HibernateIssueDaoIT.xml")
