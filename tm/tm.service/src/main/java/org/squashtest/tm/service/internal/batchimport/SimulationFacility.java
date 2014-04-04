@@ -32,6 +32,7 @@ import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.internal.batchimport.Model.Existence;
+import org.squashtest.tm.service.internal.batchimport.Model.StepType;
 import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -297,7 +298,7 @@ public class SimulationFacility implements Facility{
 		LogTrain logs ;
 		
 		// 1 - basic checks
-		logs = entityValidator.basicTestStepChecks(target, testStep);
+		logs = entityValidator.basicTestStepChecks(target);
 		
 		// 2 - custom fields (create)
 		logs.append( cufValidator.checkUpdateCustomFields(target, cufValues, model.getTestStepCufs(target)) );
@@ -314,6 +315,12 @@ public class SimulationFacility implements Facility{
 			logs.addEntry(indexCheckLog);
 		}
 		
+		// 5 - the step must be actually an action step
+		StepType type = model.getType(target);
+		if (type != StepType.ACTION){
+			logs.addEntry (new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_NOT_AN_ACTIONSTEP) );
+		}
+		
 		// no need to update the model 
 		
 		return logs;
@@ -327,7 +334,7 @@ public class SimulationFacility implements Facility{
 		LogTrain logs;		
 		
 		// 1 - basic checks
-		logs = entityValidator.basicTestStepChecks(target, testStep);
+		logs = entityValidator.basicTestStepChecks(target);
 		
 		// 2 - call step specific checks
 		logs.append( entityValidator.validateCallStep(target, testStep, calledTestCase));
@@ -352,20 +359,60 @@ public class SimulationFacility implements Facility{
 			logs.addEntry(indexCheckLog);
 		}
 		
-		// 6 - no call step cycles allowed
+		// 6 - check that this is a call step
+		StepType type = model.getType(target);
+		if (type != StepType.CALL){
+			logs.addEntry (new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_NOT_A_CALLSTEP) );
+		}		
+		
+		// 7 - no call step cycles allowed
 		if (model.wouldCreateCycle(target, calledTestCase)){
 			logs.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_CYCLIC_STEP_CALLS, new Object[]{ target.getTestCase().getPath(), calledTestCase.getPath() } ));
 		}
 		
-		// if all is ok, update the target of this call step
+		// if all is ok, update the target of this call step then return
+		if (! logs.hasCriticalErrors()){
+			model.updateCallStepTarget(target, calledTestCase);
+		}
+		
 		return logs;
 	}
 
 
 	@Override
 	public LogTrain deleteTestStep(TestStepTarget target) {
-		throw new UnsupportedOperationException("not implemented yet");
+		
+		LogTrain logs ;
+		
+		// 1 - basic checks
+		logs = entityValidator.basicTestStepChecks(target);
+		
+		// 2 - can the user do it
+		LogEntry hasntPermission = checkPermissionOnProject(PERM_DELETE, target.getTestCase());
+		if ( hasntPermission != null){
+			logs.addEntry( hasntPermission );
+		}		
+		
+		// 3 - can that step be identified precisely ?
+		LogEntry indexCheckLog = checkStepIndex(target, ImportStatus.FAILURE, null);
+		if (indexCheckLog != null){
+			logs.addEntry(indexCheckLog);
+		}
+		
+		// if all went well, we can remove that step from the model
+		if (! logs.hasCriticalErrors()){
+			model.remove(target);
+		}
+		
+		return logs;
 	}
+	
+	
+	
+	
+	
+	
+	
 	
 	// checks permission on a project that may exist or not.
 	// the case where the project doesn't exist (and thus has no id) is already covered in the basic checks.

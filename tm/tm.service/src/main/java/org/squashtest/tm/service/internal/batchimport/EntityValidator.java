@@ -122,7 +122,7 @@ class EntityValidator {
 	 * @param testStep
 	 * @return
 	 */
-	LogTrain basicTestStepChecks(TestStepTarget target, TestStep testStep){
+	LogTrain basicTestStepChecks(TestStepTarget target){
 		
 		LogTrain logs = new LogTrain();
 		
@@ -146,6 +146,13 @@ class EntityValidator {
 		}
 		
 		return logs;
+
+	}
+	
+	LogTrain basicTestStepChecks(TestStepTarget target, TestStep testStep){
+		
+		// for now nothing much more to do with the TestStep
+		return basicTestStepChecks(target);
 
 	}
 	
