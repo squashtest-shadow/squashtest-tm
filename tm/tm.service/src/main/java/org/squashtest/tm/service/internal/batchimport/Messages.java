@@ -43,6 +43,7 @@ final class Messages {
 	static final String ERROR_NOT_A_CALLSTEP = "message.import.log.error.tc.tcStep.notacallstep";
 	static final String ERROR_NOT_AN_ACTIONSTEP = "message.import.log.error.tc.tcStep.notanactionstep";
 	static final String ERROR_CYCLIC_STEP_CALLS = "message.import.log.error.tc.callStep.cyclicCalls";
+	static final String ERROR_UNEXPECTED_ERROR = "message.import.log.error.unexpectederror";
 	
 	
 	static final String IMPACT_MAX_SIZE = "message.import.log.impact.truncatedValue";

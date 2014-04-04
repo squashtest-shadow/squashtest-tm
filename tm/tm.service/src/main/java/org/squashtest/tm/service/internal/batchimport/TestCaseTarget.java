@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import java.util.Arrays;
+
 import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.Target;
 
@@ -47,6 +49,8 @@ public class TestCaseTarget extends Target{
 	public EntityType getType() {
 		return EntityType.TEST_CASE;
 	}
+	
+	
 
 	public String getPath() {
 		return path;
@@ -108,4 +112,22 @@ public class TestCaseTarget extends Target{
 	public String getProject() {
 		return Utils.extractProjectName(path);
 	}
+	
+	public String getName(){
+		return Utils.extractTestCaseName(path);
+	}
+	
+	
+	/**
+	 * note : return the names of each folders, including the project, of this test case. Assumes that the path is well formed.
+	 * 
+	 * @return
+	 */
+	public String[] getFolder(){
+		
+		String[] names =  Utils.splitPath(path);
+		
+		return Arrays.copyOf(names, names.length-1);
+	}
+	
 }

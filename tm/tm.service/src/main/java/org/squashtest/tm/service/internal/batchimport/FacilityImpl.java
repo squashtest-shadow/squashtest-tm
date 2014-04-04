@@ -20,26 +20,52 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.service.importer.ImportStatus;
+import org.squashtest.tm.service.importer.LogEntry;
+import org.squashtest.tm.service.internal.repository.CustomFieldDao;
+import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
+import org.squashtest.tm.service.testcase.TestCaseModificationService;
+import org.squashtest.tm.service.testcase.TestStepModificationService;
 
 @Component
 @Scope("prototype")
 public class FacilityImpl implements Facility {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(FacilityImpl.class); 
 
 	@Inject
 	private SessionFactory sessionFactory;
 	
+	@Inject
+	private TestCaseLibraryNavigationService navigationService;
+	
+	@Inject
+	private TestCaseModificationService testcaseModificationService;
+	
+	@Inject
+	private TestStepModificationService stepModificationService;
+	
+	@Inject
+	private CustomFieldDao cufDao;
+	
+	
 	private SimulationFacility simulator;
 	
 	private Model model;
+	
+	private Map<String, Long> cufIdByCode = new HashMap<String, Long>();
 
 	
 	public SimulationFacility getSimulator() {
@@ -61,10 +87,21 @@ public class FacilityImpl implements Facility {
 	@Override
 	public LogTrain createTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
 
-		//LogTrain train = simulator.createTestCase(target, testCase, cufValues);
+		LogTrain train = simulator.createTestCase(target, testCase, cufValues);
 		
+		if (! train.hasCriticalErrors()){
+			try{
+				reallyCreateTestcase(target, testCase, cufValues);
+				model.setExists(target, testCase.getId());
+			}
+			catch(Exception ex){
+				train.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );
+				model.setNotExists(target);
+				LOGGER.error("Excel import : unexpected error while importing "+target+" : ", ex);
+			}
+		}
 		
-		throw new UnsupportedOperationException("not implemented yet");
+		return train;
 		
 	}
 
@@ -109,7 +146,18 @@ public class FacilityImpl implements Facility {
 	}
 
 	
-
+	// ************************* private stuffs **************************
+	
+	// because the service identifies cufs by their id, not their code
+	private Map<Long, String> toAcceptableCufs(Map<String, String> origCufs){
+		// Map<Long, String> result = new HashMap<Long, String>(origCufs.size());
+		 throw new RuntimeException("implement that");
+	}
+	
+	// because this time we're not f'ng around man, this is the real thing
+	private void reallyCreateTestcase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) throws Exception{
+				
+	}
 
 
 }
