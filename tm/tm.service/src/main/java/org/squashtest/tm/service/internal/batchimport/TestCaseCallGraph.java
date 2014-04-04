@@ -21,12 +21,14 @@
 package org.squashtest.tm.service.internal.batchimport;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 
 import org.squashtest.tm.domain.NamedReference;
 import org.squashtest.tm.domain.library.structures.GraphNode;
 import org.squashtest.tm.domain.library.structures.LibraryGraph;
+import org.squashtest.tm.exception.CyclicStepCallException;
 
 class TestCaseCallGraph extends LibraryGraph<TestCaseTarget, TestCaseCallGraph.Node> {
 	
@@ -61,7 +63,7 @@ class TestCaseCallGraph extends LibraryGraph<TestCaseTarget, TestCaseCallGraph.N
 			super.addEdge(src, dest);
 		}
 		else{
-			throw new IllegalArgumentException("cannot add to test case call graph an edge from '"+src.getKey().getPath()+"' to '"+dest.getKey().getPath()+"' : would create a cycle");
+			throw new CyclicStepCallException("cannot add to test case call graph an edge from '"+src.getKey().getPath()+"' to '"+dest.getKey().getPath()+"' : would create a cycle");
 		}
 	}
 	
@@ -144,13 +146,26 @@ class TestCaseCallGraph extends LibraryGraph<TestCaseTarget, TestCaseCallGraph.N
 	void removeNode(TestCaseTarget target){
 		Node n = getNode(target);
 		if (n != null){
-			n.getInbounds().remove(n);
-			n.getOutbounds().remove(n);
+			for (Node othernode : getNodes()){
+				if (! othernode.equals(n)){
+					othernode.disconnect(n);
+				}
+			}
 			getNodes().remove(n);
 		}
 	}
+
+	// it removes one edge only, not all of them.
+	void removeEdge(TestCaseTarget src, TestCaseTarget dest){
+		Node srcNode = getNode(src);
+		Node destNode = getNode(dest);
+		
+		srcNode.getOutbounds().remove(destNode);
+		destNode.getInbounds().remove(srcNode);
+	}
 	
 	static final class Node extends GraphNode<TestCaseTarget, Node>{
+		
 		Node(TestCaseTarget target){
 			super(target);
 		}
@@ -170,6 +185,21 @@ class TestCaseCallGraph extends LibraryGraph<TestCaseTarget, TestCaseCallGraph.N
 				}
 			}
 			return false;
+		}
+		
+		void disconnect(Node node){
+			 
+			for (Iterator<Node> iter = inbounds.iterator(); iter.hasNext();){
+				if (iter.next().equals(node)){
+					iter.remove();
+				}
+			}
+			
+			for (Iterator<Node> iter = outbounds.iterator(); iter.hasNext();){
+				if (iter.next().equals(node)){
+					iter.remove();
+				}
+			}
 		}
 	}
 }

@@ -21,6 +21,8 @@
 package org.squashtest.tm.service.internal.batchimport
 
 import spock.lang.Specification
+
+import org.squashtest.tm.exception.CyclicStepCallException;
 import org.squashtest.tm.service.internal.batchimport.TestCaseCallGraph.Node
 
 class TestCaseCallGraphTest extends Specification {
@@ -132,6 +134,119 @@ class TestCaseCallGraphTest extends Specification {
 	}
 	
 	
+	def "should rant because a new edge would create a cycle"(){
+		
+		when :
+			graph.addEdge(target("/family/ziggy"), target("/family/grandma"))
+			
+		then :
+			thrown CyclicStepCallException
+	}
+	
+	def "should disconnect a node (removing all connected edges)"(){
+		
+		given :
+			def targetCharlie = target("/family/charlie")
+			
+			def charlieConnected = { node ->
+				node.inbounds.contains ( graph.getNode (targetCharlie) ) ||
+				node.outbounds.contains ( graph.getNode (targetCharlie) )
+			}
+		
+		when :
+			graph.removeNode(targetCharlie)
+			
+
+		
+		then :
+			graph.getNode(targetCharlie) == null
+		
+			graph.getNodes().collect { charlieConnected it }.inject { prev, current -> prev || current } == false
+	}
+	
+	
+	def "for multi connected nodes, should remove an edge but not the others"(){
+		
+		given :
+			def charlie = target("/family/charlie")
+			def sally = target("/family/sally")
+		
+		when :
+			graph.removeEdge(charlie, sally)
+		
+		then :
+			
+			def cNode = graph.getNode(charlie)
+			def sNode = graph.getNode(sally)
+			
+			cNode.outbounds.contains sNode
+			sNode.inbounds.contains cNode
+		
+	}
+	
+	def "when removing a node, new connections previously forbidden are now possible"(){
+		
+		given :
+			def grandpa = target("/family/grandpa")
+			def martha = target("/family/martha")
+			def jess = target("/family/jess")
+		
+		when :
+			graph.removeNode(martha)
+			graph.addEdge(jess, grandpa)
+			
+		then :
+			notThrown CyclicStepCallException 
+		
+	}
+	
+	def "when removing an single edge, new connections previously forbidden are now possible"(){
+		
+		given :
+			def grandma = target("/family/grandma")
+			def charlie = target("/family/charlie")
+			def leonard = target("/family/leonard")
+		
+		when :
+			graph.removeEdge(grandma, charlie)
+			graph.addEdge(leonard, grandma)
+			
+		then :
+			notThrown CyclicStepCallException
+		
+	}
+	
+	def "when removing a multi edge, new connections still aren't available"(){
+		
+		given :
+			def charlie = target("/family/charlie")
+			def grandma = target("/family/grandma")
+			def sally = target("/family/sally")
+		
+		when :
+			graph.removeEdge(charlie, sally)
+			graph.addEdge(sally, grandma)
+			
+		then :
+			thrown CyclicStepCallException
+	}
+	
+	def "when removing a multi connected node, new connections become available"(){
+		
+		given :
+			def charlie = target("/family/charlie")
+			def grandma = target("/family/grandma")
+			def sally = target("/family/sally")
+		
+		when :
+			graph.removeNode(charlie)
+			graph.addEdge(sally, grandma)
+			
+		then :
+			notThrown CyclicStepCallException
+	}
+	
+	
 	def TestCaseTarget target(name){
 		return new TestCaseTarget(name)
 	}
@@ -163,8 +278,13 @@ class TestCaseCallGraphTest extends Specification {
 		graph.addEdge grandma, charlie
 		graph.addEdge grandpa, sally
 		graph.addEdge grandma, kenny
+		
+		// grandpa really likes kenny
+		graph.addEdge grandpa, kenny
 		graph.addEdge grandpa, kenny
 		
+		// charlie really likes sally
+		graph.addEdge charlie, sally
 		graph.addEdge charlie, sally
 		
 		graph.addEdge charlie, tommy

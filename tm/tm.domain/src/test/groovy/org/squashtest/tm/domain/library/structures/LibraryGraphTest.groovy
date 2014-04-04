@@ -146,6 +146,22 @@ class LibraryGraphTest extends Specification {
 		
 	}
 	
+	def "when two nodes are connected multiple times, the edge is represented as many times"(){
+		
+		when :
+			def nodes = [[null, 1l], [1l, 2l], [1l, 2l], [1l, 3l], [3l, 4l]]
+			LibraryGraph<NamedReference, SimpleNode<NamedReference>> graph = new LibraryGraph()
+			nodes.each { graph.addEdge(node(it[0]), node(it[1])) }
+	
+		
+		then :
+			def node1 = graph.getNode(ref(1l))
+			def node2 = graph.getNode(ref(2l))
+			
+			node1.outbounds.count { it.equals(node2) } == 2
+			node2.inbounds.count { it.equals(node1) } == 2
+		
+	}
 	
 	
 	NamedReference ref(id){
