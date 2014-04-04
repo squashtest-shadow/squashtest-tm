@@ -24,31 +24,36 @@ package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.validation.constraints.NotNull;
+
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.service.importer.Target;
+import org.squashtest.tm.service.internal.batchimport.ActionStepInstruction;
+import org.squashtest.tm.service.internal.batchimport.CallStepInstruction;
+import org.squashtest.tm.service.internal.batchimport.Instruction;
+import org.squashtest.tm.service.internal.batchimport.StepInstruction;
 import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
 import org.squashtest.tm.service.internal.batchimport.TestCaseTarget;
+import org.squashtest.tm.service.internal.batchimport.TestStepTarget;
 import org.squashtest.tm.service.internal.batchimport.excel.TargetFinder;
-
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.*;
 
 /**
  * 
  * @author Gregory Fouquet
  * 
  */
-public class PropertyHolderFinderRepository {
-	public static final PropertyHolderFinderRepository INSTANCE = new PropertyHolderFinderRepository();
+public class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColumn> {
+	private static final Map<TemplateWorksheet, PropertyHolderFinderRepository<?>> finderRepoByWorksheet = new HashMap<TemplateWorksheet, PropertyHolderFinderRepository<?>>(
+			TemplateWorksheet.values().length);
 
-	private final Map<TestCaseSheetColumn, TargetFinder<TestCaseInstruction, ?>> finderByColumn = new HashMap<TestCaseSheetColumn, TargetFinder<TestCaseInstruction, ?>>();
+	static {
+		finderRepoByWorksheet.put(TemplateWorksheet.TEST_CASES_SHEET, createTestCasesWorksheetRepo());
+		finderRepoByWorksheet.put(TemplateWorksheet.STEPS_SHEET, createStepsWorksheetRepo());
+	}
 
-	private final TargetFinder<TestCaseInstruction, TestCase> testCaseFinder = new TargetFinder<TestCaseInstruction, TestCase>() {
-		@Override
-		public TestCase find(TestCaseInstruction instruction) {
-			return instruction.getTestCase();
-		}
-	};
+	private static PropertyHolderFinderRepository<TestCaseSheetColumn> createTestCasesWorksheetRepo() {
+		PropertyHolderFinderRepository<TestCaseSheetColumn> r = new PropertyHolderFinderRepository<TestCaseSheetColumn>();
 
-	private PropertyHolderFinderRepository() {
 		TargetFinder<TestCaseInstruction, TestCaseTarget> targetFinder = new TargetFinder<TestCaseInstruction, TestCaseTarget>() {
 			@Override
 			public TestCaseTarget find(TestCaseInstruction instruction) {
@@ -56,21 +61,92 @@ public class PropertyHolderFinderRepository {
 			}
 		};
 
-		finderByColumn.put(TC_NUM, targetFinder);
-		finderByColumn.put(TC_PATH, targetFinder);
-		
+		r.finderByColumn.put(TestCaseSheetColumn.TC_NUM, targetFinder);
+		r.finderByColumn.put(TestCaseSheetColumn.TC_PATH, targetFinder);
+
 		TargetFinder<TestCaseInstruction, TestCaseInstruction> instructionFinder = new TargetFinder<TestCaseInstruction, TestCaseInstruction>() {
 			@Override
 			public TestCaseInstruction find(TestCaseInstruction instruction) {
 				return instruction;
 			}
 		};
-		finderByColumn.put(ACTION, instructionFinder);
+		r.finderByColumn.put(TestCaseSheetColumn.ACTION, instructionFinder);
+
+		TargetFinder<TestCaseInstruction, TestCase> testCaseFinder = new TargetFinder<TestCaseInstruction, TestCase>() {
+			@Override
+			public TestCase find(TestCaseInstruction instruction) {
+				return instruction.getTestCase();
+			}
+		};
+
+		r.defaultFinder = testCaseFinder;
+
+		return r;
+	}
+
+	/**
+	 * @return
+	 */
+	private static PropertyHolderFinderRepository<?> createStepsWorksheetRepo() {
+		PropertyHolderFinderRepository<StepSheetColumn> r = new PropertyHolderFinderRepository<StepSheetColumn>();
+
+		TargetFinder<StepInstruction, TestStepTarget> targetFinder = new TargetFinder<StepInstruction, TestStepTarget>() {
+			@Override
+			public TestStepTarget find(StepInstruction instruction) {
+				return instruction.getTarget();
+			}
+		};
+
+		r.finderByColumn.put(StepSheetColumn.TC_OWNER_PATH, targetFinder);
+		r.finderByColumn.put(StepSheetColumn.TC_STEP_NUM, targetFinder);
+
+		TargetFinder<StepInstruction, StepInstruction> instructionFinder = new TargetFinder<StepInstruction, StepInstruction>() {
+			@Override
+			public StepInstruction find(StepInstruction instruction) {
+				return instruction;
+			}
+		};
+
+		r.finderByColumn.put(StepSheetColumn.ACTION, instructionFinder);
+
+		TargetFinder<StepInstruction, Object> stepFinder = new TargetFinder<StepInstruction, Object>() {
+			@Override
+			public Object find(StepInstruction instruction) {
+				if (instruction instanceof ActionStepInstruction) {
+					return ((ActionStepInstruction) instruction).getTestStep();
+				}
+				if (instruction instanceof CallStepInstruction) {
+					return ((CallStepInstruction) instruction).getCalledTC();
+				}
+
+				throw new IllegalArgumentException("Cannot process this type of instruction : " + instruction);
+			}
+		};
+
+		r.defaultFinder = stepFinder;
+
+		return r;
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> TargetFinder<TestCaseInstruction, T> findTargetFinder(TestCaseSheetColumn col) {
-		TargetFinder<TestCaseInstruction, ?> finder = finderByColumn.get(col);
-		return (TargetFinder<TestCaseInstruction, T>) (finder == null ? testCaseFinder : finder);
+	public static <C extends Enum<C> & TemplateColumn> PropertyHolderFinderRepository<C> forWorksheet(
+			@NotNull TemplateWorksheet worksheet) {
+		return (PropertyHolderFinderRepository<C>) finderRepoByWorksheet.get(worksheet);
+	}
+
+	private final Map<COL, TargetFinder<?, ?>> finderByColumn = new HashMap<COL, TargetFinder<?, ?>>();
+	/**
+	 * the default finder is to be used when no finder could be found from {@link #finderByColumn}
+	 */
+	private TargetFinder<?, ?> defaultFinder;
+
+	private PropertyHolderFinderRepository() {
+		super();
+	}
+
+	@SuppressWarnings("unchecked")
+	public <I extends Instruction, T extends Target> TargetFinder<I, T> findTargetFinder(TestCaseSheetColumn col) {
+		TargetFinder<?, ?> finder = finderByColumn.get(col);
+		return (TargetFinder<I, T>) (finder == null ? defaultFinder : finder);
 	}
 }

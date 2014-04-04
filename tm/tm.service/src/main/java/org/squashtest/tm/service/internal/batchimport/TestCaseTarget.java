@@ -26,26 +26,26 @@ import org.apache.commons.lang.StringUtils;
 import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.Target;
 
-public class TestCaseTarget extends Target{
+public class TestCaseTarget extends Target {
 
 	private String path;
 	private Integer order;
-	
-	public TestCaseTarget(){
+
+	public TestCaseTarget() {
 		super();
 	}
-	
-	public TestCaseTarget(String path){
+
+	public TestCaseTarget(String path) {
 		super();
 		this.path = path;
 	}
-	
-	public TestCaseTarget(String path, Integer order){
+
+	public TestCaseTarget(String path, Integer order) {
 		super();
 		this.path = path;
 		this.order = order;
 	}
-	
+
 	@Override
 	public EntityType getType() {
 		return EntityType.TEST_CASE;
@@ -77,38 +77,44 @@ public class TestCaseTarget extends Target{
 		result = prime * result + ((path == null) ? 0 : path.hashCode());
 		return result;
 	}
+
 	// GENERATED:END
 
 	@Override
 	// GENERATED:START
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		TestCaseTarget other = (TestCaseTarget) obj;
 		if (path == null) {
-			if (other.path != null)
+			if (other.path != null) {
 				return false;
-		} else if (!path.equals(other.path))
+			}
+		} else if (!path.equals(other.path)) {
 			return false;
+		}
 		return true;
 	}
+
 	// GENERATED:END
 
-
 	@Override
-	public String toString(){
+	public String toString() {
 		return path;
 	}
-	
+
 	@Override
 	public boolean isWellFormed() {
 		return Utils.isPathWellFormed(path);
 	}
-	
+
 	@Override
 	public String getProject() {
 		return Utils.extractProjectName(path);

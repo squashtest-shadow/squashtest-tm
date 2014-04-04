@@ -21,13 +21,27 @@
 
 package org.squashtest.tm.service.internal.batchimport.excel;
 
+import javax.validation.constraints.NotNull;
+
 import org.squashtest.tm.service.internal.batchimport.Instruction;
 
 /**
- * @author Gregory Fouquet
+ * Target finder implementations are responsible for finding the target of an operation from this operation's context,
+ * represented by an {@link Instruction}
  * 
+ * @author Gregory Fouquet
+ * @param <I>
+ *            the type of the {@link Instruction} context.
+ * @param <T>
+ *            the type of the target
  */
 public interface TargetFinder<I extends Instruction, T> {
-	T find(I instruction);
+	/**
+	 * finds the target object from the given instruction.
+	 * 
+	 * @param instruction
+	 * @return
+	 */
+	T find(@NotNull I instruction);
 
 }

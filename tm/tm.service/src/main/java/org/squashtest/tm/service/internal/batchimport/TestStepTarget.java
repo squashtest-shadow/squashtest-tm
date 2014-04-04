@@ -23,84 +23,90 @@ package org.squashtest.tm.service.internal.batchimport;
 import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.Target;
 
-public class TestStepTarget extends Target{
+public class TestStepTarget extends Target {
 
 	private TestCaseTarget testCase;
-	private Integer index ;
-	
-	public TestStepTarget(){
+	private Integer index;
+
+	public TestStepTarget() {
 		super();
 	}
-	
-	public TestStepTarget(TestCaseTarget testCase, Integer index){
+
+	public TestStepTarget(TestCaseTarget testCase, Integer index) {
 		super();
 		this.testCase = testCase;
 		this.index = index;
 	}
-	
+
 	@Override
 	public EntityType getType() {
 		return EntityType.TEST_STEP;
 	}
-	
+
 	public TestCaseTarget getTestCase() {
 		return testCase;
 	}
-	
+
 	public void setTestCase(TestCaseTarget testCase) {
 		this.testCase = testCase;
 	}
-	
+
 	public Integer getIndex() {
 		return index;
 	}
-	
+
 	public void setIndex(Integer index) {
 		this.index = index;
 	}
 
 	@Override
-	public int hashCode() {
+	public int hashCode() { // GENERATED:START
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((index == null) ? 0 : index.hashCode());
-		result = prime * result
-				+ ((testCase == null) ? 0 : testCase.hashCode());
+		result = prime * result + ((testCase == null) ? 0 : testCase.hashCode());
 		return result;
+	} // GENERATED:END
+
+	@Override
+	public boolean equals(Object obj) { // GENERATED:START
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		TestStepTarget other = (TestStepTarget) obj;
+		if (index == null) {
+			if (other.index != null) {
+				return false;
+			}
+		} else if (!index.equals(other.index)) {
+			return false;
+		}
+		if (testCase == null) {
+			if (other.testCase != null) {
+				return false;
+			}
+		} else if (!testCase.equals(other.testCase)) {
+			return false;
+		}
+		return true;
+	} // GENERATED:END
+
+	@Override
+	public String toString() {
+		return testCase.toString() + "/steps/" + index;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		TestStepTarget other = (TestStepTarget) obj;
-		if (index == null) {
-			if (other.index != null)
-				return false;
-		} else if (!index.equals(other.index))
-			return false;
-		if (testCase == null) {
-			if (other.testCase != null)
-				return false;
-		} else if (!testCase.equals(other.testCase))
-			return false;
-		return true;
-	}
-	
-	@Override
-	public String toString(){
-		return testCase.toString()+"/steps/"+index;
-	}
-	
-	@Override
 	public boolean isWellFormed() {
-		return testCase.isWellFormed() && (index == null || index >= 0); 
+		return testCase.isWellFormed() && (index == null || index >= 0);
 	}
-	
+
 	@Override
 	public String getProject() {
 		return testCase.getProject();
