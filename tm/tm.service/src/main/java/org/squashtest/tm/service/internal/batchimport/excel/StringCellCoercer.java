@@ -29,7 +29,7 @@ import org.apache.poi.ss.usermodel.Cell;
  * @author Gregory Fouquet
  * 
  */
-public class StringCellCoercer implements CellValueCoercer<String> {
+public final class StringCellCoercer implements CellValueCoercer<String> {
 	public static final StringCellCoercer INSTANCE = new StringCellCoercer();
 
 	private StringCellCoercer() {

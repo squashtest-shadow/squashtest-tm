@@ -36,10 +36,10 @@ import org.apache.poi.ss.usermodel.Cell;
  * @author Gregory Fouquet
  * 
  */
-public class OptionalIntegerCellCoercer implements CellValueCoercer<Integer> {
+public final class OptionalIntegerCellCoercer implements CellValueCoercer<Integer> {
 	public static final OptionalIntegerCellCoercer INSTANCE = new OptionalIntegerCellCoercer();
 
-	public OptionalIntegerCellCoercer() {
+	private OptionalIntegerCellCoercer() {
 		super();
 	}
 

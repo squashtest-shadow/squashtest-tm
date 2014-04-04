@@ -29,7 +29,7 @@ import org.apache.poi.ss.usermodel.Cell;
  * @author Gregory Fouquet
  * 
  */
-public class OptionalBooleanCellCoercer extends LiberalBooleanCellCoercer {
+public final class OptionalBooleanCellCoercer extends LiberalBooleanCellCoercer {
 	public static final OptionalBooleanCellCoercer INSTANCE = new OptionalBooleanCellCoercer();
 
 	private OptionalBooleanCellCoercer() {

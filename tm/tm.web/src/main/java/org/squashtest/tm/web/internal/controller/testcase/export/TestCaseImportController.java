@@ -51,7 +51,7 @@ public class TestCaseImportController {
 
 	@Inject
 	private MessageSource messageSource;
-	
+
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(TestCaseImportController.class);
 
@@ -104,7 +104,7 @@ public class TestCaseImportController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, params = { "importLog",
-			"export=csv" })
+	"export=csv" })
 	public @ResponseBody
 	void writeImportController(ImportLog importLog,
 			HttpServletResponse response, Locale locale) throws IOException {
@@ -137,8 +137,6 @@ public class TestCaseImportController {
 		}
 
 		// Writing the workbook to the response output stream
-		BufferedWriter writer = null;
-
 		try {
 
 			response.setContentType("application/octet-stream");
@@ -152,14 +150,6 @@ public class TestCaseImportController {
 		} catch (IOException ex) {
 			LOGGER.error(ex.getMessage());
 			throw new RuntimeException(ex);
-		} finally {
-			if (writer != null) {
-				try {
-					writer.close();
-				} catch (IOException ex) {
-					LOGGER.warn(ex.getMessage());
-				}
-			}
 		}
 
 	}

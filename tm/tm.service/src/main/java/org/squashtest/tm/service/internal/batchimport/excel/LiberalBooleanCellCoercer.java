@@ -46,7 +46,7 @@ import org.apache.poi.ss.usermodel.Cell;
 public class LiberalBooleanCellCoercer extends TypeBasedCellValueCoercer<Boolean> implements CellValueCoercer<Boolean> {
 	public static final LiberalBooleanCellCoercer INSTANCE = new LiberalBooleanCellCoercer();
 
-	public LiberalBooleanCellCoercer() {
+	protected LiberalBooleanCellCoercer() {
 		super();
 	}
 
@@ -75,7 +75,7 @@ public class LiberalBooleanCellCoercer extends TypeBasedCellValueCoercer<Boolean
 		double val = cell.getNumericCellValue();
 		return coerceDouble(val);
 	}
-	
+
 	private boolean coerceDouble(double val) throws CannotCoerceException {
 		boolean res;
 

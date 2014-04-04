@@ -34,8 +34,12 @@ import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
  * @author Gregory Fouquet
  * 
  */
-public class OptionalDateCellCoercer extends TypeBasedCellValueCoercer<Date> implements CellValueCoercer<Date> {
+public final class OptionalDateCellCoercer extends TypeBasedCellValueCoercer<Date> implements CellValueCoercer<Date> {
 	public static final OptionalDateCellCoercer INSTANCE = new OptionalDateCellCoercer();
+
+	private OptionalDateCellCoercer() {
+		super();
+	}
 
 	/**
 	 * @see org.squashtest.tm.service.internal.batchimport.excel.TypeBasedCellValueCoercer#coerceBlankCell(org.apache.poi.ss.usermodel.Cell)

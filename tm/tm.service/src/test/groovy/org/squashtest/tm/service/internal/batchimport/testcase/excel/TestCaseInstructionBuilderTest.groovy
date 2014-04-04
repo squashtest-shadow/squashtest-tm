@@ -32,7 +32,7 @@ import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.testcase.TestCaseType;
-import org.squashtest.tm.service.internal.batchimport.ImportMode;
+import org.squashtest.tm.service.importer.ImportMode;
 import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
 import org.squashtest.tm.service.internal.batchimport.TestCaseTarget;
 import org.squashtest.tm.service.internal.batchimport.excel.CannotCoerceException;
@@ -60,7 +60,7 @@ class TestCaseInstructionBuilderTest extends Specification {
 		]
 
 		wd.getCustomFieldDefs() >> []
-		
+
 		row.getCell(10) >> pathCell
 		row.getCell(20) >> orderCell
 	}
@@ -118,7 +118,7 @@ class TestCaseInstructionBuilderTest extends Specification {
 		and:
 		wd.getImportableColumnDefs() >> [new StdColumnDef(col, 30)]
 		wd.getCustomFieldDefs() >> []
-		
+
 		when:
 		TestCaseInstruction instruction = builder.build(row)
 
@@ -168,14 +168,14 @@ class TestCaseInstructionBuilderTest extends Specification {
 
 	private Cell mockCell(cellType, cellValue) {
 		Cell cell = Mock()
-		
+
 		cell.getCellType() >> cellType
-		
+
 		cell.getNumericCellValue() >> cellValue
 		cell.getStringCellValue() >> cellValue
 		cell.getBooleanCellValue() >> cellValue
 		cell.getDateCellValue() >> cellValue
-		
+
 		return cell
 	}
 
@@ -188,7 +188,7 @@ class TestCaseInstructionBuilderTest extends Specification {
 		and:
 		wd.getImportableColumnDefs() >> [new StdColumnDef(col, 30)]
 		wd.getCustomFieldDefs() >> []
-		
+
 		when:
 		TestCaseInstruction instruction = builder.build(row)
 

@@ -29,7 +29,7 @@ import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.testcase.TestCaseType;
-import org.squashtest.tm.service.internal.batchimport.ImportMode;
+import org.squashtest.tm.service.importer.ImportMode;
 import org.squashtest.tm.service.internal.batchimport.excel.CellValueCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.OptionalBooleanCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.OptionalDateCellCoercer;

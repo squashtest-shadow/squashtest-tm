@@ -31,6 +31,7 @@ import javax.validation.constraints.NotNull;
  * 
  */
 public class NamedReference implements Serializable {
+	private static final long serialVersionUID = 354730428216748026L;
 
 	private final Long id;
 
@@ -51,35 +52,42 @@ public class NamedReference implements Serializable {
 	}
 
 	@Override
-	public int hashCode() {
+	public int hashCode() { // GENERATED:START
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
-	}
+	} // GENERATED:END
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
+	public boolean equals(Object obj) { // GENERATED:START
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		NamedReference other = (NamedReference) obj;
 		if (id == null) {
-			if (other.id != null)
+			if (other.id != null) {
 				return false;
-		} else if (!id.equals(other.id))
+			}
+		} else if (!id.equals(other.id)) {
 			return false;
+		}
 		if (name == null) {
-			if (other.name != null)
+			if (other.name != null) {
 				return false;
-		} else if (!name.equals(other.name))
+			}
+		} else if (!name.equals(other.name)) {
 			return false;
+		}
 		return true;
-	}
-	
-	
+	} // GENERATED:END
+
+
 }

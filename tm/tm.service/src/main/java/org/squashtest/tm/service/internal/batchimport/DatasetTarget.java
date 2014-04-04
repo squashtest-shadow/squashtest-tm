@@ -28,7 +28,7 @@ public class DatasetTarget extends Target {
 
 	private TestCaseTarget testCase;
 	private String name;
-	
+
 	@Override
 	public EntityType getType() {
 		return EntityType.DATASET;
@@ -51,42 +51,49 @@ public class DatasetTarget extends Target {
 	}
 
 	@Override
-	public int hashCode() {
+	public int hashCode() { // GENERATED:START
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result
 				+ ((testCase == null) ? 0 : testCase.hashCode());
 		return result;
-	}
+	} // GENERATED:END
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
+	public boolean equals(Object obj) { // GENERATED:START
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		DatasetTarget other = (DatasetTarget) obj;
 		if (name == null) {
-			if (other.name != null)
+			if (other.name != null) {
 				return false;
-		} else if (!name.equals(other.name))
+			}
+		} else if (!name.equals(other.name)) {
 			return false;
+		}
 		if (testCase == null) {
-			if (other.testCase != null)
+			if (other.testCase != null) {
 				return false;
-		} else if (!testCase.equals(other.testCase))
+			}
+		} else if (!testCase.equals(other.testCase)) {
 			return false;
+		}
 		return true;
-	}
-	
+	} // GENERATED:END
+
 	@Override
 	public boolean isWellFormed() {
 		return testCase.isWellFormed() && (! StringUtils.isBlank(name));
 	}
-	
+
 	@Override
 	public String getProject() {
 		return testCase.getProject();
