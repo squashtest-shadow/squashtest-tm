@@ -160,8 +160,12 @@ class TestCaseCallGraph extends LibraryGraph<TestCaseTarget, TestCaseCallGraph.N
 		Node srcNode = getNode(src);
 		Node destNode = getNode(dest);
 		
-		srcNode.getOutbounds().remove(destNode);
-		destNode.getInbounds().remove(srcNode);
+		if (srcNode!=null){
+			srcNode.getOutbounds().remove(destNode);
+		}
+		if (destNode!=null){
+			destNode.getInbounds().remove(srcNode);
+		}
 	}
 	
 	static final class Node extends GraphNode<TestCaseTarget, Node>{

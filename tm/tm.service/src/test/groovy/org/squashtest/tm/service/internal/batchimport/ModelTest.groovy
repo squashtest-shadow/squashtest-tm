@@ -29,6 +29,7 @@ import org.squashtest.tm.domain.library.structures.LibraryGraph;
 import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.internal.batchimport.Model.Existence;
+import org.squashtest.tm.service.internal.batchimport.Model.InternalStepModel;
 import org.squashtest.tm.service.internal.batchimport.Model.StepType;
 import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
@@ -140,15 +141,17 @@ public class ModelTest extends Specification{
 			model.testCaseStatusByTarget[targets[1]] = new TargetStatus(EXISTS, 10l)
 			model.testCaseStatusByTarget[targets[2]] = new TargetStatus(TO_BE_DELETED, 20l)
 		and :
-			mockSessionQuery(["ACTION", "CALL", "ACTION"])
+			mockSessionQuery([["ACTION", null] as Object[], ["CALL", 17l] as Object[], ["ACTION", null] as Object[]])
+			finderService.getPathAsString(17l) >> "/project/bob"
 				
 		when :
 			model.initTestSteps(targets)
-		
+			
 		
 		then :
 			model.testCaseStepsByTarget[targets[0]] == []
-			model.testCaseStepsByTarget[targets[1]] == [StepType.ACTION, StepType.CALL, StepType.ACTION]
+			model.testCaseStepsByTarget[targets[1]].collect {it.type} == [StepType.ACTION, StepType.CALL, StepType.ACTION]
+			model.testCaseStepsByTarget[targets[1]].collect {it.calledTC} == [null, new TestCaseTarget("/project/bob"), null]
 			model.testCaseStepsByTarget[targets[2]] == []
 		
 			
@@ -268,7 +271,11 @@ public class ModelTest extends Specification{
 			def st  = new TestStepTarget(tc, 1)
 			
 			model.testCaseStatusByTarget[tc] = new TargetStatus(EXISTS, 10l)
-			model.testCaseStepsByTarget[tc] = [StepType.ACTION, StepType.ACTION, StepType.ACTION]
+			model.testCaseStepsByTarget[tc] = [
+												new InternalStepModel(StepType.ACTION), 
+												new InternalStepModel(StepType.ACTION), 
+												new InternalStepModel(StepType.ACTION)
+											]
 		
 			
 		when :
@@ -286,7 +293,11 @@ public class ModelTest extends Specification{
 			def st  = new TestStepTarget(tc, 10)
 			
 			model.testCaseStatusByTarget[tc] = new TargetStatus(EXISTS, 10l)
-			model.testCaseStepsByTarget[tc] = [StepType.ACTION, StepType.ACTION, StepType.ACTION]
+			model.testCaseStepsByTarget[tc] =  [
+												new InternalStepModel(StepType.ACTION), 
+												new InternalStepModel(StepType.ACTION), 
+												new InternalStepModel(StepType.ACTION)
+											]
 		
 			
 		when :
@@ -305,7 +316,11 @@ public class ModelTest extends Specification{
 			def st  = new TestStepTarget(tc, null)
 			
 			model.testCaseStatusByTarget[tc] = new TargetStatus(EXISTS, 10l)
-			model.testCaseStepsByTarget[tc] = [StepType.ACTION, StepType.ACTION, StepType.ACTION]
+			model.testCaseStepsByTarget[tc] =  [
+												new InternalStepModel(StepType.ACTION), 
+												new InternalStepModel(StepType.ACTION), 
+												new InternalStepModel(StepType.ACTION)
+											]
 		
 			
 		when :
@@ -325,7 +340,11 @@ public class ModelTest extends Specification{
 			
 			model.testCaseStatusByTarget[tc] = new TargetStatus(EXISTS, 10l)
 			model.testCaseStatusByTarget[ctc] = new TargetStatus(EXISTS, 20l)
-			model.testCaseStepsByTarget[tc] = [StepType.ACTION, StepType.ACTION, StepType.ACTION]
+			model.testCaseStepsByTarget[tc] =  [
+												new InternalStepModel(StepType.ACTION), 
+												new InternalStepModel(StepType.ACTION), 
+												new InternalStepModel(StepType.ACTION)
+											]
 		
 		and :
 			calltreeFinder.getCallerGraph(_) >> new LibraryGraph()
@@ -335,7 +354,8 @@ public class ModelTest extends Specification{
 			model.addCallStep(st, ctc)
 		
 		then :
-			model.testCaseStepsByTarget[tc] == [StepType.ACTION, StepType.CALL, StepType.ACTION, StepType.ACTION]
+			model.testCaseStepsByTarget[tc].collect{it.type} == [StepType.ACTION, StepType.CALL, StepType.ACTION, StepType.ACTION]
+			model.testCaseStepsByTarget[tc][1].calledTC == ctc
 	}
 	
 	
@@ -348,7 +368,11 @@ public class ModelTest extends Specification{
 			
 			model.testCaseStatusByTarget[tc] = new TargetStatus(EXISTS, 10l)
 			model.testCaseStatusByTarget[ctc] = new TargetStatus(EXISTS, 20l)
-			model.testCaseStepsByTarget[tc] = [StepType.ACTION, StepType.ACTION, StepType.ACTION]
+			model.testCaseStepsByTarget[tc] =  [
+												new InternalStepModel(StepType.ACTION), 
+												new InternalStepModel(StepType.ACTION), 
+												new InternalStepModel(StepType.ACTION)
+											]
 		
 		and :
 			calltreeFinder.getCallerGraph(_) >> new LibraryGraph()
@@ -358,7 +382,8 @@ public class ModelTest extends Specification{
 			model.addCallStep(st, ctc)
 		
 		then :
-			model.testCaseStepsByTarget[tc] == [StepType.ACTION, StepType.ACTION, StepType.ACTION, StepType.CALL]
+			model.testCaseStepsByTarget[tc].collect {it.type} == [StepType.ACTION, StepType.ACTION, StepType.ACTION, StepType.CALL]
+			model.testCaseStepsByTarget[tc][3].calledTC == ctc
 	}
 	
 	
@@ -371,7 +396,11 @@ public class ModelTest extends Specification{
 			
 			model.testCaseStatusByTarget[tc] = new TargetStatus(EXISTS, 10l)
 			model.testCaseStatusByTarget[ctc] = new TargetStatus(EXISTS, 20l)
-			model.testCaseStepsByTarget[tc] = [StepType.ACTION, StepType.ACTION, StepType.ACTION]
+			model.testCaseStepsByTarget[tc] =  [
+												new InternalStepModel(StepType.ACTION), 
+												new InternalStepModel(StepType.ACTION), 
+												new InternalStepModel(StepType.ACTION)
+											]
 		
 		and :
 			calltreeFinder.getCallerGraph(_) >> new LibraryGraph()
@@ -381,7 +410,8 @@ public class ModelTest extends Specification{
 			model.addCallStep(st, ctc)
 		
 		then :
-			model.testCaseStepsByTarget[tc] == [StepType.ACTION, StepType.ACTION, StepType.ACTION, StepType.CALL]
+			model.testCaseStepsByTarget[tc].collect{ it.type} == [StepType.ACTION, StepType.ACTION, StepType.ACTION, StepType.CALL]
+			model.testCaseStepsByTarget[tc][3].calledTC == ctc
 	}
 	
 	
@@ -392,13 +422,17 @@ public class ModelTest extends Specification{
 			def st  = new TestStepTarget(tc, 1)
 			
 			model.testCaseStatusByTarget[tc] = new TargetStatus(EXISTS, 10l)
-			model.testCaseStepsByTarget[tc] = [StepType.ACTION, StepType.CALL, StepType.ACTION]
+			model.testCaseStepsByTarget[tc] =  [
+												new InternalStepModel(StepType.ACTION), 
+												new InternalStepModel(StepType.CALL, new TestCaseTarget("/whatever")), 
+												new InternalStepModel(StepType.ACTION)
+											]
 		
 		when :
 			model.remove(st)
 		
 		then :
-			model.testCaseStepsByTarget[tc] == [StepType.ACTION, StepType.ACTION]
+			model.testCaseStepsByTarget[tc].collect{it.type} == [StepType.ACTION, StepType.ACTION]
 		
 	}
 	
@@ -409,7 +443,11 @@ public class ModelTest extends Specification{
 			def st  = new TestStepTarget(tc, 17)
 			
 			model.testCaseStatusByTarget[tc] = new TargetStatus(EXISTS, 10l)
-			model.testCaseStepsByTarget[tc] = [StepType.ACTION, StepType.CALL, StepType.ACTION]
+			model.testCaseStepsByTarget[tc] =  [
+												new InternalStepModel(StepType.ACTION), 
+												new InternalStepModel(StepType.CALL), 
+												new InternalStepModel(StepType.ACTION)
+											]
 		
 		when :
 			model.remove(st)
@@ -483,11 +521,11 @@ public class ModelTest extends Specification{
 		return proj
 	}
 	
-	def mockSessionQuery(queryResult){
+	def mockSessionQuery(queryResults){
 		Query q = Mock(Query)
 		Session s = Mock(Session)
 		
-		q.list() >> queryResult
+		q.list() >> queryResults
 		s.getNamedQuery(_) >> q
 		factory.getCurrentSession() >> s
 	}

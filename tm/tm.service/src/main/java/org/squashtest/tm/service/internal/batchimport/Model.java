@@ -104,12 +104,10 @@ public class Model {
 	  Maps a test case (given its target) to a list of step models. We only care of their position (because they are identified by position) 
 	  and their type (because we want to detect potential attempts of modifications of an action step whereas the target is actually a call step 
 	  and conversely).
-	  
-	  TODO : maybe implement it as a LRU cache that doesn't scrap step lists that were modified (ie "dirty" data that
-	  		differs from the DB content).
+
 	  
 	 ------------------------ */	
-	private Map<TestCaseTarget, List<StepType>> testCaseStepsByTarget = new HashMap<TestCaseTarget, List<StepType>>();
+	private Map<TestCaseTarget, List<InternalStepModel>> testCaseStepsByTarget = new HashMap<TestCaseTarget, List<InternalStepModel>>();
 	
 	private Map<String, TargetStatus> projectStatusByName = new HashMap<String, TargetStatus>();
 		
@@ -249,7 +247,7 @@ public class Model {
 		
 		if (id != null){
 			LibraryGraph<NamedReference, SimpleNode<NamedReference>> targetCallers 
-				= calltreeFinder.getCallerGraph(Arrays.asList(new Long[]{id}));
+				= calltreeFinder.getCallerGraph(Arrays.asList(id));
 			
 			// some data transform now
 			Collection<SimpleNode<NamedReference>> refs = targetCallers.getNodes();
@@ -287,39 +285,61 @@ public class Model {
 	 */
 	// returns the index at which the step was created
 	public Integer addActionStep(TestStepTarget target){		
-		return addStep(target, StepType.ACTION);
+		return addStep(target, StepType.ACTION, null);
 	}
 	
 	public Integer addCallStep(TestStepTarget target, TestCaseTarget calledTestCase){	
 		
+		// set the call graph
 		addCallGraphEdge(target.getTestCase(), calledTestCase);
 		
-		return addStep(target, StepType.CALL);
+		// set the model
+		return addStep(target, StepType.CALL, calledTestCase);
 		
 	}
 	
-	private Integer addStep(TestStepTarget target, StepType type){
+	private Integer addStep(TestStepTarget target, StepType type, TestCaseTarget calledTestCase){
 		
-		TestCaseTarget tc = target.getTestCase();
+		
+		List<InternalStepModel> steps = findInternalStepModels(target);
+		
 		Integer index = target.getIndex();
 		
-		if (! testCaseStatusByTarget.containsKey(tc)){
-			init(tc);
-		}
-
-		
-		List<StepType> types = testCaseStepsByTarget.get(tc);
-		
-		if (index == null || index >= types.size() || index < 0){
-			index = types.size();
+		if (index == null || index >= steps.size() || index < 0){
+			index = steps.size();
 		}
 		
-		types.add(index, type);
+		steps.add(index, new InternalStepModel(type, calledTestCase));
 		
 		return index;
 		
 	}
 	
+	// warning : won't check that the operation will not create a cycle. Such check needs to
+	// be done beforehand.
+	public void updateCallStepTarget(TestStepTarget step, TestCaseTarget newTarget){
+		
+		if (! stepExists(step)){
+			throw new IllegalArgumentException("cannot update non existant step '"+step+"'");
+		}
+		
+		if ( getType(step) != StepType.CALL){
+			throw new IllegalArgumentException("cannot update the called test case for step '"+step+"' because that step is not a call step");
+		}
+		
+
+		InternalStepModel model = findInternalStepModel(step);
+		TestCaseTarget src = step.getTestCase();
+		TestCaseTarget oldDest = model.getCalledTC();
+		
+		// update the model		
+		model.setCalledTC(newTarget);
+		
+		// update the call graph
+		callGraph.removeEdge(src, oldDest);
+		callGraph.removeEdge(src, newTarget);
+		
+	}
 	
 	public void remove(TestStepTarget target){
 		
@@ -327,22 +347,19 @@ public class Model {
 			throw new IllegalArgumentException("cannot remove non existant step '"+target+"'");
 		}
 		
-		TestCaseTarget tc = target.getTestCase();
+		List<InternalStepModel> steps = findInternalStepModels(target);
 		Integer index = target.getIndex();
+
+
+		// remove from the model
+		// .intValue() desambiguate with the other method - remove(Object) -
+		InternalStepModel step = steps.remove(index.intValue());
 		
-		if (! testCaseStatusByTarget.containsKey(tc)){
-			init(tc);
+		// remove from the callgraph
+		if (step.type == StepType.CALL){
+			callGraph.removeEdge(target.getTestCase(), step.getCalledTC());
 		}
 		
-		List<StepType> types = testCaseStepsByTarget.get(tc);
-
-		// .intValue() desambiguate with the other method - remove(Object) -
-		types.remove(index.intValue()); 
-		
-		// if that was a call step, also remove the connection from the callgraph
-		// since the graph keeps no track of the cardinality of the relationship (ie if a test A calls a test B three times), 
-		// all redundant calls will be "removed" from the model, leaving it in an inconsistent state. Shit might then 
-		// happen if a call step is then added back and includes a cycle : it could go undetected.
 		
 	}
 	
@@ -351,18 +368,9 @@ public class Model {
 	
 	public boolean stepExists(TestStepTarget target){
 		
-		TestCaseTarget tc = target.getTestCase();
-		Integer index = target.getIndex();
+		InternalStepModel model = findInternalStepModel(target);
 		
-		if (! testCaseStatusByTarget.containsKey(tc)){
-			init(tc);
-		}
-		
-		List<StepType> types = testCaseStepsByTarget.get(tc);
-		
-		// if index is defined just check it is within range
-		// otherwise it doesn't exist.
-		return (index != null) ? (types.size() > index && index >= 0) : false;
+		return (model != null);			
 		
 	}
 	
@@ -370,17 +378,10 @@ public class Model {
 	// returns null if the step is unknown
 	public StepType getType(TestStepTarget target){
 		
-		TestCaseTarget tc = target.getTestCase();
-		Integer index = target.getIndex();
+		InternalStepModel model = findInternalStepModel(target);
 		
-		if (! testCaseStatusByTarget.containsKey(tc)){
-			init(tc);
-		}
-		
-		List<StepType> types = testCaseStepsByTarget.get(tc);
-		
-		if (index != null && types.size() > index){
-			return types.get(index);
+		if (model != null){
+			return model.getType();
 		}
 		else{
 			return null;
@@ -425,6 +426,29 @@ public class Model {
 		
 		return (TestStep)q.uniqueResult();
 		
+	}
+	
+	private List<InternalStepModel> findInternalStepModels(TestStepTarget step){
+		TestCaseTarget tc = step.getTestCase();
+		
+		if (! testCaseStatusByTarget.containsKey(tc)){
+			init(tc);
+		}
+
+		return testCaseStepsByTarget.get(tc);
+				
+	}
+	
+	private InternalStepModel findInternalStepModel(TestStepTarget step){
+		Integer index = step.getIndex();
+		List<InternalStepModel> steps = findInternalStepModels(step);
+		
+		if (index != null && steps.size() > index && index >= 0){
+			return steps.get(index.intValue());
+		}
+		else{
+			return null;
+		}
 	}
 	
 	// ************************* CUFS accessors *************************************
@@ -520,15 +544,17 @@ public class Model {
 			}
 			
 			TargetStatus status = testCaseStatusByTarget.get(target);
-			List<StepType> types = null;
+			
+			
+			List<InternalStepModel> steps = null;
 			if (status.id != null && status.status != Existence.TO_BE_DELETED){
-				types = loadStepTypes(status.id);
+				steps = loadStepsModel(status.id);
 			}
 			else{
-				types = new ArrayList<StepType>();
+				steps = new ArrayList<InternalStepModel>();
 			}
 			
-			testCaseStepsByTarget.put(target, types);
+			testCaseStepsByTarget.put(target, steps);
 			
 		}
 		
@@ -618,17 +644,24 @@ public class Model {
 		return q.list();
 	}
 	
-	private List<StepType> loadStepTypes(Long tcId){
+	private List<InternalStepModel> loadStepsModel(Long tcId){
 		Query query = sessionFactory.getCurrentSession().getNamedQuery("testStep.findBasicInfosByTcId");
 		query.setParameter("tcId", tcId, LongType.INSTANCE);
-		List<String> stepdata = query.list();
 		
-		List<StepType> res = new ArrayList<StepType>(stepdata.size());
-		for (String strtype : stepdata){
-			res.add(StepType.valueOf(strtype));
-			
+		List<Object[]> stepdata = query.list();
+		
+		List<InternalStepModel> steps = new ArrayList<InternalStepModel>(stepdata.size());
+		for (Object[] tuple : stepdata){
+			StepType type = StepType.valueOf((String)tuple[0]);
+			TestCaseTarget calledTC = null;
+			if (type == StepType.CALL){
+				String path = finderService.getPathAsString((Long)tuple[1]);
+				calledTC = new TestCaseTarget(path);
+			}
+			steps.add(new InternalStepModel(type, calledTC));
 		}
-		return res;
+		
+		return steps;
 	}	
 	
 	
@@ -738,6 +771,33 @@ public class Model {
 		CALL;
 	}
 	
+	private static final class InternalStepModel{
+		StepType type;
+		TestCaseTarget calledTC;
+		
+		public InternalStepModel(StepType type){
+			this.type=type;
+		}
+		
+		public InternalStepModel(StepType type, TestCaseTarget calledTC){
+			this.type = type;
+			this.calledTC = calledTC;
+		}
+
+		public TestCaseTarget getCalledTC() {
+			return calledTC;
+		}
+
+		public void setCalledTC(TestCaseTarget calledTC) {
+			this.calledTC = calledTC;
+		}
+
+		public StepType getType() {
+			return type;
+		}
+		
+		
+	}
 
 	
 }

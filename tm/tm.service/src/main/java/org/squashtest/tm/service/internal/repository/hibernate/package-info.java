@@ -251,7 +251,8 @@
 			") "+
 			"and cfv.boundEntityType = 'TEST_STEP'"			
 		),
-		@NamedQuery(name = "testStep.findBasicInfosByTcId", query="select case when st.class = ActionTestStep then 'ACTION' else 'CALL' end as steptype " +
+		@NamedQuery(name = "testStep.findBasicInfosByTcId", query="select case when st.class = ActionTestStep then 'ACTION' else 'CALL' end as steptype, " +
+																	"case when st.class = CallTestStep then st.calledTestCase.id else null end as calledTC "+
 																	"from TestCase tc join tc.steps st where tc.id = :tcId order by index(st)"),
 		@NamedQuery(name = "testStep.findIdByTestCaseAndPosition", query="select st.id from TestCase tc join tc.steps st where tc.id = :tcId and index(st) = :position"),
 		@NamedQuery(name = "testStep.findByTestCaseAndPosition", query="select st from TestCase tc join tc.steps st where tc.id = :tcId and index(st) = :position"),		
