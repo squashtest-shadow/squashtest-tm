@@ -24,6 +24,8 @@ package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.validation.constraints.NotNull;
+
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseNature;
@@ -38,30 +40,73 @@ import org.squashtest.tm.service.internal.batchimport.excel.OptionalIntegerCellC
 import org.squashtest.tm.service.internal.batchimport.excel.StringCellCoercer;
 
 /**
- * Repository of {@link CellValueCoercer} for {@link TestCaseSheetColumn}s
+ * Repository of {@link CellValueCoercer} for a given {@link TemplateColumn}s
  * 
  * @author Gregory Fouquet
  * 
  */
 @Component
-public final class CoercerRepository {
-	public static final CoercerRepository INSTANCE = new CoercerRepository();
+public final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
+	private static final Map<TemplateWorksheet, CellValueCoercerRepository<?>> coercerRepoByWorksheet = new HashMap<TemplateWorksheet, CellValueCoercerRepository<?>>(
+			TemplateWorksheet.values().length);
+
+	static {
+		coercerRepoByWorksheet.put(TemplateWorksheet.TEST_CASES_SHEET, createTestCasesSheetRepo());
+		coercerRepoByWorksheet.put(TemplateWorksheet.STEPS_SHEET, createStepsSheetRepo());
+	}
+
+	/**
+	 * Returns the repository suitable for the given worksheet.
+	 * 
+	 * @param worksheet
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static final <C extends Enum<C> & TemplateColumn> CellValueCoercerRepository<C> forWorksheet(
+			@NotNull TemplateWorksheet worksheet) {
+		return (CellValueCoercerRepository<C>) coercerRepoByWorksheet.get(worksheet);
+	}
+
+	/**
+	 * @return a {@link CellValueCoercerRepository} suitable for the steps worksheet.
+	 */
+	private static CellValueCoercerRepository<StepSheetColumn> createStepsSheetRepo() {
+		CellValueCoercerRepository<StepSheetColumn> repo = new CellValueCoercerRepository<StepSheetColumn>();
+
+		repo.coercerByColumn.put(StepSheetColumn.ACTION, OptionalEnumCellCoercer.forEnum(ImportMode.class));
+
+		return repo;
+	}
+
+	/**
+	 * @return a {@link CellValueCoercerRepository} suitable for the test cases worksheet.
+	 */
+	private static CellValueCoercerRepository<TestCaseSheetColumn> createTestCasesSheetRepo() {
+		CellValueCoercerRepository<TestCaseSheetColumn> repo = new CellValueCoercerRepository<TestCaseSheetColumn>();
+
+		repo.coercerByColumn.put(TestCaseSheetColumn.TC_NUM, OptionalIntegerCellCoercer.INSTANCE);
+		repo.coercerByColumn.put(TestCaseSheetColumn.TC_WEIGHT_AUTO, OptionalBooleanCellCoercer.INSTANCE);
+		repo.coercerByColumn.put(TestCaseSheetColumn.TC_WEIGHT,
+				OptionalEnumCellCoercer.forEnum(TestCaseImportance.class));
+		repo.coercerByColumn.put(TestCaseSheetColumn.TC_NATURE, OptionalEnumCellCoercer.forEnum(TestCaseNature.class));
+		repo.coercerByColumn.put(TestCaseSheetColumn.TC_TYPE, OptionalEnumCellCoercer.forEnum(TestCaseType.class));
+		repo.coercerByColumn.put(TestCaseSheetColumn.TC_STATUS, OptionalEnumCellCoercer.forEnum(TestCaseStatus.class));
+		repo.coercerByColumn.put(TestCaseSheetColumn.TC_CREATED_ON, OptionalDateCellCoercer.INSTANCE);
+
+		repo.coercerByColumn.put(TestCaseSheetColumn.ACTION, OptionalEnumCellCoercer.forEnum(ImportMode.class));
+
+		return repo;
+	}
+
 	/**
 	 * The default coercer that shall be given when no other is defined.
 	 */
 	private static final CellValueCoercer<String> DEFAULT_COERCER = StringCellCoercer.INSTANCE;
 
-	private Map<TestCaseSheetColumn, CellValueCoercer<?>> coercerByColumn = new HashMap<TestCaseSheetColumn, CellValueCoercer<?>>();
+	private Map<COL, CellValueCoercer<?>> coercerByColumn = new HashMap<COL, CellValueCoercer<?>>();
 
-	private CoercerRepository() {
-		coercerByColumn.put(TestCaseSheetColumn.TC_NUM, OptionalIntegerCellCoercer.INSTANCE);
-		coercerByColumn.put(TestCaseSheetColumn.TC_WEIGHT_AUTO, OptionalBooleanCellCoercer.INSTANCE);
-		coercerByColumn.put(TestCaseSheetColumn.TC_WEIGHT, OptionalEnumCellCoercer.forEnum(TestCaseImportance.class));
-		coercerByColumn.put(TestCaseSheetColumn.TC_NATURE, OptionalEnumCellCoercer.forEnum(TestCaseNature.class));
-		coercerByColumn.put(TestCaseSheetColumn.TC_TYPE, OptionalEnumCellCoercer.forEnum(TestCaseType.class));
-		coercerByColumn.put(TestCaseSheetColumn.TC_STATUS, OptionalEnumCellCoercer.forEnum(TestCaseStatus.class));
-		coercerByColumn.put(TestCaseSheetColumn.TC_CREATED_ON, OptionalDateCellCoercer.INSTANCE);
-		coercerByColumn.put(TestCaseSheetColumn.ACTION, OptionalEnumCellCoercer.forEnum(ImportMode.class));
+	private CellValueCoercerRepository() {
+		super();
 	}
 
 	/**

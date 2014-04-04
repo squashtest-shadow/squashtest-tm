@@ -31,6 +31,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.squashtest.tm.exception.SheetCorruptedException;
+import org.squashtest.tm.service.internal.batchimport.StepInstruction;
 import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
 
 /**
@@ -51,7 +52,7 @@ public class ExcelWorkbookParser {
 	 *             when the workbook does not match the template in an unrecoverable way.
 	 */
 	public static final ExcelWorkbookParser createParser(File xls) throws SheetCorruptedException,
-			TemplateMismatchException {
+	TemplateMismatchException {
 		return new ExcelWorkbookParserBuilder(xls).build();
 	}
 
@@ -59,6 +60,7 @@ public class ExcelWorkbookParser {
 	private final WorkbookMetaData wmd;
 
 	private List<TestCaseInstruction> testCaseInstructions = new ArrayList<TestCaseInstruction>();
+	private List<StepInstruction> stepInstructions = new ArrayList<StepInstruction>();
 
 	/**
 	 * Should be used by ExcelWorkbookParserBuilder only.
@@ -78,6 +80,25 @@ public class ExcelWorkbookParser {
 	 * @return
 	 */
 	public ExcelWorkbookParser parse() {
+		processTestCasesSheet();
+		processStepsSheet();
+
+		return this;
+	}
+
+	private void processStepsSheet() {
+		WorksheetDef<StepSheetColumn> swd = wmd.getWorksheetDef(TemplateWorksheet.STEPS_SHEET);
+		Sheet ss = workbook.getSheet(swd.getSheetName());
+
+		StepInstructionBuilder stepInstructionBuilder = new StepInstructionBuilder(swd);
+
+		for (int i = 1; i <= ss.getLastRowNum(); i++) {
+			Row row = ss.getRow(i);
+			stepInstructions.add(stepInstructionBuilder.build(row));
+		}
+	}
+
+	private Sheet processTestCasesSheet() {
 		WorksheetDef<TestCaseSheetColumn> tcwd = wmd.getWorksheetDef(TemplateWorksheet.TEST_CASES_SHEET);
 		Sheet tcs = workbook.getSheet(tcwd.getSheetName());
 
@@ -87,8 +108,7 @@ public class ExcelWorkbookParser {
 			Row row = tcs.getRow(i);
 			testCaseInstructions.add(testCaseTargetBuilder.build(row));
 		}
-
-		return this;
+		return tcs;
 	}
 
 	/**

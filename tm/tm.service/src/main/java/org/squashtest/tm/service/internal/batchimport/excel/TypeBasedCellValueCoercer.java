@@ -37,6 +37,7 @@ public abstract class TypeBasedCellValueCoercer<VAL> implements CellValueCoercer
 	}
 
 	/**
+	 * Checks the cell type and callthe appropriate <code>coerceXxxCell(cell)</code> accordingly 
 	 * @see org.squashtest.tm.service.internal.batchimport.excel.CellValueCoercer#coerce(org.apache.poi.ss.usermodel.Cell)
 	 */
 	@Override

@@ -20,24 +20,14 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+public class CallStepInstruction extends StepInstruction {
 
-public class CallStepInstruction extends Instruction{
+	private TestCaseTarget calledTC;
 
-	private TestStepTarget target;
-	private TestCaseTarget calledTC;	
-	
 	@Override
 	public LogTrain execute(Facility facility) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	public TestStepTarget getTarget() {
-		return target;
-	}
-
-	public void setTarget(TestStepTarget target) {
-		this.target = target;
 	}
 
 	public TestCaseTarget getCalledTC() {
@@ -47,8 +37,5 @@ public class CallStepInstruction extends Instruction{
 	public void setCalledTC(TestCaseTarget calledTC) {
 		this.calledTC = calledTC;
 	}
-	
-	
-	
-	
+
 }

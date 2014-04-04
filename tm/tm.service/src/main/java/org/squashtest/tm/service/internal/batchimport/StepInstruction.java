@@ -18,26 +18,28 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.squashtest.tm.service.internal.batchimport;
 
-import org.squashtest.tm.domain.testcase.ActionTestStep;
+/**
+ * Generic instruction for test steps.
+ * 
+ * @author Gregory Fouquet
+ * 
+ */
+public abstract class StepInstruction extends Instruction {
+	private TestStepTarget target;
 
-public class ActionStepInstruction extends StepInstruction {
-
-	private ActionTestStep testStep;
-
-	@Override
-	public LogTrain execute(Facility facility) {
-		// TODO Auto-generated method stub
-		return null;
+	public StepInstruction() {
+		super();
 	}
 
-	public ActionTestStep getTestStep() {
-		return testStep;
+	public TestStepTarget getTarget() {
+		return target;
 	}
 
-	public void setTestStep(ActionTestStep testStep) {
-		this.testStep = testStep;
+	public void setTarget(TestStepTarget target) {
+		this.target = target;
 	}
 
 }

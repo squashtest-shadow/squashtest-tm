@@ -18,26 +18,30 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.batchimport;
 
-import org.squashtest.tm.domain.testcase.ActionTestStep;
+package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
-public class ActionStepInstruction extends StepInstruction {
+import org.apache.poi.ss.usermodel.Row;
+import org.squashtest.tm.service.internal.batchimport.StepInstruction;
 
-	private ActionTestStep testStep;
+/**
+ * @author Gregory Fouquet
+ *
+ */
+public class StepInstructionBuilder {
 
-	@Override
-	public LogTrain execute(Facility facility) {
-		// TODO Auto-generated method stub
+	/**
+	 * @param tcwd
+	 */
+	public StepInstructionBuilder(WorksheetDef<StepSheetColumn> swd) {
+	}
+
+	/**
+	 * @param row
+	 * @return
+	 */
+	public StepInstruction build(Row row) {
 		return null;
-	}
-
-	public ActionTestStep getTestStep() {
-		return testStep;
-	}
-
-	public void setTestStep(ActionTestStep testStep) {
-		this.testStep = testStep;
 	}
 
 }
