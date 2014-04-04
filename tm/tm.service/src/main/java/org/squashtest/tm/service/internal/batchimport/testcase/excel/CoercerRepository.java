@@ -29,6 +29,7 @@ import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.testcase.TestCaseType;
+import org.squashtest.tm.service.internal.batchimport.ImportMode;
 import org.squashtest.tm.service.internal.batchimport.excel.CellValueCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.OptionalBooleanCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.OptionalDateCellCoercer;
@@ -38,6 +39,7 @@ import org.squashtest.tm.service.internal.batchimport.excel.StringCellCoercer;
 
 /**
  * Repository of {@link CellValueCoercer} for {@link TestCaseSheetColumn}s
+ * 
  * @author Gregory Fouquet
  * 
  */
@@ -47,7 +49,7 @@ public final class CoercerRepository {
 	/**
 	 * The default coercer that shall be given when no other is defined.
 	 */
-	private static final CellValueCoercer<?> DEFAULT_COERCER = StringCellCoercer.INSTANCE;
+	private static final CellValueCoercer<String> DEFAULT_COERCER = StringCellCoercer.INSTANCE;
 
 	private Map<TestCaseSheetColumn, CellValueCoercer<?>> coercerByColumn = new HashMap<TestCaseSheetColumn, CellValueCoercer<?>>();
 
@@ -59,6 +61,7 @@ public final class CoercerRepository {
 		coercerByColumn.put(TestCaseSheetColumn.TC_TYPE, OptionalEnumCellCoercer.forEnum(TestCaseType.class));
 		coercerByColumn.put(TestCaseSheetColumn.TC_STATUS, OptionalEnumCellCoercer.forEnum(TestCaseStatus.class));
 		coercerByColumn.put(TestCaseSheetColumn.TC_CREATED_ON, OptionalDateCellCoercer.INSTANCE);
+		coercerByColumn.put(TestCaseSheetColumn.ACTION, OptionalEnumCellCoercer.forEnum(ImportMode.class));
 	}
 
 	/**
@@ -71,5 +74,12 @@ public final class CoercerRepository {
 	public <VAL> CellValueCoercer<VAL> findCoercer(TestCaseSheetColumn col) {
 		CellValueCoercer<?> coercer = (CellValueCoercer<VAL>) coercerByColumn.get(col);
 		return (CellValueCoercer<VAL>) (coercer == null ? DEFAULT_COERCER : coercer);
+	}
+
+	/**
+	 * @return the coercer suitable for custom field cells.
+	 */
+	public CellValueCoercer<String> findCustomFieldCoercer() {
+		return StringCellCoercer.INSTANCE;
 	}
 }

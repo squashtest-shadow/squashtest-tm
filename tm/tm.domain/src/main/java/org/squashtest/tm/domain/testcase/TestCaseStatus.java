@@ -23,13 +23,13 @@ package org.squashtest.tm.domain.testcase;
 import org.squashtest.tm.domain.Level;
 
 public enum TestCaseStatus implements Level{
-	
+
 	WORK_IN_PROGRESS(1),
 	UNDER_REVIEW(2),
 	APPROVED(3),
 	OBSOLETE(4),
 	TO_BE_UPDATED(5);
-	
+
 	private static final String I18N_KEY_ROOT = "test-case.status.";
 
 	private final int level;
@@ -42,12 +42,12 @@ public enum TestCaseStatus implements Level{
 	public String getI18nKey() {
 		return I18N_KEY_ROOT + this.name();
 	}
-	
+
 	@Override
 	public int getLevel() {
 		return level;
 	}
-	
+
 	public static TestCaseStatus defaultValue() {
 		return WORK_IN_PROGRESS;
 	}

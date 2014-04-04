@@ -25,12 +25,14 @@ package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.junit.After;
 import org.junit.Test;
 import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.testcase.TestCaseType;
+import org.squashtest.tm.service.internal.batchimport.ImportMode;
 import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
 import org.squashtest.tm.service.internal.batchimport.TestCaseTarget;
 import org.squashtest.tm.service.internal.batchimport.excel.CannotCoerceException;
@@ -50,14 +52,19 @@ class TestCaseInstructionBuilderTest extends Specification {
 	TestCaseInstructionBuilder builder = new TestCaseInstructionBuilder(wd)
 	Cell pathCell = Mock()
 	Cell orderCell = Mock()
-	
-	private setupTestCaseTargetSpec() {
-		wd.getImportableColumnDefs() >> [new StdColumnDef(TestCaseSheetColumn.TC_PATH, 10), new StdColumnDef(TestCaseSheetColumn.TC_NUM, 20)]
 
+	private setupTestCaseTargetSpec() {
+		wd.getImportableColumnDefs() >> [
+			new StdColumnDef(TestCaseSheetColumn.TC_PATH, 10),
+			new StdColumnDef(TestCaseSheetColumn.TC_NUM, 20)
+		]
+
+		wd.getCustomFieldDefs() >> []
+		
 		row.getCell(10) >> pathCell
 		row.getCell(20) >> orderCell
 	}
-	
+
 	@Unroll
 	def "should create target from row with path #path and order #order"() {
 		given:
@@ -68,15 +75,15 @@ class TestCaseInstructionBuilderTest extends Specification {
 		orderCell.getNumericCellValue() >> order
 		orderCell.getStringCellValue() >> order
 		orderCell.getCellType() >> cellType
-		
+
 		when:
 		TestCaseInstruction instruction = builder.build(row)
-		
+
 		then:
 		instruction.target.path == path
 		instruction.target.order == intOrder
-		
-		where: 
+
+		where:
 		path 	| order 		| intOrder 	| cellType
 		"foo" 	| 30.0 			| 30       	| Cell.CELL_TYPE_NUMERIC
 		"foo" 	| 29.9999996	| 30 		| Cell.CELL_TYPE_NUMERIC
@@ -84,52 +91,47 @@ class TestCaseInstructionBuilderTest extends Specification {
 		"foo" 	| "30" 			| 30       	| Cell.CELL_TYPE_STRING
 		"foo" 	| null 			| null     	| Cell.CELL_TYPE_BLANK
 	}
-	
+
 	def "not sure what we should do when order not a number"() {
 		given:
 		setupTestCaseTargetSpec()
-		
+
 		and:
 		pathCell.getStringCellValue() >> "foo"
 		orderCell.getNumericCellValue() >> { throw new RuntimeException("not a number, lol") }
 		orderCell.getStringCellValue() >> "not a number, lol"
 		orderCell.getCellType() >> Cell.CELL_TYPE_STRING
-		
+
 		when:
 		TestCaseTarget target = builder.build(row)
-		
+
 		then:
 		thrown(CannotCoerceException)
 	}
-	
+
 	@Unroll
 	def "should create test case from row with this bunch of data : #col #cellType #cellValue #propName #propValue"() {
 		given:
-		Cell cell = Mock()
-		cell.getCellType() >> cellType
-		cell.getNumericCellValue() >> cellValue
-		cell.getStringCellValue() >> cellValue
-		cell.getBooleanCellValue() >> cellValue
-		cell.getDateCellValue() >> cellValue
-		
+		Cell cell = mockCell(cellType, cellValue)
 		row.getCell(30) >> cell
-		
+
 		and:
 		wd.getImportableColumnDefs() >> [new StdColumnDef(col, 30)]
+		wd.getCustomFieldDefs() >> []
 		
 		when:
 		TestCaseInstruction instruction = builder.build(row)
-		
+
 		then:
 		instruction.testCase[propName] == propValue
-		
-		where: 
+
+		where:
 		col				| cellType					| cellValue			| propName			| propValue
 		TC_REFERENCE	| Cell.CELL_TYPE_STRING		| "yeah"			| "reference"		| "yeah"
 		TC_REFERENCE	| Cell.CELL_TYPE_BLANK		| ""				| "reference"		| ""
-		
+
 		TC_NAME			| Cell.CELL_TYPE_STRING		| "yeah"			| "name"			| "yeah"
-		
+
 		TC_WEIGHT_AUTO	| Cell.CELL_TYPE_NUMERIC	| 1					| "importanceAuto"	| true
 		TC_WEIGHT_AUTO	| Cell.CELL_TYPE_BOOLEAN	| true				| "importanceAuto"	| true
 		TC_WEIGHT_AUTO	| Cell.CELL_TYPE_STRING		| "1"				| "importanceAuto"	| true
@@ -137,7 +139,7 @@ class TestCaseInstructionBuilderTest extends Specification {
 		TC_WEIGHT_AUTO	| Cell.CELL_TYPE_BOOLEAN	| false				| "importanceAuto"	| false
 		TC_WEIGHT_AUTO	| Cell.CELL_TYPE_STRING		| "0"				| "importanceAuto"	| false
 		TC_WEIGHT_AUTO	| Cell.CELL_TYPE_BLANK		| ""				| "importanceAuto"	| false
-		
+
 		TC_WEIGHT		| Cell.CELL_TYPE_STRING		| "VERY_HIGH"		| "importance"		| TestCaseImportance.VERY_HIGH
 		TC_WEIGHT		| Cell.CELL_TYPE_BLANK		| ""				| "importance"		| TestCaseImportance.LOW
 
@@ -155,12 +157,68 @@ class TestCaseInstructionBuilderTest extends Specification {
 
 		TC_PRE_REQUISITE| Cell.CELL_TYPE_STRING		| "yeah"			| "prerequisite"	| "yeah"
 		TC_PRE_REQUISITE| Cell.CELL_TYPE_BLANK		| ""				| "prerequisite"	| ""
-		
+
 		TC_CREATED_ON	| Cell.CELL_TYPE_STRING		| "2010-01-12"		| "createdOn"		| IsoDateUtils.parseIso8601Date("2010-01-12")
 		TC_CREATED_ON	| Cell.CELL_TYPE_NUMERIC	| IsoDateUtils.parseIso8601Date("2019-03-17") | "createdOn"		| IsoDateUtils.parseIso8601Date("2019-03-17")
 		TC_CREATED_ON	| Cell.CELL_TYPE_BLANK		| ""				| "createdOn"		| null
-		
+
 		TC_CREATED_BY	| Cell.CELL_TYPE_STRING		| "your mom"		| "createdBy"		| "your mom"
 		TC_CREATED_BY	| Cell.CELL_TYPE_BLANK		| ""				| "createdBy"		| ""
-		}
+	}
+
+	private Cell mockCell(cellType, cellValue) {
+		Cell cell = Mock()
+		
+		cell.getCellType() >> cellType
+		
+		cell.getNumericCellValue() >> cellValue
+		cell.getStringCellValue() >> cellValue
+		cell.getBooleanCellValue() >> cellValue
+		cell.getDateCellValue() >> cellValue
+		
+		return cell
+	}
+
+	@Unroll
+	def "should create instruction from row with this bunch of data : #col #cellType #cellValue #propValue"() {
+		given:
+		Cell cell = mockCell(cellType, cellValue)
+		row.getCell(30) >> cell
+
+		and:
+		wd.getImportableColumnDefs() >> [new StdColumnDef(col, 30)]
+		wd.getCustomFieldDefs() >> []
+		
+		when:
+		TestCaseInstruction instruction = builder.build(row)
+
+		then:
+		instruction.mode == propValue
+
+		where:
+		col				| cellType					| cellValue			| propValue
+		ACTION			| Cell.CELL_TYPE_STRING		| "CREATE"			| ImportMode.CREATE
+	}
+
+	@Unroll
+	def "should add custom field to instruction from row with this bunch of data : #cellType #cellValue #fieldCode"() {
+		given:
+		Cell cell = mockCell(cellType, cellValue)
+		row.getCell(30) >> cell
+
+		and:
+		wd.getImportableColumnDefs() >> []
+		wd.getCustomFieldDefs() >> [new CustomFieldColumnDef(fieldCode, 30)]
+
+		when:
+		TestCaseInstruction instruction = builder.build(row)
+
+		then:
+		instruction.customFields[fieldCode] == cellValue
+
+		where:
+		cellType			 	| fieldCode	| cellValue
+		Cell.CELL_TYPE_STRING	|"FOO"		| "bar"
+		Cell.CELL_TYPE_BLANK	|"FOO"		| ""
+	}
 }

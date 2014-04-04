@@ -119,7 +119,7 @@ class WorksheetDef<COL extends TemplateColumn> {
 		} else if (isCustomFieldHeader(header)) {
 			LOGGER.trace("Column named '{}' will be added to metamodel as custom field", header);
 			res = new CustomFieldColumnDef(parseCustomFieldHeader(header), colIndex);
-			customFieldDefs.add((CustomFieldColumnDef) res);
+			getCustomFieldDefs().add((CustomFieldColumnDef) res);
 
 		} else {
 			LOGGER.trace("Column named '{}' will be ignored", header);
@@ -156,5 +156,12 @@ class WorksheetDef<COL extends TemplateColumn> {
 	 */
 	public String getSheetName() {
 		return worksheetType.sheetName;
+	}
+
+	/**
+	 * @return the customFieldDefs
+	 */
+	public List<CustomFieldColumnDef> getCustomFieldDefs() {
+		return customFieldDefs;
 	}
 }

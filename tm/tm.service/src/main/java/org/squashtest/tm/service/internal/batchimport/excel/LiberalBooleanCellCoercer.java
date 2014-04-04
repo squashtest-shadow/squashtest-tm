@@ -75,7 +75,7 @@ public class LiberalBooleanCellCoercer extends TypeBasedCellValueCoercer<Boolean
 		double val = cell.getNumericCellValue();
 		return coerceDouble(val);
 	}
-
+	
 	private boolean coerceDouble(double val) throws CannotCoerceException {
 		boolean res;
 

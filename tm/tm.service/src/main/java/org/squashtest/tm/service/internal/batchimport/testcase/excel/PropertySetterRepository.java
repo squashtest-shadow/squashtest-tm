@@ -49,8 +49,11 @@ public class PropertySetterRepository {
 	private Map<TestCaseSheetColumn, PropertySetter<?, ?>> propSetterByColumn = new HashMap<TestCaseSheetColumn, PropertySetter<?, ?>>();
 
 	private PropertySetterRepository() {
+		// target
 		propSetterByColumn.put(TC_PATH, ReflectionFieldSetter.forField("path"));
 		propSetterByColumn.put(TC_NUM, ReflectionFieldSetter.forOptionalField("order"));
+		
+		// test case
 		propSetterByColumn.put(TC_REFERENCE, ReflectionFieldSetter.forOptionalField("reference"));
 		propSetterByColumn.put(TC_NAME, ReflectionFieldSetter.forField("name"));
 		propSetterByColumn.put(TC_WEIGHT_AUTO, ReflectionFieldSetter.forOptionalField("importanceAuto"));
@@ -63,6 +66,9 @@ public class PropertySetterRepository {
 		// createdOn and createdBy field name is not known, we use mutators to set'em
 		propSetterByColumn.put(TC_CREATED_ON, ReflectionMutatorSetter.forOptionalProperty("createdOn"));
 		propSetterByColumn.put(TC_CREATED_BY, ReflectionMutatorSetter.forOptionalProperty("createdBy"));
+		
+		// instruction
+		propSetterByColumn.put(ACTION, ReflectionMutatorSetter.forOptionalProperty("mode"));
 	}
 
 	@SuppressWarnings("unchecked")

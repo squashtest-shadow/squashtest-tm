@@ -38,7 +38,7 @@ import org.squashtest.tm.service.internal.batchimport.excel.PropertySetter;
  */
 class TestCaseInstructionBuilder {
 	private CoercerRepository coercerRepository = CoercerRepository.INSTANCE;
-	private TargetFinderRepository targetFinderRepository = TargetFinderRepository.INSTANCE;
+	private PropertyHolderFinderRepository propHolderFinderRepository = PropertyHolderFinderRepository.INSTANCE;
 	private PropertySetterRepository propertySetterRepository = PropertySetterRepository.INSTANCE;
 
 	private final WorksheetDef<TestCaseSheetColumn> worksheetDef;
@@ -54,9 +54,14 @@ class TestCaseInstructionBuilder {
 		for (StdColumnDef<TestCaseSheetColumn> colDef : worksheetDef.getImportableColumnDefs()) {
 			TestCaseSheetColumn col = colDef.getType();
 			Object value = getValue(row, colDef);
-			Object target = targetFinderRepository.findTargetFinder(col).find(instruction);
+			Object target = propHolderFinderRepository.findTargetFinder(col).find(instruction);
 			PropertySetter<Object, Object> propSetter = propertySetterRepository.findPropSetter(col);
 			propSetter.set(value, target);
+		}
+
+		for (CustomFieldColumnDef colDef : worksheetDef.getCustomFieldDefs()) {
+			String value = getValue(row, colDef);
+			instruction.addCustomField(colDef.getCode(), value);
 		}
 
 		return instruction;
@@ -78,5 +83,10 @@ class TestCaseInstructionBuilder {
 	private <VAL> VAL getValue(Row row, StdColumnDef<TestCaseSheetColumn> colDef) {
 		Cell cell = getCell(row, colDef);
 		return (VAL) coercerRepository.findCoercer(colDef.getType()).coerce(cell);
+	}
+
+	private String getValue(Row row, CustomFieldColumnDef colDef) {
+		Cell cell = getCell(row, colDef);
+		return coercerRepository.findCustomFieldCoercer().coerce(cell);
 	}
 }

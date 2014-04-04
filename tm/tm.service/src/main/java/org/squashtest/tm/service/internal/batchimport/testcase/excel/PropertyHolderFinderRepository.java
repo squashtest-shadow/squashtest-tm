@@ -36,10 +36,10 @@ import static org.squashtest.tm.service.internal.batchimport.testcase.excel.Test
  * @author Gregory Fouquet
  * 
  */
-public class TargetFinderRepository {
-	public static final TargetFinderRepository INSTANCE = new TargetFinderRepository();
+public class PropertyHolderFinderRepository {
+	public static final PropertyHolderFinderRepository INSTANCE = new PropertyHolderFinderRepository();
 
-	private final Map<TestCaseSheetColumn, TargetFinder<TestCaseInstruction, ?>> targetFinderByColumn = new HashMap<TestCaseSheetColumn, TargetFinder<TestCaseInstruction, ?>>();
+	private final Map<TestCaseSheetColumn, TargetFinder<TestCaseInstruction, ?>> finderByColumn = new HashMap<TestCaseSheetColumn, TargetFinder<TestCaseInstruction, ?>>();
 
 	private final TargetFinder<TestCaseInstruction, TestCase> testCaseFinder = new TargetFinder<TestCaseInstruction, TestCase>() {
 		@Override
@@ -48,7 +48,7 @@ public class TargetFinderRepository {
 		}
 	};
 
-	private TargetFinderRepository() {
+	private PropertyHolderFinderRepository() {
 		TargetFinder<TestCaseInstruction, TestCaseTarget> targetFinder = new TargetFinder<TestCaseInstruction, TestCaseTarget>() {
 			@Override
 			public TestCaseTarget find(TestCaseInstruction instruction) {
@@ -56,13 +56,21 @@ public class TargetFinderRepository {
 			}
 		};
 
-		targetFinderByColumn.put(TC_NUM, targetFinder);
-		targetFinderByColumn.put(TC_PATH, targetFinder);
+		finderByColumn.put(TC_NUM, targetFinder);
+		finderByColumn.put(TC_PATH, targetFinder);
+		
+		TargetFinder<TestCaseInstruction, TestCaseInstruction> instructionFinder = new TargetFinder<TestCaseInstruction, TestCaseInstruction>() {
+			@Override
+			public TestCaseInstruction find(TestCaseInstruction instruction) {
+				return instruction;
+			}
+		};
+		finderByColumn.put(ACTION, instructionFinder);
 	}
 
 	@SuppressWarnings("unchecked")
 	public <T> TargetFinder<TestCaseInstruction, T> findTargetFinder(TestCaseSheetColumn col) {
-		TargetFinder<TestCaseInstruction, ?> finder = targetFinderByColumn.get(col);
+		TargetFinder<TestCaseInstruction, ?> finder = finderByColumn.get(col);
 		return (TargetFinder<TestCaseInstruction, T>) (finder == null ? testCaseFinder : finder);
 	}
 }

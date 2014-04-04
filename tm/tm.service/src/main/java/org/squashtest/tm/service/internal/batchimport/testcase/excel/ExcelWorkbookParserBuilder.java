@@ -71,7 +71,7 @@ class ExcelWorkbookParserBuilder {
 			is = new BufferedInputStream(new FileInputStream(xls));
 		} catch (FileNotFoundException e) {
 			IOUtils.closeQuietly(is);
-			throw new RuntimeException(e);
+			throw new SheetCorruptedException(e);
 		}
 		Workbook wb = openWorkbook(is);
 		WorkbookMetaData wmd = buildMetaData(wb);
