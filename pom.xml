@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -280,7 +281,7 @@
             <exclude>**/scripts/iesupport/**/*.*</exclude>
             <exclude>**/scripts/thirdparties/**/*.*</exclude>
             <exclude>**/scripts/lib/**/*.*</exclude>
-            <exclude>**/scripts/require*.js</exclude>          
+            <exclude>**/scripts/require*.js</exclude>
             <exclude>**/styles/ckeditor/**/*.*</exclude>
             <exclude>**/styles/datatables/**/*.*</exclude>
             <exclude>**/styles/jquery/**/*.*</exclude>
@@ -289,7 +290,7 @@
             <exclude>**/styles/switchButton/*.*</exclude>
             <exclude>**/styles/**/thymol.js</exclude>
             <exclude>**/r.js</exclude>
-            <exclude>**/styles/**/bootstrap*.css</exclude> 
+            <exclude>**/styles/**/bootstrap*.css</exclude>
             <exclude>**/pubsub-boot.js</exclude> 
             
 	    <!-- generated stylesheets -->
@@ -409,6 +410,46 @@
         </file>
       </activation>
       <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-remote-resources-plugin</artifactId>
+            <executions>
+              <execution>
+              <id>remote-tools-resources</id>
+                <phase>generate-resources</phase>
+                <goals>
+                  <goal>process</goal>
+                </goals>
+                <configuration>
+                  <resourceBundles>
+                    <resourceBundle>org.squashtest.tm:squashtest-tools-resources:${project.version}</resourceBundle>
+                  </resourceBundles>
+                    <outputDirectory>${project.build.directory}/maven-shared-tools-resources</outputDirectory>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <artifactId>maven-resources-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>copy-eclipse-settings</id>
+                <phase>process-resources</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>${basedir}/.settings</outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>${project.build.directory}/maven-shared-tools-resources/eclipse/settings</directory>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
         <pluginManagement>
           <plugins>
 						<!--This plugin's configuration is used to store Eclipse m2e settings 
