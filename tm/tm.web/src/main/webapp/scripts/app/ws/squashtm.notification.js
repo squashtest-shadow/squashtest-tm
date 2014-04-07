@@ -24,7 +24,12 @@
 var squashtm = squashtm || {};
 
 define([ "jquery", "app/pubsub", "app/lnf/Forms", "jquery.squash.messagedialog" ], function($, ps, Forms) {
-	var _config = {};
+	var _config = {errorTitle :  "Error",
+			infoTitle : "Info"};
+	if(squashtm.message){
+		_config.errorTitle = squashtm.message.errorTitle;
+		_config.infoTitle = squashtm.message.infoTitle;
+	}
 	var _spinner = "#ajax-processing-indicator";
 	var _widgetsInitialized = false;
 	
