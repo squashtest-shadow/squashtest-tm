@@ -27,8 +27,9 @@ import javax.inject.Inject;
 import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.internal.batchimport.Model.Existence;
@@ -215,7 +216,7 @@ public class SimulationFacility implements Facility{
 
 	
 	@Override
-	public LogTrain addActionStep(TestStepTarget target, TestStep testStep, Map<String, String> cufValues) {
+	public LogTrain addActionStep(TestStepTarget target, ActionTestStep testStep, Map<String, String> cufValues) {
 		
 		LogTrain logs ;
 		
@@ -248,7 +249,7 @@ public class SimulationFacility implements Facility{
 	}
 	
 	@Override
-	public LogTrain addCallStep(TestStepTarget target, TestStep testStep, TestCaseTarget calledTestCase) {
+	public LogTrain addCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase) {
 		
 		LogTrain logs;		
 		
@@ -293,7 +294,7 @@ public class SimulationFacility implements Facility{
 
 
 	@Override
-	public LogTrain updateActionStep(TestStepTarget target, TestStep testStep, Map<String, String> cufValues) {
+	public LogTrain updateActionStep(TestStepTarget target, ActionTestStep testStep, Map<String, String> cufValues) {
 		
 		LogTrain logs ;
 		
@@ -329,7 +330,7 @@ public class SimulationFacility implements Facility{
 
 
 	@Override
-	public LogTrain updateCallStep(TestStepTarget target, TestStep testStep, TestCaseTarget calledTestCase) {
+	public LogTrain updateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase) {
 		
 		LogTrain logs;		
 		

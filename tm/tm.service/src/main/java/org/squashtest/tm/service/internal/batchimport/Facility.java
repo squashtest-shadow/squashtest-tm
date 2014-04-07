@@ -22,8 +22,9 @@ package org.squashtest.tm.service.internal.batchimport;
 
 import java.util.Map;
 
+import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestStep;
 
 public interface Facility {
 	
@@ -34,10 +35,11 @@ public interface Facility {
 	LogTrain deleteTestCase(TestCaseTarget target);
 	
 	
-	LogTrain addActionStep(TestStepTarget target, TestStep testStep, Map<String, String> cufValues);
-	LogTrain addCallStep(TestStepTarget target, TestStep testStep, TestCaseTarget calledTestCase);
-	LogTrain updateActionStep(TestStepTarget target, TestStep testStep, Map<String, String> cufValues);
-	LogTrain updateCallStep(TestStepTarget target, TestStep testStep, TestCaseTarget calledTestCase);
+	LogTrain addActionStep(TestStepTarget target, ActionTestStep testStep, Map<String, String> cufValues);
+	LogTrain addCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase);
+	LogTrain updateActionStep(TestStepTarget target, ActionTestStep testStep, Map<String, String> cufValues);
+	LogTrain updateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase);
 	LogTrain deleteTestStep(TestStepTarget target);
 	
 }
+
