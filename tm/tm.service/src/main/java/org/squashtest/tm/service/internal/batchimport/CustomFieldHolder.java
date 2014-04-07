@@ -21,37 +21,12 @@
 
 package org.squashtest.tm.service.internal.batchimport;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /**
- * Generic instruction for test steps.
- * 
+ * Interface to be implemented by instructions to which custom fields can be added.
  * @author Gregory Fouquet
- * 
+ *
  */
-public abstract class StepInstruction extends Instruction implements CustomFieldHolder {
-	private final TestStepTarget target;
-	private final Map<String, String> customFields = new HashMap<String, String>();
-
-	protected StepInstruction(TestStepTarget target) {
-		super();
-		this.target = target;
-	}
-
-	public TestStepTarget getTarget() {
-		return target;
-	}
-
-	/**
-	 * @return the customFields
-	 */
-	public Map<String, String> getCustomFields() {
-		return customFields;
-	}
-
-	public void addCustomField(String code, String value) {
-		customFields.put(code, value);
-	}
-
+public interface CustomFieldHolder {
+	void addCustomField(String code, String value);
 }

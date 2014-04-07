@@ -49,9 +49,14 @@ import static org.squashtest.tm.service.internal.batchimport.testcase.excel.Test
 class TestCaseInstructionBuilderTest extends Specification {
 	WorksheetDef wd = Mock();
 	Row row = Mock()
-	TestCaseInstructionBuilder builder = new TestCaseInstructionBuilder(wd)
+	TestCaseInstructionBuilder builder
 	Cell pathCell = Mock()
 	Cell orderCell = Mock()
+
+	def setup() {
+		wd.getWorksheetType() >> TemplateWorksheet.TEST_CASES_SHEET
+		builder = new TestCaseInstructionBuilder(wd)
+	}
 
 	private setupTestCaseTargetSpec() {
 		wd.getImportableColumnDefs() >> [
@@ -208,7 +213,9 @@ class TestCaseInstructionBuilderTest extends Specification {
 
 		and:
 		wd.getImportableColumnDefs() >> []
-		wd.getCustomFieldDefs() >> [new CustomFieldColumnDef(fieldCode, 30)]
+		wd.getCustomFieldDefs() >> [
+			new CustomFieldColumnDef(fieldCode, 30)
+		]
 
 		when:
 		TestCaseInstruction instruction = builder.build(row)

@@ -25,9 +25,9 @@ import java.util.Map;
 
 import org.squashtest.tm.domain.testcase.TestCase;
 
-public class TestCaseInstruction extends Instruction {
-	private final TestCaseTarget target; // indicates the "coordinates" of the test case  
-	
+public class TestCaseInstruction extends Instruction implements CustomFieldHolder {
+	private final TestCaseTarget target; // indicates the "coordinates" of the test case
+
 	private final TestCase testCase;
 	private final Map<String, String> customFields = new HashMap<String, String>();
 
@@ -54,7 +54,7 @@ public class TestCaseInstruction extends Instruction {
 	public Map<String, String> getCustomFields() {
 		return customFields;
 	}
-	
+
 	public void addCustomField(String code, String value) {
 		customFields.put(code, value);
 	}

@@ -40,7 +40,12 @@ import static org.squashtest.tm.service.internal.batchimport.testcase.excel.Step
 class StepInstructionBuilderTest extends Specification {
 	WorksheetDef wd = Mock();
 	Row row = Mock()
-	StepInstructionBuilder builder = new StepInstructionBuilder(wd)
+	StepInstructionBuilder builder
+
+	def setup() {
+		wd.getWorksheetType() >> TemplateWorksheet.STEPS_SHEET
+		builder = new StepInstructionBuilder(wd)
+	}
 
 	private Cell mockCell(cellType, cellValue) {
 		Cell cell = Mock()
