@@ -36,10 +36,10 @@ import org.apache.poi.ss.usermodel.Cell;
  * @author Gregory Fouquet
  * 
  */
-public final class OptionalIntegerCellCoercer implements CellValueCoercer<Integer> {
+public class OptionalIntegerCellCoercer implements CellValueCoercer<Integer> {
 	public static final OptionalIntegerCellCoercer INSTANCE = new OptionalIntegerCellCoercer();
 
-	private OptionalIntegerCellCoercer() {
+	protected OptionalIntegerCellCoercer() {
 		super();
 	}
 
@@ -79,7 +79,7 @@ public final class OptionalIntegerCellCoercer implements CellValueCoercer<Intege
 		return res;
 	}
 
-	private Integer coerceStringCell(Cell cell) throws NumberFormatException {
+	protected Integer coerceStringCell(Cell cell) throws NumberFormatException {
 		Integer res;
 		String val = cell.getStringCellValue();
 		try {
@@ -94,7 +94,7 @@ public final class OptionalIntegerCellCoercer implements CellValueCoercer<Intege
 		return res;
 	}
 
-	private Integer coerceNumericCell(Cell cell) {
+	protected Integer coerceNumericCell(Cell cell) {
 		Integer res;
 		double val = cell.getNumericCellValue();
 		res = round(val);
