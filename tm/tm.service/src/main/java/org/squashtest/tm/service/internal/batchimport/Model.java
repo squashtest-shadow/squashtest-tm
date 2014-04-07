@@ -101,9 +101,9 @@ public class Model {
 	  
 	  stepStatusByTarget : 
 	  
-	  Maps a test case (given its target) to a list of step models. We only care of their position (because they are identified by position) 
-	  and their type (because we want to detect potential attempts of modifications of an action step whereas the target is actually a call step 
-	  and conversely).
+	  Maps a test case (given its target) to a list of step models. We only care of their position (because they are identified by position),  
+	  their type (because we want to detect potential attempts of modifications of an action step whereas the target is actually a call step 
+	  and conversely), and possibly a called test case (if the step is a call step, and we want to keep track of possible cycles).
 
 	  
 	 ------------------------ */	

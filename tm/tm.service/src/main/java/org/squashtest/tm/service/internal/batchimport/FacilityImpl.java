@@ -115,6 +115,7 @@ public class FacilityImpl implements Facility {
 		
 		if (! train.hasCriticalErrors()){
 			try{
+				truncate(testCase, cufValues);
 				doCreateTestcase(target, testCase, cufValues);
 				model.setExists(target, testCase.getId());
 			}
@@ -130,13 +131,14 @@ public class FacilityImpl implements Facility {
 	}
 
 	@Override
-	public LogTrain updateTestCase(TestCaseTarget target, TestCase testCaseData, Map<String, String> cufValues) {
+	public LogTrain updateTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
 		
-		LogTrain train = simulator.updateTestCase(target, testCaseData, cufValues);
+		LogTrain train = simulator.updateTestCase(target, testCase, cufValues);
 		
 		if (! train.hasCriticalErrors()){
 			try{
-				doUpdateTestcase(target, testCaseData, cufValues);
+				truncate(testCase, cufValues);
+				doUpdateTestcase(target, testCase, cufValues);
 			}
 			catch(Exception ex){
 				train.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );
@@ -174,6 +176,7 @@ public class FacilityImpl implements Facility {
 		
 		if (! train.hasCriticalErrors()){
 			try{
+				truncate(testStep, cufValues);
 				doAddActionStep(target, testStep, cufValues);
 				model.addActionStep(target);
 			}
@@ -213,6 +216,7 @@ public class FacilityImpl implements Facility {
 		
 		if (! train.hasCriticalErrors()){
 			try{
+				truncate(testStep, cufValues);
 				doUpdateActionStep(target, testStep, cufValues);
 			}
 			catch(Exception ex){
@@ -477,6 +481,29 @@ public class FacilityImpl implements Facility {
 		support.setCreatedOn ( mixin. getCreatedOn() );
 		support.setLastModifiedOn ( mixin.getLastModifiedOn() );
 		return support;
+	}
+	
+	private void truncate(TestCase testCase, Map<String, String> cufValues){
+		String name = testCase.getName();
+		if (name != null){
+			testCase.setName( name.substring(0, Math.min(name.length(), 255)) );
+		}
+		String ref = testCase.getReference();
+		if (ref != null){
+			testCase.setReference( ref.substring(0, Math.min(name.length(), 50 )) );
+		}
+		
+		for (Entry<String, String> cuf : cufValues.entrySet()){
+			String value = cuf.getValue();
+			cuf.setValue( value.substring(0, Math.min(value.length(), 255)));
+		}
+	}
+	
+	private void truncate(ActionTestStep step, Map<String, String> cufValues){
+		for (Entry<String, String> cuf : cufValues.entrySet()){
+			String value = cuf.getValue();
+			cuf.setValue( value.substring(0, Math.min(value.length(), 255)));
+		}	
 	}
 	
 	private void restoreMetadata(AuditableMixin mixin, AuditableSupport saved){
