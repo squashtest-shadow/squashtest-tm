@@ -145,7 +145,7 @@ public class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColu
 	}
 
 	@SuppressWarnings("unchecked")
-	public <I extends Instruction, T extends Target> TargetFinder<I, T> findTargetFinder(TestCaseSheetColumn col) {
+	public <I extends Instruction, T extends Target> TargetFinder<I, T> findTargetFinder(COL col) {
 		TargetFinder<?, ?> finder = finderByColumn.get(col);
 		return (TargetFinder<I, T>) (finder == null ? defaultFinder : finder);
 	}

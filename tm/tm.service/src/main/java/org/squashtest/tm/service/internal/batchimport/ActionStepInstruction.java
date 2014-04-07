@@ -24,7 +24,12 @@ import org.squashtest.tm.domain.testcase.ActionTestStep;
 
 public class ActionStepInstruction extends StepInstruction {
 
-	private ActionTestStep testStep;
+	private final ActionTestStep testStep;
+
+	public ActionStepInstruction(TestStepTarget target, ActionTestStep actionTestStep) {
+		super(target);
+		this.testStep = actionTestStep;
+	}
 
 	@Override
 	public LogTrain execute(Facility facility) {
@@ -35,9 +40,4 @@ public class ActionStepInstruction extends StepInstruction {
 	public ActionTestStep getTestStep() {
 		return testStep;
 	}
-
-	public void setTestStep(ActionTestStep testStep) {
-		this.testStep = testStep;
-	}
-
 }

@@ -22,7 +22,13 @@ package org.squashtest.tm.service.internal.batchimport;
 
 public class CallStepInstruction extends StepInstruction {
 
-	private TestCaseTarget calledTC;
+	private final TestCaseTarget calledTC;
+
+
+	public CallStepInstruction(TestStepTarget target, TestCaseTarget calledTestCase) {
+		super(target);
+		calledTC = calledTestCase;
+	}
 
 	@Override
 	public LogTrain execute(Facility facility) {
@@ -32,10 +38,6 @@ public class CallStepInstruction extends StepInstruction {
 
 	public TestCaseTarget getCalledTC() {
 		return calledTC;
-	}
-
-	public void setCalledTC(TestCaseTarget calledTC) {
-		this.calledTC = calledTC;
 	}
 
 }

@@ -21,6 +21,9 @@
 
 package org.squashtest.tm.service.internal.batchimport;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Generic instruction for test steps.
  * 
@@ -28,18 +31,16 @@ package org.squashtest.tm.service.internal.batchimport;
  * 
  */
 public abstract class StepInstruction extends Instruction {
-	private TestStepTarget target;
+	private final TestStepTarget target;
+	private final Map<String, String> customFields = new HashMap<String, String>();
 
-	public StepInstruction() {
+	protected StepInstruction(TestStepTarget target) {
 		super();
+		this.target = target;
 	}
 
 	public TestStepTarget getTarget() {
 		return target;
-	}
-
-	public void setTarget(TestStepTarget target) {
-		this.target = target;
 	}
 
 }

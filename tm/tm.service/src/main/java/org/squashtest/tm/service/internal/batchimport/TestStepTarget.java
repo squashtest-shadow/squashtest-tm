@@ -30,12 +30,29 @@ public class TestStepTarget extends Target {
 
 	public TestStepTarget() {
 		super();
+		testCase = new TestCaseTarget();
 	}
 
 	public TestStepTarget(TestCaseTarget testCase, Integer index) {
 		super();
 		this.testCase = testCase;
 		this.index = index;
+	}
+
+	/**
+	 * @return
+	 * @see org.squashtest.tm.service.internal.batchimport.TestCaseTarget#getPath()
+	 */
+	public String getPath() {
+		return testCase.getPath();
+	}
+
+	/**
+	 * @param path
+	 * @see org.squashtest.tm.service.internal.batchimport.TestCaseTarget#setPath(java.lang.String)
+	 */
+	public void setPath(String path) {
+		testCase.setPath(path);
 	}
 
 	@Override

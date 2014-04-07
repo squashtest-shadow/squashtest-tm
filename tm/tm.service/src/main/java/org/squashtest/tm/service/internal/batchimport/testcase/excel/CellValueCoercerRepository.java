@@ -76,6 +76,7 @@ public final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateCo
 
 		repo.coercerByColumn.put(StepSheetColumn.ACTION, OptionalEnumCellCoercer.forEnum(ImportMode.class));
 		repo.coercerByColumn.put(StepSheetColumn.TC_STEP_NUM, OptionalOneBasedIndexCellCoercer.INSTANCE);
+		repo.coercerByColumn.put(StepSheetColumn.TC_STEP_IS_CALL_STEP, OptionalBooleanCellCoercer.INSTANCE);
 
 		return repo;
 	}
@@ -118,7 +119,7 @@ public final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateCo
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public <VAL> CellValueCoercer<VAL> findCoercer(TestCaseSheetColumn col) {
+	public <VAL> CellValueCoercer<VAL> findCoercer(COL col) {
 		CellValueCoercer<?> coercer = (CellValueCoercer<VAL>) coercerByColumn.get(col);
 		return (CellValueCoercer<VAL>) (coercer == null ? DEFAULT_COERCER : coercer);
 	}

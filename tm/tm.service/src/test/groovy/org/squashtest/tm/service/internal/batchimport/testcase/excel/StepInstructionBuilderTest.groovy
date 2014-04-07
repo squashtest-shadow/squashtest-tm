@@ -22,19 +22,150 @@
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.junit.Test;
+import org.squashtest.tm.service.importer.ImportMode;
+import org.squashtest.tm.service.internal.batchimport.StepInstruction;
 
 import spock.lang.Specification;
+import spock.lang.Unroll;
+
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.StepSheetColumn.*
 
 /**
  * @author Gregory Fouquet
  *
  */
 class StepInstructionBuilderTest extends Specification {
+	WorksheetDef wd = Mock();
+	Row row = Mock()
+	StepInstructionBuilder builder = new StepInstructionBuilder(wd)
 
-	@Test
-	public void test() {
-		fail("Not yet implemented");
+	private Cell mockCell(cellType, cellValue) {
+		Cell cell = Mock()
+
+		cell.getCellType() >> cellType
+
+		cell.getNumericCellValue() >> cellValue
+		cell.getStringCellValue() >> cellValue
+		cell.getBooleanCellValue() >> cellValue
+		cell.getDateCellValue() >> cellValue
+
+		return cell
 	}
 
+	@Unroll
+	def "should create test step target from row with this bunch of data : #col #cellType #cellValue #propName #propValue"() {
+		given:
+		Cell cell = mockCell(cellType, cellValue)
+		row.getCell(30) >> cell
+
+		and:
+		wd.getImportableColumnDefs() >> [new StdColumnDef(col, 30)]
+		wd.getCustomFieldDefs() >> []
+
+		when:
+		StepInstruction instruction = builder.build(row)
+
+		then:
+		instruction.target[propName] == propValue
+
+		where:
+		col				| cellType					| cellValue			| propName			| propValue
+		TC_OWNER_PATH	| Cell.CELL_TYPE_STRING		| "here/i/am"		| "path"			| "here/i/am"
+		TC_OWNER_PATH	| Cell.CELL_TYPE_BLANK		| null				| "path"			| null
+
+		TC_STEP_NUM 	| Cell.CELL_TYPE_NUMERIC	| 20				| "index"			| 19
+		TC_STEP_NUM 	| Cell.CELL_TYPE_STRING		| "20"				| "index"			| 19
+		TC_STEP_NUM		| Cell.CELL_TYPE_BLANK		| null				| "index"			| null
+
+	}
+
+	@Unroll
+	def "should create test step instruction from row with this bunch of data : #col #cellType #cellValue #propName #propValue"() {
+		given:
+		Cell cell = mockCell(cellType, cellValue)
+		row.getCell(30) >> cell
+
+		and:
+		wd.getImportableColumnDefs() >> [new StdColumnDef(col, 30)]
+		wd.getCustomFieldDefs() >> []
+
+		when:
+		StepInstruction instruction = builder.build(row)
+
+		then:
+		instruction[propName] == propValue
+
+		where:
+		col				| cellType					| cellValue			| propName			| propValue
+		ACTION			| Cell.CELL_TYPE_STRING		| "UPDATE"			| "mode"			| ImportMode.UPDATE
+		ACTION			| Cell.CELL_TYPE_BLANK		| null				| "mode"			| null
+
+	}
+
+	@Unroll
+	def "should create action test step from row with this bunch of data : #col #cellType #cellValue #propName #propValue"() {
+		given:
+		Cell cell = mockCell(cellType, cellValue)
+		row.getCell(30) >> cell
+
+		and:
+		Cell typeCell = mockCell(Cell.CELL_TYPE_NUMERIC, 0)
+		row.getCell(40) >> typeCell
+		def typeCellDef = new StdColumnDef(StepSheetColumn.TC_STEP_IS_CALL_STEP, 40)
+
+		and:
+		wd.getImportableColumnDefs() >> [new StdColumnDef(col, 30), typeCellDef]
+		wd.getColumnDef(StepSheetColumn.TC_STEP_IS_CALL_STEP) >> typeCellDef
+		wd.getCustomFieldDefs() >> []
+
+		and: builder = new StepInstructionBuilder(wd);
+
+		when:
+		StepInstruction instruction = builder.build(row)
+
+		then:
+		instruction.testStep[propName] == propValue
+
+		where:
+		col						| cellType					| cellValue								| propName			| propValue
+		TC_STEP_ACTION			| Cell.CELL_TYPE_STRING		| "i just want a lover like any other"	| "action"			| "i just want a lover like any other"
+		TC_STEP_ACTION			| Cell.CELL_TYPE_BLANK		| null									| "action"			| ""
+
+		TC_STEP_EXPECTED_RESULT	| Cell.CELL_TYPE_STRING		| "what do i get"						| "expectedResult"	| "what do i get"
+		TC_STEP_EXPECTED_RESULT	| Cell.CELL_TYPE_BLANK		| null									| "expectedResult"	| ""
+
+	}
+	@Unroll
+	def "should create call test step from row with this bunch of data : #col #cellType #cellValue #propName #propValue"() {
+		given:
+		Cell cell = mockCell(cellType, cellValue)
+		row.getCell(30) >> cell
+
+		and:
+		Cell typeCell = mockCell(Cell.CELL_TYPE_BOOLEAN, true)
+		row.getCell(40) >> typeCell
+		def typeCellDef = new StdColumnDef(StepSheetColumn.TC_STEP_IS_CALL_STEP, 40)
+
+		and:
+		wd.getImportableColumnDefs() >> [new StdColumnDef(col, 30), typeCellDef]
+		wd.getColumnDef(StepSheetColumn.TC_STEP_IS_CALL_STEP) >> typeCellDef
+		wd.getCustomFieldDefs() >> []
+
+		and: builder = new StepInstructionBuilder(wd);
+
+		when:
+		StepInstruction instruction = builder.build(row)
+
+		then:
+		instruction.calledTC[propName] == propValue
+
+		where:
+		col						| cellType					| cellValue		| propName			| propValue
+		TC_STEP_ACTION			| Cell.CELL_TYPE_STRING		| "here/i/am"	| "path"			| "here/i/am"
+		TC_STEP_ACTION			| Cell.CELL_TYPE_BLANK		| null			| "path"			| null
+
+	}
 }

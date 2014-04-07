@@ -56,30 +56,17 @@ public class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 		PropertySetterRepository<StepSheetColumn> r = new PropertySetterRepository<StepSheetColumn>();
 
 		// target
-		r.propSetterByColumn.put(StepSheetColumn.TC_OWNER_PATH, ReflectionFieldSetter.forField("path"));
-		r.propSetterByColumn.put(StepSheetColumn.TC_STEP_NUM, ReflectionFieldSetter.forOptionalField("order"));
+		r.propSetterByColumn.put(StepSheetColumn.TC_OWNER_PATH, ReflectionMutatorSetter.forProperty("path", String.class));
+		r.propSetterByColumn.put(StepSheetColumn.TC_STEP_NUM, ReflectionFieldSetter.forOptionalField("index"));
 
+		// instruction
+		r.propSetterByColumn.put(StepSheetColumn.ACTION, ReflectionMutatorSetter.forOptionalProperty("mode"));
+
+		// step props
 		r.propSetterByColumn.put(StepSheetColumn.TC_STEP_IS_CALL_STEP, NullPropertySetter.INSTANCE);
 
 		r.propSetterByColumn.put(StepSheetColumn.TC_STEP_ACTION, StepActionPropSetter.INSTANCE);
 		r.propSetterByColumn.put(StepSheetColumn.TC_STEP_EXPECTED_RESULT, StepResultPropSetter.INSTANCE);
-
-		//		// test case
-		//		r.propSetterByColumn.put(TC_REFERENCE, ReflectionFieldSetter.forOptionalField("reference"));
-		//		r.propSetterByColumn.put(TC_NAME, ReflectionFieldSetter.forField("name"));
-		//		r.propSetterByColumn.put(TC_WEIGHT_AUTO, ReflectionFieldSetter.forOptionalField("importanceAuto"));
-		//		r.propSetterByColumn.put(TC_WEIGHT, ReflectionFieldSetter.forOptionalField("importance"));
-		//		r.propSetterByColumn.put(TC_NATURE, ReflectionFieldSetter.forOptionalField("nature"));
-		//		r.propSetterByColumn.put(TC_TYPE, ReflectionFieldSetter.forOptionalField("type"));
-		//		r.propSetterByColumn.put(TC_STATUS, ReflectionFieldSetter.forOptionalField("status"));
-		//		r.propSetterByColumn.put(TC_DESCRIPTION, ReflectionFieldSetter.forOptionalField("description"));
-		//		r.propSetterByColumn.put(TC_PRE_REQUISITE, ReflectionFieldSetter.forOptionalField("prerequisite"));
-		//		// createdOn and createdBy field name is not known, we use mutators to set'em
-		//		r.propSetterByColumn.put(TC_CREATED_ON, ReflectionMutatorSetter.forOptionalProperty("createdOn"));
-		//		r.propSetterByColumn.put(TC_CREATED_BY, ReflectionMutatorSetter.forOptionalProperty("createdBy"));
-
-		// instruction
-		r.propSetterByColumn.put(StepSheetColumn.ACTION, ReflectionMutatorSetter.forOptionalProperty("mode"));
 
 		return r;
 	}

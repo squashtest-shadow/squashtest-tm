@@ -133,19 +133,19 @@ class WorksheetDef<COL extends TemplateColumn> {
 		return worksheetType.customFieldPattern.parseFieldCode(header);
 	}
 
-	public ColumnDef getColumnDef(COL col) {
+	public StdColumnDef<COL> getColumnDef(COL col) {
 		return stdColumnDefs.get(col);
 	}
 
 	public List<StdColumnDef<COL>> getImportableColumnDefs() {
 		List<StdColumnDef<COL>> res = new ArrayList<StdColumnDef<COL>>(stdColumnDefs.size());
-		
+
 		for (Entry<COL, StdColumnDef<COL>> entry : stdColumnDefs.entrySet()) {
 			if (isMandatory(entry.getKey())) {
 				res.add(entry.getValue());
 			}
 		}
-		
+
 		return res;
 	}
 
