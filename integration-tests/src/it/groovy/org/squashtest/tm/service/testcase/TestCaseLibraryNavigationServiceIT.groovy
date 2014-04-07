@@ -229,6 +229,71 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		thrown (CannotMoveInHimselfException)
 	}
 	
+	@Unroll("by attempting to create it, should find that the id of folder #path is #id ")
+	@DataSet("TestCaseLibraryNavigationServiceIT.create by path.xml")
+	def "should note create a folder because it already exists"(){
+		
+		expect :
+			navService.mkdirs(path) == id
+			
+		where :
+			path								| 	id
+			"/some project/super folder"		| 	13l
+			"/some project/another folder/"		|	2l
+			"/some project/super folder/robert"	|	1l
+	}
+	
+	
+	@DataSet("TestCaseLibraryNavigationServiceIT.create by path.xml")
+	def "should create one folder at the root of a library"(){
+		
+		given :
+			def path = "/some project/big"
+			
+		when :
+			def id = navService.mkdirs(path)
+			
+		then :
+			navService.getPathAsString(id) == path
+			navService.findNodeIdByPath(path) == id
+		
+	}
+	
+	
+	@DataSet("TestCaseLibraryNavigationServiceIT.create by path.xml")
+	def "should create bunch of folders out of nowhere"(){
+		
+		given :
+			def path = "/some project/big/normal/low"
+			
+		when :
+			def id = navService.mkdirs(path)
+			getSession().flush();
+			
+		then :
+			navService.findNodeIdByPath("/some project/big") != null
+			navService.findNodeIdByPath("/some project/big/normal") != null
+			navService.findNodeIdByPath("/some project/big/normal/low") == id
+		
+	}
+	
+	@DataSet("TestCaseLibraryNavigationServiceIT.create by path.xml")
+	def "should create bunch of folders in existing folders"(){
+		
+		given :
+			def path = "/some project/another folder/bob/mike"
+			
+		when :
+			def id = navService.mkdirs(path)
+			getSession().flush();
+			
+		then :
+			navService.findNodeIdByPath("/some project/another folder/bob") != null
+			navService.findNodeIdByPath("/some project/another folder/bob/mike") == id
+		
+	}
+	
+	
 	@DataSet("TestCaseLibraryNavigationServiceIT.should not move in himself.xml")
 	def "should not move in his hierarchy"(){
 		given:

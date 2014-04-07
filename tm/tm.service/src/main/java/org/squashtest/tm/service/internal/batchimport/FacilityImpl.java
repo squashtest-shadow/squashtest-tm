@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.batchimport;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
@@ -30,11 +31,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
+import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.service.testcase.TestStepModificationService;
@@ -46,7 +49,7 @@ public class FacilityImpl implements Facility {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FacilityImpl.class); 
 
 	@Inject
-	private SessionFactory sessionFactory;
+	private TestCaseLibraryFinderService finderService;
 	
 	@Inject
 	private TestCaseLibraryNavigationService navigationService;
@@ -149,14 +152,44 @@ public class FacilityImpl implements Facility {
 	// ************************* private stuffs **************************
 	
 	// because the service identifies cufs by their id, not their code
+	// also populates the cache (cufIdByCode)
 	private Map<Long, String> toAcceptableCufs(Map<String, String> origCufs){
-		// Map<Long, String> result = new HashMap<Long, String>(origCufs.size());
-		 throw new RuntimeException("implement that");
+		
+		Map<Long, String> result = new HashMap<Long, String>(origCufs.size());
+		
+		for (Entry<String, String> origCuf : origCufs.entrySet()){
+			String cufCode = origCuf.getKey();
+			if (! cufIdByCode.containsKey(cufCode)){
+				CustomField customField = cufDao.findByCode(cufCode);
+				cufIdByCode.put(cufCode, customField.getId());
+			}
+			Long cufId = cufIdByCode.get(cufCode);
+			result.put(cufId, origCuf.getValue());
+		}
+		
+		return result;
+		
 	}
+	
 	
 	// because this time we're not f'ng around man, this is the real thing
 	private void reallyCreateTestcase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) throws Exception{
-				
+		
+
+		Map<Long, String> acceptableCufs = toAcceptableCufs(cufValues);
+
+		
+		// case 1 : this test case lies at the root of the project
+		if (target.isRootTestCase()){
+			Long libraryId = model.getProjectStatus(target.getProject()).getId();	// never null because the checks ensured that the project exists
+			navigationService.addTestCaseToLibrary(libraryId, testCase, acceptableCufs);
+		}
+		// case 2 : this test case exists within a folder
+		else{
+			Long folderId = navigationService.mkdirs(target.getFolder());
+			navigationService.addTestCaseToFolder(folderId, testCase, acceptableCufs);
+		}
+		
 	}
 
 

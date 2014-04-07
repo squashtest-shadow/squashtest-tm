@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.batchimport;
 
 import java.util.Arrays;
 
+import org.apache.commons.lang.StringUtils;
 import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.Target;
 
@@ -123,11 +124,16 @@ public class TestCaseTarget extends Target{
 	 * 
 	 * @return
 	 */
-	public String[] getFolder(){
+	public String getFolder(){
 		
 		String[] names =  Utils.splitPath(path);
+		String[] shortened = Arrays.copyOf(names, names.length-1);
 		
-		return Arrays.copyOf(names, names.length-1);
+		return StringUtils.join(shortened, '/');
 	}
 	
+	public boolean isRootTestCase(){
+		String[] names =  Utils.splitPath(path);
+		return names.length==2;	//that is, composed of a project and a test case name only.
+	}
 }

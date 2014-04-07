@@ -89,6 +89,16 @@ public interface TestCaseLibraryNavigationService extends
 	
 	
 	/**
+	 * given a well formed path (starting with /project), creates a folder at this position if the user is allowed to.
+	 * If a folder already exists in that place, creates nothing and returns its id instead.
+	 * 
+	 * @param folderpath
+	 * @return the id of that folder 
+	 */
+	Long mkdirs(String folderpath);
+	
+	
+	/**
 	 * @deprecated use {@link TestCaseFinder#findById(long)} instead
 	 * @param testCaseId
 	 * @return

@@ -57,6 +57,7 @@ import org.squashtest.tm.service.internal.library.PasteStrategy;
 import org.squashtest.tm.service.internal.repository.FolderDao;
 import org.squashtest.tm.service.internal.repository.LibraryDao;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
+import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
@@ -70,6 +71,7 @@ import org.squashtest.tm.service.testcase.TestCaseStatisticsService;
 public class TestCaseLibraryNavigationServiceImpl extends
 		AbstractLibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode> implements
 		TestCaseLibraryNavigationService {
+	
 	@Inject
 	private TestCaseLibraryDao testCaseLibraryDao;
 	@Inject
@@ -107,6 +109,9 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	@Inject
 	private TestCaseExcelExporterService excelService;
 
+	@Inject
+	private ProjectDao projectDao;
+	
 	@Override
 	protected NodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> getDeletionHandler() {
 		return deletionHandler;
@@ -233,6 +238,92 @@ public class TestCaseLibraryNavigationServiceImpl extends
 		addTestCaseToFolder(folderId, testCase);
 		initCustomFieldValues(testCase, customFieldValues);
 	}
+	
+	
+	@Override
+	public Long mkdirs(String folderpath) {
+		
+		String path = folderpath.replaceFirst("^/", "").replaceFirst("/$", "");
+		
+		StringBuffer buffer = new StringBuffer();
+		String[] split = path.split("(?<!\\\\)/");	
+		List<String> paths = new ArrayList<String>(split.length - 1);
+		
+
+		// build all the paths on the way.  
+		buffer.append("/"+split[0]);
+		for (int i = 1; i< split.length; i++){
+			buffer.append("/"+split[i]);
+			paths.add(buffer.toString());
+		}
+
+		// find the folder ids, if exist 
+		List<Long> foundIds = findNodeIdsByPath(paths);		
+		
+		
+		int nullIdx = foundIds.indexOf(null);
+		TestCaseFolder foldertree = null;
+		
+		switch(nullIdx){
+		case -1 : 
+			return foundIds.get(foundIds.size()-1);	// all folders do exist, simply return the last element;
+			
+		case 0 : 
+			Long libraryId = projectDao.findByName(split[0].replaceAll("\\\\\\/", "/"))
+										.getTestCaseLibrary()
+										.getId();		
+			foldertree = mkTransFolders(1, split);
+			addFolderToLibrary(libraryId, foldertree);
+			break;
+			
+		default : 
+			Long parentFolder = foundIds.get(nullIdx - 1);
+			foldertree = mkTransFolders(nullIdx + 1, split);
+			addFolderToFolder(parentFolder, foldertree);
+			break;
+		}
+		
+		TestCaseFolder lastFolder = foldertree;
+		do{
+			if (lastFolder.hasContent()){
+				lastFolder = (TestCaseFolder)lastFolder.getContent().get(0);
+			}
+		}while(lastFolder.hasContent());	
+		
+		return lastFolder.getId();		
+		
+	}
+	
+	
+	private TestCaseFolder mkTransFolders(int startIndex, String[] names){
+		
+		TestCaseFolder baseFolder = null;
+		TestCaseFolder currentParent = null;
+		TestCaseFolder currentChild = null;
+		
+		for (int i = startIndex; i < names.length; i++){
+			currentChild = new TestCaseFolder();
+			currentChild.setName(names[i].replaceAll("\\\\\\/", "/"));	// unescapes escaped slashes '\/' to slashes '/'
+			currentChild.setDescription("");
+			
+			// if this is the first round in the loop we must initialize some variables
+			if (baseFolder == null){
+				baseFolder = currentChild;
+				currentParent = currentChild;
+			}
+			else{
+				currentParent.addContent(currentChild);
+			}
+			
+			currentParent = currentChild;
+			
+		}
+		
+		return baseFolder;
+		
+	}
+	
+	
 
 	// CUF : this is a very quick fix for [Issue 2061], TODO : remove the lines that are related to this issue and replace
 	// it with another solution mentioned in the ticket

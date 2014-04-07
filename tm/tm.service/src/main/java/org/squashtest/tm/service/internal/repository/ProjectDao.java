@@ -30,6 +30,9 @@ import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 
 @DynamicDao(entity = Project.class)
 public interface ProjectDao extends CustomProjectDao {
+	
+	Project findByName(String projectname);
+	
 	Project findById(long id);
 	
 	void persist(Project project);

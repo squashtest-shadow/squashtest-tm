@@ -22,16 +22,19 @@ package org.squashtest.tm.service.internal.testcase;
 
 import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
 import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
+import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao
 import org.squashtest.tm.service.internal.testcase.TestCaseLibraryNavigationServiceImpl;
 import org.squashtest.tm.service.security.PermissionEvaluationService
+import org.squashtest.tm.service.internal.repository.LibraryNodeDao
 
 import spock.lang.Specification
 
@@ -41,12 +44,16 @@ class TestCaseLibraryNavigationServiceImplTest extends Specification {
 	TestCaseLibraryDao testCaseLibraryDao = Mock() 
 	TestCaseFolderDao testCaseFolderDao = Mock() 
 	TestCaseDao testCaseDao = Mock() 
+	ProjectDao projectDao = Mock()
+	LibraryNodeDao<TestCaseLibraryNode> nodeDao = Mock()
 	PermissionEvaluationService permissionService = Mock();
 	
 	def setup() {
 		service.testCaseLibraryDao = testCaseLibraryDao
 		service.testCaseFolderDao = testCaseFolderDao
 		service.testCaseDao = testCaseDao
+		service.projectDao = projectDao
+		service.testCaseLibraryNodeDao = nodeDao
 		use (ReflectionCategory) {
 			AbstractLibraryNavigationService.set(field: "permissionService", of: service, to: permissionService)
 		}
@@ -135,6 +142,69 @@ class TestCaseLibraryNavigationServiceImplTest extends Specification {
 		then:
 		container.addContent newFolder
 		1 * testCaseFolderDao.persist(newFolder)
+	}
+	
+	
+	def "should create a hierarchy of folders"(){
+		
+		given: 
+			def splitname = ["project", "folder1", "folder2", "folder \\/ 3", "folder4"] as String[]
+			def idx = 2
+			
+		when :
+			def res = service.mkTransFolders(idx, splitname)
+		
+			def names = []
+			TestCaseFolder iter = res
+			
+			// groovy doesn't support do..while yet
+			while (iter != null){				
+				names << iter.name
+				iter = (iter.hasContent()) ? iter.content[0] : null
+			}
+			
+			
+		then :
+			 names == ["folder2", "folder / 3", "folder4"]
+		
+		
+	}
+	
+	def "should persist a hierarchy of folders at the root of a library"(){
+		
+		given :
+			def path = "/project/folder1/folder2/folder \\/ 3/folder4"
+			
+		and : 
+			Project p = Mock()
+			TestCaseLibrary tcl = Mock()
+			p.getTestCaseLibrary() >> tcl
+			tcl.getId() >> 5l
+			
+			projectDao.findByName("project") >> p
+			testCaseLibraryDao.findById(5l) >> tcl
+		
+		and :
+			nodeDao.findNodeIdsByPath(_) >> [null, null, null, null]
+			
+		when :
+			service.mkdirs(path)
+		
+		then :
+			
+			1 * testCaseFolderDao.persist ( {
+				it.name == "folder1" && 	
+				it.content[0].name == "folder2" &&
+				it.content[0].content[0].name == "folder / 3" && 
+				it.content[0].content[0].content[0].name == "folder4" 
+			})
+		
+			1 * tcl.addContent( {
+				it.name == "folder1" && 	
+				it.content[0].name == "folder2" &&
+				it.content[0].content[0].name == "folder / 3" &&
+				it.content[0].content[0].content[0].name == "folder4" 
+			} )
 	}
 
 }
