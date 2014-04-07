@@ -36,7 +36,7 @@ import org.apache.poi.ss.usermodel.Cell;
  * @author Gregory Fouquet
  * 
  */
-public class OptionalIntegerCellCoercer implements CellValueCoercer<Integer> {
+public class OptionalIntegerCellCoercer extends TypeBasedCellValueCoercer<Integer> implements CellValueCoercer<Integer> {
 	public static final OptionalIntegerCellCoercer INSTANCE = new OptionalIntegerCellCoercer();
 
 	protected OptionalIntegerCellCoercer() {
@@ -44,41 +44,10 @@ public class OptionalIntegerCellCoercer implements CellValueCoercer<Integer> {
 	}
 
 	/**
-	 * @return the cell content as an Integer, <code>null</code> when empty.
-	 * @throws TBD
-	 *             when non numeric cell is not parseable.
-	 * @see org.squashtest.tm.service.internal.batchimport.excel.CellValueCoercer#coerce(org.apache.poi.ss.usermodel.Cell)
+	 * 
+	 * @see org.squashtest.tm.service.internal.batchimport.excel.TypeBasedCellValueCoercer#coerceStringCell(org.apache.poi.ss.usermodel.Cell)
 	 */
 	@Override
-	public Integer coerce(Cell cell) {
-		int type = cell.getCellType();
-		Integer res;
-
-		switch (type) {
-		case Cell.CELL_TYPE_NUMERIC:
-			res = coerceNumericCell(cell);
-			break;
-
-		case Cell.CELL_TYPE_STRING:
-			res = coerceStringCell(cell);
-			break;
-
-		case Cell.CELL_TYPE_BLANK:
-			res = null;
-			break;
-		default:
-			try {
-				cell.getNumericCellValue();
-			} catch (RuntimeException e) {
-				throw new CannotCoerceException(e);
-			}
-			// we should never get here, ex should be thrown above
-			throw new CannotCoerceException("Funky cell type " + type + " is not coercible to an Integer");
-		}
-
-		return res;
-	}
-
 	protected Integer coerceStringCell(Cell cell) throws NumberFormatException {
 		Integer res;
 		String val = cell.getStringCellValue();
@@ -94,6 +63,11 @@ public class OptionalIntegerCellCoercer implements CellValueCoercer<Integer> {
 		return res;
 	}
 
+	/**
+	 * 
+	 * @see org.squashtest.tm.service.internal.batchimport.excel.TypeBasedCellValueCoercer#coerceNumericCell(org.apache.poi.ss.usermodel.Cell)
+	 */
+	@Override
 	protected Integer coerceNumericCell(Cell cell) {
 		Integer res;
 		double val = cell.getNumericCellValue();
@@ -101,10 +75,12 @@ public class OptionalIntegerCellCoercer implements CellValueCoercer<Integer> {
 		return res;
 	}
 
-	private Integer round(double val) {
-		Integer res;
-		res = Integer.valueOf((int) Math.round(val));
-		return res;
+	/**
+	 * @see org.squashtest.tm.service.internal.batchimport.excel.TypeBasedCellValueCoercer#coerceBlankCell(org.apache.poi.ss.usermodel.Cell)
+	 */
+	@Override
+	protected Integer coerceBlankCell(Cell cell) {
+		return null;
 	}
 
 }

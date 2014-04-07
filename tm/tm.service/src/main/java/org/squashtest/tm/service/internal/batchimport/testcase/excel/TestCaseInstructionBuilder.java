@@ -39,7 +39,7 @@ import org.squashtest.tm.service.internal.batchimport.excel.PropertySetter;
 class TestCaseInstructionBuilder {
 	private CellValueCoercerRepository<TestCaseSheetColumn> coercerRepository = CellValueCoercerRepository.forWorksheet(TemplateWorksheet.TEST_CASES_SHEET);
 	private PropertyHolderFinderRepository<TestCaseSheetColumn> propHolderFinderRepository = PropertyHolderFinderRepository.forWorksheet(TemplateWorksheet.STEPS_SHEET);
-	private PropertySetterRepository propertySetterRepository = PropertySetterRepository.INSTANCE;
+	private PropertySetterRepository<TestCaseSheetColumn> propertySetterRepository = PropertySetterRepository.forWorksheet(TemplateWorksheet.TEST_CASES_SHEET);
 
 	private final WorksheetDef<TestCaseSheetColumn> worksheetDef;
 

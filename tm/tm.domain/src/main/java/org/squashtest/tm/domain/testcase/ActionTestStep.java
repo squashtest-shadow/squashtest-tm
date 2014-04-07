@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -50,16 +49,15 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 @PrimaryKeyJoinColumn(name = "TEST_STEP_ID")
 public class ActionTestStep extends TestStep implements BoundEntity, AttachmentHolder {
 	@Lob
-	@Basic(optional = false)
-	private String action;
+	private String action = "";
 
 	@Lob
-	private String expectedResult;
+	private String expectedResult = "";
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
-	
+
 	@ManyToMany(cascade = {CascadeType.REFRESH})
 	@JoinTable(name = "VERIFYING_STEPS", joinColumns = @JoinColumn(name = "TEST_STEP_ID", updatable = false, insertable = false), inverseJoinColumns = @JoinColumn(name = "REQUIREMENT_VERSION_COVERAGE_ID", updatable = false, insertable = false))
 	private Set<RequirementVersionCoverage> requirementVersionCoverages= new HashSet<RequirementVersionCoverage>();
@@ -111,7 +109,7 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 		visitor.visit(this);
 
 	}
-	
+
 	@Override
 	public AttachmentList getAttachmentList() {
 		return attachmentList;
@@ -120,7 +118,7 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 	@Override
 	public List<ExecutionStep> createExecutionSteps(Dataset dataset) {
 		List<ExecutionStep> returnList = new ArrayList<ExecutionStep>(1);
-		ExecutionStep exec = new ExecutionStep(this, dataset);		
+		ExecutionStep exec = new ExecutionStep(this, dataset);
 		returnList.add(exec);
 		return returnList;
 	}
@@ -128,14 +126,14 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 	public Set<Attachment> getAllAttachments() {
 		return attachmentList.getAllAttachments();
 	}
-	
+
 	// *************** BoundEntity implementation *************
-	
+
 	@Override
 	public Long getBoundEntityId() {
 		return getId();
 	}
-	
+
 	@Override
 	public BindableEntity getBoundEntityType() {
 		return BindableEntity.TEST_STEP;
@@ -145,13 +143,13 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 	public Project getProject() {
 		return getTestCase().getProject();
 	}
-	
+
 	/**
 	 * Simply remove the RequirementVersionCoverage from this.requirementVersionCoverages.
 	 * @param requirementVersionCoverage : the entity to remove from this step's {@linkplain RequirementVersionCoverage}s list.
 	 */
 	public void removeRequirementVersionCoverage(RequirementVersionCoverage requirementVersionCoverage) {
-		this.requirementVersionCoverages.remove(requirementVersionCoverage);		
+		this.requirementVersionCoverages.remove(requirementVersionCoverage);
 	}
 
 	/**
@@ -161,16 +159,16 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 	public Set<RequirementVersionCoverage> getRequirementVersionCoverages() {
 		return Collections.unmodifiableSet(this.requirementVersionCoverages);
 	}
-	
+
 	/**
 	 * will simply add the given {@linkplain RequirementVersionCoverage} to this {@linkplain ActionTestStep#requirementVersionCoverages}
 	 * @param requirementVersionCoverage
 	 */
 	public void addRequirementVersionCoverage(RequirementVersionCoverage requirementVersionCoverage) {
 		this.requirementVersionCoverages.add(requirementVersionCoverage);
-		
+
 	}
-	
+
 	/**
 	 * 
 	 * @return UNMODIFIABLE VIEW of verified requirements.
@@ -194,5 +192,5 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 		return result;
 	}
 
-	
+
 }

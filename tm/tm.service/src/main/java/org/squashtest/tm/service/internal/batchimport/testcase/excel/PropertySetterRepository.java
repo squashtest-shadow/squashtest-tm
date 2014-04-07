@@ -21,20 +21,12 @@
 
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_DESCRIPTION;
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_NAME;
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_NATURE;
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_NUM;
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_PATH;
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_REFERENCE;
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_TYPE;
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_WEIGHT;
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_WEIGHT_AUTO;
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.*;
-
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.validation.constraints.NotNull;
+
+import org.squashtest.tm.service.internal.batchimport.excel.NullPropertySetter;
 import org.squashtest.tm.service.internal.batchimport.excel.PropertySetter;
 import org.squashtest.tm.service.internal.batchimport.excel.ReflectionFieldSetter;
 import org.squashtest.tm.service.internal.batchimport.excel.ReflectionMutatorSetter;
@@ -43,36 +35,93 @@ import org.squashtest.tm.service.internal.batchimport.excel.ReflectionMutatorSet
  * @author Gregory Fouquet
  * 
  */
-public class PropertySetterRepository {
-	public static final PropertySetterRepository INSTANCE = new PropertySetterRepository();
-	
-	private Map<TestCaseSheetColumn, PropertySetter<?, ?>> propSetterByColumn = new HashMap<TestCaseSheetColumn, PropertySetter<?, ?>>();
+public class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
+	private static final Map<TemplateWorksheet, PropertySetterRepository<?>> finderRepoByWorksheet = new HashMap<TemplateWorksheet, PropertySetterRepository<?>>(
+			TemplateWorksheet.values().length);
 
-	private PropertySetterRepository() {
-		// target
-		propSetterByColumn.put(TC_PATH, ReflectionFieldSetter.forField("path"));
-		propSetterByColumn.put(TC_NUM, ReflectionFieldSetter.forOptionalField("order"));
-		
-		// test case
-		propSetterByColumn.put(TC_REFERENCE, ReflectionFieldSetter.forOptionalField("reference"));
-		propSetterByColumn.put(TC_NAME, ReflectionFieldSetter.forField("name"));
-		propSetterByColumn.put(TC_WEIGHT_AUTO, ReflectionFieldSetter.forOptionalField("importanceAuto"));
-		propSetterByColumn.put(TC_WEIGHT, ReflectionFieldSetter.forOptionalField("importance"));
-		propSetterByColumn.put(TC_NATURE, ReflectionFieldSetter.forOptionalField("nature"));
-		propSetterByColumn.put(TC_TYPE, ReflectionFieldSetter.forOptionalField("type"));
-		propSetterByColumn.put(TC_STATUS, ReflectionFieldSetter.forOptionalField("status"));
-		propSetterByColumn.put(TC_DESCRIPTION, ReflectionFieldSetter.forOptionalField("description"));
-		propSetterByColumn.put(TC_PRE_REQUISITE, ReflectionFieldSetter.forOptionalField("prerequisite"));
-		// createdOn and createdBy field name is not known, we use mutators to set'em
-		propSetterByColumn.put(TC_CREATED_ON, ReflectionMutatorSetter.forOptionalProperty("createdOn"));
-		propSetterByColumn.put(TC_CREATED_BY, ReflectionMutatorSetter.forOptionalProperty("createdBy"));
-		
-		// instruction
-		propSetterByColumn.put(ACTION, ReflectionMutatorSetter.forOptionalProperty("mode"));
+	static {
+		finderRepoByWorksheet.put(TemplateWorksheet.TEST_CASES_SHEET, createTestCasesWorksheetRepo());
+		finderRepoByWorksheet.put(TemplateWorksheet.STEPS_SHEET, createStepsWorksheetRepo());
 	}
 
 	@SuppressWarnings("unchecked")
-	public <V, T> PropertySetter<V, T> findPropSetter(TestCaseSheetColumn col) {
+	public static <C extends Enum<C> & TemplateColumn> PropertySetterRepository<C> forWorksheet(@NotNull TemplateWorksheet worksheet) {
+		return (PropertySetterRepository<C>) finderRepoByWorksheet.get(worksheet);
+	}
+
+	/**
+	 * @return
+	 */
+	private static PropertySetterRepository<?> createStepsWorksheetRepo() {
+		PropertySetterRepository<StepSheetColumn> r = new PropertySetterRepository<StepSheetColumn>();
+
+		// target
+		r.propSetterByColumn.put(StepSheetColumn.TC_OWNER_PATH, ReflectionFieldSetter.forField("path"));
+		r.propSetterByColumn.put(StepSheetColumn.TC_STEP_NUM, ReflectionFieldSetter.forOptionalField("order"));
+
+		r.propSetterByColumn.put(StepSheetColumn.TC_STEP_IS_CALL_STEP, NullPropertySetter.INSTANCE);
+
+		r.propSetterByColumn.put(StepSheetColumn.TC_STEP_ACTION, StepActionPropSetter.INSTANCE);
+		r.propSetterByColumn.put(StepSheetColumn.TC_STEP_EXPECTED_RESULT, StepResultPropSetter.INSTANCE);
+
+		//		// test case
+		//		r.propSetterByColumn.put(TC_REFERENCE, ReflectionFieldSetter.forOptionalField("reference"));
+		//		r.propSetterByColumn.put(TC_NAME, ReflectionFieldSetter.forField("name"));
+		//		r.propSetterByColumn.put(TC_WEIGHT_AUTO, ReflectionFieldSetter.forOptionalField("importanceAuto"));
+		//		r.propSetterByColumn.put(TC_WEIGHT, ReflectionFieldSetter.forOptionalField("importance"));
+		//		r.propSetterByColumn.put(TC_NATURE, ReflectionFieldSetter.forOptionalField("nature"));
+		//		r.propSetterByColumn.put(TC_TYPE, ReflectionFieldSetter.forOptionalField("type"));
+		//		r.propSetterByColumn.put(TC_STATUS, ReflectionFieldSetter.forOptionalField("status"));
+		//		r.propSetterByColumn.put(TC_DESCRIPTION, ReflectionFieldSetter.forOptionalField("description"));
+		//		r.propSetterByColumn.put(TC_PRE_REQUISITE, ReflectionFieldSetter.forOptionalField("prerequisite"));
+		//		// createdOn and createdBy field name is not known, we use mutators to set'em
+		//		r.propSetterByColumn.put(TC_CREATED_ON, ReflectionMutatorSetter.forOptionalProperty("createdOn"));
+		//		r.propSetterByColumn.put(TC_CREATED_BY, ReflectionMutatorSetter.forOptionalProperty("createdBy"));
+
+		// instruction
+		r.propSetterByColumn.put(StepSheetColumn.ACTION, ReflectionMutatorSetter.forOptionalProperty("mode"));
+
+		return r;
+	}
+
+	/**
+	 * @return
+	 */
+	private static PropertySetterRepository<?> createTestCasesWorksheetRepo() {
+		PropertySetterRepository<TestCaseSheetColumn> r = new PropertySetterRepository<TestCaseSheetColumn>();
+
+		// target
+		r.propSetterByColumn.put(TestCaseSheetColumn.TC_PATH, ReflectionFieldSetter.forField("path"));
+		r.propSetterByColumn.put(TestCaseSheetColumn.TC_NUM, ReflectionFieldSetter.forOptionalField("order"));
+
+		// test case
+		r.propSetterByColumn.put(TestCaseSheetColumn.TC_REFERENCE, ReflectionFieldSetter.forOptionalField("reference"));
+		r.propSetterByColumn.put(TestCaseSheetColumn.TC_NAME, ReflectionFieldSetter.forField("name"));
+		r.propSetterByColumn.put(TestCaseSheetColumn.TC_WEIGHT_AUTO, ReflectionFieldSetter.forOptionalField("importanceAuto"));
+		r.propSetterByColumn.put(TestCaseSheetColumn.TC_WEIGHT, ReflectionFieldSetter.forOptionalField("importance"));
+		r.propSetterByColumn.put(TestCaseSheetColumn.TC_NATURE, ReflectionFieldSetter.forOptionalField("nature"));
+		r.propSetterByColumn.put(TestCaseSheetColumn.TC_TYPE, ReflectionFieldSetter.forOptionalField("type"));
+		r.propSetterByColumn.put(TestCaseSheetColumn.TC_STATUS, ReflectionFieldSetter.forOptionalField("status"));
+		r.propSetterByColumn.put(TestCaseSheetColumn.TC_DESCRIPTION, ReflectionFieldSetter.forOptionalField("description"));
+		r.propSetterByColumn.put(TestCaseSheetColumn.TC_PRE_REQUISITE, ReflectionFieldSetter.forOptionalField("prerequisite"));
+		// createdOn and createdBy field name is not known, we use mutators to set'em
+		r.propSetterByColumn.put(TestCaseSheetColumn.TC_CREATED_ON, ReflectionMutatorSetter.forOptionalProperty("createdOn"));
+		r.propSetterByColumn.put(TestCaseSheetColumn.TC_CREATED_BY, ReflectionMutatorSetter.forOptionalProperty("createdBy"));
+
+		// instruction
+		r.propSetterByColumn.put(TestCaseSheetColumn.ACTION, ReflectionMutatorSetter.forOptionalProperty("mode"));
+
+		return r;
+	}
+
+	private Map<COL, PropertySetter<?, ?>> propSetterByColumn = new HashMap<COL, PropertySetter<?, ?>>();
+
+	private PropertySetterRepository() {
+		super();
+	}
+
+	@SuppressWarnings("unchecked")
+	public <V, T> PropertySetter<V, T> findPropSetter(COL col) {
 		return (PropertySetter<V, T>) propSetterByColumn.get(col);
 	}
 }
