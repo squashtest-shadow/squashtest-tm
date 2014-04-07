@@ -67,8 +67,8 @@
 	
 	<c:if test="${ not empty wizards }">
 	<div id="wizard-tree-pane" class="button-group">
-    <a id="wizard-tree-button" class="buttonmenu sq-icon-btn" title="<f:message key='label.wizards' />...">
-    <span clmass="ui-icon ui-icon-star"></span>
+    <a id="wizard-tree-button" class="sq-icon-btn" title="<f:message key='label.wizards' />...">
+    <span class="ui-icon ui-icon-star"></span>
     </a>
     <script id="ws-wizard-tree-menu-template" type="text/x-handlebars-template">		
 		<ul id="ws-wizard-tree-menu">
