@@ -66,10 +66,10 @@ public class StepInstructionBuilder {
 			propSetter.set(value, target);
 		}
 
-		//		for (CustomFieldColumnDef colDef : worksheetDef.getCustomFieldDefs()) {
-		//			String value = getValue(row, colDef);
-		//			instruction.addCustomField(colDef.getCode(), value);
-		//		}
+		for (CustomFieldColumnDef colDef : worksheetDef.getCustomFieldDefs()) {
+			String value = getValue(row, colDef);
+			instruction.addCustomField(colDef.getCode(), value);
+		}
 
 		return instruction;
 	}
@@ -113,9 +113,9 @@ public class StepInstructionBuilder {
 		return (VAL) coercerRepository.findCoercer(colDef.getType()).coerce(cell);
 	}
 
-	//	private String getValue(Row row, CustomFieldColumnDef colDef) {
-	//		Cell cell = getCell(row, colDef);
-	//		return coercerRepository.findCustomFieldCoercer().coerce(cell);
-	//	}
+	private String getValue(Row row, CustomFieldColumnDef colDef) {
+		Cell cell = getCell(row, colDef);
+		return coercerRepository.findCustomFieldCoercer().coerce(cell);
+	}
 
 }

@@ -43,4 +43,15 @@ public abstract class StepInstruction extends Instruction {
 		return target;
 	}
 
+	/**
+	 * @return the customFields
+	 */
+	public Map<String, String> getCustomFields() {
+		return customFields;
+	}
+
+	public void addCustomField(String code, String value) {
+		customFields.put(code, value);
+	}
+
 }

@@ -168,4 +168,27 @@ class StepInstructionBuilderTest extends Specification {
 		TC_STEP_ACTION			| Cell.CELL_TYPE_BLANK		| null			| "path"			| null
 
 	}
+
+	@Unroll
+	def "should add custom field to instruction from row with this bunch of data : #cellType #cellValue #fieldCode"() {
+		given:
+		Cell cell = mockCell(cellType, cellValue)
+		row.getCell(30) >> cell
+
+		and:
+		wd.getImportableColumnDefs() >> []
+		wd.getCustomFieldDefs() >> [new CustomFieldColumnDef(fieldCode, 30)]
+
+		when:
+		StepInstruction instruction = builder.build(row)
+
+		then:
+		instruction.customFields[fieldCode] == cellValue
+
+		where:
+		cellType			 	| fieldCode	| cellValue
+		Cell.CELL_TYPE_STRING	|"FOO"		| "bar"
+		Cell.CELL_TYPE_BLANK	|"FOO"		| ""
+	}
+
 }
