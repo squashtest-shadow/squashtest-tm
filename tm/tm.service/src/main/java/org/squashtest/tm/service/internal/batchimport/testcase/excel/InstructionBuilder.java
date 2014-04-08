@@ -81,7 +81,7 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 		for (StdColumnDef<COL> colDef : worksheetDef.getImportableColumnDefs()) {
 			COL col = colDef.getType();
 			Object value = getValue(row, colDef);
-			Object target = propHolderFinderRepository.findTargetFinder(col).find(instruction);
+			Object target = propHolderFinderRepository.findPropertyHolderFinder(col).find(instruction);
 			PropertySetter<Object, Object> propSetter = propertySetterRepository.findPropSetter(col);
 			propSetter.set(value, target);
 		}

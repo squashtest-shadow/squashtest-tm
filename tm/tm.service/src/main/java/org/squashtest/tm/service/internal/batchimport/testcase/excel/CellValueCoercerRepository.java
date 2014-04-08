@@ -47,14 +47,14 @@ import org.squashtest.tm.service.internal.batchimport.excel.StringCellCoercer;
  * 
  */
 @Component
-public final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
-	private static final Map<TemplateWorksheet, CellValueCoercerRepository<?>> coercerRepoByWorksheet = new HashMap<TemplateWorksheet, CellValueCoercerRepository<?>>(
+final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
+	private static final Map<TemplateWorksheet, CellValueCoercerRepository<?>> COERCER_REPO_BY_WORKSHEET = new HashMap<TemplateWorksheet, CellValueCoercerRepository<?>>(
 			TemplateWorksheet.values().length);
 
 	static {
-		coercerRepoByWorksheet.put(TemplateWorksheet.TEST_CASES_SHEET, createTestCasesSheetRepo());
-		coercerRepoByWorksheet.put(TemplateWorksheet.STEPS_SHEET, createStepsSheetRepo());
-		coercerRepoByWorksheet.put(TemplateWorksheet.PARAMETERS_SHEET, createParamsSheetRepo());
+		COERCER_REPO_BY_WORKSHEET.put(TemplateWorksheet.TEST_CASES_SHEET, createTestCasesSheetRepo());
+		COERCER_REPO_BY_WORKSHEET.put(TemplateWorksheet.STEPS_SHEET, createStepsSheetRepo());
+		COERCER_REPO_BY_WORKSHEET.put(TemplateWorksheet.PARAMETERS_SHEET, createParamsSheetRepo());
 	}
 
 	/**
@@ -66,7 +66,7 @@ public final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateCo
 	@SuppressWarnings("unchecked")
 	public static final <C extends Enum<C> & TemplateColumn> CellValueCoercerRepository<C> forWorksheet(
 			@NotNull TemplateWorksheet worksheet) {
-		return (CellValueCoercerRepository<C>) coercerRepoByWorksheet.get(worksheet);
+		return (CellValueCoercerRepository<C>) COERCER_REPO_BY_WORKSHEET.get(worksheet);
 	}
 
 	/**

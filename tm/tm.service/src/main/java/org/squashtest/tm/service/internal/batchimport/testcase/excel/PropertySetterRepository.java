@@ -32,10 +32,12 @@ import org.squashtest.tm.service.internal.batchimport.excel.ReflectionFieldSette
 import org.squashtest.tm.service.internal.batchimport.excel.ReflectionMutatorSetter;
 
 /**
+ * Repository of {@link PropertySetter}s in the context of a specific {@link TemplateWorksheet}
+ * 
  * @author Gregory Fouquet
  * 
  */
-public class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
+class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 	private static final Map<TemplateWorksheet, PropertySetterRepository<?>> finderRepoByWorksheet = new HashMap<TemplateWorksheet, PropertySetterRepository<?>>(
 			TemplateWorksheet.values().length);
 
@@ -45,8 +47,14 @@ public class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 		finderRepoByWorksheet.put(TemplateWorksheet.PARAMETERS_SHEET, createParamsWorksheetRepo());
 	}
 
+	/**
+	 * 
+	 * @param worksheet
+	 * @return the {@link PropertySetterRepository} suitable fot the given worksheet
+	 */
 	@SuppressWarnings("unchecked")
-	public static <C extends Enum<C> & TemplateColumn> PropertySetterRepository<C> forWorksheet(@NotNull TemplateWorksheet worksheet) {
+	public static <C extends Enum<C> & TemplateColumn> PropertySetterRepository<C> forWorksheet(
+			@NotNull TemplateWorksheet worksheet) {
 		return (PropertySetterRepository<C>) finderRepoByWorksheet.get(worksheet);
 	}
 
@@ -57,7 +65,8 @@ public class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 		PropertySetterRepository<ParameterSheetColumn> r = new PropertySetterRepository<ParameterSheetColumn>();
 
 		// target
-		r.propSetterByColumn.put(ParameterSheetColumn.TC_OWNER_PATH, ReflectionMutatorSetter.forProperty("path", String.class));
+		r.propSetterByColumn.put(ParameterSheetColumn.TC_OWNER_PATH,
+				ReflectionMutatorSetter.forProperty("path", String.class));
 
 		// instruction
 		r.propSetterByColumn.put(ParameterSheetColumn.ACTION, ReflectionFieldSetter.forOptionalField("mode"));
@@ -65,7 +74,8 @@ public class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 		// paraameter
 		// param.setName(..) has logic we'd rather short-circuit
 		r.propSetterByColumn.put(ParameterSheetColumn.TC_PARAM_NAME, ReflectionFieldSetter.forField("name"));
-		r.propSetterByColumn.put(ParameterSheetColumn.TC_PARAM_DESCRIPTION, ReflectionFieldSetter.forOptionalField("description"));
+		r.propSetterByColumn.put(ParameterSheetColumn.TC_PARAM_DESCRIPTION,
+				ReflectionFieldSetter.forOptionalField("description"));
 
 		return r;
 	}
@@ -77,7 +87,8 @@ public class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 		PropertySetterRepository<StepSheetColumn> r = new PropertySetterRepository<StepSheetColumn>();
 
 		// target
-		r.propSetterByColumn.put(StepSheetColumn.TC_OWNER_PATH, ReflectionMutatorSetter.forProperty("path", String.class));
+		r.propSetterByColumn.put(StepSheetColumn.TC_OWNER_PATH,
+				ReflectionMutatorSetter.forProperty("path", String.class));
 		r.propSetterByColumn.put(StepSheetColumn.TC_STEP_NUM, ReflectionFieldSetter.forOptionalField("index"));
 
 		// instruction
@@ -105,16 +116,21 @@ public class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 		// test case
 		r.propSetterByColumn.put(TestCaseSheetColumn.TC_REFERENCE, ReflectionFieldSetter.forOptionalField("reference"));
 		r.propSetterByColumn.put(TestCaseSheetColumn.TC_NAME, ReflectionFieldSetter.forField("name"));
-		r.propSetterByColumn.put(TestCaseSheetColumn.TC_WEIGHT_AUTO, ReflectionFieldSetter.forOptionalField("importanceAuto"));
+		r.propSetterByColumn.put(TestCaseSheetColumn.TC_WEIGHT_AUTO,
+				ReflectionFieldSetter.forOptionalField("importanceAuto"));
 		r.propSetterByColumn.put(TestCaseSheetColumn.TC_WEIGHT, ReflectionFieldSetter.forOptionalField("importance"));
 		r.propSetterByColumn.put(TestCaseSheetColumn.TC_NATURE, ReflectionFieldSetter.forOptionalField("nature"));
 		r.propSetterByColumn.put(TestCaseSheetColumn.TC_TYPE, ReflectionFieldSetter.forOptionalField("type"));
 		r.propSetterByColumn.put(TestCaseSheetColumn.TC_STATUS, ReflectionFieldSetter.forOptionalField("status"));
-		r.propSetterByColumn.put(TestCaseSheetColumn.TC_DESCRIPTION, ReflectionFieldSetter.forOptionalField("description"));
-		r.propSetterByColumn.put(TestCaseSheetColumn.TC_PRE_REQUISITE, ReflectionFieldSetter.forOptionalField("prerequisite"));
+		r.propSetterByColumn.put(TestCaseSheetColumn.TC_DESCRIPTION,
+				ReflectionFieldSetter.forOptionalField("description"));
+		r.propSetterByColumn.put(TestCaseSheetColumn.TC_PRE_REQUISITE,
+				ReflectionFieldSetter.forOptionalField("prerequisite"));
 		// createdOn and createdBy field name is not known, we use mutators to set'em
-		r.propSetterByColumn.put(TestCaseSheetColumn.TC_CREATED_ON, ReflectionMutatorSetter.forOptionalProperty("createdOn"));
-		r.propSetterByColumn.put(TestCaseSheetColumn.TC_CREATED_BY, ReflectionMutatorSetter.forOptionalProperty("createdBy"));
+		r.propSetterByColumn.put(TestCaseSheetColumn.TC_CREATED_ON,
+				ReflectionMutatorSetter.forOptionalProperty("createdOn"));
+		r.propSetterByColumn.put(TestCaseSheetColumn.TC_CREATED_BY,
+				ReflectionMutatorSetter.forOptionalProperty("createdBy"));
 
 		// instruction
 		r.propSetterByColumn.put(TestCaseSheetColumn.ACTION, ReflectionMutatorSetter.forOptionalProperty("mode"));
@@ -128,6 +144,12 @@ public class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 		super();
 	}
 
+	/**
+	 * Finds the {@link PropertySetter} for the given column.
+	 * 
+	 * @param col
+	 * @return the {@link PropertySetter} or <code>null</code> when nothing found.
+	 */
 	@SuppressWarnings("unchecked")
 	public <V, T> PropertySetter<V, T> findPropSetter(COL col) {
 		return (PropertySetter<V, T>) propSetterByColumn.get(col);

@@ -41,18 +41,19 @@ import org.squashtest.tm.service.internal.batchimport.TestStepTarget;
 import org.squashtest.tm.service.internal.batchimport.excel.PropertyHolderFinder;
 
 /**
+ * Repository of {@link PropertyHolderFinder}s in the context of a specific {@link TemplateWorksheet}.
  * 
  * @author Gregory Fouquet
  * 
  */
-public class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColumn> {
-	private static final Map<TemplateWorksheet, PropertyHolderFinderRepository<?>> finderRepoByWorksheet = new HashMap<TemplateWorksheet, PropertyHolderFinderRepository<?>>(
+final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColumn> {
+	private static final Map<TemplateWorksheet, PropertyHolderFinderRepository<?>> FINDER_REPO_BY_WORKSHEET = new HashMap<TemplateWorksheet, PropertyHolderFinderRepository<?>>(
 			TemplateWorksheet.values().length);
 
 	static {
-		finderRepoByWorksheet.put(TemplateWorksheet.TEST_CASES_SHEET, createTestCasesWorksheetRepo());
-		finderRepoByWorksheet.put(TemplateWorksheet.STEPS_SHEET, createStepsWorksheetRepo());
-		finderRepoByWorksheet.put(TemplateWorksheet.PARAMETERS_SHEET, createParamsWorksheetRepo());
+		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.TEST_CASES_SHEET, createTestCasesWorksheetRepo());
+		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.STEPS_SHEET, createStepsWorksheetRepo());
+		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.PARAMETERS_SHEET, createParamsWorksheetRepo());
 	}
 
 	private static PropertyHolderFinderRepository<TestCaseSheetColumn> createTestCasesWorksheetRepo() {
@@ -168,10 +169,15 @@ public class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColu
 		return r;
 	}
 
+	/**
+	 * 
+	 * @param worksheet
+	 * @return the {@link PropertyHolderFinderRepository} suitable for the given worksheet.
+	 */
 	@SuppressWarnings("unchecked")
 	public static <C extends Enum<C> & TemplateColumn> PropertyHolderFinderRepository<C> forWorksheet(
 			@NotNull TemplateWorksheet worksheet) {
-		return (PropertyHolderFinderRepository<C>) finderRepoByWorksheet.get(worksheet);
+		return (PropertyHolderFinderRepository<C>) FINDER_REPO_BY_WORKSHEET.get(worksheet);
 	}
 
 	private final Map<COL, PropertyHolderFinder<?, ?>> finderByColumn = new HashMap<COL, PropertyHolderFinder<?, ?>>();
@@ -184,8 +190,15 @@ public class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColu
 		super();
 	}
 
+	/**
+	 * Finds a suitable {@link PropertyHolderFinder}. When no {@link PropertyHolderFinder} is found, returhs the
+	 * {@link #defaultFinder}.
+	 * 
+	 * @param col
+	 * @return the {@link PropertyHolderFinder} suitable for the given col.
+	 */
 	@SuppressWarnings("unchecked")
-	public <I extends Instruction, T extends Target> PropertyHolderFinder<I, T> findTargetFinder(COL col) {
+	public <I extends Instruction, T extends Target> PropertyHolderFinder<I, T> findPropertyHolderFinder(COL col) {
 		PropertyHolderFinder<?, ?> finder = finderByColumn.get(col);
 		return (PropertyHolderFinder<I, T>) (finder == null ? defaultFinder : finder);
 	}
