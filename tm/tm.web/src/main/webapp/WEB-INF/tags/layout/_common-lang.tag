@@ -50,6 +50,7 @@ var _langcache = {
 	'execution.execution-status.RUNNING' : "<f:message key='execution.execution-status.RUNNING'/>",
 	'execution.execution-status.READY' : "<f:message key='execution.execution-status.READY'/>",
 	'execution.execution-status.WARNING' : "<f:message key='execution.execution-status.WARNING'/>",
+ 	'execution.execution-status.NOT_RUN' : "<f:message key='execution.execution-status.NOT_RUN'/>",
 	'execution.execution-status.ERROR' : "<f:message key='execution.execution-status.ERROR'/>",
 	'label.Cancel' : "<f:message key='label.Cancel'/>",
 	'label.Ok' : "<f:message key='label.Ok'/>",

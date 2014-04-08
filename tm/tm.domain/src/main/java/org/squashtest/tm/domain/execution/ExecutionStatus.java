@@ -30,15 +30,15 @@ import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 import org.squashtest.tm.domain.Level;
 
 /**
- *
+ * 
  * <p>
  * This class declare the 7 execution statuses, 5 of them being canonical.
- *
+ * 
  * Also, it declares and additional methods to update the new execution status of an execution, based on the former
  * states of the execution, of the step, and the new status of the step. See their documentation for details.
  * </p>
- *
- * <b>Definitions</b> : 
+ * 
+ * <b>Definitions</b> :
  * <ul>
  * <li><u>former execution status</u> : former ExecutionStatus of the considered Execution</li>
  * <li><u>former step status</u> : former ExecutionStatus of the ExecutionStep (that belongs to the considered
@@ -49,15 +49,15 @@ import org.squashtest.tm.domain.Level;
  * there.</li>
  * </ul>
  * 
- * Rem : {@link Level} seems to be used for sorting purposes (which might not be so good a thing) 
+ * Rem : {@link Level} seems to be used for sorting purposes (which might not be so good a thing)
  * 
  * @author bsiri
- *
+ * 
  */
 
 /*
  * Tech documentation :
- *
+ * 
  * When asking for the new status of an Execution given its former state, and those of the modified step, the procedure
  * goes through multiple stages. It's a rather awkward procedure because the implementation first concern was
  * optimization rather than code clarity. Indeed we need to reduce calls to the database to the minimum because this
@@ -71,7 +71,7 @@ import org.squashtest.tm.domain.Level;
  * From all the possible combinations obtained in that table we can deduce the tests mentioned above, and which
  * informations are required to deduce them. When no test can be deduced it usually means that a db call is needed.
  * 
- * The tests are grouped in the following stages (in that order) : 
+ * The tests are grouped in the following stages (in that order) :
  * 
  * 1/ trivial deductions : we filter the table of truth with trivial computations wrt the former states of the execution
  * only. If the new status could be deducted it is returned immediately, otherwise we proceed to the next stage.
@@ -79,100 +79,100 @@ import org.squashtest.tm.domain.Level;
  * 2/ check if computation is mandatory : another row of quick tests that will tell if a db call is unavoidable. If
  * that's the case the method returns null immediately, otherwise we proceed to the next stage. The calling method is
  * now in charge to call the db.
- *
+ * 
  * 3/ Status-specific computations : we perform specific tests, like in the first one (trivial computation), this time
  * adding all the informations we have at disposal. If a result was found the method returns it immediately, otherwise
  * we proceed.
  * 
  * 4/ Failure : none of the step above succeeded. The result is null, and the calling method must call the DB.
- *
+ * 
  * See below for more comments about the various tests .
- *
+ * 
  * Note 1 : impossible states like formerStepStatus = BLOCKED and formerExecStatus = SUCCESS are filtered out (they
  * aren't supposed to happen).
- *
+ * 
  * Note 2 : see the method computeNewStatus for the simplest statement about what does this thing compute.
  */
 
 /*
  * Feat 1181, 03/08/12 : the list of execution statuses is extended by two statuses designed for automated executions :
- * TA_WARNING and TA_ERROR. There are now 7 status, yet manual or automated statuses only uses a subset of them.
+ * TA_WARNING and TA_ERROR. There are now 8 status, yet manual or automated statuses only uses a subset of them.
  * 
  * The set of valid statuses for manual executions is : BLOCKED, FAILURE, SUCCESS, RUNNING, READY The set of valid
- * statuses for automated executions : ERROR, FAILURE, WARNING, SUCCESS, RUNNING, READY
+ * statuses for automated executions : ERROR, FAILURE, WARNING, SUCCESS, RUNNING, READY, NOT_RUN
  * 
  * 
  * The status sets for manual and automated can still be compared to each other, but one have to normalize them first :
- * BLOCKED, FAILURE, SUCCESS, RUNNING, READY is considered as the Canonical status set. To this end, TA_ERROR is
- * considered equal to BLOCKED and TA_WARNING is considered equal to SUCCESS.
+ * BLOCKED, FAILURE, SUCCESS, RUNNING, READY is considered as the Canonical status set. To this end, TA_ERROR and
+ * TA_NOT_RUN is considered equal to BLOCKED and TA_WARNING is considered equal to SUCCESS.
  */
 public enum ExecutionStatus implements Internationalizable, Level {
-	
-	SETTLED(10){
+
+	SETTLED(10) {
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 			return needsComputation();
 		}
-		
+
 		@Override
 		public boolean isCanonical() {
 			return true;
 		}
-		
+
 		@Override
 		public ExecutionStatus getCanonicalStatus() {
 			return SETTLED;
 		}
-		
+
 		@Override
-		public boolean canBeDisabled(){
+		public boolean canBeDisabled() {
 			return true;
 		}
-		
+
 		@Override
-		public boolean defaultEnabled(){
+		public boolean defaultEnabled() {
 			return false;
 		}
 	},
-	
+
 	UNTESTABLE(9) {
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 			return needsComputation();
 		}
-		
+
 		@Override
 		public boolean isCanonical() {
 			return true;
 		}
-		
+
 		@Override
 		public ExecutionStatus getCanonicalStatus() {
 			return UNTESTABLE;
 		}
-		
+
 		@Override
-		public boolean canBeDisabled(){
+		public boolean canBeDisabled() {
 			return true;
 		}
-		
+
 		@Override
-		public boolean defaultEnabled(){
+		public boolean defaultEnabled() {
 			return true;
 		}
 	},
-	
+
 	BLOCKED(6) {
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 			return ExecutionStatus.BLOCKED;
 		}
-		
+
 		@Override
 		public boolean isCanonical() {
 			return true;
 		}
-		
+
 		@Override
 		public ExecutionStatus getCanonicalStatus() {
 			return BLOCKED;
@@ -185,12 +185,12 @@ public enum ExecutionStatus implements Internationalizable, Level {
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 			return ExecutionStatus.FAILURE;
 		}
-		
+
 		@Override
 		public boolean isCanonical() {
 			return true;
 		}
-		
+
 		@Override
 		public ExecutionStatus getCanonicalStatus() {
 			return FAILURE;
@@ -212,12 +212,12 @@ public enum ExecutionStatus implements Internationalizable, Level {
 
 			return newStatus;
 		}
-		
+
 		@Override
 		public boolean isCanonical() {
 			return true;
 		}
-		
+
 		@Override
 		public ExecutionStatus getCanonicalStatus() {
 			return SUCCESS;
@@ -225,7 +225,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 	},
 
 	RUNNING(2) {
-		
+
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 			ExecutionStatus newStatus;
@@ -241,12 +241,12 @@ public enum ExecutionStatus implements Internationalizable, Level {
 			}
 			return newStatus;
 		}
-		
+
 		@Override
 		public boolean isCanonical() {
 			return true;
 		}
-		
+
 		@Override
 		public ExecutionStatus getCanonicalStatus() {
 			return RUNNING;
@@ -254,7 +254,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 	},
 
 	READY(1) {
-		
+
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 			ExecutionStatus newStatus;
@@ -267,46 +267,46 @@ public enum ExecutionStatus implements Internationalizable, Level {
 
 			return newStatus;
 		}
-		
+
 		@Override
 		public boolean isCanonical() {
 			return true;
 		}
-		
+
 		@Override
 		public ExecutionStatus getCanonicalStatus() {
 			return READY;
 		}
 	},
-	
-	WARNING(4){
+
+	WARNING(4) {
 		// supposed to never happen because this operation requires canonical statuses and TA_WARNING is not one of
 		// them.
 		@Override
-		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus,ExecutionStatus formerStepStatus) {
+		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 			throw new UnsupportedOperationException(
 					"ExecutionStatus.TA_WARNING#resolveStatus(...) should never have been invoked. That exception cleary results from faulty logic. If you read this message please "
 							+ "report the issue at https://ci.squashtest.org/mantis/ Please put [ExecutionStatus - unsupported operation] as title for your report and explain what you did. Also please check that it hadn't been reported "
 							+ "already. Thanks for your help and happy Squash !");
 		}
-		
+
 		@Override
 		public boolean isCanonical() {
 			return false;
 		}
-		
+
 		@Override
 		public ExecutionStatus getCanonicalStatus() {
 			return SUCCESS;
 		}
-		
+
 		@Override
 		public boolean defaultEnabled() {
 			return false;
 		}
 	},
-	
-	ERROR(7){
+
+	ERROR(7) {
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 			throw new UnsupportedOperationException(
@@ -314,24 +314,24 @@ public enum ExecutionStatus implements Internationalizable, Level {
 							+ "report the issue at https://ci.squashtest.org/mantis/ Please put [ExecutionStatus - unsupported operation] as title for your report and explain what you did. Also please check that it hadn't been reported "
 							+ "already. Thanks for your help and happy Squash !");
 		}
-		
+
 		@Override
 		public boolean isCanonical() {
 			return false;
-		}		
-		
+		}
+
 		@Override
 		public ExecutionStatus getCanonicalStatus() {
 			return BLOCKED;
 		}
-		
+
 		@Override
 		public boolean defaultEnabled() {
 			return false;
 		}
 	},
-	
-	NOT_RUN(8){
+
+	NOT_RUN(8) {
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 			throw new UnsupportedOperationException(
@@ -339,17 +339,17 @@ public enum ExecutionStatus implements Internationalizable, Level {
 							+ "report the issue at https://ci.squashtest.org/mantis/ Please put [ExecutionStatus - unsupported operation] as title for your report and explain what you did. Also please check that it hadn't been reported "
 							+ "already. Thanks for your help and happy Squash !");
 		}
-		
+
 		@Override
 		public boolean isCanonical() {
 			return false;
-		}		
-		
+		}
+
 		@Override
 		public ExecutionStatus getCanonicalStatus() {
 			return BLOCKED;
 		}
-		
+
 		@Override
 		public boolean defaultEnabled() {
 			return false;
@@ -361,64 +361,67 @@ public enum ExecutionStatus implements Internationalizable, Level {
 	private static final String I18N_KEY_ROOT = "execution.execution-status.";
 
 	private static final Set<ExecutionStatus> CANONICAL_STATUSES;
-	//tests with terminal statuses are considered executed (used for setting iteration/campaign end dates automatically)
+	// tests with terminal statuses are considered executed (used for setting iteration/campaign end dates
+	// automatically)
 	private static final Set<ExecutionStatus> TERMINAL_STATUSES;
-	//tests with non terminal statuses are considered not executed (used for setting iteration/campaign end dates automatically)
+	// tests with non terminal statuses are considered not executed (used for setting iteration/campaign end dates
+	// automatically)
 	private static final Set<ExecutionStatus> NON_TERMINAL_STATUSES;
 	public static final Set<ExecutionStatus> DEFAULT_DISABLED_STATUSES;
-	
+
 	private final int level;
-	
-	static{
-		
+
+	static {
+
 		Set<ExecutionStatus> set = new HashSet<ExecutionStatus>();
 		set.add(BLOCKED);
 		set.add(FAILURE);
 		set.add(SUCCESS);
 		set.add(RUNNING);
-		set.add(READY);	
+		set.add(READY);
 		set.add(UNTESTABLE);
-		
+
 		CANONICAL_STATUSES = Collections.unmodifiableSet(set);
-		
+
 		Set<ExecutionStatus> terms = new HashSet<ExecutionStatus>();
 		terms.add(BLOCKED);
 		terms.add(FAILURE);
 		terms.add(SUCCESS);
 		terms.add(WARNING);
+		terms.add(NOT_RUN);
 		terms.add(ERROR);
 		terms.add(UNTESTABLE);
 		terms.add(SETTLED);
-		
-		TERMINAL_STATUSES = Collections.unmodifiableSet(terms);	
-		
+
+		TERMINAL_STATUSES = Collections.unmodifiableSet(terms);
+
 		Set<ExecutionStatus> nonTerms = new HashSet<ExecutionStatus>();
 		nonTerms.add(RUNNING);
 		nonTerms.add(READY);
-		
+
 		NON_TERMINAL_STATUSES = Collections.unmodifiableSet(nonTerms);
-		
+
 		Set<ExecutionStatus> disabled = new HashSet<ExecutionStatus>();
 		for (ExecutionStatus status : values()) {
 			if (!status.defaultEnabled()) {
 				disabled.add(status);
 			}
 		}
-		
+
 		DEFAULT_DISABLED_STATUSES = Collections.unmodifiableSet(disabled);
-		
+
 	}
-	
-	private ExecutionStatus(int level){
+
+	private ExecutionStatus(int level) {
 		this.level = level;
 	}
-	
+
 	// **************************** SURROGATES SPECIAL, INNER VALUES OF EXECUTION STATUS *******************
-	// the following methods exists to wrap 'null' values with semantic. We need to, because 'null' might mean 
-	// different things depending on the context : 'is ambiguous' and 'needs computation'. 
-	// some private static final Object isAmbiguous, needsComputation would have been nicer but impracticable here 
+	// the following methods exists to wrap 'null' values with semantic. We need to, because 'null' might mean
+	// different things depending on the context : 'is ambiguous' and 'needs computation'.
+	// some private static final Object isAmbiguous, needsComputation would have been nicer but impracticable here
 	// in the context of an enum.
-	
+
 	public boolean defaultEnabled() {
 		return true;
 	}
@@ -427,62 +430,62 @@ public enum ExecutionStatus implements Internationalizable, Level {
 		return false;
 	}
 
-	protected ExecutionStatus isAmbiguous(){
+	protected ExecutionStatus isAmbiguous() {
 		return null;
 	}
-	
-	protected boolean isAmbiguous(ExecutionStatus status){
+
+	protected boolean isAmbiguous(ExecutionStatus status) {
 		return status == null;
 	}
-	
-	protected ExecutionStatus needsComputation(){
+
+	protected ExecutionStatus needsComputation() {
 		return null;
 	}
-	
-	protected boolean needsComputation(ExecutionStatus status){
+
+	protected boolean needsComputation(ExecutionStatus status) {
 		return status == null;
 	}
-	
+
 	/* *************************** abstract methods ********************************* */
-	
+
 	protected abstract ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus,
 			ExecutionStatus formerStepStatus);
-	
+
 	public abstract boolean isCanonical();
-	
+
 	public abstract ExecutionStatus getCanonicalStatus();
-	
+
 	/* **************************** static methods ***************************** */
 
-	public static List<ExecutionStatus> toCanonicalStatusList(List<ExecutionStatus> nonCanonical){
+	public static List<ExecutionStatus> toCanonicalStatusList(List<ExecutionStatus> nonCanonical) {
 		List<ExecutionStatus> canonical = new ArrayList<ExecutionStatus>();
-		for (ExecutionStatus nStatus : nonCanonical){
+		for (ExecutionStatus nStatus : nonCanonical) {
 			canonical.add(nStatus.getCanonicalStatus());
 		}
 		return canonical;
 	}
-	
-	public static Set<ExecutionStatus> getCanonicalStatusSet(){
+
+	public static Set<ExecutionStatus> getCanonicalStatusSet() {
 		return CANONICAL_STATUSES;
 	}
-	
-	public static Set<ExecutionStatus> getTerminatedStatusSet(){
+
+	public static Set<ExecutionStatus> getTerminatedStatusSet() {
 		return TERMINAL_STATUSES;
 	}
-	
-	public static Set<ExecutionStatus> getNonTerminatedStatusSet(){
+
+	public static Set<ExecutionStatus> getNonTerminatedStatusSet() {
 		return NON_TERMINAL_STATUSES;
 	}
-	
+
 	/* **************************** public instance methods ***************************** */
 
-	public int getLevel(){
+	public int getLevel() {
 		return level;
 	}
 
 	/***
 	 * This methods checks if the status is RUNNING or READY
-	 *
+	 * 
 	 * @return true if the status is neither RUNNING nor READY
 	 */
 	public boolean isTerminatedStatus() {
@@ -499,7 +502,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 	 * here the new step status. In some case the deduction is impossible and a further computation will be necessary.
 	 * 
 	 * The method will first convert the argument to their canonical form before performing the comparison.
-	 *
+	 * 
 	 * @param formerExecutionStatus
 	 *            : the former execution status
 	 * @param formerStepStatus
@@ -507,13 +510,13 @@ public enum ExecutionStatus implements Internationalizable, Level {
 	 * @return : the new execution status when possible, or null if it wasn't. The later usually means that a call to
 	 *         the database is needed.
 	 */
-	public ExecutionStatus deduceNewStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus){
+	public ExecutionStatus deduceNewStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 		return this.getCanonicalStatus().doDeduceNewStatus(formerExecutionStatus.getCanonicalStatus(),
 				formerStepStatus.getCanonicalStatus());
 	}
-	
+
 	/* *************************** class-private instance method (assumes canonical form) ******************** */
-	
+
 	protected boolean isNoneOf(ExecutionStatus... status) {
 		for (ExecutionStatus state : status) {
 			if (this.equals(state)) {
@@ -526,7 +529,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 	protected boolean isOneOf(ExecutionStatus... status) {
 		return (!isNoneOf(status));
 	}
-	
+
 	protected ExecutionStatus doDeduceNewStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 
 		ExecutionStatus newStatus;
@@ -534,7 +537,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 		// first pass : trivial deductions
 		ExecutionStatus deductedStatus = trivialDeductions(formerExecutionStatus, formerStepStatus);
 
-		if (! isAmbiguous(deductedStatus)) {
+		if (!isAmbiguous(deductedStatus)) {
 			newStatus = deductedStatus;
 		}
 
@@ -557,7 +560,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 
 	/**
 	 * will compute from scratch a status using a complete report.
-	 *
+	 * 
 	 * @param report
 	 *            : ExecutionStatusReport.
 	 * @return : ExecutionStatus.
@@ -568,25 +571,26 @@ public enum ExecutionStatus implements Internationalizable, Level {
 
 		if (report.has(BLOCKED)) {
 			newStatus = BLOCKED;
-			
+
 		} else if (report.allOf(UNTESTABLE)) {
 			newStatus = UNTESTABLE;
-			
+
 		} else if (report.allOf(SETTLED, UNTESTABLE)) {
 			newStatus = SETTLED;
-			
+		} else if (report.has(NOT_RUN)) {
+			newStatus = ERROR;
+
 		} else if (report.has(ERROR)) {
 			newStatus = ERROR;
-			
 		} else if (report.has(FAILURE)) {
 			newStatus = FAILURE;
-			
+
 		} else if (report.allOf(SUCCESS, WARNING, UNTESTABLE, SETTLED)) {
 			newStatus = SUCCESS;
-			
+
 		} else if (report.anyOf(SUCCESS, WARNING, SETTLED)) {
 			newStatus = RUNNING;
-			
+
 		}
 
 		return newStatus;
@@ -635,9 +639,9 @@ public enum ExecutionStatus implements Internationalizable, Level {
 		else if (couldHaveSetExecStatusAlone(formerExecutionStatus, formerStepStatus)) {
 			isMandatory = true;
 		}
-		
-		//UNTESTABLE is a neutral status, the new execution status depends on every others status but not this one.
-		else if (this == UNTESTABLE){
+
+		// UNTESTABLE is a neutral status, the new execution status depends on every others status but not this one.
+		else if (this == UNTESTABLE) {
 			isMandatory = true;
 		}
 
