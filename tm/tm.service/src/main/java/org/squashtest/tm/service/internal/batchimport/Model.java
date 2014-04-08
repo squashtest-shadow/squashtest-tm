@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,10 +47,13 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.library.structures.LibraryGraph;
 import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
+import org.squashtest.tm.service.testcase.ParameterFinder;
+import org.squashtest.tm.service.testcase.ParameterModificationService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
 
 
@@ -69,6 +73,9 @@ public class Model {
 	
 	@Inject
 	private TestCaseCallTreeFinder calltreeFinder;
+	
+	@Inject
+	private ParameterFinder paramFinder;
 	
 	
 	/* **********************************************************************************************************************************
@@ -109,11 +116,44 @@ public class Model {
 	 ------------------------ */	
 	private Map<TestCaseTarget, List<InternalStepModel>> testCaseStepsByTarget = new HashMap<TestCaseTarget, List<InternalStepModel>>();
 	
+	
+	/* ------------------------
+	  
+	  projectStatusByName : 
+	  
+	  nothing special, plain wysiwyg
+	  
+	 -------------------------*/
 	private Map<String, TargetStatus> projectStatusByName = new HashMap<String, TargetStatus>();
 		
+	/* ------------------------
+	  
+	  tcCufsPerProjectname : 
+	  
+	  caches the custom fields defined for the test cases in a given project. This is a multimap that matches a project name against a collection 
+	  of CustomField
+	  
+	 -------------------------*/
 	private MultiValueMap tcCufsPerProjectname = new MultiValueMap();
 	
+	/* ------------------------
+	  
+	  stepCufsPerProjectname : 
+	  
+	  same as tcCufsPerProjectname, but regarding the test steps
+	  
+	 -------------------------*/
 	private MultiValueMap stepCufsPerProjectname = new MultiValueMap();
+	
+	
+	/* ------------------------
+	  
+	  parametersByTestCase : 
+	  
+	  keeps track of which parameters are defined for which test cases
+	  
+	 -------------------------*/
+	private Map<TestCaseTarget, Collection<ParameterTarget>> parametersByTestCase = new HashMap<TestCaseTarget, Collection<ParameterTarget>>();
 	
 	
 
@@ -222,9 +262,11 @@ public class Model {
 		return callGraph.isCalled(target);
 	}
 	
-	public boolean wouldCreateCycle(TestStepTarget step, TestCaseTarget destTestCase){
-		TestCaseTarget srcTestCase = step.getTestCase();
-		
+	public boolean isCalledBy(TestCaseTarget called, TestCaseTarget caller){
+		return wouldCreateCycle(called, caller);
+	}
+	
+	public boolean wouldCreateCycle(TestCaseTarget srcTestCase, TestCaseTarget destTestCase){
 		if (! callGraph.knowsNode(srcTestCase)){
 			initCallerGraph(srcTestCase);
 		}
@@ -234,6 +276,10 @@ public class Model {
 		}
 		
 		return callGraph.wouldCreateCycle(srcTestCase, destTestCase);
+	}
+	
+	public boolean wouldCreateCycle(TestStepTarget step, TestCaseTarget destTestCase){
+		return wouldCreateCycle(step.getTestCase(), destTestCase);
 	}
 	
 	
@@ -451,6 +497,37 @@ public class Model {
 		}
 	}
 	
+	// ************************** parameters ****************************************
+	
+	public boolean parameterExists(ParameterTarget target){
+		TestCaseTarget tc = target.getOwner();
+		if (! testCaseStatusByTarget.containsKey(tc)){
+			init(tc);
+		}
+		
+		return parametersByTestCase.get(tc).contains(target);
+	}
+	
+	
+	public void addParameter(ParameterTarget target){
+		TestCaseTarget tc = target.getOwner();
+		if (! testCaseStatusByTarget.containsKey(tc)){
+			init(tc);
+		}
+		
+		parametersByTestCase.get(tc).add(target);
+	}
+	
+	public void removeParameter(ParameterTarget target){
+		TestCaseTarget tc = target.getOwner();
+		if (! testCaseStatusByTarget.containsKey(tc)){
+			init(tc);
+		}
+		
+		parametersByTestCase.get(tc).remove(target);		
+	}
+	
+	
 	// ************************* CUFS accessors *************************************
 	
 	@SuppressWarnings("unchecked")
@@ -532,6 +609,35 @@ public class Model {
 			testCaseStatusByTarget.put(t,status);
 		}
 	}
+	
+	private void initParameters(List<TestCaseTarget> initialTargets){
+				
+		for (TestCaseTarget t : initialTargets){
+			
+			if ( parametersByTestCase.containsKey(t)){
+				continue;
+			}
+			
+			TargetStatus status = testCaseStatusByTarget.get(t);
+			
+			
+			if (status.id != null && status.status != Existence.TO_BE_DELETED){
+				Collection<Parameter> params = paramFinder.findAllforTestCase(status.id);
+				Collection<ParameterTarget> parameters = new HashSet<ParameterTarget>(params.size());
+				for (Parameter p : params){
+					parameters.add(new ParameterTarget(t, p.getName()));
+				}
+				parametersByTestCase.put(t, parameters);
+			}
+			else{
+				parametersByTestCase.put(t, new HashSet<ParameterTarget>());
+			}
+		}
+	}
+	
+	  
+	
+	
 	
 	// this method assumes that the targets were all processed through initTestCases(targets) beforehand. 
 	private void initTestSteps(List<TestCaseTarget> targets){
@@ -707,20 +813,20 @@ public class Model {
 	}
 	
 
-	public static class TargetStatus{
+	static final class TargetStatus{
 				
-		Existence status = null;
-		Long id = null;
+		Existence status = null;	// NOSONAR this attribute is local to the package and the implementor knows what he's doing
+		Long id = null;				// NOSONAR this attribute is local to the package and the implementor knows what he's doing
 		
 		
-		TargetStatus(Existence status){
+		private TargetStatus(Existence status){
 			if (status == Existence.EXISTS){
 				throw new IllegalArgumentException("internal error : a TargetStatus representing an actually existent target should specify an id");
 			}
 			this.status = status;
 		}
 		
-		TargetStatus (Existence status, Long id){
+		private TargetStatus (Existence status, Long id){
 			this.status = status;
 			this.id = id;
 		}
@@ -736,9 +842,9 @@ public class Model {
 	}
 	
 	
-	private static class TestCasePathCollector implements Transformer{
+	private static final class TestCasePathCollector implements Transformer{
 		
-		static TestCasePathCollector INSTANCE = new TestCasePathCollector();
+		private static final TestCasePathCollector INSTANCE = new TestCasePathCollector();
 		
 		private TestCasePathCollector(){
 			super();
@@ -750,8 +856,8 @@ public class Model {
 		}
 	}
 	
-	private static class NamedReferenceIdCollector implements Transformer{
-		static NamedReferenceIdCollector INSTANCE = new NamedReferenceIdCollector();
+	private static final class NamedReferenceIdCollector implements Transformer{
+		private static final NamedReferenceIdCollector INSTANCE = new NamedReferenceIdCollector();
 		
 		private NamedReferenceIdCollector(){
 			super();
@@ -772,12 +878,9 @@ public class Model {
 	}
 	
 	private static final class InternalStepModel{
-		StepType type;
-		TestCaseTarget calledTC;
-		
-		public InternalStepModel(StepType type){
-			this.type=type;
-		}
+		private StepType type;
+		private TestCaseTarget calledTC;
+
 		
 		public InternalStepModel(StepType type, TestCaseTarget calledTC){
 			this.type = type;

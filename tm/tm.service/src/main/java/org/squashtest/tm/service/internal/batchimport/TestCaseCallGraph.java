@@ -21,7 +21,6 @@
 package org.squashtest.tm.service.internal.batchimport;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 
@@ -30,19 +29,49 @@ import org.squashtest.tm.domain.library.structures.GraphNode;
 import org.squashtest.tm.domain.library.structures.LibraryGraph;
 import org.squashtest.tm.exception.CyclicStepCallException;
 
+
+/**
+ * Definitely NOT THREAD SAFE !
+ * 
+ * @author bsiri
+ *
+ */
 class TestCaseCallGraph extends LibraryGraph<TestCaseTarget, TestCaseCallGraph.Node> {
-	
+
+	/**
+	 * the merge mode modifies the behavior of addEdges(src, dest). It is active only when we are merging 
+	 * a new graph with this one. It makes sure that local graph takes precedence over the graph being merged into it.
+	 * 
+	 * That's how we prevent nodes and edges from the database to override changes that were made to the model.  
+	 */
+	private boolean mergeMode = false;
 	
 	void addGraph(LibraryGraph<NamedReference, SimpleNode<NamedReference>> othergraph){
+		
+		mergeMode = true;
 		
 		mergeGraph(othergraph, new NodeTransformer<SimpleNode<NamedReference>, Node>() {
 			@Override
 			public Node createFrom(SimpleNode<NamedReference> node) {
 				return new Node(new TestCaseTarget(node.getKey().getName()));
 			}
-		});	
+			
+			@Override
+			public Object createKey(SimpleNode<NamedReference> node) {
+				return new TestCaseTarget(node.getKey().getName());
+			}
+		});
 		
+		// now flag all new node as Live
+		for (Node n : getNodes()){
+			if (n.isNew()){
+				n.state = NodeLifecycle.LIVE;
+			}
+		}
+		
+		mergeMode = false;
 	}
+	
 	
 	public boolean knowsNode(TestCaseTarget target){
 		return getNodes().contains(target);
@@ -58,13 +87,60 @@ class TestCaseCallGraph extends LibraryGraph<TestCaseTarget, TestCaseCallGraph.N
 	
 	
 	@Override
-	public void addEdge(Node src, Node dest) {
-		if (! wouldCreateCycle(src.getKey(), dest.getKey())){
-			super.addEdge(src, dest);
+	public void removeNode(TestCaseTarget target){
+		Node n = getNode(target);
+		
+		if (n != null){
+			super.removeNode(target);
+			n.state = NodeLifecycle.REMOVED;
+			getNodes().add(n);
 		}
-		else{
+	}
+	
+	
+	@Override
+	public void addEdge(Node src, Node dest) {
+		
+		if (checkShouldCreate(src, dest)){
+			
+			super.addEdge(src, dest);
+			
+		}
+		
+		if (! mergeMode){
+			getNode(src.getKey()).state=NodeLifecycle.LIVE;
+			getNode(dest.getKey()).state=NodeLifecycle.LIVE;
+		}
+	}
+	
+
+	private boolean checkShouldCreate(Node src, Node dest){
+		
+		boolean shouldCreate = true;
+		
+		Node iSrc = createIfNotExists(src);
+		Node iDest = createIfNotExists(dest);
+
+		// if merge mode, we don't want to add edges that already exist. That's why we ensure that at least one node is new.
+		// Failure is non fatal since in merge mode there are nominal cases that may or may not pass this check.
+		if (mergeMode && ! hasNewNodes(iSrc, iDest)) {
+			shouldCreate = false;
+		}
+		
+		// in any case, we don't want to add edges to of from a dead node. Failure is non fatal because there are nominal cases 
+		// in merge mode that may or may not pass this check.
+		else if (hasRemovedNodes(iSrc, iDest)){
+			shouldCreate = false;
+		}
+		
+		// most of all we don't want to introduce cycles. Failure is fatal because this should never happen, as such we raise
+		// an exception instead of aborting the operation.
+		else if (wouldCreateCycle(iSrc.getKey(), iDest.getKey())){
 			throw new CyclicStepCallException("cannot add to test case call graph an edge from '"+src.getKey().getPath()+"' to '"+dest.getKey().getPath()+"' : would create a cycle");
 		}
+		
+		
+		return shouldCreate;
 	}
 	
 	/**
@@ -143,32 +219,24 @@ class TestCaseCallGraph extends LibraryGraph<TestCaseTarget, TestCaseCallGraph.N
 	}
 	
 	
-	void removeNode(TestCaseTarget target){
-		Node n = getNode(target);
-		if (n != null){
-			for (Node othernode : getNodes()){
-				if (! othernode.equals(n)){
-					othernode.disconnect(n);
-				}
-			}
-			getNodes().remove(n);
-		}
-	}
-
-	// it removes one edge only, not all of them.
-	void removeEdge(TestCaseTarget src, TestCaseTarget dest){
-		Node srcNode = getNode(src);
-		Node destNode = getNode(dest);
-		
-		if (srcNode!=null){
-			srcNode.getOutbounds().remove(destNode);
-		}
-		if (destNode!=null){
-			destNode.getInbounds().remove(srcNode);
-		}
+	
+	// ******************* predicates ****************
+	
+	
+	private boolean hasNewNodes(Node n1, Node n2){
+		return n1.isNew() || n2.isNew();
 	}
 	
+	private boolean hasRemovedNodes(Node n1, Node n2){
+		return n1.isRemoved() || n2.isRemoved();
+	}
+	
+
+	
+	
 	static final class Node extends GraphNode<TestCaseTarget, Node>{
+				
+		private NodeLifecycle state = NodeLifecycle.NEW;
 		
 		Node(TestCaseTarget target){
 			super(target);
@@ -191,20 +259,24 @@ class TestCaseCallGraph extends LibraryGraph<TestCaseTarget, TestCaseCallGraph.N
 			return false;
 		}
 		
-		void disconnect(Node node){
-			 
-			for (Iterator<Node> iter = inbounds.iterator(); iter.hasNext();){
-				if (iter.next().equals(node)){
-					iter.remove();
-				}
-			}
-			
-			for (Iterator<Node> iter = outbounds.iterator(); iter.hasNext();){
-				if (iter.next().equals(node)){
-					iter.remove();
-				}
-			}
+		boolean isNew(){
+			return state == NodeLifecycle.NEW;
 		}
+		
+		boolean isLive(){
+			return state == NodeLifecycle.LIVE;
+		}
+		
+		boolean isRemoved(){
+			return state == NodeLifecycle.REMOVED;
+		}
+	
+	}
+	
+	private enum NodeLifecycle{
+		NEW,
+		LIVE,
+		REMOVED;
 	}
 }
 

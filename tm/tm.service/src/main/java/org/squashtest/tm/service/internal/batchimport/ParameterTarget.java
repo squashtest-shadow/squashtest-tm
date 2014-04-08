@@ -26,27 +26,26 @@ import org.squashtest.tm.service.importer.Target;
 
 public class ParameterTarget extends Target{
 
-
-	private DatasetTarget dataset;
 	private TestCaseTarget owner;
 	private String name;
 
-	public ParameterTarget() {
-		super();
-		owner = new TestCaseTarget();
-	}
+
 
 	@Override
 	public EntityType getType() {
 		return EntityType.PARAMETER;
 	}
 
-	public DatasetTarget getDataset() {
-		return dataset;
+	public ParameterTarget(){
+		super();
+		this.owner = new TestCaseTarget();
 	}
-	public void setDataset(DatasetTarget dataset) {
-		this.dataset = dataset;
+	
+	public ParameterTarget(TestCaseTarget owner, String name){
+		this.owner = owner;
+		this.name = name;
 	}
+
 	public TestCaseTarget getOwner() {
 		return owner;
 	}
@@ -61,12 +60,12 @@ public class ParameterTarget extends Target{
 	}
 
 
+
 	// GENERATED:START
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((dataset == null) ? 0 : dataset.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((owner == null) ? 0 : owner.hashCode());
 		return result;
@@ -77,49 +76,36 @@ public class ParameterTarget extends Target{
 	// GENERATED:START
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (this == obj)
 			return true;
-		}
-		if (obj == null) {
+		if (obj == null)
 			return false;
-		}
-		if (getClass() != obj.getClass()) {
+		if (getClass() != obj.getClass())
 			return false;
-		}
 		ParameterTarget other = (ParameterTarget) obj;
-		if (dataset == null) {
-			if (other.dataset != null) {
-				return false;
-			}
-		} else if (!dataset.equals(other.dataset)) {
-			return false;
-		}
 		if (name == null) {
-			if (other.name != null) {
+			if (other.name != null)
 				return false;
-			}
-		} else if (!name.equals(other.name)) {
+		} else if (!name.equals(other.name))
 			return false;
-		}
 		if (owner == null) {
-			if (other.owner != null) {
+			if (other.owner != null)
 				return false;
-			}
-		} else if (!owner.equals(other.owner)) {
+		} else if (!owner.equals(other.owner))
 			return false;
-		}
 		return true;
 	}
 	// GENERATED:END
 
+
 	@Override
 	public boolean isWellFormed() {
-		return dataset.isWellFormed() && owner.isWellFormed() && (! StringUtils.isBlank(name));
+		return owner.isWellFormed() && (! StringUtils.isBlank(name));
 	}
 
 	@Override
 	public String getProject() {
-		return dataset.getProject();
+		return owner.getProject();
 	}
 
 	/**

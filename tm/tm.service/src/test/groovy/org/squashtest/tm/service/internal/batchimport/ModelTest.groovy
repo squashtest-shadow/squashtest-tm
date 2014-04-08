@@ -272,9 +272,9 @@ public class ModelTest extends Specification{
 			
 			model.testCaseStatusByTarget[tc] = new TargetStatus(EXISTS, 10l)
 			model.testCaseStepsByTarget[tc] = [
-												new InternalStepModel(StepType.ACTION), 
-												new InternalStepModel(StepType.ACTION), 
-												new InternalStepModel(StepType.ACTION)
+												new InternalStepModel(StepType.ACTION, null), 
+												new InternalStepModel(StepType.ACTION, null), 
+												new InternalStepModel(StepType.ACTION, null)
 											]
 		
 			
@@ -294,9 +294,9 @@ public class ModelTest extends Specification{
 			
 			model.testCaseStatusByTarget[tc] = new TargetStatus(EXISTS, 10l)
 			model.testCaseStepsByTarget[tc] =  [
-												new InternalStepModel(StepType.ACTION), 
-												new InternalStepModel(StepType.ACTION), 
-												new InternalStepModel(StepType.ACTION)
+												new InternalStepModel(StepType.ACTION, null), 
+												new InternalStepModel(StepType.ACTION, null), 
+												new InternalStepModel(StepType.ACTION, null)
 											]
 		
 			
@@ -317,9 +317,9 @@ public class ModelTest extends Specification{
 			
 			model.testCaseStatusByTarget[tc] = new TargetStatus(EXISTS, 10l)
 			model.testCaseStepsByTarget[tc] =  [
-												new InternalStepModel(StepType.ACTION), 
-												new InternalStepModel(StepType.ACTION), 
-												new InternalStepModel(StepType.ACTION)
+												new InternalStepModel(StepType.ACTION, null), 
+												new InternalStepModel(StepType.ACTION, null), 
+												new InternalStepModel(StepType.ACTION, null)
 											]
 		
 			
@@ -341,9 +341,9 @@ public class ModelTest extends Specification{
 			model.testCaseStatusByTarget[tc] = new TargetStatus(EXISTS, 10l)
 			model.testCaseStatusByTarget[ctc] = new TargetStatus(EXISTS, 20l)
 			model.testCaseStepsByTarget[tc] =  [
-												new InternalStepModel(StepType.ACTION), 
-												new InternalStepModel(StepType.ACTION), 
-												new InternalStepModel(StepType.ACTION)
+												new InternalStepModel(StepType.ACTION, null), 
+												new InternalStepModel(StepType.ACTION, null), 
+												new InternalStepModel(StepType.ACTION, null)
 											]
 		
 		and :
@@ -369,9 +369,9 @@ public class ModelTest extends Specification{
 			model.testCaseStatusByTarget[tc] = new TargetStatus(EXISTS, 10l)
 			model.testCaseStatusByTarget[ctc] = new TargetStatus(EXISTS, 20l)
 			model.testCaseStepsByTarget[tc] =  [
-												new InternalStepModel(StepType.ACTION), 
-												new InternalStepModel(StepType.ACTION), 
-												new InternalStepModel(StepType.ACTION)
+												new InternalStepModel(StepType.ACTION, null), 
+												new InternalStepModel(StepType.ACTION, null), 
+												new InternalStepModel(StepType.ACTION, null)
 											]
 		
 		and :
@@ -397,9 +397,9 @@ public class ModelTest extends Specification{
 			model.testCaseStatusByTarget[tc] = new TargetStatus(EXISTS, 10l)
 			model.testCaseStatusByTarget[ctc] = new TargetStatus(EXISTS, 20l)
 			model.testCaseStepsByTarget[tc] =  [
-												new InternalStepModel(StepType.ACTION), 
-												new InternalStepModel(StepType.ACTION), 
-												new InternalStepModel(StepType.ACTION)
+												new InternalStepModel(StepType.ACTION, null), 
+												new InternalStepModel(StepType.ACTION, null), 
+												new InternalStepModel(StepType.ACTION, null)
 											]
 		
 		and :
@@ -423,9 +423,9 @@ public class ModelTest extends Specification{
 			
 			model.testCaseStatusByTarget[tc] = new TargetStatus(EXISTS, 10l)
 			model.testCaseStepsByTarget[tc] =  [
-												new InternalStepModel(StepType.ACTION), 
+												new InternalStepModel(StepType.ACTION, null), 
 												new InternalStepModel(StepType.CALL, new TestCaseTarget("/whatever")), 
-												new InternalStepModel(StepType.ACTION)
+												new InternalStepModel(StepType.ACTION, null)
 											]
 		
 		when :
@@ -444,9 +444,9 @@ public class ModelTest extends Specification{
 			
 			model.testCaseStatusByTarget[tc] = new TargetStatus(EXISTS, 10l)
 			model.testCaseStepsByTarget[tc] =  [
-												new InternalStepModel(StepType.ACTION), 
-												new InternalStepModel(StepType.CALL), 
-												new InternalStepModel(StepType.ACTION)
+												new InternalStepModel(StepType.ACTION, null), 
+												new InternalStepModel(StepType.CALL, null), 
+												new InternalStepModel(StepType.ACTION, null)
 											]
 		
 		when :

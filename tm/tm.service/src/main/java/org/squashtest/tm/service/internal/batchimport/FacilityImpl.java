@@ -325,7 +325,7 @@ public class FacilityImpl implements Facility {
 		}
 		
 		TestCaseNature newNat = testCase.getNature();
-		if (newNat != null && ! orig.getNature().equals(newName)){
+		if (newNat != null && ! orig.getNature().equals(newNat)){
 			testcaseModificationService.changeNature(origId, newNat);
 		}
 		

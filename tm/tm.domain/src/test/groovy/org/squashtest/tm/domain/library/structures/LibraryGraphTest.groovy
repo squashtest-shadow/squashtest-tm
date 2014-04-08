@@ -146,6 +146,64 @@ class LibraryGraphTest extends Specification {
 		
 	}
 	
+	def "should substract a graph from this graph"(){
+		
+		given :
+			def nodes1 = [[null, 1l], [1l, 2l], [1l, 3l], [3l, 4l]]
+			LibraryGraph<NamedReference, SimpleNode<NamedReference>> othergraph = new LibraryGraph()
+			nodes1.each { othergraph.addEdge(node(it[0]), node(it[1])) }
+		
+			
+		and :
+			def nodes2 = [[null, 1l], [1l, 2l], [1l, 3l], [3l, 4l], [4l, 5l]]
+			LibraryGraph<Long, CustomNode<Long>> thisgraph = new LibraryGraph()
+			nodes2.each { thisgraph.addEdge( new CustomNode(it[0]), new CustomNode(it[1])) }
+			
+		when :
+			thisgraph.substractGraph(othergraph, new SimpleTransformer(), true)
+			
+		then :
+			def node1 = thisgraph.getNode(1l)
+			def node2 = thisgraph.getNode(2l)
+			def node3 = thisgraph.getNode(3l)
+			def node4 = thisgraph.getNode(4l)
+			def node5 = thisgraph.getNode(5l)
+			
+			// expected result is that every edge has been removed except 4->5
+			node1.inbounds as Set == [] as Set
+			node1.outbounds as Set == [] as Set
+			
+			node2.inbounds as Set == [] as Set
+			node2.outbounds as Set == [] as Set
+			
+			node3.inbounds as Set == [] as Set
+			node3.outbounds as Set == [] as Set
+			
+			node4.inbounds as Set == [] as Set
+			node4.outbounds as Set == [node5] as Set
+			
+			node5.inbounds  as Set == [node4] as Set
+			node5.outbounds as Set == [] as Set
+		
+	}
+	
+	def "should disconnect a node (removing all connected edges)"(){
+		
+		given :
+			def nodes1 = [[null, 1l], [1l, 2l], [1l, 3l], [3l, 4l]]
+			LibraryGraph<NamedReference, SimpleNode<NamedReference>> graph = new LibraryGraph()
+			nodes1.each { graph.addEdge(node(it[0]), node(it[1])) }
+		
+		when :
+			graph.removeNode(ref(1l))
+		
+		then :
+			def n1 = node(1l)
+			graph.nodes.size() == 3
+			graph.nodes.count { it.inbounds.contains(n1) || it.outbounds.contains(n1) } == 0
+	}
+	
+
 	def "when two nodes are connected multiple times, the edge is represented as many times"(){
 		
 		when :
@@ -160,6 +218,53 @@ class LibraryGraphTest extends Specification {
 			
 			node1.outbounds.count { it.equals(node2) } == 2
 			node2.inbounds.count { it.equals(node1) } == 2
+		
+	}
+	
+	def "when two nodes are connected multiple times, removing one edge do not remove the others"(){
+		
+		given :
+			def nodes = [[null, 1l], [1l, 2l], [1l, 2l], [1l, 3l], [3l, 4l]]
+			LibraryGraph<NamedReference, SimpleNode<NamedReference>> graph = new LibraryGraph()
+			nodes.each { graph.addEdge(node(it[0]), node(it[1])) }
+	
+		
+		when :
+			graph.removeEdge(ref(1l), ref(2l))
+			
+		then :
+			graph.hasEdge(ref(1l), ref(2l))
+	}
+	
+	def "when two nodes are connected multiple times, removing multiple edges eventually disconnect the nodes"(){
+		
+		given :
+			def nodes = [[null, 1l], [1l, 2l], [1l, 2l], [1l, 3l], [3l, 4l]]
+			LibraryGraph<NamedReference, SimpleNode<NamedReference>> graph = new LibraryGraph()
+			nodes.each { graph.addEdge(node(it[0]), node(it[1])) }
+	
+		
+		when :
+			graph.removeEdge(ref(1l), ref(2l))
+			graph.removeEdge(ref(1l), ref(2l))
+			
+		then :
+			graph.hasEdge(ref(1l), ref(2l)) == false
+	}
+	
+	def "should remove all edges between two nodes"(){
+		given :
+			def nodes = [[null, 1l], [1l, 2l], [1l, 2l], [1l, 3l], [3l, 4l]]
+			LibraryGraph<NamedReference, SimpleNode<NamedReference>> graph = new LibraryGraph()
+			nodes.each { graph.addEdge(node(it[0]), node(it[1])) }
+	
+		
+		when :
+			graph.removeAllEdges(ref(1l), ref(2l))
+			
+		then :
+			graph.hasEdge(ref(1l), ref(2l)) == false
+		
 		
 	}
 	
@@ -182,6 +287,9 @@ class LibraryGraphTest extends Specification {
 		CustomNode createFrom(SimpleNode<NamedReference> othernode) {
 			new CustomNode(othernode.key.id)
 		};
+		Object createKey(SimpleNode<NamedReference> othernode){
+			othernode.key.id
+		}
 	}
 	
 }

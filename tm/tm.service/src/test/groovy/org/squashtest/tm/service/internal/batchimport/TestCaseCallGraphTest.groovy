@@ -20,10 +20,14 @@
  */
 package org.squashtest.tm.service.internal.batchimport
 
-import spock.lang.Specification
-
-import org.squashtest.tm.exception.CyclicStepCallException;
+import org.squashtest.tm.domain.NamedReference
+import org.squashtest.tm.domain.library.structures.LibraryGraph
+import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode
+import org.squashtest.tm.exception.CyclicStepCallException
 import org.squashtest.tm.service.internal.batchimport.TestCaseCallGraph.Node
+import org.squashtest.tm.service.internal.batchimport.TestCaseCallGraph.NodeLifecycle
+
+import spock.lang.Specification
 
 class TestCaseCallGraphTest extends Specification {
 
@@ -143,7 +147,7 @@ class TestCaseCallGraphTest extends Specification {
 			thrown CyclicStepCallException
 	}
 	
-	def "should disconnect a node (removing all connected edges)"(){
+	def "should logically remove a node (removing all connected edges)"(){
 		
 		given :
 			def targetCharlie = target("/family/charlie")
@@ -159,7 +163,7 @@ class TestCaseCallGraphTest extends Specification {
 
 		
 		then :
-			graph.getNode(targetCharlie) == null
+			graph.getNode(targetCharlie).state == NodeLifecycle.REMOVED
 		
 			graph.getNodes().collect { charlieConnected it }.inject { prev, current -> prev || current } == false
 	}
@@ -230,7 +234,8 @@ class TestCaseCallGraphTest extends Specification {
 		then :
 			thrown CyclicStepCallException
 	}
-	
+
+		
 	def "when removing a multi connected node, new connections become available"(){
 		
 		given :
@@ -247,12 +252,130 @@ class TestCaseCallGraphTest extends Specification {
 	}
 	
 	
+	def "should never add new edges to a node that was removed"(){
+		
+		given :
+			def kenny = 	target("/family/kenny")
+			def carole = 	target("/family/carole")
+		
+		and :
+			graph.removeNode(kenny)	// oh my god they killed kenny !
+		
+		when :
+			graph.addEdge(kenny, carole)
+		
+		then :
+			def nCarole = graph.getNode(carole)
+			def nKenny = graph.getNode(kenny)
+			! nCarole.inbounds.contains(kenny)
+		
+	}
+	
+	
+	def "when merging in a new graph, informations in 'this' graph always take precedence (deleted nodes and edges aren't added back)"(){
+		
+		given : "some nodes"
+		
+			def tmike = target("/family/mike")
+			def tleonard = target("/family/leonard")
+			def tcharlie = target("/family/charlie")
+			def tcarole = target("/family/carole")
+			def tsally = target("/family/sally")
+		
+		and : "changes to local graph"
+		
+			graph.removeNode(tsally)
+			graph.removeEdge(tcharlie, tleonard)
+		
+		and : "the other graph"
+			
+			def othergraph = new LibraryGraph<NamedReference, SimpleNode<NamedReference,SimpleNode>>()
+			
+			othergraph.addEdge( snode("/family/charlie"), 	snode("/family/leonard"))
+			othergraph.addEdge( snode("/family/leonard"),  	snode("/family/mike"))
+			othergraph.addEdge( snode("/family/sally"), 	snode("/family/carole"))
+			
+		when :
+			graph.addGraph(othergraph)
+					
+		then :
+			def nmike = graph.getNode(tmike)
+			def nleonard = graph.getNode(tleonard)
+			def ncharlie = graph.getNode(tcharlie)
+			def ncarole = graph.getNode(tcarole)
+			def nsally = graph.getNode(tsally)
+			
+			
+			// check that the changes to local graph are still in effect
+			nsally.state == NodeLifecycle.REMOVED
+			! ncarole.inbounds.contains(nsally)
+			! ncharlie.outbounds.contains(ncarole)
+			
+			// check the new nodes and connections
+			nleonard.outbounds.contains nmike
+			nmike.inbounds.contains nleonard
+			
+	}
+	
+	
+	def "in normal mode, add edges normally"(){
+
+		given :
+			def tleo = target("/family/leonard")
+			def tjess = target("/family/jess")
+				
+		when :
+			graph.addEdge(tleo, tjess)
+			
+		then :
+			graph.hasEdge(tleo, tjess)
+	}
+	
+	def "in merge mode, doesn't add edges between existing nodes"(){
+		given :
+			def tleo = target("/family/leonard")
+			def tjess = target("/family/jess")
+			
+		and :
+			graph.mergeMode = true
+				
+		when :
+			graph.addEdge(tleo, tjess)
+			
+		then :
+			! graph.hasEdge(tleo, tjess)
+			
+	}
+	
+	def "in merge mode, does add edges between new nodes and the others"(){
+		given :
+			def tleo = target("/family/leonard")
+			def tbob = target("/family/bob")
+			
+		and :
+			graph.mergeMode = true
+				
+		when :
+			graph.addEdge(tleo, tbob)
+			
+		then :
+			graph.hasEdge(tleo, tbob)
+			
+		
+	}
+	
+	// ******************* utils ********************
+	
 	def TestCaseTarget target(name){
 		return new TestCaseTarget(name)
 	}
 	
 	def Node node(name){
 		return new Node(new TestCaseTarget(name))
+	}
+	
+	def SimpleNode<NamedReference> snode(name){
+		return new SimpleNode(new NamedReference(0l, name));
 	}
 	
 	def TestCaseCallGraph createGraph(){

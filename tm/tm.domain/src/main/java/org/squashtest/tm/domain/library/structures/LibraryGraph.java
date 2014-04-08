@@ -37,7 +37,7 @@ import org.apache.commons.collections.Transformer;
  * 
  * @author bsiri
  *
- * @param acts like a primary key. It should be immutable and should be sufficient to identify a node. String, Long, ou autre sont de bons exemples.
+ * @param acts like a primary key. It should be immutable and should be sufficient to identify a node. String, Long are examples of good keys.
  * @param <T>
  */
 public class LibraryGraph<IDENT, T extends GraphNode<IDENT, T>> {
@@ -101,7 +101,7 @@ public class LibraryGraph<IDENT, T extends GraphNode<IDENT, T>> {
 		return toReturn;
 	}
 	
-	private T createIfNotExists(T node){
+	protected T createIfNotExists(T node){
 		
 		if (! nodes.contains(node)){
 			nodes.add(node);
@@ -111,6 +111,50 @@ public class LibraryGraph<IDENT, T extends GraphNode<IDENT, T>> {
 
 	}
 	
+	public boolean hasEdge(IDENT src, IDENT dest){
+		
+		T srcNode = getNode(src);
+		T destNode = getNode(dest);
+		
+		return (srcNode != null && destNode != null && srcNode.getOutbounds().contains(destNode));
+	}
+	
+	
+	public void removeNode(IDENT target){
+		T n = getNode(target);
+		if (n != null){
+			for (T othernode : getNodes()){
+				if (! othernode.equals(n)){
+					othernode.disconnect(n);
+				}
+			}
+			getNodes().remove(n);
+		}
+	}
+
+	// it removes one edge only, not all of them.
+	public void removeEdge(IDENT src, IDENT dest){
+		T srcNode = getNode(src);
+		T destNode = getNode(dest);
+		
+		if (srcNode!=null){
+			srcNode.getOutbounds().remove(destNode);
+		}
+		if (destNode!=null){
+			destNode.getInbounds().remove(srcNode);
+		}
+	}
+	
+	
+	public void removeAllEdges(IDENT src, IDENT dest){
+		T srcNode = getNode(src);
+		T destNode = getNode(dest);
+		
+		if (srcNode!=null && destNode != null){
+			srcNode.disconnect(destNode);
+			destNode.disconnect(srcNode);
+		}
+	}
 	
 	
 	public List<T> getOrphans(){
@@ -210,6 +254,51 @@ public class LibraryGraph<IDENT, T extends GraphNode<IDENT, T>> {
 	}
 	
 	
+	/**
+	 * Will remove from this graph any edge that exists in othergraph. If removeAll is 
+	 * set to true every connection between the source and destination node of such edges 
+	 * will be removed, is false only their cardinalities will be substracted. 
+	 * 
+	 * 
+	 * @param othergraph
+	 * @param transformer
+	 * @param removeAll
+	 */
+	public 
+	<OIDENT, 	ON extends GraphNode<OIDENT, ON>, 	OG extends LibraryGraph<OIDENT, ON>> 
+	void substractGraph(OG othergraph, NodeTransformer<ON,T> transformer, boolean removeAll){
+		
+		LinkedList<ON> processing = new LinkedList<ON>(othergraph.getOrphans());
+		
+		Set<ON> processed = new HashSet<ON>();
+		
+		while (! processing.isEmpty()){
+			ON otherCurrent = processing.pop();
+			IDENT thisCurrent = (IDENT)transformer.createKey(otherCurrent); 
+			
+			for (ON otherChild : otherCurrent.getOutbounds()){
+				IDENT thisChild = (IDENT)transformer.createKey(otherChild);
+	
+				if (hasEdge(thisCurrent, thisChild)){
+					if (removeAll){
+						removeAllEdges(thisCurrent, thisChild);
+					}
+					else{
+						removeEdge(thisCurrent, thisChild);
+					}
+				}
+				
+				if (! processed.contains(otherChild)){
+					processing.add(otherChild);
+					processed.add(otherChild);
+				}
+			}
+		}
+		
+		
+	}
+	
+	
 	// ********* Simple class in which a node is solely represented by its key. The key is still whatever you need. **********
 	
 	public static final class SimpleNode<T> extends GraphNode<T, SimpleNode<T>>{
@@ -227,6 +316,8 @@ public class LibraryGraph<IDENT, T extends GraphNode<IDENT, T>> {
 	public static interface NodeTransformer<FORMER, NEW>{
 		
 		NEW createFrom(FORMER node);
+		
+		Object createKey(FORMER node);
 		
 	}
 	

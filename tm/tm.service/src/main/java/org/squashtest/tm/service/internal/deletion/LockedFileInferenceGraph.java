@@ -42,6 +42,10 @@ public class LockedFileInferenceGraph extends
 			public Node createFrom(SimpleNode<NamedReference> node) {
 				return new Node(node.getKey());				
 			}
+			@Override
+			public Object createKey(SimpleNode<NamedReference> node) {
+				return node.getKey();
+			}
 		});
 		
 	}

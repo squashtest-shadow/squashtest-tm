@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.library.structures;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 
@@ -109,7 +110,20 @@ public class GraphNode<IDENT, T extends GraphNode<IDENT, T>>{
 		return true;
 	}
 	
-	
+	public void disconnect(T node){
+		 
+		for (Iterator<T> iter = inbounds.iterator(); iter.hasNext();){
+			if (iter.next().equals(node)){
+				iter.remove();
+			}
+		}
+		
+		for (Iterator<T> iter = outbounds.iterator(); iter.hasNext();){
+			if (iter.next().equals(node)){
+				iter.remove();
+			}
+		}
+	}
 
 	
 }
