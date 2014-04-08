@@ -45,5 +45,6 @@ class AutomatedExecutionManagerServiceImplTest extends Specification {
 		org.squashtest.tm.api.testautomation.execution.dto.ExecutionStatus.RUNNING | ExecutionStatus.RUNNING
 		org.squashtest.tm.api.testautomation.execution.dto.ExecutionStatus.SUCCESS | ExecutionStatus.SUCCESS
 		org.squashtest.tm.api.testautomation.execution.dto.ExecutionStatus.WARNING | ExecutionStatus.WARNING
+		org.squashtest.tm.api.testautomation.execution.dto.ExecutionStatus.NOT_RUN | ExecutionStatus.NOT_RUN
 	}
 }

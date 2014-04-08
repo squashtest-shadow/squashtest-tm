@@ -59,7 +59,8 @@ class ExecutionStatusTest extends Specification {
 			BLOCKED,
 			ERROR,
 			FAILURE,
-			SETTLED] as Set
+			SETTLED,
+			NOT_RUN] as Set
 		nonTerminal == [RUNNING, READY] as Set
 	}
 
@@ -126,12 +127,13 @@ class ExecutionStatusTest extends Specification {
 		ERROR == ExecutionStatus.computeNewStatus(report)
 	}
 
-	def "a non-blocked, non error report with failure statuses should produce a FALURE status"(){
+	def "a non-blocked, non error, non not_run report with failure statuses should produce a FALURE status"(){
 		given :
 		ExecutionStatusReport report = new ExecutionStatusReport()
 		ExecutionStatus.values().each { report.set(it, 3) }
 		report.set(BLOCKED, 0)
 		report.set(ERROR, 0)
+		report.set(NOT_RUN, 0)
 		
 		expect :
 		ExecutionStatus.computeNewStatus(report) == FAILURE

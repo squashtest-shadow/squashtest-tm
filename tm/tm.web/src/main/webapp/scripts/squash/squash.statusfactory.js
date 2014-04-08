@@ -91,6 +91,7 @@ define(["squash.translator"], function(translator){
 			RUNNING : "execution.execution-status.RUNNING",
 			READY	: "execution.execution-status.READY",
 			WARNING : "execution.execution-status.WARNING",
+			NOT_RUN : "execution.execution-status.NOT_RUN",
 			ERROR : "execution.execution-status.ERROR"
 		})
 		
