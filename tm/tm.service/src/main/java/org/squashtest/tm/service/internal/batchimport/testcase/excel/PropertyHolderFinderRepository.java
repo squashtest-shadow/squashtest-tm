@@ -31,6 +31,9 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.importer.Target;
 import org.squashtest.tm.service.internal.batchimport.ActionStepInstruction;
 import org.squashtest.tm.service.internal.batchimport.CallStepInstruction;
+import org.squashtest.tm.service.internal.batchimport.DatasetInstruction;
+import org.squashtest.tm.service.internal.batchimport.DatasetTarget;
+import org.squashtest.tm.service.internal.batchimport.DatasetValue;
 import org.squashtest.tm.service.internal.batchimport.Instruction;
 import org.squashtest.tm.service.internal.batchimport.ParameterInstruction;
 import org.squashtest.tm.service.internal.batchimport.ParameterTarget;
@@ -54,6 +57,7 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.TEST_CASES_SHEET, createTestCasesWorksheetRepo());
 		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.STEPS_SHEET, createStepsWorksheetRepo());
 		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.PARAMETERS_SHEET, createParamsWorksheetRepo());
+		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.DATASETS_SHEET, createDatasetsWorksheetRepo());
 	}
 
 	private static PropertyHolderFinderRepository<TestCaseSheetColumn> createTestCasesWorksheetRepo() {
@@ -85,6 +89,43 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 		};
 
 		r.defaultFinder = testCaseFinder;
+
+		return r;
+	}
+
+	/**
+	 * @return
+	 */
+	private static PropertyHolderFinderRepository<?> createDatasetsWorksheetRepo() {
+		PropertyHolderFinderRepository<DatasetSheetColumn> r = new PropertyHolderFinderRepository<DatasetSheetColumn>();
+
+		PropertyHolderFinder<DatasetInstruction, DatasetTarget> targetFinder = new PropertyHolderFinder<DatasetInstruction, DatasetTarget>() {
+			@Override
+			public DatasetTarget find(DatasetInstruction instruction) {
+				return instruction.getTarget();
+			}
+		};
+
+		r.finderByColumn.put(DatasetSheetColumn.TC_OWNER_PATH, targetFinder);
+		r.finderByColumn.put(DatasetSheetColumn.TC_DATASET_NAME, targetFinder);
+
+		PropertyHolderFinder<DatasetInstruction, DatasetInstruction> instructionFinder = new PropertyHolderFinder<DatasetInstruction, DatasetInstruction>() {
+			@Override
+			public DatasetInstruction find(DatasetInstruction instruction) {
+				return instruction;
+			}
+		};
+
+		r.finderByColumn.put(DatasetSheetColumn.ACTION, instructionFinder);
+
+		PropertyHolderFinder<DatasetInstruction, DatasetValue> paramFinder = new PropertyHolderFinder<DatasetInstruction, DatasetValue>() {
+			@Override
+			public DatasetValue find(DatasetInstruction instruction) {
+				return instruction.getDatasetValue();
+			}
+		};
+
+		r.defaultFinder = paramFinder;
 
 		return r;
 	}
@@ -191,7 +232,7 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 	}
 
 	/**
-	 * Finds a suitable {@link PropertyHolderFinder}. When no {@link PropertyHolderFinder} is found, returhs the
+	 * Finds a suitable {@link PropertyHolderFinder}. When no {@link PropertyHolderFinder} is found, returns the
 	 * {@link #defaultFinder}.
 	 * 
 	 * @param col

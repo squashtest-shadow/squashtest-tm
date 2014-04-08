@@ -18,38 +18,30 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.batchimport;
 
+package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
-import javax.validation.constraints.NotNull;
+import org.apache.poi.ss.usermodel.Row;
+import org.squashtest.tm.service.internal.batchimport.DatasetInstruction;
+import org.squashtest.tm.service.internal.batchimport.DatasetTarget;
+import org.squashtest.tm.service.internal.batchimport.DatasetValue;
 
-public class DatasetInstruction extends Instruction{
+/**
+ * @author Gregory Fouquet
+ *
+ */
+class DatasetInstructionBuilder extends InstructionBuilder<DatasetSheetColumn, DatasetInstruction> {
 
-	private final DatasetTarget target;
-	private final DatasetValue datasetValue;
-
-	public DatasetInstruction(@NotNull DatasetTarget target, @NotNull DatasetValue datasetValue) {
-		super();
-		this.target = target;
-		this.datasetValue = datasetValue;
-	}
-
-	@Override
-	public LogTrain execute(Facility facility) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public DatasetTarget getTarget() {
-		return target;
+	public DatasetInstructionBuilder(WorksheetDef<DatasetSheetColumn> worksheetDef) {
+		super(worksheetDef);
 	}
 
 	/**
-	 * @return the datasetParamValue
+	 * @see org.squashtest.tm.service.internal.batchimport.testcase.excel.InstructionBuilder#createInstruction(org.apache.poi.ss.usermodel.Row)
 	 */
-	public DatasetValue getDatasetValue() {
-		return datasetValue;
+	@Override
+	protected DatasetInstruction createInstruction(Row row) {
+		return new DatasetInstruction(new DatasetTarget(), new DatasetValue());
 	}
-
 
 }

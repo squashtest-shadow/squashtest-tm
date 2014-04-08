@@ -21,9 +21,16 @@
 
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.DATASETS_SHEET;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.PARAMETERS_SHEET;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.STEPS_SHEET;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.TEST_CASES_SHEET;
+
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
@@ -31,8 +38,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.squashtest.tm.exception.SheetCorruptedException;
-import org.squashtest.tm.service.internal.batchimport.ParameterInstruction;
-import org.squashtest.tm.service.internal.batchimport.StepInstruction;
+import org.squashtest.tm.service.internal.batchimport.Instruction;
 import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
 
 /**
@@ -42,6 +48,10 @@ import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
  * 
  */
 public class ExcelWorkbookParser {
+	private static interface Factory<C extends Enum<C> & TemplateColumn> {
+		InstructionBuilder<?, ?> create(WorksheetDef<C> wd);
+	}
+
 	/**
 	 * Factory method which should be used to create a parser.
 	 * 
@@ -60,9 +70,10 @@ public class ExcelWorkbookParser {
 	private final Workbook workbook;
 	private final WorkbookMetaData wmd;
 
-	private List<TestCaseInstruction> testCaseInstructions = new ArrayList<TestCaseInstruction>();
-	private List<StepInstruction> stepInstructions = new ArrayList<StepInstruction>();
-	private List<ParameterInstruction> parameterInstructions = new ArrayList<ParameterInstruction>();
+	private final Map<TemplateWorksheet, List<Instruction>> instructionsByWorksheet = new HashMap<TemplateWorksheet, List<Instruction>>(
+			4);
+	private final Map<TemplateWorksheet, Factory<?>> instructionBuilderFactoryByWorksheet = new HashMap<TemplateWorksheet, Factory<?>>(
+			4);
 
 	/**
 	 * Should be used by ExcelWorkbookParserBuilder only.
@@ -74,6 +85,39 @@ public class ExcelWorkbookParser {
 		super();
 		this.workbook = workbook;
 		this.wmd = wmd;
+
+		instructionsByWorksheet.put(TEST_CASES_SHEET, new ArrayList<Instruction>());
+		instructionsByWorksheet.put(STEPS_SHEET, new ArrayList<Instruction>());
+		instructionsByWorksheet.put(PARAMETERS_SHEET, new ArrayList<Instruction>());
+		instructionsByWorksheet.put(DATASETS_SHEET, new ArrayList<Instruction>());
+
+		instructionBuilderFactoryByWorksheet.put(TEST_CASES_SHEET, new Factory<TestCaseSheetColumn>() {
+			@Override
+			public InstructionBuilder<?, ?> create(WorksheetDef<TestCaseSheetColumn> wd) {
+				return new TestCaseInstructionBuilder(wd);
+			}
+		});
+		instructionBuilderFactoryByWorksheet.put(STEPS_SHEET, new Factory<StepSheetColumn>() {
+			@Override
+			public InstructionBuilder<?, ?> create(WorksheetDef<StepSheetColumn> wd) {
+				return new StepInstructionBuilder(wd);
+			}
+
+		});
+		instructionBuilderFactoryByWorksheet.put(PARAMETERS_SHEET, new Factory<ParameterSheetColumn>() {
+			@Override
+			public InstructionBuilder<?, ?> create(WorksheetDef<ParameterSheetColumn> wd) {
+				return new ParameterInstructionBuilder(wd);
+			}
+
+		});
+		instructionBuilderFactoryByWorksheet.put(DATASETS_SHEET, new Factory<DatasetSheetColumn>() {
+			@Override
+			public InstructionBuilder<?, ?> create(WorksheetDef<DatasetSheetColumn> wd) {
+				return new DatasetInstructionBuilder(wd);
+			}
+
+		});
 	}
 
 	/**
@@ -82,51 +126,25 @@ public class ExcelWorkbookParser {
 	 * @return
 	 */
 	public ExcelWorkbookParser parse() {
-		processTestCasesSheet();
-		processStepsSheet();
-		processParametersSheet();
+		for (TemplateWorksheet ws : TemplateWorksheet.values()) {
+			processWorksheet(ws);
+		}
 
 		return this;
 	}
 
-	/**
-	 * 
-	 */
-	private void processParametersSheet() {
-		WorksheetDef<ParameterSheetColumn> wd = wmd.getWorksheetDef(TemplateWorksheet.PARAMETERS_SHEET);
-		Sheet ss = workbook.getSheet(wd.getSheetName());
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void processWorksheet(TemplateWorksheet worksheet) {
+		WorksheetDef<?> worksheetDef = wmd.getWorksheetDef(worksheet);
+		Sheet sheet = workbook.getSheet(worksheetDef.getSheetName());
 
-		ParameterInstructionBuilder paramInstructionBuilder = new ParameterInstructionBuilder(wd);
+		InstructionBuilder<?, ?> instructionBuilder = instructionBuilderFactoryByWorksheet.get(worksheet).create(
+				(WorksheetDef) worksheetDef); // useless (WorksheetDef) cast required for compiler not to whine
 
-		for (int i = 1; i <= ss.getLastRowNum(); i++) {
-			Row row = ss.getRow(i);
-			parameterInstructions.add(paramInstructionBuilder.build(row));
+		for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+			Row row = sheet.getRow(i);
+			instructionsByWorksheet.get(worksheet).add(instructionBuilder.build(row));
 		}
-	}
-
-	private void processStepsSheet() {
-		WorksheetDef<StepSheetColumn> swd = wmd.getWorksheetDef(TemplateWorksheet.STEPS_SHEET);
-		Sheet ss = workbook.getSheet(swd.getSheetName());
-
-		StepInstructionBuilder stepInstructionBuilder = new StepInstructionBuilder(swd);
-
-		for (int i = 1; i <= ss.getLastRowNum(); i++) {
-			Row row = ss.getRow(i);
-			stepInstructions.add(stepInstructionBuilder.build(row));
-		}
-	}
-
-	private Sheet processTestCasesSheet() {
-		WorksheetDef<TestCaseSheetColumn> tcwd = wmd.getWorksheetDef(TemplateWorksheet.TEST_CASES_SHEET);
-		Sheet tcs = workbook.getSheet(tcwd.getSheetName());
-
-		TestCaseInstructionBuilder testCaseTargetBuilder = new TestCaseInstructionBuilder(tcwd);
-
-		for (int i = 1; i <= tcs.getLastRowNum(); i++) {
-			Row row = tcs.getRow(i);
-			testCaseInstructions.add(testCaseTargetBuilder.build(row));
-		}
-		return tcs;
 	}
 
 	/**
@@ -134,5 +152,10 @@ public class ExcelWorkbookParser {
 	 */
 	public void dispose() {
 		// TODO close the workbook
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public List<TestCaseInstruction> getTestCaseInstructions() {
+		return (List) instructionsByWorksheet.get(TEST_CASES_SHEET); // useless (List) cast required for compiler not to whine
 	}
 }

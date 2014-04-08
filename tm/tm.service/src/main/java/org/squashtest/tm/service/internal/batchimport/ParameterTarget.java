@@ -29,17 +29,16 @@ public class ParameterTarget extends Target{
 	private TestCaseTarget owner;
 	private String name;
 
-
+	public ParameterTarget() {
+		super();
+		owner = new TestCaseTarget();
+	}
 
 	@Override
 	public EntityType getType() {
 		return EntityType.PARAMETER;
 	}
 
-	public ParameterTarget(){
-		super();
-		this.owner = new TestCaseTarget();
-	}
 	
 	public ParameterTarget(TestCaseTarget owner, String name){
 		this.owner = owner;
@@ -59,8 +58,6 @@ public class ParameterTarget extends Target{
 		this.name = name;
 	}
 
-
-
 	// GENERATED:START
 	@Override
 	public int hashCode() {
@@ -71,7 +68,6 @@ public class ParameterTarget extends Target{
 		return result;
 	}
 	// GENERATED:END
-
 
 	// GENERATED:START
 	@Override
@@ -96,7 +92,6 @@ public class ParameterTarget extends Target{
 		return true;
 	}
 	// GENERATED:END
-
 
 	@Override
 	public boolean isWellFormed() {

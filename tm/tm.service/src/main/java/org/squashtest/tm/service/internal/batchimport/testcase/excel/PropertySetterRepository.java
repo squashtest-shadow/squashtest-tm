@@ -37,14 +37,15 @@ import org.squashtest.tm.service.internal.batchimport.excel.ReflectionMutatorSet
  * @author Gregory Fouquet
  * 
  */
-class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
-	private static final Map<TemplateWorksheet, PropertySetterRepository<?>> finderRepoByWorksheet = new HashMap<TemplateWorksheet, PropertySetterRepository<?>>(
+final class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
+	private static final Map<TemplateWorksheet, PropertySetterRepository<?>> FINDER_REPO_BY_WORKSHEET = new HashMap<TemplateWorksheet, PropertySetterRepository<?>>(
 			TemplateWorksheet.values().length);
 
 	static {
-		finderRepoByWorksheet.put(TemplateWorksheet.TEST_CASES_SHEET, createTestCasesWorksheetRepo());
-		finderRepoByWorksheet.put(TemplateWorksheet.STEPS_SHEET, createStepsWorksheetRepo());
-		finderRepoByWorksheet.put(TemplateWorksheet.PARAMETERS_SHEET, createParamsWorksheetRepo());
+		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.TEST_CASES_SHEET, createTestCasesWorksheetRepo());
+		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.STEPS_SHEET, createStepsWorksheetRepo());
+		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.PARAMETERS_SHEET, createParamsWorksheetRepo());
+		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.DATASETS_SHEET, createDatasetsWorksheetRepo());
 	}
 
 	/**
@@ -55,7 +56,32 @@ class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 	@SuppressWarnings("unchecked")
 	public static <C extends Enum<C> & TemplateColumn> PropertySetterRepository<C> forWorksheet(
 			@NotNull TemplateWorksheet worksheet) {
-		return (PropertySetterRepository<C>) finderRepoByWorksheet.get(worksheet);
+		return (PropertySetterRepository<C>) FINDER_REPO_BY_WORKSHEET.get(worksheet);
+	}
+
+	/**
+	 * @return
+	 */
+	private static PropertySetterRepository<?> createDatasetsWorksheetRepo() {
+		PropertySetterRepository<DatasetSheetColumn> r = new PropertySetterRepository<DatasetSheetColumn>();
+
+		// target
+		r.propSetterByColumn.put(DatasetSheetColumn.TC_OWNER_PATH,
+				ReflectionMutatorSetter.forProperty("path", String.class));
+		r.propSetterByColumn.put(DatasetSheetColumn.TC_DATASET_NAME, ReflectionFieldSetter.forField("name"));
+
+		// instruction
+		r.propSetterByColumn.put(DatasetSheetColumn.ACTION, ReflectionFieldSetter.forOptionalField("mode"));
+
+		// datasetvalue
+		r.propSetterByColumn.put(DatasetSheetColumn.TC_PARAM_OWNER_PATH,
+				ReflectionFieldSetter.forOptionalField("parameterOwnerPath"));
+		r.propSetterByColumn.put(DatasetSheetColumn.TC_DATASET_PARAM_NAME,
+				ReflectionFieldSetter.forField("parameterName"));
+		r.propSetterByColumn.put(DatasetSheetColumn.TC_DATASET_PARAM_VALUE,
+				ReflectionFieldSetter.forOptionalField("value"));
+
+		return r;
 	}
 
 	/**

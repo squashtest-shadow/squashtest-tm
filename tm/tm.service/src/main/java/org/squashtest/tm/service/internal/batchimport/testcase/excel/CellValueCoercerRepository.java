@@ -55,6 +55,7 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 		COERCER_REPO_BY_WORKSHEET.put(TemplateWorksheet.TEST_CASES_SHEET, createTestCasesSheetRepo());
 		COERCER_REPO_BY_WORKSHEET.put(TemplateWorksheet.STEPS_SHEET, createStepsSheetRepo());
 		COERCER_REPO_BY_WORKSHEET.put(TemplateWorksheet.PARAMETERS_SHEET, createParamsSheetRepo());
+		COERCER_REPO_BY_WORKSHEET.put(TemplateWorksheet.DATASETS_SHEET, createDatasetsSheetRepo());
 	}
 
 	/**
@@ -67,6 +68,17 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 	public static final <C extends Enum<C> & TemplateColumn> CellValueCoercerRepository<C> forWorksheet(
 			@NotNull TemplateWorksheet worksheet) {
 		return (CellValueCoercerRepository<C>) COERCER_REPO_BY_WORKSHEET.get(worksheet);
+	}
+
+	/**
+	 * @return
+	 */
+	private static CellValueCoercerRepository<?> createDatasetsSheetRepo() {
+		CellValueCoercerRepository<DatasetSheetColumn> repo = new CellValueCoercerRepository<DatasetSheetColumn>();
+
+		repo.coercerByColumn.put(DatasetSheetColumn.ACTION, OptionalEnumCellCoercer.forEnum(ImportMode.class));
+
+		return repo;
 	}
 
 	/**

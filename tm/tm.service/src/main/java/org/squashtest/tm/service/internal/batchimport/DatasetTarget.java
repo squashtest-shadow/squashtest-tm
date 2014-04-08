@@ -25,9 +25,14 @@ import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.Target;
 
 public class DatasetTarget extends Target {
-
-	private TestCaseTarget testCase;
+	private final TestCaseTarget testCase;
 	private String name;
+	private String parameterOwnerPath;
+
+	public DatasetTarget() {
+		super();
+		testCase = new TestCaseTarget();
+	}
 
 	@Override
 	public EntityType getType() {
@@ -36,10 +41,6 @@ public class DatasetTarget extends Target {
 
 	public TestCaseTarget getTestCase() {
 		return testCase;
-	}
-
-	public void setTestCase(TestCaseTarget testCase) {
-		this.testCase = testCase;
 	}
 
 	public String getName() {
@@ -98,5 +99,33 @@ public class DatasetTarget extends Target {
 	public String getProject() {
 		return testCase.getProject();
 	}
+	/**
+	 * @return
+	 * @see org.squashtest.tm.service.internal.batchimport.TestCaseTarget#getPath()
+	 */
+	public String getPath() {
+		return testCase.getPath();
+	}
 
+	/**
+	 * @param path
+	 * @see org.squashtest.tm.service.internal.batchimport.TestCaseTarget#setPath(java.lang.String)
+	 */
+	public void setPath(String path) {
+		testCase.setPath(path);
+	}
+
+	/**
+	 * @return the parameterOwnerPath
+	 */
+	public String getParameterOwnerPath() {
+		return parameterOwnerPath;
+	}
+
+	/**
+	 * @param parameterOwnerPath the parameterOwnerPath to set
+	 */
+	public void setParameterOwnerPath(String parameterOwnerPath) {
+		this.parameterOwnerPath = parameterOwnerPath;
+	}
 }
