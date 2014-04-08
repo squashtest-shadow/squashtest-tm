@@ -31,6 +31,10 @@ public class ParameterTarget extends Target{
 	private TestCaseTarget owner;
 	private String name;
 
+	public ParameterTarget() {
+		super();
+		owner = new TestCaseTarget();
+	}
 
 	@Override
 	public EntityType getType() {
@@ -69,9 +73,9 @@ public class ParameterTarget extends Target{
 	}
 	// GENERATED:END
 
-	
+
 	// GENERATED:START
-	@Override	
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -116,6 +120,22 @@ public class ParameterTarget extends Target{
 	@Override
 	public String getProject() {
 		return dataset.getProject();
+	}
+
+	/**
+	 * @return
+	 * @see org.squashtest.tm.service.internal.batchimport.TestCaseTarget#getPath()
+	 */
+	public String getPath() {
+		return owner.getPath();
+	}
+
+	/**
+	 * @param path
+	 * @see org.squashtest.tm.service.internal.batchimport.TestCaseTarget#setPath(java.lang.String)
+	 */
+	public void setPath(String path) {
+		owner.setPath(path);
 	}
 
 }

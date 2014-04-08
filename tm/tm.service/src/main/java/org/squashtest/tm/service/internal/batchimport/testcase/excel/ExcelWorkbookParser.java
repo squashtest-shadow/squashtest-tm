@@ -31,6 +31,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.squashtest.tm.exception.SheetCorruptedException;
+import org.squashtest.tm.service.internal.batchimport.ParameterInstruction;
 import org.squashtest.tm.service.internal.batchimport.StepInstruction;
 import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
 
@@ -61,6 +62,7 @@ public class ExcelWorkbookParser {
 
 	private List<TestCaseInstruction> testCaseInstructions = new ArrayList<TestCaseInstruction>();
 	private List<StepInstruction> stepInstructions = new ArrayList<StepInstruction>();
+	private List<ParameterInstruction> parameterInstructions = new ArrayList<ParameterInstruction>();
 
 	/**
 	 * Should be used by ExcelWorkbookParserBuilder only.
@@ -82,8 +84,24 @@ public class ExcelWorkbookParser {
 	public ExcelWorkbookParser parse() {
 		processTestCasesSheet();
 		processStepsSheet();
+		processParametersSheet();
 
 		return this;
+	}
+
+	/**
+	 * 
+	 */
+	private void processParametersSheet() {
+		WorksheetDef<ParameterSheetColumn> wd = wmd.getWorksheetDef(TemplateWorksheet.PARAMETERS_SHEET);
+		Sheet ss = workbook.getSheet(wd.getSheetName());
+
+		ParameterInstructionBuilder paramInstructionBuilder = new ParameterInstructionBuilder(wd);
+
+		for (int i = 1; i <= ss.getLastRowNum(); i++) {
+			Row row = ss.getRow(i);
+			parameterInstructions.add(paramInstructionBuilder.build(row));
+		}
 	}
 
 	private void processStepsSheet() {

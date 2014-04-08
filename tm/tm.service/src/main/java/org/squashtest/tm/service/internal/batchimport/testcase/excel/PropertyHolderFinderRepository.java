@@ -26,16 +26,19 @@ import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
+import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.importer.Target;
 import org.squashtest.tm.service.internal.batchimport.ActionStepInstruction;
 import org.squashtest.tm.service.internal.batchimport.CallStepInstruction;
 import org.squashtest.tm.service.internal.batchimport.Instruction;
+import org.squashtest.tm.service.internal.batchimport.ParameterInstruction;
+import org.squashtest.tm.service.internal.batchimport.ParameterTarget;
 import org.squashtest.tm.service.internal.batchimport.StepInstruction;
 import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
 import org.squashtest.tm.service.internal.batchimport.TestCaseTarget;
 import org.squashtest.tm.service.internal.batchimport.TestStepTarget;
-import org.squashtest.tm.service.internal.batchimport.excel.TargetFinder;
+import org.squashtest.tm.service.internal.batchimport.excel.PropertyHolderFinder;
 
 /**
  * 
@@ -49,12 +52,13 @@ public class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColu
 	static {
 		finderRepoByWorksheet.put(TemplateWorksheet.TEST_CASES_SHEET, createTestCasesWorksheetRepo());
 		finderRepoByWorksheet.put(TemplateWorksheet.STEPS_SHEET, createStepsWorksheetRepo());
+		finderRepoByWorksheet.put(TemplateWorksheet.PARAMETERS_SHEET, createParamsWorksheetRepo());
 	}
 
 	private static PropertyHolderFinderRepository<TestCaseSheetColumn> createTestCasesWorksheetRepo() {
 		PropertyHolderFinderRepository<TestCaseSheetColumn> r = new PropertyHolderFinderRepository<TestCaseSheetColumn>();
 
-		TargetFinder<TestCaseInstruction, TestCaseTarget> targetFinder = new TargetFinder<TestCaseInstruction, TestCaseTarget>() {
+		PropertyHolderFinder<TestCaseInstruction, TestCaseTarget> targetFinder = new PropertyHolderFinder<TestCaseInstruction, TestCaseTarget>() {
 			@Override
 			public TestCaseTarget find(TestCaseInstruction instruction) {
 				return instruction.getTarget();
@@ -64,7 +68,7 @@ public class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColu
 		r.finderByColumn.put(TestCaseSheetColumn.TC_NUM, targetFinder);
 		r.finderByColumn.put(TestCaseSheetColumn.TC_PATH, targetFinder);
 
-		TargetFinder<TestCaseInstruction, TestCaseInstruction> instructionFinder = new TargetFinder<TestCaseInstruction, TestCaseInstruction>() {
+		PropertyHolderFinder<TestCaseInstruction, TestCaseInstruction> instructionFinder = new PropertyHolderFinder<TestCaseInstruction, TestCaseInstruction>() {
 			@Override
 			public TestCaseInstruction find(TestCaseInstruction instruction) {
 				return instruction;
@@ -72,7 +76,7 @@ public class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColu
 		};
 		r.finderByColumn.put(TestCaseSheetColumn.ACTION, instructionFinder);
 
-		TargetFinder<TestCaseInstruction, TestCase> testCaseFinder = new TargetFinder<TestCaseInstruction, TestCase>() {
+		PropertyHolderFinder<TestCaseInstruction, TestCase> testCaseFinder = new PropertyHolderFinder<TestCaseInstruction, TestCase>() {
 			@Override
 			public TestCase find(TestCaseInstruction instruction) {
 				return instruction.getTestCase();
@@ -87,10 +91,46 @@ public class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColu
 	/**
 	 * @return
 	 */
+	private static PropertyHolderFinderRepository<?> createParamsWorksheetRepo() {
+		PropertyHolderFinderRepository<ParameterSheetColumn> r = new PropertyHolderFinderRepository<ParameterSheetColumn>();
+
+		PropertyHolderFinder<ParameterInstruction, ParameterTarget> targetFinder = new PropertyHolderFinder<ParameterInstruction, ParameterTarget>() {
+			@Override
+			public ParameterTarget find(ParameterInstruction instruction) {
+				return instruction.getTarget();
+			}
+		};
+
+		r.finderByColumn.put(ParameterSheetColumn.TC_OWNER_PATH, targetFinder);
+
+		PropertyHolderFinder<ParameterInstruction, ParameterInstruction> instructionFinder = new PropertyHolderFinder<ParameterInstruction, ParameterInstruction>() {
+			@Override
+			public ParameterInstruction find(ParameterInstruction instruction) {
+				return instruction;
+			}
+		};
+
+		r.finderByColumn.put(ParameterSheetColumn.ACTION, instructionFinder);
+
+		PropertyHolderFinder<ParameterInstruction, Parameter> paramFinder = new PropertyHolderFinder<ParameterInstruction, Parameter>() {
+			@Override
+			public Parameter find(ParameterInstruction instruction) {
+				return instruction.getParameter();
+			}
+		};
+
+		r.defaultFinder = paramFinder;
+
+		return r;
+	}
+
+	/**
+	 * @return
+	 */
 	private static PropertyHolderFinderRepository<?> createStepsWorksheetRepo() {
 		PropertyHolderFinderRepository<StepSheetColumn> r = new PropertyHolderFinderRepository<StepSheetColumn>();
 
-		TargetFinder<StepInstruction, TestStepTarget> targetFinder = new TargetFinder<StepInstruction, TestStepTarget>() {
+		PropertyHolderFinder<StepInstruction, TestStepTarget> targetFinder = new PropertyHolderFinder<StepInstruction, TestStepTarget>() {
 			@Override
 			public TestStepTarget find(StepInstruction instruction) {
 				return instruction.getTarget();
@@ -100,7 +140,7 @@ public class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColu
 		r.finderByColumn.put(StepSheetColumn.TC_OWNER_PATH, targetFinder);
 		r.finderByColumn.put(StepSheetColumn.TC_STEP_NUM, targetFinder);
 
-		TargetFinder<StepInstruction, StepInstruction> instructionFinder = new TargetFinder<StepInstruction, StepInstruction>() {
+		PropertyHolderFinder<StepInstruction, StepInstruction> instructionFinder = new PropertyHolderFinder<StepInstruction, StepInstruction>() {
 			@Override
 			public StepInstruction find(StepInstruction instruction) {
 				return instruction;
@@ -109,7 +149,7 @@ public class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColu
 
 		r.finderByColumn.put(StepSheetColumn.ACTION, instructionFinder);
 
-		TargetFinder<StepInstruction, Object> stepFinder = new TargetFinder<StepInstruction, Object>() {
+		PropertyHolderFinder<StepInstruction, Object> stepFinder = new PropertyHolderFinder<StepInstruction, Object>() {
 			@Override
 			public Object find(StepInstruction instruction) {
 				if (instruction instanceof ActionStepInstruction) {
@@ -134,19 +174,19 @@ public class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColu
 		return (PropertyHolderFinderRepository<C>) finderRepoByWorksheet.get(worksheet);
 	}
 
-	private final Map<COL, TargetFinder<?, ?>> finderByColumn = new HashMap<COL, TargetFinder<?, ?>>();
+	private final Map<COL, PropertyHolderFinder<?, ?>> finderByColumn = new HashMap<COL, PropertyHolderFinder<?, ?>>();
 	/**
 	 * the default finder is to be used when no finder could be found from {@link #finderByColumn}
 	 */
-	private TargetFinder<?, ?> defaultFinder;
+	private PropertyHolderFinder<?, ?> defaultFinder;
 
 	private PropertyHolderFinderRepository() {
 		super();
 	}
 
 	@SuppressWarnings("unchecked")
-	public <I extends Instruction, T extends Target> TargetFinder<I, T> findTargetFinder(COL col) {
-		TargetFinder<?, ?> finder = finderByColumn.get(col);
-		return (TargetFinder<I, T>) (finder == null ? defaultFinder : finder);
+	public <I extends Instruction, T extends Target> PropertyHolderFinder<I, T> findTargetFinder(COL col) {
+		PropertyHolderFinder<?, ?> finder = finderByColumn.get(col);
+		return (PropertyHolderFinder<I, T>) (finder == null ? defaultFinder : finder);
 	}
 }

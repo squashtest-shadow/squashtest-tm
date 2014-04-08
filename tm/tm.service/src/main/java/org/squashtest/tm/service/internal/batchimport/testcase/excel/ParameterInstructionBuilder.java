@@ -18,41 +18,30 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.batchimport;
 
+package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
-
-import javax.validation.constraints.NotNull;
-
+import org.apache.poi.ss.usermodel.Row;
 import org.squashtest.tm.domain.testcase.Parameter;
+import org.squashtest.tm.service.internal.batchimport.ParameterInstruction;
+import org.squashtest.tm.service.internal.batchimport.ParameterTarget;
 
-public class ParameterInstruction extends Instruction {
+/**
+ * @author Gregory Fouquet
+ *
+ */
+class ParameterInstructionBuilder extends InstructionBuilder<ParameterSheetColumn, ParameterInstruction> {
 
-	private final ParameterTarget target;
-	private final Parameter parameter;
-
-	public ParameterInstruction(@NotNull ParameterTarget target, @NotNull Parameter parameter) {
-		super();
-		this.target = target;
-		this.parameter = parameter;
-	}
-
-	@Override
-	public LogTrain execute(Facility facility) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public ParameterTarget getTarget() {
-		return target;
+	public ParameterInstructionBuilder(WorksheetDef<ParameterSheetColumn> worksheetDef) {
+		super(worksheetDef);
 	}
 
 	/**
-	 * @return the parameter
+	 * @see org.squashtest.tm.service.internal.batchimport.testcase.excel.InstructionBuilder#createInstruction(org.apache.poi.ss.usermodel.Row)
 	 */
-	public Parameter getParameter() {
-		return parameter;
+	@Override
+	protected ParameterInstruction createInstruction(Row row) {
+		return new ParameterInstruction(new ParameterTarget(), new Parameter());
 	}
-
 
 }

@@ -42,11 +42,32 @@ public class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 	static {
 		finderRepoByWorksheet.put(TemplateWorksheet.TEST_CASES_SHEET, createTestCasesWorksheetRepo());
 		finderRepoByWorksheet.put(TemplateWorksheet.STEPS_SHEET, createStepsWorksheetRepo());
+		finderRepoByWorksheet.put(TemplateWorksheet.PARAMETERS_SHEET, createParamsWorksheetRepo());
 	}
 
 	@SuppressWarnings("unchecked")
 	public static <C extends Enum<C> & TemplateColumn> PropertySetterRepository<C> forWorksheet(@NotNull TemplateWorksheet worksheet) {
 		return (PropertySetterRepository<C>) finderRepoByWorksheet.get(worksheet);
+	}
+
+	/**
+	 * @return
+	 */
+	private static PropertySetterRepository<?> createParamsWorksheetRepo() {
+		PropertySetterRepository<ParameterSheetColumn> r = new PropertySetterRepository<ParameterSheetColumn>();
+
+		// target
+		r.propSetterByColumn.put(ParameterSheetColumn.TC_OWNER_PATH, ReflectionMutatorSetter.forProperty("path", String.class));
+
+		// instruction
+		r.propSetterByColumn.put(ParameterSheetColumn.ACTION, ReflectionFieldSetter.forOptionalField("mode"));
+
+		// paraameter
+		// param.setName(..) has logic we'd rather short-circuit
+		r.propSetterByColumn.put(ParameterSheetColumn.TC_PARAM_NAME, ReflectionFieldSetter.forField("name"));
+		r.propSetterByColumn.put(ParameterSheetColumn.TC_PARAM_DESCRIPTION, ReflectionFieldSetter.forOptionalField("description"));
+
+		return r;
 	}
 
 	/**
