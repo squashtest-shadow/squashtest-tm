@@ -59,12 +59,11 @@ class ExcelWorkbookParserTest extends Specification {
 		then:
 		thrown(exception);
 
-
 		where:
-		file                                     | exception
-		"batchimport/testcase/garbage-file.xlsx" | SheetCorruptedException
-		"batchimport/testcase/no-header.xlsx"    | TemplateMismatchException // should be refined
-		"batchimport/testcase/missing-headers.xlsx" | TemplateMismatchException // should be refined
+		file										| exception
+		"batchimport/testcase/garbage-file.xlsx"	| SheetCorruptedException
+		"batchimport/testcase/no-header.xlsx"		| TemplateMismatchException // should be refined
+		"batchimport/testcase/missing-headers.xlsx"	| TemplateMismatchException // should be refined
 		//		"batchimport/testcase/duplicate-ws.xlsx" | DuplicateWorksheetException
 	}
 
@@ -74,15 +73,15 @@ class ExcelWorkbookParserTest extends Specification {
 
 		and:
 		ExcelWorkbookParser parser = ExcelWorkbookParser.createParser(xls.file)
-		
+
 		and:
 		def expectedPaths = (1..10).collect { "path/row$it" }
-		
+
 		when:
 		parser.parse()
 
 		then:
-		parser.testCaseInstructions*.target.path == expectedPaths
+		parser.instructions*.target.path == expectedPaths
 
 	}
 }

@@ -42,7 +42,18 @@ import org.squashtest.tm.service.internal.batchimport.Instruction;
 import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
 
 /**
+ * <p>
  * Parses an excel import workbook and creates instructions.
+ * </p>
+ * 
+ * <p>
+ * Usage :
+ * <pre>{@code
+ * ExcelWorkbookParser parser = ExcelWorkbookParser.createParser(xlsxFile);
+ * parser.parse().releaseResources();
+ * List<Instructions> instructions = parser.getInstructions();
+ * }</pre>
+ * </p>
  * 
  * @author Gregory Fouquet
  * 
@@ -67,13 +78,14 @@ public class ExcelWorkbookParser {
 		return new ExcelWorkbookParserBuilder(xls).build();
 	}
 
-	private final Workbook workbook;
+	private Workbook workbook;
 	private final WorkbookMetaData wmd;
 
 	private final Map<TemplateWorksheet, List<Instruction>> instructionsByWorksheet = new HashMap<TemplateWorksheet, List<Instruction>>(
 			4);
 	private final Map<TemplateWorksheet, Factory<?>> instructionBuilderFactoryByWorksheet = new HashMap<TemplateWorksheet, Factory<?>>(
 			4);
+	private final List<Instruction> instructions = new ArrayList<Instruction>();
 
 	/**
 	 * Should be used by ExcelWorkbookParserBuilder only.
@@ -126,6 +138,11 @@ public class ExcelWorkbookParser {
 	 * @return
 	 */
 	public ExcelWorkbookParser parse() {
+		if (workbook == null) {
+			throw new IllegalStateException(
+					"No workbook available for parsing. Maybe you released this parser's resources by mistake.");
+		}
+
 		for (TemplateWorksheet ws : TemplateWorksheet.values()) {
 			processWorksheet(ws);
 		}
@@ -143,19 +160,30 @@ public class ExcelWorkbookParser {
 
 		for (int i = 1; i <= sheet.getLastRowNum(); i++) {
 			Row row = sheet.getRow(i);
-			instructionsByWorksheet.get(worksheet).add(instructionBuilder.build(row));
+
+			Instruction instruction = instructionBuilder.build(row);
+			instructionsByWorksheet.get(worksheet).add(instruction);
+			instructions.add(instruction);
 		}
 	}
 
 	/**
-	 * Releases resources hold by this parser.
+	 * Releases resources hold by this parser. The result of parsing is still available but the {@link #parse()} method
+	 * should no longer be called.
 	 */
-	public void dispose() {
-		// TODO close the workbook
+	public ExcelWorkbookParser releaseResources() {
+		// as per POI doc : workbook resources are released upon GC
+		workbook = null;
+		return this;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<TestCaseInstruction> getTestCaseInstructions() {
-		return (List) instructionsByWorksheet.get(TEST_CASES_SHEET); // useless (List) cast required for compiler not to whine
+		return (List) instructionsByWorksheet.get(TEST_CASES_SHEET); // useless (List) cast required for compiler not to
+		// whine
+	}
+
+	public List<Instruction> getInstructions() {
+		return instructions;
 	}
 }
