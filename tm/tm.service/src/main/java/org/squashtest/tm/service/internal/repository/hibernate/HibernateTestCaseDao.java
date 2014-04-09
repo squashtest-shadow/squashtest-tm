@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -264,23 +265,74 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		query.setParameter("testCaseId", calleeId);
 		return query.list();
 	}
-
+	
+	public List<NamedReference> findTestCaseDetails(Collection<Long> ids){
+		if (ids.isEmpty()){
+			return Collections.emptyList();
+		}
+		Query q = currentSession().getNamedQuery("testCase.findTestCaseDetails");
+		q.setParameterList("testCaseIds", ids, LongType.INSTANCE);
+		return q.list();
+	}
+	
+	
 	@Override
-	@SuppressWarnings("unchecked")
-	
-	
+	@SuppressWarnings("unchecked")	
 	/*
 	 * implementation note : the following query could not use a right outer join. So we'll do the job manually. Hence
 	 * the weird things done below.
 	 */
-	public List<Object[]> findTestCasesHavingCallerDetails(final Collection<Long> testCaseIds) {
+	public List<Object[]> findTestCaseCallsUpstream(final Collection<Long> testCaseIds) {
 
+		// get the node pairs when a caller/called pair was found.
+		List<NamedReferencePair> result =  findTestCaseCallsDetails(testCaseIds, "testCase.findTestCasesHavingCallerDetails");
+		
+		// now we must also add dummy Object[] for the test case ids that hadn't any caller
+		Collection<Long> remainingIds = new HashSet<Long>(testCaseIds);
+		for (NamedReferencePair pair : result){
+			remainingIds.remove(pair.getCalled().getId());
+		}
+		
+		List<NamedReference> noncalledReferences = findTestCaseDetails(remainingIds);
+		
+		for (NamedReference ref : noncalledReferences){
+			result.add(new NamedReferencePair(null, null, ref.getId(), ref.getName()));
+		}
+		
+		// last, transform to the agreed format
+		return asArray(result);
+
+	}
+	
+	
+	public List<Object[]> findTestCaseCallsDownstream(final Collection<Long> testCaseIds) {
+		
+		// get the node pairs when a caller/called pair was found.
+		List<NamedReferencePair> result = findTestCaseCallsDetails(testCaseIds, "testCase.findTestCasesHavingCallStepsDetails");
+		
+		// now we must also add dummy Object[] for the test case ids that hadn't any caller
+		Collection<Long> remainingIds = new HashSet<Long>(testCaseIds);
+		for (NamedReferencePair pair : result){
+			remainingIds.remove(pair.getCaller().getId());
+		}
+		
+		List<NamedReference> noncalledReferences = findTestCaseDetails(remainingIds);
+		
+		for (NamedReference ref : noncalledReferences){
+			result.add(new NamedReferencePair(ref.getId(), ref.getName(), null, null));
+		}
+		
+		// last, transform to the agreed format
+		return asArray(result);
+	}
+
+	private List<NamedReferencePair> findTestCaseCallsDetails(final Collection<Long> testCaseIds, String mainQuery){
 		if (testCaseIds.isEmpty()) {
 			return Collections.emptyList();
 		}
 
 		// the easy part : fetch the informations for those who are called
-		SetQueryParametersCallback firstQueryCallback = new SetQueryParametersCallback() {
+		SetQueryParametersCallback queryCallback = new SetQueryParametersCallback() {
 			@Override
 			public void setQueryParameters(Query query) {
 				query.setParameterList("testCaseIds", testCaseIds, new LongType());
@@ -288,66 +340,18 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 			}
 		};
 
-		List<NamedReferencePair> calledDetails = executeListNamedQuery("testCase.findTestCasesHavingCallerDetails",
-				firstQueryCallback);
-
-		// now we must fetch the same informations for those who aren't, so we can emulate the right outer join we need
-		// first, get the ids that aren't part of the result. If we already got them all, no need for additional
-		// queries.
-		List<Long> calledIds = getCalledDetailsIds(calledDetails);
-
-		if (calledIds.size() != testCaseIds.size()) {
+		return executeListNamedQuery(mainQuery,	queryCallback);
 		
-	
-			// otherwise a second query is necessary.
-			final List<Long> nonCalledIds = new LinkedList<Long>(CollectionUtils.subtract(testCaseIds, calledIds));
-	
-			SetQueryParametersCallback secondQueryCallback = new SetNonCalledIdsParameter(nonCalledIds);
-	
-			List<NamedReferencePair> nonCalledDetails = executeListNamedQuery("testCase.findTestCasesHavingNoCallerDetails",
-					secondQueryCallback);
-	
-			// now we can return
-			calledDetails.addAll(nonCalledDetails);
-		}
-		
-		// last : transform the result as specified by the contract
-		List<Object[]> result = new ArrayList<Object[]>(calledDetails.size());
-		for (NamedReferencePair pair : calledDetails){
+	}
+
+	private List<Object[]> asArray(List<NamedReferencePair> ref){
+		List<Object[]> result = new ArrayList<Object[]>(ref.size());
+		for (NamedReferencePair pair : ref){
 			result.add(new Object[]{ pair.getCaller(), pair.getCalled()} );
 		}
-		
 		return result;
-
 	}
 
-	private static final class SetNonCalledIdsParameter implements SetQueryParametersCallback {
-		private List<Long> nonCalledIds;
-
-		private SetNonCalledIdsParameter(List<Long> nonCalledIds) {
-			this.nonCalledIds = nonCalledIds;
-		}
-
-		@Override
-		public void setQueryParameters(Query query) {
-			query.setParameterList("nonCalledIds", nonCalledIds, new LongType());
-			query.setReadOnly(true);
-		}
-	}
-
-	// remember that the argument is a pair of (caller, called) of type NamedReference
-	private List<Long> getCalledDetailsIds(List<NamedReferencePair> calledDetails) {
-		List<Long> calledIds = new LinkedList<Long>();
-
-		for (NamedReferencePair pair: calledDetails) {
-			NamedReference ref = pair.getCalled();
-
-			if (!calledIds.contains(ref.getId())) {
-				calledIds.add(ref.getId());
-			}
-		}
-		return calledIds;
-	}
 
 	@SuppressWarnings("unchecked")
 	@Override

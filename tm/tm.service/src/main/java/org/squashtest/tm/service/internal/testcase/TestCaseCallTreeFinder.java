@@ -152,7 +152,7 @@ public class TestCaseCallTreeFinder {
 		
 		while (!currentCalled.isEmpty()) {
 			
-			List<Object[]> currentPair = testCaseDao.findTestCasesHavingCallerDetails(currentCalled);
+			List<Object[]> currentPair = testCaseDao.findTestCaseCallsUpstream(currentCalled);
 
 			allpairs.addAll(currentPair);
 
@@ -194,6 +194,87 @@ public class TestCaseCallTreeFinder {
 		}
 
 		return graph;
+		
+	}
+	
+	/**
+	 * returns an extended graph of ALL the test cases that can be reached by the source test cases, navigating on the call test steps 
+	 * in both directions. This graph include the callers and the called test cases, recursively including their callers and test cases 
+	 * etc until all relevant test cases are included in the resulting graph.   
+	 * 
+	 * @param calledIds
+	 * @return
+	 */
+	public LibraryGraph<NamedReference, SimpleNode<NamedReference>> getExtendedGraph(List<Long> sourceIds){
+		
+		// remember which nodes were processed (so that we can spare less DB calls in the worst cases scenarios)
+		Set<Long> treated = new HashSet<Long>();
+		treated.addAll(sourceIds);
+
+		// the temporary result variable
+		List<Object[]> allpairs = new ArrayList<Object[]>();
+
+		// a temporary buffer variable
+		List<Long> currentNodes = new LinkedList<Long>(sourceIds);
+
+		// phase 1 : data collection
+		
+		while (!currentNodes.isEmpty()) {
+			
+			List<Object[]> currentPair = testCaseDao.findTestCaseCallsUpstream(currentNodes);
+			currentPair.addAll( testCaseDao.findTestCaseCallsDownstream(currentNodes) );
+			
+			
+
+			allpairs.addAll(currentPair);
+
+			/*
+			 * collect the caller ids in the currentPair for the next loop, with the following restrictions : 
+			 * 1) if the "caller" slot of the Object[] is not null, 
+ 			 * 2) if the "called" slot is not null,
+			 * 2) if that node was not already processed 
+			 * 
+			 * then we can add that id.
+			 */
+
+			List<Long> nextNodes = new LinkedList<Long>();
+
+			for (Object[] pair : currentPair) {
+				// no caller or no called -> no need for further processing
+				if (pair[0] == null || pair[1] == null){
+					continue;
+				}
+				
+				NamedReference caller = (NamedReference)pair[0];
+				Long callerkey = caller.getId();
+				if (! treated.contains(callerkey)) {
+					nextNodes.add(callerkey);
+					treated.add(callerkey);
+				}
+				
+				NamedReference called = (NamedReference)pair[1];
+				Long calledkey = called.getId();
+				if (! treated.contains(calledkey)) {
+					nextNodes.add(calledkey);
+					treated.add(calledkey);
+				}
+				
+			}
+
+			currentNodes = nextNodes;
+
+		}
+		
+		// phase 2 : make that graph
+		
+		LibraryGraph<NamedReference, SimpleNode<NamedReference>> graph = new LibraryGraph<NamedReference, SimpleNode<NamedReference>>();
+		
+		for (Object[] pair : allpairs){
+			graph.addEdge(new SimpleNode<NamedReference>((NamedReference) pair[0]), new SimpleNode<NamedReference>((NamedReference)pair[1]));
+		}
+		
+		throw new IllegalArgumentException("TODO : not satisfying enough ");
+		//return graph;
 		
 	}
 

@@ -284,7 +284,7 @@ public class Model {
 	
 	
 	// initialize from the database.
-	// not that we don't always want the target to be fully initialized because we only care of the   
+	// note that we don't always want the target to be fully initialized because we only care of the   
 	// caller test case graph. So we initialize that information from the DB only and 
 	// we don't need to fully fill the model with it.
 	private void initCallerGraph(TestCaseTarget target){
@@ -499,10 +499,10 @@ public class Model {
 	
 	// ************************** parameters ****************************************
 	
-	public boolean parameterExists(ParameterTarget target){
+	public boolean doesParameterExists(ParameterTarget target){
 		TestCaseTarget tc = target.getOwner();
-		if (! testCaseStatusByTarget.containsKey(tc)){
-			init(tc);
+		if (! parametersByTestCase.containsKey(tc)){
+			initParameters(Arrays.asList(tc));
 		}
 		
 		return parametersByTestCase.get(tc).contains(target);
@@ -511,20 +511,45 @@ public class Model {
 	
 	public void addParameter(ParameterTarget target){
 		TestCaseTarget tc = target.getOwner();
-		if (! testCaseStatusByTarget.containsKey(tc)){
-			init(tc);
-		}
+		if (! parametersByTestCase.containsKey(tc)){
+			initParameters(Arrays.asList(tc));
+		}		
 		
 		parametersByTestCase.get(tc).add(target);
 	}
 	
 	public void removeParameter(ParameterTarget target){
 		TestCaseTarget tc = target.getOwner();
-		if (! testCaseStatusByTarget.containsKey(tc)){
-			init(tc);
-		}
+		if (! parametersByTestCase.containsKey(tc)){
+			initParameters(Arrays.asList(tc));
+		}		
 		
 		parametersByTestCase.get(tc).remove(target);		
+	}
+	
+	/**
+	 * returns the parameters owned by this test case. It doesn't include 
+	 * all the parameters from the test case call tree of this test case.
+	 */
+	public Collection<ParameterTarget> getOwnParameters(TestCaseTarget testCase){
+		if (! parametersByTestCase.containsKey(testCase)){
+			initParameters(Arrays.asList(testCase));
+		}		
+		
+		return parametersByTestCase.get(testCase);		
+	}
+	
+	/**
+	 * returns all parameters available to a test case. This includes 
+	 * every ParameterTarget from the test cases being called directly or 
+	 * indirectly by this test case, not just the one owner by the test case
+	 * (unlike getOwnParameters)
+	 * 
+	 * @param testCase
+	 * @return
+	 */
+	public Collection<ParameterTarget> getAllParameters(TestCaseTarget testCase){
+		return null;
 	}
 	
 	

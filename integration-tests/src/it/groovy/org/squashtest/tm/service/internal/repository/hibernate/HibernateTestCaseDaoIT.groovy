@@ -189,10 +189,10 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 	}
 
 	@DataSet("HibernateTestCaseDaoIT.should find the calling test cases.xml")
-	def "should find pairs of caller/called nodes, including caller/called pairs occuring multiple times"(){
+	def "should find the callers of a couple of test cases, returning results as pairs of caller/called details"(){
 
 		when :
-		def result = testCaseDao.findTestCasesHavingCallerDetails([100l, 50l]);
+		def result = testCaseDao.findTestCaseCallsUpstream([100l, 50l]);
 		then :
 		result.size == 9
 
@@ -202,37 +202,37 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		 */
 
 
-		def pair1 = tcrefPair(
+		def call1 = tcrefPair(
 			101l,
 			"first test case",
 			50l,
 			"other bottom test case"
 		);
-		def pair2 = tcrefPair(
+		def call2 = tcrefPair(
 			102l,
 			"second test case",
 			50l,
 			"other bottom test case"
 		);
-		def pair3 = tcrefPair(
+		def call3 = tcrefPair(
 			103l,
 			"third test case",
 			50l,
 			"other bottom test case"
 		);
-		def pair4 = tcrefPair(
+		def call4 = tcrefPair(
 			101l,
 			"first test case",
 			100l,
 			"bottom test case"
 		);
-		def pair5 = tcrefPair(
+		def call5 = tcrefPair(
 			102l,
 			"second test case",
 			100l,
 			"bottom test case"
 		);
-		def pair6 = tcrefPair(
+		def call6 = tcrefPair(
 			103l,
 			"third test case",
 			100l,
@@ -244,12 +244,12 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 			 op1[0].equals(op2[0]) && op1[1].equals(op2[1]) 
 		}
 
-		result.count { compare it, pair1 } == 1
-		result.count { compare it, pair2 } == 1
-		result.count { compare it, pair3 } == 1
-		result.count { compare it, pair4 } == 2
-		result.count { compare it, pair5 } == 2
-		result.count { compare it, pair6 } == 2
+		result.count { compare it, call1 } == 1
+		result.count { compare it, call2 } == 1
+		result.count { compare it, call3 } == 1
+		result.count { compare it, call4 } == 2
+		result.count { compare it, call5 } == 2
+		result.count { compare it, call6 } == 2
 
 	}
 	
@@ -257,31 +257,31 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 
 
 	@DataSet("HibernateTestCaseDaoIT.should find the calling test cases.xml")
-	def "should return a list of caller/caller pair padded with null values when no caller is found"(){
+	def "should find no callers of a couple of test cases, returning results as pairs of caller/called details with null values"(){
 
 		given :
 		List.metaClass.containsValue = { Object[] arg -> return containsValue(delegate, arg)  }
 
 		when :
-		def result = testCaseDao.findTestCasesHavingCallerDetails([101l, 102l, 103l]);
+		def result = testCaseDao.findTestCaseCallsUpstream([101l, 102l, 103l]);
 		then :
 		result.size == 3
 
 
 
-		def array1 = tcrefPair(
+		def call1 = tcrefPair(
 			null,
 			null,
 			101l,
 			"first test case"
 		);
-		def array2 = tcrefPair(
+		def call2 = tcrefPair(
 			null,
 			null,
 			102l,
 			"second test case"
 		);
-		def array3 = tcrefPair(
+		def call3 = tcrefPair(
 			null,
 			null,
 			103l,
@@ -289,11 +289,109 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		);
 
 
-		result.containsValue (array1)
-		result.containsValue (array2)
-		result.containsValue (array3)
+		result.containsValue (call1)
+		result.containsValue (call2)
+		result.containsValue (call3)
+	}
+	
+	
+	@DataSet("HibernateTestCaseDaoIT.should find the calling test cases.xml")
+	def "should find the called test cases of a couple of test cases, returning results as pairs of caller/called details"(){
+
+		when :
+		def result = testCaseDao.findTestCaseCallsDownstream([101l, 103l]);
+		then :
+		result.size == 7
+
+		/*
+		 * nodes 101, 102 and 103 call node 100 2 times each
+		 * nodes 101, 102 and 103 call node 50 1 time each
+		 * node 103 calls node 5 1 time
+		 */
+
+
+		def call1 = tcrefPair(
+			101l,
+			"first test case",
+			50l,
+			"other bottom test case"
+		);
+	
+		def call2 = tcrefPair(
+			103l,
+			"third test case",
+			50l,
+			"other bottom test case"
+		);
+		def call3 = tcrefPair(
+			101l,
+			"first test case",
+			100l,
+			"bottom test case"
+		);
+		def call4 = tcrefPair(
+			103l,
+			"third test case",
+			100l,
+			"bottom test case"
+		);
+		def call5 = tcrefPair(
+			103l,
+			"third test case",
+			5l,
+			"ultra bottom test case"
+		);
+
+		def compare = {
+			op1, op2 ->
+			 op1[0].equals(op2[0]) && op1[1].equals(op2[1])
+		}
+
+		result.count { compare it, call1 } == 1
+		result.count { compare it, call2 } == 1		
+		result.count { compare it, call3 } == 2		
+		result.count { compare it, call4 } == 2	
+		result.count { compare it, call5 } == 1
+
+
+	}
+	
+	
+
+
+	@DataSet("HibernateTestCaseDaoIT.should find the calling test cases.xml")
+	def "should find no called test cases of a couple of test cases, returning results as pairs of details with null values"(){
+
+		given :
+		List.metaClass.containsValue = { Object[] arg -> return containsValue(delegate, arg)  }
+
+		when :
+		def result = testCaseDao.findTestCaseCallsDownstream([100l, 50l]);
+		then :
+		result.size == 2
+
+
+
+		def call1 = tcrefPair(
+			100l,
+			"bottom test case",
+			null,
+			null
+		);
+		def call2 = tcrefPair(
+			50l,
+			"other bottom test case",
+			null,
+			null
+		);
+
+
+		result.containsValue (call1)
+		result.containsValue (call2)
 	}
 
+	
+	
 	@DataSet("HibernateTestCaseDaoIT.deletiontest.xml")
 	def "should delete a test case and cascade-remove some relationships"(){
 
