@@ -48,7 +48,8 @@ public class ReflectionMutatorSetter<VAL, TARGET> implements PropertySetter<VAL,
 
 	/**
 	 * Creates a {@link ReflectionMutatorSetter} with mandatory values, ie the {@link ReflectionMutatorSetter} shall try
-	 * to set any given value. As the value to be set can be <code>null</code>, we cannot infer its type, hence the paramType param.
+	 * to set any given value. As the value to be set can be <code>null</code>, we cannot infer its type, hence the
+	 * paramType param.
 	 * 
 	 * @param propName
 	 *            name of the field.
@@ -92,8 +93,8 @@ public class ReflectionMutatorSetter<VAL, TARGET> implements PropertySetter<VAL,
 			mutator = ReflectionUtils.findMethod(target.getClass(), mutatorName, paramType(value));
 
 			if (mutator == null) {
-				throw new IllegalStateException("Could not find method named '" + mutatorName + "' in object of type '"
-						+ target.getClass() + "'. Maybe you mistyped field name.");
+				throw new IllegalStateException("Could not find method named '" + mutatorName + "(" + paramType(value)
+						+ ")' in object of type '" + target.getClass() + "'. Maybe you mistyped field name.");
 			}
 
 			mutator.setAccessible(true);

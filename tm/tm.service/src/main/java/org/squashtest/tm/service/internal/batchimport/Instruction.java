@@ -24,11 +24,11 @@ import org.squashtest.tm.service.importer.ImportMode;
 
 
 public abstract class Instruction {
-	
+
 	private int line;
 	private ImportMode mode;
-	
-	
+
+
 	/**
 	 * Must "execute" I agree, but more importantly must validate.
 	 * 
@@ -51,7 +51,7 @@ public abstract class Instruction {
 
 	public void setMode(ImportMode mode) {
 		this.mode = mode;
-	}	
-	
-	
+	}
+
+
 }

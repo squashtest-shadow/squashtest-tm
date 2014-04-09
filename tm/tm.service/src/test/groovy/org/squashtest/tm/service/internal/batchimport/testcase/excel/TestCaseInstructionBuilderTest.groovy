@@ -108,10 +108,11 @@ class TestCaseInstructionBuilderTest extends Specification {
 		orderCell.getCellType() >> Cell.CELL_TYPE_STRING
 
 		when:
-		TestCaseTarget target = builder.build(row)
+		TestCaseInstruction target = builder.build(row)
 
-		then:
-		thrown(CannotCoerceException)
+		then: "no exceptions raised not to break processing"
+		notThrown(CannotCoerceException)
+		target != null
 	}
 
 	@Unroll
@@ -203,6 +204,8 @@ class TestCaseInstructionBuilderTest extends Specification {
 		where:
 		col				| cellType					| cellValue			| propValue
 		ACTION			| Cell.CELL_TYPE_STRING		| "CREATE"			| ImportMode.CREATE
+		ACTION			| Cell.CELL_TYPE_STRING		| "C"				| ImportMode.CREATE
+		ACTION			| Cell.CELL_TYPE_BLANK		| ""				| ImportMode.UPDATE
 	}
 
 	@Unroll

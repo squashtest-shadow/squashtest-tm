@@ -105,8 +105,9 @@ class StepInstructionBuilderTest extends Specification {
 
 		where:
 		col				| cellType					| cellValue			| propName			| propValue
-		ACTION			| Cell.CELL_TYPE_STRING		| "UPDATE"			| "mode"			| ImportMode.UPDATE
-		ACTION			| Cell.CELL_TYPE_BLANK		| null				| "mode"			| null
+		ACTION			| Cell.CELL_TYPE_STRING		| "DELETE"			| "mode"			| ImportMode.DELETE
+		ACTION			| Cell.CELL_TYPE_STRING		| "D"				| "mode"			| ImportMode.DELETE
+		ACTION			| Cell.CELL_TYPE_BLANK		| null				| "mode"			| ImportMode.UPDATE
 
 	}
 

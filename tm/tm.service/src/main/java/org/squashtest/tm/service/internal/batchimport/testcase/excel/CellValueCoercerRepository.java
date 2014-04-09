@@ -31,8 +31,8 @@ import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.testcase.TestCaseType;
-import org.squashtest.tm.service.importer.ImportMode;
 import org.squashtest.tm.service.internal.batchimport.excel.CellValueCoercer;
+import org.squashtest.tm.service.internal.batchimport.excel.ImportModeCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.OptionalBooleanCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.OptionalDateCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.OptionalEnumCellCoercer;
@@ -76,7 +76,7 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 	private static CellValueCoercerRepository<?> createDatasetsSheetRepo() {
 		CellValueCoercerRepository<DatasetSheetColumn> repo = new CellValueCoercerRepository<DatasetSheetColumn>();
 
-		repo.coercerByColumn.put(DatasetSheetColumn.ACTION, OptionalEnumCellCoercer.forEnum(ImportMode.class));
+		repo.coercerByColumn.put(DatasetSheetColumn.ACTION, ImportModeCellCoercer.INSTANCE);
 
 		return repo;
 	}
@@ -87,7 +87,7 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 	private static CellValueCoercerRepository<ParameterSheetColumn> createParamsSheetRepo() {
 		CellValueCoercerRepository<ParameterSheetColumn> repo = new CellValueCoercerRepository<ParameterSheetColumn>();
 
-		repo.coercerByColumn.put(ParameterSheetColumn.ACTION, OptionalEnumCellCoercer.forEnum(ImportMode.class));
+		repo.coercerByColumn.put(ParameterSheetColumn.ACTION, ImportModeCellCoercer.INSTANCE);
 
 		return repo;
 	}
@@ -98,7 +98,7 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 	private static CellValueCoercerRepository<StepSheetColumn> createStepsSheetRepo() {
 		CellValueCoercerRepository<StepSheetColumn> repo = new CellValueCoercerRepository<StepSheetColumn>();
 
-		repo.coercerByColumn.put(StepSheetColumn.ACTION, OptionalEnumCellCoercer.forEnum(ImportMode.class));
+		repo.coercerByColumn.put(StepSheetColumn.ACTION, ImportModeCellCoercer.INSTANCE);
 		repo.coercerByColumn.put(StepSheetColumn.TC_STEP_NUM, OptionalOneBasedIndexCellCoercer.INSTANCE);
 		repo.coercerByColumn.put(StepSheetColumn.TC_STEP_IS_CALL_STEP, OptionalBooleanCellCoercer.INSTANCE);
 
@@ -120,7 +120,7 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 		repo.coercerByColumn.put(TestCaseSheetColumn.TC_STATUS, OptionalEnumCellCoercer.forEnum(TestCaseStatus.class));
 		repo.coercerByColumn.put(TestCaseSheetColumn.TC_CREATED_ON, OptionalDateCellCoercer.INSTANCE);
 
-		repo.coercerByColumn.put(TestCaseSheetColumn.ACTION, OptionalEnumCellCoercer.forEnum(ImportMode.class));
+		repo.coercerByColumn.put(TestCaseSheetColumn.ACTION, ImportModeCellCoercer.INSTANCE);
 
 		return repo;
 	}

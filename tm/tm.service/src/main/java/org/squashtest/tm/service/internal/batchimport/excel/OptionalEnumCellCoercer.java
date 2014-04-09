@@ -33,8 +33,8 @@ import org.apache.poi.ss.usermodel.Cell;
  * @param the
  *            target enum.
  */
-public class OptionalEnumCellCoercer<ENUM extends Enum<ENUM>> extends TypeBasedCellValueCoercer<ENUM> implements
-		CellValueCoercer<ENUM> {
+public final class OptionalEnumCellCoercer<ENUM extends Enum<ENUM>> extends TypeBasedCellValueCoercer<ENUM> implements
+CellValueCoercer<ENUM> {
 	private final Class<ENUM> enumType;
 
 	public static <E extends Enum<E>> OptionalEnumCellCoercer<E> forEnum(@NotNull Class<E> enumType) {

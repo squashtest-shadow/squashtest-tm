@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
 import org.squashtest.tm.exception.SheetCorruptedException;
 
 import spock.lang.Specification;
@@ -77,20 +78,27 @@ class ExcelWorkbookParserTest extends Specification {
 		ExcelWorkbookParser parser = ExcelWorkbookParser.createParser(xls.file)
 
 		and:
-		def expectedPaths = (1..10).collect { "path/row$it" }
-		def expectedNums = (1..10).collect { it + 10 }
-		def expectedRefs = (1..10).collect { "ref$it" }
-		def expectedNames = (1..10).collect { "name$it" }
-		def expectedActions = [CREATE, CREATE, null, null, UPDATE, UPDATE, DELETE, DELETE, UPDATE, null]
+		def expectedPaths = (1..8).collect { "path/row$it" }
+		def expectedNums = (1..8).collect { it + 10 }
+		def expectedRefs = (1..8).collect { "ref$it" }
+		def expectedNames = (1..8).collect { "name$it" }
+		def expectedPres = (1..8).collect { "pre$it" }
+		def expectedDescs = (1..8).collect { "desc$it" }
+		def expectedCreators = (1..8).collect { "creator$it" }
+		def expectedCreateds = (1..8).collect { "2003-02-0$it" }
+		def expectedActions = [CREATE, CREATE, UPDATE, UPDATE, DELETE, DELETE, UPDATE, null]
 
 		when:
 		parser.parse().releaseResources()
-		println parser.instructions
 
 		then:
 		parser.instructions*.target.path == expectedPaths
 		parser.instructions*.testCase.reference == expectedRefs
 		parser.instructions*.testCase.name == expectedNames
+		parser.instructions*.testCase.prerequisite == expectedPres
+		parser.instructions*.testCase.description == expectedDescs
+		parser.instructions.collect { IsoDateUtils.formatIso8601Date(it.testCase.createdOn) }  == expectedCreateds
+		parser.instructions*.testCase.createdBy == expectedCreators
 		parser.instructions*.mode == expectedActions
 
 	}

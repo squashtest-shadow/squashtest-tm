@@ -101,8 +101,9 @@ class ParameterInstructionBuilderTest extends Specification {
 
 		where:
 		col				| cellType					| cellValue			| propName			| propValue
-		ACTION			| Cell.CELL_TYPE_STRING		| "UPDATE"			| "mode"			| ImportMode.UPDATE
-		ACTION			| Cell.CELL_TYPE_BLANK		| null				| "mode"			| null
+		ACTION			| Cell.CELL_TYPE_STRING		| "CREATE"			| "mode"			| ImportMode.CREATE
+		ACTION			| Cell.CELL_TYPE_STRING		| "C"				| "mode"			| ImportMode.CREATE
+		ACTION			| Cell.CELL_TYPE_BLANK		| null				| "mode"			| ImportMode.UPDATE
 
 	}
 

@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.service.internal.batchimport.CustomFieldHolder;
 import org.squashtest.tm.service.internal.batchimport.Instruction;
+import org.squashtest.tm.service.internal.batchimport.excel.CannotCoerceException;
 import org.squashtest.tm.service.internal.batchimport.excel.PropertySetter;
 
 /**
@@ -83,6 +84,12 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 
 	private void processStandardColumns(Row row, INST instruction) {
 		for (StdColumnDef<COL> colDef : worksheetDef.getImportableColumnDefs()) {
+			processStandardColumn(row, colDef, instruction);
+		}
+	}
+
+	private void processStandardColumn(Row row, StdColumnDef<COL> colDef, INST instruction) {
+		try {
 			logger.trace("Parsing column {} of type {}", colDef.getIndex(), colDef.getType());
 
 			COL col = colDef.getType();
@@ -90,6 +97,8 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 			Object target = propHolderFinderRepository.findPropertyHolderFinder(col).find(instruction);
 			PropertySetter<Object, Object> propSetter = propertySetterRepository.findPropSetter(col);
 			propSetter.set(value, target);
+		} catch (CannotCoerceException e) {
+			logger.error("HAve to do something better", e);
 		}
 	}
 
