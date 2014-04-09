@@ -28,6 +28,8 @@ import org.squashtest.tm.exception.SheetCorruptedException;
 import spock.lang.Specification;
 import spock.lang.Unroll;
 
+import static org.squashtest.tm.service.importer.ImportMode.*
+
 /**
  * @author Gregory Fouquet
  *
@@ -76,12 +78,20 @@ class ExcelWorkbookParserTest extends Specification {
 
 		and:
 		def expectedPaths = (1..10).collect { "path/row$it" }
+		def expectedNums = (1..10).collect { it + 10 }
+		def expectedRefs = (1..10).collect { "ref$it" }
+		def expectedNames = (1..10).collect { "name$it" }
+		def expectedActions = [CREATE, CREATE, null, null, UPDATE, UPDATE, DELETE, DELETE, UPDATE, null]
 
 		when:
-		parser.parse()
+		parser.parse().releaseResources()
+		println parser.instructions
 
 		then:
 		parser.instructions*.target.path == expectedPaths
+		parser.instructions*.testCase.reference == expectedRefs
+		parser.instructions*.testCase.name == expectedNames
+		parser.instructions*.mode == expectedActions
 
 	}
 }

@@ -23,6 +23,8 @@ package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.squashtest.tm.service.internal.batchimport.CustomFieldHolder;
 import org.squashtest.tm.service.internal.batchimport.Instruction;
 import org.squashtest.tm.service.internal.batchimport.excel.PropertySetter;
@@ -34,6 +36,7 @@ import org.squashtest.tm.service.internal.batchimport.excel.PropertySetter;
  * 
  */
 public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn, INST extends Instruction> {
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	protected final CellValueCoercerRepository<COL> coercerRepository;
 	protected final PropertyHolderFinderRepository<COL> propHolderFinderRepository;
@@ -80,6 +83,8 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 
 	private void processStandardColumns(Row row, INST instruction) {
 		for (StdColumnDef<COL> colDef : worksheetDef.getImportableColumnDefs()) {
+			logger.trace("Parsing column {} of type {}", colDef.getIndex(), colDef.getType());
+
 			COL col = colDef.getType();
 			Object value = getValue(row, colDef);
 			Object target = propHolderFinderRepository.findPropertyHolderFinder(col).find(instruction);

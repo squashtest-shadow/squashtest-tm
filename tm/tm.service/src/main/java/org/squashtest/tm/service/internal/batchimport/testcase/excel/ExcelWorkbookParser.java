@@ -37,6 +37,8 @@ import javax.validation.constraints.NotNull;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.squashtest.tm.exception.SheetCorruptedException;
 import org.squashtest.tm.service.internal.batchimport.Instruction;
 import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
@@ -59,6 +61,8 @@ import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
  * 
  */
 public class ExcelWorkbookParser {
+	private static final Logger LOGGER = LoggerFactory.getLogger(ExcelWorkbookParser.class);
+
 	private static interface Factory<C extends Enum<C> & TemplateColumn> {
 		InstructionBuilder<?, ?> create(WorksheetDef<C> wd);
 	}
@@ -138,6 +142,8 @@ public class ExcelWorkbookParser {
 	 * @return
 	 */
 	public ExcelWorkbookParser parse() {
+		LOGGER.info("Parsing test-cases excel workbook {}", workbook);
+
 		if (workbook == null) {
 			throw new IllegalStateException(
 					"No workbook available for parsing. Maybe you released this parser's resources by mistake.");
@@ -147,11 +153,15 @@ public class ExcelWorkbookParser {
 			processWorksheet(ws);
 		}
 
+		LOGGER.debug("Done parsing test-cases workbook");
+
 		return this;
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void processWorksheet(TemplateWorksheet worksheet) {
+		LOGGER.debug("Processing worksheet {}", worksheet);
+
 		WorksheetDef<?> worksheetDef = wmd.getWorksheetDef(worksheet);
 		Sheet sheet = workbook.getSheet(worksheetDef.getSheetName());
 
@@ -159,6 +169,7 @@ public class ExcelWorkbookParser {
 				(WorksheetDef) worksheetDef); // useless (WorksheetDef) cast required for compiler not to whine
 
 		for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+			LOGGER.trace("Creating instruction for row {}", i);
 			Row row = sheet.getRow(i);
 
 			Instruction instruction = instructionBuilder.build(row);

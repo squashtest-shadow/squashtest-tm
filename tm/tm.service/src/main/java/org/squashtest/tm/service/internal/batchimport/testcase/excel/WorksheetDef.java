@@ -141,12 +141,20 @@ class WorksheetDef<COL extends TemplateColumn> {
 		List<StdColumnDef<COL>> res = new ArrayList<StdColumnDef<COL>>(stdColumnDefs.size());
 
 		for (Entry<COL, StdColumnDef<COL>> entry : stdColumnDefs.entrySet()) {
-			if (isMandatory(entry.getKey())) {
+			if (!isIgnored(entry.getKey())) {
 				res.add(entry.getValue());
 			}
 		}
 
 		return res;
+	}
+
+	/**
+	 * @param key
+	 * @return
+	 */
+	private boolean isIgnored(COL col) {
+		return ColumnProcessingMode.IGNORED.equals(col.getProcessingMode());
 	}
 
 	/**

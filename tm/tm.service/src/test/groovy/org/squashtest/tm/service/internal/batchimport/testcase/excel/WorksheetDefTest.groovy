@@ -39,83 +39,83 @@ class WorksheetDefTest extends Specification {
 		given:
 		WorksheetDef wd = new WorksheetDef(TemplateWorksheet.TEST_CASES_SHEET)
 		cols.each { wd.addColumnDef(new StdColumnDef(it, 1)) }
-		
+
 		when:
 		wd.validate()
-		
+
 		then:
 		notThrown(TemplateMismatchException)
-		
+
 		where:
 		cols << [
-			TestCaseSheetColumn.values(), 
+			TestCaseSheetColumn.values(),
 			[TestCaseSheetColumn.TC_NAME, TestCaseSheetColumn.TC_PATH]
-		] 
-		
+		]
+
 	}
-	
+
 	@Unroll
 	def "colset #cols should produce an invalid worksheet"() {
 		given:
 		WorksheetDef wd = new WorksheetDef(TemplateWorksheet.TEST_CASES_SHEET)
 		cols.each { wd.addColumnDef(new StdColumnDef(it, 1)) }
-		
+
 		when:
 		wd.validate()
-		
+
 		then:
 		thrown(TemplateMismatchException)
-		
+
 		where:
 		cols << [
 			[],
 			[TestCaseSheetColumn.TC_PATH],
 			[TestCaseSheetColumn.TC_NAME],
-			[TestCaseSheetColumn.TC_ID] 
+			[TestCaseSheetColumn.TC_ID]
 		]
-		
+
 	}
-	
+
 	@Unroll
 	def "header #header should be a custom field : #isField"() {
 		given:
 		WorksheetDef wd = new WorksheetDef(TEST_CASES_SHEET)
-		
+
 		expect:
 		wd.isCustomFieldHeader(header) == isField
-		
+
 		where:
 		header                | isField
-		"TC_CUF_  "           | false 
-		"TC_CUF_"             | false 
+		"TC_CUF_  "           | false
+		"TC_CUF_"             | false
 		null                  | false
 		"    "                | false
 		"TC_CUF_s'çz_gîobn x" | true
 		"TC_CUF_FOO"          | true
 	}
-	
+
 	def "should add a std column"() {
 		given:
 		WorksheetDef wd = new WorksheetDef(TEST_CASES_SHEET)
-		
+
 		when:
 		def col = wd.addColumnDef("TC_NAME", 10)
-		
+
 		then:
 		col.type == TC_NAME
 		col.index == 10
 		wd.stdColumnDefs[TC_NAME] == col
 		wd.customFieldDefs.isEmpty()
-		
+
 	}
 
 	def "should add a custom field column"() {
 		given:
 		WorksheetDef wd = new WorksheetDef(TEST_CASES_SHEET)
-		
+
 		when:
 		def col = wd.addColumnDef("TC_CUF_HANDCUF", 10)
-		
+
 		then:
 		col.code == "HANDCUF"
 		col.index == 10
@@ -127,14 +127,29 @@ class WorksheetDefTest extends Specification {
 	def "should not add any column"() {
 		given:
 		WorksheetDef wd = new WorksheetDef(TEST_CASES_SHEET)
-		
+
 		when:
 		def col = wd.addColumnDef("NOT A KNOWN COLUMN", 10)
-		
+
 		then:
 		col == null
 		wd.customFieldDefs.isEmpty()
 		wd.stdColumnDefs.isEmpty()
+
+	}
+	def "should return importable columns"() {
+		given:
+		WorksheetDef wd = new WorksheetDef(TEST_CASES_SHEET)
+
+		when:
+		wd.addColumnDef("ACTION", 10) // optional
+		wd.addColumnDef("TC_PATH", 20) // mandatory
+		wd.addColumnDef("PROJECT_ID", 30) // ignored
+		def col = wd.addColumnDef("NOT A KNOWN COLUMN", 40) // ditched
+
+		then:
+		wd.importableColumnDefs.size() == 2
+		wd.importableColumnDefs*.type.containsAll([ACTION, TC_PATH])
 
 	}
 }

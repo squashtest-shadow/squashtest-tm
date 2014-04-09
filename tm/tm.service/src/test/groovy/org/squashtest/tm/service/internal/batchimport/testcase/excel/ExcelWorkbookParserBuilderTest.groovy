@@ -50,7 +50,7 @@ class ExcelWorkbookParserBuilderTest extends Specification {
 		when:
 		def wb = builder.openWorkbook(is);
 		WorkbookMetaData wmd = builder.buildMetaData(wb)
-		
+
 		then:
 		wmd.worksheetDefs[TEST_CASES_SHEET]
 		wmd.worksheetDefs[TEST_CASES_SHEET].stdColumnDefs.values()*.type as Set == TestCaseSheetColumn.values() as Set
@@ -62,6 +62,8 @@ class ExcelWorkbookParserBuilderTest extends Specification {
 		wmd.worksheetDefs[PARAMETERS_SHEET].stdColumnDefs.values()*.type as Set == ParameterSheetColumn.values() as Set
 		wmd.worksheetDefs[DATASETS_SHEET]
 		wmd.worksheetDefs[DATASETS_SHEET].stdColumnDefs.values()*.type as Set == DatasetSheetColumn.values() as Set
+
+		(wmd.worksheetDefs[TEST_CASES_SHEET].stdColumnDefs.values().collect{ it.type.name()}).contains("ACTION")
 
 		cleanup:
 		IOUtils.closeQuietly(is);
