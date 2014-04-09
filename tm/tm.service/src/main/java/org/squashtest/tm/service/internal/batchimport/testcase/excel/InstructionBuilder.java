@@ -61,6 +61,7 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 	 */
 	public final INST build(Row row) {
 		INST instruction = createInstruction(row);
+		instruction.setLine(row.getRowNum());
 
 		processStandardColumns(row, instruction);
 		if (instruction instanceof CustomFieldHolder) {

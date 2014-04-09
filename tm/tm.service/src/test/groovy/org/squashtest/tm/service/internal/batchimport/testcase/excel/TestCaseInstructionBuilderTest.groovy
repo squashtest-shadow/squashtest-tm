@@ -228,4 +228,20 @@ class TestCaseInstructionBuilderTest extends Specification {
 		Cell.CELL_TYPE_STRING	|"FOO"		| "bar"
 		Cell.CELL_TYPE_BLANK	|"FOO"		| ""
 	}
+
+	def "should set the row number on the instruction"() {
+		given:
+		wd.getImportableColumnDefs() >> []
+		wd.getCustomFieldDefs() >> []
+
+		and:
+		row.getRowNum() >> 150
+
+		when:
+		TestCaseInstruction instruction = builder.build(row)
+
+		then:
+		instruction.line == 150
+	}
+
 }
