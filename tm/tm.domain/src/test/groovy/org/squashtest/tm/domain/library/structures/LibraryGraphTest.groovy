@@ -268,6 +268,23 @@ class LibraryGraphTest extends Specification {
 		
 	}
 	
+	def "should tell the cardinality of an edge between twno nodes"(){
+		
+		
+		given :
+			def nodes = [[null, 1l], [1l, 2l], [1l, 2l], [1l, 3l], [3l, 4l]]
+			LibraryGraph<NamedReference, SimpleNode<NamedReference>> graph = new LibraryGraph()
+			nodes.each { graph.addEdge(node(it[0]), node(it[1])) }
+	
+		
+		when :
+			def res = graph.cardEdge(ref(1l), ref(2l))
+			
+		then :
+			res == 2
+		
+	}
+	
 	
 	NamedReference ref(id){
 		return new NamedReference(id, id?.toString());

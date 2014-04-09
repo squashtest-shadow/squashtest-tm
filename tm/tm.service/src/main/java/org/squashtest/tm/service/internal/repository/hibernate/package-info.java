@@ -157,13 +157,13 @@
 			query = "select new org.squashtest.tm.domain.NamedReference(tc.id, tc.name) from TestCase tc where tc.id in (:testCaseIds)"),
 			
 		@NamedQuery(name = "testCase.findTestCasesHavingCallerDetails", 
-				query = "select new org.squashtest.tm.service.internal.repository.hibernate.HibernateTestCaseDao$NamedReferencePair(caller.id, caller.name, called.id, called.name) "+
+				query = "select new org.squashtest.tm.service.internal.repository.CustomTestCaseDao$NamedReferencePair(caller.id, caller.name, called.id, called.name) "+
 						"from TestCase caller join caller.steps steps join steps.calledTestCase called " +
 						"where steps.class = CallTestStep and called.id in (:testCaseIds)"),
 						
 					
 		@NamedQuery(name = "testCase.findTestCasesHavingCallStepsDetails", 
-			query = "select new org.squashtest.tm.service.internal.repository.hibernate.HibernateTestCaseDao$NamedReferencePair(caller.id, caller.name, called.id, called.name) "+
+			query = "select new org.squashtest.tm.service.internal.repository.CustomTestCaseDao$NamedReferencePair(caller.id, caller.name, called.id, called.name) "+
 					"from TestCase caller join caller.steps steps join steps.calledTestCase called " +
 					"where steps.class = CallTestStep and caller.id in (:testCaseIds)"),
 																				  

@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ListUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
@@ -282,7 +281,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	 * implementation note : the following query could not use a right outer join. So we'll do the job manually. Hence
 	 * the weird things done below.
 	 */
-	public List<Object[]> findTestCaseCallsUpstream(final Collection<Long> testCaseIds) {
+	public List<NamedReferencePair> findTestCaseCallsUpstream(final Collection<Long> testCaseIds) {
 
 		// get the node pairs when a caller/called pair was found.
 		List<NamedReferencePair> result =  findTestCaseCallsDetails(testCaseIds, "testCase.findTestCasesHavingCallerDetails");
@@ -298,14 +297,13 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		for (NamedReference ref : noncalledReferences){
 			result.add(new NamedReferencePair(null, null, ref.getId(), ref.getName()));
 		}
-		
-		// last, transform to the agreed format
-		return asArray(result);
+
+		return result;
 
 	}
 	
 	
-	public List<Object[]> findTestCaseCallsDownstream(final Collection<Long> testCaseIds) {
+	public List<NamedReferencePair> findTestCaseCallsDownstream(final Collection<Long> testCaseIds) {
 		
 		// get the node pairs when a caller/called pair was found.
 		List<NamedReferencePair> result = findTestCaseCallsDetails(testCaseIds, "testCase.findTestCasesHavingCallStepsDetails");
@@ -322,10 +320,10 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 			result.add(new NamedReferencePair(ref.getId(), ref.getName(), null, null));
 		}
 		
-		// last, transform to the agreed format
-		return asArray(result);
+		return result;
 	}
 
+	
 	private List<NamedReferencePair> findTestCaseCallsDetails(final Collection<Long> testCaseIds, String mainQuery){
 		if (testCaseIds.isEmpty()) {
 			return Collections.emptyList();
@@ -344,15 +342,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		
 	}
 
-	private List<Object[]> asArray(List<NamedReferencePair> ref){
-		List<Object[]> result = new ArrayList<Object[]>(ref.size());
-		for (NamedReferencePair pair : ref){
-			result.add(new Object[]{ pair.getCaller(), pair.getCalled()} );
-		}
-		return result;
-	}
-
-
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<TestCase> findAllByRequirement(RequirementSearchCriteria criteria, boolean isProjectOrdered) {
@@ -366,6 +356,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		return crit.getExecutableCriteria(currentSession()).list();
 	}
 
+	
 	private DetachedCriteria createFindAllByRequirementCriteria(RequirementSearchCriteria criteria) {
 		DetachedCriteria crit = DetachedCriteria.forClass(TestCase.class);
 		crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
@@ -698,43 +689,5 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	}
 	
 	
-	public static final class NamedReferencePair{
-		
-		private NamedReference caller;
-		private NamedReference called;
-	
-		public NamedReferencePair(){
-			
-		}
-		
-		public NamedReferencePair(Long calledId, String calledName){
 
-			if (calledId != null){
-				called = new NamedReference(calledId, calledName);
-			}
-		}
-		
-		public NamedReferencePair(Long callerId, String callerName, 
-						  Long calledId, String calledName){
-			
-			if (callerId != null){			
-				caller = new NamedReference(callerId, callerName);
-			}
-			if (calledId != null){
-				called = new NamedReference(calledId, calledName);
-			}
-		}
-
-		public NamedReference getCaller() {
-			return caller;
-		}
-
-		public NamedReference getCalled() {
-			return called;
-		}
-		
-		
-		
-	}
-	
 }

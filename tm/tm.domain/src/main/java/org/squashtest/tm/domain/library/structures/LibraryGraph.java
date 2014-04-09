@@ -63,17 +63,17 @@ public class LibraryGraph<IDENT, T extends GraphNode<IDENT, T>> {
 	 */
 	
 	
-	public void addEdge(T parentData, T childData){
+	public void addEdge(T parentNode, T childNode){
 		
 		T parent = null;
 		T child = null;
 		
-		if ( (parentData !=null) && (parentData.getKey()!=null)){
-			parent=createIfNotExists(parentData);
+		if ( parentNode !=null && parentNode.getKey() != null){
+			parent=createIfNotExists(parentNode);
 		}
 		
-		if (childData!=null){
-			child = createIfNotExists(childData);
+		if (childNode !=null && childNode.getKey() != null){
+			child = createIfNotExists(childNode);
 		}
 		
 		if (parent!=null){
@@ -117,6 +117,25 @@ public class LibraryGraph<IDENT, T extends GraphNode<IDENT, T>> {
 		T destNode = getNode(dest);
 		
 		return (srcNode != null && destNode != null && srcNode.getOutbounds().contains(destNode));
+	}
+	
+	public int cardEdge(IDENT src, IDENT dest){
+		
+		int cardinality=0;
+		
+		T srcNode = getNode(src);
+		T destNode = getNode(dest);
+		
+		if (srcNode != null && destNode != null){
+			for (T node : srcNode.getOutbounds()){
+				if (node.equals(destNode)){
+					cardinality++;
+				}
+			}
+		}
+		
+		return cardinality;
+		
 	}
 	
 	

@@ -23,18 +23,22 @@ package org.squashtest.tm.service.internal.testcase;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.Bag;
+import org.apache.commons.collections.bag.HashBag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.NamedReference;
 import org.squashtest.tm.domain.library.structures.LibraryGraph;
 import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode;
+import org.squashtest.tm.service.internal.repository.CustomTestCaseDao.NamedReferencePair;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 
 /**
@@ -143,22 +147,21 @@ public class TestCaseCallTreeFinder {
 		allIds.addAll(calledIds);
 
 		// the temporary result variable
-		List<Object[]> allpairs = new ArrayList<Object[]>();
+		List<NamedReferencePair> allpairs = new LinkedList<NamedReferencePair>();
 
 		// a temporary buffer variable
 		List<Long> currentCalled = new LinkedList<Long>(calledIds);
 
-		// phase 1 : data collection
-		
+		// phase 1 : data collection		
 		while (!currentCalled.isEmpty()) {
 			
-			List<Object[]> currentPair = testCaseDao.findTestCaseCallsUpstream(currentCalled);
+			List<NamedReferencePair> currentPair = testCaseDao.findTestCaseCallsUpstream(currentCalled);
 
 			allpairs.addAll(currentPair);
 
 			/*
 			 * collect the caller ids in the currentPair for the next loop, with the following restrictions : 
-			 * 1) if the "caller" slot of the Object[] is not null, and 
+			 * 1) if the caller is not null, and 
 			 * 2) if that node was not already processed 
 			 * 
 			 * then we can add that id.
@@ -166,14 +169,13 @@ public class TestCaseCallTreeFinder {
 
 			List<Long> nextCalled = new LinkedList<Long>();
 
-			for (Object[] pair : currentPair) {
+			for (NamedReferencePair pair : currentPair) {
 				// no caller -> no need for further processing
-				if (pair[0] == null){
+				if (pair.getCaller() == null){
 					continue;
 				}
 				
-				NamedReference caller = (NamedReference)pair[0];
-				Long key = caller.getId();
+				Long key = pair.getCaller().getId();
 				if (! allIds.contains(key)) {
 					nextCalled.add(key);
 					allIds.add(key);
@@ -189,8 +191,8 @@ public class TestCaseCallTreeFinder {
 		
 		LibraryGraph<NamedReference, SimpleNode<NamedReference>> graph = new LibraryGraph<NamedReference, SimpleNode<NamedReference>>();
 		
-		for (Object[] pair : allpairs){
-			graph.addEdge(new SimpleNode<NamedReference>((NamedReference) pair[0]), new SimpleNode<NamedReference>((NamedReference)pair[1]));
+		for (NamedReferencePair pair : allpairs){
+			graph.addEdge(node(pair.getCaller()), node(pair.getCalled()));
 		}
 
 		return graph;
@@ -205,6 +207,9 @@ public class TestCaseCallTreeFinder {
 	 * @param calledIds
 	 * @return
 	 */
+	// note :  for each node, call steps are searched both upward and downward. As a result every edge will 
+	// be found twice (once on the up, once on the down). We then must build the graph by using only one edge over two 
+	// that's why we use a bag here, and then we halve the cardinality.
 	public LibraryGraph<NamedReference, SimpleNode<NamedReference>> getExtendedGraph(List<Long> sourceIds){
 		
 		// remember which nodes were processed (so that we can spare less DB calls in the worst cases scenarios)
@@ -212,7 +217,7 @@ public class TestCaseCallTreeFinder {
 		treated.addAll(sourceIds);
 
 		// the temporary result variable
-		List<Object[]> allpairs = new ArrayList<Object[]>();
+		Bag allpairs = new HashBag();
 
 		// a temporary buffer variable
 		List<Long> currentNodes = new LinkedList<Long>(sourceIds);
@@ -221,11 +226,9 @@ public class TestCaseCallTreeFinder {
 		
 		while (!currentNodes.isEmpty()) {
 			
-			List<Object[]> currentPair = testCaseDao.findTestCaseCallsUpstream(currentNodes);
+			List<NamedReferencePair> currentPair = testCaseDao.findTestCaseCallsUpstream(currentNodes);
 			currentPair.addAll( testCaseDao.findTestCaseCallsDownstream(currentNodes) );
 			
-			
-
 			allpairs.addAll(currentPair);
 
 			/*
@@ -239,21 +242,20 @@ public class TestCaseCallTreeFinder {
 
 			List<Long> nextNodes = new LinkedList<Long>();
 
-			for (Object[] pair : currentPair) {
+			for (NamedReferencePair pair : currentPair) {
+				
 				// no caller or no called -> no need for further processing
-				if (pair[0] == null || pair[1] == null){
+				if (pair.getCaller() == null || pair.getCalled() == null){
 					continue;
 				}
 				
-				NamedReference caller = (NamedReference)pair[0];
-				Long callerkey = caller.getId();
+				Long callerkey = pair.getCaller().getId();
 				if (! treated.contains(callerkey)) {
 					nextNodes.add(callerkey);
 					treated.add(callerkey);
 				}
 				
-				NamedReference called = (NamedReference)pair[1];
-				Long calledkey = called.getId();
+				Long calledkey = pair.getCalled().getId();
 				if (! treated.contains(calledkey)) {
 					nextNodes.add(calledkey);
 					treated.add(calledkey);
@@ -265,17 +267,30 @@ public class TestCaseCallTreeFinder {
 
 		}
 		
-		// phase 2 : make that graph
-		
-		LibraryGraph<NamedReference, SimpleNode<NamedReference>> graph = new LibraryGraph<NamedReference, SimpleNode<NamedReference>>();
-		
-		for (Object[] pair : allpairs){
-			graph.addEdge(new SimpleNode<NamedReference>((NamedReference) pair[0]), new SimpleNode<NamedReference>((NamedReference)pair[1]));
+		// phase 2 : halve the number of edges as explained in the comment above the method
+		// every edges will appear two times, except for "boundaries" (ie caller is null or called is null),
+		// for which the cardinality is 1.
+		for (NamedReferencePair pair : ((Set<NamedReferencePair>)allpairs.uniqueSet())){
+			int cardinality = allpairs.getCount(pair);
+			if (cardinality>1){
+				allpairs.remove(pair, (cardinality)/2);
+			}
 		}
 		
-		throw new IllegalArgumentException("TODO : not satisfying enough ");
-		//return graph;
+		// phase 3 : make that graph		
+		LibraryGraph<NamedReference, SimpleNode<NamedReference>> graph = new LibraryGraph<NamedReference, SimpleNode<NamedReference>>();
 		
+		for (Iterator<NamedReferencePair> iter = allpairs.iterator(); iter.hasNext();){
+			NamedReferencePair pair = iter.next();
+			graph.addEdge(node(pair.getCaller()), node(pair.getCalled()));
+		}
+		
+		return graph;
+		
+	}
+	
+	private SimpleNode<NamedReference> node(NamedReference ref){
+		return (ref != null) ? new SimpleNode<NamedReference>(ref) : null;
 	}
 
 }

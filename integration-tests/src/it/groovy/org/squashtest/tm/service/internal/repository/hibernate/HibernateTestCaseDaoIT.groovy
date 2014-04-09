@@ -31,9 +31,8 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.csp.tools.unittest.assertions.ListAssertions
 import org.squashtest.tm.core.foundation.collection.Paging
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
-import org.squashtest.tm.core.foundation.collection.SortOrder;
-import org.squashtest.tm.domain.NamedReference;
-import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode;
+import org.squashtest.tm.core.foundation.collection.SortOrder
+import org.squashtest.tm.domain.NamedReference
 import org.squashtest.tm.domain.requirement.RequirementCategory
 import org.squashtest.tm.domain.requirement.RequirementCriticality
 import org.squashtest.tm.domain.requirement.RequirementSearchCriteria
@@ -43,6 +42,7 @@ import org.squashtest.tm.domain.testcase.TestCaseSearchCriteria
 import org.squashtest.tm.domain.testcase.TestCaseStatus
 import org.squashtest.tm.domain.testcase.TestCaseType
 import org.squashtest.tm.service.internal.repository.TestCaseDao
+import org.squashtest.tm.service.internal.repository.CustomTestCaseDao.NamedReferencePair
 import org.unitils.dbunit.annotation.DataSet
 
 import spock.unitils.UnitilsSupport
@@ -182,10 +182,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 
 	
 	private tcrefPair(callerid, callername, calledid, calledname){
-		[
-			new NamedReference(callerid, callername),
-			new NamedReference(calledid, calledname)
-		] as Object[]
+		new NamedReferencePair(callerid, callername, calledid, calledname)
 	}
 
 	@DataSet("HibernateTestCaseDaoIT.should find the calling test cases.xml")
@@ -239,17 +236,13 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 			"bottom test case"
 		);
 
-		def compare = { 
-			op1, op2 ->
-			 op1[0].equals(op2[0]) && op1[1].equals(op2[1]) 
-		}
 
-		result.count { compare it, call1 } == 1
-		result.count { compare it, call2 } == 1
-		result.count { compare it, call3 } == 1
-		result.count { compare it, call4 } == 2
-		result.count { compare it, call5 } == 2
-		result.count { compare it, call6 } == 2
+		result.count { it.equals call1 } == 1
+		result.count { it.equals call2 } == 1
+		result.count { it.equals call3 } == 1
+		result.count { it.equals call4 } == 2
+		result.count { it.equals call5 } == 2
+		result.count { it.equals call6 } == 2
 
 	}
 	
@@ -258,9 +251,6 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 
 	@DataSet("HibernateTestCaseDaoIT.should find the calling test cases.xml")
 	def "should find no callers of a couple of test cases, returning results as pairs of caller/called details with null values"(){
-
-		given :
-		List.metaClass.containsValue = { Object[] arg -> return containsValue(delegate, arg)  }
 
 		when :
 		def result = testCaseDao.findTestCaseCallsUpstream([101l, 102l, 103l]);
@@ -289,9 +279,9 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		);
 
 
-		result.containsValue (call1)
-		result.containsValue (call2)
-		result.containsValue (call3)
+		result.contains (call1)
+		result.contains (call2)
+		result.contains (call3)
 	}
 	
 	
@@ -342,16 +332,12 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 			"ultra bottom test case"
 		);
 
-		def compare = {
-			op1, op2 ->
-			 op1[0].equals(op2[0]) && op1[1].equals(op2[1])
-		}
 
-		result.count { compare it, call1 } == 1
-		result.count { compare it, call2 } == 1		
-		result.count { compare it, call3 } == 2		
-		result.count { compare it, call4 } == 2	
-		result.count { compare it, call5 } == 1
+		result.count { it.equals call1 } == 1
+		result.count { it.equals call2 } == 1		
+		result.count { it.equals call3 } == 2		
+		result.count { it.equals call4 } == 2	
+		result.count { it.equals call5 } == 1
 
 
 	}
@@ -362,11 +348,9 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateTestCaseDaoIT.should find the calling test cases.xml")
 	def "should find no called test cases of a couple of test cases, returning results as pairs of details with null values"(){
 
-		given :
-		List.metaClass.containsValue = { Object[] arg -> return containsValue(delegate, arg)  }
-
+	
 		when :
-		def result = testCaseDao.findTestCaseCallsDownstream([100l, 50l]);
+		def result = testCaseDao.findTestCaseCallsDownstream([100l, 5l]);
 		then :
 		result.size == 2
 
@@ -379,15 +363,15 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 			null
 		);
 		def call2 = tcrefPair(
-			50l,
-			"other bottom test case",
+			5l,
+			"ultra bottom test case",
 			null,
 			null
 		);
 
 
-		result.containsValue (call1)
-		result.containsValue (call2)
+		result.contains (call1)
+		result.contains (call2)
 	}
 
 	
@@ -412,22 +396,6 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 
 
 
-
-	//if there is a groovy way to do that please tell me
-	private boolean containsValue(List<Object[]> list, Object[] value){
-		for (Object[] item : list){
-			boolean match = true;
-			for (int i=0;i<value.length;i++){
-				if ( item[i].equals(value[i])){
-					match=false;
-					break;
-				}
-			}
-			if (match) return true;
-		}
-		return false;
-
-	}
 
 	@DataSet("HibernateTestCaseDaoIT.should find test cases by requirement name token.xml")
 	def "should find test cases by requirement name token"() {
