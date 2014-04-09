@@ -74,7 +74,7 @@ class TestCaseCallGraph extends LibraryGraph<TestCaseTarget, TestCaseCallGraph.N
 	
 	
 	public boolean knowsNode(TestCaseTarget target){
-		return getNodes().contains(target);
+		return getNodes().contains(new Node(target));
 	}
 	
 	public void addEdge(TestCaseTarget parent, TestCaseTarget child){

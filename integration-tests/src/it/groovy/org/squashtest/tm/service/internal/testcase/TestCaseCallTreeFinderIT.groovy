@@ -160,7 +160,41 @@ class TestCaseCallTreefinderIT extends DbunitServiceSpecification {
 			
 	}
 		
-	
+	@DataSet("TestCaseCallTreeFinderIT.dataset.xml")
+	def "should find the same extended call graph starting from 3 node"(){
+		
+		given :
+			def seeds = [21l, 1l, 22l ]
+			
+		when :
+			def graph = callTreeFinder.getExtendedGraph(seeds)
+		
+		then :
+			def ref1 = ref(1, "top test case")
+			def ref11 = ref(11, "first level 1")
+			def ref21 = ref(21, "second level 1")
+			def ref22 = ref(22, "second level 2")
+			def ref31 = ref(31, "third level 1")
+			def ref32 = ref(32, "third level 2")
+		
+			
+			graph.cardEdge(ref1, ref11) == 1
+			graph.cardEdge(ref1, ref31) == 1
+			graph.cardEdge(ref11, ref21) == 1
+			graph.cardEdge(ref11, ref22) == 2
+			graph.cardEdge(ref21, ref31) == 1
+			graph.cardEdge(ref22, ref32) == 1
+			
+			// some more controls
+			graph.cardEdge(ref1, ref32) == 0
+			graph.cardEdge(ref21, ref22) == 0
+			graph.cardEdge(ref31, ref32) == 0
+			graph.cardEdge(ref1, ref21) == 0
+			
+			
+			
+	}
+		
 	
 	// ********************* private **********************
 	

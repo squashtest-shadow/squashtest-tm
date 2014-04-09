@@ -77,8 +77,8 @@ public class ModelTest extends Specification{
 			model.uniqueList(targets) == filtered
 		
 		where :
-			targets = createTargets("/project/a", "/project/b", "/project/a", "/project/c")
-			filtered = createTargets("/project/a", "/project/b", "/project/c")
+			targets = targets("/project/a", "/project/b", "/project/a", "/project/c")
+			filtered = targets("/project/a", "/project/b", "/project/c")
 	}
 	
 	def "should collect projects names from targets"(){
@@ -87,7 +87,7 @@ public class ModelTest extends Specification{
 			model.collectProjects(targets) == ["project a", "project b"]
 		
 		where :
-			targets = createTargets("/project a/test1", "/project a/test2", "/project b/test 3")
+			targets = targets("/project a/test1", "/project a/test2", "/project b/test 3")
 				
 	}
 
@@ -97,7 +97,7 @@ public class ModelTest extends Specification{
 			model.collectPaths(targets) == ["/project/a", "/project/B"]
 		 
 		where :
-			targets = createTargets("/project/a", "/project/B")
+			targets = targets("/project/a", "/project/B")
 	}
 	
 	// ************* core mechanics ******************
@@ -106,7 +106,7 @@ public class ModelTest extends Specification{
 	
 	def "should init the model with some test cases"(){
 		given :
-			def targets = createTargets("/project/folder/test1", "/project/<nonexistant>/test2", "/project/folder/test3")
+			def targets = targets("/project/folder/test1", "/project/<nonexistant>/test2", "/project/folder/test3")
 		
 		and :
 			finderService.findNodeIdsByPath(_) >> [10l, null, 20l]
@@ -134,7 +134,7 @@ public class ModelTest extends Specification{
 	def "should init the test steps"(){
 		
 		given :
-			def targets = createTargets("/project/notok", "/project/ok", "/project/tobedeleted")
+			def targets = targets("/project/notok", "/project/ok", "/project/tobedeleted")
 			
 		and :
 			model.testCaseStatusByTarget[targets[0]] = new TargetStatus(NOT_EXISTS, null)
@@ -161,7 +161,7 @@ public class ModelTest extends Specification{
 	def "should init the projects"(){
 		
 		given :
-			def targets = createTargets("/project a/test1", "/sprololo/testB", "/project a/test2")
+			def targets = targets("/project a/test1", "/sprololo/testB", "/project a/test2")
 		
 		and :
 			Project p = mockProject("project a", 10l)
@@ -347,7 +347,7 @@ public class ModelTest extends Specification{
 											]
 		
 		and :
-			calltreeFinder.getCallerGraph(_) >> new LibraryGraph()
+			calltreeFinder.getExtendedGraph(_) >> new LibraryGraph()
 			finderService.getPathsAsString(_) >> []
 			
 		when :
@@ -375,7 +375,7 @@ public class ModelTest extends Specification{
 											]
 		
 		and :
-			calltreeFinder.getCallerGraph(_) >> new LibraryGraph()
+			calltreeFinder.getExtendedGraph(_) >> new LibraryGraph()
 			finderService.getPathsAsString(_) >> []
 			
 		when :
@@ -403,7 +403,7 @@ public class ModelTest extends Specification{
 											]
 		
 		and :
-			calltreeFinder.getCallerGraph(_) >> new LibraryGraph()
+			calltreeFinder.getExtendedGraph(_) >> new LibraryGraph()
 			finderService.getPathsAsString(_) >> []
 			
 		when :
@@ -495,7 +495,7 @@ public class ModelTest extends Specification{
 			def srobert = new SimpleNode(new NamedReference(3l, "robert"))
 			
 			fromdb.addEdge srobert, darry
-			calltreeFinder.getCallerGraph(_) >> fromdb
+			calltreeFinder.getExtendedGraph(_) >> fromdb
 			
 		and : 
 			finderService.findNodeIdByPath("/project/darry") >> 4l
@@ -504,13 +504,82 @@ public class ModelTest extends Specification{
 			
 			
 		when :
-			model.initCallerGraph(new TestCaseTarget("/project"))
+			model.initCallGraph(new TestCaseTarget("/project"))
 		
 		then :
 			fromdb.nodes.collect { it.key.name } as Set == ["/project/robert", "/project/darry" ] as Set
 			1 * model.callGraph.addGraph(fromdb)
 	}
 	
+	// ************************** parameters ***************************
+	
+	def "should retrieve all the parameters available to a test case (1)"(){
+		
+		given :
+			def bob = new TestCaseTarget("/project/bob")
+			def robert = new TestCaseTarget("/project/robert")
+			def mike = new TestCaseTarget("/project/mike")
+			
+		and :
+			def p1 = new ParameterTarget(bob, "meal")
+			def p2 = new ParameterTarget(bob, "couch")
+			def p3 = new ParameterTarget(robert, "basement surface")
+			def p4 = new ParameterTarget(mike, "tv size")
+			def p5 = new ParameterTarget(mike, "beer stocks")
+		
+		and :
+			model.callGraph.addEdge(bob, robert)
+			model.callGraph.addEdge(robert, mike)
+			model.callGraph.addEdge(bob, mike)
+		
+		and :
+		
+			model.parametersByTestCase.put	 bob, [ p1, p2 ] as Set
+			model.parametersByTestCase.put	 robert, [ p3 ] as Set
+			model.parametersByTestCase.put	 mike,  [p4, p5] as Set
+
+			
+		when :
+			Collection<ParameterTarget> allparams = model.getAllParameters(bob);
+		
+		then :
+			allparams as Set == [p1, p2, p3, p4, p5] as Set
+		
+	}
+	
+	def "should retrieve all the parameters available to a test case (2)"(){
+		
+		given :
+			def bob = new TestCaseTarget("/project/bob")
+			def robert = new TestCaseTarget("/project/robert")
+			def mike = new TestCaseTarget("/project/mike")
+			
+		and :
+			def p1 = new ParameterTarget(bob, "meal")
+			def p2 = new ParameterTarget(bob, "couch")
+			def p3 = new ParameterTarget(robert, "basement surface")
+			def p4 = new ParameterTarget(mike, "tv size")
+			def p5 = new ParameterTarget(mike, "beer stocks")
+		
+		and :
+			model.callGraph.addEdge(bob, robert)
+			model.callGraph.addEdge(robert, mike)
+			model.callGraph.addEdge(bob, mike)
+		
+		and :
+			
+		
+			model.parametersByTestCase.put	 bob, [ p1, p2 ] as Set
+			model.parametersByTestCase.put	 robert, [ p3 ] as Set
+			model.parametersByTestCase.put	 mike,  [p4, p5] as Set
+			
+		when :
+			Collection<ParameterTarget> allparams = model.getAllParameters(robert);
+		
+		then :
+			allparams as Set == [p3, p4, p5] as Set
+		
+	}
 	
 	// **************************** utils ******************************
 	
@@ -530,7 +599,7 @@ public class ModelTest extends Specification{
 		factory.getCurrentSession() >> s
 	}
 	
-	def createTargets(String... paths){
+	def targets(String... paths){
 		return paths.collect{ new TestCaseTarget(it) }
 	}
 }

@@ -50,6 +50,7 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.service.internal.batchimport.TestCaseCallGraph.Node;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
 import org.squashtest.tm.service.testcase.ParameterFinder;
@@ -256,7 +257,7 @@ public class Model {
 	public boolean isCalled(TestCaseTarget target){
 		
 		if (! callGraph.knowsNode(target)){
-			initCallerGraph(target);
+			initCallGraph(target);
 		}
 
 		return callGraph.isCalled(target);
@@ -268,11 +269,11 @@ public class Model {
 	
 	public boolean wouldCreateCycle(TestCaseTarget srcTestCase, TestCaseTarget destTestCase){
 		if (! callGraph.knowsNode(srcTestCase)){
-			initCallerGraph(srcTestCase);
+			initCallGraph(srcTestCase);
 		}
 		
 		if (! callGraph.knowsNode(destTestCase)){
-			initCallerGraph(destTestCase);
+			initCallGraph(destTestCase);
 		}
 		
 		return callGraph.wouldCreateCycle(srcTestCase, destTestCase);
@@ -283,17 +284,15 @@ public class Model {
 	}
 	
 	
-	// initialize from the database.
-	// note that we don't always want the target to be fully initialized because we only care of the   
-	// caller test case graph. So we initialize that information from the DB only and 
-	// we don't need to fully fill the model with it.
-	private void initCallerGraph(TestCaseTarget target){
+	// initialize the call graph from the database. The whole graph will be pulled 
+	// so be carefull to load it only when necessary.
+	private void initCallGraph(TestCaseTarget target){
 		
 		Long id = finderService.findNodeIdByPath(target.getPath());
 		
 		if (id != null){
 			LibraryGraph<NamedReference, SimpleNode<NamedReference>> targetCallers 
-				= calltreeFinder.getCallerGraph(Arrays.asList(id));
+				= calltreeFinder.getExtendedGraph(Arrays.asList(id));
 			
 			// some data transform now
 			Collection<SimpleNode<NamedReference>> refs = targetCallers.getNodes();
@@ -310,11 +309,11 @@ public class Model {
 	private void addCallGraphEdge(TestCaseTarget src, TestCaseTarget dest){
 		
 		if (! callGraph.knowsNode(src)){
-			initCallerGraph(src);
+			initCallGraph(src);
 		}
 		
 		if (! callGraph.knowsNode(dest)){
-			initCallerGraph(dest);
+			initCallGraph(dest);
 		}
 		
 		callGraph.addEdge(src, dest);
@@ -549,7 +548,32 @@ public class Model {
 	 * @return
 	 */
 	public Collection<ParameterTarget> getAllParameters(TestCaseTarget testCase){
-		return null;
+		
+		if (! callGraph.knowsNode(testCase)){
+			initCallGraph(testCase);
+		}
+		
+		Collection<ParameterTarget> result = new HashSet<ParameterTarget>();
+		LinkedList<Node> processing = new LinkedList<Node>();
+		processing.add(callGraph.getNode(testCase));
+		
+		while (! processing.isEmpty()){
+			Node current = processing.pop();
+			result.addAll(getOwnParameters(current.getKey()));
+			processing.addAll(current.getOutbounds());
+		}
+		
+		return result;
+		
+	}
+	
+	/**
+	 * 
+	 * @return true if the parameter legitimately belongs to the dataset, false otherwise
+	 */
+	public boolean isParamInDataset(ParameterTarget param, DatasetTarget ds){
+		Collection<ParameterTarget> allparams = getAllParameters(ds.getTestCase());
+		return (allparams.contains(param));
 	}
 	
 	
