@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
+import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 
 public interface Facility {
@@ -41,5 +42,41 @@ public interface Facility {
 	LogTrain updateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase);
 	LogTrain deleteTestStep(TestStepTarget target);
 	
+	LogTrain createParameter(ParameterTarget target, Parameter param);
+	LogTrain updateParameter(ParameterTarget target, Parameter param);
+	LogTrain deleteParameter(ParameterTarget target);
+	
+	
+	/**
+	 * Will update the value for the given parameter in the given dataset. If the dataset doesn't exist for this dataset, it will be created.
+	 * If the parameter doesn't exist or is not available to this dataset the method fails. In all cases the methods returns a log.
+	 * 
+	 * @param dataset
+	 * @param param
+	 * @param value
+	 * @return
+	 */
+	LogTrain failsafeUpdateParameterValue (DatasetTarget dataset, ParameterTarget param, String value);
+	
+	
+	
+	/**
+	 * Will update the value for the given parameter in the given dataset. If the dataset doesn't exist for this dataset the method fails.
+	 * If the parameter doesn't exist or is not available to this dataset the method fails. In all cases the methods returns a log.
+	 * 
+	 * @param dataset
+	 * @param param
+	 * @param value
+	 * @return
+	 */
+	LogTrain strictUpdateParameterValue (DatasetTarget dataset, ParameterTarget param, String value);
+	
+	/**
+	 * Deletes a dataset.
+	 * 
+	 * @param dataset
+	 * @return
+	 */
+	LogTrain deleteDataset(DatasetTarget dataset);
 }
 

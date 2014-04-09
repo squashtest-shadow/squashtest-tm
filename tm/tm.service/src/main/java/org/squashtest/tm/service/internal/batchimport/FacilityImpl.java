@@ -39,6 +39,7 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
+import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseNature;
@@ -263,6 +264,39 @@ public class FacilityImpl implements Facility {
 		
 		return train;
 	}
+	
+	@Override
+	public LogTrain createParameter(ParameterTarget target, Parameter param) {
+		throw new UnsupportedOperationException("not implemented yet");
+	}
+
+	@Override
+	public LogTrain updateParameter(ParameterTarget target, Parameter param) {
+		throw new UnsupportedOperationException("not implemented yet");
+	}
+
+	@Override
+	public LogTrain deleteParameter(ParameterTarget target) {
+		throw new UnsupportedOperationException("not implemented yet");
+	}
+
+	@Override
+	public LogTrain failsafeUpdateParameterValue(DatasetTarget dataset,
+			ParameterTarget param, String value) {
+		throw new UnsupportedOperationException("not implemented yet");
+	}
+
+	@Override
+	public LogTrain strictUpdateParameterValue(DatasetTarget dataset,
+			ParameterTarget param, String value) {
+		throw new UnsupportedOperationException("not implemented yet");
+	}
+
+	@Override
+	public LogTrain deleteDataset(DatasetTarget dataset) {
+		throw new UnsupportedOperationException("not implemented yet");
+	}
+	
 
 	
 	// ************************* private (and hairy) code *********************************
@@ -523,5 +557,6 @@ public class FacilityImpl implements Facility {
 			mixin.setLastModifiedOn(saved.getLastModifiedOn());
 		}
 	}
-	
+
+
 }

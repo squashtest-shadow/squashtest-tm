@@ -29,6 +29,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
+import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
@@ -409,8 +410,72 @@ public class SimulationFacility implements Facility{
 	}
 	
 	
-	
-	
+	@Override
+	public LogTrain createParameter(ParameterTarget target, Parameter param) {
+		
+		LogTrain logs;		
+
+		// 1 - basic checks
+		logs = entityValidator.basicParameterChecks(target, param);
+
+		// 2 - does it already exists ?
+		if (model.doesParameterExists(target)){
+			logs.addEntry( new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_PARAMETER_ALREADY_EXISTS, null, Messages.IMPACT_PARAM_UPDATED, null) );			
+		}
+		
+		// if no problems, add it to the model (the model is double-insertion proof)
+		if (! logs.hasCriticalErrors()){
+			model.addParameter(target);
+		}
+		
+		return logs;
+	}
+
+
+	@Override
+	public LogTrain updateParameter(ParameterTarget target, Parameter param) {
+		
+		LogTrain logs;		
+
+		// 1 - basic checks
+		logs = entityValidator.basicParameterChecks(target, param);
+
+		// 2 - does it exists ?
+		if (! model.doesParameterExists(target)){
+			logs.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PARAMETER_NOT_FOUND) );			
+		}
+		
+		
+		return logs;
+		
+	}
+
+
+	@Override
+	public LogTrain deleteParameter(ParameterTarget target) {
+		throw new UnsupportedOperationException("not implemented yet");
+	}
+
+
+	@Override
+	public LogTrain failsafeUpdateParameterValue(DatasetTarget dataset,
+			ParameterTarget param, String value) {
+		throw new UnsupportedOperationException("not implemented yet");
+	}
+
+
+	@Override
+	public LogTrain strictUpdateParameterValue(DatasetTarget dataset,
+			ParameterTarget param, String value) {
+		throw new UnsupportedOperationException("not implemented yet");
+	}
+
+
+	@Override
+	public LogTrain deleteDataset(DatasetTarget dataset) {
+		throw new UnsupportedOperationException("not implemented yet");
+	}
+
 	
 	
 	
@@ -418,6 +483,7 @@ public class SimulationFacility implements Facility{
 	// checks permission on a project that may exist or not.
 	// the case where the project doesn't exist (and thus has no id) is already covered in the basic checks.
 	private LogEntry checkPermissionOnProject(String permission, TestCaseTarget target){
+		
 		LogEntry entry = null;
 		
 		Long libid = model.getProjectStatus(target.getProject()).id;
@@ -426,6 +492,7 @@ public class SimulationFacility implements Facility{
 		}
 		
 		return entry;
+		
 	}
 	
 	private LogEntry checkStepIndex(TestStepTarget target, ImportStatus importStatus, String optionalImpact ){
@@ -445,6 +512,7 @@ public class SimulationFacility implements Facility{
 		return entry;
 	}
 
-	
+
+
 	
 }

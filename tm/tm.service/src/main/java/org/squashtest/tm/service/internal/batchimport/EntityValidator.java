@@ -20,21 +20,15 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import static org.squashtest.tm.service.internal.batchimport.Model.Existence.NOT_EXISTS;
+import static org.squashtest.tm.service.internal.batchimport.Model.Existence.TO_BE_DELETED;
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_NAME;
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_REFERENCE;
-import static org.squashtest.tm.service.internal.batchimport.Model.Existence.TO_BE_DELETED;
-import static org.squashtest.tm.service.internal.batchimport.Model.Existence.NOT_EXISTS;
-
-
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.squashtest.tm.domain.library.WhichNodeVisitor;
-import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.CallTestStep;
+import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
-import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.internal.batchimport.Model.Existence;
@@ -179,6 +173,41 @@ class EntityValidator {
 		
 	}
 	
-	
+	LogTrain basicParameterChecks(ParameterTarget target, Parameter parameter){
+		
+		LogTrain logs = new LogTrain();
+		String[] fieldNameErrorArgs = new String[]{"TC_PARAM_NAME"};	// that variable is simple convenience for logging
+		
+		TestCaseTarget testCase = target.getOwner();
+		
+		// 1 - test case owner path must be supplied and and well formed
+		if (! testCase.isWellFormed()){
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MALFORMED_PATH));
+		}
+		
+		// 2 - the test case must exist
+		TargetStatus tcStatus = model.getStatus(testCase);
+		if (tcStatus.status == TO_BE_DELETED || tcStatus.status == NOT_EXISTS){
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_TC_NOT_FOUND));
+		}
+		
+		// 3 - the project actually exists
+		TargetStatus projectStatus = model.getProjectStatus(target.getProject()); 
+		if (projectStatus.getStatus() != Existence.EXISTS){
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PROJECT_NOT_EXIST));
+		}	
+		
+		// 4 - name has length between 1 and 255
+		String name = parameter.getName();
+		if (name != null && name.length() > 255){
+			logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_MAX_SIZE, fieldNameErrorArgs, Messages.IMPACT_MAX_SIZE, null));
+		}
+		if (StringUtils.isBlank(name)){
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_FIELD_MANDATORY, fieldNameErrorArgs));
+		}
+		
+		return logs;
+		
+	}
 	
 }

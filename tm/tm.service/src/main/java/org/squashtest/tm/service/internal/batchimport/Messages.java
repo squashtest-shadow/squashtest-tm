@@ -44,6 +44,8 @@ final class Messages {
 	static final String ERROR_NOT_AN_ACTIONSTEP = "message.import.log.error.tc.tcStep.notanactionstep";
 	static final String ERROR_CYCLIC_STEP_CALLS = "message.import.log.error.tc.callStep.cyclicCalls";
 	static final String ERROR_UNEXPECTED_ERROR = "message.import.log.error.unexpectederror";
+	static final String ERROR_PARAMETER_ALREADY_EXISTS = "message.import.log.error.tc.param.alreayexists";
+	static final String ERROR_PARAMETER_NOT_FOUND = "message.import.log.error.tc.param.notFound";
 	
 	
 	static final String IMPACT_MAX_SIZE = "message.import.log.impact.truncatedValue";
@@ -52,6 +54,7 @@ final class Messages {
 	static final String IMPACT_TC_WITH_SUFFIX = "message.import.log.impact.tc.renamed";
 	static final String IMPACT_TC_CREATED = "message.import.log.impact.tc.created";
 	static final String IMPACT_STEP_CREATED_LAST = "message.import.log.impact.testStepAddedAtMaxPosition";
+	static final String IMPACT_PARAM_UPDATED = "message.import.log.impact.paramupdate";
 	
 	private Messages(){
 		super();

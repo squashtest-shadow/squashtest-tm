@@ -47,11 +47,13 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.library.structures.LibraryGraph;
 import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.internal.batchimport.TestCaseCallGraph.Node;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
+import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
 import org.squashtest.tm.service.testcase.ParameterFinder;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
@@ -77,6 +79,9 @@ public class Model {
 	
 	@Inject
 	private ParameterFinder paramFinder;
+	
+	@Inject
+	private DatasetDao dsDao;
 	
 	
 	/* **********************************************************************************************************************************
@@ -156,6 +161,15 @@ public class Model {
 	 -------------------------*/
 	private Map<TestCaseTarget, Collection<ParameterTarget>> parametersByTestCase = new HashMap<TestCaseTarget, Collection<ParameterTarget>>();
 	
+	
+	/* ------------------------
+	  
+	  parametersByTestCase : 
+	  
+	  keeps track of which parameters are defined for which test cases
+	  
+	 -------------------------*/
+	private Map<TestCaseTarget, Collection<DatasetTarget>> datasetsByTestCase = new HashMap<TestCaseTarget, Collection<DatasetTarget>>();
 	
 
 	/* *******************************************************************************************************
@@ -577,6 +591,49 @@ public class Model {
 	}
 	
 	
+	// **************************** datasets ****************************************
+	
+	public boolean doesDatasetExists(DatasetTarget target){
+		TestCaseTarget tc = target.getTestCase();
+		if (! datasetsByTestCase.containsKey(tc)){
+			initDatasets(Arrays.asList(tc));
+		}
+		
+		return datasetsByTestCase.get(tc).contains(target);
+	}
+	
+	
+	public void addDataset(DatasetTarget target){
+		TestCaseTarget tc = target.getTestCase();
+		if (! datasetsByTestCase.containsKey(tc)){
+			initDatasets(Arrays.asList(tc));
+		}
+		
+		datasetsByTestCase.get(tc).add(target);
+	}
+	
+	public void removeDataset(DatasetTarget target){
+		TestCaseTarget tc = target.getTestCase();
+		if (! datasetsByTestCase.containsKey(tc)){
+			initDatasets(Arrays.asList(tc));
+		}
+		
+		datasetsByTestCase.get(tc).remove(target);		
+	}
+	
+	/**
+	 * returns the parameters owned by this test case. It doesn't include 
+	 * all the parameters from the test case call tree of this test case.
+	 */
+	public Collection<DatasetTarget> getDatasets(TestCaseTarget testCase){
+		if (! datasetsByTestCase.containsKey(testCase)){
+			initDatasets(Arrays.asList(testCase));
+		}
+		
+		return datasetsByTestCase.get(testCase);		
+	}
+	
+	
 	// ************************* CUFS accessors *************************************
 	
 	@SuppressWarnings("unchecked")
@@ -667,7 +724,7 @@ public class Model {
 				continue;
 			}
 			
-			TargetStatus status = testCaseStatusByTarget.get(t);
+			TargetStatus status = getStatus(t);
 			
 			
 			if (status.id != null && status.status != Existence.TO_BE_DELETED){
@@ -684,7 +741,30 @@ public class Model {
 		}
 	}
 	
-	  
+	 private void initDatasets(List<TestCaseTarget> testCases){
+			
+		 for (TestCaseTarget t : testCases){
+				
+				if ( datasetsByTestCase.containsKey(t)){
+					continue;
+				}
+				
+				TargetStatus status = getStatus(t);
+				
+				
+				if (status.id != null && status.status != Existence.TO_BE_DELETED){
+					Collection<Dataset> datasets = dsDao.findAllDatasetsByTestCase(status.id);
+					Collection<DatasetTarget> dstargets = new HashSet<DatasetTarget>(datasets.size());
+					for (Dataset ds : datasets){
+						dstargets.add(new DatasetTarget(t, ds.getName()));
+					}
+					datasetsByTestCase.put(t, dstargets);
+				}
+				else{
+					datasetsByTestCase.put(t, new HashSet<DatasetTarget>());
+				}
+			}
+	 }
 	
 	
 	

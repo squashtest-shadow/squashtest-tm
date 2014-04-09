@@ -27,13 +27,19 @@ import org.squashtest.tm.service.importer.Target;
 public class DatasetTarget extends Target {
 	private final TestCaseTarget testCase;
 	private String name;
-	private String parameterOwnerPath;
 
 	public DatasetTarget() {
 		super();
 		testCase = new TestCaseTarget();
 	}
 
+	
+	public DatasetTarget(TestCaseTarget testCase, String name){
+		super();
+		this.testCase = testCase;
+		this.name = name;
+	}
+	
 	@Override
 	public EntityType getType() {
 		return EntityType.DATASET;
@@ -115,17 +121,4 @@ public class DatasetTarget extends Target {
 		testCase.setPath(path);
 	}
 
-	/**
-	 * @return the parameterOwnerPath
-	 */
-	public String getParameterOwnerPath() {
-		return parameterOwnerPath;
-	}
-
-	/**
-	 * @param parameterOwnerPath the parameterOwnerPath to set
-	 */
-	public void setParameterOwnerPath(String parameterOwnerPath) {
-		this.parameterOwnerPath = parameterOwnerPath;
-	}
 }
