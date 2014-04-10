@@ -91,8 +91,8 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	@Override
 	public int findExecutionRank(long executionId) {
 		IterationTestPlanItem testPlan = (IterationTestPlanItem) currentSession()
-				.createCriteria(IterationTestPlanItem.class).createCriteria("executions")
-				.add(Restrictions.eq("id", executionId)).uniqueResult();
+				.createCriteria(IterationTestPlanItem.class).createAlias("executions", "execution")
+				.add(Restrictions.eq("execution.id", executionId)).uniqueResult();
 
 		int index = 0;
 		for (Execution execution : testPlan.getExecutions()) {

@@ -38,7 +38,7 @@ public class ExecutionStatusReport {
 
 	public ExecutionStatusReport() {
 		super();
-		for (ExecutionStatus status : ExecutionStatus.values()) {
+		for (ExecutionStatus status : ExecutionStep.LEGAL_EXEC_STATUS) {
 			statusCount.put(status, 0);
 		}
 	}

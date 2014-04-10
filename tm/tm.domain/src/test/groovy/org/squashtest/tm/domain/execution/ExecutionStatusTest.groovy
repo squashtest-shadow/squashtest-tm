@@ -116,7 +116,7 @@ class ExecutionStatusTest extends Specification {
 		ExecutionStatus.computeNewStatus(report) == BLOCKED
 	}
 
-		def "a non-blocked report with error statuses should produce an ERROR status"(){
+		def "a non-blocked report with error statuses should produce a FAILURE status"(){
 
 		given :
 		ExecutionStatusReport report = new ExecutionStatusReport()
@@ -124,7 +124,7 @@ class ExecutionStatusTest extends Specification {
 		report.set(BLOCKED, 0)
 
 		expect :
-		ERROR == ExecutionStatus.computeNewStatus(report)
+		FAILURE == ExecutionStatus.computeNewStatus(report)
 	}
 
 	def "a non-blocked, non error, non not_run report with failure statuses should produce a FALURE status"(){
@@ -163,17 +163,15 @@ class ExecutionStatusTest extends Specification {
 		
 		where:
 		statuses                    | expected
-		[SUCCESS, BLOCKED, ERROR]   | BLOCKED
-		[SUCCESS, ERROR, FAILURE]   | ERROR
+		[SUCCESS, BLOCKED]   		| BLOCKED
 		[SUCCESS, FAILURE]          | FAILURE
-		[SUCCESS, WARNING, SETTLED, UNTESTABLE] | SUCCESS
-		[SUCCESS, WARNING, SETTLED] | SUCCESS
-		[SUCCESS, WARNING]          | SUCCESS
-		[WARNING]                   | SUCCESS
+		[SUCCESS, SETTLED, UNTESTABLE] | SUCCESS
+		[SUCCESS, SETTLED] 			| SUCCESS
+		[SUCCESS]          			| SUCCESS
 		[SETTLED]                   | SETTLED
 		[SETTLED, UNTESTABLE]       | SETTLED
 		[UNTESTABLE]                | UNTESTABLE
-		[SUCCESS, WARNING, SETTLED, READY] | RUNNING
+		[SUCCESS, SETTLED, READY] 	| RUNNING
 	}
 
 	def "should never invoke resolveStatus on non canon status when using plublic methods"(){

@@ -36,6 +36,7 @@ import org.squashtest.tm.service.internal.campaign.IterationTestPlanManagerServi
 import org.squashtest.tm.core.foundation.collection.DefaultSorting
 import org.squashtest.tm.core.foundation.collection.DefaultColumnFiltering
 import org.squashtest.tm.core.foundation.collection.SortOrder
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.users.User
 import org.squashtest.tm.service.user.UserAccountService
 import spock.lang.Unroll
@@ -139,4 +140,40 @@ class IterationTestPlanManagerServiceIT extends DbunitServiceSpecification {
 	}
 	
 	
+		@DataSet("IterationTestPlanManagerServiceIT.1execution.xml")
+		def "should remove executed Test plan from iteration because has admin rights"(){
+			given :
+			def iterationId = 1L
+			def testPlanItem = 1L
+			when :
+			service.removeTestPlanFromIteration(testPlanItem)
+	 
+			then :
+			!found(IterationTestPlanItem.class, 1L)
+		}
+		
+//		TODO make it work
+//		@DataSet("IterationTestPlanManagerServiceIT.1execution.noEDRight.xml")
+//		def "should remove executed Test plan from iteration because has not EXTENDED_DELETE rights"(){
+//			given :
+//			def iterationId = 1L
+//			def testPlanItem = 1L
+//			when :
+//			service.removeTestPlanFromIteration(testPlanItem)
+//	 
+//			then :
+//			found(IterationTestPlanItem.class, 1L)
+//		}
+		
+		@DataSet("IterationTestPlanManagerServiceIT.0execution.xml")
+		def "should remove not executed Test plan from iteration"(){
+			given :
+			def iterationId = 1L
+			def testPlanItem = 1L
+			when :
+			service.removeTestPlanFromIteration(testPlanItem)
+	 
+			then :
+			!found(IterationTestPlanItem.class, 1L)
+		}
 }

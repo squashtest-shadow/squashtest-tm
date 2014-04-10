@@ -90,7 +90,7 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 @Entity
 public class Execution implements AttachmentHolder, IssueDetector, Identified, HasExecutionStatus, DenormalizedFieldHolder, BoundEntity {
 	
-	private static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
+	static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
 	
 	static {
 		Set<ExecutionStatus> set = new HashSet<ExecutionStatus>();
@@ -101,7 +101,7 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 		set.add(ExecutionStatus.READY);
 		set.add(ExecutionStatus.UNTESTABLE);
 		set.add(ExecutionStatus.SETTLED);
-		LEGAL_EXEC_STATUS = Collections.unmodifiableSet(set);		
+		LEGAL_EXEC_STATUS = Collections.unmodifiableSet(set);
 	}
 	
 	
@@ -638,4 +638,39 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 		return BindableEntity.EXECUTION;
 	}
 	
+	/**
+	 * will compute from scratch a status using a complete report.
+	 * 
+	 * @param report
+	 *            : ExecutionStatusReport.
+	 * @return : ExecutionStatus.
+	 * 
+	 */
+	public static ExecutionStatus computeNewStatus(ExecutionStatusReport report) {
+
+		ExecutionStatus newStatus = ExecutionStatus.READY;
+
+		if (report.has(ExecutionStatus.BLOCKED)) {
+			newStatus = ExecutionStatus.BLOCKED;
+
+		} else if (report.has(ExecutionStatus.FAILURE)) {
+			newStatus = ExecutionStatus.FAILURE;
+
+		} else if (report.allOf(ExecutionStatus.UNTESTABLE)) {
+			newStatus =ExecutionStatus.UNTESTABLE;
+
+		} else if (report.allOf(ExecutionStatus.SETTLED, ExecutionStatus.UNTESTABLE)) {
+			newStatus = ExecutionStatus.SETTLED;
+			
+		} else if (report.allOf(ExecutionStatus.SUCCESS, ExecutionStatus.UNTESTABLE, ExecutionStatus.SETTLED)) {
+			newStatus = ExecutionStatus.SUCCESS;
+
+		} else if (report.anyOf(ExecutionStatus.SUCCESS, ExecutionStatus.SETTLED)) {
+			newStatus = ExecutionStatus.RUNNING;
+
+		}
+
+		return newStatus;
+	}
+
 }

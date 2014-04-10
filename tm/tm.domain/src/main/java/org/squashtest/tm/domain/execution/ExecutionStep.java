@@ -76,7 +76,7 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 @Auditable
 public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepVisitor, Identified, HasExecutionStatus, DenormalizedFieldHolder, BoundEntity {
 	
-	private static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
+	static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
 	
 	private static final String PARAM_PREFIX = "\\Q${\\E";
 	private static final String PARAM_SUFFIX = "\\Q}\\E";
@@ -89,6 +89,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 		set.add(ExecutionStatus.BLOCKED);
 		set.add(ExecutionStatus.FAILURE);
 		set.add(ExecutionStatus.READY);
+		set.add(ExecutionStatus.SETTLED);
 		LEGAL_EXEC_STATUS = Collections.unmodifiableSet(set);		
 	}
 	
