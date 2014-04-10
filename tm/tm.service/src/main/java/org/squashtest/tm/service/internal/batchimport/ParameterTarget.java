@@ -118,5 +118,10 @@ public class ParameterTarget extends Target{
 	public void setPath(String path) {
 		owner.setPath(path);
 	}
+	
+	@Override
+	public String toString(){
+		return name;
+	}
 
 }

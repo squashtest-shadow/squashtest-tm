@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 
 import javax.inject.Inject;
 
@@ -39,6 +40,8 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
+import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.domain.testcase.DatasetParamValue;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
@@ -50,7 +53,12 @@ import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
+import org.squashtest.tm.service.internal.repository.DatasetDao;
+import org.squashtest.tm.service.internal.repository.DatasetParamValueDao;
+import org.squashtest.tm.service.internal.repository.ParameterDao;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
+import org.squashtest.tm.service.testcase.DatasetModificationService;
+import org.squashtest.tm.service.testcase.ParameterModificationService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
@@ -74,15 +82,33 @@ public class FacilityImpl implements Facility {
 	@Inject
 	private TestStepModificationService stepModificationService;
 	
-	@Inject
-	private CustomFieldDao cufDao;
 	
 	@Inject
 	private PrivateCustomFieldValueService cufvalueService;
 	
 	@Inject
 	private CallStepManagerService callstepService;
-		
+	
+	@Inject
+	private ParameterModificationService parameterService;
+	
+	@Inject
+	private DatasetModificationService datasetService;
+	
+	@Inject
+	private DatasetDao datasetDao;
+	
+	@Inject
+	private DatasetParamValueDao paramvalueDao;
+	
+	
+	@Inject
+	private ParameterDao paramDao;
+	
+	@Inject
+	private CustomFieldDao cufDao;
+	
+	
 	
 	private SimulationFacility simulator;
 	
@@ -255,6 +281,7 @@ public class FacilityImpl implements Facility {
 		if (! train.hasCriticalErrors()){
 			try{
 				doDeleteTestStep(target);
+				model.remove(target);
 			}
 			catch(Exception ex){
 				train.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );
@@ -265,30 +292,98 @@ public class FacilityImpl implements Facility {
 		return train;
 	}
 	
+	
 	@Override
 	public LogTrain createParameter(ParameterTarget target, Parameter param) {
-		throw new UnsupportedOperationException("not implemented yet");
+		
+		LogTrain train = simulator.createParameter(target, param);
+		
+		if (! train.hasCriticalErrors()){
+			try{
+				doCreateParameter(target, param);
+			}
+			catch(Exception ex){
+				train.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );
+				model.removeParameter(target);
+				LOGGER.error("Excel import : unexpected error while adding parameter "+target+" : ", ex);			
+			}
+		}
+		
+		return train;
 	}
 
+	
 	@Override
 	public LogTrain updateParameter(ParameterTarget target, Parameter param) {
-		throw new UnsupportedOperationException("not implemented yet");
+		
+		LogTrain train = simulator.updateParameter(target, param);
+		
+		if (! train.hasCriticalErrors()){
+			try{
+				doUpdateParameter(target, param);
+			}
+			catch(Exception ex){
+				train.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );				
+				LOGGER.error("Excel import : unexpected error while updating parameter "+target+" : ", ex);			
+			}
+		}
+		
+		return train;
 	}
 
 	@Override
 	public LogTrain deleteParameter(ParameterTarget target) {
-		throw new UnsupportedOperationException("not implemented yet");
+		
+		LogTrain train = simulator.deleteParameter(target);
+		
+		if (! train.hasCriticalErrors()){
+			try{
+				doDeleteParameter(target);
+			}
+			catch(Exception ex){
+				train.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );
+				model.addParameter(target);	// we must readd it because simulation facility (if all went well at the simulation level) would have removed it. Design flaw apparently.
+				LOGGER.error("Excel import : unexpected error while deleting parameter "+target+" : ", ex);			
+			}
+		}
+		
+		return train;
 	}
 
 	@Override
-	public LogTrain failsafeUpdateParameterValue(DatasetTarget dataset,
-			ParameterTarget param, String value) {
-		throw new UnsupportedOperationException("not implemented yet");
+	public LogTrain failsafeUpdateParameterValue(DatasetTarget dataset,	ParameterTarget param, String value) {
+		
+		LogTrain train = simulator.failsafeUpdateParameterValue(dataset, param, value);
+		
+		if (! train.hasCriticalErrors()){
+			try{
+				doFailsafeUpdateParameterValue(dataset, param, value);
+			}
+			catch(Exception ex){
+				train.addEntry( new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );
+				LOGGER.error("Excel import : unexpected error while setting parameter "+param+" in dataset "+dataset+" : ", ex);						
+			}
+		}
+		
+		return train;
 	}
 
 	@Override
 	public LogTrain deleteDataset(DatasetTarget dataset) {
-		throw new UnsupportedOperationException("not implemented yet");
+		
+		LogTrain train = simulator.deleteDataset(dataset);
+		
+		if (! train.hasCriticalErrors()){
+			try{
+				doDeleteDataset(dataset);
+			}
+			catch(Exception ex){
+				train.addEntry( new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );
+				LOGGER.error("Excel import : unexpected error while deleting dataset "+dataset+" in dataset "+dataset+" : ", ex);						
+			}
+		}
+		
+		return train;	
 	}
 	
 
@@ -372,7 +467,6 @@ public class FacilityImpl implements Facility {
 			testcaseModificationService.changeImportanceAuto(origId, newImportanceAuto);
 		}
 		
-		
 		// the custom field values now
 		
 		List<CustomFieldValue> cufs = cufvalueService.findAllCustomFieldValues(testCase);
@@ -383,7 +477,6 @@ public class FacilityImpl implements Facility {
 				v.setValue(newValue);
 			}
 		}
-		
 		
 		// restore the audit log 
 		restoreMetadata((AuditableMixin)testCase, metadata);
@@ -478,8 +571,102 @@ public class FacilityImpl implements Facility {
 		testcaseModificationService.removeStepFromTestCase(actual.getTestCase().getId(), actual.getId());
 	}
 	
+	private void doCreateParameter(ParameterTarget target, Parameter param){
+
+		// according to the spec this is exactly the same thing
+		doUpdateParameter(target, param);
+	}
+	
+	private void doUpdateParameter(ParameterTarget target, Parameter param){
+		
+		if (! model.doesParameterExists(target)){
+			Long testcaseId = model.getId(target.getOwner());
+			parameterService.addNewParameterToTestCase(param, testcaseId);
+		}
+		else{
+		
+			findParameter(target).setDescription(param.getDescription());
+		}
+		
+	}
+	
+	private void doDeleteParameter(ParameterTarget target){
+		Long testcaseId = model.getId(target.getOwner());
+		List<Parameter> allparams = parameterService.findAllforTestCase(testcaseId);
+		
+		Parameter param=null;
+		for (Parameter p : allparams){
+			if (p.getName().equals(target.getName())){
+				param = p;
+				break;				
+			}
+		}		
+		
+		parameterService.remove(param);
+	}
+	
+	
+	private void doFailsafeUpdateParameterValue(DatasetTarget dataset, ParameterTarget param, String value){
+		DatasetParamValue dpv = findParamValue(dataset, param);
+		dpv.setParamValue(value);
+	}
+	
+	private void doDeleteDataset(DatasetTarget dataset){
+		Dataset ds = findDataset(dataset);
+		datasetService.remove(ds);
+	}
 	
 	// ******************************** support methods ***********************
+	
+	
+	private Parameter findParameter(ParameterTarget param){
+		Long testcaseId = model.getId(param.getOwner());
+
+		Parameter found = paramDao.findParameterByNameAndTestCase(param.getName(), testcaseId);
+		
+		if (found != null){
+			return found;
+		}
+		else{
+			throw new NoSuchElementException("parameter "+param+" could not be found");
+		}
+	}
+
+	private Dataset findDataset(DatasetTarget dataset){
+		Long tcid = model.getId(dataset.getTestCase());
+		
+		Dataset found = datasetDao.findDatasetByTestCaseAndByName(tcid, dataset.getName());
+		
+		if (found == null){
+			return found;
+		}
+		else{
+			Dataset newds = new Dataset();
+			newds.setName(dataset.getName());
+			datasetService.persist(newds, tcid);
+			return newds;
+		}
+	}
+
+	private DatasetParamValue findParamValue(DatasetTarget dataset, ParameterTarget param){
+		
+		Dataset dbDs = findDataset(dataset);
+		Parameter dsParam = findParameter(param);
+		
+		for (DatasetParamValue dpv : dbDs.getParameterValues()){
+			if (dpv.getParameter().equals(dsParam)){
+				return dpv;
+			}
+		}
+		
+		// else we have to create it. Note that the services do not provide any facility for that 
+		// so we have to do it from scratch here. Tsss, lazy conception again.
+		DatasetParamValue dpv = new DatasetParamValue(dsParam, dbDs);
+		paramvalueDao.persist(dpv);
+		dbDs.addParameterValue(dpv);
+		
+		return dpv;
+	}
 	
 	
 	// because the service identifies cufs by their id, not their code

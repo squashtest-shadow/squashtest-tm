@@ -120,5 +120,10 @@ public class DatasetTarget extends Target {
 	public void setPath(String path) {
 		testCase.setPath(path);
 	}
+	
+	@Override
+	public String toString(){
+		return name;
+	}
 
 }

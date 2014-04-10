@@ -23,7 +23,6 @@ package org.squashtest.tm.service.internal.batchimport;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.validation.Validator;
 
 import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.Scope;
