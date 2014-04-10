@@ -47,32 +47,32 @@ import spock.lang.Specification
 
 class TestCaseModificationControllerTest extends Specification {
 	TestCaseModificationController controller = new TestCaseModificationController()
-	
+
 	TestCaseModificationService testCaseModificationService = Mock()
 	HttpServletRequest request = Mock()
 	InternationalizationHelper messageSource = Mock()
-	
+
 	TestCaseImportanceJeditableComboDataBuilder importanceComboBuilder = Mock()
 	Provider<TestCaseImportanceJeditableComboDataBuilder> importanceComboBuilderProvider = Mock()
 
 	TestCaseNatureJeditableComboDataBuilder natureComboBuilder = Mock()
 	Provider<TestCaseNatureJeditableComboDataBuilder> natureComboBuilderProvider = Mock()
-	
+
 	TestCaseTypeJeditableComboDataBuilder typeComboBuilder = Mock()
 	Provider<TestCaseTypeJeditableComboDataBuilder> typeComboBuilderProvider = Mock()
-	
+
 	TestCaseStatusJeditableComboDataBuilder statusComboBuilder = Mock()
 	Provider<TestCaseStatusJeditableComboDataBuilder> statusComboBuilderProvider = Mock()
-	
+
 	LevelLabelFormatter levelLabelFormatter = Mock()
 	Provider<LevelLabelFormatter> levelLabelFormatterProvider = Mock()
 
 	LevelLabelFormatterWithoutOrder levelLabelFormatterWithoutOrder = Mock()
 	Provider<LevelLabelFormatterWithoutOrder> levelLabelFormatterWithoutOrderProvider = Mock()
 	ServiceAwareAttachmentTableModelHelper attachmHelper = Mock()
-	
+
 	CustomFieldHelperService cufHelperService = Mock()
-	
+
 	def setup() {
 		controller.testCaseModificationService = testCaseModificationService
 		request.getCharacterEncoding() >> "ISO-8859-1"
@@ -89,21 +89,21 @@ class TestCaseModificationControllerTest extends Specification {
 
 		setupStatusComboBuilder()
 		controller.statusComboBuilderProvider = statusComboBuilderProvider
-		
-		setupLevelLabelFormatter()		
+
+		setupLevelLabelFormatter()
 		controller.levelLabelFormatterProvider = levelLabelFormatterProvider
-		
-		
+
+
 		setupLevelLabelFormatterWithoutOrder()
 		controller.levelLabelFormatterWithoutOrderProvider = levelLabelFormatterWithoutOrderProvider
-		
+
 		controller.cufHelperService = cufHelperService
-		
+
 		controller.attachmentHelper = attachmHelper;
-		
+
 		mockCallingTestCaseService()
 	}
-	
+
 	def mockCallingTestCaseService(){
 		PagedCollectionHolder holder = Mock()
 		holder.getFirstItemIndex() >> 0
@@ -132,14 +132,14 @@ class TestCaseModificationControllerTest extends Specification {
 
 		typeComboBuilderProvider.get() >> typeComboBuilder
 	}
-	
+
 	def setupStatusComboBuilder() {
 		statusComboBuilder.useLocale(_) >> statusComboBuilder
 		statusComboBuilder.selectItem(_) >> statusComboBuilder
 
 		statusComboBuilderProvider.get() >> statusComboBuilder
 	}
-	
+
 	def setupLevelLabelFormatter() {
 		levelLabelFormatter.useLocale(_) >> levelLabelFormatter
 
@@ -155,7 +155,7 @@ class TestCaseModificationControllerTest extends Specification {
 	def setupAttachmentHelper(){
 		attachmHelper.findPagedAttachments(_) >> Mock(DataTableModel)
 	}
-	
+
 
 	def "should return test case page fragment"() {
 		given:
@@ -197,7 +197,7 @@ class TestCaseModificationControllerTest extends Specification {
 		filter.sortOrder.code == "asc"
 	}
 
-	
+
 	def "should return general info fragment"() {
 		given:
 		TestCase testCase = Mock()
@@ -229,7 +229,7 @@ class TestCaseModificationControllerTest extends Specification {
 		testCase.getId() >> 10l
 		testCase.importance >> TestCaseImportance.HIGH
 		testCaseModificationService.findTestCaseWithSteps(10) >> testCase
-		
+
 		and:
 		importanceComboBuilder.buildMarshalled() >> "akemashite omedet�"
 
@@ -241,14 +241,14 @@ class TestCaseModificationControllerTest extends Specification {
 		0 * importanceComboBuilder.selectItem(TestCaseImportance.HIGH) >> importanceComboBuilder
 		mav.modelMap['testCaseImportanceComboJson'] == "akemashite omedet�"
 	}
-	
+
 	def "when showing a test case, should put test case importance label in the model"() {
 		given:
 		TestCase testCase = Mock()
 		testCase.getId() >> 10l
 		testCase.importance >> TestCaseImportance.HIGH
 		testCaseModificationService.findTestCaseWithSteps(10) >> testCase
-		
+
 		and:
 		levelLabelFormatter.formatLabel(TestCaseImportance.HIGH) >> "takai"
 

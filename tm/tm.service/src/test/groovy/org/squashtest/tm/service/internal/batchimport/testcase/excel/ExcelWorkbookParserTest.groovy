@@ -25,6 +25,11 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
 import org.squashtest.tm.exception.SheetCorruptedException;
+import org.squashtest.tm.service.internal.batchimport.CallStepInstruction;
+import org.squashtest.tm.service.internal.batchimport.DatasetInstruction;
+import org.squashtest.tm.service.internal.batchimport.ParameterInstruction;
+import org.squashtest.tm.service.internal.batchimport.StepInstruction;
+import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
 
 import spock.lang.Specification;
 import spock.lang.Unroll;
@@ -70,36 +75,117 @@ class ExcelWorkbookParserTest extends Specification {
 		//		"batchimport/testcase/duplicate-ws.xlsx" | DuplicateWorksheetException
 	}
 
-	def "should parse file and create test case target object"() {
+	def "should parse file and createinstructions"() {
 		given:
 		Resource xls = new ClassPathResource("batchimport/testcase/import-2269.xlsx")
 
 		and:
 		ExcelWorkbookParser parser = ExcelWorkbookParser.createParser(xls.file)
 
-		and:
-		def expectedPaths = (1..8).collect { "path/row$it" }
-		def expectedNums = (1..8).collect { it + 10 }
-		def expectedRefs = (1..8).collect { "ref$it" }
-		def expectedNames = (1..8).collect { "name$it" }
-		def expectedPres = (1..8).collect { "pre$it" }
-		def expectedDescs = (1..8).collect { "desc$it" }
-		def expectedCreators = (1..8).collect { "creator$it" }
-		def expectedCreateds = (1..8).collect { "2003-02-0$it" }
-		def expectedActions = [CREATE, CREATE, UPDATE, UPDATE, DELETE, DELETE, UPDATE, null]
-
 		when:
 		parser.parse().releaseResources()
 
-		then:
-		parser.instructions*.target.path == expectedPaths
-		parser.instructions*.testCase.reference == expectedRefs
-		parser.instructions*.testCase.name == expectedNames
-		parser.instructions*.testCase.prerequisite == expectedPres
-		parser.instructions*.testCase.description == expectedDescs
-		parser.instructions.collect { IsoDateUtils.formatIso8601Date(it.testCase.createdOn) }  == expectedCreateds
-		parser.instructions*.testCase.createdBy == expectedCreators
-		parser.instructions*.mode == expectedActions
+		and:
+		def testCaseInstructions = parser.instructions.findAll { it instanceof TestCaseInstruction }
 
+		and:
+		def testCasePaths = (1..8).collect { "path/row$it" }
+		def testCaseNums = (1..8).collect { it + 10 }
+		def testCaseRefs = (1..8).collect { "ref$it" }
+		def testCaseNames = (1..8).collect { "name$it" }
+		def testCasePres = (1..8).collect { "pre$it" }
+		def testCaseDescs = (1..8).collect { "desc$it" }
+		def testCaseCreators = (1..8).collect { "creator$it" }
+		def testCaseCreateds = (1..8).collect { "2003-02-0$it" }
+		def testCaseActions = [CREATE, CREATE, UPDATE, UPDATE, DELETE, DELETE, UPDATE, null]
+
+		// TODO add tests on cufs
+		// TODO add error case on enums
+		// TODO add string nums
+		// TODO add string dates
+
+		then:
+		testCaseInstructions*.target.path == testCasePaths
+		testCaseInstructions*.target.order == testCaseNums
+		testCaseInstructions*.testCase.reference == testCaseRefs
+		testCaseInstructions*.testCase.name == testCaseNames
+		testCaseInstructions*.testCase.prerequisite == testCasePres
+		testCaseInstructions*.testCase.description == testCaseDescs
+		testCaseInstructions.collect { IsoDateUtils.formatIso8601Date(it.testCase.createdOn) }  == testCaseCreateds
+		testCaseInstructions*.testCase.createdBy == testCaseCreators
+		testCaseInstructions*.mode == testCaseActions
+
+		when:
+		def stepInstructions = parser.instructions.findAll { it instanceof StepInstruction }
+
+
+		and:
+		def stepPaths = (1..8).collect { "owner/path/$it" }
+		def stepNums = (1..8).collect { it + 9 } // indexes are 0-based while 1-based in xls
+		def stepActions = (1..8).collect { "action$it" }
+		def stepReactions = (1..8).collect { "result$it" }
+		def stepModes = [CREATE, CREATE, UPDATE, UPDATE, DELETE, DELETE, UPDATE, null]
+
+		then:
+		stepInstructions*.target.path == stepPaths
+		stepInstructions*.target.index == stepNums
+		stepInstructions*.testStep.action == stepActions
+		stepInstructions*.testStep.expectedResult == stepReactions
+		stepInstructions*.mode == stepModes
+
+		when:
+		def paramInstructions = parser.instructions.findAll { it instanceof ParameterInstruction }
+
+		and:
+		def paramPaths = (1..8).collect { "owner/path/$it" }
+		def paramNames = (1..8).collect { "name$it" }
+		def paramDescs = (1..8).collect { "desc$it" }
+		def paramActions = [CREATE, CREATE, UPDATE, UPDATE, DELETE, DELETE, UPDATE, null]
+
+		then:
+		paramInstructions*.target.path == paramPaths
+		paramInstructions*.parameter.name == paramNames
+		paramInstructions*.parameter.description == paramDescs
+		paramInstructions*.mode == paramActions
+
+		when:
+		def datasetInstructions = parser.instructions.findAll { it instanceof DatasetInstruction }
+
+		and:
+		def datasetPaths = (1..8).collect { "owner/path/$it" }
+		def datasetParamOwnerPaths = (1..8).collect { "param/owner/path/$it" }
+		def datasetNames = (1..8).collect { "name$it" }
+		def datasetParamNames = (1..8).collect { "paramName$it" }
+		def datasetValues = (1..8).collect { "value$it" }
+		def datasetActions = [CREATE, CREATE, UPDATE, UPDATE, DELETE, DELETE, UPDATE, null]
+
+		then:
+		datasetInstructions*.target.path == datasetPaths
+		datasetInstructions*.target.name == datasetNames
+		datasetInstructions*.datasetValue.parameterOwnerPath == datasetParamOwnerPaths
+		datasetInstructions*.datasetValue.parameterName == datasetParamNames
+		datasetInstructions*.datasetValue.value == datasetValues
+		datasetInstructions*.mode == datasetActions
+
+	}
+
+	def "should parse file call step instructions"() {
+		given:
+		Resource xls = new ClassPathResource("batchimport/testcase/call-steps.xlsx")
+
+		and:
+		ExcelWorkbookParser parser = ExcelWorkbookParser.createParser(xls.file)
+
+		when:
+		parser.parse().releaseResources()
+		def stepInstructions = parser.instructions.findAll { it instanceof CallStepInstruction }
+
+		and:
+		def stepPaths = (1..3).collect { "owner/path/$it" }
+		def stepActions = (1..3).collect { "call/path/$it" }
+
+		then:
+		stepInstructions*.target.path == stepPaths
+		stepInstructions*.calledTC.path == stepActions
 	}
 }

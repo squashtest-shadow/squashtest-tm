@@ -149,8 +149,8 @@ public class ExcelWorkbookParser {
 					"No workbook available for parsing. Maybe you released this parser's resources by mistake.");
 		}
 
-		for (TemplateWorksheet ws : TemplateWorksheet.values()) {
-			processWorksheet(ws);
+		for (WorksheetDef<?> wd : wmd.getWorksheetDefs()) {
+			processWorksheet(wd);
 		}
 
 		LOGGER.debug("Done parsing test-cases workbook");
@@ -159,13 +159,12 @@ public class ExcelWorkbookParser {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void processWorksheet(TemplateWorksheet worksheet) {
-		LOGGER.debug("Processing worksheet {}", worksheet);
+	private void processWorksheet(WorksheetDef<?> worksheetDef) {
+		LOGGER.debug("Processing worksheet {}", worksheetDef.getWorksheetType());
 
-		WorksheetDef<?> worksheetDef = wmd.getWorksheetDef(worksheet);
 		Sheet sheet = workbook.getSheet(worksheetDef.getSheetName());
 
-		InstructionBuilder<?, ?> instructionBuilder = instructionBuilderFactoryByWorksheet.get(worksheet).create(
+		InstructionBuilder<?, ?> instructionBuilder = instructionBuilderFactoryByWorksheet.get(worksheetDef.getWorksheetType()).create(
 				(WorksheetDef) worksheetDef); // useless (WorksheetDef) cast required for compiler not to whine
 
 		for (int i = 1; i <= sheet.getLastRowNum(); i++) {
@@ -173,7 +172,7 @@ public class ExcelWorkbookParser {
 			Row row = sheet.getRow(i);
 
 			Instruction instruction = instructionBuilder.build(row);
-			instructionsByWorksheet.get(worksheet).add(instruction);
+			instructionsByWorksheet.get(worksheetDef.getWorksheetType()).add(instruction);
 			instructions.add(instruction);
 		}
 	}

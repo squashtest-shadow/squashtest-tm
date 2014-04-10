@@ -22,6 +22,7 @@
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,7 @@ import java.util.Map;
  * 
  */
 public class WorkbookMetaData {
-	private Map<TemplateWorksheet, WorksheetDef<? extends TemplateColumn>> worksheetDefs = new HashMap<TemplateWorksheet, WorksheetDef<? extends TemplateColumn>>();
+	private Map<TemplateWorksheet, WorksheetDef<? extends TemplateColumn>> worksheetDefByType = new HashMap<TemplateWorksheet, WorksheetDef<? extends TemplateColumn>>();
 
 	/**
 	 * should not be called after build time / validation
@@ -41,7 +42,7 @@ public class WorkbookMetaData {
 	 * @param worksheetDef
 	 */
 	void addWorksheetDef(WorksheetDef<? extends TemplateColumn> worksheetDef) {
-		worksheetDefs.put(worksheetDef.getWorksheetType(), worksheetDef);
+		worksheetDefByType.put(worksheetDef.getWorksheetType(), worksheetDef);
 
 	}
 
@@ -55,7 +56,7 @@ public class WorkbookMetaData {
 	public void validate() throws TemplateMismatchException {
 		List<TemplateMismatch> mismatches = new ArrayList<TemplateMismatch>();
 
-		for (WorksheetDef<?> wd : worksheetDefs.values()) {
+		for (WorksheetDef<?> wd : worksheetDefByType.values()) {
 			try {
 				wd.validate();
 			} catch (TemplateMismatchException e) {
@@ -76,6 +77,10 @@ public class WorkbookMetaData {
 	 */
 	@SuppressWarnings("unchecked")
 	public <COL extends TemplateColumn> WorksheetDef<COL> getWorksheetDef(TemplateWorksheet ws) {
-		return (WorksheetDef<COL>) worksheetDefs.get(ws);
+		return (WorksheetDef<COL>) worksheetDefByType.get(ws);
+	}
+
+	public Collection<WorksheetDef<? extends TemplateColumn>> getWorksheetDefs() {
+		return worksheetDefByType.values();
 	}
 }

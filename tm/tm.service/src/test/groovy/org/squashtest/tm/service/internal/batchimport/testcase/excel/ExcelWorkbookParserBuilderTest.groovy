@@ -52,18 +52,18 @@ class ExcelWorkbookParserBuilderTest extends Specification {
 		WorkbookMetaData wmd = builder.buildMetaData(wb)
 
 		then:
-		wmd.worksheetDefs[TEST_CASES_SHEET]
-		wmd.worksheetDefs[TEST_CASES_SHEET].stdColumnDefs.values()*.type as Set == TestCaseSheetColumn.values() as Set
-		wmd.worksheetDefs[TEST_CASES_SHEET].customFieldDefs*.code as Set == ["<CODE1>", "<CODE2>"] as Set
-		wmd.worksheetDefs[STEPS_SHEET]
-		wmd.worksheetDefs[STEPS_SHEET].stdColumnDefs.values()*.type as Set == StepSheetColumn.values() as Set
-		wmd.worksheetDefs[STEPS_SHEET].customFieldDefs*.code == ["<CODE>"]
-		wmd.worksheetDefs[PARAMETERS_SHEET]
-		wmd.worksheetDefs[PARAMETERS_SHEET].stdColumnDefs.values()*.type as Set == ParameterSheetColumn.values() as Set
-		wmd.worksheetDefs[DATASETS_SHEET]
-		wmd.worksheetDefs[DATASETS_SHEET].stdColumnDefs.values()*.type as Set == DatasetSheetColumn.values() as Set
+		wmd.worksheetDefByType[TEST_CASES_SHEET]
+		wmd.worksheetDefByType[TEST_CASES_SHEET].stdColumnDefs.values()*.type as Set == TestCaseSheetColumn.values() as Set
+		wmd.worksheetDefByType[TEST_CASES_SHEET].customFieldDefs*.code as Set == ["<CODE1>", "<CODE2>"] as Set
+		wmd.worksheetDefByType[STEPS_SHEET]
+		wmd.worksheetDefByType[STEPS_SHEET].stdColumnDefs.values()*.type as Set == StepSheetColumn.values() as Set
+		wmd.worksheetDefByType[STEPS_SHEET].customFieldDefs*.code == ["<CODE>"]
+		wmd.worksheetDefByType[PARAMETERS_SHEET]
+		wmd.worksheetDefByType[PARAMETERS_SHEET].stdColumnDefs.values()*.type as Set == ParameterSheetColumn.values() as Set
+		wmd.worksheetDefByType[DATASETS_SHEET]
+		wmd.worksheetDefByType[DATASETS_SHEET].stdColumnDefs.values()*.type as Set == DatasetSheetColumn.values() as Set
 
-		(wmd.worksheetDefs[TEST_CASES_SHEET].stdColumnDefs.values().collect{ it.type.name()}).contains("ACTION")
+		(wmd.worksheetDefByType[TEST_CASES_SHEET].stdColumnDefs.values().collect{ it.type.name()}).contains("ACTION")
 
 		cleanup:
 		IOUtils.closeQuietly(is);
