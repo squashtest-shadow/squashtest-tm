@@ -61,17 +61,6 @@ public interface Facility {
 	
 	
 	/**
-	 * Will update the value for the given parameter in the given dataset. If the dataset doesn't exist for this dataset the method fails.
-	 * If the parameter doesn't exist or is not available to this dataset the method fails. In all cases the methods returns a log.
-	 * 
-	 * @param dataset
-	 * @param param
-	 * @param value
-	 * @return
-	 */
-	LogTrain strictUpdateParameterValue (DatasetTarget dataset, ParameterTarget param, String value);
-	
-	/**
 	 * Deletes a dataset.
 	 * 
 	 * @param dataset

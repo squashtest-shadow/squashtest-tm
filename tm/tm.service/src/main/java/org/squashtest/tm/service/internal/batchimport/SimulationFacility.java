@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.batchimport;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.validation.Validator;
 
 import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.Scope;
@@ -416,12 +417,18 @@ public class SimulationFacility implements Facility{
 		LogTrain logs;		
 
 		// 1 - basic checks
-		logs = entityValidator.basicParameterChecks(target, param);
+		logs = entityValidator.basicParameterChecks(target);
 
 		// 2 - does it already exists ?
 		if (model.doesParameterExists(target)){
-			logs.addEntry( new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_PARAMETER_ALREADY_EXISTS, null, Messages.IMPACT_PARAM_UPDATED, null) );			
+			logs.addEntry( new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_PARAMETER_ALREADY_EXISTS, Messages.IMPACT_PARAM_UPDATED) );			
 		}
+		
+		// 3 - is the user approved ?
+		LogEntry hasNoPermission = checkPermissionOnProject(PERM_WRITE, target.getOwner());
+		if ( hasNoPermission != null){
+			logs.addEntry( hasNoPermission );
+		}	
 		
 		// if no problems, add it to the model (the model is double-insertion proof)
 		if (! logs.hasCriticalErrors()){
@@ -438,13 +445,20 @@ public class SimulationFacility implements Facility{
 		LogTrain logs;		
 
 		// 1 - basic checks
-		logs = entityValidator.basicParameterChecks(target, param);
+		logs = entityValidator.basicParameterChecks(target);
 
 		// 2 - does it exists ?
 		if (! model.doesParameterExists(target)){
-			logs.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PARAMETER_NOT_FOUND) );			
+			logs.addEntry( new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_PARAMETER_NOT_FOUND, Messages.IMPACT_PARAM_CREATED) );	
 		}
 		
+		// 3 - is the user approved ?
+		LogEntry hasNoPermission = checkPermissionOnProject(PERM_WRITE, target.getOwner());
+		if ( hasNoPermission != null){
+			logs.addEntry( hasNoPermission );
+		}	
+		
+		// no need to update the model because because the existence of that parameter is unaffected
 		
 		return logs;
 		
@@ -453,31 +467,98 @@ public class SimulationFacility implements Facility{
 
 	@Override
 	public LogTrain deleteParameter(ParameterTarget target) {
-		throw new UnsupportedOperationException("not implemented yet");
+		
+		LogTrain logs = new LogTrain(); 		
+
+		// 1 - does it exists ?
+		if (! model.doesParameterExists(target)){
+			logs.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PARAMETER_NOT_FOUND) );
+		}
+		
+		// 2 - is the user approved ?
+		LogEntry hasNoPermission = checkPermissionOnProject(PERM_WRITE, target.getOwner());
+		if ( hasNoPermission != null){
+			logs.addEntry( hasNoPermission );
+		}
+		
+		// if all is ok let's proceed
+		if (! logs.hasCriticalErrors()){
+			model.removeParameter(target);
+		}
+		
+		return logs;
 	}
 
 
 	@Override
 	public LogTrain failsafeUpdateParameterValue(DatasetTarget dataset,
 			ParameterTarget param, String value) {
-		throw new UnsupportedOperationException("not implemented yet");
-	}
-
-
-	@Override
-	public LogTrain strictUpdateParameterValue(DatasetTarget dataset,
-			ParameterTarget param, String value) {
-		throw new UnsupportedOperationException("not implemented yet");
+		
+		LogTrain logs;
+		boolean createsDSonthefly=false;
+		
+		// 1 - is the dataset correctly identifed ? 
+		logs = entityValidator.basicDatasetCheck(dataset);
+		
+		// 2 - is the parameter correctly identified ?
+		logs.append( entityValidator.basicParameterChecks(param) );
+		
+		// 3 - does the dataset exists ?
+		if (! model.doesDatasetExists(dataset)){
+			logs.addEntry( new LogEntry(dataset, ImportStatus.WARNING, Messages.ERROR_DATASET_NOT_FOUND, Messages.IMPACT_DATASET_CREATED) );
+		}
+		
+		// 4 - is such parameter available for this dataset ?
+		if (! model.isParamInDataset(param, dataset)){
+			logs.addEntry (new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_DATASET_PARAMETER_MISMATCH));
+		}
+		
+		// 5 - is the user allowed to do so ?
+		LogEntry hasNoPermission = checkPermissionOnProject(PERM_WRITE, dataset.getTestCase());
+		if ( hasNoPermission != null){
+			logs.addEntry( hasNoPermission );
+		}
+		
+		if (!logs.hasCriticalErrors()){
+			if (createsDSonthefly){
+				model.addDataset(dataset);
+			}
+		}
+		
+		return logs;
 	}
 
 
 	@Override
 	public LogTrain deleteDataset(DatasetTarget dataset) {
-		throw new UnsupportedOperationException("not implemented yet");
+		
+		LogTrain logs;
+		
+		// 1 - is the dataset correctly identified ?
+		logs = entityValidator.basicDatasetCheck(dataset);
+		
+		// 2 - does the dataset exists ? 
+		if (! model.doesDatasetExists(dataset)){
+			logs.addEntry( new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_DATASET_NOT_FOUND) );
+		}
+		
+		// 3 - has the user the required privilege ?
+		LogEntry hasNoPermission = checkPermissionOnProject(PERM_WRITE, dataset.getTestCase());
+		if ( hasNoPermission != null){
+			logs.addEntry( hasNoPermission );
+		}
+		
+		// 4 - if ok, update the model
+		if (! logs.hasCriticalErrors()){
+			model.removeDataset(dataset);
+		}
+
+		return logs;
+	
 	}
 
 	
-	
+	// **************************** private utilities *****************************************
 	
 	
 	// checks permission on a project that may exist or not.

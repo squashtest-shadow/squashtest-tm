@@ -287,12 +287,6 @@ public class FacilityImpl implements Facility {
 	}
 
 	@Override
-	public LogTrain strictUpdateParameterValue(DatasetTarget dataset,
-			ParameterTarget param, String value) {
-		throw new UnsupportedOperationException("not implemented yet");
-	}
-
-	@Override
 	public LogTrain deleteDataset(DatasetTarget dataset) {
 		throw new UnsupportedOperationException("not implemented yet");
 	}

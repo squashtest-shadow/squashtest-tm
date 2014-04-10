@@ -173,7 +173,7 @@ class EntityValidator {
 		
 	}
 	
-	LogTrain basicParameterChecks(ParameterTarget target, Parameter parameter){
+	LogTrain basicParameterChecks(ParameterTarget target){
 		
 		LogTrain logs = new LogTrain();
 		String[] fieldNameErrorArgs = new String[]{"TC_PARAM_NAME"};	// that variable is simple convenience for logging
@@ -198,7 +198,44 @@ class EntityValidator {
 		}	
 		
 		// 4 - name has length between 1 and 255
-		String name = parameter.getName();
+		String name = target.getName();
+		if (name != null && name.length() > 255){
+			logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_MAX_SIZE, fieldNameErrorArgs, Messages.IMPACT_MAX_SIZE, null));
+		}
+		if (StringUtils.isBlank(name)){
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_FIELD_MANDATORY, fieldNameErrorArgs));
+		}
+		
+		return logs;
+		
+	}
+	
+	LogTrain basicDatasetCheck(DatasetTarget target){
+
+		LogTrain logs = new LogTrain();
+		String[] fieldNameErrorArgs = new String[]{"TC_DATASET_NAME"};	// that variable is simple convenience for logging
+
+		TestCaseTarget testCase = target.getTestCase();
+		
+		// 1 - the test case must be valid
+		if (! testCase.isWellFormed()){
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MALFORMED_PATH));
+		}
+		
+		// 2 - the test case must exist
+		TargetStatus tcStatus = model.getStatus(testCase);
+		if (tcStatus.status == TO_BE_DELETED || tcStatus.status == NOT_EXISTS){
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_TC_NOT_FOUND));
+		}
+		
+		// 3 - the project actually exists
+		TargetStatus projectStatus = model.getProjectStatus(target.getProject()); 
+		if (projectStatus.getStatus() != Existence.EXISTS){
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PROJECT_NOT_EXIST));
+		}	
+		
+		// 4 - name has length between 1 and 255
+		String name = target.getName();
 		if (name != null && name.length() > 255){
 			logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_MAX_SIZE, fieldNameErrorArgs, Messages.IMPACT_MAX_SIZE, null));
 		}
