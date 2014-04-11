@@ -121,7 +121,7 @@ define(['jquery', 'jquery.squash.formdialog', 'jform'], function($){
 		},
 		
 		reset : function(){
-			this.element.find('input').val('');
+			this.element.find('input:text').val('');
 			this.setState('parametrization');
 		},
 		

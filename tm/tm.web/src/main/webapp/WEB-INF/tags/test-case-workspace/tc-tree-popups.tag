@@ -188,7 +188,7 @@
 				<div class="std-padding std-margin-top">
 				
 					<div class="grey-round-panel snap-left" style="width:43%;">
-						<input type="radio" name="format" data-val="xls" class="centered" checked="checked"/><span style="text-decoration:underline;">Excel</span>
+						<input type="radio" name="importFormat" value="xls" class="centered" checked="checked"/><span style="text-decoration:underline;">Excel</span>
 						<p class="nota-bene">
 							<f:message key="test-case.import.dialog.excel.description"/>
 						</p>
@@ -198,7 +198,7 @@
 					</div>
 				
 					<div class="grey-round-panel snap-right" style="width:43%;">
-						<input type="radio" name="format" data-val="zip" class="centered"/><span style="text-decoration:underline;">ZIP</span>
+						<input type="radio" name="importFormat" value="zip" class="centered"/><span style="text-decoration:underline;">ZIP</span>
 						<p class="nota-bene">
 							<f:message key="test-case.import.dialog.zip.description"/>
 						</p>			

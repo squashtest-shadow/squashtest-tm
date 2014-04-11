@@ -235,7 +235,7 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui',
 		cleanup : function() {
 			var elt = this.element;
 			
-			elt.find(':input,textarea').not('select').each(function() {
+			elt.find(':input,textarea').not('select').not(':input[type=radio]').each(function() {
 				$(this).val('');
 			});
 			

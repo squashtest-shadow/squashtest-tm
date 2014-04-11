@@ -64,8 +64,13 @@ define(['jquery', 'tree', 'workspace/workspace.import-popup'], function($, zetre
 				}
 			});
 			
-			this.element.on('change', 'input[name="format"]', function(){
-				var value = 'toto';
+			this.element.on('change', 'input[name="importFormat"]', function(){
+				var value = $(this).val();
+				if(value === "zip"){
+					$('#simulateButton').prop('disabled', true);
+				} else {
+					$('#simulateButton').prop('disabled', false);
+				}
 			});
 			
 			this.element.on('change', 'select[name="projectId"]', function(){
@@ -88,8 +93,8 @@ define(['jquery', 'tree', 'workspace/workspace.import-popup'], function($, zetre
 		});
 		
 		// ******** additional processing ***********
-		
-
+		$($('input[name="importFormat"]')[0]).attr('checked', 'checked');
+		$('#simulateButton').prop('disabled', false);
 	}
 	
 	return {

@@ -151,7 +151,7 @@ public class TestCaseLibraryNavigationController extends
 			@RequestParam("archive") MultipartFile archive,
 			@RequestParam("projectId") Long projectId, 
 			@RequestParam("zipEncoding") String zipEncoding,
-			@RequestParam("format") String format)
+			@RequestParam("importFormat") String format)
 			throws IOException {
 
 		InputStream stream = archive.getInputStream();
