@@ -20,18 +20,20 @@
  */
 package org.squashtest.tm.service.internal.batchimport
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-
-import org.junit.runner.RunWith;
-import org.spockframework.runtime.Sputnik;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.service.DbunitServiceSpecification;
-import org.unitils.dbunit.annotation.DataSet;
 import static org.squashtest.tm.service.internal.batchimport.Model.Existence.*
 import static org.squashtest.tm.service.internal.batchimport.Model.StepType.*
 
-import spock.unitils.UnitilsSupport;
+import javax.inject.Inject
+import javax.inject.Provider
+
+import org.junit.runner.RunWith
+import org.spockframework.runtime.Sputnik
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.service.DbunitServiceSpecification
+import org.unitils.dbunit.annotation.DataSet
+
+import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
 @Transactional
@@ -96,6 +98,7 @@ class ModelIT  extends DbunitServiceSpecification {
 			
 			// now check the call graph
 			model.isCalled(new TestCaseTarget("/Test Project-1/test 3"))
+			model.isCalledBy(new TestCaseTarget("/Test Project-1/test 3"), new TestCaseTarget("/Test Project-1/dossier 2/0 test case \\/ with slash"))
 			
 	}
 	
@@ -106,7 +109,7 @@ class ModelIT  extends DbunitServiceSpecification {
 			
 		given :
 			def targets = createTestCaseTargets("/Test Project-1/test 3")
-		
+			
 		when :
 			def status = model.getStatus(targets[0])
 		
