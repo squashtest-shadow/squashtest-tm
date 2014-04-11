@@ -26,7 +26,6 @@ import static org.squashtest.tm.service.internal.batchimport.testcase.excel.Test
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_REFERENCE;
 
 import org.apache.commons.lang.StringUtils;
-import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.importer.ImportStatus;
@@ -81,9 +80,11 @@ class EntityValidator {
 		}
 		
 		// 3 - the project actually exists
-		TargetStatus projectStatus = model.getProjectStatus(target.getProject()); 
-		if (projectStatus.getStatus() != Existence.EXISTS){
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PROJECT_NOT_EXIST));
+		if (target.isWellFormed()){
+			TargetStatus projectStatus = model.getProjectStatus(target.getProject()); 
+			if (projectStatus.getStatus() != Existence.EXISTS){
+				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PROJECT_NOT_EXIST));
+			}
 		}
 		
 		// 4 - name has length between 0 and 255		

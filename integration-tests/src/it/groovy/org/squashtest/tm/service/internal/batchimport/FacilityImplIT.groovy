@@ -27,7 +27,12 @@ import org.hibernate.SessionFactory
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseNature
+import org.squashtest.tm.domain.testcase.TestCaseStatus
 import org.squashtest.tm.service.DbunitServiceSpecification
+import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
+import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService
 import org.unitils.dbunit.annotation.DataSet
 
 import spock.unitils.UnitilsSupport
@@ -38,6 +43,62 @@ import spock.unitils.UnitilsSupport
 @RunWith(Sputnik)
 public class FacilityImplIT extends DbunitServiceSpecification {
 
+/*
+	To walk you through that dataset :
+	
+1/ test cases and step types :
+------------------------------
+
+/Test Project-1/test 3 								: [Action Call Action]
+/Test Project-1/dossier 1/test case 1 				: [Action Action Action]
+/Test Project-1/dossier 1/test case 2   			: [Action Action]
+/Test Project-1/dossier 2/0 test case \/ with slash : [Action Action Call]
+/autre project/test A								: [Call Action Call]
+/autre project/folder/test B						: [Action Action]
+
+
+2/ which test case calls which one :
+------------------------------------
+
+/autre project/test A								==> /Test Project-1/dossier 1/test case 2
+/autre project/test A								==> /Test Project-1/dossier 2/0 test case \/ with slash
+/Test Project-1/dossier 2/0 test case \/ with slash ==> /Test Project-1/test 3
+/Test Project-1/test 3								==> /Test Project-1/dossier 1/test case 1
+
+
+3/ test cases and parameters :
+------------------------------
+
+/Test Project-1/test 3 								: param_test_3, reparam_test_3
+/Test Project-1/dossier 1/test case 1 				:
+/Test Project-1/dossier 1/test case 2   			:
+/Test Project-1/dossier 2/0 test case \/ with slash : param_test_0
+/autre project/test A								: param_A
+/autre project/folder/test B						:
+
+
+4/ test cases and datasets :
+-----------------------------
+
+
+/Test Project-1/dossier 2/0 test case \/ with slash : dataset_with_slash
+/autre project/test A								: ultimate ds
+
+
+5/ custom fields :
+
+text test case : text, TXT_TC, mandatory -> (proj1, test case)
+check test case : checkbox, CK_TC, optional ->  (proj1, test case), (proj2, test case)
+DATE : date_picker, DATE, optional -> (proj2, test case), (proj2, test step)
+list step : dropdown list, LST_ST, optional -> (proj1, test step), (proj2, test step)
+
+*/
+	
+	@Inject
+	private TestCaseLibraryFinderService finder;
+	
+	@Inject
+	private CustomFieldValueFinderService cufFinder;
 	
 	@Inject
 	private SessionFactory sessionFactory
@@ -68,20 +129,53 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 	}
 		
 	
+	def commit(){
+		getSession().getTransaction().commit()
+	}
+	
+	def flush(){
+		getSession().flush()
+	}
 	
 	@DataSet("batchimport.sandbox.xml")
-	def "should return a failure because of basic checks"(){
+	def "should create a new test case"(){
 		
 		given :
-			true
-		
+			TestCaseTarget target = new TestCaseTarget("/Test Project-1/dossier 2/mytestcase")
+			TestCase tc = new TestCase(name:"mytestcase", description :"<p>ouaaahpaaa</p>", nature: TestCaseNature.SECURITY_TESTING)
+			def cufs = [
+				"TXT_TC" : "shazam",
+				"CK_TC" : "false",
+				"inexistant" : "azeaer"	
+			]
+			
+			
 		when :
-			true
-		
+			LogTrain logtrain = impl.createTestCase(target, tc, cufs)
+			
+			flush()
+			
 		then :
-			true
 		
-		
+			logtrain.hasCriticalErrors() == false
+			
+			TestCase t = (TestCase)finder.findNodesByPath(target.path)
+			
+			def storedcufs = cufFinder.findAllCustomFieldValues t
+			
+			
+			t.id != null
+			t.name == "mytestcase"
+			t.description == "<p>ouaaahpaaa</p>"
+			t.nature == TestCaseNature.SECURITY_TESTING
+			t.status == TestCaseStatus.WORK_IN_PROGRESS 
+			
+			storedcufs.size() == 2
+			storedcufs.find { it.customField.code == "TXT_TC" }.value == "shazam"
+			storedcufs.find { it.customField.code == "CK_TC" }.value == "false"
+
 	}
+	
+
 		
 }

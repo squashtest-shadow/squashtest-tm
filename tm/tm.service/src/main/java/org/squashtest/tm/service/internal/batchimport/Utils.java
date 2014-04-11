@@ -105,7 +105,7 @@ final class Utils {
 	
 	
 	static boolean arePathsAndNameConsistents(String path, String name){
-		String pathName = extractProjectName(path);
+		String pathName = extractTestCaseName(path);
 		return pathName.equals(name);
 	}
 	

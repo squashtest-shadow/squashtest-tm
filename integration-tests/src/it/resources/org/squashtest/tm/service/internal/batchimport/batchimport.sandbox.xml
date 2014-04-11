@@ -1,4 +1,55 @@
 <?xml version='1.0' encoding='UTF-8'?>
+
+<!-- 
+	To walk you through that dataset :
+	
+1/ test cases and step types :
+==================================
+
+/Test Project-1/test 3 								: [Action Call Action]
+/Test Project-1/dossier 1/test case 1 				: [Action Action Action]
+/Test Project-1/dossier 1/test case 2   			: [Action Action]
+/Test Project-1/dossier 2/0 test case \/ with slash : [Action Action Call]
+/autre project/test A								: [Call Action Call]
+/autre project/folder/test B						: [Action Action]
+
+
+2/ which test case calls which one :
+==================================
+
+/autre project/test A								==> /Test Project-1/dossier 1/test case 2 
+/autre project/test A								==> /Test Project-1/dossier 2/0 test case \/ with slash
+/Test Project-1/dossier 2/0 test case \/ with slash ==> /Test Project-1/test 3
+/Test Project-1/test 3								==> /Test Project-1/dossier 1/test case 1
+
+
+3/ test cases and parameters : 
+==================================
+
+/Test Project-1/test 3 								: param_test_3, reparam_test_3
+/Test Project-1/dossier 1/test case 1 				: 
+/Test Project-1/dossier 1/test case 2   			: 
+/Test Project-1/dossier 2/0 test case \/ with slash : param_test_0
+/autre project/test A								: param_A
+/autre project/folder/test B						: 
+
+
+4/ test cases and datasets :
+==================================
+
+
+/Test Project-1/dossier 2/0 test case \/ with slash : dataset_with_slash
+/autre project/test A								: ultimate ds
+
+5/ custom fields :
+==================================
+
+text test case : text, TXT_TC, mandatory -> (proj1, test case)
+check test case : checkbox, CK_TC, optional ->  (proj1, test case), (proj2, test case)
+DATE : date_picker, DATE, optional -> (proj2, test case), (proj2, test step)
+list step : dropdown list, LST_ST, optional -> (proj1, test step), (proj2, test step)
+
+ -->
 <dataset>
   <acl_class ID="1" CLASSNAME="org.squashtest.tm.domain.project.Project"/>
   <acl_class ID="2" CLASSNAME="org.squashtest.tm.domain.requirement.RequirementLibrary"/>

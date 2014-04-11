@@ -581,6 +581,7 @@ public class FacilityImpl implements Facility {
 		
 		if (! model.doesParameterExists(target)){
 			Long testcaseId = model.getId(target.getOwner());
+			truncate(param);
 			parameterService.addNewParameterToTestCase(param, testcaseId);
 		}
 		else{
@@ -608,7 +609,8 @@ public class FacilityImpl implements Facility {
 	
 	private void doFailsafeUpdateParameterValue(DatasetTarget dataset, ParameterTarget param, String value){
 		DatasetParamValue dpv = findParamValue(dataset, param);
-		dpv.setParamValue(value);
+		String trValue = truncate(value, 255);
+		dpv.setParamValue(trValue);
 	}
 	
 	private void doDeleteDataset(DatasetTarget dataset){
@@ -643,6 +645,7 @@ public class FacilityImpl implements Facility {
 		else{
 			Dataset newds = new Dataset();
 			newds.setName(dataset.getName());
+			truncate(newds);
 			datasetService.persist(newds, tcid);
 			return newds;
 		}
@@ -677,17 +680,34 @@ public class FacilityImpl implements Facility {
 		
 		for (Entry<String, String> origCuf : origCufs.entrySet()){
 			String cufCode = origCuf.getKey();
+			
 			if (! cufIdByCode.containsKey(cufCode)){
+				
 				CustomField customField = cufDao.findByCode(cufCode);
-				cufIdByCode.put(cufCode, customField.getId());
+
+				// that bit of code checks that if the custom field doesn't exist, the hashmap entry contains
+				// a dummy value for this code.
+				Long id = null;
+				if (customField != null){
+					id = customField.getId();
+				}
+	
+				cufIdByCode.put(cufCode, id);
 			}
+			
+			// now add to our map the id of the custom field, except if null : the custom field 
+			// does not exist and therefore wont be included.
 			Long cufId = cufIdByCode.get(cufCode);
-			result.put(cufId, origCuf.getValue());
+			if (cufId != null){
+				result.put(cufId, origCuf.getValue());
+			}
 		}
 		
 		return result;
 		
 	}
+	
+	
 
 	private AuditableSupport saveAuditMetadata(AuditableMixin mixin){
 		AuditableSupport support = new AuditableSupport();
@@ -701,24 +721,42 @@ public class FacilityImpl implements Facility {
 	private void truncate(TestCase testCase, Map<String, String> cufValues){
 		String name = testCase.getName();
 		if (name != null){
-			testCase.setName( name.substring(0, Math.min(name.length(), 255)) );
+			testCase.setName( truncate(name, 255) );
 		}
 		String ref = testCase.getReference();
 		if (ref != null){
-			testCase.setReference( ref.substring(0, Math.min(name.length(), 50 )) );
+			testCase.setReference( truncate(ref, 50) );
 		}
 		
 		for (Entry<String, String> cuf : cufValues.entrySet()){
 			String value = cuf.getValue();
-			cuf.setValue( value.substring(0, Math.min(value.length(), 255)));
+			cuf.setValue( truncate(value, 255));
 		}
 	}
 	
 	private void truncate(ActionTestStep step, Map<String, String> cufValues){
 		for (Entry<String, String> cuf : cufValues.entrySet()){
 			String value = cuf.getValue();
-			cuf.setValue( value.substring(0, Math.min(value.length(), 255)));
+			cuf.setValue( truncate(value, 255));
 		}	
+	}
+	
+	private void truncate(Parameter param){
+		String name = param.getName();
+		if (name != null){
+			param.setName( truncate(name, 255));
+		}
+	}
+	
+	private void truncate(Dataset ds){
+		String name = ds.getName();
+		if (name != null){
+			ds.setName ( truncate (name, 255));
+		}
+	}
+	
+	private String truncate(String str, int cap){
+		return str.substring(0, Math.min(str.length(), cap));
 	}
 	
 	private void restoreMetadata(AuditableMixin mixin, AuditableSupport saved){
