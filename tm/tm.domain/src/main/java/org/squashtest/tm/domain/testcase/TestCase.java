@@ -173,7 +173,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	 * Should the importance be automatically computed.
 	 */
 	@NotNull
-	private Boolean importanceAuto = false;
+	private Boolean importanceAuto = Boolean.FALSE;
 
 	@ManyToOne
 	@JoinColumn(name = "TA_TEST")

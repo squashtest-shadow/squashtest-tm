@@ -110,7 +110,9 @@ public class CustomTestStepModificationServiceImpl implements CustomTestStepModi
 			PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(step, "WRITE"));
 			for (Entry<Long, String> cufValue : cufValues.entrySet()) {
 				try {
-					cufValueService.changeValue(cufValue.getKey(), cufValue.getValue());
+					if (cufValue.getValue() != null){
+						cufValueService.changeValue(cufValue.getKey(), cufValue.getValue());
+					}
 				} catch (DomainException e) {
 					LOGGER.error(e.getMessage());
 					exceptions.add(e);
@@ -133,8 +135,12 @@ public class CustomTestStepModificationServiceImpl implements CustomTestStepModi
 
 		@Override
 		public void visit(ActionTestStep visited) {
-			visited.setAction(action);
-			visited.setExpectedResult(expectedResult);
+			if (action != null){
+				visited.setAction(action);
+			}
+			if (expectedResult != null){
+				visited.setExpectedResult(expectedResult);
+			}
 		}
 
 		@Override

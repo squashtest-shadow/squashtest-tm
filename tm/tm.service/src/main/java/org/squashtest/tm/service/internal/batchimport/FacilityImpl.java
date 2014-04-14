@@ -51,6 +51,8 @@ import org.squashtest.tm.domain.testcase.TestCaseType;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
+import org.squashtest.tm.service.internal.batchimport.Model.Existence;
+import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
@@ -108,7 +110,7 @@ public class FacilityImpl implements Facility {
 	@Inject
 	private CustomFieldDao cufDao;
 	
-	
+	private FacilityImplHelper helper = new FacilityImplHelper();
 	
 	private SimulationFacility simulator;
 	
@@ -142,7 +144,8 @@ public class FacilityImpl implements Facility {
 		
 		if (! train.hasCriticalErrors()){
 			try{
-				truncate(testCase, cufValues);
+				helper.fillNullWithDefaults(testCase);
+				helper.truncate(testCase, cufValues);
 				doCreateTestcase(target, testCase, cufValues);
 				model.setExists(target, testCase.getId());
 			}
@@ -160,20 +163,29 @@ public class FacilityImpl implements Facility {
 	@Override
 	public LogTrain updateTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
 		
-		LogTrain train = simulator.updateTestCase(target, testCase, cufValues);
+		TargetStatus status = model.getStatus(target);
 		
-		if (! train.hasCriticalErrors()){
-			try{
-				truncate(testCase, cufValues);
-				doUpdateTestcase(target, testCase, cufValues);
-			}
-			catch(Exception ex){
-				train.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );
-				LOGGER.error("Excel import : unexpected error while updating "+target+" : ", ex);
-			}
+		if (status.status == Existence.NOT_EXISTS){
+			return createTestCase(target, testCase, cufValues);
 		}
-		
-		return train;
+		else{
+			
+			LogTrain train = simulator.updateTestCase(target, testCase, cufValues);
+			
+			if (! train.hasCriticalErrors()){
+				try{
+					helper.truncate(testCase, cufValues);
+					doUpdateTestcase(target, testCase, cufValues);
+				}
+				catch(Exception ex){
+					train.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );
+					LOGGER.error("Excel import : unexpected error while updating "+target+" : ", ex);
+				}
+			}
+			
+			return train;
+		}
+
 	}
 
 	@Override
@@ -203,7 +215,8 @@ public class FacilityImpl implements Facility {
 		
 		if (! train.hasCriticalErrors()){
 			try{
-				truncate(testStep, cufValues);
+				helper.fillNullWithDefaults(testStep);
+				helper.truncate(testStep, cufValues);
 				doAddActionStep(target, testStep, cufValues);
 				model.addActionStep(target);
 			}
@@ -217,7 +230,7 @@ public class FacilityImpl implements Facility {
 	}
 
 	@Override
-	public LogTrain addCallStep(TestStepTarget target, CallTestStep testStep,	TestCaseTarget calledTestCase) {
+	public LogTrain addCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase) {
 		
 		LogTrain train = simulator.addCallStep(target, testStep, calledTestCase);
 		
@@ -243,7 +256,7 @@ public class FacilityImpl implements Facility {
 		
 		if (! train.hasCriticalErrors()){
 			try{
-				truncate(testStep, cufValues);
+				helper.truncate(testStep, cufValues);
 				doUpdateActionStep(target, testStep, cufValues);
 			}
 			catch(Exception ex){
@@ -398,7 +411,9 @@ public class FacilityImpl implements Facility {
 		Map<Long, String> acceptableCufs = toAcceptableCufs(cufValues);
 		
 		// backup the audit log 
-		AuditableSupport metadata = saveAuditMetadata((AuditableMixin)testCase);
+		AuditableSupport metadata = helper.saveAuditMetadata((AuditableMixin)testCase);
+		
+
 	
 		// case 1 : this test case lies at the root of the project
 		if (target.isRootTestCase()){
@@ -412,7 +427,7 @@ public class FacilityImpl implements Facility {
 		}
 		
 		// restore the audit log 
-		restoreMetadata((AuditableMixin)testCase, metadata);
+		helper.restoreMetadata((AuditableMixin)testCase, metadata);
 	}
 
 	
@@ -422,7 +437,7 @@ public class FacilityImpl implements Facility {
 		Long origId = orig.getId();
 		
 		// backup the audit log 
-		AuditableSupport metadata = saveAuditMetadata((AuditableMixin)testCase);
+		AuditableSupport metadata = helper.saveAuditMetadata((AuditableMixin)testCase);
 	
 		
 		// update the test case core attributes
@@ -462,8 +477,8 @@ public class FacilityImpl implements Facility {
 			testcaseModificationService.changeStatus(origId, newStatus);
 		}
 		
-		boolean newImportanceAuto = testCase.isImportanceAuto();
-		if (orig.isImportanceAuto() != newImportanceAuto){
+		Boolean newImportanceAuto = testCase.isImportanceAuto();
+		if (orig != null && orig.isImportanceAuto() != newImportanceAuto){
 			testcaseModificationService.changeImportanceAuto(origId, newImportanceAuto);
 		}
 		
@@ -479,7 +494,7 @@ public class FacilityImpl implements Facility {
 		}
 		
 		// restore the audit log 
-		restoreMetadata((AuditableMixin)testCase, metadata);
+		helper.restoreMetadata((AuditableMixin)testCase, metadata);
 		
 	}
 	
@@ -495,7 +510,7 @@ public class FacilityImpl implements Facility {
 		Map<Long, String> acceptableCufs = toAcceptableCufs(cufValues);
 		
 		// backup the audit log 
-		AuditableSupport metadata = saveAuditMetadata((AuditableMixin)testStep);
+		AuditableSupport metadata = helper.saveAuditMetadata((AuditableMixin)testStep);
 	
 		// add the step
 		TestCase tc = model.get(target.getTestCase());
@@ -508,7 +523,7 @@ public class FacilityImpl implements Facility {
 		}
 		
 		// restore the audit log 
-		restoreMetadata((AuditableMixin)testStep, metadata);
+		helper.restoreMetadata((AuditableMixin)testStep, metadata);
 	}
 	
 	
@@ -516,7 +531,7 @@ public class FacilityImpl implements Facility {
 	private void doAddCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase){
 		
 		// backup the audit log 
-		AuditableSupport metadata = saveAuditMetadata((AuditableMixin)testStep);
+		AuditableSupport metadata = helper.saveAuditMetadata((AuditableMixin)testStep);
 	
 		// add the step
 		TestCase tc = model.get(target.getTestCase());
@@ -532,7 +547,7 @@ public class FacilityImpl implements Facility {
 		}
 		
 		// restore the audit log 
-		restoreMetadata((AuditableMixin)created, metadata);
+		helper.restoreMetadata((AuditableMixin)created, metadata);
 	}
 	
 	
@@ -541,20 +556,20 @@ public class FacilityImpl implements Facility {
 		Map<Long, String> acceptableCufs = toAcceptableCufs(cufValues);
 		
 		// backup the audit log 
-		AuditableSupport metadata = saveAuditMetadata((AuditableMixin)testStep);
+		AuditableSupport metadata = helper.saveAuditMetadata((AuditableMixin)testStep);
 		
 		// update the step
 		TestStep actualStep = model.getStep(target);		
 		stepModificationService.updateTestStep(actualStep.getId(), testStep.getAction(), testStep.getExpectedResult(), acceptableCufs);
 		
 		// restore the audit log 
-		restoreMetadata((AuditableMixin)actualStep, metadata);
+		helper.restoreMetadata((AuditableMixin)actualStep, metadata);
 	}
 	
 	private void doUpdateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase){
 
 		// backup the audit log 
-		AuditableSupport metadata = saveAuditMetadata((AuditableMixin)testStep);
+		AuditableSupport metadata = helper.saveAuditMetadata((AuditableMixin)testStep);
 		
 		// update the step
 		TestStep actualStep = model.getStep(target);		
@@ -563,7 +578,7 @@ public class FacilityImpl implements Facility {
 		((CallTestStep)actualStep).setCalledTestCase(newCalled);
 		
 		// restore the audit log 
-		restoreMetadata((AuditableMixin)actualStep, metadata);
+		helper.restoreMetadata((AuditableMixin)actualStep, metadata);
 	}
 	
 	private void doDeleteTestStep(TestStepTarget target){
@@ -581,7 +596,8 @@ public class FacilityImpl implements Facility {
 		
 		if (! model.doesParameterExists(target)){
 			Long testcaseId = model.getId(target.getOwner());
-			truncate(param);
+			helper.fillNullWithDefaults(param);
+			helper.truncate(param);
 			parameterService.addNewParameterToTestCase(param, testcaseId);
 		}
 		else{
@@ -609,7 +625,7 @@ public class FacilityImpl implements Facility {
 	
 	private void doFailsafeUpdateParameterValue(DatasetTarget dataset, ParameterTarget param, String value){
 		DatasetParamValue dpv = findParamValue(dataset, param);
-		String trValue = truncate(value, 255);
+		String trValue = helper.truncate(value, 255);
 		dpv.setParamValue(trValue);
 	}
 	
@@ -645,7 +661,8 @@ public class FacilityImpl implements Facility {
 		else{
 			Dataset newds = new Dataset();
 			newds.setName(dataset.getName());
-			truncate(newds);
+			helper.fillNullWithDefaults(newds);
+			helper.truncate(newds);
 			datasetService.persist(newds, tcid);
 			return newds;
 		}
@@ -709,73 +726,7 @@ public class FacilityImpl implements Facility {
 	
 	
 
-	private AuditableSupport saveAuditMetadata(AuditableMixin mixin){
-		AuditableSupport support = new AuditableSupport();
-		support.setCreatedBy ( mixin.getCreatedBy() );
-		support.setLastModifiedBy ( mixin.getLastModifiedBy() );
-		support.setCreatedOn ( mixin. getCreatedOn() );
-		support.setLastModifiedOn ( mixin.getLastModifiedOn() );
-		return support;
-	}
-	
-	private void truncate(TestCase testCase, Map<String, String> cufValues){
-		String name = testCase.getName();
-		if (name != null){
-			testCase.setName( truncate(name, 255) );
-		}
-		String ref = testCase.getReference();
-		if (ref != null){
-			testCase.setReference( truncate(ref, 50) );
-		}
-		
-		for (Entry<String, String> cuf : cufValues.entrySet()){
-			String value = cuf.getValue();
-			cuf.setValue( truncate(value, 255));
-		}
-	}
-	
-	private void truncate(ActionTestStep step, Map<String, String> cufValues){
-		for (Entry<String, String> cuf : cufValues.entrySet()){
-			String value = cuf.getValue();
-			cuf.setValue( truncate(value, 255));
-		}	
-	}
-	
-	private void truncate(Parameter param){
-		String name = param.getName();
-		if (name != null){
-			param.setName( truncate(name, 255));
-		}
-	}
-	
-	private void truncate(Dataset ds){
-		String name = ds.getName();
-		if (name != null){
-			ds.setName ( truncate (name, 255));
-		}
-	}
-	
-	private String truncate(String str, int cap){
-		return str.substring(0, Math.min(str.length(), cap));
-	}
-	
-	private void restoreMetadata(AuditableMixin mixin, AuditableSupport saved){
-		if (!StringUtils.isBlank(saved.getCreatedBy())){
-			mixin.setCreatedBy(saved.getCreatedBy());
-		}
-		
-		if (!StringUtils.isBlank(saved.getLastModifiedBy())){
-			mixin.setLastModifiedBy(saved.getLastModifiedBy());
-		}
-		
-		if (saved.getCreatedOn() != null){
-			mixin.setCreatedOn(saved.getCreatedOn());
-		}
-		
-		if (saved.getLastModifiedOn() != null){
-			mixin.setLastModifiedOn(saved.getLastModifiedOn());
-		}
-	}
+
 
 
 }
