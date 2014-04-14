@@ -30,14 +30,24 @@ public class CallStepInstruction extends StepInstruction {
 		calledTC = calledTestCase;
 	}
 
-	@Override
-	public LogTrain execute(Facility facility) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public TestCaseTarget getCalledTC() {
 		return calledTC;
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.internal.batchimport.Instruction#executeUpdate(org.squashtest.tm.service.internal.batchimport.Facility)
+	 */
+	@Override
+	protected LogTrain executeUpdate(Facility facility) {
+		return facility.updateCallStep(getTarget(), null, calledTC);
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.internal.batchimport.Instruction#executeCreate(org.squashtest.tm.service.internal.batchimport.Facility)
+	 */
+	@Override
+	protected LogTrain executeCreate(Facility facility) {
+		return facility.addCallStep(getTarget(), null, calledTC);
 	}
 
 }

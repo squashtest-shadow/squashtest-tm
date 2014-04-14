@@ -31,13 +31,23 @@ public class ActionStepInstruction extends StepInstruction {
 		this.testStep = actionTestStep;
 	}
 
-	@Override
-	public LogTrain execute(Facility facility) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public ActionTestStep getTestStep() {
 		return testStep;
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.internal.batchimport.Instruction#executeUpdate(org.squashtest.tm.service.internal.batchimport.Facility)
+	 */
+	@Override
+	protected LogTrain executeUpdate(Facility facility) {
+		return facility.updateActionStep(getTarget(), testStep, getCustomFields());
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.internal.batchimport.Instruction#executeCreate(org.squashtest.tm.service.internal.batchimport.Facility)
+	 */
+	@Override
+	protected LogTrain executeCreate(Facility facility) {
+		return facility.addActionStep(getTarget(), testStep, getCustomFields());
 	}
 }

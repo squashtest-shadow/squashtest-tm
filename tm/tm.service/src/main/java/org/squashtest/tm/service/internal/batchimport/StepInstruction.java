@@ -48,4 +48,11 @@ public abstract class StepInstruction extends Instruction<TestStepTarget> implem
 		customFields.put(code, value);
 	}
 
+	/**
+	 * @see org.squashtest.tm.service.internal.batchimport.Instruction#executeDelete(org.squashtest.tm.service.internal.batchimport.Facility)
+	 */
+	@Override
+	protected LogTrain executeDelete(Facility facility) {
+		return facility.deleteTestStep(getTarget());
+	}
 }

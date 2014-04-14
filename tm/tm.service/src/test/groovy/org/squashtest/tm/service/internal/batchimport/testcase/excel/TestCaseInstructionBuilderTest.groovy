@@ -34,6 +34,7 @@ import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.testcase.TestCaseType;
 import org.squashtest.tm.service.importer.ImportMode;
 import org.squashtest.tm.service.importer.ImportStatus;
+import org.squashtest.tm.service.internal.batchimport.Facility;
 import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
 import org.squashtest.tm.service.internal.batchimport.TestCaseTarget;
 import org.squashtest.tm.service.internal.batchimport.excel.CannotCoerceException;
@@ -327,4 +328,5 @@ class TestCaseInstructionBuilderTest extends Specification {
 		TC_STATUS		| Cell.CELL_TYPE_STRING		| "PROBLEM?"		| "nature"			| null
 		TC_STATUS		| Cell.CELL_TYPE_NUMERIC	| 1					| "nature"			| null
 	}
+
 }

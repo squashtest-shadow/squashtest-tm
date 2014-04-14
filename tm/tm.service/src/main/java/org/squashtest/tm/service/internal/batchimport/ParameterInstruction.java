@@ -35,17 +35,35 @@ public class ParameterInstruction extends Instruction<ParameterTarget> {
 		this.parameter = parameter;
 	}
 
-	@Override
-	public LogTrain execute(Facility facility) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	/**
 	 * @return the parameter
 	 */
 	public Parameter getParameter() {
 		return parameter;
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.internal.batchimport.Instruction#executeUpdate(org.squashtest.tm.service.internal.batchimport.Facility)
+	 */
+	@Override
+	protected LogTrain executeUpdate(Facility facility) {
+		return facility.updateParameter(getTarget(), parameter);
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.internal.batchimport.Instruction#executeDelete(org.squashtest.tm.service.internal.batchimport.Facility)
+	 */
+	@Override
+	protected LogTrain executeDelete(Facility facility) {
+		return facility.deleteParameter(getTarget());
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.internal.batchimport.Instruction#executeCreate(org.squashtest.tm.service.internal.batchimport.Facility)
+	 */
+	@Override
+	protected LogTrain executeCreate(Facility facility) {
+		return facility.createParameter(getTarget(), parameter);
 	}
 
 

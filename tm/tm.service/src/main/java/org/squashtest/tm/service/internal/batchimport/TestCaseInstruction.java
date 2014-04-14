@@ -34,10 +34,22 @@ public class TestCaseInstruction extends Instruction<TestCaseTarget> implements 
 		this.testCase = testCase;
 	}
 
-	@Override
-	public LogTrain execute(Facility facility) {
-		// TODO Auto-generated method stub
-		return null;
+	protected LogTrain executeUpdate(Facility facility) {
+		LogTrain execLogTrain;
+		execLogTrain = facility.updateTestCase(getTarget(), testCase, customFields);
+		return execLogTrain;
+	}
+
+	protected LogTrain executeDelete(Facility facility) {
+		LogTrain execLogTrain;
+		execLogTrain = facility.deleteTestCase(getTarget());
+		return execLogTrain;
+	}
+
+	protected LogTrain executeCreate(Facility facility) {
+		LogTrain execLogTrain;
+		execLogTrain = facility.createTestCase(getTarget(), testCase, customFields);
+		return execLogTrain;
 	}
 
 	public TestCase getTestCase() {

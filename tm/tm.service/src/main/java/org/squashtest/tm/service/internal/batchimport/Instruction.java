@@ -25,6 +25,9 @@ import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.importer.Target;
 
+import static org.squashtest.tm.service.importer.ImportMode.*;
+
+
 
 public abstract class Instruction<T extends Target> {
 	private final T target;
@@ -37,14 +40,6 @@ public abstract class Instruction<T extends Target> {
 		this.logTrain = new LogTrain();
 		this.target = target;
 	}
-
-	/**
-	 * Must "execute" I agree, but more importantly must validate.
-	 * 
-	 * @param facility
-	 * @return
-	 */
-	public abstract LogTrain execute(Facility facility);
 
 	public int getLine() {
 		return line;
@@ -75,4 +70,46 @@ public abstract class Instruction<T extends Target> {
 	public T getTarget() {
 		return target;
 	}
+
+	/**
+	 * Must "execute" I agree, but more importantly must validate.
+	 * 
+	 * @param facility
+	 * @return
+	 */
+	public final LogTrain execute(Facility facility) {
+		if (logTrain.hasCriticalErrors()) { // don't bother to execute, it's broken anyway.
+			return logTrain;
+		}
+
+		LogTrain execLogTrain;
+
+		switch (mode == null ? UPDATE : mode) {
+		case CREATE:
+			execLogTrain = executeCreate(facility);
+			break;
+
+		case DELETE:
+			execLogTrain = executeDelete(facility);
+			break;
+
+		case UPDATE: // update is default mode when unspecified
+			execLogTrain = executeUpdate(facility);
+			break;
+
+		default:
+			throw new IllegalStateException("Unrecognized ImportMode " + mode + ". One must have forgotten to handle new modes");
+		}
+
+		logTrain.append(execLogTrain);
+
+		return logTrain;
+	}
+
+	protected abstract LogTrain executeUpdate(Facility facility);
+
+	protected abstract LogTrain executeDelete(Facility facility);
+
+	protected abstract LogTrain executeCreate(Facility facility);
+
 }

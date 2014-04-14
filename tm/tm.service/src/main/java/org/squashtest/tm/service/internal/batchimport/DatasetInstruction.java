@@ -32,17 +32,40 @@ public class DatasetInstruction extends Instruction<DatasetTarget> {
 		this.datasetValue = datasetValue;
 	}
 
-	@Override
-	public LogTrain execute(Facility facility) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	/**
 	 * @return the datasetParamValue
 	 */
 	public DatasetValue getDatasetValue() {
 		return datasetValue;
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.internal.batchimport.Instruction#executeUpdate(org.squashtest.tm.service.internal.batchimport.Facility)
+	 */
+	@Override
+	protected LogTrain executeUpdate(Facility facility) {
+		ParameterTarget parameterTarget = new ParameterTarget();
+		parameterTarget.setPath(datasetValue.getParameterOwnerPath());
+		parameterTarget.setName(datasetValue.getParameterName());
+
+		return facility.failsafeUpdateParameterValue(getTarget(), parameterTarget, datasetValue.getValue());
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.internal.batchimport.Instruction#executeDelete(org.squashtest.tm.service.internal.batchimport.Facility)
+	 */
+	@Override
+	protected LogTrain executeDelete(Facility facility) {
+		return facility.deleteDataset(getTarget());
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.internal.batchimport.Instruction#executeCreate(org.squashtest.tm.service.internal.batchimport.Facility)
+	 */
+	@Override
+	protected LogTrain executeCreate(Facility facility) {
+		return executeUpdate(facility);
 	}
 
 
