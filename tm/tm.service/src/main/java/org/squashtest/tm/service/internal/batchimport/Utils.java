@@ -75,7 +75,7 @@ final class Utils {
 			return matcher.group(1);
 		}
 		else{
-			throw new IllegalArgumentException("couldn't find a valid project name in path '"+path+"'. It might be malformed.");
+			return null;
 		}
 	}
 	

@@ -135,9 +135,11 @@ class EntityValidator {
 		}
 		
 		// 3 - the project actually exists
-		TargetStatus projectStatus = model.getProjectStatus(target.getProject()); 
-		if (projectStatus.getStatus() != Existence.EXISTS){
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PROJECT_NOT_EXIST));
+		if (target.isWellFormed()){
+			TargetStatus projectStatus = model.getProjectStatus(target.getProject()); 
+			if (projectStatus.getStatus() != Existence.EXISTS){
+				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PROJECT_NOT_EXIST));
+			}
 		}
 		
 		return logs;
@@ -193,10 +195,12 @@ class EntityValidator {
 		}
 		
 		// 3 - the project actually exists
-		TargetStatus projectStatus = model.getProjectStatus(target.getProject()); 
-		if (projectStatus.getStatus() != Existence.EXISTS){
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PROJECT_NOT_EXIST));
-		}	
+		if (testCase.isWellFormed()){
+			TargetStatus projectStatus = model.getProjectStatus(target.getProject()); 
+			if (projectStatus.getStatus() != Existence.EXISTS){
+				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PROJECT_NOT_EXIST));
+			}	
+		}
 		
 		// 4 - name has length between 1 and 255
 		String name = target.getName();
@@ -230,10 +234,12 @@ class EntityValidator {
 		}
 		
 		// 3 - the project actually exists
-		TargetStatus projectStatus = model.getProjectStatus(target.getProject()); 
-		if (projectStatus.getStatus() != Existence.EXISTS){
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PROJECT_NOT_EXIST));
-		}	
+		if (testCase.isWellFormed()){
+			TargetStatus projectStatus = model.getProjectStatus(target.getProject()); 
+			if (projectStatus.getStatus() != Existence.EXISTS){
+				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PROJECT_NOT_EXIST));
+			}	
+		}
 		
 		// 4 - name has length between 1 and 255
 		String name = target.getName();
