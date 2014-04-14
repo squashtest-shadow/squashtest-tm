@@ -25,9 +25,12 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.internal.batchimport.CustomFieldHolder;
 import org.squashtest.tm.service.internal.batchimport.Instruction;
+import org.squashtest.tm.service.internal.batchimport.Messages;
 import org.squashtest.tm.service.internal.batchimport.excel.CannotCoerceException;
+import org.squashtest.tm.service.internal.batchimport.excel.NullMandatoryValueException;
 import org.squashtest.tm.service.internal.batchimport.excel.PropertySetter;
 
 /**
@@ -36,7 +39,7 @@ import org.squashtest.tm.service.internal.batchimport.excel.PropertySetter;
  * @author Gregory Fouquet
  * 
  */
-public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn, INST extends Instruction> {
+public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn, INST extends Instruction<?>> {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	protected final CellValueCoercerRepository<COL> coercerRepository;
@@ -68,6 +71,7 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 		instruction.setLine(row.getRowNum());
 
 		processStandardColumns(row, instruction);
+
 		if (instruction instanceof CustomFieldHolder) {
 			processCustomFieldColumns(row, instruction);
 		}
@@ -77,8 +81,17 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 
 	private void processCustomFieldColumns(Row row, INST instruction) {
 		for (CustomFieldColumnDef colDef : worksheetDef.getCustomFieldDefs()) {
+			processCustomFieldColumn(row, colDef, instruction);
+		}
+	}
+
+	private void processCustomFieldColumn(Row row, CustomFieldColumnDef colDef, INST instruction) {
+		try {
 			String value = getValue(row, colDef);
 			((CustomFieldHolder) instruction).addCustomField(colDef.getCode(), value);
+
+		} catch (CannotCoerceException e) {
+			log(colDef, e, instruction);
 		}
 	}
 
@@ -89,17 +102,48 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 	}
 
 	private void processStandardColumn(Row row, StdColumnDef<COL> colDef, INST instruction) {
-		try {
-			logger.trace("Parsing column {} of type {}", colDef.getIndex(), colDef.getType());
+		logger.trace("Parsing column {} of type {}", colDef.getIndex(), colDef.getType());
 
-			COL col = colDef.getType();
-			Object value = getValue(row, colDef);
-			Object target = propHolderFinderRepository.findPropertyHolderFinder(col).find(instruction);
-			PropertySetter<Object, Object> propSetter = propertySetterRepository.findPropSetter(col);
-			propSetter.set(value, target);
+		COL col = colDef.getType();
+		Object value = null;
+
+		try {
+			value = getValue(row, colDef);
+
 		} catch (CannotCoerceException e) {
-			logger.error("HAve to do something better", e);
+			log(colDef, e, instruction);
+
 		}
+
+		Object target = propHolderFinderRepository.findPropertyHolderFinder(col).find(instruction);
+		PropertySetter<Object, Object> propSetter = propertySetterRepository.findPropSetter(col);
+
+		try {
+			propSetter.set(value, target);
+
+		} catch (NullMandatoryValueException e) {
+			log(colDef, e, instruction);
+		}
+	}
+
+	/**
+	 * @param colDef
+	 * @param e
+	 * @param instruction
+	 */
+	private void log(ColumnDef colDef, NullMandatoryValueException e, INST instruction) {
+		instruction.addLogEntry(ImportStatus.FAILURE, Messages.ERROR_FIELD_MANDATORY, colDef.getHeader());
+
+	}
+
+	/**
+	 * @param colDef
+	 * @param e
+	 */
+	private void log(ColumnDef colDef, CannotCoerceException e, INST instr) {
+		ImportStatus status = colDef.is(ColumnProcessingMode.MANDATORY) ? ImportStatus.FAILURE : ImportStatus.WARNING;
+		instr.addLogEntry(status, e.errorI18nKey, colDef.getHeader());
+
 	}
 
 	/**

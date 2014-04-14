@@ -77,7 +77,10 @@ public class ReflectionFieldSetter<VAL, TARGET> implements PropertySetter<VAL, T
 	@Override
 	public void set(VAL value, TARGET target) {
 		if (optionalValue && value == null) {
-			return;
+			return; // applies default
+		}
+		if (!optionalValue && value == null) {
+			throw new NullMandatoryValueException(fieldName);
 		}
 
 		if (field == null) {

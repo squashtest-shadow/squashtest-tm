@@ -22,10 +22,14 @@ package org.squashtest.tm.service.testcase;
 
 
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerInterfaceSpecification
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode
 import org.squashtest.tm.domain.testcase.TestCaseImportance
+import org.squashtest.tm.domain.testcase.TestCaseNature;
+import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.domain.testcase.TestCaseType;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 
 import spock.lang.Shared
@@ -43,6 +47,14 @@ class TestCaseModificationDynamicServiceTest extends DynamicManagerInterfaceSpec
 		}, {
 			it.changeImportance(10L, TestCaseImportance.HIGH)
 		}, {
-			it.changeImportanceAuto(10L, true)
+			it.changeReference(10L, "ref")
+		}, {
+			it.changeNature(10L, TestCaseNature.BUSINESS_TESTING)
+		}, {
+			it.changeType(10L, TestCaseType.END_TO_END_TESTING)
+		}, {
+			it.changeStatus(10L, TestCaseStatus.TO_BE_UPDATED)
+		}, {
+			it.changePrerequisite(10L, "prq")
 		}]
 }

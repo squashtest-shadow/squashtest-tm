@@ -89,13 +89,10 @@ import org.squashtest.tm.search.bridge.LevelEnumBridge;
 	@ClassBridge(name = "issues", store = Store.YES, impl = TestCaseIssueBridge.class),
 	@ClassBridge(name = "cufs", store = Store.YES, impl = CUFBridge.class, params = {
 		@org.hibernate.search.annotations.Parameter(name = "type", value = "testcase"),
-		@org.hibernate.search.annotations.Parameter(name = "inputType", value = "ALL") 
-	}),
-	@ClassBridge(name = "cufs", store = Store.YES, analyze = Analyze.NO, impl = CUFBridge.class, params = {
-		@org.hibernate.search.annotations.Parameter(name = "type", value = "testcase"),
-		@org.hibernate.search.annotations.Parameter(name = "inputType", value = "DROPDOWN_LIST") 
-	})
-})
+		@org.hibernate.search.annotations.Parameter(name = "inputType", value = "ALL") }),
+		@ClassBridge(name = "cufs", store = Store.YES, analyze = Analyze.NO, impl = CUFBridge.class, params = {
+			@org.hibernate.search.annotations.Parameter(name = "type", value = "testcase"),
+			@org.hibernate.search.annotations.Parameter(name = "inputType", value = "DROPDOWN_LIST") }) })
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
 public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, BoundEntity {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseLibraryNode.class);
@@ -106,10 +103,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private final int version = 1;
 
 	@NotNull
-	@Fields({
-		@Field(),
-		@Field(name = "referenceSort", analyze = Analyze.NO, store = Store.YES)	
-	})
+	@Fields({ @Field(), @Field(name = "referenceSort", analyze = Analyze.NO, store = Store.YES) })
 	@Size(min = 0, max = 50)
 	private String reference = "";
 
@@ -122,52 +116,52 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@OrderColumn(name = "STEP_ORDER")
 	@JoinTable(name = "TEST_CASE_STEPS", joinColumns = @JoinColumn(name = "TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "STEP_ID"))
 	@FieldBridge(impl = CollectionSizeBridge.class)
-	@Field(analyze=Analyze.NO, store=Store.YES)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	private final List<TestStep> steps = new ArrayList<TestStep>();
 
 	@NotNull
 	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE })
 	@JoinColumn(name = "VERIFYING_TEST_CASE_ID")
 	@FieldBridge(impl = CollectionSizeBridge.class)
-	@Field(name="requirements",analyze=Analyze.NO, store=Store.YES)
+	@Field(name = "requirements", analyze = Analyze.NO, store = Store.YES)
 	private Set<RequirementVersionCoverage> requirementVersionCoverages = new HashSet<RequirementVersionCoverage>(0);
 
 	@NotNull
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "testCase")
 	@OrderBy("name")
-	@Field(analyze=Analyze.NO, store=Store.YES)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = CollectionSizeBridge.class)
 	private Set<Parameter> parameters = new HashSet<Parameter>(0);
 
 	@NotNull
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "testCase")
 	@OrderBy("name")
-	@Field(analyze=Analyze.NO, store=Store.YES)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = CollectionSizeBridge.class)
 	private Set<Dataset> datasets = new HashSet<Dataset>(0);
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	@Field(analyze=Analyze.NO, store=Store.YES)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = LevelEnumBridge.class)
 	private TestCaseImportance importance = LOW;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TC_NATURE")
-	@Field(analyze=Analyze.NO, store=Store.YES)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	private TestCaseNature nature = TestCaseNature.UNDEFINED;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TC_TYPE")
-	@Field(analyze=Analyze.NO, store=Store.YES)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	private TestCaseType type = TestCaseType.UNDEFINED;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TC_STATUS")
-	@Field(analyze=Analyze.NO, store=Store.YES)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = LevelEnumBridge.class)
 	private TestCaseStatus status = TestCaseStatus.WORK_IN_PROGRESS;
 
@@ -178,7 +172,8 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	/**
 	 * Should the importance be automatically computed.
 	 */
-	private boolean importanceAuto = false;
+	@NotNull
+	private Boolean importanceAuto = false;
 
 	@ManyToOne
 	@JoinColumn(name = "TA_TEST")
@@ -245,7 +240,6 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		this.executionMode = executionMode;
 	}
 
-	
 	public List<TestStep> getSteps() {
 		return steps;
 	}
@@ -469,7 +463,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	/**
 	 * @return the weightAuto
 	 */
-	public boolean isImportanceAuto() {
+	public Boolean isImportanceAuto() {
 		return importanceAuto;
 	}
 
@@ -477,7 +471,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	 * @param importanceAuto
 	 *            the importanceAuto to set
 	 */
-	public void setImportanceAuto(boolean importanceAuto) {
+	public void setImportanceAuto(@NotNull Boolean importanceAuto) {
 		this.importanceAuto = importanceAuto;
 	}
 
@@ -699,7 +693,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	protected void addParameter(@NotNull Parameter parameter) {
 		Parameter homonyme = findParameterByName(parameter.getName());
 		if (homonyme != null && !homonyme.equals(parameter)) {
-				throw new NameAlreadyInUseException(Parameter.class.getSimpleName(), parameter.getName());
+			throw new NameAlreadyInUseException(Parameter.class.getSimpleName(), parameter.getName());
 		}
 		this.parameters.add(parameter);
 
@@ -740,6 +734,26 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 			result.addAll(step.findUsedParametersNames());
 		}
 		return result;
+	}
+
+	/**
+	 * Creates a test case which non-collection, non-primitive type fields are set to null.
+	 * 
+	 * @return
+	 */
+	public static TestCase createBlankTestCase() {
+		TestCase res = new TestCase();
+
+		res.importanceAuto = null;
+		res.executionMode = null;
+		res.prerequisite = null;
+		res.reference = null;
+		res.nature = null;
+		res.type = null;
+		res.importance = null;
+		res.status = null;
+
+		return res;
 	}
 
 }

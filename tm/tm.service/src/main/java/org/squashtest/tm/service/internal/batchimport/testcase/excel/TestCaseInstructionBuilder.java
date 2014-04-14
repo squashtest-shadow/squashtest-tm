@@ -44,6 +44,6 @@ class TestCaseInstructionBuilder extends InstructionBuilder<TestCaseSheetColumn,
 	 */
 	@Override
 	protected TestCaseInstruction createInstruction(Row row) {
-		return new TestCaseInstruction(new TestCaseTarget(), new TestCase());
+		return new TestCaseInstruction(new TestCaseTarget(), TestCase.createBlankTestCase());
 	}
 }

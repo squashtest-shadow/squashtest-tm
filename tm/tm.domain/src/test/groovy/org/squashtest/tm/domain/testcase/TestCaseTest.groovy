@@ -22,9 +22,14 @@ package org.squashtest.tm.domain.testcase
 
 import static org.squashtest.tm.domain.testcase.TestCaseType.*
 
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
+
 import org.apache.commons.lang.NullArgumentException
+import org.springframework.util.ReflectionUtils;
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.domain.audit.AuditableSupport;
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testautomation.AutomatedTest
 import org.squashtest.tm.domain.testcase.ActionTestStep
@@ -69,7 +74,7 @@ class TestCaseTest extends Specification {
 		then:
 		thrown(NullArgumentException)
 	}
-	
+
 	def "should not add a null dataset"() {
 		when:
 		testCase.addDataset(null)
@@ -77,7 +82,7 @@ class TestCaseTest extends Specification {
 		then:
 		thrown(NullArgumentException)
 	}
-	
+
 	def "should not add a null parameter"() {
 		when:
 		testCase.addParameter(null)
@@ -180,7 +185,7 @@ class TestCaseTest extends Specification {
 		testCase.steps.collect{ it.action } == result.collect{ it.action }
 	}
 
-	
+
 
 	def "should return position of step"() {
 		given:
@@ -218,7 +223,7 @@ class TestCaseTest extends Specification {
 		given:
 		TestCase source = new TestCase()
 		source.notifyAssociatedWithProject(new Project())
-		
+
 		source[propName] = propValue
 
 		when:
@@ -257,9 +262,9 @@ class TestCaseTest extends Specification {
 		!copy.steps[0].is(sourceStep)
 	}
 
-	
+
 	def "should remove automated script link"(){
-		given : 
+		given :
 		TestCase automatedTestCase = new TestCase();
 		AutomatedTest automatedTest = new AutomatedTest();
 		use(ReflectionCategory){
@@ -267,10 +272,39 @@ class TestCaseTest extends Specification {
 		}
 		when :
 		automatedTestCase.removeAutomatedScript();
-		
+
 		then:
 		automatedTestCase.automatedTest == null;
-		
+
 	}
-	
+
+	def "should create blank test case"() {
+		given:
+		def findFields
+		findFields = { it ->
+			List fields = it.declaredFields
+			def sc = it.superclass
+			if (sc != null) {
+				fields.addAll(findFields(sc))
+			}
+
+			return fields
+		}
+
+		and:
+		List blankableFields = findFields(TestCase)
+				.findAll({ !(Collection.isAssignableFrom(it.type) || Map.isAssignableFrom(it.type)) })
+				.findAll({ !(Modifier.isStatic(it.modifiers) || Modifier.isFinal(it.modifiers))})
+				.findAll({ ! [Long.TYPE, Integer.TYPE, Boolean.TYPE, Float.TYPE, Double.TYPE].contains(it.type) })
+				.findAll({ ! it.name.startsWith('ajc$')})
+				.each { it.setAccessible(true) }
+
+		when:
+		TestCase res = TestCase.createBlankTestCase()
+
+		then:
+		blankableFields.findAll({ it.get(res) != null })*.name == []
+
+	}
+
 }

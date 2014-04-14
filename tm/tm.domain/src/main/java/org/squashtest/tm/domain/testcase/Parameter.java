@@ -186,4 +186,13 @@ public class Parameter implements Identified {
 		}
 		return paramNames;
 	}
+
+	public static Parameter createBlankParameter() {
+		Parameter res = new Parameter();
+
+		res.name = null;
+		res.description = null;
+
+		return res;
+	}
 }

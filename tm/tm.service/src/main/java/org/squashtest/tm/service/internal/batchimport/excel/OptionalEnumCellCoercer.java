@@ -24,6 +24,7 @@ package org.squashtest.tm.service.internal.batchimport.excel;
 import javax.validation.constraints.NotNull;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.squashtest.tm.service.internal.batchimport.Messages;
 
 /**
  * Coerces a cell into an enum. Non coercible values throw a {@link CannotCoerceException}. Empty cells return
@@ -55,7 +56,7 @@ CellValueCoercer<ENUM> {
 		try {
 			return (ENUM) Enum.valueOf(enumType, name);
 		} catch (IllegalArgumentException e) {
-			throw new CannotCoerceException(e);
+			throw new CannotCoerceException(e, Messages.ERROR_UNPARSABLE_OPTION);
 		}
 	}
 

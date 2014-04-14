@@ -95,10 +95,10 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Inject
 	private TestStepDao testStepDao;
-	
+
 	@Inject
 	private RequirementVersionDao requirementVersionDao;
-	
+
 	@Inject
 	@Named("squashtest.tm.service.internal.TestCaseManagementService")
 	private NodeManagementService<TestCase, TestCaseLibraryNode, TestCaseFolder> testCaseManagementService;
@@ -429,7 +429,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		return testCaseDao.findTestCaseByTestStepId(testStepId);
 	}
 
-	
+
 	/**
 	 * @see org.squashtest.tm.service.testcase.CustomTestCaseFinder#findImpTCWithImpAuto(Collection)
 	 */
@@ -437,7 +437,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	public Map<Long, TestCaseImportance> findImpTCWithImpAuto(Collection<Long> testCaseIds) {
 		return testCaseDao.findAllTestCaseImportanceWithImportanceAuto(testCaseIds);
 	}
-	
+
 	/**
 	 * @see org.squashtest.tm.service.testcase.CustomTestCaseFinder#findCallingTCids(long, Collection)
 	 */

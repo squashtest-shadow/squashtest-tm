@@ -23,14 +23,12 @@ package org.squashtest.tm.service.internal.batchimport;
 
 import javax.validation.constraints.NotNull;
 
-public class DatasetInstruction extends Instruction{
+public class DatasetInstruction extends Instruction<DatasetTarget> {
 
-	private final DatasetTarget target;
 	private final DatasetValue datasetValue;
 
 	public DatasetInstruction(@NotNull DatasetTarget target, @NotNull DatasetValue datasetValue) {
-		super();
-		this.target = target;
+		super(target);
 		this.datasetValue = datasetValue;
 	}
 
@@ -38,10 +36,6 @@ public class DatasetInstruction extends Instruction{
 	public LogTrain execute(Facility facility) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	public DatasetTarget getTarget() {
-		return target;
 	}
 
 	/**

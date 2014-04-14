@@ -21,7 +21,10 @@
 
 package org.squashtest.tm.service.internal.batchimport.excel;
 
+import javax.validation.constraints.NotNull;
+
 import org.apache.poi.ss.usermodel.Cell;
+import org.squashtest.tm.service.internal.batchimport.Messages;
 
 /**
  * Implementation of {@link CellValueCoercer} which tests the cell's type then invokes a specific method. Default
@@ -31,13 +34,22 @@ import org.apache.poi.ss.usermodel.Cell;
  * 
  */
 public abstract class TypeBasedCellValueCoercer<VAL> implements CellValueCoercer<VAL> {
+	private final String errorI18nKey;
 
 	protected TypeBasedCellValueCoercer() {
+		this(Messages.ERROR_GENERIC_UNPARSABLE);
+
+	}
+
+	protected TypeBasedCellValueCoercer(@NotNull String errorI18nKey) {
 		super();
+		this.errorI18nKey = errorI18nKey;
+
 	}
 
 	/**
-	 * Checks the cell type and callthe appropriate <code>coerceXxxCell(cell)</code> accordingly 
+	 * Checks the cell type and callthe appropriate <code>coerceXxxCell(cell)</code> accordingly
+	 * 
 	 * @see org.squashtest.tm.service.internal.batchimport.excel.CellValueCoercer#coerce(org.apache.poi.ss.usermodel.Cell)
 	 */
 	@Override
@@ -49,7 +61,7 @@ public abstract class TypeBasedCellValueCoercer<VAL> implements CellValueCoercer
 		case Cell.CELL_TYPE_BLANK:
 			res = coerceBlankCell(cell);
 			break;
-			
+
 		case Cell.CELL_TYPE_NUMERIC:
 			res = coerceNumericCell(cell);
 			break;
@@ -65,13 +77,15 @@ public abstract class TypeBasedCellValueCoercer<VAL> implements CellValueCoercer
 		case Cell.CELL_TYPE_FORMULA:
 			res = coerceFormulaCell(cell);
 			break;
-			
+
 		case Cell.CELL_TYPE_ERROR:
 			res = coerceErrorCell(cell);
 			break;
+
 		default:
 			// we should never get here, ex should be thrown above
-			throw new CannotCoerceException("Funky cell type " + type + " is not coercible to a Boolean");
+			throw new CannotCoerceException("Funky cell type " + type + " is not coercible",
+					Messages.ERROR_FUNKY_CELL_TYPE);
 		}
 
 		return res;
@@ -82,7 +96,18 @@ public abstract class TypeBasedCellValueCoercer<VAL> implements CellValueCoercer
 	 * @return
 	 */
 	private VAL coerceErrorCell(Cell cell) {
-		throw cannotCoerce("ERROR", cell);
+		throw cannotCoerceFunky("ERROR", cell);
+	}
+
+	/**
+	 * @param string
+	 * @param cell
+	 * @return
+	 */
+	private CannotCoerceException cannotCoerceFunky(String string, Cell cell) {
+		return new CannotCoerceException("Cannot coerce cell [R," + cell.getRowIndex() + " C" + cell.getColumnIndex()
+				+ "] of unhandled type", Messages.ERROR_FUNKY_CELL_TYPE);
+
 	}
 
 	/**
@@ -90,7 +115,7 @@ public abstract class TypeBasedCellValueCoercer<VAL> implements CellValueCoercer
 	 * @return
 	 */
 	protected VAL coerceFormulaCell(Cell cell) {
-		throw cannotCoerce("FORMULA", cell);
+		throw cannotCoerceFunky("FORMULA", cell);
 	}
 
 	/**
@@ -126,8 +151,12 @@ public abstract class TypeBasedCellValueCoercer<VAL> implements CellValueCoercer
 	}
 
 	private CannotCoerceException cannotCoerce(String type, Cell cell) {
+		return cannotCoerce(type, cell, errorI18nKey);
+	}
+
+	private CannotCoerceException cannotCoerce(String type, Cell cell, String errorI18nKey) {
 		return new CannotCoerceException("Cannot coerce cell [R," + cell.getRowIndex() + " C" + cell.getColumnIndex()
-				+ "] of type " + type);
+				+ "] of type " + type, errorI18nKey);
 	}
 
 	/**
@@ -146,7 +175,7 @@ public abstract class TypeBasedCellValueCoercer<VAL> implements CellValueCoercer
 			try {
 				res = round(Double.valueOf(s));
 			} catch (NumberFormatException ex) {
-				throw new CannotCoerceException(ex);
+				throw new CannotCoerceException(ex, Messages.ERROR_UNPARSABLE_INTEGER);
 			}
 		}
 		return res;

@@ -88,6 +88,9 @@ public class ReflectionMutatorSetter<VAL, TARGET> implements PropertySetter<VAL,
 		if (optionalValue && value == null) {
 			return;
 		}
+		if (!optionalValue && value == null) {
+			throw new NullMandatoryValueException(mutatorName);
+		}
 
 		if (mutator == null) {
 			mutator = ReflectionUtils.findMethod(target.getClass(), mutatorName, paramType(value));

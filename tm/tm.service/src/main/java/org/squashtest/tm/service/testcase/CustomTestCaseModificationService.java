@@ -38,15 +38,15 @@ import org.squashtest.tm.service.testautomation.model.TestAutomationProjectConte
  * 
  */
 public interface CustomTestCaseModificationService extends CustomTestCaseFinder {
-	
+
 	void rename(long testCaseId, String newName);
 
 	ActionTestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep);
-	
+
 	/**
-	 * Adds an action test step to a test case, and its initial custom field values. 
+	 * Adds an action test step to a test case, and its initial custom field values.
 	 * The initial custom field values are passed as a Map<Long, String>, that maps the id of the {@link CustomField} to the values of the corresponding {@link CustomFieldValue}.
-	 * Read that last sentence again. 
+	 * Read that last sentence again.
 	 * 
 	 * @param libraryId
 	 * @param testCase
@@ -109,17 +109,17 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	 * @param auto
 	 */
 	void changeImportanceAuto(long testCaseId, boolean auto);
-	
-	
+
+
 	// *************** test automation section ******************
-	
+
 	Collection<TestAutomationProjectContent> findAssignableAutomationTests(long testCaseId);
-	
-	
+
+
 	AutomatedTest bindAutomatedTest(Long testCaseId, Long taProjectId, String testName);
-	
+
 	/**
-	 * Will delete the link 
+	 * Will delete the link
 	 * @param testCaseId
 	 */
 	void removeAutomation(long testCaseId);

@@ -56,7 +56,7 @@ class ReflectionMutatorSetterTest extends Specification {
 		foo.bar == value
 
 		where:
-		value << ["baz", null]
+		value << ["baz"]
 	}
 
 	def "should set optional field"() {
@@ -79,5 +79,16 @@ class ReflectionMutatorSetterTest extends Specification {
 
 		then:
 		foo.bar == "default"
+	}
+
+	def "should refuse to set mandatory field to null value"() {
+		given:
+		Foo foo = new Foo()
+
+		when:
+		ReflectionMutatorSetter.forProperty("bar", String).set(null, foo)
+
+		then:
+		thrown(NullMandatoryValueException);
 	}
 }

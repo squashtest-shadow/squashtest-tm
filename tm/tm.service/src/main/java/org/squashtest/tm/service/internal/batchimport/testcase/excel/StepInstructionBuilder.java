@@ -50,7 +50,7 @@ class StepInstructionBuilder extends InstructionBuilder<StepSheetColumn, StepIns
 	protected StepInstruction createInstruction(Row row) {
 		StepInstruction instruction;
 		if (isActionStepRow(row)) {
-			instruction = new ActionStepInstruction(new TestStepTarget(), new ActionTestStep());
+			instruction = new ActionStepInstruction(new TestStepTarget(), ActionTestStep.createBlankActionStep());
 		} else {
 			instruction = new CallStepInstruction(new TestStepTarget(), new TestCaseTarget());
 		}

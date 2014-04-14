@@ -56,9 +56,9 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 
 	@NotBlank
 	@Fields({
-			@Field,
-			@Field(name = "label", analyze = Analyze.NO, store = Store.YES),
-			@Field(name = "labelUpperCased", analyze = Analyze.NO, store = Store.YES, bridge = @FieldBridge(impl = UpperCasedStringBridge.class)), })
+		@Field,
+		@Field(name = "label", analyze = Analyze.NO, store = Store.YES),
+		@Field(name = "labelUpperCased", analyze = Analyze.NO, store = Store.YES, bridge = @FieldBridge(impl = UpperCasedStringBridge.class)), })
 	@Size(min = 0, max = 255)
 	private String name;
 
@@ -116,16 +116,16 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 
 
 	// ******************* other utilities ****************************
-	
+
 	/*
 	 * Issue 1713
 	 * 
-	 * Due to the mixed use of actual instances and javassist proxies, comparisons may fail. Thus the 
-	 * redefinition of hashCode() and equals() below, that take account of the lazy loading and 
-	 * the fact that the compared objects may be of different classes. 
+	 * Due to the mixed use of actual instances and javassist proxies, comparisons may fail. Thus the
+	 * redefinition of hashCode() and equals() below, that take account of the lazy loading and
+	 * the fact that the compared objects may be of different classes.
 	 * 
 	 */
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 67;
@@ -141,36 +141,45 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 
 	@Override //NOSONAR code generation, assumed to be safe
 	public boolean equals(Object obj) {// GENERATED:START
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (! ( this.getClass().isAssignableFrom(obj.getClass()) || obj.getClass().isAssignableFrom(getClass()) ))
+		}
+		if (! ( this.getClass().isAssignableFrom(obj.getClass()) || obj.getClass().isAssignableFrom(getClass()) )) {
 			return false;
+		}
 		GenericLibraryNode other = (GenericLibraryNode) obj;
 		if (getAttachmentList() == null) {
-			if (other.getAttachmentList() != null)
+			if (other.getAttachmentList() != null) {
 				return false;
-		} else if (!getAttachmentList().equals(other.getAttachmentList()))
+			}
+		} else if (!getAttachmentList().equals(other.getAttachmentList())) {
 			return false;
+		}
 		if (getDescription() == null) {
-			if (other.getDescription() != null)
+			if (other.getDescription() != null) {
 				return false;
-		} else if (!getDescription().equals(other.getDescription()))
+			}
+		} else if (!getDescription().equals(other.getDescription())) {
 			return false;
+		}
 		if (getId() == null) {
-			if (other.getId() != null)
+			if (other.getId() != null) {
 				return false;
-		} else if (!getId().equals(other.getId()))
+			}
+		} else if (!getId().equals(other.getId())) {
 			return false;
+		}
 		if (getName() == null) {
-			if (other.getName() != null)
+			if (other.getName() != null) {
 				return false;
-		} else if (!getName().equals(other.getName()))
+			}
+		} else if (!getName().equals(other.getName())) {
 			return false;
+		}
 		return true;
 	} // GENERATED:END
-
-
 
 }

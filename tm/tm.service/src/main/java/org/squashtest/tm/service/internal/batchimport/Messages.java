@@ -20,45 +20,50 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-final class Messages {
+public final class Messages {
 
-	static final String ERROR_MALFORMED_PATH = "message.import.log.error.field.malformedPath";
-	static final String ERROR_FIELD_MANDATORY = "message.import.log.error.mandatoryColumn";
-	static final String ERROR_MANDATORY_CUF = "message.import.log.error.cuf.noValueForMandatoryCuf";
-	static final String ERROR_PROJECT_NOT_EXIST = "message.import.log.error.tc.tcPath.projectNotFound";
-	static final String ERROR_MAX_SIZE = "message.import.log.error.field.maxSize";
-	static final String ERROR_UNPARSABLE_CHECKBOX = "message.import.log.error.field.notBoolean";
-	static final String ERROR_UNPARSABLE_DATE = "message.import.log.error.field.wrongDateFormat";
-	static final String ERROR_UNPARSABLE_OPTION = "message.import.log.error.listField.wrongValueForListField";
-	static final String ERROR_UNKNOWN_CUF_TYPE = "message.import.log.cuf.unknowntype";
-	static final String ERROR_TC_ALREADY_EXISTS = "message.import.log.error.tc.alreadyexists";
-	static final String ERROR_NO_PERMISSION = "message.import.log.error.unsuficientRight";
-	static final String ERROR_INCONSISTENT_PATH_AND_NAME = "message.import.log.error.tc.inconsistentNameAndPath";
-	static final String ERROR_TC_NOT_FOUND = "message.import.log.error.tc.notFound";
-	static final String ERROR_TC_CANT_RENAME = "message.import.log.error.tc.cantrename";
-	static final String ERROR_REMOVE_CALLED_TC = "message.import.log.error.tc.cannotRemoveCalledTestCase";
-	static final String ERROR_STEPINDEX_EMPTY = "message.import.log.error.tc.tcStep.empty"; 
-	static final String ERROR_STEPINDEX_NEGATIVE = "message.import.log.error.tc.tcStep.negative";
-	static final String ERROR_STEPINDEX_OVERFLOW = "message.import.log.error.tc.tcStep.numberOverNextPosition";
-	static final String ERROR_NOT_A_CALLSTEP = "message.import.log.error.tc.tcStep.notacallstep";
-	static final String ERROR_NOT_AN_ACTIONSTEP = "message.import.log.error.tc.tcStep.notanactionstep";
-	static final String ERROR_CYCLIC_STEP_CALLS = "message.import.log.error.tc.callStep.cyclicCalls";
-	static final String ERROR_UNEXPECTED_ERROR = "message.import.log.error.unexpectederror";
-	static final String ERROR_PARAMETER_ALREADY_EXISTS = "message.import.log.error.tc.param.alreayexists";
-	static final String ERROR_PARAMETER_NOT_FOUND = "message.import.log.error.tc.param.notFound";
-	static final String ERROR_DATASET_NOT_FOUND = "message.import.log.error.tc.dataset.notFound";
-	static final String ERROR_DATASET_PARAMETER_MISMATCH = "message.import.log.error.tc.dataset.paramOwnerNotFound";
+	public static final String ERROR_MALFORMED_PATH = "message.import.log.error.field.malformedPath";
+	public static final String ERROR_FIELD_MANDATORY = "message.import.log.error.mandatoryColumn";
+	public static final String ERROR_MANDATORY_CUF = "message.import.log.error.cuf.noValueForMandatoryCuf";
+	public static final String ERROR_PROJECT_NOT_EXIST = "message.import.log.error.tc.tcPath.projectNotFound";
+	public static final String ERROR_MAX_SIZE = "message.import.log.error.field.maxSize";
+
+	public static final String ERROR_UNPARSABLE_CHECKBOX = "message.import.log.error.field.notBoolean";
+	public static final String ERROR_UNPARSABLE_DATE = "message.import.log.error.field.wrongDateFormat";
+	public static final String ERROR_UNPARSABLE_OPTION = "message.import.log.error.listField.wrongValueForListField";
+	public static final String ERROR_UNPARSABLE_INTEGER = "message.import.log.error.field.notInteger";;
+	public static final String ERROR_GENERIC_UNPARSABLE = "message.import.log.error.cannotParse";
+	public static final String ERROR_FUNKY_CELL_TYPE = "message.import.log.error.unexpectedCellType";
+
+	public static final String ERROR_UNKNOWN_CUF_TYPE = "message.import.log.cuf.unknowntype";
+	public static final String ERROR_TC_ALREADY_EXISTS = "message.import.log.error.tc.alreadyexists";
+	public static final String ERROR_NO_PERMISSION = "message.import.log.error.unsuficientRight";
+	public static final String ERROR_INCONSISTENT_PATH_AND_NAME = "message.import.log.error.tc.inconsistentNameAndPath";
+	public static final String ERROR_TC_NOT_FOUND = "message.import.log.error.tc.notFound";
+	public static final String ERROR_TC_CANT_RENAME = "message.import.log.error.tc.cantrename";
+	public static final String ERROR_REMOVE_CALLED_TC = "message.import.log.error.tc.cannotRemoveCalledTestCase";
+	public static final String ERROR_STEPINDEX_EMPTY = "message.import.log.error.tc.tcStep.empty";
+	public static final String ERROR_STEPINDEX_NEGATIVE = "message.import.log.error.tc.tcStep.negative";
+	public static final String ERROR_STEPINDEX_OVERFLOW = "message.import.log.error.tc.tcStep.numberOverNextPosition";
+	public static final String ERROR_NOT_A_CALLSTEP = "message.import.log.error.tc.tcStep.notacallstep";
+	public static final String ERROR_NOT_AN_ACTIONSTEP = "message.import.log.error.tc.tcStep.notanactionstep";
+	public static final String ERROR_CYCLIC_STEP_CALLS = "message.import.log.error.tc.callStep.cyclicCalls";
+	public static final String ERROR_UNEXPECTED_ERROR = "message.import.log.error.unexpectederror";
+	public static final String ERROR_PARAMETER_ALREADY_EXISTS = "message.import.log.error.tc.param.alreayexists";
+	public static final String ERROR_PARAMETER_NOT_FOUND = "message.import.log.error.tc.param.notFound";
+	public static final String ERROR_DATASET_NOT_FOUND = "message.import.log.error.tc.dataset.notFound";
+	public static final String ERROR_DATASET_PARAMETER_MISMATCH = "message.import.log.error.tc.dataset.paramOwnerNotFound";
 	
 	
-	static final String IMPACT_MAX_SIZE = "message.import.log.impact.truncatedValue";
-	static final String IMPACT_DEFAULT_VALUE = "message.import.log.impact.useDefaultValue";
-	static final String IMPACT_NO_CHANGE = "message.import.log.impact.fieldNotChange";
-	static final String IMPACT_TC_WITH_SUFFIX = "message.import.log.impact.tc.renamed";
-	static final String IMPACT_TC_CREATED = "message.import.log.impact.tc.created";
-	static final String IMPACT_STEP_CREATED_LAST = "message.import.log.impact.testStepAddedAtMaxPosition";
-	static final String IMPACT_PARAM_UPDATED = "message.import.log.impact.paramupdate";
-	static final String IMPACT_PARAM_CREATED = "message.import.log.impact.paramcreated";
-	static final String IMPACT_DATASET_CREATED = "message.import.log.impact.dscreated";
+	public static final String IMPACT_MAX_SIZE = "message.import.log.impact.truncatedValue";
+	public static final String IMPACT_DEFAULT_VALUE = "message.import.log.impact.useDefaultValue";
+	public static final String IMPACT_NO_CHANGE = "message.import.log.impact.fieldNotChange";
+	public static final String IMPACT_TC_WITH_SUFFIX = "message.import.log.impact.tc.renamed";
+	public static final String IMPACT_TC_CREATED = "message.import.log.impact.tc.created";
+	public static final String IMPACT_STEP_CREATED_LAST = "message.import.log.impact.testStepAddedAtMaxPosition";
+	public static final String IMPACT_PARAM_UPDATED = "message.import.log.impact.paramupdate";
+	public static final String IMPACT_PARAM_CREATED = "message.import.log.impact.paramcreated";
+	public static final String IMPACT_DATASET_CREATED = "message.import.log.impact.dscreated";
 	
 	private Messages(){
 		super();

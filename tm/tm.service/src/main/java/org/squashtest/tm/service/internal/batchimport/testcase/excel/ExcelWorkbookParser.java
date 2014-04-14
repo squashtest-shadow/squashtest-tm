@@ -50,11 +50,16 @@ import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
  * 
  * <p>
  * Usage :
- * <pre>{@code
- * ExcelWorkbookParser parser = ExcelWorkbookParser.createParser(xlsxFile);
- * parser.parse().releaseResources();
- * List<Instructions> instructions = parser.getInstructions();
- * }</pre>
+ * 
+ * <pre>
+ * {
+ * 	&#064;code
+ * 	ExcelWorkbookParser parser = ExcelWorkbookParser.createParser(xlsxFile);
+ * 	parser.parse().releaseResources();
+ * 	List&lt;Instructions&gt; instructions = parser.getInstructions();
+ * }
+ * </pre>
+ * 
  * </p>
  * 
  * @author Gregory Fouquet
@@ -85,11 +90,11 @@ public class ExcelWorkbookParser {
 	private Workbook workbook;
 	private final WorkbookMetaData wmd;
 
-	private final Map<TemplateWorksheet, List<Instruction>> instructionsByWorksheet = new HashMap<TemplateWorksheet, List<Instruction>>(
+	private final Map<TemplateWorksheet, List<Instruction<?>>> instructionsByWorksheet = new HashMap<TemplateWorksheet, List<Instruction<?>>>(
 			4);
 	private final Map<TemplateWorksheet, Factory<?>> instructionBuilderFactoryByWorksheet = new HashMap<TemplateWorksheet, Factory<?>>(
 			4);
-	private final List<Instruction> instructions = new ArrayList<Instruction>();
+	private final List<Instruction<?>> instructions = new ArrayList<Instruction<?>>();
 
 	/**
 	 * Should be used by ExcelWorkbookParserBuilder only.
@@ -102,10 +107,10 @@ public class ExcelWorkbookParser {
 		this.workbook = workbook;
 		this.wmd = wmd;
 
-		instructionsByWorksheet.put(TEST_CASES_SHEET, new ArrayList<Instruction>());
-		instructionsByWorksheet.put(STEPS_SHEET, new ArrayList<Instruction>());
-		instructionsByWorksheet.put(PARAMETERS_SHEET, new ArrayList<Instruction>());
-		instructionsByWorksheet.put(DATASETS_SHEET, new ArrayList<Instruction>());
+		instructionsByWorksheet.put(TEST_CASES_SHEET, new ArrayList<Instruction<?>>());
+		instructionsByWorksheet.put(STEPS_SHEET, new ArrayList<Instruction<?>>());
+		instructionsByWorksheet.put(PARAMETERS_SHEET, new ArrayList<Instruction<?>>());
+		instructionsByWorksheet.put(DATASETS_SHEET, new ArrayList<Instruction<?>>());
 
 		instructionBuilderFactoryByWorksheet.put(TEST_CASES_SHEET, new Factory<TestCaseSheetColumn>() {
 			@Override
@@ -164,8 +169,9 @@ public class ExcelWorkbookParser {
 
 		Sheet sheet = workbook.getSheet(worksheetDef.getSheetName());
 
-		InstructionBuilder<?, ?> instructionBuilder = instructionBuilderFactoryByWorksheet.get(worksheetDef.getWorksheetType()).create(
-				(WorksheetDef) worksheetDef); // useless (WorksheetDef) cast required for compiler not to whine
+		InstructionBuilder<?, ?> instructionBuilder = instructionBuilderFactoryByWorksheet.get(
+				worksheetDef.getWorksheetType()).create((WorksheetDef) worksheetDef); // useless (WorksheetDef) cast
+		// required for compiler not to whine
 
 		for (int i = 1; i <= sheet.getLastRowNum(); i++) {
 			LOGGER.trace("Creating instruction for row {}", i);
@@ -193,7 +199,7 @@ public class ExcelWorkbookParser {
 		// whine
 	}
 
-	public List<Instruction> getInstructions() {
+	public List<Instruction<?>> getInstructions() {
 		return instructions;
 	}
 }

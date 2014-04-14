@@ -22,6 +22,7 @@
 package org.squashtest.tm.service.internal.batchimport.excel;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.squashtest.tm.service.internal.batchimport.Messages;
 
 /**
  * Coerces a cell to an Integer value. As values are extracted as float, they are rounded to the closest integer.
@@ -57,7 +58,7 @@ public class OptionalIntegerCellCoercer extends TypeBasedCellValueCoercer<Intege
 			try {
 				res = round(Double.valueOf(val));
 			} catch (NumberFormatException ex) {
-				throw new CannotCoerceException(ex);
+				throw new CannotCoerceException(ex, Messages.ERROR_UNPARSABLE_INTEGER);
 			}
 		}
 		return res;

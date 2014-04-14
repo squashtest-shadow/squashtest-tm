@@ -239,7 +239,7 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 	 * @return the {@link PropertyHolderFinder} suitable for the given col.
 	 */
 	@SuppressWarnings("unchecked")
-	public <I extends Instruction, T extends Target> PropertyHolderFinder<I, T> findPropertyHolderFinder(COL col) {
+	public <I extends Instruction<?>, T extends Target> PropertyHolderFinder<I, T> findPropertyHolderFinder(COL col) {
 		PropertyHolderFinder<?, ?> finder = finderByColumn.get(col);
 		return (PropertyHolderFinder<I, T>) (finder == null ? defaultFinder : finder);
 	}

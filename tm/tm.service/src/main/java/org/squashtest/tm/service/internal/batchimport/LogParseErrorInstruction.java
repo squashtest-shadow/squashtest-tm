@@ -23,26 +23,15 @@ package org.squashtest.tm.service.internal.batchimport;
 import org.squashtest.tm.service.importer.Target;
 
 
-public class LogParseErrorInstruction extends Instruction {
+public class LogParseErrorInstruction extends Instruction<Target> {
 
-	private Target target;
-	
-	private LogTrain entries;
-	
+	public LogParseErrorInstruction(Target target) {
+		super(target);
+	}
+
 	@Override
 	public LogTrain execute(Facility facility) {
-		return entries;
+		return logTrain;
 	}
 
-	public Target getTarget() {
-		return target;
-	}
-
-	public void setTarget(Target target) {
-		this.target = target;
-	}
-
-	public void setEntries(LogTrain entries){
-		this.entries = entries;
-	}
 }

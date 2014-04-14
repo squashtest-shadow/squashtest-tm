@@ -26,14 +26,12 @@ import javax.validation.constraints.NotNull;
 
 import org.squashtest.tm.domain.testcase.Parameter;
 
-public class ParameterInstruction extends Instruction {
+public class ParameterInstruction extends Instruction<ParameterTarget> {
 
-	private final ParameterTarget target;
 	private final Parameter parameter;
 
 	public ParameterInstruction(@NotNull ParameterTarget target, @NotNull Parameter parameter) {
-		super();
-		this.target = target;
+		super(target);
 		this.parameter = parameter;
 	}
 
@@ -41,10 +39,6 @@ public class ParameterInstruction extends Instruction {
 	public LogTrain execute(Facility facility) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	public ParameterTarget getTarget() {
-		return target;
 	}
 
 	/**

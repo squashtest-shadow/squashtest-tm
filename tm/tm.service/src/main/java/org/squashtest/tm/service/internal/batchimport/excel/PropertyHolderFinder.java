@@ -35,7 +35,7 @@ import org.squashtest.tm.service.internal.batchimport.Instruction;
  * @param <T>
  *            the type of the target
  */
-public interface PropertyHolderFinder<I extends Instruction, T> {
+public interface PropertyHolderFinder<I extends Instruction<?>, T> {
 	/**
 	 * finds the target object from the given instruction.
 	 * 

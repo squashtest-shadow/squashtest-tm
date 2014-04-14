@@ -27,11 +27,11 @@ import org.squashtest.tm.service.importer.ImportMode;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
 
-class LogTrain {
+public class LogTrain {
 
 	private List<LogEntry> entries = new LinkedList<LogEntry>();
 	private boolean criticalErrors = false;
-	
+
 	void addEntry(LogEntry entry){
 		if (entry != null){
 			entries.add(entry);
@@ -40,39 +40,39 @@ class LogTrain {
 			}
 		}
 	}
-	
+
 	void addEntries(List<LogEntry> entries){
 		for (LogEntry entry : entries){
 			addEntry(entry);
 		}
 	}
-	
+
 	void append(LogTrain train){
 		addEntries(train.entries);
 	}
-	
-	
+
+
 	List<LogEntry> getEntries(){
 		return entries;
 	}
-	
-	
+
+
 	boolean hasCriticalErrors(){
 		return criticalErrors;
 	}
-	
-	
+
+
 	void setForAll(int lineNumber){
 		for (LogEntry entry : entries){
 			entry.setLine(lineNumber);
 		}
 	}
-	
+
 	void setForAll(ImportMode mode){
 		for (LogEntry entry : entries) {
 			entry.setMode(mode);
 		}
 	}
-	
-	
+
+
 }

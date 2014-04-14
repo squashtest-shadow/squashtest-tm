@@ -21,13 +21,22 @@
 package org.squashtest.tm.service.internal.batchimport;
 
 import org.squashtest.tm.service.importer.ImportMode;
+import org.squashtest.tm.service.importer.ImportStatus;
+import org.squashtest.tm.service.importer.LogEntry;
+import org.squashtest.tm.service.importer.Target;
 
 
-public abstract class Instruction {
+public abstract class Instruction<T extends Target> {
+	private final T target;
+	protected final LogTrain logTrain;
 
 	private int line;
 	private ImportMode mode;
 
+	protected Instruction(T target) {
+		this.logTrain = new LogTrain();
+		this.target = target;
+	}
 
 	/**
 	 * Must "execute" I agree, but more importantly must validate.
@@ -53,5 +62,17 @@ public abstract class Instruction {
 		this.mode = mode;
 	}
 
+	public void addLogEntry(ImportStatus status, String messageKey, Object... messageArgs) {
+		LogEntry entry = new LogEntry(target, status, messageKey);
+		entry.setLine(line);
+		entry.setErrorArgs(messageArgs);
+		logTrain.addEntry(entry);
+	}
 
+	/**
+	 * @return the target
+	 */
+	public T getTarget() {
+		return target;
+	}
 }

@@ -22,6 +22,7 @@
 package org.squashtest.tm.service.internal.batchimport.excel;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.squashtest.tm.service.internal.batchimport.Messages;
 
 /**
  * Liberally coerces a cell into a boolean value.<br/>
@@ -88,7 +89,7 @@ public class LiberalBooleanCellCoercer extends TypeBasedCellValueCoercer<Boolean
 			break;
 		default:
 			throw new CannotCoerceException("Cannot coerce cell value " + val
-					+ " into a boolean. Rounded value should either be 0 or 1");
+					+ " into a boolean. Rounded value should either be 0 or 1", Messages.ERROR_UNPARSABLE_CHECKBOX);
 		}
 
 		return res;

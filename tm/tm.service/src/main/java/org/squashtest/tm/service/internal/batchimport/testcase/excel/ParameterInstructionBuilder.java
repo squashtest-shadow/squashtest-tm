@@ -41,7 +41,7 @@ class ParameterInstructionBuilder extends InstructionBuilder<ParameterSheetColum
 	 */
 	@Override
 	protected ParameterInstruction createInstruction(Row row) {
-		return new ParameterInstruction(new ParameterTarget(), new Parameter());
+		return new ParameterInstruction(new ParameterTarget(), Parameter.createBlankParameter());
 	}
 
 }

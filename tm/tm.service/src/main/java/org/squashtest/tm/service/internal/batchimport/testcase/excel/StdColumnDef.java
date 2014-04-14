@@ -21,6 +21,8 @@
 
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * Definition of a "standard" column in an import file. Standard columns have predifined headers and behaviour.
  * 
@@ -49,5 +51,17 @@ class StdColumnDef<COL extends TemplateColumn> implements ColumnDef {
 	 */
 	public int getIndex() {
 		return index;
+	}
+
+	public boolean is(@NotNull ColumnProcessingMode processingMode) {
+		return processingMode.equals(type.getProcessingMode());
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.internal.batchimport.testcase.excel.ColumnDef#getHeader()
+	 */
+	@Override
+	public String getHeader() {
+		return type.getHeader();
 	}
 }

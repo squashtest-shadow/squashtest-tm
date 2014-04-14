@@ -22,18 +22,14 @@ package org.squashtest.tm.service.importer;
 
 public class LogEntry implements Comparable<LogEntry> {
 	private Integer line;
-	private Target target;
+	private final Target target;
 	private ImportMode mode;
-	private ImportStatus status;
-	private String i18nError;
+	private final ImportStatus status;
+	private final String i18nError;
 	private String i18nImpact;
 
 	private Object[] errorArgs;
 	private Object[] impactArgs;
-
-	public LogEntry() {
-		super();
-	}
 
 	public LogEntry(Target target, ImportStatus status, String i18nError) {
 		super();
@@ -84,7 +80,7 @@ public class LogEntry implements Comparable<LogEntry> {
 		return errorArgs;
 	}
 
-	public void setErrorArgs(Object[] errorArgs) {
+	public void setErrorArgs(Object... errorArgs) {
 		this.errorArgs = errorArgs;
 	}
 
@@ -92,7 +88,7 @@ public class LogEntry implements Comparable<LogEntry> {
 		return impactArgs;
 	}
 
-	public void setImpactArgs(Object[] impactArgs) {
+	public void setImpactArgs(Object... impactArgs) {
 		this.impactArgs = impactArgs;
 	}
 
@@ -121,24 +117,12 @@ public class LogEntry implements Comparable<LogEntry> {
 		return target;
 	}
 
-	public void setTarget(Target target) {
-		this.target = target;
-	}
-
 	public ImportStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(ImportStatus status) {
-		this.status = status;
-	}
-
 	public String getI18nError() {
 		return i18nError;
-	}
-
-	public void setI18nError(String i18nError) {
-		this.i18nError = i18nError;
 	}
 
 	public String getI18nImpact() {
@@ -148,37 +132,5 @@ public class LogEntry implements Comparable<LogEntry> {
 	public void setI18nImpact(String i18nImpact) {
 		this.i18nImpact = i18nImpact;
 	}
-
-	/**
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() { // GENERATED:START
-		final int prime = 31;
-		int result = 47;
-		result = prime * result + line;
-		return result;
-	} // GENERATED:END
-
-	/**
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) { // GENERATED:START
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		LogEntry other = (LogEntry) obj;
-		if (line != other.line) {
-			return false;
-		}
-		return true;
-	} // GENERATED:END
 
 }

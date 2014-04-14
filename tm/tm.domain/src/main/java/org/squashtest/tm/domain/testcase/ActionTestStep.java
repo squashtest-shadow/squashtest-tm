@@ -192,5 +192,9 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 		return result;
 	}
 
+	public static ActionTestStep createBlankActionStep() {
+		ActionTestStep res = new ActionTestStep(null, null);
 
+		return res;
+	}
 }

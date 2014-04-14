@@ -36,14 +36,14 @@ import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.importer.Target;
 
 class CustomFieldValidator {
-	
+
 	private static final String TRUE = "TRUE";
 	private static final String FALSE = "FALSE";
-	
+
 	private MultiValueMap optionsByListCode = new MultiValueMap();
 
 	private Model model;
-	
+
 	Model getModel() {
 		return model;
 	}
@@ -52,8 +52,8 @@ class CustomFieldValidator {
 		this.model = model;
 	}
 
-	
-	
+
+
 	/**
 	 * check the custom fields for the import mode UPDATE. Empty values are legal.
 	 * 
@@ -62,86 +62,87 @@ class CustomFieldValidator {
 	 * @return
 	 */
 	LogTrain checkUpdateCustomFields(Target target, Map<String, String> cufs, Collection<CustomField> definitions){
-			
+
 		LogTrain train = new LogTrain();
-		
+
 		for (CustomField cuf : definitions){
 
-			LogEntry check = null;		
+			LogEntry check = null;
 			String code = cuf.getCode();
 			String value = cufs.get(code);
-			
+
 			// we only care if the value is not blank (blank is legal and means 'no change' )
 			if (! StringUtils.isBlank(value)){
-	
+
 				check = checkCustomField(target, code, value, cuf, Messages.IMPACT_NO_CHANGE);
-				
+
 				train.addEntry(check);
 			}
 		}
 
 		return train;
-		
+
 	}
-	
-	
+
+
 	/**
-	 * a strong check does not tolerate empty values for custom fields when the said custom field is mandatory. 
-	 * Useful for modes create 
-	 * or replace 
+	 * a strong check does not tolerate empty values for custom fields when the said custom field is mandatory.
+	 * Useful for modes create
+	 * or replace
 	 *
- 	 * @param cufs a map of (CODE, VALUE) for each custom fields read in the file
+	 * @param cufs a map of (CODE, VALUE) for each custom fields read in the file
 	 * @param definitions the list of custom fields to check against
 	 * @return
 	 */
 	LogTrain checkCreateCustomFields(Target target, Map<String, String> cufs, Collection<CustomField> definitions){
-		
+
 		LogTrain train = new LogTrain();
-		
+
 		for (CustomField cuf : definitions){
-			
+
 			LogEntry check = null;
 			String code = cuf.getCode();
-			String value = cufs.get(code);			
-	
+			String value = cufs.get(code);
+
 			if (! StringUtils.isBlank(value)){
 				check = checkCustomField(target, code, value, cuf, Messages.IMPACT_DEFAULT_VALUE);
 			}
 			else if (! cuf.isOptional()){
-				check = new LogEntry(target, ImportStatus.WARNING, 
-						Messages.ERROR_MANDATORY_CUF, new String[]{code}, 
+				check = new LogEntry(target, ImportStatus.WARNING,
+						Messages.ERROR_MANDATORY_CUF, new String[]{code},
 						Messages.IMPACT_DEFAULT_VALUE, null);
 			}
 			//else no big deal
-			
+
 			train.addEntry(check);
 		}
 
 		return train;
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	private LogEntry checkCustomField(Target target, String inputCode, String inputValue, CustomField cuf, String impactmsg){
-		
-		LogEntry check = null;			
+
+		LogEntry check = null;
 		InputType type = cuf.getInputType();
-		
+
 		switch (type){
-		
-		case PLAIN_TEXT : 
+
+		case PLAIN_TEXT :
 			if (inputValue.length() > 255){
 				String[] cufCodeArg = new String[]{ inputCode };
 				check = new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_MAX_SIZE, cufCodeArg, Messages.IMPACT_MAX_SIZE, null);
 			}
 			break;
 
-		case CHECKBOX : 
+		case CHECKBOX :
 			if (! ( TRUE.equalsIgnoreCase(inputValue) || FALSE.equalsIgnoreCase(inputValue))){
 				String[] cufCodeArg = new String[]{ inputCode };
 				check = new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_UNPARSABLE_CHECKBOX, cufCodeArg, impactmsg, null);
 			}
 			break;
-	
-		case DATE_PICKER :					
+
+		case DATE_PICKER :
 			// if the weak check is not enough, swap for the string check
 			if (! IsoDateUtils.weakCheckIso8601Date(inputValue)){
 				String[] cufCodeArg = new String[]{ inputCode };
@@ -158,18 +159,18 @@ class CustomFieldValidator {
 				check = new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_UNPARSABLE_OPTION, cufCodeArg, impactmsg, null);
 			}
 			break;
-			
+
 
 		default :
-			check = new LogEntry(target, ImportStatus.WARNING, 
-					Messages.ERROR_UNKNOWN_CUF_TYPE, new String[]{ inputCode, cuf.getInputType().toString()}, 
+			check = new LogEntry(target, ImportStatus.WARNING,
+					Messages.ERROR_UNKNOWN_CUF_TYPE, new String[]{ inputCode, cuf.getInputType().toString()},
 					Messages.IMPACT_NO_CHANGE, null);
 			break;
 		}
-		
+
 		return check;
 	}
-	
+
 
 	private void registerOptions(CustomField cuf){
 		String code = cuf.getCode();
@@ -180,5 +181,5 @@ class CustomFieldValidator {
 			}
 		}
 	}
-	
+
 }

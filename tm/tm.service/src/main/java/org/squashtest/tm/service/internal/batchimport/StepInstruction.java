@@ -30,17 +30,11 @@ import java.util.Map;
  * @author Gregory Fouquet
  * 
  */
-public abstract class StepInstruction extends Instruction implements CustomFieldHolder {
-	private final TestStepTarget target;
+public abstract class StepInstruction extends Instruction<TestStepTarget> implements CustomFieldHolder {
 	private final Map<String, String> customFields = new HashMap<String, String>();
 
 	protected StepInstruction(TestStepTarget target) {
-		super();
-		this.target = target;
-	}
-
-	public TestStepTarget getTarget() {
-		return target;
+		super(target);
 	}
 
 	/**

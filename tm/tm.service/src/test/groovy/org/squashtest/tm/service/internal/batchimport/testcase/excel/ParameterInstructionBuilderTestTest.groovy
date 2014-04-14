@@ -129,7 +129,7 @@ class ParameterInstructionBuilderTest extends Specification {
 		TC_PARAM_NAME			| Cell.CELL_TYPE_BLANK		| null									| "name"			| null
 
 		TC_PARAM_DESCRIPTION	| Cell.CELL_TYPE_STRING		| "i live on the 2nd floor"				| "description"		| "i live on the 2nd floor"
-		TC_PARAM_DESCRIPTION	| Cell.CELL_TYPE_BLANK		| null									| "description"		| ""
+		TC_PARAM_DESCRIPTION	| Cell.CELL_TYPE_BLANK		| null									| "description"		| null
 
 	}
 

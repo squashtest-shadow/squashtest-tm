@@ -138,10 +138,10 @@ class StepInstructionBuilderTest extends Specification {
 		where:
 		col						| cellType					| cellValue								| propName			| propValue
 		TC_STEP_ACTION			| Cell.CELL_TYPE_STRING		| "i just want a lover like any other"	| "action"			| "i just want a lover like any other"
-		TC_STEP_ACTION			| Cell.CELL_TYPE_BLANK		| null									| "action"			| ""
+		TC_STEP_ACTION			| Cell.CELL_TYPE_BLANK		| null									| "action"			| null
 
 		TC_STEP_EXPECTED_RESULT	| Cell.CELL_TYPE_STRING		| "what do i get"						| "expectedResult"	| "what do i get"
-		TC_STEP_EXPECTED_RESULT	| Cell.CELL_TYPE_BLANK		| null									| "expectedResult"	| ""
+		TC_STEP_EXPECTED_RESULT	| Cell.CELL_TYPE_BLANK		| null									| "expectedResult"	| null
 
 	}
 	@Unroll
@@ -194,7 +194,7 @@ class StepInstructionBuilderTest extends Specification {
 		where:
 		cellType			 	| fieldCode	| cellValue
 		Cell.CELL_TYPE_STRING	|"FOO"		| "bar"
-		Cell.CELL_TYPE_BLANK	|"FOO"		| ""
+		Cell.CELL_TYPE_BLANK	|"FOO"		| null
 	}
 
 }

@@ -34,41 +34,51 @@ class ReflectionFieldSetterTest extends Specification {
 	class Foo {
 		private String bar = "default"
 	}
-	
-	@Unroll
+
 	def "should set foo.bar to #value"() {
 		given:
 		Foo foo = new Foo()
-		
+
 		when:
 		ReflectionFieldSetter.forField("bar").set(value, foo)
-		
+
 		then:
 		foo.bar == value
-		
+
 		where:
-		value << ["baz", null]
+		value << ["baz"]
 	}
 
 	def "should set optional field"() {
 		given:
 		Foo foo = new Foo()
-		
+
 		when:
 		ReflectionFieldSetter.forOptionalField("bar").set("optional", foo)
-		
+
 		then:
 		foo.bar == "optional"
 	}
-	
+
 	def "should not set optional field to null value"() {
 		given:
 		Foo foo = new Foo()
-		
+
 		when:
 		ReflectionFieldSetter.forOptionalField("bar").set(null, foo)
-		
+
 		then:
 		foo.bar == "default"
+	}
+
+	def "should refuse to set mandatory field to null value"() {
+		given:
+		Foo foo = new Foo()
+
+		when:
+		ReflectionFieldSetter.forField("bar").set(null, foo)
+
+		then:
+		thrown(NullMandatoryValueException)
 	}
 }

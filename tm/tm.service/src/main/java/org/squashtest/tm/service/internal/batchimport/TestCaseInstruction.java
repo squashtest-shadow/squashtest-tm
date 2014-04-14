@@ -25,15 +25,12 @@ import java.util.Map;
 
 import org.squashtest.tm.domain.testcase.TestCase;
 
-public class TestCaseInstruction extends Instruction implements CustomFieldHolder {
-	private final TestCaseTarget target; // indicates the "coordinates" of the test case
-
+public class TestCaseInstruction extends Instruction<TestCaseTarget> implements CustomFieldHolder {
 	private final TestCase testCase;
 	private final Map<String, String> customFields = new HashMap<String, String>();
 
 	public TestCaseInstruction(TestCaseTarget target, TestCase testCase) {
-		super();
-		this.target = target;
+		super(target);
 		this.testCase = testCase;
 	}
 
@@ -41,10 +38,6 @@ public class TestCaseInstruction extends Instruction implements CustomFieldHolde
 	public LogTrain execute(Facility facility) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	public TestCaseTarget getTarget() {
-		return target;
 	}
 
 	public TestCase getTestCase() {
@@ -58,5 +51,4 @@ public class TestCaseInstruction extends Instruction implements CustomFieldHolde
 	public void addCustomField(String code, String value) {
 		customFields.put(code, value);
 	}
-
 }

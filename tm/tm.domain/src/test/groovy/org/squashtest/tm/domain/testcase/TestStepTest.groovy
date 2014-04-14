@@ -20,7 +20,11 @@
  */
 package org.squashtest.tm.domain.testcase;
 
+import java.lang.reflect.Modifier;
+
 import org.squashtest.tm.domain.attachment.Attachment
+import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.audit.AuditableSupport;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 
 import spock.lang.Specification
@@ -47,4 +51,32 @@ class TestStepTest extends Specification {
 		then:
 		testStep.attachmentList.hasAttachments()
 	}
+	def "should create blank test case"() {
+		given:
+		def findFields
+		findFields = { it ->
+			List fields = it.declaredFields
+			def sc = it.superclass
+			if (sc != null) {
+				fields.addAll(findFields(sc))
+			}
+
+			return fields
+		}
+
+		and:
+		List blankableFields = findFields(ActionTestStep)
+				.findAll({ !(Collection.isAssignableFrom(it.type) || Map.isAssignableFrom(it.type)) })
+				.findAll({ !(Modifier.isStatic(it.modifiers) || Modifier.isFinal(it.modifiers))})
+				.findAll({ ! [Long.TYPE, Integer.TYPE, Boolean.TYPE, Float.TYPE, Double.TYPE].contains(it.type) })
+				.each { it.setAccessible(true) }
+		println blankableFields
+		when:
+		def res = ActionTestStep.createBlankActionStep()
+
+		then:
+		blankableFields.findAll({ it.get(res) != null })*.name == []
+
+	}
+
 }

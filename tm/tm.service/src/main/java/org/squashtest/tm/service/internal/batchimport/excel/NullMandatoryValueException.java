@@ -22,32 +22,22 @@
 package org.squashtest.tm.service.internal.batchimport.excel;
 
 /**
+ * Thrown when trying to set a mandatory property to null.
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
-public class CannotCoerceException extends RuntimeException {
-	private static final long serialVersionUID = 839887673080933124L;
+public class NullMandatoryValueException extends RuntimeException {
+	private static final long serialVersionUID = -709696016697558891L;
 
-	public final String errorI18nKey; // NOSONAR immutable const
-
-	public CannotCoerceException(Throwable cause, String errorI18nKey) {
-		super(cause);
-		this.errorI18nKey = errorI18nKey;
-	}
+	public final String propertyName;
 
 	/**
-	 * @param string
-	 * @param errorI18nKey
+	 * @param propertyName
 	 */
-	public CannotCoerceException(String string, String errorI18nKey) {
-		this.errorI18nKey = errorI18nKey;
-	}
-
-	/**
-	 * @return the errorI18nKey
-	 */
-	public String getErrorI18nKey() {
-		return errorI18nKey;
+	public NullMandatoryValueException(String propertyName) {
+		super("Cannor set mandatory property '" + propertyName + "' to `null`");
+		this.propertyName = propertyName;
 	}
 
 }

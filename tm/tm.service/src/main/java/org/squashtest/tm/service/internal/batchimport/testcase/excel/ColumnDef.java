@@ -30,7 +30,23 @@ package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 public interface ColumnDef {
 	/**
 	 * The index of the column, i.e. its position in a row.
+	 * 
 	 * @return the index
 	 */
 	int getIndex();
+
+	/**
+	 * Returns the header of the column i.e. the actual content of first row.
+	 * 
+	 * @return
+	 */
+	String getHeader();
+
+	/**
+	 * Tells if this column def matches the given processing mode.
+	 * 
+	 * @param processingMode
+	 * @return
+	 */
+	boolean is(ColumnProcessingMode processingMode);
 }

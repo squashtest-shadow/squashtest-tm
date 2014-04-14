@@ -22,6 +22,7 @@
 package org.squashtest.tm.service.internal.batchimport.excel;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.squashtest.tm.service.internal.batchimport.Messages;
 
 /**
  * Coerces a plain string cell to a string
@@ -29,7 +30,7 @@ import org.apache.poi.ss.usermodel.Cell;
  * @author Gregory Fouquet
  * 
  */
-public final class StringCellCoercer implements CellValueCoercer<String> {
+public final class StringCellCoercer extends TypeBasedCellValueCoercer<String> implements CellValueCoercer<String> {
 	public static final StringCellCoercer INSTANCE = new StringCellCoercer();
 
 	private StringCellCoercer() {
@@ -37,15 +38,30 @@ public final class StringCellCoercer implements CellValueCoercer<String> {
 	}
 
 	/**
-	 * @see org.squashtest.tm.service.internal.batchimport.excel.CellValueCoercer#coerce(org.apache.poi.ss.usermodel.Cell)
+	 * @see org.squashtest.tm.service.internal.batchimport.excel.TypeBasedCellValueCoercer#coerceBlankCell(org.apache.poi.ss.usermodel.Cell)
 	 */
 	@Override
-	public String coerce(Cell cell) {
-		try {
-			return cell.getStringCellValue();
-		} catch (IllegalStateException e) {
-			throw new CannotCoerceException(e);
-		}
+	protected String coerceBlankCell(Cell cell) {
+		return null;
 	}
+
+	/**
+	 * @see org.squashtest.tm.service.internal.batchimport.excel.TypeBasedCellValueCoercer#coerceStringCell(org.apache.poi.ss.usermodel.Cell)
+	 */
+	@Override
+	protected String coerceStringCell(Cell cell) {
+		return cell.getStringCellValue();
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.internal.batchimport.excel.TypeBasedCellValueCoercer#coerceNumericCell(org.apache.poi.ss.usermodel.Cell)
+	 */
+	@Override
+	protected String coerceNumericCell(Cell cell) {
+		return "" + cell.getNumericCellValue();
+	}
+
+
+
 
 }

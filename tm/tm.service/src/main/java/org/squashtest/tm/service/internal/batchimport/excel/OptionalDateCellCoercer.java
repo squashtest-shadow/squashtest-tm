@@ -26,6 +26,7 @@ import java.util.Date;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
+import org.squashtest.tm.service.internal.batchimport.Messages;
 
 /**
  * Coerces an optional date cell into a {@link Date}. Handles both excel-style date cells and string cells containing an
@@ -57,7 +58,7 @@ public final class OptionalDateCellCoercer extends TypeBasedCellValueCoercer<Dat
 		try {
 			return IsoDateUtils.parseIso8601Date(cell.getStringCellValue());
 		} catch (ParseException e) {
-			throw new CannotCoerceException(e);
+			throw new CannotCoerceException(e, Messages.ERROR_UNPARSABLE_DATE);
 		}
 	}
 
@@ -69,7 +70,7 @@ public final class OptionalDateCellCoercer extends TypeBasedCellValueCoercer<Dat
 		try {
 			return cell.getDateCellValue();
 		} catch (IllegalArgumentException e) {
-			throw new CannotCoerceException(e);
+			throw new CannotCoerceException(e, Messages.ERROR_UNPARSABLE_DATE);
 		}
 	}
 

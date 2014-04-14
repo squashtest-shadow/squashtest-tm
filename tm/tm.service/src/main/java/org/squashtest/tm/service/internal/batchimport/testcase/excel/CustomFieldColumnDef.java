@@ -33,8 +33,6 @@ public class CustomFieldColumnDef implements ColumnDef {
 	private final int index;
 	private final String code;
 
-	// private final TemplateCustomFieldParser parser ?
-
 	CustomFieldColumnDef(@NotNull String code, int index) {
 		super();
 		this.index = index;
@@ -55,6 +53,22 @@ public class CustomFieldColumnDef implements ColumnDef {
 	 */
 	public String getCode() {
 		return code;
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.internal.batchimport.testcase.excel.ColumnDef#getHeader()
+	 */
+	@Override
+	public String getHeader() {
+		return getCode();
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.internal.batchimport.testcase.excel.ColumnDef#is(org.squashtest.tm.service.internal.batchimport.testcase.excel.ColumnProcessingMode)
+	 */
+	@Override
+	public boolean is(@NotNull ColumnProcessingMode processingMode) {
+		return processingMode.equals(ColumnProcessingMode.OPTIONAL);
 	}
 
 }

@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.squashtest.tm.service.importer.ImportMode;
+import org.squashtest.tm.service.internal.batchimport.Messages;
 
 /**
  * @author Gregory Fouquet
@@ -69,7 +70,7 @@ public final class ImportModeCellCoercer extends TypeBasedCellValueCoercer<Impor
 			try {
 				res = Enum.valueOf(ImportMode.class, val);
 			} catch (IllegalArgumentException e) {
-				throw new CannotCoerceException(e);
+				throw new CannotCoerceException(e, Messages.ERROR_UNPARSABLE_OPTION);
 			}
 		}
 
