@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.batchimport
 
 import static org.squashtest.tm.service.importer.ImportStatus.*
 import org.squashtest.tm.domain.testcase.ActionTestStep
+import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.service.importer.ImportStatus
@@ -147,9 +148,6 @@ class EntityValidatorTest extends Specification {
 		
 		
 		then :
-			System.out.println( humanmsg )
-			train.entries.each { println it.i18nError }
-			System.out.println();
 			
 			train.entries.size() == 1
 			
@@ -159,15 +157,139 @@ class EntityValidatorTest extends Specification {
 			
 		where :
 			astep					|	target									|	 status	|	msg								|	humanmsg
-			ast(action:"action")	| 	asteptarget("project/test-case", null)	|	FAILURE	|	Messages.ERROR_MALFORMED_PATH	|	"malformed path"
-			ast(action:"action")	|	asteptarget("/project/whatever", null)	|	FAILURE	|	Messages.ERROR_TC_NOT_FOUND		|	"test case doesn't exist"
-			ast(action:"action")	|	asteptarget("/unknown/test-case", null)	|	FAILURE	|	Messages.ERROR_PROJECT_NOT_EXIST|	"project doesn't exists"
+			ast(action:"action")	| 	steptarget("project/test-case", null)	|	FAILURE	|	Messages.ERROR_MALFORMED_PATH	|	"malformed path"
+			ast(action:"action")	|	steptarget("/project/whatever", null)	|	FAILURE	|	Messages.ERROR_TC_NOT_FOUND		|	"test case doesn't exist"
+			ast(action:"action")	|	steptarget("/unknown/test-case", null)	|	FAILURE	|	Messages.ERROR_PROJECT_NOT_EXIST|	"project doesn't exists"
 
 	}
 	
 
+	def "should say that call step is fine"(){
+		
+		given :
+			TestStepTarget target  = new TestStepTarget(new TestCaseTarget("/project/test-case"), 2)
+			TestCaseTarget called = new TestCaseTarget("/project/called")
+			TestStep cstep = new CallTestStep() 
+		
+		and :
+			model.getStatus(_) >> new TargetStatus(EXISTS, 10l)
+			model.wouldCreateCycle(_) >> false 
+		
+		when :
+			LogTrain train = validator.validateCallStep(target, cstep, called)
+		
+		
+		then :
+			train.hasCriticalErrors() == false
+			train.entries == []
+
+	}
+	
+	
+	@Unroll("should say nay to call step because #humanmsg")
+	def "should say nay to call step for various reasons"(){
+		
+		given :
+			model.getStatus(_) >> calledstatus
+			model.wouldCreateCycle(_, _) >> calledcycle
+			
+		and : 
+			def target = steptarget("/project/test-case", 5)
+			def called = tar("/project/autre")
+			def cstep = cst()
+			
+		when :
+			LogTrain train = validator.validateCallStep(target, cstep, called)
+		
+		then :
+			
+			train.entries.size() == 1
+			
+			def pb = train.entries[0]
+			pb.status == status
+			pb.i18nError == msg
+			
+		where :
+			calledstatus 				|	calledcycle		|	status	|	msg									|	humanmsg
+			status(NOT_EXISTS,null)		|	false			|	FAILURE	|	Messages.ERROR_CALLED_TC_NOT_FOUND	|	"called test doesn't exist"
+			status(EXISTS, 12l)			|	true			|	FAILURE	|	Messages.ERROR_CYCLIC_STEP_CALLS	|	"such calls would induce cycles"
+	
+	}
+	
+	
+	def "should say that the parameter is good to go"(){
+		
+		given :
+			ParameterTarget target = ptarget("/project/test-case", "param")
+			
+		and :
+			model.getStatus(_) >> status(EXISTS, 10l)
+			model.getProjectStatus("project") >> status(EXISTS, 15l)  
+		
+		when :
+			LogTrain train = validator.basicParameterChecks(target)
+		
+		then :
+			train.hasCriticalErrors() == false
+			train.entries == []
+		
+	}
+	
+	
+	@Unroll("should say nay to a parameter because #humanmsg")
+	def "should reject the parameter for various reasons"(){
+		
+		given :
+			model.getStatus(_) >> {
+				return (it[0].path ==~ /.*test-case$/) ?
+					new TargetStatus(EXISTS, 10l) :
+					new TargetStatus(NOT_EXISTS, null)
+			}
+			
+			model.getProjectStatus(_) >> {
+				return (it[0] == "project") ?
+					new TargetStatus(EXISTS, 10l) :
+					new TargetStatus(NOT_EXISTS, null)
+			}
+
+			
+		when :
+			LogTrain train = validator.basicParameterChecks(target)
+		
+		then :
+			System.out.println(humanmsg)
+			train.entries.each { println it.i18nError }	
+		
+			train.entries.size() == 1
+			
+			def pb = train.entries[0]
+			pb.status == status
+			pb.i18nError == msg
+			
+		where :
+			target 										|	status	|	msg									|	humanmsg
+			ptarget("project/test-case", "param")		|	FAILURE	|	Messages.ERROR_MALFORMED_PATH		|	"malformed path"
+			ptarget("/project/unknown", "param")		|	FAILURE	|	Messages.ERROR_TC_NOT_FOUND			|	"test case doesn't exists"
+			ptarget("/unknown/test-case", "param")		|	FAILURE	|	Messages.ERROR_PROJECT_NOT_EXIST	|	"project doesn't exists"
+			ptarget("/project/test-case", "")			|	FAILURE	|	Messages.ERROR_FIELD_MANDATORY		|	"param has no name"
+			ptarget("/project/test-case", toolongstring)|	WARNING	|	Messages.ERROR_MAX_SIZE				|	"param name is too long"
+			
+		
+	}
+	
+	
+	// ******************** utils *****************************
+	
+	def status(ex, id){
+		return new TargetStatus(ex, id)
+	}
+	
 	def tc(args){
 		return new TestCase(args)
+	}
+	
+	def cst(){
+		return new CallTestStep()
 	}
 	
 	def ast(args){
@@ -178,8 +300,13 @@ class EntityValidatorTest extends Specification {
 		return new TestCaseTarget(arg)
 	}
 	
-	def asteptarget(path,idx){
+	def steptarget(path,idx){
 		return new TestStepTarget(tar(path), idx)
 	}
+	
+	def ptarget(path, name){
+		return new ParameterTarget(tar(path), name)
+	}
+
 	
 }

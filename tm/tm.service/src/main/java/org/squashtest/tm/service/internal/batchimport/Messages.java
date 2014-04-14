@@ -27,6 +27,7 @@ public final class Messages {
 	public static final String ERROR_MANDATORY_CUF = "message.import.log.error.cuf.noValueForMandatoryCuf";
 	public static final String ERROR_PROJECT_NOT_EXIST = "message.import.log.error.tc.tcPath.projectNotFound";
 	public static final String ERROR_MAX_SIZE = "message.import.log.error.field.maxSize";
+	static final String ERROR_CALLED_TC_NOT_FOUND = "message.import.log.error.tc.callStep.calledTcNotFound";
 
 	public static final String ERROR_UNPARSABLE_CHECKBOX = "message.import.log.error.field.notBoolean";
 	public static final String ERROR_UNPARSABLE_DATE = "message.import.log.error.field.wrongDateFormat";

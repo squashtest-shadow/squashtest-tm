@@ -162,13 +162,13 @@ class EntityValidator {
 		
 		// 1 - the target must exist and be valid
 		if (calledStatus.status == NOT_EXISTS || calledStatus.status == TO_BE_DELETED || ! calledTestCase.isWellFormed()){
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, "message.import.log.error.tc.callStep.calledTcNotFound"));
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_CALLED_TC_NOT_FOUND));
 		}
 		
 		// 2 - there must be no cyclic calls
 		if (model.wouldCreateCycle(target, calledTestCase)){
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, 
-										"message.import.log.error.tc.callStep.cyclicCalls", 
+										Messages.ERROR_CYCLIC_STEP_CALLS, 
 										new Object[]{target.getTestCase().getPath(), calledTestCase.getPath()}));
 		}
 		
