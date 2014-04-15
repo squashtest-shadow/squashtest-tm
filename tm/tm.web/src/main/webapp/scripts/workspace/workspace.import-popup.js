@@ -20,117 +20,117 @@
  */
 /*
  * settings : {
- *		formats : [array of supported file extensions, that will be checked on validation ] 
- * 
+ *		formats : [array of supported file extensions, that will be checked on validation ]
+ *
  * }
- * 
+ *
  * -------------- API----------
- * 
- * the following MUST be implemented : 
- * 
+ *
+ * the following MUST be implemented :
+ *
  * {
- *		createSummary : function(json) : populate the summary panel using the json response object	
+ *		createSummary : function(json) : populate the summary panel using the json response object
  * }
- * 
- * The following methods have a default implementation but could be considered for overriding : 
- * 
+ *
+ * The following methods have a default implementation but could be considered for overriding :
+ *
  * {
  *		bindEvents : function() : event binding
  *		getForm : function() : returns the form that must be uploaded.
  * }
- * 
+ *
  */
-define(['jquery', 'jquery.squash.formdialog', 'jform'], function($){
-	
+define(["jquery", "jquery.squash.formdialog", "jform"], function($){
+
 	if (($.squash !== undefined) && ($.squash.importDialog !== undefined)){
 		//plugin already loaded
 		return ;
 	}
-	
-	$.widget('squash.importDialog', $.squash.formDialog, {
-		
-		widgetEventPrefix : 'importdialog',
-		
+
+	$.widget("squash.importDialog", $.squash.formDialog, {
+
+		widgetEventPrefix : "importdialog",
+
 		options : {
 			_ticket : 0,	//upload ticket (used internally, shouldn't be set by the user)
-			formats : ['you forgot to configure that']
+			formats : ["you forgot to configure that"]
 		},
-		
-	
+
+
 		// ********************** abstrat *******************************
-		
+
 		createSummary : function(xhr){
 			throw "importDialog : it seems this instance is an abstract instance : " +
 					" it should have been subclassed and implement createSummary properly !";
 		},
-		
-	
+
+
 		_create : function(){
 			this._super();
 			this.bindEvents();
 		},
-		
+
 		bindEvents : function(){
 			var self = this;
-			
+
 			// ** radio **
-			
-			
+
+
 			// ** buttons **
-	
-			this.onOwnBtn('import', function(){
+
+			this.onOwnBtn("import", function(){
 				var validated = self.validate();
 				if (validated){
-					self.setState('confirm');
-				} 
+					self.setState("confirm");
+				}
 				else {
-					self.setState('error-format');
+					self.setState("error-format");
 				}
 			});
-			
-			this.onOwnBtn('confirm', function(){
+
+			this.onOwnBtn("confirm", function(){
 				self.submit();
 			});
-			
-			this.onOwnBtn('ok', function(){
+
+			this.onOwnBtn("ok", function(){
 				self.close();
 			});
-			
-			this.onOwnBtn('okerrsize', function(){
+
+			this.onOwnBtn("okerrsize", function(){
 				self.close();
 			});
-			
-			this.onOwnBtn('okerrformat', function(){
-				self.setState('parametrization');
+
+			this.onOwnBtn("okerrformat", function(){
+				self.setState("parametrization");
 			});
-			
-			this.onOwnBtn('cancel-progression', function(){
+
+			this.onOwnBtn("cancel-progression", function(){
 				self.cancelUpload();
 				self.close();
 			});
-			
-			this.onOwnBtn('cancel', function(){
+
+			this.onOwnBtn("cancel", function(){
 				self.close();
 			});
-						
+
 		},
-		
+
 		open : function(){
 			this._super();
 			this.reset();
 		},
-		
+
 		reset : function(){
-			this.element.find('input:text').val('');
-			this.setState('parametrization');
+			this.element.find("input:text").val('');
+			this.setState("parametrization");
 		},
-		
+
 		getForm : function(){
-			return this.element.find('form');
+			return this.element.find("form");
 		},
-		
+
 		validate : function(){
-			
+
 			var fileUploads = this.getForm().find("input[type='file']");
 
 			var self = this;
@@ -145,82 +145,82 @@ define(['jquery', 'jquery.squash.formdialog', 'jform'], function($){
 				});
 
 			});
-			
+
 			return validated;
 		},
-		
+
 		// ***************** request submission code *******************
-		
+
 		simulate : function() {
-			this.setState('progression');
+			this.setState("progression");
 			this.doSimulate();
 		},
-		
+
 		submit : function() {
-			this.setState('progression');
+			this.setState("progression");
 			this.doSubmit();
 		},
-		
+
 		doSimulate : function(){
 			var self = this;
-			
+
 			var form = this.getForm();
-			
-			var url = form.attr('action');
+
+			var url = form.attr("action");
 			form.ajaxSubmit({
-				url : url + '/simulation?upload-ticket=' + self.options._ticket,
-				dataType : 'text/html',
-				type : 'POST',
+				url : url + "/simulation?upload-ticket=" + self.options._ticket,
+				dataType : "text/html",
+				type : "POST",
 				success : function(){},
 				error : function(){},
 				complete : function(xhr){
-					
-					self.options.xhr = xhr;					
+
+					self.options.xhr = xhr;
 					var json = $.parseJSON($(xhr.responseText).text());
-			
-					if ('maxSize' in json){
+
+					if ("maxSize" in json){
 						self.errMaxSize(json.maxSize);
-						self.setState('error-size');
+						self.setState("error-size");
 					}
-					else{						
+					else{
 						self.createSummary(json);
-						self.setState('summary');						
+						self.setState("summary");
 					}
 				},
-				target : self.element.find('.dump').attr('id')
+				target : self.element.find(".dump").attr("id")
 			});
 		},
-		
+
 		doSubmit : function(){
 			var self = this;
-			
+
 			var form = this.getForm();
-			
-			var url = form.attr('action');
+
+			var url = form.attr("action");
 			form.ajaxSubmit({
-				url : url + '?upload-ticket=' + self.options._ticket,
-				dataType : 'text/html',
-				type : 'POST',
+				url : url + "?upload-ticket=" + self.options._ticket,
+				dataType : "text/html",
+				type : "POST",
 				success : function(){},
 				error : function(){},
 				complete : function(xhr){
-					
-					self.options.xhr = xhr;					
+
+					self.options.xhr = xhr;
 					var json = $.parseJSON($(xhr.responseText).text());
-			
-					if ('maxSize' in json){
+
+					if ("maxSize" in json){
 						self.errMaxSize(json.maxSize);
-						self.setState('error-size');
+						self.setState("error-size");
 					}
-					else{						
+					else{
 						self.createSummary(json);
-						self.setState('summary');						
+						self.setState("summary");
 					}
 				},
-				target : self.element.find('.dump').attr('id')
+				target : self.element.find(".dump").attr("id")
 			});
 		},
-		
+
 		cancelUpload : function(){
 			var state = this.getState();
 			if (state === "progression"){
@@ -238,27 +238,27 @@ define(['jquery', 'jquery.squash.formdialog', 'jform'], function($){
 				}
 			}
 		},
-		
+
 		_startPoll : function(){
 			// TODO
 		},
-		
+
 		_cancelPoll : function(){
 			// TODO
 		},
 
-		
+
 		// ********************* errors *********************************
-		
+
 		errMaxSize : function(maxSize){
-			var span = this.element.find('.error-size');
+			var span = this.element.find(".error-size");
 			var text = span.text();
-			if (text.indexOf('{MAX-SIZE}') !== -1 ){
-				text.replace('{MAX-SIZE}', maxSize);
+			if (text.indexOf("{MAX-SIZE}") !== -1 ){
+				text.replace("{MAX-SIZE}", maxSize);
 				span.text( text );
 			}
 		}
 
 	});
-	
+
 });
