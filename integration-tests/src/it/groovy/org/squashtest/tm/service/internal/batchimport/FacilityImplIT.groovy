@@ -28,10 +28,12 @@ import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseNature
 import org.squashtest.tm.domain.testcase.TestCaseStatus
 import org.squashtest.tm.service.DbunitServiceSpecification
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
+import org.squashtest.tm.service.internal.batchimport.Model.Existence;
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService
 import org.unitils.dbunit.annotation.DataSet
 
@@ -138,7 +140,7 @@ list step : dropdown list, LST_ST, optional -> (proj1, test step), (proj2, test 
 	}
 	
 	@DataSet("batchimport.sandbox.xml")
-	def "should create a new test case"(){
+	def "should create a new test case, some attributes are specified and some are left to default"(){
 		
 		given :
 			TestCaseTarget target = new TestCaseTarget("/Test Project-1/dossier 2/mytestcase")
@@ -169,6 +171,8 @@ list step : dropdown list, LST_ST, optional -> (proj1, test step), (proj2, test 
 			t.description == "<p>ouaaahpaaa</p>"
 			t.nature == TestCaseNature.SECURITY_TESTING
 			t.status == TestCaseStatus.WORK_IN_PROGRESS 
+			t.importanceAuto == Boolean.FALSE
+			t.importance == TestCaseImportance.LOW
 			
 			storedcufs.size() == 2
 			storedcufs.find { it.customField.code == "TXT_TC" }.value == "shazam"
@@ -177,5 +181,23 @@ list step : dropdown list, LST_ST, optional -> (proj1, test step), (proj2, test 
 	}
 	
 
+	@DataSet("batchimport.sandbox.xml")
+	def "should not create a test case"(){
+		
+		given :
+			TestCaseTarget target = new TestCaseTarget("/flawed target/flawed test")
+			TestCase tc = new TestCase(name:"")
+			def cufs = new HashMap()
+			
+			
+		when :
+			LogTrain logtrain = impl.createTestCase(target, tc, cufs)
+			flush()
+			TestCase t = (TestCase)finder.findNodesByPath(target.path)
+			
+			
+		then :
+			thrown NoSuchElementException
+	}
 		
 }

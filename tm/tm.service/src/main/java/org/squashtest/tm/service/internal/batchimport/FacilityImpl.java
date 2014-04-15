@@ -83,8 +83,7 @@ public class FacilityImpl implements Facility {
 	
 	@Inject
 	private TestStepModificationService stepModificationService;
-	
-	
+		
 	@Inject
 	private PrivateCustomFieldValueService cufvalueService;
 	
@@ -102,19 +101,21 @@ public class FacilityImpl implements Facility {
 	
 	@Inject
 	private DatasetParamValueDao paramvalueDao;
-	
-	
+		
 	@Inject
 	private ParameterDao paramDao;
 	
 	@Inject
 	private CustomFieldDao cufDao;
 	
+	
+	
+	
+	private SimulationFacility simulator;	// manual injection via setter
+	
+	private Model model;					// manual injection via setter
+
 	private FacilityImplHelper helper = new FacilityImplHelper();
-	
-	private SimulationFacility simulator;
-	
-	private Model model;
 	
 	private Map<String, Long> cufIdByCode = new HashMap<String, Long>();
 

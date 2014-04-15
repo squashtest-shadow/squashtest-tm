@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.batchimport;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -640,8 +641,16 @@ public class Model {
 		if (! testCaseStatusByTarget.containsKey(target)){
 			init(target);
 		}
+		
 		String projectName = Utils.extractProjectName(target.getPath());
-		return tcCufsPerProjectname.getCollection(projectName);
+		Collection<CustomField>  cufs = tcCufsPerProjectname.getCollection(projectName);
+		
+		if (cufs != null){
+			return cufs;
+		}
+		else{
+			return Collections.emptyList();
+		}
 	}
 
 
@@ -654,7 +663,13 @@ public class Model {
 		}
 
 		String projectName = Utils.extractProjectName(tc.getPath());
-		return stepCufsPerProjectname.getCollection(projectName);
+		Collection<CustomField>  cufs = stepCufsPerProjectname.getCollection(projectName);
+		if (cufs != null){
+			return cufs;
+		}
+		else{
+			return Collections.emptyList();
+		}
 	}
 
 
