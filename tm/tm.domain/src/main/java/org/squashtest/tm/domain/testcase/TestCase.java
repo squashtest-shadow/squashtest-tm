@@ -756,4 +756,12 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		return res;
 	}
 
+	/**
+	 * Same as {@link #isImportanceAuto()}, required as per javabean spec since it returns a Boolean instead of a boolean.
+	 * @return the importanceAuto
+	 */
+	public Boolean getImportanceAuto() {
+		return isImportanceAuto();
+	}
+
 }
