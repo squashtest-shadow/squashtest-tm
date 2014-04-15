@@ -57,6 +57,7 @@ import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.internal.batchimport.Model.Existence;
 import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
+import org.squashtest.tm.service.internal.library.LibraryUtils;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.repository.DatasetParamValueDao;
@@ -172,29 +173,35 @@ public class FacilityImpl implements Facility {
 	public LogTrain updateTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
 		
 		TargetStatus status = model.getStatus(target);
+
+		LogTrain train = simulator.updateTestCase(target, testCase, cufValues);
 		
-		if (status.status == Existence.NOT_EXISTS){
-			return createTestCase(target, testCase, cufValues);
-		}
-		else{
-			
-			LogTrain train = simulator.updateTestCase(target, testCase, cufValues);
-			
-			if (! train.hasCriticalErrors()){
-				try{
+		if (! train.hasCriticalErrors()){
+			try{
+				if (status.status == Existence.NOT_EXISTS){
+					helper.fillNullWithDefaults(testCase);
+					helper.truncate(testCase, cufValues);
+					doCreateTestcase(target, testCase, cufValues);
+					
+					model.setExists(target, testCase.getId());
+					remember(target);
+				}
+				else{
+				
 					helper.truncate(testCase, cufValues);
 					doUpdateTestcase(target, testCase, cufValues);
 					remember(target);
-				}
-				catch(Exception ex){
-					train.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );
-					LOGGER.error("Excel import : unexpected error while updating "+target+" : ", ex);
+				
 				}
 			}
-			
-			return train;
+			catch(Exception ex){
+				train.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );
+				LOGGER.error("Excel import : unexpected error while updating "+target+" : ", ex);
+			}
+				
 		}
-
+		
+		return train;
 	}
 
 	@Override
@@ -445,16 +452,27 @@ public class FacilityImpl implements Facility {
 		// case 1 : this test case lies at the root of the project
 		if (target.isRootTestCase()){
 			Long libraryId = model.getProjectStatus(target.getProject()).getId();	// never null because the checks ensured that the project exists
+			Collection<String> siblingNames = navigationService.findNamesInLibraryStartingWith(libraryId, testCase.getName());
+			renameIfNeeded(testCase, siblingNames);
 			navigationService.addTestCaseToLibrary(libraryId, testCase, acceptableCufs);
 		}
 		// case 2 : this test case exists within a folder
 		else{
 			Long folderId = navigationService.mkdirs(target.getFolder());
+			Collection<String> siblingNames = navigationService.findNamesInFolderStartingWith(folderId, testCase.getName());
+			renameIfNeeded(testCase, siblingNames);
 			navigationService.addTestCaseToFolder(folderId, testCase, acceptableCufs);
 		}
 		
 		// restore the audit log 
 		helper.restoreMetadata((AuditableMixin)testCase, metadata);
+	}
+	
+	private void renameIfNeeded(TestCase testCase, Collection<String> siblingNames){
+		String newName = LibraryUtils.generateNonClashingName(testCase.getName(), siblingNames);
+		if (! newName.equals(testCase.getName())){
+			testCase.setName(newName);
+		}
 	}
 
 	
@@ -478,6 +496,12 @@ public class FacilityImpl implements Facility {
 		if (! StringUtils.isBlank(newRef) && ! orig.getReference().equals(newRef)){
 			testcaseModificationService.changeReference(origId, newRef);
 		}
+		
+		String newDesc = testCase.getDescription();
+		if (! StringUtils.isBlank(newDesc) && ! orig.getDescription().equals(newDesc)){
+			testcaseModificationService.changeDescription(origId, newDesc);
+		}
+		
 		
 		String newPrereq = testCase.getPrerequisite();
 		if (! StringUtils.isBlank(newPrereq) && ! orig.getPrerequisite().equals(newPrereq)){
@@ -505,13 +529,13 @@ public class FacilityImpl implements Facility {
 		}
 		
 		Boolean newImportanceAuto = testCase.isImportanceAuto();
-		if (orig != null && orig.isImportanceAuto() != newImportanceAuto){
+		if (newImportanceAuto != null && orig.isImportanceAuto() != newImportanceAuto){
 			testcaseModificationService.changeImportanceAuto(origId, newImportanceAuto);
 		}
 		
 		// the custom field values now
 		
-		List<CustomFieldValue> cufs = cufvalueService.findAllCustomFieldValues(testCase);
+		List<CustomFieldValue> cufs = cufvalueService.findAllCustomFieldValues(orig);
 		for (CustomFieldValue v : cufs){
 			String code = v.getCustomField().getCode();
 			String newValue = cufValues.get(code);

@@ -465,4 +465,19 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	}
 
 
+	@Override
+	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseFolder', 'READ') or hasRole('ROLE_ADMIN')")
+	public List<String> findNamesInFolderStartingWith(long folderId,
+			String nameStart) {
+		return testCaseFolderDao.findNamesInFolderStartingWith(folderId, nameStart);
+	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary', 'READ') or hasRole('ROLE_ADMIN')")
+	public List<String> findNamesInLibraryStartingWith(long libraryId,
+			String nameStart) {
+		return findNamesInLibraryStartingWith(libraryId, nameStart);
+	}
+	
+	
 }

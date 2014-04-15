@@ -163,4 +163,9 @@ public interface TestCaseLibraryNavigationService extends
 	
 	
 	List<String> getParentNodesAsStringList(Long nodeId);
+	
+	
+	public List<String> findNamesInFolderStartingWith(final long folderId, final String nameStart);
+	
+	public List<String> findNamesInLibraryStartingWith(final long libraryId, final String nameStart);
 }

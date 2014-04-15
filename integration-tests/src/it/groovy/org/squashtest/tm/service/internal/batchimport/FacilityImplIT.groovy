@@ -31,8 +31,10 @@ import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseNature
 import org.squashtest.tm.domain.testcase.TestCaseStatus
+import org.squashtest.tm.domain.testcase.TestCaseType;
 import org.squashtest.tm.service.DbunitServiceSpecification
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
+import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.internal.batchimport.Model.Existence;
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService
 import org.unitils.dbunit.annotation.DataSet
@@ -139,12 +141,16 @@ list step : dropdown list, LST_ST, optional -> (proj1, test step), (proj2, test 
 		getSession().flush()
 	}
 	
+	
 	@DataSet("batchimport.sandbox.xml")
 	def "should create a new test case, some attributes are specified and some are left to default"(){
 		
 		given :
 			TestCaseTarget target = new TestCaseTarget("/Test Project-1/dossier 2/mytestcase")
-			TestCase tc = new TestCase(name:"mytestcase", description :"<p>ouaaahpaaa</p>", nature: TestCaseNature.SECURITY_TESTING)
+			
+			TestCase tc = emptyTC();
+			stuffWith(tc, [name:"mytestcase", description :"<p>ouaaahpaaa</p>", nature: TestCaseNature.SECURITY_TESTING])
+			
 			def cufs = [
 				"TXT_TC" : "shazam",
 				"CK_TC" : "false",
@@ -198,6 +204,123 @@ list step : dropdown list, LST_ST, optional -> (proj1, test step), (proj2, test 
 			
 		then :
 			thrown NoSuchElementException
+	}
+	
+	
+	@DataSet("batchimport.sandbox.xml")
+	def "should update a test case"(){
+		
+		given :
+			TestCaseTarget target = new TestCaseTarget("/Test Project-1/test 3")
+			
+			TestCase tc = emptyTC()
+			stuffWith(tc, [name : "renamed", description : "this description has been modified", importance : TestCaseImportance.HIGH, reference : "modified"]) 
+			
+			def cufs = [ TXT_TC : "changed the cuf value"]
+		
+			
+		when :
+			LogTrain train = impl.updateTestCase(target, tc, cufs)
+			
+			flush()
+		
+		
+		then :
+			train.hasCriticalErrors() == false
+			
+			TestCase t = (TestCase) finder.findNodesByPath("/Test Project-1/renamed")
+			
+			def storedcufs = cufFinder.findAllCustomFieldValues t
+			
+			// the modified values
+			t.name == "renamed"
+			t.reference == "modified"
+			t.description == "this description has been modified"
+			t.importance == TestCaseImportance.HIGH
+			storedcufs.find { it.customField.code == "TXT_TC" }.value == "changed the cuf value"
+			
+			// the unmodified values
+			t.id == 245l
+			t.importanceAuto == false
+			t.nature == TestCaseNature.BUSINESS_TESTING
+			t.status == TestCaseStatus.WORK_IN_PROGRESS
+			t.type == TestCaseType.REGRESSION_TESTING
+			storedcufs.find { it.customField.code == "CK_TC" }.value == "false"
+			
+	}
+	
+	@DataSet("batchimport.sandbox.xml")
+	def "should create a test case instead of updating it"(){
+		
+		given :
+			TestCaseTarget target = new TestCaseTarget("/Test Project-1/dossier 2/inexistant")
+			
+			TestCase tc = emptyTC();
+			stuffWith(tc, [name:"inexistant"])
+			
+			def cufs = [:]
+			
+			
+		when :
+			LogTrain logtrain = impl.updateTestCase(target, tc, cufs)
+			
+			flush()
+			
+			TestCase found = (TestCase)finder.findNodesByPath(target.path)
+			
+		then :
+		
+			logtrain.hasCriticalErrors() == false
+			
+			logtrain.entries.find { it.i18nError == Messages.ERROR_TC_NOT_FOUND}.status == ImportStatus.WARNING 
+			
+			found.id != null
+			found.name == "inexistant"
+
+	}
+	
+	@DataSet("batchimport.sandbox.xml")
+	def "should create a test case with a different name because of name clash"(){
+		
+		given :
+			TestCaseTarget target = new TestCaseTarget("/Test Project-1/dossier 1/test case 1")
+			
+			TestCase tc = emptyTC();
+			stuffWith(tc, [name:"test case 1", description : "special description"])
+			
+			def cufs = [:]
+			
+			
+		when :
+			LogTrain logtrain = impl.createTestCase(target, tc, cufs)
+			
+			flush()
+			
+			TestCase found = impl.model.get(target)
+			
+		then :
+		
+			logtrain.hasCriticalErrors() == false
+			
+			logtrain.entries.find { it.i18nError == Messages.ERROR_TC_ALREADY_EXISTS }.status == ImportStatus.WARNING
+		
+			
+			found.id != null
+			found.id != 242l
+			found.name == "test case 1 (1)"	// means test case 1 with at least one extra character
+			found.description == "special description"
+	}
+	
+	
+	
+	// ********************* private stuffs **********************
+	
+	def emptyTC(){
+		return TestCase.createBlankTestCase();		
+	}
+	
+	def stuffWith(tc, attributes){
+		attributes.each { k,v -> tc[k] = v }
 	}
 		
 }
