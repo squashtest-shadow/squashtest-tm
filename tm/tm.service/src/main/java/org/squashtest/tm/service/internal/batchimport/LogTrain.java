@@ -52,7 +52,7 @@ public class LogTrain {
 	}
 
 
-	List<LogEntry> getEntries(){
+	public List<LogEntry> getEntries(){
 		return entries;
 	}
 

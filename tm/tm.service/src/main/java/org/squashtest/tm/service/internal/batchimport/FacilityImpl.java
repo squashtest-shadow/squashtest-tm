@@ -21,7 +21,10 @@
 package org.squashtest.tm.service.internal.batchimport;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -118,6 +121,8 @@ public class FacilityImpl implements Facility {
 	private FacilityImplHelper helper = new FacilityImplHelper();
 	
 	private Map<String, Long> cufIdByCode = new HashMap<String, Long>();
+	
+	private Collection<Long> modifiedTestCases = new HashSet<Long>(); 
 
 	
 	public SimulationFacility getSimulator() {
@@ -148,7 +153,9 @@ public class FacilityImpl implements Facility {
 				helper.fillNullWithDefaults(testCase);
 				helper.truncate(testCase, cufValues);
 				doCreateTestcase(target, testCase, cufValues);
+				
 				model.setExists(target, testCase.getId());
+				remember(target);
 			}
 			catch(Exception ex){
 				train.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );
@@ -177,6 +184,7 @@ public class FacilityImpl implements Facility {
 				try{
 					helper.truncate(testCase, cufValues);
 					doUpdateTestcase(target, testCase, cufValues);
+					remember(target);
 				}
 				catch(Exception ex){
 					train.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );
@@ -201,6 +209,8 @@ public class FacilityImpl implements Facility {
 			}
 			catch(Exception ex){
 				train.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );
+				TestCase tc = model.get(target);
+				model.setExists(target, tc.getId());
 				LOGGER.error("Excel import : unexpected error while deleting "+target+" : ", ex);				
 			}
 		}
@@ -219,7 +229,7 @@ public class FacilityImpl implements Facility {
 				helper.fillNullWithDefaults(testStep);
 				helper.truncate(testStep, cufValues);
 				doAddActionStep(target, testStep, cufValues);
-				model.addActionStep(target);
+				
 			}
 			catch(Exception ex){
 				train.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );
@@ -239,6 +249,8 @@ public class FacilityImpl implements Facility {
 			try{
 				doAddCallStep(target, testStep, calledTestCase);
 				model.addCallStep(target, calledTestCase);
+				
+				remember(target.getTestCase());
 			}
 			catch(Exception ex){
 				train.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );
@@ -315,6 +327,7 @@ public class FacilityImpl implements Facility {
 		if (! train.hasCriticalErrors()){
 			try{
 				doCreateParameter(target, param);
+
 			}
 			catch(Exception ex){
 				train.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );
@@ -372,6 +385,7 @@ public class FacilityImpl implements Facility {
 		if (! train.hasCriticalErrors()){
 			try{
 				doFailsafeUpdateParameterValue(dataset, param, value);
+				remember(dataset.getTestCase());
 			}
 			catch(Exception ex){
 				train.addEntry( new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );
@@ -400,7 +414,19 @@ public class FacilityImpl implements Facility {
 		return train;	
 	}
 	
-
+	/**
+	 * for all other stuffs that need to be done afterward
+	 * 
+	 */
+	public void postprocess(){
+		
+		for (Long id : modifiedTestCases){
+			datasetService.updateDatasetParameters(id);
+		}
+		
+		
+	}
+	
 	
 	// ************************* private (and hairy) code *********************************
 
@@ -725,9 +751,11 @@ public class FacilityImpl implements Facility {
 		
 	}
 	
-	
-
-
-
+	private void remember(TestCaseTarget target){
+		TestCase tc = model.get(target);
+		if (tc.getId() != null){
+			modifiedTestCases.add(tc.getId());
+		}
+	}
 
 }

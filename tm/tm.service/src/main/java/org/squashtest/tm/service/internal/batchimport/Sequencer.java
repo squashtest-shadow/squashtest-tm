@@ -21,12 +21,14 @@
 package org.squashtest.tm.service.internal.batchimport;
 
 import java.io.File;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.service.importer.ImportLog;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.ExcelWorkbookParser;
 
 @Component
 public class Sequencer {
@@ -43,18 +45,21 @@ public class Sequencer {
 	
 	
 	public ImportLog simulateImport(File excelFile){
+		
 		SimulationFacility simulator = simulatorProvider.get();
+		
 		Model model = modelProvider.get();
 		simulator.setModel(model);
 		
+	 	ExcelWorkbookParser parser = ExcelWorkbookParser.createParser(excelFile);
+	 	parser.parse().releaseResources();
+	 	List<Instruction<?>> instructions = parser.getInstructions();
 
-		// TODO : for each LogTrain, remember to use setForAll(...) to set them with 
-		// the line number and import mode.
-		
-		return null;
+	 	return run(instructions, simulator);
 	}
 	
 	public ImportLog performImport(File excelFile){
+		
 		SimulationFacility simulator = simulatorProvider.get();
 		FacilityImpl impl = facilityImplProvider.get();
 		
@@ -63,13 +68,34 @@ public class Sequencer {
 		impl.setModel(model);
 		impl.setSimulator(simulator);
 		
-		// TODO : for each LogTrain, remember to use setForAll(...) to set them with 
-		// the line number and import mode.
-		
-		
-		return null;
+	 	ExcelWorkbookParser parser = ExcelWorkbookParser.createParser(excelFile);
+	 	parser.parse().releaseResources();
+	 	List<Instruction<?>> instructions = parser.getInstructions();
+
+
+	 	ImportLog importLog = run(instructions, impl);
+	 	
+	 	impl.postprocess();
+	 	
+	 	return importLog;
+	 	
 	}
 	
 	
+	private ImportLog run(List<Instruction<?>> instructions, Facility facility){
+		
+		ImportLog importLog = new ImportLog();
+		
+	 	for (Instruction<?> instruction : instructions){
+	 		LogTrain logs = instruction.execute(facility);
+	 		
+	 		logs.setForAll(instruction.getMode());
+	 		logs.setForAll(instruction.getLine());
+	 		
+	 		importLog.appendLogTrain(logs);
+	 	}
+		
+		return importLog;
+	}
 	
 }
