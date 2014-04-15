@@ -18,67 +18,52 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "tree", "workspace/workspace.import-popup"], function($, zetree){
+define([ "jquery", "tree", "workspace/workspace.import-popup" ], function($, zetree) {
+	"use-strict";
 
 	$.widget("squash.tcimportDialog", $.squash.importDialog, {
 
-		createSummary : function(json){
-			var panel = this.element.find(".import-summary");
+		createSummary : function(json) {
+			this.template = this.template || Handlebars.compile($("#import-recap-tpl").html());
 
-			//basic infos
-			$(".total-import", panel).text(json.total);
-			$(".success-import", panel).text(json.success);
-			$(".rejected-import", panel).text(json.rejected);
+			var recap = $.extend({}, json);
+			recap.failuresClass = recap.failures > 0 ? "span-red" : "";
+			recap.createdOnly = (recap.renamed + recap.modified) === 0;
+			recap.hasRenamed = recap.renamed > 0;
+			recap.hasModified = recap.modified > 0;
+			recap.hasRejects = recap.rejected > 0;
 
-			var failSpan = $(".failures-import", panel).text(json.failures);
-			if (json.failures===0){ failSpan.removeClass("span-red"); }else{	failSpan.addClass("span-red"); }
+			this.element.find(".import-summary").html(this.template(recap));
 
-			//notes
-			if ((json.renamed===0) && (json.modified===0)){
-				$(".import-excel-dialog-note", panel).hide();
-			}else{
-				$(".import-excel-dialog-note", panel).show();
-
-				var renamedDialog = $(".import-excel-dialog-renamed", panel);
-				if (json.renamed>0) { renamedDialog.show(); } else { renamedDialog.hide(); }
-
-				var modifiedDialog = $(".import-excel-dialog-modified", panel);
-				if (json.modified>0) { modifiedDialog.show(); } else { modifiedDialog.hide(); }
-
-				var extensionDialog = $(".import-excel-dialog-extension", panel);
-				if (json.rejected>0) { extensionDialog.show(); } else { extensionDialog.hide(); }
-
-			}
 		},
 
-		bindEvents : function(){
+		bindEvents : function() {
 			this._super();
 			var self = this;
 
-			this.onOwnBtn("ok", function(){
+			this.onOwnBtn("ok", function() {
 				var tree = zetree.get();
 				var projectId = self.element.find("select[name='projectId']").val();
-				var lib = tree.jstree("findNodes", {rel : "drive", resid : projectId});
-				if (lib.size()>0){
+				var lib = tree.jstree("findNodes", {
+					rel : "drive",
+					resid : projectId
+				});
+				if (lib.size() > 0) {
 					tree.jstree("refresh", lib);
 				}
 			});
 
-			this.element.on("change", "input[name='importFormat']", function(){
+			this.element.on("change", "input[name='importFormat']", function() {
 				var value = $(this).val();
-				if(value === "zip"){
-					$("#simulateButton").prop("disabled", true);
-				} else {
-					$("#simulateButton").prop("disabled", false);
-				}
+				$("#simulateButton").prop("disabled", value === "zip");
 			});
 
-			this.element.on("change", "select[name='projectId']", function(){
+			this.element.on("change", "select[name='projectId']", function() {
 				var projectname = $(":selected", this).text();
 				self.element.find(".confirm-project").text(projectname);
 			});
 
-			this.element.on("change", "input[type='file']", function(){
+			this.element.on("change", "input[type='file']", function() {
 				var filename = /([^\\]+)$/.exec(this.value)[1];
 				self.element.find(".confirm-file").text(filename);
 			});
@@ -86,15 +71,14 @@ define(["jquery", "tree", "workspace/workspace.import-popup"], function($, zetre
 
 	});
 
-	function init(){
-
-		var dialog = $("#import-excel-dialog").tcimportDialog({
-			formats : ["xls","xlsx","zip"]
+	function init() {
+		$("#import-excel-dialog").tcimportDialog({
+			formats : [ "xls", "xlsx", "zip" ]
 		});
 
 		// ******** additional processing ***********
-		$($("input[name='importFormat']")[0]).attr("checked", "checked");
-		$("#simulateButton").prop("disabled", false);
+//		$($("input[name='importFormat']")[0]).attr("checked", "checked");
+//		$("#simulateButton").prop("disabled", false);
 	}
 
 	return {

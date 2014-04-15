@@ -40,11 +40,12 @@
  * }
  *
  */
-define(["jquery", "jquery.squash.formdialog", "jform"], function($){
+define([ "jquery", "underscore", "jquery.squash.formdialog", "jform" ], function($, _) {
+	"use-strict";
 
-	if (($.squash !== undefined) && ($.squash.importDialog !== undefined)){
-		//plugin already loaded
-		return ;
+	if (($.squash !== undefined) && ($.squash.importDialog !== undefined)) {
+		// plugin already loaded
+		return;
 	}
 
 	$.widget("squash.importDialog", $.squash.formDialog, {
@@ -52,108 +53,82 @@ define(["jquery", "jquery.squash.formdialog", "jform"], function($){
 		widgetEventPrefix : "importdialog",
 
 		options : {
-			_ticket : 0,	//upload ticket (used internally, shouldn't be set by the user)
-			formats : ["you forgot to configure that"]
+			_ticket : 0, // upload ticket (used internally, shouldn't be set by the user)
+			formats : [ "you forgot to configure that" ]
 		},
-
 
 		// ********************** abstrat *******************************
 
-		createSummary : function(xhr){
+		createSummary : function(xhr) {
 			throw "importDialog : it seems this instance is an abstract instance : " +
-					" it should have been subclassed and implement createSummary properly !";
+				" it should have been subclassed and implement createSummary properly !";
 		},
 
-
-		_create : function(){
+		_create : function() {
 			this._super();
 			this.bindEvents();
 		},
 
-		bindEvents : function(){
+		bindEvents : function() {
 			var self = this;
 
 			// ** radio **
 
-
 			// ** buttons **
 
-			this.onOwnBtn("import", function(){
-				var validated = self.validate();
-				if (validated){
-					self.setState("confirm");
-				}
-				else {
-					self.setState("error-format");
-				}
+			this.onOwnBtn("import", function() {
+				self.setState(self.validate() === true ? "confirm" : "error-format");
 			});
 
-			this.onOwnBtn("confirm", function(){
-				self.submit();
-			});
+			var selfClose = $.proxy(self.close, self);
+			this.onOwnBtn("confirm", $.proxy(self.submit, self));
 
-			this.onOwnBtn("ok", function(){
-				self.close();
-			});
+			this.onOwnBtn("ok", selfClose);
+			this.onOwnBtn("okerrsize", selfClose);
 
-			this.onOwnBtn("okerrsize", function(){
-				self.close();
-			});
-
-			this.onOwnBtn("okerrformat", function(){
+			this.onOwnBtn("okerrformat", function() {
 				self.setState("parametrization");
 			});
 
-			this.onOwnBtn("cancel-progression", function(){
+			this.onOwnBtn("cancel-progression", function() {
 				self.cancelUpload();
 				self.close();
 			});
 
-			this.onOwnBtn("cancel", function(){
-				self.close();
-			});
+			this.onOwnBtn("cancel", selfClose);
 
 		},
 
-		open : function(){
+		open : function() {
 			this._super();
 			this.reset();
 		},
 
-		reset : function(){
-			this.element.find("input:text").val('');
+		reset : function() {
+			this.element.find("input:text").val("");
 			this.setState("parametrization");
 		},
 
-		getForm : function(){
+		getForm : function() {
 			return this.element.find("form");
 		},
 
-		validate : function(){
-
+		validate : function() {
 			var fileUploads = this.getForm().find("input[type='file']");
+			var fileNames = _.map(fileUploads, function(item) { return item.value; });
 
 			var self = this;
-			var validated = false;
-			fileUploads.each(function(i, v) {
-				var fileName = v.value;
+			var nameToValidMapper = function(name) { return _.some(self.options.formats, function(ext) { return name.match("." + ext + "$"); }); };
+			var validNames = _.map(fileNames, nameToValidMapper);
 
-				$.each(self.options.formats, function(i, v) {
-					if (fileName.match("." + v + "$")) {
-						validated = true;
-					}
-				});
-
-			});
-
-			return validated;
+			return _.every(validNames);
 		},
 
 		// ***************** request submission code *******************
 
 		simulate : function() {
 			this.setState("progression");
-			this.doSimulate();
+			this.doSubmit({dryRun: true});
 		},
 
 		submit : function() {
@@ -161,28 +136,25 @@ define(["jquery", "jquery.squash.formdialog", "jform"], function($){
 			this.doSubmit();
 		},
 
-		doSimulate : function(){
+		doSubmit : function(opts) {
 			var self = this;
-
 			var form = this.getForm();
 
-			var url = form.attr("action");
+			var url = form.attr("action") + "?upload-ticket=" + self.options._ticket + ((!!opts && !!opts.dryRun) ? "&dryRun" : "");
 			form.ajaxSubmit({
-				url : url + "/simulation?upload-ticket=" + self.options._ticket,
+				url : url,
 				dataType : "text/html",
 				type : "POST",
-				success : function(){},
-				error : function(){},
-				complete : function(xhr){
-
+				success : function() {},
+				error : function() {},
+				complete : function(xhr) {
 					self.options.xhr = xhr;
 					var json = $.parseJSON($(xhr.responseText).text());
 
-					if ("maxSize" in json){
+					if ("maxSize" in json) {
 						self.errMaxSize(json.maxSize);
 						self.setState("error-size");
-					}
-					else{
+					} else {
 						self.createSummary(json);
 						self.setState("summary");
 					}
@@ -191,39 +163,9 @@ define(["jquery", "jquery.squash.formdialog", "jform"], function($){
 			});
 		},
 
-		doSubmit : function(){
-			var self = this;
-
-			var form = this.getForm();
-
-			var url = form.attr("action");
-			form.ajaxSubmit({
-				url : url + "?upload-ticket=" + self.options._ticket,
-				dataType : "text/html",
-				type : "POST",
-				success : function(){},
-				error : function(){},
-				complete : function(xhr){
-
-					self.options.xhr = xhr;
-					var json = $.parseJSON($(xhr.responseText).text());
-
-					if ("maxSize" in json){
-						self.errMaxSize(json.maxSize);
-						self.setState("error-size");
-					}
-					else{
-						self.createSummary(json);
-						self.setState("summary");
-					}
-				},
-				target : self.element.find(".dump").attr("id")
-			});
-		},
-
-		cancelUpload : function(){
+		cancelUpload : function() {
 			var state = this.getState();
-			if (state === "progression"){
+			if (state === "progression") {
 				this._cancelPoll();
 				// we must also kill the submit itself, alas killing other pending
 				// ajax requests.
@@ -239,23 +181,22 @@ define(["jquery", "jquery.squash.formdialog", "jform"], function($){
 			}
 		},
 
-		_startPoll : function(){
+		_startPoll : function() {
 			// TODO
 		},
 
-		_cancelPoll : function(){
+		_cancelPoll : function() {
 			// TODO
 		},
-
 
 		// ********************* errors *********************************
 
-		errMaxSize : function(maxSize){
+		errMaxSize : function(maxSize) {
 			var span = this.element.find(".error-size");
 			var text = span.text();
-			if (text.indexOf("{MAX-SIZE}") !== -1 ){
+			if (text.indexOf("{MAX-SIZE}") !== -1) {
 				text.replace("{MAX-SIZE}", maxSize);
-				span.text( text );
+				span.text(text);
 			}
 		}
 
