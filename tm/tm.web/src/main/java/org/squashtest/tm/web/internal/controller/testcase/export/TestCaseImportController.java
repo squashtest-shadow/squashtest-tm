@@ -20,9 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.export;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
@@ -41,8 +39,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.squashtest.tm.service.importer.ImportLog;
+import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
 import org.squashtest.tm.service.importer.EntityType;
+import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.importer.LogEntry;
 
 @Controller
@@ -52,11 +51,9 @@ public class TestCaseImportController {
 	@Inject
 	private MessageSource messageSource;
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(TestCaseImportController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseImportController.class);
 
-	private void writeToTab(Collection<LogEntry> entries,
-			XSSFWorkbook workbook, String sheetName, Locale locale) {
+	private void writeToTab(Collection<LogEntry> entries, XSSFWorkbook workbook, String sheetName, Locale locale) {
 
 		// Create a blank sheet
 		XSSFSheet sheet = workbook.createSheet(sheetName);
@@ -103,35 +100,29 @@ public class TestCaseImportController {
 		}
 	}
 
-	@RequestMapping(method = RequestMethod.GET, params = { "importLog",
-	"export=csv" })
+	@RequestMapping(method = RequestMethod.GET, params = { "importLog", "export=csv" })
 	public @ResponseBody
-	void writeImportController(ImportLog importLog,
-			HttpServletResponse response, Locale locale) throws IOException {
+	void writeImportController(ImportLog importLog, HttpServletResponse response, Locale locale) throws IOException {
 
 		// Building the workbook
 		XSSFWorkbook workbook = new XSSFWorkbook();
 
-		Collection<LogEntry> logEntriesForTestcases = importLog
-				.findAllFor(EntityType.TEST_CASE);
+		Collection<LogEntry> logEntriesForTestcases = importLog.findAllFor(EntityType.TEST_CASE);
 		if (logEntriesForTestcases.size() > 0) {
 			writeToTab(logEntriesForTestcases, workbook, "TEST CASE", locale);
 		}
 
-		Collection<LogEntry> logEntriesForTeststeps = importLog
-				.findAllFor(EntityType.TEST_STEP);
+		Collection<LogEntry> logEntriesForTeststeps = importLog.findAllFor(EntityType.TEST_STEP);
 		if (logEntriesForTeststeps.size() > 0) {
 			writeToTab(logEntriesForTeststeps, workbook, "TEST STEP", locale);
 		}
 
-		Collection<LogEntry> logEntriesForParameters = importLog
-				.findAllFor(EntityType.PARAMETER);
+		Collection<LogEntry> logEntriesForParameters = importLog.findAllFor(EntityType.PARAMETER);
 		if (logEntriesForParameters.size() > 0) {
 			writeToTab(logEntriesForParameters, workbook, "PARAMETER", locale);
 		}
 
-		Collection<LogEntry> logEntriesForDatasets = importLog
-				.findAllFor(EntityType.DATASET);
+		Collection<LogEntry> logEntriesForDatasets = importLog.findAllFor(EntityType.DATASET);
 		if (logEntriesForDatasets.size() > 0) {
 			writeToTab(logEntriesForDatasets, workbook, "DATASET", locale);
 		}
@@ -140,16 +131,15 @@ public class TestCaseImportController {
 		try {
 
 			response.setContentType("application/octet-stream");
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 
-			response.setHeader("Content-Disposition", "attachment; filename="
-					+ "ImportLog" + sdf.format(new Date()) + ".csv");
+			response.setHeader("Content-Disposition",
+					"attachment; filename=" + "import-log-" + IsoDateUtils.formatIso8601DateTime(new Date()) + ".csv");
 
 			workbook.write(response.getOutputStream());
 
 		} catch (IOException ex) {
 			LOGGER.error(ex.getMessage());
-			throw new RuntimeException(ex);
+			throw ex;
 		}
 
 	}
