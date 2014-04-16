@@ -27,15 +27,16 @@ import org.hibernate.SessionFactory
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.domain.testcase.TestCaseNature
 import org.squashtest.tm.domain.testcase.TestCaseStatus
-import org.squashtest.tm.domain.testcase.TestCaseType;
+import org.squashtest.tm.domain.testcase.TestCaseType
 import org.squashtest.tm.service.DbunitServiceSpecification
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
-import org.squashtest.tm.service.importer.ImportStatus;
-import org.squashtest.tm.service.internal.batchimport.Model.Existence;
+import org.squashtest.tm.service.importer.ImportStatus
+import org.squashtest.tm.service.internal.batchimport.Model.Existence
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService
 import org.unitils.dbunit.annotation.DataSet
 
@@ -331,7 +332,7 @@ list step : dropdown list, LST_ST, optional -> (proj1, test step), (proj2, test 
 	}
 	
 	@DataSet("batchimport.sandbox.xml")
-	def "should not delete a test case because it's called"(){
+	def "should not delete a test case because it's being called"(){
 		
 		given :
 			TestCaseTarget target = new TestCaseTarget("/Test Project-1/dossier 1/test case 2")
@@ -344,7 +345,35 @@ list step : dropdown list, LST_ST, optional -> (proj1, test step), (proj2, test 
 			train.entries.find { it.i18nError == Messages.ERROR_REMOVE_CALLED_TC }.status == ImportStatus.FAILURE
 	}
 	
-	
+	@DataSet("batchimport.sandbox.xml")
+	def "should add an action step to a test case at the end"(){
+		
+		given :
+			TestStepTarget target = new TestStepTarget(new TestCaseTarget("/Test Project-1/dossier 1/test case 2"),null)
+			ActionTestStep astep = new ActionTestStep(action:"new action", expectedResult : "new expectedResult")
+			def cufs = [LST_ST: "b"]
+		
+		when :
+			LogTrain train = impl.addActionStep(target, astep, cufs)
+			flush()
+			
+			
+		then :
+		
+			train.hasCriticalErrors() == false
+		
+			TestCase found = (TestCase)finder.findNodesByPath("/Test Project-1/dossier 1/test case 2")
+		
+			found.steps.size() == 3
+			found.steps[2].action == "new action"
+			found.steps[2].expectedResult == "new expectedResult"
+			
+			def storedcufs = cufFinder.findAllCustomFieldValues found.steps[2]
+			
+			storedcufs.find { it.customField.code == "LST_ST" }.value == "b"
+			
+			 
+	}
 	
 	// ********************* private stuffs **********************
 	

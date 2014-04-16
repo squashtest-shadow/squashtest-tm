@@ -558,10 +558,7 @@ public class FacilityImpl implements Facility {
 	private void doAddActionStep(TestStepTarget target, ActionTestStep testStep, Map<String, String> cufValues) throws Exception{
 		
 		Map<Long, String> acceptableCufs = toAcceptableCufs(cufValues);
-		
-		// backup the audit log 
-		AuditableSupport metadata = helper.saveAuditMetadata((AuditableMixin)testStep);
-	
+			
 		// add the step
 		TestCase tc = model.get(target.getTestCase());
 		testcaseModificationService.addActionTestStep(tc.getId(), testStep, acceptableCufs);
@@ -572,17 +569,12 @@ public class FacilityImpl implements Facility {
 			testcaseModificationService.changeTestStepsPosition(tc.getId(), index, Arrays.asList(testStep.getId()));
 		}
 		
-		// restore the audit log 
-		helper.restoreMetadata((AuditableMixin)testStep, metadata);
 	}
 	
 	
 	
 	private void doAddCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase){
 		
-		// backup the audit log 
-		AuditableSupport metadata = helper.saveAuditMetadata((AuditableMixin)testStep);
-	
 		// add the step
 		TestCase tc = model.get(target.getTestCase());
 		TestCase called = model.get(calledTestCase);
@@ -596,8 +588,6 @@ public class FacilityImpl implements Facility {
 			testcaseModificationService.changeTestStepsPosition(tc.getId(), index, Arrays.asList(created.getId()));
 		}
 		
-		// restore the audit log 
-		helper.restoreMetadata((AuditableMixin)created, metadata);
 	}
 	
 	
@@ -605,21 +595,14 @@ public class FacilityImpl implements Facility {
 		
 		Map<Long, String> acceptableCufs = toAcceptableCufs(cufValues);
 		
-		// backup the audit log 
-		AuditableSupport metadata = helper.saveAuditMetadata((AuditableMixin)testStep);
-		
 		// update the step
 		TestStep actualStep = model.getStep(target);		
 		stepModificationService.updateTestStep(actualStep.getId(), testStep.getAction(), testStep.getExpectedResult(), acceptableCufs);
 		
-		// restore the audit log 
-		helper.restoreMetadata((AuditableMixin)actualStep, metadata);
 	}
 	
 	private void doUpdateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase){
 
-		// backup the audit log 
-		AuditableSupport metadata = helper.saveAuditMetadata((AuditableMixin)testStep);
 		
 		// update the step
 		TestStep actualStep = model.getStep(target);		
@@ -627,8 +610,6 @@ public class FacilityImpl implements Facility {
 		callstepService.checkForCyclicStepCallBeforePaste(newCalled.getId(), Arrays.asList(actualStep.getId()));
 		((CallTestStep)actualStep).setCalledTestCase(newCalled);
 		
-		// restore the audit log 
-		helper.restoreMetadata((AuditableMixin)actualStep, metadata);
 	}
 	
 	private void doDeleteTestStep(TestStepTarget target){
