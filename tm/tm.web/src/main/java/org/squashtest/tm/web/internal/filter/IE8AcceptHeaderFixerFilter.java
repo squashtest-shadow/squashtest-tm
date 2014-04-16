@@ -23,7 +23,6 @@ package org.squashtest.tm.web.internal.filter;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Vector;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.Filter;
