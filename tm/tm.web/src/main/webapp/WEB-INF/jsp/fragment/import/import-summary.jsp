@@ -20,7 +20,17 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
+<%--
+	parameters : 
+		- summary : an import summary bean
+		
+ --%>
 <!-- The form.ajaxSubmit() has a special way to send multipart forms that requires this trick of wrapping json in some html. 
 This is so because Chrome and FF handle well a repsonse in json but not IE. -->
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8" %>
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
+
+<%--
 <p>${'{' } "success" : ${ summary.success }, "total" : ${ summary.total }, "rejected" : ${ summary.rejected }, "failures" : ${ summary.failures }, "modified" : ${ summary.modified }, "renamed" : ${ summary.renamed } ${'}'}</p>
+ --%>
+ <p>${json:marshall(summary)}</p>

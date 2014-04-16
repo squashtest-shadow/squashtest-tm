@@ -122,14 +122,29 @@ public interface TestCaseLibraryNavigationService extends
 
 	
 	/**
-	 * Accepts an single excel file containing test case informations. Note that the structure of that 
+	 * Simulates an import and returns a complete log 
+	 * for any invalid informations it contains. It does not proceed to an actual import. Note that the structure of that 
 	 * excel file is totally different that the one contained in the zip archive consumed by 
 	 * {@link #importZipTestCase(InputStream, long, String)}
 	 * 
 	 * @param excelFile
 	 * @return
 	 */
-	ImportLog	importExcelTestCase(File excelFile);
+	ImportLog simulateImportExcelTestCase(File excelFile);
+	
+	
+	/**
+	 * Proceed to an import returns a complete log 
+	 * for any invalid informations it contains. Contrary to {@link #simulateImportExcelTestCase(File)} data are actually processed. 
+	 * Note that the structure of that 
+	 * excel file is totally different that the one contained in the zip archive consumed by 
+	 * {@link #importZipTestCase(InputStream, long, String)}
+	 * 
+	 * @param excelFile
+	 * @return
+	 */
+	ImportLog performImportExcelTestCase(File excelFile);
+	
 	
 	
 	/**

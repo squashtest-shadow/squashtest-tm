@@ -31,7 +31,7 @@ import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.ExcelWorkbookParser;
 
 @Component
-public class Sequencer {
+public class TestCaseExcelBatchImporter {
 
 	
 	@Inject

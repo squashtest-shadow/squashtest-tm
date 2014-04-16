@@ -49,6 +49,7 @@ import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
 import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.internal.batchexport.TestCaseExcelExporterService;
+import org.squashtest.tm.service.internal.batchimport.TestCaseExcelBatchImporter;
 import org.squashtest.tm.service.internal.importer.TestCaseImporter;
 import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
@@ -111,6 +112,10 @@ public class TestCaseLibraryNavigationServiceImpl extends
 
 	@Inject
 	private ProjectDao projectDao;
+	
+	@Inject
+	private TestCaseExcelBatchImporter batchImporter; 
+	
 	
 	@Override
 	protected NodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> getDeletionHandler() {
@@ -355,10 +360,16 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	}
 	
 	@Override
-	public ImportLog importExcelTestCase(File excelFile) {
-		throw new UnsupportedOperationException("not implemented yet");
+	public ImportLog simulateImportExcelTestCase(File excelFile) {
+		return batchImporter.simulateImport(excelFile);
 	}
 
+	@Override
+	public ImportLog performImportExcelTestCase(File excelFile) {
+		return batchImporter.performImport(excelFile);
+	}
+	
+	
 	@Override
 	@PostFilter("hasPermission(filterObject, 'LINK') or hasRole('ROLE_ADMIN')")
 	public List<TestCaseLibrary> findLinkableTestCaseLibraries() {

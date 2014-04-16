@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.importer;
 
-import java.io.File;
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.SortedSet;
@@ -32,9 +32,6 @@ public class ImportLog {
 
 	//key : EntityType, values : LogEntry
 	private MultiValueMap logEntriesPerType = MultiValueMap.decorate(new HashMap(), SortedSet.class);
-	
-	// the pointer to the excel workbook that contains the error log
-	private File fullReport = null;
 	
 	private int testCaseSuccess=0;
 	private int testCaseWarnings=0;
@@ -51,6 +48,8 @@ public class ImportLog {
 	private int datasetSuccess=0;
 	private int datasetWarnings=0;
 	private int datasetFailures=0;
+	
+	private URL reportURL;
 	
 
 	public void addLogEntry(LogEntry logEntry){
@@ -110,14 +109,6 @@ public class ImportLog {
 		
 	}
 	
-	// that getter doesn't comply with the Java bean convention purposely. 
-	public File obtainFullReport() {
-		return fullReport;
-	}
-
-	public void setFullReport(File fullReport) {
-		this.fullReport = fullReport;
-	}
 
 	public int getTestCaseSuccess() {
 		return testCaseSuccess;
@@ -169,6 +160,13 @@ public class ImportLog {
 	public int getDatasetFailures() {
 		return datasetFailures;
 	}
+
+	public URL getReportURL() {
+		return reportURL;
+	}
 	
+	public void setReportURL(URL reportURL){
+		this.reportURL = reportURL;
+	}
 	
 }
