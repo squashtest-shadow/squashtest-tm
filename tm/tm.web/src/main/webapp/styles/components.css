@@ -628,7 +628,7 @@ td.editable:HOVER {
 }
 
 span.span-red {
-	color: red;
+	.txt-error()
 }
 
 span.span-bold {
@@ -636,7 +636,7 @@ span.span-bold {
 }
 
 span.span-green {
-	color: green;
+	.txt-success();
 }
 
 /*******************************

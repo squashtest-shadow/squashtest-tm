@@ -46,14 +46,23 @@ define([ "jquery", "tree", "workspace/workspace.import-popup" ], function($, zet
  * @returns recap as an html string
  */
 	recapBuilder.xls = function(json) {
-		this.template = this.template || Handlebars.compile($("#zip-import-recap-tpl").html()); // caching
+		this.template = this.template || Handlebars.compile($("#xls-import-recap-tpl").html()); // caching
 
-		var recap = $.extend({}, json);
-		recap.failuresClass = recap.failures > 0 ? "span-red" : "";
-		recap.createdOnly = (recap.renamed + recap.modified) === 0;
-		recap.hasRenamed = recap.renamed > 0;
-		recap.hasModified = recap.modified > 0;
-		recap.hasRejects = recap.rejected > 0;
+		var recap = {
+				testCaseSuccess: 10,
+				testCaseWarning: 20,
+				testCaseFailure: 30,
+				testStepSuccess: 10,
+				testStepWarning: 20,
+				testStepFailure: 30,
+				parameterSuccess: 10,
+				parameterWarning: 20,
+				parameterFailure: 30,
+				datasetSuccess: 10,
+				datasetWarning: 20,
+				datasetFailure: 30,
+				xlsRecapUrl: "http://foo.bar"
+		};
 
 		return this.template(recap);
 	};
@@ -85,13 +94,20 @@ define([ "jquery", "tree", "workspace/workspace.import-popup" ], function($, zet
 				}
 			});
 
-			this.onOwnBtn("simulate", $.proxy(self.simulate, self));
+			this.onOwnBtn("simulate", function() {
+				if(self.validate() === true) {
+					self.simulate();
+				} else {
+					self.setState("error-format");
+				}
+			});
 
 			this.element.on("change", "input[name='import-type']", function() {
 				var value = $(this).val();
 				self.importType = value;
 				self.options.formats = self.options.typeFormats[value];
 				$("#simulateButton").prop("disabled", value === "zip");
+				$("#import-err-filetype").text(self.options.formats);
 			});
 
 			this.element.on("change", "select[name='projectId']", function() {
@@ -114,7 +130,6 @@ define([ "jquery", "tree", "workspace/workspace.import-popup" ], function($, zet
 			this.setState("progression");
 			this.doSubmit({ urlPostfix: "/" + this.importType });
 		}
-
 
 	});
 

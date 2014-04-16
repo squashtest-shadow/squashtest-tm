@@ -289,13 +289,63 @@
 	</div>
 	{{/unless}}
   </script>
+  
+  <script id="xls-import-recap-tpl" type="text/x-handlebars-template">
+  <div>
+    <p class="cf">
+      <span class="snap-left ui-icon ui-icon-check"></span><f:message key="message.import.success" />
+    </p>
+    <p>
+    <table>
+      <thead>
+      <tr>
+        <th class="not visible"></th>
+        <th><f:message key="message.import.successRowCount" /></th>
+        <th><f:message key="message.import.warningRowCount" /></th>
+        <th><f:message key="message.import.failureRowCount" /></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <th><f:message key="label.testCases" /></th>
+        <th class="txt-success">{{testCaseSuccess}}</th>
+        <th class="txt-warn">{{testCaseWarning}}</th>
+        <th class="txt-error">{{testCaseFailure}}</th>
+      </tr>
+      <tr>
+        <th><f:message key="label.testSteps" /></th>
+        <th class="txt-success">{{testStepSuccess}}</th>
+        <th class="txt-warn">{{testStepWarning}}</th>
+        <th class="txt-error">{{testStepFailure}}</th>
+      </tr>
+      <tr>
+        <th><f:message key="label.parameters" /></th>
+        <th class="txt-success">{{parameterSuccess}}</th>
+        <th class="txt-warn">{{parameterWarning}}</th>
+        <th class="txt-error">{{parameterFailure}}</th>
+      </tr>
+      <tr>
+        <th><f:message key="label.datasets" /></th>
+        <th class="txt-success">{{datasetSuccess}}</th>
+        <th class="txt-warn">{{datasetWarning}}</th>
+        <th class="txt-error">{{datasetFailure}}</th>
+      </tr>
+      </tbody>
+    </table>
+    </p>
+    <p class="cf">
+      <span class="snap-left ui-icon ui-icon-arrowthick-1-e"></span><a href="{{xlsRecapUrl}}"><f:message key="message.import.downloadLog" /></a>
+    </p>
+  </div>
+  </script>
+  
 	
 	<div data-def="state=error-size">
 		<span class="error-size"><f:message key="dialog.import.error.sizeexceeded"/></span>
 	</div>
 	
 	<div data-def="state=error-format">		
-		<span><f:message key="dialog.import.wrongfile"/>zip</span>	
+		<span><f:message key="dialog.import.wrongfile"/><span id="import-err-filetype">xls, xlsx</span></span>	
 	</div>
 	
 	<div id="import-excel-dump" class="not-displayed dump"></div>
