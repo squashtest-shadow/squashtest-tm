@@ -85,17 +85,19 @@ public abstract class TestCaseLibraryNode extends GenericLibraryNode implements 
 		if (obj == null) {
 			return false;
 		}
-		if (getClass() != obj.getClass()) {
+		if (! TestCaseLibraryNode.class.isAssignableFrom(obj.getClass())) {
 			return false;
 		}
 		TestCaseLibraryNode other = (TestCaseLibraryNode) obj;
-		if (id == null) {
-			if (other.id != null) {
+		Long thisId = getId();
+		Long otherId = other.getId();
+		if (thisId == null) {
+			if (otherId != null) {
 				return false;
 			}
 			// no ids for both -> delegate to superclass
 			return super.equals(other);
-		} else if (!id.equals(other.id)) {
+		} else if (!thisId.equals(otherId)) {
 			return false;
 		}
 		return true;

@@ -97,8 +97,10 @@ class ModelIT  extends DbunitServiceSpecification {
 			model.stepCufsPerProjectname["autre project"].collect{ it.code } as Set == ["DATE", "LST_ST"] as Set
 			
 			// now check the call graph
-			model.isCalled(new TestCaseTarget("/Test Project-1/test 3"))
-			model.isCalledBy(new TestCaseTarget("/Test Project-1/test 3"), new TestCaseTarget("/Test Project-1/dossier 2/0 test case \\/ with slash"))
+			model.isCalledBy(target("/Test Project-1/dossier 1/test case 2"), target("/autre project/TEST A"))
+			model.isCalledBy(target("/Test Project-1/dossier 2/0 test case \\/ with slash"), target("/autre project/TEST A"))
+			model.isCalledBy(target("/Test Project-1/test 3"), target("/Test Project-1/dossier 2/0 test case \\/ with slash"))
+			model.isCalledBy(target("/Test Project-1/dossier 1/test case 1"), target("/Test Project-1/test 3"))
 			
 	}
 	
@@ -157,5 +159,8 @@ class ModelIT  extends DbunitServiceSpecification {
 	def createTestCaseTargets(String... paths){
 		return paths.collect{ return new TestCaseTarget(it) }
 	}
-	
+
+	def target(path){
+		return new TestCaseTarget(path)
+	}	
 }

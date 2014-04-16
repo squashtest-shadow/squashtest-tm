@@ -61,36 +61,37 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 			Query query = null;
 			for(Long entityId : entityIds){
 				
-				query = getSession().getNamedQuery("testCaseLibraryNode.findById");
-				query.setParameter("libraryNodeId", entityId);
-				TestCaseLibraryNode node = (TestCaseLibraryNode) query.uniqueResult();
+
+				TestCaseLibraryNode node = (TestCaseLibraryNode)getSession().get(TestCaseLibraryNode.class, entityId);
 				
 				query = getSession().getNamedQuery("testCaseLibraryNode.findParentLibraryIfExists");
 				query.setParameter("libraryNodeId", entityId);
 				TestCaseLibrary library = (TestCaseLibrary) query.uniqueResult();
 				if(library != null){
-					ListIterator<TestCaseLibraryNode> iterator = library.getContent().listIterator();
+					/*ListIterator<TestCaseLibraryNode> iterator = library.getContent().listIterator();
 					while (iterator.hasNext()) {
 						TestCaseLibraryNode tcln = iterator.next();
 						if (tcln.getId().equals(node.getId())) {
 							library.removeContent(tcln);
 							break;
 						}
-					}
+					}*/
+					library.removeContent(node);
 				}
 				
 				query = getSession().getNamedQuery("testCaseLibraryNode.findParentFolderIfExists");
 				query.setParameter("libraryNodeId", entityId);
 				TestCaseFolder folder = (TestCaseFolder) query.uniqueResult();
 				if(folder != null){
-					ListIterator<TestCaseLibraryNode> iterator = folder.getContent().listIterator();
+					/*ListIterator<TestCaseLibraryNode> iterator = folder.getContent().listIterator();
 					while (iterator.hasNext()) {
 						TestCaseLibraryNode tcln = iterator.next();
 						if (tcln.getId().equals(node.getId())) {
 							folder.removeContent(tcln);
 							break;
 						}
-					}
+					}*/
+					folder.removeContent(node);
 				}
 			
 				if(node!=null){

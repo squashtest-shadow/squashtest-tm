@@ -57,15 +57,15 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 /Test Project-1/dossier 1/test case 1 				: [Action Action Action]
 /Test Project-1/dossier 1/test case 2   			: [Action Action]
 /Test Project-1/dossier 2/0 test case \/ with slash : [Action Action Call]
-/autre project/test A								: [Call Action Call]
-/autre project/folder/test B						: [Action Action]
+/autre project/TEST A								: [Call Action Call]
+/autre project/folder/TEST B						: [Action Action]
 
 
 2/ which test case calls which one :
 ------------------------------------
 
-/autre project/test A								==> /Test Project-1/dossier 1/test case 2
-/autre project/test A								==> /Test Project-1/dossier 2/0 test case \/ with slash
+/autre project/TEST A								==> /Test Project-1/dossier 1/test case 2
+/autre project/TEST A								==> /Test Project-1/dossier 2/0 test case \/ with slash
 /Test Project-1/dossier 2/0 test case \/ with slash ==> /Test Project-1/test 3
 /Test Project-1/test 3								==> /Test Project-1/dossier 1/test case 1
 
@@ -77,8 +77,8 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 /Test Project-1/dossier 1/test case 1 				:
 /Test Project-1/dossier 1/test case 2   			:
 /Test Project-1/dossier 2/0 test case \/ with slash : param_test_0
-/autre project/test A								: param_A
-/autre project/folder/test B						:
+/autre project/TEST A								: param_A
+/autre project/folder/TEST B						:
 
 
 4/ test cases and datasets :
@@ -86,7 +86,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 
 
 /Test Project-1/dossier 2/0 test case \/ with slash : dataset_with_slash
-/autre project/test A								: ultimate ds
+/autre project/TEST A								: ultimate ds
 
 
 5/ custom fields :
@@ -309,6 +309,39 @@ list step : dropdown list, LST_ST, optional -> (proj1, test step), (proj2, test 
 			found.id != 242l
 			found.name == "test case 1 (1)"	// means test case 1 with at least one extra character
 			found.description == "special description"
+	}
+	
+	
+	@DataSet("batchimport.sandbox.xml")
+	def "should delete a test case"(){
+		
+		given :
+			TestCaseTarget target = new TestCaseTarget("/autre project/TEST A")
+		
+		when :
+			LogTrain train = impl.deleteTestCase(target)
+			
+			//flush() unneeded here because hibernate did it already
+		
+		then :
+			train.hasCriticalErrors() == false
+			allDeleted("TestCase", [246l])
+			impl.model.getStatus(target).status == Existence.NOT_EXISTS
+				
+	}
+	
+	@DataSet("batchimport.sandbox.xml")
+	def "should not delete a test case because it's called"(){
+		
+		given :
+			TestCaseTarget target = new TestCaseTarget("/Test Project-1/dossier 1/test case 2")
+		
+		when :
+			LogTrain train = impl.deleteTestCase(target)
+			
+		then :
+			train.hasCriticalErrors() == true
+			train.entries.find { it.i18nError == Messages.ERROR_REMOVE_CALLED_TC }.status == ImportStatus.FAILURE
 	}
 	
 	

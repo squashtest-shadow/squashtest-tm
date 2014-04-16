@@ -216,7 +216,8 @@ public class Model {
 	}
 
 	public void setToBeDeleted(TestCaseTarget target){
-		testCaseStatusByTarget.put(target, new TargetStatus(Existence.TO_BE_DELETED));
+		TargetStatus oldStatus = testCaseStatusByTarget.get(target);
+		testCaseStatusByTarget.put(target, new TargetStatus(Existence.TO_BE_DELETED, oldStatus.id));
 		clearSteps(target);
 		callGraph.removeNode(target);
 	}
