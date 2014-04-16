@@ -105,7 +105,7 @@
 <div id="rename-node-dialog" class="popup-dialog not-displayed" title="${renameNodeTitle}" >
 
 	<span data-def="state=denied">
-		<f:message key="dialog.label.rename-node.rejected" />		
+		<f:message key="dialog.label.rename-node.rejected" />
 	</span>
 	
 	<div data-def="state=confirm">
@@ -147,48 +147,40 @@
 				<div class="not-displayed delete-node-dialog-details">
 					<p><f:message key="dialog.delete-tree-node.details"/></p>
 					<ul>
-					</ul>				
+					</ul>	
 				</div>
-				
 				<p>
 					<span>
 						<f:message key="dialog.label.delete-node.label.cantbeundone" />
-					</span>				
+					</span>
 					<span class='bold-warning-message'>
 						<f:message key="dialog.label.delete-node.label.confirm" />
-					</span>				
-				</p>				
-				
+					</span>
+				</p>
 			</div>
 		</div>
 	</div>
-		
 	<div class="not-displayed" data-def="state=rejected">
 		<f:message key="dialog.label.delete-node.rejected"/>
 	</div>
-	
 	<div class="popup-dialog-buttonpane">
 		<input type="button" value="${confirmLabel}" data-def="evt=confirm, mainbtn=confirm, state=confirm"/>
 		<input type="button" value="${cancelLabel}"  data-def="evt=cancel,  mainbtn=rejected"/>
 	</div>
 </div>
-
-
 <%-- ================ IMPORT EXCEL POPUP ======================= --%>
-
 <sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
- 
 <div id="import-excel-dialog" class="popup-dialog not-displayed" title="${importExcelTitle}">
 
 	<div data-def="state=parametrization" class="std-margin-top">
 		
 		<div>
-			<form action="${servContext}/test-case-browser/import/upload" method="POST" enctype="multipart/form-data" class="display-table">
+			<form action="${servContext}/test-cases/importer" method="POST" enctype="multipart/form-data" class="display-table">
 
 				<div class="std-padding std-margin-top">
 				
 					<div class="grey-round-panel snap-left" style="width:43%;">
-						<input type="radio" name="importFormat" value="xls" class="centered" checked="checked"/><span style="text-decoration:underline;">Excel</span>
+						<input id="xls-import-opt" type="radio" name="import-type" value="xls" class="centered" checked="checked"/><span style="text-decoration:underline;">Excel</span>
 						<p class="nota-bene">
 							<f:message key="test-case.import.dialog.excel.description"/>
 						</p>
@@ -198,7 +190,7 @@
 					</div>
 				
 					<div class="grey-round-panel snap-right" style="width:43%;">
-						<input type="radio" name="importFormat" value="zip" class="centered"/><span style="text-decoration:underline;">ZIP</span>
+						<input id="zip-import-opt" type="radio" name="import-type" value="zip" class="centered"/><span style="text-decoration:underline;">ZIP</span>
 						<p class="nota-bene">
 							<f:message key="test-case.import.dialog.zip.description"/>
 						</p>			
@@ -258,40 +250,46 @@
 			<span class="confirm-span confirm-project"><c:out value="${importableLibraries[0].project.name}"/></span>
 		</div>
 		
-		<span style="display:block"><f:message key="dialog.import.confirm.message"/></span>
+		<div><f:message key="dialog.import.confirm.message"/></div>
 	</div>
 	
 	<div data-def="state=progression" >
 		<comp:waiting-pane/>
 	</div>
 	
-	<div class="import-summary" data-def="state=zip-summary">
-	
-		<div><span><f:message key="dialog.import-excel.test-case.total"/></span><span class="total-import span-bold"></span></div>
-		
-		<div><span><f:message key="dialog.import-excel.test-case.success"/></span><span class="success-import span-bold span-green"></span></div>
-		
-		<div><span><f:message key="dialog.import-excel.test-case.rejected"/></span><span class="rejected-import span-bold span-green"></span></div>
-		
-		<div><span><f:message key="dialog.import-excel.test-case.failed"/></span><span class="failures-import span-bold"></span></div>			
-		
-		<div class="import-excel-dialog-note">			
-			<hr/>
-			<span><f:message key="dialog.import.summary.notes.label"/></span>
-			<ul>
-				<li class="import-excel-dialog-renamed"><span><f:message key="dialog.import-excel.test-case.warnings.renamed"/></span></li>
-				<li class="import-excel-dialog-modified"><span><f:message key="dialog.import-excel.test-case.warnings.modified"/></span></li>
-				<li class="import-excel-dialog-extension"><span><f:message key="dialog.import-excel.test-case.warnings.extension"/></span></li>
-			</ul>
-		</div>
-	</div>	
-	
-	<div data-def="state=xls-simulation-summary">
+	<div class="import-summary" data-def="state=summary">
 	</div>
+  
+  <script id="zip-import-recap-tpl" type="text/x-handlebars-template">
+ 	<div><span><f:message key="dialog.import-excel.test-case.total"/></span><span class="total-import span-bold">{{total}}</span></div>
 
-	<div data-def="state=xls-import-summary">
+	<div><span><f:message key="dialog.import-excel.test-case.success"/></span><span class="success-import span-bold span-green">{{success}}</span></div>
+	
+	<div><span><f:message key="dialog.import-excel.test-case.rejected"/></span><span class="rejected-import span-bold span-green">{{rejected}}</span></div>
+	
+	<div>
+		<span><f:message key="dialog.import-excel.test-case.failed"/></span>
+		<span class="failures-import span-bold {{failuresClass}}">{{failures}}</span>
+	</div>			
+	{{#unless createdOnly}}
+	<div class="import-excel-dialog-note">
+		<hr/>
+		<span><f:message key="dialog.import.summary.notes.label"/></span>
+		<ul>
+			{{#if hasRenamed}}
+			<li class="import-excel-dialog-renamed"><span><f:message key="dialog.import-excel.test-case.warnings.renamed"/></span></li>
+			{{/if}}
+			{{#if hasModified}}
+			<li class="import-excel-dialog-modified"><span><f:message key="dialog.import-excel.test-case.warnings.modified"/></span></li>
+			{{/if}}
+			{{#if hasRejects}}
+			<li class="import-excel-dialog-extension"><span><f:message key="dialog.import-excel.test-case.warnings.extension"/></span></li>
+			{{/if}}
+		</ul>
 	</div>
-		
+	{{/unless}}
+  </script>
+	
 	<div data-def="state=error-size">
 		<span class="error-size"><f:message key="dialog.import.error.sizeexceeded"/></span>
 	</div>
@@ -340,7 +338,7 @@
 			<label class="confirm-label"><f:message key="dialog.import.file.confirm"/></label>
 			<span class="confirm-span confirm-file"></span>
 		</div>
-		<span style="display:block"><f:message key="dialog.import.confirm.message"/></span>
+		<div><f:message key="dialog.import.confirm.message"/></div>
 	</div>
 	
 	<div data-def="state=progression">

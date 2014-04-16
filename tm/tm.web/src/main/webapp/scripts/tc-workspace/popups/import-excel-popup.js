@@ -19,22 +19,54 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "tree", "workspace/workspace.import-popup" ], function($, zetree) {
-	"use-strict";
+	"use strict";
+
+	var recapBuilder = {};
+	/**
+	 * builds recap for zip import
+	 * @param json
+	 * @returns recap as an html string
+	 */
+	recapBuilder.zip = function(json) {
+		this.template = this.template || Handlebars.compile($("#zip-import-recap-tpl").html()); // caching
+
+		var recap = $.extend({}, json);
+		recap.failuresClass = ((recap.failures > 0) ? "span-red" : "");
+		recap.createdOnly = (recap.renamed + recap.modified) === 0;
+		recap.hasRenamed = recap.renamed > 0;
+		recap.hasModified = recap.modified > 0;
+		recap.hasRejects = recap.rejected > 0;
+
+		return this.template(recap);
+	};
+
+/**
+ * builds recap for xls import
+ * @param json
+ * @returns recap as an html string
+ */
+	recapBuilder.xls = function(json) {
+		this.template = this.template || Handlebars.compile($("#zip-import-recap-tpl").html()); // caching
+
+		var recap = $.extend({}, json);
+		recap.failuresClass = recap.failures > 0 ? "span-red" : "";
+		recap.createdOnly = (recap.renamed + recap.modified) === 0;
+		recap.hasRenamed = recap.renamed > 0;
+		recap.hasModified = recap.modified > 0;
+		recap.hasRejects = recap.rejected > 0;
+
+		return this.template(recap);
+	};
 
 	$.widget("squash.tcimportDialog", $.squash.importDialog, {
 
+		_create : function() {
+			this._super();
+			this.importType = this.element.find("#xls-import-opt").val();
+		},
+
 		createSummary : function(json) {
-			this.template = this.template || Handlebars.compile($("#import-recap-tpl").html());
-
-			var recap = $.extend({}, json);
-			recap.failuresClass = recap.failures > 0 ? "span-red" : "";
-			recap.createdOnly = (recap.renamed + recap.modified) === 0;
-			recap.hasRenamed = recap.renamed > 0;
-			recap.hasModified = recap.modified > 0;
-			recap.hasRejects = recap.rejected > 0;
-
-			this.element.find(".import-summary").html(this.template(recap));
-
+			this.element.find(".import-summary").html(recapBuilder[this.importType].call(this, json));
 		},
 
 		bindEvents : function() {
@@ -53,8 +85,11 @@ define([ "jquery", "tree", "workspace/workspace.import-popup" ], function($, zet
 				}
 			});
 
-			this.element.on("change", "input[name='importFormat']", function() {
+			this.onOwnBtn("simulate", $.proxy(self.simulate, self));
+
+			this.element.on("change", "input[name='import-type']", function() {
 				var value = $(this).val();
+				self.importType = value;
 				$("#simulateButton").prop("disabled", value === "zip");
 			});
 
@@ -67,18 +102,26 @@ define([ "jquery", "tree", "workspace/workspace.import-popup" ], function($, zet
 				var filename = /([^\\]+)$/.exec(this.value)[1];
 				self.element.find(".confirm-file").text(filename);
 			});
+		},
+
+		simulate: function() {
+			this.setState("progression");
+			this.doSubmit({ urlPostfix: "/" + this.importType , queryParams: {"dry-run": true}});
+		},
+
+		submit: function() {
+			this.setState("progression");
+			this.doSubmit({ urlPostfix: "/" + this.importType });
 		}
 
+
 	});
+
 
 	function init() {
 		$("#import-excel-dialog").tcimportDialog({
 			formats : [ "xls", "xlsx", "zip" ]
 		});
-
-		// ******** additional processing ***********
-//		$($("input[name='importFormat']")[0]).attr("checked", "checked");
-//		$("#simulateButton").prop("disabled", false);
 	}
 
 	return {

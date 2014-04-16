@@ -46,12 +46,12 @@ import org.squashtest.tm.service.importer.LogEntry;
 
 @Controller
 @RequestMapping("/testcase-import")
-public class TestCaseImportController {
+public class TestCaseWhateverImportController {
 
 	@Inject
 	private MessageSource messageSource;
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseImportController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseWhateverImportController.class);
 
 	private void writeToTab(Collection<LogEntry> entries, XSSFWorkbook workbook, String sheetName, Locale locale) {
 

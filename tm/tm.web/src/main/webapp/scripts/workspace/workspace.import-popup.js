@@ -41,7 +41,7 @@
  *
  */
 define([ "jquery", "underscore", "jquery.squash.formdialog", "jform" ], function($, _) {
-	"use-strict";
+	"use strict";
 
 	if (($.squash !== undefined) && ($.squash.importDialog !== undefined)) {
 		// plugin already loaded
@@ -126,23 +126,44 @@ define([ "jquery", "underscore", "jquery.squash.formdialog", "jform" ], function
 
 		// ***************** request submission code *******************
 
-		simulate : function() {
-			this.setState("progression");
-			this.doSubmit({dryRun: true});
-		},
-
 		submit : function() {
 			this.setState("progression");
 			this.doSubmit();
 		},
 
-		doSubmit : function(opts) {
+		/**
+		 * Submits the form. The submit url can be customizet through the params hash, which supports :
+		 * <code>
+		 * params = {
+		 *   urlPostfix : "/something"
+		 *   queryParams {
+		 *     "foo": "bar"
+		 *   }
+		 * }
+		 * </code>
+		 *
+		 * The resulting url shall be: <ode>formAction/something?upload-ticket=1&foo=bar</code>
+		 */
+		doSubmit : function(params) {
 			var self = this;
 			var form = this.getForm();
 
-			var url = form.attr("action") + "?upload-ticket=" + self.options._ticket + ((!!opts && !!opts.dryRun) ? "&dryRun" : "");
+			var buildUrl = function() {
+				var root = self.getForm().attr("action");
+				var url = root;
+				url += (!!params && !!params.urlPostfix) ? params.urlPostfix : "";
+				url += "?upload-ticket=" + self.options._ticket;
+
+				if (!!params && !!params.queryParams) {
+					var queryStringReducer = function(memo, value, key) { return memo += "&"+encodeURIComponent(key)+"=" +encodeURIComponent(value); };
+					url += _.reduce(params.queryParams, queryStringReducer, "");
+				}
+
+				return url;
+			};
+
 			form.ajaxSubmit({
-				url : url,
+				url : buildUrl(),
 				dataType : "text/html",
 				type : "POST",
 				success : function() {},
@@ -159,6 +180,7 @@ define([ "jquery", "underscore", "jquery.squash.formdialog", "jform" ], function
 						self.setState("summary");
 					}
 				},
+
 				target : self.element.find(".dump").attr("id")
 			});
 		},
