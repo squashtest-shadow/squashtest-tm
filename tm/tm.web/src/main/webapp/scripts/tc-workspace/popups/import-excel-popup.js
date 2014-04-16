@@ -90,6 +90,7 @@ define([ "jquery", "tree", "workspace/workspace.import-popup" ], function($, zet
 			this.element.on("change", "input[name='import-type']", function() {
 				var value = $(this).val();
 				self.importType = value;
+				self.options.formats = self.options.typeFormats[value];
 				$("#simulateButton").prop("disabled", value === "zip");
 			});
 
@@ -120,7 +121,11 @@ define([ "jquery", "tree", "workspace/workspace.import-popup" ], function($, zet
 
 	function init() {
 		$("#import-excel-dialog").tcimportDialog({
-			formats : [ "xls", "xlsx", "zip" ]
+			formats : [ "xls", "xlsx" ],
+			typeFormats: {
+				zip: ["zip"],
+				xls: ["xls", "xlsx"]
+			}
 		});
 	}
 
