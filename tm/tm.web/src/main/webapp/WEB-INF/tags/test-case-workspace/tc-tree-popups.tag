@@ -208,7 +208,7 @@
 				<div class="display-table-row">
 					<div class="display-table-cell"><label><f:message key="dialog.import.project.message"/></label></div>
 					<div class="display-table-cell">
-						<select name="projectId">
+						<select id="import-project-list" name="projectId" disabled="disabled">
 							<c:forEach items="${importableLibraries}" var="lib" varStatus="status" >
 							<%-- warning : c tag nested in another c tag --%>
 							<option value="${lib.id}" <c:if test="${status.first}">selected="yes"</c:if>>${lib.project.name}</option>

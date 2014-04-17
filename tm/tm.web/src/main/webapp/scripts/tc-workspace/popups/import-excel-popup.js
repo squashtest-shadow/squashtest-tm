@@ -91,6 +91,7 @@ define([ "jquery", "tree", "workspace/workspace.import-popup" ], function($, zet
 				self.options.formats = self.options.typeFormats[value];
 				$("#simulateButton").prop("disabled", value === "zip");
 				$("#import-err-filetype").text(self.options.formats);
+				$("#import-project-list").prop("disabled", value === "xls");
 			});
 
 			this.element.on("change", "select[name='projectId']", function() {

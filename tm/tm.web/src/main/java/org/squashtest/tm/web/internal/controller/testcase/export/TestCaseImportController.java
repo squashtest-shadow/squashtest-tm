@@ -51,7 +51,7 @@ import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
  * 
  */
 @Controller
-@RequestMapping("test-cases/importer")
+@RequestMapping("/test-cases/importer")
 public class TestCaseImportController {
 	private static final String XLS_SUFFIX = ".xls";
 
@@ -85,8 +85,7 @@ public class TestCaseImportController {
 	}
 
 	@RequestMapping(value = "/xls", method = RequestMethod.POST, params = "dry-run")
-	public ModelAndView dryRunExcelWorkbook(@RequestParam("archive") MultipartFile archive,
-			@RequestParam("projectId") long projectId, WebRequest request) throws IOException {
+	public ModelAndView dryRunExcelWorkbook(@RequestParam("archive") MultipartFile archive, WebRequest request) throws IOException {
 		LOGGER.debug("dryRunExcelWorkbook");
 
 		return importWorkbook(archive, request, new Command<File, ImportLog>() {
