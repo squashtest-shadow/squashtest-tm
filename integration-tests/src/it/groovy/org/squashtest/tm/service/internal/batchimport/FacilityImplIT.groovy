@@ -476,6 +476,124 @@ list step : dropdown list, LST_ST, optional -> (proj1, test step), (proj2, test 
 	}
 
 	
+	@DataSet("batchimport.sandbox.xml")
+	@Unroll("should not update an action step because #humanmsg")
+	def "should not update an action step"(){
+		given :
+			TestStepTarget target = new TestStepTarget(new TestCaseTarget("/Test Project-1/test 3"),idx)
+			ActionTestStep astep = new ActionTestStep(action:"new action", expectedResult : "new expectedResult")
+			def cufs = [LST_ST: "b"]
+		
+		when :
+			LogTrain train = impl.updateActionStep(target, astep, cufs)
+			
+			flush()
+			
+		then :
+			train.hasCriticalErrors() == true
+			train.hasSuchError msg ,  status
+			
+		where :
+			idx						|	humanmsg											|	msg							| status
+			null					|	"null index"										|	ERROR_STEPINDEX_EMPTY		| FAILURE
+			 4						|	"excessive index"									|	ERROR_STEPINDEX_OVERFLOW	| FAILURE
+			-1						|	"negative index"									|	ERROR_STEPINDEX_NEGATIVE	| FAILURE
+			1						|	"trying to update a call step with an action step"	|	ERROR_NOT_AN_ACTIONSTEP		| FAILURE
+	}
+
+	
+	@DataSet("batchimport.sandbox.xml")
+	def "should update a call step (change the called test case)"(){
+
+		given : "instead of '/Test Project-1/dossier 2/0 test case \\/ with slash', will now call '/autre project/folder/TEST B'"
+		
+			TestCaseTarget callertc = new TestCaseTarget("/autre project/TEST A")
+			TestCaseTarget calledtc = new TestCaseTarget("/autre project/folder/TEST B")
+			
+			TestStepTarget steptarget = new TestStepTarget(callertc, 2)
+			CallTestStep callstep = new CallTestStep()
+			
+			
+		when :
+			LogTrain train = impl.updateCallStep(steptarget, callstep, calledtc)
+			
+			flush()
+			
+		then :
+		
+			train.hasCriticalErrors() == false
+		
+			TestCase found = (TestCase)finder.findNodesByPath("/autre project/TEST A")
+		
+			found.steps.size() == 3
+			found.steps[2].calledTestCase.id == 248l
+			
+			impl.model.isCalledBy(calledtc, callertc)
+		
+	}
+	
+	@DataSet("batchimport.sandbox.xml")
+	def "should not update a call step because the target would create a cycle"(){
+
+		given : "instead of '/Test Project-1/dossier 1/test case 2', will now call '/Test Project-1/test 3'"
+		
+			TestCaseTarget callertc = new TestCaseTarget("/Test Project-1/test 3")
+			TestCaseTarget calledtc = new TestCaseTarget("/autre project/TEST A")
+			
+			TestStepTarget steptarget = new TestStepTarget(callertc, 1)
+			CallTestStep callstep = new CallTestStep()
+			
+			
+		when :
+			LogTrain train = impl.updateCallStep(steptarget, callstep, calledtc)
+			
+			flush()
+			
+		then :
+		
+			train.hasCriticalErrors() == true
+		
+			TestCase found = (TestCase)finder.findNodesByPath("/Test Project-1/test 3")
+		
+			found.steps.size() == 3
+			found.steps[1].calledTestCase.id == 242l // and not 246l
+			
+			! impl.model.isCalledBy(calledtc, callertc)
+		
+	}
+	
+	
+	
+	@DataSet("batchimport.sandbox.xml")
+	def "should not update an action step because the target would create a cycle"(){
+
+		given : "instead of '/Test Project-1/dossier 1/test case 2', will now call '/Test Project-1/test 3'"
+		
+			TestCaseTarget callertc = new TestCaseTarget("/Test Project-1/test 3")
+			TestCaseTarget calledtc = new TestCaseTarget("/autre project/TEST A")
+			
+			TestStepTarget steptarget = new TestStepTarget(callertc, 1)
+			CallTestStep callstep = new CallTestStep()
+			
+			
+		when :
+			LogTrain train = impl.updateCallStep(steptarget, callstep, calledtc)
+			
+			flush()
+			
+		then :
+		
+			train.hasCriticalErrors() == true
+		
+			TestCase found = (TestCase)finder.findNodesByPath("/Test Project-1/test 3")
+		
+			found.steps.size() == 3
+			found.steps[1].calledTestCase.id == 242l // and not 246l
+			
+			! impl.model.isCalledBy(calledtc, callertc)
+		
+	}
+	
 	// ********************* private stuffs **********************
 	
 	

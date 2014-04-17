@@ -399,7 +399,7 @@ public class Model {
 
 		// update the call graph
 		callGraph.removeEdge(src, oldDest);
-		callGraph.removeEdge(src, newTarget);
+		callGraph.addEdge(src, newTarget);
 
 	}
 
