@@ -280,10 +280,6 @@ public class SimulationFacility implements Facility{
 			logs.addEntry(indexCheckLog);
 		}
 		
-		// 6 - no call step cycles allowed
-		if (model.wouldCreateCycle(target, calledTestCase)){
-			logs.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_CYCLIC_STEP_CALLS, new Object[]{ target.getTestCase().getPath(), calledTestCase.getPath() } ));
-		}
 		
 		// update the model if no fatal flaws were detected
 		if (! logs.hasCriticalErrors()){
@@ -502,20 +498,24 @@ public class SimulationFacility implements Facility{
 		// 2 - is the parameter correctly identified ?
 		logs.append( entityValidator.basicParameterChecks(param) );
 		
-		// 3 - does the dataset exists ?
-		if (! model.doesDatasetExists(dataset)){
-			logs.addEntry( new LogEntry(dataset, ImportStatus.WARNING, Messages.ERROR_DATASET_NOT_FOUND, Messages.IMPACT_DATASET_CREATED) );
-		}
-		
-		// 4 - is such parameter available for this dataset ?
-		if (! model.isParamInDataset(param, dataset)){
-			logs.addEntry (new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_DATASET_PARAMETER_MISMATCH));
-		}
-		
-		// 5 - is the user allowed to do so ?
-		LogEntry hasNoPermission = checkPermissionOnProject(PERM_WRITE, dataset.getTestCase());
-		if ( hasNoPermission != null){
-			logs.addEntry( hasNoPermission );
+		// go further if no blocking errors are detected
+		if (! logs.hasCriticalErrors()){
+			// 3 - does the dataset exists ?
+			if (! model.doesDatasetExists(dataset)){
+				logs.addEntry( new LogEntry(dataset, ImportStatus.WARNING, Messages.ERROR_DATASET_NOT_FOUND, Messages.IMPACT_DATASET_CREATED) );
+				createsDSonthefly = true;
+			}
+			
+			// 4 - is such parameter available for this dataset ?
+			if (! model.isParamInDataset(param, dataset)){
+				logs.addEntry (new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_DATASET_PARAMETER_MISMATCH));
+			}
+			
+			// 5 - is the user allowed to do so ?
+			LogEntry hasNoPermission = checkPermissionOnProject(PERM_WRITE, dataset.getTestCase());
+			if ( hasNoPermission != null){
+				logs.addEntry( hasNoPermission );
+			}
 		}
 		
 		if (!logs.hasCriticalErrors()){

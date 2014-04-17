@@ -30,6 +30,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -303,9 +304,9 @@ public class Model {
 	// so be carefull to load it only when necessary.
 	private void initCallGraph(TestCaseTarget target){
 
-		Long id = finderService.findNodeIdByPath(target.getPath());
-
-		if (id != null){
+		
+		try{
+			Long id = finderService.findNodeIdByPath(target.getPath());
 			LibraryGraph<NamedReference, SimpleNode<NamedReference>> targetCallers
 			= calltreeFinder.getExtendedGraph(Arrays.asList(id));
 
@@ -316,7 +317,8 @@ public class Model {
 			// now create the graph
 			callGraph.addGraph(targetCallers);
 		}
-		else{
+		catch(NoSuchElementException ex){
+			// this is probably a new node
 			callGraph.addNode(target);
 		}
 	}

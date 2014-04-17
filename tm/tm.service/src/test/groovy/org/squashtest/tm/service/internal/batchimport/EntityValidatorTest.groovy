@@ -49,7 +49,7 @@ class EntityValidatorTest extends Specification {
 	}
 	
 	
-	
+	// ******************** test case checks **********************************
 	
 	def "should say that a test case is good for the service"(){
 		
@@ -104,6 +104,8 @@ class EntityValidatorTest extends Specification {
 			
 	}
 	
+	
+	// ******************** test steps checks **********************************
 	
 	def "should say that this test step is good for the service"(){
 		
@@ -217,6 +219,9 @@ class EntityValidatorTest extends Specification {
 	}
 	
 	
+	// ******************** parameter checks **********************************
+	
+	
 	def "should say that the parameter is good to go"(){
 		
 		given :
@@ -278,6 +283,49 @@ class EntityValidatorTest extends Specification {
 	}
 	
 	
+	
+	// ******************** datasets checks **********************************
+	
+	@Unroll("should say nay to a dataset because #humanmsg")
+	def "say nay to dataset for various reasons"(){
+		given :
+			model.getStatus(_) >> {
+				return (it[0].path ==~ /.*test-case$/) ?
+					new TargetStatus(EXISTS, 10l) :
+					new TargetStatus(NOT_EXISTS, null)
+			}
+			
+			model.getProjectStatus(_) >> {
+				return (it[0] == "project") ?
+					new TargetStatus(EXISTS, 10l) :
+					new TargetStatus(NOT_EXISTS, null)
+			}
+	
+			
+		when :
+			LogTrain train = validator.basicDatasetCheck(target)
+		
+		then :
+			System.out.println(humanmsg)
+			train.entries.each { println it.i18nError }
+		
+			train.entries.size() == 1
+			
+			def pb = train.entries[0]
+			pb.status == status
+			pb.i18nError == msg
+			
+		where :
+			target 											|	status	|	msg									|	humanmsg
+			dstarget("owner/test-case", "ds")				|	FAILURE	|	Messages.ERROR_MALFORMED_PATH		|	"malformed path"
+			dstarget("/project/unknown", "ds")				|	FAILURE	|	Messages.ERROR_TC_NOT_FOUND			|	"test case doesn't exists"
+			dstarget("/unknown/test-case", "ds")			|	FAILURE	|	Messages.ERROR_PROJECT_NOT_EXIST	|	"project doesn't exists"
+			dstarget("/project/test-case", "")				|	FAILURE	|	Messages.ERROR_FIELD_MANDATORY		|	"dataset has no name"
+			dstarget("/project/test-case", toolongstring)	|	WARNING	|	Messages.ERROR_MAX_SIZE				|	"dataset name is too long"
+		
+	}
+	
+	
 	// ******************** utils *****************************
 	
 	def status(ex, id){
@@ -308,5 +356,8 @@ class EntityValidatorTest extends Specification {
 		return new ParameterTarget(tar(path), name)
 	}
 
+	def dstarget(path, name){
+		return new DatasetTarget(tar(path), name)
+	}
 	
 }

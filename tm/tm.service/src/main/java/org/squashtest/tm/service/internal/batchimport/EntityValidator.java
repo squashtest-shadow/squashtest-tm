@@ -166,7 +166,7 @@ class EntityValidator {
 		}
 		
 		// 2 - there must be no cyclic calls
-		if (model.wouldCreateCycle(target, calledTestCase)){
+		else if (model.wouldCreateCycle(target, calledTestCase)){
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, 
 										Messages.ERROR_CYCLIC_STEP_CALLS, 
 										new Object[]{target.getTestCase().getPath(), calledTestCase.getPath()}));
