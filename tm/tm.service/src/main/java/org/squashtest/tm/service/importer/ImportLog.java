@@ -22,7 +22,7 @@ package org.squashtest.tm.service.importer;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.apache.commons.collections.map.MultiValueMap;
 import org.squashtest.tm.service.internal.batchimport.LogTrain;
@@ -31,7 +31,7 @@ public class ImportLog {
 
 	//key : EntityType, values : LogEntry
 	@SuppressWarnings("rawtypes")
-	private MultiValueMap logEntriesPerType = MultiValueMap.decorate(new HashMap(), SortedSet.class);
+	private MultiValueMap logEntriesPerType = MultiValueMap.decorate(new HashMap(), TreeSet.class);
 
 	private int testCaseSuccess=0;
 	private int testCaseWarnings=0;
@@ -63,6 +63,7 @@ public class ImportLog {
 	}
 
 
+	@SuppressWarnings("unchecked")
 	public Collection<LogEntry> findAllFor(EntityType type){
 		return logEntriesPerType.getCollection(type);
 	}
