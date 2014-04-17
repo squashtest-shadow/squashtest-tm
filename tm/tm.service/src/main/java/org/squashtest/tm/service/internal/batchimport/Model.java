@@ -481,7 +481,7 @@ public class Model {
 		}
 
 		Query q = sessionFactory.getCurrentSession().getNamedQuery("testStep.findByTestCaseAndPosition");
-		q.setParameter(":tcId", tcId);
+		q.setParameter("tcId", tcId);
 		q.setParameter("position", index);
 
 		return (TestStep)q.uniqueResult();

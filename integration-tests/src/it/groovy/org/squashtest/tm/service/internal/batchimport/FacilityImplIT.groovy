@@ -28,6 +28,7 @@ import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.testcase.ActionTestStep
+import org.squashtest.tm.domain.testcase.CallTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.domain.testcase.TestCaseNature
@@ -35,11 +36,13 @@ import org.squashtest.tm.domain.testcase.TestCaseStatus
 import org.squashtest.tm.domain.testcase.TestCaseType
 import org.squashtest.tm.service.DbunitServiceSpecification
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
-import org.squashtest.tm.service.importer.ImportStatus
 import org.squashtest.tm.service.internal.batchimport.Model.Existence
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService
 import org.unitils.dbunit.annotation.DataSet
+import static org.squashtest.tm.service.internal.batchimport.Messages.*
+import static org.squashtest.tm.service.importer.ImportStatus.*
 
+import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
 
@@ -131,6 +134,8 @@ list step : dropdown list, LST_ST, optional -> (proj1, test step), (proj2, test 
 		simulator.setModel(model);
 		impl.setModel(model);
 		impl.setSimulator(simulator);
+		
+		addMixins()
 	}
 		
 	
@@ -182,8 +187,8 @@ list step : dropdown list, LST_ST, optional -> (proj1, test step), (proj2, test 
 			t.importance == TestCaseImportance.LOW
 			
 			storedcufs.size() == 2
-			storedcufs.find { it.customField.code == "TXT_TC" }.value == "shazam"
-			storedcufs.find { it.customField.code == "CK_TC" }.value == "false"
+			storedcufs.hasCuf "TXT_TC", "shazam"
+			storedcufs.hasCuf "CK_TC", "false"
 
 	}
 	
@@ -238,7 +243,7 @@ list step : dropdown list, LST_ST, optional -> (proj1, test step), (proj2, test 
 			t.reference == "modified"
 			t.description == "this description has been modified"
 			t.importance == TestCaseImportance.HIGH
-			storedcufs.find { it.customField.code == "TXT_TC" }.value == "changed the cuf value"
+			storedcufs.hasCuf "TXT_TC" ,"changed the cuf value" 
 			
 			// the unmodified values
 			t.id == 245l
@@ -246,7 +251,7 @@ list step : dropdown list, LST_ST, optional -> (proj1, test step), (proj2, test 
 			t.nature == TestCaseNature.BUSINESS_TESTING
 			t.status == TestCaseStatus.WORK_IN_PROGRESS
 			t.type == TestCaseType.REGRESSION_TESTING
-			storedcufs.find { it.customField.code == "CK_TC" }.value == "false"
+			storedcufs.hasCuf  "CK_TC" , "false" 
 			
 	}
 	
@@ -273,7 +278,7 @@ list step : dropdown list, LST_ST, optional -> (proj1, test step), (proj2, test 
 		
 			logtrain.hasCriticalErrors() == false
 			
-			logtrain.entries.find { it.i18nError == Messages.ERROR_TC_NOT_FOUND}.status == ImportStatus.WARNING 
+			logtrain.hasSuchError ERROR_TC_NOT_FOUND, WARNING 
 			
 			found.id != null
 			found.name == "inexistant"
@@ -303,7 +308,7 @@ list step : dropdown list, LST_ST, optional -> (proj1, test step), (proj2, test 
 		
 			logtrain.hasCriticalErrors() == false
 			
-			logtrain.entries.find { it.i18nError == Messages.ERROR_TC_ALREADY_EXISTS }.status == ImportStatus.WARNING
+			logtrain.hasSuchError ERROR_TC_ALREADY_EXISTS , WARNING
 		
 			
 			found.id != null
@@ -322,7 +327,7 @@ list step : dropdown list, LST_ST, optional -> (proj1, test step), (proj2, test 
 		when :
 			LogTrain train = impl.deleteTestCase(target)
 			
-			//flush() unneeded here because hibernate did it already
+			flush() 
 		
 		then :
 			train.hasCriticalErrors() == false
@@ -330,6 +335,8 @@ list step : dropdown list, LST_ST, optional -> (proj1, test step), (proj2, test 
 			impl.model.getStatus(target).status == Existence.NOT_EXISTS
 				
 	}
+	
+	
 	
 	@DataSet("batchimport.sandbox.xml")
 	def "should not delete a test case because it's being called"(){
@@ -342,21 +349,25 @@ list step : dropdown list, LST_ST, optional -> (proj1, test step), (proj2, test 
 			
 		then :
 			train.hasCriticalErrors() == true
-			train.entries.find { it.i18nError == Messages.ERROR_REMOVE_CALLED_TC }.status == ImportStatus.FAILURE
+			train.hasSuchError ERROR_REMOVE_CALLED_TC ,  FAILURE
 	}
 	
+	
+	
+	
+	@Unroll("should add an action step to a test case at last position because of #humanmsg")
 	@DataSet("batchimport.sandbox.xml")
 	def "should add an action step to a test case at the end"(){
 		
 		given :
-			TestStepTarget target = new TestStepTarget(new TestCaseTarget("/Test Project-1/dossier 1/test case 2"),null)
+			TestStepTarget target = new TestStepTarget(new TestCaseTarget("/Test Project-1/dossier 1/test case 2"),idx)
 			ActionTestStep astep = new ActionTestStep(action:"new action", expectedResult : "new expectedResult")
 			def cufs = [LST_ST: "b"]
 		
 		when :
 			LogTrain train = impl.addActionStep(target, astep, cufs)
-			flush()
 			
+			flush()		
 			
 		then :
 		
@@ -370,12 +381,108 @@ list step : dropdown list, LST_ST, optional -> (proj1, test step), (proj2, test 
 			
 			def storedcufs = cufFinder.findAllCustomFieldValues found.steps[2]
 			
-			storedcufs.find { it.customField.code == "LST_ST" }.value == "b"
+			storedcufs.hasCuf "LST_ST", "b"
 			
-			 
+		where :
+			idx						|	humanmsg
+			null					|	"because null index"	
+	 		4						|	"because excessive index"
+			-1						|	"because negative index"
+			2						|	"because that was what we wanted indeed"
+	}	
+	
+	
+	@DataSet("batchimport.sandbox.xml")
+	def "should insert a call step at the correct position"(){
+		
+		given :
+			TestCaseTarget callertc = new TestCaseTarget("/Test Project-1/dossier 1/test case 2")
+			TestCaseTarget calledtc = new TestCaseTarget("/autre project/folder/TEST B")
+			
+			TestStepTarget steptarget = new TestStepTarget(callertc, 1)
+			CallTestStep callstep = new CallTestStep()
+			
+			
+		when :
+			LogTrain train = impl.addCallStep(steptarget, callstep, calledtc)
+			
+			flush()		
+			
+		then :
+		
+			train.hasCriticalErrors() == false
+		
+			TestCase found = (TestCase)finder.findNodesByPath("/Test Project-1/dossier 1/test case 2")
+		
+			found.steps.size() == 3
+			found.steps[1].calledTestCase.id == 248l
+			
+			impl.model.isCalledBy(calledtc, callertc)
 	}
 	
+	
+	@DataSet("batchimport.sandbox.xml")
+	def "should reject a call step because of cycle"(){
+		
+		given :
+			TestCaseTarget callertc = new TestCaseTarget("/Test Project-1/dossier 1/test case 1")
+			TestCaseTarget calledtc = new TestCaseTarget("/autre project/TEST A")
+			
+			TestStepTarget steptarget = new TestStepTarget(callertc, 1)
+			CallTestStep callstep = new CallTestStep()
+			
+			
+		when :
+			LogTrain train = impl.addCallStep(steptarget, callstep, calledtc)
+			
+			flush()
+			
+		then :
+		
+			train.hasCriticalErrors() == true
+		
+			train.entries
+			
+			! impl.model.isCalledBy(calledtc, callertc)
+	}
+	
+	
+	@DataSet("batchimport.sandbox.xml")
+	def "should update an action step"(){
+		
+		given :
+			TestCaseTarget tc = new TestCaseTarget("/Test Project-1/dossier 1/test case 1")
+			TestStepTarget target = new TestStepTarget(tc, 0)
+			ActionTestStep astep = new ActionTestStep(action:"updated action")
+			def cufs = [ "LST_ST" : "c" ]
+		
+		when :
+			LogTrain train = impl.updateActionStep(target, astep, cufs)
+			
+			flush()
+			
+			def updatedstep = getSession().get(ActionTestStep, 168l)
+			def updatedcufs = cufFinder.findAllCustomFieldValues updatedstep
+		
+		then :
+		
+			train.hasCriticalErrors() == false
+			
+			updatedstep.action == "updated action"
+			updatedstep.expectedResult == "<p>result 1</p>"	//unmodified
+			
+			updatedcufs.hasCuf "LST_ST", "c"
+			
+	}
+
+	
 	// ********************* private stuffs **********************
+	
+	
+	def addMixins(){
+		Collection.metaClass.mixin(CufsPredicates)
+		LogTrain.metaClass.mixin(LogsPredicates)
+	}
 	
 	def emptyTC(){
 		return TestCase.createBlankTestCase();		
@@ -386,3 +493,18 @@ list step : dropdown list, LST_ST, optional -> (proj1, test step), (proj2, test 
 	}
 		
 }
+
+class CufsPredicates{
+	static hasCuf(cufs, code, value){
+		cufs.find { it.customField.code == code }.value == value
+	}
+	
+}
+
+class LogsPredicates{
+	
+	static hasSuchError(train, error, status){
+		train.entries.find { it.i18nError == error}.status == status
+	}
+}
+

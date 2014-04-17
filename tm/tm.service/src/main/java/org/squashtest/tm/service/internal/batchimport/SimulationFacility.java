@@ -219,7 +219,7 @@ public class SimulationFacility implements Facility{
 	@Override
 	public LogTrain addActionStep(TestStepTarget target, ActionTestStep testStep, Map<String, String> cufValues) {
 		
-		LogTrain logs ;
+		LogTrain logs;
 		
 		// 1 - basic checks
 		logs = entityValidator.basicTestStepChecks(target, testStep);

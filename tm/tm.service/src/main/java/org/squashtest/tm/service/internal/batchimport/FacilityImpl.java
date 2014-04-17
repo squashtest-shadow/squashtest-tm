@@ -593,12 +593,30 @@ public class FacilityImpl implements Facility {
 	
 	private void doUpdateActionStep(TestStepTarget target, ActionTestStep testStep, Map<String, String> cufValues){
 		
-		Map<Long, String> acceptableCufs = toAcceptableCufs(cufValues);
-		
 		// update the step
-		TestStep actualStep = model.getStep(target);		
-		stepModificationService.updateTestStep(actualStep.getId(), testStep.getAction(), testStep.getExpectedResult(), acceptableCufs);
+		ActionTestStep orig = (ActionTestStep)model.getStep(target);
 		
+		String newAction = testStep.getAction();
+		if (! StringUtils.isBlank(newAction) && ! orig.getAction().equals(newAction)){
+			orig.setAction(newAction);
+		}
+		
+		String newResult = testStep.getExpectedResult();
+		if (! StringUtils.isBlank(newResult) && ! orig.getExpectedResult().equals(newResult)){
+			orig.setExpectedResult(newResult);
+		}
+		
+		// the custom field values now
+		
+		List<CustomFieldValue> cufs = cufvalueService.findAllCustomFieldValues(orig);
+		for (CustomFieldValue v : cufs){
+			String code = v.getCustomField().getCode();
+			String newValue = cufValues.get(code);
+			if (! StringUtils.isBlank(newValue)){
+				v.setValue(newValue);
+			}
+		}
+			
 	}
 	
 	private void doUpdateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase){

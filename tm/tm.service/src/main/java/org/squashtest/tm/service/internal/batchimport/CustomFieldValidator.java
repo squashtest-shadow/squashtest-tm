@@ -113,8 +113,9 @@ class CustomFieldValidator {
 						Messages.IMPACT_DEFAULT_VALUE, null);
 			}
 			//else no big deal
-
-			train.addEntry(check);
+			if (check != null){
+				train.addEntry(check);
+			}
 		}
 
 		return train;

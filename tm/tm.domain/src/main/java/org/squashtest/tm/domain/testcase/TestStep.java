@@ -35,6 +35,7 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Persister;
+import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.infrastructure.hibernate.TestStepPersister;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
@@ -55,9 +56,8 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @InheritsAcls(constrainedClass = TestCase.class, collectionName = "steps")
-
 @Persister(impl=TestStepPersister.class)
-public abstract class TestStep {
+public abstract class TestStep implements Identified {
 	
 	@Id
 	@GeneratedValue

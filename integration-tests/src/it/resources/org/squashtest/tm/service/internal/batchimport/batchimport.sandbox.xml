@@ -223,7 +223,7 @@ list step : dropdown list, LST_ST, optional -> (proj1, test step), (proj2, test 
   <test_step TEST_STEP_ID="181"/>
   <test_step TEST_STEP_ID="182"/>
   <test_step TEST_STEP_ID="183"/>
-  <action_test_step TEST_STEP_ID="168" ACTION="&lt;p&gt;&#xA;&#09;action step 1&lt;/p&gt;&#xA;" EXPECTED_RESULT="&lt;p&gt;&#xA;&#09;result 1&lt;/p&gt;&#xA;" ATTACHMENT_LIST_ID="909"/>
+  <action_test_step TEST_STEP_ID="168" ACTION="&lt;p&gt;&#xA;&#09;action step 1&lt;/p&gt;&#xA;" EXPECTED_RESULT="&lt;p&gt;result 1&lt;/p&gt;" ATTACHMENT_LIST_ID="909"/>
   <action_test_step TEST_STEP_ID="169" ACTION="&lt;p&gt;&#xA;&#09;action step 2&lt;/p&gt;&#xA;" EXPECTED_RESULT="&lt;p&gt;&#xA;&#09;result 2&lt;/p&gt;&#xA;" ATTACHMENT_LIST_ID="910"/>
   <action_test_step TEST_STEP_ID="170" ACTION="&lt;p&gt;&#xA;&#09;action step 3&lt;/p&gt;&#xA;" EXPECTED_RESULT="&lt;p&gt;&#xA;&#09;result 3&lt;/p&gt;&#xA;" ATTACHMENT_LIST_ID="911"/>
   <action_test_step TEST_STEP_ID="171" ACTION="&lt;p&gt;&#xA;&#09;premier pas&lt;/p&gt;&#xA;" EXPECTED_RESULT="&lt;p&gt;&#xA;&#09;permier r&amp;eacute;sultat&lt;/p&gt;&#xA;" ATTACHMENT_LIST_ID="915"/>
