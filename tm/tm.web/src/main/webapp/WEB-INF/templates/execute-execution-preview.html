@@ -74,12 +74,20 @@ documentation :
 
 <body class="execute-html-body">
 
-	<div id="execute-header">
-		<div class="snap-left"><button id="execute-stop-button" th:text="#{execute.header.button.stop.title}" data-icon="ui-icon-power">stop</button></div>
-		<div style="margin-left:25%;" class="snap-left"><span id="execute-header-numbers-label" th:text="'0 / '+${totalSteps}">0 / 3</span></div>
-		<div class="snap-right"><a data-icon="ui-icon-triangle-1-e" id="execute-begin-button" th:text="#{label.Begin}"
-						th:href="@{__${currentStepsUrl}__/index//0(optimized=${config.optimized})}" href="#">begin</a></div>
-	</div>
+  <div id="execute-header">
+    <div class="snap-left">
+      <button id="execute-stop-button" th:text="#{execute.header.button.stop.title}" data-icon="ui-icon-power">stop</button>
+    </div>
+    <div style="margin-left:25%;" class="snap-left">
+      <span id="execute-header-numbers-label" th:text="'0 / '+${totalSteps}">0 / 3</span>
+    </div>
+    <div class="snap-right">
+      <a data-icon="ui-icon-triangle-1-e" id="execute-begin-button" th:text="#{label.Begin}"
+        th:href="@{__${currentStepsUrl}__/index/0(optimized=${config.optimized})}" href="#">
+        begin
+      </a>
+    </div>
+  </div>
 
 
 

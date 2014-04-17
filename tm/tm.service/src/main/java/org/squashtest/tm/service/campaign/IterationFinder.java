@@ -27,18 +27,21 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.testcase.TestCase;
 
 public interface IterationFinder {
-		
+
 	List<Iteration> findIterationsByCampaignId(long campaignId);
 
 	Iteration findById(long iterationId);
 
+	/**
+	 * @param iterationId
+	 * @return the list of iteration's executions ordered by their test plan order.
+	 */
 	List<Execution> findAllExecutions(long iterationId);
 
 	List<Execution> findExecutionsByTestPlan(long iterationId, long testPlanId);
 
 	List<TestCase> findPlannedTestCases(long iterationId);
-	
+
 	List<Iteration> findIterationContainingTestCase(long testCaseId);
-	
-	
+
 }

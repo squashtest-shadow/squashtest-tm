@@ -89,7 +89,10 @@
     </script>
 	<script type="text/javascript">
 	require(["common"], function() {
-		require(["jquery", "squash.basicwidgets", "jqueryui"], function($, basicwidg){
+		require(["jquery", "squash.basicwidgets", 
+		         "iesupport/am-I-ie8",
+		         "execution-processing/ie8-no-close-on-enter",
+		         "jqueryui"], function($, basicwidg, isIE, noCloseOnEnter){
 			$(function(){
 				basicwidg.init();
 				
@@ -142,14 +145,11 @@
 				}).click(function(){
 					parent.squashtm.ieomanager.navigateNextTestCase();
 				});
-				
-				if (${ not empty testPlanItemUrl }) $('#execute-next-test-case-panel').removeClass('not-displayed');		
-				if (${ (not empty testPlanItemUrl) and hasPreviousTestCase and (not hasPreviousStep) }) $('#new-test-case-label').removeClass('not-displayed');				
-				
+					
 			});
 	
             <c:if test="${not empty denormalizedFieldValues }">
-            var postLabel = " (" + $("#df-post-label").text().trim() +")";
+            var postLabel = " (" + $.trim($("#df-post-label").text()) +")";
             
             $.get("${denormalizedFieldsValuesURL}?denormalizedFieldHolderId=${executionStep.boundEntityId}&denormalizedFieldHolderType=${executionStep.boundEntityType}")
               .success(function(data){
@@ -166,6 +166,10 @@
 			});
 			</c:if>
 		
+			// 2195
+			if (isIE){
+				noCloseOnEnter();				
+			}
 			
 		});
 	});
@@ -179,21 +183,18 @@
 					<span id="execute-header-numbers-label">${executionStep.executionStepOrder +1} / ${totalSteps}</span>
 					<button id="execute-next-button"><f:message key="execute.header.button.next.title" /></button>
 				</td>
-				<td style="width:50px" class="centered not-displayed" id="execute-next-test-case-panel">
+				<c:if test="${not empty testPlanItemUrl}">
+				<td style="width:50px" class="centered" id="execute-next-test-case-panel">
 					<f:message  var="nextTestCaseTitle" key="execute.header.button.next-test-case.title" />
 					<button id="execute-next-test-case" name="optimized" title="${ nextTestCaseTitle }">${ nextTestCaseTitle }</button>
 				</td>
+				</c:if>
 				<td><h3 id="ieo-execution-title" class="ellipsis" >${ executionStep.execution.name }</h3></td>
 			</tr>
 			</table>
 	</div>
 	<div id="execute-body" class="execute-fragment-body">
-	
-		<div id="new-test-case-label" class="centered not-displayed">
-			<font color=red><f:message
-					key="execute.test.suite.next.test.case.label" />
-			</font>
-		</div>
+
 	
 		<div id="execute-evaluation-rightside">
 			<comp:step-information-panel auditableEntity="${executionStep}" />			
@@ -251,8 +252,9 @@
 		</div>
 		 <script type="text/javascript">
 		 require(["common"], function() {
-			 require(["jquery"], function($) {
+			 require(["jquery", "app/ws/squashtm.notification"], function($, wtf) {
 		 		$("#bugtracker-section-div").load("${btEntityUrl}");
+		 		wtf.init({});
 			 });
 		 });
 		</script>

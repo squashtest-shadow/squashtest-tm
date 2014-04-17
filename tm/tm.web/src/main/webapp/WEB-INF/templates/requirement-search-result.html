@@ -70,6 +70,7 @@
      }
     };
   </script>
+  <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
   <script data-main="../../scripts/requirement-search-result.js" th:attr="data-main=@{/scripts/requirement-search-result.js}"
     src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
   </script>
@@ -110,8 +111,8 @@
 							th:value="#{label.AssociateAll}" id="associate-all-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
 							role="button" aria-disabled="false" />
-				  	<input th:if="!${associateResult}" id="back" type="button" class="button" th:value="#{label.Back}" value="Retour"/>	
-				  	<input th:if="${associateResult}" id="back" type="button" class="button" th:value="#{label.Cancel}" value="Retour"/>	
+				  	<input th:if="!${associateResult}" id="back" type="button" class="sq-btn" th:value="#{label.Back}" value="Retour"/>	
+				  	<input th:if="${associateResult}" id="back" type="button" class="sq-btn" th:value="#{label.Cancel}" value="Retour"/>	
 				</div>
 				
 				<div class="unsnap"></div>

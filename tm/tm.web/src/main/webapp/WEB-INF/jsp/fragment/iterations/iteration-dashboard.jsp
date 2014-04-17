@@ -62,7 +62,7 @@
 		</div>
 		
 		<div class="fragment-body">
-			<dashboard:iteration-dashboard-panel url="(unused)"  printUrl="(unused)" printmode="${true}"/>
+			<dashboard:iteration-dashboard-panel url="(unused)"  printUrl="(unused)" printmode="${true}" allowsSettled="${allowsSettled}" allowsUntestable="${allowsUntestable}" />
 		</div>
 		
 		<script type="text/javascript">

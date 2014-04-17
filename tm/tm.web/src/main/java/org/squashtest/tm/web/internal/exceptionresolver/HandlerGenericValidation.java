@@ -36,6 +36,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
+import org.squashtest.tm.web.internal.http.RequestHeaders;
 
 @Component
 public class HandlerGenericValidation extends AbstractHandlerExceptionResolver {
@@ -88,9 +89,8 @@ public class HandlerGenericValidation extends AbstractHandlerExceptionResolver {
 		return ex instanceof ConstraintViolationException;
 	}
 
-	@SuppressWarnings("unchecked")
 	private boolean clientAcceptsJson(HttpServletRequest request) {
-		Enumeration<String> e = request.getHeaders("Accept");
+		Enumeration<String> e = request.getHeaders(RequestHeaders.ACCEPT);
 
 		while (e.hasMoreElements()) {
 			String header = e.nextElement();

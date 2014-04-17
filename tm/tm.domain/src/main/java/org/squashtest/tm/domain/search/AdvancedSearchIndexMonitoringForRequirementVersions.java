@@ -51,7 +51,11 @@ public class AdvancedSearchIndexMonitoringForRequirementVersions {
 	}
 
 	public static long getDocumentsAdded() {
-		return documentsAdded;
+		if(isIndexingOver || documentsAdded > addToTotalCount){
+			return addToTotalCount;
+		} else {
+			return documentsAdded;
+		}
 	}
 
 	public static void setDocumentsAdded(long documentsAdded) {
@@ -67,7 +71,11 @@ public class AdvancedSearchIndexMonitoringForRequirementVersions {
 	}
 
 	public static int getDocumentsBuilt() {
-		return documentsBuilt;
+		if(isIndexingOver || documentsBuilt > entitiesLoaded){
+			return entitiesLoaded;
+		} else {
+			return documentsBuilt;
+		}
 	}
 
 	public static void setDocumentsBuilt(int documentsBuilt) {
@@ -84,8 +92,12 @@ public class AdvancedSearchIndexMonitoringForRequirementVersions {
 
 	public static double getProgressPercentage() {
 		AdvancedSearchIndexMonitoringForRequirementVersions.progressPercentage = Math.round(((double) AdvancedSearchIndexMonitoringForRequirementVersions.documentsBuilt
-				*100.0 / (double) AdvancedSearchIndexMonitoringForRequirementVersions.addToTotalCount))/100.0;
-		return AdvancedSearchIndexMonitoringForRequirementVersions.progressPercentage;
+				*100.0 / (double) AdvancedSearchIndexMonitoringForRequirementVersions.addToTotalCount))/100.0;	
+		if(isIndexingOver){
+			return 1;
+		} else {
+			return AdvancedSearchIndexMonitoringForRequirementVersions.progressPercentage;
+		}
 	}
 
 	public static void setProgressPercentage(float progressPercentage) {

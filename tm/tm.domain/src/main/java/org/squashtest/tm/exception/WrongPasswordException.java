@@ -35,7 +35,9 @@ public class WrongPasswordException extends PasswordChangeFailedException {
 		super(message);
 
 	}
-
+	public WrongPasswordException(String message, Throwable cause){
+		super(message, cause);
+	}
 	@Override
 	public String getI18nKey() {
 		return "squashtm.domain.exception.wrong.password";

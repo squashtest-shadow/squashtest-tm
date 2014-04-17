@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
@@ -293,8 +294,7 @@ class RequirementLibraryMerger {
 	 **/
 	private static String generateUniqueName(List<String> names, String baseName) {
 		String token = "-import";
-		int importXNumber = LibraryUtils.generateUniqueCopyNumber(names, baseName, token);
-		return baseName + token + importXNumber;
+		return LibraryUtils.generateUniqueName(names, baseName, token, RequirementLibraryNode.MAX_NAME_SIZE);
 	}
 
 	@SuppressWarnings("rawtypes")

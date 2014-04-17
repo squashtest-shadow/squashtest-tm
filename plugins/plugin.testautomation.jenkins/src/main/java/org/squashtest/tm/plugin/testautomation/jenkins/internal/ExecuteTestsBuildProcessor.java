@@ -27,7 +27,6 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.StepSequen
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 
-
 public class ExecuteTestsBuildProcessor extends DelayedBuildProcessor {
 
 	private ExecuteTestsStepSequence stepSequence = new ExecuteTestsStepSequence(this);

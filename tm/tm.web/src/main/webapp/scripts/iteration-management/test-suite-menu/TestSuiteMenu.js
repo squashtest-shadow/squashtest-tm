@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "underscore", "jqueryui" ],function($, _) {
+define([ "jquery", "underscore", "jquery.squash.messagedialog", "jqueryui" ], function($, _) {
 
 	function TestSuiteMenuNewStatuses() {
 
@@ -132,8 +132,30 @@ define([ "jquery", "underscore", "jqueryui" ],function($, _) {
 			return $('span', jqElt).data('suite-id');
 		};
 
-		var initializeContent = $.proxy(function() {
-
+		var initializeContent = $.proxy(function(evt) {
+			var self = this;
+			// if a suite has just been added it is not necessary to reload all. Especially since we want to keep the
+			// changes the user has made on the menu and that he has not yet validated.
+			if (evt && evt.type == "node" && evt.namespace == "add" && self.lastAdded) {
+				//remove items from dom
+				var menuItems = this.menu.find('li.suite-item');
+				menuItems.detach();
+				//add new suite to items
+				var suite = _.where(this.model.data, {
+					name : $.trim(self.lastAdded)
+				})[0];
+				var suiteItem = makeItem(suite);
+				suiteItem.find("input:checkbox").attr("checked", "checked");
+				self.testSuiteNewStatuses.change(suite.id, true);
+				menuItems.push(suiteItem[0]);
+				//sort items and add them to dom
+				var sortedItems = sortItems(menuItems);
+				this.menu.prepend(sortedItems);
+				//end initialization
+				self.lastAdded = undefined;
+				return;
+			}
+			
 			// wipe the previous items
 			this.menu.find('li.suite-item').remove();
 
@@ -147,18 +169,21 @@ define([ "jquery", "underscore", "jqueryui" ],function($, _) {
 			}
 
 			// sort new content
-			var sorted = Array.prototype.sort.call(items, function(a, b) {
-				var textA = a.text();
-				var textB = b.text();
-				return (textA < textB) ? -1 : 1;
-			});
+			var sorted = sortItems(items);
 
 			// append to the list
 
 			this.menu.prepend(sorted);
 
 		}, this);
-
+		
+		var sortItems = function(items){
+			return Array.prototype.sort.call(items, function(a, b) {
+				var textA = $(a).text();
+				var textB = $(b).text();
+				return (textA < textB) ? -1 : 1;
+			});
+		};
 		var getCheckboxes = $.proxy(function() {
 			return this.menu.find('input[name="menu-suite-item"]');
 		}, this);
@@ -189,7 +214,7 @@ define([ "jquery", "underscore", "jqueryui" ],function($, _) {
 						message.append('<div>could not add your suite : unexpected error</div>');
 					}
 
-					oneShotDialog('Information', message);
+				$.squash.openMessage('Information', message);
 
 				} catch (wtf) {
 					// non json error : it must be handled
@@ -201,14 +226,11 @@ define([ "jquery", "underscore", "jqueryui" ],function($, _) {
 			}, this);
 
 		/*
-		 * **************************** public
-		 * ******************************
+		 * **************************** public ******************************
 		 */
 
-		this.redraw = function(evt_name) {
-			if ((evt_name !== "node.bind") || (evt_name == "node.rename")){
-				initializeContent();
-			}
+		this.redraw = function(evt) {
+			initializeContent(evt);
 		};
 
 		/* *********************** handlers ***************** */
@@ -224,7 +246,11 @@ define([ "jquery", "underscore", "jqueryui" ],function($, _) {
 		var addSuite = $.proxy(function() {
 			var self = this;
 			var name = $('#suite-manager-menu-input').val();
-			this.model.postNew(name).error(displayAddSuiteError);
+			self.lastAdded = name;
+			self.model.postNew(name).fail(function(json) {
+				displayAddSuiteError(json);
+				self.lastAdded = undefined;
+			});
 		}, this);
 
 		// -------- binding -------------
@@ -238,7 +264,7 @@ define([ "jquery", "underscore", "jqueryui" ],function($, _) {
 								.data('suite-id'), checkbx
 								.is(":checked"));
 
-					});
+			});
 		}, this);
 
 		var bindOkButton = $.proxy(function() {

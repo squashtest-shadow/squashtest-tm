@@ -25,6 +25,7 @@ var squashtm = squashtm || {};
 
 define([ "jquery", "./ProjectFilterPopup" ],
 		function($, ProjectFilterPopup) {
+	
 			var popupSelector = "#project-filter-popup";
 			var popupOpener = "#menu-project-filter-link";
 

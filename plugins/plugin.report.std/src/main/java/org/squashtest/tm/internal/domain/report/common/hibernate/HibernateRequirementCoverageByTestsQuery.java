@@ -22,6 +22,7 @@ package org.squashtest.tm.internal.domain.report.common.hibernate;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -172,7 +173,9 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 	}
 	
 	private List<Requirement> findRequirements(Session session, List<Long> ids) {
-		
+		if(ids.isEmpty()){
+			return Collections.emptyList();
+		}
 		return session.createQuery("from Requirement where id in (:ids)")
 					  .setParameterList("ids", ids, LongType.INSTANCE)
 					  .list();
@@ -181,7 +184,9 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 
 	
 	private List<Object[]> findParentsNames(Session session, List<Long> ids){
-		
+		if(ids.isEmpty()){
+			return Collections.emptyList();
+		}
 		return session.createSQLQuery(FIND_REQUIREMENT_PARENT_NAMES)
 					  .setParameterList("reqIds", ids, LongType.INSTANCE)
 					  .list();

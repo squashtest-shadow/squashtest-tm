@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.internal.controller.report;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -33,14 +34,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.api.report.Report;
 import org.squashtest.tm.api.report.criteria.Criteria;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
+import org.squashtest.tm.web.internal.model.jquery.FilterModel;
 import org.squashtest.tm.web.internal.report.ReportsRegistry;
 import org.squashtest.tm.web.internal.report.criteria.FormToCriteriaConverter;
 
@@ -56,6 +59,9 @@ public class ReportController {
 	@Inject
 	private ReportsRegistry reportsRegistry;
 
+	@Inject
+	private ProjectFinder projectFinder;
+	
 	@Inject
 	@Value("${report.criteria.project.multiselect:false}")
 	private boolean projectMultiselect;
@@ -74,7 +80,13 @@ public class ReportController {
 	public String showReportPanel(@PathVariable String namespace, @PathVariable int index, Model model) {
 		populateModelWithReport(namespace, index, model);
 		model.addAttribute("projectMultiselect", projectMultiselect);
+		model.addAttribute("projectFilterModel", findProjectsModels());
 		return "report-panel.html";
+	}
+
+	private FilterModel findProjectsModels() {
+		List<Project> projects = projectFinder.findAllOrderedByName();
+		return new FilterModel(projects);
 	}
 
 	private void populateModelWithReport(String namespace, int index, Model model) {
@@ -99,26 +111,6 @@ public class ReportController {
 		return "report-viewer.html";
 	}
 
-	/**
-	 * Generates report view from a post with JSON payload
-	 * 
-	 * @param namespace
-	 * @param index
-	 * @param viewIndex
-	 * @param format
-	 * @param form
-	 * @return
-	 */
-	@RequestMapping(value = "/views/{viewIndex}/formats/{format}", method = RequestMethod.POST)
-	public ModelAndView generateReportView(@PathVariable String namespace, @PathVariable int index,
-			@PathVariable int viewIndex, @PathVariable String format, @RequestBody Map<String, Object> form) {
-		LOGGER.debug(form.toString());
-		Map<String, Criteria> crit = (new FormToCriteriaConverter()).convert(form);
-		LOGGER.debug(crit.toString());
-
-		Report report = reportsRegistry.findReport(namespace, index);
-		return report.buildModelAndView(viewIndex, format, crit);
-	}
 
 	/**
 	 * Generates report view from a standard post with a data attribute containing a serialized JSON form.
@@ -133,12 +125,16 @@ public class ReportController {
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
-	@RequestMapping(value = "/views/{viewIndex}/formats/{format}", method = RequestMethod.POST, params = { "data" })
-	public ModelAndView generateReportView(@PathVariable String namespace, @PathVariable int index,
-			@PathVariable int viewIndex, @PathVariable String format, @RequestParam String data)
+	@RequestMapping(value = "/views/{viewIndex}/formats/{format}", method = RequestMethod.GET, params = { "parameters" })
+	public ModelAndView generateReportViewUsingGet(@PathVariable String namespace, @PathVariable int index,
+			@PathVariable int viewIndex, @PathVariable String format, @RequestParam("parameters") String parameters)
 			throws JsonParseException, JsonMappingException, IOException {
-		Map<String, Object> form = JsonHelper.deserialize(data);
-		return generateReportView(namespace, index, viewIndex, format, form);
+		Map<String, Object> form = JsonHelper.deserialize(parameters);
+		Map<String, Criteria> crit = (new FormToCriteriaConverter()).convert(form);
+		
+		Report report = reportsRegistry.findReport(namespace, index);
+		return report.buildModelAndView(viewIndex, format, crit);
+		
 	}
-	
+
 }

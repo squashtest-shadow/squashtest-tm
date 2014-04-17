@@ -95,7 +95,7 @@ public class User extends Party {
 	}
 
 	public void setLogin(String login) {
-		this.login = login;
+		this.login = login.trim();
 	}
 
 	public String getEmail() {

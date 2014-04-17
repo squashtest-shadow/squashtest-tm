@@ -80,19 +80,23 @@ public class CampaignTestCaseSuccessRateStatistics {
 
 	public int getNbVeryHighSuccess() {
 		return getValue(testsOfVeryHighImportance, ExecutionStatus.SUCCESS)+
-				getValue(testsOfVeryHighImportance, ExecutionStatus.WARNING);
+				getValue(testsOfVeryHighImportance, ExecutionStatus.WARNING)+
+				getValue(testsOfVeryHighImportance, ExecutionStatus.SETTLED);
 	}
 	public int getNbHighSuccess() {
 		return getValue(testsOfHighImportance, ExecutionStatus.SUCCESS)+
-				getValue(testsOfHighImportance, ExecutionStatus.WARNING);
+				getValue(testsOfHighImportance, ExecutionStatus.WARNING)+
+				getValue(testsOfHighImportance, ExecutionStatus.SETTLED);
 	}
 	public int getNbMediumSuccess() {
 		return getValue(testsOfMediumImportance, ExecutionStatus.SUCCESS)+
-				getValue(testsOfMediumImportance, ExecutionStatus.WARNING);
+				getValue(testsOfMediumImportance, ExecutionStatus.WARNING)+
+			    getValue(testsOfMediumImportance, ExecutionStatus.SETTLED);
 	}
 	public int getNbLowSuccess() {
 		return getValue(testsOfLowImportance, ExecutionStatus.SUCCESS)+
-				getValue(testsOfLowImportance, ExecutionStatus.WARNING);
+				getValue(testsOfLowImportance, ExecutionStatus.WARNING)+
+				getValue(testsOfLowImportance, ExecutionStatus.SETTLED);
 	}
 	public int getNbVeryHighFailure() {
 		return getValue(testsOfVeryHighImportance, ExecutionStatus.FAILURE)+
@@ -108,33 +112,77 @@ public class CampaignTestCaseSuccessRateStatistics {
 	}
 	public int getNbLowFailure() {
 		return getValue(testsOfLowImportance, ExecutionStatus.FAILURE)+
-				getValue(testsOfLowImportance, ExecutionStatus.ERROR);
+				getValue(testsOfLowImportance, ExecutionStatus.ERROR)
+				;
 	}
 	public int getNbVeryHighOther() {
 		return getValue(testsOfVeryHighImportance, ExecutionStatus.BLOCKED)+
 				getValue(testsOfVeryHighImportance, ExecutionStatus.READY)+
 				getValue(testsOfVeryHighImportance, ExecutionStatus.RUNNING)+
-				getValue(testsOfVeryHighImportance, ExecutionStatus.UNTESTABLE);
+				getValue(testsOfVeryHighImportance, ExecutionStatus.UNTESTABLE)+
+				getValue(testsOfVeryHighImportance, ExecutionStatus.NOT_RUN);
 	}
 	public int getNbHighOther() {
 		return getValue(testsOfHighImportance, ExecutionStatus.BLOCKED)+
 				getValue(testsOfHighImportance, ExecutionStatus.READY)+
 				getValue(testsOfHighImportance, ExecutionStatus.RUNNING)+
-				getValue(testsOfHighImportance, ExecutionStatus.UNTESTABLE);
+				getValue(testsOfHighImportance, ExecutionStatus.UNTESTABLE)+
+				getValue(testsOfHighImportance, ExecutionStatus.NOT_RUN);
 	}
 	public int getNbMediumOther() {
 		return getValue(testsOfMediumImportance, ExecutionStatus.BLOCKED)+
 				getValue(testsOfMediumImportance, ExecutionStatus.READY)+
 				getValue(testsOfMediumImportance, ExecutionStatus.RUNNING)+
-				getValue(testsOfMediumImportance, ExecutionStatus.UNTESTABLE);
+				getValue(testsOfMediumImportance, ExecutionStatus.UNTESTABLE)+
+				getValue(testsOfMediumImportance, ExecutionStatus.NOT_RUN);
 	}
 	public int getNbLowOther() {
 		return getValue(testsOfLowImportance, ExecutionStatus.BLOCKED)+
 				getValue(testsOfLowImportance, ExecutionStatus.READY)+
 				getValue(testsOfLowImportance, ExecutionStatus.RUNNING)+
-				getValue(testsOfLowImportance, ExecutionStatus.UNTESTABLE);
+				getValue(testsOfLowImportance, ExecutionStatus.UNTESTABLE)+
+				getValue(testsOfLowImportance, ExecutionStatus.NOT_RUN);
 	}
-	
+	public int getNbVeryHighExecuted() {
+		return getValue(testsOfVeryHighImportance, ExecutionStatus.BLOCKED)+
+				getValue(testsOfVeryHighImportance, ExecutionStatus.UNTESTABLE)+
+				getValue(testsOfVeryHighImportance, ExecutionStatus.SUCCESS)+
+				getValue(testsOfVeryHighImportance, ExecutionStatus.WARNING)+
+				getValue(testsOfVeryHighImportance, ExecutionStatus.SETTLED)+
+				getValue(testsOfVeryHighImportance, ExecutionStatus.FAILURE)+
+				getValue(testsOfVeryHighImportance, ExecutionStatus.ERROR)+
+				getValue(testsOfVeryHighImportance, ExecutionStatus.NOT_RUN);
+	}
+	public int getNbHighExecuted() {
+		return getValue(testsOfHighImportance, ExecutionStatus.BLOCKED)+
+				getValue(testsOfHighImportance, ExecutionStatus.UNTESTABLE)+
+				getValue(testsOfHighImportance, ExecutionStatus.SUCCESS)+
+				getValue(testsOfHighImportance, ExecutionStatus.WARNING)+
+				getValue(testsOfHighImportance, ExecutionStatus.SETTLED)+
+				getValue(testsOfHighImportance, ExecutionStatus.FAILURE)+
+				getValue(testsOfHighImportance, ExecutionStatus.ERROR)+
+				getValue(testsOfHighImportance, ExecutionStatus.NOT_RUN);
+	}
+	public int getNbMediumExecuted() {
+		return getValue(testsOfMediumImportance, ExecutionStatus.BLOCKED)+
+				getValue(testsOfMediumImportance, ExecutionStatus.UNTESTABLE)+
+				getValue(testsOfMediumImportance, ExecutionStatus.SUCCESS)+
+				getValue(testsOfMediumImportance, ExecutionStatus.WARNING)+
+				getValue(testsOfMediumImportance, ExecutionStatus.SETTLED)+
+				getValue(testsOfMediumImportance, ExecutionStatus.FAILURE)+
+				getValue(testsOfMediumImportance, ExecutionStatus.ERROR)+
+				getValue(testsOfMediumImportance, ExecutionStatus.NOT_RUN);
+	}
+	public int getNbLowExecuted() {
+		return getValue(testsOfLowImportance, ExecutionStatus.BLOCKED)+
+				getValue(testsOfLowImportance, ExecutionStatus.UNTESTABLE)+
+				getValue(testsOfLowImportance, ExecutionStatus.SUCCESS)+
+				getValue(testsOfLowImportance, ExecutionStatus.WARNING)+
+				getValue(testsOfLowImportance, ExecutionStatus.SETTLED)+
+				getValue(testsOfLowImportance, ExecutionStatus.FAILURE)+
+				getValue(testsOfLowImportance, ExecutionStatus.ERROR)+
+				getValue(testsOfLowImportance, ExecutionStatus.NOT_RUN);
+	}
 	public int getValue(Map<ExecutionStatus, Integer> map, ExecutionStatus status){
 		if(map.containsKey(status)){
 			return map.get(status);

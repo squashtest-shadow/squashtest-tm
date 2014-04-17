@@ -19,7 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload", "workspace.event-bus", "jqueryui", "squashtest/jquery.squash.popuperror"], function($, DefaultFieldView, AdvancedFieldView, fileUploadUtils, eventBus){
-
+	
+	squashtm.eventBus = eventBus;
+	
 	function SimpleIssuePostHelper(controller){
 		
 		this.controller = controller;
@@ -124,8 +126,8 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 	
 
 	/*
-	  report-issue-dialog is the javascript object handling the behaviour of the popup that will post 
-	  a new issue or attach an existing issue to the current entity.
+      report-issue-dialog is the javascript object handling the behaviour of the popup that will post 
+      a new issue or attach an existing issue to the current entity.
 	*/
 
 	/*
@@ -142,13 +144,13 @@ define(["jquery", "./default-field-view", "./advanced-field-view", "file-upload"
 		
 		
 		events : 
-			context.bug-reported : triggered when a bug is successfully reported/attached
+           context.bug-reported : triggered when a bug is successfully reported/attached
 		
 		******************
 
 		Implementation detail about 'reportUrl' : 
-		 - for the regular bugtracker model, this url will be used for both GET and POST
-		 - for the advanced bugtracker model, the url where you GET (/new-issue) is slightly
+          - for the regular bugtracker model, this url will be used for both GET and POST
+          - for the advanced bugtracker model, the url where you GET (/new-issue) is slightly
 			different from the one where to post (/new-advanced-issue). This discrepancy is	handled by the code via method getSubmitIssueUrl.
 	 */
 	

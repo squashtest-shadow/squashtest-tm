@@ -85,7 +85,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 				"test-case.nature.label", locale), MULTISELECT);
 		panel.addField(natureField);
 
-		List<SearchInputPossibleValueModel> natureOptions = internationalizableComboBuilder(TestCaseNature.values())
+		List<SearchInputPossibleValueModel> natureOptions = levelComboBuilder(TestCaseNature.values())
 				.useLocale(locale).build();
 		natureField.addPossibleValues(natureOptions);
 
@@ -93,7 +93,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 				"test-case.type.label", locale), MULTISELECT);
 		panel.addField(typeField);
 
-		List<SearchInputPossibleValueModel> typeOptions = internationalizableComboBuilder(TestCaseType.values())
+		List<SearchInputPossibleValueModel> typeOptions = levelComboBuilder(TestCaseType.values())
 				.useLocale(locale).build();
 		typeField.addPossibleValues(typeOptions);
 
@@ -233,7 +233,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 				.internationalize("search.testcase.history.createdOn.label", locale), DATE);
 		panel.addField(createdOnField);
 
-		SearchInputFieldModel modifiedByField = new SearchInputFieldModel("modifiedBy", getMessageSource()
+		SearchInputFieldModel modifiedByField = new SearchInputFieldModel("lastModifiedBy", getMessageSource()
 				.internationalize("search.testcase.history.modifiedBy.label", locale), MULTIAUTOCOMPLETE);
 		panel.addField(modifiedByField);
 
@@ -247,7 +247,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 			}
 		}
 
-		SearchInputFieldModel modifiedOnField = new SearchInputFieldModel("modifiedOn", getMessageSource()
+		SearchInputFieldModel modifiedOnField = new SearchInputFieldModel("lastModifiedOn", getMessageSource()
 				.internationalize("search.testcase.history.modifiedOn.label", locale), DATE);
 		panel.addField(modifiedOnField);
 

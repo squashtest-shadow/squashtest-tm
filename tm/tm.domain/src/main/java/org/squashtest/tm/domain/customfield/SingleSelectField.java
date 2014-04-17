@@ -119,6 +119,10 @@ public class SingleSelectField extends CustomField {
 		if (defaultValue != null && defaultValue.equals(label)) {
 			throw new CannotDeleteDefaultOptionException(label);
 		}
+		removeOptionWithoutCheck(label);
+	}
+
+	public void removeOptionWithoutCheck(@NotBlank String label) {
 		Iterator<CustomFieldOption> it = options.iterator();
 		while (it.hasNext()) {
 			if (label.equals(it.next().getLabel())) {
@@ -127,7 +131,7 @@ public class SingleSelectField extends CustomField {
 			}
 		}
 	}
-
+	
 	/**
 	 * Checks if the newlabel is available among all options. <br>
 	 * If so, will change the defaultValue if needed, remove the option and add a new one at the vacant position. Else
@@ -164,9 +168,10 @@ public class SingleSelectField extends CustomField {
 		// TODO fix [Task 1682] and remove this line
 		checkCodeMatchesPattern(newCode);
 		int index = findIndexOfLabel(optionLabel);
-		removeOption(optionLabel);
+		//We can remove the option without checking if it is the default value because an option
+		//with the same label will be created right after that.
+		removeOptionWithoutCheck(optionLabel);
 		addOption(optionLabel, newCode, index);
-
 	}
 
 	private String findCodeOf(String previousLabel) {

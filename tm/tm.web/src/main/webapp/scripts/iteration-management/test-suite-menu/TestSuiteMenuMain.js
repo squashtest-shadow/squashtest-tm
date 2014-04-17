@@ -36,9 +36,8 @@ define(
 			 * 
 			 * initData = array of { id : suite id, name : suite name }
 			 * 
-			 * managerSettings = { instance : location of the message within the
-			 * page, defaultMessage : default message, deleteConfirmMessage :
-			 * deletion popup message, deleteConfirmTitle : deletion popup title }
+			 * managerSettings = { instance : location of the message within the page, 
+			 * deleteConfirmMessage : deletion popup message, deleteConfirmTitle : deletion popup title }
 			 * 
 			 * 
 			 * menuSettings = { instanceSelector : menu id , datatableSelector :

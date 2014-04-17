@@ -1234,6 +1234,11 @@ div.information-panel p {
 	font-weight : bold;
 }
 
+#delete-node-dialog .delete-node-dialog-details ul{
+	text-align: justify;
+	padding-right: 10px;
+}
+
 
 /* ---------------------------------------------------------*/
 /* ---------------->>> Administration page <<<------------------*/

@@ -40,6 +40,7 @@ import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
 import org.squashtest.tm.service.internal.repository.TeamDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService;
+import org.squashtest.tm.service.user.CustomTeamFinderService;
 import org.squashtest.tm.service.user.CustomTeamModificationService;
 
 @Service("CustomTeamModificationService")
@@ -89,11 +90,12 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 
 	@Override
 	public void changeName(long teamId, String name) {
-		if (!teamDao.findAllByName(name).isEmpty()) {
-			throw new NameAlreadyInUseException("Team", name);
+		String trimName = name.trim();
+		if (!teamDao.findAllByName(trimName).isEmpty()) {
+			throw new NameAlreadyInUseException("Team", trimName);
 		}
 		Team team = teamDao.findById(teamId);
-		team.setName(name);
+		team.setName(trimName);
 
 	}
 

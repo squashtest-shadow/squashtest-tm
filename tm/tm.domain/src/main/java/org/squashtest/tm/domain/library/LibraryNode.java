@@ -32,6 +32,7 @@ import org.squashtest.tm.domain.project.ProjectResource;
  *
  */
 public interface LibraryNode extends Copiable, Identified, AttachmentHolder, TreeNode, ProjectResource<Project>  {
+	final int MAX_NAME_SIZE = 255;
 	/**
 	 * @return Name of this node.
 	 */

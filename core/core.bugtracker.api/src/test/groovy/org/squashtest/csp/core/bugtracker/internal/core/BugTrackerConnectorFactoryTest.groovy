@@ -37,7 +37,7 @@ class BugTrackerConnectorFactoryTest extends Specification {
 
 	def "should create a connector of said kind"() {
 		given: "a bugtracker definition"
-		BugTracker bt = new BugTracker("http://bt", "foo", null, true)
+		BugTracker bt = new BugTracker("http://bt", "foo", "", true)
 
 		and: "a connector provider"
 		BugTrackerConnector connector = Mock()
@@ -68,7 +68,7 @@ class BugTrackerConnectorFactoryTest extends Specification {
 
 	def "should refuse to create a connector of unknown kind"() {
 		given: "a bugtracker definition"
-		BugTracker bt = new BugTracker("http://foo", "foo", null, true)
+		BugTracker bt = new BugTracker("http://foo", "foo", "", true)
 
 		when:
 		def res = factory.createConnector(bt)
@@ -79,7 +79,7 @@ class BugTrackerConnectorFactoryTest extends Specification {
 
 	def "should refuse to create a connector of unregistered kind"() {
 		given: "a bugtracker definition"
-		BugTracker bt = new BugTracker("http://foo", "foo", null, true)
+		BugTracker bt = new BugTracker("http://foo", "foo", "", true)
 
 		and: "a registered connector provider"
 		BugTrackerConnector connector = Mock()

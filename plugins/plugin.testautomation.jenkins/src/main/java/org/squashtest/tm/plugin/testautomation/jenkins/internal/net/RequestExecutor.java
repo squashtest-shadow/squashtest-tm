@@ -35,7 +35,6 @@ import org.squashtest.tm.service.testautomation.spi.AccessDenied;
 import org.squashtest.tm.service.testautomation.spi.ServerConnectionFailed;
 
 
-
 public class RequestExecutor {
 
 	public static final Logger LOGGER = LoggerFactory.getLogger(RequestExecutor.class);

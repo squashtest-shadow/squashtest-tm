@@ -39,9 +39,9 @@ import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.internal.repository.BoundEntityDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao;
@@ -181,11 +181,17 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		List<CustomFieldValue> allValues = customFieldValueDao.findAllCustomValuesOfBindings(customFieldBindingIds);
 		for (CustomFieldValue value : allValues) {
 			BoundEntity boundEntity = boundEntityDao.findBoundEntity(value);
-			if (BindableEntity.TEST_CASE.equals(boundEntity.getBoundEntityType())) {
-				indexationService.reindexTestCase(boundEntity.getBoundEntityId());
-			}
-			if (BindableEntity.REQUIREMENT_VERSION.equals(boundEntity.getBoundEntityType())) {
-				indexationService.reindexRequirementVersion(boundEntity.getBoundEntityId());
+			if(boundEntity != null){
+				switch(boundEntity.getBoundEntityType()){
+					case TEST_CASE :
+						indexationService.reindexTestCase(boundEntity.getBoundEntityId());
+						break;
+					case REQUIREMENT_VERSION : 
+						indexationService.reindexRequirementVersion(boundEntity.getBoundEntityId());
+						break;
+					default:
+						break;
+				}			
 			}
 		}
 		deleteCustomFieldValues(allValues);

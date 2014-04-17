@@ -92,7 +92,7 @@ class RequirementHierarchyCreator {
 			Map<RequirementFolder, List<PseudoRequirement>> organizedRequirementLibraryNodes) {
 		Sheet sheet = workbook.getSheetAt(0);
 		Map<String, Integer> columnsMapping = ExcelRowReaderUtils.mapColumns(sheet);
-		for (int r = 1; r < sheet.getLastRowNum(); r++) {
+		for (int r = 1; r <= sheet.getLastRowNum(); r++) {
 			Row row = sheet.getRow(r);
 			parser.parseRow(root, row, summary, columnsMapping, organizedRequirementLibraryNodes);
 		}

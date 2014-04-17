@@ -63,7 +63,7 @@
   <changeSet id="tm-1.8.2.feature-3120-03" author="flaurens">
     <comment>Adding a field type column to denormalized field value table</comment>
     <addColumn tableName="DENORMALIZED_FIELD_VALUE">
-            <column name="FIELD_TYPE" type="CHAR(3)" remarks="CF : simple, SSF : multiple-choice">
+            <column name="FIELD_TYPE" type="CHAR(3)" defaultValue="CF" remarks="CF : simple, SSF : multiple-choice">
                    <constraints nullable="false" />
             </column>
     </addColumn>
@@ -101,8 +101,6 @@
           constraintName="uniq_plugin_binding" />
     
   </changeSet>
-  
-
   
   <changeSet id="tm-1.8.2-feat-3127-02" author="bsiri">
     <comment>create the table LIBRARY_PLUGIN_PROPERTY</comment>

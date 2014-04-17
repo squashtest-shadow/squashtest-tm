@@ -150,7 +150,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 				query = qb
 						.bool()
 						.must(qb.keyword().wildcard().onField(fieldName).ignoreFieldBridge()
-								.matching(value.toLowerCase(locale)).createQuery()).createQuery();
+								.matching(value).createQuery()).createQuery();
 			} else {
 
 				query = qb.bool()
@@ -266,6 +266,11 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			start = 1;
 		}
 
+		// if we encounter a simple quote at the very start
+		if (input[0] == '\'') {
+			start = 1;
+		}
+		
 		for (int i = 1; i < input.length; i++) {
 			char charAtPosition = input[i];
 			char charBeforePosition = input[i - 1];
@@ -276,6 +281,12 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 				start = i + 1;
 			}
 
+			//treat apostrophes as word separators
+			else if( isSimpleQuote(charAtPosition, charBeforePosition)){
+				addToTokens(tokens, textInput.substring(start, i).trim());
+				start = i + 1;
+			}
+				
 			// if we encounter a double quote
 			else if (isDoubleQuote(charAtPosition, charBeforePosition)) {
 				inDoubleQuoteContext = !inDoubleQuoteContext;
@@ -292,6 +303,10 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return tokens;
 	}
 
+	private boolean isSimpleQuote(char charAtPosition, char charBeforePosition) {
+		return charAtPosition == '\'' && charBeforePosition != '\\';
+	}
+	
 	private boolean isDoubleQuote(char charAtPosition, char charBeforePosition) {
 		return charAtPosition == '"' && charBeforePosition != '\\';
 	}

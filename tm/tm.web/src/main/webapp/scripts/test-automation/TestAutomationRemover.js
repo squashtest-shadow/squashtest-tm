@@ -30,7 +30,6 @@
 define(["jquery", "jquery.squash.confirmdialog"], function() {
 	function TestAutomationRemover(settings) {
 
-		var link = $(settings.linkSelector);
 		var automatedTestRemovalUrl = settings.automatedTestRemovalUrl;
 		var successCallback = settings.successCallback;
 		var confirmDialog = $(settings.confirmPopupSelector);
@@ -39,10 +38,6 @@ define(["jquery", "jquery.squash.confirmdialog"], function() {
 			confirm : sendRemovalRequest
 		});
 
-		link.click(function() {
-			confirmDialog.confirmDialog("open");
-			return false;
-		});
 
 		function sendRemovalRequest() {
 			return $.ajax({

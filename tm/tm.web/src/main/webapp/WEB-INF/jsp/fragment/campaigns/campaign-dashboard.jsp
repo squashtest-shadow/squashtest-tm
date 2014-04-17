@@ -62,7 +62,7 @@
 		</div>
 		
 		<div class="fragment-body">
-			<dashboard:campaign-dashboard-panel url="${campaignStatisticsUrl}"  printUrl="${campaignStatisticsPrintUrl}" printmode="${true}"/>
+			<dashboard:campaign-dashboard-panel url="${campaignStatisticsUrl}"  printUrl="${campaignStatisticsPrintUrl}" printmode="${true}" allowsSettled="${allowsSettled}" allowsUntestable="${allowsUntestable}" />
 		</div>
 		
 		<script type="text/javascript">

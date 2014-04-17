@@ -28,7 +28,6 @@ import java.util.Map.Entry;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.validation.Errors;
-import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 
@@ -43,7 +42,7 @@ public class ActionStepFormModel {
 	/*@NotBlank
 	 * @NotNull
 	 */
-	private String action;
+	private String action="";
 	
 	private String expectedResult="";
 	
@@ -102,14 +101,12 @@ public class ActionStepFormModel {
 			
 			ActionStepFormModel model = (ActionStepFormModel) target;
 			
-			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "action", "message.notBlank", notBlank);
-			
 			for (Entry<Long, String> entry : model.getCustomFields().entrySet()){
 				String value = entry.getValue();
 				if (value.trim().isEmpty()){
 					errors.rejectValue("customFields["+entry.getKey()+"]", "message.notBlank", notBlank);
 				}
-			}		
+			}
 			
 		}
 		

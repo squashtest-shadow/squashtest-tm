@@ -39,6 +39,7 @@ define(["../basic-objects/table-view", "squash.translator"], function(TableView,
 				              0, // ready
 				              0, // running
 				              0, // success
+				              0, // settled
 				              0, // failure
 				              0, // blocked
 				              0, // untestable
@@ -63,6 +64,7 @@ define(["../basic-objects/table-view", "squash.translator"], function(TableView,
 					               m.nbReady,
 					               m.nbRunning,
 					               m.nbSuccess,
+					               m.nbSettled,
 					               m.nbFailure,
 					               m.nbBlocked,
 					               m.nbUntestable,
@@ -79,25 +81,21 @@ define(["../basic-objects/table-view", "squash.translator"], function(TableView,
 					data.push(rowdata);
 				
 					// update th totals
-					for (var j=1; j<19; j++){
+					for (var j=1; j<20; j++){
 						totals[j] += rowdata[j];
 					}
-					
-					// for the percentage we'd rather save a weighted value
-					totals[10] = rowdata[10] * m.nbTotal;
-					totals[11] = rowdata[11] * m.nbTotal;
-					totals[12] = rowdata[12] * m.nbTotal;
-					totals[13] = rowdata[13] * m.nbTotal;
-					
+
 				}
 				
 				// finalize the totals and add them to the data, mostly the percentages
 				var total = totals[1];
+				var totalExecuted = totals[3]; 
+				var totalSucces = totals[6] + totals[7];
 				
-				totals[10] = (total>0) ? (totals[10] / total).toFixed(0) : 0.0;
-				totals[11] = (total>0) ? (totals[11] / total).toFixed(0) : 0.0;
-				totals[12] = (total>0) ? (totals[12] / total).toFixed(0) : 0.0;
-				totals[13] = (total>0) ? (totals[13] / total).toFixed(0) : 0.0;
+				totals[11] = (total>0) ? ((totalExecuted / total)*100).toFixed(0) : 0.0;
+				totals[12] = (totalExecuted>0) ? ((totalSucces / totalExecuted)* 100).toFixed(0) : 0.0;
+				totals[13] = (totalExecuted>0) ? ((totals[8] / totalExecuted) * 100).toFixed(0) : 0.0;
+				totals[14] = (total>0) ? (totals[14] / i ).toFixed(0) : 0.0;
 				
 				data.push(totals);
 

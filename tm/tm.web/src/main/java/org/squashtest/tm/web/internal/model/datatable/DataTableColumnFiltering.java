@@ -41,11 +41,8 @@ public class DataTableColumnFiltering implements ColumnFiltering{
 	
 	public void createDataProps(){
 		Map<Integer,Object> mDataProp = params.getmDataProp();
-
-		for (Entry<Integer, Object> e : mDataProp.entrySet()){
-			Integer key = e.getKey();
-			Object v = e.getValue();
-			dataProps.put(v, key);
+		for(Entry<Integer, Object>entry	: mDataProp.entrySet()){
+			dataProps.put(entry.getValue(), entry.getKey());
 		}
 	}
 	

@@ -20,37 +20,37 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.executions;
 
-import java.util.List;
+import java.util.Set;
+
 import javax.inject.Inject;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.service.project.CustomGenericProjectManager;
-import org.squashtest.tm.web.internal.helper.LevelLabelFormatterWithoutOrder;
-import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.service.project.CustomGenericProjectManager;
+import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter;
+import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
 
 @Component
 @Scope("prototype")
-public class ExecutionStatusJeditableComboDataBuilder extends EnumJeditableComboDataBuilder<ExecutionStatus> {
+public class ExecutionStatusJeditableComboDataBuilder extends
+		EnumJeditableComboDataBuilder<ExecutionStatus, ExecutionStatusJeditableComboDataBuilder> {
+	@Inject
+	private CustomGenericProjectManager projectManager;
 
-		@Inject
-		CustomGenericProjectManager projectManager;
-	
-		public ExecutionStatusJeditableComboDataBuilder() {
-			super();
-		}
+	public ExecutionStatusJeditableComboDataBuilder() {
+		super();
+	}
 
-		@Inject
-		public void setLabelFormatter(LevelLabelFormatterWithoutOrder formatter) {
-			super.setLabelFormatter(formatter);
-		}
-		
-		public  EnumJeditableComboDataBuilder<ExecutionStatus> useContext(Object context){
-			super.useContext(context);
-			Long projectId = (Long) getContext();
-			List<ExecutionStatus> statuses = projectManager.enabledExecutionStatuses(projectId);
-			setModel(statuses.toArray(new ExecutionStatus[statuses.size()]));
-			return this;
-		}
+	@Inject
+	public void setLabelFormatter(InternationalizableLabelFormatter formatter) {
+		super.setLabelFormatter(formatter);
+	}
+
+	public ExecutionStatusJeditableComboDataBuilder useContext(Object context) {
+		Long projectId = (Long) context;
+		Set<ExecutionStatus> statuses = projectManager.enabledExecutionStatuses(projectId);
+		setModel(statuses.toArray(new ExecutionStatus[statuses.size()]));
+		return this;
+	}
 }

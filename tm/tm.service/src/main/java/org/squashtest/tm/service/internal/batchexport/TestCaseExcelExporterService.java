@@ -197,10 +197,10 @@ public class TestCaseExcelExporterService {
 	
 
 	private void sort(ExportModel models){
-		Collections.sort(models.getTestCases());
-		Collections.sort(models.getTestSteps());
-		Collections.sort(models.getParameters());
-		Collections.sort(models.getDatasets());
+		Collections.sort(models.getTestCases(), TestCaseModel.COMPARATOR);
+		Collections.sort(models.getTestSteps(), TestStepModel.COMPARATOR);
+		Collections.sort(models.getParameters(), ParameterModel.COMPARATOR);
+		Collections.sort(models.getDatasets(), DatasetModel.COMPARATOR);
 	}
 	
 

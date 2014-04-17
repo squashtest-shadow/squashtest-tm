@@ -72,8 +72,8 @@
 				<td class="left-aligned"><button class="stop-execution"><f:message key="execute.header.button.stop.title" /></button></td>
 				<td class="right-aligned">
 					<label class="evaluation-label-status"><f:message key="execute.header.status.label" /></label>
-					<comp:execution-status-combo name="executionStatus" id="step-status-combo" allowsUntestable="${allowsUntestable}" />
-					<c:if test="${allowsUntestable}">
+					<comp:execution-status-combo name="executionStatus" id="step-status-combo" allowsUntestable="${config.allowsUntestable}" allowsSettled="${config.allowsSettled}"/>
+					<c:if test="${config.allowsUntestable}">
 						<button class="step-untestable"><f:message key="execute.header.button.untestable.title" /></button>
 					</c:if>
 					<button class="step-blocked"><f:message key="execute.header.button.blocked.title" /></button>

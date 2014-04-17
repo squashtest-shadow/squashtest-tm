@@ -39,7 +39,9 @@ public class PasswordChangeFailedException extends DomainException {
 		super(message, OLD_PASSWORD);
 
 	}
-
+	public PasswordChangeFailedException(String message, Throwable cause){
+		super(message, OLD_PASSWORD, cause);
+	}
 	@Override
 	public String getI18nKey() {
 		return "squashtm.domain.exception.password.change.fail";

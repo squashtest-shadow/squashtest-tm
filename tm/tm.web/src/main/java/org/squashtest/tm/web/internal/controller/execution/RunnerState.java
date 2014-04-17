@@ -26,6 +26,8 @@ public class RunnerState {
 	private boolean isLastTestCase;
 	private boolean isOptimized;
 	private boolean isPrologue;
+	private boolean allowsUntestable=false;
+	private boolean allowsSettled=false;
 
 	private String baseStepUrl;
 	private String nextTestCaseUrl;
@@ -44,6 +46,23 @@ public class RunnerState {
 	private String completeSuiteMessage;
 	private Long testSuiteId;
 	private Long testPlanItemId;
+
+	
+	public boolean isAllowsUntestable() {
+		return allowsUntestable;
+	}
+
+	public void setAllowsUntestable(boolean allowsUntestable) {
+		this.allowsUntestable = allowsUntestable;
+	}
+
+	public boolean isAllowsSettled() {
+		return allowsSettled;
+	}
+
+	public void setAllowsSettled(boolean allowsSettled) {
+		this.allowsSettled = allowsSettled;
+	}
 
 	public boolean isLastTestCase() {
 		return isLastTestCase;

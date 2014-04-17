@@ -32,8 +32,7 @@
 @params :
 	workspace : test-case | campaign | requirement
 	attachListId : id de la attachmentList qu'on va traiter. Est utilisé par le fragment appelé ci dessous
-
-
+  
  --%>
  <c:set var="workspaceColor" value="blue" />
  <c:choose>
@@ -46,6 +45,9 @@
 	<c:when test="${workspace =='requirement'}">
  		<c:set var="workspaceColor" value="blue" />
  	</c:when>
+    <c:when test="${workspace =='administration'}">
+      <c:set var="workspaceColor" value="grey" />
+    </c:when>
  </c:choose>
 
 <layout:info-page-layout titleKey="squashtm.attachments.manager.title" highlightedWorkspace="${workspace}">

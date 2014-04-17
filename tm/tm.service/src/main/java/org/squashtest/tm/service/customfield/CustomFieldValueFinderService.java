@@ -28,8 +28,6 @@ import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
-import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;
-import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 
 public interface CustomFieldValueFinderService {
 

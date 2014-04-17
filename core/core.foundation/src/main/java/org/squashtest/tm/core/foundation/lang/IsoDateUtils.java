@@ -27,25 +27,25 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class IsoDateUtils {
-	
+
 	private static final String ISO_DATE = "yyyy-MM-dd";
 	private static final String ISO_DATETIME = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 	
 	private static final Pattern ISO_DATE_PATTERN = Pattern.compile("^([\\d]{4})-([\\d]{2})-([\\d]{2})$");
-	
-	private IsoDateUtils(){
+
+	private IsoDateUtils() {
 		super();
 	}
-	
+
 	/**
 	 * Formats a date into a an ISO 8601 string. <strong>The date will be formatted using the jvm default timezone</strong>
 	 * @param date
 	 * @return returns that date formatted according to the ISO 8601 Date (no time info)
 	 */
-	public static String formatIso8601Date(Date date){
-		if (date == null){
+	public static String formatIso8601Date(Date date) {
+		if (date == null) {
 			return null;
-		} else{
+		} else {
 			return formatDate(date, ISO_DATE);
 		}
 	}
@@ -56,17 +56,18 @@ public final class IsoDateUtils {
 	}
 
 	/**
+	 * Formats a timestamp into a an ISO 8601 string. <strong>The date will be formatted using the jvm default timezone</strong>
 	 * @param date
 	 * @return returns that date formatted according to the ISO 8601 DateTime (with time and timezone info)
 	 */
-	public static String formatIso8601DateTime(Date date){
-		if (date == null){
+	public static String formatIso8601DateTime(Date date) {
+		if (date == null) {
 			return null;
 		} else {
 			return formatDate(date, ISO_DATETIME);
 		}
 	}
-	
+
 	
 	
 	/**
@@ -120,26 +121,26 @@ public final class IsoDateUtils {
 	 * @param strDate
 	 * @return the Date obtained when parsing the argument against pattern yyyy-MM-dd
 	 */
-	public static Date parseIso8601Date(String strDate) throws ParseException{
-		if (strDate == null){
+	public static Date parseIso8601Date(String strDate) throws ParseException {
+		if (strDate == null) {
 			return null;
 		} else {
 			return parseDate(strDate, ISO_DATE);
 		}
 	}
-		
+
 	/**
 	 * @param strDate
 	 * @return the Date obtained when parsing the argument against pattern yyyy-MM-dd'T'HH:mm:ssZ
 	 */
-	public static Date parseIso8601DateTime(String strDatetime) throws ParseException{
-		if (strDatetime == null){
+	public static Date parseIso8601DateTime(String strDatetime) throws ParseException {
+		if (strDatetime == null) {
 			return null;
 		} else {
 			return parseDate(strDatetime, ISO_DATETIME);
 		}
 	}
-	
+
 	private static Date parseDate(String strDatetime, String format) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat(format);
 		return sdf.parse(strDatetime);
@@ -161,7 +162,7 @@ public final class IsoDateUtils {
 
 		return newDate;
 	}
-	
+
 	public static String dateToMillisecondsAsString(Date date) {
 		if (date != null) {
 			return Long.valueOf(date.getTime()).toString();
@@ -169,5 +170,5 @@ public final class IsoDateUtils {
 			return "";
 		}
 	}
-	
+
 }

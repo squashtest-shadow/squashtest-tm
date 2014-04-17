@@ -72,7 +72,7 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 @Entity
 public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, TreeNode, Copiable, Identified,
 		BoundEntity {
-
+	public static final int MAX_NAME_SIZE = 255;
 	private static final String ITERATION_ID = "ITERATION_ID";
 
 	@Id
@@ -84,7 +84,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	private String description;
 
 	@NotBlank
-	@Size(min = 0, max = 255)
+	@Size(min = 0, max = MAX_NAME_SIZE)
 	private String name;
 
 	@Embedded
@@ -144,7 +144,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		this.name = name.trim();
 	}
 
 	@NotBlank
@@ -298,7 +298,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	}
 
 	// TODO rename plannedTestCase_s_
-	// TODO return a Colleciton instead of a list
+	// TODO return a Collection instead of a list
 	public List<TestCase> getPlannedTestCase() {
 		// FIXME (GRF) I think it's broken because it may return several times the same test case. Cannot fix without
 		// checking side effects on campagne epargne wizard beforehand. Note : w wrote a test which i deactivated

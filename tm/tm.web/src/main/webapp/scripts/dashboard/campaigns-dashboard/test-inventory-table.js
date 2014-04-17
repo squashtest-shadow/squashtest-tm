@@ -36,6 +36,7 @@ define(["../basic-objects/table-view", "squash.translator"], function(TableView,
 					0, // ready
 					0, // running
 					0, // success
+					0, // settled
 					0, // failure
 					0, // blocked
 					0, // untestable
@@ -49,7 +50,7 @@ define(["../basic-objects/table-view", "squash.translator"], function(TableView,
 					
 					// compute stats
 					var m = inventory[i];
-					var _nbterm = m.nbSuccess + m.nbFailure + m.nbBlocked + m.nbUntestable + m.nbWarning + m.nbError;
+					var _nbterm = m.nbSuccess + m.nbSettled + m.nbFailure + m.nbBlocked + m.nbUntestable + m.nbWarning + m.nbError;
 					var total = _nbterm + m.nbReady + m.nbRunning;
 					var progress = (total>0) ? (_nbterm * 100 / total).toFixed(0) + ' %' : '0%';
 					var rowdata = [
@@ -57,6 +58,7 @@ define(["../basic-objects/table-view", "squash.translator"], function(TableView,
 					               m.nbReady,
 					               m.nbRunning,
 					               m.nbSuccess + m.nbWarning,
+					               m.nbSettled,
 					               m.nbFailure,
 					               m.nbBlocked + m.nbError + m.nbNotRun,
 					               m.nbUntestable,
@@ -68,13 +70,13 @@ define(["../basic-objects/table-view", "squash.translator"], function(TableView,
 					// save the totals
 					total_nbterm += _nbterm;
 					total_total += total;
-					for (var j=1; j<8; j++){
+					for (var j=1; j<9; j++){
 						totals[j]+=rowdata[j];
 					}
 				}
 				
 				// finalize the totals and add them to the data
-				totals[8] = (total_total>0) ? (total_nbterm * 100 / total_total).toFixed(0) + ' %' : '0%';
+				totals[9] = (total_total>0) ? (total_nbterm * 100 / total_total).toFixed(0) + ' %' : '0%';
 				data.push(totals);
 			}
 			

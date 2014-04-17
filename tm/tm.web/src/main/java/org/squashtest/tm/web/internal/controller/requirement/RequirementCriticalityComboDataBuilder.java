@@ -26,45 +26,28 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.LevelComparator;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
-import org.squashtest.tm.web.internal.helper.InternationalizableComparator;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
 
 /**
  * Jeditable combo data builder which model is {@link RequirementCriticality}
  * 
- * Note the weird way to inject an comparator for internationalized values and its message source. This class doesn't have an attribute "internationalizationHelper", 
- * but it still has a setter for one. When invoked this setter will actually set the helper for another collaborator : the comparator. 
- * To summarize, events happen in the following order :
- * <ol>
- * 	<li>this class is instancied by a Spring factory.</li>
- * 	<li>immediately an instance of the comparator is implicitly created in the init segment.</li>
- * 	<li>the constructor is then invoked and sets the comparator as the modelComparator</li>
- *  <li>when the constructor is done for, collaborators are injected using @Inject, and that's how the comparator is supplied with the helper.</li>
- *  <li>the object is now fully created and can finally execute the main code.</li>
- * </ol>
- * 
  * @author Gregory Fouquet, bsiri
  * 
  */
 @Component
 @Scope("prototype")
-public class RequirementCriticalityComboDataBuilder extends EnumJeditableComboDataBuilder<RequirementCriticality> {
-	
-	private InternationalizableComparator comparator = new InternationalizableComparator();
-	
-	
+public class RequirementCriticalityComboDataBuilder extends
+		EnumJeditableComboDataBuilder<RequirementCriticality, RequirementCriticalityComboDataBuilder> {
 	public RequirementCriticalityComboDataBuilder() {
 		super();
 		setModel(RequirementCriticality.values());
 		setModelComparator(LevelComparator.getInstance());
 	}
-	
 
 	@Inject
 	public void setLabelFormatter(LevelLabelFormatter formatter) {
 		super.setLabelFormatter(formatter);
 	}
-
 
 }

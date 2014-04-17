@@ -37,7 +37,7 @@ import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilde
  */
 @Component
 @Scope("prototype")
-public class TestCaseImportanceJeditableComboDataBuilder extends EnumJeditableComboDataBuilder<TestCaseImportance> {
+public class TestCaseImportanceJeditableComboDataBuilder extends EnumJeditableComboDataBuilder<TestCaseImportance, TestCaseImportanceJeditableComboDataBuilder> {
 	public TestCaseImportanceJeditableComboDataBuilder() {
 		super();
 		setModel(TestCaseImportance.values());

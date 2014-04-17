@@ -53,6 +53,7 @@ import org.squashtest.tm.web.internal.fileupload.UploadProgress;
 import org.squashtest.tm.web.internal.fileupload.UploadProgressListener;
 import org.squashtest.tm.web.internal.fileupload.UploadProgressListenerUtils;
 import org.squashtest.tm.web.internal.fileupload.UploadSummary;
+import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.model.customeditor.AttachmentPropertyEditorSupport;
 
 @Controller
@@ -163,7 +164,7 @@ public class AttachmentController {
 	}
 
 	// answers the polls regarding upload status
-	@RequestMapping(value = UPLOAD_URL, method = RequestMethod.GET, params = "upload-ticket", produces="application/json")
+	@RequestMapping(value = UPLOAD_URL, method = RequestMethod.GET, params = "upload-ticket", produces=ContentTypes.APPLICATION_JSON)
 	public @ResponseBody
 	UploadProgress pollUploadStatus(HttpServletRequest request) {
 		String ticket = UploadProgressListenerUtils.getUploadTicket(request);

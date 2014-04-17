@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squash-tm-parent</artifactId>
-    <version>1.6-SNAPSHOT</version>
+    <version>1.6</version>
   </parent>
 
   <artifactId>squash-tm</artifactId>
-  <version>1.9.0.feat-2269-SNAPSHOT</version>
+  <version>1.10.0.M1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>squash-tm</name>
@@ -281,7 +280,7 @@
             <exclude>**/scripts/iesupport/**/*.*</exclude>
             <exclude>**/scripts/thirdparties/**/*.*</exclude>
             <exclude>**/scripts/lib/**/*.*</exclude>
-            <exclude>**/scripts/require*.js</exclude>
+            <exclude>**/scripts/require*.js</exclude>          
             <exclude>**/styles/ckeditor/**/*.*</exclude>
             <exclude>**/styles/datatables/**/*.*</exclude>
             <exclude>**/styles/jquery/**/*.*</exclude>
@@ -290,7 +289,7 @@
             <exclude>**/styles/switchButton/*.*</exclude>
             <exclude>**/styles/**/thymol.js</exclude>
             <exclude>**/r.js</exclude>
-            <exclude>**/styles/**/bootstrap*.css</exclude>
+            <exclude>**/styles/**/bootstrap*.css</exclude> 
             <exclude>**/pubsub-boot.js</exclude> 
             
 	    <!-- generated stylesheets -->
@@ -323,6 +322,8 @@
             <exclude>**/provision/**/etc/jetty.xml</exclude>
             <exclude>**/provision/**/etc/jetty*.xml</exclude>
             <exclude>tm/tm.web/scripts/**</exclude>
+            <exclude>tm/tm.web/images/**</exclude>
+            <exclude>tm/tm.web/styles/**</exclude>
           </excludes>
           <mapping>
             <tag>DYNASCRIPT_STYLE</tag>

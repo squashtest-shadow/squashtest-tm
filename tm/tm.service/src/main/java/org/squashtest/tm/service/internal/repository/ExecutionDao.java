@@ -45,13 +45,24 @@ public interface ExecutionDao extends EntityDao<Execution> {
 
 	long countReady(long executionId);
 
+	// ************** special execution status deactivation section ***************
+	
 	List<ExecutionStep> findStepsFiltered(Long executionId, Paging filter);
 
 	List<ExecutionStep> findAllExecutionStepsWithStatus(Long projectId, ExecutionStatus source);
 	
+	List<Long> findAllExecutionIdHavingStepWithStatus(Long projectId, ExecutionStatus source);
+	
 	List<IterationTestPlanItem> findAllIterationTestPlanItemsWithStatus(Long projectId, ExecutionStatus source);
 	
-	boolean hasStepOrExecutionWithStatus(long projectId, ExecutionStatus executionStatus);
+	boolean projectUsesExecutionStatus(long projectId, ExecutionStatus executionStatus);
+	
+	void replaceExecutionStepStatus(long projectId, ExecutionStatus oldStatus, ExecutionStatus newStatus);
+	
+	void replaceTestPlanStatus(long projectId, ExecutionStatus oldStatus, ExecutionStatus newStatus);
+	
+	// ************* /special execution status deactivation section ***************
+	
 	
 	List<IssueDetector> findAllIssueDetectorsForExecution(Long execId);
 

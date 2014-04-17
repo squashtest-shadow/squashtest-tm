@@ -31,6 +31,7 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 public class ExProgressIterationDto extends ExProgressScheduledAbstractDto {
 
 	private ExProgressCampaignDto campaign;
+	
 	private List<ExProgressTestPlanDto> testPlans = new LinkedList<ExProgressTestPlanDto>();
 	private List<ExProgressTestSuiteDto> testSuites = new LinkedList<ExProgressTestSuiteDto>();
 
@@ -51,6 +52,7 @@ public class ExProgressIterationDto extends ExProgressScheduledAbstractDto {
 	private void fillTestSuiteInfos(Iteration iteration) {
 		for (TestSuite testSuite : iteration.getTestSuites()) {
 			ExProgressTestSuiteDto testSuiteDto = new ExProgressTestSuiteDto(testSuite);
+			testSuiteDto.setIteration(this);
 			testSuites.add(testSuiteDto);
 			Collections.sort(testSuites, new testSuiteComparator());
 		}
@@ -91,4 +93,13 @@ public class ExProgressIterationDto extends ExProgressScheduledAbstractDto {
 	public void setTestSuites(List<ExProgressTestSuiteDto> testSuites) {
 		this.testSuites = testSuites;
 	}
+
+	public boolean isAllowsSettled() {
+		return this.getCampaign().getProject().isAllowsSettled();
+	}
+
+	public boolean isAllowsUntestable() {
+		return this.getCampaign().getProject().isAllowsUntestable();
+	}
+
 }

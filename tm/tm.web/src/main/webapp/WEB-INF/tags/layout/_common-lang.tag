@@ -41,13 +41,16 @@ squashtm.message.errorTitle = "<f:message key='popup.title.error'/>";
 
 var _langcache = {	
 	'error.generic.label' : "<f:message key ='error.generic.label'/>",
+	'execution.execution-status.SETTLED' : "<f:message key='execution.execution-status.SETTLED'/>",
 	'execution.execution-status.UNTESTABLE' : "<f:message key='execution.execution-status.UNTESTABLE'/>",
 	'execution.execution-status.BLOCKED' : "<f:message key='execution.execution-status.BLOCKED'/>",
 	'execution.execution-status.FAILURE' : "<f:message key='execution.execution-status.FAILURE'/>",
+	'execution.execution-status.SETTLED' : "<f:message key='execution.execution-status.SETTLED'/>",
 	'execution.execution-status.SUCCESS' : "<f:message key='execution.execution-status.SUCCESS'/>",
 	'execution.execution-status.RUNNING' : "<f:message key='execution.execution-status.RUNNING'/>",
 	'execution.execution-status.READY' : "<f:message key='execution.execution-status.READY'/>",
 	'execution.execution-status.WARNING' : "<f:message key='execution.execution-status.WARNING'/>",
+ 	'execution.execution-status.NOT_RUN' : "<f:message key='execution.execution-status.NOT_RUN'/>",
 	'execution.execution-status.ERROR' : "<f:message key='execution.execution-status.ERROR'/>",
 	'label.Cancel' : "<f:message key='label.Cancel'/>",
 	'label.Ok' : "<f:message key='label.Ok'/>",

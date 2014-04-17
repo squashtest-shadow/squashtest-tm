@@ -56,8 +56,6 @@ public class ExecutionProcessingController {
 	 */
 	private static final String STEP_URL = "/step/index/{stepIndex}";
 
-	private static final String STEP_INFORMATION_FRAGMENT = "fragment/executions/step-information-fragment";
-
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExecutionProcessingController.class);
 
 	@Inject

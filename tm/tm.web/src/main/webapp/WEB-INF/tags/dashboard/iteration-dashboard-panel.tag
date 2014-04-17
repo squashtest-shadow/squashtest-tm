@@ -28,6 +28,8 @@
 
 
 <%@ attribute name="url" required="true" description="url where to get the data" %>
+<%@ attribute name="allowsSettled" required="true" description="whether execution status settled is allowed" %>
+<%@ attribute name="allowsUntestable" required="true" description="whether execution status  untestable is allowed" %>
 <%@ attribute name="printUrl" required="false" description="url where to fetch an html version" %>
 <%@ attribute name="printmode" required="false" type="java.lang.Boolean" 
 			description="if set to true, renders in print mode. This means among other things that the toolbar will not be rendered." %>
@@ -113,6 +115,12 @@
 									<div class="dashboard-legend-sample-color" style="background-color:#99CC00"></div>
 									<span><f:message key="execution.execution-status.SUCCESS" /></span>
 								</div>
+								
+								<div class="${allowsSettled ? '' : 'not-displayed' }">
+									<div class="dashboard-legend-sample-color" style="background-color:#99FF99"></div>
+									<span><f:message key="execution.execution-status.SETTLED" /></span>
+								</div>
+								
 								<div>
 									<div class="dashboard-legend-sample-color" style="background-color:#FF3300"></div>
 									<span><f:message key="execution.execution-status.FAILURE" /></span>
@@ -121,12 +129,12 @@
 									<div class="dashboard-legend-sample-color" style="background-color:#FFCC00"></div>
 									<span><f:message key="execution.execution-status.BLOCKED" /></span>
 								</div>
-								<c:if test="${allowsUntestable}">
-								<div>
+								
+								<div class="${allowsUntestable ? '' : 'not-displayed' }">
 									<div class="dashboard-legend-sample-color" style="background-color:#969696"></div>
 									<span><f:message key="execution.execution-status.UNTESTABLE" /></span>
 								</div>
-								</c:if>
+								
 							</div>
 						</div>
 					</div>
@@ -239,7 +247,7 @@
 								<th style="border:none;"></th>
 								<th class="status-color-untestable" colspan="3"><f:message key="label.Synthesis"/></th>
 								<th style="border:none;"></th>
-								<th class="status-color-untestable" colspan="13"><f:message key="label.ExecutionProgress"/> </th>
+								<th class="status-color-untestable" colspan="${allowsSettled? (allowsUntestable? 14 : 13) : (allowsUntestable? 13 : 12)}"><f:message key="label.ExecutionProgress"/> </th>
 								<th style="border:none;"></th>
 								<th class="status-color-untestable" colspan="4"><f:message key="label.NeverExecuted"/></th>
 							</tr>
@@ -253,11 +261,10 @@
 								<th title="${ToExecuteLabel}" class="status-color-ready"><f:message key="shortLabel.Ready"/></th>
 								<th title="${RunningLabel}" class="status-color-running"><f:message key="shortLabel.Running"/></th>															    								
 								<th title="${SuccessLabel}" class="status-color-success"><f:message key="shortLabel.Success"/></th>
+								<th class="${allowsSettled ? 'status-color-settled' : 'status-color-settled not-displayed' }" title="${SettledLabel}"><f:message key="shortLabel.Settled"/></th>
 								<th title="${FailureLabel}" class="status-color-failure"><f:message key="shortLabel.Failure"/></th>
 								<th title="${BlockedLabel}" class="status-color-blocked"><f:message key="shortLabel.Blocked"/></th>								
-								<c:if test="${allowsUntestable}">
-								<th title="${NonExecutableLabel}" class="status-color-untestable"><f:message key="shortLabel.NonExecutable"/></th>
-								</c:if>
+								<th class="${allowsUntestable ? 'status-color-untestable' : 'status-color-untestable not-displayed' }" title="${NonExecutableLabel}"><f:message key="shortLabel.NonExecutable"/></th>
 								<th style="border:none;"></th>
 								<th title="${ProgressLabel}"><f:message key="shortLabel.ExecutionProgress"/></th>								
 								<th title="${SuccessRateLabel}"><f:message key="shortLabel.SuccessRate"/></th>
@@ -288,23 +295,22 @@
 								<td class="std-border light-border">{{this.[4]}}</td>
 								<td class="std-border light-border">{{this.[5]}}</td>
 								<td class="std-border light-border">{{this.[6]}}</td>
-								<td class="std-border light-border">{{this.[7]}}</td>
+								<td class="${allowsSettled ? 'std-border light-border' : 'std-border light-border not-displayed' }">{{this.[7]}}</td>
 								<td class="std-border light-border">{{this.[8]}}</td>
-								<c:if test="${allowsUntestable}">
 								<td class="std-border light-border">{{this.[9]}}</td>
-								</c:if>
+								<td class="${allowsUntestable ? 'std-border light-border' : 'std-border light-border not-displayed' }">{{this.[10]}}</td>
 								<td style="border:none;"></td>
-								<td class="std-border light-border">{{this.[10]}}%</td>								
-								<td class="std-border light-border">{{this.[11]}}%</td>
+								<td class="std-border light-border">{{this.[11]}}%</td>								
 								<td class="std-border light-border">{{this.[12]}}%</td>
-								<td class="std-border light-border"></td>
 								<td class="std-border light-border">{{this.[13]}}%</td>
-								<td class="std-border light-border">{{this.[14]}}</td>
+								<td class="std-border light-border"></td>
+								<td class="std-border light-border">{{this.[14]}}%</td>
+								<td class="std-border light-border">{{this.[15]}}</td>
 								<td style="border:none;"></td>
-								<td class="std-border light-border">{{this.[15]}}</td>								
-								<td class="std-border light-border">{{this.[16]}}</td>
+								<td class="std-border light-border">{{this.[16]}}</td>								
 								<td class="std-border light-border">{{this.[17]}}</td>
 								<td class="std-border light-border">{{this.[18]}}</td>
+								<td class="std-border light-border">{{this.[19]}}</td>
 							</tr>
 						</tbody>			
 					</table>		

@@ -21,5 +21,5 @@
 define(["./init-test-step-issue-table"], function(initTSTable){
 	return{
 		initTestStepIssueTable : initTSTable
-	}
+	};
 });

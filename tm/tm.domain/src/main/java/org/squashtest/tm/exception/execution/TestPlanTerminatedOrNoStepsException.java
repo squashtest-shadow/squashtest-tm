@@ -29,11 +29,14 @@ public class TestPlanTerminatedOrNoStepsException extends ActionException {
 	 */
 	private static final long serialVersionUID = 2L;
 	private static final String ERROR_MESSAGE_KEY = "squashtm.action.exception.testsuite.testplan.terminated.or.no.steps";
-
+	private static final String ERROR_MESSAGE = " no execution is to be resumed because : all terminated, or no execution-step on executions";
 	public TestPlanTerminatedOrNoStepsException() {
-		super(" no execution is to be resumed because : all terminated, or no execution-step on executions");
+		super(ERROR_MESSAGE);
 	}
-
+	
+	public TestPlanTerminatedOrNoStepsException(Exception e){
+		super(ERROR_MESSAGE, e);
+	}
 	@Override
 	public String getI18nKey() {
 		return ERROR_MESSAGE_KEY;

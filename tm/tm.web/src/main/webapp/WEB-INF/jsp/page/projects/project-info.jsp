@@ -245,7 +245,9 @@
 				titleKey="label.Permissions" open="true">
 	
 				<jsp:attribute name="panelButtons">
-					<input id="add-permission-button" title="${addButtonTitle}"	type="button" value="+" class="sq-btn" />
+        <button id="add-permission-button" title="${addButtonTitle}" class="sq-icon-btn btn-sm">
+          <span class="ui-icon ui-icon-plus">+</span>
+        </button>
 				</jsp:attribute>
 				
 				<jsp:attribute name="body">
@@ -274,12 +276,14 @@
 			</comp:toggle-panel>
 			<%-----------------------------------END USERS PANEL -----------------------------------------------%>
 			<%----------------------------------------STATUS----------------------------------------------------%>
+			<f:message var="statusAllowedLabel" key="label.status.options.allowed" />
+			<f:message var="statusForbiddenLabel" key="label.status.options.forbidden" />
 			<comp:toggle-panel id="project-status-panel" titleKey="label.status.options" open="true">
 				<jsp:attribute name="body">
 					<div id="project-description-table" class="display-table">
 						<div class="display-table-row">
 							<div class="display-table-cell">  
-								<label for="toggle-nontestable-checkbox" class="display-table-cell">
+								<label for="toggle-UNTESTABLE-checkbox" class="display-table-cell">
 									<f:message key="label.status.options.optional" />
 								</label>
 							</div>
@@ -289,7 +293,21 @@
 								</span>
 							</div>
 							<div class="display-table-cell">                  		
-	                  			<input id="toggle-nontestable-checkbox" type="checkbox" data-def="width=35, on_label=<f:message key="label.status.options.allowed" />, off_label=<f:message key="label.status.options.forbidden" />" checked="checked" style="display: none;"/>
+	                  			<input id="toggle-UNTESTABLE-checkbox" type="checkbox" 
+	                  				data-def="width=35, on_label=${statusAllowedLabel}, off_label=${statusForbiddenLabel}, checked=${allowedStatuses['UNTESTABLE']}" style="display: none;"/>
+	                  		</div>
+						</div>
+						<div class="display-table-row">
+							<div class="display-table-cell">  
+							</div>
+							<div class="display-table-cell">  
+								<span class="display-table-cell exec-status-label exec-status-settled">
+									<f:message key="execution.execution-status.SETTLED" />
+								</span>
+							</div>
+							<div class="display-table-cell">                  		
+	                  			<input id="toggle-SETTLED-checkbox" type="checkbox" 
+	                  				data-def="width=35,on_label=${statusAllowedLabel}, off_label=${statusForbiddenLabel}, checked=${allowedStatuses['SETTLED']}" style="display: none;"/>
 	                  		</div>
 						</div>
 					</div>
@@ -306,7 +324,7 @@
 			<%----------------------------- /TEST AUTOMATION PROJECT -------------------------------------------%>					
 			<%----------------------------- ATTACHMENT -------------------------------------------%>
 			
-			<at:attachment-bloc editable="${ true }"  workspaceName="" attachListId="${adminproject.project.attachmentList.id}" attachmentSet="${attachments}"/>
+			<at:attachment-bloc editable="${ true }"  workspaceName="administration" attachListId="${adminproject.project.attachmentList.id}" attachmentSet="${attachments}"/>
 			<%----------------------------- /ATTACHMENT -------------------------------------------%>
 			
 			</div> <%-- /div#main-informations --%>		
@@ -320,6 +338,8 @@
 		<f:message var="noUserSelectedError" key="error.permissions.noUserSelected" />		
 		<div id="add-permission-dialog" class="popup-dialog not-displayed">
 		
+			<input type="hidden" id="source-status"></input>
+			
 			<div data-def="state=loading">
 				<comp:waiting-pane/>
 			</div>
@@ -361,14 +381,18 @@
 
 		<div id="replace-status-dialog" class="popup-dialog not-displayed" title="<f:message key="label.status.options.popup.label"/>">
 		
+			<!--  warning message template -->
+			<div class="replace-status-warning-template not-displayed"><f:message key="label.status.options.popup.text"/></div>
+				
 			<div data-def="state=loading">
 				<comp:waiting-pane/>
 			</div>
 		
 			
 			<div data-def="state=normal" class="display-table">
-				<div class="display-table-row">
-					${untestablePopupMessage}
+				<!--  message actually displayed -->
+				<div class="display-table-row replace-status-warning">
+					
 				</div>
 				<div class="display-table-row">
 					<f:message key="label.Status"/>
@@ -444,9 +468,13 @@ require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.att
 	
 	$(function() {
 		 		init(projectsManager, Frag);	
-		 		configureActivation();
-		 		$("#toggle-nontestable-checkbox").change(function(){
-		 			toggleUntestableActivation();
+		 		configureActivation("UNTESTABLE");
+		 		configureActivation("SETTLED");
+		 		$("#toggle-UNTESTABLE-checkbox").change(function(){
+		 			toggleStatusActivation("UNTESTABLE");
+		 		}); 
+		 		$("#toggle-SETTLED-checkbox").change(function(){
+		 			toggleStatusActivation("SETTLED");
 		 		}); 
 	});
 	
@@ -454,28 +482,16 @@ require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.att
 		$("#user-permissions-table").squashTable().refresh();		
 	}
 	
-	function configureActivation(){
+	function configureActivation(status){
 
-		var activCbx = $("#toggle-nontestable-checkbox"),
+		var activCbx = $("#toggle-"+status+"-checkbox"),
 			activConf = attrparser.parse(activCbx.data('def'));
-		
+		activConf.checked = activConf.checked == 'true';
 		activCbx.switchButton(activConf);
 		
 		//a bit of css tweak now
 		activCbx.siblings('.switch-button-background').css({position : 'relative', top : '6px'});
-		
-		$.ajax({
-			type: 'GET',
-			 url: "${projectUrl}/is-enabled-execution-status/UNTESTABLE",
-			 success : function(data){
-				 if(!data){
-					 $("#toggle-nontestable-checkbox").switchButton({
-						  checked: false
-					});
-				 }
-			 }
-		});
-		
+	
 		
 	}
 	
@@ -486,19 +502,26 @@ require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.att
 	statuspopup.on('formdialogopen', function(){
 		
 		statuspopup.formDialog('setState', 'normal');
+		var removedstatus = statuspopup.data('removed-status'),
+			statusname = $(".exec-status-label.exec-status-"+removedstatus.toLowerCase()).text();
+		
+		var txt = statuspopup.find('.replace-status-warning-template').text().replace('{0}',statusname);
+		statuspopup.find('.replace-status-warning').text(txt);
 			
-			$.getJSON("${projectUrl}/execution-status/UNTESTABLE").done(function(json){
-					$.each(json, function(key){
-						var o = new Option(key, json[key]);
-						$(o).html(key);
-						$("#status-input").append(o);
-					});
-				statuspopup.formDialog('setState', "normal");
+		$.getJSON("${projectUrl}/execution-status/"+removedstatus).done(function(json){
+				$("#status-input").empty();
+				$.each(json, function(key){
+					var o = new Option(key, json[key]);
+					$(o).html(key);
+					$("#status-input").append(o);
+				});
+			statuspopup.formDialog('setState', "normal");
 		});
 	});
 	
 	statuspopup.on('formdialogcancel', function(){
-		 $("#toggle-nontestable-checkbox").switchButton({
+		var removedstatus = statuspopup.data('removed-status');
+		 $("#toggle-"+removedstatus+"-checkbox").switchButton({
 			  checked: true
 		});
 		$("#status-input").html("");
@@ -507,35 +530,38 @@ require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.att
 	
 	statuspopup.on('formdialogconfirm', function(){
 		var target = $("#status-input").val();
+		var source = $("#source-status").val();
 		$.ajax({
 			type: 'POST',
 			url: "${projectUrl}/replace-execution-status",
 			data : {
-				sourceExecutionStatus : "UNTESTABLE",
+				sourceExecutionStatus : source,
 				targetExecutionStatus : target,
 				success : function(){
-					deactivateUntestable();
+					deactivateStatus(source);
 					statuspopup.formDialog('close');
 				}
 			}
 		});
 	});
 	
-	function toggleUntestableActivation(){
-		var shouldActivate = $("#toggle-nontestable-checkbox").prop('checked');
+	function toggleStatusActivation(status){
+		var shouldActivate = $("#toggle-"+status+"-checkbox").prop('checked');
 		if (shouldActivate){
-			activateUntestable();
+			activateStatus(status);
 		}
 		else{
 			$.ajax({
 				type: 'GET',
-				 url: "${projectUrl}/execution-status-is-used/UNTESTABLE",
+				 url: "${projectUrl}/execution-status-is-used/"+status,
 				 success : function(data){
 						if(data){
+							$("#source-status").val(status);
+							statuspopup.data('removed-status', status);
 							statuspopup.formDialog('open');
 						}
 						else {
-						 	deactivateUntestable();
+						 	deactivateStatus(status);
 						}
 				 }
 			});
@@ -545,17 +571,17 @@ require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.att
 			
 	}	
 	
-	function activateUntestable(){
+	function activateStatus(status){
 		$.ajax({
 			type: 'POST',
-			 url: "${projectUrl}/enable-execution-status/UNTESTABLE",
+			 url: "${projectUrl}/enable-execution-status/"+status,
 		});
 	}
 	
-	function deactivateUntestable(){
+	function deactivateStatus(status){
 		$.ajax({
 			type: 'POST',
-			 url: "${projectUrl}/disable-execution-status/UNTESTABLE",
+			 url: "${projectUrl}/disable-execution-status/"+status,
 		});
 	}
 
@@ -626,7 +652,7 @@ require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.att
 		});
 		
 		// permission mgt
-		$("#add-permission-button").squashButton().on('click', function(){
+		$("#add-permission-button").on('click', function(){
 			permpopup.formDialog('open');
 		});
 	

@@ -222,6 +222,7 @@ class TestCaseTest extends Specification {
 	def "copy of a test case should have the same simple properties"() {
 		given:
 		TestCase source = new TestCase()
+		source.setName("foo");
 		source.notifyAssociatedWithProject(new Project())
 
 		source[propName] = propValue
@@ -248,6 +249,7 @@ class TestCaseTest extends Specification {
 	def "copy of a test case should have the same steps"() {
 		given:
 		TestCase source = new TestCase()
+		source.setName("source");
 		source.notifyAssociatedWithProject(new Project())
 		ActionTestStep sourceStep = new ActionTestStep(action: "fingerpoke opponent", expectedResult: "win the belt")
 		source.steps << sourceStep

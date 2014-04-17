@@ -48,7 +48,7 @@
 
 	<jsp:attribute name="body">
 		<table id="calling-test-case-table" class="unstyled-table" data-def="ajaxsource=${modelUrl}, 
-													  datakeys-id=tc-id, pagesize=10, pre-sort=4, deferloading=${model.iTotalRecords}">
+													  datakeys-id=tc-id, pagesize=50, pre-sort=4, deferloading=${model.iTotalRecords}">
 			<thead>
 				<tr>
 					<th data-def="map=tc-index, select">#</th>

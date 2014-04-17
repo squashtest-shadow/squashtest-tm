@@ -199,7 +199,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 			+ OR_HAS_ROLE_ADMIN)
 	public void rename(long iterationId, String newName) {
 		Iteration iteration = iterationDao.findById(iterationId);
-
+		
 		iteration.setName(newName);
 	}
 

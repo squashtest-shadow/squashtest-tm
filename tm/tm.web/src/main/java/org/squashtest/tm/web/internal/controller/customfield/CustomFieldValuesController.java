@@ -38,7 +38,7 @@ import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
-import org.squashtest.tm.web.internal.controller.RequestHeaders;
+import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldValueConfigurationBean;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldValueModel;
@@ -62,7 +62,7 @@ public class CustomFieldValuesController {
 	@Inject
 	private MessageSource messageSource;
 
-	@RequestMapping(method = RequestMethod.GET, params = { BOUND_ENTITY_ID, BOUND_ENTITY_TYPE }, headers = RequestHeaders.CONTENT_JSON)
+	@RequestMapping(method = RequestMethod.GET, params = { BOUND_ENTITY_ID, BOUND_ENTITY_TYPE }, headers = AcceptHeaders.CONTENT_JSON)
 	@ResponseBody
 	public List<CustomFieldValueModel> getCustomFieldValuesForEntity(@RequestParam(BOUND_ENTITY_ID) long id,
 			@RequestParam(BOUND_ENTITY_TYPE) BindableEntity entityType) {
@@ -80,7 +80,7 @@ public class CustomFieldValuesController {
 		List<CustomFieldValue> values = managerService.findAllCustomFieldValues(id, entityType);
 		boolean editable = managerService.areValuesEditable(id, entityType);
 
-		CustomFieldValueConfigurationBean conf = new CustomFieldValueConfigurationBean(values);
+		CustomFieldValueConfigurationBean conf = CustomFieldValueConfigurationBean.createFromValues(values);
 
 		ModelAndView mav = new ModelAndView("custom-field-values-panel.html");
 		mav.addObject("editable", editable);

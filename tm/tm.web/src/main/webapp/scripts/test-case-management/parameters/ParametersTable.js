@@ -66,20 +66,7 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confi
 					} ],
 
 					richEditables : {
-						conf : {
-							ckeditor : {
-								customConfig : self.settings.basic.ckeConfigUrl,
-								language : self.settings.language.ckeLang
-							},
-							placeholder : self.settings.language.placeholder,
-							submit : self.settings.language.submit,
-							cancel : self.settings.language.cancellabel,
-							indicator : self.settings.basic.indicatorUrl
-						},
-
-						targets : {
-							'parameter-description' : self.settings.basic.parametersUrl + '/{entity-id}/description'
-						}
+						'parameter-description' : self.settings.basic.parametersUrl + '/{entity-id}/description'					
 					}
 				};
 			}

@@ -38,58 +38,61 @@
 
 <?xml version="1.0" encoding="utf-8" ?>
 
-<%@ page language="java" contentType="text/html; charset=utf-8"
-	pageEncoding="utf-8"%>
-	
-<c:set var="servContext" value="${ pageContext.servletContext.contextPath }" />
-<c:url var="objectUrl" value="${workspace}" />
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+
 
 <div id="search-result">
-	<table id="search-result-datatable">
+  <table id="search-result-datatable">
 
-		<tbody>
-			<c:forEach var="object" items="${resultList}" varStatus="index">
-				
-				<c:set var="currentProject" value="${object.project.name}"></c:set>
-				
-				<c:if test="${currentProject != oldProject}">
-					<c:set var="oldProject" value="${currentProject}"></c:set>
-					<tr>
-						<td>${object.id}</td>
-						<td id="searchnode-CampaignLibrary-${object.project.id}"
-							class="searched-project non-tree" style="border: none;">
-								<span class="icon-entity icon-root"/>
-								<span class="search-text">${object.project.name}</span>
-							
-						</td>
-						<td>${object.project.name}</td>
-					</tr>
+    <tbody>
+      <c:forEach var="object" items="${resultList}" varStatus="index">
 
-				</c:if>
-				
-				<c:set var="icon-class" value="${ (object.class.simpleName == 'Campaign') ? 'icon-campaign' : 
-												  (object.class.simpleName == 'Iteration') ? 'icon-iteration' : 
-												  'icon-folder' }"/>
-				<tr>
-					<td class="objectId">${object.id}</td>
-					<td id="searchnode-${object.class.simpleName}-${object.id}" class="non-tree" style="border: none;">
-						<span class="icon-entity ${icon-class}"></span> 
-						<span class="search-text">${object.name}</span> 					
-					</td>
-					<td>${object.project.name }-${object.name }</td>
-				</tr>
+        <c:set var="currentProject" value="${object.project.name}"></c:set>
 
-			</c:forEach>
-		</tbody>
-	</table>
+        <c:if test="${currentProject != oldProject}">
+          <c:set var="oldProject" value="${currentProject}"></c:set>
+          <tr>
+            <td>${object.id}</td>
+            <td id="searchnode-CampaignLibrary-${object.project.id}" class="searched-project non-tree"
+              style="border: none;">
+              <span class="icon-entity icon-root" />
+              <span class="search-text">${object.project.name}</span>
+
+            </td>
+            <td>${object.project.name}</td>
+          </tr>
+
+        </c:if>
+
+        <c:set var="iconClass" value="icon-folder" />
+        <c:choose>
+          <c:when test="${ object.class.simpleName == 'Campaign'}">
+            <c:set var="iconClass" value="icon-campaign" />
+          </c:when>
+          <c:when test="${object.class.simpleName == 'Iteration'}">
+            <c:set var="iconClass" value="icon-iteration" />
+          </c:when>
+        </c:choose>
+
+        <tr>
+          <td class="objectId">${object.id}</td>
+          <td id="searchnode-${object.class.simpleName}-${object.id}" class="non-tree" style="border: none;">
+            <span class="icon-entity ${iconClass}"></span>
+            <span class="search-text">${object.name}</span>
+          </td>
+          <td>${object.project.name }-${object.name }</td>
+        </tr>
+
+      </c:forEach>
+    </tbody>
+  </table>
 </div>
 
 <comp:decorate-ajax-search-table tableId="search-result-datatable">
-		<jsp:attribute name="initialSort">[[2,'asc']]</jsp:attribute>
-		<jsp:attribute name="columnDefs">
+  <jsp:attribute name="initialSort">[[2,'asc']]</jsp:attribute>
+  <jsp:attribute name="columnDefs">
 		<dt:column-definition targets="0" sortable="false" visible="false" />
 		<dt:column-definition targets="1" sortable="false" />
-		<dt:column-definition targets="2" sortable="true" visible="false"
-				lastDef="true" />
+		<dt:column-definition targets="2" sortable="true" visible="false" lastDef="true" />
 	</jsp:attribute>
 </comp:decorate-ajax-search-table>

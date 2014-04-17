@@ -50,7 +50,7 @@ import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService;
 import org.squashtest.tm.service.campaign.TestSuiteFinder;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
-import org.squashtest.tm.web.internal.controller.RequestHeaders;
+import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.model.json.JsonStepInfo;
 
 /**
@@ -220,7 +220,7 @@ public class TestSuiteExecutionRunnerController {
 	 * @param locale
 	 * @return
 	 */
-	@RequestMapping(value = RequestMappingPattern.INIT_NEXT_EXECUTION_RUNNER, headers = RequestHeaders.CONTENT_JSON)
+	@RequestMapping(value = RequestMappingPattern.INIT_NEXT_EXECUTION_RUNNER, headers = AcceptHeaders.CONTENT_JSON)
 	@ResponseBody
 	public RunnerState getNextTestCaseRunnerState(@PathVariable("testPlanItemId") long testPlanItemId,
 			@PathVariable("testSuiteId") long testSuiteId, Locale locale) {
@@ -404,7 +404,7 @@ public class TestSuiteExecutionRunnerController {
 		return executionProcessingController.getBasicInfos(executionId, stepIndex);
 	}
 
-	@RequestMapping(value = RequestMappingPattern.INDEXED_STEP, method = RequestMethod.GET, params = "optimized", headers = RequestHeaders.CONTENT_JSON)
+	@RequestMapping(value = RequestMappingPattern.INDEXED_STEP, method = RequestMethod.GET, params = "optimized", headers = AcceptHeaders.CONTENT_JSON)
 	@ResponseBody
 	public StepState getStepState(@PathVariable long executionId, @PathVariable int stepIndex) {
 		return executionProcessingController.getStepState(executionId, stepIndex);

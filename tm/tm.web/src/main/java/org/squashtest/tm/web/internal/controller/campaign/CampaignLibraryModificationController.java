@@ -53,6 +53,7 @@ public class CampaignLibraryModificationController {
 		
 		mav.addObject("library", lib);
 		mav.addObject("attachments", attachments);		
+		mav.addObject("workspaceName", "campaign");
 		
 		
 		return mav;

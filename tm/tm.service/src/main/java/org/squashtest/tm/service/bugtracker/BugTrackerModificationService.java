@@ -28,8 +28,7 @@ import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 @Transactional
 @DynamicManager(name = "squashtest.tm.service.BugTrackerModificationService", entity = BugTracker.class)
 public interface BugTrackerModificationService extends CustomBugTrackerModificationService {
-		@PreAuthorize("hasRole('ROLE_ADMIN')")
-	void changeName(long bugtrackerId, String newName);
+		
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	void changeIframeFriendly(long bugtrackerId, boolean isIframeFriendly);

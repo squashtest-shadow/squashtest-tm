@@ -37,7 +37,7 @@ import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilde
  */
 @Component
 @Scope("prototype")
-public class RequirementStatusComboDataBuilder extends EnumJeditableComboDataBuilder<RequirementStatus> {
+public class RequirementStatusComboDataBuilder extends EnumJeditableComboDataBuilder<RequirementStatus, RequirementStatusComboDataBuilder> {
 	public RequirementStatusComboDataBuilder() {
 		super();
 		setModel(RequirementStatus.values());

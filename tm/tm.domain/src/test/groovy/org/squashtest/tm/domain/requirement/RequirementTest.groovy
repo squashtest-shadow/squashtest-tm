@@ -312,6 +312,7 @@ class RequirementTest extends Specification {
 	def "verifiableVersion should be the latest approved version"() {
 		given: "a req with an approved version"
 		RequirementVersion v1 = new RequirementVersion()
+		v1.setName("name");
 		use (ReflectionCategory) {
 			RequirementVersion.set field: "status", of: v1, to: RequirementStatus.APPROVED
 		}
@@ -337,6 +338,7 @@ class RequirementTest extends Specification {
 	def "verifiableVersion should be the latest non-obsolete version"() {
 		given: "a req with an approved version"
 		RequirementVersion v1 = new RequirementVersion()
+		v1.setName("name");
 		use (ReflectionCategory) {
 			RequirementVersion.set field: "status", of: v1, to: RequirementStatus.UNDER_REVIEW
 		}

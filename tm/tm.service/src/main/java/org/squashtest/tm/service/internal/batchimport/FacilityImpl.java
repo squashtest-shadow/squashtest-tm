@@ -72,59 +72,59 @@ import org.squashtest.tm.service.testcase.TestStepModificationService;
 @Component
 @Scope("prototype")
 public class FacilityImpl implements Facility {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(FacilityImpl.class); 
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(FacilityImpl.class);
 
 	@Inject
 	private TestCaseLibraryFinderService finderService;
-	
+
 	@Inject
 	private TestCaseLibraryNavigationService navigationService;
-	
+
 	@Inject
 	private TestCaseModificationService testcaseModificationService;
-	
+
 	@Inject
 	private TestStepModificationService stepModificationService;
-		
+
 	@Inject
 	private PrivateCustomFieldValueService cufvalueService;
-	
+
 	@Inject
 	private CallStepManagerService callstepService;
-	
+
 	@Inject
 	private ParameterModificationService parameterService;
-	
+
 	@Inject
 	private DatasetModificationService datasetService;
-	
+
 	@Inject
 	private DatasetDao datasetDao;
-	
+
 	@Inject
 	private DatasetParamValueDao paramvalueDao;
-		
+
 	@Inject
 	private ParameterDao paramDao;
-	
+
 	@Inject
 	private CustomFieldDao cufDao;
-	
-	
-	
-	
+
+
+
+
 	private SimulationFacility simulator;	// manual injection via setter
-	
+
 	private Model model;					// manual injection via setter
 
 	private FacilityImplHelper helper = new FacilityImplHelper();
-	
-	private Map<String, Long> cufIdByCode = new HashMap<String, Long>();
-	
-	private Collection<Long> modifiedTestCases = new HashSet<Long>(); 
 
-	
+	private Map<String, Long> cufIdByCode = new HashMap<String, Long>();
+
+	private Collection<Long> modifiedTestCases = new HashSet<Long>();
+
+
 	public SimulationFacility getSimulator() {
 		return simulator;
 	}
@@ -140,20 +140,20 @@ public class FacilityImpl implements Facility {
 	public void setModel(Model model) {
 		this.model = model;
 	}
-	
+
 	// ************************ public (and nice looking) code **************************************
 
 	@Override
 	public LogTrain createTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
 
 		LogTrain train = simulator.createTestCase(target, testCase, cufValues);
-		
+
 		if (! train.hasCriticalErrors()){
 			try{
 				helper.fillNullWithDefaults(testCase);
 				helper.truncate(testCase, cufValues);
 				doCreateTestcase(target, testCase, cufValues);
-				
+
 				model.setExists(target, testCase.getId());
 				remember(target);
 			}
@@ -163,43 +163,43 @@ public class FacilityImpl implements Facility {
 				LOGGER.error("Excel import : unexpected error while importing "+target+" : ", ex);
 			}
 		}
-		
+
 		return train;
-		
+
 	}
 
 	@Override
 	public LogTrain updateTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
-		
+
 		TargetStatus status = model.getStatus(target);
 
 		LogTrain train = simulator.updateTestCase(target, testCase, cufValues);
-		
+
 		if (! train.hasCriticalErrors()){
 			try{
 				if (status.status == Existence.NOT_EXISTS){
 					helper.fillNullWithDefaults(testCase);
 					helper.truncate(testCase, cufValues);
 					doCreateTestcase(target, testCase, cufValues);
-					
+
 					model.setExists(target, testCase.getId());
 					remember(target);
 				}
 				else{
-				
+
 					helper.truncate(testCase, cufValues);
 					doUpdateTestcase(target, testCase, cufValues);
 					remember(target);
-				
+
 				}
 			}
 			catch(Exception ex){
 				train.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );
 				LOGGER.error("Excel import : unexpected error while updating "+target+" : ", ex);
 			}
-				
+
 		}
-		
+
 		return train;
 	}
 
@@ -207,7 +207,7 @@ public class FacilityImpl implements Facility {
 	public LogTrain deleteTestCase(TestCaseTarget target) {
 
 		LogTrain train = simulator.deleteTestCase(target);
-		
+
 		if (! train.hasCriticalErrors()){
 			try{
 				doDeleteTestCase(target);
@@ -217,62 +217,62 @@ public class FacilityImpl implements Facility {
 				train.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );
 				TestCase tc = model.get(target);
 				model.setExists(target, tc.getId());
-				LOGGER.error("Excel import : unexpected error while deleting "+target+" : ", ex);				
+				LOGGER.error("Excel import : unexpected error while deleting "+target+" : ", ex);
 			}
 		}
-		
+
 		return train;
 	}
 
 	@Override
 	public LogTrain addActionStep(TestStepTarget target, ActionTestStep testStep,
 			Map<String, String> cufValues) {
-		
+
 		LogTrain train = simulator.addActionStep(target, testStep, cufValues);
-		
+
 		if (! train.hasCriticalErrors()){
 			try{
 				helper.fillNullWithDefaults(testStep);
 				helper.truncate(testStep, cufValues);
 				doAddActionStep(target, testStep, cufValues);
-				
+
 			}
 			catch(Exception ex){
 				train.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );
-				LOGGER.error("Excel import : unexpected error while creating step "+target+" : ", ex);				
+				LOGGER.error("Excel import : unexpected error while creating step "+target+" : ", ex);
 			}
 		}
-		
+
 		return train;
 	}
 
 	@Override
 	public LogTrain addCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase) {
-		
+
 		LogTrain train = simulator.addCallStep(target, testStep, calledTestCase);
-		
+
 		if (! train.hasCriticalErrors()){
 			try{
 				doAddCallStep(target, testStep, calledTestCase);
 				model.addCallStep(target, calledTestCase);
-				
+
 				remember(target.getTestCase());
 			}
 			catch(Exception ex){
 				train.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );
-				LOGGER.error("Excel import : unexpected error while creating step "+target+" : ", ex);				
+				LOGGER.error("Excel import : unexpected error while creating step "+target+" : ", ex);
 			}
 		}
-		
+
 		return train;
 	}
 
 	@Override
 	public LogTrain updateActionStep(TestStepTarget target, ActionTestStep testStep,
 			Map<String, String> cufValues) {
-		
+
 		LogTrain train = simulator.updateActionStep(target, testStep, cufValues);
-		
+
 		if (! train.hasCriticalErrors()){
 			try{
 				helper.truncate(testStep, cufValues);
@@ -280,36 +280,36 @@ public class FacilityImpl implements Facility {
 			}
 			catch(Exception ex){
 				train.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );
-				LOGGER.error("Excel import : unexpected error while updating step "+target+" : ", ex);				
+				LOGGER.error("Excel import : unexpected error while updating step "+target+" : ", ex);
 			}
 		}
-		
+
 		return train;
 	}
 
 	@Override
 	public LogTrain updateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase) {
-		
+
 		LogTrain train = simulator.updateCallStep(target, testStep, calledTestCase);
-		
+
 		if (! train.hasCriticalErrors()){
 			try{
 				doUpdateCallStep(target, testStep, calledTestCase);
 			}
 			catch(Exception ex){
 				train.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );
-				LOGGER.error("Excel import : unexpected error while updating step "+target+" : ", ex);				
+				LOGGER.error("Excel import : unexpected error while updating step "+target+" : ", ex);
 			}
 		}
-		
+
 		return train;
 	}
 
 	@Override
 	public LogTrain deleteTestStep(TestStepTarget target) {
-		
+
 		LogTrain train = simulator.deleteTestStep(target);
-		
+
 		if (! train.hasCriticalErrors()){
 			try{
 				doDeleteTestStep(target);
@@ -317,19 +317,19 @@ public class FacilityImpl implements Facility {
 			}
 			catch(Exception ex){
 				train.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );
-				LOGGER.error("Excel import : unexpected error while deleting step "+target+" : ", ex);				
+				LOGGER.error("Excel import : unexpected error while deleting step "+target+" : ", ex);
 			}
 		}
-		
+
 		return train;
 	}
-	
-	
+
+
 	@Override
 	public LogTrain createParameter(ParameterTarget target, Parameter param) {
-		
+
 		LogTrain train = simulator.createParameter(target, param);
-		
+
 		if (! train.hasCriticalErrors()){
 			try{
 				doCreateParameter(target, param);
@@ -338,37 +338,37 @@ public class FacilityImpl implements Facility {
 			catch(Exception ex){
 				train.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );
 				model.removeParameter(target);
-				LOGGER.error("Excel import : unexpected error while adding parameter "+target+" : ", ex);			
+				LOGGER.error("Excel import : unexpected error while adding parameter "+target+" : ", ex);
 			}
 		}
-		
+
 		return train;
 	}
 
-	
+
 	@Override
 	public LogTrain updateParameter(ParameterTarget target, Parameter param) {
-		
+
 		LogTrain train = simulator.updateParameter(target, param);
-		
+
 		if (! train.hasCriticalErrors()){
 			try{
 				doUpdateParameter(target, param);
 			}
 			catch(Exception ex){
-				train.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );				
-				LOGGER.error("Excel import : unexpected error while updating parameter "+target+" : ", ex);			
+				train.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );
+				LOGGER.error("Excel import : unexpected error while updating parameter "+target+" : ", ex);
 			}
 		}
-		
+
 		return train;
 	}
 
 	@Override
 	public LogTrain deleteParameter(ParameterTarget target) {
-		
+
 		LogTrain train = simulator.deleteParameter(target);
-		
+
 		if (! train.hasCriticalErrors()){
 			try{
 				doDeleteParameter(target);
@@ -376,18 +376,18 @@ public class FacilityImpl implements Facility {
 			catch(Exception ex){
 				train.addEntry( new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );
 				model.addParameter(target);	// we must readd it because simulation facility (if all went well at the simulation level) would have removed it. Design flaw apparently.
-				LOGGER.error("Excel import : unexpected error while deleting parameter "+target+" : ", ex);			
+				LOGGER.error("Excel import : unexpected error while deleting parameter "+target+" : ", ex);
 			}
 		}
-		
+
 		return train;
 	}
 
 	@Override
 	public LogTrain failsafeUpdateParameterValue(DatasetTarget dataset,	ParameterTarget param, String value) {
-		
+
 		LogTrain train = simulator.failsafeUpdateParameterValue(dataset, param, value);
-		
+
 		if (! train.hasCriticalErrors()){
 			try{
 				doFailsafeUpdateParameterValue(dataset, param, value);
@@ -395,59 +395,59 @@ public class FacilityImpl implements Facility {
 			}
 			catch(Exception ex){
 				train.addEntry( new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );
-				LOGGER.error("Excel import : unexpected error while setting parameter "+param+" in dataset "+dataset+" : ", ex);						
+				LOGGER.error("Excel import : unexpected error while setting parameter "+param+" in dataset "+dataset+" : ", ex);
 			}
 		}
-		
+
 		return train;
 	}
 
 	@Override
 	public LogTrain deleteDataset(DatasetTarget dataset) {
-		
+
 		LogTrain train = simulator.deleteDataset(dataset);
-		
+
 		if (! train.hasCriticalErrors()){
 			try{
 				doDeleteDataset(dataset);
 			}
 			catch(Exception ex){
 				train.addEntry( new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR, new Object[]{ex.getClass().getName()}) );
-				LOGGER.error("Excel import : unexpected error while deleting dataset "+dataset+" in dataset "+dataset+" : ", ex);						
+				LOGGER.error("Excel import : unexpected error while deleting dataset "+dataset+" in dataset "+dataset+" : ", ex);
 			}
 		}
-		
-		return train;	
+
+		return train;
 	}
-	
+
 	/**
 	 * for all other stuffs that need to be done afterward
 	 * 
 	 */
 	public void postprocess(){
-		
+
 		for (Long id : modifiedTestCases){
 			datasetService.updateDatasetParameters(id);
 		}
-		
-		
+
+
 	}
-	
-	
+
+
 	// ************************* private (and hairy) code *********************************
 
-	
-	
+
+
 	// because this time we're not toying around man, this is the real thing
 	private void doCreateTestcase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) throws Exception{
-		
-		Map<Long, String> acceptableCufs = toAcceptableCufs(cufValues);
-		
-		// backup the audit log 
-		AuditableSupport metadata = helper.saveAuditMetadata((AuditableMixin)testCase);
-		
 
-	
+		Map<Long, String> acceptableCufs = toAcceptableCufs(cufValues);
+
+		// backup the audit log
+		AuditableSupport metadata = helper.saveAuditMetadata((AuditableMixin)testCase);
+
+
+
 		// case 1 : this test case lies at the root of the project
 		if (target.isRootTestCase()){
 			Long libraryId = model.getProjectStatus(target.getProject()).getId();	// never null because the checks ensured that the project exists
@@ -462,78 +462,78 @@ public class FacilityImpl implements Facility {
 			renameIfNeeded(testCase, siblingNames);
 			navigationService.addTestCaseToFolder(folderId, testCase, acceptableCufs);
 		}
-		
-		// restore the audit log 
+
+		// restore the audit log
 		helper.restoreMetadata((AuditableMixin)testCase, metadata);
 	}
-	
+
 	private void renameIfNeeded(TestCase testCase, Collection<String> siblingNames){
-		String newName = LibraryUtils.generateNonClashingName(testCase.getName(), siblingNames);
+		String newName = LibraryUtils.generateNonClashingName(testCase.getName(), siblingNames, TestCase.MAX_NAME_SIZE);
 		if (! newName.equals(testCase.getName())){
 			testCase.setName(newName);
 		}
 	}
 
-	
+
 	private void doUpdateTestcase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) throws Exception{
-		
+
 		TestCase orig = model.get(target);
 		Long origId = orig.getId();
-		
-		// backup the audit log 
+
+		// backup the audit log
 		AuditableSupport metadata = helper.saveAuditMetadata((AuditableMixin)testCase);
-	
-		
+
+
 		// update the test case core attributes
-		
+
 		String newName = testCase.getName();
 		if (! StringUtils.isBlank(newName) && ! orig.getName().equals(newName)){
 			testcaseModificationService.rename(origId, newName);
 		}
-		
+
 		String newRef = testCase.getReference();
 		if (! StringUtils.isBlank(newRef) && ! orig.getReference().equals(newRef)){
 			testcaseModificationService.changeReference(origId, newRef);
 		}
-		
+
 		String newDesc = testCase.getDescription();
 		if (! StringUtils.isBlank(newDesc) && ! orig.getDescription().equals(newDesc)){
 			testcaseModificationService.changeDescription(origId, newDesc);
 		}
-		
-		
+
+
 		String newPrereq = testCase.getPrerequisite();
 		if (! StringUtils.isBlank(newPrereq) && ! orig.getPrerequisite().equals(newPrereq)){
 			testcaseModificationService.changePrerequisite(origId, newPrereq);
 		}
-		
+
 		TestCaseImportance newImp = testCase.getImportance();
 		if (newImp != null && ! orig.getImportance().equals(newImp)){
 			testcaseModificationService.changeImportance(origId, newImp);
 		}
-		
+
 		TestCaseNature newNat = testCase.getNature();
 		if (newNat != null && ! orig.getNature().equals(newNat)){
 			testcaseModificationService.changeNature(origId, newNat);
 		}
-		
+
 		TestCaseType newType = testCase.getType();
 		if (newType != null && ! orig.getType().equals(newType)){
 			testcaseModificationService.changeType(origId, newType);
 		}
-		
+
 		TestCaseStatus newStatus = testCase.getStatus();
 		if (newStatus != null && ! orig.getStatus().equals(newStatus)){
 			testcaseModificationService.changeStatus(origId, newStatus);
 		}
-		
+
 		Boolean newImportanceAuto = testCase.isImportanceAuto();
 		if (newImportanceAuto != null && orig.isImportanceAuto() != newImportanceAuto){
 			testcaseModificationService.changeImportanceAuto(origId, newImportanceAuto);
 		}
-		
+
 		// the custom field values now
-		
+
 		List<CustomFieldValue> cufs = cufvalueService.findAllCustomFieldValues(orig);
 		for (CustomFieldValue v : cufs){
 			String code = v.getCustomField().getCode();
@@ -542,72 +542,72 @@ public class FacilityImpl implements Facility {
 				v.setValue(newValue);
 			}
 		}
-		
-		// restore the audit log 
+
+		// restore the audit log
 		helper.restoreMetadata((AuditableMixin)testCase, metadata);
-		
+
 	}
-	
-	
+
+
 	private void doDeleteTestCase(TestCaseTarget target) throws Exception{
 		TestCase tc = model.get(target);
 		navigationService.deleteNodes(Arrays.asList(tc.getId()));
 	}
-	
-	
+
+
 	private void doAddActionStep(TestStepTarget target, ActionTestStep testStep, Map<String, String> cufValues) throws Exception{
-		
+
 		Map<Long, String> acceptableCufs = toAcceptableCufs(cufValues);
-			
+
 		// add the step
 		TestCase tc = model.get(target.getTestCase());
 		testcaseModificationService.addActionTestStep(tc.getId(), testStep, acceptableCufs);
-		
+
 		// move it if the index was specified
 		Integer index = target.getIndex();
 		if (index != null && index >=0 && index < tc.getSteps().size()){
 			testcaseModificationService.changeTestStepsPosition(tc.getId(), index, Arrays.asList(testStep.getId()));
 		}
-		
+
 	}
-	
-	
-	
+
+
+
 	private void doAddCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase){
-		
+
 		// add the step
 		TestCase tc = model.get(target.getTestCase());
 		TestCase called = model.get(calledTestCase);
-		
+
 		callstepService.addCallTestStep(tc.getId(), called.getId());
 		CallTestStep created = (CallTestStep)tc.getSteps().get(tc.getSteps().size()-1);
-		
+
 		// change position if possible and required
 		Integer index = target.getIndex();
 		if (index != null && index >=0 && index < tc.getSteps().size()){
 			testcaseModificationService.changeTestStepsPosition(tc.getId(), index, Arrays.asList(created.getId()));
 		}
-		
+
 	}
-	
-	
+
+
 	private void doUpdateActionStep(TestStepTarget target, ActionTestStep testStep, Map<String, String> cufValues){
-		
+
 		// update the step
 		ActionTestStep orig = (ActionTestStep)model.getStep(target);
-		
+
 		String newAction = testStep.getAction();
 		if (! StringUtils.isBlank(newAction) && ! orig.getAction().equals(newAction)){
 			orig.setAction(newAction);
 		}
-		
+
 		String newResult = testStep.getExpectedResult();
 		if (! StringUtils.isBlank(newResult) && ! orig.getExpectedResult().equals(newResult)){
 			orig.setExpectedResult(newResult);
 		}
-		
+
 		// the custom field values now
-		
+
 		List<CustomFieldValue> cufs = cufvalueService.findAllCustomFieldValues(orig);
 		for (CustomFieldValue v : cufs){
 			String code = v.getCustomField().getCode();
@@ -616,33 +616,33 @@ public class FacilityImpl implements Facility {
 				v.setValue(newValue);
 			}
 		}
-			
+
 	}
-	
+
 	private void doUpdateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase){
 
-		
+
 		// update the step
-		TestStep actualStep = model.getStep(target);		
+		TestStep actualStep = model.getStep(target);
 		TestCase newCalled = model.get(calledTestCase);
 		callstepService.checkForCyclicStepCallBeforePaste(newCalled.getId(), Arrays.asList(actualStep.getId()));
 		((CallTestStep)actualStep).setCalledTestCase(newCalled);
-		
+
 	}
-	
+
 	private void doDeleteTestStep(TestStepTarget target){
 		TestStep actual = model.getStep(target);
 		testcaseModificationService.removeStepFromTestCase(actual.getTestCase().getId(), actual.getId());
 	}
-	
+
 	private void doCreateParameter(ParameterTarget target, Parameter param){
 
 		// according to the spec this is exactly the same thing
 		doUpdateParameter(target, param);
 	}
-	
+
 	private void doUpdateParameter(ParameterTarget target, Parameter param){
-		
+
 		if (! model.doesParameterExists(target)){
 			Long testcaseId = model.getId(target.getOwner());
 			helper.fillNullWithDefaults(param);
@@ -650,47 +650,47 @@ public class FacilityImpl implements Facility {
 			parameterService.addNewParameterToTestCase(param, testcaseId);
 		}
 		else{
-		
+
 			findParameter(target).setDescription(param.getDescription());
 		}
-		
+
 	}
-	
+
 	private void doDeleteParameter(ParameterTarget target){
 		Long testcaseId = model.getId(target.getOwner());
 		List<Parameter> allparams = parameterService.findAllforTestCase(testcaseId);
-		
+
 		Parameter param=null;
 		for (Parameter p : allparams){
 			if (p.getName().equals(target.getName())){
 				param = p;
-				break;				
+				break;
 			}
-		}		
-		
+		}
+
 		parameterService.remove(param);
 	}
-	
-	
+
+
 	private void doFailsafeUpdateParameterValue(DatasetTarget dataset, ParameterTarget param, String value){
 		DatasetParamValue dpv = findParamValue(dataset, param);
 		String trValue = helper.truncate(value, 255);
 		dpv.setParamValue(trValue);
 	}
-	
+
 	private void doDeleteDataset(DatasetTarget dataset){
 		Dataset ds = findDataset(dataset);
 		datasetService.remove(ds);
 	}
-	
+
 	// ******************************** support methods ***********************
-	
-	
+
+
 	private Parameter findParameter(ParameterTarget param){
 		Long testcaseId = model.getId(param.getOwner());
 
 		Parameter found = paramDao.findParameterByNameAndTestCase(param.getName(), testcaseId);
-		
+
 		if (found != null){
 			return found;
 		}
@@ -701,9 +701,9 @@ public class FacilityImpl implements Facility {
 
 	private Dataset findDataset(DatasetTarget dataset){
 		Long tcid = model.getId(dataset.getTestCase());
-		
+
 		Dataset found = datasetDao.findDatasetByTestCaseAndByName(tcid, dataset.getName());
-		
+
 		if (found == null){
 			return found;
 		}
@@ -718,37 +718,37 @@ public class FacilityImpl implements Facility {
 	}
 
 	private DatasetParamValue findParamValue(DatasetTarget dataset, ParameterTarget param){
-		
+
 		Dataset dbDs = findDataset(dataset);
 		Parameter dsParam = findParameter(param);
-		
+
 		for (DatasetParamValue dpv : dbDs.getParameterValues()){
 			if (dpv.getParameter().equals(dsParam)){
 				return dpv;
 			}
 		}
-		
-		// else we have to create it. Note that the services do not provide any facility for that 
+
+		// else we have to create it. Note that the services do not provide any facility for that
 		// so we have to do it from scratch here. Tsss, lazy conception again.
 		DatasetParamValue dpv = new DatasetParamValue(dsParam, dbDs);
 		paramvalueDao.persist(dpv);
 		dbDs.addParameterValue(dpv);
-		
+
 		return dpv;
 	}
-	
-	
+
+
 	// because the service identifies cufs by their id, not their code
 	// also populates the cache (cufIdByCode)
 	private Map<Long, String> toAcceptableCufs(Map<String, String> origCufs){
-		
+
 		Map<Long, String> result = new HashMap<Long, String>(origCufs.size());
-		
+
 		for (Entry<String, String> origCuf : origCufs.entrySet()){
 			String cufCode = origCuf.getKey();
-			
+
 			if (! cufIdByCode.containsKey(cufCode)){
-				
+
 				CustomField customField = cufDao.findByCode(cufCode);
 
 				// that bit of code checks that if the custom field doesn't exist, the hashmap entry contains
@@ -757,22 +757,22 @@ public class FacilityImpl implements Facility {
 				if (customField != null){
 					id = customField.getId();
 				}
-	
+
 				cufIdByCode.put(cufCode, id);
 			}
-			
-			// now add to our map the id of the custom field, except if null : the custom field 
+
+			// now add to our map the id of the custom field, except if null : the custom field
 			// does not exist and therefore wont be included.
 			Long cufId = cufIdByCode.get(cufCode);
 			if (cufId != null){
 				result.put(cufId, origCuf.getValue());
 			}
 		}
-		
+
 		return result;
-		
+
 	}
-	
+
 	private void remember(TestCaseTarget target){
 		TestCase tc = model.get(target);
 		if (tc.getId() != null){

@@ -139,12 +139,16 @@
 		<parameter name="iCountStatusUntestable" class="java.lang.Integer" isForPrompting="false"/>
 		<parameter name="iCountStatusBloqued" class="java.lang.Integer" isForPrompting="false"/>
 		<parameter name="iCountStatusFailure" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="iCountStatusSettled" class="java.lang.Integer" isForPrompting="false"/>
 		<parameter name="fPercentageStatusReady" class="java.lang.Float" isForPrompting="false"/>
 		<parameter name="fPercentageStatusSuccess" class="java.lang.Float" isForPrompting="false"/>
 		<parameter name="fPercentageStatusBloqued" class="java.lang.Float" isForPrompting="false"/>
 		<parameter name="fPercentageStatusRunning" class="java.lang.Float" isForPrompting="false"/>
 		<parameter name="fPercentageStatusUntestable" class="java.lang.Float" isForPrompting="false"/>
 		<parameter name="fPercentageStatusFailure" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="fPercentageStatusSettled" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="allowsUntestable" class="java.lang.Boolean" isForPrompting="false"/>
+		<parameter name="allowsSettled" class="java.lang.Boolean" isForPrompting="false"/>
 		<parameter name="status" class="java.lang.Enum" isForPrompting="false"/>
 	</subDataset>
 	<subDataset name="Total_Dataset">
@@ -157,12 +161,16 @@
 		<parameter name="iCountStatusUntestable" class="java.lang.Integer" isForPrompting="false"/>
 		<parameter name="iCountStatusBloqued" class="java.lang.Integer" isForPrompting="false"/>
 		<parameter name="iCountStatusFailure" class="java.lang.Integer" isForPrompting="false"/>
+		<parameter name="iCountStatusSettled" class="java.lang.Integer" isForPrompting="false"/>
 		<parameter name="fPercentageStatusReady" class="java.lang.Float" isForPrompting="false"/>
 		<parameter name="fPercentageStatusSuccess" class="java.lang.Float" isForPrompting="false"/>
 		<parameter name="fPercentageStatusBloqued" class="java.lang.Float" isForPrompting="false"/>
 		<parameter name="fPercentageStatusRunning" class="java.lang.Float" isForPrompting="false"/>
 		<parameter name="fPercentageStatusUntestable" class="java.lang.Float" isForPrompting="false"/>
 		<parameter name="fPercentageStatusFailure" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="fPercentageStatusSettled" class="java.lang.Float" isForPrompting="false"/>
+		<parameter name="allowsUntestable" class="java.lang.Boolean" isForPrompting="false"/>
+		<parameter name="allowsSettled" class="java.lang.Boolean" isForPrompting="false"/>
 	</subDataset>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["C:\\Documents and Settings\\bsiri\\Mes documents\\reports\\"]]></defaultValueExpression>
@@ -202,6 +210,9 @@
 	<field name="fPercentageStatusUntestable" class="java.lang.Float">
 		<fieldDescription><![CDATA[fPercentageStatusUntestable]]></fieldDescription>
 	</field>
+	<field name="fPercentageStatusSettled" class="java.lang.Float">
+		<fieldDescription><![CDATA[fPercentageStatusSettled]]></fieldDescription>
+	</field>	
 	<field name="fPercentageStatusFailure" class="java.lang.Float">
 		<fieldDescription><![CDATA[fPercentageStatusFailure]]></fieldDescription>
 	</field>
@@ -220,6 +231,15 @@
 	<field name="iCountStatusUntestable" class="java.lang.Integer">
 		<fieldDescription><![CDATA[iCountStatusUntestable]]></fieldDescription>
 	</field>
+	<field name="iCountStatusSettled" class="java.lang.Integer">
+		<fieldDescription><![CDATA[iCountStatusSettled]]></fieldDescription>
+	</field>
+	<field name="allowsSettled" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[allowsSettled]]></fieldDescription>
+	</field>
+	<field name="allowsUntestable" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[allowsUntestable]]></fieldDescription>
+	</field>
 	<field name="name" class="java.lang.String">
 		<fieldDescription><![CDATA[name]]></fieldDescription>
 	</field>
@@ -227,6 +247,12 @@
 		<fieldDescription><![CDATA[id]]></fieldDescription>
 	</field>
 	<sortField name="name"/>
+	<variable name="allowsSettled" class="java.lang.Boolean" incrementType="Group" incrementGroup="projects" calculation="Sum">
+		<variableExpression><![CDATA[$F{allowsSettled}]]></variableExpression>
+	</variable>
+	<variable name="allowsUntestable" class="java.lang.Boolean" incrementType="Group" incrementGroup="projects" calculation="Sum">
+		<variableExpression><![CDATA[$F{allowsUntestable}]]></variableExpression>
+	</variable>
 	<variable name="total_iCountStatusSuccess" class="java.lang.Integer" incrementType="Group" incrementGroup="projects" calculation="Sum">
 		<variableExpression><![CDATA[$F{iCountStatusSuccess}]]></variableExpression>
 		<initialValueExpression><![CDATA[0]]></initialValueExpression>
@@ -251,6 +277,10 @@
 		<variableExpression><![CDATA[$F{iCountStatusUntestable}]]></variableExpression>
 		<initialValueExpression><![CDATA[0]]></initialValueExpression>
 	</variable>
+	<variable name="total_iCountStatusSettled" class="java.lang.Integer" incrementType="Group" incrementGroup="projects" calculation="Sum">
+		<variableExpression><![CDATA[$F{iCountStatusSettled}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
 	<variable name="total_numberTestCase" class="java.lang.Integer" incrementType="Group" incrementGroup="projects" calculation="Sum">
 		<variableExpression><![CDATA[$F{numberTestCase}]]></variableExpression>
 		<initialValueExpression><![CDATA[0]]></initialValueExpression>
@@ -264,6 +294,12 @@
 				<reportElement key="table 2" style="table" x="0" y="0" width="736" height="20"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="Project_Dataset">
+						<datasetParameter name="allowsSettled">
+							<datasetParameterExpression><![CDATA[$F{allowsSettled}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="allowsUntestable">
+							<datasetParameterExpression><![CDATA[$F{allowsUntestable}]]></datasetParameterExpression>
+						</datasetParameter>
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource(1)]]></dataSourceExpression>
 					</datasetRun>
 					<jr:columnGroup width="113">
@@ -281,23 +317,23 @@
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
 						</jr:column>
 					</jr:columnGroup>
-					<jr:columnGroup width="260">
+					<jr:columnGroup width="220">
 						<jr:columnHeader height="30" rowSpan="1">
 							<box>
 								<bottomPen lineWidth="1.0"/>
 							</box>
 							<textField>
-								<reportElement x="0" y="0" width="260" height="30"/>
+								<reportElement x="0" y="0" width="220" height="30"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="9" isBold="true"/>
 								</textElement>
 								<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.header.planning.label}]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
-						<jr:column width="65">
+						<jr:column width="55">
 							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
 								<textField>
-									<reportElement x="0" y="0" width="65" height="20"/>
+									<reportElement x="0" y="0" width="55" height="20"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font size="9" isItalic="true"/>
 									</textElement>
@@ -306,10 +342,10 @@
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
 						</jr:column>
-						<jr:column width="65">
+						<jr:column width="55">
 							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
 								<textField>
-									<reportElement x="0" y="0" width="65" height="20"/>
+									<reportElement x="0" y="0" width="55" height="20"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font size="9" isItalic="true"/>
 									</textElement>
@@ -318,10 +354,10 @@
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
 						</jr:column>
-						<jr:column width="65">
+						<jr:column width="55">
 							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
 								<textField>
-									<reportElement x="0" y="0" width="65" height="20"/>
+									<reportElement x="0" y="0" width="55" height="20"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font size="9" isItalic="true"/>
 									</textElement>
@@ -330,10 +366,10 @@
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
 						</jr:column>
-						<jr:column width="65">
+						<jr:column width="55">
 							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
 								<textField>
-									<reportElement x="0" y="0" width="65" height="20"/>
+									<reportElement x="0" y="0" width="55" height="20"/>
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font size="9" isItalic="true"/>
 									</textElement>
@@ -343,13 +379,13 @@
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
 						</jr:column>
 					</jr:columnGroup>
-					<jr:columnGroup width="246">
+					<jr:columnGroup width="287">
 						<jr:columnHeader height="30" rowSpan="1">
 							<box>
 								<bottomPen lineWidth="1.0"/>
 							</box>
 							<textField>
-								<reportElement x="0" y="0" width="246" height="30"/>
+								<reportElement x="0" y="0" width="287" height="30"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="9" isBold="true"/>
 								</textElement>
@@ -428,6 +464,18 @@
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
 						</jr:column>
+						<jr:column width="41">
+							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+								<textField>
+									<reportElement x="0" y="0" width="41" height="20" forecolor="#009900"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.settled.label}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>						
 					</jr:columnGroup>
 					<jr:columnGroup width="113">
 						<jr:columnHeader height="30" rowSpan="1"/>
@@ -477,6 +525,12 @@
 				<reportElement key="table 3" style="table 2" x="0" y="0" width="732" height="20" isRemoveLineWhenBlank="true" backcolor="#77132E"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="Project_Dataset">
+						<datasetParameter name="allowsSettled">
+							<datasetParameterExpression><![CDATA[$F{allowsSettled}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="allowsUntestable">
+							<datasetParameterExpression><![CDATA[$F{allowsUntestable}]]></datasetParameterExpression>
+						</datasetParameter>
 						<datasetParameter name="iCountStatusSuccess">
 							<datasetParameterExpression><![CDATA[$F{iCountStatusSuccess}]]></datasetParameterExpression>
 						</datasetParameter>
@@ -494,6 +548,9 @@
 						</datasetParameter>
 						<datasetParameter name="iCountStatusFailure">
 							<datasetParameterExpression><![CDATA[$F{iCountStatusFailure}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="iCountStatusSettled">
+							<datasetParameterExpression><![CDATA[$F{iCountStatusSettled}]]></datasetParameterExpression>
 						</datasetParameter>
 						<datasetParameter name="fPercentageStatusReady">
 							<datasetParameterExpression><![CDATA[$F{fPercentageStatusReady}]]></datasetParameterExpression>
@@ -513,6 +570,9 @@
 						<datasetParameter name="fPercentageStatusFailure">
 							<datasetParameterExpression><![CDATA[$F{fPercentageStatusFailure}]]></datasetParameterExpression>
 						</datasetParameter>
+						<datasetParameter name="fPercentageStatusSettled">
+							<datasetParameterExpression><![CDATA[$F{fPercentageStatusSettled}]]></datasetParameterExpression>
+						</datasetParameter>
 						<datasetParameter name="numberTestCase">
 							<datasetParameterExpression><![CDATA[$F{numberTestCase}]]></datasetParameterExpression>
 						</datasetParameter>
@@ -524,11 +584,11 @@
 						</datasetParameter>
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource(1)]]></dataSourceExpression>
 					</datasetRun>
-					<jr:columnGroup width="373">
-						<jr:column width="373">
+					<jr:columnGroup width="333">
+						<jr:column width="333">
 							<jr:columnHeader height="19" rowSpan="1">
 								<textField>
-									<reportElement mode="Opaque" x="0" y="0" width="373" height="19" forecolor="#FFFFFF" backcolor="#77132E"/>
+									<reportElement mode="Opaque" x="0" y="0" width="333" height="19" forecolor="#FFFFFF" backcolor="#77132E"/>
 									<textElement verticalAlignment="Middle">
 										<font size="9" isBold="true"/>
 									</textElement>
@@ -538,7 +598,7 @@
 							<jr:detailCell height="0" rowSpan="1"/>
 						</jr:column>
 					</jr:columnGroup>
-					<jr:columnGroup width="246">
+					<jr:columnGroup width="287">
 						<jr:column width="41">
 							<jr:columnHeader height="19" rowSpan="1">
 								<textField>
@@ -584,14 +644,14 @@
 									<textElement textAlignment="Center" verticalAlignment="Middle">
 										<font size="9" isItalic="true"/>
 									</textElement>
-									<textFieldExpression class="java.lang.Integer"><![CDATA[$P{iCountStatusUntestable}]]></textFieldExpression>
+									<textFieldExpression class="java.lang.String"><![CDATA[$P{allowsUntestable} ? $P{iCountStatusUntestable}.toString() : new String("")]]></textFieldExpression>
 								</textField>
 								<textField pattern="#,##0 %">
 									<reportElement mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999" backcolor="#77132E"/>
 									<textElement verticalAlignment="Middle">
 										<font size="7"/>
 									</textElement>
-									<textFieldExpression class="java.lang.Float"><![CDATA[$P{fPercentageStatusUntestable}]]></textFieldExpression>
+									<textFieldExpression class="java.lang.String"><![CDATA[$P{allowsUntestable} ? $P{fPercentageStatusUntestable} : new String("")]]></textFieldExpression>
 								</textField>
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
@@ -653,6 +713,25 @@
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
 						</jr:column>
+						<jr:column width="41">
+							<jr:columnHeader height="19" rowSpan="1">
+								<textField>
+									<reportElement mode="Opaque" x="0" y="0" width="20" height="19" forecolor="#009900" backcolor="#77132E"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression class="java.lang.String"><![CDATA[$P{allowsSettled} ? $P{iCountStatusSettled}.toString() : new String("")]]></textFieldExpression>
+								</textField>
+								<textField pattern="#,##0 %">
+									<reportElement mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999" backcolor="#77132E"/>
+									<textElement verticalAlignment="Middle">
+										<font size="7"/>
+									</textElement>
+									<textFieldExpression class="java.lang.String"><![CDATA[$P{allowsSettled} ? $P{fPercentageStatusSettled} : new String("")]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>						
 					</jr:columnGroup>
 					<jr:columnGroup width="113">
 						<jr:column width="50">
@@ -690,6 +769,12 @@
 				<reportElement key="table 3" x="0" y="50" width="736" height="20"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="Total_Dataset">
+						<datasetParameter name="allowsSettled">
+							<datasetParameterExpression><![CDATA[$F{allowsSettled}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="allowsUntestable">
+							<datasetParameterExpression><![CDATA[$F{allowsUntestable}]]></datasetParameterExpression>
+						</datasetParameter>					
 						<datasetParameter name="iCountStatusSuccess">
 							<datasetParameterExpression><![CDATA[$V{total_iCountStatusSuccess}]]></datasetParameterExpression>
 						</datasetParameter>
@@ -708,15 +793,18 @@
 						<datasetParameter name="iCountStatusFailure">
 							<datasetParameterExpression><![CDATA[$V{total_iCountStatusFailure}]]></datasetParameterExpression>
 						</datasetParameter>
+						<datasetParameter name="iCountStatusSettled">
+							<datasetParameterExpression><![CDATA[$V{total_iCountStatusSettled}]]></datasetParameterExpression>
+						</datasetParameter>
 						<datasetParameter name="numberTestCase">
 							<datasetParameterExpression><![CDATA[$V{total_numberTestCase}]]></datasetParameterExpression>
 						</datasetParameter>
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource(1)]]></dataSourceExpression>
 					</datasetRun>
-					<jr:column width="373">
+					<jr:column width="333">
 						<jr:columnHeader height="20" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="373" height="20"/>
+								<reportElement x="0" y="0" width="333" height="20"/>
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font size="9"/>
 								</textElement>
@@ -770,14 +858,14 @@
 								<textElement textAlignment="Right" verticalAlignment="Middle">
 									<font size="9"/>
 								</textElement>
-								<textFieldExpression class="java.lang.Integer"><![CDATA[$P{iCountStatusUntestable}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$P{allowsUntestable} ? $P{iCountStatusUntestable}.toString() : new String("")]]></textFieldExpression>
 							</textField>
 							<textField pattern="#,##0 %">
 								<reportElement mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="7"/>
 								</textElement>
-								<textFieldExpression class="java.lang.Float"><![CDATA[(float)$P{iCountStatusUntestable}/(float)$P{numberTestCase}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$P{allowsUntestable} ? (float)$P{iCountStatusUntestable}/(float)$P{numberTestCase} : new String("")]]></textFieldExpression>
 							</textField>
 						</jr:columnHeader>
 						<jr:detailCell height="0" rowSpan="1"/>
@@ -839,6 +927,25 @@
 						</jr:columnHeader>
 						<jr:detailCell height="0" rowSpan="1"/>
 					</jr:column>
+					<jr:column width="41">
+						<jr:columnHeader height="20" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="20" height="20" forecolor="#009900"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[$P{allowsSettled} ? $P{iCountStatusSettled}.toString() : new String("")]]></textFieldExpression>
+							</textField>
+							<textField pattern="#,##0 %">
+								<reportElement mode="Opaque" x="20" y="0" width="21" height="19" forecolor="#999999"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression class="java.lang.String"><![CDATA[$P{allowsSettled} ? ((float)$P{iCountStatusSettled}/(float)$P{numberTestCase}) : new String("")]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell height="0" rowSpan="1"/>
+					</jr:column>
 					<jr:column width="50">
 						<jr:columnHeader height="20" rowSpan="1">
 							<textField>
@@ -869,22 +976,28 @@
 				<reportElement key="table 4" style="table" x="0" y="0" width="736" height="50"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="Project_Dataset">
+						<datasetParameter name="allowsSettled">
+							<datasetParameterExpression><![CDATA[$F{allowsSettled}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="allowsUntestable">
+							<datasetParameterExpression><![CDATA[$F{allowsUntestable}]]></datasetParameterExpression>
+						</datasetParameter>
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource(1)]]></dataSourceExpression>
 					</datasetRun>
-					<jr:columnGroup width="372">
+					<jr:columnGroup width="333">
 						<jr:columnHeader height="30" rowSpan="1"/>
-						<jr:column width="372">
+						<jr:column width="333">
 							<jr:columnHeader style="table_CH" height="20" rowSpan="1"/>
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
 						</jr:column>
 					</jr:columnGroup>
-					<jr:columnGroup width="246">
+					<jr:columnGroup width="287">
 						<jr:columnHeader height="30" rowSpan="1">
 							<box>
 								<bottomPen lineWidth="1.0"/>
 							</box>
 							<textField>
-								<reportElement x="0" y="0" width="246" height="30"/>
+								<reportElement x="0" y="0" width="287" height="30"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="9" isBold="true"/>
 								</textElement>
@@ -959,6 +1072,18 @@
 										<font size="9" isItalic="true"/>
 									</textElement>
 									<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.success.label}]]></textFieldExpression>
+								</textField>
+							</jr:columnHeader>
+							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>
+						</jr:column>
+						<jr:column width="41">
+							<jr:columnHeader style="table_CH" height="20" rowSpan="1">
+								<textField>
+									<reportElement x="0" y="0" width="41" height="20" forecolor="#009900"/>
+									<textElement textAlignment="Center" verticalAlignment="Middle">
+										<font size="9" isItalic="true"/>
+									</textElement>
+									<textFieldExpression class="java.lang.String"><![CDATA[$R{report.executionprogression.main.settled.label}]]></textFieldExpression>
 								</textField>
 							</jr:columnHeader>
 							<jr:detailCell style="table 2_TD" height="0" rowSpan="1"/>

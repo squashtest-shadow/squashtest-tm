@@ -25,8 +25,8 @@ import javax.inject.Inject;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.requirement.RequirementCategory;
-import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter;
 import org.squashtest.tm.web.internal.helper.InternationalizableComparator;
+import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
 
@@ -38,7 +38,7 @@ import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilde
  */
 @Component
 @Scope("prototype")
-public class RequirementCategoryComboDataBuilder extends EnumJeditableComboDataBuilder<RequirementCategory> {
+public class RequirementCategoryComboDataBuilder extends EnumJeditableComboDataBuilder<RequirementCategory, RequirementCategoryComboDataBuilder> {
 	
 	private InternationalizableComparator comparator = new InternationalizableComparator();
 	

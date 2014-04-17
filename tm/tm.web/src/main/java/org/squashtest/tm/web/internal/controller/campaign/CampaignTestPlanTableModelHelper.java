@@ -26,7 +26,6 @@ import java.util.Map;
 
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IndexedCampaignTestPlanItem;
@@ -77,11 +76,6 @@ final class CampaignTestPlanTableModelHelper extends DataTableModelBuilder<Index
 
 	}
 	
-
-	private String formatExecutionMode(TestCaseExecutionMode mode, Locale locale) {
-		return messageSource.internationalize(mode+"-short", locale);
-	}
-
 
 	private String formatImportance(TestCaseImportance importance, Locale locale) {
 		return messageSource.internationalize(importance, locale);

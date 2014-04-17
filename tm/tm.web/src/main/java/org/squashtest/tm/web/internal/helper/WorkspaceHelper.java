@@ -38,7 +38,6 @@ import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.web.internal.export.ExportPluginManager;
-import org.squashtest.tm.web.internal.export.ExportPluginRegistry;
 import org.squashtest.tm.web.internal.model.jquery.FilterModel;
 
 /**

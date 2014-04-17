@@ -21,7 +21,6 @@
 package org.squashtest.tm.web.internal.controller.project;
 
 import java.text.MessageFormat;
-import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -40,9 +39,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.service.project.ProjectManagerService;
-import org.squashtest.tm.web.internal.model.jquery.FilterModel;
 
 @Controller
 @RequestMapping("/projects")
@@ -50,40 +49,37 @@ public class ProjectController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProjectController.class);
 	
 	@Inject
-	private ProjectManagerService projectService;
+	private ProjectManagerService projectManager;
 	
-	@Inject private GenericProjectManagerService projectManager;
+	@Inject
+	private GenericProjectManagerService genericProjectManager;
 
-	@RequestMapping(method = RequestMethod.GET, params = "format=picker")
-	@ResponseBody
-	public FilterModel getProjectPickerModel() {
-		List<Project> projects = projectService.findAllOrderedByName();
-		FilterModel model = new FilterModel();
-
-		for (Project project : projects) {
-			model.addProject(project.getId(), project.getName(), project.getLabel());
-		}
-
-		return model;
-	}
-	
 	@RequestMapping(value= "/{projectId}", method=RequestMethod.PUT)
 	@ResponseStatus(HttpStatus.CREATED)
-	public @ResponseBody void coerceTemplateIntoProject(@RequestBody Map<String, Object> payload, @PathVariable long projectId) {
+	public @ResponseBody
+	void coerceTemplateIntoProject(@RequestBody Map<String, Object> payload, @PathVariable long projectId) {
 		LOGGER.trace("PUTting project/{} with payload {}", projectId, payload);
 		if (payload.get("templateId").equals(projectId)) {
-			throw new IllegalArgumentException(MessageFormat.format("Cannot coerce ProjectTemplate into Project : project id {0} is not the same as template id {1}", projectId, payload.get("templateId")));
+			throw new IllegalArgumentException(MessageFormat.format(
+					"Cannot coerce ProjectTemplate into Project : project id {0} is not the same as template id {1}",
+					projectId, payload.get("templateId")));
 		}
 		
-		projectManager.coerceTemplateIntoProject(projectId);
+		genericProjectManager.coerceTemplateIntoProject(projectId);
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "templateId")
+	@ResponseStatus(value = HttpStatus.CREATED)
 	public @ResponseBody
-	void createNewProject(@Valid @ModelAttribute("add-project-from-template") Project project,
+	void createProjectFromTemplate(@Valid @ModelAttribute("add-project-from-template") Project project,
 			@RequestParam long templateId, @RequestParam boolean copyPermissions, @RequestParam boolean copyCUF,
 			@RequestParam boolean copyBugtrackerBinding, @RequestParam boolean copyAutomatedProjects) {
-		projectService.addProjectAndCopySettingsFromTemplate(project, templateId, copyPermissions, copyCUF,
-				copyBugtrackerBinding, copyAutomatedProjects);
+		try {
+			projectManager.addProjectAndCopySettingsFromTemplate(project, templateId, copyPermissions, copyCUF,
+					copyBugtrackerBinding, copyAutomatedProjects);
+		} catch (NameAlreadyInUseException ex) {
+			ex.setObjectName("add-project-from-template");
+			throw ex;
+		}
 	}
 }

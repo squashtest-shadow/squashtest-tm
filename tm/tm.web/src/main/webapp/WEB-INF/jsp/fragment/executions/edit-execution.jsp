@@ -290,6 +290,7 @@
 	</pop:popup>
 
 	<%--------------------------- /Deletion confirmation popup -------------------------------------%>
+	<f:message var="statusSettled" key="execution.execution-status.SETTLED" />
 	<f:message var="statusUntestable" key="execution.execution-status.UNTESTABLE" />
 	<f:message var="statusBlocked" key="execution.execution-status.BLOCKED" />
 	<f:message var="statusFailure" key="execution.execution-status.FAILURE" />
@@ -319,7 +320,6 @@
 			/* deletion success handler */
 			function deleteExecutionSuccess(){
 				$( '#delete-execution-confirm' ).dialog( 'close' );
-//		 		document.location.href="${ parentUrl }" ;
 				history.back();
 			}
 			
@@ -339,10 +339,10 @@
 			});
 
 			
-			// ************** execution table *********************
+			// ==== execution table ====
 			var tableSettings = {
 				"sAjaxSource": "${executionStepsUrl}", 
-				"aoColumnDefs": ${stepsAoColumnDefs}
+				"aoColumnDefs": ${stepsAoColumnDefs}, 
 				"cufDefinitions": ${ json:marshall(cufDefinitions) }
 			};
 			
@@ -352,16 +352,7 @@
 			
 			<c:if test="${ editable }">
 			squashSettings.richEditables = {
-				conf : {
-					ckeditor : { customConfig : '${ ckeConfigUrl }', language: '<f:message key="rich-edit.language.value" />' },
-					placeholder: '<f:message key="rich-edit.placeholder" />',
-					submit: '<f:message key="rich-edit.button.ok.label" />',
-					cancel: '<f:message key="label.Cancel" />',
-					indicator : '<div class="processing-indicator" />' 				
-				},
-				targets : {
-					"rich-editable-comment" : "${ executionStepsUrl }/{entity-id}/comment"
-				}
+				"rich-editable-comment" : "${ executionStepsUrl }/{entity-id}/comment"				
 			};
 			squashSettings.attachments = { 
 				url : "${stepAttachmentManagerUrl}/{attach-list-id}/attachments/manager?workspace=campaign"
@@ -425,7 +416,7 @@
 			$("#execution-execution-steps-table").squashTable(tableSettings, squashSettings);
 			
 			
-			//**** cuf sections ************
+			//==== cuf sections ====
 
 			//load the custom fields
 			$.get("${denormalizedFieldsValuesURL}?denormalizedFieldHolderId=${execution.boundEntityId}&denormalizedFieldHolderType=${execution.boundEntityType}")
@@ -440,12 +431,12 @@
 				</c:if>
 			});		
 			
-			// ************** bugtracker section ******************************
+			// ==== bugtracker section ====
 		 	
 		 	$("#bugtracker-section-div").load("${btEntityUrl}");
 			
 			
-		 	// ************** handle for refershing the page (called by the execution popup) ******************
+		 	// ==== handle for refershing the page (called by the execution popup) ====
 		 	
 		 	squashtm.execution = squashtm.execution || {};
 		 	squashtm.execution.refresh = $.proxy(function(){

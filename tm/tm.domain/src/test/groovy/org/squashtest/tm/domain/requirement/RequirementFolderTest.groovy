@@ -114,6 +114,7 @@ class RequirementFolderTest extends Specification {
 		
 		and:
 		Attachment attachment = new Attachment()
+		attachment.setType("txt")
 		folder.attachmentList.addAttachment attachment
 		
 		when:

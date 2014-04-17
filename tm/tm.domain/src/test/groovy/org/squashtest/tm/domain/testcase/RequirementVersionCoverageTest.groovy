@@ -57,7 +57,9 @@ class RequirementVersionCoverageTest extends Specification {
 	def "should not verify 2 versions of same requirement"() {
 		given:
 		TestCase tc = new TestCase()
-		Requirement req = new Requirement(new RequirementVersion())
+		RequirementVersion version = new RequirementVersion();
+		version.setName("version");
+		Requirement req = new Requirement(version)
 		new RequirementVersionCoverage(req, tc)
 
 		and:
@@ -89,6 +91,7 @@ class RequirementVersionCoverageTest extends Specification {
 	def "should copy rvc for Test Case"() {
 		given:
 		TestCase source = new TestCase()
+		source.setName("source");
 		source.notifyAssociatedWithProject(new Project())
 		RequirementVersion req = new RequirementVersion(name: "")
 		RequirementVersionCoverage coverage = new RequirementVersionCoverage(req, source)
@@ -105,6 +108,7 @@ class RequirementVersionCoverageTest extends Specification {
 		given:
 		TestCase called = new TestCase()
 		TestCase source = new TestCase()
+		source.setName("source");
 		ActionTestStep step1 = new ActionTestStep()		
 		CallTestStep step2 = new CallTestStep()
 		use (ReflectionCategory) {
@@ -137,6 +141,7 @@ class RequirementVersionCoverageTest extends Specification {
 		given:"a requirement with current version"
 		Requirement requirement = new Requirement();
 		RequirementVersion source = new RequirementVersion()
+		source.setName("source");
 		source.setRequirement(requirement)
 		and : "a test case"
 		TestCase tc = new TestCase()

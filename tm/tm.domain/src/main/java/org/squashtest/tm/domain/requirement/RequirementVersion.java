@@ -43,7 +43,6 @@ import org.hibernate.search.annotations.ClassBridge;
 import org.hibernate.search.annotations.ClassBridges;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.Fields;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.Parameter;
@@ -95,7 +94,7 @@ public class RequirementVersion extends Resource implements BoundEntity {
 	 * The requirement reference. It should usually be set by the Requirement.
 	 */
 	@NotNull
-	@Fields({ @Field(), @Field(name = "referenceSort", analyze = Analyze.NO, store = Store.YES) })
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@Size(min = 0, max = 50)
 	private String reference = "";
 

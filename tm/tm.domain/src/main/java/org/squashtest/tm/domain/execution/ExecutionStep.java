@@ -75,9 +75,9 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 @Entity
 @Auditable
 public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepVisitor, Identified, HasExecutionStatus, DenormalizedFieldHolder, BoundEntity {
-	
-	private static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
-	
+
+	public static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
+
 	private static final String PARAM_PREFIX = "\\Q${\\E";
 	private static final String PARAM_SUFFIX = "\\Q}\\E";
 	private static final String PARAM_PATTERN = PARAM_PREFIX + "([A-Za-z0-9_-]+)" + PARAM_SUFFIX;
@@ -89,10 +89,11 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 		set.add(ExecutionStatus.BLOCKED);
 		set.add(ExecutionStatus.FAILURE);
 		set.add(ExecutionStatus.READY);
-		LEGAL_EXEC_STATUS = Collections.unmodifiableSet(set);		
+		set.add(ExecutionStatus.SETTLED);
+		LEGAL_EXEC_STATUS = Collections.unmodifiableSet(set);
 	}
-	
-	
+
+
 	@Id
 	@GeneratedValue
 	@Column(name = "EXECUTION_STEP_ID")
@@ -141,7 +142,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 
 	@Transient
 	private Map<String, String> dataset = new HashMap<String,String>();
-	
+
 	/**
 	 * Hibernate needs this.
 	 */
@@ -152,9 +153,9 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	public ExecutionStep(ActionTestStep testStep){
 		this(testStep, null);
 	}
-	
+
 	public ExecutionStep(ActionTestStep testStep, Dataset dataset) {
-		fillParameterMap(dataset); 
+		fillParameterMap(dataset);
 		testStep.accept(this);
 		referencedTestStep = testStep;
 		for (Attachment actionStepAttach : testStep.getAllAttachments()) {
@@ -162,7 +163,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 			attachmentList.addAttachment(clone);
 		}
 	}
-	
+
 	private void fillParameterMap(Dataset dataset){
 		if(dataset != null){
 			for(DatasetParamValue param : dataset.getParameterValues()){
@@ -172,7 +173,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 			}
 		}
 	}
-	
+
 	public TestStep getReferencedTestStep() {
 		return referencedTestStep;
 	}
@@ -197,7 +198,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	public ExecutionStatus getExecutionStatus() {
 		return executionStatus;
 	}
-	
+
 	@Override
 	public Set<ExecutionStatus> getLegalStatusSet() {
 		return LEGAL_EXEC_STATUS;
@@ -243,7 +244,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	public String getAction() {
 		return action;
 	}
-	
+
 	public boolean isFirst(){
 		return (executionStepOrder==0);
 	}
@@ -282,7 +283,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	public void detachIssue(Long id){
 		issueList.removeIssue(id);
 	}
-	
+
 	@Override
 	public void visit(ActionTestStep visited) {
 		String originalAction = visited.getAction();
@@ -292,67 +293,67 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	}
 
 	private String valueParams(String content){
-		
+
 		String result = null;
-		
+
 		if(content != null){
-			
+
 			StringBuilder builder = new StringBuilder(content);
-			
-		    Pattern pattern = Pattern.compile(PARAM_PATTERN);
-		    Matcher matcher = pattern.matcher(content);		
-		    
-		    // each time a replacement occurs in the stringbuilder deviates 
-		    // a bit further from string scanned by the matcher.
-		    //
-		    // Consequently the more the string is modified the more the length might be altered,
-		    // which leads to inconsistencies in the position of a given substring in the original string
-		    // and the modified string.
-		    //
-		    // Thus, the following variable keeps track
-		    // of the modifications to adjust the start and end position 
-		    // 
-		    int offset = 0;
-			
-		    while (matcher.find()){
-		    	String paramName = matcher.group(1);
-		    	
-		    	String paramValue = dataset.get(paramName);		    	
-		    	if( paramValue == null|| paramValue.length() == 0) {
-		    		paramValue = NO_PARAM;
-		    	}
-		    	
-		    	int start = matcher.start();
-		    	int end = matcher.end();
 
-		    	builder.replace(start + offset, end + offset, paramValue);
-		    	
-		    	offset += paramValue.length() - (end - start);	
+			Pattern pattern = Pattern.compile(PARAM_PATTERN);
+			Matcher matcher = pattern.matcher(content);
 
-		    }
-		    
-		    result = builder.toString();
+			// each time a replacement occurs in the stringbuilder deviates
+			// a bit further from string scanned by the matcher.
+			//
+			// Consequently the more the string is modified the more the length might be altered,
+			// which leads to inconsistencies in the position of a given substring in the original string
+			// and the modified string.
+			//
+			// Thus, the following variable keeps track
+			// of the modifications to adjust the start and end position
+			//
+			int offset = 0;
+
+			while (matcher.find()){
+				String paramName = matcher.group(1);
+
+				String paramValue = dataset.get(paramName);
+				if( paramValue == null|| paramValue.length() == 0) {
+					paramValue = NO_PARAM;
+				}
+
+				int start = matcher.start();
+				int end = matcher.end();
+
+				builder.replace(start + offset, end + offset, paramValue);
+
+				offset += paramValue.length() - (end - start);
+
+			}
+
+			result = builder.toString();
 		}
 		else{
 			result = content;
 		}
-	    return result;
+		return result;
 
 
 	}
-	
+
 	@Override
 	public void visit(CallTestStep visited) {
 		// FIXME naive implementation so that app don't break
 		action = visited.getCalledTestCase().getName();
 	}
-	
+
 	@Override
-		public List<Long> getAllIssueListId() {
-			List<Long> ids = new LinkedList<Long>();
-			ids.add(issueList.getId());
-			return ids;
-		}
+	public List<Long> getAllIssueListId() {
+		List<Long> ids = new LinkedList<Long>();
+		ids.add(issueList.getId());
+		return ids;
+	}
 
 	@Override
 	public BugTracker getBugTracker() {
@@ -368,7 +369,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	public DenormalizedFieldHolderType getDenormalizedFieldHolderType() {
 		return DenormalizedFieldHolderType.EXECUTION_STEP;
 	}
-	
+
 	// ***************** (detached) custom field section *************
 
 	@Override

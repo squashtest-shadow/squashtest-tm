@@ -18,24 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "./show-projects/ProjectsManager",
-		"./project-info/project-info-manager" ], function($,
-		ProjectsManager, infoManager) {
-
-	function initShowProjects() {
-		$(function() {
-			$("#new-project-button").button();
-			$("#new-project-from-template-button").button();
-
-		});
-
-		new ProjectsManager();
-	}
+define([ "./project-info/project-info-manager" ], function(infoManager) {
 
 	return {
-		showProjects : {
-			init : initShowProjects
-		},
 		projectInfo : {
 			initUserPermissions : infoManager.initUserPermissions,
 			initWizardsTab : infoManager.initWizardsTab

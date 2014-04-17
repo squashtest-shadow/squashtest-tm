@@ -36,6 +36,8 @@ import org.squashtest.tm.service.internal.repository.CampaignDeletionDao;
 public class HibernateCampaignDeletionDao extends HibernateDeletionDao
 		implements CampaignDeletionDao {
 
+
+	
 	@Override
 	public void removeEntities(List<Long> entityIds) {
 		if (!entityIds.isEmpty()) {
@@ -47,34 +49,10 @@ public class HibernateCampaignDeletionDao extends HibernateDeletionDao
 				query.setParameter("libraryNodeId", entityId);
 				CampaignLibraryNode node = (CampaignLibraryNode) query.uniqueResult();
 				
-				query = getSession().getNamedQuery("campaignLibraryNode.findParentLibraryIfExists");
-				query.setParameter("libraryNodeId", entityId);
-				CampaignLibrary library = (CampaignLibrary) query.uniqueResult();
-				if(library != null){
-					ListIterator<CampaignLibraryNode> iterator = library.getContent().listIterator();
-					while (iterator.hasNext()) {
-						CampaignLibraryNode tcln = iterator.next();
-						if (tcln.getId().equals(node.getId())) {
-							library.removeContent(tcln);
-							break;
-						}
-					}
-				}
+				removeEntityFromParentLibraryIfExists(entityId, node);
+
+				removeEntityFromParentFolderIfExists(entityId, node);
 				
-				query = getSession().getNamedQuery("campaignLibraryNode.findParentFolderIfExists");
-				query.setParameter("libraryNodeId", entityId);
-				CampaignFolder folder = (CampaignFolder) query.uniqueResult();
-				if(folder != null){
-					ListIterator<CampaignLibraryNode> iterator = folder.getContent().listIterator();
-					while (iterator.hasNext()) {
-						CampaignLibraryNode tcln = iterator.next();
-						if (tcln.getId().equals(node.getId())) {
-							folder.removeContent(tcln);
-							break;
-						}
-					}
-				}
-			
 				if(node != null){
 					getSession().delete(node);
 					getSession().flush();
@@ -85,6 +63,37 @@ public class HibernateCampaignDeletionDao extends HibernateDeletionDao
 		}
 	}
 	
+	private void removeEntityFromParentLibraryIfExists(Long entityId, CampaignLibraryNode node){
+		Query query = getSession().getNamedQuery("campaignLibraryNode.findParentLibraryIfExists");
+		query.setParameter("libraryNodeId", entityId);
+		CampaignLibrary library = (CampaignLibrary) query.uniqueResult();
+		if(library != null){
+			ListIterator<CampaignLibraryNode> iterator = library.getContent().listIterator();
+			while (iterator.hasNext()) {
+				CampaignLibraryNode tcln = iterator.next();
+				if (tcln.getId().equals(node.getId())) {
+					library.removeContent(tcln);
+					break;
+				}
+			}
+		}
+	}
+	
+	private void removeEntityFromParentFolderIfExists(Long entityId, CampaignLibraryNode node){
+		Query query = getSession().getNamedQuery("campaignLibraryNode.findParentFolderIfExists");
+		query.setParameter("libraryNodeId", entityId);
+		CampaignFolder folder = (CampaignFolder) query.uniqueResult();
+		if(folder != null){
+			ListIterator<CampaignLibraryNode> iterator = folder.getContent().listIterator();
+			while (iterator.hasNext()) {
+				CampaignLibraryNode tcln = iterator.next();
+				if (tcln.getId().equals(node.getId())) {
+					folder.removeContent(tcln);
+					break;
+				}
+			}
+		}
+	}
 	
 	@Override
 	public List<Long>[] separateFolderFromCampaignIds(List<Long> originalIds) {

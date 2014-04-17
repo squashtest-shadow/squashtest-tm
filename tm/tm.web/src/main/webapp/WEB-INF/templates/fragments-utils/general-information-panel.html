@@ -45,7 +45,7 @@ DEV NOTES :
 					 rawDateformat=#{squashtm.dateformat.iso},
 					 displayDateformat=#{squashtm.dateformat},
 					 neverLabel=#{label.lower.Never},
-					 url = ${entityUrl}">		
+					 url = ${entityUrl}">
 					 	 
 		<div id="general-information-panel" class="information-panel" th:attr="data-def='url='+${url}+', never='+${neverLabel}+', format='+${displayDateformat}">
 					 
@@ -59,14 +59,11 @@ DEV NOTES :
 			<br/>
 			
 			<span th:text="#{label.UpdatedOn}+'&nbsp;:&nbsp;'">updated on </span>
-			<span th:if="${entity.lastModifiedOn}" id="last-modified-on">
-				<span class="datetime" th:text="${#dates.format(entity.lastModifiedOn, rawDateformat)}"></span>
-				<span class="author" th:text="${entity.lastModifiedBy}"></span>
+			<span  id="last-modified-on">
+				<span class="datetime" th:text="${entity.lastModifiedOn} ? ${#dates.format(entity.lastModifiedOn, rawDateformat)}"></span>
+				<span class="author" th:text="${entity.lastModifiedBy} ? ${entity.lastModifiedBy}"></span>
 			</span>
-			<span th:unless="${entity.lastModifiedOn}" id="last-modified-on">
-				<span class="datetime" th:text="#{label.lower.Never}"></span>
-				<span class="author"></span>
-			</span>
+			
 			
 			<br />
 			
@@ -76,7 +73,7 @@ DEV NOTES :
 		/*<![CDATA[*/
 		  require(["common"], function(){
 			  require(["jquery", "page-components/general-information-panel"], function($, general){
-				  general.init();		  
+				  general.init();
 			  });
 		  });
 		/*]]>*/

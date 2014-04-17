@@ -81,6 +81,7 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 	@Inject
 	private Provider<TestCaseSearchExportCSVModelImpl> testCaseSearchExportCSVModelProvider;
+	
 
 	private final static SortField[] DEFAULT_SORT_TESTCASES = new SortField[] {
 			new SortField("project.name", SortField.STRING, false),
@@ -142,8 +143,10 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		return result;
 	}
 
-	private Sort getTestCaseSort(List<Sorting> sortings) {
+	private Sort getTestCaseSort(PagingAndMultiSorting multisorting) {
 
+		List<Sorting> sortings = multisorting.getSortings();
+		
 		if (sortings == null || sortings.size() == 0) {
 			return new Sort(DEFAULT_SORT_TESTCASES);
 		}
@@ -161,9 +164,8 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 			if (LONG_SORTABLE_FIELDS.contains(fieldName)) {
 				sortFieldArray[i] = new SortField(fieldName, SortField.LONG, isReverse);
-			} else if ("reference".equals(fieldName)) {
-				sortFieldArray[i] = new SortField(fieldName + "Sort", SortField.STRING, isReverse);
-			} else {
+			} 
+			else {
 				sortFieldArray[i] = new SortField(fieldName, SortField.STRING, isReverse);
 			}
 		}
@@ -198,7 +200,7 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		List<TestCase> result = Collections.emptyList();
 		int countAll = 0;
 		if (luceneQuery != null) {
-			Sort sort = getTestCaseSort(sorting.getSortings());
+			Sort sort = getTestCaseSort(sorting);
 			org.hibernate.Query hibQuery = ftSession.createFullTextQuery(luceneQuery, TestCase.class).setSort(sort);
 
 			countAll = hibQuery.list().size();
@@ -223,7 +225,7 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		List<TestCase> result = Collections.emptyList();
 		int countAll = 0;
 		if (luceneQuery != null) {
-			Sort sort = getTestCaseSort(sorting.getSortings());
+			Sort sort = getTestCaseSort(sorting);
 			org.hibernate.Query hibQuery = ftSession.createFullTextQuery(luceneQuery, TestCase.class).setSort(sort);
 
 			countAll = hibQuery.list().size();

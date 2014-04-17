@@ -21,7 +21,6 @@
 package org.squashtest.tm.domain.campaign;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -71,7 +70,14 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	private static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
 
 	static {
-		Set<ExecutionStatus> set = new HashSet<ExecutionStatus>(Arrays.asList(ExecutionStatus.values()));
+		Set<ExecutionStatus> set = new HashSet<ExecutionStatus>();
+		set.add(ExecutionStatus.SUCCESS);
+		set.add(ExecutionStatus.BLOCKED);
+		set.add(ExecutionStatus.FAILURE);
+		set.add(ExecutionStatus.RUNNING);
+		set.add(ExecutionStatus.READY);
+		set.add(ExecutionStatus.UNTESTABLE);
+		set.add(ExecutionStatus.SETTLED);
 		LEGAL_EXEC_STATUS = Collections.unmodifiableSet(set);
 	}
 
@@ -343,9 +349,9 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	}
 
 	public Project getProject() {
-		if(iteration != null){
+		if (iteration != null) {
 			return iteration.getProject();
-		}else if(!testSuites.isEmpty()){
+		} else if (!testSuites.isEmpty()) {
 			return testSuites.get(0).getProject();
 		}
 		return null;
@@ -360,7 +366,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	}
 
 	public boolean isExecutableThroughIteration() {
-		//XX check if tester is assigned
+		// XX check if tester is assigned
 		return !isTestCaseDeleted();
 	}
 
@@ -369,7 +375,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	 *         testCase).
 	 */
 	public boolean isExecutableThroughTestSuite() {
-		//XXX check if tester is assigned 
+		// XXX check if tester is assigned
 		if (executions.isEmpty()) {
 			return !this.isTestCaseDeleted();
 		} else {
@@ -519,7 +525,9 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 
 	/**
 	 * Return true if the item is assigned to the given user.
-	 * @param userLogin : the login of the concerned user (may not be null)
+	 * 
+	 * @param userLogin
+	 *            : the login of the concerned user (may not be null)
 	 * @return true if the assigned user is not <code>null</code> and matches the given login.
 	 */
 	public boolean isAssignedToUser(@NotNull String userLogin) {

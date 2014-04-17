@@ -35,7 +35,7 @@
  * 
  */
 
-define(['squash.translator', './table', './popups'], function(translator, table, popups){
+define(['squash.translator', './table', './popups', 'app/util/ButtonUtil'], function(translator, table, popups, ButtonUtil){
 	
 	var filterOn = false;
 	
@@ -47,6 +47,7 @@ define(['squash.translator', './table', './popups'], function(translator, table,
 		
 		conf.messages = translator.get({			
 			executionStatus : {
+				SETTLED : "execution.execution-status.SETTLED",
 				UNTESTABLE : "execution.execution-status.UNTESTABLE",
 				BLOCKED : "execution.execution-status.BLOCKED",
 				FAILURE : "execution.execution-status.FAILURE",
@@ -103,7 +104,7 @@ define(['squash.translator', './table', './popups'], function(translator, table,
 				$("#test-plan-sort-mode-message").show();
 				$("#test-cases-table").find('.select-handle').removeClass('drag-handle');
 				if (this.reorderable){
-					$("#reorder-test-plan-button").prop("disabled", false);
+					ButtonUtil.enable($("#reorder-test-plan-button"));
 				}
 	
 			} else {
@@ -112,7 +113,7 @@ define(['squash.translator', './table', './popups'], function(translator, table,
 				filterOn=true;
 				$("#test-plan-sort-mode-message").hide();
 				$("#test-cases-table").find('.select-handle').addClass('drag-handle');
-				$("#reorder-test-plan-button").prop("disabled", true);
+				ButtonUtil.disable($("#reorder-test-plan-button"));
 
 			}
 		});

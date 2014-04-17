@@ -87,10 +87,13 @@ public abstract class DataTableModelBuilder<X> {
 		return currentIndex;
 	}
 
+	// NOSONAR:START 
+	// it is here on purpose
 	@SuppressWarnings("unused")
-	private void setCurrentIndex(int i) { // NOSONAR it is here on purpose
+	private void setCurrentIndex(int i) {
 		// NOOP - No fiddling with the current index ! Use #getCurrentIndex() in #buildItemData(X item) implementations instead.
 	}
+	// NOSONAR:END
 
 	protected abstract Object buildItemData(X item);
 

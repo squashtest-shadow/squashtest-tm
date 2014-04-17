@@ -114,7 +114,7 @@ define([ "jquery", "workspace.event-bus", "jqueryui" ], function($, eventBus) {
 				dataType : 'json'
 			}).success(function(json) {
 				self.data.push(json);
-				eventBus.trigger("node.add");
+				eventBus.trigger("node.add", json);
 			});
 		};
 
@@ -178,9 +178,9 @@ define([ "jquery", "workspace.event-bus", "jqueryui" ], function($, eventBus) {
 			});
 		};
 		
-		this.getModel = function() {
+		this.getModel = function(evt) {
 			_getModel().success(function() {
-				redrawViews();
+				redrawViews(evt);
 			});
 		};
 
@@ -188,7 +188,7 @@ define([ "jquery", "workspace.event-bus", "jqueryui" ], function($, eventBus) {
 		// ************** other events **********
 
 		eventBus.onContextual('node.add node.rename node.remove node.refresh node.bind', function(evt){
-			self.getModel();
+			self.getModel(evt);
 		});
 
 	}

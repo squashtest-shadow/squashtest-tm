@@ -52,71 +52,66 @@
 
 <%-- ======================== /VARIABLES & URLS ============================ --%>
 
-				
+        
 <table id="verifying-test-cases-table" class="unstyled-table" data-def="ajaxsource=${tableModelUrl}, deferloading=${model.iTotalRecords}, 
-												 datakeys-id=tc-id, pre-sort=2-asc,
-												 pagesize=10 ">
-	<thead>
-		<tr>
-			<th data-def="map=tc-index, select">#</th>
-			<th data-def="map=project-name, sortable"><f:message key="label.project" /></th>
-			<th data-def="map=tc-reference, sortable"><f:message key="test-case.reference.label" /></th>
-			<th data-def="map=tc-name, sortable, link=${testCaseUrl}/{tc-id}/info"><f:message key="test-case.name.label" /></th>
-			<th data-def="map=tc-type, sortable"><f:message key="verifying-test-cases.table.column-header.type.label"/></th>
-			<th data-def="map=empty-delete-holder${tblRemoveBtnClause}">&nbsp;</th>				
-		</tr>
-	</thead>
-	<tbody>
-	</tbody>
+  datakeys-id=tc-id, pre-sort=2-asc, pagesize=50 ">
+  <thead>
+    <tr>
+      <th data-def="map=tc-index, select">#</th>
+      <th data-def="map=project-name, sortable"><f:message key="label.project" /></th>
+      <th data-def="map=tc-reference, sortable"><f:message key="test-case.reference.label" /></th>
+      <th data-def="map=tc-name, sortable, link=${testCaseUrl}/{tc-id}/info"><f:message key="test-case.name.label" /></th>
+      <th data-def="map=tc-type, sortable"><f:message key="verifying-test-cases.table.column-header.type.label"/></th>
+      <th data-def="map=empty-delete-holder${tblRemoveBtnClause}">&nbsp;</th>        
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
 </table>
 
-
-
 <div id="remove-verifying-test-case-dialog" class="popup-dialog not-displayed" title="${labelConfirm}">
-	<div><c:out value="${removeAssoc}"/></div>
-	<div class="popup-dialog-buttonpane">
-		<input class="confirm" type="button" value="${labelConfirm}" />
-		 <input class="cancel" type="button" value="${labelCancel}" />
-	</div>
+  <div><c:out value="${removeAssoc}"/></div>
+  <div class="popup-dialog-buttonpane">
+    <input class="confirm" type="button" value="${labelConfirm}" />
+     <input class="cancel" type="button" value="${labelCancel}" />
+  </div>
 </div>
 
-				
-				
 <script type="text/javascript">
-	require([ "common" ], function() {
-  		require(["jquery", 'workspace.event-bus', "squashtable"], function($, eventBus){
-			$(function() {
-    			var table = $("#verifying-test-cases-table").squashTable({
-    				'aaData' : ${json:serialize(model.aaData)}
-    			}, {});
-    			
-    			<c:if test="${editable}">
-    			var removeDialog = $("#remove-verifying-test-case-dialog").confirmDialog();
-    			
-    			$( '#${batchRemoveButtonId}' ).click(function() {
-    				var table = $( '#verifying-test-cases-table' ).squashTable();
-    				var ids = table.getSelectedIds();
-    				
-    				if (ids.length > 0) {
-    					removeDialog.confirmDialog('open');
-    				}else{
-    					$.squash.openMessage("${titleError}","${emptyMessage}");
-    				}
-    			});
-    			
-    			removeDialog.on('confirmdialogconfirm', function(){
-    				var ids = table.getSelectedIds();
-    				$.ajax({
-    					url : "${verifyingTestCasesUrl}/"+ids.join(','),
-    					type : 'DELETE',
-    					dataType : 'json'
-    				}).success(function(){
-    					table.refresh();
-    					eventBus.workspace.trigger("node.update-reqCoverage", {targetIds : ids});
-    				})
-    			});
-    			</c:if>			
-    		});
-		});
-	});
+  require([ "common" ], function() {
+      require(['jquery', 'workspace.event-bus', 'squashtable', 'jquery.squash.confirmdialog'], function($, eventBus){
+      $(function() {
+          var table = $("#verifying-test-cases-table").squashTable({
+            'aaData' : ${json:serialize(model.aaData)}
+          }, {});
+          
+          <c:if test="${editable}">
+          var removeDialog = $("#remove-verifying-test-case-dialog").confirmDialog();
+          
+          $( '#${batchRemoveButtonId}' ).click(function() {
+            var table = $( '#verifying-test-cases-table' ).squashTable();
+            var ids = table.getSelectedIds();
+            
+            if (ids.length > 0) {
+              removeDialog.confirmDialog('open');
+            } else {
+              $.squash.openMessage("${titleError}","${emptyMessage}");
+            }
+          });
+          
+          removeDialog.on('confirmdialogconfirm', function(){
+            var ids = table.getSelectedIds();
+            $.ajax({
+              url : "${verifyingTestCasesUrl}/"+ids.join(','),
+              type : 'DELETE',
+              dataType : 'json'
+            }).success(function() {
+              table.refresh();
+              eventBus.trigger("node.update-reqCoverage", {targetIds : ids});
+            })
+          });
+          </c:if>
+        });
+    });
+  });
 </script>

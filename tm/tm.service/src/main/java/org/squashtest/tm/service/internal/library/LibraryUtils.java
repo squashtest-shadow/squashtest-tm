@@ -32,16 +32,84 @@ public final class LibraryUtils {
 	private LibraryUtils() {
 
 	}
-
-	public static int generateUniqueCopyNumber(List<String> copiesNames, String sourceName, String copyToken) {
-		// we want to match one or more digits following the first instance of substring -Copie
-		Pattern pattern = Pattern.compile(Pattern.quote(sourceName) + copyToken + "(\\d+)");
-		return computeNonClashingIndex(pattern, copiesNames);
+	/**
+	 * Will generate a unique name assuming that there is a clash with the given copiesNames.
+	 * 
+	 * @param copiesNames
+	 * @param sourceName
+	 * @param token
+	 * @param maxNameSize
+	 * @return
+	 */
+	public static String generateUniqueName(List<String> copiesNames, String sourceName, String token, int maxNameSize) {
+	  TokenHelper helper = new SimpleTokenHelper(token);
+	  return generateUniqueName(copiesNames, sourceName, maxNameSize, helper);
+	}
+	
+	
+	private static String generateUniqueName(Collection<String> copiesNames, String sourceName, int maxNameSize,
+			TokenHelper helper) {
+		String result = "";
+		String baseName = sourceName;
+		String tokenRegexp = helper.getTokenRegexp();
+		
+		int newCopyNumber = generateUniqueIndex(copiesNames, baseName, 0, tokenRegexp);
+		result =  helper.buildResult(newCopyNumber, baseName);
+		
+		while(result.length() > maxNameSize){
+			int extraCharsNumber = result.length() - maxNameSize;
+			baseName = substringBaseName(baseName, extraCharsNumber);
+			
+			newCopyNumber = generateUniqueIndex(copiesNames, baseName, newCopyNumber, tokenRegexp);
+			result =  helper.buildResult(newCopyNumber, baseName);
+		}
+		
+		return result;
 	}
 
-	public static String generateUniqueCopyName(List<String> copiesNames, String sourceName) {
-		int newCopyNumber = generateUniqueCopyNumber(copiesNames, sourceName, COPY_TOKEN);
-		return sourceName + COPY_TOKEN + newCopyNumber;
+
+	private static interface TokenHelper{
+		String getTokenRegexp();
+		String buildResult(int index, String baseName);
+	}
+	
+	private static class SimpleTokenHelper implements TokenHelper{
+		private String token;
+		
+		public SimpleTokenHelper(String token){
+			this.token = token;
+		}
+		
+		@Override
+		public String buildResult(int index, String baseName) {
+			return baseName + token + index;
+		};
+		@Override
+		public String getTokenRegexp() {
+			return token+"(\\d+)";
+		}
+	}
+	
+	private static class ParenthesisTokenHelper implements TokenHelper{
+		
+		@Override
+		public String buildResult(int index, String baseName) {
+			return baseName+ " (" + index + ")";
+		};
+		@Override
+		public String getTokenRegexp() {
+			return " \\((\\d+)\\)";
+		}
+	}
+
+	public static String generateUniqueCopyName(List<String> copiesNames, String sourceName, int maxNameSize) {
+		return generateUniqueName(copiesNames, sourceName, COPY_TOKEN, maxNameSize);
+		
+	}
+
+	private static String substringBaseName(String baseName, int extraCharsNumber) {
+		baseName = baseName.substring(0, baseName.length() - extraCharsNumber-3)+"...";
+		return baseName;
 	}
 
 	/**
@@ -54,21 +122,25 @@ public final class LibraryUtils {
 	 *            a non <code>null</code> collection of siblings of the source name
 	 * @return a non clashing name
 	 */
-	public static String generateNonClashingName(String source, Collection<String> siblings) {
+	public static String generateNonClashingName(String source, Collection<String> siblings, int maxNameSize) {
+		
 		if (noNameClash(source, siblings)) {
 			return source;
 		}
-
-		List<String> potentialClashes = filterPotentialClashes(source, siblings);
-		
-		Pattern p = Pattern.compile(Pattern.quote(source) + " \\((\\d+)\\)");
-		
-		int index = computeNonClashingIndex(p, potentialClashes);
-
-		return source + " (" + index + ")";
+		TokenHelper helper = new ParenthesisTokenHelper();
+		return generateUniqueName(siblings, source, maxNameSize, helper);
 	}
 
-	private static int computeNonClashingIndex(Pattern indexLookupPattern, Collection<String> potentialClashes) {
+	
+	
+	private static int generateUniqueIndex(Collection<String> siblings, String baseName, int minIndex, String tokenRegexp){
+		List<String> potentialClashes = filterPotentialClashes(baseName, siblings);
+		Pattern p = Pattern.compile(Pattern.quote(baseName) + tokenRegexp);
+		int index = computeNonClashingIndex(p, potentialClashes, minIndex);
+		return index;
+	}
+
+	private static int computeNonClashingIndex(Pattern indexLookupPattern, Collection<String> potentialClashes, int minCopyNumber) {
 		int maxIndex = 0;
 
 		for (String sibling : potentialClashes) {
@@ -79,7 +151,11 @@ public final class LibraryUtils {
 				maxIndex = Math.max(maxIndex, siblingIndex);
 			}
 		}
-		return ++maxIndex;
+		int result = ++maxIndex;
+		if(result<minCopyNumber){
+			result = minCopyNumber;
+		}
+		return result;
 	}
 
 	private static List<String> filterPotentialClashes(String source, Collection<String> siblings) {
@@ -96,4 +172,6 @@ public final class LibraryUtils {
 	private static boolean noNameClash(String name, Collection<String> siblings) {
 		return siblings.size() == 0 || !siblings.contains(name);
 	}
+
+	
 }

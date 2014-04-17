@@ -31,25 +31,16 @@
  * 
  * Methods : open, close
  */
- define([ "jquery",  "./ProjectFilterModel", "squashtable", "jqueryui", "jquery.squash.confirmdialog"],
-		function($, ProjectFilterModel) {
-	 
+ define([ "jquery",  "./ProjectFilterModel","underscore", "squashtable", "jqueryui", "jquery.squash.confirmdialog"],
+		function($, ProjectFilterModel, _) {
+	//TODO mutualize what can be with app/report/ProjectsPickerPopup and SingleProjectPickerPopup
 	function eachCheckbox($domPicker, eachCallback) {
 			var $boxes = $domPicker.find("table .project-checkbox");
 			$boxes.each(eachCallback);
-			return $boxes.value;
+			return _.pluck($boxes, 'value');
 	}
 		
-		function itemToDataMapper () {
-			var item = $(this), jqCbx = item.find(".project-checkbox"), cbx = jqCbx.get()[0];
-			var $name = item.find(".project-name").text();
 	
-			return {
-				id : cbx.value,
-				name : $name,
-				selected : cbx.checked
-			};
-		}
 		var ProjectFilterPopup = Backbone.View.extend({
 		 
 			events : {
@@ -62,32 +53,29 @@
 			},
 		 
 			initialize :function(){
-			var self = this;			
-			
+			var self = this;
+			this.filterTable = $.proxy(this._filterTable, this);
 			// process initial state
-			var projects = [];
 			var ids =[];
 			this.$el.find("table tbody tr").each(function() {
 				var $checkbox = $(this).find(".project-checkbox");
-				var checked = $checkbox.checked;
+				var checked = $checkbox.is(":checked");
 				$checkbox.data("previous-checked", checked);
 				var id = $checkbox.val();
-				var name = $(this).find(".project-name").text();
-				var project = {id :id, name : name , checked : checked};
 				if(checked){
-					ids.put(id);
+					ids.push(id);
 				}
-				projects.push(project);
 			});
 			// set model
 			var url  = this.$el.data("url");
-			self.model = new ProjectFilterModel({projectIds : ids},{url : url, initiallySelectedIds : ids , projectsState : projects});
+			self.model = new ProjectFilterModel({projectIds : ids},{url : url});
 			
 			// init confirm dialog
-			this.$el.confirmDialog({width : 600});
+			this.$el.confirmDialog({
+					width : 800});
 			
 			// init datatable
-			self.table = this.$el.find("table").squashTable({
+			self.table = this.$el.find("table").bind('filter', self.filterTable).squashTable({
 					"sScrollY": "500px",
 					"bFilter":true,
 					"bPaginate" : false, 
@@ -104,9 +92,18 @@
 				this.$el.confirmDialog("open");
 				this.table.fnAdjustColumnSizing();
 			},
-			
+			_filterTable : function(event){
+				var warning = this.$el.find(".filter-warning");
+				var filterText = this.$el.find('div.dataTables_filter input').val();
+				if(filterText){
+					warning.show();
+				}else{
+					warning.hide();
+				}
+			},
 			confirm : function(){
-				this.model.save(null,{success : function(){window.location.reload();}
+				this.model.save(null,{
+					success : function(){window.location.reload();}
 				});
 			},
 			
@@ -123,8 +120,7 @@
 			dialogConfig : {
 				autoOpen : false,
 				resizable : false,
-				modal : true,
-				width : 600
+				modal : true
 			},
 		
 			selectAllProjects : function() {

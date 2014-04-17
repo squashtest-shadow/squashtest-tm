@@ -20,18 +20,20 @@
  */
 package org.squashtest.tm.service.internal.project;
 
-import java.util.HashMap;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
@@ -48,9 +50,8 @@ import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionH
 import org.squashtest.tm.core.foundation.collection.Pagings;
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
-import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.domain.library.PluginReferencer;
 import org.squashtest.tm.domain.project.AdministrableProject;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -65,7 +66,9 @@ import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.exception.NoBugTrackerBindingException;
 import org.squashtest.tm.exception.UnknownEntityException;
+import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
 import org.squashtest.tm.security.acls.PermissionGroup;
+import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.service.internal.repository.BugTrackerBindingDao;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
@@ -86,14 +89,14 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 @Service("CustomGenericProjectManager")
 @Transactional
 public class CustomGenericProjectManagerImpl implements CustomGenericProjectManager {
-	
+
 	private static final String IS_ADMIN_OR_MANAGER = "hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')";
 	private static final String IS_ADMIN = "hasRole('ROLE_ADMIN')";
-	
+
 	@Inject
 	private GenericProjectDao genericProjectDao;
 	@Inject
-	private ProjectDao projectDao;	
+	private ProjectDao projectDao;
 	@Inject
 	private BugTrackerBindingDao bugTrackerBindingDao;
 	@Inject
@@ -118,79 +121,83 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	private InsecureTestAutomationManagementService autotestService;
 	@Inject
 	private ProjectDeletionHandler projectDeletionHandler;
+	@Inject
+	private ExecutionProcessingService execProcessing;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomGenericProjectManagerImpl.class);
 
-	
 	// ************************* finding projects wrt user role ****************************
-	
+
 	/**
 	 * @see org.squashtest.tm.service.project.CustomGenericProjectManager#findSortedProjects(org.squashtest.tm.core.foundation.collection.PagingAndSorting)
 	 */
-	/*
-	 * Implementation note :
-	 * 
-	 * Here for once the paging will not be handled by the database, but programmatically. The reason is that we want to filter the projects according to the 
-	 * caller's permissions, something that isn't doable using hql alone (the acl system isn't part of the domain and thus wasn't modeled).
-	 * 
-	 * So, we just load all the projects and apply paging on the resultset
-	 * 
-	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional(readOnly = true)
 	@PreAuthorize(IS_ADMIN_OR_MANAGER)
-	public PagedCollectionHolder<List<GenericProject>> findSortedProjects(PagingAndSorting pagingAndSorting, Filtering filter) {
-		
+	public PagedCollectionHolder<List<GenericProject>> findSortedProjects(PagingAndSorting pagingAndSorting,
+			Filtering filter) {
+		/*
+		 * Implementation note :
+		 * 
+		 * Here for once the paging will not be handled by the database, but programmatically. The reason is that we
+		 * want to filter the projects according to the caller's permissions, something that isn't doable using hql
+		 * alone (the acl system isn't part of the domain and thus wasn't modeled).
+		 * 
+		 * So, we just load all the projects and apply paging on the resultset
+		 */
+
 		List<? extends GenericProject> resultset;
 		PagingAndSorting unpaged = Pagings.disablePaging(pagingAndSorting);
-		
-		if (permissionEvaluationService.hasRole("ROLE_ADMIN")){
+
+		if (permissionEvaluationService.hasRole("ROLE_ADMIN")) {
 			resultset = findAllSortedProjects(unpaged, filter);
-		}
-		else{
+		} else {
 			resultset = findSortedActualProjects(unpaged, filter);
 		}
-		
+
 		// filter on permissions
 		List<? extends GenericProject> securedResultset = new LinkedList<GenericProject>(resultset);
 		CollectionUtils.filter(securedResultset, new IsManagerOnObject());
-		
+
 		// manual paging
 		int listsize = securedResultset.size();
 		int firstIdx = Math.min(listsize, pagingAndSorting.getFirstItemIndex());
 		int lastIdx = Math.min(listsize, firstIdx + pagingAndSorting.getPageSize());
 		securedResultset = securedResultset.subList(firstIdx, lastIdx);
 
-		return new PagingBackedPagedCollectionHolder<List<GenericProject>>(pagingAndSorting, listsize , (List<GenericProject>) securedResultset);
+		return new PagingBackedPagedCollectionHolder<List<GenericProject>>(pagingAndSorting, listsize,
+				(List<GenericProject>) securedResultset);
 	}
-	
-	
+
 	private List<GenericProject> findAllSortedProjects(PagingAndSorting pagingAndSorting, Filtering filter) {
-		if (filter.isDefined()){
-			return genericProjectDao.findProjectsFiltered(pagingAndSorting, "%"+filter.getFilter()+"%");
-		}
-		else{
+		if (filter.isDefined()) {
+			return genericProjectDao.findProjectsFiltered(pagingAndSorting, "%" + filter.getFilter() + "%");
+		} else {
 			return genericProjectDao.findAll(pagingAndSorting);
 		}
 	}
-	
+
 	private List<Project> findSortedActualProjects(PagingAndSorting pagingAndSorting, Filtering filter) {
-		if (filter.isDefined()){
-			return projectDao.findProjectsFiltered(pagingAndSorting, "%"+filter.getFilter()+"%");
-		}
-		else{
+		if (filter.isDefined()) {
+			return projectDao.findProjectsFiltered(pagingAndSorting, "%" + filter.getFilter() + "%");
+		} else {
 			return projectDao.findAll(pagingAndSorting);
 		}
 	}
 
-	// ************************* finding projects wrt user role ****************************	
-	
-	
+	// ************************* finding projects wrt user role ****************************
+
 	@Override
 	@PreAuthorize(IS_ADMIN)
 	public void persist(GenericProject project) {
 		Session session = sessionFactory.getCurrentSession();
-
+		
+		if (
+		genericProjectDao.countByName(project.getName()) > 0) {
+			throw new NameAlreadyInUseException(project.getClass().getSimpleName(), project.getName());
+		}
+		
 		CampaignLibrary cl = new CampaignLibrary();
 		project.setCampaignLibrary(cl);
 		session.persist(cl);
@@ -216,7 +223,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	/**
 	 * @see org.squashtest.tm.service.project.CustomGenericProjectManager#coerceTemplateIntoProject(long)
 	 */
-	@Override	
+	@Override
 	@PreAuthorize(IS_ADMIN)
 	public void coerceTemplateIntoProject(long templateId) {
 		Project project = genericProjectDao.coerceTemplateIntoProject(templateId);
@@ -240,8 +247,6 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		return genericToAdministrableConvertor.get().convertToAdministrableProject(genericProject);
 	}
 
-
-
 	@Override
 	public void addNewPermissionToProject(long userId, long projectId, String permission) {
 		GenericProject genericProject = genericProjectDao.findById(projectId);
@@ -261,13 +266,13 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	public List<PartyProjectPermissionsBean> findPartyPermissionsBeansByProject(long projectId) {
 		return permissionsManager.findPartyPermissionsBeanByProject(projectId);
 	}
-	
+
 	@Override
 	public PagedCollectionHolder<List<PartyProjectPermissionsBean>> findPartyPermissionsBeanByProject(
 			PagingAndSorting sorting, Filtering filtering, long projectId) {
 		return permissionsManager.findPartyPermissionsBeanByProject(sorting, filtering, projectId);
 	}
-	
+
 	@Override
 	public List<PermissionGroup> findAllPossiblePermission() {
 		return permissionsManager.findAllPossiblePermission();
@@ -282,7 +287,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	public Party findPartyById(long partyId) {
 		return partyDao.findById(partyId);
 	}
-	
+
 	// ********************************** Test automation section *************************************
 
 	@Override
@@ -368,7 +373,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@Override
 	public void removeBugTracker(long projectId) {
 		LOGGER.debug("removeBugTracker for project " + projectId);
-		GenericProject project = genericProjectDao.findById(projectId);	
+		GenericProject project = genericProjectDao.findById(projectId);
 		checkManageProjectOrAdmin(project);
 		if (project.isBugtrackerConnected()) {
 			BugTrackerBinding bugtrackerBinding = project.getBugtrackerBinding();
@@ -388,160 +393,155 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		bugtrackerBinding.setProjectName(projectBugTrackerName);
 
 	}
-	
+
 	// **************************** wizards section **********************************
-	
-	
+
 	@Override
 	@PreAuthorize(IS_ADMIN_OR_MANAGER)
 	public void enableWizardForWorkspace(long projectId, WorkspaceType workspace, String wizardId) {
-		PluginReferencer library = findLibrary(projectId, workspace);
+		PluginReferencer<?> library = findLibrary(projectId, workspace);
 		library.enablePlugin(wizardId);
 	}
-	
-	
+
 	@Override
 	@PreAuthorize(IS_ADMIN_OR_MANAGER)
 	public void disableWizardForWorkspace(long projectId, WorkspaceType workspace, String wizardId) {
-		PluginReferencer library = findLibrary(projectId, workspace);
+		PluginReferencer<?> library = findLibrary(projectId, workspace);
 		library.disablePlugin(wizardId);
 	}
-	
+
 	@Override
 	// this information is read-only and public, no need for security
 	public Map<String, String> getWizardConfiguration(long projectId, WorkspaceType workspace, String wizardId) {
-		PluginReferencer library = findLibrary(projectId, workspace);
+		PluginReferencer<?> library = findLibrary(projectId, workspace);
 		LibraryPluginBinding binding = library.getPluginBinding(wizardId);
-		if (binding != null){
+		if (binding != null) {
 			return binding.getProperties();
-		}
-		else{
+		} else {
 			return new HashMap<String, String>();
 		}
 	}
-	
+
 	@Override
 	@PreAuthorize(IS_ADMIN_OR_MANAGER)
-	public void setWizardConfiguration(long projectId, WorkspaceType workspace,
-			String wizardId, Map<String, String> configuration) {
-		
-		PluginReferencer library = findLibrary(projectId, workspace);
-		if (! library.isPluginEnabled(wizardId)){
+	public void setWizardConfiguration(long projectId, WorkspaceType workspace, String wizardId,
+			Map<String, String> configuration) {
+
+		PluginReferencer<?> library = findLibrary(projectId, workspace);
+		if (!library.isPluginEnabled(wizardId)) {
 			library.enablePlugin(wizardId);
 		}
-		
+
 		LibraryPluginBinding binding = library.getPluginBinding(wizardId);
 		binding.setProperties(configuration);
 	}
 
 	// ************************** status configuration section ****************************
-	
+
 	@Override
 	public void enableExecutionStatus(long projectId, ExecutionStatus executionStatus) {
 		GenericProject project = genericProjectDao.findById(projectId);
 		checkManageProjectOrAdmin(project);
-		switch(executionStatus){
-			case UNTESTABLE :	project.setAllowsNonTestableStatus(true); break;
-			default:	break; 
-		}
-			
+		project.getCampaignLibrary().enableStatus(executionStatus);
 	}
-
 
 	@Override
 	public void disableExecutionStatus(long projectId, ExecutionStatus executionStatus) {
 		GenericProject project = genericProjectDao.findById(projectId);
 		checkManageProjectOrAdmin(project);
-		switch(executionStatus){
-		case UNTESTABLE :	project.setAllowsNonTestableStatus(false); break;
-		default:	break; 
+		project.getCampaignLibrary().disableStatus(executionStatus);
 	}
-	}
-
 
 	@Override
-	public List<ExecutionStatus> enabledExecutionStatuses(long projectId) {
+	public Set<ExecutionStatus> enabledExecutionStatuses(long projectId) {
 		GenericProject project = genericProjectDao.findById(projectId);
 		checkManageProjectOrAdmin(project);
-		List<ExecutionStatus> statuses = new ArrayList<ExecutionStatus>();
-		statuses.addAll(Arrays.asList(ExecutionStatus.values())); 
-		if(!project.isAllowsNonTestableStatus()){
-			statuses.remove(ExecutionStatus.UNTESTABLE);
-		}
-		//always disables statuses
-		statuses.remove(ExecutionStatus.ERROR);
-		statuses.remove(ExecutionStatus.NOT_RUN);
-		statuses.remove(ExecutionStatus.WARNING);
+		Set<ExecutionStatus> statuses = new HashSet<ExecutionStatus>();
+		statuses.addAll(Arrays.asList(ExecutionStatus.values()));
+		Set<ExecutionStatus> disabledStatuses = project.getCampaignLibrary().getDisabledStatuses();
+		statuses.removeAll(disabledStatuses);
 		return statuses;
 	}
 
-
 	@Override
-	public List<ExecutionStatus> disabledExecutionStatuses(long projectId) {
+	public Set<ExecutionStatus> disabledExecutionStatuses(long projectId) {
 		GenericProject project = genericProjectDao.findById(projectId);
 		checkManageProjectOrAdmin(project);
-		List<ExecutionStatus> statuses = new ArrayList<ExecutionStatus>();
-		if(!project.isAllowsNonTestableStatus()){
-			statuses.add(ExecutionStatus.UNTESTABLE);
-			
-			//always disables statuses
-			statuses.add(ExecutionStatus.ERROR);
-			statuses.add(ExecutionStatus.NOT_RUN);
-			statuses.add(ExecutionStatus.WARNING);
-		}
-		return statuses;
+		return project.getCampaignLibrary().getDisabledStatuses();
 	}
-	
-	
+
 	@Override
-	public void replaceExecutionStatus(long projectId, ExecutionStatus source, ExecutionStatus target) {
-		List<ExecutionStep> steps = executionDao.findAllExecutionStepsWithStatus(projectId, source);
-		for(ExecutionStep step : steps){
-			step.setExecutionStatus(target);
+	public void replaceExecutionStepStatus(long projectId, ExecutionStatus source, ExecutionStatus target) {
+
+		// save the ids of executions having steps with the source status
+		List<Long> modifiedExecutionIds = executionDao.findAllExecutionIdHavingStepWithStatus(projectId, source);
+
+		// now modify the step statuses
+		executionDao.replaceExecutionStepStatus(projectId, source, target);
+
+		// now update the execution status
+		for (Long id : modifiedExecutionIds) {
+			ExecutionStatusReport report = execProcessing.getExecutionStatusReport(id);
+			execProcessing.setExecutionStatus(id, report);
 		}
-		List<IterationTestPlanItem> testPlanItems = executionDao.findAllIterationTestPlanItemsWithStatus(projectId, source);
-		for(IterationTestPlanItem testPlanItem : testPlanItems){
-			testPlanItem.setExecutionStatus(target);
-		}
+
+		// finally update the item test plans
+		executionDao.replaceTestPlanStatus(projectId, source, target);
 	}
-	
+
 	@Override
 	public boolean isExecutionStatusEnabledForProject(long projectId, ExecutionStatus executionStatus) {
-		List<ExecutionStatus> statuses = disabledExecutionStatuses(projectId);
-		if(statuses.contains(executionStatus)){
-			return false;
-		} else {
-			return true;
-		}
+		Set<ExecutionStatus> statuses = disabledExecutionStatuses(projectId);
+		return !statuses.contains(executionStatus);
 	}
 
 	@Override
-	public boolean executionStatusUsedByProject(long projectId, ExecutionStatus executionStatus) {
-		return executionDao.hasStepOrExecutionWithStatus(projectId, executionStatus);
+	public boolean projectUsesExecutionStatus(long projectId, ExecutionStatus executionStatus) {
+		
+		return executionDao.projectUsesExecutionStatus(projectId, executionStatus);
 	}
 
 	// **************** private stuffs **************
-	
-	private PluginReferencer findLibrary(long projectId, WorkspaceType workspace){
+
+	private PluginReferencer<?> findLibrary(long projectId, WorkspaceType workspace) {
 		GenericProject project = genericProjectDao.findById(projectId);
-		
-		switch(workspace){
-			case TEST_CASE_WORKSPACE : 		return project.getTestCaseLibrary();
-			case REQUIREMENT_WORKSPACE : 	return project.getRequirementLibrary();
-			case CAMPAIGN_WORKSPACE : 		return project.getCampaignLibrary();
-			default : throw new IllegalArgumentException("WorkspaceType "+workspace+" is unknown and is not covered");
+
+		switch (workspace) {
+		case TEST_CASE_WORKSPACE:
+			return project.getTestCaseLibrary();
+		case REQUIREMENT_WORKSPACE:
+			return project.getRequirementLibrary();
+		case CAMPAIGN_WORKSPACE:
+			return project.getCampaignLibrary();
+		default:
+			throw new IllegalArgumentException("WorkspaceType " + workspace + " is unknown and is not covered");
 		}
 	}
-	
-	
+
 	private void checkManageProjectOrAdmin(GenericProject genericProject) {
 		permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "MANAGEMENT", genericProject);
 	}
-	
-	private final class IsManagerOnObject implements Predicate{
+
+	private final class IsManagerOnObject implements Predicate {
 		@Override
 		public boolean evaluate(Object object) {
 			return permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "MANAGEMENT", object);
 		}
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.project.CustomGenericProjectManager#changeName(long, java.lang.String)
+	 */
+	@PreAuthorize(IS_ADMIN_OR_MANAGER)
+	@Override
+	public void changeName(long projectId, String newName) {
+		GenericProject project = genericProjectDao.findById(projectId);
+		if (StringUtils.equals(project.getName(), newName)) {
+			return;
+		}
+		if (genericProjectDao.countByName(newName) > 0) {
+			throw new NameAlreadyInUseException(project.getClass().getSimpleName(), newName);
+		}
+		project.setName(newName);
 	}
 }

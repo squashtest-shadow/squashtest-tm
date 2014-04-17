@@ -37,7 +37,7 @@
 <c:set var="prefilledClause" value=""/>
 
 <c:if  test="${editable}"> <c:set var="btnDeleteClause" value=", delete-button=#delete-attachment-dialog"/></c:if>
-<c:if test="${not empty model}"><c:set var="prefilledClause" value=", pagesize=10, deferloading=${model.iTotalRecords}"/></c:if>
+<c:if test="${not empty model}"><c:set var="prefilledClause" value=", pagesize=50, deferloading=${model.iTotalRecords}"/></c:if>
 
 <table id="attachment-detail-table" class="unstyled-table" data-def="ajaxsource=${baseURL}/details, 
 													   pre-sort=1-asc 

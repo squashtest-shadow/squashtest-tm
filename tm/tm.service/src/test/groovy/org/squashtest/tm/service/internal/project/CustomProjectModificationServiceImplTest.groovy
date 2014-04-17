@@ -25,6 +25,7 @@ import org.squashtest.tm.domain.bugtracker.BugTrackerBinding
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.project.ProjectTemplate
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
+import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
 import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService
 import org.squashtest.tm.service.internal.project.CustomProjectModificationServiceImpl
 import org.squashtest.tm.service.internal.repository.ProjectTemplateDao

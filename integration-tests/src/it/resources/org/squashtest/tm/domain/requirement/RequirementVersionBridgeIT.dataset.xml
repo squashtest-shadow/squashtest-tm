@@ -1,26 +1,4 @@
-<!--
-
-        This file is part of the Squashtest platform.
-        Copyright (C) 2010 - 2012 Henix, henix.fr
-
-        See the NOTICE file distributed with this work for additional
-        information regarding copyright ownership.
-
-        This is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Lesser General Public License as published by
-        the Free Software Foundation, either version 3 of the License, or
-        (at your option) any later version.
-
-        this software is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Lesser General Public License for more details.
-
-        You should have received a copy of the GNU Lesser General Public License
-        along with this software.  If not, see <http://www.gnu.org/licenses/>.
-
--->
-<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.8.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.9.0.dtd">
 <dataset>
   
 
@@ -33,11 +11,11 @@
   <!--  tc 10 and 20 at project root   -->
   <TEST_CASE_LIBRARY_NODE TCLN_ID="10" NAME="test-10" CREATED_BY="DBUNIT" CREATED_ON="2012-10-09" PROJECT_ID="1" ATTACHMENT_LIST_ID="1"/>
   <TEST_CASE PREREQUISITE="" TCLN_ID="10" VERSION="1" />
-  <TEST_CASE_LIBRARY_CONTENT LIBRARY_ID="1" CONTENT_ID="10"/>
+  <TEST_CASE_LIBRARY_CONTENT LIBRARY_ID="1" CONTENT_ID="10" CONTENT_ORDER="0"/>
     
   <TEST_CASE_LIBRARY_NODE TCLN_ID="20" NAME="test-20" CREATED_BY="DBUNIT" CREATED_ON="2012-10-09" PROJECT_ID="1" ATTACHMENT_LIST_ID="1"/>
   <TEST_CASE PREREQUISITE="" TCLN_ID="20" VERSION="1" />
-  <TEST_CASE_LIBRARY_CONTENT LIBRARY_ID="1" CONTENT_ID="20"/>  
+  <TEST_CASE_LIBRARY_CONTENT LIBRARY_ID="1" CONTENT_ID="20" CONTENT_ORDER="1"/>  
   
   <!-- req version 10 with 2 attachments -->
   <ATTACHMENT_LIST ATTACHMENT_LIST_ID="10"/>
@@ -47,7 +25,7 @@
   <REQUIREMENT_VERSION RES_ID="10" CATEGORY="UNDEFINED"/>
   <REQUIREMENT_LIBRARY_NODE CREATED_BY="dbunit" CREATED_ON="2012-11-13" RLN_ID="10" PROJECT_ID="1"/>
   <REQUIREMENT RLN_ID="10" CURRENT_VERSION_ID="10"/>
-  <REQUIREMENT_LIBRARY_CONTENT LIBRARY_ID="1" CONTENT_ID="10"/>
+  <REQUIREMENT_LIBRARY_CONTENT LIBRARY_ID="1" CONTENT_ID="10" CONTENT_ORDER="2"/>
   
   <!-- req version 10 is covered once by tc 10 and twice by tc 20 -->
   <REQUIREMENT_VERSION_COVERAGE REQUIREMENT_VERSION_COVERAGE_ID="1010" VERIFIED_REQ_VERSION_ID="10" VERIFYING_TEST_CASE_ID="10" />
@@ -59,7 +37,7 @@
   
   <REQUIREMENT_LIBRARY_NODE CREATED_BY="dbunit" CREATED_ON="2012-11-13" RLN_ID="20" PROJECT_ID="1"/>
   <REQUIREMENT RLN_ID="20" CURRENT_VERSION_ID="2010"/>
-  <REQUIREMENT_LIBRARY_CONTENT LIBRARY_ID="1" CONTENT_ID="20"/>
+  <REQUIREMENT_LIBRARY_CONTENT LIBRARY_ID="1" CONTENT_ID="20" CONTENT_ORDER="3"/>
 
   <RESOURCE CREATED_BY="dbunit" RES_ID="2020" CREATED_ON="2012-11-13" ATTACHMENT_LIST_ID="1" NAME="requirement10" />
   <REQUIREMENT_VERSION RES_ID="2020" CATEGORY="UNDEFINED" REQUIREMENT_ID="20"/>
@@ -69,7 +47,7 @@
   <REQUIREMENT_VERSION RES_ID="3010" CATEGORY="UNDEFINED" REQUIREMENT_STATUS="OBSOLETE" />
   <REQUIREMENT_LIBRARY_NODE CREATED_BY="dbunit" CREATED_ON="2012-11-13" RLN_ID="30" PROJECT_ID="1"/>
   <REQUIREMENT RLN_ID="30" CURRENT_VERSION_ID="3010"/>
-  <REQUIREMENT_LIBRARY_CONTENT LIBRARY_ID="1" CONTENT_ID="30"/>
+  <REQUIREMENT_LIBRARY_CONTENT LIBRARY_ID="1" CONTENT_ID="30" CONTENT_ORDER="4"/>
 
   <!-- req 400 is child of 10 -->
   <!-- req 401 is current version, 402 is v2. -->
@@ -90,7 +68,7 @@
   <SIMPLE_RESOURCE RES_ID="50" />
   <REQUIREMENT_LIBRARY_NODE CREATED_BY="dbunit" CREATED_ON="2012-11-13" RLN_ID="5000" PROJECT_ID="1"/>
   <REQUIREMENT_FOLDER RLN_ID="5000" RES_ID="50"/>
-  <REQUIREMENT_LIBRARY_CONTENT LIBRARY_ID="1" CONTENT_ID="5000"/>
+  <REQUIREMENT_LIBRARY_CONTENT LIBRARY_ID="1" CONTENT_ID="5000" CONTENT_ORDER="5"/>
   
   <RESOURCE CREATED_BY="dbunit" RES_ID="60" CREATED_ON="2012-11-13" ATTACHMENT_LIST_ID="1" NAME="requirement6000" />
   <REQUIREMENT_VERSION RES_ID="60" CATEGORY="UNDEFINED"/>

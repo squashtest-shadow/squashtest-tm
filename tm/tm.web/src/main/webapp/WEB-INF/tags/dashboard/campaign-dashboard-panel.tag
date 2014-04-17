@@ -27,6 +27,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <%@ attribute name="url" required="true" description="url where to get the data" %>
+<%@ attribute name="allowsSettled" required="true" description="whether execution status settled is allowed" %>
+<%@ attribute name="allowsUntestable" required="true" description="whether execution status  untestable is allowed" %>
 <%@ attribute name="printUrl" required="false" description="url where to fetch an html version" %>
 <%@ attribute name="printmode" required="false" type="java.lang.Boolean" 
 			description="if set to true, renders in print mode. This means among other things that the toolbar will not be rendered." %>
@@ -144,6 +146,12 @@
 									<div class="dashboard-legend-sample-color" style="background-color:#99CC00"></div>
 									<span><f:message key="execution.execution-status.SUCCESS" /></span>
 								</div>
+								
+								<div class="${allowsSettled ? '' : 'not-displayed' }">
+									<div class="dashboard-legend-sample-color" style="background-color:#99FF99" ></div>
+									<span><f:message key="execution.execution-status.SETTLED" /></span>
+								</div>
+								
 								<div>
 									<div class="dashboard-legend-sample-color" style="background-color:#FF3300"></div>
 									<span><f:message key="execution.execution-status.FAILURE" /></span>
@@ -152,12 +160,12 @@
 									<div class="dashboard-legend-sample-color" style="background-color:#FFCC00"></div>
 									<span><f:message key="execution.execution-status.BLOCKED" /></span>
 								</div>
-								<c:if test="${allowsUntestable}">
-								<div>
-									<div class="dashboard-legend-sample-color" style="background-color:#969696"></div>
+								
+								<div class="${allowsUntestable ? '' : 'not-displayed' }">
+									<div class="dashboard-legend-sample-color" style="background-color:#969696" ></div>
 									<span><f:message key="execution.execution-status.UNTESTABLE" /></span>
 								</div>
-								</c:if>
+								
 							</div>
 						</div>
 					</div>
@@ -265,11 +273,10 @@
 								<th class="status-color-ready std-border"><span><f:message key="label.Ready"/></span></th>
 								<th class="status-color-running"><span><f:message key="label.Running"/></span></th>
 								<th class="status-color-success"><span><f:message key="label.Success"/></span></th>
+								<th class="${allowsSettled ? 'status-color-settled std-border' : 'status-color-settled std-border not-displayed' }"><span><f:message key="label.Settled"/></span></th>		
 								<th class="status-color-failure"><span><f:message key="label.Failure"/></span></th>
 								<th class="status-color-blocked"><span><f:message key="label.Blocked"/></span></th>
-									<c:if test="${allowsUntestable}">
-								<th class="status-color-untestable std-border"><span><f:message key="label.Untestable"/></span></th>
-								</c:if>
+								<th class="${allowsUntestable ? 'status-color-untestable std-border' : 'status-color-untestable std-border not-displayed' }"><span><f:message key="label.Untestable"/></span></th>
 								<th ><span><f:message key="dashboard.campaigns.testinventory.legend.testnumber"/></span></th>
 								<th ><span><f:message key="dashboard.campaigns.testinventory.legend.advancementexecution"/></span></th>
 							</tr>
@@ -284,13 +291,12 @@
 								<td class="std-border light-border">{{this.[1]}}</td>
 								<td class="std-border light-border">{{this.[2]}}</td>
 								<td class="std-border light-border">{{this.[3]}}</td>
-								<td class="std-border light-border">{{this.[4]}}</td>
+								<td class="${allowsSettled ? 'std-border light-border' : 'std-border light-border not-displayed' }">{{this.[4]}}</td>
 								<td class="std-border light-border">{{this.[5]}}</td>
-								<c:if test="${allowsUntestable}">
-									<td class="std-border light-border">{{this.[6]}}</td>
-								</c:if>
-								<td class="std-border light-border" style="font-weight:bold;">{{this.[7]}}</td>
-								<td class="std-border light-border"style="font-weight:bold;">{{this.[8]}}</td>
+								<td class="std-border light-border">{{this.[6]}}</td>
+								<td class="${allowsUntestable ? 'std-border light-border' : 'std-border light-border not-displayed' }">{{this.[7]}}</td>
+								<td class="std-border light-border" style="font-weight:bold;">{{this.[8]}}</td>
+								<td class="std-border light-border"style="font-weight:bold;">{{this.[9]}}</td>
 							</tr>
 						</tbody>			
 					</table>		

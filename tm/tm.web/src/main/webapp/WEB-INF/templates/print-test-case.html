@@ -304,7 +304,7 @@
 				<tbody>
 					<tr th:each="verifReq, iterStat : ${verifiedRequirements}"
 						th:object="${verifReq}"
-						th:class="*{directVerification}? 'directVerification' : 'indirectVerivication'">
+						th:class="*{directVerification}? 'directVerification' : 'indirectVerification'">
 						<td th:text="${iterStat.count}">1</td>
 						<td th:text="*{project.name}">Project B</td>
 						<td th:text="*{id}">3</td>
@@ -313,7 +313,9 @@
 						<td th:text="*{versionNumber}">3</td>
 						<td th:text="#{__*{criticality.i18nKey}__}">crit</td>
 						<td th:text="#{__*{category.i18nKey}__}">cat</td>
-						<td th:text="*{directVerification}? *{verifyingSteps.size()} : ''">0</td>
+						<td th:text="${ #sets.isEmpty(verifReq.verifyingSteps) ? '' :  
+										#sets.size(verifReq.verifyingSteps) > 1  ? '*' : 
+										verifReq.verifyingSteps[0].index + 1}">0</td>
 					</tr>
 				</tbody>
 			</table>

@@ -46,7 +46,7 @@ public class BugTracker  {
 		this.id = id;
 		this.url = bugTrackerUrl;
 		this.kind = connectorKind;
-		this.name = name;
+		doSetName(name);
 		this.iframeFriendly = iframeFriendly;
 	}
 
@@ -54,10 +54,12 @@ public class BugTracker  {
 		super();
 		this.url = bugTrackerUrl;
 		this.kind = connectorKind;
-		this.name = name;
+		doSetName(name);
 		this.iframeFriendly = iframeFriendly;
 	}
-	
+	private void doSetName(String name){
+		this.name = name.trim();
+	}
 	@Id
 	@GeneratedValue
 	@Column(name = "BUGTRACKER_ID")
@@ -83,7 +85,7 @@ public class BugTracker  {
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		doSetName(name);
 	}
 
 	public String getUrl() {

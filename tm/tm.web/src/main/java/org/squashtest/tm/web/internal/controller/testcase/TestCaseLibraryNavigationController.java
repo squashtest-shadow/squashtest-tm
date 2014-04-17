@@ -57,6 +57,7 @@ import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseFormModel.TestCaseFormModelValidator;
+import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.builder.TestCaseLibraryTreeNodeBuilder;
@@ -66,9 +67,9 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 @Controller
 @RequestMapping("/test-case-browser")
 public class TestCaseLibraryNavigationController extends
-LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode> {
+		LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode> {
 	public static final Logger LOGGER = LoggerFactory.getLogger(TestCaseLibraryNavigationController.class);
-
+	
 	@Inject
 	private Provider<TestCaseLibraryTreeNodeBuilder> testCaseLibraryTreeNodeBuilder;
 
@@ -78,17 +79,20 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 
 	@Inject
 	private TestCaseLibraryNavigationService testCaseLibraryNavigationService;
-
+	
 	private static final String JASPER_EXPORT_FILE = "/WEB-INF/reports/test-case-export.jasper";
-
-
-
+	private static final String ADD_TEST_CASE = "add-test-case";
+	private static final String FILENAME = "filename";	
+	private static final String LIBRARIES = "libraries";	
+	private static final String NODES = "nodes";	
+	private static final String CALLS = "calls";	
+	
 	@Override
 	protected LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode> getLibraryNavigationService() {
 		return testCaseLibraryNavigationService;
 	}
 
-
+	
 
 	@Override
 	protected String getShowLibraryViewName() {
@@ -99,24 +103,24 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 	protected JsTreeNode createTreeNodeFromLibraryNode(TestCaseLibraryNode node) {
 		return testCaseLibraryTreeNodeBuilder.get().setNode(node).build();
 	}
+	
 
-
-	@InitBinder("add-test-case")
+	@InitBinder(ADD_TEST_CASE)
 	public void addTestCaseBinder(WebDataBinder binder){
 		TestCaseFormModelValidator validator = new TestCaseFormModelValidator();
 		validator.setMessageSource(getMessageSource());
 		binder.setValidator(validator);
 	}
-
-
+	
+	
 
 	@RequestMapping(value = "/drives/{libraryId}/content/new-test-case", method = RequestMethod.POST)
 	public @ResponseBody
 	JsTreeNode addNewTestCaseToLibraryRootContent(@PathVariable long libraryId,
-			@Valid @ModelAttribute("add-test-case") TestCaseFormModel testCaseModel){
-
+			@Valid @ModelAttribute(ADD_TEST_CASE) TestCaseFormModel testCaseModel){
+		
 		TestCase testCase = testCaseModel.getTestCase();
-
+		
 		Map<Long, String> customFieldValues = testCaseModel.getCustomFields();
 
 		testCaseLibraryNavigationService.addTestCaseToLibrary(libraryId, testCase, customFieldValues);
@@ -124,20 +128,20 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 		return createTreeNodeFromLibraryNode(testCase);
 	}
 
-
+	
 	@RequestMapping(value = "/folders/{folderId}/content/new-test-case", method = RequestMethod.POST)
 	public @ResponseBody JsTreeNode addNewTestCaseToFolder(@PathVariable long folderId,
-			@Valid @ModelAttribute("add-test-case") TestCaseFormModel testCaseModel){
-
+			@Valid @ModelAttribute(ADD_TEST_CASE) TestCaseFormModel testCaseModel){
+		
 		TestCase testCase = testCaseModel.getTestCase();
-
+		
 		Map<Long, String> customFieldValues = testCaseModel.getCustomFields();
-
+		
 		testCaseLibraryNavigationService.addTestCaseToFolder(folderId, testCase, customFieldValues);
 
 		return createTreeNodeFromLibraryNode(testCase);
 	}
-
+	
 
 
 
@@ -154,37 +158,37 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 
 		return listBuilder.setModel(linkableLibraries).build();
 	}
-
-	@RequestMapping(value = "/content/csv", produces="application/octet-stream", method = RequestMethod.GET, params={"filename", "libraries", "nodes", "calls"})
+	
+	@RequestMapping(value = "/content/csv", produces="application/octet-stream", method = RequestMethod.GET, params={FILENAME, LIBRARIES, NODES, CALLS})
 	@ResponseBody
-	public void exportAsCsv(Locale locale, @RequestParam("filename") String filename, @RequestParam("libraries") List<Long> libraryIds,
-			@RequestParam("nodes") List<Long> nodeIds, @RequestParam("calls") Boolean includeCalledTests, HttpServletResponse response) throws FileNotFoundException{
-
+	public void exportAsCsv(Locale locale, @RequestParam(FILENAME) String filename, @RequestParam(LIBRARIES) List<Long> libraryIds, 
+			@RequestParam(NODES) List<Long> nodeIds, @RequestParam(CALLS) Boolean includeCalledTests, HttpServletResponse response) throws FileNotFoundException{
+		
 		response.setContentType("application/octet-stream");
 		response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".xls");
-
+		
 		List<ExportTestCaseData> dataSource = testCaseLibraryNavigationService.findTestCasesToExport(libraryIds, nodeIds, includeCalledTests);
 		escapePrerequisiteAndSteps(dataSource);
-
+		
 		printExport(dataSource, filename, JASPER_EXPORT_FILE, response, locale, "csv");
 	}
-
-
-	@RequestMapping(value = "/content/xls", produces="application/octet-stream", method = RequestMethod.GET, params={"filename", "libraries", "nodes", "calls"})
+		
+	
+	@RequestMapping(value = "/content/xls", produces="application/octet-stream", method = RequestMethod.GET, params={FILENAME, LIBRARIES, NODES, CALLS})
 	@ResponseBody
-	public FileSystemResource exportAsExcel(@RequestParam("filename") String filename, @RequestParam("libraries") List<Long> libraryIds,
-			@RequestParam("nodes") List<Long> nodeIds, @RequestParam("calls") Boolean includeCalledTests, HttpServletResponse response) throws FileNotFoundException{
-
-
+	public FileSystemResource exportAsExcel(@RequestParam(FILENAME) String filename, @RequestParam(LIBRARIES) List<Long> libraryIds, 
+							@RequestParam(NODES) List<Long> nodeIds, @RequestParam(CALLS) Boolean includeCalledTests, HttpServletResponse response) throws FileNotFoundException{
+		
+		
 		response.setContentType("application/octet-stream");
 		response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".xls");
-
+		
 		File export = testCaseLibraryNavigationService.exportTestCaseAsExcel(libraryIds, nodeIds, includeCalledTests);
 		return new FileSystemResource(export);
-
+		
 	}
-
-
+	
+	
 
 	private void escapePrerequisiteAndSteps(List<ExportTestCaseData> dataSource) {
 		for (ExportTestCaseData data : dataSource) {
@@ -192,50 +196,50 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 			String htmlPrerequisite = data.getPrerequisite();
 			String prerequisite = HTMLCleanupUtils.htmlToText(htmlPrerequisite);
 			data.setPrerequisite(prerequisite);
-
+			
 			//escape first step
 			String htmlFirstAction = data.getFirstAction();
 			String firstAction = HTMLCleanupUtils.htmlToText(htmlFirstAction);
 			data.setFirstAction(firstAction);
-
+			
 			String htmlFirstResult = data.getFirstExpectedResult();
 			String firstResult = HTMLCleanupUtils.htmlToText(htmlFirstResult);
 			data.setFirstExpectedResult(firstResult);
-
+			
 			//escape other steps
 			for(ExportTestStepData step : data.getSteps()){
 				String htmlAction = step.getAction();
 				String action = HTMLCleanupUtils.htmlToText(htmlAction);
 				step.setAction(action);
-
+				
 				String htmlExpectedResult = step.getExpectedResult();
 				String expectedResult = HTMLCleanupUtils.htmlToText(htmlExpectedResult);
 				step.setExpectedResult(expectedResult);
 			}
-
+			
 		}
 	}
 
-
+	
 	// ****************************** statistics section *******************************
-
-	@RequestMapping (value = "/statistics", method = RequestMethod.GET, produces="application/json", params = {"libraries", "nodes"})
-	public @ResponseBody TestCaseStatisticsBundle getStatisticsAsJson(@RequestParam(value="libraries", defaultValue="") Collection<Long> libraryIds,
-			@RequestParam(value="nodes", defaultValue="") Collection<Long> nodeIds){
-
+	
+	@RequestMapping (value = "/statistics", method = RequestMethod.GET, produces=ContentTypes.APPLICATION_JSON, params = {LIBRARIES, NODES})
+	public @ResponseBody TestCaseStatisticsBundle getStatisticsAsJson(@RequestParam(value=LIBRARIES, defaultValue="") Collection<Long> libraryIds, 
+																	  @RequestParam(value=NODES, defaultValue="") Collection<Long> nodeIds){
+		
 		return testCaseLibraryNavigationService.getStatisticsForSelection(libraryIds, nodeIds);
 	}
-
-	@RequestMapping (value = "/dashboard", method = RequestMethod.GET, produces="text/html", params = {"libraries", "nodes"})
-	public String getDashboard(Model model, @RequestParam("libraries") Collection<Long> libraryIds,
-			@RequestParam("nodes") Collection<Long> nodeIds){
-
+	
+	@RequestMapping (value = "/dashboard", method = RequestMethod.GET, produces=ContentTypes.TEXT_HTML, params = {LIBRARIES, NODES})
+	public String getDashboard(Model model, @RequestParam(LIBRARIES) Collection<Long> libraryIds, 
+											@RequestParam(NODES) Collection<Long> nodeIds){
+		
 		TestCaseStatisticsBundle stats = testCaseLibraryNavigationService.getStatisticsForSelection(libraryIds, nodeIds);
-
+		
 		model.addAttribute("statistics", stats);
-
+		
 		return "fragment/test-cases/test-cases-dashboard";
 	}
-
+	
 
 }

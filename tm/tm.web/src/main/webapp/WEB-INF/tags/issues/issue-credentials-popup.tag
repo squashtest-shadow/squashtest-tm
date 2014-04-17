@@ -55,8 +55,7 @@
 	
 	<jsp:attribute name="body">
 		<comp:error-message forField="bugtracker" />
-		<div style="text-align:center;">
-
+		<div class="centered">
 			<div class="display-table">
 				<div class="display-table-row">
 					<div class="display-table-cell"><label><f:message key="dialog.issue.credentials.labels.username"/></label></div>

@@ -30,18 +30,42 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 	}
 	
 	function stdJeditable(){
-		return {
+		
+		var lang = translator.get({
+			submit : "label.Confirm",
+			cancel : "label.Cancel",
+			placeholder : "rich-edit.placeholder"
+		});
+		
+		return $.extend(lang, {
 			width : '100%',
-			submit : squashtm.message.confirm,
-			cancel : squashtm.message.cancel,
 			maxlength : 255,
 			cols : 80,
+			rows : 10,
 			max_size : 20,
+			indicator : '<div class="processing-indicator"/>',
 			onblur : function() {
 			},
-			placeholder : squashtm.message.placeholder
-			
-		};
+			// abort edit if clicked on a hyperlink (being the tag itself or its content)
+			onedit : function(settings, editable, evt){
+				var $target = $(evt.target);
+				return ! ( $target.is('a') || $target.parents('a').length > 0);  
+			}
+		});
+
+	}
+	
+	function jeditableCkeditor(){
+		var ckconf = stdCkeditor(),
+			jedconf = stdJeditable();
+		
+		return $.extend(true, 
+			jedconf, 
+			{
+				type : 'ckeditor',
+				ckeditor : ckconf
+			}
+		);
 	}
 	
 	/*
@@ -68,9 +92,10 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 	}
 
 	return {
-		getStdChkeditor : stdCkeditor,
+		getStdCkeditor : stdCkeditor,
 		getStdJeditable : stdJeditable,
-		getStdDatepicker : stdDatepicker
+		getStdDatepicker : stdDatepicker,
+		getJeditableCkeditor : jeditableCkeditor
 	};
 
 });

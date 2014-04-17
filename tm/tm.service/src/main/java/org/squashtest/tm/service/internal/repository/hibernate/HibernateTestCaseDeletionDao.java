@@ -64,35 +64,9 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 
 				TestCaseLibraryNode node = (TestCaseLibraryNode)getSession().get(TestCaseLibraryNode.class, entityId);
 				
-				query = getSession().getNamedQuery("testCaseLibraryNode.findParentLibraryIfExists");
-				query.setParameter("libraryNodeId", entityId);
-				TestCaseLibrary library = (TestCaseLibrary) query.uniqueResult();
-				if(library != null){
-					/*ListIterator<TestCaseLibraryNode> iterator = library.getContent().listIterator();
-					while (iterator.hasNext()) {
-						TestCaseLibraryNode tcln = iterator.next();
-						if (tcln.getId().equals(node.getId())) {
-							library.removeContent(tcln);
-							break;
-						}
-					}*/
-					library.removeContent(node);
-				}
+				removeEntityFromParentLibraryIfExists(entityId, node);
 				
-				query = getSession().getNamedQuery("testCaseLibraryNode.findParentFolderIfExists");
-				query.setParameter("libraryNodeId", entityId);
-				TestCaseFolder folder = (TestCaseFolder) query.uniqueResult();
-				if(folder != null){
-					/*ListIterator<TestCaseLibraryNode> iterator = folder.getContent().listIterator();
-					while (iterator.hasNext()) {
-						TestCaseLibraryNode tcln = iterator.next();
-						if (tcln.getId().equals(node.getId())) {
-							folder.removeContent(tcln);
-							break;
-						}
-					}*/
-					folder.removeContent(node);
-				}
+				removeEntityFromParentFolderIfExists(entityId, node);
 			
 				if(node!=null){
 					getSession().delete(node);
@@ -103,6 +77,40 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 
 	}
 
+	private void removeEntityFromParentLibraryIfExists(Long entityId, TestCaseLibraryNode node){
+		Query query = getSession().getNamedQuery("testCaseLibraryNode.findParentLibraryIfExists");
+		query.setParameter("libraryNodeId", entityId);
+		TestCaseLibrary library = (TestCaseLibrary) query.uniqueResult();
+		if(library != null){
+					/*ListIterator<TestCaseLibraryNode> iterator = library.getContent().listIterator();
+					while (iterator.hasNext()) {
+						TestCaseLibraryNode tcln = iterator.next();
+						if (tcln.getId().equals(node.getId())) {
+							library.removeContent(tcln);
+							break;
+						}
+					}*/
+					library.removeContent(node);
+		}
+	}
+	
+	private void removeEntityFromParentFolderIfExists(Long entityId, TestCaseLibraryNode node){
+		Query query = getSession().getNamedQuery("testCaseLibraryNode.findParentFolderIfExists");
+		query.setParameter("libraryNodeId", entityId);
+		TestCaseFolder folder = (TestCaseFolder) query.uniqueResult();
+		if(folder != null){
+					/*ListIterator<TestCaseLibraryNode> iterator = folder.getContent().listIterator();
+					while (iterator.hasNext()) {
+						TestCaseLibraryNode tcln = iterator.next();
+						if (tcln.getId().equals(node.getId())) {
+							folder.removeContent(tcln);
+							break;
+						}
+					}*/
+					folder.removeContent(node);
+		}
+	}
+	
 	@Override
 	public void removeAllSteps(List<Long> testStepIds) {
 		if (!testStepIds.isEmpty()) {

@@ -25,10 +25,13 @@ import java.util.List;
 
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.internal.domain.report.common.dto.ExProgressIterationDto;
+import org.squashtest.tm.internal.domain.report.common.dto.ExProgressProjectDto;
 
 public class ExProgressCampaignDto extends ExProgressScheduledAbstractDto {
 
 	private ExProgressProjectDto project;
+
 	private List<ExProgressIterationDto> iterations = new LinkedList<ExProgressIterationDto>();
 
 	public ExProgressCampaignDto() {
@@ -78,6 +81,14 @@ public class ExProgressCampaignDto extends ExProgressScheduledAbstractDto {
 			iterations.add(iterDto);
 		}
 		return this;
+	}
+
+	public boolean isAllowsSettled() {
+		return this.getProject().isAllowsSettled();
+	}
+
+	public boolean isAllowsUntestable() {
+		return this.getProject().isAllowsUntestable();
 	}
 
 }

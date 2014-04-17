@@ -1,26 +1,4 @@
-<!--
-
-        This file is part of the Squashtest platform.
-        Copyright (C) 2010 - 2012 Henix, henix.fr
-
-        See the NOTICE file distributed with this work for additional
-        information regarding copyright ownership.
-
-        This is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Lesser General Public License as published by
-        the Free Software Foundation, either version 3 of the License, or
-        (at your option) any later version.
-
-        this software is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Lesser General Public License for more details.
-
-        You should have received a copy of the GNU Lesser General Public License
-        along with this software.  If not, see <http://www.gnu.org/licenses/>.
-
--->
-<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.8.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.9.0.dtd">
 <dataset>
   
 
@@ -35,5 +13,5 @@
   <ATTACHMENT ATTACHMENT_ID="102" NAME="102" TYPE="" SIZE="10" ADDED_ON="2012-01-02" ATTACHMENT_LIST_ID="10" />
   <TEST_CASE_LIBRARY_NODE TCLN_ID="10" NAME="test-10" CREATED_BY="DBUNIT" CREATED_ON="2012-10-09" PROJECT_ID="1" ATTACHMENT_LIST_ID="10"/>
   <TEST_CASE PREREQUISITE="" TCLN_ID="10" VERSION="1" />
-  <TEST_CASE_LIBRARY_CONTENT LIBRARY_ID="1" CONTENT_ID="10"/>  
+  <TEST_CASE_LIBRARY_CONTENT LIBRARY_ID="1" CONTENT_ID="10" CONTENT_ORDER="0"/>  
  </dataset>

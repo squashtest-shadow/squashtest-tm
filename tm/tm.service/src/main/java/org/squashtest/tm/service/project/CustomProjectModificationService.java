@@ -22,6 +22,7 @@ package org.squashtest.tm.service.project;
 
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
+import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
 
 
 /**
@@ -30,7 +31,7 @@ import org.squashtest.tm.domain.project.ProjectTemplate;
  * @author mpagnon
  * 
  */
-public interface CustomProjectModificationService extends ProjectFinder {	
+public interface CustomProjectModificationService extends CustomProjectFinder {	
 	/**
 	 * Will persist the new {@linkplain Project} and add settings copied from a given {@linkplain ProjectTemplate}.
 	 * 
@@ -42,7 +43,7 @@ public interface CustomProjectModificationService extends ProjectFinder {
 	 * @param copyTestAutomationSettings : whether to copy the Template's automation settings or not
 	 * @return the persisted new {@link Project}
 	 */
-	Project addProjectAndCopySettingsFromTemplate(Project newProject, long templateId, boolean copyAssignedUsers, boolean copyCustomFieldsSettings, boolean copyBugtrackerSettings , boolean copyTestAutomationSettings);
+	Project addProjectAndCopySettingsFromTemplate(Project newProject, long templateId, boolean copyAssignedUsers, boolean copyCustomFieldsSettings, boolean copyBugtrackerSettings , boolean copyTestAutomationSettings) throws NameAlreadyInUseException;
 
 	void deleteProject(long projectId);
 	

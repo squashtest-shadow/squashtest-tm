@@ -25,6 +25,7 @@ import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.squashtest.tm.web.internal.http.RequestHeaders;
 
 public final class ExceptionResolverUtils {
 	private ExceptionResolverUtils (){
@@ -32,7 +33,7 @@ public final class ExceptionResolverUtils {
 	}
 	
 	public static boolean clientAcceptsMIME(HttpServletRequest request, MimeType type) {
-		Enumeration<String> e = request.getHeaders("Accept");
+		Enumeration<String> e = request.getHeaders(RequestHeaders.ACCEPT);
 		while (e.hasMoreElements()) {
 			String header = e.nextElement();
 			if (StringUtils.containsIgnoreCase(StringUtils.trimToEmpty(header), type.requestHeaderValue()) 

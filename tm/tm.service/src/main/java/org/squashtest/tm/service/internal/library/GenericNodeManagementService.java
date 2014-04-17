@@ -132,8 +132,9 @@ public class GenericNodeManagementService<MANAGED extends LibraryNode, NODE exte
 	}
 
 	private void renameNode(String newName, MANAGED node) {
-		if (notCurrentNameOfNode(newName, node)) {
-			forcedRenameNode(node, newName);
+		String trimedNewName = newName.trim();
+		if (notCurrentNameOfNode(trimedNewName, node)) {
+			forcedRenameNode(node, trimedNewName);
 		}
 	}
 
@@ -149,26 +150,26 @@ public class GenericNodeManagementService<MANAGED extends LibraryNode, NODE exte
 	 * Renames the node regardless its current name. In other words, renaming a node to its current name should fail.
 	 * 
 	 * @param node
-	 * @param newName
+	 * @param trimedNewName the new name previously trimed.
 	 */
 	@SuppressWarnings("unchecked")
-	private void forcedRenameNode(MANAGED node, String newName) {
+	private void forcedRenameNode(MANAGED node, String trimedNewName) {
 		Library<?> library = libraryDao.findByRootContent((NODE) node);
 
 		if (library != null) {
-			if (!library.isContentNameAvailable(newName)) {
-				throw new DuplicateNameException(node.getName(), newName);
+			if (!library.isContentNameAvailable(trimedNewName)) {
+				throw new DuplicateNameException(node.getName(), trimedNewName);
 			}
 		} else {
 			FOLDER parentFolder = folderDao.findByContent((NODE) node);
 
-			if (parentFolder != null && !parentFolder.isContentNameAvailable(newName)) {
-				throw new DuplicateNameException(node.getName(), newName);
+			if (parentFolder != null && !parentFolder.isContentNameAvailable(trimedNewName)) {
+				throw new DuplicateNameException(node.getName(), trimedNewName);
 			}
 		}
 
 		// TODO throw some exception if node is null
-		node.setName(newName);
+		node.setName(trimedNewName);
 	}
 
 	private boolean notCurrentNameOfNode(String newName, MANAGED node) {

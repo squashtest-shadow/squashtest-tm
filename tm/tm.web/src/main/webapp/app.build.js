@@ -139,16 +139,21 @@
 //	}, {
 //		name: "project",
 //		exclude: [ "common" ] 
-//	}, {
-//		name: "projects-manager",
-//		exclude: [ "common", "squashtable" ] 
+	}, {
+		name: "project-manager",
+		include: [ "app/pubsub", "projects-manager/show-projects/ProjectsManager" ], 
+		exclude: [ "common" ] 
 	}, {
 		name: "project-page",
-		include: [  ], 
+		include: [ ], 
 		exclude: [ "common" ] 
 	}, {
 		name: "report-workspace",
 		include: [ "app/ws/squashtm.workspace", "app/report/squashtm.reportworkspace" ],
+		exclude: [ "common" ] 
+	}, {
+		name: "user-page",
+		include: [ "jquery", "user-editor/UserModificationView", "app/ws/squashtm.workspace", "app/pubsub" ],
 		exclude: [ "common" ] 
 //	}, {
 //		name: "squashtable",

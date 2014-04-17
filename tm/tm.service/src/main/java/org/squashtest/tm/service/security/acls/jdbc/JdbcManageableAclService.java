@@ -49,6 +49,7 @@ import org.springframework.security.acls.model.NotFoundException;
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.acls.model.Permission;
 import org.springframework.security.acls.model.Sid;
+import org.springframework.security.acls.model.UnloadedSidException;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.Sorting;
@@ -490,9 +491,10 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 		try {
 			aclList = readAclsById(entityRefs).values();
 		} catch (NotFoundException nfe) {
-			LOGGER.debug("Acl not found for entities.");
+			LOGGER.debug("Acl not found for entities.", nfe);
 			aclList = Collections.emptyList();
 		}
+		
 		for (Acl acl : aclList) {
 			List<AccessControlEntry> aces = acl.getEntries();
 
@@ -511,10 +513,25 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 							resultSidList.add(principalSid.getPrincipal());
 						}
 					}
-				} catch (Exception e) {
-					LOGGER.warn("Error while processing acl list ", e);
+				} catch (NotFoundException ex) {
+					// this may happen quite often and is not an error case so we fine-grain log and then ignore
+					LOGGER.debug("Error while processing acl list ", ex);
 					continue;
-				}
+					
+					// not too sure about what should be done with other exceptions so we warn and then ignore
+				} catch (UnloadedSidException ex) {
+					LOGGER.warn("Error while processing acl list ", ex);
+					continue;
+
+				} catch (ClassCastException ex) {
+					LOGGER.warn("Error while processing acl list ", ex);
+					continue;
+
+				} catch (NullPointerException ex) {
+					LOGGER.warn("Error while processing acl list ", ex);
+					continue;
+					
+				} 
 			}
 		}
 

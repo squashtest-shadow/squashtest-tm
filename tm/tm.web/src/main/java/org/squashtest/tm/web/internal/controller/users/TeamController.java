@@ -60,6 +60,7 @@ import org.squashtest.tm.service.user.TeamModificationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.administration.UserModel;
 import org.squashtest.tm.web.internal.controller.project.ProjectModel;
+import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
@@ -79,6 +80,11 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 @Controller
 @RequestMapping("/administration/teams")
 public class TeamController extends PartyControllerSupport {
+	/**
+	 * 
+	 */
+	private static final String TEAM_ID = "teamId";
+
 	@Inject
 	private TeamModificationService service;
 
@@ -196,9 +202,9 @@ public class TeamController extends PartyControllerSupport {
 	}
 
 
-	@RequestMapping(value = TEAM_ID_URL + "/general", method = RequestMethod.GET, produces="application/json")
+	@RequestMapping(value = TEAM_ID_URL + "/general", method = RequestMethod.GET, produces=ContentTypes.APPLICATION_JSON)
 	@ResponseBody
-	public JsonGeneralInfo refreshGeneralInfos(@PathVariable("teamId") long teamId){
+	public JsonGeneralInfo refreshGeneralInfos(@PathVariable(TEAM_ID) long teamId){
 		Team team = service.findById(teamId);
 		return new JsonGeneralInfo((AuditableMixin)team);
 		
@@ -209,7 +215,7 @@ public class TeamController extends PartyControllerSupport {
 
 	@RequestMapping(value = TEAM_ID_URL + "/members", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
-	public DataTableModel getMembersTableModel(DataTableDrawParameters params, @PathVariable("teamId") long teamId) {
+	public DataTableModel getMembersTableModel(DataTableDrawParameters params, @PathVariable(TEAM_ID) long teamId) {
 		PagingAndSorting paging = new DataTableSorting(params, membersMapper);
 		Filtering filtering = new DataTableFiltering(params);
 		return createMembersTableModel(teamId, paging, filtering, params.getsEcho());
@@ -217,21 +223,21 @@ public class TeamController extends PartyControllerSupport {
 
 	@RequestMapping(value = TEAM_ID_URL + "/members/{memberIds}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public void removeMember(@PathVariable("teamId") long teamId, @PathVariable("memberIds") List<Long> memberIds) {
+	public void removeMember(@PathVariable(TEAM_ID) long teamId, @PathVariable("memberIds") List<Long> memberIds) {
 		service.removeMembers(teamId, memberIds);
 	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = TEAM_ID_URL + "/non-members", headers = "Accept=application/json")
 	@ResponseBody
-	public Collection<UserModel> getNonMembers(@PathVariable("teamId") long teamId) {
+	public Collection<UserModel> getNonMembers(@PathVariable(TEAM_ID) long teamId) {
 		List<User> nonMembers = service.findAllNonMemberUsers(teamId);
 		return CollectionUtils.collect(nonMembers, new UserModelCreator());
 	}
 
 	@RequestMapping(value = TEAM_ID_URL + "/members/{logins}", method = RequestMethod.PUT)
 	@ResponseBody
-	public void addMembers(@PathVariable("teamId") long teamId, @PathVariable("logins") List<String> userlogins) {
+	public void addMembers(@PathVariable(TEAM_ID) long teamId, @PathVariable("logins") List<String> userlogins) {
 		service.addMembers(teamId, userlogins);
 	}
 
@@ -252,7 +258,7 @@ public class TeamController extends PartyControllerSupport {
 
 	@RequestMapping(value = TEAM_ID_URL + "/permissions", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
-	public DataTableModel getPermissionTableModel(DataTableDrawParameters params, @PathVariable("teamId") long teamId) {
+	public DataTableModel getPermissionTableModel(DataTableDrawParameters params, @PathVariable(TEAM_ID) long teamId) {
 		PagingAndSorting paging = new DataTableSorting(params, permissionMapper);
 		Filtering filtering = new DataTableFiltering(params);
 		return createPermissionTableModel(teamId, paging, filtering, params.getsEcho());

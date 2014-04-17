@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
@@ -37,6 +38,8 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -46,6 +49,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.api.plugin.EntityReference;
 import org.squashtest.tm.api.plugin.EntityType;
@@ -54,7 +58,6 @@ import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
-
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -65,12 +68,14 @@ import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.exception.NoBugTrackerBindingException;
+import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
 import org.squashtest.tm.exception.user.LoginDoNotExistException;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.administration.PartyPermissionDatatableModelHelper;
 import org.squashtest.tm.web.internal.helper.ProjectHelper;
+import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableFiltering;
@@ -105,26 +110,21 @@ public class GenericProjectController {
 	@Inject
 	private WorkspaceWizardManager wizardManager;
 
+	@Inject
+	private TaskExecutor taskExecutor;
 	private static final Logger LOGGER = LoggerFactory.getLogger(GenericProjectController.class);
 
 	private static final String PROJECT_ID = "projectId";
 	private static final String PROJECT_ID_URL = "/{projectId}";
 	private static final String PROJECT_BUGTRACKER_NAME_UNDEFINED = "project.bugtracker.name.undefined";
 
-	private DatatableMapper<String> allProjectsMapper = new NameBasedMapper(9)
-			.map("name", "name")
-			.map("label", "label")
-			.map("active", "active")
-			.map("created-on", "audit.createdOn")
-			.map("created-by", "audit.createdBy")
-			.map("last-mod-on", "audit.lastModifiedOn")
+	private DatatableMapper<String> allProjectsMapper = new NameBasedMapper(9).map("name", "name")
+			.map("label", "label").map("active", "active").map("created-on", "audit.createdOn")
+			.map("created-by", "audit.createdBy").map("last-mod-on", "audit.lastModifiedOn")
 			.map("last-mod-by", "audit.lastModifiedBy");
 
-	private DatatableMapper<String> partyPermissionMapper = new NameBasedMapper(5)
-			.map("party-index", "index")
-			.map("party-id", "id")
-			.map("party-name", "name")
-			.map("party-type", "type")
+	private DatatableMapper<String> partyPermissionMapper = new NameBasedMapper(5).map("party-index", "index")
+			.map("party-id", "id").map("party-name", "name").map("party-type", "type")
 			.map("permission-group.qualifiedName", "qualifiedName");
 
 	@RequestMapping(value = "", params = RequestParams.S_ECHO_PARAM, method = RequestMethod.GET)
@@ -142,15 +142,26 @@ public class GenericProjectController {
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "isTemplate=false")
+	@ResponseStatus(value = HttpStatus.CREATED)
 	public @ResponseBody
 	void createNewProject(@Valid @ModelAttribute("add-project") Project project) {
-		projectManager.persist(project);
+		createProject(project);
+	}
+
+	private void createProject(GenericProject project) {
+		try {
+			projectManager.persist(project);
+		} catch (NameAlreadyInUseException ex) {
+			ex.setObjectName("add-project");
+			throw ex;
+		}
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "isTemplate=true")
+	@ResponseStatus(value = HttpStatus.CREATED)
 	public @ResponseBody
 	void createNewProject(@Valid @ModelAttribute("add-project") ProjectTemplate template) {
-		projectManager.persist(template);
+		createProject(template);
 	}
 
 	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = { "id=project-label", VALUE }, produces = "text/plain;charset=UTF-8")
@@ -204,7 +215,7 @@ public class GenericProjectController {
 			projectManager.changeBugTracker(projectId, bugtrackerId);
 			LOGGER.debug("Project {} : bugtracker changed, new value : {}", projectId, bugtrackerId);
 		} else {
-			toReturn = messageSource.getMessage(PROJECT_BUGTRACKER_NAME_UNDEFINED, null, locale);
+			toReturn = messageSource.internationalize(PROJECT_BUGTRACKER_NAME_UNDEFINED, locale);
 			projectManager.removeBugTracker(projectId);
 		}
 		return toReturn;
@@ -240,14 +251,13 @@ public class GenericProjectController {
 		}
 	}
 
-	@RequestMapping(value = PROJECT_ID_URL + "/general", method = RequestMethod.GET, produces="application/json")
+	@RequestMapping(value = PROJECT_ID_URL + "/general", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	@ResponseBody
 	public JsonGeneralInfo refreshGeneralInfos(@PathVariable long projectId) {
 
 		GenericProject project = projectManager.findById(projectId);
-		return new JsonGeneralInfo((AuditableMixin)project);
+		return new JsonGeneralInfo((AuditableMixin) project);
 	}
-	
 
 	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.DELETE)
 	@ResponseBody
@@ -256,22 +266,22 @@ public class GenericProjectController {
 	}
 
 	// ********************************** Permission Popup *******************************
-	
+
 	@RequestMapping(value = PROJECT_ID_URL + "/unbound-parties", method = RequestMethod.GET)
 	@ResponseBody
 	public List<Map<String, Object>> getPermissionPopup(@PathVariable long projectId) {
 
 		List<Party> partyList = projectManager.findPartyWithoutPermissionByProject(projectId);
-		
-		List<Map<String, Object>> partiesModel = new ArrayList<Map<String,Object>>(partyList.size());
-		for (Party p : partyList){
+
+		List<Map<String, Object>> partiesModel = new ArrayList<Map<String, Object>>(partyList.size());
+		for (Party p : partyList) {
 			Map<String, Object> newModel = new HashMap<String, Object>();
 			newModel.put("label", p.getName());
 			newModel.put("value", p.getName());
 			newModel.put("id", p.getId());
 			partiesModel.add(newModel);
 		}
-		
+
 		return partiesModel;
 
 	}
@@ -328,7 +338,8 @@ public class GenericProjectController {
 	public DataTableModel getProjectsTableModel(@PathVariable long projectId, final DataTableDrawParameters params) {
 		List<TestAutomationProject> taProjects = projectManager.findBoundTestAutomationProjects(projectId);
 
-		PagedCollectionHolder<List<TestAutomationProject>> holder = new SinglePageCollectionHolder<List<TestAutomationProject>>(taProjects);
+		PagedCollectionHolder<List<TestAutomationProject>> holder = new SinglePageCollectionHolder<List<TestAutomationProject>>(
+				taProjects);
 
 		return new TestAutomationTableModel().buildDataModel(holder, params.getsEcho());
 
@@ -345,11 +356,14 @@ public class GenericProjectController {
 				form = it.next();
 				projectManager.bindTestAutomationProject(projectId, form.toTestAutomationProject());
 			}
-		} catch (MalformedURLException ex) {
+		} catch (MalformedURLException mue) {
 			// quick and dirty validation
+			LOGGER.error(mue.getMessage(), mue);
 			BindException be = new BindException(new TestAutomationServer(), "ta-project");
 			be.rejectValue("baseURL", null, messageSource.internationalize("error.url.malformed", locale));
-			throw be;
+			throw be;// NOSONAR : No way to pass
+			// original exception to
+			// BindException constructor
 		}
 	}
 
@@ -382,26 +396,26 @@ public class GenericProjectController {
 		projectManager.disableWizardForWorkspace(projectId, wizard.getDisplayWorkspace(), wizardId);
 	}
 
-	
-	@RequestMapping(value = PROJECT_ID_URL + "/wizards/{wizardId}/configuration", method = RequestMethod.GET, produces="application/json")
-	@ResponseBody 
-	public Map<String, String> getEnabledWizardProperties(@PathVariable("projectId") long projectId, @PathVariable("wizardId") String wizardId){
+	@RequestMapping(value = PROJECT_ID_URL + "/wizards/{wizardId}/configuration", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
+	@ResponseBody
+	public Map<String, String> getEnabledWizardProperties(@PathVariable("projectId") long projectId,
+			@PathVariable("wizardId") String wizardId) {
 		WorkspaceWizard wizard = wizardManager.findById(wizardId);
 		Map<String, String> conf = wizard.getProperties();
-		Map<String, String> configuration = projectManager.getWizardConfiguration(projectId, wizard.getDisplayWorkspace(), wizardId);
+		Map<String, String> configuration = projectManager.getWizardConfiguration(projectId,
+				wizard.getDisplayWorkspace(), wizardId);
 		conf.putAll(configuration);
 		return conf;
 	}
-	
-	@RequestMapping(value = PROJECT_ID_URL +  "/wizards/{wizardId}/configuration", method = RequestMethod.POST, consumes="application/json")
+
+	@RequestMapping(value = PROJECT_ID_URL + "/wizards/{wizardId}/configuration", method = RequestMethod.POST, consumes = ContentTypes.APPLICATION_JSON)
 	@ResponseBody
-	public void setEnabledWizardProperties(@PathVariable("projectId") long projectId, @PathVariable("wizardId") String wizardId, 
-			@RequestBody Map<String, String> configuration){
+	public void setEnabledWizardProperties(@PathVariable("projectId") long projectId,
+			@PathVariable("wizardId") String wizardId, @RequestBody Map<String, String> configuration) {
 		WorkspaceWizard wizard = wizardManager.findById(wizardId);
 		wizard.validate(new EntityReference(EntityType.PROJECT, projectId), configuration);
 		projectManager.setWizardConfiguration(projectId, wizard.getDisplayWorkspace(), wizardId, configuration);
 	}
-	
 
 	// ********************** other stuffs *****************************
 
@@ -454,62 +468,64 @@ public class GenericProjectController {
 			return data;
 		}
 	}
-	
+
 	@RequestMapping(value = PROJECT_ID_URL + "/disable-execution-status/{executionStatus}", method = RequestMethod.POST)
 	@ResponseBody
-	public void disableExecutionStatusOnProject(@PathVariable long projectId, @PathVariable String executionStatus){
+	public void disableExecutionStatusOnProject(@PathVariable long projectId, @PathVariable String executionStatus) {
 		projectManager.disableExecutionStatus(projectId, ExecutionStatus.valueOf(executionStatus));
 	}
 
 	@RequestMapping(value = PROJECT_ID_URL + "/enable-execution-status/{executionStatus}", method = RequestMethod.POST)
 	@ResponseBody
-	public void enableExecutionStatusOnProject(@PathVariable long projectId, @PathVariable String executionStatus){
+	public void enableExecutionStatusOnProject(@PathVariable long projectId, @PathVariable String executionStatus) {
 		projectManager.enableExecutionStatus(projectId, ExecutionStatus.valueOf(executionStatus));
 	}
-	
+
 	@RequestMapping(value = PROJECT_ID_URL + "/is-enabled-execution-status/{executionStatus}", method = RequestMethod.GET)
 	@ResponseBody
-	public boolean isExecutionStatusEnabledForProject(@PathVariable long projectId, @PathVariable String executionStatus){
+	public boolean isExecutionStatusEnabledForProject(@PathVariable long projectId, @PathVariable String executionStatus) {
 		return projectManager.isExecutionStatusEnabledForProject(projectId, ExecutionStatus.valueOf(executionStatus));
 	}
-	
+
 	@RequestMapping(value = PROJECT_ID_URL + "/execution-status-is-used/{executionStatus}", method = RequestMethod.GET)
 	@ResponseBody
-	public boolean executionStatusUsedByProject(@PathVariable long projectId, @PathVariable String executionStatus){
-		return projectManager.executionStatusUsedByProject(projectId, ExecutionStatus.valueOf(executionStatus));
+	public boolean projectUsesExecutionStatus(@PathVariable long projectId, @PathVariable String executionStatus) {
+		return projectManager.projectUsesExecutionStatus(projectId, ExecutionStatus.valueOf(executionStatus));
 	}
-	
+
 	@RequestMapping(value = PROJECT_ID_URL + "/execution-status/{executionStatus}", method = RequestMethod.GET)
 	@ResponseBody
-	public Map<String, Object> getStatusPopup(@PathVariable long projectId, @PathVariable String executionStatus, final Locale locale) {
-		List<ExecutionStatus> statuses = projectManager.enabledExecutionStatuses(projectId);
+	public Map<String, Object> getStatusPopup(@PathVariable long projectId, @PathVariable String executionStatus,
+			final Locale locale) {
+		Set<ExecutionStatus> statuses = projectManager.enabledExecutionStatuses(projectId);
 		ExecutionStatus status = ExecutionStatus.valueOf(executionStatus);
 		statuses.remove(status);
 		Map<String, Object> options = new HashMap<String, Object>();
-		for(ExecutionStatus st : statuses){
+		for (ExecutionStatus st : statuses) {
 			options.put(messageSource.internationalize(st.getI18nKey(), locale), st.name());
 		}
 		return options;
-		
+
 	}
-	
+
 	@RequestMapping(value = PROJECT_ID_URL + "/replace-execution-status", method = RequestMethod.POST)
 	@ResponseBody
-	public void replaceStatusWithinProject(@PathVariable long projectId, @RequestParam String sourceExecutionStatus, @RequestParam String targetExecutionStatus) {
+	public void replaceStatusWithinProject(@PathVariable long projectId, @RequestParam String sourceExecutionStatus,
+			@RequestParam String targetExecutionStatus) {
 		ExecutionStatus source = ExecutionStatus.valueOf(sourceExecutionStatus);
 		ExecutionStatus target = ExecutionStatus.valueOf(targetExecutionStatus);
 		Runnable replacer = new AsynchronousReplaceExecutionStatus(projectId, source, target);
-		replacer.run();
+		taskExecutor.execute(replacer);
 	}
-	
-	private class AsynchronousReplaceExecutionStatus implements Runnable{
-		
+
+	private class AsynchronousReplaceExecutionStatus implements Runnable {
+
 		private Long projectId;
 		private ExecutionStatus sourceExecutionStatus;
 		private ExecutionStatus targetExecutionStatus;
-		
 
-		public AsynchronousReplaceExecutionStatus(Long projectId, ExecutionStatus sourceExecutionStatus, ExecutionStatus targetExecutionStatus) {
+		public AsynchronousReplaceExecutionStatus(Long projectId, ExecutionStatus sourceExecutionStatus,
+				ExecutionStatus targetExecutionStatus) {
 			super();
 			this.projectId = projectId;
 			this.sourceExecutionStatus = sourceExecutionStatus;
@@ -518,7 +534,7 @@ public class GenericProjectController {
 
 		@Override
 		public void run() {
-			projectManager.replaceExecutionStatus(projectId, sourceExecutionStatus, targetExecutionStatus);
+			projectManager.replaceExecutionStepStatus(projectId, sourceExecutionStatus, targetExecutionStatus);
 		}
 	}
 }

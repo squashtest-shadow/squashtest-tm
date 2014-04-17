@@ -362,9 +362,8 @@ check that in the next <script></script> tags
 
 <script type="text/javascript">
 require([ "common" ], function() {
-  require([ "jquery", "squash.basicwidgets" ], function($, basicwidg) {
-	$(function() {
-		require(["squash.basicwidgets", "workspace.event-bus"], function(basicwidg, eventBus){
+	require([ "jquery", "squash.basicwidgets", "workspace.event-bus" ], function($, basicwidg, eventBus) {
+		$(function() {		
 			basicwidg.init();
 			<c:if test="${executable}">
 			$("#issue-report-dialog-openbutton").click(function() {
@@ -377,11 +376,21 @@ require([ "common" ], function() {
 				$(this).removeClass("ui-state-focus ui-state-hover");
 				bugTrackerLogin();
 			});
-			
-			eventBus.onContextual('context.bug-reported', function(evt, json){
+			<c:choose>
+			<c:when test="${useParentContextPopup}">
+				parent.squashtm.eventBus.onContextual('context.bug-reported', function(evt, json){
+					displayNewIssue(json);
+					refreshIssueTable();
+				});
+			</c:when>
+			<c:otherwise>
+			     eventBus.onContextual('context.bug-reported', function(evt, json){
 				displayNewIssue(json);
 				refreshIssueTable();
-			});
+			   });
+			</c:otherwise>
+			</c:choose>			
+			
 		});
 	});
 });

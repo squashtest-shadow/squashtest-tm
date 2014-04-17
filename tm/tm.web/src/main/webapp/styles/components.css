@@ -200,12 +200,23 @@ table.datepicker-table td.datepicker-table-col {
 	background-repeat : no-repeat;
 }
 
+.ui-button .ui-icon.exec-status-not_run,
+.exec-status-not_run {
+	background-image: url("../images/Icon_Yellow.png");  /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
 .ui-button .ui-icon.exec-status-warning,
 .exec-status-warning{
 	background-image: url("../images/Icon_Green.png");  /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
 
+.ui-button .ui-icon.exec-status-settled,
+.exec-status-settled{
+	background-image: url("../images/Icon_GreenWhite.png");  /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
 
 .ui-button .ui-icon.execute-stop {
 	background-image: url("../images/Button_Exec_stop.png");  /** sprite-ref: sprites-icons; */
@@ -222,6 +233,10 @@ table.datepicker-table td.datepicker-table-col {
 
 .status-color-success{
 	background-color : #99CC00;
+}
+
+.status-color-settled{
+	background-color : #99FF99;
 }
 
 .status-color-failure{
@@ -264,6 +279,15 @@ the display:block trick will implicitly add that property */
 	color : #555555;
     font-size: smaller;
     padding-left: 20px;
+}
+.project-picker .filter-warning {
+    color: #FF0000;
+    left: 280px;
+    position: absolute;
+    top: 10px;
+}
+.rpt-projects-crit-result{
+	padding-right : 8px;
 }
 
 /******************************

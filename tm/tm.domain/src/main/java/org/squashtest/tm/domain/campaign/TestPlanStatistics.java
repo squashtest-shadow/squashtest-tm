@@ -36,7 +36,7 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
  * <li>int nbSuccess  =  SUCCESS + WARNING</li>
  * <li>int nbFailure</li>
  * <li>int nbUntestable</li>
- * <li>int nbBlocked = BLOCKED + ERROR</li>
+ * <li>int nbBlocked = BLOCKED + ERROR + NOT_RUN</li>
  * <li>int nbReady</li>
  * <li>int nbRunning</li>
  * <li>{@linkplain TestPlanStatus} status</li>
@@ -72,6 +72,10 @@ public class TestPlanStatistics {
 		return findIntValue(ExecutionStatus.UNTESTABLE.name());
 	}
 
+	public int getNbSettled() {
+		return findIntValue(ExecutionStatus.SETTLED.name());
+	}
+	
 	public int getNbBlocked() {
 		return findIntValue(ExecutionStatus.BLOCKED.name())+ findIntValue(ExecutionStatus.ERROR.name());
 	}
@@ -128,6 +132,6 @@ public class TestPlanStatistics {
 	}
 
 	private void computeDone() {
-		nbDone = getNbUntestable()  + getNbBlocked() +  getNbFailure() + getNbSuccess() ;
+		nbDone = getNbSettled() + getNbUntestable()  + getNbBlocked() +  getNbFailure() + getNbSuccess() ;
 	}
 }

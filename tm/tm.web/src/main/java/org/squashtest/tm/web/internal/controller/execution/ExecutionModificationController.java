@@ -73,6 +73,7 @@ import org.squashtest.tm.web.internal.controller.generic.DataTableColumnDefHelpe
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.widget.AoColumnDef;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
+import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
@@ -487,7 +488,7 @@ public class ExecutionModificationController {
 
 	}
 
-	@RequestMapping(value = "/general", method = RequestMethod.GET, produces="application/json")
+	@RequestMapping(value = "/general", method = RequestMethod.GET, produces=ContentTypes.APPLICATION_JSON)
 	@ResponseBody
 	public JsonExecutionInfo refreshGeneralInfos(@PathVariable long executionId) {
 

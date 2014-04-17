@@ -34,6 +34,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "./TeamPermi
 			this.configureDeletionDialog();
 			this.configureRemoveMemberDialog();
 			this.configureNoMemberSelectedDialog();
+			this.configureInvalidMemberSelectedDialog();
 			this.configureAddMemberDialog();
 			this.configureMembersTable();
 			new TeamPermissionPanel();
@@ -236,16 +237,23 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "./TeamPermi
 			this.noMemberSelectedDialog = this.$("#no-selected-users").messageDialog();
 		},
 
+		configureInvalidMemberSelectedDialog : function() {
+			this.invalidMemberSelectedDialog = this.$("#invalid-user").messageDialog();
+		},
+		
 		configureAddMemberDialog : function() {
 			var addMemberDialog = this.$("#add-member-dialog").confirmDialog();
 
 			addMemberDialog.on("confirmdialogvalidate", function() {
 				var login = addMemberDialog.find('#add-member-input').val();
 				if (login === null || login === undefined || login.length === 0) {
-					dialog.activate('no-selected-users');
+					addMemberDialog.activate('no-selected-users');
 					return false;
-				} else {
+				} else if (_.contains(addMemberDialog.find('#add-member-input').autocomplete( "option", "source" ),login)) {
 					return true;
+				} else {
+					addMemberDialog.activate('invalid-user');
+					return false;
 				}
 			});
 

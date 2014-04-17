@@ -76,7 +76,7 @@
 				<div class="table-tab-wrap">
 					<table id="users-list-table"  class="unstyled-table" 
 							data-def="ajaxsource=${tableModelUrl}, datakeys-id=user-id, deferLoading=${tableModelLength},
-							pagesize=10, filter, pre-sort=2-asc">
+							pagesize=50, filter, pre-sort=2-asc">
 						<thead>
 							<tr>
 								<th class="user-index" 							data-def="map=user-index, select">#</th>

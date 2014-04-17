@@ -210,6 +210,8 @@ define(
 						contentType  : 'application/json'
 					}).done(function(){
 						dialog.formDialog('close');
+					}).fail(function(json){
+						squashtm.notification.handleJsonResponseError(json);
 					});
 					
 				});

@@ -23,17 +23,15 @@
  *
  */
 
-define([ "jquery", "jqueryui" ], function($) {
+define([ 'jquery', 'jqueryui', 'jquery.squash.squashbutton' ], function($) {
 
 	function TestSuiteManagerControl(settings) {
 
 		this.manager = settings.manager;
 		this.confirmMessage = settings.confirmMessage;
 		this.confirmTitle = settings.confirmTitle;
-		this.defaultMessage = settings.defaultMessage;
 		this.panel = settings.panel;
 		this.action = settings.action;
-		this.onfocus = settings.onfocus;
 
 		this.input = $("input[type='text']", settings.panel);
 		this.button = $("input[type='button']", settings.panel).squashButton();
@@ -63,32 +61,26 @@ define([ "jquery", "jqueryui" ], function($) {
 
 		this.deactivate = function() {
 			defaultState();
-			this.input.attr('disabled', 'disabled');
+			this.input.prop('disabled', true);
 			this.input.removeClass('manager-control-ready');
 			this.input.addClass('manager-control-disabled');
+			this.button.squashButton("disable");
 		};
 
 		this.setText = function(text) {
 			this.input.val(text);
 		};
 
-		this.setDefaultText = function() {
-			this.input.val(this.defaultMessage);
-		};
-
 		/* ************* private ******** */
 
 		var defaultState = $.proxy(function() {
-			this.input.removeAttr('disabled');
-			this.input.val(this.defaultMessage);
-			this.button.prop("disabled", true);
+			this.input.prop('disabled', false);
+			this.button.squashButton("enable");
+			this.input.val("");
 		}, self);
 
 		var editState = $.proxy(function() {
 			this.input.removeClass('manager-control-ready');
-			this.onfocus();
-			this.input.val('');
-			this.button.prop("disabled", false);
 		}, self);
 
 		/* ************* handlers ******** */
@@ -120,10 +112,10 @@ define([ "jquery", "jqueryui" ], function($) {
 
 		var updateBtn = function() {
 			var button = self.button;
-			if (!self.input.val().length || self.input.val() == self.manager.create.control.defaultMessage) {
-				button.prop("disabled", true);
+			if (!self.input.val().length ) {
+				button.squashButton("disable");
 			} else {
-				button.prop("disabled", false);
+				button.squashButton("enable");
 			}
 		};
 
@@ -278,15 +270,15 @@ define([ "jquery", "jqueryui" ], function($) {
 			switch (allItems.size()) {
 			case 0:
 				this.rename.control.deactivate();
-				this.remove.button.prop("disabled", true);
-				this.rename.control.button.prop("disabled", true);
+				this.remove.button.squashButton("disable");
+				this.rename.control.button.squashButton("disable");
 				break;
 			case 1:
 				this.rename.control.reset();
 				var itemText = allItems.eq(0).find('span').text();
 				this.rename.control.setText(itemText);
-				this.remove.button.prop("disabled", false);
-				this.rename.control.button.prop("disabled", false);
+				this.remove.button.squashButton("enable");
+				this.rename.control.button.squashButton("enable");
 				break;
 			default:
 				this.rename.control.deactivate();
@@ -374,21 +366,14 @@ define([ "jquery", "jqueryui" ], function($) {
 
 		var createControlSettings = {
 			manager : this,
-			defaultMessage : settings.defaultMessage,
 			panel : $(".create-suites-section", this.instance),
-			action : postNewSuite,
-			onfocus : function() {
-				this.input.val('');
-			}
+			action : postNewSuite
 		};
 
 		var renameControlSettings = {
 			manager : this,
-			defaultMessage : '',
 			panel : this.rename.panel = $(".rename-suites-section", this.instance),
-			action : postRenameSuite,
-			onfocus : function() {
-			}
+			action : postRenameSuite
 		};
 
 		/*
@@ -398,11 +383,8 @@ define([ "jquery", "jqueryui" ], function($) {
 			manager : this,
 			confirmMessage : settings.deleteConfirmMessage,
 			confirmTitle : settings.deleteConfirmTitle,
-			defaultMessage : settings.defaultMessage,
 			panel : this.remove.panel = $(".remove-suites-section", this.instance),
-			action : postRemoveSuites,
-			onfocus : function() {
-			}
+			action : postRemoveSuites
 		};
 
 		var viewSettings = {

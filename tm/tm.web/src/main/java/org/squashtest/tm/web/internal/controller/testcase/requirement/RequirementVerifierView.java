@@ -21,6 +21,8 @@
 package org.squashtest.tm.web.internal.controller.testcase.requirement;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -74,8 +76,19 @@ public class RequirementVerifierView {
 			RequirementVersionCoverageView coverage = new RequirementVersionCoverageView(rc, verifyingStep);
 			coverages.add(coverage);
 		}
+		
+		Collections.sort(coverages, new Comparator<RequirementVersionCoverageView>() {
+	        @Override
+	        public int compare(RequirementVersionCoverageView  view1, RequirementVersionCoverageView view2)
+	        {
+	            return  view1.version.getName().compareTo(view2.version.getName());
+	        }
+	    });
+		
 		return coverages;
 	}
+	
+
 	
 	public static final class RequirementVersionCoverageView{
 		private RequirementVersion version;

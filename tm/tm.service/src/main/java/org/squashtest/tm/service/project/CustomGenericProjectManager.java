@@ -22,6 +22,7 @@ package org.squashtest.tm.service.project;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.api.workspace.WorkspaceType;
@@ -32,32 +33,38 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.users.Party;
+import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
 
 /**
  * @author Gregory Fouquet
- *
+ * 
  */
-public interface CustomGenericProjectManager extends CustomGenericProjectFinder{
+public interface CustomGenericProjectManager extends CustomGenericProjectFinder {
 	/**
-	 * Will find all Projects and Templates to which the user has management access to and return them ordered according to the given params.
+	 * Will find all Projects and Templates to which the user has management access to and return them ordered according
+	 * to the given params.
 	 * 
-	 * @param pagingAndSorting the {@link PagingAndSorting} that holds order and paging params
-	 * @param filter the filter to apply on the result
-	 * @return a {@link PagedCollectionHolder} containing all projects the user has management access to, ordered according to the given params.
+	 * @param pagingAndSorting
+	 *            the {@link PagingAndSorting} that holds order and paging params
+	 * @param filter
+	 *            the filter to apply on the result
+	 * @return a {@link PagedCollectionHolder} containing all projects the user has management access to, ordered
+	 *         according to the given params.
 	 */
-	PagedCollectionHolder<List<GenericProject>> findSortedProjects(PagingAndSorting pagingAndSorting, Filtering filtering);
+	PagedCollectionHolder<List<GenericProject>> findSortedProjects(PagingAndSorting pagingAndSorting,
+			Filtering filtering);
 
 	/**
 	 * @param project
 	 */
-	void persist(GenericProject project);
+	void persist(GenericProject project) throws NameAlreadyInUseException;
 
 	/**
 	 * 
 	 * @param templateId
 	 */
 	void coerceTemplateIntoProject(long templateId);
-	
+
 	/************************************************************************************************/
 	void deleteProject(long projectId);
 
@@ -66,10 +73,9 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder{
 	void removeProjectPermission(long userId, long projectId);
 
 	Party findPartyById(long partyId);
-	
+
 	// **************************** test automation extension ********************
 
-	
 	/**
 	 * Will bind the TM project to a TA project. Will persist it if necessary.
 	 * 
@@ -91,14 +97,16 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder{
 	 * @param newBugtrackerId
 	 */
 	void changeBugTracker(long projectId, Long newBugtrackerId);
-	
+
 	/**
 	 * Change the Bugtracker the Project is associated-to.<br>
 	 * If the Project had no Bugtracker, will add a new association.<br>
 	 * If the Project had a already a Bugtracker, it will keep the project-Name information
 	 * 
-	 * @param project : the concerned GenericProject
-	 * @param bugtracker : the bugtracker to bind the project to
+	 * @param project
+	 *            : the concerned GenericProject
+	 * @param bugtracker
+	 *            : the bugtracker to bind the project to
 	 */
 	void changeBugTracker(GenericProject project, BugTracker bugtracker);
 
@@ -118,83 +126,89 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder{
 	 *            the name of the bugtracker's project, the Project is connected to
 	 */
 	void changeBugTrackerProjectName(long projectId, String projectBugTrackerName);
-	
-	
-	
+
 	// ****************************** wizards management ***********************
-	
+
 	/**
 	 * enables the given wizard for the given workspace of the given project
 	 */
 	void enableWizardForWorkspace(long projectId, WorkspaceType workspace, String wizardId);
-	
+
 	/**
 	 * enables the given wizard for the given workspace of the given project
 	 */
 	void disableWizardForWorkspace(long projectId, WorkspaceType workspace, String wizardId);
-	
-	
+
 	/**
-	 * Returns the configuration of a given wizard for a given project. Returns an empty map if 
-	 * the wizard is not bound to this project.
+	 * Returns the configuration of a given wizard for a given project. Returns an empty map if the wizard is not bound
+	 * to this project.
 	 */
 	Map<String, String> getWizardConfiguration(long projectId, WorkspaceType workspace, String wizardId);
-	
+
 	/**
-	 * Applies the given configuration to a wizard for a given project. If the wizard wasn't enabled for this project already, it will be during the process.
+	 * Applies the given configuration to a wizard for a given project. If the wizard wasn't enabled for this project
+	 * already, it will be during the process.
 	 * 
 	 * @param projectId
 	 * @param workspace
 	 * @param wizardId
 	 * @param configuration
 	 */
-	void setWizardConfiguration(long projectId, WorkspaceType workspace, String wizardId, Map<String, String> configuration);
-	
+	void setWizardConfiguration(long projectId, WorkspaceType workspace, String wizardId,
+			Map<String, String> configuration);
+
 	// ***************************** status management *************************
-	
+
 	/**
 	 * Enables an execution status for a project
+	 * 
 	 * @param projectId
 	 * @param executionStatus
 	 */
 	void enableExecutionStatus(long projectId, ExecutionStatus executionStatus);
-	
+
 	/**
 	 * Disables an execution status for a project
+	 * 
 	 * @param projectId
 	 * @param executionStatus
 	 */
 	void disableExecutionStatus(long projectId, ExecutionStatus executionStatus);
-	
+
 	/**
 	 * Returns the list of enabled execution statuses given a project.
+	 * 
 	 * @param projectId
 	 * @return
 	 */
-	List<ExecutionStatus> enabledExecutionStatuses(long projectId);
-	
+	Set<ExecutionStatus> enabledExecutionStatuses(long projectId);
+
 	/**
-	 * Returns the list of disabled execution statuses given a project. 
+	 * Returns the list of disabled execution statuses given a project.
+	 * 
 	 * @param projectId
 	 * @return
 	 */
-	List<ExecutionStatus> disabledExecutionStatuses(long projectId);
-	
+	Set<ExecutionStatus> disabledExecutionStatuses(long projectId);
+
 	/**
 	 * Replaces an execution status with another within a project
+	 * 
 	 * @param source
 	 * @param target
 	 */
-	void replaceExecutionStatus(long projectId, ExecutionStatus source, ExecutionStatus target);
-
+	void replaceExecutionStepStatus(long projectId, ExecutionStatus source, ExecutionStatus target);
 
 	/**
 	 * Returns true if a given execution status is enabled for a given project, false otherwise
+	 * 
 	 * @param projectId
 	 * @param executionStatus
 	 * @return
 	 */
 	boolean isExecutionStatusEnabledForProject(long projectId, ExecutionStatus executionStatus);
+
+	boolean projectUsesExecutionStatus(long projectId,  ExecutionStatus executionStatus);
 	
-	boolean executionStatusUsedByProject(long projectId,  ExecutionStatus executionStatus);
+	void changeName(long projectId, String newName) throws NameAlreadyInUseException;
 }

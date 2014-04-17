@@ -107,7 +107,11 @@
           </script>
 			<script type="text/javascript">						
 			require(["common"], function() {
-				require(["jquery", "squash.basicwidgets", "page-components/step-information-panel","workspace.event-bus"], function($, basicwidg, infopanel, eventBus ) {
+				require(["jquery", "squash.basicwidgets", 
+				         "iesupport/am-I-ie8",
+				         "execution-processing/ie8-no-close-on-enter",
+				         "page-components/step-information-panel", "workspace.event-bus",  "jquery.squash"], 
+				         function($, basicwidg, isIE, noCloseOnEnter, infopanel, eventBus ) {
 			
 				var isOer = ${ not empty hasNextTestCase };
 				var hasNextTestCase = ${ (not empty hasNextTestCase) and hasNextTestCase };
@@ -115,13 +119,13 @@
 	
 				function refreshParent(){
 					if (!!window.opener) {
-                                        if (window.opener.squashtm.execution){
-						window.opener.squashtm.execution.refresh();
-					}
-					if (window.opener.progressWindow) {
-						window.opener.progressWindow.close();
-					}
-                                        }
+                        if (window.opener.squashtm.execution){
+							window.opener.squashtm.execution.refresh();
+						}
+						if (window.opener.progressWindow) {
+							window.opener.progressWindow.close();
+						}
+                    }
 				}
 			
 				function refreshExecStepInfos(){
@@ -288,28 +292,7 @@
 					refreshExecStepInfos();
 				}
 				
-				//issue #2069
-				//note : could not user jquery.squash.plugin.js because of errors from unknown origin
-				//so I'll inline the code here
-				function noBackspaceNavigation(){
-					$(document).bind('keydown', function (event) {	
-					    var doPrevent = false;
-					    if (event.keyCode === 8) {
-					        var d = event.srcElement || event.target;
-					        if ((d.tagName.toUpperCase() === 'INPUT' && (d.type.toUpperCase() === 'TEXT' || d.type.toUpperCase() === 'PASSWORD')) 
-					             || d.tagName.toUpperCase() === 'TEXTAREA') {
-					            doPrevent = d.readOnly || d.disabled;
-					        }
-					        else {
-					            doPrevent = true;
-					        }
-					    }
-			
-					    if (doPrevent) {
-					        event.preventDefault();
-					    }
-					});								
-				}
+
 				
 				$(function(){
 											
@@ -349,35 +332,40 @@
 						$(window).unload( refreshParent );
 						
 						//issue #2069
-						noBackspaceNavigation();		
+						$.noBackspaceNavigation();	
+						
+						//issue #2195
+						if (isIE){
+							noCloseOnEnter();
+						}
 						
 						//issue 3083 : propagate the information to the parent context
 						eventBus.onContextual('context.bug-reported', function(event, json){
 							window.opener.squashtm.workspace.eventBus.trigger(event, json )
 						});
-						});
-						
-                    <c:if test="${not empty denormalizedFieldValues }">
-                    $.get("${denormalizedFieldsValuesURL}?denormalizedFieldHolderId=${executionStep.boundEntityId}&denormalizedFieldHolderType=${executionStep.boundEntityType}")
-                      .success(function(data){
-                        var postLabel = " (" + $("#df-post-label").text().trim() +")";
-                        
-                        $("#dfv-information-table")
-                          .append(data)
-                          .find("label")
-                          .append(postLabel);
-                      });
-                    </c:if>
-
-                    <c:if test="${not empty customFieldValues }">
-                    $.get("${customFieldsValuesURL}?boundEntityId=${executionStep.boundEntityId}&boundEntityType=${executionStep.boundEntityType}")
-                      .success(function(data){
-                        $("#cuf-information-table").append(data);
-                      });
-                    </c:if>
+	                    <c:if test="${not empty denormalizedFieldValues }">
+	                    $.get("${denormalizedFieldsValuesURL}?denormalizedFieldHolderId=${executionStep.boundEntityId}&denormalizedFieldHolderType=${executionStep.boundEntityType}")
+	                      .success(function(data){
+	                        var postLabel = " (" + $.trim($("#df-post-label").text()) +")";
+	                        
+	                        $("#dfv-information-table")
+	                          .append(data)
+	                          .find("label")
+	                          .append(postLabel);
+	                      });
+	                    </c:if>
+	
+	                    <c:if test="${not empty customFieldValues }">
+	                    $.get("${customFieldsValuesURL}?boundEntityId=${executionStep.boundEntityId}&boundEntityType=${executionStep.boundEntityType}")
+	                      .success(function(data){
+	                        $("#cuf-information-table").append(data);
+	                      });
+	                    </c:if>
 				
 					});	
 				});
+				
+			});
 			</script>
 
 			<div id="execute-header">
@@ -412,7 +400,7 @@
 								<f:message key="execute.header.status.label" />
 							</label> 
 							<c:choose>
-							<c:when test="${editable }"><comp:execution-status-combo name="executionStatus" id="execution-status-combo" allowsUntestable="${allowsUntestable}"/>
+							<c:when test="${editable }"><comp:execution-status-combo name="executionStatus" id="execution-status-combo" allowsUntestable="${allowsUntestable}" allowsSettled="${allowsSettled}"/>
 							<c:if test="${allowsUntestable}">
 							<button id="execute-untestable-button">
 								<f:message key="execute.header.button.untestable.title" />
@@ -493,8 +481,9 @@
         		</div>
         		 <script type="text/javascript">
         		 require(["common"], function() {
-        			 require(["jquery"], function($) {
+        			 require(["jquery", "app/ws/squashtm.notification"], function($, wtf) {
         		 		$("#bugtracker-section-div").load("${btEntityUrl}");
+        		 		wtf.init({});
         			 });
         		 });
         		</script>

@@ -59,4 +59,5 @@ public interface GenericProjectDao extends CustomGenericProjectDao {
 	 */
 	void remove(GenericProject project);
 
+	long countByName(String name);
 }

@@ -180,7 +180,7 @@ define(
 							statuses = JSON.parse(settings.data);
 						
 						$statusspan.attr('class', 'cursor-arrow exec-status-label exec-status-' + itp.executionStatus.toLowerCase());						
-						$statusspan.text(statuses[itp.executionStatus]);
+						$statusspan.html(statuses[itp.executionStatus]);
 						
 						// 2/ the date format
 						var format = translator.get('squashtm.dateformat'),

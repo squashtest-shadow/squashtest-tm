@@ -26,7 +26,7 @@
  * or jsonUrl must be defined.
  */
 
-define([ "jquery", "jquery.squash.jeditable" ], function($) {
+define([ "jquery", "squash.configmanager", "jquery.squash.jeditable" ], function($, confman) {
 	/*
 	 * settings = {
 	 *  target (target url or target function)
@@ -45,21 +45,10 @@ define([ "jquery", "jquery.squash.jeditable" ], function($) {
 		var txt = component.text();
 		component.text($.trim(txt));
 		
-		var defaultSettings = {
-			type : 'select',
-			placeholder :squashtm.message.placeholder,
-			submit : squashtm.message.cache['label.Ok'],
-			cancel :  squashtm.message.cache['label.Cancel'],
-			onblur : function() {
-				// this disable the onBlur handler, which would close the
-				// jeditable
-				// when clicking in the rich editor (since it considers the click as
-				// out of the editing zone)
-			},
-			
-			indicator : '<div class="processing-indicator"/>'
-			
-		};
+		var defaultSettings = confman.getStdJeditable();
+		defaultSettings.type = 'select';
+
+
 		this.getSelectedOption = function(){
 			var option = "";
               $.each(settings.jeditableSettings.data, function(key, value){

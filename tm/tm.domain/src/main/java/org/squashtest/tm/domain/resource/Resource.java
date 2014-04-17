@@ -44,6 +44,7 @@ import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.audit.Auditable;
+import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.search.UpperCasedStringBridge;
 
 /**
@@ -64,7 +65,7 @@ public abstract class Resource implements AttachmentHolder, Identified{
 	private Long id;
 
 	@NotBlank
-	@Size(min = 0, max = 255)
+	@Size(min = 0, max = RequirementLibraryNode.MAX_NAME_SIZE)
 	@Fields({
 		@Field,
 		@Field(name="label", analyze=Analyze.NO, store=Store.YES),
@@ -106,7 +107,7 @@ public abstract class Resource implements AttachmentHolder, Identified{
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		this.name = name.trim();
 	}
 
 	public String getDescription() {

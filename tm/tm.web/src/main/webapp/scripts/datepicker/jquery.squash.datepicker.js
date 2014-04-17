@@ -82,9 +82,12 @@ function SquashDatePicker(controls, params) {
 
 }
 
-function dp_initialize() {
+function dp_initialize(options) {
 	// init the datepicker
 	$(this.controls.datepick).datepicker();
+	if(this.params.dateFormat){//[Issue 3435]
+		$(this.controls.datepick).datepicker( "option", "dateFormat", this.params.dateFormat );
+	}
 	$(this.controls.datelabel).addClass("editable");
 	var me = this;
 

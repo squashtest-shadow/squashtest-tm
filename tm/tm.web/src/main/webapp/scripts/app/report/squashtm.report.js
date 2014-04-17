@@ -27,8 +27,8 @@ var squashtm = squashtm || {};
  * 
  * @author Gregory Fouquet
  */
-define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", "jqueryui", "jeditable", "jeditable.datepicker",
-		"jquery.squash", "jquery.cookie", "datepicker/jquery.squash.datepicker-locales" ], function($, RWS, treebuilder, _) {
+define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", "./ProjectsPickerPopup", "./SingleProjectPickerPopup","app/util/ButtonUtil", "jqueryui", "jeditable", "jeditable.datepicker",
+		"jquery.squash", "jquery.cookie", "datepicker/jquery.squash.datepicker-locales" ], function($, RWS, treebuilder, _, ProjectsPickerPopup, SingleProjectPickerPopup, ButtonUtil) {
 	var config = {
 		contextPath : "",
 		dateFormat : "dd/mm/yy",
@@ -56,7 +56,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 		formState[name] = {
 			value : option.value,
 			selected : option.checked,
-			type : 'CHECKBOX'
+			type : "CHECKBOX"
 		};
 	}
 
@@ -78,7 +78,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 			groupState.push({
 				value : value,
 				selected : option.checked,
-				type : 'CHECKBOXES_GROUP'
+				type : "CHECKBOXES_GROUP"
 			});
 		}
 	}
@@ -103,9 +103,8 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 
 		// if the option has an associated element
 		if (givesAccessTo !== undefined && givesAccessTo !== "none") {
-
 			// find the right element and activate it
-			$("#" + givesAccessTo + "-open").removeAttr("disabled");
+			ButtonUtil.enable($("#" + givesAccessTo + "-open"));
 
 		}
 
@@ -122,7 +121,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 
 			if (givesAccessTo !== undefined && givesAccessTo !== "none") {
 				// find the right element and deactivate it
-				$("#" + givesAccessTo + "-open").attr("disabled", "disabled");
+				ButtonUtil.disable($("#" + givesAccessTo + "-open"));
 			}
 		});
 	}
@@ -146,7 +145,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 	function onTextBlurred() {
 		formState[this.name] = {
 			value : this.value,
-			type : 'TEXT'
+			type : "TEXT"
 		};
 	}
 
@@ -168,7 +167,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 		else{
 			formState[this.id] = {
 				value : postDate,
-				type : 'DATE'
+				type : "DATE"
 			};
 		}
 	}
@@ -186,11 +185,10 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 					$.each(preferenceForName, function(index, element) {
 						var value = element.value;
 						var options = $("option", dropdown);
+						// TODO change below with _.filter then _.each
 						$.each(options, function(index, option) {
-							if (option.value == value && element.selected) {
-								$(option).attr('selected', true);
-							} else if (option.value == value && !element.selected) {
-								$(option).attr('selected', false);
+							if (option.value == value) {
+								$(option).prop("selected", element.selected);
 							}
 						});
 					});
@@ -214,7 +212,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 		var datepickers = panel.find(".rpt-date-crit");
 
 		// setting the locale
-		var locale = datepickers.data('locale');
+		var locale = datepickers.data("locale");
 		var confLocale = $.datepicker.regional[locale];
 
 		if (!!confLocale) {
@@ -228,7 +226,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 
 			return value;
 		}, {
-			type : 'datepicker',
+			type : "datepicker",
 			tooltip : "Click to edit...",
 			datepicker : dateSettings
 		});
@@ -250,7 +248,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 						var postDate = $.datepicker.formatDate(postDateFormat, date);
 						formState[this.id] = {
 							value : postDate,
-							type : 'DATE'
+							type : "DATE"
 						};
 					}
 				}
@@ -273,12 +271,12 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 				name : name,
 				value : option.value,
 				selected : option.checked,
-				type : 'RADIO_BUTTONS_GROUP'
+				type : "RADIO_BUTTONS_GROUP"
 			});
 
 			if (givesAccessTo !== undefined && givesAccessTo !== "none") {
 				// find the right element and deactivate it
-				$("#" + givesAccessTo + "-open").attr("disabled", "disabled");
+				ButtonUtil.disable($("#" + givesAccessTo + "-open"));
 			}
 		});
 
@@ -290,13 +288,15 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 				if (preferenceForName) {
 					$.each(preferenceForName, function(index, element) {
 						var value = element.value;
+						
 						if (radio.value == value && element.selected) {
-							$(radio).attr('checked', true);
+							$(radio).prop("checked", true);
+							
 							$.each(formState[name], function(index, state) {
 								if (state.value == radio.value) {
 									state.selected = true;
 									if (givesAccessTo !== undefined && givesAccessTo !== "none") {
-										$("#" + givesAccessTo + "-open").removeAttr("disabled");
+										ButtonUtil.enable($("#" + givesAccessTo + "-open"));
 									}
 								}
 							});
@@ -311,6 +311,15 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 					});
 				}
 			});
+		}else{
+			var checkedRadios = _.where(radios, {checked:true});
+			$.each(checkedRadios, function(index, radio){
+				var givesAccessTo = (radio.id).replace("-binder", "");
+				if (givesAccessTo !== undefined && givesAccessTo !== "none") {
+					ButtonUtil.enable($("#" + givesAccessTo + "-open"));
+				}
+			});
+				
 		}
 	}
 
@@ -319,14 +328,14 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 
 		var groupedCheckboxes = checkboxes.filter(function(index) {
 			var item = $(this);
-			return item.data('grouped');
+			return item.data("grouped");
 		});
 		groupedCheckboxes.change(onGroupedCheckboxesChanged);
 		groupedCheckboxes.change();
 
 		var singleCheckboxes = checkboxes.filter(function(index) {
 			var item = $(this);
-			return !$(item).data('grouped');
+			return !$(item).data("grouped");
 		});
 		singleCheckboxes.change(onSingleCheckboxChanged);
 		singleCheckboxes.change();
@@ -336,21 +345,15 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 				var name = checkbox.name;
 				var preferenceForName = preferences[name];
 				if (preferenceForName) {
+					// TODO change below with _.filter then _.each
 					$.each(preferenceForName, function(index, element) {
 						var value = element.value;
-						if (checkbox.value == value && element.selected) {
-							$(checkbox).attr('checked', true);
+						
+						if (checkbox.value == value) {
+							$(checkbox).prop("checked", element.selected);
 							$.each(formState[name], function(index, state) {
 								if (state.value == checkbox.value) {
-									state.selected = true;
-								}
-							});
-						} else if (checkbox.value == value && !element.selected) {
-							$(checkbox).removeAttr('checked');
-							$.each(formState[name], function(index, state) {
-								if (state.value == checkbox.value) {
-									state.selected = false;
-
+									state.selected = element.selected;
 								}
 							});
 						}
@@ -362,63 +365,90 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 
 	function buildViewUrl(index, format) {
 		// see [Issue 1205] for why "document.location.protocol"
-		return document.location.protocol + '//' + document.location.host + config.reportUrl + "/views/" + index +
+		return document.location.protocol + "//" + document.location.host + config.reportUrl + "/views/" + index +
 				"/formats/" + format;
 
 	}
 
 	function loadTab(tab) {
-		var url = buildViewUrl(tab.newTab.index(), "html");
+		var url = buildViewUrl(tab.newTab.index(), "html"),
+			params = JSON.stringify(formState);
+		
 		$.ajax({
-			type : 'post',
+			type : "get",
 			url : url,
-			data : JSON.stringify(formState),
-			contentType : "application/json"
+			dataType : "html",
+			data : { parameters : params }
 		}).done(function(html) {
 			tab.newPanel.html(html);
 		});
 	}
 
-	function isPerimeterValid() {
-
-		var status = false;
-
-		$.each(formState, function(key, value) {
-
-			if (value[0]) {
-
-				if ("PROJECT_PICKER" == value[0].type) {
-					$.each(value, function(index, element) {
-						if (element.selected) {
-							status = true;
-						}
-					});
-				}
-
-				if ("RADIO_BUTTONS_GROUP" == value[0].type) {
-					$.each(value, function(index, element) {
-						if (element.selected & element.value == "EVERYTHING") {
-							status = true;
-						}
-					});
-				}
-
-				if ("TREE_PICKER" == value[0].type) {
-					$.each(value, function(index, element) {
-						if (element.value) {
-							status = true;
-						}
-					});
-				}
-			}
+	function isPerimeterValid(formState) {
+		// first pass : do we have pickers bound to radiobuttons
+		var selectedPicker = reduceToSelectedPicker(formState);
+		
+		var checkerByControl = buildPerimeterCheckerByControl(selectedPicker);
+		
+		return undefined !== _.find(formState, function(value, key) {
+			var checker = value && value[0] ? checkerByControl[value[0].type] : undefined;
+			return !!checker && checker.call(this, value);
 		});
-
-		return status;
+	}
+	
+	function reduceToSelectedPicker(formState) {
+		return _.reduceRight(formState, function(memo, control) {
+			if (!!memo) {
+				return memo;
+			}
+			
+			var found = _.find(control, function(item) {
+				return item.type === "RADIO_BUTTONS_GROUP" && item.selected === true && (item.value === "PROJECT_PICKER" || item.value === "TREE_PICKER");
+			});
+			
+			return !!found ? found.value : undefined;
+		}, undefined);	
 	}
 
+	function buildPerimeterCheckerByControl(selectedPicker) {
+		function hasProjectPicked(pp) {
+			return _.where(pp, { selected : true }).length !== 0;
+		}
+		
+		function hasEverythingSelected(rg) {
+			return _.where(rg, { selected : true, value : "EVERYTHING"	}).length !== 0;
+		}
+		
+		function hasNodePicked(tp) {
+			return undefined !== _.find(tp, function(element) {
+				return !!element.value;
+			});
+		}
+		
+		var checkerByControl = {
+				"PROJECT_PICKER" : hasProjectPicked, 
+				"RADIO_BUTTONS_GROUP" : hasEverythingSelected,
+				"TREE_PICKER" : hasNodePicked
+				
+		};
+		
+		var res = checkerByControl;
+		
+		if (!!selectedPicker) {
+			var actualChecker = checkerByControl[selectedPicker];
+			
+			if (!!actualChecker) {
+				res = {};
+				res[selectedPicker] = actualChecker;
+			}
+		} // when selectedPicker is gibberish, we ignore it
+
+		return res;
+	}
+	
 	function generateView() {
 
-		if (isPerimeterValid()) {
+		if (isPerimeterValid(formState)) {
 			// stores preferences in browser datastore
 			sessionStorage[config.reportUrl + "-prefs"] = JSON.stringify(formState);
 
@@ -438,18 +468,18 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 				loadTab(selectedTab);
 			}
 
-			$("#view-tabed-panel:hidden").show('blind', {}, 500);
+			$("#view-tabed-panel:hidden").show("blind", {}, 500);
 		} else {
 			var invalidPerimeterDialog = $("#invalid-perimeter").messageDialog();
-			invalidPerimeterDialog.messageDialog('open');
+			invalidPerimeterDialog.messageDialog("open");
 		}
 	}
 
 	function onViewTabSelected(event, ui) {
 		selectedTab = ui;
 		var tabs = $(this);
-		tabs.find(".view-format-cmb").addClass('not-displayed');
-		tabs.find("#view-format-cmb-" + ui.newTab.index()).removeClass('not-displayed');
+		tabs.find(".view-format-cmb").addClass("not-displayed");
+		tabs.find("#view-format-cmb-" + ui.newTab.index()).removeClass("not-displayed");
 
 		loadTab(ui);
 	}
@@ -459,14 +489,11 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 		var format = $("#view-format-cmb-" + viewIndex).val();
 
 		var url = buildViewUrl(viewIndex, format);
-		var data = JSON.stringify(formState).replace(/"/g, '&quot;');
+		var data = JSON.stringify(formState);
+		data = encodeURIComponent(data);
+		
+		window.open(url+"?parameters="+data, "_blank", "resizable=yes, scrollbars=yes");
 
-		$.open(url, {
-			data : data
-		}, {
-			name : '_blank',
-			features : 'resizable=yes, scrollbars=yes'
-		});
 	}
 
 	function initViewTabs() {
@@ -477,6 +504,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 			activate : onViewTabSelected
 		});
 	}
+	/** ==================================================================== TREE PIKER */
 	/**
 	 * Converts a NODE_TYPE into a workspace-type
 	 */
@@ -491,7 +519,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 	}
 
 	function setTreeState(tree, nodes) {
-		var name = tree.attr('id');
+		var name = tree.attr("id");
 
 		formState[name] = [];
 
@@ -499,7 +527,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 			formState[name].push({
 				value : "",
 				nodeType : "",
-				type : 'TREE_PICKER'
+				type : "TREE_PICKER"
 			});
 			return;
 		}
@@ -509,7 +537,7 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 			formState[name].push({
 				value : node.attr("resid"),
 				nodeType : node.attr("restype"),
-				type : 'TREE_PICKER'
+				type : "TREE_PICKER"
 			});
 		});
 	}
@@ -533,14 +561,14 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 	function onConfirmTreePickerDialog() {
 		var self = $(this);
 		self.dialog("close");
-		var tree = self.find('.rpt-tree-crit');
-		var nodes = tree.jstree('get_selected');
+		var tree = self.find(".rpt-tree-crit");
+		var nodes = tree.jstree("get_selected");
 
 		setTreeState(tree, nodes);
 	}
 
 	function onCancelTreePickerDialog() {
-		$(this).dialog('close');
+		$(this).dialog("close");
 	}
 
 	function initTreePickerDialogCallback() {
@@ -560,19 +588,19 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 	}
 
 	function initTreePickers(panel) {
-		panel.find('.rpt-tree-crit-open').click(function() {
-			var dialogId = $(this).data('id-opened');
+		panel.find(".rpt-tree-crit-open").click(function() {
+			var dialogId = $(this).data("id-opened");
 			var treePickerPopup = $("#" + dialogId);
-			treePickerPopup.dialog('open');
+			treePickerPopup.dialog("open");
 		});
 
-		panel.find('.rpt-tree-crit').each(initTreePickerCallback);
+		panel.find(".rpt-tree-crit").each(initTreePickerCallback);
 
 		panel.find(".rpt-tree-crit-dialog").each(initTreePickerDialogCallback);
 
 		if (preferences) {
 
-			var pickers = panel.find('.rpt-tree-crit-open');
+			var pickers = panel.find(".rpt-tree-crit-open");
 
 			$.each(pickers, function(index, picker) {
 				var id = picker.id;
@@ -581,54 +609,32 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 			});
 		}
 	}
-
+	
+	
+	/** ==================================================================== / TREE PIKER */
+	/** ==================================================================== PROJECT PIKER */
 	function initProjectPickers(panel) {
-		var url = config.contextPath + "/projects?format=picker";
+		panel.find(".rpt-projects-crit-open").each(function(){
+			var dialogId = $(this).data("id-opened");
+			var dialogSelect = "#" + dialogId;
+			var resultId = $(this).data("id-result");
+			var resultSelect = "#" + resultId;
+			var $result = $(resultSelect);
+			var $dialog = $(dialogSelect);
+			var multiSelect = $dialog.data("multi-select");
+			var projectPickerPopup ;
+			if(multiSelect){
+				projectPickerPopup = new ProjectsPickerPopup({el : dialogSelect, attributes :{ formState : formState, preferences : preferences, $result : $result } });
+			}
+			else{
+				projectPickerPopup = new SingleProjectPickerPopup({el : dialogSelect,  attributes :{ formState : formState,  preferences : preferences, $result : $result  }});
+			}
+			$(this).click(function(){projectPickerPopup.open();});
+		});
 		
-		
-		
-		
-//		$.getJSON(url).done(function(data) {
-//				
-//			var optionsHtml = _.reduce(data.projectData, function(memo, project) {
-//				var selected = (memo === "") ? "selected = '' " : "";
-//				return memo += "<option " + selected + "value='" + project[0] + "'>" + project[1] + "</option>";
-//			}, "");
-//			
-//			panel.find(".rpt-projects > select").each(function() {
-//				var $picker = $(this);
-//				
-//				if($picker.data("multi-select") === true) {
-//					$picker.attr("multiple", "multiple");
-//				}
-//				
-//				var inputId = this.name;
-//			
-//				$picker.append(optionsHtml);
-//				$picker.change(onListItemSelected("PROJECT_PICKER"));
-//				$picker.change();
-//				
-//				if (preferences) {
-//					var name = $picker.attr("name");
-//					var preferenceForName = preferences[name];
-//					options = $picker.find("option");
-//					
-//					$.each(options, function(index, option) {
-//						$.each(preferenceForName, function(index, element) {
-//							var value = element.value;
-//							if (option.value == value && element.selected) {
-//								$(option).attr("selected", true);
-//							} else if (option.value == value && !element.selected) {
-//								$(option).attr("selected", false);
-//							}
-//						});
-//					});
-//				
-//					$picker.change();
-//				});
-//			}
-//		});
 	}
+	
+/** ==================================================================== /PROJECT PIKER */
 
 	function init(settings) {
 
@@ -655,13 +661,18 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 		initViewTabs();
 		initProjectPickers(panel);
 
-		$('#generate-view').click(generateView);
-		$('#export').click(doExport);
+		$("#generate-view").click(generateView);
+		$("#export").click(doExport);
 	}
 
 	squashtm.report = {
 		init : init
 	};
 
+	squashtm.report._private = {
+			isPerimeterValid : isPerimeterValid, 
+			reduceToSelectedPicker : reduceToSelectedPicker
+	};
+	
 	return squashtm.report;
 });

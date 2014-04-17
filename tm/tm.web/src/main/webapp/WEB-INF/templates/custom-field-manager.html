@@ -62,6 +62,7 @@
   		}
   	};
   </script>
+  <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>  
   <script data-main="../../scripts/custom-field-manager.js" th:attr="data-main=@{/scripts/custom-field-manager.js}"
     src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
   </script>
@@ -105,7 +106,7 @@
 				</div>
 				
 				<div id="sub-page-buttons" class="sub-page-buttons">
-				  <input id="back" type="button" class="button" th:value="#{label.Back}" value="Retour"/>	
+				  <input id="back" type="button" class="sq-btn" th:value="#{label.Back}" value="Retour"/>	
 	
 				</div>
 				

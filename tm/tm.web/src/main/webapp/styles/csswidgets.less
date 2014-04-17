@@ -205,7 +205,7 @@
  * PRIVATE STUFF - NOT TO BE USED IN HTML CODE
  **/
 /* Private "rewrite" of .ui-widget, because there are rules not possible to "mix in" */
-.sq-widget {
+.sq-widget() {
 	.ui-widget;
 	
 	.sq-widget { font-size: 1em; }
@@ -215,8 +215,10 @@
 		font-size: 1em;
 	}
 }
-.btn-disabled {
+.btn-disabled() {
 	.ui-state-disabled;
 	
 	.ui-icon { filter:Alpha(Opacity=35); }
+	
+	opacity : 0.35;
 }

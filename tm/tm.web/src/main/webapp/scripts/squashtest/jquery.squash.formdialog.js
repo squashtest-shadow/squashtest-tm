@@ -184,11 +184,15 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui',
 					break;
 
 				case $.ui.keyCode.ENTER:
-					var state = self.options._state;
-					var btn = self.options._mainBtns[state];
-
-					if (btn !== undefined) {
-						btn.click();
+					var button = self.uiDialog.find(".ui-dialog-buttonset .ui-button:focus")[0];
+					if(!button){
+						event.preventDefault();
+						var state = self.options._state;
+						var btn = self.options._mainBtns[state];
+	
+						if (btn !== undefined) {
+							btn.click();
+						}
 					}
 					break;
 
@@ -325,7 +329,7 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui',
 		'isrich' : function($elt, value) {
 			var randomKey = Math.random().toString().substring(3,6);
 			this.options._richeditors[randomKey]=$elt;
-			var conf = confman.getStdChkeditor();
+			var conf = confman.getStdCkeditor();
 			$elt.ckeditor(function() {
 			}, conf);
 		},

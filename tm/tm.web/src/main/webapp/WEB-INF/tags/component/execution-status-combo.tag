@@ -24,6 +24,7 @@
 <%@ attribute name="id" required="true" description="The html id of the combo" %>
 <%@ attribute name="name" required="true" description="The name attribute of the combo" %>
 <%@ attribute name="allowsUntestable" required="true" description="Wether the status untestable is allowed" %>
+<%@ attribute name="allowsSettled" required="true" description="Wether the status settled is allowed" %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
@@ -33,6 +34,9 @@
 	</c:if>
 	<option value="BLOCKED" class="exec-status-option exec-status-blocked"><f:message key="execution.execution-status.BLOCKED" /></option>
 	<option value="FAILURE" class="exec-status-option exec-status-failure"><f:message key="execution.execution-status.FAILURE" /></option>
+		<c:if test="${allowsSettled}">
+		<option value="SETTLED" class="exec-status-option exec-status-settled"><f:message key="execution.execution-status.SETTLED" /></option>
+	</c:if>
 	<option value="SUCCESS" class="exec-status-option exec-status-success"><f:message key="execution.execution-status.SUCCESS" /></option>
 	<option value="READY" class="exec-status-option exec-status-ready"><f:message key="execution.execution-status.READY" /></option>
 </select >				

@@ -35,6 +35,7 @@ define([ "jquery", "app/pubsub", "app/ws/squashtm.navbar", "project-filter/Proje
 		$(".unstyled").fadeIn("fast", function() {
 			$(this).removeClass("unstyled");
 		});
+		
 	}
 
 	return {

@@ -49,6 +49,7 @@
 <c:url var="campaignPlanningUrl" value="/campaigns/${campaign.id}/planning"/>
 <c:url var="assignableUsersUrl" value="/campaigns/${campaign.id}/assignable-users" />
 <c:url var="campaignStatisticsUrl" value="/campaigns/${campaign.id}/dashboard-statistics" />
+<c:url var="campaignInfoStatisticsUrl" value="/campaigns/${campaign.id}/statistics"/>
 <c:url var="campaignStatisticsPrintUrl" value="/campaigns/${campaign.id}/dashboard"/>
 <c:url var="testCaseManagerUrl"	value="/campaigns/${campaign.id}/test-plan/manager" />
 <c:url var="workspaceUrl" value="/campaign-workspace/#" />
@@ -317,7 +318,7 @@
 	
 		<%--------------------------- /Planning section ------------------------------------%>
 		<%-- ------------------ statistiques --------------------------- --%>
-		<comp:statistics-panel statisticsEntity="${ statistics }" statisticsUrl="${ campaignStatisticsUrl }"/>
+		<comp:statistics-panel statisticsEntity="${ statistics }" statisticsUrl="${ campaignInfoStatisticsUrl }"/>
 		<%-- ------------------ /statistiques --------------------------- --%>
 	</div>
 	<div id="tabs-2" class="table-tab">
@@ -351,6 +352,7 @@
 			<f:message var="assignLabel" key="label.Assign" />
 			<f:message var="reorderLabel" key="label.Reorder" />
 			<f:message var="filterLabel" key="label.Filter" />
+            <f:message var="filterTooltip" key="tooltips.FilterTestPlan" />
 			<f:message var="reorderTooltip" key="tooltips.ReorderTestPlan" />
 			<f:message var="tooltipAddTPI" key="tooltips.AddTPIToTP" />
 			<f:message var="tooltipRemoveTPI" key="tooltips.RemoveTPIFromTP" />
@@ -359,7 +361,7 @@
 			<c:if test="${ writable }">
       <div class="left btn-toolbar">
         <div class="btn-group">
-          <button id="filter-test-plan-button" class="sq-btn btn-sm" title="${reorderTooltip}">
+          <button id="filter-test-plan-button" class="sq-btn btn-sm" title="${filterTooltip}">
             <span class="ui-icon ui-icon-refresh"></span>${filterLabel}
           </button>
           <button id="reorder-test-plan-button" class="sq-btn btn-sm" title="${reorderTooltip}">
@@ -460,7 +462,7 @@
 	
 	<%------------------------------- Dashboard ---------------------------------------------------%>
 	<div id="campaign-dashboard">
-		<dashboard:campaign-dashboard-panel url="${campaignStatisticsUrl}" printUrl="${campaignStatisticsPrintUrl}"/>
+		<dashboard:campaign-dashboard-panel url="${campaignStatisticsUrl}" printUrl="${campaignStatisticsPrintUrl}" allowsSettled="${allowsSettled}" allowsUntestable="${allowsUntestable}" />
 	</div>
 
 </div>

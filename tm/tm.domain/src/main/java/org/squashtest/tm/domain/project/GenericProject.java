@@ -91,9 +91,6 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	@Size(min = 0, max = 255)
 	@Field(analyze=Analyze.NO, store=Store.YES)
 	private String name;
-
-	@Column(name = "NON_TESTABLE_STATUS")
-	private boolean allowsNonTestableStatus = true;
 	
 	private boolean active = true;
 
@@ -152,7 +149,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		this.name = name.trim();
 	}
 
 	public void setActive(boolean isActive) {
@@ -298,11 +295,4 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 
 	public abstract void accept(ProjectVisitor visitor);
 
-	public boolean isAllowsNonTestableStatus() {
-		return allowsNonTestableStatus;
-	}
-
-	public void setAllowsNonTestableStatus(boolean allowsNonTestableStatus) {
-		this.allowsNonTestableStatus = allowsNonTestableStatus;
-	}	
 }

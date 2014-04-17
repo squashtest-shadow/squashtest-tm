@@ -26,6 +26,10 @@ import java.util.List;
 public class ExProgressProjectDto extends ExProgressAbstractDto {
 	private Long id;
 
+	private boolean allowsUntestable;
+	
+	private boolean allowsSettled;
+	
 	private List<ExProgressCampaignDto> campaigns = new LinkedList<ExProgressCampaignDto>();
 
 	public Long getId() {
@@ -48,5 +52,20 @@ public class ExProgressProjectDto extends ExProgressAbstractDto {
 		this.campaigns.add(campaignDto);
 	}
 
-	
+	public boolean isAllowsSettled() {
+		return allowsSettled;
+	}
+
+	public void setAllowsSettled(boolean allowsSettled) {
+		this.allowsSettled = allowsSettled;
+	}
+
+
+	public boolean isAllowsUntestable() {
+		return allowsUntestable;
+	}
+
+	public void setAllowsUntestable(boolean allowsUntestable) {
+		this.allowsUntestable = allowsUntestable;
+	}
 }

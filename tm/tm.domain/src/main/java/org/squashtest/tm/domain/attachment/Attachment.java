@@ -122,13 +122,13 @@ public class Attachment {
 	}
 
 	public final void setType(String strType) {
-		this.type = strType;
+		this.type = strType.trim();
 	}
 
 	private void setType() {
 		if (name != null) {
 			int position = name.lastIndexOf('.');
-			type = name.substring(position + 1);
+			setType(name.substring(position + 1));
 		}
 	}
 

@@ -35,7 +35,12 @@ public class DomainException extends RuntimeException implements Internationaliz
 		super(message);
 		this.field = field;
 	}
-
+	
+	protected DomainException(String message, String field, Throwable cause){
+		super(message, cause);
+		this.field = field	;
+	}
+	
 	protected DomainException(String field) {
 		super();
 		this.field = field;

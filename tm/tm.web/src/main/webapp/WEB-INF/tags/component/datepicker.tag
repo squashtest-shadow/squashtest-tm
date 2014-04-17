@@ -42,6 +42,7 @@ the data. Prototype is : function my_function(strParamName, iDate)"%>
 
 <f:message var="label" key="${fmtLabel}" />
 <f:message var="dateFormat" key="squashtm.dateformatShort" />
+<f:message var="dateFormatDp" key="squashtm.dateformatShort.datepicker" />
 <div >
 	<div class="datepicker-caption">
 		<label>${label}</label>&nbsp;
@@ -62,6 +63,7 @@ the data. Prototype is : function my_function(strParamName, iDate)"%>
                   
                   var params ={
                     paramName : "${paramName}",
+                    dateFormat : "${dateFormatDp}",//[Issue 3435]
                     initialDate : "${initialDate}"
                     <c:if test="${not empty url}" >,url :  "${url}"</c:if>
                     <c:if test="${not empty updateFunction}">,updateFunction : ${updateFunction} </c:if>

@@ -68,7 +68,7 @@ define(["jquery", "../domain/FieldValue", "squash.configmanager", "squash.dateut
 				
 				if(!!date){
 					strDate = this.formatDate(date);
-					time = this.element.val().split('@')[1].trim();
+					time = $.trim(this.element.val().split('@')[1]);
 					strTime = $.datepicker.formatTime(toTimeFormat, $.datepicker.parseTime(toTimeFormat, time,{})); 
 					strDate = strDate+" "+strTime;
 				}

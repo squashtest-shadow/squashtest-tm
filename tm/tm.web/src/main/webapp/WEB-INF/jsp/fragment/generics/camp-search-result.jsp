@@ -36,40 +36,41 @@
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <?xml version="1.0" encoding="utf-8" ?>
-<%@ page language="java" contentType="text/html; charset=utf-8"
-	pageEncoding="utf-8"%>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
-<c:set var="servContext"
-	value="${ pageContext.servletContext.contextPath }" />
-<c:url var="objectUrl" value="${workspace}" />
 
 <table id="search-result-datatable">
 
-	<tbody>
-		<c:forEach var="object" items="${resultList}">
+  <tbody>
+    <c:forEach var="object" items="${resultList}">
 
-	<c:set var="icon-class" value="${ (object.class.simpleName == 'Campaign') ? 'icon-campaign' : 
-												  (object.class.simpleName == 'Iteration') ? 'icon-iteration' : 
-												  'icon-folder' }"/>
+      <c:set var="iconClass" value="icon-folder" />
+      <c:choose>
+        <c:when test="${object.class.simpleName == 'Campaign'}">
+          <c:set var="iconClass" value="icon-campaign" />
+        </c:when>
+        <c:when test="${object.class.simpleName == 'Iteration'}">
+          <c:set var="iconClass" value="icon-iteration" />
+        </c:when>
+      </c:choose>
 
-			<tr class="search-items">
+      <tr class="search-items">
 
-					<td class="objectId">${object.id}</td>
-					<td id="searchnode-${object.class.simpleName}-${object.id}"
-							class="non-tree" style="border: none;">
-							<span class="icon-entity ${icon-class}"></span> 
-							<span class="search-text">${object.name}</span> 
-					</td>
-				
-			</tr>
-		</c:forEach>
-	</tbody>
+        <td class="objectId">${object.id}</td>
+        <td id="searchnode-${object.class.simpleName}-${object.id}" class="non-tree" style="border: none;">
+          <span class="icon-entity ${iconClass}"></span>
+          <span class="search-text">${object.name}</span>
+        </td>
+
+      </tr>
+    </c:forEach>
+  </tbody>
 </table>
 
 
 <comp:decorate-ajax-search-table tableId="search-result-datatable">
-	<jsp:attribute name="initialSort">[[1,'asc']]</jsp:attribute>
-	<jsp:attribute name="columnDefs">
+  <jsp:attribute name="initialSort">[[1,'asc']]</jsp:attribute>
+  <jsp:attribute name="columnDefs">
 		<dt:column-definition targets="0" sortable="false" visible="false" />
 		<dt:column-definition targets="1" sortable="false" visible="true" lastDef="true" />
 	</jsp:attribute>

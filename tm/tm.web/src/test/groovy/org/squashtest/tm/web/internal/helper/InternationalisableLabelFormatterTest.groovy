@@ -53,8 +53,8 @@ class InternationalisableLabelFormatterTest extends Specification {
 		label == formatter.formatLabel(level)
 		
 		where: 
-		clazz << [	InternationalizableLabelFormatter, LabelFormatterWithoutOrder, LevelLabelFormatter, LevelLabelFormatterWithoutOrder ]
-		label << [ "&eacute;chapp&eacute;", "&eacute;chapp&eacute;", "1-&eacute;chapp&eacute;", "&eacute;chapp&eacute;" ] 
+		clazz << [	InternationalizableLabelFormatter, LevelLabelFormatter ]
+		label << [ "&eacute;chapp&eacute;", "1-&eacute;chapp&eacute;" ] 
 	}
 	@Unroll
 	def "#clazz.simpleName should produce escaped html as asked"() {
@@ -75,8 +75,8 @@ class InternationalisableLabelFormatterTest extends Specification {
 		label == formatter.formatLabel(level)
 		
 		where: 
-		clazz << [	InternationalizableLabelFormatter, LabelFormatterWithoutOrder, LevelLabelFormatter, LevelLabelFormatterWithoutOrder ]
-		label << [ "&eacute;chapp&eacute;", "&eacute;chapp&eacute;", "1-&eacute;chapp&eacute;", "&eacute;chapp&eacute;" ] 
+		clazz << [	InternationalizableLabelFormatter, LevelLabelFormatter ]
+		label << [ "&eacute;chapp&eacute;", "1-&eacute;chapp&eacute;" ] 
 	}
 	@Unroll
 	def "#clazz.simpleName should produce unescaped html as asked"() {
@@ -97,7 +97,7 @@ class InternationalisableLabelFormatterTest extends Specification {
 		label == formatter.formatLabel(level)
 		
 		where: 
-		clazz << [	InternationalizableLabelFormatter, LabelFormatterWithoutOrder, LevelLabelFormatter, LevelLabelFormatterWithoutOrder ]
-		label << [ "échappé", "échappé", "1-échappé", "échappé" ] 
+		clazz << [	InternationalizableLabelFormatter, LevelLabelFormatter ]
+		label << [ "échappé", "1-échappé" ] 
 	}
 }

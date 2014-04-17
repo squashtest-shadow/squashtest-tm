@@ -53,7 +53,6 @@ import org.hibernate.search.annotations.ClassBridge;
 import org.hibernate.search.annotations.ClassBridges;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.Fields;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
 import org.slf4j.Logger;
@@ -89,10 +88,13 @@ import org.squashtest.tm.search.bridge.LevelEnumBridge;
 	@ClassBridge(name = "issues", store = Store.YES, impl = TestCaseIssueBridge.class),
 	@ClassBridge(name = "cufs", store = Store.YES, impl = CUFBridge.class, params = {
 		@org.hibernate.search.annotations.Parameter(name = "type", value = "testcase"),
-		@org.hibernate.search.annotations.Parameter(name = "inputType", value = "ALL") }),
-		@ClassBridge(name = "cufs", store = Store.YES, analyze = Analyze.NO, impl = CUFBridge.class, params = {
-			@org.hibernate.search.annotations.Parameter(name = "type", value = "testcase"),
-			@org.hibernate.search.annotations.Parameter(name = "inputType", value = "DROPDOWN_LIST") }) })
+		@org.hibernate.search.annotations.Parameter(name = "inputType", value = "ALL") 
+	}),
+	@ClassBridge(name = "cufs", store = Store.YES, analyze = Analyze.NO, impl = CUFBridge.class, params = {
+		@org.hibernate.search.annotations.Parameter(name = "type", value = "testcase"),
+		@org.hibernate.search.annotations.Parameter(name = "inputType", value = "DROPDOWN_LIST") 
+	})
+})
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
 public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, BoundEntity {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseLibraryNode.class);
@@ -103,7 +105,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private final int version = 1;
 
 	@NotNull
-	@Fields({ @Field(), @Field(name = "referenceSort", analyze = Analyze.NO, store = Store.YES) })
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@Size(min = 0, max = 50)
 	private String reference = "";
 
@@ -116,52 +118,54 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@OrderColumn(name = "STEP_ORDER")
 	@JoinTable(name = "TEST_CASE_STEPS", joinColumns = @JoinColumn(name = "TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "STEP_ID"))
 	@FieldBridge(impl = CollectionSizeBridge.class)
-	@Field(analyze = Analyze.NO, store = Store.YES)
+	@Field(analyze=Analyze.NO, store=Store.YES)
 	private final List<TestStep> steps = new ArrayList<TestStep>();
 
 	@NotNull
 	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE })
 	@JoinColumn(name = "VERIFYING_TEST_CASE_ID")
 	@FieldBridge(impl = CollectionSizeBridge.class)
-	@Field(name = "requirements", analyze = Analyze.NO, store = Store.YES)
+	@Field(name="requirements",analyze=Analyze.NO, store=Store.YES)
 	private Set<RequirementVersionCoverage> requirementVersionCoverages = new HashSet<RequirementVersionCoverage>(0);
 
 	@NotNull
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "testCase")
 	@OrderBy("name")
-	@Field(analyze = Analyze.NO, store = Store.YES)
+	@Field(analyze=Analyze.NO, store=Store.YES)
 	@FieldBridge(impl = CollectionSizeBridge.class)
 	private Set<Parameter> parameters = new HashSet<Parameter>(0);
 
 	@NotNull
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "testCase")
 	@OrderBy("name")
-	@Field(analyze = Analyze.NO, store = Store.YES)
+	@Field(analyze=Analyze.NO, store=Store.YES)
 	@FieldBridge(impl = CollectionSizeBridge.class)
 	private Set<Dataset> datasets = new HashSet<Dataset>(0);
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	@Field(analyze = Analyze.NO, store = Store.YES)
+	@Field(analyze=Analyze.NO, store=Store.YES)
 	@FieldBridge(impl = LevelEnumBridge.class)
 	private TestCaseImportance importance = LOW;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TC_NATURE")
-	@Field(analyze = Analyze.NO, store = Store.YES)
+	@Field(analyze=Analyze.NO, store=Store.YES)
+	@FieldBridge(impl = LevelEnumBridge.class)
 	private TestCaseNature nature = TestCaseNature.UNDEFINED;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TC_TYPE")
-	@Field(analyze = Analyze.NO, store = Store.YES)
+	@Field(analyze=Analyze.NO, store=Store.YES)
+	@FieldBridge(impl = LevelEnumBridge.class)
 	private TestCaseType type = TestCaseType.UNDEFINED;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TC_STATUS")
-	@Field(analyze = Analyze.NO, store = Store.YES)
+	@Field(analyze=Analyze.NO, store=Store.YES)
 	@FieldBridge(impl = LevelEnumBridge.class)
 	private TestCaseStatus status = TestCaseStatus.WORK_IN_PROGRESS;
 
@@ -693,7 +697,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	protected void addParameter(@NotNull Parameter parameter) {
 		Parameter homonyme = findParameterByName(parameter.getName());
 		if (homonyme != null && !homonyme.equals(parameter)) {
-			throw new NameAlreadyInUseException(Parameter.class.getSimpleName(), parameter.getName());
+				throw new NameAlreadyInUseException(Parameter.class.getSimpleName(), parameter.getName());
 		}
 		this.parameters.add(parameter);
 

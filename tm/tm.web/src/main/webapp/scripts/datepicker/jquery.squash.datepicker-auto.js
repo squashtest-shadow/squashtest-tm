@@ -96,7 +96,9 @@ function dpa_initialize() {
 	// init the datepicker
 	$(this.controls.datepick).datepicker();
 	var me = this;
-
+	if(this.params.dateFormat){//[Issue 3435]
+		$(this.controls.datepick).datepicker( "option", "dateFormat", this.params.dateFormat );
+	}
 	$(this.controls.datepick).datepicker("option", "onClose", function() {
 		try {
 			var currentDate = $(me.controls.datepick).datepicker("getDate");

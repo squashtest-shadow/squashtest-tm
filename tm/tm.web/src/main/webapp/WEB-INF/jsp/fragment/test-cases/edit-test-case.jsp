@@ -26,11 +26,14 @@
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%@ taglib prefix="tc" tagdir="/WEB-INF/tags/test-cases-components"%>
 <%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform" %>
-
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 
 <?xml version="1.0" encoding="utf-8" ?>
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
+
+
+<f:message key="tabs.label.issues" var="tabIssueLabel"/>
 
 <%-- used for copy/paste of steps --%>
 <script>
@@ -45,7 +48,10 @@ require(["common"], function() {
 <c:url var="testCaseUrl" 					value="/test-cases/${testCase.id}"/>
 <c:url var="executionsTabUrl"				value="/test-cases/${testCase.id}/executions?tab="/>
 <c:url var="stepTabUrl"						value="/test-cases/${testCase.id}/steps/panel" />
- <c:url var="importanceAutoUrl" 				value="/test-cases/${testCase.id}/importanceAuto"/>
+<c:url var="importanceAutoUrl" 				value="/test-cases/${testCase.id}/importanceAuto"/>
+<c:url var="customFieldsValuesURL" 			value="/custom-fields/values" />
+<c:url var="btEntityUrl" 					value="/bugtracker/test-case/${testCase.id}"/>
+<c:url var="automationUrl"					value="/test-cases/${testCase.id}/test-automation" />
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <%-- 
@@ -53,6 +59,7 @@ require(["common"], function() {
 	was granted for that object. 
 --%>
 
+<c:set var="writable" value="${false }"/>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE"
 	domainObject="${ testCase }">
 	<c:set var="writable" value="${ true }" />
@@ -157,29 +164,14 @@ require(["common"], function() {
 </div>
 </csst:jq-tab>
 
-
-<%-- ===================================== INIT =============================== --%>
-
-<tc:test-case-main-js testCase="${testCase}" isInfoPage="${param.isInfoPage}" callingTestCasesModel="${callingTestCasesModel}"/>
-
-<%-- ===================================== /INIT =============================== --%>
-
-
 <%-- ===================================== popups =============================== --%>
 
-<tc:test-case-popups testCase="${testCase}" writable="${writable}" deletable="${deletable}" />
+<tc:test-case-popups writable="${writable}" />
 
 <%-- ===================================== /popups =============================== --%>
 		
-<%-- ===================================== Test Automation code  =============================== --%>
 
-<c:if test="${testCase.project.testAutomationEnabled}">
-	<tc:testcase-script-elt-code testCase="${testCase}"
-								 canModify="${writable}" 
-								 testCaseUrl="${testCaseUrl}" />
-</c:if>
-
-<%-- ===================================== /Test Automation code  ===============================  --%>
+<%-- ===================================== INIT =============================== --%>
 
 <script type="text/javascript" th:inline="javascript">
 	/*<![CDATA[*/
@@ -189,20 +181,28 @@ require(["common"], function() {
         require([ "jquery", "test-case-management" ],
 			function($, testCaseManagement) {
 					var settings = {
-							urls : {
-								testCaseUrl : "${testCaseUrl}",
-								importanceAutoUrl : "${importanceAutoUrl}"
-							},
-							writable : ${writable},
-							testCaseImportanceComboJson : ${testCaseImportanceComboJson},
-							testCaseNatureComboJson : ${testCaseNatureComboJson},
-							testCaseStatusComboJson : ${testCaseStatusComboJson},
-							testCaseTypeComboJson : ${testCaseTypeComboJson},							
-							importanceAuto : ${testCase.importanceAuto},
-							testCaseId : ${testCase.id}
+						urls : {
+							testCaseUrl : "${testCaseUrl}",
+							importanceAutoUrl : "${importanceAutoUrl}",
+							cufValuesUrl : "${customFieldsValuesURL}?boundEntityId=${testCase.boundEntityId}&boundEntityType=${testCase.boundEntityType}",
+							bugtrackerUrl : "${btEntityUrl}",
+							automationUrl : "${automationUrl}"
+						},
+						writable : ${writable},
+						testCaseImportanceComboJson : ${testCaseImportanceComboJson},
+						testCaseNatureComboJson : ${testCaseNatureComboJson},
+						testCaseStatusComboJson : ${testCaseStatusComboJson},
+						testCaseTypeComboJson : ${testCaseTypeComboJson},							
+						importanceAuto : ${testCase.importanceAuto},
+						testCaseId : ${testCase.id},
+						callingTestCases : ${json:serialize(callingTestCasesModel.aaData)},
+						hasCufs : ${hasCUF},
+						hasBugtracker : ${testCase.project.bugtrackerConnected},
+						isAutomated : ${testCase.project.testAutomationEnabled}
 					};
 					
 				$(function() {
+					testCaseManagement.initStructure(settings);
 					testCaseManagement.initInfosTab(settings);
 				});
 			});

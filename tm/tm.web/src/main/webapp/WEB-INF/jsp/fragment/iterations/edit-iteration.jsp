@@ -229,23 +229,21 @@
 
 		
 		<%----------------------------------- Custom Fields -----------------------------------------------%>
-		
-		<comp:toggle-panel id="iteration-custom-fields" 
-			titleKey="generics.customfieldvalues.title"
-			open="${hasCUF}">
-			<jsp:attribute name="body">
+
+      <comp:toggle-panel id="iteration-custom-fields" titleKey="generics.customfieldvalues.title" open="${hasCUF}">
+        <jsp:attribute name="body">
 				<div id="iteration-custom-fields-content" class="display-table">
-<c:if test="${hasCUF}">
-				<comp:waiting-pane/>
-</c:if>
+                <c:if test="${hasCUF}">
+			     	<comp:waiting-pane />
+                </c:if>
 				</div>
 			</jsp:attribute>
-		</comp:toggle-panel>
-		
-		
+      </comp:toggle-panel>
 
 
-		<%--------------------------- Planning section ------------------------------------%>
+
+
+      <%--------------------------- Planning section ------------------------------------%>
 
 		<comp:toggle-panel id="datepicker-panel"
 			titleKey="label.Planning"
@@ -314,7 +312,7 @@
 
 	<%------------------------------- Dashboard ---------------------------------------------------%>
 	<div id="dashboard-iteration">
-		<dashboard:iteration-dashboard-panel url="${iterationDashboardStatisticsUrl}" printUrl="${iterationStatisticsPrintUrl}"/>
+		<dashboard:iteration-dashboard-panel url="${iterationDashboardStatisticsUrl}" printUrl="${iterationStatisticsPrintUrl}" allowsSettled="${allowsSettled}" allowsUntestable="${allowsUntestable}" />
 	</div>
 
 
@@ -365,10 +363,10 @@
 	require(["common"], function(){
 			require(["jquery", "squash.basicwidgets", "contextual-content-handlers", 
 			         "jquery.squash.fragmenttabs", "bugtracker", "workspace.event-bus", 
-			         "iteration-management"], 
-					function($, basicwidg, contentHandlers, Frag, bugtracker, eventBus, itermanagement, basic){
+			         "iteration-management", "app/ws/squashtm.workspace" ], 
+					function($, basicwidg, contentHandlers, Frag, bugtracker, eventBus, itermanagement, WS){
 		$(function(){
-
+                 WS.init();
 				basicwidg.init();
 				
 				// *********** event handler ***************

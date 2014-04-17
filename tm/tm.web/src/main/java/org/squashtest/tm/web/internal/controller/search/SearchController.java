@@ -43,11 +43,7 @@ public class SearchController {
 
 	private static final String WORKSPACE = "workspace";
 	
-//	private static final String PROJECT_LIST = "projectList";
-	
 	private static final String NODE_NAME = "nodeName";
-
-	private static final String ICON = "icon";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SearchController.class);
 	private static final String NODE_NAME_REJEX = "-";
@@ -84,14 +80,12 @@ public class SearchController {
 		ModelAndView mav;
 
 		if (isOrdered) {
-			mav = new ModelAndView("fragment/generics/search-result-display-ordered");
+			mav = new ModelAndView("fragment/generics/camp-search-result-ordered");
 		} else {
-			mav = new ModelAndView("fragment/generics/search-result-display");
+			mav = new ModelAndView("fragment/generics/camp-search-result");
 		}
 
 		mav.addObject(RESULT_LIST, resultList);
-		mav.addObject(ICON, "Campaign");
-		mav.addObject(WORKSPACE, "campaign");
 
 		return mav;
 	}

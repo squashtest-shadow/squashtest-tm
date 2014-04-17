@@ -50,6 +50,7 @@
 <%@ attribute name="jsVarName" required="false"
 	description="set the name of the javascript DatepickerAuto object to be able to use it outside this tag"%>
 
+<f:message var="dateFormatDp" key="squashtm.dateformatShort.datepicker" />
 <c:if test="${ (empty editable) or editable }">
 	<script type="text/javascript">
 require(["common"], function() {
@@ -71,6 +72,7 @@ var myDatePicker;
 		
 		var params ={
 			paramName : "${paramName}",
+			dateFormat : "${dateFormatDp}",
 			modeParamName : "${autosetParamName}",
 			url :  "${url}",
 			initialDate : "${initialDate}",
@@ -94,7 +96,7 @@ var myDatePicker;
 
 <f:message var="label" key="${fmtLabel}" />
 <f:message var="dateFormat" key="squashtm.dateformatShort" />
-
+<f:message var="dateFormatDp" key="squashtm.dateformatShort.datepicker" />
 <div>
 	<div class="datepicker-caption">
 		<label>${label}</label>&nbsp;

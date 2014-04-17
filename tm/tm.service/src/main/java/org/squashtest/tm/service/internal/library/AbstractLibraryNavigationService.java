@@ -356,10 +356,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 		
 	}
 
-	public int generateUniqueCopyNumber(List<String> copiesNames, String sourceName) {
-
-		return LibraryUtils.generateUniqueCopyNumber(copiesNames, sourceName, COPY_TOKEN);
-	}
+	
 
 
 

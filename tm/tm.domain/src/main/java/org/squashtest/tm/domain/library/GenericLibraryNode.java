@@ -56,10 +56,10 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 
 	@NotBlank
 	@Fields({
-		@Field,
-		@Field(name = "label", analyze = Analyze.NO, store = Store.YES),
-		@Field(name = "labelUpperCased", analyze = Analyze.NO, store = Store.YES, bridge = @FieldBridge(impl = UpperCasedStringBridge.class)), })
-	@Size(min = 0, max = 255)
+			@Field,
+			@Field(name = "label", analyze = Analyze.NO, store = Store.YES),
+			@Field(name = "labelUpperCased", analyze = Analyze.NO, store = Store.YES, bridge = @FieldBridge(impl = UpperCasedStringBridge.class)), })
+	@Size(min = 0, max = MAX_NAME_SIZE)
 	private String name;
 
 	@Lob
@@ -81,7 +81,7 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 
 	@Override
 	public void setName(String name) {
-		this.name = name;
+		this.name = name.trim();
 	}
 
 	public void setDescription(String description) {
@@ -116,16 +116,16 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 
 
 	// ******************* other utilities ****************************
-
+	
 	/*
 	 * Issue 1713
 	 * 
-	 * Due to the mixed use of actual instances and javassist proxies, comparisons may fail. Thus the
-	 * redefinition of hashCode() and equals() below, that take account of the lazy loading and
-	 * the fact that the compared objects may be of different classes.
+	 * Due to the mixed use of actual instances and javassist proxies, comparisons may fail. Thus the 
+	 * redefinition of hashCode() and equals() below, that take account of the lazy loading and 
+	 * the fact that the compared objects may be of different classes. 
 	 * 
 	 */
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 67;

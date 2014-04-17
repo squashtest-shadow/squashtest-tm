@@ -29,7 +29,7 @@ public enum TestPlanStatus implements Internationalizable {
 	/**
 	 * 
 	 * @param statistics a {@link TestPlanStatistics}
-	 * @return DONE if all test-plan-item are "untestable", "failed", "success" or "blocked"<br>
+	 * @return DONE if all test-plan-item are "settled", "untestable", "failed", "success" or "blocked"<br>
 	 * 		   READY if all test-plan item are "ready"
 	 * 		   RUNNING otherwise
 	 */

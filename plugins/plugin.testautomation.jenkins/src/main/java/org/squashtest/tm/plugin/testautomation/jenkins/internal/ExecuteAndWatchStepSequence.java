@@ -33,7 +33,6 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.GetBui
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.StartBuild;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 
-
 class ExecuteAndWatchStepSequence extends HttpBasedStepSequence implements StepSequence {
 
 	
