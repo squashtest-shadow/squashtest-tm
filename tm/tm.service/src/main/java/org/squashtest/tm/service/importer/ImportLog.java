@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.importer;
 
-import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.SortedSet;
@@ -31,31 +30,32 @@ import org.squashtest.tm.service.internal.batchimport.LogTrain;
 public class ImportLog {
 
 	//key : EntityType, values : LogEntry
+	@SuppressWarnings("rawtypes")
 	private MultiValueMap logEntriesPerType = MultiValueMap.decorate(new HashMap(), SortedSet.class);
-	
+
 	private int testCaseSuccess=0;
 	private int testCaseWarnings=0;
 	private int testCaseFailures=0;
-	
+
 	private int testStepSuccess=0;
 	private int testStepWarnings=0;
 	private int testStepFailures=0;
-	
+
 	private int parametersSuccess=0;
 	private int parametersWarnings=0;
 	private int parametersFailures=0;
-	
+
 	private int datasetSuccess=0;
 	private int datasetWarnings=0;
 	private int datasetFailures=0;
-	
-	private URL reportURL;
-	
+
+	private String reportUrl;
+
 
 	public void addLogEntry(LogEntry logEntry){
 		logEntriesPerType.put(logEntry.getTarget().getType(), logEntry);
 	}
-	
+
 	public void appendLogTrain(LogTrain train){
 		for (LogEntry entry : train.getEntries()){
 			logEntriesPerType.put(entry.getTarget().getType(), entry);
@@ -67,9 +67,9 @@ public class ImportLog {
 		return logEntriesPerType.getCollection(type);
 	}
 
-	
+
 	public void recompute(){
-		
+
 		for ( LogEntry entry : findAllFor(EntityType.TEST_CASE) ){
 			switch(entry.getStatus()){
 			case OK : testCaseSuccess++; break;
@@ -78,7 +78,7 @@ public class ImportLog {
 			default : break;
 			}
 		}
-		
+
 		for ( LogEntry entry : findAllFor(EntityType.TEST_STEP)){
 			switch(entry.getStatus()){
 			case OK : testStepSuccess++; break;
@@ -87,7 +87,7 @@ public class ImportLog {
 			default : break;
 			}
 		}
-		
+
 		for ( LogEntry entry : findAllFor(EntityType.PARAMETER)){
 			switch(entry.getStatus()){
 			case OK : parametersSuccess++; break;
@@ -96,7 +96,7 @@ public class ImportLog {
 			default : break;
 			}
 		}
-		
+
 		for ( LogEntry entry : findAllFor(EntityType.DATASET)){
 			switch(entry.getStatus()){
 			case OK : datasetSuccess++; break;
@@ -106,9 +106,9 @@ public class ImportLog {
 			}
 		}
 
-		
+
 	}
-	
+
 
 	public int getTestCaseSuccess() {
 		return testCaseSuccess;
@@ -161,12 +161,12 @@ public class ImportLog {
 		return datasetFailures;
 	}
 
-	public URL getReportURL() {
-		return reportURL;
+	public String getReportUrl() {
+		return reportUrl;
 	}
-	
-	public void setReportURL(URL reportURL){
-		this.reportURL = reportURL;
+
+	public void setReportUrl(String reportURL){
+		this.reportUrl = reportURL;
 	}
-	
+
 }

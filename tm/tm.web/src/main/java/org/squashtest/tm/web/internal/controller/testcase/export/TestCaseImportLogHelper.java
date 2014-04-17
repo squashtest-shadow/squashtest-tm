@@ -20,47 +20,48 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.export;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Locale;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.MessageSource;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.WebRequest;
 import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.importer.LogEntry;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
-@Controller
-@RequestMapping("/testcase-import")
-public class TestCaseWhateverImportController {
+@Component
+class TestCaseImportLogHelper {
 
 	@Inject
-	private MessageSource messageSource;
+	private InternationalizationHelper messageSource;
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseWhateverImportController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseImportLogHelper.class);
 
 	private void writeToTab(Collection<LogEntry> entries, XSSFWorkbook workbook, String sheetName, Locale locale) {
+		if (entries.size() > 0) {
+			// Create a blank sheet
+			XSSFSheet sheet = workbook.createSheet(sheetName);
 
-		// Create a blank sheet
-		XSSFSheet sheet = workbook.createSheet(sheetName);
-
-		writeHeaderToTab(sheet);
-		writeEntriesToTab(entries, sheet, locale);
-
+			writeHeaderToTab(sheet);
+			writeEntriesToTab(entries, sheet, locale);
+		}
 	}
 
 	private void writeHeaderToTab(XSSFSheet sheet) {
@@ -94,53 +95,68 @@ public class TestCaseWhateverImportController {
 			cell = row.createCell(cellnum++);
 			writeValueToCell(cell, "MISSING INFO");
 			cell = row.createCell(cellnum++);
-			writeValueToCell(cell, messageSource.getMessage(entry.getI18nError(), null, locale));
+			writeValueToCell(cell, messageSource.internationalize(entry.getI18nError(), locale));
 			cell = row.createCell(cellnum++);
-			writeValueToCell(cell, messageSource.getMessage(entry.getI18nImpact(), null, locale));
+			writeValueToCell(cell, messageSource.internationalize(entry.getI18nImpact(), locale));
 		}
 	}
 
-	@RequestMapping(method = RequestMethod.GET, params = { "importLog", "export=csv" })
-	public @ResponseBody
-	void writeImportController(ImportLog importLog, HttpServletResponse response, Locale locale) throws IOException {
+	public void writeToFile(ImportLog importLog, File emptyFile) throws IOException {
+		XSSFWorkbook workbook = buildWorkbook(importLog);
+		writeToFile(emptyFile, workbook);
 
-		// Building the workbook
+	}
+
+	private void writeToFile(File emptyFile, XSSFWorkbook workbook) throws IOException {
+		BufferedOutputStream os = null;
+		try {
+			os = new BufferedOutputStream(new FileOutputStream(emptyFile));
+			workbook.write(os);
+		} catch (IOException e) {
+			LOGGER.warn(e.getMessage(), e);
+			throw e;
+		} finally {
+			IOUtils.closeQuietly(os);
+		}
+	}
+
+	private XSSFWorkbook buildWorkbook(ImportLog importLog) {
 		XSSFWorkbook workbook = new XSSFWorkbook();
+		Locale locale = LocaleContextHolder.getLocale();
 
 		Collection<LogEntry> logEntriesForTestcases = importLog.findAllFor(EntityType.TEST_CASE);
-		if (logEntriesForTestcases.size() > 0) {
-			writeToTab(logEntriesForTestcases, workbook, "TEST CASE", locale);
-		}
+		writeToTab(logEntriesForTestcases, workbook, "TEST CASE", locale);
 
 		Collection<LogEntry> logEntriesForTeststeps = importLog.findAllFor(EntityType.TEST_STEP);
-		if (logEntriesForTeststeps.size() > 0) {
-			writeToTab(logEntriesForTeststeps, workbook, "TEST STEP", locale);
-		}
+		writeToTab(logEntriesForTeststeps, workbook, "TEST STEP", locale);
 
 		Collection<LogEntry> logEntriesForParameters = importLog.findAllFor(EntityType.PARAMETER);
-		if (logEntriesForParameters.size() > 0) {
-			writeToTab(logEntriesForParameters, workbook, "PARAMETER", locale);
-		}
+		writeToTab(logEntriesForParameters, workbook, "PARAMETER", locale);
 
 		Collection<LogEntry> logEntriesForDatasets = importLog.findAllFor(EntityType.DATASET);
-		if (logEntriesForDatasets.size() > 0) {
-			writeToTab(logEntriesForDatasets, workbook, "DATASET", locale);
-		}
-
-		// Writing the workbook to the response output stream
-		try {
-
-			response.setContentType("application/octet-stream");
-
-			response.setHeader("Content-Disposition",
-					"attachment; filename=" + "import-log-" + IsoDateUtils.formatIso8601DateTime(new Date()) + ".csv");
-
-			workbook.write(response.getOutputStream());
-
-		} catch (IOException ex) {
-			LOGGER.error(ex.getMessage());
-			throw ex;
-		}
-
+		writeToTab(logEntriesForDatasets, workbook, "DATASET", locale);
+		return workbook;
 	}
+
+	/**
+	 * Builds filename from iso timestamp
+	 * 
+	 * @param logTimeStamp
+	 * @return
+	 */
+	public String logFilename(@NotNull String logTimeStamp) {
+		String logFilename = "test-case-import-log-" + logTimeStamp;
+		return logFilename;
+	}
+
+	public void storeLogFile(WebRequest request, File xlsSummary, String logTimeStamp) {
+		String logFilename = logFilename(logTimeStamp);
+		request.setAttribute(logFilename, xlsSummary, RequestAttributes.SCOPE_SESSION);
+	}
+
+	public File fetchLogFile(WebRequest request, String logTimeStamp) {
+		String logFilename = logFilename(logTimeStamp);
+		return (File) request.getAttribute(logFilename, RequestAttributes.SCOPE_SESSION);
+	}
+
 }

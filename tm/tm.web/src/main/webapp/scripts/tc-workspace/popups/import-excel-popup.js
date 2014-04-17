@@ -47,24 +47,7 @@ define([ "jquery", "tree", "workspace/workspace.import-popup" ], function($, zet
  */
 	recapBuilder.xls = function(json) {
 		this.template = this.template || Handlebars.compile($("#xls-import-recap-tpl").html()); // caching
-
-		var recap = {
-				testCaseSuccess: 10,
-				testCaseWarning: 20,
-				testCaseFailure: 30,
-				testStepSuccess: 10,
-				testStepWarning: 20,
-				testStepFailure: 30,
-				parameterSuccess: 10,
-				parameterWarning: 20,
-				parameterFailure: 30,
-				datasetSuccess: 10,
-				datasetWarning: 20,
-				datasetFailure: 30,
-				xlsRecapUrl: "http://foo.bar"
-		};
-
-		return this.template(recap);
+		return this.template(json);
 	};
 
 	$.widget("squash.tcimportDialog", $.squash.importDialog, {
