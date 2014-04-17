@@ -115,10 +115,10 @@ define([ "jquery", "underscore", "jquery.squash.formdialog", "jform" ], function
 
 		validate : function() {
 			var fileUploads = this.getForm().find("input[type='file']");
-			var fileNames = _.map(fileUploads, function(item) { return item.value; });
+			var fileNames = _.map(fileUploads, function(item) { return item.value.toLowerCase(); });
 
 			var self = this;
-			var nameToValidMapper = function(name) { return _.some(self.options.formats, function(ext) { return name.match("." + ext + "$"); }); };
+			var nameToValidMapper = function(name) { return _.some(self.options.formats, function(ext) { return name.match("." + ext.toLowerCase() + "$"); }); };
 			var validNames = _.map(fileNames, nameToValidMapper);
 
 			return _.every(validNames);
@@ -153,11 +153,7 @@ define([ "jquery", "underscore", "jquery.squash.formdialog", "jform" ], function
 				var url = root;
 				url += (!!params && !!params.urlPostfix) ? params.urlPostfix : "";
 				url += "?upload-ticket=" + self.options._ticket;
-
-				if (!!params && !!params.queryParams) {
-					var queryStringReducer = function(memo, value, key) { return memo += "&"+encodeURIComponent(key)+"=" +encodeURIComponent(value); };
-					url += _.reduce(params.queryParams, queryStringReducer, "");
-				}
+				url += (!!params && !!params.queryParams) ? ("&" + $.param(params.queryParams)) : "";
 
 				return url;
 			};
