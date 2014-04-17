@@ -19,50 +19,47 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.web.internal.controller.testcase.export;
+package org.squashtest.tm.web.internal.controller.testcase.export
 
-import org.junit.Test;
 import org.springframework.web.context.request.WebRequest;
 import org.squashtest.tm.service.importer.ImportLog;
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 /**
  * @author Gregory Fouquet
  *
  */
-class TestCaseImportControllerTest extends Specification {
-	TestCaseImportController controller = new TestCaseImportController()
-	TestCaseImportLogHelper logHelper = Mock()
-
-
-	def setup() {
-		controller.logHelper = logHelper
-	}
-	def "should create import log file"() {
+class TestCaseImportLogHelperTest extends Specification {
+	TestCaseImportLogHelper helper = new TestCaseImportLogHelper()
+	def "should store log"() {
 		given:
-		ImportLog log = new ImportLog()
-
-		when:
-		File f = controller.importLogToLogFile(log)
-
-		then:
-		f.exists()
-	}
-	def "should gnerate import log"() {
-		given:
-		ImportLog log = new ImportLog()
+		File xlsLog = new File(".");
 
 		and:
 		WebRequest request = Mock()
 		request.contextPath >> "squashtm"
 
 		when:
-		controller.generateImportLog(request, log)
+		helper.storeLogFile(request, xlsLog, "xxx")
 
 		then:
-		log.reportUrl.startsWith "/squashtm/test-cases/import-logs/"
-		1 * logHelper.storeLogFile(request, _, _)
+		1 * request.setAttribute("test-case-import-log-xxx", xlsLog, WebRequest.SCOPE_SESSION)
+
+	}
+	def "should retrieve log"() {
+		given:
+		File xlsLog = new File(".");
+
+		and:
+		WebRequest request = Mock()
+		request.contextPath >> "squashtm"
+
+		when:
+		xlsLog == helper.fetchLogFile(request, "xxx");
+
+		then:
+		1 * request.getAttribute("test-case-import-log-xxx", WebRequest.SCOPE_SESSION) >> xlsLog
 
 	}
 

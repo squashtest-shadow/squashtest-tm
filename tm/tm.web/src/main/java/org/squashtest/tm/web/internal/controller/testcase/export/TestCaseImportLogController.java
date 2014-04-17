@@ -21,19 +21,14 @@
 
 package org.squashtest.tm.web.internal.controller.testcase.export;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -51,30 +46,12 @@ public class TestCaseImportLogController {
 	@Inject
 	private TestCaseImportLogHelper logHelper;
 
-	@RequestMapping(value = "{timestamp}", method = RequestMethod.GET)
-	public void getExcelImportLog(String timestamp, WebRequest request, HttpServletResponse response) {
+	@RequestMapping(value = "/{timestamp}", method = RequestMethod.GET)
+	public FileSystemResource getExcelImportLog(String timestamp, WebRequest request, HttpServletResponse response) {
 		File logFile = logHelper.fetchLogFile(request, timestamp);
+		response.setContentType("application/octet-stream");
+		response.setHeader("Content-Disposition", "attachment; filename=" + logHelper.logFilename(timestamp) + ".xls");
 
-		if (logFile.exists()) {
-			InputStream is = null;
-			try {
-				response.setContentType("application/octet-stream");
-				response.setHeader("Content-Disposition", "attachment; filename=" + logHelper.logFilename(timestamp)
-						+ ".xls");
-				is = new BufferedInputStream(new FileInputStream(logFile));
-				IOUtils.copy(is, response.getOutputStream());
-				response.flushBuffer();
-
-			} catch (IOException e) {
-				LOGGER.warn("Could not read test-case import log " + logFile.getPath(), e);
-				throw new RuntimeException(e);
-
-			} finally {
-				IOUtils.closeQuietly(is);
-			}
-		} else {
-			response.setStatus(HttpStatus.NOT_FOUND.value());
-			// TODO should redirect somehow
-		}
+		return new FileSystemResource(logFile);
 	}
 }
