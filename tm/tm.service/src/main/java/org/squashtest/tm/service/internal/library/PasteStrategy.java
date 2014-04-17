@@ -37,8 +37,28 @@ import org.squashtest.tm.service.internal.repository.EntityDao;
 import org.squashtest.tm.service.internal.repository.GenericDao;
 
 /**
- * Careful : As of Squash TM 1.5.0 this object becomes stateful, in layman words you need one instance per operation.
+ * Careful : As of Squash TM 1.5.0 this object becomes stateful, in layman words you need one instance per operation. <br/>
+ * <br/>
+ * This class holds the logic for processing all nodes in operations that need to go throug a node branch. So far it is
+ * used for copying and moving nodes. When moving nodes it can be necessary to go throug the branch to update cufs etc.
+ * (see {@linkplain NextLayersTreeNodeMover}. <br/>
+ * <br/>
+ * To use the PasteStategy, you need to define the CONTAINER type, the {@linkplain #nodeDao} and the
+ * {@linkplain #containerDao}. This is done in <b>bundle-context.xml</b>, look for examples there. <br/>
+ * <br/>
+ * You will also need to define the operations that needs to be done for the nodes in the first and next layers. This is
+ * done when the PasteStrategy is being used (see
+ * {@linkplain AbstractLibraryNavigationService#makeCopierStrategy(PasteStrategy)} and
+ * {@linkplain AbstractLibraryNavigationService#makeMoverStrategy(PasteStrategy)} as examples).
+ * <br><br>
  * 
+ * <u>What is a layer ?</u><br>
+ * A layer is a map holing
+ * <ul>
+ * <li>a key : the destination , a {@link NodeContainer}</li>
+ * <li>a value : the list of source {@link TreeNode} that will be processed by a {@link PasteOperation} and which result will be
+ * added to the destination</li>
+ * </ul>
  * 
  * @author gfouquet, mpagnon, bsiri
  * 
@@ -52,7 +72,6 @@ import org.squashtest.tm.service.internal.repository.GenericDao;
  * @Scope("prototype")
  */
 public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends TreeNode> {
-
 
 	// **************** collaborators **************************
 
@@ -95,14 +114,14 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	List<NODE> outputList;
 	Map<NodeContainer<TreeNode>, Collection<TreeNode>> nextLayer;
 	Map<NodeContainer<TreeNode>, Collection<TreeNode>> sourceLayer;
-	Map<NodeContainer<TreeNode>, Collection<TreeNode>> parents;
+	Map<NodeContainer<TreeNode>, Collection<TreeNode>> sourceLayerParents;
 
 	// ******************* code *****************************
 
 	public List<NODE> pasteNodes(long containerId, List<Long> list) {
 
 		// fetch
-		CONTAINER container = containerDao.findById(containerId);		
+		CONTAINER container = containerDao.findById(containerId);
 
 		// proceed : will process the nodes layer by layer.
 		init(list.size());
@@ -123,11 +142,11 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 
 		return outputList;
 	}
-	
+
 	public List<NODE> pasteNodes(long containerId, List<Long> list, int position) {
 
 		// fetch
-		CONTAINER container = containerDao.findById(containerId);		
+		CONTAINER container = containerDao.findById(containerId);
 
 		// proceed : will process the nodes layer by layer.
 		init(list.size());
@@ -150,29 +169,30 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	}
 
 	private void init(int nbCopiedNodes) {
-		firstOperation= createFirstLayerOperation();
+		firstOperation = createFirstLayerOperation();
 		nextsOperation = createNextLayerOperation();
 		outputList = new ArrayList<NODE>(nbCopiedNodes);
 		nextLayer = new HashMap<NodeContainer<TreeNode>, Collection<TreeNode>>();
 		sourceLayer = null;
-		parents = null;
+		sourceLayerParents = null;
 	}
 
 	private void removeProcessedNodesFromCache() {
-		if (parents != null) {
+		if (sourceLayerParents != null) {
 			// if we cont flush and then evict, some entities might not be persisted
 			genericDao.flush();
-			
+
 			Collection<TreeNode> evicted = new HashSet<TreeNode>();
 			// when moving to a next layer, evict the nodes that won't be used anymore - those who will not receive
 			// content anymore.
 			// note: will note evict the nodes to return because they never been in the "sourceLayer" map.
-			for (Entry<NodeContainer<TreeNode>, Collection<TreeNode>> processedLayerEntry : parents.entrySet()) {
+			for (Entry<NodeContainer<TreeNode>, Collection<TreeNode>> processedLayerEntry : sourceLayerParents
+					.entrySet()) {
 				NodeContainer<TreeNode> container = processedLayerEntry.getKey();
 				Collection<TreeNode> content = processedLayerEntry.getValue();
 				genericDao.clearFromCache(container);
-				for(TreeNode node : content){
-					if(!evicted.contains(node)){
+				for (TreeNode node : content) {
+					if (!evicted.contains(node)) {
 						evicted.add(node);
 						genericDao.clearFromCache(node);
 					}
@@ -182,7 +202,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	}
 
 	private void shiftToNextLayer() {
-		parents = sourceLayer;
+		sourceLayerParents = sourceLayer;
 		sourceLayer = nextLayer;
 		nextLayer = new HashMap<NodeContainer<TreeNode>, Collection<TreeNode>>();
 	}
@@ -195,26 +215,29 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 			outputList.add(outputNode);
 			if (firstOperation.isOkToGoDeeper()) {
 				appendNextLayerNodes(srcNode, outputNode);
-			}			
+			}
 		}
-		
+
 	}
 
 	@SuppressWarnings("unchecked")
 	private void processFirstLayer(CONTAINER container, List<Long> list, int position) {
 		for (Long id : list) {
 			NODE srcNode = nodeDao.findById(id);
-			NODE outputNode = (NODE) firstOperation.performOperation(srcNode, (NodeContainer<TreeNode>) container, position);
+			NODE outputNode = (NODE) firstOperation.performOperation(srcNode, (NodeContainer<TreeNode>) container,
+					position);
 			outputList.add(outputNode);
+			position++;
 			if (firstOperation.isOkToGoDeeper()) {
-				position++;
-				appendNextLayerNodes(srcNode, outputNode, position);
-			}			
+				appendNextLayerNodes(srcNode, outputNode);
+			}
 		}
-		
+
 	}
 
-	
+	/**
+	 * Process non first layer.
+	 */
 	private void processLayer() {
 
 		for (Entry<NodeContainer<TreeNode>, Collection<TreeNode>> sourceEntry : sourceLayer.entrySet()) {
@@ -223,24 +246,23 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 			NodeContainer<TreeNode> destination = sourceEntry.getKey();
 
 			for (TreeNode source : sources) {
-				TreeNode outputNode = nextsOperation.performOperation(source, destination);	
+				TreeNode outputNode = nextsOperation.performOperation(source, destination);
 				if (nextsOperation.isOkToGoDeeper()) {
 					appendNextLayerNodes(source, outputNode);
 				}
 			}
 		}
-		
+
 	}
 
 	private PasteOperation createNextLayerOperation() {
 		return nextLayersOperationFactory.getObject();
 	}
-	
+
 	private PasteOperation createFirstLayerOperation() {
 		return firstLayerOperationFactory.getObject();
 	}
 
-	
 	/**
 	 * feeds next layer avoiding nodes from the outputList.
 	 * 
@@ -249,12 +271,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	 */
 	private void appendNextLayerNodes(TreeNode sourceNode, TreeNode destNode) {
 		NextLayerFeeder feeder = nextLayerFeederOperationFactory.getObject();
-		feeder.feedNextLayer( destNode,sourceNode, this.nextLayer, this.outputList);
+		feeder.feedNextLayer(destNode, sourceNode, this.nextLayer, this.outputList);
 	}
 
-	private void appendNextLayerNodes(TreeNode sourceNode, TreeNode destNode, int position) {
-		NextLayerFeeder feeder = nextLayerFeederOperationFactory.getObject();
-		feeder.feedNextLayer( destNode,sourceNode, this.nextLayer, this.outputList, position);
-	}
 }
-

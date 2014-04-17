@@ -298,7 +298,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	}
 
 	// TODO rename plannedTestCase_s_
-	// TODO return a Colleciton instead of a list
+	// TODO return a Collection instead of a list
 	public List<TestCase> getPlannedTestCase() {
 		// FIXME (GRF) I think it's broken because it may return several times the same test case. Cannot fix without
 		// checking side effects on campagne epargne wizard beforehand. Note : w wrote a test which i deactivated

@@ -89,14 +89,6 @@ public class NextLayerFeeder implements NodeVisitor {
 		source.accept(this);
 	}
 
-	public void feedNextLayer(TreeNode destination, TreeNode source,
-			Map<NodeContainer<TreeNode>, Collection<TreeNode>> nextLayer, Collection<? extends TreeNode> outputList,
-			int position) {
-		this.nextLayer = nextLayer;
-		this.destination = destination;
-		this.outputList = outputList;
-		source.accept(this);
-	}
 
 	@Override
 	public void visit(CampaignFolder campaignFolder) {

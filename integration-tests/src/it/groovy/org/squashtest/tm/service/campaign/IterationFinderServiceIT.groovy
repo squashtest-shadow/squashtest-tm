@@ -89,7 +89,7 @@ class IterationFinderServiceIT extends DbunitServiceSpecification {
 		]
 	}
 	
-//	TODO FIXME see Iteration#getPlannedTestCase()
+/** TODO FIXME see {@linkplain Iteration#getPlannedTestCase()} */
 //	@DataSet("IterationFinderServiceIT.execution.xml")
 //	def "should get the list of planned test cases of an iteration"(){
 //
