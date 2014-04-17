@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "tree", "workspace/workspace.import-popup" ], function($, zetree) {
+define([ "jquery", "tree", "handlebars", "workspace/workspace.import-popup" ], function($, zetree, Handlebars) {
 	"use strict";
 
 	var recapBuilder = {};
