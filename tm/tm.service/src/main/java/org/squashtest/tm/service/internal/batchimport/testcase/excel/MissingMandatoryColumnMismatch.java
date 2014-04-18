@@ -28,7 +28,7 @@ package org.squashtest.tm.service.internal.batchimport.testcase.excel;
  * 
  */
 public class MissingMandatoryColumnMismatch implements TemplateMismatch {
-	public final TemplateColumn missingColumn;
+	public final TemplateColumn missingColumn; // NOSONAR immutable public field
 
 	MissingMandatoryColumnMismatch(TemplateColumn missingColumn) {
 		super();

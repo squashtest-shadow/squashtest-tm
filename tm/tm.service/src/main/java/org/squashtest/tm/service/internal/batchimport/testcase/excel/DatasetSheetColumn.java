@@ -32,18 +32,18 @@ import static org.squashtest.tm.service.internal.batchimport.testcase.excel.Colu
  * 
  */
 public enum DatasetSheetColumn implements TemplateColumn {
-	ACTION, 
-	TC_OWNER_PATH(MANDATORY), 
-	TC_OWNER_ID(IGNORED), 
-	TC_DATASET_ID(IGNORED), 
-	TC_DATASET_NAME(MANDATORY), 
-	TC_PARAM_OWNER_PATH, 
-	TC_PARAM_OWNER_ID(IGNORED), 
-	TC_DATASET_PARAM_NAME(MANDATORY), 
+	ACTION,
+	TC_OWNER_PATH(MANDATORY),
+	TC_OWNER_ID(IGNORED),
+	TC_DATASET_ID(IGNORED),
+	TC_DATASET_NAME(MANDATORY),
+	TC_PARAM_OWNER_PATH,
+	TC_PARAM_OWNER_ID(IGNORED),
+	TC_DATASET_PARAM_NAME(MANDATORY),
 	TC_DATASET_PARAM_VALUE;
 
-	public final String header;
-	public final ColumnProcessingMode processingMode;
+	public final String header; ; // NOSONAR immutable public field
+	public final ColumnProcessingMode processingMode; ; // NOSONAR immutable public field
 
 	private DatasetSheetColumn() {
 		this.header = name();

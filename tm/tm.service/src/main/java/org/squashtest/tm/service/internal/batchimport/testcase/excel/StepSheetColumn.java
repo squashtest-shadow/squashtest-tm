@@ -32,19 +32,19 @@ import static org.squashtest.tm.service.internal.batchimport.testcase.excel.Colu
  * 
  */
 public enum StepSheetColumn implements TemplateColumn {
-	ACTION, 
-	TC_OWNER_PATH(MANDATORY), 
-	TC_OWNER_ID(IGNORED), 
-	TC_STEP_ID(IGNORED), 
-	TC_STEP_NUM, 
-	TC_STEP_IS_CALL_STEP, 
-	TC_STEP_ACTION, 
-	TC_STEP_EXPECTED_RESULT, 
-	TC_STEP_NB_REQ("TC_STEP_#_REQ", IGNORED), 
+	ACTION,
+	TC_OWNER_PATH(MANDATORY),
+	TC_OWNER_ID(IGNORED),
+	TC_STEP_ID(IGNORED),
+	TC_STEP_NUM,
+	TC_STEP_IS_CALL_STEP,
+	TC_STEP_ACTION,
+	TC_STEP_EXPECTED_RESULT,
+	TC_STEP_NB_REQ("TC_STEP_#_REQ", IGNORED),
 	TC_STEP_NB_ATTACHMENT("TC_STEP_#_ATTACHMENT", IGNORED);
 
-	public final String header;
-	public final ColumnProcessingMode processingMode;
+	public final String header; ; // NOSONAR immutable public field
+	public final ColumnProcessingMode processingMode; ; // NOSONAR immutable public field
 
 	private StepSheetColumn() {
 		this.header = name();

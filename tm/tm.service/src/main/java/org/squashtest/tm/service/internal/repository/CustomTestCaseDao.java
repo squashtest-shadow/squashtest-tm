@@ -90,7 +90,7 @@ public interface CustomTestCaseDao extends EntityDao<TestCase> {
 
 	/**
 	 * Given a list of test case ids, returns data about those test cases and which test cases called them.
-	 * The result is a list of NamedReferencePair. 
+	 * The result is a list of NamedReferencePair.
 	 * If a test case calls the same other test case multiple times the resultset will contain as many pairs.
 	 * 
 	 * Note that only first-level callers will be included if found, additional invokations will be needed to fetch all
@@ -101,10 +101,10 @@ public interface CustomTestCaseDao extends EntityDao<TestCase> {
 	 * @return a structure described just like above.
 	 */
 	List<NamedReferencePair> findTestCaseCallsUpstream(Collection<Long> testCaseIds);
-	
+
 	/**
 	 * Given a list of test case ids, returns data about those test cases and which test cases they do call.
-	 * The result is a list of NamedReferencePair. 
+	 * The result is a list of NamedReferencePair.
 	 * If a test case calls the same other test case multiple times the resultset will contain as many pairs.
 	 * 
 	 * Note that only first-level callers will be included if found, additional invokations will be needed to fetch all
@@ -115,7 +115,7 @@ public interface CustomTestCaseDao extends EntityDao<TestCase> {
 	 * @return a structure described just like above.
 	 */
 	List<NamedReferencePair> findTestCaseCallsDownstream(Collection<Long> testCaseIds);
-	
+
 
 	/**
 	 * Finds all the ids of the test cases called by a given list of test cases.
@@ -237,23 +237,23 @@ public interface CustomTestCaseDao extends EntityDao<TestCase> {
 	 * @return the filter result with ids of test case having their importanceAuto to true.
 	 */
 	Map<Long, TestCaseImportance> findAllTestCaseImportanceWithImportanceAuto(Collection<Long> testCaseIds);
-	
-	
-	
+
+
+
 	public static final class NamedReferencePair{
-		
+
 		private NamedReference caller;
 		private NamedReference called;
-	
+
 		public NamedReferencePair(){
-			
+
 		}
-		
-		
-		public NamedReferencePair(Long callerId, String callerName, 
-						  Long calledId, String calledName){
-			
-			if (callerId != null){			
+
+
+		public NamedReferencePair(Long callerId, String callerName,
+				Long calledId, String calledName){
+
+			if (callerId != null){
 				caller = new NamedReference(callerId, callerName);
 			}
 			if (calledId != null){
@@ -270,6 +270,7 @@ public interface CustomTestCaseDao extends EntityDao<TestCase> {
 		}
 
 		@Override
+		//GENERATED:START
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
@@ -279,32 +280,42 @@ public interface CustomTestCaseDao extends EntityDao<TestCase> {
 					+ ((caller == null) ? 0 : caller.hashCode());
 			return result;
 		}
+		//GENERATED:END
 
 		@Override
+		//GENERATED:START
 		public boolean equals(Object obj) {
-			if (this == obj)
+			if (this == obj) {
 				return true;
-			if (obj == null)
+			}
+			if (obj == null) {
 				return false;
-			if (getClass() != obj.getClass())
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
+			}
 			NamedReferencePair other = (NamedReferencePair) obj;
 			if (called == null) {
-				if (other.called != null)
+				if (other.called != null) {
 					return false;
-			} else if (!called.equals(other.called))
+				}
+			} else if (!called.equals(other.called)) {
 				return false;
+			}
 			if (caller == null) {
-				if (other.caller != null)
+				if (other.caller != null) {
 					return false;
-			} else if (!caller.equals(other.caller))
+				}
+			} else if (!caller.equals(other.caller)) {
 				return false;
+			}
 			return true;
 		}
-		
-		
-		
+		// GENERATED:END
+
+
+
 	}
-	
-	
+
+
 }

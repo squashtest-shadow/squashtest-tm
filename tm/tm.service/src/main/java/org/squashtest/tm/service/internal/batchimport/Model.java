@@ -245,8 +245,7 @@ public class Model {
 
 	// may return null
 	public Long getId(TestCaseTarget target){
-		TargetStatus status = getStatus(target);
-		return status.id;
+		return getStatus(target).id;
 	}
 
 
@@ -304,7 +303,7 @@ public class Model {
 	// so be carefull to load it only when necessary.
 	private void initCallGraph(TestCaseTarget target){
 
-		
+
 		try{
 			Long id = finderService.findNodeIdByPath(target.getPath());
 			LibraryGraph<NamedReference, SimpleNode<NamedReference>> targetCallers
@@ -644,10 +643,10 @@ public class Model {
 		if (! testCaseStatusByTarget.containsKey(target)){
 			init(target);
 		}
-		
+
 		String projectName = Utils.extractProjectName(target.getPath());
 		Collection<CustomField>  cufs = tcCufsPerProjectname.getCollection(projectName);
-		
+
 		if (cufs != null){
 			return cufs;
 		}
@@ -890,12 +889,14 @@ public class Model {
 		return (List<String>)CollectionUtils.collect(targets, TestCasePathCollector.INSTANCE, new ArrayList<String>(targets.size()));
 	}
 
+	@SuppressWarnings("unchecked")
 	private List<Project> loadProjects(List<String> names){
 		Query q = sessionFactory.getCurrentSession().getNamedQuery("Project.findAllByName");
 		q.setParameterList("names", names);
 		return q.list();
 	}
 
+	@SuppressWarnings("unchecked")
 	private List<InternalStepModel> loadStepsModel(Long tcId){
 		Query query = sessionFactory.getCurrentSession().getNamedQuery("testStep.findBasicInfosByTcId");
 		query.setParameter("tcId", tcId, LongType.INSTANCE);
@@ -1009,6 +1010,7 @@ public class Model {
 			super();
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public Long transform(Object input) {
 			return ((SimpleNode<NamedReference>)input).getKey().getId();

@@ -34,31 +34,31 @@ import org.squashtest.tm.service.internal.batchimport.excel.CellValueCoercer;
  * 
  */
 public enum TestCaseSheetColumn implements TemplateColumn {
-	ACTION, 
-	PROJECT_ID(IGNORED), 
-	PROJECT_NAME(IGNORED), 
-	TC_PATH(MANDATORY), 
-	TC_NUM, 
-	TC_ID(IGNORED), 
-	TC_REFERENCE, 
-	TC_NAME(MANDATORY), 
-	TC_WEIGHT_AUTO, 
-	TC_WEIGHT, 
-	TC_NATURE, 
-	TC_TYPE, 
-	TC_STATUS, 
-	TC_DESCRIPTION, 
-	TC_PRE_REQUISITE, 
-	TC_NB_REQ("TC_#_REQ", IGNORED), 
-	TC_NB_CALLED_BY("TC_#_CALLED_BY", IGNORED), 
-	TC_NB_ATTACHMENT("TC_#_ATTACHMENT", IGNORED), 
-	TC_CREATED_ON, 
-	TC_CREATED_BY, 
-	TC_LAST_MODIFIED_ON(IGNORED), 
+	ACTION,
+	PROJECT_ID(IGNORED),
+	PROJECT_NAME(IGNORED),
+	TC_PATH(MANDATORY),
+	TC_NUM,
+	TC_ID(IGNORED),
+	TC_REFERENCE,
+	TC_NAME(MANDATORY),
+	TC_WEIGHT_AUTO,
+	TC_WEIGHT,
+	TC_NATURE,
+	TC_TYPE,
+	TC_STATUS,
+	TC_DESCRIPTION,
+	TC_PRE_REQUISITE,
+	TC_NB_REQ("TC_#_REQ", IGNORED),
+	TC_NB_CALLED_BY("TC_#_CALLED_BY", IGNORED),
+	TC_NB_ATTACHMENT("TC_#_ATTACHMENT", IGNORED),
+	TC_CREATED_ON,
+	TC_CREATED_BY,
+	TC_LAST_MODIFIED_ON(IGNORED),
 	TC_LAST_MODIFIED_BY(IGNORED);
 
-	public final String header;
-	public final ColumnProcessingMode processingMode;
+	public final String header; ; // NOSONAR immutable public field
+	public final ColumnProcessingMode processingMode; ; // NOSONAR immutable public field
 
 	private TestCaseSheetColumn() {
 		this.header = name();

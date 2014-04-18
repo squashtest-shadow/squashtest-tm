@@ -145,8 +145,7 @@ class TestCaseImportLogHelper {
 	 * @return
 	 */
 	public String logFilename(@NotNull String logTimeStamp) {
-		String logFilename = "test-case-import-log-" + logTimeStamp;
-		return logFilename;
+		return "test-case-import-log-" + logTimeStamp;
 	}
 
 	public void storeLogFile(WebRequest request, File xlsSummary, String logTimeStamp) {

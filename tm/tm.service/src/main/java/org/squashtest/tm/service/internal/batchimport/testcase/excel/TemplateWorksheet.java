@@ -33,16 +33,16 @@ import static org.squashtest.tm.service.internal.batchimport.testcase.excel.Temp
  */
 public enum TemplateWorksheet {
 	TEST_CASES_SHEET("TEST_CASES", TestCaseSheetColumn.class, TEST_CASE_CUSTOM_FIELD),
-	STEPS_SHEET("STEPS", StepSheetColumn.class, STEP_CUSTOM_FIELD), 
-	PARAMETERS_SHEET("PARAMETERS", ParameterSheetColumn.class), 
+	STEPS_SHEET("STEPS", StepSheetColumn.class, STEP_CUSTOM_FIELD),
+	PARAMETERS_SHEET("PARAMETERS", ParameterSheetColumn.class),
 	DATASETS_SHEET("DATASETS", DatasetSheetColumn.class);
 
 	private static final Map<String, TemplateWorksheet> ENUM_BY_SHEET_NAME = new HashMap<String, TemplateWorksheet>(
 			values().length);
 
-	public final String sheetName;
-	public final Class<? extends Enum<?>> columnTypesClass;
-	public final TemplateCustomFieldPattern customFieldPattern;
+	public final String sheetName; // NOSONAR immutable public field
+	public final Class<? extends Enum<?>> columnTypesClass; ; // NOSONAR immutable public field
+	public final TemplateCustomFieldPattern customFieldPattern; ; // NOSONAR immutable public field
 
 	private <E extends Enum<?> & TemplateColumn> TemplateWorksheet(String name, Class<E> columnEnumType) {
 		this.sheetName = name;

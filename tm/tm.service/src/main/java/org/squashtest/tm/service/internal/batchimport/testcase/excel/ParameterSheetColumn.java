@@ -31,15 +31,15 @@ import static org.squashtest.tm.service.internal.batchimport.testcase.excel.Colu
  * 
  */
 public enum ParameterSheetColumn implements TemplateColumn {
-	ACTION, 
-	TC_OWNER_PATH(MANDATORY), 
-	TC_OWNER_ID(IGNORED), 
-	TC_PARAM_ID(IGNORED), 
-	TC_PARAM_NAME(MANDATORY), 
+	ACTION,
+	TC_OWNER_PATH(MANDATORY),
+	TC_OWNER_ID(IGNORED),
+	TC_PARAM_ID(IGNORED),
+	TC_PARAM_NAME(MANDATORY),
 	TC_PARAM_DESCRIPTION;
 
-	public final String header;
-	public final ColumnProcessingMode processingMode;
+	public final String header; ; // NOSONAR immutable public field
+	public final ColumnProcessingMode processingMode; ; // NOSONAR immutable public field
 
 	private ParameterSheetColumn() {
 		this.header = name();

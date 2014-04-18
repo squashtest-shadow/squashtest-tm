@@ -100,7 +100,7 @@ final class TemplateColumnUtils {
 	@SuppressWarnings("unchecked")
 	public static <E extends Enum<?>> E[] values(Class<E> enumType) {
 		Method valuesMethod = ReflectionUtils.findMethod(enumType, "values");
-		E[] values = (E[]) ReflectionUtils.invokeMethod(valuesMethod, enumType);
-		return values;
+
+		return (E[]) ReflectionUtils.invokeMethod(valuesMethod, enumType);
 	}
 }

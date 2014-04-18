@@ -28,18 +28,18 @@ import java.util.LinkedList;
 public class GraphNode<IDENT, T extends GraphNode<IDENT, T>>{
 
 	protected IDENT key;
-	
+
 	/*
-	 * implementation note : the use of a List is important here, not because 
+	 * implementation note : the use of a List is important here, not because
 	 * we need an arbitrary order, but rather because a node can appear multiple times
 	 * (edge cardinality)
 	 */
 	protected final Collection<T> inbounds = new LinkedList<T>();
-	protected final Collection<T> outbounds = new LinkedList<T>();	
-	
-	
+	protected final Collection<T> outbounds = new LinkedList<T>();
+
+
 	public GraphNode(){
-		
+
 	}
 
 	public GraphNode(IDENT key){
@@ -55,23 +55,23 @@ public class GraphNode<IDENT, T extends GraphNode<IDENT, T>>{
 	public Collection<T> getOutbounds() {
 		return outbounds;
 	}
-	
+
 	public void addInbound(T inbound){
-		if (inbound!=null){ 
+		if (inbound!=null){
 			inbounds.add(inbound);
 		}
 	}
-	
+
 	public void addOutbound(T outbound){
-		if (outbound!=null){ 
+		if (outbound!=null){
 			outbounds.add(outbound);
 		}
 	}
-	
+
 	public void removeInbound(T inbound){
 		inbounds.remove(inbound);
 	}
-	
+
 	public void removeOutbount(T outbound){
 		outbounds.remove(outbound);
 	}
@@ -86,38 +86,48 @@ public class GraphNode<IDENT, T extends GraphNode<IDENT, T>>{
 
 
 	@Override
+	//GENERATED:START
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((key == null) ? 0 : key.hashCode());
 		return result;
 	}
+	//GENERATED:END
 
+	@SuppressWarnings("unchecked")
 	@Override
+	//GENERATED:START
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		T other = (T) obj;
 		if (key == null) {
-			if (other.key != null)
+			if (other.key != null) {
 				return false;
-		} else if (!key.equals(other.key))
+			}
+		} else if (!key.equals(other.key)) {
 			return false;
+		}
 		return true;
 	}
-	
+	//GENERATED:END
+
 	public void disconnect(T node){
-		 
+
 		for (Iterator<T> iter = inbounds.iterator(); iter.hasNext();){
 			if (iter.next().equals(node)){
 				iter.remove();
 			}
 		}
-		
+
 		for (Iterator<T> iter = outbounds.iterator(); iter.hasNext();){
 			if (iter.next().equals(node)){
 				iter.remove();
@@ -125,5 +135,5 @@ public class GraphNode<IDENT, T extends GraphNode<IDENT, T>>{
 		}
 	}
 
-	
+
 }

@@ -155,8 +155,7 @@ class ExcelWorkbookParserBuilder {
 	 * @return header row or <code>null</code>
 	 */
 	private Row findHeaderRow(Sheet ws) {
-		Row headerRow = ws.getRow(0);
-		return headerRow;
+		return  ws.getRow(0);
 	}
 
 	/**

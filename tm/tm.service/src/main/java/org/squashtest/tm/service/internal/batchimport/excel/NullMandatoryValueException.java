@@ -30,7 +30,7 @@ package org.squashtest.tm.service.internal.batchimport.excel;
 public class NullMandatoryValueException extends RuntimeException {
 	private static final long serialVersionUID = -709696016697558891L;
 
-	public final String propertyName;
+	public final String propertyName; // NOSONAR immutable public field
 
 	/**
 	 * @param propertyName
