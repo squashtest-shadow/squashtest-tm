@@ -26,7 +26,7 @@ import java.util.Map;
 
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.domain.NamedReference;
+import org.squashtest.tm.domain.NamedReferencePair;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.requirement.RequirementSearchCriteria;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
@@ -237,85 +237,6 @@ public interface CustomTestCaseDao extends EntityDao<TestCase> {
 	 * @return the filter result with ids of test case having their importanceAuto to true.
 	 */
 	Map<Long, TestCaseImportance> findAllTestCaseImportanceWithImportanceAuto(Collection<Long> testCaseIds);
-
-
-
-	public static final class NamedReferencePair{
-
-		private NamedReference caller;
-		private NamedReference called;
-
-		public NamedReferencePair(){
-
-		}
-
-
-		public NamedReferencePair(Long callerId, String callerName,
-				Long calledId, String calledName){
-
-			if (callerId != null){
-				caller = new NamedReference(callerId, callerName);
-			}
-			if (calledId != null){
-				called = new NamedReference(calledId, calledName);
-			}
-		}
-
-		public NamedReference getCaller() {
-			return caller;
-		}
-
-		public NamedReference getCalled() {
-			return called;
-		}
-
-		@Override
-		//GENERATED:START
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result
-					+ ((called == null) ? 0 : called.hashCode());
-			result = prime * result
-					+ ((caller == null) ? 0 : caller.hashCode());
-			return result;
-		}
-		//GENERATED:END
-
-		@Override
-		//GENERATED:START
-		public boolean equals(Object obj) {
-			if (this == obj) {
-				return true;
-			}
-			if (obj == null) {
-				return false;
-			}
-			if (getClass() != obj.getClass()) {
-				return false;
-			}
-			NamedReferencePair other = (NamedReferencePair) obj;
-			if (called == null) {
-				if (other.called != null) {
-					return false;
-				}
-			} else if (!called.equals(other.called)) {
-				return false;
-			}
-			if (caller == null) {
-				if (other.caller != null) {
-					return false;
-				}
-			} else if (!caller.equals(other.caller)) {
-				return false;
-			}
-			return true;
-		}
-		// GENERATED:END
-
-
-
-	}
 
 
 }

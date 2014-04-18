@@ -182,7 +182,7 @@ class ExcelWorkbookParserTest extends Specification {
 
 		and:
 		def stepPaths = (1..3).collect { "owner/path/$it" }
-		def stepActions = (1..3).collect { "call/path/$it" }
+		def stepActions = (1..3).collect { "/path/$it" }
 
 		then:
 		stepInstructions*.target.path == stepPaths

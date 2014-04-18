@@ -33,7 +33,7 @@
 		@NamedQuery(name = "requirementLibrary.findAll", query = "select rl from Project p join p.requirementLibrary rl fetch all properties"),
 		@NamedQuery(name = "requirementLibrary.findAllRootContentById", query = "select l.rootContent from RequirementLibrary l where l.id = :libraryId"),
 		@NamedQuery(name = "requirementLibrary.findByRootContent", query = "from RequirementLibrary where :content in elements(rootContent)"),
-		
+
 		//CampaignLibrary
 		@NamedQuery(name = "campaignLibrary.findAll", query = "select cl from Project p join p.campaignLibrary cl fetch all properties"),
 		@NamedQuery(name = "campaignLibrary.findAllRootContentById", query = "select l.rootContent from CampaignLibrary l where l.id = :libraryId"),
@@ -89,10 +89,9 @@
 		@NamedQuery(name = "requirement.findChildrenRequirements", query = "select childreqs from Requirement r join r.children childreqs where r.id = :requirementId"),
 		@NamedQuery(name = "requirement.findByContent", query = "from Requirement where :content in elements(children)"),
 		@NamedQuery(name = "requirement.findAllRequirementParents", query = "select par, req from Requirement 		 par join par.children req where req.id in (:requirementIds)"),
-		@NamedQuery(name = "requirement.findAllFolderParents", 		query = "select par, req from RequirementFolder  par join par.content  req where req.id in (:requirementIds)"),
-		@NamedQuery(name = "requirement.findAllLibraryParents", 	query = "select par, req from RequirementLibrary par join par.rootContent  req where req.id in (:requirementIds)"),
+		@NamedQuery(name = "requirement.findAllFolderParents", query = "select par, req from RequirementFolder  par join par.content  req where req.id in (:requirementIds)"),
+		@NamedQuery(name = "requirement.findAllLibraryParents", query = "select par, req from RequirementLibrary par join par.rootContent  req where req.id in (:requirementIds)"),
 		@NamedQuery(name = "requirement.findAllAttachmentLists", query = "select v.attachmentList.id from RequirementVersion v where v.requirement.id in (:requirementIds)"),
-				
 
 		//CampaignFolder
 		@NamedQuery(name = "campaignFolder.findAllContentById", query = "select f.content from CampaignFolder f where f.id = :folderId"),
@@ -101,11 +100,11 @@
 		@NamedQuery(name = "campaignFolder.findNamesInLibraryStartingWith", query = "select c.name from CampaignLibrary l join l.rootContent c where l.id = :containerId and c.name like :nameStart"),
 		@NamedQuery(name = "campaignFolder.findParentOf", query = "select f from CampaignFolder f join f.content c where c.id = :contentId"),
 		@NamedQuery(name = "campaignFolder.remove", query = "delete CampaignFolder cf where cf.id in (:nodeIds)"),
-		
+
 		//Iteration
 		@NamedQuery(name = "iterationDao.findAllByCampaignId", query = "select c.iterations from Campaign c where c.id = :campaignId"),
-		@NamedQuery(name = "iterationDao.findAllIterationContainingTestCase", query="select it from Iteration it join it.testPlans tps where tps.referencedTestCase = :testCaseId"),
-		
+		@NamedQuery(name = "iterationDao.findAllIterationContainingTestCase", query = "select it from Iteration it join it.testPlans tps where tps.referencedTestCase = :testCaseId"),
+
 		@NamedQuery(name = "iteration.countTestPlans", query = "select count(tps) from Iteration iter join iter.testPlans tps where iter.id = :iterationId"),
 		@NamedQuery(name = "iteration.countTestPlansFiltered", query = "select count(tps) from Iteration iter join iter.testPlans tps where iter.id = :iterationId and tps.user.login = :userLogin"),
 		@NamedQuery(name = "iteration.countStatuses", query = "select tp.executionStatus, count(tp) from Iteration it join it.testPlans tp where it.id = :iterationId group by tp.executionStatus"),
@@ -115,15 +114,12 @@
 		@NamedQuery(name = "iteration.findAllExecutionsByTestCase", query = "select exec from Iteration it join it.testPlans tp join tp.executions exec where it.id = :iterationId and exec.referencedTestCase.id = :testCaseId"),
 		@NamedQuery(name = "iteration.findAllExecutionsByTestPlan", query = "select exec from Iteration it join it.testPlans tp join tp.executions exec where it.id = :iterationId and tp.id = :testPlanId"),
 		@NamedQuery(name = "iteration.countRunningOrDoneExecutions", query = "select count(tps) from Iteration iter join iter.testPlans tps join tps.executions exes where iter.id =:iterationId and exes.executionStatus <> 'READY'"),
-		
-		
+
 		// IterationTestPlanItem
-		@NamedQuery(name = "iterationTestPlanItem.countAllStatus", query="select count(itpi) from IterationTestPlanItem itpi where itpi.executionStatus = :status and itpi.iteration.campaign.project.id = :projectId"),
-		@NamedQuery(name = "iterationTestPlanItem.replaceStatus", query ="update IterationTestPlanItem item set item.executionStatus = :newStatus where item.executionStatus = :oldStatus and item.id in " +
-				  														"(select itpi.id from IterationTestPlanItem itpi where itpi.iteration.campaign.project.id = :projectId)"),
+		@NamedQuery(name = "iterationTestPlanItem.countAllStatus", query = "select count(itpi) from IterationTestPlanItem itpi where itpi.executionStatus = :status and itpi.iteration.campaign.project.id = :projectId"),
+		@NamedQuery(name = "iterationTestPlanItem.replaceStatus", query = "update IterationTestPlanItem item set item.executionStatus = :newStatus where item.executionStatus = :oldStatus and item.id in "
+				+ "(select itpi.id from IterationTestPlanItem itpi where itpi.iteration.campaign.project.id = :projectId)"),
 
-
-	
 		// TestSuite
 		@NamedQuery(name = "TestSuite.findAllTestPlanItemsPaged", query = "select tp from TestSuite ts join ts.testPlan tp join tp.testSuites tss where ts.id = ?1 and ts.id = tss.id order by index(tp)"),
 		@NamedQuery(name = "TestSuite.countTestPlanItems", query = "select count(tp) from TestSuite ts join ts.testPlan tp join tp.testSuites tss where ts.id = ?1 and ts.id = tss.id"),
@@ -131,17 +127,17 @@
 		@NamedQuery(name = "testSuite.countStatuses", query = "select tp.executionStatus, count(tp) from TestSuite ts join ts.testPlan tp join tp.testSuites tss where ts.id = :id and :id2 = tss.id group by tp.executionStatus"),
 		@NamedQuery(name = "testSuite.countStatusesForUser", query = "select tp.executionStatus, count(tp) from TestSuite ts join ts.testPlan tp join tp.testSuites tss join tp.user user where ts.id = :id and :id2 = tss.id and user.login = :login group by tp.executionStatus"),
 		@NamedQuery(name = "testSuite.findTestPlanFiltered", query = "select tpi from TestSuite ts join ts.testPlan tpi where ts.id = :testSuiteId and index(tpi) between :firstIndex and :lastIndex order by index(tpi)"),
-		
+
 		@NamedQuery(name = "testSuite.findTestPlanPartition", query = "select plan from TestSuite ts join ts.testPlan plan where plan.id in (:itemIds) and ts.id = :suiteId order by index(plan)"),
 		@NamedQuery(name = "testSuite.findAllExecutions", query = "select itpi.executions from IterationTestPlanItem itpi join itpi.testSuites tss where ?1 = tss.id "),
-		
+
 		@NamedQuery(name = "testSuite.findAllByIterationId", query = "select ts from TestSuite ts join ts.iteration i where i.id = ?1"),
 		@NamedQuery(name = "testSuite.findLaunchableTestPlan", query = "select tp from TestSuite ts join ts.testPlan tp join tp.testSuites tss where ts.id = ?1 and ?2 = tss.id and ((tp.referencedTestCase is not null) or (tp.executions is not empty)) order by index(tp)"),
 		@NamedQuery(name = "testSuite.countTestPlansFiltered", query = "select count(tps) from TestSuite ts join ts.testPlan tps where ts.id = :suiteId and tps.user.login = :userLogin"),
-		@NamedQuery(name = "testSuite.findProjectIdBySuiteId", query  = "select project.id from TestSuite ts join ts.iteration it join it.campaign camp join camp.project project where ts.id = ?1"),
-	
+		@NamedQuery(name = "testSuite.findProjectIdBySuiteId", query = "select project.id from TestSuite ts join ts.iteration it join it.campaign camp join camp.project project where ts.id = ?1"),
+
 		@NamedQuery(name = "TestSuite.findReferencedTestCasesIds", query = "select distinct tc.id from TestSuite ts join ts.testPlan tpi join tpi.referencedTestCase tc where ts.id = ?1"),
-		
+
 		//TestCase
 		@NamedQuery(name = "testCase.findAllByIdListOrderedByName", query = "from TestCase tc where id in (:testCasesIds) order by tc.name asc"),
 		@NamedQuery(name = "testCase.findById", query = "from TestCase tc left join fetch tc.steps left join fetch tc.requirementVersionCoverages where tc.id = :testCaseId"),
@@ -160,21 +156,17 @@
 		@NamedQuery(name = "testCase.findAllLinkedToIteration", query = "select tc from IterationTestPlanItem item join item.referencedTestCase tc where tc.id in (:testCasesIds)"),
 		@NamedQuery(name = "TestCase.findAllTestCaseIdsByLibraries", query = "select tc.id from TestCase tc join tc.project p join p.testCaseLibrary tcl where tcl.id in (:libraryIds)"),
 		@NamedQuery(name = "testCase.remove", query = "delete TestCase tc where tc.id in (:nodeIds)"),
-		
-		@NamedQuery(name = "testCase.findTestCaseDetails", 
-			query = "select new org.squashtest.tm.domain.NamedReference(tc.id, tc.name) from TestCase tc where tc.id in (:testCaseIds)"),
-			
-		@NamedQuery(name = "testCase.findTestCasesHavingCallerDetails", 
-				query = "select new org.squashtest.tm.service.internal.repository.CustomTestCaseDao$NamedReferencePair(caller.id, caller.name, called.id, called.name) "+
-						"from TestCase caller join caller.steps steps join steps.calledTestCase called " +
-						"where steps.class = CallTestStep and called.id in (:testCaseIds)"),
-						
-					
-		@NamedQuery(name = "testCase.findTestCasesHavingCallStepsDetails", 
-			query = "select new org.squashtest.tm.service.internal.repository.CustomTestCaseDao$NamedReferencePair(caller.id, caller.name, called.id, called.name) "+
-					"from TestCase caller join caller.steps steps join steps.calledTestCase called " +
-					"where steps.class = CallTestStep and caller.id in (:testCaseIds)"),
-																				  
+
+		@NamedQuery(name = "testCase.findTestCaseDetails", query = "select new org.squashtest.tm.domain.NamedReference(tc.id, tc.name) from TestCase tc where tc.id in (:testCaseIds)"),
+
+		@NamedQuery(name = "testCase.findTestCasesHavingCallerDetails", query = "select new org.squashtest.tm.domain.NamedReferencePair(caller.id, caller.name, called.id, called.name) "
+				+ "from TestCase caller join caller.steps steps join steps.calledTestCase called "
+				+ "where steps.class = CallTestStep and called.id in (:testCaseIds)"),
+
+		@NamedQuery(name = "testCase.findTestCasesHavingCallStepsDetails", query = "select new org.squashtest.tm.domain.NamedReferencePair(caller.id, caller.name, called.id, called.name) "
+				+ "from TestCase caller join caller.steps steps join steps.calledTestCase called "
+				+ "where steps.class = CallTestStep and caller.id in (:testCaseIds)"),
+
 		@NamedQuery(name = "testCase.findCalledTestCaseOfCallSteps", query = "select distinct called.id from CallTestStep callStep join callStep.calledTestCase called where callStep.id in (:testStepsIds)"),
 		@NamedQuery(name = "testCase.countByVerifiedRequirementVersion", query = "select count(tc) from TestCase tc join tc.requirementVersionCoverages rvc join rvc.verifiedRequirementVersion vr where vr.id = :verifiedId"),
 		@NamedQuery(name = "testCase.findUnsortedAllByVerifiedRequirementVersion", query = "select tc from TestCase tc join tc.requirementVersionCoverages rvc join rvc.verifiedRequirementVersion vr where vr.id = :requirementVersionId"),
@@ -184,40 +176,31 @@
 		@NamedQuery(name = "testCase.findAllSteps", query = "select step.id from TestCase testCase join testCase.steps step where testCase.id in (:testCaseIds)"),
 		@NamedQuery(name = "testCase.removeAllCallSteps", query = "delete CallTestStep cts where  cts.id in (:stepIds)"),
 		@NamedQuery(name = "testCase.removeAllActionSteps", query = "delete ActionTestStep ats where ats.id in (:stepIds)"),
-		
-		@NamedQuery(name = "testCase.excelExportDataFromFolder", query = 
-			"select p.id, p.name, index(tc)+1, tc.id, tc.reference, tc.name, tc.importanceAuto, tc.importance, tc.nature, "+
-					"tc.type, tc.status, tc.description, tc.prerequisite, count(req), "+
-					"("+
-						"select count(distinct caller) from TestCase caller join caller.steps steps join steps.calledTestCase called where steps.class = CallTestStep and called.id = tc.id"+
-					"), "+
-					"count(attach), tc.audit.createdOn, tc.audit.createdBy, tc.audit.lastModifiedOn, tc.audit.lastModifiedBy "+
-					"from TestCaseFolder f join f.content tc join tc.project p inner join tc.attachmentList atlist left join atlist.attachments attach left join tc.requirementVersionCoverages req "+
-					"where tc.id in (:testCaseIds) "+
-					"group by tc"
+
+		@NamedQuery(name = "testCase.excelExportDataFromFolder", query = "select p.id, p.name, index(tc)+1, tc.id, tc.reference, tc.name, tc.importanceAuto, tc.importance, tc.nature, "
+				+ "tc.type, tc.status, tc.description, tc.prerequisite, count(req), "
+				+ "("
+				+ "select count(distinct caller) from TestCase caller join caller.steps steps join steps.calledTestCase called where steps.class = CallTestStep and called.id = tc.id"
+				+ "), "
+				+ "count(attach), tc.audit.createdOn, tc.audit.createdBy, tc.audit.lastModifiedOn, tc.audit.lastModifiedBy "
+				+ "from TestCaseFolder f join f.content tc join tc.project p inner join tc.attachmentList atlist left join atlist.attachments attach left join tc.requirementVersionCoverages req "
+				+ "where tc.id in (:testCaseIds) " + "group by tc"
 
 		),
-		
-		@NamedQuery(name = "testCase.excelExportDataFromLibrary", query = 
-			"select p.id, p.name, index(tc)+1, tc.id, tc.reference, tc.name, tc.importanceAuto, tc.importance, tc.nature, "+
-					"tc.type, tc.status, tc.description, tc.prerequisite, count(req), "+
-					"("+
-						"select count(distinct caller) from TestCase caller join caller.steps steps join steps.calledTestCase called where steps.class = CallTestStep and called.id = tc.id"+
-					"), "+
-					"count(attach), tc.audit.createdOn, tc.audit.createdBy, tc.audit.lastModifiedOn, tc.audit.lastModifiedBy "+
-					"from TestCaseLibrary tcl join tcl.rootContent tc join tc.project p inner join tc.attachmentList atlist left join atlist.attachments attach left join tc.requirementVersionCoverages req "+
-					"where tc.id in (:testCaseIds) "	+
-					"group by tc"
-		),
-		
-		@NamedQuery(name = "testCase.excelExportCUF", query= 
-			"select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cf.inputType "+
-			"from CustomFieldValue cfv join cfv.binding binding join binding.customField cf "+
-			"where cfv.boundEntityId in (:testCaseIds) and cfv.boundEntityType = 'TEST_CASE'"			
-		),
-	
-		
-		
+
+		@NamedQuery(name = "testCase.excelExportDataFromLibrary", query = "select p.id, p.name, index(tc)+1, tc.id, tc.reference, tc.name, tc.importanceAuto, tc.importance, tc.nature, "
+				+ "tc.type, tc.status, tc.description, tc.prerequisite, count(req), "
+				+ "("
+				+ "select count(distinct caller) from TestCase caller join caller.steps steps join steps.calledTestCase called where steps.class = CallTestStep and called.id = tc.id"
+				+ "), "
+				+ "count(attach), tc.audit.createdOn, tc.audit.createdBy, tc.audit.lastModifiedOn, tc.audit.lastModifiedBy "
+				+ "from TestCaseLibrary tcl join tcl.rootContent tc join tc.project p inner join tc.attachmentList atlist left join atlist.attachments attach left join tc.requirementVersionCoverages req "
+				+ "where tc.id in (:testCaseIds) " + "group by tc"),
+
+		@NamedQuery(name = "testCase.excelExportCUF", query = "select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cf.inputType "
+				+ "from CustomFieldValue cfv join cfv.binding binding join binding.customField cf "
+				+ "where cfv.boundEntityId in (:testCaseIds) and cfv.boundEntityType = 'TEST_CASE'"),
+
 		//Campaign
 		@NamedQuery(name = "campaign.findNamesInCampaignStartingWith", query = "select i.name from Campaign c join c.iterations i where c.id = :containerId and i.name like :nameStart"),
 		@NamedQuery(name = "campaign.findAllNamesInCampaign", query = "select i.name from Campaign c join c.iterations i where c.id = :containerId "),
@@ -232,7 +215,7 @@
 		@NamedQuery(name = "campaign.findTestPlanFiltered", query = "select tp from Campaign cp join cp.testPlan tp where cp.id = :campaignId order by index(tp)"),
 		@NamedQuery(name = "campaign.findAllExecutions", query = "select exec from Campaign camp join camp.iterations it join it.testPlans tp join tp.executions exec where camp.id = :campaignId "),
 		@NamedQuery(name = "campaign.countRunningOrDoneExecutions", query = "select count(tps) from Campaign camp join camp.iterations iter join iter.testPlans tps join tps.executions exes where camp.id =:campaignId and exes.executionStatus <> 'READY'"),
-		@NamedQuery(name = "campaign.remove", query = "delete Campaign c where c.id in (:nodeIds)"),	
+		@NamedQuery(name = "campaign.remove", query = "delete Campaign c where c.id in (:nodeIds)"),
 		//TestStep
 		@NamedQuery(name = "testStep.findParentNode", query = "select testcase from TestCase as testcase join testcase.steps tcSteps where tcSteps.id= :childId "),
 		@NamedQuery(name = "testStep.findAllByParentId", query = "select step.id from TestCase testCase join testCase.steps step where testCase.id in (:testCaseIds)"),
@@ -240,34 +223,25 @@
 		@NamedQuery(name = "testStep.findPositionOfStep", query = "select index(tsteps) from TestCase tc join tc.steps tsteps where tsteps.id = :stepId"),
 		@NamedQuery(name = "testStep.stringIsFoundInStepsOfTestCase", query = "select count(steps) from TestCase tc join tc.steps steps where tc.id = :testCaseId and (steps.action like :stringToFind or steps.expectedResult like :stringToFind ) "),
 		@NamedQuery(name = "testStep.findAllAttachmentLists", query = "select step.attachmentList.id from ActionTestStep step where step.id in (:testStepIds)"),
-		@NamedQuery(name = "testStep.excelExportActionSteps", 
-					query = "select tc.id, st.id, index(st)+1, 0, st.action, st.expectedResult, count(distinct req), count(attach) " +
-							"from TestCase tc inner join tc.steps st inner join st.attachmentList atlist left join atlist.attachments attach left join st.requirementVersionCoverages req "+
-							"where st.class = ActionTestStep "+
-							"and tc.id in (:testCaseIds) "+
-							"group by st"
-		),
-		@NamedQuery(name = "testStep.excelExportCallSteps", 
-					query = "select tc.id, st.id, index(st)+1, 1, cast(st.calledTestCase.id as string), '', 0l, 0l " +
-							"from TestCase tc inner join tc.steps st "+
-							"where st.class = CallTestStep "+
-							"and tc.id in (:testCaseIds) "+
-							"group by st"
-		),
-		@NamedQuery(name = "testStep.excelExportCUF", query= 
-			"select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cf.inputType "+
-			"from CustomFieldValue cfv join cfv.binding binding join binding.customField cf "+
-			"where cfv.boundEntityId in ("+
-				"select st.id from TestCase tc inner join tc.steps st where tc.id in (:testCaseIds)"+
-			") "+
-			"and cfv.boundEntityType = 'TEST_STEP'"			
-		),
-		@NamedQuery(name = "testStep.findBasicInfosByTcId", query="select case when st.class = ActionTestStep then 'ACTION' else 'CALL' end as steptype, " +
-																	"case when st.class = CallTestStep then st.calledTestCase.id else null end as calledTC "+
-																	"from TestCase tc join tc.steps st where tc.id = :tcId order by index(st)"),
-		@NamedQuery(name = "testStep.findIdByTestCaseAndPosition", query="select st.id from TestCase tc join tc.steps st where tc.id = :tcId and index(st) = :position"),
-		@NamedQuery(name = "testStep.findByTestCaseAndPosition", query="select st from TestCase tc join tc.steps st where tc.id = :tcId and index(st) = :position"),		
-		
+		@NamedQuery(name = "testStep.excelExportActionSteps", query = "select tc.id, st.id, index(st)+1, 0, st.action, st.expectedResult, count(distinct req), count(attach) "
+				+ "from TestCase tc inner join tc.steps st inner join st.attachmentList atlist left join atlist.attachments attach left join st.requirementVersionCoverages req "
+				+ "where st.class = ActionTestStep " + "and tc.id in (:testCaseIds) " + "group by st"),
+		@NamedQuery(name = "testStep.excelExportCallSteps", query = "select tc.id, st.id, index(st)+1, 1, cast(st.calledTestCase.id as string), '', 0l, 0l "
+				+ "from TestCase tc inner join tc.steps st "
+				+ "where st.class = CallTestStep "
+				+ "and tc.id in (:testCaseIds) " + "group by st"),
+		@NamedQuery(name = "testStep.excelExportCUF", query = "select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cf.inputType "
+				+ "from CustomFieldValue cfv join cfv.binding binding join binding.customField cf "
+				+ "where cfv.boundEntityId in ("
+				+ "select st.id from TestCase tc inner join tc.steps st where tc.id in (:testCaseIds)"
+				+ ") "
+				+ "and cfv.boundEntityType = 'TEST_STEP'"),
+		@NamedQuery(name = "testStep.findBasicInfosByTcId", query = "select case when st.class = ActionTestStep then 'ACTION' else 'CALL' end as steptype, "
+				+ "case when st.class = CallTestStep then st.calledTestCase.id else null end as calledTC "
+				+ "from TestCase tc join tc.steps st where tc.id = :tcId order by index(st)"),
+		@NamedQuery(name = "testStep.findIdByTestCaseAndPosition", query = "select st.id from TestCase tc join tc.steps st where tc.id = :tcId and index(st) = :position"),
+		@NamedQuery(name = "testStep.findByTestCaseAndPosition", query = "select st from TestCase tc join tc.steps st where tc.id = :tcId and index(st) = :position"),
+
 		//TestParameters
 		@NamedQuery(name = "parameter.findAllByTestCases", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id in (:testCaseIds) order by testCase.name,  parameter.name "),
 		@NamedQuery(name = "parameter.findAllByTestCase", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id = :testCaseId order by testCase.name,  parameter.name "),
@@ -276,7 +250,7 @@
 		@NamedQuery(name = "Parameter.removeAllByTestCaseIds", query = "delete Parameter pm where pm.testCase.id in (:testCaseIds)"),
 		@NamedQuery(name = "Parameter.removeAllValuesByTestCaseIds", query = "delete DatasetParamValue dpv where dpv.parameter in (select pm from Parameter pm where pm.testCase.id in (:testCaseIds))"),
 		@NamedQuery(name = "parameter.excelExport", query = "select tc.id, param.id, param.name, param.description from TestCase tc inner join tc.parameters param where tc.id in (:testCaseIds)"),
-		
+
 		//Datasets
 		@NamedQuery(name = "dataset.findAllDatasetsByTestCase", query = "select dataset from Dataset as dataset join dataset.testCase testCase where testCase.id = :testCaseId order by dataset.name "),
 		@NamedQuery(name = "dataset.findAllDatasetsByTestCases", query = "select dataset from Dataset as dataset join dataset.testCase testCase where testCase.id in (:testCaseIds) order by dataset.name "),
@@ -284,32 +258,31 @@
 		@NamedQuery(name = "Dataset.removeAllByTestCaseIds", query = "delete Dataset ds where ds.testCase.id in (:testCaseIds)"),
 		@NamedQuery(name = "Dataset.removeAllValuesByTestCaseIds", query = "delete DatasetParamValue dpv where dpv.dataset in (select ds from Dataset ds where ds.testCase.id in (:testCaseIds))"),
 		@NamedQuery(name = "dataset.removeDatasetFromItsIterationTestPlanItems", query = "update IterationTestPlanItem set referencedDataset = null where referencedDataset in (from Dataset dataset where dataset.id = :datasetId) "),
-		@NamedQuery(name = "dataset.excelExport", query = "select tc.id, ds.id, ds.name, tcown.id, param.name, pvalue.paramValue from TestCase tc " +
-															"join tc.datasets ds join ds.parameterValues pvalue join pvalue.parameter param join param.testCase tcown " +
-															"where tc.id in (:testCaseIds)"),
-		
+		@NamedQuery(name = "dataset.excelExport", query = "select tc.id, ds.id, ds.name, tcown.id, param.name, pvalue.paramValue from TestCase tc "
+				+ "join tc.datasets ds join ds.parameterValues pvalue join pvalue.parameter param join param.testCase tcown "
+				+ "where tc.id in (:testCaseIds)"),
+
 		//CampaignTestPlanItem
-		@NamedQuery(name = "CampaignTestPlanItem.findPlannedTestCasesIdsByCampaignId", query="select distinct tc.id from Campaign c join c.testPlan tpi join tpi.referencedTestCase tc where c.id = ?1"),
-		
+		@NamedQuery(name = "CampaignTestPlanItem.findPlannedTestCasesIdsByCampaignId", query = "select distinct tc.id from Campaign c join c.testPlan tpi join tpi.referencedTestCase tc where c.id = ?1"),
+
 		//Execution
 		@NamedQuery(name = "execution.countStatus", query = "select count(exSteps.executionStatus) from Execution as execution join execution.steps as exSteps where execution.id =:execId and exSteps.executionStatus=:status"),
 		@NamedQuery(name = "execution.countSteps", query = "select count(steps) from Execution ex join ex.steps as steps where ex.id = :executionId"),
 		@NamedQuery(name = "execution.findAllByTestCaseIdOrderByRunDate", query = "select e from Execution e inner join e.referencedTestCase tc where tc.id = :testCaseId order by e.lastExecutedOn desc"),
 		@NamedQuery(name = "execution.countByTestCaseId", query = "select count(e) from Execution e inner join e.referencedTestCase tc where tc.id = :testCaseId"),
-		@NamedQuery(name = "execution.countAllStatus", query="select count(ex) from Execution ex where ex.executionStatus = :status and ex.testPlan.iteration.campaign.project.id = :projectId"),
-		@NamedQuery(name = "execution.findExecutionIdsHavingStepStatus", query="select distinct exec.id from Execution exec join exec.steps steps where steps.executionStatus = :status and exec.testPlan.iteration.campaign.project.id = :projectId"),
-		
+		@NamedQuery(name = "execution.countAllStatus", query = "select count(ex) from Execution ex where ex.executionStatus = :status and ex.testPlan.iteration.campaign.project.id = :projectId"),
+		@NamedQuery(name = "execution.findExecutionIdsHavingStepStatus", query = "select distinct exec.id from Execution exec join exec.steps steps where steps.executionStatus = :status and exec.testPlan.iteration.campaign.project.id = :projectId"),
+
 		//ExecutionStep
 		@NamedQuery(name = "executionStep.findParentNode", query = "select execution from Execution as execution join execution.steps exSteps where exSteps.id= :childId "),
-		@NamedQuery(name = "executionStep.countAllStatus", query="select count(step) from ExecutionStep step where step.executionStatus = :status and step.execution.testPlan.iteration.campaign.project.id = :projectId"),
-		@NamedQuery(name = "executionStep.replaceStatus", query ="update ExecutionStep step set step.executionStatus = :newStatus where step.executionStatus = :oldStatus and step.id in " +
-															  "(select estep.id from ExecutionStep estep where estep.execution.testPlan.iteration.campaign.project.id = :projectId)"),
+		@NamedQuery(name = "executionStep.countAllStatus", query = "select count(step) from ExecutionStep step where step.executionStatus = :status and step.execution.testPlan.iteration.campaign.project.id = :projectId"),
+		@NamedQuery(name = "executionStep.replaceStatus", query = "update ExecutionStep step set step.executionStatus = :newStatus where step.executionStatus = :oldStatus and step.id in "
+				+ "(select estep.id from ExecutionStep estep where estep.execution.testPlan.iteration.campaign.project.id = :projectId)"),
 
-		
 		//Generic Project
 		@NamedQuery(name = "GenericProject.findAllOrderedByName", query = "from GenericProject fetch all properties order by name"),
 		@NamedQuery(name = "GenericProject.findProjectsFiltered", query = "from GenericProject gp where gp.name like :filter or gp.label like :filter or gp.audit.createdBy like :filter or gp.audit.lastModifiedBy like :filter"),
-		@NamedQuery(name = "GenericProject.countGenericProjects", query = "select count(p) from GenericProject p"),		
+		@NamedQuery(name = "GenericProject.countGenericProjects", query = "select count(p) from GenericProject p"),
 		@NamedQuery(name = "GenericProject.findProjectTypeOf", query = "select p.class from GenericProject p where p.id = :projectId"),
 		@NamedQuery(name = "GenericProject.findBoundTestAutomationProjects", query = "select tap from GenericProject p join p.testAutomationProjects tap where p.id = :projectId order by tap.name"),
 		@NamedQuery(name = "GenericProject.countByName", query = "select count(p) from GenericProject p where p.name = ?1"),
@@ -325,10 +298,10 @@
 		@NamedQuery(name = "project.countNonFolderInRequirement", query = "select count(req) from Requirement req where req.project.id = :projectId "),
 		@NamedQuery(name = "Project.findProjectFiltersContainingProject", query = "select pf from ProjectFilter pf join pf.projects p where p.id = :projectId "),
 		@NamedQuery(name = "Project.findAllUsersWhoCreatedTestCases", query = "select distinct tc.audit.createdBy from TestCase tc join tc.project p where p.id in :projectIds order by tc.audit.createdBy asc"),
-		@NamedQuery(name = "Project.findAllUsersWhoModifiedTestCases", query = "select distinct tc.audit.lastModifiedBy from TestCase tc join tc.project p where p.id in :projectIds order by tc.audit.lastModifiedBy asc"),		
+		@NamedQuery(name = "Project.findAllUsersWhoModifiedTestCases", query = "select distinct tc.audit.lastModifiedBy from TestCase tc join tc.project p where p.id in :projectIds order by tc.audit.lastModifiedBy asc"),
 		@NamedQuery(name = "Project.findAllUsersWhoCreatedRequirementVersions", query = "select distinct rv.audit.createdBy from RequirementVersion rv join rv.requirement r join r.project p where p.id in :projectIds order by rv.audit.createdBy asc"),
-		@NamedQuery(name = "Project.findAllUsersWhoModifiedRequirementVersions", query = "select distinct rv.audit.lastModifiedBy from RequirementVersion rv join rv.requirement r join r.project p where p.id in :projectIds order by rv.audit.lastModifiedBy asc"),		
-		
+		@NamedQuery(name = "Project.findAllUsersWhoModifiedRequirementVersions", query = "select distinct rv.audit.lastModifiedBy from RequirementVersion rv join rv.requirement r join r.project p where p.id in :projectIds order by rv.audit.lastModifiedBy asc"),
+
 		//Attachement et al
 		@NamedQuery(name = "attachment.findContentId", query = "select aContent.id from Attachment attachment join attachment.content aContent where attachment.id = :attachId"),
 		@NamedQuery(name = "attachment.removeContent", query = "delete from AttachmentContent where id = :contentId"),
@@ -349,7 +322,6 @@
 		@NamedQuery(name = "bugtracker.findBugTrackerByName", query = "from BugTracker where name = :name "),
 		@NamedQuery(name = "bugtracker.findDistinctBugTrackersForProjects", query = "select distinct bt from Project p join p.bugtrackerBinding btB join btB.bugtracker bt where p.id in (:projects)"),
 		@NamedQuery(name = "bugtracker.findByName", query = "from BugTracker where name = :btName"),
-		
 
 		//UsersGroup
 		@NamedQuery(name = "usersGroup.findAllGroups", query = "from UsersGroup fetch all properties order by qualifiedName"),
@@ -361,14 +333,14 @@
 		@NamedQuery(name = "user.findUsersByLoginList", query = "from User fetch all properties where login in (:userIds)"),
 		@NamedQuery(name = "user.findUserByLogin", query = "from User fetch all properties where login = :userLogin"),
 		@NamedQuery(name = "user.findAllNonTeamMembers", query = "select u from User u, Team t where u not member of t.members and t.id = :teamId "),
-		@NamedQuery(name = "user.countAllTeamMembers",   query = "select members.size from Team where id = :teamId"),
+		@NamedQuery(name = "user.countAllTeamMembers", query = "select members.size from Team where id = :teamId"),
 		@NamedQuery(name = "user.unassignFromAllCampaignTestPlan", query = "update CampaignTestPlanItem set user = null where user.id = :userId"),
 		@NamedQuery(name = "user.unassignFromAllIterationTestPlan", query = "update IterationTestPlanItem set user = null where user.id = :userId"),
-		
+
 		//Party
 		@NamedQuery(name = "party.findAllActive", query = "select party from Party party where party.id in (select user.id from User user where user.active = true) or party.id in (select team.id from Team team)"),
 		@NamedQuery(name = "party.findAllActiveByIds", query = "select party from Party party where party.id in (:partyIds) and (party.id in (select user.id from User user where user.active = true) or party.id in (select team.id from Team team))"),
-				
+
 		//RequirementAuditEvent
 		//XXX RequirementVersion
 		@NamedQuery(name = "RequirementAuditEvent.findAllByRequirementVersionIdOrderedByDate", query = "select rae from RequirementAuditEvent rae join rae.requirementVersion r where r.id = ?1 order by rae.date desc"),
@@ -386,29 +358,25 @@
 		@NamedQuery(name = "RequirementVersion.countByRequirement", query = "select count(rv) from RequirementVersion rv join rv.requirement r where r.id = ?1"),
 		@NamedQuery(name = "requirementDeletionDao.findVersionIds", query = "select rv.id from RequirementVersion rv join rv.requirement r where r.id in (:reqIds)"),
 
-		
 		//AutomatedSuite
-		@NamedQuery(name = "automatedSuite.completeInitializationById", query = "select suite from AutomatedSuite suite join fetch suite.executionExtenders ext join fetch ext.automatedTest test " +
-																				"join fetch test.project project join fetch project.server server where suite.id = :suiteId"),
-		
-		
+		@NamedQuery(name = "automatedSuite.completeInitializationById", query = "select suite from AutomatedSuite suite join fetch suite.executionExtenders ext join fetch ext.automatedTest test "
+				+ "join fetch test.project project join fetch project.server server where suite.id = :suiteId"),
+
 		//AutomatedExecution
 		@NamedQuery(name = "AutomatedExecutionExtender.findAllBySuiteIdAndTestName", query = "from AutomatedExecutionExtender ex where ex.automatedSuite.id = ?1 and ex.automatedTest.name = ?2 and ex.automatedTest.project.name = ?3"),
 		@NamedQuery(name = "AutomatedExecutionExtender.findAllBySuiteIdAndProjectId", query = "from AutomatedExecutionExtender ex where ex.automatedSuite.id = ?1 and ex.automatedTest.project.id = ?2"),
 
-
 		//AutomatedTest
 		@NamedQuery(name = "automatedTest.findAllByExtenderIds", query = "select distinct test from AutomatedExecutionExtender ext join ext.automatedTest test where ext.id in (:extenderIds)"),
 		@NamedQuery(name = "automatedTest.findAllByExtenders", query = "select distinct test from AutomatedExecutionExtender ext join ext.automatedTest test where ext in (:extenders)"),
-		
-		
+
 		//CustomField
 		@NamedQuery(name = "CustomField.findAll", query = "from CustomField"),
-		@NamedQuery(name = "CustomField.findAllBindableCustomFields", query = "select cf from CustomField cf where cf not in (select cf2 from CustomFieldBinding binding join binding.customField cf2 "+
-																			"where binding.boundProject.id = ?1 and binding.boundEntity = ?2)"),
-		@NamedQuery(name = "CustomField.findAllBoundCustomFields", query = "select cf from CustomFieldBinding binding join binding.customField cf where binding.boundProject.id = ?1 and binding.boundEntity = ?2 order by cf.name asc "),		
+		@NamedQuery(name = "CustomField.findAllBindableCustomFields", query = "select cf from CustomField cf where cf not in (select cf2 from CustomFieldBinding binding join binding.customField cf2 "
+				+ "where binding.boundProject.id = ?1 and binding.boundEntity = ?2)"),
+		@NamedQuery(name = "CustomField.findAllBoundCustomFields", query = "select cf from CustomFieldBinding binding join binding.customField cf where binding.boundProject.id = ?1 and binding.boundEntity = ?2 order by cf.name asc "),
 		@NamedQuery(name = "CustomField.findByName", query = "from CustomField where name = ?1"),
-		
+
 		//CustomFieldBinding
 		@NamedQuery(name = "CustomFieldBinding.findAllByIds", query = "select cfb from CustomFieldBinding cfb where cfb.id in (:cfbIds) group by cfb.boundEntity, cfb.boundProject order by cfb.position asc"),
 		@NamedQuery(name = "CustomFieldBinding.findAllForGenericProject", query = "select cfb from CustomFieldBinding cfb join cfb.boundProject bp where bp.id = ?1 group by cfb.boundEntity, cfb.id order by cfb.position asc"),
@@ -416,111 +384,95 @@
 		@NamedQuery(name = "CustomFieldBinding.countAllForProjectAndEntity", query = "select count(cfb) from CustomFieldBinding cfb where cfb.boundProject.id = ?1 and cfb.boundEntity = ?2"),
 		@NamedQuery(name = "CustomFieldBinding.findAllForCustomField", query = "select cfb from CustomFieldBinding cfb where cfb.customField.id = ?1 order by cfb.position asc"),
 		@NamedQuery(name = "CustomFieldBinding.removeCustomFieldBindings", query = "delete CustomFieldBinding cfb where cfb.id in (:cfbIds)"),
-		@NamedQuery(name = "CustomFieldBinding.recomputeBindingPositions", query = "select cfb1.id as bindingId, cfb1.position as formerPosition, count(cfb1.id) as newPosition from CustomFieldBinding cfb1, CustomFieldBinding cfb2 where cfb1.boundEntity=cfb2.boundEntity "+
-																				   "and cfb1.boundProject = cfb2.boundProject and cfb1.position >= cfb2.position group by cfb1.id"),	
-		@NamedQuery(name = "CustomFielBinding.updateBindingPosition", query="update CustomFieldBinding cfb set cfb.position = :newPos where cfb.id = :id"),
-		@NamedQuery(name = "CustomFieldBinding.findAllAlike", query="select cfb2 from CustomFieldBinding cfb1, CustomFieldBinding cfb2 where cfb1.id = ?1 and cfb1.boundProject = cfb2.boundProject and cfb1.boundEntity = cfb2.boundEntity order by cfb2.position"),
-		
+		@NamedQuery(name = "CustomFieldBinding.recomputeBindingPositions", query = "select cfb1.id as bindingId, cfb1.position as formerPosition, count(cfb1.id) as newPosition from CustomFieldBinding cfb1, CustomFieldBinding cfb2 where cfb1.boundEntity=cfb2.boundEntity "
+				+ "and cfb1.boundProject = cfb2.boundProject and cfb1.position >= cfb2.position group by cfb1.id"),
+		@NamedQuery(name = "CustomFielBinding.updateBindingPosition", query = "update CustomFieldBinding cfb set cfb.position = :newPos where cfb.id = :id"),
+		@NamedQuery(name = "CustomFieldBinding.findAllAlike", query = "select cfb2 from CustomFieldBinding cfb1, CustomFieldBinding cfb2 where cfb1.id = ?1 and cfb1.boundProject = cfb2.boundProject and cfb1.boundEntity = cfb2.boundEntity order by cfb2.position"),
+
 		//CustomFieldValue
-		@NamedQuery(name = "CustomFieldValue.findBoundEntityId", query="select cfv.boundEntityId from CustomFieldValue cfv where cfv.id = :customFieldValueId"),
-		@NamedQuery(name = "CustomFieldValue.findAllCustomValues", query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfv.boundEntityId = ?1 and cfv.boundEntityType = ?2 order by cfb.position asc"),
-		@NamedQuery(name = "CustomFieldValue.batchedFindAllCustomValuesFor", query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfv.boundEntityId in (:entityIds) and cfv.boundEntityType = :entityType order by cfv.boundEntityId asc, cfb.position asc"),
-		@NamedQuery(name = "CustomFieldValue.batchedRestrictedFindAllCustomValuesFor", query="select cfv from CustomFieldValue cfv join cfv.binding cfb join cfb.customField cf where cfv.boundEntityId in (:entityIds) and cfv.boundEntityType = :entityType " +
-																							 "and cf in (:customFields) " +	
-																							 "order by cfv.boundEntityId , cfb.position asc"),		
-		@NamedQuery(name = "CustomFieldValue.findAllCustomValuesOfBinding" , query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfb.id = ?1 order by cfb.position asc"),
-		@NamedQuery(name = "CustomFieldValue.findAllCustomValuesOfBindings", query="select cfv from CustomFieldValue cfv join cfv.binding cfb where cfb.id in ( :bindingIds )"),
-		@NamedQuery(name = "CustomFieldValue.findAllForEntityAndRenderingLocation", query="select cfv from CustomFieldValue cfv join cfv.binding cfb join cfb.renderingLocations rl where cfv.boundEntityId = ?1 and cfv.boundEntityType = ?2 and rl = ?3 order by cfb.position asc"),
-		
-		@NamedQuery(name = "CustomFieldValue.deleteAll", query="delete CustomFieldValue where id in (:ids)"),
+		@NamedQuery(name = "CustomFieldValue.findBoundEntityId", query = "select cfv.boundEntityId from CustomFieldValue cfv where cfv.id = :customFieldValueId"),
+		@NamedQuery(name = "CustomFieldValue.findAllCustomValues", query = "select cfv from CustomFieldValue cfv join cfv.binding cfb where cfv.boundEntityId = ?1 and cfv.boundEntityType = ?2 order by cfb.position asc"),
+		@NamedQuery(name = "CustomFieldValue.batchedFindAllCustomValuesFor", query = "select cfv from CustomFieldValue cfv join cfv.binding cfb where cfv.boundEntityId in (:entityIds) and cfv.boundEntityType = :entityType order by cfv.boundEntityId asc, cfb.position asc"),
+		@NamedQuery(name = "CustomFieldValue.batchedRestrictedFindAllCustomValuesFor", query = "select cfv from CustomFieldValue cfv join cfv.binding cfb join cfb.customField cf where cfv.boundEntityId in (:entityIds) and cfv.boundEntityType = :entityType "
+				+ "and cf in (:customFields) " + "order by cfv.boundEntityId , cfb.position asc"),
+		@NamedQuery(name = "CustomFieldValue.findAllCustomValuesOfBinding", query = "select cfv from CustomFieldValue cfv join cfv.binding cfb where cfb.id = ?1 order by cfb.position asc"),
+		@NamedQuery(name = "CustomFieldValue.findAllCustomValuesOfBindings", query = "select cfv from CustomFieldValue cfv join cfv.binding cfb where cfb.id in ( :bindingIds )"),
+		@NamedQuery(name = "CustomFieldValue.findAllForEntityAndRenderingLocation", query = "select cfv from CustomFieldValue cfv join cfv.binding cfb join cfb.renderingLocations rl where cfv.boundEntityId = ?1 and cfv.boundEntityType = ?2 and rl = ?3 order by cfb.position asc"),
+
+		@NamedQuery(name = "CustomFieldValue.deleteAll", query = "delete CustomFieldValue where id in (:ids)"),
 		@NamedQuery(name = "CustomFieldValue.deleteAllForBinding", query = "delete CustomFieldValue cv1 where cv1 in (select cv2 from CustomFieldValue cv2 join cv2.binding cfb where cfb.id = :bindingId )"),
-		@NamedQuery(name = "CustomFieldValue.deleteAllForEntity",  query = "delete CustomFieldValue cv where cv.boundEntityId = :entityId and cv.boundEntityType = :entityType"),
-		@NamedQuery(name = "CustomFieldValue.deleteAllForEntities", query= "delete CustomFieldValue cv where cv.boundEntityId in (:entityIds) and cv.boundEntityType = :entityType"),
-		@NamedQuery(name = "CustomFieldValue.findPairedCustomFieldValues", query="select new org.squashtest.tm.service.internal.repository.CustomFieldValueDao$CustomFieldValuesPair(orig, copy) from CustomFieldValue orig, CustomFieldValue copy "+
-																				 " where orig.boundEntityId = :origEntityId "+
-																				 " and orig.boundEntityType = :entityType "+
-												 								 " and copy.boundEntityId = :copyEntityId "+
-																				 " and copy.boundEntityType = :entityType "+
-																				 " and copy.binding = orig.binding"
-																			),
-		@NamedQuery(name = "CustomFieldValue.findAllCustomFieldValueOfBindingAndEntity", query="select cv from CustomFieldValue cv join cv.binding binding where binding.id = ?1 and cv.boundEntityId = ?2 and cv.boundEntityType = ?3 "),
-		
+		@NamedQuery(name = "CustomFieldValue.deleteAllForEntity", query = "delete CustomFieldValue cv where cv.boundEntityId = :entityId and cv.boundEntityType = :entityType"),
+		@NamedQuery(name = "CustomFieldValue.deleteAllForEntities", query = "delete CustomFieldValue cv where cv.boundEntityId in (:entityIds) and cv.boundEntityType = :entityType"),
+		@NamedQuery(name = "CustomFieldValue.findPairedCustomFieldValues", query = "select new org.squashtest.tm.service.internal.repository.CustomFieldValueDao$CustomFieldValuesPair(orig, copy) from CustomFieldValue orig, CustomFieldValue copy "
+				+ " where orig.boundEntityId = :origEntityId "
+				+ " and orig.boundEntityType = :entityType "
+				+ " and copy.boundEntityId = :copyEntityId "
+				+ " and copy.boundEntityType = :entityType "
+				+ " and copy.binding = orig.binding"),
+		@NamedQuery(name = "CustomFieldValue.findAllCustomFieldValueOfBindingAndEntity", query = "select cv from CustomFieldValue cv join cv.binding binding where binding.id = ?1 and cv.boundEntityId = ?2 and cv.boundEntityType = ?3 "),
+
 		//BoundEntity
-		@NamedQuery(name = "BoundEntityDao.findAllTestCasesForProject", query="select tc from TestCase tc where tc.project.id = :projectId"),
-		@NamedQuery(name = "BoundEntityDao.findAllReqVersionsForProject", query="select rv from RequirementVersion rv join rv.requirement r where r.project.id = :projectId"),
-		@NamedQuery(name = "BoundEntityDao.findAllCampaignsForProject", query="select c from Campaign c where c.project.id = :projectId"),
-		@NamedQuery(name = "BoundEntityDao.findAllIterationsForProject", query="select i from Iteration i join i.campaign c where c.project.id = :projectId"),
-		@NamedQuery(name = "BoundEntityDao.findAllTestSuitesForProject", query="select ts from TestSuite ts join ts.iteration i join i.campaign c where c.project.id = :projectId"),
-		@NamedQuery(name = "BoundEntityDao.findAllTestStepsForProject", query="select ts from TestCase tc join tc.steps ts where tc.project.id = :projectId and ts.class = ActionTestStep"),		
-		@NamedQuery(name = "BoundEntityDao.findAllExecutionsForProject", query="select exec from Execution exec join exec.testPlan tp join tp.iteration i join i.campaign c where c.project.id = :projectId"),		
-		@NamedQuery(name = "BoundEntityDao.findAllExecutionStepsForProject", query="select execst from ExecutionStep execst join execst.execution exe join exe.testPlan tp join tp.iteration i join i.campaign c where c.project.id = :projectId"),						
-		@NamedQuery(name = "BoundEntityDao.hasCustomFields", query="select count(cfv) from CustomFieldValue cfv where cfv.boundEntityId = :boundEntityId and cfv.boundEntityType = :boundEntityType"),
-		
+		@NamedQuery(name = "BoundEntityDao.findAllTestCasesForProject", query = "select tc from TestCase tc where tc.project.id = :projectId"),
+		@NamedQuery(name = "BoundEntityDao.findAllReqVersionsForProject", query = "select rv from RequirementVersion rv join rv.requirement r where r.project.id = :projectId"),
+		@NamedQuery(name = "BoundEntityDao.findAllCampaignsForProject", query = "select c from Campaign c where c.project.id = :projectId"),
+		@NamedQuery(name = "BoundEntityDao.findAllIterationsForProject", query = "select i from Iteration i join i.campaign c where c.project.id = :projectId"),
+		@NamedQuery(name = "BoundEntityDao.findAllTestSuitesForProject", query = "select ts from TestSuite ts join ts.iteration i join i.campaign c where c.project.id = :projectId"),
+		@NamedQuery(name = "BoundEntityDao.findAllTestStepsForProject", query = "select ts from TestCase tc join tc.steps ts where tc.project.id = :projectId and ts.class = ActionTestStep"),
+		@NamedQuery(name = "BoundEntityDao.findAllExecutionsForProject", query = "select exec from Execution exec join exec.testPlan tp join tp.iteration i join i.campaign c where c.project.id = :projectId"),
+		@NamedQuery(name = "BoundEntityDao.findAllExecutionStepsForProject", query = "select execst from ExecutionStep execst join execst.execution exe join exe.testPlan tp join tp.iteration i join i.campaign c where c.project.id = :projectId"),
+		@NamedQuery(name = "BoundEntityDao.hasCustomFields", query = "select count(cfv) from CustomFieldValue cfv where cfv.boundEntityId = :boundEntityId and cfv.boundEntityType = :boundEntityType"),
+
 		//Administration
-		@NamedQuery(name = "administration.findAdministrationStatistics", query="select (select count(p.id) from Project p), count(*),(select count(req.id) from Requirement req),(select count(tc.id) from TestCase tc),(select count(camp.id) from Campaign camp), (select count(it.id) from Iteration it),(select count(exec.id) from Execution exec) from User u where u.active = true"),
-		
-		
+		@NamedQuery(name = "administration.findAdministrationStatistics", query = "select (select count(p.id) from Project p), count(*),(select count(req.id) from Requirement req),(select count(tc.id) from TestCase tc),(select count(camp.id) from Campaign camp), (select count(it.id) from Iteration it),(select count(exec.id) from Execution exec) from User u where u.active = true"),
+
 		//Test Case Statistics
 		@NamedQuery(name = "TestCaseStatistics.importanceStatistics", query = "select tc.importance, count(tc) from TestCase tc where tc.id in (:testCaseIds) group by tc.importance"),
-		@NamedQuery(name = "TestCaseStatistics.statusesStatistics",	query = "select tc.status, count(tc) from TestCase tc where tc.id in (:testCaseIds) group by tc.status"),
+		@NamedQuery(name = "TestCaseStatistics.statusesStatistics", query = "select tc.status, count(tc) from TestCase tc where tc.id in (:testCaseIds) group by tc.status"),
 
 		//Campaign Statistics
-		@NamedQuery(name="CampaignStatistics.testinventory", 
-					query=	"select iter.id as iterid, iter.name as name, itp.executionStatus as status, count(tc) as num " +
-							"from Campaign c join c.iterations iter left join iter.testPlans itp left join itp.referencedTestCase tc where c.id = :id group by iter, itp.executionStatus order by iter"),
-		
-		@NamedQuery(name="CampaignStatistics.globaltestinventory", 
-					query = "select itp.executionStatus, count(itp.executionStatus) " +
-							"from Campaign c join c.iterations iter join iter.testPlans itp where c.id = :id and itp.referencedTestCase is not null group by itp.executionStatus"),
-					
-		@NamedQuery(name="CampaignStatistics.successRate", 
-					query = "select tc.importance, itp.executionStatus, count(tc.importance) " +
-							"from Campaign c join c.iterations iter join iter.testPlans itp join itp.referencedTestCase tc where c.id = :id group by tc.importance, itp.executionStatus"),		
-							
-		@NamedQuery(name="CampaignStatistics.nonexecutedTestcaseImportance", 
-					query = "select tc.importance, count(tc.importance) " +
-							"from Campaign c join c.iterations iter join iter.testPlans itp join itp.referencedTestCase tc where c.id = :id and (itp.executionStatus = 'READY' or itp.executionStatus = 'RUNNING') group by tc.importance"),		
-							
-		@NamedQuery(name="CampaignStatistics.findScheduledIterations", 
-					query = "select new org.squashtest.tm.service.statistics.campaign.ScheduledIteration(iter.id as id, iter.name as name, "+
-							"(select count(itp1) from Iteration it1 join it1.testPlans itp1 where it1.id = iter.id and itp1.referencedTestCase is not null) as testplanCount, " +
-							"iter.scheduledPeriod.scheduledStartDate as scheduledStart, iter.scheduledPeriod.scheduledEndDate as scheduledEnd) " +
-							"from Campaign c join c.iterations iter where c.id = :id group by iter order by index(iter)"),
+		@NamedQuery(name = "CampaignStatistics.testinventory", query = "select iter.id as iterid, iter.name as name, itp.executionStatus as status, count(tc) as num "
+				+ "from Campaign c join c.iterations iter left join iter.testPlans itp left join itp.referencedTestCase tc where c.id = :id group by iter, itp.executionStatus order by iter"),
 
-		@NamedQuery(name="CampaignStatistics.findExecutionsHistory",
-					query="select itp.lastExecutedOn from IterationTestPlanItem itp where itp.iteration.campaign.id = :id " +
-							"and itp.lastExecutedOn is not null and itp.executionStatus not in (:nonterminalStatuses) and itp.referencedTestCase is not null order by itp.lastExecutedOn"),
-		
+		@NamedQuery(name = "CampaignStatistics.globaltestinventory", query = "select itp.executionStatus, count(itp.executionStatus) "
+				+ "from Campaign c join c.iterations iter join iter.testPlans itp where c.id = :id and itp.referencedTestCase is not null group by itp.executionStatus"),
+
+		@NamedQuery(name = "CampaignStatistics.successRate", query = "select tc.importance, itp.executionStatus, count(tc.importance) "
+				+ "from Campaign c join c.iterations iter join iter.testPlans itp join itp.referencedTestCase tc where c.id = :id group by tc.importance, itp.executionStatus"),
+
+		@NamedQuery(name = "CampaignStatistics.nonexecutedTestcaseImportance", query = "select tc.importance, count(tc.importance) "
+				+ "from Campaign c join c.iterations iter join iter.testPlans itp join itp.referencedTestCase tc where c.id = :id and (itp.executionStatus = 'READY' or itp.executionStatus = 'RUNNING') group by tc.importance"),
+
+		@NamedQuery(name = "CampaignStatistics.findScheduledIterations", query = "select new org.squashtest.tm.service.statistics.campaign.ScheduledIteration(iter.id as id, iter.name as name, "
+				+ "(select count(itp1) from Iteration it1 join it1.testPlans itp1 where it1.id = iter.id and itp1.referencedTestCase is not null) as testplanCount, "
+				+ "iter.scheduledPeriod.scheduledStartDate as scheduledStart, iter.scheduledPeriod.scheduledEndDate as scheduledEnd) "
+				+ "from Campaign c join c.iterations iter where c.id = :id group by iter order by index(iter)"),
+
+		@NamedQuery(name = "CampaignStatistics.findExecutionsHistory", query = "select itp.lastExecutedOn from IterationTestPlanItem itp where itp.iteration.campaign.id = :id "
+				+ "and itp.lastExecutedOn is not null and itp.executionStatus not in (:nonterminalStatuses) and itp.referencedTestCase is not null order by itp.lastExecutedOn"),
+
 		//Iteration Statistics
-			
-		@NamedQuery(name="IterationStatistics.globaltestinventory", 
-		query = "select itp.executionStatus, count(itp.executionStatus) " +
-				"from Iteration iter join iter.testPlans itp where iter.id = :id and itp.referencedTestCase is not null group by itp.executionStatus"),
-				
-		@NamedQuery(name="IterationStatistics.nonexecutedTestcaseImportance", 
-		query = "select tc.importance, count(tc.importance) " +
-				"from Iteration iter join iter.testPlans itp join itp.referencedTestCase tc where iter.id = :id and (itp.executionStatus = 'READY' or itp.executionStatus = 'RUNNING') group by tc.importance"),		
-	
-		@NamedQuery(name="IterationStatistics.successRate", 
-		query = "select tc.importance, itp.executionStatus, count(tc.importance) " +
-				"from Iteration iter join iter.testPlans itp join itp.referencedTestCase tc where iter.id = :id group by tc.importance, itp.executionStatus"),		
 
+		@NamedQuery(name = "IterationStatistics.globaltestinventory", query = "select itp.executionStatus, count(itp.executionStatus) "
+				+ "from Iteration iter join iter.testPlans itp where iter.id = :id and itp.referencedTestCase is not null group by itp.executionStatus"),
 
-		@NamedQuery(name="IterationStatistics.testSuiteStatistics", 
-		query = "select ts.name, tp.executionStatus, tc.importance, count(tc.importance), iter.scheduledPeriod.scheduledStartDate, iter.scheduledPeriod.scheduledEndDate " +
-		         "from Iteration iter join iter.testSuites ts left join ts.testPlan tp left join tp.referencedTestCase tc "+
-				 "where iter.id = :id group by ts.name, tp.executionStatus, tc.importance, iter.scheduledPeriod.scheduledStartDate, iter.scheduledPeriod.scheduledEndDate "+
-		         "order by ts.name, tp.executionStatus, tc.importance"),
-		
+		@NamedQuery(name = "IterationStatistics.nonexecutedTestcaseImportance", query = "select tc.importance, count(tc.importance) "
+				+ "from Iteration iter join iter.testPlans itp join itp.referencedTestCase tc where iter.id = :id and (itp.executionStatus = 'READY' or itp.executionStatus = 'RUNNING') group by tc.importance"),
+
+		@NamedQuery(name = "IterationStatistics.successRate", query = "select tc.importance, itp.executionStatus, count(tc.importance) "
+				+ "from Iteration iter join iter.testPlans itp join itp.referencedTestCase tc where iter.id = :id group by tc.importance, itp.executionStatus"),
+
+		@NamedQuery(name = "IterationStatistics.testSuiteStatistics", query = "select ts.name, tp.executionStatus, tc.importance, count(tc.importance), iter.scheduledPeriod.scheduledStartDate, iter.scheduledPeriod.scheduledEndDate "
+				+ "from Iteration iter join iter.testSuites ts left join ts.testPlan tp left join tp.referencedTestCase tc "
+				+ "where iter.id = :id group by ts.name, tp.executionStatus, tc.importance, iter.scheduledPeriod.scheduledStartDate, iter.scheduledPeriod.scheduledEndDate "
+				+ "order by ts.name, tp.executionStatus, tc.importance"),
 
 		// that query is complementary of the one above, and will bring the tests that belongs to no test suite.
 		// note : the first occurent of 'tp.executionStatus' is actually a placeholder for 'null', because HQL doesn't support select NULL
- 		@NamedQuery(name="IterationStatistics.testSuiteStatistics-testsLeftover", 
-		query = "select tp.executionStatus, tp.executionStatus, tc.importance, count(tc.importance), iter.scheduledPeriod.scheduledStartDate, iter.scheduledPeriod.scheduledEndDate " +
-		         "from Iteration iter join iter.testPlans tp left join tp.referencedTestCase tc "+
-				 "where iter.id = :id and tp.testSuites is empty "+
-		         "group by tp.executionStatus, tc.importance, iter.scheduledPeriod.scheduledStartDate, iter.scheduledPeriod.scheduledEndDate "+
-		         "order by tp.executionStatus, tc.importance"),
+		@NamedQuery(name = "IterationStatistics.testSuiteStatistics-testsLeftover", query = "select tp.executionStatus, tp.executionStatus, tc.importance, count(tc.importance), iter.scheduledPeriod.scheduledStartDate, iter.scheduledPeriod.scheduledEndDate "
+				+ "from Iteration iter join iter.testPlans tp left join tp.referencedTestCase tc "
+				+ "where iter.id = :id and tp.testSuites is empty "
+				+ "group by tp.executionStatus, tc.importance, iter.scheduledPeriod.scheduledStartDate, iter.scheduledPeriod.scheduledEndDate "
+				+ "order by tp.executionStatus, tc.importance"),
 
 })
 package org.squashtest.tm.service.internal.repository.hibernate;

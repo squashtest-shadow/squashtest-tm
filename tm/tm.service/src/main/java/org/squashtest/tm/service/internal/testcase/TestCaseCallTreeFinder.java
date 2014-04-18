@@ -36,9 +36,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.NamedReference;
+import org.squashtest.tm.domain.NamedReferencePair;
 import org.squashtest.tm.domain.library.structures.LibraryGraph;
 import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode;
-import org.squashtest.tm.service.internal.repository.CustomTestCaseDao.NamedReferencePair;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 
 /**

@@ -460,7 +460,7 @@ TestCaseLibraryNavigationService {
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseFolder', 'READ') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.testcase.TestCaseFolder', 'READ') or hasRole('ROLE_ADMIN')")
 	public List<String> findNamesInFolderStartingWith(long folderId, String nameStart) {
 		return testCaseFolderDao.findNamesInFolderStartingWith(folderId, nameStart);
 	}

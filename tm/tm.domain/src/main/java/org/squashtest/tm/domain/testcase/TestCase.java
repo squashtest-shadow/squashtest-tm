@@ -88,11 +88,11 @@ import org.squashtest.tm.search.bridge.LevelEnumBridge;
 	@ClassBridge(name = "issues", store = Store.YES, impl = TestCaseIssueBridge.class),
 	@ClassBridge(name = "cufs", store = Store.YES, impl = CUFBridge.class, params = {
 		@org.hibernate.search.annotations.Parameter(name = "type", value = "testcase"),
-		@org.hibernate.search.annotations.Parameter(name = "inputType", value = "ALL") 
+		@org.hibernate.search.annotations.Parameter(name = "inputType", value = "ALL")
 	}),
 	@ClassBridge(name = "cufs", store = Store.YES, analyze = Analyze.NO, impl = CUFBridge.class, params = {
 		@org.hibernate.search.annotations.Parameter(name = "type", value = "testcase"),
-		@org.hibernate.search.annotations.Parameter(name = "inputType", value = "DROPDOWN_LIST") 
+		@org.hibernate.search.annotations.Parameter(name = "inputType", value = "DROPDOWN_LIST")
 	})
 })
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
@@ -697,7 +697,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	protected void addParameter(@NotNull Parameter parameter) {
 		Parameter homonyme = findParameterByName(parameter.getName());
 		if (homonyme != null && !homonyme.equals(parameter)) {
-				throw new NameAlreadyInUseException(Parameter.class.getSimpleName(), parameter.getName());
+			throw new NameAlreadyInUseException(Parameter.class.getSimpleName(), parameter.getName());
 		}
 		this.parameters.add(parameter);
 
@@ -749,7 +749,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		TestCase res = new TestCase();
 
 		res.importanceAuto = null;
-		res.executionMode = null;
+		//res.executionMode = null;
 		res.prerequisite = null;
 		res.reference = null;
 		res.nature = null;
