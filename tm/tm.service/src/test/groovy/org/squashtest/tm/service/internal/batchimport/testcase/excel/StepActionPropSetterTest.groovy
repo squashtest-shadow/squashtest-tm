@@ -66,9 +66,11 @@ class StepActionPropSetterTest extends Specification {
 		target.path == expected
 
 		where:
-		action 											| expected
-		"the path is straight but the slope is steep"	| "the path is straight but the slope is steep"
-		null											| null
+		action 												| expected
+		"the path is straight but the slope is steep"		| "the path is straight but the slope is steep"
+		"CALL the path is straight but the slope is steep"	| "the path is straight but the slope is steep"
+		"CALLthe path is straight but the slope is steep"	| "the path is straight but the slope is steep"
+		null												| null
 
 	}
 }

@@ -44,7 +44,8 @@ public class StepActionPropSetter extends StepPropSetter implements PropertySett
 
 	@Override
 	protected void setOnTarget(String value, TestCaseTarget target) {
-		pathSetter.set(value, target);
+		String path = value == null ? value : value.replaceFirst("^CALL\\s*", "");
+		pathSetter.set(path, target);
 	}
 
 	@Override

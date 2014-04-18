@@ -50,8 +50,7 @@ public abstract class StepPropSetter implements PropertySetter<String, Object> {
 			return;
 		}
 		if (target instanceof TestCaseTarget) {
-			String path = value.replaceFirst("^CALL\\s*", "");
-			setOnTarget(path, (TestCaseTarget) target);
+			setOnTarget(value, (TestCaseTarget) target);
 			return;
 		}
 		throw new IllegalArgumentException("Target of type " + target.getClass().getSimpleName()
