@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.WebRequest;
@@ -46,8 +47,10 @@ public class TestCaseImportLogController {
 	@Inject
 	private TestCaseImportLogHelper logHelper;
 
-	@RequestMapping(value = "/{timestamp}", method = RequestMethod.GET)
-	public FileSystemResource getExcelImportLog(String timestamp, WebRequest request, HttpServletResponse response) {
+	// There are dots in `{timestamp}`. We need to parse using a regexp (`{:.+}`) because standard parser ditches file extensions.
+	@RequestMapping(value = "/{timestamp:.+}", method = RequestMethod.GET)
+	public FileSystemResource getExcelImportLog(@PathVariable String timestamp, WebRequest request,
+			HttpServletResponse response) {
 		File logFile = logHelper.fetchLogFile(request, timestamp);
 		response.setContentType("application/octet-stream");
 		response.setHeader("Content-Disposition", "attachment; filename=" + logHelper.logFilename(timestamp) + ".xls");
