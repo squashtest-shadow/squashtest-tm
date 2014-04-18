@@ -70,9 +70,9 @@ import org.squashtest.tm.service.testcase.TestCaseStatisticsService;
 @Service("squashtest.tm.service.TestCaseLibraryNavigationService")
 @Transactional
 public class TestCaseLibraryNavigationServiceImpl extends
-		AbstractLibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode> implements
-		TestCaseLibraryNavigationService {
-	
+AbstractLibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode> implements
+TestCaseLibraryNavigationService {
+
 	@Inject
 	private TestCaseLibraryDao testCaseLibraryDao;
 	@Inject
@@ -100,23 +100,22 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToTestCaseLibraryStrategy")
 	private Provider<PasteStrategy<TestCaseLibrary, TestCaseLibraryNode>> pasteToTestCaseLibraryStrategyProvider;
-	
+
 	@Inject
 	private TestCaseStatisticsService statisticsService;
-	
+
 	@Inject
 	private TestCaseCallTreeFinder calltreeService;
-	
+
 	@Inject
 	private TestCaseExcelExporterService excelService;
 
 	@Inject
 	private ProjectDao projectDao;
-	
+
 	@Inject
-	private TestCaseExcelBatchImporter batchImporter; 
-	
-	
+	private TestCaseExcelBatchImporter batchImporter;
+
 	@Override
 	protected NodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> getDeletionHandler() {
 		return deletionHandler;
@@ -155,21 +154,19 @@ public class TestCaseLibraryNavigationServiceImpl extends
 
 	@Override
 	public String getPathAsString(long entityId) {
-		return (getPathsAsString(Arrays.asList(new Long[]{entityId}))).get(0);
+		return (getPathsAsString(Arrays.asList(new Long[] { entityId }))).get(0);
 	}
 
-	
 	@Override
 	public List<String> getPathsAsString(List<Long> ids) {
 		return getLibraryNodeDao().getPathsAsString(ids);
 	}
-	
-	
+
 	@Override
 	public List<TestCaseLibraryNode> findNodesByPath(List<String> paths) {
 		return getLibraryNodeDao().findNodesByPath(paths);
 	}
-	
+
 	@Override
 	public List<Long> findNodeIdsByPath(List<String> paths) {
 		return getLibraryNodeDao().findNodeIdsByPath(paths);
@@ -185,7 +182,6 @@ public class TestCaseLibraryNavigationServiceImpl extends
 		return getLibraryNodeDao().findNodesByPath(path);
 	}
 
-	
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary' , 'CREATE' )"
 			+ "or hasRole('ROLE_ADMIN')")
@@ -195,8 +191,7 @@ public class TestCaseLibraryNavigationServiceImpl extends
 
 		if (!library.isContentNameAvailable(testCase.getName())) {
 			throw new DuplicateNameException(testCase.getName(), testCase.getName());
-		} 
-		else {
+		} else {
 			library.addContent(testCase);
 			testCaseDao.safePersist(testCase);
 			createCustomFieldValuesForTestCase(testCase);
@@ -243,94 +238,86 @@ public class TestCaseLibraryNavigationServiceImpl extends
 		addTestCaseToFolder(folderId, testCase);
 		initCustomFieldValues(testCase, customFieldValues);
 	}
-	
-	
+
 	@Override
 	public Long mkdirs(String folderpath) {
-		
-		String path = folderpath.replaceFirst("^/", "").replaceFirst("/$", "");
-		
-		StringBuffer buffer = new StringBuffer();
-		String[] split = path.split("(?<!\\\\)/");	
-		List<String> paths = new ArrayList<String>(split.length - 1);
-		
 
-		// build all the paths on the way.  
-		buffer.append("/"+split[0]);
-		for (int i = 1; i< split.length; i++){
-			buffer.append("/"+split[i]);
+		String path = folderpath.replaceFirst("^/", "").replaceFirst("/$", "");
+
+		StringBuffer buffer = new StringBuffer();
+		String[] split = path.split("(?<!\\\\)/");
+		List<String> paths = new ArrayList<String>(split.length - 1);
+
+		// build all the paths on the way.
+		buffer.append("/" + split[0]);
+		for (int i = 1; i < split.length; i++) {
+			buffer.append("/" + split[i]);
 			paths.add(buffer.toString());
 		}
 
-		// find the folder ids, if exist 
-		List<Long> foundIds = findNodeIdsByPath(paths);		
-		
-		
+		// find the folder ids, if exist
+		List<Long> foundIds = findNodeIdsByPath(paths);
+
 		int nullIdx = foundIds.indexOf(null);
 		TestCaseFolder foldertree = null;
-		
-		switch(nullIdx){
-		case -1 : 
-			return foundIds.get(foundIds.size()-1);	// all folders do exist, simply return the last element;
-			
-		case 0 : 
-			Long libraryId = projectDao.findByName(split[0].replaceAll("\\\\\\/", "/"))
-										.getTestCaseLibrary()
-										.getId();		
+
+		switch (nullIdx) {
+		case -1:
+			return foundIds.get(foundIds.size() - 1); // all folders do exist, simply return the last element;
+
+		case 0:
+			Long libraryId = projectDao.findByName(split[0].replaceAll("\\\\\\/", "/")).getTestCaseLibrary().getId();
 			foldertree = mkTransFolders(1, split);
 			addFolderToLibrary(libraryId, foldertree);
 			break;
-			
-		default : 
+
+		default:
 			Long parentFolder = foundIds.get(nullIdx - 1);
 			foldertree = mkTransFolders(nullIdx + 1, split);
 			addFolderToFolder(parentFolder, foldertree);
 			break;
 		}
-		
+
 		TestCaseFolder lastFolder = foldertree;
-		do{
-			if (lastFolder.hasContent()){
-				lastFolder = (TestCaseFolder)lastFolder.getContent().get(0);
+		do {
+			if (lastFolder.hasContent()) {
+				lastFolder = (TestCaseFolder) lastFolder.getContent().get(0);
 			}
-		}while(lastFolder.hasContent());	
-		
-		return lastFolder.getId();		
-		
+		} while (lastFolder.hasContent());
+
+		return lastFolder.getId();
+
 	}
-	
-	
-	private TestCaseFolder mkTransFolders(int startIndex, String[] names){
-		
+
+	private TestCaseFolder mkTransFolders(int startIndex, String[] names) {
+
 		TestCaseFolder baseFolder = null;
 		TestCaseFolder currentParent = null;
 		TestCaseFolder currentChild = null;
-		
-		for (int i = startIndex; i < names.length; i++){
+
+		for (int i = startIndex; i < names.length; i++) {
 			currentChild = new TestCaseFolder();
-			currentChild.setName(names[i].replaceAll("\\\\\\/", "/"));	// unescapes escaped slashes '\/' to slashes '/'
+			currentChild.setName(names[i].replaceAll("\\\\\\/", "/")); // unescapes escaped slashes '\/' to slashes '/'
 			currentChild.setDescription("");
-			
+
 			// if this is the first round in the loop we must initialize some variables
-			if (baseFolder == null){
+			if (baseFolder == null) {
 				baseFolder = currentChild;
 				currentParent = currentChild;
-			}
-			else{
+			} else {
 				currentParent.addContent(currentChild);
 			}
-			
-			currentParent = currentChild;
-			
-		}
-		
-		return baseFolder;
-		
-	}
-	
-	
 
-	// CUF : this is a very quick fix for [Issue 2061], TODO : remove the lines that are related to this issue and replace
+			currentParent = currentChild;
+
+		}
+
+		return baseFolder;
+
+	}
+
+	// CUF : this is a very quick fix for [Issue 2061], TODO : remove the lines that are related to this issue and
+	// replace
 	// it with another solution mentioned in the ticket
 	// same for requirement import
 	@Override
@@ -341,7 +328,7 @@ public class TestCaseLibraryNavigationServiceImpl extends
 		List<Long> alreadyExistingTestCases = testCaseDao.findAllTestCasesIdsByLibrary(libraryId);
 		// **************************end [Issue 2061]********************
 		ImportSummary summary = testCaseImporter.importExcelTestCases(archiveStream, libraryId, encoding);
-		
+
 		// **************************[Issue 2061]********************
 		// flush so that sql query works
 		testCaseDao.flush();
@@ -358,7 +345,7 @@ public class TestCaseLibraryNavigationServiceImpl extends
 		// **************************end [Issue 2061]********************
 		return summary;
 	}
-	
+
 	@Override
 	public ImportLog simulateImportExcelTestCase(File excelFile) {
 		return batchImporter.simulateImport(excelFile);
@@ -368,8 +355,7 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	public ImportLog performImportExcelTestCase(File excelFile) {
 		return batchImporter.performImport(excelFile);
 	}
-	
-	
+
 	@Override
 	@PostFilter("hasPermission(filterObject, 'LINK') or hasRole('ROLE_ADMIN')")
 	public List<TestCaseLibrary> findLinkableTestCaseLibraries() {
@@ -379,78 +365,76 @@ public class TestCaseLibraryNavigationServiceImpl extends
 
 	}
 
-
 	@Override
-	@Transactional(readOnly=true)
-	public List<ExportTestCaseData> findTestCasesToExport(List<Long> libraryIds, List<Long> nodeIds, boolean includeCalledTests){
+	@Transactional(readOnly = true)
+	public List<ExportTestCaseData> findTestCasesToExport(List<Long> libraryIds, List<Long> nodeIds,
+			boolean includeCalledTests) {
 
 		Collection<Long> allIds = findTestCaseIdsFromSelection(libraryIds, nodeIds, includeCalledTests);
 		allIds = securityFilterIds(allIds, "org.squashtest.tm.domain.testcase.TestCase", "EXPORT");
-		
+
 		List<ExportTestCaseData> testCases = testCaseDao.findTestCaseToExportFromNodes(new ArrayList<Long>(allIds));
 		return (List<ExportTestCaseData>) setFullFolderPath(testCases);
-		
+
 	}
-	
+
 	@Override
-	@Transactional(readOnly=true)
-	public File exportTestCaseAsExcel(List<Long> libraryIds,
-			List<Long> nodeIds, boolean includeCalledTests) {
-		
+	@Transactional(readOnly = true)
+	public File exportTestCaseAsExcel(List<Long> libraryIds, List<Long> nodeIds, boolean includeCalledTests) {
+
 		Collection<Long> allIds = findTestCaseIdsFromSelection(libraryIds, nodeIds, includeCalledTests);
 		allIds = securityFilterIds(allIds, "org.squashtest.tm.domain.testcase.TestCase", "EXPORT");
-		
+
 		return excelService.exportAsExcel(new ArrayList<Long>(allIds));
 	}
-	
-	
+
 	@Override
-	public TestCaseStatisticsBundle getStatisticsForSelection(Collection<Long> libraryIds, Collection<Long> nodeIds){
-		
+	public TestCaseStatisticsBundle getStatisticsForSelection(Collection<Long> libraryIds, Collection<Long> nodeIds) {
+
 		Collection<Long> tcIds = findTestCaseIdsFromSelection(libraryIds, nodeIds);
-		
+
 		return statisticsService.gatherTestCaseStatisticsBundle(tcIds);
 	}
-	
-	
+
 	@Override
-	public Collection<Long> findTestCaseIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds){
+	public Collection<Long> findTestCaseIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds) {
 		return findTestCaseIdsFromSelection(libraryIds, nodeIds, false);
 	}
-	
+
 	@Override
-	public Collection<Long> findTestCaseIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds, boolean includeCalledTests){
-		
+	public Collection<Long> findTestCaseIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds,
+			boolean includeCalledTests) {
+
 		// get all the test cases
 		Collection<Long> tcIds = new ArrayList<Long>();
-		
-		if (! libraryIds.isEmpty()){
-			tcIds.addAll(testCaseDao.findAllTestCaseIdsByLibraries(libraryIds));	
+
+		if (!libraryIds.isEmpty()) {
+			tcIds.addAll(testCaseDao.findAllTestCaseIdsByLibraries(libraryIds));
 		}
-		if (! nodeIds.isEmpty()){
+		if (!nodeIds.isEmpty()) {
 			tcIds.addAll(testCaseDao.findAllTestCaseIdsByNodeIds(nodeIds));
 		}
-		if (includeCalledTests){
+		if (includeCalledTests) {
 			tcIds.addAll(calltreeService.getTestCaseCallTree(tcIds));
 		}
 
 		// filter out duplicates
 		Set<Long> set = new HashSet<Long>(tcIds);
 		tcIds = new ArrayList<Long>(set);
-		
+
 		// sec check
 		tcIds = securityFilterIds(tcIds, "org.squashtest.tm.domain.testcase.TestCase", "READ");
 
 		return tcIds;
-		
+
 	}
-	
-	private Collection<Long> securityFilterIds(Collection<Long> original, String entityType, String permission){
+
+	private Collection<Long> securityFilterIds(Collection<Long> original, String entityType, String permission) {
 		Collection<Long> effective = new ArrayList<Long>();
-		for (Long id : original){
-			if (permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", permission, id, entityType)){
+		for (Long id : original) {
+			if (permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", permission, id, entityType)) {
 				effective.add(id);
-			}	
+			}
 		}
 		return effective;
 	}
@@ -458,37 +442,33 @@ public class TestCaseLibraryNavigationServiceImpl extends
 	@Override
 	public List<String> getParentNodesAsStringList(Long nodeId) {
 		List<Long> ids = testCaseLibraryNodeDao.getParentsIds(nodeId);
-		
+
 		TestCase tc = testCaseDao.findById(nodeId);
 		Long librabryId = tc.getLibrary().getId();
-		
-		List<String> parents = new ArrayList<String>();
-		
-		parents.add("#TestCaseLibrary-"+librabryId);
 
-		if(ids.size() > 1){
-			for(int i=0; i<ids.size()-1; i++){
-				parents.add("#TestCaseFolder-"+String.valueOf(ids.get(i)));
+		List<String> parents = new ArrayList<String>();
+
+		parents.add("#TestCaseLibrary-" + librabryId);
+
+		if (ids.size() > 1) {
+			for (int i = 0; i < ids.size() - 1; i++) {
+				parents.add("#TestCaseFolder-" + String.valueOf(ids.get(i)));
 			}
 		}
-		
+
 		return parents;
 	}
 
-
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseFolder', 'READ') or hasRole('ROLE_ADMIN')")
-	public List<String> findNamesInFolderStartingWith(long folderId,
-			String nameStart) {
+	public List<String> findNamesInFolderStartingWith(long folderId, String nameStart) {
 		return testCaseFolderDao.findNamesInFolderStartingWith(folderId, nameStart);
 	}
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary', 'READ') or hasRole('ROLE_ADMIN')")
-	public List<String> findNamesInLibraryStartingWith(long libraryId,
-			String nameStart) {
-		return findNamesInLibraryStartingWith(libraryId, nameStart);
+	public List<String> findNamesInLibraryStartingWith(long libraryId, String nameStart) {
+		return testCaseFolderDao.findNamesInLibraryStartingWith(libraryId, nameStart);
 	}
-	
-	
+
 }
