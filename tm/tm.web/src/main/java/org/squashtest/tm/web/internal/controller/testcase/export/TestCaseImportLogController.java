@@ -47,13 +47,13 @@ public class TestCaseImportLogController {
 	@Inject
 	private TestCaseImportLogHelper logHelper;
 
-	// There are dots in `{timestamp}`. We need to parse using a regexp (`{:.+}`) because standard parser ditches file extensions.
-	@RequestMapping(value = "/{timestamp:.+}", method = RequestMethod.GET)
-	public FileSystemResource getExcelImportLog(@PathVariable String timestamp, WebRequest request,
+	// There are dots in `{filename}`. We need to parse using a regexp (`{:.+}`) because standard parser ditches file extensions.
+	@RequestMapping(value = "/{filename:.+}", method = RequestMethod.GET)
+	public FileSystemResource getExcelImportLog(@PathVariable String filename, WebRequest request,
 			HttpServletResponse response) {
-		File logFile = logHelper.fetchLogFile(request, timestamp);
+		File logFile = logHelper.fetchLogFile(request, filename);
 		response.setContentType("application/octet-stream");
-		response.setHeader("Content-Disposition", "attachment; filename=" + logHelper.logFilename(timestamp) + ".xls");
+		response.setHeader("Content-Disposition", "attachment; filename=" + logHelper.logFilename(filename) + ".xls");
 
 		return new FileSystemResource(logFile);
 	}

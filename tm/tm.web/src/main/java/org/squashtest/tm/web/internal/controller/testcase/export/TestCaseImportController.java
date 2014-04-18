@@ -27,7 +27,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 
 import javax.inject.Inject;
 
@@ -41,7 +40,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
 import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
@@ -53,9 +51,6 @@ import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 @Controller
 @RequestMapping("/test-cases/importer")
 public class TestCaseImportController {
-	private static final String XLS_SUFFIX = ".xls";
-
-	private static final String IMPORT_LOG_PREFIX = "test-case-import-log-";
 
 	private interface Command<T, U> {
 		U execute(T arg);
@@ -133,15 +128,12 @@ public class TestCaseImportController {
 		try {
 			xlsSummary = importLogToLogFile(summary);
 
-			String logTimeStamp = IsoDateUtils.formatIso8601DateTime(new Date());
-
-			String reportUrl = request.getContextPath() + "/test-cases/import-logs/" + logTimeStamp;
+			String reportUrl = request.getContextPath() + "/test-cases/import-logs/" + xlsSummary.getName();
 			summary.setReportUrl(reportUrl);
-
-			storeLogFile(request, xlsSummary, logTimeStamp);
 
 		} catch (IOException e) {
 			LOGGER.warn("An error occured during import log generation", e);
+
 		} finally {
 			if (xlsSummary != null) {
 				xlsSummary.deleteOnExit();
@@ -150,20 +142,13 @@ public class TestCaseImportController {
 		}
 	}
 
-	private void storeLogFile(WebRequest request, File xlsSummary, String logTimeStamp) {
-		logHelper.storeLogFile(request, xlsSummary, logTimeStamp);
-	}
-
 	private File importLogToLogFile(ImportLog summary) throws IOException {
-		File xlsSummary;
-		xlsSummary = File.createTempFile(IMPORT_LOG_PREFIX, XLS_SUFFIX);
-		logHelper.writeToFile(summary, xlsSummary);
-		return xlsSummary;
+		return logHelper.storeLogFile(summary);
 	}
 
 	private File multipartToImportFile(MultipartFile archive) throws IOException, FileNotFoundException {
 		InputStream is = archive.getInputStream();
-		File xls = File.createTempFile("test-case-import-", XLS_SUFFIX);
+		File xls = File.createTempFile("test-case-import-", ".xls");
 		BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(xls));
 		IOUtils.copy(is, os);
 		IOUtils.closeQuietly(os);

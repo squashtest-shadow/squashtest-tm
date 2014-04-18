@@ -48,9 +48,14 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
 @Component
 class TestCaseImportLogHelper {
+	public static final String XLS_SUFFIX = ".xls";
+
+	private static final String IMPORT_LOG_PREFIX = "test-case-import-log-";
 
 	@Inject
 	private InternationalizationHelper messageSource;
+
+	private File tempDir;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseImportLogHelper.class);
 
@@ -104,7 +109,7 @@ class TestCaseImportLogHelper {
 		}
 	}
 
-	public void writeToFile(ImportLog importLog, File emptyFile) throws IOException {
+	private void writeToFile(ImportLog importLog, File emptyFile) throws IOException {
 		XSSFWorkbook workbook = buildWorkbook(importLog);
 		writeToFile(emptyFile, workbook);
 
@@ -156,9 +161,36 @@ class TestCaseImportLogHelper {
 		request.setAttribute(logFilename, xlsSummary, RequestAttributes.SCOPE_SESSION);
 	}
 
-	public File fetchLogFile(WebRequest request, String logTimeStamp) {
-		String logFilename = logFilename(logTimeStamp);
-		return (File) request.getAttribute(logFilename, RequestAttributes.SCOPE_SESSION);
+	public File fetchLogFile(WebRequest request, String filename) {
+		return new File(getTempDir(), filename);
+
+	}
+
+	/**
+	 * @return
+	 */
+	private File getTempDir() {
+		if (tempDir == null) {
+			try {
+				tempDir = File.createTempFile("temp", null).getParentFile();
+			} catch (IOException e) {
+				LOGGER.error("Impossible to create a temp file ! Check fs permissions", e);
+				throw new RuntimeException(e);
+			}
+		}
+		return tempDir;
+	}
+
+	/**
+	 * @param summary
+	 * @return
+	 * @throws IOException
+	 */
+	public File storeLogFile(ImportLog summary) throws IOException {
+		File logFile = File.createTempFile(IMPORT_LOG_PREFIX, XLS_SUFFIX);
+		writeToFile(summary, logFile);
+
+		return logFile;
 	}
 
 }
