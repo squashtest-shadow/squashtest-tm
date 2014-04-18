@@ -104,7 +104,7 @@ public class TestCaseImportController {
 		try {
 			xls = multipartToImportFile(archive);
 			ImportLog summary = callback.execute(xls); // TODO parser may throw ex we should handle
-			summary.recompute();
+			summary.recompute(); // TODO why is it here ? shouldnt it be in service ?
 			generateImportLog(request, summary);
 			mav.addObject("summary", summary);
 			mav.addObject("workspace", "test-case");
