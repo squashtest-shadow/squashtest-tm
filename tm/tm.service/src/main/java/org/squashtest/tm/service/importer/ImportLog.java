@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.importer;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.TreeSet;
 
@@ -65,7 +66,13 @@ public class ImportLog {
 
 	@SuppressWarnings("unchecked")
 	public Collection<LogEntry> findAllFor(EntityType type){
-		return logEntriesPerType.getCollection(type);
+		Collection<LogEntry> entries = logEntriesPerType.getCollection(type);
+		if (entries != null){
+			return entries;
+		}
+		else{
+			return Collections.emptyList();
+		}
 	}
 
 

@@ -80,6 +80,7 @@ class TestCaseImportLogHelper {
 	}
 
 	private void writeValueToCell(Cell cell, Object value) {
+		cell.setCellValue(value.toString());
 	}
 
 	private void writeEntriesToTab(Collection<LogEntry> entries, XSSFSheet sheet, Locale locale) {
@@ -95,9 +96,11 @@ class TestCaseImportLogHelper {
 			cell = row.createCell(cellnum++);
 			writeValueToCell(cell, "MISSING INFO");
 			cell = row.createCell(cellnum++);
-			writeValueToCell(cell, messageSource.internationalize(entry.getI18nError(), locale));
+			writeValueToCell(cell, messageSource.getMessage(entry.getI18nError(), entry.getErrorArgs(), locale));
 			cell = row.createCell(cellnum++);
-			writeValueToCell(cell, messageSource.internationalize(entry.getI18nImpact(), locale));
+			if (entry.getI18nImpact() != null){
+				writeValueToCell(cell, messageSource.getMessage(entry.getI18nImpact(), entry.getImpactArgs(), locale));
+			}
 		}
 	}
 
