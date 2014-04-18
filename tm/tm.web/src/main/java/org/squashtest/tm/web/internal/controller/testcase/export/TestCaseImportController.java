@@ -85,7 +85,7 @@ public class TestCaseImportController {
 	}
 
 	@RequestMapping(value = "/xls", method = RequestMethod.POST, params = "dry-run")
-	public ModelAndView dryRunExcelWorkbook(@RequestParam("archive") MultipartFile archive, WebRequest request) throws IOException {
+	public ModelAndView dryRunExcelWorkbook(@RequestParam("archive") MultipartFile archive, WebRequest request) {
 		LOGGER.debug("dryRunExcelWorkbook");
 
 		return importWorkbook(archive, request, new Command<File, ImportLog>() {
@@ -170,8 +170,7 @@ public class TestCaseImportController {
 	}
 
 	@RequestMapping(value = "/xls", params = "!dry-run", method = RequestMethod.POST)
-	public ModelAndView importExcelWorkbook(@RequestParam("archive") MultipartFile archive,
-			@RequestParam("projectId") long projectId, WebRequest request) throws IOException {
+	public ModelAndView importExcelWorkbook(@RequestParam("archive") MultipartFile archive, WebRequest request) {
 
 		return importWorkbook(archive, request, new Command<File, ImportLog>() {
 			@Override
