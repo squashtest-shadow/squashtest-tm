@@ -55,7 +55,7 @@ class TestCaseImportControllerTest extends Specification {
 
 		and:
 		WebRequest request = Mock()
-		request.contextPath >> "squashtm"
+		request.contextPath >> "/squashtm"
 
 		when:
 		controller.generateImportLog(request, log)

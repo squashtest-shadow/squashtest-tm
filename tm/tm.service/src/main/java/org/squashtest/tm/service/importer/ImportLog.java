@@ -34,19 +34,19 @@ public class ImportLog {
 	@SuppressWarnings("rawtypes")
 	private MultiValueMap logEntriesPerType = MultiValueMap.decorate(new HashMap(), TreeSet.class);
 
-	private int testCaseSuccess = 0;
+	private int testCaseSuccesses = 0;
 	private int testCaseWarnings = 0;
 	private int testCaseFailures = 0;
 
-	private int testStepSuccess = 0;
+	private int testStepSuccesses = 0;
 	private int testStepWarnings = 0;
 	private int testStepFailures = 0;
 
-	private int parametersSuccess = 0;
-	private int parametersWarnings = 0;
-	private int parametersFailures = 0;
+	private int parameterSuccesses = 0;
+	private int parameterWarnings = 0;
+	private int parameterFailures = 0;
 
-	private int datasetSuccess = 0;
+	private int datasetSuccesses = 0;
 	private int datasetWarnings = 0;
 	private int datasetFailures = 0;
 
@@ -83,7 +83,7 @@ public class ImportLog {
 		for (LogEntry entry : findAllFor(EntityType.DATASET)) {
 			switch (entry.getStatus()) {
 			case OK:
-				datasetSuccess++;
+				datasetSuccesses++;
 				break;
 			case WARNING:
 				datasetWarnings++;
@@ -101,13 +101,13 @@ public class ImportLog {
 		for (LogEntry entry : findAllFor(EntityType.PARAMETER)) {
 			switch (entry.getStatus()) {
 			case OK:
-				parametersSuccess++;
+				parameterSuccesses++;
 				break;
 			case WARNING:
-				parametersWarnings++;
+				parameterWarnings++;
 				break;
 			case FAILURE:
-				parametersFailures++;
+				parameterFailures++;
 				break;
 			default:
 				break;
@@ -119,7 +119,7 @@ public class ImportLog {
 		for (LogEntry entry : findAllFor(EntityType.TEST_STEP)) {
 			switch (entry.getStatus()) {
 			case OK:
-				testStepSuccess++;
+				testStepSuccesses++;
 				break;
 			case WARNING:
 				testStepWarnings++;
@@ -137,7 +137,7 @@ public class ImportLog {
 		for (LogEntry entry : findAllFor(EntityType.TEST_CASE)) {
 			switch (entry.getStatus()) {
 			case OK:
-				testCaseSuccess++;
+				testCaseSuccesses++;
 				break;
 			case WARNING:
 				testCaseWarnings++;
@@ -151,8 +151,8 @@ public class ImportLog {
 		}
 	}
 
-	public int getTestCaseSuccess() {
-		return testCaseSuccess;
+	public int getTestCaseSuccesses() {
+		return testCaseSuccesses;
 	}
 
 	public int getTestCaseWarnings() {
@@ -163,8 +163,8 @@ public class ImportLog {
 		return testCaseFailures;
 	}
 
-	public int getTestStepSuccess() {
-		return testStepSuccess;
+	public int getTestStepSuccesses() {
+		return testStepSuccesses;
 	}
 
 	public int getTestStepWarnings() {
@@ -175,20 +175,20 @@ public class ImportLog {
 		return testStepFailures;
 	}
 
-	public int getParametersSuccess() {
-		return parametersSuccess;
+	public int getParameterSuccesses() {
+		return parameterSuccesses;
 	}
 
-	public int getParametersWarnings() {
-		return parametersWarnings;
+	public int getParameterWarnings() {
+		return parameterWarnings;
 	}
 
-	public int getParametersFailures() {
-		return parametersFailures;
+	public int getParameterFailures() {
+		return parameterFailures;
 	}
 
-	public int getDatasetSuccess() {
-		return datasetSuccess;
+	public int getDatasetSuccesses() {
+		return datasetSuccesses;
 	}
 
 	public int getDatasetWarnings() {

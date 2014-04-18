@@ -308,33 +308,33 @@
       <tbody>
       <tr>
         <th><f:message key="label.testCases" /></th>
-        <th class="txt-success">{{testCaseSuccess}}</th>
-        <th class="txt-warn">{{testCaseWarning}}</th>
-        <th class="txt-error">{{testCaseFailure}}</th>
+        <th class="txt-success">{{testCaseSuccesses}}</th>
+        <th class="txt-warn">{{testCaseWarnings}}</th>
+        <th class="txt-error">{{testCaseFailures}}</th>
       </tr>
       <tr>
         <th><f:message key="label.testSteps" /></th>
-        <th class="txt-success">{{testStepSuccess}}</th>
-        <th class="txt-warn">{{testStepWarning}}</th>
-        <th class="txt-error">{{testStepFailure}}</th>
+        <th class="txt-success">{{testStepSuccesses}}</th>
+        <th class="txt-warn">{{testStepWarnings}}</th>
+        <th class="txt-error">{{testStepFailures}}</th>
       </tr>
       <tr>
         <th><f:message key="label.parameters" /></th>
-        <th class="txt-success">{{parameterSuccess}}</th>
-        <th class="txt-warn">{{parameterWarning}}</th>
-        <th class="txt-error">{{parameterFailure}}</th>
+        <th class="txt-success">{{parameterSuccesses}}</th>
+        <th class="txt-warn">{{parameterWarnings}}</th>
+        <th class="txt-error">{{parameterFailures}}</th>
       </tr>
       <tr>
         <th><f:message key="label.datasets" /></th>
-        <th class="txt-success">{{datasetSuccess}}</th>
-        <th class="txt-warn">{{datasetWarning}}</th>
-        <th class="txt-error">{{datasetFailure}}</th>
+        <th class="txt-success">{{datasetSuccesses}}</th>
+        <th class="txt-warn">{{datasetWarnings}}</th>
+        <th class="txt-error">{{datasetFailures}}</th>
       </tr>
       </tbody>
     </table>
     </p>
     <p class="cf">
-      <span class="snap-left ui-icon ui-icon-arrowthick-1-e"></span><a href="{{xlsRecapUrl}}"><f:message key="message.import.downloadLog" /></a>
+      <span class="snap-left ui-icon ui-icon-arrowthick-1-e"></span><a href="{{reportUrl}}"><f:message key="message.import.downloadLog" /></a>
     </p>
   </div>
   </script>

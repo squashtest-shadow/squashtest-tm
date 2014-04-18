@@ -135,7 +135,7 @@ public class TestCaseImportController {
 
 			String logTimeStamp = IsoDateUtils.formatIso8601DateTime(new Date());
 
-			String reportUrl = '/' + request.getContextPath() + "/test-cases/import-logs/" + logTimeStamp;
+			String reportUrl = request.getContextPath() + "/test-cases/import-logs/" + logTimeStamp;
 			summary.setReportUrl(reportUrl);
 
 			storeLogFile(request, xlsSummary, logTimeStamp);
