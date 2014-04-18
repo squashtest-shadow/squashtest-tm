@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.service.importer.ImportStatus;
@@ -154,8 +155,7 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 	 * @return the cell or null when the cell does not exist
 	 */
 	protected final Cell getCell(Row row, ColumnDef colDef) {
-		return row.getCell(colDef.getIndex());
-		// TODO should it throw an ex when a mandatory cell is not avail ?
+		return row.getCell(colDef.getIndex(), Row.CREATE_NULL_AS_BLANK);
 	}
 
 	@SuppressWarnings("unchecked")

@@ -64,7 +64,7 @@ class ParameterInstructionBuilderTest extends Specification {
 	def "should create test step target from row with this bunch of data : #col #cellType #cellValue #propName #propValue"() {
 		given:
 		Cell cell = mockCell(cellType, cellValue)
-		row.getCell(30) >> cell
+		row.getCell(30, _) >> cell
 
 		and:
 		wd.getImportableColumnDefs() >> [new StdColumnDef(col, 30)]
@@ -87,7 +87,7 @@ class ParameterInstructionBuilderTest extends Specification {
 	def "should create test step instruction from row with this bunch of data : #col #cellType #cellValue #propName #propValue"() {
 		given:
 		Cell cell = mockCell(cellType, cellValue)
-		row.getCell(30) >> cell
+		row.getCell(30, _) >> cell
 
 		and:
 		wd.getImportableColumnDefs() >> [new StdColumnDef(col, 30)]
@@ -111,7 +111,7 @@ class ParameterInstructionBuilderTest extends Specification {
 	def "should create action test step from row with this bunch of data : #col #cellType #cellValue #propName #propValue"() {
 		given:
 		Cell cell = mockCell(cellType, cellValue)
-		row.getCell(30) >> cell
+		row.getCell(30, _) >> cell
 
 		and:
 		wd.getImportableColumnDefs() >> [new StdColumnDef(col, 30)]

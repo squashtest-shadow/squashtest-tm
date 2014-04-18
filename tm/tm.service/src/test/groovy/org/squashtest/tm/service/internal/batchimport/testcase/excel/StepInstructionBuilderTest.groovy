@@ -64,7 +64,7 @@ class StepInstructionBuilderTest extends Specification {
 	def "should create test step target from row with this bunch of data : #col #cellType #cellValue #propName #propValue"() {
 		given:
 		Cell cell = mockCell(cellType, cellValue)
-		row.getCell(30) >> cell
+		row.getCell(30, _) >> cell
 
 		and:
 		wd.getImportableColumnDefs() >> [new StdColumnDef(col, 30)]
@@ -91,7 +91,7 @@ class StepInstructionBuilderTest extends Specification {
 	def "should create test step instruction from row with this bunch of data : #col #cellType #cellValue #propName #propValue"() {
 		given:
 		Cell cell = mockCell(cellType, cellValue)
-		row.getCell(30) >> cell
+		row.getCell(30, _) >> cell
 
 		and:
 		wd.getImportableColumnDefs() >> [new StdColumnDef(col, 30)]
@@ -115,11 +115,11 @@ class StepInstructionBuilderTest extends Specification {
 	def "should create action test step from row with this bunch of data : #col #cellType #cellValue #propName #propValue"() {
 		given:
 		Cell cell = mockCell(cellType, cellValue)
-		row.getCell(30) >> cell
+		row.getCell(30, _) >> cell
 
 		and:
 		Cell typeCell = mockCell(Cell.CELL_TYPE_NUMERIC, 0)
-		row.getCell(40) >> typeCell
+		row.getCell(40, _) >> typeCell
 		def typeCellDef = new StdColumnDef(StepSheetColumn.TC_STEP_IS_CALL_STEP, 40)
 
 		and:
@@ -148,11 +148,11 @@ class StepInstructionBuilderTest extends Specification {
 	def "should create call test step from row with this bunch of data : #col #cellType #cellValue #propName #propValue"() {
 		given:
 		Cell cell = mockCell(cellType, cellValue)
-		row.getCell(30) >> cell
+		row.getCell(30, _) >> cell
 
 		and:
 		Cell typeCell = mockCell(Cell.CELL_TYPE_BOOLEAN, true)
-		row.getCell(40) >> typeCell
+		row.getCell(40, _) >> typeCell
 		def typeCellDef = new StdColumnDef(StepSheetColumn.TC_STEP_IS_CALL_STEP, 40)
 
 		and:
@@ -179,7 +179,7 @@ class StepInstructionBuilderTest extends Specification {
 	def "should add custom field to instruction from row with this bunch of data : #cellType #cellValue #fieldCode"() {
 		given:
 		Cell cell = mockCell(cellType, cellValue)
-		row.getCell(30) >> cell
+		row.getCell(30, _) >> cell
 
 		and:
 		wd.getImportableColumnDefs() >> []

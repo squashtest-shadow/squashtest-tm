@@ -68,8 +68,8 @@ class TestCaseInstructionBuilderTest extends Specification {
 
 		wd.getCustomFieldDefs() >> []
 
-		row.getCell(10) >> pathCell
-		row.getCell(20) >> orderCell
+		row.getCell(10, _) >> pathCell
+		row.getCell(20, _) >> orderCell
 	}
 
 	@Unroll
@@ -141,7 +141,7 @@ class TestCaseInstructionBuilderTest extends Specification {
 	def "should create test case from row with this bunch of data : #col #cellType #cellValue #propName #propValue"() {
 		given:
 		Cell cell = mockCell(cellType, cellValue)
-		row.getCell(30) >> cell
+		row.getCell(30, _) >> cell
 
 		and:
 		wd.getImportableColumnDefs() >> [new StdColumnDef(col, 30)]
@@ -211,7 +211,7 @@ class TestCaseInstructionBuilderTest extends Specification {
 	def "should create instruction from row with this bunch of data : #col #cellType #cellValue #propValue"() {
 		given:
 		Cell cell = mockCell(cellType, cellValue)
-		row.getCell(30) >> cell
+		row.getCell(30, _) >> cell
 
 		and:
 		wd.getImportableColumnDefs() >> [new StdColumnDef(col, 30)]
@@ -234,7 +234,7 @@ class TestCaseInstructionBuilderTest extends Specification {
 	def "should log error on illegal action value : #col #cellType #cellValue"() {
 		given:
 		Cell cell = mockCell(cellType, cellValue)
-		row.getCell(30) >> cell
+		row.getCell(30, _) >> cell
 
 		and:
 		wd.getImportableColumnDefs() >> [new StdColumnDef(col, 30)]
@@ -257,7 +257,7 @@ class TestCaseInstructionBuilderTest extends Specification {
 	def "should add custom field to instruction from row with this bunch of data : #cellType #cellValue #fieldCode"() {
 		given:
 		Cell cell = mockCell(cellType, cellValue)
-		row.getCell(30) >> cell
+		row.getCell(30, _) >> cell
 
 		and:
 		wd.getImportableColumnDefs() >> []
@@ -296,7 +296,7 @@ class TestCaseInstructionBuilderTest extends Specification {
 	def "should log warning for broken data : #col #cellType #cellValue #propName #propValue"() {
 		given:
 		Cell cell = mockCell(cellType, cellValue)
-		row.getCell(30) >> cell
+		row.getCell(30, _) >> cell
 
 		and:
 		wd.getImportableColumnDefs() >> [new StdColumnDef(col, 30)]

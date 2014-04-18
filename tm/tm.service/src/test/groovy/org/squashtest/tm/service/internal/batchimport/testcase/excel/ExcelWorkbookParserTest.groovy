@@ -188,4 +188,22 @@ class ExcelWorkbookParserTest extends Specification {
 		stepInstructions*.target.path == stepPaths
 		stepInstructions*.calledTC.path == stepActions
 	}
+
+	def "should not break on phantom (null) cells"() {
+		given:
+		Resource xls = new ClassPathResource("batchimport/testcase/phantom-cells.xlsx")
+
+		and:
+		ExcelWorkbookParser parser = ExcelWorkbookParser.createParser(xls.file)
+
+		when:
+		parser.parse().releaseResources()
+		def instructions = parser.instructions
+
+		and:
+		def paths = ["null-action-cell", null]
+
+		then:
+		instructions*.target.path == paths
+	}
 }
