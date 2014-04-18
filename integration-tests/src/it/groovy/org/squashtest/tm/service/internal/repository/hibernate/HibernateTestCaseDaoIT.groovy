@@ -41,7 +41,7 @@ import org.squashtest.tm.domain.testcase.TestCaseNature
 import org.squashtest.tm.domain.testcase.TestCaseSearchCriteria
 import org.squashtest.tm.domain.testcase.TestCaseStatus
 import org.squashtest.tm.domain.testcase.TestCaseType
-import org.squashtest.tm.service.internal.repository.CustomTestCaseDao.NamedReferencePair;
+import org.squashtest.tm.domain.NamedReferencePair;
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.unitils.dbunit.annotation.DataSet
 
