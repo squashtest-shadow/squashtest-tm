@@ -51,14 +51,14 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService {
 	}
 	@Inject
 	private BugTrackersLocalService bugtrackersLocalService;
-	
+
 	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
 	@Override
 	public List<BugTracker> findAll() {
 		return bugTrackerDao.findAll();
-		
+
 	}
-	
+
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public PagedCollectionHolder<List<BugTracker>> findSortedBugtrackers(PagingAndSorting filter) {
@@ -75,6 +75,11 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService {
 	@Override
 	public String findBugtrackerName(Long bugtrackerId) {
 		return bugTrackerDao.findById(bugtrackerId).getName();
+	}
+
+	@Override
+	public BugTracker getBugtrackerFromKeyIfExists(String bugTrackerName){
+		return bugTrackerDao.findByName(bugTrackerName);
 	}
 
 	@Override

@@ -256,7 +256,11 @@
 		interface="org.squashtest.tm.service.bugtracker.BugTrackersLocalService"
 		availability="mandatory" />
 
-
+	<osgi:reference id="squashtest.tm.service.JiraPluginRestService"
+		bean-name="squashtest.tm.service.JiraPluginRestService"
+		interface="org.squashtest.tm.service.bugtracker.JiraPluginRestService"
+		availability="mandatory" />
+	
 	<osgi:reference id="squashtest.tm.service.BugTrackerManagerService"
 		bean-name="squashtest.tm.service.BugTrackerManagerService"
 		availability="mandatory">

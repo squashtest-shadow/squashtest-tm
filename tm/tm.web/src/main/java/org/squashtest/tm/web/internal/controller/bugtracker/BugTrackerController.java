@@ -195,8 +195,8 @@ public class BugTrackerController {
 	 * that the report bug dialog will be populated later.
 	 * </p>
 	 * <p>
-	 * Note : accepts as optional parameter : 
-	 * <ul><li>useParentContextPopup : will tell the panel to use a delegate report issue popup (that's how the OER works)  
+	 * Note : accepts as optional parameter :
+	 * <ul><li>useParentContextPopup : will tell the panel to use a delegate report issue popup (that's how the OER works)
 	 * </p>
 	 * @param stepId
 	 * @return

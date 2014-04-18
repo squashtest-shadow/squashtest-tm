@@ -48,6 +48,8 @@
 
   <osgi:service ref="squashtest.tm.service.BugTrackersLocalService" interface="org.squashtest.tm.service.bugtracker.BugTrackersLocalService" />
 
+  <osgi:service ref="squashtest.tm.service.JiraPluginRestService" interface="org.squashtest.tm.service.bugtracker.JiraPluginRestService" />
+	
   <osgi:service ref="squashtest.tm.service.BugTrackerManagerService">
     <osgi:interfaces>
       <value>org.squashtest.tm.service.bugtracker.BugTrackerManagerService</value>

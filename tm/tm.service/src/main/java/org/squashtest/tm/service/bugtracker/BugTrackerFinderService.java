@@ -29,6 +29,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 
 
+
 @Transactional(readOnly = true)
 public interface BugTrackerFinderService {
 
@@ -37,7 +38,7 @@ public interface BugTrackerFinderService {
 	 * @return all bugtrackers the user has read access to
 	 */
 	List<BugTracker> findAll();
-	
+
 	/**
 	 * 
 	 * @param bugTrackerId
@@ -50,23 +51,26 @@ public interface BugTrackerFinderService {
 	 * @return sorted list of bugtrackers
 	 */
 	PagedCollectionHolder<List<BugTracker>> findSortedBugtrackers(PagingAndSorting filter);
-	
+
 	/**
 	 * 
 	 * @return a list of bugtracker kinds
 	 */
 	Set<String> findBugTrackerKinds();
-	
+
 	/**
 	 * @param bugtrackerId
 	 * @return the name of the bugtracker
 	 */
 	String findBugtrackerName(Long bugtrackerId);
-	
+
 	/**
 	 * 
 	 * @param projectIds
 	 * @return a list of distinct BugTrackers concerned by the given projects;
 	 */
 	List<BugTracker> findDistinctBugTrackersForProjects(List<Long> projectIds);
+
+
+	BugTracker getBugtrackerFromKeyIfExists(String bugTrackerName);
 }

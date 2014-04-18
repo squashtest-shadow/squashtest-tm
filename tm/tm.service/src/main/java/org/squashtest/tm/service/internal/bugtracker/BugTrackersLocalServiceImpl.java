@@ -22,11 +22,8 @@ package org.squashtest.tm.service.internal.bugtracker;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -99,7 +96,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	@Inject
 	private IterationDao iterationDao;
-	
+
 	@Inject
 	private IterationTestPlanDao iterationTestPlanDao;
 
@@ -117,10 +114,10 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	@Inject
 	private ProjectDao projectDao;
-	
+
 	@Inject
 	private IndexationService indexationService;
-	
+
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
 
@@ -151,17 +148,17 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	}
 
 	private RemoteIssue createRemoteIssue(IssueDetector entity, RemoteIssue btIssue) {
-		
+
 		BugTracker bugTracker = entity.getBugTracker();
 		String btName = bugTracker.getName();
 		btIssue.setBugtracker(btName);
 
 		RemoteIssue createdIssue = remoteBugTrackersService.createIssue(btIssue, bugTracker);
 		createdIssue.setBugtracker(btName);
-		
+
 		return createdIssue;
 	}
-	
+
 	@Override
 	public RemoteIssue createIssue(IssueDetector entity, RemoteIssue btIssue) {
 
@@ -169,7 +166,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		// if success we set the bug in Squash TM database
 		// a success being : we reach this code with no exceptions
 		BugTracker bugTracker = entity.getBugTracker();
-		
+
 		Issue sqIssue = new Issue();
 		sqIssue.setRemoteIssueId(createdIssue.getId());
 		sqIssue.setBugtracker(bugTracker);
@@ -182,7 +179,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 		TestCase testCase = this.findTestCaseRelatedToIssue(sqIssue.getId());
 		this.indexationService.reindexTestCase(testCase.getId());
-		
+
 		return createdIssue;
 	}
 
@@ -222,9 +219,9 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	@Override
 	public void forwardAttachments(String remoteIssueKey, String bugtrackerName, List<Attachment> attachments) {
 		BugTracker bugtracker = bugTrackerDao.findByName(bugtrackerName); // NOTE : this may crash is multiple
-																			// bugtracker have the same name. One could
-																			// cross check with the remoteissuekey if
-																			// one day shit happened.
+		// bugtracker have the same name. One could
+		// cross check with the remoteissuekey if
+		// one day shit happened.
 		remoteBugTrackersService.forwardAttachments(remoteIssueKey, bugtracker, attachments);
 	}
 
@@ -258,20 +255,20 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 			issue.setRemoteIssueId(test.getId());
 			issueList.addIssue(issue);
 			issueDao.persist(issue);
-			
+
 			TestCase testCase = this.findTestCaseRelatedToIssue(issue.getId());
 			this.indexationService.reindexTestCase(testCase.getId());
 
 		}
-		
+
 
 	}
 
-	@Override	
+	@Override
 	public void detachIssue(long id) {
-		IssueDetector bugged = issueDao.findIssueDetectorByIssue(id);		
+		IssueDetector bugged = issueDao.findIssueDetectorByIssue(id);
 		PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(bugged, "EXECUTE"));
-		
+
 		Issue issue = issueDao.findById(id);
 		TestCase testCase = this.findTestCaseRelatedToIssue(issue.getId());
 		issueDao.remove(issue);
@@ -283,16 +280,16 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	@PreAuthorize("hasPermission(#stepId, 'org.squashtest.tm.domain.execution.ExecutionStep', 'READ') or hasRole('ROLE_ADMIN')")
 	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnerShipsForExecutionStep(
 			Long stepId, PagingAndSorting sorter) {
-		
+
 		ExecutionStep step = executionStepDao.findById(stepId);
-		
+
 		List<IssueDetector> detectors = new ArrayList<IssueDetector>(1);
 		detectors.add(step);
-		
+
 		BugTracker bt = step.getBugTracker();
-		
+
 		return createOwnershipsCollection(sorter, detectors, bt);
-		
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -312,16 +309,16 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	private List<IssueOwnership<RemoteIssueDecorator>> bindIssuesToDetectors(List<RemoteIssueDecorator> btIssues,
 			ExecutionStep executionStep) {
-		
+
 		List<IssueOwnership<RemoteIssueDecorator>> ownerships = new ArrayList<IssueOwnership<RemoteIssueDecorator>>(
 				btIssues.size());
-		
+
 		for (RemoteIssueDecorator btIssue : btIssues) {
 			IssueOwnership<RemoteIssueDecorator> ownership = new IssueOwnership<RemoteIssueDecorator>(btIssue,
 					executionStep);
 			ownerships.add(ownership);
 		}
-		
+
 		return ownerships;
 	}
 
@@ -440,7 +437,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 				return "Issue.id";
 			}
 		};
-		
+
 		return findSortedIssueOwnershipForTestCase(tcId, sorter).getPagedItems();
 	}
 
@@ -472,7 +469,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	 */
 	private PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> createOwnershipsCollection(
 			PagingAndSorting sorter, List<IssueDetector> issueDetectors, BugTracker bugTracker) {
-		
+
 		// Collect all IssueList.id out of the IssueDetector list, but keep the information about the
 		// IssueDetector/IssueList association
 		Map<Long, IssueDetector> issueDetectorByListId = createIssueDetectorByIssueListId(issueDetectors);
@@ -518,7 +515,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		return localIdsByRemoteId;
 	}
 
-	
+
 	/**
 	 * This method is not the same as the
 	 * {@linkplain BugTrackersLocalServiceImpl#createOwnershipsCollection(PagingAndSorting, List, BugTracker)} ,in the
@@ -531,10 +528,10 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	 * @param sorter
 	 * @param issueDetectors
 	 * @return
-	 */	
+	 */
 	/*
-	 * XXX with plugin jira.rest this method takes about 15 seconds to complete on my machine, of which only 2 seconds are 
-	 * spent on the remote call. Specifically the methods 
+	 * XXX with plugin jira.rest this method takes about 15 seconds to complete on my machine, of which only 2 seconds are
+	 * spent on the remote call. Specifically the methods
 	 *	
 	 *	- issueDao.findSortedIssuesFromExecutionAndExecutionSteps(executionIds, executionStepsIds, sorter),
 	 *	- issueDao.countIssuesfromExecutionAndExecutionSteps(executionIds, executionStepsIds);
@@ -545,7 +542,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	 */
 	private PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> createOwnershipsCollection(
 			PagingAndSorting sorter, List<Execution> executions, List<ExecutionStep> executionSteps) {
-		
+
 		// Keep the information about the IssueDetector/IssueList association
 		Map<Long, IssueDetector> issueDetectorByListId = createIssueDetectorByIssueListId(executions);
 		Map<Long, IssueDetector> executionStepByListId = createIssueDetectorByIssueListId(executionSteps);
@@ -680,7 +677,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	public Set<String> getProviderKinds() {
 		return remoteBugTrackersService.getProviderKinds();
 	}
-	
+
 
 
 	@Override
@@ -689,7 +686,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		// Find all concerned IssueDetector
 		List<Execution> executions = testCaseDao.findAllExecutionByTestCase(tcId);
 		List<ExecutionStep> executionSteps = collectExecutionStepsFromExecution(executions);
-	
+
 		Map<Long, IssueDetector> issueDetectorByListId = createIssueDetectorByIssueListId(executions);
 		Map<Long, IssueDetector> executionStepByListId = createIssueDetectorByIssueListId(executionSteps);
 		issueDetectorByListId.putAll(executionStepByListId);
@@ -703,7 +700,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	@Override
 	public int findNumberOfIssueForItemTestPlanLastExecution(Long itemTestPlanId) {
-		
+
 		IterationTestPlanItem itp = iterationTestPlanDao.findTestPlanItem(itemTestPlanId);
 		Execution execution = itp.getLatestExecution();
 		if(execution == null){
@@ -714,18 +711,18 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 			return findNumberOfIssueForExecutions(executions);
 		}
 	}
-	
+
 	@Override
 	public int findNumberOfIssueForExecutionStep(Long testStepId){
 		List<Long> executionStepIds  = new ArrayList<Long>();
-		executionStepIds.add(testStepId); 
+		executionStepIds.add(testStepId);
 		return issueDao.countIssuesfromExecutionSteps(executionStepIds);
 	}
-	
+
 	private int findNumberOfIssueForExecutions(List<Execution> executions){
-		
+
 		List<ExecutionStep> executionSteps = collectExecutionStepsFromExecution(executions);
-		
+
 		Map<Long, IssueDetector> issueDetectorByListId = createIssueDetectorByIssueListId(executions);
 		Map<Long, IssueDetector> executionStepByListId = createIssueDetectorByIssueListId(executionSteps);
 		issueDetectorByListId.putAll(executionStepByListId);
@@ -741,5 +738,5 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	public TestCase findTestCaseRelatedToIssue(Long issueId) {
 		return issueDao.findTestCaseRelatedToIssue(issueId);
 	}
-	
+
 }

@@ -42,15 +42,15 @@ import org.squashtest.tm.service.internal.repository.IssueDao;
 public class HibernateIssueDao extends HibernateEntityDao<Issue> implements IssueDao {
 
 	private static final String WHERE_CLAUSE_FOR_ISSUES_FROM_EXEC_AND_EXEC_STEP =
-	// ------------------------------------Where issues is from the given Executions
-	"where Issue.id in ( select issueExec.id "
+			// ------------------------------------Where issues is from the given Executions
+			"where Issue.id in ( select issueExec.id "
 			+ "from Execution exec "
 			// way to issue id for exec
 			+ "join exec.issueList issueListExec "
 			+ "join issueListExec.issues issueExec "
 			+ "join issueExec.bugtracker issuExecBT "
-			+ "join exec.testPlan tp " 
-			+ "join tp.iteration it " 
+			+ "join exec.testPlan tp "
+			+ "join tp.iteration it "
 			+ "join it.campaign cp "
 			+ "join cp.project proj "
 			+ "join proj.bugtrackerBinding binding "
@@ -62,25 +62,25 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 			+ "or Issue.id in (select issueExecStep.id "
 			+ "from ExecutionStep execStep "
 			// way to issue id for execStep
-			+ "join execStep.issueList issueListExecStep "  
+			+ "join execStep.issueList issueListExecStep "
 			+ "join issueListExecStep.issues issueExecStep "
 			+ "join issueExecStep.bugtracker issueExecStepBT "
 			+ "join execStep.execution exec "
-			+ "join exec.testPlan tp " 
-			+ "join tp.iteration it " 
+			+ "join exec.testPlan tp "
+			+ "join tp.iteration it "
 			+ "join it.campaign cp "
 			+ "join cp.project proj "
 			+ "join proj.bugtrackerBinding binding "
 			+ "join binding.bugtracker projbt "
 			// restriction for executionStep's bugtracker
-			+ "where execStep.id in (:executionStepsIds) " 
+			+ "where execStep.id in (:executionStepsIds) "
 			+ "and projbt.id = issueExecStepBT.id) ";
 
 
-	
+
 	private static final String WHERE_CLAUSE_FOR_ISSUES_FROM_EXEC_STEP =
-	// ------------------------------------Where issues is from the given Executions
-	"where Issue.id in (select issueExecStep.id "
+			// ------------------------------------Where issues is from the given Executions
+			"where Issue.id in (select issueExecStep.id "
 			+ "from ExecutionStep execStep "
 			// way to issue id for execStep
 			+ "join execStep.issueList issueListExecStep " + "join issueListExecStep.issues issueExecStep "
@@ -90,8 +90,8 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 			+ "join iter.campaign camp " + "join camp.project project " + "join project.bugtrackerBinding btb " +
 			// restriction for executionStep's bugtracker
 			"where execStep.id in :executionStepsIds " + "and btb.bugtracker.id = issueExecStepBT.id) ";
-	
-	
+
+
 	/**
 	 * 
 	 * @see org.squashtest.tm.service.internal.repository.IssueDao#countIssuesfromIssueList(java.util.List)
@@ -137,17 +137,17 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	@Override
 	public List<Issue> findSortedIssuesFromIssuesLists(final Collection<Long> issueListIds,
 			final PagingAndSorting sorter, Long bugtrackerId) {
-		
+
 		if (issueListIds.isEmpty()) {
 			return Collections.emptyList();
 		}
-	
-		
+
+
 		Criteria crit = currentSession()
-						.createCriteria(Issue.class, "Issue")
-						.add(Restrictions.in("Issue.issueList.id", issueListIds))
-						.add(Restrictions.eq("Issue.bugtracker.id", bugtrackerId));
-		
+				.createCriteria(Issue.class, "Issue")
+				.add(Restrictions.in("Issue.issueList.id", issueListIds))
+				.add(Restrictions.eq("Issue.bugtracker.id", bugtrackerId));
+
 		SortingUtils.addOrder(crit, sorter);
 		PagingUtils.addPaging(crit, sorter);
 
@@ -190,11 +190,11 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 		if (!executionsIds.isEmpty() && !executionStepsIds.isEmpty()) {
 			String queryString = "select count(Issue)  " + "from Issue Issue "
 					+ WHERE_CLAUSE_FOR_ISSUES_FROM_EXEC_AND_EXEC_STEP;
-			
+
 			Query query = currentSession().createQuery(queryString);
 			query.setParameterList("executionsIds", executionsIds);
 			query.setParameterList("executionStepsIds", executionStepsIds);
-			
+
 			Long result = (Long) query.uniqueResult();
 			return result.intValue();
 
@@ -202,7 +202,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 			return 0;
 		}
 	}
-	
+
 	@Override
 	public Integer countIssuesfromExecutionSteps(List<Long> executionStepsIds) {
 		if (!executionStepsIds.isEmpty()) {
@@ -241,9 +241,9 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 
 	@Override
 	public TestCase findTestCaseRelatedToIssue(long id) {
-		
+
 		TestCase testCase = null;
-		 
+
 		Execution exec = executeEntityNamedQuery("Issue.findExecution", new SetIdParameter("id", id));
 		if(exec != null ){
 			testCase = exec.getReferencedTestCase();
@@ -253,10 +253,40 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 				testCase = step.getExecution().getReferencedTestCase();
 			}
 		}
-		
+
 		return testCase;
 	}
-	
+
+	@Override
+	public List<Issue> findIssueIfExists(String remoteIssueId, String bugtrackerName) {
+		return executeListNamedQuery("Issue.findIssueIfExists", new ContainerIssueBugtrackerParameterCallback(remoteIssueId, bugtrackerName));
+	}
 
 
+	private class ContainerIssueBugtrackerParameterCallback implements SetQueryParametersCallback {
+		private String remoteIssueId;
+		private String bugtrackerName;
+
+		ContainerIssueBugtrackerParameterCallback(String remoteIssueId, String bugtrackerName){
+			this.remoteIssueId = remoteIssueId;
+			this.bugtrackerName = bugtrackerName;
+		}
+
+		@Override
+		public void setQueryParameters(Query query) {
+			query.setParameter("remoteIssueId", remoteIssueId);
+			query.setParameter("bugtrackerName", bugtrackerName);
+		}
+	}
+
+	@Override
+	public Execution findIssueHoldersAtExecutionLevel(Issue issue) {
+		Execution exec = executeEntityNamedQuery("Issue.findExecution", new SetIdParameter("id", issue.getId()));
+		if(exec != null ){
+			return exec	;
+		}else{
+			ExecutionStep step = executeEntityNamedQuery("Issue.findExecutionStep", new SetIdParameter("id", issue.getId()));
+			return step.getExecution();
+		}
+	}
 }
