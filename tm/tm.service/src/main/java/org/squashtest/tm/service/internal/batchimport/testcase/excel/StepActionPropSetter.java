@@ -44,7 +44,7 @@ public class StepActionPropSetter extends StepPropSetter implements PropertySett
 
 	@Override
 	protected void setOnTarget(String value, TestCaseTarget target) {
-		String path = value == null ? value : value.replaceFirst("^CALL\\s*", "");
+		String path = value == null ? value : value.replaceFirst("^CALL\\s*", ""); // NOSONAR nulls are properly handled
 		pathSetter.set(path, target);
 	}
 

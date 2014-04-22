@@ -94,15 +94,14 @@ public class LogEntry implements Comparable<LogEntry> {
 
 	@Override
 	public int compareTo(LogEntry o) {
-		if (line != o.line){
+		if (!line.equals(o.line)) {
 			return line - o.line;
-		}
-		else if (status != o.status){
-			return (status==ImportStatus.WARNING) ? -1 : 1;
-		}
-		else{
-			return -1;  // even when two instances have strictly same content we don't want to consider them equal.
-			// note that returning -1 is not an ideal solution because it violates the Comparable contract x.compareTo(y) == - y.compareTo(x) but it's good enough here
+		} else if (status != o.status) {
+			return (status == ImportStatus.WARNING) ? -1 : 1;
+		} else {
+			return -1; // even when two instances have strictly same content we don't want to consider them equal.
+			// note that returning -1 is not an ideal solution because it violates the Comparable contract
+			// x.compareTo(y) == - y.compareTo(x) but it's good enough here
 		}
 	}
 
