@@ -33,7 +33,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * @author Gregory Fouquet
@@ -49,12 +49,14 @@ public class TestCaseImportLogController {
 
 	// There are dots in `{filename}`. We need to parse using a regexp (`{:.+}`) because standard parser ditches file extensions.
 	@RequestMapping(value = "/{filename:.+}", method = RequestMethod.GET)
-	public FileSystemResource getExcelImportLog(@PathVariable String filename, WebRequest request,
+	public @ResponseBody FileSystemResource getExcelImportLog(@PathVariable String filename,
 			HttpServletResponse response) {
-		File logFile = logHelper.fetchLogFile(request, filename);
+		File logFile = logHelper.fetchLogFile(filename);
 		response.setContentType("application/octet-stream");
 		response.setHeader("Content-Disposition", "attachment; filename=" + logHelper.logFilename(filename) + ".xls");
 
-		return new FileSystemResource(logFile);
+		FileSystemResource res = new FileSystemResource(logFile);
+
+		return res;
 	}
 }

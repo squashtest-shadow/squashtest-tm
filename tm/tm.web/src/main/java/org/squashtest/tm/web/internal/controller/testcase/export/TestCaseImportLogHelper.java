@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.export;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -31,16 +30,15 @@ import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.WebRequest;
 import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.importer.LogEntry;
@@ -59,17 +57,17 @@ class TestCaseImportLogHelper {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseImportLogHelper.class);
 
-	private void writeToTab(Collection<LogEntry> entries, XSSFWorkbook workbook, String sheetName, Locale locale) {
+	private void writeToTab(Collection<LogEntry> entries, Workbook workbook, String sheetName, Locale locale) {
 		if (entries.size() > 0) {
 			// Create a blank sheet
-			XSSFSheet sheet = workbook.createSheet(sheetName);
+			Sheet sheet = workbook.createSheet(sheetName);
 
 			writeHeaderToTab(sheet);
 			writeEntriesToTab(entries, sheet, locale);
 		}
 	}
 
-	private void writeHeaderToTab(XSSFSheet sheet) {
+	private void writeHeaderToTab(Sheet sheet) {
 		Row row = sheet.createRow(0);
 		int cellnum = 0;
 		Cell cell = row.createCell(cellnum++);
@@ -84,11 +82,16 @@ class TestCaseImportLogHelper {
 		writeValueToCell(cell, "IMPACT");
 	}
 
-	private void writeValueToCell(Cell cell, Object value) {
-		cell.setCellValue(value.toString());
+	private void writeValueToCell(Cell cell, String value) {
+		cell.setCellValue(value);
 	}
 
-	private void writeEntriesToTab(Collection<LogEntry> entries, XSSFSheet sheet, Locale locale) {
+	private void writeValueToCell(Cell cell, Number value) {
+		cell.setCellValue(value.doubleValue());
+	}
+
+	@SuppressWarnings("deprecation")
+	private void writeEntriesToTab(Collection<LogEntry> entries, Sheet sheet, Locale locale) {
 
 		int rownum = 1;
 		for (LogEntry entry : entries) {
@@ -110,16 +113,17 @@ class TestCaseImportLogHelper {
 	}
 
 	private void writeToFile(ImportLog importLog, File emptyFile) throws IOException {
-		XSSFWorkbook workbook = buildWorkbook(importLog);
+		Workbook workbook = buildWorkbook(importLog);
 		writeToFile(emptyFile, workbook);
 
 	}
 
-	private void writeToFile(File emptyFile, XSSFWorkbook workbook) throws IOException {
-		BufferedOutputStream os = null;
+	private void writeToFile(File emptyFile, Workbook workbook) throws IOException {
+		FileOutputStream os = null;
 		try {
-			os = new BufferedOutputStream(new FileOutputStream(emptyFile));
+			os = new FileOutputStream(emptyFile);
 			workbook.write(os);
+			os.flush();
 		} catch (IOException e) {
 			LOGGER.warn(e.getMessage(), e);
 			throw e;
@@ -128,8 +132,8 @@ class TestCaseImportLogHelper {
 		}
 	}
 
-	private XSSFWorkbook buildWorkbook(ImportLog importLog) {
-		XSSFWorkbook workbook = new XSSFWorkbook();
+	private Workbook buildWorkbook(ImportLog importLog) {
+		Workbook workbook = new HSSFWorkbook();
 		Locale locale = LocaleContextHolder.getLocale();
 
 		Collection<LogEntry> logEntriesForTestcases = importLog.findAllFor(EntityType.TEST_CASE);
@@ -143,6 +147,7 @@ class TestCaseImportLogHelper {
 
 		Collection<LogEntry> logEntriesForDatasets = importLog.findAllFor(EntityType.DATASET);
 		writeToTab(logEntriesForDatasets, workbook, "DATASET", locale);
+
 		return workbook;
 	}
 
@@ -156,12 +161,7 @@ class TestCaseImportLogHelper {
 		return "test-case-import-log-" + logTimeStamp;
 	}
 
-	public void storeLogFile(WebRequest request, File xlsSummary, String logTimeStamp) {
-		String logFilename = logFilename(logTimeStamp);
-		request.setAttribute(logFilename, xlsSummary, RequestAttributes.SCOPE_SESSION);
-	}
-
-	public File fetchLogFile(WebRequest request, String filename) {
+	public File fetchLogFile(String filename) {
 		return new File(getTempDir(), filename);
 
 	}

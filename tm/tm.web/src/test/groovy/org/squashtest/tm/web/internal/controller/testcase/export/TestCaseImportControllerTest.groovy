@@ -43,6 +43,9 @@ class TestCaseImportControllerTest extends Specification {
 		given:
 		ImportLog log = new ImportLog()
 
+		and:
+		logHelper.storeLogFile(log) >> File.createTempFile("tmp", null)
+
 		when:
 		File f = controller.importLogToLogFile(log)
 
@@ -62,7 +65,7 @@ class TestCaseImportControllerTest extends Specification {
 
 		then:
 		log.reportUrl.startsWith "/squashtm/test-cases/import-logs/"
-		1 * logHelper.storeLogFile(request, _, _)
+		1 * logHelper.storeLogFile(log) >> File.createTempFile("tmp", null)
 
 	}
 

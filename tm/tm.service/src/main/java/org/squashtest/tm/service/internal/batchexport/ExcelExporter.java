@@ -22,7 +22,6 @@ package org.squashtest.tm.service.internal.batchexport;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +33,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
-import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.DatasetModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.ParameterModel;
@@ -244,19 +242,6 @@ class ExcelExporter {
 		return nextIdx;
 	}
 
-	private String format(String date){
-		if (date == null ){
-			return "";
-		}
-		try{
-			// when the given date parses, we return it as is 
-			IsoDateUtils.parseIso8601Date(date);
-			return date;
-		} catch (ParseException ex) {
-			throw new RuntimeException(ex);
-		}
-	}
-	
 	private String format(Date date) {
 		if (date == null) {
 			return "";
@@ -302,7 +287,7 @@ class ExcelExporter {
 		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_CREATED_BY.header);
 		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_LAST_MODIFIED_ON.header);
 		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_LAST_MODIFIED_BY.header);
-		
+
 		Sheet stSheet = workbook.getSheet(ST_SHEET);
 		h = stSheet.createRow(0);
 		cIdx = 0;
@@ -315,7 +300,7 @@ class ExcelExporter {
 		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_EXPECTED_RESULT.header);
 		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_NB_REQ.header);
 		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_NB_ATTACHMENT.header);
-		
+
 		Sheet pSheet = workbook.getSheet(PRM_SHEET);
 		h = pSheet.createRow(0);
 		cIdx = 0;
@@ -324,7 +309,7 @@ class ExcelExporter {
 		h.createCell(cIdx++).setCellValue(ParameterSheetColumn.TC_PARAM_ID.header);
 		h.createCell(cIdx++).setCellValue(ParameterSheetColumn.TC_PARAM_NAME.header);
 		h.createCell(cIdx++).setCellValue(ParameterSheetColumn.TC_PARAM_DESCRIPTION.header);
-		
+
 		Sheet dsSheet = workbook.getSheet(DS_SHEET);
 		h = dsSheet.createRow(0);
 		cIdx = 0;
@@ -335,7 +320,7 @@ class ExcelExporter {
 		h.createCell(cIdx++).setCellValue(DatasetSheetColumn.TC_PARAM_OWNER_PATH.header);
 		h.createCell(cIdx++).setCellValue(DatasetSheetColumn.TC_PARAM_OWNER_ID.header);
 		h.createCell(cIdx++).setCellValue(DatasetSheetColumn.TC_DATASET_PARAM_NAME.header);
-		h.createCell(cIdx++).setCellValue(DatasetSheetColumn.TC_DATASET_PARAM_VALUE.header);		
+		h.createCell(cIdx++).setCellValue(DatasetSheetColumn.TC_DATASET_PARAM_VALUE.header);
 
 	}
 

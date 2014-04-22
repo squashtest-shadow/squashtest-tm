@@ -21,8 +21,21 @@
 
 package org.squashtest.tm.web.internal.controller.testcase.export
 
+import java.io.FileInputStream;
+
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.util.WorkbookUtil;
 import org.springframework.web.context.request.WebRequest;
 import org.squashtest.tm.service.importer.ImportLog;
+import org.squashtest.tm.service.importer.ImportMode;
+import org.squashtest.tm.service.importer.ImportStatus;
+import org.squashtest.tm.service.importer.LogEntry;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
 import spock.lang.Specification
 
@@ -31,35 +44,69 @@ import spock.lang.Specification
  *
  */
 class TestCaseImportLogHelperTest extends Specification {
+	InternationalizationHelper i18n = Mock()
 	TestCaseImportLogHelper helper = new TestCaseImportLogHelper()
-	def "should store log"() {
-		given:
-		File xlsLog = new File(".");
 
-		and:
-		WebRequest request = Mock()
-		request.contextPath >> "squashtm"
+	def setup() {
+		helper.messageSource = i18n
 
+		i18n._ >> "chic happened"
+	}
+
+	def "should retrieve log"() {
 		when:
-		helper.storeLogFile(request, xlsLog, "xxx")
+		File xlsLog = helper.fetchLogFile("xxx");
 
 		then:
-		1 * request.setAttribute("test-case-import-log-xxx", xlsLog, WebRequest.SCOPE_SESSION)
+		xlsLog.name.startsWith "xxx"
 
 	}
-	def "should retrieve log"() {
+
+	def "should write wb to file"() {
 		given:
-		File xlsLog = new File(".");
+		Workbook wb = new HSSFWorkbook()
+		Sheet ws = wb.createSheet("foo")
+
+		10.times { it->
+			Row row = ws.createRow(it)
+			["bar", "", 10].eachWithIndex {jt, dx -> row.createCell(dx).setCellValue(jt + it)}
+
+		}
 
 		and:
-		WebRequest request = Mock()
-		request.contextPath >> "squashtm"
+		File tmp = File.createTempFile("should write wb to file", ".xls")
 
 		when:
-		xlsLog == helper.fetchLogFile(request, "xxx");
+		helper.writeToFile(tmp, wb)
 
 		then:
-		1 * request.getAttribute("test-case-import-log-xxx", WebRequest.SCOPE_SESSION) >> xlsLog
+		WorkbookFactory.create(new FileInputStream(tmp));
+
+		cleanup:
+		tmp.deleteOnExit()
+
+	}
+
+	def "should create wb from log"() {
+		given:
+		LogEntry entry = Mock()
+		entry.getLine() >> { Math.round(Math.random() * 10) }
+		entry.getMode() >> ImportMode.UPDATE
+		entry.getStatus() >> ImportStatus.WARNING
+
+		and:
+		ImportLog log = Mock()
+		log.findAllFor(_) >> [entry, entry, entry]
+
+
+		when:
+		File f = helper.storeLogFile(log)
+
+		then:
+		WorkbookFactory.create(new FileInputStream(f));
+
+		cleanup:
+		f.deleteOnExit()
 
 	}
 
