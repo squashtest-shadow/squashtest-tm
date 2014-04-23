@@ -60,8 +60,6 @@ import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
 import org.squashtest.tm.service.testcase.ParameterFinder;
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
 
-
-
 @Repository
 @Scope("prototype")
 public class Model {
@@ -84,112 +82,118 @@ public class Model {
 	@Inject
 	private DatasetDao dsDao;
 
-
 	/* **********************************************************************************************************************************
 	 * 
-	 * The following properties are initialized all together during  init(List<TestCaseTarget>) :
-	 *
-	 * - testCaseStatusByTarget
-	 * - testCaseStepsByTarget
-	 * - projectStatusByName
-	 * - tcCufsPerProjectname
-	 * - stepCufsPerProjectname
-	 *
-	 ************************************************************************************************************************************ */
+	 * The following properties are initialized all together during init(List<TestCaseTarget>) :
+	 * 
+	 * - testCaseStatusByTarget - testCaseStepsByTarget - projectStatusByName - tcCufsPerProjectname -
+	 * stepCufsPerProjectname
+	 * 
+	 * ******************************************************************************************************************
+	 * *****************
+	 */
 
-
-	/* ------------------------
-
-	  testCaseStatusByTarget :
-
-	  Maps a reference to a TestCase (namely a TestCaseTarget). It keeps track of its status (see ModelizedStatus) and
-	  possibly its id (when there is a concrete instance of it in the database).
-
-	  Because a test case might be referenced multiple time, once a test case is loaded in that map it'll stay there.
-
-	 --------------------------*/
+	/*
+	 * ------------------------
+	 * 
+	 * testCaseStatusByTarget :
+	 * 
+	 * Maps a reference to a TestCase (namely a TestCaseTarget). It keeps track of its status (see ModelizedStatus) and
+	 * possibly its id (when there is a concrete instance of it in the database).
+	 * 
+	 * Because a test case might be referenced multiple time, once a test case is loaded in that map it'll stay there.
+	 * 
+	 * --------------------------
+	 */
 	private Map<TestCaseTarget, TargetStatus> testCaseStatusByTarget = new HashMap<TestCaseTarget, TargetStatus>();
 
-
-	/* ------------------------
-
-	  stepStatusByTarget :
-
-	  Maps a test case (given its target) to a list of step models. We only care of their position (because they are identified by position),
-	  their type (because we want to detect potential attempts of modifications of an action step whereas the target is actually a call step
-	  and conversely), and possibly a called test case (if the step is a call step, and we want to keep track of possible cycles).
-
-
-	 ------------------------ */
+	/*
+	 * ------------------------
+	 * 
+	 * stepStatusByTarget :
+	 * 
+	 * Maps a test case (given its target) to a list of step models. We only care of their position (because they are
+	 * identified by position), their type (because we want to detect potential attempts of modifications of an action
+	 * step whereas the target is actually a call step and conversely), and possibly a called test case (if the step is
+	 * a call step, and we want to keep track of possible cycles).
+	 * 
+	 * 
+	 * ------------------------
+	 */
 	private Map<TestCaseTarget, List<InternalStepModel>> testCaseStepsByTarget = new HashMap<TestCaseTarget, List<InternalStepModel>>();
 
-
-	/* ------------------------
-
-	  projectStatusByName :
-
-	  nothing special, plain wysiwyg
-
-	 -------------------------*/
+	/*
+	 * ------------------------
+	 * 
+	 * projectStatusByName :
+	 * 
+	 * nothing special, plain wysiwyg
+	 * 
+	 * -------------------------
+	 */
 	private Map<String, TargetStatus> projectStatusByName = new HashMap<String, TargetStatus>();
 
-	/* ------------------------
-
-	  tcCufsPerProjectname :
-
-	  caches the custom fields defined for the test cases in a given project. This is a multimap that matches a project name against a collection
-	  of CustomField
-
-	 -------------------------*/
+	/*
+	 * ------------------------
+	 * 
+	 * tcCufsPerProjectname :
+	 * 
+	 * caches the custom fields defined for the test cases in a given project. This is a multimap that matches a project
+	 * name against a collection of CustomField
+	 * 
+	 * -------------------------
+	 */
 	private MultiValueMap tcCufsPerProjectname = new MultiValueMap();
 
-	/* ------------------------
-
-	  stepCufsPerProjectname :
-
-	  same as tcCufsPerProjectname, but regarding the test steps
-
-	 -------------------------*/
+	/*
+	 * ------------------------
+	 * 
+	 * stepCufsPerProjectname :
+	 * 
+	 * same as tcCufsPerProjectname, but regarding the test steps
+	 * 
+	 * -------------------------
+	 */
 	private MultiValueMap stepCufsPerProjectname = new MultiValueMap();
 
-
-	/* ------------------------
-
-	  parametersByTestCase :
-
-	  keeps track of which parameters are defined for which test cases
-
-	 -------------------------*/
+	/*
+	 * ------------------------
+	 * 
+	 * parametersByTestCase :
+	 * 
+	 * keeps track of which parameters are defined for which test cases
+	 * 
+	 * -------------------------
+	 */
 	private Map<TestCaseTarget, Collection<ParameterTarget>> parametersByTestCase = new HashMap<TestCaseTarget, Collection<ParameterTarget>>();
 
-
-	/* ------------------------
-
-	  parametersByTestCase :
-
-	  keeps track of which parameters are defined for which test cases
-
-	 -------------------------*/
+	/*
+	 * ------------------------
+	 * 
+	 * parametersByTestCase :
+	 * 
+	 * keeps track of which parameters are defined for which test cases
+	 * 
+	 * -------------------------
+	 */
 	private Map<TestCaseTarget, Collection<DatasetTarget>> datasetsByTestCase = new HashMap<TestCaseTarget, Collection<DatasetTarget>>();
-
 
 	/* *******************************************************************************************************
 	 * 
 	 * This property keeps track of the test case call graph. It is not initialized like the rest, it's rather
 	 * initialized on demand (see isCalled for instance )
 	 * 
-	 * ******************************************************************************************************/
+	 * *****************************************************************************************************
+	 */
 	private TestCaseCallGraph callGraph = new TestCaseCallGraph();
 
-
 	// ===============================================================================================
 	// ===============================================================================================
-
 
 	// ************************** project access *****************************************************
 
-	public TargetStatus getProjectStatus(String projectName){
-		if (! projectStatusByName.containsKey(projectName)){
+	public TargetStatus getProjectStatus(String projectName) {
+		if (!projectStatusByName.containsKey(projectName)) {
 			initProject(projectName);
 		}
 		return projectStatusByName.get(projectName);
@@ -197,9 +201,9 @@ public class Model {
 
 	// ************************** Test Case status management ****************************************
 
-	public TargetStatus getStatus(TestCaseTarget target){
+	public TargetStatus getStatus(TestCaseTarget target) {
 
-		if (! testCaseStatusByTarget.containsKey(target)){
+		if (!testCaseStatusByTarget.containsKey(target)) {
 			init(target);
 		}
 
@@ -207,36 +211,36 @@ public class Model {
 
 	}
 
-	public void setExists(TestCaseTarget target, Long id){
+	public void setExists(TestCaseTarget target, Long id) {
 		testCaseStatusByTarget.put(target, new TargetStatus(Existence.EXISTS, id));
 	}
 
-	public void setToBeCreated(TestCaseTarget target){
+	public void setToBeCreated(TestCaseTarget target) {
 		testCaseStatusByTarget.put(target, new TargetStatus(Existence.TO_BE_CREATED));
 		clearSteps(target);
 	}
 
-	public void setToBeDeleted(TestCaseTarget target){
+	public void setToBeDeleted(TestCaseTarget target) {
 		TargetStatus oldStatus = testCaseStatusByTarget.get(target);
 		testCaseStatusByTarget.put(target, new TargetStatus(Existence.TO_BE_DELETED, oldStatus.id));
 		clearSteps(target);
 		callGraph.removeNode(target);
 	}
 
-	public void setDeleted(TestCaseTarget target){
+	public void setDeleted(TestCaseTarget target) {
 		testCaseStatusByTarget.put(target, new TargetStatus(Existence.NOT_EXISTS, null));
 		clearSteps(target);
 		callGraph.removeNode(target);
 	}
 
 	// virtually an alias of setDeleted
-	public void setNotExists(TestCaseTarget target){
+	public void setNotExists(TestCaseTarget target) {
 		testCaseStatusByTarget.put(target, new TargetStatus(Existence.NOT_EXISTS, null));
 		clearSteps(target);
 	}
 
-	private void clearSteps(TestCaseTarget target){
-		if (testCaseStepsByTarget.containsKey(target)){
+	private void clearSteps(TestCaseTarget target) {
+		if (testCaseStepsByTarget.containsKey(target)) {
 			testCaseStepsByTarget.get(target).clear();
 		}
 	}
@@ -244,17 +248,15 @@ public class Model {
 	// ************************** Test Case accessors *****************************************
 
 	// may return null
-	public Long getId(TestCaseTarget target){
+	public Long getId(TestCaseTarget target) {
 		return getStatus(target).id;
 	}
 
-
-	public TestCase get(TestCaseTarget target){
+	public TestCase get(TestCaseTarget target) {
 		Long id = getId(target);
-		if (id == null){
+		if (id == null) {
 			return null;
-		}
-		else{
+		} else {
 			return (TestCase) sessionFactory.getCurrentSession().load(TestCase.class, id);
 		}
 	}
@@ -262,52 +264,48 @@ public class Model {
 	// ************************ test case calls code ***********************************
 
 	/*
-	 *  returns true if the test case is being called by another test case or else false.
+	 * returns true if the test case is being called by another test case or else false.
 	 * 
-	 *  Note : the problem arises only if the test case already exists in the database
-	 *  (test cases instructions are all processed before step-instructions are thus newly
-	 *  imported test cases aren't bound to any test step yet).
-	 * 
+	 * Note : the problem arises only if the test case already exists in the database (test cases instructions are all
+	 * processed before step-instructions are thus newly imported test cases aren't bound to any test step yet).
 	 */
-	public boolean isCalled(TestCaseTarget target){
+	public boolean isCalled(TestCaseTarget target) {
 
-		if (! callGraph.knowsNode(target)){
+		if (!callGraph.knowsNode(target)) {
 			initCallGraph(target);
 		}
 
 		return callGraph.isCalled(target);
 	}
 
-	public boolean isCalledBy(TestCaseTarget called, TestCaseTarget caller){
+	public boolean isCalledBy(TestCaseTarget called, TestCaseTarget caller) {
 		return wouldCreateCycle(called, caller);
 	}
 
-	public boolean wouldCreateCycle(TestCaseTarget srcTestCase, TestCaseTarget destTestCase){
-		if (! callGraph.knowsNode(srcTestCase)){
+	public boolean wouldCreateCycle(TestCaseTarget srcTestCase, TestCaseTarget destTestCase) {
+		if (!callGraph.knowsNode(srcTestCase)) {
 			initCallGraph(srcTestCase);
 		}
 
-		if (! callGraph.knowsNode(destTestCase)){
+		if (!callGraph.knowsNode(destTestCase)) {
 			initCallGraph(destTestCase);
 		}
 
 		return callGraph.wouldCreateCycle(srcTestCase, destTestCase);
 	}
 
-	public boolean wouldCreateCycle(TestStepTarget step, TestCaseTarget destTestCase){
+	public boolean wouldCreateCycle(TestStepTarget step, TestCaseTarget destTestCase) {
 		return wouldCreateCycle(step.getTestCase(), destTestCase);
 	}
 
-
 	// initialize the call graph from the database. The whole graph will be pulled
 	// so be carefull to load it only when necessary.
-	private void initCallGraph(TestCaseTarget target){
+	private void initCallGraph(TestCaseTarget target) {
 
-
-		try{
+		try {
 			Long id = finderService.findNodeIdByPath(target.getPath());
-			LibraryGraph<NamedReference, SimpleNode<NamedReference>> targetCallers
-			= calltreeFinder.getExtendedGraph(Arrays.asList(id));
+			LibraryGraph<NamedReference, SimpleNode<NamedReference>> targetCallers = calltreeFinder
+					.getExtendedGraph(Arrays.asList(id));
 
 			// some data transform now
 			Collection<SimpleNode<NamedReference>> refs = targetCallers.getNodes();
@@ -315,20 +313,19 @@ public class Model {
 
 			// now create the graph
 			callGraph.addGraph(targetCallers);
-		}
-		catch(NoSuchElementException ex){
+		} catch (NoSuchElementException ex) {
 			// this is probably a new node
 			callGraph.addNode(target);
 		}
 	}
 
-	private void addCallGraphEdge(TestCaseTarget src, TestCaseTarget dest){
+	private void addCallGraphEdge(TestCaseTarget src, TestCaseTarget dest) {
 
-		if (! callGraph.knowsNode(src)){
+		if (!callGraph.knowsNode(src)) {
 			initCallGraph(src);
 		}
 
-		if (! callGraph.knowsNode(dest)){
+		if (!callGraph.knowsNode(dest)) {
 			initCallGraph(dest);
 		}
 
@@ -345,11 +342,11 @@ public class Model {
 	 * @return
 	 */
 	// returns the index at which the step was created
-	public Integer addActionStep(TestStepTarget target){
+	public Integer addActionStep(TestStepTarget target) {
 		return addStep(target, StepType.ACTION, null);
 	}
 
-	public Integer addCallStep(TestStepTarget target, TestCaseTarget calledTestCase){
+	public Integer addCallStep(TestStepTarget target, TestCaseTarget calledTestCase) {
 
 		// set the call graph
 		addCallGraphEdge(target.getTestCase(), calledTestCase);
@@ -359,14 +356,13 @@ public class Model {
 
 	}
 
-	private Integer addStep(TestStepTarget target, StepType type, TestCaseTarget calledTestCase){
-
+	private Integer addStep(TestStepTarget target, StepType type, TestCaseTarget calledTestCase) {
 
 		List<InternalStepModel> steps = findInternalStepModels(target);
 
 		Integer index = target.getIndex();
 
-		if (index == null || index >= steps.size() || index < 0){
+		if (index == null || index >= steps.size() || index < 0) {
 			index = steps.size();
 		}
 
@@ -378,16 +374,16 @@ public class Model {
 
 	// warning : won't check that the operation will not create a cycle. Such check needs to
 	// be done beforehand.
-	public void updateCallStepTarget(TestStepTarget step, TestCaseTarget newTarget){
+	public void updateCallStepTarget(TestStepTarget step, TestCaseTarget newTarget) {
 
-		if (! stepExists(step)){
-			throw new IllegalArgumentException("cannot update non existant step '"+step+"'");
+		if (!stepExists(step)) {
+			throw new IllegalArgumentException("cannot update non existant step '" + step + "'");
 		}
 
-		if ( getType(step) != StepType.CALL){
-			throw new IllegalArgumentException("cannot update the called test case for step '"+step+"' because that step is not a call step");
+		if (getType(step) != StepType.CALL) {
+			throw new IllegalArgumentException("cannot update the called test case for step '" + step
+					+ "' because that step is not a call step");
 		}
-
 
 		InternalStepModel model = findInternalStepModel(step);
 		TestCaseTarget src = step.getTestCase();
@@ -402,32 +398,29 @@ public class Model {
 
 	}
 
-	public void remove(TestStepTarget target){
+	public void remove(TestStepTarget target) {
 
-		if (! stepExists(target)){
-			throw new IllegalArgumentException("cannot remove non existant step '"+target+"'");
+		if (!stepExists(target)) {
+			throw new IllegalArgumentException("cannot remove non existant step '" + target + "'");
 		}
 
 		List<InternalStepModel> steps = findInternalStepModels(target);
 		Integer index = target.getIndex();
-
 
 		// remove from the model
 		// .intValue() desambiguate with the other method - remove(Object) -
 		InternalStepModel step = steps.remove(index.intValue());
 
 		// remove from the callgraph
-		if (step.type == StepType.CALL){
+		if (step.type == StepType.CALL) {
 			callGraph.removeEdge(target.getTestCase(), step.getCalledTC());
 		}
 
-
 	}
-
 
 	// ************************ Test Step accessors *********************************
 
-	public boolean stepExists(TestStepTarget target){
+	public boolean stepExists(TestStepTarget target) {
 
 		InternalStepModel model = findInternalStepModel(target);
 
@@ -435,29 +428,26 @@ public class Model {
 
 	}
 
-
 	// returns null if the step is unknown
-	public StepType getType(TestStepTarget target){
+	public StepType getType(TestStepTarget target) {
 
 		InternalStepModel model = findInternalStepModel(target);
 
-		if (model != null){
+		if (model != null) {
 			return model.getType();
-		}
-		else{
+		} else {
 			return null;
 		}
 	}
 
-
 	// may return null
-	public Long getStepId(TestStepTarget target){
+	public Long getStepId(TestStepTarget target) {
 
 		Long tcId = getStatus(target.getTestCase()).id;
 		Integer index = target.getIndex();
 
 		// this condition is heavily defensive and the caller code should check those beforehand
-		if (! stepExists(target) || tcId == null || index == null){
+		if (!stepExists(target) || tcId == null || index == null) {
 			return null;
 		}
 
@@ -465,19 +455,18 @@ public class Model {
 		q.setParameter(":tcId", tcId);
 		q.setParameter("position", index);
 
-		return (Long)q.uniqueResult();
+		return (Long) q.uniqueResult();
 
 	}
 
-
 	// may return null
-	public TestStep getStep(TestStepTarget target){
+	public TestStep getStep(TestStepTarget target) {
 
 		Long tcId = getStatus(target.getTestCase()).id;
 		Integer index = target.getIndex();
 
 		// this condition is heavily defensive and the caller code should check those beforehand
-		if (! stepExists(target) || tcId == null || index == null){
+		if (!stepExists(target) || tcId == null || index == null) {
 			return null;
 		}
 
@@ -485,14 +474,14 @@ public class Model {
 		q.setParameter("tcId", tcId);
 		q.setParameter("position", index);
 
-		return (TestStep)q.uniqueResult();
+		return (TestStep) q.uniqueResult();
 
 	}
 
-	private List<InternalStepModel> findInternalStepModels(TestStepTarget step){
+	private List<InternalStepModel> findInternalStepModels(TestStepTarget step) {
 		TestCaseTarget tc = step.getTestCase();
 
-		if (! testCaseStatusByTarget.containsKey(tc)){
+		if (!testCaseStatusByTarget.containsKey(tc)) {
 			init(tc);
 		}
 
@@ -500,42 +489,40 @@ public class Model {
 
 	}
 
-	private InternalStepModel findInternalStepModel(TestStepTarget step){
+	private InternalStepModel findInternalStepModel(TestStepTarget step) {
 		Integer index = step.getIndex();
 		List<InternalStepModel> steps = findInternalStepModels(step);
 
-		if (index != null && steps.size() > index && index >= 0){
+		if (index != null && steps.size() > index && index >= 0) {
 			return steps.get(index.intValue());
-		}
-		else{
+		} else {
 			return null;
 		}
 	}
 
 	// ************************** parameters ****************************************
 
-	public boolean doesParameterExists(ParameterTarget target){
+	public boolean doesParameterExists(ParameterTarget target) {
 		TestCaseTarget tc = target.getOwner();
-		if (! parametersByTestCase.containsKey(tc)){
+		if (!parametersByTestCase.containsKey(tc)) {
 			initParameters(Arrays.asList(tc));
 		}
 
 		return parametersByTestCase.get(tc).contains(target);
 	}
 
-
-	public void addParameter(ParameterTarget target){
+	public void addParameter(ParameterTarget target) {
 		TestCaseTarget tc = target.getOwner();
-		if (! parametersByTestCase.containsKey(tc)){
+		if (!parametersByTestCase.containsKey(tc)) {
 			initParameters(Arrays.asList(tc));
 		}
 
 		parametersByTestCase.get(tc).add(target);
 	}
 
-	public void removeParameter(ParameterTarget target){
+	public void removeParameter(ParameterTarget target) {
 		TestCaseTarget tc = target.getOwner();
-		if (! parametersByTestCase.containsKey(tc)){
+		if (!parametersByTestCase.containsKey(tc)) {
 			initParameters(Arrays.asList(tc));
 		}
 
@@ -543,11 +530,11 @@ public class Model {
 	}
 
 	/**
-	 * returns the parameters owned by this test case. It doesn't include
-	 * all the parameters from the test case call tree of this test case.
+	 * returns the parameters owned by this test case. It doesn't include all the parameters from the test case call
+	 * tree of this test case.
 	 */
-	public Collection<ParameterTarget> getOwnParameters(TestCaseTarget testCase){
-		if (! parametersByTestCase.containsKey(testCase)){
+	public Collection<ParameterTarget> getOwnParameters(TestCaseTarget testCase) {
+		if (!parametersByTestCase.containsKey(testCase)) {
 			initParameters(Arrays.asList(testCase));
 		}
 
@@ -555,17 +542,16 @@ public class Model {
 	}
 
 	/**
-	 * returns all parameters available to a test case. This includes
-	 * every ParameterTarget from the test cases being called directly or
-	 * indirectly by this test case, not just the one owner by the test case
-	 * (unlike getOwnParameters)
+	 * returns all parameters available to a test case. This includes every ParameterTarget from the test cases being
+	 * called directly or indirectly by this test case, not just the one owner by the test case (unlike
+	 * getOwnParameters)
 	 * 
 	 * @param testCase
 	 * @return
 	 */
-	public Collection<ParameterTarget> getAllParameters(TestCaseTarget testCase){
+	public Collection<ParameterTarget> getAllParameters(TestCaseTarget testCase) {
 
-		if (! callGraph.knowsNode(testCase)){
+		if (!callGraph.knowsNode(testCase)) {
 			initCallGraph(testCase);
 		}
 
@@ -573,7 +559,7 @@ public class Model {
 		LinkedList<Node> processing = new LinkedList<Node>();
 		processing.add(callGraph.getNode(testCase));
 
-		while (! processing.isEmpty()){
+		while (!processing.isEmpty()) {
 			Node current = processing.pop();
 			result.addAll(getOwnParameters(current.getKey()));
 			processing.addAll(current.getOutbounds());
@@ -587,36 +573,34 @@ public class Model {
 	 * 
 	 * @return true if the parameter legitimately belongs to the dataset, false otherwise
 	 */
-	public boolean isParamInDataset(ParameterTarget param, DatasetTarget ds){
+	public boolean isParamInDataset(ParameterTarget param, DatasetTarget ds) {
 		Collection<ParameterTarget> allparams = getAllParameters(ds.getTestCase());
 		return (allparams.contains(param));
 	}
 
-
 	// **************************** datasets ****************************************
 
-	public boolean doesDatasetExists(DatasetTarget target){
+	public boolean doesDatasetExists(DatasetTarget target) {
 		TestCaseTarget tc = target.getTestCase();
-		if (! datasetsByTestCase.containsKey(tc)){
+		if (!datasetsByTestCase.containsKey(tc)) {
 			initDatasets(Arrays.asList(tc));
 		}
 
 		return datasetsByTestCase.get(tc).contains(target);
 	}
 
-
-	public void addDataset(DatasetTarget target){
+	public void addDataset(DatasetTarget target) {
 		TestCaseTarget tc = target.getTestCase();
-		if (! datasetsByTestCase.containsKey(tc)){
+		if (!datasetsByTestCase.containsKey(tc)) {
 			initDatasets(Arrays.asList(tc));
 		}
 
 		datasetsByTestCase.get(tc).add(target);
 	}
 
-	public void removeDataset(DatasetTarget target){
+	public void removeDataset(DatasetTarget target) {
 		TestCaseTarget tc = target.getTestCase();
-		if (! datasetsByTestCase.containsKey(tc)){
+		if (!datasetsByTestCase.containsKey(tc)) {
 			initDatasets(Arrays.asList(tc));
 		}
 
@@ -624,64 +608,59 @@ public class Model {
 	}
 
 	/**
-	 * returns the parameters owned by this test case. It doesn't include
-	 * all the parameters from the test case call tree of this test case.
+	 * returns the parameters owned by this test case. It doesn't include all the parameters from the test case call
+	 * tree of this test case.
 	 */
-	public Collection<DatasetTarget> getDatasets(TestCaseTarget testCase){
-		if (! datasetsByTestCase.containsKey(testCase)){
+	public Collection<DatasetTarget> getDatasets(TestCaseTarget testCase) {
+		if (!datasetsByTestCase.containsKey(testCase)) {
 			initDatasets(Arrays.asList(testCase));
 		}
 
 		return datasetsByTestCase.get(testCase);
 	}
 
-
 	// ************************* CUFS accessors *************************************
 
 	@SuppressWarnings("unchecked")
-	public Collection<CustomField> getTestCaseCufs(TestCaseTarget target){
-		if (! testCaseStatusByTarget.containsKey(target)){
+	public Collection<CustomField> getTestCaseCufs(TestCaseTarget target) {
+		if (!testCaseStatusByTarget.containsKey(target)) {
 			init(target);
 		}
 
 		String projectName = Utils.extractProjectName(target.getPath());
-		Collection<CustomField>  cufs = tcCufsPerProjectname.getCollection(projectName);
+		Collection<CustomField> cufs = tcCufsPerProjectname.getCollection(projectName);
 
-		if (cufs != null){
+		if (cufs != null) {
 			return cufs;
-		}
-		else{
+		} else {
 			return Collections.emptyList();
 		}
 	}
 
-
 	@SuppressWarnings("unchecked")
-	public Collection<CustomField> getTestStepCufs(TestStepTarget target){
+	public Collection<CustomField> getTestStepCufs(TestStepTarget target) {
 		TestCaseTarget tc = target.getTestCase();
 
-		if (! testCaseStatusByTarget.containsKey(tc)){
+		if (!testCaseStatusByTarget.containsKey(tc)) {
 			init(tc);
 		}
 
 		String projectName = Utils.extractProjectName(tc.getPath());
-		Collection<CustomField>  cufs = stepCufsPerProjectname.getCollection(projectName);
-		if (cufs != null){
+		Collection<CustomField> cufs = stepCufsPerProjectname.getCollection(projectName);
+		if (cufs != null) {
 			return cufs;
-		}
-		else{
+		} else {
 			return Collections.emptyList();
 		}
 	}
 
-
 	// ************************** loading code **************************************
 
-	public void init(TestCaseTarget target){
+	public void init(TestCaseTarget target) {
 		init(Arrays.asList(new TestCaseTarget[] { target }));
 	}
 
-	public void init(List<TestCaseTarget> targets){
+	public void init(List<TestCaseTarget> targets) {
 
 		// ensures unicity
 		List<TestCaseTarget> uniqueTargets = uniqueList(targets);
@@ -697,19 +676,18 @@ public class Model {
 
 	}
 
-
-	private void initTestCases(List<TestCaseTarget> initialTargets){
+	private void initTestCases(List<TestCaseTarget> initialTargets) {
 
 		// filter out the test cases we already know of
 		List<TestCaseTarget> targets = new LinkedList<TestCaseTarget>();
-		for (TestCaseTarget target : initialTargets){
-			if (! testCaseStatusByTarget.containsKey(target)){
+		for (TestCaseTarget target : initialTargets) {
+			if (!testCaseStatusByTarget.containsKey(target)) {
 				targets.add(target);
 			}
 		}
 
 		// exit if they are all known
-		if (targets.isEmpty()){
+		if (targets.isEmpty()) {
 			return;
 		}
 
@@ -720,7 +698,7 @@ public class Model {
 		List<Long> ids = finderService.findNodeIdsByPath(paths);
 
 		// now store them
-		for (int i=0; i< paths.size(); i++){
+		for (int i = 0; i < paths.size(); i++) {
 
 			TestCaseTarget t = targets.get(i);
 			Long id = ids.get(i);
@@ -728,80 +706,72 @@ public class Model {
 			Existence existence = (id == null) ? Existence.NOT_EXISTS : Existence.EXISTS;
 			TargetStatus status = new TargetStatus(existence, id);
 
-			testCaseStatusByTarget.put(t,status);
+			testCaseStatusByTarget.put(t, status);
 		}
 	}
 
-	private void initParameters(List<TestCaseTarget> initialTargets){
+	private void initParameters(List<TestCaseTarget> initialTargets) {
 
-		for (TestCaseTarget t : initialTargets){
+		for (TestCaseTarget t : initialTargets) {
 
-			if ( parametersByTestCase.containsKey(t)){
+			if (parametersByTestCase.containsKey(t)) {
 				continue;
 			}
 
 			TargetStatus status = getStatus(t);
 
-
-			if (status.id != null && status.status != Existence.TO_BE_DELETED){
+			if (status.id != null && status.status != Existence.TO_BE_DELETED) {
 				Collection<Parameter> params = paramFinder.findAllforTestCase(status.id);
 				Collection<ParameterTarget> parameters = new HashSet<ParameterTarget>(params.size());
-				for (Parameter p : params){
+				for (Parameter p : params) {
 					parameters.add(new ParameterTarget(t, p.getName()));
 				}
 				parametersByTestCase.put(t, parameters);
-			}
-			else{
+			} else {
 				parametersByTestCase.put(t, new HashSet<ParameterTarget>());
 			}
 		}
 	}
 
-	private void initDatasets(List<TestCaseTarget> testCases){
+	private void initDatasets(List<TestCaseTarget> testCases) {
 
-		for (TestCaseTarget t : testCases){
+		for (TestCaseTarget t : testCases) {
 
-			if ( datasetsByTestCase.containsKey(t)){
+			if (datasetsByTestCase.containsKey(t)) {
 				continue;
 			}
 
 			TargetStatus status = getStatus(t);
 
-
-			if (status.id != null && status.status != Existence.TO_BE_DELETED){
+			if (status.id != null && status.status != Existence.TO_BE_DELETED) {
 				Collection<Dataset> datasets = dsDao.findAllDatasetsByTestCase(status.id);
 				Collection<DatasetTarget> dstargets = new HashSet<DatasetTarget>(datasets.size());
-				for (Dataset ds : datasets){
+				for (Dataset ds : datasets) {
 					dstargets.add(new DatasetTarget(t, ds.getName()));
 				}
 				datasetsByTestCase.put(t, dstargets);
-			}
-			else{
+			} else {
 				datasetsByTestCase.put(t, new HashSet<DatasetTarget>());
 			}
 		}
 	}
 
-
-
 	// this method assumes that the targets were all processed through initTestCases(targets) beforehand.
-	private void initTestSteps(List<TestCaseTarget> targets){
+	private void initTestSteps(List<TestCaseTarget> targets) {
 
-		for (TestCaseTarget target : targets){
+		for (TestCaseTarget target : targets) {
 
 			// do not double process the steps
-			if ( testCaseStepsByTarget.containsKey( target ) ){
+			if (testCaseStepsByTarget.containsKey(target)) {
 				continue;
 			}
 
 			TargetStatus status = testCaseStatusByTarget.get(target);
 
-
 			List<InternalStepModel> steps = null;
-			if (status.id != null && status.status != Existence.TO_BE_DELETED){
+			if (status.id != null && status.status != Existence.TO_BE_DELETED) {
 				steps = loadStepsModel(status.id);
-			}
-			else{
+			} else {
 				steps = new ArrayList<InternalStepModel>();
 			}
 
@@ -811,28 +781,26 @@ public class Model {
 
 	}
 
-	private void initProject(String projectName){
-		initProjectsByName(Arrays.asList(new String[]{projectName}));
+	private void initProject(String projectName) {
+		initProjectsByName(Arrays.asList(new String[] { projectName }));
 	}
 
-	private void initProjects(List<TestCaseTarget> targets){
+	private void initProjects(List<TestCaseTarget> targets) {
 		initProjectsByName(collectProjects(targets));
 	}
 
-
-	private void initProjectsByName(List<String> allNames){
-
+	private void initProjectsByName(List<String> allNames) {
 
 		// filter out projects we already know of
 		List<String> projectNames = new LinkedList<String>();
-		for (String name : allNames){
-			if (! projectStatusByName.containsKey(name)){
+		for (String name : allNames) {
+			if (!projectStatusByName.containsKey(name)) {
 				projectNames.add(name);
 			}
 		}
 
 		// exit if they are all known
-		if (projectNames.isEmpty()){
+		if (projectNames.isEmpty()) {
 			return;
 		}
 
@@ -840,16 +808,16 @@ public class Model {
 		List<Project> projects = loadProjects(projectNames);
 
 		// add the projects that were found
-		for (Project p : projects){
-			TargetStatus status =  new TargetStatus(Existence.EXISTS, p.getId());
+		for (Project p : projects) {
+			TargetStatus status = new TargetStatus(Existence.EXISTS, p.getId());
 			projectStatusByName.put(p.getName(), status);
 			initCufs(p.getName());
 		}
 
 		// add the projects that weren't found
 		Set<String> knownProjects = projectStatusByName.keySet();
-		for (String name : projectNames){
-			if (! knownProjects.contains(name)){
+		for (String name : projectNames) {
+			if (!knownProjects.contains(name)) {
 				projectStatusByName.put(name, new TargetStatus(Existence.NOT_EXISTS));
 			}
 		}
@@ -857,58 +825,56 @@ public class Model {
 	}
 
 	// assumes that the project exists and that we have its ID
-	private void initCufs(String projectName){
+	private void initCufs(String projectName) {
 
 		Long projectId = projectStatusByName.get(projectName).id;
 
-		List<CustomField> tccufs = cufDao.findAllBoundCustomFields(projectId, BindableEntity.TEST_CASE) ;
+		List<CustomField> tccufs = cufDao.findAllBoundCustomFields(projectId, BindableEntity.TEST_CASE);
 		tcCufsPerProjectname.putAll(projectName, tccufs);
 
-		List<CustomField> stcufs = cufDao.findAllBoundCustomFields(projectId, BindableEntity.TEST_STEP) ;
+		List<CustomField> stcufs = cufDao.findAllBoundCustomFields(projectId, BindableEntity.TEST_STEP);
 		stepCufsPerProjectname.putAll(projectName, stcufs);
 
 	}
 
-
 	// *************************** private methods *************************************
 
-	private <OBJ extends Object> List<OBJ> uniqueList(Collection<OBJ> orig){
-		Set<OBJ> filtered =  new LinkedHashSet<OBJ>(orig);
+	private <OBJ extends Object> List<OBJ> uniqueList(Collection<OBJ> orig) {
+		Set<OBJ> filtered = new LinkedHashSet<OBJ>(orig);
 		return new ArrayList<OBJ>(filtered);
 	}
 
-
-	private List<String> collectProjects(List<TestCaseTarget> targets){
+	private List<String> collectProjects(List<TestCaseTarget> targets) {
 		List<String> paths = collectPaths(targets);
 		return Utils.extractProjectNames(paths);
 	}
 
-
 	@SuppressWarnings("unchecked")
-	private List<String> collectPaths(List<TestCaseTarget> targets){
-		return (List<String>)CollectionUtils.collect(targets, TestCasePathCollector.INSTANCE, new ArrayList<String>(targets.size()));
+	private List<String> collectPaths(List<TestCaseTarget> targets) {
+		return (List<String>) CollectionUtils.collect(targets, TestCasePathCollector.INSTANCE, new ArrayList<String>(
+				targets.size()));
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<Project> loadProjects(List<String> names){
+	private List<Project> loadProjects(List<String> names) {
 		Query q = sessionFactory.getCurrentSession().getNamedQuery("Project.findAllByName");
 		q.setParameterList("names", names);
 		return q.list();
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<InternalStepModel> loadStepsModel(Long tcId){
+	private List<InternalStepModel> loadStepsModel(Long tcId) {
 		Query query = sessionFactory.getCurrentSession().getNamedQuery("testStep.findBasicInfosByTcId");
 		query.setParameter("tcId", tcId, LongType.INSTANCE);
 
 		List<Object[]> stepdata = query.list();
 
 		List<InternalStepModel> steps = new ArrayList<InternalStepModel>(stepdata.size());
-		for (Object[] tuple : stepdata){
-			StepType type = StepType.valueOf((String)tuple[0]);
+		for (Object[] tuple : stepdata) {
+			StepType type = StepType.valueOf((String) tuple[0]);
 			TestCaseTarget calledTC = null;
-			if (type == StepType.CALL){
-				String path = finderService.getPathAsString((Long)tuple[1]);
+			if (type == StepType.CALL) {
+				String path = finderService.getPathAsString((Long) tuple[1]);
 				calledTC = new TestCaseTarget(path);
 			}
 			steps.add(new InternalStepModel(type, calledTC));
@@ -917,22 +883,21 @@ public class Model {
 		return steps;
 	}
 
-
 	// substitute the value of the name attribute of NamedReference so that it becomes a path instead.
 	// all references are supposed to exist in the database
 	// that's foul play but saves more bloat
 	@SuppressWarnings("unchecked")
-	private void swapNameForPath(Collection<SimpleNode<NamedReference>> references){
+	private void swapNameForPath(Collection<SimpleNode<NamedReference>> references) {
 
 		// first ensures that the references will be iterated in a constant order
 		List<SimpleNode<NamedReference>> listedRefs = new ArrayList<LibraryGraph.SimpleNode<NamedReference>>(references);
 
 		// now collect the ids. Node : the javadoc claims that the result is a new list.
-		List<Long> ids = (List<Long>)CollectionUtils.collect(listedRefs, NamedReferenceIdCollector.INSTANCE);
+		List<Long> ids = (List<Long>) CollectionUtils.collect(listedRefs, NamedReferenceIdCollector.INSTANCE);
 
 		List<String> paths = finderService.getPathsAsString(ids);
 
-		for (int i=0; i < paths.size(); i++){
+		for (int i = 0; i < paths.size(); i++) {
 			SimpleNode<NamedReference> currentNode = listedRefs.get(i);
 			Long id = ids.get(i);
 			String path = paths.get(i);
@@ -943,37 +908,36 @@ public class Model {
 
 	// ************************ internal types for TestCase Management **********************************
 
-
 	/**
-	 * That enum sort of represent the level of existence of a test case. It can be either physically present, or virtually present, or virtually non existent,
-	 * or default to physically non existant. It helps us keeping track of the fate of a test case during the import process (which is, remember, essentially
-	 * a batch processing).
+	 * That enum sort of represent the level of existence of a test case. It can be either physically present, or
+	 * virtually present, or virtually non existent, or default to physically non existant. It helps us keeping track of
+	 * the fate of a test case during the import process (which is, remember, essentially a batch processing).
 	 * 
 	 * @author bsiri
-	 *
+	 * 
 	 */
-	static enum Existence{
-		EXISTS,				// means : exists now in the database
-		TO_BE_CREATED,		// means : will be created later on in the process
-		TO_BE_DELETED,		// means : will be deleted later on in the process
-		NOT_EXISTS;			// means : at this point, doesn't exists either in DB nor in anything planned later in the process
+	static enum Existence {
+		EXISTS, // means : exists now in the database
+		TO_BE_CREATED, // means : will be created later on in the process
+		TO_BE_DELETED, // means : will be deleted later on in the process
+		NOT_EXISTS; // means : at this point, doesn't exists either in DB nor in anything planned later in the process
 	}
 
+	static final class TargetStatus {
 
-	static final class TargetStatus{
+		Existence status = null; // NOSONAR this attribute is local to the package and the implementor knows what he's
+		// doing
+		Long id = null; // NOSONAR this attribute is local to the package and the implementor knows what he's doing
 
-		Existence status = null;	// NOSONAR this attribute is local to the package and the implementor knows what he's doing
-		Long id = null;				// NOSONAR this attribute is local to the package and the implementor knows what he's doing
-
-
-		private TargetStatus(Existence status){
-			if (status == Existence.EXISTS){
-				throw new IllegalArgumentException("internal error : a TargetStatus representing an actually existent target should specify an id");
+		private TargetStatus(Existence status) {
+			if (status == Existence.EXISTS) {
+				throw new IllegalArgumentException(
+						"internal error : a TargetStatus representing an actually existent target should specify an id");
 			}
 			this.status = status;
 		}
 
-		private TargetStatus (Existence status, Long id){
+		private TargetStatus(Existence status, Long id) {
 			this.status = status;
 			this.id = id;
 		}
@@ -988,49 +952,45 @@ public class Model {
 
 	}
 
-
-	private static final class TestCasePathCollector implements Transformer{
+	private static final class TestCasePathCollector implements Transformer {
 
 		private static final TestCasePathCollector INSTANCE = new TestCasePathCollector();
 
-		private TestCasePathCollector(){
+		private TestCasePathCollector() {
 			super();
 		}
 
 		@Override
 		public Object transform(Object value) {
-			return ((TestCaseTarget)value).getPath();
+			return ((TestCaseTarget) value).getPath();
 		}
 	}
 
-	private static final class NamedReferenceIdCollector implements Transformer{
+	private static final class NamedReferenceIdCollector implements Transformer {
 		private static final NamedReferenceIdCollector INSTANCE = new NamedReferenceIdCollector();
 
-		private NamedReferenceIdCollector(){
+		private NamedReferenceIdCollector() {
 			super();
 		}
 
 		@SuppressWarnings("unchecked")
 		@Override
 		public Long transform(Object input) {
-			return ((SimpleNode<NamedReference>)input).getKey().getId();
+			return ((SimpleNode<NamedReference>) input).getKey().getId();
 		}
 	}
 
 	// ********************************** Internal types for Test Step management *************************
 
-
 	static enum StepType {
-		ACTION,
-		CALL;
+		ACTION, CALL;
 	}
 
-	private static final class InternalStepModel{
+	private static final class InternalStepModel {
 		private StepType type;
 		private TestCaseTarget calledTC;
 
-
-		public InternalStepModel(StepType type, TestCaseTarget calledTC){
+		public InternalStepModel(StepType type, TestCaseTarget calledTC) {
 			this.type = type;
 			this.calledTC = calledTC;
 		}
@@ -1047,8 +1007,6 @@ public class Model {
 			return type;
 		}
 
-
 	}
-
 
 }
