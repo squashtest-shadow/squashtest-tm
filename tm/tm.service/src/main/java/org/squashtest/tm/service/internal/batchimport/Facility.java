@@ -20,18 +20,22 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.service.importer.EntityType;
 
 /**
  * Interface for batch import instructions methods.
  *
  */
 public interface Facility {
+	final List<EntityType> ENTITIES_ORDERED_BY_INSTRUCTION_ORDER = Arrays.asList(EntityType.TEST_CASE, EntityType.TEST_STEP, EntityType.PARAMETER, EntityType.DATASET);
 
 	Model getModel();
 

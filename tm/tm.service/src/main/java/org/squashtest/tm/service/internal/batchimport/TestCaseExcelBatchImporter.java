@@ -21,18 +21,19 @@
 package org.squashtest.tm.service.internal.batchimport;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.ExcelWorkbookParser;
 
 @Component
 public class TestCaseExcelBatchImporter {
-
 
 	@Inject
 	private Provider<SimulationFacility> simulatorProvider;
@@ -43,8 +44,7 @@ public class TestCaseExcelBatchImporter {
 	@Inject
 	private Provider<Model> modelProvider;
 
-
-	public ImportLog simulateImport(File excelFile){
+	public ImportLog simulateImport(File excelFile) {
 
 		SimulationFacility simulator = simulatorProvider.get();
 
@@ -53,12 +53,12 @@ public class TestCaseExcelBatchImporter {
 
 		ExcelWorkbookParser parser = ExcelWorkbookParser.createParser(excelFile);
 		parser.parse().releaseResources();
-		List<Instruction<?>> instructions = parser.getInstructions();
+		List<Instruction<?>> instructions = buildOrderedInstruction(parser);
 
 		return run(instructions, simulator);
 	}
 
-	public ImportLog performImport(File excelFile){
+	public ImportLog performImport(File excelFile) {
 
 		SimulationFacility simulator = simulatorProvider.get();
 		FacilityImpl impl = facilityImplProvider.get();
@@ -70,8 +70,7 @@ public class TestCaseExcelBatchImporter {
 
 		ExcelWorkbookParser parser = ExcelWorkbookParser.createParser(excelFile);
 		parser.parse().releaseResources();
-		List<Instruction<?>> instructions = parser.getInstructions();
-
+		List<Instruction<?>> instructions = buildOrderedInstruction(parser);
 
 		ImportLog importLog = run(instructions, impl);
 
@@ -81,12 +80,43 @@ public class TestCaseExcelBatchImporter {
 
 	}
 
+	private List<Instruction<?>> buildOrderedInstruction(ExcelWorkbookParser parser) {
+		List<Instruction<?>> instructions = new ArrayList<Instruction<?>>();
+		for (int i = Facility.ENTITIES_ORDERED_BY_INSTRUCTION_ORDER.size() - 1; i <= 0; i--) {
+			List<Instruction<?>> entityInstructions = findInstructionsByEntity(parser,
+					Facility.ENTITIES_ORDERED_BY_INSTRUCTION_ORDER.get(i));
+			instructions.addAll(entityInstructions);
+		}
+		return instructions;
+	}
 
-	private ImportLog run(List<Instruction<?>> instructions, Facility facility){
+	private List<Instruction<?>> findInstructionsByEntity(ExcelWorkbookParser parser, EntityType entityType) {
+		List<Instruction<?>> instructions = new ArrayList<Instruction<?>>();
+		;
+		switch (entityType) {
+		case TEST_CASE:
+			instructions.addAll(parser.getTestCaseInstructions());
+			break;
+		case TEST_STEP:
+			instructions.addAll(parser.getTestStepInstructions());
+			break;
+		case PARAMETER:
+			instructions.addAll(parser.getParameterInstructions());
+			break;
+		case DATASET:
+			instructions.addAll(parser.getDatasetInstructions());
+			break;
+		default:
+
+		}
+		return instructions;
+	}
+
+	private ImportLog run(List<Instruction<?>> instructions, Facility facility) {
 
 		ImportLog importLog = new ImportLog();
 
-		for (Instruction<?> instruction : instructions){
+		for (Instruction<?> instruction : instructions) {
 			LogTrain logs = instruction.execute(facility);
 
 			logs.setForAll(instruction.getMode());

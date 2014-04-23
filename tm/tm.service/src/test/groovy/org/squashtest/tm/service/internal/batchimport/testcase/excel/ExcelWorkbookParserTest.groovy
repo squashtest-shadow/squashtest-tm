@@ -19,22 +19,18 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.service.internal.batchimport.testcase.excel;
-
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
-import org.squashtest.tm.exception.SheetCorruptedException;
-import org.squashtest.tm.service.internal.batchimport.CallStepInstruction;
-import org.squashtest.tm.service.internal.batchimport.DatasetInstruction;
-import org.squashtest.tm.service.internal.batchimport.ParameterInstruction;
-import org.squashtest.tm.service.internal.batchimport.StepInstruction;
-import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
-
-import spock.lang.Specification;
-import spock.lang.Unroll;
+package org.squashtest.tm.service.internal.batchimport.testcase.excel
 
 import static org.squashtest.tm.service.importer.ImportMode.*
+
+import org.springframework.core.io.ClassPathResource
+import org.springframework.core.io.Resource
+import org.squashtest.tm.core.foundation.lang.IsoDateUtils
+import org.squashtest.tm.exception.SheetCorruptedException
+import org.squashtest.tm.service.internal.batchimport.CallStepInstruction
+
+import spock.lang.Specification
+import spock.lang.Unroll
 
 /**
  * @author Gregory Fouquet
@@ -65,7 +61,7 @@ class ExcelWorkbookParserTest extends Specification {
 		ExcelWorkbookParser.createParser(xls.file)
 
 		then:
-		thrown(exception);
+		thrown(exception)
 
 		where:
 		file										| exception
@@ -86,7 +82,7 @@ class ExcelWorkbookParserTest extends Specification {
 		parser.parse().releaseResources()
 
 		and:
-		def testCaseInstructions = parser.instructions.findAll { it instanceof TestCaseInstruction }
+		def testCaseInstructions = parser.getTestCaseInstructions()
 
 		and:
 		def testCasePaths = (1..8).collect { "path/row$it" }
@@ -116,7 +112,7 @@ class ExcelWorkbookParserTest extends Specification {
 		testCaseInstructions*.mode == testCaseActions
 
 		when:
-		def stepInstructions = parser.instructions.findAll { it instanceof StepInstruction }
+		def stepInstructions = parser.getTestStepInstructions()
 
 
 		and:
@@ -134,7 +130,7 @@ class ExcelWorkbookParserTest extends Specification {
 		stepInstructions*.mode == stepModes
 
 		when:
-		def paramInstructions = parser.instructions.findAll { it instanceof ParameterInstruction }
+		def paramInstructions = parser.getParameterInstructions()
 
 		and:
 		def paramPaths = (1..8).collect { "owner/path/$it" }
@@ -149,7 +145,7 @@ class ExcelWorkbookParserTest extends Specification {
 		paramInstructions*.mode == paramActions
 
 		when:
-		def datasetInstructions = parser.instructions.findAll { it instanceof DatasetInstruction }
+		def datasetInstructions = parser.getDatasetInstructions()
 
 		and:
 		def datasetPaths = (1..8).collect { "owner/path/$it" }
@@ -178,7 +174,7 @@ class ExcelWorkbookParserTest extends Specification {
 
 		when:
 		parser.parse().releaseResources()
-		def stepInstructions = parser.instructions.findAll { it instanceof CallStepInstruction }
+		def stepInstructions = parser.getTestStepInstructions().findAll { it instanceof CallStepInstruction }
 
 		and:
 		def stepPaths = (1..3).collect { "owner/path/$it" }
@@ -198,7 +194,7 @@ class ExcelWorkbookParserTest extends Specification {
 
 		when:
 		parser.parse().releaseResources()
-		def instructions = parser.instructions
+		def instructions = parser.getTestCaseInstructions()
 
 		and:
 		def paths = ["null-action-cell", null]

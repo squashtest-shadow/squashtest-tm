@@ -40,7 +40,10 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.exception.SheetCorruptedException;
+import org.squashtest.tm.service.internal.batchimport.DatasetInstruction;
 import org.squashtest.tm.service.internal.batchimport.Instruction;
+import org.squashtest.tm.service.internal.batchimport.ParameterInstruction;
+import org.squashtest.tm.service.internal.batchimport.StepInstruction;
 import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
 
 /**
@@ -94,7 +97,7 @@ public class ExcelWorkbookParser {
 			4);
 	private final Map<TemplateWorksheet, Factory<?>> instructionBuilderFactoryByWorksheet = new HashMap<TemplateWorksheet, Factory<?>>(
 			4);
-	private final List<Instruction<?>> instructions = new ArrayList<Instruction<?>>();
+
 
 	/**
 	 * Should be used by ExcelWorkbookParserBuilder only.
@@ -179,7 +182,7 @@ public class ExcelWorkbookParser {
 
 			Instruction instruction = instructionBuilder.build(row);
 			instructionsByWorksheet.get(worksheetDef.getWorksheetType()).add(instruction);
-			instructions.add(instruction);
+
 		}
 	}
 
@@ -200,7 +203,25 @@ public class ExcelWorkbookParser {
 		// whine
 	}
 
-	public List<Instruction<?>> getInstructions() {
-		return instructions;
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public List<StepInstruction> getTestStepInstructions() {
+		return (List) instructionsByWorksheet.get(STEPS_SHEET); // useless (List) cast required for compiler not to
+		// whine
 	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public List<ParameterInstruction> getParameterInstructions() {
+		return (List) instructionsByWorksheet.get(PARAMETERS_SHEET); // useless (List) cast required for compiler not to
+		// whine
+	}
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public List<DatasetInstruction> getDatasetInstructions() {
+		return (List) instructionsByWorksheet.get(DATASETS_SHEET); // useless (List) cast required for compiler not to
+		// whine
+	}
+
+
+
+
+
 }
