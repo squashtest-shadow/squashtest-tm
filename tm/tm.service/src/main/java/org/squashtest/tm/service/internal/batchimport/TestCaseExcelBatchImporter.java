@@ -82,9 +82,8 @@ public class TestCaseExcelBatchImporter {
 
 	private List<Instruction<?>> buildOrderedInstruction(ExcelWorkbookParser parser) {
 		List<Instruction<?>> instructions = new ArrayList<Instruction<?>>();
-		for (int i = Facility.ENTITIES_ORDERED_BY_INSTRUCTION_ORDER.size() - 1; i <= 0; i--) {
-			List<Instruction<?>> entityInstructions = findInstructionsByEntity(parser,
-					Facility.ENTITIES_ORDERED_BY_INSTRUCTION_ORDER.get(i));
+		for (EntityType entity :  Facility.ENTITIES_ORDERED_BY_INSTRUCTION_ORDER) {
+			List<Instruction<?>> entityInstructions = findInstructionsByEntity(parser,entity);
 			instructions.addAll(entityInstructions);
 		}
 		return instructions;
