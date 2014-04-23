@@ -64,6 +64,21 @@ public class TestCaseImportController {
 	@Inject
 	private TestCaseImportLogHelper logHelper;
 
+	/**
+	 * Will import test cases given in the form of zipped archive. The zip must contain a folder hierarchy, with
+	 * test-cases represented by xls files. One test-case is represented by one xls file where only the first tab of the
+	 * file is read.
+	 * 
+	 * @see TestCaseLibraryNavigationService#importZipTestCase(InputStream, long, String)
+	 * @param archive
+	 *            : the uploaded file
+	 * @param projectId
+	 *            : the id of the project where the hierarchy must be imported
+	 * @param zipEncoding
+	 *            : the encoding to use for file names,
+	 * @return a view with the result of the import
+	 * @throws IOException
+	 */
 	@RequestMapping(value = "/zip", method = RequestMethod.POST, produces = "text/html")
 	public ModelAndView importZippedTestCases(@RequestParam("archive") MultipartFile archive,
 			@RequestParam("projectId") long projectId, @RequestParam("zipEncoding") String zipEncoding)
@@ -79,11 +94,22 @@ public class TestCaseImportController {
 		return mav;
 	}
 
+	/**
+	 * Will simulate import of test cases in a one xls file format.
+	 * 
+	 * @see TestCaseLibraryNavigationService#simulateImportExcelTestCase(File)
+	 * @param uploadedFile
+	 *            : the xls file to import in a {@link MultipartFile} form
+	 * @param request
+	 *            : the {@link WebRequest}
+	 * @return a {@link ModelAndView} containing the summary of the import and the link to a complete log for any
+	 *         invalid informations it contains
+	 */
 	@RequestMapping(value = "/xls", method = RequestMethod.POST, params = "dry-run")
-	public ModelAndView dryRunExcelWorkbook(@RequestParam("archive") MultipartFile archive, WebRequest request) {
+	public ModelAndView dryRunExcelWorkbook(@RequestParam("archive") MultipartFile uploadedFile, WebRequest request) {
 		LOGGER.debug("dryRunExcelWorkbook");
 
-		return importWorkbook(archive, request, new Command<File, ImportLog>() {
+		return importWorkbook(uploadedFile, request, new Command<File, ImportLog>() {
 			@Override
 			public ImportLog execute(File xls) {
 				return navigationService.simulateImportExcelTestCase(xls);
@@ -91,13 +117,14 @@ public class TestCaseImportController {
 		});
 	}
 
-	private ModelAndView importWorkbook(MultipartFile archive, WebRequest request, Command<File, ImportLog> callback) {
+	private ModelAndView importWorkbook(MultipartFile uploadedFile, WebRequest request,
+			Command<File, ImportLog> callback) {
 		ModelAndView mav = new ModelAndView("fragment/import/import-summary");
 
 		File xls = null;
 
 		try {
-			xls = multipartToImportFile(archive);
+			xls = multipartToImportFile(uploadedFile);
 			ImportLog summary = callback.execute(xls); // TODO parser may throw ex we should handle
 			summary.recompute(); // TODO why is it here ? shouldnt it be in service ?
 			generateImportLog(request, summary);
@@ -120,7 +147,9 @@ public class TestCaseImportController {
 	 * Generates a downloadable xls import log file and stores it where it should.
 	 * 
 	 * @param request
+	 *            : the {@link WebRequest} that lead here
 	 * @param summary
+	 *            : the {@link ImportLog} summary of the xls import/simulation
 	 */
 	private void generateImportLog(WebRequest request, ImportLog summary) {
 		File xlsSummary = null;
@@ -146,8 +175,8 @@ public class TestCaseImportController {
 		return logHelper.storeLogFile(summary);
 	}
 
-	private File multipartToImportFile(MultipartFile archive) throws IOException, FileNotFoundException {
-		InputStream is = archive.getInputStream();
+	private File multipartToImportFile(MultipartFile uploadedFile) throws IOException, FileNotFoundException {
+		InputStream is = uploadedFile.getInputStream();
 		File xls = File.createTempFile("test-case-import-", ".xls");
 		BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(xls));
 		IOUtils.copy(is, os);
@@ -155,10 +184,21 @@ public class TestCaseImportController {
 		return xls;
 	}
 
+	/**
+	 * Will import test cases in a one xls file format.
+	 * 
+	 * @see TestCaseLibraryNavigationService#performImportExcelTestCase(File)
+	 * @param uploadedFile
+	 *            : the xls file to import in a {@link MultipartFile} form
+	 * @param request
+	 *            : the {@link WebRequest}
+	 * @return @return a {@link ModelAndView} containing the summary of the import and the link to a complete log for
+	 *         any invalid informations it contains
+	 */
 	@RequestMapping(value = "/xls", params = "!dry-run", method = RequestMethod.POST)
-	public ModelAndView importExcelWorkbook(@RequestParam("archive") MultipartFile archive, WebRequest request) {
+	public ModelAndView importExcelWorkbook(@RequestParam("archive") MultipartFile uploadedFile, WebRequest request) {
 
-		return importWorkbook(archive, request, new Command<File, ImportLog>() {
+		return importWorkbook(uploadedFile, request, new Command<File, ImportLog>() {
 			@Override
 			public ImportLog execute(File xls) {
 				return navigationService.performImportExcelTestCase(xls);

@@ -144,7 +144,7 @@ public class ExcelWorkbookParser {
 	/**
 	 * Parses the file and creates instructions accordingly.
 	 * 
-	 * @return
+	 * @return this
 	 */
 	public ExcelWorkbookParser parse() {
 		LOGGER.info("Parsing test-cases excel workbook {}", workbook);
@@ -184,8 +184,9 @@ public class ExcelWorkbookParser {
 	}
 
 	/**
-	 * Releases resources hold by this parser. The result of parsing is still available but the {@link #parse()} method
+	 * Releases resources held by this parser. The result of parsing is still available but the {@link #parse()} method
 	 * should no longer be called.
+	 * @return this
 	 */
 	public ExcelWorkbookParser releaseResources() {
 		// as per POI doc : workbook resources are released upon GC

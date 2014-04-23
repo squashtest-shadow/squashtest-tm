@@ -34,7 +34,7 @@ import org.squashtest.tm.service.internal.batchimport.excel.NullMandatoryValueEx
 import org.squashtest.tm.service.internal.batchimport.excel.PropertySetter;
 
 /**
- * Generig superclass for instruction builders.
+ * Generic superclass for instruction builders.
  * 
  * @author Gregory Fouquet
  * 

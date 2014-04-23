@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import static org.squashtest.tm.service.importer.ImportMode.UPDATE;
+
 import org.squashtest.tm.service.importer.ImportMode;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.importer.Target;
-
-import static org.squashtest.tm.service.importer.ImportMode.*;
 
 
 

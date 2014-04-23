@@ -22,7 +22,6 @@
 package org.squashtest.tm.service.internal.batchimport.excel;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.squashtest.tm.service.internal.batchimport.Messages;
 
 /**
  * Coerces a plain string cell to a string

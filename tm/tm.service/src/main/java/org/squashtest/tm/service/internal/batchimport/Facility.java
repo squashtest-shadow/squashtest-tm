@@ -27,26 +27,30 @@ import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 
+/**
+ * Interface for batch import instructions methods.
+ *
+ */
 public interface Facility {
-	
+
 	Model getModel();
 
 	LogTrain createTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues);
 	LogTrain updateTestCase(TestCaseTarget target, TestCase testCaseData, Map<String, String> cufValues);
 	LogTrain deleteTestCase(TestCaseTarget target);
-	
-	
+
+
 	LogTrain addActionStep(TestStepTarget target, ActionTestStep testStep, Map<String, String> cufValues);
 	LogTrain addCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase);
 	LogTrain updateActionStep(TestStepTarget target, ActionTestStep testStep, Map<String, String> cufValues);
 	LogTrain updateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase);
 	LogTrain deleteTestStep(TestStepTarget target);
-	
+
 	LogTrain createParameter(ParameterTarget target, Parameter param);
 	LogTrain updateParameter(ParameterTarget target, Parameter param);
 	LogTrain deleteParameter(ParameterTarget target);
-	
-	
+
+
 	/**
 	 * Will update the value for the given parameter in the given dataset. If the dataset doesn't exist for this dataset, it will be created.
 	 * If the parameter doesn't exist or is not available to this dataset the method fails. In all cases the methods returns a log.
@@ -57,9 +61,9 @@ public interface Facility {
 	 * @return
 	 */
 	LogTrain failsafeUpdateParameterValue (DatasetTarget dataset, ParameterTarget param, String value);
-	
-	
-	
+
+
+
 	/**
 	 * Deletes a dataset.
 	 * 

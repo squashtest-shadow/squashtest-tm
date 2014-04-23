@@ -68,7 +68,11 @@ import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.service.testcase.TestStepModificationService;
-
+/**
+ * 
+ * Implementation of batch import methods that will actually update the database.
+ *
+ */
 @Component
 @Scope("prototype")
 public class FacilityImpl implements Facility {

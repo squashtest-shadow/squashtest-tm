@@ -21,9 +21,11 @@
 
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateCustomFieldPattern.STEP_CUSTOM_FIELD;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateCustomFieldPattern.TEST_CASE_CUSTOM_FIELD;
+
 import java.util.HashMap;
 import java.util.Map;
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateCustomFieldPattern.*;
 
 /**
  * Enum of worksheet which are expected in the import file.
