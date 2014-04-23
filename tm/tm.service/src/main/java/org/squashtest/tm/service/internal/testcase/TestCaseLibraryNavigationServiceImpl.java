@@ -137,12 +137,6 @@ TestCaseLibraryNavigationService {
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ') or hasRole('ROLE_ADMIN')")
-	public TestCase findTestCase(long testCaseId) {
-		return testCaseDao.findById(testCaseId);
-	}
-
-	@Override
 	protected PasteStrategy<TestCaseFolder, TestCaseLibraryNode> getPasteToFolderStrategy() {
 		return pasteToTestCaseFolderStrategyProvider.get();
 	}

@@ -43,7 +43,7 @@ import org.squashtest.tm.service.library.LibraryNavigationService;
  * 
  */
 public interface TestCaseLibraryNavigationService extends
-		LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, TestCaseLibraryFinderService {
+LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, TestCaseLibraryFinderService {
 
 	/**
 	 * Adds a TestCase to the root of the library. The custom fields will be created with their default value.
@@ -52,21 +52,21 @@ public interface TestCaseLibraryNavigationService extends
 	 * @param testCase
 	 */
 	void addTestCaseToLibrary(long libraryId, TestCase testCase);
-	
-	
+
+
 	/**
 	 * Adds a TestCase to the root of the Library, and its initial custom field values. The initial custom field values
 	 * are passed as a Map<Long, String>, that maps the id of the {@link CustomField} to the values of the corresponding {@link CustomFieldValue}.
-	 * Read that last sentence again. 
+	 * Read that last sentence again.
 	 * 
 	 * @param libraryId
 	 * @param testCase
 	 * @param customFieldValues
 	 */
 	void addTestCaseToLibrary(long libraryId, TestCase testCase, Map<Long, String> customFieldValues);
-	
 
-	
+
+
 	/**
 	 * Adds a TestCase to a folder. The custom fields will be created with their default value.
 	 * 
@@ -74,39 +74,29 @@ public interface TestCaseLibraryNavigationService extends
 	 * @param testCase
 	 */
 	void addTestCaseToFolder(long folderId, TestCase testCase);
-	
-	
+
+
 	/**
 	 * Adds a TestCase to a folder, and its initial custom field values. The initial custom field values
 	 * are passed as a Map<Long, String>, that maps the id of the {@link CustomField} to the values of the corresponding {@link CustomFieldValue}.
-	 * Read that last sentence again. 
+	 * Read that last sentence again.
 	 * 
 	 * @param libraryId
 	 * @param testCase
 	 * @param customFieldValues
 	 */
 	void addTestCaseToFolder(long folderId, TestCase testCase, Map<Long, String> customFieldValues);
-	
-	
+
+
 	/**
 	 * given a well formed path (starting with /project), creates a folder at this position if the user is allowed to.
 	 * If a folder already exists in that place, creates nothing and returns its id instead.
 	 * 
 	 * @param folderpath
-	 * @return the id of that folder 
+	 * @return the id of that folder
 	 */
 	Long mkdirs(String folderpath);
-	
-	
-	/**
-	 * @deprecated use {@link TestCaseFinder#findById(long)} instead
-	 * @param testCaseId
-	 * @return
-	 */
-	@Deprecated
-	TestCase findTestCase(long testCaseId);
 
-	
 	/**
 	 * Accepts a stream to a .zip file containing regular folders or excel files and nothing else. Will convert the test
 	 * cases from excel to squash.
@@ -120,33 +110,33 @@ public interface TestCaseLibraryNavigationService extends
 	 */
 	ImportSummary importZipTestCase(InputStream archiveStream, long libraryId, String encoding);
 
-	
+
 	/**
-	 * Simulates an import and returns a complete log 
-	 * for any invalid informations it contains. It does not proceed to an actual import. Note that the structure of that 
-	 * excel file is totally different that the one contained in the zip archive consumed by 
+	 * Simulates an import and returns a complete log
+	 * for any invalid informations it contains. It does not proceed to an actual import. Note that the structure of that
+	 * excel file is totally different that the one contained in the zip archive consumed by
 	 * {@link #importZipTestCase(InputStream, long, String)}
 	 * 
 	 * @param excelFile
 	 * @return
 	 */
 	ImportLog simulateImportExcelTestCase(File excelFile);
-	
-	
+
+
 	/**
-	 * Proceed to an import returns a complete log 
-	 * for any invalid informations it contains. Contrary to {@link #simulateImportExcelTestCase(File)} data are actually processed. 
-	 * Note that the structure of that 
-	 * excel file is totally different that the one contained in the zip archive consumed by 
+	 * Proceed to an import returns a complete log
+	 * for any invalid informations it contains. Contrary to {@link #simulateImportExcelTestCase(File)} data are actually processed.
+	 * Note that the structure of that
+	 * excel file is totally different that the one contained in the zip archive consumed by
 	 * {@link #importZipTestCase(InputStream, long, String)}
 	 * 
 	 * @param excelFile
 	 * @return
 	 */
 	ImportLog performImportExcelTestCase(File excelFile);
-	
-	
-	
+
+
+
 	/**
 	 * Will find all test cases in the library and node ids supplied in arguments, and return their
 	 * information as a list of {@linkplain ExportTestCaseData}
@@ -156,16 +146,16 @@ public interface TestCaseLibraryNavigationService extends
 	 * @return a list of {@linkplain ExportTestCaseData}
 	 */
 	List<ExportTestCaseData> findTestCasesToExport(List<Long> libraryIds, List<Long> nodeIds, boolean includeCalledTests);
-	
+
 	/**
-	 * <p>Will export a selection of test cases as an Excel 2003 (.xls) spreadsheet. 
+	 * <p>Will export a selection of test cases as an Excel 2003 (.xls) spreadsheet.
 	 * The selection consists of :</p>
 	 * 
 	 *  <ul>
 	 *  	<li>zero to several libraries</li>
 	 *  	<li>zero to several nodes</li>
 	 *  </ul>
-	 *  
+	 * 
 	 *  <p>Last, if the selection have some call steps, the called test case can be included in the export
 	 *  if the parameter includeCalledTests is set to true.</p>
 	 * 
@@ -175,12 +165,12 @@ public interface TestCaseLibraryNavigationService extends
 	 * @return
 	 */
 	File exportTestCaseAsExcel(List<Long> libraryIds, List<Long> nodeIds, boolean includeCalledTests);
-	
-	
+
+
 	List<String> getParentNodesAsStringList(Long nodeId);
-	
-	
+
+
 	public List<String> findNamesInFolderStartingWith(final long folderId, final String nameStart);
-	
+
 	public List<String> findNamesInLibraryStartingWith(final long libraryId, final String nameStart);
 }
