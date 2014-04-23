@@ -427,8 +427,20 @@ public class Model {
 		return (model != null);
 
 	}
+	public boolean indexIsFirstAvailable(TestStepTarget target) {
+		Integer index = target.getIndex();
+		TestCaseTarget tc = target.getTestCase();
+		if (! testCaseStatusByTarget.containsKey(tc)){
+			init(tc);
+		}
+		List<InternalStepModel> steps = testCaseStepsByTarget.get(tc);
+		return index == steps.size() ;
+	}
 
-	// returns null if the step is unknown
+	/**
+	 * @param target
+	 * @return null if the step is unknown
+	 */
 	public StepType getType(TestStepTarget target) {
 
 		InternalStepModel model = findInternalStepModel(target);
@@ -1008,5 +1020,7 @@ public class Model {
 		}
 
 	}
+
+
 
 }

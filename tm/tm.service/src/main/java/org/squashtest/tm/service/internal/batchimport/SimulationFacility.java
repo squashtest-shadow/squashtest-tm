@@ -31,6 +31,7 @@ import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.service.importer.ImportMode;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.internal.batchimport.Model.Existence;
@@ -232,7 +233,8 @@ public class SimulationFacility implements Facility {
 		}
 
 		// 4 - check the index
-		LogEntry indexCheckLog = checkStepIndex(target, ImportStatus.WARNING, Messages.IMPACT_STEP_CREATED_LAST);
+		LogEntry indexCheckLog = checkStepIndex(ImportMode.CREATE, target, ImportStatus.WARNING,
+				Messages.IMPACT_STEP_CREATED_LAST);
 		if (indexCheckLog != null) {
 			logs.addEntry(indexCheckLog);
 		}
@@ -272,7 +274,8 @@ public class SimulationFacility implements Facility {
 		}
 
 		// 5 - check the index
-		LogEntry indexCheckLog = checkStepIndex(target, ImportStatus.WARNING, Messages.IMPACT_STEP_CREATED_LAST);
+		LogEntry indexCheckLog = checkStepIndex(ImportMode.CREATE, target, ImportStatus.WARNING,
+				Messages.IMPACT_STEP_CREATED_LAST);
 		if (indexCheckLog != null) {
 			logs.addEntry(indexCheckLog);
 		}
@@ -303,7 +306,7 @@ public class SimulationFacility implements Facility {
 		}
 
 		// 4 - check the index
-		LogEntry indexCheckLog = checkStepIndex(target, ImportStatus.FAILURE, null);
+		LogEntry indexCheckLog = checkStepIndex(ImportMode.UPDATE, target, ImportStatus.FAILURE, null);
 		if (indexCheckLog != null) {
 			logs.addEntry(indexCheckLog);
 		}
@@ -346,7 +349,7 @@ public class SimulationFacility implements Facility {
 		}
 
 		// 5 - check the index
-		LogEntry indexCheckLog = checkStepIndex(target, ImportStatus.FAILURE, null);
+		LogEntry indexCheckLog = checkStepIndex(ImportMode.UPDATE, target, ImportStatus.FAILURE, null);
 		if (indexCheckLog != null) {
 			logs.addEntry(indexCheckLog);
 		}
@@ -386,7 +389,7 @@ public class SimulationFacility implements Facility {
 		}
 
 		// 3 - can that step be identified precisely ?
-		LogEntry indexCheckLog = checkStepIndex(target, ImportStatus.FAILURE, null);
+		LogEntry indexCheckLog = checkStepIndex(ImportMode.DELETE, target, ImportStatus.FAILURE, null);
 		if (indexCheckLog != null) {
 			logs.addEntry(indexCheckLog);
 		}
@@ -566,7 +569,8 @@ public class SimulationFacility implements Facility {
 
 	}
 
-	private LogEntry checkStepIndex(TestStepTarget target, ImportStatus importStatus, String optionalImpact) {
+	private LogEntry checkStepIndex(ImportMode mode, TestStepTarget target, ImportStatus importStatus,
+			String optionalImpact) {
 		Integer index = target.getIndex();
 		LogEntry entry = null;
 
@@ -574,11 +578,14 @@ public class SimulationFacility implements Facility {
 			entry = new LogEntry(target, importStatus, Messages.ERROR_STEPINDEX_EMPTY, optionalImpact);
 		} else if (index < 0) {
 			entry = new LogEntry(target, importStatus, Messages.ERROR_STEPINDEX_NEGATIVE, optionalImpact);
-		} else if (!model.stepExists(target)) {
+
+		} else if (!model.stepExists(target) && (!model.indexIsFirstAvailable(target) || !mode.equals(ImportMode.CREATE))) {
+			// when index doesn't match a step in the target model
+			// this error message is not needed for creation when the target index is the first one available
 			entry = new LogEntry(target, importStatus, Messages.ERROR_STEPINDEX_OVERFLOW, optionalImpact);
 		}
 
+
 		return entry;
 	}
-
 }
