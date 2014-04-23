@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -43,32 +42,30 @@ import org.squashtest.tm.service.internal.repository.TestCaseDeletionDao;
 /*
  * we'll perform a lot of operation using SQL because Hibernate whine at bulk-delete on polymorphic entities.
  * 
- * See bugs : HHH-4183, HHH-1361, HHH-1657 
+ * See bugs : HHH-4183, HHH-1361, HHH-1657
  * 
  */
 
 @Repository
 public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implements TestCaseDeletionDao {
-	
+
 	private static final String TEST_CASES_IDS = "testCaseIds";
 	private static final String TEST_STEP_IDS = "testStepIds";
 	private static final String FOLDER_IDS = "folderIds";
-	
+
 	@Override
 	public void removeEntities(final List<Long> entityIds) {
 		if (!entityIds.isEmpty()) {
 
-			Query query = null;
-			for(Long entityId : entityIds){
-				
+			for (Long entityId : entityIds) {
 
-				TestCaseLibraryNode node = (TestCaseLibraryNode)getSession().get(TestCaseLibraryNode.class, entityId);
-				
+				TestCaseLibraryNode node = (TestCaseLibraryNode) getSession().get(TestCaseLibraryNode.class, entityId);
+
 				removeEntityFromParentLibraryIfExists(entityId, node);
-				
+
 				removeEntityFromParentFolderIfExists(entityId, node);
-			
-				if(node!=null){
+
+				if (node != null) {
 					getSession().delete(node);
 					getSession().flush();
 				}
@@ -77,40 +74,34 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 
 	}
 
-	private void removeEntityFromParentLibraryIfExists(Long entityId, TestCaseLibraryNode node){
+	private void removeEntityFromParentLibraryIfExists(Long entityId, TestCaseLibraryNode node) {
 		Query query = getSession().getNamedQuery("testCaseLibraryNode.findParentLibraryIfExists");
 		query.setParameter("libraryNodeId", entityId);
 		TestCaseLibrary library = (TestCaseLibrary) query.uniqueResult();
-		if(library != null){
-					/*ListIterator<TestCaseLibraryNode> iterator = library.getContent().listIterator();
-					while (iterator.hasNext()) {
-						TestCaseLibraryNode tcln = iterator.next();
-						if (tcln.getId().equals(node.getId())) {
-							library.removeContent(tcln);
-							break;
-						}
-					}*/
-					library.removeContent(node);
+		if (library != null) {
+			/*
+			 * ListIterator<TestCaseLibraryNode> iterator = library.getContent().listIterator(); while
+			 * (iterator.hasNext()) { TestCaseLibraryNode tcln = iterator.next(); if (tcln.getId().equals(node.getId()))
+			 * { library.removeContent(tcln); break; } }
+			 */
+			library.removeContent(node);
 		}
 	}
-	
-	private void removeEntityFromParentFolderIfExists(Long entityId, TestCaseLibraryNode node){
+
+	private void removeEntityFromParentFolderIfExists(Long entityId, TestCaseLibraryNode node) {
 		Query query = getSession().getNamedQuery("testCaseLibraryNode.findParentFolderIfExists");
 		query.setParameter("libraryNodeId", entityId);
 		TestCaseFolder folder = (TestCaseFolder) query.uniqueResult();
-		if(folder != null){
-					/*ListIterator<TestCaseLibraryNode> iterator = folder.getContent().listIterator();
-					while (iterator.hasNext()) {
-						TestCaseLibraryNode tcln = iterator.next();
-						if (tcln.getId().equals(node.getId())) {
-							folder.removeContent(tcln);
-							break;
-						}
-					}*/
-					folder.removeContent(node);
+		if (folder != null) {
+			/*
+			 * ListIterator<TestCaseLibraryNode> iterator = folder.getContent().listIterator(); while
+			 * (iterator.hasNext()) { TestCaseLibraryNode tcln = iterator.next(); if (tcln.getId().equals(node.getId()))
+			 * { folder.removeContent(tcln); break; } }
+			 */
+			folder.removeContent(node);
 		}
 	}
-	
+
 	@Override
 	public void removeAllSteps(List<Long> testStepIds) {
 		if (!testStepIds.isEmpty()) {
@@ -137,15 +128,14 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 		}
 		return Collections.emptyList();
 	}
-	
+
 	@Override
 	public List<Long> findTestCaseFolderAttachmentListIds(List<Long> folderIds) {
-		if (! folderIds.isEmpty()){
+		if (!folderIds.isEmpty()) {
 			return executeSelectNamedQuery("testCaseFolder.findAllAttachmentLists", FOLDER_IDS, folderIds);
 		}
 		return Collections.emptyList();
 	}
-	
 
 	@Override
 	public List<Long> findTestStepAttachmentListIds(List<Long> testStepIds) {
@@ -167,13 +157,13 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 	 * Also, because MySQL do not support sub queries selecting from the table being updated we have to proceed with the
 	 * awkward treatment that follows :
 	 */
-	@SuppressWarnings("unchecked")
 	public void removeCampaignTestPlanInboundReferences(List<Long> testCaseIds) {
 
 		if (!testCaseIds.isEmpty()) {
 
 			// first we must reorder the campaign_item_test_plans
-			reorderTestPlan(NativeQueries.TESTCASE_SQL_GETCALLINGCAMPAIGNITEMTESTPLANORDEROFFSET, NativeQueries.TESTCASE_SQL_UPDATECALLINGCAMPAIGNITEMTESTPLAN, testCaseIds);
+			reorderTestPlan(NativeQueries.TESTCASE_SQL_GETCALLINGCAMPAIGNITEMTESTPLANORDEROFFSET,
+					NativeQueries.TESTCASE_SQL_UPDATECALLINGCAMPAIGNITEMTESTPLAN, testCaseIds);
 
 			// now we can delete the items
 			executeDeleteSQLQuery(NativeQueries.TESTCASE_SQL_REMOVECALLINGCAMPAIGNITEMTESTPLAN, TEST_CASES_IDS,
@@ -182,7 +172,6 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 		}
 
 	}
-
 
 	/*
 	 * same comment than for HibernateTestCaseDeletionDao#removeCallingCampaignItemTestPlan
@@ -223,37 +212,34 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void removeCallingIterationItemTestPlanHavingNoExecutions(List<Long> itpHavingNoExecIds) {
 		if (!itpHavingNoExecIds.isEmpty()) {
 
-			//reorder the test plans for iterations
-			reorderTestPlan(NativeQueries.TESTCASE_SQL_GETCALLINGITERATIONITEMTESTPLANORDEROFFSET, 
-							NativeQueries.TESTCASE_SQL_UPDATECALLINGITERATIONITEMTESTPLANORDER, 
-							itpHavingNoExecIds);
+			// reorder the test plans for iterations
+			reorderTestPlan(NativeQueries.TESTCASE_SQL_GETCALLINGITERATIONITEMTESTPLANORDEROFFSET,
+					NativeQueries.TESTCASE_SQL_UPDATECALLINGITERATIONITEMTESTPLANORDER, itpHavingNoExecIds);
 
-			//reorder the test plans for test suites
-			reorderTestPlan(NativeQueries.TESTCASE_SQL_GETCALLINGTESTSUITEITEMTESTPLANORDEROFFSET, 
-					NativeQueries.TESTCASE_SQL_UPDATECALLINGTESTSUITEITEMTESTPLANORDER, 
-					itpHavingNoExecIds);			
-			
-			//remove the elements from their collection
-			executeDeleteSQLQuery(NativeQueries.TESTCASE_SQL_REMOVECALLINGTESTSUITEITEMTESTPLAN,
-					"itpHavingNoExecIds", itpHavingNoExecIds);
-			
+			// reorder the test plans for test suites
+			reorderTestPlan(NativeQueries.TESTCASE_SQL_GETCALLINGTESTSUITEITEMTESTPLANORDEROFFSET,
+					NativeQueries.TESTCASE_SQL_UPDATECALLINGTESTSUITEITEMTESTPLANORDER, itpHavingNoExecIds);
+
+			// remove the elements from their collection
+			executeDeleteSQLQuery(NativeQueries.TESTCASE_SQL_REMOVECALLINGTESTSUITEITEMTESTPLAN, "itpHavingNoExecIds",
+					itpHavingNoExecIds);
+
 			executeDeleteSQLQuery(NativeQueries.TESTCASE_SQL_REMOVECALLINGITERATIONITEMTESTPLANFROMLIST,
 					"itpHavingNoExecIds", itpHavingNoExecIds);
-			
-			
-			//remove the elements themselves
+
+			// remove the elements themselves
 			executeDeleteSQLQuery(NativeQueries.TESTCASE_SQL_REMOVECALLINGITERATIONITEMTESTPLAN, "itpHavingNoExecIds",
 					itpHavingNoExecIds);
 
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void reorderTestPlan(String selectOffsetQuery, String updateOrderQuery, List<Long> removedItems) {
-		
+
 		Query query0 = getSession().createSQLQuery(selectOffsetQuery);
 		query0.setParameterList("removedItemIds1", removedItems);
 		query0.setParameterList("removedItemIds2", removedItems);
@@ -267,9 +253,8 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 			query.setParameterList("reorderedItemIds", offsetEntry.getValue(), LongType.INSTANCE);
 			query.executeUpdate();
 		}
-		
+
 	}
-	
 
 	private Map<Integer, List<Long>> buildMapOfOffsetAndIds(List<Object[]> list) {
 		Map<Integer, List<Long>> result = new HashMap<Integer, List<Long>>();
@@ -278,8 +263,9 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 			Integer offset = ((BigInteger) pair[1]).intValue();
 
 			// we skip if the offset is 0
-			if (offset == 0){
-				continue;}
+			if (offset == 0) {
+				continue;
+			}
 
 			if (!result.containsKey(offset)) {
 				result.put(offset, new LinkedList<Long>());
@@ -291,7 +277,6 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 		return result;
 
 	}
-	
 
 	@Override
 	public void setExecStepInboundReferencesToNull(List<Long> testStepIds) {
@@ -318,6 +303,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 
 		}
 	}
+
 	@Override
 	public void removeFromVerifyingTestStepsList(List<Long> testStepIds) {
 		if (!testStepIds.isEmpty()) {
@@ -327,28 +313,28 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 
 		}
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long>[] separateFolderFromTestCaseIds(List<Long> originalIds) {
 		List<Long> folderIds = new ArrayList<Long>();
 		List<Long> testcaseIds = new ArrayList<Long>();
-		
+
 		List<BigInteger> filtredFolderIds = executeSelectSQLQuery(
-						NativeQueries.TESTCASELIBRARYNODE_SQL_FILTERFOLDERIDS, "testcaseIds", originalIds);
-		
-		for (Long oId : originalIds){
-			if (filtredFolderIds.contains(BigInteger.valueOf(oId))){
+				NativeQueries.TESTCASELIBRARYNODE_SQL_FILTERFOLDERIDS, "testcaseIds", originalIds);
+
+		for (Long oId : originalIds) {
+			if (filtredFolderIds.contains(BigInteger.valueOf(oId))) {
 				folderIds.add(oId);
-			}
-			else{
+			} else {
 				testcaseIds.add(oId);
 			}
 		}
-		
+
 		List<Long>[] result = new List[2];
 		result[0] = folderIds;
 		result[1] = testcaseIds;
-		
+
 		return result;
 	}
 }

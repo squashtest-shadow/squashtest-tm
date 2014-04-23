@@ -25,19 +25,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
-import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
-
+import org.squashtest.tm.service.internal.repository.TestCaseLibraryNodeDao;
 
 @Repository("squashtest.tm.repository.TestCaseLibraryNodeDao")
-public class HibernateTestCaseLibraryNodeDao extends HibernateEntityDao<TestCaseLibraryNode> implements LibraryNodeDao<TestCaseLibraryNode>{
-
-
+public class HibernateTestCaseLibraryNodeDao extends HibernateEntityDao<TestCaseLibraryNode> implements
+TestCaseLibraryNodeDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -56,15 +53,14 @@ public class HibernateTestCaseLibraryNodeDao extends HibernateEntityDao<TestCase
 		return query.list();
 	}
 
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> getPathsAsString(List<Long> ids) {
 
-		if (! ids.isEmpty()){
+		if (!ids.isEmpty()) {
 			SQLQuery query = currentSession().createSQLQuery(NativeQueries.TCLN_GET_PATHS_AS_STRING);
 			query.setParameterList("nodeIds", ids, LongType.INSTANCE);
-			List<Object[]>  result = query.list();
+			List<Object[]> result = query.list();
 
 			// now ensures that the results are returned in the correct order
 			// also post process the resulting string to escape the '/' in
@@ -73,16 +69,15 @@ public class HibernateTestCaseLibraryNodeDao extends HibernateEntityDao<TestCase
 			// See NativeQueries.PATH_SEPARATOR and the associated comment
 			String[] toReturn = new String[ids.size()];
 
-			for (Object[] res : result){
+			for (Object[] res : result) {
 				Long id = ((BigInteger) res[0]).longValue();
-				String path = (String)res[1];
+				String path = (String) res[1];
 				path = path.replaceAll("\\/", "\\\\/").replaceAll(NativeQueries.PATH_SEPARATOR, "/");
 				toReturn[ids.indexOf(id)] = path;
 			}
 
 			return Arrays.asList(toReturn);
-		}
-		else{
+		} else {
 
 			return Collections.emptyList();
 		}
@@ -91,11 +86,11 @@ public class HibernateTestCaseLibraryNodeDao extends HibernateEntityDao<TestCase
 	@Override
 	public List<TestCaseLibraryNode> findNodesByPath(List<String> path) {
 		List<Long> ids = findNodeIdsByPath(path);
-		List<TestCaseLibraryNode>  result = findAllByIds(ids);
+		List<TestCaseLibraryNode> result = findAllByIds(ids);
 
 		// post process the result to ensure the correct order of the result
 		TestCaseLibraryNode[] toReturn = new TestCaseLibraryNode[ids.size()];
-		for (TestCaseLibraryNode node :  result){
+		for (TestCaseLibraryNode node : result) {
 			toReturn[ids.indexOf(node.getId())] = node;
 		}
 
@@ -105,79 +100,73 @@ public class HibernateTestCaseLibraryNodeDao extends HibernateEntityDao<TestCase
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> findNodeIdsByPath(List<String> paths) {
-		if (!paths.isEmpty()){
+		if (!paths.isEmpty()) {
 			// process the paths parameter : we don't want escaped '/' in there
 			List<String> effectiveParameters = unescapeSlashes(paths);
 
 			SQLQuery query = currentSession().createSQLQuery(NativeQueries.TCLN_FIND_NODE_IDS_BY_PATH);
 			query.setParameterList("paths", effectiveParameters);
-			List<Object[]>  result = query.list();
+			List<Object[]> result = query.list();
 
 			// now ensures that the results are returned in the correct order
 			Long[] toReturn = new Long[effectiveParameters.size()];
 
-			for (Object[] res : result){
+			for (Object[] res : result) {
 				String path = (String) res[0];
-				toReturn[effectiveParameters.indexOf(path)] =  ((BigInteger)res[1]).longValue();
+				toReturn[effectiveParameters.indexOf(path)] = ((BigInteger) res[1]).longValue();
 			}
 
 			return Arrays.asList(toReturn);
-		}
-		else{
+		} else {
 			return Collections.emptyList();
 		}
 	}
 
-
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.squashtest.tm.service.internal.repository.LibraryNodeDao#findNodeIdByPath(java.lang.String)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public long findNodeIdByPath(String path) {
+	public Long findNodeIdByPath(String path) {
 		String effectiveParameters = unescapeSlashes(path);
 
 		SQLQuery query = currentSession().createSQLQuery(NativeQueries.TCLN_FIND_NODE_IDS_BY_PATH);
-		query.setParameterList("paths", Arrays.asList(new String[]{effectiveParameters}));
-		List<Object[]>  result = query.list();
+		query.setParameterList("paths", new String[] { effectiveParameters });
+		List<Object[]> result = query.list();
 
-		if (! result.isEmpty()){
-			BigInteger id = (BigInteger)result.get(0)[1];
-			return id.longValue();
+		if (result.isEmpty()) {
+			return null;
 		}
-		else{
-			throw new NoSuchElementException("test case library node at path "+path+" doesn't exist");
-		}
+
+		BigInteger id = (BigInteger) result.get(0)[1];
+		return id.longValue();
 
 	}
 
-	@SuppressWarnings("unchecked")
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.squashtest.tm.service.internal.repository.LibraryNodeDao#findNodeByPath(java.lang.String)
+	 */
 	@Override
-	public TestCaseLibraryNode findNodesByPath(String path) {
-		String effectiveParameters = unescapeSlashes(path);
+	public TestCaseLibraryNode findNodeByPath(String path) {
+		Long id = findNodeIdByPath(path);
 
-		SQLQuery query = currentSession().createSQLQuery(NativeQueries.TCLN_FIND_NODE_IDS_BY_PATH);
-		query.setParameterList("paths", Arrays.asList(new String[]{effectiveParameters}));
-		List<Object[]>  result = query.list();
-
-		if (! result.isEmpty()){
-			BigInteger id = (BigInteger)result.get(0)[1];
-			return findById(id.longValue());
-		}
-		else{
-			throw new NoSuchElementException("test case library node at path "+path+" doesn't exist");
-		}
+		return (TestCaseLibraryNode) (id != null ? currentSession().load(TestCaseLibraryNode.class, id) : null);
 	}
 
-
-	private List<String> unescapeSlashes(List<String> paths){
+	private List<String> unescapeSlashes(List<String> paths) {
 		List<String> unescaped = new ArrayList<String>(paths.size());
-		for (String orig : paths){
+		for (String orig : paths) {
 			unescaped.add(orig.replaceAll("\\\\/", "/"));
 		}
 		return unescaped;
 	}
 
-	private String unescapeSlashes(String path){
+	private String unescapeSlashes(String path) {
 		return path.replaceAll("\\\\/", "/");
 	}
-
 
 }

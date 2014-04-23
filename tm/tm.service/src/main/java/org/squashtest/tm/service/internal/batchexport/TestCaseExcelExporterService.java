@@ -31,65 +31,63 @@ import javax.inject.Inject;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.DatasetModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.ParameterModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.TestStepModel;
-import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
+import org.squashtest.tm.service.internal.repository.TestCaseLibraryNodeDao;
 
 @Service
 public class TestCaseExcelExporterService {
 
 	@Inject
 	private ExportDao exportDao;
-	
-	
+
+
 	@Inject
 	@Qualifier("squashtest.tm.repository.TestCaseLibraryNodeDao")
-	private LibraryNodeDao<TestCaseLibraryNode> nodeDao;
+	private TestCaseLibraryNodeDao nodeDao;
 
-	
 	public File exportAsExcel(List<Long> testCaseIds){
-		
-		// let's chunk the job by batches of 20 test cases 
+
+		// let's chunk the job by batches of 20 test cases
 		List<Long> ids;
 		int idx=0;
 		int max = Math.min(idx+20, testCaseIds.size());
 		ExcelExporter exporter = new ExcelExporter();
-		
+
 		Map<Long, String> pathById = new HashMap<Long, String>(testCaseIds.size());
 		populatePathsCache(pathById, testCaseIds);
-		
+
 		while (idx < testCaseIds.size()){
-			
+
 			ids = testCaseIds.subList(idx, max);
-			
-			ExportModel model = exportDao.findModel(ids); 
+
+			ExportModel model = exportDao.findModel(ids);
 			addPaths(pathById, model);
 			sort(model);
-			
+
 			exporter.appendToWorkbook(model);
-			
+
 			idx = max;
 			max = Math.min(idx+20, testCaseIds.size());
 		}
-		
+
 		return exporter.print();
-		
+
 	}
-	
-	
+
+
 	private void populatePathsCache(Map<Long, String> pathById, List<Long> ids){
-		
+
 		List<String> paths = nodeDao.getPathsAsString(ids);
-		
+
 		for (int i=0; i< ids.size(); i++){
 			pathById.put(ids.get(i), paths.get(i));
 		}
-		
+
 	}
-	
+
 	private void addPaths(Map<Long, String> pathById, ExportModel models){
 
 		addPathsForTestCase(pathById, models);
@@ -98,30 +96,30 @@ public class TestCaseExcelExporterService {
 		addPathsForDatasets(pathById, models);
 
 	}
-	
+
 	private void addPathsForTestCase(Map<Long, String> pathById, ExportModel models){
-		
+
 		for (TestCaseModel model : models.getTestCases()){
 			Long id = model.getId();
 			String path = pathById.get(id);
 			model.setPath(path);
 		}
-		
+
 	}
 
 	private void addPathsForTestSteps(Map<Long, String> pathById, ExportModel models){
-		
-		
+
+
 		List<TestStepModel> callsteps = new LinkedList<TestStepModel>();
 		List<Long> calledTC = new LinkedList<Long>();
-		
+
 		for (TestStepModel model : models.getTestSteps()){
-			
+
 			// add the path to the owner id
 			Long id = model.getTcOwnerId();
 			String path = pathById.get(id);
 			model.setTcOwnerPath(path);
-			
+
 			// if it is a call step, treat the path of the called test case or save the reference for a second round
 			if (model.getIsCallStep()>0){
 				Long callid = Long.valueOf(model.getAction());
@@ -135,7 +133,7 @@ public class TestCaseExcelExporterService {
 				}
 			}
 		}
-		
+
 		// if some call steps were left unresolved, let's do them.
 		if (! calledTC.isEmpty()){
 			populatePathsCache(pathById, calledTC);
@@ -143,11 +141,11 @@ public class TestCaseExcelExporterService {
 				Long callid = Long.valueOf(model.getAction());
 				String callaction = "CALL "+pathById.get(callid);
 				model.setAction(callaction);
-			}			
+			}
 		}
 	}
 
-	
+
 	private void addPathsForParameters(Map<Long, String> pathById, ExportModel models){
 		for (ParameterModel model : models.getParameters()){
 			Long id = model.getTcOwnerId();
@@ -155,23 +153,23 @@ public class TestCaseExcelExporterService {
 			model.setTcOwnerPath(path);
 		}
 	}
-	
-	
+
+
 	private void addPathsForDatasets(Map<Long, String> pathById, ExportModel models){
-		
+
 		List<DatasetModel>  unresolvedPOwnerPath = new LinkedList<DatasetModel>();
 		List<Long> pOwnerIds = new LinkedList<Long>();
-		
+
 		for (DatasetModel model : models.getDatasets()){
-			
+
 			Long id = model.getOwnerId();
 			String path = pathById.get(id);
 			model.setTcOwnerPath(path);
-			
-			// also needs the path for the param owner. Like for the test steps 
+
+			// also needs the path for the param owner. Like for the test steps
 			// the param owner path may be unknown yet so we need
 			// to see if further resolution is required.
-			
+
 			Long pOwnerId = model.getParamOwnerId();
 			if (pathById.containsKey(pOwnerId)){
 				String pOwnerPath = pathById.get(pOwnerId);
@@ -181,7 +179,7 @@ public class TestCaseExcelExporterService {
 				pOwnerIds.add(pOwnerId);
 			}
 		}
-		
+
 		// now resolve the param owner paths left over
 		if (! pOwnerIds.isEmpty()){
 			populatePathsCache(pathById, pOwnerIds);
@@ -191,10 +189,10 @@ public class TestCaseExcelExporterService {
 				model.setParamOwnerPath(path);
 			}
 		}
-		
+
 	}
-	
-	
+
+
 
 	private void sort(ExportModel models){
 		Collections.sort(models.getTestCases(), TestCaseModel.COMPARATOR);
@@ -202,7 +200,7 @@ public class TestCaseExcelExporterService {
 		Collections.sort(models.getParameters(), ParameterModel.COMPARATOR);
 		Collections.sort(models.getDatasets(), DatasetModel.COMPARATOR);
 	}
-	
+
 
 
 }

@@ -37,13 +37,12 @@ import org.springframework.test.context.transaction.TransactionConfiguration
 import spock.lang.Specification
 
 /**
- * Superclass for a DB-driven DAO test. The test will populate the database using a DBUnit dataset with the same name as the test. 
+ * Superclass for a DB-driven DAO test. The test will populate the database using a DBUnit dataset with the same name as the test.
  * Subclasses should be annotated @UnitilsSupport
  */
 @ContextConfiguration(["classpath:service/dependencies-scan-context.xml", "classpath:unitils-datasource-context.xml", "classpath*:META-INF/**/bundle-context.xml", "classpath*:META-INF/**/repository-context.xml", "classpath*:META-INF/**/dynamicdao-context.xml", "classpath*:META-INF/**/dynamicmanager-context.xml"])
 @TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager", defaultRollback = true)
 abstract class DbunitServiceSpecification extends Specification {
-
 
 	@Inject
 	private SessionFactory sessionFactory;
@@ -51,7 +50,7 @@ abstract class DbunitServiceSpecification extends Specification {
 	protected Session getSession(){
 		return sessionFactory.getCurrentSession();
 	}
-	
+
 	/*-------------------------------------------Private stuff-----------------------------------*/
 	protected boolean found(String tableName, String idColumnName, Long id){
 		String sql = "select count(*) from "+tableName+" where "+idColumnName+" = :id"
@@ -61,14 +60,14 @@ abstract class DbunitServiceSpecification extends Specification {
 		def result = query.uniqueResult()
 		return (result != 0)
 	}
-	
+
 
 	protected boolean found(Class<?> entityClass, Long id){
 		boolean found = false
-			
+
 		try {
 			found = (getSession().get(entityClass, id) != null)
-			
+
 		} catch (ObjectNotFoundException ex) {
 			// Hibernate sometimes pukes the above exception instead of returning null when entity is part of a class hierarchy
 			found = false
@@ -87,11 +86,11 @@ abstract class DbunitServiceSpecification extends Specification {
 	protected Object findEntity(Class<?> entityClass, Long id){
 		return getSession().get(entityClass, id);
 	}
-	
+
 	protected List<Object> findAll(String className){
 		return getSession().createQuery("from "+className).list();
 	}
-	
+
 	protected boolean allNotDeleted(String className, List<Long> ids){
 		Query query = getSession().createQuery("from "+className+" where id in (:ids)")
 		query.setParameterList("ids", ids, new LongType())
@@ -99,11 +98,11 @@ abstract class DbunitServiceSpecification extends Specification {
 
 		return result.size() == ids.size()
 	}
-	
+
 	protected NewSQLQuery newSQLQuery(String query){
 		return new NewSQLQuery(query, session);
 	}
-	
+
 	protected Object executeSQL (String query){
 		def q = newSQLQuery(query)
 		def expr = /(?is)\s*select.*/
@@ -115,51 +114,51 @@ abstract class DbunitServiceSpecification extends Specification {
 			return null
 		}
 	}
-	
-	
+
+
 	class NewSQLQuery {
-		
+
 		Query query
-		
+
 		public NewSQLQuery(String query, Session session){
 			this.query = session.createSQLQuery(query);
 			this.query.setResultTransformer  new EasyResultTransformer()
 		}
-		
+
 		NewSQLQuery setParameter(String name, Object value){
 			query.setParameter(name, value)
 			return this
 		}
-		
+
 		NewSQLQuery setParameter(String name, Object value, Object type){
 			query.setParameter(name, value, type)
 			return this
 		}
-		
+
 		NewSQLQuery setParameterList(String name, Collection value){
 			query.setParameterList(name, value)
 			return this
 		}
-		
+
 		NewSQLQuery setParameterList(String name, Collection value, Object type){
 			query.setParameterList(name, value, type)
 			return this
 		}
-		
+
 		List list(){
 			return query.list()
 		}
-		
+
 		Object uniqueResult(){
 			return query.uniqueResult()
 		}
-		
+
 		void update(){
 			query.executeUpdate()
 		}
 	}
-	
-	
+
+
 	class EasyResultTransformer implements ResultTransformer{
 
 		@Override
@@ -181,10 +180,10 @@ abstract class DbunitServiceSpecification extends Specification {
 				return collection
 			}
 		}
-		
+
 		Object convert(Object sourceOjbect){
 			(sourceOjbect instanceof BigInteger) ? ((BigInteger)sourceOjbect).longValue() : sourceOjbect
 		}
 	}
-	
+
 }

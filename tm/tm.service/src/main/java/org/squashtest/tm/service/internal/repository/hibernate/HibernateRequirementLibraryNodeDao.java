@@ -30,9 +30,8 @@ import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 
 @SuppressWarnings("rawtypes")
 @Repository("squashtest.tm.repository.RequirementLibraryNodeDao")
-public class HibernateRequirementLibraryNodeDao extends HibernateEntityDao<RequirementLibraryNode>
-		implements LibraryNodeDao<RequirementLibraryNode> {
-
+public class HibernateRequirementLibraryNodeDao extends HibernateEntityDao<RequirementLibraryNode> implements
+LibraryNodeDao<RequirementLibraryNode> {
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -50,30 +49,5 @@ public class HibernateRequirementLibraryNodeDao extends HibernateEntityDao<Requi
 		query.setParameter("nodeId", entityId, LongType.INSTANCE);
 		return query.list();
 	}
-	
-	@Override
-	public List<String> getPathsAsString(List<Long> ids) {
-		throw new UnsupportedOperationException("not implemented yet");
-	}
 
-	@Override
-	public List<RequirementLibraryNode> findNodesByPath(List<String> path) {
-		throw new UnsupportedOperationException("not implemented yet");
-	}
-	
-	@Override
-	public List<Long> findNodeIdsByPath(List<String> path) {
-		throw new UnsupportedOperationException("not implemented yet");
-	}
-
-	@Override
-	public long findNodeIdByPath(String path) {
-		throw new UnsupportedOperationException("not implemented yet");
-	}
-
-	@Override
-	public RequirementLibraryNode findNodesByPath(String path) {
-		throw new UnsupportedOperationException("not implemented yet");
-	}
-	
 }

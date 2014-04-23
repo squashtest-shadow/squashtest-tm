@@ -57,11 +57,11 @@ import org.squashtest.tm.service.internal.library.NodeDeletionHandler;
 import org.squashtest.tm.service.internal.library.PasteStrategy;
 import org.squashtest.tm.service.internal.repository.FolderDao;
 import org.squashtest.tm.service.internal.repository.LibraryDao;
-import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
+import org.squashtest.tm.service.internal.repository.TestCaseLibraryNodeDao;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
@@ -81,7 +81,7 @@ TestCaseLibraryNavigationService {
 	private TestCaseDao testCaseDao;
 	@Inject
 	@Qualifier("squashtest.tm.repository.TestCaseLibraryNodeDao")
-	private LibraryNodeDao<TestCaseLibraryNode> testCaseLibraryNodeDao;
+	private TestCaseLibraryNodeDao testCaseLibraryNodeDao;
 
 	@Inject
 	private TestCaseImporter testCaseImporter;
@@ -132,7 +132,7 @@ TestCaseLibraryNavigationService {
 	}
 
 	@Override
-	protected final LibraryNodeDao<TestCaseLibraryNode> getLibraryNodeDao() {
+	protected final TestCaseLibraryNodeDao getLibraryNodeDao() {
 		return testCaseLibraryNodeDao;
 	}
 
@@ -153,33 +153,65 @@ TestCaseLibraryNavigationService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String getPathAsString(long entityId) {
 		return (getPathsAsString(Arrays.asList(new Long[] { entityId }))).get(0);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.squashtest.tm.service.testcase.TestCaseLibraryFinderService#getPathsAsString(java.util.List)
+	 */
 	@Override
+	@Transactional(readOnly = true)
 	public List<String> getPathsAsString(List<Long> ids) {
 		return getLibraryNodeDao().getPathsAsString(ids);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.squashtest.tm.service.testcase.TestCaseLibraryFinderService#findNodesByPath(java.util.List)
+	 */
+
 	@Override
+	@Transactional(readOnly = true)
 	public List<TestCaseLibraryNode> findNodesByPath(List<String> paths) {
 		return getLibraryNodeDao().findNodesByPath(paths);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.squashtest.tm.service.testcase.TestCaseLibraryFinderService#findNodeIdsByPath(java.util.List)
+	 */
 	@Override
+	@Transactional(readOnly = true)
 	public List<Long> findNodeIdsByPath(List<String> paths) {
 		return getLibraryNodeDao().findNodeIdsByPath(paths);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.squashtest.tm.service.testcase.TestCaseLibraryFinderService#findNodeIdByPath(java.lang.String)
+	 */
 	@Override
-	public long findNodeIdByPath(String path) {
+	@Transactional(readOnly = true)
+	public Long findNodeIdByPath(String path) {
 		return getLibraryNodeDao().findNodeIdByPath(path);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.squashtest.tm.service.testcase.TestCaseLibraryFinderService#findNodeByPath(java.lang.String)
+	 */
 	@Override
-	public TestCaseLibraryNode findNodesByPath(String path) {
-		return getLibraryNodeDao().findNodesByPath(path);
+	@Transactional(readOnly = true)
+	public TestCaseLibraryNode findNodeByPath(String path) {
+		return getLibraryNodeDao().findNodeByPath(path);
 	}
 
 	@Override
@@ -365,6 +397,7 @@ TestCaseLibraryNavigationService {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional(readOnly = true)
 	public List<ExportTestCaseData> findTestCasesToExport(List<Long> libraryIds, List<Long> nodeIds,

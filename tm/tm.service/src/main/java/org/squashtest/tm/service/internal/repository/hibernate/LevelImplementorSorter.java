@@ -43,20 +43,22 @@ import org.squashtest.tm.domain.Level;
 public final class LevelImplementorSorter implements PagingAndMultiSorting{
 
 	private PagingAndMultiSorting multiSorting;
+
+	@SuppressWarnings("rawtypes")
 	private Map<String, Class<? extends Enum>> levelClassByAttributes = new HashMap<String, Class<? extends Enum>>();
-	
+
 	public LevelImplementorSorter(PagingAndMultiSorting sorting){
 		this.multiSorting = sorting;
 	}
-	
+
 	public void map(String attributeName, Class<? extends Enum<?>> levelClass){
 		if (! Level.class.isAssignableFrom(levelClass)){
 			throw new IllegalArgumentException("LevelImplementorSorter : attempted to map incompatible class '"+levelClass+"' : "+
-												"it must both be an Enum and implement org.squashtest.tm.domain.Level");
+					"it must both be an Enum and implement org.squashtest.tm.domain.Level");
 		}
 		levelClassByAttributes.put(attributeName, levelClass);
 	}
-	
+
 
 	@Override
 	public int getFirstItemIndex() {
@@ -76,45 +78,46 @@ public final class LevelImplementorSorter implements PagingAndMultiSorting{
 	@Override
 	public List<Sorting> getSortings() {
 		List<Sorting> newSortings = new ArrayList<Sorting>(multiSorting.getSortings());
-		
+
 		ListIterator<Sorting> iterSorting = newSortings.listIterator();
-		
+
 		while (iterSorting.hasNext()){
-			
+
 			Sorting sort = iterSorting.next();
 			String attribute = sort.getSortedAttribute();
-			
+
 			if (levelClassByAttributes.containsKey(attribute)){
-				
+
 				String stmt = buildCaseStmt(attribute);
-				
+
 				DefaultSorting newSorting =  new DefaultSorting();
 				newSorting.setSortedAttribute(stmt);
 				newSorting.setSortOrder(sort.getSortOrder());
-				
+
 				iterSorting.remove();
 				iterSorting.add(newSorting);
 			}
-			
+
 		}
-		
+
 		return newSortings;
 	}
-	
-	
+
+
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	private String buildCaseStmt(String attribute){
-		
+
 		Class<? extends Enum> enumClass = levelClassByAttributes.get(attribute);
 		EnumSet<? extends Enum> enums = EnumSet.allOf(enumClass);
-		
+
 		StringBuilder builder = new StringBuilder();
 		builder.append("CASE "+attribute+" ");
 		for (Enum e : enums){
 			builder.append("when '"+e.name()+"' then "+((Level)e).getLevel()+" ");
 		}
 		builder.append("END ");
-		
+
 		return builder.toString();
 	}
-	
+
 }

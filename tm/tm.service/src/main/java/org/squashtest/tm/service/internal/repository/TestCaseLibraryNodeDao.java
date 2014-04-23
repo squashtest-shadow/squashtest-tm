@@ -18,39 +18,18 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.testcase;
 
-import java.util.Collection;
+package org.squashtest.tm.service.internal.repository;
+
 import java.util.List;
 
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
-import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
 
 /**
  * @author Gregory Fouquet
  * 
  */
-public interface TestCaseLibraryFinderService {
-
-	/**
-	 * Returns the collection of {@link TestCaseLibrary}s which TestCases can be linked by a {@link TestCase} via a
-	 * CallTestStep
-	 * 
-	 * @return
-	 */
-	List<TestCaseLibrary> findLinkableTestCaseLibraries();
-
-	/**
-	 * Returns the path of a TestCaseLibraryNode given its id. The format is standard, beginning with
-	 * /&lt;project-name&gt; Item separator is '/'. If an item name contains a '\', it will be escaped as '\/'.
-	 * 
-	 * @param entityId
-	 *            the id of the node.
-	 * @return the path of that node.
-	 */
-	String getPathAsString(long entityId);
+public interface TestCaseLibraryNodeDao extends LibraryNodeDao<TestCaseLibraryNode> {
 
 	/**
 	 * <p>
@@ -89,12 +68,11 @@ public interface TestCaseLibraryFinderService {
 	 * Same as {@link #findNodeIdsByPath(List)}, for one test case only.
 	 * 
 	 * @param path
-	 * @return the node id or <code>null</code>
+	 * @return the node id or <code>null</code> when not found
 	 */
 	Long findNodeIdByPath(String path);
 
 	/**
-	 * Same than above, but returns the entities instead.
 	 * 
 	 * @param path
 	 * @return
@@ -102,46 +80,10 @@ public interface TestCaseLibraryFinderService {
 	List<TestCaseLibraryNode> findNodesByPath(List<String> path);
 
 	/**
-	 * Same than above, but for one path only.
 	 * 
 	 * @param path
-	 * @return the matching node or <code>null</code>
+	 * @return the node at the goven path or <code>null</code>
 	 */
 	TestCaseLibraryNode findNodeByPath(String path);
 
-	/**
-	 * Passing the ids of some selected TestCaseLibrary and TestCaseLibraryNodes (in separate collections), will return
-	 * the statistics covering all the TestCases encompassed by this selection. The test case ids that cannot be
-	 * accessed for security reason will be filtered out.
-	 * 
-	 * 
-	 * @param libraryIds
-	 * @param nodeIds
-	 * @return TestcaseStatisticsBundle
-	 */
-	TestCaseStatisticsBundle getStatisticsForSelection(Collection<Long> libraryIds, Collection<Long> nodeIds);
-
-	/**
-	 * Passing the ids of some selected TestCaseLibrary and TestCaseLibraryNodes (in separate collections), will return
-	 * the ids of the TestCases encompassed by this selection. If includeCalledTests is true, every test cases being
-	 * called directly or indirectly will be included.
-	 * 
-	 * If The test case ids that cannot be accessed for security reason will be filtered out.
-	 * 
-	 * @param libraryIds
-	 * @param nodeIds
-	 * @param includeCalledTests
-	 * @return
-	 */
-	Collection<Long> findTestCaseIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds,
-			boolean includeCalledTests);
-
-	/**
-	 * same as {@link #findTestCaseIdsFromSelection(Collection, Collection)}, with includedCalledTests = false
-	 * 
-	 * @param libraryIds
-	 * @param nodeIds
-	 * @return
-	 */
-	Collection<Long> findTestCaseIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds);
 }

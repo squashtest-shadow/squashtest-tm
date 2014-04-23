@@ -30,7 +30,6 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -42,7 +41,7 @@ import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.type.LongType;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.NamedReference;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
@@ -60,7 +59,7 @@ import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
 import org.squashtest.tm.service.testcase.ParameterFinder;
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
 
-@Repository
+@Component
 @Scope("prototype")
 public class Model {
 
@@ -302,21 +301,22 @@ public class Model {
 	// so be carefull to load it only when necessary.
 	private void initCallGraph(TestCaseTarget target) {
 
-		try {
-			Long id = finderService.findNodeIdByPath(target.getPath());
-			LibraryGraph<NamedReference, SimpleNode<NamedReference>> targetCallers = calltreeFinder
-					.getExtendedGraph(Arrays.asList(id));
-
-			// some data transform now
-			Collection<SimpleNode<NamedReference>> refs = targetCallers.getNodes();
-			swapNameForPath(refs);
-
-			// now create the graph
-			callGraph.addGraph(targetCallers);
-		} catch (NoSuchElementException ex) {
+		Long id = finderService.findNodeIdByPath(target.getPath());
+		if (id == null) {
 			// this is probably a new node
 			callGraph.addNode(target);
+			return;
 		}
+
+		LibraryGraph<NamedReference, SimpleNode<NamedReference>> targetCallers = calltreeFinder
+				.getExtendedGraph(Arrays.asList(id));
+
+		// some data transform now
+		Collection<SimpleNode<NamedReference>> refs = targetCallers.getNodes();
+		swapNameForPath(refs);
+
+		// now create the graph
+		callGraph.addGraph(targetCallers);
 	}
 
 	private void addCallGraphEdge(TestCaseTarget src, TestCaseTarget dest) {

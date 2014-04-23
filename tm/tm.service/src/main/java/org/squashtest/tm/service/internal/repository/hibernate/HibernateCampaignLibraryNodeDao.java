@@ -48,31 +48,4 @@ public class HibernateCampaignLibraryNodeDao extends HibernateEntityDao<Campaign
 		return query.list();
 	}
 
-	@Override
-	public List<String> getPathsAsString(List<Long> ids) {
-		throw new UnsupportedOperationException("not implemented yet");
-	}
-
-	@Override
-	public List<CampaignLibraryNode> findNodesByPath(List<String> path) {
-		throw new UnsupportedOperationException("not implemented yet");
-	}
-
-	@Override
-	public List<Long> findNodeIdsByPath(List<String> path) {
-		throw new UnsupportedOperationException("not implemented yet");
-	}
-
-	@Override
-	public long findNodeIdByPath(String path) {
-		throw new UnsupportedOperationException("not implemented yet");
-	}
-
-	@Override
-	public CampaignLibraryNode findNodesByPath(String path) {
-		throw new UnsupportedOperationException("not implemented yet");
-	}
-	
-
-	
 }

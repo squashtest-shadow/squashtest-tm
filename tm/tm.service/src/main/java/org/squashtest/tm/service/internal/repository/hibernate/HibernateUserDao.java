@@ -56,27 +56,27 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 	public List<User> findAllActiveUsersOrderedByLogin() {
 		return executeListNamedQuery("user.findAllActiveUsers");
 	}
-	
-	
+
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<User> findAllUsers(PagingAndSorting sorter, Filtering filter) {
-	
+
 		User example = new User();
 		example.setActive(true);
 
 		String sortedAttribute = sorter.getSortedAttribute();
 		SortOrder order = sorter.getSortOrder();
-		
-		
+
+
 		Criteria crit = currentSession().createCriteria(User.class, "User");
-		
-		
+
+
 		/* create the query with respect to the filtering */
-		if (filter.isDefined()){ 
+		if (filter.isDefined()){
 			crit = crit.add(filterUsers(filter));
 		}
-		
+
 		/* add ordering */
 		if (sortedAttribute != null) {
 			if (order == SortOrder.ASCENDING) {
@@ -85,40 +85,40 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 				crit.addOrder(Order.desc(sortedAttribute).ignoreCase());
 			}
 		}
-		
+
 
 		/* result range */
 		crit.setFirstResult(sorter.getFirstItemIndex());
 		crit.setMaxResults(sorter.getPageSize());
 
 		return crit.list();
-		
+
 	}
-	
-	
+
+
 
 	private Criterion filterUsers(Filtering oFilter){
-		
+
 		String filter = oFilter.getFilter();
 		return Restrictions.disjunction()
-						   .add(Restrictions.like("login", filter, MatchMode.ANYWHERE))
-						   .add(Restrictions.like("firstName", filter, MatchMode.ANYWHERE))
-						   .add(Restrictions.like("lastName", filter, MatchMode.ANYWHERE))
-						   .add(Restrictions.like("email", filter, MatchMode.ANYWHERE))
-						   .add(Restrictions.like("audit.createdBy", filter, MatchMode.ANYWHERE))
-						   .add(Restrictions.like("audit.lastModifiedBy", filter, MatchMode.ANYWHERE));
+				.add(Restrictions.like("login", filter, MatchMode.ANYWHERE))
+				.add(Restrictions.like("firstName", filter, MatchMode.ANYWHERE))
+				.add(Restrictions.like("lastName", filter, MatchMode.ANYWHERE))
+				.add(Restrictions.like("email", filter, MatchMode.ANYWHERE))
+				.add(Restrictions.like("audit.createdBy", filter, MatchMode.ANYWHERE))
+				.add(Restrictions.like("audit.lastModifiedBy", filter, MatchMode.ANYWHERE));
 
-		
+
 	}
-	
+
 
 
 	@Override
-	// FIXME : be careful of the filter 
+	// FIXME : be careful of the filter
 	public User findUserByLogin(final String login) {
 		return executeEntityNamedQuery("user.findUserByLogin", new SetUserLoginParameterCallback(login));
 	}
-	
+
 	private static final class SetUserLoginParameterCallback implements SetQueryParametersCallback {
 		private String login;
 		private SetUserLoginParameterCallback(String login){
@@ -141,13 +141,13 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 			return executeListNamedQuery("user.findUsersByLoginList", setParams);
 		}
 	}
-	
+
 	@Override
 	public List<User> findAllNonTeamMembers(final long teamId) {
 		return executeListNamedQuery("user.findAllNonTeamMembers", new SetTeamIdParameterCallback(teamId));
 	}
 
-	
+
 	@Override
 	public void checkLoginAvailability(String login) {
 		if (findUserByLogin(login) != null) {
@@ -155,42 +155,43 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 		}
 
 	}
-	
+
 	@Override
 	public int countAllTeamMembers(long teamId) {
 		Query query = currentSession().getNamedQuery("user.countAllTeamMembers");
 		query.setParameter("teamId", teamId, LongType.INSTANCE);
 		return (Integer)query.uniqueResult();
 	}
-	
-	
+
+
 	@Override
 	public void unassignUserFromAllTestPlan(long userId) {
 		Query query = currentSession().getNamedQuery("user.unassignFromAllCampaignTestPlan");
 		query.setParameter("userId", userId, LongType.INSTANCE);
 		query.executeUpdate();
-		
-		query = currentSession().getNamedQuery("user.unassignFromAllIterationTestPlan");		
+
+		query = currentSession().getNamedQuery("user.unassignFromAllIterationTestPlan");
 		query.setParameter("userId", userId, LongType.INSTANCE);
 		query.executeUpdate();
 	}
-	
-	
+
+
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<User> findAllTeamMembers(long teamId, PagingAndSorting paging,
 			Filtering filtering) {
-		
+
 		Criteria crit = currentSession().createCriteria(Team.class, "Team")
-										.add(Restrictions.eq("Team.id", teamId))
-										.createCriteria("Team.members", "User")
-										.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
-		
+				.add(Restrictions.eq("Team.id", teamId))
+				.createCriteria("Team.members", "User")
+				.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+
 		/* add ordering */
 		String sortedAttribute = paging.getSortedAttribute();
 		if (sortedAttribute != null) {
 			SortingUtils.addOrder(crit, paging);
 		}
-		
+
 		/* add filtering */
 		if  (filtering.isDefined()){
 			crit = crit.add(filterMembers(filtering));
@@ -199,22 +200,22 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 		/* result range */
 		PagingUtils.addPaging(crit, paging);
 
-		
+
 		return collectFromMapList(crit.list(), "User");
-		
+
 	}
-	
+
 	private Criterion filterMembers(Filtering filtering){
 		String filter = filtering.getFilter();
 		return Restrictions.disjunction()
-						  .add(Restrictions.like("User.firstName", filter, MatchMode.ANYWHERE))
-						  .add(Restrictions.like("User.lastName", filter, MatchMode.ANYWHERE))
-						  .add(Restrictions.like("User.login", filter, MatchMode.ANYWHERE));
+				.add(Restrictions.like("User.firstName", filter, MatchMode.ANYWHERE))
+				.add(Restrictions.like("User.lastName", filter, MatchMode.ANYWHERE))
+				.add(Restrictions.like("User.login", filter, MatchMode.ANYWHERE));
 	}
-	
-	
+
+
 	// **************** private code ****************************
-	
+
 	private static final class SetUserIdsParameterCallback implements SetQueryParametersCallback{
 		private List<String> idList;
 		private SetUserIdsParameterCallback(List<String> idList){
@@ -236,5 +237,5 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 			query.setParameter("teamId", teamId, LongType.INSTANCE);
 		}
 	}
-	
+
 }
