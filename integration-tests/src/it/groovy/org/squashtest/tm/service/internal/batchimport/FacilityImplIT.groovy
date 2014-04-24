@@ -18,12 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.batchimport;
+package org.squashtest.tm.service.internal.batchimport
 
 import javax.inject.Inject
 import javax.inject.Provider
 
-import org.hibernate.Hibernate;
+import org.hibernate.Hibernate
 import org.hibernate.SessionFactory
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
@@ -32,7 +32,7 @@ import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.CallTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance
-import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
 import org.squashtest.tm.domain.testcase.TestCaseNature
 import org.squashtest.tm.domain.testcase.TestCaseStatus
 import org.squashtest.tm.domain.testcase.TestCaseType
@@ -47,79 +47,89 @@ import static org.squashtest.tm.service.importer.ImportStatus.*
 import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
-
+/**
+ <b> To walk you through that dataset :</b><br/><br/>
+ 1/ test cases and step types :<br/>
+ ------------------------------<br/>
+ <table>
+ <tr><td>/Test Project-1/test 3</td><td>[Action Call Action]</td></tr>
+ <tr><td>/Test Project-1/dossier 1/test case 1</td><td>[Action Action Action]</td></tr>
+ <tr><td>/Test Project-1/dossier 1/test case 2</td><td>[Action Action]</td></tr>
+ <tr><td>/Test Project-1/dossier 2/0 test case \/ with slash</td><td>[Action Action Call]</td></tr>
+ <tr><td>/autre project/TEST A</td><td>[Call Action Call]</td></tr>
+ <tr><td>/autre project/folder/TEST B</td><td>[Action Action]</td></tr>
+ </table>
+ <br/><br/>
+ 2/ which test case calls which one <br/>
+ ------------------------------------<br/>
+ <table>
+ <tr><td>/autre project/TEST A</td><td>/Test Project-1/dossier 1/test case 2</td></tr>
+ <tr><td>/autre project/TEST A</td><td>/Test Project-1/dossier 2/0 test case \/ with slash</td></tr>
+ <tr><td>/Test Project-1/dossier 2/0 test case \/ with slash</td><td>/Test Project-1/test 3</td></tr>
+ <tr><td>/Test Project-1/test 3</td><td>/Test Project-1/dossier 1/test case 1</td></tr>
+ </table>
+ <br/><br/>
+ 3/ test cases and parameters :<br/>
+ ------------------------------<br/>
+ <table>
+ <tr><td>/Test Project-1/test 3</td><td>param_test_3, reparam_test_3</td></tr>
+ <tr><td>/Test Project-1/dossier 1/test case 1</td><td></td></tr>
+ <tr><td>/Test Project-1/dossier 1/test case 2 </td><td></td></tr>
+ <tr><td>/Test Project-1/dossier 2/0 test case \/ with slash</td><td>param_test_0</td></tr>
+ <tr><td>/autre project/TEST A</td><td>param_A</td></tr>
+ <tr><td>/autre project/folder/TEST B</td><td></td></tr></table><br/><br/>
+ 4/ test cases and datasets :<br/>
+ -----------------------------<br/>
+ <table>
+ <tr><td>/Test Project-1/dossier 2/0 test case \/ with slash</td><td>dataset_with_slash</td></tr>
+ <tr><td>/autre project/TEST A</td><td>ultimate ds</td></tr></table><br/><br/>
+ 5/ custom fields :<br/>
+ ----------------------------<br/>
+ <table>
+ <tr><td>text test case : text, TXT_TC, mandatory</td><td>(proj1, test case)</td></tr>
+ <tr><td>check test case : checkbox, CK_TC, optional</td><td>(proj1, test case), (proj2, test case)</td></tr>
+ <tr><td>DATE : date_picker, DATE, optional</td><td>(proj2, test case), (proj2, test step)</td></tr>
+ <tr><td>list step : dropdown list, LST_ST, optional</td><td>(proj1, test step), (proj2, test step)</td></tr>
+ */
 @UnitilsSupport
 @Transactional
 @RunWith(Sputnik)
 public class FacilityImplIT extends DbunitServiceSpecification {
 
-	/*
-	 To walk you through that dataset :
-	 1/ test cases and step types :
-	 ------------------------------
-	 /Test Project-1/test 3 								: [Action Call Action]
-	 /Test Project-1/dossier 1/test case 1 				: [Action Action Action]
-	 /Test Project-1/dossier 1/test case 2   			: [Action Action]
-	 /Test Project-1/dossier 2/0 test case \/ with slash : [Action Action Call]
-	 /autre project/TEST A								: [Call Action Call]
-	 /autre project/folder/TEST B						: [Action Action]
-	 2/ which test case calls which one :
-	 ------------------------------------
-	 /autre project/TEST A								==> /Test Project-1/dossier 1/test case 2
-	 /autre project/TEST A								==> /Test Project-1/dossier 2/0 test case \/ with slash
-	 /Test Project-1/dossier 2/0 test case \/ with slash ==> /Test Project-1/test 3
-	 /Test Project-1/test 3								==> /Test Project-1/dossier 1/test case 1
-	 3/ test cases and parameters :
-	 ------------------------------
-	 /Test Project-1/test 3 								: param_test_3, reparam_test_3
-	 /Test Project-1/dossier 1/test case 1 				:
-	 /Test Project-1/dossier 1/test case 2   			:
-	 /Test Project-1/dossier 2/0 test case \/ with slash : param_test_0
-	 /autre project/TEST A								: param_A
-	 /autre project/folder/TEST B						:
-	 4/ test cases and datasets :
-	 -----------------------------
-	 /Test Project-1/dossier 2/0 test case \/ with slash : dataset_with_slash
-	 /autre project/TEST A								: ultimate ds
-	 5/ custom fields :
-	 text test case : text, TXT_TC, mandatory -> (proj1, test case)
-	 check test case : checkbox, CK_TC, optional ->  (proj1, test case), (proj2, test case)
-	 DATE : date_picker, DATE, optional -> (proj2, test case), (proj2, test step)
-	 list step : dropdown list, LST_ST, optional -> (proj1, test step), (proj2, test step)
-	 */
+
 
 	@Inject
-	private TestCaseLibraryFinderService finder;
+	private TestCaseLibraryFinderService finder
 
 	@Inject
-	private CustomFieldValueFinderService cufFinder;
+	private CustomFieldValueFinderService cufFinder
 
 	@Inject
 	private SessionFactory sessionFactory
 
 	@Inject
-	Provider<SimulationFacility> simulatorProvider;
+	Provider<SimulationFacility> simulatorProvider
 
 	@Inject
-	Provider<FacilityImpl> implProvider;
+	Provider<FacilityImpl> implProvider
 
 	@Inject
-	Provider<Model> modelProvider;
+	Provider<Model> modelProvider
 
-	SimulationFacility simulator;
+	SimulationFacility simulator
 
-	FacilityImpl impl;
+	FacilityImpl impl
 
-	Model model;
+	Model model
 
 	def setup(){
-		simulator = simulatorProvider.get();
-		impl = implProvider.get();
+		simulator = simulatorProvider.get()
+		impl = implProvider.get()
 
-		model = modelProvider.get();
-		simulator.setModel(model);
-		impl.setModel(model);
-		impl.setSimulator(simulator);
+		model = modelProvider.get()
+		simulator.setModel(model)
+		impl.setModel(model)
+		impl.setSimulator(simulator)
 
 		addMixins()
 	}
@@ -133,14 +143,18 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		getSession().flush()
 	}
 
-
+	/**
+	 *
+	 * See  {@link FacilityImplIT} for dataset description
+	 *
+	 */
 	@DataSet("batchimport.sandbox.xml")
 	def "should create a new test case, some attributes are specified and some are left to default"(){
 
 		given :
 		TestCaseTarget target = new TestCaseTarget("/Test Project-1/dossier 2/mytestcase")
 
-		TestCase tc = emptyTC();
+		TestCase tc = emptyTC()
 		stuffWith(tc, [name:"mytestcase", description :"<p>ouaaahpaaa</p>", nature: TestCaseNature.SECURITY_TESTING])
 
 		def cufs = [
@@ -177,7 +191,11 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		storedcufs.hasCuf "CK_TC", "false"
 	}
 
-
+	/**
+	 *
+	 * See  {@link FacilityImplIT} for dataset description
+	 *
+	 */
 	@DataSet("batchimport.sandbox.xml")
 	def "should not create a test case"(){
 
@@ -195,7 +213,11 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		finder.findNodeByPath(target.path) == null
 	}
 
-
+	/**
+	 *
+	 * See  {@link FacilityImplIT} for dataset description
+	 *
+	 */
 	@DataSet("batchimport.sandbox.xml")
 	def "should update a test case"(){
 
@@ -237,14 +259,18 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		storedcufs.hasCuf  "CK_TC" , "false"
 
 	}
-
+	/**
+	 *
+	 * See  {@link FacilityImplIT} for dataset description
+	 *
+	 */
 	@DataSet("batchimport.sandbox.xml")
 	def "should create a test case instead of updating it"(){
 
 		given :
 		TestCaseTarget target = new TestCaseTarget("/Test Project-1/dossier 2/inexistant")
 
-		TestCase tc = emptyTC();
+		TestCase tc = emptyTC()
 		stuffWith(tc, [name:"inexistant"])
 
 		def cufs = [:]
@@ -266,14 +292,18 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		found.id != null
 		found.name == "inexistant"
 	}
-
+	/**
+	 *
+	 * See  {@link FacilityImplIT} for dataset description
+	 *
+	 */
 	@DataSet("batchimport.sandbox.xml")
 	def "should create a test case with a different name because of name clash"(){
 
 		given :
 		TestCaseTarget target = new TestCaseTarget("/Test Project-1/dossier 1/test case 1")
 
-		TestCase tc = emptyTC();
+		TestCase tc = emptyTC()
 		stuffWith(tc, [name:"test case 1", description : "special description"])
 
 		def cufs = [:]
@@ -299,7 +329,11 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		found.description == "special description"
 	}
 
-
+	/**
+	 *
+	 * See  {@link FacilityImplIT} for dataset description
+	 *
+	 */
 	@DataSet("batchimport.sandbox.xml")
 	def "should delete a test case"(){
 
@@ -318,7 +352,11 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 	}
 
 
-
+	/**
+	 *
+	 * See  {@link FacilityImplIT} for dataset description
+	 *
+	 */
 	@DataSet("batchimport.sandbox.xml")
 	def "should not delete a test case because it's being called"(){
 
@@ -335,7 +373,11 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 
 
 
-
+	/**
+	 *
+	 * See  {@link FacilityImplIT} for dataset description
+	 *
+	 */
 	@Unroll("should add an action step to a test case at last position because of #humanmsg")
 	@DataSet("batchimport.sandbox.xml")
 	def "should add an action step to a test case at the end"(){
@@ -372,7 +414,11 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		2						|	"because that was what we wanted indeed"
 	}
 
-
+	/**
+	 *
+	 * See  {@link FacilityImplIT} for dataset description
+	 *
+	 */
 	@DataSet("batchimport.sandbox.xml")
 	def "should insert a call step at the correct position"(){
 
@@ -401,7 +447,11 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		impl.model.isCalledBy(calledtc, callertc)
 	}
 
-
+	/**
+	 *
+	 * See  {@link FacilityImplIT} for dataset description
+	 *
+	 */
 	@DataSet("batchimport.sandbox.xml")
 	def "should reject a call step because of cycle"(){
 
@@ -427,7 +477,11 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		! impl.model.isCalledBy(calledtc, callertc)
 	}
 
-
+	/**
+	 *
+	 * See  {@link FacilityImplIT} for dataset description
+	 *
+	 */
 	@DataSet("batchimport.sandbox.xml")
 	def "should update an action step"(){
 
@@ -456,7 +510,11 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 
 	}
 
-
+	/**
+	 *
+	 * See  {@link FacilityImplIT} for dataset description
+	 *
+	 */
 	@DataSet("batchimport.sandbox.xml")
 	@Unroll("should not update an action step because #humanmsg")
 	def "should not update an action step"(){
@@ -482,7 +540,11 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		1						|	"trying to update a call step with an action step"	|	ERROR_NOT_AN_ACTIONSTEP		| FAILURE
 	}
 
-
+	/**
+	 *
+	 * See  {@link FacilityImplIT} for dataset description
+	 *
+	 */
 	@DataSet("batchimport.sandbox.xml")
 	def "should update a call step (change the called test case)"(){
 
@@ -511,7 +573,11 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 
 		impl.model.isCalledBy(calledtc, callertc)
 	}
-
+	/**
+	 *
+	 * See  {@link FacilityImplIT} for dataset description
+	 *
+	 */
 	@DataSet("batchimport.sandbox.xml")
 	def "should not update a call step because the target would create a cycle"(){
 
@@ -585,7 +651,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 	}
 
 	def emptyTC(){
-		return TestCase.createBlankTestCase();
+		return TestCase.createBlankTestCase()
 	}
 
 	def stuffWith(tc, attributes){

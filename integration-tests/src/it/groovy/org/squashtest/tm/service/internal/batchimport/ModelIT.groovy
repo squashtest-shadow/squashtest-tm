@@ -35,6 +35,7 @@ import org.unitils.dbunit.annotation.DataSet
 
 import spock.unitils.UnitilsSupport
 
+
 @UnitilsSupport
 @Transactional
 @RunWith(Sputnik)
@@ -50,7 +51,11 @@ class ModelIT  extends DbunitServiceSpecification {
 		model = modelProvider.get()
 	}
 	
-	
+	/**
+	 *
+	 * See  {@link FacilityImplIT} for dataset description
+	 *
+	 */
 	@DataSet("batchimport.sandbox.xml")
 	def "should init the requested target, some targets already exists and some do not"(){
 		
@@ -105,7 +110,11 @@ class ModelIT  extends DbunitServiceSpecification {
 	}
 	
 	
-	
+	/**
+	 *
+	 * See  {@link FacilityImplIT} for dataset description
+	 *
+	 */
 	@DataSet("batchimport.sandbox.xml")
 	def "should init on the fly a test case that wasn't init-ed early on"(){
 			
@@ -126,7 +135,11 @@ class ModelIT  extends DbunitServiceSpecification {
 		
 	}
 	
-	
+	/**
+	 *
+	 * See  {@link FacilityImplIT} for dataset description
+	 *
+	 */
 	@DataSet("batchimport.sandbox.xml")
 	def "should tell which custom fields are supported for a test case"(){
 			
@@ -140,7 +153,11 @@ class ModelIT  extends DbunitServiceSpecification {
 			cufs.collect{ it.code }  as Set == ["TXT_TC", "CK_TC"] as Set
 		
 	}
-	
+	/**
+	 *
+	 * See  {@link FacilityImplIT} for dataset description
+	 *
+	 */
 	@DataSet("batchimport.sandbox.xml")
 	def "should tell which custom fields are supported for a test step"(){
 			
