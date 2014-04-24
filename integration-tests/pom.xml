@@ -12,9 +12,8 @@
   <name>Squashtest TM - Integration tests module</name>
 
   <properties>
-		<!-- On Jenkins server these relative paths are not interpreted in the 
-			same way by liquibase and the datasource. These props should be overridden 
-			with absolute paths (which don't work under windows...) -->
+    <!-- On Jenkins server these relative paths are not interpreted in the same way by liquibase and the datasource. These 
+      props should be overridden with absolute paths (which don't work under windows...) -->
     <dbunit-database.url>jdbc:h2:target/database/squash-it-dbunit/squash-it</dbunit-database.url>
     <non-dbunit-database.url>jdbc:h2:target/database/squash-it-non-dbunit/squash-it</non-dbunit-database.url>
 
@@ -38,6 +37,8 @@
         <directory>src/it/resources</directory>
         <filtering>true</filtering>
         <excludes>
+          <exclude>**/*.xls</exclude>
+          <exclude>**/*.xlsx</exclude>
           <exclude>**/*.zip</exclude>
         </excludes>
       </testResource>
@@ -45,6 +46,8 @@
         <directory>src/it/resources</directory>
         <filtering>false</filtering>
         <includes>
+          <include>**/*.xls</include>
+          <include>**/*.xlsx</include>
           <include>**/*.zip</include>
         </includes>
       </testResource>
@@ -81,7 +84,7 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
         <executions>
-					<!-- Adds more source directories to the pom -->
+          <!-- Adds more source directories to the pom -->
           <execution>
             <id>add-integration-test-source</id>
             <phase>pre-integration-test</phase>
@@ -104,7 +107,7 @@
         <configuration>
           <parallel>false</parallel>
           <threadCount>1</threadCount>
-					<!-- We can run ITs and skip unit tests with -DskipTests=true -->
+          <!-- We can run ITs and skip unit tests with -DskipTests=true -->
           <skipTests>${skipITs}</skipTests>
         </configuration>
 
@@ -125,11 +128,11 @@
             <groupId>org.squashtest.tm</groupId>
             <version>${project.version}</version>
           </dependency>
-					<dependency>
-						<artifactId>core.aspect</artifactId>
-						<groupId>org.squashtest.tm</groupId>
-						<version>${project.version}</version>
-					</dependency>
+          <dependency>
+            <artifactId>core.aspect</artifactId>
+            <groupId>org.squashtest.tm</groupId>
+            <version>${project.version}</version>
+          </dependency>
         </dependencies>
       </plugin>
 
@@ -138,31 +141,31 @@
   </build>
 
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<artifactId>provision-bom</artifactId>
-				<groupId>org.squashtest.tm</groupId>
-        		<version>${provisionBom.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <artifactId>provision-bom</artifactId>
+        <groupId>org.squashtest.tm</groupId>
+        <version>${provisionBom.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
-		<!-- ====== SQUASHTEST ====== -->
+    <!-- ====== SQUASHTEST ====== -->
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>tm.service</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
-		<dependency>
-			<artifactId>core.aspect</artifactId>
-			<groupId>org.squashtest.tm</groupId>
-			<version>${project.version}</version>
-		</dependency>
+    <dependency>
+      <artifactId>core.aspect</artifactId>
+      <groupId>org.squashtest.tm</groupId>
+      <version>${project.version}</version>
+    </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>core.testautomation.api</artifactId>
@@ -175,9 +178,9 @@
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
-		<!-- ====== /SQUASHTEST ====== -->
+    <!-- ====== /SQUASHTEST ====== -->
 
-		<!-- ====== SPOCK TESTS SUPPORT ====== -->
+    <!-- ====== SPOCK TESTS SUPPORT ====== -->
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>spock-test-dependencies</artifactId>
@@ -185,9 +188,9 @@
       <type>pom</type>
       <scope>test</scope>
     </dependency>
-		<!-- ====== /SPOCK TESTS SUPPORT ====== -->
+    <!-- ====== /SPOCK TESTS SUPPORT ====== -->
 
-		<!-- ====== HIBERNATE SUPPORT ====== -->
+    <!-- ====== HIBERNATE SUPPORT ====== -->
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>hibernate-dependencies</artifactId>
@@ -195,7 +198,7 @@
       <type>pom</type>
       <scope>test</scope>
     </dependency>
-		<!-- ====== /HIBERNATE SUPPORT ====== -->
+    <!-- ====== /HIBERNATE SUPPORT ====== -->
 
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -205,14 +208,14 @@
       <scope>test</scope>
     </dependency>
 
-		<!-- ====== SPRING INTEGRATION TEST SUPPORT ====== -->
+    <!-- ====== SPRING INTEGRATION TEST SUPPORT ====== -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>org.springframework.test</artifactId>
     </dependency>
-		<!-- ====== /SPRING INTEGRATION TEST SUPPORT ====== -->
+    <!-- ====== /SPRING INTEGRATION TEST SUPPORT ====== -->
 
-		<!-- ====== SPRING FRAMEWORK ====== -->
+    <!-- ====== SPRING FRAMEWORK ====== -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>org.springframework.transaction</artifactId>
@@ -230,19 +233,19 @@
       <groupId>org.springframework</groupId>
       <artifactId>org.springframework.aspects</artifactId>
     </dependency>
-		<!-- ====== /SPRING FRAMEWORK ====== -->
+    <!-- ====== /SPRING FRAMEWORK ====== -->
 
-		<!-- ====== SPRING ====== -->
+    <!-- ====== SPRING ====== -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>org.springframework.expression</artifactId>
       <scope>test</scope>
     </dependency>
-  
-    
-		<!-- ====== /SPRING ====== -->
 
-		<!-- ====== DB AND CONNECTION POOL ====== -->
+
+    <!-- ====== /SPRING ====== -->
+
+    <!-- ====== DB AND CONNECTION POOL ====== -->
     <dependency>
       <groupId>commons-dbcp</groupId>
       <artifactId>commons-dbcp</artifactId>
@@ -259,7 +262,7 @@
       <artifactId>com.springsource.com.mysql.jdbc</artifactId>
       <scope>runtime</scope>
     </dependency>
-		<!-- ====== SPOCK-SPRING-TEST BRIDGE ====== -->
+    <!-- ====== SPOCK-SPRING-TEST BRIDGE ====== -->
     <dependency>
       <groupId>org.spockframework</groupId>
       <artifactId>spock-spring</artifactId>
@@ -268,7 +271,7 @@
       <groupId>org.spockframework</groupId>
       <artifactId>spock-unitils</artifactId>
     </dependency>
-		<!-- ====== /SPOCK-SPRING-TEST BRIDGE ====== -->
+    <!-- ====== /SPOCK-SPRING-TEST BRIDGE ====== -->
 
     <dependency>
       <groupId>org.unitils</groupId>
@@ -394,27 +397,27 @@
         </exclusion>
       </exclusions>
     </dependency>
-		<!-- ====== FOUNDATION ====== -->
+    <!-- ====== FOUNDATION ====== -->
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
       <scope>runtime</scope>
     </dependency>
-		<!-- ====== /FOUNDATION ====== -->
+    <!-- ====== /FOUNDATION ====== -->
 
-		<!-- ====== JTA ====== -->
+    <!-- ====== JTA ====== -->
     <dependency>
       <groupId>javax.transaction</groupId>
       <artifactId>com.springsource.javax.transaction</artifactId>
     </dependency>
-		<!-- ====== JTA ====== -->
+    <!-- ====== JTA ====== -->
 
-		<!-- ====== JSE DI API ====== -->
+    <!-- ====== JSE DI API ====== -->
     <dependency>
       <groupId>javax.inject</groupId>
       <artifactId>com.springsource.javax.inject</artifactId>
     </dependency>
-		<!-- ====== /JSE DI API ====== -->
+    <!-- ====== /JSE DI API ====== -->
 
     <dependency>
       <groupId>org.squashtest.tm</groupId>
@@ -455,7 +458,7 @@
         <hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect>
         <database.dialect>mysql</database.dialect>
         <database.drivername>com.mysql.jdbc.Driver</database.drivername>
-		    	<database.schemaName>squashtest_it</database.schemaName>
+        <database.schemaName>squashtest_it</database.schemaName>
         <database.username>root</database.username>
         <database.password></database.password>
         <database.typefactory>org.dbunit.ext.mysql.MySqlDataTypeFactory</database.typefactory>
@@ -470,25 +473,25 @@
       </activation>
       <build>
         <plugins>
-<!-- Create and populate a database integration tests -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>aspectj-maven-plugin</artifactId>
-        <configuration>
-          <showWeaveInfo>${verbose.compiler}</showWeaveInfo>
-          <source>${jdk.version}</source>
-          <target>${jdk.version}</target>
-          <compatibilityLevel>${jdk.version}</compatibilityLevel>
-          <aspectLibraries>
-            <aspectLibrary>
-            <!-- For @Configurable. Not sure we need it in this module -->
-              <groupId>org.springframework</groupId>
-              <artifactId>org.springframework.aspects</artifactId>
-            </aspectLibrary>
-          </aspectLibraries>
-        </configuration>
-      </plugin>
-          
+          <!-- Create and populate a database integration tests -->
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>aspectj-maven-plugin</artifactId>
+            <configuration>
+              <showWeaveInfo>${verbose.compiler}</showWeaveInfo>
+              <source>${jdk.version}</source>
+              <target>${jdk.version}</target>
+              <compatibilityLevel>${jdk.version}</compatibilityLevel>
+              <aspectLibraries>
+                <aspectLibrary>
+                  <!-- For @Configurable. Not sure we need it in this module -->
+                  <groupId>org.springframework</groupId>
+                  <artifactId>org.springframework.aspects</artifactId>
+                </aspectLibrary>
+              </aspectLibraries>
+            </configuration>
+          </plugin>
+
           <plugin>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-maven-plugin</artifactId>

@@ -24,6 +24,7 @@ import javax.inject.Inject
 
 import org.hibernate.SessionFactory
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.service.DbunitServiceSpecification
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService
 import org.unitils.dbunit.annotation.DataSet
@@ -32,57 +33,47 @@ import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
 @Transactional
-class RequirementImporterIT_Disabled extends DbunitServiceSpecification {
+class RequirementImporterIT extends DbunitServiceSpecification {
 
 	@Inject
-	RequirementLibraryNavigationService service;
-	
-	RequirementImporter importer = new RequirementImporter();
-	
-	@Inject
-	SessionFactory sessionFactory;
-	
-	
+	RequirementLibraryNavigationService service
+
+	RequirementImporter importer = new RequirementImporter()
+
+
+
 	def setup(){
 		importer.service = service
-		importer.sessionFactory = sessionFactory
-		
+
 	}
-	
-	
-	
-	/*@DataSet("RequirementImporterIT.setup.xml")
+
+
+
+	@DataSet("RequirementImporterIT.setup.xml")
 	def "should import a hierarchy in an empty library"(){
-		
+
 		given :
 		Class classe = this.getClass()
 		ClassLoader classLoader = classe.getClassLoader()
 		InputStream stream = classLoader.getResourceAsStream("import/import-requirement.xlsx")
-		
+
 		when :
-			def summary = importer.importExcelRequirements( stream, 1L)
-		
-		then : 
-			summary.getTotal() == 7
-			summary.getSuccess()  == 7
-			summary.getRenamed() == 1
-			summary.getFailures() == 0
-	
-//			def rContent = service.findLibrary(1l).rootContent
-//			
-//			def names = rContent*.name as Set			
-//			names ==  ["configuration pas de tir", "prerequis", "échec de la connexion", "succès de la connexion" ] as Set
-//			
-//			def confContent = rContent.find{it.name=="configuration pas de tir"}.content
-//			def confNames = confContent*.name as Set
-//			confNames == ["approvisionnement fuel", "connexion fusée - pas de tir", 
-//				"obtenir le go du contrôle", "obtenir le go du technique"] as Set
-//			
-//			def fuelFuseeContentNames = confContent.findAll{it instanceof TestCaseFolder }*.content.flatten()*.name as Set
-//			fuelFuseeContentNames == ["cas limite - fuite de carburant", "remplissage de la soute", "vérification des citernes", "activer robot étage 1", 
-//									"activer robot étage 2", "activer robot étage 3", "cas limite - blocage robot", "vérifier l'erreur d'alignement"] as Set
-	}*/
-	
-	
-	
+		def summary = importer.importExcelRequirements( stream, 1L)
+
+		then :
+		summary.getTotal() == 7
+		summary.getSuccess()  == 7
+		summary.getRenamed() == 1
+		summary.getFailures() == 0
+
+		def rContent = service.findLibrary(1l).content
+
+		def names = rContent*.name as Set
+		names ==  ["Version2", "name1", "name4", "name7/" ] as Set
+		//TODO improve test checks
+
+	}
+
+
+
 }
