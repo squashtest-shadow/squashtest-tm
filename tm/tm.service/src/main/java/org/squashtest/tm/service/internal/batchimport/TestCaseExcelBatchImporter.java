@@ -30,6 +30,8 @@ import javax.inject.Provider;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.ImportLog;
+import org.squashtest.tm.service.importer.ImportStatus;
+import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.ExcelWorkbookParser;
 
 @Component
@@ -117,6 +119,10 @@ public class TestCaseExcelBatchImporter {
 
 		for (Instruction<?> instruction : instructions) {
 			LogTrain logs = instruction.execute(facility);
+
+			if (logs.hasNoErrorWhatsoever()){
+				logs.addEntry(new LogEntry(instruction.getTarget(), ImportStatus.OK, null));
+			}
 
 			logs.setForAll(instruction.getMode());
 			logs.setForAll(instruction.getLine());

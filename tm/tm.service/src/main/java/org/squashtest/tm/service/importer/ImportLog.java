@@ -23,6 +23,9 @@ package org.squashtest.tm.service.importer;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.TreeSet;
 
 import org.apache.commons.collections.map.MultiValueMap;
@@ -73,81 +76,153 @@ public class ImportLog {
 	}
 
 	public void recompute() {
-		recomputeTestCase();
-		recomputeTestStep();
-		recomputeParameter();
-		recomputeDataset();
+		recomputeFor(EntityType.TEST_CASE);
+		recomputeFor(EntityType.TEST_STEP);
+		recomputeFor(EntityType.PARAMETER);
+		recomputeFor(EntityType.DATASET);
 	}
 
-	private void recomputeDataset() {
-		for (LogEntry entry : findAllFor(EntityType.DATASET)) {
-			switch (entry.getStatus()) {
-			case OK:
-				datasetSuccesses++;
-				break;
-			case WARNING:
-				datasetWarnings++;
-				break;
-			case FAILURE:
-				datasetFailures++;
-				break;
-			default:
-				break;
+
+	/*
+	 * This method will compute, for one type of data, how
+	 * many lines in the imported excel workbook were treated successfully,
+	 * partially or not at all.
+	 * 
+	 * Each line can be the object of one or many log entry, for each of those
+	 * lines we need to know whether the entries that reference them have errors,
+	 * warning or just report a success.
+	 * 
+	 * The entries are returned sorted by line number (thanks to the choice of a
+	 * TreeSet as the collection). All we have to do is to iterate over the
+	 * elements, record whenever a status 'warning' or 'failure' is encountered, then
+	 * when a new line is being treated we just report what statuses were found
+	 * and reset the counters.
+	 * 
+	 */
+	private void recomputeFor(EntityType type){
+
+		Collection<LogEntry> entries = findAllFor(type);
+
+		if (! entries.isEmpty()){
+
+			boolean errors = false;
+			boolean warnings = false;
+
+			Iterator<LogEntry> iter = entries.iterator();
+			Integer curLine = null;
+
+			LogEntry entry = iter.next();
+			Integer precLine = entry.getLine();	// we move the iterator forward purposedly
+
+			errors = (entry.getStatus() == ImportStatus.FAILURE);
+			warnings = (entry.getStatus() == ImportStatus.WARNING);
+
+			while(iter.hasNext()){
+				entry = iter.next();
+				curLine = entry.getLine();
+
+				if (! curLine.equals(precLine)){
+
+					switch(type){
+					case TEST_CASE :
+						countTestcase(errors, warnings);
+						break;
+					case TEST_STEP :
+						countStep(errors, warnings);
+						break;
+					case PARAMETER :
+						countParameter(errors, warnings);
+						break;
+					case DATASET :
+						countDataset(errors, warnings);
+						break;
+					case NONE :
+						break;
+
+					}
+
+					// reset
+					errors = (entry.getStatus() == ImportStatus.FAILURE);
+					warnings = (entry.getStatus() == ImportStatus.WARNING);
+				}
+				else{
+					errors = (entry.getStatus() == ImportStatus.FAILURE || errors);
+					warnings = (entry.getStatus() == ImportStatus.WARNING || warnings);
+				}
+
+				precLine = curLine;
 			}
+
+			// now treat the last entry
+			switch(type){
+			case TEST_CASE :
+				countTestcase(errors, warnings);
+				break;
+			case TEST_STEP :
+				countStep(errors, warnings);
+				break;
+			case PARAMETER :
+				countParameter(errors, warnings);
+				break;
+			case DATASET :
+				countDataset(errors, warnings);
+				break;
+			case NONE :
+				break;
+
+			}
+
+		}
+
+	}
+
+	private void countTestcase(boolean errors, boolean warnings){
+		if (errors){
+			testCaseFailures++;
+		}
+		else if (warnings){
+			testCaseWarnings ++;
+		}
+		else{
+			testCaseSuccesses++;
 		}
 	}
 
-	private void recomputeParameter() {
-		for (LogEntry entry : findAllFor(EntityType.PARAMETER)) {
-			switch (entry.getStatus()) {
-			case OK:
-				parameterSuccesses++;
-				break;
-			case WARNING:
-				parameterWarnings++;
-				break;
-			case FAILURE:
-				parameterFailures++;
-				break;
-			default:
-				break;
-			}
+
+	private void countStep(boolean errors, boolean warnings){
+		if (errors){
+			testStepFailures++;
+		}
+		else if (warnings){
+			testStepWarnings ++;
+		}
+		else{
+			testStepSuccesses++;
 		}
 	}
 
-	private void recomputeTestStep() {
-		for (LogEntry entry : findAllFor(EntityType.TEST_STEP)) {
-			switch (entry.getStatus()) {
-			case OK:
-				testStepSuccesses++;
-				break;
-			case WARNING:
-				testStepWarnings++;
-				break;
-			case FAILURE:
-				testStepFailures++;
-				break;
-			default:
-				break;
-			}
+	private void countParameter(boolean errors, boolean warnings){
+		if (errors){
+			parameterFailures++;
+		}
+		else if (warnings){
+			parameterWarnings ++;
+		}
+		else{
+			parameterSuccesses++;
 		}
 	}
 
-	private void recomputeTestCase() {
-		for (LogEntry entry : findAllFor(EntityType.TEST_CASE)) {
-			switch (entry.getStatus()) {
-			case OK:
-				testCaseSuccesses++;
-				break;
-			case WARNING:
-				testCaseWarnings++;
-				break;
-			case FAILURE:
-				testCaseFailures++;
-				break;
-			default:
-				break;
-			}
+
+	private void countDataset(boolean errors, boolean warnings){
+		if (errors){
+			datasetFailures++;
+		}
+		else if (warnings){
+			datasetWarnings ++;
+		}
+		else{
+			datasetSuccesses++;
 		}
 	}
 

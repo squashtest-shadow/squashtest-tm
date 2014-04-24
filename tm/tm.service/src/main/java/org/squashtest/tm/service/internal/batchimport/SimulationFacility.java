@@ -305,16 +305,17 @@ public class SimulationFacility implements Facility {
 			logs.addEntry(hasntPermission);
 		}
 
-		// 4 - check the index
-		LogEntry indexCheckLog = checkStepIndex(ImportMode.UPDATE, target, ImportStatus.FAILURE, null);
-		if (indexCheckLog != null) {
-			logs.addEntry(indexCheckLog);
+		// 4 - the step must exist
+		boolean exists = model.stepExists(target);
+		if (! exists){
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_STEP_NOT_EXISTS));
 		}
-
-		// 5 - the step must be actually an action step
-		StepType type = model.getType(target);
-		if (type != StepType.ACTION) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_NOT_AN_ACTIONSTEP));
+		else{
+			// 5 - the step must be actually an action step
+			StepType type = model.getType(target);
+			if (type != StepType.ACTION) {
+				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_NOT_AN_ACTIONSTEP));
+			}
 		}
 
 		// no need to update the model
@@ -348,22 +349,23 @@ public class SimulationFacility implements Facility {
 			logs.addEntry(hasntCallPermission);
 		}
 
-		// 5 - check the index
-		LogEntry indexCheckLog = checkStepIndex(ImportMode.UPDATE, target, ImportStatus.FAILURE, null);
-		if (indexCheckLog != null) {
-			logs.addEntry(indexCheckLog);
+		// 5 - the step must exist
+		boolean exists = model.stepExists(target);
+		if (! exists){
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_STEP_NOT_EXISTS));
 		}
+		else{
+			// 6 - check that this is a call step
+			StepType type = model.getType(target);
+			if (type != StepType.CALL) {
+				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_NOT_A_CALLSTEP));
+			}
 
-		// 6 - check that this is a call step
-		StepType type = model.getType(target);
-		if (type != StepType.CALL) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_NOT_A_CALLSTEP));
-		}
-
-		// 7 - no call step cycles allowed
-		if (model.wouldCreateCycle(target, calledTestCase)) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_CYCLIC_STEP_CALLS, new Object[] {
-					target.getTestCase().getPath(), calledTestCase.getPath() }));
+			// 7 - no call step cycles allowed
+			if (model.wouldCreateCycle(target, calledTestCase)) {
+				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_CYCLIC_STEP_CALLS, new Object[] {
+						target.getTestCase().getPath(), calledTestCase.getPath() }));
+			}
 		}
 
 		// if all is ok, update the target of this call step then return

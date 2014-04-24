@@ -46,6 +46,7 @@ public final class Messages {
 	public static final String ERROR_STEPINDEX_EMPTY = "message.import.log.error.tc.tcStep.empty";
 	public static final String ERROR_STEPINDEX_NEGATIVE = "message.import.log.error.tc.tcStep.negative";
 	public static final String ERROR_STEPINDEX_OVERFLOW = "message.import.log.error.tc.tcStep.numberOverNextPosition";
+	public static final String ERROR_STEP_NOT_EXISTS = "message.import.log.error.tc.tcStep.notexists";
 	public static final String ERROR_NOT_A_CALLSTEP = "message.import.log.error.tc.tcStep.notacallstep";
 	public static final String ERROR_NOT_AN_ACTIONSTEP = "message.import.log.error.tc.tcStep.notanactionstep";
 	public static final String ERROR_CYCLIC_STEP_CALLS = "message.import.log.error.tc.callStep.cyclicCalls";
@@ -54,8 +55,8 @@ public final class Messages {
 	public static final String ERROR_PARAMETER_NOT_FOUND = "message.import.log.error.tc.param.notFound";
 	public static final String ERROR_DATASET_NOT_FOUND = "message.import.log.error.tc.dataset.notFound";
 	public static final String ERROR_DATASET_PARAMETER_MISMATCH = "message.import.log.error.tc.dataset.paramOwnerNotFound";
-	
-	
+
+
 	public static final String IMPACT_MAX_SIZE = "message.import.log.impact.truncatedValue";
 	public static final String IMPACT_DEFAULT_VALUE = "message.import.log.impact.useDefaultValue";
 	public static final String IMPACT_NO_CHANGE = "message.import.log.impact.fieldNotChange";
@@ -65,7 +66,7 @@ public final class Messages {
 	public static final String IMPACT_PARAM_UPDATED = "message.import.log.impact.paramupdate";
 	public static final String IMPACT_PARAM_CREATED = "message.import.log.impact.paramcreated";
 	public static final String IMPACT_DATASET_CREATED = "message.import.log.impact.dscreated";
-	
+
 	private Messages(){
 		super();
 	}

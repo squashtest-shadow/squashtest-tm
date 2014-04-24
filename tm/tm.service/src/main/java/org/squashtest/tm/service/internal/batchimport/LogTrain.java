@@ -61,6 +61,10 @@ public class LogTrain {
 		return criticalErrors;
 	}
 
+	boolean hasNoErrorWhatsoever(){
+		return entries.isEmpty();
+	}
+
 
 	void setForAll(int lineNumber){
 		for (LogEntry entry : entries){

@@ -102,9 +102,12 @@ class TestCaseImportLogHelper {
 			cell = row.createCell(cellnum++);
 			writeValueToCell(cell, entry.getStatus().shortName());
 			cell = row.createCell(cellnum++);
-			writeValueToCell(cell, "MISSING INFO");
+			//writeValueToCell(cell, "MISSING INFO");
+			writeValueToCell(cell, "");
 			cell = row.createCell(cellnum++);
-			writeValueToCell(cell, messageSource.getMessage(entry.getI18nError(), entry.getErrorArgs(), locale));
+			if (entry.getI18nError() != null){
+				writeValueToCell(cell, messageSource.getMessage(entry.getI18nError(), entry.getErrorArgs(), locale));
+			}
 			cell = row.createCell(cellnum++);
 			if (entry.getI18nImpact() != null){
 				writeValueToCell(cell, messageSource.getMessage(entry.getI18nImpact(), entry.getImpactArgs(), locale));
