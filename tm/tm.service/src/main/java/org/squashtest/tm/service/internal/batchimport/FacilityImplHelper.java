@@ -37,139 +37,136 @@ import org.squashtest.tm.domain.testcase.TestCaseType;
 
 final class FacilityImplHelper {
 
-	FacilityImplHelper(){
+	FacilityImplHelper() {
 		super();
 	}
-	
-	
-	AuditableSupport saveAuditMetadata(AuditableMixin mixin){
+
+	AuditableSupport saveAuditMetadata(AuditableMixin mixin) {
 		AuditableSupport support = new AuditableSupport();
-		support.setCreatedBy ( mixin.getCreatedBy() );
-		support.setLastModifiedBy ( mixin.getLastModifiedBy() );
-		support.setCreatedOn ( mixin. getCreatedOn() );
-		support.setLastModifiedOn ( mixin.getLastModifiedOn() );
+		support.setCreatedBy(mixin.getCreatedBy());
+		support.setLastModifiedBy(mixin.getLastModifiedBy());
+		support.setCreatedOn(mixin.getCreatedOn());
+		support.setLastModifiedOn(mixin.getLastModifiedOn());
 		return support;
 	}
-	
-	
-	
-	void restoreMetadata(AuditableMixin mixin, AuditableSupport saved){
-		if (!StringUtils.isBlank(saved.getCreatedBy())){
+
+	void restoreMetadata(AuditableMixin mixin, AuditableSupport saved) {
+		if (!StringUtils.isBlank(saved.getCreatedBy())) {
 			mixin.setCreatedBy(saved.getCreatedBy());
 		}
-		
-		if (!StringUtils.isBlank(saved.getLastModifiedBy())){
+
+		if (!StringUtils.isBlank(saved.getLastModifiedBy())) {
 			mixin.setLastModifiedBy(saved.getLastModifiedBy());
 		}
-		
-		if (saved.getCreatedOn() != null){
+
+		if (saved.getCreatedOn() != null) {
 			mixin.setCreatedOn(saved.getCreatedOn());
 		}
-		
-		if (saved.getLastModifiedOn() != null){
+
+		if (saved.getLastModifiedOn() != null) {
 			mixin.setLastModifiedOn(saved.getLastModifiedOn());
 		}
 	}
 
-	// fix the potentially null values with default values. In some case it's completely superfluous since null values (eg for the name) are eliminatory.
-	void fillNullWithDefaults(TestCase testCase){
-		
-		if (testCase.getName() == null){
+	/**
+	 * fix the potentially null values with default values. In some case it's completely superfluous since null values
+	 * (eg for the name) are eliminatory.
+	 */
+	void fillNullWithDefaults(TestCase testCase) {
+
+		if (testCase.getName() == null) {
 			testCase.setName("");
 		}
-		
-		if (testCase.getReference() == null){
+
+		if (testCase.getReference() == null) {
 			testCase.setReference("");
 		}
-		
-		if (testCase.getPrerequisite() == null){
+
+		if (testCase.getPrerequisite() == null) {
 			testCase.setPrerequisite("");
 		}
-		
-		if (testCase.getImportance() == null){
-			testCase.setImportance(TestCaseImportance.LOW);	
+
+		if (testCase.getImportance() == null) {
+			testCase.setImportance(TestCaseImportance.LOW);
 		}
-		
-		if (testCase.getNature() == null){
+
+		if (testCase.getNature() == null) {
 			testCase.setNature(TestCaseNature.UNDEFINED);
 		}
-		
-		if (testCase.getType() == null){
+
+		if (testCase.getType() == null) {
 			testCase.setType(TestCaseType.UNDEFINED);
 		}
-		
-		if (testCase.getStatus() == null){
+
+		if (testCase.getStatus() == null) {
 			testCase.setStatus(TestCaseStatus.WORK_IN_PROGRESS);
 		}
-		
-		if (testCase.isImportanceAuto() == null){
+
+		if (testCase.isImportanceAuto() == null) {
 			testCase.setImportanceAuto(Boolean.FALSE);
 		}
-		
-	}
-	
 
-	void fillNullWithDefaults(ActionTestStep step){
-		if (step.getAction() == null){
+	}
+
+	void fillNullWithDefaults(ActionTestStep step) {
+		if (step.getAction() == null) {
 			step.setAction("");
 		}
-		if (step.getExpectedResult() == null){
+		if (step.getExpectedResult() == null) {
 			step.setExpectedResult("");
 		}
 	}
-	
-	
-	void fillNullWithDefaults(Parameter param){
-		if (param.getName() == null){
+
+	void fillNullWithDefaults(Parameter param) {
+		if (param.getName() == null) {
 			param.setName("");
 		}
 	}
-	
-	void fillNullWithDefaults(Dataset ds){
-		if (ds.getName() == null){
+
+	void fillNullWithDefaults(Dataset ds) {
+		if (ds.getName() == null) {
 			ds.setName("");
 		}
 	}
-	
-	
-	void truncate(TestCase testCase, Map<String, String> cufValues){
+
+	void truncate(TestCase testCase, Map<String, String> cufValues) {
 		String name = testCase.getName();
-		if (name != null){
-			testCase.setName( truncate(name, 255) );
+		if (name != null) {
+			testCase.setName(truncate(name, 255));
 		}
 		String ref = testCase.getReference();
-		if (ref != null){
-			testCase.setReference( truncate(ref, 50) );
+		if (ref != null) {
+			testCase.setReference(truncate(ref, 50));
 		}
-		
-		for (Entry<String, String> cuf : cufValues.entrySet()){
+
+		for (Entry<String, String> cuf : cufValues.entrySet()) {
 			String value = cuf.getValue();
-			cuf.setValue( truncate(value, 255));
+			cuf.setValue(truncate(value, 255));
 		}
 	}
-	
-	void truncate(ActionTestStep step, Map<String, String> cufValues){
-		for (Entry<String, String> cuf : cufValues.entrySet()){
+
+	void truncate(ActionTestStep step, Map<String, String> cufValues) {
+		for (Entry<String, String> cuf : cufValues.entrySet()) {
 			String value = cuf.getValue();
-			cuf.setValue( truncate(value, 255));
-		}	
+			cuf.setValue(truncate(value, 255));
+		}
 	}
-	
-	void truncate(Parameter param){
+
+	void truncate(Parameter param) {
 		String name = param.getName();
-		if (name != null){
-			param.setName( truncate(name, 255));
+		if (name != null) {
+			param.setName(truncate(name, 255));
 		}
 	}
-	
-	void truncate(Dataset ds){
+
+	void truncate(Dataset ds) {
 		String name = ds.getName();
-		if (name != null){
-			ds.setName ( truncate (name, 255));
+		if (name != null) {
+			ds.setName(truncate(name, 255));
 		}
 	}
-	
-	String truncate(String str, int cap){
+
+	String truncate(String str, int cap) {
 		return str.substring(0, Math.min(str.length(), cap));
 	}
 }

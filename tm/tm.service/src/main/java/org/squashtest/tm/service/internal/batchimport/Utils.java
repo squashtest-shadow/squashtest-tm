@@ -27,91 +27,88 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 /**
- * Used internally mostly for operations on paths. Much like an URL instance can check if the protocol, host, path etc are corrects.
+ * Used internally mostly for operations on paths. Much like an URL instance can check if the protocol, host, path etc
+ * are corrects.
  * 
  * @author bsiri
- *
+ * 
  */
 final class Utils {
-	
-	// a non terminal name is anything that ends with a (non included) slash and has non zero length. Escaped slashes are valid part of a name.
+
+	/**
+	 * a non terminal name is anything that ends with a (non included) slash and has non zero length. Escaped slashes
+	 * are valid part of a name.
+	 */
 	private static final Pattern NON_TERMINAL_NAME = Pattern.compile("(.+?[^\\\\])/");
-	
-	
+
 	private static final String SPLIT = "(?<!\\\\)/";
-	
 
-	// a well formed path starts with a slash, doesn't end with a slash (we consider only test cases here so they don't end 
-	// with a slash), and contains at least two elements (the project name and element name in case it's at the root of 
-	// the library).
-	private static final Pattern WELL_FORMED_PATH = 
-			Pattern.compile("^\\/(.+?[^\\\\]/)+.+?(\\\\\\/$|[^\\/]$)" );	
-	
-	
-	// the first element of slash-separated names is the project name. Beware that escaped slashes aren't actual separator 
-	private static final Pattern projectPattern = Pattern.compile("^\\/"+NON_TERMINAL_NAME+".*");// can concatenate thanks to toString()
+	/**
+	 * a well formed path starts with a slash, doesn't end with a slash (we consider only test cases here so they don't
+	 * end with a slash), and contains at least two elements (the project name and element name in case it's at the root
+	 * of the library).
+	 */
+	private static final Pattern WELL_FORMED_PATH = Pattern.compile("^\\/(.+?[^\\\\]/)+.+?(\\\\\\/$|[^\\/]$)");
 
-	
-	// the last element is the test case name
+	/**
+	 * the first element of slash-separated names is the project name. Beware that escaped slashes aren't actual
+	 * separator
+	 */
+	private static final Pattern projectPattern = Pattern.compile("^\\/" + NON_TERMINAL_NAME + ".*");// can concatenate
+	// thanks to
+	// toString()
+
+	/** the last element is the test case name */
 	private static final Pattern testcasePattern = Pattern.compile(".*[^\\\\]\\/(.*)$");
-			
-			
-	
-	private Utils(){
+
+	private Utils() {
 		super();
 	}
-	
-	
-	
-	static boolean isPathWellFormed(String path){
+
+	static boolean isPathWellFormed(String path) {
 		return WELL_FORMED_PATH.matcher(path).matches();
 	}
-	
-	static String extractProjectName(String path){
+
+	static String extractProjectName(String path) {
 		Matcher matcher = projectPattern.matcher(path);
-		if (matcher.matches()){
+		if (matcher.matches()) {
 			return matcher.group(1);
-		}
-		else{
+		} else {
 			return null;
 		}
 	}
-	
-	static List<String> extractProjectNames(List<String> pathes){
+
+	static List<String> extractProjectNames(List<String> pathes) {
 		Set<String> res = new HashSet<String>();
-		for (String p : pathes){
+		for (String p : pathes) {
 			Matcher matcher = projectPattern.matcher(p);
-			if (matcher.matches()){
-				res.add( matcher.group(1) );
-			}
-			else{
+			if (matcher.matches()) {
+				res.add(matcher.group(1));
+			} else {
 				res.add(null);
 			}
 		}
 		return new ArrayList<String>(res);
 	}
 
-	static String extractTestCaseName(String path){
+	static String extractTestCaseName(String path) {
 		Matcher matcher = testcasePattern.matcher(path);
-		if (matcher.matches()){
+		if (matcher.matches()) {
 			return matcher.group(1);
-		}
-		else{
-			throw new IllegalArgumentException("couldn't find a valid test case name in path '"+path+"'. It might be malformed.");
+		} else {
+			throw new IllegalArgumentException("couldn't find a valid test case name in path '" + path
+					+ "'. It might be malformed.");
 		}
 	}
-	
-	
-	static boolean arePathsAndNameConsistents(String path, String name){
+
+	static boolean arePathsAndNameConsistents(String path, String name) {
 		String pathName = extractTestCaseName(path);
 		return pathName.equals(name);
 	}
-	
-	
+
 	/**
-	 * Returns the path with a different test case name. You can't change directory that way (using "..")  
+	 * Returns the path with a different test case name. You can't change directory that way (using "..")
 	 * 
 	 * @param path
 	 * @param name
@@ -119,16 +116,16 @@ final class Utils {
 	 */
 	static String rename(String path, String name) {
 		String oldname = extractTestCaseName(path);
-		String oldpatt = "\\Q"+oldname+"\\E$";
+		String oldpatt = "\\Q" + oldname + "\\E$";
 		return path.replaceAll(oldpatt, name);
 	}
-	
-	
-	// a well formed path starts with a '/' and we remove it right away before splitting (or else 
-	// a false positive empty string would appear before it)
-	static String[] splitPath(String path){
+
+	/**
+	 * a well formed path starts with a '/' and we remove it right away before splitting (or else a false positive empty
+	 * string would appear before it)
+	 */
+	static String[] splitPath(String path) {
 		return path.substring(1).split(SPLIT);
 	}
-	
-	
+
 }

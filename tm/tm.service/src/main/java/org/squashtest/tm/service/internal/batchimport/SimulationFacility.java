@@ -552,8 +552,10 @@ public class SimulationFacility implements Facility {
 
 	// **************************** private utilities *****************************************
 
-	// checks permission on a project that may exist or not.
-	// the case where the project doesn't exist (and thus has no id) is already covered in the basic checks.
+	/**
+	 * checks permission on a project that may exist or not. <br/> the case where the project doesn't exist (and thus has
+	 * no id) is already covered in the basic checks.
+	 */
 	private LogEntry checkPermissionOnProject(String permission, TestCaseTarget target) {
 
 		LogEntry entry = null;
@@ -579,12 +581,12 @@ public class SimulationFacility implements Facility {
 		} else if (index < 0) {
 			entry = new LogEntry(target, importStatus, Messages.ERROR_STEPINDEX_NEGATIVE, optionalImpact);
 
-		} else if (!model.stepExists(target) && (!model.indexIsFirstAvailable(target) || !mode.equals(ImportMode.CREATE))) {
+		} else if (!model.stepExists(target)
+				&& (!model.indexIsFirstAvailable(target) || !mode.equals(ImportMode.CREATE))) {
 			// when index doesn't match a step in the target model
 			// this error message is not needed for creation when the target index is the first one available
 			entry = new LogEntry(target, importStatus, Messages.ERROR_STEPINDEX_OVERFLOW, optionalImpact);
 		}
-
 
 		return entry;
 	}

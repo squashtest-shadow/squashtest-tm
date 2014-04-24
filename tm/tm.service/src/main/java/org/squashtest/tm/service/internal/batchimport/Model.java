@@ -92,97 +92,53 @@ public class Model {
 	 * *****************
 	 */
 
-	/*
-	 * ------------------------
-	 * 
-	 * testCaseStatusByTarget :
+	/**
 	 * 
 	 * Maps a reference to a TestCase (namely a TestCaseTarget). It keeps track of its status (see ModelizedStatus) and
-	 * possibly its id (when there is a concrete instance of it in the database).
-	 * 
+	 * possibly its id (when there is a concrete instance of it in the database).<br/>
+	 * <br/>
 	 * Because a test case might be referenced multiple time, once a test case is loaded in that map it'll stay there.
-	 * 
-	 * --------------------------
 	 */
 	private Map<TestCaseTarget, TargetStatus> testCaseStatusByTarget = new HashMap<TestCaseTarget, TargetStatus>();
 
-	/*
-	 * ------------------------
-	 * 
-	 * stepStatusByTarget :
-	 * 
+	/**
 	 * Maps a test case (given its target) to a list of step models. We only care of their position (because they are
 	 * identified by position), their type (because we want to detect potential attempts of modifications of an action
 	 * step whereas the target is actually a call step and conversely), and possibly a called test case (if the step is
 	 * a call step, and we want to keep track of possible cycles).
 	 * 
-	 * 
-	 * ------------------------
 	 */
 	private Map<TestCaseTarget, List<InternalStepModel>> testCaseStepsByTarget = new HashMap<TestCaseTarget, List<InternalStepModel>>();
 
-	/*
-	 * ------------------------
-	 * 
-	 * projectStatusByName :
-	 * 
+	/**
 	 * nothing special, plain wysiwyg
-	 * 
-	 * -------------------------
 	 */
 	private Map<String, TargetStatus> projectStatusByName = new HashMap<String, TargetStatus>();
 
-	/*
-	 * ------------------------
-	 * 
-	 * tcCufsPerProjectname :
-	 * 
+	/**
 	 * caches the custom fields defined for the test cases in a given project. This is a multimap that matches a project
 	 * name against a collection of CustomField
-	 * 
-	 * -------------------------
 	 */
 	private MultiValueMap tcCufsPerProjectname = new MultiValueMap();
 
-	/*
-	 * ------------------------
-	 * 
-	 * stepCufsPerProjectname :
-	 * 
+	/**
 	 * same as tcCufsPerProjectname, but regarding the test steps
-	 * 
-	 * -------------------------
 	 */
 	private MultiValueMap stepCufsPerProjectname = new MultiValueMap();
 
-	/*
-	 * ------------------------
-	 * 
-	 * parametersByTestCase :
-	 * 
+	/**
 	 * keeps track of which parameters are defined for which test cases
-	 * 
-	 * -------------------------
 	 */
 	private Map<TestCaseTarget, Collection<ParameterTarget>> parametersByTestCase = new HashMap<TestCaseTarget, Collection<ParameterTarget>>();
 
-	/*
-	 * ------------------------
-	 * 
-	 * parametersByTestCase :
-	 * 
-	 * keeps track of which parameters are defined for which test cases
-	 * 
-	 * -------------------------
+	/**
+	 * keeps track of which datasets are defined for which test cases
 	 */
 	private Map<TestCaseTarget, Collection<DatasetTarget>> datasetsByTestCase = new HashMap<TestCaseTarget, Collection<DatasetTarget>>();
 
-	/* *******************************************************************************************************
-	 * 
+	/**
 	 * This property keeps track of the test case call graph. It is not initialized like the rest, it's rather
 	 * initialized on demand (see isCalled for instance )
-	 * 
-	 * *****************************************************************************************************
 	 */
 	private TestCaseCallGraph callGraph = new TestCaseCallGraph();
 
@@ -232,7 +188,7 @@ public class Model {
 		callGraph.removeNode(target);
 	}
 
-	// virtually an alias of setDeleted
+	/** virtually an alias of setDeleted */
 	public void setNotExists(TestCaseTarget target) {
 		testCaseStatusByTarget.put(target, new TargetStatus(Existence.NOT_EXISTS, null));
 		clearSteps(target);
@@ -246,7 +202,7 @@ public class Model {
 
 	// ************************** Test Case accessors *****************************************
 
-	// may return null
+	/** may return null */
 	public Long getId(TestCaseTarget target) {
 		return getStatus(target).id;
 	}
@@ -262,7 +218,7 @@ public class Model {
 
 	// ************************ test case calls code ***********************************
 
-	/*
+	/**
 	 * returns true if the test case is being called by another test case or else false.
 	 * 
 	 * Note : the problem arises only if the test case already exists in the database (test cases instructions are all
@@ -297,8 +253,10 @@ public class Model {
 		return wouldCreateCycle(step.getTestCase(), destTestCase);
 	}
 
-	// initialize the call graph from the database. The whole graph will be pulled
-	// so be carefull to load it only when necessary.
+	/**
+	 * initialize the call graph from the database. The whole graph will be pulled so be carefull to load it only when
+	 * necessary.
+	 */
 	private void initCallGraph(TestCaseTarget target) {
 
 		Long id = finderService.findNodeIdByPath(target.getPath());
@@ -308,8 +266,8 @@ public class Model {
 			return;
 		}
 
-		LibraryGraph<NamedReference, SimpleNode<NamedReference>> targetCallers = calltreeFinder
-				.getExtendedGraph(Arrays.asList(id));
+		LibraryGraph<NamedReference, SimpleNode<NamedReference>> targetCallers = calltreeFinder.getExtendedGraph(Arrays
+				.asList(id));
 
 		// some data transform now
 		Collection<SimpleNode<NamedReference>> refs = targetCallers.getNodes();
@@ -339,9 +297,8 @@ public class Model {
 	 * 
 	 * @param target
 	 * @param type
-	 * @return
+	 * @return the index at which the step was created
 	 */
-	// returns the index at which the step was created
 	public Integer addActionStep(TestStepTarget target) {
 		return addStep(target, StepType.ACTION, null);
 	}
@@ -372,8 +329,9 @@ public class Model {
 
 	}
 
-	// warning : won't check that the operation will not create a cycle. Such check needs to
-	// be done beforehand.
+	/**
+	 * warning : won't check that the operation will not create a cycle. Such check needs to be done beforehand.
+	 */
 	public void updateCallStepTarget(TestStepTarget step, TestCaseTarget newTarget) {
 
 		if (!stepExists(step)) {
@@ -427,14 +385,15 @@ public class Model {
 		return (model != null);
 
 	}
+
 	public boolean indexIsFirstAvailable(TestStepTarget target) {
 		Integer index = target.getIndex();
 		TestCaseTarget tc = target.getTestCase();
-		if (! testCaseStatusByTarget.containsKey(tc)){
+		if (!testCaseStatusByTarget.containsKey(tc)) {
 			init(tc);
 		}
 		List<InternalStepModel> steps = testCaseStepsByTarget.get(tc);
-		return index == steps.size() ;
+		return index == steps.size();
 	}
 
 	/**
@@ -452,7 +411,7 @@ public class Model {
 		}
 	}
 
-	// may return null
+	/** may return null */
 	public Long getStepId(TestStepTarget target) {
 
 		Long tcId = getStatus(target.getTestCase()).id;
@@ -471,7 +430,7 @@ public class Model {
 
 	}
 
-	// may return null
+	/** may return null */
 	public TestStep getStep(TestStepTarget target) {
 
 		Long tcId = getStatus(target.getTestCase()).id;
@@ -768,7 +727,7 @@ public class Model {
 		}
 	}
 
-	// this method assumes that the targets were all processed through initTestCases(targets) beforehand.
+	/** this method assumes that the targets were all processed through initTestCases(targets) beforehand. */
 	private void initTestSteps(List<TestCaseTarget> targets) {
 
 		for (TestCaseTarget target : targets) {
@@ -836,7 +795,7 @@ public class Model {
 
 	}
 
-	// assumes that the project exists and that we have its ID
+	/** assumes that the project exists and that we have its ID */
 	private void initCufs(String projectName) {
 
 		Long projectId = projectStatusByName.get(projectName).id;
@@ -895,9 +854,10 @@ public class Model {
 		return steps;
 	}
 
-	// substitute the value of the name attribute of NamedReference so that it becomes a path instead.
-	// all references are supposed to exist in the database
-	// that's foul play but saves more bloat
+	/**
+	 * substitutes the value of the name attribute of NamedReference so that it becomes a path instead.<br/>All references
+	 * are supposed to exist in the database that's foul play but saves more bloat
+	 */
 	@SuppressWarnings("unchecked")
 	private void swapNameForPath(Collection<SimpleNode<NamedReference>> references) {
 
@@ -921,24 +881,46 @@ public class Model {
 	// ************************ internal types for TestCase Management **********************************
 
 	/**
-	 * That enum sort of represent the level of existence of a test case. It can be either physically present, or
-	 * virtually present, or virtually non existent, or default to physically non existant. It helps us keeping track of
-	 * the fate of a test case during the import process (which is, remember, essentially a batch processing).
+	 * That enum sort of represents the level of existence of a test case. It can be either physically present, or
+	 * virtually present, or virtually non existent, or default to physically non existant.<br/>
+	 * It helps us keeping track of the fate of a test case during the import process (which is, remember, essentially a
+	 * batch processing).
 	 * 
 	 * @author bsiri
 	 * 
 	 */
 	static enum Existence {
-		EXISTS, // means : exists now in the database
-		TO_BE_CREATED, // means : will be created later on in the process
-		TO_BE_DELETED, // means : will be deleted later on in the process
-		NOT_EXISTS; // means : at this point, doesn't exists either in DB nor in anything planned later in the process
+		/**
+		 *  exists now in the database
+		 */
+		EXISTS,
+		/**
+		 * will be created later on in the process
+		 */
+		TO_BE_CREATED,
+		/**
+		 * will be deleted later on in the process
+		 */
+		TO_BE_DELETED,
+		/**
+		 * at this point, doesn't exists either in DB nor in anything planned later in the process
+		 */
+		NOT_EXISTS;
 	}
 
+	/**
+	 * Holds the {@link #id} and the {@link #status} of an entity concerned by the import.
+	 * 
+	 */
 	static final class TargetStatus {
-
+		/**
+		 * The {@link Existence} status of the concerned entity.
+		 */
 		Existence status = null; // NOSONAR this attribute is local to the package and the implementor knows what he's
 		// doing
+		/**
+		 * The id of the concerned entity.
+		 */
 		Long id = null; // NOSONAR this attribute is local to the package and the implementor knows what he's doing
 
 		private TargetStatus(Existence status) {
@@ -1020,7 +1002,5 @@ public class Model {
 		}
 
 	}
-
-
 
 }

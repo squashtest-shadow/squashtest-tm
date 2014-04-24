@@ -68,10 +68,11 @@ import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.service.testcase.TestStepModificationService;
+
 /**
  * 
  * Implementation of batch import methods that will actually update the database.
- *
+ * 
  */
 @Component
 @Scope("prototype")
@@ -721,8 +722,10 @@ public class FacilityImpl implements Facility {
 		return dpv;
 	}
 
-	// because the service identifies cufs by their id, not their code
-	// also populates the cache (cufIdByCode)
+	/**
+	 * because the service identifies cufs by their id, not their code<br/>
+	 * also populates the cache (cufIdByCode)
+	 */
 	private Map<Long, String> toAcceptableCufs(Map<String, String> origCufs) {
 
 		Map<Long, String> result = new HashMap<Long, String>(origCufs.size());
