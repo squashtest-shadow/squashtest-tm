@@ -70,7 +70,7 @@ define([ "jquery", "backbone", "underscore",
 			
 			// CUFs
 			if (this.settings.hasCufs){
-				$.get(settings.urls.cufValuesUrl)
+				$.get(this.settings.urls.cufValuesUrl)
 				.success(function(data){
 					$("#test-case-description-table").append(data);
 				});
