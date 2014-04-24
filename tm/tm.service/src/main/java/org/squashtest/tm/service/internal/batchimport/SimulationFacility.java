@@ -108,7 +108,7 @@ public class SimulationFacility implements Facility {
 
 		// 3-3 : name and path must be consistent
 		if (!Utils.arePathsAndNameConsistents(path, name)) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_INCONSISTENT_PATH_AND_NAME));
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_INCONSISTENT_PATH_AND_NAME, new Object[]{path, name}));
 		}
 
 		/*
