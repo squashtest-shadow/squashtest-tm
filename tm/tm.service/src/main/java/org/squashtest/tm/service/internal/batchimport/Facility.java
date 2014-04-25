@@ -35,9 +35,8 @@ import org.squashtest.tm.service.importer.EntityType;
  *
  */
 public interface Facility {
-	final List<EntityType> ENTITIES_ORDERED_BY_INSTRUCTION_ORDER = Arrays.asList(EntityType.TEST_CASE, EntityType.TEST_STEP, EntityType.PARAMETER, EntityType.DATASET);
 
-	Model getModel();
+	final List<EntityType> ENTITIES_ORDERED_BY_INSTRUCTION_ORDER = Arrays.asList(EntityType.TEST_CASE, EntityType.TEST_STEP, EntityType.PARAMETER, EntityType.DATASET);
 
 	LogTrain createTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues);
 	LogTrain updateTestCase(TestCaseTarget target, TestCase testCaseData, Map<String, String> cufValues);

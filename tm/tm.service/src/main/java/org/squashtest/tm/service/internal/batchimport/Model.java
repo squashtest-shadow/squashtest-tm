@@ -560,13 +560,21 @@ public class Model {
 		return datasetsByTestCase.get(tc).contains(target);
 	}
 
+	/**
+	 * This operation is imdepotent
+	 * 
+	 * @param target
+	 */
 	public void addDataset(DatasetTarget target) {
 		TestCaseTarget tc = target.getTestCase();
 		if (!datasetsByTestCase.containsKey(tc)) {
 			initDatasets(Arrays.asList(tc));
 		}
 
-		datasetsByTestCase.get(tc).add(target);
+		Collection<DatasetTarget> knownDS = datasetsByTestCase.get(tc);
+		if (! knownDS.contains(target)){
+			datasetsByTestCase.get(tc).add(target);
+		}
 	}
 
 	public void removeDataset(DatasetTarget target) {

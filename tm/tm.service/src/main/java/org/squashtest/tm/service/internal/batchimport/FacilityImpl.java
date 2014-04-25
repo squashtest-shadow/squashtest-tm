@@ -80,6 +80,10 @@ public class FacilityImpl implements Facility {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FacilityImpl.class);
 
+
+	@Inject
+	private ValidationFacility validator;
+
 	@Inject
 	private TestCaseLibraryFinderService finderService;
 
@@ -116,9 +120,6 @@ public class FacilityImpl implements Facility {
 	@Inject
 	private CustomFieldDao cufDao;
 
-	private SimulationFacility simulator; // manual injection via setter
-
-	private Model model; // manual injection via setter
 
 	private FacilityImplHelper helper = new FacilityImplHelper();
 
@@ -126,76 +127,71 @@ public class FacilityImpl implements Facility {
 
 	private Collection<Long> modifiedTestCases = new HashSet<Long>();
 
-	public SimulationFacility getSimulator() {
-		return simulator;
-	}
-
-	public void setSimulator(SimulationFacility simulator) {
-		this.simulator = simulator;
-	}
-
-	public Model getModel() {
-		return model;
-	}
-
-	public void setModel(Model model) {
-		this.model = model;
-	}
 
 	// ************************ public (and nice looking) code **************************************
 
 	@Override
 	public LogTrain createTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
 
-		LogTrain train = simulator.createTestCase(target, testCase, cufValues);
+		LogTrain train = validator.createTestCase(target, testCase, cufValues);
 
 		if (!train.hasCriticalErrors()) {
-			try {
-				helper.fillNullWithDefaults(testCase);
-				helper.truncate(testCase, cufValues);
-				doCreateTestcase(target, testCase, cufValues);
-
-				model.setExists(target, testCase.getId());
-				remember(target);
-			} catch (Exception ex) {
-				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
-						new Object[] { ex.getClass().getName() }));
-				model.setNotExists(target);
-				LOGGER.error("Excel import : unexpected error while importing " + target + " : ", ex);
-			}
+			train = createTCRoutine(train, target, testCase, cufValues);
 		}
 
 		return train;
 
 	}
 
+	private LogTrain createTCRoutine(LogTrain train, TestCaseTarget target, TestCase testCase, Map<String, String> cufValues){
+
+		try {
+
+			helper.fillNullWithDefaults(testCase);
+			helper.truncate(testCase, cufValues);
+
+			doCreateTestcase(target, testCase, cufValues);
+			validator.getModel().setExists(target, testCase.getId());
+
+			remember(target);
+
+		} catch (Exception ex) {
+			train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
+					new Object[] { ex.getClass().getName() }));
+			validator.getModel().setNotExists(target);
+			LOGGER.error("Excel import : unexpected error while importing " + target + " : ", ex);
+		}
+
+		return train;
+	}
+
 	@Override
 	public LogTrain updateTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
 
-		TargetStatus status = model.getStatus(target);
+		TargetStatus status = validator.getModel().getStatus(target);
 
-		LogTrain train = simulator.updateTestCase(target, testCase, cufValues);
+		LogTrain train = validator.updateTestCase(target, testCase, cufValues);
 
 		if (!train.hasCriticalErrors()) {
-			try {
-				if (status.status == Existence.NOT_EXISTS) {
-					helper.fillNullWithDefaults(testCase);
-					helper.truncate(testCase, cufValues);
-					doCreateTestcase(target, testCase, cufValues);
 
-					model.setExists(target, testCase.getId());
-					remember(target);
-				} else {
+			if (status.status == Existence.NOT_EXISTS) {
+
+				train = createTCRoutine(train, target, testCase, cufValues);
+
+			} else {
+				try {
 
 					helper.truncate(testCase, cufValues);
 					doUpdateTestcase(target, testCase, cufValues);
-					remember(target);
 
+					remember(target);
 				}
-			} catch (Exception ex) {
-				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
-						new Object[] { ex.getClass().getName() }));
-				LOGGER.error("Excel import : unexpected error while updating " + target + " : ", ex);
+				catch (Exception ex) {
+					train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
+							new Object[] { ex.getClass().getName() }));
+					LOGGER.error("Excel import : unexpected error while updating " + target + " : ", ex);
+				}
+
 			}
 
 		}
@@ -206,17 +202,19 @@ public class FacilityImpl implements Facility {
 	@Override
 	public LogTrain deleteTestCase(TestCaseTarget target) {
 
-		LogTrain train = simulator.deleteTestCase(target);
+		LogTrain train = validator.deleteTestCase(target);
 
 		if (!train.hasCriticalErrors()) {
 			try {
+
 				doDeleteTestCase(target);
-				model.setDeleted(target);
-			} catch (Exception ex) {
+				validator.getModel().setDeleted(target);
+
+			}
+			catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
-				TestCase tc = model.get(target);
-				model.setExists(target, tc.getId());
+
 				LOGGER.error("Excel import : unexpected error while deleting " + target + " : ", ex);
 			}
 		}
@@ -227,17 +225,20 @@ public class FacilityImpl implements Facility {
 	@Override
 	public LogTrain addActionStep(TestStepTarget target, ActionTestStep testStep, Map<String, String> cufValues) {
 
-		LogTrain train = simulator.addActionStep(target, testStep, cufValues);
+		LogTrain train = validator.addActionStep(target, testStep, cufValues);
 
 		if (!train.hasCriticalErrors()) {
 			try {
 				helper.fillNullWithDefaults(testStep);
 				helper.truncate(testStep, cufValues);
+
 				doAddActionStep(target, testStep, cufValues);
+				validator.getModel().addActionStep(target);
 
 			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
+
 				LOGGER.error("Excel import : unexpected error while creating step " + target + " : ", ex);
 			}
 		}
@@ -248,15 +249,17 @@ public class FacilityImpl implements Facility {
 	@Override
 	public LogTrain addCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase) {
 
-		LogTrain train = simulator.addCallStep(target, testStep, calledTestCase);
+		LogTrain train = validator.addCallStep(target, testStep, calledTestCase);
 
 		if (!train.hasCriticalErrors()) {
 			try {
 				doAddCallStep(target, testStep, calledTestCase);
-				model.addCallStep(target, calledTestCase);
 
 				remember(target.getTestCase());
-			} catch (Exception ex) {
+				validator.getModel().addCallStep(target, calledTestCase);
+
+			}
+			catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
 				LOGGER.error("Excel import : unexpected error while creating step " + target + " : ", ex);
@@ -269,13 +272,14 @@ public class FacilityImpl implements Facility {
 	@Override
 	public LogTrain updateActionStep(TestStepTarget target, ActionTestStep testStep, Map<String, String> cufValues) {
 
-		LogTrain train = simulator.updateActionStep(target, testStep, cufValues);
+		LogTrain train = validator.updateActionStep(target, testStep, cufValues);
 
 		if (!train.hasCriticalErrors()) {
 			try {
 				helper.truncate(testStep, cufValues);
 				doUpdateActionStep(target, testStep, cufValues);
-			} catch (Exception ex) {
+			}
+			catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
 				LOGGER.error("Excel import : unexpected error while updating step " + target + " : ", ex);
@@ -288,12 +292,14 @@ public class FacilityImpl implements Facility {
 	@Override
 	public LogTrain updateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase) {
 
-		LogTrain train = simulator.updateCallStep(target, testStep, calledTestCase);
+		LogTrain train = validator.updateCallStep(target, testStep, calledTestCase);
 
 		if (!train.hasCriticalErrors()) {
 			try {
 				doUpdateCallStep(target, testStep, calledTestCase);
-			} catch (Exception ex) {
+				validator.getModel().updateCallStepTarget(target, calledTestCase);
+			}
+			catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
 				LOGGER.error("Excel import : unexpected error while updating step " + target + " : ", ex);
@@ -306,13 +312,15 @@ public class FacilityImpl implements Facility {
 	@Override
 	public LogTrain deleteTestStep(TestStepTarget target) {
 
-		LogTrain train = simulator.deleteTestStep(target);
+		LogTrain train = validator.deleteTestStep(target);
 
 		if (!train.hasCriticalErrors()) {
 			try {
 				doDeleteTestStep(target);
-				// model.remove(target); already done in the SimulationFacility
-			} catch (Exception ex) {
+				validator.getModel().remove(target);
+
+			}
+			catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
 				LOGGER.error("Excel import : unexpected error while deleting step " + target + " : ", ex);
@@ -325,16 +333,17 @@ public class FacilityImpl implements Facility {
 	@Override
 	public LogTrain createParameter(ParameterTarget target, Parameter param) {
 
-		LogTrain train = simulator.createParameter(target, param);
+		LogTrain train = validator.createParameter(target, param);
 
 		if (!train.hasCriticalErrors()) {
 			try {
 				doCreateParameter(target, param);
-
-			} catch (Exception ex) {
+				validator.getModel().addParameter(target);
+				remember(target.getOwner());
+			}
+			catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
-				model.removeParameter(target);
 				LOGGER.error("Excel import : unexpected error while adding parameter " + target + " : ", ex);
 			}
 		}
@@ -345,12 +354,13 @@ public class FacilityImpl implements Facility {
 	@Override
 	public LogTrain updateParameter(ParameterTarget target, Parameter param) {
 
-		LogTrain train = simulator.updateParameter(target, param);
+		LogTrain train = validator.updateParameter(target, param);
 
 		if (!train.hasCriticalErrors()) {
 			try {
 				doUpdateParameter(target, param);
-			} catch (Exception ex) {
+			}
+			catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
 				LOGGER.error("Excel import : unexpected error while updating parameter " + target + " : ", ex);
@@ -363,16 +373,17 @@ public class FacilityImpl implements Facility {
 	@Override
 	public LogTrain deleteParameter(ParameterTarget target) {
 
-		LogTrain train = simulator.deleteParameter(target);
+		LogTrain train = validator.deleteParameter(target);
 
 		if (!train.hasCriticalErrors()) {
 			try {
 				doDeleteParameter(target);
-			} catch (Exception ex) {
+				validator.getModel().removeParameter(target);
+			}
+			catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
-				model.addParameter(target); // we must readd it because simulation facility (if all went well at the
-				// simulation level) would have removed it. Design flaw apparently.
+
 				LOGGER.error("Excel import : unexpected error while deleting parameter " + target + " : ", ex);
 			}
 		}
@@ -383,13 +394,18 @@ public class FacilityImpl implements Facility {
 	@Override
 	public LogTrain failsafeUpdateParameterValue(DatasetTarget dataset, ParameterTarget param, String value) {
 
-		LogTrain train = simulator.failsafeUpdateParameterValue(dataset, param, value);
+		LogTrain train = validator.failsafeUpdateParameterValue(dataset, param, value);
 
 		if (!train.hasCriticalErrors()) {
 			try {
 				doFailsafeUpdateParameterValue(dataset, param, value);
+
+				validator.getModel().addDataset(dataset);
 				remember(dataset.getTestCase());
-			} catch (Exception ex) {
+				remember(param.getOwner());
+
+			}
+			catch (Exception ex) {
 				train.addEntry(new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
 				LOGGER.error("Excel import : unexpected error while setting parameter " + param + " in dataset "
@@ -403,11 +419,15 @@ public class FacilityImpl implements Facility {
 	@Override
 	public LogTrain deleteDataset(DatasetTarget dataset) {
 
-		LogTrain train = simulator.deleteDataset(dataset);
+		LogTrain train = validator.deleteDataset(dataset);
 
 		if (!train.hasCriticalErrors()) {
 			try {
 				doDeleteDataset(dataset);
+
+				validator.getModel().removeDataset(dataset);
+				remember(dataset.getTestCase());
+
 			} catch (Exception ex) {
 				train.addEntry(new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
@@ -444,7 +464,7 @@ public class FacilityImpl implements Facility {
 
 		// case 1 : this test case lies at the root of the project
 		if (target.isRootTestCase()) {
-			Long libraryId = model.getProjectStatus(target.getProject()).getId(); // never null because the checks
+			Long libraryId = validator.getModel().getProjectStatus(target.getProject()).getId(); // never null because the checks
 			// ensured that the project exists
 			Collection<String> siblingNames = navigationService.findNamesInLibraryStartingWith(libraryId,
 					testCase.getName());
@@ -474,7 +494,7 @@ public class FacilityImpl implements Facility {
 	private void doUpdateTestcase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues)
 			throws Exception {
 
-		TestCase orig = model.get(target);
+		TestCase orig = validator.getModel().get(target);
 		Long origId = orig.getId();
 
 		// backup the audit log
@@ -544,7 +564,7 @@ public class FacilityImpl implements Facility {
 	}
 
 	private void doDeleteTestCase(TestCaseTarget target) throws Exception {
-		TestCase tc = model.get(target);
+		TestCase tc = validator.getModel().get(target);
 		navigationService.deleteNodes(Arrays.asList(tc.getId()));
 	}
 
@@ -554,7 +574,7 @@ public class FacilityImpl implements Facility {
 		Map<Long, String> acceptableCufs = toAcceptableCufs(cufValues);
 
 		// add the step
-		TestCase tc = model.get(target.getTestCase());
+		TestCase tc = validator.getModel().get(target.getTestCase());
 		testcaseModificationService.addActionTestStep(tc.getId(), testStep, acceptableCufs);
 
 		// move it if the index was specified
@@ -568,8 +588,8 @@ public class FacilityImpl implements Facility {
 	private void doAddCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase) {
 
 		// add the step
-		TestCase tc = model.get(target.getTestCase());
-		TestCase called = model.get(calledTestCase);
+		TestCase tc = validator.getModel().get(target.getTestCase());
+		TestCase called = validator.getModel().get(calledTestCase);
 
 		callstepService.addCallTestStep(tc.getId(), called.getId());
 		CallTestStep created = (CallTestStep) tc.getSteps().get(tc.getSteps().size() - 1);
@@ -585,7 +605,7 @@ public class FacilityImpl implements Facility {
 	private void doUpdateActionStep(TestStepTarget target, ActionTestStep testStep, Map<String, String> cufValues) {
 
 		// update the step
-		ActionTestStep orig = (ActionTestStep) model.getStep(target);
+		ActionTestStep orig = (ActionTestStep) validator.getModel().getStep(target);
 
 		String newAction = testStep.getAction();
 		if (!StringUtils.isBlank(newAction) && !orig.getAction().equals(newAction)) {
@@ -613,15 +633,15 @@ public class FacilityImpl implements Facility {
 	private void doUpdateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase) {
 
 		// update the step
-		TestStep actualStep = model.getStep(target);
-		TestCase newCalled = model.get(calledTestCase);
+		TestStep actualStep = validator.getModel().getStep(target);
+		TestCase newCalled = validator.getModel().get(calledTestCase);
 		callstepService.checkForCyclicStepCallBeforePaste(newCalled.getId(), Arrays.asList(actualStep.getId()));
 		((CallTestStep) actualStep).setCalledTestCase(newCalled);
 
 	}
 
 	private void doDeleteTestStep(TestStepTarget target) {
-		TestCase tc = model.get(target.getTestCase());
+		TestCase tc = validator.getModel().get(target.getTestCase());
 		testcaseModificationService.removeStepFromTestCaseByIndex(tc.getId(), target.getIndex());
 	}
 
@@ -633,8 +653,8 @@ public class FacilityImpl implements Facility {
 
 	private void doUpdateParameter(ParameterTarget target, Parameter param) {
 
-		if (!model.doesParameterExists(target)) {
-			Long testcaseId = model.getId(target.getOwner());
+		if (!validator.getModel().doesParameterExists(target)) {
+			Long testcaseId = validator.getModel().getId(target.getOwner());
 			helper.fillNullWithDefaults(param);
 			helper.truncate(param);
 			parameterService.addNewParameterToTestCase(param, testcaseId);
@@ -646,7 +666,7 @@ public class FacilityImpl implements Facility {
 	}
 
 	private void doDeleteParameter(ParameterTarget target) {
-		Long testcaseId = model.getId(target.getOwner());
+		Long testcaseId = validator.getModel().getId(target.getOwner());
 		List<Parameter> allparams = parameterService.findAllforTestCase(testcaseId);
 
 		Parameter param = null;
@@ -674,7 +694,7 @@ public class FacilityImpl implements Facility {
 	// ******************************** support methods ***********************
 
 	private Parameter findParameter(ParameterTarget param) {
-		Long testcaseId = model.getId(param.getOwner());
+		Long testcaseId = validator.getModel().getId(param.getOwner());
 
 		Parameter found = paramDao.findParameterByNameAndTestCase(param.getName(), testcaseId);
 
@@ -686,7 +706,7 @@ public class FacilityImpl implements Facility {
 	}
 
 	private Dataset findDataset(DatasetTarget dataset) {
-		Long tcid = model.getId(dataset.getTestCase());
+		Long tcid = validator.getModel().getId(dataset.getTestCase());
 
 		Dataset found = datasetDao.findDatasetByTestCaseAndByName(tcid, dataset.getName());
 
@@ -760,7 +780,7 @@ public class FacilityImpl implements Facility {
 	}
 
 	private void remember(TestCaseTarget target) {
-		TestCase tc = model.get(target);
+		TestCase tc = validator.getModel().get(target);
 		if (tc.getId() != null) {
 			modifiedTestCases.add(tc.getId());
 		}

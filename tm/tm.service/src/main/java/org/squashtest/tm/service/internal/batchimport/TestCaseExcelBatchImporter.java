@@ -43,15 +43,11 @@ public class TestCaseExcelBatchImporter {
 	@Inject
 	private Provider<FacilityImpl> facilityImplProvider;
 
-	@Inject
-	private Provider<Model> modelProvider;
 
 	public ImportLog simulateImport(File excelFile) {
 
 		SimulationFacility simulator = simulatorProvider.get();
 
-		Model model = modelProvider.get();
-		simulator.setModel(model);
 
 		ExcelWorkbookParser parser = ExcelWorkbookParser.createParser(excelFile);
 		parser.parse().releaseResources();
@@ -62,13 +58,7 @@ public class TestCaseExcelBatchImporter {
 
 	public ImportLog performImport(File excelFile) {
 
-		SimulationFacility simulator = simulatorProvider.get();
 		FacilityImpl impl = facilityImplProvider.get();
-
-		Model model = modelProvider.get();
-		simulator.setModel(model);
-		impl.setModel(model);
-		impl.setSimulator(simulator);
 
 		ExcelWorkbookParser parser = ExcelWorkbookParser.createParser(excelFile);
 		parser.parse().releaseResources();

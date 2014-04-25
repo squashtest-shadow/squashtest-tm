@@ -108,13 +108,8 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 	private SessionFactory sessionFactory
 
 	@Inject
-	Provider<SimulationFacility> simulatorProvider
-
-	@Inject
 	Provider<FacilityImpl> implProvider
 
-	@Inject
-	Provider<Model> modelProvider
 
 	SimulationFacility simulator
 
@@ -123,13 +118,8 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 	Model model
 
 	def setup(){
-		simulator = simulatorProvider.get()
-		impl = implProvider.get()
 
-		model = modelProvider.get()
-		simulator.setModel(model)
-		impl.setModel(model)
-		impl.setSimulator(simulator)
+		impl = implProvider.get()
 
 		addMixins()
 	}
@@ -314,7 +304,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 
 		flush()
 
-		TestCase found = impl.model.get(target)
+		TestCase found = impl.validator.model.get(target)
 
 		then :
 
@@ -348,7 +338,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		then :
 		train.hasCriticalErrors() == false
 		allDeleted("TestCase", [246l])
-		impl.model.getStatus(target).status == Existence.NOT_EXISTS
+		impl.validator.model.getStatus(target).status == Existence.NOT_EXISTS
 	}
 
 
@@ -444,7 +434,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		found.steps.size() == 3
 		found.steps[1].calledTestCase.id == 248l
 
-		impl.model.isCalledBy(calledtc, callertc)
+		impl.validator.model.isCalledBy(calledtc, callertc)
 	}
 
 	/**
@@ -474,7 +464,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 
 		train.entries
 
-		! impl.model.isCalledBy(calledtc, callertc)
+		! impl.validator.model.isCalledBy(calledtc, callertc)
 	}
 
 	/**
@@ -534,9 +524,9 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 
 		where :
 		idx						|	humanmsg											|	msg							| status
-		null					|	"null index"										|	ERROR_STEPINDEX_EMPTY		| FAILURE
-		4						|	"excessive index"									|	ERROR_STEPINDEX_OVERFLOW	| FAILURE
-		-1						|	"negative index"									|	ERROR_STEPINDEX_NEGATIVE	| FAILURE
+		null					|	"null index"										|	ERROR_STEP_NOT_EXISTS		| FAILURE
+		4						|	"excessive index"									|	ERROR_STEP_NOT_EXISTS		| FAILURE
+		-1						|	"negative index"									|	ERROR_STEP_NOT_EXISTS		| FAILURE
 		1						|	"trying to update a call step with an action step"	|	ERROR_NOT_AN_ACTIONSTEP		| FAILURE
 	}
 
@@ -571,7 +561,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		found.steps.size() == 3
 		found.steps[2].calledTestCase.id == 248l
 
-		impl.model.isCalledBy(calledtc, callertc)
+		impl.validator.model.isCalledBy(calledtc, callertc)
 	}
 	/**
 	 *
@@ -605,7 +595,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		found.steps.size() == 3
 		found.steps[1].calledTestCase.id == 242l // and not 246l
 
-		! impl.model.isCalledBy(calledtc, callertc)
+		! impl.validator.model.isCalledBy(calledtc, callertc)
 
 	}
 
@@ -638,7 +628,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		found.getSteps().size() == 3
 		found.getSteps()[1].calledTestCase.id == 242l // and not 246l
 
-		! impl.model.isCalledBy(calledtc, callertc)
+		! impl.validator.model.isCalledBy(calledtc, callertc)
 
 	}
 
