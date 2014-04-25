@@ -571,10 +571,7 @@ public class Model {
 			initDatasets(Arrays.asList(tc));
 		}
 
-		Collection<DatasetTarget> knownDS = datasetsByTestCase.get(tc);
-		if (! knownDS.contains(target)){
-			datasetsByTestCase.get(tc).add(target);
-		}
+		datasetsByTestCase.get(tc).add(target);
 	}
 
 	public void removeDataset(DatasetTarget target) {

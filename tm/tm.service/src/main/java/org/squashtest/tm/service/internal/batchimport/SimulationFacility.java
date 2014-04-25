@@ -181,7 +181,10 @@ public class SimulationFacility implements Facility {
 
 		LogTrain logs = validator.updateParameter(target, param);
 
-		// no need to update the model because because the existence of that parameter is unaffected
+		// if the parameter didn't exist, it is created on the fly
+		if (! logs.hasCriticalErrors()){
+			validator.getModel().addParameter(target);
+		}
 
 		return logs;
 

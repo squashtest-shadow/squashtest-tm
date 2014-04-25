@@ -32,7 +32,7 @@ public final class Messages {
 	public static final String ERROR_UNPARSABLE_CHECKBOX = "message.import.log.error.field.notBoolean";
 	public static final String ERROR_UNPARSABLE_DATE = "message.import.log.error.field.wrongDateFormat";
 	public static final String ERROR_UNPARSABLE_OPTION = "message.import.log.error.listField.wrongValueForListField";
-	public static final String ERROR_UNPARSABLE_INTEGER = "message.import.log.error.field.notInteger";;
+	public static final String ERROR_UNPARSABLE_INTEGER = "message.import.log.error.field.notInteger";
 	public static final String ERROR_GENERIC_UNPARSABLE = "message.import.log.error.cannotParse";
 	public static final String ERROR_FUNKY_CELL_TYPE = "message.import.log.error.unexpectedCellType";
 

@@ -711,6 +711,10 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		this.datasets.add(dataset);
 	}
 
+	public void removeDataset(@NotNull Dataset dataset){
+		this.datasets.remove(dataset);
+	}
+
 	/**
 	 * Will go through this.parameters and return the Parameter matching the given name
 	 * 

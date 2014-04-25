@@ -47,6 +47,7 @@ public class ParameterInstruction extends Instruction<ParameterTarget> {
 	 */
 	@Override
 	protected LogTrain executeUpdate(Facility facility) {
+		fillMissingData();
 		return facility.updateParameter(getTarget(), parameter);
 	}
 
@@ -55,6 +56,7 @@ public class ParameterInstruction extends Instruction<ParameterTarget> {
 	 */
 	@Override
 	protected LogTrain executeDelete(Facility facility) {
+		fillMissingData();
 		return facility.deleteParameter(getTarget());
 	}
 
@@ -63,8 +65,20 @@ public class ParameterInstruction extends Instruction<ParameterTarget> {
 	 */
 	@Override
 	protected LogTrain executeCreate(Facility facility) {
+		fillMissingData();
 		return facility.createParameter(getTarget(), parameter);
 	}
 
+	/*
+	 * The point here is that the name of the parameter must appear in both
+	 * the Parameter and the ParameterTarget. The problem is, when the sheet is parsed
+	 * the PropertySetter that did the job only set the name for the Parameter.
+	 * 
+	 * A proper solution would be a PropertySetter that can update both the target and the
+	 * bean, but it's way simpler to just call the method below when required to.
+	 */
+	private void fillMissingData(){
+		getTarget().setName(parameter.getName());
+	}
 
 }

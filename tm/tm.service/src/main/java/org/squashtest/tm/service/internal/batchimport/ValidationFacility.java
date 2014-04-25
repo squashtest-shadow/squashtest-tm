@@ -421,7 +421,7 @@ public class ValidationFacility implements Facility {
 	public LogTrain failsafeUpdateParameterValue(DatasetTarget dataset, ParameterTarget param, String value) {
 
 		LogTrain logs;
-		boolean createsDSonthefly = false;
+
 
 		// 1 - is the dataset correctly identifed ?
 		logs = entityValidator.basicDatasetCheck(dataset);
@@ -435,7 +435,7 @@ public class ValidationFacility implements Facility {
 			if (!model.doesDatasetExists(dataset)) {
 				logs.addEntry(new LogEntry(dataset, ImportStatus.WARNING, Messages.ERROR_DATASET_NOT_FOUND,
 						Messages.IMPACT_DATASET_CREATED));
-				createsDSonthefly = true;
+
 			}
 
 			// 4 - is such parameter available for this dataset ?

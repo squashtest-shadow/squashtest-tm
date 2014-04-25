@@ -359,6 +359,8 @@ public class FacilityImpl implements Facility {
 		if (!train.hasCriticalErrors()) {
 			try {
 				doUpdateParameter(target, param);
+				validator.getModel().addParameter(target);	// create the parameter if didn't exist already. Double-insertion proof.
+				remember(target.getOwner());
 			}
 			catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
@@ -688,6 +690,8 @@ public class FacilityImpl implements Facility {
 
 	private void doDeleteDataset(DatasetTarget dataset) {
 		Dataset ds = findDataset(dataset);
+		TestCase tc = ds.getTestCase();
+		tc.removeDataset(ds);
 		datasetService.remove(ds);
 	}
 
@@ -710,7 +714,7 @@ public class FacilityImpl implements Facility {
 
 		Dataset found = datasetDao.findDatasetByTestCaseAndByName(tcid, dataset.getName());
 
-		if (found == null) {
+		if (found != null) {
 			return found;
 		} else {
 			Dataset newds = new Dataset();
