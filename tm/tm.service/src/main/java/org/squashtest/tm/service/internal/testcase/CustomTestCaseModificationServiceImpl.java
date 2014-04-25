@@ -213,6 +213,14 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		deletionHandler.deleteStep(testCase, testStep);
 	}
 
+	@Override
+	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
+	public void removeStepFromTestCaseByIndex(long testCaseId, int index) {
+		TestCase testCase = testCaseDao.findById(testCaseId);
+		TestStep testStep = testCase.getSteps().get(index);
+		deletionHandler.deleteStep(testCase, testStep);
+	}
+
 	/*
 	 * given a TestCase, will search for a TestStep in the steps list (identified with its testStepId)
 	 * 

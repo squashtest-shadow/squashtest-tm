@@ -311,7 +311,7 @@ public class FacilityImpl implements Facility {
 		if (!train.hasCriticalErrors()) {
 			try {
 				doDeleteTestStep(target);
-				model.remove(target);
+				// model.remove(target); already done in the SimulationFacility
 			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
@@ -621,8 +621,8 @@ public class FacilityImpl implements Facility {
 	}
 
 	private void doDeleteTestStep(TestStepTarget target) {
-		TestStep actual = model.getStep(target);
-		testcaseModificationService.removeStepFromTestCase(actual.getTestCase().getId(), actual.getId());
+		TestCase tc = model.get(target.getTestCase());
+		testcaseModificationService.removeStepFromTestCaseByIndex(tc.getId(), target.getIndex());
 	}
 
 	private void doCreateParameter(ParameterTarget target, Parameter param) {

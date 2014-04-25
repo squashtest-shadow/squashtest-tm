@@ -75,6 +75,8 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 
 	void removeStepFromTestCase(long testCaseId, long testStepId);
 
+	void removeStepFromTestCaseByIndex(long testCaseId, int stepIndex);
+
 	List<TestStep> removeListOfSteps(long testCaseId, List<Long> testStepIds);
 
 	/**
