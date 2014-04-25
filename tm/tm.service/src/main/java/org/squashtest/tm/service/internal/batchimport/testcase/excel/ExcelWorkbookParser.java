@@ -98,7 +98,6 @@ public class ExcelWorkbookParser {
 	private final Map<TemplateWorksheet, Factory<?>> instructionBuilderFactoryByWorksheet = new HashMap<TemplateWorksheet, Factory<?>>(
 			4);
 
-
 	/**
 	 * Should be used by ExcelWorkbookParserBuilder only.
 	 * 
@@ -179,9 +178,10 @@ public class ExcelWorkbookParser {
 		for (int i = 1; i <= sheet.getLastRowNum(); i++) {
 			LOGGER.trace("Creating instruction for row {}", i);
 			Row row = sheet.getRow(i);
-
-			Instruction instruction = instructionBuilder.build(row);
-			instructionsByWorksheet.get(worksheetDef.getWorksheetType()).add(instruction);
+			if (row != null) {
+				Instruction instruction = instructionBuilder.build(row);
+				instructionsByWorksheet.get(worksheetDef.getWorksheetType()).add(instruction);
+			}
 
 		}
 	}
@@ -189,6 +189,7 @@ public class ExcelWorkbookParser {
 	/**
 	 * Releases resources held by this parser. The result of parsing is still available but the {@link #parse()} method
 	 * should no longer be called.
+	 * 
 	 * @return this
 	 */
 	public ExcelWorkbookParser releaseResources() {
@@ -214,14 +215,11 @@ public class ExcelWorkbookParser {
 		return (List) instructionsByWorksheet.get(PARAMETERS_SHEET); // useless (List) cast required for compiler not to
 		// whine
 	}
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<DatasetInstruction> getDatasetInstructions() {
 		return (List) instructionsByWorksheet.get(DATASETS_SHEET); // useless (List) cast required for compiler not to
 		// whine
 	}
-
-
-
-
 
 }
