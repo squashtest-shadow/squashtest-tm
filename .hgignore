@@ -115,6 +115,7 @@ tm/tm\.testautomation\.api/META-INF$
 plugins/plugin.testautomation.jenkins/META-INF
 /tm\.web/images$
 /tm\.web/scripts$
+/tm\.web/static$
 /tm\.web/WEB-INF$
 ^core/core.dynamicmanager/META-INF
 core/core.jasperreport.fragment/META-INF/*
