@@ -475,6 +475,12 @@
               <targetPath>${js.packageDirectory}</targetPath>
               <filtering>true</filtering>
             </resource>
+             <resource>
+              <!-- includes rjs-optimized javascript -->
+              <directory>src/main/webapp/static</directory>
+              <targetPath>static</targetPath>
+              <filtering>false</filtering>
+            </resource>
           </webResources>
           <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
           <archive>
@@ -848,6 +854,24 @@
                   </resources>
                 </configuration>
               </execution>
+              
+               <execution>
+                <id>copy-static-to-web-inf</id>
+                <phase>process-resources</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+
+                <configuration>
+                  <outputDirectory>static</outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>src/main/webapp/static</directory>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+              
 
               <execution>
                 <id>copy-processed-css</id>
@@ -866,7 +890,7 @@
                   </resources>
                 </configuration>
               </execution>
-
+              
               <execution>
                 <id>copy-optimized-js</id>
                 <phase>package</phase>

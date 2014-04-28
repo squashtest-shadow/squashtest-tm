@@ -184,7 +184,8 @@
 						<p class="nota-bene">
 							<f:message key="test-case.import.dialog.excel.description"/>
 						</p>
-						<a href="" target="_blank">
+           	            <f:message var="xlsFileName" key="file.testcase.import.template.xls"/>
+						<a href="${servContext }/static/${xlsFileName}">
 							<f:message key="test-case.import.dialog.excel.template"/>
 						</a>			
 					</div>
@@ -194,7 +195,8 @@
 						<p class="nota-bene">
 							<f:message key="test-case.import.dialog.zip.description"/>
 						</p>			
-						<a href="" target="_blank">
+                        <f:message var="zipFileName" key="file.testcase.import.template.zip"/>
+						<a href="${servContext }/static/${zipFileName}">
 							<f:message key="test-case.import.dialog.zip.template"/>
 						</a>
 					</div>

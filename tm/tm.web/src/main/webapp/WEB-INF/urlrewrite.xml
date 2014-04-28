@@ -45,6 +45,10 @@
 		<to>/scripts/$1</to>
 	</rule>
   <rule>
+    <from>/static/**</from>
+    <to>/static/$1</to>
+  </rule>
+  <rule>
     <from>/SpecRunner.html</from>
     <to>/SpecRunner.html</to>
   </rule>

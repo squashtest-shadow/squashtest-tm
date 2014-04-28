@@ -110,6 +110,7 @@
   <!-- Placeholders below are interpolated by maven. The @placeholder@ syntax would be clearer but it does not work in this file -->
   <mvc:resources location="/images/" mapping="/images/**" cache-period="${client.cache.max.age}" />
   <mvc:resources location="/scripts/" mapping="/scripts/**" cache-period="${client.cache.max.age}" />
+  <mvc:resources location="/static/" mapping="/static/**" cache-period="${client.cache.max.age}" />
   <mvc:resources location="/styles/" mapping="/styles/**" cache-period="${client.cache.max.age}" />
   <mvc:resources location="/styles/" mapping="/styles-*/**" cache-period="${client.cache.max.age}" />
 
