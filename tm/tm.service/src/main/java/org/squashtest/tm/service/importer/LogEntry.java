@@ -22,7 +22,7 @@ package org.squashtest.tm.service.importer;
 
 public class LogEntry implements Comparable<LogEntry> {
 	private Integer line;
-	private final Target target;
+	private Target target;
 	private ImportMode mode;
 	private final ImportStatus status;
 	private final String i18nError;
@@ -142,4 +142,7 @@ public class LogEntry implements Comparable<LogEntry> {
 		this.i18nImpact = i18nImpact;
 	}
 
+	public void setTarget(Target target){
+		this.target = target;
+	}
 }

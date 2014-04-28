@@ -26,6 +26,7 @@ import java.util.List;
 import org.squashtest.tm.service.importer.ImportMode;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
+import org.squashtest.tm.service.importer.Target;
 
 public class LogTrain {
 
@@ -75,6 +76,12 @@ public class LogTrain {
 	void setForAll(ImportMode mode){
 		for (LogEntry entry : entries) {
 			entry.setMode(mode);
+		}
+	}
+
+	void setForAll(Target target){
+		for (LogEntry entry : entries){
+			entry.setTarget(target);
 		}
 	}
 

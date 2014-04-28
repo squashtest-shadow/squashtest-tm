@@ -49,7 +49,7 @@ final class Utils {
 	 * end with a slash), and contains at least two elements (the project name and element name in case it's at the root
 	 * of the library).
 	 */
-	private static final Pattern WELL_FORMED_PATH = Pattern.compile("^\\/(.+?[^\\\\]/)+.+?(\\\\\\/$|[^\\/]$)");
+	private static final Pattern WELL_FORMED_PATH = Pattern.compile("^\\/(.+?[^\\\\]/)+.*?(\\\\\\/$|[^\\/]$)");
 
 	/**
 	 * the first element of slash-separated names is the project name. Beware that escaped slashes aren't actual

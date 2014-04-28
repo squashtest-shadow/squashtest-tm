@@ -429,6 +429,11 @@ public class ValidationFacility implements Facility {
 		// 2 - is the parameter correctly identified ?
 		logs.append(entityValidator.basicParameterChecks(param));
 
+		// in this context specifically we set the target explicitly as being the dataset, not the parameter
+		// (or the logs will be reported at the wrong place)
+		logs.setForAll(dataset);
+
+
 		// go further if no blocking errors are detected
 		if (!logs.hasCriticalErrors()) {
 			// 3 - does the dataset exists ?
