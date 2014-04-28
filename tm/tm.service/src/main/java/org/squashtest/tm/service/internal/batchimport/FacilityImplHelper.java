@@ -43,10 +43,10 @@ final class FacilityImplHelper {
 	}
 
 	/**
-	 * Will replace {@code mixin.createdBy} and {@codemixin.createdOn} if it's values are invalid :
+	 * Will replace {@code mixin.createdBy} and {@code mixin.createdOn} if the values are invalid :
 	 * <ul>
-	 * <li>{@codemixin.createdBy} will be replaced by the current user's login</li>
-	 * <li>{@codemixin.createdOn} will be replaced by the import date.</li>
+	 * <li>{@code mixin.createdBy} will be replaced by the current user's login</li>
+	 * <li>{@code mixin.createdOn} will be replaced by the import date.</li>
 	 * </ul>
 	 * 
 	 * @param mixin
@@ -54,12 +54,10 @@ final class FacilityImplHelper {
 	 */
 	void fixMetadatas(AuditableMixin mixin, String currentUserLogin) {
 		if (StringUtils.isBlank(mixin.getCreatedBy())) {
-
 			mixin.setCreatedBy(currentUserLogin);
 		}
 
 		if (mixin.getCreatedOn() == null) {
-
 			mixin.setCreatedOn(new Date());
 		}
 
