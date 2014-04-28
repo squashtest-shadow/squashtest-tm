@@ -116,7 +116,7 @@ class ExcelWorkbookParserTest extends Specification {
 
 
 		and:
-		def stepPaths = (1..8).collect { "owner/path/$it" }
+		def stepPaths = (1..8).collect { "owner/path/$it/steps/"+(it+9) }
 		def stepNums = (1..8).collect { it + 9 } // indexes are 0-based while 1-based in xls
 		def stepActions = (1..8).collect { "action$it" }
 		def stepReactions = (1..8).collect { "result$it" }
@@ -133,7 +133,7 @@ class ExcelWorkbookParserTest extends Specification {
 		def paramInstructions = parser.getParameterInstructions()
 
 		and:
-		def paramPaths = (1..8).collect { "owner/path/$it" }
+		def paramPaths = (1..8).collect { "owner/path/$it/parameters/null" }
 		def paramNames = (1..8).collect { "name$it" }
 		def paramDescs = (1..8).collect { "desc$it" }
 		def paramActions = [CREATE, CREATE, UPDATE, UPDATE, DELETE, DELETE, UPDATE, null]
@@ -148,7 +148,7 @@ class ExcelWorkbookParserTest extends Specification {
 		def datasetInstructions = parser.getDatasetInstructions()
 
 		and:
-		def datasetPaths = (1..8).collect { "owner/path/$it" }
+		def datasetPaths = (1..8).collect { "owner/path/$it/datasets/name$it" }
 		def datasetParamOwnerPaths = (1..8).collect { "param/owner/path/$it" }
 		def datasetNames = (1..8).collect { "name$it" }
 		def datasetParamNames = (1..8).collect { "paramName$it" }
@@ -177,7 +177,7 @@ class ExcelWorkbookParserTest extends Specification {
 		def stepInstructions = parser.getTestStepInstructions().findAll { it instanceof CallStepInstruction }
 
 		and:
-		def stepPaths = (1..3).collect { "owner/path/$it" }
+		def stepPaths = (1..3).collect { "owner/path/$it/steps/null" }
 		def stepActions = (1..3).collect { "/path/$it" }
 
 		then:

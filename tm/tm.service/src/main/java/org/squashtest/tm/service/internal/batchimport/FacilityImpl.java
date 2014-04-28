@@ -158,6 +158,8 @@ public class FacilityImpl implements Facility {
 
 			remember(target);
 
+			LOGGER.debug("Excel import : Created Test Case \t'" + target + "'");
+
 		} catch (Exception ex) {
 			train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 					new Object[] { ex.getClass().getName() }));
@@ -188,6 +190,9 @@ public class FacilityImpl implements Facility {
 					doUpdateTestcase(target, testCase, cufValues);
 
 					remember(target);
+
+					LOGGER.debug("Excel import : Updated Test Case \t'" + target + "'");
+
 				}
 				catch (Exception ex) {
 					train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
@@ -212,6 +217,8 @@ public class FacilityImpl implements Facility {
 
 				doDeleteTestCase(target);
 				validator.getModel().setDeleted(target);
+
+				LOGGER.debug("Excel import : Deleted Test Case \t'" + target + "'");
 
 			}
 			catch (Exception ex) {
@@ -238,6 +245,8 @@ public class FacilityImpl implements Facility {
 				doAddActionStep(target, testStep, cufValues);
 				validator.getModel().addActionStep(target);
 
+				LOGGER.debug("Excel import : Created Action Step \t'" + target + "'");
+
 			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
@@ -261,6 +270,8 @@ public class FacilityImpl implements Facility {
 				remember(target.getTestCase());
 				validator.getModel().addCallStep(target, calledTestCase);
 
+				LOGGER.debug("Excel import : Created Call Step \t'" + target + "' -> '" + calledTestCase + "'");
+
 			}
 			catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
@@ -281,6 +292,8 @@ public class FacilityImpl implements Facility {
 			try {
 				helper.truncate(testStep, cufValues);
 				doUpdateActionStep(target, testStep, cufValues);
+
+				LOGGER.debug("Excel import : Updated Action Step \t'" + target + "'");
 			}
 			catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
@@ -301,6 +314,8 @@ public class FacilityImpl implements Facility {
 			try {
 				doUpdateCallStep(target, testStep, calledTestCase);
 				validator.getModel().updateCallStepTarget(target, calledTestCase);
+
+				LOGGER.debug("Excel import : Created Call Step \t'" + target + "' -> '" + calledTestCase + "'");
 			}
 			catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
@@ -321,6 +336,8 @@ public class FacilityImpl implements Facility {
 			try {
 				doDeleteTestStep(target);
 				validator.getModel().remove(target);
+
+				LOGGER.debug("Excel import : Deleted Step \t'" + target + "'");
 
 			}
 			catch (Exception ex) {
@@ -343,6 +360,8 @@ public class FacilityImpl implements Facility {
 				doCreateParameter(target, param);
 				validator.getModel().addParameter(target);
 				remember(target.getOwner());
+
+				LOGGER.debug("Excel import : Created Parameter \t'" + target + "'");
 			}
 			catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
@@ -364,6 +383,8 @@ public class FacilityImpl implements Facility {
 				doUpdateParameter(target, param);
 				validator.getModel().addParameter(target);	// create the parameter if didn't exist already. Double-insertion proof.
 				remember(target.getOwner());
+
+				LOGGER.debug("Excel import : Updated Parameter \t'" + target + "'");
 			}
 			catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
@@ -384,6 +405,8 @@ public class FacilityImpl implements Facility {
 			try {
 				doDeleteParameter(target);
 				validator.getModel().removeParameter(target);
+
+				LOGGER.debug("Excel import : Deleted Parameter \t'" + target + "'");
 			}
 			catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
@@ -409,6 +432,7 @@ public class FacilityImpl implements Facility {
 				remember(dataset.getTestCase());
 				remember(param.getOwner());
 
+				LOGGER.debug("Excel import : Updated Param Value for param \t'" + param + "' in dataset '" + dataset + "'");
 			}
 			catch (Exception ex) {
 				train.addEntry(new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
@@ -432,6 +456,8 @@ public class FacilityImpl implements Facility {
 
 				validator.getModel().removeDataset(dataset);
 				remember(dataset.getTestCase());
+
+				LOGGER.debug("Excel import : Deleted Dataset '" + dataset + "'");
 
 			} catch (Exception ex) {
 				train.addEntry(new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
@@ -720,6 +746,9 @@ public class FacilityImpl implements Facility {
 			helper.fillNullWithDefaults(newds);
 			helper.truncate(newds);
 			datasetService.persist(newds, tcid);
+
+			LOGGER.debug("Excel import : Created Dataset \t'" + dataset + "'");
+
 			return newds;
 		}
 	}

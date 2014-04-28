@@ -78,8 +78,8 @@ class StepInstructionBuilderTest extends Specification {
 
 		where:
 		col				| cellType					| cellValue			| propName			| propValue
-		TC_OWNER_PATH	| Cell.CELL_TYPE_STRING		| "here/i/am"		| "path"			| "here/i/am"
-		TC_OWNER_PATH	| Cell.CELL_TYPE_BLANK		| null				| "path"			| null
+		TC_OWNER_PATH	| Cell.CELL_TYPE_STRING		| "here/i/am"		| "path"			| "here/i/am/steps/null"
+		TC_OWNER_PATH	| Cell.CELL_TYPE_BLANK		| null				| "path"			| "null/steps/null"
 
 		TC_STEP_NUM 	| Cell.CELL_TYPE_NUMERIC	| 20				| "index"			| 19
 		TC_STEP_NUM 	| Cell.CELL_TYPE_STRING		| "20"				| "index"			| 19

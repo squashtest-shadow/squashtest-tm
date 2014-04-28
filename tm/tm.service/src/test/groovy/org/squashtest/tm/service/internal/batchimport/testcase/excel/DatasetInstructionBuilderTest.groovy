@@ -78,8 +78,8 @@ class DatasetInstructionBuilderTest extends Specification {
 
 		where:
 		col				| cellType					| cellValue			| propName			| propValue
-		TC_OWNER_PATH	| Cell.CELL_TYPE_STRING		| "here/i/am"		| "path"			| "here/i/am"
-		TC_OWNER_PATH	| Cell.CELL_TYPE_BLANK		| null				| "path"			| null
+		TC_OWNER_PATH	| Cell.CELL_TYPE_STRING		| "/here/i/am"		| "path"			| "/here/i/am/datasets/null"
+		TC_OWNER_PATH	| Cell.CELL_TYPE_BLANK		| null				| "path"			| "null/datasets/null"
 
 		TC_DATASET_NAME	| Cell.CELL_TYPE_STRING		| "my name"			| "name"			| "my name"
 		TC_DATASET_NAME	| Cell.CELL_TYPE_BLANK		| null				| "name"			| null

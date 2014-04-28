@@ -111,9 +111,25 @@ TestCaseLibraryNodeDao {
 			// now ensures that the results are returned in the correct order
 			Long[] toReturn = new Long[effectiveParameters.size()];
 
+			/*
+			 * There is one case where the database could return a path we haven't requested :
+			 * the DB is MySQL and the charset is case insensitive for select
+			 * (see http://dev.mysql.com/doc/refman/5.0/en/case-sensitivity.html)
+			 * 
+			 * This leads to problem because our system is always case sensitive : MySQL could
+			 * return paths it considers valid (give or take a couple of uppercased letters)
+			 * that weren't queried for.
+			 * 
+			 * That's why we test again that the result from the DB actually has a positive index
+			 * before assigning it to the result.
+			 * 
+			 */
 			for (Object[] res : result) {
 				String path = (String) res[0];
-				toReturn[effectiveParameters.indexOf(path)] = ((BigInteger) res[1]).longValue();
+				int idx = effectiveParameters.indexOf(path);
+				if (idx>-1) {
+					toReturn[effectiveParameters.indexOf(path)] = ((BigInteger) res[1]).longValue();
+				}
 			}
 
 			return Arrays.asList(toReturn);
@@ -136,7 +152,7 @@ TestCaseLibraryNodeDao {
 		query.setParameterList("paths", new String[] { effectiveParameters });
 		List<Object[]> result = query.list();
 
-		if (result.isEmpty()) {
+		if (result.isEmpty() || ! path.equals(result.get(0)[0])) {
 			return null;
 		}
 

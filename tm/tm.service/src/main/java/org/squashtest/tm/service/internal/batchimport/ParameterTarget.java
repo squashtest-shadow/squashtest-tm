@@ -39,7 +39,7 @@ public class ParameterTarget extends Target{
 		return EntityType.PARAMETER;
 	}
 
-	
+
 	public ParameterTarget(TestCaseTarget owner, String name){
 		this.owner = owner;
 		this.name = name;
@@ -72,23 +72,30 @@ public class ParameterTarget extends Target{
 	// GENERATED:START
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		ParameterTarget other = (ParameterTarget) obj;
 		if (name == null) {
-			if (other.name != null)
+			if (other.name != null) {
 				return false;
-		} else if (!name.equals(other.name))
+			}
+		} else if (!name.equals(other.name)) {
 			return false;
+		}
 		if (owner == null) {
-			if (other.owner != null)
+			if (other.owner != null) {
 				return false;
-		} else if (!owner.equals(other.owner))
+			}
+		} else if (!owner.equals(other.owner)) {
 			return false;
+		}
 		return true;
 	}
 	// GENERATED:END
@@ -108,7 +115,7 @@ public class ParameterTarget extends Target{
 	 * @see org.squashtest.tm.service.internal.batchimport.TestCaseTarget#getPath()
 	 */
 	public String getPath() {
-		return owner.getPath();
+		return owner.getPath()+"/parameters/"+name;
 	}
 
 	/**
@@ -118,10 +125,10 @@ public class ParameterTarget extends Target{
 	public void setPath(String path) {
 		owner.setPath(path);
 	}
-	
+
 	@Override
 	public String toString(){
-		return name;
+		return getPath();
 	}
 
 }

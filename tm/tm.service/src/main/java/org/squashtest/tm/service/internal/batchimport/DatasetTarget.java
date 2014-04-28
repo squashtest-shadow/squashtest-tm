@@ -33,13 +33,13 @@ public class DatasetTarget extends Target {
 		testCase = new TestCaseTarget();
 	}
 
-	
+
 	public DatasetTarget(TestCaseTarget testCase, String name){
 		super();
 		this.testCase = testCase;
 		this.name = name;
 	}
-	
+
 	@Override
 	public EntityType getType() {
 		return EntityType.DATASET;
@@ -110,7 +110,7 @@ public class DatasetTarget extends Target {
 	 * @see org.squashtest.tm.service.internal.batchimport.TestCaseTarget#getPath()
 	 */
 	public String getPath() {
-		return testCase.getPath();
+		return testCase.getPath()+"/datasets/"+name;
 	}
 
 	/**
@@ -120,10 +120,10 @@ public class DatasetTarget extends Target {
 	public void setPath(String path) {
 		testCase.setPath(path);
 	}
-	
+
 	@Override
 	public String toString(){
-		return name;
+		return getPath();
 	}
 
 }

@@ -78,8 +78,8 @@ class ParameterInstructionBuilderTest extends Specification {
 
 		where:
 		col				| cellType					| cellValue			| propName			| propValue
-		TC_OWNER_PATH	| Cell.CELL_TYPE_STRING		| "here/i/am"		| "path"			| "here/i/am"
-		TC_OWNER_PATH	| Cell.CELL_TYPE_BLANK		| null				| "path"			| null
+		TC_OWNER_PATH	| Cell.CELL_TYPE_STRING		| "here/i/am"		| "path"			| "here/i/am/parameters/null"
+		TC_OWNER_PATH	| Cell.CELL_TYPE_BLANK		| null				| "path"			| "null/parameters/null"
 
 	}
 
