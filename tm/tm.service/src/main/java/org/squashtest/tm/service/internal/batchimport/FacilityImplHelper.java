@@ -131,13 +131,9 @@ final class FacilityImplHelper {
 
 	void truncate(TestCase testCase, Map<String, String> cufValues) {
 		String name = testCase.getName();
-		if (name != null) {
-			testCase.setName(truncate(name, 255));
-		}
+		testCase.setName(truncate(name, 255));
 		String ref = testCase.getReference();
-		if (ref != null) {
-			testCase.setReference(truncate(ref, 50));
-		}
+		testCase.setReference(truncate(ref, 50));
 
 		for (Entry<String, String> cuf : cufValues.entrySet()) {
 			String value = cuf.getValue();
@@ -154,19 +150,28 @@ final class FacilityImplHelper {
 
 	void truncate(Parameter param) {
 		String name = param.getName();
-		if (name != null) {
-			param.setName(truncate(name, 255));
-		}
+		param.setName(truncate(name, 255));
 	}
 
 	void truncate(Dataset ds) {
 		String name = ds.getName();
-		if (name != null) {
-			ds.setName(truncate(name, 255));
-		}
+		ds.setName(truncate(name, 255));
 	}
 
+	/**
+	 * Will trucate the input str if it is longer than the given cap value.
+	 * 
+	 * @param str
+	 *            : the string to truncate
+	 * @param cap
+	 *            : the maximum number of characters to live in the truncated string
+	 * @return : the truncated string or {@code null} if str was {@code null}.
+	 */
 	String truncate(String str, int cap) {
-		return str.substring(0, Math.min(str.length(), cap));
+		if (str != null) {
+			return str.substring(0, Math.min(str.length(), cap));
+		} else {
+			return null;
+		}
 	}
 }

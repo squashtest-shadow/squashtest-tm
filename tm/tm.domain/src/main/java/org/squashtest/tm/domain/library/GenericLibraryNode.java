@@ -49,16 +49,16 @@ import org.squashtest.tm.domain.search.UpperCasedStringBridge;
  */
 @MappedSuperclass
 public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolder {
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "PROJECT_ID")
 	@IndexedEmbedded
 	private Project project;
 
 	@NotBlank
 	@Fields({
-			@Field,
-			@Field(name = "label", analyze = Analyze.NO, store = Store.YES),
-			@Field(name = "labelUpperCased", analyze = Analyze.NO, store = Store.YES, bridge = @FieldBridge(impl = UpperCasedStringBridge.class)), })
+		@Field,
+		@Field(name = "label", analyze = Analyze.NO, store = Store.YES),
+		@Field(name = "labelUpperCased", analyze = Analyze.NO, store = Store.YES, bridge = @FieldBridge(impl = UpperCasedStringBridge.class)), })
 	@Size(min = 0, max = MAX_NAME_SIZE)
 	private String name;
 
@@ -81,7 +81,9 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 
 	@Override
 	public void setName(String name) {
-		this.name = name.trim();
+		if (name != null) {
+			this.name = name.trim();
+		}
 	}
 
 	public void setDescription(String description) {
@@ -114,32 +116,29 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 		return attachmentList;
 	}
 
-
 	// ******************* other utilities ****************************
-	
+
 	/*
 	 * Issue 1713
 	 * 
-	 * Due to the mixed use of actual instances and javassist proxies, comparisons may fail. Thus the 
-	 * redefinition of hashCode() and equals() below, that take account of the lazy loading and 
-	 * the fact that the compared objects may be of different classes. 
-	 * 
+	 * Due to the mixed use of actual instances and javassist proxies, comparisons may fail. Thus the redefinition of
+	 * hashCode() and equals() below, that take account of the lazy loading and the fact that the compared objects may
+	 * be of different classes.
 	 */
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 67;
 		int result = 3;
-		result = prime * result
-				+ ((getAttachmentList() == null) ? 0 : getAttachmentList().hashCode());
-		result = prime * result
-				+ ((getDescription() == null) ? 0 : getDescription().hashCode());
+		result = prime * result + ((getAttachmentList() == null) ? 0 : getAttachmentList().hashCode());
+		result = prime * result + ((getDescription() == null) ? 0 : getDescription().hashCode());
 		result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
 		result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
 		return result;
 	}
 
-	@Override //NOSONAR code generation, assumed to be safe
+	@Override
+	// NOSONAR code generation, assumed to be safe
 	public boolean equals(Object obj) {// GENERATED:START
 		if (this == obj) {
 			return true;
@@ -147,7 +146,7 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 		if (obj == null) {
 			return false;
 		}
-		if (! ( this.getClass().isAssignableFrom(obj.getClass()) || obj.getClass().isAssignableFrom(getClass()) )) {
+		if (!(this.getClass().isAssignableFrom(obj.getClass()) || obj.getClass().isAssignableFrom(getClass()))) {
 			return false;
 		}
 		GenericLibraryNode other = (GenericLibraryNode) obj;

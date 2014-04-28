@@ -40,7 +40,7 @@ public class DatasetParamValue implements Identified {
 	private Long id;
 
 	@NotNull
-	@ManyToOne(cascade={CascadeType.PERSIST})
+	@ManyToOne(cascade = { CascadeType.PERSIST })
 	@JoinColumn(name = "PARAM_ID", referencedColumnName = "PARAM_ID")
 	private Parameter parameter;
 
@@ -55,12 +55,14 @@ public class DatasetParamValue implements Identified {
 	public DatasetParamValue() {
 		super();
 	}
-	public DatasetParamValue(Parameter parameter, Dataset dataset){
+
+	public DatasetParamValue(Parameter parameter, Dataset dataset) {
 		this();
 		this.parameter = parameter;
 		this.dataset = dataset;
 		this.dataset.addParameterValue(this);
 	}
+
 	public DatasetParamValue(Parameter parameter, Dataset dataset, String paramValue) {
 		this(parameter, dataset);
 		this.paramValue = paramValue;
