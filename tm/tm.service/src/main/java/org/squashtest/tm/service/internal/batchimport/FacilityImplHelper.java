@@ -35,6 +35,7 @@ import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.testcase.TestCaseType;
+import org.squashtest.tm.service.user.UserAccountService;
 
 final class FacilityImplHelper {
 
@@ -50,11 +51,11 @@ final class FacilityImplHelper {
 	 * </ul>
 	 * 
 	 * @param mixin
-	 * @param currentUserLogin
+	 * @param userAccountService
 	 */
-	void fixMetadatas(AuditableMixin mixin, String currentUserLogin) {
+	void fixMetadatas(AuditableMixin mixin, UserAccountService userAccountService) {
 		if (StringUtils.isBlank(mixin.getCreatedBy())) {
-			mixin.setCreatedBy(currentUserLogin);
+			mixin.setCreatedBy(userAccountService.findCurrentUser().getLogin());
 		}
 
 		if (mixin.getCreatedOn() == null) {

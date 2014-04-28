@@ -491,7 +491,7 @@ public class FacilityImpl implements Facility {
 		Map<Long, String> acceptableCufs = toAcceptableCufs(cufValues);
 
 		// backup the audit log
-		helper.fixMetadatas((AuditableMixin) testCase, userAccountService.findCurrentUser().getLogin());
+		helper.fixMetadatas((AuditableMixin) testCase, userAccountService);
 
 		// case 1 : this test case lies at the root of the project
 		if (target.isRootTestCase()) {
@@ -527,7 +527,7 @@ public class FacilityImpl implements Facility {
 		Long origId = orig.getId();
 
 		// backup the audit log
-		helper.fixMetadatas((AuditableMixin) testCase, userAccountService.findCurrentUser().getLogin());
+		helper.fixMetadatas((AuditableMixin) testCase, userAccountService);
 
 		// update the test case core attributes
 
