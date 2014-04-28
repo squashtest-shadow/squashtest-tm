@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -41,31 +42,27 @@ final class FacilityImplHelper {
 		super();
 	}
 
-	AuditableSupport saveAuditMetadata(AuditableMixin mixin) {
-		AuditableSupport support = new AuditableSupport();
-		support.setCreatedBy(mixin.getCreatedBy());
-		support.setLastModifiedBy(mixin.getLastModifiedBy());
-		support.setCreatedOn(mixin.getCreatedOn());
-		support.setLastModifiedOn(mixin.getLastModifiedOn());
-		return support;
-	}
+	/**
+	 * Will replace {@code mixin.createdBy} and {@codemixin.createdOn} if it's values are invalid :
+	 * <ul>
+	 * <li>{@codemixin.createdBy} will be replaced by the current user's login</li>
+	 * <li>{@codemixin.createdOn} will be replaced by the import date.</li>
+	 * </ul>
+	 * 
+	 * @param mixin
+	 * @param currentUserLogin
+	 */
+	void fixMetadatas(AuditableMixin mixin, String currentUserLogin) {
+		if (StringUtils.isBlank(mixin.getCreatedBy())) {
 
-	void restoreMetadata(AuditableMixin mixin, AuditableSupport saved) {
-		if (!StringUtils.isBlank(saved.getCreatedBy())) {
-			mixin.setCreatedBy(saved.getCreatedBy());
+			mixin.setCreatedBy(currentUserLogin);
 		}
 
-		if (!StringUtils.isBlank(saved.getLastModifiedBy())) {
-			mixin.setLastModifiedBy(saved.getLastModifiedBy());
+		if (mixin.getCreatedOn() == null) {
+
+			mixin.setCreatedOn(new Date());
 		}
 
-		if (saved.getCreatedOn() != null) {
-			mixin.setCreatedOn(saved.getCreatedOn());
-		}
-
-		if (saved.getLastModifiedOn() != null) {
-			mixin.setLastModifiedOn(saved.getLastModifiedOn());
-		}
 	}
 
 	/**

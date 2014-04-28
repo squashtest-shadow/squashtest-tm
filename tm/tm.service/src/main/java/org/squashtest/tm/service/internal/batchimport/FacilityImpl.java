@@ -68,6 +68,7 @@ import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.service.testcase.TestStepModificationService;
+import org.squashtest.tm.service.user.UserAccountService;
 
 /**
  * 
@@ -120,6 +121,8 @@ public class FacilityImpl implements Facility {
 	@Inject
 	private CustomFieldDao cufDao;
 
+	@Inject
+	private UserAccountService userAccountService;
 
 	private FacilityImplHelper helper = new FacilityImplHelper();
 
@@ -462,7 +465,7 @@ public class FacilityImpl implements Facility {
 		Map<Long, String> acceptableCufs = toAcceptableCufs(cufValues);
 
 		// backup the audit log
-		AuditableSupport metadata = helper.saveAuditMetadata((AuditableMixin) testCase);
+		helper.fixMetadatas((AuditableMixin) testCase, userAccountService.findCurrentUser().getLogin());
 
 		// case 1 : this test case lies at the root of the project
 		if (target.isRootTestCase()) {
@@ -482,8 +485,6 @@ public class FacilityImpl implements Facility {
 			navigationService.addTestCaseToFolder(folderId, testCase, acceptableCufs);
 		}
 
-		// restore the audit log
-		helper.restoreMetadata((AuditableMixin) testCase, metadata);
 	}
 
 	private void renameIfNeeded(TestCase testCase, Collection<String> siblingNames) {
@@ -500,7 +501,7 @@ public class FacilityImpl implements Facility {
 		Long origId = orig.getId();
 
 		// backup the audit log
-		AuditableSupport metadata = helper.saveAuditMetadata((AuditableMixin) testCase);
+		helper.fixMetadatas((AuditableMixin) testCase, userAccountService.findCurrentUser().getLogin());
 
 		// update the test case core attributes
 
@@ -559,9 +560,6 @@ public class FacilityImpl implements Facility {
 				v.setValue(newValue);
 			}
 		}
-
-		// restore the audit log
-		helper.restoreMetadata((AuditableMixin) testCase, metadata);
 
 	}
 
