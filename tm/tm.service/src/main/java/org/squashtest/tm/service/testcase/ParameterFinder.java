@@ -32,7 +32,17 @@ import org.squashtest.tm.domain.testcase.Parameter;
  */
 @Transactional(readOnly = true)
 public interface ParameterFinder {
-	
+
+
+	/**
+	 * Given a test case id, will find the parameters that are proper to that test case. Inherited parameters
+	 * will not be returned, for this see {@link #findAllforTestCase(long)} instead.
+	 * 
+	 * @param testCaseId
+	 * @return returns a list of parameters ordered by name
+	 */
+	List<Parameter> findForTestCase(long testCaseId);
+
 	/**
 	 * Will find all parameters for the test case along with all parameters found for the call steps.
 	 * 
@@ -40,14 +50,15 @@ public interface ParameterFinder {
 	 * @return returns a list of parameters ordered by test case and name
 	 */
 	List<Parameter> findAllforTestCase(long testCaseId);
-	
+
+
 	/**
 	 * Simply find the parameter matching the given id
 	 * @param parameterId : the id of the {@link Parameter} to find
 	 * @return the {@link Parameter} matching the id or <code>null</code>
 	 */
 	Parameter findById(long parameterId);
-	
+
 	/**
 	 * Returns true if the parameter is used in one of it's test case action steps
 	 * 

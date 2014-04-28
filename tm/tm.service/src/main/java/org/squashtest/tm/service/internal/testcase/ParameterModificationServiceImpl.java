@@ -60,6 +60,12 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	@Inject
 	private TestCaseCallTreeFinder callTreeFinder;
 
+
+	@Override
+	public List<Parameter> findForTestCase(long testCaseId) {
+		return parameterDao.findAllByTestCase(testCaseId);
+	}
+
 	/**
 	 * @see
 	 */

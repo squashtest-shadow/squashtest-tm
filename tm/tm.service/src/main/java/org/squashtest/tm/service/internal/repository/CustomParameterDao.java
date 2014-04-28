@@ -25,11 +25,13 @@ import java.util.List;
 import org.squashtest.tm.domain.testcase.Parameter;
 
 public interface CustomParameterDao {
-	
+
+	// XXX the name of that method is very misleading when compared with ParameterFinder#findAllforTestCase because unlike the service the dao
+	// method will NOT bring up the inherited parameters
 	List<Parameter> findAllByTestCase(Long testcaseId);
 
 	List<Parameter> findAllByTestCases(List<Long> testcaseIds);
-	
+
 	List<Parameter> findAllByNameAndTestCases(String name, List<Long> testcaseIds);
 
 	Parameter findParameterByNameAndTestCase(String name, Long testcaseId);

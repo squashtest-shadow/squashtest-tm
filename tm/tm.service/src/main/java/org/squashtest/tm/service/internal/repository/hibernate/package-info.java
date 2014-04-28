@@ -244,7 +244,7 @@
 
 		//TestParameters
 		@NamedQuery(name = "parameter.findAllByTestCases", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id in (:testCaseIds) order by testCase.name,  parameter.name "),
-		@NamedQuery(name = "parameter.findAllByTestCase", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id = :testCaseId order by testCase.name,  parameter.name "),
+		@NamedQuery(name = "parameter.findAllByTestCase", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id = :testCaseId order by parameter.name "),
 		@NamedQuery(name = "parameter.findParameterByNameAndTestCase", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id = :testCaseId and parameter.name = :name "),
 		@NamedQuery(name = "parameter.findAllByNameAndTestCases", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id in (:testCaseIds) and parameter.name = :name "),
 		@NamedQuery(name = "Parameter.removeAllByTestCaseIds", query = "delete Parameter pm where pm.testCase.id in (:testCaseIds)"),
