@@ -70,10 +70,10 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 	}
 	public RequirementFolder(Date createdOn, String createdBy) {
 		AuditableMixin audit = ((AuditableMixin) this);
-		
+
 		audit.setCreatedOn(createdOn);
 		audit.setCreatedBy(createdBy);
-		
+
 		resource = new SimpleResource();
 	}
 	@Override
@@ -85,12 +85,12 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 	public void accept(RequirementLibraryNodeVisitor visitor) {
 		visitor.visit(this);
 	}
-	
+
 	@Override
 	public void accept(NodeContainerVisitor visitor) {
 		visitor.visit(this);
 	}
-	
+
 
 	@Override
 	public void removeContent(RequirementLibraryNode contentToRemove) throws NullArgumentException {
@@ -105,24 +105,23 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 
 	@Override
 	public void addContent(RequirementLibraryNode node, int position) {
-		if(position >= content.size()){
-			folderSupport.addContent(node);
-		} else {
-			folderSupport.addContent(node, position);
-		}
+		folderSupport.addContent(node, position);
+		// the following enforces that hibernate reinsert the data with their index,
+		// and makes sure it works along the triggers.
+		content = new ArrayList<RequirementLibraryNode>(content);
 	}
-	
+
 	@Override
 	public boolean isContentNameAvailable(String name) {
 		return folderSupport.isContentNameAvailable(name);
 	}
-	
+
 	@Override
 	public RequirementFolder createCopy() {
 		return (RequirementFolder) folderSupport.createCopy(new RequirementFolder());
 	}
-	
-	
+
+
 	@Override
 	public void notifyAssociatedWithProject(Project project) {
 		Project former = getProject();
@@ -162,13 +161,13 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 
 	public void emptyContent() {
 		this.content.clear();
-		
+
 	}
 	@Override
 	public void accept(NodeVisitor visitor) {
 		visitor.visit(this);
 	}
-	
+
 	@Override
 	public List<String> getContentNames() {
 		return folderSupport.getContentNames();
