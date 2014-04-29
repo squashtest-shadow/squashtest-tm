@@ -20,24 +20,32 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.importer.ImportMode;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.internal.batchimport.Model.Existence;
 import org.squashtest.tm.service.internal.batchimport.Model.StepType;
 import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
+import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.user.UserAccountService;
 
 /**
  * 
@@ -61,6 +69,12 @@ public class ValidationFacility implements Facility {
 
 	@Inject
 	private Model model;
+
+	@Inject
+	private UserAccountService userAccountService;
+
+	@Inject
+	private UserDao userDao;
 
 	private EntityValidator entityValidator = new EntityValidator();
 	private CustomFieldValidator cufValidator = new CustomFieldValidator();
@@ -107,6 +121,9 @@ public class ValidationFacility implements Facility {
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_INCONSISTENT_PATH_AND_NAME, new Object[]{path, name}));
 		}
 
+		// 3-4 : fix test case metadatas
+		List<LogEntry> logEntries = fixMetadatas(target, (AuditableMixin) testCase,  ImportMode.CREATE);
+		logs.addEntries(logEntries);
 		return logs;
 
 	}
@@ -151,13 +168,66 @@ public class ValidationFacility implements Facility {
 			if (hasntPermission != null) {
 				logs.addEntry(hasntPermission);
 			}
+			// 3-3 : check audit datas
+			// backup the audit log
+			List<LogEntry> logEntries = fixMetadatas(target, (AuditableMixin) testCase,  ImportMode.UPDATE);
+			logs.addEntries(logEntries);
 
 		}
 
 		return logs;
 
 	}
+	/**
+	 * Will replace {@code mixin.createdBy} and {@code mixin.createdOn} if the values are invalid :
+	 * <ul>
+	 * <li>{@code mixin.createdBy} will be replaced by the current user's login</li>
+	 * <li>{@code mixin.createdOn} will be replaced by the import date.</li>
+	 * </ul>
+	 * @param target
+	 * 
+	 * @param testCase
+	 * @param create
+	 * @return a list of logEntries
+	 */
+	private List<LogEntry> fixMetadatas(TestCaseTarget target, AuditableMixin testCase, ImportMode importMode) {
+		//init vars
+		List<LogEntry> logEntries = new ArrayList<LogEntry>();
+		String login = testCase.getCreatedBy();
+		boolean fixUser = false;
+		if (StringUtils.isBlank(login)) {
+			//no value for created by
+			fixUser = true;
+		} else {
+			User user = userDao.findUserByLogin(login);
+			if (user == null || !user.getActive()) {
+				//user not found or not active
+				String impactMessage = null;
+				switch (importMode) {
+				case CREATE:
+					impactMessage = Messages.IMPACT_USE_CURRENT_LOGIN;
+					break;
+				case UPDATE:
+					impactMessage = Messages.IMPACT_NO_CHANGE;
+					break;
+				default :
+					impactMessage = Messages.IMPACT_NO_CHANGE;
+					break;
+				}
+				LogEntry logEntry = new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_TC_USER_NOT_FOUND, impactMessage);
+				logEntries.add(logEntry);
+				fixUser = true;
+			}
+		}
+		if (fixUser) {
+			testCase.setCreatedBy(userAccountService.findCurrentUser().getLogin());
+		}
 
+		if (testCase.getCreatedOn() == null) {
+			testCase.setCreatedOn(new Date());
+		}
+		return logEntries;
+	}
 	@Override
 	public LogTrain deleteTestCase(TestCaseTarget target) {
 

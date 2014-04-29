@@ -55,7 +55,8 @@ public final class Messages {
 	public static final String ERROR_PARAMETER_NOT_FOUND = "message.import.log.error.tc.param.notFound";
 	public static final String ERROR_DATASET_NOT_FOUND = "message.import.log.error.tc.dataset.notFound";
 	public static final String ERROR_DATASET_PARAMETER_MISMATCH = "message.import.log.error.tc.dataset.paramOwnerNotFound";
-
+	public static final String ERROR_TC_USER_NOT_FOUND = "message.import.log.error.tc.userNotFound";
+	public static final String IMPACT_USE_CURRENT_LOGIN = "message.import.log.impact.useCurrentLogin";
 
 	public static final String IMPACT_MAX_SIZE = "message.import.log.impact.truncatedValue";
 	public static final String IMPACT_DEFAULT_VALUE = "message.import.log.impact.useDefaultValue";
@@ -66,7 +67,6 @@ public final class Messages {
 	public static final String IMPACT_PARAM_UPDATED = "message.import.log.impact.paramupdate";
 	public static final String IMPACT_PARAM_CREATED = "message.import.log.impact.paramcreated";
 	public static final String IMPACT_DATASET_CREATED = "message.import.log.impact.dscreated";
-
 	private Messages(){
 		super();
 	}

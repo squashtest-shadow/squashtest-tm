@@ -26,9 +26,20 @@ import org.apache.commons.lang.StringUtils;
 import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.Target;
 
+/**
+ * Bean that holds the property of a test case target.<br/>
+ * Properties are : <br/>
+ * {@link #path}<br/>
+ * {@link #order}
+ */
 public class TestCaseTarget extends Target {
-
+	/**
+	 * The path from the project name to the targeted test case.
+	 */
 	private String path;
+	/**
+	 * The order of the test case in it's container.
+	 */
 	private Integer order;
 
 	public TestCaseTarget() {
@@ -50,8 +61,6 @@ public class TestCaseTarget extends Target {
 	public EntityType getType() {
 		return EntityType.TEST_CASE;
 	}
-	
-	
 
 	public String getPath() {
 		return path;
@@ -119,27 +128,27 @@ public class TestCaseTarget extends Target {
 	public String getProject() {
 		return Utils.extractProjectName(path);
 	}
-	
-	public String getName(){
+
+	public String getName() {
 		return Utils.extractTestCaseName(path);
 	}
-	
-	
+
 	/**
-	 * note : return the names of each folders, including the project, of this test case. Assumes that the path is well formed.
+	 * note : return the names of each folders, including the project, of this test case. Assumes that the path is well
+	 * formed.
 	 * 
 	 * @return
 	 */
-	public String getFolder(){
-		
-		String[] names =  Utils.splitPath(path);
-		String[] shortened = Arrays.copyOf(names, names.length-1);
-		
+	public String getFolder() {
+
+		String[] names = Utils.splitPath(path);
+		String[] shortened = Arrays.copyOf(names, names.length - 1);
+
 		return StringUtils.join(shortened, '/');
 	}
-	
-	public boolean isRootTestCase(){
-		String[] names =  Utils.splitPath(path);
-		return names.length==2;	//that is, composed of a project and a test case name only.
+
+	public boolean isRootTestCase() {
+		String[] names = Utils.splitPath(path);
+		return names.length == 2; // that is, composed of a project and a test case name only.
 	}
 }

@@ -37,7 +37,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.audit.AuditableMixin;
-import org.squashtest.tm.domain.audit.AuditableSupport;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
@@ -51,6 +50,7 @@ import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.testcase.TestCaseType;
 import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.service.importer.ImportMode;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.internal.batchimport.Model.Existence;
@@ -61,6 +61,7 @@ import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.repository.DatasetParamValueDao;
 import org.squashtest.tm.service.internal.repository.ParameterDao;
+import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.DatasetModificationService;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
@@ -80,7 +81,6 @@ import org.squashtest.tm.service.user.UserAccountService;
 public class FacilityImpl implements Facility {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FacilityImpl.class);
-
 
 	@Inject
 	private ValidationFacility validator;
@@ -121,15 +121,13 @@ public class FacilityImpl implements Facility {
 	@Inject
 	private CustomFieldDao cufDao;
 
-	@Inject
-	private UserAccountService userAccountService;
+
 
 	private FacilityImplHelper helper = new FacilityImplHelper();
 
 	private Map<String, Long> cufIdByCode = new HashMap<String, Long>();
 
 	private Collection<Long> modifiedTestCases = new HashSet<Long>();
-
 
 	// ************************ public (and nice looking) code **************************************
 
@@ -146,7 +144,8 @@ public class FacilityImpl implements Facility {
 
 	}
 
-	private LogTrain createTCRoutine(LogTrain train, TestCaseTarget target, TestCase testCase, Map<String, String> cufValues){
+	private LogTrain createTCRoutine(LogTrain train, TestCaseTarget target, TestCase testCase,
+			Map<String, String> cufValues) {
 
 		try {
 
@@ -193,8 +192,7 @@ public class FacilityImpl implements Facility {
 
 					LOGGER.debug("Excel import : Updated Test Case \t'" + target + "'");
 
-				}
-				catch (Exception ex) {
+				} catch (Exception ex) {
 					train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 							new Object[] { ex.getClass().getName() }));
 					LOGGER.error("Excel import : unexpected error while updating " + target + " : ", ex);
@@ -220,8 +218,7 @@ public class FacilityImpl implements Facility {
 
 				LOGGER.debug("Excel import : Deleted Test Case \t'" + target + "'");
 
-			}
-			catch (Exception ex) {
+			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
 
@@ -272,8 +269,7 @@ public class FacilityImpl implements Facility {
 
 				LOGGER.debug("Excel import : Created Call Step \t'" + target + "' -> '" + calledTestCase + "'");
 
-			}
-			catch (Exception ex) {
+			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
 				LOGGER.error("Excel import : unexpected error while creating step " + target + " : ", ex);
@@ -294,8 +290,7 @@ public class FacilityImpl implements Facility {
 				doUpdateActionStep(target, testStep, cufValues);
 
 				LOGGER.debug("Excel import : Updated Action Step \t'" + target + "'");
-			}
-			catch (Exception ex) {
+			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
 				LOGGER.error("Excel import : unexpected error while updating step " + target + " : ", ex);
@@ -316,8 +311,7 @@ public class FacilityImpl implements Facility {
 				validator.getModel().updateCallStepTarget(target, calledTestCase);
 
 				LOGGER.debug("Excel import : Created Call Step \t'" + target + "' -> '" + calledTestCase + "'");
-			}
-			catch (Exception ex) {
+			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
 				LOGGER.error("Excel import : unexpected error while updating step " + target + " : ", ex);
@@ -339,8 +333,7 @@ public class FacilityImpl implements Facility {
 
 				LOGGER.debug("Excel import : Deleted Step \t'" + target + "'");
 
-			}
-			catch (Exception ex) {
+			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
 				LOGGER.error("Excel import : unexpected error while deleting step " + target + " : ", ex);
@@ -362,8 +355,7 @@ public class FacilityImpl implements Facility {
 				remember(target.getOwner());
 
 				LOGGER.debug("Excel import : Created Parameter \t'" + target + "'");
-			}
-			catch (Exception ex) {
+			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
 				LOGGER.error("Excel import : unexpected error while adding parameter " + target + " : ", ex);
@@ -381,12 +373,12 @@ public class FacilityImpl implements Facility {
 		if (!train.hasCriticalErrors()) {
 			try {
 				doUpdateParameter(target, param);
-				validator.getModel().addParameter(target);	// create the parameter if didn't exist already. Double-insertion proof.
+				validator.getModel().addParameter(target); // create the parameter if didn't exist already.
+				// Double-insertion proof.
 				remember(target.getOwner());
 
 				LOGGER.debug("Excel import : Updated Parameter \t'" + target + "'");
-			}
-			catch (Exception ex) {
+			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
 				LOGGER.error("Excel import : unexpected error while updating parameter " + target + " : ", ex);
@@ -407,8 +399,7 @@ public class FacilityImpl implements Facility {
 				validator.getModel().removeParameter(target);
 
 				LOGGER.debug("Excel import : Deleted Parameter \t'" + target + "'");
-			}
-			catch (Exception ex) {
+			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
 
@@ -432,9 +423,9 @@ public class FacilityImpl implements Facility {
 				remember(dataset.getTestCase());
 				remember(param.getOwner());
 
-				LOGGER.debug("Excel import : Updated Param Value for param \t'" + param + "' in dataset '" + dataset + "'");
-			}
-			catch (Exception ex) {
+				LOGGER.debug("Excel import : Updated Param Value for param \t'" + param + "' in dataset '" + dataset
+						+ "'");
+			} catch (Exception ex) {
 				train.addEntry(new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
 				LOGGER.error("Excel import : unexpected error while setting parameter " + param + " in dataset "
@@ -490,12 +481,12 @@ public class FacilityImpl implements Facility {
 
 		Map<Long, String> acceptableCufs = toAcceptableCufs(cufValues);
 
-		// backup the audit log
-		helper.fixMetadatas((AuditableMixin) testCase, userAccountService);
+
 
 		// case 1 : this test case lies at the root of the project
 		if (target.isRootTestCase()) {
-			Long libraryId = validator.getModel().getProjectStatus(target.getProject()).getId(); // never null because the checks
+			Long libraryId = validator.getModel().getProjectStatus(target.getProject()).getId(); // never null because
+			// the checks
 			// ensured that the project exists
 			Collection<String> siblingNames = navigationService.findNamesInLibraryStartingWith(libraryId,
 					testCase.getName());
@@ -526,8 +517,7 @@ public class FacilityImpl implements Facility {
 		TestCase orig = validator.getModel().get(target);
 		Long origId = orig.getId();
 
-		// backup the audit log
-		helper.fixMetadatas((AuditableMixin) testCase, userAccountService);
+
 
 		// update the test case core attributes
 

@@ -20,7 +20,9 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -35,6 +37,11 @@ import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.testcase.TestCaseType;
+import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.service.importer.ImportMode;
+import org.squashtest.tm.service.importer.ImportStatus;
+import org.squashtest.tm.service.importer.LogEntry;
+import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.user.UserAccountService;
 
 final class FacilityImplHelper {
@@ -43,26 +50,7 @@ final class FacilityImplHelper {
 		super();
 	}
 
-	/**
-	 * Will replace {@code mixin.createdBy} and {@code mixin.createdOn} if the values are invalid :
-	 * <ul>
-	 * <li>{@code mixin.createdBy} will be replaced by the current user's login</li>
-	 * <li>{@code mixin.createdOn} will be replaced by the import date.</li>
-	 * </ul>
-	 * 
-	 * @param mixin
-	 * @param userAccountService
-	 */
-	void fixMetadatas(AuditableMixin mixin, UserAccountService userAccountService) {
-		if (StringUtils.isBlank(mixin.getCreatedBy())) {
-			mixin.setCreatedBy(userAccountService.findCurrentUser().getLogin());
-		}
 
-		if (mixin.getCreatedOn() == null) {
-			mixin.setCreatedOn(new Date());
-		}
-
-	}
 
 	/**
 	 * fix the potentially null values with default values. In some case it's completely superfluous since null values
