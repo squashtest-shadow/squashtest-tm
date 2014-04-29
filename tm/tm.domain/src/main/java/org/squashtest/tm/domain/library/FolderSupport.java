@@ -59,14 +59,14 @@ public class FolderSupport<NODE extends LibraryNode, FOLDER extends Folder<NODE>
 
 	public void addContent(NODE node, int position) {
 		checkContentNameAvailable(node);
-		if(position >= folder.getContent().size()){
+		if(position >= folder.getContent().size() || position < 0){
 			folder.addContent(node);
 		} else {
 			folder.getContent().add(position, node);
 		}
 		node.notifyAssociatedWithProject(folder.getProject());
 	}
-	
+
 	private void checkContentNameAvailable(NODE candidateContent) throws DuplicateNameException {
 		if (!isContentNameAvailable(candidateContent.getName())) {
 			throw new DuplicateNameException(candidateContent.getName(), candidateContent.getName());
@@ -114,7 +114,7 @@ public class FolderSupport<NODE extends LibraryNode, FOLDER extends Folder<NODE>
 		}
 		return thisProject == null || !thisProject.equals(thatProject);
 	}
-	
+
 	public boolean hasContent(){
 		return (folder.getContent().size()>0);
 	}
@@ -126,7 +126,7 @@ public class FolderSupport<NODE extends LibraryNode, FOLDER extends Folder<NODE>
 		addCopiesOfAttachments(folder, newFolder);
 		return newFolder;
 	}
-	
+
 	private void addCopiesOfAttachments(Folder<NODE> source, Folder<NODE> destination) {
 		for (Attachment tcAttach : source.getAttachmentList().getAllAttachments()) {
 			Attachment atCopy = tcAttach.hardCopy();
@@ -135,11 +135,11 @@ public class FolderSupport<NODE extends LibraryNode, FOLDER extends Folder<NODE>
 	}
 
 	public List<String> getContentNames() {
-			List<String> contentNames = new ArrayList<String>(folder.getContent().size());
-			for(NODE node : folder.getContent()){
-				contentNames.add(node.getName());
-			}
-			return contentNames;
+		List<String> contentNames = new ArrayList<String>(folder.getContent().size());
+		for(NODE node : folder.getContent()){
+			contentNames.add(node.getName());
+		}
+		return contentNames;
 	}
 
 }

@@ -39,7 +39,7 @@ import org.squashtest.tm.domain.library.FolderSupport;
 import org.squashtest.tm.domain.library.NodeContainerVisitor;
 import org.squashtest.tm.domain.library.NodeVisitor;
 import org.squashtest.tm.domain.project.Project;
- 
+
 @Entity
 @PrimaryKeyJoinColumn(name = "TCLN_ID")
 public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCaseLibraryNode> {
@@ -65,13 +65,13 @@ public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCa
 
 	@Override
 	public void addContent(TestCaseLibraryNode node, int position) {
-		if(position >= content.size()){
-			folderSupport.addContent(node);
-		} else {
-			folderSupport.addContent(node, position);
-		}
+		folderSupport.addContent(node, position);
+		// the following enforces that hibernate reinsert the data with their index,
+		// and makes sure it works along the triggers.
+		content = new ArrayList<TestCaseLibraryNode>(content);
+
 	}
-	
+
 	@Override
 	public List<TestCaseLibraryNode> getContent() {
 		return content;
@@ -81,11 +81,11 @@ public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCa
 	public void accept(TestCaseLibraryNodeVisitor visitor) {
 		visitor.visit(this);
 	}
-	
+
 	@Override
 	public void accept(NodeContainerVisitor visitor) {
 		visitor.visit(this);
-		
+
 	}
 
 	@Override
@@ -103,7 +103,7 @@ public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCa
 	public TestCaseFolder createCopy() {
 		return folderSupport.createCopy(new TestCaseFolder());
 	}
-	
+
 	@Override
 	public void notifyAssociatedWithProject(Project project) {
 		Project former = getProject();
@@ -141,5 +141,5 @@ public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCa
 	public Collection<TestCaseLibraryNode> getOrderedContent() {
 		return content;
 	}
-	
+
 }

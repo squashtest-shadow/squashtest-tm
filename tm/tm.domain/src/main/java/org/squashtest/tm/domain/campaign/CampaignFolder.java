@@ -55,7 +55,7 @@ public class CampaignFolder extends CampaignLibraryNode implements Folder<Campai
 	@OrderColumn(name = "CONTENT_ORDER")
 	@JoinTable(name = "CLN_RELATIONSHIP", joinColumns = @JoinColumn(name = "ANCESTOR_ID"), inverseJoinColumns = @JoinColumn(name = "DESCENDANT_ID"))
 	private List<CampaignLibraryNode> content = new ArrayList<CampaignLibraryNode>();
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignLibrary.class);
 
 	@Override
@@ -71,7 +71,7 @@ public class CampaignFolder extends CampaignLibraryNode implements Folder<Campai
 	@Override
 	public void accept(NodeContainerVisitor visitor) {
 		visitor.visit(this);
-		
+
 	}
 	@Override
 	public void removeContent(CampaignLibraryNode node) throws NullArgumentException {
@@ -89,25 +89,24 @@ public class CampaignFolder extends CampaignLibraryNode implements Folder<Campai
 
 	@Override
 	public void addContent(CampaignLibraryNode node, int position) {
-		if(position >= content.size()){
-			folderSupport.addContent(node);
-		} else {
-			folderSupport.addContent(node, position);
-		}
+		folderSupport.addContent(node, position);
+		// the following enforces that hibernate reinsert the data with their index,
+		// and makes sure it works along the triggers.
+		content = new ArrayList<CampaignLibraryNode>(content);
 	}
-	
+
 	@Override
 	public boolean isContentNameAvailable(String name) {
 		return folderSupport.isContentNameAvailable(name);
 	}
-	
+
 	@Override
 	public CampaignFolder createCopy() {
 		return folderSupport.createCopy(new CampaignFolder());
 	}
-	
-	
-	
+
+
+
 	@Override
 	public void notifyAssociatedWithProject(Project project) {
 		Project former = getProject();
@@ -123,7 +122,7 @@ public class CampaignFolder extends CampaignLibraryNode implements Folder<Campai
 
 	@Override
 	public void accept(NodeVisitor visitor) {
-		visitor.visit(this);		
+		visitor.visit(this);
 	}
 
 	@Override
@@ -136,8 +135,8 @@ public class CampaignFolder extends CampaignLibraryNode implements Folder<Campai
 		return content;
 	}
 
-	
-	
-	
-	
+
+
+
+
 }
