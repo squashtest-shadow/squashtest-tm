@@ -45,7 +45,7 @@ class TestCaseModificationServiceImp2lIT extends HibernateServiceSpecification {
 	@Inject
 	private TestCaseLibrariesCrudService libcrud
 	@Inject GenericProjectManagerService projectService
-	
+
 	private int testCaseId=-1;
 	private int folderId = -1;
 
@@ -61,7 +61,7 @@ class TestCaseModificationServiceImp2lIT extends HibernateServiceSpecification {
 		def testCase = new TestCase(name: "test case 1", description: "the first test case")
 
 		navService.addFolderToLibrary(lib.id,folder)
-		navService.addTestCaseToFolder (folder.id, testCase )
+		navService.addTestCaseToFolder (folder.id, testCase, null )
 
 		folderId = folder.id;
 		testCaseId= testCase.id;
@@ -69,26 +69,20 @@ class TestCaseModificationServiceImp2lIT extends HibernateServiceSpecification {
 
 
 
-/*	def "should allow to create a second test case having the same name than a previously removed test case"(){
+	/*	def "should allow to create a second test case having the same name than a previously removed test case"(){
+	 given :
+	 def tc = service.findById(testCaseId);
+	 def tc2 = new TestCase();
+	 tc2.name = "test case 1";
+	 navService.deleteNodes([Long.valueOf(testCaseId)])
+	 when :
+	 navService.addTestCaseToFolder(folderId, tc2, null)
+	 then :
+	 notThrown(DuplicateNameException)
+	 }*/
 
-		given :
-		def tc = service.findById(testCaseId);
 
-		def tc2 = new TestCase();
-		tc2.name = "test case 1";
-		
-		navService.deleteNodes([Long.valueOf(testCaseId)])
-		
-		
-			when :
-			navService.addTestCaseToFolder(folderId, tc2)
-	
-			then :
-			notThrown(DuplicateNameException)
-	}*/
 
-	
-	
 	def GenericProject createProject(){
 		Project p = new Project();
 		p.name = Double.valueOf(Math.random()).toString();

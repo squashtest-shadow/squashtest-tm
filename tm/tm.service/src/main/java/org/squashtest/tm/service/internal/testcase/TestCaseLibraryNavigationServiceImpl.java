@@ -211,14 +211,20 @@ TestCaseLibraryNavigationService {
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary' , 'CREATE' )"
 			+ "or hasRole('ROLE_ADMIN')")
-	public void addTestCaseToLibrary(long libraryId, TestCase testCase) {
+	public void addTestCaseToLibrary(long libraryId, TestCase testCase, Integer position) {
 
 		TestCaseLibrary library = testCaseLibraryDao.findById(libraryId);
 
 		if (!library.isContentNameAvailable(testCase.getName())) {
 			throw new DuplicateNameException(testCase.getName(), testCase.getName());
-		} else {
-			library.addContent(testCase);
+		}
+		else {
+			if (position != null){
+				library.addContent(testCase,position);
+			}
+			else{
+				library.addContent(testCase);
+			}
 			testCaseDao.safePersist(testCase);
 			createCustomFieldValuesForTestCase(testCase);
 
@@ -237,21 +243,26 @@ TestCaseLibraryNavigationService {
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary' , 'CREATE' )"
 			+ "or hasRole('ROLE_ADMIN')")
-	public void addTestCaseToLibrary(long libraryId, TestCase testCase, Map<Long, String> customFieldValues) {
-		addTestCaseToLibrary(libraryId, testCase);
+	public void addTestCaseToLibrary(long libraryId, TestCase testCase, Map<Long, String> customFieldValues, Integer position) {
+		addTestCaseToLibrary(libraryId, testCase, position);
 		initCustomFieldValues(testCase, customFieldValues);
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.testcase.TestCaseFolder' , 'CREATE') "
 			+ "or hasRole('ROLE_ADMIN')")
-	public void addTestCaseToFolder(long folderId, TestCase testCase) {
+	public void addTestCaseToFolder(long folderId, TestCase testCase, Integer position) {
 		TestCaseFolder folder = testCaseFolderDao.findById(folderId);
 
 		if (!folder.isContentNameAvailable(testCase.getName())) {
 			throw new DuplicateNameException(testCase.getName(), testCase.getName());
 		} else {
-			folder.addContent(testCase);
+			if (position != null){
+				folder.addContent(testCase);
+			}
+			else{
+				folder.addContent(testCase);
+			}
 			testCaseDao.safePersist(testCase);
 			createCustomFieldValuesForTestCase(testCase);
 		}
@@ -260,8 +271,8 @@ TestCaseLibraryNavigationService {
 	@Override
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.testcase.TestCaseFolder' , 'CREATE') "
 			+ "or hasRole('ROLE_ADMIN')")
-	public void addTestCaseToFolder(long folderId, TestCase testCase, Map<Long, String> customFieldValues) {
-		addTestCaseToFolder(folderId, testCase);
+	public void addTestCaseToFolder(long folderId, TestCase testCase, Map<Long, String> customFieldValues, Integer position) {
+		addTestCaseToFolder(folderId, testCase, position);
 		initCustomFieldValues(testCase, customFieldValues);
 	}
 

@@ -491,7 +491,7 @@ public class FacilityImpl implements Facility {
 			Collection<String> siblingNames = navigationService.findNamesInLibraryStartingWith(libraryId,
 					testCase.getName());
 			renameIfNeeded(testCase, siblingNames);
-			navigationService.addTestCaseToLibrary(libraryId, testCase, acceptableCufs);
+			navigationService.addTestCaseToLibrary(libraryId, testCase, acceptableCufs, target.getOrder());
 		}
 		// case 2 : this test case exists within a folder
 		else {
@@ -499,7 +499,7 @@ public class FacilityImpl implements Facility {
 			Collection<String> siblingNames = navigationService.findNamesInFolderStartingWith(folderId,
 					testCase.getName());
 			renameIfNeeded(testCase, siblingNames);
-			navigationService.addTestCaseToFolder(folderId, testCase, acceptableCufs);
+			navigationService.addTestCaseToFolder(folderId, testCase, acceptableCufs, target.getOrder());
 		}
 
 	}

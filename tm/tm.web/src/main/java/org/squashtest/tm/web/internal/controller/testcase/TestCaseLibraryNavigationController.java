@@ -67,9 +67,9 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 @Controller
 @RequestMapping("/test-case-browser")
 public class TestCaseLibraryNavigationController extends
-		LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode> {
+LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode> {
 	public static final Logger LOGGER = LoggerFactory.getLogger(TestCaseLibraryNavigationController.class);
-	
+
 	@Inject
 	private Provider<TestCaseLibraryTreeNodeBuilder> testCaseLibraryTreeNodeBuilder;
 
@@ -79,20 +79,20 @@ public class TestCaseLibraryNavigationController extends
 
 	@Inject
 	private TestCaseLibraryNavigationService testCaseLibraryNavigationService;
-	
+
 	private static final String JASPER_EXPORT_FILE = "/WEB-INF/reports/test-case-export.jasper";
 	private static final String ADD_TEST_CASE = "add-test-case";
-	private static final String FILENAME = "filename";	
-	private static final String LIBRARIES = "libraries";	
-	private static final String NODES = "nodes";	
-	private static final String CALLS = "calls";	
-	
+	private static final String FILENAME = "filename";
+	private static final String LIBRARIES = "libraries";
+	private static final String NODES = "nodes";
+	private static final String CALLS = "calls";
+
 	@Override
 	protected LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode> getLibraryNavigationService() {
 		return testCaseLibraryNavigationService;
 	}
 
-	
+
 
 	@Override
 	protected String getShowLibraryViewName() {
@@ -103,7 +103,7 @@ public class TestCaseLibraryNavigationController extends
 	protected JsTreeNode createTreeNodeFromLibraryNode(TestCaseLibraryNode node) {
 		return testCaseLibraryTreeNodeBuilder.get().setNode(node).build();
 	}
-	
+
 
 	@InitBinder(ADD_TEST_CASE)
 	public void addTestCaseBinder(WebDataBinder binder){
@@ -111,37 +111,37 @@ public class TestCaseLibraryNavigationController extends
 		validator.setMessageSource(getMessageSource());
 		binder.setValidator(validator);
 	}
-	
-	
+
+
 
 	@RequestMapping(value = "/drives/{libraryId}/content/new-test-case", method = RequestMethod.POST)
 	public @ResponseBody
 	JsTreeNode addNewTestCaseToLibraryRootContent(@PathVariable long libraryId,
 			@Valid @ModelAttribute(ADD_TEST_CASE) TestCaseFormModel testCaseModel){
-		
+
 		TestCase testCase = testCaseModel.getTestCase();
-		
+
 		Map<Long, String> customFieldValues = testCaseModel.getCustomFields();
 
-		testCaseLibraryNavigationService.addTestCaseToLibrary(libraryId, testCase, customFieldValues);
+		testCaseLibraryNavigationService.addTestCaseToLibrary(libraryId, testCase, customFieldValues, null);
 
 		return createTreeNodeFromLibraryNode(testCase);
 	}
 
-	
+
 	@RequestMapping(value = "/folders/{folderId}/content/new-test-case", method = RequestMethod.POST)
 	public @ResponseBody JsTreeNode addNewTestCaseToFolder(@PathVariable long folderId,
 			@Valid @ModelAttribute(ADD_TEST_CASE) TestCaseFormModel testCaseModel){
-		
+
 		TestCase testCase = testCaseModel.getTestCase();
-		
+
 		Map<Long, String> customFieldValues = testCaseModel.getCustomFields();
-		
-		testCaseLibraryNavigationService.addTestCaseToFolder(folderId, testCase, customFieldValues);
+
+		testCaseLibraryNavigationService.addTestCaseToFolder(folderId, testCase, customFieldValues, null);
 
 		return createTreeNodeFromLibraryNode(testCase);
 	}
-	
+
 
 
 
@@ -158,37 +158,37 @@ public class TestCaseLibraryNavigationController extends
 
 		return listBuilder.setModel(linkableLibraries).build();
 	}
-	
+
 	@RequestMapping(value = "/content/csv", produces="application/octet-stream", method = RequestMethod.GET, params={FILENAME, LIBRARIES, NODES, CALLS})
 	@ResponseBody
-	public void exportAsCsv(Locale locale, @RequestParam(FILENAME) String filename, @RequestParam(LIBRARIES) List<Long> libraryIds, 
+	public void exportAsCsv(Locale locale, @RequestParam(FILENAME) String filename, @RequestParam(LIBRARIES) List<Long> libraryIds,
 			@RequestParam(NODES) List<Long> nodeIds, @RequestParam(CALLS) Boolean includeCalledTests, HttpServletResponse response) throws FileNotFoundException{
-		
+
 		response.setContentType("application/octet-stream");
 		response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".xls");
-		
+
 		List<ExportTestCaseData> dataSource = testCaseLibraryNavigationService.findTestCasesToExport(libraryIds, nodeIds, includeCalledTests);
 		escapePrerequisiteAndSteps(dataSource);
-		
+
 		printExport(dataSource, filename, JASPER_EXPORT_FILE, response, locale, "csv");
 	}
-		
-	
+
+
 	@RequestMapping(value = "/content/xls", produces="application/octet-stream", method = RequestMethod.GET, params={FILENAME, LIBRARIES, NODES, CALLS})
 	@ResponseBody
-	public FileSystemResource exportAsExcel(@RequestParam(FILENAME) String filename, @RequestParam(LIBRARIES) List<Long> libraryIds, 
-							@RequestParam(NODES) List<Long> nodeIds, @RequestParam(CALLS) Boolean includeCalledTests, HttpServletResponse response) throws FileNotFoundException{
-		
-		
+	public FileSystemResource exportAsExcel(@RequestParam(FILENAME) String filename, @RequestParam(LIBRARIES) List<Long> libraryIds,
+			@RequestParam(NODES) List<Long> nodeIds, @RequestParam(CALLS) Boolean includeCalledTests, HttpServletResponse response) throws FileNotFoundException{
+
+
 		response.setContentType("application/octet-stream");
 		response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".xls");
-		
+
 		File export = testCaseLibraryNavigationService.exportTestCaseAsExcel(libraryIds, nodeIds, includeCalledTests);
 		return new FileSystemResource(export);
-		
+
 	}
-	
-	
+
+
 
 	private void escapePrerequisiteAndSteps(List<ExportTestCaseData> dataSource) {
 		for (ExportTestCaseData data : dataSource) {
@@ -196,50 +196,50 @@ public class TestCaseLibraryNavigationController extends
 			String htmlPrerequisite = data.getPrerequisite();
 			String prerequisite = HTMLCleanupUtils.htmlToText(htmlPrerequisite);
 			data.setPrerequisite(prerequisite);
-			
+
 			//escape first step
 			String htmlFirstAction = data.getFirstAction();
 			String firstAction = HTMLCleanupUtils.htmlToText(htmlFirstAction);
 			data.setFirstAction(firstAction);
-			
+
 			String htmlFirstResult = data.getFirstExpectedResult();
 			String firstResult = HTMLCleanupUtils.htmlToText(htmlFirstResult);
 			data.setFirstExpectedResult(firstResult);
-			
+
 			//escape other steps
 			for(ExportTestStepData step : data.getSteps()){
 				String htmlAction = step.getAction();
 				String action = HTMLCleanupUtils.htmlToText(htmlAction);
 				step.setAction(action);
-				
+
 				String htmlExpectedResult = step.getExpectedResult();
 				String expectedResult = HTMLCleanupUtils.htmlToText(htmlExpectedResult);
 				step.setExpectedResult(expectedResult);
 			}
-			
+
 		}
 	}
 
-	
+
 	// ****************************** statistics section *******************************
-	
+
 	@RequestMapping (value = "/statistics", method = RequestMethod.GET, produces=ContentTypes.APPLICATION_JSON, params = {LIBRARIES, NODES})
-	public @ResponseBody TestCaseStatisticsBundle getStatisticsAsJson(@RequestParam(value=LIBRARIES, defaultValue="") Collection<Long> libraryIds, 
-																	  @RequestParam(value=NODES, defaultValue="") Collection<Long> nodeIds){
-		
+	public @ResponseBody TestCaseStatisticsBundle getStatisticsAsJson(@RequestParam(value=LIBRARIES, defaultValue="") Collection<Long> libraryIds,
+			@RequestParam(value=NODES, defaultValue="") Collection<Long> nodeIds){
+
 		return testCaseLibraryNavigationService.getStatisticsForSelection(libraryIds, nodeIds);
 	}
-	
+
 	@RequestMapping (value = "/dashboard", method = RequestMethod.GET, produces=ContentTypes.TEXT_HTML, params = {LIBRARIES, NODES})
-	public String getDashboard(Model model, @RequestParam(LIBRARIES) Collection<Long> libraryIds, 
-											@RequestParam(NODES) Collection<Long> nodeIds){
-		
+	public String getDashboard(Model model, @RequestParam(LIBRARIES) Collection<Long> libraryIds,
+			@RequestParam(NODES) Collection<Long> nodeIds){
+
 		TestCaseStatisticsBundle stats = testCaseLibraryNavigationService.getStatisticsForSelection(libraryIds, nodeIds);
-		
+
 		model.addAttribute("statistics", stats);
-		
+
 		return "fragment/test-cases/test-cases-dashboard";
 	}
-	
+
 
 }

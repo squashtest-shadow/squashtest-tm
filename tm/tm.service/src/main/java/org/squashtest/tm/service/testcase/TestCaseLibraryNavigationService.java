@@ -50,8 +50,9 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 	 * 
 	 * @param libraryId
 	 * @param testCase
+	 * @param position if non-null and non-negative, the test case will be inserted at that index.
 	 */
-	void addTestCaseToLibrary(long libraryId, TestCase testCase);
+	void addTestCaseToLibrary(long libraryId, TestCase testCase, Integer position);
 
 
 	/**
@@ -62,8 +63,9 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 	 * @param libraryId
 	 * @param testCase
 	 * @param customFieldValues
+	 * @param position if non-null and non-negative, the test case will be inserted at that index.
 	 */
-	void addTestCaseToLibrary(long libraryId, TestCase testCase, Map<Long, String> customFieldValues);
+	void addTestCaseToLibrary(long libraryId, TestCase testCase, Map<Long, String> customFieldValues, Integer position);
 
 
 
@@ -72,8 +74,9 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 	 * 
 	 * @param libraryId
 	 * @param testCase
+	 * @param position if non-null and non-negative, the test case will be inserted at that index.
 	 */
-	void addTestCaseToFolder(long folderId, TestCase testCase);
+	void addTestCaseToFolder(long folderId, TestCase testCase, Integer position);
 
 
 	/**
@@ -84,8 +87,9 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 	 * @param libraryId
 	 * @param testCase
 	 * @param customFieldValues
+	 * @param position if non-null and non-negative, the test case will be inserted at that index.
 	 */
-	void addTestCaseToFolder(long folderId, TestCase testCase, Map<Long, String> customFieldValues);
+	void addTestCaseToFolder(long folderId, TestCase testCase, Map<Long, String> customFieldValues, Integer position);
 
 
 	/**

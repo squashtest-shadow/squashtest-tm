@@ -34,7 +34,7 @@ import org.squashtest.tm.service.internal.library.LibraryUtils;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 
 /**
- * <p>The idea behind the implementation of this class is the following :</p> 
+ * <p>The idea behind the implementation of this class is the following :</p>
  * 
  * parameters :
  * <ul>
@@ -74,7 +74,7 @@ import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
  * 		</ul>
  * </ul>
  * 
- * Regarding the summary, may increment failures and warning, but not total test cases nor success. 
+ * Regarding the summary, may increment failures and warning, but not total test cases nor success.
  * 
  * @author bsiri
  *
@@ -86,36 +86,36 @@ import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 
 class TestCaseLibraryMerger {
 
-	
+
 	private TestCaseLibraryNavigationService service;
-	
+
 	private ImportSummaryImpl summary = new ImportSummaryImpl();
-	
+
 	private LinkedList<FolderPair> nonTreated = new LinkedList<FolderPair>();
-		
-	
+
+
 	public TestCaseLibraryMerger(){
 		super();
 	}
-	
+
 	public TestCaseLibraryMerger(TestCaseLibraryNavigationService service){
 		this();
 		this.service=service;
 	}
-	
-	
+
+
 
 	public void setLibraryService(TestCaseLibraryNavigationService service){
 		this.service = service;
 	}
-	
+
 	public ImportSummary getSummary(){
 		return summary;
 	}
-	
+
 	private NodeMerger merger = new NodeMerger();
-	
-	
+
+
 	/**
 	 * the Library is the root of the hierarchy, and that's where we're importing our data. the data that couldn't be added to the root of the library
 	 * (mostly duplicate folders) will be treated in additional loops (see #mergerIntoFolder)
@@ -124,78 +124,78 @@ class TestCaseLibraryMerger {
 	 * @param src
 	 */
 	public void mergeIntoLibrary(TestCaseLibrary dest, TestCaseFolder src){
-		
+
 		//phase 1 : add the content of the root of the library
 		merger.setMergingContext(this);
 		merger.setDestination(dest);
-		
+
 		for (TestCaseLibraryNode node : src.getContent()){
 			node.accept(merger);
 		}
-		
-		//phase 2 : if some source folder already exists, then no need to persist it, but we must merge its content instead with the content of the 
+
+		//phase 2 : if some source folder already exists, then no need to persist it, but we must merge its content instead with the content of the
 		//corresponding persistent entity.
-		
-		//important : do not replace the while loop with a for or foreach : 
-		//nonTreated may/should be modified during treatment 
+
+		//important : do not replace the while loop with a for or foreach :
+		//nonTreated may/should be modified during treatment
 		FolderPair pair;
-		
+
 		while(! nonTreated.isEmpty()){
-			
+
 			pair = nonTreated.removeFirst();
-			
+
 			merger.setDestination(pair.dest);
-			
+
 			for (TestCaseLibraryNode node : pair.src.getContent()){
 				node.accept(merger);
 			}
-			
+
 		}
-		
+
 	}
 
-	
+
 	/* ******************************** private classes ************************************ */
-	
+
 	private static class FolderPair {
 		private TestCaseFolder dest;
 		private TestCaseFolder src;
-		
+
 		public FolderPair(TestCaseFolder dest, TestCaseFolder src){
 			this.dest=dest;
 			this.src=src;
 		}
-		
+
 	}
-	
+
 
 	/*
-	 * This class is an adapter to help with the API differences between Libraries and Folders  
+	 * This class is an adapter to help with the API differences between Libraries and Folders
 	 */
-	
+
 	private static class DestinationManager {
-		
+
 		protected TestCaseLibraryMerger context;
-		
+
 		protected TestCaseLibrary destLibrary ;
 		protected TestCaseFolder destFolder;
 
-		
+
 		public void setMergingContext(TestCaseLibraryMerger merger){
 			this.context=merger;
 		}
-		
+
 		public void setDestination(TestCaseLibrary library){
 			this.destLibrary=library;
 			this.destFolder=null;
 		}
-		
+
 		public void setDestination(TestCaseFolder folder){
 			this.destFolder=folder;
 			this.destLibrary=null;
 		}
-		
-		
+
+
 		protected Collection<TestCaseLibraryNode> getDestinationContent(){
 			if (destLibrary!=null){
 				return destLibrary.getRootContent();
@@ -203,40 +203,40 @@ class TestCaseLibraryMerger {
 				return destFolder.getContent();
 			}
 		}
-		
-		
+
+
 		protected void persistTestCase(TestCase tc){
 			if (destLibrary!=null){
-				context.service.addTestCaseToLibrary(destLibrary.getId(), tc);
+				context.service.addTestCaseToLibrary(destLibrary.getId(), tc, null);
 			}else{
-				context.service.addTestCaseToFolder(destFolder.getId(), tc);
-			}			
+				context.service.addTestCaseToFolder(destFolder.getId(), tc, null);
+			}
 		}
-		
+
 		protected void persistFolder(TestCaseFolder folder){
 			if (destLibrary!=null){
 				context.service.addFolderToLibrary(destLibrary.getId(), folder);
 			}else{
 				context.service.addFolderToFolder(destFolder.getId(), folder);
-			}					
+			}
 		}
-		
+
 		protected void applyConfigurationTo(DestinationManager otherManager){
 			otherManager.setMergingContext(context);
-			
+
 			if (destLibrary!=null){
 				otherManager.setDestination(destLibrary);
 			}else{
 				otherManager.setDestination(destFolder);
-			}	
+			}
 		}
-		
-		
+
+
 	}
-	
-	
-	
-	
+
+
+
+
 	private static class NodeMerger extends DestinationManager implements TestCaseLibraryNodeVisitor{
 
 		private TestCaseMerger tcMerger= new TestCaseMerger();
@@ -246,86 +246,86 @@ class TestCaseLibraryMerger {
 		public void visit(TestCase visited) {
 			applyConfigurationTo(tcMerger);
 			tcMerger.setTransientTestCase(visited);
-			
+
 			tcMerger.merge();
-			
+
 		}
-		
+
 		@Override
 		public void visit(TestCaseFolder visited) {
 			applyConfigurationTo(fMerger);
-			fMerger.setTransientFolder(visited);		
-			
+			fMerger.setTransientFolder(visited);
+
 			fMerger.merge();
 		}
-		
-		
+
+
 	}
-	
-	
+
+
 	private static class TestCaseMerger extends DestinationManager{
-		
+
 		private TestCase toMerge;
-		
+
 		public void setTransientTestCase(TestCase tc){
 			toMerge=tc;
 		}
 
-	
+
 		public void merge(){
 			List<String> names = collectNames(getDestinationContent());
-			
+
 			if (names.contains(toMerge.getName())){
 				String newName = generateUniqueName(names, toMerge.getName());
 				toMerge.setName(newName);
-				context.summary.incrRenamed();				
+				context.summary.incrRenamed();
 			}
-			
+
 			persistTestCase(toMerge);
-			
+
 		}
-		
+
 	}
 
-	
+
 	private static class FolderMerger extends DestinationManager implements TestCaseLibraryNodeVisitor{
-		
+
 		private TestCaseFolder toMerge;
 
 
 		public void setTransientFolder(TestCaseFolder folder){
 			this.toMerge=folder;
 		}
-		
+
 		public void merge(){
-			
+
 			Collection<String> names = collectNames(getDestinationContent());
-			
+
 			if (names.contains(toMerge.getName())){
-				TestCaseLibraryNode conflictingNode = getByName(getDestinationContent(), toMerge.getName());	
+				TestCaseLibraryNode conflictingNode = getByName(getDestinationContent(), toMerge.getName());
 				conflictingNode.accept(this);
 			}
 			else{
 				persistFolder(toMerge);
 			}
-					
+
 		}
-		
+
 		//in the case of a conflict with an existing test case we have to rename the transient folder then persist it
 		@Override
 		public void visit(TestCase persisted) {
 			List<String> allNames = collectNames(getDestinationContent());
-			
+
 			String newName = generateUniqueName(allNames, toMerge.getName());
 			toMerge.setName(newName);
-			
+
 			context.summary.incrRenamed();
-			
+
 			persistFolder(toMerge);
-			
+
 		}
-		
-		
+
+
 		//in the case of a conflict with an existing folder it's fine : we don't have to persist it.
 		//However we must handle the transient content and merge them in turn : we notify the context that it must now merge it.
 		@Override
@@ -335,27 +335,27 @@ class TestCaseLibraryMerger {
 		}
 
 	}
-	 
-		
+
+
 	/* ******************************** util functions ************************************* */
-	
-	
+
+
 	private static List<String> collectNames(Collection<TestCaseLibraryNode> nodes){
 		List<String> res = new LinkedList<String>();
-		
+
 		for (TestCaseLibraryNode node : nodes){
 			res.add(node.getName());
 		}
-		
+
 		return res;
 	}
-	
-	
+
+
 	private static String generateUniqueName(List<String> pickedNames, String baseName){
 		String copyToken = "-import";
 		return  LibraryUtils.generateUniqueName(pickedNames, baseName, copyToken, TestCaseLibraryNode.MAX_NAME_SIZE);
 	}
-	
+
 	private static TestCaseLibraryNode getByName(Collection<TestCaseLibraryNode> hayStack, String needle){
 		for (TestCaseLibraryNode node : hayStack ){
 			if (node.getName().equals(needle)){
@@ -364,8 +364,8 @@ class TestCaseLibraryMerger {
 		}
 		throw new RuntimeException("that method should never have been called if not preceeded by a preventive call to "+
 				"collectName().contains() or if this preventive call returned false - something is wrong with your code dude ");
-		
+
 	}
-	
-	
+
+
 }

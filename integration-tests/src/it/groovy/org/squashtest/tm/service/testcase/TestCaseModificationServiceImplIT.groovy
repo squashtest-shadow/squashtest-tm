@@ -56,7 +56,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 	private TestCaseLibrariesCrudService libcrud
 
 	@Inject GenericProjectManagerService projectService
-	
+
 	private int testCaseId=-1;
 	private int folderId = -1;
 
@@ -72,7 +72,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		def testCase = new TestCase(name: "test case 1", description: "the first test case")
 
 		navService.addFolderToLibrary(lib.id,folder)
-		navService.addTestCaseToFolder (folder.id, testCase )
+		navService.addTestCaseToFolder (folder.id, testCase, null )
 
 		folderId = folder.id;
 		testCaseId= testCase.id;
@@ -154,7 +154,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		def newtc= new TestCase(name: tc2name, description: tc2desc)
 
 		when :
-		navService.addTestCaseToFolder(folderId,newtc)
+		navService.addTestCaseToFolder(folderId,newtc, null)
 		service.rename(newtc.id, newName)
 		def renewtc = service.findById(newtc.id)
 		then :
@@ -173,7 +173,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		def newtc = new TestCase(name: tc2name, description: tc2desc)
 
 		when :
-		navService.addTestCaseToFolder(folderId, newtc  )
+		navService.addTestCaseToFolder(folderId, newtc, null  )
 		service.rename(newtc.id, newName)
 		then :
 		thrown(DuplicateNameException)
@@ -191,7 +191,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		then :
 		tc.description == tcNewDesc
 	}
-	
+
 	def "should change a test case reference"(){
 		given :
 		def tcNewRef = "the new ref"
@@ -211,7 +211,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		def newAction = "manmana"
 		when :
 		service.updateTestStepAction(stepId, newAction)
-		
+
 		then :
 		ActionTestStep step = findEntity(ActionTestStep.class, 2L);
 		step.action == newAction;
@@ -277,59 +277,59 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		list[1].id == tstep3.id
 		list[2].id == tstep2.id
 	}
-	
-	def "should move a couple of steps to position #2"(){
-		
-		given :
-			def step1 = new ActionTestStep("first step", "first result")
-			def step2 = new ActionTestStep("second step", "second result")
-			def step3 = new ActionTestStep("third step", "third result")
-			def step4 = new ActionTestStep("fourth step", "fourth result")
-			def step5 = new ActionTestStep("fifth step", "fifth result")
-			def step6 = new ActionTestStep("sixth step", "sixth result")
-		
-		and :
-			service.addActionTestStep(testCaseId, step1)
-			service.addActionTestStep(testCaseId, step2)
-			service.addActionTestStep(testCaseId, step3)
-			service.addActionTestStep(testCaseId, step4)
-			service.addActionTestStep(testCaseId, step5)
-			service.addActionTestStep(testCaseId, step6)
-		when :
-		
 
-			service.changeTestStepsPosition(testCaseId, 1, [step4, step5].collect{it.id})
-			def reTc = service.findTestCaseWithSteps (testCaseId)
-			
+	def "should move a couple of steps to position #2"(){
+
+		given :
+		def step1 = new ActionTestStep("first step", "first result")
+		def step2 = new ActionTestStep("second step", "second result")
+		def step3 = new ActionTestStep("third step", "third result")
+		def step4 = new ActionTestStep("fourth step", "fourth result")
+		def step5 = new ActionTestStep("fifth step", "fifth result")
+		def step6 = new ActionTestStep("sixth step", "sixth result")
+
+		and :
+		service.addActionTestStep(testCaseId, step1)
+		service.addActionTestStep(testCaseId, step2)
+		service.addActionTestStep(testCaseId, step3)
+		service.addActionTestStep(testCaseId, step4)
+		service.addActionTestStep(testCaseId, step5)
+		service.addActionTestStep(testCaseId, step6)
+		when :
+
+
+		service.changeTestStepsPosition(testCaseId, 1, [step4, step5].collect{it.id})
+		def reTc = service.findTestCaseWithSteps (testCaseId)
+
 		then :
-			reTc.getSteps().collect{it.id} == [step1, step4, step5, step2, step3, step6].collect{it.id}
-			
-		
+		reTc.getSteps().collect{it.id} == [step1, step4, step5, step2, step3, step6].collect{it.id}
+
+
 	}
-	
+
 	def "should move the three first steps at last position"(){
 		given :
-			def step1 = new ActionTestStep("first step", "first result")
-			def step2 = new ActionTestStep("second step", "second result")
-			def step3 = new ActionTestStep("third step", "third result")
-			def step4 = new ActionTestStep("fourth step", "fourth result")
-			def step5 = new ActionTestStep("fifth step", "fifth result")
-			def step6 = new ActionTestStep("sixth step", "sixth result")
+		def step1 = new ActionTestStep("first step", "first result")
+		def step2 = new ActionTestStep("second step", "second result")
+		def step3 = new ActionTestStep("third step", "third result")
+		def step4 = new ActionTestStep("fourth step", "fourth result")
+		def step5 = new ActionTestStep("fifth step", "fifth result")
+		def step6 = new ActionTestStep("sixth step", "sixth result")
 
 		and :
-			service.addActionTestStep(testCaseId, step1)
-			service.addActionTestStep(testCaseId, step2)
-			service.addActionTestStep(testCaseId, step3)
-			service.addActionTestStep(testCaseId, step4)
-			service.addActionTestStep(testCaseId, step5)
-			service.addActionTestStep(testCaseId, step6)
-			
+		service.addActionTestStep(testCaseId, step1)
+		service.addActionTestStep(testCaseId, step2)
+		service.addActionTestStep(testCaseId, step3)
+		service.addActionTestStep(testCaseId, step4)
+		service.addActionTestStep(testCaseId, step5)
+		service.addActionTestStep(testCaseId, step6)
+
 		when :
-			service.changeTestStepsPosition(testCaseId, 3, [step1, step2, step3].collect{it.id})
-			def reTc = service.findTestCaseWithSteps (testCaseId)
-		
+		service.changeTestStepsPosition(testCaseId, 3, [step1, step2, step3].collect{it.id})
+		def reTc = service.findTestCaseWithSteps (testCaseId)
+
 		then :
-			reTc.getSteps().collect{it.id} == [step4, step5, step6, step1, step2, step3].collect{it.id}
+		reTc.getSteps().collect{it.id} == [step4, step5, step6, step1, step2, step3].collect{it.id}
 	}
 
 
@@ -365,7 +365,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 
 
 
-		navService.addTestCaseToFolder(folderId, tc)
+		navService.addTestCaseToFolder(folderId, tc, null)
 		service.addActionTestStep tc.id, ts1
 		service.addActionTestStep tc.id, ts2
 
@@ -389,9 +389,9 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		def ts3 = new ActionTestStep(action:"action3", expectedResult:"ex3")
 		def ts4 = new ActionTestStep(action:"action4", expectedResult:"ex4")
 		def ts5 = new ActionTestStep(action:"action5", expectedResult:"ex5")
-		
 
-		navService.addTestCaseToFolder(folderId, tc)
+
+		navService.addTestCaseToFolder(folderId, tc, null)
 		service.addActionTestStep tc.id, ts1
 		service.addActionTestStep tc.id, ts2
 		service.addActionTestStep tc.id, ts3
@@ -412,32 +412,32 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		obj.size()==2
 		obj.collect {it.action } == ["action2", "action4"]
 	}
-	
+
 	@DataSet("TestCaseModificationServiceImplIT.should remove automated script link.xml")
 	def "should remove automated script link"(){
 		given :
 		def testCaseId = 11L
-		
+
 		when :
 		service.removeAutomation(testCaseId)
-		
+
 		then:
 		TestCase testCase = findEntity(TestCase.class, testCaseId)
 		testCase.getAutomatedTest() == null
 	}
-	
+
 	def GenericProject createProject(){
 		Project p = new Project();
 		p.name = Double.valueOf(Math.random()).toString();
 		p.description = "eaerazer"
 		return p
 	}
-	
+
 	@DataSet("TestCaseModificationServiceImplIT.should find test cases.xml")
 	def "should find all test cases by ids"(){
 		when :
 		def res = service.findAllByIds([10L, 30L])
-		
+
 		then:
 		res*.getId() == [10L, 30L]
 	}
@@ -446,12 +446,12 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 	def "should find all test cases by ancestor ids"(){
 		when :
 		def res = service.findAllByAncestorIds(ancestors)
-		
+
 		then:
 		res*.getId() == expected
-		
-		where: 
-		ancestors | expected 
+
+		where:
+		ancestors | expected
 		[10L]     | [10L]
 		[50L]     | [30L]
 		[40L]     | [30L,20L]

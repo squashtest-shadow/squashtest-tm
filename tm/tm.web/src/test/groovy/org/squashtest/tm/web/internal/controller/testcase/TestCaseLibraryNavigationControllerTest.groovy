@@ -54,14 +54,14 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 		controller.driveNodeBuilder = driveNodeBuilder
 		controller.testCaseLibraryTreeNodeBuilder = testCaseLibraryTreeNodeBuilder
 		verifiedRequirementManagerService.testCaseHasUndirectRequirementCoverage(_)>>false
-		
+
 		driveNodeBuilder.get() >> new DriveNodeBuilder(permissionEvaluationService, null)
 		testCaseLibraryTreeNodeBuilder.get() >> new TestCaseLibraryTreeNodeBuilder(permissionEvaluationService, verifiedRequirementManagerService, internationalizationHelper)
 		internationalizationHelper.internationalize(_,_)>> ""
 		internationalizationHelper.internationalizeYesNo(false, _)>>"non";
 		internationalizationHelper.internationalizeYesNo(true, _)>>"oui";
 		internationalizationHelper.getMessage(_, _, _, _)>>"message";
-		}
+	}
 
 	def "should return root nodes of library"() {
 		given:
@@ -96,8 +96,8 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 	def "should create a node of closed folder type"() {
 		given:
 		TestCaseFolder node = Mock()
-		
-		
+
+
 		when:
 		def res = controller.createTreeNodeFromLibraryNode(node)
 
@@ -148,14 +148,14 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 		tc.getRequirementVersionCoverages() >> []
 		tc.getId()>>23L
 		tc.getName()>>"test case"
-		tcfm.getTestCase() >> tc 		
+		tcfm.getTestCase() >> tc
 		Map<Long, String> customFieldValues = [:]
 		tcfm.getCustomFields()>>customFieldValues
 		when:
 		def res = controller.addNewTestCaseToLibraryRootContent(10, tcfm)
 
 		then:
-		1 * testCaseLibraryNavigationService.addTestCaseToLibrary(10, {it.getName() == "test case"}, [:])
+		1 * testCaseLibraryNavigationService.addTestCaseToLibrary(10, {it.getName() == "test case"}, [:], null)
 		res.attr['name'] == "test case"
 	}
 
@@ -171,14 +171,14 @@ class TestCaseLibraryNavigationControllerTest extends Specification {
 		tc.getRequirementVersionCoverages() >> []
 		tc.getId()>>23L
 		tc.getName()>>"test case"
-		tcfm.getTestCase() >> tc 
+		tcfm.getTestCase() >> tc
 		Map<Long, String> customFieldValues = [:]
 		tcfm.getCustomFields()>>customFieldValues
 		when:
 		def res = controller.addNewTestCaseToFolder(10, tcfm)
 
 		then:
-		1 * testCaseLibraryNavigationService.addTestCaseToFolder(10, {it.getName() == "test case"}, [:])
+		1 * testCaseLibraryNavigationService.addTestCaseToFolder(10, {it.getName() == "test case"}, [:], null)
 		res.attr['name'] == "test case"
 	}
 }
