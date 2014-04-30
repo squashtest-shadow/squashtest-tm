@@ -36,9 +36,8 @@ import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
 class EntityValidator {
 
 	private Model model;
-	
-	
-	//private Validator validator = ValidatorFactoryBean.getInstance().getValidator();
+
+	// private Validator validator = ValidatorFactoryBean.getInstance().getValidator();
 
 	Model getModel() {
 		return model;
@@ -48,68 +47,63 @@ class EntityValidator {
 		this.model = model;
 	}
 
-
 	/**
-	 *  those checks are run for a test case for any type of operations.
-	 *  
-	 *  It checks : 
-	 *  - the path is well formed (failure)
-	 *  - the test case has a name (failure)
-	 *  - the test case name has length between 0 and 255
-	 *  - the project exists (failure)
-	 *  - the size of fields that are restricted in size  (warning)
+	 * those checks are run for a test case for any type of operations.
+	 * 
+	 * It checks : - the path is well formed (failure) - the test case has a name (failure) - the test case name has
+	 * length between 0 and 255 - the project exists (failure) - the size of fields that are restricted in size
+	 * (warning)
 	 * 
 	 * @param target
 	 * @param testCase
 	 * @return
 	 */
-	LogTrain basicTestCaseChecks(TestCaseTarget target, TestCase testCase){
-		
+	LogTrain basicTestCaseChecks(TestCaseTarget target, TestCase testCase) {
+
 		LogTrain logs = new LogTrain();
-		String[] fieldNameErrorArgs = new String[]{TC_NAME.header};	// that variable is simple convenience for logging
-		
+		String[] fieldNameErrorArgs = new String[] { TC_NAME.header }; // that variable is simple convenience for
+		// logging
+
 		// 1 - path must be supplied and and well formed
-		if (! target.isWellFormed()){
+		if (!target.isWellFormed()) {
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MALFORMED_PATH));
 		}
-		
+
 		// 2 - name must be supplied
 		String name = testCase.getName();
-		if (StringUtils.isBlank(name)){
+		if (StringUtils.isBlank(name)) {
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_FIELD_MANDATORY, fieldNameErrorArgs));
 		}
-		
+
 		// 3 - the project actually exists
-		if (target.isWellFormed()){
-			TargetStatus projectStatus = model.getProjectStatus(target.getProject()); 
-			if (projectStatus.getStatus() != Existence.EXISTS){
+		if (target.isWellFormed()) {
+			TargetStatus projectStatus = model.getProjectStatus(target.getProject());
+			if (projectStatus.getStatus() != Existence.EXISTS) {
 				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PROJECT_NOT_EXIST));
 			}
 		}
-		
-		// 4 - name has length between 0 and 255		
-		if (name != null && name.length() > 255){
-			logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_MAX_SIZE, fieldNameErrorArgs, Messages.IMPACT_MAX_SIZE, null));
+
+		// 4 - name has length between 0 and 255
+		if (name != null && name.length() > 255) {
+			logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_MAX_SIZE, fieldNameErrorArgs,
+					Messages.IMPACT_MAX_SIZE, null));
 		}
 
 		// 5 - reference, if exists, has length between 0 and 50
 		String reference = testCase.getReference();
-		if (! StringUtils.isBlank(reference) && reference.length() > 50){
-			logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_MAX_SIZE, new String[]{TC_REFERENCE.header}));
+		if (!StringUtils.isBlank(reference) && reference.length() > 50) {
+			logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_MAX_SIZE,
+					new String[] { TC_REFERENCE.header }));
 		}
-		
+
 		return logs;
 	}
-	
-	
-	
+
 	/**
-	 *  those checks are run for a test step for any type of operations.
-	 *  
-	 *  It checks : 
-	 *  - the path of the test case is well formed (failure)
-	 *  - the project exists (failure)
-	 *  - the format of the custom fields (lists, dates and checkbox) (warning)
+	 * those checks are run for a test step for any type of operations.
+	 * 
+	 * It checks : - the path of the test case is well formed (failure) - the project exists (failure) - the format of
+	 * the custom fields (lists, dates and checkbox) (warning)
 	 * 
 	 * 
 	 * 
@@ -117,141 +111,143 @@ class EntityValidator {
 	 * @param testStep
 	 * @return
 	 */
-	LogTrain basicTestStepChecks(TestStepTarget target){
-		
+	LogTrain basicTestStepChecks(TestStepTarget target) {
+
 		LogTrain logs = new LogTrain();
-		
+
 		TestCaseTarget testCase = target.getTestCase();
-		
+
 		// 1 - test case owner path must be supplied and and well formed
-		if (! testCase.isWellFormed()){
+		if (!testCase.isWellFormed()) {
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MALFORMED_PATH));
 		}
-		
+
 		// 2 - the test case must exist
 		TargetStatus tcStatus = model.getStatus(testCase);
-		if (tcStatus.status == TO_BE_DELETED || tcStatus.status == NOT_EXISTS){
+		if (tcStatus.status == TO_BE_DELETED || tcStatus.status == NOT_EXISTS) {
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_TC_NOT_FOUND));
 		}
-		
+
 		// 3 - the project actually exists
-		if (target.isWellFormed()){
-			TargetStatus projectStatus = model.getProjectStatus(target.getProject()); 
-			if (projectStatus.getStatus() != Existence.EXISTS){
+		if (target.isWellFormed()) {
+			TargetStatus projectStatus = model.getProjectStatus(target.getProject());
+			if (projectStatus.getStatus() != Existence.EXISTS) {
 				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PROJECT_NOT_EXIST));
 			}
 		}
-		
+
 		return logs;
 
 	}
-	
-	LogTrain basicTestStepChecks(TestStepTarget target, TestStep testStep){
-		
+
+	LogTrain basicTestStepChecks(TestStepTarget target, TestStep testStep) {
+
 		// for now nothing much more to do with the TestStep
 		return basicTestStepChecks(target);
 
 	}
-	
-	
-	LogTrain validateCallStep(TestStepTarget target, TestStep testStep, TestCaseTarget calledTestCase){
-		
+
+	LogTrain validateCallStep(TestStepTarget target, TestStep testStep, TestCaseTarget calledTestCase) {
+
 		LogTrain logs = new LogTrain();
-		
+
 		TargetStatus calledStatus = model.getStatus(calledTestCase);
-		
+
 		// 1 - the target must exist and be valid
-		if (calledStatus.status == NOT_EXISTS || calledStatus.status == TO_BE_DELETED || ! calledTestCase.isWellFormed()){
+		if (calledStatus.status == NOT_EXISTS || calledStatus.status == TO_BE_DELETED || !calledTestCase.isWellFormed()) {
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_CALLED_TC_NOT_FOUND));
 		}
-		
+
 		// 2 - there must be no cyclic calls
-		else if (model.wouldCreateCycle(target, calledTestCase)){
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, 
-										Messages.ERROR_CYCLIC_STEP_CALLS, 
-										new Object[]{target.getTestCase().getPath(), calledTestCase.getPath()}));
+		else if (model.wouldCreateCycle(target, calledTestCase)) {
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_CYCLIC_STEP_CALLS, new Object[] {
+					target.getTestCase().getPath(), calledTestCase.getPath() }));
 		}
-		
+
 		return logs;
-		
+
 	}
-	
-	LogTrain basicParameterChecks(ParameterTarget target){
-		
-		LogTrain logs = new LogTrain();
-		String[] fieldNameErrorArgs = new String[]{"TC_PARAM_NAME"};	// that variable is simple convenience for logging
-		
-		TestCaseTarget testCase = target.getOwner();
-		
-		// 1 - test case owner path must be supplied and and well formed
-		if (! testCase.isWellFormed()){
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MALFORMED_PATH));
-		}
-		
-		// 2 - the test case must exist
-		TargetStatus tcStatus = model.getStatus(testCase);
-		if (tcStatus.status == TO_BE_DELETED || tcStatus.status == NOT_EXISTS){
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_TC_NOT_FOUND));
-		}
-		
-		// 3 - the project actually exists
-		if (testCase.isWellFormed()){
-			TargetStatus projectStatus = model.getProjectStatus(target.getProject()); 
-			if (projectStatus.getStatus() != Existence.EXISTS){
-				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PROJECT_NOT_EXIST));
-			}	
-		}
-		
-		// 4 - name has length between 1 and 255
-		String name = target.getName();
-		if (name != null && name.length() > 255){
-			logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_MAX_SIZE, fieldNameErrorArgs, Messages.IMPACT_MAX_SIZE, null));
-		}
-		if (StringUtils.isBlank(name)){
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_FIELD_MANDATORY, fieldNameErrorArgs));
-		}
-		
-		return logs;
-		
-	}
-	
-	LogTrain basicDatasetCheck(DatasetTarget target){
+
+	LogTrain basicParameterChecks(ParameterTarget target) {
 
 		LogTrain logs = new LogTrain();
-		String[] fieldNameErrorArgs = new String[]{"TC_DATASET_NAME"};	// that variable is simple convenience for logging
+		String[] fieldNameErrorArgs = new String[] { "TC_PARAM_NAME" }; // that variable is simple convenience for
+		// logging
+
+		TestCaseTarget testCase = target.getOwner();
+
+		// 1 - test case owner path must be supplied and and well formed
+		if (!testCase.isWellFormed()) {
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MALFORMED_PATH));
+		}
+
+		// 2 - the test case must exist
+		TargetStatus tcStatus = model.getStatus(testCase);
+		if (tcStatus.status == TO_BE_DELETED || tcStatus.status == NOT_EXISTS) {
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_TC_NOT_FOUND));
+		}
+
+		// 3 - the project actually exists
+		if (testCase.isWellFormed()) {
+			TargetStatus projectStatus = model.getProjectStatus(target.getProject());
+			if (projectStatus.getStatus() != Existence.EXISTS) {
+				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PROJECT_NOT_EXIST));
+			}
+		}
+
+		// 4 - name has length between 1 and 255
+		String name = target.getName();
+		if (name != null && name.length() > 255) {
+			logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_MAX_SIZE, fieldNameErrorArgs,
+					Messages.IMPACT_MAX_SIZE, null));
+		}
+		if (StringUtils.isBlank(name)) {
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_FIELD_MANDATORY, fieldNameErrorArgs));
+		}
+
+		return logs;
+
+	}
+
+	LogTrain basicDatasetCheck(DatasetTarget target) {
+
+		LogTrain logs = new LogTrain();
+		String[] fieldNameErrorArgs = new String[] { "TC_DATASET_NAME" }; // that variable is simple convenience for
+		// logging
 
 		TestCaseTarget testCase = target.getTestCase();
-		
+
 		// 1 - the test case must be valid
-		if (! testCase.isWellFormed()){
+		if (!testCase.isWellFormed()) {
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MALFORMED_PATH));
 		}
-		
+
 		// 2 - the test case must exist
 		TargetStatus tcStatus = model.getStatus(testCase);
-		if (tcStatus.status == TO_BE_DELETED || tcStatus.status == NOT_EXISTS){
+		if (tcStatus.status == TO_BE_DELETED || tcStatus.status == NOT_EXISTS) {
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_TC_NOT_FOUND));
 		}
-		
+
 		// 3 - the project actually exists
-		if (testCase.isWellFormed()){
-			TargetStatus projectStatus = model.getProjectStatus(target.getProject()); 
-			if (projectStatus.getStatus() != Existence.EXISTS){
+		if (testCase.isWellFormed()) {
+			TargetStatus projectStatus = model.getProjectStatus(target.getProject());
+			if (projectStatus.getStatus() != Existence.EXISTS) {
 				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PROJECT_NOT_EXIST));
-			}	
+			}
 		}
-		
+
 		// 4 - name has length between 1 and 255
 		String name = target.getName();
-		if (name != null && name.length() > 255){
-			logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_MAX_SIZE, fieldNameErrorArgs, Messages.IMPACT_MAX_SIZE, null));
+		if (name != null && name.length() > 255) {
+			logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_MAX_SIZE, fieldNameErrorArgs,
+					Messages.IMPACT_MAX_SIZE, null));
 		}
-		if (StringUtils.isBlank(name)){
+		if (StringUtils.isBlank(name)) {
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_FIELD_MANDATORY, fieldNameErrorArgs));
 		}
-		
+
 		return logs;
-		
+
 	}
-	
+
 }
