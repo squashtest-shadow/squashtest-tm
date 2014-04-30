@@ -1,0 +1,72 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2014 Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package org.squashtest.tm.service.importer;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+import spock.lang.Specification;
+
+/**
+ * @author Gregory Fouquet
+ *
+ */
+class LogEntryTest extends Specification {
+	def "should create failure entry"() {
+		given:
+		Target t = Mock()
+		String msg = "foo"
+		String arg1 = "arg1"
+		String arg2 = "arg2"
+
+		when:
+		def entry = LogEntry.failure().forTarget(t).atLine(10).withMessage(msg, arg1, arg2).build()
+
+		then:
+		entry.status == ImportStatus.FAILURE
+		entry.target == t
+		entry.line == 10
+		entry.i18nError == msg
+		entry.errorArgs == [ arg1, arg2 ]
+
+	}
+	def "should create warning entry"() {
+		given:
+		Target t = Mock()
+		String msg = "foo"
+		String arg1 = "arg1"
+		String arg2 = "arg2"
+
+		when:
+		def entry = LogEntry.warning().forTarget(t).atLine(10).withMessage(msg, arg1, arg2).build()
+
+		then:
+		entry.status == ImportStatus.WARNING
+		entry.target == t
+		entry.line == 10
+		entry.i18nError == msg
+		entry.errorArgs == [ arg1, arg2 ]
+
+	}
+
+}

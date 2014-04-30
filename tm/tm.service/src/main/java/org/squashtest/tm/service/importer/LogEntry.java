@@ -24,13 +24,54 @@ public class LogEntry implements Comparable<LogEntry> {
 	private Integer line;
 	private Target target;
 	private ImportMode mode;
-	private final ImportStatus status;
-	private final String i18nError;
+	private ImportStatus status;
+	private String i18nError;
 	private String i18nImpact;
 
 	private Object[] errorArgs;
 	private Object[] impactArgs;
 
+	public static class Builder {
+		private final LogEntry product;
+
+		private Builder(ImportStatus status) {
+			product = new LogEntry(null, status, null);
+		}
+
+		public Builder forTarget(Target tgt) {
+			product.target = tgt;
+			return this;
+		}
+
+		public Builder atLine(int line) {
+			product.line = line;
+			return this;
+		}
+
+		public Builder withMessage(String key, Object... args) {
+			product.i18nError = key;
+			product.errorArgs = args;
+			return this;
+		}
+
+		public Builder withImpact(String key, Object... args) {
+			product.i18nImpact = key;
+			product.impactArgs = args;
+			return this;
+		}
+
+		public LogEntry build() {
+			return product;
+		}
+	}
+
+	public static Builder failure() {
+		return new Builder(ImportStatus.FAILURE);
+	}
+
+	public static Builder warning() {
+		return new Builder(ImportStatus.WARNING);
+	}
 
 	public LogEntry(Target target, ImportStatus status, String i18nError) {
 		super();
@@ -142,7 +183,7 @@ public class LogEntry implements Comparable<LogEntry> {
 		this.i18nImpact = i18nImpact;
 	}
 
-	public void setTarget(Target target){
+	public void setTarget(Target target) {
 		this.target = target;
 	}
 }
