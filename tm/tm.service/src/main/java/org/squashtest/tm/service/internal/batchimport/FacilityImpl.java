@@ -36,7 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
@@ -50,7 +49,6 @@ import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.testcase.TestCaseType;
 import org.squashtest.tm.domain.testcase.TestStep;
-import org.squashtest.tm.service.importer.ImportMode;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.internal.batchimport.Model.Existence;
@@ -61,7 +59,6 @@ import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.repository.DatasetParamValueDao;
 import org.squashtest.tm.service.internal.repository.ParameterDao;
-import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.DatasetModificationService;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
@@ -69,7 +66,6 @@ import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.service.testcase.TestStepModificationService;
-import org.squashtest.tm.service.user.UserAccountService;
 
 /**
  * 
@@ -120,8 +116,6 @@ public class FacilityImpl implements Facility {
 
 	@Inject
 	private CustomFieldDao cufDao;
-
-
 
 	private FacilityImplHelper helper = new FacilityImplHelper();
 
@@ -481,8 +475,6 @@ public class FacilityImpl implements Facility {
 
 		Map<Long, String> acceptableCufs = toAcceptableCufs(cufValues);
 
-
-
 		// case 1 : this test case lies at the root of the project
 		if (target.isRootTestCase()) {
 			Long libraryId = validator.getModel().getProjectStatus(target.getProject()).getId(); // never null because
@@ -516,8 +508,6 @@ public class FacilityImpl implements Facility {
 
 		TestCase orig = validator.getModel().get(target);
 		Long origId = orig.getId();
-
-
 
 		// update the test case core attributes
 
