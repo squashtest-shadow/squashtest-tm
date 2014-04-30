@@ -49,8 +49,8 @@ import org.squashtest.tm.service.user.UserAccountService;
 
 /**
  * 
- * This implementation solely focuses on validating data. It doesn't perform any operation
- * against the database, nor modifies the model : it justs uses the current data available.
+ * This implementation solely focuses on validating data. It doesn't perform any operation against the database, nor
+ * modifies the model : it justs uses the current data available.
  * 
  */
 @Component
@@ -106,8 +106,9 @@ public class ValidationFacility implements Facility {
 		// 3 - other checks
 		// 3-1 : names clash
 		if (status.status != Existence.NOT_EXISTS) {
-			logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_TC_ALREADY_EXISTS,
-					new String[] { target.getPath() }, Messages.IMPACT_TC_WITH_SUFFIX, null));
+			logs.addEntry(LogEntry.warning().forTarget(target)
+					.withMessage(Messages.ERROR_TC_ALREADY_EXISTS, target.getPath())
+					.withImpact(Messages.IMPACT_TC_WITH_SUFFIX).build());
 		}
 
 		// 3-2 : permissions.
@@ -118,11 +119,12 @@ public class ValidationFacility implements Facility {
 
 		// 3-3 : name and path must be consistent
 		if (!PathUtils.arePathsAndNameConsistents(path, name)) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_INCONSISTENT_PATH_AND_NAME, new Object[]{path, name}));
+			logs.addEntry(LogEntry.warning().forTarget(target)
+					.withMessage(Messages.ERROR_INCONSISTENT_PATH_AND_NAME, path, name).build());
 		}
 
 		// 3-4 : fix test case metadatas
-		List<LogEntry> logEntries = fixMetadatas(target, (AuditableMixin) testCase,  ImportMode.CREATE);
+		List<LogEntry> logEntries = fixMetadatas(target, (AuditableMixin) testCase, ImportMode.CREATE);
 		logs.addEntries(logEntries);
 		return logs;
 
@@ -170,7 +172,7 @@ public class ValidationFacility implements Facility {
 			}
 			// 3-3 : check audit datas
 			// backup the audit log
-			List<LogEntry> logEntries = fixMetadatas(target, (AuditableMixin) testCase,  ImportMode.UPDATE);
+			List<LogEntry> logEntries = fixMetadatas(target, (AuditableMixin) testCase, ImportMode.UPDATE);
 			logs.addEntries(logEntries);
 
 		}
@@ -178,12 +180,14 @@ public class ValidationFacility implements Facility {
 		return logs;
 
 	}
+
 	/**
 	 * Will replace {@code mixin.createdBy} and {@code mixin.createdOn} if the values are invalid :
 	 * <ul>
 	 * <li>{@code mixin.createdBy} will be replaced by the current user's login</li>
 	 * <li>{@code mixin.createdOn} will be replaced by the import date.</li>
 	 * </ul>
+	 * 
 	 * @param target
 	 * 
 	 * @param testCase
@@ -191,17 +195,17 @@ public class ValidationFacility implements Facility {
 	 * @return a list of logEntries
 	 */
 	private List<LogEntry> fixMetadatas(TestCaseTarget target, AuditableMixin testCase, ImportMode importMode) {
-		//init vars
+		// init vars
 		List<LogEntry> logEntries = new ArrayList<LogEntry>();
 		String login = testCase.getCreatedBy();
 		boolean fixUser = false;
 		if (StringUtils.isBlank(login)) {
-			//no value for created by
+			// no value for created by
 			fixUser = true;
 		} else {
 			User user = userDao.findUserByLogin(login);
 			if (user == null || !user.getActive()) {
-				//user not found or not active
+				// user not found or not active
 				String impactMessage = null;
 				switch (importMode) {
 				case CREATE:
@@ -210,11 +214,12 @@ public class ValidationFacility implements Facility {
 				case UPDATE:
 					impactMessage = Messages.IMPACT_NO_CHANGE;
 					break;
-				default :
+				default:
 					impactMessage = Messages.IMPACT_NO_CHANGE;
 					break;
 				}
-				LogEntry logEntry = new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_TC_USER_NOT_FOUND, impactMessage);
+				LogEntry logEntry = new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_TC_USER_NOT_FOUND,
+						impactMessage);
 				logEntries.add(logEntry);
 				fixUser = true;
 			}
@@ -228,6 +233,7 @@ public class ValidationFacility implements Facility {
 		}
 		return logEntries;
 	}
+
 	@Override
 	public LogTrain deleteTestCase(TestCaseTarget target) {
 
@@ -336,10 +342,9 @@ public class ValidationFacility implements Facility {
 
 		// 4 - the step must exist
 		boolean exists = model.stepExists(target);
-		if (! exists){
+		if (!exists) {
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_STEP_NOT_EXISTS));
-		}
-		else{
+		} else {
 			// 5 - the step must be actually an action step
 			StepType type = model.getType(target);
 			if (type != StepType.ACTION) {
@@ -378,10 +383,9 @@ public class ValidationFacility implements Facility {
 
 		// 5 - the step must exist
 		boolean exists = model.stepExists(target);
-		if (! exists){
+		if (!exists) {
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_STEP_NOT_EXISTS));
-		}
-		else{
+		} else {
 			// 6 - check that this is a call step
 			StepType type = model.getType(target);
 			if (type != StepType.CALL) {
@@ -390,8 +394,8 @@ public class ValidationFacility implements Facility {
 
 			// 7 - no call step cycles allowed
 			if (model.wouldCreateCycle(target, calledTestCase)) {
-				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_CYCLIC_STEP_CALLS, new Object[] {
-						target.getTestCase().getPath(), calledTestCase.getPath() }));
+				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_CYCLIC_STEP_CALLS,
+						new Object[] { target.getTestCase().getPath(), calledTestCase.getPath() }));
 			}
 		}
 
@@ -492,7 +496,6 @@ public class ValidationFacility implements Facility {
 
 		LogTrain logs;
 
-
 		// 1 - is the dataset correctly identifed ?
 		logs = entityValidator.basicDatasetCheck(dataset);
 
@@ -502,7 +505,6 @@ public class ValidationFacility implements Facility {
 		// in this context specifically we set the target explicitly as being the dataset, not the parameter
 		// (or the logs will be reported at the wrong place)
 		logs.setForAll(dataset);
-
 
 		// go further if no blocking errors are detected
 		if (!logs.hasCriticalErrors()) {
@@ -524,7 +526,6 @@ public class ValidationFacility implements Facility {
 				logs.addEntry(hasNoPermission);
 			}
 		}
-
 
 		return logs;
 	}
@@ -555,8 +556,8 @@ public class ValidationFacility implements Facility {
 	// **************************** private utilities *****************************************
 
 	/**
-	 * checks permission on a project that may exist or not. <br/> the case where the project doesn't exist (and thus has
-	 * no id) is already covered in the basic checks.
+	 * checks permission on a project that may exist or not. <br/>
+	 * the case where the project doesn't exist (and thus has no id) is already covered in the basic checks.
 	 */
 	private LogEntry checkPermissionOnProject(String permission, TestCaseTarget target) {
 
@@ -570,7 +571,6 @@ public class ValidationFacility implements Facility {
 		}
 
 		return entry;
-
 	}
 
 	private LogEntry checkStepIndex(ImportMode mode, TestStepTarget target, ImportStatus importStatus,
