@@ -121,16 +121,16 @@ public class TestCaseTarget extends Target {
 
 	@Override
 	public boolean isWellFormed() {
-		return Utils.isPathWellFormed(path);
+		return PathUtils.isPathWellFormed(path);
 	}
 
 	@Override
 	public String getProject() {
-		return Utils.extractProjectName(path);
+		return PathUtils.extractProjectName(path);
 	}
 
 	public String getName() {
-		return Utils.extractTestCaseName(path);
+		return PathUtils.extractTestCaseName(path);
 	}
 
 	/**
@@ -141,14 +141,14 @@ public class TestCaseTarget extends Target {
 	 */
 	public String getFolder() {
 
-		String[] names = Utils.splitPath(path);
+		String[] names = PathUtils.splitPath(path);
 		String[] shortened = Arrays.copyOf(names, names.length - 1);
 
 		return StringUtils.join(shortened, '/');
 	}
 
 	public boolean isRootTestCase() {
-		String[] names = Utils.splitPath(path);
+		String[] names = PathUtils.splitPath(path);
 		return names.length == 2; // that is, composed of a project and a test case name only.
 	}
 }

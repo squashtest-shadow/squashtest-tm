@@ -117,7 +117,7 @@ public class ValidationFacility implements Facility {
 		}
 
 		// 3-3 : name and path must be consistent
-		if (!Utils.arePathsAndNameConsistents(path, name)) {
+		if (!PathUtils.arePathsAndNameConsistents(path, name)) {
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_INCONSISTENT_PATH_AND_NAME, new Object[]{path, name}));
 		}
 
@@ -153,8 +153,8 @@ public class ValidationFacility implements Facility {
 			// 3 - other checks
 			// 3-1 : check if the test case is renamed and would induce a potential name clash.
 			// arePathsAndNameConsistent() will tell us if the test case is renamed
-			if (!Utils.arePathsAndNameConsistents(path, name)) {
-				String newPath = Utils.rename(path, name);
+			if (!PathUtils.arePathsAndNameConsistents(path, name)) {
+				String newPath = PathUtils.rename(path, name);
 				TestCaseTarget newTarget = new TestCaseTarget(newPath);
 				TargetStatus newStatus = model.getStatus(newTarget);
 				if (newStatus.status != Existence.NOT_EXISTS) {

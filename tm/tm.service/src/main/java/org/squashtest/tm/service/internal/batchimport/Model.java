@@ -603,7 +603,7 @@ public class Model {
 			init(target);
 		}
 
-		String projectName = Utils.extractProjectName(target.getPath());
+		String projectName = PathUtils.extractProjectName(target.getPath());
 		Collection<CustomField> cufs = tcCufsPerProjectname.getCollection(projectName);
 
 		if (cufs != null) {
@@ -621,7 +621,7 @@ public class Model {
 			init(tc);
 		}
 
-		String projectName = Utils.extractProjectName(tc.getPath());
+		String projectName = PathUtils.extractProjectName(tc.getPath());
 		Collection<CustomField> cufs = stepCufsPerProjectname.getCollection(projectName);
 		if (cufs != null) {
 			return cufs;
@@ -822,7 +822,7 @@ public class Model {
 
 	private List<String> collectProjects(List<TestCaseTarget> targets) {
 		List<String> paths = collectPaths(targets);
-		return Utils.extractProjectNames(paths);
+		return PathUtils.extractProjectNames(paths);
 	}
 
 	@SuppressWarnings("unchecked")

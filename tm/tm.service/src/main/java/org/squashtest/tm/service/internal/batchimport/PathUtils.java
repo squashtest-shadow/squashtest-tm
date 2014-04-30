@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
  * @author bsiri
  * 
  */
-final class Utils {
+final class PathUtils {
 
 	/**
 	 * a non terminal name is anything that ends with a (non included) slash and has non zero length. Escaped slashes
@@ -62,7 +62,7 @@ final class Utils {
 	/** the last element is the test case name */
 	private static final Pattern testcasePattern = Pattern.compile(".*[^\\\\]\\/(.*)$");
 
-	private Utils() {
+	private PathUtils() {
 		super();
 	}
 

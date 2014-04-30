@@ -29,7 +29,7 @@ class UtilsTest extends Specification{
 	def "should say that the following pathes are valid"(){
 		
 		expect :
-			Utils.isPathWellFormed(path) == predicate
+			PathUtils.isPathWellFormed(path) == predicate
 		
 		where :
 			path								|	predicate	| textres 	| why
@@ -48,7 +48,7 @@ class UtilsTest extends Specification{
 	def "should extract project names"(){
 		
 		expect :
-			def res = Utils.extractProjectName(path)
+			def res = PathUtils.extractProjectName(path)
 			name.equals(res);
 		
 		where :
@@ -61,7 +61,7 @@ class UtilsTest extends Specification{
 	@Unroll("the test case name in '#path' is '#name'")
 	def "should extract test case names"(){
 		expect :
-			def res = Utils.extractTestCaseName(path)
+			def res = PathUtils.extractTestCaseName(path)
 			name.equals(res);
 		
 		where :
@@ -77,7 +77,7 @@ class UtilsTest extends Specification{
 	def "should split a path"(){
 		
 		expect :
-			def pathes = Utils.splitPath(path) as List
+			def pathes = PathUtils.splitPath(path) as List
 			pathes == names
 		
 		where :
@@ -100,7 +100,7 @@ class UtilsTest extends Specification{
 				]
 		
 		when :
-			def res = Utils.extractProjectNames(paths)
+			def res = PathUtils.extractProjectNames(paths)
 		
 		then :
 			res == ["project 1", "project \\/2"]
@@ -110,7 +110,7 @@ class UtilsTest extends Specification{
 	@Unroll("should rename #path to #newpath")
 	def "should 'rename' a path with a new name"(){
 		expect:
-			newpath == Utils.rename(path, newname)
+			newpath == PathUtils.rename(path, newname)
 		
 		where :
 			path					| 	newname			| newpath
