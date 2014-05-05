@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.service.internal.batchimport.Model.Existence;
 import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -50,32 +51,41 @@ class ValidationFacilityTest extends Specification {
 		facility.userAccountService = userAccount
 		facility.permissionService = permissionEvaluation
 		facility.userDao = userDao
+		facility.entityValidator = entityValidator
 
-		model.getStatus(_) >> Mock(TargetStatus)
+		TargetStatus status = Mock()
+		status.status >> Existence.NOT_EXISTS
+		model.getStatus(_) >> status
 		model.getTestCaseCufs(_) >> Collections.emptyList()
 		model.getProjectStatus(_) >> Mock(TargetStatus)
 
 		userAccount.findCurrentUser() >> Mock(User)
 	}
 
+	@Unroll("should validate new test case with inconsistent path #path and name #name")
 	def "should validate new test case with inconsistent path and name"() {
 		given:
 		LogTrain logTrain = new LogTrain();
-		entityValidator.basicTestCaseChecks(_, _) >> logTrain
+		entityValidator.createTestCaseChecks(_, _) >> logTrain
 
 		and:
 		TestCaseTarget target = Mock()
-		target.path >> "/the/path/is/straight"
+		target.path >> path
 
 		and:
 		TestCase testCase = Mock()
-		testCase.name >> "deviant"
+		testCase.name >> name
 
 		when:
 		LogTrain createLog = facility.createTestCase(target, testCase, Collections.emptyMap())
 
 		then:
 		!createLog.criticalErrors
+
+		where:
+		path					| name
+		"/the/path/is/straight"	| "deviant"
+		"/the/path/is/straight"	| ""
 	}
 
 }

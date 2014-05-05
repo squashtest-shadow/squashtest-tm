@@ -62,7 +62,7 @@ class EntityValidatorTest extends Specification {
 		model.getProjectStatus("project") >> new TargetStatus(EXISTS, 10l)
 
 		when :
-		LogTrain train = validator.basicTestCaseChecks(target, testCase)
+		LogTrain train = validator.updateTestCaseChecks(target, testCase)
 
 
 		then :
@@ -73,8 +73,8 @@ class EntityValidatorTest extends Specification {
 
 
 
-	@Unroll("should say nay to a test case because #humanmsg")
-	def "should say nay for testcase for various reasons"(){
+	@Unroll("modified test case at #path should produce a #status log because #humanMsg")
+	def "test case at #path should produce a #status log because #humanmsg"(){
 
 		given :
 		model.getProjectStatus(_) >> {
@@ -84,7 +84,7 @@ class EntityValidatorTest extends Specification {
 		}
 
 		when :
-		LogTrain train = validator.basicTestCaseChecks(target, testCase)
+		LogTrain train = validator.updateTestCaseChecks(tar(path), testCase)
 
 
 		then :
@@ -96,15 +96,70 @@ class EntityValidatorTest extends Specification {
 		pb.i18nError == msg
 
 		where :
-		testCase										|	target							|	 status	|	msg								|	humanmsg
-		tc(name:"test-case")							| 	tar("project/test-case")		|	FAILURE	|	Messages.ERROR_MALFORMED_PATH	|	"malformed path"
-		tc(name:"")										|	tar("/project/whatever")		|	FAILURE	|	Messages.ERROR_FIELD_MANDATORY	|	"name is empty"
-		tc(name:"test-case")							|	tar("/unknown/test-case")		|	FAILURE	|	Messages.ERROR_PROJECT_NOT_EXIST|	"project doesn't exists"
-		tc(name:toolongstring)							|	tar("/project/"+toolongstring)	|	WARNING	|	Messages.ERROR_MAX_SIZE			|	"name is too long"
-		tc(name:"test-case", reference:longstring)		|	tar("/project/test-case")		|	WARNING	|	Messages.ERROR_MAX_SIZE			|	"ref is too long"
+		testCase										|	path						|	 status	|	msg								|	humanMsg
+		tc(name:"test-case")							| 	"project/test-case"			|	FAILURE	|	Messages.ERROR_MALFORMED_PATH	|	"malformed path"
+		tc(name:"")										|	"/project/whatever"			|	FAILURE	|	Messages.ERROR_FIELD_MANDATORY	|	"name is empty"
+		tc(name:"test-case")							|	"/unknown/test-case"		|	FAILURE	|	Messages.ERROR_PROJECT_NOT_EXIST|	"project doesn't exists"
+		tc(name:toolongstring)							|	"/project/"+toolongstring	|	WARNING	|	Messages.ERROR_MAX_SIZE			|	"name is too long"
+		tc(name:"test-case", reference:longstring)		|	"/project/test-case"		|	WARNING	|	Messages.ERROR_MAX_SIZE			|	"ref is too long"
 
 	}
 
+	@Unroll("new test case at #path should produce a #status log because #humanMsg")
+	def "same name as above but slightly different"(){
+
+		given :
+		model.getProjectStatus(_) >> {
+			return (it[0] == "project") ?
+			new TargetStatus(EXISTS, 10l) :
+			new TargetStatus(NOT_EXISTS, null)
+		}
+
+		when :
+		LogTrain train = validator.createTestCaseChecks(tar(path), testCase)
+
+
+		then :
+
+		train.entries.size() == 1
+
+		def pb = train.entries[0]
+		pb.status == status
+		pb.i18nError == msg
+
+		where :
+		testCase										|	path						|	 status	|	msg								|	humanMsg
+		tc(name:"test-case")							| 	"project/test-case"			|	FAILURE	|	Messages.ERROR_MALFORMED_PATH	|	"malformed path"
+		tc(name:"test-case")							|	"/unknown/test-case"		|	FAILURE	|	Messages.ERROR_PROJECT_NOT_EXIST|	"project doesn't exists"
+		tc(name:toolongstring)							|	"/project/"+toolongstring	|	WARNING	|	Messages.ERROR_MAX_SIZE			|	"name is too long"
+		tc(name:"test-case", reference:longstring)		|	"/project/test-case"		|	WARNING	|	Messages.ERROR_MAX_SIZE			|	"ref is too long"
+
+	}
+
+	@Unroll("new test case at #path should not produce log")
+	def "new test case at #path should not produce log"(){
+
+		given :
+		model.getProjectStatus(_) >> {
+			return (it[0] == "project") ?
+			new TargetStatus(EXISTS, 10l) :
+			new TargetStatus(NOT_EXISTS, null)
+		}
+
+		when :
+		LogTrain train = validator.createTestCaseChecks(tar(path), testCase)
+
+
+		then :
+		!train.hasCriticalErrors()
+		train.entries.size() == 0
+
+		where :
+		testCase										|	path
+		tc(name:"")										|	"/project/blank name"
+		tc(name:null)									|	"/project/null name"
+
+	}
 
 	// ******************** test steps checks **********************************
 

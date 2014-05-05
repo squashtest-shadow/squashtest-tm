@@ -138,7 +138,7 @@ public class FacilityImpl implements Facility {
 
 	}
 
-	private LogTrain createTCRoutine(LogTrain train, TestCaseTarget target, TestCase testCase,
+	private LogTrain updateTCRoutine(LogTrain train, TestCaseTarget target, TestCase testCase,
 			Map<String, String> cufValues) {
 
 		try {
@@ -163,6 +163,15 @@ public class FacilityImpl implements Facility {
 		return train;
 	}
 
+	private LogTrain createTCRoutine(LogTrain train, TestCaseTarget target, TestCase testCase,
+			Map<String, String> cufValues) {
+
+		// when creating, tc name might be random crap or blank
+		testCase.setName(target.getName());
+
+		return updateTCRoutine(train, target, testCase, cufValues);
+	}
+
 	@Override
 	public LogTrain updateTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
 
@@ -174,7 +183,7 @@ public class FacilityImpl implements Facility {
 
 			if (status.status == Existence.NOT_EXISTS) {
 
-				train = createTCRoutine(train, target, testCase, cufValues);
+				train = updateTCRoutine(train, target, testCase, cufValues);
 
 			} else {
 				try {

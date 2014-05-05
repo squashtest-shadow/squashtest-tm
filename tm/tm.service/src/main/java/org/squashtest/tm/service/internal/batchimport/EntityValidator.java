@@ -37,8 +37,6 @@ class EntityValidator {
 
 	private Model model;
 
-	// private Validator validator = ValidatorFactoryBean.getInstance().getValidator();
-
 	Model getModel() {
 		return model;
 	}
@@ -48,7 +46,7 @@ class EntityValidator {
 	}
 
 	/**
-	 * those checks are run for a test case for any type of operations.
+	 * Prerforms Test Case entity check before modifying a test case.
 	 * 
 	 * It checks : - the path is well formed (failure) - the test case has a name (failure) - the test case name has
 	 * length between 0 and 255 - the project exists (failure) - the size of fields that are restricted in size
@@ -58,42 +56,53 @@ class EntityValidator {
 	 * @param testCase
 	 * @return
 	 */
-	LogTrain basicTestCaseChecks(TestCaseTarget target, TestCase testCase) {
+	public LogTrain updateTestCaseChecks(TestCaseTarget target, TestCase testCase) {
 
-		LogTrain logs = new LogTrain();
-		String[] fieldNameErrorArgs = new String[] { TC_NAME.header }; // that variable is simple convenience for
-		// logging
-
-		// 1 - path must be supplied and and well formed
-		if (!target.isWellFormed()) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MALFORMED_PATH));
-		}
+		LogTrain logs = createTestCaseChecks(target, testCase);
 
 		// 2 - name must be supplied
 		String name = testCase.getName();
 		if (StringUtils.isBlank(name)) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_FIELD_MANDATORY, fieldNameErrorArgs));
+			logs.addEntry(LogEntry.failure().forTarget(target)
+					.withMessage(Messages.ERROR_FIELD_MANDATORY, TC_NAME.header).build());
+		}
+
+		return logs;
+	}
+
+	/**
+	 * Prerforms Test Case entity check before creating a test case.
+	 * 
+	 * @param target
+	 * @param testCase
+	 * @return
+	 */
+	public LogTrain createTestCaseChecks(TestCaseTarget target, TestCase testCase) {
+		String name = testCase.getName();
+		LogTrain logs = new LogTrain();
+
+		// 1 - path must be supplied and and well formed
+		if (!target.isWellFormed()) {
+			logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_MALFORMED_PATH).build());
 		}
 
 		// 3 - the project actually exists
 		if (target.isWellFormed()) {
 			TargetStatus projectStatus = model.getProjectStatus(target.getProject());
 			if (projectStatus.getStatus() != Existence.EXISTS) {
-				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PROJECT_NOT_EXIST));
+				logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_PROJECT_NOT_EXIST).build());
 			}
 		}
 
 		// 4 - name has length between 0 and 255
 		if (name != null && name.length() > 255) {
-			logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_MAX_SIZE, fieldNameErrorArgs,
-					Messages.IMPACT_MAX_SIZE, null));
+			logs.addEntry(LogEntry.warning().forTarget(target).withMessage(Messages.ERROR_MAX_SIZE, TC_NAME.header).withImpact(Messages.IMPACT_MAX_SIZE).build());
 		}
 
 		// 5 - reference, if exists, has length between 0 and 50
 		String reference = testCase.getReference();
 		if (!StringUtils.isBlank(reference) && reference.length() > 50) {
-			logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_MAX_SIZE,
-					new String[] { TC_REFERENCE.header }));
+			logs.addEntry(LogEntry.warning().forTarget(target).withMessage(Messages.ERROR_MAX_SIZE, TC_REFERENCE.header).build());
 		}
 
 		return logs;

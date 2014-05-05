@@ -98,14 +98,14 @@ public class ValidationFacility implements Facility {
 		TargetStatus status = model.getStatus(target);
 
 		// 1 - basic verifications
-		logs = entityValidator.basicTestCaseChecks(target, testCase);
+		logs = entityValidator.createTestCaseChecks(target, testCase);
 
 		// 2 - custom fields (create)
 		logs.append(cufValidator.checkCreateCustomFields(target, cufValues, model.getTestCaseCufs(target)));
 
 		// 3 - other checks
 		// 3-1 : names clash
-		if (status.status != Existence.NOT_EXISTS) {
+		if (status.getStatus() != Existence.NOT_EXISTS) {
 			logs.addEntry(LogEntry.warning().forTarget(target)
 					.withMessage(Messages.ERROR_TC_ALREADY_EXISTS, target.getPath())
 					.withImpact(Messages.IMPACT_TC_WITH_SUFFIX).build());
@@ -120,7 +120,7 @@ public class ValidationFacility implements Facility {
 		// 3-3 : name and path must be consistent
 		if (!PathUtils.arePathsAndNameConsistents(path, name)) {
 			logs.addEntry(LogEntry.warning().forTarget(target)
-					.withMessage(Messages.ERROR_INCONSISTENT_PATH_AND_NAME, path, name).build());
+					.withMessage(Messages.ERROR_INCONSISTENT_PATH_AND_NAME, path, name == null ? "" : name).build());
 		}
 
 		// 3-4 : fix test case metadatas
@@ -140,14 +140,14 @@ public class ValidationFacility implements Facility {
 		TargetStatus status = model.getStatus(target);
 
 		// if the test case doesn't exist
-		if (status.status == Existence.NOT_EXISTS) {
+		if (status.getStatus() == Existence.NOT_EXISTS) {
 			logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_TC_NOT_FOUND,
 					Messages.IMPACT_TC_CREATED));
 			logs.append(createTestCase(target, testCase, cufValues));
 		} else {
 
 			// 1 - basic verifications
-			logs.append(entityValidator.basicTestCaseChecks(target, testCase));
+			logs.append(entityValidator.updateTestCaseChecks(target, testCase));
 
 			// 2 - custom fields (create)
 			logs.append(cufValidator.checkUpdateCustomFields(target, cufValues, model.getTestCaseCufs(target)));
@@ -242,7 +242,7 @@ public class ValidationFacility implements Facility {
 		TargetStatus status = model.getStatus(target);
 
 		// 1 - does the target exist
-		if (status.status == Existence.NOT_EXISTS) {
+		if (status.getStatus() == Existence.NOT_EXISTS) {
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_TC_NOT_FOUND));
 		}
 
@@ -353,7 +353,6 @@ public class ValidationFacility implements Facility {
 		}
 
 		return logs;
-
 	}
 
 	@Override
