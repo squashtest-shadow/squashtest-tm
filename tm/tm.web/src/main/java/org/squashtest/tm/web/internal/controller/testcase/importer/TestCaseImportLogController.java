@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.web.internal.controller.testcase.export;
+package org.squashtest.tm.web.internal.controller.testcase.importer;
 
 import java.io.File;
 

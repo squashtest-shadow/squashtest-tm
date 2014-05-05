@@ -71,4 +71,14 @@ public enum DatasetSheetColumn implements TemplateColumn {
 		return processingMode;
 	}
 
+	@Override
+	public TemplateWorksheet getWorksheet() {
+		return TemplateWorksheet.DATASETS_SHEET;
+	}
+
+	@Override
+	public String getFullName() {
+		return getWorksheet().sheetName +"."+header;
+	}
+
 }

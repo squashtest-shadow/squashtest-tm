@@ -19,19 +19,15 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.service.internal.batchimport.testcase.excel;
+package org.squashtest.tm.service.batchimport.excel;
 
 /**
- * Indicates a templates'mandatory column is not present in import file.
+ * This holds types of columns mismatches from the expected workboosheet template and the actual structure of the workboosheet.
  * 
- * @author Gregory Fouquet
  * 
  */
-public class MissingMandatoryColumnMismatch implements TemplateMismatch {
-	public final TemplateColumn missingColumn; // NOSONAR immutable public field
+public enum ColumnMismatch {
+	MISSING_MANDATORY,
+	DUPLICATE
 
-	MissingMandatoryColumnMismatch(TemplateColumn missingColumn) {
-		super();
-		this.missingColumn = missingColumn;
-	}
 }

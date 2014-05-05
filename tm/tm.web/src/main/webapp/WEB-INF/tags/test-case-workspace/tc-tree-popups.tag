@@ -340,16 +340,28 @@
     </p>
   </div>
   </script>
+ 
   
-	
-	<div data-def="state=error-size">
+   <script id="xls-import-recap-ko" type="text/x-handlebars-template">
+   <p><f:message key="message.import.error.format"/><ul>
+     {{#if missingMandatoryColumns.length}}
+       <li><f:message key="message.import.log.error.mandatoryColumns"/>{{missingMandatoryColumns}}.</li>
+     {{/if}}
+     {{#if duplicateColumns.length}}
+       <li><f:message key="message.import.log.error.duplicateColumns"/></li>
+     {{/if}}
+   </ul></p>
+   </script>
+
+      <div data-def="state=error-size">
 		<span class="error-size"><f:message key="dialog.import.error.sizeexceeded"/></span>
 	</div>
 	
-	<div data-def="state=error-format">		
+	<div class="error-type" data-def="state=error-type">		
 		<span><f:message key="dialog.import.wrongfile"/><span id="import-err-filetype">xls, xlsx</span></span>	
 	</div>
-	
+	<div class="error-format" data-def="state=error-format">
+    </div>
 	<div id="import-excel-dump" class="not-displayed dump"></div>
 
 	<div class="popup-dialog-buttonpane">
@@ -358,7 +370,8 @@
 		<input type="button" value="${confirmLabel}" data-def="evt=confirm, state=confirm, mainbtn=confirm"/>
 		<input type="button" value="${okLabel}"		 data-def="evt=ok, state=summary, mainbtn=summary"/>
 		<input type="button" value="${okLabel}"		 data-def="evt=okerrsize, state=error-size, mainbtn=error-size"/>
-		<input type="button" value="${okLabel}"		 data-def="evt=okerrformat, state=error-format, mainbtn=error-format"/>
+		<input type="button" value="${okLabel}"		 data-def="evt=okerrformat, state=error-type, mainbtn=error-type"/>
+        <input type="button" value="${okLabel}"       data-def="evt=okerrformat, state=error-format, mainbtn=error-format"/>
 		<input type="button" value="${cancelLabel}"  data-def="evt=cancel, state=parametrization confirm"/>
 		<input type="button" value="${cancelLabel}"  data-def="evt=cancel-progression, state=progression"/>
 	</div>
@@ -465,10 +478,14 @@
 	<div data-def="state=error-size">
 		<span class="error-size"><f:message key="dialog.import.error.sizeexceeded"/></span>
 	</div>
+  
 	
-	<div data-def="state=error-format">		
-		<span><f:message key="dialog.import.wrongfile"/>xls, xlsx</span>	
+	<div  data-def="state=error-type">
+      <p><f:message key="message.import.error.format"/><ul><li><span><f:message key="dialog.import.wrongfile"/>xls, xlsx</span></li></ul></p>
 	</div>
+ 
+    
+  
 	
 	<div id="import-links-dump" class="not-displayed dump"></div>	
 
@@ -477,7 +494,7 @@
 		<input type="button" value="${confirmLabel}" data-def="evt=confirm, state=confirm, mainbtn=confirm"/>
 		<input type="button" value="${okLabel}"		 data-def="evt=ok, state=summary, mainbtn=summary"/>
 		<input type="button" value="${okLabel}"		 data-def="evt=okerrsize, state=error-size, mainbtn=error-size"/>
-		<input type="button" value="${okLabel}"		 data-def="evt=okerrformat, state=error-format, mainbtn=error-format"/>
+		<input type="button" value="${okLabel}"		 data-def="evt=okerrformat, state=error-type, mainbtn=error-type"/>
 		<input type="button" value="${cancelLabel}"  data-def="evt=cancel, state=parametrization confirm"/>
 		<input type="button" value="${cancelLabel}"  data-def="evt=cancel-progression, state=progression"/>
 	</div>

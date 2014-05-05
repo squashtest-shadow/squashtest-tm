@@ -24,14 +24,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.TreeSet;
 
 import org.apache.commons.collections.map.MultiValueMap;
 import org.squashtest.tm.service.internal.batchimport.LogTrain;
 
-public class ImportLog {
+public class ImportLog{
 
 	// key : EntityType, values : LogEntry
 	@SuppressWarnings("rawtypes")
@@ -280,6 +278,10 @@ public class ImportLog {
 
 	public void setReportUrl(String reportURL) {
 		this.reportUrl = reportURL;
+	}
+
+	public String getStatus(){
+		return "ok";
 	}
 
 }

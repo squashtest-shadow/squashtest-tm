@@ -33,6 +33,11 @@ class StdColumnDef<COL extends TemplateColumn> implements ColumnDef {
 	private final COL type;
 	private final int index;
 
+	/**
+	 * 
+	 * @param type
+	 * @param index
+	 */
 	StdColumnDef(COL type, int index) {
 		super();
 		this.type = type;

@@ -181,7 +181,8 @@ define([ "jquery", "app/pubsub", "app/lnf/Forms", "jquery.squash.messagedialog" 
 		init : init,
 		showInfo : displayInformationNotification,
 		getErrorMessage : getErrorMessage,
-		handleJsonResponseError : handleJsonResponseError
+		handleJsonResponseError : handleJsonResponseError,
+		handleGenericResponseError : handleGenericResponseError
 
 	};
 

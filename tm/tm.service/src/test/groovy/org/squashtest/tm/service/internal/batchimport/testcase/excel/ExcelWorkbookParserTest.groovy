@@ -27,6 +27,7 @@ import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.Resource
 import org.squashtest.tm.core.foundation.lang.IsoDateUtils
 import org.squashtest.tm.exception.SheetCorruptedException
+import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException
 import org.squashtest.tm.service.internal.batchimport.CallStepInstruction
 
 import spock.lang.Specification

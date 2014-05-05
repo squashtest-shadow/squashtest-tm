@@ -19,14 +19,29 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.service.internal.batchimport.testcase.excel;
+package org.squashtest.tm.service.batchimport.excel;
+
+import java.util.List;
+
 
 /**
- * This holds a mismatch from the expected workbook template and the actual structure of the workbook.
+ * Thrown when an import file doesnt' match the expected template.
  * 
  * @author Gregory Fouquet
  * 
  */
-public interface TemplateMismatch {
+public class TemplateMismatchException extends RuntimeException {
+	private static final long serialVersionUID = -3318286142079157710L;
+
+	private List<WorksheetFormatStatus> worksheetFormatStatuses;
+
+	public TemplateMismatchException(List<WorksheetFormatStatus> worksheetFormatStatuses) {
+		super();
+		this.worksheetFormatStatuses = worksheetFormatStatuses;
+	}
+
+	public List<WorksheetFormatStatus> getWorksheetFormatStatuses() {
+		return worksheetFormatStatuses;
+	}
 
 }

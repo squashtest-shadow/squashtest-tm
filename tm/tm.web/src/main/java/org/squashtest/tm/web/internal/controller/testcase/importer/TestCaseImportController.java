@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.web.internal.controller.testcase.export;
+package org.squashtest.tm.web.internal.controller.testcase.importer;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -40,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException;
 import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
@@ -108,7 +109,6 @@ public class TestCaseImportController {
 	@RequestMapping(value = "/xls", method = RequestMethod.POST, params = "dry-run")
 	public ModelAndView dryRunExcelWorkbook(@RequestParam("archive") MultipartFile uploadedFile, WebRequest request) {
 		LOGGER.debug("dryRunExcelWorkbook");
-
 		return importWorkbook(uploadedFile, request, new Command<File, ImportLog>() {
 			@Override
 			public ImportLog execute(File xls) {
@@ -129,16 +129,21 @@ public class TestCaseImportController {
 			summary.recompute(); // TODO why is it here ? shouldnt it be in service ?
 			generateImportLog(request, summary);
 			mav.addObject("summary", summary);
-			mav.addObject("workspace", "test-case");
 
 		} catch (IOException e) {
 			LOGGER.error("An exception prevented processing of test-case import file", e);
 
-		} finally {
+		}
+		catch (TemplateMismatchException tme){
+			ImportFormatFailure importFormatFailure = new ImportFormatFailure(tme);
+			mav.addObject("summary", importFormatFailure);
+		}
+		finally {
 			if (xls != null) {
 				xls.deleteOnExit();
 			}
 		}
+		mav.addObject("workspace", "test-case");
 
 		return mav;
 	}

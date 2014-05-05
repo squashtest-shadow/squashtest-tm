@@ -19,13 +19,15 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.service.internal.batchimport.testcase.excel;
+package org.squashtest.tm.service.internal.batchimport.testcase.excel
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.*
 
-import org.junit.Test;
+import org.squashtest.tm.service.batchimport.excel.ColumnMismatch
+import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException
+import org.squashtest.tm.service.batchimport.excel.WorksheetFormatStatus
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 /**
  * @author Gregory Fouquet
@@ -34,11 +36,12 @@ import spock.lang.Specification;
 class WorkbookMetaDataTest extends Specification {
 	def "should validate"() {
 		given:
-		WorkbookMetaData wmd = new WorkbookMetaData();
+		WorkbookMetaData wmd = new WorkbookMetaData()
 
 		wmd.addWorksheetDef(new WorksheetDef(TemplateWorksheet.TEST_CASES_SHEET) {
-					void validate() {
+					WorksheetFormatStatus validate() {
 						// validating sheet
+						return new WorksheetFormatStatus(TemplateWorksheet.TEST_CASES_SHEET)
 					}
 				})
 
@@ -50,19 +53,21 @@ class WorkbookMetaDataTest extends Specification {
 	}
 	def "should NOT validate"() {
 		given:
-		WorkbookMetaData wmd = new WorkbookMetaData();
+		WorkbookMetaData wmd = new WorkbookMetaData()
 
 		wmd.addWorksheetDef(new WorksheetDef(TemplateWorksheet.TEST_CASES_SHEET) {
-					void validate() {
+					WorksheetFormatStatus validate() {
 						// non validation sheet
-						throw new TemplateMismatchException();
+						WorksheetFormatStatus wfs = new WorksheetFormatStatus(TemplateWorksheet.TEST_CASES_SHEET)
+						wfs.addMismatches(ColumnMismatch.DUPLICATE, Arrays.asList(TestCaseSheetColumn.TC_NAME))
+						return wfs
 					}
 				})
 
 		wmd.addWorksheetDef(new WorksheetDef(TemplateWorksheet.STEPS_SHEET) {
-					void validate() {
-						// non validation sheet
-						throw new TemplateMismatchException();
+					WorksheetFormatStatus validate() {
+						// validation sheet
+						return new WorksheetFormatStatus(TemplateWorksheet.TEST_CASES_SHEET)
 					}
 				})
 
@@ -70,7 +75,7 @@ class WorkbookMetaDataTest extends Specification {
 		wmd.validate()
 
 		then:
-		def e = thrown(TemplateMismatchException)
-		e.mismatches.size() == 2
+		TemplateMismatchException e = thrown(TemplateMismatchException)
+		e.getWorksheetFormatStatuses().size() == 1
 	}
 }

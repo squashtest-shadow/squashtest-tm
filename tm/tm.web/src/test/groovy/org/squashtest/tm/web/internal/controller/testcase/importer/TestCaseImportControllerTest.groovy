@@ -19,13 +19,14 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.web.internal.controller.testcase.export;
+package org.squashtest.tm.web.internal.controller.testcase.importer
 
-import org.junit.Test;
-import org.springframework.web.context.request.WebRequest;
-import org.squashtest.tm.service.importer.ImportLog;
+import org.springframework.web.context.request.WebRequest
+import org.squashtest.tm.service.importer.ImportLog
+import org.squashtest.tm.web.internal.controller.testcase.importer.TestCaseImportController
+import org.squashtest.tm.web.internal.controller.testcase.importer.TestCaseImportLogHelper
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 /**
  * @author Gregory Fouquet
@@ -52,7 +53,7 @@ class TestCaseImportControllerTest extends Specification {
 		then:
 		f.exists()
 	}
-	def "should gnerate import log"() {
+	def "should generate import log"() {
 		given:
 		ImportLog log = new ImportLog()
 

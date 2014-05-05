@@ -19,15 +19,17 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.service.internal.batchimport.testcase.excel;
+package org.squashtest.tm.service.internal.batchimport.testcase.excel
 
 
-import spock.lang.Specification;
-import spock.lang.Unroll;
 
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.*
-
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.*
+
+import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException
+
+import spock.lang.Specification
+import spock.lang.Unroll
 
 /**
  * @author Gregory Fouquet
@@ -41,10 +43,10 @@ class WorksheetDefTest extends Specification {
 		cols.each { wd.addColumnDef(new StdColumnDef(it, 1)) }
 
 		when:
-		wd.validate()
+		def worksheetStatus = wd.validate()
 
 		then:
-		notThrown(TemplateMismatchException)
+		worksheetStatus.isFormatOk()
 
 		where:
 		cols << [
@@ -62,10 +64,10 @@ class WorksheetDefTest extends Specification {
 		cols.each { wd.addColumnDef(new StdColumnDef(it, 1)) }
 
 		when:
-		wd.validate()
+		def worksheetStatus = wd.validate()
 
 		then:
-		thrown(TemplateMismatchException)
+		!worksheetStatus.isFormatOk()
 
 		where:
 		cols << [

@@ -21,6 +21,8 @@
 
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
+import com.sun.org.apache.bcel.internal.classfile.Code;
+
 /**
  * Interface which describe a import template's column. Usually implemented as an enum.
  * 
@@ -29,5 +31,11 @@ package org.squashtest.tm.service.internal.batchimport.testcase.excel;
  */
 public interface TemplateColumn {
 	String getHeader();
+	TemplateWorksheet getWorksheet();
+	/**
+	 * Concatenates the name of the worksheet with it's header.
+	 * @return {@code "<worksheetName>.<header>"}
+	 */
+	String getFullName();
 	ColumnProcessingMode getProcessingMode();
 }

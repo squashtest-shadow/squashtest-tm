@@ -77,4 +77,12 @@ public enum StepSheetColumn implements TemplateColumn {
 		return processingMode;
 	}
 
+	@Override
+	public TemplateWorksheet getWorksheet() {
+		return TemplateWorksheet.STEPS_SHEET;
+	}
+	@Override
+	public String getFullName() {
+		return getWorksheet().sheetName +"."+header;
+	}
 }

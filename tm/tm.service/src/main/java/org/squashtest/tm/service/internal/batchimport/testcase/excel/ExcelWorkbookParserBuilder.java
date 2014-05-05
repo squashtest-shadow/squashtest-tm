@@ -40,6 +40,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.exception.SheetCorruptedException;
+import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException;
 
 /**
  * Builds an excel parser. It checks the structure of the excel file and configures the parser accordingly.

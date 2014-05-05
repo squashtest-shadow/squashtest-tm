@@ -27,6 +27,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException;
+import org.squashtest.tm.service.batchimport.excel.WorksheetFormatStatus;
+
 /**
  * Metadata of a test case import workbook. It collects data about the worksheets and the columns we have to process.
  * 
@@ -54,18 +57,18 @@ public class WorkbookMetaData {
 	 *             all encountered mismatches.
 	 */
 	public void validate() throws TemplateMismatchException {
-		List<TemplateMismatch> mismatches = new ArrayList<TemplateMismatch>();
+		List<WorksheetFormatStatus> worksheetKOStatuses = new ArrayList<WorksheetFormatStatus>();
 
 		for (WorksheetDef<?> wd : worksheetDefByType.values()) {
-			try {
-				wd.validate();
-			} catch (TemplateMismatchException e) {
-				mismatches.add(e);
+
+			WorksheetFormatStatus worksheetStatus = wd.validate();
+			if(!worksheetStatus.isFormatOk()){
+				worksheetKOStatuses.add(worksheetStatus);
 			}
 		}
 
-		if (mismatches.size() > 0) {
-			throw new TemplateMismatchException(mismatches);
+		if (worksheetKOStatuses.size() > 0) {
+			throw new TemplateMismatchException(worksheetKOStatuses);
 		}
 	}
 

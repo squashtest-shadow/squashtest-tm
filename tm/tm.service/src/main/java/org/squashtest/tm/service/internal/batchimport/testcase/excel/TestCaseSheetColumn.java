@@ -95,4 +95,13 @@ public enum TestCaseSheetColumn implements TemplateColumn {
 	public ColumnProcessingMode getProcessingMode() {
 		return processingMode;
 	}
+
+	@Override
+	public TemplateWorksheet getWorksheet() {
+		return TemplateWorksheet.TEST_CASES_SHEET;
+	}
+	@Override
+	public String getFullName() {
+		return getWorksheet().sheetName +"."+header;
+	}
 }

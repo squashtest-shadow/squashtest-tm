@@ -24,6 +24,7 @@ define([ "jquery", "tree", "handlebars", "workspace/workspace.import-popup" ], f
 	var recapBuilder = {};
 	/**
 	 * builds recap for zip import
+	 * 
 	 * @param json
 	 * @returns recap as an html string
 	 */
@@ -40,14 +41,15 @@ define([ "jquery", "tree", "handlebars", "workspace/workspace.import-popup" ], f
 		return this.template(recap);
 	};
 
-/**
- * builds recap for xls import
- * @param json
- * @returns recap as an html string
- */
+	/**
+	 * builds recap for xls import
+	 * 
+	 * @param json
+	 * @returns recap as an html string
+	 */
 	recapBuilder.xls = function(json) {
-		this.template = this.template || Handlebars.compile($("#xls-import-recap-tpl").html()); // caching
-		return this.template(json);
+			var templateOk =  Handlebars.compile($("#xls-import-recap-tpl").html()); // caching
+			return templateOk(json);
 	};
 
 	$.widget("squash.tcimportDialog", $.squash.importDialog, {
@@ -59,6 +61,10 @@ define([ "jquery", "tree", "handlebars", "workspace/workspace.import-popup" ], f
 
 		createSummary : function(json) {
 			this.element.find(".import-summary").html(recapBuilder[this.importType].call(this, json));
+		},
+		createFormatErrorsSummary : function(json){
+			this.templateKoMiss = Handlebars.compile($("#xls-import-recap-ko").html());
+			this.element.find(".error-format").html(this.templateKoMiss(json));
 		},
 
 		bindEvents : function() {
@@ -78,10 +84,10 @@ define([ "jquery", "tree", "handlebars", "workspace/workspace.import-popup" ], f
 			});
 
 			this.onOwnBtn("simulate", function() {
-				if(self.validate() === true) {
+				if (self.validate() === true) {
 					self.simulate();
 				} else {
-					self.setState("error-format");
+					self.setState("error-type");
 				}
 			});
 
@@ -105,25 +111,31 @@ define([ "jquery", "tree", "handlebars", "workspace/workspace.import-popup" ], f
 			});
 		},
 
-		simulate: function() {
+		simulate : function() {
 			this.setState("progression");
-			this.doSubmit({ urlPostfix: "/" + this.importType , queryParams: {"dry-run": true}});
+			this.doSubmit({
+				urlPostfix : "/" + this.importType,
+				queryParams : {
+					"dry-run" : true
+				}
+			});
 		},
 
-		submit: function() {
+		submit : function() {
 			this.setState("progression");
-			this.doSubmit({ urlPostfix: "/" + this.importType });
+			this.doSubmit({
+				urlPostfix : "/" + this.importType
+			});
 		}
 
 	});
 
-
 	function init() {
 		$("#import-excel-dialog").tcimportDialog({
 			formats : [ "xls", "xlsx" ],
-			typeFormats: {
-				zip: ["zip"],
-				xls: ["xls", "xlsx"]
+			typeFormats : {
+				zip : [ "zip" ],
+				xls : [ "xls", "xlsx" ]
 			}
 		});
 	}

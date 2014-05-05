@@ -19,23 +19,24 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.web.internal.controller.testcase.export
+package org.squashtest.tm.web.internal.controller.testcase.importer
 
-import java.io.FileInputStream;
+import java.io.FileInputStream
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.ss.util.WorkbookUtil;
-import org.springframework.web.context.request.WebRequest;
-import org.squashtest.tm.service.importer.ImportLog;
-import org.squashtest.tm.service.importer.ImportMode;
-import org.squashtest.tm.service.importer.ImportStatus;
-import org.squashtest.tm.service.importer.LogEntry;
-import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook
+import org.apache.poi.ss.usermodel.Cell
+import org.apache.poi.ss.usermodel.Row
+import org.apache.poi.ss.usermodel.Sheet
+import org.apache.poi.ss.usermodel.Workbook
+import org.apache.poi.ss.usermodel.WorkbookFactory
+import org.apache.poi.ss.util.WorkbookUtil
+import org.springframework.web.context.request.WebRequest
+import org.squashtest.tm.service.importer.ImportLog
+import org.squashtest.tm.service.importer.ImportMode
+import org.squashtest.tm.service.importer.ImportStatus
+import org.squashtest.tm.service.importer.LogEntry
+import org.squashtest.tm.web.internal.controller.testcase.importer.TestCaseImportLogHelper
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
 
 import spock.lang.Specification
 
@@ -55,7 +56,7 @@ class TestCaseImportLogHelperTest extends Specification {
 
 	def "should retrieve log"() {
 		when:
-		File xlsLog = helper.fetchLogFile("xxx");
+		File xlsLog = helper.fetchLogFile("xxx")
 
 		then:
 		xlsLog.name.startsWith "xxx"
@@ -80,7 +81,7 @@ class TestCaseImportLogHelperTest extends Specification {
 		helper.writeToFile(tmp, wb)
 
 		then:
-		WorkbookFactory.create(new FileInputStream(tmp));
+		WorkbookFactory.create(new FileInputStream(tmp))
 
 		cleanup:
 		tmp.deleteOnExit()
@@ -103,7 +104,7 @@ class TestCaseImportLogHelperTest extends Specification {
 		File f = helper.storeLogFile(log)
 
 		then:
-		WorkbookFactory.create(new FileInputStream(f));
+		WorkbookFactory.create(new FileInputStream(f))
 
 		cleanup:
 		f.deleteOnExit()

@@ -31,6 +31,8 @@ import javax.validation.constraints.NotNull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squashtest.tm.service.batchimport.excel.ColumnMismatch;
+import org.squashtest.tm.service.batchimport.excel.WorksheetFormatStatus;
 
 /**
  * Definition of a worksheet that is to be processd by the importer.
@@ -61,6 +63,7 @@ class WorksheetDef<COL extends TemplateColumn> {
 	 * @param columnDef
 	 */
 	private void addColumnDef(@NotNull StdColumnDef<COL> columnDef) {
+		//TODO check for duplicate column definitions and return a template Mismatch
 		stdColumnDefs.put(columnDef.getType(), columnDef);
 
 	}
@@ -68,22 +71,21 @@ class WorksheetDef<COL extends TemplateColumn> {
 	/**
 	 * Validates this {@link WorksheetDef}. Unrecoverable mismatches from template will throw an exception.
 	 * 
-	 * @throws TemplateMismatchException
-	 *             when the metadata does not match the expected template in an unrecoverable way. The exception holds
-	 *             all encountered mismatches.
+	 * @returns {@link WorksheetFormatStatus}
+	 *            that holds the possible Column mismatches
 	 */
-	void validate() throws TemplateMismatchException {
-		List<MissingMandatoryColumnMismatch> mmces = new ArrayList<MissingMandatoryColumnMismatch>();
+	WorksheetFormatStatus validate()  {
+
+		List<TemplateColumn> missingMandatoryColumnMismatch = new ArrayList<TemplateColumn>();
 
 		for (TemplateColumn col : worksheetType.getColumnTypes()) {
 			if (isMandatory(col) && noColumnDef(col)) {
-				mmces.add(new MissingMandatoryColumnMismatch(col));
+				missingMandatoryColumnMismatch.add(col);
 			}
 		}
-
-		if (!mmces.isEmpty()) {
-			throw new TemplateMismatchException(mmces);
-		}
+		WorksheetFormatStatus worksheetStatus = new WorksheetFormatStatus(worksheetType);
+		worksheetStatus.addMismatches(ColumnMismatch.MISSING_MANDATORY, missingMandatoryColumnMismatch);
+		return worksheetStatus;
 	}
 
 	private boolean isMandatory(TemplateColumn col) {
@@ -119,6 +121,7 @@ class WorksheetDef<COL extends TemplateColumn> {
 		} else if (isCustomFieldHeader(header)) {
 			LOGGER.trace("Column named '{}' will be added to metamodel as custom field", header);
 			res = new CustomFieldColumnDef(parseCustomFieldHeader(header), colIndex);
+			//TODO check for duplicate columns
 			getCustomFieldDefs().add((CustomFieldColumnDef) res);
 
 		} else {

@@ -20,15 +20,9 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang.StringUtils;
-import org.squashtest.tm.domain.audit.AuditableMixin;
-import org.squashtest.tm.domain.audit.AuditableSupport;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.Parameter;
@@ -37,12 +31,6 @@ import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.testcase.TestCaseType;
-import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.service.importer.ImportMode;
-import org.squashtest.tm.service.importer.ImportStatus;
-import org.squashtest.tm.service.importer.LogEntry;
-import org.squashtest.tm.service.internal.repository.UserDao;
-import org.squashtest.tm.service.user.UserAccountService;
 
 final class FacilityImplHelper {
 

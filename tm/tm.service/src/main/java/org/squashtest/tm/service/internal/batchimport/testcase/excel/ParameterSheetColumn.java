@@ -68,4 +68,12 @@ public enum ParameterSheetColumn implements TemplateColumn {
 		return processingMode;
 	}
 
+	@Override
+	public TemplateWorksheet getWorksheet() {
+		return TemplateWorksheet.PARAMETERS_SHEET;
+	}
+	@Override
+	public String getFullName() {
+		return getWorksheet().sheetName +"."+header;
+	}
 }
