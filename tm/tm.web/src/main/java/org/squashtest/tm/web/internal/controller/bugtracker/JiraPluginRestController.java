@@ -26,10 +26,12 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.testcase.TestCaseRestInfo;
 import org.squashtest.tm.service.bugtracker.JiraPluginRestService;
+import org.squashtest.tm.web.internal.http.ContentTypes;
 
 @Controller
 @RequestMapping("/jira/rest")
@@ -38,8 +40,9 @@ public class JiraPluginRestController {
 	@Inject
 	JiraPluginRestService jiraPluginRestService;
 
-	@RequestMapping("/getTestCases")
-	public @ResponseBody List<TestCaseRestInfo> getTestCases(
+	@RequestMapping(value="/getTestCases", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
+	public @ResponseBody
+	List<TestCaseRestInfo> getTestCases(
 			@RequestParam(value="issueKey", required=true) String issueKey,
 			@RequestParam(value="bugTrackerKey", required=true) String bugTrackerKey) {
 		return jiraPluginRestService.getTestcases("2849", "LOL");
