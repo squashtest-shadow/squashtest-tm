@@ -21,20 +21,32 @@
 
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
+import org.squashtest.tm.service.batchimport.excel.ColumnMismatch;
 
 /**
- * Interface which describe a import template's column. Usually implemented as an enum.
- * 
- * @author Gregory Fouquet
+ * Thrown when an import file's worksheet has a {@link ColumnMismatch}
  * 
  */
-public interface TemplateColumn {
-	String getHeader();
-	TemplateWorksheet getWorksheet();
-	/**
-	 * Concatenates the name of the worksheet with it's header.
-	 * @return {@code "<worksheetName>.<header>"}
-	 */
-	String getFullName();
-	ColumnProcessingMode getProcessingMode();
+public class ColumnMismatchException extends RuntimeException {
+
+	ColumnMismatch type ;
+	TemplateColumn colType;
+	public ColumnMismatchException() {
+		super();
+	}
+
+
+	public ColumnMismatchException(ColumnMismatch type, TemplateColumn colType) {
+		this();
+		this.type = type;
+		this.colType = colType;
+	}
+
+	public ColumnMismatch getType() {
+		return type;
+	}
+	public void setType(ColumnMismatch type) {
+		this.type = type;
+	}
+
 }

@@ -44,8 +44,8 @@
  *
  */
 define(
-		[ "jquery", "underscore", "jquery.squash.formdialog", "jform" ],
-		function($, _) {
+		[ "jquery", "underscore",  "app/ws/squashtm.notification", "jquery.squash.formdialog", "jform" ],
+		function($, _, WTF) {
 			"use strict";
 
 			if (($.squash !== undefined) && ($.squash.importDialog !== undefined)) {
@@ -183,25 +183,27 @@ define(
 										},
 										complete : function(xhr) {
 											self.options.xhr = xhr;
+											var json ;
 											try{
-											var json = $.parseJSON($(xhr.responseText).text());
+											json = $.parseJSON($(xhr.responseText).text());
 											}catch(e){
-												squashtm.notification.handleGenericResponseError(xhr);
+												WTF.handleGenericResponseError(xhr);
 												self.close();
 											}
-											
-											if ("maxSize" in json) {
-												self.errMaxSize(json.maxSize);
-												self.setState("error-size");
-											} else {
-												if (json.status && json.status == "Format KO") {
-													self.createFormatErrorsSummary(json);
-													self.setState("error-format");
+											if (json) {
+												if ("maxSize" in json) {
+													self.errMaxSize(json.maxSize);
+													self.setState("error-size");
 												} else {
-													self.createSummary(json);
-													self.setState("summary");
+													if (json.status && json.status == "Format KO") {
+														self.createFormatErrorsSummary(json);
+														self.setState("error-format");
+													} else {
+														self.createSummary(json);
+														self.setState("summary");
+													}
 												}
-										}
+											}
 										},
 
 										target : self.element.find(".dump").attr("id")

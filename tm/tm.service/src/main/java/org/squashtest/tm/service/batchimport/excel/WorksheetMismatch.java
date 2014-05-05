@@ -19,22 +19,17 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.service.internal.batchimport.testcase.excel;
-
+package org.squashtest.tm.service.batchimport.excel;
 
 /**
- * Interface which describe a import template's column. Usually implemented as an enum.
+ * This holds types of worksheet mismatches from the expected workboosheet template and the actual structure of the workboosheet.
  * 
- * @author Gregory Fouquet
  * 
  */
-public interface TemplateColumn {
-	String getHeader();
-	TemplateWorksheet getWorksheet();
+public enum WorksheetMismatch {
 	/**
-	 * Concatenates the name of the worksheet with it's header.
-	 * @return {@code "<worksheetName>.<header>"}
+	 * When the first row is missing
 	 */
-	String getFullName();
-	ColumnProcessingMode getProcessingMode();
+	MISSING_HEADER;
+
 }

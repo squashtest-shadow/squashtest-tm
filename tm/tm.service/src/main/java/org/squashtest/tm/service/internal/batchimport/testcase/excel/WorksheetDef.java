@@ -22,6 +22,7 @@
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.service.batchimport.excel.ColumnMismatch;
+import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException;
 import org.squashtest.tm.service.batchimport.excel.WorksheetFormatStatus;
 
 /**
@@ -61,11 +63,10 @@ class WorksheetDef<COL extends TemplateColumn> {
 
 	/**
 	 * @param columnDef
+	 * @return {@code true} if the columnDef had already been stored
 	 */
-	private void addColumnDef(@NotNull StdColumnDef<COL> columnDef) {
-		//TODO check for duplicate column definitions and return a template Mismatch
-		stdColumnDefs.put(columnDef.getType(), columnDef);
-
+	private boolean addColumnDef(@NotNull StdColumnDef<COL> columnDef) {
+		return stdColumnDefs.put(columnDef.getType(), columnDef)!= null;
 	}
 
 	/**
@@ -106,27 +107,33 @@ class WorksheetDef<COL extends TemplateColumn> {
 	 * @param header
 	 * @param colIndex
 	 * @return
+	 * @throws ColumnMismatchException
 	 */
 	@SuppressWarnings("unchecked")
-	ColumnDef addColumnDef(String header, int colIndex) {
+	ColumnDef addColumnDef(String header, int colIndex)throws ColumnMismatchException{
 		ColumnDef res = null;
 
 		COL colType = (COL) TemplateColumnUtils.coerceFromHeader(worksheetType.columnTypesClass, header);
-
+		boolean duplicate = false;
 		if (colType != null) {
 			LOGGER.trace("Column named '{}' will be added to metamodel as standard column {}", header, colType);
 			res = new StdColumnDef<COL>(colType, colIndex);
-			addColumnDef((StdColumnDef<COL>) res);
+			duplicate = addColumnDef((StdColumnDef<COL>) res);
+
 
 		} else if (isCustomFieldHeader(header)) {
 			LOGGER.trace("Column named '{}' will be added to metamodel as custom field", header);
 			res = new CustomFieldColumnDef(parseCustomFieldHeader(header), colIndex);
-			//TODO check for duplicate columns
-			getCustomFieldDefs().add((CustomFieldColumnDef) res);
+			List<CustomFieldColumnDef> cufDefs = getCustomFieldDefs();
+			duplicate = cufDefs.contains((CustomFieldColumnDef) res);
+			cufDefs.add((CustomFieldColumnDef) res);
 
 		} else {
 			LOGGER.trace("Column named '{}' will be ignored", header);
 			// else unknown columns are ditched
+		}
+		if(duplicate){
+			throw new ColumnMismatchException(ColumnMismatch.DUPLICATE, colType);
 		}
 
 		return res;

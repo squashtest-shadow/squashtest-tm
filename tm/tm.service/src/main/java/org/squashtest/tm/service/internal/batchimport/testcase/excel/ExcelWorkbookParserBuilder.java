@@ -27,6 +27,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
@@ -41,6 +43,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.exception.SheetCorruptedException;
 import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException;
+import org.squashtest.tm.service.batchimport.excel.WorksheetFormatStatus;
+import org.squashtest.tm.service.batchimport.excel.WorksheetMismatch;
 
 /**
  * Builds an excel parser. It checks the structure of the excel file and configures the parser accordingly.
@@ -75,8 +79,21 @@ class ExcelWorkbookParserBuilder {
 			throw new SheetCorruptedException(e);
 		}
 		Workbook wb = openWorkbook(is);
-		WorkbookMetaData wmd = buildMetaData(wb);
-		wmd.validate();
+		List<TemplateMismatchException> mismatches = new ArrayList<TemplateMismatchException>();
+		WorkbookMetaData wmd = null;
+		try {
+			wmd = buildMetaData(wb);
+			wmd.validate();
+		} catch (TemplateMismatchException tme) {
+			mismatches.add(tme);
+		}
+		if (!mismatches.isEmpty()) {
+			TemplateMismatchException tme = new TemplateMismatchException();
+			for (TemplateMismatchException mismatch : mismatches) {
+				tme.addWorksheetFormatStatus(mismatch.getWorksheetFormatStatuses());
+			}
+			throw tme;
+		}
 
 		LOGGER.trace("Metamodel is built, will create a parser based on the metamodel");
 
@@ -87,7 +104,7 @@ class ExcelWorkbookParserBuilder {
 	 * @param wb
 	 * @return
 	 */
-	private WorkbookMetaData buildMetaData(Workbook wb) {
+	private WorkbookMetaData buildMetaData(Workbook wb) throws TemplateMismatchException {
 		LOGGER.trace("Building metamodel for workbook");
 
 		WorkbookMetaData wmd = new WorkbookMetaData();
@@ -104,6 +121,13 @@ class ExcelWorkbookParserBuilder {
 	 */
 	@SuppressWarnings({ "rawtypes" })
 	private void processSheets(Workbook wb, WorkbookMetaData wmd) {
+
+		List<WorksheetFormatStatus> worksheetKOStatuses = new ArrayList<WorksheetFormatStatus>();
+
+
+
+
+
 		for (int iSheet = 0; iSheet < wb.getNumberOfSheets(); iSheet++) {
 			Sheet ws = wb.getSheetAt(iSheet);
 			String sheetName = ws.getSheetName();
@@ -115,10 +139,16 @@ class ExcelWorkbookParserBuilder {
 
 				WorksheetDef<?> wd = new WorksheetDef(sheetType);
 				wmd.addWorksheetDef(wd);
-				populateColumnDefs(wd, ws);
+				WorksheetFormatStatus workSheetFormatStatus = populateColumnDefs(wd, ws);
+				if(!workSheetFormatStatus.isFormatOk()){
+					worksheetKOStatuses.add(workSheetFormatStatus);
+				}
 			} else {
 				LOGGER.trace("Skipping unrecognized worksheet named '{}'", ws.getSheetName());
 
+			}
+			if (worksheetKOStatuses.size() > 0) {
+				throw new TemplateMismatchException(worksheetKOStatuses);
 			}
 		}
 	}
@@ -128,14 +158,16 @@ class ExcelWorkbookParserBuilder {
 	 * 
 	 * @param wd
 	 * @param ws
+	 * @return {@link WorksheetFormatStatus}
 	 */
-	private void populateColumnDefs(WorksheetDef<?> wd, Sheet ws) {
+	private WorksheetFormatStatus populateColumnDefs(WorksheetDef<?> wd, Sheet ws) {
 		Row headerRow = findHeaderRow(ws);
+		WorksheetFormatStatus worksheetFormatStatus = new WorksheetFormatStatus(wd.getWorksheetType());
 
 		if (headerRow == null) {
-			return;
+			worksheetFormatStatus.addWorksheetMismatch(WorksheetMismatch.MISSING_HEADER);
+			return worksheetFormatStatus;
 		}
-
 		for (int iCell = 0; iCell < headerRow.getLastCellNum(); iCell++) {
 			Cell cell = headerRow.getCell(iCell);
 			try {
@@ -147,7 +179,11 @@ class ExcelWorkbookParserBuilder {
 						"We expected a string cell, but it was not. Not an error case so we silently skip it. Exception message : {}",
 						e.getMessage());
 			}
+			catch (ColumnMismatchException cme){
+				worksheetFormatStatus.addMismatch(cme.type, cme.colType);
+			}
 		}
+		return worksheetFormatStatus;
 	}
 
 	/**
@@ -156,7 +192,7 @@ class ExcelWorkbookParserBuilder {
 	 * @return header row or <code>null</code>
 	 */
 	private Row findHeaderRow(Sheet ws) {
-		return  ws.getRow(0);
+		return ws.getRow(0);
 	}
 
 	/**

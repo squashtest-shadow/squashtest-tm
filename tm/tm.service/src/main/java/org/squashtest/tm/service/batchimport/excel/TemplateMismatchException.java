@@ -21,8 +21,8 @@
 
 package org.squashtest.tm.service.batchimport.excel;
 
+import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * Thrown when an import file doesnt' match the expected template.
@@ -33,13 +33,19 @@ import java.util.List;
 public class TemplateMismatchException extends RuntimeException {
 	private static final long serialVersionUID = -3318286142079157710L;
 
-	private List<WorksheetFormatStatus> worksheetFormatStatuses;
+	private List<WorksheetFormatStatus> worksheetFormatStatuses = new ArrayList<WorksheetFormatStatus>();
 
-	public TemplateMismatchException(List<WorksheetFormatStatus> worksheetFormatStatuses) {
+	public TemplateMismatchException() {
 		super();
-		this.worksheetFormatStatuses = worksheetFormatStatuses;
 	}
 
+	public TemplateMismatchException(List<WorksheetFormatStatus> worksheetFormatStatuses) {
+		this();
+		this.worksheetFormatStatuses = worksheetFormatStatuses;
+	}
+	public void addWorksheetFormatStatus(List<WorksheetFormatStatus> worksheetFormatStatuses){
+		this.worksheetFormatStatuses.addAll(worksheetFormatStatuses);
+	}
 	public List<WorksheetFormatStatus> getWorksheetFormatStatuses() {
 		return worksheetFormatStatuses;
 	}

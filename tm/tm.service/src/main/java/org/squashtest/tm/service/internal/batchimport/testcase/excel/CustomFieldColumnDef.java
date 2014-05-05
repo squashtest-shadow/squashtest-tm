@@ -71,4 +71,40 @@ public class CustomFieldColumnDef implements ColumnDef {
 		return processingMode.equals(ColumnProcessingMode.OPTIONAL);
 	}
 
+	// GENERATED:START
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((code == null) ? 0 : code.hashCode());
+		result = prime * result + index;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		CustomFieldColumnDef other = (CustomFieldColumnDef) obj;
+		if (code == null) {
+			if (other.code != null) {
+				return false;
+			}
+		} else if (!code.equals(other.code)) {
+			return false;
+		}
+		if (index != other.index) {
+			return false;
+		}
+		return true;
+	}
+	// GENERATED:END
+
 }

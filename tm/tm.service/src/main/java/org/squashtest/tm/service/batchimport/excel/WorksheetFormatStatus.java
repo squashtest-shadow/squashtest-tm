@@ -21,9 +21,11 @@
 
 package org.squashtest.tm.service.batchimport.excel;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -40,6 +42,7 @@ import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWor
  */
 public class WorksheetFormatStatus {
 	private Map<ColumnMismatch, Set<TemplateColumn>> columnMismatches = new HashMap<ColumnMismatch, Set<TemplateColumn>>();
+	private List<WorksheetMismatch> worksheetMismatches = new ArrayList<WorksheetMismatch>();
 	private TemplateWorksheet worksheet;
 
 	public WorksheetFormatStatus(TemplateWorksheet worksheet) {
@@ -60,10 +63,7 @@ public class WorksheetFormatStatus {
 	 */
 	public void addMismatches(ColumnMismatch mismatchType, Collection<TemplateColumn> columnsMismatched) {
 		if (!columnsMismatched.isEmpty()) {
-			Set<TemplateColumn> columns = this.columnMismatches.get(mismatchType);
-			if (columns == null) {
-				columns = new HashSet<TemplateColumn>();
-			}
+			Set<TemplateColumn> columns = findOrAddColumnListForMismatch(mismatchType);
 			columns.addAll(columnsMismatched);
 			this.columnMismatches.put(mismatchType, columns);
 		}
@@ -86,7 +86,7 @@ public class WorksheetFormatStatus {
 	 * @return true if there is no column mismatches.
 	 */
 	public boolean isFormatOk() {
-		return columnMismatches.isEmpty();
+		return columnMismatches.isEmpty() && worksheetMismatches.isEmpty();
 	}
 
 	/**
@@ -113,5 +113,34 @@ public class WorksheetFormatStatus {
 			columnNames.add(column.getFullName());
 		}
 		return columnNames;
+	}
+
+	/**
+	 * Store the {@link WorksheetMismatch}.
+	 * @param worksheetMismatch
+	 */
+	public void addWorksheetMismatch(WorksheetMismatch worksheetMismatch) {
+		this.worksheetMismatches.add(worksheetMismatch);
+
+	}
+	/**
+	 * Will store the column mismatch.
+	 * 
+	 * @param type
+	 * @param colType
+	 */
+	public void addMismatch(ColumnMismatch mismatchType, TemplateColumn colType) {
+		Set<TemplateColumn> columns = findOrAddColumnListForMismatch(mismatchType);
+		columns.add(colType);
+		this.columnMismatches.put(mismatchType, columns);
+
+	}
+
+	private Set<TemplateColumn> findOrAddColumnListForMismatch(ColumnMismatch mismatchType) {
+		Set<TemplateColumn> columns = this.columnMismatches.get(mismatchType);
+		if (columns == null) {
+			columns = new HashSet<TemplateColumn>();
+		}
+		return columns;
 	}
 }
