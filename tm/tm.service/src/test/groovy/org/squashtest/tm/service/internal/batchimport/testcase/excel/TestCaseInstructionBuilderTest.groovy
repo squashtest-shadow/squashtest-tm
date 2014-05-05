@@ -93,10 +93,10 @@ class TestCaseInstructionBuilderTest extends Specification {
 
 		where:
 		path 	| order 		| intOrder 	| cellType
-		"foo" 	| 30.0 			| 30       	| Cell.CELL_TYPE_NUMERIC
-		"foo" 	| 29.9999996	| 30 		| Cell.CELL_TYPE_NUMERIC
-		"foo" 	| 75.359 		| 75     	| Cell.CELL_TYPE_NUMERIC
-		"foo" 	| "30" 			| 30       	| Cell.CELL_TYPE_STRING
+		"foo" 	| 30.0 			| 29       	| Cell.CELL_TYPE_NUMERIC
+		"foo" 	| 29.9999996	| 29 		| Cell.CELL_TYPE_NUMERIC
+		"foo" 	| 75.359 		| 74     	| Cell.CELL_TYPE_NUMERIC
+		"foo" 	| "30" 			| 29       	| Cell.CELL_TYPE_STRING
 		"foo" 	| null 			| null     	| Cell.CELL_TYPE_BLANK
 	}
 

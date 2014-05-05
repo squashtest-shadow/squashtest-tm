@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
@@ -172,6 +173,29 @@ TestCaseLibraryNodeDao {
 
 		return (TestCaseLibraryNode) (id != null ? currentSession().load(TestCaseLibraryNode.class, id) : null);
 	}
+
+
+	@Override
+	public int countSiblingsOfNode(long nodeId) {
+
+		Query q;
+		Integer count;
+
+		q = currentSession().getNamedQuery("testCase.countSiblingsInFolder");
+		q.setParameter("nodeId", nodeId);
+		count = (Integer)q.uniqueResult();
+
+		if (count == null ){
+			q = currentSession().getNamedQuery("testCase.countSiblingsInLibrary");
+			q.setParameter("nodeId", nodeId);
+			count = (Integer)q.uniqueResult();
+		}
+
+		// if NPE here it's probably because nodeId corresponds to nothing. The +1 is because the queries use 'maxindex' instead of 'count'
+		return count + 1;
+	}
+
+
 
 	private List<String> unescapeSlashes(List<String> paths) {
 		List<String> unescaped = new ArrayList<String>(paths.size());

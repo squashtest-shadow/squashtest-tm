@@ -86,4 +86,10 @@ public interface TestCaseLibraryNodeDao extends LibraryNodeDao<TestCaseLibraryNo
 	 */
 	TestCaseLibraryNode findNodeByPath(String path);
 
+
+	int countSiblingsOfNode(long nodeId);
+
+
 }
+
+

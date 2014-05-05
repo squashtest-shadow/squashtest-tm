@@ -144,7 +144,7 @@ public class TestCaseTarget extends Target {
 		String[] names = PathUtils.splitPath(path);
 		String[] shortened = Arrays.copyOf(names, names.length - 1);
 
-		return StringUtils.join(shortened, '/');
+		return "/" + StringUtils.join(shortened, '/');
 	}
 
 	public boolean isRootTestCase() {

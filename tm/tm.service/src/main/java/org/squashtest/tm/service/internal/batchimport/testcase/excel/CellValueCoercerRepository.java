@@ -111,7 +111,7 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 	private static CellValueCoercerRepository<TestCaseSheetColumn> createTestCasesSheetRepo() {
 		CellValueCoercerRepository<TestCaseSheetColumn> repo = new CellValueCoercerRepository<TestCaseSheetColumn>();
 
-		repo.coercerByColumn.put(TestCaseSheetColumn.TC_NUM, OptionalIntegerCellCoercer.INSTANCE);
+		repo.coercerByColumn.put(TestCaseSheetColumn.TC_NUM, OptionalOneBasedIndexCellCoercer.INSTANCE);
 		repo.coercerByColumn.put(TestCaseSheetColumn.TC_WEIGHT_AUTO, OptionalBooleanCellCoercer.INSTANCE);
 		repo.coercerByColumn.put(TestCaseSheetColumn.TC_WEIGHT,
 				OptionalEnumCellCoercer.forEnum(TestCaseImportance.class));

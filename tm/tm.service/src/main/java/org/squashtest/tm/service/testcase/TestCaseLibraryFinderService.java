@@ -144,4 +144,14 @@ public interface TestCaseLibraryFinderService {
 	 * @return
 	 */
 	Collection<Long> findTestCaseIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds);
+
+
+
+	/**
+	 * returns how many nodes belongs to the same collection of the node being referenced by this id (this node is included in the count).
+	 * 
+	 * @param testCaseId
+	 * @return
+	 */
+	int countSiblingsOfNode(long nodeId);
 }

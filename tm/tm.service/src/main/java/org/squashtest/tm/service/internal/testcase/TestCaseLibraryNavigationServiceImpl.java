@@ -260,7 +260,7 @@ TestCaseLibraryNavigationService {
 			throw new DuplicateNameException(testCase.getName(), testCase.getName());
 		} else {
 			if (position != null){
-				folder.addContent(testCase);
+				folder.addContent(testCase, position);
 			}
 			else{
 				folder.addContent(testCase);
@@ -355,10 +355,12 @@ TestCaseLibraryNavigationService {
 
 	}
 
-	// CUF : this is a very quick fix for [Issue 2061], TODO : remove the lines that are related to this issue and
-	// replace
-	// it with another solution mentioned in the ticket
-	// same for requirement import
+	/*
+	 * CUF : this is a very quick fix for [Issue 2061], TODO : remove the lines that are related to this issue and
+	 * replace
+	 * it with another solution mentioned in the ticket
+	 * same for requirement import
+	 */
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary', 'IMPORT') or hasRole('ROLE_ADMIN')")
 	public ImportSummary importZipTestCase(InputStream archiveStream, long libraryId, String encoding) {
@@ -509,6 +511,12 @@ TestCaseLibraryNavigationService {
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary', 'READ') or hasRole('ROLE_ADMIN')")
 	public List<String> findNamesInLibraryStartingWith(long libraryId, String nameStart) {
 		return testCaseFolderDao.findNamesInLibraryStartingWith(libraryId, nameStart);
+	}
+
+
+	@Override
+	public int countSiblingsOfNode(long nodeId) {
+		return testCaseLibraryNodeDao.countSiblingsOfNode(nodeId);
 	}
 
 }

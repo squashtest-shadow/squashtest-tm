@@ -87,7 +87,7 @@ class ExcelWorkbookParserTest extends Specification {
 
 		and:
 		def testCasePaths = (1..8).collect { "path/row$it" }
-		def testCaseNums = (1..8).collect { it + 10 }
+		def testCaseNums = (1..8).collect { it + (10-1) }	// minus 1 because indexes in the file are one-based
 		def testCaseRefs = (1..8).collect { "ref$it" }
 		def testCaseNames = (1..8).collect { "name$it" }
 		def testCasePres = (1..8).collect { "pre$it" }

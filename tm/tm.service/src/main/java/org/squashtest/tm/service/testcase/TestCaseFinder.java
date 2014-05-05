@@ -27,6 +27,7 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testcase.TestCase;
 
@@ -36,6 +37,8 @@ import org.squashtest.tm.domain.testcase.TestCase;
  */
 @Transactional(readOnly = true)
 public interface TestCaseFinder extends CustomTestCaseFinder {
+
+
 	@PostAuthorize("hasPermission(returnObject , 'READ') or hasRole('ROLE_ADMIN')")
 	TestCase findById(long testCaseId);
 
@@ -47,6 +50,7 @@ public interface TestCaseFinder extends CustomTestCaseFinder {
 	 */
 	@PostFilter("hasPermission(filterObject , 'READ') or hasRole('ROLE_ADMIN')")
 	List<TestCase> findAllByIds(@NotNull Collection<Long> ids);
+
 
 
 

@@ -486,9 +486,9 @@ public class FacilityImpl implements Facility {
 
 		// case 1 : this test case lies at the root of the project
 		if (target.isRootTestCase()) {
-			Long libraryId = validator.getModel().getProjectStatus(target.getProject()).getId(); // never null because
-			// the checks
-			// ensured that the project exists
+			// libraryId is never null because the checks ensured that the project exists
+			Long libraryId = validator.getModel().getProjectStatus(target.getProject()).getId();
+
 			Collection<String> siblingNames = navigationService.findNamesInLibraryStartingWith(libraryId,
 					testCase.getName());
 			renameIfNeeded(testCase, siblingNames);
@@ -573,6 +573,19 @@ public class FacilityImpl implements Facility {
 			String newValue = cufValues.get(code);
 			if (!StringUtils.isBlank(newValue)) {
 				v.setValue(newValue);
+			}
+		}
+
+		// move the test case if its index says it has to move
+		Integer order = target.getOrder();
+		if (order != null && order > -1  && order < navigationService.countSiblingsOfNode(origId)){
+			if (target.isRootTestCase()){
+				Long libraryId = validator.getModel().getProjectStatus(target.getProject()).getId();
+				navigationService.moveNodesToLibrary(libraryId, new Long[]{origId}, order);
+			}
+			else{
+				Long folderId = navigationService.findNodeIdByPath(target.getFolder());
+				navigationService.moveNodesToFolder(folderId, new Long[]{origId}, order);
 			}
 		}
 
