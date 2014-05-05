@@ -49,7 +49,8 @@ class WorksheetDefTest extends Specification {
 		where:
 		cols << [
 			TestCaseSheetColumn.values(),
-			[TestCaseSheetColumn.TC_NAME, TestCaseSheetColumn.TC_PATH]
+			[TestCaseSheetColumn.TC_NAME, TestCaseSheetColumn.TC_PATH],
+			[TestCaseSheetColumn.TC_PATH]
 		]
 
 	}
@@ -69,7 +70,6 @@ class WorksheetDefTest extends Specification {
 		where:
 		cols << [
 			[],
-			[TestCaseSheetColumn.TC_PATH],
 			[TestCaseSheetColumn.TC_NAME],
 			[TestCaseSheetColumn.TC_ID]
 		]

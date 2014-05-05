@@ -159,6 +159,8 @@ class TestCaseInstructionBuilderTest extends Specification {
 		TC_REFERENCE	| Cell.CELL_TYPE_BLANK		| ""				| "reference"		| null
 
 		TC_NAME			| Cell.CELL_TYPE_STRING		| "yeah"			| "name"			| "yeah"
+		TC_NAME			| Cell.CELL_TYPE_STRING		| ""				| "name"			| ""
+		TC_NAME		 	| Cell.CELL_TYPE_BLANK		| ""				| "name"			| null
 
 		TC_WEIGHT_AUTO	| Cell.CELL_TYPE_NUMERIC	| 1					| "importanceAuto"	| true
 		TC_WEIGHT_AUTO	| Cell.CELL_TYPE_BOOLEAN	| true				| "importanceAuto"	| true
