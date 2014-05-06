@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;

@@ -687,8 +687,10 @@ public class FacilityImpl implements Facility {
 			helper.truncate(param);
 			parameterService.addNewParameterToTestCase(param, testcaseId);
 		} else {
-
-			findParameter(target).setDescription(param.getDescription());
+			String description = param.getDescription();
+			if(description != null){
+				findParameter(target).setDescription(description);
+			}
 		}
 
 	}

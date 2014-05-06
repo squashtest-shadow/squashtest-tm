@@ -36,7 +36,6 @@ import org.squashtest.tm.service.internal.batchimport.excel.ImportModeCellCoerce
 import org.squashtest.tm.service.internal.batchimport.excel.OptionalBooleanCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.OptionalDateCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.OptionalEnumCellCoercer;
-import org.squashtest.tm.service.internal.batchimport.excel.OptionalIntegerCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.OptionalOneBasedIndexCellCoercer;
 import org.squashtest.tm.service.internal.batchimport.excel.StringCellCoercer;
 

@@ -55,12 +55,12 @@ final class PathUtils {
 	 * the first element of slash-separated names is the project name. Beware that escaped slashes aren't actual
 	 * separator
 	 */
-	private static final Pattern projectPattern = Pattern.compile("^\\/" + NON_TERMINAL_NAME + ".*");// can concatenate
+	private static final Pattern PROJECT_PATTERN = Pattern.compile("^\\/" + NON_TERMINAL_NAME + ".*");// can concatenate
 	// thanks to
 	// toString()
 
 	/** the last element is the test case name */
-	private static final Pattern testcasePattern = Pattern.compile(".*[^\\\\]\\/(.*)$");
+	private static final Pattern TEST_CASE_PATTERN = Pattern.compile(".*[^\\\\]\\/(.*)$");
 
 	private PathUtils() {
 		super();
@@ -71,7 +71,7 @@ final class PathUtils {
 	}
 
 	static String extractProjectName(String path) {
-		Matcher matcher = projectPattern.matcher(path);
+		Matcher matcher = PROJECT_PATTERN.matcher(path);
 		if (matcher.matches()) {
 			return matcher.group(1);
 		} else {
@@ -82,7 +82,7 @@ final class PathUtils {
 	static List<String> extractProjectNames(List<String> pathes) {
 		Set<String> res = new HashSet<String>();
 		for (String p : pathes) {
-			Matcher matcher = projectPattern.matcher(p);
+			Matcher matcher = PROJECT_PATTERN.matcher(p);
 			if (matcher.matches()) {
 				res.add(matcher.group(1));
 			} else {
@@ -93,7 +93,7 @@ final class PathUtils {
 	}
 
 	static String extractTestCaseName(String path) {
-		Matcher matcher = testcasePattern.matcher(path);
+		Matcher matcher = TEST_CASE_PATTERN.matcher(path);
 		if (matcher.matches()) {
 			return matcher.group(1);
 		} else {

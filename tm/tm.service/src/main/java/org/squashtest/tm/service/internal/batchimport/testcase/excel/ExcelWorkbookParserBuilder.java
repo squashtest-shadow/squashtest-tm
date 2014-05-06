@@ -121,35 +121,35 @@ class ExcelWorkbookParserBuilder {
 	 */
 	@SuppressWarnings({ "rawtypes" })
 	private void processSheets(Workbook wb, WorkbookMetaData wmd) {
-
 		List<WorksheetFormatStatus> worksheetKOStatuses = new ArrayList<WorksheetFormatStatus>();
 
-
-
-
-
 		for (int iSheet = 0; iSheet < wb.getNumberOfSheets(); iSheet++) {
-			Sheet ws = wb.getSheetAt(iSheet);
-			String sheetName = ws.getSheetName();
-			TemplateWorksheet sheetType = TemplateWorksheet.coerceFromSheetName(sheetName);
+			processSheet(wb, wmd, worksheetKOStatuses, iSheet);
+		}
+		if (worksheetKOStatuses.size() > 0) {
+			throw new TemplateMismatchException(worksheetKOStatuses);
+		}
+	}
 
-			if (sheetType != null) {
-				LOGGER.trace("Worksheet named '{}' will be added to metamodel as standard worksheet {}", sheetName,
-						sheetType);
+	private void processSheet(Workbook wb, WorkbookMetaData wmd, List<WorksheetFormatStatus> worksheetKOStatuses,
+			int iSheet) {
+		Sheet ws = wb.getSheetAt(iSheet);
+		String sheetName = ws.getSheetName();
+		TemplateWorksheet sheetType = TemplateWorksheet.coerceFromSheetName(sheetName);
 
-				WorksheetDef<?> wd = new WorksheetDef(sheetType);
-				wmd.addWorksheetDef(wd);
-				WorksheetFormatStatus workSheetFormatStatus = populateColumnDefs(wd, ws);
-				if(!workSheetFormatStatus.isFormatOk()){
-					worksheetKOStatuses.add(workSheetFormatStatus);
-				}
-			} else {
-				LOGGER.trace("Skipping unrecognized worksheet named '{}'", ws.getSheetName());
+		if (sheetType != null) {
+			LOGGER.trace("Worksheet named '{}' will be added to metamodel as standard worksheet {}", sheetName,
+					sheetType);
 
+			WorksheetDef<?> wd = new WorksheetDef(sheetType);
+			wmd.addWorksheetDef(wd);
+			WorksheetFormatStatus workSheetFormatStatus = populateColumnDefs(wd, ws);
+			if(!workSheetFormatStatus.isFormatOk()){
+				worksheetKOStatuses.add(workSheetFormatStatus);
 			}
-			if (worksheetKOStatuses.size() > 0) {
-				throw new TemplateMismatchException(worksheetKOStatuses);
-			}
+		} else {
+			LOGGER.trace("Skipping unrecognized worksheet named '{}'", ws.getSheetName());
+
 		}
 	}
 
@@ -180,7 +180,7 @@ class ExcelWorkbookParserBuilder {
 						e.getMessage());
 			}
 			catch (ColumnMismatchException cme){
-				worksheetFormatStatus.addMismatch(cme.type, cme.colType);
+				worksheetFormatStatus.addMismatch(cme.getType(), cme.getColType());
 			}
 		}
 		return worksheetFormatStatus;

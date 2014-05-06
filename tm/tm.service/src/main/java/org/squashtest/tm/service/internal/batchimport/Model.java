@@ -917,7 +917,7 @@ public class Model {
 	 * Holds the {@link #id} and the {@link #status} of an entity concerned by the import.
 	 * 
 	 */
-	static class TargetStatus {
+	static final class TargetStatus {
 		/**
 		 * The {@link Existence} status of the concerned entity.
 		 */

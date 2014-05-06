@@ -38,7 +38,7 @@ import org.squashtest.tm.service.batchimport.excel.WorksheetFormatStatus;
  * 
  */
 public class ImportFormatFailure {
-	Map<ColumnMismatch, Set<String>> mismatches = new HashMap<ColumnMismatch, Set<String>>();
+	private Map<ColumnMismatch, Set<String>> mismatches = new HashMap<ColumnMismatch, Set<String>>();
 
 	public ImportFormatFailure(TemplateMismatchException tme) {
 		fillMismatches(tme);

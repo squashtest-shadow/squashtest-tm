@@ -31,7 +31,7 @@ public class LogEntry implements Comparable<LogEntry> {
 	private Object[] errorArgs;
 	private Object[] impactArgs;
 
-	public static class Builder {
+	public static final class Builder {
 		private final LogEntry product;
 
 		private Builder(ImportStatus status) {
