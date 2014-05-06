@@ -193,7 +193,7 @@ class EntityValidator {
 		// 2 - the test case must exist
 		TargetStatus tcStatus = model.getStatus(testCase);
 		if (tcStatus.status == TO_BE_DELETED || tcStatus.status == NOT_EXISTS) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_TC_NOT_FOUND));
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PARAMETER_OWNER_NOT_FOUND));
 		}
 
 		// 3 - the project actually exists

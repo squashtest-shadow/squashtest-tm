@@ -51,6 +51,7 @@ public final class Messages {
 	public static final String ERROR_NOT_AN_ACTIONSTEP = "message.import.log.error.tc.tcStep.notanactionstep";
 	public static final String ERROR_CYCLIC_STEP_CALLS = "message.import.log.error.tc.callStep.cyclicCalls";
 	public static final String ERROR_UNEXPECTED_ERROR = "message.import.log.error.unexpectederror";
+	public static final String ERROR_PARAMETER_OWNER_NOT_FOUND = "message.import.log.error.tc.tcOwnerNotFound";
 	public static final String ERROR_PARAMETER_ALREADY_EXISTS = "message.import.log.error.tc.param.alreadyexists";
 	public static final String ERROR_PARAMETER_NOT_FOUND = "message.import.log.error.tc.param.notFound";
 	public static final String ERROR_DATASET_NOT_FOUND = "message.import.log.error.tc.dataset.notFound";

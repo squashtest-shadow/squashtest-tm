@@ -330,7 +330,7 @@ class EntityValidatorTest extends Specification {
 		where :
 		target 										|	status	|	msg									|	humanmsg
 		ptarget("project/test-case", "param")		|	FAILURE	|	Messages.ERROR_MALFORMED_PATH		|	"malformed path"
-		ptarget("/project/unknown", "param")		|	FAILURE	|	Messages.ERROR_TC_NOT_FOUND			|	"test case doesn't exists"
+		ptarget("/project/unknown", "param")		|	FAILURE	|	Messages.ERROR_PARAMETER_OWNER_NOT_FOUND	|	"test case doesn't exists"
 		ptarget("/unknown/test-case", "param")		|	FAILURE	|	Messages.ERROR_PROJECT_NOT_EXIST	|	"project doesn't exists"
 		ptarget("/project/test-case", "")			|	FAILURE	|	Messages.ERROR_FIELD_MANDATORY		|	"param has no name"
 		ptarget("/project/test-case", toolongstring)|	WARNING	|	Messages.ERROR_MAX_SIZE				|	"param name is too long"
