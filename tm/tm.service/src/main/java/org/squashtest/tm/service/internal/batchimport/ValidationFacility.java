@@ -40,6 +40,7 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.importer.ImportMode;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
+import org.squashtest.tm.service.importer.Target;
 import org.squashtest.tm.service.internal.batchimport.Model.Existence;
 import org.squashtest.tm.service.internal.batchimport.Model.StepType;
 import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
@@ -112,7 +113,7 @@ public class ValidationFacility implements Facility {
 		}
 
 		// 3-2 : permissions.
-		LogEntry hasntPermission = checkPermissionOnProject(PERM_CREATE, target);
+		LogEntry hasntPermission = checkPermissionOnProject(PERM_CREATE, target, target);
 		if (hasntPermission != null) {
 			logs.addEntry(hasntPermission);
 		}
@@ -166,7 +167,7 @@ public class ValidationFacility implements Facility {
 			}
 			// 3-2 : permissions. note about the following 'if' : the case where the project doesn't exist (and thus has
 			// no id) is already covered in the basic checks.
-			LogEntry hasntPermission = checkPermissionOnProject(PERM_WRITE, target);
+			LogEntry hasntPermission = checkPermissionOnProject(PERM_WRITE, target, target);
 			if (hasntPermission != null) {
 				logs.addEntry(hasntPermission);
 			}
@@ -247,7 +248,7 @@ public class ValidationFacility implements Facility {
 		}
 
 		// 2 - can the user actually do it ?
-		LogEntry hasntPermission = checkPermissionOnProject(PERM_DELETE, target);
+		LogEntry hasntPermission = checkPermissionOnProject(PERM_DELETE, target, target);
 		if (hasntPermission != null) {
 			logs.addEntry(hasntPermission);
 		}
@@ -272,7 +273,7 @@ public class ValidationFacility implements Facility {
 		logs.append(cufValidator.checkCreateCustomFields(target, cufValues, model.getTestStepCufs(target)));
 
 		// 3 - the user must be approved
-		LogEntry hasntPermission = checkPermissionOnProject(PERM_WRITE, target.getTestCase());
+		LogEntry hasntPermission = checkPermissionOnProject(PERM_WRITE, target.getTestCase(), target);
 		if (hasntPermission != null) {
 			logs.addEntry(hasntPermission);
 		}
@@ -302,13 +303,13 @@ public class ValidationFacility implements Facility {
 		// 3 - cufs : call steps have no cufs -> skip
 
 		// 4.1 - the user must be approved on the source test case
-		LogEntry hasntOwnerPermission = checkPermissionOnProject(PERM_WRITE, target.getTestCase());
+		LogEntry hasntOwnerPermission = checkPermissionOnProject(PERM_WRITE, target.getTestCase(), target);
 		if (hasntOwnerPermission != null) {
 			logs.addEntry(hasntOwnerPermission);
 		}
 
 		// 4.2 - the user must be approved on the target test case
-		LogEntry hasntCallPermission = checkPermissionOnProject(PERM_READ, calledTestCase);
+		LogEntry hasntCallPermission = checkPermissionOnProject(PERM_READ, calledTestCase, target);
 		if (hasntCallPermission != null) {
 			logs.addEntry(hasntCallPermission);
 		}
@@ -335,7 +336,7 @@ public class ValidationFacility implements Facility {
 		logs.append(cufValidator.checkUpdateCustomFields(target, cufValues, model.getTestStepCufs(target)));
 
 		// 3 - the user must be approved
-		LogEntry hasntPermission = checkPermissionOnProject(PERM_WRITE, target.getTestCase());
+		LogEntry hasntPermission = checkPermissionOnProject(PERM_WRITE, target.getTestCase(), target);
 		if (hasntPermission != null) {
 			logs.addEntry(hasntPermission);
 		}
@@ -369,13 +370,13 @@ public class ValidationFacility implements Facility {
 		// 3 - cufs : call steps have no cufs -> skip
 
 		// 4.1 - the user must be approved on the source test case
-		LogEntry hasntOwnerPermission = checkPermissionOnProject(PERM_WRITE, target.getTestCase());
+		LogEntry hasntOwnerPermission = checkPermissionOnProject(PERM_WRITE, target.getTestCase(), target);
 		if (hasntOwnerPermission != null) {
 			logs.addEntry(hasntOwnerPermission);
 		}
 
 		// 4.2 - the user must be approved on the target test case
-		LogEntry hasntCallPermission = checkPermissionOnProject(PERM_READ, calledTestCase);
+		LogEntry hasntCallPermission = checkPermissionOnProject(PERM_READ, calledTestCase, target);
 		if (hasntCallPermission != null) {
 			logs.addEntry(hasntCallPermission);
 		}
@@ -410,7 +411,7 @@ public class ValidationFacility implements Facility {
 		logs = entityValidator.basicTestStepChecks(target);
 
 		// 2 - can the user do it
-		LogEntry hasntPermission = checkPermissionOnProject(PERM_DELETE, target.getTestCase());
+		LogEntry hasntPermission = checkPermissionOnProject(PERM_DELETE, target.getTestCase(), target);
 		if (hasntPermission != null) {
 			logs.addEntry(hasntPermission);
 		}
@@ -439,7 +440,7 @@ public class ValidationFacility implements Facility {
 		}
 
 		// 3 - is the user approved ?
-		LogEntry hasNoPermission = checkPermissionOnProject(PERM_WRITE, target.getOwner());
+		LogEntry hasNoPermission = checkPermissionOnProject(PERM_WRITE, target.getOwner(), target);
 		if (hasNoPermission != null) {
 			logs.addEntry(hasNoPermission);
 		}
@@ -462,7 +463,7 @@ public class ValidationFacility implements Facility {
 		}
 
 		// 3 - is the user approved ?
-		LogEntry hasNoPermission = checkPermissionOnProject(PERM_WRITE, target.getOwner());
+		LogEntry hasNoPermission = checkPermissionOnProject(PERM_WRITE, target.getOwner(), target);
 		if (hasNoPermission != null) {
 			logs.addEntry(hasNoPermission);
 		}
@@ -482,7 +483,7 @@ public class ValidationFacility implements Facility {
 		}
 
 		// 2 - is the user approved ?
-		LogEntry hasNoPermission = checkPermissionOnProject(PERM_WRITE, target.getOwner());
+		LogEntry hasNoPermission = checkPermissionOnProject(PERM_WRITE, target.getOwner(), target);
 		if (hasNoPermission != null) {
 			logs.addEntry(hasNoPermission);
 		}
@@ -520,7 +521,7 @@ public class ValidationFacility implements Facility {
 			}
 
 			// 5 - is the user allowed to do so ?
-			LogEntry hasNoPermission = checkPermissionOnProject(PERM_WRITE, dataset.getTestCase());
+			LogEntry hasNoPermission = checkPermissionOnProject(PERM_WRITE, dataset.getTestCase(), dataset);
 			if (hasNoPermission != null) {
 				logs.addEntry(hasNoPermission);
 			}
@@ -543,7 +544,7 @@ public class ValidationFacility implements Facility {
 		}
 
 		// 3 - has the user the required privilege ?
-		LogEntry hasNoPermission = checkPermissionOnProject(PERM_WRITE, dataset.getTestCase());
+		LogEntry hasNoPermission = checkPermissionOnProject(PERM_WRITE, dataset.getTestCase(), dataset);
 		if (hasNoPermission != null) {
 			logs.addEntry(hasNoPermission);
 		}
@@ -558,14 +559,14 @@ public class ValidationFacility implements Facility {
 	 * checks permission on a project that may exist or not. <br/>
 	 * the case where the project doesn't exist (and thus has no id) is already covered in the basic checks.
 	 */
-	private LogEntry checkPermissionOnProject(String permission, TestCaseTarget target) {
+	private LogEntry checkPermissionOnProject(String permission, TestCaseTarget target, Target checkedTarget) {
 
 		LogEntry entry = null;
 
 		Long libid = model.getProjectStatus(target.getProject()).id;
 		if ((libid != null)
 				&& (!permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, libid, LIBRARY_CLASSNAME))) {
-			entry = new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[] { permission,
+			entry = new LogEntry(checkedTarget, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[] { permission,
 					target.getPath() });
 		}
 
