@@ -25,10 +25,13 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.internal.batchimport.CustomFieldHolder;
 import org.squashtest.tm.service.internal.batchimport.Instruction;
 import org.squashtest.tm.service.internal.batchimport.Messages;
+import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
 import org.squashtest.tm.service.internal.batchimport.excel.CannotCoerceException;
 import org.squashtest.tm.service.internal.batchimport.excel.NullMandatoryValueException;
 import org.squashtest.tm.service.internal.batchimport.excel.PropertySetter;
@@ -75,8 +78,18 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 		if (instruction instanceof CustomFieldHolder) {
 			processCustomFieldColumns(row, instruction);
 		}
+		if(instruction instanceof TestCaseInstruction){
+			ignoreImportancetIfAuto((TestCaseInstruction)instruction);
+		}
 
 		return instruction;
+	}
+
+	private void ignoreImportancetIfAuto(TestCaseInstruction instruction) {
+		TestCase testCase = instruction.getTestCase();
+		if(testCase!= null && testCase.isImportanceAuto() != null && testCase.isImportanceAuto()){
+			testCase.setImportance(TestCaseImportance.defaultValue());
+		}
 	}
 
 	private void processCustomFieldColumns(Row row, INST instruction) {
