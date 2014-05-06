@@ -917,7 +917,7 @@ public class Model {
 	 * Holds the {@link #id} and the {@link #status} of an entity concerned by the import.
 	 * 
 	 */
-	static final class TargetStatus {
+	static  class TargetStatus {//NOSONAR this class is not final so that it can be tested in ValidationFacilityTest
 		/**
 		 * The {@link Existence} status of the concerned entity.
 		 */
