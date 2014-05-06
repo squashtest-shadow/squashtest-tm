@@ -680,7 +680,6 @@ public class FacilityImpl implements Facility {
 	}
 
 	private void doUpdateParameter(ParameterTarget target, Parameter param) {
-
 		if (!validator.getModel().doesParameterExists(target)) {
 			Long testcaseId = validator.getModel().getId(target.getOwner());
 			helper.fillNullWithDefaults(param);

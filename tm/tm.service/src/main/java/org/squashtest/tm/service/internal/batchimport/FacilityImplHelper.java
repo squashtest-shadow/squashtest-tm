@@ -93,6 +93,9 @@ final class FacilityImplHelper {
 		if (param.getName() == null) {
 			param.setName("");
 		}
+		if (param.getDescription() == null) {
+			param.setDescription("");
+		}
 	}
 
 	void fillNullWithDefaults(Dataset ds) {
