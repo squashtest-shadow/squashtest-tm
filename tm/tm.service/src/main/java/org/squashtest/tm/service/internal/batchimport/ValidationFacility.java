@@ -25,7 +25,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
@@ -56,7 +55,7 @@ import org.squashtest.tm.service.user.UserAccountService;
  */
 @Component
 @Scope("prototype")
-public class ValidationFacility implements Facility {
+public class ValidationFacility implements Facility, ModelProvider {
 
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";
 	private static final String PERM_CREATE = "CREATE";
@@ -77,14 +76,8 @@ public class ValidationFacility implements Facility {
 	@Inject
 	private UserDao userDao;
 
-	private EntityValidator entityValidator = new EntityValidator();
+	private EntityValidator entityValidator = new EntityValidator(this);
 	private CustomFieldValidator cufValidator = new CustomFieldValidator();
-
-	@PostConstruct
-	public void setinit() {
-		entityValidator.setModel(model);
-		cufValidator.setModel(model);
-	}
 
 	public Model getModel() {
 		return model;

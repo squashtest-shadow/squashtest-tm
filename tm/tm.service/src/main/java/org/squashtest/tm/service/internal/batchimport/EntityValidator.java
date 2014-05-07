@@ -35,14 +35,15 @@ import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
 
 class EntityValidator {
 
-	private Model model;
+	private final ModelProvider modelProvider;
 
 	Model getModel() {
-		return model;
+		return modelProvider.getModel();
 	}
 
-	void setModel(Model model) {
-		this.model = model;
+	public EntityValidator(ModelProvider modelProvider) {
+		super();
+		this.modelProvider = modelProvider;
 	}
 
 	/**
@@ -57,7 +58,6 @@ class EntityValidator {
 	 * @return
 	 */
 	public LogTrain updateTestCaseChecks(TestCaseTarget target, TestCase testCase) {
-
 		LogTrain logs = createTestCaseChecks(target, testCase);
 
 		// 2 - name must be supplied
@@ -88,7 +88,7 @@ class EntityValidator {
 
 		// 3 - the project actually exists
 		if (target.isWellFormed()) {
-			TargetStatus projectStatus = model.getProjectStatus(target.getProject());
+			TargetStatus projectStatus = getModel().getProjectStatus(target.getProject());
 			if (projectStatus.getStatus() != Existence.EXISTS) {
 				logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_PROJECT_NOT_EXIST).build());
 			}
@@ -132,14 +132,14 @@ class EntityValidator {
 		}
 
 		// 2 - the test case must exist
-		TargetStatus tcStatus = model.getStatus(testCase);
+		TargetStatus tcStatus = getModel().getStatus(testCase);
 		if (tcStatus.status == TO_BE_DELETED || tcStatus.status == NOT_EXISTS) {
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_TC_NOT_FOUND));
 		}
 
 		// 3 - the project actually exists
 		if (target.isWellFormed()) {
-			TargetStatus projectStatus = model.getProjectStatus(target.getProject());
+			TargetStatus projectStatus = getModel().getProjectStatus(target.getProject());
 			if (projectStatus.getStatus() != Existence.EXISTS) {
 				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PROJECT_NOT_EXIST));
 			}
@@ -160,7 +160,7 @@ class EntityValidator {
 
 		LogTrain logs = new LogTrain();
 
-		TargetStatus calledStatus = model.getStatus(calledTestCase);
+		TargetStatus calledStatus = getModel().getStatus(calledTestCase);
 
 		// 1 - the target must exist and be valid
 		if (calledStatus.status == NOT_EXISTS || calledStatus.status == TO_BE_DELETED || !calledTestCase.isWellFormed()) {
@@ -168,7 +168,7 @@ class EntityValidator {
 		}
 
 		// 2 - there must be no cyclic calls
-		else if (model.wouldCreateCycle(target, calledTestCase)) {
+		else if (getModel().wouldCreateCycle(target, calledTestCase)) {
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_CYCLIC_STEP_CALLS, new Object[] {
 					target.getTestCase().getPath(), calledTestCase.getPath() }));
 		}
@@ -191,14 +191,14 @@ class EntityValidator {
 		}
 
 		// 2 - the test case must exist
-		TargetStatus tcStatus = model.getStatus(testCase);
+		TargetStatus tcStatus = getModel().getStatus(testCase);
 		if (tcStatus.status == TO_BE_DELETED || tcStatus.status == NOT_EXISTS) {
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PARAMETER_OWNER_NOT_FOUND));
 		}
 
 		// 3 - the project actually exists
 		if (testCase.isWellFormed()) {
-			TargetStatus projectStatus = model.getProjectStatus(target.getProject());
+			TargetStatus projectStatus = getModel().getProjectStatus(target.getProject());
 			if (projectStatus.getStatus() != Existence.EXISTS) {
 				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PROJECT_NOT_EXIST));
 			}
@@ -232,14 +232,14 @@ class EntityValidator {
 		}
 
 		// 2 - the test case must exist
-		TargetStatus tcStatus = model.getStatus(testCase);
+		TargetStatus tcStatus = getModel().getStatus(testCase);
 		if (tcStatus.status == TO_BE_DELETED || tcStatus.status == NOT_EXISTS) {
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_TC_NOT_FOUND));
 		}
 
 		// 3 - the project actually exists
 		if (testCase.isWellFormed()) {
-			TargetStatus projectStatus = model.getProjectStatus(target.getProject());
+			TargetStatus projectStatus = getModel().getProjectStatus(target.getProject());
 			if (projectStatus.getStatus() != Existence.EXISTS) {
 				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PROJECT_NOT_EXIST));
 			}
