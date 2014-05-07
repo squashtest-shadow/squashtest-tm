@@ -276,8 +276,8 @@
 		'${ label }': function() {
 			var url = "${executionUrl}";
 			<jq:ajaxcall url="url" httpMethod="DELETE"
-				successHandler="deleteExecutionSuccess"
-				errorHandler="deleteExecutionFailure">					
+				successHandler="squashtm.execution.deleteExecutionSuccess"
+				errorHandler="squashtm.execution.deleteExecutionFailure">					
 			</jq:ajaxcall>
 		},			
 		<pop:cancel-button />

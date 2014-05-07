@@ -186,6 +186,7 @@ requirejs.config({
 				},
 				"jform" : [ "jquery" ],
 				"jqueryui" : [ "jquery" ],
+				"jquery.generateId" : [ "jquery" ],
 				"datatables" : [ "jqueryui" ],
 				"jquery.dialog-patch" : [ "jqueryui" ],
 				"jquery.squash" : {
