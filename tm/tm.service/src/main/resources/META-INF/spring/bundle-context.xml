@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2014 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:util="http://www.springframework.org/schema/util" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+  	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+  	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
+
+  <context:spring-configured/> 
+
+  <context:annotation-config />
+
+  <context:component-scan base-package="*">
+  <context:exclude-filter type="annotation" expression="org.springframework.context.annotation.Configuration"/>
+  </context:component-scan>
+
+  <bean id="requirementCreationEventPublisherAspect" class="org.squashtest.tm.service.internal.event.RequirementCreationEventPublisherAspect"
+    factory-method="aspectOf">
+    <property name="auditor" ref="statusBasedRequirementAuditor" />
+  </bean>
+  <bean id="requirementModificationEventPublisherAspect" class="org.squashtest.tm.domain.event.RequirementModificationEventPublisherAspect"
+    factory-method="aspectOf">
+    <property name="auditor" ref="statusBasedRequirementAuditor" />
+  </bean>
+
+  <!-- ====== BEAN VALIDATION ====== -->
+  <bean id="javax.validation.ValidatorFactory" class="org.squashtest.tm.validation.ValidatorFactoryBean"
+    factory-method="getInstance" />
+
+  <!-- ====== SHARED THREAD POOL TASK EXECUTOR ====== -->
+
+  <bean id="squashtest.tm.service.ThreadPoolTaskScheduler" class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler">
+    <property name="poolSize" value="10" />
+  </bean>
+
+  <!-- the following bean, exposed through OSGI, will be in charge of modifications of the user auth. note that the password 
+    encoder should be consistent with the one used in the authentication. Needs the userDetailsManager as a service reference. -->
+  <bean id="squashtest.core.security.AdministratorAuthenticationService" class="org.squashtest.tm.service.internal.security.AdministratorAuthenticationServiceImpl">
+    <property name="passwordEncoder">
+      <bean class="org.springframework.security.authentication.encoding.ShaPasswordEncoder" />
+    </property>
+    <property name="userDetailsManager" ref="squashtest.core.security.JdbcUserDetailsManager" />
+  </bean>
+
+  <!-- ====== SERVICES NOT CONFIGURABLE THROUGH ANNOTATIONS ====== -->
+
+  <bean id="parent.GenericWorkspaceService" abstract="true">
+    <property name="projectFilterModificationService" ref="squashtest.tm.service.ProjectFilterModificationService" />
+  </bean>
+
+  <bean id="squashtest.tm.service.TestCasesWorkspaceService" class="org.squashtest.tm.service.internal.library.GenericWorkspaceService"
+    parent="parent.GenericWorkspaceService">
+    <property name="libraryDao" ref="hibernateTestCaseLibraryDao" />
+    <property name="libraryStrategy" ref="squashtest.tm.service.TestCaseLibrarySelectionStrategy" />
+  </bean>
+  <bean id="squashtest.tm.service.RequirementsWorkspaceService" class="org.squashtest.tm.service.internal.library.GenericWorkspaceService"
+    parent="parent.GenericWorkspaceService">
+    <property name="libraryDao" ref="hibernateRequirementLibraryDao" />
+    <property name="libraryStrategy" ref="squashtest.tm.service.RequirementLibrarySelectionStrategy" />
+  </bean>
+  <bean id="squashtest.tm.service.CampaignsWorkspaceService" class="org.squashtest.tm.service.internal.library.GenericWorkspaceService"
+    parent="parent.GenericWorkspaceService">
+    <property name="libraryDao" ref="hibernateCampaignLibraryDao" />
+    <property name="libraryStrategy" ref="squashtest.tm.service.CampaignLibrarySelectionStrategy" />
+  </bean>
+
+  <bean id="parent.GenericFolderModificationService" abstract="true">
+    <property name="permissionService" ref="squashtest.core.security.PermissionEvaluationService" />
+  </bean>
+
+  <bean id="squashtest.tm.service.TestCaseFolderModificationService" class="org.squashtest.tm.service.internal.library.GenericFolderModificationService"
+    parent="parent.GenericFolderModificationService">
+    <property name="folderDao" ref="hibernateTestCaseFolderDao" />
+    <property name="libraryDao" ref="hibernateTestCaseLibraryDao" />
+  </bean>
+
+  <bean id="squashtest.tm.service.RequirementFolderModificationService" class="org.squashtest.tm.service.internal.library.GenericFolderModificationService"
+    parent="parent.GenericFolderModificationService">
+    <property name="folderDao" ref="hibernateRequirementFolderDao" />
+    <property name="libraryDao" ref="hibernateRequirementLibraryDao" />
+  </bean>
+  <bean id="squashtest.tm.service.CampaignFolderModificationService" class="org.squashtest.tm.service.internal.library.GenericFolderModificationService"
+    parent="parent.GenericFolderModificationService">
+    <property name="folderDao" ref="hibernateCampaignFolderDao" />
+    <property name="libraryDao" ref="hibernateCampaignLibraryDao" />
+  </bean>
+
+  <bean id="parent.GenericNodeManagementService" abstract="true">
+    <property name="permissionService" ref="squashtest.core.security.PermissionEvaluationService" />
+  </bean>
+
+  <bean id="squashtest.tm.service.internal.TestCaseManagementService" class="org.squashtest.tm.service.internal.library.GenericNodeManagementService"
+    parent="parent.GenericNodeManagementService">
+    <property name="nodeDao" ref="testCaseDao" />
+    <property name="folderDao" ref="hibernateTestCaseFolderDao" />
+    <property name="libraryDao" ref="hibernateTestCaseLibraryDao" />
+  </bean>
+
+  <bean id="squashtest.tm.service.internal.RequirementManagementService" class="org.squashtest.tm.service.internal.library.GenericNodeManagementService"
+    parent="parent.GenericNodeManagementService">
+    <property name="nodeDao" ref="hibernateRequirementDao" />
+    <property name="folderDao" ref="hibernateRequirementFolderDao" />
+    <property name="libraryDao" ref="hibernateRequirementLibraryDao" />
+  </bean>
+
+  <bean id="squashtest.tm.service.internal.CampaignManagementService" class="org.squashtest.tm.service.internal.library.GenericNodeManagementService"
+    parent="parent.GenericNodeManagementService">
+    <property name="nodeDao" ref="hibernateCampaignDao" />
+    <property name="folderDao" ref="hibernateCampaignFolderDao" />
+    <property name="libraryDao" ref="hibernateCampaignLibraryDao" />
+  </bean>
+
+  <!-- Paste Strategies -->
+  <bean id="treeNodeCopierProvider" class="org.springframework.beans.factory.config.ObjectFactoryCreatingFactoryBean">
+    <property name="targetBeanName" value="treeNodeCopier" />
+  </bean>
+  
+   <bean id="firstLayerMoverProvider" class="org.springframework.beans.factory.config.ObjectFactoryCreatingFactoryBean">
+    <property name="targetBeanName" value="firstLayerTreeNodeMover" />
+  </bean>
+  
+   <bean id="nextLayersMoverProvider" class="org.springframework.beans.factory.config.ObjectFactoryCreatingFactoryBean">
+    <property name="targetBeanName" value="nextLayersTreeNodeMover" />
+  </bean>
+
+  <bean id="parent.PasteStrategy" abstract="true">
+    <property name="genericDao" ref="hibernateObjectDao" />
+  </bean>
+
+  <bean id="squashtest.tm.service.internal.PasteToTestCaseFolderStrategy" class="org.squashtest.tm.service.internal.library.PasteStrategy"
+    parent="parent.PasteStrategy" scope="prototype">
+    <property name="containerDao" ref="hibernateTestCaseFolderDao" />
+    <property name="nodeDao" ref="squashtest.tm.repository.TestCaseLibraryNodeDao" />
+  </bean>
+
+  <bean id="squashtest.tm.service.internal.PasteToTestCaseLibraryStrategy" class="org.squashtest.tm.service.internal.library.PasteStrategy"
+    parent="parent.PasteStrategy" scope="prototype">
+    <property name="containerDao" ref="hibernateTestCaseLibraryDao" />
+    <property name="nodeDao" ref="squashtest.tm.repository.TestCaseLibraryNodeDao" />
+  </bean>
+
+  <bean id="squashtest.tm.service.internal.PasteToRequirementFolderStrategy" class="org.squashtest.tm.service.internal.library.PasteStrategy"
+    parent="parent.PasteStrategy" scope="prototype">
+    <property name="containerDao" ref="hibernateRequirementFolderDao" />
+    <property name="nodeDao" ref="squashtest.tm.repository.RequirementLibraryNodeDao" />
+  </bean>
+
+  <bean id="squashtest.tm.service.internal.PasteToRequirementLibraryStrategy" class="org.squashtest.tm.service.internal.library.PasteStrategy"
+    parent="parent.PasteStrategy" scope="prototype">
+    <property name="containerDao" ref="hibernateRequirementLibraryDao" />
+    <property name="nodeDao" ref="squashtest.tm.repository.RequirementLibraryNodeDao" />
+  </bean>
+  
+  <bean id="squashtest.tm.service.internal.PasteToRequirementStrategy" class="org.squashtest.tm.service.internal.library.PasteStrategy"
+    parent="parent.PasteStrategy" scope="prototype">
+    <property name="containerDao" ref="hibernateRequirementDao" />
+    <property name="nodeDao" ref="hibernateRequirementDao" />
+  </bean>
+
+  <bean id="squashtest.tm.service.internal.PasteToCampaignFolderStrategy" class="org.squashtest.tm.service.internal.library.PasteStrategy"
+    parent="parent.PasteStrategy" scope="prototype">
+    <property name="containerDao" ref="hibernateCampaignFolderDao" />
+    <property name="nodeDao" ref="squashtest.tm.repository.CampaignLibraryNodeDao" />
+  </bean>
+
+  <bean id="squashtest.tm.service.internal.PasteToCampaignLibraryStrategy" class="org.squashtest.tm.service.internal.library.PasteStrategy"
+    parent="parent.PasteStrategy" scope="prototype">
+    <property name="containerDao" ref="hibernateCampaignLibraryDao" />
+    <property name="nodeDao" ref="squashtest.tm.repository.CampaignLibraryNodeDao" />
+  </bean>
+
+  <bean id="squashtest.tm.service.internal.PasteToCampaignStrategy" class="org.squashtest.tm.service.internal.library.PasteStrategy"
+    parent="parent.PasteStrategy" scope="prototype">
+    <property name="containerDao" ref="hibernateCampaignDao" />
+    <property name="nodeDao" ref="hibernateIterationDao" />
+  </bean>
+
+  <bean id="squashtest.tm.service.internal.PasteToIterationStrategy" class="org.squashtest.tm.service.internal.library.PasteStrategy"
+    parent="parent.PasteStrategy" scope="prototype">
+    <property name="containerDao" ref="hibernateIterationDao" />
+    <property name="nodeDao" ref="testSuiteDao" />
+  </bean>
+
+<!-- Security related service, declared here so that we can test it -->
+  <bean id="permissionFactory" class="org.squashtest.tm.security.acls.CustomPermissionFactory" />
+
+  <bean id="aclAdminAuthority" class="org.springframework.security.core.authority.GrantedAuthorityImpl">
+    <constructor-arg value="ROLE_ADMIN" />
+  </bean>
+
+  <bean id="lookupStrategy" class="org.springframework.security.acls.jdbc.BasicLookupStrategy">
+    <constructor-arg ref="squashtest.core.persistence.jdbc.DataSource" />
+    <constructor-arg ref="aclCache" />
+    <constructor-arg>
+      <bean class="org.springframework.security.acls.domain.AclAuthorizationStrategyImpl">
+        <constructor-arg>
+          <list>
+            <ref local="aclAdminAuthority" />
+            <ref local="aclAdminAuthority" />
+            <ref local="aclAdminAuthority" />
+          </list>
+        </constructor-arg>
+      </bean>
+    </constructor-arg>
+    <constructor-arg>
+        <bean class="org.squashtest.tm.security.acls.Slf4jAuditLogger" />
+    </constructor-arg>
+    <property name="permissionFactory" ref="permissionFactory" />
+    <property name="selectClause">
+      <value>
+        select oid.IDENTITY as object_id_identity,
+					gp.PERMISSION_ORDER,
+					oid.ID as acl_id,
+					null as parent_object, /* oid.parent */
+					true as entries_inheriting, /* oid.entries_inheriting*/
+					rse.ID as ace_id,
+					gp.PERMISSION_MASK as mask,
+					gp.GRANTING as granting,
+					true as audit_success, /* audit success */
+					false as audit_failure, /* audit failure */
+					true as ace_principal, /* sid is principal */
+					u.LOGIN as ace_sid,
+					true as acl_principal, /* owner is prinipal */
+					u.LOGIN as acl_sid, /* owner sid */
+					ocl.CLASSNAME as class
+				from ACL_OBJECT_IDENTITY oid
+					left join ACL_CLASS ocl on ocl.ID = oid.CLASS_ID
+					left join ACL_GROUP_PERMISSION gp on gp.CLASS_ID = ocl.ID
+					left join ACL_GROUP g on g.ID = gp.ACL_GROUP_ID
+					left join ACL_RESPONSIBILITY_SCOPE_ENTRY rse on rse.ACL_GROUP_ID = g.ID and rse.OBJECT_IDENTITY_ID = oid.ID
+					inner join CORE_PARTY party on party.PARTY_ID = rse.PARTY_ID
+					left join CORE_TEAM team on team.PARTY_ID = party.PARTY_ID
+					left join CORE_TEAM_MEMBER tmemb on tmemb.TEAM_ID = team.PARTY_ID,
+					CORE_USER u 
+				where((u.PARTY_ID = tmemb.USER_ID) or (u.PARTY_ID = party.PARTY_ID)) and u.ACTIVE = true and (
+      </value>
+    </property>
+    <property name="lookupObjectIdentitiesWhereClause">
+      <value>(oid.IDENTITY = ? and ocl.CLASSNAME = ?)</value>
+    </property>
+    <property name="lookupPrimaryKeysWhereClause">
+      <value>(oid.ID = ?)</value>
+    </property>
+    <property name="orderByClause">
+      <value>) order by oid.IDENTITY asc, gp.PERMISSION_ORDER asc</value>
+    </property>
+  </bean>
+
+  <bean class="org.squashtest.tm.service.security.acls.jdbc.JdbcManageableAclService" id="squashtest.core.security.AclService"
+    lazy-init="false">
+    <constructor-arg ref="squashtest.core.persistence.jdbc.DataSource" />
+    <constructor-arg ref="lookupStrategy" />
+    <property name="aclCache" ref="aclCache" /> <!-- about that heresy, see comments in JdbcManageableAclService sources -->
+
+    <property name="findChildrenQuery">
+      <value>
+        select null as obj_id,
+        null as class
+        from ACL_OBJECT_IDENTITY
+        where 0 = 1
+      </value>
+    </property>
+  </bean>
+
+  <!--  SPRING SEC -->
+
+  <!-- =============== BUG TRACKER RELATED BEANS ============================ -->
+  <bean id="squashtest.core.bugtracker.BugTrackerContextHolder" class="org.squashtest.csp.core.bugtracker.service.ThreadLocalBugTrackerContextHolder" />
+
+  <bean id="squashtest.core.bugtracker.BugTrackerConnectorFactory" class="org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory" />
+
+  <bean id="bugTrackersService" class="org.squashtest.csp.core.bugtracker.service.BugTrackersServiceImpl">
+    <property name="bugTrackerConnectorFactory" ref="squashtest.core.bugtracker.BugTrackerConnectorFactory" />
+    <property name="contextHolder" ref="squashtest.core.bugtracker.BugTrackerContextHolder" />
+  </bean>
+  <!-- =============== /BUG TRACKER RELATED BEANS ============================ -->
+
+
+</beans>
+

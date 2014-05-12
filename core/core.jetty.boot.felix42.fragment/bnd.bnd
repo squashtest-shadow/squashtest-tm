@@ -1,0 +1,3 @@
+-include: pom.xml
+Fragment-Host: org.eclipse.jetty.osgi.boot
+Private-Package: org.eclipse.jetty.boot.utils

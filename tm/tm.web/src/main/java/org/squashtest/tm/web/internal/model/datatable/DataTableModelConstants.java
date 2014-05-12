@@ -1,0 +1,44 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2014 Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.squashtest.tm.web.internal.model.datatable;
+
+/**
+ * Comumns names commonly used in DataTableModel instances 
+ * @author Gregory Fouquet
+ * 
+ */
+public final class DataTableModelConstants {
+	public static final String DEFAULT_ENTITY_ID_KEY = "entity-id";
+	public static final String DEFAULT_ENTITY_INDEX_KEY = "entity-index";
+	public static final String DEFAULT_NB_ATTACH_KEY = "nb-attachments";
+	public static final String DEFAULT_ATTACH_LIST_ID_KEY = "attach-list-id";
+	public static final String DEFAULT_EMPTY_DELETE_HOLDER_KEY = "empty-delete-holder";
+	public static final String DEFAULT_EMPTY_EXECUTE_HOLDER_KEY = "empty-execute-holder";
+	public static final String DEFAULT_ENTITY_NAME_KEY = "name";
+
+	/**
+	 * 
+	 */
+	private DataTableModelConstants() {
+		super();
+	}
+
+}

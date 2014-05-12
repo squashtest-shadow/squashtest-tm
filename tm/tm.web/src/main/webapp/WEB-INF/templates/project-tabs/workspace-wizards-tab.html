@@ -1,0 +1,114 @@
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2014 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<div th:remove="all">
+	<!--  
+		This snippet of html describes the template for the plugin panel of a project.
+		
+		Required variables are :
+			
+			* projectId : the project Id
+			* availableWizards : the collection of WorkspaceWizardModel representing the available wizards
+			* enabledWizards : the collection of ids of enabled wizards for this project
+
+
+	 -->
+
+</div>
+
+
+<div id="workspace-wizards-tab">
+
+	
+	<div class="toggle-panel" th:with="baseID = 'workspace-wizards'">
+		
+		<div th:id="${baseID}+'-panel'" class="toggle-panel-main"  th:title="#{title.workspace-wizards.administration}">
+
+			<div th:id="${baseID}+'-list'" class="wizard-list">
+
+				<table>
+					<thead>
+						<tr>
+							<td class="narrow" th:text="#{label.Enabled}"></td>
+							<td th:text="#{label.PluginName}"></td>
+							<td><!-- configuration (header should remain empty at runtime)  --></td>
+						</tr>
+					</thead>
+					
+					<tbody class="y-scollable medium-height not-displayed">
+						<!--  the following rows are templates and will be replaced by actual rows when the widget initialize -->
+						
+						<tr class="template-emptyrow">
+							<td colspan="3" th:text="#{generics.datatable.zeroRecords}">empty</td>
+						</tr>
+						
+						<tr class="template-datarow cursor-arrow" data-pluginid="{{this.id}}">
+							<td class="centered narrow"><input type="checkbox" class="plugin-enabled"/></td>
+							<td>{{this.displayableName}}</td>
+							<td><span style="text-decoration:underline" class="wizard-configure disabled-transparent" th:text="#{label.Configure}">configure</span></td>						
+						</tr>
+					</tbody>
+					
+				</table>
+			</div>
+
+		</div>
+		
+		
+		<div id="wizard-configure-dialog" class="not-display popup-dialog" th:title="#{label.Configure}">
+		
+			<div data-def="state=configure">
+				<h4 th:text="#{label.AvailableOptions}">availableOptions :</h4>
+				<div class="wizard-options display-table"></div>
+			</div>
+			
+			<div data-def="state=noconf">
+				<span th:text="#{message.noWizardConfNeeded}">no conf available</span>
+			</div>
+		
+			<div class="popup-dialog-buttonpane">
+				<input type="button" class="button" data-def="evt=confirm, state=configure, mainbtn=configure" th:value="#{label.Confirm}"/>
+				<input type="button" class="button" data-def="evt=cancel, state=configure noconf, mainbtn=noconf" th:value="#{label.Cancel}"/>
+			</div>
+		</div>
+		
+	</div>
+	
+	
+		
+	<script type="text/javascript" th:inline="javascript">
+	/*<![CDATA[*/
+	        require(["common"], function() {
+			require(["jquery","projects-manager"], function($,manager){
+				$(function(){
+						manager.projectInfo.initWizardsTab({
+							projectUrl : /*[[@{/generic-projects/__${projectId}__/wizards}]]*/"/generic-projects/14/wizards",
+							availableWizards : /*[[${availableWizards}]]*/[],
+							enabledWizards : /*[[${enabledWizards}]]*/[]
+						});
+					});
+				});		
+	         });
+	/*]]>*/
+	</script>
+</div>
+
