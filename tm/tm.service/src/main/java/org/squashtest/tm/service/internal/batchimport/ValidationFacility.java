@@ -283,7 +283,7 @@ public class ValidationFacility implements Facility, ModelProvider {
 	}
 
 	@Override
-	public LogTrain addCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase) {
+	public LogTrain addCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase, ActionTestStep actionStepBackup) {
 
 		LogTrain logs;
 
@@ -291,7 +291,7 @@ public class ValidationFacility implements Facility, ModelProvider {
 		logs = entityValidator.basicTestStepChecks(target, testStep);
 
 		// 2 - call step specific checks
-		logs.append(entityValidator.validateCallStep(target, testStep, calledTestCase));
+		logs.append(entityValidator.validateCallStep(target, testStep, calledTestCase, ImportMode.CREATE));
 
 		// 3 - cufs : call steps have no cufs -> skip
 
@@ -304,7 +304,7 @@ public class ValidationFacility implements Facility, ModelProvider {
 		// 4.2 - the user must be approved on the target test case
 		LogEntry hasntCallPermission = checkPermissionOnProject(PERM_READ, calledTestCase, target);
 		if (hasntCallPermission != null) {
-			logs.addEntry(hasntCallPermission);
+			logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_CALL_NOT_READABLE, Messages.IMPACT_CALL_AS_ACTION_STEP));
 		}
 
 		// 5 - check the index
@@ -350,7 +350,7 @@ public class ValidationFacility implements Facility, ModelProvider {
 	}
 
 	@Override
-	public LogTrain updateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase) {
+	public LogTrain updateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase, ActionTestStep actionStepBackup) {
 
 		LogTrain logs;
 
@@ -358,7 +358,7 @@ public class ValidationFacility implements Facility, ModelProvider {
 		logs = entityValidator.basicTestStepChecks(target);
 
 		// 2 - call step specific checks
-		logs.append(entityValidator.validateCallStep(target, testStep, calledTestCase));
+		logs.append(entityValidator.validateCallStep(target, testStep, calledTestCase, ImportMode.UPDATE));
 
 		// 3 - cufs : call steps have no cufs -> skip
 
@@ -371,7 +371,8 @@ public class ValidationFacility implements Facility, ModelProvider {
 		// 4.2 - the user must be approved on the target test case
 		LogEntry hasntCallPermission = checkPermissionOnProject(PERM_READ, calledTestCase, target);
 		if (hasntCallPermission != null) {
-			logs.addEntry(hasntCallPermission);
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_CALL_NOT_READABLE));
+
 		}
 
 		// 5 - the step must exist

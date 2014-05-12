@@ -69,7 +69,7 @@ class ExcelWorkbookParserTest extends Specification {
 		"batchimport/testcase/garbage-file.xlsx"	| SheetCorruptedException
 		"batchimport/testcase/no-header.xlsx"		| TemplateMismatchException // should be refined
 		"batchimport/testcase/missing-headers.xlsx"	| TemplateMismatchException // should be refined
-		//		"batchimport/testcase/duplicate-ws.xlsx" | DuplicateWorksheetException
+		//TODO		"batchimport/testcase/duplicate-ws.xlsx" | DuplicateWorksheetException
 	}
 
 	def "should parse file and createinstructions"() {

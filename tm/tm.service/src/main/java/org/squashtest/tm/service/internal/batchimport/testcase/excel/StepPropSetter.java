@@ -22,6 +22,7 @@
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
 import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.service.internal.batchimport.CallStepInstruction;
 import org.squashtest.tm.service.internal.batchimport.TestCaseTarget;
 import org.squashtest.tm.service.internal.batchimport.excel.PropertySetter;
 
@@ -49,15 +50,17 @@ public abstract class StepPropSetter implements PropertySetter<String, Object> {
 			setOnStep(value, (ActionTestStep) target);
 			return;
 		}
-		if (target instanceof TestCaseTarget) {
+		if (target instanceof CallStepInstruction) {
 			if (value != null){
+				CallStepInstruction targetCSI = (CallStepInstruction) target;
+				setOnStep(value, targetCSI.getActionStepBackup());
 				String path = value.replaceFirst("^[cC][aA][lL][lL]\\s*", "");
-				setOnTarget(path, (TestCaseTarget) target);
+				setOnTarget(path, targetCSI.getCalledTC());
 			}
 			return;
 		}
 		throw new IllegalArgumentException("Target of type " + target.getClass().getSimpleName()
-				+ " is illicit. It should either be ActionTestStep or TestCaseTarget");
+				+ " is illicit. It should either be ActionTestStep or CallStepInstruction");
 	}
 
 }

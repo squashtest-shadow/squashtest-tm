@@ -110,23 +110,23 @@ final class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 	 * @return
 	 */
 	private static PropertySetterRepository<?> createStepsWorksheetRepo() {
-		PropertySetterRepository<StepSheetColumn> r = new PropertySetterRepository<StepSheetColumn>();
+		PropertySetterRepository<StepSheetColumn> stepWorksheetRepo = new PropertySetterRepository<StepSheetColumn>();
 
 		// target
-		r.propSetterByColumn.put(StepSheetColumn.TC_OWNER_PATH,
+		stepWorksheetRepo.propSetterByColumn.put(StepSheetColumn.TC_OWNER_PATH,
 				ReflectionMutatorSetter.forProperty("path", String.class));
-		r.propSetterByColumn.put(StepSheetColumn.TC_STEP_NUM, ReflectionFieldSetter.forOptionalField("index"));
+		stepWorksheetRepo.propSetterByColumn.put(StepSheetColumn.TC_STEP_NUM, ReflectionFieldSetter.forOptionalField("index"));
 
 		// instruction
-		r.propSetterByColumn.put(StepSheetColumn.ACTION, ReflectionMutatorSetter.forOptionalProperty("mode"));
+		stepWorksheetRepo.propSetterByColumn.put(StepSheetColumn.ACTION, ReflectionMutatorSetter.forOptionalProperty("mode"));
 
 		// step props
-		r.propSetterByColumn.put(StepSheetColumn.TC_STEP_IS_CALL_STEP, NullPropertySetter.INSTANCE);
+		stepWorksheetRepo.propSetterByColumn.put(StepSheetColumn.TC_STEP_IS_CALL_STEP, NullPropertySetter.INSTANCE);
 
-		r.propSetterByColumn.put(StepSheetColumn.TC_STEP_ACTION, StepActionPropSetter.INSTANCE);
-		r.propSetterByColumn.put(StepSheetColumn.TC_STEP_EXPECTED_RESULT, StepResultPropSetter.INSTANCE);
+		stepWorksheetRepo.propSetterByColumn.put(StepSheetColumn.TC_STEP_ACTION, StepActionPropSetter.INSTANCE);
+		stepWorksheetRepo.propSetterByColumn.put(StepSheetColumn.TC_STEP_EXPECTED_RESULT, StepResultPropSetter.INSTANCE);
 
-		return r;
+		return stepWorksheetRepo;
 	}
 
 	/**

@@ -44,9 +44,9 @@ public interface Facility {
 
 
 	LogTrain addActionStep(TestStepTarget target, ActionTestStep testStep, Map<String, String> cufValues);
-	LogTrain addCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase);
+	LogTrain addCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase, ActionTestStep actionStepBackup);
 	LogTrain updateActionStep(TestStepTarget target, ActionTestStep testStep, Map<String, String> cufValues);
-	LogTrain updateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase);
+	LogTrain updateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase, ActionTestStep actionStepBackup);
 	LogTrain deleteTestStep(TestStepTarget target);
 
 	LogTrain createParameter(ParameterTarget target, Parameter param);

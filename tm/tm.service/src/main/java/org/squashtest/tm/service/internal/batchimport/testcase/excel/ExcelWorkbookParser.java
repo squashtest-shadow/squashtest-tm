@@ -72,6 +72,10 @@ import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
 public class ExcelWorkbookParser {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExcelWorkbookParser.class);
 
+	/**
+	 * Can create an {@link InstructionBuilder} for a given {@link WorksheetDef<C>}
+	 * @param <C> a TemplateColumn
+	 */
 	private static interface Factory<C extends Enum<C> & TemplateColumn> {
 		InstructionBuilder<?, ?> create(WorksheetDef<C> wd);
 	}

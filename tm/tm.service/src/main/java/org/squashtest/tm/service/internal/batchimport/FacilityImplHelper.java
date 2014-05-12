@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -31,6 +32,7 @@ import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.testcase.TestCaseType;
+import org.squashtest.tm.service.importer.LogEntry;
 
 final class FacilityImplHelper {
 
@@ -149,4 +151,6 @@ final class FacilityImplHelper {
 			return null;
 		}
 	}
+
+
 }

@@ -20,26 +20,32 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import org.squashtest.tm.domain.testcase.ActionTestStep;
+
 public class CallStepInstruction extends StepInstruction {
 
 	private final TestCaseTarget calledTC;
+	private final ActionTestStep actionStepBackup;
 
 
-	public CallStepInstruction(TestStepTarget target, TestCaseTarget calledTestCase) {
+	public CallStepInstruction(TestStepTarget target, TestCaseTarget calledTestCase, ActionTestStep actionStepBackup) {
 		super(target);
-		calledTC = calledTestCase;
+		this.calledTC = calledTestCase;
+		this.actionStepBackup = actionStepBackup;
 	}
 
 	public TestCaseTarget getCalledTC() {
 		return calledTC;
 	}
-
+	public ActionTestStep getActionStepBackup() {
+		return actionStepBackup;
+	}
 	/**
 	 * @see org.squashtest.tm.service.internal.batchimport.Instruction#executeUpdate(org.squashtest.tm.service.internal.batchimport.Facility)
 	 */
 	@Override
 	protected LogTrain executeUpdate(Facility facility) {
-		return facility.updateCallStep(getTarget(), null, calledTC);
+		return facility.updateCallStep(getTarget(), null, calledTC, actionStepBackup);
 	}
 
 	/**
@@ -47,7 +53,7 @@ public class CallStepInstruction extends StepInstruction {
 	 */
 	@Override
 	protected LogTrain executeCreate(Facility facility) {
-		return facility.addCallStep(getTarget(), null, calledTC);
+		return facility.addCallStep(getTarget(), null, calledTC, actionStepBackup);
 	}
 
 }

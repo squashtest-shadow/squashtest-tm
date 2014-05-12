@@ -19,30 +19,30 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.service.internal.batchimport;
+package org.squashtest.tm.service.internal.batchimport
 
-import org.junit.Test;
-import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.Parameter;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.service.importer.ImportMode;
-import org.squashtest.tm.service.importer.ImportStatus;
-import org.squashtest.tm.service.internal.batchimport.ActionStepInstruction;
-import org.squashtest.tm.service.internal.batchimport.CallStepInstruction;
-import org.squashtest.tm.service.internal.batchimport.DatasetInstruction;
-import org.squashtest.tm.service.internal.batchimport.DatasetTarget;
-import org.squashtest.tm.service.internal.batchimport.DatasetValue;
-import org.squashtest.tm.service.internal.batchimport.Facility;
-import org.squashtest.tm.service.internal.batchimport.LogTrain;
-import org.squashtest.tm.service.internal.batchimport.ParameterInstruction;
-import org.squashtest.tm.service.internal.batchimport.ParameterTarget;
-import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
-import org.squashtest.tm.service.internal.batchimport.TestCaseTarget;
-import org.squashtest.tm.service.internal.batchimport.TestStepTarget;
-import org.squashtest.tm.service.internal.batchimport.excel.ImportModeCellCoercer;
+import org.junit.Test
+import org.squashtest.tm.domain.testcase.ActionTestStep
+import org.squashtest.tm.domain.testcase.Parameter
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.service.importer.ImportMode
+import org.squashtest.tm.service.importer.ImportStatus
+import org.squashtest.tm.service.internal.batchimport.ActionStepInstruction
+import org.squashtest.tm.service.internal.batchimport.CallStepInstruction
+import org.squashtest.tm.service.internal.batchimport.DatasetInstruction
+import org.squashtest.tm.service.internal.batchimport.DatasetTarget
+import org.squashtest.tm.service.internal.batchimport.DatasetValue
+import org.squashtest.tm.service.internal.batchimport.Facility
+import org.squashtest.tm.service.internal.batchimport.LogTrain
+import org.squashtest.tm.service.internal.batchimport.ParameterInstruction
+import org.squashtest.tm.service.internal.batchimport.ParameterTarget
+import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction
+import org.squashtest.tm.service.internal.batchimport.TestCaseTarget
+import org.squashtest.tm.service.internal.batchimport.TestStepTarget
+import org.squashtest.tm.service.internal.batchimport.excel.ImportModeCellCoercer
 
-import spock.lang.Specification;
-import spock.lang.Unroll;
+import spock.lang.Specification
+import spock.lang.Unroll
 
 /**
  * @author Gregory Fouquet
@@ -53,7 +53,7 @@ class StepInstructionTest extends Specification {
 	ActionTestStep step = Mock()
 	TestCaseTarget tct = Mock()
 	ActionStepInstruction instruction = new ActionStepInstruction(target, step)
-	CallStepInstruction callInstruction = new CallStepInstruction(target, tct)
+	CallStepInstruction callInstruction = new CallStepInstruction(target, tct, step)
 	Facility f = Mock()
 
 	def setup() {
@@ -99,7 +99,7 @@ class StepInstructionTest extends Specification {
 
 	def "should not execute"() {
 		given:
-		instruction.addLogEntry(ImportStatus.FAILURE, "", null);
+		instruction.addLogEntry(ImportStatus.FAILURE, "", null)
 
 		when:
 		def lt = instruction.execute(f)
@@ -117,7 +117,7 @@ class StepInstructionTest extends Specification {
 		def lt = callInstruction.execute(f)
 
 		then:
-		1 * f.addCallStep(target, null, tct) >> new LogTrain()
+		1 * f.addCallStep(target, null, tct, step) >> new LogTrain()
 	}
 
 	@Unroll
@@ -129,7 +129,7 @@ class StepInstructionTest extends Specification {
 		def lt = callInstruction.execute(f)
 
 		then:
-		1 * f.updateCallStep(target, null, tct) >> new LogTrain()
+		1 * f.updateCallStep(target, null, tct, step) >> new LogTrain()
 
 		where:
 		mode << [ImportMode.UPDATE, null]

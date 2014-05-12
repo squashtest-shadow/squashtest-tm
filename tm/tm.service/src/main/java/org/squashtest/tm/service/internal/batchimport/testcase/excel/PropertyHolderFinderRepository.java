@@ -167,10 +167,10 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 	}
 
 	/**
-	 * @return
+	 * @return the {@link PropertyHolderFinderRepository<StepSheetColumn>} for Steps worksheet
 	 */
 	private static PropertyHolderFinderRepository<?> createStepsWorksheetRepo() {
-		PropertyHolderFinderRepository<StepSheetColumn> r = new PropertyHolderFinderRepository<StepSheetColumn>();
+		PropertyHolderFinderRepository<StepSheetColumn> stepsWorksheetRepo = new PropertyHolderFinderRepository<StepSheetColumn>();
 
 		PropertyHolderFinder<StepInstruction, TestStepTarget> targetFinder = new PropertyHolderFinder<StepInstruction, TestStepTarget>() {
 			@Override
@@ -179,8 +179,8 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 			}
 		};
 
-		r.finderByColumn.put(StepSheetColumn.TC_OWNER_PATH, targetFinder);
-		r.finderByColumn.put(StepSheetColumn.TC_STEP_NUM, targetFinder);
+		stepsWorksheetRepo.finderByColumn.put(StepSheetColumn.TC_OWNER_PATH, targetFinder);
+		stepsWorksheetRepo.finderByColumn.put(StepSheetColumn.TC_STEP_NUM, targetFinder);
 
 		PropertyHolderFinder<StepInstruction, StepInstruction> instructionFinder = new PropertyHolderFinder<StepInstruction, StepInstruction>() {
 			@Override
@@ -189,7 +189,23 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 			}
 		};
 
-		r.finderByColumn.put(StepSheetColumn.ACTION, instructionFinder);
+		stepsWorksheetRepo.finderByColumn.put(StepSheetColumn.ACTION, instructionFinder);
+
+		PropertyHolderFinder<StepInstruction, Object> actionResultHolderFinder = new PropertyHolderFinder<StepInstruction, Object>() {
+			@Override
+			public Object find(StepInstruction instruction) {
+				if (instruction instanceof ActionStepInstruction) {
+					return ((ActionStepInstruction) instruction).getTestStep();
+				}
+				if (instruction instanceof CallStepInstruction) {
+					return (CallStepInstruction) instruction;
+				}
+
+				throw new IllegalArgumentException("Cannot process this type of instruction : " + instruction);
+			}
+		};
+		stepsWorksheetRepo.finderByColumn.put(StepSheetColumn.TC_STEP_ACTION, actionResultHolderFinder);
+		stepsWorksheetRepo.finderByColumn.put(StepSheetColumn.TC_STEP_EXPECTED_RESULT, actionResultHolderFinder);
 
 		PropertyHolderFinder<StepInstruction, Object> stepFinder = new PropertyHolderFinder<StepInstruction, Object>() {
 			@Override
@@ -205,9 +221,11 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 			}
 		};
 
-		r.defaultFinder = stepFinder;
+		stepsWorksheetRepo.defaultFinder = stepFinder;
 
-		return r;
+
+
+		return stepsWorksheetRepo;
 	}
 
 	/**

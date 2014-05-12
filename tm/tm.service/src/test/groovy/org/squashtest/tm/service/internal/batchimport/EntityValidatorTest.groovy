@@ -27,6 +27,7 @@ import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.CallTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestStep
+import org.squashtest.tm.service.importer.ImportMode
 import org.squashtest.tm.service.importer.ImportStatus
 import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus
 
@@ -222,7 +223,7 @@ class EntityValidatorTest extends Specification {
 
 	}
 
-
+	@Unroll("should say that call step is fine  #humanmsg")
 	def "should say that call step is fine"(){
 
 		given :
@@ -234,14 +235,20 @@ class EntityValidatorTest extends Specification {
 		model.getStatus(_) >> new TargetStatus(EXISTS, 10l)
 		model.wouldCreateCycle(_) >> false
 
+
+
 		when :
-		LogTrain train = validator.validateCallStep(target, cstep, called)
+		LogTrain train = validator.validateCallStep(target, cstep, called, mode)
 
 
 		then :
 		train.hasCriticalErrors() == false
 		train.entries == []
 
+		where :
+		humanmsg |mode
+		"CREATE" |ImportMode.CREATE
+		"UPDATE" |ImportMode.UPDATE
 	}
 
 
@@ -257,8 +264,9 @@ class EntityValidatorTest extends Specification {
 		def called = tar("/project/autre")
 		def cstep = cst()
 
+
 		when :
-		LogTrain train = validator.validateCallStep(target, cstep, called)
+		LogTrain train = validator.validateCallStep(target, cstep, called, mode)
 
 		then :
 
@@ -267,11 +275,14 @@ class EntityValidatorTest extends Specification {
 		def pb = train.entries[0]
 		pb.status == status
 		pb.i18nError == msg
+		pb.i18nImpact == impct
 
 		where :
-		calledstatus 				|	calledcycle		|	status	|	msg									|	humanmsg
-		status(NOT_EXISTS,null)		|	false			|	FAILURE	|	Messages.ERROR_CALLED_TC_NOT_FOUND	|	"called test doesn't exist"
-		status(EXISTS, 12l)			|	true			|	FAILURE	|	Messages.ERROR_CYCLIC_STEP_CALLS	|	"such calls would induce cycles"
+		mode              |calledstatus 				|	calledcycle		|	status	|	msg									|  impct                              |	humanmsg
+		ImportMode.UPDATE |status(NOT_EXISTS,null)		|	false			|	FAILURE	|	Messages.ERROR_CALLED_TC_NOT_FOUND	|  null                               |	"UPDATE : called test doesn't exist"
+		ImportMode.UPDATE |status(EXISTS, 12l)			|	true			|	FAILURE	|	Messages.ERROR_CYCLIC_STEP_CALLS	|  null                               |	"UPDATE : such calls would induce cycles"
+		ImportMode.CREATE |status(NOT_EXISTS,null)		|	false			|	WARNING	|	Messages.ERROR_CALLED_TC_NOT_FOUND	|  Messages.IMPACT_CALL_AS_ACTION_STEP|	"CREATE : called test doesn't exist"
+		ImportMode.CREATE |status(EXISTS, 12l)			|	true			|	FAILURE	|	Messages.ERROR_CYCLIC_STEP_CALLS	|  null                               |	"CREATE :such calls would induce cycles"
 
 	}
 

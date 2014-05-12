@@ -28,6 +28,7 @@ import static org.squashtest.tm.service.internal.batchimport.testcase.excel.Test
 import org.apache.commons.lang.StringUtils;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.service.importer.ImportMode;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.internal.batchimport.Model.Existence;
@@ -90,19 +91,22 @@ class EntityValidator {
 		if (target.isWellFormed()) {
 			TargetStatus projectStatus = getModel().getProjectStatus(target.getProject());
 			if (projectStatus.getStatus() != Existence.EXISTS) {
-				logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_PROJECT_NOT_EXIST).build());
+				logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_PROJECT_NOT_EXIST)
+						.build());
 			}
 		}
 
 		// 4 - name has length between 0 and 255
 		if (name != null && name.length() > 255) {
-			logs.addEntry(LogEntry.warning().forTarget(target).withMessage(Messages.ERROR_MAX_SIZE, TC_NAME.header).withImpact(Messages.IMPACT_MAX_SIZE).build());
+			logs.addEntry(LogEntry.warning().forTarget(target).withMessage(Messages.ERROR_MAX_SIZE, TC_NAME.header)
+					.withImpact(Messages.IMPACT_MAX_SIZE).build());
 		}
 
 		// 5 - reference, if exists, has length between 0 and 50
 		String reference = testCase.getReference();
 		if (!StringUtils.isBlank(reference) && reference.length() > 50) {
-			logs.addEntry(LogEntry.warning().forTarget(target).withMessage(Messages.ERROR_MAX_SIZE, TC_REFERENCE.header).build());
+			logs.addEntry(LogEntry.warning().forTarget(target)
+					.withMessage(Messages.ERROR_MAX_SIZE, TC_REFERENCE.header).build());
 		}
 
 		return logs;
@@ -156,15 +160,21 @@ class EntityValidator {
 
 	}
 
-	LogTrain validateCallStep(TestStepTarget target, TestStep testStep, TestCaseTarget calledTestCase) {
+	LogTrain validateCallStep(TestStepTarget target, TestStep testStep, TestCaseTarget calledTestCase, ImportMode mode) {
 
 		LogTrain logs = new LogTrain();
 
 		TargetStatus calledStatus = getModel().getStatus(calledTestCase);
 
 		// 1 - the target must exist and be valid
-		if (calledStatus.status == NOT_EXISTS || calledStatus.status == TO_BE_DELETED || !calledTestCase.isWellFormed()) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_CALLED_TC_NOT_FOUND));
+		String mustExistAndBeValidMessage = null;
+		if (calledStatus.status == NOT_EXISTS || calledStatus.status == TO_BE_DELETED) {
+			mustExistAndBeValidMessage = Messages.ERROR_CALLED_TC_NOT_FOUND;
+		} else if (!calledTestCase.isWellFormed()) {
+			mustExistAndBeValidMessage = Messages.ERROR_CALLED_STEP_WRONG_FORMAT;
+		}
+		if (mustExistAndBeValidMessage != null) {
+			logMustExistAndBeValidCalledTest(target, mode, logs, mustExistAndBeValidMessage);
 		}
 
 		// 2 - there must be no cyclic calls
@@ -175,6 +185,18 @@ class EntityValidator {
 
 		return logs;
 
+	}
+
+	private void logMustExistAndBeValidCalledTest(TestStepTarget target, ImportMode mode, LogTrain logs, String message) {
+		switch (mode) {
+		case CREATE:
+			logs.addEntry(new LogEntry(target, ImportStatus.WARNING, message, Messages.IMPACT_CALL_AS_ACTION_STEP));
+			break;
+		case UPDATE: // do default
+		default:
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, message));
+			break;
+		}
 	}
 
 	LogTrain basicParameterChecks(ParameterTarget target) {

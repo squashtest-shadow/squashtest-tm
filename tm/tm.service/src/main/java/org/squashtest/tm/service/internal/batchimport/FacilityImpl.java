@@ -259,19 +259,27 @@ public class FacilityImpl implements Facility {
 	}
 
 	@Override
-	public LogTrain addCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase) {
+	public LogTrain addCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase,
+			ActionTestStep actionStepBackup) {
 
-		LogTrain train = validator.addCallStep(target, testStep, calledTestCase);
+		LogTrain train = validator.addCallStep(target, testStep, calledTestCase, actionStepBackup);
 
 		if (!train.hasCriticalErrors()) {
+			String mustImportCallAsActionStepErrorI18n = FacilityUtils.mustImportCallAsActionStep(train);
 			try {
-				doAddCallStep(target, testStep, calledTestCase);
+				if (mustImportCallAsActionStepErrorI18n != null) {
+					ActionTestStep actionTestStep = actionStepBackup;
+					doAddActionStep(target, actionTestStep, new HashMap<String, String>(0));
+					validator.getModel().addActionStep(target);
+				} else {
 
-				remember(target.getTestCase());
-				validator.getModel().addCallStep(target, calledTestCase);
+					doAddCallStep(target, testStep, calledTestCase);
 
-				LOGGER.debug("Excel import : Created Call Step \t'" + target + "' -> '" + calledTestCase + "'");
+					remember(target.getTestCase());
+					validator.getModel().addCallStep(target, calledTestCase);
 
+					LOGGER.debug("Excel import : Created Call Step \t'" + target + "' -> '" + calledTestCase + "'");
+				}
 			} catch (Exception ex) {
 				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
 						new Object[] { ex.getClass().getName() }));
@@ -281,6 +289,8 @@ public class FacilityImpl implements Facility {
 
 		return train;
 	}
+
+
 
 	@Override
 	public LogTrain updateActionStep(TestStepTarget target, ActionTestStep testStep, Map<String, String> cufValues) {
@@ -304,9 +314,10 @@ public class FacilityImpl implements Facility {
 	}
 
 	@Override
-	public LogTrain updateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase) {
+	public LogTrain updateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase,
+			ActionTestStep actionStepBackup) {
 
-		LogTrain train = validator.updateCallStep(target, testStep, calledTestCase);
+		LogTrain train = validator.updateCallStep(target, testStep, calledTestCase, actionStepBackup);
 
 		if (!train.hasCriticalErrors()) {
 			try {
@@ -578,14 +589,13 @@ public class FacilityImpl implements Facility {
 
 		// move the test case if its index says it has to move
 		Integer order = target.getOrder();
-		if (order != null && order > -1  && order < navigationService.countSiblingsOfNode(origId)){
-			if (target.isRootTestCase()){
+		if (order != null && order > -1 && order < navigationService.countSiblingsOfNode(origId)) {
+			if (target.isRootTestCase()) {
 				Long libraryId = validator.getModel().getProjectStatus(target.getProject()).getId();
-				navigationService.moveNodesToLibrary(libraryId, new Long[]{origId}, order);
-			}
-			else{
+				navigationService.moveNodesToLibrary(libraryId, new Long[] { origId }, order);
+			} else {
 				Long folderId = navigationService.findNodeIdByPath(target.getFolder());
-				navigationService.moveNodesToFolder(folderId, new Long[]{origId}, order);
+				navigationService.moveNodesToFolder(folderId, new Long[] { origId }, order);
 			}
 		}
 
@@ -687,7 +697,7 @@ public class FacilityImpl implements Facility {
 			parameterService.addNewParameterToTestCase(param, testcaseId);
 		} else {
 			String description = param.getDescription();
-			if(description != null){
+			if (description != null) {
 				findParameter(target).setDescription(description);
 			}
 		}

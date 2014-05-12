@@ -113,18 +113,24 @@ public class SimulationFacility implements Facility {
 
 	}
 
-	@Override
-	public LogTrain addCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase) {
 
-		LogTrain logs = validator.addCallStep(target, testStep, calledTestCase);
+	@Override
+	public LogTrain addCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase, ActionTestStep actionBackupStep) {
+
+		LogTrain logs = validator.addCallStep(target, testStep, calledTestCase, actionBackupStep);
 
 		// update the model if no fatal flaws were detected
 		if (!logs.hasCriticalErrors()) {
-			validator.getModel().addCallStep(target, calledTestCase);
+			String mustImportCallAsActionStepErrorI18n = FacilityUtils.mustImportCallAsActionStep(logs);
+			if (mustImportCallAsActionStepErrorI18n != null) {
+				validator.getModel().addActionStep(target);
+			} else {
+				validator.getModel().addCallStep(target, calledTestCase);
+			}
 		}
-
 		return logs;
 	}
+
 
 	@Override
 	public LogTrain updateActionStep(TestStepTarget target, ActionTestStep testStep, Map<String, String> cufValues) {
@@ -138,9 +144,9 @@ public class SimulationFacility implements Facility {
 	}
 
 	@Override
-	public LogTrain updateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase) {
+	public LogTrain updateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase, ActionTestStep actionStepBackup) {
 
-		LogTrain logs = validator.updateCallStep(target, testStep, calledTestCase);
+		LogTrain logs = validator.updateCallStep(target, testStep, calledTestCase, actionStepBackup);
 
 		// if all is ok, update the target of this call step then return
 		if (!logs.hasCriticalErrors()) {

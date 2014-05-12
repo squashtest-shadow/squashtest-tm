@@ -27,7 +27,8 @@ public final class Messages {
 	public static final String ERROR_MANDATORY_CUF = "message.import.log.error.cuf.noValueForMandatoryCuf";
 	public static final String ERROR_PROJECT_NOT_EXIST = "message.import.log.error.tc.tcPath.projectNotFound";
 	public static final String ERROR_MAX_SIZE = "message.import.log.error.field.maxSize";
-	static final String ERROR_CALLED_TC_NOT_FOUND = "message.import.log.error.tc.callStep.calledTcNotFound";
+	public static final String ERROR_CALLED_TC_NOT_FOUND = "message.import.log.error.tc.callStep.calledTcNotFound";
+	public static final String ERROR_CALLED_STEP_WRONG_FORMAT = "message.import.log.error.tc.callStep.wrongFormat";
 
 	public static final String ERROR_UNPARSABLE_CHECKBOX = "message.import.log.error.field.notBoolean";
 	public static final String ERROR_UNPARSABLE_DATE = "message.import.log.error.field.wrongDateFormat";
@@ -57,7 +58,7 @@ public final class Messages {
 	public static final String ERROR_DATASET_NOT_FOUND = "message.import.log.error.tc.dataset.notFound";
 	public static final String ERROR_DATASET_PARAMETER_MISMATCH = "message.import.log.error.tc.dataset.paramOwnerNotFound";
 	public static final String ERROR_TC_USER_NOT_FOUND = "message.import.log.error.tc.userNotFound";
-	public static final String IMPACT_USE_CURRENT_LOGIN = "message.import.log.impact.useCurrentLogin";
+	public static final String ERROR_CALL_NOT_READABLE = "message.import.log.error.tc.callStep.calledTcNotReadable";
 
 	public static final String IMPACT_MAX_SIZE = "message.import.log.impact.truncatedValue";
 	public static final String IMPACT_DEFAULT_VALUE = "message.import.log.impact.useDefaultValue";
@@ -68,6 +69,8 @@ public final class Messages {
 	public static final String IMPACT_PARAM_UPDATED = "message.import.log.impact.paramupdate";
 	public static final String IMPACT_PARAM_CREATED = "message.import.log.impact.paramcreated";
 	public static final String IMPACT_DATASET_CREATED = "message.import.log.impact.dscreated";
+	public static final String IMPACT_CALL_AS_ACTION_STEP = "message.import.log.impact.callStepImportedAsActionStep";
+	public static final String IMPACT_USE_CURRENT_LOGIN = "message.import.log.impact.useCurrentLogin";
 	private Messages(){
 		super();
 	}

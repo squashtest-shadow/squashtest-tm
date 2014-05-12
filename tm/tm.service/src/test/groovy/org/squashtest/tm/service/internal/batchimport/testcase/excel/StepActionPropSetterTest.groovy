@@ -19,15 +19,16 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.service.internal.batchimport.testcase.excel;
+package org.squashtest.tm.service.internal.batchimport.testcase.excel
 
 
-import org.junit.Test;
-import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.service.internal.batchimport.TestCaseTarget;
+import org.squashtest.tm.domain.testcase.ActionTestStep
+import org.squashtest.tm.service.internal.batchimport.CallStepInstruction
+import org.squashtest.tm.service.internal.batchimport.TestCaseTarget
+import org.squashtest.tm.service.internal.batchimport.TestStepTarget
 
-import spock.lang.Specification;
-import spock.lang.Unroll;
+import spock.lang.Specification
+import spock.lang.Unroll
 
 /**
  * @author Gregory Fouquet
@@ -39,7 +40,7 @@ class StepActionPropSetterTest extends Specification {
 	@Unroll
 	def "should set action field of action step to #expected"() {
 		given:
-		ActionTestStep step = new ActionTestStep();
+		ActionTestStep step = new ActionTestStep()
 
 		when:
 		setter.set(action, step)
@@ -57,20 +58,25 @@ class StepActionPropSetterTest extends Specification {
 	@Unroll
 	def "should set path field of call step to #expected"() {
 		given:
-		TestCaseTarget target = new TestCaseTarget();
+		TestStepTarget  stepTarget = new TestStepTarget()
+		TestCaseTarget calledTestCase = new TestCaseTarget()
+		ActionTestStep actionStepBackup = new ActionTestStep()
+
+		CallStepInstruction target = new CallStepInstruction(stepTarget, calledTestCase, actionStepBackup)
 
 		when:
 		setter.set(action, target)
 
 		then:
-		target.path == expected
+		target.calledTC.path == expected
+		target.actionStepBackup.action == actionBackup
 
 		where:
-		action 												| expected
-		"the path is straight but the slope is steep"		| "the path is straight but the slope is steep"
-		"CALL the path is straight but the slope is steep"	| "the path is straight but the slope is steep"
-		"CALLthe path is straight but the slope is steep"	| "the path is straight but the slope is steep"
-		null												| null
+		actionBackup | action 												| expected
+		"the path is straight but the slope is steep"		| "the path is straight but the slope is steep"			| "the path is straight but the slope is steep"
+		"CALL the path is straight but the slope is steep"	| "CALL the path is straight but the slope is steep"	| "the path is straight but the slope is steep"
+		"CALLthe path is straight but the slope is steep"	| "CALLthe path is straight but the slope is steep"		| "the path is straight but the slope is steep"
+		""											 		| null													| null
 
 	}
 }

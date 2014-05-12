@@ -19,10 +19,12 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.service.internal.batchimport.testcase.excel;
+package org.squashtest.tm.service.internal.batchimport.testcase.excel
 
 import org.squashtest.tm.domain.testcase.ActionTestStep
+import org.squashtest.tm.service.internal.batchimport.CallStepInstruction
 import org.squashtest.tm.service.internal.batchimport.TestCaseTarget
+import org.squashtest.tm.service.internal.batchimport.TestStepTarget
 
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -37,7 +39,7 @@ class StepResultPropSetterTest extends Specification {
 	@Unroll
 	def "should set result field of action step to #expected"() {
 		given:
-		ActionTestStep step = new ActionTestStep();
+		ActionTestStep step = new ActionTestStep()
 
 		when:
 		setter.set(result, step)
@@ -52,15 +54,20 @@ class StepResultPropSetterTest extends Specification {
 
 	}
 
-	def "should not set anything on test case target"() {
+	def "should set the result on actionStepBackup"() {
 		given:
-		TestCaseTarget target = Mock();
+		TestStepTarget  stepTarget = new TestStepTarget()
+		TestCaseTarget calledTestCase = new TestCaseTarget()
+		ActionTestStep actionStepBackup = new ActionTestStep()
 
+		CallStepInstruction target = new CallStepInstruction(stepTarget, calledTestCase, actionStepBackup)
+		def result = "i wanna see some results out there"
 		when:
-		setter.set("i wanna see some results out there", target)
+		setter.set(result, target)
 
 		then:
-		0 * target._(_)
+		actionStepBackup.getExpectedResult() == result
+
 
 	}
 }
