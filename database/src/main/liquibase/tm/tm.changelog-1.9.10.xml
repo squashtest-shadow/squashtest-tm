@@ -68,10 +68,9 @@
   			update AUTOMATED_EXECUTION_EXTENDER extender
   			set result_url = null,
   				test_id = null
-  			where extender.extender_id in (
-  				select ext.extender_id 
-  				from  AUTOMATED_EXECUTION_EXTENDER ext
-  				inner join AUTOMATED_TEST tatest on ext.test_id = tatest.test_id 
+  			where extender.test_id in (
+  				select tatest.test_id 
+  				from  AUTOMATED_TEST tatest 
   				inner join UNUSED_TA_PROJECT unused on tatest.project_id = unused.project_id 
   			);
   		</sql>
@@ -79,19 +78,17 @@
   		<sql>
   			update TEST_CASE tc 
   			set tc.ta_test = null
-  			where tc.tcln_id in (
-  				select testcase.tcln_id 
-  				from TEST_CASE testcase 
-  				inner join AUTOMATED_TEST tatest on testcase.ta_test = tatest.test_id 
+  			where tc.ta_test in (
+  				select tatest.test_id 
+  				from AUTOMATED_TEST tatest 
   				inner join UNUSED_TA_PROJECT unused on tatest.project_id = unused.project_id 
   			);	
   		</sql>
   	
   		<sql>
 			delete from AUTOMATED_TEST  
-			where test_id in (
-				select test.test_id from AUTOMATED_TEST test
-				inner join UNUSED_TA_PROJECT unused on test.project_id = unused.project_id
+			where project_id in (
+				select unused.project_id from UNUSED_TA_PROJECT unused
 			);			
   		</sql>
   		
@@ -126,11 +123,11 @@
 			<column name="NAME" type="VARCHAR(50)" remarks="The name of the server"/>
 			
 			<column name="CREATED_BY" type="VARCHAR(50)" defaultValue="(nobody)"  remarks="Who created this test automation server">
-				<constraints nullable="false" />
+				<constraints nullable="true" />
 			</column>
 			
-			<!--  warning : the function now() works for both mysql and H2 but might break if later more databases are supported -->
-			<column name="CREATED_ON" type="DATETIME" defaultValueDate="now()"  remarks="When was created that server">
+			<!-- this column is not nullable but the constraint will be added after the migration -->
+			<column name="CREATED_ON" type="DATETIME" remarks="When was created that server">
 				<constraints nullable="false" />
 			</column>
 			
@@ -151,8 +148,14 @@
 			set name = base_url;
 		</sql>
 		
+		<sql>
+			update TEST_AUTOMATION_SERVER
+			set CREATED_ON = NOW();
+		</sql>
+		
 		<!--  now add the missing not null constraints -->
 		<addNotNullConstraint tableName="TEST_AUTOMATION_SERVER" columnName="NAME" columnDataType="VARCHAR(50)"/>
+		<addNotNullConstraint tableName="TEST_AUTOMATION_SERVER" columnName="CREATED_ON" columnDataType="DATETIME"/>
 		
 	</changeSet>
 	
