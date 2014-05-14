@@ -23,7 +23,7 @@
  * next.
  */
 
-define([ "jquery", "module", "jquery.cookie", "jqueryui" ], function($, module) {
+define([ "jquery", "module", "app/util/ComponentUtil", "jquery.cookie", "jqueryui" ], function($, module, ComponentUtil) {
 
 	$.widget("squash.ieoControl", {
 
@@ -273,19 +273,7 @@ define([ "jquery", "module", "jquery.cookie", "jqueryui" ], function($, module) 
 
 		_updateComboIcon : function() {
 			var cbox = this.getStatusCombo();
-
-			// reset the classes
-			cbox.attr("class", "");
-
-			cbox.addClass("execution-status-combo-class");
-
-			// find and set the new class
-			var selectedIndex = cbox.get(0).selectedIndex;
-			var selector = "option:eq(" + selectedIndex + ")";
-
-			var className = cbox.find(selector).attr("class");
-
-			cbox.addClass(className);
+			ComponentUtil.updateStatusCboxIcon(cbox);
 		},
 
 		_updateCounter : function() {

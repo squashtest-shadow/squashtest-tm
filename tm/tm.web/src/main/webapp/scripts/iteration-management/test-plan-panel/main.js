@@ -86,6 +86,9 @@ define(['squash.translator', './table', './popups', 'app/util/ButtonUtil'], func
 			$("#assign-users-button").on('click', function(){
 				$("#iter-test-plan-batch-assign").formDialog('open');
 			});
+			$("#change-status-button").on('click', function(){
+				$("#iter-test-plan-batch-edit-status").formDialog('open');
+			});
 		}
 		
 		if (conf.permissions.reorderable){

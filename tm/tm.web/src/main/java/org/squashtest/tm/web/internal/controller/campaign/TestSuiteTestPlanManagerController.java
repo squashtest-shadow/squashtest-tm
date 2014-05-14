@@ -98,7 +98,7 @@ public class TestSuiteTestPlanManagerController {
 	private static final String STATUS = "status";
 	private static final String ITEM_ID = "itemId";
 	private static final String TESTPLAN_IDS = "testPlanIds";
-	
+
 	@Inject
 	private TestSuiteModificationService service;
 
@@ -117,15 +117,15 @@ public class TestSuiteTestPlanManagerController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteModificationController.class);
 
 	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
-			.map("entity-index", "index(IterationTestPlanItem)")
-			// index is a special case which means : no sorting.
-			.mapAttribute("project-name", NAME, Project.class).mapAttribute(REFERENCE, REFERENCE, TestCase.class)
-			.mapAttribute("tc-name", NAME, TestCase.class).mapAttribute(IMPORTANCE, IMPORTANCE, TestCase.class)
-			.mapAttribute("dataset", NAME, Dataset.class)
-			.mapAttribute("status", "executionStatus", IterationTestPlanItem.class)
-			.mapAttribute("assignee-login", "login", User.class)
-			.mapAttribute("last-exec-on", "lastExecutedOn", IterationTestPlanItem.class)
-			.mapAttribute("exec-mode", "automatedTest", TestCase.class);
+	.map("entity-index", "index(IterationTestPlanItem)")
+	// index is a special case which means : no sorting.
+	.mapAttribute("project-name", NAME, Project.class).mapAttribute(REFERENCE, REFERENCE, TestCase.class)
+	.mapAttribute("tc-name", NAME, TestCase.class).mapAttribute(IMPORTANCE, IMPORTANCE, TestCase.class)
+	.mapAttribute("dataset", NAME, Dataset.class)
+	.mapAttribute("status", "executionStatus", IterationTestPlanItem.class)
+	.mapAttribute("assignee-login", "login", User.class)
+	.mapAttribute("last-exec-on", "lastExecutedOn", IterationTestPlanItem.class)
+	.mapAttribute("exec-mode", "automatedTest", TestCase.class);
 
 	@Inject
 	private InternationalizationHelper messageSource;
@@ -167,9 +167,9 @@ public class TestSuiteTestPlanManagerController {
 			final Locale locale) {
 
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, testPlanMapper);
-		
+
 		ColumnFiltering filter = new DataTableColumnFiltering(params);
-		
+
 		PagedCollectionHolder<List<IndexedIterationTestPlanItem>> holder = testSuiteTestPlanManagerService
 				.findAssignedTestPlan(suiteId, paging, filter);
 
@@ -273,7 +273,7 @@ public class TestSuiteTestPlanManagerController {
 		testSuiteTestPlanManagerService.bindTestPlanToMultipleSuites(boundTestSuitesIds, itpIds);
 		testSuiteTestPlanManagerService.unbindTestPlanToMultipleSuites(unboundTestSuiteIds, itpIds);
 	}
-	
+
 	@RequestMapping(value = "/test-suites/test-plan", method = RequestMethod.POST, params = { ITEM_IDS, "unboundSuiteIds[]" })
 	public @ResponseBody
 	void unbindTestPlans(@RequestParam(ITEM_IDS) List<Long> itpIds,
@@ -281,9 +281,9 @@ public class TestSuiteTestPlanManagerController {
 		LOGGER.debug("bind test plan items to test suites");
 		testSuiteTestPlanManagerService.unbindTestPlanToMultipleSuites(unboundTestSuiteIds, itpIds);
 	}
-	
+
 	@RequestMapping(value = "/test-suites/test-plan", method = RequestMethod.POST, params = { ITEM_IDS,
-			"boundSuiteIds[]" })
+	"boundSuiteIds[]" })
 	public @ResponseBody
 	void bindTestPlans(@RequestParam(ITEM_IDS) List<Long> itpIds,
 			@RequestParam("boundSuiteIds[]") List<Long> boundTestSuitesIds) {
@@ -291,14 +291,12 @@ public class TestSuiteTestPlanManagerController {
 		testSuiteTestPlanManagerService.bindTestPlanToMultipleSuites(boundTestSuitesIds, itpIds);
 	}
 
-	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{testPlanId}", method = RequestMethod.POST, params = { STATUS })
+	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{testPlanIds}", method = RequestMethod.POST, params = { STATUS })
 	public @ResponseBody
-	JsonIterationTestPlanItem setTestPlanItemStatus(@PathVariable("testPlanId") long testPlanId, @RequestParam(STATUS) String status) {
-		LOGGER.debug("change status test plan item #{} to {}", testPlanId, status);
-		iterationTestPlanManagerService.forceExecutionStatus(testPlanId, status);
-		IterationTestPlanItem item = iterationTestPlanManagerService.findTestPlanItem(testPlanId);
-		
-		return createJsonITPI(item);
+	JsonIterationTestPlanItem setTestPlanItemStatus(@PathVariable("testPlanIds") List<Long> testPlanIds, @RequestParam(STATUS) String status) {
+		LOGGER.debug("change status test plan items to {}", status);
+		List<IterationTestPlanItem> itpis = iterationTestPlanManagerService.forceExecutionStatus(testPlanIds, status);
+		return createJsonITPI(itpis.get(0));
 	}
 
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{itemId}/executions", method = RequestMethod.GET)
@@ -360,20 +358,21 @@ public class TestSuiteTestPlanManagerController {
 	private String formatUnassigned(Locale locale) {
 		return messageSource.internationalize("label.Unassigned", locale);
 	}
-	
+
 
 	private JsonIterationTestPlanItem createJsonITPI(IterationTestPlanItem item){
 		String name = (item.isTestCaseDeleted()) ? null : item.getReferencedTestCase().getName();
 		return new JsonIterationTestPlanItem(
-					item.getId(),
-					item.getExecutionStatus(),
-					name,
-					item.getLastExecutedOn(),
-					item.getLastExecutedBy(),
-					item.getUser(),
-					item.isTestCaseDeleted(),
-					item.isAutomated()
+				item.getId(),
+				item.getExecutionStatus(),
+				name,
+				item.getLastExecutedOn(),
+				item.getLastExecutedBy(),
+				item.getUser(),
+				item.isTestCaseDeleted(),
+				item.isAutomated()
 				);
 	}
+
 
 }

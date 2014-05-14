@@ -107,11 +107,11 @@
           </script>
 			<script type="text/javascript">						
 			require(["common"], function() {
-				require(["jquery", "squash.basicwidgets", 
-				         "iesupport/am-I-ie8",
-				         "execution-processing/ie8-no-close-on-enter",
-				         "page-components/step-information-panel", "workspace.event-bus",  "jquery.squash"], 
-				         function($, basicwidg, isIE, noCloseOnEnter, infopanel, eventBus ) {
+				require(['jquery", "squash.basicwidgets', 
+				         'iesupport/am-I-ie8',
+				         'execution-processing/ie8-no-close-on-enter',
+				         'page-components/step-information-panel', 'workspace.event-bus', 'app/util/ComponentUtil', 'jquery.squash'], 
+				         function($, basicwidg, isIE, noCloseOnEnter, infopanel, eventBus, ComponentUtil ) {
 			
 				var isOer = ${ not empty hasNextTestCase };
 				var hasNextTestCase = ${ (not empty hasNextTestCase) and hasNextTestCase };
@@ -273,18 +273,7 @@
 				
 				function statusComboSetIcon(){
 					var cbox = $("#execution-status-combo");
-					//reset the classes
-					cbox.attr("class","");
-					
-					cbox.addClass("execution-status-combo-class");
-					
-					//find and set the new class
-					var selectedIndex=document.getElementById('execution-status-combo').selectedIndex;
-					var selector = "option:eq("+selectedIndex+")";
-					
-					var className = cbox.find(selector).attr("class");
-					
-					cbox.addClass(className);
+					ComponentUtil.updateStatusCboxIcon(cbox);
 				}
 			
 				function statusComboChange(){

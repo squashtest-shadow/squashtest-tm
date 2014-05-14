@@ -372,13 +372,16 @@
       </div>
 			</c:if>
 			
-			<c:if test="${ linkable }">
+			<c:if test="${ linkable or writable }">
       <div class="right btn-toolbar">
+      <c:if test="${  writable }">
         <span class="btn-group">
           <button id="assign-users-button" class="sq-btn btn-sm" title="${tooltipAssign}" >
             <span class="ui-icon ui-icon-person"></span>${assignLabel}
           </button>
         </span>
+        </c:if>
+         <c:if test="${ linkable }">
         <span class="btn-group">
           <button id="test-case-button" class="sq-btn btn-sm" title="${tooltipAddTPI}">
             <span class="ui-icon ui-icon-plusthick"></span>${associateLabel}
@@ -387,6 +390,7 @@
             <span class="ui-icon ui-icon-trash"></span>${removeLabel}
           </button>
         </span>
+        </c:if>
       </div>
 			</c:if>
 		</div>

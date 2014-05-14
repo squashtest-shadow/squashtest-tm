@@ -57,6 +57,7 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IterationModificationService;
@@ -94,7 +95,7 @@ public class IterationModificationController {
 
 	@Inject
 	private IterationModificationService iterationModService;
-	
+
 	@Inject
 	private IterationTestPlanManagerService iterationTestPlanManagerService;
 
@@ -105,14 +106,14 @@ public class IterationModificationController {
 	private CustomFieldValueFinderService cufValueService;
 
 	@Inject
-	private IterationTestPlanFinder testPlanFinder;	
-	
+	private IterationTestPlanFinder testPlanFinder;
+
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentHelper;
 
 	@Inject
 	private Provider<TestCaseImportanceJeditableComboDataBuilder> importanceComboBuilderProvider;
-	
+
 	@Inject
 	private InternationalizationHelper messageSource;
 
@@ -124,7 +125,7 @@ public class IterationModificationController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showIteration(Model model, @PathVariable long iterationId) {
-		
+
 		populateIterationModel(model, iterationId);
 		return "fragment/iterations/edit-iteration";
 	}
@@ -136,78 +137,84 @@ public class IterationModificationController {
 		populateIterationModel(model, iterationId);
 		return "page/campaign-libraries/show-iteration";
 	}
-	
+
 	private void populateIterationModel(Model model, long iterationId){
-		
+
 		Iteration iteration = iterationModService.findById(iterationId);
 		boolean hasCUF = cufValueService.hasCustomFields(iteration);
 		DataTableModel attachmentsModel = attachmentHelper.findPagedAttachments(iteration);
 		Map<String, String> assignableUsers = getAssignableUsers(iterationId);
 		Map<String, String> weights = getWeights();
-		
+
 		model.addAttribute(ITERATION_KEY, iteration);
-		model.addAttribute("hasCUF", hasCUF);		
-		model.addAttribute("attachmentsModel", attachmentsModel);		
+		model.addAttribute("hasCUF", hasCUF);
+		model.addAttribute("attachmentsModel", attachmentsModel);
 		model.addAttribute("assignableUsers", assignableUsers);
 		model.addAttribute("weights", weights);
 		model.addAttribute("modes", getModes());
 		model.addAttribute("statuses", getStatuses(iteration.getProject().getId()));
 		model.addAttribute("allowsSettled", iteration.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
 		model.addAttribute("allowsUntestable", iteration.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
-		
+
 	}
 
+	/**
+	 * Will fetch the active {@link ExecutionStatus} for the project matching the given id
+	 * @param projectId : the id of the concerned {@link Project}
+	 * @return  a map representing the active statuses for the given project with :
+	 * <ul><li>key: the status name</li><li>value: the status internationalized label</li></ul>
+	 */
 	private Map<String, String> getStatuses(long projectId){
 		Locale locale = LocaleContextHolder.getLocale();
 		return executionStatusComboBuilderProvider.get().useContext(projectId).useLocale(locale).buildMap();
 	}
-	
+
 	private Map<String, String> getModes(){
 		Locale locale = LocaleContextHolder.getLocale();
 		return modeComboBuilderProvider.get().useLocale(locale).buildMap();
 	}
-	
+
 	private Map<String, String> getWeights(){
 		Locale locale = LocaleContextHolder.getLocale();
 		return importanceComboBuilderProvider.get().useLocale(locale).buildMap();
 	}
-	
+
 	private Map<String, String> getAssignableUsers(@PathVariable long iterationId){
 
 		Locale locale = LocaleContextHolder.getLocale();
-		
+
 		List<User> usersList = iterationTestPlanManagerService.findAssignableUserForTestPlan(iterationId);
 		Collections.sort(usersList, new UserLoginComparator());
 
 		String unassignedLabel = messageSource.internationalize("label.Unassigned", locale);
 
 		Map<String, String> jsonUsers = new LinkedHashMap<String, String>(usersList.size());
-		
+
 		jsonUsers.put(User.NO_USER_ID.toString(), unassignedLabel);
 		for (User user : usersList){
 			jsonUsers.put(user.getId().toString(), user.getLogin());
 		}
-		
+
 		return jsonUsers;
 	}
 
 	//URL should have been /statistics, but that was already used by another method in this controller
 	@RequestMapping (value = "/dashboard-statistics", method = RequestMethod.GET, produces=ContentTypes.APPLICATION_JSON)
 	public @ResponseBody IterationStatisticsBundle getStatisticsAsJson(@PathVariable("iterationId") long iterationId){
-			
+
 		return iterationModService.gatherIterationStatisticsBundle(iterationId);
 	}
-	
+
 	@RequestMapping (value = "/dashboard", method = RequestMethod.GET, produces=ContentTypes.TEXT_HTML)
 	public ModelAndView getDashboard(Model model, @PathVariable("iterationId") long iterationId){
-			
+
 		Iteration iteration = iterationModService.findById(iterationId);
 		IterationStatisticsBundle bundle = iterationModService.gatherIterationStatisticsBundle(iterationId);
-		
+
 		ModelAndView mav  = new ModelAndView("fragment/iterations/iteration-dashboard");
 		mav.addObject("iteration", iteration);
 		mav.addObject("dashboardModel", bundle);
-		
+
 		return mav;
 	}
 
@@ -247,7 +254,7 @@ public class IterationModificationController {
 	public JsonGeneralInfo refreshGeneralInfos(@PathVariable long iterationId){
 		Iteration iteration = iterationModService.findById(iterationId);
 		return new JsonGeneralInfo((AuditableMixin)iteration);
-		
+
 	}
 
 	/* *************************************** planning ********************************* */
@@ -456,7 +463,7 @@ public class IterationModificationController {
 	AutomatedSuiteOverview executeSelectionAuto(@PathVariable long iterationId,
 			@RequestParam("testPlanItemsIds[]") List<Long> ids, Locale locale) {
 		AutomatedSuite suite = iterationModService.createAndStartAutomatedSuite(iterationId, ids);
-		
+
 
 		LOGGER.debug("Iteration #" + iterationId + " : execute selected test plans");
 
@@ -473,15 +480,15 @@ public class IterationModificationController {
 		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
 	}
 
-	
+
 	// ******************** other stuffs ***********************
-	
+
 	private static final class UserLoginComparator implements Comparator<User>{
 		@Override
 		public int compare(User u1, User u2) {
 			return u1.getLogin().compareTo(u2.getLogin());
 		}
-		
+
 	}
 
 }

@@ -143,10 +143,10 @@ public class EnumJeditableComboDataBuilder<T extends Enum<?>, B extends EnumJedi
 	}
 
 	/**
-	 * Returns the key which vill be used in combo data for the given item. defaults to the items's name.
+	 * Returns the key which will be used in combo data for the given item. defaults to the items's name.
 	 * 
 	 * @param item
-	 * @return
+	 * @return the key  for the given item.
 	 */
 	protected String itemKey(T item) {
 		return item.name();
@@ -157,7 +157,7 @@ public class EnumJeditableComboDataBuilder<T extends Enum<?>, B extends EnumJedi
 			comboData.put("selected", selectedItem.name());
 		}
 	}
-	
+
 	private void sortModelIfRequired() {
 		if (modelComparator != null) {
 			Collections.sort(model, modelComparator);
