@@ -46,15 +46,23 @@
   </changeSet>
   
   
-  	<changeSet id="tm-1.9.10.feature-3481-1" author="bsiri">
+  		
+	
+	<changeSet id="tm-1.9.10.feature-3481-1" author="bsiri">
+		<comment>before the cleanup, we need to relax some constraints</comment>
+	
+		<dropNotNullConstraint tableName="AUTOMATED_EXECUTION_EXTENDER" columnName="TEST_ID" columnDataType="BIGINT"/>
+	
+	</changeSet>
+  
+  	<changeSet id="tm-1.9.10.feature-3481-2" author="bsiri">
   		<comment>cleaning up unused entities</comment>
   	
   		<!-- find the unused projects -->
   		<sql>
   			create temporary table UNUSED_TA_PROJECT as 
   			(
-  				select taproj.project_id as project_id,
-  						taproj.server_id as server_id 
+  				select taproj.project_id as project_id
   				from TEST_AUTOMATION_PROJECT taproj 
   				where taproj.project_id not in (
   					select ta_project_id from TM_TA_PROJECTS
@@ -101,8 +109,10 @@
   		
   		<sql>
   			delete from TEST_AUTOMATION_SERVER 
-  			where server_id in (
-  				select s.server_id from UNUSED_TA_PROJECT s
+  			where server_id not in (
+  				select distinct taproj.server_id 
+  				from TM_TA_PROJECTS binding 
+  				inner join TEST_AUTOMATION_PROJECT taproj on binding.ta_project_id = taproj.project_id 
   			);
   		</sql>
   		
@@ -114,7 +124,7 @@
   	
   	</changeSet>
 
-	<changeSet id="tm-1.9.10.feature-3481-2" author="bsiri">
+	<changeSet id="tm-1.9.10.feature-3481-3" author="bsiri">
 		<comment>The test automation serveurs are now 'auditable' (dates and authors of creation/modification are recorded) and has 
 		several other attributes</comment>
 		<addColumn tableName="TEST_AUTOMATION_SERVER">
@@ -128,7 +138,7 @@
 			
 			<!-- this column is not nullable but the constraint will be added after the migration -->
 			<column name="CREATED_ON" type="DATETIME" remarks="When was created that server">
-				<constraints nullable="false" />
+				<constraints nullable="true" />
 			</column>
 			
 			<column name="LAST_MODIFIED_BY" type="VARCHAR(50)" defaultValue="NULL" remarks="Author of last edition" />
@@ -159,7 +169,7 @@
 		
 	</changeSet>
 	
-	<changeSet id="tm-1.9.10.feature-3481-3" author="bsiri">
+	<changeSet id="tm-1.9.10.feature-3481-4" author="bsiri">
 		
 		<comment>
 			The associative table TM_TA_PROJECTS is totally repurposed as TM_AUTOMATION_PROJECT 
@@ -217,22 +227,23 @@
 		
 		<!-- drop the constraints pointing to TEST_AUTOMATION_PROJECT -->
 		<dropForeignKeyConstraint constraintName="fk_automated_test_project" baseTableName="AUTOMATED_TEST"  />
-	
+
 		<!-- drop the table TEST_AUTOMATION_PROJECT -->
 		<dropTable tableName="TEST_AUTOMATION_PROJECT"/>
-		
+
+	
 		<!-- all hail the new table TEST_AUTOMATION_PROJECT ! -->
 		<renameTable oldTableName="PROTO_TEST_AUTOMATION_PROJECT" newTableName="TEST_AUTOMATION_PROJECT" />
+	
 		
 		<!-- reinstatiate the foreign keys to the new table -->
-		<addForeignKeyConstraint constraintName="fk_automated_test_project" 
+		<!--  <addForeignKeyConstraint constraintName="fk_automated_test_project" 
 				baseTableName="AUTOMATED_TEST" baseColumnNames="PROJECT_ID" 
-				referencedTableName="TEST_AUTOMATION_PROJECT" referencedColumnNames="TA_PROJECT_ID"/>
-	
+				referencedTableName="TEST_AUTOMATION_PROJECT" referencedColumnNames="TA_PROJECT_ID"/>-->	
 	</changeSet>
 	
 	
-	<changeSet id="tm-1.9.10.feature-3481-4" author="bsiri">
+	<changeSet id="tm-1.9.10.feature-3481-5" author="bsiri">
 		<comment>A TM project is now hard-bound to a TA server</comment>
 		
 		<addColumn tableName="PROJECT">
@@ -245,9 +256,9 @@
 		<dropColumn tableName="PROJECT" columnName="TEST_AUTOMATION_ENABLED"/>
 		
 	</changeSet>
+
 	
-	
-	<changeSet id="tm-1.9.10.feature-3481-5" author="bsiri">
+	<changeSet id="tm-1.9.10.feature-3481-6" author="bsiri">
 		<comment>migrating existing data to the new schema</comment>
 	
 	
