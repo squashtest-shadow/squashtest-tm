@@ -40,45 +40,40 @@ import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.exception.customfield.BindableEntityMismatchException;
 import org.squashtest.tm.exception.customfield.MandatoryCufException;
+import org.squashtest.tm.exception.customfield.WrongCufDateFormatException;
 
 @Entity
 public class CustomFieldValue implements Identified {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomFieldValue.class);
-
+	public static final int MAX_SIZE = 255;
 	@Id
 	@GeneratedValue
-	@Column(name="CFV_ID")
+	@Column(name = "CFV_ID")
 	private Long id;
-	
+
 	private Long boundEntityId;
 
 	@Enumerated(EnumType.STRING)
 	private BindableEntity boundEntityType;
-	
 
 	@ManyToOne
-	@JoinColumn(name="CFB_ID")
+	@JoinColumn(name = "CFB_ID")
 	private CustomFieldBinding binding;
-		
-	@Size(min = 0, max = 255)
+
+	@Size(min = 0, max = MAX_SIZE)
 	private String value;
-	
-	
-	
-	public CustomFieldValue(){
+
+	public CustomFieldValue() {
 		super();
 	}
-	
-	
-	public CustomFieldValue(Long boundEntityId, BindableEntity boundEntityType,
-			CustomFieldBinding binding, String value) {
+
+	public CustomFieldValue(Long boundEntityId, BindableEntity boundEntityType, CustomFieldBinding binding, String value) {
 		super();
 		this.boundEntityId = boundEntityId;
 		this.boundEntityType = boundEntityType;
 		this.binding = binding;
-		this.value = value;
+		doSetValue(value);
 	}
-
 
 	public Long getId() {
 		return id;
@@ -88,15 +83,25 @@ public class CustomFieldValue implements Identified {
 		this.id = id;
 	}
 
-
 	public String getValue() {
 		return value;
 	}
-
-
-	public void setValue(String value) {
-		if(getCustomField() != null && !getCustomField().isOptional() && StringUtils.isBlank(value)){
-			throw new MandatoryCufException(this);
+	public void setValue(String value){
+		doSetValue(value);
+	}
+	private void doSetValue(String value) {
+		CustomField cuf = getCustomField();
+		if (cuf != null) {
+			if (!cuf.isOptional() && StringUtils.isBlank(value)) {
+				throw new MandatoryCufException(this);
+			}
+			if (cuf.inputType == InputType.DATE_PICKER && value != null ) {
+				try {
+					IsoDateUtils.parseIso8601Date(value);
+				} catch (ParseException pe) {
+					throw new WrongCufDateFormatException(pe);
+				}
+			}
 		}
 		this.value = value;
 	}
@@ -104,53 +109,52 @@ public class CustomFieldValue implements Identified {
 	public CustomFieldBinding getBinding() {
 		return binding;
 	}
-	
-	public CustomField getCustomField(){
-		if(binding != null){
+
+	public CustomField getCustomField() {
+		if (binding != null) {
 			return binding.getCustomField();
 		}
 		return null;
 	}
 
-
 	public void setBinding(CustomFieldBinding binding) {
 		this.binding = binding;
 	}
 
-	public Long getBoundEntityId(){
+	public Long getBoundEntityId() {
 		return boundEntityId;
 	}
 
-	public BindableEntity getBoundEntityType(){
+	public BindableEntity getBoundEntityType() {
 		return boundEntityType;
 	}
 
-	
-	public void setBoundEntity(BoundEntity entity){
-		if (entity.getBoundEntityType() != binding.getBoundEntity()){
-			throw new BindableEntityMismatchException("attempted to bind '"+entity.getBoundEntityType()+"' while expected '"+binding.getBoundEntity()+"'");
+	public void setBoundEntity(BoundEntity entity) {
+		if (entity.getBoundEntityType() != binding.getBoundEntity()) {
+			throw new BindableEntityMismatchException("attempted to bind '" + entity.getBoundEntityType()
+					+ "' while expected '" + binding.getBoundEntity() + "'");
 		}
-		this.boundEntityId=entity.getBoundEntityId();
-		this.boundEntityType=entity.getBoundEntityType();
+		this.boundEntityId = entity.getBoundEntityId();
+		this.boundEntityType = entity.getBoundEntityType();
 	}
-	
-	public CustomFieldValue copy(){
+
+	public CustomFieldValue copy() {
 		CustomFieldValue copy = new CustomFieldValue();
 		copy.setBinding(binding);
 		copy.setValue(this.value);
 		return copy;
 	}
-	
-	public boolean representsSameBinding(CustomFieldValue otherValue){
+
+	public boolean representsSameBinding(CustomFieldValue otherValue) {
 		return otherValue.getBinding().getId().equals(binding.getId());
 	}
-	
-	public boolean representsSameCustomField(CustomFieldValue otherValue){
+
+	public boolean representsSameCustomField(CustomFieldValue otherValue) {
 		return otherValue.getCustomField().getId().equals(getCustomField().getId());
 	}
-	
-	public Date getValueAsDate(){
-		if(getCustomField() != null && getCustomField().getInputType() == InputType.DATE_PICKER){
+
+	public Date getValueAsDate() {
+		if (getCustomField() != null && getCustomField().getInputType() == InputType.DATE_PICKER) {
 			try {
 				return IsoDateUtils.parseIso8601Date(value);
 			} catch (ParseException e) {
@@ -158,6 +162,6 @@ public class CustomFieldValue implements Identified {
 			}
 		}
 		return null;
-		
+
 	}
 }

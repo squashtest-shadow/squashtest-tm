@@ -24,6 +24,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.squashtest.tm.domain.customfield.CustomField;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.Parameter;
@@ -108,31 +110,31 @@ final class FacilityImplHelper {
 
 	void truncate(TestCase testCase, Map<String, String> cufValues) {
 		String name = testCase.getName();
-		testCase.setName(truncate(name, 255));
+		testCase.setName(truncate(name, TestCase.MAX_NAME_SIZE));
 		String ref = testCase.getReference();
-		testCase.setReference(truncate(ref, 50));
+		testCase.setReference(truncate(ref, TestCase.MAX_REF_SIZE));
 
 		for (Entry<String, String> cuf : cufValues.entrySet()) {
 			String value = cuf.getValue();
-			cuf.setValue(truncate(value, 255));
+			cuf.setValue(truncate(value, CustomFieldValue.MAX_SIZE));
 		}
 	}
 
 	void truncate(ActionTestStep step, Map<String, String> cufValues) {
 		for (Entry<String, String> cuf : cufValues.entrySet()) {
 			String value = cuf.getValue();
-			cuf.setValue(truncate(value, 255));
+			cuf.setValue(truncate(value, CustomFieldValue.MAX_SIZE));
 		}
 	}
 
 	void truncate(Parameter param) {
 		String name = param.getName();
-		param.setName(truncate(name, 255));
+		param.setName(truncate(name, Parameter.MAX_NAME_SIZE));
 	}
 
 	void truncate(Dataset ds) {
 		String name = ds.getName();
-		ds.setName(truncate(name, 255));
+		ds.setName(truncate(name, Dataset.MAX_NAME_SIZE));
 	}
 
 	/**

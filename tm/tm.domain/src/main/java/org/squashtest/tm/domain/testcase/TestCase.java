@@ -100,13 +100,13 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseLibraryNode.class);
 	private static final String CLASS_NAME = "org.squashtest.tm.domain.testcase.TestCase";
 	private static final String SIMPLE_CLASS_NAME = "TestCase";
-
+	public static final int MAX_REF_SIZE=50;
 	@Column(updatable = false)
 	private final int version = 1;
 
 	@NotNull
 	@Field(analyze = Analyze.NO, store = Store.YES)
-	@Size(min = 0, max = 50)
+	@Size(min = 0, max = MAX_REF_SIZE)
 	private String reference = "";
 
 	@Lob

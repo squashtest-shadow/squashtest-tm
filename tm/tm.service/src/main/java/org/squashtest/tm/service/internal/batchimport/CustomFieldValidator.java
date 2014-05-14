@@ -29,6 +29,7 @@ import org.apache.commons.lang.StringUtils;
 import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldOption;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.service.importer.ImportStatus;
@@ -59,16 +60,18 @@ class CustomFieldValidator {
 
 		for (CustomField cuf : definitions) {
 
-			LogEntry check = null;
 			String code = cuf.getCode();
 			String value = cufs.get(code);
 
-			// we only care if the value is not blank (blank is legal and means 'no change' )
-			if (!StringUtils.isBlank(value)) {
+			CustomFieldError error = checkCustomField(value, cuf);
 
-				check = checkCustomField(target, code, value, cuf, Messages.IMPACT_NO_CHANGE);
-
-				train.addEntry(check);
+			if (error != null) {
+				String[] errorArgs =  {code};
+				String errorMessage = error.getErrorMessage();
+				String impact = error.getUpdateImpact();
+				CustomFieldError.updateValue(cufs, cuf, value, impact);
+				LogEntry entry = new LogEntry(target, ImportStatus.WARNING, errorMessage, errorArgs, impact, null);
+				train.addEntry(entry);
 			}
 		}
 
@@ -92,19 +95,16 @@ class CustomFieldValidator {
 
 		for (CustomField cuf : definitions) {
 
-			LogEntry check = null;
 			String code = cuf.getCode();
 			String value = cufs.get(code);
-
-			if (!StringUtils.isBlank(value)) {
-				check = checkCustomField(target, code, value, cuf, Messages.IMPACT_DEFAULT_VALUE);
-			} else if (!cuf.isOptional()) {
-				check = new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_MANDATORY_CUF, new String[] { code },
-						Messages.IMPACT_DEFAULT_VALUE, null);
-			}
-			// else no big deal
-			if (check != null) {
-				train.addEntry(check);
+			CustomFieldError error = checkCustomField(value, cuf);
+			if (error != null) {
+				String[] errorArgs =  {code};
+				String errorMessage = error.getErrorMessage();
+				String impact = error.getCreateImpact();
+				CustomFieldError.updateValue(cufs, cuf, value, impact);
+				LogEntry entry = new LogEntry(target, ImportStatus.WARNING, errorMessage, errorArgs, impact, null);
+				train.addEntry(entry);
 			}
 		}
 
@@ -112,57 +112,53 @@ class CustomFieldValidator {
 	}
 
 	@SuppressWarnings("unchecked")
-	private LogEntry checkCustomField(Target target, String inputCode, String inputValue, CustomField cuf,
-			String impactmsg) {
+	private CustomFieldError checkCustomField( String inputValue, CustomField cuf ) {
 
-		LogEntry check = null;
+		CustomFieldError error = null;
 		InputType type = cuf.getInputType();
+		if (StringUtils.isNotBlank(inputValue)) {
 
-		switch (type) {
+			switch (type) {
 
-		case PLAIN_TEXT:
-			if (inputValue.length() > 255) {
-				String[] cufCodeArg = new String[] { inputCode };
-				check = new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_MAX_SIZE, cufCodeArg,
-						Messages.IMPACT_MAX_SIZE, null);
+			case PLAIN_TEXT:
+				if (inputValue.length() > CustomFieldValue.MAX_SIZE) {
+					error = CustomFieldError.MAX_SIZE;
+				}
+				break;
+
+			case CHECKBOX:
+				if (!(TRUE.equalsIgnoreCase(inputValue) || FALSE.equalsIgnoreCase(inputValue))) {
+					error = CustomFieldError.UNPARSABLE_CHECKBOX;
+				}
+				break;
+
+			case DATE_PICKER:
+				// if the weak check is not enough, swap for the string check
+				if (!StringUtils.isBlank(inputValue) && !IsoDateUtils.weakCheckIso8601Date(inputValue)) {
+					error = CustomFieldError.UNPARSABLE_DATE;
+
+				}
+				break;
+
+			case DROPDOWN_LIST:
+				// cache the options if needed
+				registerOptions(cuf);
+				Collection<String> options = (Collection<String>) optionsByListCode.getCollection(cuf.getCode());
+				if (!options.contains(inputValue)) {
+					error = CustomFieldError.UNPARSABLE_OPTION;
+				}
+				break;
+
+			default:
+				error = CustomFieldError.UNKNOWN_CUF_TYPE;
+				break;
 			}
-			break;
 
-		case CHECKBOX:
-			if (!(TRUE.equalsIgnoreCase(inputValue) || FALSE.equalsIgnoreCase(inputValue))) {
-				String[] cufCodeArg = new String[] { inputCode };
-				check = new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_UNPARSABLE_CHECKBOX, cufCodeArg,
-						impactmsg, null);
-			}
-			break;
-
-		case DATE_PICKER:
-			// if the weak check is not enough, swap for the string check
-			if (!IsoDateUtils.weakCheckIso8601Date(inputValue)) {
-				String[] cufCodeArg = new String[] { inputCode };
-				check = new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_UNPARSABLE_DATE, cufCodeArg,
-						impactmsg, null);
-			}
-			break;
-
-		case DROPDOWN_LIST:
-			// cache the options if needed
-			registerOptions(cuf);
-			Collection<String> options = (Collection<String>) optionsByListCode.getCollection(cuf.getCode());
-			if (!options.contains(inputValue)) {
-				String[] cufCodeArg = new String[] { inputCode };
-				check = new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_UNPARSABLE_OPTION, cufCodeArg,
-						impactmsg, null);
-			}
-			break;
-
-		default:
-			check = new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_UNKNOWN_CUF_TYPE, new String[] {
-					inputCode, cuf.getInputType().toString() }, Messages.IMPACT_NO_CHANGE, null);
-			break;
+		}else if (!cuf.isOptional()) {
+			error = CustomFieldError.MANDATORY_CUF;
 		}
 
-		return check;
+		return error;
 	}
 
 	private void registerOptions(CustomField cuf) {
@@ -170,7 +166,7 @@ class CustomFieldValidator {
 		if (!optionsByListCode.containsKey(cuf.getCode())) {
 			List<CustomFieldOption> options = ((SingleSelectField) cuf).getOptions();
 			for (CustomFieldOption op : options) {
-				optionsByListCode.put(code, op.getCode());
+				optionsByListCode.put(code, op.getLabel());
 			}
 		}
 	}

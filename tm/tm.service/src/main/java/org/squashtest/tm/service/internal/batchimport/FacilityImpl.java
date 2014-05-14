@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -581,8 +582,9 @@ public class FacilityImpl implements Facility {
 		List<CustomFieldValue> cufs = cufvalueService.findAllCustomFieldValues(orig);
 		for (CustomFieldValue v : cufs) {
 			String code = v.getCustomField().getCode();
-			String newValue = cufValues.get(code);
-			if (!StringUtils.isBlank(newValue)) {
+			Set<String> codesToUpdate = cufValues.keySet();
+			if (codesToUpdate.contains(code)) {
+				String newValue = cufValues.get(code);
 				v.setValue(newValue);
 			}
 		}
@@ -656,12 +658,12 @@ public class FacilityImpl implements Facility {
 		}
 
 		// the custom field values now
-
 		List<CustomFieldValue> cufs = cufvalueService.findAllCustomFieldValues(orig);
+		Set<String> codeSet = cufValues.keySet();
 		for (CustomFieldValue v : cufs) {
 			String code = v.getCustomField().getCode();
 			String newValue = cufValues.get(code);
-			if (!StringUtils.isBlank(newValue)) {
+			if (codeSet.contains(code)) {
 				v.setValue(newValue);
 			}
 		}

@@ -43,17 +43,17 @@ import org.squashtest.tm.domain.Identified;
 @Entity
 @Table(uniqueConstraints={@UniqueConstraint(columnNames={"NAME","TEST_CASE_ID"})})
 public class Dataset implements Identified {
-
+	public static final int MAX_NAME_SIZE = 255;
 	@Id
 	@GeneratedValue
 	@Column(name = "DATASET_ID")
 	private Long id;
 
 	@NotBlank
-	@Size(min = 0, max = 255)
+	@Size(min = 0, max = MAX_NAME_SIZE)
 	private String name;
 
-	
+
 	@ManyToOne
 	@JoinColumn(name = "TEST_CASE_ID", referencedColumnName = "TCLN_ID")
 	private TestCase testCase;
