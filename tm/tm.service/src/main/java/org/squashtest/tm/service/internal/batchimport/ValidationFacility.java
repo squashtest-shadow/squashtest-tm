@@ -501,8 +501,7 @@ public class ValidationFacility implements Facility, ModelProvider {
 		if (!logs.hasCriticalErrors()) {
 			// 3 - does the dataset exists ?
 			if (!model.doesDatasetExists(dataset)) {
-				logs.addEntry(new LogEntry(dataset, ImportStatus.WARNING, Messages.ERROR_DATASET_NOT_FOUND,
-						Messages.IMPACT_DATASET_CREATED));
+				logs.addEntry(new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_DATASET_NOT_FOUND));
 
 			}
 
