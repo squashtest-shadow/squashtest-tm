@@ -181,9 +181,9 @@
 				
 					<div class="grey-round-panel snap-left" style="width:43%;">
 						<input id="xls-import-opt" type="radio" name="import-type" value="xls" class="centered" checked="checked"/><span style="text-decoration:underline;">Excel</span>
-						<p class="nota-bene">
+						<div class="nota-bene">
 							<f:message key="test-case.import.dialog.excel.description"/>
-						</p>
+						</div>
            	            <f:message var="xlsFileName" key="file.testcase.import.template.xls"/>
 						<a href="${servContext }/static/${xlsFileName}">
 							<f:message key="test-case.import.dialog.excel.template"/>
@@ -192,9 +192,9 @@
 				
 					<div class="grey-round-panel snap-right" style="width:43%;">
 						<input id="zip-import-opt" type="radio" name="import-type" value="zip" class="centered"/><span style="text-decoration:underline;">ZIP</span>
-						<p class="nota-bene">
+						<div class="nota-bene">
 							<f:message key="test-case.import.dialog.zip.description"/>
-						</p>			
+						</div>			
                         <f:message var="zipFileName" key="file.testcase.import.template.zip"/>
 						<a href="${servContext }/static/${zipFileName}">
 							<f:message key="test-case.import.dialog.zip.template"/>
@@ -518,16 +518,16 @@
 		
 			<div class="grey-round-panel snap-left" style="width:43%;">
 				<input type="radio" name="format" data-val="xls" class="centered" checked="checked"/><span style="text-decoration:underline;">Excel</span>
-				<p class="nota-bene">
+				<div class="nota-bene">
 					<f:message key="test-case.export.dialog.excel.description"/>
-				</p>			
+				</div>			
 			</div>
 		
 			<div class="grey-round-panel snap-right" style="width:43%;">
 				<input type="radio" name="format" data-val="csv" class="centered"/><span style="text-decoration:underline;">CSV</span>
-				<p class="nota-bene">
+				<div class="nota-bene">
 					<f:message key="test-case.export.dialog.csv.description"/>
-				</p>			
+				</div>			
 			</div>
 		
 			<div class="unsnap"></div>
@@ -542,9 +542,9 @@
 		<div class="std-margin-top">
 			<input type="checkbox" id="export-test-case-includecalls"/>
 			<span><f:message key="test-case.export.dialog.includecall"/></span>
-			<p class="nota-bene">
+			<div class="nota-bene">
 				<f:message key="test-case.export.dialog.includecall.description"/>
-			</p>
+			</div>
 		</div>
 		
 	</div>
