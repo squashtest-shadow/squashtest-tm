@@ -135,9 +135,7 @@ public class ValidationFacility implements Facility, ModelProvider {
 
 		// if the test case doesn't exist
 		if (status.getStatus() == Existence.NOT_EXISTS) {
-			logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_TC_NOT_FOUND,
-					Messages.IMPACT_TC_CREATED));
-			logs.append(createTestCase(target, testCase, cufValues));
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_TC_NOT_FOUND));
 		} else {
 
 			// 1 - basic verifications
@@ -452,8 +450,7 @@ public class ValidationFacility implements Facility, ModelProvider {
 
 		// 2 - does it exists ?
 		if (!model.doesParameterExists(target)) {
-			logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_PARAMETER_NOT_FOUND,
-					Messages.IMPACT_PARAM_CREATED));
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PARAMETER_NOT_FOUND));
 		}
 
 		// 3 - is the user approved ?
