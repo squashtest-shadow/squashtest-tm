@@ -255,7 +255,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 	 *
 	 */
 	@DataSet("batchimport.sandbox.xml")
-	def "should create a test case instead of updating it"(){
+	def "should not create a test case instead of updating it"(){
 
 		given :
 		TestCaseTarget target = new TestCaseTarget("/Test Project-1/dossier 2/inexistant")
@@ -275,12 +275,9 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 
 		then :
 
-		logtrain.hasCriticalErrors() == false
+		logtrain.hasCriticalErrors() == true
 
-		logtrain.hasSuchError ERROR_TC_NOT_FOUND, WARNING
-
-		found.id != null
-		found.name == "inexistant"
+		found == null
 	}
 	/**
 	 *
