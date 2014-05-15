@@ -29,11 +29,7 @@
 
 	<osgix:cm-properties id="squashtest.tm.ta.defaults"  persistent-id="tm.testautomation.conf" /> 
 	
-	<!-- 
-	<bean id="tm.testautomation.server.default.factory"
-		class="squashtm.testautomation.configuration.PropertiesBasedDefaultTestAutomationServerFactoryBean">
-	</bean>	
-	 -->
+
 	<!--  
 		the listener here is declared using @Component 
 		(see class org.squashtest.tm.service.internal.testautomation.TestAutomationConnectorRegistry)

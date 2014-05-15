@@ -20,60 +20,46 @@
  */
 package org.squashtest.tm.web.internal.model.testautomation;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 
 
 public class TestAutomationProjectRegistrationForm {
-	
-	private String serverBaseURL;
-	private String serverLogin;
-	private String serverPassword;
-	
-	private String projectName;
 
-	public String getServerBaseURL() {
-		return serverBaseURL;
+
+	private String jobName;
+	private String label;
+	private String serverName;
+
+	public String getJobName() {
+		return jobName;
 	}
 
-	public void setServerBaseURL(String serverBaseURL) {
-		this.serverBaseURL = serverBaseURL;
+	public void setJobName(String jobName) {
+		this.jobName = jobName;
 	}
 
-	public String getServerLogin() {
-		return serverLogin;
+	public String getLabel() {
+		return label;
 	}
 
-	public void setServerLogin(String serverLogin) {
-		this.serverLogin = serverLogin;
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
-	public String getServerPassword() {
-		return serverPassword;
+	public String getServerName() {
+		return serverName;
 	}
 
-	public void setServerPassword(String serverPassword) {
-		this.serverPassword = serverPassword;
+	public void setServerName(String serverName) {
+		this.serverName = serverName;
 	}
 
-	public String getProjectName() {
-		return projectName;
+
+	public TestAutomationProject toTestAutomationProject(){
+		TestAutomationServer detachedServer = new TestAutomationServer(serverName);
+		return new TestAutomationProject(jobName, label, detachedServer);
 	}
 
-	public void setProjectName(String projectName) {
-		this.projectName = projectName;
-	}
-	
-	public TestAutomationProject toTestAutomationProject() throws MalformedURLException{
 
-			TestAutomationServer server = new TestAutomationServer(new URL(serverBaseURL), serverLogin, serverPassword);
-			return new TestAutomationProject(projectName, server);
-
-		
-	}
-	
-	
 }

@@ -48,9 +48,6 @@ class GenericProjectDynamicManagerTest extends DynamicManagerInterfaceSpecificat
 		},
 		{
 			it.changeActive(10L, true)
-		},
-		{
-			it.changeTestAutomationEnabled(10L, true)
 		}
-		]
+	]
 }

@@ -37,43 +37,19 @@ import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
 
 @Repository
 public class HibernateTestAutomationProjectDao implements
-		TestAutomationProjectDao {
-	
+TestAutomationProjectDao {
+
 	@Inject
 	private SessionFactory sessionFactory;
 
 	@Override
 	public void persist(TestAutomationProject newProject) {
-		if (findByExample(newProject)==null){
-			sessionFactory.getCurrentSession().persist(newProject);
-		}else{
-			throw new NonUniqueEntityException();
-		}
+		sessionFactory.getCurrentSession().persist(newProject);
 	}
-	
-	@Override
-	public TestAutomationProject uniquePersist(TestAutomationProject newProject) {
-		
-		//id exists ?
-		if ((newProject.getId() != null) && (findById(newProject.getId())!=null)){
-			return newProject;
-		}
-		
-		//content exists ?
-		TestAutomationProject baseProject = findByExample(newProject);
-		if (baseProject != null){
-			return baseProject;
-		}
-		
-		//or else, persist
-		else{
-			sessionFactory.getCurrentSession().persist(newProject);
-			return newProject;
-		}
-		
-	}
-	
-	
+
+
+
+
 	@Override
 	public TestAutomationProject findById(Long id) {
 		Session session = sessionFactory.getCurrentSession();
@@ -81,7 +57,7 @@ public class HibernateTestAutomationProjectDao implements
 		query.setParameter("projectId", id);
 		return (TestAutomationProject)query.uniqueResult();
 	}
-	
+
 
 
 	@Override
@@ -91,7 +67,7 @@ public class HibernateTestAutomationProjectDao implements
 		criteria = criteria.add(Restrictions.eq("server", example.getServer()));
 
 		List<?> res = criteria.list();
-		
+
 		if (res.isEmpty()){
 			return null;
 		}
@@ -103,7 +79,7 @@ public class HibernateTestAutomationProjectDao implements
 		}
 	}
 
-	
+
 
 
 }

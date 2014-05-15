@@ -73,13 +73,13 @@ public class ProjectAdministrationController {
 	private InternationalizationHelper internationalizationHelper;
 	@Inject
 	private MessageSource messageSource;
-	
+
 	@Inject
 	private WorkspaceWizardManager wizardManager;
-	
+
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentsHelper;
-	
+
 
 	private static final String PROJECT_BUGTRACKER_NAME_UNDEFINED = "project.bugtracker.name.undefined";
 
@@ -110,13 +110,12 @@ public class ProjectAdministrationController {
 				.findPartyPermissionsBeanByProject(new DefaultPagingAndSorting("login", 25),
 						DefaultFiltering.NO_FILTERING, projectId).getPagedItems();
 		Collection<Object> partyPermissions = new PartyPermissionDatatableModelHelper(locale, internationalizationHelper)
-				.buildRawModel(partyProjectPermissionsBean);
+		.buildRawModel(partyProjectPermissionsBean);
 
 		List<PermissionGroup> availablePermissions = projectFinder.findAllPossiblePermission();
 
 		// test automation data
-		TestAutomationServer taServerCoordinates = projectFinder.getLastBoundServerOrDefault((long) adminProject
-				.getProject().getId());
+		TestAutomationServer taServerCoordinates = adminProject.getProject().getTestAutomationServer();
 		List<TestAutomationProject> boundProjects = projectFinder.findBoundTestAutomationProjects(projectId);
 
 		// bugtracker data
@@ -127,7 +126,7 @@ public class ProjectAdministrationController {
 		Map<String, Boolean> allowedStatuses = new HashMap<String, Boolean>();
 		allowedStatuses.put(ExecutionStatus.SETTLED.toString(), cl.allowsStatus(ExecutionStatus.SETTLED));
 		allowedStatuses.put(ExecutionStatus.UNTESTABLE.toString(), cl.allowsStatus(ExecutionStatus.UNTESTABLE));
-		
+
 		// populating model
 		ModelAndView mav = new ModelAndView("page/projects/project-info");
 
@@ -140,13 +139,13 @@ public class ProjectAdministrationController {
 		mav.addObject("availablePermissions", availablePermissions);
 		mav.addObject("attachments", attachmentsHelper.findAttachments(adminProject.getProject()));
 		mav.addObject("allowedStatuses", allowedStatuses);
-		
-		
+
+
 		return mav;
 	}
 
 	// ********************** Wizard administration section ************
-	
+
 	@RequestMapping(value = "{projectId}/wizards")
 	public String getWizardsManager(@PathVariable("projectId") Long projectId, Model model) {
 

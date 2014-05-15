@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.domain.project;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -36,9 +36,8 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
@@ -83,7 +82,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 
 	@Lob
 	private String description;
-	
+
 	@Size(min = 0, max = 255)
 	private String label;
 
@@ -91,7 +90,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	@Size(min = 0, max = 255)
 	@Field(analyze=Analyze.NO, store=Store.YES)
 	private String name;
-	
+
 	private boolean active = true;
 
 	// FIXME remove lazy, sometimes we dont want to load all of this stuff
@@ -109,11 +108,13 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "project")
 	private BugTrackerBinding bugtrackerBinding;
 
-	@ManyToMany(cascade = { CascadeType.ALL })
-	@JoinTable(name = "TM_TA_PROJECTS", joinColumns = @JoinColumn(name = "TM_PROJECT_ID"), inverseJoinColumns = @JoinColumn(name = "TA_PROJECT_ID"))
-	private List<TestAutomationProject> testAutomationProjects = new ArrayList<TestAutomationProject>();
+	@OneToMany(cascade = { CascadeType.ALL } )
+	@JoinColumn(name = "TM_SERVER_ID")
+	private Set<TestAutomationProject> testAutomationProjects = new HashSet<TestAutomationProject>();
 
-	private boolean testAutomationEnabled = false;
+
+	private TestAutomationServer testAutomationServer;
+
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "ATTACHMENT_LIST_ID", updatable = false)
@@ -252,24 +253,22 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	}
 
 	public boolean isTestAutomationEnabled() {
-		return testAutomationEnabled;
+		return testAutomationServer != null;
 	}
 
-	public void setTestAutomationEnabled(boolean enabled) {
-		testAutomationEnabled = enabled;
+	public TestAutomationServer getTestAutomationServer(){
+		return testAutomationServer;
 	}
+
+	public void setTestAutomationServer(TestAutomationServer server){
+		this.testAutomationServer = server;
+	}
+
 
 	public boolean hasTestAutomationProjects() {
 		return !testAutomationProjects.isEmpty();
 	}
 
-	public TestAutomationServer getServerOfLatestBoundProject() {
-		if (testAutomationProjects.isEmpty()) {
-			return null;
-		} else {
-			return testAutomationProjects.get(testAutomationProjects.size() - 1).getServer();
-		}
-	}
 
 	public Collection<TestAutomationProject> getTestAutomationProjects() {
 		return testAutomationProjects;

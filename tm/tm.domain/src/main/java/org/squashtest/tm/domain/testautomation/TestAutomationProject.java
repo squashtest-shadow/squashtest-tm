@@ -30,17 +30,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.validation.constraints.Size;
 
-/**
- * 
- * Like every entities in the package org.squashtest.tm.domain.testautomation, these are immutable : modifying servers, projects etc 
- * could break existing data. For instance changing the URL of a server, or its kind, means that a new instance of AutomatedTestServer should 
- * be persisted instead of altering the existing one. In other words, our objects here are immutable. When a setter is used, a new instance of 
- * this will be returned, with a null ID because this instance is still unknown.
- * 
- * 
- * @author bsiri
- *
- */
 
 @NamedQueries({
 	@NamedQuery(name="testAutomationProject.findById", query="from TestAutomationProject where id = :projectId"),
@@ -49,28 +38,58 @@ import javax.validation.constraints.Size;
 @Entity
 public class TestAutomationProject {
 
-	
+
 	@Id
 	@GeneratedValue
-	@Column(name="PROJECT_ID")
+	@Column(name="TA_PROJECT_ID")
 	private Long id;
-	
-	@Column
+
+
+	@Column(name="REMOTE_NAME")
 	@Size(min = 0, max = 50)
-	private String name;
-	
-	
+	private String jobName;
+
+
+	@Size(min = 0, max=50)
+	private String label;
+
+
 	@ManyToOne
 	@JoinColumn(name="SERVER_ID")
 	private TestAutomationServer server;
 
-	
+	/**
+	 * This is a space-separated list of slave nodes of the server on which that project can be run.
+	 * 
+	 */
+	/*
+	 * TODO : For the sake of cool please implement a dedicated UserType that would map the single column
+	 * in the DB to a Set in java world
+	 */
+	@Column (name = "EXECUTION_ENVIRONMENTS")
+	private String slaves = "";
+
+
 	public Long getId() {
 		return id;
 	}
 
+	/**
+	 * Still there for legacy purposes. Depending on what you need use {@link #getLabel()} or {@link #getJobName()}
+	 * 
+	 * @return
+	 */
+	@Deprecated
 	public String getName() {
-		return name;
+		return jobName;
+	}
+
+	public String getJobName(){
+		return jobName;
+	}
+
+	public String getLabel(){
+		return label;
 	}
 
 
@@ -78,27 +97,45 @@ public class TestAutomationProject {
 		return server;
 	}
 
-	public TestAutomationProject newWithName(String name){
-		return new TestAutomationProject(name, server);
-	}
-	
-	public TestAutomationProject newWithServer(TestAutomationServer server){
-		return new TestAutomationProject(name, server);
-	}
-	
-
-	public TestAutomationProject(){
-		
-	}
-
-	
-	public TestAutomationProject(String name, TestAutomationServer server) {
-		super();
-		this.name = name;
+	public void setServer(TestAutomationServer server) {
 		this.server = server;
 	}
-	
-	
-	
-	
+
+	public void setJobName(String jobName){
+		this.jobName = jobName;
+	}
+
+	public void setLabel(String label){
+		this.label = label;
+	}
+
+
+	public String getSlaves() {
+		return slaves;
+	}
+
+	public void setSlaves(String slaves) {
+		this.slaves = slaves;
+	}
+
+	public TestAutomationProject(){
+		super();
+	}
+
+
+	public TestAutomationProject(String jobName, TestAutomationServer server) {
+		super();
+		this.jobName = jobName;
+		this.label = jobName;
+		this.server = server;
+	}
+
+	public TestAutomationProject(String jobName, String label, TestAutomationServer server){
+		super();
+		this.jobName = jobName;
+		this.label = label;
+		this.server = server;
+	}
+
+
 }

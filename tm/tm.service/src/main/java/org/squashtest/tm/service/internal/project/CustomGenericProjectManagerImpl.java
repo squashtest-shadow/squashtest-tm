@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.project;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -192,12 +193,12 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@PreAuthorize(IS_ADMIN)
 	public void persist(GenericProject project) {
 		Session session = sessionFactory.getCurrentSession();
-		
+
 		if (
-		genericProjectDao.countByName(project.getName()) > 0) {
+				genericProjectDao.countByName(project.getName()) > 0) {
 			throw new NameAlreadyInUseException(project.getClass().getSimpleName(), project.getName());
 		}
-		
+
 		CampaignLibrary cl = new CampaignLibrary();
 		project.setCampaignLibrary(cl);
 		session.persist(cl);
@@ -292,24 +293,24 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	@Override
 	public void bindTestAutomationProject(long projectId, TestAutomationProject taProject) {
+
 		GenericProject genericProject = genericProjectDao.findById(projectId);
 		checkManageProjectOrAdmin(genericProject);
-		TestAutomationProject persistedProject = autotestService.persistOrAttach(taProject);
-		genericProject.bindTestAutomationProject(persistedProject);
+
+		TestAutomationServer server = genericProject.getTestAutomationServer();
+		taProject.setServer(server);
+
+		autotestService.persist(taProject);
+		genericProject.bindTestAutomationProject(taProject);
 	}
 
-	@Override
-	public TestAutomationServer getLastBoundServerOrDefault(long projectId) {
-		GenericProject genericProject = genericProjectDao.findById(projectId);
-		checkManageProjectOrAdmin(genericProject);
-		if (genericProject.hasTestAutomationProjects()) {
-			return genericProject.getServerOfLatestBoundProject();
-		}
 
-		else {
-			return autotestService.getDefaultServer();
+	public void bindTestAutomationProjects(long projectId, Collection<TestAutomationProject> taProjects){
+		for (TestAutomationProject p : taProjects){
+			bindTestAutomationProject(projectId, p);
 		}
 	}
+
 
 	@Override
 	public List<TestAutomationProject> findBoundTestAutomationProjects(long projectId) {
@@ -497,7 +498,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	@Override
 	public boolean projectUsesExecutionStatus(long projectId, ExecutionStatus executionStatus) {
-		
+
 		return executionDao.projectUsesExecutionStatus(projectId, executionStatus);
 	}
 

@@ -32,39 +32,25 @@ import org.squashtest.tm.service.internal.repository.hibernate.NonUniqueEntityEx
 public interface TestAutomationServerDao {
 
 	/**
-	 * Will persist a new {@link TestAutomationServer}. Note : each server must have different characteristics, more exactly each combination of 
-	 * attributes is unique. Therefore if the object to be persisted already exists in the database an exception will be raised instead.
+	 * Will persist a new {@link TestAutomationServer}.
 	 * 
 	 * @param server
-	 * @throws NonUniqueEntityException if the given server happen to exist already. 
+	 * @throws NonUniqueEntityException if the given server happen to exist already.
 	 */
 	void persist(TestAutomationServer server);
-	
-	
-	/**
-	 * Will persist a TestAutomationServer if really new, or return the existing instance
-	 * if not. An instance exists if : 
-	 * 
-	 * <ul>
-	 * 	<li>argument's id is set and exists in base,</li>
-	 * 	<li>argument's id is not set but matches one by content</li>
-	 * </ul>
-	 * In all cases it returns the persisted server : this returned instance should replace the one supplied as argument in the client code.
-	 * 
-	 * @param server
-	 * @return a persistent version of that server.
-	 */
-	TestAutomationServer uniquePersist(TestAutomationServer server);
-	
-	
+
+
 	/**
 	 * 
-	 *  
+	 * 
 	 * @param id
 	 * @return
 	 */
 	TestAutomationServer findById(Long id);
-	
+
+
+	TestAutomationServer findByName(String serverName);
+
 	/**
 	 *	<p>Given a detached (or even attached) {@link TestAutomationServer} example, will fetch a {@link TestAutomationServer}
 	 *	having the same characteristics. Null attributes will be discarded before the comparison. </p>
@@ -73,7 +59,7 @@ public interface TestAutomationServerDao {
 	 * @throws NonUniqueEntityException if more than one match. Causes are either a not restrictive enough example... or a bug.
 	 */
 	TestAutomationServer findByExample(TestAutomationServer example);
-	
+
 	/**
 	 * return all the projects that the given server hosts.
 	 * 
@@ -81,5 +67,5 @@ public interface TestAutomationServerDao {
 	 * @return
 	 */
 	List<TestAutomationProject> findAllHostedProjects(long serverId);
-	
+
 }

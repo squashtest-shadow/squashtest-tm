@@ -69,7 +69,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	@PostFilter("hasPermission(filterObject, 'READ') or  hasRole('ROLE_ADMIN')")
 	@Transactional(readOnly=true)
 	public List<Project> findAllReadable() {
-			return projectDao.findAll();
+		return projectDao.findAll();
 	}
 
 	/**
@@ -100,7 +100,9 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	}
 
 	private void copyTestAutomationSettings(Project newProject, ProjectTemplate projectTemplate) {
-		newProject.setTestAutomationEnabled(projectTemplate.isTestAutomationEnabled());
+
+		newProject.setTestAutomationServer(projectTemplate.getTestAutomationServer());
+
 		for (TestAutomationProject automationProject : projectTemplate.getTestAutomationProjects()) {
 			newProject.bindTestAutomationProject(automationProject);
 		}

@@ -28,64 +28,49 @@ import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.service.internal.repository.hibernate.NonUniqueEntityException;
 
 public interface AutomatedTestDao {
-	
+
 	/**
-	 * Will persist a new {@link AutomatedTest}. Note : each server must have different characteristics, more exactly each combination of 
-	 * attributes is unique. Therefore if the object to be persisted already exists in the database an exception will be raised instead.
+	 * Will persist a new {@link AutomatedTest}.
 	 * 
 	 * @param newTest
-	 * @throws NonUniqueEntityException if the given server happen to exist already. 
+	 * @throws NonUniqueEntityException if the given server happen to exist already.
 	 */
 	void persist(AutomatedTest newTest);
-	
-	/**
-	 * Will persist a TestAutomationTest if really new, or return the existing instance
-	 * if not. An instance exists if : 
-	 * 
-	 * <ul>
-	 * 	<li>argument's id is set and exists in base,</li>
-	 * 	<li>argument's id is not set but matches one by content</li>
-	 * </ul>
-	 * In all cases it returns the persisted project : this returned instance should replace the one supplied as argument in the client code.
-	 * 
-	 * @param newTest
-	 * @return a persistent version of that test.
-	 */
-	AutomatedTest uniquePersist(AutomatedTest newTest);
-	
+
+
 	/**
 	 * 
-	 *  
+	 * 
 	 * @param id
 	 * @return
 	 */
 	AutomatedTest findById(Long testId);
-	
-	
+
+
 	/**
 	 *	<p>Given a detached (or even attached) {@link AutomatedTest} example, will fetch a {@link AutomatedTest}
 	 *	having the same characteristics. Null attributes will be discarded before the comparison. </p>
 	 *
 	 * @return a TestAutomation test if one was found, null if none was found.
 	 * @throws NonUniqueEntityException if more than one match. Causes are either a not restrictive enough example... or a bug.
-	 */	
+	 */
 	AutomatedTest findByExample(AutomatedTest example);
-	
-	
+
+
 	/**
-	 * warning : return unique automated tests ( ie result.size() &lt;= argument.size() ) 
+	 * warning : return unique automated tests ( ie result.size() &lt;= argument.size() )
 	 * 
 	 * @param extenderIds
 	 * @return
 	 */
 	List<AutomatedTest> findAllByExtenderIds(List<Long> extenderIds);
-	
+
 	/**
 	 * Same than {@link #findAllByExtenderIds(List)}, but with the extenders themselves instead of their ids.
 	 * 
-	 * @param extenders 
+	 * @param extenders
 	 * @return
 	 */
 	List<AutomatedTest> findAllByExtender(Collection<AutomatedExecutionExtender> extenders);
-		
+
 }

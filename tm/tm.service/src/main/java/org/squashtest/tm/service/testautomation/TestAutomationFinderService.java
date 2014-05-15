@@ -36,9 +36,9 @@ import org.squashtest.tm.service.testautomation.spi.AccessDenied;
 
 public interface TestAutomationFinderService {
 
-	
+
 	/**
-	 * <p>Given the URL of the test automation server, and the credentials required to connect it, will return the list of 
+	 * <p>Given the name of a server, will return the list of
 	 * project currently available on it. The credentials will be tested on the fly.</p>
 	 * 
 	 * @param serverURL
@@ -48,9 +48,17 @@ public interface TestAutomationFinderService {
 	 * @return a collection of projects hosted on that server
 	 * @throws AccessDenied if the given credentials are invalid
 	 */
-	//no security needed here : the real endpoint of that operation is a remote test automation server, not Squash TM.
-	Collection<TestAutomationProject> listProjectsOnServer(URL serverURL, String login, String password);
-	
+	Collection<TestAutomationProject> listProjectsOnServer(String serverName);
+
+	/**
+	 * see {@link #listProjectsOnServer(URL, String, String)}, using its ID for argument
+	 * 
+	 * @param server
+	 * @return
+	 */
+	Collection<TestAutomationProject> listProjectsOnServer(Long serverId);
+
+
 	/**
 	 * see {@link #listProjectsOnServer(URL, String, String)}, using a {@link TestAutomationServer} for argument
 	 * 
@@ -58,10 +66,10 @@ public interface TestAutomationFinderService {
 	 * @return
 	 */
 	Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server);
-	
+
 
 	/**
-	 * Given a collection of {@link TestAutomationProject}, will return the aggregated list of {@link AutomatedTest} 
+	 * Given a collection of {@link TestAutomationProject}, will return the aggregated list of {@link AutomatedTest}
 	 * paired with their owner project.
 	 * 
 	 * @param projects
@@ -69,7 +77,7 @@ public interface TestAutomationFinderService {
 	 */
 	Collection<TestAutomationProjectContent> listTestsInProjects(Collection<TestAutomationProject> projects);
 
-	
+
 	/**
 	 * Given the id of an automated test suite, returns the list of executions associated to this automated test
 	 * suite.
@@ -80,9 +88,9 @@ public interface TestAutomationFinderService {
 	List<Execution> findExecutionsByAutomatedTestSuiteId(String automatedTestSuiteId);
 
 	AutomatedSuite findAutomatedTestSuiteById(String suiteId);
-	
 
-	
-	
+
+
+
 
 }

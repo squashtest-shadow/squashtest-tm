@@ -46,29 +46,10 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 
 	@Override
 	public void persist(AutomatedTest newTest) {
-		if (findByExample(newTest) == null) {
-			sessionFactory.getCurrentSession().persist(newTest);
-		} else {
-			throw new NonUniqueEntityException();
-		}
+		sessionFactory.getCurrentSession().persist(newTest);
 	}
 
-	@Override
-	public AutomatedTest uniquePersist(AutomatedTest newTest) {
-		if ((newTest.getId() != null) && (findById(newTest.getId()) != null)) {
-			return newTest;
-		}
 
-		// content exists ?
-		AutomatedTest baseTest = findByExample(newTest);
-		
-		if (baseTest != null) {
-			return baseTest;
-		} else { // or else, persist
-			sessionFactory.getCurrentSession().persist(newTest);
-			return newTest;
-		}
-	}
 
 	@Override
 	public AutomatedTest findById(Long testId) {
@@ -93,31 +74,31 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 			throw new NonUniqueEntityException();
 		}
 	}
-	
+
 	@Override
 	public List<AutomatedTest> findAllByExtenderIds(List<Long> extenderIds) {
-		
+
 		if (extenderIds.isEmpty()){
 			return Collections.emptyList();
 		}
-		
+
 		Query query = sessionFactory.getCurrentSession().getNamedQuery("automatedTest.findAllByExtenderIds");
 		query.setParameterList("extenderIds", extenderIds, LongType.INSTANCE);
 		return (List<AutomatedTest>) query.list();
-		
+
 	}
-	
+
 	@Override
 	public List<AutomatedTest> findAllByExtender(Collection<AutomatedExecutionExtender> extenders) {
-		
+
 		if (extenders.isEmpty()){
 			return Collections.emptyList();
 		}
-		
+
 		Query query = sessionFactory.getCurrentSession().getNamedQuery("automatedTest.findAllByExtenders");
-		query.setParameterList("extenders", extenders); 
+		query.setParameterList("extenders", extenders);
 		return (List<AutomatedTest>) query.list();
-		
+
 	}
 
 }

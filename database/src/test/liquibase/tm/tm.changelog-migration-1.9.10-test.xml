@@ -177,7 +177,7 @@
 				from TEST_AUTOMATION_SERVER 
 				where server_id = 1
 				and base_url = 'http://localhost:9080/jenkins'
-				and name = 'http://localhost:9080/jenkins'
+				and name = 'http://localhost:9080/jenkins-1'
 			</sqlCheck>
 			
 			<sqlCheck expectedResult="1">

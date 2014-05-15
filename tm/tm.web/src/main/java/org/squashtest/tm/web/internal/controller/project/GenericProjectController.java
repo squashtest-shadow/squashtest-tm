@@ -349,22 +349,15 @@ public class GenericProjectController {
 	@ResponseBody
 	public void bindTestAutomationProject(@PathVariable long projectId,
 			@RequestBody TestAutomationProjectRegistrationForm[] projects, Locale locale) throws BindException {
+
 		TestAutomationProjectRegistrationForm form = null;
-		try {
-			Iterator<TestAutomationProjectRegistrationForm> it = Arrays.asList(projects).listIterator();
-			while (it.hasNext()) {
-				form = it.next();
-				projectManager.bindTestAutomationProject(projectId, form.toTestAutomationProject());
-			}
-		} catch (MalformedURLException mue) {
-			// quick and dirty validation
-			LOGGER.error(mue.getMessage(), mue);
-			BindException be = new BindException(new TestAutomationServer(), "ta-project");
-			be.rejectValue("baseURL", null, messageSource.internationalize("error.url.malformed", locale));
-			throw be;// NOSONAR : No way to pass
-			// original exception to
-			// BindException constructor
+
+		Iterator<TestAutomationProjectRegistrationForm> it = Arrays.asList(projects).listIterator();
+		while (it.hasNext()) {
+			form = it.next();
+			projectManager.bindTestAutomationProject(projectId, form.toTestAutomationProject());
 		}
+
 	}
 
 	@RequestMapping(value = PROJECT_ID_URL + "/test-automation-enabled", method = RequestMethod.POST, params = "enabled")

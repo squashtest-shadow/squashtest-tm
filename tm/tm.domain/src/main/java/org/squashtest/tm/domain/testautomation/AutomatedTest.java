@@ -35,18 +35,18 @@ public class AutomatedTest {
 	@GeneratedValue
 	@Column(name="TEST_ID")
 	private Long id;
-	
+
 	@ManyToOne
 	@JoinColumn(name="PROJECT_ID")
 	private TestAutomationProject project;
-	
+
 	@Size(min = 0, max = 255)
 	private String name;
 
 	public Long getId() {
 		return id;
 	}
-	
+
 	public TestAutomationProject getProject() {
 		return project;
 	}
@@ -54,15 +54,15 @@ public class AutomatedTest {
 	public String getName(){
 		return name;
 	}
-	
+
 	/**
 	 * 
 	 * @return project.name + name
 	 */
 	public String getFullName(){
-		return project.getName()+"/"+name;
+		return project.getJobName()+"/"+name;
 	}
-	
+
 	/**
 	 * 
 	 * @return name - shortName
@@ -70,7 +70,7 @@ public class AutomatedTest {
 	public String getPath(){
 		return name.replaceAll("[^\\/]*$","");
 	}
-	
+
 	/**
 	 * 
 	 * @return returns name - path
@@ -78,7 +78,7 @@ public class AutomatedTest {
 	public String getShortName(){
 		return name.replaceAll(".*\\/", "");
 	}
-	
+
 	/**
 	 * 
 	 * @return name - rootfolder
@@ -86,11 +86,11 @@ public class AutomatedTest {
 	public String getNameWithoutRoot(){
 		return name.replaceFirst("^[^\\/]*\\/", "");
 	}
-	
+
 	public String getRootFolderName(){
 		return name.replaceFirst("\\/.*$","/");
 	}
-	
+
 	/**
 	 * 
 	 * @return if the test is a direct child of the root folder
@@ -98,23 +98,16 @@ public class AutomatedTest {
 	public boolean isAtTheRoot(){
 		return (getPath().equals(getRootFolderName()));
 	}
-	
-	public AutomatedTest newWithProject(TestAutomationProject project){
-		return new AutomatedTest(name, project); 
-	}
-	
-	public AutomatedTest newWithName(String name){
-		return new AutomatedTest(name, project);
-	}
-	
+
+
 	public AutomatedTest(){
-		
+		super();
 	}
-	
+
 	public AutomatedTest(String name, TestAutomationProject project){
 		super();
 		this.name=name;
 		this.project=project;
 	}
-	
+
 }

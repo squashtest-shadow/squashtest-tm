@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.project;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -83,6 +84,8 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	 * @param TAproject
 	 */
 	void bindTestAutomationProject(long tmProjectId, TestAutomationProject taProject);
+
+	void bindTestAutomationProjects(long tmProjectId, Collection<TestAutomationProject> taProjects);
 
 	void unbindTestAutomationProject(long projectId, long taProjectId);
 
@@ -209,6 +212,6 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	boolean isExecutionStatusEnabledForProject(long projectId, ExecutionStatus executionStatus);
 
 	boolean projectUsesExecutionStatus(long projectId,  ExecutionStatus executionStatus);
-	
+
 	void changeName(long projectId, String newName) throws NameAlreadyInUseException;
 }

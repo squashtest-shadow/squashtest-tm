@@ -37,47 +37,20 @@ import org.squashtest.tm.service.internal.repository.TestAutomationServerDao;
 
 @Repository
 public class HibernateTestAutomationServerDao implements
-		TestAutomationServerDao {
-	
+TestAutomationServerDao {
+
 	@Inject
 	private SessionFactory sessionFactory;
 
-	
+
 	@Override
 	public void persist(TestAutomationServer server) {
-		if (findByExample(server)==null){
-			sessionFactory.getCurrentSession().persist(server);
-		}
-		else{
-			throw new NonUniqueEntityException(); 
-		}
+		sessionFactory.getCurrentSession().persist(server);
+
 	}
 
 
 
-	@Override
-	public TestAutomationServer uniquePersist(TestAutomationServer server) {
-	
-		//id exists ?
-		if ((server.getId() != null) && (findById(server.getId())!=null)){
-			return server;
-		}
-		
-		//content exists ?
-		TestAutomationServer baseServer = findByExample(server);
-		if (baseServer != null){
-			return baseServer;
-		}
-		
-		//or else, persist
-		else{
-			sessionFactory.getCurrentSession().persist(server);
-			return server;
-		}
-		
-	}
-	
-	
 	@Override
 	public TestAutomationServer findById(Long id) {
 		Session session = sessionFactory.getCurrentSession();
@@ -85,15 +58,23 @@ public class HibernateTestAutomationServerDao implements
 		query.setParameter("serverId", id);
 		return (TestAutomationServer)query.uniqueResult();
 	}
-	
-	
+
+	@Override
+	public TestAutomationServer findByName(String serverName){
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.getNamedQuery("testAutomationServer.findByName");
+		query.setParameter("serverName", serverName);
+		return (TestAutomationServer)query.uniqueResult();
+	}
+
+
 	@Override
 	public TestAutomationServer findByExample(TestAutomationServer example) {
-		
+
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(TestAutomationServer.class);
 		criteria.add(Example.create(example));
 		List<?> res = criteria.list();
-		
+
 		if (res.isEmpty()){
 			return null;
 		}
@@ -105,14 +86,14 @@ public class HibernateTestAutomationServerDao implements
 		}
 	}
 
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<TestAutomationProject> findAllHostedProjects(long serverId) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.getNamedQuery("testAutomationServer.findAllHostedProjects");
 		query.setParameter("serverId", serverId);
-		return (List<TestAutomationProject>)query.list();		
+		return (List<TestAutomationProject>)query.list();
 	}
 
 

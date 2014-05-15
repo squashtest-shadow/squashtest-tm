@@ -37,21 +37,16 @@ import org.squashtest.tm.security.acls.PermissionGroup;
  *
  */
 public interface CustomGenericProjectFinder {
-	/**
-	 * Returns a TestAutomationServer instance. Either it is a persisted instance that the tm project was bound to
-	 * lastly (through a ta project), either it will be the default server configuration.
-	 * 
-	 */
-	TestAutomationServer getLastBoundServerOrDefault(long projectId);
-	
-	AdministrableProject findAdministrableProjectById(long projectId);	
-	
+
+
+	AdministrableProject findAdministrableProjectById(long projectId);
+
 	List<TestAutomationProject> findBoundTestAutomationProjects(long projectId);
 
 	List<PartyProjectPermissionsBean> findPartyPermissionsBeansByProject(long projectId);
-	
+
 	PagedCollectionHolder<List<PartyProjectPermissionsBean>> findPartyPermissionsBeanByProject(PagingAndSorting sorting, Filtering filtering, long projectId);
-	
+
 	List<PermissionGroup> findAllPossiblePermission();
 
 	List<Party> findPartyWithoutPermissionByProject(long projectId);

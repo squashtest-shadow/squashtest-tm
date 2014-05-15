@@ -24,48 +24,33 @@ import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.service.internal.repository.hibernate.NonUniqueEntityException;
 
 public interface TestAutomationProjectDao {
-	
+
 	/**
-	 * Will persist a new {@link TestAutomationProject}. Note : each server must have different characteristics, more exactly each combination of 
-	 * attributes is unique. Therefore if the object to be persisted already exists in the database an exception will be raised instead.
+	 * Will persist a new {@link TestAutomationProject}.
 	 * 
 	 * @param newProject
-	 * @throws NonUniqueEntityException if the given server happen to exist already. 
+	 * @throws NonUniqueEntityException if the given server happen to exist already.
 	 */
 	void persist(TestAutomationProject newProject);
-	
-	/**
-	 * Will persist a TestAutomationProject if really new, or return the existing instance
-	 * if not. An instance exists if : 
-	 * 
-	 * <ul>
-	 * 	<li>argument's id is set and exists in base,</li>
-	 * 	<li>argument's id is not set but matches one by content</li>
-	 * </ul>
-	 * In all cases it returns the persisted project : this returned instance should replace the one supplied as argument in the client code.
-	 * 
-	 * @param newProject
-	 * @return a persistent version of that project.
-	 */
-	TestAutomationProject uniquePersist(TestAutomationProject newProject);
-	
+
+
 	/**
 	 * 
-	 *  
+	 * 
 	 * @param id
 	 * @return
 	 */
 	TestAutomationProject findById(Long projectId);
-	
-	
+
+
 	/**
 	 *	<p>Given a detached (or even attached) {@link TestAutomationProject} example, will fetch a {@link TestAutomationProject}
 	 *	having the same characteristics. Null attributes will be discarded before the comparison. </p>
 	 *
 	 * @return a TestAutomation project if one was found, null if none was found.
 	 * @throws NonUniqueEntityException if more than one match. Causes are either a not restrictive enough example... or a bug.
-	 */	
+	 */
 	TestAutomationProject findByExample(TestAutomationProject example);
-	
-		
+
+
 }

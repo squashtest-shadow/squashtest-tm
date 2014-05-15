@@ -374,13 +374,13 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		AutomatedTest newTest = new AutomatedTest(testName, project);
 
-		AutomatedTest persistedTest = taService.persistOrAttach(newTest);
+		taService.persist(newTest);
 
 		TestCase testCase = testCaseDao.findById(testCaseId);
 
-		testCase.setAutomatedTest(persistedTest);
+		testCase.setAutomatedTest(newTest);
 
-		return persistedTest;
+		return newTest;
 	}
 
 	@Override

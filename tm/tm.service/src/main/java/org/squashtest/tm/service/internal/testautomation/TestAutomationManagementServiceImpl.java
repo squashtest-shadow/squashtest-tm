@@ -64,37 +64,37 @@ import org.squashtest.tm.service.testautomation.spi.UnknownConnectorKind;
 @Transactional
 @Service("squashtest.tm.service.TestAutomationService")
 public class TestAutomationManagementServiceImpl implements  InsecureTestAutomationManagementService{
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestAutomationConnector.class);
 	private static final int DEFAULT_THREAD_TIMEOUT = 30000;	//timeout as milliseconds
-	
+
 	private int timeoutMillis = DEFAULT_THREAD_TIMEOUT;
 
 	@Inject
 	private TestAutomationServerDao serverDao;
-	
+
 	@Inject
 	private TestAutomationProjectDao projectDao;
 
 	@Inject
 	private AutomatedSuiteDao automatedSuiteDao;
-	
+
 	@Inject
 	private AutomatedTestDao testDao;
-	
+
 	@Inject
 	private AutomatedExecutionExtenderDao extenderDao;
-	
-	
+
+
 	@Inject
 	private TestAutomationConnectorRegistry connectorRegistry;
-	
+
 	@Inject
 	private TestAutomationServer defaultServer;
-	
+
 	@Inject
 	private TestAutomationCallbackService callbackService;
-	
+
 	private TestAutomationTaskExecutor executor ;
 
 	@Inject
@@ -102,9 +102,9 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 		TestAutomationTaskExecutor taExecutor = new TestAutomationTaskExecutor(executor);
 		this.executor=taExecutor;
 	}
-	
-	
-	
+
+
+
 	public int getTimeoutMillis() {
 		return timeoutMillis;
 	}
@@ -117,10 +117,10 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 
 	@Override
 	public Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server) {
-		
+
 		TestAutomationConnector connector = connectorRegistry.getConnectorForKind(server.getKind());
-		
-		connector.checkCredentials(server);	
+
+		connector.checkCredentials(server);
 		try{
 			return connector.listProjectsOnServer(server);
 		}
@@ -131,33 +131,41 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 			throw ex;
 		}
 	}
-	
-	
+
+
 	@Override
-	public Collection<TestAutomationProject> listProjectsOnServer(URL serverURL, String login, String password) {
-			
-		TestAutomationServer server = new TestAutomationServer(serverURL, login, password);
-		
+	public Collection<TestAutomationProject> listProjectsOnServer(String serverName) {
+
+		TestAutomationServer server = serverDao.findByName(serverName);
+
 		return listProjectsOnServer(server);
-		
-	}
-	
-	
-	@Override
-	public Collection<TestAutomationProjectContent> listTestsInProjects(Collection<TestAutomationProject> projects) {
-		
-		//1 : prepare the tasks
-		Collection<FetchTestListTask> tasks = prepareAllFetchTestListTasks(projects);
-		
-		//2 : start the tasks
-		Collection<FetchTestListFuture> futures = submitAllFetchTestListTasks(tasks); 
-		
-		//3 : harvest the results
-		return collectAllTestLists(futures); 
-		
+
 	}
 
-	
+	public Collection<TestAutomationProject> listProjectsOnServer(Long serverId) {
+
+		TestAutomationServer server = serverDao.findById(serverId);
+
+		return listProjectsOnServer(server);
+
+	}
+
+
+	@Override
+	public Collection<TestAutomationProjectContent> listTestsInProjects(Collection<TestAutomationProject> projects) {
+
+		//1 : prepare the tasks
+		Collection<FetchTestListTask> tasks = prepareAllFetchTestListTasks(projects);
+
+		//2 : start the tasks
+		Collection<FetchTestListFuture> futures = submitAllFetchTestListTasks(tasks);
+
+		//3 : harvest the results
+		return collectAllTestLists(futures);
+
+	}
+
+
 	@Override
 	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
 	@Transactional(readOnly=true)
@@ -170,57 +178,45 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 		}
 		return executions;
 	}
-	
+
 	//from the insecure interface
 	@Override
-	public TestAutomationProject persistOrAttach(TestAutomationProject newProject) {
-		
-		TestAutomationServer inBaseServer = serverDao.uniquePersist(newProject.getServer());
-				
-		return projectDao.uniquePersist(newProject.newWithServer(inBaseServer));
-		
+	public void persist(TestAutomationProject newProject) {
+		projectDao.persist(newProject);
 	}
-	
-	
+
+
 	@Override
-	public AutomatedTest persistOrAttach(AutomatedTest newTest) {
-		return testDao.uniquePersist(newTest);
+	public void persist(AutomatedTest newTest) {
+		testDao.persist(newTest);
 	}
-	
-	
+
+
 	@Override
 	public TestAutomationProject findProjectById(long projectId) {
 		return projectDao.findById(projectId);
 	}
-	
-	
+
+
 	@Override
 	public AutomatedTest findTestById(long testId) {
 		return testDao.findById(testId);
 	}
-	
 
-
-	//from the insecure interface
-	@Override
-	public TestAutomationServer getDefaultServer() {
-		return defaultServer;
-	}
-	
 
 	@Override
 	public void startAutomatedSuite(AutomatedSuite suite) {
-		
+
 		ExtenderSorter sorter = new ExtenderSorter(suite);
-		
+
 		TestAutomationCallbackService securedCallback = new CallbackServiceSecurityWrapper(callbackService);
-		
+
 		while (sorter.hasNext()){
-			
+
 			Entry<String, Collection<AutomatedExecutionExtender>> extendersByKind = sorter.getNextEntry();
-			
+
 			TestAutomationConnector connector = null;
-			
+
 			try{
 				connector = connectorRegistry.getConnectorForKind(extendersByKind.getKey());
 				Collection<AutomatedTest> tests = collectAutomatedTests(extendersByKind.getValue());
@@ -238,176 +234,176 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 				}
 				notifyExecutionError(extendersByKind.getValue(), ex.getMessage());
 			}
-			
+
 		}
 	}
 
-	
+
 
 	@Override
 	public AutomatedSuite findAutomatedTestSuiteById(String suiteId) {
 		LOGGER.trace("Find AutomatedSuite by Id = "+suiteId);
 		return automatedSuiteDao.findById(suiteId);
 	}
-	
-	
+
+
 	@Override
 	public void fetchAllResultURL(TestAutomationProject project, AutomatedSuite suite) {
-		
+
 		Collection<AutomatedExecutionExtender> extenders = extenderDao.findAllBySuiteIdAndProjectId(suite.getId(), project.getId());
-			
+
 		Collection<AutomatedTest> tests = testDao.findAllByExtender(extenders);
-		
+
 		try{
 			TestAutomationConnector connector = connectorRegistry.getConnectorForKind(project.getServer().getKind());
-			
+
 			Map<AutomatedTest, URL> urlMap = connector.getResultURLs(tests, suite.getId());
-			
+
 			_mergeResultURL(urlMap, extenders);
-			
+
 		}
 		catch(UnknownConnectorKind ex){
 			if (LOGGER.isErrorEnabled()){
 				LOGGER.error("Test Automation : cannot update the result URL for some executions due to unknown connector :",ex);
-			}			
+			}
 			throw ex;
 		}
-		
+
 	}
 
-	
+
 	//****************************** fetch test list methods ****************************************
-	
+
 	private Collection<FetchTestListTask> prepareAllFetchTestListTasks(Collection<TestAutomationProject> projects){
 		Collection<FetchTestListTask> tasks = new ArrayList<FetchTestListTask>();
-		
+
 		for (TestAutomationProject project : projects){
 			tasks.add(new FetchTestListTask(connectorRegistry, project));
 		}
-		
+
 		return tasks;
 	}
-	
+
 	private Collection<FetchTestListFuture> submitAllFetchTestListTasks(Collection<FetchTestListTask> tasks){
-		
+
 		Collection<FetchTestListFuture> futures = new ArrayList<FetchTestListFuture>();
-		
+
 		for (FetchTestListTask task : tasks){
 			futures.add(executor.sumbitFetchTestListTask(task));
 		}
-		
+
 		return futures;
 	}
-	
-	
+
+
 	private Collection<TestAutomationProjectContent> collectAllTestLists(Collection<FetchTestListFuture> futures){
-		
+
 		Collection<TestAutomationProjectContent> results = new ArrayList<TestAutomationProjectContent>();
-		
+
 		for (FetchTestListFuture  future : futures){
-			
+
 			try {
 				TestAutomationProjectContent projectContent = future.get(timeoutMillis, TimeUnit.MILLISECONDS);
 				results.add(projectContent);
-			} 
+			}
 			catch(Exception ex){
 				results.add(future.getTask().buildFailedResult(ex));
 			}
 		}
-		
+
 		return results;
-		
+
 	}
 
 
 
 	// ******************* dispatching methods **************************
 
-	
-	
+
+
 	private Collection<AutomatedTest> collectAutomatedTests(Collection<AutomatedExecutionExtender> extenders){
-		
+
 		Collection<AutomatedTest> tests = new LinkedList<AutomatedTest>();
-		
+
 		for (AutomatedExecutionExtender extender : extenders){
-			
+
 			tests.add(extender.getAutomatedTest());
-			
+
 		}
-		
+
 		return tests;
-		
+
 	}
 
-	
+
 	private void notifyExecutionError(Collection<AutomatedExecutionExtender> failedExecExtenders, String message){
 		for (AutomatedExecutionExtender extender : failedExecExtenders){
 			extender.setExecutionStatus(ExecutionStatus.ERROR);
 			extender.setResultSummary(message);
 		}
 	}
-	
+
 	private static class ExtenderSorter{
-		
+
 		private Map<String, Collection<AutomatedExecutionExtender>> extendersByKind;
-		
+
 		private Iterator<Entry<String, Collection<AutomatedExecutionExtender>>> iterator =null;
-		
-		
+
+
 		public ExtenderSorter(AutomatedSuite suite){
-			
+
 			extendersByKind = new HashMap<String, Collection<AutomatedExecutionExtender>>(suite.getExecutionExtenders().size());
-			
+
 			for (AutomatedExecutionExtender extender : suite.getExecutionExtenders()){
-				
+
 				String serverKind = extender.getAutomatedTest().getProject().getServer().getKind();
-				
+
 				register(extender, serverKind);
-			
-			}	
-			
+
+			}
+
 			iterator = extendersByKind.entrySet().iterator();
-			
+
 		}
-		
+
 		public boolean hasNext(){
 			return iterator.hasNext();
 		}
-		
+
 		public Map.Entry<String, Collection<AutomatedExecutionExtender>> getNextEntry(){
-			
+
 			return iterator.next();
-					
+
 		}
-		
+
 		private void register(AutomatedExecutionExtender extender, String serverKind){
-			
+
 			if (! extendersByKind.containsKey(serverKind)){
 				extendersByKind.put(serverKind, new LinkedList<AutomatedExecutionExtender>());
 			}
-			
+
 			extendersByKind.get(serverKind).add(extender);
-			
+
 		}
-		
+
 	}
 
-	
+
 	// *************************  other private stuffs  ***********************
-	
+
 	private void _mergeResultURL(Map<AutomatedTest, URL> urlMap, Collection<AutomatedExecutionExtender> extenders){
-		
+
 		for (AutomatedExecutionExtender ext : extenders){
-			
+
 			AutomatedTest test = ext.getAutomatedTest();
 			URL resultURL = urlMap.get(test);
 			ext.setResultURL(resultURL);
-			
+
 		}
-		
+
 	}
-	
-	
+
+
 	/**
 	 * That wrapper is a TestAutomationCallbackService, that ensures that the security context is properly set for any thread that requires its services.
 	 * @author bsiri
@@ -416,19 +412,19 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 	private static class CallbackServiceSecurityWrapper implements TestAutomationCallbackService{
 
 		private SecurityContext secContext;
-		
+
 		private TestAutomationCallbackService wrapped;
-		
-		
+
+
 		/*
-		 * the SecurityContext here is the one from the original thread. The others methods will use that instance of SecurityContext 
+		 * the SecurityContext here is the one from the original thread. The others methods will use that instance of SecurityContext
 		 * for all their operations from now on (see the code, it's straightforward).
 		 */
 		CallbackServiceSecurityWrapper(TestAutomationCallbackService service){
 			secContext = SecurityContextHolder.getContext();
 			wrapped = service;
 		}
-		
+
 		@Override
 		public void updateResultURL(AutomatedExecutionSetIdentifier execIdentifier, URL resultURL) {
 			SecurityContextHolder.setContext(secContext);
@@ -441,7 +437,7 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 				ExecutionStatus newStatus) {
 			SecurityContextHolder.setContext(secContext);
 			wrapped.updateExecutionStatus(execIdentifier, newStatus);
-			
+
 		}
 
 		@Override
@@ -451,8 +447,8 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 			SecurityContextHolder.setContext(secContext);
 			wrapped.updateResultSummary(execIdentifier, newSummary);
 		}
-		
+
 	}
-	
+
 
 }

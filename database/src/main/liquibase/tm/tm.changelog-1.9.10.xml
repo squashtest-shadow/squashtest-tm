@@ -130,7 +130,9 @@
 		<addColumn tableName="TEST_AUTOMATION_SERVER">
 			
 			<!-- this column is not nullable but the constraint will be added after the migration -->
-			<column name="NAME" type="VARCHAR(50)" remarks="The name of the server"/>
+			<column name="NAME" type="VARCHAR(50)" remarks="The name of the server">
+				<constraints unique="true"/>
+			</column>
 			
 			<column name="CREATED_BY" type="VARCHAR(50)" defaultValue="(nobody)"  remarks="Who created this test automation server">
 				<constraints nullable="true" />
@@ -155,7 +157,7 @@
 		<!--  sets a default value for the server name -->
 		<sql>
 			update TEST_AUTOMATION_SERVER
-			set name = base_url;
+			set name = concat_ws('-', base_url, server_id);
 		</sql>
 		
 		<sql>
@@ -237,9 +239,9 @@
 	
 		
 		<!-- reinstatiate the foreign keys to the new table -->
-		<!--  <addForeignKeyConstraint constraintName="fk_automated_test_project" 
+		<addForeignKeyConstraint constraintName="fk_automated_test_project" 
 				baseTableName="AUTOMATED_TEST" baseColumnNames="PROJECT_ID" 
-				referencedTableName="TEST_AUTOMATION_PROJECT" referencedColumnNames="TA_PROJECT_ID"/>-->	
+				referencedTableName="TEST_AUTOMATION_PROJECT" referencedColumnNames="TA_PROJECT_ID"/>
 	</changeSet>
 	
 	
