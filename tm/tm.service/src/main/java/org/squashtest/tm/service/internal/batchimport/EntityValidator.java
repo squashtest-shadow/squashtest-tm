@@ -25,7 +25,11 @@ import static org.squashtest.tm.service.internal.batchimport.Model.Existence.TO_
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_NAME;
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_REFERENCE;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang.StringUtils;
+import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.importer.ImportMode;
@@ -232,6 +236,17 @@ class EntityValidator {
 			logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_MAX_SIZE, fieldNameErrorArgs,
 					Messages.IMPACT_MAX_SIZE, null));
 		}
+
+		// 5 - name does not contain forbidden characters
+		String regex = Parameter.NAME_REGEXP;
+		String trimmedName = name.trim();
+		target.setName(trimmedName);
+		Pattern p = Pattern.compile(regex);
+		Matcher m = p.matcher(trimmedName);
+		if(!m.matches()){
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PARAMETER_CONTAINS_FORBIDDEN_CHARACTERS, fieldNameErrorArgs));
+		}
+
 		if (StringUtils.isBlank(name)) {
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_FIELD_MANDATORY, fieldNameErrorArgs));
 		}
