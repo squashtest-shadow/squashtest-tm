@@ -239,11 +239,11 @@ class EntityValidator {
 
 		// 5 - name does not contain forbidden characters
 		String regex = Parameter.NAME_REGEXP;
-		String trimmedName = name.trim();
-		target.setName(trimmedName);
+		name = name.trim();
+		target.setName(name);
 		Pattern p = Pattern.compile(regex);
-		Matcher m = p.matcher(trimmedName);
-		if(!m.matches()){
+		Matcher m = p.matcher(name);
+		if(!StringUtils.isBlank(name) && !m.matches()){
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PARAMETER_CONTAINS_FORBIDDEN_CHARACTERS, fieldNameErrorArgs));
 		}
 
