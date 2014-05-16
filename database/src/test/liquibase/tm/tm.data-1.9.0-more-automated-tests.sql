@@ -15,7 +15,7 @@
 -- 
 -- 
 
-INSERT INTO `test_automation_server` (`SERVER_ID`, `BASE_URL`, `LOGIN`, `PASSWORD`, `KIND`) VALUES
+INSERT INTO TEST_AUTOMATION_SERVER (SERVER_ID, BASE_URL, LOGIN, PASSWORD, KIND) VALUES
 (2, 'SOMEURL', 'notcalled', 'notcalled', 'jenkins');
 
 
