@@ -118,10 +118,14 @@ public class GenericProjectController {
 	private static final String PROJECT_ID_URL = "/{projectId}";
 	private static final String PROJECT_BUGTRACKER_NAME_UNDEFINED = "project.bugtracker.name.undefined";
 
-	private DatatableMapper<String> allProjectsMapper = new NameBasedMapper(9).map("name", "name")
-			.map("label", "label").map("active", "active").map("created-on", "audit.createdOn")
-			.map("created-by", "audit.createdBy").map("last-mod-on", "audit.lastModifiedOn")
-			.map("last-mod-by", "audit.lastModifiedBy");
+	private DatatableMapper<String> allProjectsMapper = new NameBasedMapper(9)
+	.map("name", "name")
+	.map("label", "label")
+	.map("active", "active")
+	.map("created-on", "audit.createdOn")
+	.map("created-by", "audit.createdBy")
+	.map("last-mod-on", "audit.lastModifiedOn")
+	.map("last-mod-by", "audit.lastModifiedBy");
 
 	private DatatableMapper<String> partyPermissionMapper = new NameBasedMapper(5).map("party-index", "index")
 			.map("party-id", "id").map("party-name", "name").map("party-type", "type")
