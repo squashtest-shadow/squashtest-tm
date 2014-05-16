@@ -133,6 +133,17 @@ public class TestAutomationProject {
 		this.slaves = slaves;
 	}
 
+	// wrote this under protest : a Job should have been a proper concept, not this
+	public boolean referencesSameJob(TestAutomationProject otherproject){
+		if (otherproject == null){
+			return false;
+		}
+		else {
+			return  otherproject.getJobName().equals(jobName) &&
+					otherproject.getServer().equals(server);
+		}
+	}
+
 	public TestAutomationProject(){
 		super();
 	}

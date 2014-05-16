@@ -99,6 +99,9 @@ public class AutomatedTest {
 		return (getPath().equals(getRootFolderName()));
 	}
 
+	public AutomatedTest newWithProject(TestAutomationProject newP){
+		return new AutomatedTest(name, newP);
+	}
 
 	public AutomatedTest(){
 		super();

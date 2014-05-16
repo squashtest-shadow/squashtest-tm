@@ -276,6 +276,32 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 		return testAutomationProjects;
 	}
 
+	/**
+	 * returns true if the given TA project is indeed bound to the TM project
+	 * 
+	 * @param p
+	 * @return
+	 */
+	public boolean isBoundToTestAutomationProject(TestAutomationProject p){
+		return testAutomationProjects.contains(p);
+	}
+
+	/**
+	 * returns a TestAutomationProject, bound to this TM project, that references the same job
+	 * than the argument.
+	 * 
+	 * @param p
+	 * @return a TestAutomationProject if an equivalent was found or null if not
+	 */
+	public TestAutomationProject findTestAutomationProjectByJob(TestAutomationProject p){
+		for (TestAutomationProject mine : testAutomationProjects){
+			if (mine.referencesSameJob(p)){
+				return mine;
+			}
+		}
+		return null;
+	}
+
 	public void removeBugTrackerBinding() {
 		this.bugtrackerBinding = null;
 	}

@@ -207,9 +207,9 @@ class TestCaseLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		TestCaseFolder folderCopy = (TestCaseFolder) nodes.get(0)
 		folderCopy.content.size() == 2
 		def tc10 =  folderCopy.content.find({it.name == "test-case10"})
-		!tc10.isAutomated()
+		tc10.isAutomated()
 		def tc11 = folderCopy.content.find {it.name == "test-case11"}
-		tc11.isAutomated()
+		!tc11.isAutomated()
 		and:"cufs are updated to match destination project's config"
 		def values10 = findCufValuesForEntity(BindableEntity.TEST_CASE, tc10.id)
 		values10.find {it.getBinding().id == 2L}.value == "tc-10-cuf1"
