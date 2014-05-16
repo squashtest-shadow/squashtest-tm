@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "tree", "handlebars", "workspace/workspace.import-popup" ], function($, zetree, Handlebars) {
+define([ "jquery", "tree", "handlebars", "underscore", "workspace/workspace.import-popup" ], function($, zetree, Handlebars, _) {
 	"use strict";
 
 	var recapBuilder = {};
@@ -97,6 +97,12 @@ define([ "jquery", "tree", "handlebars", "workspace/workspace.import-popup" ], f
 				self.options.formats = self.options.typeFormats[value];
 				$("#simulateButton").prop("disabled", value === "zip");
 				$("#import-err-filetype").text(self.options.formats);
+				$(".import-err-filetype-text").hide();
+				if(_.contains(self.options.formats, "zip")){
+					$("#import-err-filetype-text-zip").show();
+				} else {
+					$("#import-err-filetype-text-xls").show();
+				}
 				$("#import-project-list").prop("disabled", value === "xls");
 			});
 
