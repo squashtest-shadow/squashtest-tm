@@ -20,13 +20,17 @@
  */
 package org.squashtest.tm.service.internal.testautomation.service
 
+import java.net.URL
+
 import javax.inject.Inject
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
-import org.squashtest.tm.service.DbunitServiceSpecification;
+import org.squashtest.tm.service.DbunitServiceSpecification
 import org.squashtest.tm.service.internal.testautomation.InsecureTestAutomationManagementService
 import org.squashtest.tm.service.testautomation.TestAutomationFinderService
 import org.unitils.dbunit.annotation.DataSet
@@ -45,88 +49,51 @@ class TestAutomationManagementServiceImplIT extends DbunitServiceSpecification {
 	TestAutomationFinderService finderService
 
 	@DataSet("TestAutomationService.sandbox.xml")
-	def "should persist a new TestAutomationProject along with a new TestAutomationServer"(){
+	def "should persist a new TestAutomationProject"(){
 
 		given :
-		def server = new TestAutomationServer(new URL("http://www.bobinio.com"), "bobinio", "passbobinio")
-		def project = new TestAutomationProject("bobinio1", server)
+		def server = getServer(1l)
+		def project = new TestAutomationProject("roberto5","Project Roberto 5" , server)
+		def tmproject = getProject(1l)
+		project.setTmProject(tmproject)
 
 		when :
-		def res = service.persist(project)
-
+		service.persist(project)
 		then :
-		res.id!=null
-		res.jobName=="bobinio1"
-
-		def reserver = res.server
-		reserver.id != null
-		reserver.baseURL == new URL("http://www.bobinio.com")
-		reserver.login == "bobinio"
-		reserver.password == "passbobinio"
-		reserver.kind == "jenkins"
-
+		project.id != null
+		project.label == "Project Roberto 5"
+		project.jobName == "roberto5"
+		project.server.id == 1l
 	}
 
 	@DataSet("TestAutomationService.sandbox.xml")
-	def "should persist a new TestAutomationProject hosted on a known TestAutomationServer"(){
+	def "should say that a project label is not unique"(){
 		given :
-		def server = new TestAutomationServer(new URL("http://www.roberto.com"), "roberto", "passroberto")
-		def project = new TestAutomationProject("roberto5", server)
+		def server  = getServer(2l)
+		def project = new TestAutomationProject("whatever","Project Mike 2",  server)
+		def tmproject = getProject(1l)
+		project.setTmProject(tmproject)
 
 		when :
-		def res = service.persist(project)
-
+		service.persist(project)
 		then :
-		res.id != null
-		res.jobName == "roberto5"
-
-		res.server.id == 1l	//that instance existed already
+		thrown ConstraintViolationException
 	}
 
 	@DataSet("TestAutomationService.sandbox.xml")
-	def "should persist a new TestAutomationProject very similar to a known one, but hosted on a different server"(){
-
-		given :
-		def server  = new TestAutomationServer(new URL("http://www.roberto.com"), "roberto_user", "passroberto_user")
-		def project = new TestAutomationProject("roberto1", server)
-
-		when :
-		def res = service.persist(project)
-
-		then :
-		res.id!=null
-		res.id!=11l
-		res.jobName=="roberto1"
-
-		res.server.id == 3l
-
+	def "should return executions associated to an automated test suite given its id"(){
+		when:
+		def res = finderService.findExecutionsByAutomatedTestSuiteId("suite1")
+		then:
+		res[0].id == 40l
+		res[1].id == 41l
 	}
 
-
-	@DataSet("TestAutomationService.sandbox.xml")
-	def "should not persist the arguments because they happen to exist already"(){
-
-		given :
-		def server  = new TestAutomationServer(new URL("http://www.mike.com"), "mike", "passmike", "something-else")
-		def project = new TestAutomationProject("mike2", server)
-
-		when :
-		def res = service.persist(project)
-
-		then :
-		res.id == 22l
-		res.server.id == 2l
-
+	def getServer(id){
+		return getSession().load(TestAutomationServer.class, id)
 	}
 
-	/* TODO complete and test
-	 @DataSet("TestAutomationService.sandbox.xml")
-	 def "should return executions associated to an automated test suite given its id"(){
-	 given:
-	 when:
-	 def res = finderService.findExecutionsByAutomatedTestSuiteId("suite1")
-	 then:
-	 res.get(0).id == 40l
-	 res.get(1).id == 41l
-	 }*/
+	def getProject(id){
+		return getSession().load(GenericProject.class, id)
+	}
 }

@@ -43,7 +43,7 @@ import org.squashtest.tm.domain.audit.Auditable;
 
 @NamedQueries({
 	@NamedQuery(name="testAutomationServer.findById", query="from TestAutomationServer where id = :serverId"),
-	@NamedQuery(name="testAutomationServer.findByName", query="from TestAutomationServer where id = :serverName"),
+	@NamedQuery(name="testAutomationServer.findByName", query="from TestAutomationServer where name = :serverName"),
 	@NamedQuery(name="testAutomationServer.findAllHostedProjects", query="select p from TestAutomationProject p join p.server s where s.id = :serverId")
 })
 @Entity
@@ -96,7 +96,7 @@ public class TestAutomationServer {
 	private String kind = DEFAULT_KIND;
 
 
-	@Column
+	@Column(name="MANUAL_SLAVE_SELECTION")
 	private boolean isManualSlaveSelection = false;
 
 
@@ -179,6 +179,18 @@ public class TestAutomationServer {
 		super();
 		this.id = id;
 	}
+
+
+
+	public TestAutomationServer(String name, URL baseURL, String login, String password) {
+		super();
+		this.name = name;
+		this.baseURL = baseURL;
+		this.login = login;
+		this.password = password;
+	}
+
+
 
 	public TestAutomationServer(String name, URL baseURL, String login, String password, String kind) {
 		super();

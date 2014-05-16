@@ -30,26 +30,26 @@ import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification;
 
 class AutomatedTestServerMappingIT extends HibernateMappingSpecification {
 
-	
-	
+
+
 	def "should persist a new AutomatedTestServer"(){
-		
+
 		given :
-			URL baseUrl = new URL("http://www.squashtest.org/")
-		
+		URL baseUrl = new URL("http://www.squashtest.org/")
+
 		and :
-			TestAutomationServer server = new TestAutomationServer(baseUrl, "bob", "robert")
-			
+		TestAutomationServer server = new TestAutomationServer("myserver", baseUrl, "bob", "robert", "jenkins")
+
 		when :
-			persistFixture server
-			def server2 = doInTransaction({it.get(TestAutomationServer.class, server.id)})
-		
+		persistFixture server
+		def server2 = doInTransaction({it.get(TestAutomationServer.class, server.id)})
+
 		then :
-			server2.baseURL.equals(server.baseURL)
-			
+		server2.baseURL.equals(server.baseURL)
+
 		cleanup :
-			deleteFixture server
-		
+		deleteFixture server
+
 	}
-	
+
 }

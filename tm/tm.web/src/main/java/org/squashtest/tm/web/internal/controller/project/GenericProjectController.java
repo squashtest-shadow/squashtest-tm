@@ -360,11 +360,6 @@ public class GenericProjectController {
 
 	}
 
-	@RequestMapping(value = PROJECT_ID_URL + "/test-automation-enabled", method = RequestMethod.POST, params = "enabled")
-	@ResponseBody
-	public void enableTestAutomation(@PathVariable long projectId, @RequestParam("enabled") boolean isEnabled) {
-		projectManager.changeTestAutomationEnabled(projectId, isEnabled);
-	}
 
 	@RequestMapping(value = PROJECT_ID_URL + "/test-automation-projects/{taProjectId}", method = RequestMethod.DELETE)
 	@ResponseBody

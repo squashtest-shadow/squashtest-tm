@@ -25,7 +25,6 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import org.springframework.context.MessageSource;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,18 +41,15 @@ public class AutomatedSuiteManagementController {
 
 	@Inject
 	private MessageSource messageSource;
-	
+
+	@Inject
 	private TestAutomationFinderService testAutomationManagementService;
-	
-	@ServiceReference
-	public void setTestAutomationManagementService(TestAutomationFinderService testAutomationManagementService) {
-		this.testAutomationManagementService = testAutomationManagementService;
-	}
-	
+
+
 	@RequestMapping(value = "/executions", method = RequestMethod.GET)
 	public @ResponseBody AutomatedSuiteOverview updateExecutionInfo(@PathVariable String suiteId, Locale locale) {
 		AutomatedSuite suite = testAutomationManagementService.findAutomatedTestSuiteById(suiteId);
 		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
 	}
-	
+
 }

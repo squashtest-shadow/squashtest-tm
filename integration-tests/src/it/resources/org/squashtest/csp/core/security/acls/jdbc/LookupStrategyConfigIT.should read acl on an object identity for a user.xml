@@ -21,7 +21,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.9.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.9.10.dtd">
 <dataset>
 <CORE_PARTY PARTY_ID="10000100"/>
 	<CORE_USER PARTY_ID="10000100" LOGIN="jimmy.olsen" LAST_NAME="olsen" FIRST_NAME="jimmy" CREATED_ON="2011-12-23" CREATED_BY="dbunit" ACTIVE="1"/>

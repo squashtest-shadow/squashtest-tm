@@ -129,10 +129,8 @@
 		several other attributes</comment>
 		<addColumn tableName="TEST_AUTOMATION_SERVER">
 			
-			<!-- this column is not nullable but the constraint will be added after the migration -->
-			<column name="NAME" type="VARCHAR(50)" remarks="The name of the server">
-				<constraints unique="true"/>
-			</column>
+			<!-- this column is not nullable and must be unique but the constraints will be added after the migration -->
+			<column name="NAME" type="VARCHAR(50)" remarks="The name of the server"/>
 			
 			<column name="CREATED_BY" type="VARCHAR(50)" defaultValue="(nobody)"  remarks="Who created this test automation server">
 				<constraints nullable="true" />
@@ -167,6 +165,7 @@
 		
 		<!--  now add the missing not null constraints -->
 		<addNotNullConstraint tableName="TEST_AUTOMATION_SERVER" columnName="NAME" columnDataType="VARCHAR(50)"/>
+		<addUniqueConstraint  tableName="TEST_AUTOMATION_SERVER" columnNames="NAME" />
 		<addNotNullConstraint tableName="TEST_AUTOMATION_SERVER" columnName="CREATED_ON" columnDataType="DATETIME"/>
 		
 	</changeSet>

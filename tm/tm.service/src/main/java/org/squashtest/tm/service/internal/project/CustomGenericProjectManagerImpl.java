@@ -299,6 +299,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 		TestAutomationServer server = genericProject.getTestAutomationServer();
 		taProject.setServer(server);
+		taProject.setTmProject(genericProject);
 
 		autotestService.persist(taProject);
 		genericProject.bindTestAutomationProject(taProject);

@@ -39,17 +39,7 @@ class HibernateTestAutomationProjectDaoIT extends DbunitDaoSpecification {
 	@Inject  TestAutomationServerDao serverDao
 	@Inject	 TestAutomationProjectDao projectDao
 
-	@DataSet("HibernateTestAutomationDao.sandbox.xml")
-	def "should refuse to perist a server having similar characteristic to an already existing project"(){
-		given :
-		TestAutomationServer server = serverDao.findById(1l)
-		TestAutomationProject newProject = new TestAutomationProject("roberto1", server)
 
-		when :
-		projectDao.persist(newProject)
-		then :
-		thrown(NonUniqueEntityException)
-	}
 
 	@DataSet("HibernateTestAutomationDao.sandbox.xml")
 	def "should find a project by id"(){
@@ -69,7 +59,7 @@ class HibernateTestAutomationProjectDaoIT extends DbunitDaoSpecification {
 	def "should find a project by example"(){
 		given :
 		TestAutomationServer server = serverDao.findById(1l)
-		TestAutomationProject project = new TestAutomationProject("roberto1", server)
+		TestAutomationProject project = new TestAutomationProject("roberto1", "Project Roberto 1",  server)
 
 		when :
 		def res = projectDao.findByExample(project)
@@ -82,7 +72,7 @@ class HibernateTestAutomationProjectDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateTestAutomationDao.sandbox.xml")
 	def "should not find a project because of unmatched example"(){
 		given :
-		TestAutomationProject example = new TestAutomationProject("roberto55", null);
+		TestAutomationProject example = new TestAutomationProject("roberto55", "Project Roberto-55", null);
 
 		when :
 		def res = projectDao.findByExample(example)

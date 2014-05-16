@@ -89,8 +89,6 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 	@Inject
 	private TestAutomationConnectorRegistry connectorRegistry;
 
-	@Inject
-	private TestAutomationServer defaultServer;
 
 	@Inject
 	private TestAutomationCallbackService callbackService;

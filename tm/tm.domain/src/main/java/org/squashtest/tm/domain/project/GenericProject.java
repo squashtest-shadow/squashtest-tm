@@ -37,6 +37,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -108,11 +109,12 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "project")
 	private BugTrackerBinding bugtrackerBinding;
 
-	@OneToMany(cascade = { CascadeType.ALL } )
-	@JoinColumn(name = "TM_SERVER_ID")
+	@OneToMany(cascade = { CascadeType.ALL }, mappedBy="tmProject")
 	private Set<TestAutomationProject> testAutomationProjects = new HashSet<TestAutomationProject>();
 
 
+	@JoinColumn(name = "TA_SERVER_ID")
+	@ManyToOne
 	private TestAutomationServer testAutomationServer;
 
 

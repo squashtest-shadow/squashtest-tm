@@ -30,6 +30,9 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.validation.constraints.Size;
 
+import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.project.Project;
+
 
 @NamedQueries({
 	@NamedQuery(name="testAutomationProject.findById", query="from TestAutomationProject where id = :projectId"),
@@ -57,6 +60,10 @@ public class TestAutomationProject {
 	@ManyToOne
 	@JoinColumn(name="SERVER_ID")
 	private TestAutomationServer server;
+
+	@ManyToOne
+	@JoinColumn(name = "TM_PROJECT_ID")
+	private GenericProject tmProject;
 
 	/**
 	 * This is a space-separated list of slave nodes of the server on which that project can be run.
@@ -109,6 +116,14 @@ public class TestAutomationProject {
 		this.label = label;
 	}
 
+
+	public GenericProject getTmProject() {
+		return tmProject;
+	}
+
+	public void setTmProject(GenericProject tmProject) {
+		this.tmProject = tmProject;
+	}
 
 	public String getSlaves() {
 		return slaves;

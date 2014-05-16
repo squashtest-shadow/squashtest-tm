@@ -20,15 +20,12 @@
  */
 package org.squashtest.tm.web.internal.controller.testautomation;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Locale;
 
 import javax.inject.Inject;
 
 import org.springframework.context.MessageSource;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,7 +33,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.service.testautomation.TestAutomationFinderService;
 
 
@@ -47,39 +43,19 @@ public class TestAutomationFindingController {
 
 	@Inject
 	private MessageSource messageSource;
-	
-	
-	private TestAutomationFinderService testAutomationManagementService;
 
-	
-	@ServiceReference
-	public void setTestAutomationManagementService(
-			TestAutomationFinderService testAutomationManagementService) {
-		this.testAutomationManagementService = testAutomationManagementService;
-	}
+	@Inject
+	private TestAutomationFinderService testAutomationManagementService;
 
 
 
 	@RequestMapping(value = "/servers/projects-list", method = RequestMethod.GET, headers = "Accept=application/json", params = {"url", "login", "password"} )
 	@ResponseBody
-	public Collection<TestAutomationProject> listProjectsOnServer(@RequestParam("url") String strURL, 
-																  @RequestParam("login") String login, 
-																  @RequestParam("password") String password,
-																  Locale locale)
-																  throws BindException{
-		
-		try{
-			return testAutomationManagementService.listProjectsOnServer(new URL(strURL), login, password);
-		}
-		catch(MalformedURLException ex){
-			//quick and dirty validation
-			BindException be = new BindException(new TestAutomationServer(), "ta-project");
-			be.rejectValue("baseURL", null, findMessage(locale, "error.url.malformed"));
-			throw be;
-		}		
+	public Collection<TestAutomationProject> listProjectsOnServer(@RequestParam("serverId") Long serverId,
+			Locale locale)	throws BindException{
+
+		return testAutomationManagementService.listProjectsOnServer(serverId);
+
 	}
-	
-	private String findMessage(Locale locale, String key){
-		return messageSource.getMessage(key, null, locale);
-	}
+
 }

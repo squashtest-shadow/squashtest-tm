@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.9.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../dtd/squash-tm.1.9.10.dtd">
 <dataset>
   <ATTACHMENT_LIST ATTACHMENT_LIST_ID="898"/>
   <TEST_STEP TEST_STEP_ID="167"/>
@@ -65,7 +65,7 @@
   <REQUIREMENT_LIBRARY RL_ID="14" ATTACHMENT_LIST_ID="898"/>
   <TEST_CASE_LIBRARY TCL_ID="14" ATTACHMENT_LIST_ID="898"/>
   <CAMPAIGN_LIBRARY CL_ID="14" ATTACHMENT_LIST_ID="898"/>
-  <PROJECT PROJECT_ID="14" NAME="Test Project-1" DESCRIPTION="&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam felis ante,&lt;/p&gt;" LABEL="Lorem ipsum dolor sit amet, " ACTIVE="true" CREATED_BY="admin" CREATED_ON="2011-09-30 10:24:47.0" CL_ID="14" TCL_ID="14" RL_ID="14" TEST_AUTOMATION_ENABLED="false" ATTACHMENT_LIST_ID="898"/>
+  <PROJECT PROJECT_ID="14" NAME="Test Project-1" DESCRIPTION="&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam felis ante,&lt;/p&gt;" LABEL="Lorem ipsum dolor sit amet, " ACTIVE="true" CREATED_BY="admin" CREATED_ON="2011-09-30 10:24:47.0" CL_ID="14" TCL_ID="14" RL_ID="14" ATTACHMENT_LIST_ID="898"/>
   <TEST_CASE_LIBRARY_NODE TCLN_ID="239" DESCRIPTION="dossier de test" NAME="grouptest" CREATED_BY="admin" CREATED_ON="2013-09-23 10:50:10.0" LAST_MODIFIED_BY="admin" LAST_MODIFIED_ON="2013-09-23 10:50:19.0" PROJECT_ID="14" ATTACHMENT_LIST_ID="898"/>
   <TEST_CASE_LIBRARY_NODE TCLN_ID="240" DESCRIPTION="" NAME="test 1" CREATED_BY="admin" CREATED_ON="2013-09-23 10:50:53.0" LAST_MODIFIED_BY="admin" LAST_MODIFIED_ON="2013-09-23 11:21:37.0" PROJECT_ID="14" ATTACHMENT_LIST_ID="898"/>
   <TEST_CASE_LIBRARY_NODE TCLN_ID="241" DESCRIPTION="" NAME="test 2" CREATED_BY="admin" CREATED_ON="2013-09-23 10:51:05.0" LAST_MODIFIED_BY="admin" LAST_MODIFIED_ON="2013-09-23 11:21:58.0" PROJECT_ID="14" ATTACHMENT_LIST_ID="898"/>

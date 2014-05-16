@@ -25,6 +25,7 @@ import javax.inject.Inject
 
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.service.DbunitServiceSpecification;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.unitils.dbunit.annotation.DataSet
@@ -37,40 +38,60 @@ class GenericProjectManagerServiceIT extends DbunitServiceSpecification {
 
 	@Inject
 	GenericProjectManagerService modService
-	
-	
-		@DataSet("ProjectModificationServiceIT.xml")
-		def "should delete bugtrackerProject" () {
-			given :
-			Project project = findEntity(Project.class, 1l)
-			when:
-			modService.removeBugTracker(1L)
-	
-			then:
-			!project.isBugtrackerConnected()
-		}
-		
-		@DataSet("ProjectModificationServiceIT.xml")
-		def "should change bugtrackerProjectName" () {
-			given :
-			Project project = findEntity(Project.class, 1l)
-			when:
-			modService.changeBugTrackerProjectName(1L, "this")
-	
-			then:
-			project.getBugtrackerBinding().getProjectName() == "this"
-		}
-		
-		@DataSet("ProjectModificationServiceIT.xml")
-		def "should change bugtracker" () {
-			given :
-			Project project = findEntity(Project.class, 1l)
-			when:
-			modService.changeBugTracker(1L, 2L)
-	
-			then:
-			project.getBugtrackerBinding().getBugtracker().getId() == 2L
-		}
-		
-		
+
+
+	@DataSet("ProjectModificationServiceIT.xml")
+	def "should delete bugtrackerProject" () {
+		given :
+		Project project = findEntity(Project.class, 1l)
+		when:
+		modService.removeBugTracker(1L)
+
+		then:
+		!project.isBugtrackerConnected()
+	}
+
+	@DataSet("ProjectModificationServiceIT.xml")
+	def "should change bugtrackerProjectName" () {
+		given :
+		Project project = findEntity(Project.class, 1l)
+		when:
+		modService.changeBugTrackerProjectName(1L, "this")
+
+		then:
+		project.getBugtrackerBinding().getProjectName() == "this"
+	}
+
+	@DataSet("ProjectModificationServiceIT.xml")
+	def "should change bugtracker" () {
+		given :
+		Project project = findEntity(Project.class, 1l)
+		when:
+		modService.changeBugTracker(1L, 2L)
+
+		then:
+		project.getBugtrackerBinding().getBugtracker().getId() == 2L
+	}
+
+	@DataSet("/org/squashtest/tm/service/internal/testautomation/service/TestAutomationService.sandbox.xml")
+	def "should bind a bunch of test automation project"(){
+
+		given :
+		def taprojects = [
+			new TestAutomationProject("job1", "New Project 1", null),
+			new TestAutomationProject("job25", "New Project 25", null)
+
+		] as Collection
+
+		when :
+		modService.bindTestAutomationProjects(1l, taprojects)
+
+		then :
+		def proj = modService.findById(1l)
+		proj.testAutomationProjects.collect { it.jobName} as Set == ["job1", "job25", "roberto1", "roberto2", "roberto3"] as Set
+		proj.testAutomationProjects.collect { it.server.id }.unique() == [1l] as Collection
+
+	}
+
+
 }

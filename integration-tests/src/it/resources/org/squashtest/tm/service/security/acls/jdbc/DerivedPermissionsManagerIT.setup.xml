@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.9.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.9.10.dtd">
 <dataset>
   <ACL_CLASS ID="1" CLASSNAME="org.squashtest.tm.domain.project.Project"/>
   <ACL_CLASS ID="2" CLASSNAME="org.squashtest.tm.domain.requirement.RequirementLibrary"/>
@@ -161,7 +161,7 @@
   <REQUIREMENT_LIBRARY RL_ID="14" ATTACHMENT_LIST_ID="902"/>
   <TEST_CASE_LIBRARY TCL_ID="14" ATTACHMENT_LIST_ID="903"/>
   <CAMPAIGN_LIBRARY CL_ID="14" ATTACHMENT_LIST_ID="904"/>
-  <PROJECT PROJECT_ID="14" NAME="Projet 1" DESCRIPTION="&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam felis ante,&lt;/p&gt;" LABEL="Lorem ipsum dolor sit amet, " ACTIVE="true" CREATED_BY="admin" CREATED_ON="2011-09-30 10:24:47.0" LAST_MODIFIED_BY="admin" LAST_MODIFIED_ON="2013-10-22 18:23:05.0" CL_ID="14" TCL_ID="14" RL_ID="14" TEST_AUTOMATION_ENABLED="false" ATTACHMENT_LIST_ID="901" PROJECT_TYPE="P"/>
+  <PROJECT PROJECT_ID="14" NAME="Projet 1" DESCRIPTION="&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam felis ante,&lt;/p&gt;" LABEL="Lorem ipsum dolor sit amet, " ACTIVE="true" CREATED_BY="admin" CREATED_ON="2011-09-30 10:24:47.0" LAST_MODIFIED_BY="admin" LAST_MODIFIED_ON="2013-10-22 18:23:05.0" CL_ID="14" TCL_ID="14" RL_ID="14" ATTACHMENT_LIST_ID="901" PROJECT_TYPE="P"/>
   <CORE_USER PARTY_ID="34" LOGIN="regular user" FIRST_NAME="regular user" LAST_NAME="regular user" EMAIL="regular user" ACTIVE="true" CREATED_BY="admin" CREATED_ON="2013-10-22 18:23:27.0"/>
   <CORE_USER PARTY_ID="35" LOGIN="direct project leader" FIRST_NAME="direct project leader" LAST_NAME="direct project leader" EMAIL="direct project leader" ACTIVE="true" CREATED_BY="admin" CREATED_ON="2013-10-22 18:23:42.0"/>
   <CORE_USER PARTY_ID="36" LOGIN="leader because of team" FIRST_NAME="leader because of team" LAST_NAME="leader because of team" EMAIL="leader because of team" ACTIVE="true" CREATED_BY="admin" CREATED_ON="2013-10-22 18:23:58.0"/>
