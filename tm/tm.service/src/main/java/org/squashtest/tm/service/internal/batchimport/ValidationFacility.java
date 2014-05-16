@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import static org.squashtest.tm.service.internal.batchimport.Model.Existence.EXISTS;
+import static org.squashtest.tm.service.internal.batchimport.Model.Existence.TO_BE_CREATED;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -270,10 +273,14 @@ public class ValidationFacility implements Facility, ModelProvider {
 		}
 
 		// 4 - check the index
-		LogEntry indexCheckLog = checkStepIndex(ImportMode.CREATE, target, ImportStatus.WARNING,
-				Messages.IMPACT_STEP_CREATED_LAST);
-		if (indexCheckLog != null) {
-			logs.addEntry(indexCheckLog);
+		TestCaseTarget testCase = target.getTestCase();
+		TargetStatus tcStatus = getModel().getStatus(testCase);
+		if (tcStatus.status == TO_BE_CREATED || tcStatus.status == EXISTS) {
+			LogEntry indexCheckLog = checkStepIndex(ImportMode.CREATE, target, ImportStatus.WARNING,
+					Messages.IMPACT_STEP_CREATED_LAST);
+			if (indexCheckLog != null) {
+				logs.addEntry(indexCheckLog);
+			}
 		}
 
 		return logs;
@@ -310,6 +317,12 @@ public class ValidationFacility implements Facility, ModelProvider {
 				Messages.IMPACT_STEP_CREATED_LAST);
 		if (indexCheckLog != null) {
 			logs.addEntry(indexCheckLog);
+		}
+
+		//6 - no cycles
+		if (model.wouldCreateCycle(target, calledTestCase)) {
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_CYCLIC_STEP_CALLS,
+					new Object[] { target.getTestCase().getPath(), calledTestCase.getPath() }));
 		}
 
 		return logs;
