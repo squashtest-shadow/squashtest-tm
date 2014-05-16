@@ -88,11 +88,11 @@ public class TestCaseExcelBatchImporter {
 		case TEST_CASE:
 			instructions.addAll(parser.getTestCaseInstructions());
 			break;
-		case TEST_STEP:
-			instructions.addAll(parser.getTestStepInstructions());
-			break;
 		case PARAMETER:
 			instructions.addAll(parser.getParameterInstructions());
+			break;
+		case TEST_STEP:
+			instructions.addAll(parser.getTestStepInstructions());
 			break;
 		case DATASET:
 			instructions.addAll(parser.getDatasetInstructions());
