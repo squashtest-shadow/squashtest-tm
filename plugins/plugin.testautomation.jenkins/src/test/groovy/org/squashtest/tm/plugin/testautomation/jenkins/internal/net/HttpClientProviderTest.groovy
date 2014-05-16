@@ -34,8 +34,8 @@ class HttpClientProviderTest extends Specification {
 	def "keys generated from different instances of the 'same' TestAutomationServer should be equal"(){
 		
 		given :
-			TestAutomationServer server1 = new TestAutomationServer(new URL("http://www.toto.com"), "toto", "toto")
-			TestAutomationServer server2 = new TestAutomationServer(new URL("http://www.toto.com"), "toto", "toto")
+			TestAutomationServer server1 = new TestAutomationServer("server1", new URL("http://www.toto.com"), "toto", "toto", "jenkins")
+			TestAutomationServer server2 = new TestAutomationServer("server1", new URL("http://www.toto.com"), "toto", "toto", "jenkins")
 		
 			
 		when :
@@ -49,8 +49,8 @@ class HttpClientProviderTest extends Specification {
 	
 	def "keys generated from two different TestAutomationServer should not be equal"(){
 		given :
-			TestAutomationServer server1 = new TestAutomationServer(new URL("http://www.toto.com"), "toto", "toto")
-			TestAutomationServer server2 = new TestAutomationServer(new URL("http://www.titi.com"), "titi", "titi")
+			TestAutomationServer server1 = new TestAutomationServer("server1", new URL("http://www.toto.com"), "toto", "toto", "jenkins")
+			TestAutomationServer server2 = new TestAutomationServer("server2", new URL("http://www.titi.com"), "titi", "titi", "jenkins")
 		
 			
 		when :

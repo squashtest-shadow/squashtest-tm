@@ -41,7 +41,7 @@ class HttpRequestFactoryTest extends Specification {
 	def "should return a well formatted query"(){
 		
 		given :
-			TestAutomationServer server = new TestAutomationServer(new URL("http://ci.jruby.org"), "", "")
+			TestAutomationServer server = new TestAutomationServer("server", new URL("http://ci.jruby.org"), "", "", "jenkins")
 			
 		when :
 			def method = factory.newGetJobsMethod(server)
