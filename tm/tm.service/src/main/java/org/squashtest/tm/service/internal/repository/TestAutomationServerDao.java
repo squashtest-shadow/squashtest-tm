@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
 
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.service.internal.repository.hibernate.NonUniqueEntityException;
@@ -39,6 +40,14 @@ public interface TestAutomationServerDao {
 	 */
 	void persist(TestAutomationServer server);
 
+
+	List<TestAutomationServer> findAllOrderedByName();
+
+	long countAll();
+
+	List<TestAutomationServer> findPagedServers(PagingAndSorting  pas);
+
+	boolean hasBoundProjects(long serverId);
 
 	/**
 	 * 
@@ -67,5 +76,8 @@ public interface TestAutomationServerDao {
 	 * @return
 	 */
 	List<TestAutomationProject> findAllHostedProjects(long serverId);
+
+
+	void deleteServer(long serverId);
 
 }

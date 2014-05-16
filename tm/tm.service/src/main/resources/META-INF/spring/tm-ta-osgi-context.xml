@@ -43,5 +43,8 @@
 	<osgi:service ref="squashtest.tm.service.TestAutomationService"
 				  interface="org.squashtest.tm.service.testautomation.TestAutomationFinderService" />
 
+	<osgi:service ref="squashtest.tm.service.TestAutomationServerManagementService"
+			  interface="org.squashtest.tm.service.testautomation.TestAutomationServerManagerService" />
+
 	
 </beans>

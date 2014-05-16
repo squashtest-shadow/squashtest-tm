@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import java.util.Collection;
+
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.service.internal.repository.hibernate.NonUniqueEntityException;
 
@@ -51,6 +53,27 @@ public interface TestAutomationProjectDao {
 	 * @throws NonUniqueEntityException if more than one match. Causes are either a not restrictive enough example... or a bug.
 	 */
 	TestAutomationProject findByExample(TestAutomationProject example);
+
+
+	/**
+	 * return true if at least one of these projects have been executed, false otherwise
+	 * 
+	 * @param projectIds
+	 * @return
+	 */
+	boolean haveExecutedTestsByIds(Collection<Long> projectIds);
+
+	boolean haveExecutedTests(Collection<TestAutomationProject> projects);
+
+
+	/**
+	 * When removing one or several TestAutomationProject : the test cases referencing their scripts are unbound, the AutomatedExecutionExtender have their resultURL and automatedTest to null,
+	 * then all the AutomatedTests are removed, and finally the projects.
+	 * @param projectIds
+	 */
+	void deleteProjectsByIds(Collection<Long> projectIds);
+
+	void deleteProjects(Collection<TestAutomationProject> projects);
 
 
 }

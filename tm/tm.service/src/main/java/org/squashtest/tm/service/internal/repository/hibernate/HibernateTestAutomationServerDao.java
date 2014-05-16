@@ -20,7 +20,9 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -29,9 +31,13 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Example;
+import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
+import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.TestAutomationServerDao;
 
 
@@ -46,10 +52,49 @@ TestAutomationServerDao {
 	@Override
 	public void persist(TestAutomationServer server) {
 		sessionFactory.getCurrentSession().persist(server);
+	}
 
+	@Override
+	public List<TestAutomationServer> findAllOrderedByName() {
+		Session session = sessionFactory.getCurrentSession();
+		Query q = session.getNamedQuery("testAutomationServer.findAllOrderedByName");
+		return q.list();
 	}
 
 
+	@Override
+	public long countAll() {
+		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationServer.countAll");
+		return ((Long)q.iterate().next()).longValue();
+	}
+
+
+	@Override
+	public List<TestAutomationServer> findPagedServers(PagingAndSorting pas) {
+
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(TestAutomationServer.class, "TestAutomationServer");
+		SortingUtils.addOrder(criteria, pas);
+		PagingUtils.addPaging(criteria, pas);
+		criteria.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+
+		List<Map<String, ?>> raw = criteria.list();
+		List<TestAutomationServer> res = new ArrayList<TestAutomationServer>(raw.size());
+
+		for (Map<String, ?> r : raw){
+			res.add((TestAutomationServer)r.get("TestAutomationServer"));
+		}
+
+		return res;
+
+	}
+
+	@Override
+	public boolean hasBoundProjects(long serverId) {
+		Session session = sessionFactory.getCurrentSession();
+		Query q = session.getNamedQuery("testAutomationServer.hasBoundProjects");
+		int count = ((Integer)q.iterate().next()).intValue();
+		return (count > 0);
+	}
 
 	@Override
 	public TestAutomationServer findById(Long id) {
@@ -96,5 +141,25 @@ TestAutomationServerDao {
 		return (List<TestAutomationProject>)query.list();
 	}
 
+
+	@Override
+	public void deleteServer(long serverId) {
+		dereferenceProjects(serverId);
+		deleteServerById(serverId);
+	}
+
+	// ***************** private stuffs ***************
+
+	private void dereferenceProjects(long serverId){
+		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationServer.dereferenceProjects");
+		q.setParameter("serverId", serverId, LongType.INSTANCE);
+		q.executeUpdate();
+	}
+
+	private void deleteServerById(long serverId){
+		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationServer.deleteServer");
+		q.setParameter("serverId", serverId, LongType.INSTANCE);
+		q.executeUpdate();
+	}
 
 }

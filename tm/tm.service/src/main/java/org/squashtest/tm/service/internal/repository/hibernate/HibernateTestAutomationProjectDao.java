@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -30,6 +31,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Example;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
@@ -79,7 +81,80 @@ TestAutomationProjectDao {
 		}
 	}
 
+	@Override
+	public boolean haveExecutedTests(Collection<TestAutomationProject> projects) {
+		if (projects.isEmpty()){
+			return false;
+		}
+
+		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationProject.haveExecutedTests");
+		q.setParameterList("projects", projects, LongType.INSTANCE);
+		int count = ((Integer) q.iterate().next()).intValue();
+		return (count > 0);
+	}
+
+	@Override
+	public boolean haveExecutedTestsByIds(Collection<Long> projectIds) {
+		if (projectIds.isEmpty()){
+			return false;
+		}
+
+		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationProject.haveExecutedTestsByIds");
+		q.setParameterList("projectIds", projectIds);
+		int count = ((Integer) q.iterate().next()).intValue();
+		return (count > 0);
+	}
 
 
 
+	@Override
+	public void deleteProjects(Collection<TestAutomationProject> projects) {
+
+		dereferenceAutomatedExecutionExtender(projects);
+		dereferenceTestCases(projects);
+
+		deleteAutomatedTests(projects);
+		deleteAutomatedTests(projects);
+		deleteTestAutomationProjects(projects);
+
+	}
+
+	@Override
+	public void deleteProjectsByIds(Collection<Long> projectIds) {
+		deleteProjects(findAllByIds(projectIds));
+	}
+
+
+
+	// ************************ private stuffs **********************************
+
+	private void dereferenceAutomatedExecutionExtender(Collection<TestAutomationProject> projects){
+		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationProject.dereferenceAutomatedExecutionExtender");
+		q.setParameterList("projects", projects);
+		q.executeUpdate();
+	}
+
+	private void dereferenceTestCases(Collection<TestAutomationProject> projects){
+		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationProject.dereferenceTestCases");
+		q.setParameterList("projects", projects);
+		q.executeUpdate();
+	}
+
+	private void deleteAutomatedTests(Collection<TestAutomationProject> projects){
+		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationProject.deleteAutomatedTests");
+		q.setParameterList("projects", projects);
+		q.executeUpdate();
+	}
+
+	private void deleteTestAutomationProjects(Collection<TestAutomationProject> projects){
+		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationProject.delete");
+		q.setParameterList("projects", projects);
+		q.executeUpdate();
+	}
+
+	private Collection<TestAutomationProject> findAllByIds(Collection<Long> ids){
+		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationProject.findAllByIds");
+		q.setParameterList("projectIds", ids, LongType.INSTANCE);
+		return q.list();
+	}
 }

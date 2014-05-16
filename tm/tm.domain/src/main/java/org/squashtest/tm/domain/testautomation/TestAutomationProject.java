@@ -31,34 +31,38 @@ import javax.persistence.NamedQuery;
 import javax.validation.constraints.Size;
 
 import org.squashtest.tm.domain.project.GenericProject;
-import org.squashtest.tm.domain.project.Project;
-
 
 @NamedQueries({
-	@NamedQuery(name="testAutomationProject.findById", query="from TestAutomationProject where id = :projectId"),
-	@NamedQuery(name="testAutomationProject.findAllKnownTests", query="select t from AutomatedTest t join t.project p where p.id = :projectId")
+		@NamedQuery(name = "testAutomationProject.findById", query = "from TestAutomationProject where id = :projectId"),
+		@NamedQuery(name = "testAutomationProject.findAllByIds", query = "from TestAutomationProject where id in (:projectIds)"),
+		@NamedQuery(name = "testAutomationProject.findAllKnownTests", query = "select t from AutomatedTest t join t.project p where p.id = :projectId"),
+		@NamedQuery(name = "testAutomationProject.haveExecutedTestsByIds", query = "select count(ext) from AutomatedExecutionExtender ext join ext.automatedTest test join test.project p where p.id in (:projectIds)"),
+		@NamedQuery(name = "testAutomationProject.haveExecutedTests", query = "select count(ext) from AutomatedExecutionExtender ext join ext.automatedTest test join test.project p where p in (:projects)"),
+		@NamedQuery(name = "testAutomationProject.dereferenceAutomatedExecutionExtender", query = "update AutomatedExecutionExtender ext set ext.resultURL = null, ext.automatedTest = null "
+				+ "where ext in (from AutomatedExecutionExtender e join e.automatedTest tests join tests.project p where p in (:projects))"),
+
+		@NamedQuery(name = "testAutomationProject.dereferenceTestCases", query = "update TestCase tc set tc.automatedTest = null "
+				+ "where tc in (from TestCase t join t.automatedTest tests join tests.project p where p in (:projects))"),
+		@NamedQuery(name = "testAutomationProject.deleteAutomatedTests", query = "delete AutomatedTest t where t.project in (:projects)"),
+		@NamedQuery(name = "testAutmationProject.delete", query = "delete TestAutomationProject p where p in (:projects)")
 })
 @Entity
 public class TestAutomationProject {
 
-
 	@Id
 	@GeneratedValue
-	@Column(name="TA_PROJECT_ID")
+	@Column(name = "TA_PROJECT_ID")
 	private Long id;
 
-
-	@Column(name="REMOTE_NAME")
+	@Column(name = "REMOTE_NAME")
 	@Size(min = 0, max = 50)
 	private String jobName;
 
-
-	@Size(min = 0, max=50)
+	@Size(min = 0, max = 50)
 	private String label;
 
-
 	@ManyToOne
-	@JoinColumn(name="SERVER_ID")
+	@JoinColumn(name = "SERVER_ID")
 	private TestAutomationServer server;
 
 	@ManyToOne
@@ -70,12 +74,11 @@ public class TestAutomationProject {
 	 * 
 	 */
 	/*
-	 * TODO : For the sake of cool please implement a dedicated UserType that would map the single column
-	 * in the DB to a Set in java world
+	 * TODO : For the sake of cool please implement a dedicated UserType that would map the single column in the DB to a
+	 * Set in java world
 	 */
-	@Column (name = "EXECUTION_ENVIRONMENTS")
+	@Column(name = "EXECUTION_ENVIRONMENTS")
 	private String slaves = "";
-
 
 	public Long getId() {
 		return id;
@@ -91,14 +94,13 @@ public class TestAutomationProject {
 		return jobName;
 	}
 
-	public String getJobName(){
+	public String getJobName() {
 		return jobName;
 	}
 
-	public String getLabel(){
+	public String getLabel() {
 		return label;
 	}
-
 
 	public TestAutomationServer getServer() {
 		return server;
@@ -108,14 +110,13 @@ public class TestAutomationProject {
 		this.server = server;
 	}
 
-	public void setJobName(String jobName){
+	public void setJobName(String jobName) {
 		this.jobName = jobName;
 	}
 
-	public void setLabel(String label){
+	public void setLabel(String label) {
 		this.label = label;
 	}
-
 
 	public GenericProject getTmProject() {
 		return tmProject;
@@ -134,20 +135,17 @@ public class TestAutomationProject {
 	}
 
 	// wrote this under protest : a Job should have been a proper concept, not this
-	public boolean referencesSameJob(TestAutomationProject otherproject){
-		if (otherproject == null){
+	public boolean referencesSameJob(TestAutomationProject otherproject) {
+		if (otherproject == null) {
 			return false;
-		}
-		else {
-			return  otherproject.getJobName().equals(jobName) &&
-					otherproject.getServer().equals(server);
+		} else {
+			return otherproject.getJobName().equals(jobName) && otherproject.getServer().equals(server);
 		}
 	}
 
-	public TestAutomationProject(){
+	public TestAutomationProject() {
 		super();
 	}
-
 
 	public TestAutomationProject(String jobName, TestAutomationServer server) {
 		super();
@@ -156,12 +154,11 @@ public class TestAutomationProject {
 		this.server = server;
 	}
 
-	public TestAutomationProject(String jobName, String label, TestAutomationServer server){
+	public TestAutomationProject(String jobName, String label, TestAutomationServer server) {
 		super();
 		this.jobName = jobName;
 		this.label = label;
 		this.server = server;
 	}
-
 
 }

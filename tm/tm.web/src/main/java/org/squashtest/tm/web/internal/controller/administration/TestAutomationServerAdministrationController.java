@@ -44,6 +44,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Pagings;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -67,9 +68,9 @@ public class TestAutomationServerAdministrationController {
 	private static final String BASE_URL = "baseURL";
 	private static final String TEST_AUTOMATION_SERVERS = "testAutomationServers";
 
-	// TODO
-	// @Inject
-	// private TestAutomationServerManagerService testAutomationServerService;
+
+	@Inject
+	private TestAutomationServerManagerService testAutomationServerService;
 
 	@Inject
 	private InternationalizationHelper messageSource;
@@ -91,7 +92,7 @@ public class TestAutomationServerAdministrationController {
 		// TODO replace following lines
 		TestAutomationServer tas = getStubTAS();
 		List<TestAutomationServer> testAutomationServers = Arrays.asList(tas);
-		// List<TestAutomationServer> testAutomationServers = testAutomationServerService.findAllOrderedByName();
+		//List<TestAutomationServer> testAutomationServers = testAutomationServerService.findAllOrderedByName();
 		model.addAttribute(TEST_AUTOMATION_SERVERS, testAutomationServers);
 
 		return "test-automation-servers-manager.html";
