@@ -26,35 +26,33 @@ import java.util.List;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
-
-
+import org.squashtest.tm.service.internal.repository.hibernate.NonUniqueEntityException;
 
 public interface TestAutomationServerManagerService {
-
-
 
 	// *********************** entity management *******************
 
 	TestAutomationServer findById(long serverId);
 
-
+	/**
+	 * Will persist a new {@link TestAutomationServer}.
+	 * 
+	 * @param server
+	 *            : the server to persist
+	 * @throws NonUniqueEntityException
+	 *             if the given server happen to exist already.
+	 */
 	void persist(TestAutomationServer server);
-
 
 	boolean hasBoundProjects(long serverId);
 
-
 	boolean hasExecutedTests(long serverId);
-
 
 	void deleteServer(long serverId);
 
-
 	List<TestAutomationServer> findAllOrderedByName();
 
-
 	PagedCollectionHolder<List<TestAutomationServer>> findSortedTestAutomationServers(PagingAndSorting pagingNsorting);
-
 
 	// *********************** Properties mutators ****************************
 
@@ -68,10 +66,6 @@ public interface TestAutomationServerManagerService {
 
 	void changeDescription(long serverId, String description);
 
-	void changeIsManualSlaveSelection(long serverId, boolean hasSlaves);
-
-
-
-
+	void changeManualSlaveSelection(long serverId, boolean hasSlaves);
 
 }

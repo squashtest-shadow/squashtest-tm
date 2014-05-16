@@ -103,7 +103,7 @@ public class TestAutomationServer {
 
 
 	@Column(name="MANUAL_SLAVE_SELECTION")
-	private boolean isManualSlaveSelection = false;
+	private boolean manualSlaveSelection = false;
 
 	@Column(name="DESCRIPTION")
 	private String description = "";
@@ -165,11 +165,11 @@ public class TestAutomationServer {
 	}
 
 	public boolean isManualSlaveSelection() {
-		return isManualSlaveSelection;
+		return manualSlaveSelection;
 	}
 
-	public void setManualSlaveSelection(boolean isManualSlaveSelection) {
-		this.isManualSlaveSelection = isManualSlaveSelection;
+	public void setManualSlaveSelection(boolean manualSlaveSelection) {
+		this.manualSlaveSelection = manualSlaveSelection;
 	}
 
 	public String getDescription() {

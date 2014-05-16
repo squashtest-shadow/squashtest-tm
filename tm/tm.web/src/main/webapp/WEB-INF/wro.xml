@@ -67,6 +67,7 @@
     <js>/scripts/requirement-workspace.js</js>
     <js>/scripts/team-modification.js</js>
     <js>/scripts/test-case-search-result.js</js>
+    <js>/scripts/test-automation-servers-manager.js</js>
     <js>/scripts/user-modification.js</js>
   </group>
 

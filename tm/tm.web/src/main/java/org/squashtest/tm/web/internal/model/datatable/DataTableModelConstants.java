@@ -38,7 +38,7 @@ public final class DataTableModelConstants {
 	public static final String DEFAULT_CREATED_ON_KEY = "created-on";
 	public static final String DEFAULT_LAST_MODIFIED_BY_KEY = "last-modified-by";
 	public static final String DEFAULT_LAST_MODIFIED_ON_KEY = "last-modified-on";
-	public static final String DEFAULT_CREATED_NO_VALUE = "audit.createdOn";
+	public static final String DEFAULT_CREATED_ON_VALUE = "audit.createdOn";
 	public static final String DEFAULT_CREATED_BY_VALUE = "audit.createdBy";
 	public static final String DEFAULT_LAST_MODIFIED_ON_VALUE = "audit.lastModifiedOn";
 	public static final String DEFAULT_LAST_MODIFIED_BY_VALUE = "audit.lastModifiedBy";

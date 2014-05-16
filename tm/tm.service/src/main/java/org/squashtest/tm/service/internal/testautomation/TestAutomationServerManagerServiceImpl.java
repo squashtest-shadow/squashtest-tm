@@ -54,9 +54,11 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 		return serverDao.findById(serverId);
 	}
 
-
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	/**
+	 * @see TestAutomationServerManagerService#persist(TestAutomationServer)
+	 */
 	public void persist(TestAutomationServer server) {
 		serverDao.persist(server);
 	}
@@ -92,7 +94,8 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')")
-	public PagedCollectionHolder<List<TestAutomationServer>> findSortedTestAutomationServers(PagingAndSorting pagingNsorting) {
+	public PagedCollectionHolder<List<TestAutomationServer>> findSortedTestAutomationServers(
+			PagingAndSorting pagingNsorting) {
 
 		List<TestAutomationServer> sortedServers = serverDao.findPagedServers(pagingNsorting);
 		long count = serverDao.countAll();
@@ -102,7 +105,7 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public void changeURL(long serverId, URL url){
+	public void changeURL(long serverId, URL url) {
 		TestAutomationServer server = serverDao.findById(serverId);
 		server.setBaseURL(url);
 	}
@@ -137,7 +140,7 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public void changeIsManualSlaveSelection(long serverId, boolean manualSlaveSelection) {
+	public void changeManualSlaveSelection(long serverId, boolean manualSlaveSelection) {
 		TestAutomationServer server = serverDao.findById(serverId);
 		server.setManualSlaveSelection(manualSlaveSelection);
 	}

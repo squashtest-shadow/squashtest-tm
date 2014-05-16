@@ -110,6 +110,10 @@
 		name: "custom-field-modification",
 		include: [ "custom-field-editor/CustomFieldModificationView", "app/ws/squashtm.workspace" ], 
 		exclude: [ "common" ] 
+	},{
+		name: "test-automation-servers-manager",
+		include: [ "test-automation-servers-manager/TestAutomationServersTableView", "app/ws/squashtm.workspace" ], 
+		exclude: [ "common" ] 
 	}, {
 		name: "edit-test-step",
 		include: [ "jquery", "squash.basicwidgets", "test-step-editor/TestStepModificationView", "app/ws/squashtm.workspace" ], 

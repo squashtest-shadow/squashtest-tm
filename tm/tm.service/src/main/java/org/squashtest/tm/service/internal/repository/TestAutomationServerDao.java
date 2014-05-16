@@ -27,25 +27,23 @@ import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.service.internal.repository.hibernate.NonUniqueEntityException;
 
-
-
-
 public interface TestAutomationServerDao {
 
 	/**
 	 * Will persist a new {@link TestAutomationServer}.
 	 * 
 	 * @param server
-	 * @throws NonUniqueEntityException if the given server happen to exist already.
+	 *            : the server to persist
+	 * @throws NonUniqueEntityException
+	 *             if the given server happen to exist already.
 	 */
 	void persist(TestAutomationServer server);
-
 
 	List<TestAutomationServer> findAllOrderedByName();
 
 	long countAll();
 
-	List<TestAutomationServer> findPagedServers(PagingAndSorting  pas);
+	List<TestAutomationServer> findPagedServers(PagingAndSorting pas);
 
 	boolean hasBoundProjects(long serverId);
 
@@ -57,7 +55,6 @@ public interface TestAutomationServerDao {
 	 */
 	TestAutomationServer findById(Long id);
 
-
 	TestAutomationServer findByName(String serverName);
 
 	/**
@@ -67,7 +64,6 @@ public interface TestAutomationServerDao {
 	 * @return
 	 */
 	List<TestAutomationProject> findAllHostedProjects(long serverId);
-
 
 	void deleteServer(long serverId);
 
