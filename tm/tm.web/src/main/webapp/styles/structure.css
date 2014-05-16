@@ -1289,6 +1289,10 @@ div.information-panel p {
 	background-image :url(../images/Button_CUF.png); /** sprite-ref: sprites-icons; */
 }
 
+.admin-test-automation-servers-icon{
+	background-image :url(../images/Button_ExecServer.png); /** sprite-ref: sprites-icons; */
+}
+
 .admin-msglogin-icon{
 	background-image :url(../images/Button_MsgLogin.png); /** sprite-ref: sprites-icons; */
 }
