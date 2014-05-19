@@ -132,6 +132,8 @@
 			<!-- this column is not nullable and must be unique but the constraints will be added after the migration -->
 			<column name="NAME" type="VARCHAR(50)" remarks="The name of the server"/>
 			
+			<column name="DESCRIPTION" type="CLOB"	remarks="A description for the server. Since its of type 'CLOB' it might not be so short after all." defaultValue=""></column> 	
+			
 			<column name="CREATED_BY" type="VARCHAR(50)" defaultValue="(nobody)"  remarks="Who created this test automation server">
 				<constraints nullable="true" />
 			</column>

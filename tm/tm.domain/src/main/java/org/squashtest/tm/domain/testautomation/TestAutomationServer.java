@@ -104,6 +104,8 @@ public class TestAutomationServer {
 	@Column(name="MANUAL_SLAVE_SELECTION")
 	private boolean isManualSlaveSelection = false;
 
+	@Column(name="DESCRIPTION")
+	private String description = "";
 
 	public Long getId() {
 		return id;
@@ -167,6 +169,14 @@ public class TestAutomationServer {
 
 	public void setManualSlaveSelection(boolean isManualSlaveSelection) {
 		this.isManualSlaveSelection = isManualSlaveSelection;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 
