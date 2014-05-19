@@ -45,10 +45,10 @@
 			  interface="org.squashtest.tm.service.testautomation.TestAutomationServerManagerService" />
 	
 	<osgi:service ref="squashtest.tm.service.TestAutomationProjectManagementService"
-				  interface="org.squashtest.tm.service.testautomation.TestAutomationProjectManagementService" />
+				  interface="org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService" />
 
-	<osgi:service ref="squashtest.tm.service.AutomatedTestManagementService"
-				  interface="org.squashtest.tm.service.testautomation.AutomatedTestManagementService" />
+	<osgi:service ref="squashtest.tm.service.AutomatedTestService"
+				  interface="org.squashtest.tm.service.testautomation.AutomatedTestFinderService" />
 
 
 	

@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.testautomation;
+package org.squashtest.tm.service.internal.testautomation;
 
 import java.util.Collection;
 import java.util.List;
@@ -27,20 +27,23 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.tm.service.testautomation.AutomatedTestFinderService;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 
 
-
-public interface AutomatedTestManagerService {
-
-
+/**
+ * This one is called "Unsecured" because many (if not all) methods aren't properly secured. This interface
+ * should never be exposed through OSGI, and the methods accessed via secured services instead.
+ * 
+ * @author bsiri
+ *
+ */
+public interface UnsecuredAutomatedTestManagerService extends AutomatedTestFinderService {
 
 
 	// ************************ Entity management **********************
 
 	TestAutomationProject findProjectById(long projectId);
-
-	AutomatedTest findTestById(long testId);
 
 	/**
 	 * Will persist this test if really new, or return the persisted instance
@@ -69,10 +72,6 @@ public interface AutomatedTestManagerService {
 	 * @return
 	 */
 	List<Execution> findExecutionsByAutomatedTestSuiteId(String automatedTestSuiteId);
-
-
-	AutomatedSuite findAutomatedTestSuiteById(String suiteId);
-
 
 
 	// *********************** remote calls ************************************

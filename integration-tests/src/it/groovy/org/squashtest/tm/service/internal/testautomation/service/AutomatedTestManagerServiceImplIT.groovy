@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
 import org.squashtest.tm.service.DbunitServiceSpecification
-import org.squashtest.tm.service.testautomation.AutomatedTestManagerService
+import org.squashtest.tm.service.testautomation.AutomatedTestFinderService;
 import org.unitils.dbunit.annotation.DataSet
 
 import spock.unitils.UnitilsSupport
@@ -38,7 +38,7 @@ import spock.unitils.UnitilsSupport
 class AutomatedTestManagerServiceImplIT extends DbunitServiceSpecification {
 
 	@Inject
-	AutomatedTestManagerService service
+	AutomatedTestFinderService service
 
 
 

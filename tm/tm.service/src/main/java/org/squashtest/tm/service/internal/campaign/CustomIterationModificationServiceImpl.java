@@ -66,11 +66,11 @@ import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
+import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
-import org.squashtest.tm.service.testautomation.AutomatedTestManagerService;
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker;
 
 @Service("CustomIterationModificationService")
@@ -118,7 +118,7 @@ IterationTestPlanManager {
 
 	@Inject	private IterationTestPlanManagerService iterationTestPlanManager;
 
-	@Inject private AutomatedTestManagerService testAutomationService;
+	@Inject private UnsecuredAutomatedTestManagerService testAutomationService;
 
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE') "

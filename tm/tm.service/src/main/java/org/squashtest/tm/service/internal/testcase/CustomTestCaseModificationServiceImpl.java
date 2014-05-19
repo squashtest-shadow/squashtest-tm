@@ -64,7 +64,7 @@ import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
-import org.squashtest.tm.service.testautomation.AutomatedTestManagerService;
+import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.tm.service.testcase.CustomTestCaseModificationService;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
@@ -107,7 +107,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	private TestCaseNodeDeletionHandler deletionHandler;
 
 	@Inject
-	private AutomatedTestManagerService taService;
+	private UnsecuredAutomatedTestManagerService taService;
 
 	@Inject
 	protected PrivateCustomFieldValueService customFieldValuesService;

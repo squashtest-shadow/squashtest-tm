@@ -52,7 +52,6 @@ import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
 import org.squashtest.tm.service.internal.repository.AutomatedTestDao;
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
 import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
-import org.squashtest.tm.service.testautomation.AutomatedTestManagerService;
 import org.squashtest.tm.service.testautomation.TestAutomationCallbackService;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector;
@@ -67,8 +66,8 @@ import org.squashtest.tm.service.testautomation.spi.UnknownConnectorKind;
  *
  */
 @Transactional
-@Service("squashtest.tm.service.AutomatedTestManagementService")
-public class AutomatedTestManagerServiceImpl implements  AutomatedTestManagerService{
+@Service("squashtest.tm.service.AutomatedTestService")
+public class AutomatedTestManagerServiceImpl implements  UnsecuredAutomatedTestManagerService{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestAutomationConnector.class);
 	private static final int DEFAULT_THREAD_TIMEOUT = 30000;	//timeout as milliseconds
@@ -125,13 +124,6 @@ public class AutomatedTestManagerServiceImpl implements  AutomatedTestManagerSer
 	@Override
 	public TestAutomationProject findProjectById(long projectId) {
 		return projectDao.findById(projectId);
-	}
-
-
-
-	@Override
-	public AutomatedTest findTestById(long testId) {
-		return testDao.findById(testId);
 	}
 
 

@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
-import org.squashtest.tm.service.testautomation.AutomatedTestManagerService;
+import org.squashtest.tm.service.testautomation.AutomatedTestFinderService;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.AutomatedSuiteOverview;
 
@@ -43,7 +43,7 @@ public class AutomatedSuiteManagementController {
 	private MessageSource messageSource;
 
 	@Inject
-	private AutomatedTestManagerService automatedTestService;
+	private AutomatedTestFinderService automatedTestService;
 
 
 	@RequestMapping(value = "/executions", method = RequestMethod.GET)

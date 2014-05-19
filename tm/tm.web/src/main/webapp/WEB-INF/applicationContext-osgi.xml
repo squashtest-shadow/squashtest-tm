@@ -325,12 +325,12 @@
 		
 	<osgi:reference id="squashtest.tm.service.TestAutomationProjectManagementService"
 		bean-name="squashtest.tm.service.TestAutomationProjectManagementService"
-		interface="org.squashtest.tm.service.testautomation.TestAutomationProjectManagementService"
+		interface="org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService"
 		availability="mandatory" />
 		
-	<osgi:reference id="squashtest.tm.service.AutomatedTestManagementService"
-		bean-name="squashtest.tm.service.AutomatedTestManagementService"
-		interface="org.squashtest.tm.service.testautomation.AutomatedTestManagementService"
+	<osgi:reference id="squashtest.tm.service.AutomatedTestService"
+		bean-name="squashtest.tm.service.AutomatedTestService"
+		interface="org.squashtest.tm.service.testautomation.AutomatedTestFinderService"
 		availability="mandatory" />
 
 	<osgi:reference id="squashtest.tm.service.TestSuiteModificationService"
