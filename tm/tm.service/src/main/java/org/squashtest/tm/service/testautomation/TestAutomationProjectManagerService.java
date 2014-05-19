@@ -20,46 +20,25 @@
  */
 package org.squashtest.tm.service.testautomation;
 
-import java.net.URL;
-import java.util.List;
-
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 
 
+public interface TestAutomationProjectManagerService {
 
-public interface TestAutomationServerManagerService {
-
-
-	void persist(TestAutomationServer server);
+	void persist(TestAutomationProject newProject);
 
 
-	boolean hasBoundProjects(long serverId);
+	TestAutomationProject findProjectById(long projectId);
 
 
-	boolean hasExecutedTests(long serverId);
+	void changeLabel(long projectId, String name);
 
+	void changeJobName(long projectId, String jobName);
 
-	void deleteServer(long serverId);
-
-
-	List<TestAutomationServer> findAllOrderedByName();
-
-
-	PagedCollectionHolder<List<TestAutomationServer>> findSortedTestAutomationServers(PagingAndSorting pagingNsorting);
-
-
-	void changeURL(long serverId, URL url);
-
-	void changeName(long serverId, String newName);
-
-	void changeLogin(long serverId, String login);
-
-	void changePassword(long serverId, String password);
-
-	void changeDescription(long serverId, String description);
-
-	void changeIsManualSlaveSelection(long serverId, boolean hasSlaves);
+	/**
+	 * Note : the sale list is a semi-column separated list
+	 * 
+	 */
+	void setSlaveNodes(long projectId, String slaveList);
 
 }

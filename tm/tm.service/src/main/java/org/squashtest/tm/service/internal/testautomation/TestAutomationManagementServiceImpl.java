@@ -177,12 +177,6 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 		return executions;
 	}
 
-	//from the insecure interface
-	@Override
-	public void persist(TestAutomationProject newProject) {
-		projectDao.persist(newProject);
-	}
-
 
 	@Override
 	public void persist(AutomatedTest newTest) {

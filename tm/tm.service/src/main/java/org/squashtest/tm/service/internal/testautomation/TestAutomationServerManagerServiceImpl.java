@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.testautomation;
 
+import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 
@@ -27,6 +28,7 @@ import javax.inject.Inject;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
@@ -36,6 +38,7 @@ import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
 import org.squashtest.tm.service.internal.repository.TestAutomationServerDao;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
 
+@Transactional
 @Service("squashtest.tm.service.TestAutomationServerManagementService")
 public class TestAutomationServerManagerServiceImpl implements TestAutomationServerManagerService {
 
@@ -65,25 +68,8 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 		return projectDao.haveExecutedTests(projects);
 	}
 
-
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<TestAutomationServer> findAllOrderedByName() {
-		return serverDao.findAllOrderedByName();
-	}
-
-	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public PagedCollectionHolder<List<TestAutomationServer>> findSortedTestAutomationServers(PagingAndSorting pagingNsorting) {
-
-		List<TestAutomationServer> sortedServers = serverDao.findPagedServers(pagingNsorting);
-		long count = serverDao.countAll();
-
-		return new PagingBackedPagedCollectionHolder<List<TestAutomationServer>>(pagingNsorting, count, sortedServers);
-	}
-
-
-	@Override
 	public void deleteServer(long serverId) {
 		Collection<TestAutomationProject> projects = serverDao.findAllHostedProjects(serverId);
 
@@ -92,12 +78,61 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 
 	}
 
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')")
+	public List<TestAutomationServer> findAllOrderedByName() {
+		return serverDao.findAllOrderedByName();
+	}
 
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')")
+	public PagedCollectionHolder<List<TestAutomationServer>> findSortedTestAutomationServers(PagingAndSorting pagingNsorting) {
 
+		List<TestAutomationServer> sortedServers = serverDao.findPagedServers(pagingNsorting);
+		long count = serverDao.countAll();
 
+		return new PagingBackedPagedCollectionHolder<List<TestAutomationServer>>(pagingNsorting, count, sortedServers);
+	}
 
+	@Override
+	public void changeURL(long serverId, URL url){
+		TestAutomationServer server = serverDao.findById(serverId);
+		server.setBaseURL(url);
+	}
 
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public void changeName(long serverId, String newName) {
+		TestAutomationServer server = serverDao.findById(serverId);
+		server.setName(newName);
+	}
 
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public void changeLogin(long serverId, String login) {
+		TestAutomationServer server = serverDao.findById(serverId);
+		server.setLogin(login);
+	}
 
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public void changePassword(long serverId, String password) {
+		TestAutomationServer server = serverDao.findById(serverId);
+		server.setPassword(password);
+	}
+
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public void changeDescription(long serverId, String description) {
+		TestAutomationServer server = serverDao.findById(serverId);
+		server.setDescription(description);
+	}
+
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public void changeIsManualSlaveSelection(long serverId, boolean manualSlaveSelection) {
+		TestAutomationServer server = serverDao.findById(serverId);
+		server.setManualSlaveSelection(manualSlaveSelection);
+	}
 
 }

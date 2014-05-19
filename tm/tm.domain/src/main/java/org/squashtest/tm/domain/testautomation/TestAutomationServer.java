@@ -28,6 +28,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.squashtest.tm.domain.audit.Auditable;
@@ -119,7 +120,7 @@ public class TestAutomationServer {
 
 
 
-	public void setName(String name) {
+	public void setName(@NotNull String name) {
 		this.name = name;
 	}
 

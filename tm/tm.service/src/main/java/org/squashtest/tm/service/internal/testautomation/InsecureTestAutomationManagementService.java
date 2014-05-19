@@ -37,7 +37,6 @@ import org.squashtest.tm.service.testautomation.TestAutomationFinderService;
  */
 public interface InsecureTestAutomationManagementService extends TestAutomationFinderService{
 
-	void persist(TestAutomationProject newProject);
 
 	void persist(AutomatedTest newTest);
 

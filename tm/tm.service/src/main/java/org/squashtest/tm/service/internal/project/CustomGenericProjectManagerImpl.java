@@ -82,12 +82,9 @@ import org.squashtest.tm.service.project.CustomGenericProjectManager;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.security.ObjectIdentityService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService;
+import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
 
-/**
- * @author Gregory Fouquet
- * 
- */
-@Service("CustomGenericProjectManager")
 @Transactional
 public class CustomGenericProjectManagerImpl implements CustomGenericProjectManager {
 
@@ -119,11 +116,14 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
 	@Inject
-	private InsecureTestAutomationManagementService autotestService;
-	@Inject
 	private ProjectDeletionHandler projectDeletionHandler;
 	@Inject
 	private ExecutionProcessingService execProcessing;
+	@Inject
+	private TestAutomationServerManagerService taServerService;
+	@Inject
+	private TestAutomationProjectManagerService taProjectService;
+
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomGenericProjectManagerImpl.class);
 
@@ -291,6 +291,12 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	// ********************************** Test automation section *************************************
 
+	public void bindTestAutomationServer(long tmProjectId, Long serverId) {
+		GenericProject genericProject = genericProjectDao.findById(tmProjectId);
+		TestAutomationServer taServer = taServerService.fin
+	}
+
+
 	@Override
 	public void bindTestAutomationProject(long projectId, TestAutomationProject taProject) {
 
@@ -301,7 +307,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		taProject.setServer(server);
 		taProject.setTmProject(genericProject);
 
-		autotestService.persist(taProject);
+		taProjectService.persist(taProject);
 		genericProject.bindTestAutomationProject(taProject);
 	}
 
