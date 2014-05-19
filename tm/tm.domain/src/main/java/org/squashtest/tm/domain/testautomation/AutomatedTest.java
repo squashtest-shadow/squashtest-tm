@@ -26,8 +26,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.validation.constraints.Size;
 
+@NamedQueries({
+	@NamedQuery(name="automatedTest.isReferencedByTestCases", query="select count(*) from TestCase tc join tc.automatedTest autoTest where autoTest.id = :autoTestId"),
+	@NamedQuery(name="automatedTest.isReferencedByExecutions", query="select count(*) from AutomatedExecutionExtender extender join extender.automatedTest autoTest where autoTest.id = :autoTestId")
+})
 @Entity
 public class AutomatedTest {
 

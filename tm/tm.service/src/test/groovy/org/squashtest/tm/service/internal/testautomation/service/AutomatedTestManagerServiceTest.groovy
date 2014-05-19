@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.testautomation.service
 
-import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStatus
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender
@@ -29,71 +28,36 @@ import org.squashtest.tm.domain.testautomation.AutomatedTest
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
 import org.squashtest.tm.service.internal.repository.TestAutomationServerDao
-import org.squashtest.tm.service.internal.testautomation.TestAutomationConnectorRegistry
-import org.squashtest.tm.service.internal.testautomation.TestAutomationManagementServiceImpl
-import org.squashtest.tm.service.internal.testautomation.TestAutomationManagementServiceImpl.ExtenderSorter
-import org.squashtest.tm.service.internal.testautomation.FetchTestListTask
+import org.squashtest.tm.service.internal.testautomation.AutomatedTestManagerServiceImpl
 import org.squashtest.tm.service.internal.testautomation.FetchTestListFuture
+import org.squashtest.tm.service.internal.testautomation.FetchTestListTask
+import org.squashtest.tm.service.internal.testautomation.TestAutomationConnectorRegistry
 import org.squashtest.tm.service.internal.testautomation.TestAutomationTaskExecutor
+import org.squashtest.tm.service.internal.testautomation.AutomatedTestManagerServiceImpl.ExtenderSorter
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent
 import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector
 import org.squashtest.tm.service.testautomation.spi.UnknownConnectorKind
 
 import spock.lang.Specification
 
+class AutomatedTestManagerServiceTest extends Specification {
 
-class TestAutomationManagementServiceImplTest extends Specification {
-
-	TestAutomationServerDao serverDao;
 
 	TestAutomationConnectorRegistry connectorRegistry;
+	AutomatedTestManagerServiceImpl service;
 
-	TestAutomationManagementServiceImpl service;
 
 	TestAutomationTaskExecutor executor;
 
 	def setup(){
-		serverDao = Mock()
 		connectorRegistry = Mock()
 		executor = Mock()
-		service = new TestAutomationManagementServiceImpl()
-		service.serverDao = serverDao
+		service = new AutomatedTestManagerServiceImpl()
 		service.connectorRegistry = connectorRegistry
 		service.executor = executor;
 	}
 
 
-	def "should return a list of projects refering to a server object"(){
-
-		given :
-		def proj1 = new TestAutomationProject("proj1", null)
-		def proj2 = new TestAutomationProject("proj2", null)
-		def proj3 = new TestAutomationProject("proj3", null)
-
-		and :
-		TestAutomationConnector connector = Mock()
-		connector.listProjectsOnServer(_) >> [ proj1, proj2, proj3 ]
-
-		and :
-		connectorRegistry.getConnectorForKind(_) >> connector
-
-		and :
-		def server = new TestAutomationServer("myserver", new URL("http://www.toto.com"), "toto", "toto", "jenkins")
-
-		when :
-		def res = service.listProjectsOnServer(server)
-
-		then :
-
-		//the collection contains three elements
-		res.size()==3
-
-		//all of the elements refer to the same server instance :
-		res.collect{it.server}.unique().size() == 1
-
-		//the elements have the specified names :
-		res.collect{it.name} == ["proj1", "proj2", "proj3"]
-	}
 
 
 	def "should build a bunch of tasks to fetch the test lists"(){
@@ -169,6 +133,7 @@ class TestAutomationManagementServiceImplTest extends Specification {
 
 	}
 
+
 	def "extender sorter should sort extenders "(){
 
 		given :
@@ -191,6 +156,9 @@ class TestAutomationManagementServiceImplTest extends Specification {
 		col2.value.collect{ it.automatedTest.project}.unique().collect{ it.name} as Set == ["project-qc-1"] as Set
 
 	}
+
+
+
 
 
 	def "should collect tests from extender list"(){
@@ -316,5 +284,6 @@ class TestAutomationManagementServiceImplTest extends Specification {
 
 
 	}
+
 
 }

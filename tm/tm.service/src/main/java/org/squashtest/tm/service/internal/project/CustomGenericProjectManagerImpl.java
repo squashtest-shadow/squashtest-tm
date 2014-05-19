@@ -77,7 +77,6 @@ import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.PartyDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
-import org.squashtest.tm.service.internal.testautomation.InsecureTestAutomationManagementService;
 import org.squashtest.tm.service.project.CustomGenericProjectManager;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.security.ObjectIdentityService;
@@ -85,6 +84,7 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
 
+@Service("CustomGenericProjectManager")
 @Transactional
 public class CustomGenericProjectManagerImpl implements CustomGenericProjectManager {
 

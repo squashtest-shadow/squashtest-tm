@@ -45,10 +45,50 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 	private SessionFactory sessionFactory;
 
 	@Override
-	public void persist(AutomatedTest newTest) {
-		sessionFactory.getCurrentSession().persist(newTest);
+	public AutomatedTest persistOrAttach(AutomatedTest newTest) {
+
+		if ((newTest.getId() != null) && (findById(newTest.getId()) != null)) {
+			return newTest;
+		}
+
+		AutomatedTest persisted = findByExample(newTest);
+		if (persisted != null){
+			return persisted;
+		}
+		else{
+			sessionFactory.getCurrentSession().persist(newTest);
+			return newTest;
+		}
 	}
 
+
+
+
+	@Override
+	public void removeIfUnused(AutomatedTest test) {
+
+		Session session = sessionFactory.getCurrentSession();
+		AutomatedTest persisted = null;
+
+		if (test.getId() != null){
+			persisted = test;
+		}
+		else{
+			persisted = findByExample(test);
+		}
+
+		Query qCountTC = session.getNamedQuery("automatedTest.isReferencedByTestCases");
+		qCountTC.setParameter("autoTestId", persisted.getId());
+		int countTC = ((Integer)qCountTC.iterate().next()).intValue();
+
+		Query qCountExt = session.getNamedQuery("automatedTest.isReferencedByExecutions");
+		qCountExt.setParameter("autoTestId", persisted.getId());
+		int countExt = ((Integer)qCountExt.iterate().next()).intValue();
+
+		if (countTC + countExt == 0){
+			session.delete(persisted);
+		}
+	}
 
 
 	@Override
@@ -100,5 +140,6 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 		return (List<AutomatedTest>) query.list();
 
 	}
+
 
 }

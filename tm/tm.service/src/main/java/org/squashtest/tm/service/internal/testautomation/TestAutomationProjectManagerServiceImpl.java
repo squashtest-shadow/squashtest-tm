@@ -20,21 +20,39 @@
  */
 package org.squashtest.tm.service.internal.testautomation;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
+import org.squashtest.tm.service.internal.repository.TestAutomationServerDao;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService;
+import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector;
+import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
 
 @Transactional
 @Service("squashtest.tm.service.TestAutomationProjectManagementService")
 public class TestAutomationProjectManagerServiceImpl implements TestAutomationProjectManagerService {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestAutomationConnector.class);
+
 	@Inject
 	private  TestAutomationProjectDao projectDao;
+
+	@Inject
+	private TestAutomationConnectorRegistry connectorRegistry;
+
+	@Inject
+	private TestAutomationServerDao serverDao;
+
 
 
 	@Override
@@ -47,6 +65,16 @@ public class TestAutomationProjectManagerServiceImpl implements TestAutomationPr
 	@Override
 	public TestAutomationProject findProjectById(long projectId) {
 		return projectDao.findById(projectId);
+	}
+
+	@Override
+	public void deleteProject(long projectId) {
+		projectDao.deleteProjectsByIds(Arrays.asList(projectId));
+	}
+
+	@Override
+	public boolean hasExecutedTests(long serverId) {
+		return projectDao.haveExecutedTestsByIds(Arrays.asList(serverId));
 	}
 
 
@@ -71,6 +99,44 @@ public class TestAutomationProjectManagerServiceImpl implements TestAutomationPr
 	public void setSlaveNodes(long projectId, String slaveList) {
 		TestAutomationProject project = projectDao.findById(projectId);
 		project.setSlaves(slaveList);
+	}
+
+
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')")
+	public Collection<TestAutomationProject> listProjectsOnServer(String serverName) {
+
+		TestAutomationServer server = serverDao.findByName(serverName);
+
+		return listProjectsOnServer(server);
+	}
+
+
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')")
+	public Collection<TestAutomationProject> listProjectsOnServer(Long serverId) {
+		TestAutomationServer server = serverDao.findById(serverId);
+
+		return listProjectsOnServer(server);
+	}
+
+
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')")
+	public Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server) {
+
+		TestAutomationConnector connector = connectorRegistry.getConnectorForKind(server.getKind());
+
+		connector.checkCredentials(server);
+		try{
+			return connector.listProjectsOnServer(server);
+		}
+		catch(TestAutomationException ex){
+			if (LOGGER.isErrorEnabled()){
+				LOGGER.error("Test Automation : failed to list projects on server : ",ex);
+			}
+			throw ex;
+		}
 	}
 
 }

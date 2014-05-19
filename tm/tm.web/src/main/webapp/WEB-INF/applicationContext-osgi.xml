@@ -317,14 +317,20 @@
 		bean-name="squashtest.tm.service.CallStepManagerService" interface="org.squashtest.tm.service.testcase.CallStepManagerService"
 		availability="mandatory" />
 
-	<osgi:reference id="squashtest.tm.service.TestAutomationService"
-		bean-name="squashtest.tm.service.TestAutomationService"
-		interface="org.squashtest.tm.service.testautomation.TestAutomationFinderService"
-		availability="mandatory" />
 		
 	<osgi:reference id="squashtest.tm.service.TestAutomationServerManagementService"
 		bean-name="squashtest.tm.service.TestAutomationServerManagementService"
 		interface="org.squashtest.tm.service.testautomation.TestAutomationServerManagerService"
+		availability="mandatory" />
+		
+	<osgi:reference id="squashtest.tm.service.TestAutomationProjectManagementService"
+		bean-name="squashtest.tm.service.TestAutomationProjectManagementService"
+		interface="org.squashtest.tm.service.testautomation.TestAutomationProjectManagementService"
+		availability="mandatory" />
+		
+	<osgi:reference id="squashtest.tm.service.AutomatedTestManagementService"
+		bean-name="squashtest.tm.service.AutomatedTestManagementService"
+		interface="org.squashtest.tm.service.testautomation.AutomatedTestManagementService"
 		availability="mandatory" />
 
 	<osgi:reference id="squashtest.tm.service.TestSuiteModificationService"

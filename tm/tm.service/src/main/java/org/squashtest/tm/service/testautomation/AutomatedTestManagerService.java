@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.testautomation;
 
-import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 
@@ -28,45 +27,55 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
-import org.squashtest.tm.service.testautomation.spi.AccessDenied;
 
 
 
-public interface TestAutomationFinderService {
+public interface AutomatedTestManagerService {
 
+
+
+
+	// ************************ Entity management **********************
+
+	TestAutomationProject findProjectById(long projectId);
+
+	AutomatedTest findTestById(long testId);
 
 	/**
-	 * <p>Given the name of a server, will return the list of
-	 * project currently available on it. The credentials will be tested on the fly.</p>
+	 * Will persist this test if really new, or return the persisted instance
+	 * if this test already exists. Due to this the calling code should always
+	 * rely on the returned instance of AutomatedTest.
 	 * 
-	 * @param serverURL
-	 * @param login
-	 * @param password
-	 * 
-	 * @return a collection of projects hosted on that server
-	 * @throws AccessDenied if the given credentials are invalid
+	 * @param newTest
 	 */
-	Collection<TestAutomationProject> listProjectsOnServer(String serverName);
+	AutomatedTest persistOrAttach(AutomatedTest newTest);
+
 
 	/**
-	 * see {@link #listProjectsOnServer(URL, String, String)}, using its ID for argument
+	 * Will remove the test from the database, if and only if no TestCase nor AutomatedExecutionExtender
+	 * still refer to it.
 	 * 
-	 * @param server
+	 * @param test
+	 */
+	void removeIfUnused(AutomatedTest test);
+
+
+	/**
+	 * Given the id of an automated test suite, returns the list of executions associated to this automated test
+	 * suite.
+	 * 
+	 * @param automatedTestSuiteId
 	 * @return
 	 */
-	Collection<TestAutomationProject> listProjectsOnServer(Long serverId);
+	List<Execution> findExecutionsByAutomatedTestSuiteId(String automatedTestSuiteId);
 
 
-	/**
-	 * see {@link #listProjectsOnServer(URL, String, String)}, using a {@link TestAutomationServer} for argument
-	 * 
-	 * @param server
-	 * @return
-	 */
-	Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server);
+	AutomatedSuite findAutomatedTestSuiteById(String suiteId);
 
+
+
+	// *********************** remote calls ************************************
 
 	/**
 	 * Given a collection of {@link TestAutomationProject}, will return the aggregated list of {@link AutomatedTest}
@@ -79,17 +88,20 @@ public interface TestAutomationFinderService {
 
 
 	/**
-	 * Given the id of an automated test suite, returns the list of executions associated to this automated test
-	 * suite.
+	 * Will (attempt to) retrieve the result url for all the executions that belongs to a given automated suite,
+	 * and of which tests belongs to a given project.
 	 * 
-	 * @param automatedTestSuiteId
-	 * @return
+	 * @param project
+	 * @param suite
 	 */
-	List<Execution> findExecutionsByAutomatedTestSuiteId(String automatedTestSuiteId);
+	void fetchAllResultURL(TestAutomationProject project, AutomatedSuite suite);
 
-	AutomatedSuite findAutomatedTestSuiteById(String suiteId);
-
-
+	/**
+	 * Will start a test suite, by dispatching the tests to the corresponding connectors.
+	 * 
+	 * @param suite
+	 */
+	void startAutomatedSuite(AutomatedSuite suite);
 
 
 

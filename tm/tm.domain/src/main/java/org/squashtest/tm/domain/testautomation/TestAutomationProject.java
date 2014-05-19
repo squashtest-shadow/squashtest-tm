@@ -119,6 +119,7 @@ public class TestAutomationProject {
 		this.label = label;
 	}
 
+	@AclConstrainedObject
 	public GenericProject getTmProject() {
 		return tmProject;
 	}

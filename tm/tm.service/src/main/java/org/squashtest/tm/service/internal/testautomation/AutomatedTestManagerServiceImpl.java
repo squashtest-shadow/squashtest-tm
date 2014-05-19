@@ -47,13 +47,12 @@ import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.service.internal.repository.AutomatedExecutionExtenderDao;
 import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
 import org.squashtest.tm.service.internal.repository.AutomatedTestDao;
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
-import org.squashtest.tm.service.internal.repository.TestAutomationServerDao;
 import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
+import org.squashtest.tm.service.testautomation.AutomatedTestManagerService;
 import org.squashtest.tm.service.testautomation.TestAutomationCallbackService;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector;
@@ -61,17 +60,21 @@ import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
 import org.squashtest.tm.service.testautomation.spi.UnknownConnectorKind;
 
 
+/**
+ *
+ * 
+ * @author bsiri
+ *
+ */
 @Transactional
-@Service("squashtest.tm.service.TestAutomationService")
-public class TestAutomationManagementServiceImpl implements  InsecureTestAutomationManagementService{
+@Service("squashtest.tm.service.AutomatedTestManagementService")
+public class AutomatedTestManagerServiceImpl implements  AutomatedTestManagerService{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestAutomationConnector.class);
 	private static final int DEFAULT_THREAD_TIMEOUT = 30000;	//timeout as milliseconds
 
 	private int timeoutMillis = DEFAULT_THREAD_TIMEOUT;
 
-	@Inject
-	private TestAutomationServerDao serverDao;
 
 	@Inject
 	private TestAutomationProjectDao projectDao;
@@ -113,54 +116,22 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 
 
 
-	@Override
-	public Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server) {
 
-		TestAutomationConnector connector = connectorRegistry.getConnectorForKind(server.getKind());
 
-		connector.checkCredentials(server);
-		try{
-			return connector.listProjectsOnServer(server);
-		}
-		catch(TestAutomationException ex){
-			if (LOGGER.isErrorEnabled()){
-				LOGGER.error("Test Automation : failed to list projects on server : ",ex);
-			}
-			throw ex;
-		}
-	}
+	// ******************** Entity Management ************************
+
 
 
 	@Override
-	public Collection<TestAutomationProject> listProjectsOnServer(String serverName) {
-
-		TestAutomationServer server = serverDao.findByName(serverName);
-
-		return listProjectsOnServer(server);
-
+	public TestAutomationProject findProjectById(long projectId) {
+		return projectDao.findById(projectId);
 	}
 
-	public Collection<TestAutomationProject> listProjectsOnServer(Long serverId) {
-
-		TestAutomationServer server = serverDao.findById(serverId);
-
-		return listProjectsOnServer(server);
-
-	}
 
 
 	@Override
-	public Collection<TestAutomationProjectContent> listTestsInProjects(Collection<TestAutomationProject> projects) {
-
-		//1 : prepare the tasks
-		Collection<FetchTestListTask> tasks = prepareAllFetchTestListTasks(projects);
-
-		//2 : start the tasks
-		Collection<FetchTestListFuture> futures = submitAllFetchTestListTasks(tasks);
-
-		//3 : harvest the results
-		return collectAllTestLists(futures);
-
+	public AutomatedTest findTestById(long testId) {
+		return testDao.findById(testId);
 	}
 
 
@@ -179,22 +150,32 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 
 
 	@Override
-	public void persist(AutomatedTest newTest) {
-		testDao.persist(newTest);
+	public AutomatedTest persistOrAttach(AutomatedTest newTest) {
+		return testDao.persistOrAttach(newTest);
 	}
 
 
 	@Override
-	public TestAutomationProject findProjectById(long projectId) {
-		return projectDao.findById(projectId);
+	public void removeIfUnused(AutomatedTest test) {
+		testDao.removeIfUnused(test);
 	}
 
+
+	// **************************** Remote Calls ***********************
 
 	@Override
-	public AutomatedTest findTestById(long testId) {
-		return testDao.findById(testId);
-	}
+	public Collection<TestAutomationProjectContent> listTestsInProjects(Collection<TestAutomationProject> projects) {
 
+		//1 : prepare the tasks
+		Collection<FetchTestListTask> tasks = prepareAllFetchTestListTasks(projects);
+
+		//2 : start the tasks
+		Collection<FetchTestListFuture> futures = submitAllFetchTestListTasks(tasks);
+
+		//3 : harvest the results
+		return collectAllTestLists(futures);
+
+	}
 
 	@Override
 	public void startAutomatedSuite(AutomatedSuite suite) {
@@ -441,6 +422,8 @@ public class TestAutomationManagementServiceImpl implements  InsecureTestAutomat
 		}
 
 	}
+
+
 
 
 }

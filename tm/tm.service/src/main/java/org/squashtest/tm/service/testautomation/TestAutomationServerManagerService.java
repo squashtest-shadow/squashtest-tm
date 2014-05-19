@@ -32,7 +32,11 @@ import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 public interface TestAutomationServerManagerService {
 
 
+
+	// *********************** entity management *******************
+
 	TestAutomationServer findById(long serverId);
+
 
 	void persist(TestAutomationServer server);
 
@@ -52,6 +56,8 @@ public interface TestAutomationServerManagerService {
 	PagedCollectionHolder<List<TestAutomationServer>> findSortedTestAutomationServers(PagingAndSorting pagingNsorting);
 
 
+	// *********************** Properties mutators ****************************
+
 	void changeURL(long serverId, URL url);
 
 	void changeName(long serverId, String newName);
@@ -63,5 +69,9 @@ public interface TestAutomationServerManagerService {
 	void changeDescription(long serverId, String description);
 
 	void changeIsManualSlaveSelection(long serverId, boolean hasSlaves);
+
+
+
+
 
 }

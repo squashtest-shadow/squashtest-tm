@@ -22,7 +22,7 @@ package org.squashtest.tm.service.internal.campaign;
 
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
-import org.squashtest.tm.service.internal.testautomation.InsecureTestAutomationManagementService;
+import org.squashtest.tm.service.testautomation.AutomatedTestManagerService;
 /**
  * 
  * This class has been created to avoid [Issue 1531]
@@ -33,13 +33,13 @@ import org.squashtest.tm.service.internal.testautomation.InsecureTestAutomationM
  */
 public class AutomatedRunTransactionHandler implements TransactionSynchronization {
 
-	
-	private AutomatedSuite suite;
-	private InsecureTestAutomationManagementService testAutomationService;
 
-	public AutomatedRunTransactionHandler(AutomatedSuite suite, InsecureTestAutomationManagementService testAutomationService){
+	private AutomatedSuite suite;
+	private AutomatedTestManagerService automatedTestService;
+
+	public AutomatedRunTransactionHandler(AutomatedSuite suite, AutomatedTestManagerService automatedTestService){
 		this.suite = suite;
-		this.testAutomationService = testAutomationService;
+		this.automatedTestService = automatedTestService;
 	}
 	@Override
 	public void suspend() {
@@ -73,7 +73,7 @@ public class AutomatedRunTransactionHandler implements TransactionSynchronizatio
 
 	@Override
 	public void afterCommit() {
-		testAutomationService.startAutomatedSuite(suite);
+		automatedTestService.startAutomatedSuite(suite);
 	}
 
 	@Override

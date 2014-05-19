@@ -30,20 +30,25 @@ import org.squashtest.tm.service.internal.repository.hibernate.NonUniqueEntityEx
 public interface AutomatedTestDao {
 
 	/**
-	 * Will persist a new {@link AutomatedTest}.
+	 * Will persist this test if really new, or return the persisted instance
+	 * if this test already exists. Due to this the calling code should always
+	 * rely on the returned instance of AutomatedTest.
 	 * 
 	 * @param newTest
-	 * @throws NonUniqueEntityException if the given server happen to exist already.
 	 */
-	void persist(AutomatedTest newTest);
+	AutomatedTest persistOrAttach(AutomatedTest newTest);
 
 
 	/**
+	 * Will remove the test from the database, if and only if no TestCase nor AutomatedExecutionExtender
+	 * still refer to it.
 	 * 
-	 * 
-	 * @param id
-	 * @return
+	 * @param test
 	 */
+	void removeIfUnused(AutomatedTest test);
+
+
+
 	AutomatedTest findById(Long testId);
 
 

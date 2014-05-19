@@ -39,7 +39,6 @@ import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
-import org.squashtest.tm.service.internal.testautomation.InsecureTestAutomationManagementService;
 import org.squashtest.tm.service.project.ProjectsPermissionFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
@@ -53,7 +52,7 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 	private static final String HAS_EXECUTE_PERMISSION_ID = "hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'EXECUTE') ";
 	private static final String HAS_READ_PERMISSION_ID = "hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite','READ') ";
 	private static final String PERMISSION_EXECUTE_ITEM = "hasPermission(#testPlanItemId, 'org.squashtest.tm.domain.campaign.IterationTestPlanItem', 'EXECUTE') ";
-		
+
 	@Inject
 	private TestSuiteDao testSuiteDao;
 
@@ -74,14 +73,11 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 
 
 	@Inject
-	private InsecureTestAutomationManagementService testAutomationService;
-	
-	@Inject
 	private IterationTestPlanManager iterationTestPlanManager;
-	
+
 	@Inject
 	private UserAccountService userService;
-	
+
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
 
@@ -105,23 +101,23 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 		try {
 			PermissionsUtils.checkPermission(permissionEvaluationService, Arrays.asList(suiteId), "READ_UNASSIGNED", TestSuite.class.getName());
 			return testSuiteDao.getTestSuiteStatistics(suiteId);
-			
+
 		} catch (AccessDeniedException ade) {
 			String userLogin = userService.findCurrentUser().getLogin();
 			return testSuiteDao.getTestSuiteStatistics(suiteId, userLogin);
-			
+
 		}
-				
+
 	}
-	
-	
+
+
 	@Override
 	@PreAuthorize(PERMISSION_EXECUTE_ITEM + OR_HAS_ROLE_ADMIN)
 	public Execution addExecution(long testPlanItemId) {
 		return iterationService.addExecution(testPlanItemId);
 	}
-	
-	
+
+
 	@Override
 	@PreAuthorize(PERMISSION_EXECUTE_ITEM + OR_HAS_ROLE_ADMIN)
 	public Execution addAutomatedExecution(long testPlanItemId) {
@@ -134,7 +130,7 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 	public AutomatedSuite createAndStartAutomatedSuite(long suiteId) {
 
 		TestSuite testSuite = testSuiteDao.findById(suiteId);
-		
+
 		List<IterationTestPlanItem> items = testSuite.getTestPlan();
 
 		return iterationTestPlanManager.createAndStartAutomatedSuite(items);

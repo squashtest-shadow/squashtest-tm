@@ -20,19 +20,14 @@
  */
 package org.squashtest.tm.service.internal.testautomation.service
 
-import java.net.URL
-
 import javax.inject.Inject
 
-import org.hibernate.exception.ConstraintViolationException;
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.domain.project.GenericProject;
-import org.squashtest.tm.domain.testautomation.TestAutomationProject
+import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
 import org.squashtest.tm.service.DbunitServiceSpecification
-import org.squashtest.tm.service.internal.testautomation.InsecureTestAutomationManagementService
-import org.squashtest.tm.service.testautomation.TestAutomationFinderService
+import org.squashtest.tm.service.testautomation.AutomatedTestManagerService
 import org.unitils.dbunit.annotation.DataSet
 
 import spock.unitils.UnitilsSupport
@@ -40,50 +35,17 @@ import spock.unitils.UnitilsSupport
 @NotThreadSafe
 @UnitilsSupport
 @Transactional
-class TestAutomationManagementServiceImplIT extends DbunitServiceSpecification {
+class AutomatedTestManagerServiceImplIT extends DbunitServiceSpecification {
 
 	@Inject
-	InsecureTestAutomationManagementService service
+	AutomatedTestManagerService service
 
-	@Inject
-	TestAutomationFinderService finderService
 
-	@DataSet("TestAutomationService.sandbox.xml")
-	def "should persist a new TestAutomationProject"(){
-
-		given :
-		def server = getServer(1l)
-		def project = new TestAutomationProject("roberto5","Project Roberto 5" , server)
-		def tmproject = getProject(1l)
-		project.setTmProject(tmproject)
-
-		when :
-		service.persist(project)
-		then :
-		project.id != null
-		project.label == "Project Roberto 5"
-		project.jobName == "roberto5"
-		project.server.id == 1l
-	}
-
-	@DataSet("TestAutomationService.sandbox.xml")
-	def "should say that a project label is not unique"(){
-		given :
-		def server  = getServer(2l)
-		def project = new TestAutomationProject("whatever","Project Mike 2",  server)
-		def tmproject = getProject(1l)
-		project.setTmProject(tmproject)
-
-		when :
-		service.persist(project)
-		then :
-		thrown ConstraintViolationException
-	}
 
 	@DataSet("TestAutomationService.sandbox.xml")
 	def "should return executions associated to an automated test suite given its id"(){
 		when:
-		def res = finderService.findExecutionsByAutomatedTestSuiteId("suite1")
+		def res = service.findExecutionsByAutomatedTestSuiteId("suite1")
 		then:
 		res[0].id == 40l
 		res[1].id == 41l

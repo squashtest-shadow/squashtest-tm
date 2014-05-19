@@ -21,19 +21,18 @@
 package org.squashtest.tm.web.internal.controller.testautomation;
 
 import java.util.Collection;
-import java.util.Locale;
 
 import javax.inject.Inject;
 
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.tm.service.testautomation.TestAutomationFinderService;
+import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService;
 
 
 
@@ -45,17 +44,17 @@ public class TestAutomationFindingController {
 	private MessageSource messageSource;
 
 	@Inject
-	private TestAutomationFinderService testAutomationManagementService;
+	private TestAutomationProjectManagerService projectService;
 
 
-
-	@RequestMapping(value = "/servers/projects-list", method = RequestMethod.GET, headers = "Accept=application/json", params = {"url", "login", "password"} )
+	@RequestMapping(value = "/servers/{serverId}/projects", method = RequestMethod.GET, headers = "Accept=application/json" )
 	@ResponseBody
-	public Collection<TestAutomationProject> listProjectsOnServer(@RequestParam("serverId") Long serverId,
-			Locale locale)	throws BindException{
+	public Collection<TestAutomationProject> listProjectsOnServer(@PathVariable("serverId") Long serverId)	throws BindException{
 
-		return testAutomationManagementService.listProjectsOnServer(serverId);
+		return projectService.listProjectsOnServer(serverId);
 
 	}
+
+
 
 }
