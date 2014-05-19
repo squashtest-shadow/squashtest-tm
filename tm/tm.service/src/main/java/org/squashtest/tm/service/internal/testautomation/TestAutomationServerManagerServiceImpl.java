@@ -48,6 +48,12 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	@Inject
 	private TestAutomationProjectDao projectDao;
 
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')")
+	public TestAutomationServer findById(long serverId) {
+		return serverDao.findById(serverId);
+	}
+
 
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -95,6 +101,7 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	}
 
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void changeURL(long serverId, URL url){
 		TestAutomationServer server = serverDao.findById(serverId);
 		server.setBaseURL(url);

@@ -32,6 +32,8 @@ import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 public interface TestAutomationServerManagerService {
 
 
+	TestAutomationServer findById(long serverId);
+
 	void persist(TestAutomationServer server);
 
 
