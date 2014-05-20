@@ -35,37 +35,38 @@ import org.squashtest.tm.domain.projectfilter.ProjectFilter;
  * @author bsiri
  */
 
-public class FilterModel {
+// made "final" because SONAR didn't like the overridable methods in the constructor
+public final class FilterModel {
 	private List<Object[]> projectData = new ArrayList<Object[]>();
 	private boolean enabled;
-	
+
 	public FilterModel(){
 		super();
 	}
-	
+
 	public FilterModel(ProjectFilter filter, List<Project> projects){
 
 		setEnabled(filter.getActivated());
-		
-		Object[][] projectData = new Object[projects.size()][4];  
+
+		Object[][] projectData = new Object[projects.size()][4];
 		int i = 0;
-		
+
 		for (Project project : projects){
 			projectData[i] = new Object[]{
-				project.getId(),
-				project.getName(),
-				filter.isProjectSelected(project),
-				project.getLabel()
+					project.getId(),
+					project.getName(),
+					filter.isProjectSelected(project),
+					project.getLabel()
 			};
-			
+
 			i++;
-			
+
 		}
-		
+
 		//remember that projectData.toArray() actually returns an Object[][]
 		setProjectData((Object[][]) projectData);
 	}
-	
+
 	public FilterModel(List<Project> projects) {
 		for (Project project : projects) {
 			addProject(project.getId(), project.getName(), project.getLabel());
@@ -75,7 +76,7 @@ public class FilterModel {
 	public Object[] getProjectData() {
 		return projectData.toArray();
 	}
-	
+
 	private void setProjectData(Object[][] projectData) {
 		this.projectData = new ArrayList<Object[]>(projectData.length);
 		for(Object[] project : projectData) {
@@ -91,5 +92,5 @@ public class FilterModel {
 	public void addProject(long id, String name, String label) {
 		projectData.add(new Object[] {id, name, false, label});
 	}
-	
+
 }

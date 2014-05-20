@@ -273,7 +273,7 @@ public class FacilityImpl implements Facility {
 					validator.getModel().addActionStep(target);
 				} else {
 
-					doAddCallStep(target, testStep, calledTestCase);
+					doAddCallStep(target, calledTestCase);
 
 					remember(target.getTestCase());
 					validator.getModel().addCallStep(target, calledTestCase);
@@ -321,7 +321,7 @@ public class FacilityImpl implements Facility {
 
 		if (!train.hasCriticalErrors()) {
 			try {
-				doUpdateCallStep(target, testStep, calledTestCase);
+				doUpdateCallStep(target,calledTestCase);
 				validator.getModel().updateCallStepTarget(target, calledTestCase);
 
 				LOGGER.debug("Excel import : Created Call Step \t'" + target + "' -> '" + calledTestCase + "'");
@@ -623,7 +623,7 @@ public class FacilityImpl implements Facility {
 
 	}
 
-	private void doAddCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase) {
+	private void doAddCallStep(TestStepTarget target, TestCaseTarget calledTestCase) {
 
 		// add the step
 		TestCase tc = validator.getModel().get(target.getTestCase());
@@ -668,7 +668,7 @@ public class FacilityImpl implements Facility {
 
 	}
 
-	private void doUpdateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase) {
+	private void doUpdateCallStep(TestStepTarget target,  TestCaseTarget calledTestCase) {
 
 		// update the step
 		TestStep actualStep = validator.getModel().getStep(target);

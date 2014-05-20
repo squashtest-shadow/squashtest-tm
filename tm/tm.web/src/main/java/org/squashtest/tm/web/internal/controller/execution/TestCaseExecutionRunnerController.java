@@ -53,13 +53,13 @@ public class TestCaseExecutionRunnerController {
 
 	@Inject
 	private ExecutionProcessingService executionProcessingService;
-	
+
 	@Inject
 	private BugTrackersLocalService bugTrackersLocalService;
-	
+
 	@Inject
 	private BugTrackerFinderService bugTrackerFinderService;
-	
+
 
 	public TestCaseExecutionRunnerController() {
 		super();
@@ -67,7 +67,7 @@ public class TestCaseExecutionRunnerController {
 
 
 	// redirects to something served by ExecutionProcessingController
-	private String getRedirectExecURL(long executionId, boolean optimized, boolean suitemode) {
+	private String getRedirectExecURL(long executionId, boolean optimized) {
 		return "/execute/" + executionId + "?optimized=" + optimized;
 	}
 
@@ -77,9 +77,9 @@ public class TestCaseExecutionRunnerController {
 
 		RunnerState state = helper.initOptimizedSingleContext(executionId, context.getContextPath(), locale);
 		model.addAttribute("config", state);
-		
+
 		try{
-			Project project = executionProcessingService.findExecution(executionId).getProject();			
+			Project project = executionProcessingService.findExecution(executionId).getProject();
 			BugTracker bugtracker = project.findBugTracker();
 			BugTrackerInterfaceDescriptor descriptor = bugTrackersLocalService.getInterfaceDescriptor(bugtracker);
 			model.addAttribute("interfaceDescriptor", descriptor);
@@ -88,7 +88,7 @@ public class TestCaseExecutionRunnerController {
 		catch(NoBugTrackerBindingException ex){
 			//well, no bugtracker then. It's fine.
 		}
-		
+
 
 		return OPTIMIZED_RUNNER_MAIN;
 
@@ -98,7 +98,7 @@ public class TestCaseExecutionRunnerController {
 	public String startResumeExecutionInClassicRunner(@PathVariable long executionId, Model model) {
 
 		// simple case here : the context is simply the popup. We redirect to the execution processing view controller.
-		return "redirect:" + getRedirectExecURL(executionId, false, false);
+		return "redirect:" + getRedirectExecURL(executionId, false);
 
 	}
 

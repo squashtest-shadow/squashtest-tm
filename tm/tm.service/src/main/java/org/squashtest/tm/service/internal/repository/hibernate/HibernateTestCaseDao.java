@@ -90,13 +90,13 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	private static final String FIND_ALL_CALLING_TEST_CASE_MAIN_HQL = "select TestCase from TestCase as TestCase left join TestCase.project as Project "
 			+ " join TestCase.steps as Steps where Steps.calledTestCase.id = :testCaseId group by TestCase ";
 
-	private static List<DefaultSorting> DEFAULT_VERIFIED_TC_SORTING;
+	private static List<DefaultSorting> defaultVerifiedTcSorting;
 
 	static {
-		DEFAULT_VERIFIED_TC_SORTING = new LinkedList<DefaultSorting>();
-		DEFAULT_VERIFIED_TC_SORTING.add(new DefaultSorting("TestCase.reference"));
-		DEFAULT_VERIFIED_TC_SORTING.add(new DefaultSorting("TestCase.name"));
-		ListUtils.unmodifiableList(DEFAULT_VERIFIED_TC_SORTING);
+		defaultVerifiedTcSorting = new LinkedList<DefaultSorting>();
+		defaultVerifiedTcSorting.add(new DefaultSorting("TestCase.reference"));
+		defaultVerifiedTcSorting.add(new DefaultSorting("TestCase.name"));
+		ListUtils.unmodifiableList(defaultVerifiedTcSorting);
 	}
 
 	@Override
@@ -437,7 +437,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 
 	private List<Sorting> createEffectiveSorting(Sorting userSorting) {
 
-		LinkedList<Sorting> sortings = new LinkedList<Sorting>(DEFAULT_VERIFIED_TC_SORTING);
+		LinkedList<Sorting> sortings = new LinkedList<Sorting>(defaultVerifiedTcSorting);
 
 		// from that list we filter out the redundant element, considering the argument.
 		// note that the sorting order is irrelevant here.

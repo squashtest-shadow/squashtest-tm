@@ -126,7 +126,7 @@ public class RequirementParserImpl implements RequirementParser {
 			Map<RequirementFolder, List<PseudoRequirement>> organizedRequirementLibraryNodes) {
 		RequirementFolder lastFolder = root;
 		if (notEmpty(path)) {
-			LinkedList<String> folderNames = UrlParser.extractFoldersNames(path);
+			List<String> folderNames = UrlParser.extractFoldersNames(path);
 			for (String folderName : folderNames) {
 				if (notEmpty(folderName)) {
 					RequirementFolder newFolder = findOrCreateFolder(lastFolder, folderName,

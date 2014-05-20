@@ -334,9 +334,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 
 			result = builder.toString();
 		}
-		else{
-			result = content;
-		}
+
 		return result;
 
 

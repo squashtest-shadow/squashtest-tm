@@ -26,11 +26,16 @@ package org.squashtest.tm.web.internal.model.jquery;
  *
  */
 public class RenameModel {
-	public final String newName; 
+	private final String newName;
 
 	public RenameModel(String newName) {
 		super();
 		this.newName = newName;
 	}
-	
+
+	public String getNewName() {
+		return newName;
+	}
+
+
 }

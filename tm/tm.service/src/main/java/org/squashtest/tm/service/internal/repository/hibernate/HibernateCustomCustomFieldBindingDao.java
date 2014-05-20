@@ -34,47 +34,47 @@ import org.squashtest.tm.service.internal.repository.CustomCustomFieldBindingDao
 
 @Repository("CustomCustomFieldBindingDao")
 public class HibernateCustomCustomFieldBindingDao extends HibernateEntityDao<CustomFieldBinding> implements CustomCustomFieldBindingDao {
-	
+
 	@Override
 	public void removeCustomFieldBindings(List<Long> bindingIds) {
-		
+
 		if (!bindingIds.isEmpty()){
-			
+
 			executeUpdateListQuery("CustomFieldBinding.removeCustomFieldBindings", new SetBindingIdsParameterCallback(bindingIds));
-			
+
 			List<NewBindingPosition> newPositions = recomputeBindingPositions();
 			updateBindingPositions(newPositions);
-			
+
 		}
 	}
-	
+
 	@Override
 	public List<CustomFieldBinding> findAllByIds(Collection<Long> ids){
 		return executeListNamedQuery("CustomFieldBinding.findAllByIds", new SetBindingIdsParameterCallback(new ArrayList<Long>(ids)));
 	}
-	
+
 	public List<CustomFieldBinding> findAllByIds(List<Long> ids){
-		return executeListNamedQuery("CustomFieldBinding.findAllByIds", new SetBindingIdsParameterCallback(ids));		
+		return executeListNamedQuery("CustomFieldBinding.findAllByIds", new SetBindingIdsParameterCallback(ids));
 	}
 
-	 
-	
+
+
 	@SuppressWarnings("unchecked")
 	protected List<NewBindingPosition> recomputeBindingPositions(){
-		
+
 		Session session = currentSession();
 		Query q = session.getNamedQuery("CustomFieldBinding.recomputeBindingPositions");
 		q.setResultTransformer(Transformers.aliasToBean(NewBindingPosition.class));
-		
-		return q.list();		
-		
+
+		return q.list();
+
 	}
-	
-	
+
+
 	protected void updateBindingPositions(List<NewBindingPosition> newPositions){
-		
+
 		Query q = currentSession().getNamedQuery("CustomFielBinding.updateBindingPosition");
-		
+
 		for (NewBindingPosition newPos : newPositions){
 			if (newPos.needsUpdate()){
 				q.setInteger("newPos", newPos.getNewPosition());
@@ -82,35 +82,35 @@ public class HibernateCustomCustomFieldBindingDao extends HibernateEntityDao<Cus
 				q.executeUpdate();
 			}
 		}
-		
+
 	}
-	
-	
-	
+
+
+
 	// ********************** static classes ******************************
 
-	
+
 	private static final class SetBindingIdsParameterCallback implements SetQueryParametersCallback{
-		
-		List<Long> ids;
-		
+
+		private List<Long> ids;
+
 		private SetBindingIdsParameterCallback(List<Long> ids) {
 			this.ids = ids;
 		}
-		
+
 		@Override
 		public void setQueryParameters(Query query) {
 			query.setParameterList("cfbIds", ids);
 		}
 	}
-	
-	
+
+
 	public static class NewBindingPosition {
 
 		private Long bindingId;
 		private int formerPosition;
 		private int newPosition;
-		
+
 		public NewBindingPosition() {
 		}
 
@@ -141,7 +141,7 @@ public class HibernateCustomCustomFieldBindingDao extends HibernateEntityDao<Cus
 		public boolean needsUpdate(){
 			return (formerPosition!=newPosition);
 		}
-		
+
 	}
 
 }

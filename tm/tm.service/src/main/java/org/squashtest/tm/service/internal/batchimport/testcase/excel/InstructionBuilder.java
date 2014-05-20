@@ -135,7 +135,7 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 			propSetter.set(value, target);
 
 		} catch (NullMandatoryValueException e) {
-			log(colDef, e, instruction);
+			log(colDef, instruction);
 		}
 	}
 
@@ -144,7 +144,7 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 	 * @param e
 	 * @param instruction
 	 */
-	private void log(ColumnDef colDef, NullMandatoryValueException e, INST instruction) {
+	private void log(ColumnDef colDef, INST instruction) {
 		instruction.addLogEntry(ImportStatus.FAILURE, Messages.ERROR_FIELD_MANDATORY, colDef.getHeader());
 
 	}

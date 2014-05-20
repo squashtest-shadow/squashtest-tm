@@ -35,7 +35,7 @@ import org.squashtest.tm.domain.requirement.RequirementVersionImportMemento;
  * 
  */
 /* package-private */class PseudoRequirementVersion implements Comparable<PseudoRequirementVersion>,
-		RequirementVersionImportMemento {
+RequirementVersionImportMemento {
 	private Integer rowNumber = 0;
 	private Double version = null;
 	private String label = "untitled";
@@ -177,6 +177,46 @@ import org.squashtest.tm.domain.requirement.RequirementVersionImportMemento;
 	/* ***************************** end getter and setters *********************************** */
 	private boolean notEmpty(String string) {
 		return (string != null && (!string.isEmpty()));
+	}
+
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((rowNumber == null) ? 0 : rowNumber.hashCode());
+		result = prime * result + ((version == null) ? 0 : version.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		PseudoRequirementVersion other = (PseudoRequirementVersion) obj;
+		if (rowNumber == null) {
+			if (other.rowNumber != null) {
+				return false;
+			}
+		} else if (!rowNumber.equals(other.rowNumber)) {
+			return false;
+		}
+		if (version == null) {
+			if (other.version != null) {
+				return false;
+			}
+		} else if (!version.equals(other.version)) {
+			return false;
+		}
+		return true;
 	}
 
 	@Override

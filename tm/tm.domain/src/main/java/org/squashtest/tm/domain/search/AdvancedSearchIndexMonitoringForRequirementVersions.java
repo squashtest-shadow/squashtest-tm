@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.domain.search;
 
-public class AdvancedSearchIndexMonitoringForRequirementVersions {
+public final class AdvancedSearchIndexMonitoringForRequirementVersions {
 
 	private static boolean isIndexingOver = false;
 	private static long documentsAdded = 0L;
@@ -92,7 +92,7 @@ public class AdvancedSearchIndexMonitoringForRequirementVersions {
 
 	public static double getProgressPercentage() {
 		AdvancedSearchIndexMonitoringForRequirementVersions.progressPercentage = Math.round(((double) AdvancedSearchIndexMonitoringForRequirementVersions.documentsBuilt
-				*100.0 / (double) AdvancedSearchIndexMonitoringForRequirementVersions.addToTotalCount))/100.0;	
+				*100.0 / (double) AdvancedSearchIndexMonitoringForRequirementVersions.addToTotalCount))/100.0;
 		if(isIndexingOver){
 			return 1;
 		} else {

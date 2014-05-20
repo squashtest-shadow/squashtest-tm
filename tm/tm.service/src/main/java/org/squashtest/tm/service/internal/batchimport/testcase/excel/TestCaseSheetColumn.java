@@ -65,10 +65,6 @@ public enum TestCaseSheetColumn implements TemplateColumn {
 		processingMode = OPTIONAL;
 	}
 
-	private TestCaseSheetColumn(CellValueCoercer<?> coercer) {
-		this.header = name();
-		processingMode = OPTIONAL;
-	}
 
 	private TestCaseSheetColumn(String header, ColumnProcessingMode processingMode) {
 		this.header = header;

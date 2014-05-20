@@ -28,17 +28,17 @@ import org.hibernate.type.Type;
 
 
 /**
- * <p>This custom implementation of group_concat. Because it can contain an embedded expression, hibernate will try to parse it just as if 
+ * <p>This custom implementation of group_concat. Because it can contain an embedded expression, hibernate will try to parse it just as if
  * it was within the scope of the main query - thus causing parsing exception.</p>
  * 
  *  <p>To prevent this we had to make the awkward syntax as follow:</p>
- *  
+ * 
  *  <ul>
  *  	<li>group_concat(<it>col identifier</it>) : will concatenate as expected over the column identifier.</li>
- *  	<li>group_concat(<it>col identifier 1</it>, 'order by', <it>col identifier 2</it>, ['asc|desc']) : will send this to the target db as 'group_concat(id1 order by id2 [asc|desc])' 
+ *  	<li>group_concat(<it>col identifier 1</it>, 'order by', <it>col identifier 2</it>, ['asc|desc']) : will send this to the target db as 'group_concat(id1 order by id2 [asc|desc])'
  *  </ul>
- *  
- *  
+ * 
+ * 
  * 
  * 
  * @author bsiri
@@ -53,14 +53,14 @@ public class GroupConcatFunction extends StandardSQLFunction {
 	public GroupConcatFunction(String name) {
 		super(name);
 	}
-	
+
 	@Override
 	public String render(Type firstArgumentType, List arguments, SessionFactoryImplementor sessionFactory) {
-		
+
 		if (arguments.size()==1){
 			return super.render(firstArgumentType, arguments, sessionFactory);
 		}
-		
+
 		else{
 			try{
 				// validation
@@ -71,15 +71,15 @@ public class GroupConcatFunction extends StandardSQLFunction {
 				if (! ((String)arguments.get(1)).equalsIgnoreCase("'order by'")){
 					throw new IllegalArgumentException();
 				}
-				
+
 				// expression
 				return "group_concat("+arguments.get(0)+" order by "+arguments.get(2)+" "+direction+")";
 			}
 			catch(IllegalArgumentException ex){
-				throw new IllegalArgumentException("usage of custom hql group_concat : group_concat(col id, [ 'order by', col id2, ['asc|desc']]");
+				throw new IllegalArgumentException("usage of custom hql group_concat : group_concat(col id, [ 'order by', col id2, ['asc|desc']]", ex);
 			}
 		}
-		
+
 	}
 
 }

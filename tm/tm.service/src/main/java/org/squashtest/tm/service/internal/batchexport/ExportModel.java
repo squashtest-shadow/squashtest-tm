@@ -618,11 +618,11 @@ public class ExportModel {
 	}
 
 	public static final class CustomField {
-		Long ownerId;
-		BindableEntity ownerType;
-		String code;
-		String value;
-		InputType type;
+		private Long ownerId;
+		private BindableEntity ownerType;
+		private String code;
+		private String value;
+		private InputType type;
 
 		public CustomField(Long ownerId, BindableEntity ownerType, String code, String value, InputType type) {
 			super();

@@ -26,6 +26,7 @@ public class DefaultPagingAndSorting implements PagingAndSorting {
 	private Integer pageSize = 10;
 	private Integer firstIndex = 0;
 	private SortOrder order = SortOrder.ASCENDING;
+	private boolean isShouldDisplayAll = false;
 
 	public DefaultPagingAndSorting() {
 		super();
@@ -34,6 +35,12 @@ public class DefaultPagingAndSorting implements PagingAndSorting {
 	public DefaultPagingAndSorting(String sortedAttribute) {
 		super();
 		this.sortedAttribute = sortedAttribute;
+	}
+
+	public DefaultPagingAndSorting(String sortedAttribute, boolean shouldDisplayAll){
+		super();
+		this.sortedAttribute = sortedAttribute;
+		this.isShouldDisplayAll = shouldDisplayAll;
 	}
 
 	public DefaultPagingAndSorting(Integer pageSize) {
@@ -67,7 +74,11 @@ public class DefaultPagingAndSorting implements PagingAndSorting {
 
 	@Override
 	public boolean shouldDisplayAll() {
-		return false;
+		return isShouldDisplayAll;
+	}
+
+	public void setShouldDisplayAll(boolean should) {
+		this.isShouldDisplayAll = should;
 	}
 
 	@Override

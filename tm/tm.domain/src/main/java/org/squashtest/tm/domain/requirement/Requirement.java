@@ -72,7 +72,7 @@ import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
 @PrimaryKeyJoinColumn(name = "RLN_ID")
 public class Requirement extends RequirementLibraryNode<RequirementVersion> implements NodeContainer<Requirement> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Requirement.class);
-	
+
 	/**
 	 * The resource of this requirement is the latest version of the requirement.
 	 */
@@ -85,8 +85,8 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	@Field(analyze=Analyze.NO, store=Store.YES)
 	@FieldBridge(impl = CollectionSizeBridge.class)
 	private List<RequirementVersion> versions = new ArrayList<RequirementVersion>();
-	
-	
+
+
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
 	@OrderColumn(name = "CONTENT_ORDER")
 	@JoinTable(name = "RLN_RELATIONSHIP", joinColumns = @JoinColumn(name = "ANCESTOR_ID"), inverseJoinColumns = @JoinColumn(name = "DESCENDANT_ID"))
@@ -189,8 +189,8 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 		}
 		return copyBySource;
 	}
-	
-	
+
+
 	private boolean isNotLatestVersion(RequirementVersion sourceVersion) {
 		return !getCurrentVersion().equals(sourceVersion);
 	}
@@ -372,7 +372,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 		} catch (IndexOutOfBoundsException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new EntityNotFoundException("Version #" + versionNumber + " of Requirement #" + this.getId()
-					+ " do not exist");
+					+ " do not exist");	// NOSONAR we cannot pass in the original exception
 		}
 	}
 
@@ -381,7 +381,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 
 	@Override
 	public void addContent(@NotNull Requirement child) throws DuplicateNameException,
-			NullArgumentException {
+	NullArgumentException {
 		checkContentNameAvailable(child);
 		children.add(child);
 		children = new ArrayList<Requirement>(children);
@@ -390,7 +390,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 
 	@Override
 	public void addContent(@NotNull Requirement child, int position) throws DuplicateNameException,
-			NullArgumentException {
+	NullArgumentException {
 		checkContentNameAvailable(child);
 		if(position >= children.size()){
 			children.add(child);
@@ -400,7 +400,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 		children = new ArrayList<Requirement>(children);
 		child.notifyAssociatedWithProject(this.getProject());
 	}
-	
+
 	private void checkContentNameAvailable(Requirement child) throws DuplicateNameException {
 		if (!isContentNameAvailable(child.getName())) {
 			throw new DuplicateNameException(child.getName(), child.getName());
@@ -421,7 +421,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	public List<Requirement> getContent() {
 		return children;
 	}
-	
+
 	@Override
 	public Collection<Requirement> getOrderedContent() {
 		return children;
@@ -453,7 +453,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 		visitor.visit(this);
 	}
 
-	
-	
-	
+
+
+
 }

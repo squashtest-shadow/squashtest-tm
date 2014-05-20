@@ -25,7 +25,8 @@ import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 
-public class TestStepView {
+// made "final" because SONAR wants to be sure that subclasses wont mess with overrides and constructors
+public final class TestStepView {
 	private long id;
 	private TestCase testCase;
 	private int totalNumberOfSteps;
@@ -51,17 +52,17 @@ public class TestStepView {
 		testCase = step.getTestCase();
 		setTotalNumberOfSteps(testCase.getSteps().size());
 		int stepIndex = testCase.getPositionOfStep(step.getId());
-		
+
 		order = stepIndex +1;
-				
+
 		if(stepIndex > 0){
 			previousStep = testCase.getSteps().get(stepIndex - 1);
 		}
-	
+
 		if(order < testCase.getSteps().size()){
 			nextStep = testCase.getSteps().get(stepIndex + 1);
 		}
-		
+
 		id = step.getId();
 	}
 

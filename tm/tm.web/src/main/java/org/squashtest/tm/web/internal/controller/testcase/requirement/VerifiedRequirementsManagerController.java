@@ -89,12 +89,12 @@ public class VerifiedRequirementsManagerController {
 
 	@Inject
 	private InternationalizationHelper internationalizationHelper;
-	
+
 	@SuppressWarnings("rawtypes")
 	@Inject
 	@Named("requirement.driveNodeBuilder")
 	private Provider<DriveNodeBuilder<RequirementLibraryNode>> driveNodeBuilder;
-	
+
 	@Inject
 	private TestCaseModificationService testCaseModificationService;
 	@Inject
@@ -105,7 +105,7 @@ public class VerifiedRequirementsManagerController {
 	private RequirementLibraryFinderService requirementLibraryFinder;
 	@Inject
 	private PermissionEvaluationService permissionService;
-	
+
 	private static final String NAME = "name";
 	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions/manager", method = RequestMethod.GET)
 	public String showTestCaseManager(@PathVariable long testCaseId, Model model, @CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
@@ -114,7 +114,7 @@ public class VerifiedRequirementsManagerController {
 		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(openedNodes);
 		model.addAttribute("testCase", testCase);
 		model.addAttribute("linkableLibrariesModel", linkableLibrariesModel);
-		
+
 		return "page/test-cases/show-verified-requirements-manager";
 	}
 
@@ -124,17 +124,17 @@ public class VerifiedRequirementsManagerController {
 		PermissionsUtils.checkPermission(permissionService, new SecurityCheckableObject(testStep, "LINK"));
 
 		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(openedNodes);
-		
+
 		model.addAttribute("testStep", testStep);
 		model.addAttribute("linkableLibrariesModel", linkableLibrariesModel);
-		
+
 		return "page/test-cases/show-step-verified-requirements-manager";
 	}
 
 	@SuppressWarnings("rawtypes")
 	private List<JsTreeNode> createLinkableLibrariesModel(String[] openedNodes) {
 		List<RequirementLibrary> linkableLibraries = requirementLibraryFinder.findLinkableRequirementLibraries();
-		
+
 		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
 		DriveNodeBuilder<RequirementLibraryNode> nodeBuilder = driveNodeBuilder.get();
 
@@ -142,7 +142,7 @@ public class VerifiedRequirementsManagerController {
 				.expand(expansionCandidates)
 				.setModel(linkableLibraries)
 				.build();
-		
+
 	}
 
 	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirements", method = RequestMethod.POST, params = REQUIREMENTS_IDS)
@@ -202,7 +202,7 @@ public class VerifiedRequirementsManagerController {
 	public @ResponseBody
 	void removeVerifiedRequirementVersionsFromTestCase(@PathVariable List<Long> requirementVersionsIds,
 			@PathVariable long testCaseId) {
-		 verifiedRequirementsManagerService.removeVerifiedRequirementVersionsFromTestCase(requirementVersionsIds,
+		verifiedRequirementsManagerService.removeVerifiedRequirementVersionsFromTestCase(requirementVersionsIds,
 				testCaseId);
 
 	}
@@ -228,12 +228,12 @@ public class VerifiedRequirementsManagerController {
 				.findAllVerifiedRequirementsByTestCaseId(testCaseId, pas);
 
 		return new TestCaseWithCalledStepsVerifiedRequirementsDataTableModelHelper(locale, internationalizationHelper)
-				.buildDataModel(holder, params.getsEcho());
+		.buildDataModel(holder, params.getsEcho());
 
 	}
 
 	private static final class TestCaseWithCalledStepsVerifiedRequirementsDataTableModelHelper extends
-			TestCaseVerifiedRequirementsDataTableModelHelper {
+	TestCaseVerifiedRequirementsDataTableModelHelper {
 
 		public TestCaseWithCalledStepsVerifiedRequirementsDataTableModelHelper(Locale locale,
 				InternationalizationHelper internationalizationHelper) {
@@ -280,13 +280,13 @@ public class VerifiedRequirementsManagerController {
 		Locale locale = LocaleContextHolder.getLocale();
 		PagedCollectionHolder<List<VerifiedRequirement>> holder = verifiedRequirementsManagerService
 				.findAllDirectlyVerifiedRequirementsByTestStepId(testStepId, paging);
-		
+
 		TestCase testCase = testCaseModificationService.findTestCaseFromStep(testStepId);
-		return new TestStepVerifiedRequirementsDataTableModelHelper(locale, internationalizationHelper, testStepId, testCase)
-				.buildDataModel(holder, params.getsEcho());
+		return new TestStepVerifiedRequirementsDataTableModelHelper(locale, internationalizationHelper, testStepId, testCase).buildDataModel(holder, params.getsEcho());
 	}
 
-	private static class VerifiedRequirementsDataTableModelHelper extends DataTableModelBuilder<VerifiedRequirement> {
+	private static class VerifiedRequirementsDataTableModelHelper
+	extends DataTableModelBuilder<VerifiedRequirement> { // NOSONAR no, it should not be declared final because it has subclasses in this very file
 		private InternationalizationHelper internationalizationHelper;
 		private Locale locale;
 
@@ -315,7 +315,7 @@ public class VerifiedRequirementsManagerController {
 	}
 
 	private static class TestCaseVerifiedRequirementsDataTableModelHelper extends
-			VerifiedRequirementsDataTableModelHelper {
+	VerifiedRequirementsDataTableModelHelper {
 
 		private TestCaseVerifiedRequirementsDataTableModelHelper(Locale locale,
 				InternationalizationHelper internationalizationHelper) {
@@ -346,10 +346,10 @@ public class VerifiedRequirementsManagerController {
 	}
 
 	private static final class TestStepVerifiedRequirementsDataTableModelHelper extends
-			VerifiedRequirementsDataTableModelHelper {
+	VerifiedRequirementsDataTableModelHelper {
 		private long stepId;
 		private TestCase testCase;
-		
+
 		private TestStepVerifiedRequirementsDataTableModelHelper(Locale locale,
 				InternationalizationHelper internationalizationHelper, long stepId, TestCase testCase) {
 			super(locale, internationalizationHelper);
@@ -369,12 +369,12 @@ public class VerifiedRequirementsManagerController {
 	}
 
 	private DatatableMapper<String> verifiedRequirementVersionsMapper = new NameBasedMapper(7)
-			.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, "id", RequirementVersion.class)
-			.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, NAME, RequirementVersion.class)
-			.mapAttribute("project", NAME, Project.class)
-			.mapAttribute("reference", "reference", RequirementVersion.class)
-			.mapAttribute("versionNumber", "versionNumber", RequirementVersion.class)
-			.mapAttribute("criticality", "criticality", RequirementVersion.class)
-			.mapAttribute("category", "category", RequirementVersion.class);
+	.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, "id", RequirementVersion.class)
+	.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, NAME, RequirementVersion.class)
+	.mapAttribute("project", NAME, Project.class)
+	.mapAttribute("reference", "reference", RequirementVersion.class)
+	.mapAttribute("versionNumber", "versionNumber", RequirementVersion.class)
+	.mapAttribute("criticality", "criticality", RequirementVersion.class)
+	.mapAttribute("category", "category", RequirementVersion.class);
 
 }

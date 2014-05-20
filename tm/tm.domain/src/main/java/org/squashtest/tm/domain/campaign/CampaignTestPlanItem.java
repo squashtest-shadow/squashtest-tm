@@ -54,7 +54,7 @@ public class CampaignTestPlanItem {
 
 	@ManyToOne
 	@JoinColumn(name = "CAMPAIGN_ID", insertable = false, updatable = false)
-	public Campaign campaign;
+	private Campaign campaign;
 
 	public Long getId() {
 		return id;

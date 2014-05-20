@@ -74,7 +74,7 @@ public abstract class SearchInterfaceDescription {
 	 * @author Gregory Fouquet
 	 * 
 	 */
-	protected class OptionBuilder {
+	protected final class OptionBuilder {
 		private final Locale locale;
 		private String label;
 		private String key;
@@ -116,7 +116,7 @@ public abstract class SearchInterfaceDescription {
 		}
 	};
 
-	protected class OptionListBuilder {
+	protected final class OptionListBuilder {
 		private final EnumJeditableComboDataBuilder<?, ?> delegateBuilder;
 		private Locale locale;
 
@@ -149,7 +149,7 @@ public abstract class SearchInterfaceDescription {
 		}
 	}
 
-	protected class PerimeterPanelBuilder {
+	protected final class PerimeterPanelBuilder {
 		private final Locale locale;
 		private String cssClass;
 		private String htmlId;

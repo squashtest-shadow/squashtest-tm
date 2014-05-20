@@ -40,7 +40,7 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 /*
  * that class needs to embbed a real HtmlValidator.
  * 
- * TODO : check the OWASP library and the following class :  
+ * TODO : check the OWASP library and the following class :
  * 
  * http://owasp-esapi-java.googlecode.com/svn/trunk_doc/latest/org/owasp/esapi/filters/SecurityWrapperRequest.html
  * 
@@ -62,7 +62,7 @@ public class HtmlSanitizationFilter implements Filter {
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
-			ServletException {
+	ServletException {
 
 		if (HttpServletRequest.class.isAssignableFrom(request.getClass())) {
 			chain.doFilter(new HtmlSafeRequestWrapper((HttpServletRequest) request), response);
@@ -88,7 +88,7 @@ public class HtmlSanitizationFilter implements Filter {
 	}
 
 	@SuppressWarnings("unchecked")
-	private class HtmlSafeRequestWrapper extends HttpServletRequestWrapper {
+	private static final class HtmlSafeRequestWrapper extends HttpServletRequestWrapper {
 
 		private HttpServletRequest request;
 
@@ -120,7 +120,7 @@ public class HtmlSanitizationFilter implements Filter {
 
 	}
 
-	private static class HtmlSafeParameterMapWrapper implements Map<String, String[]> {
+	private static final class HtmlSafeParameterMapWrapper implements Map<String, String[]> {
 
 		private final Map<String, String[]> wrappedMap;
 

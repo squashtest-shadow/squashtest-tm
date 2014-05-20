@@ -57,7 +57,7 @@ import org.squashtest.tm.service.testcase.ParameterModificationService;
 @Service("CustomTestStepModificationService")
 @Transactional
 public class CustomTestStepModificationServiceImpl implements CustomTestStepModificationService {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomTestStepModificationServiceImpl.class);
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
@@ -122,7 +122,7 @@ public class CustomTestStepModificationServiceImpl implements CustomTestStepModi
 		return step;
 	}
 
-	private final class TestStepUpdater implements TestStepVisitor {
+	private static final class TestStepUpdater implements TestStepVisitor {
 
 		private String expectedResult;
 		private String action;
