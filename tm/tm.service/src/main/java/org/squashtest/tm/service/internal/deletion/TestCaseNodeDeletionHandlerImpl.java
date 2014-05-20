@@ -44,6 +44,7 @@ import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.deletion.LockedFileInferenceGraph.Node;
+import org.squashtest.tm.service.internal.repository.AutomatedTestDao;
 import org.squashtest.tm.service.internal.repository.FolderDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDeletionDao;
@@ -57,7 +58,7 @@ import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 @Component("squashtest.tm.service.deletion.TestCaseNodeDeletionHandler")
 @Transactional
 public class TestCaseNodeDeletionHandlerImpl extends
-		AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements TestCaseNodeDeletionHandler {
+AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements TestCaseNodeDeletionHandler {
 
 	@Inject
 	private TestCaseFolderDao folderDao;
@@ -69,18 +70,21 @@ public class TestCaseNodeDeletionHandlerImpl extends
 	private TestCaseDeletionDao deletionDao;
 	@Inject
 	private TestCaseImportanceManagerService testCaseImportanceManagerService;
-	
+
 	@Inject
 	private DatasetModificationService datasetService;
-	
+
 	@Inject
 	private ParameterModificationService parameterService;
-	
+
 	@Inject
 	private PrivateCustomFieldValueService customValueService;
-	
+
 	@Inject
 	private TestCaseCallTreeFinder calltreeFinder;
+
+	@Inject
+	private AutomatedTestDao autoTestDao;
 
 	@Override
 	protected FolderDao<TestCaseFolder, TestCaseLibraryNode> getFolderDao() {
@@ -133,23 +137,23 @@ public class TestCaseNodeDeletionHandlerImpl extends
 	 * clauses in the other tables.
 	 */
 	protected OperationReport batchDeleteNodes(List<Long> ids) {
-		
+
 		OperationReport report = new OperationReport();
-		
+
 		if (!ids.isEmpty()) {
-			
+
 			List<Long>[] separatedIds = deletionDao.separateFolderFromTestCaseIds(ids);
 
 			List<Long> stepIds = deletionDao.findTestSteps(ids);
 
 			List<Long> testCaseAttachmentIds = deletionDao.findTestCaseAttachmentListIds(ids);
- 			List<Long> testStepAttachmentIds = deletionDao.findTestStepAttachmentListIds(stepIds);
+			List<Long> testStepAttachmentIds = deletionDao.findTestStepAttachmentListIds(stepIds);
 			List<Long> testCaseFolderAttachmentIds = deletionDao.findTestCaseFolderAttachmentListIds(ids);
-			
+
 			deletionDao.removeCampaignTestPlanInboundReferences(ids);
 			deletionDao.removeOrSetIterationTestPlanInboundReferencesToNull(ids);
 
-			deletionDao.setExecutionInboundReferencesToNull(ids); 
+			deletionDao.setExecutionInboundReferencesToNull(ids);
 			deletionDao.setExecStepInboundReferencesToNull(stepIds);
 
 			deletionDao.removeFromVerifyingTestStepsList(stepIds);
@@ -157,9 +161,9 @@ public class TestCaseNodeDeletionHandlerImpl extends
 
 			customValueService.deleteAllCustomFieldValues(BindableEntity.TEST_STEP, stepIds);
 			deletionDao.removeAllSteps(stepIds);
-			
+
 			customValueService.deleteAllCustomFieldValues(BindableEntity.TEST_CASE, ids);
-			
+
 			datasetService.removeAllByTestCaseIds(ids);
 			parameterService.removeAllByTestCaseIds(ids);
 
@@ -171,12 +175,15 @@ public class TestCaseNodeDeletionHandlerImpl extends
 			testCaseAttachmentIds.addAll(testStepAttachmentIds);
 			testCaseAttachmentIds.addAll(testCaseFolderAttachmentIds);
 			deletionDao.removeAttachmentsLists(testCaseAttachmentIds);
-			
+
 			report.addRemoved(separatedIds[0], "folder");
 			report.addRemoved(separatedIds[1], "test-case");
 
+			// Last, take care of the automated tests that could end up as "orphans" after the mass deletion
+			autoTestDao.pruneOrphans();
+
 		}
-		
+
 		return report;
 	}
 
@@ -243,7 +250,7 @@ public class TestCaseNodeDeletionHandlerImpl extends
 		if (graph.hasLockedFiles()) {
 
 			report = new NotDeletablePreviewReport();
-			
+
 			for (Node node : graph.collectLockedCandidates()) {
 				report.addName(node.getName());
 			}
@@ -270,7 +277,7 @@ public class TestCaseNodeDeletionHandlerImpl extends
 
 		return graph;
 	}
-	
+
 	private LinkedToIterationPreviewReport previewAffectedNodes(List<Long> nodeIds) {
 
 		LinkedToIterationPreviewReport report = null;
@@ -279,7 +286,7 @@ public class TestCaseNodeDeletionHandlerImpl extends
 		if (!linkedNodes.isEmpty()) {
 
 			report = new LinkedToIterationPreviewReport();
-			
+
 			for (TestCase node : linkedNodes) {
 				report.addName(node.getName());
 			}

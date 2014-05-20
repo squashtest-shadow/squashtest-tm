@@ -54,7 +54,7 @@ public interface AutomatedTestDao {
 	 * @param testId
 	 * @return
 	 */
-	int countReferences(long testId);
+	long countReferences(long testId);
 
 
 	/**

@@ -34,7 +34,7 @@ import javax.validation.constraints.Size;
 	@NamedQuery(name="automatedTest.countReferencesByTestCases", query="select count(*) from TestCase tc join tc.automatedTest autoTest where autoTest.id = :autoTestId"),
 	@NamedQuery(name="automatedTest.countReferencesByExecutions", query="select count(*) from AutomatedExecutionExtender extender join extender.automatedTest autoTest where autoTest.id = :autoTestId"),
 	@NamedQuery(name="automatedTest.findByTestCase", query="select auto from TestCase tc join tc.automatedTest auto where tc.id in (:testCaseIds)"),
-	@NamedQuery(name="automatedTest.builkDelete", query="delete from AutomatedTest auto where auto in (:tests)"),
+	@NamedQuery(name="automatedTest.bulkDelete", query="delete from AutomatedTest auto where auto in (:tests)"),
 	@NamedQuery(name="automatedTest.findOrphans",
 	query="from AutomatedTest auto where not exists (from TestCase where automatedTest = auto) and not exists (from AutomatedExecutionExtender where automatedTest = auto)")
 })

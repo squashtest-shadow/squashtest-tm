@@ -69,14 +69,17 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 
 		AutomatedTest persisted = null;
 
-		if (test.getId() != null){
+		if (test == null){
+			return;
+		}
+		else if (test.getId() != null){
 			persisted = test;
 		}
 		else{
 			persisted = findByExample(test);
 		}
 
-		if (countReferences(persisted.getId()) == 0){
+		if (countReferences(persisted.getId()) == 0l){
 			sessionFactory.getCurrentSession().delete(persisted);
 		}
 
@@ -92,7 +95,7 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 			return;
 		}
 
-		Query q = session.getNamedQuery("automatedTest.builkDelete");
+		Query q = session.getNamedQuery("automatedTest.bulkDelete");
 		q.setParameterList("tests", orphans);
 		q.executeUpdate();
 
@@ -100,16 +103,16 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 
 
 	@Override
-	public int countReferences(long testId) {
+	public long countReferences(long testId) {
 		Session session = sessionFactory.getCurrentSession();
 
 		Query qCountTC = session.getNamedQuery("automatedTest.countReferencesByTestCases");
 		qCountTC.setParameter("autoTestId", testId);
-		int countTC = ((Integer)qCountTC.iterate().next()).intValue();
+		long countTC = (Long)qCountTC.uniqueResult();
 
 		Query qCountExt = session.getNamedQuery("automatedTest.countReferencesByExecutions");
 		qCountExt.setParameter("autoTestId", testId);
-		int countExt = ((Integer)qCountExt.iterate().next()).intValue();
+		long countExt = (Long)qCountExt.uniqueResult();
 
 		return countTC + countExt;
 	}
