@@ -262,10 +262,62 @@ class ExcelExporter {
 	}
 
 	private void createHeaders() {
+
+		createTestCaseSheetHeaders();
+		createStepSheetHeaders();
+		createParameterSheetHeaders();
+		createDatasetSheetHeaders();
+
+	}
+
+	private void createDatasetSheetHeaders() {
+		Sheet dsSheet = workbook.getSheet(DS_SHEET);
+		Row h = dsSheet.createRow(0);
+		int cIdx = 0;
+
+		h.createCell(cIdx++).setCellValue(DatasetSheetColumn.TC_OWNER_PATH.header);
+		h.createCell(cIdx++).setCellValue(DatasetSheetColumn.TC_OWNER_ID.header);
+		h.createCell(cIdx++).setCellValue(DatasetSheetColumn.TC_DATASET_ID.header);
+		h.createCell(cIdx++).setCellValue(DatasetSheetColumn.TC_DATASET_NAME.header);
+		h.createCell(cIdx++).setCellValue(DatasetSheetColumn.TC_PARAM_OWNER_PATH.header);
+		h.createCell(cIdx++).setCellValue(DatasetSheetColumn.TC_PARAM_OWNER_ID.header);
+		h.createCell(cIdx++).setCellValue(DatasetSheetColumn.TC_DATASET_PARAM_NAME.header);
+		h.createCell(cIdx++).setCellValue(DatasetSheetColumn.TC_DATASET_PARAM_VALUE.header);
+	}
+
+	private void createParameterSheetHeaders() {
+		Sheet pSheet = workbook.getSheet(PRM_SHEET);
+		Row h = pSheet.createRow(0);
+		int cIdx = 0;
+
+		h.createCell(cIdx++).setCellValue(ParameterSheetColumn.TC_OWNER_PATH.header);
+		h.createCell(cIdx++).setCellValue(ParameterSheetColumn.TC_OWNER_ID.header);
+		h.createCell(cIdx++).setCellValue(ParameterSheetColumn.TC_PARAM_ID.header);
+		h.createCell(cIdx++).setCellValue(ParameterSheetColumn.TC_PARAM_NAME.header);
+		h.createCell(cIdx++).setCellValue(ParameterSheetColumn.TC_PARAM_DESCRIPTION.header);
+	}
+
+	private void createStepSheetHeaders() {
+		Sheet stSheet = workbook.getSheet(ST_SHEET);
+		Row h = stSheet.createRow(0);
+		int cIdx = 0;
+
+		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_OWNER_PATH.header);
+		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_OWNER_ID.header);
+		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_ID.header);
+		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_NUM.header);
+		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_IS_CALL_STEP.header);
+		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_ACTION.header);
+		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_EXPECTED_RESULT.header);
+		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_NB_REQ.header);
+		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_NB_ATTACHMENT.header);
+	}
+
+	private void createTestCaseSheetHeaders() {
 		Sheet tcSheet = workbook.getSheet(TC_SHEET);
 		Row h = tcSheet.createRow(0);
-
 		int cIdx = 0;
+
 		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.PROJECT_ID.header);
 		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.PROJECT_NAME.header);
 		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_PATH.header);
@@ -287,41 +339,6 @@ class ExcelExporter {
 		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_CREATED_BY.header);
 		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_LAST_MODIFIED_ON.header);
 		h.createCell(cIdx++).setCellValue(TestCaseSheetColumn.TC_LAST_MODIFIED_BY.header);
-
-		Sheet stSheet = workbook.getSheet(ST_SHEET);
-		h = stSheet.createRow(0);
-		cIdx = 0;
-		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_OWNER_PATH.header);
-		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_OWNER_ID.header);
-		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_ID.header);
-		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_NUM.header);
-		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_IS_CALL_STEP.header);
-		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_ACTION.header);
-		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_EXPECTED_RESULT.header);
-		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_NB_REQ.header);
-		h.createCell(cIdx++).setCellValue(StepSheetColumn.TC_STEP_NB_ATTACHMENT.header);
-
-		Sheet pSheet = workbook.getSheet(PRM_SHEET);
-		h = pSheet.createRow(0);
-		cIdx = 0;
-		h.createCell(cIdx++).setCellValue(ParameterSheetColumn.TC_OWNER_PATH.header);
-		h.createCell(cIdx++).setCellValue(ParameterSheetColumn.TC_OWNER_ID.header);
-		h.createCell(cIdx++).setCellValue(ParameterSheetColumn.TC_PARAM_ID.header);
-		h.createCell(cIdx++).setCellValue(ParameterSheetColumn.TC_PARAM_NAME.header);
-		h.createCell(cIdx++).setCellValue(ParameterSheetColumn.TC_PARAM_DESCRIPTION.header);
-
-		Sheet dsSheet = workbook.getSheet(DS_SHEET);
-		h = dsSheet.createRow(0);
-		cIdx = 0;
-		h.createCell(cIdx++).setCellValue(DatasetSheetColumn.TC_OWNER_PATH.header);
-		h.createCell(cIdx++).setCellValue(DatasetSheetColumn.TC_OWNER_ID.header);
-		h.createCell(cIdx++).setCellValue(DatasetSheetColumn.TC_DATASET_ID.header);
-		h.createCell(cIdx++).setCellValue(DatasetSheetColumn.TC_DATASET_NAME.header);
-		h.createCell(cIdx++).setCellValue(DatasetSheetColumn.TC_PARAM_OWNER_PATH.header);
-		h.createCell(cIdx++).setCellValue(DatasetSheetColumn.TC_PARAM_OWNER_ID.header);
-		h.createCell(cIdx++).setCellValue(DatasetSheetColumn.TC_DATASET_PARAM_NAME.header);
-		h.createCell(cIdx++).setCellValue(DatasetSheetColumn.TC_DATASET_PARAM_VALUE.header);
-
 	}
 
 }

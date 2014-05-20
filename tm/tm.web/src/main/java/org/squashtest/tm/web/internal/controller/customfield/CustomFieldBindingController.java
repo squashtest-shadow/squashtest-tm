@@ -194,7 +194,7 @@ public class CustomFieldBindingController {
 
 	// ************************* inner classes ****************************
 
-	private static class CUFBindingDataTableModelHelper extends DataTableModelBuilder<CustomFieldBinding> {
+	private static final class CUFBindingDataTableModelHelper extends DataTableModelBuilder<CustomFieldBinding> {
 		private CustomFieldJsonConverter converter;
 
 		private CUFBindingDataTableModelHelper(CustomFieldJsonConverter converter) {

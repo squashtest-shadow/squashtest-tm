@@ -111,10 +111,10 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 
 	// ***************** treatment-scoped variables ****************
 
-	List<NODE> outputList;
-	Map<NodeContainer<TreeNode>, Collection<TreeNode>> nextLayer;
-	Map<NodeContainer<TreeNode>, Collection<TreeNode>> sourceLayer;
-	Map<NodeContainer<TreeNode>, Collection<TreeNode>> sourceLayerParents;
+	private List<NODE> outputList;
+	private Map<NodeContainer<TreeNode>, Collection<TreeNode>> nextLayer;
+	private Map<NodeContainer<TreeNode>, Collection<TreeNode>> sourceLayer;
+	private Map<NodeContainer<TreeNode>, Collection<TreeNode>> sourceLayerParents;
 
 	// ******************* code *****************************
 

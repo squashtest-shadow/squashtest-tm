@@ -44,13 +44,14 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
  * </ul>
  * 
  */
-public class TestPlanStatistics {
+// made "final" because SONAR complained about constructors and overridable methods used in there
+public final class TestPlanStatistics {
 	public static final String TOTAL_NUMBER_OF_TEST_CASE_KEY = "total";
 	private int progression;
 	private TestPlanStatus status;
 	private int nbDone ;
 	private Map<String, Integer> statisticValues;
-	
+
 
 	public int getNbTestCases() {
 		return findIntValue(TOTAL_NUMBER_OF_TEST_CASE_KEY);
@@ -75,7 +76,7 @@ public class TestPlanStatistics {
 	public int getNbSettled() {
 		return findIntValue(ExecutionStatus.SETTLED.name());
 	}
-	
+
 	public int getNbBlocked() {
 		return findIntValue(ExecutionStatus.BLOCKED.name())+ findIntValue(ExecutionStatus.ERROR.name());
 	}
@@ -91,7 +92,7 @@ public class TestPlanStatistics {
 	public TestPlanStatus getStatus() {
 		return status;
 	}
-	
+
 	/**
 	 * 
 	 * @return summ of Test-plan-items with status of "untestable", "blocked", "failure" or "success".<br>
@@ -112,7 +113,7 @@ public class TestPlanStatistics {
 		computeProgression();
 		this.status = TestPlanStatus.getStatus(this);
 	}
-	
+
 	private int findIntValue( String key){
 		Integer integer = statisticValues.get(key);
 		if(integer == null){

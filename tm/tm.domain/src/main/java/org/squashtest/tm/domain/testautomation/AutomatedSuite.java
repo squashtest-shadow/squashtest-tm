@@ -41,7 +41,7 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
 	@NamedQuery(name="automatedSuite.findAllById", query="from AutomatedSuite where id in (:suiteIds)"),
 	@NamedQuery(name="automatedSuite.findAllExtenders", query="select ext from AutomatedExecutionExtender ext join ext.automatedSuite s where s.id = :suiteId"),
 	@NamedQuery(name="automatedSuite.findAllExtendersHavingStatus", query="select ext from AutomatedExecutionExtender ext join ext.execution exe join ext.automatedSuite s where s.id = :suiteId and exe.executionStatus in (:statusList)")
-	})
+})
 @Entity
 public class AutomatedSuite  {
 
@@ -52,7 +52,7 @@ public class AutomatedSuite  {
 	private String id;
 
 	@OneToMany(mappedBy="automatedSuite", cascade = {CascadeType.ALL})
-	public Collection<AutomatedExecutionExtender> executionExtenders = new ArrayList<AutomatedExecutionExtender>();
+	private Collection<AutomatedExecutionExtender> executionExtenders = new ArrayList<AutomatedExecutionExtender>();
 
 	public String getId(){
 		return id;
@@ -68,34 +68,34 @@ public class AutomatedSuite  {
 			Collection<AutomatedExecutionExtender> executionExtenders) {
 		this.executionExtenders = executionExtenders;
 	}
-	
+
 	public void addExtender(AutomatedExecutionExtender extender){
 		executionExtenders.add(extender);
 		extender.setAutomatedSuite(this);
 	}
-	
+
 	public void addExtenders(Collection<AutomatedExecutionExtender> extenders){
 		for (AutomatedExecutionExtender extender : extenders){
 			executionExtenders.add(extender);
 		}
 	}
-	
+
 	public boolean hasStarted(){
 		for (AutomatedExecutionExtender extender : executionExtenders){
 			if (extender.getExecution().getExecutionStatus() != ExecutionStatus.READY){
-				return true; 
+				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	public boolean hasEnded(){
 		for (AutomatedExecutionExtender extender : executionExtenders){
 			if (! extender.getExecution().getExecutionStatus().isTerminatedStatus()){
-				return false; 
+				return false;
 			}
 		}
 		return true;
 	}
-	
+
 }

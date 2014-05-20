@@ -31,21 +31,21 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 
 class VerifyingTestCasesTableModelHelper extends DataTableModelBuilder<TestCase> {
-	
-	InternationalizationHelper helper;
-	Locale locale = LocaleContextHolder.getLocale();
-	
+
+	private InternationalizationHelper helper;
+	private Locale locale = LocaleContextHolder.getLocale();
+
 	public VerifyingTestCasesTableModelHelper(InternationalizationHelper helper){
 		this.helper = helper;
 	}
 
 	@Override
 	protected Object buildItemData(TestCase tc) {
-		
+
 		String type = formatExecutionMode(tc.getExecutionMode());
 
 		Map<String, String> row = new HashMap<String, String>(7);
-		
+
 		row.put("tc-id", tc.getId().toString());
 		row.put("tc-index", Long.toString(getCurrentIndex()));
 		row.put("project-name", tc.getProject().getName());
@@ -53,14 +53,14 @@ class VerifyingTestCasesTableModelHelper extends DataTableModelBuilder<TestCase>
 		row.put("tc-name", tc.getName());
 		row.put("tc-type", type);
 		row.put("empty-delete-holder", null);
-		
+
 		return row;
 	}
-	
+
 
 	private String formatExecutionMode(TestCaseExecutionMode mode) {
 		return helper.internationalize(mode, locale);
 	}
-	
+
 
 }

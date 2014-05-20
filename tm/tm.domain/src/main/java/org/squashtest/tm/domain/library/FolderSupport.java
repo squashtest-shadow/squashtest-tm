@@ -109,10 +109,15 @@ public class FolderSupport<NODE extends LibraryNode, FOLDER extends Folder<NODE>
 	}
 
 	private boolean notSameProject(Project thisProject, Project thatProject) {
-		if (thisProject == thatProject) {
+		if (thisProject == null && thatProject == null) {
 			return false;
 		}
-		return thisProject == null || !thisProject.equals(thatProject);
+		else if (thisProject == null){
+			return true;
+		}
+		else{
+			return !thisProject.equals(thatProject);
+		}
 	}
 
 	public boolean hasContent(){

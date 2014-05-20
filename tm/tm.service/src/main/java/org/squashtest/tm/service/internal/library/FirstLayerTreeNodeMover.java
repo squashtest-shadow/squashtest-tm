@@ -76,6 +76,9 @@ import org.squashtest.tm.service.security.SecurityCheckableObject;
 @Component
 @Scope("prototype")
 public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean {
+	private static final String READ = "READ";
+	private static final String CREATE = "CREATE";
+
 	private static final class NodeCollaborators {
 		private final LibraryDao<?,?> libraryDao;
 		private final FolderDao<?,?> folderDao;
@@ -88,7 +91,7 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 			this.nodeDao = nodeDao;
 		}
 	}
-	
+
 	@Inject
 	@Qualifier("squashtest.tm.repository.RequirementLibraryNodeDao")
 	private LibraryNodeDao<RequirementLibraryNode<Resource>> requirementLibraryNodeDao;
@@ -119,7 +122,7 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 	private TreeNode movedNode;
 	private NodeContainer<? extends TreeNode> destination;
 	private boolean projectChanged = false;
-	
+
 	private WhichNodeVisitor whichVisitor = new WhichNodeVisitor();
 	private Map<NodeType, NodeCollaborators> collaboratorsByType = new HashMap<NodeType, NodeCollaborators>();
 
@@ -127,7 +130,7 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 	public void afterPropertiesSet() throws Exception {
 		init();
 	}
-	
+
 	public void init() {
 		NodeCollaborators nc = new NodeCollaborators(campaignLibraryDao, campaignFolderDao, campaignLibraryNodeDao);
 		collaboratorsByType.put(CAMPAIGN_FOLDER, nc);
@@ -150,14 +153,14 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 		movedNode = null;
 		//check destination's hierarchy doesn't contain node to move
 		checkNotMovedInHimself(toMove);
-		//project changed ? 
+		//project changed ?
 		Project sourceProject = toMove.getProject();
 		GenericProject destinationProject = destination.getProject();
 		this.projectChanged = changedProject(sourceProject, destinationProject);
-		
+
 		//process
-		processNodes(toMove);		
-		
+		processNodes(toMove);
+
 		if(projectChanged){
 			movedNode.accept(treeNodeUpdater);
 		}
@@ -170,27 +173,27 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 		movedNode = null;
 		//check destination's hierarchy doesn't contain node to move
 		checkNotMovedInHimself(toMove);
-		//project changed ? 
+		//project changed ?
 		Project sourceProject = toMove.getProject();
 		GenericProject destinationProject = destination.getProject();
 		this.projectChanged = changedProject(sourceProject, destinationProject);
-		
+
 		//process
-		processNodes(toMove, position);		
-		
+		processNodes(toMove, position);
+
 		if(projectChanged){
 			movedNode.accept(treeNodeUpdater);
 		}
 		return movedNode;
 	}
-	
+
 	@Override
 	public boolean isOkToGoDeeper() {
 		return this.projectChanged;
 	}
-	
-	protected void processNodes(TreeNode toMove) {
-		// IGNOREVIOLATIONS:START the cyclomatic complexity here is perfectly manageable by a standard instance of homo computernicus 
+
+	protected void processNodes(TreeNode toMove) { //NOSONAR the cyclomatic complexity here is perfectly manageable by a standard instance of homo computernicus
+
 		NodeType visitedType = whichVisitor.getTypeOf(toMove);
 
 		switch (visitedType) {
@@ -211,13 +214,12 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 		default:
 			throw new IllegalArgumentException("Libraries cannot be copied nor moved !");
 		}
-		// IGNOREVIOLATIONS:END 
+
 	}
 
-	protected void processNodes(TreeNode toMove, int position) {
+	protected void processNodes(TreeNode toMove, int position) { //NOSONAR the cyclomatic complexity here is perfectly manageable by a standard instance of homo computernicus
 		NodeType visitedType = whichVisitor.getTypeOf(toMove);
 
-		// IGNOREVIOLATIONS:START the cyclomatic complexity here is perfectly manageable by a standard instance of homo computernicus 
 		switch (visitedType) {
 		case CAMPAIGN_FOLDER:
 		case REQUIREMENT_FOLDER:
@@ -236,73 +238,73 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 		default:
 			throw new IllegalArgumentException("Libraries cannot be copied nor moved !");
 		}
-		// IGNOREVIOLATIONS:END 
+
 
 	}
 
 	@SuppressWarnings("unchecked")
 	private <LN extends LibraryNode> void visitLibraryNode(LN node, LibraryDao<?,?> libraryDao,
 			FolderDao<?,?> folderDao) {
-		
+
 		NodeContainer<LN> parent = findFolderOrLibraryParent(node, libraryDao, folderDao);
-		
-		PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(destination, "CREATE"), new SecurityCheckableObject(
-				parent, "DELETE"), new SecurityCheckableObject(node, "READ"));
-		
+
+		PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(destination, CREATE), new SecurityCheckableObject(
+				parent, "DELETE"), new SecurityCheckableObject(node, READ));
+
 		node.notifyAssociatedWithProject((Project)destination.getProject());
 		moveNode(node, (NodeContainer<LN>) destination, parent);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private <LN extends LibraryNode> void visitLibraryNode(LN node, LibraryDao<?,?> libraryDao,
 			FolderDao<?,?> folderDao, int position) {
-		
+
 		NodeContainer<LN> parent = findFolderOrLibraryParent(node, libraryDao, folderDao);
-		
-		PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(destination, "CREATE"), new SecurityCheckableObject(
-				parent, "DELETE"), new SecurityCheckableObject(node, "READ"));
-		
+
+		PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(destination, CREATE), new SecurityCheckableObject(
+				parent, "DELETE"), new SecurityCheckableObject(node, READ));
+
 		node.notifyAssociatedWithProject((Project)destination.getProject());
 		moveNode(node, (NodeContainer<LN>) destination, parent, position);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private  <LN extends LibraryNode>  void visitWhenNodeIsRequirement(Requirement node) {
-		
+
 		NodeContainer<Requirement> parent = findFolderOrLibraryParent(node, requirementLibraryDao, requirementFolderDao);
 		if (parent == null){
 			parent = requirementDao.findByContent(node);
 		}
-		
-		PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(destination, "CREATE"), new SecurityCheckableObject(
-				parent, "DELETE"), new SecurityCheckableObject(node, "READ"));
-		
+
+		PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(destination, CREATE), new SecurityCheckableObject(
+				parent, "DELETE"), new SecurityCheckableObject(node, READ));
+
 		node.notifyAssociatedWithProject((Project)destination.getProject());
 		moveNode((LN)node, (NodeContainer<LN>) destination,(NodeContainer<LN>) parent);
 	}
 
 	@SuppressWarnings("unchecked")
 	private  <LN extends LibraryNode>  void visitWhenNodeIsRequirement(Requirement node, int position) {
-		
+
 		NodeContainer<Requirement> parent = findFolderOrLibraryParent(node, requirementLibraryDao, requirementFolderDao);
 		if (parent == null){
 			parent = requirementDao.findByContent(node);
 		}
-		
-		PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(destination, "CREATE"), new SecurityCheckableObject(
-				parent, "DELETE"), new SecurityCheckableObject(node, "READ"));
-		
+
+		PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(destination, CREATE), new SecurityCheckableObject(
+				parent, "DELETE"), new SecurityCheckableObject(node, READ));
+
 		node.notifyAssociatedWithProject((Project)destination.getProject());
 		moveNode((LN)node, (NodeContainer<LN>) destination,(NodeContainer<LN>) parent, position);
 	}
-	
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private <LN extends LibraryNode> NodeContainer<LN> findFolderOrLibraryParent(LN node, LibraryDao libraryDao,
 			FolderDao folderDao) {
 		Library<? extends LibraryNode> parentLib = libraryDao.findByRootContent(node);
 		return ((parentLib != null) ? parentLib : folderDao.findByContent(node));
 	}
-	
+
 
 
 	private <TN extends TreeNode> void moveNode(TN toMove, NodeContainer<TN> destination, NodeContainer<TN> toMoveParent) {
@@ -329,14 +331,14 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 	 * @return true if the source and destination projects are the same.
 	 * 
 	 */
-	private boolean changedProject(Project sourceProject , GenericProject destinationProject) {		
+	private boolean changedProject(Project sourceProject , GenericProject destinationProject) {
 		return (sourceProject != null && destinationProject != null && !sourceProject.getId().equals(destinationProject.getId()));
 	}
-	
+
 	/**
 	 * Will check if the treeNode to move is not his destination and if it is not contained in the hierarchy of it's destination.
 	 * @param toMove
-	 * @return 
+	 * @return
 	 */
 	private void checkNotMovedInHimself(TreeNode toMove) {
 

@@ -33,7 +33,7 @@ import org.springframework.util.ReflectionUtils;
  * @author Gregory Fouquet
  * 
  */
-public class ReflectionFieldSetter<VAL, TARGET> implements PropertySetter<VAL, TARGET> {
+public final class ReflectionFieldSetter<VAL, TARGET> implements PropertySetter<VAL, TARGET> {
 	private final String fieldName;
 	/**
 	 * when value is optional, <code>null</code> values are not set.

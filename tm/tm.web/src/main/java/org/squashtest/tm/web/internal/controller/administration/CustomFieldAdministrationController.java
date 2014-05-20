@@ -59,7 +59,7 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
  */
 @Controller
 @RequestMapping("/administration/custom-fields")
-public class CustomFieldAdministrationController {
+public final class CustomFieldAdministrationController {
 
 	private static final String NAME = "name";
 	private static final String LABEL = "label";
@@ -106,9 +106,9 @@ public class CustomFieldAdministrationController {
 	 * column index is of all table's columns (displayed or not)
 	 */
 	private final DatatableMapper<String> customFieldTableMapper = new NameBasedMapper(3)
-			.mapAttribute(NAME, NAME, CustomField.class)
-			.mapAttribute(LABEL, LABEL, CustomField.class)
-			.mapAttribute("input-type", INPUT_TYPE, CustomField.class);
+	.mapAttribute(NAME, NAME, CustomField.class)
+	.mapAttribute(LABEL, LABEL, CustomField.class)
+	.mapAttribute("input-type", INPUT_TYPE, CustomField.class);
 
 	/**
 	 * Return the DataTableModel to display the table of all custom fields.

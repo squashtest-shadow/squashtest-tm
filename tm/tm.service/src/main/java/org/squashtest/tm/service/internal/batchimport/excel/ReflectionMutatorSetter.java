@@ -34,7 +34,7 @@ import org.springframework.util.ReflectionUtils;
  * @author Gregory Fouquet
  * 
  */
-public class ReflectionMutatorSetter<VAL, TARGET> implements PropertySetter<VAL, TARGET> {
+public final class ReflectionMutatorSetter<VAL, TARGET> implements PropertySetter<VAL, TARGET> {
 	private final String mutatorName;
 	/**
 	 * mutator's formal parameter type.

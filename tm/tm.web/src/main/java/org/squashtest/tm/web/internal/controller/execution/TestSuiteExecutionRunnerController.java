@@ -88,7 +88,7 @@ public class TestSuiteExecutionRunnerController {
 
 	@Inject
 	private ExecutionProcessingService executionRunner;
-	
+
 	@Inject
 	private TestSuiteFinder suiteFinder;
 
@@ -100,13 +100,13 @@ public class TestSuiteExecutionRunnerController {
 
 	@Inject
 	private ServletContext servletContext;
-	
+
 	@Inject
 	private BugTrackersLocalService bugTrackersLocalService;
-	
+
 	@Inject
-	private BugTrackerFinderService bugTrackerFinderService;	
-	
+	private BugTrackerFinderService bugTrackerFinderService;
+
 
 	public TestSuiteExecutionRunnerController() {
 		super();
@@ -128,7 +128,7 @@ public class TestSuiteExecutionRunnerController {
 		try {
 			testSuiteExecutionRunner.startResume(testSuiteId);
 		} catch (TestPlanItemNotExecutableException e) {
-			throw new TestPlanTerminatedOrNoStepsException();
+			throw new TestPlanTerminatedOrNoStepsException(e);
 		}
 	}
 
@@ -150,9 +150,9 @@ public class TestSuiteExecutionRunnerController {
 		RunnerState state = helper.createOptimizedRunnerState(testSuiteId, execution, contextPath(), locale);
 		state.setBaseStepUrl(stepsAbsoluteUrl(testSuiteId, execution));
 		model.addAttribute("config", state);
-		
+
 		try{
-			Project project = suiteFinder.findById(testSuiteId).getProject();	
+			Project project = suiteFinder.findById(testSuiteId).getProject();
 			BugTracker bugtracker = project.findBugTracker();
 			BugTrackerInterfaceDescriptor descriptor = bugTrackersLocalService.getInterfaceDescriptor(bugtracker);
 			model.addAttribute("interfaceDescriptor", descriptor);
@@ -161,7 +161,7 @@ public class TestSuiteExecutionRunnerController {
 		catch(NoBugTrackerBindingException ex){
 			//well, no bugtracker then. It's fine.
 		}
-		
+
 		return OPTIMIZED_RUNNER_MAIN;
 
 	}

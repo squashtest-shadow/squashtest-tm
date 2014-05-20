@@ -28,6 +28,7 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.springframework.stereotype.Repository;
+import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -38,7 +39,8 @@ import org.squashtest.tm.service.internal.repository.CustomRequirementVersionCov
 
 @Repository("CustomRequirementVersionCoverageDao")
 public class HibernateRequirementVersionCoverageDao extends HibernateEntityDao<RequirementVersionCoverage> implements
-		CustomRequirementVersionCoverageDao {
+CustomRequirementVersionCoverageDao {
+
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -92,33 +94,8 @@ public class HibernateRequirementVersionCoverageDao extends HibernateEntityDao<R
 
 	@Override
 	public List<RequirementVersion> findDistinctRequirementVersionsByTestCases(Collection<Long> testCaseIds) {
-		PagingAndSorting pas = new PagingAndSorting() {
-
-			@Override
-			public String getSortedAttribute() {
-				return "RequirementVersion.name";
-			}
-
-			@Override
-			public SortOrder getSortOrder() {
-				return SortOrder.ASCENDING;
-			}
-
-			@Override
-			public boolean shouldDisplayAll() {
-				return true;
-			}
-
-			@Override
-			public int getPageSize() {
-				return 0;
-			}
-
-			@Override
-			public int getFirstItemIndex() {
-				return 0;
-			}
-		};
+		PagingAndSorting pas = new DefaultPagingAndSorting("RequirementVersion.name", true);
 		return findDistinctRequirementVersionsByTestCases(testCaseIds, pas);
 	}
+
 }

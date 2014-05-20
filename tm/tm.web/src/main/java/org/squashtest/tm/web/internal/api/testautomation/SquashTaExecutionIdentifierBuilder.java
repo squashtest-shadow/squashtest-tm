@@ -31,7 +31,7 @@ import org.thymeleaf.util.Validate;
  * @author Gregory Fouquet
  * 
  */
-class SquashTaExecutionIdentifierBuilder {
+final class SquashTaExecutionIdentifierBuilder {
 	private String projectName;
 	private String suiteId;
 	private String dottedTestPath;
@@ -52,7 +52,7 @@ class SquashTaExecutionIdentifierBuilder {
 
 	public AutomatedExecutionSetIdentifier build() {
 		checkState();
-		
+
 		String slashedPath = dottedTestPath.replace('.', '/');
 		final String testFullName = slashedPath + '/' + testName;
 
@@ -82,7 +82,7 @@ class SquashTaExecutionIdentifierBuilder {
 		Validate.notNull(projectName, "projectName should not be null");
 		Validate.notNull(dottedTestPath, "dottedTestPath should not be null");
 		Validate.notNull(testName, "testName should not be null");
-		
+
 	}
 
 	public SquashTaExecutionIdentifierBuilder automationProjectName(@NotNull String name) {

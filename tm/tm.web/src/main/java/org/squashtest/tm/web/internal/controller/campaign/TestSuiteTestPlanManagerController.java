@@ -87,6 +87,9 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 @Controller
 public class TestSuiteTestPlanManagerController {
 
+	private static final String UNBOUND_SUITE_IDS = "unboundSuiteIds[]";
+	private static final String BOUND_SUITE_IDS = "boundSuiteIds[]";
+	private static final String BIND_TEST_PLAN_ITEMS_TO_TEST_SUITES = "bind test plan items to test suites";
 	private static final String FALSE = "false";
 	private static final String TESTCASES_IDS_REQUEST_PARAM = "testCasesIds[]";
 	private static final String TEST_SUITE = "testSuite";
@@ -256,7 +259,7 @@ public class TestSuiteTestPlanManagerController {
 	public @ResponseBody
 	Map<String, List<Long>> bindTestPlan(@RequestParam(ITEM_IDS) List<Long> itpIds,
 			@PathVariable("suiteIds") List<Long> suitesIds) {
-		LOGGER.debug("bind test plan items to test suites");
+		LOGGER.debug(BIND_TEST_PLAN_ITEMS_TO_TEST_SUITES);
 		testSuiteTestPlanManagerService.bindTestPlanToMultipleSuites(suitesIds, itpIds);
 		Map<String, List<Long>> result = new HashMap<String, List<Long>>();
 		result.put("ids", suitesIds);
@@ -264,30 +267,30 @@ public class TestSuiteTestPlanManagerController {
 	}
 
 	@RequestMapping(value = "/test-suites/test-plan", method = RequestMethod.POST, params = { ITEM_IDS,
-			"boundSuiteIds[]", "unboundSuiteIds[]" })
+			BOUND_SUITE_IDS, UNBOUND_SUITE_IDS })
 	public @ResponseBody
 	void changeboundTestPlan(@RequestParam(ITEM_IDS) List<Long> itpIds,
-			@RequestParam("boundSuiteIds[]") List<Long> boundTestSuitesIds,
-			@RequestParam("unboundSuiteIds[]") List<Long> unboundTestSuiteIds) {
-		LOGGER.debug("bind test plan items to test suites");
+			@RequestParam(BOUND_SUITE_IDS) List<Long> boundTestSuitesIds,
+			@RequestParam(UNBOUND_SUITE_IDS) List<Long> unboundTestSuiteIds) {
+		LOGGER.debug(BIND_TEST_PLAN_ITEMS_TO_TEST_SUITES);
 		testSuiteTestPlanManagerService.bindTestPlanToMultipleSuites(boundTestSuitesIds, itpIds);
 		testSuiteTestPlanManagerService.unbindTestPlanToMultipleSuites(unboundTestSuiteIds, itpIds);
 	}
 	
-	@RequestMapping(value = "/test-suites/test-plan", method = RequestMethod.POST, params = { ITEM_IDS, "unboundSuiteIds[]" })
+	@RequestMapping(value = "/test-suites/test-plan", method = RequestMethod.POST, params = { ITEM_IDS, UNBOUND_SUITE_IDS })
 	public @ResponseBody
 	void unbindTestPlans(@RequestParam(ITEM_IDS) List<Long> itpIds,
-			@RequestParam("unboundSuiteIds[]") List<Long> unboundTestSuiteIds) {
-		LOGGER.debug("bind test plan items to test suites");
+			@RequestParam(UNBOUND_SUITE_IDS) List<Long> unboundTestSuiteIds) {
+		LOGGER.debug(BIND_TEST_PLAN_ITEMS_TO_TEST_SUITES);
 		testSuiteTestPlanManagerService.unbindTestPlanToMultipleSuites(unboundTestSuiteIds, itpIds);
 	}
 	
 	@RequestMapping(value = "/test-suites/test-plan", method = RequestMethod.POST, params = { ITEM_IDS,
-			"boundSuiteIds[]" })
+	BOUND_SUITE_IDS })
 	public @ResponseBody
 	void bindTestPlans(@RequestParam(ITEM_IDS) List<Long> itpIds,
-			@RequestParam("boundSuiteIds[]") List<Long> boundTestSuitesIds) {
-		LOGGER.debug("bind test plan items to test suites");
+			@RequestParam(BOUND_SUITE_IDS) List<Long> boundTestSuitesIds) {
+		LOGGER.debug(BIND_TEST_PLAN_ITEMS_TO_TEST_SUITES);
 		testSuiteTestPlanManagerService.bindTestPlanToMultipleSuites(boundTestSuitesIds, itpIds);
 	}
 

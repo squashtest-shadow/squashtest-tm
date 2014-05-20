@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.importer;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +35,7 @@ import org.slf4j.LoggerFactory;
  */
 /* package-private */final class UrlParser {
 	private UrlParser(){
-		
+
 	}
 	private static final Logger LOGGER = LoggerFactory.getLogger(UrlParser.class);
 	/* *****************************Path extraction*********************************** */
@@ -43,13 +44,13 @@ import org.slf4j.LoggerFactory;
 	 * <ul>
 	 * <li>names are added one by one to the end of the list</li>
 	 * <li>folder names are separated by '/', </li>
- 	 * <li>'//' is read as a '/' in the folder name</li>
- 	 * <li>'///' is interpreted as one '/' in the name and the end of the name</li>
- 	 * <li>'/ //' is interpreted as the end of the name and one '/' in the next name</li>
- 	 * <li>all space characters at the beginning and at the end of extracted names are removed.</li>
- 	 * </ul>
+	 * <li>'//' is read as a '/' in the folder name</li>
+	 * <li>'///' is interpreted as one '/' in the name and the end of the name</li>
+	 * <li>'/ //' is interpreted as the end of the name and one '/' in the next name</li>
+	 * <li>all space characters at the beginning and at the end of extracted names are removed.</li>
+	 * </ul>
 	 * <br>
-	 * As examples: 
+	 * As examples:
 	 * <ul>
 	 * <li>"name1/name2/name3" => "name1" + "name2" + "name3"</li>
 	 * <li>"/name1//name2/name3" => "name1/name2" + "name3"</li>
@@ -57,7 +58,7 @@ import org.slf4j.LoggerFactory;
 	 * <li>"///name1/ //name2/ name3 " => "/name1" + "/name2" + "name3"</li>
 	 * </ul>
 	 */
-	public static LinkedList<String> extractFoldersNames(String path) {
+	public static List<String> extractFoldersNames(String path) {
 		LinkedList<String> nameList = new LinkedList<String>();
 		String trimedPath = path.trim();
 		StringReader pathReader = new StringReader(trimedPath);
@@ -75,30 +76,30 @@ import org.slf4j.LoggerFactory;
 			}
 		} catch (IOException e) {
 			LOGGER.warn(e.getMessage());
-			
+
 		}
 
 		return nameList;
 	}
 
-	private static int readFirstFolder(LinkedList<String> nameList, StringReader pathReader, int pathCharIntParam) throws IOException {
+	private static int readFirstFolder(List<String> nameList, StringReader pathReader, int pathCharIntParam) throws IOException {
 		int pathCharInt = pathCharIntParam;
 		StringBuffer nameBuffer = new StringBuffer();
-			int slashesNumber = 1;
+		int slashesNumber = 1;
+		pathCharInt = pathReader.read();
+		while (pathCharInt != -1 && ((char) pathCharInt == '/')) {
+			slashesNumber++;
 			pathCharInt = pathReader.read();
-			while (pathCharInt != -1 && ((char) pathCharInt == '/')) {
-				slashesNumber++;
-				pathCharInt = pathReader.read();
-			}
-			int slashesToaddToBuffer;
-			if (isEven(slashesNumber)) {
-				slashesToaddToBuffer = slashesNumber / 2;
-			} else {
-				slashesToaddToBuffer = (slashesNumber - 1) / 2;
-			}
-			addSlashesToBuffer(nameBuffer, slashesToaddToBuffer);
-			pathCharInt = readName(pathCharInt, pathReader, nameBuffer, nameList);
-		
+		}
+		int slashesToaddToBuffer;
+		if (isEven(slashesNumber)) {
+			slashesToaddToBuffer = slashesNumber / 2;
+		} else {
+			slashesToaddToBuffer = (slashesNumber - 1) / 2;
+		}
+		addSlashesToBuffer(nameBuffer, slashesToaddToBuffer);
+		pathCharInt = readName(pathCharInt, pathReader, nameBuffer, nameList);
+
 		return pathCharInt;
 	}
 
@@ -107,7 +108,7 @@ import org.slf4j.LoggerFactory;
 		return readName(pathCharInt, pathReader, folderNameBuffer, nameList);
 	}
 
-	private static int readName(int pathCharIntParam, StringReader pathReader, StringBuffer folderNameBuffer, LinkedList<String> nameList) throws IOException {
+	private static int readName(int pathCharIntParam, StringReader pathReader, StringBuffer folderNameBuffer, List<String> nameList) throws IOException {
 		Integer slashesNumber = 0;
 		int pathCharInt = pathCharIntParam;
 		while(pathCharInt != -1){
@@ -116,7 +117,7 @@ import org.slf4j.LoggerFactory;
 					slashesNumber ++;
 					pathCharInt = pathReader.read();
 				}
-				int slashesToAdd ; 
+				int slashesToAdd ;
 				if(isEven(slashesNumber)){
 					slashesToAdd = slashesNumber / 2;
 					addSlashesToBuffer(folderNameBuffer, slashesToAdd);
@@ -129,7 +130,7 @@ import org.slf4j.LoggerFactory;
 			}
 			folderNameBuffer.append((char)pathCharInt);
 			pathCharInt = pathReader.read();
-			
+
 		}
 		String name = folderNameBuffer.toString();
 		nameList.add(name.trim());
@@ -140,7 +141,7 @@ import org.slf4j.LoggerFactory;
 		for (int i = 0; i < slashesToAdd; i++) {
 			folderNameBuffer.append('/');
 		}
-		
+
 	}
 
 	private static boolean isEven(int n) {

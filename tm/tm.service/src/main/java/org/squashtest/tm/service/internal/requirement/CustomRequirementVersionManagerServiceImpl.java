@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
@@ -44,6 +45,7 @@ import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 @Service("CustomRequirementVersionManagerService")
 @Transactional
 public class CustomRequirementVersionManagerServiceImpl implements CustomRequirementVersionManagerService {
+
 	@Inject
 	private RequirementVersionDao requirementVersionDao;
 	@Inject
@@ -75,35 +77,14 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 
 		return new PagingBackedPagedCollectionHolder<List<RequirementVersion>>(pas, versionsCount, versions);
 	}
-	
-	 @Override
-	 @PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'READ') or hasRole('ROLE_ADMIN')")		
+
+	@Override
+	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'READ') or hasRole('ROLE_ADMIN')")
 	public List<RequirementVersion> findAllByRequirement(long requirementId) {
-		 PagingAndSorting pas = new PagingAndSorting() {
-			
-			@Override
-			public String getSortedAttribute() {
-				return "versionNumber";
-			}
-			
-			@Override
-			public SortOrder getSortOrder() {return SortOrder.DESCENDING;
-			}
-			
-			@Override
-			public boolean shouldDisplayAll() {return true;
-			}
-			
-			@Override
-			public int getPageSize() {
-				return 0;
-			}
-			
-			@Override
-			public int getFirstItemIndex() {
-				return 0;
-			}
-		};
+		DefaultPagingAndSorting pas = new DefaultPagingAndSorting("versionNumber", true);
+		pas.setSortOrder(SortOrder.DESCENDING);
 		return findAllByRequirement(requirementId, pas).getPagedItems();
 	}
+
+
 }

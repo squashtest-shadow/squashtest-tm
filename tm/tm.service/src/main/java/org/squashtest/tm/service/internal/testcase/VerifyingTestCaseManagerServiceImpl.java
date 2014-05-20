@@ -36,6 +36,7 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
@@ -155,10 +156,10 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 				coverage.checkCanRemoveTestCaseFromRequirementVersion();
 				requirementVersionCoverageDao.delete(coverage);
 			}
-			
+
 			indexationService.reindexTestCases(testCases);
 			indexationService.reindexRequirementVersion(requirementVersionId);
-			
+
 			testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromReq(testCasesIds,
 					requirementVersionId);
 		}
@@ -188,32 +189,8 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 
 	@Override
 	public List<TestCase> findAllByRequirementVersion(long requirementVersionId) {
-		PagingAndSorting pas = new PagingAndSorting(){
 
-			@Override
-			public int getFirstItemIndex() {
-				return 0;
-			}
-
-			@Override
-			public int getPageSize() {
-				return 0;
-			}
-
-			@Override
-			public boolean shouldDisplayAll() {
-				return true;
-			}
-
-			@Override
-			public String getSortedAttribute() {return "Project.name";
-			}
-
-			@Override
-			public SortOrder getSortOrder() {return SortOrder.ASCENDING;
-			}
-			
-		};
+		DefaultPagingAndSorting pas = new DefaultPagingAndSorting( "Project.name", true);
 		return findAllByRequirementVersion(requirementVersionId, pas).getPagedItems();
 	}
 

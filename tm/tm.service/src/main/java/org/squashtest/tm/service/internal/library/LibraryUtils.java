@@ -42,28 +42,28 @@ public final class LibraryUtils {
 	 * @return
 	 */
 	public static String generateUniqueName(List<String> copiesNames, String sourceName, String token, int maxNameSize) {
-	  TokenHelper helper = new SimpleTokenHelper(token);
-	  return generateUniqueName(copiesNames, sourceName, maxNameSize, helper);
+		TokenHelper helper = new SimpleTokenHelper(token);
+		return generateUniqueName(copiesNames, sourceName, maxNameSize, helper);
 	}
-	
-	
+
+
 	private static String generateUniqueName(Collection<String> copiesNames, String sourceName, int maxNameSize,
 			TokenHelper helper) {
 		String result = "";
 		String baseName = sourceName;
 		String tokenRegexp = helper.getTokenRegexp();
-		
+
 		int newCopyNumber = generateUniqueIndex(copiesNames, baseName, 0, tokenRegexp);
 		result =  helper.buildResult(newCopyNumber, baseName);
-		
+
 		while(result.length() > maxNameSize){
 			int extraCharsNumber = result.length() - maxNameSize;
 			baseName = substringBaseName(baseName, extraCharsNumber);
-			
+
 			newCopyNumber = generateUniqueIndex(copiesNames, baseName, newCopyNumber, tokenRegexp);
 			result =  helper.buildResult(newCopyNumber, baseName);
 		}
-		
+
 		return result;
 	}
 
@@ -72,14 +72,14 @@ public final class LibraryUtils {
 		String getTokenRegexp();
 		String buildResult(int index, String baseName);
 	}
-	
+
 	private static class SimpleTokenHelper implements TokenHelper{
 		private String token;
-		
+
 		public SimpleTokenHelper(String token){
 			this.token = token;
 		}
-		
+
 		@Override
 		public String buildResult(int index, String baseName) {
 			return baseName + token + index;
@@ -89,9 +89,9 @@ public final class LibraryUtils {
 			return token+"(\\d+)";
 		}
 	}
-	
+
 	private static class ParenthesisTokenHelper implements TokenHelper{
-		
+
 		@Override
 		public String buildResult(int index, String baseName) {
 			return baseName+ " (" + index + ")";
@@ -104,7 +104,7 @@ public final class LibraryUtils {
 
 	public static String generateUniqueCopyName(List<String> copiesNames, String sourceName, int maxNameSize) {
 		return generateUniqueName(copiesNames, sourceName, COPY_TOKEN, maxNameSize);
-		
+
 	}
 
 	private static String substringBaseName(String baseName, int extraCharsNumber) {
@@ -123,7 +123,7 @@ public final class LibraryUtils {
 	 * @return a non clashing name
 	 */
 	public static String generateNonClashingName(String source, Collection<String> siblings, int maxNameSize) {
-		
+
 		if (noNameClash(source, siblings)) {
 			return source;
 		}
@@ -131,13 +131,12 @@ public final class LibraryUtils {
 		return generateUniqueName(siblings, source, maxNameSize, helper);
 	}
 
-	
-	
+
+
 	private static int generateUniqueIndex(Collection<String> siblings, String baseName, int minIndex, String tokenRegexp){
 		List<String> potentialClashes = filterPotentialClashes(baseName, siblings);
 		Pattern p = Pattern.compile(Pattern.quote(baseName) + tokenRegexp);
-		int index = computeNonClashingIndex(p, potentialClashes, minIndex);
-		return index;
+		return computeNonClashingIndex(p, potentialClashes, minIndex);
 	}
 
 	private static int computeNonClashingIndex(Pattern indexLookupPattern, Collection<String> potentialClashes, int minCopyNumber) {
@@ -173,5 +172,5 @@ public final class LibraryUtils {
 		return siblings.size() == 0 || !siblings.contains(name);
 	}
 
-	
+
 }

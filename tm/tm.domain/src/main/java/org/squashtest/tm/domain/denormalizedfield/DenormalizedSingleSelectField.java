@@ -77,7 +77,7 @@ public class DenormalizedSingleSelectField extends DenormalizedFieldValue {
 			this.addOption(option);
 		}
 	}
-	
+
 	public DenormalizedSingleSelectField(String value, CustomFieldBinding binding, Long denormalizedFieldHolderId,
 			DenormalizedFieldHolderType denormalizedFieldHolderType) {
 		super(value, binding, denormalizedFieldHolderId, denormalizedFieldHolderType);
@@ -86,7 +86,7 @@ public class DenormalizedSingleSelectField extends DenormalizedFieldValue {
 			this.addOption(option);
 		}
 	}
-	
+
 	public DenormalizedSingleSelectField(CustomFieldValue customFieldValue, int newBindingPosition,
 			Long denormalizedFieldHolderId, DenormalizedFieldHolderType denormalizedFieldHolderType) {
 		super(customFieldValue, newBindingPosition, denormalizedFieldHolderId, denormalizedFieldHolderType);
@@ -95,7 +95,7 @@ public class DenormalizedSingleSelectField extends DenormalizedFieldValue {
 			this.addOption(option);
 		}
 	}
-	
+
 	/**
 	 * Will check if label and the code are available among the existing options. If so, will add the new option at the
 	 * end of the list. Else will throw a NameAlreadyInUseException or CodeAlreadyExistsException.
@@ -104,7 +104,8 @@ public class DenormalizedSingleSelectField extends DenormalizedFieldValue {
 	 * @param option
 	 *            : the new option
 	 */
-	public void addOption(CustomFieldOption option) {
+	// made 'final' because it's used in the constructor (and SONAR complained about that)
+	public final void addOption(CustomFieldOption option) {
 		checkLabelAvailable(option.getLabel());
 		checkCodeAvailable(option.getCode());
 		// TODO fix [Task 1682] and remove this line

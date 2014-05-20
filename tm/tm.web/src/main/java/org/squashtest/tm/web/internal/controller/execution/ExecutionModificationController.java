@@ -92,13 +92,13 @@ public class ExecutionModificationController {
 
 	@Inject
 	private ExecutionModificationService executionModService;
-	
+
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
 
 	@Inject
 	private DenormalizedFieldValueManager denormalizedFieldValueFinder;
-	
+
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentHelper;
 
@@ -112,7 +112,7 @@ public class ExecutionModificationController {
 
 	@Inject
 	private CustomFieldValueFinderService cufValueService;
-	
+
 	@Inject
 	private CustomFieldJsonConverter converter;
 
@@ -125,27 +125,27 @@ public class ExecutionModificationController {
 		int rank = executionModService.findExecutionRank(executionId);
 		LOGGER.trace("ExecutionModService : getting execution {}, rank {}", executionId, rank);
 		List<DenormalizedFieldValue> values = denormalizedFieldValueFinder.findAllForEntity(execution);
-		
+
 		// step properties
 		List<AoColumnDef> columnDefs;
-		
+
 		boolean hasCUF = cufHelperService.hasCustomFields(execution);
 		List<CustomFieldValue> customFieldValues = cufHelperService.newHelper(execution).getCustomFieldValues();
 		columnDefs = findColumnDefForSteps(execution);
 		List<CustomFieldModel> dfvDefinitions = Collections.emptyList();
-		
+
 		if (!execution.getSteps().isEmpty()) {
-	
+
 			CustomFieldHelper<ExecutionStep> helper = cufHelperService.newHelper(execution.getSteps())
 					.setRenderingLocations(RenderingLocation.STEP_TABLE).restrictToCommonFields();
-			
+
 			List<CustomFieldModel> cufDefinitions = convertToJsonCustomField(helper.getCustomFieldConfiguration());
-			
+
 			List<DenormalizedFieldValue> firstStepDfv = denormalizedFieldValueFinder.findAllForEntityAndRenderingLocation(execution.getSteps().get(0), RenderingLocation.STEP_TABLE);
 			dfvDefinitions = convertToJsonCustomField(firstStepDfv);
 			dfvDefinitions.addAll(cufDefinitions);
-		}		
-		
+		}
+
 		ModelAndView mav = new ModelAndView("page/campaign-libraries/show-execution");
 		mav.addObject("execution", execution);
 		mav.addObject("executionRank", Integer.valueOf(rank + 1));
@@ -167,7 +167,7 @@ public class ExecutionModificationController {
 		}
 		return models;
 	}
-		
+
 	private List<CustomFieldModel> convertToJsonCustomField(List<DenormalizedFieldValue> denormalizedFields) {
 		List<CustomFieldModel> models = new ArrayList<CustomFieldModel>(denormalizedFields.size());
 		for (DenormalizedFieldValue field : denormalizedFields) {
@@ -175,10 +175,10 @@ public class ExecutionModificationController {
 		}
 		return models;
 	}
-			
-	
+
+
 	private List<AoColumnDef> findColumnDefForSteps(Execution execution) {
-		List<AoColumnDef> columnDefs;		
+		List<AoColumnDef> columnDefs;
 		boolean editable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "EXECUTE", execution);
 		boolean isBugtrackerConnected = execution.getProject().isBugtrackerConnected();
 		columnDefs = new ExecutionStepTableColumnDefHelper().getAoColumnDfvDefs(editable, isBugtrackerConnected);
@@ -197,7 +197,7 @@ public class ExecutionModificationController {
 				filter);
 
 		return new ManualExecutionStepDataTableModelHelper(locale, messageSource, denormalizedFieldValueFinder, cufValueService)
-				.buildDataModel(holder,  params.getsEcho());
+		.buildDataModel(holder,  params.getsEcho());
 
 	}
 
@@ -234,14 +234,14 @@ public class ExecutionModificationController {
 		}
 	}
 
-	private static class ExecutionStepDataTableModelHelper extends DataTableModelBuilder<ExecutionStep> {
+	private static class ExecutionStepDataTableModelHelper extends DataTableModelBuilder<ExecutionStep> { // NOSONAR this cannot be made final because there are subclasses of it already
 		private Locale locale;
 		private InternationalizationHelper messageSource;
 		private DenormalizedFieldValueManager dfvFinder;
 		private CustomFieldValueFinderService cufValueService;
 		private Map<Long, Map<String, CustomFieldValueTableModel>> customFieldValuesById;
 		private Map<Long, Map<String, CustomFieldValueTableModel>> denormalizedFieldValuesById;
-		
+
 		private ExecutionStepDataTableModelHelper(Locale locale, InternationalizationHelper messageSource,
 				DenormalizedFieldValueManager dfvFinder, CustomFieldValueFinderService cufValueService) {
 			this.locale = locale;
@@ -285,7 +285,7 @@ public class ExecutionModificationController {
 			Map<String, CustomFieldValueTableModel> denormalizedValues = getDenormalizedFieldsFor((Long) item.get("entity-id"));
 			item.put("denormalizedFields", denormalizedValues);
 		}
-		
+
 		public void usingDenormalizedFields(Collection<DenormalizedFieldValue> dfvValues, int nbFieldsPerEntity) {
 			denormalizedFieldValuesById = new HashMap<Long, Map<String, CustomFieldValueTableModel>>();
 
@@ -347,7 +347,7 @@ public class ExecutionModificationController {
 			return values;
 
 		}
-		
+
 		protected static class CustomFieldValueTableModel {
 			private static final Logger LOGGER = LoggerFactory.getLogger(CustomFieldValueTableModel.class);
 
@@ -425,7 +425,7 @@ public class ExecutionModificationController {
 				filter);
 
 		return new AutomatedExecutionStepDataTableModelHelper(locale, messageSource, denormalizedFieldValueFinder, cufValueService)
-				.buildDataModel(holder,  params.getsEcho());
+		.buildDataModel(holder,  params.getsEcho());
 
 	}
 
@@ -494,7 +494,7 @@ public class ExecutionModificationController {
 
 		Execution execution = executionModService.findAndInitExecution(executionId);
 		return toJson(execution);
-		
+
 	}
 
 	@RequestMapping(method = RequestMethod.DELETE)
@@ -518,28 +518,28 @@ public class ExecutionModificationController {
 		}
 		return new StartEndDate(reNewStartDate, reNewEndDate);
 	}
-	
-	
+
+
 	// ************* private stuffs *************
-	
+
 	private JsonExecutionInfo toJson(Execution exec){
 		if (exec.isAutomated()){
 			return new JsonExecutionInfo(
-				exec.getLastExecutedOn(),
-				exec.getLastExecutedBy(),
-				exec.getExecutionStatus().getCanonicalStatus(),
-				exec.getExecutionStatus(),
-				exec.getAutomatedExecutionExtender().getResultURL()				
-			);
+					exec.getLastExecutedOn(),
+					exec.getLastExecutedBy(),
+					exec.getExecutionStatus().getCanonicalStatus(),
+					exec.getExecutionStatus(),
+					exec.getAutomatedExecutionExtender().getResultURL()
+					);
 		}
 		else{
 			return new JsonExecutionInfo(
-				exec.getLastExecutedOn(),
-				exec.getLastExecutedBy(),
-				exec.getExecutionStatus(),
-				null,
-				null
-			);
+					exec.getLastExecutedOn(),
+					exec.getLastExecutedBy(),
+					exec.getExecutionStatus(),
+					null,
+					null
+					);
 		}
 	}
 

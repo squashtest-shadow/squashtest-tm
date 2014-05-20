@@ -42,7 +42,7 @@ import org.hibernate.persister.entity.JoinedSubclassEntityPersister;
  * 
  * 
  * What
- * ====================== 
+ * ======================
  * 
  * This class works around a bug on the reverse mapping between the test steps and the test case that own them.
  * 
@@ -58,22 +58,22 @@ import org.hibernate.persister.entity.JoinedSubclassEntityPersister;
  * - mapped in a superclass using the joined-sublasses strategy
  * 
  * Specifically the problem lies in org.hibernate.persister.entity.JoinedSubclassEntityPersister constructor, line 277 -> 281.
- * In that section of the code, the foreign key between the master table (TEST_STEP) and the join table (TEST_CASE_STEPS) is 
- * wrongly identified : it is assumed to be the the primary key of the join table regardless of what the annotations says  
- * (and the primary key isn't right anyway). 
+ * In that section of the code, the foreign key between the master table (TEST_STEP) and the join table (TEST_CASE_STEPS) is
+ * wrongly identified : it is assumed to be the the primary key of the join table regardless of what the annotations says
+ * (and the primary key isn't right anyway).
  * 
- * The consequence is that Hibernate believe it must join on TEST_CASE_ID, while the correct column is STEP_ID. 
+ * The consequence is that Hibernate believe it must join on TEST_CASE_ID, while the correct column is STEP_ID.
  * 
  * 
  * How
  * =======================
  * 
- * To work around this we override the function #getSubclassTableKeyColumns(), that returns accepts an index as input and returns 
- * the foreign key for this index. This method is invoked anytime the persister generates a join sql fragment. 
+ * To work around this we override the function #getSubclassTableKeyColumns(), that returns accepts an index as input and returns
+ * the foreign key for this index. This method is invoked anytime the persister generates a join sql fragment.
  * When the overriden function is requested for the foreign key of the table TEST_CASE_STEPS, it will return the correct foreign key
- * (STEP_ID), instead of the wrong one (TEST_CASE_ID). 
+ * (STEP_ID), instead of the wrong one (TEST_CASE_ID).
  * 
- * This class reuses some bits of the initialization code in order to generate the final name of the table and column, according to 
+ * This class reuses some bits of the initialization code in order to generate the final name of the table and column, according to
  * target database dialect.
  * 
  * 
@@ -83,7 +83,7 @@ import org.hibernate.persister.entity.JoinedSubclassEntityPersister;
 /*
  * Update 08/03/13 : Issue 1980 (https://ci.squashtest.org/mantis/view.php?id=1980)
  * 
- * First, I'd like you to know that I swear I've tried everything ( mapping using @SecondaryTable + inverse=true, custom @SQLInsert, orthodox and unorthodox mapping, 
+ * First, I'd like you to know that I swear I've tried everything ( mapping using @SecondaryTable + inverse=true, custom @SQLInsert, orthodox and unorthodox mapping,
  * voodoo and else) before relying on this.
  * 
  * 
@@ -93,13 +93,13 @@ import org.hibernate.persister.entity.JoinedSubclassEntityPersister;
  * This issue is related to the cascade-persist of a test case and its steps. What should normally happen is the following :
  * 
  *  1/ persist the data in table TEST_STEP
- *  2/ persist the data in the table subclasses 
+ *  2/ persist the data in the table subclasses
  *  3/ persist the other join tables
- *  
- *  For each of those operations it's supposed to check that the join pointing to the current table is not an inverse relation. That information is normally 
- *  supplied by the  . However, here is 
- *  the default implementation straight from org.hibernate.persister.entity.AbstractEntityPersister : 
- *  
+ * 
+ *  For each of those operations it's supposed to check that the join pointing to the current table is not an inverse relation. That information is normally
+ *  supplied by the  . However, here is
+ *  the default implementation straight from org.hibernate.persister.entity.AbstractEntityPersister :
+ * 
  *  [quote]
  *  protected boolean isInverseTable(int j) {
  *		return false;
@@ -108,12 +108,12 @@ import org.hibernate.persister.entity.JoinedSubclassEntityPersister;
  *	
  *	And here is how Gavin King solved the problem : by delegating to me.
  *
- *  The consequence, regarding cascade persistence, is that the join table TEST_CASE_STEPS is handled by the CollectionPersister managing TestCase#steps but also by the 
+ *  The consequence, regarding cascade persistence, is that the join table TEST_CASE_STEPS is handled by the CollectionPersister managing TestCase#steps but also by the
  *  TestStep persister, which has no clue of what index it should insert the TestStep. This leads to double-insertion in the database, with null data for the order column.
  *  But the TestStepPersister should never worry about TEST_CASE_STEPS in the first place !
  *
  *	
- * How 
+ * How
  * =======================
  * 
  * Override isInverseTable and return the information that should have been read from the metadata : the bloody TEST_CASE_STEPS table is an INVERTED TABLE.
@@ -124,130 +124,32 @@ public class TestStepPersister extends JoinedSubclassEntityPersister {
 
 	private static final String NONFORMATTED_TABLE_NAME = "TEST_CASE_STEPS";
 	private static final String NONFORMATTED_COLUMN_NAME = "STEP_ID";
-	
+
 	private String formattedTableName;
 	private String[] formattedColumnName = new String[1];
-	
+
 	/*
-	 * At first, when Hibernate invokes getSubclassTableKeyColumns(int) we must test if 
+	 * At first, when Hibernate invokes getSubclassTableKeyColumns(int) we must test if
 	 * the override applies by comparing the string names of the requested table.
 	 * 
-	 * In order to prevent systematic and expensive string comparison we later on 
+	 * In order to prevent systematic and expensive string comparison we later on
 	 * cache the index of that data, once it is known to us.
 	 */
-	private int _cachedIndex=-1;		
+	private int _cachedIndex=-1;
 
 	public TestStepPersister(PersistentClass persistentClass,
 			EntityRegionAccessStrategy cacheAccessStrategy,
 			NaturalIdRegionAccessStrategy naturalIdRegionAccessStrategy,
 			SessionFactoryImplementor factory, Mapping mapping)
-			throws HibernateException {
+					throws HibernateException {
 
-		super(persistentClass, cacheAccessStrategy, new NaturalIdRegionAccessStrategy() {
-			
-			@Override
-			public void unlockRegion(SoftLock lock) throws CacheException {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void unlockItem(Object key, SoftLock lock) throws CacheException {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void removeAll() throws CacheException {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void remove(Object key) throws CacheException {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public boolean putFromLoad(Object key, Object value, long txTimestamp, Object version, boolean minimalPutOverride)
-					throws CacheException {
-				// TODO Auto-generated method stub
-				return false;
-			}
-			
-			@Override
-			public boolean putFromLoad(Object key, Object value, long txTimestamp, Object version) throws CacheException {
-				// TODO Auto-generated method stub
-				return false;
-			}
-			
-			@Override
-			public SoftLock lockRegion() throws CacheException {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public SoftLock lockItem(Object key, Object version) throws CacheException {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public Object get(Object key, long txTimestamp) throws CacheException {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public void evictAll() throws CacheException {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void evict(Object key) throws CacheException {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public boolean update(Object key, Object value) throws CacheException {
-				// TODO Auto-generated method stub
-				return false;
-			}
-			
-			@Override
-			public boolean insert(Object key, Object value) throws CacheException {
-				// TODO Auto-generated method stub
-				return false;
-			}
-			
-			@Override
-			public NaturalIdRegion getRegion() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public boolean afterUpdate(Object key, Object value, SoftLock lock) throws CacheException {
-				// TODO Auto-generated method stub
-				return false;
-			}
-			
-			@Override
-			public boolean afterInsert(Object key, Object value) throws CacheException {
-				// TODO Auto-generated method stub
-				return false;
-			}
-		}, factory, mapping);
+		super(persistentClass, cacheAccessStrategy, naturalIdRegionAccessStrategy, factory, mapping);
 
 		init(persistentClass, factory);
 	}
 
 
-	
+
 	/*
 	 * This override is the very reason of that class
 	 * @see org.hibernate.persister.entity.JoinedSubclassEntityPersister#getSubclassTableKeyColumns(int)
@@ -275,8 +177,8 @@ public class TestStepPersister extends JoinedSubclassEntityPersister {
 		}
 	}
 
-	
-	
+
+
 	private boolean isTheJoinTable(int index){
 		if (_cachedIndex==-1){
 			boolean isTheOne = getSubclassTableName(index).equals(formattedTableName);
@@ -289,32 +191,32 @@ public class TestStepPersister extends JoinedSubclassEntityPersister {
 			return (_cachedIndex == index);
 		}
 	}
-	
-	
+
+
 	// **************************** init **************************
-	
+
 	private void init(PersistentClass persistentClass, SessionFactoryImplementor factory){
 		createTableNamePattern(persistentClass, factory);
 		createColumnName(factory);
-		
+
 	}
-	
-	
+
+
 	private void createTableNamePattern(PersistentClass persistentClass, SessionFactoryImplementor factory){
-		Iterator joinIter = persistentClass.getJoinClosureIterator(); 
+		Iterator joinIter = persistentClass.getJoinClosureIterator();
 		while (joinIter.hasNext()){
 			Table tab = ((Join) joinIter.next()).getTable();
 			if (tab.getName().toUpperCase().equals(NONFORMATTED_TABLE_NAME)){
-				formattedTableName = tab.getQualifiedName(factory.getDialect(), 
-										factory.getSettings().getDefaultCatalogName(), 
-										factory.getSettings().getDefaultSchemaName());
+				formattedTableName = tab.getQualifiedName(factory.getDialect(),
+						factory.getSettings().getDefaultCatalogName(),
+						factory.getSettings().getDefaultSchemaName());
 				return;
 			}
 		}
 		throw new IllegalArgumentException("TestStepPersister : could not find the join table "+NONFORMATTED_TABLE_NAME);
 	}
-	
-	
+
+
 	private void createColumnName(SessionFactoryImplementor factory){
 		Column column = new Column(NONFORMATTED_COLUMN_NAME);
 		formattedColumnName[0] = column.getQuotedName(factory.getDialect());

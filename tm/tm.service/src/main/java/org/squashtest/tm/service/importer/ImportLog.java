@@ -121,23 +121,7 @@ public class ImportLog{
 
 				if (! curLine.equals(precLine)){
 
-					switch(type){
-					case TEST_CASE :
-						countTestcase(errors, warnings);
-						break;
-					case TEST_STEP :
-						countStep(errors, warnings);
-						break;
-					case PARAMETER :
-						countParameter(errors, warnings);
-						break;
-					case DATASET :
-						countDataset(errors, warnings);
-						break;
-					case NONE :
-						break;
-
-					}
+					countForEntity(type, errors, warnings);
 
 					// reset
 					errors = (entry.getStatus() == ImportStatus.FAILURE);
@@ -151,27 +135,30 @@ public class ImportLog{
 				precLine = curLine;
 			}
 
-			// now treat the last entry
-			switch(type){
-			case TEST_CASE :
-				countTestcase(errors, warnings);
-				break;
-			case TEST_STEP :
-				countStep(errors, warnings);
-				break;
-			case PARAMETER :
-				countParameter(errors, warnings);
-				break;
-			case DATASET :
-				countDataset(errors, warnings);
-				break;
-			case NONE :
-				break;
-
-			}
+			countForEntity(type, errors, warnings);
 
 		}
 
+	}
+
+	private void countForEntity(EntityType type, boolean errors, boolean warnings) {
+		switch(type){
+		case TEST_CASE :
+			countTestcase(errors, warnings);
+			break;
+		case TEST_STEP :
+			countStep(errors, warnings);
+			break;
+		case PARAMETER :
+			countParameter(errors, warnings);
+			break;
+		case DATASET :
+			countDataset(errors, warnings);
+			break;
+		case NONE :
+			break;
+
+		}
 	}
 
 	private void countTestcase(boolean errors, boolean warnings){

@@ -108,7 +108,7 @@ public class CustomFieldController {
 	@RequestMapping(value = "/{customFieldId}", method = RequestMethod.GET)
 	public String showCustomFieldModificationPage(@PathVariable Long customFieldId, Model model) {
 		CustomField customField = customFieldManager.findById(customFieldId);
-		
+
 		if (customField.getInputType().equals(InputType.DROPDOWN_LIST)) {
 			SingleSelectField cuf = customFieldManager.findSingleSelectFieldById(customFieldId);
 			model.addAttribute(CUSTOM_FIELD, cuf);
@@ -235,7 +235,7 @@ public class CustomFieldController {
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void changeDefaultValue(@PathVariable long customFieldId, @RequestParam(VALUE) String defaultValue) {
 		customFieldManager.changeDefaultValue(customFieldId, defaultValue);
-		
+
 	}
 
 	/**
@@ -345,7 +345,7 @@ public class CustomFieldController {
 	 * Will help to create the {@link DataTableModel} to fill the data-table of custom field's options
 	 * 
 	 */
-	private class CustomFieldOptionsDataTableModelHelper extends DataTableModelBuilder<CustomFieldOption> {
+	private static final class CustomFieldOptionsDataTableModelHelper extends DataTableModelBuilder<CustomFieldOption> {
 
 		private CustomField customField;
 
@@ -382,7 +382,7 @@ public class CustomFieldController {
 	 *            : the labels of the moved options
 	 */
 	@RequestMapping(value = "/{customFieldId}/options/positions", method = RequestMethod.POST, params = { "itemIds[]",
-			"newIndex" })
+	"newIndex" })
 	@ResponseBody
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void changeOptionsPositions(@PathVariable long customFieldId, @RequestParam int newIndex,
