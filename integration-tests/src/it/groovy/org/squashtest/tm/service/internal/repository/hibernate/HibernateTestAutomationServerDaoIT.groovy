@@ -71,42 +71,6 @@ class HibernateTestAutomationServerDaoIT extends DbunitDaoSpecification {
 	}
 
 
-	@DataSet("HibernateTestAutomationDao.sandbox.xml")
-	def "should find a server by example"(){
-		given :
-		TestAutomationServer example = new TestAutomationServer("Roberto-1", new URL("http://www.roberto.com"), "roberto", "passroberto", "jenkins");
-		when :
-		def res = serverDao.findByExample(example)
-
-		then :
-		res.id==1l;
-	}
-
-
-	@DataSet("HibernateTestAutomationDao.sandbox.xml")
-	def "should not find a project because of unmatched example"(){
-		given :
-		TestAutomationServer example = new TestAutomationServer("noname", null, "bobinio", "passbobinio", "none");
-
-		when :
-		def res = serverDao.findByExample(example)
-
-		then :
-		res == null
-	}
-
-
-	@DataSet("HibernateTestAutomationDao.sandbox.xml")
-	def "should rant because too many matches for the given example"(){
-		given :
-		TestAutomationServer example = new TestAutomationServer(null, new URL("http://www.roberto.com"), null, null, "jenkins");
-
-		when :
-		def res = serverDao.findByExample(example)
-
-		then :
-		thrown(NonUniqueEntityException)
-	}
 
 
 	@DataSet("HibernateTestAutomationDao.sandbox.xml")

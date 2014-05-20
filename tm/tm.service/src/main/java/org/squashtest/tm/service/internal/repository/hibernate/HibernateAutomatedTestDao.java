@@ -67,7 +67,6 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 	@Override
 	public void removeIfUnused(AutomatedTest test) {
 
-		Session session = sessionFactory.getCurrentSession();
 		AutomatedTest persisted = null;
 
 		if (test.getId() != null){
@@ -77,17 +76,42 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 			persisted = findByExample(test);
 		}
 
-		Query qCountTC = session.getNamedQuery("automatedTest.isReferencedByTestCases");
-		qCountTC.setParameter("autoTestId", persisted.getId());
+		if (countReferences(persisted.getId()) == 0){
+			sessionFactory.getCurrentSession().delete(persisted);
+		}
+
+	}
+
+
+	public void pruneOrphans(){
+		Session session = sessionFactory.getCurrentSession();
+
+		Collection<AutomatedTest> orphans = session.getNamedQuery("automatedTest.findOrphans").list();
+
+		if (orphans.isEmpty()){
+			return;
+		}
+
+		Query q = session.getNamedQuery("automatedTest.builkDelete");
+		q.setParameterList("tests", orphans);
+		q.executeUpdate();
+
+	}
+
+
+	@Override
+	public int countReferences(long testId) {
+		Session session = sessionFactory.getCurrentSession();
+
+		Query qCountTC = session.getNamedQuery("automatedTest.countReferencesByTestCases");
+		qCountTC.setParameter("autoTestId", testId);
 		int countTC = ((Integer)qCountTC.iterate().next()).intValue();
 
-		Query qCountExt = session.getNamedQuery("automatedTest.isReferencedByExecutions");
-		qCountExt.setParameter("autoTestId", persisted.getId());
+		Query qCountExt = session.getNamedQuery("automatedTest.countReferencesByExecutions");
+		qCountExt.setParameter("autoTestId", testId);
 		int countExt = ((Integer)qCountExt.iterate().next()).intValue();
 
-		if (countTC + countExt == 0){
-			session.delete(persisted);
-		}
+		return countTC + countExt;
 	}
 
 
@@ -95,6 +119,17 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 	public AutomatedTest findById(Long testId) {
 		Session session = sessionFactory.getCurrentSession();
 		return (AutomatedTest) session.load(AutomatedTest.class, testId);
+	}
+
+	@Override
+	public List<AutomatedTest> findByTestCases(Collection<Long> testCaseIds) {
+		if (testCaseIds.isEmpty()){
+			return Collections.emptyList();
+		}
+
+		Query query = sessionFactory.getCurrentSession().getNamedQuery("automatedTest.findByTestCase");
+		query.setParameter("testCaseIds", testCaseIds);
+		return query.list();
 	}
 
 	@Override

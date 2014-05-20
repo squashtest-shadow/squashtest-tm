@@ -113,23 +113,6 @@ TestAutomationServerDao {
 	}
 
 
-	@Override
-	public TestAutomationServer findByExample(TestAutomationServer example) {
-
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(TestAutomationServer.class);
-		criteria.add(Example.create(example));
-		List<?> res = criteria.list();
-
-		if (res.isEmpty()){
-			return null;
-		}
-		else if (res.size()==1){
-			return (TestAutomationServer)res.get(0);
-		}
-		else{
-			throw new NonUniqueEntityException();
-		}
-	}
 
 
 	@SuppressWarnings("unchecked")

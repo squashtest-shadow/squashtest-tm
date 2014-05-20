@@ -61,15 +61,6 @@ public interface TestAutomationServerDao {
 	TestAutomationServer findByName(String serverName);
 
 	/**
-	 *	<p>Given a detached (or even attached) {@link TestAutomationServer} example, will fetch a {@link TestAutomationServer}
-	 *	having the same characteristics. Null attributes will be discarded before the comparison. </p>
-	 *
-	 * @return a TestAutomation server if one was found, null if none was found.
-	 * @throws NonUniqueEntityException if more than one match. Causes are either a not restrictive enough example... or a bug.
-	 */
-	TestAutomationServer findByExample(TestAutomationServer example);
-
-	/**
 	 * return all the projects that the given server hosts.
 	 * 
 	 * @param serverId

@@ -48,8 +48,25 @@ public interface AutomatedTestDao {
 	void removeIfUnused(AutomatedTest test);
 
 
+	/**
+	 * returns how many test cases and/or executions reference an AutomatedTest (given its id)
+	 * 
+	 * @param testId
+	 * @return
+	 */
+	int countReferences(long testId);
+
+
+	/**
+	 * Will look for AutomatedTests that aren't referenced by anything and will remove them from the repository
+	 * 
+	 */
+	void pruneOrphans();
+
 
 	AutomatedTest findById(Long testId);
+
+	List<AutomatedTest> findByTestCases(Collection<Long> testCaseIds);
 
 
 	/**
@@ -57,7 +74,7 @@ public interface AutomatedTestDao {
 	 *	having the same characteristics. Null attributes will be discarded before the comparison. </p>
 	 *
 	 * @return a TestAutomation test if one was found, null if none was found.
-	 * @throws NonUniqueEntityException if more than one match. Causes are either a not restrictive enough example... or a bug.
+	 * @throws NonUniqueEntityException if more than one match. Causes are either an example not restrictive enough ... or a bug.
 	 */
 	AutomatedTest findByExample(AutomatedTest example);
 
