@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.users.Team;
-import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
+import org.squashtest.tm.exception.NameAlreadyInUseException;
 
 /**
  * Non dynamically generated methods for {@link Team} Modification

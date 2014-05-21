@@ -36,7 +36,7 @@ import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionH
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
+import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.internal.repository.TeamDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService;

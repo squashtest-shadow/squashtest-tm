@@ -32,7 +32,7 @@ import org.squashtest.tm.domain.NamedReference
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
-import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
+import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.user.TeamModificationService;
 import org.unitils.dbunit.annotation.DataSet
 import org.unitils.dbunit.annotation.ExpectedDataSet;

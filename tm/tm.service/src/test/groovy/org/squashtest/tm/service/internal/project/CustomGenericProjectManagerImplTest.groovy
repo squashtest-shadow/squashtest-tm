@@ -29,7 +29,7 @@ import org.junit.Test;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
+import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.security.ObjectIdentityServiceImpl;
 import org.squashtest.tm.service.security.ObjectIdentityService;

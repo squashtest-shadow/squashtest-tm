@@ -68,7 +68,7 @@ public class TestAutomationServer {
 	@Column(name = "SERVER_ID")
 	private Long id;
 
-	@Column
+	@Column(unique=true)
 	private String name;
 
 	/**

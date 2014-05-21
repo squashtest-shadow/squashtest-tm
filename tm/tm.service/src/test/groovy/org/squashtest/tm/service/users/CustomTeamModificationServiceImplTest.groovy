@@ -22,7 +22,7 @@ package org.squashtest.tm.service.users
 
 import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.tm.domain.users.Team
-import org.squashtest.tm.exception.customfield.NameAlreadyInUseException
+import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.internal.repository.TeamDao
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.internal.user.CustomTeamModificationServiceImpl

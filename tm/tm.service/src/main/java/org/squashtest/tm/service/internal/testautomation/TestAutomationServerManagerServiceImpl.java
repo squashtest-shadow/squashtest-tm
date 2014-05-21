@@ -34,6 +34,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
 import org.squashtest.tm.service.internal.repository.TestAutomationServerDao;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
@@ -60,7 +61,13 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	 * @see TestAutomationServerManagerService#persist(TestAutomationServer)
 	 */
 	public void persist(TestAutomationServer server) {
-		serverDao.persist(server);
+		TestAutomationServer alreadyExists  = serverDao.findByName(server.getName());
+		if (alreadyExists == null){
+			serverDao.persist(server);
+		}
+		else{
+			throw new NameAlreadyInUseException(TestAutomationServer.class.getSimpleName(), server.getName());
+		}
 	}
 
 	@Override
@@ -113,8 +120,14 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void changeName(long serverId, String newName) {
-		TestAutomationServer server = serverDao.findById(serverId);
-		server.setName(newName);
+		TestAutomationServer alreadyExists = serverDao.findByName(newName);
+		if (alreadyExists == null){
+			TestAutomationServer server = serverDao.findById(serverId);
+			server.setName(newName);
+		}
+		else{
+			throw new NameAlreadyInUseException(TestAutomationServer.class.getSimpleName(), newName);
+		}
 	}
 
 	@Override

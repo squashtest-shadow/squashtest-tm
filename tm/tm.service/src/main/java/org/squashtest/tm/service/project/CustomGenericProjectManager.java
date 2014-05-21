@@ -34,7 +34,7 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.users.Party;
-import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
+import org.squashtest.tm.exception.NameAlreadyInUseException;
 
 /**
  * @author Gregory Fouquet
