@@ -48,11 +48,11 @@ public final class FilterModel {
 
 		setEnabled(filter.getActivated());
 
-		Object[][] projectData = new Object[projects.size()][4];
+		Object[][] pData = new Object[projects.size()][4];
 		int i = 0;
 
 		for (Project project : projects){
-			projectData[i] = new Object[]{
+			pData[i] = new Object[]{
 					project.getId(),
 					project.getName(),
 					filter.isProjectSelected(project),
@@ -64,7 +64,7 @@ public final class FilterModel {
 		}
 
 		//remember that projectData.toArray() actually returns an Object[][]
-		setProjectData((Object[][]) projectData);
+		setProjectData((Object[][]) pData);
 	}
 
 	public FilterModel(List<Project> projects) {

@@ -46,7 +46,7 @@ public class CustomFieldValueConfigurationBean {
 	public static CustomFieldValueConfigurationBean createFromValues(Collection<CustomFieldValue> values) {
 		List<ConfigurationBean> configurationBeans = new ArrayList<CustomFieldValueConfigurationBean.ConfigurationBean>(
 				values.size());
-		
+
 		for (CustomFieldValue value : values) {
 			InputType iType = value.getBinding().getCustomField().getInputType();
 			ConfigurationBean newConf;
@@ -69,21 +69,21 @@ public class CustomFieldValueConfigurationBean {
 
 			configurationBeans.add(newConf);
 		}
-		
+
 		return new CustomFieldValueConfigurationBean(configurationBeans);
 	}
 
 	public static CustomFieldValueConfigurationBean createFromDenormalized(Collection<DenormalizedFieldValue> values) {
 		List<ConfigurationBean> configurationBeans = new ArrayList<CustomFieldValueConfigurationBean.ConfigurationBean>(
 				values.size());
-		
+
 		for (DenormalizedFieldValue value : values) {
 			InputType iType = value.getInputType();
 			ConfigurationBean newConf;
 
 			switch (iType) {
 			case DROPDOWN_LIST:
-				newConf = new SingleSelectItem(value);
+				newConf = new SingleSelectItem((DenormalizedSingleSelectField)value);
 				break;
 			case CHECKBOX:
 				newConf = new CheckboxItem(value);
@@ -99,7 +99,7 @@ public class CustomFieldValueConfigurationBean {
 
 			configurationBeans.add(newConf);
 		}
-		
+
 		return new CustomFieldValueConfigurationBean(configurationBeans);
 	}
 
@@ -325,12 +325,11 @@ public class CustomFieldValueConfigurationBean {
 			super();
 		}
 
-		public SingleSelectItem(DenormalizedFieldValue value) {
+		public SingleSelectItem(DenormalizedSingleSelectField value) {
+
 			super(value);
 
-			DenormalizedSingleSelectField select = (DenormalizedSingleSelectField) value;
-
-			for (CustomFieldOption option : select.getOptions()) {
+			for (CustomFieldOption option : value.getOptions()) {
 				this.addOption(option);
 			}
 

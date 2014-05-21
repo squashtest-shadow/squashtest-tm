@@ -57,8 +57,7 @@ public final class NamedReferencePair{
 	}
 
 	@Override
-	//GENERATED:START
-	public int hashCode() {
+	public int hashCode() { // NOSONAR generated
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
@@ -67,11 +66,10 @@ public final class NamedReferencePair{
 				+ ((caller == null) ? 0 : caller.hashCode());
 		return result;
 	}
-	//GENERATED:END
+
 
 	@Override
-	//GENERATED:START
-	public boolean equals(Object obj) {
+	public boolean equals(Object obj) { // NOSONAR generated
 		if (this == obj) {
 			return true;
 		}
@@ -98,8 +96,6 @@ public final class NamedReferencePair{
 		}
 		return true;
 	}
-	// GENERATED:END
-
 
 
 }

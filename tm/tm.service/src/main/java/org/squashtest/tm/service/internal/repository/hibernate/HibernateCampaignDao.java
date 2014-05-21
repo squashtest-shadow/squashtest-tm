@@ -58,29 +58,29 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 	private static final String CONTAINER_ID = "containerId";
 	private static final String PROJECT_FILTER = "projectFilter";
 	private static final String REFERENCE_FILTER = "referenceFilter";
-	private static final String TESTCASE_FILTER = "testcaseFilter";	
+	private static final String TESTCASE_FILTER = "testcaseFilter";
 	private static final String USER_FILTER = "userFilter";
 	private static final String WEIGHT_FILTER = "weightFilter";
-	
+
 	private static final String PROJECT_DATA = "project-name";
 	private static final String REFERENCE_DATA = "reference";
-	private static final String TESTCASE_DATA = "tc-name";	
+	private static final String TESTCASE_DATA = "tc-name";
 	private static final String USER_DATA = "assigned-user";
 	private static final String WEIGHT_DATA = "importance";
 	private static final String MODE_DATA = "exec-mode";
-	
+
 	/*
-	 * Because it is impossible to sort over the indices of ordered collection in a criteria query 
-	 * we must then build an hql string which will let us do that. 
+	 * Because it is impossible to sort over the indices of ordered collection in a criteria query
+	 * we must then build an hql string which will let us do that.
 	 */
-	private static final String HQL_INDEXED_TEST_PLAN = 
+	private static final String HQL_INDEXED_TEST_PLAN =
 			"select index(CampaignTestPlanItem), CampaignTestPlanItem "+
-			"from Campaign as Campaign inner join Campaign.testPlan as CampaignTestPlanItem "+
-			"left outer join CampaignTestPlanItem.referencedTestCase as TestCase " +
-			"left outer join TestCase.project as Project " + 
-			"left outer join CampaignTestPlanItem.user as User "+
-			"where Campaign.id = :campaignId ";
-	
+					"from Campaign as Campaign inner join Campaign.testPlan as CampaignTestPlanItem "+
+					"left outer join CampaignTestPlanItem.referencedTestCase as TestCase " +
+					"left outer join TestCase.project as Project " +
+					"left outer join CampaignTestPlanItem.user as User "+
+					"where Campaign.id = :campaignId ";
+
 	private static final String HQL_INDEXED_TEST_PLAN_PROJECT_FILTER = "and Project.name like :projectFilter ";
 
 	private static final String HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER = "and TestCase.reference like :referenceFilter ";
@@ -179,9 +179,9 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 
 	private StringBuilder buildIndexedTestPlanQueryBody(ColumnFiltering filtering) {
 		StringBuilder hqlbuilder = new StringBuilder(HQL_INDEXED_TEST_PLAN);
-		if (filtering.hasFilter(PROJECT_DATA)) {
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_PROJECT_FILTER);
-		}
+
+		applySimpleFilter(hqlbuilder, filtering, PROJECT_DATA, HQL_INDEXED_TEST_PLAN_PROJECT_FILTER);
+
 		if (filtering.hasFilter(MODE_DATA)) {
 			if (TestCaseExecutionMode.MANUAL.name().equals(filtering.getFilter(MODE_DATA))) {
 				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_MODEMANUAL_FILTER);
@@ -189,12 +189,11 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_MODEAUTO_FILTER);
 			}
 		}
-		if (filtering.hasFilter(REFERENCE_DATA)) {
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER);
-		}
-		if (filtering.hasFilter(TESTCASE_DATA)) {
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER);
-		}
+
+		applySimpleFilter(hqlbuilder, filtering, REFERENCE_DATA, HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER);
+
+		applySimpleFilter(hqlbuilder, filtering, TESTCASE_DATA, HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER);
+
 		if (filtering.hasFilter(USER_DATA)) {
 			if ("0".equals(filtering.getFilter(USER_DATA))) {
 				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER);
@@ -202,12 +201,21 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 				hqlbuilder.append(HQL_INDEXED_TEST_PLAN_USER_FILTER);
 			}
 		}
-		if (filtering.hasFilter(WEIGHT_DATA)) {
-			hqlbuilder.append(HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER);
-		}
+
+		applySimpleFilter(hqlbuilder, filtering, WEIGHT_DATA, HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER);
 
 		return hqlbuilder;
 	}
+
+
+	private void applySimpleFilter(StringBuilder hqlbuilder, ColumnFiltering filtering, String propertyName, String hqlWhereClause){
+		if (filtering.hasFilter(propertyName)){
+			hqlbuilder.append(hqlWhereClause);
+		}
+	}
+
+
+
 
 	@SuppressWarnings("unchecked")
 	private List<Object[]> findIndexedTestPlanAsTuples(final long campaignId, PagingAndMultiSorting sorting,
@@ -246,6 +254,9 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 
 		return query;
 	}
+
+
+
 
 	@Override
 	public long countFilteredTestPlanById(long campaignId, ColumnFiltering filtering) {
