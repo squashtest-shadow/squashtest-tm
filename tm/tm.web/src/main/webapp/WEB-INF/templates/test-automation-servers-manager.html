@@ -47,8 +47,8 @@
 	};
 </script>
 <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
-<script data-main="../../scripts/test-automation-server-manager.js"
-  th:attr="data-main=@{/scripts/test-automation-server-manager.js}" src="../../scripts/require.js"
+<script data-main="../../scripts/test-automation-servers-manager.js"
+  th:attr="data-main=@{/scripts/test-automation-servers-manager.js}" src="../../scripts/require.js"
   th:src="@{/scripts/require-min.js}">
 	
 </script>
@@ -116,7 +116,7 @@
                       le</th>
                     <th th:attr="data-def='sortable, map=last-modified-by'" th:text="#{label.lastModifiedBy}">Modifié
                       par</th>
-                    <th th:attr="data-def='delete-button=#remove-test-automation-server-confirm-dialog, map=empty-delete-holder'"></th>
+                    <th th:attr="data-def='delete-button=#remove-test-automation-server-confirm-dialog , map=empty-delete-holder'"></th>
                   </tr>
                 </thead>
                 <tbody>

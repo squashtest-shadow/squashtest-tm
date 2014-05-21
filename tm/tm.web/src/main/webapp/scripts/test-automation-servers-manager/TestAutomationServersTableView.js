@@ -28,102 +28,12 @@ define([ 'jquery', 'backbone', './NewTestAutomationServerDialogView', './NewTest
 		el : "#test-automation-server-table-pane",
 		initialize : function() {
 			var self = this;
-			// this.el is decorated with an ajax sourced
-			// datatable
-			var config = $.extend({
-			// "oLanguage" : {
-			// "sUrl" : tasTable.languageUrl
-			// },
-			// "bJQueryUI" : true,
-			// "bAutoWidth" : false,
-			// "bFilter" : false,
-			// "bPaginate" : true,
-			// "sPaginationType" : "squash",
-			// "iDisplayLength" : tasTable.displayLength,
-			// "bServerSide" : true,
-			// "sAjaxSource" : tasTable.ajaxSource,
-			// "bDeferRender" : true,
-			// "bRetrieve" : true,
-			// "sDom" : 't<"dataTables_footer"lp>',
-			// "iDeferLoading" : 0,
-			// "aaSorting" : [ [ 2, "asc" ] ],
-			// "fnRowCallback" : function() {
-			// },
-			// "aoColumnDefs" : [
-			// {
-			// "bVisible" : false,
-			// "aTargets" : [ 0 ],
-			// "sClass" : "cf-id",
-			// "mDataProp" : "entity-id"
-			// },
-			// {
-			// 'bSortable' : false,
-			// 'sClass' : 'centered ui-state-default drag-handle select-handle',
-			// 'aTargets' : [ 1 ],
-			// 'mDataProp' : 'entity-index'
-			// },
-			// {
-			// "bSortable" : true,
-			// "aTargets" : [ 2 ],
-			// "mDataProp" : "name"
-			// },
-			// {
-			// "bSortable" : true,
-			// "aTargets" : [ 3 ],
-			// "mDataProp" : "label"
-			// },
-			// {
-			// "bVisible" : false,
-			// "aTargets" : [ 4 ],
-			// "sClass" : "raw-input-type",
-			// "mDataProp" : "raw-input-type"
-			// },
-			// {
-			// "bSortable" : true,
-			// "aTargets" : [ 5 ],
-			// "mDataProp" : "input-type"
-			// },
-			// {
-			// 'bSortable' : false,
-			// 'sWidth' : '2em',
-			// 'sClass' : 'delete-button',
-			// 'aTargets' : [ 6 ],
-			// 'mDataProp' : 'empty-delete-holder'
-			// } ]
-			}, squashtm.datatable.defaults);
-
-			var squashSettings = {
-			// enableHover : true,
-			//
-			// confirmPopup : {
-			// oklabel : tasTable.confirmLabel,
-			// cancellabel : tasTable.cancelLabel
-			// },
-			//
-			// deleteButtons : {
-			// url : tasTable.ajaxSource + "/{entity-id}",
-			// popupmessage : "<div class='display-table-row'><div class='display-table-cell warning-cell'><div
-			// class='delete-node-dialog-warning'></div></div><div
-			// class='display-table-cell'>"+tasTable.deleteConfirmMessageFirst+"<span class='red-warning-message'>
-			// "+tasTable.deleteConfirmMessageSecond+"</span>"+tasTable.deleteConfirmMessageThird+"<span
-			// class='bold-warning-message'> "+tasTable.deleteConfirmMessageFourth+"</span></div></div>",
-			// tooltip : tasTable.deleteTooltip,
-			// success : function(data) {
-			// self.table.refresh();
-			// }
-			// },
-			//
-			// bindLinks : {
-			// list : [ {
-			// url : tasTable.customFieldUrl + "/{entity-id}",
-			// target : 2,
-			// isOpenInTab : false
-			// } ]
-			// }
-			};
-			// TODO make dom initialized table
+			
+			// DOM initialized table
 			this.table = this.$("table");
-			this.table.squashTable(config, squashSettings);
+			this.table.squashTable(squashtm.datatable.defaults, {});
+			
+			
 		},
 
 		events : {
@@ -153,6 +63,30 @@ define([ 'jquery', 'backbone', './NewTestAutomationServerDialogView', './NewTest
 
 			self.newTasDialog.on("newtestautomationserver.cancel", discard);
 			self.newTasDialog.on("newtestautomationserver.confirm", discardAndRefresh);
+		},
+		
+		configureRemoveTASDialog : function() {
+			// confirmRemoveRequirementDialog
+			this.confirmRemoveTASDialog = $("#remove-test-automation-server-dialog").confirmDialog();
+			this.confirmRemoveTASDialog.width("600px");
+			this.confirmRemoveTASDialog.on("confirmdialogconfirm", $.proxy(this.removeTestAutomationServer, this));
+			this.confirmRemoveTASDialog.on("close", $.proxy(function() {
+				this.toDeleteIds = [];
+			}, this));
+			
+		},
+		
+		removeTestAutomationServer : function(){
+				var self = this;
+				var ids = this.toDeleteIds;
+				if (ids.length === 0) {
+					return;
+				}
+				$.ajax({
+					url : VRTS.url + '/' + ids.join(','),
+					type : 'delete'
+				}).done(self.refresh);
+
 		}
 	});
 	return NewTestAutomationServersTableView;
