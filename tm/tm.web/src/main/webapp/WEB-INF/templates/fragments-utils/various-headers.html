@@ -22,6 +22,10 @@
 -->
 <script th:fragment="env-setup" th:remove="tag">
 /*<![CDATA[*/
+	var require = require || {};
+	require.baseUrl = "${pageContext.servletContext.contextPath}/scripts";       
+	require.baseUrl = /*[[@{/scripts}]]*/;     
+           
 	var squashtm = squashtm || {};
 	squashtm.message = squashtm.message || {};
 	
@@ -34,7 +38,15 @@
 	
 	squashtm.app = squashtm.app || {};
 	squashtm.app.contextRoot = /*[[@{/}]]*/;
+	squashtm.app.locale = /*[[#{squashtm.locale}]]*/;
            
 /*]]>*/
 </script>
 
+<div th:fragment="admin-subpage-css" th:remove="tag">
+	<link rel="stylesheet" type="text/css" media="all" sq:css="squash.core.css" />
+	<link rel="shortcut icon" type="image/x-icon" media="all" th:href="@{/images/favicon.ico}" />
+	<link rel="stylesheet" type="text/css" media="all" sq:css="squash.grey.css" />
+	<link rel="stylesheet" type="text/css" media="all" sq:css="squash.core.override.css" />
+	<link rel="stylesheet" type="text/css" media="all" sq:css="squash.subpage.override.css" />
+</div>

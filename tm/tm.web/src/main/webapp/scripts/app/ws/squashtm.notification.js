@@ -23,13 +23,13 @@
  */
 var squashtm = squashtm || {};
 
-define([ "jquery", "app/pubsub", "app/lnf/Forms", "jquery.squash.messagedialog" ], function($, ps, Forms) {
-	var _config = {errorTitle :  "Error",
-			infoTitle : "Info"};
-	if(squashtm.message){
-		_config.errorTitle = squashtm.message.errorTitle;
-		_config.infoTitle = squashtm.message.infoTitle;
-	}
+define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.squash.messagedialog" ], function($, ps, translator, Forms) {
+	
+	var _config = translator.get({
+		errorTitle : "popup.title.info",
+		infoTitle : "popup.title.error"
+	});
+
 	var _spinner = "#ajax-processing-indicator";
 	var _widgetsInitialized = false;
 	
@@ -147,13 +147,9 @@ define([ "jquery", "app/pubsub", "app/lnf/Forms", "jquery.squash.messagedialog" 
 
 	}
 
-	function init(config) {
-		_config.errorTitle = config.errorTitle;
-		_config.infoTitle = config.infoTitle;
-		
+	function init() {
 		initWidgets();
 		initSpinner();
-
 	}
 
 	function getErrorMessage(request, index) {
