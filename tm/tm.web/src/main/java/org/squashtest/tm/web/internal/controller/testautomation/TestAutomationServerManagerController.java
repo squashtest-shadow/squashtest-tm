@@ -111,8 +111,8 @@ public class TestAutomationServerManagerController {
 
 	@RequestMapping(value="/manualSelection", method=RequestMethod.POST, params="manualSelection")
 	@ResponseBody
-	public Boolean changePassword(@PathVariable("serverId") long serverId, @RequestParam("manualSelection") Boolean manualSelection){
-		service.changeIsManualSlaveSelection(serverId, manualSelection);
+	public Boolean changeManualSelection(@PathVariable("serverId") long serverId, @RequestParam("manualSelection") Boolean manualSelection){
+		service.changeManualSlaveSelection(serverId, manualSelection);
 		return manualSelection;
 	}
 
