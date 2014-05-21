@@ -52,24 +52,29 @@ public class TestAutomationServerManagerController {
 	private TestAutomationServerManagerService service;
 
 
-	@RequestMapping(method=RequestMethod.GET)
+	@RequestMapping(value="/infos", method=RequestMethod.GET)
 	public String showTAServer(@PathVariable("serverId") long serverId, Model model){
 
 		TestAutomationServer server = service.findById(serverId);
 
 		model.addAttribute("server", server);
 
-		return "templates/test-automation/server-manager.html";
+		return "test-automation/server-manager.html";
 
 	}
-
-
 
 	@RequestMapping(value="/name", method=RequestMethod.POST, params="newName")
 	@ResponseBody
 	public String changeName(@PathVariable("serverId") long serverId, @RequestParam("newName") String newName){
 		service.changeName(serverId, newName);
 		return newName;
+	}
+
+	@RequestMapping(value="/description", method=RequestMethod.POST, params="newDescription")
+	@ResponseBody
+	public String changeDescription(@PathVariable("serverId") long serverId, @RequestParam("newDescription") String newDescription){
+		service.changeDescription(serverId, newDescription);
+		return newDescription;
 	}
 
 
@@ -90,7 +95,26 @@ public class TestAutomationServerManagerController {
 		}
 	}
 
+	@RequestMapping(value="/login", method=RequestMethod.POST, params="newLogin")
+	@ResponseBody
+	public String changeLogin(@PathVariable("serverId") long serverId, @RequestParam("newLogin") String newLogin){
+		service.changeLogin(serverId, newLogin);
+		return newLogin;
+	}
 
+	@RequestMapping(value="/password", method=RequestMethod.POST, params="newPassword")
+	@ResponseBody
+	public String changePassword(@PathVariable("serverId") long serverId, @RequestParam("newPassword") String newPassword){
+		service.changePassword(serverId, newPassword);
+		return newPassword;
+	}
+
+	@RequestMapping(value="/manualSelection", method=RequestMethod.POST, params="manualSelection")
+	@ResponseBody
+	public Boolean changePassword(@PathVariable("serverId") long serverId, @RequestParam("manualSelection") Boolean manualSelection){
+		service.changeIsManualSlaveSelection(serverId, manualSelection);
+		return manualSelection;
+	}
 
 	private String findMessage(Locale locale, String key){
 		return messageSource.getMessage(key, null, locale);

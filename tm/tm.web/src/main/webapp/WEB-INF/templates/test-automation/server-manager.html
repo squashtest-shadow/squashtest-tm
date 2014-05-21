@@ -40,6 +40,18 @@
 
 <script th:src="@{/scripts/pubsub-boot.js}"></script>
 <script type="text/javascript" th:inline="javascript"  th:include="fragments-utils/various-headers :: env-setup"></script>
+
+
+<script type="text/javascript" th:inline="javascript">
+
+/*<![CDATA[*/
+	squashtm.pageConfiguration = {
+		url : /*[[ @{/test-automation-servers/}+${server.id} ]]*/ "http://localhost/taserver"
+	};
+/*]]>*/
+
+</script>
+
 <script th:attr="data-main=@{/scripts/test-automation/server-manager.js}" th:src="@{/scripts/require-min.js}"></script>      
 
 </head>
@@ -65,7 +77,7 @@
 
         <div id="sub-page-buttons" class="sub-page-buttons">
 
-          <input id="back" type="button" th:value="#{ label.Back }" class="sq-btn" value="Back" />
+          <input id="back" type="button" th:value="'J AI PAS ENCORE DE ONCLICK'" class="sq-btn" value="#{ label.Back }" />
 
         </div>
 
@@ -92,12 +104,16 @@
                 <input type="button" th:value="#{ label.Rename }" value="Rename" id="rename-ta-server-button"  class="sq-btn"  />
               </div>
             </div>
+            
+            <script type="text/javascript">
+            publish('load.toolbar');
+            </script>
+            
             <br /> 
             <br />
             <div class="toggle-panel ">
             
-              <span class="not-displayed toogle-panel-buttons"></span>
-              <div id="ta-server-info-panel" class="information-panel toggle-panel-main">
+              <div id="ta-server-info-panel" class="information-panel toggle-panel-main" th:title="#{title.InfoOnServer}">
                 <div class="display-table" id="ta-server-infos-table">
                 
                   <div class="display-table-row">
@@ -125,14 +141,16 @@
   
 
           </div>
-
+			<script type="text/javascript">
+			publish('load.main-panel');
+			</script>
 	    </div>
 	  </div>
 	</div>
   </div>
   <!--    ====================================POPUPS======================================================  -->
   <!--    	RENAME POPUP -->
-  <div id="rename-ta-server-popup" class="not-displayed popup-dialog">
+  <div id="rename-ta-server-popup" class="not-displayed popup-dialog" th:title="#{title.RenameServer}">
     <label for="rename-cuf-input" th:text="#{ label.Rename }">Rename</label> 
     <input type="text" id="rename-ta-server-input"  maxlength="255" size="50" /> 
       <br/> 
@@ -144,6 +162,7 @@
   </div>
   
 <script type="text/javascript">
+	publish('load.popups');
 	publish('load.ready'); 		
 </script>
 
