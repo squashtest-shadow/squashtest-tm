@@ -27,16 +27,22 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
+import org.squashtest.tm.web.internal.controller.administration.NewTestAutomationServer;
 
 
 @Controller
@@ -49,8 +55,9 @@ public class TestAutomationServerController {
 
 	@Inject
 	private TestAutomationServerManagerService service;
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestAutomationServerManagerController.class);
 
-
+		return "test-automation/server-modification.html";
 
 	@RequestMapping(value="/name", method=RequestMethod.POST, params="newName")
 	@ResponseBody
@@ -108,5 +115,36 @@ public class TestAutomationServerController {
 	private String findMessage(Locale locale, String key){
 		return messageSource.getMessage(key, null, locale);
 	}
+	@RequestMapping(value = "/{testAutomationServerId}", method = RequestMethod.DELETE)
+	@ResponseBody
+	public void deleteTestAutomationServer(@PathVariable long testAutomationServerId) {
+		LOGGER.info("Delete test automation server of id #{}", testAutomationServerId);
+		service.deleteServer(testAutomationServerId);
+	}
 
+	@RequestMapping(value = "/{testAutomationServerId}/usage-status", method = RequestMethod.GET)
+	@ResponseBody
+	public TestAutomationUsageStatus getTestAutomationUsageStatus(@PathVariable long testAutomationServerId) {
+		LOGGER.info("Delete test automation server of id #{}", testAutomationServerId);
+		boolean hasBoundProject = service.hasBoundProjects(testAutomationServerId);
+		boolean hasExecutedTests = service.hasExecutedTests(testAutomationServerId);
+		return new TestAutomationUsageStatus(hasBoundProject, hasExecutedTests);
+	}
+
+	private class TestAutomationUsageStatus{
+		private boolean hasBoundProject;
+		private boolean hasExecutedTests;
+		public TestAutomationUsageStatus(boolean hasBoundProject, boolean hasExecutedTests) {
+			this.hasBoundProject = hasBoundProject;
+			this.hasExecutedTests = hasExecutedTests;
+		}
+		@SuppressWarnings("unused")
+		public boolean isHasBoundProject() {
+			return hasBoundProject;
+		}
+		@SuppressWarnings("unused")
+		public boolean isHasExecutedTests() {
+			return hasExecutedTests;
+		}
+	}
 }

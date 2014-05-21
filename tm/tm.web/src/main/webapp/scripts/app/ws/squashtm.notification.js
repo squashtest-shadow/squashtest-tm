@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Controller for the notification area. 
+ * Controller for the notification area.
  */
 var squashtm = squashtm || {};
 
@@ -27,8 +27,7 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 	
 	var _config = translator.get({
 		errorTitle : "popup.title.info",
-		infoTitle : "popup.title.error"
-	});
+		infoTitle : "popup.title.error"});
 
 	var _spinner = "#ajax-processing-indicator";
 	var _widgetsInitialized = false;
@@ -37,11 +36,11 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 		if (!_widgetsInitialized) {
 			_widgetsInitialized = true;
 			$(".unstyled-notification-pane").addClass("notification-pane").removeClass("unstyled-notification-pane");
-			$(_spinner).addClass("not-processing").removeClass("processing");				
-			
+			$(_spinner).addClass("not-processing").removeClass("processing");
+
 		}
 	}
-	
+
 	function handleJsonResponseError(request) {
 		/*
 		 * this pukes an exception if not valid json. there's no other jQuery way to tell
@@ -51,30 +50,32 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 		if (json !== null) {
 			if (!!json.actionValidationError) {
 				return $.squash.openMessage(_config.errorTitle, json.actionValidationError.message);
-			} else {
-				if (!!json.fieldValidationErrors) {
-					/* IE8 requires low tech code */
-					var validationErrorList = json.fieldValidationErrors;
-					if (validationErrorList.length > 0) {
-						for ( var counter = 0; counter < validationErrorList.length; counter++) {
-							var fve = validationErrorList[counter];
-							if (!! request.label ) {
-								request.label.html(fve.errorMessage);
-							} else if (!showBootstrapErrorMessage(fve) && !showLegacyErrorMessage(fve)) {
-								throw 'exception';
-							}
+			} else if (!!json.fieldValidationErrors) {
+				/* IE8 requires low tech code */
+				var validationErrorList = json.fieldValidationErrors;
+				if (validationErrorList.length > 0) {
+					for ( var counter = 0; counter < validationErrorList.length; counter++) {
+						var fve = validationErrorList[counter];
+						if (!!request.label) {
+							request.label.html(fve.errorMessage);
+						} else if (!showBootstrapErrorMessage(fve) && !showLegacyErrorMessage(fve)) {
+							throw 'exception';
 						}
 					}
-				} else {
-					throw 'exception';
 				}
+			} else {
+				throw 'exception';
 			}
+
+		} else {
+			throw 'exception';
 		}
 	}
 
 	function showLegacyErrorMessage(fieldValidationError) {
 		var labelId = fieldValidationError.fieldName + '-error';
-		labelId = labelId.replace(".", "-").replace('[', '-').replace(']', '');// this is necessary because labelId is used
+		labelId = labelId.replace(".", "-").replace('[', '-').replace(']', '');// this is necessary because labelId is
+																				// used
 		// as a css classname
 		var label = $('span.error-message.' + labelId);
 
@@ -92,7 +93,8 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 			inputName = fieldValidationError.objectName + "-" + inputName;
 		}
 
-		$input = $("input[name='" + inputName + "'], input[id='" + inputName + "'],  textarea[name='" + inputName + "']");
+		$input = $("input[name='" + inputName + "'], input[id='" + inputName + "'],  textarea[name='" + inputName +
+				"']");
 		input = Forms.input($input);
 
 		input.setState("error", fieldValidationError.errorMessage);
@@ -102,9 +104,14 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 
 	function handleGenericResponseError(request) {
 		var showError = function() {
+			
 			var popup = window.open('about:blank', 'error_details',
 					'resizable=yes, scrollbars=yes, status=no, menubar=no, toolbar=no, dialog=yes, location=no');
+			if(request.responseText){
 			popup.document.write(request.responseText);
+			}else{
+				popup.document.write(JSON.stringify(request));
+			}
 		};
 
 		$('#show-generic-error-details').unbind('click').click(showError);

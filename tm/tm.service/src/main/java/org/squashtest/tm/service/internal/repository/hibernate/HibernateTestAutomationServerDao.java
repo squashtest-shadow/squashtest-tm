@@ -91,7 +91,8 @@ TestAutomationServerDao {
 	public boolean hasBoundProjects(long serverId) {
 		Session session = sessionFactory.getCurrentSession();
 		Query q = session.getNamedQuery("testAutomationServer.hasBoundProjects");
-		int count = ((Integer)q.iterate().next()).intValue();
+		q.setParameter("serverId", serverId);
+		Long count = (Long) q.uniqueResult();
 		return (count > 0);
 	}
 

@@ -75,6 +75,7 @@
   <group name="squash.core">
     <css>/styles/structure.css</css>
     <css>/styles/ckeditor.override.css</css>
+     <css>/styles/bootstrap.override.css</css>
 		<!-- squashtree is loaded through ajax by jstree <css>/styles/squashtree.css</css> -->
   </group>
 

@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ 'jquery', 'backbone', './NewTestAutomationServerDialogView', './NewTestAutomationServerModel', 'app/util/ButtonUtil', 'squashtable',
-		'jqueryui' ], function($, Backbone, NewTestAutomationServerDialogView, NewTestAutomationServerModel, ButtonUtil) {
+		'jqueryui', 'jquery.squash.formdialog' ], function($, Backbone, NewTestAutomationServerDialogView, NewTestAutomationServerModel, ButtonUtil) {
 	var tasTable = squashtm.app.tasTable;
 	/*
 	 * Defines the controller for the test automation server table.
@@ -28,11 +28,13 @@ define([ 'jquery', 'backbone', './NewTestAutomationServerDialogView', './NewTest
 		el : "#test-automation-server-table-pane",
 		initialize : function() {
 			var self = this;
+			this.removeTestAutomationServer = $.proxy(this._removeTestAutomationServer, this);
+			this.setConfirmRemoveDialogState = $.proxy(this._setConfirmRemoveDialogState, this);
 			
 			// DOM initialized table
 			this.table = this.$("table");
 			this.table.squashTable(squashtm.datatable.defaults, {});
-			
+			this.configureRemoveTASDialog();
 			
 		},
 
@@ -66,28 +68,59 @@ define([ 'jquery', 'backbone', './NewTestAutomationServerDialogView', './NewTest
 		},
 		
 		configureRemoveTASDialog : function() {
-			// confirmRemoveRequirementDialog
-			this.confirmRemoveTASDialog = $("#remove-test-automation-server-dialog").confirmDialog();
-			this.confirmRemoveTASDialog.width("600px");
-			this.confirmRemoveTASDialog.on("confirmdialogconfirm", $.proxy(this.removeTestAutomationServer, this));
-			this.confirmRemoveTASDialog.on("close", $.proxy(function() {
+			this.confirmRemoveTASDialog = $("#remove-test-automation-server-confirm-dialog").formDialog();
+			this.confirmRemoveTASDialog.formDialog('setState','processing');
+			this.confirmRemoveTASDialog.on("formdialogopen", this.setConfirmRemoveDialogState);
+			this.confirmRemoveTASDialog.on("formdialogconfirm", $.proxy(this.removeTestAutomationServer, this));
+			this.confirmRemoveTASDialog.on("formdialogcancel", $.proxy(function() {
+				this.confirmRemoveTASDialog.formDialog('close');
+			}, this));
+			this.confirmRemoveTASDialog.on("formdialogclose", $.proxy(function() {
 				this.toDeleteIds = [];
+				this.table.deselectRows();
+				this.confirmRemoveTASDialog.formDialog('setState','processing');
 			}, this));
 			
 		},
-		
-		removeTestAutomationServer : function(){
-				var self = this;
-				var ids = this.toDeleteIds;
-				if (ids.length === 0) {
-					return;
-				}
+		_setConfirmRemoveDialogState : function(event){
+			var self = this;
+			var table = self.table;
+			var ids = table.getSelectedIds();
+			if (ids.length !=1 ) {
+				return ;
+			}else {
 				$.ajax({
-					url : VRTS.url + '/' + ids.join(','),
-					type : 'delete'
-				}).done(self.refresh);
-
-		}
+					url : squashtm.app.contextRoot +"test-automation-servers/"+ids[0]+"/usage-status",
+					type: "GET"
+				}).then(function(status){
+					if(!status.hasBoundProject && !status.hasExecutedTests){
+						self.confirmRemoveTASDialog.formDialog('setState','case1');
+					}else if (!status.hasExecutedTests){
+						self.confirmRemoveTASDialog.formDialog('setState','case2');
+					}else{
+						self.confirmRemoveTASDialog.formDialog('setState','case3');
+					}
+				});
+			}
+			
+		},
+		_removeTestAutomationServer : function(event) {
+			var table = this.table;
+			var ids = table.getSelectedIds();
+			if (ids.length === 0) {
+				return;
+			}
+			$.ajax({
+				url : squashtm.app.contextRoot + "test-automation-servers/" + ids.join(','),
+				type : 'delete'
+			}).then($.proxy(table.refresh, table)).fail(function(wtf){
+				try {
+					squashtm.notification.handleJsonResponseError(wtf);
+				} catch (wtf) {
+					squashtm.notification.handleGenericResponseError(wtf);
+				}
+			});
+		},
 	});
 	return NewTestAutomationServersTableView;
 });

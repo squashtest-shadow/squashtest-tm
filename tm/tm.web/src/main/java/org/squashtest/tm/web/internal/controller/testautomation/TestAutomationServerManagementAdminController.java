@@ -34,7 +34,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -84,18 +83,18 @@ public class TestAutomationServerManagementAdminController {
 	}
 
 	/**
-	 * Shows the custom fields manager.
+	 * Shows the test automation servers manager.
 	 * 
 	 * @param model
 	 * @return
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String showManager(Model model) {
-
+		LOGGER.info("Show test automation servers manager page");
 		List<TestAutomationServer> testAutomationServers = testAutomationServerService.findAllOrderedByName();
 		model.addAttribute(TEST_AUTOMATION_SERVERS, testAutomationServers);
 
-		return "test-automation-servers-manager.html";
+		return "test-automation/servers-manager.html";
 	}
 
 	/**
@@ -165,14 +164,6 @@ public class TestAutomationServerManagementAdminController {
 			return res;
 		}
 	}
-
-	@RequestMapping(value = "/{testAutomationServerId}", method = RequestMethod.DELETE)
-	@ResponseBody
-	public void deleteTestAutomationServer(@PathVariable long testAutomationServerId) {
-		LOGGER.info("Delete test automation server of id #{}", testAutomationServerId);
-		testAutomationServerService.deleteServer(testAutomationServerId);
-	}
-
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody
