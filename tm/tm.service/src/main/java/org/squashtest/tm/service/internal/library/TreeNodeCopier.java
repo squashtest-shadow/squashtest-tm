@@ -124,8 +124,8 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 			copy.accept(treeNodeUpdater);
 		}
 		return copy;
-		
-		
+
+
 	}
 
 	public TreeNode performOperation(TreeNode source, NodeContainer<TreeNode> destination, int position) {
@@ -140,10 +140,10 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 			copy.accept(treeNodeUpdater);
 		}
 		return copy;
-		
-		
+
+
 	}
-	
+
 	private boolean projectchanged(TreeNode source) {
 		Project projectSource = source.getProject();
 		GenericProject projectDestination = destination.getProject();
@@ -154,7 +154,7 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 	public void visit(Folder source, FolderDao dao) {
 		Folder<?> copyFolder = (Folder<?>) source.createCopy();
 		persistCopy(copyFolder, dao, Folder.MAX_NAME_SIZE);
-		
+
 	}
 
 	@Override
@@ -162,7 +162,7 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 		Campaign copyCampaign = source.createCopy();
 		persistCopy(copyCampaign, campaignDao, Campaign.MAX_NAME_SIZE);
 		copyCustomFields(source, copyCampaign);
-		
+
 	}
 
 	/**
@@ -199,7 +199,7 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 		persistCopy(copyTestSuite, testSuiteDao, TestSuite.MAX_NAME_SIZE);
 		copyCustomFields(source, copyTestSuite);
 		copyTestSuiteTestPlanToDestinationIteration(source, copyTestSuite);
-		
+
 	}
 
 	private void copyTestSuiteTestPlanToDestinationIteration(TestSuite source, TestSuite copy) {
@@ -234,32 +234,32 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 			copyCustomFields(sourceVersion, copyVersion);
 		}
 	}
-	
+
 	@Override
 	public void visit(TestCase source) {
 		TestCase copyTestCase = source.createCopy();
-		persistTestCase(copyTestCase);		
-		copyCustomFields(source, copyTestCase);		
+		persistTestCase(copyTestCase);
+		copyCustomFields(source, copyTestCase);
 		copyRequirementVersionCoverage(source, copyTestCase);
 	}
-	
+
 
 	@Override
 	public void visit(CampaignFolder campaignFolder) {
 		visit(campaignFolder, campaignFolderDao);
-		
+
 	}
 
 	@Override
 	public void visit(RequirementFolder requirementFolder) {
 		visit(requirementFolder, requirementFolderDao);
-		
+
 	}
 
 	@Override
 	public void visit(TestCaseFolder testCaseFolder) {
 		visit(testCaseFolder, testCaseFolderDao);
-		
+
 	}
 
 	/**************************************************** PRIVATE **********************************************************/
@@ -361,18 +361,18 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 	public boolean isOkToGoDeeper() {
 		return this.okToGoDeeper;
 	}
-	
+
 	private void copyRequirementVersionCoverages(RequirementVersion sourceVersion, RequirementVersion copyVersion) {
 		List<RequirementVersionCoverage> copies = sourceVersion.createRequirementVersionCoveragesForCopy(copyVersion);
 		indexRequirementVersionCoverageCopies(copies);
 		requirementVersionCoverageDao.persist(copies);
-		
+
 	}
 
 	private void indexRequirementVersionCoverageCopies(List<RequirementVersionCoverage> copies) {
-		for(RequirementVersionCoverage copy : copies){
-			indexationService.reindexTestCase(copy.getVerifyingTestCase().getId());
-			indexationService.reindexRequirementVersion(copy.getVerifiedRequirementVersion().getId());
+		for(RequirementVersionCoverage covCpy : copies){
+			indexationService.reindexTestCase(covCpy.getVerifyingTestCase().getId());
+			indexationService.reindexRequirementVersion(covCpy.getVerifiedRequirementVersion().getId());
 		}
 	}
 

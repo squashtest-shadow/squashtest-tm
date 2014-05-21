@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
@@ -532,62 +533,13 @@ public class FacilityImpl implements Facility {
 
 		// update the test case core attributes
 
-		String newName = testCase.getName();
-		if (!StringUtils.isBlank(newName) && !orig.getName().equals(newName)) {
-			testcaseModificationService.rename(origId, newName);
-		}
-
-		String newRef = testCase.getReference();
-		if (!StringUtils.isBlank(newRef) && !orig.getReference().equals(newRef)) {
-			testcaseModificationService.changeReference(origId, newRef);
-		}
-
-		String newDesc = testCase.getDescription();
-		if (!StringUtils.isBlank(newDesc) && !orig.getDescription().equals(newDesc)) {
-			testcaseModificationService.changeDescription(origId, newDesc);
-		}
-
-		String newPrereq = testCase.getPrerequisite();
-		if (!StringUtils.isBlank(newPrereq) && !orig.getPrerequisite().equals(newPrereq)) {
-			testcaseModificationService.changePrerequisite(origId, newPrereq);
-		}
-
-		TestCaseImportance newImp = testCase.getImportance();
-		if (newImp != null && !orig.getImportance().equals(newImp)) {
-			testcaseModificationService.changeImportance(origId, newImp);
-		}
-
-		TestCaseNature newNat = testCase.getNature();
-		if (newNat != null && !orig.getNature().equals(newNat)) {
-			testcaseModificationService.changeNature(origId, newNat);
-		}
-
-		TestCaseType newType = testCase.getType();
-		if (newType != null && !orig.getType().equals(newType)) {
-			testcaseModificationService.changeType(origId, newType);
-		}
-
-		TestCaseStatus newStatus = testCase.getStatus();
-		if (newStatus != null && !orig.getStatus().equals(newStatus)) {
-			testcaseModificationService.changeStatus(origId, newStatus);
-		}
-
-		Boolean newImportanceAuto = testCase.isImportanceAuto();
-		if (newImportanceAuto != null && orig.isImportanceAuto() != newImportanceAuto) {
-			testcaseModificationService.changeImportanceAuto(origId, newImportanceAuto);
-		}
+		doUpdateTestCaseCoreAttributes(testCase, orig);
 
 		// the custom field values now
 
-		List<CustomFieldValue> cufs = cufvalueService.findAllCustomFieldValues(orig);
-		for (CustomFieldValue v : cufs) {
-			String code = v.getCustomField().getCode();
+		doUpdateCustomFields(cufValues, orig);
 			Set<String> codesToUpdate = cufValues.keySet();
 			if (codesToUpdate.contains(code)) {
-				String newValue = cufValues.get(code);
-				v.setValue(newValue);
-			}
-		}
 
 		// move the test case if its index says it has to move
 		Integer order = target.getOrder();
@@ -602,6 +554,8 @@ public class FacilityImpl implements Facility {
 		}
 
 	}
+
+
 
 	private void doDeleteTestCase(TestCaseTarget target) throws Exception {
 		TestCase tc = validator.getModel().get(target);
@@ -658,15 +612,8 @@ public class FacilityImpl implements Facility {
 		}
 
 		// the custom field values now
-		List<CustomFieldValue> cufs = cufvalueService.findAllCustomFieldValues(orig);
+		doUpdateCustomFields(cufValues, orig);
 		Set<String> codeSet = cufValues.keySet();
-		for (CustomFieldValue v : cufs) {
-			String code = v.getCustomField().getCode();
-			String newValue = cufValues.get(code);
-			if (codeSet.contains(code)) {
-				v.setValue(newValue);
-			}
-		}
 
 	}
 
@@ -735,6 +682,71 @@ public class FacilityImpl implements Facility {
 	}
 
 	// ******************************** support methods ***********************
+
+
+	private void doUpdateTestCaseCoreAttributes(TestCase testCase, TestCase orig) {
+
+		Long origId = orig.getId();
+		String newName = testCase.getName();
+
+		if (!StringUtils.isBlank(newName) && !orig.getName().equals(newName)) {
+			testcaseModificationService.rename(origId, newName);
+		}
+
+		String newRef = testCase.getReference();
+		if (!StringUtils.isBlank(newRef) && !orig.getReference().equals(newRef)) {
+			testcaseModificationService.changeReference(origId, newRef);
+		}
+
+		String newDesc = testCase.getDescription();
+		if (!StringUtils.isBlank(newDesc) && !orig.getDescription().equals(newDesc)) {
+			testcaseModificationService.changeDescription(origId, newDesc);
+		}
+
+		String newPrereq = testCase.getPrerequisite();
+		if (!StringUtils.isBlank(newPrereq) && !orig.getPrerequisite().equals(newPrereq)) {
+			testcaseModificationService.changePrerequisite(origId, newPrereq);
+		}
+
+		TestCaseImportance newImp = testCase.getImportance();
+		if (newImp != null && !orig.getImportance().equals(newImp)) {
+			testcaseModificationService.changeImportance(origId, newImp);
+		}
+
+		TestCaseNature newNat = testCase.getNature();
+		if (newNat != null && !orig.getNature().equals(newNat)) {
+			testcaseModificationService.changeNature(origId, newNat);
+		}
+
+		TestCaseType newType = testCase.getType();
+		if (newType != null && !orig.getType().equals(newType)) {
+			testcaseModificationService.changeType(origId, newType);
+		}
+
+		TestCaseStatus newStatus = testCase.getStatus();
+		if (newStatus != null && !orig.getStatus().equals(newStatus)) {
+			testcaseModificationService.changeStatus(origId, newStatus);
+		}
+
+		Boolean newImportanceAuto = testCase.isImportanceAuto();
+		if (newImportanceAuto != null && orig.isImportanceAuto() != newImportanceAuto) {
+			testcaseModificationService.changeImportanceAuto(origId, newImportanceAuto);
+		}
+	}
+
+
+	private void doUpdateCustomFields(Map<String, String> cufValues, BoundEntity bindableEntity) {
+
+		List<CustomFieldValue> cufs = cufvalueService.findAllCustomFieldValues(bindableEntity);
+		for (CustomFieldValue v : cufs) {
+			String code = v.getCustomField().getCode();
+			String newValue = cufValues.get(code);
+			if (!StringUtils.isBlank(newValue)) {
+				v.setValue(newValue);
+			}
+		}
+
+	}
 
 	private Parameter findParameter(ParameterTarget param) {
 		Long testcaseId = validator.getModel().getId(param.getOwner());

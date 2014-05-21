@@ -103,7 +103,7 @@ import org.slf4j.LoggerFactory;
 		return pathCharInt;
 	}
 
-	private static int readNextFolder(LinkedList<String> nameList, StringReader pathReader, int pathCharInt) throws IOException {
+	private static int readNextFolder(List<String> nameList, StringReader pathReader, int pathCharInt) throws IOException {
 		StringBuffer folderNameBuffer = new StringBuffer();
 		return readName(pathCharInt, pathReader, folderNameBuffer, nameList);
 	}

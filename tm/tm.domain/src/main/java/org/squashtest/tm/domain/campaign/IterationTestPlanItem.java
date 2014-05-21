@@ -448,10 +448,8 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 		for (TestSuite suite : testSuites) {
 			builder.append(suite.getName() + ", ");
 		}
-		String nameList = builder.toString();
-		if (nameList.length() > 0) {
-			nameList = nameList.trim().substring(0, nameList.lastIndexOf(","));
-		}
+
+		String nameList = builder.toString().replaceFirst(", $", "");	//this eliminates the last comma
 
 		return nameList;
 	}

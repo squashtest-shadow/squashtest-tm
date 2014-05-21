@@ -52,16 +52,16 @@ public class NamedReference implements Serializable {
 	}
 
 	@Override
-	public int hashCode() { // GENERATED:START
+	public int hashCode() { // NOSONAR : that was generated
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
-	} // GENERATED:END
+	}
 
 	@Override
-	public boolean equals(Object obj) { // GENERATED:START
+	public boolean equals(Object obj) { // NOSONAR : that was generated
 		if (this == obj) {
 			return true;
 		}
@@ -87,7 +87,7 @@ public class NamedReference implements Serializable {
 			return false;
 		}
 		return true;
-	} // GENERATED:END
+	}
 
 
 }
