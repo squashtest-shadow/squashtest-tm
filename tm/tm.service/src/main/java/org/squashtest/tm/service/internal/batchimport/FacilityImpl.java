@@ -292,8 +292,6 @@ public class FacilityImpl implements Facility {
 		return train;
 	}
 
-
-
 	@Override
 	public LogTrain updateActionStep(TestStepTarget target, ActionTestStep testStep, Map<String, String> cufValues) {
 
@@ -323,7 +321,7 @@ public class FacilityImpl implements Facility {
 
 		if (!train.hasCriticalErrors()) {
 			try {
-				doUpdateCallStep(target,calledTestCase);
+				doUpdateCallStep(target, calledTestCase);
 				validator.getModel().updateCallStepTarget(target, calledTestCase);
 
 				LOGGER.debug("Excel import : Created Call Step \t'" + target + "' -> '" + calledTestCase + "'");
@@ -538,8 +536,6 @@ public class FacilityImpl implements Facility {
 		// the custom field values now
 
 		doUpdateCustomFields(cufValues, orig);
-			Set<String> codesToUpdate = cufValues.keySet();
-			if (codesToUpdate.contains(code)) {
 
 		// move the test case if its index says it has to move
 		Integer order = target.getOrder();
@@ -554,8 +550,6 @@ public class FacilityImpl implements Facility {
 		}
 
 	}
-
-
 
 	private void doDeleteTestCase(TestCaseTarget target) throws Exception {
 		TestCase tc = validator.getModel().get(target);
@@ -613,11 +607,10 @@ public class FacilityImpl implements Facility {
 
 		// the custom field values now
 		doUpdateCustomFields(cufValues, orig);
-		Set<String> codeSet = cufValues.keySet();
 
 	}
 
-	private void doUpdateCallStep(TestStepTarget target,  TestCaseTarget calledTestCase) {
+	private void doUpdateCallStep(TestStepTarget target, TestCaseTarget calledTestCase) {
 
 		// update the step
 		TestStep actualStep = validator.getModel().getStep(target);
@@ -683,7 +676,6 @@ public class FacilityImpl implements Facility {
 
 	// ******************************** support methods ***********************
 
-
 	private void doUpdateTestCaseCoreAttributes(TestCase testCase, TestCase orig) {
 
 		Long origId = orig.getId();
@@ -734,14 +726,14 @@ public class FacilityImpl implements Facility {
 		}
 	}
 
-
 	private void doUpdateCustomFields(Map<String, String> cufValues, BoundEntity bindableEntity) {
 
 		List<CustomFieldValue> cufs = cufvalueService.findAllCustomFieldValues(bindableEntity);
+		Set<String> codeSet = cufValues.keySet();
 		for (CustomFieldValue v : cufs) {
 			String code = v.getCustomField().getCode();
 			String newValue = cufValues.get(code);
-			if (!StringUtils.isBlank(newValue)) {
+			if (codeSet.contains(code)) {
 				v.setValue(newValue);
 			}
 		}
