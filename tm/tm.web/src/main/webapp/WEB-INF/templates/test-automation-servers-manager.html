@@ -108,15 +108,15 @@
                   <tr>
                     <th th:attr="data-def='invisible, map=entity-id'" class="not-displayed">Id</th>
                     <th th:attr="data-def='select, map=entity-index'">#</th>
-                    <th th:attr="data-def='sortable, map=name'" th:text="#{label.Name}">Name</th>
-                    <th th:attr="data-def='sortable, map=base-url'" th:text="#{label.Url}">URL</th>
+                    <th th:attr="data-def='sortable, map=name, link='+@{/test-automation-server/{entity-id}}" th:text="#{label.Name}">Name</th>
+                    <th th:attr="data-def='sortable, map=base-url, link-new-tab={base-url}'" th:text="#{label.Url}">URL</th>
                     <th th:attr="data-def='sortable, map=created-on'" th:text="#{label.createdOn}">Créé le</th>
                     <th th:attr="data-def='sortable, map=created-by'" th:text="#{label.createdBy}">Créé par</th>
                     <th th:attr="data-def='sortable, map=last-modified-on'" th:text="#{label.lastModifiedOn}">Modifié
                       le</th>
                     <th th:attr="data-def='sortable, map=last-modified-by'" th:text="#{label.lastModifiedBy}">Modifié
                       par</th>
-                    <th th:attr="data-def='sWidth=2em, map=empty-delete-holder, sClass=delete-button'"></th>
+                    <th th:attr="data-def='delete-button=#remove-test-automation-server-confirm-dialog, map=empty-delete-holder'"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -205,7 +205,7 @@
           </div>
 
           <!-- ==================== remove popup ==================== -->
-          <div id="remove-parameter-confirm-dialog" class="popup-dialog not-displayed"
+          <div id="remove-test-automation-server-confirm-dialog" class="popup-dialog not-displayed"
             th:title="#{title.removeParameter}" title="info">
             <!-- _____________CASE 1_______________ -->
             <div data-def="state=case1">
