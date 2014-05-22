@@ -42,7 +42,7 @@ import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 @Service("squashtest.tm.service.CallStepManagerService")
 @Transactional
 public class CallStepManagerServiceImpl implements CallStepManagerService, TestCaseCyclicCallChecker {
-	
+
 	@Inject
 	private TestCaseDao testCaseDao;
 
@@ -57,7 +57,7 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 
 	@Inject
 	private DatasetModificationService datasetModificationService;
-	
+
 	@Override
 	@PreAuthorize("(hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') "
 			+ "and hasPermission(#calledTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')) "
@@ -95,8 +95,8 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 	public TestCase findTestCase(long testCaseId) {
 		return testCaseDao.findById(testCaseId);
 	}
-	
-	
+
+
 	@Override
 	@PreAuthorize("hasPermission(#destinationTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ') or hasRole('ROLE_ADMIN')")
 	public void checkForCyclicStepCallBeforePaste(long destinationTestCaseId, String[] pastedStepId) {
@@ -108,12 +108,12 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 	@PreAuthorize("hasPermission(#destinationTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ') or hasRole('ROLE_ADMIN')")
 	public void checkForCyclicStepCallBeforePaste(long destinationTestCaseId, List<Long> pastedStepId) {
 		List<Long> firstCalledTestCasesIds = testCaseDao.findCalledTestCaseOfCallSteps(pastedStepId);
-		
+
 		// 1> check that first called test cases are not the destination one.
 		if (firstCalledTestCasesIds.contains(destinationTestCaseId)) {
 			throw new CyclicStepCallException();
 		}
-		
+
 		// 2> check that each first called test case doesn't have the destination one in it's callTree
 		for (Long testCaseId : firstCalledTestCasesIds) {
 			Set<Long> callTree = callTreeFinder.getTestCaseCallTree(testCaseId);
@@ -123,7 +123,23 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 		}
 
 	}
-	
+
+	@Override
+	@PreAuthorize("hasPermission(#destinationTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ') or hasRole('ROLE_ADMIN')")
+	public void checkForCyclicStepCallBeforePaste(Long destinationTestCaseId, Long calledTestCaseId) {
+
+		// 1> check that first called test cases are not the destination one.
+		if (calledTestCaseId.equals(destinationTestCaseId)) {
+			throw new CyclicStepCallException();
+		}
+
+		// 2> check that each first called test case doesn't have the destination one in it's callTree
+		Set<Long> callTree = callTreeFinder.getTestCaseCallTree(calledTestCaseId);
+		if (callTree.contains(destinationTestCaseId)) {
+			throw new CyclicStepCallException();
+		}
+	}
+
 
 	private List<Long> parseLong(String[] stringArray) {
 		List<Long> longList = new ArrayList<Long>();

@@ -615,7 +615,7 @@ public class FacilityImpl implements Facility {
 		// update the step
 		TestStep actualStep = validator.getModel().getStep(target);
 		TestCase newCalled = validator.getModel().get(calledTestCase);
-		callstepService.checkForCyclicStepCallBeforePaste(newCalled.getId(), Arrays.asList(actualStep.getId()));
+		callstepService.checkForCyclicStepCallBeforePaste(actualStep.getTestCase().getId(),newCalled.getId());
 		((CallTestStep) actualStep).setCalledTestCase(newCalled);
 
 	}

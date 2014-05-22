@@ -28,7 +28,7 @@ import org.squashtest.tm.exception.CyclicStepCallException;
 public interface CallStepManagerService {
 
 	TestCase findTestCase(long testCaseId);
-	
+
 	/**
 	 * will add a call test step.
 	 * 
@@ -36,7 +36,7 @@ public interface CallStepManagerService {
 	 * @param calledTestCaseId being called
 	 */
 	void addCallTestStep(long parentTestCaseId, long calledTestCaseId);
-		
+
 	/**
 	 * Used to check if the destination test case id is found in the calling tree of the pasted steps
 	 * if so : a {@linkplain CyclicStepCallException} is thrown.
@@ -45,13 +45,15 @@ public interface CallStepManagerService {
 	 * @param copiedStepId
 	 */
 	@Deprecated
-	void checkForCyclicStepCallBeforePaste(long destinationTestCaseId, String[] pastedStepsIds);	
-	
+	void checkForCyclicStepCallBeforePaste(long destinationTestCaseId, String[] pastedStepsIds);
+
 	/**
 	 * same as {@link #checkForCyclicStepCallBeforePaste(long, String[])} with a more comfortable signature
 	 * 
 	 * @param destinationTestCaseId
 	 * @param pastedStepsIds
 	 */
-	void checkForCyclicStepCallBeforePaste(long destinationTestCaseId, List<Long> pastedStepsIds);	
+	void checkForCyclicStepCallBeforePaste(long destinationTestCaseId, List<Long> pastedStepsIds);
+
+	void checkForCyclicStepCallBeforePaste(Long destinationTestCaseId, Long calledTestCaseId);
 }
