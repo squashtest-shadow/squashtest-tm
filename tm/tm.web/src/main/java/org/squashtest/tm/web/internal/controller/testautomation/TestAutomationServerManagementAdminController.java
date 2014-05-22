@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.administration;
+package org.squashtest.tm.web.internal.controller.testautomation;
 
 import java.util.HashMap;
 import java.util.List;
@@ -47,6 +47,7 @@ import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.controller.administration.NewTestAutomationServer;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
@@ -64,9 +65,9 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
  */
 @Controller
 @RequestMapping("/administration/test-automation-servers")
-public class TestAutomationServerAdministrationController {
+public class TestAutomationServerManagementAdminController {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(TestAutomationServerAdministrationController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestAutomationServerManagementAdminController.class);
 	private static final String BASE_URL_KEY = "base-url";
 	private static final String BASE_URL_VALUE = "baseURL";
 	private static final String TEST_AUTOMATION_SERVERS = "testAutomationServers";

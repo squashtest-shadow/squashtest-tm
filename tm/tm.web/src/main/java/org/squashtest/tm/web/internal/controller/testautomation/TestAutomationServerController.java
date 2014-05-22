@@ -29,7 +29,6 @@ import javax.inject.Inject;
 
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,7 +41,7 @@ import org.squashtest.tm.service.testautomation.TestAutomationServerManagerServi
 
 @Controller
 @RequestMapping("/test-automation-servers/{serverId}")
-public class TestAutomationServerManagerController {
+public class TestAutomationServerController {
 
 	@Inject
 	private MessageSource messageSource;
@@ -52,16 +51,6 @@ public class TestAutomationServerManagerController {
 	private TestAutomationServerManagerService service;
 
 
-	@RequestMapping(value="/infos", method=RequestMethod.GET)
-	public String showTAServer(@PathVariable("serverId") long serverId, Model model){
-
-		TestAutomationServer server = service.findById(serverId);
-
-		model.addAttribute("server", server);
-
-		return "test-automation/server-manager.html";
-
-	}
 
 	@RequestMapping(value="/name", method=RequestMethod.POST, params="newName")
 	@ResponseBody
