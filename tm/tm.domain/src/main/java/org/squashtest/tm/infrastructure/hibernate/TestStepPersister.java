@@ -23,11 +23,8 @@ package org.squashtest.tm.infrastructure.hibernate;
 import java.util.Iterator;
 
 import org.hibernate.HibernateException;
-import org.hibernate.cache.CacheException;
-import org.hibernate.cache.spi.NaturalIdRegion;
 import org.hibernate.cache.spi.access.EntityRegionAccessStrategy;
 import org.hibernate.cache.spi.access.NaturalIdRegionAccessStrategy;
-import org.hibernate.cache.spi.access.SoftLock;
 import org.hibernate.engine.spi.Mapping;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.mapping.Column;
