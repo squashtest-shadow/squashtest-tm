@@ -27,50 +27,52 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
+import org.squashtest.tm.web.internal.controller.administration.NewTestAutomationServer;
 
 
 @Controller
-@RequestMapping("/test-automation-servers/{serverId}")
+@RequestMapping("/test-automation-servers")
 public class TestAutomationServerController {
 
 	@Inject
 	private MessageSource messageSource;
 
-
 	@Inject
 	private TestAutomationServerManagerService service;
-	private static final Logger LOGGER = LoggerFactory.getLogger(TestAutomationServerManagerController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestAutomationServerController.class);
 
-		return "test-automation/server-modification.html";
 
-	@RequestMapping(value="/name", method=RequestMethod.POST, params="newName")
+	@RequestMapping(value="/{serverId}/name", method=RequestMethod.POST, params="newName")
 	@ResponseBody
 	public String changeName(@PathVariable("serverId") long serverId, @RequestParam("newName") String newName){
 		service.changeName(serverId, newName);
 		return newName;
 	}
 
-	@RequestMapping(value="/description", method=RequestMethod.POST, params="newDescription")
+	@RequestMapping(value="/{serverId}/description", method=RequestMethod.POST, params="newDescription")
 	@ResponseBody
 	public String changeDescription(@PathVariable("serverId") long serverId, @RequestParam("newDescription") String newDescription){
 		service.changeDescription(serverId, newDescription);
 		return newDescription;
 	}
 
-
-	@RequestMapping(value="/baseURL", method=RequestMethod.POST, params="newURL")
+	@RequestMapping(value="/{serverId}/baseURL", method=RequestMethod.POST, params="newURL")
 	@ResponseBody
 	public String changeURL(@PathVariable("serverId") long serverId, @RequestParam("newURL") String newURL, Locale locale)
 			throws BindException{
@@ -87,21 +89,21 @@ public class TestAutomationServerController {
 		}
 	}
 
-	@RequestMapping(value="/login", method=RequestMethod.POST, params="newLogin")
+	@RequestMapping(value="/{serverId}/login", method=RequestMethod.POST, params="newLogin")
 	@ResponseBody
 	public String changeLogin(@PathVariable("serverId") long serverId, @RequestParam("newLogin") String newLogin){
 		service.changeLogin(serverId, newLogin);
 		return newLogin;
 	}
 
-	@RequestMapping(value="/password", method=RequestMethod.POST, params="newPassword")
+	@RequestMapping(value="/{serverId}/password", method=RequestMethod.POST, params="newPassword")
 	@ResponseBody
 	public String changePassword(@PathVariable("serverId") long serverId, @RequestParam("newPassword") String newPassword){
 		service.changePassword(serverId, newPassword);
 		return newPassword;
 	}
 
-	@RequestMapping(value="/manualSelection", method=RequestMethod.POST, params="manualSelection")
+	@RequestMapping(value="/{serverId}/manualSelection", method=RequestMethod.POST, params="manualSelection")
 	@ResponseBody
 	public Boolean changeManualSelection(@PathVariable("serverId") long serverId, @RequestParam("manualSelection") Boolean manualSelection){
 		service.changeManualSlaveSelection(serverId, manualSelection);
@@ -111,19 +113,27 @@ public class TestAutomationServerController {
 	private String findMessage(Locale locale, String key){
 		return messageSource.getMessage(key, null, locale);
 	}
-	@RequestMapping(value = "/{testAutomationServerId}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/{serverId}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public void deleteTestAutomationServer(@PathVariable long testAutomationServerId) {
-		LOGGER.info("Delete test automation server of id #{}", testAutomationServerId);
-		service.deleteServer(testAutomationServerId);
+	public void deleteTestAutomationServer(@PathVariable long serverId) {
+		LOGGER.info("Delete test automation server of id #{}", serverId);
+		service.deleteServer(serverId);
 	}
 
-	@RequestMapping(value = "/{testAutomationServerId}/usage-status", method = RequestMethod.GET)
+	@RequestMapping(value = "/new", method = RequestMethod.POST)
+	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody
-	public TestAutomationUsageStatus getTestAutomationUsageStatus(@PathVariable long testAutomationServerId) {
-		LOGGER.info("Delete test automation server of id #{}", testAutomationServerId);
-		boolean hasBoundProject = service.hasBoundProjects(testAutomationServerId);
-		boolean hasExecutedTests = service.hasExecutedTests(testAutomationServerId);
+	public void createNew(@RequestBody NewTestAutomationServer server) {
+		LOGGER.info(ToStringBuilder.reflectionToString(server));
+		service.persist(server.createTransientEntity());
+	}
+
+	@RequestMapping(value = "/{serverId}/usage-status", method = RequestMethod.GET)
+	@ResponseBody
+	public TestAutomationUsageStatus getTestAutomationUsageStatus(@PathVariable long serverId) {
+		LOGGER.info("Delete test automation server of id #{}", serverId);
+		boolean hasBoundProject = service.hasBoundProjects(serverId);
+		boolean hasExecutedTests = service.hasExecutedTests(serverId);
 		return new TestAutomationUsageStatus(hasBoundProject, hasExecutedTests);
 	}
 

@@ -102,7 +102,7 @@
                   <tr>
                     <th th:attr="data-def='invisible, map=entity-id'" class="not-displayed">Id</th>
                     <th th:attr="data-def='select, map=entity-index'">#</th>
-                    <th th:attr="data-def='sortable, map=name, link='+@{/test-automation-server/{entity-id}}"
+                    <th th:attr="data-def='sortable, map=name, link='+@{/administration/test-automation-servers/{entity-id}}"
                       th:text="#{label.Name}">Name</th>
                     <th th:attr="data-def='sortable, map=base-url, link-new-tab={base-url}'" th:text="#{label.Url}">URL</th>
                     <th th:attr="data-def='sortable, map=created-on'" th:text="#{label.createdOn}">Créé le</th>

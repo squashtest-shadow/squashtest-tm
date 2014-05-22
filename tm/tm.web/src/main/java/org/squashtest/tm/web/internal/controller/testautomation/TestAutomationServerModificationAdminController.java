@@ -52,7 +52,7 @@ public class TestAutomationServerModificationAdminController {
 
 		model.addAttribute("server", server);
 
-		return "test-automation/server-manager.html";
+		return "test-automation/server-modification.html";
 
 	}
 

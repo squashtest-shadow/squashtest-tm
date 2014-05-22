@@ -29,7 +29,7 @@ define([ "jquery", "backbone", "app/util/StringUtil" ],function($, Backbone, Str
 			 */
 			var NewTestAutomationServerModel = Backbone.Model
 					.extend({
-						url : squashtm.app.contextRoot + "administration/test-automation-servers/new",
+						url : squashtm.app.contextRoot + "test-automation-servers/new",
 						defaults : {
 							name : "",
 							baseUrl : "",
