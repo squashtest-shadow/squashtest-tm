@@ -319,12 +319,6 @@ public class ValidationFacility implements Facility, ModelProvider {
 			logs.addEntry(indexCheckLog);
 		}
 
-		//6 - no cycles
-		if (model.wouldCreateCycle(target, calledTestCase)) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_CYCLIC_STEP_CALLS,
-					new Object[] { target.getTestCase().getPath(), calledTestCase.getPath() }));
-		}
-
 		return logs;
 	}
 
