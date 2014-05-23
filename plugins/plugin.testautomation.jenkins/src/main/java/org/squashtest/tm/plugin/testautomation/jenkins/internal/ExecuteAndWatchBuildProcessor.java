@@ -20,50 +20,123 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal;
 
-import org.apache.commons.httpclient.HttpClient;
+import javax.inject.Inject;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.TaskScheduler;
+import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpClientProvider;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.DelayedBuildProcessor;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.StepEventListener;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.StepSequence;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.GetBuildID;
-import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 
-public class ExecuteAndWatchBuildProcessor extends 	DelayedBuildProcessor {
+/**
+ * Instance are created / injected by Spring, yet they are not fully configured. To do so, one should use configuration
+ * dsl :
+ * 
+ * <pre>
+ * processorProvider.get()
+ *   .configuration()
+ *     .buildDef(buildDefinition)
+ *     .externalId(externalId)
+ *   .configure()
+ *   .run()
+ * </pre>
+ * 
+ * @author bsiri, Gregory Fouquet
+ * 
+ */
+@Component
+@Scope("prototype")
+public class ExecuteAndWatchBuildProcessor extends DelayedBuildProcessor implements ExecuteAndWatchContext {
 
-	
-	private ExecuteAndWatchStepSequence stepSequence = new ExecuteAndWatchStepSequence(this);
-	
-	
-	//******* collaborators *********
-	
-	public void setClient(HttpClient client){
-		stepSequence.setClient(client);
+	public class ProcessorConfigurer {
+		private BuildDef buildDef;
+		private String externalId;
+		private StepEventListener<GetBuildID> buildIdListener;
+
+		private ProcessorConfigurer() {
+			super();
+		}
+
+		public ProcessorConfigurer buildDef(BuildDef buildDef) {
+			this.buildDef = buildDef;
+			return this;
+		}
+
+		public ProcessorConfigurer externalId(String externalId) {
+			this.externalId = externalId;
+			return this;
+		}
+
+		public ProcessorConfigurer buildIdListener(StepEventListener<GetBuildID> listener) {
+			this.buildIdListener = listener;
+			return this;
+		}
+
+		/**
+		 * Configures the outer {@link ExecuteAndWatchBuildProcessor} and returns it.
+		 * 
+		 * @return
+		 */
+		public ExecuteAndWatchBuildProcessor configure() {
+			stepSequence = new ExecuteAndWatchStepSequence(ExecuteAndWatchBuildProcessor.this, buildDef, externalId, buildIdListener);
+			configurer = new ProcessorConfigurer(); // releases resources
+			return ExecuteAndWatchBuildProcessor.this;
+		}
 	}
-	
-	public void setProjectContent(TestAutomationProjectContent content){
-		stepSequence.setProjectContent(content);
+
+	@Inject
+	private HttpClientProvider httpClientProvider;
+
+	private ExecuteAndWatchStepSequence stepSequence;
+	private ProcessorConfigurer configurer = new ProcessorConfigurer();
+
+	/**
+	 * Opens the configuration dsl. should be
+	 * 
+	 * @return
+	 */
+	public ProcessorConfigurer configuration() {
+		return configurer;
 	}
-	
-	public void setBuildAbsoluteId(BuildAbsoluteId absoluteId){
-		stepSequence.setAbsoluteId(absoluteId);
-	}
-	
-	public void setGetBuildIDListener(StepEventListener<GetBuildID> listener){
-		stepSequence.setBuildIDEventListener(listener);
-	}
-	
+
 	// *********************** ctor *************
-	
-	public ExecuteAndWatchBuildProcessor(TaskScheduler scheduler){
+	@Inject
+	public ExecuteAndWatchBuildProcessor(TaskScheduler scheduler) {
 		super(scheduler);
 	}
-	
-
 
 	@Override
 	protected StepSequence getStepSequence() {
 		return stepSequence;
+	}
+
+	/**
+	 * Checks this processor has correctly been configured and then runs it.
+	 * 
+	 * @see org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.DelayedBuildProcessor#run()
+	 */
+	@Override
+	public void run() {
+		Assert.state(stepSequence != null,
+				"Step sequence should not be null. Did you programmatically configure this processor ?");
+		super.run();
+	}
+
+	/**
+	 * @return the httpClientProvider
+	 */
+	public HttpClientProvider getHttpClientProvider() {
+		return httpClientProvider;
+	}
+
+	@Value("${tm.test.automation.pollinterval.millis:5000}")
+	public void setDefaultReschedulingDelay(int defaultReschedulingDelay) {
+		super.setDefaultReschedulingDelay(defaultReschedulingDelay);
 	}
 
 }

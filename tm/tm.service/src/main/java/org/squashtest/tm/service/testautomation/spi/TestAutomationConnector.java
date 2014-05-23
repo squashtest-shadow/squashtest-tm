@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.squashtest.tm.core.foundation.lang.Couple;
+import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
@@ -112,6 +113,6 @@ public interface TestAutomationConnector {
 	 * @Throws BadConfiguration if something went wrong due to the configuration
 	 * @throws TestAutomationException for anything that doesn't fit the exceptions above.
 	 */
-	void executeParameterizedTests(Collection<Couple<AutomatedTest, Map<String, Object>>> tests, String externalId,
+	void executeParameterizedTests(Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> tests, String externalId,
 			TestAutomationCallbackService securedCallback);
 }

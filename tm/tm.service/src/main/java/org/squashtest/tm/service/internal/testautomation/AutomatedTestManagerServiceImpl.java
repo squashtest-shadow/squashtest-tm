@@ -177,7 +177,7 @@ public class AutomatedTestManagerServiceImpl implements UnsecuredAutomatedTestMa
 
 			try {
 				connector = connectorRegistry.getConnectorForKind(extendersByKind.getKey());
-				Collection<Couple<AutomatedTest, Map<String, Object>>> tests = collectAutomatedTests(extendersByKind
+				Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> tests = collectAutomatedExecs(extendersByKind
 						.getValue());
 				connector.executeParameterizedTests(tests, suite.getId(), securedCallback);
 			} catch (UnknownConnectorKind ex) {
@@ -244,21 +244,21 @@ public class AutomatedTestManagerServiceImpl implements UnsecuredAutomatedTestMa
 
 	// ******************* dispatching methods **************************
 
-	private Collection<Couple<AutomatedTest, Map<String, Object>>> collectAutomatedTests(
+	private Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> collectAutomatedExecs(
 			Collection<AutomatedExecutionExtender> extenders) {
 
-		Collection<Couple<AutomatedTest, Map<String, Object>>> tests = new ArrayList<Couple<AutomatedTest, Map<String, Object>>>(
+		Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> tests = new ArrayList<Couple<AutomatedExecutionExtender, Map<String, Object>>>(
 				extenders.size());
 
 		for (AutomatedExecutionExtender extender : extenders) {
-			tests.add(createAutomatedTestAndParams(extender));
+			tests.add(createAutomatedExecAndParams(extender));
 		}
 
 		return tests;
 
 	}
 
-	private Couple<AutomatedTest, Map<String, Object>> createAutomatedTestAndParams(AutomatedExecutionExtender extender) {
+	private Couple<AutomatedExecutionExtender, Map<String, Object>> createAutomatedExecAndParams(AutomatedExecutionExtender extender) {
 		Execution execution = extender.getExecution();
 
 		Collection<CustomFieldValue> tcFields = customFieldValueFinder.findAllCustomFieldValues(execution
@@ -272,7 +272,7 @@ public class AutomatedTestManagerServiceImpl implements UnsecuredAutomatedTestMa
 				.addCustomFields(tcFields).iteration().addCustomFields(iterFields).campaign()
 				.addCustomFields(campFields).build();
 
-		return new Couple<AutomatedTest, Map<String, Object>>(extender.getAutomatedTest(), params);
+		return new Couple<AutomatedExecutionExtender, Map<String, Object>>(extender, params);
 	}
 
 	private void notifyExecutionError(Collection<AutomatedExecutionExtender> failedExecExtenders, String message) {

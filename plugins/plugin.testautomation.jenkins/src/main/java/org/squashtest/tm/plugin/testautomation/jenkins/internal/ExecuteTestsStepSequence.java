@@ -31,16 +31,21 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.StepSequen
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.StartBuild;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 
+/**
+ * 
+ * @deprecated no longer used ?
+ */
+@Deprecated
 class ExecuteTestsStepSequence extends HttpBasedStepSequence implements StepSequence {
-	
+
 	// ********* to be configured ************
 
-	
+
 	private TestAutomationProjectContent projectContent;
-	
+
 	private AbstractBuildProcessor processor;
-	
-	
+
+
 	// ************* setters **************
 
 	void setProjectContent(TestAutomationProjectContent content) {
@@ -49,64 +54,64 @@ class ExecuteTestsStepSequence extends HttpBasedStepSequence implements StepSequ
 	}
 
 	// ********** getters ****************
-	
+
 	@Override
 	protected AbstractBuildProcessor getProcessor() {
 		return processor;
 	}
-	
-	
+
+
 
 	//*************** code ****************
-	
-	
+
+
 	ExecuteTestsStepSequence(AbstractBuildProcessor processor){
 		super();
 		this.processor=processor;
 	}
-	
-	
+
+
 	@Override
 	public boolean hasMoreElements() {
 		return (currentStage != START_BUILD);
 	}
 
-	
+
 	@Override
 	public BuildStep<?> nextElement() {
 		switch(currentStage){
-		
+
 		case WAITING :
-				currentStage = START_BUILD;
-				return newStartBuild();
-				
+			currentStage = START_BUILD;
+			return newStartBuild();
+
 		case START_BUILD :
-				throw new NoSuchElementException();
-				
+			throw new NoSuchElementException();
+
 		default : throw new NoSuchElementException();
-				
-			
+
+
 		}
 	}
-	
-	
-	
+
+
+
 	//************** private stuffs ****************
-	
-	
+
+
 	protected StartBuild newStartBuild(){
-		
+
 		PostMethod method = requestFactory.newStartTestSuiteBuild(projectContent, absoluteId.getExternalId());
-		
+
 		StartBuild startBuild = new StartBuild(processor);
-		
+
 		wireHttpSteps(startBuild, method);
-		
+
 		return startBuild;
-		
+
 	}
 
 
-	
+
 
 }

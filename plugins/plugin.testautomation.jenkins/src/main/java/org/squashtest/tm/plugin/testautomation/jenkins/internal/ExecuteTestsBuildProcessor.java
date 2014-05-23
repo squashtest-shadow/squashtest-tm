@@ -27,33 +27,38 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.StepSequen
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 
+/**
+ * 
+ * @deprecated no longer used ?
+ */
+@Deprecated
 public class ExecuteTestsBuildProcessor extends DelayedBuildProcessor {
 
 	private ExecuteTestsStepSequence stepSequence = new ExecuteTestsStepSequence(this);
-	
-	
+
+
 	//******* collaborators *********
-	
+
 	public void setClient(HttpClient client){
 		stepSequence.setClient(client);
 	}
-	
+
 	public void setProjectContent(TestAutomationProjectContent content){
 		stepSequence.setProjectContent(content);
 	}
-	
+
 	public void setBuildAbsoluteId(BuildAbsoluteId absoluteId){
 		stepSequence.setAbsoluteId(absoluteId);
 	}
-	
-	
+
+
 	//************** ctor **************
-	
+
 	public ExecuteTestsBuildProcessor(TaskScheduler scheduler) {
 		super(scheduler);
 	}
-	
-	
+
+
 	@Override
 	protected StepSequence getStepSequence() {
 		return stepSequence;

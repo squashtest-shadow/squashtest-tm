@@ -25,7 +25,7 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpRequestFactory;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.AbstractBuildProcessor;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildProcessor;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.CheckBuildQueue;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.CheckBuildRunning;
@@ -36,100 +36,99 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.HttpBa
 public abstract class HttpBasedStepSequence {
 
 	protected HttpRequestFactory requestFactory = new HttpRequestFactory();
-	
+
 	protected JsonParser jsonParser = new JsonParser();
-	
+
 	protected BuildStage currentStage = BuildStage.WAITING;
-	
-		
+
+
 	// ********* to be configured ************
-	
+
 	protected HttpClient client;
-	
+
 	protected TestAutomationProject project;
-	
+
 	protected BuildAbsoluteId absoluteId;
-	
-	
-	
+
+
+
 	// ************* setters **************
-	
+
 	void setClient(HttpClient client) {
 		this.client = client;
 	}
 
-	
+
 	void setProject(TestAutomationProject project) {
 		this.project = project;
 	}
-	
-	
+
+
 	void setAbsoluteId(BuildAbsoluteId absoluteId) {
 		this.absoluteId = absoluteId;
 	}
-	
+
 	// *********** getters *******************
-	
-	abstract protected AbstractBuildProcessor getProcessor();
-	
-	
+
+	abstract protected BuildProcessor getProcessor();
+
+
 	// *********** useful methods ************
 
-	
+
 	protected CheckBuildQueue newCheckQueue(){
-		
+
 		GetMethod method = requestFactory.newCheckQueue(project);
-		
-		CheckBuildQueue checkQueue = new CheckBuildQueue(getProcessor()); 
-		
+
+		CheckBuildQueue checkQueue = new CheckBuildQueue(getProcessor());
+
 		wireHttpSteps(checkQueue, method);
-		
+
 		return checkQueue;
 	}
-	
-	
+
+
 	protected GetBuildID newGetBuildID(){
-		
+
 		GetMethod method = requestFactory.newGetBuildsForProject(project);
-		
+
 		GetBuildID getBuildID = new GetBuildID(getProcessor());
-		
+
 		wireHttpSteps(getBuildID, method);
-		
+
 		return getBuildID;
-		
+
 	}
-	
+
 	protected CheckBuildRunning newCheckBuildRunning(){
-		
+
 		GetMethod method = requestFactory.newGetBuild(project, absoluteId.getBuildId());
-		
+
 		CheckBuildRunning running = new CheckBuildRunning(getProcessor());
-		
+
 		wireHttpSteps(running, method);
-		
+
 		return running;
 	}
-	
+
 	protected GatherTestList newGatherResults(){
-		
 		GetMethod method = requestFactory.newGetBuildResults(project, absoluteId.getBuildId());
-		
+
 		GatherTestList gatherList = new GatherTestList(getProcessor());
-		
+
 		wireHttpSteps(gatherList, method);
-		
-		return gatherList; 
-		
+
+		return gatherList;
+
 	}
-	
-	
+
+
 	protected void wireHttpSteps(HttpBasedStep step, HttpMethod method){
 		step.setClient(client);
 		step.setMethod(method);
 		step.setParser(jsonParser);
-		step.setBuildAbsoluteId(absoluteId);		
+		step.setBuildAbsoluteId(absoluteId);
 	}
-	
-	
+
+
 }

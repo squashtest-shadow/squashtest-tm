@@ -18,48 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.plugin.testautomation.jenkins.internal.net;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+package org.squashtest.tm.plugin.testautomation.jenkins.internal;
 
-/*
- * Ugly trick. Booh.
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpClientProvider;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildProcessor;
+
+/**
+ * Build Context of a {@link ExecuteAndWatchStepSequence}. This is a {@link BuildProcessor} with service locator
+ * features because {@link ExecuteAndWatchStepSequence} cannot be injected.
  * 
- * @author bsiri
- *
+ * 
+ * @author Gregory Fouquet
+ * 
  */
-
-@Component
-public final class CallbackURL {
-	private static CallbackURL instance;
-	private static final String PROPERTY_NAME = "tm.test.automation.server.callbackurl";
-
-	private String strURL = null;
-
-	private CallbackURL() {
-		super();
-		instance = this;
-	}
-
-	public String getValue() {
-		return strURL;
-	}
-
-	String getConfPropertyName() {
-		return PROPERTY_NAME;
-	}
-
-	@Value("${" + PROPERTY_NAME + "}")
-	void setURL(String url) {
-		strURL = url;
-	}
-
-	/**
-	 * @return the instance
-	 */
-	public static CallbackURL getInstance() {
-		return instance;
-	}
-
+interface ExecuteAndWatchContext extends BuildProcessor {
+	HttpClientProvider getHttpClientProvider();
 }

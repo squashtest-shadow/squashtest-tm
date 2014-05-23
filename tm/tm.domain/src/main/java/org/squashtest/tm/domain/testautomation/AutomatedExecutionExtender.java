@@ -146,4 +146,7 @@ public class AutomatedExecutionExtender {
 		execution.setExecutionStatus(status);
 	}
 
+	public TestAutomationProject getAutomatedProject() {
+		return automatedTest.getProject();
+	}
 }

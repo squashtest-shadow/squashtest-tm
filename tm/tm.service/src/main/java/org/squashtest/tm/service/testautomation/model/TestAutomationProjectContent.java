@@ -23,9 +23,8 @@ package org.squashtest.tm.service.testautomation.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 
-import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 
@@ -33,7 +32,7 @@ public class TestAutomationProjectContent {
 
 	private final TestAutomationProject project;
 
-	private final Collection<Couple<AutomatedTest, Map<String, Object>>> parameterizedTests;
+	private final List<AutomatedTest> tests;
 
 	private Exception knownProblem = null;
 
@@ -43,24 +42,10 @@ public class TestAutomationProjectContent {
 
 	/**
 	 * 
-	 * @return an **unmodifiable view** of the tests.
-	 */
-	public Collection<Couple<AutomatedTest, Map<String, Object>>> getParameterizedTests() {
-		return Collections.unmodifiableCollection(parameterizedTests);
-	}
-
-	/**
-	 * 
 	 * @return an **copy** of the test list.
 	 */
-	public Collection<AutomatedTest> getTests() {
-		ArrayList<AutomatedTest> res = new ArrayList<AutomatedTest>(parameterizedTests.size());
-
-		for (Couple<AutomatedTest, Map<String, Object>> test : parameterizedTests) {
-			res.add(test.getA1());
-		}
-
-		return res;
+	public List<AutomatedTest> getTests() {
+		return Collections.unmodifiableList(tests);
 	}
 
 	public Exception getKnownProblem() {
@@ -78,14 +63,14 @@ public class TestAutomationProjectContent {
 	public TestAutomationProjectContent(TestAutomationProject project) {
 		super();
 		this.project = project;
-		this.parameterizedTests = new ArrayList<Couple<AutomatedTest, Map<String, Object>>>();
+		this.tests = new ArrayList<AutomatedTest>();
 	}
 
 	public TestAutomationProjectContent(TestAutomationProject project, Exception knownProblem) {
 		super();
 		this.project = project;
 		this.knownProblem = knownProblem;
-		this.parameterizedTests = Collections.emptyList();
+		this.tests = Collections.emptyList();
 	}
 
 	/**
@@ -94,12 +79,8 @@ public class TestAutomationProjectContent {
 	 */
 	public TestAutomationProjectContent(TestAutomationProject project, Collection<AutomatedTest> tests) {
 		this.project = project;
-		this.parameterizedTests = new ArrayList<Couple<AutomatedTest, Map<String, Object>>>(tests.size());
+		this.tests = new ArrayList<AutomatedTest>();
 		appendTests(tests);
-	}
-
-	public void appendParameterizedTest(Couple<AutomatedTest, Map<String, Object>> test) {
-		parameterizedTests.add(test);
 	}
 
 	/**
@@ -108,8 +89,7 @@ public class TestAutomationProjectContent {
 	 * @param test
 	 */
 	public void appendTest(AutomatedTest test) {
-		parameterizedTests.add(new Couple<AutomatedTest, Map<String, Object>>(test, Collections
-				.<String, Object> emptyMap()));
+		tests.add(test);
 	}
 
 	/**

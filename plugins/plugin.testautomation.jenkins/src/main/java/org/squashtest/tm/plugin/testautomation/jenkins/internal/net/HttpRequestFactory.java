@@ -129,7 +129,13 @@ public class HttpRequestFactory {
 
 	}
 
-
+	/**
+	 * @deprecated
+	 * @param content
+	 * @param externalID
+	 * @return
+	 */
+	@Deprecated
 	public PostMethod newStartTestSuiteBuild(TestAutomationProjectContent content, String externalID){
 
 		String strURL = callbackProvider.get().toExternalForm();
@@ -286,7 +292,7 @@ public class HttpRequestFactory {
 
 		public URL get(){
 
-			CallbackURL callback = new CallbackURL();
+			CallbackURL callback = CallbackURL.getInstance();
 
 			try{
 

@@ -141,7 +141,7 @@ public class TATestNodeListBuilder {
 
 		TATestNode node = new TATestNode();
 
-		State state = content.getParameterizedTests().isEmpty() ? State.leaf : State.closed;
+		State state = content.getTests().isEmpty() ? State.leaf : State.closed;
 		node.setState(state);
 
 		Attr attr = new Attr();

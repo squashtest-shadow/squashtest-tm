@@ -172,10 +172,10 @@ class AutomatedTestManagerServiceTest extends Specification {
 		finder.findAllCustomFieldValues(_) >> []
 
 		when :
-		def res = service.collectAutomatedTests(exts)
+		def res = service.collectAutomatedExecs(exts)
 
 		then :
-		res*.a1 == tests
+		res*.a1 == exts
 		res*.a2.each { it == []}
 
 	}
@@ -303,10 +303,10 @@ class AutomatedTestManagerServiceTest extends Specification {
 		finder.findAllCustomFieldValues(_) >> [value]
 
 		when:
-		Couple couple = service.createAutomatedTestAndParams(extender)
+		Couple couple = service.createAutomatedExecAndParams(extender)
 
 		then:
-		couple.a1 == extender.automatedTest
+		couple.a1 == extender
 		couple.a2["TC_CUF_FIELD"] == "VALUE"
 		couple.a2["IT_CUF_FIELD"] == "VALUE"
 		couple.a2["CPG_CUF_FIELD"] == "VALUE"

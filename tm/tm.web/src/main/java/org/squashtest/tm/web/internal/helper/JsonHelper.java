@@ -45,7 +45,7 @@ public final class JsonHelper {
 	}
 
 	public static Map<String, Object> deserialize(String json) throws JsonParseException, JsonMappingException,
-			IOException {
+	IOException {
 		TypeReference<HashMap<String, Object>> typeRef = new TypeReference<HashMap<String, Object>>() {
 		};
 		return OBJECT_MAPPER.readValue(json, typeRef);
@@ -67,7 +67,7 @@ public final class JsonHelper {
 	 * @param json
 	 * @return
 	 */
-	public Map<String, Object> unmarshall(String json) throws JsonParseException, JsonMappingException, IOException {
+	public static Map<String, Object> unmarshall(String json) throws JsonParseException, JsonMappingException, IOException {
 		return deserialize(json);
 	}
 }
