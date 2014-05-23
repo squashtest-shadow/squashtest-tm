@@ -23,6 +23,7 @@ package org.squashtest.tm.service.testautomation;
 import java.net.URL;
 import java.util.List;
 
+import org.hibernate.Session;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
@@ -48,6 +49,13 @@ public interface TestAutomationServerManagerService {
 
 	boolean hasExecutedTests(long serverId);
 
+	/**
+	 * <p>
+	 * <b style="color:red">Warning :</b> When using this method there is a risk that your Hibernate beans are not up to
+	 * date. Use {@link Session#clear()} and {@link Session#refresh(Object)} to make sure your they are.
+	 * </p>
+	 * @param serverId
+	 */
 	void deleteServer(long serverId);
 
 	List<TestAutomationServer> findAllOrderedByName();

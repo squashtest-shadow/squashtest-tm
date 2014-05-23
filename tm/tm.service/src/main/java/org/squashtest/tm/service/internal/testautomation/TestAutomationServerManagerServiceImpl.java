@@ -83,12 +83,14 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 		return projectDao.haveExecutedTests(projects);
 	}
 
+	/**
+	 * @see TestAutomationServerManagerService#deleteServer(long)
+	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void deleteServer(long serverId) {
-		Collection<TestAutomationProject> projects = serverDao.findAllHostedProjects(serverId);
 
-		projectDao.deleteProjects(projects);
+		projectDao.deleteAllHostedProjects(serverId);
 		serverDao.deleteServer(serverId);
 
 	}

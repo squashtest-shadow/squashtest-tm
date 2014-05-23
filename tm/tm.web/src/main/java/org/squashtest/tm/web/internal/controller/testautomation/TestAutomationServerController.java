@@ -61,6 +61,7 @@ public class TestAutomationServerController {
 	@RequestMapping(value="/{serverId}/name", method=RequestMethod.POST, params="newName")
 	@ResponseBody
 	public String changeName(@PathVariable("serverId") long serverId, @RequestParam("newName") String newName){
+		LOGGER.info("Change name for test automation server of id #{}", serverId);
 		service.changeName(serverId, newName);
 		return newName;
 	}
@@ -68,6 +69,7 @@ public class TestAutomationServerController {
 	@RequestMapping(value="/{serverId}/description", method=RequestMethod.POST, params="newDescription")
 	@ResponseBody
 	public String changeDescription(@PathVariable("serverId") long serverId, @RequestParam("newDescription") String newDescription){
+		LOGGER.info("Change description for test automation server of id #{}", serverId);
 		service.changeDescription(serverId, newDescription);
 		return newDescription;
 	}
@@ -75,6 +77,7 @@ public class TestAutomationServerController {
 	@RequestMapping(value="/{serverId}/baseURL", method=RequestMethod.POST, params="newURL")
 	@ResponseBody
 	public String changeURL(@PathVariable("serverId") long serverId, @RequestParam("newURL") String newURL, Locale locale){
+		LOGGER.info("Change URL for test automation server of id #{}", serverId);
 		try{
 			URL url = new URL(newURL);
 			service.changeURL(serverId, url);
@@ -88,6 +91,7 @@ public class TestAutomationServerController {
 	@RequestMapping(value="/{serverId}/login", method=RequestMethod.POST, params="newLogin")
 	@ResponseBody
 	public String changeLogin(@PathVariable("serverId") long serverId, @RequestParam("newLogin") String newLogin){
+		LOGGER.info("Change login for test automation server of id #{}", serverId);
 		service.changeLogin(serverId, newLogin);
 		return newLogin;
 	}
@@ -95,6 +99,7 @@ public class TestAutomationServerController {
 	@RequestMapping(value="/{serverId}/password", method=RequestMethod.POST, params="newPassword")
 	@ResponseBody
 	public String changePassword(@PathVariable("serverId") long serverId, @RequestParam("newPassword") String newPassword){
+		LOGGER.info("Change password for test automation server of id #{}", serverId);
 		service.changePassword(serverId, newPassword);
 		return newPassword;
 	}
@@ -102,6 +107,7 @@ public class TestAutomationServerController {
 	@RequestMapping(value="/{serverId}/manualSelection", method=RequestMethod.POST, params="manualSelection")
 	@ResponseBody
 	public Boolean changeManualSelection(@PathVariable("serverId") long serverId, @RequestParam("manualSelection") Boolean manualSelection){
+		LOGGER.info("Change manual slave selection for test automation server of id #{}", serverId);
 		service.changeManualSlaveSelection(serverId, manualSelection);
 		return manualSelection;
 	}
@@ -117,7 +123,7 @@ public class TestAutomationServerController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody
 	public void createNew(@RequestBody NewTestAutomationServer server) {
-		LOGGER.info(ToStringBuilder.reflectionToString(server));
+		LOGGER.info("Add new Test automation server : {}",ToStringBuilder.reflectionToString(server));
 		service.persist(server.createTransientEntity());
 	}
 

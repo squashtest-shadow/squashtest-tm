@@ -94,7 +94,6 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 
 	private boolean active = true;
 
-	// FIXME remove lazy, sometimes we don't want to load all of this stuff
 	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	@JoinColumn(name = "TCL_ID")
 	private TestCaseLibrary testCaseLibrary;

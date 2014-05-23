@@ -39,20 +39,24 @@ import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.TestAutomationServerDao;
 
-
 @Repository
-public class HibernateTestAutomationServerDao implements
-TestAutomationServerDao {
+public class HibernateTestAutomationServerDao implements TestAutomationServerDao {
 
 	@Inject
 	private SessionFactory sessionFactory;
 
-
+	/**
+	 * @see org.squashtest.tm.service.internal.repository.TestAutomationServerDao#persist(TestAutomationServer)
+	 */
 	@Override
 	public void persist(TestAutomationServer server) {
 		sessionFactory.getCurrentSession().persist(server);
 	}
 
+	/**
+	 * @see org.squashtest.tm.service.internal.repository.TestAutomationServerDao#findAllOrderedByName()
+	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<TestAutomationServer> findAllOrderedByName() {
 		Session session = sessionFactory.getCurrentSession();
@@ -60,18 +64,24 @@ TestAutomationServerDao {
 		return q.list();
 	}
 
-
+	/**
+	 * @see org.squashtest.tm.service.internal.repository.TestAutomationServerDao#countAll()
+	 */
 	@Override
 	public long countAll() {
 		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationServer.countAll");
-		return ((Long)q.iterate().next()).longValue();
+		return ((Long) q.iterate().next()).longValue();
 	}
 
-
+	/**
+	 * @see org.squashtest.tm.service.internal.repository.TestAutomationServerDao#findPagedServers(PagingAndSorting)
+	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<TestAutomationServer> findPagedServers(PagingAndSorting pas) {
 
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(TestAutomationServer.class, "TestAutomationServer");
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(TestAutomationServer.class,
+				"TestAutomationServer");
 		SortingUtils.addOrder(criteria, pas);
 		PagingUtils.addPaging(criteria, pas);
 		criteria.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
@@ -79,14 +89,17 @@ TestAutomationServerDao {
 		List<Map<String, ?>> raw = criteria.list();
 		List<TestAutomationServer> res = new ArrayList<TestAutomationServer>(raw.size());
 
-		for (Map<String, ?> r : raw){
-			res.add((TestAutomationServer)r.get("TestAutomationServer"));
+		for (Map<String, ?> r : raw) {
+			res.add((TestAutomationServer) r.get("TestAutomationServer"));
 		}
 
 		return res;
 
 	}
 
+	/**
+	 * @see org.squashtest.tm.service.internal.repository.TestAutomationServerDao#hasBoundProjects(long)
+	 */
 	@Override
 	public boolean hasBoundProjects(long serverId) {
 		Session session = sessionFactory.getCurrentSession();
@@ -96,50 +109,61 @@ TestAutomationServerDao {
 		return (count > 0);
 	}
 
+	/**
+	 * @see org.squashtest.tm.service.internal.repository.TestAutomationServerDao#findById(Long)
+	 */
 	@Override
 	public TestAutomationServer findById(Long id) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.getNamedQuery("testAutomationServer.findById");
 		query.setParameter("serverId", id);
-		return (TestAutomationServer)query.uniqueResult();
+		return (TestAutomationServer) query.uniqueResult();
 	}
 
+	/**
+	 * @see org.squashtest.tm.service.internal.repository.TestAutomationServerDao#findByName(String)
+	 */
 	@Override
-	public TestAutomationServer findByName(String serverName){
+	public TestAutomationServer findByName(String serverName) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.getNamedQuery("testAutomationServer.findByName");
 		query.setParameter("serverName", serverName);
-		return (TestAutomationServer)query.uniqueResult();
+		return (TestAutomationServer) query.uniqueResult();
 	}
 
-
-
-
+	/**
+	 * @see org.squashtest.tm.service.internal.repository.TestAutomationServerDao#findAllHostedProjects(long)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<TestAutomationProject> findAllHostedProjects(long serverId) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.getNamedQuery("testAutomationServer.findAllHostedProjects");
 		query.setParameter("serverId", serverId);
-		return (List<TestAutomationProject>)query.list();
+		return (List<TestAutomationProject>) query.list();
 	}
 
-
+	/**
+	 * @see org.squashtest.tm.service.internal.repository.TestAutomationServerDao#deleteServer(long)
+	 */
 	@Override
 	public void deleteServer(long serverId) {
 		dereferenceProjects(serverId);
+		sessionFactory.getCurrentSession().flush();
 		deleteServerById(serverId);
+		sessionFactory.getCurrentSession().flush();
 	}
 
 	// ***************** private stuffs ***************
 
-	private void dereferenceProjects(long serverId){
+	private void dereferenceProjects(long serverId) {
 		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationServer.dereferenceProjects");
 		q.setParameter("serverId", serverId, LongType.INSTANCE);
 		q.executeUpdate();
+
 	}
 
-	private void deleteServerById(long serverId){
+	private void deleteServerById(long serverId) {
 		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationServer.deleteServer");
 		q.setParameter("serverId", serverId, LongType.INSTANCE);
 		q.executeUpdate();

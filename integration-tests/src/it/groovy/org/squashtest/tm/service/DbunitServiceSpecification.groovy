@@ -21,14 +21,14 @@
 package org.squashtest.tm.service
 
 
-import java.util.List;
+import java.util.List
 
 import javax.inject.Inject
 
 import org.hibernate.Query
-import org.hibernate.transform.ResultTransformer;
+import org.hibernate.transform.ResultTransformer
 import org.hibernate.type.LongType
-import org.hibernate.ObjectNotFoundException;
+import org.hibernate.ObjectNotFoundException
 import org.hibernate.Session
 import org.hibernate.SessionFactory
 import org.springframework.test.context.ContextConfiguration
@@ -45,10 +45,10 @@ import spock.lang.Specification
 abstract class DbunitServiceSpecification extends Specification {
 
 	@Inject
-	private SessionFactory sessionFactory;
+	private SessionFactory sessionFactory
 
 	protected Session getSession(){
-		return sessionFactory.getCurrentSession();
+		return sessionFactory.getCurrentSession()
 	}
 
 	/*-------------------------------------------Private stuff-----------------------------------*/
@@ -62,7 +62,7 @@ abstract class DbunitServiceSpecification extends Specification {
 	}
 
 
-	protected boolean found(Class<?> entityClass, Long id){
+	protected boolean found(Class<?> entityClass, Object id){
 		boolean found = false
 
 		try {
@@ -84,11 +84,11 @@ abstract class DbunitServiceSpecification extends Specification {
 	}
 
 	protected Object findEntity(Class<?> entityClass, Long id){
-		return getSession().get(entityClass, id);
+		return getSession().get(entityClass, id)
 	}
 
 	protected List<Object> findAll(String className){
-		return getSession().createQuery("from "+className).list();
+		return getSession().createQuery("from "+className).list()
 	}
 
 	protected boolean allNotDeleted(String className, List<Long> ids){
@@ -100,7 +100,7 @@ abstract class DbunitServiceSpecification extends Specification {
 	}
 
 	protected NewSQLQuery newSQLQuery(String query){
-		return new NewSQLQuery(query, session);
+		return new NewSQLQuery(query, session)
 	}
 
 	protected Object executeSQL (String query){
@@ -121,7 +121,7 @@ abstract class DbunitServiceSpecification extends Specification {
 		Query query
 
 		public NewSQLQuery(String query, Session session){
-			this.query = session.createSQLQuery(query);
+			this.query = session.createSQLQuery(query)
 			this.query.setResultTransformer  new EasyResultTransformer()
 		}
 

@@ -22,12 +22,17 @@ package org.squashtest.tm.service.testautomation
 
 import javax.inject.Inject
 
+import org.hibernate.context.CurrentSessionContext
 import org.hibernate.exception.ConstraintViolationException
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.project.GenericProject
+import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender
+import org.squashtest.tm.domain.testautomation.AutomatedSuite
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
+import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.service.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
 import org.squashtest.tm.service.internal.customfield.DefaultEditionStatusStrategy
@@ -54,4 +59,48 @@ public class TestAutomationServerManagerServiceIT extends DbunitServiceSpecifica
 		!found(TestAutomationServer.class, serverId)
 	}
 
+	@DataSet("TestAutomationServerManagerServiceIT.bound.xml")
+	def "should delete a tas bound to a project" (){
+		given :
+		def serverId = 1L
+		def taProjectId = 1L
+		def tmProjectId = 1L
+		when :
+		service.deleteServer(serverId)
+		then:
+		!found(TestAutomationServer.class, serverId)
+		!found(TestAutomationProject.class, taProjectId)
+		GenericProject tmProject = findEntity(GenericProject, tmProjectId)
+		tmProject.getTestAutomationServer() == null
+		tmProject.getTestAutomationProjects().size() == 0
+	}
+
+	@DataSet("TestAutomationServerManagerServiceIT.executed.xml")
+	def "should delete a tas with executions" (){
+		given :
+		def serverId = 11L
+		def taProjectId = 10L
+		def tmProjectId = 1L
+		def tmTestId = 13L
+		def taTestId = 12L
+		def executionId = 15L
+		def automatedSuiteId = "16"
+		def automatedExecutionExtenderId = 17L
+		when :
+		service.deleteServer(serverId)
+		then:
+		!found(TestAutomationServer.class, serverId)
+		!found(TestAutomationProject.class, taProjectId)
+		GenericProject tmProject = findEntity(GenericProject, tmProjectId)
+		tmProject.getTestAutomationServer() == null
+		tmProject.getTestAutomationProjects().size() == 0
+		found(Execution.class, executionId)
+		TestCase test = findEntity(TestCase.class, tmTestId)
+		test !=null
+		test.getAutomatedTest() == null
+		found(AutomatedSuite.class, automatedSuiteId)
+		AutomatedExecutionExtender aee = findEntity(AutomatedExecutionExtender.class, automatedExecutionExtenderId)
+		aee != null
+		aee.getResultURL() == null
+	}
 }

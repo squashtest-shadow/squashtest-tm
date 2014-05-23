@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.Collection;
 
+import org.hibernate.Session;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.service.internal.repository.hibernate.NonUniqueEntityException;
 
@@ -76,7 +77,14 @@ public interface TestAutomationProjectDao {
 	 */
 	void deleteProjectsByIds(Collection<Long> projectIds);
 
-	void deleteProjects(Collection<TestAutomationProject> projects);
+	/**
+	 * <p>
+	 * <b style="color:red">Warning :</b> When using this method there is a risk that your Hibernate beans are not up to
+	 * date. Use {@link Session#clear()} and {@link Session#refresh(Object)} to make sure your they are.
+	 * </p>
+	 * @param serverId
+	 */
+	void deleteAllHostedProjects(long serverId);
 
 
 }

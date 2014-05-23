@@ -22,7 +22,9 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
 
+import org.hibernate.Session;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.service.internal.repository.hibernate.NonUniqueEntityException;
@@ -39,22 +41,47 @@ public interface TestAutomationServerDao {
 	 */
 	void persist(TestAutomationServer server);
 
+	/**
+	 * Will find all occurrences of {@link TestAutomationServer} in the database ordered by their name.
+	 * 
+	 * @return : all {@link TestAutomationServer} ordered by their name
+	 */
 	List<TestAutomationServer> findAllOrderedByName();
 
+	/**
+	 * Will count all occurrences of {@link TestAutomationServer} in the database
+	 * 
+	 * @return the number of {@link TestAutomationServer} in the database
+	 */
 	long countAll();
 
 	List<TestAutomationServer> findPagedServers(PagingAndSorting pas);
 
+	/**
+	 * Checks if the {@link TestAutomationServer} is bound to at least one {@link TestAutomationProject}
+	 * 
+	 * @param serverId
+	 *            : the id of the concernedTestAutomationServer
+	 * @return : true if the TestAutomationServer is bound to a TA-project
+	 */
 	boolean hasBoundProjects(long serverId);
 
 	/**
-	 * 
+	 * Simple find entity by id.
 	 * 
 	 * @param id
-	 * @return
+	 *            : the id of the entity to find
+	 * @return the entity matching the given id or <code>null</code>
 	 */
 	TestAutomationServer findById(Long id);
 
+	/**
+	 * Find the {@linkplain TestAutomationServer} by it's name.
+	 * 
+	 * @param serverName
+	 *            : the name of the entity to find
+	 * @return : the entity matching the given name (must be only one or database is corrupted) or <code>null</code>.
+	 */
 	TestAutomationServer findByName(String serverName);
 
 	/**
@@ -65,6 +92,16 @@ public interface TestAutomationServerDao {
 	 */
 	List<TestAutomationProject> findAllHostedProjects(long serverId);
 
+	/**
+	 * Will delete the given {@linkplain TestAutomationServer} and dereference it from TM {@linkplain Project}s.
+	 * <p>
+	 * <b style="color:red">Warning :</b> When using this method there is a risk that your Hibernate beans are not up to
+	 * date. Use {@link Session#clear()} and {@link Session#refresh(Object)} to make sure your they are.
+	 * </p>
+	 * 
+	 * @param serverId
+	 *            the id of the {@linkplain TestAutomationServer} to delete.
+	 */
 	void deleteServer(long serverId);
 
 }
