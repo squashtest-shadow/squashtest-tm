@@ -71,7 +71,7 @@ import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
  */
 public class ExcelWorkbookParser {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExcelWorkbookParser.class);
-
+	private static final Integer MAX_LINES = 100;
 	/**
 	 * Can create an {@link InstructionBuilder} for a given {@link WorksheetDef<C>}
 	 * @param <C> a TemplateColumn
@@ -171,10 +171,14 @@ public class ExcelWorkbookParser {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void processWorksheet(WorksheetDef<?> worksheetDef) {
+	private void processWorksheet(WorksheetDef<?> worksheetDef) throws MaxNumberOfLinesExceededException {
 		LOGGER.debug("Processing worksheet {}", worksheetDef.getWorksheetType());
 
 		Sheet sheet = workbook.getSheet(worksheetDef.getSheetName());
+
+		if(sheet.getLastRowNum() > MAX_LINES){
+			throw new MaxNumberOfLinesExceededException(worksheetDef.getSheetName());
+		}
 
 		InstructionBuilder<?, ?> instructionBuilder = instructionBuilderFactoryByWorksheet.get(
 				worksheetDef.getWorksheetType()).create((WorksheetDef) worksheetDef); // useless (WorksheetDef) cast
