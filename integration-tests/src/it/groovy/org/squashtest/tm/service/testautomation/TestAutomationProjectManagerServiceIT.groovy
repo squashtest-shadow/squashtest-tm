@@ -18,17 +18,17 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.testautomation.service;
+package org.squashtest.tm.service.testautomation
 
-import javax.inject.Inject;
+import javax.inject.Inject
 
-import org.hibernate.exception.ConstraintViolationException;
+import org.hibernate.exception.ConstraintViolationException
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
-import org.squashtest.tm.service.DbunitServiceSpecification;
+import org.squashtest.tm.service.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
 import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService
 
@@ -38,7 +38,7 @@ import spock.unitils.UnitilsSupport
 @NotThreadSafe
 @UnitilsSupport
 @Transactional
-public class TestAutomationProjectManagerServiceImplIT extends DbunitServiceSpecification {
+public class TestAutomationProjectManagerServiceIT extends DbunitServiceSpecification {
 
 	@Inject
 	private TestAutomationProjectManagerService service

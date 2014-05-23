@@ -117,7 +117,7 @@
   		</sql>
   		
   		
-  		<!-- drop the temp table (yes, event if its a temp table) -->
+  		<!-- drop the temp table (yes, even if its a temp table) -->
   		<sql>
   			drop table UNUSED_TA_PROJECT;
   		</sql>
@@ -125,7 +125,7 @@
   	</changeSet>
 
 	<changeSet id="tm-1.9.10.feature-3481-3" author="bsiri">
-		<comment>The test automation serveurs are now 'auditable' (dates and authors of creation/modification are recorded) and has 
+		<comment>The test automation servers are now 'auditable' (dates and authors of creation/modification are recorded) and has 
 		several other attributes</comment>
 		<addColumn tableName="TEST_AUTOMATION_SERVER">
 			
@@ -175,7 +175,7 @@
 	<changeSet id="tm-1.9.10.feature-3481-4" author="bsiri">
 		
 		<comment>
-			The associative table TM_TA_PROJECTS is totally repurposed as TM_AUTOMATION_PROJECT 
+			The associative table TM_TA_PROJECTS is totally re-purposed as TEST_AUTOMATION_PROJECT 
 			(and the former table is ditched). 
 			
 			Gosh, that's so unnatural. We then do so by creating a whole new table, that will be renamed afterward.

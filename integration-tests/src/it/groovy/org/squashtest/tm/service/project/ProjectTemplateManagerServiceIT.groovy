@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.project;
+package org.squashtest.tm.service.project;
 
 import static org.junit.Assert.*;
 
@@ -39,7 +39,7 @@ import spock.unitils.UnitilsSupport;
  */
 @UnitilsSupport
 @Transactional
-class ProjectTemplateManagerIT extends DbunitServiceSpecification {
+class ProjectTemplateManagerServiceIT extends DbunitServiceSpecification {
 
 	@Inject ProjectTemplateManagerService manager
 
