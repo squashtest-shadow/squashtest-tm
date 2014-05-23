@@ -45,10 +45,33 @@ define(["jquery", "squash.translator", "squash.configmanager",
 		var selectConf = confman.getJeditableSelect();
 		var url = conf.tmProjectURL + '/test-automation-server';
 		selectConf.data = data;
-		selectConf.name = "serverId";
+		
+		// warning : there will be tricky tricks involving the confirmChangePopup
+		// but that's your job now, I'm in hollidays :P have fun
+		selectConf.onsubmit = function(settings, original){
+			$("#ta-server-confirm-popup").formDialog('open');
+			return false;	// must return false to prevent the editable to submit right away
+		}
 		
 		$("#selected-ta-server-span").editable(url, selectConf);
 		
+	}
+	
+	function initConfirmChangePopup(){
+		
+		var dialog = $("#ta-server-confirm-popup");
+		var select = $("#selected-ta-server-span");
+		
+		dialog.formDialog();
+		
+		dialog.on('formdialogconfirm', function(){
+			alert('confirmed !')
+			// also make sure to resume the jeditable submission routine.
+		});
+		
+		dialog.on('formdialogcancel', function(){
+			alert('cancelled !')
+		});
 	}
 	
 	function initBindPopup(){
@@ -101,6 +124,7 @@ define(["jquery", "squash.translator", "squash.configmanager",
 			
 			initSelect(conf);
 			initBindPopup();
+			initConfirmChangePopup();
 			initUnbindPopup();
 			initTable();
 			

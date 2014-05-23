@@ -41,6 +41,8 @@ public interface TestAutomationProjectManagerService {
 
 	void deleteProject(long projectId);
 
+	void deleteAllForTMProject(long tmProjectId);
+
 
 	// *********************** Properties mutators ****************************
 

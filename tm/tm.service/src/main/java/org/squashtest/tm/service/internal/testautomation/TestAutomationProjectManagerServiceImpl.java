@@ -73,6 +73,12 @@ public class TestAutomationProjectManagerServiceImpl implements TestAutomationPr
 	}
 
 	@Override
+	public void deleteAllForTMProject(long tmProjectId) {
+		Collection<TestAutomationProject> allprojects = projectDao.findAllByTMProject(tmProjectId);
+		projectDao.deleteProjects(allprojects);
+	}
+
+	@Override
 	public boolean hasExecutedTests(long serverId) {
 		return projectDao.haveExecutedTestsByIds(Arrays.asList(serverId));
 	}

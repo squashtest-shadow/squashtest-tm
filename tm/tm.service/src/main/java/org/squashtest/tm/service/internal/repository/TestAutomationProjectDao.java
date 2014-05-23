@@ -55,6 +55,9 @@ public interface TestAutomationProjectDao {
 	TestAutomationProject findByExample(TestAutomationProject example);
 
 
+	Collection<TestAutomationProject> findAllByTMProject(long tmProjectId);
+
+
 	/**
 	 * return true if at least one of these projects have been executed, false otherwise
 	 * 

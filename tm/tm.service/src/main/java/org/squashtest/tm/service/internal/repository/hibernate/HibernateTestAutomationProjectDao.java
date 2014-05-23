@@ -73,6 +73,14 @@ public class HibernateTestAutomationProjectDao implements TestAutomationProjectD
 	}
 
 	@Override
+	public Collection<TestAutomationProject> findAllByTMProject(long tmProjectId) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.getNamedQuery("testAutomationProject.findAllByTMPRoject");
+		query.setParameter("tmProjectId", tmProjectId);
+		return query.list();
+	}
+
+	@Override
 	public boolean haveExecutedTests(Collection<TestAutomationProject> projects) {
 		if (projects.isEmpty()) {
 			return false;

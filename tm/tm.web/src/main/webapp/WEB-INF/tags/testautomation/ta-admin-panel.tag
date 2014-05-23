@@ -119,6 +119,24 @@
 
 
 <%-- ================================================
+
+	Change TA server confirmation popup
+	
+
+ ================================================= --%>
+
+<div id="ta-server-confirm-popup" class="popup-dialog" title="CONFIRM">
+
+	<div><span>// DO AJAX THEN</span><br/><span>U OK WIZ REMOVIN ALL UR STUFFS AND CHANGE SERVERZ ?</span></div>
+
+	<div class="popup-dialog-buttonpane">
+		<input type="button" value="${confirmLabel}" data-def="mainbtn=main, evt=confirm"/>
+		<input type="button" value="${cancelLabel}" data-def="evt=cancel"/>	
+	</div>
+</div>
+
+
+<%-- ================================================
 	Project add popup. 
 	
 	Dumb definition here, the code is elsewhere 
