@@ -24,6 +24,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
 
+import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
@@ -138,7 +139,7 @@ public interface TestAutomationConnector {
 	 * @param tests the tests that must be executed. These entities are detached copies of the real entities,
 	 * 		so they won't keep a session or transaction stuck forever.
 	 * 
-	 * @param reference a reference that index the resulting executions of those tests
+	 * @param reference a reference that indexes the resulting executions of those tests
 	 * 
 	 * @throws ServerConnectionFailed if could not connect to the server
 	 * @throws AccessDenied if the server was reached but the used user could log in
@@ -181,4 +182,13 @@ public interface TestAutomationConnector {
 			NotFoundException,
 			BadConfiguration,
 			TestAutomationException;
+
+
+	/**
+	 * @param tests
+	 * @param id
+	 * @param securedCallback
+	 */
+	void executeParameterizedTests(Collection<Couple<AutomatedTest, Map<String, Object>>> tests, String id,
+			TestAutomationCallbackService securedCallback);
 }

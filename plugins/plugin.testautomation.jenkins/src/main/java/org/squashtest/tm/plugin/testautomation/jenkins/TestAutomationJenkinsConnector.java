@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
+import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
@@ -414,6 +415,17 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 		public String getAutomatedTestName() {
 			return automatedTestName;
 		}
+
+	}
+
+
+	/**
+	 * @see org.squashtest.tm.service.testautomation.spi.TestAutomationConnector#executeParameterizedTests(java.util.Collection, java.lang.String, org.squashtest.tm.service.testautomation.TestAutomationCallbackService)
+	 */
+	@Override
+	public void executeParameterizedTests(Collection<Couple<AutomatedTest, Map<String, Object>>> tests, String id,
+			TestAutomationCallbackService securedCallback) {
+		// TODO Auto-generated method stub
 
 	}
 

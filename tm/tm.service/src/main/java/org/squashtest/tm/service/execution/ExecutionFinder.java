@@ -55,5 +55,4 @@ public interface ExecutionFinder {
 	 * @return a {@link PagedCollectionHolder} holding the results. Should never return <code>null</code>
 	 */
 	PagedCollectionHolder<List<Execution>> findAllByTestCaseId(long testCaseId, PagingAndSorting pas);
-
 }

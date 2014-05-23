@@ -30,6 +30,8 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -52,9 +54,9 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	@Inject
 	private CampaignNodeDeletionHandler deletionHandler;
 
-	@Inject 
+	@Inject
 	private IndexationService indexationService;
-	
+
 	@Override
 	public Execution findAndInitExecution(Long executionId) {
 		return executionDao.findAndInit(executionId);
@@ -101,12 +103,11 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#execution, 'EXECUTE') "
-			+	"or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#execution, 'EXECUTE') " + "or hasRole('ROLE_ADMIN')")
 	public void deleteExecution(Execution execution) {
 		TestCase testCase = execution.getReferencedTestCase();
 		deletionHandler.deleteExecution(execution);
-		if (testCase != null){
+		if (testCase != null) {
 			indexationService.reindexTestCase(testCase.getId());
 		}
 	}
@@ -122,7 +123,8 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	}
 
 	/**
-	 * @see org.squashtest.tm.service.execution.ExecutionFinder#findAllByTestCaseIdOrderByRunDate(long, org.squashtest.csp.core.infrastructure.collection.Paging)
+	 * @see org.squashtest.tm.service.execution.ExecutionFinder#findAllByTestCaseIdOrderByRunDate(long,
+	 *      org.squashtest.csp.core.infrastructure.collection.Paging)
 	 *      org.squashtest.csp.core.infrastructure.collection.Paging)
 	 */
 	@Override

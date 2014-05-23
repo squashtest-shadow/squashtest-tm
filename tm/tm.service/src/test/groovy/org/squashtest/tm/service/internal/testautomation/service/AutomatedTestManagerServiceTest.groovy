@@ -20,6 +20,14 @@
  */
 package org.squashtest.tm.service.internal.testautomation.service
 
+import javax.inject.Provider;
+
+import org.squashtest.tm.core.foundation.lang.Couple
+import org.squashtest.tm.domain.campaign.Campaign
+import org.squashtest.tm.domain.campaign.Iteration
+import org.squashtest.tm.domain.customfield.CustomField
+import org.squashtest.tm.domain.customfield.CustomFieldBinding
+import org.squashtest.tm.domain.customfield.CustomFieldValue
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStatus
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender
@@ -27,10 +35,12 @@ import org.squashtest.tm.domain.testautomation.AutomatedSuite
 import org.squashtest.tm.domain.testautomation.AutomatedTest
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
-import org.squashtest.tm.service.internal.repository.TestAutomationServerDao
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.internal.testautomation.AutomatedTestManagerServiceImpl
 import org.squashtest.tm.service.internal.testautomation.FetchTestListFuture
 import org.squashtest.tm.service.internal.testautomation.FetchTestListTask
+import org.squashtest.tm.service.internal.testautomation.TaParametersBuilder;
 import org.squashtest.tm.service.internal.testautomation.TestAutomationConnectorRegistry
 import org.squashtest.tm.service.internal.testautomation.TestAutomationTaskExecutor
 import org.squashtest.tm.service.internal.testautomation.AutomatedTestManagerServiceImpl.ExtenderSorter
@@ -48,6 +58,8 @@ class AutomatedTestManagerServiceTest extends Specification {
 
 
 	TestAutomationTaskExecutor executor;
+	CustomFieldValueFinderService finder = Mock()
+	Provider builderProvider = Mock()
 
 	def setup(){
 		connectorRegistry = Mock()
@@ -55,6 +67,10 @@ class AutomatedTestManagerServiceTest extends Specification {
 		service = new AutomatedTestManagerServiceImpl()
 		service.connectorRegistry = connectorRegistry
 		service.executor = executor;
+
+		service.customFieldValueFinder = finder
+		builderProvider.get() >> new TaParametersBuilder()
+		service.paramBuilder = builderProvider
 	}
 
 
@@ -63,7 +79,8 @@ class AutomatedTestManagerServiceTest extends Specification {
 	def "should build a bunch of tasks to fetch the test lists"(){
 
 		given :
-		List<TestAutomationProject> projects = [ Mock(TestAutomationProject),
+		List<TestAutomationProject> projects = [
+			Mock(TestAutomationProject),
 			Mock(TestAutomationProject),
 			Mock(TestAutomationProject)
 		]
@@ -73,24 +90,37 @@ class AutomatedTestManagerServiceTest extends Specification {
 
 		then :
 		res.collect {
-			[it.project, it.connectorRegistry]
+			[
+				it.project,
+				it.connectorRegistry
+			]
 		} == [
-			[projects[0], connectorRegistry],
-			[projects[1], connectorRegistry],
-			[projects[2], connectorRegistry]
+			[
+				projects[0],
+				connectorRegistry
+			],
+			[
+				projects[1],
+				connectorRegistry
+			],
+			[
+				projects[2],
+				connectorRegistry]
 		]
 	}
 
 	def "should submit a bunch of tasks"(){
 
 		given :
-		List<FetchTestListTask> tasks = [ Mock(FetchTestListTask),
+		List<FetchTestListTask> tasks = [
+			Mock(FetchTestListTask),
 			Mock(FetchTestListTask),
 			Mock(FetchTestListTask)
 		]
 
 		and :
-		List<FetchTestListFuture> futures = [ Mock(FetchTestListFuture),
+		List<FetchTestListFuture> futures = [
+			Mock(FetchTestListFuture),
 			Mock(FetchTestListFuture),
 			Mock(FetchTestListFuture)
 		]
@@ -105,7 +135,6 @@ class AutomatedTestManagerServiceTest extends Specification {
 
 		then :
 		res == futures
-
 	}
 
 	def "should collect test list results"(){
@@ -130,12 +159,185 @@ class AutomatedTestManagerServiceTest extends Specification {
 
 		then :
 		res == [content1, content2]
+	}
+
+	def "should collect tests from extender list"(){
+		given :
+		def exts = []
+		3.times { exts << mockExtender() }
+
+		def tests = exts*.automatedTest
+
+		and:
+		finder.findAllCustomFieldValues(_) >> []
+
+		when :
+		def res = service.collectAutomatedTests(exts)
+
+		then :
+		res*.a1 == tests
+		res*.a2.each { it == []}
 
 	}
 
 
-	def "extender sorter should sort extenders "(){
 
+	def "should start some tests"(){
+		given :
+		AutomatedSuite suite = mockAutomatedSuite()
+
+		and :
+		def jenConnector = Mock(TestAutomationConnector)
+		def qcConnector = Mock(TestAutomationConnector)
+
+		and:
+		finder.findAllCustomFieldValues(_) >> []
+
+		when :
+		service.startAutomatedSuite(suite)
+
+		then :
+
+		1 * connectorRegistry.getConnectorForKind("jenkins") >> jenConnector
+		1 * connectorRegistry.getConnectorForKind("qc") >> qcConnector
+		1 * jenConnector.executeParameterizedTests(_, "12345", _)
+		1 * qcConnector.executeParameterizedTests(_, "12345", _)
+
+	}
+
+
+
+	def "should notify some executions that an error occured before they could start"(){
+		given :
+		AutomatedSuite suite = mockAutomatedSuite()
+
+		suite.executionExtenders.each{
+			def exec = new Execution()
+			exec.automatedExecutionExtender = it
+		}
+
+		and :
+		def jenConnector = Mock(TestAutomationConnector)
+		def qcConnector = Mock(TestAutomationConnector)
+
+		connectorRegistry.getConnectorForKind("jenkins") >> jenConnector
+		connectorRegistry.getConnectorForKind("qc") >> { throw new UnknownConnectorKind("connector unknown") }
+
+		and:
+		finder.findAllCustomFieldValues(_) >> []
+
+		and:
+		def errors = 0
+		suite.executionExtenders.each { it.setExecutionStatus(_) >> { st -> st == ExecutionStatus.ERROR ?: errors++ } }
+
+		when :
+		service.startAutomatedSuite(suite)
+
+		then :
+		1 * jenConnector.executeParameterizedTests(_, "12345", _)
+		errors == 6
+	}
+
+
+	def mockAutomatedSuite(){
+
+		AutomatedSuite suite = new AutomatedSuite();
+		suite.id = "12345"
+
+		TestAutomationServer serverJenkins = new TestAutomationServer("thejenkins", new URL("http://jenkins-ta"), "jen", "kins", "jenkins");
+		TestAutomationServer serverQC = new TestAutomationServer("theQC", new URL("http://qc-ta"), "the", "QC", "qc");
+
+		TestAutomationProject projectJ1 = new TestAutomationProject("project-jenkins-1", serverJenkins)
+		TestAutomationProject projectQC1 = new TestAutomationProject("project-qc-1", serverQC)
+		TestAutomationProject projectJ2 = new TestAutomationProject("project-jenkins-2", serverJenkins)
+
+		def allTests = []
+
+		def projects = [
+			projectJ1,
+			projectQC1,
+			projectJ2
+		]
+
+		projects.each{ proj ->
+
+			5.times{ num ->
+
+				AutomatedTest test = new AutomatedTest("${proj.jobName} - test $num", proj)
+				allTests << test
+			}
+		}
+
+		def exts = []
+
+		suite.addExtenders(
+				projects.collect { proj ->
+					// returns list of lists of exts
+					return (0..5).collect { // returns list of exts
+						mockExtender() }.eachWithIndex { ext, num ->
+						// performs stuff on exts and returns exts
+						def test = ext.automatedTest
+						test.project >> proj
+						test.name >> "${proj.name} - test $num"
+					}
+				}.flatten()
+				)
+
+		return suite
+	}
+	def "should create automated test and params couple"() {
+		given:
+		AutomatedExecutionExtender extender = mockExtender()
+
+		and:
+		CustomFieldValue value = Mock()
+		value.value >> "VALUE"
+
+		CustomFieldBinding binding = Mock()
+		value.binding >> binding
+
+		CustomField field = Mock()
+		field.code >> "FIELD"
+		binding.customField >> field
+
+		finder.findAllCustomFieldValues(_) >> [value]
+
+		when:
+		Couple couple = service.createAutomatedTestAndParams(extender)
+
+		then:
+		couple.a1 == extender.automatedTest
+		couple.a2["TC_CUF_FIELD"] == "VALUE"
+		couple.a2["IT_CUF_FIELD"] == "VALUE"
+		couple.a2["CPG_CUF_FIELD"] == "VALUE"
+	}
+
+
+
+	private AutomatedExecutionExtender mockExtender(realExec) {
+		AutomatedExecutionExtender extender = Mock()
+
+		AutomatedTest automatedTest = Mock()
+		extender.automatedTest >> automatedTest
+
+		Execution exec = Mock()
+		exec.iteration >> Mock(Iteration)
+		exec.campaign >> Mock(Campaign)
+
+		extender.execution >> exec
+
+		TestCase tc = Mock()
+
+		exec.referencedTestCase >> tc
+
+		return extender
+	}
+
+}
+
+class ExtenderSorterTest extends Specification {
+
+	def "extender sorter should sort extenders "(){
 		given :
 		AutomatedSuite suite = makeSomeSuite()
 
@@ -150,100 +352,17 @@ class AutomatedTestManagerServiceTest extends Specification {
 		col2.key == "qc"
 
 		col1.value.size() == 10
-		col1.value.collect{ it.automatedTest.project }.unique().collect{ it.name} as Set == ["project-jenkins-1", "project-jenkins-2"] as Set
+
+		col1.value.collect{ it.automatedTest.project }.unique()*.name as Set == [
+			"project-jenkins-1",
+			"project-jenkins-2"] as Set
 
 		col2.value.size() == 5
-		col2.value.collect{ it.automatedTest.project}.unique().collect{ it.name} as Set == ["project-qc-1"] as Set
 
+		col2.value.collect{ it.automatedTest.project}.unique()*.name as Set == ["project-qc-1"] as Set
 	}
 
-
-
-
-
-	def "should collect tests from extender list"(){
-
-		given :
-
-		def tests = [new AutomatedTest("bob", null), new AutomatedTest("mike", null), new AutomatedTest("robert", null) ]
-
-		def exts = []
-
-		tests.each{
-			def ex = new AutomatedExecutionExtender()
-			ex.automatedTest = it
-			exts << ex
-		}
-
-		when :
-
-		def res = service.collectAutomatedTests(exts)
-
-		then :
-		res == tests
-	}
-
-
-	def "should start some tests"(){
-
-		given :
-		AutomatedSuite suite = makeSomeSuite()
-
-		and :
-		def jenConnector = Mock(TestAutomationConnector)
-		def qcConnector = Mock(TestAutomationConnector)
-
-		when :
-		service.startAutomatedSuite(suite)
-
-		then :
-
-		1 * connectorRegistry.getConnectorForKind("jenkins") >> jenConnector
-		1 * connectorRegistry.getConnectorForKind("qc") >> qcConnector
-
-		1 * jenConnector.executeTests(_, "12345", _)
-		1 * qcConnector.executeTests(_, "12345", _)
-
-	}
-
-
-	def "should notify some executions that an error occured before they could start"(){
-
-		given :
-		AutomatedSuite suite = makeSomeSuite()
-
-		suite.executionExtenders.each{
-
-			def exec = new Execution()
-			exec.automatedExecutionExtender = it
-			it.execution = exec
-
-		}
-
-		and :
-		def jenConnector = Mock(TestAutomationConnector)
-		def qcConnector = Mock(TestAutomationConnector)
-
-		connectorRegistry.getConnectorForKind("jenkins") >> jenConnector
-		connectorRegistry.getConnectorForKind("qc") >> { throw new UnknownConnectorKind("connector unknown") }
-
-		when :
-		service.startAutomatedSuite(suite)
-
-
-		then :
-		1 * jenConnector.executeTests(_, "12345", _)
-
-		def executions = suite.executionExtenders.collect{it.execution}
-		executions.findAll{it.executionStatus == ExecutionStatus.ERROR }.size() == 5
-		executions.findAll{it.executionStatus == ExecutionStatus.READY }.size() == 10
-
-
-	}
-
-
-	def makeSomeSuite(){
-
+	def makeSomeSuite() {
 		AutomatedSuite suite = new AutomatedSuite();
 		suite.id = "12345"
 
@@ -256,13 +375,15 @@ class AutomatedTestManagerServiceTest extends Specification {
 
 		def allTests = []
 
-		def projects = [projectJ1, projectQC1, projectJ2]
+		def projects = [
+			projectJ1,
+			projectQC1,
+			projectJ2
+		]
 
 		projects.each{ proj ->
-
 			5.times{ num ->
-
-				AutomatedTest test = new AutomatedTest("${proj.jobName} - test $num", proj)
+				AutomatedTest test = new AutomatedTest("${proj.name} - test $num", proj)
 				allTests << test
 			}
 		}
@@ -270,20 +391,14 @@ class AutomatedTestManagerServiceTest extends Specification {
 		def allExts = [];
 
 		allTests.each{
-
 			def ex = new AutomatedExecutionExtender()
 			ex.automatedTest = it
 
 			allExts << ex
-
 		}
 
 		suite.addExtenders(allExts)
 
 		return suite
-
-
 	}
-
-
 }
