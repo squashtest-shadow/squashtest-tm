@@ -33,15 +33,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.squashtest.tm.exception.InvalidURLException;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.squashtest.tm.domain.testautomation.TestAutomationServer;
+
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
 import org.squashtest.tm.web.internal.controller.administration.NewTestAutomationServer;
 
@@ -74,18 +74,14 @@ public class TestAutomationServerController {
 
 	@RequestMapping(value="/{serverId}/baseURL", method=RequestMethod.POST, params="newURL")
 	@ResponseBody
-	public String changeURL(@PathVariable("serverId") long serverId, @RequestParam("newURL") String newURL, Locale locale)
-			throws BindException{
+	public String changeURL(@PathVariable("serverId") long serverId, @RequestParam("newURL") String newURL, Locale locale){
 		try{
 			URL url = new URL(newURL);
 			service.changeURL(serverId, url);
 			return newURL;
 		}
 		catch(MalformedURLException ex){
-			//quick and dirty validation
-			BindException be = new BindException(new TestAutomationServer(), "ta-project");
-			be.rejectValue("baseURL", null, findMessage(locale, "error.url.malformed"));
-			throw be;
+			throw new InvalidURLException();
 		}
 	}
 
@@ -110,9 +106,6 @@ public class TestAutomationServerController {
 		return manualSelection;
 	}
 
-	private String findMessage(Locale locale, String key){
-		return messageSource.getMessage(key, null, locale);
-	}
 	@RequestMapping(value = "/{serverId}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public void deleteTestAutomationServer(@PathVariable long serverId) {

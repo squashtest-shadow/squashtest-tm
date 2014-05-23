@@ -77,7 +77,8 @@
 
         <div id="sub-page-buttons" class="sub-page-buttons">
 
-          <input id="back" type="button" th:value="'J AI PAS ENCORE DE ONCLICK'" class="sq-btn" value="#{ label.Back }" />
+          <input id="back" type="button" th:value="#{label.Back}" class="sq-btn" value="#{ label.Back }" 
+          th:onclick="'document.location.href=\''+@{/administration/test-automation-servers}+'\''"/>
 
         </div>
 
@@ -118,7 +119,10 @@
                 
                   <div class="display-table-row">
                     <label for="ta-server-url" th:text="#{label.URL}">URL</label>
-                    <div id="ta-server-url" class="display-table-cell" th:text="${server.baseURL}">http://localhost</div>
+                    <div>
+                    	<span id="ta-server-url" th:text="${server.baseURL}">http://localhost</span>
+                    	<a th:href="${server.baseURL}" th:text="'['+#{label.BrowseTo}+']'"></a>
+                    </div>
                   </div>
                   
                   <div class="display-table-row">
@@ -128,22 +132,29 @@
                   
                   <div class="display-table-row">
                     <label for="ta-server-password" th:text="#{label.Password}">Password</label>
-                   	<input type="password" id="ta-server-password" class="display-table-cell" th:value="${server.password}" value="abcdlol"/>
-                 </div>     
+                   	<span id="ta-server-password" class="display-table-cell" style="font-weight:bold;" th:text="${server.password}" ></span>
+                  </div>     
                  
-		         <div class="display-table-row">
+		          <div class="display-table-row">
                     <label for="ta-server-description" th:text="#{label.Description}">Description</label>
-                    <div id="ta-server-description" class="display-table-cell" th:text="${server.description}">your standard TA server</div>
-                  </div>      
+                    <div id="ta-server-description" class="display-table-cell" th:utext="${server.description}">your standard TA server</div>
+                  </div> 
+                  
+                  <div class="display-table-row" style="text-align:center;">
+                  	<input id="ta-server-manual-selection" type="checkbox" th:checked="${server.manualSlaveSelection}" style="margin-top:5px"/>
+                  	<span th:text="#{label.isManualSlaveSelection}" class="display-table-cell">Pick a slave yourself (if available)</span>
+                  </div>     
                 </div>
               </div>
             </div>
   
 
           </div>
+          
 			<script type="text/javascript">
 			publish('load.main-panel');
 			</script>
+			
 	    </div>
 	  </div>
 	</div>
