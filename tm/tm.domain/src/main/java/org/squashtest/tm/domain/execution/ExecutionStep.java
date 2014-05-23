@@ -80,7 +80,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 
 	private static final String PARAM_PREFIX = "\\Q${\\E";
 	private static final String PARAM_SUFFIX = "\\Q}\\E";
-	private static final String PARAM_PATTERN = PARAM_PREFIX + "([A-Za-z0-9_-]+)" + PARAM_SUFFIX;
+	private static final String PARAM_PATTERN = PARAM_PREFIX + "([A-Za-z0-9_-]{1,255})" + PARAM_SUFFIX;
 	private static final String NO_PARAM = "&lt;no_value&gt;";
 	static {
 		Set<ExecutionStatus> set = new HashSet<ExecutionStatus>();

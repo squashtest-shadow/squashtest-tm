@@ -49,7 +49,7 @@ import org.squashtest.tm.exception.DuplicateNameException;
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "NAME", "TEST_CASE_ID" }) })
 public class Parameter implements Identified {
 
-	private static final String PARAM_REGEXP = "[A-Za-z0-9_-]+";
+	private static final String PARAM_REGEXP = "[A-Za-z0-9_-]{1,255}";
 	public static final String NAME_REGEXP = "^" + PARAM_REGEXP + "$";
 	public static final int MIN_NAME_SIZE = 1;
 	public static final int MAX_NAME_SIZE = 255;
