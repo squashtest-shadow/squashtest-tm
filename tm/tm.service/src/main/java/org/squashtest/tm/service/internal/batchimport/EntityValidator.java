@@ -243,7 +243,7 @@ class EntityValidator {
 		target.setName(name);
 		Pattern p = Pattern.compile(regex);
 		Matcher m = p.matcher(name);
-		if(!StringUtils.isBlank(name) && !m.matches()){
+		if(!StringUtils.isBlank(name) && !m.matches() && name.length() < 256){
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PARAMETER_CONTAINS_FORBIDDEN_CHARACTERS, fieldNameErrorArgs));
 		}
 
