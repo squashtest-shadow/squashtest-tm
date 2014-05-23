@@ -334,6 +334,15 @@ public class GenericProjectController {
 
 	// ********************************** test automation ***********************************
 
+
+	@RequestMapping(value = PROJECT_ID_URL + "/test-automation-server", method = RequestMethod.POST, params = "serverId")
+	@ResponseBody
+	public Long bindTestAutomationServer(@PathVariable("projectId") long projectId, @RequestParam("serverId") long serverId){
+		Long finalServerId = (serverId == 0) ? null : serverId;
+		projectManager.bindTestAutomationServer(projectId, finalServerId);
+		return serverId;
+	}
+
 	// filtering and sorting not supported for now
 	@RequestMapping(value = PROJECT_ID_URL + "/test-automation-projects", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody

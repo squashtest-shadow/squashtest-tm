@@ -318,8 +318,7 @@
 
 			<ta:ta-admin-panel  
 				project="${adminproject.project}" 
-				taServer="${taServer}" 
-				boundProjects="${boundTAProjects}"/>
+				availableTAServers="${availableTAServers}"/>
 			
 			<%----------------------------- /TEST AUTOMATION PROJECT -------------------------------------------%>					
 			<%----------------------------- ATTACHMENT -------------------------------------------%>

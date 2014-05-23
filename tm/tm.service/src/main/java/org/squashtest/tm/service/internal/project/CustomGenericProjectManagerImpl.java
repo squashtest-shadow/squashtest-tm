@@ -295,7 +295,11 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		GenericProject genericProject = genericProjectDao.findById(tmProjectId);
 		checkManageProjectOrAdmin(genericProject);
 
-		TestAutomationServer taServer = taServerService.findById(serverId);
+		TestAutomationServer taServer = null;
+		if (serverId != null){
+			taServer = taServerService.findById(serverId);
+		}
+
 		genericProject.setTestAutomationServer(taServer);
 	}
 

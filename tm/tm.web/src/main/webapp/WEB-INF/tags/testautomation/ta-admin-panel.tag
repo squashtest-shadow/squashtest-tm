@@ -25,19 +25,21 @@
 
 <%@ attribute name="project" type="java.lang.Object" required="true"
 	description="the TM Project"%>
-<%@ attribute name="taServer" type="java.lang.Object" required="true"
-	description="the TA server"%>
-<%@ attribute name="boundProjects" type="java.lang.Object" required="true"
-	description="the TA projects already bound"%>
+<%@ attribute name="availableTAServers" type="java.util.Collection" required="true"
+	description="the list of the available TA servers"%>
 
 <%@ tag language="java" pageEncoding="utf-8"%>
-<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
-<%@ taglib tagdir="/WEB-INF/tags/component" prefix="comp"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
+<%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 
+
+<f:message var="confirmLabel" key="label.Confirm"/>
+<f:message var="cancelLabel" key="label.Cancel"/> 
+<f:message var="noServerLabel" key="label.NoServer"/>
 
 <c:url var="listRemoteProjectsURL" 	value="/test-automation/servers/projects-list" />
 
@@ -49,20 +51,6 @@
 	<s:param name="projectId" value="${project.id}"/>
 </s:url>
 
-<s:url var="enableTAURL" value="/generic-projects/{projectId}/test-automation-enabled">
-	<s:param name="projectId" value="${project.id}"/>
-</s:url>
-
-<c:set var="initialChecked" value="checked=\"checked\"" />
-<c:set var="initialDisabled" value="" />
-<c:set var="initialCss" value="" />
-
-
-<c:if test="${not project.testAutomationEnabled}">
-	<c:set var="initialChecked" value="" />
-	<c:set var="initialDisabled" value="disabled=\"disabled\"" />
-	<c:set var="initialCss" value="ta-manager-disabled" />
-</c:if>
 
 <c:set var="inputSize" value="50" />
 
@@ -72,51 +60,15 @@
 	<jsp:attribute name="body">
 		<div class="ta-main-div">
 		
-			<div class="ta-maincheck-div ta-block">
-				<label><f:message key="project.testauto.maincheckbox" />
-				</label><input type="checkbox" id="test-auto-enabled-ckbox" ${initialChecked} />
-			</div>
-			
-			
 			<%-- =================================== server block =============================================================== --%>	
 		
-			<fieldset class="ta-server-block  ta-block  ${initialCss}">
+			<fieldset class="ta-server-block ta-block">
 				<legend>
 					<f:message key="project.testauto.serverblock.title" />
 				</legend>
-				<div class="ta-block-item">
-					<div class="ta-block-item-unit">
-						<label><f:message
-								key="project.testauto.serverblock.url.label" />
-						</label>
-					</div>
-					<div class="ta-block-item-unit">
-						<input type="text" class="ta-serverblock-url-input"
-							value="${taServer.baseURL}" size="${inputSize}" />
-					</div>
-				</div>
-				<div class="ta-block-item">
-					<div class="ta-block-item-unit">
-						<label><f:message
-								key="project.testauto.serverblock.login.label" />
-						</label>
-					</div>
-					<div class="ta-block-item-unit">
-						<input type="text" class="ta-serverblock-login-input"
-							value="${taServer.login}" size="${inputSize}" />
-					</div>
-				</div>
-				<div class="ta-block-item">
-					<div class="ta-block-item-unit">
-						<label><f:message
-								key="project.testauto.serverblock.password.label" />
-						</label>
-					</div>
-					<div class="ta-block-item-unit">
-						<input type="password" class="ta-serverblock-password-input"
-							value="${taServer.password}" size="${inputSize}" />
-					</div>
-				</div>
+				
+				<div id="selected-ta-server-span" class="std-margin-top std-margin-bottom">${(not empty project.testAutomationServer) ? project.testAutomationServer.name : noServerLabel }</div>
+								
 			</fieldset> 
 			<%-- =================================== /server block =============================================================== --%>	
 		
@@ -127,25 +79,24 @@
 			<fieldset class="ta-projects-block  ta-block">
 				<legend>
 					<f:message key="project.testauto.projectsblock.title" />
-        <button id="ta-projectsblock-add-button" title="${addTAProjectLabel}" class="sq-icon-btn btn-sm">
-          <span class="ui-icon ui-icon-plus"></span>
-        </button>
+			        <button id="ta-projects-bind-button" title="${addTAProjectLabel}" class="sq-icon-btn btn-sm">
+			          <span class="ui-icon ui-icon-plus"></span>
+			        </button>
 				</legend>
 
 				
-				<table id="ta-projects-table" class="ta-projects-table">
+				<table id="ta-projects-table" class="ta-projects-table" data-def="ajaxsource=${localProjectsURL}, hover, deferloading=${fn:length(project.testAutomationProjects)}">
 					<thead>
 						<tr>
-							<th>Id (masked)</th>
-							<th>#</th>
-							<th><f:message key="project.testauto.projectsblock.table.headers.name"/></th>
-							<th><f:message key="project.testauto.projectsblock.table.headers.serverurl"/></th>
-							<th><f:message key="project.testauto.projectsblock.table.headers.serverkind"/></th>
-							<th>&nbsp;</th>
+							<th data-def="map=entity-index,narrow, select">#</th>
+							<th data-def="map=name"><f:message key="project.testauto.projectsblock.table.headers.name"/></th>
+							<th data-def="map=server-url"><f:message key="project.testauto.projectsblock.table.headers.serverurl"/></th>
+							<th data-def="map=server-kind"><f:message key="project.testauto.projectsblock.table.headers.serverkind"/></th>
+							<th data-def="delete-button=#ta-projects-unbind-popup">&nbsp;</th>
 						</tr>
 					</thead>
 					<tbody>
-						<c:forEach items="${boundProjects}" var="taproj" varStatus="status">
+						<c:forEach items="${project.testAutomationProjects}" var="taproj" varStatus="status">
 						<tr>
 							<td>${taproj.id}</td>
 							<td>${status.index}</td>
@@ -173,50 +124,63 @@
 	Dumb definition here, the code is elsewhere 
 ================================================= --%>
 
-<pop:popup id="ta-projectsblock-popup" openedBy="ta-projectsblock-add-button" closeOnSuccess="false" 
-							   usesRichEdit="false" titleKey="project.testauto.projectsblock.add.popup.title" >
-							   
-	<jsp:attribute name="buttonsArray">
-		{
-			'text' 	: '<f:message key="label.Confirm" />',
-			'class' : 'ta-projectsadd-popup-confirm'
-		},
-		{
-			'text'  : '<f:message key="label.Cancel" />',
-			'class' : 'ta-projectsadd-popup-cancel'
-		}											
-	</jsp:attribute>
-	
-	<jsp:attribute name="additionalSetup">
-		height : 500
-	</jsp:attribute>
-	
-	<jsp:attribute name="body">
-	
- 		<div class="ta-projectsadd-pleasewait" >
- 			<comp:waiting-pane/>
- 		</div>
-	
 
-		<div class="ta-projectsadd-fatalerror">
-			<span> </span>
-		</div>
-		
-		<div class="ta-projectsadd-error">
-			<span> </span>
-		</div>
-			 	
+<f:message var="bindProjectPopup" key="project.testauto.projectsblock.add.popup.title"/>
+<div id="ta-projects-bind-popup" title="${bindProjectPopup}" class="popup-dialog not-displayed">
+   		
+	<div data-def="state=pleasewait" >
+		<comp:waiting-pane/>
+	</div>
+
+	<div data-def="state=fatalerror">
+		<span> </span>
+	</div>
 	
-		<div class="ta-projectsadd-maindiv">
-			<label><f:message key="project.testauto.projectsblock.add.popup.caption"/></label>
-			<div class="ta-projectsadd-listdiv">
+	<div data-def="state=error">
+		<span> </span>
+	</div>
+		 	
+	<div data-def="state=main" class="ta-projects-bind-maindiv">
+		<label><f:message key="project.testauto.projectsblock.add.popup.caption"/></label>
+		<div class="ta-project-bind-listdiv">
+			
+			<%--
+				!!!!!!!!!!!!!!! CONSEILS DEVELOPPEMENT !!!!!!!!!!!!!!
+	
+				TOUT LE CSS UTILISE PAR CETTE POPUP DEVRAIT RESPECTER 
+				LA CONVENTION 'ta-projects-bind-X' ET DECLARE DANS LE
+				FICHIER 'components.css' A COTE DE LA CLASSE 
+				'ta-projects-bind-maindiv'
 				
-			</div>
+				!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!			
+			
+			 --%>
+			
 		</div>
+	</div>
+	
+	<div class="popup-dialog-buttonpane">
+		<input type="button" value="${confirmLabel}" data-def="mainbtn=main, evt=confirm"/>
+		<input type="button" value="${cancelLabel}" data-def="evt=cancel"/>
+		 
+	</div>
 		
-	</jsp:attribute>
-</pop:popup>
+</div>
 
+
+<%-- the project unbind confirmation popup (STUB) --%>
+
+<f:message var="unbindPopupTitle" key="dialog.unbind-ta-project.tooltip"/>
+<div id="ta-projects-unbind-popup" class="popup-dialog not-displayed" title="${unbindPopupTitle}">
+	
+	<div><f:message key="dialog.unbind-ta-project.message"/></div>
+	
+	<div class="popup-dialog-buttonpane">
+		<input type="button" value="${confirmLabel}" data-def="evt=confirm"/>
+		<input type="button" value="${cancelLabel}" data-def="evt=cancel, mainbtn"/>
+	</div>
+
+</div>
 
 
 <%-- ===================================
@@ -225,79 +189,18 @@
 
 <script type="text/javascript">
 require(["common"], function() {
-	require(["jquery", "test-automation/TestAutomationProjectManager", "test-automation/TestAutomationAddProjectPopup", "squashtable"], function($, TestAutomationProjectManager, TestAutomationAddProjectPopup){
+	require(["jquery", "test-automation/project-manager", "squashtable"], function($, projectsManager){
 		$(function(){
 			//************************** manager setup ********************
 			
-			if (! squashtm.testautomation){
-				squashtm.testautomation = {};
-			}
-			
 			var managerSettings = {
-				selector : "#test-automation-management-panel .ta-main-div",
-				initiallyEnabled : ${project.testAutomationEnabled},
-				enableTAURL : "${enableTAURL}"
+				tmProjectURL : "${projectUrl}",
+				availableServers: ${json:serialize(availableTAServers)},
+				TAServerId : ${(empty project.testAutomationServer) ? 0 : project.testAutomationServer.id}
 			};
 			
-			squashtm.testautomation.projectmanager = new TestAutomationProjectManager(managerSettings);
+			projectsManager.init(managerSettings);
 			
-			
-			var popupSettings = {
-				selector : "#ta-projectsblock-popup",
-				manager : squashtm.testautomation.projectmanager,
-				listProjectsURL : "${listRemoteProjectsURL}",
-				bindProjectsURL : "${localProjectsURL}"
-			}
-			
-			var projectAddPopup = new TestAutomationAddProjectPopup(popupSettings);
-			
-			//************************** table setup **********************
-			
-			var tableSettings = {
-					"oLanguage":{
-						"sLengthMenu": '<f:message key="generics.datatable.lengthMenu" />',
-						"sZeroRecords": '<f:message key="generics.datatable.zeroRecords" />',
-						"sInfo": '<f:message key="generics.datatable.info" />',
-						"sInfoEmpty": '<f:message key="generics.datatable.infoEmpty" />',
-						"sInfoFiltered": '<f:message key="generics.datatable.infoFiltered" />',
-						"oPaginate":{
-							"sFirst":    '<f:message key="generics.datatable.paginate.first" />',
-							"sPrevious": '<f:message key="generics.datatable.paginate.previous" />',
-							"sNext":     '<f:message key="generics.datatable.paginate.next" />',
-							"sLast":     '<f:message key="generics.datatable.paginate.last" />'
-						}
-					},
-					"iDeferLoading": ${fn:length(boundProjects)},
-					"sAjaxSource": "${localProjectsURL}", 
-					"aoColumnDefs":[
-						{'bSortable': false, 'bVisible': false, 'aTargets': [0], 'mDataProp' : 'entity-id'},
-						{'bSortable': false, 'bVisible': true,  'aTargets': [1], 'mDataProp' : 'entity-index', 'sClass' :'select-handle centered', 'sWidth' : '2em'},
-						{'bSortable': false, 'bVisible': true,  'aTargets': [2], 'mDataProp' : 'name'},
-						{'bSortable': false, 'bVisible': true,  'aTargets': [3], 'mDataProp' : 'server-url'},
-						{'bSortable': false, 'bVisible': true,  'aTargets': [4], 'mDataProp' : 'server-kind'},
-						{'bSortable': false, 'bVisible': true, 'aTargets': [5], 'mDataProp' : 'empty-delete-holder', 'sWidth': '2em', 'sClass': 'centered delete-button' }										
-					]
-	
-				};
-			
-			var squashSettings = {
-				enableHover : true,
-				confirmPopup : {
-					oklabel : '<f:message key="label.Yes" />',
-					cancellabel : '<f:message key="label.Cancel" />'
-				},
-				enableDnD : false,
-				deleteButtons : {
-					url : "${projectUrl}/test-automation-projects/{entity-id}",
-					popupmessage : '<f:message key="dialog.unbind-ta-project.message" />',
-					tooltip : '<f:message key="dialog.unbind-ta-project.tooltip" />',
-					success : function(){
-						$("#ta-projects-table").squashTable().refresh();
-					}
-				}
-			}
-			
-			$("#ta-projects-table").squashTable(tableSettings, squashSettings);
 
 		});
 		

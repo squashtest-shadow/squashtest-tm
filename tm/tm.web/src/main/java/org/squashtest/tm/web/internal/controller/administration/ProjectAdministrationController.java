@@ -53,6 +53,7 @@ import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.project.GenericProjectFinder;
+import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.project.WorkspaceWizardModel;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
@@ -73,6 +74,9 @@ public class ProjectAdministrationController {
 	private InternationalizationHelper internationalizationHelper;
 	@Inject
 	private MessageSource messageSource;
+
+	@Inject
+	private TestAutomationServerManagerService taServerService;
 
 	@Inject
 	private WorkspaceWizardManager wizardManager;
@@ -115,8 +119,7 @@ public class ProjectAdministrationController {
 		List<PermissionGroup> availablePermissions = projectFinder.findAllPossiblePermission();
 
 		// test automation data
-		TestAutomationServer taServerCoordinates = adminProject.getProject().getTestAutomationServer();
-		List<TestAutomationProject> boundProjects = projectFinder.findBoundTestAutomationProjects(projectId);
+		Collection<TestAutomationServer> availableTAServers = taServerService.findAllOrderedByName();
 
 		// bugtracker data
 		Map<Long, String> comboDataMap = createComboDataForBugtracker(locale);
@@ -131,8 +134,7 @@ public class ProjectAdministrationController {
 		ModelAndView mav = new ModelAndView("page/projects/project-info");
 
 		mav.addObject("adminproject", adminProject);
-		mav.addObject("taServer", taServerCoordinates);
-		mav.addObject("boundTAProjects", boundProjects);
+		mav.addObject("availableTAServers", availableTAServers);
 		mav.addObject("bugtrackersList", JsonHelper.serialize(comboDataMap));
 		mav.addObject("bugtrackersListEmpty", comboDataMap.size() == 1);
 		mav.addObject("userPermissions", partyPermissions);
