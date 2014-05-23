@@ -243,7 +243,7 @@ public class TestCaseTestStepsController {
 	}
 
 	@RequestMapping(value = "/{stepId}/result", method = RequestMethod.POST, params = { "id", VALUE }, produces = "text/plain;charset=UTF-8")
-	@ResponseBody 
+	@ResponseBody
 	public String changeStepDescription(@PathVariable long stepId, @RequestParam(VALUE) String newResult) {
 		testCaseModificationService.updateTestStepExpectedResult(stepId, newResult);
 		LOGGER.trace("TestCaseModificationController : updated action for step {}", stepId);

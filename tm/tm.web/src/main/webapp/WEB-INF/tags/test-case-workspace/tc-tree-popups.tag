@@ -47,7 +47,7 @@
 <f:message var="exportLabel"		key="label.Export" />
 <f:message var="dateexportFormat"	key="export.dateformat"/>
 <f:message var="exportnamePrefix" 	key="label.lower.dash.exportTestCase" />
-
+<f:message var="targetProjectHelper" key="message.import.info.targetproject" />
 
 <div id="treepopups-definition" class="not-displayed">
 
@@ -216,7 +216,7 @@
 							<option value="${lib.id}" <c:if test="${status.first}">selected="yes"</c:if>>${lib.project.name}</option>
 							</c:forEach>
 						</select>
-					
+						<div class="icon-helper no-print small-margin-left" title="${targetProjectHelper}"></div>
 					</div>
 				</div>
 
