@@ -49,7 +49,7 @@ define(["jquery", "squash.translator"], function($, translator){
 		
 		$this.jedp_init();
 		
-	}
+	};
 
 	
 	/*
@@ -160,7 +160,7 @@ define(["jquery", "squash.translator"], function($, translator){
 		}
 		
 			
-	} 
+	}; 
 	
 	
 });
