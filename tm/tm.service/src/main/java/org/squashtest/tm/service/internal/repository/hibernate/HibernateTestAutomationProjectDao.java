@@ -36,10 +36,8 @@ import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
 
-
 @Repository
-public class HibernateTestAutomationProjectDao implements
-TestAutomationProjectDao {
+public class HibernateTestAutomationProjectDao implements TestAutomationProjectDao {
 
 	@Inject
 	private SessionFactory sessionFactory;
@@ -49,18 +47,13 @@ TestAutomationProjectDao {
 		sessionFactory.getCurrentSession().persist(newProject);
 	}
 
-
-
-
 	@Override
 	public TestAutomationProject findById(Long id) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.getNamedQuery("testAutomationProject.findById");
 		query.setParameter("projectId", id);
-		return (TestAutomationProject)query.uniqueResult();
+		return (TestAutomationProject) query.uniqueResult();
 	}
-
-
 
 	@Override
 	public TestAutomationProject findByExample(TestAutomationProject example) {
@@ -70,20 +63,18 @@ TestAutomationProjectDao {
 
 		List<?> res = criteria.list();
 
-		if (res.isEmpty()){
+		if (res.isEmpty()) {
 			return null;
-		}
-		else if (res.size()==1){
-			return (TestAutomationProject)res.get(0);
-		}
-		else{
+		} else if (res.size() == 1) {
+			return (TestAutomationProject) res.get(0);
+		} else {
 			throw new NonUniqueEntityException();
 		}
 	}
 
 	@Override
 	public boolean haveExecutedTests(Collection<TestAutomationProject> projects) {
-		if (projects.isEmpty()){
+		if (projects.isEmpty()) {
 			return false;
 		}
 
@@ -95,7 +86,7 @@ TestAutomationProjectDao {
 
 	@Override
 	public boolean haveExecutedTestsByIds(Collection<Long> projectIds) {
-		if (projectIds.isEmpty()){
+		if (projectIds.isEmpty()) {
 			return false;
 		}
 
@@ -104,8 +95,6 @@ TestAutomationProjectDao {
 		int count = ((Integer) q.iterate().next()).intValue();
 		return (count > 0);
 	}
-
-
 
 	@Override
 	public void deleteProjects(Collection<TestAutomationProject> projects) {
@@ -124,35 +113,34 @@ TestAutomationProjectDao {
 		deleteProjects(findAllByIds(projectIds));
 	}
 
-
-
 	// ************************ private stuffs **********************************
 
-	private void dereferenceAutomatedExecutionExtender(Collection<TestAutomationProject> projects){
-		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationProject.dereferenceAutomatedExecutionExtender");
+	private void dereferenceAutomatedExecutionExtender(Collection<TestAutomationProject> projects) {
+		Query q = sessionFactory.getCurrentSession().getNamedQuery(
+				"testAutomationProject.dereferenceAutomatedExecutionExtender");
 		q.setParameterList("projects", projects);
 		q.executeUpdate();
 	}
 
-	private void dereferenceTestCases(Collection<TestAutomationProject> projects){
+	private void dereferenceTestCases(Collection<TestAutomationProject> projects) {
 		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationProject.dereferenceTestCases");
 		q.setParameterList("projects", projects);
 		q.executeUpdate();
 	}
 
-	private void deleteAutomatedTests(Collection<TestAutomationProject> projects){
+	private void deleteAutomatedTests(Collection<TestAutomationProject> projects) {
 		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationProject.deleteAutomatedTests");
 		q.setParameterList("projects", projects);
 		q.executeUpdate();
 	}
 
-	private void deleteTestAutomationProjects(Collection<TestAutomationProject> projects){
-		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationProject.delete");
-		q.setParameterList("projects", projects);
-		q.executeUpdate();
+	private void deleteTestAutomationProjects(Collection<TestAutomationProject> projects) {
+		for (TestAutomationProject entity : projects) {
+			sessionFactory.getCurrentSession().delete(entity);
+		}
 	}
 
-	private Collection<TestAutomationProject> findAllByIds(Collection<Long> ids){
+	private Collection<TestAutomationProject> findAllByIds(Collection<Long> ids) {
 		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationProject.findAllByIds");
 		q.setParameterList("projectIds", ids, LongType.INSTANCE);
 		return q.list();

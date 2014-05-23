@@ -18,41 +18,40 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.customfield
+package org.squashtest.tm.service.testautomation
 
 import javax.inject.Inject
 
-import org.hibernate.SessionFactory
+import org.hibernate.exception.ConstraintViolationException
+import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.domain.customfield.CustomFieldValue
-import org.squashtest.tm.service.internal.repository.CustomFieldValueDao
+import org.squashtest.tm.domain.project.GenericProject
+import org.squashtest.tm.domain.testautomation.TestAutomationProject
+import org.squashtest.tm.domain.testautomation.TestAutomationServer
 import org.squashtest.tm.service.DbunitServiceSpecification
-import org.squashtest.tm.service.customfield.CustomFieldManagerService
 import org.unitils.dbunit.annotation.DataSet
+import org.squashtest.tm.service.internal.customfield.DefaultEditionStatusStrategy
+import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService
 
+import spock.lang.Specification
 import spock.unitils.UnitilsSupport
 
+@NotThreadSafe
 @UnitilsSupport
 @Transactional
-@DataSet("CustomFieldVariousIT.sandbox.xml")
-class CustomCustomFieldManagerServiceIT extends DbunitServiceSpecification {
+public class TestAutomationServerManagerServiceIT extends DbunitServiceSpecification {
 
 	@Inject
-	CustomFieldManagerService service
+	private TestAutomationServerManagerService service
 
-
-	@Inject
-	SessionFactory sessionFactory
-
-	def "should add default value to custom fields without a value"(){
-
+	@DataSet("TestAutomationServerManagerServiceIT.not bound.xml")
+	def "should delete a test automation server" (){
+		given :
+		def serverId = 1L
 		when :
-		service.changeOptional(1l,false)
-		CustomFieldValue value1 = findEntity(CustomFieldValue.class, 1111l)
-		CustomFieldValue value2 = findEntity(CustomFieldValue.class, 1112l)
-
-		then :
-		value1.getValue().equals("NOSEC")
-		value2.getValue().equals("true")
+		service.deleteServer(serverId)
+		then:
+		!found(TestAutomationServer.class, serverId)
 	}
+
 }

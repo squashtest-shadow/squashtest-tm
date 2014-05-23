@@ -35,15 +35,14 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @NamedQueries({
 	@NamedQuery(name = "testAutomationProject.findById", query = "from TestAutomationProject where id = :projectId"),
-	@NamedQuery(name = "testAutomationProject.findAllByIds", query = "from TestAutomationProject where id in (:projectIds)"),
 	@NamedQuery(name = "testAutomationProject.findAllKnownTests", query = "select t from AutomatedTest t join t.project p where p.id = :projectId"),
 	@NamedQuery(name = "testAutomationProject.haveExecutedTestsByIds", query = "select count(ext) from AutomatedExecutionExtender ext join ext.automatedTest test join test.project p where p.id in (:projectIds)"),
 	@NamedQuery(name = "testAutomationProject.haveExecutedTests", query = "select count(ext) from AutomatedExecutionExtender ext join ext.automatedTest test join test.project p where p in (:projects)"),
 	@NamedQuery(name = "testAutomationProject.dereferenceAutomatedExecutionExtender", query = "update AutomatedExecutionExtender ext set ext.resultURL = null, ext.automatedTest = null "
-			+ "where ext in (from AutomatedExecutionExtender e join e.automatedTest tests join tests.project p where p in (:projects))"),
+			+ "where ext in (select e from AutomatedExecutionExtender e join e.automatedTest tests join tests.project p where p in (:projects))"),
 
 			@NamedQuery(name = "testAutomationProject.dereferenceTestCases", query = "update TestCase tc set tc.automatedTest = null "
-					+ "where tc in (from TestCase t join t.automatedTest tests join tests.project p where p in (:projects))"),
+					+ "where tc.id in (select t.id from TestCase t join t.automatedTest tests join tests.project p where p in (:projects))"),
 					@NamedQuery(name = "testAutomationProject.deleteAutomatedTests", query = "delete AutomatedTest t where t.project in (:projects)"),
 					@NamedQuery(name = "testAutmationProject.delete", query = "delete TestAutomationProject p where p in (:projects)")
 })
