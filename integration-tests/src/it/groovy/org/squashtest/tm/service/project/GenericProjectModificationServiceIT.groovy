@@ -25,9 +25,9 @@ import javax.inject.Inject
 
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.tm.service.DbunitServiceSpecification;
-import org.squashtest.tm.service.project.GenericProjectManagerService;
+import org.squashtest.tm.domain.testautomation.TestAutomationProject
+import org.squashtest.tm.service.DbunitServiceSpecification
+import org.squashtest.tm.service.project.GenericProjectManagerService
 import org.unitils.dbunit.annotation.DataSet
 
 import spock.unitils.UnitilsSupport
@@ -73,7 +73,7 @@ class GenericProjectManagerServiceIT extends DbunitServiceSpecification {
 		project.getBugtrackerBinding().getBugtracker().getId() == 2L
 	}
 
-	@DataSet("/org/squashtest/tm/service/internal/testautomation/service/TestAutomationService.sandbox.xml")
+	@DataSet("/org/squashtest/tm/service/testautomation/TestAutomationService.sandbox.xml")
 	def "should bind a bunch of test automation project"(){
 
 		given :
