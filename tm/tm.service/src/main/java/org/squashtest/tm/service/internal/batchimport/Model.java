@@ -393,7 +393,11 @@ public class Model {
 			init(tc);
 		}
 		List<InternalStepModel> steps = testCaseStepsByTarget.get(tc);
-		return index == steps.size();
+		if(index == null || steps == null){
+			return false;
+		} else {
+			return index == steps.size();
+		}
 	}
 
 	/**

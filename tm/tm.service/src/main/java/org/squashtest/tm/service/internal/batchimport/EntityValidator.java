@@ -76,7 +76,7 @@ class EntityValidator {
 	}
 
 	/**
-	 * Prerforms Test Case entity check before creating a test case.
+	 * Performs Test Case entity check before creating a test case.
 	 * 
 	 * @param target
 	 * @param testCase

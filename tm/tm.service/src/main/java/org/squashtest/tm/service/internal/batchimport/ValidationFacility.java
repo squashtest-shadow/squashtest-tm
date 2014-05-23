@@ -342,7 +342,9 @@ public class ValidationFacility implements Facility, ModelProvider {
 		// 4 - the step must exist
 		boolean exists = model.stepExists(target);
 		if (!exists) {
-			if (target.getIndex()!=null && target.getIndex() < 0){
+			if (target.getIndex()== null){
+				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_STEPINDEX_EMPTY));
+			} else if (target.getIndex() < 0){
 				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_STEPINDEX_NEGATIVE));
 			} else if(!model.indexIsFirstAvailable(target)) {
 				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_STEPINDEX_OVERFLOW));
