@@ -201,32 +201,6 @@ public class AutomatedTestManagerServiceImpl implements UnsecuredAutomatedTestMa
 		return automatedSuiteDao.findById(suiteId);
 	}
 
-	@Override
-	public void fetchAllResultURL(TestAutomationProject project, AutomatedSuite suite) {
-
-		Collection<AutomatedExecutionExtender> extenders = extenderDao.findAllBySuiteIdAndProjectId(suite.getId(),
-				project.getId());
-
-		Collection<AutomatedTest> tests = testDao.findAllByExtender(extenders);
-
-		try {
-			TestAutomationConnector connector = connectorRegistry.getConnectorForKind(project.getServer().getKind());
-
-			Map<AutomatedTest, URL> urlMap = connector.getResultURLs(tests, suite.getId());
-
-			_mergeResultURL(urlMap, extenders);
-
-		} catch (UnknownConnectorKind ex) {
-			if (LOGGER.isErrorEnabled()) {
-				LOGGER.error(
-						"Test Automation : cannot update the result URL for some executions due to unknown connector :",
-						ex);
-			}
-			throw ex;
-		}
-
-	}
-
 	// ****************************** fetch test list methods ****************************************
 
 	private Collection<FetchTestListTask> prepareAllFetchTestListTasks(Collection<TestAutomationProject> projects) {
@@ -348,20 +322,6 @@ public class AutomatedTestManagerServiceImpl implements UnsecuredAutomatedTestMa
 			}
 
 			extendersByKind.get(serverKind).add(extender);
-
-		}
-
-	}
-
-	// ************************* other private stuffs ***********************
-
-	private void _mergeResultURL(Map<AutomatedTest, URL> urlMap, Collection<AutomatedExecutionExtender> extenders) {
-
-		for (AutomatedExecutionExtender ext : extenders) {
-
-			AutomatedTest test = ext.getAutomatedTest();
-			URL resultURL = urlMap.get(test);
-			ext.setResultURL(resultURL);
 
 		}
 

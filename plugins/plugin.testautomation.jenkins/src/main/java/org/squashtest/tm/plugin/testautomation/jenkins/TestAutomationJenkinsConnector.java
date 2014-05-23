@@ -39,10 +39,7 @@ import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.tm.plugin.testautomation.jenkins.beans.Build;
-import org.squashtest.tm.plugin.testautomation.jenkins.beans.BuildList;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.ExecuteAndWatchBuildProcessor;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.ExecuteTestsBuildProcessor;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.FetchTestListBuildProcessor;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.TestByProjectSorter;
@@ -148,82 +145,6 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 
 	}
 
-	@Override
-	public void executeTests(Collection<AutomatedTest> tests, String reference) throws ServerConnectionFailed,
-	AccessDenied, UnreadableResponseException, NotFoundException, BadConfiguration, TestAutomationException {
-
-		TestByProjectSorter sorter = new TestByProjectSorter(tests);
-
-		while (sorter.hasNext()) {
-			startTestExecution(sorter.getNext(), reference);
-		}
-
-	}
-
-	@Override
-	public void executeTests(Collection<AutomatedTest> tests, String reference,
-			TestAutomationCallbackService callbackService) throws ServerConnectionFailed, AccessDenied,
-			UnreadableResponseException, NotFoundException, BadConfiguration, TestAutomationException {
-
-		TestByProjectSorter sorter = new TestByProjectSorter(tests);
-
-		while (sorter.hasNext()) {
-			startTestExecution(sorter.getNext(), reference, callbackService);
-		}
-
-	}
-
-	@Override
-	public Map<AutomatedTest, URL> getResultURLs(Collection<AutomatedTest> tests, String reference)
-			throws ServerConnectionFailed, AccessDenied, UnreadableResponseException, NotFoundException,
-			BadConfiguration, TestAutomationException {
-
-		Map<AutomatedTest, URL> resultMap = new HashMap<AutomatedTest, URL>(tests.size());
-
-		TestByProjectSorter sorter = new TestByProjectSorter(tests);
-
-		while (sorter.hasNext()) {
-
-			TestAutomationProjectContent content = sorter.getNext();
-
-			try {
-
-				Integer buildID = optimisticGetBuildID(content.getProject(), reference);
-
-				createAndAddURLs(resultMap, content, buildID);
-			} catch (TestAutomationException ex) {
-				if (LOGGER.isErrorEnabled()) {
-					LOGGER.error("Test Automation : could not create result url due to an inner error : ", ex);
-				}
-				for (AutomatedTest test : content.getTests()) {
-					resultMap.put(test, null);
-				}
-			}
-
-		}
-
-		return resultMap;
-
-	}
-
-	// ****************** private, second layer method *********************
-
-	private void startTestExecution(TestAutomationProjectContent content, String externalID) {
-
-		TestAutomationProject project = content.getProject();
-
-		HttpClient client = clientProvider.getClientFor(project.getServer());
-
-		ExecuteTestsBuildProcessor processor = new ExecuteTestsBuildProcessor(taskScheduler);
-
-		processor.setClient(client);
-		processor.setProjectContent(content);
-		processor.setBuildAbsoluteId(new BuildAbsoluteId(project.getJobName(), externalID));
-		processor.setDefaultReschedulingDelay(spamInterval);
-
-		processor.run();
-
-	}
 
 	private void startTestExecution(TestAutomationProjectContent content, String externalID,
 			TestAutomationCallbackService service) {
@@ -243,29 +164,6 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 		processor.setGetBuildIDListener(updater);
 
 		processor.run();
-
-	}
-
-
-	/*
-	 * that method is said optimistic because it will attempt to get the buildID of a given build without certainty of its existence
-	 * (the lack of which is likely to bring the process to a disappointing conclusion).
-	 */
-	private Integer optimisticGetBuildID(TestAutomationProject project, String externalID){
-
-		HttpClient client = clientProvider.getClientFor(project.getServer());
-		GetMethod method = requestFactory.newGetBuildsForProject(project);
-
-		String json = requestExecutor.execute(client, method);
-		BuildList buildList = jsonParser.getBuildListFromJson(json);
-		Build buildOfInterest =  buildList.findByExternalId(externalID);
-
-		if (buildOfInterest!=null){
-			return buildOfInterest.getId();
-		}
-		else{
-			throw new NotFoundException("TestAutomationConnector : the requested build for project "+project.getJobName()+" externalID "+externalID+" cannot be found");
-		}
 
 	}
 
@@ -314,7 +212,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 		@Override
 		public void onComplete(GetBuildID step) {
 
-			Map<AutomatedTest, URL> resultUrlPerTest = new HashMap<AutomatedTest, URL>(content.getTests().size());
+			Map<AutomatedTest, URL> resultUrlPerTest = new HashMap<AutomatedTest, URL>(content.getParameterizedTests().size());
 
 			Integer buildID = step.getBuildID();
 
@@ -384,8 +282,13 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 	 *      java.lang.String, org.squashtest.tm.service.testautomation.TestAutomationCallbackService)
 	 */
 	@Override
-	public void executeParameterizedTests(Collection<Couple<AutomatedTest, Map<String, Object>>> tests, String id,
-			TestAutomationCallbackService securedCallback) {
+	public void executeParameterizedTests(Collection<Couple<AutomatedTest, Map<String, Object>>> tests, String externalId,
+			TestAutomationCallbackService callbackService) {
+		TestByProjectSorter sorter = new TestByProjectSorter(tests);
+
+		while (sorter.hasNext()) {
+			startTestExecution(sorter.getNext(), externalId, callbackService);
+		}
 
 	}
 

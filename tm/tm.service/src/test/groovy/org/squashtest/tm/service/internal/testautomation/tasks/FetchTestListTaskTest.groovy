@@ -82,7 +82,5 @@ class FetchTestListTaskTest extends Specification {
 		res.project == project
 		res.hadKnownProblems()
 		res.knownProblem == ex
-
 	}
-
 }

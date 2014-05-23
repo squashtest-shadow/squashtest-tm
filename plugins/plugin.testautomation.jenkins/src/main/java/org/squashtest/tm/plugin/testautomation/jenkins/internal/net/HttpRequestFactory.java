@@ -22,7 +22,6 @@ package org.squashtest.tm.plugin.testautomation.jenkins.internal.net;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Iterator;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.Header;
@@ -57,7 +56,6 @@ public class HttpRequestFactory {
 	private static final NameValuePair[] QUEUED_BUILDS_QUERY = new NameValuePair[]{
 		new NameValuePair("tree","items[id,actions[parameters[name,value]],task[name]]")
 	};
-
 
 	private static final NameValuePair[] EXISTING_BUILDS_QUERY = new NameValuePair[]{
 		new NameValuePair("tree", "builds[building,number,actions[parameters[name,value]]]")
@@ -135,14 +133,12 @@ public class HttpRequestFactory {
 	public PostMethod newStartTestSuiteBuild(TestAutomationProjectContent content, String externalID){
 
 		String strURL = callbackProvider.get().toExternalForm();
-		String testList = makeTestListParameter(content);
 
 		ParameterArray params = new ParameterArray(
 				new Parameter[]{
 						Parameter.operationRunSuiteParameter(),
 						Parameter.newExtIdParameter(externalID),
-						Parameter.newCallbackURlParameter(strURL),
-						Parameter.newExecuteTestListParameter(testList)
+						Parameter.newCallbackURlParameter(strURL)
 				}
 				);
 
@@ -213,7 +209,7 @@ public class HttpRequestFactory {
 
 		TestAutomationProject project = test.getProject();
 
-		String relativePath = _toRelativePath(test);
+		String relativePath = toRelativePath(test);
 		String urlPath = toUrlPath(project.getServer(), "/job/"+project.getJobName()+"/"+buildID+"/testReport/"+relativePath);
 
 		return  urlPath;
@@ -272,7 +268,7 @@ public class HttpRequestFactory {
 	}
 
 
-	private String _toRelativePath(AutomatedTest test) {
+	private String toRelativePath(AutomatedTest test) {
 
 		String name="";
 
@@ -285,32 +281,6 @@ public class HttpRequestFactory {
 		return name;
 
 	}
-
-	// ********************* static class and stuffs ***************************
-
-	private String makeTestListParameter(TestAutomationProjectContent content){
-
-		StringBuilder builder = new StringBuilder();
-
-		Iterator<AutomatedTest> iterator = content.getTests().iterator();
-
-		while( iterator.hasNext() ){
-
-			String name = iterator.next().getNameWithoutRoot();
-
-			builder.append(name);
-
-			if (iterator.hasNext()){
-				builder.append(",");
-			}
-
-		}
-
-		return builder.toString();
-
-	}
-
-
 
 	private static class CallbackURLProvider{
 
