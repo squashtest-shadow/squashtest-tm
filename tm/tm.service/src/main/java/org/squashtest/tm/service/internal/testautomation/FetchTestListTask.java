@@ -30,7 +30,6 @@ import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector;
 
-
 public class FetchTestListTask implements TestAutomationConnectorTask<TestAutomationProjectContent> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestAutomationConnector.class);
@@ -38,10 +37,10 @@ public class FetchTestListTask implements TestAutomationConnectorTask<TestAutoma
 	private TestAutomationConnectorRegistry connectorRegistry;
 	private TestAutomationProject project;
 
-	public FetchTestListTask(TestAutomationConnectorRegistry connectorRegistry, TestAutomationProject project){
+	public FetchTestListTask(TestAutomationConnectorRegistry connectorRegistry, TestAutomationProject project) {
 		super();
-		this.connectorRegistry=connectorRegistry;
-		this.project=project;
+		this.connectorRegistry = connectorRegistry;
+		this.project = project;
 	}
 
 	@Override
@@ -49,16 +48,16 @@ public class FetchTestListTask implements TestAutomationConnectorTask<TestAutoma
 		TestAutomationServer server = project.getServer();
 		TestAutomationConnector connector = connectorRegistry.getConnectorForKind(server.getKind());
 
-		Collection<AutomatedTest> allTests =  connector.listTestsInProject(project);
+		Collection<AutomatedTest> allTests = connector.listTestsInProject(project);
 		return new TestAutomationProjectContent(project, allTests);
 	}
 
-
 	@Override
 	public TestAutomationProjectContent buildFailedResult(Exception thrownException) {
-		if (LOGGER.isErrorEnabled()){
-			LOGGER.error("TestAutomationConnector : the task 'fetch test list' failed for project '"+project.getLabel()+
-					"' on server '"+project.getServer().getBaseURL()+"', caused by :",thrownException);
+		if (LOGGER.isErrorEnabled()) {
+			LOGGER.error(
+					"TestAutomationConnector : the task 'fetch test list' failed for project '" + project.getLabel()
+					+ "' on server '" + project.getServer().getBaseURL() + "', caused by :", thrownException);
 		}
 		return new TestAutomationProjectContent(project, thrownException);
 	}

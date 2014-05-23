@@ -63,49 +63,38 @@ import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
 import org.squashtest.tm.service.testautomation.spi.UnreadableResponseException;
 
-
 @Service("plugin.testautomation.jenkins.connector")
-public class TestAutomationJenkinsConnector implements TestAutomationConnector{
+public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestAutomationConnector.class);
 
 	private static final String CONNECTOR_KIND = "jenkins";
 	private static final int DEFAULT_SPAM_INTERVAL_MILLIS = 5000;
 
-
-	//@Inject
 	private TaskScheduler taskScheduler;
-
 
 	private HttpClientProvider clientProvider = new HttpClientProvider();
 
-
 	private JsonParser jsonParser = new JsonParser();
 
-
 	private HttpRequestFactory requestFactory = new HttpRequestFactory();
-
 
 	@Value("${tm.test.automation.pollinterval.millis}")
 	private int spamInterval = DEFAULT_SPAM_INTERVAL_MILLIS;
 
-
-
 	private RequestExecutor requestExecutor = RequestExecutor.getInstance();
 
-	//****************************** let's roll ****************************************
-
+	// ****************************** let's roll ****************************************
 
 	@ServiceReference
-	public void setTaskScheduler(TaskScheduler taskScheduler){
-		this.taskScheduler=taskScheduler;
+	public void setTaskScheduler(TaskScheduler taskScheduler) {
+		this.taskScheduler = taskScheduler;
 	}
 
 	@Override
 	public String getConnectorKind() {
 		return CONNECTOR_KIND;
 	}
-
 
 	public boolean checkCredentials(TestAutomationServer server) {
 
@@ -115,19 +104,14 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 
 		requestExecutor.execute(client, credCheck);
 
-		//if everything went fine, we may return true. Or else let the exception go.
+		// if everything went fine, we may return true. Or else let the exception go.
 		return true;
 
 	}
 
-
-
 	@Override
 	public Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server)
-			throws  ServerConnectionFailed,
-			AccessDenied,
-			UnreadableResponseException,
-			BadConfiguration,
+			throws ServerConnectionFailed, AccessDenied, UnreadableResponseException, BadConfiguration,
 			TestAutomationException {
 
 		HttpClient client = clientProvider.getClientFor(server);
@@ -136,24 +120,18 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 
 		String response = requestExecutor.execute(client, getJobsMethod);
 
-		try{
+		try {
 			return jsonParser.readJobListFromJson(response);
-		}
-		catch(UnreadableResponseException ex){
-			throw new UnreadableResponseException("Test automation - jenkins : server '"+server+"' returned malformed response : ", ex.getCause());
+		} catch (UnreadableResponseException ex) {
+			throw new UnreadableResponseException("Test automation - jenkins : server '" + server
+					+ "' returned malformed response : ", ex.getCause());
 		}
 
 	}
 
-
 	@Override
-	public Collection<AutomatedTest> listTestsInProject(TestAutomationProject project)
-			throws ServerConnectionFailed,
-			AccessDenied,
-			UnreadableResponseException,
-			NotFoundException,
-			BadConfiguration,
-			TestAutomationException {
+	public Collection<AutomatedTest> listTestsInProject(TestAutomationProject project) throws ServerConnectionFailed,
+	AccessDenied, UnreadableResponseException, NotFoundException, BadConfiguration, TestAutomationException {
 
 		HttpClient client = clientProvider.getClientFor(project.getServer());
 
@@ -170,68 +148,54 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 
 	}
 
-
 	@Override
-	public void executeTests(Collection<AutomatedTest> tests, String reference)
-			throws ServerConnectionFailed,
-			AccessDenied,
-			UnreadableResponseException,
-			NotFoundException,
-			BadConfiguration,
-			TestAutomationException {
+	public void executeTests(Collection<AutomatedTest> tests, String reference) throws ServerConnectionFailed,
+	AccessDenied, UnreadableResponseException, NotFoundException, BadConfiguration, TestAutomationException {
 
 		TestByProjectSorter sorter = new TestByProjectSorter(tests);
 
-		while(sorter.hasNext()){
+		while (sorter.hasNext()) {
 			startTestExecution(sorter.getNext(), reference);
 		}
 
 	}
 
-
 	@Override
 	public void executeTests(Collection<AutomatedTest> tests, String reference,
-			TestAutomationCallbackService callbackService)
-					throws ServerConnectionFailed, AccessDenied,
-					UnreadableResponseException, NotFoundException, BadConfiguration,
-					TestAutomationException {
+			TestAutomationCallbackService callbackService) throws ServerConnectionFailed, AccessDenied,
+			UnreadableResponseException, NotFoundException, BadConfiguration, TestAutomationException {
 
 		TestByProjectSorter sorter = new TestByProjectSorter(tests);
 
-		while(sorter.hasNext()){
+		while (sorter.hasNext()) {
 			startTestExecution(sorter.getNext(), reference, callbackService);
 		}
 
 	}
 
-
 	@Override
-	public Map<AutomatedTest, URL> getResultURLs(Collection<AutomatedTest> tests, String reference) throws ServerConnectionFailed,
-	AccessDenied,
-	UnreadableResponseException,
-	NotFoundException,
-	BadConfiguration,
-	TestAutomationException {
+	public Map<AutomatedTest, URL> getResultURLs(Collection<AutomatedTest> tests, String reference)
+			throws ServerConnectionFailed, AccessDenied, UnreadableResponseException, NotFoundException,
+			BadConfiguration, TestAutomationException {
 
 		Map<AutomatedTest, URL> resultMap = new HashMap<AutomatedTest, URL>(tests.size());
 
 		TestByProjectSorter sorter = new TestByProjectSorter(tests);
 
-		while(sorter.hasNext()){
+		while (sorter.hasNext()) {
 
 			TestAutomationProjectContent content = sorter.getNext();
 
-			try{
+			try {
 
 				Integer buildID = optimisticGetBuildID(content.getProject(), reference);
 
 				createAndAddURLs(resultMap, content, buildID);
-			}
-			catch(TestAutomationException ex){
-				if (LOGGER.isErrorEnabled()){
-					LOGGER.error("Test Automation : could not create result url due to an inner error : ",ex );
+			} catch (TestAutomationException ex) {
+				if (LOGGER.isErrorEnabled()) {
+					LOGGER.error("Test Automation : could not create result url due to an inner error : ", ex);
 				}
-				for (AutomatedTest test : content.getTests()){
+				for (AutomatedTest test : content.getTests()) {
 					resultMap.put(test, null);
 				}
 			}
@@ -244,7 +208,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 
 	// ****************** private, second layer method *********************
 
-	private void startTestExecution(TestAutomationProjectContent content, String externalID){
+	private void startTestExecution(TestAutomationProjectContent content, String externalID) {
 
 		TestAutomationProject project = content.getProject();
 
@@ -261,7 +225,8 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 
 	}
 
-	private void startTestExecution(TestAutomationProjectContent content, String externalID, TestAutomationCallbackService service){
+	private void startTestExecution(TestAutomationProjectContent content, String externalID,
+			TestAutomationCallbackService service) {
 
 		TestAutomationProject project = content.getProject();
 
@@ -305,9 +270,8 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 	}
 
 
-	private void createAndAddURLs(Map<AutomatedTest, URL> allURLs, TestAutomationProjectContent content, Integer buildID){
-
-		for (AutomatedTest test : content.getTests()){
+	private void createAndAddURLs(Map<AutomatedTest, URL> allURLs, TestAutomationProjectContent content, Integer buildID) {
+		for (AutomatedTest test : content.getTests()) {
 
 			String resultPath = requestFactory.buildResultURL(test, buildID);
 
@@ -315,10 +279,10 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 
 			try {
 				resultURL = new URL(resultPath);
-			}
-			catch (MalformedURLException e) {
-				if (LOGGER.isErrorEnabled()){
-					LOGGER.error("Test Automation : malformed URL, could not create result url from string '"+resultPath+"'",e);
+			} catch (MalformedURLException e) {
+				if (LOGGER.isErrorEnabled()) {
+					LOGGER.error("Test Automation : malformed URL, could not create result url from string '"
+							+ resultPath + "'", e);
 				}
 				resultURL = null;
 			}
@@ -331,24 +295,21 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 
 	// ************************************ other private stuffs **************************
 
-	private String generateNewId(){
+	private String generateNewId() {
 		return Long.valueOf(System.currentTimeMillis()).toString();
 	}
 
-
-	private class ResultURLUpdater implements StepEventListener<GetBuildID>{
+	private class ResultURLUpdater implements StepEventListener<GetBuildID> {
 
 		private TestAutomationCallbackService service;
 		private TestAutomationProjectContent content;
 		private String externalID;
 
-
-		ResultURLUpdater(TestAutomationCallbackService service, TestAutomationProjectContent content, String externalID){
+		ResultURLUpdater(TestAutomationCallbackService service, TestAutomationProjectContent content, String externalID) {
 			this.service = service;
 			this.content = content;
 			this.externalID = externalID;
 		}
-
 
 		@Override
 		public void onComplete(GetBuildID step) {
@@ -361,7 +322,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 
 			Iterator<Map.Entry<AutomatedTest, URL>> iterator = resultUrlPerTest.entrySet().iterator();
 
-			while(iterator.hasNext()){
+			while (iterator.hasNext()) {
 
 				Map.Entry<AutomatedTest, URL> entry = iterator.next();
 
@@ -418,14 +379,13 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector{
 
 	}
 
-
 	/**
-	 * @see org.squashtest.tm.service.testautomation.spi.TestAutomationConnector#executeParameterizedTests(java.util.Collection, java.lang.String, org.squashtest.tm.service.testautomation.TestAutomationCallbackService)
+	 * @see org.squashtest.tm.service.testautomation.spi.TestAutomationConnector#executeParameterizedTests(java.util.Collection,
+	 *      java.lang.String, org.squashtest.tm.service.testautomation.TestAutomationCallbackService)
 	 */
 	@Override
 	public void executeParameterizedTests(Collection<Couple<AutomatedTest, Map<String, Object>>> tests, String id,
 			TestAutomationCallbackService securedCallback) {
-		// TODO Auto-generated method stub
 
 	}
 

@@ -35,99 +35,88 @@ import org.squashtest.tm.service.testautomation.model.TestAutomationProjectConte
 
 class ExecuteAndWatchStepSequence extends HttpBasedStepSequence implements StepSequence {
 
-	
-
 	private TestAutomationProjectContent projectContent;
-	
+
 	private ExecuteAndWatchBuildProcessor processor;
-	
-	
+
 	private StepEventListener<GetBuildID> buildIDListener;
 
-	
 	// ************** setters *************
-	
-	public void setBuildIDEventListener(StepEventListener<GetBuildID> listener){
-		this.buildIDListener=listener;
+
+	public void setBuildIDEventListener(StepEventListener<GetBuildID> listener) {
+		this.buildIDListener = listener;
 	}
-	
 
 	void setProjectContent(TestAutomationProjectContent content) {
 		this.projectContent = content;
 		setProject(content.getProject());
 	}
-	
+
 	// ************** getters *************
-	
+
 	@Override
 	protected AbstractBuildProcessor getProcessor() {
 		return processor;
 	}
-	
-	
-	
+
 	// ************** constructor ****************
-	
+
 	ExecuteAndWatchStepSequence(ExecuteAndWatchBuildProcessor processor) {
 		super();
-		this.processor=processor;
+		this.processor = processor;
 	}
 
-	
-	//*************** code ****************
-	
+	// *************** code ****************
+
 	@Override
 	public boolean hasMoreElements() {
 		return (currentStage != GET_BUILD_ID);
 	}
 
-
 	@Override
 	public BuildStep<?> nextElement() {
-		switch(currentStage){
-		
-		case WAITING :
-				currentStage = BuildStage.START_BUILD;
-				return newStartBuild();
-				
-		case START_BUILD :
-				currentStage = BuildStage.CHECK_QUEUE;
-				return newCheckQueue();
-				
-		case CHECK_QUEUE :
-				currentStage = BuildStage.GET_BUILD_ID;
-				return newGetBuildID();
-				
-		case GET_BUILD_ID :
-				throw new NoSuchElementException();
-				 
-		default : throw new NoSuchElementException();
-				
-			
+		switch (currentStage) {
+
+		case WAITING:
+			currentStage = BuildStage.START_BUILD;
+			return newStartBuild();
+
+		case START_BUILD:
+			currentStage = BuildStage.CHECK_QUEUE;
+			return newCheckQueue();
+
+		case CHECK_QUEUE:
+			currentStage = BuildStage.GET_BUILD_ID;
+			return newGetBuildID();
+
+		case GET_BUILD_ID:
+			throw new NoSuchElementException();
+
+		default:
+			throw new NoSuchElementException();
+
 		}
 	}
-	
-	
-	// ********** some override **************** 
+
+	// ********** some override ****************
 
 	@Override
-	protected GetBuildID newGetBuildID(){
+	protected GetBuildID newGetBuildID() {
 		GetBuildID step = super.newGetBuildID();
 		step.addListener(buildIDListener);
 		return step;
 	}
-	
-	
-	protected StartBuild newStartBuild(){
-		
+
+	protected StartBuild newStartBuild() {
+
 		PostMethod method = requestFactory.newStartTestSuiteBuild(projectContent, absoluteId.getExternalId());
-		
+
 		StartBuild startBuild = new StartBuild(processor);
-		
+
 		wireHttpSteps(startBuild, method);
-		
+
 		return startBuild;
-		
+
 	}
-	
+
 }

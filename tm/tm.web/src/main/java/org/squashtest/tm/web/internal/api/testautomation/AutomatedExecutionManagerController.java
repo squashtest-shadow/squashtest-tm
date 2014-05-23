@@ -48,7 +48,7 @@ public class AutomatedExecutionManagerController {
 	private AutomatedExecutionManagerService automatedExecutionManager;
 	/**
 	 * Changes the status of all executions matching an automated test case and an automated execution suite
-	 * @param taProjectName
+	 * @param taProjectName matches TestAutomationProject.name, **not** TAP.label
 	 * @param automatedSuiteId
 	 * @param automatedTestPath
 	 * @param automatedTestName
@@ -57,12 +57,12 @@ public class AutomatedExecutionManagerController {
 	@RequestMapping(value="testStatus/{automatedTestPath}/{automatedTestName}", method = RequestMethod.POST)
 	public @ResponseBody void changeExecutionsStates(@PathVariable String taProjectName, @PathVariable String automatedSuiteId, @PathVariable String automatedTestPath, @PathVariable String automatedTestName,  @RequestBody @Valid TestExecutionStatus stateChange) {
 		AutomatedExecutionSetIdentifier setIdentifier = SquashTaExecutionIdentifierBuilder.builder()
-			.automatedSuiteId(automatedSuiteId)
-			.automatedTestName(stateChange.getTestName())
-			.automatedTestPath(automatedTestPath)
-			.automationProjectName(taProjectName)
-			.build();
-		
+				.automatedSuiteId(automatedSuiteId)
+				.automatedTestName(stateChange.getTestName())
+				.automatedTestPath(automatedTestPath)
+				.automationProjectName(taProjectName)
+				.build();
+
 		automatedExecutionManager.changeExecutionsStates(setIdentifier, stateChange);
 	}
 }

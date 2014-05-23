@@ -34,54 +34,52 @@ import org.slf4j.LoggerFactory;
 import org.squashtest.tm.service.testautomation.spi.AccessDenied;
 import org.squashtest.tm.service.testautomation.spi.ServerConnectionFailed;
 
-
 public class RequestExecutor {
 
 	public static final Logger LOGGER = LoggerFactory.getLogger(RequestExecutor.class);
-	
+
 	public static final RequestExecutor INSTANCE = new RequestExecutor();
-	
-	private RequestExecutor(){}
-	
-	public static RequestExecutor getInstance(){
+
+	private RequestExecutor() {
+		super();
+	}
+
+	public static RequestExecutor getInstance() {
 		return INSTANCE;
 	}
-	
-	public String execute(HttpClient client, HttpMethod method){
-		try{
+
+	public String execute(HttpClient client, HttpMethod method) {
+		try {
 			int responseCode = client.executeMethod(method);
-			
+
 			checkResponseCode(responseCode);
-			
-			String response = method.getResponseBodyAsString();	
-			
+
+			String response = method.getResponseBodyAsString();
+
 			return response;
-		}
-		catch(AccessDenied ex){
-			throw new AccessDenied("Test automation - jenkins : operation rejected the operation because of wrong credentials");
-		}
-		catch(IOException ex){
-			throw new ServerConnectionFailed("Test automation - jenkins : could not connect to server due to technical error : ", ex);
-		}	
-		finally{
+		} catch (AccessDenied ex) {
+			throw new AccessDenied(
+					"Test automation - jenkins : operation rejected the operation because of wrong credentials");
+		} catch (IOException ex) {
+			throw new ServerConnectionFailed(
+					"Test automation - jenkins : could not connect to server due to technical error : ", ex);
+		} finally {
 			method.releaseConnection();
-		}	
+		}
 	}
-	
-	
-	private void checkResponseCode(int responseCode){
-		
-		if (responseCode == SC_OK){
+
+	private void checkResponseCode(int responseCode) {
+
+		if (responseCode == SC_OK) {
 			return;
 		}
-		
-		
-		switch(responseCode){
-			case SC_FORBIDDEN :
-			case SC_UNAUTHORIZED :
-			case SC_PROXY_AUTHENTICATION_REQUIRED :
-				throw new AccessDenied();
+
+		switch (responseCode) {
+		case SC_FORBIDDEN:
+		case SC_UNAUTHORIZED:
+		case SC_PROXY_AUTHENTICATION_REQUIRED:
+			throw new AccessDenied();
 		}
 	}
-	
+
 }

@@ -26,23 +26,19 @@ import java.util.List;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
-import org.squashtest.tm.domain.testautomation.AutomatedTest;
-import org.squashtest.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 
 
 public interface AutomatedSuiteDao{
 
 
 	AutomatedSuite createNewSuite();
-	
+
 	AutomatedSuite findById(String id);
-	
-	
+
 	List<AutomatedSuite> findAll();
-		
-	List<AutomatedSuite> findAllById(final Collection<String> ids);
-	
+
+	List<AutomatedSuite> findAllByIds(final Collection<String> ids);
+
 	/**
 	 * retrieve all the {@link AutomatedExecutionExtender} that this suite is bound to.
 	 * 
@@ -50,7 +46,7 @@ public interface AutomatedSuiteDao{
 	 * @return
 	 */
 	Collection<AutomatedExecutionExtender> findAllExtenders(String suiteId);
-	 
+
 	/**
 	 * retrieve all the extenders of executions currently waiting to be run by their test automation servers, for a given {@link AutomatedSuite}
 	 * 
@@ -58,7 +54,7 @@ public interface AutomatedSuiteDao{
 	 * @return
 	 */
 	Collection<AutomatedExecutionExtender> findAllWaitingExtenders(String suiteId);
-	
+
 	/**
 	 * retrieve all the extenders of executions currently being run by their test automation servers, for a given {@link AutomatedSuite}
 	 * 
@@ -66,7 +62,7 @@ public interface AutomatedSuiteDao{
 	 * @return
 	 */
 	Collection<AutomatedExecutionExtender> findAllRunningExtenders(String suiteId);
-	
+
 	/**
 	 * retrieve all the extenders of executions which had been ran their test automation servers, for a given {@link AutomatedSuite}
 	 * 
@@ -74,7 +70,7 @@ public interface AutomatedSuiteDao{
 	 * @return
 	 */
 	Collection<AutomatedExecutionExtender> findAllCompletedExtenders(String suiteId);
-	
+
 	/**
 	 * retrieve all the extenders of executions which status is one of the supplied status, for a given {@link AutomatedSuite}
 	 * 
@@ -82,17 +78,5 @@ public interface AutomatedSuiteDao{
 	 * @return
 	 */
 	Collection<AutomatedExecutionExtender> findAllExtendersByStatus(String suiteId, Collection<ExecutionStatus> statusList);
-	
-	
-	
-	/**
-	 * <p>Given the id of an AutomatedSuite, returns a detached instance with all dependencies initialized :
-	 * 	{@link AutomatedExecutionExtender}, {@link AutomatedTest}, {@link TestAutomationProject} and {@link TestAutomationServer}.
-	 * </p>
-	 * @param suiteToInit
-	 * @return
-	 */
-	AutomatedSuite initDetachedSuite(String suiteId);
-	
-	
+
 }

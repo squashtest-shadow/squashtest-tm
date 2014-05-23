@@ -23,95 +23,86 @@ package org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks;
 import java.util.Collection;
 import java.util.LinkedList;
 
-public abstract class BuildStep<S extends BuildStep<S>> implements Runnable{
-	
+public abstract class BuildStep<S extends BuildStep<S>> implements Runnable {
+
 	protected BuildProcessor buildProcessor;
-	
+
 	private Collection<StepEventListener<S>> eventListeners;
-	
-	public void addListener(StepEventListener<S> newListener){
-		if (eventListeners==null){
+
+	public void addListener(StepEventListener<S> newListener) {
+		if (eventListeners == null) {
 			eventListeners = new LinkedList<StepEventListener<S>>();
 		}
 		eventListeners.add(newListener);
 	}
-	
 
-	public void setBuildProcessor(BuildProcessor processor){
+	public void setBuildProcessor(BuildProcessor processor) {
 		this.buildProcessor = processor;
 	}
 
-	
-	public BuildStep(BuildProcessor processor){
+	public BuildStep(BuildProcessor processor) {
 		super();
 		this.buildProcessor = processor;
 	}
-	
-	
+
 	@Override
-	public void run(){
-		try{
+	public void run() {
+		try {
 			perform();
 			notifyListenerComplete();
 			buildProcessor.notifyStepDone();
-			
-		}
-		catch(Exception ex){
+
+		} catch (Exception ex) {
 			notifyListenerError(ex);
 			buildProcessor.notifyException(ex);
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	private void notifyListenerComplete(){
-		if (eventListeners!=null){
-			for (StepEventListener<S> listener : eventListeners){
-				listener.onComplete((S)this);
+	private void notifyListenerComplete() {
+		if (eventListeners != null) {
+			for (StepEventListener<S> listener : eventListeners) {
+				listener.onComplete((S) this);
 			}
-		}		
+		}
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
-	private void notifyListenerError(Exception ex){
-		if (eventListeners!=null){
-			for (StepEventListener<S> listener : eventListeners){
-				listener.onError((S)this, ex);
+	private void notifyListenerError(Exception ex) {
+		if (eventListeners != null) {
+			for (StepEventListener<S> listener : eventListeners) {
+				listener.onError((S) this, ex);
 			}
-		}		
+		}
 	}
-	
-	
+
 	/**
 	 * Tells whether the current step is complete, or the same step needs to be executed again at a later time.
 	 * 
 	 * @return true if needs rescheduling, false if we can move to the next step
 	 */
 	public abstract boolean needsRescheduling();
-	
 
-	
 	/**
 	 * do the job
+	 * 
 	 * @throws Exception
 	 */
 	public abstract void perform() throws Exception;
-	
+
 	/**
 	 * sets the same object ready for reuse
 	 * 
 	 */
 	public abstract void reset();
-	
-	
+
 	/**
-	 * Returns a positive or null integer if it can suggest an adequate delay before next execution, if the task 
-	 * is unconclusive and must be rescheduled. Null should be returned if it has no opinion and let the processor decide
-	 * instead. 
+	 * Returns a positive or null integer if it can suggest an adequate delay before next execution, if the task is
+	 * unconclusive and must be rescheduled. Null should be returned if it has no opinion and let the processor decide
+	 * instead.
 	 * 
 	 * @return
 	 */
 	public abstract Integer suggestedReschedulingInterval();
-	
 
 }

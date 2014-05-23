@@ -30,46 +30,47 @@ import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 
-public class TestByProjectSorter{
+public class TestByProjectSorter {
 
 	private Map<TestAutomationProject, TestAutomationProjectContent> testsByProject;
-	
+
 	private Iterator<TestAutomationProjectContent> iterator;
-	
-	public TestByProjectSorter(Collection<AutomatedTest> tests){
-		testsByProject  = new HashMap<TestAutomationProject, TestAutomationProjectContent>(tests.size());
-		
-		for (AutomatedTest test : tests){
-			
+
+	public TestByProjectSorter(Collection<AutomatedTest> tests) {
+		testsByProject = new HashMap<TestAutomationProject, TestAutomationProjectContent>(tests.size());
+
+		for (AutomatedTest test : tests) {
+
 			TestAutomationProject project = test.getProject();
-			
+
 			register(project, test);
-			
+
 		}
-		
+
 		iterator = testsByProject.values().iterator();
-		
+
 	}
-	
-	public boolean hasNext(){
+
+	public boolean hasNext() {
 		return iterator.hasNext();
 	}
-	
-	public TestAutomationProjectContent getNext(){
+
+	public TestAutomationProjectContent getNext() {
 		return iterator.next();
 	}
-	
-	private void register(TestAutomationProject project, AutomatedTest test){
-		
-		if (! testsByProject.containsKey(project)){
-			TestAutomationProjectContent newContent = new TestAutomationProjectContent(project, new LinkedList<AutomatedTest>());
+
+	private void register(TestAutomationProject project, AutomatedTest test) {
+
+		if (!testsByProject.containsKey(project)) {
+			TestAutomationProjectContent newContent = new TestAutomationProjectContent(project,
+					new LinkedList<AutomatedTest>());
 			testsByProject.put(project, newContent);
 		}
-		
+
 		TestAutomationProjectContent content = testsByProject.get(project);
-		
+
 		content.getTests().add(test);
-		
+
 	}
-	
+
 }

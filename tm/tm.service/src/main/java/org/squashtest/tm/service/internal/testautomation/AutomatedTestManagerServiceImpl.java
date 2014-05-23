@@ -177,7 +177,8 @@ public class AutomatedTestManagerServiceImpl implements UnsecuredAutomatedTestMa
 
 			try {
 				connector = connectorRegistry.getConnectorForKind(extendersByKind.getKey());
-				Collection<Couple<AutomatedTest, Map<String, Object>>> tests = collectAutomatedTests(extendersByKind.getValue());
+				Collection<Couple<AutomatedTest, Map<String, Object>>> tests = collectAutomatedTests(extendersByKind
+						.getValue());
 				connector.executeParameterizedTests(tests, suite.getId(), securedCallback);
 			} catch (UnknownConnectorKind ex) {
 				if (LOGGER.isErrorEnabled()) {

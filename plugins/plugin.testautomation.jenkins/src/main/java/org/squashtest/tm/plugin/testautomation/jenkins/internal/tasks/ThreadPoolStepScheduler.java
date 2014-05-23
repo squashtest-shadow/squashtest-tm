@@ -25,7 +25,7 @@ import java.util.concurrent.ScheduledFuture;
 
 import org.springframework.scheduling.TaskScheduler;
 
-public class ThreadPoolStepScheduler implements StepScheduler{
+public class ThreadPoolStepScheduler implements StepScheduler {
 
 	private TaskScheduler scheduler;
 
@@ -36,47 +36,46 @@ public class ThreadPoolStepScheduler implements StepScheduler{
 	public void setScheduler(TaskScheduler scheduler) {
 		this.scheduler = scheduler;
 	}
-	
-	
-	public ThreadPoolStepScheduler(){
+
+	public ThreadPoolStepScheduler() {
 		super();
 	}
-	
-	public ThreadPoolStepScheduler(TaskScheduler scheduler){
-		this.scheduler=scheduler;
+
+	public ThreadPoolStepScheduler(TaskScheduler scheduler) {
+		this.scheduler = scheduler;
 	}
-	
-	
+
+	@SuppressWarnings("rawtypes")
 	@Override
-	public StepFuture schedule(BuildStep step,	int millisDelay){
-		Date startTime = new Date(System.currentTimeMillis()+millisDelay);
-		
+	public StepFuture schedule(BuildStep step, int millisDelay) {
+		Date startTime = new Date(System.currentTimeMillis() + millisDelay);
+
 		ScheduledFuture<?> future = scheduler.schedule(step, startTime);
-		
+
 		return new ScheduledFutureWrapper(future);
 	}
-	
+
+	@SuppressWarnings("rawtypes")
 	@Override
 	public StepFuture schedule(BuildStep step) {
 		return schedule(step, 0);
 	}
-	
-	
-	private static class ScheduledFutureWrapper implements StepFuture{
+
+	private static class ScheduledFutureWrapper implements StepFuture {
 
 		private ScheduledFuture<?> future;
-		
-		public ScheduledFutureWrapper(ScheduledFuture<?> future){
-			this.future=future;
+
+		public ScheduledFutureWrapper(ScheduledFuture<?> future) {
+			this.future = future;
 		}
-		
+
 		@Override
 		public void cancel() {
-			if (! future.isCancelled() && !future.isDone()){
+			if (!future.isCancelled() && !future.isDone()) {
 				future.cancel(false);
 			}
 		}
-		
+
 	}
-	
+
 }
