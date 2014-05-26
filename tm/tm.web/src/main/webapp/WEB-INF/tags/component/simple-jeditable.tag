@@ -42,7 +42,6 @@
 				component.editable( '${ targetUrl }', {
 					type: 'text',
 					cols: 80,
-					max_size: 20,
 					placeholder: '<f:message key="rich-edit.placeholder" />',
 					submit: '<f:message key="rich-edit.button.ok.label" />',
 					cancel: '<f:message key="label.Cancel" />',

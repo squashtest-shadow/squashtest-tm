@@ -43,8 +43,8 @@ define([ "jquery", "jquery.squash.jeditable" ], function($) {
 
 		var defaultSettings = {
 			type : 'text',
-			cols : 80,
-			max_size : 20,
+			width : 200,
+			maxLength : 255,
 			placeholder : squashtm.message.placeholder,
 			submit : squashtm.message.cache['label.Ok'],
 			cancel :  squashtm.message.cache['label.Cancel'],

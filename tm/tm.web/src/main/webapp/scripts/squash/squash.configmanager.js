@@ -38,11 +38,8 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 		});
 		
 		return $.extend(lang, {
-			width : '100%',
+			width : 200,
 			maxlength : 255,
-			cols : 80,
-			rows : 10,
-			max_size : 20,
 			indicator : '<div class="processing-indicator"/>',
 			onblur : function() {
 			},
@@ -66,8 +63,6 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 			type : 'select',
 			width : '100%',
 			maxlength : 255,
-			cols : 80,
-			max_size : 20,
 			indicator : '<div class="processing-indicator"/>',
 			onblur : function() {
 			},
@@ -89,6 +84,8 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 		return $.extend(true, 
 			jedconf, 
 			{
+				cols : 80,
+				rows : 10,
 				type : 'ckeditor',
 				ckeditor : ckconf
 			}

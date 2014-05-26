@@ -57,7 +57,7 @@
 <div class="display-table-row"
 	th:each="confBean : ${configuration.configurationBeans}">
 	<label class="display-table-cell" th:text="${confBean.fieldLabel}"
-		th:for="'dfv-value-'+${confBeanStat.count}">quantité de café</label>
+		th:for="'dfv-value-'+${confBeanStat.count}">quantitï¿½ de cafï¿½</label>
 	<div class="display-table-cell" th:switch="${confBean.type}">
 		<input th:case="'checkbox'" type="checkbox" th:disabled="${!editable}"
 			th:checked="${confBean.valueAsBoolean}"
@@ -94,7 +94,6 @@
 					cancel : /*[[#{label.Cancel}]]*/"cancel",
 					placeholder : /*[[#{rich-edit.placeholder}]]*/"say something",
 					cols : 80,
-					max_size : 20,
 					onblur : function() {
 					},
 					maxlength : 255,
