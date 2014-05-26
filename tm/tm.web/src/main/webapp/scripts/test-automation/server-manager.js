@@ -21,8 +21,9 @@
 
 require([ "common", ], function() {
 
-	require([ "jquery", "app/pubsub", "squash.configmanager", "app/ws/squashtm.workspace", "jquery.squash.togglepanel",
-			"jquery.squash.formdialog", "jquery.squash.jedpassword" ], function($, pubsub, confman) {
+	require([ "jquery", "app/pubsub", "jeditable.simpleJEditable", "squash.configmanager", "app/ws/squashtm.workspace",
+			"jquery.squash.togglepanel", "jquery.squash.formdialog", "jquery.squash.jedpassword",
+			"jquery.squash.jeditable" ], function($, pubsub, SimpleJEditable, confman) {
 
 		// ********** function declarations *****************
 
@@ -38,27 +39,24 @@ require([ "common", ], function() {
 
 			$("#ta-server-info-panel").togglePanel();
 
-			var normalJeditConf = confman.getStdJeditable(), ckedJeditConf = confman.getJeditableCkeditor();
-
-			var urlConf = $.extend({
-				name : 'newURL'
-			}, normalJeditConf);
-			$("#ta-server-url").editable(url + '/baseURL', urlConf);
-
-			var loginConf = $.extend({
-				name : 'newLogin'
-			}, normalJeditConf);
-			$("#ta-server-login").editable(url + '/login', loginConf);
-
-			var passwordConf = $.extend({}, {
-				name : 'newPassword'
+			new SimpleJEditable({
+				targetUrl : url + '/baseURL',
+				componentId : "ta-server-url"
 			});
-			$("#ta-server-password").jedpassword(url + '/password', passwordConf);
 
-			var descriptionConf = $.extend({
-				name : 'newDescription'
-			}, ckedJeditConf);
-			$("#ta-server-description").editable(url + '/description', descriptionConf);
+			new SimpleJEditable({
+				targetUrl : url + '/login',
+				componentId : "ta-server-login"
+			});
+
+			$("#ta-server-password").jedpassword(url + '/password', {
+				name : 'value'
+			});
+			$("#ta-server-password").addClass("editable");
+
+			var richEditSettings = confman.getJeditableCkeditor();
+			richEditSettings.url = url + '/description';
+			$("#ta-server-description").richEditable(richEditSettings).addClass("editable");
 
 			$("#ta-server-manual-selection").on('change', function() {
 				var checked = $(this).is(':checked');
@@ -66,7 +64,7 @@ require([ "common", ], function() {
 					url : url + '/manualSelection',
 					type : 'post',
 					data : {
-						manualSelection : checked
+						value : checked
 					}
 				});
 			});

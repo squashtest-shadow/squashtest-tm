@@ -39,6 +39,7 @@ import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
+import org.squashtest.tm.web.internal.helper.JEditablePostParams;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldValueConfigurationBean;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldValueModel;
@@ -90,9 +91,9 @@ public class DenormalizedFieldValuesController {
 
 	}
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.POST, params = "value")
+	@RequestMapping(value = "/{id}", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
 	@ResponseBody
-	public void updateDenormalizedValue(@PathVariable long id, @RequestParam("value") String value) {
+	public void updateDenormalizedValue(@PathVariable long id, @RequestParam(JEditablePostParams.VALUE) String value) {
 		denormalizedFieldValueFinder.changeValue(id, value);
 	}
 

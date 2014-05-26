@@ -72,6 +72,7 @@ import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.administration.PartyPermissionDatatableModelHelper;
+import org.squashtest.tm.web.internal.helper.JEditablePostParams;
 import org.squashtest.tm.web.internal.helper.ProjectHelper;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -279,7 +280,7 @@ public class GenericProjectController {
 		for (Party p : partyList) {
 			Map<String, Object> newModel = new HashMap<String, Object>();
 			newModel.put("label", p.getName());
-			newModel.put("value", p.getName());
+			newModel.put(JEditablePostParams.VALUE, p.getName());
 			newModel.put("id", p.getId());
 			partiesModel.add(newModel);
 		}

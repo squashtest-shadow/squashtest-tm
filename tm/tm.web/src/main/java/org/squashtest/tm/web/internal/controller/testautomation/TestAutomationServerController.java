@@ -43,6 +43,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.tm.exception.InvalidURLException;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
 import org.squashtest.tm.web.internal.controller.administration.NewTestAutomationServer;
+import org.squashtest.tm.web.internal.helper.JEditablePostParams;
 
 
 @Controller
@@ -57,25 +58,25 @@ public class TestAutomationServerController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestAutomationServerController.class);
 
 
-	@RequestMapping(value="/{serverId}/name", method=RequestMethod.POST, params="newName")
+	@RequestMapping(value="/{serverId}/name", method=RequestMethod.POST, params=JEditablePostParams.VALUE)
 	@ResponseBody
-	public String changeName(@PathVariable("serverId") long serverId, @RequestParam("newName") String newName){
+	public String changeName(@PathVariable("serverId") long serverId, @RequestParam(JEditablePostParams.VALUE) String newName){
 		LOGGER.info("Change name for test automation server of id #{}", serverId);
 		service.changeName(serverId, newName);
 		return newName;
 	}
 
-	@RequestMapping(value="/{serverId}/description", method=RequestMethod.POST, params="newDescription")
+	@RequestMapping(value="/{serverId}/description", method=RequestMethod.POST, params=JEditablePostParams.VALUE)
 	@ResponseBody
-	public String changeDescription(@PathVariable("serverId") long serverId, @RequestParam("newDescription") String newDescription){
+	public String changeDescription(@PathVariable("serverId") long serverId, @RequestParam(JEditablePostParams.VALUE) String newDescription){
 		LOGGER.info("Change description for test automation server of id #{}", serverId);
 		service.changeDescription(serverId, newDescription);
 		return newDescription;
 	}
 
-	@RequestMapping(value="/{serverId}/baseURL", method=RequestMethod.POST, params="newURL")
+	@RequestMapping(value="/{serverId}/baseURL", method=RequestMethod.POST, params=JEditablePostParams.VALUE)
 	@ResponseBody
-	public String changeURL(@PathVariable("serverId") long serverId, @RequestParam("newURL") String newURL, Locale locale){
+	public String changeURL(@PathVariable("serverId") long serverId, @RequestParam(JEditablePostParams.VALUE) String newURL, Locale locale){
 		LOGGER.info("Change URL for test automation server of id #{}", serverId);
 		try{
 			URL url = new URL(newURL);
@@ -87,25 +88,25 @@ public class TestAutomationServerController {
 		}
 	}
 
-	@RequestMapping(value="/{serverId}/login", method=RequestMethod.POST, params="newLogin")
+	@RequestMapping(value="/{serverId}/login", method=RequestMethod.POST, params=JEditablePostParams.VALUE)
 	@ResponseBody
-	public String changeLogin(@PathVariable("serverId") long serverId, @RequestParam("newLogin") String newLogin){
+	public String changeLogin(@PathVariable("serverId") long serverId, @RequestParam(JEditablePostParams.VALUE) String newLogin){
 		LOGGER.info("Change login for test automation server of id #{}", serverId);
 		service.changeLogin(serverId, newLogin);
 		return newLogin;
 	}
 
-	@RequestMapping(value="/{serverId}/password", method=RequestMethod.POST, params="newPassword")
+	@RequestMapping(value="/{serverId}/password", method=RequestMethod.POST, params=JEditablePostParams.VALUE)
 	@ResponseBody
-	public String changePassword(@PathVariable("serverId") long serverId, @RequestParam("newPassword") String newPassword){
+	public String changePassword(@PathVariable("serverId") long serverId, @RequestParam(JEditablePostParams.VALUE) String newPassword){
 		LOGGER.info("Change password for test automation server of id #{}", serverId);
 		service.changePassword(serverId, newPassword);
 		return newPassword;
 	}
 
-	@RequestMapping(value="/{serverId}/manualSelection", method=RequestMethod.POST, params="manualSelection")
+	@RequestMapping(value="/{serverId}/manualSelection", method=RequestMethod.POST, params=JEditablePostParams.VALUE)
 	@ResponseBody
-	public Boolean changeManualSelection(@PathVariable("serverId") long serverId, @RequestParam("manualSelection") Boolean manualSelection){
+	public Boolean changeManualSelection(@PathVariable("serverId") long serverId, @RequestParam(JEditablePostParams.VALUE) Boolean manualSelection){
 		LOGGER.info("Change manual slave selection for test automation server of id #{}", serverId);
 		service.changeManualSlaveSelection(serverId, manualSelection);
 		return manualSelection;
