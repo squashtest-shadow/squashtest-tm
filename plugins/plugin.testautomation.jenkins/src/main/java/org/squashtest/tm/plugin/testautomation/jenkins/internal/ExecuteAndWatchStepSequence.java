@@ -73,6 +73,7 @@ import org.squashtest.tm.service.testautomation.model.TestAutomationProjectConte
 // spring support of httpclient 3.1 deprecated yet we rely on it
 class ExecuteAndWatchStepSequence extends HttpBasedStepSequence implements StepSequence {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExecuteAndWatchStepSequence.class);
+	private static final String UNUSED = "unused";
 
 	private final BuildDef buildDef;
 
@@ -204,10 +205,10 @@ class ExecuteAndWatchStepSequence extends HttpBasedStepSequence implements StepS
 	 * Adapts a {@link TestAutomationProjectContent} into something which can be marshalled into a json test suite
 	 * (payload of "execute tests" request).
 	 * 
-	 * @author Gregory
+	 * @author Gregory Fouquet
 	 * 
 	 */
-	private static class JsonSuiteAdapter {
+	private static final class JsonSuiteAdapter {
 		private final BuildDef buildDef;
 		private List<JsonTestAdapter> tests;
 
@@ -216,7 +217,7 @@ class ExecuteAndWatchStepSequence extends HttpBasedStepSequence implements StepS
 			this.buildDef = buildDef;
 		}
 
-		@SuppressWarnings("unused")
+		@SuppressWarnings(UNUSED)
 		public List<JsonTestAdapter> getTest() {
 			if (tests == null) {
 				tests = new ArrayList<JsonTestAdapter>();
@@ -239,7 +240,7 @@ class ExecuteAndWatchStepSequence extends HttpBasedStepSequence implements StepS
 	 * @author Gregory Fouquet
 	 * 
 	 */
-	private static class JsonTestAdapter {
+	private static final class JsonTestAdapter {
 		private final Couple<AutomatedExecutionExtender, Map<String, Object>> paramdExec;
 
 		private JsonTestAdapter(@NotNull Couple<AutomatedExecutionExtender, Map<String, Object>> paramdExec) {
@@ -247,17 +248,17 @@ class ExecuteAndWatchStepSequence extends HttpBasedStepSequence implements StepS
 			this.paramdExec = paramdExec;
 		}
 
-		@SuppressWarnings("unused")
+		@SuppressWarnings(UNUSED)
 		public String getScript() {
 			return paramdExec.getA1().getAutomatedTest().getFullName();
 		}
 
-		@SuppressWarnings("unused")
+		@SuppressWarnings(UNUSED)
 		public String getId() {
 			return paramdExec.getA1().getId().toString();
 		}
 
-		@SuppressWarnings("unused")
+		@SuppressWarnings(UNUSED)
 		public Map<String, Object> getParam() {
 			return paramdExec.getA2();
 		}

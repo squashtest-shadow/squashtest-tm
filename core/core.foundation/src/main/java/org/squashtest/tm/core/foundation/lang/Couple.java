@@ -60,11 +60,13 @@ public class Couple<T1, T2> {
 	 */
 	@Override
 	public int hashCode() {
+		// GENERATED:START
 		final int prime = 31;
-		int result = 1;
+		int result = 7;
 		result = prime * result + ((a1 == null) ? 0 : a1.hashCode());
 		result = prime * result + ((a2 == null) ? 0 : a2.hashCode());
 		return result;
+		// GENERATED:END
 	}
 
 	/**
@@ -73,6 +75,7 @@ public class Couple<T1, T2> {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean equals(Object obj) {
+		// GENERATED:START
 		if (this == obj) {
 			return true;
 		}
@@ -98,5 +101,6 @@ public class Couple<T1, T2> {
 			return false;
 		}
 		return true;
+		// GENERATED:END
 	}
 }

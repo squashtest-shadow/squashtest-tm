@@ -97,7 +97,7 @@ public class TestAutomationProjectContent {
 	 * 
 	 * @param tests
 	 */
-	public void appendTests(Collection<AutomatedTest> tests) {
+	public final void appendTests(Collection<AutomatedTest> tests) {
 		for (AutomatedTest test : tests) {
 			appendTest(test);
 		}
