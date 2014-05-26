@@ -210,6 +210,26 @@
       </plugin>
 
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.4</version>
+        <executions>
+          <execution>
+            <phase>pre-integration-test</phase>
+            <configuration>
+              <tasks>
+                <echo message="Create document base for IT's tomcat" />
+                <mkdir dir="${stubTaServer.webapp.path}" />
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
         <groupId>org.apache.tomcat.maven</groupId>
         <artifactId>tomcat7-maven-plugin</artifactId>
         <version>2.2</version>
@@ -256,8 +276,8 @@
         </executions>
       </plugin>
       <!-- ====== /INTEGRATION TESTS ====== -->
-
     </plugins>
+
     <pluginManagement>
       <plugins>
         <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
