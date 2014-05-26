@@ -18,9 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "handlebars", "app/lnf/Forms", "jquery.squash.confirmdialog",
-		"jquery.ckeditor", "datepicker/jquery.squash.datepicker-locales" ], function($, Backbone,
-		Handlebars, Forms) {
+define([ "jquery", "backbone", "handlebars", "app/lnf/Forms", "jquery.squash.confirmdialog", "jquery.ckeditor",
+		"datepicker/jquery.squash.datepicker-locales" ], function($, Backbone, Handlebars, Forms) {
 	/*
 	 * Defines the controller for the new test automation panel.
 	 */
@@ -50,7 +49,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms", "jquery.squash.con
 			// model prop which name matches the textbox name
 			"blur input:text.strprop" : "changeStrProp",
 			"blur input:password.strprop" : "changeStrProp",
-//			 "change textarea" : "updateCKEModelAttr",
+			// "change textarea" : "updateCKEModelAttr",
 			// did not work because of _CKE instances (cf method
 			// configureCKEs to see how manual binding is done.
 			"click input:checkbox[name='manualSlaveSelection']" : "changeManualSlaveSelection",

@@ -27,17 +27,16 @@
  - messages : 
  - noTestSelected : message that must be displayed when nothing is selected
  */
-define(["jquery", "jquery.squash.confirmdialog"], function() {
+define([ "jquery", "jquery.squash.confirmdialog" ], function() {
 	function TestAutomationRemover(settings) {
 
 		var automatedTestRemovalUrl = settings.automatedTestRemovalUrl;
 		var successCallback = settings.successCallback;
 		var confirmDialog = $(settings.confirmPopupSelector);
-		
+
 		confirmDialog.confirmDialog({
 			confirm : sendRemovalRequest
 		});
-
 
 		function sendRemovalRequest() {
 			return $.ajax({
