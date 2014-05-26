@@ -56,6 +56,7 @@ public class AutomatedExecutionExtender {
 		set.add(ExecutionStatus.SUCCESS);
 		set.add(ExecutionStatus.WARNING);
 		set.add(ExecutionStatus.NOT_RUN);
+		set.add(ExecutionStatus.NOT_FOUND);
 		set.add(ExecutionStatus.ERROR);
 		set.add(ExecutionStatus.FAILURE);
 		set.add(ExecutionStatus.RUNNING);

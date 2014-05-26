@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.execution;
+package org.squashtest.tm.domain.execution
 
 import static org.squashtest.tm.domain.execution.ExecutionStatus.*
 
@@ -38,9 +38,9 @@ class ExecutionStatusTest extends Specification {
 	def "checks the constant sets"(){
 
 		when :
-		def canonical = ExecutionStatus.getCanonicalStatusSet();
-		def terminal = ExecutionStatus.getTerminatedStatusSet();
-		def nonTerminal = ExecutionStatus.getNonTerminatedStatusSet();
+		def canonical = ExecutionStatus.getCanonicalStatusSet()
+		def terminal = ExecutionStatus.getTerminatedStatusSet()
+		def nonTerminal = ExecutionStatus.getNonTerminatedStatusSet()
 
 
 		then :
@@ -60,7 +60,8 @@ class ExecutionStatusTest extends Specification {
 			ERROR,
 			FAILURE,
 			SETTLED,
-			NOT_RUN] as Set
+			NOT_RUN,
+			NOT_FOUND] as Set
 		nonTerminal == [RUNNING, READY] as Set
 	}
 
@@ -105,6 +106,8 @@ class ExecutionStatusTest extends Specification {
 		READY   	| "execution.execution-status.READY"
 		ERROR	    | "execution.execution-status.ERROR"
 		WARNING	    | "execution.execution-status.WARNING"
+		NOT_FOUND   | "execution.execution-status.NOT_FOUND"
+		NOT_RUN   | "execution.execution-status.NOT_RUN"
 	}
 
 	def "a report with blocked statuses should produce a BLOCKED status"(){
@@ -116,7 +119,7 @@ class ExecutionStatusTest extends Specification {
 		ExecutionStatus.computeNewStatus(report) == BLOCKED
 	}
 
-		def "a non-blocked report with error statuses should produce a FAILURE status"(){
+	def "a non-blocked report with error statuses should produce a FAILURE status"(){
 
 		given :
 		ExecutionStatusReport report = new ExecutionStatusReport()
@@ -134,7 +137,7 @@ class ExecutionStatusTest extends Specification {
 		report.set(BLOCKED, 0)
 		report.set(ERROR, 0)
 		report.set(NOT_RUN, 0)
-		
+
 		expect :
 		ExecutionStatus.computeNewStatus(report) == FAILURE
 	}
@@ -147,7 +150,7 @@ class ExecutionStatusTest extends Specification {
 		report.set(RUNNING, 3)
 		report.set(READY, 3)
 		report.set(SETTLED, 3)
-		
+
 		expect :
 		ExecutionStatus.computeNewStatus(report) == RUNNING
 	}
@@ -160,7 +163,7 @@ class ExecutionStatusTest extends Specification {
 
 		expect :
 		ExecutionStatus.computeNewStatus(report) == expected
-		
+
 		where:
 		statuses                    | expected
 		[SUCCESS, BLOCKED]   		| BLOCKED
@@ -199,7 +202,7 @@ class ExecutionStatusTest extends Specification {
 		expect:
 		expectedCount == report.total
 	}
-	
+
 	@Unroll
 	def "should have #expected"() {
 		given:
@@ -208,8 +211,8 @@ class ExecutionStatusTest extends Specification {
 
 		expect:
 		report.has(expected)
-		
-		where: 
+
+		where:
 		expected << ExecutionStatus.values()
 	}
 
@@ -220,10 +223,10 @@ class ExecutionStatusTest extends Specification {
 		report.set(BLOCKED, 10)
 		report.set(UNTESTABLE, 10)
 		report.set(SETTLED, 10)
-		
+
 		expect:
 		expected == report.allOf(queried as ExecutionStatus[])
-		
+
 		where:
 		queried | expected
 		[]      | false
@@ -232,9 +235,9 @@ class ExecutionStatusTest extends Specification {
 		[BLOCKED, UNTESTABLE, SETTLED, SETTLED, UNTESTABLE] | true
 		[BLOCKED, UNTESTABLE, SETTLED, READY] | true
 		[READY] | false
-		
+
 	}
-	
+
 	@Unroll
 	def "should there have any of #queried : #expected"() {
 		given:
@@ -242,10 +245,10 @@ class ExecutionStatusTest extends Specification {
 		report.set(BLOCKED, 10)
 		report.set(UNTESTABLE, 10)
 		report.set(SETTLED, 10)
-		
+
 		expect:
 		expected == report.anyOf(queried as ExecutionStatus[])
-		
+
 		where:
 		queried   | expected
 		[]        | false
@@ -254,7 +257,7 @@ class ExecutionStatusTest extends Specification {
 		[BLOCKED, UNTESTABLE, SETTLED, SETTLED, UNTESTABLE] | true
 		[BLOCKED, UNTESTABLE, SETTLED, READY] | true
 		[READY]   | false
-		
+
 	}
 
 }

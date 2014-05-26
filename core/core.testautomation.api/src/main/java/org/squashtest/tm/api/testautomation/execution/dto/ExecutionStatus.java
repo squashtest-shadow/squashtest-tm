@@ -50,5 +50,9 @@ public enum ExecutionStatus {
         /**
          * The test is not run because prior test failed.
          */
-        NOT_RUN
+        NOT_RUN,
+        /**
+         * The script to run is not found
+         */
+        NOT_FOUND
 }
