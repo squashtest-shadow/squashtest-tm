@@ -20,17 +20,17 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
-import javax.inject.Inject;
+import javax.inject.Inject
 
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.tm.domain.testautomation.TestAutomationServer;
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.domain.testautomation.TestAutomationProject
+import org.squashtest.tm.domain.testautomation.TestAutomationServer
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao
 import org.squashtest.tm.service.internal.repository.TestAutomationServerDao
 import org.squashtest.tm.service.internal.repository.hibernate.NonUniqueEntityException
-import org.unitils.dbunit.annotation.DataSet;
+import org.unitils.dbunit.annotation.DataSet
 
-import spock.unitils.UnitilsSupport;
+import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
 @Transactional
@@ -65,14 +65,14 @@ class HibernateTestAutomationProjectDaoIT extends DbunitDaoSpecification {
 		def res = projectDao.findByExample(project)
 
 		then :
-		res.id==11l;
+		res.id==11l
 	}
 
 
 	@DataSet("HibernateTestAutomationDao.sandbox.xml")
 	def "should not find a project because of unmatched example"(){
 		given :
-		TestAutomationProject example = new TestAutomationProject("roberto55", "Project Roberto-55", null);
+		TestAutomationProject example = new TestAutomationProject("roberto55", "Project Roberto-55", null)
 
 		when :
 		def res = projectDao.findByExample(example)
@@ -95,6 +95,15 @@ class HibernateTestAutomationProjectDaoIT extends DbunitDaoSpecification {
 		thrown(NonUniqueEntityException)
 	}
 
+	@DataSet("HibernateTestAutomationDao.sandbox.xml")
+	def "should list the automation projects hosted on a given server"(){
 
+		when :
+		def res = projectDao.findAllHostedProjects(1l)
+
+		then :
+		res.size()==3
+		res.collect{it.jobName} as Set == ["roberto1", "roberto2", "roberto3"] as Set
+	}
 
 }

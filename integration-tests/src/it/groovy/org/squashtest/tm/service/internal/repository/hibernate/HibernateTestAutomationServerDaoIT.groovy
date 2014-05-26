@@ -20,15 +20,15 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
-import javax.inject.Inject;
+import javax.inject.Inject
 
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.testautomation.TestAutomationServer;
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.domain.testautomation.TestAutomationServer
 import org.squashtest.tm.service.internal.repository.TestAutomationServerDao
-import org.squashtest.tm.service.internal.repository.hibernate.NonUniqueEntityException;
-import org.unitils.dbunit.annotation.DataSet;
+import org.squashtest.tm.service.internal.repository.hibernate.NonUniqueEntityException
+import org.unitils.dbunit.annotation.DataSet
 
-import spock.unitils.UnitilsSupport;
+import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
 @Transactional
@@ -73,16 +73,7 @@ class HibernateTestAutomationServerDaoIT extends DbunitDaoSpecification {
 
 
 
-	@DataSet("HibernateTestAutomationDao.sandbox.xml")
-	def "should list the automation projects hosted on a given server"(){
 
-		when :
-		def res = serverDao.findAllHostedProjects(1l)
-
-		then :
-		res.size()==3
-		res.collect{it.name} as Set == ["roberto1", "roberto2", "roberto3"] as Set
-	}
 
 
 }

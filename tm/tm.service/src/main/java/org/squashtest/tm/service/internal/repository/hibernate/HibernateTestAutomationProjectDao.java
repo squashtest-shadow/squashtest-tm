@@ -31,7 +31,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Example;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
@@ -41,6 +40,7 @@ public class HibernateTestAutomationProjectDao implements TestAutomationProjectD
 
 	@Inject
 	private SessionFactory sessionFactory;
+
 	/**
 	 * @see org.squashtest.tm.service.internal.repository.TestAutomationProjectDao#persist(TestAutomationProject)
 	 */
@@ -48,6 +48,7 @@ public class HibernateTestAutomationProjectDao implements TestAutomationProjectD
 	public void persist(TestAutomationProject newProject) {
 		sessionFactory.getCurrentSession().persist(newProject);
 	}
+
 	/**
 	 * @see org.squashtest.tm.service.internal.repository.TestAutomationProjectDao#findById(Long)
 	 */
@@ -58,6 +59,7 @@ public class HibernateTestAutomationProjectDao implements TestAutomationProjectD
 		query.setParameter("projectId", id);
 		return (TestAutomationProject) query.uniqueResult();
 	}
+
 	/**
 	 * @see org.squashtest.tm.service.internal.repository.TestAutomationProjectDao#findByExample(TestAutomationProject)
 	 */
@@ -77,10 +79,6 @@ public class HibernateTestAutomationProjectDao implements TestAutomationProjectD
 			throw new NonUniqueEntityException();
 		}
 	}
-	/**
-	 * @see org.squashtest.tm.service.internal.repository.TestAutomationProjectDao#haveExecutedTests(Collection)
-	 */
-	@Override
 	public Collection<TestAutomationProject> findAllByTMProject(long tmProjectId) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.getNamedQuery("testAutomationProject.findAllByTMPRoject");
@@ -89,16 +87,9 @@ public class HibernateTestAutomationProjectDao implements TestAutomationProjectD
 	}
 
 	@Override
-	public boolean haveExecutedTests(Collection<TestAutomationProject> projects) {
-		if (projects.isEmpty()) {
-			return false;
-		}
 
-		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationProject.haveExecutedTests");
-		q.setParameterList("projects", projects, LongType.INSTANCE);
-		int count = ((Integer) q.iterate().next()).intValue();
-		return (count > 0);
-	}
+
+
 	/**
 	 * @see org.squashtest.tm.service.internal.repository.TestAutomationProjectDao#haveExecutedTestsByIds(Collection)
 	 */
@@ -110,9 +101,10 @@ public class HibernateTestAutomationProjectDao implements TestAutomationProjectD
 
 		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationProject.haveExecutedTestsByIds");
 		q.setParameterList("projectIds", projectIds);
-		int count = ((Integer) q.iterate().next()).intValue();
+		int count = ((Long) q.iterate().next()).intValue();
 		return (count > 0);
 	}
+
 	/**
 	 * @see org.squashtest.tm.service.internal.repository.TestAutomationProjectDao#deleteProjectsByIds(Collection)
 	 */
@@ -135,8 +127,24 @@ public class HibernateTestAutomationProjectDao implements TestAutomationProjectD
 		deleteProjectsByIds(hostedProjectIds);
 	}
 
+	/**
+	 * @see org.squashtest.tm.service.internal.repository.TestAutomationProjectDao#findAllHostedProjects(long)
+	 */
 	@SuppressWarnings("unchecked")
-	private List<Long> findHostedProjectIds(long serverId) {
+	@Override
+	public List<TestAutomationProject> findAllHostedProjects(long serverId) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.getNamedQuery("testAutomationServer.findAllHostedProjects");
+		query.setParameter("serverId", serverId);
+		return (List<TestAutomationProject>) query.list();
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.internal.repository.TestAutomationProjectDao#findHostedProjectIds(long)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> findHostedProjectIds(long serverId) {
 		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationProject.findHostedProjectIds");
 		q.setParameter("serverId", serverId);
 		return q.list();

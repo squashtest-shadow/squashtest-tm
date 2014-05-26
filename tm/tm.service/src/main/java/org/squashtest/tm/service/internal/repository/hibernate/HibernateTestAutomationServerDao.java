@@ -33,7 +33,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
@@ -131,17 +130,6 @@ public class HibernateTestAutomationServerDao implements TestAutomationServerDao
 		return (TestAutomationServer) query.uniqueResult();
 	}
 
-	/**
-	 * @see org.squashtest.tm.service.internal.repository.TestAutomationServerDao#findAllHostedProjects(long)
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<TestAutomationProject> findAllHostedProjects(long serverId) {
-		Session session = sessionFactory.getCurrentSession();
-		Query query = session.getNamedQuery("testAutomationServer.findAllHostedProjects");
-		query.setParameter("serverId", serverId);
-		return (List<TestAutomationProject>) query.list();
-	}
 
 	/**
 	 * @see org.squashtest.tm.service.internal.repository.TestAutomationServerDao#deleteServer(long)

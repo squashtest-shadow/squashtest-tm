@@ -33,6 +33,7 @@ import org.squashtest.tm.domain.testautomation.AutomatedSuite
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
 import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.exception.NameAlreadyInUseException
 import org.squashtest.tm.service.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
 import org.squashtest.tm.service.internal.customfield.DefaultEditionStatusStrategy
@@ -48,6 +49,137 @@ public class TestAutomationServerManagerServiceIT extends DbunitServiceSpecifica
 
 	@Inject
 	private TestAutomationServerManagerService service
+
+	@DataSet("TestAutomationServerManagerServiceIT.not bound.xml")
+	def "should find has not bound project" (){
+		given :
+		def serverId = 1L
+		when :
+		boolean result = service.hasBoundProjects(serverId)
+		then:
+		!result
+	}
+
+	@DataSet("TestAutomationServerManagerServiceIT.not bound.xml")
+	def "should find has no execution1" (){
+		given :
+		def serverId = 1L
+		when :
+		boolean result = service.hasExecutedTests(serverId)
+		then:
+		!result
+	}
+
+	@DataSet("TestAutomationServerManagerServiceIT.bound.xml")
+	def "should find has no execution2" (){
+		given :
+		def serverId = 1L
+		when :
+		boolean result = service.hasExecutedTests(serverId)
+		then:
+		!result
+	}
+
+
+	@DataSet("TestAutomationServerManagerServiceIT.bound.xml")
+	def "should find has bound1" (){
+		given :
+		def serverId = 1L
+		when :
+		boolean result = service.hasBoundProjects(serverId)
+		then:
+		result
+	}
+
+	@DataSet("TestAutomationServerManagerServiceIT.executed.xml")
+	def "should find has bound2" (){
+		given :
+		def serverId = 11L
+		when :
+		boolean result = service.hasBoundProjects(serverId)
+		then:
+		result
+	}
+
+	@DataSet("TestAutomationServerManagerServiceIT.executed.xml")
+	def "should find has execution" (){
+		given :
+		def serverId = 11L
+		when :
+		boolean result = service.hasExecutedTests(serverId)
+		then:
+		result
+	}
+	@DataSet("TestAutomationServerManagerServiceIT.not bound.xml")
+	def "should change description" (){
+		given :
+		def serverId = 1L
+		def newDesc = "new description"
+		when :
+		service.changeDescription(serverId, newDesc)
+		then:
+		TestAutomationServer tas = findEntity(TestAutomationServer.class, serverId)
+		tas.description == newDesc
+	}
+
+
+	@DataSet("TestAutomationServerManagerServiceIT.not bound.xml")
+	def "should change login" (){
+		given :
+		def serverId = 1L
+		def newLogin = "newLogin"
+		when :
+		service.changeLogin(serverId, newLogin)
+		then:
+		TestAutomationServer tas = findEntity(TestAutomationServer.class, serverId)
+		tas.login == newLogin
+	}
+
+	@DataSet("TestAutomationServerManagerServiceIT.not bound.xml")
+	def "should change password" (){
+		given :
+		def serverId = 1L
+		def newPassword = "password"
+		when :
+		service.changePassword(serverId, newPassword)
+		then:
+		TestAutomationServer tas = findEntity(TestAutomationServer.class, serverId)
+		tas.password == newPassword
+	}
+
+	@DataSet("TestAutomationServerManagerServiceIT.not bound.xml")
+	def "should change name" (){
+		given :
+		def serverId = 1L
+		def newName = "new name"
+		when :
+		service.changeName(serverId, newName)
+		then:
+		TestAutomationServer tas = findEntity(TestAutomationServer.class, serverId)
+		tas.name == newName
+	}
+
+	@DataSet("TestAutomationServerManagerServiceIT.2 not bound.xml")
+	def "should throw name already in use exception" (){
+		given :
+		def serverId = 1L
+		def newName = "new name"
+		when :
+		service.changeName(serverId, newName)
+		then:
+		thrown(NameAlreadyInUseException.class)
+	}
+
+	@DataSet("TestAutomationServerManagerServiceIT.not bound.xml")
+	def "should not throw name already in use exception" (){
+		given :
+		def serverId = 1L
+		def sameName = "Roberto-1"
+		when :
+		service.changeName(serverId, sameName)
+		then:
+		notThrown(NameAlreadyInUseException.class)
+	}
 
 	@DataSet("TestAutomationServerManagerServiceIT.not bound.xml")
 	def "should delete a test automation server" (){

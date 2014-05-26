@@ -84,13 +84,6 @@ public interface TestAutomationServerDao {
 	 */
 	TestAutomationServer findByName(String serverName);
 
-	/**
-	 * return all the projects that the given server hosts.
-	 * 
-	 * @param serverId
-	 * @return
-	 */
-	List<TestAutomationProject> findAllHostedProjects(long serverId);
 
 	/**
 	 * Will delete the given {@linkplain TestAutomationServer} and dereference it from TM {@linkplain Project}s.

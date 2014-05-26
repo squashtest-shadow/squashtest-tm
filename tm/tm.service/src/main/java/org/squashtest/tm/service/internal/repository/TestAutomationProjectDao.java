@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.repository;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.hibernate.Session;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
@@ -32,10 +33,10 @@ public interface TestAutomationProjectDao {
 	 * Will persist a new {@link TestAutomationProject}.
 	 * 
 	 * @param newProject
-	 * @throws NonUniqueEntityException if the given server happen to exist already.
+	 * @throws NonUniqueEntityException
+	 *             if the given server happen to exist already.
 	 */
 	void persist(TestAutomationProject newProject);
-
 
 	/**
 	 * 
@@ -45,16 +46,18 @@ public interface TestAutomationProjectDao {
 	 */
 	TestAutomationProject findById(Long projectId);
 
-
 	/**
-	 *	<p>Given a detached (or even attached) {@link TestAutomationProject} example, will fetch a {@link TestAutomationProject}
-	 *	having the same characteristics. Null attributes will be discarded before the comparison. </p>
-	 *
+	 * <p>
+	 * Given a detached (or even attached) {@link TestAutomationProject} example, will fetch a
+	 * {@link TestAutomationProject} having the same characteristics. Null attributes will be discarded before the
+	 * comparison.
+	 * </p>
+	 * 
 	 * @return a TestAutomation project if one was found, null if none was found.
-	 * @throws NonUniqueEntityException if more than one match. Causes are either a not restrictive enough example... or a bug.
+	 * @throws NonUniqueEntityException
+	 *             if more than one match. Causes are either a not restrictive enough example... or a bug.
 	 */
 	TestAutomationProject findByExample(TestAutomationProject example);
-
 
 	Collection<TestAutomationProject> findAllByTMProject(long tmProjectId);
 
@@ -67,12 +70,11 @@ public interface TestAutomationProjectDao {
 	 */
 	boolean haveExecutedTestsByIds(Collection<Long> projectIds);
 
-	boolean haveExecutedTests(Collection<TestAutomationProject> projects);
-
-
 	/**
-	 * When removing one or several TestAutomationProject : the test cases referencing their scripts are unbound, the AutomatedExecutionExtender have their resultURL and automatedTest to null,
-	 * then all the AutomatedTests are removed, and finally the projects.
+	 * When removing one or several TestAutomationProject : the test cases referencing their scripts are unbound, the
+	 * AutomatedExecutionExtender have their resultURL and automatedTest to null, then all the AutomatedTests are
+	 * removed, and finally the projects.
+	 * 
 	 * @param projectIds
 	 */
 	void deleteProjectsByIds(Collection<Long> projectIds);
@@ -82,9 +84,25 @@ public interface TestAutomationProjectDao {
 	 * <b style="color:red">Warning :</b> When using this method there is a risk that your Hibernate beans are not up to
 	 * date. Use {@link Session#clear()} and {@link Session#refresh(Object)} to make sure your they are.
 	 * </p>
+	 * 
 	 * @param serverId
 	 */
 	void deleteAllHostedProjects(long serverId);
 
+	/**
+	 * return all the projects that the given server hosts.
+	 * 
+	 * @param serverId
+	 * @return
+	 */
+	List<TestAutomationProject> findAllHostedProjects(long serverId);
+
+	/**
+	 * return all the ids of the projects that the given server hosts.
+	 * 
+	 * @param serverId
+	 * @return
+	 */
+	List<Long> findHostedProjectIds(long serverId);
 
 }

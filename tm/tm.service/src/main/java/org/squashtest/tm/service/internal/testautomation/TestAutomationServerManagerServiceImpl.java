@@ -32,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
-import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
@@ -61,11 +60,10 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	 * @see TestAutomationServerManagerService#persist(TestAutomationServer)
 	 */
 	public void persist(TestAutomationServer server) {
-		TestAutomationServer alreadyExists  = serverDao.findByName(server.getName());
-		if (alreadyExists == null){
+		TestAutomationServer alreadyExists = serverDao.findByName(server.getName());
+		if (alreadyExists == null) {
 			serverDao.persist(server);
-		}
-		else{
+		} else {
 			throw new NameAlreadyInUseException(TestAutomationServer.class.getSimpleName(), server.getName());
 		}
 	}
@@ -79,8 +77,8 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public boolean hasExecutedTests(long serverId) {
-		Collection<TestAutomationProject> projects = serverDao.findAllHostedProjects(serverId);
-		return projectDao.haveExecutedTests(projects);
+		Collection<Long> projectIds = projectDao.findHostedProjectIds(serverId);
+		return projectDao.haveExecutedTestsByIds(projectIds);
 	}
 
 	/**
@@ -122,12 +120,14 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void changeName(long serverId, String newName) {
-		TestAutomationServer alreadyExists = serverDao.findByName(newName);
-		if (alreadyExists == null){
-			TestAutomationServer server = serverDao.findById(serverId);
-			server.setName(newName);
+		TestAutomationServer server = serverDao.findById(serverId);
+		if (newName.equals(server.getName())) {
+			return;
 		}
-		else{
+		TestAutomationServer alreadyExists = serverDao.findByName(newName);
+		if (alreadyExists == null) {
+			server.setName(newName);
+		} else {
 			throw new NameAlreadyInUseException(TestAutomationServer.class.getSimpleName(), newName);
 		}
 	}

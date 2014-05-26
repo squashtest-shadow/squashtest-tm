@@ -37,7 +37,6 @@ public interface TestAutomationProjectManagerService {
 
 	TestAutomationProject findProjectById(long projectId);
 
-	boolean hasExecutedTests(long serverId);
 
 	void deleteProject(long projectId);
 

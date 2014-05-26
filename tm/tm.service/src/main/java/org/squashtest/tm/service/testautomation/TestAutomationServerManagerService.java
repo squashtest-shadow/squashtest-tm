@@ -27,6 +27,7 @@ import org.hibernate.Session;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.internal.repository.hibernate.NonUniqueEntityException;
 
 public interface TestAutomationServerManagerService {
@@ -54,6 +55,7 @@ public interface TestAutomationServerManagerService {
 	 * <b style="color:red">Warning :</b> When using this method there is a risk that your Hibernate beans are not up to
 	 * date. Use {@link Session#clear()} and {@link Session#refresh(Object)} to make sure your they are.
 	 * </p>
+	 * 
 	 * @param serverId
 	 */
 	void deleteServer(long serverId);
@@ -66,6 +68,16 @@ public interface TestAutomationServerManagerService {
 
 	void changeURL(long serverId, URL url);
 
+	/**
+	 * Will change the name of the server.
+	 * 
+	 * @param serverId
+	 *            : id of the {@link TestAutomationServer} to change the name of
+	 * @param newName
+	 *            : the new name for the concerned server
+	 * @throws NameAlreadyInUseException
+	 *             if name already exists in database
+	 */
 	void changeName(long serverId, String newName);
 
 	void changeLogin(long serverId, String login);
