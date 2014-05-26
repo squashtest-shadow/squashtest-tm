@@ -45,7 +45,6 @@ import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
 import org.squashtest.tm.service.security.UserContextService;
 
-
 @Service("squashtest.tm.service.ExecutionProcessingService")
 @Transactional
 public class ExecutionProcessingServiceImpl implements ExecutionProcessingService {
@@ -65,29 +64,27 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 
 	@Inject
 	private IterationTestPlanManagerService testPlanService;
-	
+
 	@Override
 	public ExecutionStep findExecutionStep(Long executionStepId) {
 		return executionStepDao.findById(executionStepId);
 	}
 
-	
-	public boolean wasNeverRun(Long executionId){
+	public boolean wasNeverRun(Long executionId) {
 		return executionDao.wasNeverRan(executionId);
 	}
-	
-	
+
 	@Override
 	public ExecutionStep findRunnableExecutionStep(long executionId) throws ExecutionHasNoStepsException {
 		Execution execution = executionDao.findById(executionId);
-		
+
 		ExecutionStep step;
 		try {
 			step = execution.findFirstRunnableStep();
 		} catch (ExecutionHasNoRunnableStepException e) {
 			step = execution.getLastStep();
 		}
-		
+
 		return step;
 	}
 
@@ -152,7 +149,7 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 	/***
 	 * Method which update :<br>
 	 * * execution and item test plan status * execution data for the step, execution and item test plan
-	 *
+	 * 
 	 * @param executionStep
 	 * @param formerStepStatus
 	 */
@@ -167,22 +164,21 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 
 		// let's see if we can autocompute with only 3 these statuses
 		ExecutionStatus newExecutionStatus = newStepStatus.deduceNewStatus(formerExecutionStatus, formerStepStatus);
-		
-		if (newExecutionStatus == null) { //means we couldn't autocompute with only 3 statuses
+
+		if (newExecutionStatus == null) { // means we couldn't autocompute with only 3 statuses
 			ExecutionStatusReport report = executionDao.getStatusReport(execution.getId());
 			newExecutionStatus = ExecutionStatus.computeNewStatus(report);
 		}
 
 		execution.setExecutionStatus(newExecutionStatus);
-		
-		
+
 		// update execution and item test plan data
 		updateExecutionMetadata(execution);
 	}
 
 	/***
 	 * Update the execution step lastExecutionBy and On values depending on the status
-	 *
+	 * 
 	 * @param executionStep
 	 *            the step to update
 	 */
@@ -199,14 +195,13 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 		}
 	}
 
-
 	@PreAuthorize("hasPermission(#execution, 'EXECUTE') or hasRole('ROLE_ADMIN')")
 	@Override
 	public void updateExecutionMetadata(Execution execution) {
 		LOGGER.debug("update the executed by/on for given execution and it's test plan.");
 		String lastExecutedBy = null;
 		Date lastExecutedOn = null;
-		
+
 		if (execution.getExecutionStatus().compareTo(ExecutionStatus.READY) != 0) {
 			// Get the date and user of the most recent step which status is not at READY
 			ExecutionStep mostRecentStep = getMostRecentExecutionStep(execution);
@@ -216,31 +211,30 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 
 		execution.setLastExecutedBy(lastExecutedBy);
 		execution.setLastExecutedOn(lastExecutedOn);
-		
 
 		// forward to the test plan
-		IterationTestPlanItem testPlan = execution.getTestPlan();	
+		IterationTestPlanItem testPlan = execution.getTestPlan();
 		testPlanService.updateMetadata(testPlan);
 
 	}
-	
+
 	@PreAuthorize("hasPermission(#extender, 'EXECUTE') or hasRole('ROLE_ADMIN') or hasRole('ROLE_TA_API_CLIENT')")
 	@Override
-	public void updateExecutionMetadata(AutomatedExecutionExtender extender){
-		
+	public void updateExecutionMetadata(AutomatedExecutionExtender extender) {
+
 		Execution execution = extender.getExecution();
-		
+
 		execution.setLastExecutedOn(new Date());
 		execution.setLastExecutedBy(userContextService.getUsername());
-		
+
 		// forward to the test plan
-		IterationTestPlanItem testPlan = execution.getTestPlan();	
+		IterationTestPlanItem testPlan = execution.getTestPlan();
 		testPlanService.updateMetadata(testPlan);
 	}
 
 	/***
 	 * Method which gets the most recent execution step which status is not at READY
-	 *
+	 * 
 	 * @param givenExecution
 	 *            the execution from which we get the steps
 	 * @return the most recent Execution Step which is not "READY"

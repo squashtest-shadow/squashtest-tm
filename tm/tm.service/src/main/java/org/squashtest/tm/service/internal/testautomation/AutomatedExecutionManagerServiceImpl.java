@@ -40,84 +40,81 @@ import org.squashtest.tm.service.testautomation.TestAutomationCallbackService;
 
 /**
  * @author Gregory Fouquet
- *
+ * 
  */
 @Service("squashtest.tm.service.testautomation.AutomatedExecutionManagerService")
 @Transactional
-public class AutomatedExecutionManagerServiceImpl implements AutomatedExecutionManagerService, TestAutomationCallbackService {
-	
-	@Inject private AutomatedExecutionExtenderDao automatedExecutionDao;
-	
+public class AutomatedExecutionManagerServiceImpl implements AutomatedExecutionManagerService,
+TestAutomationCallbackService {
+
+	@Inject
+	private AutomatedExecutionExtenderDao automatedExecutionDao;
+
 	@Inject
 	private PermissionEvaluationService permissionService;
-	
+
 	@Inject
 	private ExecutionProcessingService execProcService;
-	
 
-	public void setPermissionEvaluationService(PermissionEvaluationService permissionService){
+	public void setPermissionEvaluationService(PermissionEvaluationService permissionService) {
 		this.permissionService = permissionService;
 	}
-	
-	
+
 	/**
-	 * @see org.squashtest.tm.service.testautomation.AutomatedExecutionManagerService#changeExecutionsStates(org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier, org.squashtest.tm.api.testautomation.execution.dto.TestExecutionStatus)
+	 * @see org.squashtest.tm.service.testautomation.AutomatedExecutionManagerService#changeExecutionsStates(org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier,
+	 *      org.squashtest.tm.api.testautomation.execution.dto.TestExecutionStatus)
 	 */
 	@Override
 	public void changeExecutionsStates(@NotNull AutomatedExecutionSetIdentifier setIdentifier,
 			@NotNull TestExecutionStatus stateChange) {
 		List<AutomatedExecutionExtender> execs = findExtendersFor(setIdentifier);
-		
+
 		for (AutomatedExecutionExtender exec : execs) {
 			changeState(exec, stateChange);
 		}
 	}
-	
-	
+
 	@Override
 	public void updateExecutionStatus(AutomatedExecutionSetIdentifier execIdentifier, ExecutionStatus newStatus) {
-		
+
 		List<AutomatedExecutionExtender> execs = findExtendersFor(execIdentifier);
-		
-		for (AutomatedExecutionExtender exec : execs){
+
+		for (AutomatedExecutionExtender exec : execs) {
 			permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "EXECUTE", exec);
 			exec.setExecutionStatus(newStatus);
 			execProcService.updateExecutionMetadata(exec);
 		}
 
 	}
-	
-	
+
 	@Override
-	public void updateResultURL(AutomatedExecutionSetIdentifier execIdentifier,
-			URL resultURL) {
-		
+	public void updateResultURL(AutomatedExecutionSetIdentifier execIdentifier, URL resultURL) {
+
 		List<AutomatedExecutionExtender> execs = findExtendersFor(execIdentifier);
-				
-		for (AutomatedExecutionExtender exec : execs){
+
+		for (AutomatedExecutionExtender exec : execs) {
 			permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "EXECUTE", exec);
 			exec.setResultURL(resultURL);
-		}	
+		}
 	}
-	
+
 	@Override
-	public void updateResultSummary(
-			AutomatedExecutionSetIdentifier execIdentifier, String newSummary) {
-		
+	public void updateResultSummary(AutomatedExecutionSetIdentifier execIdentifier, String newSummary) {
+
 		List<AutomatedExecutionExtender> execs = findExtendersFor(execIdentifier);
-		
-		for (AutomatedExecutionExtender exec : execs){
+
+		for (AutomatedExecutionExtender exec : execs) {
 			permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "EXECUTE", exec);
 			exec.setResultSummary(newSummary);
 		}
-		
+
 	}
-	
-	
-	private List<AutomatedExecutionExtender> findExtendersFor(AutomatedExecutionSetIdentifier setIdentifier){
-		return automatedExecutionDao.findAllBySuiteIdAndTestName(setIdentifier.getAutomatedSuiteId(), setIdentifier.getAutomatedTestName(), setIdentifier.getTestAutomationProjectName());
+
+	private List<AutomatedExecutionExtender> findExtendersFor(AutomatedExecutionSetIdentifier setIdentifier) {
+		return automatedExecutionDao.findAllBySuiteIdAndTestName(setIdentifier.getAutomatedSuiteId(),
+				setIdentifier.getAutomatedTestName(), setIdentifier.getTestAutomationProjectName());
 	}
-	
+
 	/**
 	 * @param exec
 	 * @param stateChange
@@ -126,8 +123,9 @@ public class AutomatedExecutionManagerServiceImpl implements AutomatedExecutionM
 		exec.setResultSummary(stateChange.getStatusMessage());
 		exec.setExecutionStatus(coerce(stateChange.getStatus()));
 		execProcService.updateExecutionMetadata(exec);
-		
+
 	}
+
 	/**
 	 * @param status
 	 * @return

@@ -34,20 +34,21 @@ import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
  * 
  */
 @DynamicDao(entity = AutomatedExecutionExtender.class, hasCustomImplementation = false)
-public interface AutomatedExecutionExtenderDao{
-	
+public interface AutomatedExecutionExtenderDao {
+
 	AutomatedExecutionExtender findById(long executionId);
-	
+
 	void persist(AutomatedExecutionExtender extender);
 
 	/**
 	 * Returns the {@link AutomatedExecution}s which match the {@link AutomatedExecutionSetIdentifier}.
-	 * @param projectName 
+	 * 
+	 * @param projectName
 	 * 
 	 * @return
 	 */
-	List<AutomatedExecutionExtender> findAllBySuiteIdAndTestName(@NotNull String suiteId, @NotNull String testName, @NotNull String projectName);
-	
-	
+	List<AutomatedExecutionExtender> findAllBySuiteIdAndTestName(@NotNull String suiteId, @NotNull String testName,
+			@NotNull String projectName);
+
 	List<AutomatedExecutionExtender> findAllBySuiteIdAndProjectId(@NotNull String suiteId, @NotNull Long projectId);
 }

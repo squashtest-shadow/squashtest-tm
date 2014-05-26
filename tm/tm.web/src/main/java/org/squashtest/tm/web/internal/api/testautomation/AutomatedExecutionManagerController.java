@@ -33,8 +33,6 @@ import org.squashtest.tm.api.testautomation.execution.dto.TestExecutionStatus;
 import org.squashtest.tm.service.testautomation.AutomatedExecutionManagerService;
 import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
 
-
-
 /**
  * This controller receives callbacks from Squash TA which modify automated executions statuses.
  * 
@@ -46,16 +44,23 @@ import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
 public class AutomatedExecutionManagerController {
 	@Inject
 	private AutomatedExecutionManagerService automatedExecutionManager;
+
 	/**
 	 * Changes the status of all executions matching an automated test case and an automated execution suite
-	 * @param taProjectName matches TestAutomationProject.name, **not** TAP.label
+	 * 
+	 * @param taProjectName
+	 *            matches TestAutomationProject.name, **not** TAP.label
 	 * @param automatedSuiteId
 	 * @param automatedTestPath
 	 * @param automatedTestName
 	 * @param stateChange
 	 */
-	@RequestMapping(value="testStatus/{automatedTestPath}/{automatedTestName}", method = RequestMethod.POST)
-	public @ResponseBody void changeExecutionsStates(@PathVariable String taProjectName, @PathVariable String automatedSuiteId, @PathVariable String automatedTestPath, @PathVariable String automatedTestName,  @RequestBody @Valid TestExecutionStatus stateChange) {
+	@RequestMapping(value = "testStatus/{automatedTestPath}/{automatedTestName}", method = RequestMethod.POST)
+	public @ResponseBody
+	void changeExecutionsStates(@PathVariable String taProjectName, @PathVariable String automatedSuiteId,
+			@PathVariable String automatedTestPath, @PathVariable String automatedTestName,
+			@RequestBody @Valid TestExecutionStatus stateChange) {
+
 		AutomatedExecutionSetIdentifier setIdentifier = SquashTaExecutionIdentifierBuilder.builder()
 				.automatedSuiteId(automatedSuiteId)
 				.automatedTestName(stateChange.getTestName())

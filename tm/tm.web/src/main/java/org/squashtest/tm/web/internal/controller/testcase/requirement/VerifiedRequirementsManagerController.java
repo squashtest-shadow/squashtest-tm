@@ -107,8 +107,10 @@ public class VerifiedRequirementsManagerController {
 	private PermissionEvaluationService permissionService;
 
 	private static final String NAME = "name";
+
 	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions/manager", method = RequestMethod.GET)
-	public String showTestCaseManager(@PathVariable long testCaseId, Model model, @CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
+	public String showTestCaseManager(@PathVariable long testCaseId, Model model,
+			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
 		PermissionsUtils.checkPermission(permissionService, new SecurityCheckableObject(testCase, "LINK"));
 		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(openedNodes);
@@ -119,7 +121,8 @@ public class VerifiedRequirementsManagerController {
 	}
 
 	@RequestMapping(value = "/test-steps/{testStepId}/verified-requirement-versions/manager", method = RequestMethod.GET)
-	public String showTestStepManager(@PathVariable long testStepId, Model model, @CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
+	public String showTestStepManager(@PathVariable long testStepId, Model model,
+			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
 		TestStep testStep = testStepService.findById(testStepId);
 		PermissionsUtils.checkPermission(permissionService, new SecurityCheckableObject(testStep, "LINK"));
 
@@ -138,10 +141,8 @@ public class VerifiedRequirementsManagerController {
 		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
 		DriveNodeBuilder<RequirementLibraryNode> nodeBuilder = driveNodeBuilder.get();
 
-		return new JsTreeNodeListBuilder<RequirementLibrary>(nodeBuilder)
-				.expand(expansionCandidates)
-				.setModel(linkableLibraries)
-				.build();
+		return new JsTreeNodeListBuilder<RequirementLibrary>(nodeBuilder).expand(expansionCandidates)
+				.setModel(linkableLibraries).build();
 
 	}
 
@@ -253,8 +254,7 @@ public class VerifiedRequirementsManagerController {
 	public DataTableModel getTestCaseVerifiedRequirementsTableModel(@PathVariable long testCaseId,
 			final DataTableDrawParameters params, final Locale locale) {
 
-		PagingAndSorting pagingAndSorting = new DataTableSorting(params,
-				verifiedRequirementVersionsMapper);
+		PagingAndSorting pagingAndSorting = new DataTableSorting(params, verifiedRequirementVersionsMapper);
 
 		PagedCollectionHolder<List<VerifiedRequirement>> holder = verifiedRequirementsManagerService
 				.findAllDirectlyVerifiedRequirementsByTestCaseId(testCaseId, pagingAndSorting);
@@ -278,15 +278,32 @@ public class VerifiedRequirementsManagerController {
 			@PathVariable long testStepId) {
 		PagingAndSorting paging = new DataTableSorting(params, verifiedRequirementVersionsMapper);
 		Locale locale = LocaleContextHolder.getLocale();
+
 		PagedCollectionHolder<List<VerifiedRequirement>> holder = verifiedRequirementsManagerService
 				.findAllDirectlyVerifiedRequirementsByTestStepId(testStepId, paging);
 
 		TestCase testCase = testCaseModificationService.findTestCaseFromStep(testStepId);
-		return new TestStepVerifiedRequirementsDataTableModelHelper(locale, internationalizationHelper, testStepId, testCase).buildDataModel(holder, params.getsEcho());
+
+		return new TestStepVerifiedRequirementsDataTableModelHelper(locale, internationalizationHelper, testStepId,
+				testCase).buildDataModel(holder, params.getsEcho());
 	}
 
-	private static class VerifiedRequirementsDataTableModelHelper
-	extends DataTableModelBuilder<VerifiedRequirement> { // NOSONAR no, it should not be declared final because it has subclasses in this very file
+	private static class VerifiedRequirementsDataTableModelHelper extends DataTableModelBuilder<VerifiedRequirement> { // NOSONAR
+		// no,
+		// it
+		// should
+		// not
+		// be
+		// declared
+		// final
+		// because
+		// it
+		// has
+		// subclasses
+		// in
+		// this
+		// very
+		// file
 		private InternationalizationHelper internationalizationHelper;
 		private Locale locale;
 
@@ -299,17 +316,18 @@ public class VerifiedRequirementsManagerController {
 		@Override
 		public Map<String, Object> buildItemData(VerifiedRequirement item) {
 			Map<String, Object> res = new HashMap<String, Object>();
+
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, item.getName());
 			res.put("project", item.getProject().getName());
 			res.put("reference", item.getReference());
 			res.put("versionNumber", item.getVersionNumber());
-			res.put("criticality",
-					internationalizationHelper.internationalize(item.getCriticality(), locale));
+			res.put("criticality", internationalizationHelper.internationalize(item.getCriticality(), locale));
 			res.put("category", internationalizationHelper.internationalize(item.getCategory(), locale));
 			res.put("status", item.getStatus().toString());
 			res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
+
 			return res;
 		}
 	}
