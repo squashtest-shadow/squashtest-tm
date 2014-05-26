@@ -59,7 +59,7 @@ public interface TestAutomationProjectDao {
 	 */
 	TestAutomationProject findByExample(TestAutomationProject example);
 
-	Collection<TestAutomationProject> findAllByTMProject(long tmProjectId);
+	Collection<Long> findAllByTMProject(long tmProjectId);
 
 
 	/**

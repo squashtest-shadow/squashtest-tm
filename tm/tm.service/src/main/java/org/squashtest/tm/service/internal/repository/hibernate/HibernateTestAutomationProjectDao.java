@@ -79,14 +79,15 @@ public class HibernateTestAutomationProjectDao implements TestAutomationProjectD
 			throw new NonUniqueEntityException();
 		}
 	}
-	public Collection<TestAutomationProject> findAllByTMProject(long tmProjectId) {
+	@Override
+	public Collection<Long> findAllByTMProject(long tmProjectId) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.getNamedQuery("testAutomationProject.findAllByTMPRoject");
 		query.setParameter("tmProjectId", tmProjectId);
 		return query.list();
 	}
 
-	@Override
+
 
 
 
