@@ -39,20 +39,18 @@
 <style th:include="fragments-utils/various-headers :: admin-subpage-css" th:remove="tag"></style>
 
 <script th:src="@{/scripts/pubsub-boot.js}"></script>
-<script type="text/javascript" th:inline="javascript"  th:include="fragments-utils/various-headers :: env-setup"></script>
+<script type="text/javascript" th:inline="javascript" th:include="fragments-utils/various-headers :: env-setup"></script>
 
 
 <script type="text/javascript" th:inline="javascript">
-
-/*<![CDATA[*/
+	/*<![CDATA[*/
 	squashtm.pageConfiguration = {
-		url : /*[[ @{/test-automation-servers/}+${server.id} ]]*/ "http://localhost/taserver"
+		url : /*[[ @{/test-automation-servers/}+${server.id} ]]*/"http://localhost/taserver"
 	};
-/*]]>*/
-
+	/*]]>*/
 </script>
 
-<script th:attr="data-main=@{/scripts/test-automation/server-manager.js}" th:src="@{/scripts/require-min.js}"></script>      
+<script th:attr="data-main=@{/scripts/test-automation/server-manager.js}" th:src="@{/scripts/require-min.js}"></script>
 
 </head>
 <body>
@@ -77,8 +75,8 @@
 
         <div id="sub-page-buttons" class="sub-page-buttons">
 
-          <input id="back" type="button" th:value="#{label.Back}" class="sq-btn" value="#{ label.Back }" 
-          th:onclick="'document.location.href=\''+@{/administration/test-automation-servers}+'\''"/>
+          <input id="back" type="button" th:value="#{label.Back}" class="sq-btn" value="#{ label.Back }"
+            th:onclick="'document.location.href=\''+@{/administration/test-automation-servers}+'\''" />
 
         </div>
 
@@ -91,7 +89,7 @@
           <div id="ta-server-name-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
             <div style="float: left; height: 3em">
               <h2>
-                <label for="ta-server-name-header" th:text="#{label.TestAutomationServer}">Server</label> 
+                <label for="ta-server-name-header" th:text="#{label.TestAutomationServer}">Server</label>
                 <a id="ta-server-name-header" href="#" th:text="${server.name}">my server</a>
               </h2>
             </div>
@@ -102,80 +100,86 @@
           <div class="fragment-body unstyled">
             <div id="ta-server-toolbar" class="toolbar-class ui-corner-all ">
               <div class="toolbar-button-panel">
-                <input type="button" th:value="#{ label.Rename }" value="Rename" id="rename-ta-server-button"  class="sq-btn"  />
+                <input type="button" th:value="#{ label.Rename }" value="Rename" id="rename-ta-server-button"
+                  class="sq-btn" />
               </div>
             </div>
-            
+
             <script type="text/javascript">
-            publish('load.toolbar');
-            </script>
-            
-            <br /> 
+				publish('load.toolbar');
+			</script>
+
+            <br />
             <br />
             <div class="toggle-panel ">
-            
-              <div id="ta-server-info-panel" class="information-panel toggle-panel-main" th:title="#{title.InfoOnServer}">
+
+              <div id="ta-server-info-panel" class="information-panel toggle-panel-main"
+                th:title="#{title.InfoOnServer}">
                 <div class="display-table" id="ta-server-infos-table">
-                
+
                   <div class="display-table-row">
                     <label for="ta-server-url" th:text="#{label.URL}">URL</label>
-                    <div>
-                    	<span id="ta-server-url" th:text="${server.baseURL}">http://localhost</span>
-                    	<a th:href="${server.baseURL}" th:text="'['+#{label.BrowseTo}+']'"></a>
+                    <div class="display-table-cell">
+                      <span id="ta-server-url" th:text="${server.baseURL}">http://localhost</span>
+                      <a th:href="${server.baseURL}" th:text="'['+#{label.BrowseTo}+']'"></a>
                     </div>
                   </div>
-                  
+
                   <div class="display-table-row">
                     <label for="ta-server-login" th:text="#{label.Login}">Login</label>
                     <div id="ta-server-login" class="display-table-cell" th:text="${server.login}">username</div>
                   </div>
-                  
+
                   <div class="display-table-row">
                     <label for="ta-server-password" th:text="#{label.Password}">Password</label>
-                   	<span id="ta-server-password" class="display-table-cell" style="font-weight:bold;" th:text="${server.password}" ></span>
-                  </div>     
-                 
-		          <div class="display-table-row">
+                    <div id="ta-server-password" class="display-table-cell" style="font-weight: bold;"
+                      th:text="${server.password}"></div>
+                  </div>
+
+                  <div class="display-table-row">
                     <label for="ta-server-description" th:text="#{label.Description}">Description</label>
-                    <div id="ta-server-description" class="display-table-cell" th:utext="${server.description}">your standard TA server</div>
-                  </div> 
-                  
-                  <div class="display-table-row" style="text-align:center;">
-                  	<input id="ta-server-manual-selection" type="checkbox" th:checked="${server.manualSlaveSelection}" style="margin-top:5px"/>
-                  	<span th:text="#{label.isManualSlaveSelection}" class="display-table-cell">Pick a slave yourself (if available)</span>
-                  </div>     
+                    <div id="ta-server-description" class="display-table-cell" th:utext="${server.description}">your
+                      standard TA server</div>
+                  </div>
+
+                  <div class="display-table-row" style="text-align: center;">
+                    <input id="ta-server-manual-selection" type="checkbox" th:checked="${server.manualSlaveSelection}"
+                      style="margin-top: 5px" />
+                    <div th:text="#{label.isManualSlaveSelection}" class="display-table-cell">Pick a slave
+                      yourself (if available)</div>
+                  </div>
                 </div>
               </div>
             </div>
-  
+
 
           </div>
-          
-			<script type="text/javascript">
-			publish('load.main-panel');
-			</script>
-			
-	    </div>
-	  </div>
-	</div>
+
+          <script type="text/javascript">
+											publish('load.main-panel');
+										</script>
+
+        </div>
+      </div>
+    </div>
   </div>
   <!--    ====================================POPUPS======================================================  -->
   <!--    	RENAME POPUP -->
   <div id="rename-ta-server-popup" class="not-displayed popup-dialog" th:title="#{title.RenameServer}">
-    <label for="rename-cuf-input" th:text="#{ label.Rename }">Rename</label> 
-    <input type="text" id="rename-ta-server-input"  maxlength="255" size="50" />
-    <br/>
+    <label for="rename-cuf-input" th:text="#{ label.Rename }">Rename</label>
+    <input type="text" id="rename-ta-server-input" maxlength="255" size="50" />
+    <br />
     <span class="error-message name-error"></span>
     <div class="popup-dialog-buttonpane">
-    	<input type="button" value="ok" th:value="#{label.Confirm}" data-def="evt=confirm, mainbtn"/>
-    	<input type="button" value="cl" th:value="#{label.Cancel}"  data-def="evt=cancel"/>
+      <input type="button" value="ok" th:value="#{label.Confirm}" data-def="evt=confirm, mainbtn" />
+      <input type="button" value="cl" th:value="#{label.Cancel}" data-def="evt=cancel" />
     </div>
   </div>
-  
-<script type="text/javascript">
-	publish('load.popups');
-	publish('load.ready'); 		
-</script>
+
+  <script type="text/javascript">
+			publish('load.popups');
+			publish('load.ready');
+	</script>
 
 </body>
 </html>
