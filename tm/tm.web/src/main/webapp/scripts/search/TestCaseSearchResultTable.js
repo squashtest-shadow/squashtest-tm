@@ -288,6 +288,7 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 			var urlGET = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"] + "/importance-combo-data";
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
+			//TODO use SelectJEditable obj
 			$('.editable_importance', row).editable(urlPOST, {
 						type : 'select',
 						submit : ok,
@@ -305,6 +306,7 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 			var urlGET = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"] + "/nature-combo-data";
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
+			//TODO use SelectJEditable obj
 			$('.editable_nature', row).editable(urlPOST, {
 				type : 'select',
 				submit : ok,
@@ -322,6 +324,7 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 			var urlGET = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"] + "/type-combo-data";
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
+			//TODO use SelectJEditable obj
 			$('.editable_type', row).editable(urlPOST, {
 				type : 'select',
 				submit : ok,
@@ -339,6 +342,7 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 			var urlGET = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"] + "/status-combo-data";
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
+			//TODO use SelectJEditable obj
 			$('.editable_status', row).editable(urlPOST, {
 				type : 'select',
 				submit : ok,
@@ -354,11 +358,6 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 			var component = $("td.editable_ref", row);
 			var url = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
 			new SimpleJEditable({
-				language : {
-					richEditPlaceHolder : translator.get("rich-edit.placeholder"),
-					okLabel : translator.get("rich-edit.button.ok.label"),
-					cancelLabel : translator.get("label.Cancel")
-				},
 				targetUrl : url,
 				component : component,
 				jeditableSettings : {
@@ -377,11 +376,6 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 			var component = $('td.editable_label', row);
 			var url = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
 			new SimpleJEditable({
-				language : {
-					richEditPlaceHolder : translator.get("rich-edit.placeholder"),
-					okLabel : translator.get("rich-edit.button.ok.label"),
-					cancelLabel : translator.get("label.Cancel")
-				},
 				targetUrl : url,
 				component : component,
 				jeditableSettings : {

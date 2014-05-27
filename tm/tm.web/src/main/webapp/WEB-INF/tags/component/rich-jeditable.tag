@@ -34,6 +34,7 @@
 <c:url var="ckeWelcomeMessageConfigUrl" value="/styles/ckeditor/welcome-message-ckeditor-config.js" />
 
 <script type="text/javascript">
+//TODO remove this tag. Init in js file instead.
 require(["common"], function() {
 	var settings = {
 		url : '${ targetUrl }',

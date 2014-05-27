@@ -100,6 +100,7 @@ define(
 				var statusurl = _conf.testplanUrl + data['entity-id'];
 				var statusElt = $row.find('.status-combo').children().first();
 				statusElt.addClass('cursor-arrow');
+				//TODO use SelectJEditable obj
 				statusElt.editable(statusurl, {
 					type : 'select',
 					data : _conf.jsonStatuses,
@@ -112,6 +113,7 @@ define(
 				var assigneeurl = _conf.testplanUrl + data['entity-id'];
 				var assigneeElt = $row.find('.assignee-combo').children().first();
 				assigneeElt.addClass('cursor-arrow');
+				//TODO use SelectJEditable obj
 				assigneeElt.editable(assigneeurl, {
 					type : 'select',
 					data : _conf.jsonAssignableUsers,

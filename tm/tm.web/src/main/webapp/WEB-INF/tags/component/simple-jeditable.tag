@@ -33,6 +33,7 @@
 
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
 <script type="text/javascript">
+//TODO remove this tag. Init in js file instead.
 	require(["common"], function() {
 		require(["jquery", "jeditable"], function($) {
 			$(function() {

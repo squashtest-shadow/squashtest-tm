@@ -178,6 +178,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 
 			// the table needs to be redrawn after each return
 			// of the POST so we implement the posting workflow
+			//TODO use SelectJEditable obj
 			$('td.versionNumber', row).editable(function(value, settings) {
 				var innerPOSTData;
 				$.post(urlPOST, {

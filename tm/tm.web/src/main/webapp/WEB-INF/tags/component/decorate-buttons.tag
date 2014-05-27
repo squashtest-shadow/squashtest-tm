@@ -23,6 +23,7 @@
 <!-- DEPRECATED - USE TAG FROM JQ TAGLIB -->
 <%@ tag body-content="empty" description="Applies jquery l'n'f to all buttons and links with the 'button' class" %>
 <script type="text/javascript">
+//TODO remove this tag. Init in js file instead.
 	$(function() {
 		$.squash.decorateButtons();
 	});
