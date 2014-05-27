@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.testautomation;
 
-
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Locale;
 
@@ -40,7 +38,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.squashtest.tm.exception.InvalidURLException;
+import org.squashtest.tm.core.foundation.lang.UrlUtils;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
 import org.squashtest.tm.web.internal.controller.administration.NewTestAutomationServer;
 import org.squashtest.tm.web.internal.helper.JEditablePostParams;
@@ -76,16 +74,11 @@ public class TestAutomationServerController {
 
 	@RequestMapping(value="/{serverId}/baseURL", method=RequestMethod.POST, params=JEditablePostParams.VALUE)
 	@ResponseBody
-	public String changeURL(@PathVariable("serverId") long serverId, @RequestParam(JEditablePostParams.VALUE) String newURL, Locale locale){
-		LOGGER.info("Change URL for test automation server of id #{}", serverId);
-		try{
-			URL url = new URL(newURL);
-			service.changeURL(serverId, url);
-			return newURL;
-		}
-		catch(MalformedURLException ex){
-			throw new InvalidURLException();
-		}
+	public String changeURL(@PathVariable("serverId") long serverId, @RequestParam("newURL") String newURL,
+			Locale locale) {
+		URL url = UrlUtils.toUrl(newURL);
+		service.changeURL(serverId, url);
+		return newURL;
 	}
 
 	@RequestMapping(value="/{serverId}/login", method=RequestMethod.POST, params=JEditablePostParams.VALUE)
@@ -123,7 +116,10 @@ public class TestAutomationServerController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody
 	public void createNew(@RequestBody NewTestAutomationServer server) {
-		LOGGER.info("Add new Test automation server : {}",ToStringBuilder.reflectionToString(server));
+		if(LOGGER.isInfoEnabled()) { // w/o this test string rep is always build
+			LOGGER.info("Add new Test automation server : {}", ToStringBuilder.reflectionToString(server));
+		}
+
 		service.persist(server.createTransientEntity());
 	}
 
@@ -139,14 +135,17 @@ public class TestAutomationServerController {
 	private class TestAutomationUsageStatus{
 		private boolean hasBoundProject;
 		private boolean hasExecutedTests;
+
 		public TestAutomationUsageStatus(boolean hasBoundProject, boolean hasExecutedTests) {
 			this.hasBoundProject = hasBoundProject;
 			this.hasExecutedTests = hasExecutedTests;
 		}
+
 		@SuppressWarnings("unused")
 		public boolean isHasBoundProject() {
 			return hasBoundProject;
 		}
+
 		@SuppressWarnings("unused")
 		public boolean isHasExecutedTests() {
 			return hasExecutedTests;

@@ -18,27 +18,36 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.testautomation;
 
-import javax.validation.constraints.NotNull;
+package org.squashtest.tm.core.foundation.lang;
 
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.squashtest.tm.api.testautomation.execution.dto.TestExecutionStatus;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import org.squashtest.tm.core.foundation.exception.InvalidUrlException;
 
 /**
  * @author Gregory Fouquet
  * 
  */
-public interface AutomatedExecutionManagerService {
+public final class UrlUtils {
+
+	private UrlUtils() {
+		super();
+	}
 
 	/**
-	 * Changes the state of a given execution to a new value.
+	 * Coerces the given string into a URL. When it's not coercible, throws a {@link InvalidUrlException}
 	 * 
-	 * @param id
-	 *            id of the automated exec extender
-	 * @param stateChange
+	 * @param url
+	 * @return
+	 * @throws InvalidUrlException
 	 */
-	@PreAuthorize("hasRole('ROLE_TA_API_CLIENT')")
-	void changeExecutionState(long id, @NotNull TestExecutionStatus stateChange);
-
+	public static URL toUrl(String url) throws InvalidUrlException {
+		try {
+			return new URL(url);
+		} catch (MalformedURLException e) {
+			throw new InvalidUrlException(e);
+		}
+	}
 }

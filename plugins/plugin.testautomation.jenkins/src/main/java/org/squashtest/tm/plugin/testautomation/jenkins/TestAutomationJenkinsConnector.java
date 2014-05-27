@@ -149,7 +149,6 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 
 	}
 
-
 	private void startTestExecution(BuildDef buildDef, String externalId, TestAutomationCallbackService service) {
 
 		ResultURLUpdater updater = new ResultURLUpdater(service, buildDef.getTests(), externalId);
@@ -201,10 +200,10 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 
 		@Override
 		public void onError(GetBuildID step, Exception exception) {
-			//nothing special, the regular exception handling is good enough
+			// nothing special, the regular exception handling is good enough
 		}
 
-		private AutomatedExecutionSetIdentifier toIdentifier(AutomatedTest test){
+		private AutomatedExecutionSetIdentifier toIdentifier(AutomatedTest test) {
 			return new SimpleAutoExecIdentifier(test.getProject().getJobName(), externalID, test.getName());
 		}
 
@@ -231,14 +230,11 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 		}
 	}
 
-
-	private static class SimpleAutoExecIdentifier implements AutomatedExecutionSetIdentifier{
-
+	private static class SimpleAutoExecIdentifier implements AutomatedExecutionSetIdentifier {
 
 		private String testAutomationProjectName;
 		private String automatedSuiteId;
 		private String automatedTestName;
-
 
 		public SimpleAutoExecIdentifier(String testAutomationProjectName,
 				String automatedSuiteId, String automatedTestName) {

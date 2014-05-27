@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.api.testautomation.execution.dto.TestExecutionStatus;
 import org.squashtest.tm.service.testautomation.AutomatedExecutionManagerService;
-import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
 
 /**
  * This controller receives callbacks from Squash TA which modify automated executions statuses.
@@ -40,34 +39,21 @@ import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
  * 
  */
 @Controller
-@RequestMapping("/resultUpdate/{unidentifiedHostId}/{taProjectName}/{automatedSuiteId}")
+@RequestMapping("/automated-executions")
 public class AutomatedExecutionManagerController {
 	@Inject
 	private AutomatedExecutionManagerService automatedExecutionManager;
 
 	/**
-	 * Changes the status of all executions matching an automated test case and an automated execution suite
+	 * Changes the status of the automated execution
 	 * 
-	 * @param taProjectName
-	 *            matches TestAutomationProject.name, **not** TAP.label
-	 * @param automatedSuiteId
-	 * @param automatedTestPath
-	 * @param automatedTestName
+	 * @param id
+	 *            the automated exec extender id.
 	 * @param stateChange
 	 */
-	@RequestMapping(value = "testStatus/{automatedTestPath}/{automatedTestName}", method = RequestMethod.POST)
+	@RequestMapping(value = "{id}/test-status", method = RequestMethod.POST)
 	public @ResponseBody
-	void changeExecutionsStates(@PathVariable String taProjectName, @PathVariable String automatedSuiteId,
-			@PathVariable String automatedTestPath, @PathVariable String automatedTestName,
-			@RequestBody @Valid TestExecutionStatus stateChange) {
-
-		AutomatedExecutionSetIdentifier setIdentifier = SquashTaExecutionIdentifierBuilder.builder()
-				.automatedSuiteId(automatedSuiteId)
-				.automatedTestName(stateChange.getTestName())
-				.automatedTestPath(automatedTestPath)
-				.automationProjectName(taProjectName)
-				.build();
-
-		automatedExecutionManager.changeExecutionsStates(setIdentifier, stateChange);
+	void changeExecutionState(@PathVariable long id, @RequestBody @Valid TestExecutionStatus stateChange) {
+		automatedExecutionManager.changeExecutionState(id, stateChange);
 	}
 }

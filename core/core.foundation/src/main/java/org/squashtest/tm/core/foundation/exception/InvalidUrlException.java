@@ -18,17 +18,19 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.exception;
+package org.squashtest.tm.core.foundation.exception;
 
-import org.squashtest.tm.core.foundation.exception.ActionException;
-
-public class InvalidURLException extends ActionException {
-
-	private static final long serialVersionUID = 1L;
-
-
+public class InvalidUrlException extends ActionException {
+	private static final long serialVersionUID = -3850737537729862855L;
 	private static final String MESSAGE_KEY = "error.url.malformed";
 
+	public InvalidUrlException(String msg, Throwable cause) {
+		super(msg, cause);
+	}
+
+	public InvalidUrlException(Throwable cause) {
+		super(cause);
+	}
 
 	@Override
 	public String getI18nKey() {

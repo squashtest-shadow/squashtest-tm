@@ -26,9 +26,13 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.api.testautomation.execution.dto.TestExecutionStatus;
+import org.squashtest.tm.core.foundation.exception.InvalidUrlException;
+import org.squashtest.tm.core.foundation.lang.UrlUtils;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
@@ -46,6 +50,7 @@ import org.squashtest.tm.service.testautomation.TestAutomationCallbackService;
 @Transactional
 public class AutomatedExecutionManagerServiceImpl implements AutomatedExecutionManagerService,
 TestAutomationCallbackService {
+	private static final Logger LOGGER = LoggerFactory.getLogger(AutomatedExecutionManagerServiceImpl.class);
 
 	@Inject
 	private AutomatedExecutionExtenderDao automatedExecutionDao;
@@ -55,24 +60,6 @@ TestAutomationCallbackService {
 
 	@Inject
 	private ExecutionProcessingService execProcService;
-
-	public void setPermissionEvaluationService(PermissionEvaluationService permissionService) {
-		this.permissionService = permissionService;
-	}
-
-	/**
-	 * @see org.squashtest.tm.service.testautomation.AutomatedExecutionManagerService#changeExecutionsStates(org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier,
-	 *      org.squashtest.tm.api.testautomation.execution.dto.TestExecutionStatus)
-	 */
-	@Override
-	public void changeExecutionsStates(@NotNull AutomatedExecutionSetIdentifier setIdentifier,
-			@NotNull TestExecutionStatus stateChange) {
-		List<AutomatedExecutionExtender> execs = findExtendersFor(setIdentifier);
-
-		for (AutomatedExecutionExtender exec : execs) {
-			changeState(exec, stateChange);
-		}
-	}
 
 	@Override
 	public void updateExecutionStatus(AutomatedExecutionSetIdentifier execIdentifier, ExecutionStatus newStatus) {
@@ -122,6 +109,15 @@ TestAutomationCallbackService {
 	private void changeState(AutomatedExecutionExtender exec, TestExecutionStatus stateChange) {
 		exec.setResultSummary(stateChange.getStatusMessage());
 		exec.setExecutionStatus(coerce(stateChange.getStatus()));
+
+		try {
+			URL result = UrlUtils.toUrl(stateChange.getResultUrl());
+			exec.setResultURL(result);
+		} catch (InvalidUrlException ex) {
+			LOGGER.warn("Received a result url which does not math any valid url pattern : {}",
+					stateChange.getResultUrl());
+		}
+
 		execProcService.updateExecutionMetadata(exec);
 
 	}
@@ -132,6 +128,16 @@ TestAutomationCallbackService {
 	 */
 	private ExecutionStatus coerce(org.squashtest.tm.api.testautomation.execution.dto.ExecutionStatus status) {
 		return ExecutionStatus.valueOf(status.name());
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.testautomation.AutomatedExecutionManagerService#changeExecutionState(long,
+	 *      org.squashtest.tm.api.testautomation.execution.dto.TestExecutionStatus)
+	 */
+	@Override
+	public void changeExecutionState(long id, @NotNull TestExecutionStatus stateChange) {
+		changeState(automatedExecutionDao.findById(id), stateChange);
+
 	}
 
 }
