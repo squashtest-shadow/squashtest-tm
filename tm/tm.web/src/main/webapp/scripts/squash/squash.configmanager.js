@@ -38,7 +38,7 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 		});
 		
 		return $.extend(lang, {
-			width : 200,
+			width : '80%',
 			maxlength : 255,
 			indicator : '<div class="processing-indicator"/>',
 			onblur : function() {
@@ -61,7 +61,7 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 		
 		return $.extend(lang, {
 			type : 'select',
-			width : '100%',
+			width : '80%',
 			maxlength : 255,
 			indicator : '<div class="processing-indicator"/>',
 			onblur : function() {

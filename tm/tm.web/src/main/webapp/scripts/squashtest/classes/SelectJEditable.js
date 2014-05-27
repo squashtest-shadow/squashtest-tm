@@ -45,8 +45,7 @@ define([ "jquery", "squash.configmanager", "jquery.squash.jeditable" ], function
 		var txt = component.text();
 		component.text($.trim(txt));
 		
-		var defaultSettings = confman.getStdJeditable();
-		defaultSettings.type = 'select';
+		var defaultSettings = confman.getJeditableSelect();
 
 
 		this.getSelectedOption = function(){

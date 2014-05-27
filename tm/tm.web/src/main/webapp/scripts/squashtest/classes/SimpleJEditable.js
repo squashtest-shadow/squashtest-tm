@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "jquery.squash.jeditable" ], function($) {
+define([ "jquery", "squash.configmanager", "jquery.squash.jeditable" ], function($, confman) {
 /*
  * settings = {
  *  targetUrl
@@ -41,31 +41,7 @@ define([ "jquery", "jquery.squash.jeditable" ], function($) {
 		var txt = component.text();
 		component.text($.trim(txt));
 
-		var defaultSettings = {
-			type : 'text',
-			width : 200,
-			maxLength : 255,
-			placeholder : squashtm.message.placeholder,
-			submit : squashtm.message.cache['label.Ok'],
-			cancel :  squashtm.message.cache['label.Cancel'],
-			onblur : function() {
-				// this disable the onBlur handler, which would close the
-				// jeditable
-				// when clicking in the rich editor (since it considers the click as
-				// out of the editing zone)
-			},
-			indicator : '<div class="processing-indicator"/>',
-			onerror : function(settings, self, xhr){//this = form
-				var spanError = $("<span/>" ,{					
-					'class':'error-message'
-				}); 
-				self.reset();
-				self.click();
-				$(self).append(spanError);				
-				xhr.label = spanError;
-				$(spanError).on("mouseover",function(){ spanError.fadeOut('slow').remove(); });
-			}
-		};
+		var defaultSettings = confman.getStdJeditable();
 		
 		if(!settings.jeditableSettings){
 			settings.jeditableSettings = {};
