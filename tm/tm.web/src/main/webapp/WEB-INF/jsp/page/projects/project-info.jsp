@@ -28,7 +28,7 @@
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
-<%@ taglib prefix="ta" tagdir="/WEB-INF/tags/testautomation"%>
+<%@ taglib prefix="pc" tagdir="/WEB-INF/tags/project-components"%>
 <%@ taglib prefix="input" tagdir="/WEB-INF/tags/input"%>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
@@ -316,7 +316,7 @@
 			<%---------------------------------------/STATUS----------------------------------------------------%>
 			<%------------------------------ TEST AUTOMATION PROJECT -------------------------------------------%>
 
-			<ta:ta-admin-panel  
+			<pc:automation-panel
 				project="${adminproject.project}" 
 				availableTAServers="${availableTAServers}"/>
 			

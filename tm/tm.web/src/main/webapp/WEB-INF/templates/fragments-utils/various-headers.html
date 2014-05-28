@@ -40,6 +40,35 @@
 	squashtm.app.contextRoot = /*[[@{/}]]*/;
 	squashtm.app.locale = /*[[#{squashtm.locale}]]*/;
            
+	
+	// ------------------- prefilled translator cache ---------------------------------------------------- 
+
+	var _langcache = {	
+		'error.generic.label' : /*[[#{error.generic.label}]]*/ "",
+		'execution.execution-status.SETTLED' : /*[[#{execution.execution-status.SETTLED}]]*/ "",
+		'execution.execution-status.UNTESTABLE' : /*[[#{execution.execution-status.UNTESTABLE}]]*/ "",
+		'execution.execution-status.BLOCKED' : /*[[#{execution.execution-status.BLOCKED}]]*/ "",
+		'execution.execution-status.FAILURE' : /*[[#{execution.execution-status.FAILURE}]]*/ "",
+		'execution.execution-status.SETTLED' : /*[[#{execution.execution-status.SETTLED}]]*/ "",
+		'execution.execution-status.SUCCESS' : /*[[#{execution.execution-status.SUCCESS}]]*/ "",
+		'execution.execution-status.RUNNING' : /*[[#{execution.execution-status.RUNNING}]]*/ "",
+		'execution.execution-status.READY' : /*[[#{execution.execution-status.READY}]]*/ "",
+		'execution.execution-status.WARNING' : /*[[#{execution.execution-status.WARNING}]]*/ "",
+		'execution.execution-status.NOT_RUN' : /*[[#{execution.execution-status.NOT_RUN}]]*/ "",
+		'execution.execution-status.NOT_FOUND' : /*[[#{execution.execution-status.NOT_FOUND}]]*/ "",
+		'execution.execution-status.ERROR' : /*[[#{execution.execution-status.ERROR}]]*/ "",
+		'label.Cancel' : /*[[#{label.Cancel}]]*/ "",
+		'label.Ok' : /*[[#{label.Ok}]]*/ "",
+		'label.Confirm' : /*[[#{label.Confirm}]]*/ "",
+		'rich-edit.language.value' : /*[[#{rich-edit.language.value}]]*/ "",
+		'squashtm.locale' : /*[[#{squashtm.locale}]]*/ "",
+		'squashtm.message.infoTitle' : /*[[#{popup.title.info}]]*/ "",
+		'squashtm.dateformat' : /*[[#{squashtm.dateformat}]]*/ "",
+		'squashtm.dateformat.iso' : /*[[#{squashtm.dateformat.iso}]]*/ "",
+		'squashtm.dateformatShort.datepicker' : /*[[#{squashtm.dateformatShort.datepicker}]]*/ ""
+	};
+
+	squashtm.message.cache = _langcache;
 /*]]>*/
 </script>
 
