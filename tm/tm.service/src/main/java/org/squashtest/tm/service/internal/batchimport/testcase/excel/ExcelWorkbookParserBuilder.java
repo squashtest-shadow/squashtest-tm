@@ -44,6 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.squashtest.tm.exception.SheetCorruptedException;
+import org.squashtest.tm.service.batchimport.excel.MaxFileSizeExceededException;
 import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException;
 import org.squashtest.tm.service.batchimport.excel.WorksheetFormatStatus;
 import org.squashtest.tm.service.batchimport.excel.WorksheetMismatch;
@@ -59,7 +60,7 @@ class ExcelWorkbookParserBuilder {
 	private final File xls;
 
 	@Inject
-	@Value("${uploadfilter.upload.import.sizeLimitInBytes:2000000}")
+	@Value("${uploadfilter.upload.import.sizeLimitInBytes}")
 	private double maxSize;
 
 	public ExcelWorkbookParserBuilder(@NotNull File xls) {
@@ -78,9 +79,9 @@ class ExcelWorkbookParserBuilder {
 	 */
 	public ExcelWorkbookParser build() throws MaxFileSizeExceededException, SheetCorruptedException, TemplateMismatchException {
 
-		if(xls.length() > maxSize){
+		/*if(xls.length() > maxSize){
 			throw new MaxFileSizeExceededException(xls.getName());
-		}
+		}*/
 
 		InputStream is = null;
 		try {

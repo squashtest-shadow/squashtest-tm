@@ -19,9 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.service.internal.batchimport.testcase.excel;
+package org.squashtest.tm.service.batchimport.excel;
 
-import org.squashtest.tm.service.batchimport.excel.ColumnMismatch;
 
 /**
  * Thrown when a sheet has too many lines
@@ -31,11 +30,11 @@ public class MaxNumberOfLinesExceededException extends RuntimeException {
 
 	private String sheetName;
 
-	MaxNumberOfLinesExceededException(){
+	public MaxNumberOfLinesExceededException(){
 		super();
 	}
 
-	MaxNumberOfLinesExceededException(String sheetName){
+	public MaxNumberOfLinesExceededException(String sheetName){
 		this();
 		this.sheetName = sheetName;
 	}

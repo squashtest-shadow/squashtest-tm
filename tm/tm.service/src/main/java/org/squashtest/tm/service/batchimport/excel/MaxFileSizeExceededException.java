@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.service.internal.batchimport.testcase.excel;
+package org.squashtest.tm.service.batchimport.excel;
 
 /**
  * Thrown when a sheet has too many lines
@@ -29,11 +29,11 @@ public class MaxFileSizeExceededException extends RuntimeException {
 
 	private String fileName;
 
-	MaxFileSizeExceededException(){
+	public MaxFileSizeExceededException(){
 		super();
 	}
 
-	MaxFileSizeExceededException(String fileName){
+	public MaxFileSizeExceededException(String fileName){
 		this();
 		this.fileName = fileName;
 	}

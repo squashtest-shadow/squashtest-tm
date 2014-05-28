@@ -42,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.squashtest.tm.exception.SheetCorruptedException;
+import org.squashtest.tm.service.batchimport.excel.MaxNumberOfLinesExceededException;
 import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException;
 import org.squashtest.tm.service.internal.batchimport.DatasetInstruction;
 import org.squashtest.tm.service.internal.batchimport.Instruction;
@@ -184,9 +185,9 @@ public class ExcelWorkbookParser {
 
 		Sheet sheet = workbook.getSheet(worksheetDef.getSheetName());
 
-		if(sheet.getLastRowNum() > maxLines){
+		/*if(sheet.getLastRowNum() > maxLines){
 			throw new MaxNumberOfLinesExceededException(worksheetDef.getSheetName());
-		}
+		}*/
 
 		InstructionBuilder<?, ?> instructionBuilder = instructionBuilderFactoryByWorksheet.get(
 				worksheetDef.getWorksheetType()).create((WorksheetDef) worksheetDef); // useless (WorksheetDef) cast
