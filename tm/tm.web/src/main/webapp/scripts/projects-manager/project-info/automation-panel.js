@@ -56,7 +56,7 @@ define([ "jquery", "squash.translator", "jeditable.selectJEditable", "squashtabl
 						self.close();
 					}).fail(function(wtf){
 						squasthm.notification.handleJsonResponseError(wtf);
-						self.trigger("confirmChangeServerPopup.confirm.fail", [ self.selectedId ])
+						self.trigger("confirmChangeServerPopup.confirm.fail", [ self.selectedId ]);
 						self.newSelectedId = null;
 					});
 				},
@@ -94,7 +94,7 @@ define([ "jquery", "squash.translator", "jeditable.selectJEditable", "squashtabl
 
 				setSelected : function(selected) {
 					this.selectedId = selected;
-				},
+				}
 			});
 			// *************************************** BindPopup **********************************************
 
@@ -151,7 +151,7 @@ define([ "jquery", "squash.translator", "jeditable.selectJEditable", "squashtabl
 				cancel : function() {
 					this.trigger("unbindTAProjectPopup.cancel");
 					alert('Canceled !');
-				},
+				}
 			});
 			// *************************************** AutomationPanel **********************************************
 
