@@ -24,8 +24,8 @@
  - availableServers : an array of TestAutomationServer
  - TAServerId : the id of the selected server if there is one, or null if none
  */
-define([ "jquery", "squash.translator", "jeditable.selectJEditable", "squashtable", "jquery.squash.formdialog" ],
-		function($, translator, SelectJEditable) {
+define([ "jquery", "jeditable.selectJEditable", "./AddTAProjectsDialog",, "squashtable", "jquery.squash.formdialog" ],
+		function($, SelectJEditable, BindPopup, WTF) {
 			// *************************************** ConfirmChangePopup **********************************************
 			var ConfirmChangePopup = Backbone.View.extend({
 
@@ -50,18 +50,21 @@ define([ "jquery", "squash.translator", "jeditable.selectJEditable", "squashtabl
 							serverId : this.newSelectedId
 						}
 					}).done(function() {
-						self.trigger("confirmChangeServerPopup.confirm", [ self.newSelectedId ]);
+						//trigger confirm success event with active selected id
+						self.trigger("confirmChangeServerPopup.confirm.success", [ self.newSelectedId ]);
 						self.selectedId = self.newSelectedId;
 						self.newSelectedId = null;
 						self.close();
 					}).fail(function(wtf){
-						squasthm.notification.handleJsonResponseError(wtf);
+						WTF.handleJsonResponseError(wtf);
+						//trigger confirm fail event with active selected id
 						self.trigger("confirmChangeServerPopup.confirm.fail", [ self.selectedId ]);
 						self.newSelectedId = null;
 					});
 				},
 				cancel : function() {
 					var self = this;
+					//trigger cancel event with active selected id
 					this.trigger("confirmChangeServerPopup.cancel", [ self.selectedId ]);
 					self.newSelectedId = null;
 					this.close();
@@ -96,41 +99,7 @@ define([ "jquery", "squash.translator", "jeditable.selectJEditable", "squashtabl
 					this.selectedId = selected;
 				}
 			});
-			// *************************************** BindPopup **********************************************
-
-			var BindPopup = Backbone.View.extend({
-
-				el : "#ta-projects-bind-popup",
-
-				initialize : function() {
-					this.$el.formDialog({
-						height : 500
-					});
-				},
-
-				events : {
-					"formdialogconfirm" : "confirm",
-					"formdialogcancel" : "cancel",
-					"formdialogopen" : "open"
-				},
-
-				open : function() {
-					this.$el.formDialog('setState', 'pleasewait');
-				},
-				confirm : function() {
-					this.trigger("bindTAProjectPopup.confirm");
-					alert('Confirmed !');
-				},
-				cancel : function() {
-					this.trigger("bindTAProjectPopup.cancel");
-					this.$el.formDialog('close');
-				},
-				show : function() {
-					this.$el.formDialog("open");
-
-				}
-
-			});
+			
 			// *************************************** UnbindPopup **********************************************
 
 			var UnbindPopup = Backbone.View.extend({
@@ -164,14 +133,15 @@ define([ "jquery", "squash.translator", "jeditable.selectJEditable", "squashtabl
 					this.popups = popups;
 					this.initSelect(conf);
 					this.table = $("#ta-projects-table").squashTable({}, {});
-					this.onChangeServerConfirmed = $.proxy(this._onChangeServerConfirmed, this);
-					this.onChangeServerCancel = $.proxy(this._onChangeServerCancel, this);
-					this.listenTo(self.popups.confirmChangePopup, "confirmChangeServerPopup.confirm",
-							self.onChangeServerConfirmed);
+					
+					//listens to change-server-popup cancel and fail events to update the server's select-jeditable status accordingly
+					this.onChangeServerComplete = $.proxy(this._onChangeServerComplete, this);
+					this.listenTo(self.popups.confirmChangePopup, "confirmChangeServerPopup.confirm.success",
+							self.onChangeServerComplete);
 					this.listenTo(self.popups.confirmChangePopup, "confirmChangeServerPopup.cancel",
-							self.onChangeServerCancel);
+							self.onChangeServerComplete);
 					this.listenTo(self.popups.confirmChangePopup, "confirmChangeServerPopup.confirm.fail",
-							self.onChangeServerCancel);
+							self.onChangeServerComplete);
 				},
 
 				events : {
@@ -180,14 +150,13 @@ define([ "jquery", "squash.translator", "jeditable.selectJEditable", "squashtabl
 				openBindPopup : function() {
 					this.popups.bindPopup.show();
 				},
-				_onChangeServerConfirmed : function(newServerId) {
+				
+				//when the select jeditable popup completes we change the server's select-jeditable status accordingly.
+				_onChangeServerComplete : function(newServerId) {
 					this.selectServer.setValue(newServerId);
 					this.table.refresh();
 				},
-				_onChangeServerCancel : function(previousServerId) {
-					this.selectServer.setValue(previousServerId);
-					this.table.refresh();
-				},
+				
 				initSelect : function(conf) {
 					var self = this;
 					var data = {
@@ -221,9 +190,9 @@ define([ "jquery", "squash.translator", "jeditable.selectJEditable", "squashtabl
 			return {
 				init : function(conf) {
 					var popups = {
-						unbindPopup : new UnbindPopup(),
+						unbindPopup : new UnbindPopup(conf),
 						confirmChangePopup : new ConfirmChangePopup(conf),
-						bindPopup : new BindPopup()
+						bindPopup : new BindPopup(conf)
 					};
 					new AutomationPanel(conf, popups);
 				}

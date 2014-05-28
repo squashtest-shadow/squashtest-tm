@@ -134,24 +134,32 @@
   <!-- _____________CASE 1_______________ -->
   <div data-def="state=case1">
     <p>
-      <f:message key="message.testAutomationBinding.removeJobs"/>
+      <f:message key="message.testAutomationBinding.removeJobs" />
     </p>
     <p>
-      <label ><f:message key="label.warning"/></label>
-       <f:message key="message.testAutomationServer.noExecution.warning"/>
+      <label>
+        <f:message key="label.warning" />
+      </label>
+      <f:message key="message.testAutomationServer.noExecution.warning" />
     </p>
-    <p>  <f:message key="message.testAutomationServer.change.confirm"/></p>
+    <p>
+      <f:message key="message.testAutomationServer.change.confirm" />
+    </p>
   </div>
   <!-- _____________CASE 2_______________ -->
   <div data-def="state=case2">
     <p>
-      <f:message key="message.testAutomationBinding.removeJobs"/>
+      <f:message key="message.testAutomationBinding.removeJobs" />
     </p>
     <p>
-     <label ><f:message key="label.warning"/></label>
-     <f:message key="message.testAutomationServer.withExecution.warning"/>
+      <label>
+        <f:message key="label.warning" />
+      </label>
+      <f:message key="message.testAutomationServer.withExecution.warning" />
     </p>
-     <p>  <f:message key="message.testAutomationServer.change.confirm"/></p>
+    <p>
+      <f:message key="message.testAutomationServer.change.confirm" />
+    </p>
   </div>
   <!-- _____________Progression_______________ -->
   <div data-def="state=pleasewait">
@@ -195,7 +203,7 @@
     <label>
       <f:message key="project.testauto.projectsblock.add.popup.caption" />
     </label>
-    <div class="ta-project-bind-listdiv">
+    <table class="ta-project-bind-listdiv">
 
       <%--
 				!!!!!!!!!!!!!!! CONSEILS DEVELOPPEMENT !!!!!!!!!!!!!!
@@ -209,9 +217,16 @@
 			
 			 --%>
 
-    </div>
+    </table>
+
+  </div>
+  <div class="ta-projectsadd-fatalerror">
+    <span> </span>
   </div>
 
+  <div class="ta-projectsadd-error">
+    <span> </span>
+  </div>
   <div class="popup-dialog-buttonpane">
     <input type="button" value="${confirmLabel}" data-def="mainbtn=main, evt=confirm" />
     <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
@@ -229,7 +244,9 @@
   <div>
     <f:message key="dialog.unbind-ta-project.message" />
   </div>
-
+  <script id="default-item-tpl" type="text/x-handlebars-template" th:inline="text">
+        <tr class="listdiv-item"> <td><input type="checkbox" value="{{jsonItem.name}}"/><td> <td>{{jsonItem.name}}</td><td class="ta-project-tm-label"><label th:text="#{label.taProjectTmLabel}">Libellé dans Squash TM</label></td></tr>
+	</script>
   <div class="popup-dialog-buttonpane">
     <input type="button" value="${confirmLabel}" data-def="evt=confirm" />
     <input type="button" value="${cancelLabel}" data-def="evt=cancel, mainbtn" />
@@ -261,6 +278,10 @@ require(["common"], function() {
 		
 	});
 });
+
+	
+
+	
 
 	
 </script>

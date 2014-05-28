@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.internal.controller.testautomation;
 
 import java.net.URL;
+import java.util.Collection;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -31,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,10 +41,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.tm.core.foundation.lang.UrlUtils;
+import org.squashtest.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.tm.service.testautomation.TestAutomationProjectFinderService;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
 import org.squashtest.tm.web.internal.controller.administration.NewTestAutomationServer;
 import org.squashtest.tm.web.internal.helper.JEditablePostParams;
-
 
 @Controller
 @RequestMapping("/test-automation-servers")
@@ -50,29 +53,31 @@ public class TestAutomationServerController {
 
 	@Inject
 	private MessageSource messageSource;
-
+	@Inject
+	private TestAutomationProjectFinderService projectService;
 	@Inject
 	private TestAutomationServerManagerService service;
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestAutomationServerController.class);
 
-
-	@RequestMapping(value="/{serverId}/name", method=RequestMethod.POST, params=JEditablePostParams.VALUE)
+	@RequestMapping(value = "/{serverId}/name", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
 	@ResponseBody
-	public String changeName(@PathVariable("serverId") long serverId, @RequestParam(JEditablePostParams.VALUE) String newName){
+	public String changeName(@PathVariable("serverId") long serverId,
+			@RequestParam(JEditablePostParams.VALUE) String newName) {
 		LOGGER.info("Change name for test automation server of id #{}", serverId);
 		service.changeName(serverId, newName);
 		return newName;
 	}
 
-	@RequestMapping(value="/{serverId}/description", method=RequestMethod.POST, params=JEditablePostParams.VALUE)
+	@RequestMapping(value = "/{serverId}/description", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
 	@ResponseBody
-	public String changeDescription(@PathVariable("serverId") long serverId, @RequestParam(JEditablePostParams.VALUE) String newDescription){
+	public String changeDescription(@PathVariable("serverId") long serverId,
+			@RequestParam(JEditablePostParams.VALUE) String newDescription) {
 		LOGGER.info("Change description for test automation server of id #{}", serverId);
 		service.changeDescription(serverId, newDescription);
 		return newDescription;
 	}
 
-	@RequestMapping(value="/{serverId}/baseURL", method=RequestMethod.POST, params=JEditablePostParams.VALUE)
+	@RequestMapping(value = "/{serverId}/baseURL", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
 	@ResponseBody
 	public String changeURL(@PathVariable("serverId") long serverId, @RequestParam("newURL") String newURL,
 			Locale locale) {
@@ -81,25 +86,28 @@ public class TestAutomationServerController {
 		return newURL;
 	}
 
-	@RequestMapping(value="/{serverId}/login", method=RequestMethod.POST, params=JEditablePostParams.VALUE)
+	@RequestMapping(value = "/{serverId}/login", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
 	@ResponseBody
-	public String changeLogin(@PathVariable("serverId") long serverId, @RequestParam(JEditablePostParams.VALUE) String newLogin){
+	public String changeLogin(@PathVariable("serverId") long serverId,
+			@RequestParam(JEditablePostParams.VALUE) String newLogin) {
 		LOGGER.info("Change login for test automation server of id #{}", serverId);
 		service.changeLogin(serverId, newLogin);
 		return newLogin;
 	}
 
-	@RequestMapping(value="/{serverId}/password", method=RequestMethod.POST, params=JEditablePostParams.VALUE)
+	@RequestMapping(value = "/{serverId}/password", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
 	@ResponseBody
-	public String changePassword(@PathVariable("serverId") long serverId, @RequestParam(JEditablePostParams.VALUE) String newPassword){
+	public String changePassword(@PathVariable("serverId") long serverId,
+			@RequestParam(JEditablePostParams.VALUE) String newPassword) {
 		LOGGER.info("Change password for test automation server of id #{}", serverId);
 		service.changePassword(serverId, newPassword);
 		return newPassword;
 	}
 
-	@RequestMapping(value="/{serverId}/manualSelection", method=RequestMethod.POST, params=JEditablePostParams.VALUE)
+	@RequestMapping(value = "/{serverId}/manualSelection", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
 	@ResponseBody
-	public Boolean changeManualSelection(@PathVariable("serverId") long serverId, @RequestParam(JEditablePostParams.VALUE) Boolean manualSelection){
+	public Boolean changeManualSelection(@PathVariable("serverId") long serverId,
+			@RequestParam(JEditablePostParams.VALUE) Boolean manualSelection) {
 		LOGGER.info("Change manual slave selection for test automation server of id #{}", serverId);
 		service.changeManualSlaveSelection(serverId, manualSelection);
 		return manualSelection;
@@ -116,7 +124,7 @@ public class TestAutomationServerController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody
 	public void createNew(@RequestBody NewTestAutomationServer server) {
-		if(LOGGER.isInfoEnabled()) { // w/o this test string rep is always build
+		if (LOGGER.isInfoEnabled()) { // w/o this test string rep is always build
 			LOGGER.info("Add new Test automation server : {}", ToStringBuilder.reflectionToString(server));
 		}
 
@@ -132,7 +140,7 @@ public class TestAutomationServerController {
 		return new TestAutomationUsageStatus(hasBoundProject, hasExecutedTests);
 	}
 
-	private class TestAutomationUsageStatus{
+	private class TestAutomationUsageStatus {
 		private boolean hasBoundProject;
 		private boolean hasExecutedTests;
 
@@ -151,4 +159,13 @@ public class TestAutomationServerController {
 			return hasExecutedTests;
 		}
 	}
+
+	@RequestMapping(value = "/{serverId}/available-ta-projects", method = RequestMethod.GET)
+	@ResponseBody
+	public Collection<TestAutomationProject> listProjectsOnServer(@PathVariable("serverId") Long serverId)
+			throws BindException {
+		return projectService.listProjectsOnServer(serverId);
+
+	}
+
 }
