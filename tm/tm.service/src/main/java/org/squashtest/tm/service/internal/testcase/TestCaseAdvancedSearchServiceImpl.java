@@ -57,10 +57,12 @@ import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
 import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
+import org.squashtest.tm.service.testcase.TestCaseModificationService;
+import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 
 @Service("squashtest.tm.service.TestCaseAdvancedSearchService")
 public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
-		TestCaseAdvancedSearchService {
+TestCaseAdvancedSearchService {
 
 	@Inject
 	protected SessionFactory sessionFactory;
@@ -80,13 +82,19 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	private RequirementVersionAdvancedSearchService requirementSearchService;
 
 	@Inject
+	private VerifyingTestCaseManagerService verifyingTestCaseManagerService;
+
+	@Inject
+	private TestCaseCallTreeFinder testCaseCallTreeFinder;
+
+	@Inject
 	private Provider<TestCaseSearchExportCSVModelImpl> testCaseSearchExportCSVModelProvider;
-	
+
 
 	private final static SortField[] DEFAULT_SORT_TESTCASES = new SortField[] {
-			new SortField("project.name", SortField.STRING, false),
-			new SortField("reference", SortField.STRING, false), new SortField("importance", SortField.STRING, false),
-			new SortField("label", SortField.STRING, false) };
+		new SortField("project.name", SortField.STRING, false),
+		new SortField("reference", SortField.STRING, false), new SortField("importance", SortField.STRING, false),
+		new SortField("label", SortField.STRING, false) };
 
 	private final static List<String> LONG_SORTABLE_FIELDS = Arrays.asList("requirements", "steps", "id", "iterations",
 			"attachments");
@@ -134,8 +142,17 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		List<RequirementVersion> requirements = requirementSearchService.searchForRequirementVersions(model, locale);
 		List<TestCase> result = new ArrayList<TestCase>();
 		Set<TestCase> testCases = new HashSet<TestCase>();
+		//Get testcases from found requirements
 		for (RequirementVersion requirement : requirements) {
-			testCases.addAll(requirement.getVerifyingTestCases());
+			List<TestCase> verifiedTestCases = verifyingTestCaseManagerService.findAllByRequirementVersion(requirement.getId());
+			testCases.addAll(verifiedTestCases);
+		}
+		//Get calling testcases
+		for (TestCase testcase : testCases) {
+			Set<Long> callingTestCaseIds = testCaseCallTreeFinder.getTestCaseCallers(testcase.getId());
+			for(Long callingTestCaseId : callingTestCaseIds){
+				testCases.add(testCaseDao.findById(callingTestCaseId));
+			}
 		}
 		for (TestCase testcase : testCases) {
 			result.add(testcase);
@@ -146,7 +163,7 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	private Sort getTestCaseSort(PagingAndMultiSorting multisorting) {
 
 		List<Sorting> sortings = multisorting.getSortings();
-		
+
 		if (sortings == null || sortings.size() == 0) {
 			return new Sort(DEFAULT_SORT_TESTCASES);
 		}
@@ -164,7 +181,7 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 			if (LONG_SORTABLE_FIELDS.contains(fieldName)) {
 				sortFieldArray[i] = new SortField(fieldName, SortField.LONG, isReverse);
-			} 
+			}
 			else {
 				sortFieldArray[i] = new SortField(fieldName, SortField.STRING, isReverse);
 			}

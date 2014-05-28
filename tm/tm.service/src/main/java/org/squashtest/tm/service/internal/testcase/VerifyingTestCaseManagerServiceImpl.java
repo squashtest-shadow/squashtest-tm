@@ -190,7 +190,7 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	@Override
 	public List<TestCase> findAllByRequirementVersion(long requirementVersionId) {
 
-		DefaultPagingAndSorting pas = new DefaultPagingAndSorting( "Project.name", true);
+		DefaultPagingAndSorting pas = new DefaultPagingAndSorting("Project.name");
 		return findAllByRequirementVersion(requirementVersionId, pas).getPagedItems();
 	}
 
