@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.io.IOUtils;
@@ -41,6 +42,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.squashtest.tm.exception.SheetCorruptedException;
 import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException;
 import org.squashtest.tm.service.batchimport.excel.WorksheetFormatStatus;
@@ -56,6 +58,10 @@ class ExcelWorkbookParserBuilder {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExcelWorkbookParserBuilder.class);
 	private final File xls;
 
+	@Inject
+	@Value("${uploadfilter.upload.import.sizeLimitInBytes:2000000}")
+	private double maxSize;
+
 	public ExcelWorkbookParserBuilder(@NotNull File xls) {
 		super();
 		this.xls = xls;
@@ -70,7 +76,12 @@ class ExcelWorkbookParserBuilder {
 	 * @throws TemplateMismatchException
 	 *             when the workbook does not match the expected template in an unrecoverable way.
 	 */
-	public ExcelWorkbookParser build() throws SheetCorruptedException, TemplateMismatchException {
+	public ExcelWorkbookParser build() throws MaxFileSizeExceededException, SheetCorruptedException, TemplateMismatchException {
+
+		if(xls.length() > maxSize){
+			throw new MaxFileSizeExceededException(xls.getName());
+		}
+
 		InputStream is = null;
 		try {
 			is = new BufferedInputStream(new FileInputStream(xls));

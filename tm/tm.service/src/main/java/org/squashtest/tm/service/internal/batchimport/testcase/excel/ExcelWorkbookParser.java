@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
 import org.apache.poi.ss.usermodel.Row;
@@ -39,6 +40,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.squashtest.tm.exception.SheetCorruptedException;
 import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException;
 import org.squashtest.tm.service.internal.batchimport.DatasetInstruction;
@@ -71,7 +73,13 @@ import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
  */
 public class ExcelWorkbookParser {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExcelWorkbookParser.class);
-	private static final Integer MAX_LINES = 100;
+
+	@Inject
+	@Value("${uploadfilter.upload.import.maxLinesPerSheetForExcelImport:100}")
+	private int maxLines;
+
+
+
 	/**
 	 * Can create an {@link InstructionBuilder} for a given {@link WorksheetDef<C>}
 	 * @param <C> a TemplateColumn
@@ -176,7 +184,7 @@ public class ExcelWorkbookParser {
 
 		Sheet sheet = workbook.getSheet(worksheetDef.getSheetName());
 
-		if(sheet.getLastRowNum() > MAX_LINES){
+		if(sheet.getLastRowNum() > maxLines){
 			throw new MaxNumberOfLinesExceededException(worksheetDef.getSheetName());
 		}
 
