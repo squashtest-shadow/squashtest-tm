@@ -24,10 +24,8 @@ requirejs.config({
 			packages : [
 				"execution-processing",
 				"contextual-content-handlers",
-				"bugtracker",
 				"file-upload",
 				"squashtable",
-				"issue-tables",
 				"tree",
 				"search",
 				//cufs

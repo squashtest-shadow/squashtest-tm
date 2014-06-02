@@ -23,18 +23,18 @@
  *	{
  *		target : a css selector to the target table,
  *		urls : {
- *			bugtracker : the base url of the Squash bugtracker service			
- *		},		
+ *			bugtracker : the base url of the Squash bugtracker service
+ *		},
  *		language : {
  *			removeMessage : the text in the remove popup confirm,
  *			removeTooltip : the text of the tooltip of the remove button
  *		}
  *  }
- *  
+ *
  *  @returns : the squashTable instance of this table.
  */
 define(["jquery", "squashtable"], function($){
-	return function(oSettings){
+	var initTSTable = function(oSettings){
 		var settings = $.extend({}, oSettings);	//local copy of the arguments
 		var tblSelector = settings.target;
 		var squashSettings = {
@@ -45,9 +45,13 @@ define(["jquery", "squashtable"], function($){
 				success : function(data) {
 					$(tblSelector).squashTable().refresh();
 				}
-			}					
+			}
 		};
-		
+
 		return $(tblSelector).squashTable({}, squashSettings);
-	};	
+	};
+
+	return{
+		initTestStepIssueTable : initTSTable
+	};
 });

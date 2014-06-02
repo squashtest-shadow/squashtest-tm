@@ -18,8 +18,34 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["./bug-tracker-panel", "./report-issue-popup/jquery.main-popup"], function(btPanel){
+define([ "jquery", "jqueryui", "./report-issue-popup/jquery.main-popup" ], function($) {
 	return {
-		btPanel : btPanel
+		load : function(conf) {
+
+			// first : add the tab entry
+			var tab = $("div.fragment-tabs");
+
+			var btDiv = $("#bugtracker-section-div");
+			if (!btDiv.length) {
+				btDiv = $('<div id="bugtracker-section-div"/>');
+				btDiv.appendTo(tab);
+			}
+
+			tab.tabs("add", "#bugtracker-section-div", conf.label);
+
+			// second : load the bugtracker section
+			btDiv.load(conf.url + "?style=fragment-tab", function() {
+				btDiv.addClass("table-tab");
+			});
+
+			var cookieName = "iteration-tab-cookie";
+			var cookie = $.cookie(cookieName);
+			if (cookie){
+				tab.tabs({active : parseInt(cookie,10)});
+				$.cookie(cookieName, null, { path: '/' });
+			}
+		}
+
 	};
+
 });

@@ -482,9 +482,9 @@
 	
 	require(["common"], function(){
 			require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs", 
-			         "bugtracker", 'workspace.event-bus', "campaign-management",
+			         "bugtracker/bugtracker-panel", 'workspace.event-bus', "campaign-management",
 			         "jqueryui"], 
-					function($, basicwidg, contentHandlers, Frag, bugtracker, eventBus, campmanager){
+					function($, basicwidg, contentHandlers, Frag, bugtrackerPanel, eventBus, campmanager){
 		$(function(){
 				
 				basicwidg.init();
@@ -509,7 +509,7 @@
 				Frag.init(fragConf);
 				
 				<c:if test="${campaign.project.bugtrackerConnected}">
-				bugtracker.btPanel.load({
+				bugtrackerPanel.load({
 					url : "${btEntityUrl}",
 					label : "${tabIssueLabel}"
 				});
