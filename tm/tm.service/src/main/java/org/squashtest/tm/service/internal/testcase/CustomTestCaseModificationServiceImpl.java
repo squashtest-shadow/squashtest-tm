@@ -31,6 +31,8 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -45,6 +47,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
@@ -57,6 +60,7 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.exception.DuplicateNameException;
+import org.squashtest.tm.exception.UnallowedTestAssociationException;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.library.NodeManagementService;
 import org.squashtest.tm.service.internal.repository.ActionTestStepDao;
@@ -384,6 +388,30 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	@Override
+	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
+	public AutomatedTest bindAutomatedTest(Long testCaseId, String testPath) {
+
+		// first, let's find which TA project it is
+		int idxSlash = testPath.indexOf('/');
+
+		String projectLabel = testPath.substring(0,idxSlash);
+		String testName = testPath.substring(idxSlash+1);
+
+		TestCase tc = testCaseDao.findById(testCaseId);
+		GenericProject tmproject = tc.getProject();
+
+		TestAutomationProject tap = (TestAutomationProject) CollectionUtils.find(tmproject.getTestAutomationProjects(), new HasSuchLabel(projectLabel));
+
+		if (tap == null){
+			throw new UnallowedTestAssociationException();
+		}
+
+		// once it's okay we commit the test association
+		return bindAutomatedTest(testCaseId, tap.getId(), testName);
+
+	}
+
+	@Override
 	public void removeAutomation(long testCaseId) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		testCase.removeAutomatedScript();
@@ -466,6 +494,24 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			callingLayer = testCaseDao.findAllTestCasesIdsCallingTestCases(callingLayer);
 		}
 		return callingTCToUpdate;
+	}
+
+
+
+	// ******************** private stuffs *********************
+
+	private static final class HasSuchLabel implements Predicate{
+		private String label;
+
+		HasSuchLabel(String label) {
+			this.label = label;
+		}
+
+		@Override
+		public boolean evaluate(Object object) {
+			TestAutomationProject tap = (TestAutomationProject) object;
+			return (tap.getLabel().equals(label));
+		}
 	}
 
 

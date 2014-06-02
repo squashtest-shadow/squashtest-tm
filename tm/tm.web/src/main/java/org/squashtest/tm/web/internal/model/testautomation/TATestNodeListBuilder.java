@@ -149,10 +149,10 @@ public class TATestNodeListBuilder {
 
 		attr.setId(project.getId().toString());
 		attr.setRel("drive");
-		attr.setName(project.getName());
+		attr.setName(project.getLabel());
 		attr.setRestype("ta-project");
 
-		data.setTitle(project.getName());
+		data.setTitle(project.getLabel());
 
 		node.setAttr(attr);
 		node.setData(data);

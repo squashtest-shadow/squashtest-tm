@@ -47,35 +47,45 @@ public class TestCaseAutomationController {
 		this.testCaseModificationService = testCaseModificationService;
 	}
 	private static final String NAME_KEY = "name";
+	private static final String PATH	=	"path";
 	private static final String TEST_CASE_ID = "testCaseId";
 	private static final String PROJECT_ID = "projectId";
-	
 
-		@RequestMapping(value="/tests", method = RequestMethod.GET)
-		@ResponseBody
-		public Collection<TATestNode> findAssignableAutomatedTests(@PathVariable(TEST_CASE_ID) Long testCaseId){
-			LOGGER.trace("Find assignable automated tests for TC#"+testCaseId);
-			Collection<TestAutomationProjectContent> projectContents = testCaseModificationService.findAssignableAutomationTests(testCaseId);
-			return new TATestNodeListBuilder().build(projectContents);
-		}
-		
-		
-		@RequestMapping(value="/tests", method = RequestMethod.POST, params = { PROJECT_ID, NAME_KEY})
-		@ResponseBody
-		public void bindAutomatedTest(@PathVariable(TEST_CASE_ID) long testCaseId,@RequestParam(PROJECT_ID) long projectId, @RequestParam(NAME_KEY) String testName){
-			LOGGER.trace("Bind automated test "+testName+" to TC#"+testCaseId);			
-			testCaseModificationService.bindAutomatedTest(testCaseId, projectId, testName);
 
-		}
-		
-		@RequestMapping(method = RequestMethod.DELETE)
-		@ResponseBody
-		public void removeAutomation(@PathVariable(TEST_CASE_ID) long testCaseId){
-			
-			testCaseModificationService.removeAutomation(testCaseId);
+	@RequestMapping(value="/tests", method = RequestMethod.GET)
+	@ResponseBody
+	public Collection<TATestNode> findAssignableAutomatedTests(@PathVariable(TEST_CASE_ID) Long testCaseId){
+		LOGGER.trace("Find assignable automated tests for TC#"+testCaseId);
+		Collection<TestAutomationProjectContent> projectContents = testCaseModificationService.findAssignableAutomationTests(testCaseId);
+		return new TATestNodeListBuilder().build(projectContents);
+	}
 
-		}
-		
-	
+
+	@RequestMapping(value="/tests", method = RequestMethod.POST, params = { PROJECT_ID, NAME_KEY})
+	@ResponseBody
+	public void bindAutomatedTest(@PathVariable(TEST_CASE_ID) long testCaseId,@RequestParam(PROJECT_ID) long projectId, @RequestParam(NAME_KEY) String testName){
+		LOGGER.trace("Bind automated test "+testName+" to TC#"+testCaseId);
+		testCaseModificationService.bindAutomatedTest(testCaseId, projectId, testName);
+
+	}
+
+	@RequestMapping(value="/tests", method = RequestMethod.POST, params = { PATH })
+	@ResponseBody
+	public void bindAutomatedTest(@PathVariable(TEST_CASE_ID) long testCaseId, @RequestParam(PATH) String testPath){
+		LOGGER.trace("Bind automated test "+testPath+" to TC#"+testCaseId);
+		testCaseModificationService.bindAutomatedTest(testCaseId, testPath);
+	}
+
+
+
+	@RequestMapping(method = RequestMethod.DELETE)
+	@ResponseBody
+	public void removeAutomation(@PathVariable(TEST_CASE_ID) long testCaseId){
+
+		testCaseModificationService.removeAutomation(testCaseId);
+
+	}
+
+
 
 }

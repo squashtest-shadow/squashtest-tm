@@ -21,14 +21,13 @@
 define([ "jquery", "backbone", "underscore",
          "./GeneralInfosPanel",
          "./PrerequisitePanel",
-         "test-automation/TestAutomationPicker",
-         "test-automation/TestAutomationRemover",
+         "../../test-automation/testcase-test-automation",
          "../../verified-requirements/TestCaseVerifiedRequirementsPanel",
          "bugtracker/bugtracker-panel",
          "workspace.event-bus",
          "squash.translator",
          "squashtable"], function($,
-		Backbone, _, GeneralInfosPanel, PrerequisitePanel, TestAutomationPicker, TestAutomationRemover, TestCaseVerifiedRequirementsPanel, bugtrackerPanel, eventBus, translator) {
+		Backbone, _, GeneralInfosPanel, PrerequisitePanel, testcaseTestAutomation,  TestCaseVerifiedRequirementsPanel, bugtrackerPanel, eventBus, translator) {
 
 
 	var InfoTab = Backbone.View.extend({
@@ -106,6 +105,17 @@ define([ "jquery", "backbone", "underscore",
 		_initTestAutomation : function(){
 
 			if (this.settings.isAutomated){
+				
+				var conf = {
+					canModify 			: this.settings.writable,
+					testAutomationUrl	: this.settings.urls.automationUrl + '/tests'
+				};
+				
+				testcaseTestAutomation.init(conf);
+				
+			}
+			/*
+			if (this.settings.isAutomated){
 				new TestAutomationPicker({
 					selector : "#ta-picker-popup",
 					testAutomationURL : this.settings.urls.automationUrl + '/tests',
@@ -133,6 +143,8 @@ define([ "jquery", "backbone", "underscore",
 					return false;
 				});
 			}
+			*/
+			
 		},
 
 		_sendUpdateReqToTree : function(){

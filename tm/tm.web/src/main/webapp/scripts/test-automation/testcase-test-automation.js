@@ -20,14 +20,87 @@
  */
 /*
  settings : 
- - selector : an appropriate selector for the popup.
- - testAutomationURL : the url where to GET - POST things.
- - successCallback : a callback if the test association succeeds. Will be given 1 argument, the path of the associated automated test.
+ - canModify : a boolean telling if the associated script can be changed or not 
+ - testAutomationURL : the url where to GET - POST - DELETE things.
  */
-define([ "jquery", "workspace.event-bus", "squash.translator", "tree/plugins/plugin-factory",
-		"jquery.squash.formdialog", "squashtest/jquery.squash.popuperror" ], function($, eventBus, translator,
+define([ "jquery", "workspace.event-bus", "squash.translator", "squash.configmanager", "tree/plugins/plugin-factory",
+		"jquery.squash.formdialog", "squashtest/jquery.squash.popuperror", "jeditable" ], function($, eventBus, translator, confman, 
 		treefactory) {
 
+	
+	// ************* specific jeditable plugin ***************
+	
+	/*
+	 * We need a specific plugin because we need the buttons panel 
+	 * to have a third button.
+	 * 
+	 * We base our plugin on the 'text' builtin plugin.
+	 * 
+	 */
+	
+	var edObj = $.extend(true, {},$.editable.types.text);
+	var edFnButtons = $.editable.types.defaults.buttons;
+	
+	edObj.buttons = function(settings, original){
+		//var form = this;
+		//first apply the original function
+		edFnButtons.call(this, settings, original);
+		
+		// now add our own button
+		var btn = $("<button/>",{
+			'text' : translator.get('label.dot.pick'),
+			'id' : 'ta-script-picker-button'
+		});
+		
+		this.append(btn);
+	}
+	
+	$.editable.addInputType('ta-picker', edObj );
+	
+	
+	// ****************** init function ********************
+	
+	function init(settings){
+		
+		
+		// simple case first
+		if (! settings.canModify){
+			return;
+		}
+		
+		// else we must init the complex edit in place and the popups
+		_initEditable(settings);
+		
+		
+	}
+	
+	function _initEditable(settings){
+		
+		var elt = $("#ta-script-picker-span");
+
+		var conf = confman.getStdJeditable();
+		conf.type = 'ta-picker';
+	//	conf.name = 'path';
+		
+		
+		// now make it editable
+		elt.editable(settings.testAutomationUrl, conf);
+		
+		// more events
+		$("#ta-script-picker-button").on('click', function(){
+			alert('invoked the picker popup');
+		});
+
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	/*
 	function TestAutomationPicker(settings) {
 		var self = this;
 
@@ -217,6 +290,30 @@ define([ "jquery", "workspace.event-bus", "squash.translator", "tree/plugins/plu
 
 		});
 	}
+	
+	function TestAutomationRemover(settings) {
 
-	return TestAutomationPicker;
+		var automatedTestRemovalUrl = settings.automatedTestRemovalUrl;
+		var successCallback = settings.successCallback;
+		var confirmDialog = $(settings.confirmPopupSelector);
+
+		confirmDialog.confirmDialog({
+			confirm : sendRemovalRequest
+		});
+
+		function sendRemovalRequest() {
+			return $.ajax({
+				url : automatedTestRemovalUrl,
+				type : 'DELETE',
+				dataType : 'json'
+			}).done(function() {
+				successCallback();
+				confirmDialog.confirmDialog("close");
+			});
+		}
+	}
+*/
+	return {
+		init : init
+	};
 });

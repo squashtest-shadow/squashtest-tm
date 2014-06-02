@@ -123,6 +123,7 @@ public class AutomatedTestManagerServiceImpl implements UnsecuredAutomatedTestMa
 		return projectDao.findById(projectId);
 	}
 
+
 	@Override
 	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
 	@Transactional(readOnly = true)

@@ -27,20 +27,21 @@
 <%@ attribute name="canModify" required="no" type="java.lang.Boolean" description="whether the script name link is editable (or not). Default is false."%>
 
 
-<%@ tag language="java" pageEncoding="utf-8" %>
+<%@ tag language="java" 	pageEncoding="utf-8" %>
 <%@ taglib prefix="f"	 	uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" 		uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="comp" 	tagdir="/WEB-INF/tags/component" %>
 
 <f:message var="testPick" 					key="label.dot.pick"/>
+<f:message var="testNone"					key="label.none"/>
 <f:message var="testAutomationPickerTitle" 	key="test-case.testautomation.popup.title" />
 <f:message var="testAutomationPickerOk" 	key="test-case.testautomation.popup.ok" />
 <f:message var="labelCancel" 				key="label.Cancel"/>
 <f:message var="deleteAutoTitle" 			key='title.confirmDeleteAutomatedTestLink'/>
 
-<c:set var="removeLinkCss" value="${empty testCase.automatedTest ? 'not-displayed' : ''}"/>
-<c:set var="pickLinkCss" value="${canModify ? 'cursor-pointer' : ''}"/>
-<c:set var="testNameOrTestPick" value="${not empty testCase.automatedTest ? testCase.automatedTest.fullName : testPick}"/>
+<c:set var="scriptnameLabel" value="${not canModify && empty testCase.automatedTest ? testNone : 
+									  not empty testCase.automatedTest ? testCase.automatedTest.fullName : 
+									  ''}"/>
 
  			
 <div class="display-table-row">
@@ -48,24 +49,17 @@
 	<label class="display-table-cell"><f:message key="test-case.testautomation.section.label"/></label>
 	
 	<div class="display-table-cell">
-
-<c:choose>
-<c:when test="${not canModify and empty testCase.automatedTest}">
-
-		<f:message key="label.none"/>
-
-</c:when>
-<c:otherwise>
-	
-		<a id="ta-picker-link" class="${pickLinkCss}"><c:out value="${testNameOrTestPick}"/></a>
+		<span id="ta-script-picker-span" style="display:block"><c:out value="${scriptnameLabel}"/></span>
 		
-<c:if test="${canModify}">
-		<a id="remove-ta-link" class="actionLink cursor-pointer ${removeLinkCss}" >[<f:message key="label.Delete"/>]</a>
-</c:if>
-
-</c:otherwise>
-</c:choose>
-
+		<%--
+		we pretty much would like to declare the following button here : 
+		
+		<input id="ta-script-picker-button" type="button" value="${testPick}" class="not-displayed"/>
+		
+		however for rendering reasons, and because the limitations of jeditable, we must 
+		handle such button programatically. see 'test-automation/testcase-test-automation to see how it's 
+		done.
+		--%>
 	</div>
 </div>
 
