@@ -34,14 +34,19 @@ require([ "common", ], function() {
 		}
 
 		function initMainPanel() {
-
+			
 			var url = squashtm.pageConfiguration.url;
 
 			$("#ta-server-info-panel").togglePanel();
 
 			new SimpleJEditable({
 				targetUrl : url + '/baseURL',
-				componentId : "ta-server-url"
+				componentId : "ta-server-url",
+				jeditableSettings : {
+					callback : function(value, settings){
+						$(this).siblings("#ta-server-url-link").attr("href", value);
+					}
+				}
 			});
 
 			new SimpleJEditable({

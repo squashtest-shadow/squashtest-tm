@@ -79,7 +79,7 @@ public class TestAutomationServerController {
 
 	@RequestMapping(value = "/{serverId}/baseURL", method = RequestMethod.POST, params = JEditablePostParams.VALUE)
 	@ResponseBody
-	public String changeURL(@PathVariable("serverId") long serverId, @RequestParam("newURL") String newURL,
+	public String changeURL(@PathVariable("serverId") long serverId, @RequestParam(JEditablePostParams.VALUE) String newURL,
 			Locale locale) {
 		URL url = UrlUtils.toUrl(newURL);
 		service.changeURL(serverId, url);
