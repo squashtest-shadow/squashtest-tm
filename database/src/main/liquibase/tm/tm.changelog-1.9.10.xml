@@ -194,7 +194,7 @@
 			</column>
 				
 			<column name="LABEL" type="VARCHAR(50)" remarks="the (friendly) alias for that TA project ">
-				<constraints nullable="false" unique="true"/>
+				<constraints nullable="false"/>
 			</column>
 			
 			<column name="REMOTE_NAME" type="VARCHAR(50)" remarks="the (real) name of the remote test automation project">
@@ -243,6 +243,11 @@
 		<addForeignKeyConstraint constraintName="fk_automated_test_project" 
 				baseTableName="AUTOMATED_TEST" baseColumnNames="PROJECT_ID" 
 				referencedTableName="TEST_AUTOMATION_PROJECT" referencedColumnNames="TA_PROJECT_ID"/>
+		
+		<addUniqueConstraint tableName="TEST_AUTOMATION_PROJECT" columnNames="TM_PROJECT_ID, REMOTE_NAME, SERVER_ID" constraintName="uniq_tm_ta_project_job"/>
+		<addUniqueConstraint tableName="TEST_AUTOMATION_PROJECT" columnNames="TM_PROJECT_ID, LABEL" constraintName="uniq_tm_ta_project_label"/>
+		
+		
 	</changeSet>
 	
 	

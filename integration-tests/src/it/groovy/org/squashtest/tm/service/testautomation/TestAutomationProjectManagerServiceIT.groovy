@@ -64,7 +64,7 @@ public class TestAutomationProjectManagerServiceIT extends DbunitServiceSpecific
 
 
 	@DataSet("TestAutomationService.sandbox.xml")
-	def "should say that a project label is not unique"(){
+	def "should say that a project label is ok"(){
 		given :
 		def server  = getServer(2l)
 		def project = new TestAutomationProject("whatever","Project Mike 2",  server)
@@ -74,8 +74,24 @@ public class TestAutomationProjectManagerServiceIT extends DbunitServiceSpecific
 		when :
 		service.persist(project)
 		then :
+		notThrown ConstraintViolationException
+	}
+
+	@DataSet("TestAutomationService.sandbox.xml")
+	def "should say that a project label is not unique"(){
+		given :
+		def server  = getServer(2l)
+		def project = new TestAutomationProject("whatever","Project Mike 2",  server)
+		def tmproject = getProject(2l)
+		project.setTmProject(tmproject)
+
+		when :
+		service.persist(project)
+		then :
 		thrown ConstraintViolationException
 	}
+
+
 
 	def getServer(id){
 		return getSession().load(TestAutomationServer.class, id)
