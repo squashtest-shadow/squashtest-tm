@@ -27,7 +27,7 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <div id="team-table-pane" class="table-tab" >
   <div class="toolbar">
-    <button id="new-team-button"><f:message key="label.addTeam"/></button>
+    <button id="new-team-button" class="sq-btn"><f:message key="label.addTeam"/></button>
   </div>
   <div class="table-tab-wrap">
     <table id="teams-table" data-def="deferloading=${ pagedTeams.totalNumberOfItems }, pagesize=${ teamsPageSize }"  class="unstyled-table">

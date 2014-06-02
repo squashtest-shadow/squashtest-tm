@@ -33,9 +33,7 @@ requirejs.config({
 				"custom-field-binding",
 				"custom-field-values",
 				//entities management
-				"teams-manager",
 				"projects-manager",
-				"users-manager",
 				"test-case-management",
 				"test-case-folder-management",
 				"test-case-library-management",
