@@ -20,11 +20,11 @@
  */
 /*
  * configuration an object as follow :
- * 
+ *
  * {
  *		permissions : {
  *			editable : boolean, is the table content editable ?
- *			executable : boolean, can the content be executed ?	
+ *			executable : boolean, can the content be executed ?
  *			reorderable : boolean, can the user reorder the content ?
  *		},
  *		basic : {
@@ -53,11 +53,11 @@
  *			executionsUrl : base urls for executions
  *		}
  *	}
- * 
+ *
  */
 
 define(
-		[ 'jquery', 'squash.translator', './exec-runner', './sortmode', './filtermode',
+		[ 'jquery', 'squash.translator', '../../test-plan-panel/exec-runner', '../../test-plan-panel/sortmode', '../../test-plan-panel/filtermode',
 		 'squash.dateutils', 'squash.statusfactory',
 		  'test-automation/automated-suite-overview',
 		  'squashtable', 'jeditable', 'jquery.squash.buttonmenu' ],
@@ -80,19 +80,19 @@ define(
 					$exectd.append('<span class="exec-mode-icon exec-mode-automated"/>').attr('title',
 							_conf.autoexecutionTooltip);
 				}
-				
+
 				// execution status (read)
-				var status = data.status, 
-					$statustd = $row.find('.status-combo'), 
+				var status = data.status,
+					$statustd = $row.find('.status-combo'),
 					html = statusfactory.getHtmlFor(status);
 
 				$statustd.html(html); // remember : this will insert a <span>
 										// in the process
-				
+
 				//execution date
 				var date = data['last-exec-on'],
 					format = translator.get('squashtm.dateformat');
-				
+
 				if(!!date){
 					$row.find('.exec-on').text(dateutils.format(date, format));
 				} else {
@@ -139,7 +139,7 @@ define(
 			function _rowCallbackExecFeatures($row, data, _conf) {
 
 				// add the execute shortcut menu
-				var isTcDel = data['is-tc-deleted'], 
+				var isTcDel = data['is-tc-deleted'],
 					isManual = (data['exec-mode'] === "M");
 
 				var tpId = data['entity-id'], $td = $row
@@ -185,26 +185,26 @@ define(
 					testplanUrl : initconf.urls.testplanUrl,
 
 					jsonStatuses : JSON.stringify(initconf.basic.statuses),
-					
+
 					submitStatusClbk : function(json, settings) {
-						
+
 						// must update the execution status, the execution date and the assignee
 						var itp = JSON.parse(json);
-						
+
 						// 1/ the status
-						var $statusspan = $(this), 
+						var $statusspan = $(this),
 							statuses = JSON.parse(settings.data);
-						
-						$statusspan.attr('class', 'cursor-arrow exec-status-label exec-status-' + itp.executionStatus.toLowerCase());						
+
+						$statusspan.attr('class', 'cursor-arrow exec-status-label exec-status-' + itp.executionStatus.toLowerCase());
 						$statusspan.html(statuses[itp.executionStatus]);
-						
+
 						// 2/ the date format
 						var format = translator.get('squashtm.dateformat'),
 							$execon= $statusspan.parents('tr:first').find("td.exec-on");
-	
+
 						var newdate = dateutils.format(itp.lastExecutedOn, format);
 						$execon.text(newdate);
-						
+
 						// 3/ user assigned
 						$statusspan.parents('tr:first')
 									.find('td.assignee-combo')
@@ -213,7 +213,7 @@ define(
 					},
 
 					jsonAssignableUsers : JSON.stringify(initconf.basic.assignableUsers),
-					
+
 					submitAssigneeClbk : function(value, settings) {
 						var assignableUsers = JSON.parse(settings.data);
 						$(this).text(assignableUsers[value]);
@@ -224,8 +224,8 @@ define(
 
 					manualHandler : function() {
 
-						var $this = $(this), 
-							tpid = $this.data('tpid'), 
+						var $this = $(this),
+							tpid = $this.data('tpid'),
 							ui = ($this.is('.run-popup')) ? "popup" : "oer", newurl = initconf.urls.testplanUrl + tpid + '/executions/new';
 
 						$.post(newurl, {
@@ -242,10 +242,10 @@ define(
 					},
 
 					automatedHandler : function() {
-						var row = $(this).parents('tr').get(0), 
-							table = $("#iteration-test-plans-table").squashTable(), 
-							data = table.fnGetData(row), 
-							tpid = data['entity-id'], 
+						var row = $(this).parents('tr').get(0),
+							table = $("#iteration-test-plans-table").squashTable(),
+							data = table.fnGetData(row),
+							tpid = data['entity-id'],
 							newurl = initconf.urls.testplanUrl+ tpid + '/executions/new';
 
 						$.post(newurl, {
@@ -411,7 +411,7 @@ define(
 					table.data('sortmode', sortmode);
 					this.lockSortMode = sortmode._lockSortMode;
 					this.unlockSortMode = sortmode._unlockSortMode;
-					
+
 					this.hideFilterFields = filtermode.hideFilterFields;
 					this.showFilterFields = filtermode.showFilterFields;
 					filtermode.initializeFilterFields(enhconf);

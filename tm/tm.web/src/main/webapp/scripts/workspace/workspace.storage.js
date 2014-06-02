@@ -19,93 +19,93 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
- * This is a simple web storage wrapper that handles object values, if we need something more 
+ * This is a simple web storage wrapper that handles object values, if we need something more
  * powerful we could consider something different like store.js.
  *
  */
 
 /*
  * Expiration.
- * 
+ *
  * The method .set() accepts an expiration date as an optional argument. Valid expiration dates are the following :
  * - ATOM date (string),
  * - number of hours starting from now (int)
- * 
+ *
  */
 
-define(["underscore", "squash.dateutils"], function(_, dateutils){
-	
+define([ "underscore", "squash.dateutils" ], function(_, dateutils) {
+
 	var storage = localStorage || {
-		setItem : function(){},
-		getItem : function(){},
-		removeItem : function(){}
+		setItem : function() {
+		},
+		getItem : function() {
+		},
+		removeItem : function() {
+		}
 	};
-	
-	function asExpiration(exp){
-		if (_.isString(exp)){
+
+	function asExpiration(exp) {
+		if (_.isString(exp)) {
 			return exp;
-		}else if (_.isNumber(exp)){
+		} else if (_.isNumber(exp)) {
 			var now = new Date();
 			var hours = now.getHours() + exp;
 			now.setHours(hours);
 			return dateutils.format(now);
-		}
-		else{
+		} else {
 			return null;
 		}
 	}
-	
-	function hasExpired(stored){
-		if (!! stored._time){
-			var now = new Date(),
-				expiration = dateutils.parse(stored._time);
+
+	function hasExpired(stored) {
+		if (!!stored._time) {
+			var now = new Date(), expiration = dateutils.parse(stored._time);
 			return (now.getTime() > expiration.getTime());
-		}else{
+		} else {
 			return false;
 		}
 	}
-	
+
 	return {
-		
-		// value can be string, array or object. Third argument, if set, is the Expiration (see top level doc), if unset the 
+
+		// value can be string, array or object. Third argument, if set, is the Expiration (see top level doc), if unset
+		// the
 		// data is permanent.
-		set : function(key, value, expiration){
-			
+		set : function(key, value, expiration) {
+
 			var stored = {
 				_time : asExpiration(expiration),
 				data : value
 			};
-			
+
 			var stringified = JSON.stringify(stored);
-			
+
 			storage.setItem(key, stringified);
 		},
-		
-		get : function(key){
-			var toReturn;
+
+		get : function(key) {
 			var stored = storage.getItem(key);
-			
-			if (stored === null || stored === undefined){
+
+			if (stored === null || stored === undefined) {
 				return undefined;
 			}
-			
+
 			var obj = JSON.parse(stored);
-			
-			if (hasExpired(obj)){
+
+			if (hasExpired(obj)) {
 				this.remove(key);
 				return undefined;
-			}
-			else{
-				
+			} else {
+
 				return obj.data;
 			}
-			
+
 		},
-		
-		remove : function(key){
+
+		remove : function(key) {
 			storage.removeItem(key);
 		}
-	
+
 	};
-	
+
 });

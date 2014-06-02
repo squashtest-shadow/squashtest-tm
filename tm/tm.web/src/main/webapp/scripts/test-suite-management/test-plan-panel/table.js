@@ -20,11 +20,11 @@
  */
 /*
  * configuration an object as follow :
- * 
+ *
  * {
  *		permissions : {
  *			editable : boolean, is the table content editable ?
- *			executable : boolean, can the content be executed ?	
+ *			executable : boolean, can the content be executed ?
  *		},
  *		basic : {
  *			testsuiteId : the id of the current testSuite
@@ -43,11 +43,11 @@
  *			executionsUrl : base urls for executions
  *		}
  *	}
- * 
+ *
  */
 
 define(
-		[ 'jquery', 'squash.translator', './exec-runner', './sortmode', './filtermode',
+		[ 'jquery', 'squash.translator', '../../test-plan-panel/exec-runner', '../../test-plan-panel/sortmode', '../../test-plan-panel/filtermode',
 				'squash.dateutils', 'squash.statusfactory',
 				'test-automation/automated-suite-overview',
 				'jeditable.datepicker', 'squashtable', 'jeditable', 'jquery.squash.buttonmenu' ],
@@ -72,17 +72,17 @@ define(
 				}
 
 				// execution status (read)
-				var status = data['status'], 
-					$statustd = $row.find('.status-combo'), 
+				var status = data['status'],
+					$statustd = $row.find('.status-combo'),
 					html = statusfactory.getHtmlFor(status);
 
 				$statustd.html(html); // remember : this will insert a <span>
 				// in the process
-				
+
 				//execution date
 				var date = data['last-exec-on'],
 					format = translator.get('squashtm.dateformat');
-				
+
 				if(!!date){
 					$row.find('.exec-on').text(dateutils.format(date, format));
 				} else {
@@ -171,26 +171,26 @@ define(
 					testplanUrl : initconf.urls.testplanUrl,
 
 					jsonStatuses : JSON.stringify(initconf.basic.statuses),
-					
-					submitStatusClbk : function(json, settings) {	
-						
+
+					submitStatusClbk : function(json, settings) {
+
 						// must update the execution status, the execution date and the assignee
 						var itp = JSON.parse(json);
-						
+
 						// 1/ the status
-						var $statusspan = $(this), 
+						var $statusspan = $(this),
 							statuses = JSON.parse(settings.data);
-						
-						$statusspan.attr('class', 'cursor-arrow exec-status-label exec-status-' + itp.executionStatus.toLowerCase());						
+
+						$statusspan.attr('class', 'cursor-arrow exec-status-label exec-status-' + itp.executionStatus.toLowerCase());
 						$statusspan.html(statuses[itp.executionStatus]);
-						
+
 						// 2/ the date format
 						var format = translator.get('squashtm.dateformat'),
 							$execon= $statusspan.parents('tr:first').find("td.exec-on");
-	
+
 						var newdate = dateutils.format(itp.lastExecutedOn, format);
 						$execon.text(newdate);
-						
+
 						// 3/ user assigned
 						$statusspan.parents('tr:first')
 									.find('td.assignee-combo')

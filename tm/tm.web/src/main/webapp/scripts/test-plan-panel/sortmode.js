@@ -23,130 +23,125 @@
  */
 
 /*
- * configuration : {
- *		basic {
- *			campaignId : the id of the iteration
- *		}, 
- *		permissions : {
- *			reorderable : boolean, that tells whether the 'reorder' button is active.
- *		}
- *	}
- * 
+ * configuration : add the following data attr to a test plan table
+ * <pre>
+ *   <table class="test-plan-table" data-entity-id="..." data-entity-type="...">
+ * </pre>
+ *
  */
-define(['jquery', 'workspace.storage', 'app/util/ButtonUtil'], function($, storage, ButtonUtil){
-	
-	
-	function SortMode(conf) {
+define([ "jquery", "workspace.storage", "app/util/ButtonUtil" ],
+	function($, storage, ButtonUtil) {
+	"use strict";
 
+	var tableSelector = ".test-plan-table";
+
+	function SortMode(conf) {
 		var isLocked = false;
-		
+
+		var $table = $(".test-plan-table");
+		var entityId = $table.data("entity-id");
+		var entityType = $table.data("entity-type");
 		this.storage = storage;
-		
+
 		// **************** configuration ******************
-		
+
 		this.reorderable = conf.permissions.reorderable || false;
-		
-		if (conf.basic.campaignId === undefined){
-			throw "sortmode : campaign id absent from the configuration";
+
+		if (!entityId) {
+			throw "sortmode : entity id absent from table data attributes";
 		}
-		
-		this.key = 'camp-sort-'+conf.basic.campaignId;
-		
+		if (!entityType) {
+			throw "sortmode : entity type absent from table data attributes";
+		}
+
+		this.key = entityType + "-sort-" + entityId;
+
 		// ******************* logic ***********************
-		
-		this.resetTableOrder = function(table){
+
+		this.resetTableOrder = function(table) {
 			table.fnSettings().aaSorting = StaticSortMode.defaultSorting();
 			this._disableSortMode();
 		};
-		
-		this.manage = function(newSorting){
-			
-			if (this._isDefaultSorting(newSorting)){
+
+		this.manage = function(newSorting) {
+
+			if (this._isDefaultSorting(newSorting)) {
 				this._disableSortMode();
 				this._deleteaaSorting();
-			}
-			else{
-				if(!isLocked){
+			} else {
+				if (!isLocked) {
 					this._enableSortMode();
 				}
 				this._saveaaSorting(newSorting);
 			}
 		};
 
-		
-		this._enableSortMode = function(){
+		this._enableSortMode = function() {
 			$("#test-plan-sort-mode-message").show();
-			$("#test-cases-table").find('.select-handle').removeClass('drag-handle');
-			if (this.reorderable){
+			$(".test-plan-table").find(".select-handle").removeClass("drag-handle");
+			if (this.reorderable) {
 				ButtonUtil.enable($("#reorder-test-plan-button"));
 			}
 		};
-		
-		this._disableSortMode = function(){
+
+		this._disableSortMode = function() {
 			$("#test-plan-sort-mode-message").hide();
-			$("#test-cases-table").find('.select-handle').addClass('drag-handle');
+			$(tableSelector).find(".select-handle").addClass("drag-handle");
+
 			ButtonUtil.disable($("#reorder-test-plan-button"));
-			
+
 		};
 
-		this._lockSortMode = function(){
+		this._lockSortMode = function() {
 			isLocked = true;
 		};
 
-		this._unlockSortMode = function(){
+		this._unlockSortMode = function() {
 			isLocked = false;
 		};
-		
-		this._isDefaultSorting = function(someSorting){
+
+		this._isDefaultSorting = function(someSorting) {
 			var defaultSorting = StaticSortMode.defaultSorting();
-			return (someSorting.length === 1 &&
-					someSorting[0][0] === defaultSorting[0][0] &&
-					someSorting[0][1] === defaultSorting[0][1]);
+			return (someSorting.length === 1 && someSorting[0][0] === defaultSorting[0][0] && someSorting[0][1] === defaultSorting[0][1]);
 		};
-		
-		
-		// ******************** I/O ******************** 
-		
-		this.loadaaSorting = function(){
+
+		// ******************** I/O ********************
+
+		this.loadaaSorting = function() {
 			var sorting = this.storage.get(this.key);
-			if (!! sorting){
+			if (!!sorting) {
 				return sorting;
-			}
-			else{
+			} else {
 				return StaticSortMode.defaultSorting();
 			}
 		};
-		
-		this._saveaaSorting = function(aaSorting){
-			var trimedSorting = [],
-				_buf;
-			
-			for (var i=0,len = aaSorting.length; i<len; i++){
+
+		this._saveaaSorting = function(aaSorting) {
+			var trimedSorting = [], _buf;
+
+			for ( var i = 0, len = aaSorting.length; i < len; i++) {
 				_buf = aaSorting[i];
-				trimedSorting.push( [_buf[0], _buf[1]] );
+				trimedSorting.push([ _buf[0], _buf[1] ]);
 			}
-			
+
 			this.storage.set(this.key, trimedSorting);
 		};
-		
-		this._deleteaaSorting = function(){
+
+		this._deleteaaSorting = function() {
 			this.storage.remove(this.key);
 		};
-		
+
 	}
-	
-	
+
 	var StaticSortMode = {
-		newInst : function (conf){
+		newInst : function(conf) {
 			return new SortMode(conf);
 		},
-		defaultSorting : function(){
-			return [[0, 'asc']];
+		defaultSorting : function() {
+			return [ [ 0, "asc" ] ];
 		}
-		
-		
 	};
-	
+
 	return StaticSortMode;
-	
+
 });
