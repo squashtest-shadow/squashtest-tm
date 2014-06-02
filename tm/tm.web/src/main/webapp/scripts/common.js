@@ -37,12 +37,11 @@ requirejs.config({
 				//entities management
 				"teams-manager",
 				"projects-manager",
-				"project",
 				"users-manager",
 				"test-case-management",
 				"test-case-folder-management",
 				"test-case-library-management",
-				"iteration-management",	
+				"iteration-management",
 				"test-suite-management",
 				"campaign-management",
 				//workspaces
@@ -51,8 +50,8 @@ requirejs.config({
 				"camp-workspace"
 			],
 			/*
-			 * rules for paths naming: 
-			 * * third party lib: unversionned lib name 
+			 * rules for paths naming:
+			 * * third party lib: unversionned lib name
 			 * * non AMD squash lib: replace "squashtm" by "squash" in js file name and remove any unrequired "ext" suffix.
 			 */
 			paths : {
@@ -195,11 +194,11 @@ requirejs.config({
 					exports : "squashtm.popup"
 				},
 				"jquery.squash.datepicker" : {
-					deps : [ "jquery", "jqueryui" ], 
+					deps : [ "jquery", "jqueryui" ],
 					exports : "SquashDatePicker" // this is a constructor
-				}, 
+				},
 				"jquery.squash.datepicker-auto" : {
-					deps : [ "jquery", "jqueryui" ], 
+					deps : [ "jquery", "jqueryui" ],
 					exports : "DatePickerAuto" // this is a constructor
 				},
 				"jquery.squash.togglepanel" : {
@@ -262,9 +261,9 @@ requirejs.config({
 						$.jqplot.config.enablePlugins = true;
 						return $;
 					}
-				}, 
+				},
 				"squash.KeyEventListener" : {
-					deps : [ "jquery" ], 
+					deps : [ "jquery" ],
 					exports : "KeyEventListener" // this is a constructor
 				}
 			}

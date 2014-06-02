@@ -442,7 +442,7 @@
 <!-- ------------------------------------END RENAME POPUP------------------------------------------------------- -->
 <script type="text/javascript">
 require(["common"], function() {
-require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.attributeparser", "project", "squashtable", "jquery.squash.formdialog", "jquery.switchButton"], function($, projectsManager, Frag, attrparser){
+require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.attributeparser", "project/ProjectToolbar", "squashtable", "jquery.squash.formdialog", "jquery.switchButton"], function($, projectsManager, Frag, attrparser){
 	/* popup renaming success handler */
 	function renameProjectSuccess(data) {
 		$('#project-name-header').html(data.newName);
@@ -475,6 +475,8 @@ require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.att
 		 		$("#toggle-SETTLED-checkbox").change(function(){
 		 			toggleStatusActivation("SETTLED");
 		 		}); 
+		 		
+		 		new ProjectToolbar();
 	});
 	
 	function refreshTableAndPopup(){
