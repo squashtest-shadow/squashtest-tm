@@ -72,8 +72,9 @@ class HibernateTestAutomationProjectDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateTestAutomationDao.sandbox.xml")
 	def "should not find a project because of unmatched example"(){
 		given :
-		TestAutomationProject example = new TestAutomationProject("roberto55", "Project Roberto-55", null)
-
+		TestAutomationProject example = new TestAutomationProject()
+		example.setJobName("roberto55")
+		example.setLabel("Project Roberto-55")
 		when :
 		def res = projectDao.findByExample(example)
 

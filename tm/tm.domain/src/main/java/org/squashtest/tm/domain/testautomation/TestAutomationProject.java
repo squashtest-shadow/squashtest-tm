@@ -149,18 +149,25 @@ public class TestAutomationProject {
 		super();
 	}
 
-	public TestAutomationProject(String jobName, TestAutomationServer server) {
-		super();
-		this.jobName = jobName;
-		this.label = jobName;
-		this.server = server;
-	}
 
-	public TestAutomationProject(String jobName, String label, TestAutomationServer server) {
+	public TestAutomationProject(String jobName, String label) {
 		super();
 		this.jobName = jobName;
 		this.label = label;
+
+	}
+	public TestAutomationProject(String jobName, String label, TestAutomationServer server) {
+		this(jobName, label);
 		this.server = server;
+	}
+
+	public TestAutomationProject(String jobName, String label, GenericProject tmProject) {
+		this(jobName, label, tmProject.getTestAutomationServer());
+		this.tmProject = tmProject;
+	}
+
+	public TestAutomationProject(String jobName, TestAutomationServer server) {
+		this(jobName, jobName, server);
 	}
 
 }

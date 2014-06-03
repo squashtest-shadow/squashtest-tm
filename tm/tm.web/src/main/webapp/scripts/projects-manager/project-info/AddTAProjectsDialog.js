@@ -18,124 +18,187 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery","app/ws/squashtm.notification", "jquery.squash.formdialog" ],
-		function($, WTF) {
-		
-// *************************************** BindPopup **********************************************
+define([ "jquery", "backbone", "app/ws/squashtm.notification", "underscore", "jquery.squash.formdialog",
+		"squashtest/jquery.squash.popuperror" ], function($, Backbone, WTF, _) {
 
-			var BindPopup = Backbone.View.extend({
+	// *************************************** BindPopup **********************************************
 
-				el : "#ta-projects-bind-popup",
+	var BindPopup = Backbone.View.extend({
 
-				initialize : function(conf) {
-					// properties
-					this.selectedServerId = conf.TAServerId;
-					this.serverHasChanged = true;
-					// initialize
-					this.$el.formDialog({
-						height : 500
-					});
-					this.fatalError = this.$(".ta-projectsadd-fatalerror").popupError();
-					this.error = this.$(".ta-projectsadd-error").popupError();
-					// methods bound to this
-					this.manageFatalError = $.proxy(this._manageFatalError, this);
-					this.onChangeServerConfirmed = $.proxy(this._onChangeServerConfirmed, this);
-					// event listening
-					this.listenTo(self.popups.confirmChangePopup, "confirmChangeServerPopup.confirm.success",
-							self.onChangeServerConfirmed);
-				},
+		el : "#ta-projects-bind-popup",
 
-				events : {
-					"formdialogconfirm" : "confirm",
-					"formdialogcancel" : "cancel",
-					"formdialogopen" : "open"
-				},
-				_onChangeServerConfirmed : function(newSelectedServer){
-					if(newSelectedServer == this.selectedServerId){
-						return;
-					}else{
-						this.selectedServerId = newSelectedServer;
-						this.serverHasChanged = true;
-					}
-				},
-				open : function() {
-					var self = this;
-					this.$el.formDialog('setState', 'pleasewait');
-					if(this.serverHasChanged){
-						$.ajax({
-							url : squashtm.app.contextRoot + "/test-automation-servers/" + self.selectedId+"/available-ta-projects", 
-							type : "get",
-							
-						}).done(self.buildAndDisplayProjectList).fail(self.manageFatalError);
-					}
-				},
-				_manageFatalError : function(json){
-					var message = WTF.getErrorMessage(jsonError);
-					this.fatalError.find('span').text(message);
-					this.fatalError.popupError('show');
-				},
-				_buildAndDisplayProjectList : function(json){
-					this.buildProjecList(json);
-					this.bindProjectListEvents();
-					this.$el.formDialog('setState', 'main');
-				},
-				buildProjectList : function(projectList){
-					var tablePanel = this.$(".ta-projectsadd-listdiv");
-					tablePanel.empty();
-
-					var i = 0;
-					var rows = $();
-
-					for (i = 0; i < json.length; i++) {
-						var row = this.newRow(json[i]);
-						rows = rows.add(row);
-					}
-
-					rows.filter("tr:odd").addClass("odd");
-					rows.filter("tr:even").addClass("even");
-
-					tablePanel.append(rows);
-				},
-				bindProjectListEvents : function(){
-					var self = this;
-					this.$(".ta-projecsadd-listdiv input:checkbox").change(function(event){
-						var $checkbox = $(event.target);
-						var $row = $checkbox.parents("tr")[0];
-						var $tmLabelCell = $row.find("td.ta-project-tm-label");
-						self.tmLabelEditable($tmLabelCell,$checkbox.is(":checked") );
-						
-					});
-				},
-				newRow : function(jsonItem) {
-					var source = $("#default-item-tpl").html();
-					var template = Handlebars.compile(source);
-					var row = template(jsonItem);
-					return row;
-				},
-
-				tmLabelEditable($tmLabelCell, editable){
-					if(editable){
-						$tmLabelCell.find("input").show();
-						$tmLabelCell.addClass("edit-state");
-					}else{
-						$tmLabelCell.find("input").hide();
-						$tmLabelCell.removeClass("edit-state");
-					}
-				},
-
-				confirm : function() {
-					this.trigger("bindTAProjectPopup.confirm");
-					alert('Confirmed !');
-				},
-				cancel : function() {
-					this.trigger("bindTAProjectPopup.cancel");
-					this.$el.formDialog('close');
-				},
-				show : function() {
-					this.$el.formDialog("open");
-
-				}
-
+		initialize : function(conf) {
+			var self = this;
+			// properties
+			this.selectedServerId = conf.TAServerId;
+			this.serverHasChanged = true;
+			this.projecUrl = conf.tmProjectURL;
+			// initialize
+			this.$el.formDialog({
+				height : 500
 			});
-			return BindPopup;
+			this.fatalError = this.$(".ta-projectsadd-fatalerror").popupError();
+			this.error = this.$(".ta-projectsadd-error").popupError();
+			// methods bound to this
+			this.manageFatalError = $.proxy(this._manageFatalError, this);
+			this.onChangeServerConfirmed = $.proxy(this._onChangeServerConfirmed, this);
+			this.buildAndDisplayProjectList = $.proxy(this._buildAndDisplayProjectList, this);
+		},
+
+		events : {
+			"formdialogconfirm" : "confirm",
+			"formdialogcancel" : "cancel",
+			"formdialogopen" : "open"
+		},
+		_onChangeServerConfirmed : function(newSelectedServer) {
+			if (newSelectedServer == this.selectedServerId) {
+				return;
+			} else {
+				this.selectedServerId = newSelectedServer;
+				this.serverHasChanged = true;
+			}
+		},
+		open : function() {
+			var self = this;
+			this.$el.formDialog('setState', 'pleasewait');
+			if (this.serverHasChanged) {
+				$.ajax(
+						{
+							url : squashtm.app.contextRoot + "/test-automation-servers/" + self.selectedServerId +
+									"/available-ta-projects",
+							type : "get"
+
+						}).done(self.buildAndDisplayProjectList).fail(self.manageFatalError);
+			}
+		},
+		_manageFatalError : function(json) {
+			var message = "";
+			try {
+				message = WTF.getErrorMessage(json);
+				this.fatalError.find('span').text(message);
+			} catch (parseException) {
+				message = json.responseText;
+				this.fatalError.find('span').html(message);
+			}
+			
+			this.fatalError.popupError('show');
+		},
+
+		_buildAndDisplayProjectList : function(json) {
+			this.buildProjectList(json);
+			this.bindProjectListEvents();
+			this.$el.formDialog('setState', 'main');
+		},
+
+		buildProjectList : function(projectList) {
+			var tablePanel = this.$el.find(".ta-project-bind-listdiv");
+			tablePanel.empty();
+
+			var i = 0;
+			var rows = $();
+
+			for (i = 0; i < projectList.length; i++) {
+				var row = this.newRow(projectList[i]);
+				rows = rows.add(row);
+			}
+
+			rows.filter("tr:odd").addClass("odd");
+			rows.filter("tr:even").addClass("even");
+
+			tablePanel.append(rows);
+		},
+		bindProjectListEvents : function() {
+			var self = this;
+			this.$el.find(".ta-project-bind-listdiv input:checkbox").change(function(event) {
+				var $checkbox = $(event.target);
+				var row = $checkbox.parents("tr")[0];
+				var tmLabelCell = $(row).find("td.ta-project-tm-label")[0];
+				self.tmLabelEditable($(tmLabelCell), $checkbox.is(":checked"));
+			});
+		},
+		newRow : function(jsonItem) {
+			var source = $("#default-item-tpl").html();
+			var template = Handlebars.compile(source);
+			var row = template(jsonItem);
+			return row;
+		},
+
+		tmLabelEditable : function($tmLabelCell, editable) {
+			if (editable) {
+				$tmLabelCell.find("input").show();
+				$tmLabelCell.addClass("edit-state");
+			} else {
+				$tmLabelCell.find("input").hide();
+				$tmLabelCell.removeClass("edit-state");
+			}
+		},
+
+		confirm : function() {
+			var self = this;
+			// find checked
+			var checked = this.$el.find(".ta-project-bind-listdiv input:checkbox:checked");
+			// map checkbox values to tm label
+			var tmLabels = [];
+			var hasDuplicateTmLabel = false;
+			var datas = _.map(checked, function(item) {
+				var $item = $(item);
+				var row = $item.parents("tr")[0];
+				var input = $(row).find("td.ta-project-tm-label input")[0];
+				var tmLabel = $(input).val();
+				// checks for duplicate tm labels
+				if (!hasDuplicateTmLabel) {
+					if (_.contains(tmLabels, tmLabel)) {
+						hasDuplicateTmLabel = true;
+					} else {
+						tmLabels.push(tmLabel);
+					}
+				}
+				return {
+					jobName : $item.val(),
+					label : tmLabel
+				};
+			});
+			if (hasDuplicateTmLabel) {
+				// show error message
+				var message = squashtm.app.messages["message.duplicatelabelForTAProjects"];
+				this.fatalError.find('span').text(message);
+				this.fatalError.popupError('show');
+			} else {
+				// send ajax
+				$.ajax({
+					url : self.projecUrl + "/test-automation-projects/new",
+					type : "post",
+					contentType : 'application/json',
+					dataType : 'json',
+					global : false,
+					data : JSON.stringify(datas)
+				}).done(function() {
+					self.trigger("bindTAProjectPopup.confirm.success");
+					self.$el.formDialog('close');
+				}).fail(function(xhr) {
+					self.trigger("bindTAProjectPopup.confirm.failure");
+					self.manageFatalError(xhr);
+
+				});
+
+			}
+
+		},
+		cancel : function() {
+			this.trigger("bindTAProjectPopup.cancel");
+			this.$el.formDialog('close');
+		},
+		show : function() {
+			this.$el.formDialog("open");
+		},
+		setParentPanel : function(parentPanel) {
+			var self = this;
+			this.parentPanel = parentPanel;
+			// event listening
+			this.listenTo(self.parentPanel.popups.confirmChangePopup, "confirmChangeServerPopup.confirm.success",
+					self.onChangeServerConfirmed);
+		}
+
+	});
+	return BindPopup;
 });

@@ -78,8 +78,8 @@ class GenericProjectManagerServiceIT extends DbunitServiceSpecification {
 
 		given :
 		def taprojects = [
-			new TestAutomationProject("job1", "New Project 1", null),
-			new TestAutomationProject("job25", "New Project 25", null)
+			new TestAutomationProject("job1", "New Project 1"),
+			new TestAutomationProject("job25", "New Project 25")
 
 		] as Collection
 

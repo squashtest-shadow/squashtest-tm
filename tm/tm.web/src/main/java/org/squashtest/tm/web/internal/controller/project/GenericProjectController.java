@@ -25,7 +25,6 @@ import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -84,7 +83,6 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
-import org.squashtest.tm.web.internal.model.testautomation.TestAutomationProjectRegistrationForm;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
@@ -335,10 +333,10 @@ public class GenericProjectController {
 
 	// ********************************** test automation ***********************************
 
-
 	@RequestMapping(value = PROJECT_ID_URL + "/test-automation-server", method = RequestMethod.POST, params = "serverId")
 	@ResponseBody
-	public Long bindTestAutomationServer(@PathVariable("projectId") long projectId, @RequestParam("serverId") long serverId){
+	public Long bindTestAutomationServer(@PathVariable("projectId") long projectId,
+			@RequestParam("serverId") long serverId) {
 		Long finalServerId = (serverId == 0) ? null : serverId;
 		projectManager.bindTestAutomationServer(projectId, finalServerId);
 		return serverId;
@@ -357,21 +355,13 @@ public class GenericProjectController {
 
 	}
 
-	@RequestMapping(value = PROJECT_ID_URL + "/test-automation-projects", method = RequestMethod.POST, headers = "Content-Type=application/json")
+	@RequestMapping(value = PROJECT_ID_URL + "/test-automation-projects/new", method = RequestMethod.POST)
 	@ResponseBody
-	public void bindTestAutomationProject(@PathVariable long projectId,
-			@RequestBody TestAutomationProjectRegistrationForm[] projects, Locale locale) throws BindException {
-
-		TestAutomationProjectRegistrationForm form = null;
-
-		Iterator<TestAutomationProjectRegistrationForm> it = Arrays.asList(projects).listIterator();
-		while (it.hasNext()) {
-			form = it.next();
-			projectManager.bindTestAutomationProject(projectId, form.toTestAutomationProject());
-		}
+	public void addTestAutomationProject(@PathVariable long projectId,
+			@RequestBody TestAutomationProject[] projects, Locale locale) throws BindException {
+		projectManager.bindTestAutomationProjects(projectId, Arrays.asList(projects));
 
 	}
-
 
 	@RequestMapping(value = PROJECT_ID_URL + "/test-automation-projects/{taProjectId}", method = RequestMethod.DELETE)
 	@ResponseBody

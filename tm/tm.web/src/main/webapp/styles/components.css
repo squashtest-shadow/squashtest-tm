@@ -543,6 +543,11 @@ div.ta-projects-bind-maindiv{
 }
 
 
+.ta-project-tm-label.edit-state label {
+    color: #000000;
+    font-style: normal;
+    text-decoration: none;
+}
 
 /*************************************
 	test automation picker

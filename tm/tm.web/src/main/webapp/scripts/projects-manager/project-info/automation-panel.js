@@ -24,8 +24,8 @@
  - availableServers : an array of TestAutomationServer
  - TAServerId : the id of the selected server if there is one, or null if none
  */
-define([ "jquery", "jeditable.selectJEditable", "./AddTAProjectsDialog",, "squashtable", "jquery.squash.formdialog" ],
-		function($, SelectJEditable, BindPopup, WTF) {
+define([ "jquery","backbone", "jeditable.selectJEditable", "./AddTAProjectsDialog", "app/ws/squashtm.notification", "squash.translator", "squashtable", "jquery.squash.formdialog" ],
+		function($,Backbone, SelectJEditable, BindPopup, WTF, translator) {
 			// *************************************** ConfirmChangePopup **********************************************
 			var ConfirmChangePopup = Backbone.View.extend({
 
@@ -97,6 +97,9 @@ define([ "jquery", "jeditable.selectJEditable", "./AddTAProjectsDialog",, "squas
 
 				setSelected : function(selected) {
 					this.selectedId = selected;
+				},
+				setParentPanel : function(parentPanel){
+					this.parentPanel = parentPanel;
 				}
 			});
 			
@@ -120,6 +123,9 @@ define([ "jquery", "jeditable.selectJEditable", "./AddTAProjectsDialog",, "squas
 				cancel : function() {
 					this.trigger("unbindTAProjectPopup.cancel");
 					alert('Canceled !');
+				},
+				setParentPanel : function(parentPanel){
+					this.parentPanel = parentPanel;
 				}
 			});
 			// *************************************** AutomationPanel **********************************************
@@ -131,6 +137,9 @@ define([ "jquery", "jeditable.selectJEditable", "./AddTAProjectsDialog",, "squas
 				initialize : function(conf, popups) {
 					var self = this;
 					this.popups = popups;
+					for(var popup in popups){
+						popups[popup].setParentPanel(this);
+					}
 					this.initSelect(conf);
 					this.table = $("#ta-projects-table").squashTable({}, {});
 					

@@ -24,7 +24,7 @@ package org.squashtest.tm.service.testautomation.spi;
 public class UnreadableResponseException extends TestAutomationException {
 
 	private static final String UNREADABLE_RESPONSE_KEY = "testautomation.exceptions.unreadableresponse";
-	
+
 	private static final long serialVersionUID = -1001444250169674985L;
 
 	public UnreadableResponseException() {
@@ -47,6 +47,5 @@ public class UnreadableResponseException extends TestAutomationException {
 	public String getI18nKey() {
 		return UNREADABLE_RESPONSE_KEY;
 	}
-	
-	
+
 }

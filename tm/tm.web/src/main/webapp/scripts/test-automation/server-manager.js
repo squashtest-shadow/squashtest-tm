@@ -95,7 +95,7 @@ require([ "common", ], function() {
 					url : conf.url + '/name',
 					type : 'post',
 					data : {
-						newName : name
+						value : name
 					}
 				}).success(function() {
 					$("#ta-server-name-header").text(name);
