@@ -68,7 +68,7 @@ define([ "jquery", "workspace.event-bus", "squash.translator", "squash.configman
 			return;
 		}
 		
-		// else we must init the complex edit in place and the popups
+		// else we must init the special edit in place and the popups
 		_initEditable(settings);
 		
 		
@@ -80,7 +80,7 @@ define([ "jquery", "workspace.event-bus", "squash.translator", "squash.configman
 
 		var conf = confman.getStdJeditable();
 		conf.type = 'ta-picker';
-	//	conf.name = 'path';
+		conf.name = 'path';
 		
 		
 		// now make it editable

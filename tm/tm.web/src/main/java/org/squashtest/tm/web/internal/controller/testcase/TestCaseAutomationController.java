@@ -71,9 +71,10 @@ public class TestCaseAutomationController {
 
 	@RequestMapping(value="/tests", method = RequestMethod.POST, params = { PATH })
 	@ResponseBody
-	public void bindAutomatedTest(@PathVariable(TEST_CASE_ID) long testCaseId, @RequestParam(PATH) String testPath){
+	public String bindAutomatedTest(@PathVariable(TEST_CASE_ID) long testCaseId, @RequestParam(PATH) String testPath){
 		LOGGER.trace("Bind automated test "+testPath+" to TC#"+testCaseId);
 		testCaseModificationService.bindAutomatedTest(testCaseId, testPath);
+		return testPath;
 	}
 
 

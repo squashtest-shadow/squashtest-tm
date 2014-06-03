@@ -40,7 +40,7 @@
 <f:message var="deleteAutoTitle" 			key='title.confirmDeleteAutomatedTestLink'/>
 
 <c:set var="scriptnameLabel" value="${not canModify && empty testCase.automatedTest ? testNone : 
-									  not empty testCase.automatedTest ? testCase.automatedTest.fullName : 
+									  not empty testCase.automatedTest ? testCase.automatedTest.fullLabel : 
 									  ''}"/>
 
  			
@@ -52,11 +52,11 @@
 		<span id="ta-script-picker-span" style="display:block"><c:out value="${scriptnameLabel}"/></span>
 		
 		<%--
-		we pretty much would like to declare the following button here : 
+		The best would have been to declare a button here : 
 		
 		<input id="ta-script-picker-button" type="button" value="${testPick}" class="not-displayed"/>
 		
-		however for rendering reasons, and because the limitations of jeditable, we must 
+		however for several reasons (for nicer rendering, limitations of jeditable), we must 
 		handle such button programatically. see 'test-automation/testcase-test-automation to see how it's 
 		done.
 		--%>

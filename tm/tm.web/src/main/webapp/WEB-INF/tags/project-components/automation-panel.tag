@@ -88,7 +88,7 @@
             <tr>
               <th data-def="map=entity-id, invisible" class="not-displayed">#</th>
               <th data-def="map=entity-index,narrow, select">#</th>
-              <th data-def="map=name">
+              <th data-def="map=label">
                 <f:message key="project.testauto.projectsblock.table.headers.name" />
               </th>
               <th data-def="map=server-url">
@@ -103,9 +103,8 @@
           <tbody>
             <c:forEach items="${project.testAutomationProjects}" var="taproj" varStatus="status">
             <tr>
-              <td>${taproj.id}</td>
               <td>${status.index}</td>
-              <td>${taproj.name}</td>
+							<td>${taproj.label}</td>
               <td>${taproj.server.baseURL}</td>
               <td>${taproj.server.kind}</td>
               <td> </td>

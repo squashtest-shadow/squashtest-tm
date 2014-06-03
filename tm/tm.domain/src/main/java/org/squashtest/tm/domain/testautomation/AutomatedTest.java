@@ -70,7 +70,15 @@ public class AutomatedTest {
 	 * @return project.name + name
 	 */
 	public String getFullName(){
-		return project.getJobName()+"/"+name;
+		return "/"+project.getJobName()+"/"+name;
+	}
+
+	/**
+	 * 
+	 * @return project.label + name
+	 */
+	public String getFullLabel(){
+		return "/"+project.getLabel()+"/"+name;
 	}
 
 	/**

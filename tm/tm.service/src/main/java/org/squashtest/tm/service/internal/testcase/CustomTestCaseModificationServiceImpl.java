@@ -33,6 +33,7 @@ import javax.inject.Named;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -374,6 +375,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public AutomatedTest bindAutomatedTest(Long testCaseId, Long taProjectId, String testName) {
 
+
 		TestAutomationProject project = taService.findProjectById(taProjectId);
 
 		AutomatedTest newTest = new AutomatedTest(testName, project);
@@ -382,7 +384,11 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		TestCase testCase = testCaseDao.findById(testCaseId);
 
+		AutomatedTest previousTest = testCase.getAutomatedTest();
+
 		testCase.setAutomatedTest(persisted);
+
+		taService.removeIfUnused(previousTest);
 
 		return newTest;
 	}
@@ -391,31 +397,40 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public AutomatedTest bindAutomatedTest(Long testCaseId, String testPath) {
 
-		// first, let's find which TA project it is
-		int idxSlash = testPath.indexOf('/');
-
-		String projectLabel = testPath.substring(0,idxSlash);
-		String testName = testPath.substring(idxSlash+1);
-
-		TestCase tc = testCaseDao.findById(testCaseId);
-		GenericProject tmproject = tc.getProject();
-
-		TestAutomationProject tap = (TestAutomationProject) CollectionUtils.find(tmproject.getTestAutomationProjects(), new HasSuchLabel(projectLabel));
-
-		if (tap == null){
-			throw new UnallowedTestAssociationException();
+		if (StringUtils.isBlank(testPath)){
+			removeAutomation(testCaseId);
+			return null;
 		}
+		else{
 
-		// once it's okay we commit the test association
-		return bindAutomatedTest(testCaseId, tap.getId(), testName);
+			// first, let's find which TA project it is. The first slash must be removed because it doesn't count.
+			String path = testPath.replaceFirst("^/", "");
+			int idxSlash = path.indexOf('/');
+
+			String projectLabel = path.substring(0,idxSlash);
+			String testName = path.substring(idxSlash+1);
+
+			TestCase tc = testCaseDao.findById(testCaseId);
+			GenericProject tmproject = tc.getProject();
+
+			TestAutomationProject tap = (TestAutomationProject) CollectionUtils.find(tmproject.getTestAutomationProjects(), new HasSuchLabel(projectLabel));
+
+			if (tap == null){
+				throw new UnallowedTestAssociationException();
+			}
+
+			// once it's okay we commit the test association
+			return bindAutomatedTest(testCaseId, tap.getId(), testName);
+		}
 
 	}
 
 	@Override
 	public void removeAutomation(long testCaseId) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
+		AutomatedTest previousTest = testCase.getAutomatedTest();
 		testCase.removeAutomatedScript();
-
+		taService.removeIfUnused(previousTest);
 	}
 
 	/**
