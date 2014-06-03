@@ -83,7 +83,6 @@ define(["jquery",
 	function initFragmentTab(){
 		
 		var fragConf = {
-			beforeLoad : Frag.confHelper.fnCacheRequests,	
 			cookie : "testcase-tab-cookie"
 		};
 		Frag.init(fragConf);		

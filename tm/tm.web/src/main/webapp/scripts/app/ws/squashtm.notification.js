@@ -131,11 +131,18 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 		 * Does not work with narrowed down selectors. see http://bugs.jquery.com/ticket/6161
 		 */
 		$doc.on('ajaxError', function(event, request, settings, ex) {
+			
+			// nothing to notify if the request was aborted
+			if (request.status === 0){
+				return;
+			}
+			
 			// Check if we get an Unauthorized access response, then
 			// redirect to login page
-			if (401 == request.status) {
+			else if (401 == request.status) {
 				window.parent.location.reload();
-			} else {
+			} 
+			else {
 				try {
 					handleJsonResponseError(request);
 				} catch (wtf) {

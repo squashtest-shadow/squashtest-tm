@@ -498,7 +498,6 @@
 				//****** tabs configuration ***********
 				
 				var fragConf = {
-					beforeLoad : Frag.confHelper.fnCacheRequests,
 					cookie : "iteration-tab-cookie",
 					activate : function(event, ui){
 						if (ui.newPanel.is('#campaign-dashboard')){

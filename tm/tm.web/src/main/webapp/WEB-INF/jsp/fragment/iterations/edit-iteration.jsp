@@ -383,7 +383,6 @@
 				//****** tabs configuration *******
 				
 				var fragConf = {
-					beforeLoad : Frag.confHelper.fnCacheRequests,
 					active : 2,
 					cookie : "iteration-tab-cookie",
 					activate : function(event, ui){

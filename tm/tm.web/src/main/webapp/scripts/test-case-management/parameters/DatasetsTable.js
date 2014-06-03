@@ -52,9 +52,6 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/util/StringUtil
 
 				initDataTableSettings : function(self) {
 					self.dataTableSettings = {
-						"oLanguage" : {
-							sUrl : self.settings.basic.dataTableLanguageUrl
-						},
 						"sAjaxSource" : self.settings.basic.testCaseDatasetsUrl,
 						"bPaginate" : false,
 						"aaSorting" : [ [ 2, 'asc' ] ],

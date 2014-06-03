@@ -675,9 +675,7 @@ require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.att
 		projectsManager.projectInfo.initUserPermissions(permSettings);
 				
 
-		Frag.init({
-			beforeLoad : Frag.confHelper.fnCacheRequests
-		});								
+		Frag.init();								
 	}
 	
 	

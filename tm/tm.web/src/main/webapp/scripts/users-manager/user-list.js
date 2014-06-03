@@ -310,10 +310,7 @@ define([ "jquery", "squash.translator", "jquery.squash.fragmenttabs", "squashtab
 	}
 
 	function initTabs(){
-		var fragConf = {
-			beforeLoad : Frag.confHelper.fnCacheRequests
-		};
-		Frag.init(fragConf);
+		Frag.init();
 	}
 
 

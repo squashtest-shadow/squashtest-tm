@@ -368,7 +368,6 @@ require([ "common" ], function() {
 				//****** tabs configuration *******
 				
 				var fragConf = {
-					beforeLoad : Frag.confHelper.fnCacheRequests,	
 					cookie : "iteration-tab-cookie"
 				};
 				Frag.init(fragConf);
