@@ -107,7 +107,7 @@ define([ "jquery", "backbone", "underscore",
 			if (this.settings.isAutomated){
 				
 				var conf = {
-					canModify 			: this.settings.writable,
+					canModify			: this.settings.writable,
 					testAutomationUrl	: this.settings.urls.automationUrl + '/tests'
 				};
 				
