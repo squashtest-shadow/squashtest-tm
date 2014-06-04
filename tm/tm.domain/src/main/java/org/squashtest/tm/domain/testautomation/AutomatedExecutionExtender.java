@@ -178,4 +178,12 @@ public class AutomatedExecutionExtender {
 	private String getHostServerName() {
 		return getAutomatedProject().getServer().getName();
 	}
+
+	public boolean isNotOverYet(){
+		return (automatedTest != null && resultURL == null);
+	}
+
+	public boolean isProjectDisassociated(){
+		return (automatedTest == null);
+	}
 }
