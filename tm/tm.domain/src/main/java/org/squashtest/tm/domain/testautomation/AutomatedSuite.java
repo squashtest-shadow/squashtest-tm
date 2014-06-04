@@ -36,66 +36,93 @@ import org.hibernate.annotations.GenericGenerator;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 
 @NamedQueries({
-	@NamedQuery(name="automatedSuite.findAll", query="from AutomatedSuite"),
-	@NamedQuery(name="automatedSuite.findById", query="from AutomatedSuite where id = :suiteId"),
-	@NamedQuery(name="automatedSuite.findAllById", query="from AutomatedSuite where id in (:suiteIds)"),
-	@NamedQuery(name="automatedSuite.findAllExtenders", query="select ext from AutomatedExecutionExtender ext join ext.automatedSuite s where s.id = :suiteId"),
-	@NamedQuery(name="automatedSuite.findAllExtendersHavingStatus", query="select ext from AutomatedExecutionExtender ext join ext.execution exe join ext.automatedSuite s where s.id = :suiteId and exe.executionStatus in (:statusList)")
+	@NamedQuery(name = "automatedSuite.findAll", query = "from AutomatedSuite"),
+	@NamedQuery(name = "automatedSuite.findById", query = "from AutomatedSuite where id = :suiteId"),
+	@NamedQuery(name = "automatedSuite.findAllById", query = "from AutomatedSuite where id in (:suiteIds)"),
+	@NamedQuery(name = "automatedSuite.findAllExtenders", query = "select ext from AutomatedExecutionExtender ext join ext.automatedSuite s where s.id = :suiteId"),
+	@NamedQuery(name = "automatedSuite.findAllExtendersHavingStatus", query = "select ext from AutomatedExecutionExtender ext join ext.execution exe join ext.automatedSuite s where s.id = :suiteId and exe.executionStatus in (:statusList)")
 })
 @Entity
-public class AutomatedSuite  {
+public class AutomatedSuite {
 
 	@Id
 	@Column(name = "SUITE_ID")
 	@GeneratedValue(generator = "system-uuid")
-	@GenericGenerator(name="system-uuid", strategy = "uuid")
+	@GenericGenerator(name = "system-uuid", strategy = "uuid")
 	private String id;
 
-	@OneToMany(mappedBy="automatedSuite", cascade = {CascadeType.ALL})
+	@OneToMany(mappedBy = "automatedSuite", cascade = { CascadeType.ALL })
 	private Collection<AutomatedExecutionExtender> executionExtenders = new ArrayList<AutomatedExecutionExtender>();
 
-	public String getId(){
+	/**
+	 * it's transient because we do not want to persist neither do we want to compute it too often.
+	 */
+	private transient Boolean manualSlaveSelection;
+
+	public String getId() {
 		return id;
 	}
-
 
 	public Collection<AutomatedExecutionExtender> getExecutionExtenders() {
 		return executionExtenders;
 	}
-
 
 	public void setExecutionExtenders(
 			Collection<AutomatedExecutionExtender> executionExtenders) {
 		this.executionExtenders = executionExtenders;
 	}
 
-	public void addExtender(AutomatedExecutionExtender extender){
+	public void addExtender(AutomatedExecutionExtender extender) {
 		executionExtenders.add(extender);
 		extender.setAutomatedSuite(this);
 	}
 
-	public void addExtenders(Collection<AutomatedExecutionExtender> extenders){
-		for (AutomatedExecutionExtender extender : extenders){
+	public void addExtenders(Collection<AutomatedExecutionExtender> extenders) {
+		for (AutomatedExecutionExtender extender : extenders) {
 			executionExtenders.add(extender);
 		}
 	}
 
-	public boolean hasStarted(){
-		for (AutomatedExecutionExtender extender : executionExtenders){
-			if (extender.getExecution().getExecutionStatus() != ExecutionStatus.READY){
+	public boolean hasStarted() {
+		for (AutomatedExecutionExtender extender : executionExtenders) {
+			if (extender.getExecution().getExecutionStatus() != ExecutionStatus.READY) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public boolean hasEnded(){
-		for (AutomatedExecutionExtender extender : executionExtenders){
-			if (! extender.getExecution().getExecutionStatus().isTerminatedStatus()){
+	public boolean hasEnded() {
+		for (AutomatedExecutionExtender extender : executionExtenders) {
+			if (!extender.getExecution().getExecutionStatus().isTerminatedStatus()) {
 				return false;
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Tells if the suite requires manual node selection. A manual node selection is required when at least 1 server is
+	 * configured with manual selection.
+	 * 
+	 * @return
+	 */
+	public boolean isManualNodeSelection() {
+		if (manualSlaveSelection == null) {
+			boolean manual = false;
+
+			for (AutomatedExecutionExtender autoExec : executionExtenders) {
+				manual = autoExec.getAutomatedProject().getServer().isManualSlaveSelection();
+				if (manual) {
+					break;
+				}
+			}
+
+			manualSlaveSelection = manual;
+		}
+
+		return manualSlaveSelection;
+
 	}
 
 }
