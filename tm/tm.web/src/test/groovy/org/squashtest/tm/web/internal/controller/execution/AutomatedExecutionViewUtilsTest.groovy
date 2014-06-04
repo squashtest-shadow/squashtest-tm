@@ -21,6 +21,14 @@
 
 package org.squashtest.tm.web.internal.controller.execution;
 
+import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
+import org.squashtest.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.ExecutionAutoView;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+
 import spock.lang.Specification;
 import spock.lang.Unroll;
 
@@ -29,6 +37,7 @@ import spock.lang.Unroll;
  *
  */
 class AutomatedExecutionViewUtilsTest extends Specification {
+	InternationalizationHelper  i18n = Mock()
 
 	@Unroll
 	def "percent progression should be #prog"() {
@@ -41,4 +50,31 @@ class AutomatedExecutionViewUtilsTest extends Specification {
 		4		| 4		| 100
 	}
 
+	def "should create populated ExecutionAutoView"() {
+		given:
+		AutomatedExecutionExtender autoExec = Mock()
+
+		and:
+		Execution exec = Mock()
+		exec.id >> 50
+		exec.name >> "ordeal"
+		exec.executionStatus >> ExecutionStatus.SUCCESS
+		autoExec.execution >> exec
+
+		and:
+		TestAutomationProject tap = Mock()
+		tap.label >> "drips drips drips drips"
+		autoExec.automatedProject >> tap
+
+		when:
+		ExecutionAutoView res = AutomatedExecutionViewUtils.translateExecutionInView(autoExec, Locale.JAPAN, i18n);
+
+		then:
+		res.automatedProject == "drips drips drips drips"
+		res.node == "hardcoded"
+		res.id == 50
+		res.name == "ordeal"
+		res.status == ExecutionStatus.SUCCESS
+
+	}
 }

@@ -24,7 +24,6 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,13 +33,14 @@ import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.service.testautomation.AutomatedTestFinderService;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.AutomatedSuiteOverview;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
 @Controller
 @RequestMapping("/automated-suites/{suiteId}")
 public class AutomatedSuiteManagementController {
 
 	@Inject
-	private MessageSource messageSource;
+	private InternationalizationHelper messageSource;
 
 	@Inject
 	private AutomatedTestFinderService automatedTestService;
