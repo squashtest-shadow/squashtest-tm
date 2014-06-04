@@ -46,6 +46,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.core.foundation.lang.Tuple2;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -403,27 +404,14 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		}
 		else{
 
-			// first, let's find which TA project it is. The first slash must be removed because it doesn't count.
-			String path = testPath.replaceFirst("^/", "");
-			int idxSlash = path.indexOf('/');
-
-			String projectLabel = path.substring(0,idxSlash);
-			String testName = path.substring(idxSlash+1);
-
-			TestCase tc = testCaseDao.findById(testCaseId);
-			GenericProject tmproject = tc.getProject();
-
-			TestAutomationProject tap = (TestAutomationProject) CollectionUtils.find(tmproject.getTestAutomationProjects(), new HasSuchLabel(projectLabel));
-
-			if (tap == null){
-				throw new UnallowedTestAssociationException();
-			}
+			Tuple2<Long, String> projectAndTestname = extractAutomatedProjectAndTestName(testCaseId, testPath);
 
 			// once it's okay we commit the test association
-			return bindAutomatedTest(testCaseId, tap.getId(), testName);
+			return bindAutomatedTest(testCaseId, projectAndTestname.getEl1(), projectAndTestname.getEld2());
 		}
 
 	}
+
 
 	@Override
 	public void removeAutomation(long testCaseId) {
@@ -514,6 +502,30 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 
 	// ******************** private stuffs *********************
+
+
+
+	// first element : project ID, second element : test name
+	private Tuple2<Long, String> extractAutomatedProjectAndTestName(Long testCaseId, String testPath){
+
+		// first, let's find which TA project it is. The first slash must be removed because it doesn't count.
+		String path = testPath.replaceFirst("^/", "");
+		int idxSlash = path.indexOf('/');
+
+		String projectLabel = path.substring(0,idxSlash);
+		String testName = path.substring(idxSlash+1);
+
+		TestCase tc = testCaseDao.findById(testCaseId);
+		GenericProject tmproject = tc.getProject();
+
+		TestAutomationProject tap = (TestAutomationProject) CollectionUtils.find(tmproject.getTestAutomationProjects(), new HasSuchLabel(projectLabel));
+
+		if (tap == null){
+			throw new UnallowedTestAssociationException();
+		}
+
+		return new Tuple2<Long, String>(tap.getId(), testName);
+	}
 
 	private static final class HasSuchLabel implements Predicate{
 		private String label;

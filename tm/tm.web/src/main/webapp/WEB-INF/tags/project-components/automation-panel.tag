@@ -170,6 +170,8 @@
   <div class="popup-dialog-buttonpane">
     <input class="confirm" type="button" value="${confirmLabel}" data-def="evt=confirm,  state=case1, mainbtn" />
     <input class="confirm" type="button" value="${confirmLabel}" data-def="evt=confirm,  state=case2, mainbtn" />
+      
+      
     <input class="cancel" type="button" value="${cancelLabel}" data-def="evt=cancel" />
   </div>
 </div>
@@ -205,9 +207,6 @@
     </p>
     <table class="ta-project-bind-listdiv">
     </table>
-  
-  </div>
-  
   <script id="default-item-tpl" type="text/x-handlebars-template" th:inline="text">
 	<tr class="listdiv-item"> <td><input type="checkbox" value="{{name}}"/><td>{{name}}</td><td class="ta-project-tm-label"><label th:text="#{label.taProjectTmLabel}">Libellé dans Squash TM</label><input type="text" style="display: none;"/></td></tr>
   </script>

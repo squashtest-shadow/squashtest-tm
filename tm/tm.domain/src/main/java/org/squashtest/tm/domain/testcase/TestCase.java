@@ -486,7 +486,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	}
 
 	public void setAutomatedTest(AutomatedTest testAutomationTest) {
-		if (getProject().isTestAutomationEnabled()) {
+		if (getProject().isBoundToTestAutomationProject(testAutomationTest.getProject())) {
 			this.automatedTest = testAutomationTest;
 		} else {
 			throw new UnallowedTestAssociationException();

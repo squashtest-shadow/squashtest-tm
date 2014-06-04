@@ -70,7 +70,7 @@ define([ "jquery", "workspace.event-bus", "squash.translator", "squash.configman
 		
 		// else we must init the special edit in place and the popups
 		_initEditable(settings);
-		
+		_initPopup(settings);
 		
 	}
 	
@@ -84,95 +84,56 @@ define([ "jquery", "workspace.event-bus", "squash.translator", "squash.configman
 		
 		
 		// now make it editable
-		elt.editable(settings.testAutomationUrl, conf);
+		elt.editable(settings.testAutomationURL, conf);
 		
 		// more events
-		$("#ta-script-picker-button").on('click', function(){
-			alert('invoked the picker popup');
+		elt.on('click', '#ta-script-picker-button', function(){
+			$("#ta-picker-popup").formDialog('open');
+			return false;//for some reason jeditable would trigger 'submit' if we let go
 		});
 
 		
 	}
 	
-	
-	
-	
-	
-	
-	
-	/*
-	function TestAutomationPicker(settings) {
-		var self = this;
+	function _initPopup(settings){
+		
+		var dialog = $("#ta-picker-popup");
+		
+		var tree = dialog.find(".structure-tree");
 
-		var instance = $(settings.selector);
-		var testAutomationURL = settings.testAutomationURL;
-		var successCallback = settings.successCallback;
-
-		var pleaseWaitPanel = instance.find(".structure-pleasewait");
-		var mainPanel = instance.find(".structure-treepanel");
-		var tree = instance.find(".structure-tree");
-
-		var error = instance.find(".structure-error");
+		var error = dialog.find(".structure-error");
 		error.popupError();
 
 		// init
 
-		instance.formDialog({
+		dialog.formDialog({
 			height : 500
 		});
 
 		// cache
-		this.modelCache = undefined;
+		dialog.data('model-cache', undefined);
 
-		// ************ state handling ******************
 
-		var flipToPleaseWait = function() {
-			pleaseWaitPanel.removeClass("not-displayed");
-			mainPanel.addClass("not-displayed");
-			error.popup('hide');
-		};
 
-		var flipToMain = function() {
-			pleaseWaitPanel.addClass("not-displayed");
-			mainPanel.removeClass("not-displayed");
-		};
-
-		var getPostParams = function() {
-
-			var node = tree.jstree('get_selected');
-
-			if (node.length < 1) {
-				throw "no-selection";
-			}
-
-			var nodePath = node.getPath();
-			// let's strip the 'library' part
-			var nodeName = nodePath.replace(/^[^\/]*\//, '');
-
-			return {
-				name : nodeName,
-				projectId : node.getLibrary().getDomId()
-			};
-		};
-
-		// ************ model *****************************
-
-		var init = function() {
+		// ************ model loading *************************
+		
+		var initDialogCache = function() {
+			
+			dialog.formDialog('setState', 'pleasewait');
+			
 			return $.ajax({
-				url : testAutomationURL,
+				url : settings.testAutomationURL,
 				type : 'GET',
 				dataType : 'json'
-			}).done(function(json) {
-				setCache(json);
+			})
+			.done(function(json) {
+				dialog.data('model-cache', json);
 				createTree();
-				flipToMain();
-			}).fail(function(jsonError) {
-				handleAjaxError(jsonError);
+				dialog.formDialog('setState', 'main');
+			})
+			.fail(function(jsonError) {
+				dialog.formDialog('close');
 			});
-		};
-
-		var setCache = function(model) {
-			self.modelCache = model;
 		};
 
 		var createTree = function() {
@@ -180,7 +141,7 @@ define([ "jquery", "workspace.event-bus", "squash.translator", "squash.configman
 			treefactory.configure('simple-tree'); // will add the 'squash' plugin if doesn't exist yet
 			tree.jstree({
 				"json_data" : {
-					"data" : self.modelCache
+					"data" : dialog.data('model-cache')
 				},
 
 				"types" : {
@@ -228,39 +189,25 @@ define([ "jquery", "workspace.event-bus", "squash.translator", "squash.configman
 
 		// ****************** transaction ************
 
-		var handleAjaxError = function(jsonError) {
-			var message = squashtm.notification.getErrorMessage(jsonError);
-			fatalError.find('span').text(message);
-			fatalError.popupError('show');
-		};
 
 		var submit = function() {
 
 			try {
 
-				var params = getPostParams();
+				var node = tree.jstree('get_selected');
 
-				$.ajax({
+				if (node.length < 1) {
+					throw "no-selection";
+				}
 
-					url : testAutomationURL,
-					type : 'POST',
-					data : params,
-					dataType : 'json'
+				var nodePath = node.getPath();
 
-				}).done(function() {
-					instance.formDialog('close');
-					if (successCallback) {
-						successCallback(tree.jstree('get_selected').getPath());
-					}
-				}).fail(function(jsonError) {
-					handleAjaxError(jsonError);
-				});
+				$("#ta-script-picker-span").find('form input[name="path"]').val(nodePath);
+				dialog.formDialog('close');
 
 			} catch (exception) {
 				if (exception == "no-selection") {
 					error.find("span").text(translator.get('test-case.testautomation.popup.error.noselect'));
-				} else {
-					error.find("span").text(exception);
 				}
 				error.popupError('show');
 			}
@@ -269,50 +216,28 @@ define([ "jquery", "workspace.event-bus", "squash.translator", "squash.configman
 
 		// ************ events *********************
 
-		instance.on('formdialogconfirm', submit);
+		dialog.on('formdialogconfirm', submit);
 
-		instance.on('formdialogcancel', function() {
-			instance.formDialog('close');
+		dialog.on('formdialogcancel', function() {
+			dialog.formDialog('close');
 		});
 
-		instance.on("formdialogopen", function() {
-			if (self.modelCache === undefined) {
-				self.initAjax = init();
+		dialog.on("formdialogopen", function() {
+			if (dialog.data('model-cache') === undefined) {
+				dialog.initAjax = initDialogCache();
 			} else {
 				reset();
 			}
 		});
 
-		instance.on('formdialogclose', function() {
-			if (self.initAjax) {
-				self.initAjax.abort();
+		dialog.on('formdialogclose', function() {
+			if (dialog.initAjax) {
+				dialog.initAjax.abort();
 			}
 
 		});
 	}
 	
-	function TestAutomationRemover(settings) {
-
-		var automatedTestRemovalUrl = settings.automatedTestRemovalUrl;
-		var successCallback = settings.successCallback;
-		var confirmDialog = $(settings.confirmPopupSelector);
-
-		confirmDialog.confirmDialog({
-			confirm : sendRemovalRequest
-		});
-
-		function sendRemovalRequest() {
-			return $.ajax({
-				url : automatedTestRemovalUrl,
-				type : 'DELETE',
-				dataType : 'json'
-			}).done(function() {
-				successCallback();
-				confirmDialog.confirmDialog("close");
-			});
-		}
-	}
-*/
 	return {
 		init : init
 	};

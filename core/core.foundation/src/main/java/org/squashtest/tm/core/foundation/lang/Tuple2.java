@@ -18,37 +18,26 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.exception;
+package org.squashtest.tm.core.foundation.lang;
 
-import org.squashtest.tm.core.foundation.exception.ActionException;
-import org.squashtest.tm.domain.testautomation.AutomatedTest;
-import org.squashtest.tm.domain.testcase.TestCase;
+public class Tuple2<FIRST, SECOND> {
 
-/**
- * <p>Thrown when one tries to bind a {@link AutomatedTest} to a {@link TestCase},
- * while the test automation feature is disabled for the TM project hosting it or if the test automation project
- * isn't bound to the TM project</p>
- * 
- * @author bsiri
- *
- */
-public class UnallowedTestAssociationException extends ActionException {
+	private FIRST el1;
+	private SECOND eld2;
 
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
-
-	private static final String MESSAGE_KEY = "testautomation.exceptions.unallowedassociation";
-
-
-	@Override
-	public String getI18nKey() {
-		return MESSAGE_KEY;
+	public FIRST getEl1() {
+		return el1;
 	}
 
+	public SECOND getEld2() {
+		return eld2;
+	}
+
+	public Tuple2(FIRST el1, SECOND eld2) {
+		super();
+		this.el1 = el1;
+		this.eld2 = eld2;
+	}
 
 
 

@@ -71,7 +71,7 @@
 
 		<div class="ta-picker-structure-maindiv">
 		
-		 	<div class="structure-pleasewait">
+		 	<div data-def="state=pleasewait" class="structure-pleasewait">
 	 			<comp:waiting-pane/>		
 	 		</div>
 		
@@ -79,7 +79,7 @@
 				<span> </span>
 			</div>
 		
-			<div class="structure-treepanel has-standard-margin">
+			<div data-def="state=main" class="structure-treepanel has-standard-margin">
 				<div class="structure-tree"></div>		
 			</div>
 			
@@ -91,11 +91,7 @@
 		</div>
 		
 	</div>
-	
-	<div id="test-automation-removal-confirm-dialog" class="popup-dialog" title="${ deleteAutoTitle }">
-		<strong><f:message key='message.confirmDeleteAutomatedTestLink'/></strong>
-	</div>
-	
+
 </div>
 </c:if>
 			

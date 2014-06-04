@@ -108,42 +108,12 @@ define([ "jquery", "backbone", "underscore",
 				
 				var conf = {
 					canModify			: this.settings.writable,
-					testAutomationUrl	: this.settings.urls.automationUrl + '/tests'
+					testAutomationURL	: this.settings.urls.automationUrl + '/tests'
 				};
 				
 				testcaseTestAutomation.init(conf);
 				
 			}
-			/*
-			if (this.settings.isAutomated){
-				new TestAutomationPicker({
-					selector : "#ta-picker-popup",
-					testAutomationURL : this.settings.urls.automationUrl + '/tests',
-					successCallback : function(newName){
-						$("#ta-picker-link").text(newName);
-						$("#remove-ta-link").show();
-					}
-				});
-
-				new TestAutomationRemover({
-					automatedTestRemovalUrl : this.settings.urls.automationUrl,
-					successCallback : function(){
-						$("#ta-picker-link").text(translator.get('label.dot.pick'));
-						$("#remove-ta-link").hide();
-					},
-					confirmPopupSelector : "#test-automation-removal-confirm-dialog"
-				});
-
-				$("#ta-picker-link").on('click', function(){
-					$("#ta-picker-popup").formDialog('open');
-				});
-
-				$("#remove-ta-link").on('click', function(){
-					$("#test-automation-removal-confirm-dialog").confirmDialog('open');
-					return false;
-				});
-			}
-			*/
 			
 		},
 
