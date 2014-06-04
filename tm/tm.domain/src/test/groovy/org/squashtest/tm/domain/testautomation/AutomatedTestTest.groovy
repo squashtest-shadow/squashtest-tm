@@ -52,7 +52,7 @@ class AutomatedTestTest extends Specification {
 
 	def "should return the full name"(){
 		expect :
-		test.fullName == "the-project/"+name
+		test.fullName == "/the-project/"+name
 	}
 
 
