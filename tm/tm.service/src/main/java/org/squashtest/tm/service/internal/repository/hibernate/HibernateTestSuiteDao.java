@@ -20,20 +20,13 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.hibernate.Query;
-import org.hibernate.type.DateType;
-import org.hibernate.type.LongType;
-import org.hibernate.type.StringType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -57,35 +50,12 @@ import org.squashtest.tm.service.internal.repository.CustomTestSuiteDao;
 
 /*
  * todo : make it a dynamic call
- *
  */
 @Repository("CustomTestSuiteDao")
 public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> implements CustomTestSuiteDao {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(HibernateTestSuiteDao.class);
-	
-	private static final String PROJECT_FILTER = "projectFilter";
-	private static final String REFERENCE_FILTER = "referenceFilter";
-	private static final String TESTCASE_FILTER = "testcaseFilter";
-	private static final String WEIGHT_FILTER = "weightFilter";
-	private static final String DATASET_FILTER = "datasetFilter";
-	private static final String STATUS_FILTER = "statusFilter";
-	private static final String USER_FILTER = "userFilter";
-	private static final String START_DATE = "startDate";
-	private static final String END_DATE = "endDate";
-	private static final String DATE_FORMAT = "dd/MM/yyyy";
 
-	// TODO these strings come from UI but are hidden deep plus they are defined in HID and HCD. They should be
-	// factored out.
-	private static final String PROJECT_DATA = "project-name";
-	private static final String REFERENCE_DATA = "reference";
-	private static final String TESTCASE_DATA = "tc-name";
-	private static final String WEIGHT_DATA = "importance";
-	private static final String DATASET_DATA = "dataset";
-	private static final String STATUS_DATA = "status";
-	private static final String USER_DATA = "assignee-login";
-	private static final String MODE_DATA = "exec-mode";
-	private static final String LASTEXEC_DATA = "last-exec-on";
 	/*
 	 * Because it is impossible to sort over the indices of ordered collection in a criteria query we must then build an
 	 * hql string which will let us do that.
@@ -96,28 +66,6 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 			+ "left outer join TestCase.project as Project "
 			+ "left outer join IterationTestPlanItem.referencedDataset as Dataset "
 			+ "left outer join IterationTestPlanItem.user as User " + "where TestSuite.id = :suiteId ";
-
-	private static final String HQL_INDEXED_TEST_PLAN_PROJECT_FILTER = "and Project.name like :projectFilter ";
-
-	private static final String HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER = "and TestCase.reference like :referenceFilter ";
-
-	private static final String HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER = "and TestCase.name like :testcaseFilter ";
-
-	private static final String HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER = "and TestCase.importance = :weightFilter ";
-
-	private static final String HQL_INDEXED_TEST_PLAN_DATASET_FILTER = "and Dataset.name like :datasetFilter ";
-
-	private static final String HQL_INDEXED_TEST_PLAN_STATUS_FILTER = "and IterationTestPlanItem.executionStatus = :statusFilter ";
-
-	private static final String HQL_INDEXED_TEST_PLAN_MODEAUTO_FILTER = "and TestCase.automatedTest is not null ";
-
-	private static final String HQL_INDEXED_TEST_PLAN_MODEMANUAL_FILTER = "and TestCase.automatedTest is null ";
-
-	private static final String HQL_INDEXED_TEST_PLAN_USER_FILTER = "and IterationTestPlanItem.user.id = :userFilter ";
-
-	private static final String HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER = "and IterationTestPlanItem.user is null ";
-
-	private static final String HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER = "and IterationTestPlanItem.lastExecutedOn between :startDate and :endDate ";
 
 	@Override
 	public List<TestSuite> findAllByIterationId(final long iterationId) {
@@ -243,7 +191,7 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 			@Override
 			public void setQueryParameters(Query query) {
 				query.setParameter("suiteId", testSuiteId);
-				query.setParameterList("itemIds", testPlanItemIds, LongType.INSTANCE);
+				query.setParameterList("itemIds", testPlanItemIds);
 			}
 		};
 
@@ -336,29 +284,19 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 
 	}
 
-	private static final Map<String, String> SIMPLE_FILTER_CLAUSES = new HashMap<String, String>();
-	static {
-		SIMPLE_FILTER_CLAUSES.put(PROJECT_DATA, HQL_INDEXED_TEST_PLAN_PROJECT_FILTER);
-		SIMPLE_FILTER_CLAUSES.put(REFERENCE_DATA, HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER);
-		SIMPLE_FILTER_CLAUSES.put(TESTCASE_DATA, HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER);
-		SIMPLE_FILTER_CLAUSES.put(WEIGHT_DATA, HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER);
-		SIMPLE_FILTER_CLAUSES.put(DATASET_DATA, HQL_INDEXED_TEST_PLAN_DATASET_FILTER);
-		SIMPLE_FILTER_CLAUSES.put(STATUS_DATA, HQL_INDEXED_TEST_PLAN_STATUS_FILTER);
-		SIMPLE_FILTER_CLAUSES.put(LASTEXEC_DATA, HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER);
-	}
-
 	private static final Map<String, Map<String, String>> VALUE_DEPENDENT_FILTER_CLAUSES = new HashMap<String, Map<String, String>>();
 	private static final String VDFC_DEFAULT_KEY = "VDFC_DEFAULT_KEY";
 	static {
 		Map<String, String> modeDataMap = new HashMap<String, String>(2);
-		modeDataMap.put(TestCaseExecutionMode.MANUAL.name(), HQL_INDEXED_TEST_PLAN_MODEMANUAL_FILTER);
-		modeDataMap.put(VDFC_DEFAULT_KEY, HQL_INDEXED_TEST_PLAN_MODEAUTO_FILTER);
-		VALUE_DEPENDENT_FILTER_CLAUSES.put(MODE_DATA, modeDataMap);
+		modeDataMap.put(TestCaseExecutionMode.MANUAL.name(),
+				TestPlanFilteringHelper.HQL_INDEXED_TEST_PLAN_MODEMANUAL_FILTER);
+		modeDataMap.put(VDFC_DEFAULT_KEY, TestPlanFilteringHelper.HQL_INDEXED_TEST_PLAN_MODEAUTO_FILTER);
+		VALUE_DEPENDENT_FILTER_CLAUSES.put(TestPlanFilteringHelper.MODE_DATA, modeDataMap);
 
 		Map<String, String> userData = new HashMap<String, String>(2);
-		userData.put("0", HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER);
-		userData.put(VDFC_DEFAULT_KEY, HQL_INDEXED_TEST_PLAN_USER_FILTER);
-		VALUE_DEPENDENT_FILTER_CLAUSES.put(USER_DATA, userData);
+		userData.put("0", TestPlanFilteringHelper.HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER);
+		userData.put(VDFC_DEFAULT_KEY, TestPlanFilteringHelper.HQL_INDEXED_TEST_PLAN_USER_FILTER);
+		VALUE_DEPENDENT_FILTER_CLAUSES.put(TestPlanFilteringHelper.USER_DATA, userData);
 
 	}
 
@@ -372,13 +310,7 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 		}
 
 		// additional where clauses
-		for (Entry<String, String> simpleFilterClause : SIMPLE_FILTER_CLAUSES.entrySet()) {
-			String filterName = simpleFilterClause.getKey();
-			String filterClause = simpleFilterClause.getValue();
-			if (columnFiltering.hasFilter(filterName)) {
-				hqlbuilder.append(filterClause);
-			}
-		}
+		TestPlanFilteringHelper.appendFilteringRestrictions(hqlbuilder, columnFiltering);
 
 		for (Entry<String, Map<String, String>> valueDependantFilterClause : VALUE_DEPENDENT_FILTER_CLAUSES.entrySet()) {
 			String filterName = valueDependantFilterClause.getKey();
@@ -395,64 +327,12 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 		return hqlbuilder;
 	}
 
+
 	private Query assignParameterValuesToTestPlanQuery(String queryString, Long suiteId, Filtering filtering,
 			ColumnFiltering columnFiltering) {
-
 		Query query = currentSession().createQuery(queryString);
-
-		query.setParameter("suiteId", suiteId, LongType.INSTANCE);
-
-		if (filtering.isDefined()) {
-			query.setParameter("userLogin", filtering.getFilter(), StringType.INSTANCE);
-		}
-
-		if (columnFiltering.hasFilter(PROJECT_DATA)) {
-			query.setParameter(PROJECT_FILTER, "%" + columnFiltering.getFilter(PROJECT_DATA) + "%", StringType.INSTANCE);
-		}
-		if (columnFiltering.hasFilter(REFERENCE_DATA)) {
-			query.setParameter(REFERENCE_FILTER, "%" + columnFiltering.getFilter(REFERENCE_DATA) + "%",
-					StringType.INSTANCE);
-		}
-		if (columnFiltering.hasFilter(TESTCASE_DATA)) {
-			query.setParameter(TESTCASE_FILTER, "%" + columnFiltering.getFilter(TESTCASE_DATA) + "%",
-					StringType.INSTANCE);
-		}
-		if (columnFiltering.hasFilter(WEIGHT_DATA)) {
-			query.setParameter(WEIGHT_FILTER, columnFiltering.getFilter(WEIGHT_DATA), StringType.INSTANCE);
-		}
-		if (columnFiltering.hasFilter(DATASET_DATA)) {
-			query.setParameter(DATASET_FILTER, "%" + columnFiltering.getFilter(DATASET_DATA) + "%", StringType.INSTANCE);
-		}
-		if (columnFiltering.hasFilter(STATUS_DATA)) {
-			query.setParameter(STATUS_FILTER, columnFiltering.getFilter(STATUS_DATA), StringType.INSTANCE);
-		}
-		if (columnFiltering.hasFilter(USER_DATA) && !"0".equals(columnFiltering.getFilter(USER_DATA))) {
-			query.setParameter(USER_FILTER, Long.parseLong(columnFiltering.getFilter(USER_DATA)), LongType.INSTANCE);
-		}
-		if (columnFiltering.hasFilter(LASTEXEC_DATA)) {
-			String dates = columnFiltering.getFilter(LASTEXEC_DATA);
-			if (dates.contains("-")) {
-				String[] dateArray = dates.split("-");
-				Date startDate;
-				try {
-					startDate = new SimpleDateFormat(DATE_FORMAT).parse(dateArray[0].trim());
-					Date endDate = new SimpleDateFormat(DATE_FORMAT).parse(dateArray[1].trim());
-					query.setParameter(START_DATE, startDate, DateType.INSTANCE);
-					query.setParameter(END_DATE, nextDay(endDate), DateType.INSTANCE);
-				} catch (ParseException e) {
-					LOGGER.error(e.getMessage(), e);
-				}
-			} else {
-				Date date;
-				try {
-					date = new SimpleDateFormat(DATE_FORMAT).parse(dates.trim());
-					query.setParameter(START_DATE, date, DateType.INSTANCE);
-					query.setParameter(END_DATE, nextDay(date), DateType.INSTANCE);
-				} catch (ParseException e) {
-					LOGGER.error(e.getMessage(), e);
-				}
-			}
-		}
+		query.setParameter("suiteId", suiteId);
+		TestPlanFilteringHelper.setFilters(query, filtering, columnFiltering);
 
 		return query;
 	}
@@ -475,13 +355,6 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 		PagingUtils.addPaging(query, sorting);
 
 		return query.list();
-	}
-
-	private Date nextDay(Date day) {
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(day);
-		cal.add(Calendar.DAY_OF_YEAR, 1);
-		return cal.getTime();
 	}
 
 	@Override
@@ -537,6 +410,6 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 
 	@Override
 	public List<Long> findPlannedTestCasesIds(Long suiteId) {
-		return executeListNamedQuery("TestSuite.findReferencedTestCasesIds",  idParameter(suiteId));
+		return executeListNamedQuery("TestSuite.findReferencedTestCasesIds", idParameter(suiteId));
 	}
 }
