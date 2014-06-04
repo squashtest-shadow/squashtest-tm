@@ -23,9 +23,8 @@ require([ "common" ], function() {
 
 	require([ "jquery", "underscore", "app/pubsub", "squash.basicwidgets", "contextual-content-handlers",
 			"jquery.squash.fragmenttabs", "bugtracker/bugtracker-panel", "workspace.event-bus", "iteration-management",
-			"app/ws/squashtm.workspace" ], function($, _, ps, basicwidg, contentHandlers, Frag, bugtracker, eventBus,
+			"app/ws/squashtm.workspace", "test-automation/auto-execution-buttons-panel" ], function($, _, ps, basicwidg, contentHandlers, Frag, bugtracker, eventBus,
 			itermanagement, WS) {
-
 
 		// *********** event handler ***************
 
@@ -52,7 +51,7 @@ require([ "common" ], function() {
 		console.log(document.eventsQueue);
 
 		// this is executed on each fragment load
-		ps.subscribe("refresh.iteration", function() {
+		ps.subscribe("reload.iteration", function() {
 			var config = _.extend({}, squashtm.page);
 
 			config = _.defaults(config, {
@@ -61,10 +60,7 @@ require([ "common" ], function() {
 				hasFields : false
 			});
 
-			if (config.isFullPage) {
-				WS.init();
-			}
-
+			WS.init();
 			basicwidg.init();
 
 			var nameHandler = contentHandlers.getSimpleNameHandler();

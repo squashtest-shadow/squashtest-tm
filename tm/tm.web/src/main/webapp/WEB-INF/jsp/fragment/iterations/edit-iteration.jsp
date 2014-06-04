@@ -155,15 +155,15 @@
 	</c:if>
 </div>
 
-<div id="iteration-toolbar" class="toolbar-class ui-corner-all ">
+<div id="iteration-toolbar" class="toolbar-class ui-corner-all cf">
 	<div class="toolbar-information-panel">
 		<div id="general-informations-panel">
 			<comp:general-information-panel auditableEntity="${iteration}" entityUrl="${iterationUrl}"/>
 		</div>
 	</div>
-	<div class="toolbar-button-panel">
-		<c:if test="${ executable && iteration.project.testAutomationEnabled }">
-			<comp:execute-auto-button url="${ iterationUrl }" testPlanTableId="iteration-test-plans-table"/>
+	<div class="toolbar-button-panel btn-toolbar right">
+		<c:if test="${ true or executable && iteration.project.testAutomationEnabled }">
+			<comp:execute-auto-button url="${ iterationUrl }" />
 		
 		</c:if>
 		<c:if test="${ writable }">
@@ -298,7 +298,7 @@
 	<%-- ------------------ test plan ------------------------------ --%>
 	
 	<it:iteration-test-plan-panel iteration="${iteration}" assignableUsers="${assignableUsers}" weights="${weights}" modes="${modes}" statuses="${statuses}"
-								  linkable="${linkable}"   editable="${writable}"  executable="${executable}" reorderable="${linkable}"/>
+								  linkable="${linkable}"   editable="${writable}"  executable="${true or executable}" reorderable="${linkable}"/>
 	
 	<%-- ------------------ /test plan ----------------------------- --%>
 
@@ -340,7 +340,7 @@
 </div>
 </csst:jq-tab>
 <%------------------------------------------automated suite overview --------------------------------------------%>
-<c:if test="${ executable && iteration.project.testAutomationEnabled }">		
+<c:if test="${ true or executable && iteration.project.testAutomationEnabled }">		
 	<comp:automated-suite-overview-popup />
 	</c:if>
 	<%------------------------------------------/automated suite overview --------------------------------------------%>
@@ -348,7 +348,7 @@
 
  <f:message key="tabs.label.issues" var="tabIssueLabel"/>
 <script type="text/javascript">
-	publish("refresh.iteration");
+	publish("reload.iteration");
 	if (!squashtm.page.isFullPage) {
 		require(["common"], function() {
 			require(["iteration-page"], function() {/*noop*/});

@@ -160,14 +160,14 @@
 			<comp:general-information-panel auditableEntity="${testSuite}" />
 		</div>
 	</div>
-	<div class="btn-toolbar right">
+	<div class="toolbar-button-panel btn-toolbar right">
 		<c:if test="${ executable }">
 			<div id="test-suite-exec-btn-group" class="btn-group" data-content-url="${ testSuiteExecButtonsUrl }">
 				<comp:test-suite-execution-button testSuiteId="${ testSuite.id }"
 					statisticsEntity="${ statistics }" />
 			</div>
-			<c:if test="${ testSuite.iteration.project.testAutomationEnabled }">
-			<comp:execute-auto-button url="${ testSuiteUrl }" testPlanTableId="test-suite-test-plans-table"/>
+			<c:if test="${ true or testSuite.iteration.project.testAutomationEnabled }">
+			<comp:execute-auto-button url="${ testSuiteUrl }" />
 			</c:if>
 		</c:if>
 		<c:if test="${ writable }">
@@ -256,7 +256,7 @@
 </div>
 </csst:jq-tab>
 <%------------------------------------------automated suite overview --------------------------------------------%>
-<c:if test="${ testSuite.iteration.project.testAutomationEnabled }">
+<c:if test="${ true or testSuite.iteration.project.testAutomationEnabled }">
 	<comp:automated-suite-overview-popup />
 </c:if>
 <%------------------------------------------/automated suite overview --------------------------------------------%>

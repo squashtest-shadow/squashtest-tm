@@ -91,7 +91,7 @@
 	</c:if>
 				
 	<script>
-	publish("refresh.exec-btns-panel");
+	publish("reload.exec-btns-panel");
 	</script>
 
 </div>

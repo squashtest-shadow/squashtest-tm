@@ -21,8 +21,8 @@
 require([ "common" ], function() {
 	require(["jquery", "app/pubsub", "squash.translator", "squash.basicwidgets", "workspace.event-bus",
 	         "app/ws/squashtm.workspace", "contextual-content-handlers", "jquery.squash.fragmenttabs",
-	         "bugtracker/bugtracker-panel", "test-suite-management", "test-suite/execution-buttons-panel", "jquery.cookie"],
-			function($, ps, messages, basicwidg, eventBus, WS, contentHandlers, Frag, bugtracker, tsmanagement, ExecutionButtonsPanel){
+	         "bugtracker/bugtracker-panel", "test-suite-management", "test-suite/execution-buttons-panel", "test-automation/auto-execution-buttons-panel", "jquery.cookie"],
+			function($, ps, messages, basicwidg, eventBus, WS, contentHandlers, Frag, bugtracker, tsmanagement){
 		"use strict";
 
 		$(document).on("click", "#duplicate-test-suite-button", function(){
@@ -81,10 +81,6 @@ require([ "common" ], function() {
 			eventBus.trigger("context.content-modified");
 		};
 
-		ps.subscribe("refresh.exec-btns-panel", function() {
-			new ExecutionButtonsPanel();
-		});
-
 		ps.subscribe("reload.test-suite", function(){
 			var config = _.extend({}, squashtm.page);
 
@@ -94,10 +90,7 @@ require([ "common" ], function() {
 				hasFields : false
 			});
 
-			if (config.isFullPage) {
-				WS.init();
-			}
-
+			WS.init();
 			basicwidg.init();
 
 			// registers contextual events

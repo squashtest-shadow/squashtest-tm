@@ -20,9 +20,8 @@
  */
 /**
  * Controller for test-suite-execution-button.tag
- * Clients should subscribe to the "refresh.exec-btns-panel" event usinbg pubsub and perform
- * <pre>new ExecutionButtonsPanel()</pre>
- * to initialize the panel. *
+ * Clients should require this module. The module subscribes to the "reload.exec-btns-panel" event
+ * to initialize the panel.
  */
 define(["jquery", "../app/pubsub", "jquery.squash.buttonmenu"], function($, ps) {
 	"use strict";
@@ -32,7 +31,7 @@ define(["jquery", "../app/pubsub", "jquery.squash.buttonmenu"], function($, ps) 
 	}
 
 	function checkTestSuiteExecutionDoable() {
-		console && console.log && console.log("checkTestSuiteExecutionDoable");
+		console.log("checkTestSuiteExecutionDoable");
 		return $.ajax({
 			type : 'post',
 			data : {
@@ -45,7 +44,7 @@ define(["jquery", "../app/pubsub", "jquery.squash.buttonmenu"], function($, ps) 
 	}
 
 	function classicExecution() {
-		console && console.log && console.log("classicExecution");
+		console.log("classicExecution");
 		var data = {
 			'optimized' : 'false',
 			'mode' : 'start-resume'
@@ -59,7 +58,7 @@ define(["jquery", "../app/pubsub", "jquery.squash.buttonmenu"], function($, ps) 
 	}
 
 	function optimizedExecution() {
-		console && console.log && console.log("optimizedExecution");
+		console.log("optimizedExecution");
 		$('#start-optimized-button').trigger('click');
 	}
 
@@ -71,8 +70,7 @@ define(["jquery", "../app/pubsub", "jquery.squash.buttonmenu"], function($, ps) 
 		checkTestSuiteExecutionDoable().done(classicExecution);
 	});
 
-
-	return function() {
+	ps.subscribe("reload.exec-btns-panel", function() {
 		// ****** start-resume menu ********
 		var $startResumeBtn = $("#start-resume-button");
 		if ($startResumeBtn.length>0){
@@ -92,20 +90,20 @@ define(["jquery", "../app/pubsub", "jquery.squash.buttonmenu"], function($, ps) 
 			var $restartDialog = $("#confirm-restart-dialog");
 
 			$("#restart-suite-optimized-button").on("click", function(){
-				console && console.log && console.log("click", "#restart-suite-optimized-button");
+				console.log("click", "#restart-suite-optimized-button");
 				$restartDialog.data('restart-mode', 'optimized');
 				$restartDialog.confirmDialog('open');
 			});
 
 			$("#restart-suite-classic-button").on("click", function(){
-				console && console.log && console.log("click", "#restart-suite-classic-button");
+				console.log("click", "#restart-suite-classic-button");
 				$restartDialog.data('restart-mode', 'classic');
 				$restartDialog.confirmDialog('open');
 			});
 
 			$restartDialog.confirmDialog({
 				confirm : function (){
-					console && console.log && console.log("confirmDialog");
+					console.log("confirmDialog");
 					$.ajax({
 						type : 'delete',
 						url : "${ deleteOnRestartUrl }"
@@ -125,5 +123,5 @@ define(["jquery", "../app/pubsub", "jquery.squash.buttonmenu"], function($, ps) 
 				}
 			});
 		}
-	};
+	});
 });
