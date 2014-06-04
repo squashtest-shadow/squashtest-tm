@@ -371,7 +371,7 @@ public class GenericProjectController {
 		projectManager.unbindTestAutomationProject(projectId, taProjectId);
 	}
 
-	@RequestMapping(value = "/available-ta-projects", method = RequestMethod.GET)
+	@RequestMapping(value = PROJECT_ID_URL+"/available-ta-projects", method = RequestMethod.GET)
 	@ResponseBody
 	public Collection<TestAutomationProject> listProjectsOnServer(@PathVariable long projectId)
 			throws BindException {
