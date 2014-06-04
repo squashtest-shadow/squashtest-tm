@@ -24,8 +24,7 @@
  - testAutomationURL : the url where to GET - POST - DELETE things.
  */
 define([ "jquery", "workspace.event-bus", "squash.translator", "squash.configmanager", "tree/plugins/plugin-factory",
-		"jquery.squash.formdialog", "squashtest/jquery.squash.popuperror", "jeditable" ], function($, eventBus, translator, confman, 
-		treefactory) {
+		"jquery.squash.formdialog", "jeditable" ], function($, eventBus, translator, confman, treefactory) {
 
 	
 	// ************* specific jeditable plugin ***************
@@ -100,9 +99,6 @@ define([ "jquery", "workspace.event-bus", "squash.translator", "squash.configman
 		var dialog = $("#ta-picker-popup");
 		
 		var tree = dialog.find(".structure-tree");
-
-		var error = dialog.find(".structure-error");
-		error.popupError();
 
 		// init
 
@@ -206,10 +202,11 @@ define([ "jquery", "workspace.event-bus", "squash.translator", "squash.configman
 				dialog.formDialog('close');
 
 			} catch (exception) {
+				var errmsg = exception;
 				if (exception == "no-selection") {
-					error.find("span").text(translator.get('test-case.testautomation.popup.error.noselect'));
+					errmsg = translator.get('test-case.testautomation.popup.error.noselect');
 				}
-				error.popupError('show');
+				dialog.formDialog('showError', errmsg);
 			}
 
 		};

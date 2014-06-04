@@ -75,10 +75,6 @@
 	 			<comp:waiting-pane/>		
 	 		</div>
 		
-			<div class="structure-error">
-				<span> </span>
-			</div>
-		
 			<div data-def="state=main" class="structure-treepanel has-standard-margin">
 				<div class="structure-tree"></div>		
 			</div>
