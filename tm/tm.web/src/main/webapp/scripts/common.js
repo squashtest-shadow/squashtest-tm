@@ -20,6 +20,13 @@
  */
 var CKEDITOR_BASEPATH = "/${bundle.contextPath}/scripts/ckeditor/";
 
+if (window.console === undefined) {
+	window.console = {};
+}
+if (window.console.log === undefined) {
+	window.console.log = function() {/*NOOP*/};
+}
+
 requirejs.config({
 			packages : [
 				"execution-processing",
