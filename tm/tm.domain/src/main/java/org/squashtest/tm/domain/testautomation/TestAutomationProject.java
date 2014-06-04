@@ -149,7 +149,10 @@ public class TestAutomationProject {
 		super();
 	}
 
+	public TestAutomationProject(String jobName) {
+		this(jobName, jobName);
 
+	}
 	public TestAutomationProject(String jobName, String label) {
 		super();
 		this.jobName = jobName;
@@ -159,11 +162,6 @@ public class TestAutomationProject {
 	public TestAutomationProject(String jobName, String label, TestAutomationServer server) {
 		this(jobName, label);
 		this.server = server;
-	}
-
-	public TestAutomationProject(String jobName, String label, GenericProject tmProject) {
-		this(jobName, label, tmProject.getTestAutomationServer());
-		this.tmProject = tmProject;
 	}
 
 	public TestAutomationProject(String jobName, TestAutomationServer server) {

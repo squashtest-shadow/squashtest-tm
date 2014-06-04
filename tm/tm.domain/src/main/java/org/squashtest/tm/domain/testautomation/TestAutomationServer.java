@@ -108,6 +108,36 @@ public class TestAutomationServer {
 	@Column(name="DESCRIPTION")
 	private String description = "";
 
+	public TestAutomationServer(){
+		super();
+	}
+
+	public TestAutomationServer(String name){
+		super();
+		this.name = name;
+	}
+
+	public TestAutomationServer(Long id){
+		super();
+		this.id = id;
+	}
+
+
+
+	public TestAutomationServer(String name, URL baseURL, String login, String password) {
+		this(name);
+		this.baseURL = baseURL;
+		this.login = login;
+		this.password = password;
+	}
+
+
+
+	public TestAutomationServer(String name, URL baseURL, String login, String password, String kind) {
+		this(name, baseURL, login, password);
+		this.kind = kind;
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -179,47 +209,5 @@ public class TestAutomationServer {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
-
-
-	public TestAutomationServer(){
-		super();
-	}
-
-	public TestAutomationServer(String name){
-		super();
-		this.name = name;
-	}
-
-	public TestAutomationServer(Long id){
-		super();
-		this.id = id;
-	}
-
-
-
-	public TestAutomationServer(String name, URL baseURL, String login, String password) {
-		super();
-		this.name = name;
-		this.baseURL = baseURL;
-		this.login = login;
-		this.password = password;
-	}
-
-
-
-	public TestAutomationServer(String name, URL baseURL, String login, String password, String kind) {
-		super();
-		this.name = name;
-		this.baseURL = baseURL;
-		this.login = login;
-		this.password = password;
-		this.kind = kind;
-	}
-
-
-
-
-
 
 }

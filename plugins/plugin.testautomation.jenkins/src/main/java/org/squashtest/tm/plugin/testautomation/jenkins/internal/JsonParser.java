@@ -40,88 +40,88 @@ import org.squashtest.tm.service.testautomation.spi.UnreadableResponseException;
 
 
 public class JsonParser {
-	
+
 	private static final String DISABLED_COLOR_STRING = "disabled";
 
 	private ObjectMapper objMapper = new ObjectMapper();
-	
-	
-	
+
+
+
 	public Collection<TestAutomationProject> readJobListFromJson(String json){
-		
+
 		try {
-			
+
 			JobList list = objMapper.readValue(json, JobList.class);
-			
+
 			JobList filteredList = filterDisabledJobs(list);
-			
+
 			Collection<TestAutomationProject> projectsList = toProjectList(filteredList);
-			
+
 			return projectsList;
-			
-		} 
+
+		}
 		catch (JsonParseException e) {
 			throw new UnreadableResponseException(e);
-		} 
+		}
 		catch (JsonMappingException e) {
 			throw new UnreadableResponseException(e);
-		} 
+		}
 		catch (IOException e) {
 			throw new UnreadableResponseException(e);
-		} 
-		
+		}
+
 	}
-		
-	
+
+
 	public ItemList getQueuedListFromJson(String json){
 		return safeReadValue(json, ItemList.class);
 	}
-	
+
 	public BuildList getBuildListFromJson(String json){
 		return safeReadValue(json, BuildList.class);
 	}
-	
+
 	public TestList getTestListFromJson(String json){
 		return safeReadValue(json, TestList.class);
 	}
-	
+
 	public Build getBuildFromJson(String json){
 		return safeReadValue(json, Build.class);
 	}
-	
+
 	public String toJson(Object object){
 		try {
 			return objMapper.writeValueAsString(object);
-		} 
+		}
 		catch (JsonGenerationException e) {
 			throw new TestAutomationException("TestAutomationConnector : internal error, could not generate json", e);
-		} 
+		}
 		catch (JsonMappingException e) {
 			throw new TestAutomationException("TestAutomationConnector : internal error, could not generate json", e);
-		} 
+		}
 		catch (IOException e) {
 			throw new TestAutomationException("TestAutomationConnector : internal error, could not generate json", e);
 		}
 	}
-	
+
 	protected <R> R safeReadValue(String json, Class<R> clazz){
-	
+
 		try {
 			return objMapper.readValue(json, clazz);
-		} 
+		}
 		catch (JsonParseException e) {
 			throw new UnreadableResponseException("TestAutomationConnector : the response from the server couldn't be treated", e);
-		} 
+		}
 		catch (JsonMappingException e) {
 			throw new UnreadableResponseException("TestAutomationConnector : the response from the server couldn't be treated", e);
-		} 
+		}
 		catch (IOException e) {
 			throw new UnreadableResponseException("TestAutomationConnector : internal error :", e);
 		}
 
 	}
-	
-	
+
+
 	protected JobList filterDisabledJobs(JobList fullList){
 		JobList newJobList = new JobList();
 		for (Job job : fullList.getJobs()){
@@ -131,20 +131,20 @@ public class JsonParser {
 		}
 		return newJobList;
 	}
-	
-	
+
+
 	protected Collection<TestAutomationProject> toProjectList(JobList jobList){
-		
+
 		Collection<TestAutomationProject> projects = new ArrayList<TestAutomationProject>();
-		
+
 		for (Job job : jobList.getJobs()){
-			projects.add(new TestAutomationProject(job.getName(), null));
+			projects.add(new TestAutomationProject(job.getName()));
 		}
-		
+
 		return projects;
-		
-		
+
+
 	}
 
-	
+
 }

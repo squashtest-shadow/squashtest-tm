@@ -20,21 +20,21 @@
  */
 package org.squashtest.tm.service.internal.testautomation.service
 
-import org.squashtest.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.tm.service.internal.testautomation.TestAutomationConnectorRegistry;
-import org.squashtest.tm.service.internal.testautomation.TestAutomationProjectManagerServiceImpl;
-import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService;
-import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector;
+import org.squashtest.tm.domain.testautomation.TestAutomationProject
+import org.squashtest.tm.domain.testautomation.TestAutomationServer
+import org.squashtest.tm.service.internal.testautomation.TestAutomationConnectorRegistry
+import org.squashtest.tm.service.internal.testautomation.TestAutomationProjectManagerServiceImpl
+import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService
+import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector
 
 import spock.lang.Specification
 
 class TestAutomationProjectManagerServiceTest extends Specification {
 
 
-	TestAutomationConnectorRegistry connectorRegistry;
+	TestAutomationConnectorRegistry connectorRegistry
 
-	TestAutomationProjectManagerServiceImpl service;
+	TestAutomationProjectManagerServiceImpl service
 
 	def setup(){
 		connectorRegistry = Mock()
@@ -45,9 +45,9 @@ class TestAutomationProjectManagerServiceTest extends Specification {
 	def "should return a list of projects refering to a server object"(){
 
 		given :
-		def proj1 = new TestAutomationProject("proj1", null)
-		def proj2 = new TestAutomationProject("proj2", null)
-		def proj3 = new TestAutomationProject("proj3", null)
+		def proj1 = new TestAutomationProject("proj1")
+		def proj2 = new TestAutomationProject("proj2")
+		def proj3 = new TestAutomationProject("proj3")
 
 		and :
 		TestAutomationConnector connector = Mock()
