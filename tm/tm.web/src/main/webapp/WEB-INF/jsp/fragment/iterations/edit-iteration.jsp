@@ -40,36 +40,17 @@
 
 <comp:datepicker-manager locale="${squashlocale}" />
 
-<c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
 <s:url var="iterationUrl" value="/iterations/{iterId}">
 	<s:param name="iterId" value="${iteration.id}" />
 </s:url>
 <s:url var="iterationPlanningUrl" value="/iterations/{iterId}/planning">
 	<s:param name="iterId" value="${iteration.id}" />
 </s:url>
-<s:url var="iterationTestPlanUrl" value="/iterations/{iterId}/test-plan">
-	<s:param name="iterId" value="${iteration.id}" />
-</s:url>
-
 <s:url var="iterationDashboardStatisticsUrl" value="/iterations/{iterId}/dashboard-statistics">
 	<s:param name="iterId" value="${iteration.id}" />
 </s:url>
 
 <c:url var="iterationStatisticsPrintUrl" value="/iterations/${iteration.id}/dashboard"/>
-
-<s:url var="testPlanManagerUrl"
-	value="/iterations/{iterId}/test-plan-manager">
-	<s:param name="iterId" value="${iteration.id}" />
-</s:url>
-
-<c:url var="testCaseDetailsBaseUrl"
-	value="/test-case-libraries/1/test-cases" /><%-- FIXME this url looks wrong but not used where it's passed --%>
-
-<c:url var="workspaceUrl" value="/campaign-workspace/#" />
-
-<s:url var="updateTestCaseUrl" value="/iterations/{iterId}/test-plan/">
-	<s:param name="iterId" value="${iteration.id}" />
-</s:url>
 
 <s:url var="testSuitesUrl" value="/iterations/{iterId}/test-suites">
 	<s:param name="iterId" value="${iteration.id}" />
@@ -79,17 +60,18 @@
 	<s:param name="id" value="${iteration.id}" />
 </s:url>
 
-
-<c:url var="customFieldsValuesURL" value="/custom-fields/values" />
+<s:url var="customFieldsValuesURL" value="/custom-fields/values">
+  <s:param name="boundEntityId" value="${iteration.boundEntityId}" />
+  <s:param name="boundEntityType" value="${iteration.boundEntityType}" />
+</s:url>
 
 <f:message var='deleteMessageStart' key='dialog.label.delete-node.label.start'/>
 <f:message var="deleteMessage" key="dialog.label.delete-nodes.iteration.label" />
 <f:message var='deleteMessageCantBeUndone' key='dialog.label.delete-node.label.cantbeundone'/>
 <f:message var='deleteMessageConfirm' key='dialog.label.delete-node.label.confirm'/>
 
-<c:set var="servContext" value="${ pageContext.servletContext.contextPath }"/>
-
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
+<%-- should be programmatically stuffed into page context --%>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE"
 	domainObject="${ iteration }">
 	<c:set var="writable" value="${ true }" />
@@ -121,19 +103,29 @@
 	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 
+<script type="text/javascript">
+	squashtm = squashtm || {};
+	squashtm.page = squashtm.page || {};
+	var config = squashtm.page;
+	config.isFullPage = ${ not empty param.isInfoPage and param.isInfoPage };
+	config.hasFields = ${ hasCUF };
+	config.hasBugtracker = ${ iteration.project.bugtrackerConnected };
+	config.identity = { resid: ${iteration.id}, restype : "iterations" };
+	config.bugtracker = {url: "${btEntityUrl}", label: "${tabIssueLabel}" };
+	config.customFields = { url: "${customFieldsValuesURL}" };
+</script>
 
 <div
-	class="ui-widget-header ui-state-default ui-corner-all fragment-header">
-	<div style="float: left; height: 100%;">
+	class="ui-widget-header ui-state-default ui-corner-all fragment-header ctx-title">
+	<div>
 		<h2>
-			<span><f:message key="iteration.header.title" />&nbsp;:&nbsp;</span><a
-				id="iteration-name" href="${ iterationUrl }/info"><c:out
-					value="${ iteration.name }" escapeXml="true" />
+			<span><f:message key="iteration.header.title" />&nbsp;:&nbsp;</span>
+            <a id="iteration-name" href="${ iterationUrl }/info">
+              <c:out value="${ iteration.name }" escapeXml="true" />
 			</a>
 		</h2>
 	</div>
 
-	<div class="unsnap"></div>
 	<c:if test="${ writable }">
 		<pop:popup id="rename-iteration-dialog"
 			titleKey="dialog.rename-iteration.title" isContextual="true"
@@ -144,7 +136,7 @@
 				'${ label }': function() {
 					var url = "${ iterationUrl }";
 					<jq:ajaxcall url="url" dataType="json" httpMethod="POST"
-					useData="true" successHandler="renameIterationSuccess">				
+					useData="true" successHandler="squashtm.handlers.renameIterationSuccess">				
 						<jq:params-bindings newName="#rename-iteration-name" />
 					</jq:ajaxcall>					
 				},			
@@ -356,87 +348,12 @@
 
  <f:message key="tabs.label.issues" var="tabIssueLabel"/>
 <script type="text/javascript">
-
-	var identity = { resid : ${iteration.id}, restype : "iterations"  };
-	
-	
-	require(["common"], function(){
-			require(["jquery", "squash.basicwidgets", "contextual-content-handlers", 
-			         "jquery.squash.fragmenttabs", "bugtracker", "workspace.event-bus", 
-			         "iteration-management", "app/ws/squashtm.workspace" ], 
-					function($, basicwidg, contentHandlers, Frag, bugtracker, eventBus, itermanagement, WS){
-		$(function(){
-                 WS.init();
-				basicwidg.init();
-				
-				// *********** event handler ***************
-				
-				var nameHandler = contentHandlers.getSimpleNameHandler();
-				
-				nameHandler.identity = identity;
-				nameHandler.nameDisplay = "#iteration-name";
-
-				
-				// todo : uniform the event handling.
-				itermanagement.initEvents();
-				
-				//****** tabs configuration *******
-				
-				var fragConf = {
-					active : 2,
-					cookie : "iteration-tab-cookie",
-					activate : function(event, ui){
-						if (ui.newPanel.is('#dashboard-iteration')){
-							eventBus.trigger('dashboard.appear');
-						}
-					}
-				};
-				Frag.init(fragConf);
-				
-				<c:if test="${iteration.project.bugtrackerConnected}">
-				bugtracker.btPanel.load({
-					url : "${btEntityUrl}",
-					label : "${tabIssueLabel}"
-				});
-				</c:if>
-				
-				<c:if test="${hasCUF}">
-				<%-- loading the custom field panel --%>
-				$("#iteration-custom-fields").load("${customFieldsValuesURL}?boundEntityId=${iteration.boundEntityId}&boundEntityType=${iteration.boundEntityType}"); 				
-				</c:if>	
-				
-			 	squashtm.execution = squashtm.execution || {};
-			 	squashtm.execution.refresh = $.proxy(function(){
-			 		$("#iteration-test-plans-table").squashTable().refresh();
-			 	}, window);
-			 	
-			 	// ********** rename popup ***********
-			 	
-				$("#rename-iteration-dialog").bind("dialogopen",
-					function(event, ui) {
-						var name = $.trim($('#iteration-name').text());
-						$("#rename-iteration-name").val(name);
-
-				});
-		
-				// ********** dashboard **************
-				
-				itermanagement.initDashboardPanel({
-					master : '#dashboard-master',
-					cacheKey : 'it${iteration.id}'
-				});	
-				
-			});
+	if (!squashtm.page.isFullPage) {
+		require(["common"], function() {
+			require(["iteration-page"], function() {/*noop*/});
 		});
-	});
-
-
-
-	/* renaming success handler */
-	function renameIterationSuccess(data) {
-		squashtm.workspace.eventBus.trigger('node.rename', { identity : identity, newName : data.newName});		
 	}
-	
+	publish("refresh.iteration");
 </script>
 
 

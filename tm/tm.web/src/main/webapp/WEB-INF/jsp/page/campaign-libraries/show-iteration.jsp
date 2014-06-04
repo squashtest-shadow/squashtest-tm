@@ -25,7 +25,7 @@
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
-<layout:info-page-layout titleKey="squashtm.library.test-case.title" highlightedWorkspace="campaign" isSubPaged="true">
+<layout:info-page-layout titleKey="squashtm.library.test-case.title" highlightedWorkspace="campaign" isSubPaged="true" main="iteration-page">
 	<jsp:attribute  name="head">	
 		<comp:sq-css name="squash.purple.css" />
 	</jsp:attribute>
