@@ -151,6 +151,8 @@ define([ "jquery","backbone", "jeditable.selectJEditable", "./AddTAProjectsDialo
 							self.onChangeServerComplete);
 					this.listenTo(self.popups.confirmChangePopup, "confirmChangeServerPopup.confirm.fail",
 							self.onChangeServerComplete);
+					this.onBindSuccess = $.proxy(this._onBindSuccess, this);
+					this.listenTo(self.popups.bindPopup, "bindTAProjectPopup.confirm.success", self.onBindSuccess);
 				},
 
 				events : {
@@ -159,7 +161,9 @@ define([ "jquery","backbone", "jeditable.selectJEditable", "./AddTAProjectsDialo
 				openBindPopup : function() {
 					this.popups.bindPopup.show();
 				},
-				
+				_onBindSuccess : function(){
+					this.table.refresh();
+				},
 				//when the select jeditable popup completes we change the server's select-jeditable status accordingly.
 				_onChangeServerComplete : function(newServerId) {
 					this.selectServer.setValue(newServerId);

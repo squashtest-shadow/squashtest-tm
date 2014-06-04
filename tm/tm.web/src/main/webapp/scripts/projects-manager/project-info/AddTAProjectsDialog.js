@@ -31,18 +31,17 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "underscore", "jq
 			var self = this;
 			// properties
 			this.selectedServerId = conf.TAServerId;
-			this.serverHasChanged = true;
+			this.updateProjectList = true;
 			this.projecUrl = conf.tmProjectURL;
 			// initialize
-			this.$el.formDialog({
-				height : 500
-			});
+			this.$el.formDialog();
 			this.fatalError = this.$(".ta-projectsadd-fatalerror").popupError();
 			this.error = this.$(".ta-projectsadd-error").popupError();
 			// methods bound to this
 			this.manageFatalError = $.proxy(this._manageFatalError, this);
 			this.onChangeServerConfirmed = $.proxy(this._onChangeServerConfirmed, this);
 			this.buildAndDisplayProjectList = $.proxy(this._buildAndDisplayProjectList, this);
+			this.showErrorMesage = $.proxy(this._showErrorMesage, this);
 		},
 
 		events : {
@@ -50,43 +49,80 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "underscore", "jq
 			"formdialogcancel" : "cancel",
 			"formdialogopen" : "open"
 		},
-		_onChangeServerConfirmed : function(newSelectedServer) {
-			if (newSelectedServer == this.selectedServerId) {
-				return;
-			} else {
-				this.selectedServerId = newSelectedServer;
-				this.serverHasChanged = true;
-			}
-		},
 		open : function() {
 			var self = this;
-			this.$el.formDialog('setState', 'pleasewait');
-			if (this.serverHasChanged) {
-				$.ajax(
-						{
-							url : self.projecUrl + "/available-ta-projects",
-							type : "get"
+			if (this.updateProjectList) {
+				this.$el.formDialog('setState', 'pleasewait');
+				$.ajax({
+					url : self.projecUrl + "/available-ta-projects",
+					type : "get"
 
-						}).done(self.buildAndDisplayProjectList).fail(self.manageFatalError);
+				}).done(self.buildAndDisplayProjectList).fail(self.manageFatalError);
+				this.updateProjectList = false;
 			}
 		},
-		_manageFatalError : function(json) {
-			var message = "";
-			try {
-				message = WTF.getErrorMessage(json);
-				this.fatalError.find('span').text(message);
-			} catch (parseException) {
-				message = json.responseText;
-				this.fatalError.find('span').html(message);
+		confirm : function() {
+			var self = this;
+			// find checked
+			var checked = this.$el.find(".ta-project-bind-listdiv input:checkbox:checked");
+			if (checked.length == 0) {
+				var message = squashtm.app.messages["message.project.bindJob.noneChecked"];
+				this.showErrorMesage(message);
+				return;
 			}
-			
-			this.fatalError.popupError('show');
-		},
+			// map checkbox values to tm label
+			var tmLabels = [];
+			var hasDuplicateTmLabel = false;
+			var datas = _.map(checked, function(item) {
+				var $item = $(item);
+				var row = $item.parents("tr")[0];
+				var input = $(row).find("td.ta-project-tm-label input")[0];
+				var tmLabel = $(input).val();
+				// checks for duplicate tm labels
+				if (!hasDuplicateTmLabel) {
+					if (_.contains(tmLabels, tmLabel)) {
+						hasDuplicateTmLabel = true;
+					} else {
+						tmLabels.push(tmLabel);
+					}
+				}
+				return {
+					jobName : $item.val(),
+					label : tmLabel
+				};
+			});
+			if (hasDuplicateTmLabel) {
+				// show error message
+				var message = squashtm.app.messages["message.duplicatelabelForTAProjects"];
+				this.showErrorMesage(message);
+			} else {
+				// send ajax
+				$.ajax({
+					url : self.projecUrl + "/test-automation-projects/new",
+					type : "post",
+					contentType : 'application/json',
+					dataType : 'json',
+					global : false,
+					data : JSON.stringify(datas)
+				}).done(function() {
+					self.trigger("bindTAProjectPopup.confirm.success");
+					self.updateProjectList = true;
+					self.$el.formDialog('close');
+				}).fail(function(xhr) {
+					self.trigger("bindTAProjectPopup.confirm.failure");
+					self.manageFatalError(xhr);
 
-		_buildAndDisplayProjectList : function(json) {
-			this.buildProjectList(json);
-			this.bindProjectListEvents();
-			this.$el.formDialog('setState', 'main');
+				});
+
+			}
+
+		},
+		cancel : function() {
+			this.trigger("bindTAProjectPopup.cancel");
+			this.$el.formDialog('close');
+		},
+		show : function() {
+			this.$el.formDialog("open");
 		},
 
 		buildProjectList : function(projectList) {
@@ -132,72 +168,44 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "underscore", "jq
 			}
 		},
 
-		confirm : function() {
-			var self = this;
-			// find checked
-			var checked = this.$el.find(".ta-project-bind-listdiv input:checkbox:checked");
-			// map checkbox values to tm label
-			var tmLabels = [];
-			var hasDuplicateTmLabel = false;
-			var datas = _.map(checked, function(item) {
-				var $item = $(item);
-				var row = $item.parents("tr")[0];
-				var input = $(row).find("td.ta-project-tm-label input")[0];
-				var tmLabel = $(input).val();
-				// checks for duplicate tm labels
-				if (!hasDuplicateTmLabel) {
-					if (_.contains(tmLabels, tmLabel)) {
-						hasDuplicateTmLabel = true;
-					} else {
-						tmLabels.push(tmLabel);
-					}
-				}
-				return {
-					jobName : $item.val(),
-					label : tmLabel
-				};
-			});
-			if (hasDuplicateTmLabel) {
-				// show error message
-				var message = squashtm.app.messages["message.duplicatelabelForTAProjects"];
-				this.fatalError.find('span').text(message);
-				this.fatalError.popupError('show');
-			} else {
-				// send ajax
-				$.ajax({
-					url : self.projecUrl + "/test-automation-projects/new",
-					type : "post",
-					contentType : 'application/json',
-					dataType : 'json',
-					global : false,
-					data : JSON.stringify(datas)
-				}).done(function() {
-					self.trigger("bindTAProjectPopup.confirm.success");
-					self.$el.formDialog('close');
-				}).fail(function(xhr) {
-					self.trigger("bindTAProjectPopup.confirm.failure");
-					self.manageFatalError(xhr);
-
-				});
-
-			}
-
-		},
-		cancel : function() {
-			this.trigger("bindTAProjectPopup.cancel");
-			this.$el.formDialog('close');
-		},
-		show : function() {
-			this.$el.formDialog("open");
-		},
 		setParentPanel : function(parentPanel) {
 			var self = this;
 			this.parentPanel = parentPanel;
 			// event listening
 			this.listenTo(self.parentPanel.popups.confirmChangePopup, "confirmChangeServerPopup.confirm.success",
 					self.onChangeServerConfirmed);
-		}
+		},
+		_onChangeServerConfirmed : function(newSelectedServer) {
+			if (newSelectedServer == this.selectedServerId) {
+				return;
+			} else {
+				this.selectedServerId = newSelectedServer;
+				this.updateProjectList = true;
+			}
+		},
+		_manageFatalError : function(json) {
+			var message = "";
+			try {
+				message = WTF.getErrorMessage(json);
+			} catch (parseException) {
+				message = json.responseText;
+			}
+			this.showErrorMessage(message);
 
+		},
+		_showErrorMesage : function(message) {
+			this.fatalError.find('span').text(message);
+			this.fatalError.popupError('show');
+		},
+		_buildAndDisplayProjectList : function(json) {
+			if (json.length > 0) {
+				this.buildProjectList(json);
+				this.bindProjectListEvents();
+				this.$el.formDialog('setState', 'main');
+			} else {
+				this.$el.formDialog('setState', 'noTAProjectAvailable');
+			}
+		}
 	});
 	return BindPopup;
 });
