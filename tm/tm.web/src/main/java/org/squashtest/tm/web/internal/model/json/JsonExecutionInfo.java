@@ -23,7 +23,7 @@ package org.squashtest.tm.web.internal.model.json;
 import java.net.URL;
 import java.util.Date;
 
-import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
+import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 
 public class JsonExecutionInfo {
@@ -51,7 +51,7 @@ public class JsonExecutionInfo {
 	public JsonExecutionInfo(Date executedOn, String executedBy,
 			ExecutionStatus executionStatus, ExecutionStatus automatedStatus, URL resultURL) {
 		super();
-		this.executedOn = IsoDateUtils.formatIso8601DateTime(executedOn);
+		this.executedOn = DateUtils.formatIso8601DateTime(executedOn);
 		this.executedBy = executedBy;
 		this.executionStatus = (executionStatus != null) ? executionStatus.toString() : null;
 		this.automatedStatus = (automatedStatus != null) ? automatedStatus.toString() : null;

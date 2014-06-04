@@ -27,7 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.web.util.HtmlUtils;
-import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
+import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.users.User;
@@ -129,7 +129,7 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 		res.put("status",item.getExecutionStatus().getCanonicalStatus());	// as of issue 2956, we now restrict the status to the canonical status only
 		res.put("assignee-id", assigneeId);
 		res.put("assignee-login", assigneeLogin);
-		res.put("last-exec-on", IsoDateUtils.formatIso8601DateTime(item.getLastExecutedOn()));
+		res.put("last-exec-on", DateUtils.formatIso8601DateTime(item.getLastExecutedOn()));
 		res.put("is-tc-deleted", item.isTestCaseDeleted());
 		res.put(DataTableModelConstants.DEFAULT_EMPTY_EXECUTE_HOLDER_KEY, " ");
 		res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");

@@ -30,7 +30,7 @@ import java.util.Map;
 import org.springframework.util.Assert;
 import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.api.report.form.InputType;
-import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
+import org.squashtest.tm.core.foundation.lang.DateUtils;
 
 /**
  * @author Gregory
@@ -58,7 +58,7 @@ class DateEntryConverter implements SimpleEntryConverter {
 
 	private Date parseDate(String raw) {
 		try {
-			return IsoDateUtils.parseIso8601Date(raw);
+			return DateUtils.parseIso8601Date(raw);
 		} catch (ParseException e) {
 			throw new InconsistentDateFormatException(raw, e);
 		}

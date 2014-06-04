@@ -50,7 +50,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
+import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
@@ -263,11 +263,11 @@ public class IterationModificationController {
 	 * returns null if the string is empty, or a date otherwise. No check regarding the actual content of strDate.
 	 */
 	private Date strToDate(String strDate) {
-		return IsoDateUtils.millisecondsToDate(strDate);
+		return DateUtils.millisecondsToDate(strDate);
 	}
 
 	private String dateToStr(Date date) {
-		return IsoDateUtils.dateToMillisecondsAsString(date);
+		return DateUtils.dateToMillisecondsAsString(date);
 	}
 
 	@RequestMapping(value = PLANNING_URL, params = { "scheduledStart" })

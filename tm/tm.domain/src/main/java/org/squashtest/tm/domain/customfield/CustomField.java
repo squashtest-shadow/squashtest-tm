@@ -43,7 +43,7 @@ import org.hibernate.annotations.NamedQuery;
 import org.hibernate.validator.constraints.NotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
+import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.validation.constraint.HasDefaultAsRequired;
 
 /**
@@ -140,7 +140,7 @@ public class CustomField {
 		// TODO copypasta, slap this into utility class
 		if (this.inputType == InputType.DATE_PICKER) {
 			try {
-				return IsoDateUtils.parseIso8601Date(defaultValue);
+				return DateUtils.parseIso8601Date(defaultValue);
 			} catch (ParseException e) {
 				LOGGER.warn(e.getMessage(), e);
 			}
@@ -153,7 +153,7 @@ public class CustomField {
 		String dValue = defaultValue;
 		if (this.inputType == InputType.DATE_PICKER) {
 			try {
-				IsoDateUtils.parseIso8601Date(defaultValue);
+				DateUtils.parseIso8601Date(defaultValue);
 			} catch (ParseException e) {
 				dValue = "";
 			}

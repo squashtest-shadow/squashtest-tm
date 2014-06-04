@@ -29,16 +29,16 @@ import spock.lang.Specification;
  * @author Gregory Fouquet
  *
  */
-class IsoDateUtilsTest extends Specification {
+class DateUtilsTest extends Specification {
 	def "format(parse(#date)) should be identity function"() {
 		expect:
-		IsoDateUtils.formatIso8601Date(IsoDateUtils.parseIso8601Date("2013-01-02")) == "2013-01-02"
+		DateUtils.formatIso8601Date(DateUtils.parseIso8601Date("2013-01-02")) == "2013-01-02"
 	} 
 	def "format(parse(#datetime)) should be identity function"() {
 		given: 
 		TimeZone.setDefault(new SimpleTimeZone(4*3600*1000, "CUSTOM"))
 		
 		expect:
-		IsoDateUtils.formatIso8601DateTime(IsoDateUtils.parseIso8601DateTime("2013-01-02T12:59:20.125+0400")) == "2013-01-02T12:59:20.125+0400"
+		DateUtils.formatIso8601DateTime(DateUtils.parseIso8601DateTime("2013-01-02T12:59:20.125+0400")) == "2013-01-02T12:59:20.125+0400"
 	} 
 }

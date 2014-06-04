@@ -26,7 +26,7 @@ import java.util.Map;
 
 import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.commons.lang.StringUtils;
-import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
+import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.tm.domain.customfield.InputType;
@@ -138,7 +138,7 @@ class CustomFieldValidator {
 
 		case DATE_PICKER:
 			// if the weak check is not enough, swap for the string check
-			if (!IsoDateUtils.weakCheckIso8601Date(inputValue)) {
+			if (!DateUtils.weakCheckIso8601Date(inputValue)) {
 				String[] cufCodeArg = new String[] { inputCode };
 				check = new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_UNPARSABLE_DATE, cufCodeArg,
 						impactmsg, null);

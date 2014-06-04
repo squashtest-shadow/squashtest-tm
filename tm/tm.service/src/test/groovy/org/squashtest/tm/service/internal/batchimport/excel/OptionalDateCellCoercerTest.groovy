@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.junit.Test;
-import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
+import org.squashtest.tm.core.foundation.lang.DateUtils;
 
 import spock.lang.Specification;
 import spock.lang.Unroll;
@@ -51,7 +51,7 @@ class OptionalDateCellCoercerTest extends Specification {
 		where:
 		cellType 				| cellValue										| date
 		Cell.CELL_TYPE_BLANK	| ""											| null
-		Cell.CELL_TYPE_STRING	| "2012-05-08"									| IsoDateUtils.parseIso8601Date("2012-05-08");
-		Cell.CELL_TYPE_NUMERIC	| IsoDateUtils.parseIso8601Date("2017-05-18")	| IsoDateUtils.parseIso8601Date("2017-05-18")
+		Cell.CELL_TYPE_STRING	| "2012-05-08"									| DateUtils.parseIso8601Date("2012-05-08");
+		Cell.CELL_TYPE_NUMERIC	| DateUtils.parseIso8601Date("2017-05-18")	| DateUtils.parseIso8601Date("2017-05-18")
 	}
 }

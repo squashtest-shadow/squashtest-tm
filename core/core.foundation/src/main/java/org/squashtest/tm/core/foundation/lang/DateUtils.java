@@ -22,23 +22,27 @@ package org.squashtest.tm.core.foundation.lang;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class IsoDateUtils {
+public final class DateUtils {
 
 	private static final String ISO_DATE = "yyyy-MM-dd";
 	private static final String ISO_DATETIME = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
-	
+	public static final String DD_MM_YYYY_DATE = "dd/MM/yyyy";
+
 	private static final Pattern ISO_DATE_PATTERN = Pattern.compile("^([\\d]{4})-([\\d]{2})-([\\d]{2})$");
 
-	private IsoDateUtils() {
+	private DateUtils() {
 		super();
 	}
 
 	/**
-	 * Formats a date into a an ISO 8601 string. <strong>The date will be formatted using the jvm default timezone</strong>
+	 * Formats a date into a an ISO 8601 string. <strong>The date will be formatted using the jvm default
+	 * timezone</strong>
+	 * 
 	 * @param date
 	 * @return returns that date formatted according to the ISO 8601 Date (no time info)
 	 */
@@ -56,7 +60,9 @@ public final class IsoDateUtils {
 	}
 
 	/**
-	 * Formats a timestamp into a an ISO 8601 string. <strong>The date will be formatted using the jvm default timezone</strong>
+	 * Formats a timestamp into a an ISO 8601 string. <strong>The date will be formatted using the jvm default
+	 * timezone</strong>
+	 * 
 	 * @param date
 	 * @return returns that date formatted according to the ISO 8601 DateTime (with time and timezone info)
 	 */
@@ -68,55 +74,49 @@ public final class IsoDateUtils {
 		}
 	}
 
-	
-	
 	/**
 	 * Checks that the string parses as a four-digit year dash two-digit month dash two-digits day,
 	 * that the month is between 1 and 12 and the day between 0 and 31.
-	 * It won't check leap years etc. Potentially faster than #strongCheckIso8601Date but 
+	 * It won't check leap years etc. Potentially faster than #strongCheckIso8601Date but
 	 * is less secure.
 	 */
-	public static boolean weakCheckIso8601Date(String date){
+	public static boolean weakCheckIso8601Date(String date) {
 		boolean success;
-		
-		if (date == null){
+
+		if (date == null) {
 			success = false;
-		}
-		else{			
-			Matcher matcher =  ISO_DATE_PATTERN.matcher(date);
-			if (matcher.matches()){
+		} else {
+			Matcher matcher = ISO_DATE_PATTERN.matcher(date);
+			if (matcher.matches()) {
 				int month = Integer.parseInt(matcher.group(2));
 				int day = Integer.parseInt(matcher.group(3));
-				success = (month >0) && (month < 13) && (day > 0) && (day < 32);
-			}			
-			else{
+				success = (month > 0) && (month < 13) && (day > 0) && (day < 32);
+			} else {
 				success = false;
 			}
 		}
-		
+
 		return success;
 	}
-	
+
 	/**
-	 * full check of whether the date is a valid iso 8601 date or not. Potentially slower than 
+	 * full check of whether the date is a valid iso 8601 date or not. Potentially slower than
 	 * #weakCheckIso8601Date but safer.
 	 * 
 	 */
-	public static boolean strongCheckIso8601Date(String date){
-		if (date == null){
+	public static boolean strongCheckIso8601Date(String date) {
+		if (date == null) {
 			return false;
-		}
-		else{
-			try{
+		} else {
+			try {
 				parseIso8601Date(date);
 				return true;
-			}catch(ParseException e){
+			} catch (ParseException e) {
 				return false;
 			}
 		}
 	}
-	
-	
+
 	/**
 	 * @param strDate
 	 * @return the Date obtained when parsing the argument against pattern yyyy-MM-dd
@@ -151,6 +151,7 @@ public final class IsoDateUtils {
 	 * @param milliseconds
 	 * @return <code>null</code> if the string is empty, or a date otherwise. No check regarding the actual content of
 	 *         strDate.
+	 * @deprecated when you feel the urge to marshall a date into ms, consider using atom / iso instead
 	 */
 	public static Date millisecondsToDate(String milliseconds) {
 		Date newDate = null;
@@ -163,6 +164,12 @@ public final class IsoDateUtils {
 		return newDate;
 	}
 
+	/**
+	 * 
+	 * @param date
+	 * @return
+	 * @deprecated when you feel the urge to marshall a date into ms, consider using atom / iso instead
+	 */
 	public static String dateToMillisecondsAsString(Date date) {
 		if (date != null) {
 			return Long.valueOf(date.getTime()).toString();
@@ -171,4 +178,14 @@ public final class IsoDateUtils {
 		}
 	}
 
+	public static Date parseDdMmYyyyDate(String date) throws ParseException {
+		return parseDate(date, DD_MM_YYYY_DATE);
+	}
+
+	public static Date nextDay(Date day) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(day);
+		cal.add(Calendar.DAY_OF_YEAR, 1);
+		return cal.getTime();
+	}
 }

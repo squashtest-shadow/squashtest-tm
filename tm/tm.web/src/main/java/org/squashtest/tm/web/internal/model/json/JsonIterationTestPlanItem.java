@@ -22,7 +22,7 @@ package org.squashtest.tm.web.internal.model.json;
 
 import java.util.Date;
 
-import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
+import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.users.User;
 
@@ -65,7 +65,7 @@ public class JsonIterationTestPlanItem{
 	
 		
 	private String toISO8601(Date date){
-		return IsoDateUtils.formatIso8601DateTime(date);
+		return DateUtils.formatIso8601DateTime(date);
 	}
 
 	public long getId() {
