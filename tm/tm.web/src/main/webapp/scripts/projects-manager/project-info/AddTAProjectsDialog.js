@@ -42,6 +42,7 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "underscore", "jq
 			this.onChangeServerConfirmed = $.proxy(this._onChangeServerConfirmed, this);
 			this.buildAndDisplayProjectList = $.proxy(this._buildAndDisplayProjectList, this);
 			this.showErrorMesage = $.proxy(this._showErrorMesage, this);
+
 		},
 
 		events : {
@@ -174,6 +175,10 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "underscore", "jq
 			// event listening
 			this.listenTo(self.parentPanel.popups.confirmChangePopup, "confirmChangeServerPopup.confirm.success",
 					self.onChangeServerConfirmed);
+			// refresh popup on delete project
+			this.listenTo(self.parentPanel.popups.unbindPopup, "unbindTAProjectPopup.confirm.success", function() {
+				self.updateProjectList = true;
+			});
 		},
 		_onChangeServerConfirmed : function(newSelectedServer) {
 			if (newSelectedServer == this.selectedServerId) {

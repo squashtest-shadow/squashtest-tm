@@ -109,6 +109,9 @@ define([ "jquery","backbone", "jeditable.selectJEditable", "./AddTAProjectsDialo
 				el : "#ta-projects-unbind-popup",
 
 				initialize : function() {
+					this.confirmSuccess = $.proxy(this._confirmSuccess, this);
+					this.confirmFail = $.proxy(this._confirmFail, this);
+					
 					this.$el.formDialog();
 				},
 				events : {
@@ -118,11 +121,23 @@ define([ "jquery","backbone", "jeditable.selectJEditable", "./AddTAProjectsDialo
 				confirm : function() {
 					this.trigger("unbindTAProjectPopup.confirm");
 					var deletedId = this.$el.data('entity-id');
-					alert('Confirmed deletion of ' + deletedId + '!');
+					$.ajax({
+						url : squashtm.app.contextRoot + "/test-automation-projects/" + deletedId,
+						type : "delete"						
+					}).done(this.confirmSuccess).fail(this.confirmFail);
+				},
+				_confirmSuccess : function(){
+					this.trigger("unbindTAProjectPopup.confirm.success");
+					this.$el.formDialog("close");
+				},
+				_confirmFail : function(xhr){
+					this.trigger("unbindTAProjectPopup.confirm.fail");
+					WTF.handleUnknownTypeError(xhr);
+					this.$el.formDialog("close");
 				},
 				cancel : function() {
 					this.trigger("unbindTAProjectPopup.cancel");
-					alert('Canceled !');
+					this.$el.formDialog("close");
 				},
 				setParentPanel : function(parentPanel){
 					this.parentPanel = parentPanel;
@@ -151,8 +166,9 @@ define([ "jquery","backbone", "jeditable.selectJEditable", "./AddTAProjectsDialo
 							self.onChangeServerComplete);
 					this.listenTo(self.popups.confirmChangePopup, "confirmChangeServerPopup.confirm.fail",
 							self.onChangeServerComplete);
-					this.onBindSuccess = $.proxy(this._onBindSuccess, this);
-					this.listenTo(self.popups.bindPopup, "bindTAProjectPopup.confirm.success", self.onBindSuccess);
+					this.refreshTable = $.proxy(this._refreshTable, this);
+					this.listenTo(self.popups.bindPopup, "bindTAProjectPopup.confirm.success", self.refreshTable);
+					this.listenTo(self.popups.unbindPopup, "unbindTAProjectPopup.confirm.success", self.refreshTable);
 				},
 
 				events : {
@@ -161,7 +177,7 @@ define([ "jquery","backbone", "jeditable.selectJEditable", "./AddTAProjectsDialo
 				openBindPopup : function() {
 					this.popups.bindPopup.show();
 				},
-				_onBindSuccess : function(){
+				_refreshTable : function(){
 					this.table.refresh();
 				},
 				//when the select jeditable popup completes we change the server's select-jeditable status accordingly.

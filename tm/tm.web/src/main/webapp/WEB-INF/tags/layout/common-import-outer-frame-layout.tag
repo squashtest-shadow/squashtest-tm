@@ -83,7 +83,7 @@
 					<jsp:invoke fragment="titlePane"/>
 				</div>
 				<div class="snap-right">
-					<div class="unstyled-notification-pane">
+					<div class="unstyled notification-pane">
 						<layout:_ajax-notifications  cssClass="snap-right"/>					
 					<%-- 
 						note about the sticked </div><div> below : IT DOES MATTER

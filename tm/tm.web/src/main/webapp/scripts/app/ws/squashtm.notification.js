@@ -23,15 +23,17 @@
  */
 var squashtm = squashtm || {};
 
-define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.squash.messagedialog" ], function($, ps, translator, Forms) {
-	
+define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.squash.messagedialog" ], function($, ps,
+		translator, Forms) {
+
 	var _config = translator.get({
 		errorTitle : "popup.title.info",
-		infoTitle : "popup.title.error"});
+		infoTitle : "popup.title.error"
+	});
 
 	var _spinner = "#ajax-processing-indicator";
 	var _widgetsInitialized = false;
-	
+
 	function initWidgets() {
 		if (!_widgetsInitialized) {
 			_widgetsInitialized = true;
@@ -75,7 +77,7 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 	function showLegacyErrorMessage(fieldValidationError) {
 		var labelId = fieldValidationError.fieldName + '-error';
 		labelId = labelId.replace(".", "-").replace('[', '-').replace(']', '');// this is necessary because labelId is
-																				// used
+		// used
 		// as a css classname
 		var label = $('span.error-message.' + labelId);
 
@@ -104,12 +106,12 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 
 	function handleGenericResponseError(request) {
 		var showError = function() {
-			
+
 			var popup = window.open('about:blank', 'error_details',
 					'resizable=yes, scrollbars=yes, status=no, menubar=no, toolbar=no, dialog=yes, location=no');
-			if(request.responseText){
-			popup.document.write(request.responseText);
-			}else{
+			if (request.responseText) {
+				popup.document.write(request.responseText);
+			} else {
 				popup.document.write(JSON.stringify(request));
 			}
 		};
@@ -131,18 +133,17 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 		 * Does not work with narrowed down selectors. see http://bugs.jquery.com/ticket/6161
 		 */
 		$doc.on('ajaxError', function(event, request, settings, ex) {
-			
+
 			// nothing to notify if the request was aborted
-			if (request.status === 0){
+			if (request.status === 0) {
 				return;
 			}
-			
+
 			// Check if we get an Unauthorized access response, then
 			// redirect to login page
 			else if (401 == request.status) {
 				window.parent.location.reload();
-			} 
-			else {
+			} else {
 				try {
 					handleJsonResponseError(request);
 				} catch (wtf) {
@@ -186,13 +187,20 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 			}
 		}
 	}
-
+	function handleUnknownTypeError(xhr) {
+		try {
+			handleJsonResponseError(xhr);
+		} catch (parseException) {
+			handleGenericResponseError(xhr);
+		}
+	}
 	squashtm.notification = {
 		init : init,
 		showInfo : displayInformationNotification,
 		getErrorMessage : getErrorMessage,
 		handleJsonResponseError : handleJsonResponseError,
-		handleGenericResponseError : handleGenericResponseError
+		handleGenericResponseError : handleGenericResponseError,
+		handleUnknownTypeError : handleUnknownTypeError
 
 	};
 
