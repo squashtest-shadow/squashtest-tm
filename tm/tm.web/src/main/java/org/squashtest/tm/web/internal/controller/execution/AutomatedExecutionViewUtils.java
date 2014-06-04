@@ -27,6 +27,7 @@ import java.util.Locale;
 
 import org.springframework.context.MessageSource;
 import org.springframework.web.util.HtmlUtils;
+import org.squashtest.tm.core.foundation.lang.MathsUtils;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
@@ -50,9 +51,14 @@ public final class AutomatedExecutionViewUtils {
 			ExecutionAutoView execView = translateExecutionInView(execution, locale, messageSource);
 			executionsViews.add(execView);
 		}
-		int percentage = (totalExec > 0) ?totalTerminated/totalExec*100 : 100;
+		int percentage = percentProgression(totalTerminated, totalExec);
 		return new AutomatedSuiteOverview(percentage, suite.getId(), executionsViews);
 
+	}
+
+	private static int percentProgression(int totalTerminated, int totalExec) {
+		int percentage = MathsUtils.percent(totalTerminated, totalExec);
+		return percentage;
 	}
 
 	public static ExecutionAutoView translateExecutionInView(Execution execution, Locale locale,
@@ -99,8 +105,8 @@ public final class AutomatedExecutionViewUtils {
 		public void setPercentage(int percentage) {
 			this.percentage = percentage;
 		}
-		
-		
+
+
 
 	}
 
