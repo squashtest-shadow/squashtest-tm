@@ -45,6 +45,7 @@ class AutomatedExecutionViewUtilsTest extends Specification {
 		expect: AutomatedExecutionViewUtils.percentProgression(part, total) == prog
 		where:
 		part	| total	| prog
+		0		| 0		| 100
 		1		| 4		| 25
 		2		| 4		| 50
 		3		| 4		| 75

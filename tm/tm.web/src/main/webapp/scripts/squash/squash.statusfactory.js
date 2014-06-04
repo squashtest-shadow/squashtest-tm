@@ -19,70 +19,16 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
- *API : 
+ *API :
  *
  *	translate(statusName) -> returns the i18n version of this status name
- *	reverseTranslate(i18n) -> return the real name of the status given its translation 
+ *	reverseTranslate(i18n) -> return the real name of the status given its translation
  *	getHtmlFor(status) -> given a statusname OR its translation, returns a html string to render it
  *
  */
 define(["squash.translator"], function(translator){
-	return {
-		
-		/*
-		 * PUBLIC API
-		 * 
-		 */
-		
-		getHtmlFor : function(status){
-			
-			var realStatusName;
-			
-			var css,
-				text;
-			
-			// lets check whether the argument is a real status name or a translation
-			if (this._conf[status.toUpperCase()] !== undefined){
-				realStatusName = status;
-			}
-			else{
-				realStatusName = this.reverseTranslate(status);
-			}
-			
-			// process if found
-			if (!! realStatusName){
-				css = 'exec-status-' + realStatusName.toLowerCase();
-				text = this.translate(realStatusName);
-				
-				return '<span class="exec-status-label ' + css + '">' + text + '</span>';
-			}
-			// if unknown, frack it
-			else{
-				return status;
-			}
-		},
-		
-		
-		translate : function(statusName){
-			return this._conf[statusName.toUpperCase()];
-		},
-		
-		reverseTranslate : function(translated){
-			for (var ppt in this._conf){
-				if (this._conf[ppt]===translated){
-					return ppt;
-				}
-			}
-			return undefined;
-		},
-		
-		
-		/*
-		 * PRIVATE STUFFS 
-		 * 
-		 */
-		
-		_conf : translator.get({
+	"use strict";
+	var statusKeys = {
 			UNTESTABLE : "execution.execution-status.UNTESTABLE",
 			SETTLED : "execution.execution-status.SETTLED",
 			BLOCKED : "execution.execution-status.BLOCKED",
@@ -94,7 +40,53 @@ define(["squash.translator"], function(translator){
 			NOT_RUN : "execution.execution-status.NOT_RUN",
 			NOT_FOUND : "execution.execution-status.NOT_FOUND",
 			ERROR : "execution.execution-status.ERROR"
-		})
-		
+		};
+
+	// async init of messages
+	translator.load(statusKeys);
+
+	return {
+
+		/*
+		 * PUBLIC API
+		 *
+		 */
+
+		getHtmlFor : function(status){
+
+			var css,
+				text;
+
+			// lets check whether the argument is a real status name or a translation
+			var realStatusName;
+			if (statusKeys[status.toUpperCase()] !== undefined) {
+				realStatusName = status;
+			} else {
+				realStatusName = this.reverseTranslate(status);
+			}
+
+			// process if found
+			if (!! realStatusName){
+				css = 'exec-status-' + realStatusName.toLowerCase();
+				text = this.translate(realStatusName);
+
+				return '<span class="exec-status-label ' + css + '">' + text + '</span>';
+			} else {
+				return status;
+			}
+		},
+
+		translate : function(statusName){
+			return translator.get(statusKeys[statusName.toUpperCase()]);
+		},
+
+		reverseTranslate : function(translated){
+			for (var ppt in statusKeys){
+				if (translator.get(statusKeys[ppt])===translated){
+					return ppt;
+				}
+			}
+			return undefined;
+		}
 	};
 });

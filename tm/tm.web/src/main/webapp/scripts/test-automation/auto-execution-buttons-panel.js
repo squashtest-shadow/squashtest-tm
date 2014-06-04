@@ -24,8 +24,9 @@
  * <code>execute-auto-button.tag</code> issues a "reload.auto-exec-btns-panel" event through pubsub.
  * This modules initializes the buttons when the event is triggered. Client should only require this module.
  */
-define([ "jquery", "squash.translator", "jquery.squash.buttonmenu" ], function($,
-		autosuitedialog, messages) {
+define([ "jquery", "squash.translator", "../app/pubsub", "jquery.squash.buttonmenu" ], function($, messages, ps) {
+	"ue strict";
+
 	// init message cache
 	messages.load({
 		errorDlg : {

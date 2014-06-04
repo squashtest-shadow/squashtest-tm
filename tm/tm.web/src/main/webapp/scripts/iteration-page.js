@@ -23,8 +23,8 @@ require([ "common" ], function() {
 
 	require([ "jquery", "underscore", "app/pubsub", "squash.basicwidgets", "contextual-content-handlers",
 			"jquery.squash.fragmenttabs", "bugtracker/bugtracker-panel", "workspace.event-bus", "iteration-management",
-			"app/ws/squashtm.workspace", "test-automation/auto-execution-buttons-panel" ], function($, _, ps, basicwidg, contentHandlers, Frag, bugtracker, eventBus,
-			itermanagement, WS) {
+			"app/ws/squashtm.workspace", "test-automation/auto-execution-buttons-panel" ],
+			function($, _, ps, basicwidg, contentHandlers, Frag, bugtracker, eventBus, itermanagement, WS) {
 
 		// *********** event handler ***************
 
@@ -41,7 +41,7 @@ require([ "common" ], function() {
 		}, squashtm.handlers);
 
 		var refreshTestPlan = _.bind(function() {
-			console && console.log && console.log("squashtm.execution.refresh");
+			console.log("squashtm.execution.refresh");
 			$("#iteration-test-plans-table").squashTable().refresh();
 		}, window);
 
@@ -104,8 +104,8 @@ require([ "common" ], function() {
 				$("#rename-iteration-name").val(name);
 			});
 
-			console && console.log && console.log("iteration-page refresh.iteration");
+			console.log("iteration-page refresh.iteration");
 		});
-		console && console.log && console.log("iteration-page.js loaded");
+		console.log("iteration-page.js loaded");
 	});
 });

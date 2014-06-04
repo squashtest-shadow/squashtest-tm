@@ -26,13 +26,6 @@
 <%@ attribute name="url" required="true"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
-
-<!-- *************************INITIALISATION*********************** -->
-<script type="text/javascript">
-</script>
-
-<!-- *************************/INITIALISATION*********************** -->
-<!-- *************************BUTTON*********************** -->
 <div id="auto-exec-btns-panel" class="btn-group" data-run-url="${ url }">
 	<f:message var="autoExecLabel" key="iteration.suite.execution.auto.label" />
 	<input id="execute-auto-button" class="run-menu sq-btn" type="button" value="${autoExecLabel}" />
@@ -49,8 +42,7 @@
 		</li>
 	</ul>
 	
-	<script>
-	publish("reload.auto-exec-btns-panel")
-	</script>
 </div>
-<!-- *************************/BUTTON*********************** -->
+<script>
+publish("reload.auto-exec-btns-panel")
+</script>

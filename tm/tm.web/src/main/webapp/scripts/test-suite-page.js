@@ -21,11 +21,12 @@
 require([ "common" ], function() {
 	require(["jquery", "app/pubsub", "squash.translator", "squash.basicwidgets", "workspace.event-bus",
 	         "app/ws/squashtm.workspace", "contextual-content-handlers", "jquery.squash.fragmenttabs",
-	         "bugtracker/bugtracker-panel", "test-suite-management", "test-suite/execution-buttons-panel", "test-automation/auto-execution-buttons-panel", "jquery.cookie"],
+	         "bugtracker/bugtracker-panel", "test-suite-management", "test-suite/execution-buttons-panel",
+	         "test-automation/auto-execution-buttons-panel", "jquery.cookie"],
 			function($, ps, messages, basicwidg, eventBus, WS, contentHandlers, Frag, bugtracker, tsmanagement){
 		"use strict";
 
-		$(document).on("click", "#duplicate-test-suite-button", function(){
+		$(document).on("click", "#duplicate-test-suite-button", function() {
 			console && console.log && console.log("click", "#duplicate-test-suite-button");
 			$( "#confirm-duplicate-test-suite-dialog" ).confirmDialog( "open" );
 			return false;
@@ -138,9 +139,9 @@ require([ "common" ], function() {
 			};
 
 			dialog.confirmDialog({confirm: confirmHandler});
-			console && console.log && console.log("test-suite-page refresh");
+			console.log("test-suite-page refresh");
 		});
-		console && console.log && console.log("test-suite-page.js loaded");
+		console.log("test-suite-page.js loaded");
 	});
 
 });

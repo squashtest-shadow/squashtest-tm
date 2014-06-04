@@ -57,6 +57,10 @@ public final class AutomatedExecutionViewUtils {
 	}
 
 	private static int percentProgression(int totalTerminated, int totalExec) {
+		if(totalExec == 0) {
+			return 100;
+		}
+
 		int percentage = MathsUtils.percent(totalTerminated, totalExec);
 		return percentage;
 	}

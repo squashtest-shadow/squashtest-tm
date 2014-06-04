@@ -38,10 +38,11 @@ public final class MathsUtils {
 	 * Computes the rate part / total in percent *without any floating point error* (hopefully)
 	 * 
 	 * @param part
-	 * @param total
+	 * @param total should not be 0
 	 * @return
+	 * @throws ArithmeticException when total is 0
 	 */
-	public static int percent(long part, long total) {
+	public static int percent(long part, long total) throws ArithmeticException {
 		return BigDecimal.valueOf(part)
 				.divide(BigDecimal.valueOf(total), 2, BigDecimal.ROUND_HALF_UP)
 				.multiply(HUNDRED)
