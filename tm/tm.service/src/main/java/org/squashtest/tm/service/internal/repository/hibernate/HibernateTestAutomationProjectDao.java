@@ -111,12 +111,14 @@ public class HibernateTestAutomationProjectDao implements TestAutomationProjectD
 	 */
 	@Override
 	public void deleteProjectsByIds(Collection<Long> projectIds) {
-		dereferenceAutomatedExecutionExtender(projectIds);
-		dereferenceTestCases(projectIds);
-		sessionFactory.getCurrentSession().flush();
-		deleteAutomatedTests(projectIds);
-		deleteTestAutomationProjects(projectIds);
-		sessionFactory.getCurrentSession().flush();
+		if (! projectIds.isEmpty()){
+			dereferenceAutomatedExecutionExtender(projectIds);
+			dereferenceTestCases(projectIds);
+			sessionFactory.getCurrentSession().flush();
+			deleteAutomatedTests(projectIds);
+			deleteTestAutomationProjects(projectIds);
+			sessionFactory.getCurrentSession().flush();
+		}
 	}
 
 	/**

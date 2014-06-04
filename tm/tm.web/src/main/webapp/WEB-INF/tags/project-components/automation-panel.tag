@@ -86,7 +86,6 @@
           data-def="ajaxsource=${localProjectsURL}, hover, deferloading=${fn:length(project.testAutomationProjects)}">
           <thead>
             <tr>
-              <th data-def="map=entity-id, invisible" class="not-displayed">#</th>
               <th data-def="map=entity-index,narrow, select">#</th>
               <th data-def="map=label">
                 <f:message key="project.testauto.projectsblock.table.headers.name" />
@@ -104,7 +103,7 @@
             <c:forEach items="${project.testAutomationProjects}" var="taproj" varStatus="status">
             <tr>
               <td>${status.index}</td>
-							<td>${taproj.label}</td>
+			  <td>${taproj.label}</td>
               <td>${taproj.server.baseURL}</td>
               <td>${taproj.server.kind}</td>
               <td> </td>
@@ -168,10 +167,8 @@
   
   <!-- _____________Buttons_______________ -->
   <div class="popup-dialog-buttonpane">
-    <input class="confirm" type="button" value="${confirmLabel}" data-def="evt=confirm,  state=case1, mainbtn" />
-    <input class="confirm" type="button" value="${confirmLabel}" data-def="evt=confirm,  state=case2, mainbtn" />
-      
-      
+    <input class="confirm" type="button" value="${confirmLabel}" data-def="evt=confirm,  state=case1, mainbtn=case1" />
+    <input class="confirm" type="button" value="${confirmLabel}" data-def="evt=confirm,  state=case2, mainbtn=case2" />      
     <input class="cancel" type="button" value="${cancelLabel}" data-def="evt=cancel" />
   </div>
 </div>
@@ -187,44 +184,45 @@
 <f:message var="bindProjectPopup" key="project.testauto.projectsblock.add.popup.title" />
 <div id="ta-projects-bind-popup" title="${bindProjectPopup}" class="popup-dialog not-displayed">
 
-  <div data-def="state=pleasewait">
-    <comp:waiting-pane />
-  </div>
-  
-  <div data-def="state=fatalerror">
-    <span> </span>
-  </div>
-  
-  <div data-def="state=error">
-    <span> </span>
-  </div>
-  
-  <div data-def="state=main" class="ta-projects-bind-maindiv">
-    <p>
-      <label>
-       <f:message key="project.testauto.projectsblock.add.popup.caption" />
-      </label>
-    </p>
-    <table class="ta-project-bind-listdiv">
-    </table>
-  <script id="default-item-tpl" type="text/x-handlebars-template" th:inline="text">
-	<tr class="listdiv-item"> <td><input type="checkbox" value="{{name}}"/><td>{{name}}</td><td class="ta-project-tm-label"><label th:text="#{label.taProjectTmLabel}">Libellé dans Squash TM</label><input type="text" style="display: none;"/></td></tr>
-  </script>
-  
-  <div class="ta-projectsadd-fatalerror">
-    <span> </span>
-  </div>
-  
-  <div class="ta-projectsadd-error">
-    <span> </span>
-  </div>
-  <div class="popup-dialog-buttonpane">
-    <input type="button" value="${confirmLabel}" data-def="mainbtn=main, evt=confirm" />
-    <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
-  </div>
+	<div data-def="state=pleasewait">
+	  <comp:waiting-pane />
+	</div>
 
+	<div data-def="state=fatalerror">
+	  <span> </span>
+	</div>
+
+	<div data-def="state=error">
+	  <span> </span>
+	</div>
+
+	<div data-def="state=main" class="ta-projects-bind-maindiv">
+	  	<p>
+	    	<label><f:message key="project.testauto.projectsblock.add.popup.caption" /></label>
+		</p>
+	
+		<table class="ta-project-bind-listdiv">
+		</table>
+	
+		<script id="default-item-tpl" type="text/x-handlebars-template" th:inline="text">
+			<tr class="listdiv-item"> <td><input type="checkbox" value="{{name}}"/><td>{{name}}</td><td class="ta-project-tm-label"><label th:text="#{label.taProjectTmLabel}">Libellé dans Squash TM</label><input type="text" style="display: none;"/></td></tr>
+  		</script>
+
+		<div class="ta-projectsadd-fatalerror">
+		  <span> </span>
+		</div>
+
+		<div class="ta-projectsadd-error">
+		  <span> </span>
+		</div>
+
+		<div class="popup-dialog-buttonpane">
+		 	<input type="button" value="${confirmLabel}" data-def="mainbtn=main, evt=confirm" />
+			<input type="button" value="${cancelLabel}" data-def="evt=cancel" />
+		</div>
+
+	</div>
 </div>
-
 
 <%-- the project unbind confirmation popup (STUB) --%>
 

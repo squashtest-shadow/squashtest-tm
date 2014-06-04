@@ -40,10 +40,10 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 	@NamedQuery(name = "testAutomationProject.findAllByTMPRoject", query = "select tap.id from TestAutomationProject tap join tap.tmProject tmp where tmp.id = :tmProjectId"),
 	@NamedQuery(name = "testAutomationProject.haveExecutedTestsByIds", query = "select count(ext) from AutomatedExecutionExtender ext join ext.automatedTest test join test.project p where p.id in (:projectIds)"),
 	@NamedQuery(name = "testAutomationProject.dereferenceAutomatedExecutionExtender", query = "update AutomatedExecutionExtender ext set ext.resultURL = null, ext.automatedTest = null "
-			+ "where ext in (select e from AutomatedExecutionExtender e join e.automatedTest tests join tests.project p where p.id in (:projectIds))"),
+			+ "where ext.automatedTest in (select tests from AutomatedTest tests join tests.project p where p.id in (:projectIds))"),
 
 			@NamedQuery(name = "testAutomationProject.dereferenceTestCases", query = "update TestCase tc set tc.automatedTest = null "
-					+ "where tc.id in (select t.id from TestCase t join t.automatedTest tests join tests.project p where p.id in (:projectIds))"),
+					+ "where tc.automatedTest in (select tests from AutomatedTest tests join tests.project p where p.id in (:projectIds))"),
 					@NamedQuery(name = "testAutomationProject.deleteAutomatedTests", query = "delete AutomatedTest t where t.project.id in (:projectIds)"),
 					@NamedQuery(name = "testAutmationProject.delete", query = "delete TestAutomationProject p where p.id in (:projectIds)")
 })
