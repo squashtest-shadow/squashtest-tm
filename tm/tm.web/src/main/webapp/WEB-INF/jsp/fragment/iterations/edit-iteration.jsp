@@ -348,12 +348,12 @@
 
  <f:message key="tabs.label.issues" var="tabIssueLabel"/>
 <script type="text/javascript">
+	publish("refresh.iteration");
 	if (!squashtm.page.isFullPage) {
 		require(["common"], function() {
 			require(["iteration-page"], function() {/*noop*/});
 		});
 	}
-	publish("refresh.iteration");
 </script>
 
 

@@ -68,9 +68,6 @@
 				name : "advanced-search-input",
 				include : [ "search/advanced-search-input", "app/ws/squashtm.workspace" ],
 				exclude : [ "common" ]
-			// }, {
-			// name: "bugtracker",
-			// exclude: [ "common", "squashtable", "file-upload" ]
 			},
 			{
 				name : "custom-field-manager",
@@ -93,12 +90,6 @@
 				include : [ "jquery", "squash.basicwidgets", "test-step-editor/TestStepModificationView",
 						"app/ws/squashtm.workspace" ],
 				exclude : [ "common" ]
-			// }, {
-			// name: "execution-processing",
-			// exclude: [ "common" ]
-			// }, {
-			// name: "file-upload",
-			// exclude: [ "common" ]
 			},
 			{
 				name : "home-workspace",
@@ -119,9 +110,6 @@
 				name : "print",
 				include : [ "domReady", "page-components/general-information-panel" ],
 				exclude : [ "common" ]
-			// }, {
-			// name: "project",
-			// exclude: [ "common" ]
 			},
 			{
 				name : "project-manager",
@@ -145,11 +133,15 @@
 			},
 			{
 				name : "iteration-page",
-				exclude : [ "common" ],
-				include : [ "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs",
-						"bugtracker", "workspace.event-bus", "iteration-management", "app/ws/squashtm.workspace" ]
-			//}, {
-			// name: "tree",
-			// exclude: [ "common" ]
+				include : [ "app/pubsub", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs",
+				            "bugtracker/bugtracker-panel", "workspace.event-bus", "iteration-management", "app/ws/squashtm.workspace" ],
+				exclude : [ "common" ]
+			},
+			{
+				name : "test-suite-page",
+				include : [ "app/pubsub", "squash.translator", "squash.basicwidgets", "workspace.event-bus", "app/ws/squashtm.workspace",
+				            "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker/bugtracker-panel", "test-suite-management",
+				            "jquery.cookie", "test-suite/execution-buttons-panel" ],
+				exclude : [ "common" ]
 			} ]
 }) // DONT ADD NO SEMICOLON!

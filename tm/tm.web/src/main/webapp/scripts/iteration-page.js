@@ -21,7 +21,7 @@
 require([ "common" ], function() {
 	"use strict";
 
-	require([ "jquery", "underscore", "./app/pubsub", "squash.basicwidgets", "contextual-content-handlers",
+	require([ "jquery", "underscore", "app/pubsub", "squash.basicwidgets", "contextual-content-handlers",
 			"jquery.squash.fragmenttabs", "bugtracker/bugtracker-panel", "workspace.event-bus", "iteration-management",
 			"app/ws/squashtm.workspace" ], function($, _, ps, basicwidg, contentHandlers, Frag, bugtracker, eventBus,
 			itermanagement, WS) {
@@ -30,14 +30,13 @@ require([ "common" ], function() {
 		// *********** event handler ***************
 
 		/* renaming success handler */
-		var renameIterationSuccess = function(data) {
+		function renameIterationSuccess(data) {
 			squashtm.workspace.eventBus.trigger("node.rename", {
 				identity : squashtm.page.identity,
 				newName : data.newName
 			});
-		};
+		}
 
-		squashtm = _.extend({}, squashtm);
 		squashtm.handlers = _.extend({
 			renameIterationSuccess : renameIterationSuccess
 		}, squashtm.handlers);
@@ -47,9 +46,8 @@ require([ "common" ], function() {
 			$("#iteration-test-plans-table").squashTable().refresh();
 		}, window);
 
-		squashtm.execution = _.extend({
-			refresh : refreshTestPlan
-		}, squashtm.execution);
+		squashtm.execution = squashtm.execution || {};
+		squashtm.execution.refresh = refreshTestPlan;
 
 		console.log(document.eventsQueue);
 
@@ -74,7 +72,7 @@ require([ "common" ], function() {
 			nameHandler.nameDisplay = "#iteration-name";
 
 			// todo : uniform the event handling.
-			// rem : does it mean yet another half-assed refactoring ?
+			// rem : what does it mean ?
 			itermanagement.initEvents();
 
 			// ****** tabs configuration *******

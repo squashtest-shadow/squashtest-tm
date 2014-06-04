@@ -38,9 +38,6 @@
 
 <comp:datepicker-manager locale="${squashlocale}" />
 
-<c:url var="workspaceUrl" value="/campaign-workspace/#" />
-<c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
-
 <s:url var="testSuiteUrl" value="/test-suites/{testSuiteId}">
 	<s:param name="testSuiteId" value="${testSuite.id}" />
 </s:url>
@@ -49,10 +46,6 @@
 	value="/iterations/{iterationId}/duplicateTestSuite/{testSuiteId}">
 	<s:param name="testSuiteId" value="${testSuite.id}" />
 	<s:param name="iterationId" value="${testSuite.iteration.id}" />
-</s:url>
-
-<s:url var="testSuiteInfoUrl" value="/test-suites/{testSuiteId}/general">
-	<s:param name="testSuiteId" value="${testSuite.id}" />
 </s:url>
 
 <s:url var="testSuiteStatisticsUrl"
@@ -106,57 +99,25 @@
 	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 
-
-
 <script type="text/javascript">
-
-	function renameTestSuiteSuccess(data){
-		squashtm.workspace.eventBus.trigger('node.rename', {identity : {resid : ${testSuite.id}, restype :"test-suites"}, newName : data.newName});		
-	}
-	
-	/*post a request to duplicate the test suite*/
-	function duplicateTestSuite(){
-		return $.ajax({
-			'url' : '${duplicateTestSuiteUrl}',
-			type : 'POST',
-			data : [],
-			dataType : 'json'
-		});
-	};
-	
-	/*duplication sucess handler*/
-	function duplicateTestSuiteSuccess(idOfDuplicate){
-		<c:choose>
-			<%-- if we were in a sub page context. We need to navigate back to the workspace. --%>
-			<c:when test="${param.isInfoPage}" >	
-			$.squash.openMessage('<f:message key="test-suite.duplicate.success.title" />', '<f:message key="test-suite.duplicate.success.message" />');
-			</c:when>
-			<c:otherwise>
-				squashtm.workspace.eventBus.trigger('node.add', {
-					parent : {
-						resid : ${testSuite.iteration.id},
-						rel : "iteration"
-					},
-					child :{
-						resid : idOfDuplicate,
-						rel : "test-suite" 
-					} 
-				});
-			</c:otherwise>
-		</c:choose>
-		
-	}
-
-	
-	function refreshExecButtons(){
-		$('#test-suite-execution-button').load('${ testSuiteExecButtonsUrl }');
-	}
-
+  squashtm = squashtm || {};
+  squashtm.page = squashtm.page || {};
+  var config = squashtm.page;
+  config.isFullPage = ${ not empty param.isInfoPage and param.isInfoPage };
+  config.hasFields = ${ hasCUF };
+  config.hasBugtracker = ${ testSuite.iteration.project.bugtrackerConnected };
+  config.identity = { resid : ${testSuite.id}, restype : "test-suites"  };
+  config.parentIdentity = { resid : ${testSuite.iteration.id}, restype : "iteration" };
+  config.bugtracker = { url: "${btEntityUrl}", label: "${tabIssueLabel}" };
+  config.customFields = { url: "${customFieldsValuesURL}" };
+  config.api = {
+		copy: "${duplicateTestSuiteUrl}"		
+  };
 </script>
 
 <div
-	class="ui-widget-header ui-state-default ui-corner-all fragment-header">
-	<div style="float: left; height: 100%;">
+	class="ui-widget-header ui-state-default ui-corner-all fragment-header ctx-title">
+	<div>
 		<h2>
 			<span><f:message key="test-suite.header.title" />&nbsp;:&nbsp;</span><a
 				id="test-suite-name" href="${ testSuiteUrl }/info"><c:out
@@ -164,7 +125,6 @@
 		</h2>
 	</div>
 
-	<div class="unsnap"></div>
 	<c:if test="${ writable }">
 		<pop:popup id="rename-test-suite-dialog"
 			titleKey="dialog.testsuites.rename.title" isContextual="true"
@@ -184,33 +144,25 @@
 				<pop:cancel-button />
 			</jsp:attribute>
 			<jsp:attribute name="body">
-				<script type="text/javascript">
-				$( "#rename-test-suite-dialog" ).bind( "dialogopen", function(event, ui) {
-					var name = $.trim($('#test-suite-name').text());
-					$("#rename-test-suite-name").val(name);
-					
-				});
-				</script>			
 				<label><f:message key="dialog.rename.label" />
 				</label>
 				<input type="text" id="rename-test-suite-name" maxlength="255" size="50" />
 				<br />
 				<comp:error-message forField="name" />	
-		
 			</jsp:attribute>
 		</pop:popup>
 	</c:if>
 </div>
 
-<div id="test-suite-toolbar" class="toolbar-class ui-corner-all ">
+<div id="test-suite-toolbar" class="toolbar-class ui-corner-all cf">
 	<div class="toolbar-information-panel">
 		<div id="general-informations-panel">
 			<comp:general-information-panel auditableEntity="${testSuite}" />
 		</div>
 	</div>
-	<div class="toolbar-button-panel">
+	<div class="btn-toolbar right">
 		<c:if test="${ executable }">
-			<div id="test-suite-execution-button" style="display: inline-block;">
+			<div id="test-suite-exec-btn-group" class="btn-group" data-content-url="${ testSuiteExecButtonsUrl }">
 				<comp:test-suite-execution-button testSuiteId="${ testSuite.id }"
 					statisticsEntity="${ statistics }" />
 			</div>
@@ -221,14 +173,12 @@
 		<c:if test="${ writable }">
 			<input type="button"
 				value="<f:message key='test-suite.button.rename.label' />"
-				id="rename-test-suite-button" class="sq-btn"
-				style="display: inline-block;" />
+				id="rename-test-suite-button" class="sq-btn" />
 		</c:if>
 		<c:if test="${ creatable }">
 			<input type="button"
 				value="<f:message key='test-suite.button.duplicate.label' />"
-				id="duplicate-test-suite-button" class="sq-btn"
-				style="display: inline-block;" />
+				id="duplicate-test-suite-button" class="sq-btn" />
 		</c:if>
 	</div>
 	<div class="unsnap"></div>
@@ -321,77 +271,14 @@
 		<input:ok />
 		<input:cancel />
 	</div>
-<script>
-require([ "common" ], function() {
-	require([ "jquery" ], function($) {
-		$(function(){
-			var confirmHandler = function() {
-				dialog.confirmDialog("close");
-				duplicateTestSuite().done(function(json){
-					duplicateTestSuiteSuccess(json);
-				});
-			};
-			var dialog = $( "#confirm-duplicate-test-suite-dialog" );
-			dialog.confirmDialog({confirm: confirmHandler});
-			$('#duplicate-test-suite-button').click(function(){
-				dialog.confirmDialog( "open" );
-				return false;
-			});
-		});
-	});
-});
-</script>
 
 </c:if>
  <f:message key="tabs.label.issues" var="tabIssueLabel"/>
-<script>
-
-	var identity = { resid : ${testSuite.id}, restype : "test-suites"  };
-
-	require(["common"], function(){
-			require(["jquery", "squash.basicwidgets", "workspace.event-bus", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker", "test-suite-management"], 
-					function($, basicwidg, eventBus, contentHandlers, Frag, bugtracker, tsmanagement){
-		$(function(){	
-				
-				basicwidg.init();
-				
-				var nameHandler = contentHandlers.getSimpleNameHandler();
-				
-				nameHandler.identity = identity;
-				nameHandler.nameDisplay = "#test-suite-name";
-				
-				
-
-				// todo : uniform the event handling.
-				tsmanagement.initEvents();
-				
-				//****** tabs configuration *******
-				
-				var fragConf = {
-					cookie : "iteration-tab-cookie"
-				};
-				Frag.init(fragConf);
-				
-				<c:if test="${testSuite.iteration.project.bugtrackerConnected}">
-				bugtracker.btPanel.load({
-					url : "${btEntityUrl}",
-					label : "${tabIssueLabel}"
+<script type="text/javascript">
+publish("reload.test-suite");
+if (!squashtm.page.isFullPage) {
+	require(["common"], function() {
+		require(["test-suite-page"], function() {/*noop*/});
 				});
-				</c:if>
-				
-				
-				
-				<c:if test="${hasCUF}">
-				<%-- loading the custom field panel --%>
-				$("#test-suite-custom-fields-content").load("${customFieldsValuesURL}?boundEntityId=${testSuite.boundEntityId}&boundEntityType=${testSuite.boundEntityType}"); 				
-		    	</c:if>
-		    	
-		    	
-			 	squashtm.execution = squashtm.execution || {};
-			 	squashtm.execution.refresh = function(){
-			 		eventBus.trigger('context.content-modified');
-			 	};
-			});
-		});
-	});
+}
 </script>
