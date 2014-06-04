@@ -234,7 +234,7 @@ public class IterationModificationController {
 	public Object rename(HttpServletResponse response, @RequestParam("newName") String newName,
 			@PathVariable long iterationId) {
 
-		LOGGER.info("IterationModificationController : renaming " + iterationId + " as " + newName);
+		LOGGER.info("IterationModificationController : renaming {} as {}", iterationId, newName);
 		iterationModService.rename(iterationId, newName);
 		return new RenameModel(newName);
 
@@ -278,8 +278,7 @@ public class IterationModificationController {
 		Date newScheduledStart = strToDate(strDate);
 		String toReturn = dateToStr(newScheduledStart);
 
-		LOGGER.info("IterationModificationController : setting scheduled start date for iteration " + iterationId
-				+ ", new date : " + newScheduledStart);
+		LOGGER.info("IterationModificationController : setting scheduled start date for iteration {}, new date : {}", iterationId, newScheduledStart);
 
 		iterationModService.changeScheduledStartDate(iterationId, newScheduledStart);
 
@@ -295,8 +294,7 @@ public class IterationModificationController {
 		Date newScheduledEnd = strToDate(strDate);
 		String toReturn = dateToStr(newScheduledEnd);
 
-		LOGGER.info("IterationModificationController : setting scheduled end date for iteration " + iterationId
-				+ ", new date : " + newScheduledEnd);
+		LOGGER.info("IterationModificationController : setting scheduled end date for iteration {}, new date : {}", iterationId, newScheduledEnd);
 
 		iterationModService.changeScheduledEndDate(iterationId, newScheduledEnd);
 
@@ -314,8 +312,7 @@ public class IterationModificationController {
 		Date newActualStart = strToDate(strDate);
 		String toReturn = dateToStr(newActualStart);
 
-		LOGGER.info("IterationModificationController : setting actual start date for iteration " + iterationId
-				+ ", new date : " + newActualStart);
+		LOGGER.info("IterationModificationController : setting actual start date for iteration {}, new date : {}", iterationId, newActualStart);
 
 		iterationModService.changeActualStartDate(iterationId, newActualStart);
 
@@ -331,8 +328,7 @@ public class IterationModificationController {
 		Date newActualEnd = strToDate(strDate);
 		String toReturn = dateToStr(newActualEnd);
 
-		LOGGER.info("IterationModificationController : setting actual end date for iteration " + iterationId
-				+ ", new date : " + newActualEnd);
+		LOGGER.info("IterationModificationController : setting actual end date for iteration {}, new date : {}", iterationId, newActualEnd);
 
 		iterationModService.changeActualEndDate(iterationId, newActualEnd);
 
@@ -345,8 +341,7 @@ public class IterationModificationController {
 	public String setActualStartAuto(HttpServletResponse response, @PathVariable long iterationId,
 			@RequestParam(value = "setActualStartAuto") boolean auto) {
 
-		LOGGER.info("IterationModificationController : autosetting actual start date for iteration " + iterationId
-				+ ", new value " + auto);
+		LOGGER.info("IterationModificationController : autosetting actual start date for iteration {}, new value {}" , iterationId, auto);
 
 		iterationModService.changeActualStartAuto(iterationId, auto);
 		Iteration iteration = iterationModService.findById(iterationId);
@@ -360,8 +355,7 @@ public class IterationModificationController {
 	@ResponseBody
 	public String setActualEndAuto(HttpServletResponse response, @PathVariable long iterationId,
 			@RequestParam(value = "setActualEndAuto") boolean auto) {
-		LOGGER.info("IterationModificationController : autosetting actual end date for campaign " + iterationId
-				+ ", new value " + auto);
+		LOGGER.info("IterationModificationController : autosetting actual end date for campaign {}, new value {}", iterationId , auto);
 
 		iterationModService.changeActualEndAuto(iterationId, auto);
 		Iteration iteration = iterationModService.findById(iterationId);
@@ -452,7 +446,7 @@ public class IterationModificationController {
 	public @ResponseBody
 	OperationReport removeTestSuites(@RequestParam(RequestParams.IDS) List<Long> ids) {
 		OperationReport report = iterationModService.removeTestSuites(ids);
-		LOGGER.debug("removal of " + report.getRemoved().size() + " Test Suites");
+		LOGGER.debug("removal of {} Test Suites", report.getRemoved().size());
 		return report;
 	}
 
@@ -465,7 +459,7 @@ public class IterationModificationController {
 		AutomatedSuite suite = iterationModService.createAndStartAutomatedSuite(iterationId, ids);
 
 
-		LOGGER.debug("Iteration #" + iterationId + " : execute selected test plans");
+		LOGGER.debug("Iteration #{} : execute selected test plans", iterationId);
 
 		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
 	}
@@ -475,7 +469,7 @@ public class IterationModificationController {
 	AutomatedSuiteOverview executeAllAuto(@PathVariable long iterationId, Locale locale) {
 		AutomatedSuite suite = iterationModService.createAndStartAutomatedSuite(iterationId);
 
-		LOGGER.debug("Iteration #" + iterationId + " : execute all test plan auto");
+		LOGGER.debug("Iteration #{} : execute all test plan auto", iterationId);
 
 		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
 	}
