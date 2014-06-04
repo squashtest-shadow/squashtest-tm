@@ -46,12 +46,20 @@
  *	}
  *
  *
- *
+ * The method `load()` takes the same *object* arg as `get()` and performs an *asunc* request to fill the cache if needed. It does not return anything.
  */
-define(["jquery", "underscore", "workspace.storage"], function($,_, storage){
-
+define(["jquery", "underscore", "workspace.storage"], function($, _, storage){
+	"use strict";
 
 	var serviceURL = squashtm.app.contextRoot+"/localization/filler";
+	var ajaxDefaults = {
+			url : serviceURL,
+			headers : {
+				'Content-Type' : 'application/json'
+			},
+			dataType : 'json',
+			type : 'POST',
+		};
 
 	//initialization
 	squashtm = squashtm || {};
@@ -64,23 +72,17 @@ define(["jquery", "underscore", "workspace.storage"], function($,_, storage){
 
 	function _ajax(object){
 		var result;
-		$.ajax({
-			url : serviceURL,
-			headers : {
-				'Content-Type' : 'application/json'
-			},
-			dataType : 'json',
-			type : 'POST',
+		var params = _.defaults({
 			data : JSON.stringify(object),
 			async : false
-		})
-		.success(function(json){
+		}, ajaxDefaults);
+
+		$.ajax(params).success(function(json){
 			result = json;
 		});
 
 		return result;
 	}
-
 
 	// ************** caching function **************
 
@@ -163,27 +165,51 @@ define(["jquery", "underscore", "workspace.storage"], function($,_, storage){
 	// ************ main functions ******************
 
 	function getAsObject(object){
-
-		var splitObject = _split(object);
-
-		var cached = splitObject[0];
-		var remainingKeys = splitObject[1];
+		var sorted = _sortMissing(object);
 
 		//if there isn't anything left to lookup through ajax, return the result of the cache lookup
-		if (_.isEmpty(remainingKeys)){
-			return cached;
+		if (_.isEmpty(sorted.missing)){
+			return sorted.cached;
 		}
 
 		//if not, let's query the missing values
-		var remainingValues = _ajax(remainingKeys);
+		var remainingValues = _ajax(sorted.missing);
 
 		//store the result
-		_cache(remainingKeys, remainingValues);
+		_cache(sorted.missing, remainingValues);
 
 		//merge with what was fetched from cache earlier and return
-		return $.extend(true, cached, remainingValues);
+		return $.extend(true, sorted.cached, remainingValues);
 	}
 
+	/**
+	 * Sorts out che cached messages and the missing keys
+	 * @return { cached: {hash of messages}, missing: {hash of keys} }
+	 */
+	function _sortMissing(keys) {
+		var splitObject = _split(keys);
+
+		return { cached: splitObject[0], missing: splitObject[1] };
+	}
+
+	/**
+	 * Async loads missing keys into cache.
+	 */
+	function _load(keys) {
+		var sorted = _sortMissing(keys);
+
+		if (_.isEmpty(sorted.missing)) {
+			return;
+		}
+
+		var params = _.defaults({
+			data : JSON.stringify(sorted.missing),
+		}, ajaxDefaults);
+
+		$.ajax(params).success(function(json){
+			_cache(sorted.missing, json);
+		});
+	}
 
 	function getAsString(string){
 
@@ -198,14 +224,14 @@ define(["jquery", "underscore", "workspace.storage"], function($,_, storage){
 
 	return {
 		get : function(argument){
-
 			if (typeof argument === "string"){
 				return getAsString(argument);
-			}
-			else{
+			} else {
 				return getAsObject(argument);
 			}
-		}
+		},
+
+		load: _load
 	};
 
 
