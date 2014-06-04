@@ -24,6 +24,7 @@ package org.squashtest.tm.web.internal.controller.execution;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
+import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.ExecutionAutoView;
@@ -53,6 +54,7 @@ class AutomatedExecutionViewUtilsTest extends Specification {
 	def "should create populated ExecutionAutoView"() {
 		given:
 		AutomatedExecutionExtender autoExec = Mock()
+		autoExec.nodeName >> "verser"
 
 		and:
 		Execution exec = Mock()
@@ -71,7 +73,7 @@ class AutomatedExecutionViewUtilsTest extends Specification {
 
 		then:
 		res.automatedProject == "drips drips drips drips"
-		res.node == "hardcoded"
+		res.node == "verser"
 		res.id == 50
 		res.name == "ordeal"
 		res.status == ExecutionStatus.SUCCESS

@@ -53,6 +53,16 @@ public class AutomatedTest {
 	@Size(min = 0, max = 255)
 	private String name;
 
+	protected AutomatedTest() {
+		super();
+	}
+
+	public AutomatedTest(String name, TestAutomationProject project) {
+		super();
+		this.name = name;
+		this.project = project;
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -70,7 +80,7 @@ public class AutomatedTest {
 	 * @return project.name + name
 	 */
 	public String getFullName(){
-		return "/"+project.getJobName()+"/"+name;
+		return "/" + project.getJobName() + "/"+name;
 	}
 
 	/**
@@ -78,7 +88,7 @@ public class AutomatedTest {
 	 * @return project.label + name
 	 */
 	public String getFullLabel(){
-		return "/"+project.getLabel()+"/"+name;
+		return "/" + project.getLabel() + "/" + name;
 	}
 
 	/**
@@ -120,15 +130,4 @@ public class AutomatedTest {
 	public AutomatedTest newWithProject(TestAutomationProject newP){
 		return new AutomatedTest(name, newP);
 	}
-
-	public AutomatedTest(){
-		super();
-	}
-
-	public AutomatedTest(String name, TestAutomationProject project){
-		super();
-		this.name=name;
-		this.project=project;
-	}
-
 }

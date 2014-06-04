@@ -72,6 +72,7 @@ public final class AutomatedExecutionViewUtils {
 		execView.status = autoExec.getExecution().getExecutionStatus();
 		execView.localizedStatus = htmlEscapedLocalizedStatus;
 		execView.automatedProject = autoExec.getAutomatedProject().getLabel();
+		execView.node = autoExec.getNodeName();
 
 		return execView;
 	}
@@ -119,7 +120,7 @@ public final class AutomatedExecutionViewUtils {
 		private String name;
 		private ExecutionStatus status;
 		private String localizedStatus;
-		private final String node = "hardcoded";
+		private String node;
 		private String automatedProject;
 
 		private ExecutionAutoView() {
