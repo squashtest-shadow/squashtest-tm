@@ -160,12 +160,6 @@ public class TestAutomationServerController {
 		}
 	}
 
-	@RequestMapping(value = "/{serverId}/available-ta-projects", method = RequestMethod.GET)
-	@ResponseBody
-	public Collection<TestAutomationProject> listProjectsOnServer(@PathVariable("serverId") Long serverId)
-			throws BindException {
-		return projectService.listProjectsOnServer(serverId);
 
-	}
 
 }

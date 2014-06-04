@@ -22,8 +22,10 @@ package org.squashtest.tm.service.internal.project;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +79,7 @@ import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.PartyDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
+import org.squashtest.tm.service.project.CustomGenericProjectFinder;
 import org.squashtest.tm.service.project.CustomGenericProjectManager;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.security.ObjectIdentityService;
@@ -140,11 +143,11 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 			Filtering filter) {
 		/*
 		 * Implementation note :
-		 * 
+		 *
 		 * Here for once the paging will not be handled by the database, but programmatically. The reason is that we
 		 * want to filter the projects according to the caller's permissions, something that isn't doable using hql
 		 * alone (the acl system isn't part of the domain and thus wasn't modeled).
-		 * 
+		 *
 		 * So, we just load all the projects and apply paging on the resultset
 		 */
 
@@ -341,6 +344,29 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		checkManageProjectOrAdmin(genericProject);
 		genericProject.unbindTestAutomationProject(taProjectId);
 
+	}
+
+	/**
+	 * @see CustomGenericProjectFinder#findAllAvailableTaProjects(long)
+	 */
+	@Override
+	public Collection<TestAutomationProject> findAllAvailableTaProjects(long projectId) {
+		TestAutomationServer server = genericProjectDao.findTestAutomationServer(projectId);
+		if (server == null) {
+			return Collections.emptyList();
+		}
+		Collection<TestAutomationProject> availableTaProjects = taProjectService.listProjectsOnServer(server);
+		Collection<String> alreadyBoundProjectsJobNames = genericProjectDao
+				.findBoundTestAutomationProjectJobNames(projectId);
+
+		Iterator<TestAutomationProject> it = availableTaProjects.iterator();
+		while (it.hasNext()) {
+			TestAutomationProject taProject = it.next();
+			if (alreadyBoundProjectsJobNames.contains(taProject.getJobName())) {
+				it.remove();
+			}
+		}
+		return availableTaProjects;
 	}
 
 	// ********************************** bugtracker section *************************************
@@ -561,4 +587,5 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		}
 		project.setName(newName);
 	}
+
 }

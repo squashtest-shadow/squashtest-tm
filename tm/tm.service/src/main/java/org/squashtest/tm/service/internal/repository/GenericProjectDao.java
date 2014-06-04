@@ -27,6 +27,7 @@ import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 
 /**
  * @author Gregory Fouquet
@@ -48,6 +49,9 @@ public interface GenericProjectDao extends CustomGenericProjectDao {
 
 	List<TestAutomationProject> findBoundTestAutomationProjects(@QueryParam("projectId") long id);
 
+	List<String> findBoundTestAutomationProjectJobNames(@QueryParam("projectId") long id);
+
+
 	/**
 	 * @param idList
 	 * @return
@@ -60,4 +64,6 @@ public interface GenericProjectDao extends CustomGenericProjectDao {
 	void remove(GenericProject project);
 
 	long countByName(String name);
+
+	TestAutomationServer findTestAutomationServer(@QueryParam("projectId") long projectId);
 }

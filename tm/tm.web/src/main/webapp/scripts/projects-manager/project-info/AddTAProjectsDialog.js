@@ -64,8 +64,7 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "underscore", "jq
 			if (this.serverHasChanged) {
 				$.ajax(
 						{
-							url : squashtm.app.contextRoot + "/test-automation-servers/" + self.selectedServerId +
-									"/available-ta-projects",
+							url : self.projecUrl + "/available-ta-projects",
 							type : "get"
 
 						}).done(self.buildAndDisplayProjectList).fail(self.manageFatalError);

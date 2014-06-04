@@ -20,12 +20,14 @@
  */
 package org.squashtest.tm.service.project;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.project.AdministrableProject;
+import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
@@ -44,9 +46,20 @@ public interface CustomGenericProjectFinder {
 
 	List<PartyProjectPermissionsBean> findPartyPermissionsBeansByProject(long projectId);
 
-	PagedCollectionHolder<List<PartyProjectPermissionsBean>> findPartyPermissionsBeanByProject(PagingAndSorting sorting, Filtering filtering, long projectId);
+	PagedCollectionHolder<List<PartyProjectPermissionsBean>> findPartyPermissionsBeanByProject(
+			PagingAndSorting sorting, Filtering filtering, long projectId);
 
 	List<PermissionGroup> findAllPossiblePermission();
 
 	List<Party> findPartyWithoutPermissionByProject(long projectId);
+
+	/**
+	 * Will return a list of TestAutomationProject (jobNames only) available for the server bound to the given project.
+	 * The returned list will not contain already bound ta-projects.
+	 *
+	 * @param projectId
+	 *            : the id of the {@link GenericProject} we want the available ta-projects for
+	 * @return : the list of {@link TestAutomationProject} available and not already bound to the tm-project
+	 */
+	Collection<TestAutomationProject> findAllAvailableTaProjects(long projectId);
 }

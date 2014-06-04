@@ -24,6 +24,7 @@ import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -69,6 +70,7 @@ import org.squashtest.tm.exception.NoBugTrackerBindingException;
 import org.squashtest.tm.exception.user.LoginDoNotExistException;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
+import org.squashtest.tm.service.testautomation.TestAutomationProjectFinderService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.administration.PartyPermissionDatatableModelHelper;
 import org.squashtest.tm.web.internal.helper.JEditablePostParams;
@@ -367,6 +369,14 @@ public class GenericProjectController {
 	@ResponseBody
 	public void unbindProject(@PathVariable long projectId, @PathVariable long taProjectId) {
 		projectManager.unbindTestAutomationProject(projectId, taProjectId);
+	}
+
+	@RequestMapping(value = "/available-ta-projects", method = RequestMethod.GET)
+	@ResponseBody
+	public Collection<TestAutomationProject> listProjectsOnServer(@PathVariable long projectId)
+			throws BindException {
+		return projectManager.findAllAvailableTaProjects(projectId);
+
 	}
 
 	// ************************* wizards administration ***********************
