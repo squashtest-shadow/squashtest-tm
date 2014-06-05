@@ -22,27 +22,30 @@ package org.squashtest.tm.service.testautomation;
 
 import java.net.URL;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.service.testautomation.spi.AccessDenied;
 
-
 public interface TestAutomationProjectFinderService {
 
 	TestAutomationProject findProjectById(long projectId);
 
-
 	/**
-	 * <p>Given the name of a server, will return the list of
-	 * project currently available on it. The credentials will be tested on the fly.</p>
+	 * <p>
+	 * Given the name of a server, will return the list of project currently available on it. The credentials will be
+	 * tested on the fly.
+	 * </p>
 	 * 
 	 * @param serverURL
 	 * @param login
 	 * @param password
 	 * 
 	 * @return a collection of projects hosted on that server
-	 * @throws AccessDenied if the given credentials are invalid
+	 * @throws AccessDenied
+	 *             if the given credentials are invalid
 	 */
 	Collection<TestAutomationProject> listProjectsOnServer(String serverName);
 
@@ -54,7 +57,6 @@ public interface TestAutomationProjectFinderService {
 	 */
 	Collection<TestAutomationProject> listProjectsOnServer(Long serverId);
 
-
 	/**
 	 * see {@link #listProjectsOnServer(URL, String, String)}, using a {@link TestAutomationServer} for argument
 	 * 
@@ -62,5 +64,18 @@ public interface TestAutomationProjectFinderService {
 	 * @return
 	 */
 	Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server);
+
+	/**
+	 * Will return the ta-project urls mapped by their jobName.
+	 * 
+	 * @param collection
+	 *            : the {@link TestAutomationProject} to get the urls of
+	 * @return : a map with
+	 *         <ul>
+	 *         <li>key : the project's jobName</li>
+	 *         <li>value : the project's URL</li>
+	 *         </ul>
+	 */
+	Map<String, URL> findProjectUrls(Collection<TestAutomationProject> collection);
 
 }

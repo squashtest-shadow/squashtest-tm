@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.controller.project;
 
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -105,6 +106,9 @@ public class GenericProjectController {
 
 	@Inject
 	private BugTrackerFinderService bugtrackerFinderService;
+
+	@Inject
+	private TestAutomationProjectFinderService testAutomationProjectFinder;
 
 	@Inject
 	private WorkspaceWizardManager wizardManager;
@@ -347,13 +351,13 @@ public class GenericProjectController {
 	// filtering and sorting not supported for now
 	@RequestMapping(value = PROJECT_ID_URL + "/test-automation-projects", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
-	public DataTableModel getProjectsTableModel(@PathVariable long projectId, final DataTableDrawParameters params) {
+	public DataTableModel getAutomatedProjectsTableModel(@PathVariable long projectId, final DataTableDrawParameters params) {
 		List<TestAutomationProject> taProjects = projectManager.findBoundTestAutomationProjects(projectId);
 
 		PagedCollectionHolder<List<TestAutomationProject>> holder = new SinglePageCollectionHolder<List<TestAutomationProject>>(
 				taProjects);
-
-		return new TestAutomationTableModel().buildDataModel(holder, params.getsEcho());
+		Map<String, URL> jobUrls = testAutomationProjectFinder.findProjectUrls(taProjects);
+		return new TestAutomationTableModel(jobUrls).buildDataModel(holder, params.getsEcho());
 
 	}
 
@@ -373,7 +377,7 @@ public class GenericProjectController {
 
 	@RequestMapping(value = PROJECT_ID_URL+"/available-ta-projects", method = RequestMethod.GET)
 	@ResponseBody
-	public Collection<TestAutomationProject> listProjectsOnServer(@PathVariable long projectId)
+	public Collection<TestAutomationProject> getAvailableTAProjects(@PathVariable long projectId)
 			throws BindException {
 		return projectManager.findAllAvailableTaProjects(projectId);
 
@@ -422,18 +426,22 @@ public class GenericProjectController {
 	// ********************** private classes ***************************
 
 	private final static class TestAutomationTableModel extends DataTableModelBuilder<TestAutomationProject> {
+		Map<String, URL> jobUrls;
 
+		public TestAutomationTableModel(Map<String, URL> jobUrls) {
+			this.jobUrls = jobUrls;
+		}
 		@Override
 		protected Map<String, ?> buildItemData(TestAutomationProject item) {
 			Map<String, Object> res = new HashMap<String, Object>();
 
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex() + 1);
-			res.put("name", item.getName());
-			res.put("server-url", item.getServer().getBaseURL());
-			res.put("server-kind", item.getServer().getKind());
+			res.put("label", item.getLabel());
+			res.put("jobName", item.getJobName());
+			res.put("url", jobUrls.get(item.getJobName()));
 			res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
-
+			res.put(DataTableModelConstants.DEFAULT_EMPTY_EDIT_HOLDER_KEY, " ");
 			return res;
 		}
 	}

@@ -62,7 +62,7 @@
       
       <fieldset class="ta-server-block ta-block">
         <legend>
-          <f:message key="project.testauto.serverblock.title" />
+          <f:message key="label.executionServer" />
         </legend>
         
         <div id="selected-ta-server-span" class="std-margin-top std-margin-bottom">${(not empty project.testAutomationServer) ? project.testAutomationServer.name : noServerLabel }</div>
@@ -73,10 +73,10 @@
       
       <%-- =================================== projects block =============================================================== --%>
       
-      <f:message var="addTAProjectLabel" key="project.testauto.projectsblock.add.button.label" />
+      <f:message var="addTAProjectLabel" key="title.addJob" />
       <fieldset class="ta-projects-block  ta-block">
         <legend>
-          <f:message key="project.testauto.projectsblock.title" />
+          <f:message key="label.jobs" />
           <button id="ta-projects-bind-button" title="${addTAProjectLabel}" class="sq-icon-btn btn-sm">
             <span class="ui-icon ui-icon-plus"></span>
           </button>
@@ -89,15 +89,16 @@
             <tr>
               <th data-def="map=entity-id, invisible" class="not-displayed">#</th>
               <th data-def="map=entity-index,narrow, select">#</th>
-              <th data-def="map=name">
-                <f:message key="project.testauto.projectsblock.table.headers.name" />
+              <th data-def="map=label">
+                <f:message key="label.Label" />
               </th>
-              <th data-def="map=server-url">
-               <f:message key="project.testauto.projectsblock.table.headers.serverurl" />
+               <th data-def="map=jobName">
+                <f:message key="label.testAutomationProject.jobName" />
               </th>
-              <th data-def="map=server-kind">
-               <f:message key="project.testauto.projectsblock.table.headers.serverkind" />
+              <th data-def="map=url, link-new-tab={url}">
+               <f:message key="label.testAutomationProject.url" />
               </th>
+              <th data-def="map=empty-edit-holder, narrow">&nbsp;</th>
               <th data-def="map=empty-delete-holder, delete-button=#ta-projects-unbind-popup">&nbsp;</th>
             </tr>
           </thead>
@@ -106,9 +107,10 @@
             <tr>
               <td>${taproj.id}</td>
               <td>${status.index}</td>
-              <td>${taproj.name}</td>
-              <td>${taproj.server.baseURL}</td>
-              <td>${taproj.server.kind}</td>
+              <td>${taproj.label}</td>
+              <td>${taproj.jobName}</td>
+              <td>${jobUrls[taproj.jobName]}</td>
+              <td> </td>
               <td> </td>
             </tr>
             </c:forEach>
@@ -136,7 +138,7 @@
   <!-- _____________CASE 1_______________ -->
   <div data-def="state=case1">
     <p>
-     <f:message key="message.testAutomationBinding.removeJobs" />
+      <f:message key="message.testAutomationBinding.removeJobs" />
     </p>
     <p>
       <label>
@@ -155,7 +157,7 @@
     </p>
     <p>
       <label>
-       <f:message key="label.warning" />
+        <f:message key="label.warning" />
       </label>
       <f:message key="message.testAutomationServer.withExecution.warning" />
     </p>
@@ -167,11 +169,11 @@
   <div data-def="state=pleasewait">
     <comp:waiting-pane />
   </div>
-  
+
   <!-- _____________Buttons_______________ -->
   <div class="popup-dialog-buttonpane">
     <input class="confirm" type="button" value="${confirmLabel}" data-def="evt=confirm,  state=case1, mainbtn=case1" />
-    <input class="confirm" type="button" value="${confirmLabel}" data-def="evt=confirm,  state=case2, mainbtn=case2" />      
+    <input class="confirm" type="button" value="${confirmLabel}" data-def="evt=confirm,  state=case2, mainbtn=case2" />
     <input class="cancel" type="button" value="${cancelLabel}" data-def="evt=cancel" />
   </div>
 </div>
@@ -190,29 +192,31 @@
   <div data-def="state=pleasewait">
     <comp:waiting-pane />
   </div>
-  
+
   <div data-def="state=main" class="ta-projects-bind-maindiv">
     <p>
       <label>
-       <f:message key="project.testauto.projectsblock.add.popup.caption" />
+        <f:message key="project.testauto.projectsblock.add.popup.caption" />
       </label>
     </p>
     <table class="ta-project-bind-listdiv">
     </table>
-  
+
   </div>
-  
-  <div data-def="state=noTAProjectAvailable" >
-    <p><f:message key="message.project.bindJob.noJobToBind"/></p>
+
+  <div data-def="state=noTAProjectAvailable">
+    <p>
+      <f:message key="message.project.bindJob.noJobToBind" />
+    </p>
   </div>
   <script id="default-item-tpl" type="text/x-handlebars-template" th:inline="text">
 	<tr class="listdiv-item"> <td><input type="checkbox" value="{{name}}"/><td>{{name}}</td><td class="ta-project-tm-label"><label th:text="#{label.taProjectTmLabel}">Libellé dans Squash TM</label><input type="text" style="display: none;"/></td></tr>
   </script>
-  
+
   <div class="ta-projectsadd-fatalerror">
     <span> </span>
   </div>
-  
+
   <div class="ta-projectsadd-error">
     <span> </span>
   </div>
@@ -220,7 +224,7 @@
     <input type="button" value="${cancelLabel}" data-def="mainbtn=main, evt=cancel, state=pleasewait" />
     <input type="button" value="${confirmLabel}" data-def="mainbtn=main, evt=confirm, state=main" />
     <input type="button" value="${cancelLabel}" data-def="evt=cancel, state=main" />
-    <input type="button" value="${okLabel}" data-def="mainbtn=main, evt=cancel, state=noTAProjectAvailable"/>
+    <input type="button" value="${okLabel}" data-def="mainbtn=main, evt=cancel, state=noTAProjectAvailable" />
   </div>
 
 </div>
@@ -230,14 +234,14 @@
 
 <f:message var="unbindPopupTitle" key="dialog.unbind-ta-project.tooltip" />
 <div id="ta-projects-unbind-popup" class="popup-dialog not-displayed" title="${unbindPopupTitle}">
-  
+
   <div>
     <f:message key="dialog.unbind-ta-project.message" />
   </div>
-  
+
   <div class="popup-dialog-buttonpane">
     <input type="button" value="${confirmLabel}" data-def="evt=confirm" />
-   <input type="button" value="${cancelLabel}" data-def="evt=cancel, mainbtn" />
+    <input type="button" value="${cancelLabel}" data-def="evt=cancel, mainbtn" />
   </div>
 
 </div>
@@ -269,6 +273,8 @@ require(["common"], function() {
 
   });
 });
+
+	
 
 	
 </script>

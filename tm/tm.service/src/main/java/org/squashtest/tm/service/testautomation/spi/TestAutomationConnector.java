@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.testautomation.spi;
 
+import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
 
@@ -30,9 +31,6 @@ import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.service.testautomation.TestAutomationCallbackService;
 
-
-
-
 public interface TestAutomationConnector {
 
 	/**
@@ -41,7 +39,6 @@ public interface TestAutomationConnector {
 	 * @return
 	 */
 	String getConnectorKind();
-
 
 	/**
 	 * Checks that the given server configuration (including credentials) actually works.
@@ -52,18 +49,25 @@ public interface TestAutomationConnector {
 	boolean checkCredentials(TestAutomationServer server);
 
 	/**
-	 * <p>Given a server (that contains everything you need to connect it), returns the collection of {@link TestAutomationProject}
-	 * that it hosts.</p>
+	 * <p>
+	 * Given a server (that contains everything you need to connect it), returns the collection of
+	 * {@link TestAutomationProject} that it hosts.
+	 * </p>
 	 * 
 	 * 
 	 * @param server
 	 * @return a Collection that may never be null if success
-	 * @throws ServerConnectionFailed if could not connect to the server
-	 * @throws AccessDenied if the server was reached but the used user could log in
-	 * @throws UnreadableResponseException if the server replied something that is not suitable for a response or otherwise replied not nicely
-	 * @throws NotFoundException if the server could not find its projects
+	 * @throws ServerConnectionFailed
+	 *             if could not connect to the server
+	 * @throws AccessDenied
+	 *             if the server was reached but the used user could log in
+	 * @throws UnreadableResponseException
+	 *             if the server replied something that is not suitable for a response or otherwise replied not nicely
+	 * @throws NotFoundException
+	 *             if the server could not find its projects
 	 * @Throws BadConfiguration if something went wrong due to the configuration
-	 * @throws TestAutomationException for anything that doesn't fit the exceptions above.
+	 * @throws TestAutomationException
+	 *             for anything that doesn't fit the exceptions above.
 	 */
 	Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server)
 			throws ServerConnectionFailed,
@@ -73,20 +77,26 @@ public interface TestAutomationConnector {
 			BadConfiguration,
 			TestAutomationException;
 
-
 	/**
-	 * <p>Given a project (that contains everything you need to connect it), returns the collection of {@link AutomatedTest}
-	 * that it contains</p>
-	 *
+	 * <p>
+	 * Given a project (that contains everything you need to connect it), returns the collection of
+	 * {@link AutomatedTest} that it contains
+	 * </p>
+	 * 
 	 * @param project
 	 * 
 	 * @return a Collection possibly empty but never null of TestAutomationTest if success
-	 * @throws ServerConnectionFailed if could not connect to the server
-	 * @throws AccessDenied if the server was reached but the used user could log in
-	 * @throws UnreadableResponseException if the server replied something that is not suitable for a response or otherwise was rude to you
-	 * @throws NotFoundException if the tests in that project cannot be found
+	 * @throws ServerConnectionFailed
+	 *             if could not connect to the server
+	 * @throws AccessDenied
+	 *             if the server was reached but the used user could log in
+	 * @throws UnreadableResponseException
+	 *             if the server replied something that is not suitable for a response or otherwise was rude to you
+	 * @throws NotFoundException
+	 *             if the tests in that project cannot be found
 	 * @Throws BadConfiguration if something went wrong due to the configuration
-	 * @throws TestAutomationException for anything that doesn't fit the exceptions above.
+	 * @throws TestAutomationException
+	 *             for anything that doesn't fit the exceptions above.
 	 */
 	Collection<AutomatedTest> listTestsInProject(TestAutomationProject project)
 			throws ServerConnectionFailed,
@@ -97,22 +107,47 @@ public interface TestAutomationConnector {
 			TestAutomationException;
 
 	/**
-	 * <p>Given a bunch of tests, must tell the remote server to execute them. These particular executions of those tests are grouped and must be
-	 * identifiable by a reference.</p>
+	 * <p>
+	 * Given a bunch of tests, must tell the remote server to execute them. These particular executions of those tests
+	 * are grouped and must be identifiable by a reference.
+	 * </p>
 	 * 
-	 * <p>That method must return immediately after initiating the test start sequence, it must not wait for their completion. However it may
-	 * possibly start a background task to oversee the remote executions from here.</p>
+	 * <p>
+	 * That method must return immediately after initiating the test start sequence, it must not wait for their
+	 * completion. However it may possibly start a background task to oversee the remote executions from here.
+	 * </p>
 	 * 
-	 * @param tests the tests that must be executed
-	 * @param externalId a reference that index the resulting executions of those tests
+	 * @param tests
+	 *            the tests that must be executed
+	 * @param externalId
+	 *            a reference that index the resulting executions of those tests
 	 * 
-	 * @throws ServerConnectionFailed if could not connect to the server
-	 * @throws AccessDenied if the server was reached but the used user could log in
-	 * @throws UnreadableResponseException if the server replied something that is not suitable for a response or otherwise thrown garbages at you
-	 * @throws NotFoundException if the tests in that project cannot be found
+	 * @throws ServerConnectionFailed
+	 *             if could not connect to the server
+	 * @throws AccessDenied
+	 *             if the server was reached but the used user could log in
+	 * @throws UnreadableResponseException
+	 *             if the server replied something that is not suitable for a response or otherwise thrown garbages at
+	 *             you
+	 * @throws NotFoundException
+	 *             if the tests in that project cannot be found
 	 * @Throws BadConfiguration if something went wrong due to the configuration
-	 * @throws TestAutomationException for anything that doesn't fit the exceptions above.
+	 * @throws TestAutomationException
+	 *             for anything that doesn't fit the exceptions above.
 	 */
-	void executeParameterizedTests(Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> tests, String externalId,
+	void executeParameterizedTests(Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> tests,
+			String externalId,
 			TestAutomationCallbackService securedCallback);
+
+	/**
+	 * <p>
+	 * Will build and return the URL to access to the given test automation project's.
+	 * </P>
+	 * 
+	 * @param testAutomationProject
+	 *            : the {@link TestAutomationProject} we want the URL of
+	 * @return : the URL for the given {@link TestAutomationProject}
+	 * @throws SE
+	 */
+	URL findTestAutomationProjectURL(TestAutomationProject testAutomationProject);
 }

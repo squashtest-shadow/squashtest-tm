@@ -20,8 +20,12 @@
  */
 package org.squashtest.tm.service.internal.testautomation;
 
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -34,6 +38,7 @@ import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
 import org.squashtest.tm.service.internal.repository.TestAutomationServerDao;
+import org.squashtest.tm.service.testautomation.TestAutomationProjectFinderService;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
@@ -45,7 +50,7 @@ public class TestAutomationProjectManagerServiceImpl implements TestAutomationPr
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestAutomationConnector.class);
 
 	@Inject
-	private  TestAutomationProjectDao projectDao;
+	private TestAutomationProjectDao projectDao;
 
 	@Inject
 	private TestAutomationConnectorRegistry connectorRegistry;
@@ -53,14 +58,11 @@ public class TestAutomationProjectManagerServiceImpl implements TestAutomationPr
 	@Inject
 	private TestAutomationServerDao serverDao;
 
-
-
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')")
 	public void persist(TestAutomationProject newProject) {
 		projectDao.persist(newProject);
 	}
-
 
 	@Override
 	public TestAutomationProject findProjectById(long projectId) {
@@ -78,14 +80,12 @@ public class TestAutomationProjectManagerServiceImpl implements TestAutomationPr
 		projectDao.deleteProjectsByIds(allprojects);
 	}
 
-
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')")
 	public void changeLabel(long projectId, String label) {
 		TestAutomationProject project = projectDao.findById(projectId);
 		project.setLabel(label);
 	}
-
 
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')")
@@ -94,14 +94,12 @@ public class TestAutomationProjectManagerServiceImpl implements TestAutomationPr
 		project.setJobName(jobName);
 	}
 
-
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')")
 	public void setSlaveNodes(long projectId, String slaveList) {
 		TestAutomationProject project = projectDao.findById(projectId);
 		project.setSlaves(slaveList);
 	}
-
 
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')")
@@ -112,7 +110,6 @@ public class TestAutomationProjectManagerServiceImpl implements TestAutomationPr
 		return listProjectsOnServer(server);
 	}
 
-
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')")
 	public Collection<TestAutomationProject> listProjectsOnServer(Long serverId) {
@@ -121,7 +118,6 @@ public class TestAutomationProjectManagerServiceImpl implements TestAutomationPr
 		return listProjectsOnServer(server);
 	}
 
-
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')")
 	public Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server) {
@@ -129,16 +125,32 @@ public class TestAutomationProjectManagerServiceImpl implements TestAutomationPr
 		TestAutomationConnector connector = connectorRegistry.getConnectorForKind(server.getKind());
 
 		connector.checkCredentials(server);
-		try{
+		try {
 			return connector.listProjectsOnServer(server);
-		}
-		catch(TestAutomationException ex){
-			if (LOGGER.isErrorEnabled()){
-				LOGGER.error("Test Automation : failed to list projects on server : ",ex);
+		} catch (TestAutomationException ex) {
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("Test Automation : failed to list projects on server : ", ex);
 			}
 			throw ex;
 		}
 	}
 
+	/**
+	 * @see TestAutomationProjectFinderService#findProjectUrls(List)
+	 */
+	@Override
+	public Map<String, URL> findProjectUrls(Collection<TestAutomationProject> taProjects) {
+		Map<String, URL> result = new HashMap<String, URL>(taProjects.size());
+		for (TestAutomationProject testAutomationProject : taProjects) {
+			URL url = findProjectURL(testAutomationProject);
+			result.put(testAutomationProject.getJobName(), url);
+		}
+		return result;
+	}
 
+	private URL findProjectURL(TestAutomationProject testAutomationProject) {
+		TestAutomationServer server = testAutomationProject.getServer();
+		TestAutomationConnector connector = connectorRegistry.getConnectorForKind(server.getKind());
+		return connector.findTestAutomationProjectURL(testAutomationProject);
+	}
 }

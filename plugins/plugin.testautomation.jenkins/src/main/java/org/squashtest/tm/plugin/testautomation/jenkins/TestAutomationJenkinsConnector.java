@@ -301,4 +301,31 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 
 		return execsByProject;
 	}
+
+	/**
+	 * @see TestAutomationJenkinsConnector#findTestAutomationProjectURL(TestAutomationProject)
+	 */
+	@Override
+	public URL findTestAutomationProjectURL(TestAutomationProject testAutomationProject) {
+		TestAutomationServer server = testAutomationProject.getServer();
+		String projectUrl = server.getBaseURL().toString() + "/job/" + testAutomationProject.getJobName();
+		try {
+			return new URL(projectUrl);
+		} catch (MalformedURLException e) {
+			throw new TestAutomationProjectMalformedURLException(projectUrl, e);
+		}
+	}
+
+	public class TestAutomationProjectMalformedURLException extends RuntimeException {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -4904491027261699261L;
+
+		public TestAutomationProjectMalformedURLException(String projectUrl, Exception e) {
+			super("The test automation project url : " + projectUrl + ", is malformed", e);
+		}
+
+	}
 }

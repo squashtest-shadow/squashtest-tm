@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.administration;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -53,6 +54,7 @@ import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.project.GenericProjectFinder;
+import org.squashtest.tm.service.testautomation.TestAutomationProjectFinderService;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.project.WorkspaceWizardModel;
@@ -77,6 +79,8 @@ public class ProjectAdministrationController {
 
 	@Inject
 	private TestAutomationServerManagerService taServerService;
+	@Inject
+	private TestAutomationProjectFinderService taProjectFinderService;
 
 	@Inject
 	private WorkspaceWizardManager wizardManager;
@@ -120,7 +124,7 @@ public class ProjectAdministrationController {
 
 		// test automation data
 		Collection<TestAutomationServer> availableTAServers = taServerService.findAllOrderedByName();
-
+		Map<String, URL> jobUrls = taProjectFinderService.findProjectUrls(adminProject.getProject().getTestAutomationProjects());
 		// bugtracker data
 		Map<Long, String> comboDataMap = createComboDataForBugtracker(locale);
 
@@ -132,7 +136,7 @@ public class ProjectAdministrationController {
 
 		// populating model
 		ModelAndView mav = new ModelAndView("page/projects/project-info");
-
+		mav.addObject("jobUrls", jobUrls);
 		mav.addObject("adminproject", adminProject);
 		mav.addObject("availableTAServers", availableTAServers);
 		mav.addObject("bugtrackersList", JsonHelper.serialize(comboDataMap));
