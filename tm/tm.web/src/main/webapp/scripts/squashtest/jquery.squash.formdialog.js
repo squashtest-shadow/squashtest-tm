@@ -94,11 +94,11 @@
  *					to listen to their own button event defined using evt=<eventname> (see DOM configuration). 
  *  
  *  4/ showError(message) :  displays inside a jquery.squash.popupError widget 
- *  	an error message. By default such error panel will be created if none is declared in the DOM. 
- *  	You can also declare one in the DOM, that you can then css or structure as you wish, provided that :
- *  		- it is tagged as a data-def="error-pane",
- *  		- it contains at least a span. 
- *  
+ *		an error message. By default such error panel will be created if none is declared in the DOM. 
+ *		You can also declare one in the DOM, that you can then css or structure as you wish, provided that :
+ *		- it is tagged as a data-def="error-pane",
+ *		- it contains at least a span. 
+ *
  *	========= configuration ==============
  * 
  *	1/ basic : all basic options of jQuery dialog are valid here, EXCEPT for the buttons.

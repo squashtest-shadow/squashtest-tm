@@ -49,7 +49,7 @@
  * The method `load()` takes the same *object* arg as `get()` and performs an *asunc* request to fill the cache if needed. It does not return anything.
  */
 define(["jquery", "underscore", "workspace.storage"], function($, _, storage){
-	"use strict";
+	
 
 	var serviceURL = squashtm.app.contextRoot+"/localization/filler";
 	var ajaxDefaults = {
@@ -58,7 +58,7 @@ define(["jquery", "underscore", "workspace.storage"], function($, _, storage){
 				'Content-Type' : 'application/json'
 			},
 			dataType : 'json',
-			type : 'POST',
+			type : 'POST'
 		};
 
 	//initialization
@@ -203,8 +203,9 @@ define(["jquery", "underscore", "workspace.storage"], function($, _, storage){
 		}
 
 		var params = _.defaults({
-			data : JSON.stringify(sorted.missing),
-		}, ajaxDefaults);
+				data : JSON.stringify(sorted.missing)
+			}, 
+			ajaxDefaults);
 
 		$.ajax(params).success(function(json){
 			_cache(sorted.missing, json);

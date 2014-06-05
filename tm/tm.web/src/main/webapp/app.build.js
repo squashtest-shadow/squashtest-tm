@@ -54,7 +54,7 @@
 						"domReady", "jquery", "squash.cssloader", "squash.translator", "squash.resizer",
 						"squash.session-pinger", "jquery.squash.tagit",
 						// TODO remove this one ?
-						"workspace.contextual-content", ]
+						"workspace.contextual-content" ]
 			},
 			{
 				name : "login-page",

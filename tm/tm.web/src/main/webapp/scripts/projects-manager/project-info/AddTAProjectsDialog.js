@@ -66,7 +66,7 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "underscore", "jq
 			var self = this;
 			// find checked
 			var checked = this.$el.find(".ta-project-bind-listdiv input:checkbox:checked");
-			if (checked.length == 0) {
+			if (checked.length === 0) {
 				var message = squashtm.app.messages["message.project.bindJob.noneChecked"];
 				this.showErrorMesage(message);
 				return;
@@ -94,8 +94,8 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "underscore", "jq
 			});
 			if (hasDuplicateTmLabel) {
 				// show error message
-				var message = squashtm.app.messages["message.duplicatelabelForTAProjects"];
-				this.showErrorMesage(message);
+				var msg = squashtm.app.messages["message.duplicatelabelForTAProjects"];
+				this.showErrorMesage(msg);
 			} else {
 				// send ajax
 				$.ajax({
