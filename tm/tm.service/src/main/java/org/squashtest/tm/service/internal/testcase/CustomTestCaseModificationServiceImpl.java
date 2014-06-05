@@ -46,7 +46,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
-import org.squashtest.tm.core.foundation.lang.Tuple2;
+import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -404,10 +404,10 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		}
 		else{
 
-			Tuple2<Long, String> projectAndTestname = extractAutomatedProjectAndTestName(testCaseId, testPath);
+			Couple<Long, String> projectAndTestname = extractAutomatedProjectAndTestName(testCaseId, testPath);
 
 			// once it's okay we commit the test association
-			return bindAutomatedTest(testCaseId, projectAndTestname.getEl1(), projectAndTestname.getEld2());
+			return bindAutomatedTest(testCaseId, projectAndTestname.getA1(), projectAndTestname.getA2());
 		}
 
 	}
@@ -506,7 +506,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 
 	// first element : project ID, second element : test name
-	private Tuple2<Long, String> extractAutomatedProjectAndTestName(Long testCaseId, String testPath){
+	private Couple<Long, String> extractAutomatedProjectAndTestName(Long testCaseId, String testPath){
 
 		// first, let's find which TA project it is. The first slash must be removed because it doesn't count.
 		String path = testPath.replaceFirst("^/", "");
@@ -524,7 +524,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			throw new UnallowedTestAssociationException();
 		}
 
-		return new Tuple2<Long, String>(tap.getId(), testName);
+		return new Couple<Long, String>(tap.getId(), testName);
 	}
 
 	private static final class HasSuchLabel implements Predicate{
