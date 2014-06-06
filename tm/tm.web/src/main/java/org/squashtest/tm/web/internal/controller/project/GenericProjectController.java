@@ -439,6 +439,7 @@ public class GenericProjectController {
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex() + 1);
 			res.put("label", item.getLabel());
 			res.put("jobName", item.getJobName());
+			res.put("slaves", item.getSlaves());
 			res.put("url", jobUrls.get(item.getJobName()));
 			res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 			res.put(DataTableModelConstants.DEFAULT_EMPTY_EDIT_HOLDER_KEY, " ");

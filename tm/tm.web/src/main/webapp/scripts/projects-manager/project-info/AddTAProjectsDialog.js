@@ -35,7 +35,6 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "underscore", "jq
 			this.projecUrl = conf.tmProjectURL;
 			// initialize
 			this.$el.formDialog();
-			this.fatalError = this.$(".ta-projectsadd-fatalerror").popupError();
 			this.error = this.$(".ta-projectsadd-error").popupError();
 			// methods bound to this
 			this.manageFatalError = $.proxy(this._manageFatalError, this);
@@ -94,8 +93,8 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "underscore", "jq
 			});
 			if (hasDuplicateTmLabel) {
 				// show error message
-				var msg = squashtm.app.messages["message.duplicatelabelForTAProjects"];
-				this.showErrorMesage(msg);
+				var duplicateMesage = squashtm.app.messages["message.duplicatelabelForTAProjects"];
+				this.showErrorMesage(duplicateMesage);
 			} else {
 				// send ajax
 				$.ajax({
@@ -179,6 +178,11 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "underscore", "jq
 			this.listenTo(self.parentPanel.popups.unbindPopup, "unbindTAProjectPopup.confirm.success", function() {
 				self.updateProjectList = true;
 			});
+			//refresh popup on edit project
+			this.listenTo(self.parentPanel.popups.editTAProjectPopup, "edittestautomationproject.confirm.success", function() {
+				self.updateProjectList = true;
+			});
+			
 		},
 		_onChangeServerConfirmed : function(newSelectedServer) {
 			if (newSelectedServer == this.selectedServerId) {
@@ -199,8 +203,8 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "underscore", "jq
 
 		},
 		_showErrorMesage : function(message) {
-			this.fatalError.find('span').text(message);
-			this.fatalError.popupError('show');
+			this.error.find('span').text(message);
+			this.error.popupError('show');
 		},
 		_buildAndDisplayProjectList : function(json) {
 			if (json.length > 0) {

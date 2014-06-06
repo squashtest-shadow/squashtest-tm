@@ -26,9 +26,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService;
 
 @Controller
@@ -40,11 +42,22 @@ public class TestAutomationProjectController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestAutomationServerController.class);
 
-	@RequestMapping(value = "/{projectId}", method = RequestMethod.DELETE)
+	private static final String PROJECT_ID = "/{projectId}";
+
+	@RequestMapping(value = PROJECT_ID, method = RequestMethod.DELETE)
 	@ResponseBody
-	public void deleteTestAutomationServer(@PathVariable long projectId) {
+	public void deleteTestAutomationProject(@PathVariable long projectId) {
 		LOGGER.info("Delete test automation project of id #{}", projectId);
 		service.deleteProject(projectId);
+	}
+
+	@RequestMapping(value = PROJECT_ID, method = RequestMethod.POST)
+	@ResponseBody
+	public void editTestAutomationProject(@PathVariable long projectId, @RequestBody TestAutomationProject project) {
+		LOGGER.info("Edit test automation project of id #{}", projectId);
+		service.changeJobName(projectId, project.getJobName());
+		service.changeLabel(projectId, project.getLabel());
+		service.changeSlaves(projectId, project.getSlaves());
 	}
 
 }

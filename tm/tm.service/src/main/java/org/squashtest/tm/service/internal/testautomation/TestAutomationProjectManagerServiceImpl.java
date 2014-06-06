@@ -96,7 +96,7 @@ public class TestAutomationProjectManagerServiceImpl implements TestAutomationPr
 
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')")
-	public void setSlaveNodes(long projectId, String slaveList) {
+	public void changeSlaves(long projectId, String slaveList) {
 		TestAutomationProject project = projectDao.findById(projectId);
 		project.setSlaves(slaveList);
 	}

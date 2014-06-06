@@ -24,8 +24,8 @@
  - availableServers : an array of TestAutomationServer
  - TAServerId : the id of the selected server if there is one, or null if none
  */
-define([ "jquery","backbone", "jeditable.selectJEditable", "./AddTAProjectsDialog", "app/ws/squashtm.notification", "squash.translator", "squashtable", "jquery.squash.formdialog" ],
-		function($,Backbone, SelectJEditable, BindPopup, WTF, translator) {
+define([ "jquery","backbone", "jeditable.selectJEditable", "./AddTAProjectsDialog", "./EditTAProjectDialog", "app/ws/squashtm.notification", "squash.translator", "squashtable", "jquery.squash.formdialog" ],
+		function($,Backbone, SelectJEditable, BindPopup, EditTAProjectPopup, WTF, translator) {
 			// *************************************** ConfirmChangePopup **********************************************
 			var ConfirmChangePopup = Backbone.View.extend({
 
@@ -50,21 +50,21 @@ define([ "jquery","backbone", "jeditable.selectJEditable", "./AddTAProjectsDialo
 							serverId : this.newSelectedId
 						}
 					}).done(function() {
-						//trigger confirm success event with active selected id
+						// trigger confirm success event with active selected id
 						self.trigger("confirmChangeServerPopup.confirm.success", [ self.newSelectedId ]);
 						self.selectedId = self.newSelectedId;
 						self.newSelectedId = null;
 						self.close();
 					}).fail(function(wtf){
 						WTF.handleJsonResponseError(wtf);
-						//trigger confirm fail event with active selected id
+						// trigger confirm fail event with active selected id
 						self.trigger("confirmChangeServerPopup.confirm.fail", [ self.selectedId ]);
 						self.newSelectedId = null;
 					});
 				},
 				cancel : function() {
 					var self = this;
-					//trigger cancel event with active selected id
+					// trigger cancel event with active selected id
 					this.trigger("confirmChangeServerPopup.cancel", [ self.selectedId ]);
 					self.newSelectedId = null;
 					this.close();
@@ -156,9 +156,10 @@ define([ "jquery","backbone", "jeditable.selectJEditable", "./AddTAProjectsDialo
 						popups[popup].setParentPanel(this);
 					}
 					this.initSelect(conf);
-					this.table = $("#ta-projects-table").squashTable({}, {});
+					this.initTable();
 					
-					//listens to change-server-popup cancel and fail events to update the server's select-jeditable status accordingly
+					// listens to change-server-popup cancel and fail events to update the server's select-jeditable
+					// status accordingly
 					this.onChangeServerComplete = $.proxy(this._onChangeServerComplete, this);
 					this.listenTo(self.popups.confirmChangePopup, "confirmChangeServerPopup.confirm.success",
 							self.onChangeServerComplete);
@@ -169,18 +170,42 @@ define([ "jquery","backbone", "jeditable.selectJEditable", "./AddTAProjectsDialo
 					this.refreshTable = $.proxy(this._refreshTable, this);
 					this.listenTo(self.popups.bindPopup, "bindTAProjectPopup.confirm.success", self.refreshTable);
 					this.listenTo(self.popups.unbindPopup, "unbindTAProjectPopup.confirm.success", self.refreshTable);
+					this.listenTo(self.popups.editTAProjectPopup, "edittestautomationproject.confirm.success", self.refreshTable);
 				},
 
 				events : {
 					"click #ta-projects-bind-button" : "openBindPopup"
 				},
+				
+				initTable : function(){
+					var self = this;
+					this.table = $("#ta-projects-table").squashTable({}, {
+						buttons:[{
+								tdSelector:"td.edit-job-button",
+								uiIcon : "edit-pencil",
+								onClick : function(table, cell) {
+									var row = cell.parentNode.parentNode;
+									var jobId = table.getODataId(row);
+									var data = table.getDataById(jobId);
+									var taProject = {
+											jobName :data["jobName"],
+											label : data["label"],
+											slaves : data["slaves"]
+									}
+									self.popups.editTAProjectPopup.show(jobId, taProject);
+								}
+							}
+						]
+				});
+				},
 				openBindPopup : function() {
 					this.popups.bindPopup.show();
 				},
+				
 				_refreshTable : function(){
 					this.table.refresh();
 				},
-				//when the select jeditable popup completes we change the server's select-jeditable status accordingly.
+				// when the select jeditable popup completes we change the server's select-jeditable status accordingly.
 				_onChangeServerComplete : function(newServerId) {
 					this.selectServer.setValue(newServerId);
 					this.table.refresh();
@@ -214,6 +239,8 @@ define([ "jquery","backbone", "jeditable.selectJEditable", "./AddTAProjectsDialo
 					});
 				}
 			});
+			
+			
 			// *************************************** automation panel **********************************************
 
 			return {
@@ -221,6 +248,7 @@ define([ "jquery","backbone", "jeditable.selectJEditable", "./AddTAProjectsDialo
 					var popups = {
 						unbindPopup : new UnbindPopup(conf),
 						confirmChangePopup : new ConfirmChangePopup(conf),
+						editTAProjectPopup : new EditTAProjectPopup(conf),
 						bindPopup : new BindPopup(conf)
 					};
 					new AutomationPanel(conf, popups);

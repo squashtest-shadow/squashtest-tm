@@ -42,9 +42,11 @@ public interface TestAutomationProjectManagerService extends TestAutomationProje
 	void changeJobName(long projectId, String jobName);
 
 	/**
-	 * Note : the slave list is a semi-column separated list
+	 * Note : the slave list is a semicolon separated list
 	 * 
 	 */
-	void setSlaveNodes(long projectId, String slaveList);
+	void changeSlaves(long projectId, String slaveList);
+
+
 
 }

@@ -179,7 +179,7 @@ public class ProjectAdministrationController {
 
 		for (WorkspaceWizard wizard : wizards) {
 			WorkspaceWizardModel model = new WorkspaceWizardModel(wizard);
-			model.setType(internationalizationHelper.getMessage("label.Wizard", null, locale));
+			model.setType(internationalizationHelper.internationalize("label.Wizard", locale));
 			output.add(model);
 		}
 
@@ -191,7 +191,7 @@ public class ProjectAdministrationController {
 		for (BugTracker b : bugtrackerFinderService.findAll()) {
 			comboDataMap.put(b.getId(), b.getName());
 		}
-		comboDataMap.put(-1L, internationalizationHelper.getMessage(PROJECT_BUGTRACKER_NAME_UNDEFINED, null, locale));
+		comboDataMap.put(-1L, internationalizationHelper.internationalize(PROJECT_BUGTRACKER_NAME_UNDEFINED, locale));
 		return comboDataMap;
 
 	}

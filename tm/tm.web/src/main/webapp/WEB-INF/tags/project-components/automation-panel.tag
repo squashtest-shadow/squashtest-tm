@@ -88,6 +88,7 @@
           <thead>
             <tr>
               <th data-def="map=entity-id, invisible" class="not-displayed">#</th>
+               <th data-def="map=slaves, invisible" class="not-displayed">#</th>
               <th data-def="map=entity-index,narrow, select">#</th>
               <th data-def="map=label">
                 <f:message key="label.Label" />
@@ -98,7 +99,7 @@
               <th data-def="map=url, link-new-tab={url}">
                <f:message key="label.testAutomationProject.url" />
               </th>
-              <th data-def="map=empty-edit-holder, narrow">&nbsp;</th>
+              <th data-def="map=empty-edit-holder, narrow, sClass=edit-job-button">&nbsp;</th>
               <th data-def="map=empty-delete-holder, delete-button=#ta-projects-unbind-popup">&nbsp;</th>
             </tr>
           </thead>
@@ -106,6 +107,7 @@
             <c:forEach items="${project.testAutomationProjects}" var="taproj" varStatus="status">
             <tr>
               <td>${taproj.id}</td>
+              <td>${taproj.slaves}</td>
               <td>${status.index}</td>
               <td>${taproj.label}</td>
               <td>${taproj.jobName}</td>
@@ -181,8 +183,6 @@
 
 <%-- ================================================
 	Project add popup. 
-	
-	Dumb definition here, the code is elsewhere 
 ================================================= --%>
 
 
@@ -213,13 +213,11 @@
 	<tr class="listdiv-item"> <td><input type="checkbox" value="{{name}}"/><td>{{name}}</td><td class="ta-project-tm-label"><label th:text="#{label.taProjectTmLabel}">Libellé dans Squash TM</label><input type="text" style="display: none;"/></td></tr>
   </script>
 
-  <div class="ta-projectsadd-fatalerror">
-    <span> </span>
-  </div>
-
   <div class="ta-projectsadd-error">
     <span> </span>
   </div>
+
+
   <div class="popup-dialog-buttonpane">
     <input type="button" value="${cancelLabel}" data-def="mainbtn=main, evt=cancel, state=pleasewait" />
     <input type="button" value="${confirmLabel}" data-def="mainbtn=main, evt=confirm, state=main" />
@@ -229,8 +227,56 @@
 
 </div>
 
+<%-- ================================================
+  Project edit popup. 
+================================================= --%>
+<f:message var="editTAProjectTitle" key="title.editTAProject" />
+<div id="ta-project-edit-popup" class="not-displayed popup-dialog form-horizontal" title="${editTAProjectTitle }">
+  <div data-def="state=pleasewait">
+    <comp:waiting-pane />
+  </div>
+ 
+ <div data-def="state=main" >
+  <div class="control-group">
+    <label class="control-label" for="label">
+      <f:message key="label.Label" />
+    </label>
+    <div class="controls">
+      <input name="label" class="strprop" value="" maxlength="255" type="text" />
+      <span class="help-inline">&nbsp;</span>
+    </div>
+  </div>
 
-<%-- the project unbind confirmation popup (STUB) --%>
+  <div class="control-group">
+    <label class="control-label" for="jobName">
+      <f:message key="label.job.input" />
+    </label>
+    <div class="controls">
+      <select name="jobName"></select>
+    </div>
+  </div>
+  <div class="control-group">
+    <label for="slaves">
+      <f:message key="label.slaves.input" />
+    </label>
+    <div>
+      <input name="slaves" class="strprop" value="" size="50" maxlength="255" type="text" />
+      <span class="help-inline">&nbsp;</span>
+    </div>
+  </div>
+  </div>
+ <div class="ta-projectsedit-error">
+    <span> </span>
+  </div>
+  <div class="popup-dialog-buttonpane">
+    <input type="button" value="${cancelLabel}" data-def="mainbtn=main, evt=cancel, state=pleasewait" />
+    <input type="button" value="${confirmLabel}" data-def="mainbtn=main, evt=confirm, state=main" />
+    <input type="button" value="${cancelLabel}" data-def="evt=cancel, state=main" />
+  </div>
+
+</div>
+
+<%-- =======================the project unbind confirmation popup (STUB)================================ --%>
 
 <f:message var="unbindPopupTitle" key="dialog.unbind-ta-project.tooltip" />
 <div id="ta-projects-unbind-popup" class="popup-dialog not-displayed" title="${unbindPopupTitle}">
@@ -273,6 +319,8 @@ require(["common"], function() {
 
   });
 });
+
+	
 
 	
 
