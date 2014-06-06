@@ -135,7 +135,7 @@
 
  ================================================= --%>
 
-<div id="ta-server-confirm-popup" class="popup-dialog" title="CONFIRM">
+<div id="ta-server-confirm-popup" class="popup-dialog not-displayed" title="CONFIRM">
 
   <!-- _____________CASE 1_______________ -->
   <div data-def="state=case1">
@@ -235,37 +235,37 @@
   <div data-def="state=pleasewait">
     <comp:waiting-pane />
   </div>
- 
- <div data-def="state=main" >
-  <div class="control-group">
-    <label class="control-label" for="label">
-      <f:message key="label.Label" />
-    </label>
-    <div class="controls">
-      <input name="label" class="strprop" value="" maxlength="255" type="text" />
-      <span class="help-inline">&nbsp;</span>
-    </div>
-  </div>
 
-  <div class="control-group">
-    <label class="control-label" for="jobName">
-      <f:message key="label.job.input" />
-    </label>
-    <div class="controls">
-      <select name="jobName"></select>
+  <div data-def="state=main">
+    <div class="control-group">
+      <label class="control-label" for="label">
+        <f:message key="label.Label" />
+      </label>
+      <div class="controls">
+        <input name="label" class="strprop" value="" maxlength="255" type="text" />
+        <span class="help-inline">&nbsp;</span>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label" for="jobName">
+        <f:message key="label.job.input" />
+      </label>
+      <div class="controls">
+        <select name="jobName"></select>
+      </div>
+    </div>
+    <div class="control-group">
+      <label for="slaves">
+        <f:message key="label.slaves.input" />
+      </label>
+      <div>
+        <input name="slaves" class="strprop" value="" size="50" maxlength="255" type="text" />
+        <span class="help-inline">&nbsp;</span>
+      </div>
     </div>
   </div>
-  <div class="control-group">
-    <label for="slaves">
-      <f:message key="label.slaves.input" />
-    </label>
-    <div>
-      <input name="slaves" class="strprop" value="" size="50" maxlength="255" type="text" />
-      <span class="help-inline">&nbsp;</span>
-    </div>
-  </div>
-  </div>
- <div class="ta-projectsedit-error">
+  <div class="ta-projectsedit-error">
     <span> </span>
   </div>
   <div class="popup-dialog-buttonpane">
@@ -276,22 +276,40 @@
 
 </div>
 
-<%-- =======================the project unbind confirmation popup (STUB)================================ --%>
+<%-- =======================the project unbind confirmation popup================================ --%>
 
 <f:message var="unbindPopupTitle" key="dialog.unbind-ta-project.tooltip" />
 <div id="ta-projects-unbind-popup" class="popup-dialog not-displayed" title="${unbindPopupTitle}">
-
-  <div>
-    <f:message key="dialog.unbind-ta-project.message" />
+  <!-- _____________CASE 1_______________ -->
+  <div data-def="state=case1">
+    <p class="remove-message">fbfbfbd</p>
   </div>
 
+  <!-- _____________CASE 2_______________ -->
+  <div data-def="state=case2">
+    <p class="remove-message">fbfbfbd</p>
+    <p>
+      <label>
+        <f:message key="label.warning" />
+      </label>
+      <f:message key="message.testAutomationServer.withExecution.warning" />
+    </p>
+
+  </div>
+  <!-- _____________Progression_______________ -->
+  <div data-def="state=pleasewait">
+    <comp:waiting-pane />
+  </div>
+  <script id="remove-message-tpl" type="text/x-handlebars-template">
+  <f:message key="message.testAutomationBinding.removeJob" />
+  </script>
+  <!-- _____________Buttons_______________ -->
   <div class="popup-dialog-buttonpane">
-    <input type="button" value="${confirmLabel}" data-def="evt=confirm" />
-    <input type="button" value="${cancelLabel}" data-def="evt=cancel, mainbtn" />
+    <input class="confirm" type="button" value="${confirmLabel}" data-def="evt=confirm,  state=case1, mainbtn=case1" />
+    <input class="confirm" type="button" value="${confirmLabel}" data-def="evt=confirm,  state=case2, mainbtn=case2" />
+    <input class="cancel" type="button" value="${cancelLabel}" data-def="evt=cancel" />
   </div>
-
 </div>
-
 
 <%-- ===================================
 	Js initialization
@@ -319,6 +337,8 @@ require(["common"], function() {
 
   });
 });
+
+	
 
 	
 

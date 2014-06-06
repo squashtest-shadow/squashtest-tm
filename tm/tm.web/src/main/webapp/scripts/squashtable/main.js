@@ -858,6 +858,12 @@ define(["jquery",
 				
 				var _rowid = self.getODataId(jqRow.get(0));
 				_delegate.data('entity-id', _rowid);
+				
+				var rowDatas = self.getDataById(_rowid)
+				for(var rowData in rowDatas){
+					_delegate.data(rowData, rowDatas[rowData]);
+				}
+					
 				var _data = _delegate.data();
 				for (var _ppt in _data){
 					var _widg = _data[_ppt];

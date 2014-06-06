@@ -18,36 +18,27 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.testautomation;
+package org.squashtest.tm.web.internal.model.testautomation;
 
-import org.squashtest.tm.domain.testautomation.TestAutomationProject;
-
-
-public interface TestAutomationProjectManagerService extends TestAutomationProjectFinderService{
-
-	// *********************** entity management *******************
-
-	void persist(TestAutomationProject newProject);
-
-	void deleteProject(long projectId);
-
-	void deleteAllForTMProject(long tmProjectId);
+public class TAUsageStatus {
+	private boolean hasBoundProject;
+	private boolean hasExecutedTests;
 
 
-	// *********************** Properties mutators ****************************
+	public TAUsageStatus( boolean hasExecutedTests) {
+		this.hasExecutedTests = hasExecutedTests;
+	}
 
+	public TAUsageStatus(boolean hasBoundProject, boolean hasExecutedTests) {
+		this.hasBoundProject = hasBoundProject;
+		this.hasExecutedTests = hasExecutedTests;
+	}
 
-	void changeLabel(long projectId, String name);
+	public boolean isHasBoundProject() {
+		return hasBoundProject;
+	}
 
-	void changeJobName(long projectId, String jobName);
-
-	/**
-	 * Note : the slave list is a semicolon separated list
-	 * 
-	 */
-	void changeSlaves(long projectId, String slaveList);
-
-
-
-
+	public boolean isHasExecutedTests() {
+		return hasExecutedTests;
+	}
 }

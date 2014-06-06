@@ -21,7 +21,6 @@
 package org.squashtest.tm.web.internal.controller.testautomation;
 
 import java.net.URL;
-import java.util.Collection;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -32,7 +31,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,11 +39,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.tm.core.foundation.lang.UrlUtils;
-import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectFinderService;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
 import org.squashtest.tm.web.internal.controller.administration.NewTestAutomationServer;
 import org.squashtest.tm.web.internal.helper.JEditablePostParams;
+import org.squashtest.tm.web.internal.model.testautomation.TAUsageStatus;
 
 @Controller
 @RequestMapping("/test-automation-servers")
@@ -133,31 +131,11 @@ public class TestAutomationServerController {
 
 	@RequestMapping(value = "/{serverId}/usage-status", method = RequestMethod.GET)
 	@ResponseBody
-	public TestAutomationUsageStatus getTestAutomationUsageStatus(@PathVariable long serverId) {
+	public TAUsageStatus getTestAutomationUsageStatus(@PathVariable long serverId) {
 		LOGGER.info("Delete test automation server of id #{}", serverId);
 		boolean hasBoundProject = service.hasBoundProjects(serverId);
 		boolean hasExecutedTests = service.hasExecutedTests(serverId);
-		return new TestAutomationUsageStatus(hasBoundProject, hasExecutedTests);
-	}
-
-	private class TestAutomationUsageStatus {
-		private boolean hasBoundProject;
-		private boolean hasExecutedTests;
-
-		public TestAutomationUsageStatus(boolean hasBoundProject, boolean hasExecutedTests) {
-			this.hasBoundProject = hasBoundProject;
-			this.hasExecutedTests = hasExecutedTests;
-		}
-
-		@SuppressWarnings("unused")
-		public boolean isHasBoundProject() {
-			return hasBoundProject;
-		}
-
-		@SuppressWarnings("unused")
-		public boolean isHasExecutedTests() {
-			return hasExecutedTests;
-		}
+		return new TAUsageStatus(hasBoundProject, hasExecutedTests);
 	}
 
 

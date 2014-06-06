@@ -115,16 +115,40 @@ define([ "jquery","backbone", "jeditable.selectJEditable", "./AddTAProjectsDialo
 					this.$el.formDialog();
 				},
 				events : {
+					'formdialogopen' : 'open',
 					'formdialogconfirm' : 'confirm',
 					'formdialogcancel' : 'cancel'
 				},
 				confirm : function() {
 					this.trigger("unbindTAProjectPopup.confirm");
-					var deletedId = this.$el.data('entity-id');
 					$.ajax({
-						url : squashtm.app.contextRoot + "/test-automation-projects/" + deletedId,
+						url : squashtm.app.contextRoot + "/test-automation-projects/" + this.deletedId,
 						type : "delete"						
 					}).done(this.confirmSuccess).fail(this.confirmFail);
+				},
+				open : function(){
+					var self = this;
+					this.deletedId = this.$el.data('entity-id');
+					this.jobName = this.$el.data('jobName');
+					this.$el.formDialog("setState", "pleaseWait");
+					//edit remove message
+					var $removeP = this.$el.find(".remove-message");
+					$removeP.empty();
+					var source = $("#remove-message-tpl").html();
+					var template = Handlebars.compile(source);
+					var message = template({jobName : this.jobName});
+					$removeP.html(message);
+					// set state with or without warnin message depending on project's usage status
+					$.ajax({
+						url: squashtm.app.contextRoot + "/test-automation-projects/"+this.deletedId+"/usage-status",
+						type : "get"
+					}).then(function(status){
+						if (!status.hasExecutedTests){
+							self.$el.formDialog('setState','case1');
+						}else{
+							self.$el.formDialog('setState','case2');
+						}
+					});
 				},
 				_confirmSuccess : function(){
 					this.trigger("unbindTAProjectPopup.confirm.success");

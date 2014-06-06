@@ -153,4 +153,12 @@ public class TestAutomationProjectManagerServiceImpl implements TestAutomationPr
 		TestAutomationConnector connector = connectorRegistry.getConnectorForKind(server.getKind());
 		return connector.findTestAutomationProjectURL(testAutomationProject);
 	}
+
+	/**
+	 * @see TestAutomationProjectFinderService#hasExecutedTests(long)
+	 */
+	@Override
+	public boolean hasExecutedTests(long projectId) {
+		return projectDao.haveExecutedTestsByIds(Arrays.asList(projectId));
+	}
 }

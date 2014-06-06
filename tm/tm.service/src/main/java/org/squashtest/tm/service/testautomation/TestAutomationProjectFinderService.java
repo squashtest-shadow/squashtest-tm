@@ -77,5 +77,11 @@ public interface TestAutomationProjectFinderService {
 	 *         </ul>
 	 */
 	Map<String, URL> findProjectUrls(Collection<TestAutomationProject> collection);
+	/**
+	 * 
+	 * @param projectId
+	 * @return  <code>true</code> if the project have been executed, <code>false</code> otherwise
+	 */
+	boolean hasExecutedTests(long projectId);
 
 }

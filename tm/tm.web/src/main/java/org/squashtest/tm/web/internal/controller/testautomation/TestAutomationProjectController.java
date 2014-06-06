@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService;
+import org.squashtest.tm.web.internal.model.testautomation.TAUsageStatus;
 
 @Controller
 @RequestMapping("/test-automation-projects")
@@ -59,5 +60,14 @@ public class TestAutomationProjectController {
 		service.changeLabel(projectId, project.getLabel());
 		service.changeSlaves(projectId, project.getSlaves());
 	}
+
+	@RequestMapping(value = PROJECT_ID+"/usage-status", method = RequestMethod.GET)
+	@ResponseBody
+	public TAUsageStatus getTestAutomationUsageStatus(@PathVariable long projectId) {
+		LOGGER.info("Delete test automation server of id #{}", projectId);
+		boolean hasExecutedTests = service.hasExecutedTests(projectId);
+		return new TAUsageStatus( hasExecutedTests);
+	}
+
 
 }
