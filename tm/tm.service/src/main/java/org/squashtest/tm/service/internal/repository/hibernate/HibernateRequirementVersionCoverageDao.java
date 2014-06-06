@@ -24,7 +24,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+
 import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.springframework.stereotype.Repository;
@@ -95,6 +98,33 @@ CustomRequirementVersionCoverageDao {
 	public List<RequirementVersion> findDistinctRequirementVersionsByTestCases(Collection<Long> testCaseIds) {
 		PagingAndSorting pas = new DefaultPagingAndSorting("RequirementVersion.name", true);
 		return findDistinctRequirementVersionsByTestCases(testCaseIds, pas);
+	}
+
+
+
+	/*
+	 * Hibernate won't f***ing do it the normal way so I'll shove SQL up it until it begs me to stop
+	 * 
+	 * (non-Javadoc)
+	 * @see org.squashtest.tm.service.internal.repository.CustomRequirementVersionCoverageDao#delete(org.squashtest.tm.domain.testcase.RequirementVersionCoverage)
+	 */
+	@Override
+	public void delete(RequirementVersionCoverage requirementVersionCoverage) {
+
+
+		Session s = currentSession();
+
+		String sql = NativeQueries.REQUIREMENT_SQL_REMOVE_TEST_STEP_BY_COVERAGE_ID;
+
+		Query q = s.createSQLQuery(sql);
+		q.setParameter("covId", requirementVersionCoverage.getId());
+		q.executeUpdate();
+
+		s.flush();
+
+		s.delete(requirementVersionCoverage);
+
+
 	}
 
 }
