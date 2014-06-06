@@ -549,6 +549,17 @@ div.ta-projects-bind-maindiv{
     text-decoration: none;
 }
 
+table.ta-project-bind-listdiv {
+    border-collapse: collapse;
+}
+table.ta-project-bind-listdiv tr.listdiv-item.odd {
+    background-color: #E0E0E0;
+}
+table.ta-project-bind-listdiv tr.listdiv-item.even {
+    background-color: #C0C0C0;
+}
+
+
 /*************************************
 	test automation picker
 **************************************/
