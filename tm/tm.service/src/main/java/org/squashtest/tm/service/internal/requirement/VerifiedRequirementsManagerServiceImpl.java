@@ -42,6 +42,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.domain.library.WhichNodeVisitor;
+import org.squashtest.tm.domain.library.WhichNodeVisitor.NodeType;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -480,11 +482,20 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 
 	@Override
 	public void removeVerifiedRequirementVersionsFromTestStep(List<Long> requirementVersionsIds, long testStepId) {
-		List<RequirementVersionCoverage> coverages = requirementVersionCoverageDao.byRequirementVersionsAndTestStep(
+		/*List<RequirementVersionCoverage> coverages = requirementVersionCoverageDao.byRequirementVersionsAndTestStep(
 				requirementVersionsIds, testStepId);
 		for (RequirementVersionCoverage coverage : coverages) {
 			coverage.removeVerifyingStep(testStepId);
+		}*/
+		List<RequirementVersionCoverage> coverages = requirementVersionCoverageDao.byRequirementVersionsAndTestStep(
+				requirementVersionsIds, testStepId);
+
+		// if cast exception well, the input were wrong and the thread was bound to grind to halt.
+		ActionTestStep ts = (ActionTestStep)testStepDao.findById(testStepId);
+		for (RequirementVersionCoverage cov : coverages){
+			ts.removeRequirementVersionCoverage(cov);
 		}
+
 	}
 
 }
