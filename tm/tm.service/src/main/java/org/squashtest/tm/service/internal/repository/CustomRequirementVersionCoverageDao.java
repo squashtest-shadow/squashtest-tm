@@ -38,7 +38,7 @@ public interface CustomRequirementVersionCoverageDao extends EntityDao<Requireme
 	 * @return : a list of {@link RequirementVersionCoverage} representing a sorted page of all direct coverages for the given test case
 	 */
 	List<RequirementVersionCoverage> findAllByTestCaseId(long testCaseId, PagingAndSorting pas);
-	
+
 
 	/**
 	 * Returns a paged and ordered list taken from all DISTINCT {@link RequirementVersion} linked to at least one of the {@link TestCase}s matching the given ids param.
@@ -55,5 +55,15 @@ public interface CustomRequirementVersionCoverageDao extends EntityDao<Requireme
 	 */
 	@Transactional(readOnly=true)
 	List<RequirementVersion> findDistinctRequirementVersionsByTestCases(Collection<Long> testCaseIds);
+
+
+	/**
+	 * Simply delete the given {@link RequirementVersionCoverage}, ensuring that relationships with the TestCase and its steps
+	 * are removed too.
+	 * 
+	 * @param requirementVersionCoverage
+	 */
+	void delete(RequirementVersionCoverage requirementVersionCoverage);
+
 
 }

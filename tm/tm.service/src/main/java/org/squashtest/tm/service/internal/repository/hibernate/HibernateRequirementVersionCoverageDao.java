@@ -24,7 +24,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+
 import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.springframework.stereotype.Repository;
@@ -38,7 +41,7 @@ import org.squashtest.tm.service.internal.repository.CustomRequirementVersionCov
 
 @Repository("CustomRequirementVersionCoverageDao")
 public class HibernateRequirementVersionCoverageDao extends HibernateEntityDao<RequirementVersionCoverage> implements
-		CustomRequirementVersionCoverageDao {
+CustomRequirementVersionCoverageDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -121,4 +124,32 @@ public class HibernateRequirementVersionCoverageDao extends HibernateEntityDao<R
 		};
 		return findDistinctRequirementVersionsByTestCases(testCaseIds, pas);
 	}
+
+
+
+	/*
+	 * Hibernate won't f***ing do it the normal way so I'll shove SQL up it until it begs me to stop
+	 * 
+	 * (non-Javadoc)
+	 * @see org.squashtest.tm.service.internal.repository.CustomRequirementVersionCoverageDao#delete(org.squashtest.tm.domain.testcase.RequirementVersionCoverage)
+	 */
+	@Override
+	public void delete(RequirementVersionCoverage requirementVersionCoverage) {
+
+
+		Session s = currentSession();
+
+		String sql = NativeQueries.REQUIREMENT_SQL_REMOVE_TEST_STEP_BY_COVERAGE_ID;
+
+		Query q = s.createSQLQuery(sql);
+		q.setParameter("covId", requirementVersionCoverage.getId());
+		q.executeUpdate();
+
+		s.flush();
+
+		s.delete(requirementVersionCoverage);
+
+
+	}
+
 }

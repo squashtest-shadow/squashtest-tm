@@ -50,7 +50,7 @@ public final class NativeQueries {
 	public static final String TESTCASELIBRARYNODE_SQL_REMOVE = "delete from TEST_CASE_LIBRARY_NODE where tcln_id in (:nodeIds)";
 	public static final String TESTCASEFOLDER_SQL_REMOVE = "delete from TEST_CASE_FOLDER where tcln_id in (:nodeIds)";
 	public static final String TESTCASELIBRARYNODE_SQL_FILTERFOLDERIDS = "select folder.tcln_id from TEST_CASE_FOLDER folder where folder.tcln_id in (:testcaseIds)";
-	
+
 	public static final String TESTCASE_SQL_REMOVEFROMFOLDER = "delete from TCLN_RELATIONSHIP where ancestor_id in (:ancIds) or descendant_id in (:descIds)";
 	public static final String TESTCASE_SQL_REMOVEFROMLIBRARY = "delete from TEST_CASE_LIBRARY_CONTENT where content_id in (:testCaseIds)";
 
@@ -60,12 +60,12 @@ public final class NativeQueries {
 
 	public static final String REQUIREMENT_VERSION_FIND_ID_FROM_REQUIREMENT = "select req_v.res_id from REQUIREMENT_VERSION req_v where req_v.requirement_id in (:requirementIds)";
 	public static final String SIMPLE_RESOURCE_FIND_ID_FROM_FOLDER = "select folder.res_id from REQUIREMENT_FOLDER folder where folder.rln_id in (:folderIds)";
-	
-	
+
+
 	public static final String REQUIREMENT_SET_NULL_REQUIREMENT_VERSION = "update REQUIREMENT req set req.current_version_id = null where req.rln_id in (:requirementIds);";
 	public static final String REQUIREMENT_FOLDER_SET_NULL_SIMPLE_RESOURCE = "update REQUIREMENT_FOLDER folder set folder.res_id = null where folder.rln_id in (:folderIds)";
-	
-	
+
+
 	public static final String REQUIREMENT_VERSION_SQL_REMOVE = "delete from REQUIREMENT_VERSION where res_id in (:requirementVersionIds)";
 	public static final String SIMPLE_RESOURCE_SQL_REMOVE = "delete from SIMPLE_RESOURCE where res_id in (:simpleResourceIds)";
 	public static final String RESOURCE_SQL_REMOVE = "delete from RESOURCE where res_id in (:resourceIds)";
@@ -85,7 +85,7 @@ public final class NativeQueries {
 	public static final String CAMPAIGN_SQL_REMOVEFROMFOLDER = "delete from CLN_RELATIONSHIP where ancestor_id in (:ancIds) or descendant_id in (:descIds)";
 	public static final String CAMPAIGN_SQL_REMOVEFROMLIBRARY = "delete from CAMPAIGN_LIBRARY_CONTENT where content_id in (:campaignIds)";
 
-	
+
 	/*
 	 * ********************************************** consequences of test case deletion on campaign item test plans
 	 * *******************************************
@@ -124,8 +124,8 @@ public final class NativeQueries {
 	public static final String TESTCASE_SQL_SETNULLCALLINGITERATIONITEMTESTPLANHAVINGEXECUTIONS = " update ITERATION_TEST_PLAN_ITEM itp set itp.tcln_id = NULL "
 			+ " where itp.item_test_plan_id in (:itpHavingExecIds) ";
 
-	
-	
+
+
 	// ********** reordering test plan for iterations
 	public static final String TESTCASE_SQL_GETCALLINGITERATIONITEMTESTPLANORDEROFFSET = " select itp1.item_test_plan_id, count(itp1.item_test_plan_id) "
 			+ " from ITEM_TEST_PLAN_LIST as itp1, "
@@ -139,8 +139,8 @@ public final class NativeQueries {
 			+ " set itp1.item_test_plan_order = itp1.item_test_plan_order - :offset "
 			+ " where itp1.item_test_plan_id in (:reorderedItemIds)";
 
-	
-	// ************ reordering test plan for test suites 
+
+	// ************ reordering test plan for test suites
 	public static final String TESTCASE_SQL_GETCALLINGTESTSUITEITEMTESTPLANORDEROFFSET = " select itp1.tpi_id, count(itp1.tpi_id) "
 			+ " from TEST_SUITE_TEST_PLAN_ITEM as itp1, "
 			+ " TEST_SUITE_TEST_PLAN_ITEM as itp2 "
@@ -152,15 +152,15 @@ public final class NativeQueries {
 	public static final String TESTCASE_SQL_UPDATECALLINGTESTSUITEITEMTESTPLANORDER = " update TEST_SUITE_TEST_PLAN_ITEM as itp1 "
 			+ " set itp1.test_plan_order = itp1.test_plan_order - :offset "
 			+ " where itp1.tpi_id in (:reorderedItemIds)";
-	
+
 	public static final String TESTCASE_SQL_REMOVECALLINGTESTSUITEITEMTESTPLAN = "delete from TEST_SUITE_TEST_PLAN_ITEM where tpi_id in (:itpHavingNoExecIds)";
 	public static final String TESTCASE_SQL_REMOVECALLINGITERATIONITEMTESTPLANFROMLIST = "delete from ITEM_TEST_PLAN_LIST  where item_test_plan_id in (:itpHavingNoExecIds)";
 	public static final String TESTCASE_SQL_REMOVECALLINGITERATIONITEMTESTPLAN = "delete from ITERATION_TEST_PLAN_ITEM  where item_test_plan_id in (:itpHavingNoExecIds) ";
 
-	
+
 	/* ************************************ /consequences of test case deletion on item test plans  ******************************************************* */
 
-	
+
 	public static final String TESTCASE_SQL_SETNULLCALLINGEXECUTIONS = "update EXECUTION exec set exec.tcln_id = null where exec.tcln_id in (:testCaseIds)";
 
 	public static final String TESTCASE_SQL_SETNULLCALLINGEXECUTIONSTEPS = "update EXECUTION_STEP step set step.test_step_id = null where step.test_step_id in (:testStepIds)";
@@ -175,80 +175,82 @@ public final class NativeQueries {
 			+ " where verified_req_version_id in ( "
 			+ " select req_v.res_id from REQUIREMENT_VERSION req_v where req_v.requirement_id in (:requirementIds) "
 			+ ")";
-	
+
 	public static final String REQUIREMENT_SQL_REMOVE_TEST_STEP_COVERAGE_BY_REQ_VERSION_IDS = "delete from VERIFYING_STEPS where REQUIREMENT_VERSION_COVERAGE_ID in (select REQUIREMENT_VERSION_COVERAGE_ID from REQUIREMENT_VERSION_COVERAGE where VERIFIED_REQ_VERSION_ID in (:versionIds))";
-	
+
+	public static final String REQUIREMENT_SQL_REMOVE_TEST_STEP_BY_COVERAGE_ID = "delete from VERIFYING_STEPS where requirement_version_coverage_id = :covId";
+
 	/* ********************************************* tree path queries ********************************************************************* */
 	private static final String CLN_FIND_SORTED_PARENTS = " from CAMPAIGN_LIBRARY_NODE cln "+
-															   "inner join CLN_RELATIONSHIP_CLOSURE clos "+
-															   "on clos.ancestor_id = cln.cln_id "+
-															   "where clos.descendant_id = :nodeId "+
-															   "order by clos.depth desc";
-	
-	public static final String CLN_FIND_SORTED_PARENT_NAMES = "select cln.name "+CLN_FIND_SORTED_PARENTS;	
+			"inner join CLN_RELATIONSHIP_CLOSURE clos "+
+			"on clos.ancestor_id = cln.cln_id "+
+			"where clos.descendant_id = :nodeId "+
+			"order by clos.depth desc";
+
+	public static final String CLN_FIND_SORTED_PARENT_NAMES = "select cln.name "+CLN_FIND_SORTED_PARENTS;
 	public static final String CLN_FIND_SORTED_PARENT_IDS = "select cln.cln_id "+CLN_FIND_SORTED_PARENTS;
-	
+
 	private static final String TCLN_FIND_SORTED_PARENTS = " from TEST_CASE_LIBRARY_NODE tcln "+
-													   "inner join TCLN_RELATIONSHIP_CLOSURE clos "+
-													   "on clos.ancestor_id = tcln.tcln_id "+
-													   "where clos.descendant_id = :nodeId "+
-													   "order by clos.depth desc";
-	
+			"inner join TCLN_RELATIONSHIP_CLOSURE clos "+
+			"on clos.ancestor_id = tcln.tcln_id "+
+			"where clos.descendant_id = :nodeId "+
+			"order by clos.depth desc";
+
 	public static final String TCLN_FIND_SORTED_PARENT_NAMES = "select tcln.name "+TCLN_FIND_SORTED_PARENTS;
 	public static final String TCLN_FIND_SORTED_PARENT_IDS = "select tcln.tcln_id " +TCLN_FIND_SORTED_PARENTS;
-	
 
-	/* 
-	 * The PATH_SEPARATOR is not '/' because we couldn't distinguish with slashes guenuinely part of 
-	 * a name. Of course to disambiguate we could have used MySQL / H2 function replace(targetstr, orig, replace) 
-	 * and escape the '/' but the functions don't work the same way on both database and what works in one 
+
+	/*
+	 * The PATH_SEPARATOR is not '/' because we couldn't distinguish with slashes guenuinely part of
+	 * a name. Of course to disambiguate we could have used MySQL / H2 function replace(targetstr, orig, replace)
+	 * and escape the '/' but the functions don't work the same way on both database and what works in one
 	 * doesn't work on the other.
 	 * 
-	 * So the separator is not / but some other improbable character, that I hope 
-	 * improbable enough in the context of a normal use of Squash. 
-	 * Currently it's the ASCII character "US", or "Unit separator", aka "Information separator one", 
+	 * So the separator is not / but some other improbable character, that I hope
+	 * improbable enough in the context of a normal use of Squash.
+	 * Currently it's the ASCII character "US", or "Unit separator", aka "Information separator one",
 	 * that was precisely intended for similar purpose back in the prehistoric era.
 	 * 
 	 * It's up to the caller to then post process the chain and replace that character
 	 * by anything it sees fit.
-	 */ 
+	 */
 	public static final String PATH_SEPARATOR = "\u001F";
 
-	public static final String TCLN_GET_PATHS_AS_STRING = 
+	public static final String TCLN_GET_PATHS_AS_STRING =
 			"select clos.descendant_id, concat('"+PATH_SEPARATOR+"', p.name, '"+PATH_SEPARATOR+"', "+
-						"group_concat(tcln.name order by clos.depth desc separator '"+PATH_SEPARATOR+"')) as path "+
-			"from TEST_CASE_LIBRARY_NODE tcln "+
-			"inner join PROJECT p on tcln.project_id = p.project_id "+
-			"inner join TCLN_RELATIONSHIP_CLOSURE clos on clos.ancestor_id = tcln.tcln_id "+
-			"where clos.descendant_id in (:nodeIds) "+
-			"group by clos.descendant_id";
-	
-	
+					"group_concat(tcln.name order by clos.depth desc separator '"+PATH_SEPARATOR+"')) as path "+
+					"from TEST_CASE_LIBRARY_NODE tcln "+
+					"inner join PROJECT p on tcln.project_id = p.project_id "+
+					"inner join TCLN_RELATIONSHIP_CLOSURE clos on clos.ancestor_id = tcln.tcln_id "+
+					"where clos.descendant_id in (:nodeIds) "+
+					"group by clos.descendant_id";
+
+
 	// note that in this query we don't want escaped '/' like in query TCLN_GET_PATHS_AS_STRING
-	public static final String TCLN_FIND_NODE_IDS_BY_PATH = 
-		"select concat('/', p.name, '/', "+ 
+	public static final String TCLN_FIND_NODE_IDS_BY_PATH =
+			"select concat('/', p.name, '/', "+
 					"group_concat(tcln.name order by clos.depth desc separator '/')) as concatenated, "+
-		"clos.descendant_id as tcln_id "+		
-		"from TEST_CASE_LIBRARY_NODE tcln "+ 
-		"inner join PROJECT p on tcln.project_id = p.project_id "+
-		"inner join TCLN_RELATIONSHIP_CLOSURE clos on clos.ancestor_id = tcln.tcln_id "+ 
-		"group by clos.descendant_id "+
-		"having concatenated in (:paths)";
-	
-	
+					"clos.descendant_id as tcln_id "+
+					"from TEST_CASE_LIBRARY_NODE tcln "+
+					"inner join PROJECT p on tcln.project_id = p.project_id "+
+					"inner join TCLN_RELATIONSHIP_CLOSURE clos on clos.ancestor_id = tcln.tcln_id "+
+					"group by clos.descendant_id "+
+					"having concatenated in (:paths)";
+
+
 	public static final String RLN_FIND_SORTED_PARENT_NAMES = "select rs.name from RESOURCE rs "+
-			  "join REQUIREMENT_FOLDER rf "+
-              "on rs.res_id = rf.res_id "+
-			  "join REQUIREMENT_LIBRARY_NODE rln "+
-			  "on rf.rln_id = rln.rln_id "+
-			  "inner join RLN_RELATIONSHIP_CLOSURE clos "+
-			  "on clos.ancestor_id = rln.rln_id "+
-			  "where clos.descendant_id = :nodeId "+
-			  "order by clos.depth desc";
-	
+			"join REQUIREMENT_FOLDER rf "+
+			"on rs.res_id = rf.res_id "+
+			"join REQUIREMENT_LIBRARY_NODE rln "+
+			"on rf.rln_id = rln.rln_id "+
+			"inner join RLN_RELATIONSHIP_CLOSURE clos "+
+			"on clos.ancestor_id = rln.rln_id "+
+			"where clos.descendant_id = :nodeId "+
+			"order by clos.depth desc";
+
 	public static final String RLN_FIND_SORTED_PARENT_IDS = "select rln.rln_id from REQUIREMENT_LIBRARY_NODE rln "+
-			   "inner join RLN_RELATIONSHIP_CLOSURE clos "+
-			   "on clos.ancestor_id = rln.rln_id "+
-			   "where clos.descendant_id = :nodeId "+
-			   "order by clos.depth desc";
+			"inner join RLN_RELATIONSHIP_CLOSURE clos "+
+			"on clos.ancestor_id = rln.rln_id "+
+			"where clos.descendant_id = :nodeId "+
+			"order by clos.depth desc";
 }
