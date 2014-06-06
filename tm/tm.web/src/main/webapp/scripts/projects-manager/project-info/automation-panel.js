@@ -191,7 +191,7 @@ define([ "jquery","backbone", "jeditable.selectJEditable", "./AddTAProjectsDialo
 											jobName :data["jobName"],
 											label : data["label"],
 											slaves : data["slaves"]
-									}
+									};
 									self.popups.editTAProjectPopup.show(jobId, taProject);
 								}
 							}

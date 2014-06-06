@@ -29,7 +29,7 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "app/lnf/Forms", 
 		defaults : {
 			label : "",
 			jobName : "",
-			slaves : "",
+			slaves : ""
 		},
 
 		validateAll : function() {
@@ -39,7 +39,7 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "app/lnf/Forms", 
 				errors.name = "message.notBlank";
 			}
 			return errors;
-		},
+		}
 
 	});
 
@@ -102,7 +102,7 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "app/lnf/Forms", 
 					self.trigger("edittestautomationproject.confirm.success");					
 					self.$el.formDialog("close");
 
-				},
+				}
 			});
 
 		},
@@ -164,7 +164,7 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "app/lnf/Forms", 
 		setParentPanel : function(parentPanel) {
 			var self = this;
 			this.parentPanel = parentPanel;
-		},
+		}
 	});
 
 	return EditTAProjectPopup;
