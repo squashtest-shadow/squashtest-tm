@@ -38,19 +38,20 @@ public interface GenericProjectDao extends CustomGenericProjectDao {
 	long countGenericProjects();
 
 
-	List<GenericProject> findAll(PagingAndSorting pagingAndSorting);	
-	
+	List<GenericProject> findAll(PagingAndSorting pagingAndSorting);
+
 	List<GenericProject> findProjectsFiltered(PagingAndSorting pagingAndSorting, @QueryParam("filter") String filter);
-		
-	
+
+
 	GenericProject findById(long projectId);
-	
+
 	// ************************* test automation section **********************
 
 	List<TestAutomationProject> findBoundTestAutomationProjects(@QueryParam("projectId") long id);
 
 	List<String> findBoundTestAutomationProjectJobNames(@QueryParam("projectId") long id);
 
+	List<String> findBoundTestAutomationProjectLabels(@QueryParam("projectId") long projectId);
 
 	/**
 	 * @param idList
@@ -66,4 +67,6 @@ public interface GenericProjectDao extends CustomGenericProjectDao {
 	long countByName(String name);
 
 	TestAutomationServer findTestAutomationServer(@QueryParam("projectId") long projectId);
+
+
 }

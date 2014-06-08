@@ -27,20 +27,22 @@ public class DomainException extends RuntimeException implements Internationaliz
 	private static final long serialVersionUID = 5203532234097674488L;
 
 	private static final Object[] NO_PARAMS = {};
-	
+
 	private String objectName;
+	private String fieldValue;
 	private final String field;
 
 	protected DomainException(String message, String field) {
 		super(message);
 		this.field = field;
 	}
-	
+
 	protected DomainException(String message, String field, Throwable cause){
 		super(message, cause);
 		this.field = field	;
 	}
-	
+
+
 	protected DomainException(String field) {
 		super();
 		this.field = field;
@@ -59,7 +61,7 @@ public class DomainException extends RuntimeException implements Internationaliz
 	}
 
 	/**
-	 * Can be overridden by subclasses to return the params to use when fetching the i18n'd message. 
+	 * Can be overridden by subclasses to return the params to use when fetching the i18n'd message.
 	 * @return should never return <code>null</code>
 	 */
 	public Object[] getI18nParams() {
@@ -68,7 +70,15 @@ public class DomainException extends RuntimeException implements Internationaliz
 
 	public void setObjectName(String objectName) {
 		this.objectName = objectName;
-		
+
+	}
+
+	public void setFieldValue(String fieldValue) {
+		this.fieldValue = fieldValue;
+	}
+
+	public String getFieldValue() {
+		return fieldValue;
 	}
 
 	@Override

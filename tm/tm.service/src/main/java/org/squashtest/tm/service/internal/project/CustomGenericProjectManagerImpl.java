@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.project;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -67,9 +68,11 @@ import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
+import org.squashtest.tm.exception.CompositeDomainException;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.exception.NoBugTrackerBindingException;
 import org.squashtest.tm.exception.UnknownEntityException;
+import org.squashtest.tm.exception.testautomation.DuplicateTMLabelException;
 import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.service.internal.repository.BugTrackerBindingDao;
@@ -313,6 +316,10 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	public void bindTestAutomationProject(long projectId, TestAutomationProject taProject) {
 
 		GenericProject genericProject = genericProjectDao.findById(projectId);
+		bindTestAutomationProject(taProject, genericProject);
+	}
+
+	private void bindTestAutomationProject(TestAutomationProject taProject, GenericProject genericProject) {
 		checkManageProjectOrAdmin(genericProject);
 
 		TestAutomationServer server = genericProject.getTestAutomationServer();
@@ -325,11 +332,35 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 
 	public void bindTestAutomationProjects(long projectId, Collection<TestAutomationProject> taProjects){
+		checkTAProjectNames(taProjects, projectId);
 		for (TestAutomationProject p : taProjects){
-			bindTestAutomationProject(projectId, p);
+			bindTestAutomationProject( projectId, p);
 		}
 	}
 
+
+	private void checkTAProjectNames(Collection<TestAutomationProject> taProjects, long projectId) {
+		List<DuplicateTMLabelException> dnes = new ArrayList<DuplicateTMLabelException>();
+		List<String> taProjectNames = genericProjectDao.findBoundTestAutomationProjectLabels(projectId);
+		for(TestAutomationProject taProject : taProjects){
+			try{
+				checkTAProjecTName(taProject, taProjectNames);
+			}catch(DuplicateTMLabelException dne){
+				LOGGER.error(dne.getMessage(), dne);
+				dnes.add(dne);
+			}
+		}
+		if(!dnes.isEmpty()){
+			throw new CompositeDomainException(dnes);
+		}
+	}
+
+	private void checkTAProjecTName(TestAutomationProject taProject, List<String> projectNames) {
+		if(projectNames.contains(taProject.getLabel())){
+			throw new DuplicateTMLabelException(taProject.getLabel());
+		}
+
+	}
 
 	@Override
 	public List<TestAutomationProject> findBoundTestAutomationProjects(long projectId) {

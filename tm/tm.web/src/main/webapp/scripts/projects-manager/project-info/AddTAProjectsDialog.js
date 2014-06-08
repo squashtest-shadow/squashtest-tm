@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "app/ws/squashtm.notification", "underscore", "jquery.squash.formdialog",
-		"squashtest/jquery.squash.popuperror" ], function($, Backbone, WTF, _) {
+define([ "jquery", "backbone", "app/ws/squashtm.notification", "underscore", "app/lnf/Forms", "jquery.squash.formdialog",
+		"squashtest/jquery.squash.popuperror" ], function($, Backbone, WTF, _, Forms) {
 
 	// *************************************** BindPopup **********************************************
 
@@ -40,8 +40,8 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "underscore", "jq
 			this.manageFatalError = $.proxy(this._manageFatalError, this);
 			this.onChangeServerConfirmed = $.proxy(this._onChangeServerConfirmed, this);
 			this.buildAndDisplayProjectList = $.proxy(this._buildAndDisplayProjectList, this);
-			this.showErrorMesage = $.proxy(this._showErrorMesage, this);
-
+			this.showErrorMessage = $.proxy(this._showErrorMessage, this);
+			this.manageBindingError = $.proxy(this._manageBindingError, this);
 		},
 
 		events : {
@@ -67,7 +67,7 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "underscore", "jq
 			var checked = this.$el.find(".ta-project-bind-listdiv input:checkbox:checked");
 			if (checked.length === 0) {
 				var message = squashtm.app.messages["message.project.bindJob.noneChecked"];
-				this.showErrorMesage(message);
+				this.showErrorMessage(message);
 				return;
 			}
 			// map checkbox values to tm label
@@ -93,8 +93,8 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "underscore", "jq
 			});
 			if (hasDuplicateTmLabel) {
 				// show error message
-				var duplicateMesage = squashtm.app.messages["message.duplicatelabelForTAProjects"];
-				this.showErrorMesage(duplicateMesage);
+				var duplicateMessage = squashtm.app.messages["message.project.bindJob.duplicatelabels"];
+				this.showErrorMessage(duplicateMessage);
 			} else {
 				// send ajax
 				$.ajax({
@@ -110,7 +110,7 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "underscore", "jq
 					self.$el.formDialog('close');
 				}).fail(function(xhr) {
 					self.trigger("bindTAProjectPopup.confirm.failure");
-					self.manageFatalError(xhr);
+					self.manageBindingError(xhr);
 
 				});
 
@@ -178,7 +178,7 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "underscore", "jq
 			this.listenTo(self.parentPanel.popups.unbindPopup, "unbindTAProjectPopup.confirm.success", function() {
 				self.updateProjectList = true;
 			});
-			//refresh popup on edit project
+			// refresh popup on edit project
 			this.listenTo(self.parentPanel.popups.editTAProjectPopup, "edittestautomationproject.confirm.success", function() {
 				self.updateProjectList = true;
 			});
@@ -192,6 +192,31 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "underscore", "jq
 				this.updateProjectList = true;
 			}
 		},
+		_manageBindingError :function(request) {
+			var json =  $.parseJSON(request.responseText);
+			//handle specifically CompositeDomainException containing DuplicateTMLabelException
+			var manageFatal = false;
+			 if (!!json.fieldValidationErrors) {
+				 /* IE8 requires low tech code */
+				 var validationErrorList = json.fieldValidationErrors;
+				 if (validationErrorList.length > 0) {
+					 for ( var counter = 0; counter < validationErrorList.length; counter++) {
+						 var fve = validationErrorList[counter];
+						 if (fve.fieldName == "label"){
+							 var inputs = this.$el.find('.edit-state input').filter(function() { return this.value == fve.fieldValue; });
+							 Forms.input($(inputs[0])).setState("error", fve.errorMessage)
+						 }else{
+							 manageFatal = true;
+						 }
+					}
+				 }
+			 }else{
+				 manageFatal = true;
+			 }
+			 if(manageFatal){
+				 this.manageFatalError(response);
+			 }
+		},
 		_manageFatalError : function(json) {
 			var message = "";
 			try {
@@ -202,8 +227,8 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "underscore", "jq
 			this.showErrorMessage(message);
 
 		},
-		_showErrorMesage : function(message) {
-			this.error.find('span').text(message);
+		_showErrorMessage : function(message) {
+			this.error.find('span').html(message);
 			this.error.popupError('show');
 		},
 		_buildAndDisplayProjectList : function(json) {

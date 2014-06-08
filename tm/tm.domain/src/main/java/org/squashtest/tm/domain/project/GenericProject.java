@@ -321,4 +321,5 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 
 	public abstract void accept(ProjectVisitor visitor);
 
+
 }

@@ -290,7 +290,8 @@
 		@NamedQuery(name = "GenericProject.findBoundTestAutomationProjectJobNames", query = "select tap.jobName from GenericProject p join p.testAutomationProjects tap where p.id = :projectId order by tap.label"),
 		@NamedQuery(name = "GenericProject.countByName", query = "select count(p) from GenericProject p where p.name = ?1"),
 		@NamedQuery(name = "GenericProject.findTestAutomationServer", query = "select p.testAutomationServer from GenericProject p where p.id = :projectId"),
-
+		@NamedQuery(name = "GenericProject.findBoundTestAutomationProjectLabels", query = "select tap.label from GenericProject p join p.testAutomationProjects tap where p.id = :projectId"),
+		
 		//Project
 		@NamedQuery(name = "Project.findByName", query = "from Project where name = ?1"),
 		@NamedQuery(name = "Project.findAllByName", query = "from Project where name in (:names)"),

@@ -18,27 +18,35 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.exceptionresolver;
+package org.squashtest.tm.exception.testautomation;
 
-import java.io.Serializable;
+import org.squashtest.tm.exception.DomainException;
 
-public final class FieldValidationErrorModel implements Serializable {
-	private static final long serialVersionUID = -2424352395793715437L;
+public class DuplicateTMLabelException extends DomainException {
 
-	public final String objectName; // NOSONAR Field is immutable
-	public final String fieldName; // NOSONAR Field is immutable
-	public final String fieldValue; //NOSONAR Field is immutable
-	public final String errorMessage; // NOSONAR Field is immutable
+	private static final String LABEL = "label";
 
-	public FieldValidationErrorModel(String objectName, String fieldName, String errorMessage) {
-		this(objectName, fieldName, errorMessage, null);
+	private static final long serialVersionUID = 2815263509542519285L;
+
+	public DuplicateTMLabelException(String fieldValue) {
+		super(makeMessage(fieldValue), LABEL);
+		setFieldValue(fieldValue);
 	}
 
-	public FieldValidationErrorModel(String objectName, String fieldName, String errorMessage, String fieldValue) {
-		super();
-		this.objectName = objectName;
-		this.fieldName = fieldName;
-		this.errorMessage = errorMessage;
-		this.fieldValue = fieldValue;
+	public DuplicateTMLabelException() {
+		super(LABEL);
 	}
+
+	private static String makeMessage(String label) {
+		return "Cannot add test automation project with tm label : " + label
+				+ " because it already exists in this tm project";
+	}
+
+	@Override
+	public String getI18nKey() {
+		return "squashtm.domain.exception.duplicate.tmlabel";
+	}
+
+
+
 }
