@@ -73,8 +73,11 @@
       
       <%-- =================================== projects block =============================================================== --%>
       
-      <f:message var="addTAProjectLabel" key="title.addJob" />
-      <fieldset class="ta-projects-block  ta-block">
+      <f:message var="addTAProjectLabel" key="title.addJob"  />
+      <c:if test="${ empty project.testAutomationServer}">
+      <c:set var="dispayedJobBlock" value="display: none"/>
+      </c:if>
+      <fieldset class="ta-projects-block  ta-block" style="${dispayedJobBlock}">
         <legend>
           <f:message key="label.jobs" />
           <button id="ta-projects-bind-button" title="${addTAProjectLabel}" class="sq-icon-btn btn-sm">
@@ -124,8 +127,8 @@
     	
     </div>
   </jsp:attribute>
-
 </comp:toggle-panel>
+<%-- ==================================================================== POPUPS =============================================================== --%>
 
 
 <%-- ================================================
@@ -337,6 +340,10 @@ require(["common"], function() {
 
   });
 });
+
+	
+
+	
 
 	
 

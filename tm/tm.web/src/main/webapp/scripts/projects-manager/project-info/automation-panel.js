@@ -77,21 +77,26 @@ define([ "jquery","backbone", "jeditable.selectJEditable", "./AddTAProjectsDialo
 				show : function(newSelected) {
 					var self = this;
 					this.newSelectedId = newSelected;
-					this.$el.formDialog("open");
-					this.$el.formDialog('setState', 'pleasewait');
-					// edit state of popup depending on datas retrieved by ajax
-					$.ajax(
-							{
-								url : squashtm.app.contextRoot + "/test-automation-servers/" + self.selectedId +
-										"/usage-status",
-								type : "GET"
-							}).then(function(status) {
-						if (!status.hasExecutedTests) {
-							self.$el.formDialog('setState', 'case1');
-						} else {
-							self.$el.formDialog('setState', 'case2');
-						}
-					});
+					if(parseInt(this.selectedId,10) !== 0){
+						this.$el.formDialog("open");
+						this.$el.formDialog('setState', 'pleasewait');
+						// edit state of popup depending on datas retrieved by ajax
+						$.ajax(
+								{
+									url : squashtm.app.contextRoot + "/test-automation-servers/" + self.selectedId +
+											"/usage-status",
+									type : "GET"
+								}).then(function(status) {
+							if (!status.hasExecutedTests) {
+								self.$el.formDialog('setState', 'case1');
+							} else {
+								self.$el.formDialog('setState', 'case2');
+							}
+						});
+					}else{
+						this.confirm();
+					}
+					
 
 				},
 
@@ -233,6 +238,12 @@ define([ "jquery","backbone", "jeditable.selectJEditable", "./AddTAProjectsDialo
 				_onChangeServerComplete : function(newServerId) {
 					this.selectServer.setValue(newServerId);
 					this.table.refresh();
+					var $addBlock = this.$el.find(".ta-projects-block");
+					if(parseInt(newServerId,10) === 0){
+						$addBlock.hide();
+					}else{
+						$addBlock.show();
+					}
 				},
 				
 				initSelect : function(conf) {
