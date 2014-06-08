@@ -36,6 +36,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.tm.exception.testautomation.DuplicateTMLabelException;
+import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
 import org.squashtest.tm.service.internal.repository.TestAutomationServerDao;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectFinderService;
@@ -57,6 +59,9 @@ public class TestAutomationProjectManagerServiceImpl implements TestAutomationPr
 
 	@Inject
 	private TestAutomationServerDao serverDao;
+
+	@Inject
+	private GenericProjectDao genericProjectDao;
 
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')")
@@ -84,6 +89,12 @@ public class TestAutomationProjectManagerServiceImpl implements TestAutomationPr
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TM_PROJECT_MANAGER')")
 	public void changeLabel(long projectId, String label) {
 		TestAutomationProject project = projectDao.findById(projectId);
+		if (!project.getLabel().equals(label)) {
+			List<String> taProjectNames = genericProjectDao.findBoundTestAutomationProjectLabels(project.getTmProject().getId());
+			if(taProjectNames.contains(label)){
+				throw new DuplicateTMLabelException(label);
+			}
+		}
 		project.setLabel(label);
 	}
 
@@ -99,6 +110,13 @@ public class TestAutomationProjectManagerServiceImpl implements TestAutomationPr
 	public void changeSlaves(long projectId, String slaveList) {
 		TestAutomationProject project = projectDao.findById(projectId);
 		project.setSlaves(slaveList);
+	}
+
+	@Override
+	public void editProject(long projectId, TestAutomationProject newValues) {
+		changeJobName(projectId, newValues.getJobName());
+		changeLabel(projectId, newValues.getLabel());
+		changeSlaves(projectId, newValues.getSlaves());
 	}
 
 	@Override

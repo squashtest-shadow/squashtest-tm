@@ -50,6 +50,7 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "app/lnf/Forms", 
 			this.projecUrl = conf.tmProjectURL;
 			this.$el.formDialog();
 			this.error = this.$(".ta-projectsedit-error").popupError();
+			this.showErrorMessage = $.proxy(this._showErrorMessage, this);
 			this.manageFatalError = $.proxy(this._manageFatalError, this);
 			this.updateComboDatasAndOpen = $.proxy(this._updateComboDatasAndOpen, this);
 			
@@ -95,10 +96,11 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "app/lnf/Forms", 
 
 			this.model.save(null, {
 				async : false,
-				error : function(json) {
+				error : function(model, response) {
+					WTF.handleUnknownTypeError(response);
 					self.trigger("edittestautomationproject.confirm.error");
 				},
-				success : function(json) {
+				success : function() {
 					self.trigger("edittestautomationproject.confirm.success");					
 					self.$el.formDialog("close");
 
@@ -157,7 +159,7 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "app/lnf/Forms", 
 
 		},
 
-		_showErrorMesage : function(message) {
+		_showErrorMessage : function(message) {
 			this.error.find('span').text(message);
 			this.error.popupError('show');
 		},

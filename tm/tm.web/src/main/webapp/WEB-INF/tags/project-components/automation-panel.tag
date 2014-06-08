@@ -245,7 +245,7 @@
         <f:message key="label.Label" />
       </label>
       <div class="controls">
-        <input name="label" class="strprop" value="" maxlength="255" type="text" />
+        <input id="ta-project-label" name="label" class="strprop" value="" maxlength="255" type="text" />
         <span class="help-inline">&nbsp;</span>
       </div>
     </div>
@@ -255,7 +255,7 @@
         <f:message key="label.job.input" />
       </label>
       <div class="controls">
-        <select name="jobName"></select>
+        <select id="ta-project-jobName" name="jobName"></select>
       </div>
     </div>
     <div class="control-group">
@@ -263,7 +263,7 @@
         <f:message key="label.slaves.input" />
       </label>
       <div>
-        <input name="slaves" class="strprop" value="" size="50" maxlength="255" type="text" />
+        <input id="ta-project-slaves" name="slaves" class="strprop" value="" size="50" maxlength="255" type="text" />
         <span class="help-inline">&nbsp;</span>
       </div>
     </div>

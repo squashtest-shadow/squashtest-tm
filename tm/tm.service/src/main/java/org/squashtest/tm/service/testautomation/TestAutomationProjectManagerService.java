@@ -22,8 +22,7 @@ package org.squashtest.tm.service.testautomation;
 
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 
-
-public interface TestAutomationProjectManagerService extends TestAutomationProjectFinderService{
+public interface TestAutomationProjectManagerService extends TestAutomationProjectFinderService {
 
 	// *********************** entity management *******************
 
@@ -33,9 +32,7 @@ public interface TestAutomationProjectManagerService extends TestAutomationProje
 
 	void deleteAllForTMProject(long tmProjectId);
 
-
 	// *********************** Properties mutators ****************************
-
 
 	void changeLabel(long projectId, String name);
 
@@ -47,7 +44,13 @@ public interface TestAutomationProjectManagerService extends TestAutomationProje
 	 */
 	void changeSlaves(long projectId, String slaveList);
 
-
-
+	/**
+	 * Will edit the label, jobName and slaves properties of the {@link TestAutomationProject} matching the given id
+	 * with the ones held by the given newValues parameter.
+	 * 
+	 * @param projectId
+	 * @param newValues
+	 */
+	void editProject(long projectId, TestAutomationProject newValues);
 
 }

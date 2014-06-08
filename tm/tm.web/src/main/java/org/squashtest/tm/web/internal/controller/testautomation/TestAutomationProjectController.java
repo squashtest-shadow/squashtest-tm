@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.tm.exception.DomainException;
 import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService;
 import org.squashtest.tm.web.internal.model.testautomation.TAUsageStatus;
 
@@ -54,11 +55,14 @@ public class TestAutomationProjectController {
 
 	@RequestMapping(value = PROJECT_ID, method = RequestMethod.POST)
 	@ResponseBody
-	public void editTestAutomationProject(@PathVariable long projectId, @RequestBody TestAutomationProject project) {
+	public void editTestAutomationProject(@PathVariable long projectId, @RequestBody TestAutomationProject newValues) {
 		LOGGER.info("Edit test automation project of id #{}", projectId);
-		service.changeJobName(projectId, project.getJobName());
-		service.changeLabel(projectId, project.getLabel());
-		service.changeSlaves(projectId, project.getSlaves());
+		try{
+			service.editProject(projectId, newValues);
+		}catch(DomainException de){
+			de.setObjectName("ta-project");
+			throw de;
+		}
 	}
 
 	@RequestMapping(value = PROJECT_ID+"/usage-status", method = RequestMethod.GET)
