@@ -28,13 +28,11 @@
 						http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium-2.0-m1.xsd">
 
 
-	<!-- service reference injection -->
-	<bean class="org.springframework.osgi.extensions.annotation.ServiceReferenceInjectionBeanPostProcessor" />
-	
 	<osgix:cm-properties id="connector.conf"  persistent-id="tm.testautomation.conf" /> 	
-					   
+		
+			   
 	<osgi:service ref="plugin.testautomation.jenkins.connector" interface="org.squashtest.tm.service.testautomation.spi.TestAutomationConnector"/>
-	
+
   <osgi:reference id="core.executor.service" cardinality="0..1" timeout="4000">
     <osgi:interfaces>
       <value>org.springframework.scheduling.TaskScheduler</value>

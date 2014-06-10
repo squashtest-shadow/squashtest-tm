@@ -84,4 +84,6 @@ public interface TestAutomationProjectFinderService {
 	 */
 	boolean hasExecutedTests(long projectId);
 
+	URL findProjectURL(TestAutomationProject project);
+
 }

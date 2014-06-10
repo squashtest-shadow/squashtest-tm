@@ -31,6 +31,7 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="wu" uri="http://org.squashtest.tm/taglib/workspace-utils" %>
 
 <f:message var="rawDateFormat" key="squashtm.dateformat.iso" />
 <f:message var="displayDateFormat" key="squashtm.dateformat" />
@@ -91,10 +92,13 @@
   <c:if test="${auditableEntity.automated}">
     <c:set var="taDisassociated" value="${execution.automatedExecutionExtender.projectDisassociated}" />
     <c:set var="taNotOverYet" value="${execution.automatedExecutionExtender.notOverYet}" />
+    <c:set var="jobURL" value="${wu:getAutomatedJobURL(pageContext.servletContext, execution.id) }"/>
+    
     <f:message var="taNotOverYetLabel" key="url.resultNotAvailable" />
     <f:message var="taDisassociatedLabel" key="url.resultObsolete" />
     
     <div id="general-info-resulturl" style="display: inline-block; margin-right: 2em; vertical-align: top">
+      <div>
       <label for="resulturl-link">
         <f:message key="label.resultURL" />
       </label>
@@ -102,6 +106,11 @@
         <%-- the following reads : if the project was dissociated display 'disassociated', else if it's still running display 'still running', else display the url --%>
         <c:out value="${taDisassociated ? taDisassociatedLabel : taNotOverYet ? taNotOverYetLabel : execution.resultURL}" />
        </a>
+       </div>
+       
+       <div>
+       <label><f:message key="label.job.url"/></label><a href="${jobURL}"><c:out value="${jobURL}" default="${taDisassociatedLabel}" /></a>
+       </div>
     </div>
   </c:if>
 

@@ -166,7 +166,8 @@ public class TestAutomationProjectManagerServiceImpl implements TestAutomationPr
 		return result;
 	}
 
-	private URL findProjectURL(TestAutomationProject testAutomationProject) {
+	@Override
+	public URL findProjectURL(TestAutomationProject testAutomationProject) {
 		TestAutomationServer server = testAutomationProject.getServer();
 		TestAutomationConnector connector = connectorRegistry.getConnectorForKind(server.getKind());
 		return connector.findTestAutomationProjectURL(testAutomationProject);
