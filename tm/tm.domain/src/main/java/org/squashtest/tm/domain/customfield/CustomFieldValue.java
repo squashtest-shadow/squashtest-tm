@@ -95,7 +95,7 @@ public class CustomFieldValue implements Identified {
 			if (!cuf.isOptional() && StringUtils.isBlank(value)) {
 				throw new MandatoryCufException(this);
 			}
-			if (cuf.inputType == InputType.DATE_PICKER && value != null ) {
+			if (cuf.inputType == InputType.DATE_PICKER && !StringUtils.isBlank(value)) {
 				try {
 					IsoDateUtils.parseIso8601Date(value);
 				} catch (ParseException pe) {
