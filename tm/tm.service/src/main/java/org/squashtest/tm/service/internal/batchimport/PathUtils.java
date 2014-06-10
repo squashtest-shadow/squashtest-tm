@@ -103,8 +103,13 @@ final class PathUtils {
 	}
 
 	static boolean arePathsAndNameConsistents(String path, String name) {
-		String pathName = extractTestCaseName(path);
-		return pathName.equals(name);
+		try{
+			String pathName = extractTestCaseName(path);
+			return pathName.equals(name);
+
+		} catch(IllegalArgumentException ex){
+			return false;
+		}
 	}
 
 	/**

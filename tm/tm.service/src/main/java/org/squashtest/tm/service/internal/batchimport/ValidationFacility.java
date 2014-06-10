@@ -120,6 +120,7 @@ public class ValidationFacility implements Facility, ModelProvider {
 					.withMessage(Messages.ERROR_INCONSISTENT_PATH_AND_NAME, path, name == null ? "" : name).build());
 		}
 
+
 		// 3-4 : fix test case metadatas
 		List<LogEntry> logEntries = fixMetadatas(target, (AuditableMixin) testCase, ImportMode.CREATE);
 		logs.addEntries(logEntries);
