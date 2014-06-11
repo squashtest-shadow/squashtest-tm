@@ -24,13 +24,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -47,16 +45,13 @@ import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.BuildDef;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.ExecuteAndWatchBuildProcessor;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.FetchTestListBuildProcessor;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.StartTestExecution;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpClientProvider;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpRequestFactory;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.RequestExecutor;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.StepEventListener;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.GetBuildID;
-import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
 import org.squashtest.tm.service.testautomation.TestAutomationCallbackService;
 import org.squashtest.tm.service.testautomation.spi.AccessDenied;
 import org.squashtest.tm.service.testautomation.spi.BadConfiguration;
@@ -87,8 +82,6 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 
 	private RequestExecutor requestExecutor = RequestExecutor.getInstance();
 
-	@Inject
-	private Provider<ExecuteAndWatchBuildProcessor> executeAndWatchBuildProcessor;
 
 	// ****************************** let's roll ****************************************
 
@@ -149,118 +142,6 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 
 	}
 
-	private void startTestExecution(BuildDef buildDef, String externalId, TestAutomationCallbackService service) {
-
-		ResultURLUpdater updater = new ResultURLUpdater(service, buildDef.getTests(), externalId);
-
-		executeAndWatchBuildProcessor.get()
-		.configuration()
-		.buildDef(buildDef)
-		.externalId(externalId)
-		.buildIdListener(updater)
-		.configure()
-		.run();
-
-	}
-
-	// ************************************ other private stuffs **************************
-
-	private String generateNewId() {
-		return Long.toString(System.currentTimeMillis());
-	}
-
-	private class ResultURLUpdater implements StepEventListener<GetBuildID> {
-
-		private TestAutomationCallbackService service;
-		private Collection<AutomatedTest> tests;
-		private String externalID;
-
-		ResultURLUpdater(TestAutomationCallbackService service, Collection<AutomatedTest> tests, String externalID) {
-			this.service = service;
-			this.tests = tests;
-			this.externalID = externalID;
-		}
-
-		@Override
-		public void onComplete(GetBuildID step) {
-
-			Map<AutomatedTest, URL> resultUrlPerTest = new HashMap<AutomatedTest, URL>(tests.size());
-
-			Integer buildID = step.getBuildID();
-
-			createAndAddURLs(resultUrlPerTest, tests, buildID);
-
-			for (Map.Entry<AutomatedTest, URL> entry : resultUrlPerTest.entrySet()) {
-				AutomatedExecutionSetIdentifier identifier = toIdentifier(entry.getKey());
-				service.updateResultURL(identifier, entry.getValue());
-
-			}
-
-		}
-
-		@Override
-		public void onError(GetBuildID step, Exception exception) {
-			// nothing special, the regular exception handling is good enough
-		}
-
-		private AutomatedExecutionSetIdentifier toIdentifier(AutomatedTest test) {
-			return new SimpleAutoExecIdentifier(test.getProject().getJobName(), externalID, test.getName());
-		}
-
-		private void createAndAddURLs(Map<AutomatedTest, URL> allURLs, Collection<AutomatedTest> tests, Integer buildID) {
-
-			for (AutomatedTest test : tests) {
-				String resultPath = requestFactory.buildResultURL(test, buildID);
-				URL resultURL;
-
-				try {
-					resultURL = new URL(resultPath);
-				} catch (MalformedURLException e) {
-					if (LOGGER.isErrorEnabled()) {
-						LOGGER.error("Test Automation : malformed URL, could not create result url from string '"
-								+ resultPath + "'", e);
-					}
-					resultURL = null;
-				}
-
-				allURLs.put(test, resultURL);
-
-			}
-
-		}
-	}
-
-	private static class SimpleAutoExecIdentifier implements AutomatedExecutionSetIdentifier {
-
-		private String testAutomationProjectName;
-		private String automatedSuiteId;
-		private String automatedTestName;
-
-		public SimpleAutoExecIdentifier(String testAutomationProjectName,
-				String automatedSuiteId, String automatedTestName) {
-			super();
-			this.testAutomationProjectName = testAutomationProjectName;
-			this.automatedSuiteId = automatedSuiteId;
-			this.automatedTestName = automatedTestName;
-		}
-
-		@Override
-		public String getTestAutomationProjectName() {
-			return testAutomationProjectName;
-		}
-
-		@Override
-		public String getAutomatedSuiteId() {
-			return automatedSuiteId;
-		}
-
-		@Override
-		public String getAutomatedTestName() {
-			return automatedTestName;
-		}
-
-	}
-
 	/**
 	 * @see org.squashtest.tm.service.testautomation.spi.TestAutomationConnector#executeParameterizedTests(java.util.Collection,
 	 *      java.lang.String, org.squashtest.tm.service.testautomation.TestAutomationCallbackService)
@@ -275,10 +156,21 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 		List<BuildDef> buildDefs = mapToJobDefs(execsByProject);
 
 		for (BuildDef buildDef : buildDefs) {
-			startTestExecution(buildDef, externalId, callbackService);
+
+			new StartTestExecution(buildDef, clientProvider, externalId).run();
+
 		}
 
 	}
+
+
+	// ************************************ other private stuffs **************************
+
+	private String generateNewId() {
+		return Long.toString(System.currentTimeMillis());
+	}
+
+
 
 	private List<BuildDef> mapToJobDefs(
 			MultiValueMap<TestAutomationProject, Couple<AutomatedExecutionExtender, Map<String, Object>>> execsByProject) {

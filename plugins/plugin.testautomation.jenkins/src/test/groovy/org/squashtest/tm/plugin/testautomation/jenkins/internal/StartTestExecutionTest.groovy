@@ -22,16 +22,12 @@
 package org.squashtest.tm.plugin.testautomation.jenkins.internal;
 
 import org.apache.commons.httpclient.HttpClient
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager
 import org.springframework.http.client.CommonsClientHttpRequestFactory
 import org.squashtest.tm.core.foundation.lang.Couple
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender
 import org.squashtest.tm.domain.testautomation.AutomatedTest
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
-import org.squashtest.tm.domain.testautomation.TestAutomationServer
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.CallbackURL
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpClientProvider
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.StepEventListener
 
 import spock.lang.Specification
 
@@ -39,18 +35,23 @@ import spock.lang.Specification
  * @author Gregory Fouquet
  *
  */
-class ExecuteAndWatchStepSequenceIT extends Specification {
-	StepEventListener listener = Mock()
-	ExecuteAndWatchContext context = mockContext()
+class StartTestExecutionTest extends Specification {
+	
 	BuildDef buildDef = Mock()
 	TestAutomationProject project = Mock()
-
-	ExecuteAndWatchStepSequence seq
+	HttpClientProvider clientProvider = Mock()
+	
+	StartTestExecution ste
+	
 
 	def setup() {
+
 		buildDef.project >> project
+
+		ste = new StartTestExecution(buildDef, clientProvider, "EXTERNAL-ID")
 	}
 
+	/*
 	def mockContext(httpClient) {
 		ExecuteAndWatchContext res = Mock()
 		res.getHttpClientProvider() >> mockHttpClientProvider(httpClient)
@@ -66,46 +67,27 @@ class ExecuteAndWatchStepSequenceIT extends Specification {
 
 		return res
 	}
-
-
-	def "should start a new build"() {
+*/
+	
+	def "should marshall model into a file"() {
 		given:
-		MultiThreadedHttpConnectionManager manager = new MultiThreadedHttpConnectionManager();
-		manager.getParams().setMaxTotalConnections(25);
-
-		HttpClient client = new HttpClient(manager);
-		client.getParams().setAuthenticationPreemptive(true);
-
-		ExecuteAndWatchContext context = mockContext(client)
-
-		and:
-		TestAutomationServer server = Mock()
-		server.baseURL >> new URL("http://localhost:9292/stub-ta-server")
-		project.server >> server
-
-		and:
-		project.name >> "fancy job"
-
-		and:
 		AutomatedExecutionExtender exec = Mock()
-		exec.getId() >> 12
 		AutomatedTest test = Mock()
-		exec.getAutomatedTest() >> test
-		test.fullName >> "fancy test"
+		test.fullName >> "to/the/batcave"
 
-		buildDef.parameterizedExecutions >> [
-			new Couple(exec, [batman:"leatherpants"])
-		]
+		exec.automatedTest >> test
+		exec.id >> 12
 
-		and:
-		// this initializes CallbackURL.instance. I wouldn't go so far as to call CallbackURL filthy, but it's definitely dirty
-		new CallbackURL().setURL("http://127.0.0.1/squashtm")
+		Map params = ["batman": "leatherpants"]
+
+		buildDef.parameterizedExecutions >> [new Couple(exec, params)]
+
 
 		when:
-		ExecuteAndWatchStepSequence seq = new ExecuteAndWatchStepSequence(context, buildDef, "EXTERNAL-ID", listener);
-		seq.newStartBuild()
+		File f = ste.createJsonSuite(buildDef);
+
 
 		then:
-		notThrown(Exception)
+		f.text == """{"test":[{"id":"12","script":"to/the/batcave","param":{"batman":"leatherpants"}}]}"""
 	}
 }

@@ -131,19 +131,24 @@ public class HttpRequestFactory {
 	@Deprecated
 	public PostMethod newStartTestSuiteBuild(TestAutomationProjectContent content, String externalID) {
 
-		String strURL = callbackProvider.get().toExternalForm();
-
-		ParameterArray params = new ParameterArray(
-				new Parameter[] {
-						Parameter.operationRunSuiteParameter(),
-						Parameter.newExtIdParameter(externalID),
-						Parameter.newCallbackURlParameter(strURL)
-				}
-				);
+		ParameterArray params = getStartTestSuiteBuildParameters(externalID);
 
 		PostMethod method = newStartBuild(content.getProject(), params);
 
 		return method;
+	}
+
+	public ParameterArray getStartTestSuiteBuildParameters(String externalID){
+		String strURL = callbackProvider.get().toExternalForm();
+
+		return  new ParameterArray(
+				new Parameter[] {
+						Parameter.operationRunSuiteParameter(),
+						Parameter.newExtIdParameter(externalID),
+						Parameter.newCallbackURlParameter(strURL),
+						Parameter.newTestListParameter()
+				}
+				);
 	}
 
 	public GetMethod newCheckQueue(TestAutomationProject project) {

@@ -21,57 +21,30 @@
 package org.squashtest.tm.plugin.testautomation.jenkins.beans;
 
 
-public class Parameter {
+public class FileParameter extends Parameter{
 
-	protected String name;
-	protected String value;
+	private String file;
 
-	public String getName() {
-		return name;
+
+
+	public String getFile() {
+		return file;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setFile(String file) {
+		this.file = file;
 	}
 
-	public String getValue() {
-		return
-				value;
-	}
-	public void setValue(String value) {
-		this.value = value;
-	}
-
-
-	public Parameter(){
+	public FileParameter(){
 		super();
 	}
 
-	public Parameter(String name, String value){
-		super();
-		this.name=name;
-		this.value=value;
+	public FileParameter(String name, String file){
+		super(name, "");
+		this.file=file;
 	}
 
-	static public Parameter operationTestListParameter(){
-		return new Parameter("operation", "test-list");
-	}
 
-	static public Parameter operationRunSuiteParameter(){
-		return new Parameter("operation", "run");
-	}
-
-	static public Parameter newExtIdParameter(String externalId){
-		return new Parameter("externalJobId", externalId);
-	}
-
-	static public Parameter newCallbackURlParameter(String callback){
-		return new Parameter("notificationURL", callback);
-	}
-
-	static public FileParameter newTestListParameter(){
-		return new FileParameter("testList", "testsuite.json");
-	}
 
 
 	@Override
@@ -79,7 +52,7 @@ public class Parameter {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((value == null) ? 0 : value.hashCode());
+		result = prime * result + ((file == null) ? 0 : file.hashCode());
 		return result;
 	}
 
@@ -94,7 +67,7 @@ public class Parameter {
 		if (getClass() != obj.getClass()){
 			return false;
 		}
-		Parameter other = (Parameter) obj;
+		FileParameter other = (FileParameter) obj;
 		if (name == null) {
 			if (other.name != null){
 				return false;
@@ -102,11 +75,11 @@ public class Parameter {
 		} else if (!name.equals(other.name)){
 			return false;
 		}
-		if (value == null) {
-			if (other.value != null){
+		if (file == null) {
+			if (other.file != null){
 				return false;
 			}
-		} else if (!value.equals(other.value)){
+		} else if (!file.equals(other.file)){
 			return false;
 		}
 		return true;
