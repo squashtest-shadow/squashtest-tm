@@ -48,6 +48,5 @@
 
   <osgi:service ref="squashtest.tm.service.AutomatedTestService" interface="org.squashtest.tm.service.testautomation.AutomatedTestFinderService" />
 
-
-
+<osgi:service ref="squashtest.tm.service.AutomatedSuiteManagementService" interface="org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService" />
 </beans>

@@ -270,6 +270,10 @@
   <osgi:reference id="squashtest.tm.service.AutomatedTestService" bean-name="squashtest.tm.service.AutomatedTestService"
     interface="org.squashtest.tm.service.testautomation.AutomatedTestFinderService" availability="mandatory" />
 
+  <osgi:reference id="squashtest.tm.service.AutomatedSuiteManagementService" bean-name="squashtest.tm.service.AutomatedSuiteManagementService"
+    interface="org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService" availability="mandatory" />
+
+
   <osgi:reference id="squashtest.tm.service.TestSuiteModificationService" bean-name="squashtest.tm.service.TestSuiteModificationService"
     availability="mandatory">
     <osgi:interfaces>

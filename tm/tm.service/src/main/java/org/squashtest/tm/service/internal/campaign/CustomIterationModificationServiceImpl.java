@@ -79,7 +79,6 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 IterationTestPlanManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomIterationModificationServiceImpl.class);
 	private static final String OR_HAS_ROLE_ADMIN = "or hasRole('ROLE_ADMIN')";
-	private static final String PERMISSION_EXECUTE_ITERATION = "hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'EXECUTE') ";
 	private static final String PERMISSION_EXECUTE_ITEM = "hasPermission(#testPlanItemId, 'org.squashtest.tm.domain.campaign.IterationTestPlanItem', 'EXECUTE') ";
 
 	@Inject	private CampaignDao campaignDao;
@@ -213,34 +212,6 @@ IterationTestPlanManager {
 		IterationTestPlanItem item = testPlanDao.findTestPlanItem(testPlanItemId);
 		return addExecution(item);
 	}
-
-	/**
-	 * 
-	 * @see org.squashtest.tm.service.campaign.CustomIterationModificationService#addAutomatedExecution(long)
-	 */
-	@Override
-	@PreAuthorize(PERMISSION_EXECUTE_ITEM + OR_HAS_ROLE_ADMIN)
-	public Execution addAutomatedExecution(long testPlanItemId) {
-		IterationTestPlanItem item = testPlanDao.findTestPlanItem(testPlanItemId);
-
-		return addAutomatedExecution(item);
-	}
-
-	@Override
-	@PreAuthorize(PERMISSION_EXECUTE_ITERATION + OR_HAS_ROLE_ADMIN)
-	public AutomatedSuite createAndStartAutomatedSuite(long iterationId) {
-		Iteration iteration = iterationDao.findById(iterationId);
-		List<IterationTestPlanItem> items =  iteration.getTestPlans();
-		return createAndStartAutomatedSuite(items);
-	}
-
-	@Override
-	@PreAuthorize(PERMISSION_EXECUTE_ITERATION + OR_HAS_ROLE_ADMIN)
-	public AutomatedSuite createAndStartAutomatedSuite(long iterationId, Collection<Long> testPlanIds) {
-		return createAndStartAutomatedSuiteByITPIsIds(testPlanIds);
-	}
-
-
 
 
 	@Override
@@ -411,30 +382,6 @@ IterationTestPlanManager {
 	}
 
 
-	@Override
-	public AutomatedSuite createAndStartAutomatedSuite(List<IterationTestPlanItem> testPlanItems) {
-		AutomatedSuite newSuite = autoSuiteDao.createNewSuite();
-
-		for (IterationTestPlanItem item : testPlanItems) {
-			if (item.isAutomated()) {
-				Execution exec = addAutomatedExecution(item);
-				newSuite.addExtender(exec.getAutomatedExecutionExtender());
-			}
-		}
-
-		//See [Issue 1531]
-		//We need to make sure that the AutomatedSuite has an id before we launch the execution.
-		//Otherwise there is a risk that, if TA is too quick to complete execution, it will try to find and update the suite that doesn't have an id yet.
-		TransactionSynchronizationManager.registerSynchronization(new AutomatedRunTransactionHandler(newSuite, testAutomationService));
-
-		return newSuite;
-	}
-
-	@Override
-	public AutomatedSuite createAndStartAutomatedSuiteByITPIsIds(Collection<Long> testPlanIds){
-		List<IterationTestPlanItem> items = testPlanDao.findAllByIds(testPlanIds);
-		return createAndStartAutomatedSuite(items);
-	}
 
 	@Override
 	public List<Iteration> findIterationContainingTestCase(long testCaseId) {

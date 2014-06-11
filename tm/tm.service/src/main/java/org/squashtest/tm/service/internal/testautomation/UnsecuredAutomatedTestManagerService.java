@@ -21,13 +21,9 @@
 package org.squashtest.tm.service.internal.testautomation;
 
 import java.util.Collection;
-import java.util.List;
 
-import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.tm.service.testautomation.AutomatedTestFinderService;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 
 /**
@@ -37,7 +33,7 @@ import org.squashtest.tm.service.testautomation.model.TestAutomationProjectConte
  * @author bsiri
  * 
  */
-public interface UnsecuredAutomatedTestManagerService extends AutomatedTestFinderService {
+public interface UnsecuredAutomatedTestManagerService {
 
 	// ************************ Entity management **********************
 
@@ -59,13 +55,6 @@ public interface UnsecuredAutomatedTestManagerService extends AutomatedTestFinde
 	 */
 	void removeIfUnused(AutomatedTest test);
 
-	/**
-	 * Given the id of an automated test suite, returns the list of executions associated to this automated test suite.
-	 * 
-	 * @param automatedTestSuiteId
-	 * @return
-	 */
-	List<Execution> findExecutionsByAutomatedTestSuiteId(String automatedTestSuiteId);
 
 	// *********************** remote calls ************************************
 
@@ -78,11 +67,5 @@ public interface UnsecuredAutomatedTestManagerService extends AutomatedTestFinde
 	 */
 	Collection<TestAutomationProjectContent> listTestsInProjects(Collection<TestAutomationProject> projects);
 
-	/**
-	 * Will start a test suite, by dispatching the tests to the corresponding connectors.
-	 * 
-	 * @param suite
-	 */
-	void startAutomatedSuite(AutomatedSuite suite);
 
 }

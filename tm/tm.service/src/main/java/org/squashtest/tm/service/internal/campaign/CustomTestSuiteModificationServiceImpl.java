@@ -21,18 +21,15 @@
 package org.squashtest.tm.service.internal.campaign;
 
 import java.util.Arrays;
-import java.util.List;
 
 import javax.inject.Inject;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.service.campaign.CustomTestSuiteModificationService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
@@ -49,7 +46,6 @@ import org.squashtest.tm.service.user.UserAccountService;
 public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteModificationService {
 	private static final String OR_HAS_ROLE_ADMIN = "or hasRole('ROLE_ADMIN')";
 	private static final String HAS_WRITE_PERMISSION_ID = "hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'WRITE') ";
-	private static final String HAS_EXECUTE_PERMISSION_ID = "hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'EXECUTE') ";
 	private static final String HAS_READ_PERMISSION_ID = "hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite','READ') ";
 	private static final String PERMISSION_EXECUTE_ITEM = "hasPermission(#testPlanItemId, 'org.squashtest.tm.domain.campaign.IterationTestPlanItem', 'EXECUTE') ";
 
@@ -118,28 +114,5 @@ public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteMo
 	}
 
 
-	@Override
-	@PreAuthorize(PERMISSION_EXECUTE_ITEM + OR_HAS_ROLE_ADMIN)
-	public Execution addAutomatedExecution(long testPlanItemId) {
-		return iterationService.addAutomatedExecution(testPlanItemId);
-	}
-
-
-	@Override
-	@PreAuthorize(HAS_EXECUTE_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
-	public AutomatedSuite createAndStartAutomatedSuite(long suiteId) {
-
-		TestSuite testSuite = testSuiteDao.findById(suiteId);
-
-		List<IterationTestPlanItem> items = testSuite.getTestPlan();
-
-		return iterationTestPlanManager.createAndStartAutomatedSuite(items);
-	}
-
-	@Override
-	@PreAuthorize(HAS_EXECUTE_PERMISSION_ID + OR_HAS_ROLE_ADMIN)
-	public AutomatedSuite createAndStartAutomatedSuite(long suiteId, List<Long> testPlanIds) {
-		return iterationTestPlanManager.createAndStartAutomatedSuiteByITPIsIds(testPlanIds);
-	}
 
 }
