@@ -23,6 +23,8 @@ package org.squashtest.tm.plugin.testautomation.jenkins.beans;
 
 public class Parameter {
 
+	public static final String SYMBOLIC_FILENAME = "testsuite.json";
+
 	protected String name;
 	protected String value;
 
@@ -69,10 +71,9 @@ public class Parameter {
 		return new Parameter("notificationURL", callback);
 	}
 
-	static public FileParameter newTestListParameter(){
-		return new FileParameter("testList", "testsuite.json");
+	static public Parameter testListParameter(){
+		return new Parameter("testList", "{file:" + SYMBOLIC_FILENAME +"}");
 	}
-
 
 	@Override
 	public int hashCode() {

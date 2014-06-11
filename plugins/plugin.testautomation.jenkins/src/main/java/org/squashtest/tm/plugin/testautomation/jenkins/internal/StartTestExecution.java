@@ -115,12 +115,16 @@ public class StartTestExecution {
 
 		File tmp;
 		try {
+
 			tmp = createJsonSuite(buildDef);
-			parts.add("testsuite.json", new FileSystemResource(tmp));
-			parts.add("json", new ObjectMapper().writeValueAsString(stdParams));
-		} catch (JsonProcessingException e) {
+			parts.add(HttpRequestFactory.MULTIPART_BUILDFILENAME, new FileSystemResource(tmp));
+			parts.add(HttpRequestFactory.MULTIPART_JENKINSARGS, new ObjectMapper().writeValueAsString(stdParams));
+
+		}
+		catch (JsonProcessingException e) {
 			LOGGER.error("Error while mashalling json model. Maybe a bug ?", e);
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			LOGGER.error("Error while writing json model into temp file. Maybe temp folder is not writable ?", e);
 		}
 
@@ -188,7 +192,7 @@ public class StartTestExecution {
 
 		@SuppressWarnings(UNUSED)
 		public String getScript() {
-			return paramdExec.getA1().getAutomatedTest().getFullName();
+			return paramdExec.getA1().getAutomatedTest().getName()+".ta";
 		}
 
 		@SuppressWarnings(UNUSED)

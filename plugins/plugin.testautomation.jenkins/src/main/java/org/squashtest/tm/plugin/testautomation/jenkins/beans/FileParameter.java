@@ -21,31 +21,37 @@
 package org.squashtest.tm.plugin.testautomation.jenkins.beans;
 
 
-public class FileParameter extends Parameter{
-
-	private String file;
+public class FileParameter {
 
 
+	protected String name;
+	protected String file;
 
-	public String getFile() {
-		return file;
+	public String getName() {
+		return name;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getFile() {
+		return	file;
+	}
 	public void setFile(String file) {
 		this.file = file;
 	}
+
 
 	public FileParameter(){
 		super();
 	}
 
 	public FileParameter(String name, String file){
-		super(name, "");
+		super();
+		this.name=name;
 		this.file=file;
 	}
-
-
-
 
 	@Override
 	public int hashCode() {

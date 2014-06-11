@@ -35,10 +35,10 @@ import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.tm.plugin.testautomation.jenkins.beans.FileParameter;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.Parameter;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.ParameterArray;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser;
-import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.tm.service.testautomation.spi.BadConfiguration;
 
 public class HttpRequestFactory {
@@ -46,6 +46,10 @@ public class HttpRequestFactory {
 	private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequestFactory.class);
 
 	private static final String API_URI = "/api/json";
+
+	public static final String SYMBOLIC_BUILDFILENAME = "testsuite.json";
+	public static final String MULTIPART_BUILDFILENAME = "file0";
+	public static final String MULTIPART_JENKINSARGS = "json";
 
 	private static final NameValuePair[] JOB_LIST_QUERY = new NameValuePair[] {
 		new NameValuePair("tree", "jobs[name,color]")
@@ -122,31 +126,17 @@ public class HttpRequestFactory {
 
 	}
 
-	/**
-	 * @deprecated
-	 * @param content
-	 * @param externalID
-	 * @return
-	 */
-	@Deprecated
-	public PostMethod newStartTestSuiteBuild(TestAutomationProjectContent content, String externalID) {
-
-		ParameterArray params = getStartTestSuiteBuildParameters(externalID);
-
-		PostMethod method = newStartBuild(content.getProject(), params);
-
-		return method;
-	}
 
 	public ParameterArray getStartTestSuiteBuildParameters(String externalID){
 		String strURL = callbackProvider.get().toExternalForm();
 
 		return  new ParameterArray(
-				new Parameter[] {
+				new Object[] {
 						Parameter.operationRunSuiteParameter(),
 						Parameter.newExtIdParameter(externalID),
 						Parameter.newCallbackURlParameter(strURL),
-						Parameter.newTestListParameter()
+						Parameter.testListParameter(),
+						new FileParameter(Parameter.SYMBOLIC_FILENAME, MULTIPART_BUILDFILENAME)
 				}
 				);
 	}
