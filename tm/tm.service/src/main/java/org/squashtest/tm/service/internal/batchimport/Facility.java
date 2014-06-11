@@ -63,7 +63,7 @@ public interface Facility {
 	 * @param value
 	 * @return
 	 */
-	LogTrain failsafeUpdateParameterValue (DatasetTarget dataset, ParameterTarget param, String value);
+	LogTrain failsafeUpdateParameterValue (DatasetTarget dataset, ParameterTarget param, String value, boolean isUpdate);
 
 
 

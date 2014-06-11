@@ -58,7 +58,7 @@ class DatasetInstructionTest extends Specification {
 		def lt = instruction.execute(f)
 
 		then:
-		1 * f.failsafeUpdateParameterValue(target, _, _) >> new LogTrain()
+		1 * f.failsafeUpdateParameterValue(target, _, _, _) >> new LogTrain()
 	}
 
 	@Unroll
@@ -70,7 +70,7 @@ class DatasetInstructionTest extends Specification {
 		def lt = instruction.execute(f)
 
 		then:
-		1 * f.failsafeUpdateParameterValue(target, _, _) >> new LogTrain()
+		1 * f.failsafeUpdateParameterValue(target, _, _, _) >> new LogTrain()
 
 		where:
 		mode << [ImportMode.UPDATE, null]

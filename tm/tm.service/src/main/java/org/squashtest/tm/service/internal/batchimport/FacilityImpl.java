@@ -425,9 +425,9 @@ public class FacilityImpl implements Facility {
 	}
 
 	@Override
-	public LogTrain failsafeUpdateParameterValue(DatasetTarget dataset, ParameterTarget param, String value) {
+	public LogTrain failsafeUpdateParameterValue(DatasetTarget dataset, ParameterTarget param, String value, boolean isUpdate) {
 
-		LogTrain train = validator.failsafeUpdateParameterValue(dataset, param, value);
+		LogTrain train = validator.failsafeUpdateParameterValue(dataset, param, value, isUpdate);
 
 		if (!train.hasCriticalErrors()) {
 			try {

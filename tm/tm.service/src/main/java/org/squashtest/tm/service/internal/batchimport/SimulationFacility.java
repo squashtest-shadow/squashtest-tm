@@ -210,9 +210,9 @@ public class SimulationFacility implements Facility {
 	}
 
 	@Override
-	public LogTrain failsafeUpdateParameterValue(DatasetTarget dataset, ParameterTarget param, String value) {
+	public LogTrain failsafeUpdateParameterValue(DatasetTarget dataset, ParameterTarget param, String value, boolean isUpdate) {
 
-		LogTrain logs = validator.failsafeUpdateParameterValue(dataset, param, value);
+		LogTrain logs = validator.failsafeUpdateParameterValue(dataset, param, value, isUpdate);
 
 		if (!logs.hasCriticalErrors()) {
 			// note that this operation can be invoked multiple times, a given dataset will be created only once

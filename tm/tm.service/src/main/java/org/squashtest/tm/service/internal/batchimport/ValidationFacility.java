@@ -499,7 +499,7 @@ public class ValidationFacility implements Facility, ModelProvider {
 	}
 
 	@Override
-	public LogTrain failsafeUpdateParameterValue(DatasetTarget dataset, ParameterTarget param, String value) {
+	public LogTrain failsafeUpdateParameterValue(DatasetTarget dataset, ParameterTarget param, String value, boolean isUpdate) {
 
 		LogTrain logs;
 
@@ -516,7 +516,7 @@ public class ValidationFacility implements Facility, ModelProvider {
 		// go further if no blocking errors are detected
 		if (!logs.hasCriticalErrors()) {
 			// 3 - does the dataset exists ?
-			if (!model.doesDatasetExists(dataset)) {
+			if (!model.doesDatasetExists(dataset) && isUpdate) {
 				logs.addEntry(new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_DATASET_NOT_FOUND));
 
 			}
@@ -532,7 +532,6 @@ public class ValidationFacility implements Facility, ModelProvider {
 				logs.addEntry(hasNoPermission);
 			}
 		}
-
 		return logs;
 	}
 

@@ -40,10 +40,10 @@ import org.squashtest.tm.service.library.FolderModificationService;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 
 public abstract class FolderModificationController<FOLDER extends Folder<?>> {
-	
+
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentsHelper;
-	
+
 	@RequestMapping(method = RequestMethod.GET)
 	public  ModelAndView showFolder(@PathVariable long folderId, HttpServletRequest request) {
 		FOLDER folder = getFolderModificationService().findFolder(folderId);
@@ -59,12 +59,12 @@ public abstract class FolderModificationController<FOLDER extends Folder<?>> {
 	protected abstract FolderModificationService<FOLDER> getFolderModificationService();
 	protected abstract String getWorkspaceName();
 
-	
+
 	//might look like a bit of overhead but our class is now testable.
 	protected Set<Attachment> findAttachments(FOLDER folder){
 		return attachmentsHelper.findAttachments(folder);
 	}
-	
+
 	@RequestMapping(method = RequestMethod.DELETE)
 	public @ResponseBody
 	String removeFolder(@PathVariable long folderId) {
