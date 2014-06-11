@@ -192,7 +192,7 @@ public class StartTestExecution {
 
 		@SuppressWarnings(UNUSED)
 		public String getScript() {
-			return paramdExec.getA1().getAutomatedTest().getName()+".ta";
+			return paramdExec.getA1().getAutomatedTest().getName();
 		}
 
 		@SuppressWarnings(UNUSED)
