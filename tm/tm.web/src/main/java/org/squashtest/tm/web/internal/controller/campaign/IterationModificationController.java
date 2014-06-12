@@ -380,18 +380,6 @@ public class IterationModificationController {
 
 	}
 
-	@RequestMapping(value = "/test-plan/{testPlanId}/executions/new", method = RequestMethod.POST, params = { "mode=auto" })
-	public @ResponseBody
-	AutomatedSuiteOverview addAutoExecution(@PathVariable("testPlanId") long testPlanId,
-			@PathVariable(ITERATION_ID_KEY) long iterationId, Locale locale) {
-		Collection<Long> testPlanIds = new ArrayList<Long>(1);
-		testPlanIds.add(testPlanId);
-
-		AutomatedSuite suite = iterationModService.createAndStartAutomatedSuite(iterationId, testPlanIds);
-
-		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
-
-	}
 
 	@RequestMapping(value = "/test-plan/{itemId}/executions", method = RequestMethod.GET)
 	public ModelAndView getExecutionsForTestPlan(@PathVariable("iterationId") long iterationId,
@@ -450,29 +438,6 @@ public class IterationModificationController {
 		return report;
 	}
 
-	/* ************** execute auto *********************************** */
-
-	@RequestMapping(method = RequestMethod.POST, params = { "id=execute-auto", "testPlanItemsIds[]" })
-	public @ResponseBody
-	AutomatedSuiteOverview executeSelectionAuto(@PathVariable long iterationId,
-			@RequestParam("testPlanItemsIds[]") List<Long> ids, Locale locale) {
-		AutomatedSuite suite = iterationModService.createAndStartAutomatedSuite(iterationId, ids);
-
-
-		LOGGER.debug("Iteration #{} : execute selected test plans", iterationId);
-
-		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
-	}
-
-	@RequestMapping(method = RequestMethod.POST, params = { "id=execute-auto", "!testPlanItemsIds[]" })
-	public @ResponseBody
-	AutomatedSuiteOverview executeAllAuto(@PathVariable long iterationId, Locale locale) {
-		AutomatedSuite suite = iterationModService.createAndStartAutomatedSuite(iterationId);
-
-		LOGGER.debug("Iteration #{} : execute all test plan auto", iterationId);
-
-		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
-	}
 
 
 	// ******************** other stuffs ***********************

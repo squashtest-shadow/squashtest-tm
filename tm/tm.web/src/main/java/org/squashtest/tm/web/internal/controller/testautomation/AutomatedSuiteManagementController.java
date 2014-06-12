@@ -30,25 +30,29 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
-import org.squashtest.tm.service.testautomation.AutomatedTestFinderService;
+import org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.AutomatedSuiteOverview;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
 @Controller
-@RequestMapping("/automated-suites/{suiteId}")
+@RequestMapping("/automated-suites")
 public class AutomatedSuiteManagementController {
 
 	@Inject
 	private InternationalizationHelper messageSource;
 
 	@Inject
-	private AutomatedTestFinderService automatedTestService;
+	private AutomatedSuiteManagerService service;
 
 
-	@RequestMapping(value = "/executions", method = RequestMethod.GET)
+
+	@RequestMapping(value = "/new", method = RequestMethod.POST, params="iteration-id")
+	public @ResponseBody
+
+	@RequestMapping(value = "/{suiteId}/executions", method = RequestMethod.GET)
 	public @ResponseBody AutomatedSuiteOverview updateExecutionInfo(@PathVariable String suiteId, Locale locale) {
-		AutomatedSuite suite = automatedTestService.findAutomatedTestSuiteById(suiteId);
+		AutomatedSuite suite = service.findById(suiteId);
 		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
 	}
 

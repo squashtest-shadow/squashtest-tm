@@ -253,31 +253,7 @@ public class TestSuiteModificationController {
 		return result;
 	}
 
-	// ****************** execution of the whole suite ****************************************
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=execute-auto", "testPlanItemsIds[]" })
-	public @ResponseBody
-	AutomatedSuiteOverview executeSelectionAuto(@PathVariable("suiteId") long suiteId,
-			@RequestParam("testPlanItemsIds[]") List<Long> ids, Locale locale) {
-
-		AutomatedSuite autoSuite = service.createAndStartAutomatedSuite(suiteId, ids);
-
-		LOGGER.debug("Test-Suite #" + suiteId + " : execute selected test plans");
-
-		return AutomatedExecutionViewUtils.buildExecInfo(autoSuite, locale, messageSource);
-
-	}
-
-	@RequestMapping(method = RequestMethod.POST, params = { "id=execute-auto", "!testPlanItemsIds[]" })
-	public @ResponseBody
-	AutomatedSuiteOverview executeAllAuto(@PathVariable("suiteId") long suiteId, Locale locale) {
-		AutomatedSuite suite = service.createAndStartAutomatedSuite(suiteId);
-
-		LOGGER.debug("Test-Suite #" + suiteId + " : execute all test plan auto");
-
-		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
-
-	}
 
 	// ******************** other stuffs ********************
 

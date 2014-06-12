@@ -73,7 +73,7 @@ class StartTestExecutionTest extends Specification {
 		given:
 		AutomatedExecutionExtender exec = Mock()
 		AutomatedTest test = Mock()
-		test.fullName >> "to/the/batcave"
+		test.name >> "to/the/batcave"
 
 		exec.automatedTest >> test
 		exec.id >> 12

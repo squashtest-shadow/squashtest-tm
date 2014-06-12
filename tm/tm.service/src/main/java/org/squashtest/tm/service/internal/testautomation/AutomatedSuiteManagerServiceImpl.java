@@ -29,10 +29,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.apache.commons.collections.MultiMap;
+import org.apache.commons.collections.map.MultiValueMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PostFilter;
@@ -51,6 +54,8 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
+import org.squashtest.tm.domain.testautomation.AutomatedTest;
+import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
@@ -67,6 +72,7 @@ import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
 import org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService;
 import org.squashtest.tm.service.testautomation.TestAutomationCallbackService;
+import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
 import org.squashtest.tm.service.testautomation.spi.UnknownConnectorKind;
@@ -156,6 +162,52 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 		return createFromItems(items);
 	}
+
+	@Override
+	// security delegated to sortByProject(AutomatedSuite)
+	public Collection<TestAutomationProjectContent> sortByProject(String autoSuiteId) {
+		AutomatedSuite suite = findById(autoSuiteId);
+		return sortByProject(suite);
+	}
+
+
+	@Override
+	// security handled by in the code
+	public Collection<TestAutomationProjectContent> sortByProject(AutomatedSuite suite) {
+
+		List<AutomatedExecutionExtender> extenders = (List<AutomatedExecutionExtender>)suite.getExecutionExtenders();
+
+		PermissionsUtils.checkPermission(permissionService, extenders, EXECUTE);
+
+		// first sort them using a map
+		MultiMap testsByProjects = new MultiValueMap();
+
+		for (AutomatedExecutionExtender extender : extenders){
+			if (extender.isProjectDisassociated()){
+				continue;
+			}
+			TestAutomationProject project = extender.getAutomatedProject();
+			AutomatedTest test = extender.getAutomatedTest();
+
+			testsByProjects.put(project, test);
+		}
+
+
+		// now make a friendly bean of it
+		Collection<TestAutomationProjectContent> projectContents = new LinkedList<TestAutomationProjectContent>();
+
+		Set<Entry> entries = testsByProjects.entrySet();
+		for (Entry e : entries){
+			TestAutomationProject project = (TestAutomationProject)e.getKey();
+			Collection tests = (Collection)e.getValue();
+
+			projectContents.add(new TestAutomationProjectContent(project, tests));
+		}
+
+		return projectContents;
+
+	}
+
 
 
 	@Override
@@ -356,6 +408,8 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		}
 
 	}
+
+
 
 	private static class ExtenderSorter {
 
