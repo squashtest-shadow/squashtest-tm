@@ -131,12 +131,12 @@
 				include : [ "jquery", "user-editor/UserModificationView", "app/ws/squashtm.workspace", "app/pubsub" ],
 				exclude : [ "common" ]
 			},
-			{
-				name : "iteration-page",
-				include : [ "app/pubsub", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs",
-				            "bugtracker/bugtracker-panel", "workspace.event-bus", "iteration-management", "app/ws/squashtm.workspace" ],
-				exclude : [ "common" ]
-			},
+//			{
+//				name : "iteration-page",
+//				include : [ "app/pubsub", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs",
+//				            "bugtracker/bugtracker-panel", "workspace.event-bus", "iteration-management", "app/ws/squashtm.workspace" ],
+//				exclude : [ "common" ]
+//			},
 			{
 				name : "test-suite-page",
 				include : [ "app/pubsub", "squash.translator", "squash.basicwidgets", "workspace.event-bus", "app/ws/squashtm.workspace",

@@ -25,8 +25,9 @@
 	pageEncoding="utf-8"%>
 <%@ attribute name="url" required="true"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-<div id="auto-exec-btns-panel" class="btn-group" data-run-url="${ url }">
+<div id="auto-exec-btns-panel" class="btn-group" data-suites-url="<c:url value='/automated-suites' />">
 	<f:message var="autoExecLabel" key="iteration.suite.execution.auto.label" />
 	<input id="execute-auto-button" class="run-menu sq-btn" type="button" value="${autoExecLabel}" />
 	<ul class="not-displayed">

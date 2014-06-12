@@ -25,7 +25,7 @@
  * This modules initializes the buttons when the event is triggered. Client should only require this module.
  */
 define([ "jquery", "squash.translator", "../app/pubsub", "jquery.squash.buttonmenu" ], function($, messages, ps) {
-	"ue strict";
+	"use strict";
 
 	// init message cache
 	messages.load({
@@ -41,42 +41,45 @@ define([ "jquery", "squash.translator", "../app/pubsub", "jquery.squash.buttonme
 
 	function executeAll() {
 		console.log("execute all automated tests");
-		var ids = [];
-		executeAuto(ids);
+		createSuite([]).done(startSuite);
 	}
 
 	function executeSelection() {
 		var ids = $(".test-plan-table").squashTable().getSelectedIds();
 		if (ids.length === 0) {
-			$.squash.openMessage(message.get("popup.title.error"), message.get("message.EmptyTableSelection"));
+			$.squash.openMessage(messages.get("popup.title.error"), messages.get("message.EmptyTableSelection"));
 		} else {
-			executeAuto(ids);
+			createSuite(ids).done(startSuite);
 		}
 	}
 
-	function executeAuto(ids) {
-		var runUrl = $("#auto-exec-btns-panel").data("run-url");
+	function startSuite(suite) {
+		squashtm.context.autosuiteOverview.start(suite);
+	}
 
-		$.ajax({
+	/**
+	 * issues create suite ajax request and returns request promise
+	 */
+	function createSuite(itemIds) {
+		var createUrl = $("#auto-exec-btns-panel").data("suites-url") + "/new";
+
+		var data = {};
+
+		if (!!itemIds && itemIds.length > 0) {
+			data.testPlanItemsIds = itemIds;
+
+		} else {
+			var ent =  squashtm.page.identity.restype === "iterations" ? "iterationId" : "testSuiteId";
+			data[ent] = squashtm.page.identity.resid;
+
+		}
+
+		return $.ajax({
 			type : "POST",
-			url : runUrl,
+			url : createUrl,
 			dataType : "json",
-			data : {
-				"id" : "execute-auto",
-				"testPlanItemsIds" : ids
-			}
-		}).done(function(suiteView) {
-			if (suiteView.executions.length === 0) {
-				$.squash.openMessage(messages.get("popup.title.Info"), messages.get("dialog.execution.auto.overview.error.none"));
-			} else {
-				/*
-				 * I'm cheating here, I should write
-				 *
-				 * require(["test-automation/automated-suite-overview"], function(auto){
-				 * auto.get().watch(suiteView); })
-				 */
-				squashtm.context.autosuiteOverview.watch(suiteView);
-			}
+			data : data,
+			contentType : "application/x-www-form-urlencoded;charset=UTF-8"
 		});
 	}
 

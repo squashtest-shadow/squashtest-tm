@@ -21,12 +21,11 @@
 /**
  * This module listens to the "reload.auto-suite-overview-popup" event and self initializes accordingly.
  *
- * Module api :
- * get() : returns the dialog widget instance.
+ * Module api : get() : returns the dialog widget instance.
  *
  */
-define(["jquery", "handlebars", "../app/pubsub", "squash.statusfactory", "squash.translator",
-        "jqueryui", "jquery.squash.formdialog"], function($, Handlebars, ps, statusfactory, translator) {
+define(["jquery", "underscore", "handlebars", "../app/pubsub", "squash.statusfactory", "squash.translator",
+        "jqueryui", "jquery.squash.formdialog"], function($, _, Handlebars, ps, statusfactory, translator) {
 	"use strict";
 
 	Handlebars.registerHelper("ballsyStatus", $.proxy(statusfactory.getHtmlFor, statusfactory));
@@ -47,21 +46,6 @@ define(["jquery", "handlebars", "../app/pubsub", "squash.statusfactory", "squash
 
 				var self = this;
 
-//				$(this.element).find("table").dataTable({
-//					"oLanguage" : {
-//						"sUrl" : squashtm.app.cfTable.languageUrl
-//					},
-//					"bAutoWidth" : false,
-//					"bJQueryUI" : true,
-//					"bFilter" : false,
-//					"bPaginate" : false,
-//					"bServerSide" : false,
-//					"bDeferRender" : true,
-//					"bRetrieve" : false,
-//					"bSort" : false,
-//					"aaSorting" : []
-//				});
-
 				this.options.executionRowTemplate = Handlebars.compile($("#exec-info-tpl").html());
 				this.options.executionAutoInfos = $("#executions-auto-infos");
 
@@ -81,6 +65,12 @@ define(["jquery", "handlebars", "../app/pubsub", "squash.statusfactory", "squash
 
 				this.onOwnBtn("warningcancel", function(){
 					self.unclose();
+				});
+				this.onOwnBtn("submitNodes", function(){
+					self._submitNodes();
+				});
+				this.onOwnBtn("discardNodes", function(){
+					self.close();
 				});
 			},
 
@@ -109,10 +99,9 @@ define(["jquery", "handlebars", "../app/pubsub", "squash.statusfactory", "squash
 
 
 			_cleancontent : function(){
-
 				var opts = this.options;
 
-				clearInterval(opts.intervalId),
+				clearInterval(opts.intervalId);
 				opts.executionAutoInfos.empty();
 
 				$("#execution-auto-progress-bar").progressbar("value", 0);
@@ -122,14 +111,14 @@ define(["jquery", "handlebars", "../app/pubsub", "squash.statusfactory", "squash
 				if (table.length > 0) {
 					table.squashTable().refresh();
 				}
-				// TODO : replace the following function that doesn't exist anymore with an event published on the event bus
-				//refreshStatistics();
-
+				// TODO : replace the following function that doesn't exist anymore with an event published on the event
+				// bus
+				// refreshStatistics();
 			},
 
 			watch : function(suite){
 				this.options.suite = suite;
-				this._initview();
+				this._initWatch();
 				this.setState("main");
 				this.open();
 
@@ -142,24 +131,86 @@ define(["jquery", "handlebars", "../app/pubsub", "squash.statusfactory", "squash
 				}
 			},
 
+			start : function(suite) {
+				if (suite.manualNodeSelection) {
+					this._startManualSelectNodes(suite);
+				} else {
+					this._startAutoSelectNodes(suite);
+				}
+			},
+
+			_startAutoSelectNodes : function(suite) {
+				this._execAndWatch(suite.id, function() { return []; });
+			},
+
+			_execAndWatch: function(suiteId, dataMapper) {
+				var runUrl = $("#auto-exec-btns-panel").data("suites-url") + "/" + suiteId  + "/executor";
+				var self = this;
+
+				$.ajax({
+					type : "POST",
+					url : runUrl,
+					data: JSON.stringify(dataMapper()),
+					dataType : "json",
+					contentType: "application/json"
+				}).done(function(overview) {
+					if (overview.executions.length === 0) {
+						$.squash.openMessage(messages.get("popup.title.Info"), messages.get("dialog.execution.auto.overview.error.none"));
+					} else {
+						self.watch(overview);
+					}
+				});
+			},
+
+			_startManualSelectNodes : function(suite) {
+				this.suiteId = suite.id;
+				this.setState("node-selector");
+				this.open();
+
+				var template = Handlebars.compile($("#node-selector-pnl-tpl").html());
+				var manuals = _.filter(suite.contexts, function(context) {
+					return context.project.server.manualSlaveSelection;
+				}) || {};
+				$("#node-selector-pnl").html(template({contexts: manuals}));
+			},
+
+			_submitNodes : function() {
+				var dataMapper = function() {
+					var data = _.map($("#node-selector-pnl").find("fieldset"), function(item) {
+						var $item = $(item);
+						var node = $item.find("select").val();
+						node = node === "" ? null : node;
+
+						return {
+							projectId : $item.data("proj-id"),
+							node : node
+						};
+					});
+
+					return data;
+				};
+
+				this._execAndWatch(this.suiteId, dataMapper);
+			},
+
 			update : function(){
 				var self = this,
 					opts = this.options;
 
 				$.ajax({
 					type : "GET",
-					url : opts.url + "/" +opts.suite.suiteId + "/executions",
+					url : opts.url + "/" + opts.suite.suiteId + "/executions",
 					dataType : "json"
 				}).done(function(json){
 					self.options.suite = json;
-					self._updateview();
+					self._updateWatch();
 					if (json.percentage == 100) {
 						clearInterval(self.options.intervalId);
 					}
 				});
 			},
 
-			_initview : function(){
+			_initWatch : function(){
 				var data = this.options.suite;
 				var executions = data.executions,
 					progress = data.percentage;
@@ -174,8 +225,8 @@ define(["jquery", "handlebars", "../app/pubsub", "squash.statusfactory", "squash
 				this.options.executionAutoInfos.html(htmlRows);
 			},
 
-			_updateview : function(){
-				this._initview();
+			_updateWatch : function(){
+				this._initWatch();
 			}
 		});
 
@@ -199,7 +250,7 @@ define(["jquery", "handlebars", "../app/pubsub", "squash.statusfactory", "squash
 
 	var module = {
 			// should not be useful anymore
-		//init : init,
+		// init : init,
 
 		get : function(){
 			if (squashtm.context === undefined || squashtm.context.autosuiteOverview === undefined){

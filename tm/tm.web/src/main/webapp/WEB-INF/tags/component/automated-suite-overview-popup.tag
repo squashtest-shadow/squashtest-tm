@@ -21,8 +21,9 @@
 
 --%>
 <%@ tag description="definition of the popup that follows the execution of an automated test suite." pageEncoding="utf-8"%>
-	
+
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 
@@ -42,9 +43,43 @@
 	</tr>
 {{/each}}
 </script>
+
+<script id="node-selector-pnl-tpl" type="text/x-handlebars-template">
+{{#each contexts}}
+<p>
+  <fieldset data-proj-id="{{project.id}}">
+    <legend>
+      <f:message key="message.automatedTests.ofProject" />&nbsp;<strong>{{project.label}}</strong>&nbsp;
+      <f:message key="message.fromMasterNode" />&nbsp;<em>{{project.server.name}}</em>
+    </legend>
+  
+    <div>
+      <label for="nodes-list-{{project.id}}"><f:message key="message.automatedTests.executedOn" /></label>
+      <select id="nodes-list-{{project.id}}">
+        <option selected="selected" value=""><f:message key="label.irrelevant" /></option>
+        <option value="master">{{project.server.name}}</option>
+        {{#each project.nodes}}
+        <option value="{{this}}">{{this}}</option>
+        {{/each}}
+      </select>
+    </div>
+  
+    <div id="tests-tl-{{project.server.id}}" class="collapse sq-tl">
+      <h5 class="tl-head">
+        <f:message key="message.automatedTestsList" />({{tests.length}} <f:message key="label.testCases.lower" />)
+       </h5>
+      <ul class="tl-body">
+        {{#each tests}}
+        <li>{{name}}</li>
+        {{/each}}
+      </ul>
+    </div>
+  </fieldset>
+</p>
+{{/each}}
+</script>
+
 <!-- *************************POPUP*********************** -->
-
-
 <div id="execute-auto-dialog" class="popup-dialog not-displayed" title="${popupTitle}" 
 	data-def="url=${automatedSuitesUrl}, height=490">
 
@@ -64,7 +99,7 @@
       </table>
 		</div>
 		
-		<div class="executions-auto-bottom" style="min-height:45px; width: 100%; ">
+		<div class="executions-auto-bottom" style="min-height:45px; width: 100%;">
 		
 			<div id="execution-auto-progress" style="width: 80%; margin: auto; margin-top: 20px">
 				<div style="width: 80%; display: inline-block; vertical-align: middle">
@@ -77,17 +112,21 @@
 	</div>
 	
 	<div data-def="state=warning">
-		
 		<span><f:message key='message.CloseAutomatedSuiteOverview'/></span>
-	
 	</div>
 
+    <div data-def="state=node-selector">
+      <div id="node-selector-pnl">
+      </div>
+    </div>
+    
 	<div class="popup-dialog-buttonpane">
 		<input type="button" value="${closeLabel}" data-def="evt=mainclose, state=main, mainbtn=main"/>
 		<input type="button" value="${okLabel}" data-def="evt=warningok, state=warning"/>
 		<input type="button" value="${cancelLabel}" data-def="evt=warningcancel, state=warning, mainbtn=warning"/>	
+    <input type="button" value="<f:message key="label.Confirm" />" data-def="evt=submitNodes, state=node-selector"/>
+    <input type="button" value="<f:message key="label.Cancel" />" data-def="evt=discardNodes, state=node-selector"/>
 	</div>
-
 </div>
 
 <script type="text/javascript">

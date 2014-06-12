@@ -29,20 +29,16 @@ import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 
-
 /**
  * json-friendly version of {@link TestAutomationProjectContent}.
  * 
  * @author bsiri
- *
+ * 
  */
 public class TestAutomationProjectContentModel {
 
 	private TestAutomationProjectModel project;
 	private AutomatedTestModel[] tests;
-
-
-
 
 	public TestAutomationProjectModel getProject() {
 		return project;
@@ -97,47 +93,53 @@ public class TestAutomationProjectContentModel {
 		public Long getId() {
 			return id;
 		}
+
 		public void setId(Long id) {
 			this.id = id;
 		}
+
 		public String getJobName() {
 			return jobName;
 		}
+
 		public void setJobName(String jobName) {
 			this.jobName = jobName;
 		}
+
 		public String getLabel() {
 			return label;
 		}
+
 		public void setLabel(String label) {
 			this.label = label;
 		}
+
 		public String[] getNodes() {
 			return nodes;
 		}
+
 		public void setNodes(String[] nodes) {
 			this.nodes = nodes;
 		}
+
 		public TestAutomationServerModel getServer() {
 			return server;
 		}
+
 		public void setServer(TestAutomationServerModel server) {
 			this.server = server;
 		}
 
-
 	}
 
-
-	public static final class TestAutomationServerModel{
+	public static final class TestAutomationServerModel {
 		private Long id;
 		private String name;
 		private URL baseURL;
 		private String kind;
 		private boolean manualSlaveSelection;
 
-
-		public TestAutomationServerModel(TestAutomationServer server){
+		public TestAutomationServerModel(TestAutomationServer server) {
 			this.id = server.getId();
 			this.name = server.getName();
 			this.baseURL = server.getBaseURL();
@@ -145,51 +147,59 @@ public class TestAutomationProjectContentModel {
 			this.manualSlaveSelection = server.isManualSlaveSelection();
 		}
 
-
 		public Long getId() {
 			return id;
 		}
+
 		public void setId(Long id) {
 			this.id = id;
 		}
+
 		public String getName() {
 			return name;
 		}
+
 		public void setName(String name) {
 			this.name = name;
 		}
+
 		public URL getBaseURL() {
 			return baseURL;
 		}
+
 		public void setBaseURL(URL baseURL) {
 			this.baseURL = baseURL;
 		}
+
 		public String getKind() {
 			return kind;
 		}
+
 		public void setKind(String kind) {
 			this.kind = kind;
 		}
+
 		public boolean isManualSlaveSelection() {
 			return manualSlaveSelection;
 		}
+
 		public void setManualSlaveSelection(boolean manualSlaveSelection) {
 			this.manualSlaveSelection = manualSlaveSelection;
 		}
 
-
 	}
 
-	private static final class AutomatedTestModel{
+	private static final class AutomatedTestModel {
 		private String name;
 
-		public AutomatedTestModel(AutomatedTest test){
+		public AutomatedTestModel(AutomatedTest test) {
 			this.name = test.getName();
 		}
 
 		public String getName() {
 			return name;
 		}
+
 		public void setName(String name) {
 			this.name = name;
 		}

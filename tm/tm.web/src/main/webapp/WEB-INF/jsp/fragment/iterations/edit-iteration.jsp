@@ -162,7 +162,7 @@
 		</div>
 	</div>
 	<div class="toolbar-button-panel btn-toolbar right">
-		<c:if test="${ true or executable && iteration.project.testAutomationEnabled }">
+		<c:if test="${ executable && iteration.project.testAutomationEnabled }">
 			<comp:execute-auto-button url="${ iterationUrl }" />
 		
 		</c:if>
@@ -298,7 +298,7 @@
 	<%-- ------------------ test plan ------------------------------ --%>
 	
 	<it:iteration-test-plan-panel iteration="${iteration}" assignableUsers="${assignableUsers}" weights="${weights}" modes="${modes}" statuses="${statuses}"
-								  linkable="${linkable}"   editable="${writable}"  executable="${true or executable}" reorderable="${linkable}"/>
+								  linkable="${linkable}"   editable="${writable}"  executable="${executable}" reorderable="${linkable}"/>
 	
 	<%-- ------------------ /test plan ----------------------------- --%>
 
@@ -340,7 +340,7 @@
 </div>
 </csst:jq-tab>
 <%------------------------------------------automated suite overview --------------------------------------------%>
-<c:if test="${ true or executable && iteration.project.testAutomationEnabled }">		
+<c:if test="${ executable && iteration.project.testAutomationEnabled }">		
 	<comp:automated-suite-overview-popup />
 	</c:if>
 	<%------------------------------------------/automated suite overview --------------------------------------------%>

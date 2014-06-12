@@ -21,7 +21,6 @@
 package org.squashtest.tm.web.internal.controller.testautomation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -54,45 +53,47 @@ public class AutomatedSuiteManagementController {
 	@Inject
 	private AutomatedSuiteManagerService service;
 
-	@RequestMapping(value = "/new", method = RequestMethod.POST, params="iteration-id", produces="application/json")
+	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "iterationId", produces = "application/json")
 	@ResponseBody
-	public AutomatedSuiteDetails createNewAutomatedSuiteForIteration(@RequestParam("iteration-id") Long iterationId){
+	public AutomatedSuiteDetails createNewAutomatedSuiteForIteration(@RequestParam("iterationId") long iterationId) {
 		AutomatedSuite suite = service.createFromIterationTestPlan(iterationId);
-		return toProjectContentModel(suite.getId());
+		return toProjectContentModel(suite);
 	}
-	@RequestMapping(value = "/new", method = RequestMethod.POST, params="test-suite-id", produces="application/json")
+
+	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "testSuiteId", produces = "application/json")
 	@ResponseBody
-	public AutomatedSuiteDetails createNewAutomatedSuiteForTestSuite(@RequestParam("test-suite-id") Long testSuiteId){
+	public AutomatedSuiteDetails createNewAutomatedSuiteForTestSuite(@RequestParam("testSuiteId") long testSuiteId) {
 		AutomatedSuite suite = service.createFromTestSuiteTestPlan(testSuiteId);
-		return toProjectContentModel(suite.getId());
+		return toProjectContentModel(suite);
 	}
 
-	@RequestMapping(value = "/new", method = RequestMethod.POST, params="test-plan-item-ids", produces="application/json")
+	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "testPlanItemsIds[]", produces = "application/json")
 	@ResponseBody
-	public AutomatedSuiteDetails createNewAutomatedSuite(@RequestParam("test-plan-item-ids") List<Long> testPlanIds){
+	public AutomatedSuiteDetails createNewAutomatedSuite(@RequestParam("testPlanItemsIds[]") List<Long> testPlanIds) {
 		AutomatedSuite suite = service.createFromItemIds(testPlanIds);
-		return toProjectContentModel(suite.getId());
+		return toProjectContentModel(suite);
 	}
 
-	@RequestMapping(value = "/{suiteId}/executor", method = RequestMethod.POST, produces="application/json")
+	@RequestMapping(value = "/{suiteId}/executor", method = RequestMethod.POST, produces = "application/json")
 	@ResponseBody
-	public AutomatedSuiteOverview runAutomatedSuite(@PathVariable("suiteId") String suiteId,
+	public AutomatedSuiteOverview runAutomatedSuite(@PathVariable String suiteId,
 			@RequestBody Collection<Map<String, ?>> rawConf,
-			Locale locale){
+			Locale locale) {
 
 		/*
 		 * ROUGH CODE ALERT
-		 *
+		 * 
 		 * As you noticed the type of 'rawConf' in the signature is 'Collection<Map>'
 		 * instead of 'Collection<SuiteExecutionConfiguration>'.
-		 *
+		 * 
 		 * This is because Jackson wouldn't deserialized a collection to the right content type because of type erasure.
 		 * So we manually convert the content that was serialized as a Map, to SuiteExecutionConfiguration
 		 */
-		Collection<SuiteExecutionConfiguration> configuration = new ArrayList<SuiteExecutionConfiguration>(rawConf.size());
-		for (Map<String, ?> rawC : rawConf){
-			long projectId = ((Integer)rawC.get("projectId")).longValue();
-			String node = (String)rawC.get("node");
+		Collection<SuiteExecutionConfiguration> configuration = new ArrayList<SuiteExecutionConfiguration>(
+				rawConf.size());
+		for (Map<String, ?> rawC : rawConf) {
+			long projectId = ((Integer) rawC.get("projectId")).longValue();
+			String node = (String) rawC.get("node");
 			configuration.add(new SuiteExecutionConfiguration(projectId, node));
 		}
 
@@ -101,57 +102,68 @@ public class AutomatedSuiteManagementController {
 		return updateExecutionInfo(suiteId, locale);
 	}
 
-	@RequestMapping(value = "/{suiteId}/executions", method = RequestMethod.GET, produces="application/json")
+	@RequestMapping(value = "/{suiteId}/executions", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
-	public  AutomatedSuiteOverview updateExecutionInfo(@PathVariable String suiteId, Locale locale) {
+	public AutomatedSuiteOverview updateExecutionInfo(@PathVariable String suiteId, Locale locale) {
 		AutomatedSuite suite = service.findById(suiteId);
 		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
 	}
 
 	@RequestMapping(value = "/{suiteId}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public void deleteAutomatedSuite(@PathVariable("suiteId") String suiteId){
+	public void deleteAutomatedSuite(@PathVariable("suiteId") String suiteId) {
 		service.delete(suiteId);
 	}
 
-
-	@RequestMapping(value = "/{suiteId}/details", method = RequestMethod.GET, produces="application/json")
-	public AutomatedSuiteDetails toProjectContentModel(@PathVariable("suiteId") String suiteId){
+	@RequestMapping(value = "/{suiteId}/details", method = RequestMethod.GET, produces = "application/json")
+	public AutomatedSuiteDetails getSuiteDetails(@PathVariable("suiteId") String suiteId) {
 		AutomatedSuite suite = service.findById(suiteId);
+		return toProjectContentModel(suite);
+	}
+
+	private AutomatedSuiteDetails toProjectContentModel(AutomatedSuite suite) {
 		Collection<TestAutomationProjectContent> projectContents = service.sortByProject(suite);
 
 		Collection<TestAutomationProjectContentModel> models =
 				new ArrayList<TestAutomationProjectContentModel>(projectContents.size());
 
-		for (TestAutomationProjectContent content : projectContents){
+		for (TestAutomationProjectContent content : projectContents) {
 			models.add(new TestAutomationProjectContentModel(content));
 		}
 
-		return new AutomatedSuiteDetails(suiteId, models);
+		return new AutomatedSuiteDetails(suite, models);
 	}
 
+	private static final class AutomatedSuiteDetails {
 
+		private final String id;
+		private final Collection<TestAutomationProjectContentModel> contexts;
+		private final boolean manualNodeSelection;
 
-	private static final class AutomatedSuiteDetails{
-
-		private String suiteId;
-		private Collection<TestAutomationProjectContentModel> projectContents;
-
-		public AutomatedSuiteDetails(String suiteId, Collection<TestAutomationProjectContentModel> projectContents) {
+		public AutomatedSuiteDetails(AutomatedSuite suite, Collection<TestAutomationProjectContentModel> projectContents) {
 			super();
-			this.suiteId = suiteId;
-			this.projectContents = projectContents;
+			this.id = suite.getId();
+			this.contexts = projectContents;
+			this.manualNodeSelection = suite.isManualNodeSelection();
 		}
 
-		public String getSuiteId() {
-			return suiteId;
+		@SuppressWarnings("unused")
+		public String getId() {
+			return id;
 		}
 
-		public Collection<TestAutomationProjectContentModel> getProjectContents() {
-			return projectContents;
+		@SuppressWarnings("unused")
+		public Collection<TestAutomationProjectContentModel> getContexts() {
+			return contexts;
 		}
 
-
+		/**
+		 * @return the manualNodeSelection
+		 */
+		@SuppressWarnings("unused")
+		public boolean isManualNodeSelection() {
+			return manualNodeSelection;
+		}
 
 	}
 
