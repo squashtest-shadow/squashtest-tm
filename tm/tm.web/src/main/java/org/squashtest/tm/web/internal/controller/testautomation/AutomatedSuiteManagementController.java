@@ -54,22 +54,22 @@ public class AutomatedSuiteManagementController {
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST, params="iteration-id", produces="application/json")
 	@ResponseBody
-	public Collection<TestAutomationProjectContentModel> createNewAutomatedSuiteForIteration(@RequestParam("iteration-id") Long iterationId){
+	public AutomatedSuiteDetails createNewAutomatedSuiteForIteration(@RequestParam("iteration-id") Long iterationId){
 		AutomatedSuite suite = service.createFromIterationTestPlan(iterationId);
-		return toProjectContentModel(suite);
+		return toProjectContentModel(suite.getId());
 	}
 	@RequestMapping(value = "/new", method = RequestMethod.POST, params="test-suite-id", produces="application/json")
 	@ResponseBody
-	public Collection<TestAutomationProjectContentModel> createNewAutomatedSuiteForTestSuite(@RequestParam("test-suite-id") Long testSuiteId){
+	public AutomatedSuiteDetails createNewAutomatedSuiteForTestSuite(@RequestParam("test-suite-id") Long testSuiteId){
 		AutomatedSuite suite = service.createFromTestSuiteTestPlan(testSuiteId);
-		return toProjectContentModel(suite);
+		return toProjectContentModel(suite.getId());
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST, params="test-plan-item-ids", produces="application/json")
 	@ResponseBody
-	public Collection<TestAutomationProjectContentModel> createNewAutomatedSuite(@RequestParam("test-plan-item-ids") List<Long> testPlanIds){
+	public AutomatedSuiteDetails createNewAutomatedSuite(@RequestParam("test-plan-item-ids") List<Long> testPlanIds){
 		AutomatedSuite suite = service.createFromItemIds(testPlanIds);
-		return toProjectContentModel(suite);
+		return toProjectContentModel(suite.getId());
 	}
 
 	@RequestMapping(value = "/{suiteId}/executor", method = RequestMethod.POST, produces="application/json")
@@ -82,13 +82,16 @@ public class AutomatedSuiteManagementController {
 	}
 
 	@RequestMapping(value = "/{suiteId}/executions", method = RequestMethod.GET, produces="application/json")
-	public @ResponseBody AutomatedSuiteOverview updateExecutionInfo(@PathVariable String suiteId, Locale locale) {
+	@ResponseBody
+	public  AutomatedSuiteOverview updateExecutionInfo(@PathVariable String suiteId, Locale locale) {
 		AutomatedSuite suite = service.findById(suiteId);
 		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
 	}
 
 
-	private Collection<TestAutomationProjectContentModel> toProjectContentModel(AutomatedSuite suite){
+	@RequestMapping(value = "/{suiteId}/details", method = RequestMethod.GET, produces="application/json")
+	public AutomatedSuiteDetails toProjectContentModel(@PathVariable("suiteId") String suiteId){
+		AutomatedSuite suite = service.findById(suiteId);
 		Collection<TestAutomationProjectContent> projectContents = service.sortByProject(suite);
 
 		Collection<TestAutomationProjectContentModel> models =
@@ -98,7 +101,32 @@ public class AutomatedSuiteManagementController {
 			models.add(new TestAutomationProjectContentModel(content));
 		}
 
-		return models;
+		return new AutomatedSuiteDetails(suiteId, models);
+	}
+
+
+
+	private static final class AutomatedSuiteDetails{
+
+		private String suiteId;
+		private Collection<TestAutomationProjectContentModel> projectContents;
+
+		public AutomatedSuiteDetails(String suiteId, Collection<TestAutomationProjectContentModel> projectContents) {
+			super();
+			this.suiteId = suiteId;
+			this.projectContents = projectContents;
+		}
+
+		public String getSuiteId() {
+			return suiteId;
+		}
+
+		public Collection<TestAutomationProjectContentModel> getProjectContents() {
+			return projectContents;
+		}
+
+
+
 	}
 
 }

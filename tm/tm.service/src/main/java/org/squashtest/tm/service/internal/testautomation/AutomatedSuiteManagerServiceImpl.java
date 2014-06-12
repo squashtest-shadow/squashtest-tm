@@ -138,7 +138,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'EXECUTE') or or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'EXECUTE') or hasRole('ROLE_ADMIN')")
 	public AutomatedSuite createFromIterationTestPlan(long iterationId) {
 		Iteration iteration = iterationDao.findById(iterationId);
 		List<IterationTestPlanItem> items =  iteration.getTestPlans();
@@ -146,7 +146,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.TestSuite', 'EXECUTE') or or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.TestSuite', 'EXECUTE') or hasRole('ROLE_ADMIN')")
 	public AutomatedSuite createFromTestSuiteTestPlan(long testSuiteId) {
 		TestSuite suite = testSuiteDao.findById(testSuiteId);
 		List<IterationTestPlanItem> items =  suite.getTestPlan();
