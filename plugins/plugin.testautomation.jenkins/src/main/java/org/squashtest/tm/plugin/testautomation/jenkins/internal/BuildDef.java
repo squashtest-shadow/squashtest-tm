@@ -43,12 +43,15 @@ import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 public class BuildDef {
 	private final TestAutomationProject project;
 	private final Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> parameterizedExecutions;
+	private final String node;
+
 
 	public BuildDef(@NotNull TestAutomationProject project,
-			@NotNull List<Couple<AutomatedExecutionExtender, Map<String, Object>>> parameterizedExecutions) {
+			@NotNull List<Couple<AutomatedExecutionExtender, Map<String, Object>>> parameterizedExecutions, String node) {
 		super();
 		this.project = project;
 		this.parameterizedExecutions = Collections.unmodifiableList(parameterizedExecutions);
+		this.node = node;
 	}
 
 	/**
@@ -73,5 +76,9 @@ public class BuildDef {
 		}
 
 		return res;
+	}
+
+	public String getNode(){
+		return node;
 	}
 }

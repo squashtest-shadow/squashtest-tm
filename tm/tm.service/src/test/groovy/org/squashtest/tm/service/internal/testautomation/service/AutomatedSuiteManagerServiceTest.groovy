@@ -311,7 +311,7 @@ class ExtenderSorterTest extends Specification {
 		AutomatedSuite suite = makeSomeSuite()
 
 		when :
-		def sorter = new ExtenderSorter(suite)
+		def sorter = new ExtenderSorter(suite, [])
 
 		then :
 		def col1 = sorter.getNextEntry();

@@ -29,6 +29,8 @@ import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.poi.util.StringUtil;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -111,7 +113,7 @@ public class StartTestExecution {
 
 		MultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
 
-		ParameterArray stdParams =  new HttpRequestFactory().getStartTestSuiteBuildParameters(externalId);
+		ParameterArray stdParams =  new HttpRequestFactory().getStartTestSuiteBuildParameters(externalId, buildDef.getNode());
 
 		File tmp;
 		try {

@@ -30,6 +30,7 @@ import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.util.URIUtil;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
@@ -139,6 +140,26 @@ public class HttpRequestFactory {
 						new FileParameter(Parameter.SYMBOLIC_FILENAME, MULTIPART_BUILDFILENAME)
 				}
 				);
+	}
+
+	public ParameterArray getStartTestSuiteBuildParameters(String externalID, String executor){
+		String strURL = callbackProvider.get().toExternalForm();
+
+		if (StringUtils.isBlank(executor)){
+			return getStartTestSuiteBuildParameters(externalID);
+		}
+		else{
+			return  new ParameterArray(
+					new Object[] {
+							Parameter.operationRunSuiteParameter(),
+							Parameter.newExtIdParameter(externalID),
+							Parameter.newCallbackURlParameter(strURL),
+							Parameter.testListParameter(),
+							Parameter.executorParameter(executor),
+							new FileParameter(Parameter.SYMBOLIC_FILENAME, MULTIPART_BUILDFILENAME)
+					}
+					);
+		}
 	}
 
 	public GetMethod newCheckQueue(TestAutomationProject project) {

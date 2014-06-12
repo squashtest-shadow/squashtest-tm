@@ -125,7 +125,6 @@ public class AutomatedExecutionExtender {
 	 */
 	public void setAutomatedTest(AutomatedTest automatedTest) {
 		this.automatedTest = automatedTest;
-		this.nodeName = getHostServerName();
 	}
 
 	public URL getResultURL() {
@@ -164,20 +163,18 @@ public class AutomatedExecutionExtender {
 		return automatedTest.getProject();
 	}
 
+
+	public void setNodeName(String nodeName){
+		this.nodeName = nodeName;
+	}
+
 	/**
 	 * @return the nodeName or the {@link #automatedTest} server name prop when nodeName is empty.
 	 */
 	public String getNodeName() {
-		return "".equals(nodeName) ? getHostServerName() : nodeName;
+		return nodeName;
 	}
 
-	/**
-	 * 
-	 * @return the name of the server which hosts the automated test.
-	 */
-	private String getHostServerName() {
-		return getAutomatedProject().getServer().getName();
-	}
 
 	public boolean isNotOverYet(){
 		return (automatedTest != null && resultURL == null);

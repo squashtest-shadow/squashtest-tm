@@ -23,7 +23,6 @@ package org.squashtest.tm.service.internal.testautomation;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -253,7 +252,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 		PermissionsUtils.checkPermission(permissionService, suite.getExecutionExtenders(), EXECUTE);
 
-		ExtenderSorter sorter = new ExtenderSorter(suite);
+		ExtenderSorter sorter = new ExtenderSorter(suite, configuration);
 
 		TestAutomationCallbackService securedCallback = new CallbackServiceSecurityWrapper(callbackService);
 
@@ -428,11 +427,19 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 	private static class ExtenderSorter {
 
+		private Map<Long, SuiteExecutionConfiguration> configurationByProject;
+
 		private Map<String, Collection<AutomatedExecutionExtender>> extendersByKind;
 
 		private Iterator<Entry<String, Collection<AutomatedExecutionExtender>>> iterator = null;
 
-		public ExtenderSorter(AutomatedSuite suite) {
+		public ExtenderSorter(AutomatedSuite suite, Collection<SuiteExecutionConfiguration> configuration) {
+
+			configurationByProject = new HashMap<Long, SuiteExecutionConfiguration>(configuration.size());
+
+			for (SuiteExecutionConfiguration conf : configuration){
+				configurationByProject.put(conf.getProjectId(), conf);
+			}
 
 			extendersByKind = new HashMap<String, Collection<AutomatedExecutionExtender>>(suite.getExecutionExtenders()
 					.size());
@@ -463,6 +470,11 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 			if (!extendersByKind.containsKey(serverKind)) {
 				extendersByKind.put(serverKind, new LinkedList<AutomatedExecutionExtender>());
+			}
+
+			SuiteExecutionConfiguration conf = configurationByProject.get(extender.getAutomatedProject().getId());
+			if (conf != null){
+				extender.setNodeName(conf.getNode());
 			}
 
 			extendersByKind.get(serverKind).add(extender);

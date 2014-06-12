@@ -75,6 +75,10 @@ public class Parameter {
 		return new Parameter("testList", "{file:" + SYMBOLIC_FILENAME +"}");
 	}
 
+	static public Parameter executorParameter(String executor){
+		return new Parameter("executor", executor);
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
