@@ -161,45 +161,48 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 		errors == 6
 	}
 
-	/*
-	 def "should return a view on an AutomatedSuite as TestAutomationProjectContent[]"(){
-	 given :
-	 AutomatedSuite suite = mockAutomatedSuite();
-	 when :
-	 def res = service.sortByProject(suite)
-	 then :
-	 res.collect{
-	 [
-	 it.project.jobName,
-	 it.tests.collect { it.name }
-	 ]
-	 } 	as Set == [
-	 [ "project-jenkins-1", [
-	 "project-jenkins-1 - test 0",
-	 "project-jenkins-1 - test 1",
-	 "project-jenkins-1 - test 2",
-	 "project-jenkins-1 - test 3",
-	 "project-jenkins-1 - test 4",
-	 ]
-	 ],
-	 [ "project-qc-1", [
-	 "project-qc-1 - test 0",
-	 "project-qc-1 - test 1",
-	 "project-qc-1 - test 2",
-	 "project-qc-1 - test 3",
-	 "project-qc-1 - test 4",
-	 ]
-	 ],
-	 [ "project-jenkins-2", [
-	 "project-jenkins-2 - test 0",
-	 "project-jenkins-2 - test 1",
-	 "project-jenkins-2 - test 2",
-	 "project-jenkins-2 - test 3",
-	 "project-jenkins-2 - test 4",
-	 ]
-	 ],
-	 ] as Set
-	 }*/
+
+	def "should return a view on an AutomatedSuite as TestAutomationProjectContent[]"(){
+		given :
+		AutomatedSuite suite = mockAutomatedSuite();
+		when :
+		def res = service.sortByProject(suite)
+		then :
+		res.collect{
+			[
+				it.project.jobName,
+				it.tests.collect { it.name }
+			]
+		} 	as Set == [
+			[ "project-jenkins-1", [
+					"project-jenkins-1 - test 0",
+					"project-jenkins-1 - test 1",
+					"project-jenkins-1 - test 2",
+					"project-jenkins-1 - test 3",
+					"project-jenkins-1 - test 4",
+					"project-jenkins-1 - test 5",
+				]
+			],
+			[ "project-qc-1", [
+					"project-qc-1 - test 0",
+					"project-qc-1 - test 1",
+					"project-qc-1 - test 2",
+					"project-qc-1 - test 3",
+					"project-qc-1 - test 4",
+					"project-qc-1 - test 5",
+				]
+			],
+			[ "project-jenkins-2", [
+					"project-jenkins-2 - test 0",
+					"project-jenkins-2 - test 1",
+					"project-jenkins-2 - test 2",
+					"project-jenkins-2 - test 3",
+					"project-jenkins-2 - test 4",
+					"project-jenkins-2 - test 5",
+				]
+			],
+		] as Set
+	}
 
 	def mockAutomatedSuite(){
 
@@ -235,20 +238,17 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 		suite.addExtenders(
 				projects.collect { proj ->
 					// returns list of lists of exts
-					def someExtenders = (0..5).collect { // returns list of exts
+					return  (0..5).collect { // returns list of exts
 						mockExtender()
 					}
-
-					def locproj = proj
-					someExtenders.eachWithIndex { extender, num ->
+					.eachWithIndex { extender, num ->
 
 						// performs stuff on exts and returns exts
+						extender.getAutomatedProject() >> proj
 						def autotest = extender.getAutomatedTest()
-						autotest.getProject() >> locproj
-						autotest.getName() >> "${locproj.jobName} - test $num"
+						autotest.getProject() >> proj
+						autotest.getName() >> "${proj.jobName} - test $num"
 					}
-
-					return someExtenders
 				}.flatten()
 				)
 
