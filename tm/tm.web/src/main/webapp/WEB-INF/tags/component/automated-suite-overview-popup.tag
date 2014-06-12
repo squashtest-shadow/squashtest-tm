@@ -66,8 +66,8 @@
   
     <div id="tests-tl-{{project.server.id}}" class="collapse sq-tl">
       <h5 class="tl-head">
-        <f:message key="message.automatedTestsList" />({{tests.length}} <f:message key="label.testCases.lower" />)
-       </h5>
+        <span class="tl-state-icon"></span><f:message key="message.automatedTestsList" />({{tests.length}} <f:message key="label.testCases.lower" />)
+      </h5>
       <ul class="tl-body">
         {{#each tests}}
         <li>{{name}}</li>

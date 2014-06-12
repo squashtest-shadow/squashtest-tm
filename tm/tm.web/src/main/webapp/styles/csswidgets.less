@@ -200,7 +200,38 @@
 		
 	}
 }
-
+/**
+ * Toggle list
+ */
+.sq-tl {
+	/* target height: 12px */
+	.tl-head {
+		cursor: pointer;
+		margin-bottom: 0.4em;
+		
+		.tl-state-icon {
+			.ui-icon;
+			display: inline-block;
+			height: 1.2em;
+		}
+	}
+	&.expand .tl-head {
+		.tl-state-icon {
+			.ui-icon-triangle-1-s;
+		}
+	}
+	&.collapse .tl-head {
+		.tl-state-icon {
+			.ui-icon-triangle-1-e;
+		}
+	}
+	.tl-body {
+		margin-top: 0;
+	}
+	&.collapse .tl-body {
+		display: none;
+	}	
+}
 /**
  * PRIVATE STUFF - NOT TO BE USED IN HTML CODE
  **/

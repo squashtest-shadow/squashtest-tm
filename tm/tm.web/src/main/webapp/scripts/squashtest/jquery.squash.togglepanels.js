@@ -22,50 +22,63 @@
 	// the über-new toggle-panel: each .sq-tg is automatically turned into a toggle panel
 	$(document).on("click", ".sq-tg .tg-head", function(event) {
 		var $target = $(event.target);
-		
+
 		if ($target.parent(".tg-toolbar").length > 0) {
 			// click from within the toolbar -> bail out
 			return;
 		} // else do the toggling.
-		
+
 		event.stopImmediatePropagation();
-		
+
 		var $panel = $target.parent(".sq-tg");
-		
+
 		$panel.find(".tg-body").toggle("blind", 500, function() {
 			$panel.toggleClass("collapse");
 			$panel.toggleClass("expand");
-			
-			$panel.find(".tg-toolbar .sq-btn").prop("disabled", $panel.is(".collapse"));			
+
+			$panel.find(".tg-toolbar .sq-btn").prop("disabled", $panel.is(".collapse"));
 		});
-		
+
+	});
+
+	// turns .sq-tl into toggle lists
+	$(document).on("click", ".sq-tl .tl-head", function(event) {
+		var $target = $(event.target);
+		event.stopImmediatePropagation();
+		var $panel = $target.parent(".sq-tl");
+
+		$panel.find(".tl-body").toggle("blind", 500, function() {
+			$panel.toggleClass("collapse");
+			$panel.toggleClass("expand");
+		});
+
 	});
 
 	$.widget("ui.togglePanel",{
-		
+
 		options : {
 			initiallyOpen : true,
 			title : undefined
 		},
-		
+
 		_create : function() {
 			var widget = this;
-			
+
 			this.element.each(function(){
 				var $elt = $(this);
-				
+
 				if ($elt.hasClass('toggle-panel-initialized')){
 					return true;	//AKA 'continue'
 				}
-				
+
 				var prerendered = $elt.data('prerendered');
 				if (prerendered !== true){
 					widget._createDom($elt);
 				}
-				
+
 				var panelHead = $elt.prev(),
 					wrapper = $elt.parent('div.toggle-panel');
-				
+
 				// buttons
 				panelHead.find('.snap-right')
 							.children()
@@ -74,7 +87,7 @@
 							.click(function(event) {
 								event.stopPropagation();
 							});
-							
+
 
 				// click event
 				panelHead.click(function(event) {
@@ -84,20 +97,20 @@
 					if ($target.is("input[type='button'], button, a")) {
 						return;
 					}
-					
+
 					event.stopImmediatePropagation();
 					widget.toggleContent();
 				});
-				
+
 				$elt.addClass('toggle-panel-initialized');
 
 			});
-			
+
 		},
-		
+
 		_createDom : function($maindiv){
 			var title = $maindiv.attr('title') || this.options.title;
-			
+
 			var initiallyOpen = $maindiv.data('init-open');
 			if (initiallyOpen===undefined){
 				initiallyOpen = this.options.initiallyOpen;
@@ -116,7 +129,7 @@
 				'class' : "snap-right"
 			});
 
-			/* 
+			/*
 			 * find the wrapper or create it if not exists. It's
 			 * best if the wrapper exists, because inserting the
 			 * content into it won't be necessary. This will
@@ -140,16 +153,16 @@
 
 			titlepanel.append(snapleft).append(snapright);
 			panelHead.append(titlepanel);
-			
+
 			var buttons = wrapper.find('.toggle-panel-buttons').children();
-			panelHead.find('.snap-right').append(buttons);	
+			panelHead.find('.snap-right').append(buttons);
 
 			if (wCreate) {
 				$maindiv.wrap(wrapper);
 			}
 
-			panelHead.insertBefore($maindiv);		
-			
+			panelHead.insertBefore($maindiv);
+
 			if (initiallyOpen){
 				panelHead.addClass('tg-open ui-state-focus ui-corner-top');
 			}
@@ -157,12 +170,12 @@
 				$maindiv.addClass('not-displayed');
 				panelHead.addClass('ui-state-active ui-corner-all');
 			}
-			
-	
+
+
 		},
 
 
-		
+
 		toggleContent : function() {
 
 			// skip if already being toggled
