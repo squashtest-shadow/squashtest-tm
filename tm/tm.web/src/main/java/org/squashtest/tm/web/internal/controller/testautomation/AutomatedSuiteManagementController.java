@@ -20,17 +20,24 @@
  */
 package org.squashtest.tm.web.internal.controller.testautomation;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService;
+import org.squashtest.tm.service.testautomation.model.SuiteExecutionConfiguration;
+import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.AutomatedSuiteOverview;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -45,10 +52,53 @@ public class AutomatedSuiteManagementController {
 	@Inject
 	private AutomatedSuiteManagerService service;
 
-	@RequestMapping(value = "/{suiteId}/executions", method = RequestMethod.GET)
+	@RequestMapping(value = "/new", method = RequestMethod.POST, params="iteration-id", produces="application/json")
+	@ResponseBody
+	public Collection<TestAutomationProjectContentModel> createNewAutomatedSuiteForIteration(@RequestParam("iteration-id") Long iterationId){
+		AutomatedSuite suite = service.createFromIterationTestPlan(iterationId);
+		return toProjectContentModel(suite);
+	}
+	@RequestMapping(value = "/new", method = RequestMethod.POST, params="test-suite-id", produces="application/json")
+	@ResponseBody
+	public Collection<TestAutomationProjectContentModel> createNewAutomatedSuiteForTestSuite(@RequestParam("test-suite-id") Long testSuiteId){
+		AutomatedSuite suite = service.createFromTestSuiteTestPlan(testSuiteId);
+		return toProjectContentModel(suite);
+	}
+
+	@RequestMapping(value = "/new", method = RequestMethod.POST, params="test-plan-item-ids", produces="application/json")
+	@ResponseBody
+	public Collection<TestAutomationProjectContentModel> createNewAutomatedSuite(@RequestParam("test-plan-item-ids") List<Long> testPlanIds){
+		AutomatedSuite suite = service.createFromItemIds(testPlanIds);
+		return toProjectContentModel(suite);
+	}
+
+	@RequestMapping(value = "/{suiteId}/executor", method = RequestMethod.POST, produces="application/json")
+	@ResponseBody
+	public AutomatedSuiteOverview runAutomatedSuite(@PathVariable("suiteId") String suiteId,
+			@RequestBody Collection<SuiteExecutionConfiguration> configuration,
+			Locale locale){
+		service.start(suiteId, configuration);
+		return updateExecutionInfo(suiteId, locale);
+	}
+
+	@RequestMapping(value = "/{suiteId}/executions", method = RequestMethod.GET, produces="application/json")
 	public @ResponseBody AutomatedSuiteOverview updateExecutionInfo(@PathVariable String suiteId, Locale locale) {
 		AutomatedSuite suite = service.findById(suiteId);
 		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
+	}
+
+
+	private Collection<TestAutomationProjectContentModel> toProjectContentModel(AutomatedSuite suite){
+		Collection<TestAutomationProjectContent> projectContents = service.sortByProject(suite);
+
+		Collection<TestAutomationProjectContentModel> models =
+				new ArrayList<TestAutomationProjectContentModel>(projectContents.size());
+
+		for (TestAutomationProjectContent content : projectContents){
+			models.add(new TestAutomationProjectContentModel(content));
+		}
+
+		return models;
 	}
 
 }

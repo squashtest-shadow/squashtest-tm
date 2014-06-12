@@ -28,6 +28,7 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
+import org.squashtest.tm.service.testautomation.model.SuiteExecutionConfiguration;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 
 public interface AutomatedSuiteManagerService {
@@ -85,19 +86,37 @@ public interface AutomatedSuiteManagerService {
 	Collection<TestAutomationProjectContent> sortByProject(AutomatedSuite suite);
 
 	/**
-	 * Runs the given AutomatedSuite.
+	 * Runs the given AutomatedSuite, equivalent to {@link #start(AutomatedSuite, Collection)} with
+	 * an empty configuration.
 	 * 
 	 * @param suite
 	 */
 	void start(AutomatedSuite suite);
 
 	/**
-	 * Runs an AutomatedSuite given its ID.
-	 * 
+	 * Runs an AutomatedSuite given its ID, equivalent to {@link #start(AutomatedSuite, Collection)} with
+	 * an empty configuration.
 	 * @param autoSuiteId
 	 */
 	void start(String autoSuiteId);
 
+
+	/**
+	 * Runs an automatedSuite with the given configuration.
+	 * 
+	 * @param suite
+	 * @param configuration
+	 */
+	void start(AutomatedSuite suite, Collection<SuiteExecutionConfiguration> configuration);
+
+
+	/**
+	 * Runs an automatedSuite given its ID with the given configuration.
+	 * 
+	 * @param suite
+	 * @param configuration
+	 */
+	void start(String suiteId, Collection<SuiteExecutionConfiguration> configuration);
 
 	/**
 	 * Given the id of an automated test suite, returns the list of executions associated to this automated test suite.

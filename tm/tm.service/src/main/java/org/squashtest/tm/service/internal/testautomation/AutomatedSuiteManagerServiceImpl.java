@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.testautomation;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -72,6 +73,7 @@ import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
 import org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService;
 import org.squashtest.tm.service.testautomation.TestAutomationCallbackService;
+import org.squashtest.tm.service.testautomation.model.SuiteExecutionConfiguration;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
@@ -225,16 +227,29 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 
 	@Override
-	// security delegated to start(AutomatedSuite)
+	// security delegated to start(AutomatedSuite, Collection)
 	public void start(String autoSuiteId) {
 		AutomatedSuite suite = autoSuiteDao.findById(autoSuiteId);
-		start(suite);
+		start(suite, new ArrayList<SuiteExecutionConfiguration>());
+	}
+
+	@Override
+	// security delegated to start(AutomatedSuite, Collection)
+	public void start(AutomatedSuite suite) {
+		start(suite, new ArrayList<SuiteExecutionConfiguration>());
+	}
+
+	@Override
+	// security delegated to start(AutomatedSuite, Collection)
+	public void start(String suiteId, Collection<SuiteExecutionConfiguration> configuration) {
+		AutomatedSuite suite = autoSuiteDao.findById(suiteId);
+		start(suite, configuration);
 	}
 
 
 	@Override
 	// security handled in the code
-	public void start(AutomatedSuite suite) {
+	public void start(AutomatedSuite suite, Collection<SuiteExecutionConfiguration> configuration) {
 
 		PermissionsUtils.checkPermission(permissionService, suite.getExecutionExtenders(), EXECUTE);
 
