@@ -50,6 +50,19 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 		return factory.getCurrentSession();
 	}
 
+
+	@Override
+	public void delete(String id) {
+		AutomatedSuite suite = findById(id);
+		currentSession().delete(suite);
+	}
+
+
+	@Override
+	public void delete(AutomatedSuite suite) {
+		currentSession().delete(suite);
+	}
+
 	@Override
 	public AutomatedSuite createNewSuite() {
 		AutomatedSuite suite = new AutomatedSuite();

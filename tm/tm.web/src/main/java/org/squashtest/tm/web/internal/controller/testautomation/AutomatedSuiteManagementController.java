@@ -21,9 +21,11 @@
 package org.squashtest.tm.web.internal.controller.testautomation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -75,8 +77,26 @@ public class AutomatedSuiteManagementController {
 	@RequestMapping(value = "/{suiteId}/executor", method = RequestMethod.POST, produces="application/json")
 	@ResponseBody
 	public AutomatedSuiteOverview runAutomatedSuite(@PathVariable("suiteId") String suiteId,
-			@RequestBody Collection<SuiteExecutionConfiguration> configuration,
+			@RequestBody Collection<Map<String, ?>> rawConf,
 			Locale locale){
+
+		/*
+		 * ROUGH CODE ALERT
+		 *
+		 * As you noticed the type of 'rawConf' in the signature is 'Collection<Map>'
+		 * instead of 'Collection<SuiteExecutionConfiguration>'.
+		 *
+		 * This is because Jackson wouldn't deserialized a collection to the right content type because of type erasure.
+		 * So we manually convert the content that was serialized as a Map, to SuiteExecutionConfiguration
+		 */
+		Collection<SuiteExecutionConfiguration> configuration = new ArrayList<SuiteExecutionConfiguration>(rawConf.size());
+		for (Map<String, ?> rawC : rawConf){
+			long projectId = ((Integer)rawC.get("projectId")).longValue();
+			String node = (String)rawC.get("node");
+			configuration.add(new SuiteExecutionConfiguration(projectId, node));
+		}
+
+		// now let's start the thing
 		service.start(suiteId, configuration);
 		return updateExecutionInfo(suiteId, locale);
 	}
@@ -86,6 +106,12 @@ public class AutomatedSuiteManagementController {
 	public  AutomatedSuiteOverview updateExecutionInfo(@PathVariable String suiteId, Locale locale) {
 		AutomatedSuite suite = service.findById(suiteId);
 		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
+	}
+
+	@RequestMapping(value = "/{suiteId}", method = RequestMethod.DELETE)
+	@ResponseBody
+	public void deleteAutomatedSuite(@PathVariable("suiteId") String suiteId){
+		service.delete(suiteId);
 	}
 
 

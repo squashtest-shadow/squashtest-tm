@@ -67,7 +67,7 @@ public class TestAutomationProjectContentModel {
 		for (AutomatedTest test : content.getTests()){
 			tmodels.add(new AutomatedTestModel(test));
 		}
-		tests = (AutomatedTestModel[])tmodels.toArray();
+		tests = tmodels.toArray(new AutomatedTestModel[tmodels.size()]);
 	}
 
 
@@ -84,7 +84,10 @@ public class TestAutomationProjectContentModel {
 			this.id = project.getId();
 			this.jobName = project.getJobName();
 			this.label = project.getLabel();
-			this.nodes = project.getSlaves().replaceAll("\\s*;\\s*", ";").split(";");
+			this.nodes = project.getSlaves()
+								.trim()
+								.replaceAll("\\s*;\\s*", ";")
+								.split(";");
 
 			if (project.getServer() != null){
 				this.server = new TestAutomationServerModel(project.getServer());

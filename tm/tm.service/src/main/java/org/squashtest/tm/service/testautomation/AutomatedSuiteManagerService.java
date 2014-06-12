@@ -69,6 +69,12 @@ public interface AutomatedSuiteManagerService {
 	 */
 	AutomatedSuite createFromItemIds(List<Long> testPlanIds);
 
+
+	void delete(AutomatedSuite suite);
+
+
+	void delete(String automatedSuiteId);
+
 	/**
 	 * Given the id of an {@link AutomatedSuite}, returns its content as tests grouped by projects.
 	 * 

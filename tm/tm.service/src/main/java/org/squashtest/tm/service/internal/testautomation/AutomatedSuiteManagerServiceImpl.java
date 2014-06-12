@@ -34,7 +34,9 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MultiMap;
+import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +63,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
+import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService;
 import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
@@ -81,6 +84,8 @@ import org.squashtest.tm.service.testautomation.spi.UnknownConnectorKind;
 @Transactional
 @Service("squashtest.tm.service.AutomatedSuiteManagementService")
 public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerService {
+
+	private static final String DELETE = "DELETE";
 
 	private static final String EXECUTE = "EXECUTE";
 
@@ -122,6 +127,9 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 	@Inject
 	private PermissionEvaluationService permissionService;
+
+	@Inject
+	private CampaignNodeDeletionHandler deletionHandler;
 
 
 	public int getTimeoutMillis() {
@@ -208,6 +216,32 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		return projectContents;
 
 	}
+
+
+	@Override
+	// security delegated to delete(AutomatedSuite)
+	public void delete(String automatedSuiteId) {
+		AutomatedSuite suite = findById(automatedSuiteId);
+		delete(suite);
+	}
+
+	@Override
+	// security handled in the code
+	public void delete(AutomatedSuite suite) {
+
+		PermissionsUtils.checkPermission(permissionService, suite.getExecutionExtenders(), DELETE);
+
+		List<AutomatedExecutionExtender> toremove = new ArrayList<AutomatedExecutionExtender>(suite.getExecutionExtenders());
+		suite.getExecutionExtenders().clear();
+
+		List<Execution> execs =
+				new ArrayList<Execution>(CollectionUtils.collect(toremove, new ExecutionCollector()));
+
+		deletionHandler.deleteExecutions(execs);
+
+		autoSuiteDao.delete(suite);
+	}
+
 
 
 
@@ -483,5 +517,11 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 	}
 
+	private static final class ExecutionCollector implements Transformer{
+		@Override
+		public Object transform(Object input) {
+			return ((AutomatedExecutionExtender)input).getExecution();
+		}
+	}
 
 }

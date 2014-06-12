@@ -30,6 +30,9 @@ import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 
 public interface AutomatedSuiteDao{
 
+	void delete(AutomatedSuite suite);
+
+	void delete(String id);
 
 	AutomatedSuite createNewSuite();
 
