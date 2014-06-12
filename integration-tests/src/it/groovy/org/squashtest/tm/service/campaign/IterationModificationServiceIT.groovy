@@ -114,18 +114,6 @@ class IterationModificationServiceIT extends DbunitServiceSpecification {
 		copyOfSuites.get(1).getId()!= null
 	}
 
-	@DataSet("IterationModificationServiceIT.testautomation.xml")
-	def "should create an automated execution"(){
-
-		when :
-		Execution exec = iterService.addAutomatedExecution(1l)
-
-		then :
-		def extender = exec.automatedExecutionExtender
-		extender.id != null
-		extender.execution == exec
-		extender.automatedTest.id == 100l
-	}
 
 	@DataSet("IterationModificationServiceIT.denormalizedField.xml")
 	def "should create an execution and copy the custom fields"(){

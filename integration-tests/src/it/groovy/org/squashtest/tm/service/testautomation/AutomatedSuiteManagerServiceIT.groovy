@@ -24,6 +24,7 @@ import javax.inject.Inject
 
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
 import org.squashtest.tm.service.DbunitServiceSpecification
@@ -34,7 +35,7 @@ import spock.unitils.UnitilsSupport
 @NotThreadSafe
 @UnitilsSupport
 @Transactional
-class AutomatedTestManagerServiceImplIT extends DbunitServiceSpecification {
+class AutomatedSuiteManagerServiceIT extends DbunitServiceSpecification {
 
 	@Inject
 	AutomatedSuiteManagerService service
