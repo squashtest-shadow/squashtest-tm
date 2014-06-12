@@ -29,71 +29,71 @@ import spock.lang.Specification
 class AutomatedTestTest extends Specification {
 
 	@Shared
-	AutomatedTest test;
-	
+	AutomatedTest test
+
 	@Shared
 	def name
-	
+
 	def setupSpec(){
 
 		name = "folder/subfolder/test.txt"
-		
-		def project = new TestAutomationProject("the-project", null)		
-		test = new AutomatedTest( name , project) 
-		
-	}
-	
-	
-	def "should return the name"(){
-		expect :
-			test.name == name		
-	}
-	
-	
-	def "should return the full name"(){
-		expect :
-			test.fullName == "the-project/"+name
-	}
-	
-	
-	def "should return the path"(){
-		expect :
-			test.path == "folder/subfolder/"
-	}
-	
-	def "should return the short name"(){
-		expect :
-			test.shortName == "test.txt"
-	}
-	
-	def "should return name without root folder"(){
-		expect :
-			test.nameWithoutRoot == "subfolder/test.txt"
-	}
-	
-	def "should return the root folder name"(){
-		expect :
-			test.rootFolderName == "folder/"
-	}
-	
-	def "should say that test is not at the root"(){
-		expect :
-			test.atTheRoot == false
-		
-	}
-	
-	def "should say that test is at the root"(){
-		
-		given :
-			def test = new AutomatedTest("tests/my-test.txt", null)
-		
-		when :
-			def res = test.atTheRoot
-			
-		then :
-			res == true
-		
+
+		def project = new TestAutomationProject("the-project")
+		test = new AutomatedTest( name , project)
+
 	}
 
-	
+
+	def "should return the name"(){
+		expect :
+		test.name == name
+	}
+
+
+	def "should return the full name"(){
+		expect :
+		test.fullName == "/the-project/"+name
+	}
+
+
+	def "should return the path"(){
+		expect :
+		test.path == "folder/subfolder/"
+	}
+
+	def "should return the short name"(){
+		expect :
+		test.shortName == "test.txt"
+	}
+
+	def "should return name without root folder"(){
+		expect :
+		test.nameWithoutRoot == "subfolder/test.txt"
+	}
+
+	def "should return the root folder name"(){
+		expect :
+		test.rootFolderName == "folder/"
+	}
+
+	def "should say that test is not at the root"(){
+		expect :
+		test.atTheRoot == false
+
+	}
+
+	def "should say that test is at the root"(){
+
+		given :
+		def test = new AutomatedTest("tests/my-test.txt", null)
+
+		when :
+		def res = test.atTheRoot
+
+		then :
+		res == true
+
+	}
+
+
 }

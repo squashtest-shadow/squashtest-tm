@@ -61,7 +61,9 @@ import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.bugtracker.IssueList;
+import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
@@ -88,10 +90,11 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Auditable
 @Entity
-public class Execution implements AttachmentHolder, IssueDetector, Identified, HasExecutionStatus, DenormalizedFieldHolder, BoundEntity {
-	
+public class Execution implements AttachmentHolder, IssueDetector, Identified, HasExecutionStatus,
+DenormalizedFieldHolder, BoundEntity {
+
 	static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
-	
+
 	static {
 		Set<ExecutionStatus> set = new HashSet<ExecutionStatus>();
 		set.add(ExecutionStatus.SUCCESS);
@@ -103,8 +106,7 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 		set.add(ExecutionStatus.SETTLED);
 		LEGAL_EXEC_STATUS = Collections.unmodifiableSet(set);
 	}
-	
-	
+
 	@Id
 	@GeneratedValue
 	@Column(name = "EXECUTION_ID")
@@ -124,11 +126,11 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 
 	@NotNull
 	private String reference = "";
-	
+
 	@Lob
 	@Column(name = "TC_DESCRIPTION")
 	private String tcdescription;
-	
+
 	@Enumerated(EnumType.STRING)
 	@Basic(optional = false)
 	private TestCaseImportance importance = LOW;
@@ -137,7 +139,7 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	@Basic(optional = false)
 	@Column(name = "TC_NATURE")
 	private TestCaseNature nature = TestCaseNature.UNDEFINED;
-	
+
 	@Enumerated(EnumType.STRING)
 	@Basic(optional = false)
 	@Column(name = "TC_TYPE")
@@ -147,7 +149,7 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	@Basic(optional = false)
 	@Column(name = "TC_STATUS")
 	private TestCaseStatus status = TestCaseStatus.WORK_IN_PROGRESS;
-	
+
 	@NotBlank
 	@Size(min = 0, max = 255)
 	private String name;
@@ -175,9 +177,8 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	@Column(insertable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastExecutedOn;
-	
 
-	@OneToOne(mappedBy="execution", cascade = { CascadeType.REMOVE, CascadeType.PERSIST}, optional = true)
+	@OneToOne(mappedBy = "execution", cascade = { CascadeType.REMOVE, CascadeType.PERSIST }, optional = true)
 	private AutomatedExecutionExtender automatedExecutionExtender;
 
 	/* *********************** attachment attributes ************************ */
@@ -185,8 +186,7 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
-	
-	
+
 	/* *********************** / attachement attributes ************************ */
 
 	/* *********************** issues attributes ************************ */
@@ -220,7 +220,7 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 		populateSteps(dataset);
 		populateAttachments();
 	}
-	
+
 	private void populateAttachments() {
 		for (Attachment tcAttach : referencedTestCase.getAllAttachments()) {
 			Attachment clone = tcAttach.hardCopy();
@@ -236,24 +236,15 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 			}
 		}
 	}
-	
-
 
 	/* ******************** HasExecutionStatus implementation ************** */
-	
-
 
 	@Override
 	public ExecutionStatus getExecutionStatus() {
 		return executionStatus;
 	}
 
-	
-	
 	/* ******************** /HasExecutionStatus implementation ************** */
-
-
-	
 
 	public Integer getExecutionOrder() {
 		return executionOrder;
@@ -278,12 +269,12 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	private void setReferencedTestCase(TestCase testCase) {
 		referencedTestCase = testCase;
 
-		if(testCase.getReference() != null && !testCase.getReference().equals("")){
-			setName(testCase.getReference()+" - "+testCase.getName());
+		if (testCase.getReference() != null && !testCase.getReference().equals("")) {
+			setName(testCase.getReference() + " - " + testCase.getName());
 		} else {
 			setName(testCase.getName());
 		}
-		
+
 		nullSafeSetTestCaseData(testCase);
 		setImportance(testCase.getImportance());
 		setNature(testCase.getNature());
@@ -293,18 +284,19 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	}
 
 	private void nullSafeSetTestCaseData(TestCase testCase) {
-		// though it's constrained by the app, database allows null test case prerequisite or reference. hence this safety belt.
-		
+		// though it's constrained by the app, database allows null test case prerequisite or reference. hence this
+		// safety belt.
+
 		String pr = testCase.getPrerequisite();
 		setPrerequisite(pr == null ? "" : pr);
-		
+
 		pr = testCase.getReference();
 		setReference(pr == null ? "" : pr);
-		
+
 		pr = testCase.getDescription();
 		setTcdescription(pr == null ? "" : pr);
 	}
-	
+
 	public TestCaseExecutionMode getExecutionMode() {
 		return executionMode;
 	}
@@ -337,7 +329,7 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	public String getPrerequisite() {
 		return prerequisite;
 	}
-	
+
 	/**
 	 * @param prerequisite
 	 *            the prerequisite to set
@@ -346,7 +338,6 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 		this.prerequisite = prerequisite;
 	}
 
-	
 	public String getReference() {
 		return reference;
 	}
@@ -386,7 +377,7 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	public void setStatus(@NotNull TestCaseStatus status) {
 		this.status = status;
 	}
-	
+
 	public String getTcdescription() {
 		return tcdescription;
 	}
@@ -421,7 +412,6 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	public boolean hasUnexecutedSteps() {
 		return findFirstUnexecutedStep() != null;
 	}
-	
 
 	/* *************** Attachable implementation ****************** */
 	@Override
@@ -433,12 +423,11 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 		return testPlan;
 	}
 
-	
 	@AclConstrainedObject
 	public CampaignLibrary getCampaignLibrary() {
 		return testPlan.getProject().getCampaignLibrary();
 	}
-	
+
 	/* ***************** Bugged implementation *********************** */
 	@Override
 	public Project getProject() {
@@ -454,12 +443,12 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	public Long getIssueListId() {
 		return issueList.getId();
 	}
-	
+
 	@Override
-	public void detachIssue(Long id){
+	public void detachIssue(Long id) {
 		issueList.removeIssue(id);
 	}
-	
+
 	/* ***************** /Bugged implementation *********************** */
 
 	public void notifyAddedTo(IterationTestPlanItem testPlan) {
@@ -472,7 +461,7 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	 * @throws ExecutionHasNoRunnableStepException
 	 */
 	public ExecutionStep findFirstRunnableStep() throws ExecutionHasNoStepsException,
-			ExecutionHasNoRunnableStepException {
+	ExecutionHasNoRunnableStepException {
 		// Note : this was transplanted from untested HibernateExecDao method, I'm not sure of biz rules
 		if (steps.isEmpty()) {
 			throw new ExecutionHasNoStepsException();
@@ -486,7 +475,7 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 
 		throw new ExecutionHasNoRunnableStepException();
 	}
-	
+
 	/**
 	 * @return the last step of the execution.
 	 * @throws ExecutionHasNoStepsException
@@ -498,61 +487,59 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 		}
 		return steps.get(steps.size() - 1);
 	}
+
 	@Override
-		public List<Long> getAllIssueListId() {
-			List<Long> list = new LinkedList<Long>();
-	
-			list.add(issueList.getId());
-	
-			for (ExecutionStep step : steps) {
-				list.addAll(step.getAllIssueListId());
-			}
-	
-			return list;
+	public List<Long> getAllIssueListId() {
+		List<Long> list = new LinkedList<Long>();
+
+		list.add(issueList.getId());
+
+		for (ExecutionStep step : steps) {
+			list.addAll(step.getAllIssueListId());
 		}
+
+		return list;
+	}
 
 	@Override
 	public BugTracker getBugTracker() {
 		return getProject().findBugTracker();
 	}
 
-	
-	/* ************************** test automation section (delegate to AutomatedExecutionExtender ) ************************* */
+	/*
+	 * ************************** test automation section (delegate to AutomatedExecutionExtender )
+	 * *************************
+	 */
 
 	public AutomatedExecutionExtender getAutomatedExecutionExtender() {
 		return automatedExecutionExtender;
 	}
 
-	
 	public void setAutomatedExecutionExtender(AutomatedExecutionExtender extender) {
 		this.automatedExecutionExtender = extender;
 		executionMode = TestCaseExecutionMode.AUTOMATED;
 	}
-	
-	
-	
-	public boolean isAutomated(){
-		return (executionMode == TestCaseExecutionMode.AUTOMATED && automatedExecutionExtender!=null);
+
+	public boolean isAutomated() {
+		return (executionMode == TestCaseExecutionMode.AUTOMATED && automatedExecutionExtender != null);
 	}
-	
-	private boolean checkValidNewStatus(ExecutionStatus status){
-		if (isAutomated()){
+
+	private boolean checkValidNewStatus(ExecutionStatus status) {
+		if (isAutomated()) {
 			return (automatedExecutionExtender.getLegalStatusSet().contains(status));
-		}
-		else{
+		} else {
 			return getLegalStatusSet().contains(status);
 		}
 	}
-	
-	
+
 	public void setExecutionStatus(ExecutionStatus status) {
-		
-		if ( ! checkValidNewStatus(status)){
+
+		if (!checkValidNewStatus(status)) {
 			throw new IllegalExecutionStatusException();
 		}
-		
+
 		executionStatus = status;
-		
+
 		// update parentTestPlan status
 
 		IterationTestPlanItem itp = getTestPlan();
@@ -561,44 +548,43 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 			itp.updateExecutionStatus();
 		}
 	}
-	
+
 	@Override
 	public Set<ExecutionStatus> getLegalStatusSet() {
-		if (isAutomated()){
+		if (isAutomated()) {
 			return automatedExecutionExtender.getLegalStatusSet();
-		}
-		else{
+		} else {
 			return LEGAL_EXEC_STATUS;
 		}
 	}
-	
-	public AutomatedTest getAutomatedTest(){
-		if (isAutomated()){
+
+	public AutomatedTest getAutomatedTest() {
+		if (isAutomated()) {
 			return automatedExecutionExtender.getAutomatedTest();
 		}
-		
+
 		throw new NotAutomatedException();
 	}
 
-	public URL getResultURL(){
-		if ( isAutomated()){
+	public URL getResultURL() {
+		if (isAutomated()) {
 			return automatedExecutionExtender.getResultURL();
 		}
 		throw new NotAutomatedException();
 	}
-	
-	public AutomatedSuite getAutomatedSuite(){
-		if ( isAutomated()){
+
+	public AutomatedSuite getAutomatedSuite() {
+		if (isAutomated()) {
 			return automatedExecutionExtender.getAutomatedSuite();
 		}
-		throw new NotAutomatedException();		
+		throw new NotAutomatedException();
 	}
-	
-	public String getResultSummary(){
-		if ( isAutomated()){
+
+	public String getResultSummary() {
+		if (isAutomated()) {
 			return automatedExecutionExtender.getResultSummary();
 		}
-		throw new NotAutomatedException();		
+		throw new NotAutomatedException();
 	}
 
 	@Override
@@ -618,8 +604,8 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	 * @return index of step or -1
 	 */
 	public int getStepIndex(long stepId) {
-		for(ExecutionStep step : steps){
-			if(step.getId() == stepId) {
+		for (ExecutionStep step : steps) {
+			if (step.getId() == stepId) {
 				return steps.indexOf(step);
 			}
 		}
@@ -637,7 +623,7 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 	public BindableEntity getBoundEntityType() {
 		return BindableEntity.EXECUTION;
 	}
-	
+
 	/**
 	 * will compute from scratch a status using a complete report.
 	 * 
@@ -657,11 +643,11 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 			newStatus = ExecutionStatus.FAILURE;
 
 		} else if (report.allOf(ExecutionStatus.UNTESTABLE)) {
-			newStatus =ExecutionStatus.UNTESTABLE;
+			newStatus = ExecutionStatus.UNTESTABLE;
 
 		} else if (report.allOf(ExecutionStatus.SETTLED, ExecutionStatus.UNTESTABLE)) {
 			newStatus = ExecutionStatus.SETTLED;
-			
+
 		} else if (report.allOf(ExecutionStatus.SUCCESS, ExecutionStatus.UNTESTABLE, ExecutionStatus.SETTLED)) {
 			newStatus = ExecutionStatus.SUCCESS;
 
@@ -671,6 +657,14 @@ public class Execution implements AttachmentHolder, IssueDetector, Identified, H
 		}
 
 		return newStatus;
+	}
+
+	public Iteration getIteration() {
+		return testPlan.getIteration();
+	}
+
+	public Campaign getCampaign() {
+		return getIteration().getCampaign();
 	}
 
 }

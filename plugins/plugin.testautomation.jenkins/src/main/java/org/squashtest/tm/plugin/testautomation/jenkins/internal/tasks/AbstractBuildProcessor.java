@@ -20,107 +20,87 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks;
 
-
 public abstract class AbstractBuildProcessor implements BuildProcessor {
-	 
+
 	protected StepScheduler scheduler = new SameThreadStepScheduler();
 
 	private int defaultReschedulingInterval = 3000;
-	
-	
+
 	// ******* state variables *********
-	
-	protected BuildStep<?> currentStep=null;
-	
-	protected StepFuture currentFuture=null;
-	
+
+	protected BuildStep<?> currentStep = null;
+
+	protected StepFuture currentFuture = null;
+
 	private boolean canceled;
-	
-	
-	
+
 	// ******** accessors **************
-	
- 
+
 	public StepScheduler getScheduler() {
 		return scheduler;
 	}
 
-	
 	public void setDefaultReschedulingDelay(int defaultReschedulingDelay) {
 		this.defaultReschedulingInterval = defaultReschedulingDelay;
 	}
 
-
-	protected BuildStep<?> getCurrentStep(){
+	protected BuildStep<?> getCurrentStep() {
 		return currentStep;
 	}
-	
-	protected StepFuture getCurrentFuture(){
+
+	protected StepFuture getCurrentFuture() {
 		return currentFuture;
 	}
-	
 
 	public int getDefaultReschedulingDelay() {
 		return defaultReschedulingInterval;
 	}
 
-	
-	//*********** code *************
-
-
+	// *********** code *************
 
 	public boolean isCanceled() {
 		return canceled;
 	}
 
 	@Override
-	public void cancel(){
+	public void cancel() {
 		currentFuture.cancel();
 		canceled = true;
 	}
-	
-	public boolean taskHasBegun(){
+
+	public boolean taskHasBegun() {
 		return currentStep != null;
 	}
 
-	protected void scheduleNextStep(){
+	protected void scheduleNextStep() {
 
-		
-		if (! taskHasBegun()){
+		if (!taskHasBegun()) {
+			currentStep = getStepSequence().nextElement();
+			scheduler.schedule(currentStep);
+
+		} else if (currentStep.needsRescheduling()) {
+			reschedule();
+
+		} else {
 			currentStep = getStepSequence().nextElement();
 			scheduler.schedule(currentStep);
 		}
-		else if (currentStep.needsRescheduling()){
-			_reschedule();
-		}
-		else{
-			currentStep = getStepSequence().nextElement();
-			scheduler.schedule(currentStep);
-		}
-		
-		
+
 	}
-	
-	
-	protected void _reschedule(){
-		
+
+	protected void reschedule() {
+
 		int delay;
-		
-		if (currentStep.suggestedReschedulingInterval()!=null){ 
-			delay =currentStep.suggestedReschedulingInterval();
-		}
-		else{
+
+		if (currentStep.suggestedReschedulingInterval() != null) {
+			delay = currentStep.suggestedReschedulingInterval();
+		} else {
 			delay = defaultReschedulingInterval;
 		}
-		
+
 		currentFuture = scheduler.schedule(currentStep, delay);
 	}
-	
-	
-	
-	protected abstract StepSequence getStepSequence();
-	
-	
 
-	
+	protected abstract StepSequence getStepSequence();
+
 }

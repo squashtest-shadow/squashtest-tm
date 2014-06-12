@@ -501,11 +501,8 @@ require([ "common" ], function() {
 		
 
 				//****** tabs configuration *******
-				
-				var fragConf = {
-					beforeLoad : Frag.confHelper.fnCacheRequests	
-				};
-				Frag.init(fragConf);
+	
+				Frag.init();
 
 				// ***** other events from the contextual content ********
 				

@@ -309,11 +309,6 @@ define(
 							var self = this;
 							new SimpleJEditable(
 									{
-										language : {
-											richEditPlaceHolder : cfMod.richEditPlaceHolder,
-											okLabel : cfMod.okLabel,
-											cancelLabel : cfMod.cancelLabel
-										},
 										targetUrl : function(value, settings) {
 											if (self
 													.changeDefaultValueText(value)) {
@@ -472,11 +467,6 @@ define(
 						makeSimpleJEditable : function(imputId) {
 							new SimpleJEditable(
 									{
-										language : {
-											richEditPlaceHolder : cfMod.richEditPlaceHolder,
-											okLabel : cfMod.okLabel,
-											cancelLabel : cfMod.cancelLabel
-										},
 										targetUrl : cfMod.customFieldUrl,
 										componentId : imputId,
 										jeditableSettings : {}

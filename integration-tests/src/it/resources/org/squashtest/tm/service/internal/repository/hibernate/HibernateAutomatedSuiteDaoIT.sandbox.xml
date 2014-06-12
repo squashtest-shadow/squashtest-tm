@@ -1,11 +1,17 @@
 
-<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.9.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.9.10.dtd">
 
 <dataset>
-	<TEST_AUTOMATION_SERVER SERVER_ID="1" BASE_URL="http://myserver" LOGIN="bob" PASSWORD="bob" KIND="jenkins"/>
+
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="1456"/>
+
+	<TEST_AUTOMATION_SERVER SERVER_ID="1" BASE_URL="http://myserver" LOGIN="bob" PASSWORD="bob" KIND="jenkins" CREATED_ON="2014-05-16"  CREATED_BY="admin" NAME="serv"/>
 	
-	<TEST_AUTOMATION_PROJECT PROJECT_ID="1" NAME="first project" SERVER_ID="1"/>
-	<TEST_AUTOMATION_PROJECT PROJECT_ID="2" NAME="second project" SERVER_ID="1"/>
+	<PROJECT PROJECT_ID="1" ATTACHMENT_LIST_ID="1456" CREATED_ON="2015-05-16" CREATED_BY="admin" NAME="p"/>
+	
+	
+	<TEST_AUTOMATION_PROJECT TA_PROJECT_ID="1" REMOTE_NAME="first project" SERVER_ID="1" LABEL="first" 		TM_PROJECT_ID="1"/>
+	<TEST_AUTOMATION_PROJECT TA_PROJECT_ID="2" REMOTE_NAME="second project" SERVER_ID="1" LABEL="second" 	TM_PROJECT_ID="1"/>
 	
 	<AUTOMATED_TEST TEST_ID="11" NAME="test_11" PROJECT_ID="1" />
 	<AUTOMATED_TEST TEST_ID="12" NAME="test_12" PROJECT_ID="1" />

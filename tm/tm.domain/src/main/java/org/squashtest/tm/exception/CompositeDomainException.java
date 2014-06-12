@@ -37,7 +37,7 @@ public class CompositeDomainException extends RuntimeException {
 	/**
 	 * Component exceptions.
 	 */
-	private final List<DomainException> exceptions;
+	private final List<? extends DomainException> exceptions;
 
 	private static String buildMessage(List<?> exceptions) {
 		StringBuilder sb = new StringBuilder("Exceptions with the following messages were thrown : [");
@@ -49,7 +49,7 @@ public class CompositeDomainException extends RuntimeException {
 		return sb.toString();
 	}
 
-	public <T extends Exception> CompositeDomainException(List<DomainException> exceptions) {
+	public <T extends Exception> CompositeDomainException(List<? extends DomainException> exceptions) {
 		super(buildMessage(exceptions));
 		this.exceptions = exceptions;
 	}

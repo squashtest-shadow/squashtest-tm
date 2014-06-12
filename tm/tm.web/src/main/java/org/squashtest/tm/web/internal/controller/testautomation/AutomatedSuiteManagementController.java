@@ -24,36 +24,31 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
-import org.springframework.context.MessageSource;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
-import org.squashtest.tm.service.testautomation.TestAutomationFinderService;
+import org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils;
 import org.squashtest.tm.web.internal.controller.execution.AutomatedExecutionViewUtils.AutomatedSuiteOverview;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
 @Controller
-@RequestMapping("/automated-suites/{suiteId}")
+@RequestMapping("/automated-suites")
 public class AutomatedSuiteManagementController {
 
 	@Inject
-	private MessageSource messageSource;
-	
-	private TestAutomationFinderService testAutomationManagementService;
-	
-	@ServiceReference
-	public void setTestAutomationManagementService(TestAutomationFinderService testAutomationManagementService) {
-		this.testAutomationManagementService = testAutomationManagementService;
-	}
-	
-	@RequestMapping(value = "/executions", method = RequestMethod.GET)
+	private InternationalizationHelper messageSource;
+
+	@Inject
+	private AutomatedSuiteManagerService service;
+
+	@RequestMapping(value = "/{suiteId}/executions", method = RequestMethod.GET)
 	public @ResponseBody AutomatedSuiteOverview updateExecutionInfo(@PathVariable String suiteId, Locale locale) {
-		AutomatedSuite suite = testAutomationManagementService.findAutomatedTestSuiteById(suiteId);
+		AutomatedSuite suite = service.findById(suiteId);
 		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
 	}
-	
+
 }

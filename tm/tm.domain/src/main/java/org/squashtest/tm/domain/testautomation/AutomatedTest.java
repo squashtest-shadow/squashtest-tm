@@ -26,8 +26,18 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.validation.constraints.Size;
 
+@NamedQueries({
+	@NamedQuery(name="automatedTest.countReferencesByTestCases", query="select count(*) from TestCase tc join tc.automatedTest autoTest where autoTest.id = :autoTestId"),
+	@NamedQuery(name="automatedTest.countReferencesByExecutions", query="select count(*) from AutomatedExecutionExtender extender join extender.automatedTest autoTest where autoTest.id = :autoTestId"),
+	@NamedQuery(name="automatedTest.findByTestCase", query="select auto from TestCase tc join tc.automatedTest auto where tc.id in (:testCaseIds)"),
+	@NamedQuery(name="automatedTest.bulkDelete", query="delete from AutomatedTest auto where auto in (:tests)"),
+	@NamedQuery(name="automatedTest.findOrphans",
+	query="from AutomatedTest auto where not exists (from TestCase where automatedTest = auto) and not exists (from AutomatedExecutionExtender where automatedTest = auto)")
+})
 @Entity
 public class AutomatedTest {
 
@@ -35,18 +45,28 @@ public class AutomatedTest {
 	@GeneratedValue
 	@Column(name="TEST_ID")
 	private Long id;
-	
+
 	@ManyToOne
 	@JoinColumn(name="PROJECT_ID")
 	private TestAutomationProject project;
-	
+
 	@Size(min = 0, max = 255)
 	private String name;
+
+	protected AutomatedTest() {
+		super();
+	}
+
+	public AutomatedTest(String name, TestAutomationProject project) {
+		super();
+		this.name = name;
+		this.project = project;
+	}
 
 	public Long getId() {
 		return id;
 	}
-	
+
 	public TestAutomationProject getProject() {
 		return project;
 	}
@@ -54,15 +74,23 @@ public class AutomatedTest {
 	public String getName(){
 		return name;
 	}
-	
+
 	/**
 	 * 
 	 * @return project.name + name
 	 */
 	public String getFullName(){
-		return project.getName()+"/"+name;
+		return "/" + project.getJobName() + "/"+name;
 	}
-	
+
+	/**
+	 * 
+	 * @return project.label + name
+	 */
+	public String getFullLabel(){
+		return "/" + project.getLabel() + "/" + name;
+	}
+
 	/**
 	 * 
 	 * @return name - shortName
@@ -70,7 +98,7 @@ public class AutomatedTest {
 	public String getPath(){
 		return name.replaceAll("[^\\/]*$","");
 	}
-	
+
 	/**
 	 * 
 	 * @return returns name - path
@@ -78,7 +106,7 @@ public class AutomatedTest {
 	public String getShortName(){
 		return name.replaceAll(".*\\/", "");
 	}
-	
+
 	/**
 	 * 
 	 * @return name - rootfolder
@@ -86,11 +114,11 @@ public class AutomatedTest {
 	public String getNameWithoutRoot(){
 		return name.replaceFirst("^[^\\/]*\\/", "");
 	}
-	
+
 	public String getRootFolderName(){
 		return name.replaceFirst("\\/.*$","/");
 	}
-	
+
 	/**
 	 * 
 	 * @return if the test is a direct child of the root folder
@@ -98,23 +126,8 @@ public class AutomatedTest {
 	public boolean isAtTheRoot(){
 		return (getPath().equals(getRootFolderName()));
 	}
-	
-	public AutomatedTest newWithProject(TestAutomationProject project){
-		return new AutomatedTest(name, project); 
+
+	public AutomatedTest newWithProject(TestAutomationProject newP){
+		return new AutomatedTest(name, newP);
 	}
-	
-	public AutomatedTest newWithName(String name){
-		return new AutomatedTest(name, project);
-	}
-	
-	public AutomatedTest(){
-		
-	}
-	
-	public AutomatedTest(String name, TestAutomationProject project){
-		super();
-		this.name=name;
-		this.project=project;
-	}
-	
 }

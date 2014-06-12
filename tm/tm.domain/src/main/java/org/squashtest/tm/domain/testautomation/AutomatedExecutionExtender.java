@@ -33,6 +33,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
 
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
@@ -56,6 +57,7 @@ public class AutomatedExecutionExtender {
 		set.add(ExecutionStatus.SUCCESS);
 		set.add(ExecutionStatus.WARNING);
 		set.add(ExecutionStatus.NOT_RUN);
+		set.add(ExecutionStatus.NOT_FOUND);
 		set.add(ExecutionStatus.ERROR);
 		set.add(ExecutionStatus.FAILURE);
 		set.add(ExecutionStatus.RUNNING);
@@ -85,6 +87,12 @@ public class AutomatedExecutionExtender {
 	@Lob
 	private String resultSummary = "";
 
+	/**
+	 * Name of the node where the test is executed.
+	 */
+	@NotNull
+	private String nodeName = "";
+
 	/* ******************** constructors ********************************** */
 
 	public AutomatedExecutionExtender() {
@@ -110,8 +118,14 @@ public class AutomatedExecutionExtender {
 		return automatedTest;
 	}
 
+	/**
+	 * Sets the automated test and the node, based on the test's host server.
+	 * 
+	 * @param automatedTest
+	 */
 	public void setAutomatedTest(AutomatedTest automatedTest) {
 		this.automatedTest = automatedTest;
+		this.nodeName = getHostServerName();
 	}
 
 	public URL getResultURL() {
@@ -146,4 +160,30 @@ public class AutomatedExecutionExtender {
 		execution.setExecutionStatus(status);
 	}
 
+	public TestAutomationProject getAutomatedProject() {
+		return automatedTest.getProject();
+	}
+
+	/**
+	 * @return the nodeName or the {@link #automatedTest} server name prop when nodeName is empty.
+	 */
+	public String getNodeName() {
+		return "".equals(nodeName) ? getHostServerName() : nodeName;
+	}
+
+	/**
+	 * 
+	 * @return the name of the server which hosts the automated test.
+	 */
+	private String getHostServerName() {
+		return getAutomatedProject().getServer().getName();
+	}
+
+	public boolean isNotOverYet(){
+		return (automatedTest != null && resultURL == null);
+	}
+
+	public boolean isProjectDisassociated(){
+		return (automatedTest == null);
+	}
 }

@@ -70,7 +70,7 @@ public class HandlerCompositeDomainExceptionResolver extends AbstractHandlerExce
 				message = messageSource.getMessage(dex.getI18nKey(), dex.getI18nParams(), locale);
 			}
 
-			ves.add(new FieldValidationErrorModel(dex.getObjectName(), dex.getField(), message));
+			ves.add(new FieldValidationErrorModel(dex.getObjectName(), dex.getField(), message, dex.getFieldValue()));
 		}
 		return ves;
 	}

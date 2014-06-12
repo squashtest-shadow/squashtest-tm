@@ -35,7 +35,7 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
  * <li>int progression (number between 0 and 100)</li>
  * <li>int nbSuccess  =  SUCCESS + WARNING</li>
  * <li>int nbFailure</li>
- * <li>int nbUntestable</li>
+ * <li>int nbUntestable = UNTESTABLE + NOT_FOUND</li>
  * <li>int nbBlocked = BLOCKED + ERROR + NOT_RUN</li>
  * <li>int nbReady</li>
  * <li>int nbRunning</li>

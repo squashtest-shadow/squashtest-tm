@@ -122,7 +122,7 @@ public class TestSuiteExecutionRunnerController {
 	 * 
 	 * @param testSuiteId
 	 */
-	@RequestMapping(value = "/execution/test-runner", method = RequestMethod.POST, params = { "mode=start-resume" })
+	@RequestMapping(value = RequestMappingPattern.INIT_EXECUTION_RUNNER, method = RequestMethod.POST, params = { "mode=start-resume", "dry-run" })
 	public @ResponseBody
 	void testStartResumeExecutionInClassicRunner(@PathVariable long testSuiteId) {
 		try {
@@ -132,7 +132,7 @@ public class TestSuiteExecutionRunnerController {
 		}
 	}
 
-	@RequestMapping(value = RequestMappingPattern.INIT_EXECUTION_RUNNER, params = { "optimized=false" })
+	@RequestMapping(value = RequestMappingPattern.INIT_EXECUTION_RUNNER, params = { "optimized=false", "!dry-run" })
 	public String startResumeExecutionInClassicRunner(@PathVariable long testSuiteId, Model model) {
 		LOGGER.trace("startResumeExecutionInClassicRunner({})", testSuiteId);
 
@@ -142,7 +142,7 @@ public class TestSuiteExecutionRunnerController {
 
 	}
 
-	@RequestMapping(value = RequestMappingPattern.INIT_EXECUTION_RUNNER, params = { "optimized=true" })
+	@RequestMapping(value = RequestMappingPattern.INIT_EXECUTION_RUNNER, params = { "optimized=true", "!dry-run" })
 	public String startResumeExecutionInOptimizedRunner(@PathVariable long testSuiteId, Model model, Locale locale) {
 		LOGGER.trace("startResumeExecutionInOptimizedRunner({})", testSuiteId);
 

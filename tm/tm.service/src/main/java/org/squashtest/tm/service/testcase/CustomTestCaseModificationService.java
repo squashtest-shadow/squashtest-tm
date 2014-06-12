@@ -121,6 +121,16 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	AutomatedTest bindAutomatedTest(Long testCaseId, Long taProjectId, String testName);
 
 	/**
+	 * Essentially the same than {@link #bindAutomatedTest(Long, Long, String)}. The single argument (the testPath) is the concatenation
+	 * of the TA project <b>label</b> and the test name.
+	 * 
+	 * @param testCaseId
+	 * @param testPath
+	 * @return
+	 */
+	AutomatedTest bindAutomatedTest(Long testCaseId, String testPath);
+
+	/**
 	 * Will delete the link
 	 * @param testCaseId
 	 */

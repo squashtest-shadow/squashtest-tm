@@ -19,29 +19,30 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Controller for the notification area. 
+ * Controller for the notification area.
  */
 var squashtm = squashtm || {};
 
-define([ "jquery", "app/pubsub", "app/lnf/Forms", "jquery.squash.messagedialog" ], function($, ps, Forms) {
-	var _config = {errorTitle :  "Error",
-			infoTitle : "Info"};
-	if(squashtm.message){
-		_config.errorTitle = squashtm.message.errorTitle;
-		_config.infoTitle = squashtm.message.infoTitle;
-	}
+define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.squash.messagedialog" ], function($, ps,
+		translator, Forms) {
+
+	var _config = translator.get({
+		errorTitle : "popup.title.info",
+		infoTitle : "popup.title.error"
+	});
+
 	var _spinner = "#ajax-processing-indicator";
 	var _widgetsInitialized = false;
-	
+
 	function initWidgets() {
 		if (!_widgetsInitialized) {
 			_widgetsInitialized = true;
 			$(".unstyled-notification-pane").addClass("notification-pane").removeClass("unstyled-notification-pane");
-			$(_spinner).addClass("not-processing").removeClass("processing");				
-			
+			$(_spinner).addClass("not-processing").removeClass("processing");
+
 		}
 	}
-	
+
 	function handleJsonResponseError(request) {
 		/*
 		 * this pukes an exception if not valid json. there's no other jQuery way to tell
@@ -51,30 +52,32 @@ define([ "jquery", "app/pubsub", "app/lnf/Forms", "jquery.squash.messagedialog" 
 		if (json !== null) {
 			if (!!json.actionValidationError) {
 				return $.squash.openMessage(_config.errorTitle, json.actionValidationError.message);
-			} else {
-				if (!!json.fieldValidationErrors) {
-					/* IE8 requires low tech code */
-					var validationErrorList = json.fieldValidationErrors;
-					if (validationErrorList.length > 0) {
-						for ( var counter = 0; counter < validationErrorList.length; counter++) {
-							var fve = validationErrorList[counter];
-							if (!! request.label ) {
-								request.label.html(fve.errorMessage);
-							} else if (!showBootstrapErrorMessage(fve) && !showLegacyErrorMessage(fve)) {
-								throw 'exception';
-							}
+			} else if (!!json.fieldValidationErrors) {
+				/* IE8 requires low tech code */
+				var validationErrorList = json.fieldValidationErrors;
+				if (validationErrorList.length > 0) {
+					for ( var counter = 0; counter < validationErrorList.length; counter++) {
+						var fve = validationErrorList[counter];
+						if (!!request.label) {
+							request.label.html(fve.errorMessage);
+						} else if (!showBootstrapErrorMessage(fve) && !showLegacyErrorMessage(fve)) {
+							throw 'exception';
 						}
 					}
-				} else {
-					throw 'exception';
 				}
+			} else {
+				throw 'exception';
 			}
+
+		} else {
+			throw 'exception';
 		}
 	}
 
 	function showLegacyErrorMessage(fieldValidationError) {
 		var labelId = fieldValidationError.fieldName + '-error';
-		labelId = labelId.replace(".", "-").replace('[', '-').replace(']', '');// this is necessary because labelId is used
+		labelId = labelId.replace(".", "-").replace('[', '-').replace(']', '');// this is necessary because labelId is
+		// used
 		// as a css classname
 		var label = $('span.error-message.' + labelId);
 
@@ -92,7 +95,8 @@ define([ "jquery", "app/pubsub", "app/lnf/Forms", "jquery.squash.messagedialog" 
 			inputName = fieldValidationError.objectName + "-" + inputName;
 		}
 
-		$input = $("input[name='" + inputName + "'], input[id='" + inputName + "'],  textarea[name='" + inputName + "']");
+		$input = $("input[name='" + inputName + "'], input[id='" + inputName + "'],  textarea[name='" + inputName +
+				"']");
 		input = Forms.input($input);
 
 		input.setState("error", fieldValidationError.errorMessage);
@@ -102,9 +106,14 @@ define([ "jquery", "app/pubsub", "app/lnf/Forms", "jquery.squash.messagedialog" 
 
 	function handleGenericResponseError(request) {
 		var showError = function() {
+
 			var popup = window.open('about:blank', 'error_details',
 					'resizable=yes, scrollbars=yes, status=no, menubar=no, toolbar=no, dialog=yes, location=no');
-			popup.document.write(request.responseText);
+			if (request.responseText) {
+				popup.document.write(request.responseText);
+			} else {
+				popup.document.write(JSON.stringify(request));
+			}
 		};
 
 		$('#show-generic-error-details').unbind('click').click(showError);
@@ -124,9 +133,15 @@ define([ "jquery", "app/pubsub", "app/lnf/Forms", "jquery.squash.messagedialog" 
 		 * Does not work with narrowed down selectors. see http://bugs.jquery.com/ticket/6161
 		 */
 		$doc.on('ajaxError', function(event, request, settings, ex) {
+
+			// nothing to notify if the request was aborted
+			if (request.status === 0) {
+				return;
+			}
+
 			// Check if we get an Unauthorized access response, then
 			// redirect to login page
-			if (401 == request.status) {
+			else if (401 == request.status) {
 				window.parent.location.reload();
 			} else {
 				try {
@@ -147,13 +162,9 @@ define([ "jquery", "app/pubsub", "app/lnf/Forms", "jquery.squash.messagedialog" 
 
 	}
 
-	function init(config) {
-		_config.errorTitle = config.errorTitle;
-		_config.infoTitle = config.infoTitle;
-		
+	function init() {
 		initWidgets();
 		initSpinner();
-
 	}
 
 	function getErrorMessage(request, index) {
@@ -176,13 +187,20 @@ define([ "jquery", "app/pubsub", "app/lnf/Forms", "jquery.squash.messagedialog" 
 			}
 		}
 	}
-
+	function handleUnknownTypeError(xhr) {
+		try {
+			handleJsonResponseError(xhr);
+		} catch (parseException) {
+			handleGenericResponseError(xhr);
+		}
+	}
 	squashtm.notification = {
 		init : init,
 		showInfo : displayInformationNotification,
 		getErrorMessage : getErrorMessage,
 		handleJsonResponseError : handleJsonResponseError,
-		handleGenericResponseError : handleGenericResponseError
+		handleGenericResponseError : handleGenericResponseError,
+		handleUnknownTypeError : handleUnknownTypeError
 
 	};
 

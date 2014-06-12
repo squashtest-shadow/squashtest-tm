@@ -47,35 +47,95 @@ public class TestCaseAutomationController {
 		this.testCaseModificationService = testCaseModificationService;
 	}
 	private static final String NAME_KEY = "name";
+	private static final String PATH	=	"path";
 	private static final String TEST_CASE_ID = "testCaseId";
 	private static final String PROJECT_ID = "projectId";
-	
 
-		@RequestMapping(value="/tests", method = RequestMethod.GET)
-		@ResponseBody
-		public Collection<TATestNode> findAssignableAutomatedTests(@PathVariable(TEST_CASE_ID) Long testCaseId){
-			LOGGER.trace("Find assignable automated tests for TC#"+testCaseId);
-			Collection<TestAutomationProjectContent> projectContents = testCaseModificationService.findAssignableAutomationTests(testCaseId);
+
+	@RequestMapping(value="/tests", method = RequestMethod.GET)
+	@ResponseBody
+	public Collection<TATestNode> findAssignableAutomatedTests(@PathVariable(TEST_CASE_ID) Long testCaseId){
+		LOGGER.trace("Find assignable automated tests for TC#"+testCaseId);
+
+		Collection<TestAutomationProjectContent> projectContents = testCaseModificationService.findAssignableAutomationTests(testCaseId);
+		return new TATestNodeListBuilder().build(projectContents);
+
+
+		/*
+		 * STUB (obsolete
+
+		if (testCaseId == 238){
+			Collection<TestAutomationProjectContent> projectContents = mockTests();
+
 			return new TATestNodeListBuilder().build(projectContents);
 		}
-		
-		
-		@RequestMapping(value="/tests", method = RequestMethod.POST, params = { PROJECT_ID, NAME_KEY})
-		@ResponseBody
-		public void bindAutomatedTest(@PathVariable(TEST_CASE_ID) long testCaseId,@RequestParam(PROJECT_ID) long projectId, @RequestParam(NAME_KEY) String testName){
-			LOGGER.trace("Bind automated test "+testName+" to TC#"+testCaseId);			
-			testCaseModificationService.bindAutomatedTest(testCaseId, projectId, testName);
-
+		else{
+			throw new UnknownConnectorKind("pof");
 		}
-		
-		@RequestMapping(method = RequestMethod.DELETE)
-		@ResponseBody
-		public void removeAutomation(@PathVariable(TEST_CASE_ID) long testCaseId){
-			
-			testCaseModificationService.removeAutomation(testCaseId);
+		 */
+	}
 
-		}
-		
-	
 
+	@RequestMapping(value="/tests", method = RequestMethod.POST, params = { PROJECT_ID, NAME_KEY})
+	@ResponseBody
+	public void bindAutomatedTest(@PathVariable(TEST_CASE_ID) long testCaseId,@RequestParam(PROJECT_ID) long projectId, @RequestParam(NAME_KEY) String testName){
+		LOGGER.trace("Bind automated test "+testName+" to TC#"+testCaseId);
+		testCaseModificationService.bindAutomatedTest(testCaseId, projectId, testName);
+
+	}
+
+	@RequestMapping(value="/tests", method = RequestMethod.POST, params = { PATH })
+	@ResponseBody
+	public String bindAutomatedTest(@PathVariable(TEST_CASE_ID) long testCaseId, @RequestParam(PATH) String testPath){
+		LOGGER.trace("Bind automated test "+testPath+" to TC#"+testCaseId);
+		testCaseModificationService.bindAutomatedTest(testCaseId, testPath);
+		return testPath;
+	}
+
+
+
+	@RequestMapping(method = RequestMethod.DELETE)
+	@ResponseBody
+	public void removeAutomation(@PathVariable(TEST_CASE_ID) long testCaseId){
+
+		testCaseModificationService.removeAutomation(testCaseId);
+
+	}
+
+
+	/*
+	@Deprecated
+	private Collection<TestAutomationProjectContent> mockTests() throws RuntimeException{
+
+		Field pid = ReflectionUtils.findField(TestAutomationProject.class, "id");
+		pid.setAccessible(true);
+
+		TestAutomationProject p1 = new TestAutomationProject("jobbook", "localjob1", null);
+
+		// TODO : change access from private to public
+		ReflectionUtils.setField(pid, p1, 1l);
+
+		AutomatedTest t11 = new AutomatedTest("database/stresstest", p1);
+		AutomatedTest t12 = new AutomatedTest("database/index", p1);
+		AutomatedTest t13 = new AutomatedTest("UI/login", p1);
+		AutomatedTest t14 = new AutomatedTest("UI/admin/adduser", p1);
+		AutomatedTest t15 = new AutomatedTest("basic", p1);
+
+		TestAutomationProjectContent content1 = new TestAutomationProjectContent(p1, Arrays.asList(t11, t12, t13, t14, t15));
+
+		TestAutomationProject p2 = new TestAutomationProject("grandproject", "Grand Project", null);
+		ReflectionUtils.setField(pid, p2, 2l);
+
+		AutomatedTest t21 = new AutomatedTest("step1/be grand", p2);
+		AutomatedTest t22 = new AutomatedTest("step1/be smart", p2);
+		AutomatedTest t23 = new AutomatedTest("step2/be bold", p2);
+		AutomatedTest t24 = new AutomatedTest("step2/optional/have a side kick", p2);
+		AutomatedTest t25 = new AutomatedTest("just be", p2);
+
+		TestAutomationProjectContent content2 = new TestAutomationProjectContent(p2, Arrays.asList(t21, t22, t23, t24, t25));
+
+		return Arrays.asList(content1, content2);
+
+	}
+	 */
 }

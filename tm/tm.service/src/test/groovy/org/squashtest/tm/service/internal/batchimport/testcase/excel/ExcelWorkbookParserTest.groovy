@@ -25,7 +25,7 @@ import static org.squashtest.tm.service.importer.ImportMode.*
 
 import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.Resource
-import org.squashtest.tm.core.foundation.lang.IsoDateUtils
+import org.squashtest.tm.core.foundation.lang.DateUtils
 import org.squashtest.tm.exception.SheetCorruptedException
 import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException
 import org.squashtest.tm.service.internal.batchimport.CallStepInstruction
@@ -108,7 +108,7 @@ class ExcelWorkbookParserTest extends Specification {
 		testCaseInstructions*.testCase.name == testCaseNames
 		testCaseInstructions*.testCase.prerequisite == testCasePres
 		testCaseInstructions*.testCase.description == testCaseDescs
-		testCaseInstructions.collect { IsoDateUtils.formatIso8601Date(it.testCase.createdOn) }  == testCaseCreateds
+		testCaseInstructions.collect { DateUtils.formatIso8601Date(it.testCase.createdOn) }  == testCaseCreateds
 		testCaseInstructions*.testCase.createdBy == testCaseCreators
 		testCaseInstructions*.mode == testCaseActions
 

@@ -20,9 +20,13 @@
  */
 package org.squashtest.tm.service.internal.project;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -64,9 +68,11 @@ import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
+import org.squashtest.tm.exception.CompositeDomainException;
+import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.exception.NoBugTrackerBindingException;
 import org.squashtest.tm.exception.UnknownEntityException;
-import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
+import org.squashtest.tm.exception.testautomation.DuplicateTMLabelException;
 import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.service.internal.repository.BugTrackerBindingDao;
@@ -76,16 +82,14 @@ import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.PartyDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
-import org.squashtest.tm.service.internal.testautomation.InsecureTestAutomationManagementService;
+import org.squashtest.tm.service.project.CustomGenericProjectFinder;
 import org.squashtest.tm.service.project.CustomGenericProjectManager;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.security.ObjectIdentityService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService;
+import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
 
-/**
- * @author Gregory Fouquet
- * 
- */
 @Service("CustomGenericProjectManager")
 @Transactional
 public class CustomGenericProjectManagerImpl implements CustomGenericProjectManager {
@@ -118,11 +122,14 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
 	@Inject
-	private InsecureTestAutomationManagementService autotestService;
-	@Inject
 	private ProjectDeletionHandler projectDeletionHandler;
 	@Inject
 	private ExecutionProcessingService execProcessing;
+	@Inject
+	private TestAutomationServerManagerService taServerService;
+	@Inject
+	private TestAutomationProjectManagerService taProjectService;
+
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomGenericProjectManagerImpl.class);
 
@@ -139,11 +146,11 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 			Filtering filter) {
 		/*
 		 * Implementation note :
-		 * 
+		 *
 		 * Here for once the paging will not be handled by the database, but programmatically. The reason is that we
 		 * want to filter the projects according to the caller's permissions, something that isn't doable using hql
 		 * alone (the acl system isn't part of the domain and thus wasn't modeled).
-		 * 
+		 *
 		 * So, we just load all the projects and apply paging on the resultset
 		 */
 
@@ -192,12 +199,12 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@PreAuthorize(IS_ADMIN)
 	public void persist(GenericProject project) {
 		Session session = sessionFactory.getCurrentSession();
-		
+
 		if (
-		genericProjectDao.countByName(project.getName()) > 0) {
+				genericProjectDao.countByName(project.getName()) > 0) {
 			throw new NameAlreadyInUseException(project.getClass().getSimpleName(), project.getName());
 		}
-		
+
 		CampaignLibrary cl = new CampaignLibrary();
 		project.setCampaignLibrary(cl);
 		session.persist(cl);
@@ -290,25 +297,69 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	// ********************************** Test automation section *************************************
 
-	@Override
-	public void bindTestAutomationProject(long projectId, TestAutomationProject taProject) {
-		GenericProject genericProject = genericProjectDao.findById(projectId);
+	public void bindTestAutomationServer(long tmProjectId, Long serverId) {
+		GenericProject genericProject = genericProjectDao.findById(tmProjectId);
 		checkManageProjectOrAdmin(genericProject);
-		TestAutomationProject persistedProject = autotestService.persistOrAttach(taProject);
-		genericProject.bindTestAutomationProject(persistedProject);
+
+		taProjectService.deleteAllForTMProject(tmProjectId);
+
+		TestAutomationServer taServer = null;
+		if (serverId != null){
+			taServer = taServerService.findById(serverId);
+		}
+
+		genericProject.setTestAutomationServer(taServer);
 	}
 
+
 	@Override
-	public TestAutomationServer getLastBoundServerOrDefault(long projectId) {
+	public void bindTestAutomationProject(long projectId, TestAutomationProject taProject) {
+
 		GenericProject genericProject = genericProjectDao.findById(projectId);
+		bindTestAutomationProject(taProject, genericProject);
+	}
+
+	private void bindTestAutomationProject(TestAutomationProject taProject, GenericProject genericProject) {
 		checkManageProjectOrAdmin(genericProject);
-		if (genericProject.hasTestAutomationProjects()) {
-			return genericProject.getServerOfLatestBoundProject();
+
+		TestAutomationServer server = genericProject.getTestAutomationServer();
+		taProject.setServer(server);
+		taProject.setTmProject(genericProject);
+
+		taProjectService.persist(taProject);
+		genericProject.bindTestAutomationProject(taProject);
+	}
+
+
+	public void bindTestAutomationProjects(long projectId, Collection<TestAutomationProject> taProjects){
+		checkTAProjectNames(taProjects, projectId);
+		for (TestAutomationProject p : taProjects){
+			bindTestAutomationProject( projectId, p);
+		}
+	}
+
+
+	private void checkTAProjectNames(Collection<TestAutomationProject> taProjects, long projectId) {
+		List<DuplicateTMLabelException> dnes = new ArrayList<DuplicateTMLabelException>();
+		List<String> taProjectNames = genericProjectDao.findBoundTestAutomationProjectLabels(projectId);
+		for(TestAutomationProject taProject : taProjects){
+			try{
+				checkTAProjecTName(taProject, taProjectNames);
+			}catch(DuplicateTMLabelException dne){
+				LOGGER.error(dne.getMessage(), dne);
+				dnes.add(dne);
+			}
+		}
+		if(!dnes.isEmpty()){
+			throw new CompositeDomainException(dnes);
+		}
+	}
+
+	private void checkTAProjecTName(TestAutomationProject taProject, List<String> projectNames) {
+		if(projectNames.contains(taProject.getLabel())){
+			throw new DuplicateTMLabelException(taProject.getLabel());
 		}
 
-		else {
-			return autotestService.getDefaultServer();
-		}
 	}
 
 	@Override
@@ -324,6 +375,29 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		checkManageProjectOrAdmin(genericProject);
 		genericProject.unbindTestAutomationProject(taProjectId);
 
+	}
+
+	/**
+	 * @see CustomGenericProjectFinder#findAllAvailableTaProjects(long)
+	 */
+	@Override
+	public Collection<TestAutomationProject> findAllAvailableTaProjects(long projectId) {
+		TestAutomationServer server = genericProjectDao.findTestAutomationServer(projectId);
+		if (server == null) {
+			return Collections.emptyList();
+		}
+		Collection<TestAutomationProject> availableTaProjects = taProjectService.listProjectsOnServer(server);
+		Collection<String> alreadyBoundProjectsJobNames = genericProjectDao
+				.findBoundTestAutomationProjectJobNames(projectId);
+
+		Iterator<TestAutomationProject> it = availableTaProjects.iterator();
+		while (it.hasNext()) {
+			TestAutomationProject taProject = it.next();
+			if (alreadyBoundProjectsJobNames.contains(taProject.getJobName())) {
+				it.remove();
+			}
+		}
+		return availableTaProjects;
 	}
 
 	// ********************************** bugtracker section *************************************
@@ -497,7 +571,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	@Override
 	public boolean projectUsesExecutionStatus(long projectId, ExecutionStatus executionStatus) {
-		
+
 		return executionDao.projectUsesExecutionStatus(projectId, executionStatus);
 	}
 
@@ -544,4 +618,5 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		}
 		project.setName(newName);
 	}
+
 }

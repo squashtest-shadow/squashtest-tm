@@ -25,7 +25,7 @@ import org.squashtest.tm.domain.bugtracker.BugTrackerBinding
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.project.ProjectTemplate
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
-import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
+import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService
 import org.squashtest.tm.service.internal.project.CustomProjectModificationServiceImpl
 import org.squashtest.tm.service.internal.repository.ProjectTemplateDao
@@ -40,20 +40,20 @@ class CustomProjectModificationServiceImplTest extends Specification {
 	CustomFieldBindingModificationService customFieldBindingModificationService = Mock()
 	ProjectsPermissionManagementService projectsPermissionManagementService = Mock()
 	GenericProjectManagerService genericProjectManagerService = Mock()
-	
+
 	def setup()
 	{
 		service.projectTemplateDao = projectTemplateDao
 		service.customFieldBindingModificationService = customFieldBindingModificationService
 		service.permissionService = projectsPermissionManagementService
 		service.genericProjectManager = genericProjectManagerService
-		
-		
+
+
 	}
-	
+
 	def "should add projet and copy all settings from template"(){
 		given: "a template project"
-		ProjectTemplate template = Mock() 
+		ProjectTemplate template = Mock()
 		template.isTestAutomationEnabled() >> Boolean.TRUE
 		projectTemplateDao.findById(1L) >> template
 		TestAutomationProject automationProject = Mock()
@@ -63,25 +63,24 @@ class CustomProjectModificationServiceImplTest extends Specification {
 		template.getBugtrackerBinding() >> binding
 		BugTracker bugtracker = Mock()
 		binding.getBugtracker() >> bugtracker
-		
+
 		and: "a project"
 		Project project = Mock()
-		project.getId()>> 2L		
+		project.getId()>> 2L
 		project.getClass()>> Project.class
 
-		
+
 		when:
 		service.addProjectAndCopySettingsFromTemplate(project, 1L, true, true, true, true)
-		
+
 		then:
-		1* project.setTestAutomationEnabled(true)
 		1* project.bindTestAutomationProject(automationProject)
 		1* genericProjectManagerService.changeBugTracker(_, _)
 		1* customFieldBindingModificationService.copyCustomFieldsSettingsFromTemplate(project, template)
 		1* projectsPermissionManagementService.copyAssignedUsersFromTemplate(project, template)
 	}
-	
-	
+
+
 	def "should add projet and copy all settings but bugtracker from template"(){
 		given: "a template project"
 		ProjectTemplate template = Mock()
@@ -90,19 +89,18 @@ class CustomProjectModificationServiceImplTest extends Specification {
 		TestAutomationProject automationProject = Mock()
 		template.getTestAutomationProjects() >> [automationProject]
 		template.isBugtrackerConnected() >> true
-		
-		
+
+
 		and: "a project"
 		Project project = Mock()
 		project.getId()>> 2L
 		project.getClass()>> Project.class
-		
-		
+
+
 		when:
 		service.addProjectAndCopySettingsFromTemplate(project, 1L, true, true, false, true)
-		
+
 		then:
-		1* project.setTestAutomationEnabled(true)
 		1* project.bindTestAutomationProject(automationProject)
 		0* genericProjectManagerService.changeBugTracker(_, _)
 		1* customFieldBindingModificationService.copyCustomFieldsSettingsFromTemplate(project, template)
@@ -116,23 +114,23 @@ class CustomProjectModificationServiceImplTest extends Specification {
 		TestAutomationProject automationProject = Mock()
 		template.getTestAutomationProjects() >> [automationProject]
 		template.isBugtrackerConnected() >> false
-		
+
 		and: "a project"
 		Project project = Mock()
 		project.getId()>> 2L
 		project.getClass()>> Project.class
-		
+
 		when:
 		service.addProjectAndCopySettingsFromTemplate(project, 1L, true, true, true, true)
-		
+
 		then:
-		1* project.setTestAutomationEnabled(true)
+
 		1* project.bindTestAutomationProject(automationProject)
 		0* genericProjectManagerService.changeBugTracker(_, _)
 		1* customFieldBindingModificationService.copyCustomFieldsSettingsFromTemplate(project, template)
 		1* projectsPermissionManagementService.copyAssignedUsersFromTemplate(project, template)
 	}
-	
+
 	def "should add projet and copy all settings but test automation from template"(){
 		given: "a template project"
 		ProjectTemplate template = Mock()
@@ -145,16 +143,16 @@ class CustomProjectModificationServiceImplTest extends Specification {
 		template.getBugtrackerBinding() >> binding
 		BugTracker bugtracker = Mock()
 		binding.getBugtracker() >> bugtracker
-		
+
 		and: "a project"
 		Project project = Mock()
 		project.getId()>> 2L
 		project.getClass()>> Project.class
-		
-		
+
+
 		when:
 		service.addProjectAndCopySettingsFromTemplate(project, 1L, true, true, true, false)
-		
+
 		then:
 		0* project.setTestAutomationEnabled(_)
 		0* project.bindTestAutomationProject(automationProject)
@@ -174,24 +172,24 @@ class CustomProjectModificationServiceImplTest extends Specification {
 		template.getBugtrackerBinding() >> binding
 		BugTracker bugtracker = Mock()
 		binding.getBugtracker() >> bugtracker
-		
+
 		and: "a project"
 		Project project = Mock()
 		project.getId()>> 2L
 		project.getClass()>> Project.class
-		
-		
+
+
 		when:
 		service.addProjectAndCopySettingsFromTemplate(project, 1L, false, true, true, true)
-		
+
 		then:
-		1* project.setTestAutomationEnabled(true)
+
 		1* project.bindTestAutomationProject(automationProject)
 		1* genericProjectManagerService.changeBugTracker(_, _)
 		1* customFieldBindingModificationService.copyCustomFieldsSettingsFromTemplate(project, template)
 		0* projectsPermissionManagementService.copyAssignedUsersFromTemplate(_, _)
 	}
-	
+
 	def "should add projet and copy all settings but custom fields binging from template"(){
 		given: "a template project"
 		ProjectTemplate template = Mock()
@@ -204,22 +202,22 @@ class CustomProjectModificationServiceImplTest extends Specification {
 		template.getBugtrackerBinding() >> binding
 		BugTracker bugtracker = Mock()
 		binding.getBugtracker() >> bugtracker
-		
+
 		and: "a project"
 		Project project = Mock()
 		project.getId()>> 2L
 		project.getClass()>> Project.class
-		
-		
+
+
 		when:
 		service.addProjectAndCopySettingsFromTemplate(project, 1L, true, false, true, true)
-		
+
 		then:
-		1* project.setTestAutomationEnabled(true)
+
 		1* project.bindTestAutomationProject(automationProject)
 		1* genericProjectManagerService.changeBugTracker(_, _)
 		0* customFieldBindingModificationService.copyCustomFieldsSettingsFromTemplate(_, _)
 		1* projectsPermissionManagementService.copyAssignedUsersFromTemplate(project, template)
 	}
-	
+
 }

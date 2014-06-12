@@ -22,26 +22,28 @@ package org.squashtest.tm.plugin.testautomation.jenkins.beans;
 
 
 public class Parameter {
-	
-	private String name;
-	private String value;
-	
+
+	public static final String SYMBOLIC_FILENAME = "testsuite.json";
+
+	protected String name;
+	protected String value;
+
 	public String getName() {
 		return name;
 	}
-	
+
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	public String getValue() {
-		return 
-		value;
+		return
+				value;
 	}
 	public void setValue(String value) {
 		this.value = value;
 	}
-	
+
 
 	public Parameter(){
 		super();
@@ -52,29 +54,27 @@ public class Parameter {
 		this.name=name;
 		this.value=value;
 	}
-	
+
 	static public Parameter operationTestListParameter(){
 		return new Parameter("operation", "test-list");
 	}
-	
+
 	static public Parameter operationRunSuiteParameter(){
 		return new Parameter("operation", "run");
 	}
-	
+
 	static public Parameter newExtIdParameter(String externalId){
 		return new Parameter("externalJobId", externalId);
 	}
-	
+
 	static public Parameter newCallbackURlParameter(String callback){
 		return new Parameter("notificationURL", callback);
 	}
-	
-	
-	static public Parameter newExecuteTestListParameter(String testListAsString){
 
-		return new Parameter("testList", testListAsString);
+	static public Parameter testListParameter(){
+		return new Parameter("testList", "{file:" + SYMBOLIC_FILENAME +"}");
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -113,5 +113,5 @@ public class Parameter {
 		return true;
 	}// GENERATED:END
 
-	
+
 }

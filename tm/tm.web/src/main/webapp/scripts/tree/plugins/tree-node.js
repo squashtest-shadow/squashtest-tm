@@ -274,7 +274,7 @@ define(['jquery'], function($){
 		};
 
 		this.getPath = function() {
-			return this.getAncestors().all('getName').join().replace(/,/g, '/');
+			return '/'+this.getAncestors().all('getName').join().replace(/,/g, '/');
 		};
 
 		this.getProjectId = function() {

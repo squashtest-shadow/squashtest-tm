@@ -19,5 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(["squashtable"], function(squashtable){
+	// this file was rendered useless by a squashtable refactor.
+	// yet we need this file for plugins which required it to still work
 	return squashtable;
 });

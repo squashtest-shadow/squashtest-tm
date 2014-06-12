@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 
 <!-- see org.squashtest.tm.service.internal.batchimport.FacilityImplIT for dataset description -->
-<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.9.0.dtd">
+<!DOCTYPE dataset SYSTEM "../../../../../../dtd/squash-tm.1.9.10.dtd">
 <dataset>
   <ACL_CLASS ID="1" CLASSNAME="org.squashtest.tm.domain.project.Project" />
   <ACL_CLASS ID="2" CLASSNAME="org.squashtest.tm.domain.requirement.RequirementLibrary" />
@@ -318,9 +318,9 @@
   <PROJECT PROJECT_ID="14" NAME="Test Project-1"
     DESCRIPTION="&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam felis ante,&lt;/p&gt;" LABEL="Lorem ipsum dolor sit amet, "
     ACTIVE="true" CREATED_BY="admin" CREATED_ON="2011-09-30 10:24:47.0" LAST_MODIFIED_BY="admin" LAST_MODIFIED_ON="2014-03-07 11:29:41.0"
-    CL_ID="14" TCL_ID="14" RL_ID="14" TEST_AUTOMATION_ENABLED="false" ATTACHMENT_LIST_ID="901" PROJECT_TYPE="P" />
+    CL_ID="14" TCL_ID="14" RL_ID="14"  ATTACHMENT_LIST_ID="901" PROJECT_TYPE="P" />
   <PROJECT PROJECT_ID="15" NAME="autre project" DESCRIPTION="" LABEL="" ACTIVE="true" CREATED_BY="admin"
-    CREATED_ON="2014-03-07 11:29:31.0" CL_ID="15" TCL_ID="15" RL_ID="15" TEST_AUTOMATION_ENABLED="false"
+    CREATED_ON="2014-03-07 11:29:31.0" CL_ID="15" TCL_ID="15" RL_ID="15" 
     ATTACHMENT_LIST_ID="924" PROJECT_TYPE="P" />
   <TEST_CASE_LIBRARY_NODE TCLN_ID="240" DESCRIPTION="" NAME="dossier 1" CREATED_BY="admin"
     CREATED_ON="2014-03-07 11:22:54.0" PROJECT_ID="14" ATTACHMENT_LIST_ID="906" />

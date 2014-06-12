@@ -20,13 +20,11 @@
  */
 package org.squashtest.tm.service.campaign;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
@@ -53,9 +51,6 @@ public interface CustomIterationModificationService extends IterationFinder {
 	void rename(long iterationId, String newName);
 
 	Execution addExecution(long testPlanItemId);
-
-	Execution addAutomatedExecution(long testPlanItemId);
-
 
 	/**
 	 * that method should investigate the consequences of the deletion request, and return a report about what will
@@ -86,7 +81,7 @@ public interface CustomIterationModificationService extends IterationFinder {
 	 * </p>
 	 * 
 	 * @param suitesIds
-	 * @return 
+	 * @return
 	 */
 	OperationReport removeTestSuites(List<Long> suitesIds);
 
@@ -118,24 +113,7 @@ public interface CustomIterationModificationService extends IterationFinder {
 	 */
 	List<TestSuite> copyPasteTestSuitesToIteration(Long[] testSuiteIds, long iterationId);
 
-	/**
-	 * Create an automated execution for every automated item test plan in the given iteration, group them in an
-	 * automated suite and tells the connector to process them.
-	 * 
-	 * @return an {@link AutomatedSuite}
-	 */
-	AutomatedSuite createAndStartAutomatedSuite(long iterationId);
 
-	/**
-	 * Create an automated execution for each of the test plan in arguments, group them in an automated suite and tells
-	 * the connectors to process them .
-	 * 
-	 * @param iterationId
-	 *            the id of the iteration that holds them all, and against which will be tested the user credentials
-	 * @param testPlanIds
-	 * @return an {@link AutomatedSuite}
-	 */
-	AutomatedSuite createAndStartAutomatedSuite(long iterationId, Collection<Long> testPlanIds);
 
 	IterationStatisticsBundle gatherIterationStatisticsBundle(long iterationId);
 }

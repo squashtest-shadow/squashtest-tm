@@ -25,6 +25,7 @@
 <head>
 <title th:text="#{workspace.test-case.title}">Espace cas de test</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<script th:src="@{/scripts/pubsub-boot.js}"></script>
 <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
 <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
 <script type="text/javascript" th:inline="javascript">
@@ -54,14 +55,7 @@
 			indicator : '<div class="processing-indicator"/>'
 		},
 		menuBarConf: {
-    	}, 	
-		notificationConf : {
-			infoTitle : /*[[ #{popup.title.info} ]]*/'Info',
-			errorTitle : /*[[ #{popup.title.error} ]]*/'Erreur',
-			confirmLabel : /*[[#{label.Confirm}]]*/'Confirm',
-			okLabel : /*[[ #{label.Ok} ]]*/'Ok',
-			cancelLabel : /*[[ #{label.Cancel} ]]*/'Cancel',
-		},
+    	}
 	};
 </script>
 <script data-main="../../scripts/edit-test-step.js"

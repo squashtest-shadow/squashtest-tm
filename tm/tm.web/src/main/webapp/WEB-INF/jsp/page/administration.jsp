@@ -33,6 +33,7 @@
 <c:url var="loginUrl" value="/configuration/login-message" />
 <c:url var="welcomeUrl" value="/configuration/welcome-message" />
 <c:url var="customFieldsUrl" value="administration/custom-fields" />
+<c:url var="testAutomationServerUrl" value="/administration/test-automation-servers" />
 <c:url var="indexUrl" value="/administration/indexes" />
 
 <layout:info-page-layout titleKey="label.administration">
@@ -79,7 +80,10 @@
           <span id="welcome-message-admin" class="admin-section-icon admin-msghome-icon"></span>
           <span class="admin-section-label"><f:message key="label.consultModifyWelcomeMessage" /></span>
         </a>
-        <a href="" class="unstyledLink"></a>
+        <a href="${testAutomationServerUrl}" class="unstyledLink">
+          <span id="test-automation-servers-admin" class="admin-section-icon admin-test-automation-servers-icon"></span>
+          <span class="admin-section-label"><f:message key="label.testAutomationServersManagement"/></span>
+         </a>
         <a href="${ indexUrl }" class="unstyledLink">
           <span id="index-admin" class="admin-section-icon admin-index-icon"></span>
           <span class="admin-section-label"><f:message key="label.indexManagement" /></span>

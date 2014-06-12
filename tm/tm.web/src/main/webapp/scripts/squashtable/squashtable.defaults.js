@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery'], function($){
+define(['jquery', 'squash.translator'], function($, translator){
 	
 	if (squashtm && squashtm.datatable && squashtm.datatable.defaults){
 		return squashtm.datatable.defaults;
@@ -29,14 +29,18 @@ define(['jquery'], function($){
 	// defines datatable defaults settings and puts them in the squash
 	// namespace.
 	
-	var oLanguage;
-	$.ajax({
-		url : squashtm.app.contextRoot+'/datatables/messages',
-		type : 'get',
-		async : false,
-		dataType : 'json',
-		success : function(json){
-			oLanguage = json;
+	var oLanguage = translator.get({
+		'sLengthMenu' : 'generics.datatable.lengthMenu',
+		'sZeroRecords' : 'generics.datatable.zeroRecords',
+		'sInfo' : 'generics.datatable.info',
+		'sInfoEmpty' : 'generics.datatable.infoEmpty',
+		'sInfoFiltered' : 'generics.datatable.infoFiltered',
+		'sSearch' : 'generics.datatable.search',
+		'oPaginage' : {
+			'sFirst' : 'generics.datatable.paginate.first',
+			'sPrevious' : 'generics.datatable.paginate.previous',
+			'sNext' : 'generics.datatable.paginate.next',
+			'sLast' : 'generics.datatable.paginate.last'
 		}
 	});
 	

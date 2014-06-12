@@ -20,15 +20,11 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 
 /**
@@ -41,10 +37,7 @@ public interface IterationTestPlanManager {
 	Execution addExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException;
 
 	void addTestSuite(Iteration iteration, TestSuite suite);
-	
-	 Execution addAutomatedExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException ;
-	 
-	 AutomatedSuite createAndStartAutomatedSuite(List<IterationTestPlanItem> testPlanItems);
 
-	AutomatedSuite createAndStartAutomatedSuiteByITPIsIds(Collection<Long> testPlanIds);
+	Execution addAutomatedExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException ;
+
 }

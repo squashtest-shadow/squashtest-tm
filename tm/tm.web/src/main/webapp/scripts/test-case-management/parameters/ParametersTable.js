@@ -147,11 +147,6 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "jquery.squash.confi
 			var urlPOST = self.settings.basic.parametersUrl + '/' + data["entity-id"] + "/name";
 			var component = $('td.parameter-name', row);
 			new SimpleJEditable({
-				language : {
-					richEditPlaceHolder : self.settings.language.placeholder,
-					okLabel : self.settings.language.submit,
-					cancelLabel : self.settings.language.cancellabel
-				},
 				targetUrl : urlPOST,
 				component : component,
 				jeditableSettings : {}

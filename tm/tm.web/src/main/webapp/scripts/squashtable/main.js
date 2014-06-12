@@ -180,12 +180,19 @@
  * 
  * Member name : 'bindLinks'
  * 
- * If set then will look for cells according to the parameters given and make their text a link to the wanted url. for
- * cells according to the parameters given and make their text a link to the wanted url. Configuration as follow: list :
- * a list of object to represent each td of a row to make as url Object params as follow : -url : the url to wrap the
- * text with (place holder will be set to row object id) -target : the td rank in the row (starts with 1) -targetClass :
- * alternate to the above, uses css class to find its target -isOpenInTab : boolean to set the target of the url to
- * "_blank" or not.
+ * If set then will look for cells according to the parameters given and make their text a link to the wanted url. 
+ * 
+ *  Configuration as follow: 
+ *  
+ *  list :  a list of object to represent each td of a row to make as url Object params as follow : 
+ *  
+ *  -url : the url to wrap the  text with (place holder will be set to row object id) 
+ * 
+ * -target : the td rank in the row (starts with 1) 
+ * 
+ * -targetClass :  alternate to the above, uses css class to find its target 
+ * 
+ * -isOpenInTab : boolean to set the target of the url to  "_blank" or not.
  * 
  * ============== Toggable rows ===============================================
  * 
@@ -851,6 +858,12 @@ define(["jquery",
 				
 				var _rowid = self.getODataId(jqRow.get(0));
 				_delegate.data('entity-id', _rowid);
+				
+				var rowDatas = self.getDataById(_rowid)
+				for(var rowData in rowDatas){
+					_delegate.data(rowData, rowDatas[rowData]);
+				}
+					
 				var _data = _delegate.data();
 				for (var _ppt in _data){
 					var _widg = _data[_ppt];
@@ -1578,6 +1591,18 @@ define(["jquery",
 					conf.squash.bindLinks.list.push({
 						url : assignation.value,
 						targetClass : cls
+					});
+				},
+				'link-new-tab' : function(conf, assignation) {
+					var cls = 'link-' + Math.random().toString().substr(2, 3);
+					conf.current.sClass += ' ' + cls;
+					conf.squash.bindLinks = conf.squash.bindLinks || {
+						list : []
+					};
+					conf.squash.bindLinks.list.push({
+						url : assignation.value,
+						targetClass : cls,
+						isOpenInTab : true
 					});
 				},
 				'rich-edit' : function(conf, assignation){

@@ -22,39 +22,37 @@ package org.squashtest.tm.service.internal.customfield
 
 import javax.inject.Inject
 
-import org.hibernate.SessionFactory;
-import org.springframework.transaction.annotation.Transactional;
+import org.hibernate.SessionFactory
+import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.customfield.CustomFieldValue
-import org.squashtest.tm.service.internal.repository.CustomFieldValueDao;
-import org.squashtest.tm.service.DbunitServiceSpecification;
+import org.squashtest.tm.service.internal.repository.CustomFieldValueDao
+import org.squashtest.tm.service.DbunitServiceSpecification
 import org.squashtest.tm.service.customfield.CustomFieldManagerService
 import org.unitils.dbunit.annotation.DataSet
 
-import spock.unitils.UnitilsSupport;
+import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
 @Transactional
 @DataSet("CustomFieldVariousIT.sandbox.xml")
 class CustomCustomFieldManagerServiceIT extends DbunitServiceSpecification {
 
-	@Inject 
-	CustomFieldManagerService service;
-	
-	@Inject 
-	CustomFieldValueDao customFieldValueDao;
-	
 	@Inject
-	SessionFactory sessionFactory;
-	
+	CustomFieldManagerService service
+
+
+	@Inject
+	SessionFactory sessionFactory
+
 	def "should add default value to custom fields without a value"(){
-		
+
 		when :
-			service.changeOptional(1l,false);
-			CustomFieldValue value1 = customFieldValueDao.findById(1111l);
-			CustomFieldValue value2 = customFieldValueDao.findById(1112l);
-			
+		service.changeOptional(1l,false)
+		CustomFieldValue value1 = findEntity(CustomFieldValue.class, 1111l)
+		CustomFieldValue value2 = findEntity(CustomFieldValue.class, 1112l)
+
 		then :
-			value1.getValue().equals("NOSEC");
-			value2.getValue().equals("true");
+		value1.getValue().equals("NOSEC")
+		value2.getValue().equals("true")
 	}
 }

@@ -152,11 +152,6 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/u
 		
 		makeSimpleJEditable : function(imputId) {
 			new SimpleJEditable({
-				language : {
-					richEditPlaceHolder : UMod.message.richEditPlaceHolder,
-					okLabel : UMod.message.okLabel,
-					cancelLabel : UMod.message.cancelLabel
-				},
 				targetUrl : UMod.user.url.admin,
 				componentId : imputId,
 				jeditableSettings : {}

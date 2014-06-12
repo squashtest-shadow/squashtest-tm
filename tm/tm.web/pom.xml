@@ -165,6 +165,12 @@
       <groupId>org.springframework.osgi</groupId>
       <artifactId>spring-osgi-web</artifactId>
       <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.servlet</groupId>
+          <artifactId>com.springsource.javax.servlet</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <!-- ====== /SPRING DM WEB CONTEXT ====== -->
 

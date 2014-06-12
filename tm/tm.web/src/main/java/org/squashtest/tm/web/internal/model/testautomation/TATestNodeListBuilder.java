@@ -33,136 +33,131 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
 import org.squashtest.tm.web.internal.model.testautomation.TATestNode.Attr;
 import org.squashtest.tm.web.internal.model.testautomation.TATestNode.Data;
 
-
-
 public class TATestNodeListBuilder {
 
-	public Collection<TATestNode> build(Collection<TestAutomationProjectContent> projectContents){
-	
+	public Collection<TATestNode> build(Collection<TestAutomationProjectContent> projectContents) {
+
 		Collection<TATestNode> nodeList = new LinkedList<TATestNode>();
-		
-		for (TestAutomationProjectContent content : projectContents){
-			
+
+		for (TestAutomationProjectContent content : projectContents) {
+
 			TATestNode projectNode = createProjectNode(content);
-			
-			for (AutomatedTest test : content.getTests() ){
+
+			for (AutomatedTest test : content.getTests()) {
 				merge(projectNode, test);
 			}
-			
+
 			nodeList.add(projectNode);
 		}
-		
+
 		return nodeList;
-		
+
 	}
 
-	private void merge(TATestNode projectNode, AutomatedTest test){
-		
+	private void merge(TATestNode projectNode, AutomatedTest test) {
+
 		String[] pathArray = test.getName().trim().split("\\/");
-		List<String> path = Arrays.asList(pathArray); 
-		
-		if (path.isEmpty()){
+		List<String> path = Arrays.asList(pathArray);
+
+		if (path.isEmpty()) {
 			return;
 		}
-		
+
 		TATestNode parent = projectNode;
 		TATestNode current = null;
-		
+
 		ListIterator<String> iterator = path.listIterator();
-		
-		while(iterator.hasNext()){
-			
+
+		while (iterator.hasNext()) {
+
 			String name = iterator.next();
 			current = parent.findChild(name);
-			
-			if (current==null){
-				if (iterator.hasNext()){
-					current = createFolderNode(name);				
-				}
-				else{
+
+			if (current == null) {
+				if (iterator.hasNext()) {
+					current = createFolderNode(name);
+				} else {
 					current = createTestNode(name);
 				}
 				parent.getChildren().add(current);
 			}
-			
+
 			parent = current;
 		}
-		
-				
-	}
-	
 
-	private TATestNode createTestNode(String name){
-		
+	}
+
+	private TATestNode createTestNode(String name) {
+
 		TATestNode node = new TATestNode();
-		
+
 		node.setState(State.leaf);
-		
+
 		Attr attr = new Attr();
 		Data data = new Data();
-		
+
 		attr.setRel("ta-test");
 		attr.setRestype("ta-test");
 		attr.setName(name);
-		
+
 		data.setTitle(name);
-		
-		node.setAttr(attr);
-		node.setData(data);
-		
-		return node;
-	}
-	
-	private TATestNode createFolderNode(String name){
-		return createFolderNode(name, true);
-	}
-	
-	private TATestNode createFolderNode(String name, boolean hasChildren){
-		
-		TATestNode node = new TATestNode();
-		
-		State state = (hasChildren) ? State.closed : State.leaf;
-		node.setState(state);
-		
-		Attr attr = new Attr();
-		Data data = new Data();
-		
-		attr.setRel("folder");
-		attr.setRestype("ta-folder");
-		attr.setName(name);
-		
-		data.setTitle(name);
-		
-		node.setAttr(attr);
-		node.setData(data);
-		
-		return node;
-		
-	}
-	
-	private TATestNode createProjectNode(TestAutomationProjectContent content){
-		
-		TestAutomationProject project = content.getProject();
-		
-		TATestNode node = new TATestNode();
-		
-		State state = content.getTests().isEmpty() ? State.leaf : State.closed;
-		node.setState(state);
-		
-		Attr attr = new Attr();
-		Data data = new Data();
-		
-		attr.setId(project.getId().toString());
-		attr.setRel("drive");
-		attr.setName(project.getName());
-		attr.setRestype("ta-project");
-		
-		data.setTitle(project.getName());
 
 		node.setAttr(attr);
 		node.setData(data);
-		
+
 		return node;
 	}
-	
+
+	private TATestNode createFolderNode(String name) {
+		return createFolderNode(name, true);
+	}
+
+	private TATestNode createFolderNode(String name, boolean hasChildren) {
+
+		TATestNode node = new TATestNode();
+
+		State state = (hasChildren) ? State.closed : State.leaf;
+		node.setState(state);
+
+		Attr attr = new Attr();
+		Data data = new Data();
+
+		attr.setRel("folder");
+		attr.setRestype("ta-folder");
+		attr.setName(name);
+
+		data.setTitle(name);
+
+		node.setAttr(attr);
+		node.setData(data);
+
+		return node;
+
+	}
+
+	private TATestNode createProjectNode(TestAutomationProjectContent content) {
+
+		TestAutomationProject project = content.getProject();
+
+		TATestNode node = new TATestNode();
+
+		State state = content.getTests().isEmpty() ? State.leaf : State.closed;
+		node.setState(state);
+
+		Attr attr = new Attr();
+		Data data = new Data();
+
+		attr.setId(project.getId().toString());
+		attr.setRel("drive");
+		attr.setName(project.getLabel());
+		attr.setRestype("ta-project");
+
+		data.setTitle(project.getLabel());
+
+		node.setAttr(attr);
+		node.setData(data);
+
+		return node;
+	}
+
 }

@@ -25,7 +25,6 @@ import javax.validation.constraints.NotNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.squashtest.tm.api.testautomation.execution.dto.TestExecutionStatus;
 
-
 /**
  * @author Gregory Fouquet
  * 
@@ -33,12 +32,13 @@ import org.squashtest.tm.api.testautomation.execution.dto.TestExecutionStatus;
 public interface AutomatedExecutionManagerService {
 
 	/**
-	 * Changes the state of a set of executions to a new value.
+	 * Changes the state of a given execution to a new value.
 	 * 
-	 * @param setIdentifier
+	 * @param id
+	 *            id of the automated exec extender
 	 * @param stateChange
 	 */
 	@PreAuthorize("hasRole('ROLE_TA_API_CLIENT')")
-	void changeExecutionsStates(@NotNull AutomatedExecutionSetIdentifier setIdentifier, @NotNull TestExecutionStatus stateChange);
+	void changeExecutionState(long id, @NotNull TestExecutionStatus stateChange);
 
 }

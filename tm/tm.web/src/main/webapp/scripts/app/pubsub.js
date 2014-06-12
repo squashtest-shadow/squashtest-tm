@@ -19,28 +19,39 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * Provides the publisher / subscriber pattern 
- * 
- * Adds the publish, subscribe and unsubscribe methods to the global
+ * Provides the publisher / subscriber pattern
+ *
+ * This is a crude mechanism to throw events from the DOM which are enqueued until processed. *It is meant to remain crude*.
+ * For full blown event system, use the one from Backbone / jquery
+ *
+ * Known limitations : an event published before this module is loaded can only be consumed once
+ *
+ * This module adds the publish, subscribe and unsubscribe methods to the global
  * namespace.
- * 
- * 
+ *
  * Needs to be bootstrapped by loading the pubsub-boot.js file *before* require kicks in.
+ *
  */
 define([ "jquery" ], function($) {
 	var proxy = $({});
+	var handledEvents = [];
 
 	window.publish = function() {
 		proxy.trigger.apply(proxy, arguments);
+		if (handledEvents.indexOf(arguments[0]) < 0) {
+			// when event is triggered before subscription, we enqueue it so that it can be processed later
+			document.eventsQueue.push(arguments);
+		}
 	};
 
 	window.subscribe = function(event) {
 		proxy.on.apply(proxy, arguments);
-		
+
 		$(document.eventsQueue).each(function(index) {
 			if (this[0] === event) {
 				proxy.trigger.apply(proxy, this);
 				document.eventsQueue.splice(index, 1);
+				handledEvents.push(event);
 				return false;
 			}
 		});

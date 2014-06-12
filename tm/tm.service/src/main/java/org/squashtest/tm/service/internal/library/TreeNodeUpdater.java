@@ -36,6 +36,7 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
@@ -45,6 +46,7 @@ import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.repository.IssueDao;
+import org.squashtest.tm.service.testcase.TestCaseModificationService;
 
 /**
  * Will update a node regarding it's project settings. The updated attributes will be :
@@ -62,6 +64,9 @@ public class TreeNodeUpdater implements NodeVisitor {
 
 	@Inject
 	private PrivateCustomFieldValueService privateCustomFieldValueService;
+
+	@Inject
+	private TestCaseModificationService testcaseService;
 
 	@Override
 	public void visit(CampaignFolder campaignFolder) {
@@ -161,24 +166,45 @@ public class TreeNodeUpdater implements NodeVisitor {
 	}
 
 	/**
-	 * Will remove script of test-case if the script's automated-project is not bound to the current test-case's
-	 * project.
+	 * <p>Will remove script of test-case if the script's automated-project is not bound to the current test-case's
+	 * project.<p>
+	 * 
+	 * <p>Here a test case just copied might have been copied from a different project
+	 * that his own now. If that test case was referencing an automated script
+	 * we must create a copy of that automated script that match the configuration of
+	 * the TM project the test case was copied into.</p>
+	 * 
+	 * <p>Of course we do so iif there is a matching TA project bound to the TM project,
+	 * namely if they refer to the same TA jobs.</p>
 	 * 
 	 * @param testCase
 	 */
 	public void updateAutomationParams(TestCase testCase) {
-		if (testCase.isAutomated()) {
-			Project tcProject = testCase.getProject();
-			if (tcProject.isTestAutomationEnabled()) {
-				TestAutomationProject autoProject = testCase.getAutomatedTest().getProject();
-				if (!tcProject.getTestAutomationProjects().contains(autoProject)) {
-					testCase.removeAutomatedScript();
-				}
-			} else {
-				testCase.removeAutomatedScript();
+
+		boolean couldConvert = false;
+
+		AutomatedTest formerTATest = testCase.getAutomatedTest();
+
+		if (formerTATest != null){
+
+			TestAutomationProject newTAProject = testCase.getProject().findTestAutomationProjectByJob(formerTATest.getProject());
+
+			if (newTAProject != null){
+
+				testcaseService.bindAutomatedTest(testCase.getId(), newTAProject.getId(), formerTATest.getName());
+
+				couldConvert = true;
 			}
+
+		}
+
+
+		if (! couldConvert){
+			testCase.removeAutomatedScript();
 		}
 
 	}
+
+
 
 }

@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.helper;
 
+import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 
@@ -32,11 +33,14 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.api.export.ExportPlugin;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.IdentifiedUtil;
+import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
+import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.project.ProjectFinder;
+import org.squashtest.tm.service.testautomation.TestAutomationProjectFinderService;
 import org.squashtest.tm.web.internal.export.ExportPluginManager;
 import org.squashtest.tm.web.internal.model.jquery.FilterModel;
 
@@ -48,36 +52,52 @@ import org.squashtest.tm.web.internal.model.jquery.FilterModel;
  */
 public class WorkspaceHelper extends SimpleTagSupport{
 
-	
+
 	public static Collection<BugTracker> getVisibleBugtrackers(ServletContext context){
-		
+
 		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(context);
-		
+
 		ProjectFinder projectFinder = wac.getBean(ProjectFinder.class);
 		BugTrackerFinderService bugtrackerService = wac.getBean(BugTrackerFinderService.class);
-		
+
 		List<Project> projects = projectFinder.findAllReadable();
 		List<Long> projectsIds = IdentifiedUtil.extractIds(projects);
 		return bugtrackerService.findDistinctBugTrackersForProjects(projectsIds);
 	}
-	
+
+	public static URL getAutomatedJobURL(ServletContext context, Long executionId){
+		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(context);
+
+		ExecutionModificationService exService = wac.getBean(ExecutionModificationService.class);
+		TestAutomationProjectFinderService projFinder = wac.getBean(TestAutomationProjectFinderService.class);
+
+		Execution exec = exService.findById(executionId);
+
+		if (exec.isAutomated() && ! exec.getAutomatedExecutionExtender().isProjectDisassociated()){
+			return projFinder.findProjectURL(exec.getAutomatedExecutionExtender().getAutomatedProject());
+		}
+		else{
+			return null;
+		}
+	}
+
 	public static Collection<ExportPlugin> getExportPlugins(ServletContext context, String workspaceName){
-		
+
 		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(context);
 		WorkspaceType workspace = WorkspaceType.valueOf(workspaceName);
-		
+
 		ExportPluginManager manager = wac.getBean(ExportPluginManager.class);
 		return manager.findAllByWorkspace(workspace);
 	}
-	
-	public static FilterModel getProjectFilter(ServletContext context){		
-		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(context);		
+
+	public static FilterModel getProjectFilter(ServletContext context){
+		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(context);
 		ProjectFilterModificationService service = wac.getBean(ProjectFilterModificationService.class);
-		
+
 		ProjectFilter filter = service.findProjectFilterByUserLogin();
 		List<Project> allProjects = service.getAllProjects();
-		
+
 		return new FilterModel(filter, allProjects);
-		
+
 	}
 }

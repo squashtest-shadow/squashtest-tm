@@ -32,7 +32,7 @@ import javax.validation.constraints.NotNull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
+import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.InputType;
@@ -293,7 +293,7 @@ public class CustomFieldValueConfigurationBean {
 			Date date = null;
 
 			try {
-				date = IsoDateUtils.parseIso8601Date(value);
+				date = DateUtils.parseIso8601Date(value);
 			} catch (ParseException e) {
 				LOGGER.warn(e.getMessage(), e);
 			}

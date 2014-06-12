@@ -30,6 +30,7 @@ import org.squashtest.tm.service.internal.library.GenericNodeManagementService
 import org.squashtest.tm.service.internal.repository.ParameterDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.internal.repository.TestStepDao
+import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService;
 import org.squashtest.tm.service.internal.testcase.CustomTestCaseModificationServiceImpl
 import org.squashtest.tm.service.internal.testcase.TestCaseNodeDeletionHandler
 import org.squashtest.tm.service.testcase.ParameterModificationService;
@@ -45,7 +46,8 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	TestCaseNodeDeletionHandler deletionHandler = Mock()
 	PrivateCustomFieldValueService cufValuesService = Mock()
 	ParameterModificationService parameterModificationService = Mock()
-	
+	UnsecuredAutomatedTestManagerService taService = Mock()
+
 	def setup() {
 		CollectionAssertions.declareContainsExactlyIds()
 		CollectionAssertions.declareContainsExactly()
@@ -56,6 +58,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		service.deletionHandler = deletionHandler
 		service.customFieldValuesService = cufValuesService
 		service.parameterModificationService = parameterModificationService
+		service.taService = taService
 	}
 
 	def "should find test case and add a step"() {
@@ -64,7 +67,7 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		testCaseDao.findById(10) >> testCase
 
 		and:
-		def step = new MockActionStep(4L) 
+		def step = new MockActionStep(4L)
 
 		when:
 		service.addActionTestStep(10, step)
@@ -118,10 +121,10 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		TestCase testCase = new TestCase()
 		ActionTestStep step1 = new ActionTestStep("a","a")
 		ActionTestStep step2 = new ActionTestStep("b", "b")
-		
-		and : 
+
+		and :
 		Project p = Mock()
-		testCase.notifyAssociatedWithProject p 
+		testCase.notifyAssociatedWithProject p
 
 		and:
 		testCase.addStep step1
@@ -141,19 +144,19 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 	}
 
 
-	
-	
+
+
 	def "should remove test case link to automated script"(){
 		given: "an automated test case"
 		TestCase testCase = Mock()
 		testCaseDao.findById(11L)>> testCase
-		
+
 		when:
 		service.removeAutomation(11L)
-		
+
 		then : 1 * testCase.removeAutomatedScript()
 	}
-	
+
 	class MockTC extends TestCase{
 		Long overId;
 		MockTC(Long id){
@@ -173,9 +176,9 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		public Project getProject(){
 			Project project = new Project();
 			return project;
-		} 
+		}
 	}
-	
+
 	class MockActionStep extends ActionTestStep{
 		Long overId;
 		MockActionStep(Long id){

@@ -32,7 +32,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
+import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.DatasetModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.ParameterModel;
@@ -246,7 +246,7 @@ class ExcelExporter {
 		if (date == null) {
 			return "";
 		} else {
-			return IsoDateUtils.formatIso8601Date(date);
+			return DateUtils.formatIso8601Date(date);
 		}
 	}
 

@@ -54,6 +54,7 @@ import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.exception.DomainException;
 import org.squashtest.tm.service.customfield.CustomFieldManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.helper.JEditablePostParams;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
@@ -69,10 +70,7 @@ import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 @Controller
 @RequestMapping("/custom-fields")
 public class CustomFieldController {
-	/**
-	 * 
-	 */
-	private static final String VALUE = "value";
+
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomFieldController.class);
 
@@ -142,9 +140,9 @@ public class CustomFieldController {
 	 *            the new label
 	 * @return
 	 */
-	@RequestMapping(value = "/{customFieldId}", method = RequestMethod.POST, params = { "id=cuf-label", VALUE }, produces = "text/plain;charset=UTF-8")
+	@RequestMapping(value = "/{customFieldId}", method = RequestMethod.POST, params = { "id=cuf-label", JEditablePostParams.VALUE }, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
-	public String changeLabel(@PathVariable long customFieldId, @RequestParam(VALUE) String label) {
+	public String changeLabel(@PathVariable long customFieldId, @RequestParam(JEditablePostParams.VALUE) String label) {
 		customFieldManager.changeLabel(customFieldId, label);
 		return HtmlUtils.htmlEscape(label);
 	}
@@ -158,9 +156,9 @@ public class CustomFieldController {
 	 *            the new code
 	 * @return
 	 */
-	@RequestMapping(value = "/{customFieldId}", method = RequestMethod.POST, params = { "id=cuf-code", VALUE })
+	@RequestMapping(value = "/{customFieldId}", method = RequestMethod.POST, params = { "id=cuf-code", JEditablePostParams.VALUE })
 	@ResponseBody
-	public String changeCode(@PathVariable long customFieldId, @RequestParam(VALUE) String code) {
+	public String changeCode(@PathVariable long customFieldId, @RequestParam(JEditablePostParams.VALUE) String code) {
 		customFieldManager.changeCode(customFieldId, code);
 		return code;
 	}
@@ -174,9 +172,9 @@ public class CustomFieldController {
 	 *            the new name
 	 * @return
 	 */
-	@RequestMapping(value = "/{customFieldId}/name", method = RequestMethod.POST, params = { VALUE })
+	@RequestMapping(value = "/{customFieldId}/name", method = RequestMethod.POST, params = { JEditablePostParams.VALUE })
 	@ResponseBody
-	public Object changeName(@PathVariable long customFieldId, @RequestParam(VALUE) String name) {
+	public Object changeName(@PathVariable long customFieldId, @RequestParam(JEditablePostParams.VALUE) String name) {
 		customFieldManager.changeName(customFieldId, name);
 		return new RenameModel(name);
 	}
@@ -190,9 +188,9 @@ public class CustomFieldController {
 	 *            : true if the custom field is optional
 	 * @return
 	 */
-	@RequestMapping(value = "/{customFieldId}/optional", method = RequestMethod.POST, params = { VALUE })
+	@RequestMapping(value = "/{customFieldId}/optional", method = RequestMethod.POST, params = { JEditablePostParams.VALUE })
 	@ResponseBody
-	public boolean changeOptional(@PathVariable long customFieldId, @RequestParam(VALUE) Boolean optional) {
+	public boolean changeOptional(@PathVariable long customFieldId, @RequestParam(JEditablePostParams.VALUE) Boolean optional) {
 		customFieldManager.changeOptional(customFieldId, optional);
 		return optional;
 	}
@@ -209,9 +207,9 @@ public class CustomFieldController {
 	 * 
 	 * @return defaultValue
 	 */
-	@RequestMapping(value = "/{customFieldId}", method = RequestMethod.POST, params = { "id=cuf-default-value", VALUE })
+	@RequestMapping(value = "/{customFieldId}", method = RequestMethod.POST, params = { "id=cuf-default-value", JEditablePostParams.VALUE })
 	@ResponseBody
-	public String changeDefaultValueJedit(@PathVariable long customFieldId, @RequestParam(VALUE) String defaultValue,
+	public String changeDefaultValueJedit(@PathVariable long customFieldId, @RequestParam(JEditablePostParams.VALUE) String defaultValue,
 			Locale locale) {
 		customFieldManager.changeDefaultValue(customFieldId, defaultValue);
 		CustomField customField = customFieldManager.findById(customFieldId);
@@ -230,10 +228,10 @@ public class CustomFieldController {
 	 * @param defaultValue
 	 *            : the new default-value for the custom-field
 	 */
-	@RequestMapping(value = "/{customFieldId}/defaultValue", method = RequestMethod.POST, params = { VALUE })
+	@RequestMapping(value = "/{customFieldId}/defaultValue", method = RequestMethod.POST, params = { JEditablePostParams.VALUE })
 	@ResponseBody
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
-	public void changeDefaultValue(@PathVariable long customFieldId, @RequestParam(VALUE) String defaultValue) {
+	public void changeDefaultValue(@PathVariable long customFieldId, @RequestParam(JEditablePostParams.VALUE) String defaultValue) {
 		customFieldManager.changeDefaultValue(customFieldId, defaultValue);
 
 	}
@@ -249,11 +247,11 @@ public class CustomFieldController {
 	 *            : the new label for the concerned custom-field's option
 	 * @return
 	 */
-	@RequestMapping(value = "/{customFieldId}/options/{optionLabel}/label", method = RequestMethod.POST, params = { VALUE })
+	@RequestMapping(value = "/{customFieldId}/options/{optionLabel}/label", method = RequestMethod.POST, params = { JEditablePostParams.VALUE })
 	@ResponseBody
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void changeOptionLabel(@PathVariable long customFieldId, @PathVariable String optionLabel,
-			@RequestParam(VALUE) String newLabel) {
+			@RequestParam(JEditablePostParams.VALUE) String newLabel) {
 		try {
 			customFieldManager.changeOptionLabel(customFieldId, optionLabel, newLabel);
 		} catch (DomainException e) {
@@ -273,11 +271,11 @@ public class CustomFieldController {
 	 *            : the new code for the concerned custom-field's option
 	 * @return
 	 */
-	@RequestMapping(value = "/{customFieldId}/options/{optionLabel}/code", method = RequestMethod.POST, params = { VALUE })
+	@RequestMapping(value = "/{customFieldId}/options/{optionLabel}/code", method = RequestMethod.POST, params = { JEditablePostParams.VALUE })
 	@ResponseBody
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void changeOptionCode(@PathVariable long customFieldId, @PathVariable String optionLabel,
-			@RequestParam(VALUE) String newCode) {
+			@RequestParam(JEditablePostParams.VALUE) String newCode) {
 		try {
 			customFieldManager.changeOptionCode(customFieldId, optionLabel, newCode);
 		} catch (DomainException e) {

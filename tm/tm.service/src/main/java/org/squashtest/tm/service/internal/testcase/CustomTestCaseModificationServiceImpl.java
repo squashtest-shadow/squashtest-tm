@@ -31,6 +31,9 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -43,8 +46,10 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
@@ -57,6 +62,7 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.exception.DuplicateNameException;
+import org.squashtest.tm.exception.UnallowedTestAssociationException;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.library.NodeManagementService;
 import org.squashtest.tm.service.internal.repository.ActionTestStepDao;
@@ -64,7 +70,7 @@ import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
-import org.squashtest.tm.service.internal.testautomation.InsecureTestAutomationManagementService;
+import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.tm.service.testcase.CustomTestCaseModificationService;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
@@ -107,7 +113,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	private TestCaseNodeDeletionHandler deletionHandler;
 
 	@Inject
-	private InsecureTestAutomationManagementService taService;
+	private UnsecuredAutomatedTestManagerService taService;
 
 	@Inject
 	protected PrivateCustomFieldValueService customFieldValuesService;
@@ -370,24 +376,49 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public AutomatedTest bindAutomatedTest(Long testCaseId, Long taProjectId, String testName) {
 
+
 		TestAutomationProject project = taService.findProjectById(taProjectId);
 
 		AutomatedTest newTest = new AutomatedTest(testName, project);
 
-		AutomatedTest persistedTest = taService.persistOrAttach(newTest);
+		AutomatedTest persisted = taService.persistOrAttach(newTest);
 
 		TestCase testCase = testCaseDao.findById(testCaseId);
 
-		testCase.setAutomatedTest(persistedTest);
+		AutomatedTest previousTest = testCase.getAutomatedTest();
 
-		return persistedTest;
+		testCase.setAutomatedTest(persisted);
+
+		taService.removeIfUnused(previousTest);
+
+		return newTest;
 	}
+
+	@Override
+	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
+	public AutomatedTest bindAutomatedTest(Long testCaseId, String testPath) {
+
+		if (StringUtils.isBlank(testPath)){
+			removeAutomation(testCaseId);
+			return null;
+		}
+		else{
+
+			Couple<Long, String> projectAndTestname = extractAutomatedProjectAndTestName(testCaseId, testPath);
+
+			// once it's okay we commit the test association
+			return bindAutomatedTest(testCaseId, projectAndTestname.getA1(), projectAndTestname.getA2());
+		}
+
+	}
+
 
 	@Override
 	public void removeAutomation(long testCaseId) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
+		AutomatedTest previousTest = testCase.getAutomatedTest();
 		testCase.removeAutomatedScript();
-
+		taService.removeIfUnused(previousTest);
 	}
 
 	/**
@@ -466,6 +497,48 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			callingLayer = testCaseDao.findAllTestCasesIdsCallingTestCases(callingLayer);
 		}
 		return callingTCToUpdate;
+	}
+
+
+
+	// ******************** private stuffs *********************
+
+
+
+	// first element : project ID, second element : test name
+	private Couple<Long, String> extractAutomatedProjectAndTestName(Long testCaseId, String testPath){
+
+		// first, let's find which TA project it is. The first slash must be removed because it doesn't count.
+		String path = testPath.replaceFirst("^/", "");
+		int idxSlash = path.indexOf('/');
+
+		String projectLabel = path.substring(0,idxSlash);
+		String testName = path.substring(idxSlash+1);
+
+		TestCase tc = testCaseDao.findById(testCaseId);
+		GenericProject tmproject = tc.getProject();
+
+		TestAutomationProject tap = (TestAutomationProject) CollectionUtils.find(tmproject.getTestAutomationProjects(), new HasSuchLabel(projectLabel));
+
+		if (tap == null){
+			throw new UnallowedTestAssociationException();
+		}
+
+		return new Couple<Long, String>(tap.getId(), testName);
+	}
+
+	private static final class HasSuchLabel implements Predicate{
+		private String label;
+
+		HasSuchLabel(String label) {
+			this.label = label;
+		}
+
+		@Override
+		public boolean evaluate(Object object) {
+			TestAutomationProject tap = (TestAutomationProject) object;
+			return (tap.getLabel().equals(label));
+		}
 	}
 
 

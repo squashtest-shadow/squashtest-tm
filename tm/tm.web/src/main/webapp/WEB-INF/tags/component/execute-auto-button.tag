@@ -23,65 +23,11 @@
 <%@ tag
 	description="general information panel for an auditable entity. Client can add more info in the body of this tag"
 	pageEncoding="utf-8"%>
-<%@ attribute name="testPlanTableId" required="true"%>
 <%@ attribute name="url" required="true"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
-
-<!-- *************************INITIALISATION*********************** -->
-<script type="text/javascript">
-		
-		
-	function executeAll() {
-		var ids = [];
-		executeAuto(ids);
-
-	}
-
-	function executeSelection() {
-		var ids = $('#${testPlanTableId}').squashTable().getSelectedIds();
-		if (ids.length == 0) {
-			$.squash.openMessage("<f:message key='popup.title.error' />",
-							"<f:message	key='message.EmptyTableSelection'/>");
-		} else {
-			executeAuto(ids);
-		}
-	}
-	function executeAuto(ids) {
-		$.ajax({
-			type : 'POST',
-			url : "${url}",
-			dataType : "json",
-			data : {
-				"id" : "execute-auto",
-				"testPlanItemsIds" : ids
-			}
-		}).done(function(suiteView) {
-			if(suiteView.executions.length == 0){
-				$.squash
-				.openMessage("<f:message key='popup.title.Info' />",
-						"<f:message	key='dialog.execution.auto.overview.error.none'/>");
-			}else{
-				/* 
-				I'm cheating here, I should write 
-				
-				require(["test-automation/automated-suite-overview"], function(auto){
-					auto.get().watch(suiteView);	
-				})
-				*/
-				squashtm.context.autosuiteOverview.watch(suiteView);
-			}
-		});
-	}
-	
-	
-</script>
-
-<!-- *************************/INITIALISATION*********************** -->
-<!-- *************************BUTTON*********************** -->
-<div id="iteration-suite-auto-execution-button" style="display: inline-block;">
-
-	 <f:message var="autoExecLabel" key="iteration.suite.execution.auto.label"/>
+<div id="auto-exec-btns-panel" class="btn-group" data-run-url="${ url }">
+	<f:message var="autoExecLabel" key="iteration.suite.execution.auto.label" />
 	<input id="execute-auto-button" class="run-menu sq-btn" type="button" value="${autoExecLabel}" />
 	<ul class="not-displayed">
 		<li>
@@ -96,19 +42,7 @@
 		</li>
 	</ul>
 	
-
-	<script>
-	
-		$(function() {
-			require(['jquery', 'test-automation/automated-suite-overview',
-			         'jquery.squash.buttonmenu'], function($, autosuitedialog){
-				
-				$("#execute-auto-button").buttonmenu();
-
-				$("#execute-auto-execute-all").on('click', executeAll);
-				$("#execute-auto-execute-selection").on('click', executeSelection);
-			});			
-		});
-	</script>
 </div>
-<!-- *************************/BUTTON*********************** -->
+<script>
+publish("reload.auto-exec-btns-panel")
+</script>

@@ -182,7 +182,7 @@
 			var dialog = $('<div></div>');
 			dialog.attr('title', title);
 
-			dialog.append(htmlMessage);
+			dialog.append('<div class="centered" style="margin-top:15px;">'+htmlMessage+'</div>');
 			$(document).append(dialog);
 
 			var discardDialog = function() {

@@ -49,7 +49,7 @@ import org.hibernate.annotations.NamedQuery;
 import org.hibernate.validator.constraints.NotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
+import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
@@ -231,7 +231,7 @@ public class DenormalizedFieldValue {
 		Date toReturn = null;
 		if (this.inputType == InputType.DATE_PICKER) {
 			try {
-				toReturn = IsoDateUtils.parseIso8601Date(value);
+				toReturn = DateUtils.parseIso8601Date(value);
 			} catch (ParseException e) {
 				LOGGER.warn(e.getMessage(), e);
 			}

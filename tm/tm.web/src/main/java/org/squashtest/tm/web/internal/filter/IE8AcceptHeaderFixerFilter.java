@@ -34,6 +34,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
+import org.apache.commons.lang.StringUtils;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.http.RequestHeaders;
 
@@ -41,11 +42,10 @@ import org.squashtest.tm.web.internal.http.RequestHeaders;
  * When sending a request, IE8 sends a shitload of accept headers but no "text/html". This filter adds an
  * "Accept=text/html" on non-json, IE8 looking requests.
  * 
- * Typical IE8 accept header : 
- * <code>Accept: 
- * 		image/jpeg, application/x-ms-application, 
- * 		image/gif, application/xaml+xml, 
- * 		image/pjpeg, application/x-ms-xbap, 
+ * Typical IE8 accept header : <code>Accept:
+ * 		image/jpeg, application/x-ms-application,
+ * 		image/gif, application/xaml+xml,
+ * 		image/pjpeg, application/x-ms-xbap,
  * 		application/x-shockwave-flash, application/msword, * / *
  * </code>
  * 
@@ -95,7 +95,7 @@ public class IE8AcceptHeaderFixerFilter implements Filter {
 			return acceptHeader;
 		}
 
-		@SuppressWarnings({ "rawtypes", "unchecked" })
+		@SuppressWarnings({ "rawtypes" })
 		@Override
 		public Enumeration getHeaders(String name) {
 			if (ACCEPT.equals(name)) {
@@ -147,7 +147,7 @@ public class IE8AcceptHeaderFixerFilter implements Filter {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletRequest chainedRequest;
 
-		String accept = httpRequest.getHeader(ACCEPT);
+		String accept = acceptHeader(httpRequest);
 
 		if (accept.contains(TEXT_HTML) || acceptsJson(accept) || notFromIE8(httpRequest)) {
 			chainedRequest = (HttpServletRequest) request;
@@ -158,9 +158,19 @@ public class IE8AcceptHeaderFixerFilter implements Filter {
 		chain.doFilter(chainedRequest, response);
 	}
 
+	/**
+	 * Nullsafe reads the accept header of http request.
+	 * 
+	 * @param httpRequest
+	 * @return the accept header from the request or an empty string when no header.
+	 */
+	private String acceptHeader(HttpServletRequest httpRequest) {
+		return StringUtils.defaultString(httpRequest.getHeader(ACCEPT));
+	}
+
 	private boolean notFromIE8(HttpServletRequest request) {
 		// notIE8Accept is not 100% reliable, yet we try not to use the regexp-based notIE8UserAgent
-		return notIE8Accept(request.getHeader(ACCEPT)) && notIE8UserAgent(request.getHeader(RequestHeaders.USER_AGENT));
+		return notIE8Accept(acceptHeader(request)) && notIE8UserAgent(request.getHeader(RequestHeaders.USER_AGENT));
 	}
 
 	/**

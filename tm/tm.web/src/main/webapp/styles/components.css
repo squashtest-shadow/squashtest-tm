@@ -206,6 +206,12 @@ table.datepicker-table td.datepicker-table-col {
 	background-repeat : no-repeat;
 }
 
+.ui-button .ui-icon.exec-status-not_found,
+.exec-status-not_found {
+	background-image: url("../images/Icon_Yellow.png");  /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
 .ui-button .ui-icon.exec-status-warning,
 .exec-status-warning{
 	background-image: url("../images/Icon_Green.png");  /** sprite-ref: sprites-icons; */
@@ -524,86 +530,33 @@ div.ta-main-div .ta-block{
 	margin-top	: 0.8em;
 	margin-bottom : 0.8em;	
 	padding-top	:	0.2em;
-	padding-bottom : 0.2 em;
+	padding-bottom : 0.2em;
 }
-
-div.ta-main-div .ta-block-item{
-	margin-top	:	0.1em;
-	margin-bottom : 0.1em;
-	margin-right:	0.1em;
-}
-
-div.ta-main-div .ta-server-block{
-	display : table;
-}
-
-div.ta-main-div .ta-server-block .ta-block-item {
-	display : table-row;
-}
-
-div.ta-main-div .ta-server-block .ta-block-item-unit{
-	display : table-cell;
-	padding	:	0.2em;	
-}
-
-div.ta-main-div  .ta-maincheck-div{
-	padding-left : 2em;
-}
-
-div.ta-main-div .ta-maincheck-div input{
-	vertical-align : middle;
-}	
-
-
-div.ta-main-div .ta-manager-disabled{
-	background-color: lightgray;
-	opacity: 0.4;	
-	filter: alpha(opacity=40);		/* for IE8 */
-}
-
 
 /**
 	popup style
 
 **/
 
-div.ta-projectsadd-maindiv{
+div.ta-projects-bind-maindiv{
 	padding-top : 1em;
 }
 
-div.ta-projectsadd-listdiv {
-	overflow-y : auto;
-	max-height : 360px;
-	margin-top : 1em;
+
+.ta-project-tm-label.edit-state label {
+    color: #000000;
+    font-style: normal;
+    text-decoration: none;
 }
 
-div.ta-projectsadd-listdiv .listdiv-item{
-	padding-top : 0.75em;
-	padding-bottom : 0.75em;
-	vertical-align : middle;
+table.ta-project-bind-listdiv {
+    border-collapse: collapse;
 }
-
-div.ta-projectsadd-listdiv .listdiv-item.odd{
-	background-color: #E0E0E0;
+table.ta-project-bind-listdiv tr.listdiv-item.odd {
+    background-color: #E0E0E0;
 }
-
-
-div.ta-projectsadd-listdiv .listdiv-item.even{
-	background-color: silver;
-}
-
-div.ta-projectsadd-listdiv .listdiv-item input{
-	margin-left : 1em;
-	margin-right : 1em;
-}
-
-div.ta-projectsadd-listdiv .listdiv-item span{
-	cursor : pointer;	
-}
-
-
-div.ta-projectsadd-listdiv .listdiv-item.selected{
-	font-weight : bold;
+table.ta-project-bind-listdiv tr.listdiv-item.even {
+    background-color: #C0C0C0;
 }
 
 

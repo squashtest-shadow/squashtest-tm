@@ -117,7 +117,7 @@
 <%-- state manager code of the popup --%>
 <script type="text/javascript">
 require( ["common"], function(){
-		require(["jquery","bugtracker"], function($){
+		require(["jquery","bugtracker/bugtracker-panel"], function($){
 	$(function(){
 			 
 			var conf = {					

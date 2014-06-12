@@ -129,7 +129,7 @@ public class AdvancedSearchController {
 
 	@Inject
 	private TestCaseAdvancedSearchService testCaseAdvancedSearchService;
-	
+
 	@Inject
 	private RequirementVersionAdvancedSearchService requirementVersionAdvancedSearchService;
 
@@ -166,34 +166,34 @@ public class AdvancedSearchController {
 	// These are used by Lucene - Thus the columns are mapped to index
 	// properties rather than class properties
 	private DatatableMapper<String> testCaseSearchResultMapper = new NameBasedMapper(11)
-			.mapAttribute("project-name", "name", Project.class).mapAttribute("test-case-id", "id", TestCase.class)
-			.mapAttribute("test-case-ref", "reference", TestCase.class)
-			.mapAttribute("test-case-label", "labelUpperCased", TestCase.class)
-			.mapAttribute("test-case-weight", "importance", TestCase.class)
-			.mapAttribute("test-case-nature", "nature", TestCase.class)
-			.mapAttribute("test-case-type", "type", TestCase.class)
-			.mapAttribute("test-case-status", "status", TestCase.class)
-			.mapAttribute("test-case-requirement-nb", "requirements", TestCase.class)
-			.mapAttribute("test-case-teststep-nb", "steps", TestCase.class)
-			.mapAttribute("test-case-iteration-nb", "iterations", TestCase.class)
-			.mapAttribute("test-case-attachment-nb", "attachments", TestCase.class)
-			.mapAttribute("test-case-created-by", "createdBy", TestCase.class)
-			.mapAttribute("test-case-modified-by", "lastModifiedBy", TestCase.class);
+	.mapAttribute("project-name", "name", Project.class).mapAttribute("test-case-id", "id", TestCase.class)
+	.mapAttribute("test-case-ref", "reference", TestCase.class)
+	.mapAttribute("test-case-label", "labelUpperCased", TestCase.class)
+	.mapAttribute("test-case-weight", "importance", TestCase.class)
+	.mapAttribute("test-case-nature", "nature", TestCase.class)
+	.mapAttribute("test-case-type", "type", TestCase.class)
+	.mapAttribute("test-case-status", "status", TestCase.class)
+	.mapAttribute("test-case-requirement-nb", "requirements", TestCase.class)
+	.mapAttribute("test-case-teststep-nb", "steps", TestCase.class)
+	.mapAttribute("test-case-iteration-nb", "iterations", TestCase.class)
+	.mapAttribute("test-case-attachment-nb", "attachments", TestCase.class)
+	.mapAttribute("test-case-created-by", "createdBy", TestCase.class)
+	.mapAttribute("test-case-modified-by", "lastModifiedBy", TestCase.class);
 
 	private DatatableMapper<String> requirementSearchResultMapper = new NameBasedMapper(11)
-			.mapAttribute("project-name", "name", Project.class)
-			.mapAttribute("requirement-id", "requirement.id", RequirementVersion.class)
-			.mapAttribute("requirement-reference", "reference", RequirementVersion.class)
-			.mapAttribute("requirement-label", "labelUpperCased", RequirementVersion.class)
-			.mapAttribute("requirement-criticality", "criticality", RequirementVersion.class)
-			.mapAttribute("requirement-category", "category", RequirementVersion.class)
-			.mapAttribute("requirement-status", "status", RequirementVersion.class)
-			.mapAttribute("requirement-version", "versionNumber", RequirementVersion.class)
-			.mapAttribute("requirement-version-nb", "versions", Requirement.class)
-			.mapAttribute("requirement-testcase-nb", "testcases", RequirementVersion.class)
-			.mapAttribute("requirement-attachment-nb", "attachments", RequirementVersion.class)
-			.mapAttribute("requirement-created-by", "createdBy", RequirementVersion.class)
-			.mapAttribute("requirement-modified-by", "lastModifiedBy", RequirementVersion.class);
+	.mapAttribute("project-name", "name", Project.class)
+	.mapAttribute("requirement-id", "requirement.id", RequirementVersion.class)
+	.mapAttribute("requirement-reference", "reference", RequirementVersion.class)
+	.mapAttribute("requirement-label", "labelUpperCased", RequirementVersion.class)
+	.mapAttribute("requirement-criticality", "criticality", RequirementVersion.class)
+	.mapAttribute("requirement-category", "category", RequirementVersion.class)
+	.mapAttribute("requirement-status", "status", RequirementVersion.class)
+	.mapAttribute("requirement-version", "versionNumber", RequirementVersion.class)
+	.mapAttribute("requirement-version-nb", "versions", Requirement.class)
+	.mapAttribute("requirement-testcase-nb", "testcases", RequirementVersion.class)
+	.mapAttribute("requirement-attachment-nb", "attachments", RequirementVersion.class)
+	.mapAttribute("requirement-created-by", "createdBy", RequirementVersion.class)
+	.mapAttribute("requirement-modified-by", "lastModifiedBy", RequirementVersion.class);
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showSearchPage(Model model, @RequestParam String searchDomain,
@@ -286,7 +286,7 @@ public class AdvancedSearchController {
 	public DataTableModel getTestCaseThroughRequirementTableModel(final DataTableDrawParameters params,
 			final Locale locale, @RequestParam(value = "model") String model,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id)
-			throws JsonParseException, JsonMappingException, IOException {
+					throws JsonParseException, JsonMappingException, IOException {
 
 		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);
 
@@ -313,7 +313,7 @@ public class AdvancedSearchController {
 	public DataTableModel getTestCaseTableModel(final DataTableDrawParameters params, final Locale locale,
 			@RequestParam(value = "model") String model,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id)
-			throws JsonParseException, JsonMappingException, IOException {
+					throws JsonParseException, JsonMappingException, IOException {
 
 		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);
 
@@ -340,7 +340,7 @@ public class AdvancedSearchController {
 	public DataTableModel getRequirementTableModel(final DataTableDrawParameters params, final Locale locale,
 			@RequestParam(value = "model") String model,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id)
-			throws JsonParseException, JsonMappingException, IOException {
+					throws JsonParseException, JsonMappingException, IOException {
 
 		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);
 
@@ -384,7 +384,7 @@ public class AdvancedSearchController {
 			List<TestCase> testCases = verifyingTestCaseManagerService.findAllByRequirementVersion(id);
 			List<Long> tcIds = IdentifiedUtil.extractIds(testCases);
 			ids.addAll(tcIds);
-			
+
 		} else if ("campaign".equals(associateResultWithType)) {
 			List<Long> referencedTestCasesIds = this.campaignTestPlanManagerService.findPlannedTestCasesIds(id);
 			ids.addAll(referencedTestCasesIds);
@@ -482,7 +482,7 @@ public class AdvancedSearchController {
 	}
 
 	private static final class RequirementSearchResultDataTableModelHelper extends
-			DataTableModelBuilder<RequirementVersion> {
+	DataTableModelBuilder<RequirementVersion> {
 
 		private boolean isInAssociationContext;
 		private Set<Long> associatedRequirementIds;
@@ -630,12 +630,7 @@ public class AdvancedSearchController {
 		}
 	}
 
-	private static String formatUsername(String username) {
-		if (username == null || "".equals(username.trim())) {
-			return "-";
-		}
-		return username;
-	}
+
 
 	public SearchInputPanelModel getCustomFielModel(Locale locale, BindableEntity bindableEntity) {
 		List<CustomField> customFields = testCaseAdvancedSearchService
@@ -703,7 +698,7 @@ public class AdvancedSearchController {
 	private SearchInputFieldModel convertToSearchInputFieldModel(SingleSelectField selectField, Locale locale) {
 		List<SearchInputPossibleValueModel> possibleValues = new ArrayList<SearchInputPossibleValueModel>();
 		possibleValues
-				.add(new SearchInputPossibleValueModel(messageSource.internationalize("label.Empty", locale), ""));
+		.add(new SearchInputPossibleValueModel(messageSource.internationalize("label.Empty", locale), ""));
 		for (CustomFieldOption option : selectField.getOptions()) {
 			possibleValues.add(new SearchInputPossibleValueModel(option.getLabel(), option.getLabel()));
 		}

@@ -18,17 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ './test-plan-panel/main', './events/ctxt-evt-handler' ], function(testPlanPanel, evtHandler) {
+define([ './test-plan-panel/main' ], function(testPlanPanel) {
 
 	return {
-		
+
 		initTestPlanPanel : function(conf){
 			testPlanPanel.init(conf);
-		},
-		
-		initEvents : function(conf){
-			evtHandler.init(conf);
 		}
 	};
-	
+
 });

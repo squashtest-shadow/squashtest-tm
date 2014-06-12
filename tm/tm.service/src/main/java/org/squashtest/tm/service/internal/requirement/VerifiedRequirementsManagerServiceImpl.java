@@ -42,6 +42,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.domain.library.WhichNodeVisitor;
+import org.squashtest.tm.domain.library.WhichNodeVisitor.NodeType;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -55,6 +57,7 @@ import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableExce
 import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
+import org.squashtest.tm.service.internal.repository.RequirementDeletionDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
@@ -95,6 +98,7 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	@Inject
 	private IndexationService indexationService;
 
+
 	@SuppressWarnings("rawtypes")
 	@Inject
 	@Qualifier("squashtest.tm.repository.RequirementLibraryNodeDao")
@@ -128,13 +132,17 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	public void removeVerifiedRequirementVersionsFromTestCase(List<Long> requirementVersionsIds, long testCaseId) {
 
 		if (!requirementVersionsIds.isEmpty()) {
+
 			List<RequirementVersionCoverage> requirementVersionCoverages = requirementVersionCoverageDao
 					.byTestCaseAndRequirementVersions(requirementVersionsIds, testCaseId);
+
 			for (RequirementVersionCoverage coverage : requirementVersionCoverages) {
 				requirementVersionCoverageDao.delete(coverage);
 			}
-				indexationService.reindexTestCase(testCaseId);
-				indexationService.reindexRequirementVersionsByIds(requirementVersionsIds);
+
+			indexationService.reindexTestCase(testCaseId);
+			indexationService.reindexRequirementVersionsByIds(requirementVersionsIds);
+
 			testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromTestCase(requirementVersionsIds,
 					testCaseId);
 		}
@@ -145,7 +153,9 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 	public void removeVerifiedRequirementVersionFromTestCase(long requirementVersionId, long testCaseId) {
 		RequirementVersionCoverage coverage = requirementVersionCoverageDao.byRequirementVersionAndTestCase(
 				requirementVersionId, testCaseId);
+
 		requirementVersionCoverageDao.delete(coverage);
+
 		indexationService.reindexTestCase(testCaseId);
 		indexationService.reindexRequirementVersion(requirementVersionId);
 		testCaseImportanceManagerService.changeImportanceIfRelationsRemovedFromTestCase(
@@ -304,8 +314,8 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 			RequirementVersionCoverage newCoverage = new RequirementVersionCoverage(requirementVersion, testCase);
 			newCoverage.addAllVerifyingSteps(Arrays.asList(step));
 			requirementVersionCoverageDao.persist(newCoverage);
-						indexationService.reindexTestCase(testCase.getId());
-						indexationService.reindexRequirementVersion(requirementVersion.getId());
+			indexationService.reindexTestCase(testCase.getId());
+			indexationService.reindexRequirementVersion(requirementVersion.getId());
 			return true;
 		} else {
 			coverage.addAllVerifyingSteps(Arrays.asList(step));
@@ -348,7 +358,7 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 		if (!nodes.isEmpty()) {
 			List<Requirement> requirements = new RequirementNodeWalker().walk(nodes);
 			if (!requirements.isEmpty()) {
-					return extractVersions(requirements);
+				return extractVersions(requirements);
 			}
 		}
 		return Collections.emptyList();
@@ -399,8 +409,8 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 
 		return buildVerifiedRequirementList(mainTestCase, pagedVersionVerifiedByCalles);
 	}
-	
-	
+
+
 	/**
 	 * @see org.squashtest.tm.service.internal.requirement.VerifiedRequirementsManagerService#findisReqCoveredOfCallingTCWhenisReqCoveredChanged(long,
 	 *      List)
@@ -422,10 +432,10 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 				result.put(id, value);
 			}
 		}
-		
+
 		return result;
 	}
-	
+
 	/**
 	 * @see org.squashtest.tm.service.internal.requirement.VerifiedRequirementsManagerService#testCaseHasUndirectRequirementCoverage(long)
 	 */
@@ -438,7 +448,7 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 					return true;
 				}
 			}
-		}		
+		}
 		return false;
 	}
 	/**
@@ -472,11 +482,20 @@ public class VerifiedRequirementsManagerServiceImpl implements VerifiedRequireme
 
 	@Override
 	public void removeVerifiedRequirementVersionsFromTestStep(List<Long> requirementVersionsIds, long testStepId) {
-		List<RequirementVersionCoverage> coverages = requirementVersionCoverageDao.byRequirementVersionsAndTestStep(
+		/*List<RequirementVersionCoverage> coverages = requirementVersionCoverageDao.byRequirementVersionsAndTestStep(
 				requirementVersionsIds, testStepId);
 		for (RequirementVersionCoverage coverage : coverages) {
 			coverage.removeVerifyingStep(testStepId);
+		}*/
+		List<RequirementVersionCoverage> coverages = requirementVersionCoverageDao.byRequirementVersionsAndTestStep(
+				requirementVersionsIds, testStepId);
+
+		// if cast exception well, the input were wrong and the thread was bound to grind to halt.
+		ActionTestStep ts = (ActionTestStep)testStepDao.findById(testStepId);
+		for (RequirementVersionCoverage cov : coverages){
+			ts.removeRequirementVersionCoverage(cov);
 		}
+
 	}
 
 }

@@ -20,14 +20,19 @@
  */
 var CKEDITOR_BASEPATH = "/${bundle.contextPath}/scripts/ckeditor/";
 
+if (window.console === undefined) {
+	window.console = {};
+}
+if (window.console.log === undefined) {
+	window.console.log = function() {/*NOOP*/};
+}
+
 requirejs.config({
 			packages : [
 				"execution-processing",
 				"contextual-content-handlers",
-				"bugtracker",
 				"file-upload",
 				"squashtable",
-				"issue-tables",
 				"tree",
 				"search",
 				//cufs
@@ -35,14 +40,11 @@ requirejs.config({
 				"custom-field-binding",
 				"custom-field-values",
 				//entities management
-				"teams-manager",
 				"projects-manager",
-				"project",
-				"users-manager",
 				"test-case-management",
 				"test-case-folder-management",
 				"test-case-library-management",
-				"iteration-management",	
+				"iteration-management",
 				"test-suite-management",
 				"campaign-management",
 				//workspaces
@@ -51,8 +53,8 @@ requirejs.config({
 				"camp-workspace"
 			],
 			/*
-			 * rules for paths naming: 
-			 * * third party lib: unversionned lib name 
+			 * rules for paths naming:
+			 * * third party lib: unversionned lib name
 			 * * non AMD squash lib: replace "squashtm" by "squash" in js file name and remove any unrequired "ext" suffix.
 			 */
 			paths : {
@@ -118,6 +120,7 @@ requirejs.config({
 				"jquery.squash.confirmdialog" : "squashtest/jquery.squash.confirmdialog",
 				"jquery.squash.oneshotdialog" : "squashtest/jquery.squash.oneshotdialog",
 				"jquery.squash.squashbutton" : "squashtest/jquery.squash.squashbutton",
+				"jquery.squash.jedpassword" : "squashtest/jquery.squash.jedpassword",
 				"jquery.squash.jeditable" : "squashtest/jquery.squash.jeditable.ext",
 				"squash.session-pinger" : "squashtest/jquery.squash.session-pinger",
 				"jquery.squash.tagit" : "squashtest/jquery.squash.tagit",
@@ -194,11 +197,11 @@ requirejs.config({
 					exports : "squashtm.popup"
 				},
 				"jquery.squash.datepicker" : {
-					deps : [ "jquery", "jqueryui" ], 
+					deps : [ "jquery", "jqueryui" ],
 					exports : "SquashDatePicker" // this is a constructor
-				}, 
+				},
 				"jquery.squash.datepicker-auto" : {
-					deps : [ "jquery", "jqueryui" ], 
+					deps : [ "jquery", "jqueryui" ],
 					exports : "DatePickerAuto" // this is a constructor
 				},
 				"jquery.squash.togglepanel" : {
@@ -261,9 +264,9 @@ requirejs.config({
 						$.jqplot.config.enablePlugins = true;
 						return $;
 					}
-				}, 
+				},
 				"squash.KeyEventListener" : {
-					deps : [ "jquery" ], 
+					deps : [ "jquery" ],
 					exports : "KeyEventListener" // this is a constructor
 				}
 			}

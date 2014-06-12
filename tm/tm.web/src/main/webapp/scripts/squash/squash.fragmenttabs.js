@@ -77,10 +77,14 @@ define(["jquery", "jqueryui", "jquery.cookie"], function($){
 			};
 			calculateTopPositionsOfTabs();
 			
-			var cookieName = arguments[0].cookie;
+			var cookieName;
+			if (arguments.length > 0){
+				cookieName = arguments[0].cookie;
+			}
 
 				
 			var args = {
+					cache : true,
 					show : calculateTopTableWrap,
 					active: 0
 				};
@@ -97,21 +101,6 @@ define(["jquery", "jqueryui", "jquery.cookie"], function($){
 			}
 
 			$('.fragment-tabs').tabs(args);
-		},
-		confHelper : {
-			fnCacheRequests : function(event, ui) {
-
-				var contentCache = $(this).data('content-cache') || [];
-				var targetUrl = ui.ajaxSettings.url;
-
-				if ($.inArray(targetUrl, contentCache) !== -1) {
-					event.preventDefault();
-					return false;
-				} else {
-					contentCache.push(targetUrl);
-					$(this).data('content-cache', contentCache);
-				}
-			}
 		}
 	};
 });

@@ -20,7 +20,6 @@
  */
 define([ "./NameAndReferenceHandler", "./SimpleNameHandler" ], function(
 		NameRefHandler, SimpleHandler) {
-
 	return {
 		getNameAndReferenceHandler : function() {
 			return new NameRefHandler();

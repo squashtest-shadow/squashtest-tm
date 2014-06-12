@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.security;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.security.access.AccessDeniedException;
@@ -74,6 +75,15 @@ public final class PermissionsUtils {
 			if (!permissionService.hasPermissionOnObject(permission, entityId, entityClassName)) {
 				throw new AccessDeniedException("Access is denied");
 
+			}
+		}
+	}
+
+	public static void checkPermission(PermissionEvaluationService permissionService, Collection<?> toCheck, String permission){
+
+		for (Object o : toCheck){
+			if (!permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", permission, o)){
+				throw new AccessDeniedException("Access is denied");
 			}
 		}
 	}

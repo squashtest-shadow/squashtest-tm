@@ -28,64 +28,71 @@ import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.service.internal.repository.hibernate.NonUniqueEntityException;
 
 public interface AutomatedTestDao {
-	
+
 	/**
-	 * Will persist a new {@link AutomatedTest}. Note : each server must have different characteristics, more exactly each combination of 
-	 * attributes is unique. Therefore if the object to be persisted already exists in the database an exception will be raised instead.
+	 * Will persist this test if really new, or return the persisted instance
+	 * if this test already exists. Due to this the calling code should always
+	 * rely on the returned instance of AutomatedTest.
 	 * 
 	 * @param newTest
-	 * @throws NonUniqueEntityException if the given server happen to exist already. 
 	 */
-	void persist(AutomatedTest newTest);
-	
+	AutomatedTest persistOrAttach(AutomatedTest newTest);
+
+
 	/**
-	 * Will persist a TestAutomationTest if really new, or return the existing instance
-	 * if not. An instance exists if : 
+	 * Will remove the test from the database, if and only if no TestCase nor AutomatedExecutionExtender
+	 * still refer to it.
 	 * 
-	 * <ul>
-	 * 	<li>argument's id is set and exists in base,</li>
-	 * 	<li>argument's id is not set but matches one by content</li>
-	 * </ul>
-	 * In all cases it returns the persisted project : this returned instance should replace the one supplied as argument in the client code.
-	 * 
-	 * @param newTest
-	 * @return a persistent version of that test.
+	 * @param test
 	 */
-	AutomatedTest uniquePersist(AutomatedTest newTest);
-	
+	void removeIfUnused(AutomatedTest test);
+
+
 	/**
+	 * returns how many test cases and/or executions reference an AutomatedTest (given its id)
 	 * 
-	 *  
-	 * @param id
+	 * @param testId
 	 * @return
 	 */
+	long countReferences(long testId);
+
+
+	/**
+	 * Will look for AutomatedTests that aren't referenced by anything and will remove them from the repository
+	 * 
+	 */
+	void pruneOrphans();
+
+
 	AutomatedTest findById(Long testId);
-	
-	
+
+	List<AutomatedTest> findByTestCases(Collection<Long> testCaseIds);
+
+
 	/**
 	 *	<p>Given a detached (or even attached) {@link AutomatedTest} example, will fetch a {@link AutomatedTest}
 	 *	having the same characteristics. Null attributes will be discarded before the comparison. </p>
 	 *
 	 * @return a TestAutomation test if one was found, null if none was found.
-	 * @throws NonUniqueEntityException if more than one match. Causes are either a not restrictive enough example... or a bug.
-	 */	
+	 * @throws NonUniqueEntityException if more than one match. Causes are either an example not restrictive enough ... or a bug.
+	 */
 	AutomatedTest findByExample(AutomatedTest example);
-	
-	
+
+
 	/**
-	 * warning : return unique automated tests ( ie result.size() &lt;= argument.size() ) 
+	 * warning : return unique automated tests ( ie result.size() &lt;= argument.size() )
 	 * 
 	 * @param extenderIds
 	 * @return
 	 */
 	List<AutomatedTest> findAllByExtenderIds(List<Long> extenderIds);
-	
+
 	/**
 	 * Same than {@link #findAllByExtenderIds(List)}, but with the extenders themselves instead of their ids.
 	 * 
-	 * @param extenders 
+	 * @param extenders
 	 * @return
 	 */
 	List<AutomatedTest> findAllByExtender(Collection<AutomatedExecutionExtender> extenders);
-		
+
 }

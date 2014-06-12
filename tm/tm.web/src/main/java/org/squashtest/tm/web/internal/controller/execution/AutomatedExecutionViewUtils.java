@@ -25,42 +25,59 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
-import org.springframework.context.MessageSource;
 import org.springframework.web.util.HtmlUtils;
+import org.squashtest.tm.core.foundation.lang.MathsUtils;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
 public final class AutomatedExecutionViewUtils {
 	private AutomatedExecutionViewUtils() {
-
+		super();
 	}
 
-	public static AutomatedSuiteOverview buildExecInfo(AutomatedSuite suite, Locale locale, MessageSource messageSource) {
+	public static AutomatedSuiteOverview buildExecInfo(AutomatedSuite suite, Locale locale, InternationalizationHelper messageSource) {
 		Collection<AutomatedExecutionExtender> executions = suite.getExecutionExtenders();
 		List<ExecutionAutoView> executionsViews = new ArrayList<ExecutionAutoView>(executions.size());
 		int totalExec = executions.size();
 		int totalTerminated = 0;
-		for (AutomatedExecutionExtender aee : executions) {
-			Execution execution = aee.getExecution();
-			if(execution.getExecutionStatus().isTerminatedStatus()){
-				totalTerminated ++;
+		for (AutomatedExecutionExtender autoExec : executions) {
+			Execution execution = autoExec.getExecution();
+			if (execution.getExecutionStatus().isTerminatedStatus()) {
+				totalTerminated++;
 			}
-			ExecutionAutoView execView = translateExecutionInView(execution, locale, messageSource);
+			ExecutionAutoView execView = translateExecutionInView(autoExec, locale, messageSource);
 			executionsViews.add(execView);
 		}
-		int percentage = (totalExec > 0) ?totalTerminated/totalExec*100 : 100;
+		int percentage = percentProgression(totalTerminated, totalExec);
 		return new AutomatedSuiteOverview(percentage, suite.getId(), executionsViews);
 
 	}
 
-	public static ExecutionAutoView translateExecutionInView(Execution execution, Locale locale,
-			MessageSource messageSource) {
-		String localisedStatus = messageSource.getMessage(execution.getExecutionStatus().getI18nKey(), null, locale);
+	private static int percentProgression(int totalTerminated, int totalExec) {
+		if(totalExec == 0) {
+			return 100;
+		}
+
+		int percentage = MathsUtils.percent(totalTerminated, totalExec);
+		return percentage;
+	}
+
+	public static ExecutionAutoView translateExecutionInView(AutomatedExecutionExtender autoExec, Locale locale
+			, InternationalizationHelper messageSource) {
+		String localisedStatus = messageSource.internationalize(autoExec.getExecution().getExecutionStatus(), locale);
 		String htmlEscapedLocalizedStatus = HtmlUtils.htmlEscape(localisedStatus);
-		ExecutionAutoView execView = new ExecutionAutoView(execution.getId(), execution.getName(),
-				execution.getExecutionStatus(), htmlEscapedLocalizedStatus);
+		ExecutionAutoView execView = new ExecutionAutoView();
+
+		execView.id = autoExec.getExecution().getId();
+		execView.name = autoExec.getExecution().getName();
+		execView.status = autoExec.getExecution().getExecutionStatus();
+		execView.localizedStatus = htmlEscapedLocalizedStatus;
+		execView.automatedProject = autoExec.getAutomatedProject().getLabel();
+		execView.node = autoExec.getNodeName();
+
 		return execView;
 	}
 
@@ -99,8 +116,6 @@ public final class AutomatedExecutionViewUtils {
 		public void setPercentage(int percentage) {
 			this.percentage = percentage;
 		}
-		
-		
 
 	}
 
@@ -109,44 +124,43 @@ public final class AutomatedExecutionViewUtils {
 		private String name;
 		private ExecutionStatus status;
 		private String localizedStatus;
+		private String node;
+		private String automatedProject;
 
-		public ExecutionAutoView(Long id, String name, ExecutionStatus status, String localizedStatus) {
-			this.id = id;
-			this.name = name;
-			this.status = status;
-			this.localizedStatus = localizedStatus;
+		private ExecutionAutoView() {
+			super();
 		}
 
 		public Long getId() {
 			return id;
 		}
 
-		public void setId(Long id) {
-			this.id = id;
-		}
 
 		public String getName() {
 			return name;
 		}
 
-		public void setName(String name) {
-			this.name = name;
-		}
 
 		public ExecutionStatus getStatus() {
 			return status;
-		}
-
-		public void setStatus(ExecutionStatus status) {
-			this.status = status;
 		}
 
 		public String getLocalizedStatus() {
 			return localizedStatus;
 		}
 
-		public void setLocalizedStatus(String localizedStatus) {
-			this.localizedStatus = localizedStatus;
+		/**
+		 * @return the node
+		 */
+		public String getNode() {
+			return node;
+		}
+
+		/**
+		 * @return the automatedProject
+		 */
+		public String getAutomatedProject() {
+			return automatedProject;
 		}
 
 	}

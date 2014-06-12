@@ -40,17 +40,16 @@ import org.squashtest.tm.domain.users.User;
  */
 public interface IterationTestPlanManagerService extends IterationTestPlanFinder {
 
-	
-	
 	/**
-	 * Returns an iteration filtered for a specific user. It returns an iteration
-	 * with a test plan containing only the items that are assigned to that user or
-	 * have been executed by that user.
+	 * Returns an iteration filtered for a specific user. It returns an iteration with a test plan containing only the
+	 * items that are assigned to that user or have been executed by that user.
+	 * 
 	 * @param iterationId
 	 * @return the test plan of given iteration filtered by the current user
 	 */
-	PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findAssignedTestPlan(long iterationId, PagingAndMultiSorting sorting, ColumnFiltering filtering);
-	
+	PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findAssignedTestPlan(long iterationId,
+			PagingAndMultiSorting sorting, ColumnFiltering filtering);
+
 	/**
 	 * Adds a list of test cases to an iteration.
 	 * 
@@ -66,11 +65,9 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 * @param iteration
 	 */
 	List<IterationTestPlanItem> addTestPlanItemsToIteration(List<Long> testCaseIds, Iteration iteration);
-	
 
 	void changeTestPlanPosition(long iterationId, int newPosition, List<Long> itemIds);
-	
-	
+
 	void reorderTestPlan(long iterationId, MultiSorting newSorting);
 
 	/**
@@ -104,8 +101,6 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 * @return true if the test plan was already executed and therefore not deleted
 	 */
 	boolean removeTestPlanFromIteration(long testPlanItemId);
-
-
 
 	/**
 	 * Will update the item test plan execution metadata using the last execution data.
@@ -146,14 +141,15 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 */
 	List<ExecutionStatus> getExecutionStatusList();
 
+
 	/**
-	 * Assigns an execution status to a test plan item. Overrides the current execution status, and other executions 
-	 * metadata.
+	 * Assigns an execution status to each test plan item matching the given ids. Override the current itp execution
+	 * status and other itp execution metadatas.
 	 * 
-	 * @param iterationTestPlanItemId
+	 * @param testPlanIds
 	 * @param statusName
 	 */
-	void forceExecutionStatus(long iterationTestPlanItemId, String statusName);
+	List<IterationTestPlanItem> forceExecutionStatus(List<Long> testPlanIds, String statusName);
 
 	/**
 	 * Creates a fragment of test plan, containing either :
@@ -171,4 +167,5 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 * @return
 	 */
 	Collection<IterationTestPlanItem> createTestPlanFragment(TestCase testCase, User assignee);
+
 }

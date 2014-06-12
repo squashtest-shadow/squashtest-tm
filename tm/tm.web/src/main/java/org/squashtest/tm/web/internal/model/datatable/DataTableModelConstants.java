@@ -21,7 +21,8 @@
 package org.squashtest.tm.web.internal.model.datatable;
 
 /**
- * Comumns names commonly used in DataTableModel instances 
+ * Names commonly used in DataTableModel instances
+ * 
  * @author Gregory Fouquet
  * 
  */
@@ -32,7 +33,16 @@ public final class DataTableModelConstants {
 	public static final String DEFAULT_ATTACH_LIST_ID_KEY = "attach-list-id";
 	public static final String DEFAULT_EMPTY_DELETE_HOLDER_KEY = "empty-delete-holder";
 	public static final String DEFAULT_EMPTY_EXECUTE_HOLDER_KEY = "empty-execute-holder";
+	public static final String DEFAULT_EMPTY_EDIT_HOLDER_KEY = "empty-edit-holder";
 	public static final String DEFAULT_ENTITY_NAME_KEY = "name";
+	public static final String DEFAULT_CREATED_BY_KEY = "created-by";
+	public static final String DEFAULT_CREATED_ON_KEY = "created-on";
+	public static final String DEFAULT_LAST_MODIFIED_BY_KEY = "last-modified-by";
+	public static final String DEFAULT_LAST_MODIFIED_ON_KEY = "last-modified-on";
+	public static final String DEFAULT_CREATED_ON_VALUE = "audit.createdOn";
+	public static final String DEFAULT_CREATED_BY_VALUE = "audit.createdBy";
+	public static final String DEFAULT_LAST_MODIFIED_ON_VALUE = "audit.lastModifiedOn";
+	public static final String DEFAULT_LAST_MODIFIED_BY_VALUE = "audit.lastModifiedBy";
 
 	/**
 	 * 

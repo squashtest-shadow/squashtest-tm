@@ -33,6 +33,7 @@
 
 <c:url var="ckeConfigUrl" value="/styles/ckeditor/ckeditor-config.js" />
 <script type="text/javascript">
+//TODO remove this tag. Init in js file instead.
 	require(["common"], function() {
 		require(["jquery", "jeditable"], function($) {
 			$(function() {
@@ -42,7 +43,6 @@
 				component.editable( '${ targetUrl }', {
 					type: 'text',
 					cols: 80,
-					max_size: 20,
 					placeholder: '<f:message key="rich-edit.placeholder" />',
 					submit: '<f:message key="rich-edit.button.ok.label" />',
 					cancel: '<f:message key="label.Cancel" />',

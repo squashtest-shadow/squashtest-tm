@@ -22,7 +22,6 @@ package org.squashtest.tm.plugin.testautomation.jenkins.internal.net;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Iterator;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.Header;
@@ -36,308 +35,266 @@ import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.tm.plugin.testautomation.jenkins.beans.FileParameter;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.Parameter;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.ParameterArray;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser;
-import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.tm.service.testautomation.spi.BadConfiguration;
 
-
-
 public class HttpRequestFactory {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequestFactory.class);
-	
-	private static final String API_URI = "/api/json";
-	
-	private static final NameValuePair[] JOB_LIST_QUERY = new NameValuePair[] { 
-																new NameValuePair("tree", "jobs[name,color]") 
-															};
-	
-	private static final NameValuePair[] QUEUED_BUILDS_QUERY = new NameValuePair[]{		
-																new NameValuePair("tree","items[id,actions[parameters[name,value]],task[name]]")
-															};
-	
 
-	private static final NameValuePair[] EXISTING_BUILDS_QUERY = new NameValuePair[]{
-																new NameValuePair("tree", "builds[building,number,actions[parameters[name,value]]]")
-															};
-	
-	private static final NameValuePair[] SINGLE_BUILD_QUERY = new NameValuePair[]{
-																new NameValuePair("tree", "building,number,actions[parameters[name,value]]")
-															};
-	
-	private static final NameValuePair[] BUILD_RESULT_QUERY = new NameValuePair[]{
-																new NameValuePair("tree", "suites[name,cases[name,status]]")	
-															};
+	private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequestFactory.class);
+
+	private static final String API_URI = "/api/json";
+
+	public static final String SYMBOLIC_BUILDFILENAME = "testsuite.json";
+	public static final String MULTIPART_BUILDFILENAME = "file0";
+	public static final String MULTIPART_JENKINSARGS = "json";
+
+	private static final NameValuePair[] JOB_LIST_QUERY = new NameValuePair[] {
+		new NameValuePair("tree", "jobs[name,color]")
+	};
+
+	private static final NameValuePair[] QUEUED_BUILDS_QUERY = new NameValuePair[] {
+		new NameValuePair("tree", "items[id,actions[parameters[name,value]],task[name]]")
+	};
+
+	private static final NameValuePair[] EXISTING_BUILDS_QUERY = new NameValuePair[] {
+		new NameValuePair("tree", "builds[building,number,actions[parameters[name,value]]]")
+	};
+
+	private static final NameValuePair[] SINGLE_BUILD_QUERY = new NameValuePair[] {
+		new NameValuePair("tree", "building,number,actions[parameters[name,value]]")
+	};
+
+	private static final NameValuePair[] BUILD_RESULT_QUERY = new NameValuePair[] {
+		new NameValuePair("tree", "suites[name,cases[name,status]]")
+	};
 
 	private JsonParser jsonParser = new JsonParser();
-	
+
 	private CallbackURLProvider callbackProvider = new CallbackURLProvider();
-	
-	
-	public String newRandomId(){
+
+	public String newRandomId() {
 		return Long.valueOf(System.currentTimeMillis()).toString();
 	}
-	
-	
-	public GetMethod newCheckCredentialsMethod(TestAutomationServer server){
+
+	public GetMethod newCheckCredentialsMethod(TestAutomationServer server) {
 
 		String path = toUrlPath(server, API_URI);
-		
+
 		GetMethod method = new GetMethod();
-			
+
 		method.setPath(path);
-		
-		String logPass = server.getLogin()+":"+server.getPassword();
+
+		String logPass = server.getLogin() + ":" + server.getPassword();
 		String auth = new String(Base64.encodeBase64(logPass.getBytes()));
-		
-		method.addRequestHeader(new Header("Authorization", "Basic "+auth));
-		
+
+		method.addRequestHeader(new Header("Authorization", "Basic " + auth));
+
 		method.setDoAuthentication(true);
-		
+
 		return method;
 	}
-	
-	
-	public GetMethod newGetJobsMethod(TestAutomationServer server){
-		
+
+	public GetMethod newGetJobsMethod(TestAutomationServer server) {
+
 		String path = toUrlPath(server, API_URI);
-		
+
 		GetMethod method = new GetMethod();
-		
+
 		method.setPath(path);
 		method.setQueryString(JOB_LIST_QUERY);
 
 		method.setDoAuthentication(true);
-		
+
 		return method;
 	}
-	
-	
-	
-	public PostMethod newStartFetchTestListBuild(TestAutomationProject project, String externalID){
-				
-		ParameterArray params = new ParameterArray( 
-			new Parameter[]{
-				Parameter.operationTestListParameter(),
-				Parameter.newExtIdParameter(externalID)
-			}
-		);
-		
-		PostMethod method = newStartBuild(project, params);
-		
-		return method;
-		
-	}
-	
-	
-	public PostMethod newStartTestSuiteBuild(TestAutomationProjectContent content, String externalID){
-		
-		String strURL = callbackProvider.get().toExternalForm();
-		String testList = makeTestListParameter(content);
-		
+
+	public PostMethod newStartFetchTestListBuild(TestAutomationProject project, String externalID) {
+
 		ParameterArray params = new ParameterArray(
-				new Parameter[]{
-					Parameter.operationRunSuiteParameter(),
-					Parameter.newExtIdParameter(externalID),
-					Parameter.newCallbackURlParameter(strURL),
-					Parameter.newExecuteTestListParameter(testList)
-				}		
-		);
-		
-		PostMethod method = newStartBuild(content.getProject(), params);
-		
+				new Parameter[] {
+						Parameter.operationTestListParameter(),
+						Parameter.newExtIdParameter(externalID)
+				}
+				);
+
+		PostMethod method = newStartBuild(project, params);
+
 		return method;
+
 	}
-	
-	
-	
-	public GetMethod newCheckQueue(TestAutomationProject project){
-		
-		String path = toUrlPath(project.getServer(), "/queue"+API_URI);
-		
+
+
+	public ParameterArray getStartTestSuiteBuildParameters(String externalID){
+		String strURL = callbackProvider.get().toExternalForm();
+
+		return  new ParameterArray(
+				new Object[] {
+						Parameter.operationRunSuiteParameter(),
+						Parameter.newExtIdParameter(externalID),
+						Parameter.newCallbackURlParameter(strURL),
+						Parameter.testListParameter(),
+						new FileParameter(Parameter.SYMBOLIC_FILENAME, MULTIPART_BUILDFILENAME)
+				}
+				);
+	}
+
+	public GetMethod newCheckQueue(TestAutomationProject project) {
+
+		String path = toUrlPath(project.getServer(), "/queue" + API_URI);
+
 		GetMethod method = new GetMethod();
 		method.setPath(path);
 		method.setQueryString(QUEUED_BUILDS_QUERY);
 		method.setDoAuthentication(true);
-		
+
 		return method;
 	}
-	
-	
-	public GetMethod newGetBuildsForProject(TestAutomationProject project){
-		
-		String path = toUrlPath(project.getServer(), "/job/"+project.getName()+API_URI);
-		
+
+	public GetMethod newGetBuildsForProject(TestAutomationProject project) {
+
+		String path = toUrlPath(project.getServer(), "/job/" + project.getJobName() + API_URI);
+
 		GetMethod method = new GetMethod();
 		method.setPath(path);
 		method.setQueryString(EXISTING_BUILDS_QUERY);
 
 		method.setDoAuthentication(true);
-		
-		return method;	
-		
+
+		return method;
+
 	}
-	
-	public GetMethod newGetBuild(TestAutomationProject project, int buildId){
-		
-		String path = toUrlPath(project.getServer(), "/job/"+project.getName()+"/"+buildId+"/"+API_URI);
-		
+
+	public GetMethod newGetBuild(TestAutomationProject project, int buildId) {
+
+		String path = toUrlPath(project.getServer(), "/job/" + project.getJobName() + "/" + buildId + "/" + API_URI);
+
 		GetMethod method = new GetMethod();
 		method.setPath(path);
 		method.setQueryString(SINGLE_BUILD_QUERY);
-		
+
 		method.setDoAuthentication(true);
-		
+
 		return method;
 	}
-	
-	public GetMethod newGetBuildResults(TestAutomationProject project, int buildId){
-		
-		String path = toUrlPath(project.getServer(), "/job/"+project.getName()+"/"+buildId+"/testReport/"+API_URI);
-		
+
+	public GetMethod newGetBuildResults(TestAutomationProject project, int buildId) {
+
+		String path = toUrlPath(project.getServer(), "/job/" + project.getJobName() + "/" + buildId + "/testReport/"
+				+ API_URI);
+
 		GetMethod method = new GetMethod();
 		method.setPath(path);
 		method.setQueryString(BUILD_RESULT_QUERY);
-		
+
 		method.setDoAuthentication(true);
-		
-		return method;	
-		
-		
+
+		return method;
+
 	}
-	
-	public String buildResultURL(AutomatedTest test, Integer buildID){
-		
-		
+
+	public String buildResultURL(AutomatedTest test, Integer buildID) {
+
 		TestAutomationProject project = test.getProject();
-	
-		String relativePath = _toRelativePath(test);
-		String urlPath = toUrlPath(project.getServer(), "/job/"+project.getName()+"/"+buildID+"/testReport/"+relativePath);
-		
-		return  urlPath;
-		
+
+		String relativePath = toRelativePath(test);
+		String urlPath = toUrlPath(project.getServer(), "/job/" + project.getJobName() + "/" + buildID + "/testReport/"
+				+ relativePath);
+
+		return urlPath;
+
 	}
-	
-	
-	//******************************* private stuffs ***********************
-	
-	protected PostMethod newStartBuild(TestAutomationProject project, ParameterArray params){
-		
-		String path = toUrlPath(project.getServer(), "/job/"+project.getName()+"/build");
-		
+
+	// ******************************* private stuffs ***********************
+
+	protected PostMethod newStartBuild(TestAutomationProject project, ParameterArray params) {
+
+		String path = toUrlPath(project.getServer(), "/job/" + project.getJobName() + "/build");
+
 		String jsonParam = jsonParser.toJson(params);
-		
+
 		PostMethod method = new PostMethod();
 		method.setPath(path);
 		method.setParameter("json", jsonParam);
-		
+
 		method.setDoAuthentication(true);
-		
-		return method; 
-		
+
+		return method;
+
 	}
 
-	
-	private String toUrlPath(TestAutomationServer server, String path){
-		
+	private String toUrlPath(TestAutomationServer server, String path) {
+
 		StringBuilder urlBuilder = new StringBuilder();
 		URL baseURL = server.getBaseURL();
-		
+
 		urlBuilder.append(baseURL.toExternalForm());
 		urlBuilder.append(path);
-		
+
 		return makeURL(urlBuilder.toString()).toExternalForm();
 	}
 
-	
-	private URL makeURL(String unescaped){
-		try{
+	private URL makeURL(String unescaped) {
+		try {
 			String uri = URIUtil.encodePath(unescaped);
 			return new URL(uri);
-		}
-		catch(URIException ex){
-			if (LOGGER.isErrorEnabled()){
+		} catch (URIException ex) {
+			if (LOGGER.isErrorEnabled()) {
 				LOGGER.error("HttpRequestFactory : the URI is invalid, and that was not supposed to happen.");
 			}
 			throw new RuntimeException(ex);
-		}
-		catch(MalformedURLException ex){
-			if (LOGGER.isErrorEnabled()){
+		} catch (MalformedURLException ex) {
+			if (LOGGER.isErrorEnabled()) {
 				LOGGER.error("HttpRequestFactory : the URI corresponds to an invalid URL, and that was not supposed to happen.");
 			}
 			throw new RuntimeException(ex);
 		}
 	}
-	
-	
-	private String _toRelativePath(AutomatedTest test) {
-		
-		String name="";
-		
-		if (test.isAtTheRoot()){
+
+	private String toRelativePath(AutomatedTest test) {
+
+		String name = "";
+
+		if (test.isAtTheRoot()) {
 			name = "(root)/";
 		}
-		
-		name += test.getPath()+test.getShortName().replaceAll("[-\\.]", "_");
-		
+
+		name += test.getPath() + test.getShortName().replaceAll("[-\\.]", "_");
+
 		return name;
-		
+
 	}
-	
-	// ********************* static class and stuffs ***************************
-	
-	private String makeTestListParameter(TestAutomationProjectContent content){
-		
-		StringBuilder builder = new StringBuilder();
-		
-		Iterator<AutomatedTest> iterator = content.getTests().iterator(); 
-		
-		while( iterator.hasNext() ){
-			
-			String name = iterator.next().getNameWithoutRoot();
-			
-			builder.append(name);
-			
-			if (iterator.hasNext()){
-				builder.append(",");
-			}
-			
-		}
-		
-		return builder.toString();
-		
-	}
-	
-	
-	
-	private static class CallbackURLProvider{
-		
-		public URL get(){
-			
-			CallbackURL callback = new CallbackURL();
-			
-			try{
-				
+
+	private static class CallbackURLProvider {
+
+		public URL get() {
+
+			CallbackURL callback = CallbackURL.getInstance();
+
+			try {
+
 				String strURL = callback.getValue();
-				URL url = new URL(strURL);	
+				URL url = new URL(strURL);
 				return url;
-				
-			}
-			catch(MalformedURLException ex){
-				
-				BadConfiguration bc = new BadConfiguration("Test Automation configuration : The test could not be started because the service is not configured properly. " +
-						"The url specified at property '"+callback.getConfPropertyName()+"' in configuration file 'tm.testautomation.conf.properties' is malformed. Please " +
+
+			} catch (MalformedURLException ex) {
+
+				BadConfiguration bc = new BadConfiguration(
+						"Test Automation configuration : The test could not be started because the service is not configured properly. "
+								+
+								"The url specified at property '" + callback.getConfPropertyName()
+								+ "' in configuration file 'tm.testautomation.conf.properties' is malformed. Please " +
 						"contact the administration team.");
-				
+
 				bc.setPropertyName(callback.getConfPropertyName());
-				
+
 				throw bc;
 			}
-			
+
 		}
-		
+
 	}
-	
+
 }

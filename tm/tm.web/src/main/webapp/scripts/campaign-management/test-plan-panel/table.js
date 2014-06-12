@@ -20,15 +20,15 @@
  */
 /*
  * WARNING : THIS IS A STUB. MUCH OF THE CODE STILL LIES IN THE ORIGINAL TAG FILE. TODO : MOVE IT ALL HERE !
- * 
+ *
  * @see 'tags/capaigns-components/campaign-test-plan-table.tag'
  * @see 'iteration-management/test-plan-panel'
- *  
- * 			
- * 
- * 
+ *
+ *
+ *
+ *
  * configuration an object as follow :
- *" 
+ *"
  * {
  *		permissions : {
  *			editable : boolean, is the table content editable ?
@@ -44,18 +44,18 @@
  *			testplanUrl : base urls for test plan items,
  *		}
  *	}
- * 
+ *
  */
 
-define(['jquery', './sortmode', './filtermode', 'squashtable', 'jeditable'],
+define(['jquery', '../../test-plan-panel/sortmode', '../../test-plan-panel/filtermode', 'squashtable', 'jeditable'],
         function($, smode, filtermode) {
 
 	function createTableConfiguration(conf){
-		
+
 		var rowCallback = function(row, data, displayIndex) {
-			
+
 			var $row = $(row);
-			
+
 			var $exectd = $row.find('.exec-mode').text('');
 			if (data['exec-mode'] === "M") {
 				$exectd.append('<span class="exec-mode-icon exec-mode-manual"/>').attr('title', '');
@@ -63,10 +63,10 @@ define(['jquery', './sortmode', './filtermode', 'squashtable', 'jeditable'],
 				$exectd.append('<span class="exec-mode-icon exec-mode-automated"/>').attr('title',
 						conf.messages.automatedExecutionTooltip);
 			}
-		
-			// assignee			
+
+			// assignee
 			$row.find('.assignee-combo').wrapInner('<span/>');
-			
+
 			if (conf.permissions.editable){
 				var assignableUsers = conf.basic.assignableUsers;
 				var assigneeurl = conf.urls.testplanUrl + data['entity-id'];
@@ -74,7 +74,7 @@ define(['jquery', './sortmode', './filtermode', 'squashtable', 'jeditable'],
 				$assigneeelt.addClass('cursor-arrow');
 				$assigneeelt.editable(
 					assigneeurl,{
-						type : 'select', 
+						type : 'select',
 						data : assignableUsers,
 						name : 'assignee',
 						onblur : 'cancel',
@@ -83,8 +83,8 @@ define(['jquery', './sortmode', './filtermode', 'squashtable', 'jeditable'],
 						}
 				});
 			}
-			
-			
+
+
 		};
 
 		var drawCallback = function(){
@@ -97,16 +97,16 @@ define(['jquery', './sortmode', './filtermode', 'squashtable', 'jeditable'],
 
 			//sort mode
 			var settings = this.fnSettings();
-			var aaSorting = settings.aaSorting;		
+			var aaSorting = settings.aaSorting;
 			this.data('sortmode').manage(aaSorting);
 		};
-		
+
 		var tableSettings = {
 			"aLengthMenu" : [[10, 25, 50, 100, -1], [10, 25, 50, 100, conf.messages.allLabel]],
 			fnDrawCallback : drawCallback,
 			fnRowCallback :  rowCallback
 		};
-		
+
 		var squashSettings = {};
 
 		if (conf.permissions.reorderable){
@@ -114,40 +114,40 @@ define(['jquery', './sortmode', './filtermode', 'squashtable', 'jeditable'],
 			squashSettings.functions = {
 				dropHandler : function(dropData){
 					var ids = dropData.itemIds.join(',');
-					var url	= conf.urls.testplanUrl + '/' + ids + '/position/' + dropData.newIndex;			
+					var url	= conf.urls.testplanUrl + '/' + ids + '/position/' + dropData.newIndex;
 					$.post(url, function(){
 						$("#test-cases-table").squashTable().refresh();
 					});
-						
+
 				}
 			}
 		}
-		
+
 		return {
 			tconf : tableSettings,
 			sconf : squashSettings
 		}
 	}
 
-	
+
 	// **************** MAIN ****************
-	
+
 	return {
 		init : function(enhconf){
-			
-			var tableconf = createTableConfiguration(enhconf);	
+
+			var tableconf = createTableConfiguration(enhconf);
 
 			var sortmode = smode.newInst(enhconf);
 			tableconf.tconf.aaSorting = sortmode.loadaaSorting();
-			
+
 			var table = $("#test-cases-table").squashTable(tableconf.tconf, tableconf.sconf);
 			table.data('sortmode', sortmode);
 			this.lockSortMode = sortmode._lockSortMode;
-			this.unlockSortMode = sortmode._unlockSortMode;	
+			this.unlockSortMode = sortmode._unlockSortMode;
 			this.hideFilterFields = filtermode.hideFilterFields;
 			this.showFilterFields = filtermode.showFilterFields;
 			filtermode.initializeFilterFields(enhconf);
 		}
 	};
-	
+
 });

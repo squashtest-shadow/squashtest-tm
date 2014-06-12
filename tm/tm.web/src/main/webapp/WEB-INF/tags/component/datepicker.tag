@@ -52,6 +52,7 @@ the data. Prototype is : function my_function(strParamName, iDate)"%>
 	<c:if test="${ (empty editable) or editable }" >
 			<input id="${datePickerId}" type="text" class="date-hidden"/>			
             <script type="text/javascript">
+          //TODO remove this javascript. Init in js file instead.
             require(["common"], function() {
               require(["jquery", "jquery.squash.datepicker"], function() {
                  var myDatePicker;

@@ -20,17 +20,19 @@
  */
 package org.squashtest.tm.service.testautomation.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 
 public class TestAutomationProjectContent {
 
-	private TestAutomationProject project;
+	private final TestAutomationProject project;
 
-	private Collection<AutomatedTest> tests = Collections.emptyList();
+	private final List<AutomatedTest> tests;
 
 	private Exception knownProblem = null;
 
@@ -38,8 +40,12 @@ public class TestAutomationProjectContent {
 		return project;
 	}
 
-	public Collection<AutomatedTest> getTests() {
-		return tests;
+	/**
+	 * 
+	 * @return an **copy** of the test list.
+	 */
+	public List<AutomatedTest> getTests() {
+		return Collections.unmodifiableList(tests);
 	}
 
 	public Exception getKnownProblem() {
@@ -54,16 +60,47 @@ public class TestAutomationProjectContent {
 		this.knownProblem = knownProblem;
 	}
 
-	public TestAutomationProjectContent(TestAutomationProject project, Collection<AutomatedTest> tests) {
+	public TestAutomationProjectContent(TestAutomationProject project) {
 		super();
 		this.project = project;
-		this.tests = tests;
+		this.tests = new ArrayList<AutomatedTest>();
 	}
 
 	public TestAutomationProjectContent(TestAutomationProject project, Exception knownProblem) {
 		super();
 		this.project = project;
 		this.knownProblem = knownProblem;
+		this.tests = Collections.emptyList();
+	}
+
+	/**
+	 * @param project
+	 * @param tests
+	 */
+	public TestAutomationProjectContent(TestAutomationProject project, Collection<AutomatedTest> tests) {
+		this.project = project;
+		this.tests = new ArrayList<AutomatedTest>();
+		appendTests(tests);
+	}
+
+	/**
+	 * Adds a test without params
+	 * 
+	 * @param test
+	 */
+	public void appendTest(AutomatedTest test) {
+		tests.add(test);
+	}
+
+	/**
+	 * Adds a batch of tests without params. Tests are added in the order of the given colleciton.
+	 * 
+	 * @param tests
+	 */
+	public final void appendTests(Collection<AutomatedTest> tests) {
+		for (AutomatedTest test : tests) {
+			appendTest(test);
+		}
 	}
 
 }

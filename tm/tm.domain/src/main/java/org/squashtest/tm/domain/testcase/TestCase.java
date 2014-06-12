@@ -68,9 +68,9 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.CUFBridge;
 import org.squashtest.tm.domain.search.CollectionSizeBridge;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
+import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.exception.UnallowedTestAssociationException;
 import org.squashtest.tm.exception.UnknownEntityException;
-import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
 import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
 import org.squashtest.tm.search.bridge.LevelEnumBridge;
 
@@ -486,7 +486,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	}
 
 	public void setAutomatedTest(AutomatedTest testAutomationTest) {
-		if (getProject().isTestAutomationEnabled()) {
+		if (getProject().isBoundToTestAutomationProject(testAutomationTest.getProject())) {
 			this.automatedTest = testAutomationTest;
 		} else {
 			throw new UnallowedTestAssociationException();

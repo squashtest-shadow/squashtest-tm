@@ -25,6 +25,11 @@
 <head>
 <title th:text="#{title.customField}">Espace detail champ personnalisé</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<style th:include="fragments-utils/various-headers :: admin-subpage-css" th:remove="tag"></style>
+
+
+<script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
 <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
 <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
 <script type="text/javascript" th:inline="javascript">
@@ -74,31 +79,15 @@
 			}
 		},
 		menuBarConf: {
-    	}, 
-		notificationConf : {
-			infoTitle : /*[[ #{popup.title.info} ]]*/'Info',
-			errorTitle : /*[[ #{popup.title.error} ]]*/'Erreur'
-		},
+    	}
 	};
 </script>
-<script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
 <script data-main="../../scripts/custom-field-modification.js"
   th:attr="data-main=@{/scripts/custom-field-modification.js}" src="../../scripts/require.js"
   th:src="@{/scripts/require-min.js}">
 	
 </script>
-<link rel="stylesheet" type="text/css" media="all"
-  href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" sq:css="squash.core.css" />
-<link rel="shortcut icon" type="image/x-icon" media="all"
-  href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}" />
-<link rel="stylesheet" type="text/css" media="all"
-  href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.grey.css" sq:css="squash.grey.css" />
-<link rel="stylesheet" type="text/css" media="all"
-  href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.override.css"
-  sq:css="squash.core.override.css" />
-<link rel="stylesheet" type="text/css" media="all"
-  href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.subpageoverride.css"
-  sq:css="squash.subpage.override.css" />
+
 </head>
 <body>
   <div id="navigation" th:include="navbar.frag :: navbar">NAVBAR</div>

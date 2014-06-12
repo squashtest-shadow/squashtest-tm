@@ -1,0 +1,460 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2014 Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.squashtest.tm.service.internal.testautomation;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+
+import org.apache.commons.collections.MultiMap;
+import org.apache.commons.collections.map.MultiValueMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.foundation.lang.Couple;
+import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
+import org.squashtest.tm.domain.testautomation.AutomatedSuite;
+import org.squashtest.tm.domain.testautomation.AutomatedTest;
+import org.squashtest.tm.domain.testautomation.TestAutomationProject;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
+import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
+import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService;
+import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
+import org.squashtest.tm.service.internal.repository.ExecutionDao;
+import org.squashtest.tm.service.internal.repository.IterationDao;
+import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
+import org.squashtest.tm.service.internal.repository.TestSuiteDao;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.security.PermissionsUtils;
+import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
+import org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService;
+import org.squashtest.tm.service.testautomation.TestAutomationCallbackService;
+import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
+import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector;
+import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
+import org.squashtest.tm.service.testautomation.spi.UnknownConnectorKind;
+
+@Transactional
+@Service("squashtest.tm.service.AutomatedSuiteManagementService")
+public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerService {
+
+	private static final String EXECUTE = "EXECUTE";
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestAutomationConnector.class);
+
+	private static final int DEFAULT_THREAD_TIMEOUT = 30000; // timeout as milliseconds
+
+	private int timeoutMillis = DEFAULT_THREAD_TIMEOUT;
+
+	@Inject
+	private AutomatedSuiteDao autoSuiteDao;
+
+	@Inject
+	private IterationDao iterationDao;
+
+	@Inject
+	private TestSuiteDao testSuiteDao;
+
+	@Inject
+	private IterationTestPlanDao testPlanDao;
+
+	@Inject
+	private ExecutionDao executionDao;
+
+	@Inject
+	private CustomFieldValueFinderService customFieldValueFinder;
+
+	@Inject
+	private PrivateDenormalizedFieldValueService denormalizedFieldValueService;
+
+	@Inject
+	private TestAutomationCallbackService callbackService;
+
+	@Inject
+	private Provider<TaParametersBuilder> paramBuilder;
+
+	@Inject
+	private TestAutomationConnectorRegistry connectorRegistry;
+
+	@Inject
+	private PermissionEvaluationService permissionService;
+
+
+	public int getTimeoutMillis() {
+		return timeoutMillis;
+	}
+
+	public void setTimeoutMillis(int timeoutMillis) {
+		this.timeoutMillis = timeoutMillis;
+	}
+
+	@Override
+	public AutomatedSuite findById(String id) {
+		return autoSuiteDao.findById(id);
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'EXECUTE') or or hasRole('ROLE_ADMIN')")
+	public AutomatedSuite createFromIterationTestPlan(long iterationId) {
+		Iteration iteration = iterationDao.findById(iterationId);
+		List<IterationTestPlanItem> items =  iteration.getTestPlans();
+		return createFromItems(items);
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.TestSuite', 'EXECUTE') or or hasRole('ROLE_ADMIN')")
+	public AutomatedSuite createFromTestSuiteTestPlan(long testSuiteId) {
+		TestSuite suite = testSuiteDao.findById(testSuiteId);
+		List<IterationTestPlanItem> items =  suite.getTestPlan();
+		return createFromItems(items);
+	}
+
+	@Override
+	// security handled in the code
+	public AutomatedSuite createFromItemIds(List<Long> testPlanIds) {
+
+		List<IterationTestPlanItem> items = testPlanDao.findAllByIds(testPlanIds);
+
+		PermissionsUtils.checkPermission(permissionService, testPlanIds, EXECUTE, IterationTestPlanItem.class.getName());
+
+		return createFromItems(items);
+	}
+
+	@Override
+	// security delegated to sortByProject(AutomatedSuite)
+	public Collection<TestAutomationProjectContent> sortByProject(String autoSuiteId) {
+		AutomatedSuite suite = findById(autoSuiteId);
+		return sortByProject(suite);
+	}
+
+
+	@Override
+	// security handled by in the code
+	public Collection<TestAutomationProjectContent> sortByProject(AutomatedSuite suite) {
+
+		List<AutomatedExecutionExtender> extenders = (List<AutomatedExecutionExtender>)suite.getExecutionExtenders();
+
+		PermissionsUtils.checkPermission(permissionService, extenders, EXECUTE);
+
+		// first sort them using a map
+		MultiMap testsByProjects = new MultiValueMap();
+
+		for (AutomatedExecutionExtender extender : extenders){
+			if (extender.isProjectDisassociated()){
+				continue;
+			}
+			TestAutomationProject project = extender.getAutomatedProject();
+			AutomatedTest test = extender.getAutomatedTest();
+
+			testsByProjects.put(project, test);
+		}
+
+
+		// now make a friendly bean of it
+		Collection<TestAutomationProjectContent> projectContents = new LinkedList<TestAutomationProjectContent>();
+
+		Set<Entry> entries = testsByProjects.entrySet();
+		for (Entry e : entries){
+			TestAutomationProject project = (TestAutomationProject)e.getKey();
+			Collection tests = (Collection)e.getValue();
+
+			projectContents.add(new TestAutomationProjectContent(project, tests));
+		}
+
+		return projectContents;
+
+	}
+
+
+
+	@Override
+	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
+	@Transactional(readOnly = true)
+	public List<Execution> findExecutionsByAutomatedTestSuiteId(String automatedTestSuiteId) {
+
+		List<Execution> executions = new ArrayList<Execution>();
+		AutomatedSuite suite = autoSuiteDao.findById(automatedTestSuiteId);
+		for (AutomatedExecutionExtender e : suite.getExecutionExtenders()) {
+			executions.add(e.getExecution());
+		}
+		return executions;
+	}
+
+
+	@Override
+	// security delegated to start(AutomatedSuite)
+	public void start(String autoSuiteId) {
+		AutomatedSuite suite = autoSuiteDao.findById(autoSuiteId);
+		start(suite);
+	}
+
+
+	@Override
+	// security handled in the code
+	public void start(AutomatedSuite suite) {
+
+		PermissionsUtils.checkPermission(permissionService, suite.getExecutionExtenders(), EXECUTE);
+
+		ExtenderSorter sorter = new ExtenderSorter(suite);
+
+		TestAutomationCallbackService securedCallback = new CallbackServiceSecurityWrapper(callbackService);
+
+		while (sorter.hasNext()) {
+
+			Entry<String, Collection<AutomatedExecutionExtender>> extendersByKind = sorter.getNextEntry();
+
+			TestAutomationConnector connector = null;
+
+			try {
+				connector = connectorRegistry.getConnectorForKind(extendersByKind.getKey());
+				Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> tests = collectAutomatedExecs(extendersByKind
+						.getValue());
+				connector.executeParameterizedTests(tests, suite.getId(), securedCallback);
+			} catch (UnknownConnectorKind ex) {
+				if (LOGGER.isErrorEnabled()) {
+					LOGGER.error("Test Automation : unknown connector :", ex);
+				}
+				notifyExecutionError(extendersByKind.getValue(), ex.getMessage());
+			} catch (TestAutomationException ex) {
+				if (LOGGER.isErrorEnabled()) {
+					LOGGER.error("Test Automation : an error occured :", ex);
+				}
+				notifyExecutionError(extendersByKind.getValue(), ex.getMessage());
+			}
+
+		}
+	}
+
+
+	// ******************* create suite private methods ***************************
+
+
+
+
+	private AutomatedSuite createFromItems(List<IterationTestPlanItem> items){
+
+		AutomatedSuite newSuite = autoSuiteDao.createNewSuite();
+
+		for (IterationTestPlanItem item : items) {
+			if (item.isAutomated()) {
+				Execution exec = addAutomatedExecution(item);
+				newSuite.addExtender(exec.getAutomatedExecutionExtender());
+			}
+		}
+
+
+		return newSuite;
+
+	}
+
+	private Execution addAutomatedExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException {
+
+		Execution execution = item.createAutomatedExecution();
+
+		executionDao.persist(execution);
+		item.addExecution(execution);
+		createDenormalizedFieldsForExecutionAndExecutionSteps(execution);
+
+		return execution;
+
+	}
+
+
+	private void createDenormalizedFieldsForExecutionAndExecutionSteps(Execution execution) {
+		LOGGER.debug("Create denormalized fields for Execution {}", execution.getId());
+		TestCase sourceTC = execution.getReferencedTestCase();
+		denormalizedFieldValueService.createAllDenormalizedFieldValues(sourceTC, execution);
+		for (ExecutionStep step : execution.getSteps()) {
+			TestStep sourceStep = step.getReferencedTestStep();
+			if (stepIsFromSameProjectAsTC(sourceTC, (ActionTestStep) sourceStep)) {
+				denormalizedFieldValueService.createAllDenormalizedFieldValues((ActionTestStep) sourceStep, step);
+			} else {
+				denormalizedFieldValueService.createAllDenormalizedFieldValues((ActionTestStep) sourceStep, step,
+						sourceTC.getProject());
+			}
+		}
+
+	}
+
+	private boolean stepIsFromSameProjectAsTC(TestCase sourceTC, ActionTestStep sourceStep) {
+		return sourceStep.getProject().getId().equals(sourceTC.getProject().getId());
+	}
+
+
+	// ******************* execute suite private methods **************************
+
+	private Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> collectAutomatedExecs(
+			Collection<AutomatedExecutionExtender> extenders) {
+
+		Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> tests = new ArrayList<Couple<AutomatedExecutionExtender, Map<String, Object>>>(
+				extenders.size());
+
+		for (AutomatedExecutionExtender extender : extenders) {
+			tests.add(createAutomatedExecAndParams(extender));
+		}
+
+		return tests;
+
+	}
+
+	private Couple<AutomatedExecutionExtender, Map<String, Object>> createAutomatedExecAndParams(AutomatedExecutionExtender extender) {
+		Execution execution = extender.getExecution();
+
+		Collection<CustomFieldValue> tcFields = customFieldValueFinder.findAllCustomFieldValues(execution
+				.getReferencedTestCase());
+		Collection<CustomFieldValue> iterFields = customFieldValueFinder.findAllCustomFieldValues(execution
+				.getIteration());
+		Collection<CustomFieldValue> campFields = customFieldValueFinder.findAllCustomFieldValues(execution
+				.getCampaign());
+
+		Map<String, Object> params = paramBuilder.get().testCase().addEntity(execution.getReferencedTestCase())
+				.addCustomFields(tcFields).iteration().addCustomFields(iterFields).campaign()
+				.addCustomFields(campFields).build();
+
+		return new Couple<AutomatedExecutionExtender, Map<String, Object>>(extender, params);
+	}
+
+	private void notifyExecutionError(Collection<AutomatedExecutionExtender> failedExecExtenders, String message) {
+		for (AutomatedExecutionExtender extender : failedExecExtenders) {
+			extender.setExecutionStatus(ExecutionStatus.ERROR);
+			extender.setResultSummary(message);
+		}
+	}
+
+
+
+	/**
+	 * That wrapper is a TestAutomationCallbackService, that ensures that the security context is properly set for any
+	 * thread that requires its services.
+	 * 
+	 * @author bsiri
+	 * 
+	 */
+	private static class CallbackServiceSecurityWrapper implements TestAutomationCallbackService {
+
+		private SecurityContext secContext;
+
+		private TestAutomationCallbackService wrapped;
+
+		/*
+		 * the SecurityContext here is the one from the original thread. The others methods will use that instance of
+		 * SecurityContext for all their operations from now on (see the code, it's straightforward).
+		 */
+		CallbackServiceSecurityWrapper(TestAutomationCallbackService service) {
+			secContext = SecurityContextHolder.getContext();
+			wrapped = service;
+		}
+
+		@Override
+		public void updateResultURL(AutomatedExecutionSetIdentifier execIdentifier, URL resultURL) {
+			SecurityContextHolder.setContext(secContext);
+			wrapped.updateResultURL(execIdentifier, resultURL);
+		}
+
+		@Override
+		public void updateExecutionStatus(AutomatedExecutionSetIdentifier execIdentifier, ExecutionStatus newStatus) {
+			SecurityContextHolder.setContext(secContext);
+			wrapped.updateExecutionStatus(execIdentifier, newStatus);
+
+		}
+
+		@Override
+		public void updateResultSummary(AutomatedExecutionSetIdentifier execIdentifier, String newSummary) {
+			SecurityContextHolder.setContext(secContext);
+			wrapped.updateResultSummary(execIdentifier, newSummary);
+		}
+
+	}
+
+
+
+	private static class ExtenderSorter {
+
+		private Map<String, Collection<AutomatedExecutionExtender>> extendersByKind;
+
+		private Iterator<Entry<String, Collection<AutomatedExecutionExtender>>> iterator = null;
+
+		public ExtenderSorter(AutomatedSuite suite) {
+
+			extendersByKind = new HashMap<String, Collection<AutomatedExecutionExtender>>(suite.getExecutionExtenders()
+					.size());
+
+			for (AutomatedExecutionExtender extender : suite.getExecutionExtenders()) {
+
+				String serverKind = extender.getAutomatedTest().getProject().getServer().getKind();
+
+				register(extender, serverKind);
+
+			}
+
+			iterator = extendersByKind.entrySet().iterator();
+
+		}
+
+		public boolean hasNext() {
+			return iterator.hasNext();
+		}
+
+		public Map.Entry<String, Collection<AutomatedExecutionExtender>> getNextEntry() {
+
+			return iterator.next();
+
+		}
+
+		private void register(AutomatedExecutionExtender extender, String serverKind) {
+
+			if (!extendersByKind.containsKey(serverKind)) {
+				extendersByKind.put(serverKind, new LinkedList<AutomatedExecutionExtender>());
+			}
+
+			extendersByKind.get(serverKind).add(extender);
+
+		}
+
+	}
+
+
+}

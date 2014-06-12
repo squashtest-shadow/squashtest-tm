@@ -32,12 +32,12 @@ import spock.lang.Unroll
  */
 class AutomatedExecutionManagerServiceImplTest extends Specification {
 	AutomatedExecutionManagerServiceImpl service = new AutomatedExecutionManagerServiceImpl()
-	
+
 	@Unroll("should coerce dto #dto into domain #status")
 	def "should coerce shoot dto ExecutionStatus into domain ExecutionStatus"() {
 		expect:
 		status == service.coerce(dto)
-		
+
 		where:
 		dto																		   | status
 		org.squashtest.tm.api.testautomation.execution.dto.ExecutionStatus.ERROR   | ExecutionStatus.ERROR
@@ -46,5 +46,6 @@ class AutomatedExecutionManagerServiceImplTest extends Specification {
 		org.squashtest.tm.api.testautomation.execution.dto.ExecutionStatus.SUCCESS | ExecutionStatus.SUCCESS
 		org.squashtest.tm.api.testautomation.execution.dto.ExecutionStatus.WARNING | ExecutionStatus.WARNING
 		org.squashtest.tm.api.testautomation.execution.dto.ExecutionStatus.NOT_RUN | ExecutionStatus.NOT_RUN
+		org.squashtest.tm.api.testautomation.execution.dto.ExecutionStatus.NOT_FOUND | ExecutionStatus.NOT_FOUND
 	}
 }

@@ -38,11 +38,8 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 		});
 		
 		return $.extend(lang, {
-			width : '100%',
+			width : '80%',
 			maxlength : 255,
-			cols : 80,
-			rows : 10,
-			max_size : 20,
 			indicator : '<div class="processing-indicator"/>',
 			onblur : function() {
 			},
@@ -55,6 +52,31 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 
 	}
 	
+	function jeditableSelect(){
+		var lang = translator.get({
+			submit : "label.Confirm",
+			cancel : "label.Cancel",
+			placeholder : "rich-edit.placeholder"
+		});
+		
+		return $.extend(lang, {
+			type : 'select',
+			width : '80%',
+			maxlength : 255,
+			indicator : '<div class="processing-indicator"/>',
+			onblur : function() {
+			},
+			// abort edit if clicked on a hyperlink (being the tag itself or its content)
+			onedit : function(settings, editable, evt){
+				var $target = $(evt.target);
+				return ! ( $target.is('a') || $target.parents('a').length > 0);  
+			},
+			callback : function(value, settings){
+				$(this).text(settings.data[value]);
+			}
+		});
+	}
+	
 	function jeditableCkeditor(){
 		var ckconf = stdCkeditor(),
 			jedconf = stdJeditable();
@@ -62,6 +84,8 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 		return $.extend(true, 
 			jedconf, 
 			{
+				cols : 80,
+				rows : 10,
 				type : 'ckeditor',
 				ckeditor : ckconf
 			}
@@ -95,7 +119,8 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 		getStdCkeditor : stdCkeditor,
 		getStdJeditable : stdJeditable,
 		getStdDatepicker : stdDatepicker,
-		getJeditableCkeditor : jeditableCkeditor
+		getJeditableCkeditor : jeditableCkeditor,
+		getJeditableSelect : jeditableSelect
 	};
 
 });

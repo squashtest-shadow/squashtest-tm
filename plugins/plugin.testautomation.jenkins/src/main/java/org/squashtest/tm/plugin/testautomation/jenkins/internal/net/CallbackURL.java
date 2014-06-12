@@ -31,24 +31,35 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
-final class CallbackURL {
-	 
-	
-	static String propertyName="tm.test.automation.server.callbackurl";
-	
-	static String strURL=null;
-	
-	String getValue(){
+public final class CallbackURL {
+	private static CallbackURL instance;
+	private static final String PROPERTY_NAME = "tm.test.automation.server.callbackurl";
+
+	private String strURL = null;
+
+	private CallbackURL() {
+		super();
+		instance = this;
+	}
+
+	public String getValue() {
 		return strURL;
 	}
-	
-	String getConfPropertyName(){
-		return propertyName;
+
+	String getConfPropertyName() {
+		return PROPERTY_NAME;
 	}
-	
-	@Value("${tm.test.automation.server.callbackurl}")
-	void setURL(String url){
+
+	@Value("${" + PROPERTY_NAME + "}")
+	void setURL(String url) {
 		strURL = url;
+	}
+
+	/**
+	 * @return the instance
+	 */
+	public static CallbackURL getInstance() {
+		return instance;
 	}
 
 }

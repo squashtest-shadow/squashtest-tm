@@ -22,64 +22,79 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
 
+import org.hibernate.Session;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.service.internal.repository.hibernate.NonUniqueEntityException;
 
-
-
-
 public interface TestAutomationServerDao {
 
 	/**
-	 * Will persist a new {@link TestAutomationServer}. Note : each server must have different characteristics, more exactly each combination of 
-	 * attributes is unique. Therefore if the object to be persisted already exists in the database an exception will be raised instead.
+	 * Will persist a new {@link TestAutomationServer}.
 	 * 
 	 * @param server
-	 * @throws NonUniqueEntityException if the given server happen to exist already. 
+	 *            : the server to persist
+	 * @throws NonUniqueEntityException
+	 *             if the given server happen to exist already.
 	 */
 	void persist(TestAutomationServer server);
-	
-	
+
 	/**
-	 * Will persist a TestAutomationServer if really new, or return the existing instance
-	 * if not. An instance exists if : 
+	 * Will find all occurrences of {@link TestAutomationServer} in the database ordered by their name.
 	 * 
-	 * <ul>
-	 * 	<li>argument's id is set and exists in base,</li>
-	 * 	<li>argument's id is not set but matches one by content</li>
-	 * </ul>
-	 * In all cases it returns the persisted server : this returned instance should replace the one supplied as argument in the client code.
+	 * @return : all {@link TestAutomationServer} ordered by their name
+	 */
+	List<TestAutomationServer> findAllOrderedByName();
+
+	/**
+	 * Will count all occurrences of {@link TestAutomationServer} in the database
 	 * 
-	 * @param server
-	 * @return a persistent version of that server.
+	 * @return the number of {@link TestAutomationServer} in the database
 	 */
-	TestAutomationServer uniquePersist(TestAutomationServer server);
-	
-	
+	long countAll();
+
+	List<TestAutomationServer> findPagedServers(PagingAndSorting pas);
+
 	/**
-	 * 
-	 *  
-	 * @param id
-	 * @return
-	 */
-	TestAutomationServer findById(Long id);
-	
-	/**
-	 *	<p>Given a detached (or even attached) {@link TestAutomationServer} example, will fetch a {@link TestAutomationServer}
-	 *	having the same characteristics. Null attributes will be discarded before the comparison. </p>
-	 *
-	 * @return a TestAutomation server if one was found, null if none was found.
-	 * @throws NonUniqueEntityException if more than one match. Causes are either a not restrictive enough example... or a bug.
-	 */
-	TestAutomationServer findByExample(TestAutomationServer example);
-	
-	/**
-	 * return all the projects that the given server hosts.
+	 * Checks if the {@link TestAutomationServer} is bound to at least one {@link TestAutomationProject}
 	 * 
 	 * @param serverId
-	 * @return
+	 *            : the id of the concernedTestAutomationServer
+	 * @return : true if the TestAutomationServer is bound to a TA-project
 	 */
-	List<TestAutomationProject> findAllHostedProjects(long serverId);
-	
+	boolean hasBoundProjects(long serverId);
+
+	/**
+	 * Simple find entity by id.
+	 * 
+	 * @param id
+	 *            : the id of the entity to find
+	 * @return the entity matching the given id or <code>null</code>
+	 */
+	TestAutomationServer findById(Long id);
+
+	/**
+	 * Find the {@linkplain TestAutomationServer} by it's name.
+	 * 
+	 * @param serverName
+	 *            : the name of the entity to find
+	 * @return : the entity matching the given name (must be only one or database is corrupted) or <code>null</code>.
+	 */
+	TestAutomationServer findByName(String serverName);
+
+
+	/**
+	 * Will delete the given {@linkplain TestAutomationServer} and dereference it from TM {@linkplain Project}s.
+	 * <p>
+	 * <b style="color:red">Warning :</b> When using this method there is a risk that your Hibernate beans are not up to
+	 * date. Use {@link Session#clear()} and {@link Session#refresh(Object)} to make sure your they are.
+	 * </p>
+	 * 
+	 * @param serverId
+	 *            the id of the {@linkplain TestAutomationServer} to delete.
+	 */
+	void deleteServer(long serverId);
+
 }

@@ -36,7 +36,7 @@ import javax.validation.constraints.Size;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
+import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.exception.customfield.BindableEntityMismatchException;
 import org.squashtest.tm.exception.customfield.MandatoryCufException;
@@ -97,7 +97,7 @@ public class CustomFieldValue implements Identified {
 			}
 			if (cuf.inputType == InputType.DATE_PICKER && !StringUtils.isBlank(value)) {
 				try {
-					IsoDateUtils.parseIso8601Date(value);
+					DateUtils.parseIso8601Date(value);
 				} catch (ParseException pe) {
 					throw new WrongCufDateFormatException(pe);
 				}
@@ -156,7 +156,7 @@ public class CustomFieldValue implements Identified {
 	public Date getValueAsDate() {
 		if (getCustomField() != null && getCustomField().getInputType() == InputType.DATE_PICKER) {
 			try {
-				return IsoDateUtils.parseIso8601Date(value);
+				return DateUtils.parseIso8601Date(value);
 			} catch (ParseException e) {
 				LOGGER.warn("Unable to parse date '" + value + "' of custom field value #" + id, e);
 			}

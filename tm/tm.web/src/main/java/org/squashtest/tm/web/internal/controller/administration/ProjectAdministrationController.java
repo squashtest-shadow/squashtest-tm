@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.administration;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -53,6 +54,8 @@ import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.project.GenericProjectFinder;
+import org.squashtest.tm.service.testautomation.TestAutomationProjectFinderService;
+import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.project.WorkspaceWizardModel;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
@@ -73,13 +76,18 @@ public class ProjectAdministrationController {
 	private InternationalizationHelper internationalizationHelper;
 	@Inject
 	private MessageSource messageSource;
-	
+
+	@Inject
+	private TestAutomationServerManagerService taServerService;
+	@Inject
+	private TestAutomationProjectFinderService taProjectFinderService;
+
 	@Inject
 	private WorkspaceWizardManager wizardManager;
-	
+
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentsHelper;
-	
+
 
 	private static final String PROJECT_BUGTRACKER_NAME_UNDEFINED = "project.bugtracker.name.undefined";
 
@@ -110,15 +118,13 @@ public class ProjectAdministrationController {
 				.findPartyPermissionsBeanByProject(new DefaultPagingAndSorting("login", 25),
 						DefaultFiltering.NO_FILTERING, projectId).getPagedItems();
 		Collection<Object> partyPermissions = new PartyPermissionDatatableModelHelper(locale, internationalizationHelper)
-				.buildRawModel(partyProjectPermissionsBean);
+		.buildRawModel(partyProjectPermissionsBean);
 
 		List<PermissionGroup> availablePermissions = projectFinder.findAllPossiblePermission();
 
 		// test automation data
-		TestAutomationServer taServerCoordinates = projectFinder.getLastBoundServerOrDefault((long) adminProject
-				.getProject().getId());
-		List<TestAutomationProject> boundProjects = projectFinder.findBoundTestAutomationProjects(projectId);
-
+		Collection<TestAutomationServer> availableTAServers = taServerService.findAllOrderedByName();
+		Map<String, URL> jobUrls = taProjectFinderService.findProjectUrls(adminProject.getProject().getTestAutomationProjects());
 		// bugtracker data
 		Map<Long, String> comboDataMap = createComboDataForBugtracker(locale);
 
@@ -127,26 +133,25 @@ public class ProjectAdministrationController {
 		Map<String, Boolean> allowedStatuses = new HashMap<String, Boolean>();
 		allowedStatuses.put(ExecutionStatus.SETTLED.toString(), cl.allowsStatus(ExecutionStatus.SETTLED));
 		allowedStatuses.put(ExecutionStatus.UNTESTABLE.toString(), cl.allowsStatus(ExecutionStatus.UNTESTABLE));
-		
+
 		// populating model
 		ModelAndView mav = new ModelAndView("page/projects/project-info");
-
+		mav.addObject("jobUrls", jobUrls);
 		mav.addObject("adminproject", adminProject);
-		mav.addObject("taServer", taServerCoordinates);
-		mav.addObject("boundTAProjects", boundProjects);
+		mav.addObject("availableTAServers", availableTAServers);
 		mav.addObject("bugtrackersList", JsonHelper.serialize(comboDataMap));
 		mav.addObject("bugtrackersListEmpty", comboDataMap.size() == 1);
 		mav.addObject("userPermissions", partyPermissions);
 		mav.addObject("availablePermissions", availablePermissions);
 		mav.addObject("attachments", attachmentsHelper.findAttachments(adminProject.getProject()));
 		mav.addObject("allowedStatuses", allowedStatuses);
-		
-		
+
+
 		return mav;
 	}
 
 	// ********************** Wizard administration section ************
-	
+
 	@RequestMapping(value = "{projectId}/wizards")
 	public String getWizardsManager(@PathVariable("projectId") Long projectId, Model model) {
 
@@ -174,7 +179,7 @@ public class ProjectAdministrationController {
 
 		for (WorkspaceWizard wizard : wizards) {
 			WorkspaceWizardModel model = new WorkspaceWizardModel(wizard);
-			model.setType(internationalizationHelper.getMessage("label.Wizard", null, locale));
+			model.setType(internationalizationHelper.internationalize("label.Wizard", locale));
 			output.add(model);
 		}
 
@@ -186,7 +191,7 @@ public class ProjectAdministrationController {
 		for (BugTracker b : bugtrackerFinderService.findAll()) {
 			comboDataMap.put(b.getId(), b.getName());
 		}
-		comboDataMap.put(-1L, internationalizationHelper.getMessage(PROJECT_BUGTRACKER_NAME_UNDEFINED, null, locale));
+		comboDataMap.put(-1L, internationalizationHelper.internationalize(PROJECT_BUGTRACKER_NAME_UNDEFINED, locale));
 		return comboDataMap;
 
 	}

@@ -51,7 +51,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
-import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
+import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
@@ -372,7 +372,7 @@ public class ExecutionModificationController {
 			@SuppressWarnings("unused")
 			public Date getValueAsDate() {
 				try {
-					return IsoDateUtils.parseIso8601Date(value);
+					return DateUtils.parseIso8601Date(value);
 				} catch (ParseException e) {
 					LOGGER.debug("Unable to parse date {} of custom field #{}", value, id);
 				}

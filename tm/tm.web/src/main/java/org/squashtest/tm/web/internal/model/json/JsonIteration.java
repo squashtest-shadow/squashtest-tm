@@ -22,7 +22,7 @@ package org.squashtest.tm.web.internal.model.json;
 
 import java.util.Date;
 
-import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
+import org.squashtest.tm.core.foundation.lang.DateUtils;
 
 
 public class JsonIteration {
@@ -88,7 +88,7 @@ public class JsonIteration {
 	
 	private String toISO8601(Date date){
 		if (date != null) {
-			return IsoDateUtils.formatIso8601DateTime(date);
+			return DateUtils.formatIso8601DateTime(date);
 		}
 		else{
 			return null;

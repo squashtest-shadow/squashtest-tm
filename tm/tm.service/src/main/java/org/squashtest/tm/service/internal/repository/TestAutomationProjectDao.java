@@ -20,52 +20,89 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import java.util.Collection;
+import java.util.List;
+
+import org.hibernate.Session;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.service.internal.repository.hibernate.NonUniqueEntityException;
 
 public interface TestAutomationProjectDao {
-	
+
 	/**
-	 * Will persist a new {@link TestAutomationProject}. Note : each server must have different characteristics, more exactly each combination of 
-	 * attributes is unique. Therefore if the object to be persisted already exists in the database an exception will be raised instead.
+	 * Will persist a new {@link TestAutomationProject}.
 	 * 
 	 * @param newProject
-	 * @throws NonUniqueEntityException if the given server happen to exist already. 
+	 * @throws NonUniqueEntityException
+	 *             if the given server happen to exist already.
 	 */
 	void persist(TestAutomationProject newProject);
-	
-	/**
-	 * Will persist a TestAutomationProject if really new, or return the existing instance
-	 * if not. An instance exists if : 
-	 * 
-	 * <ul>
-	 * 	<li>argument's id is set and exists in base,</li>
-	 * 	<li>argument's id is not set but matches one by content</li>
-	 * </ul>
-	 * In all cases it returns the persisted project : this returned instance should replace the one supplied as argument in the client code.
-	 * 
-	 * @param newProject
-	 * @return a persistent version of that project.
-	 */
-	TestAutomationProject uniquePersist(TestAutomationProject newProject);
-	
+
 	/**
 	 * 
-	 *  
+	 * 
 	 * @param id
 	 * @return
 	 */
 	TestAutomationProject findById(Long projectId);
-	
-	
+
 	/**
-	 *	<p>Given a detached (or even attached) {@link TestAutomationProject} example, will fetch a {@link TestAutomationProject}
-	 *	having the same characteristics. Null attributes will be discarded before the comparison. </p>
-	 *
+	 * <p>
+	 * Given a detached (or even attached) {@link TestAutomationProject} example, will fetch a
+	 * {@link TestAutomationProject} having the same characteristics. Null attributes will be discarded before the
+	 * comparison.
+	 * </p>
+	 * 
 	 * @return a TestAutomation project if one was found, null if none was found.
-	 * @throws NonUniqueEntityException if more than one match. Causes are either a not restrictive enough example... or a bug.
-	 */	
+	 * @throws NonUniqueEntityException
+	 *             if more than one match. Causes are either a not restrictive enough example... or a bug.
+	 */
 	TestAutomationProject findByExample(TestAutomationProject example);
-	
-		
+
+	Collection<Long> findAllByTMProject(long tmProjectId);
+
+
+	/**
+	 * return true if at least one of these projects have been executed, false otherwise
+	 * 
+	 * @param projectIds
+	 * @return
+	 */
+	boolean haveExecutedTestsByIds(Collection<Long> projectIds);
+
+	/**
+	 * When removing one or several TestAutomationProject : the test cases referencing their scripts are unbound, the
+	 * AutomatedExecutionExtender have their resultURL and automatedTest to null, then all the AutomatedTests are
+	 * removed, and finally the projects.
+	 * 
+	 * @param projectIds
+	 */
+	void deleteProjectsByIds(Collection<Long> projectIds);
+
+	/**
+	 * <p>
+	 * <b style="color:red">Warning :</b> When using this method there is a risk that your Hibernate beans are not up to
+	 * date. Use {@link Session#clear()} and {@link Session#refresh(Object)} to make sure your they are.
+	 * </p>
+	 * 
+	 * @param serverId
+	 */
+	void deleteAllHostedProjects(long serverId);
+
+	/**
+	 * return all the projects that the given server hosts.
+	 * 
+	 * @param serverId
+	 * @return
+	 */
+	List<TestAutomationProject> findAllHostedProjects(long serverId);
+
+	/**
+	 * return all the ids of the projects that the given server hosts.
+	 * 
+	 * @param serverId
+	 * @return
+	 */
+	List<Long> findHostedProjectIds(long serverId);
+
 }

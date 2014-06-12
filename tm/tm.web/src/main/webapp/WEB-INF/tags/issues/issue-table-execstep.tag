@@ -67,7 +67,7 @@
 
 <script type="text/javascript">
 require( ["common"], function(){
-		require(["jquery","issue-tables"], function($,it){
+		require(["jquery","issues/issues-table"], function($,it){
 	$(function(){
 			it.initTestStepIssueTable({
 				target : '#issue-table',

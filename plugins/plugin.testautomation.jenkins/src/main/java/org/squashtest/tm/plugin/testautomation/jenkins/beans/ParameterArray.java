@@ -23,19 +23,19 @@ package org.squashtest.tm.plugin.testautomation.jenkins.beans;
 import java.util.Arrays;
 
 public class ParameterArray {
-	
-	private Parameter[] parameter;
 
-	public Parameter[] getParameter() {
+	private Object[] parameter;
+
+	public Object[] getParameter() {
 		return parameter;
 	}
 
-	public void setParameter(Parameter[] parameter) {//NOSONAR no, this array is not stored directly
+	public void setParameter(Object[] parameter) {//NOSONAR no, this array is not stored directly
 		this.parameter = Arrays.copyOf(parameter,parameter.length);
 	}
-	
-	public ParameterArray(Parameter[] parameter){
+
+	public ParameterArray(Object[] parameter){
 		setParameter(parameter);
 	}
-	
+
 }

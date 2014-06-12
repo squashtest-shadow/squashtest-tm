@@ -28,11 +28,7 @@
 
 define([ "jquery", "squash.configmanager", "jquery.squash.jeditable" ], function($, confman) {
 	/*
-	 * settings = {
-	 *  target (target url or target function)
-	 *  componentId
-	 *  ...(jeditable settings)
-	 * }
+	 * settings = { target (target url or target function) componentId ...(jeditable settings) }
 	 */
 	var SelectJEditable = function(settings) {
 		var self = this;
@@ -44,34 +40,38 @@ define([ "jquery", "squash.configmanager", "jquery.squash.jeditable" ], function
 		this.component = component;
 		var txt = component.text();
 		component.text($.trim(txt));
-		
-		var defaultSettings = confman.getStdJeditable();
-		defaultSettings.type = 'select';
 
+		var defaultSettings = confman.getJeditableSelect();
 
-		this.getSelectedOption = function(){
-			var option = "";
-              $.each(settings.jeditableSettings.data, function(key, value){
-				if($("<span/>").html(value).text() == component.text()){
-					option = key;
-					}
-              });
-              return option;
+		this.setValue = function(value) {
+			component.html(settings.jeditableSettings.data[value]); 
+			self.instance.data(value);
 		};
-		
-		if(settings.getUrl){
-			this.refresh = function(){
+
+		this.getSelectedOption = function() {
+			var option = "";
+			$.each(settings.jeditableSettings.data, function(key, value) {
+				if ($("<span/>").html(value).text() == component.text()) {
+					option = key;
+				}
+			});
+			return option;
+		};
+
+		// init
+		if (settings.getUrl) {
+			this.refresh = function() {
 				$.ajax({
-					type :"get",
+					type : "get",
 					url : settings.getUrl
-				}).then(function(value){
+				}).then(function(value) {
 					component.html(value);
 					$(self).trigger("selectJEditable.refresh");
 				});
 			};
-		}else{
-			this.refresh = function(){
-				if(console){
+		} else {
+			this.refresh = function() {
+				if (console) {
 					console.log("refresh not suported because SelectJEditable.settings.getUrl undefined");
 				}
 				return;

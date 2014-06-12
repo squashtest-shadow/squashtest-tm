@@ -40,12 +40,14 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.service.deletion.NotDeletableCampaignsPreviewReport;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService;
+import org.squashtest.tm.service.internal.repository.AutomatedTestDao;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
 import org.squashtest.tm.service.internal.repository.CampaignDeletionDao;
 import org.squashtest.tm.service.internal.repository.CampaignFolderDao;
@@ -58,7 +60,7 @@ import org.squashtest.tm.service.security.SecurityCheckableObject;
 
 @Component("squashtest.tm.service.deletion.CampaignNodeDeletionHandler")
 public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<CampaignLibraryNode, CampaignFolder>
-		implements CampaignNodeDeletionHandler {
+implements CampaignNodeDeletionHandler {
 
 	@Inject
 	private CampaignFolderDao folderDao;
@@ -74,16 +76,19 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 	@Inject
 	private TestSuiteDao suiteDao;
-	
+
+	@Inject
+	private AutomatedTestDao autoTestDao;
+
 	@Inject
 	private PrivateCustomFieldValueService customValueService;
-	
+
 	@Inject
 	private PrivateDenormalizedFieldValueService denormalizedFieldValueService;
 
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
-	
+
 	@Override
 	protected FolderDao<CampaignFolder, CampaignLibraryNode> getFolderDao() {
 		return folderDao;
@@ -97,16 +102,16 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		List<SuppressionPreviewReport> reportList = new ArrayList<SuppressionPreviewReport>();
 		NotDeletableCampaignsPreviewReport report;
 		List<Campaign> campaigns = campaignDao.findAllByIds(nodeIds);
-		
+
 		//by default the user is assumed to be allowed to delete the campaigns without warning
-		
+
 		for(Campaign campaign : campaigns){
-			
+
 			if(campaignDao.countRunningOrDoneExecutions(campaign.getId()) > 0){
-				
+
 				try{
 					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(campaign,"EXTENDED_DELETE"));
-					
+
 					//The user is allowed to delete the campaign but must be warned
 					report = new NotDeletableCampaignsPreviewReport();
 					report.addName(campaign.getName());
@@ -114,14 +119,14 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 					reportList.add(report);
 				}
 				catch(AccessDeniedException exception){
-					
+
 					//The user is not allowed to delete the campaign
 					report = new NotDeletableCampaignsPreviewReport();
 					report.addName(campaign.getName());
 					report.setHasRights(false);
 					reportList.add(report);
 				}
-				
+
 			}
 		}
 
@@ -134,16 +139,16 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		List<SuppressionPreviewReport> reportList = new ArrayList<SuppressionPreviewReport>();
 		NotDeletableCampaignsPreviewReport report;
 		List<Iteration> iterations = iterationDao.findAllByIds(targetIds);
-		
+
 		//by default the user is assumed to be allowed to delete the iterations without warning
-		
+
 		for(Iteration iteration : iterations){
-			
+
 			if(iterationDao.countRunningOrDoneExecutions(iteration.getId()) > 0){
-				
+
 				try{
 					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(iteration,"EXTENDED_DELETE"));
-				
+
 					//The user is allowed to delete the campaign but must be warned
 					report = new NotDeletableCampaignsPreviewReport();
 					report.addName(iteration.getName());
@@ -151,7 +156,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 					reportList.add(report);
 				}
 				catch(AccessDeniedException exception){
-		
+
 					//The user is not allowed to delete the campaign
 					report = new NotDeletableCampaignsPreviewReport();
 					report.addName(iteration.getName());
@@ -160,7 +165,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 				}
 			}
 		}
-		
+
 		return reportList;
 	}
 
@@ -185,20 +190,20 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 		List<Campaign> campaigns = campaignDao.findAllByIds(nodeIds);
 		List<Long> lockedNodes = new ArrayList<Long>(nodeIds.size());
-		
+
 		for(Campaign campaign : campaigns){
-			
+
 			if(campaignDao.countRunningOrDoneExecutions(campaign.getId()) > 0){
-				
+
 				try{
-					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(campaign,"EXTENDED_DELETE"));	
+					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(campaign,"EXTENDED_DELETE"));
 				}
 				catch(AccessDeniedException exception){
 					lockedNodes.add(campaign.getId());
 				}
 			}
 		}
-		
+
 		return lockedNodes;
 	}
 
@@ -219,13 +224,13 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	 * by Nodes we mean the CampaignLibraryNodes.
 	 */
 	protected OperationReport batchDeleteNodes(List<Long> ids) {
-		
+
 		//prepare the operation report:
 		List<Long>[] separatedIds = deletionDao.separateFolderFromCampaignIds(ids);
-		
+
 		List<Campaign> campaigns = campaignDao.findAllByIds(ids);
 		List<CampaignFolder> folders = folderDao.findAllByIds(ids);
-		
+
 		// saving the attachment list for later.
 		List<AttachmentList> attachLists = new LinkedList<AttachmentList>();
 		for (Campaign campaign : campaigns) {
@@ -252,13 +257,13 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		for (AttachmentList list : attachLists) {
 			deletionDao.removeAttachmentList(list);
 		}
-		
-		
+
+
 		//and finally prepare the operation report.
 		OperationReport report = new OperationReport();
 		report.addRemoved(separatedIds[0], "folder");
 		report.addRemoved(separatedIds[1], "campaign");
-		
+
 		return report;
 	}
 
@@ -268,11 +273,11 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		List<Iteration> iterations = iterationDao.findAllByIds(targetIds);
 		List<Iteration> iterationsToBeDeleted = new ArrayList<Iteration>(iterations.size());
 		List<Long> deletedTargetIds = new ArrayList<Long>(targetIds.size());
-		
+
 		for(Iteration iteration : iterations){
-			
+
 			if(iterationDao.countRunningOrDoneExecutions(iteration.getId()) > 0){
-				
+
 				try{
 					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(iteration,"EXTENDED_DELETE"));
 					iteration.getCampaign().removeIteration(iteration);
@@ -280,7 +285,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 					deletedTargetIds.add(iteration.getId());
 				}
 				catch(AccessDeniedException exception){
-					
+
 				}
 			}
 			else{
@@ -289,15 +294,15 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 				deletedTargetIds.add(iteration.getId());
 			}
 		}
-			
-		doDeleteIterations(iterationsToBeDeleted);		
-	
+
+		doDeleteIterations(iterationsToBeDeleted);
+
 		OperationReport report = new OperationReport();
 		report.addRemoved(deletedTargetIds, "iteration");
-		
+
 		return report;
 	}
-	
+
 	@Override
 	public OperationReport deleteSuites(List<Long> testSuites) {
 		List<TestSuite> suites = suiteDao.findAllByIds(testSuites);
@@ -319,9 +324,9 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 				testPlanItem.getTestSuites().clear();
 			}
 			testSuite.getIteration().removeTestSuite(testSuite);
-			
+
 			customValueService.deleteAllCustomFieldValues(testSuite);
-			
+
 			deletionDao.removeEntity(testSuite);
 		}
 
@@ -332,11 +337,11 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	@Override
 	public void deleteExecution(Execution execution) {
 		deleteExecSteps(execution);
-		
+
 		IterationTestPlanItem testPlanItem = execution.getTestPlan();
 		testPlanItem.removeExecution(execution);
 		deleteAutomatedExecutionExtender(execution);
-		
+
 		denormalizedFieldValueService.deleteAllDenormalizedFieldValues(execution);
 		customValueService.deleteAllCustomFieldValues(execution);
 		deletionDao.removeAttachmentList(execution.getAttachmentList());
@@ -387,7 +392,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 			deleteIterationTestPlan(iteration.getTestPlans());
 			iteration.getTestSuites().clear();	//XXX isn't that supposed to be iteration.getTestPlans().clear();
-			
+
 			customValueService.deleteAllCustomFieldValues(iteration);
 
 			deletionDao.removeAttachmentList(iteration.getAttachmentList());
@@ -405,8 +410,8 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 			deleteIterationTestPlanItem(item);
 		}
 	}
-	
-	
+
+
 	@Override
 	public void deleteIterationTestPlanItem(IterationTestPlanItem item){
 		deleteExecutions(item.getExecutions());
@@ -414,7 +419,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	}
 
 	/*
-	 *  
+	 * 
 	 */
 	@Override
 	public void deleteExecutions(List<Execution> executions) {
@@ -431,7 +436,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	public void deleteExecSteps(Execution execution) {
 
 		for (ExecutionStep step : execution.getSteps()) {
-			
+
 			deletionDao.removeAttachmentList(step.getAttachmentList());
 			denormalizedFieldValueService.deleteAllDenormalizedFieldValues(step);
 			customValueService.deleteAllCustomFieldValues(step);
@@ -443,7 +448,9 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 	private void deleteAutomatedExecutionExtender(Execution execution){
 		if (execution.getAutomatedExecutionExtender()!=null){
-			deletionDao.removeEntity(execution.getAutomatedExecutionExtender());
+			AutomatedExecutionExtender extender = execution.getAutomatedExecutionExtender();
+			autoTestDao.removeIfUnused(extender.getAutomatedTest());
+			deletionDao.removeEntity(extender);
 			execution.setAutomatedExecutionExtender(null);
 		}
 	}

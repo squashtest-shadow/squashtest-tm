@@ -294,14 +294,12 @@ public class TestSuiteTestPlanManagerController {
 		testSuiteTestPlanManagerService.bindTestPlanToMultipleSuites(boundTestSuitesIds, itpIds);
 	}
 
-	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{testPlanId}", method = RequestMethod.POST, params = { STATUS })
+	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{testPlanIds}", method = RequestMethod.POST, params = { STATUS })
 	public @ResponseBody
-	JsonIterationTestPlanItem setTestPlanItemStatus(@PathVariable("testPlanId") long testPlanId, @RequestParam(STATUS) String status) {
-		LOGGER.debug("change status test plan item #{} to {}", testPlanId, status);
-		iterationTestPlanManagerService.forceExecutionStatus(testPlanId, status);
-		IterationTestPlanItem item = iterationTestPlanManagerService.findTestPlanItem(testPlanId);
-		
-		return createJsonITPI(item);
+	JsonIterationTestPlanItem setTestPlanItemStatus(@PathVariable("testPlanIds") List<Long> testPlanIds, @RequestParam(STATUS) String status) {
+		LOGGER.debug("change status test plan items to {}", status);
+		List<IterationTestPlanItem> itpis = iterationTestPlanManagerService.forceExecutionStatus(testPlanIds, status);
+		return createJsonITPI(itpis.get(0));
 	}
 
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{itemId}/executions", method = RequestMethod.GET)
@@ -346,19 +344,6 @@ public class TestSuiteTestPlanManagerController {
 
 	}
 
-	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{testPlanId}/executions/new", method = RequestMethod.POST, params = { "mode=auto" })
-	public @ResponseBody
-	AutomatedSuiteOverview addAutoExecution(@PathVariable(TEST_SUITE_ID) long suiteId, @PathVariable(ITEM_ID) long itemId,
-			Locale locale) {
-		LOGGER.debug("add automated execution to item #{}", itemId);
-		List<Long> testPlanIds = new ArrayList<Long>(1);
-		testPlanIds.add(itemId);
-
-		AutomatedSuite suite = service.createAndStartAutomatedSuite(itemId, testPlanIds);
-
-		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
-
-	}
 
 	private String formatUnassigned(Locale locale) {
 		return messageSource.internationalize("label.Unassigned", locale);

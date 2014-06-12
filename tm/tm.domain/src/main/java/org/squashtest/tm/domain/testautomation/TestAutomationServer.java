@@ -28,11 +28,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.squashtest.tm.domain.audit.Auditable;
 
 
 /**
- * An AutomatedTestServer represents both a repository of automated tests, and an automated test execution platform. 
+ * An AutomatedTestServer represents both a repository of automated tests, and an automated test execution platform.
  * 
  * @author bsiri
  *
@@ -40,15 +43,22 @@ import javax.validation.constraints.Size;
 
 
 @NamedQueries({
+	@NamedQuery(name="testAutomationServer.findAllOrderedByName", query="from TestAutomationServer order by name"),
 	@NamedQuery(name="testAutomationServer.findById", query="from TestAutomationServer where id = :serverId"),
-	@NamedQuery(name="testAutomationServer.findAllHostedProjects", query="select p from TestAutomationProject p join p.server s where s.id = :serverId")
+	@NamedQuery(name="testAutomationServer.findByName", query="from TestAutomationServer where name = :serverName"),
+	@NamedQuery(name="testAutomationServer.findAllHostedProjects", query="select p from TestAutomationProject p join p.server s where s.id = :serverId"),
+	@NamedQuery(name="testAutomationServer.hasBoundProjects", query="select count(*) from TestAutomationProject where server.id = :serverId"),
+	@NamedQuery(name="testAutomationServer.countAll", query="select count(*) from TestAutomationServer"),
+	@NamedQuery(name="testAutomationServer.dereferenceProjects", query="update GenericProject gp set gp.testAutomationServer = null where gp.testAutomationServer.id = :serverId"),
+	@NamedQuery(name="testAutomationServer.deleteServer", query="delete from TestAutomationServer serv where serv.id = :serverId")
 })
 @Entity
+@Auditable
 public class TestAutomationServer {
-	
-	
+
+
 	private static final String DEFAULT_KIND = "jenkins";
-	
+
 	/**
 	 * this is the ID (technical information)
 	 * 
@@ -58,42 +68,92 @@ public class TestAutomationServer {
 	@Column(name = "SERVER_ID")
 	private Long id;
 
-	
+	@Column(unique=true)
+	private String name;
+
 	/**
-	 * This is the url where to reach the server. 
+	 * This is the url where to reach the server.
 	 */
 	@Column
 	private URL baseURL ;
-	
+
 	/**
 	 * The login that the TM server should use when dealing with the remote TA server.
 	 */
 	@Column
 	@Size(min = 0, max = 50)
 	private String login;
-	
-	
+
+
 	/**
 	 * The password to be used with the login above
 	 */
-	//TODO : eeer... clear password in the database ? 
+	//TODO : eeer... clear password in the database ?
 	@Column
 	@Size(min = 0, max = 255)
 	private String password;
-	
-	
+
+
 	/**
 	 * The kind of the remote TA server. It'll help selecting the correct connector. Default is {@link #DEFAULT_KIND}
 	 */
 	@Column
 	@Size(min = 0, max = 30)
 	private String kind = DEFAULT_KIND;
-	
-	
-	
+
+
+	@Column(name="MANUAL_SLAVE_SELECTION")
+	private boolean manualSlaveSelection = false;
+
+	@Column(name="DESCRIPTION")
+	private String description = "";
+
+	public TestAutomationServer(){
+		super();
+	}
+
+	public TestAutomationServer(String name){
+		super();
+		this.name = name;
+	}
+
+	public TestAutomationServer(Long id){
+		super();
+		this.id = id;
+	}
+
+
+
+	public TestAutomationServer(String name, URL baseURL, String login, String password) {
+		this(name);
+		this.baseURL = baseURL;
+		this.login = login;
+		this.password = password;
+	}
+
+
+
+	public TestAutomationServer(String name, URL baseURL, String login, String password, String kind) {
+		this(name, baseURL, login, password);
+		this.kind = kind;
+	}
+
 	public Long getId() {
 		return id;
 	}
+
+
+
+	public String getName() {
+		return name;
+	}
+
+
+
+	public void setName(@NotNull String name) {
+		this.name = name;
+	}
+
 
 
 	public URL getBaseURL() {
@@ -114,66 +174,40 @@ public class TestAutomationServer {
 	public String getKind() {
 		return kind;
 	}
-	
+
 	public String toString(){
 		return baseURL.toExternalForm();
 	}
-	
-	
-	public TestAutomationServer newWithURL(URL baseURL){
-		return new TestAutomationServer(baseURL, login, password, kind);
-	}
-	
-	public TestAutomationServer newWithLogin(String login){
-		return new TestAutomationServer(baseURL, login, password, kind);
-	}
-	
-	public TestAutomationServer newWithPassword(String password){
-		return new TestAutomationServer(baseURL, login, password, kind);
-	}
-	
-	
-	public TestAutomationServer newWithKind(String kind){
-		return new TestAutomationServer(baseURL, login, password, kind);
+
+
+	public void setBaseURL(URL baseURL) {
+		this.baseURL = baseURL;
 	}
 
-	public TestAutomationServer(){
-		
-	}
-	
-	public TestAutomationServer(URL baseURL){
-		super();
-		this.baseURL = baseURL;
-	}
-	
-	public TestAutomationServer(URL baseURL, String kind){
-		super();
-		this.baseURL = baseURL;
-		this.kind = kind;
-	}
 
-	public TestAutomationServer(URL baseURL, String login,
-			String password) {
-		super();
-		this.baseURL = baseURL;
+	public void setLogin(String login) {
 		this.login = login;
-		this.password = password;
-		this.kind=DEFAULT_KIND;
 	}
 
 
-
-	public TestAutomationServer(URL baseURL, String login,
-			String password, String kind) {
-		super();
-		this.baseURL = baseURL;
-		this.login = login;
+	public void setPassword(String password) {
 		this.password = password;
-		this.kind = kind;
 	}
 
+	public boolean isManualSlaveSelection() {
+		return manualSlaveSelection;
+	}
 
+	public void setManualSlaveSelection(boolean manualSlaveSelection) {
+		this.manualSlaveSelection = manualSlaveSelection;
+	}
 
+	public String getDescription() {
+		return description;
+	}
 
-	
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 }

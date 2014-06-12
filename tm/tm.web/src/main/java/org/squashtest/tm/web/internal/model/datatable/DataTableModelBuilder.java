@@ -73,7 +73,7 @@ public abstract class DataTableModelBuilder<X> {
 		currentIndex = startIndex;
 		return buildRawModel(pagedItems);
 	}
-		private DataTableModel createModelFromItems(String sEcho, Collection<X> pagedItems) {
+	private DataTableModel createModelFromItems(String sEcho, Collection<X> pagedItems) {
 		DataTableModel model = new DataTableModel(sEcho);
 
 		for (X item : pagedItems) {
@@ -87,7 +87,13 @@ public abstract class DataTableModelBuilder<X> {
 		return currentIndex;
 	}
 
-	// NOSONAR:START 
+	protected static String formatUsername(String username) {
+		if (username == null || "".equals(username.trim())) {
+			return "-";
+		}
+		return username;
+	}
+	// NOSONAR:START
 	// it is here on purpose
 	@SuppressWarnings("unused")
 	private void setCurrentIndex(int i) {

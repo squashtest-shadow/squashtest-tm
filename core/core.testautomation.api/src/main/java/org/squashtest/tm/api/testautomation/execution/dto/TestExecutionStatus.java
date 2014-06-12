@@ -143,7 +143,7 @@ public class TestExecutionStatus implements Serializable {
 	 *            New status of the test.
 	 */
 	public void setStatus(ExecutionStatus status) {
-		if (testName == null) {
+		if (status == null) {
 			throw new IllegalArgumentException("status cannot be null.");
 		}
 		this.status = status;

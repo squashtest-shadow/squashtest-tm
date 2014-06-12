@@ -22,7 +22,7 @@ package org.squashtest.tm.web.internal.model.json;
 
 import java.util.Date;
 
-import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
+import org.squashtest.tm.core.foundation.lang.DateUtils;
 
 public class JsonStepInfo {
 
@@ -41,7 +41,7 @@ public class JsonStepInfo {
 	
 	public JsonStepInfo(Date executedOn, String executedBy) {
 		super();
-		this.executedOn = IsoDateUtils.formatIso8601DateTime(executedOn);
+		this.executedOn = DateUtils.formatIso8601DateTime(executedOn);
 		this.executedBy = executedBy;
 	}
 

@@ -53,6 +53,7 @@
 <f:message var="dateFormatDp" key="squashtm.dateformatShort.datepicker" />
 <c:if test="${ (empty editable) or editable }">
 	<script type="text/javascript">
+	//TODO remove this js. Init in .js file instead.
 require(["common"], function() {
 	require(["jquery", "jquery.squash.datepicker-auto"], function() {
 <c:choose>

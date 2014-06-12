@@ -27,7 +27,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.junit.After;
 import org.junit.Test;
-import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
+import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
@@ -188,8 +188,8 @@ class TestCaseInstructionBuilderTest extends Specification {
 		TC_PRE_REQUISITE| Cell.CELL_TYPE_STRING		| "yeah"			| "prerequisite"	| "yeah"
 		TC_PRE_REQUISITE| Cell.CELL_TYPE_BLANK		| ""				| "prerequisite"	| null
 
-		TC_CREATED_ON	| Cell.CELL_TYPE_STRING		| "2010-01-12"		| "createdOn"		| IsoDateUtils.parseIso8601Date("2010-01-12")
-		TC_CREATED_ON	| Cell.CELL_TYPE_NUMERIC	| IsoDateUtils.parseIso8601Date("2019-03-17") | "createdOn"		| IsoDateUtils.parseIso8601Date("2019-03-17")
+		TC_CREATED_ON	| Cell.CELL_TYPE_STRING		| "2010-01-12"		| "createdOn"		| DateUtils.parseIso8601Date("2010-01-12")
+		TC_CREATED_ON	| Cell.CELL_TYPE_NUMERIC	| DateUtils.parseIso8601Date("2019-03-17") | "createdOn"		| DateUtils.parseIso8601Date("2019-03-17")
 		TC_CREATED_ON	| Cell.CELL_TYPE_BLANK		| ""				| "createdOn"		| null
 
 		TC_CREATED_BY	| Cell.CELL_TYPE_STRING		| "your mom"		| "createdBy"		| "your mom"

@@ -22,7 +22,7 @@ package org.squashtest.tm.web.internal.model.json;
 
 import java.util.Date;
 
-import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
+import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 
 public class JsonGeneralInfo {
@@ -44,17 +44,17 @@ public class JsonGeneralInfo {
 	public JsonGeneralInfo(Date createdOn, String createdBy,
 			Date modifiedOn, String modifedBy){
 		super();
-		this.createdOn = IsoDateUtils.formatIso8601DateTime(createdOn);
+		this.createdOn = DateUtils.formatIso8601DateTime(createdOn);
 		this.createdBy = createdBy;
-		this.modifiedOn = IsoDateUtils.formatIso8601DateTime(modifiedOn);
+		this.modifiedOn = DateUtils.formatIso8601DateTime(modifiedOn);
 		this.modifiedBy = modifedBy;
 	}
 	
 	public JsonGeneralInfo(AuditableMixin mixin){
 		super();
-		this.createdOn = IsoDateUtils.formatIso8601DateTime(mixin.getCreatedOn());
+		this.createdOn = DateUtils.formatIso8601DateTime(mixin.getCreatedOn());
 		this.createdBy = mixin.getCreatedBy();
-		this.modifiedOn = IsoDateUtils.formatIso8601DateTime(mixin.getLastModifiedOn());
+		this.modifiedOn = DateUtils.formatIso8601DateTime(mixin.getLastModifiedOn());
 		this.modifiedBy = mixin.getLastModifiedBy();		
 	}
 

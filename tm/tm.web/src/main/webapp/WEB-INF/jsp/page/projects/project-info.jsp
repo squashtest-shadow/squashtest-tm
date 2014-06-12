@@ -28,7 +28,7 @@
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
 <%@ taglib prefix="dt" tagdir="/WEB-INF/tags/datatables"%>
 <%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
-<%@ taglib prefix="ta" tagdir="/WEB-INF/tags/testautomation"%>
+<%@ taglib prefix="pc" tagdir="/WEB-INF/tags/project-components"%>
 <%@ taglib prefix="input" tagdir="/WEB-INF/tags/input"%>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
@@ -316,10 +316,9 @@
 			<%---------------------------------------/STATUS----------------------------------------------------%>
 			<%------------------------------ TEST AUTOMATION PROJECT -------------------------------------------%>
 
-			<ta:ta-admin-panel  
+			<pc:automation-panel
 				project="${adminproject.project}" 
-				taServer="${taServer}" 
-				boundProjects="${boundTAProjects}"/>
+				availableTAServers="${availableTAServers}"/>
 			
 			<%----------------------------- /TEST AUTOMATION PROJECT -------------------------------------------%>					
 			<%----------------------------- ATTACHMENT -------------------------------------------%>
@@ -442,15 +441,14 @@
 
 <!-- ------------------------------------END RENAME POPUP------------------------------------------------------- -->
 <script type="text/javascript">
-
+require(["common"], function() {
+require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.attributeparser", "project/ProjectToolbar", "squashtable", "jquery.squash.formdialog", "jquery.switchButton"], function($, projectsManager, Frag, attrparser, ProjectToolbar){
 /* popup renaming success handler */
 function renameProjectSuccess(data) {
 	$('#project-name-header').html(data.newName);
 	$('#rename-project-dialog').dialog('close');
 }
 
-require(["common"], function() {
-require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.attributeparser", "project", "squashtable", "jquery.squash.formdialog", "jquery.switchButton"], function($, projectsManager, Frag, attrparser){
 	
 	function clickProjectBackButton(){
 		document.location.href = "${projectsUrl}";
@@ -477,6 +475,8 @@ require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.att
 		 		$("#toggle-SETTLED-checkbox").change(function(){
 		 			toggleStatusActivation("SETTLED");
 		 		}); 
+		 		
+		 		new ProjectToolbar();
 	});
 	
 	function refreshTableAndPopup(){
@@ -675,9 +675,7 @@ require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.att
 		projectsManager.projectInfo.initUserPermissions(permSettings);
 				
 
-		Frag.init({
-			beforeLoad : Frag.confHelper.fnCacheRequests
-		});								
+		Frag.init();								
 	}
 	
 	

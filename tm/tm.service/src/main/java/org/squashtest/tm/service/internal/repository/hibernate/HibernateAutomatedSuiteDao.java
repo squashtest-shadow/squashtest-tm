@@ -30,12 +30,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.StatelessSession;
-import org.hibernate.Transaction;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
@@ -43,19 +40,15 @@ import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
 
-
 @Repository
-public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao{
+public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 
 	@Inject
 	private SessionFactory factory;
-	
-	
-	protected Session currentSession(){
+
+	protected Session currentSession() {
 		return factory.getCurrentSession();
 	}
-	
-
 
 	@Override
 	public AutomatedSuite createNewSuite() {
@@ -64,112 +57,74 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao{
 		return suite;
 	}
 
-
 	@Override
 	public AutomatedSuite findById(String id) {
 		Query query = currentSession().getNamedQuery("automatedSuite.findById");
 		query.setString("suiteId", id);
-		return (AutomatedSuite)query.uniqueResult();
+		return (AutomatedSuite) query.uniqueResult();
 	}
 
-
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<AutomatedSuite> findAll() {
 		Query query = currentSession().getNamedQuery("automatedSuite.findAll");
-		return (List<AutomatedSuite>)query.list();
+		return (List<AutomatedSuite>) query.list();
 	}
 
-
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<AutomatedSuite> findAllById(Collection<String> ids) {
-		if (ids.isEmpty()){
+	public List<AutomatedSuite> findAllByIds(Collection<String> ids) {
+		if (ids.isEmpty()) {
 			return Collections.emptyList();
-		}
-		else{
+		} else {
 			Query query = currentSession().getNamedQuery("automatedSuite.findAllById");
 			query.setParameterList("suiteIds", ids, StringType.INSTANCE);
 			return (List<AutomatedSuite>) query.list();
 		}
 	}
 
-
+	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<AutomatedExecutionExtender> findAllExtenders(String suiteId) {
 		Query query = currentSession().getNamedQuery("automatedSuite.findAllExtenders");
 		query.setString("suiteId", suiteId);
-		return (List<AutomatedExecutionExtender>)query.list();		
-	}
-
-
-	@Override
-	public Collection<AutomatedExecutionExtender> findAllWaitingExtenders(
-			String suiteId) {
-		return findAllExtendersByStatus(suiteId, new ExecutionStatus[]{ READY });
-	}
-
-
-	@Override
-	public Collection<AutomatedExecutionExtender> findAllRunningExtenders(
-			String suiteId) {
-		return findAllExtendersByStatus(suiteId, new ExecutionStatus[]{ RUNNING });
-	}
-
-
-	@Override
-	public Collection<AutomatedExecutionExtender> findAllCompletedExtenders(
-			String suiteId) {
-		return findAllExtendersByStatus(suiteId, ExecutionStatus.getTerminatedStatusSet());
-	}
-
-
-	@Override
-	public Collection<AutomatedExecutionExtender> findAllExtendersByStatus(
-			final String suiteId, final Collection<ExecutionStatus> statusList) {
-		
-		Query query = currentSession().getNamedQuery("automatedSuite.findAllExtendersHavingStatus");
-		
-		query.setString("suiteId", suiteId);
-		
-		query.setParameterList("statusList", statusList);
-		
 		return (List<AutomatedExecutionExtender>) query.list();
 	}
 
+	@Override
+	public Collection<AutomatedExecutionExtender> findAllWaitingExtenders(String suiteId) {
+		return findAllExtendersByStatus(suiteId, new ExecutionStatus[] { READY });
+	}
 
-	public Collection<AutomatedExecutionExtender> findAllExtendersByStatus
-		(String suiteId, ExecutionStatus... statusArray){
+	@Override
+	public Collection<AutomatedExecutionExtender> findAllRunningExtenders(String suiteId) {
+		return findAllExtendersByStatus(suiteId, new ExecutionStatus[] { RUNNING });
+	}
+
+	@Override
+	public Collection<AutomatedExecutionExtender> findAllCompletedExtenders(String suiteId) {
+		return findAllExtendersByStatus(suiteId, ExecutionStatus.getTerminatedStatusSet());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Collection<AutomatedExecutionExtender> findAllExtendersByStatus(final String suiteId,
+			final Collection<ExecutionStatus> statusList) {
+
+		Query query = currentSession().getNamedQuery("automatedSuite.findAllExtendersHavingStatus");
+
+		query.setString("suiteId", suiteId);
+
+		query.setParameterList("statusList", statusList);
+
+		return (List<AutomatedExecutionExtender>) query.list();
+	}
+
+	public Collection<AutomatedExecutionExtender> findAllExtendersByStatus(String suiteId,
+			ExecutionStatus... statusArray) {
 		Collection<ExecutionStatus> statusList = Arrays.asList(statusArray);
 		return findAllExtendersByStatus(suiteId, statusList);
-		
-	}
-	
-	
-	@Override
-	public AutomatedSuite initDetachedSuite(String suiteId) {
 
-				
-		StatelessSession s = factory.openStatelessSession();
-		Transaction tx = s.beginTransaction();
-		
-		try{
-			Query query = s.getNamedQuery("automatedSuite.completeInitializationById");
-			//query.setCacheMode(null);
-			query.setParameter("suiteId", suiteId);
-			AutomatedSuite detached = (AutomatedSuite) query.uniqueResult();
-			tx.commit();
-			return detached;
-		}
-		catch(HibernateException ex){
-			tx.rollback();
-			throw ex;
-		}
-		finally{
-			tx.commit();
-			s.close();
-		}
-		
 	}
 
-	
-	
 }

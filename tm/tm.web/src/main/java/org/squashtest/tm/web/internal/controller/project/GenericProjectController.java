@@ -22,11 +22,11 @@ package org.squashtest.tm.web.internal.controller.project;
 
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
-import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -64,16 +64,17 @@ import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
-import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
+import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.exception.NoBugTrackerBindingException;
-import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
 import org.squashtest.tm.exception.user.LoginDoNotExistException;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
+import org.squashtest.tm.service.testautomation.TestAutomationProjectFinderService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.administration.PartyPermissionDatatableModelHelper;
+import org.squashtest.tm.web.internal.helper.JEditablePostParams;
 import org.squashtest.tm.web.internal.helper.ProjectHelper;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -85,7 +86,6 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
-import org.squashtest.tm.web.internal.model.testautomation.TestAutomationProjectRegistrationForm;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
@@ -108,6 +108,9 @@ public class GenericProjectController {
 	private BugTrackerFinderService bugtrackerFinderService;
 
 	@Inject
+	private TestAutomationProjectFinderService testAutomationProjectFinder;
+
+	@Inject
 	private WorkspaceWizardManager wizardManager;
 
 	@Inject
@@ -118,10 +121,14 @@ public class GenericProjectController {
 	private static final String PROJECT_ID_URL = "/{projectId}";
 	private static final String PROJECT_BUGTRACKER_NAME_UNDEFINED = "project.bugtracker.name.undefined";
 
-	private DatatableMapper<String> allProjectsMapper = new NameBasedMapper(9).map("name", "name")
-			.map("label", "label").map("active", "active").map("created-on", "audit.createdOn")
-			.map("created-by", "audit.createdBy").map("last-mod-on", "audit.lastModifiedOn")
-			.map("last-mod-by", "audit.lastModifiedBy");
+	private DatatableMapper<String> allProjectsMapper = new NameBasedMapper(9)
+	.map("name", "name")
+	.map("label", "label")
+	.map("active", "active")
+	.map("created-on", "audit.createdOn")
+	.map("created-by", "audit.createdBy")
+	.map("last-mod-on", "audit.lastModifiedOn")
+	.map("last-mod-by", "audit.lastModifiedBy");
 
 	private DatatableMapper<String> partyPermissionMapper = new NameBasedMapper(5).map("party-index", "index")
 			.map("party-id", "id").map("party-name", "name").map("party-type", "type")
@@ -277,7 +284,7 @@ public class GenericProjectController {
 		for (Party p : partyList) {
 			Map<String, Object> newModel = new HashMap<String, Object>();
 			newModel.put("label", p.getName());
-			newModel.put("value", p.getName());
+			newModel.put(JEditablePostParams.VALUE, p.getName());
 			newModel.put("id", p.getId());
 			partiesModel.add(newModel);
 		}
@@ -332,51 +339,48 @@ public class GenericProjectController {
 
 	// ********************************** test automation ***********************************
 
+	@RequestMapping(value = PROJECT_ID_URL + "/test-automation-server", method = RequestMethod.POST, params = "serverId")
+	@ResponseBody
+	public Long bindTestAutomationServer(@PathVariable("projectId") long projectId,
+			@RequestParam("serverId") long serverId) {
+		Long finalServerId = (serverId == 0) ? null : serverId;
+		projectManager.bindTestAutomationServer(projectId, finalServerId);
+		return serverId;
+	}
+
 	// filtering and sorting not supported for now
 	@RequestMapping(value = PROJECT_ID_URL + "/test-automation-projects", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
-	public DataTableModel getProjectsTableModel(@PathVariable long projectId, final DataTableDrawParameters params) {
+	public DataTableModel getAutomatedProjectsTableModel(@PathVariable long projectId, final DataTableDrawParameters params) {
 		List<TestAutomationProject> taProjects = projectManager.findBoundTestAutomationProjects(projectId);
 
 		PagedCollectionHolder<List<TestAutomationProject>> holder = new SinglePageCollectionHolder<List<TestAutomationProject>>(
 				taProjects);
-
-		return new TestAutomationTableModel().buildDataModel(holder, params.getsEcho());
+		Map<String, URL> jobUrls = testAutomationProjectFinder.findProjectUrls(taProjects);
+		return new TestAutomationTableModel(jobUrls).buildDataModel(holder, params.getsEcho());
 
 	}
 
-	@RequestMapping(value = PROJECT_ID_URL + "/test-automation-projects", method = RequestMethod.POST, headers = "Content-Type=application/json")
+	@RequestMapping(value = PROJECT_ID_URL + "/test-automation-projects/new", method = RequestMethod.POST)
 	@ResponseBody
-	public void bindTestAutomationProject(@PathVariable long projectId,
-			@RequestBody TestAutomationProjectRegistrationForm[] projects, Locale locale) throws BindException {
-		TestAutomationProjectRegistrationForm form = null;
-		try {
-			Iterator<TestAutomationProjectRegistrationForm> it = Arrays.asList(projects).listIterator();
-			while (it.hasNext()) {
-				form = it.next();
-				projectManager.bindTestAutomationProject(projectId, form.toTestAutomationProject());
-			}
-		} catch (MalformedURLException mue) {
-			// quick and dirty validation
-			LOGGER.error(mue.getMessage(), mue);
-			BindException be = new BindException(new TestAutomationServer(), "ta-project");
-			be.rejectValue("baseURL", null, messageSource.internationalize("error.url.malformed", locale));
-			throw be;// NOSONAR : No way to pass
-			// original exception to
-			// BindException constructor
-		}
-	}
+	public void addTestAutomationProject(@PathVariable long projectId,
+			@RequestBody TestAutomationProject[] projects, Locale locale) throws BindException {
+		projectManager.bindTestAutomationProjects(projectId, Arrays.asList(projects));
 
-	@RequestMapping(value = PROJECT_ID_URL + "/test-automation-enabled", method = RequestMethod.POST, params = "enabled")
-	@ResponseBody
-	public void enableTestAutomation(@PathVariable long projectId, @RequestParam("enabled") boolean isEnabled) {
-		projectManager.changeTestAutomationEnabled(projectId, isEnabled);
 	}
 
 	@RequestMapping(value = PROJECT_ID_URL + "/test-automation-projects/{taProjectId}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public void unbindProject(@PathVariable long projectId, @PathVariable long taProjectId) {
 		projectManager.unbindTestAutomationProject(projectId, taProjectId);
+	}
+
+	@RequestMapping(value = PROJECT_ID_URL+"/available-ta-projects", method = RequestMethod.GET)
+	@ResponseBody
+	public Collection<TestAutomationProject> getAvailableTAProjects(@PathVariable long projectId)
+			throws BindException {
+		return projectManager.findAllAvailableTaProjects(projectId);
+
 	}
 
 	// ************************* wizards administration ***********************
@@ -422,18 +426,23 @@ public class GenericProjectController {
 	// ********************** private classes ***************************
 
 	private final static class TestAutomationTableModel extends DataTableModelBuilder<TestAutomationProject> {
+		Map<String, URL> jobUrls;
 
+		public TestAutomationTableModel(Map<String, URL> jobUrls) {
+			this.jobUrls = jobUrls;
+		}
 		@Override
 		protected Map<String, ?> buildItemData(TestAutomationProject item) {
 			Map<String, Object> res = new HashMap<String, Object>();
 
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex() + 1);
-			res.put("name", item.getName());
-			res.put("server-url", item.getServer().getBaseURL());
-			res.put("server-kind", item.getServer().getKind());
+			res.put("label", item.getLabel());
+			res.put("jobName", item.getJobName());
+			res.put("slaves", item.getSlaves());
+			res.put("url", jobUrls.get(item.getJobName()));
 			res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
-
+			res.put(DataTableModelConstants.DEFAULT_EMPTY_EDIT_HOLDER_KEY, " ");
 			return res;
 		}
 	}

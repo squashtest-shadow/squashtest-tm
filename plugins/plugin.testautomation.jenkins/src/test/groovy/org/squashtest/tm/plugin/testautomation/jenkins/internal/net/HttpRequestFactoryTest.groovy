@@ -31,83 +31,48 @@ import org.squashtest.tm.service.testautomation.model.TestAutomationProjectConte
 import spock.lang.Specification
 
 class HttpRequestFactoryTest extends Specification {
-	
+
 	private HttpRequestFactory factory
-	
+
 	def setup(){
 		factory = new HttpRequestFactory()
 	}
-	
+
 	def "should return a well formatted query"(){
-		
+
 		given :
-			TestAutomationServer server = new TestAutomationServer(new URL("http://ci.jruby.org"), "", "")
-			
+		TestAutomationServer server = new TestAutomationServer("server", new URL("http://ci.jruby.org"), "", "", "jenkins")
+
 		when :
-			def method = factory.newGetJobsMethod(server)
-			
+		def method = factory.newGetJobsMethod(server)
+
 		then :
-			method.path == "http://ci.jruby.org/api/json"
-			method.queryString == "tree=jobs%5Bname%2Ccolor%5D"
-		
-	}
-	
-	
-	def "should create a suitable test suite parameter"(){
-		
-		given :
-			
-			def project = Mock(TestAutomationProject)
-			project.getName() >> "the-test-project"
-		
-		and :
-			def tests = []
-			
-			[   "tests/base-test.txt", 
-				"tests/subfolder/folder-test.txt", 
-				"tests/refolder/another-test.txt" 
-			].each{
-				tests << new AutomatedTest(it, project)				
-			}
-			
-		and :
-			def content = new TestAutomationProjectContent(project, tests)
-			
-		and : 
-			def expected = "base-test.txt,subfolder/folder-test.txt,refolder/another-test.txt"
-		
-		when :
-			def param = factory.makeTestListParameter(content)
-		
-		then :
-			param == expected
-				
-	}
-	
-	
-	def "should create the result path for tests being at the root of the project"(){
-		given :
-			AutomatedTest test = new AutomatedTest("tests/mon-test.txt", null)
-			
-		when :
-			def res = factory._toRelativePath(test)
-			
-		then :
-			res == "(root)/tests/mon_test_txt" 
-	}
-	
-	def "should create the crappy result path for tests being in deeper folders of the project"(){
-		
-		given :
-			AutomatedTest test = new AutomatedTest("tests/subfolder/re-test.txt", null)
-		
-		when:
-			def res = factory._toRelativePath(test)
-		
-		then :
-			res == "tests/subfolder/re_test_txt"
-		
+		method.path == "http://ci.jruby.org/api/json"
+		method.queryString == "tree=jobs%5Bname%2Ccolor%5D"
 	}
 
+
+	def "should create the result path for tests being at the root of the project"(){
+		given :
+		AutomatedTest test = new AutomatedTest("tests/mon-test.txt", null)
+
+		when :
+		def res = factory.toRelativePath(test)
+
+		then :
+		res == "(root)/tests/mon_test_txt"
+	}
+
+	def "should create the crappy result path for tests being in deeper folders of the project"(){
+
+		given :
+		AutomatedTest test = new AutomatedTest("tests/subfolder/re-test.txt", null)
+
+		when:
+		def res = factory.toRelativePath(test)
+
+		then :
+		res == "tests/subfolder/re_test_txt"
+	}
 }
 

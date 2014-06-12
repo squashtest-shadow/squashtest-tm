@@ -34,7 +34,6 @@
 
 
 <c:url var='runnerUrl' value='/test-suites/${ testSuiteId }/test-plan/execution/runner' />
-<c:url var='testRunnerUrl' value='/test-suites/${ testSuiteId }/test-plan/execution/test-runner' />
 <c:url var='deleteOnRestartUrl' value='/test-suites/${ testSuiteId }/test-plan/executions' />
 
 
@@ -46,7 +45,7 @@
 </c:if>
 
 
-<div id="test-suite-execution-button" style="display: inline-block;">
+<div id="test-suite-execution-button" class="btn-group" data-runner-url="${ runnerUrl }">
 
 	<c:if test="${ statisticsEntity.status == 'RUNNING' || statisticsEntity.status == 'READY'}">
 		<input type="button" id="start-resume-button" class="sq-btn run-menu" value="${startResumeLabel}"/>		
@@ -92,98 +91,7 @@
 	</c:if>
 				
 	<script>
-		function checkTestSuiteExecutionDoable() {
-			return $.ajax({
-				type : 'post',
-				data : { 'mode' : 'start-resume' },
-				dataType : "json",
-				url : "${ testRunnerUrl }"
-			});
-		}	
-		
-		function classicExecution() {
-			var url = "${ runnerUrl }";
-			var data = {
-				'optimized' : 'false',
-				'mode' : 'start-resume'
-			};
-			var winDef = {
-				name : "classicExecutionRunner",
-				features : "height=500, width=600, resizable, scrollbars, dialog, alwaysRaised"
-			};
-			$.open(url, data, winDef);
-	
-		}
-		
-		function optimizedExecution() {
-			$('#start-optimized-button').trigger('click');
-		}
-		
-		$(function() {
-		
-			require(['jquery', 'jquery.squash.buttonmenu'], function($){				
-				
-				// ****** start-resume menu ********
-				var startResumeBtn = $("#start-resume-button");
-				if (startResumeBtn.length>0){
-					$("#start-resume-button").buttonmenu({
-						anchor : 'right'
-					});
-					
-					$("#start-suite-optimized-button").on('click', function(){
-						checkTestSuiteExecutionDoable().done(optimizedExecution);					
-					});
-					
-					$("#start-suite-classic-button").on('click', function(){
-						checkTestSuiteExecutionDoable().done(classicExecution);
-					});
-				}
-				
-				
-				// ******* restart menu *********
-				var restartBtn = $("#restart-button");
-				if (restartBtn.length>0){
-					restartBtn.buttonmenu({
-						anchor : 'right'
-					});
-		
-					var restartDialog = $("#confirm-restart-dialog");
-					
-					$("#restart-suite-optimized-button").on("click", function(){
-						restartDialog.data('restart-mode', 'optimized');
-						restartDialog.confirmDialog('open');
-					});
-					
-					$("#restart-suite-classic-button").on("click", function(){
-						restartDialog.data('restart-mode', 'classic');
-						restartDialog.confirmDialog('open');
-					});	
-					
-					restartDialog.confirmDialog({
-						confirm : function (){
-							$.ajax({
-								type : 'delete',
-								url : "${ deleteOnRestartUrl }"
-							})
-							.then(function(){
-								return checkTestSuiteExecutionDoable();
-							})
-							.done(function(){
-								restartDialog.confirmDialog('close');
-								var mode = restartDialog.data('restart-mode');
-								if (mode === 'classic'){
-									classicExecution();
-								} else {
-									optimizedExecution();
-								}
-							});
-						}
-					});				
-				}			
-			});
-
-			
-		});
+	publish("reload.exec-btns-panel");
 	</script>
 
 </div>

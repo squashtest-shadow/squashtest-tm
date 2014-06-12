@@ -57,6 +57,12 @@
       access="hasRole('ROLE_ADMIN')" />
     <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/bugtrackers/**"
       access="hasRole('ROLE_ADMIN')" />
+      <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/test-automation-servers"
+      access="hasRole('ROLE_ADMIN')" />
+     <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/test-automation-servers/**"
+      access="hasRole('ROLE_ADMIN')" />
+     <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/indexes"
+      access="hasRole('ROLE_ADMIN')" />
     <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/projects"
       access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')" />
     <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/projects/**"

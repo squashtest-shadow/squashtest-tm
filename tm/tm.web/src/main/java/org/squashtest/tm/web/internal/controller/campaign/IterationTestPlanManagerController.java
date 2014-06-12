@@ -86,31 +86,28 @@ public class IterationTestPlanManagerController {
 
 	@Inject
 	@Named("testCase.driveNodeBuilder")
-	private Provider<DriveNodeBuilder<TestCaseLibraryNode>> driveNodeBuilder; 
+	private Provider<DriveNodeBuilder<TestCaseLibraryNode>> driveNodeBuilder;
 
 	@Inject
 	private IterationFinder iterationFinder;
-	
 
 	@Inject
 	private Provider<JsonTestCaseBuilder> jsonTestCaseBuilder;
 
 	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
-															.map		 ("entity-index", 	"index(IterationTestPlanItem)")		// index is a special case which means : no sorting.
-															.mapAttribute("project-name",	"name", 			Project.class)
-															.mapAttribute("reference", 		"reference", 		TestCase.class)
-															.mapAttribute("tc-name", 		"name", 			TestCase.class)
-															.mapAttribute("importance",		"importance", 		TestCase.class)
-															.mapAttribute("dataset",		"name", 			Dataset.class)
-															.mapAttribute("status",			"executionStatus", 	IterationTestPlanItem.class)
-															.mapAttribute("assignee-login", "login", 			User.class)
-															.mapAttribute("last-exec-on",	"lastExecutedOn",	IterationTestPlanItem.class)
-															.mapAttribute("exec-mode", 		"automatedTest", 	TestCase.class)
-															.map		 ("suite", 			"suitenames");
-	
-	
+	.map("entity-index", "index(IterationTestPlanItem)")
+	// index is a special case which means : no sorting.
+	.mapAttribute("project-name", "name", Project.class).mapAttribute("reference", "reference", TestCase.class)
+	.mapAttribute("tc-name", "name", TestCase.class).mapAttribute("importance", "importance", TestCase.class)
+	.mapAttribute("dataset", "name", Dataset.class)
+	.mapAttribute("status", "executionStatus", IterationTestPlanItem.class)
+	.mapAttribute("assignee-login", "login", User.class)
+	.mapAttribute("last-exec-on", "lastExecutedOn", IterationTestPlanItem.class)
+	.mapAttribute("exec-mode", "automatedTest", TestCase.class).map("suite", "suitenames");
+
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan-manager", method = RequestMethod.GET)
-	public ModelAndView showManager(@PathVariable long iterationId, @CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
+	public ModelAndView showManager(@PathVariable long iterationId,
+			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
 
 		Iteration iteration = iterationFinder.findById(iterationId);
 		List<TestCaseLibrary> linkableLibraries = iterationTestPlanManagerService.findLinkableTestCaseLibraries();
@@ -124,31 +121,28 @@ public class IterationTestPlanManagerController {
 		return mav;
 	}
 
-	
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan", params = RequestParams.S_ECHO_PARAM)
 	public @ResponseBody
 	DataTableModel getTestPlanModel(@PathVariable long iterationId, final DataTableDrawParameters params,
 			final Locale locale) {
 
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, testPlanMapper);
-		
-		ColumnFiltering filter = new DataTableColumnFiltering(params);
-		
-		PagedCollectionHolder<List<IndexedIterationTestPlanItem>> holder = iterationTestPlanManagerService.findAssignedTestPlan(iterationId, paging, filter);
 
-		return new TestPlanTableModelHelper(messageSource, locale).buildDataModel(holder,
-				params.getsEcho());
+		ColumnFiltering filter = new DataTableColumnFiltering(params);
+
+		PagedCollectionHolder<List<IndexedIterationTestPlanItem>> holder = iterationTestPlanManagerService
+				.findAssignedTestPlan(iterationId, paging, filter);
+
+		return new TestPlanTableModelHelper(messageSource, locale).buildDataModel(holder, params.getsEcho());
 
 	}
 
-	
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan", method = RequestMethod.POST, params = TESTCASES_IDS_REQUEST_PARAM)
 	public @ResponseBody
 	void addTestCasesToIteration(@RequestParam(TESTCASES_IDS_REQUEST_PARAM) List<Long> testCasesIds,
 			@PathVariable long iterationId) {
 		iterationTestPlanManagerService.addTestCasesToIteration(testCasesIds, iterationId);
 	}
-
 
 	/**
 	 * Fetches and returns a list of json test cases from an iteration id
@@ -164,7 +158,6 @@ public class IterationTestPlanManagerController {
 		List<TestCase> testCases = iterationFinder.findPlannedTestCases(iterationId);
 		return jsonTestCaseBuilder.get().locale(locale).entities(testCases).toJson();
 	}
-	
 
 	/***
 	 * Method called when you drag a test case and change its position in the selected iteration
@@ -180,12 +173,12 @@ public class IterationTestPlanManagerController {
 	 */
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{itemIds}/position/{newIndex}", method = RequestMethod.POST)
 	@ResponseBody
-	public void moveTestPlanItems(@PathVariable("iterationId") long iterationId, 
-								@PathVariable("newIndex") int newIndex, @PathVariable("itemIds") List<Long> itemIds) {
+	public void moveTestPlanItems(@PathVariable("iterationId") long iterationId,
+			@PathVariable("newIndex") int newIndex, @PathVariable("itemIds") List<Long> itemIds) {
 		iterationTestPlanManagerService.changeTestPlanPosition(iterationId, newIndex, itemIds);
 
 	}
-	
+
 	/**
 	 * Will reorder the test plan according to the current sorting instructions.
 	 * 
@@ -194,31 +187,29 @@ public class IterationTestPlanManagerController {
 	 */
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan/order", method = RequestMethod.POST)
 	@ResponseBody
-	public void reorderTestPlan(@PathVariable("iterationId") long iterationId, DataTableDrawParameters parameters){
-		
+	public void reorderTestPlan(@PathVariable("iterationId") long iterationId, DataTableDrawParameters parameters) {
+
 		PagingAndMultiSorting sorting = new DataTableMultiSorting(parameters, testPlanMapper);
 		iterationTestPlanManagerService.reorderTestPlan(iterationId, sorting);
 	}
 
-
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanItemsIds}", method = RequestMethod.DELETE)
 	public @ResponseBody
-	String removeTestPlanItemsFromIteration(@PathVariable("testPlanItemsIds") List<Long> testPlanItemsIds, @PathVariable long iterationId) {
+	String removeTestPlanItemsFromIteration(@PathVariable("testPlanItemsIds") List<Long> testPlanItemsIds,
+			@PathVariable long iterationId) {
 		// check if a test plan item was already executed and therefore not removed
 		Boolean response = iterationTestPlanManagerService.removeTestPlansFromIteration(testPlanItemsIds, iterationId);
 		return response.toString();
 	}
 
 	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries, String[] openedNodes) {
-		MultiMap expansionCandidates =  JsTreeHelper.mapIdsByType(openedNodes);
-		
+		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
+
 		JsTreeNodeListBuilder<TestCaseLibrary> listBuilder = new JsTreeNodeListBuilder<TestCaseLibrary>(
 				driveNodeBuilder.get());
 
 		return listBuilder.expand(expansionCandidates).setModel(linkableLibraries).build();
 	}
-
-
 
 	@RequestMapping(value = "/iterations/{iterationId}/assignable-users", method = RequestMethod.GET)
 	public @ResponseBody
@@ -239,46 +230,33 @@ public class IterationTestPlanManagerController {
 		return jsonUsers;
 
 	}
-	
-	
-	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanIds}", method = RequestMethod.POST, params = {"assignee"})
+
+	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanIds}", method = RequestMethod.POST, params = { "assignee" })
 	public @ResponseBody
-	Long assignUserToCampaignTestPlanItem(@PathVariable("testPlanIds") List<Long> testPlanIds, @PathVariable("iterationId") long iterationId,
+	Long assignUserToIterationTestPlanItem(@PathVariable("testPlanIds") List<Long> testPlanIds,
 			@RequestParam("assignee") long assignee) {
 		iterationTestPlanManagerService.assignUserToTestPlanItems(testPlanIds, assignee);
 		return assignee;
 	}
 
-
-	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanId}", method = RequestMethod.POST, params = {"status"})
+	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanIds}", method = RequestMethod.POST, params = { "status" })
 	public @ResponseBody
-	JsonIterationTestPlanItem setTestPlanItemStatus(@PathVariable("testPlanId") long testPlanId, 
-										  @PathVariable("iterationId") long iterationId,
-										  @RequestParam("status") String status) {
-		
-		iterationTestPlanManagerService.forceExecutionStatus(testPlanId, status);
-		IterationTestPlanItem item = iterationTestPlanManagerService.findTestPlanItem(testPlanId);
-		
-		return createJsonITPI(item);
-		
+	JsonIterationTestPlanItem editStatusOfIterationTestPlanItems(@PathVariable("testPlanIds") List<Long> testPlanIds,
+			@RequestParam("status") String status) {
+		List<IterationTestPlanItem> itpis = iterationTestPlanManagerService.forceExecutionStatus(testPlanIds, status);
+		return createJsonITPI(itpis.get(0));
+
 	}
 
 	private String formatUnassigned(Locale locale) {
 		return messageSource.internationalize("label.Unassigned", locale);
 	}
 
-	private JsonIterationTestPlanItem createJsonITPI(IterationTestPlanItem item){
+	private JsonIterationTestPlanItem createJsonITPI(IterationTestPlanItem item) {
 		String name = (item.isTestCaseDeleted()) ? null : item.getReferencedTestCase().getName();
-		return new JsonIterationTestPlanItem(
-					item.getId(),
-					item.getExecutionStatus(),
-					name,
-					item.getLastExecutedOn(),
-					item.getLastExecutedBy(),
-					item.getUser(),
-					item.isTestCaseDeleted(),
-					item.isAutomated()
-				);
+		return new JsonIterationTestPlanItem(item.getId(), item.getExecutionStatus(), name, item.getLastExecutedOn(),
+				item.getLastExecutedBy(), item.getUser(), item.isTestCaseDeleted(), item.isAutomated());
 	}
+
 
 }

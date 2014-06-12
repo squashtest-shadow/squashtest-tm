@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.project;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,7 +34,7 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.users.Party;
-import org.squashtest.tm.exception.customfield.NameAlreadyInUseException;
+import org.squashtest.tm.exception.NameAlreadyInUseException;
 
 /**
  * @author Gregory Fouquet
@@ -77,12 +78,24 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	// **************************** test automation extension ********************
 
 	/**
+	 * Will bind a TM project to a test automation server. Both are identified by their ID.
+	 * The serverId may be null, in which case the TM project is bound to nothing. It will be
+	 * then treated as a non automated project.
+	 * 
+	 * @param tmProjectId
+	 * @param serverId
+	 */
+	void bindTestAutomationServer(long tmProjectId, Long serverId);
+
+	/**
 	 * Will bind the TM project to a TA project. Will persist it if necessary.
 	 * 
 	 * @param TMprojectId
 	 * @param TAproject
 	 */
 	void bindTestAutomationProject(long tmProjectId, TestAutomationProject taProject);
+
+	void bindTestAutomationProjects(long tmProjectId, Collection<TestAutomationProject> taProjects);
 
 	void unbindTestAutomationProject(long projectId, long taProjectId);
 
@@ -209,6 +222,6 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	boolean isExecutionStatusEnabledForProject(long projectId, ExecutionStatus executionStatus);
 
 	boolean projectUsesExecutionStatus(long projectId,  ExecutionStatus executionStatus);
-	
+
 	void changeName(long projectId, String newName) throws NameAlreadyInUseException;
 }

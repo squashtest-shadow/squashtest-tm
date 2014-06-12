@@ -33,56 +33,54 @@ import spock.lang.Specification
 class FetchTestListTaskTest extends Specification {
 
 	def "should do the job"(){
-		
+
 		given :
-			TestAutomationProject project = Mock()
-			TestAutomationServer server = Mock()
-			
-			project.getServer() >> server
-			
+		TestAutomationProject project = Mock()
+		TestAutomationServer server = Mock()
+
+		project.getServer() >> server
+
 		and :
-			Collection<AutomatedTest> allTests = []
-			
+		Collection<AutomatedTest> allTests = []
+
 		and :
-			TestAutomationConnector connector = Mock()
-			TestAutomationConnectorRegistry registry = Mock()
-			
-			
-			registry.getConnectorForKind(_) >> connector
-			connector.listTestsInProject(project) >> allTests
-			
+		TestAutomationConnector connector = Mock()
+		TestAutomationConnectorRegistry registry = Mock()
+
+
+		registry.getConnectorForKind(_) >> connector
+		connector.listTestsInProject(project) >> allTests
+
 		when :
-			def task = new FetchTestListTask(registry, project)
-			def res = task.call();
-		
+		def task = new FetchTestListTask(registry, project)
+		def res = task.call();
+
 		then :
-			res.project == project
-			res.tests == allTests
-			res.hadKnownProblems() == false
+		res.project == project
+		res.tests == allTests
+		res.hadKnownProblems() == false
 	}
-	
+
 	def "should do a failed job"(){
-		
+
 		given :
-			TestAutomationProject project = Mock()
-			TestAutomationServer server = Mock()
-			
+		TestAutomationProject project = Mock()
+		TestAutomationServer server = Mock()
+
 		and :
-			project.getServer() >> server
-			project.getName() >> "project"
-			server.getBaseURL() >> new URL("http://www.mike.com") 
-			
-			Exception ex = new Exception()
-			
+		project.getServer() >> server
+		project.getJobName() >> "project"
+		server.getBaseURL() >> new URL("http://www.mike.com")
+
+		Exception ex = new Exception()
+
 		when :
-			def task = new FetchTestListTask(null, project)
-			def res = task.buildFailedResult(ex)
-			
+		def task = new FetchTestListTask(null, project)
+		def res = task.buildFailedResult(ex)
+
 		then :
-			res.project == project
-			res.hadKnownProblems()
-			res.knownProblem == ex
-		
+		res.project == project
+		res.hadKnownProblems()
+		res.knownProblem == ex
 	}
-	
 }

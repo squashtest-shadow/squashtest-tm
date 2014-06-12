@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -34,56 +35,34 @@ import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
 
-
 @Repository
-public class HibernateTestAutomationProjectDao implements
-		TestAutomationProjectDao {
-	
+public class HibernateTestAutomationProjectDao implements TestAutomationProjectDao {
+
 	@Inject
 	private SessionFactory sessionFactory;
 
+	/**
+	 * @see org.squashtest.tm.service.internal.repository.TestAutomationProjectDao#persist(TestAutomationProject)
+	 */
 	@Override
 	public void persist(TestAutomationProject newProject) {
-		if (findByExample(newProject)==null){
-			sessionFactory.getCurrentSession().persist(newProject);
-		}else{
-			throw new NonUniqueEntityException();
-		}
+		sessionFactory.getCurrentSession().persist(newProject);
 	}
-	
-	@Override
-	public TestAutomationProject uniquePersist(TestAutomationProject newProject) {
-		
-		//id exists ?
-		if ((newProject.getId() != null) && (findById(newProject.getId())!=null)){
-			return newProject;
-		}
-		
-		//content exists ?
-		TestAutomationProject baseProject = findByExample(newProject);
-		if (baseProject != null){
-			return baseProject;
-		}
-		
-		//or else, persist
-		else{
-			sessionFactory.getCurrentSession().persist(newProject);
-			return newProject;
-		}
-		
-	}
-	
-	
+
+	/**
+	 * @see org.squashtest.tm.service.internal.repository.TestAutomationProjectDao#findById(Long)
+	 */
 	@Override
 	public TestAutomationProject findById(Long id) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.getNamedQuery("testAutomationProject.findById");
 		query.setParameter("projectId", id);
-		return (TestAutomationProject)query.uniqueResult();
+		return (TestAutomationProject) query.uniqueResult();
 	}
-	
 
-
+	/**
+	 * @see org.squashtest.tm.service.internal.repository.TestAutomationProjectDao#findByExample(TestAutomationProject)
+	 */
 	@Override
 	public TestAutomationProject findByExample(TestAutomationProject example) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(TestAutomationProject.class);
@@ -91,19 +70,114 @@ public class HibernateTestAutomationProjectDao implements
 		criteria = criteria.add(Restrictions.eq("server", example.getServer()));
 
 		List<?> res = criteria.list();
-		
-		if (res.isEmpty()){
+
+		if (res.isEmpty()) {
 			return null;
-		}
-		else if (res.size()==1){
-			return (TestAutomationProject)res.get(0);
-		}
-		else{
+		} else if (res.size() == 1) {
+			return (TestAutomationProject) res.get(0);
+		} else {
 			throw new NonUniqueEntityException();
 		}
 	}
+	@Override
+	public Collection<Long> findAllByTMProject(long tmProjectId) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.getNamedQuery("testAutomationProject.findAllByTMPRoject");
+		query.setParameter("tmProjectId", tmProjectId);
+		return query.list();
+	}
 
-	
 
+
+
+
+	/**
+	 * @see org.squashtest.tm.service.internal.repository.TestAutomationProjectDao#haveExecutedTestsByIds(Collection)
+	 */
+	@Override
+	public boolean haveExecutedTestsByIds(Collection<Long> projectIds) {
+		if (projectIds.isEmpty()) {
+			return false;
+		}
+
+		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationProject.haveExecutedTestsByIds");
+		q.setParameterList("projectIds", projectIds);
+		int count = ((Long) q.iterate().next()).intValue();
+		return (count > 0);
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.internal.repository.TestAutomationProjectDao#deleteProjectsByIds(Collection)
+	 */
+	@Override
+	public void deleteProjectsByIds(Collection<Long> projectIds) {
+		if (! projectIds.isEmpty()){
+			dereferenceAutomatedExecutionExtender(projectIds);
+			dereferenceTestCases(projectIds);
+			sessionFactory.getCurrentSession().flush();
+			deleteAutomatedTests(projectIds);
+			deleteTestAutomationProjects(projectIds);
+			sessionFactory.getCurrentSession().flush();
+		}
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.internal.repository.TestAutomationProjectDao#deleteAllHostedProjects(long)
+	 */
+	@Override
+	public void deleteAllHostedProjects(long serverId) {
+		List<Long> hostedProjectIds = findHostedProjectIds(serverId);
+		deleteProjectsByIds(hostedProjectIds);
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.internal.repository.TestAutomationProjectDao#findAllHostedProjects(long)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TestAutomationProject> findAllHostedProjects(long serverId) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.getNamedQuery("testAutomationServer.findAllHostedProjects");
+		query.setParameter("serverId", serverId);
+		return (List<TestAutomationProject>) query.list();
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.internal.repository.TestAutomationProjectDao#findHostedProjectIds(long)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> findHostedProjectIds(long serverId) {
+		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationProject.findHostedProjectIds");
+		q.setParameter("serverId", serverId);
+		return q.list();
+	}
+
+	// ************************ private stuffs **********************************
+
+	private void dereferenceAutomatedExecutionExtender(Collection<Long> projectIds) {
+		Query q = sessionFactory.getCurrentSession().getNamedQuery(
+				"testAutomationProject.dereferenceAutomatedExecutionExtender");
+		q.setParameterList("projectIds", projectIds);
+		q.executeUpdate();
+	}
+
+	private void dereferenceTestCases(Collection<Long> projectIds) {
+		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationProject.dereferenceTestCases");
+		q.setParameterList("projectIds", projectIds);
+		q.executeUpdate();
+	}
+
+	private void deleteAutomatedTests(Collection<Long> projectIds) {
+		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationProject.deleteAutomatedTests");
+		q.setParameterList("projectIds", projectIds);
+		q.executeUpdate();
+	}
+
+	private void deleteTestAutomationProjects(Collection<Long> projectIds) {
+		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutmationProject.delete");
+		q.setParameterList("projectIds", projectIds);
+		q.executeUpdate();
+	}
 
 }

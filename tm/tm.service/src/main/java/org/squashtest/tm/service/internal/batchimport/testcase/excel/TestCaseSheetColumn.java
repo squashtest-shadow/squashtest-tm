@@ -25,8 +25,6 @@ import static org.squashtest.tm.service.internal.batchimport.testcase.excel.Colu
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.ColumnProcessingMode.MANDATORY;
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.ColumnProcessingMode.OPTIONAL;
 
-import org.squashtest.tm.service.internal.batchimport.excel.CellValueCoercer;
-
 /**
  * Enumerates columns in the test case worksheet
  * 

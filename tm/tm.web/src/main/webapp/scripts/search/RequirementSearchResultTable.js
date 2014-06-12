@@ -281,6 +281,7 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
 			var component =$('.editable_criticality', row); 
+			//TODO use SelectJEditable obj
 			component.editable(urlPOST, {
 						type : 'select',
 						submit : ok,
@@ -300,6 +301,7 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
 			var component = $('.editable_category', row);
+			//TODO use SelectJEditable obj
 			component.editable(urlPOST, {
 				type : 'select',
 				submit : ok,
@@ -319,6 +321,7 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 			var ok = translator.get("rich-edit.button.ok.label");
 			var cancel = translator.get("label.Cancel");
 			var component = $('.editable_status', row);
+			//TODO use SelectJEditable obj
 			component.editable(urlPOST, {
 				type : 'select',
 				submit : ok,
@@ -335,11 +338,6 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 			var url = squashtm.app.contextRoot + "/requirements/" + data["requirement-id"];
 			var component = $("td.editable_ref", row);
 			new SimpleJEditable({
-				language : {
-					richEditPlaceHolder : translator.get("rich-edit.placeholder"),
-					okLabel : translator.get("rich-edit.button.ok.label"),
-					cancelLabel : translator.get("label.Cancel")
-				},
 				targetUrl : url,
 				component : component,
 				jeditableSettings : {
@@ -356,11 +354,6 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 			var url = squashtm.app.contextRoot + "/requirements/" + data["requirement-id"];
 			var component = $("td.editable_label", row);
 			new SimpleJEditable({
-				language : {
-					richEditPlaceHolder : translator.get("rich-edit.placeholder"),
-					okLabel : translator.get("rich-edit.button.ok.label"),
-					cancelLabel : translator.get("label.Cancel")
-				},
 				targetUrl : url,
 				component : component,
 				jeditableSettings : {

@@ -45,35 +45,94 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 	private SessionFactory sessionFactory;
 
 	@Override
-	public void persist(AutomatedTest newTest) {
-		if (findByExample(newTest) == null) {
-			sessionFactory.getCurrentSession().persist(newTest);
-		} else {
-			throw new NonUniqueEntityException();
-		}
-	}
+	public AutomatedTest persistOrAttach(AutomatedTest newTest) {
 
-	@Override
-	public AutomatedTest uniquePersist(AutomatedTest newTest) {
 		if ((newTest.getId() != null) && (findById(newTest.getId()) != null)) {
 			return newTest;
 		}
 
-		// content exists ?
-		AutomatedTest baseTest = findByExample(newTest);
-		
-		if (baseTest != null) {
-			return baseTest;
-		} else { // or else, persist
+		AutomatedTest persisted = findByExample(newTest);
+		if (persisted != null){
+			return persisted;
+		}
+		else{
 			sessionFactory.getCurrentSession().persist(newTest);
 			return newTest;
 		}
 	}
+
+
+
+
+	@Override
+	public void removeIfUnused(AutomatedTest test) {
+
+		AutomatedTest persisted = null;
+
+		if (test == null){
+			return;
+		}
+		else if (test.getId() != null){
+			persisted = test;
+		}
+		else{
+			persisted = findByExample(test);
+		}
+
+		if (countReferences(persisted.getId()) == 0l){
+			sessionFactory.getCurrentSession().delete(persisted);
+		}
+
+	}
+
+
+	public void pruneOrphans(){
+		Session session = sessionFactory.getCurrentSession();
+
+		Collection<AutomatedTest> orphans = session.getNamedQuery("automatedTest.findOrphans").list();
+
+		if (orphans.isEmpty()){
+			return;
+		}
+
+		Query q = session.getNamedQuery("automatedTest.bulkDelete");
+		q.setParameterList("tests", orphans);
+		q.executeUpdate();
+
+	}
+
+
+	@Override
+	public long countReferences(long testId) {
+		Session session = sessionFactory.getCurrentSession();
+
+		Query qCountTC = session.getNamedQuery("automatedTest.countReferencesByTestCases");
+		qCountTC.setParameter("autoTestId", testId);
+		long countTC = (Long)qCountTC.uniqueResult();
+
+		Query qCountExt = session.getNamedQuery("automatedTest.countReferencesByExecutions");
+		qCountExt.setParameter("autoTestId", testId);
+		long countExt = (Long)qCountExt.uniqueResult();
+
+		return countTC + countExt;
+	}
+
 
 	@Override
 	public AutomatedTest findById(Long testId) {
 		Session session = sessionFactory.getCurrentSession();
 		return (AutomatedTest) session.load(AutomatedTest.class, testId);
+	}
+
+	@Override
+	public List<AutomatedTest> findByTestCases(Collection<Long> testCaseIds) {
+		if (testCaseIds.isEmpty()){
+			return Collections.emptyList();
+		}
+
+		Query query = sessionFactory.getCurrentSession().getNamedQuery("automatedTest.findByTestCase");
+		query.setParameter("testCaseIds", testCaseIds);
+		return query.list();
 	}
 
 	@Override
@@ -93,31 +152,32 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 			throw new NonUniqueEntityException();
 		}
 	}
-	
+
 	@Override
 	public List<AutomatedTest> findAllByExtenderIds(List<Long> extenderIds) {
-		
+
 		if (extenderIds.isEmpty()){
 			return Collections.emptyList();
 		}
-		
+
 		Query query = sessionFactory.getCurrentSession().getNamedQuery("automatedTest.findAllByExtenderIds");
 		query.setParameterList("extenderIds", extenderIds, LongType.INSTANCE);
 		return (List<AutomatedTest>) query.list();
-		
+
 	}
-	
+
 	@Override
 	public List<AutomatedTest> findAllByExtender(Collection<AutomatedExecutionExtender> extenders) {
-		
+
 		if (extenders.isEmpty()){
 			return Collections.emptyList();
 		}
-		
+
 		Query query = sessionFactory.getCurrentSession().getNamedQuery("automatedTest.findAllByExtenders");
-		query.setParameterList("extenders", extenders); 
+		query.setParameterList("extenders", extenders);
 		return (List<AutomatedTest>) query.list();
-		
+
 	}
+
 
 }

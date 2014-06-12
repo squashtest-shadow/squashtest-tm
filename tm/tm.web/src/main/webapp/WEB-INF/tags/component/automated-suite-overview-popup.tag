@@ -32,13 +32,16 @@
 <f:message var="closeLabel" key='label.Close' />
 <f:message var="okLabel" 	key='label.Ok' />
 <f:message var="cancelLabel" 	key='label.Cancel' />
-
-<div id="execution-info-template" class="not-displayed">
-	<div class="display-table-row">
-		<div class="execution-name display-table-cell"></div>
-		<div class="execution-status display-table-cell"></div>
-	</div>
-</div>
+<script id="exec-info-tpl" type="text/x-handlebars-template">
+{{#each execs}}
+	<tr id="execution-info-{{id}}" class="display-table-row {{oddity @index}}">
+		<td class="execution-auto-project display-table-cell">{{automatedProject}}</td>
+		<td class="execution-name display-table-cell">{{name}}</td>
+		<td class="execution-status display-table-cell">{{{ballsyStatus status}}}</td>
+		<td class="execution-node display-table-cell">{{node}}</td>
+	</tr>
+{{/each}}
+</script>
 <!-- *************************POPUP*********************** -->
 
 
@@ -47,7 +50,18 @@
 
 	<div data-def="state=main">
 		<div class="executions-auto-top" style="height:335px; width: 100%; overflow-y: scroll">
-			<div id="executions-auto-infos" class="display-table" style="width:100%"></div>
+      <table class="display-table dataTable" style="width:100%">
+        <thead>
+          <tr>
+            <td class="ui-state-default"><f:message key="label.automatedProject" /></td>
+            <td class="ui-state-default"><f:message key="label.testCase" /></td>
+            <td class="ui-state-default"><f:message key="label.Status" /></td>
+            <td class="ui-state-default"><f:message key="label.TestAutomationServer" /></td>
+          </tr>
+        </thead>
+        <tbody id="executions-auto-infos">
+        </tbody>
+      </table>
 		</div>
 		
 		<div class="executions-auto-bottom" style="min-height:45px; width: 100%; ">
@@ -77,14 +91,7 @@
 </div>
 
 <script type="text/javascript">
-require( ["common"], function(){
-
-		require(["jquery","test-automation/automated-suite-overview"], function($,overview){
-			$(function(){
-				overview.init();
-			});
-	});
-});
+publish("reload.auto-suite-overview-popup");
 </script>
 
 <!-- *************************/POPUP*********************** -->

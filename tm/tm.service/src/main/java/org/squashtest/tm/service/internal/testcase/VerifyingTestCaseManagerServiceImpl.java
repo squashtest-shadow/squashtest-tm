@@ -40,7 +40,6 @@ import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -190,7 +189,7 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	@Override
 	public List<TestCase> findAllByRequirementVersion(long requirementVersionId) {
 
-		DefaultPagingAndSorting pas = new DefaultPagingAndSorting("Project.name");
+		DefaultPagingAndSorting pas = new DefaultPagingAndSorting( "Project.name", true);
 		return findAllByRequirementVersion(requirementVersionId, pas).getPagedItems();
 	}
 

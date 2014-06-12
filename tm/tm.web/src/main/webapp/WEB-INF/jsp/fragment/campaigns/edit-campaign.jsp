@@ -372,13 +372,16 @@
       </div>
 			</c:if>
 			
-			<c:if test="${ linkable }">
+			<c:if test="${ linkable or writable }">
       <div class="right btn-toolbar">
+      <c:if test="${  writable }">
         <span class="btn-group">
           <button id="assign-users-button" class="sq-btn btn-sm" title="${tooltipAssign}" >
             <span class="ui-icon ui-icon-person"></span>${assignLabel}
           </button>
         </span>
+        </c:if>
+         <c:if test="${ linkable }">
         <span class="btn-group">
           <button id="test-case-button" class="sq-btn btn-sm" title="${tooltipAddTPI}">
             <span class="ui-icon ui-icon-plusthick"></span>${associateLabel}
@@ -387,6 +390,7 @@
             <span class="ui-icon ui-icon-trash"></span>${removeLabel}
           </button>
         </span>
+        </c:if>
       </div>
 			</c:if>
 		</div>
@@ -478,9 +482,9 @@
 	
 	require(["common"], function(){
 			require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs", 
-			         "bugtracker", 'workspace.event-bus', "campaign-management",
+			         "bugtracker/bugtracker-panel", 'workspace.event-bus', "campaign-management",
 			         "jqueryui"], 
-					function($, basicwidg, contentHandlers, Frag, bugtracker, eventBus, campmanager){
+					function($, basicwidg, contentHandlers, Frag, bugtrackerPanel, eventBus, campmanager){
 		$(function(){
 				
 				basicwidg.init();
@@ -494,7 +498,6 @@
 				//****** tabs configuration ***********
 				
 				var fragConf = {
-					beforeLoad : Frag.confHelper.fnCacheRequests,
 					cookie : "iteration-tab-cookie",
 					activate : function(event, ui){
 						if (ui.newPanel.is('#campaign-dashboard')){
@@ -505,7 +508,7 @@
 				Frag.init(fragConf);
 				
 				<c:if test="${campaign.project.bugtrackerConnected}">
-				bugtracker.btPanel.load({
+				bugtrackerPanel.load({
 					url : "${btEntityUrl}",
 					label : "${tabIssueLabel}"
 				});

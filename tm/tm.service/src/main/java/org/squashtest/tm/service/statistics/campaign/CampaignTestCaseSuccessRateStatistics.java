@@ -30,48 +30,48 @@ public class CampaignTestCaseSuccessRateStatistics {
 	private Map<ExecutionStatus, Integer> testsOfLowImportance = new HashMap<ExecutionStatus, Integer>();
 	private Map<ExecutionStatus, Integer> testsOfMediumImportance = new HashMap<ExecutionStatus, Integer>();
 	private Map<ExecutionStatus, Integer> testsOfHighImportance = new HashMap<ExecutionStatus, Integer>();
-	private Map<ExecutionStatus, Integer> testsOfVeryHighImportance = new HashMap<ExecutionStatus, Integer>();	
-	
+	private Map<ExecutionStatus, Integer> testsOfVeryHighImportance = new HashMap<ExecutionStatus, Integer>();
+
 	public void addNbLow(ExecutionStatus status, int number){
-			
+
 		if(!this.testsOfLowImportance.containsKey(status)){
 			this.testsOfLowImportance.put(status, 0);
 		}
-			
+
 		Integer nb = this.testsOfLowImportance.get(status);
 		nb += number;
 		this.testsOfLowImportance.put(status, nb);
 	}
 
 	public void addNbMedium(ExecutionStatus status, int number){
-		
+
 		if(!this.testsOfMediumImportance.containsKey(status)){
 			this.testsOfMediumImportance.put(status, 0);
 		}
-			
+
 		Integer nb = this.testsOfMediumImportance.get(status);
 		nb += number;
 		this.testsOfMediumImportance.put(status, nb);
 	}
-	
+
 	public void addNbHigh(ExecutionStatus status, int number){
-	
+
 		if(!this.testsOfHighImportance.containsKey(status)){
 			this.testsOfHighImportance.put(status, 0);
 		}
-			
+
 		Integer nb = this.testsOfHighImportance.get(status);
 		nb += number;
 		this.testsOfHighImportance.put(status, nb);
 
 	}
-	
+
 	public void addNbVeryHigh(ExecutionStatus status, int number){
-		
+
 		if(!this.testsOfVeryHighImportance.containsKey(status)){
 			this.testsOfVeryHighImportance.put(status, 0);
 		}
-			
+
 		Integer nb = this.testsOfVeryHighImportance.get(status);
 		nb += number;
 		this.testsOfVeryHighImportance.put(status, nb);
@@ -91,7 +91,7 @@ public class CampaignTestCaseSuccessRateStatistics {
 	public int getNbMediumSuccess() {
 		return getValue(testsOfMediumImportance, ExecutionStatus.SUCCESS)+
 				getValue(testsOfMediumImportance, ExecutionStatus.WARNING)+
-			    getValue(testsOfMediumImportance, ExecutionStatus.SETTLED);
+				getValue(testsOfMediumImportance, ExecutionStatus.SETTLED);
 	}
 	public int getNbLowSuccess() {
 		return getValue(testsOfLowImportance, ExecutionStatus.SUCCESS)+
@@ -120,28 +120,32 @@ public class CampaignTestCaseSuccessRateStatistics {
 				getValue(testsOfVeryHighImportance, ExecutionStatus.READY)+
 				getValue(testsOfVeryHighImportance, ExecutionStatus.RUNNING)+
 				getValue(testsOfVeryHighImportance, ExecutionStatus.UNTESTABLE)+
-				getValue(testsOfVeryHighImportance, ExecutionStatus.NOT_RUN);
+				getValue(testsOfVeryHighImportance, ExecutionStatus.NOT_RUN)+
+				getValue(testsOfVeryHighImportance, ExecutionStatus.NOT_FOUND);
 	}
 	public int getNbHighOther() {
 		return getValue(testsOfHighImportance, ExecutionStatus.BLOCKED)+
 				getValue(testsOfHighImportance, ExecutionStatus.READY)+
 				getValue(testsOfHighImportance, ExecutionStatus.RUNNING)+
 				getValue(testsOfHighImportance, ExecutionStatus.UNTESTABLE)+
-				getValue(testsOfHighImportance, ExecutionStatus.NOT_RUN);
+				getValue(testsOfHighImportance, ExecutionStatus.NOT_RUN)+
+				getValue(testsOfHighImportance, ExecutionStatus.NOT_FOUND);
 	}
 	public int getNbMediumOther() {
 		return getValue(testsOfMediumImportance, ExecutionStatus.BLOCKED)+
 				getValue(testsOfMediumImportance, ExecutionStatus.READY)+
 				getValue(testsOfMediumImportance, ExecutionStatus.RUNNING)+
 				getValue(testsOfMediumImportance, ExecutionStatus.UNTESTABLE)+
-				getValue(testsOfMediumImportance, ExecutionStatus.NOT_RUN);
+				getValue(testsOfMediumImportance, ExecutionStatus.NOT_RUN)+
+				getValue(testsOfMediumImportance, ExecutionStatus.NOT_FOUND);
 	}
 	public int getNbLowOther() {
 		return getValue(testsOfLowImportance, ExecutionStatus.BLOCKED)+
 				getValue(testsOfLowImportance, ExecutionStatus.READY)+
 				getValue(testsOfLowImportance, ExecutionStatus.RUNNING)+
 				getValue(testsOfLowImportance, ExecutionStatus.UNTESTABLE)+
-				getValue(testsOfLowImportance, ExecutionStatus.NOT_RUN);
+				getValue(testsOfLowImportance, ExecutionStatus.NOT_RUN)+
+				getValue(testsOfLowImportance, ExecutionStatus.NOT_FOUND);
 	}
 	public int getNbVeryHighExecuted() {
 		return getValue(testsOfVeryHighImportance, ExecutionStatus.BLOCKED)+
@@ -151,7 +155,8 @@ public class CampaignTestCaseSuccessRateStatistics {
 				getValue(testsOfVeryHighImportance, ExecutionStatus.SETTLED)+
 				getValue(testsOfVeryHighImportance, ExecutionStatus.FAILURE)+
 				getValue(testsOfVeryHighImportance, ExecutionStatus.ERROR)+
-				getValue(testsOfVeryHighImportance, ExecutionStatus.NOT_RUN);
+				getValue(testsOfVeryHighImportance, ExecutionStatus.NOT_RUN)+
+				getValue(testsOfVeryHighImportance, ExecutionStatus.NOT_FOUND);
 	}
 	public int getNbHighExecuted() {
 		return getValue(testsOfHighImportance, ExecutionStatus.BLOCKED)+
@@ -161,7 +166,8 @@ public class CampaignTestCaseSuccessRateStatistics {
 				getValue(testsOfHighImportance, ExecutionStatus.SETTLED)+
 				getValue(testsOfHighImportance, ExecutionStatus.FAILURE)+
 				getValue(testsOfHighImportance, ExecutionStatus.ERROR)+
-				getValue(testsOfHighImportance, ExecutionStatus.NOT_RUN);
+				getValue(testsOfHighImportance, ExecutionStatus.NOT_RUN)+
+				getValue(testsOfHighImportance, ExecutionStatus.NOT_FOUND);
 	}
 	public int getNbMediumExecuted() {
 		return getValue(testsOfMediumImportance, ExecutionStatus.BLOCKED)+
@@ -171,7 +177,8 @@ public class CampaignTestCaseSuccessRateStatistics {
 				getValue(testsOfMediumImportance, ExecutionStatus.SETTLED)+
 				getValue(testsOfMediumImportance, ExecutionStatus.FAILURE)+
 				getValue(testsOfMediumImportance, ExecutionStatus.ERROR)+
-				getValue(testsOfMediumImportance, ExecutionStatus.NOT_RUN);
+				getValue(testsOfMediumImportance, ExecutionStatus.NOT_RUN)+
+				getValue(testsOfMediumImportance, ExecutionStatus.NOT_FOUND);
 	}
 	public int getNbLowExecuted() {
 		return getValue(testsOfLowImportance, ExecutionStatus.BLOCKED)+
@@ -181,7 +188,8 @@ public class CampaignTestCaseSuccessRateStatistics {
 				getValue(testsOfLowImportance, ExecutionStatus.SETTLED)+
 				getValue(testsOfLowImportance, ExecutionStatus.FAILURE)+
 				getValue(testsOfLowImportance, ExecutionStatus.ERROR)+
-				getValue(testsOfLowImportance, ExecutionStatus.NOT_RUN);
+				getValue(testsOfLowImportance, ExecutionStatus.NOT_RUN)+
+				getValue(testsOfLowImportance, ExecutionStatus.NOT_FOUND);
 	}
 	public int getValue(Map<ExecutionStatus, Integer> map, ExecutionStatus status){
 		if(map.containsKey(status)){

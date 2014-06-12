@@ -32,7 +32,7 @@ require([ "common" ], function() {
 					$("#j_username").focus();
 				});
 
-				$(document).on('keydown', 'body', function(event) {
+				$(document).on("keydown", "body", function(event) {
 					var e;
 					if (event.which != "") {
 						e = event.which;
@@ -43,7 +43,7 @@ require([ "common" ], function() {
 					}
 
 					if (e == 13) {
-						$('#login-form-button-set input').click();
+						$("#login-form-button-set input").click();
 					}
 				});
 

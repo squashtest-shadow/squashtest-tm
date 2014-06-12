@@ -40,8 +40,14 @@
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
 	<c:set var="editable" value="${ true }" />
 </authz:authorized>
-<c:set var="automated"
-	value="${ execution.executionMode == 'AUTOMATED' }" />
+
+
+<%-- -----------------------------test automation ------------------------------ --%>
+
+<c:set var="automated"	value="${ execution.executionMode == 'AUTOMATED' }" />
+<c:set var="taDisassociated" value="${ automated and execution.automatedExecutionExtender.projectDisassociated}" />
+<f:message var="taDisassociatedLabel" key="squashtm.itemdeleted"/>
+
 
 
 <%-------------------------- urls ------------------------------%>
@@ -154,7 +160,7 @@
 <c:if test="${execution.automated}">
 			<div class="display-table-row">
 				<label class="display-table-cell" for="automated-script"><f:message key="test-case.testautomation.section.label" /></label>
-				<div class="display-table-cell" id="automated-script" >${ execution.automatedExecutionExtender.automatedTest.name }</div>
+				<div class="display-table-cell" id="automated-script" >${ taDisassociated ? taDisassociatedLabel : execution.automatedExecutionExtender.automatedTest.fullLabel }</div>
 			</div>
 </c:if>			
 		</div>

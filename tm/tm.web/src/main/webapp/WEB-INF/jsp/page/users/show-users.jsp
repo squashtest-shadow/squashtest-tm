@@ -236,7 +236,7 @@
 			}
 		}
 		require([ "common" ], function() {
-    		require(["users-manager", "jquery"], function(userAdmin, $){
+    		require(["users-manager/user-list", "jquery", "teams-manager/TeamsManager"], function(userAdmin, $, TeamsManager){
     			var settings = {
     				data : {
     					tableData : ${tableModel}
@@ -254,13 +254,14 @@
     					cancel :"${cancel}"
     				},
     				managedPassword: ${ authenticationProvider.managedPassword }
-    			}
+    			};
     			
   				$(function() {
     				userAdmin.initUserListPage(settings);
   				});
+    			
+    			new TeamsManager();
     		});
-			require([ "teams-manager" ]);
 		});
 	//]]>
 	</script>	

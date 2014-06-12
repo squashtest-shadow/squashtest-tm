@@ -49,6 +49,7 @@ import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IterationTestPlanFinder;
@@ -69,7 +70,6 @@ import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
 @Controller
 @RequestMapping("/test-suites/{suiteId}")
 public class TestSuiteModificationController {
-	
 
 	private static final String TEST_SUITE = "testSuite";
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteModificationController.class);
@@ -84,7 +84,7 @@ public class TestSuiteModificationController {
 
 	@Inject
 	private CustomFieldValueFinderService cufValueService;
-	
+
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentsHelper;
 
@@ -96,10 +96,10 @@ public class TestSuiteModificationController {
 
 	@Inject
 	private Provider<TestCaseModeJeditableComboDataBuilder> modeComboBuilderProvider;
-	
+
 	@Inject
 	private Provider<ExecutionStatusJeditableComboDataBuilder> executionStatusComboBuilderProvider;
-	
+
 	// will return the fragment only
 	@RequestMapping(method = RequestMethod.GET)
 	public String showTestSuite(Model model, @PathVariable("suiteId") long suiteId) {
@@ -115,16 +115,16 @@ public class TestSuiteModificationController {
 		populateTestSuiteModel(model, suiteId);
 		return "page/campaign-libraries/show-test-suite";
 	}
-	
-	private void populateTestSuiteModel(Model model, long testSuiteId){
-		
+
+	private void populateTestSuiteModel(Model model, long testSuiteId) {
+
 		TestSuite testSuite = service.findById(testSuiteId);
 		TestPlanStatistics testSuiteStats = service.findTestSuiteStatistics(testSuiteId);
 		boolean hasCUF = cufValueService.hasCustomFields(testSuite);
 		DataTableModel attachmentsModel = attachmentsHelper.findPagedAttachments(testSuite);
 		Map<String, String> assignableUsers = getAssignableUsers(testSuiteId);
 		Map<String, String> weights = getWeights();
-		
+
 		model.addAttribute(TEST_SUITE, testSuite);
 		model.addAttribute("statistics", testSuiteStats);
 		model.addAttribute("hasCUF", hasCUF);
@@ -139,48 +139,58 @@ public class TestSuiteModificationController {
 		model.addAttribute("statuses", getStatuses(testSuite.getProject().getId()));
 	}
 
-	private Map<String, String> getStatuses(long projectId){
+	/**
+	 * Will fetch the active {@link ExecutionStatus} for the project matching the given id
+	 * 
+	 * @param projectId
+	 *            : the id of the concerned {@link Project}
+	 * @return a map representing the active statuses for the given project with :
+	 *         <ul>
+	 *         <li>key: the status name</li>
+	 *         <li>value: the status internationalized label</li>
+	 *         </ul>
+	 */
+	private Map<String, String> getStatuses(long projectId) {
 		Locale locale = LocaleContextHolder.getLocale();
 		return executionStatusComboBuilderProvider.get().useContext(projectId).useLocale(locale).buildMap();
 	}
-	
-	private Map<String, String> getModes(){
+
+	private Map<String, String> getModes() {
 		Locale locale = LocaleContextHolder.getLocale();
 		return modeComboBuilderProvider.get().useLocale(locale).buildMap();
 	}
-	
-	private Map<String, String> getWeights(){
+
+	private Map<String, String> getWeights() {
 		Locale locale = LocaleContextHolder.getLocale();
 		return importanceComboBuilderProvider.get().useLocale(locale).buildMap();
 	}
-	
-	private Map<String, String> getAssignableUsers(long testSuiteId){
+
+	private Map<String, String> getAssignableUsers(long testSuiteId) {
 
 		Locale locale = LocaleContextHolder.getLocale();
 		TestSuite ts = service.findById(testSuiteId);
-		
+
 		List<User> usersList = iterationTestPlanFinder.findAssignableUserForTestPlan(ts.getIteration().getId());
 		Collections.sort(usersList, new UserLoginComparator());
 
 		String unassignedLabel = messageSource.internationalize("label.Unassigned", locale);
 
 		Map<String, String> jsonUsers = new LinkedHashMap<String, String>(usersList.size());
-		
+
 		jsonUsers.put(User.NO_USER_ID.toString(), unassignedLabel);
-		for (User user : usersList){
+		for (User user : usersList) {
 			jsonUsers.put(user.getId().toString(), user.getLogin());
 		}
-		
+
 		return jsonUsers;
 	}
 
-
-	@RequestMapping(value = "/general", method = RequestMethod.GET, produces=ContentTypes.APPLICATION_JSON)
+	@RequestMapping(value = "/general", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	@ResponseBody
 	public JsonGeneralInfo refreshGeneralInfos(@PathVariable("suiteId") long suiteId) {
 		TestSuite testSuite = service.findById(suiteId);
-		return new JsonGeneralInfo((AuditableMixin)testSuite);
-		
+		return new JsonGeneralInfo((AuditableMixin) testSuite);
+
 	}
 
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
@@ -190,8 +200,8 @@ public class TestSuiteModificationController {
 		TestSuite testSuite = service.findById(suiteId);
 		ModelAndView mav = new ModelAndView("fragment/generics/statistics-fragment");
 		mav.addObject("statisticsEntity", testSuiteStats);
-		mav.addObject("allowsSettled",
-				testSuite.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
+		mav.addObject("allowsSettled", testSuite.getProject().getCampaignLibrary()
+				.allowsStatus(ExecutionStatus.SETTLED));
 		mav.addObject("allowsUntestable",
 				testSuite.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
 
@@ -223,7 +233,8 @@ public class TestSuiteModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	@ResponseBody
-	public Object rename(HttpServletResponse response, @RequestParam("newName") String newName, @PathVariable("suiteId") long suiteId) {
+	public Object rename(HttpServletResponse response, @RequestParam("newName") String newName,
+			@PathVariable("suiteId") long suiteId) {
 
 		LOGGER.info("TestSuiteModificationController : renaming " + suiteId + " as " + newName);
 		service.rename(suiteId, newName);
@@ -243,45 +254,15 @@ public class TestSuiteModificationController {
 	}
 
 
-	
-	// ****************** execution of the whole suite ****************************************
-	
-	@RequestMapping(method = RequestMethod.POST, params = { "id=execute-auto", "testPlanItemsIds[]" })
-	public @ResponseBody
-	AutomatedSuiteOverview executeSelectionAuto(@PathVariable("suiteId") long suiteId,
-			@RequestParam("testPlanItemsIds[]") List<Long> ids, Locale locale) {
-		
 
-		AutomatedSuite autoSuite = service.createAndStartAutomatedSuite(suiteId, ids);
-
-		LOGGER.debug("Test-Suite #" + suiteId + " : execute selected test plans");
-
-		return AutomatedExecutionViewUtils.buildExecInfo(autoSuite, locale, messageSource);
-
-	}
-
-	@RequestMapping(method = RequestMethod.POST, params = { "id=execute-auto", "!testPlanItemsIds[]" })
-	public @ResponseBody
-	AutomatedSuiteOverview executeAllAuto(@PathVariable("suiteId") long suiteId, Locale locale) {
-		AutomatedSuite suite = service.createAndStartAutomatedSuite(suiteId);
-
-		LOGGER.debug("Test-Suite #" + suiteId + " : execute all test plan auto");
-
-		return AutomatedExecutionViewUtils.buildExecInfo(suite, locale, messageSource);
-
-	}
-	
-	
 	// ******************** other stuffs ********************
-	
-	
-	private static final class UserLoginComparator implements Comparator<User>{
+
+	private static final class UserLoginComparator implements Comparator<User> {
 		@Override
 		public int compare(User u1, User u2) {
 			return u1.getLogin().compareTo(u2.getLogin());
 		}
-		
+
 	}
-	
-	
+
 }

@@ -99,12 +99,12 @@ import org.squashtest.tm.domain.Level;
  * TA_WARNING and TA_ERROR. There are now 8 status, yet manual or automated statuses only uses a subset of them.
  * 
  * The set of valid statuses for manual executions is : BLOCKED, FAILURE, SUCCESS, RUNNING, READY The set of valid
- * statuses for automated executions : ERROR, FAILURE, WARNING, SUCCESS, RUNNING, READY, NOT_RUN
+ * statuses for automated executions : ERROR, FAILURE, WARNING, SUCCESS, RUNNING, READY, NOT_RUN, NOT_FOUND
  * 
  * 
  * The status sets for manual and automated can still be compared to each other, but one have to normalize them first :
  * BLOCKED, FAILURE, SUCCESS, RUNNING, READY is considered as the Canonical status set. To this end, TA_ERROR and
- * TA_NOT_RUN is considered equal to BLOCKED and TA_WARNING is considered equal to SUCCESS.
+ * TA_NOT_RUN is considered equal to BLOCKED, TA_NOT_RUN is considered as UNTESTABLE, and TA_WARNING is considered equal to SUCCESS.
  */
 public enum ExecutionStatus implements Internationalizable, Level {
 
@@ -354,6 +354,30 @@ public enum ExecutionStatus implements Internationalizable, Level {
 		public boolean defaultEnabled() {
 			return false;
 		}
+	},
+	NOT_FOUND(9) {
+		@Override
+		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
+			throw new UnsupportedOperationException(
+					"ExecutionStatus.TA_ERROR#resolveStatus(...) should never have been invoked. That exception cleary results from faulty logic. If you read this message please "
+							+ "report the issue at https://ci.squashtest.org/mantis/ Please put [ExecutionStatus - unsupported operation] as title for your report and explain what you did. Also please check that it hadn't been reported "
+							+ "already. Thanks for your help and happy Squash !");
+		}
+
+		@Override
+		public boolean isCanonical() {
+			return false;
+		}
+
+		@Override
+		public ExecutionStatus getCanonicalStatus() {
+			return UNTESTABLE;
+		}
+
+		@Override
+		public boolean defaultEnabled() {
+			return false;
+		}
 	};
 
 	/* ************************* attributes ********************************** */
@@ -389,6 +413,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 		terms.add(SUCCESS);
 		terms.add(WARNING);
 		terms.add(NOT_RUN);
+		terms.add(NOT_FOUND);
 		terms.add(ERROR);
 		terms.add(UNTESTABLE);
 		terms.add(SETTLED);

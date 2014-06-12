@@ -25,7 +25,7 @@
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"  %>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
-<layout:info-page-layout titleKey="squashtm.library.test-case.title" highlightedWorkspace="campaign" isSubPaged="true">
+<layout:info-page-layout titleKey="squashtm.library.test-case.title" highlightedWorkspace="campaign" isSubPaged="true" main="test-suite-page">
 	<jsp:attribute  name="head">	
 		<comp:sq-css name="squash.purple.css" />
 	</jsp:attribute>
@@ -39,7 +39,7 @@
 	
 	<jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back" />
-		<input type="button" class="button" value="${backButtonLabel}" onClick="history.back();"/>	
+		<input type="button" class="sq-btn" value="${backButtonLabel}" onClick="history.back();"/>	
 	</jsp:attribute>
 		
 	<jsp:attribute name="informationContent">	

@@ -25,8 +25,9 @@ import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testcase.TestCase;
 
 /**
- * <p>Thrown when one tries to bind a {@link AutomatedTest} to a {@link TestCase}, while the test automation feature is disabled 
- * for the project hosting it.</p>
+ * <p>Thrown when one tries to bind a {@link AutomatedTest} to a {@link TestCase},
+ * while the test automation feature is disabled for the TM project hosting it or if the test automation project
+ * isn't bound to the TM project</p>
  * 
  * @author bsiri
  *
@@ -38,17 +39,17 @@ public class UnallowedTestAssociationException extends ActionException {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	
+
+
 	private static final String MESSAGE_KEY = "testautomation.exceptions.unallowedassociation";
-	
-	
+
+
 	@Override
 	public String getI18nKey() {
 		return MESSAGE_KEY;
 	}
-	
-	
-	
-	
+
+
+
+
 }

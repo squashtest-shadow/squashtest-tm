@@ -66,7 +66,7 @@ import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
-import org.squashtest.tm.service.internal.testautomation.InsecureTestAutomationManagementService;
+import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
@@ -76,50 +76,49 @@ import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker;
 @Service("CustomIterationModificationService")
 @Transactional
 public class CustomIterationModificationServiceImpl implements CustomIterationModificationService,
-		IterationTestPlanManager {
+IterationTestPlanManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomIterationModificationServiceImpl.class);
 	private static final String OR_HAS_ROLE_ADMIN = "or hasRole('ROLE_ADMIN')";
-	private static final String PERMISSION_EXECUTE_ITERATION = "hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'EXECUTE') ";
 	private static final String PERMISSION_EXECUTE_ITEM = "hasPermission(#testPlanItemId, 'org.squashtest.tm.domain.campaign.IterationTestPlanItem', 'EXECUTE') ";
-	
+
 	@Inject	private CampaignDao campaignDao;
-	
+
 	@Inject	private IterationDao iterationDao;
-	
+
 	@Inject	private TestSuiteDao suiteDao;
-	
+
 	@Inject	private IterationTestPlanDao testPlanDao;
-	
+
 	@Inject	private AutomatedSuiteDao autoSuiteDao;
-	
+
 	@Inject	private ExecutionDao executionDao;
-	
+
 	@Inject	private TestCaseCyclicCallChecker testCaseCyclicCallChecker;
-	
+
 	@Inject	private CampaignNodeDeletionHandler deletionHandler;
-	
+
 	@Inject	private PermissionEvaluationService permissionService;
-	
+
 	@Inject	private PrivateCustomFieldValueService customFieldValueService;
-	
+
 	@Inject	private PrivateDenormalizedFieldValueService denormalizedFieldValueService;
-	
+
 	@Inject private IndexationService indexationService;
 
 	@Inject private IterationStatisticsService statisticsService;
-	
+
 	@Inject private PrivateCustomFieldValueService customFieldValuesService;
-	
+
 	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToIterationStrategy")
 	private Provider<PasteStrategy<Iteration, TestSuite>> pasteToIterationStrategyProvider;
 
 	@Inject	private ObjectFactory<TreeNodeCopier> treeNodeCopierFactory;
-	
+
 	@Inject	private IterationTestPlanManagerService iterationTestPlanManager;
-	
-	@Inject private InsecureTestAutomationManagementService testAutomationService;
-	
+
+	@Inject private UnsecuredAutomatedTestManagerService testAutomationService;
+
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
@@ -132,7 +131,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 
 		if (copyTestPlan) {
 			populateTestPlan(iteration, campaignTestPlan);
-		} 
+		}
 		iterationDao.persistIterationAndTestPlan(iteration);
 		campaign.addIteration(iteration);
 		customFieldValueService.createAllCustomFieldValues(iteration, iteration.getProject());
@@ -199,7 +198,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 			+ OR_HAS_ROLE_ADMIN)
 	public void rename(long iterationId, String newName) {
 		Iteration iteration = iterationDao.findById(iterationId);
-		
+
 		iteration.setName(newName);
 	}
 
@@ -213,34 +212,6 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		IterationTestPlanItem item = testPlanDao.findTestPlanItem(testPlanItemId);
 		return addExecution(item);
 	}
-
-	/**
-	 * 
-	 * @see org.squashtest.tm.service.campaign.CustomIterationModificationService#addAutomatedExecution(long)
-	 */
-	@Override
-	@PreAuthorize(PERMISSION_EXECUTE_ITEM + OR_HAS_ROLE_ADMIN)
-	public Execution addAutomatedExecution(long testPlanItemId) {
-		IterationTestPlanItem item = testPlanDao.findTestPlanItem(testPlanItemId);
-
-		return addAutomatedExecution(item);
-	}
-
-	@Override
-	@PreAuthorize(PERMISSION_EXECUTE_ITERATION + OR_HAS_ROLE_ADMIN)
-	public AutomatedSuite createAndStartAutomatedSuite(long iterationId) {
-		Iteration iteration = iterationDao.findById(iterationId);
-		List<IterationTestPlanItem> items =  iteration.getTestPlans();
-		return createAndStartAutomatedSuite(items);
-	}
-
-	@Override
-	@PreAuthorize(PERMISSION_EXECUTE_ITERATION + OR_HAS_ROLE_ADMIN)
-	public AutomatedSuite createAndStartAutomatedSuite(long iterationId, Collection<Long> testPlanIds) {
-		return createAndStartAutomatedSuiteByITPIsIds(testPlanIds);
-	}
-
-	
 
 
 	@Override
@@ -346,11 +317,11 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		// has no id yet. this is caused by weird mapping (https://hibernate.onjira.com/browse/HHH-5732)
 		executionDao.persist(execution);
 		item.addExecution(execution);
-		
+
 		createCustomFieldsForExecutionAndExecutionSteps(execution);
 		createDenormalizedFieldsForExecutionAndExecutionSteps(execution);
 		indexationService.reindexTestCase(item.getReferencedTestCase().getId());
-		
+
 		return execution;
 	}
 
@@ -360,7 +331,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 			customFieldValuesService.createAllCustomFieldValues(step, execution.getProject());
 		}
 	}
-	
+
 	private void createDenormalizedFieldsForExecutionAndExecutionSteps(Execution execution) {
 		LOGGER.debug("Create denormalized fields for Execution {}", execution.getId());
 		TestCase sourceTC = execution.getReferencedTestCase();
@@ -381,7 +352,7 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		return sourceStep.getProject().getId().equals(sourceTC.getProject().getId());
 	}
 
-	
+
 	@Override
 	public Execution addAutomatedExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException {
 
@@ -411,30 +382,6 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 	}
 
 
-	@Override
-	public AutomatedSuite createAndStartAutomatedSuite(List<IterationTestPlanItem> testPlanItems) {
-		AutomatedSuite newSuite = autoSuiteDao.createNewSuite();
-
-		for (IterationTestPlanItem item : testPlanItems) {
-			if (item.isAutomated()) {
-				Execution exec = addAutomatedExecution(item);
-				newSuite.addExtender(exec.getAutomatedExecutionExtender());
-			}
-		}
-		
-		//See [Issue 1531]
-		//We need to make sure that the AutomatedSuite has an id before we launch the execution.
-		//Otherwise there is a risk that, if TA is too quick to complete execution, it will try to find and update the suite that doesn't have an id yet.
-		TransactionSynchronizationManager.registerSynchronization(new AutomatedRunTransactionHandler(newSuite, testAutomationService));
-		
-		return newSuite;
-	}
-	
-	@Override
-	public AutomatedSuite createAndStartAutomatedSuiteByITPIsIds(Collection<Long> testPlanIds){
-		List<IterationTestPlanItem> items = testPlanDao.findAllByIds(testPlanIds);
-		return createAndStartAutomatedSuite(items);
-	}
 
 	@Override
 	public List<Iteration> findIterationContainingTestCase(long testCaseId) {
@@ -446,4 +393,4 @@ public class CustomIterationModificationServiceImpl implements CustomIterationMo
 		return statisticsService.gatherIterationStatisticsBundle(iterationId);
 	}
 
-} 
+}

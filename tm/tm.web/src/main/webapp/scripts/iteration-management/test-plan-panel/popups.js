@@ -18,167 +18,234 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'workspace.event-bus', 'jqueryui', 'jquery.squash.confirmdialog', 'jquery.squash.formdialog' ], function($, eventBus) {
+define([ 'jquery', 'workspace.event-bus', 'app/util/ComponentUtil', 'squash.statusfactory', 'squash.translator',
+		'squash.dateutils', 'jqueryui', 'jquery.squash.confirmdialog', 'jquery.squash.formdialog' ], function($,
+		eventBus, ComponentUtil, statusfactory, translator, dateutils) {
 
+	function _initDeleteExecutionPopup(conf) {
 
-	function _initDeleteExecutionPopup(conf){
-		
 		var deleteExecutionDialog = $("#iter-test-plan-delete-execution-dialog");
-		
+
 		deleteExecutionDialog.confirmDialog();
-		
-		deleteExecutionDialog.on('confirmdialogconfirm', function(){
-			var execId = $(this).data('origin')
-								.id
-								.substr('delete-execution-table-button-'.length);
-			
+
+		deleteExecutionDialog.on('confirmdialogconfirm', function() {
+			var execId = $(this).data('origin').id.substr('delete-execution-table-button-'.length);
+
 			$.ajax({
 				url : conf.urls.executionsUrl + execId,
 				type : 'DELETE',
 				dataType : 'json'
-			}).done(function(data){
-				eventBus.trigger('context.content-modified', { newDates : data });
-			});				
+			}).done(function(data) {
+				eventBus.trigger('context.content-modified', {
+					newDates : data
+				});
+			});
 		});
 	}
-	
-	
-	function _initDeleteItemTestplan(conf){
-		
+
+	function _initDeleteItemTestplan(conf) {
+
 		var deleteItemTestplanDialog = $("#iter-test-plan-delete-dialog");
-		
+
 		deleteItemTestplanDialog.formDialog();
-		
-		deleteItemTestplanDialog.on('formdialogopen', function(){
+
+		deleteItemTestplanDialog.on('formdialogopen', function() {
 
 			var entityId = $("#iter-test-plan-delete-dialog").data("entity-id");
 			$("#iter-test-plan-delete-dialog").data("entity-id", null);
-			
+
 			var selIds = [];
-						
-			if(!entityId){
+
+			if (!entityId) {
 				selIds = $("#iteration-test-plans-table").squashTable().getSelectedIds();
-			} 
-						
-			if(!!entityId){
+			}
+
+			if (!!entityId) {
 				selIds.push(entityId);
 			}
-			
-			switch (selIds.length){			
-				case 0 : $(this).formDialog('setState','empty-selec'); break;
-				case 1 : $(this).formDialog('setState','single-tp'); break;
-				default : $(this).formDialog('setState','multiple-tp'); break;					
+
+			switch (selIds.length) {
+			case 0:
+				$(this).formDialog('setState', 'empty-selec');
+				break;
+			case 1:
+				$(this).formDialog('setState', 'single-tp');
+				break;
+			default:
+				$(this).formDialog('setState', 'multiple-tp');
+				break;
 			}
-			
+
 			this.selIds = selIds;
 		});
-		
-		deleteItemTestplanDialog.on('formdialogconfirm', function(){
+
+		deleteItemTestplanDialog.on('formdialogconfirm', function() {
 			var table = $("#iteration-test-plans-table").squashTable();
 			var ids = this.selIds;
 			var url = conf.urls.testplanUrl + ids.join(',');
-			
+
 			$.ajax({
 				url : url,
 				type : 'delete',
 				dataType : 'json'
-			})
-			.done(function(unauthorized){
-				if (unauthorized){
+			}).done(function(unauthorized) {
+				if (unauthorized) {
 					squashtm.notification.showInfo(conf.messages.unauthorizedTestplanRemoval);
 				}
 				eventBus.trigger('context.content-modified');
 			});
-			
+
 			$(this).formDialog('close');
 		});
-		
-		deleteItemTestplanDialog.on('formdialogcancel', function(){
+
+		deleteItemTestplanDialog.on('formdialogcancel', function() {
 			$(this).formDialog('close');
 		});
-		
+
 	}
-	
-	function _initBatchAssignUsers(conf){
-		
+
+	function _initBatchAssignUsers(conf) {
+
 		var batchAssignUsersDialog = $("#iter-test-plan-batch-assign");
-		
+
 		batchAssignUsersDialog.formDialog();
-		
-		batchAssignUsersDialog.on('formdialogopen', function(){
+
+		batchAssignUsersDialog.on('formdialogopen', function() {
 			var selIds = $("#iteration-test-plans-table").squashTable().getSelectedIds();
-			
-			if (selIds.length === 0){			
-				$(this).formDialog('setState','empty-selec');
+
+			if (selIds.length === 0) {
+				$(this).formDialog('setState', 'empty-selec');
+			} else {
+				$(this).formDialog('setState', 'assign');
 			}
-			else{
-				$(this).formDialog('setState','assign');				
-			}
-			
+
 		});
-		
-		batchAssignUsersDialog.on('formdialogconfirm', function(){
-			
-			var table = $("#iteration-test-plans-table").squashTable(),
-				select = $('.batch-select', this);
-			
-			var rowIds = table.getSelectedIds(),
-				assigneeId = select.val(),
-				assigneeLogin = select.find('option:selected').text();
-			
+
+		batchAssignUsersDialog.on('formdialogconfirm', function() {
+
+			var table = $("#iteration-test-plans-table").squashTable(), select = $('.batch-select', this);
+
+			var rowIds = table.getSelectedIds(), assigneeId = select.val(), assigneeLogin = select.find(
+					'option:selected').text();
+
 			var url = conf.urls.testplanUrl + rowIds.join(',');
-			
-			$.post(url, {assignee : assigneeId}, function(){
+
+			$.post(url, {
+				assignee : assigneeId
+			}, function() {
 				table.getSelectedRows().find('td.assignee-combo span').text(assigneeLogin);
 			});
-			
+
 			$(this).formDialog('close');
 		});
-		
-		batchAssignUsersDialog.on('formdialogcancel', function(){
+
+		batchAssignUsersDialog.on('formdialogcancel', function() {
 			$(this).formDialog('close');
 		});
-		
+
 	}
-	
-	function _initReorderTestPlan(conf){
+	function _initBatchEditStatus(conf) {
+
+		var batchEditStatusDialog = $("#iter-test-plan-batch-edit-status");
+
+		batchEditStatusDialog.formDialog();
+
+		var cbox = batchEditStatusDialog.find(".execution-status-combo-class");
+		ComponentUtil.updateStatusCboxIconOnChange(cbox);
+
+		batchEditStatusDialog.on('formdialogopen', function() {
+			var selIds = $("#iteration-test-plans-table").squashTable().getSelectedIds();
+			var cbox = $(this).find(".execution-status-combo-class");
+			ComponentUtil.updateStatusCboxIcon(cbox);
+			if (selIds.length === 0) {
+				$(this).formDialog('setState', 'empty-selec');
+			} else {
+				$(this).formDialog('setState', 'edit');
+			}
+
+		});
+
+		batchEditStatusDialog.on('formdialogconfirm', function() {
+
+			var table = $("#iteration-test-plans-table").squashTable(), select = $('.execution-status-combo-class',
+					this);
+
+			var rowIds = table.getSelectedIds(), statusCode = select.val(), statusName = select.find('option:selected')
+					.text();
+
+			var url = conf.urls.testplanUrl + rowIds.join(',');
+
+			$.post(url, {
+				status : statusCode
+			}, function(itp) {
+
+				// must update the execution status, the execution date and the assignee
+
+				// 1/ the status
+				var $statusspans = table.getSelectedRows().find('td.status-combo span');
+				for ( var i = 0; i < $statusspans.length; i++) {
+					var $statusspan = $($statusspans[i]);
+					$statusspan.attr('class', 'cursor-arrow exec-status-label exec-status-' +
+							itp.executionStatus.toLowerCase());
+					$statusspan.html(statusfactory.translate(itp.executionStatus));
+
+					// 2/ the date format
+					var format = translator.get('squashtm.dateformat'), $execon = $statusspan.parents('tr:first').find(
+							"td.exec-on");
+
+					var newdate = dateutils.format(itp.lastExecutedOn, format);
+					$execon.text(newdate);
+
+					// 3/ user assigned
+					$statusspan.parents('tr:first').find('td.assignee-combo').children().first().text(itp.assignee);
+				}
+			});
+
+			$(this).formDialog('close');
+		});
+
+		batchEditStatusDialog.on('formdialogcancel', function() {
+			$(this).formDialog('close');
+		});
+
+	}
+	function _initReorderTestPlan(conf) {
 		var dialog = $("#iter-test-plan-reorder-dialog");
-		
+
 		dialog.confirmDialog();
-		
-		dialog.on('confirmdialogconfirm', function(){
+
+		dialog.on('confirmdialogconfirm', function() {
 			var table = $("#iteration-test-plans-table").squashTable();
 			var drawParameters = table.getAjaxParameters();
-			
-			var url = conf.urls.testplanUrl+'/order';
-			$.post(url, drawParameters, 'json')
-			.success(function(){
+
+			var url = conf.urls.testplanUrl + '/order';
+			$.post(url, drawParameters, 'json').success(function() {
 				table.data('sortmode').resetTableOrder(table);
-				eventBus.trigger('context.content-modified');				
+				eventBus.trigger('context.content-modified');
 			});
 		});
-		
-		dialog.on('confirmdialogcancel', function(){
+
+		dialog.on('confirmdialogcancel', function() {
 			$(this).confirmDialog('close');
 		});
 	}
-	
-	
+
 	return {
-		init : function(conf){
-			if (conf.permissions.linkable){
+		init : function(conf) {
+			if (conf.permissions.linkable) {
 				_initDeleteItemTestplan(conf);
 			}
-			if (conf.permissions.editable){				
+			if (conf.permissions.editable) {
 				_initBatchAssignUsers(conf);
+				_initBatchEditStatus(conf);
 			}
-			if(conf.permissions.executable){
+			if (conf.permissions.executable) {
 				_initDeleteExecutionPopup(conf);
 			}
-			if (conf.permissions.reorderable){
+			if (conf.permissions.reorderable) {
 				_initReorderTestPlan(conf);
 			}
 		}
 	};
-	
+
 });

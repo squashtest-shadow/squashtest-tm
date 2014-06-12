@@ -25,7 +25,7 @@ import java.text.ParseException;
 import java.util.Date;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.squashtest.tm.core.foundation.lang.IsoDateUtils;
+import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.service.internal.batchimport.Messages;
 
 /**
@@ -56,7 +56,7 @@ public final class OptionalDateCellCoercer extends TypeBasedCellValueCoercer<Dat
 	@Override
 	protected Date coerceStringCell(Cell cell) {
 		try {
-			return IsoDateUtils.parseIso8601Date(cell.getStringCellValue());
+			return DateUtils.parseIso8601Date(cell.getStringCellValue());
 		} catch (ParseException e) {
 			throw new CannotCoerceException(e, Messages.ERROR_UNPARSABLE_DATE);
 		}

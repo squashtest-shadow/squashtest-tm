@@ -54,15 +54,18 @@ public class AutomatedSuite  {
 	@OneToMany(mappedBy="automatedSuite", cascade = {CascadeType.ALL})
 	private Collection<AutomatedExecutionExtender> executionExtenders = new ArrayList<AutomatedExecutionExtender>();
 
+	/**
+	 * it's transient because we do not want to persist neither do we want to compute it too often.
+	 */
+	private transient Boolean manualSlaveSelection;
+
 	public String getId(){
 		return id;
 	}
 
-
 	public Collection<AutomatedExecutionExtender> getExecutionExtenders() {
 		return executionExtenders;
 	}
-
 
 	public void setExecutionExtenders(
 			Collection<AutomatedExecutionExtender> executionExtenders) {
@@ -96,6 +99,30 @@ public class AutomatedSuite  {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Tells if the suite requires manual node selection. A manual node selection is required when at least 1 server is
+	 * configured with manual selection.
+	 * 
+	 * @return
+	 */
+	public boolean isManualNodeSelection() {
+		if (manualSlaveSelection == null) {
+			boolean manual = false;
+
+			for (AutomatedExecutionExtender autoExec : executionExtenders) {
+				manual = autoExec.getAutomatedProject().getServer().isManualSlaveSelection();
+				if (manual) {
+					break;
+				}
+			}
+
+			manualSlaveSelection = manual;
+		}
+
+		return manualSlaveSelection;
+
 	}
 
 }

@@ -32,7 +32,7 @@ import org.squashtest.tm.domain.project.GenericProject;
 @Transactional
 @DynamicManager(name="squashtest.tm.service.GenericProjectManagerService", entity = GenericProject.class)
 public interface GenericProjectManagerService extends CustomGenericProjectManager, GenericProjectFinder {
-	
+
 	/*
 	 * Issue 2341 : the test for manager permissions on project failed because 'GenericProject' is not a valid ACL_CLASS.classname in the database.
 	 * So I had to split it and explicitly refer to the actual implementation 'Project'. A project manager cannot manage project templates anyway.
@@ -47,7 +47,5 @@ public interface GenericProjectManagerService extends CustomGenericProjectManage
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	void changeActive(long projectId, boolean isActive);
-	
-	@PreAuthorize(ADMIN_OR_PROJECT_MANAGER)
-	void changeTestAutomationEnabled(long projectId, boolean isEnabled);
+
 }

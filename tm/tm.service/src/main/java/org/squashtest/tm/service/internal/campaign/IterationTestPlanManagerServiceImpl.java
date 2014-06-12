@@ -113,7 +113,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Inject
 	private DatasetDao datasetDao;
-	
+
 	@Inject
 	private CampaignNodeDeletionHandler deletionHandler;
 
@@ -152,12 +152,12 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	public PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findAssignedTestPlan(long iterationId,
 			PagingAndMultiSorting sorting, ColumnFiltering columnFiltering) {
 
-		
 		// configure the filter, in case the test plan must be restricted to what the user can see.
 		Filtering userFiltering = DefaultFiltering.NO_FILTERING;
 
 		try {
-			PermissionsUtils.checkPermission(permissionEvaluationService, Arrays.asList(iterationId), "READ_UNASSIGNED", Iteration.class.getName());
+			PermissionsUtils.checkPermission(permissionEvaluationService, Arrays.asList(iterationId),
+					"READ_UNASSIGNED", Iteration.class.getName());
 		} catch (AccessDeniedException ade) {
 			String userLogin = userService.findCurrentUser().getLogin();
 			userFiltering = new DefaultFiltering("User.login", userLogin);
@@ -258,7 +258,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		PagingAndMultiSorting sorting = new DelegatePagingAndMultiSorting(noPaging, newSorting);
 		Filtering filtering = DefaultFiltering.NO_FILTERING;
 		ColumnFiltering columnFiltering = DefaultColumnFiltering.NO_FILTERING;
-		
+
 		List<IterationTestPlanItem> items = iterationDao.findTestPlan(iterationId, sorting, filtering, columnFiltering);
 
 		Iteration iteration = iterationDao.findById(iterationId);
@@ -315,7 +315,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		TestCase testCase = item.getReferencedTestCase();
 
 		iteration.removeItemFromTestPlan(item);
-	
+
 		deletionHandler.deleteIterationTestPlanItem(item);
 
 		// unless the test case was deleted, we need to re-index its statistics
@@ -347,11 +347,8 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		return iteration.getPlannedTestCase();
 	}
 
-
-
 	@Override
-	// FIXME : security. Note that the user should either have the right to execute executions, has role admin, or has
-	// role ta_server
+	@PreAuthorize("hasPermission(#item, 'EXECUTE') " + OR_HAS_ROLE_ADMIN + "or hasRole('ROLE_TA_API_CLIENT')")
 	public void updateMetadata(IterationTestPlanItem item) {
 		Execution execution = item.getLatestExecution();
 		if (execution != null) {
@@ -360,17 +357,20 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 			item.setUser(userDao.findUserByLogin(execution.getLastExecutedBy()));
 		}
 	}
-	
-	/*
-	 * Instead of using data from an actual execution (like {@link #updateMetadata(IterationTestPlanItem)}, 
-	 * we update those data according to arbitrary parameters like the thread initiator and now().  
-	 * @param item
-	 */
-	private void arbitraryUpdateMetadata(IterationTestPlanItem item){
-		String login = UserContextHolder.getUsername();
-		item.setLastExecutedBy(login);
-		item.setLastExecutedOn(new Date());
-		item.setUser(userDao.findUserByLogin(login));
+
+	/**
+	 * Instead of using data from an actual execution (like {@link #updateMetadata(IterationTestPlanItem)}, we update
+	 * those data according to given parameters.
+	 * 
+	 * @param item: the iteration test plan item to update the metadatas of
+	 * @param user : the user that will be set as last executor and assigne
+	 * @param date : the date to set lastExecutedOn property
+	 **/
+	private void arbitraryUpdateMetadata(IterationTestPlanItem item, User user, Date date) {
+
+		item.setLastExecutedBy(user.getLogin());
+		item.setLastExecutedOn(date);
+		item.setUser(user);
 	}
 
 	@Override
@@ -405,8 +405,9 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	 * 
 	 * @see org.squashtest.tm.service.campaign.IterationTestPlanManagerService#assignUserToTestPlanItem(long, long)
 	 */
-	// FIXME : security execute
 	@Override
+	@PreAuthorize("hasPermission(#testPlanItemId, 'org.squashtest.tm.domain.campaign.IterationTestPlanItem', 'WRITE') "
+			+ OR_HAS_ROLE_ADMIN)
 	public void assignUserToTestPlanItem(long testPlanItemId, long userId) {
 		User user = (userId == 0) ? null : userDao.findById(userId);
 
@@ -417,13 +418,13 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	}
 
 	/**
-	 * 
 	 * @see org.squashtest.tm.service.campaign.IterationTestPlanManagerService#assignUserToTestPlanItems(java.util.List,
 	 *      long)
 	 */
-	// FIXME : security execute
 	@Override
 	public void assignUserToTestPlanItems(List<Long> testPlanIds, long userId) {
+		//check permission
+		PermissionsUtils.checkPermission(permissionEvaluationService, testPlanIds, "WRITE", IterationTestPlanItem.class.getName());
 		List<IterationTestPlanItem> items = iterationTestPlanDao.findAllByIds(testPlanIds);
 
 		User user = (userId == 0) ? null : userDao.findById(userId);
@@ -453,8 +454,9 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		return null;
 	}
 
-	// FIXME : security
 	@Override
+	@PreAuthorize("hasPermission(#itemTestPlanId, 'org.squashtest.tm.domain.campaign.IterationTestPlanItem', 'READ') "
+			+ OR_HAS_ROLE_ADMIN)
 	public IterationTestPlanItem findTestPlanItem(long itemTestPlanId) {
 		return iterationTestPlanDao.findTestPlanItem(itemTestPlanId);
 	}
@@ -467,13 +469,27 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		return statusList;
 	}
 
-	@Override
-	public void forceExecutionStatus(long iterationTestPlanItemId, String statusName) {
 
-		IterationTestPlanItem testPlanItem = findTestPlanItem(iterationTestPlanItemId);		
-		testPlanItem.setExecutionStatus(ExecutionStatus.valueOf(statusName));
-		arbitraryUpdateMetadata(testPlanItem);
+	/**
+	 * {@link IterationTestPlanManagerService}{@link #forceExecutionStatus(List, String)}
+	 * @return
+	 */
+	@Override
+	public List<IterationTestPlanItem> forceExecutionStatus(List<Long> testPlanIds, String statusName) {
+		PermissionsUtils.checkPermission(permissionEvaluationService, testPlanIds, "WRITE", IterationTestPlanItem.class.getName());
+		List<IterationTestPlanItem> testPlanItems = iterationTestPlanDao.findAllByIds(testPlanIds);
+		ExecutionStatus status = ExecutionStatus.valueOf(statusName);
+		String login = UserContextHolder.getUsername();
+		User user = userDao.findUserByLogin(login);
+		Date date = new Date();
+		for(IterationTestPlanItem item : testPlanItems){
+			item.setExecutionStatus(status);
+			arbitraryUpdateMetadata(item, user, date);
+		}
+		return testPlanItems;
+
 	}
+
 
 	/**
 	 * Creates a fragment of test plan, containing either :
