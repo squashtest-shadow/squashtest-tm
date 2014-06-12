@@ -22,6 +22,7 @@ package org.squashtest.tm.domain.testautomation;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -31,6 +32,7 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
@@ -52,7 +54,8 @@ public class AutomatedSuite  {
 	private String id;
 
 	@OneToMany(mappedBy="automatedSuite", cascade = {CascadeType.ALL})
-	private Collection<AutomatedExecutionExtender> executionExtenders = new ArrayList<AutomatedExecutionExtender>();
+	@OrderColumn(name = "EXECUTION_EXTENDER_ORDER")
+	private List<AutomatedExecutionExtender> executionExtenders = new ArrayList<AutomatedExecutionExtender>();
 
 	/**
 	 * it's transient because we do not want to persist neither do we want to compute it too often.
@@ -63,12 +66,12 @@ public class AutomatedSuite  {
 		return id;
 	}
 
-	public Collection<AutomatedExecutionExtender> getExecutionExtenders() {
+	public List<AutomatedExecutionExtender> getExecutionExtenders() {
 		return executionExtenders;
 	}
 
 	public void setExecutionExtenders(
-			Collection<AutomatedExecutionExtender> executionExtenders) {
+			List<AutomatedExecutionExtender> executionExtenders) {
 		this.executionExtenders = executionExtenders;
 	}
 

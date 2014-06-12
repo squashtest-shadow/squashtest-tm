@@ -184,7 +184,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	// security handled by in the code
 	public Collection<TestAutomationProjectContent> sortByProject(AutomatedSuite suite) {
 
-		List<AutomatedExecutionExtender> extenders = (List<AutomatedExecutionExtender>)suite.getExecutionExtenders();
+		List<AutomatedExecutionExtender> extenders = suite.getExecutionExtenders();
 
 		PermissionsUtils.checkPermission(permissionService, extenders, EXECUTE);
 

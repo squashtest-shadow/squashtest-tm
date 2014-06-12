@@ -196,5 +196,29 @@
 			
 		</preConditions>	
 	</changeSet>
-	
+
+	<changeSet id="tm-1.9.10.feat-3481-test-3" author="flaurens">
+	<preConditions>
+		<sqlCheck expectedResult="16">
+			select count(suite_id) from AUTOMATED_EXECUTION_EXTENDER
+			where 
+				(suite_id=5 and extender_id=5 and execution_extender_order=0) or
+				(suite_id=5 and extender_id=6 and execution_extender_order=1) or
+				(suite_id=5 and extender_id=7 and execution_extender_order=2) or
+				(suite_id=5 and extender_id=8 and execution_extender_order=3) or
+				(suite_id=5 and extender_id=9 and execution_extender_order=4) or				
+				(suite_id=6 and extender_id=10 and execution_extender_order=0) or
+				(suite_id=6 and extender_id=11 and execution_extender_order=1) or
+				(suite_id=7 and extender_id=12 and execution_extender_order=0) or
+				(suite_id=7 and extender_id=13 and execution_extender_order=1) or
+				(suite_id=7 and extender_id=14 and execution_extender_order=2) or
+				(suite_id=7 and extender_id=15 and execution_extender_order=3) or
+				(suite_id=7 and extender_id=16 and execution_extender_order=4) or				
+				(suite_id=8 and extender_id=17 and execution_extender_order=0) or
+				(suite_id=8 and extender_id=18 and execution_extender_order=1) or
+				(suite_id=8 and extender_id=19 and execution_extender_order=2) or				
+				(suite_id=8 and extender_id=20 and execution_extender_order=3) 
+		</sqlCheck>
+	</preConditions>
+	</changeSet>		
 </databaseChangeLog>

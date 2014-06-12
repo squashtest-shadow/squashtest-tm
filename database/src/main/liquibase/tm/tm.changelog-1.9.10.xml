@@ -290,5 +290,88 @@
       <column name="NODE_NAME" type="VARCHAR(50)" defaultValue="" remarks="Name of the node which ran the test"/>
     </addColumn>
   </changeSet>
-	
+
+  <changeSet id="tm-1.9.10.feature-3481-7" author="flaurens">
+    <addColumn tableName="AUTOMATED_EXECUTION_EXTENDER">
+      <column name="EXECUTION_EXTENDER_ORDER" type="BIGINT" remarks="order of automated executions extenders within an automated suite">
+      	<constraints nullable="true" />
+      </column>
+    </addColumn>
+  </changeSet>
+  	
+    <changeSet id="tm-1.9.10.feature-3481-8" author="flaurens">
+    <preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+      <dbms type="mysql" />
+    </preConditions>
+    <comment>Creating default order which is identical with the alphabetical order</comment>
+    <sql>
+            create table TEMP_EXECUTION_EXTENDER_ORDER(
+	        EXECUTION_EXTENDER_ORDER BIGINT NOT NULL, 
+	        SUITE_ID BIGINT NOT NULL, 
+	        EXTENDER_ID BIGINT NOT NULL, 
+	        DUMMY BIGINT NOT NULL
+	      );
+
+	 	insert into TEMP_EXECUTION_EXTENDER_ORDER (EXECUTION_EXTENDER_ORDER, SUITE_ID, EXTENDER_ID, DUMMY)
+	      select 
+	        if(@prevtcs=SUITE_ID, @rownum:=@rownum+1, @rownum:=0) as RANK,
+	        clnr.SUITE_ID, 
+	        clnr.EXTENDER_ID, 
+	        (@prevtcs:=SUITE_ID)
+	      from ( 
+	      	select cr.SUITE_ID, cr.EXTENDER_ID
+	      	from AUTOMATED_EXECUTION_EXTENDER cr
+	        order by cr.SUITE_ID, cr.EXTENDER_ID
+	       ) as clnr,
+	        (SELECT @rownum:=0) r, 
+	        (SELECT @prevtcs:=0) s;
+  
+	      update AUTOMATED_EXECUTION_EXTENDER
+	      set EXECUTION_EXTENDER_ORDER = (
+	        select TEMP_EXECUTION_EXTENDER_ORDER.EXECUTION_EXTENDER_ORDER
+	        from TEMP_EXECUTION_EXTENDER_ORDER
+	        where TEMP_EXECUTION_EXTENDER_ORDER.SUITE_ID = AUTOMATED_EXECUTION_EXTENDER.SUITE_ID
+	          and TEMP_EXECUTION_EXTENDER_ORDER.EXTENDER_ID = AUTOMATED_EXECUTION_EXTENDER.EXTENDER_ID
+	      );
+           
+	     drop table TEMP_EXECUTION_EXTENDER_ORDER;
+    </sql>
+    </changeSet>
+
+    <changeSet id="tm-1.9.10.feature-3481-9" author="flaurens">
+    <preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
+      <dbms type="h2" />
+    </preConditions>
+    <comment>Creating default order which is identical with the alphabetical order</comment>
+    <sql>
+            create table TEMP_EXECUTION_EXTENDER_ORDER(
+	        EXECUTION_EXTENDER_ORDER BIGINT NOT NULL, 
+	        SUITE_ID BIGINT NOT NULL, 
+	        EXTENDER_ID BIGINT NOT NULL, 
+	        DUMMY BIGINT NOT NULL
+	      );
+
+			set @rn=-1;
+			set @prevsuite=0;
+			insert into TEMP_EXECUTION_EXTENDER_ORDER ( EXECUTION_EXTENDER_ORDER, SUITE_ID, EXTENDER_ID, DUMMY)
+			select casewhen(@prevsuite = SUITE_ID, set(@rn, @rn+1),
+			set(@rn, 0)) EXECUTION_EXTENDER_ORDER, SUITE_ID, EXTENDER_ID, set(@prevsuite, SUITE_ID)
+			from ( 
+	      	select cr.SUITE_ID, cr.EXTENDER_ID
+	      	from AUTOMATED_EXECUTION_EXTENDER cr
+	        order by cr.SUITE_ID, cr.EXTENDER_ID
+	       	);
+	       	    
+	      update AUTOMATED_EXECUTION_EXTENDER
+	      set EXECUTION_EXTENDER_ORDER = (
+	        select TEMP_EXECUTION_EXTENDER_ORDER.EXECUTION_EXTENDER_ORDER
+	        from TEMP_EXECUTION_EXTENDER_ORDER
+	        where TEMP_EXECUTION_EXTENDER_ORDER.SUITE_ID = AUTOMATED_EXECUTION_EXTENDER.SUITE_ID
+	          and TEMP_EXECUTION_EXTENDER_ORDER.EXTENDER_ID = AUTOMATED_EXECUTION_EXTENDER.EXTENDER_ID
+	      );
+      
+
+    </sql>
+    </changeSet>
+        
 </databaseChangeLog>

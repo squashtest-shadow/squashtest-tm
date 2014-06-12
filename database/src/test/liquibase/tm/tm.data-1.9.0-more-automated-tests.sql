@@ -62,7 +62,21 @@ INSERT INTO TM_TA_PROJECTS (TM_PROJECT_ID, TA_PROJECT_ID) VALUES
 
 INSERT INTO AUTOMATED_TEST (TEST_ID, NAME, PROJECT_ID) VALUES
 (5, 'new test 1', 3),
-(6, 'new test 2', 3);
+(6, 'new test 2', 3),
+(7, 'new test 3', 3),
+(8, 'new test 4', 3),
+(9, 'new test 5', 3),
+(10, 'new test 6', 3),
+(11, 'new test 7', 3),
+(12, 'new test 8', 3),
+(13, 'new test 9', 3),
+(14, 'new test 10', 3),
+(15, 'new test 11', 3),
+(16, 'new test 12', 3),
+(17, 'new test 13', 3),
+(18, 'new test 14', 3),
+(19, 'new test 15', 3),
+(20, 'new test 16', 3);
 
 UPDATE TEST_CASE
 SET TA_TEST = 5
@@ -74,11 +88,30 @@ WHERE TCLN_ID = 149;
 
 
 INSERT INTO AUTOMATED_SUITE (SUITE_ID) VALUES
-(5);
+(5),
+(6),
+(7),
+(8),
+(9);
 
 INSERT INTO AUTOMATED_EXECUTION_EXTENDER (EXTENDER_ID, MASTER_EXECUTION_ID, TEST_ID, RESULT_URL, SUITE_ID, RESULT_SUMMARY) VALUES
-(5, 26, 5, 'http://192.168.2.115:9080/jenkins/result', 5, 'summary'),
-(6, 45, 6, 'http://192.168.2.115:9080/jenkins/result', 5, 'summary');
+(5, 12, 5, 'http://192.168.2.115:9080/jenkins/result', 5, 'summary'),
+(6, 45, 6, 'http://192.168.2.115:9080/jenkins/result', 5, 'summary'),
+(7, 12, 7, 'http://192.168.2.115:9080/jenkins/result', 5, 'summary'),
+(8, 12, 8, 'http://192.168.2.115:9080/jenkins/result', 5, 'summary'),
+(9, 12, 9, 'http://192.168.2.115:9080/jenkins/result', 5, 'summary'),
+(10, 12, 10, 'http://192.168.2.115:9080/jenkins/result', 6, 'summary'),
+(11, 12, 11, 'http://192.168.2.115:9080/jenkins/result', 6, 'summary'),
+(12, 12, 12, 'http://192.168.2.115:9080/jenkins/result', 7, 'summary'),
+(13, 12, 13, 'http://192.168.2.115:9080/jenkins/result', 7, 'summary'),
+(14, 12, 14, 'http://192.168.2.115:9080/jenkins/result', 7, 'summary'),
+(15, 12, 15, 'http://192.168.2.115:9080/jenkins/result', 7, 'summary'),
+(16, 12, 16, 'http://192.168.2.115:9080/jenkins/result', 7, 'summary'),
+(17, 12, 17, 'http://192.168.2.115:9080/jenkins/result', 8, 'summary'),
+(18, 12, 18, 'http://192.168.2.115:9080/jenkins/result', 8, 'summary'),
+(19, 12, 19, 'http://192.168.2.115:9080/jenkins/result', 8, 'summary'),
+(20, 12, 20, 'http://192.168.2.115:9080/jenkins/result', 8, 'summary');
+
 
 -- 
 -- ACTION 3  
