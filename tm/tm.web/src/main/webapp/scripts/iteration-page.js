@@ -23,22 +23,10 @@ require([ "common" ], function() {
 
 	require([ "jquery", "underscore", "app/pubsub", "squash.basicwidgets", "contextual-content-handlers",
 			"jquery.squash.fragmenttabs", "bugtracker/bugtracker-panel", "workspace.event-bus", "iteration-management",
-			"app/ws/squashtm.workspace", "test-automation/auto-execution-buttons-panel" ],
+			"app/ws/squashtm.workspace", "test-automation/auto-execution-buttons-panel", "jquery.squash.formdialog" ],
 			function($, _, ps, basicwidg, contentHandlers, Frag, bugtracker, eventBus, itermanagement, WS) {
 
 		// *********** event handler ***************
-
-		/* renaming success handler */
-		function renameIterationSuccess(data) {
-			squashtm.workspace.eventBus.trigger("node.rename", {
-				identity : squashtm.page.identity,
-				newName : data.newName
-			});
-		}
-
-		squashtm.handlers = _.extend({
-			renameIterationSuccess : renameIterationSuccess
-		}, squashtm.handlers);
 
 		var refreshTestPlan = _.bind(function() {
 			console.log("squashtm.execution.refresh");
@@ -89,6 +77,41 @@ require([ "common" ], function() {
 			if (config.hasFields) {
 				$("#iteration-custom-fields").load(config.customFields.url);
 			}
+			
+			// ******** rename popup *************
+			
+			var renameDialog = $("#rename-iteration-dialog");
+			renameDialog.formDialog();
+			
+			renameDialog.on('formdialogopen', function(){
+				var name = $.trim($("#iteration-name").text());
+				$("#rename-iteration-name").val(name);			
+			});
+			
+			renameDialog.on('formdialogconfirm', function(){
+				$.ajax({
+					url : config.iterationURL,
+					type : 'POST',
+					dataType : 'json',
+					data : { "newName" : $("#rename-iteration-name").val() }
+				})
+				.done(function(json){
+					renameDialog.formDialog('close');
+					
+					eventBus.trigger("node.rename", {
+						identity : config.identity,
+						newName : json.newName
+					});
+				});
+			});
+			
+			renameDialog.on('formdialogcancel', function(){
+				renameDialog.formDialog('close');
+			});
+			
+			$("#rename-iteration-button").on('click', function(){
+				renameDialog.formDialog('open');
+			});
 
 			// ********** dashboard **************
 			itermanagement.initDashboardPanel({
@@ -96,11 +119,6 @@ require([ "common" ], function() {
 				cacheKey : "it" + config.identity.resid
 			});
 
-			// ********** rename popup ***********
-			$("#rename-iteration-dialog").bind("dialogopen", function(event, ui) {
-				var name = $.trim($("#iteration-name").text());
-				$("#rename-iteration-name").val(name);
-			});
 
 			console.log("iteration-page refresh.iteration");
 		});

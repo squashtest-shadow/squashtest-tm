@@ -24,7 +24,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="jq" tagdir="/WEB-INF/tags/jquery"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" prefix="comp"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
@@ -69,6 +68,8 @@
 <f:message var="deleteMessage" key="dialog.label.delete-nodes.iteration.label" />
 <f:message var='deleteMessageCantBeUndone' key='dialog.label.delete-node.label.cantbeundone'/>
 <f:message var='deleteMessageConfirm' key='dialog.label.delete-node.label.confirm'/>
+<f:message var="labelConfirm" key="label.Confirm"/>
+<f:message var="labelCancel" key="label.Cancel"/>
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <%-- should be programmatically stuffed into page context --%>
@@ -113,6 +114,7 @@
 	config.identity = { resid: ${iteration.id}, restype : "iterations" };
 	config.bugtracker = {url: "${btEntityUrl}", label: "${tabIssueLabel}" };
 	config.customFields = { url: "${customFieldsValuesURL}" };
+	config.iterationURL = "${iterationUrl}";
 </script>
 
 <div
@@ -126,33 +128,6 @@
 		</h2>
 	</div>
 
-	<c:if test="${ writable }">
-		<pop:popup id="rename-iteration-dialog"
-			titleKey="dialog.rename-iteration.title" isContextual="true"
-			openedBy="rename-iteration-button">
-			<jsp:attribute name="buttons">
-			
-				<f:message var="label" key="dialog.rename-iteration.title" />
-				'${ label }': function() {
-					var url = "${ iterationUrl }";
-					<jq:ajaxcall url="url" dataType="json" httpMethod="POST"
-					useData="true" successHandler="squashtm.handlers.renameIterationSuccess">				
-						<jq:params-bindings newName="#rename-iteration-name" />
-					</jq:ajaxcall>					
-				},			
-				<pop:cancel-button />
-			</jsp:attribute>
-			<jsp:attribute name="body">
-	
-				<label><f:message key="dialog.rename.label" />
-				</label>
-				<input type="text" id="rename-iteration-name" maxlength="255" size="50" />
-				<br />
-				<comp:error-message forField="name" />	
-		
-			</jsp:attribute>
-		</pop:popup>
-	</c:if>
 </div>
 
 <div id="iteration-toolbar" class="toolbar-class ui-corner-all cf">
@@ -313,8 +288,26 @@
 	<at:attachment-tab tabId="tabs-3" entity="${ iteration }"	editable="${ attachable }"  tableModel="${attachmentsModel}"/>
 
 
+    <%-------------------------------- Rename popup --------------------------------------------- --%>
 
-		
+  <c:if test="${ writable }">
+    <f:message var="renameDialogTitle" key="dialog.rename-iteration.title" />
+    <div id="rename-iteration-dialog" title="${renameDialogTitle}" class="not-displayed popup-dialog">
+        <div>
+          <label><f:message key="dialog.rename.label" /></label>
+          <input type="text" id="rename-iteration-name" maxlength="255" size="50" />
+          <br/>
+          <comp:error-message forField="name"/>
+        </div>
+      
+        <div class="popup-dialog-buttonpane">
+          <input type="button" value="${labelConfirm}" data-def="evt=confirm, mainbtn" />
+          <input type="button" value="${labelCancel}" data-def="evt=cancel" />        
+        </div>
+    </div>
+    
+  </c:if>
+  	
 	<%-- ----------------------------------- Test Suite Management -------------------------------------------------- --%>
 	<c:if test="${ writable }">
 		<!-- here the deletable attribute concern the iteration because it has the same impact so far on the appearance the deletion button for a test suite. -->
