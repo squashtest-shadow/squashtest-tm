@@ -40,12 +40,9 @@ import spock.lang.Specification
  *
  */
 class StartTestExecutionIT extends Specification {
-	
+
 	BuildDef buildDef = Mock()
 	TestAutomationProject project = Mock()
-	HttpClient httpClient
-
-	StartTestExecution ste
 
 	def setup() {
 		buildDef.project >> project
@@ -54,8 +51,6 @@ class StartTestExecutionIT extends Specification {
 
 
 	def mockHttpClientProvider(httpClient) {
-		httpClient = httpClient ?: Mock(HttpClient)
-
 		HttpClientProvider res = Mock()
 		res.getClientFor(_) >> httpClient
 		res.getRequestFactoryFor(_) >> new CommonsClientHttpRequestFactory(httpClient);
@@ -63,7 +58,6 @@ class StartTestExecutionIT extends Specification {
 		return res
 	}
 
-/*
 	def "should start a new build"() {
 		given:
 		MultiThreadedHttpConnectionManager manager = new MultiThreadedHttpConnectionManager();
@@ -95,16 +89,14 @@ class StartTestExecutionIT extends Specification {
 		and:
 		// this initializes CallbackURL.instance. I wouldn't go so far as to call CallbackURL filthy, but it's definitely dirty
 		new CallbackURL().setURL("http://127.0.0.1/squashtm")
-		
+
 		and :
-		HttpClientProvider provider = mockHttpClientProvider(httpClient)
+		HttpClientProvider provider = mockHttpClientProvider(client)
 
 		when:
-		ste = new StartTestExecution(buildDef, provider, "EXTERNAL-ID");
-		ste.run()
+		new StartTestExecution(buildDef, provider, "EXTERNAL-ID").run();
 
 		then:
 		notThrown(Exception)
 	}
-	*/
 }

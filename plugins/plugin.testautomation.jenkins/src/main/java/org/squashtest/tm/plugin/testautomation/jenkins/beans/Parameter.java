@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.beans;
 
-
 public class Parameter {
 
 	public static final String SYMBOLIC_FILENAME = "testsuite.json";
@@ -37,45 +36,45 @@ public class Parameter {
 	}
 
 	public String getValue() {
-		return
-				value;
+		return value;
 	}
+
 	public void setValue(String value) {
 		this.value = value;
 	}
 
-
-	public Parameter(){
+	public Parameter() {
 		super();
 	}
 
-	public Parameter(String name, String value){
+	public Parameter(String name, String value) {
 		super();
-		this.name=name;
-		this.value=value;
+		this.name = name;
+		this.value = value;
 	}
 
-	static public Parameter operationTestListParameter(){
+	static public Parameter operationTestListParameter() {
 		return new Parameter("operation", "test-list");
 	}
 
-	static public Parameter operationRunSuiteParameter(){
+	static public Parameter operationRunSuiteParameter() {
 		return new Parameter("operation", "run");
 	}
 
-	static public Parameter newExtIdParameter(String externalId){
+	static public Parameter newExtIdParameter(String externalId) {
 		return new Parameter("externalJobId", externalId);
 	}
 
-	static public Parameter newCallbackURlParameter(String callback){
+	static public Parameter newCallbackURlParameter(String callback) {
 		return new Parameter("notificationURL", callback);
 	}
 
-	static public Parameter testListParameter(){
-		return new Parameter("testList", "{file:" + SYMBOLIC_FILENAME +"}");
+	static public Parameter testListParameter() {
+		// not invented here : json marshaller
+		return new Parameter("testList", "{file:" + SYMBOLIC_FILENAME + "}");
 	}
 
-	static public Parameter executorParameter(String executor){
+	static public Parameter executorParameter(String executor) {
 		return new Parameter("executor", executor);
 	}
 
@@ -90,32 +89,31 @@ public class Parameter {
 
 	@Override
 	public boolean equals(Object obj) {// GENERATED:START
-		if (this == obj){
+		if (this == obj) {
 			return true;
 		}
-		if (obj == null){
+		if (obj == null) {
 			return false;
 		}
-		if (getClass() != obj.getClass()){
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		Parameter other = (Parameter) obj;
 		if (name == null) {
-			if (other.name != null){
+			if (other.name != null) {
 				return false;
 			}
-		} else if (!name.equals(other.name)){
+		} else if (!name.equals(other.name)) {
 			return false;
 		}
 		if (value == null) {
-			if (other.value != null){
+			if (other.value != null) {
 				return false;
 			}
-		} else if (!value.equals(other.value)){
+		} else if (!value.equals(other.value)) {
 			return false;
 		}
 		return true;
 	}// GENERATED:END
-
 
 }
