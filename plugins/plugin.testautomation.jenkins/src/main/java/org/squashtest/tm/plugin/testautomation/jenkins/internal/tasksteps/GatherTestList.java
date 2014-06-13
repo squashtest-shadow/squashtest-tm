@@ -24,7 +24,7 @@ import java.util.Collection;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
-import org.squashtest.tm.plugin.testautomation.jenkins.beans.TestList;
+import org.squashtest.tm.plugin.testautomation.jenkins.beans.TestListElement;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.RequestExecutor;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildProcessor;
@@ -33,22 +33,22 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildStep;
 
 public class GatherTestList extends BuildStep<GatherTestList> implements HttpBasedStep{
 
-	
+
 	//* ************* collaborators ****************
 
 	private RequestExecutor requestExecutor = RequestExecutor.getInstance();
-	
+
 	private HttpClient client;
-	
+
 	private HttpMethod method;
-		
+
 	private JsonParser parser;
-	
-	
+
+
 	//* ************ output of the computation ******
-	
+
 	private Collection<String> testNames;
-	
+
 
 	//************** accessors *****************
 
@@ -73,39 +73,39 @@ public class GatherTestList extends BuildStep<GatherTestList> implements HttpBas
 	public void setBuildAbsoluteId(BuildAbsoluteId absoluteId) {
 		//not needed here
 	}
-	
+
 	public Collection<String> getTestNames(){
 		return testNames;
 	}
 	//************* constructor ******************
-	
+
 
 	public GatherTestList(BuildProcessor processor) {
 		super(processor);
 	}
 
 	//**************** code **********************
-	
+
 
 	@Override
 	public boolean needsRescheduling() {
 		return false;
 	}
 
-	
+
 	@Override
 	public void perform() throws Exception {
 		String response = requestExecutor.execute(client, method);
-		TestList testList = parser.getTestListFromJson(response);
+		TestListElement testList = parser.getTestListFromJson(response);
 		testNames = testList.collectAllTestNames();
 	}
 
-	
+
 	@Override
 	public void reset() {
 		testNames = null;
 	}
-	
+
 
 	@Override
 	public Integer suggestedReschedulingInterval() {
@@ -113,6 +113,6 @@ public class GatherTestList extends BuildStep<GatherTestList> implements HttpBas
 	}
 
 
-	
-	
+
+
 }

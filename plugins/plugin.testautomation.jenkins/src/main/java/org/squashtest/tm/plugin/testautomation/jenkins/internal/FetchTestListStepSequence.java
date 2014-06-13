@@ -35,40 +35,40 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.StartB
 
 class FetchTestListStepSequence extends HttpBasedStepSequence implements StepSequence {
 
-	
+
 	private AbstractBuildProcessor processor;
-	
-	
+
+
 	// ************** constructor ****************
-		
+
 	FetchTestListStepSequence(AbstractBuildProcessor processor) {
 		super();
 		this.processor=processor;
 	}
-	
+
 	// ************* setters **************
-	
+
 	void setClient(HttpClient client) {
 		this.client = client;
 	}
 
-	
+
 	void setProject(TestAutomationProject project) {
 		this.project = project;
 	}
-	
-	
+
+
 	void setAbsoluteId(BuildAbsoluteId absoluteId) {
 		this.absoluteId = absoluteId;
 	}
-	
+
 	// ************** getters *************
-	
+
 	@Override
 	protected AbstractBuildProcessor getProcessor() {
 		return processor;
 	}
-	
+
 	//*************** code ****************
 
 
@@ -80,47 +80,47 @@ class FetchTestListStepSequence extends HttpBasedStepSequence implements StepSeq
 	@Override
 	public BuildStep<?> nextElement() {
 		switch(currentStage){
-		
+
 		case WAITING :
-				currentStage = BuildStage.START_BUILD;
-				return newStartBuild();
-				
+			currentStage = BuildStage.START_BUILD;
+			return newStartBuild();
+
 		case START_BUILD :
-				currentStage = BuildStage.CHECK_QUEUE;
-				return newCheckQueue();
-				
+			currentStage = BuildStage.CHECK_QUEUE;
+			return newCheckQueue();
+
 		case CHECK_QUEUE :
-				currentStage = BuildStage.GET_BUILD_ID;
-				return newGetBuildID();
-				
+			currentStage = BuildStage.GET_BUILD_ID;
+			return newGetBuildID();
+
 		case GET_BUILD_ID :
-				currentStage = BuildStage.CHECK_BUILD_RUNNING;
-				return newCheckBuildRunning();
-				
+			currentStage = BuildStage.CHECK_BUILD_RUNNING;
+			return newCheckBuildRunning();
+
 		case CHECK_BUILD_RUNNING :
-				currentStage = BuildStage.GATHER_RESULT;
-				return newGatherResults();
-				
+			currentStage = BuildStage.GATHER_RESULT;
+			return newGatherTestList();
+
 		case GATHER_RESULT :
-				 throw new NoSuchElementException();
-				 
+			throw new NoSuchElementException();
+
 		default : throw new NoSuchElementException();
-				
-			
+
+
 		}
 	}
-	
-	
+
+
 	protected StartBuild newStartBuild(){
-		
+
 		PostMethod method = requestFactory.newStartFetchTestListBuild(project, absoluteId.getExternalId());
-		
+
 		StartBuild startBuild = new StartBuild(getProcessor());
-		
+
 		wireHttpSteps(startBuild, method);
-		
+
 		return startBuild;
-		
+
 	}
-	
+
 }

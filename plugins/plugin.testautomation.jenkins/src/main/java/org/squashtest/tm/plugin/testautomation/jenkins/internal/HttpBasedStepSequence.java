@@ -111,8 +111,8 @@ public abstract class HttpBasedStepSequence {
 		return running;
 	}
 
-	protected GatherTestList newGatherResults(){
-		GetMethod method = requestFactory.newGetBuildResults(project, absoluteId.getBuildId());
+	protected GatherTestList newGatherTestList(){
+		GetMethod method = requestFactory.newGetJsonTestList(project, absoluteId.getBuildId());
 
 		GatherTestList gatherList = new GatherTestList(getProcessor());
 
@@ -121,6 +121,7 @@ public abstract class HttpBasedStepSequence {
 		return gatherList;
 
 	}
+
 
 
 	protected void wireHttpSteps(HttpBasedStep step, HttpMethod method){

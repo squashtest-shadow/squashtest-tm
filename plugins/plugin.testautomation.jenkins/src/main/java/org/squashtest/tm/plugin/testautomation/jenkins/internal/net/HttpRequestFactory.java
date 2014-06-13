@@ -213,6 +213,19 @@ public class HttpRequestFactory {
 
 	}
 
+	public GetMethod newGetJsonTestList(TestAutomationProject project, int buildId){
+
+		String path = toUrlPath(project.getServer(), "/job/" + project.getJobName() + "/Test_list/testTree.json");
+
+		GetMethod method = new GetMethod();
+		method.setPath(path);
+
+		method.setDoAuthentication(true);
+
+		return method;
+
+	}
+
 	public String buildResultURL(AutomatedTest test, Integer buildID) {
 
 		TestAutomationProject project = test.getProject();

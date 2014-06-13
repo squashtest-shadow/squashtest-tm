@@ -34,7 +34,7 @@ import org.squashtest.tm.plugin.testautomation.jenkins.beans.BuildList;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.ItemList;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.Job;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.JobList;
-import org.squashtest.tm.plugin.testautomation.jenkins.beans.TestList;
+import org.squashtest.tm.plugin.testautomation.jenkins.beans.TestListElement;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
 import org.squashtest.tm.service.testautomation.spi.UnreadableResponseException;
 
@@ -81,8 +81,8 @@ public class JsonParser {
 		return safeReadValue(json, BuildList.class);
 	}
 
-	public TestList getTestListFromJson(String json){
-		return safeReadValue(json, TestList.class);
+	public TestListElement getTestListFromJson(String json){
+		return safeReadValue(json, TestListElement.class);
 	}
 
 	public Build getBuildFromJson(String json){

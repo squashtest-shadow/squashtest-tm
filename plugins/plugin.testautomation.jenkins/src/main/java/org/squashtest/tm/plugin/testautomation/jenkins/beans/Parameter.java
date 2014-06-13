@@ -54,7 +54,7 @@ public class Parameter {
 	}
 
 	static public Parameter operationTestListParameter() {
-		return new Parameter("operation", "test-list");
+		return new Parameter("operation", "list");
 	}
 
 	static public Parameter operationRunSuiteParameter() {

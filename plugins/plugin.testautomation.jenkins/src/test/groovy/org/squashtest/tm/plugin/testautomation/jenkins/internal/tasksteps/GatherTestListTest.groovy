@@ -72,8 +72,9 @@ class GatherTestListTest extends Specification {
 	
 	
 	def makeJson(){
-		return '{"suites":[{"cases":[{"name":"othertest1.txt","status":"PASSED"}],"name":"tests.autrestests"},'+
-		'{"cases":[{"name":"dbtest-1.txt","status":"PASSED"},{"name":"dbtest-2.txt","status":"PASSED"}],'+
-		'"name":"tests.database-tests"},{"cases":[{"name":"vcs.txt","status":"PASSED"}],"name":"tests"}]}'
+		return '{"name":"tests",'+
+				'"contents":[{"name":"autrestests","contents":[{"name":"othertest1.txt","contents":null}]},'+
+				'{"name":"database-tests","contents":[{"name":"dbtest-1.txt","contents":null},'+
+				'{"name":"dbtest-2.txt","contents":null}]},{"name" : "vcs.txt", "contents" : null}]}'
 	}
 }

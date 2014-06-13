@@ -31,7 +31,7 @@ class ParameterTest extends Specification {
 		
 		expect :
 			Parameter.operationTestListParameter().name=="operation"
-			Parameter.operationTestListParameter().value=="test-list"
+			Parameter.operationTestListParameter().value=="list"
 		
 	}
 	
