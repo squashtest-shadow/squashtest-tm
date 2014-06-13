@@ -342,7 +342,7 @@
 <%------------------------------------------automated suite overview --------------------------------------------%>
 <c:if test="${ executable && iteration.project.testAutomationEnabled }">		
 	<comp:automated-suite-overview-popup />
-	</c:if>
+</c:if>
 	<%------------------------------------------/automated suite overview --------------------------------------------%>
 	
 

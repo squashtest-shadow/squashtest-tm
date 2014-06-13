@@ -154,7 +154,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.TestSuite', 'EXECUTE') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'EXECUTE') or hasRole('ROLE_ADMIN')")
 	public AutomatedSuite createFromTestSuiteTestPlan(long testSuiteId) {
 		TestSuite suite = testSuiteDao.findById(testSuiteId);
 		List<IterationTestPlanItem> items =  suite.getTestPlan();
