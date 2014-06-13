@@ -48,8 +48,6 @@ require([ "common" ], function() {
 		squashtm.execution = squashtm.execution || {};
 		squashtm.execution.refresh = refreshTestPlan;
 
-		console.log(document.eventsQueue);
-
 		// this is executed on each fragment load
 		ps.subscribe("reload.iteration", function() {
 			var config = _.extend({}, squashtm.page);

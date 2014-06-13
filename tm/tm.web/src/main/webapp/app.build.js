@@ -131,17 +131,19 @@
 				include : [ "jquery", "user-editor/UserModificationView", "app/ws/squashtm.workspace", "app/pubsub" ],
 				exclude : [ "common" ]
 			},
-//			{
-//				name : "iteration-page",
-//				include : [ "app/pubsub", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs",
-//				            "bugtracker/bugtracker-panel", "workspace.event-bus", "iteration-management", "app/ws/squashtm.workspace" ],
-//				exclude : [ "common" ]
-//			},
+			{
+				name : "iteration-page",
+				include : [ "app/pubsub", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs",
+				            "bugtracker/bugtracker-panel", "workspace.event-bus", "iteration-management", "app/ws/squashtm.workspace",
+				            "test-automation/auto-execution-buttons-panel" ],
+				exclude : [ "common" ]
+			},
 			{
 				name : "test-suite-page",
 				include : [ "app/pubsub", "squash.translator", "squash.basicwidgets", "workspace.event-bus", "app/ws/squashtm.workspace",
 				            "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker/bugtracker-panel", "test-suite-management",
-				            "jquery.cookie", "test-suite/execution-buttons-panel" ],
+				            "jquery.cookie", "test-suite/execution-buttons-panel", "test-automation/auto-execution-buttons-panel" ],
 				exclude : [ "common" ]
-			} ]
+			}
+			]
 }) // DONT ADD NO SEMICOLON!

@@ -27,13 +27,13 @@ require([ "common" ], function() {
 		"use strict";
 
 		$(document).on("click", "#duplicate-test-suite-button", function() {
-			console && console.log && console.log("click", "#duplicate-test-suite-button");
+			console.log("click", "#duplicate-test-suite-button");
 			$( "#confirm-duplicate-test-suite-dialog" ).confirmDialog( "open" );
 			return false;
 		});
 
 		$(document).on("dialogopen", "#rename-test-suite-dialog", function(event, ui) {
-			console && console.log && console.log("dialogopen", "#rename-test-suite-dialog");
+			console.log("dialogopen", "#rename-test-suite-dialog");
 			var name = $.trim($('#test-suite-name').text());
 			$("#rename-test-suite-name").val(name);
 		});
@@ -97,7 +97,7 @@ require([ "common" ], function() {
 			// registers contextual events
 			// TODO should be unregistered before ?
 			function refreshExecButtons() {
-				console && console.log && console.log("refreshExecButtons");
+				console.log("refreshExecButtons");
 				var $panel = $("#test-suite-exec-btn-group");
 				$panel.load($panel.data("content-url"));
 			}
