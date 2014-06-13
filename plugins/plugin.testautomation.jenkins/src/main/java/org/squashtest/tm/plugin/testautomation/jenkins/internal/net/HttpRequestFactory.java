@@ -127,29 +127,27 @@ public class HttpRequestFactory {
 
 	}
 
-
-	public ParameterArray getStartTestSuiteBuildParameters(String externalID){
+	public ParameterArray getStartTestSuiteBuildParameters(String externalID) {
 		String strURL = callbackProvider.get().toExternalForm();
 
-		return  new ParameterArray(
+		return new ParameterArray(
 				new Object[] {
 						Parameter.operationRunSuiteParameter(),
 						Parameter.newExtIdParameter(externalID),
 						Parameter.newCallbackURlParameter(strURL),
 						Parameter.testListParameter(),
 						new FileParameter(Parameter.SYMBOLIC_FILENAME, MULTIPART_BUILDFILENAME)
-				}
-				);
+				});
 	}
 
-	public ParameterArray getStartTestSuiteBuildParameters(String externalID, String executor){
+	public ParameterArray getStartTestSuiteBuildParameters(String externalID, String executor) {
 		String strURL = callbackProvider.get().toExternalForm();
 
-		if (StringUtils.isBlank(executor)){
+		if (StringUtils.isBlank(executor)) {
 			return getStartTestSuiteBuildParameters(externalID);
-		}
-		else{
-			return  new ParameterArray(
+
+		} else {
+			return new ParameterArray(
 					new Object[] {
 							Parameter.operationRunSuiteParameter(),
 							Parameter.newExtIdParameter(externalID),
@@ -157,8 +155,7 @@ public class HttpRequestFactory {
 							Parameter.testListParameter(),
 							Parameter.executorParameter(executor),
 							new FileParameter(Parameter.SYMBOLIC_FILENAME, MULTIPART_BUILDFILENAME)
-					}
-					);
+					});
 		}
 	}
 

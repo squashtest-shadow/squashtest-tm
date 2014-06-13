@@ -35,6 +35,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.StringUtils;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
@@ -88,7 +89,7 @@ public class AutomatedExecutionExtender {
 	private String resultSummary = "";
 
 	/**
-	 * Name of the node where the test is executed.
+	 * Name of the node where the test is executed. Empty string means
 	 */
 	@NotNull
 	private String nodeName = "";
@@ -163,24 +164,26 @@ public class AutomatedExecutionExtender {
 		return automatedTest.getProject();
 	}
 
-
-	public void setNodeName(String nodeName){
-		this.nodeName = nodeName;
+	/**
+	 * Sets the node name. <code>null</code>s are turned into empty string
+	 * @param nodeName
+	 */
+	public void setNodeName(String nodeName) {
+		this.nodeName = StringUtils.trimToEmpty(nodeName);
 	}
 
 	/**
-	 * @return the nodeName or the {@link #automatedTest} server name prop when nodeName is empty.
+	 * @return the nodeName.
 	 */
 	public String getNodeName() {
 		return nodeName;
 	}
 
-
-	public boolean isNotOverYet(){
+	public boolean isNotOverYet() {
 		return (automatedTest != null && resultURL == null);
 	}
 
-	public boolean isProjectDisassociated(){
+	public boolean isProjectDisassociated() {
 		return (automatedTest == null);
 	}
 }

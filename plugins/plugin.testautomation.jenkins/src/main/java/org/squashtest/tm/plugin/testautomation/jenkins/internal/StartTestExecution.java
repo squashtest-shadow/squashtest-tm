@@ -29,8 +29,6 @@ import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.poi.util.StringUtil;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -50,7 +48,6 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpClientPr
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpRequestFactory;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 
-
 /**
  * This class configure and execute a unique HTTP request.
  * This case is simple enough, we don't need to watch a full build.
@@ -69,7 +66,6 @@ public class StartTestExecution {
 
 	private final String externalId;
 
-
 	public StartTestExecution(BuildDef buildDef, HttpClientProvider clientProvider, String externalId) {
 		super();
 		this.buildDef = buildDef;
@@ -77,8 +73,7 @@ public class StartTestExecution {
 		this.externalId = externalId;
 	}
 
-
-	public void run(){
+	public void run() {
 
 		TestAutomationProject project = buildDef.getProject();
 		TestAutomationServer server = project.getServer();
@@ -107,13 +102,12 @@ public class StartTestExecution {
 		return params;
 	}
 
-
-
 	private MultiValueMap<String, ?> createPostData(BuildDef buildDef, String externalId) {
 
 		MultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
 
-		ParameterArray stdParams =  new HttpRequestFactory().getStartTestSuiteBuildParameters(externalId, buildDef.getNode());
+		ParameterArray stdParams = new HttpRequestFactory().getStartTestSuiteBuildParameters(externalId,
+				buildDef.getNode());
 
 		File tmp;
 		try {
@@ -122,17 +116,16 @@ public class StartTestExecution {
 			parts.add(HttpRequestFactory.MULTIPART_BUILDFILENAME, new FileSystemResource(tmp));
 			parts.add(HttpRequestFactory.MULTIPART_JENKINSARGS, new ObjectMapper().writeValueAsString(stdParams));
 
-		}
-		catch (JsonProcessingException e) {
+		} catch (JsonProcessingException e) {
 			LOGGER.error("Error while mashalling json model. Maybe a bug ?", e);
-		}
-		catch (IOException e) {
+
+		} catch (IOException e) {
 			LOGGER.error("Error while writing json model into temp file. Maybe temp folder is not writable ?", e);
+
 		}
 
 		return parts;
 	}
-
 
 	private File createJsonSuite(BuildDef buildDef) throws IOException, JsonGenerationException, JsonMappingException {
 		ObjectMapper objectMapper = new ObjectMapper();
