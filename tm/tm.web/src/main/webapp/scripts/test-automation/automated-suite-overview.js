@@ -70,7 +70,7 @@ define(["jquery", "underscore", "handlebars", "../app/pubsub", "squash.statusfac
 					self._submitNodes();
 				});
 				this.onOwnBtn("discardNodes", function(){
-					self.close();
+					self._removeSuite();
 				});
 			},
 
@@ -144,7 +144,7 @@ define(["jquery", "underscore", "handlebars", "../app/pubsub", "squash.statusfac
 			},
 
 			_execAndWatch: function(suiteId, dataMapper) {
-				var runUrl = $("#auto-exec-btns-panel").data("suites-url") + "/" + suiteId  + "/executor";
+				var runUrl = this.options.url + "/" + suiteId  + "/executor";
 				var self = this;
 
 				$.ajax({
@@ -155,7 +155,7 @@ define(["jquery", "underscore", "handlebars", "../app/pubsub", "squash.statusfac
 					contentType: "application/json"
 				}).done(function(overview) {
 					if (overview.executions.length === 0) {
-						$.squash.openMessage(messages.get("popup.title.Info"), messages.get("dialog.execution.auto.overview.error.none"));
+						$.squash.openMessage(translator.get("popup.title.Info"), translator.get("dialog.execution.auto.overview.error.none"));
 					} else {
 						self.watch(overview);
 					}
@@ -227,6 +227,18 @@ define(["jquery", "underscore", "handlebars", "../app/pubsub", "squash.statusfac
 
 			_updateWatch : function(){
 				this._initWatch();
+			},
+
+			_removeSuite: function() {
+				var opts = this.options;
+				var suiteId = this.suiteId;
+
+				$.ajax({
+					type : "DELETE",
+					url : opts.url + "/" + suiteId,
+				});
+
+				this.close();
 			}
 		});
 

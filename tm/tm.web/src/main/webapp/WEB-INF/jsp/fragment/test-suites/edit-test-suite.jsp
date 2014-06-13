@@ -166,7 +166,7 @@
 				<comp:test-suite-execution-button testSuiteId="${ testSuite.id }"
 					statisticsEntity="${ statistics }" />
 			</div>
-			<c:if test="${ true or testSuite.iteration.project.testAutomationEnabled }">
+			<c:if test="${ testSuite.iteration.project.testAutomationEnabled }">
 			<comp:execute-auto-button url="${ testSuiteUrl }" />
 			</c:if>
 		</c:if>
@@ -256,7 +256,7 @@
 </div>
 </csst:jq-tab>
 <%------------------------------------------automated suite overview --------------------------------------------%>
-<c:if test="${ true or testSuite.iteration.project.testAutomationEnabled }">
+<c:if test="${ testSuite.iteration.project.testAutomationEnabled }">
 	<comp:automated-suite-overview-popup />
 </c:if>
 <%------------------------------------------/automated suite overview --------------------------------------------%>
@@ -279,6 +279,6 @@ publish("reload.test-suite");
 if (!squashtm.page.isFullPage) {
 	require(["common"], function() {
 		require(["test-suite-page"], function() {/*noop*/});
-				});
+	});
 }
 </script>
