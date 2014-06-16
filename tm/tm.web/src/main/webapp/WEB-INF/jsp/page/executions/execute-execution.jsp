@@ -107,7 +107,7 @@
           </script>
 			<script type="text/javascript">						
 			require(["common"], function() {
-				require(['jquery", "squash.basicwidgets', 
+				require(['jquery', 'squash.basicwidgets', 
 				         'iesupport/am-I-ie8',
 				         'execution-processing/ie8-no-close-on-enter',
 				         'page-components/step-information-panel', 'workspace.event-bus', 'app/util/ComponentUtil', 'jquery.squash'], 
