@@ -226,21 +226,26 @@ define(
 					},
 
 					automatedHandler : function() {
-						var row = $(this).parents('tr').get(0), table = $("#test-suite-test-plans-table").squashTable(), data = table
-								.fnGetData(row), tpid = data['entity-id'], newurl = initconf.urls.testplanUrl + tpid +
-								'/executions/new';
+						var row = $(this).parents('tr').get(0);
+						var table = $("#test-suite-test-plans-table").squashTable();
+						var data = table.fnGetData(row);
 
-						$.post(newurl, {
-							mode : 'auto'
-						}, 'json').done(function(suiteview) {
-							if (suiteview.executions.length === 0) {
-								$.squash.openMessage(initcon.messages.titleInfo,
-										initconf.messages.messageNoAutoexecFound);
-							} else {
-								autosuitedialog.get().watch(suiteview);
-							}
+						var tpiIds =  [];
+						var tpiId = data['entity-id'];
+						tpiIds.push(tpiId);
+						var url = squashtm.app.contextRoot + "/automated-suites/new"
+						$.ajax({
+							url : url,
+							dataType:'json',
+							type : 'post',
+							data : {
+								testPlanItemsIds : tpiIds
+							},
+							contentType : "application/x-www-form-urlencoded;charset=UTF-8"
+						}).done(function(suite) {
+							squashtm.context.autosuiteOverview.start(suite);
 						});
-
+						return false;
 					}
 				};
 
@@ -324,18 +329,21 @@ define(
 									});
 
 									newautoexecBtn.click(function() {
-										var url = $(this).data('new-exec');
-										$.post(url, {
-											mode : 'auto'
-										}, 'json').done(
-												function(suiteview) {
-													if (suiteview.executions.length === 0) {
-														$.squash.openMessage(initcon.messages.titleInfo,
-																initconf.messages.messageNoAutoexecFound);
-													} else {
-														autosuitedialog.get().watch(suiteview);
-													}
-												});
+										var tpiIds =  [];
+										var tpiId = $(this).data('tpi-id');
+										tpiIds.push(tpiId);
+										var url = squashtm.app.contextRoot + "/automated-suites/new"
+										$.ajax({
+											url : url,
+											dataType:'json',
+											type : 'post',
+											data : {
+												testPlanItemsIds : tpiIds
+											},
+											contentType : "application/x-www-form-urlencoded;charset=UTF-8"
+										}).done(function(suite) {
+											squashtm.context.autosuiteOverview.start(suite);
+										});
 										return false;
 									});
 								}

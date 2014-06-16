@@ -100,7 +100,7 @@
 					</a> 
 								
 					<c:if test="${ testPlanItem.automated}"> 
-							<a	class="button new-auto-exec" style="font-size:0.8em;" id="new-auto-exec-${testPlanItem.id}"	 data-new-exec="${newExecutionUrl}">
+							<a	class="button new-auto-exec" style="font-size:0.8em;" id="new-auto-exec-${testPlanItem.id}"	 data-tpi-id="${ testPlanItem.id }">
 								<f:message	key="execution.iteration-test-plan-row.new.auto" />
 							</a>
 					</c:if>
