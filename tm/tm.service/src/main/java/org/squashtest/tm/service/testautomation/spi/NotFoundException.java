@@ -23,15 +23,15 @@ package org.squashtest.tm.service.testautomation.spi;
 public class NotFoundException extends TestAutomationException {
 
 	private static final String NOT_FOUND_EXCEPTION_KEY = "testautomation.exceptions.notfound";
-	
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -1185667228759223292L;
 
-	
+
 	public NotFoundException() {
-		super();
+		super("project not found");
 	}
 
 	public NotFoundException(String message, Throwable cause) {
@@ -50,5 +50,5 @@ public class NotFoundException extends TestAutomationException {
 	public String getI18nKey() {
 		return NOT_FOUND_EXCEPTION_KEY;
 	}
-	
+
 }

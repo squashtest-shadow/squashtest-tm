@@ -24,14 +24,14 @@ package org.squashtest.tm.service.testautomation.spi;
 public class ServerConnectionFailed extends TestAutomationException {
 
 	private static final String CONNECTION_FAILED_KEY = "testautomation.exceptions.connectionfailed";
-	
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -8208900275653805118L;
 
 	public ServerConnectionFailed() {
-		super();
+		super("server is unreachable");
 	}
 
 	public ServerConnectionFailed(String arg0, Throwable arg1) {
@@ -45,7 +45,7 @@ public class ServerConnectionFailed extends TestAutomationException {
 	public ServerConnectionFailed(Throwable arg0) {
 		super(arg0);
 	}
-	
+
 	@Override
 	public String getI18nKey() {
 		return CONNECTION_FAILED_KEY;

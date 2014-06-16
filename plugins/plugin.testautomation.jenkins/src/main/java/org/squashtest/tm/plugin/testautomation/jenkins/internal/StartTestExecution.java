@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal;
 
+import static org.apache.commons.httpclient.HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,6 +40,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
@@ -46,6 +50,10 @@ import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.ParameterArray;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpClientProvider;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpRequestFactory;
+import org.squashtest.tm.service.testautomation.spi.AccessDenied;
+import org.squashtest.tm.service.testautomation.spi.NotFoundException;
+import org.squashtest.tm.service.testautomation.spi.ServerConnectionFailed;
+import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
 
 /**
  * This class configure and execute a unique HTTP request.
@@ -84,11 +92,33 @@ public class StartTestExecution {
 		Map<String, ?> urlParams = createUrlParams(project);
 		MultiValueMap<String, ?> postData = createPostData(buildDef, externalId);
 
-		Object bime = template.postForLocation(url, postData, urlParams);
+
+		Object bime = execute(template, url, postData, urlParams);
 
 		// TODO : inspect the result to check errors and such a la RequestExecutor
 		LOGGER.info("started build {}", bime);
 
+	}
+
+	private Object execute(RestTemplate template, String url, MultiValueMap<String, ?> postData, Map<String,?> urlParams){
+		try{
+			return template.postForLocation(url, postData, urlParams);
+		}
+		catch(ResourceAccessException ex){
+			throw new ServerConnectionFailed();
+		}
+		catch(HttpClientErrorException ex){
+			switch(ex.getStatusCode()){
+			case FORBIDDEN :
+			case UNAUTHORIZED :
+			case PROXY_AUTHENTICATION_REQUIRED:
+				throw new AccessDenied();
+			case NOT_FOUND :
+				throw new NotFoundException();
+			default :
+				throw new TestAutomationException(ex.getMessage());
+			}
+		}
 	}
 
 	private String createUrl(TestAutomationServer server) {

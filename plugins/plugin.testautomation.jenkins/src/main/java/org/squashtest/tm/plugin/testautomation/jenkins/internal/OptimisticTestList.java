@@ -60,17 +60,22 @@ public class OptimisticTestList {
 
 		GetMethod method = new HttpRequestFactory().newGetJsonTestList(project);
 
-		String response = executor.execute(client, method);
-		TestListElement testList = parser.getTestListFromJson(response);
+		try{
+			String response = executor.execute(client, method);
+			TestListElement testList = parser.getTestListFromJson(response);
 
 
-		Collection<AutomatedTest> tests = new LinkedList<AutomatedTest>();
-		for (String name : testList.collectAllTestNames()){
-			AutomatedTest test = new AutomatedTest(name, project);
-			tests.add(test);
+			Collection<AutomatedTest> tests = new LinkedList<AutomatedTest>();
+			for (String name : testList.collectAllTestNames()){
+				AutomatedTest test = new AutomatedTest(name, project);
+				tests.add(test);
+			}
+
+			return tests;
 		}
-
-		return tests;
+		finally{
+			method.releaseConnection();
+		}
 
 	}
 

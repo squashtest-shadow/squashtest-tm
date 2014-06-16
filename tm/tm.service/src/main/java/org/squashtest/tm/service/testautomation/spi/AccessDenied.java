@@ -24,11 +24,11 @@ package org.squashtest.tm.service.testautomation.spi;
 public class AccessDenied extends TestAutomationException {
 
 	private static final String ACCESS_DENIED_KEY = "testautomation.exceptions.accessdenied";
-	
+
 	private static final long serialVersionUID = -5345068364658644042L;
 
 	public AccessDenied() {
-		super();
+		super("Access is denied");
 	}
 
 	public AccessDenied(String message, Throwable cause) {
@@ -47,6 +47,6 @@ public class AccessDenied extends TestAutomationException {
 	public String getI18nKey() {
 		return ACCESS_DENIED_KEY;
 	}
-	
-	
+
+
 }
