@@ -82,9 +82,9 @@ define(
 				}
 
 				// execution status (read)
-				var status = data.status,
-					$statustd = $row.find('.status-combo'),
-					html = statusfactory.getHtmlFor(status);
+				var status = data.status;
+				var	$statustd = $row.find('.status-combo');
+				var	html = statusfactory.getHtmlFor(status);
 
 				$statustd.html(html); // remember : this will insert a <span>
 										// in the process
@@ -250,7 +250,7 @@ define(
 						var tpiId = data['entity-id'];
 						tpiIds.push(tpiId);
 						
-						var url = squashtm.app.contextRoot + "/automated-suites/new"
+						var url = squashtm.app.contextRoot + "/automated-suites/new";
 						$.ajax({
 							url : url,
 							dataType:'json',
@@ -357,7 +357,7 @@ define(
 										var tpiIds =  [];
 										var tpiId = $(this).data('tpi-id');
 										tpiIds.push(tpiId);
-										var url = squashtm.app.contextRoot + "/automated-suites/new"
+										var url = squashtm.app.contextRoot + "/automated-suites/new";
 										$.ajax({
 											url : url,
 											dataType:'json',

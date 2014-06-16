@@ -233,7 +233,7 @@ define(
 						var tpiIds =  [];
 						var tpiId = data['entity-id'];
 						tpiIds.push(tpiId);
-						var url = squashtm.app.contextRoot + "/automated-suites/new"
+						var url = squashtm.app.contextRoot + "/automated-suites/new";
 						$.ajax({
 							url : url,
 							dataType:'json',
@@ -332,7 +332,7 @@ define(
 										var tpiIds =  [];
 										var tpiId = $(this).data('tpi-id');
 										tpiIds.push(tpiId);
-										var url = squashtm.app.contextRoot + "/automated-suites/new"
+										var url = squashtm.app.contextRoot + "/automated-suites/new";
 										$.ajax({
 											url : url,
 											dataType:'json',
