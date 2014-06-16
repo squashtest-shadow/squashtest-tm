@@ -51,7 +51,7 @@ public class AutomatedExecutionManagerController {
 	 *            the automated exec extender id.
 	 * @param stateChange
 	 */
-	@RequestMapping(value = "{id}/test-status", method = RequestMethod.POST)
+	@RequestMapping(value = "/{id}/test-status", method = RequestMethod.POST)
 	public @ResponseBody
 	void changeExecutionState(@PathVariable long id, @RequestBody @Valid TestExecutionStatus stateChange) {
 		automatedExecutionManager.changeExecutionState(id, stateChange);
