@@ -36,6 +36,7 @@ import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
+import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
@@ -106,9 +107,14 @@ public class AutomatedExecutionExtender {
 		return id;
 	}
 
-	@AclConstrainedObject
 	public Execution getExecution() {
 		return execution;
+	}
+
+
+	@AclConstrainedObject
+	public CampaignLibrary getCampaignLibrary(){
+		return execution.getCampaignLibrary();
 	}
 
 	public void setExecution(Execution execution) {
