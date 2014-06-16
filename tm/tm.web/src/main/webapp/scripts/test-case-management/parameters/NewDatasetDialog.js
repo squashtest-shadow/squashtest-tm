@@ -28,7 +28,6 @@ define([ "jquery", "backbone", "underscore", "app/lnf/Forms", "./NewDatasetModel
 		initialize : function() {
 			this.settings = this.options.settings;
 			var self = this;
-
 			this.getAndAddParamterInputs = $.proxy(this._getAndAddParamterInputs, this);
 			this.addParamterInputs = $.proxy(this._addParamterInputs, this);
 			this.removeParameterInputs = $.proxy(this._removeParameterInputs, this);
@@ -50,6 +49,7 @@ define([ "jquery", "backbone", "underscore", "app/lnf/Forms", "./NewDatasetModel
 			"blur input:text.strprop" : "changeStrProp",
 			"blur input:text.paramValue" : "changeParamProp",
 			"confirmdialogcancel" : "cancel",
+			"confirmdialogclose" : "cancel",
 			"confirmdialogvalidate" : "validate",
 			"confirmdialogconfirm" : "confirm"
 		},
