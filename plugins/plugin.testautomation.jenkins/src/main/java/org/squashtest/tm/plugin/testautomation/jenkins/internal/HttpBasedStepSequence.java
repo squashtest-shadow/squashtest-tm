@@ -112,7 +112,7 @@ public abstract class HttpBasedStepSequence {
 	}
 
 	protected GatherTestList newGatherTestList(){
-		GetMethod method = requestFactory.newGetJsonTestList(project, absoluteId.getBuildId());
+		GetMethod method = requestFactory.newGetJsonTestList(project);
 
 		GatherTestList gatherList = new GatherTestList(getProcessor());
 

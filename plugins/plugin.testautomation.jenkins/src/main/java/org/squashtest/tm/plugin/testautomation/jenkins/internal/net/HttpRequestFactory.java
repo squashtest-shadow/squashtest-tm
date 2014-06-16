@@ -213,7 +213,7 @@ public class HttpRequestFactory {
 
 	}
 
-	public GetMethod newGetJsonTestList(TestAutomationProject project, int buildId){
+	public GetMethod newGetJsonTestList(TestAutomationProject project){
 
 		String path = toUrlPath(project.getServer(), "/job/" + project.getJobName() + "/Test_list/testTree.json");
 

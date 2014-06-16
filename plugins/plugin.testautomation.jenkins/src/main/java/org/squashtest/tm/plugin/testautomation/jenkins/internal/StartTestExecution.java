@@ -46,7 +46,6 @@ import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.ParameterArray;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpClientProvider;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpRequestFactory;
-import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 
 /**
  * This class configure and execute a unique HTTP request.
@@ -139,7 +138,7 @@ public class StartTestExecution {
 	}
 
 	/**
-	 * Adapts a {@link TestAutomationProjectContent} into something which can be marshalled into a json test suite
+	 * Adapts a TestAutomationProjectContent into something which can be marshalled into a json test suite
 	 * (payload of "execute tests" request).
 	 * 
 	 * @author Gregory Fouquet
