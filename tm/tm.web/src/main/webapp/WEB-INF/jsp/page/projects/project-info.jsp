@@ -441,13 +441,16 @@
 
 <!-- ------------------------------------END RENAME POPUP------------------------------------------------------- -->
 <script type="text/javascript">
-require(["common"], function() {
-require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.attributeparser", "project/ProjectToolbar", "squashtable", "jquery.squash.formdialog", "jquery.switchButton"], function($, projectsManager, Frag, attrparser, ProjectToolbar){
 /* popup renaming success handler */
 function renameProjectSuccess(data) {
 	$('#project-name-header').html(data.newName);
 	$('#rename-project-dialog').dialog('close');
 }
+
+require(["common"], function() {
+
+	require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.attributeparser", "project/ProjectToolbar", "squashtable", "jquery.squash.formdialog", "jquery.switchButton"], function($, projectsManager, Frag, attrparser, ProjectToolbar){
+
 
 	
 	function clickProjectBackButton(){
