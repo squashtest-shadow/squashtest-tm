@@ -55,7 +55,7 @@ define(['jquery', 'tree',
 		},
 		
 		_createName : function(){
-			return this.options.nameprefix+"-"+ dateutils.format(new Date(), this.options.dateformat);
+			return this.options.nameprefix+"_"+ dateutils.format(new Date(), this.options.dateformat);
 		},
 		
 		_createUrl : function(nodes, type, filename, includeCalls){
