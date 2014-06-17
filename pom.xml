@@ -404,10 +404,12 @@
     </profile>
 
     <profile>
-      <id>eclipse</id>
+      <id>add-eclipse-formatter</id>
       <activation>
         <file>
-          <exists>${basedir}\.project</exists>
+          <!-- mvn appplies OR so criterion below is deactivated -->
+          <!-- <exists>${basedir}\.project</exists> -->
+          <missing>${basedir}\.settings\.sqfmt12</missing>
         </file>
       </activation>
       <build>
@@ -430,17 +432,19 @@
               </execution>
             </executions>
           </plugin>
+		
           <plugin>
             <artifactId>maven-resources-plugin</artifactId>
             <executions>
               <execution>
                 <id>copy-eclipse-settings</id>
-                <phase>process-resources</phase>
+                <phase>install</phase>
                 <goals>
                   <goal>copy-resources</goal>
                 </goals>
                 <configuration>
                   <outputDirectory>${basedir}/.settings</outputDirectory>
+                  <overwrite>true</overwrite>
                   <resources>
                     <resource>
                       <directory>${project.build.directory}/maven-shared-tools-resources/eclipse/settings</directory>
@@ -451,6 +455,17 @@
             </executions>
           </plugin>
         </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>eclipse</id>
+      <activation>
+        <file>
+          <exists>${basedir}\.project</exists>
+        </file>
+      </activation>
+      <build>
         <pluginManagement>
           <plugins>
 						<!--This plugin's configuration is used to store Eclipse m2e settings 
@@ -541,6 +556,10 @@
         <os>
           <family>windows</family>
         </os>
+	<!--<file>-->
+          <!-- mvn appplies OR so criterion below is deactivated -->
+          <!-- <exists>${basedir}\.hg\.sqpreco</exists> -->
+        <!--</file>-->
       </activation>
       <build>
         <plugins>

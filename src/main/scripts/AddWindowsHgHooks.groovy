@@ -20,6 +20,13 @@
  */
 def hgRepo = new File(".hg")
 def hgrc = new File("hgrc", hgRepo)
+def createMarker = {
+    // creates a marker file
+    def hookMarker = new File(".sqpreco", hgRepo)
+    if (!hookMarker.exists() ) {
+	hookMarker.createNewFile()
+    }
+}    
 
 def lines = []
 
@@ -38,6 +45,7 @@ if (containsHooks) {
 
 if (containsPreCommit) {
     println "precommit hook found, nothing to do"
+    createMarker()
     return
 }
 
@@ -73,3 +81,4 @@ if (containsHooks && !containsPreCommit) {
 }
 
 hgrc.withWriter hgrcProcessor
+createMarker()

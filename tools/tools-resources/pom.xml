@@ -27,6 +27,7 @@
            <include>**/*.xml</include>
            <include>**/*.prefs</include>
            <include>**/*.vm</include>
+           <include>**/.sq*</include>
            </includes>
             </configuration>
 					</execution>
