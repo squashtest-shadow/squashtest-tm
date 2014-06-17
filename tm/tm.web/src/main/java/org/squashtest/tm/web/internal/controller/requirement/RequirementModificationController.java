@@ -83,43 +83,43 @@ public class RequirementModificationController {
 
 	@Inject
 	private Provider<RequirementCategoryComboDataBuilder> categoryComboBuilderProvider;
-	
+
 	@Inject
 	private Provider<RequirementStatusComboDataBuilder> statusComboDataBuilderProvider;
-	
+
 	@Inject
 	private Provider<LevelLabelFormatter> levelFormatterProvider;
 	@Inject
 	private Provider<InternationalizableLabelFormatter> internationalizableFormatterProvider;
-	
+
 	@Inject
 	private CustomFieldValueFinderService cufValueService;
-	
+
 	@Inject
 	private RequirementModificationService requirementModService;
-	
+
 	@Inject
 	private RequirementVersionManagerService versionFinder;
-	
+
 	@Inject
 	private VerifyingTestCaseManagerService verifyingTestCaseManager;
-	
+
 	@Inject
 	private InternationalizationHelper i18nHelper;
-	
+
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentsHelper;
-	
+
 	@Inject
 	private RequirementAuditTrailService auditTrailService;
-	
+
 	private final DatatableMapper<String> versionMapper = new NameBasedMapper()
-														.mapAttribute("version-number", "versionNumber", RequirementVersion.class)
-														.mapAttribute("reference", "reference", RequirementVersion.class)
-														.mapAttribute("name", "name", RequirementVersion.class)
-														.mapAttribute("status", "status", RequirementVersion.class)
-														.mapAttribute("criticality", "criticality", RequirementVersion.class)
-														.mapAttribute("category", "category", RequirementVersion.class);
+	.mapAttribute("version-number", "versionNumber", RequirementVersion.class)
+	.mapAttribute("reference", "reference", RequirementVersion.class)
+	.mapAttribute("name", "name", RequirementVersion.class)
+	.mapAttribute("status", "status", RequirementVersion.class)
+	.mapAttribute("criticality", "criticality", RequirementVersion.class)
+	.mapAttribute("category", "category", RequirementVersion.class);
 
 
 
@@ -129,8 +129,8 @@ public class RequirementModificationController {
 	public String showRequirementInfo(Model model, @PathVariable("requirementId") long requirementId, Locale locale) {
 		populateRequirementModel(model, requirementId, locale);
 		return "page/requirement-libraries/show-requirement";
-		
-	}	
+
+	}
 
 	// will return the fragment only
 	@RequestMapping(method = RequestMethod.GET)
@@ -138,10 +138,10 @@ public class RequirementModificationController {
 		populateRequirementModel(model, requirementId, locale);
 		return "fragment/requirements/edit-requirement";
 	}
-	
-	
+
+
 	private void populateRequirementModel(Model model, long requirementId, Locale locale){
-		
+
 		Requirement requirement = requirementModService.findById(requirementId);
 		String criticalities = buildMarshalledCriticalities(locale);
 		String categories = buildMarshalledCategories(locale);
@@ -149,7 +149,7 @@ public class RequirementModificationController {
 		DataTableModel verifyingTCModel = getVerifyingTCModel(requirement.getCurrentVersion());
 		DataTableModel attachmentsModel = attachmentsHelper.findPagedAttachments(requirement);
 		DataTableModel auditTrailModel = getEventsTableModel(requirement);
-		
+
 		model.addAttribute("requirement", requirement);
 		model.addAttribute("criticalityList", criticalities);
 		model.addAttribute("categoryList", categories);
@@ -157,9 +157,9 @@ public class RequirementModificationController {
 		model.addAttribute("verifyingTestCasesModel", verifyingTCModel);
 		model.addAttribute("attachmentsModel", attachmentsModel);
 		model.addAttribute("auditTrailModel", auditTrailModel);
-		
+
 	}
-	
+
 	private String buildMarshalledCriticalities(Locale locale) {
 		return criticalityComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
@@ -171,11 +171,11 @@ public class RequirementModificationController {
 	private DataTableModel getVerifyingTCModel(RequirementVersion version){
 		PagedCollectionHolder<List<TestCase>> holder = verifyingTestCaseManager.findAllByRequirementVersion(
 				version.getId(), new DefaultPagingAndSorting("Project.name"));
-		
-		return new VerifyingTestCasesTableModelHelper(i18nHelper).buildDataModel(holder, "0");		
+
+		return new VerifyingTestCasesTableModelHelper(i18nHelper).buildDataModel(holder, "0");
 	}
-	
-	
+
+
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-description", VALUE }, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody
@@ -224,14 +224,14 @@ public class RequirementModificationController {
 		return internationalize(status, locale, levelFormatterProvider);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-name", VALUE })
+	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-name", VALUE }, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String changeName(@RequestParam(VALUE) String value, @PathVariable long requirementId, Locale locale) {
 		requirementModService.rename(requirementId, value);
 		LOGGER.info("RequirementModificationController : renaming " + requirementId + " as " + value);
 		return value;
 	}
-	
+
 	@RequestMapping(method = RequestMethod.GET, value = "/next-status")
 	@ResponseBody
 	public Map<String, String> getNextStatusList(Locale locale, @PathVariable long requirementId) {
@@ -255,8 +255,8 @@ public class RequirementModificationController {
 	public void createNewVersion(@PathVariable long requirementId) {
 		requirementModService.createNewVersion(requirementId);
 	}
-	
-	
+
+
 	private DataTableModel getEventsTableModel(Requirement requirement){
 		PagedCollectionHolder<List<RequirementAuditEvent>> auditTrail = auditTrailService
 				.findAllByRequirementVersionIdOrderedByDate(requirement.getCurrentVersion().getId(), new DefaultPagingAndSorting());
@@ -264,10 +264,10 @@ public class RequirementModificationController {
 		RequirementAuditEventTableModelBuilder builder = new RequirementAuditEventTableModelBuilder(LocaleContextHolder.getLocale(), i18nHelper);
 
 		return builder.buildDataModel(auditTrail, "");
-			
+
 	}
-	
-	
+
+
 	/**
 	 * The change status combobox is filtered and only proposes the status to which it is legal to switch to. That
 	 * method will generate a map for that purpose. Pretty much like
@@ -324,7 +324,7 @@ public class RequirementModificationController {
 		model.addAttribute("jsonCategories", buildMarshalledCategories(locale));
 		model.addAttribute("verifyingTestCaseModel", getVerifyingTCModel(req.getCurrentVersion()));
 		model.addAttribute("auditTrailModel", getEventsTableModel(req));
-		
+
 		return "page/requirements/versions-manager";
 	}
 
@@ -353,9 +353,9 @@ public class RequirementModificationController {
 
 		@Override
 		public Map<String, Object> buildItemData(RequirementVersion version) {
-			
+
 			Map<String, Object> row = new HashMap<String, Object>(7);
-			
+
 			row.put("entity-id", version.getId());
 			row.put("version-number", version.getVersionNumber());
 			row.put("reference", version.getReference());
