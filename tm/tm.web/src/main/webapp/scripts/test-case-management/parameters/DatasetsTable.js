@@ -111,11 +111,12 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/util/StringUtil
 						// each parameter value cell's text must be structured as follow "id=<id>,value=<value>" (see
 						// DatasetsDataTableModelHelper)
 						// first we extract the cell's text infos
-						var cellText = $(value).text();
+						var $value = $(value);
+						var cellText = $value.text();
 						var textAttrs = StringUtil.parseSequence(cellText);
 						// then we fix the cell's text to show only it's value
 						var valueText = StringUtil.getParsedSequenceAttribute(textAttrs, "value");
-						$(value).text(valueText);
+						$value.text(valueText);
 						// and we build the url used for the SimpleJEditable
 						var cellId = StringUtil.getParsedSequenceAttribute(textAttrs, "id");
 						var urlPost = urlPostStart + cellId + "/param-value";

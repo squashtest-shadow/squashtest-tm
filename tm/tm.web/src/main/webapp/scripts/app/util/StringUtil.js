@@ -29,7 +29,7 @@ define([ "jquery" ], function($) {
 	}
 	
 	function parseAssignation(atom) {
-		var members = atom.split(/\s*=\s*/);
+		var members = atom.split('=');
 		return {
 			name : members[0],
 			value : (members.length > 1) ? $.trim(members[1]) : 'true'
