@@ -126,7 +126,7 @@ require([ "common" ], function() {
 			}
 
 			if (config.hasFields) {
-				$("#test-suite-custom-fields-content").load(config.customFields.url);
+				$("#test-suite-custom-fields-content").load(config.customFields.url+"?boundEntityId="+config.identity.resid+"&boundEntityType=TEST_SUITE");
 			}
 
 			var dialog = $( "#confirm-duplicate-test-suite-dialog" );
