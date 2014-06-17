@@ -340,6 +340,19 @@ define(["jquery",
 		if (!this.squashSettings.enableDnD) {
 			return;
 		}
+		
+		function arraysEq(arr1, arr2){
+			if (arr1.length !== arr2.length){
+				return false;
+			}
+			for (var i=0;i<arr1.length;i++){
+				if (arr1[i] !== arr2[i]){
+					return false;
+				}
+			}
+			return true;
+		}
+		
 		var self = this;
 		this.tableDnD({
 			dragHandle : "drag-handle",
@@ -348,22 +361,25 @@ define(["jquery",
 				// rows is a jQuery object
 
 				rows.find('.drag-handle').addClass('ui-state-active');
-
 				var key = self.squashSettings.dataKeys.entityIndex;
-				var offset = self.fnGetData(0)[key] - 1;
-
-				var index = rows.get(0).rowIndex - 1;
-				self.data("previousRank", index);
+				
+				var offset = self.fnGetData(0)[key] - 1;				
 				self.data("offset", offset);
+
+				var indexes = rows.map(function(i,e){ return e.rowIndex - 1 });
+				self.data("indexes", indexes);
 
 			},
 
 			onDrop : function(table, rows) { // again, that is now a jQuery object
 				
-				var newInd = rows.get(0).rowIndex - 1;
-				var oldInd = self.data("previousRank");
-				var offset = self.data("offset");
-				if (newInd != oldInd) {
+				var oldIndexes = self.data("indexes");
+				var newIndexes = rows.map(function(i,e){ return e.rowIndex - 1 });
+
+				if (! arraysEq(oldIndexes, newIndexes)) {
+					
+					var newInd = rows.get(0).rowIndex - 1;
+					var offset = self.data("offset");
 				
 					// prepare the drop now
 					var ids = [];
