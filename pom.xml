@@ -200,6 +200,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>xml-maven-plugin</artifactId>
+          <version>1.0</version>
         </plugin>
 
         <plugin>
@@ -600,7 +601,7 @@
         <enabled>true</enabled>
       </snapshots>
       <releases>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
       </releases>
     </repository>
   </repositories>

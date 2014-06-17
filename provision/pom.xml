@@ -120,7 +120,6 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>xml-maven-plugin</artifactId>
-        <version>1.0</version>
         <executions>
           <execution>
             <phase>process-resources</phase>
@@ -593,10 +592,6 @@
     <repository>
       <id>springframework-milestone</id>
       <url>http://maven.springframework.org/milestone</url>
-    </repository>
-    <repository>
-      <id>squash</id>
-      <url>http://repo.squashtest.org/maven2/releases</url>
     </repository>
   </repositories>
 </project>

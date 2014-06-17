@@ -7,7 +7,7 @@
     <version>1.10.0.M7-SNAPSHOT</version>
   </parent>
   <artifactId>tools.annotation.processor</artifactId>
-  <name>${groupId}.${artifactId}</name>
+  <name>${project.groupId}.${project.artifactId}</name>
   <url>http://www.squashtest.org</url>
 
   <properties>
