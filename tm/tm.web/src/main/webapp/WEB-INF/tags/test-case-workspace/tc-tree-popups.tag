@@ -247,7 +247,7 @@
 			<label class="confirm-label"><f:message key="dialog.import.file.confirm"/></label>
 			<span class="confirm-span confirm-file"></span>
 		</div>
-		<div class="confirm-div">
+		<div class="confirm-div import-project-confirm not-displayed">
 			<label class="confirm-label"><f:message key="dialog.import.project.confirm"/></label>
 			<span class="confirm-span confirm-project"><c:out value="${importableLibraries[0].project.name}"/></span>
 		</div>
