@@ -21,8 +21,10 @@
 package org.squashtest.tm.web.internal.controller.campaign;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -39,6 +41,7 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -82,15 +85,15 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 @Controller
 @RequestMapping(value = "/campaign-browser")
 public class CampaignLibraryNavigationController extends
-		LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode> {
+LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignLibraryNavigationController.class);
-	
+
 
 	@Inject
 	@Named("campaign.driveNodeBuilder")
 	private Provider<DriveNodeBuilder<CampaignLibraryNode>> driveNodeBuilder;
-	
+
 	@Inject
 	private Provider<IterationNodeBuilder> iterationNodeBuilder;
 	@Inject
@@ -323,52 +326,65 @@ public class CampaignLibraryNavigationController extends
 		return createCopiedTestSuitesModel(testSuiteList);
 
 	}
-	
-	
+
+
 	@RequestMapping(value="/export-campaign/{campaignId}", method = RequestMethod.GET, params = "export=csv")
-	
+
 	public @ResponseBody
-	void exportCampaign(@PathVariable("campaignId") long campaignId, @RequestParam(value = "exportType",defaultValue="S") String exportType, HttpServletResponse response) {
+	FileSystemResource exportCampaign(@PathVariable("campaignId") long campaignId, @RequestParam(value = "exportType",defaultValue="S") String exportType, HttpServletResponse response) {
 
-		BufferedWriter writer = null;
+		Campaign campaign = campaignFinder.findById(campaignId);
+		CampaignExportCSVModel model = campaignLibraryNavigationService.exportCampaignToCSV(campaignId, exportType);
 
+		// prepare the response
+		response.setContentType("application/octet-stream");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+
+		response.setHeader("Content-Disposition", "attachment; filename=" + "EXPORT_CPG_"+exportType+"_"+campaign.getName().replace(" ", "_")
+				+"_"+sdf.format(new Date()) + ".csv");
+
+
+		File exported = exportToFile(model);
+		return new FileSystemResource(exported);
+	}
+
+
+
+	private File exportToFile(CampaignExportCSVModel model){
+
+		File file;
+		PrintWriter writer = null;
 		try {
-			Campaign campaign = campaignFinder.findById(campaignId);
-			CampaignExportCSVModel model = campaignLibraryNavigationService.exportCampaignToCSV(campaignId, exportType);
+			file = File.createTempFile("export-requirement", "tmp");
+			file.deleteOnExit();
 
-			// prepare the response
-			writer = new BufferedWriter(new OutputStreamWriter(response.getOutputStream()));
+			writer = new PrintWriter(file);
 
-			response.setContentType("application/octet-stream");
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
-
-			response.setHeader("Content-Disposition", "attachment; filename=" + "EXPORT_CPG_"+exportType+"_"+campaign.getName().replace(" ", "_")
-					+"_"+sdf.format(new Date()) + ".csv");
-	
-			// print
+			// print header
 			Row header = model.getHeader();
 			writer.write(header.toString() + "\n");
 
+			// print the rest
 			Iterator<Row> iterator = model.dataIterator();
-			while (iterator.hasNext()) {
+			while (iterator.hasNext()){
 				Row datarow = iterator.next();
 				String cleanRowValue = HTMLCleanupUtils.htmlToText(datarow.toString()).replaceAll("\\n", "").replaceAll("\\r", "");
 				writer.write(cleanRowValue + "\n");
 			}
 
-			// closes stream in the finally clause
-		} catch (IOException ex) {
-			LOGGER.error(ex.getMessage());
-			throw new RuntimeException(ex);
-		} finally {
+			writer.close();
+
+			return file;
+		} catch (IOException e) {
+			LOGGER.error("campaign export : I/O failure while creating the temporary file : "+e.getMessage());
+			throw new RuntimeException(e);
+		}
+		finally{
 			if (writer != null) {
-				try {
-					writer.close();
-				} catch (IOException ex) {
-					LOGGER.warn(ex.getMessage());
-				}
+				writer.close();
 			}
 		}
+
 
 	}
 
