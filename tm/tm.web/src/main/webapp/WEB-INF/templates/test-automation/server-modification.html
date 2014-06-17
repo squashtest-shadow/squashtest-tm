@@ -121,7 +121,7 @@
                     <label for="ta-server-url" th:text="#{label.URL}">URL</label>
                     <div class="display-table-cell">
                       <span id="ta-server-url" th:text="${server.baseURL}">http://localhost</span>
-                      <a id="ta-server-url-link" th:href="${server.baseURL}" th:text="'['+#{label.BrowseTo}+']'"></a>
+                      <a id="ta-server-url-link" target="blank" th:href="${server.baseURL}" th:text="'['+#{label.BrowseTo}+']'"></a>
                     </div>
                   </div>
 
