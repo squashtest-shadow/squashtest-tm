@@ -36,6 +36,39 @@
 
 <%---------------------------- Rename test case popup ------------------------------%>
 
+<%-- 
+  
+  That div is important because of the use of jquery.squash.formDialog, I'll explain
+  why here.
+  
+  When an element in the DOM is turned into a jquery dialog it is detached then 
+  attached to the <body>. Which means that, in the main view ('library'), when 
+  one navigate from one test case to another the popup is not removed along 
+  the rest of this part of the document.
+  
+  This commonly leads to 'widget leaks' because the more test cases are displayed 
+  and the more dialogs leaks to the body. This is especially tricky because 
+  those dialogs have all the same ID but jquery won't care and when selecting 
+  a dialog by ID it'll just pick the first one it finds.
+  
+  It may also keep alive javascript handles that manage the data of test cases
+  that are no longer displayed, possibly like in Issue 3474.
+  
+  Our custom widget jquery.squash.formDialog ensures that such leak cannot happen. 
+  When a DOM element is turned to a dialog, it registers itself as a listener on 
+  its immediate DOM parent before it is attached to <body>. That way, upon destruction 
+  of the parent, the listener will also destroy and remove the dialog.
+  
+  Henceforth, the <div class="not-displayed"> acts as this parent. When another test 
+  case is displayed, this div will be removed and thus trigger the destruction of the 
+  dialogs it contains. 
+  
+  Hadn't it be there, the dialogs would depend on the  <div id="contextual-content">, 
+  which is never removed, and thus the dialogs would never be destroyed and removed.
+
+ --%>
+<div class="not-displayed">
+
 <c:if test="${ writable }">
 
 <div id="rename-test-case-dialog" title="${renameDialogTitle}" class="popup-dialog not-displayed">
@@ -54,4 +87,6 @@
 </div>
 
 </c:if>
+
+</div>
 
