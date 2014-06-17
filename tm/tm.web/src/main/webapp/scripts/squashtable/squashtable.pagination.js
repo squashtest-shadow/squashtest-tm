@@ -52,7 +52,7 @@ define(['jquery','jqueryui', 'datatables'], function($){
 				'class' : 'paginate_button last'
 			});
 			var nPageTxt = $("<span />", {
-				text : parseInt((oSettings._iDisplayStart+oSettings._iDisplayLength) / oSettings._iDisplayLength, 50)
+				text : parseInt((oSettings._iDisplayStart+oSettings._iDisplayLength) / oSettings._iDisplayLength)
 			});
 
 			$(nPaging).append(nFirst).append(nPrevious).append(nPageTxt).append(nNext).append(nLast);
@@ -71,7 +71,7 @@ define(['jquery','jqueryui', 'datatables'], function($){
 			nFirst.click(function() {
 				oSettings.oApi._fnPageChange(oSettings, "first");
 				fnCallbackDraw(oSettings);
-				nPageTxt.text(parseInt((oSettings._iDisplayStart+oSettings._iDisplayLength) / oSettings._iDisplayLength, 50));
+				nPageTxt.text(parseInt((oSettings._iDisplayStart+oSettings._iDisplayLength) / oSettings._iDisplayLength));
 			}).bind('selectstart', function() {
 				return false;
 			});
@@ -79,7 +79,7 @@ define(['jquery','jqueryui', 'datatables'], function($){
 			nPrevious.click(function() {
 				oSettings.oApi._fnPageChange(oSettings, "previous");
 				fnCallbackDraw(oSettings);
-				nPageTxt.text(parseInt((oSettings._iDisplayStart+oSettings._iDisplayLength)/ oSettings._iDisplayLength, 50));
+				nPageTxt.text(parseInt((oSettings._iDisplayStart+oSettings._iDisplayLength)/ oSettings._iDisplayLength));
 			}).bind('selectstart', function() {
 				return false;
 			});
@@ -87,7 +87,7 @@ define(['jquery','jqueryui', 'datatables'], function($){
 			nNext.click(function() {
 				oSettings.oApi._fnPageChange(oSettings, "next");
 				fnCallbackDraw(oSettings);
-				nPageTxt.text(parseInt((oSettings._iDisplayStart+oSettings._iDisplayLength) / oSettings._iDisplayLength, 50));
+				nPageTxt.text(parseInt((oSettings._iDisplayStart+oSettings._iDisplayLength) / oSettings._iDisplayLength));
 			}).bind('selectstart', function() {
 				return false;
 			});
@@ -95,7 +95,7 @@ define(['jquery','jqueryui', 'datatables'], function($){
 			nLast.click(function() {
 				oSettings.oApi._fnPageChange(oSettings, "last");
 				fnCallbackDraw(oSettings);
-				nPageTxt.text(parseInt((oSettings._iDisplayStart+oSettings._iDisplayLength) / oSettings._iDisplayLength, 50));
+				nPageTxt.text(parseInt((oSettings._iDisplayStart+oSettings._iDisplayLength) / oSettings._iDisplayLength));
 			}).bind('selectstart', function() {
 				return false;
 			});
@@ -121,7 +121,7 @@ define(['jquery','jqueryui', 'datatables'], function($){
 				if (oSettings._iDisplayStart === 0) {
 					buttons.eq(0).button("option", "disabled", true);
 					buttons.eq(1).button("option", "disabled", true);
-					$($("span", an)[4]).text("1");
+					$(an[i]).find(">span").eq(2).text("1");
 				} else {
 					buttons.eq(0).button("option", "disabled", false);
 					buttons.eq(1).button("option", "disabled", false);
