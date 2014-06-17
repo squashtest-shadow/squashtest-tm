@@ -37,38 +37,38 @@ import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentT
 @Controller
 @RequestMapping("/test-case-libraries/{libraryId}")
 public class TestCaseLibraryModificationController {
-	
+
 	@Inject
 	private TestCaseLibraryNavigationService service;
 
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentsHelper;
-	
+
 	@RequestMapping(method = RequestMethod.GET)
 	public final ModelAndView showTestCaseLibrary(@PathVariable long libraryId) {
-		
+
 		TestCaseLibrary lib = service.findLibrary(libraryId);
-		
+
 		ModelAndView mav = new ModelAndView("fragment/test-cases/edit-test-case-library");
 		Set<Attachment> attachments = attachmentsHelper.findAttachments(lib);
-		
-		mav.addObject("library", lib);
-		mav.addObject("attachments", attachments);
-		
-		return mav;
-	}
-	
-	@RequestMapping(value = "/info", method = RequestMethod.GET)
-	public final ModelAndView showTestCaseLibraryInfo(@PathVariable long libraryId){
-		TestCaseLibrary lib = service.findLibrary(libraryId);
-		
-		ModelAndView mav = new ModelAndView("page/test-case-libraries/show-test-case-library");
-		Set<Attachment> attachments = attachmentsHelper.findAttachments(lib);
-		
+
 		mav.addObject("library", lib);
 		mav.addObject("attachments", attachments);
 		mav.addObject("workspaceName", "test-case");
-		
+		return mav;
+	}
+
+	@RequestMapping(value = "/info", method = RequestMethod.GET)
+	public final ModelAndView showTestCaseLibraryInfo(@PathVariable long libraryId){
+		TestCaseLibrary lib = service.findLibrary(libraryId);
+
+		ModelAndView mav = new ModelAndView("page/test-case-libraries/show-test-case-library");
+		Set<Attachment> attachments = attachmentsHelper.findAttachments(lib);
+
+		mav.addObject("library", lib);
+		mav.addObject("attachments", attachments);
+		mav.addObject("workspaceName", "test-case");
+
 		return mav;
 	}
 }
