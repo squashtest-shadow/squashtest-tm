@@ -664,14 +664,14 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		};
 	}
 
-	function initCollapser(language, urls, isWritable) {
+	function initCollapser(language, urls, isWritable, testCaseId) {
 
 	
 		var collapser;
 
 		var collapseButton = $("#collapse-steps-button");
 
-		var table = $("#test-steps-table");
+		var table = $("#test-steps-table-"+testCaseId);
 
 		// begin
 
@@ -758,7 +758,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		}
 
 		// table collapser
-		initCollapser(language, urls, permissions.isWritable);
+		initCollapser(language, urls, permissions.isWritable,  settings.basic.testCaseId);
 		
 
 	}
