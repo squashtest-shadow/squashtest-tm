@@ -134,6 +134,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 			addPermissionDialog.find('#add-permission-input').autocomplete();
 
 			addPermissionDialog.on('confirmdialogopen', function() {
+				//TODO reload only when needed (after remove or add permission)
 				var dialog = addPermissionDialog;
 				var input = dialog.find('#add-permission-input');
 				dialog.activate('wait');

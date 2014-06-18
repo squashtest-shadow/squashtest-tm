@@ -25,6 +25,7 @@ import java.util.List;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
 import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
@@ -58,6 +59,9 @@ public interface GenericProjectDao extends CustomGenericProjectDao {
 	 * @return
 	 */
 	List<GenericProject> findAllByIds(List<Long> ids);
+
+	List<GenericProject> findAllByIds(List<Long> idList, Sorting defaultSorting);
+
 	/**
 	 * Simply remove entity
 	 * @param project : the {@link GenericProject} to remove

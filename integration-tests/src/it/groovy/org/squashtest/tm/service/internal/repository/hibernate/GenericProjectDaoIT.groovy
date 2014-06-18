@@ -20,14 +20,16 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
+import static org.squashtest.tm.core.foundation.collection.SortOrder.*
+
 import javax.inject.Inject
 
+import org.squashtest.tm.core.foundation.collection.DefaultSorting
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.service.internal.repository.GenericProjectDao
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.unitils.dbunit.annotation.DataSet
-import static org.squashtest.tm.core.foundation.collection.SortOrder.*
 
 import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
@@ -59,16 +61,26 @@ class GenericProjectDaoIT extends DbunitDaoSpecification {
 		where:
 		start | pageSize | sortAttr | sortOrder  | expected
 		0     | 4        | "id"     | ASCENDING  | ["ONE", "TWO", "THREE", "FOUR"]
-		0     | 4        | "name"   | DESCENDING | ["TWO", "THREE", "ONE", "FOUR"]
+		0     | 4        | "name"   | DESCENDING | ["twobis", "TWO", "THREE", "ONE"]
 		0     | 2        | "id"     | ASCENDING  | ["ONE", "TWO"]
-		2     | 4        | "id"     | ASCENDING  | ["THREE", "FOUR"]
+		2     | 4        | "id"     | ASCENDING  | ["THREE", "FOUR", "twobis"]
 
+	}
+
+	@DataSet("GenericProjectDaoIT.xml")
+	def "should find project by id ordered by name"(){
+		given :
+		def ids = [1L, 2L, 3L, 4L, 5L]
+		when :
+		List<GenericProject> result = dao.findAllByIds(ids, new DefaultSorting("name"))
+		then:
+		result*.name == ["FOUR", "ONE", "THREE", "TWO", "twobis"]
 	}
 
 	@DataSet("GenericProjectDaoIT.xml")
 	def "should count existing projects" () {
 		expect:
-		dao.countGenericProjects() == 4L
+		dao.countGenericProjects() == 5L
 	}
 
 	@Unroll
@@ -122,6 +134,7 @@ class GenericProjectDaoIT extends DbunitDaoSpecification {
 		then :
 		res.containsAll(["job-1", "job-2"])
 	}
+
 
 
 }

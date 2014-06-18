@@ -29,13 +29,19 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.squashtest.tm.core.foundation.collection.Sorting;
+
 /**
- * {@link DynamicComponentInvocationHandler} which handles <code>List<ENTITY> findAllByIds(Collection<Long> id)</code> method. Fetches all entities matching the ids of a collection.
+ * {@link DynamicComponentInvocationHandler} which handles <code>List<ENTITY> findAllByIds(Collection<Long> id)</code>
+ * method. Fetches all entities matching the ids of a collection.
+ * 
  * @author Gregory Fouquet
- *
+ * 
  */
-public class FindAllByIdsHandler<ENTITY> implements DynamicComponentInvocationHandler { // NOSONAR : I dont choose what JDK interfaces throw
+public class FindAllByIdsHandler<ENTITY> implements DynamicComponentInvocationHandler { // NOSONAR : I dont choose what
+	// JDK interfaces throw
 	private final Class<ENTITY> entityType;
 	private final SessionFactory sessionFactory;
 
@@ -50,19 +56,35 @@ public class FindAllByIdsHandler<ENTITY> implements DynamicComponentInvocationHa
 	}
 
 	/**
-	 * Performs an entity fetch using {@link #entityType} and the first arg as the collection of entities ids. 
+	 * Performs an entity fetch using {@link #entityType} and the first arg as the collection of entities ids.
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) {
 		Collection<Long> ids = (Collection<Long>) args[0];
-		
+
 		if (ids.isEmpty()) {
 			return Collections.emptyList();
 		}
-		
 		Criteria crit = sessionFactory.getCurrentSession().createCriteria(entityType);
-		return crit.add(Restrictions.in("id", ids)).list();
+		crit.add(Restrictions.in("id", ids));
+		if(method.getParameterTypes().length >1){
+			Sorting sorting = (Sorting) args[1];
+			Order order = null;
+			switch(sorting.getSortOrder()){
+			case DESCENDING :
+				order = Order.desc(sorting.getSortedAttribute()).ignoreCase();
+				break;
+			case ASCENDING:
+			default :
+				order = Order.asc(sorting.getSortedAttribute()).ignoreCase();
+				break;
+			}
+			crit.addOrder(order);
+
+		}
+
+		return crit.list();
 	}
 
 	/**
@@ -76,7 +98,9 @@ public class FindAllByIdsHandler<ENTITY> implements DynamicComponentInvocationHa
 
 	private boolean mehtodParamsMatchMethodParams(Method method) {
 		Class<?>[] params = method.getParameterTypes();
-		return params.length == 1 && Collection.class.isAssignableFrom(params[0]);
+		return (params.length == 1 && Collection.class.isAssignableFrom(params[0]))
+				|| (params.length == 2 && Collection.class.isAssignableFrom(params[0]) && Sorting.class
+				.isAssignableFrom(params[1]));
 	}
 
 	public boolean methodNameMatchesMethodPattern(Method method) {

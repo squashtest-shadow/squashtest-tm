@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.ProjectPermission;
 import org.squashtest.tm.domain.users.Party;
@@ -44,24 +45,26 @@ public interface ProjectsPermissionFinder {
 	List<ProjectPermission> findProjectPermissionByParty(long partyId);
 
 	List<ProjectPermission> findProjectPermissionByUserLogin(String userLogin);
-	
+
 	PagedCollectionHolder<List<ProjectPermission>> findProjectPermissionByParty(long partyId, PagingAndSorting sorting, Filtering filtering);
+
+	List<GenericProject> findProjectWithoutPermissionByParty(long partyId, Sorting defaultSorting);
 
 	List<GenericProject> findProjectWithoutPermissionByParty(long partyId);
 
-	List<PartyProjectPermissionsBean> findPartyPermissionsBeanByProject(long projectId);	
-	
+	List<PartyProjectPermissionsBean> findPartyPermissionsBeanByProject(long projectId);
+
 	PagedCollectionHolder<List<PartyProjectPermissionsBean>> findPartyPermissionsBeanByProject(PagingAndSorting sorting, Filtering filtering, long projectId);
-	
+
 	List<Party> findPartyWithoutPermissionByProject(long projectId);
 	/**
 	 * @param userId
 	 * @param projectId
 	 */
 	void removeProjectPermission(long userId, long projectId);
-	
+
 	boolean isInPermissionGroup(long partyId, Long projectId, String permissionGroup);
-	
+
 	boolean isInPermissionGroup(String userLogin, Long projectId, String permissionGroup);
 
 	List<GenericProject> findProjectWithPermissionByParty(long partyId);

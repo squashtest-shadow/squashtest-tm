@@ -33,6 +33,7 @@ import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
@@ -55,19 +56,21 @@ import org.squashtest.tm.service.security.acls.model.ObjectAclService;
 public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissionManagementService {
 
 	private static final String NAMESPACE = "squashtest.acl.group.tm";
-	private static final List<String> PROJECT_CLASS_NAMES = new ArrayList<String>(Arrays.asList("org.squashtest.tm.domain.project.Project", "org.squashtest.tm.domain.project.ProjectTemplate"));
-	
+	private static final List<String> PROJECT_CLASS_NAMES = new ArrayList<String>(Arrays.asList(
+			"org.squashtest.tm.domain.project.Project", "org.squashtest.tm.domain.project.ProjectTemplate"));
+
 	@Inject
 	private ObjectAclService aclService;
 
-	@Inject private GenericProjectDao genericProjectFinder;
+	@Inject
+	private GenericProjectDao genericProjectFinder;
 
 	@Inject
 	private UserDao userDao;
 
 	@Inject
 	private PartyDao partyDao;
-	
+
 	@Override
 	public List<PermissionGroup> findAllPossiblePermission() {
 		return aclService.findAllPermissionGroupsByNamespace(NAMESPACE);
@@ -77,7 +80,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	public void deleteUserProjectOldPermission(String userLogin, long projectId) {
 		ObjectIdentity entityRef = createProjectIdentity(projectId);
 		User user = userDao.findUserByLogin(userLogin);
-		
+
 		aclService.removeAllResponsibilities(user.getId(), entityRef);
 
 		GenericProject project = genericProjectFinder.findById(projectId);
@@ -94,21 +97,21 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 	private ObjectIdentity createProjectIdentity(long projectId) {
 		GenericProject project = genericProjectFinder.findById(projectId);
-		final Class<?>[] projectType = {null};
-		
+		final Class<?>[] projectType = { null };
+
 		project.accept(new ProjectVisitor() {
-			
+
 			@Override
 			public void visit(ProjectTemplate projectTemplate) {
 				projectType[0] = ProjectTemplate.class;
 			}
-			
+
 			@Override
 			public void visit(Project project) {
 				projectType[0] = Project.class;
 			}
 		});
-		
+
 		return new ObjectIdentityImpl(projectType[0], projectId);
 	}
 
@@ -124,7 +127,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	private ObjectIdentity createRequirementLibraryIdentity(GenericProject project) {
 		return new ObjectIdentityImpl(RequirementLibrary.class, project.getRequirementLibrary().getId());
 	}
-	
+
 	@Override
 	public List<ProjectPermission> findProjectPermissionByParty(long partyId) {
 		List<ProjectPermission> newResult = new ArrayList<ProjectPermission>();
@@ -147,7 +150,6 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		return newResult;
 	}
 
-	
 	@Override
 	public List<ProjectPermission> findProjectPermissionByUserLogin(String userLogin) {
 		List<ProjectPermission> newResult = new ArrayList<ProjectPermission>();
@@ -158,25 +160,25 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		}
 		return newResult;
 	}
-	
-	
-	
+
 	@Override
-	public PagedCollectionHolder<List<ProjectPermission>> findProjectPermissionByParty(long partyId, PagingAndSorting sorting, Filtering filtering){
-		
+	public PagedCollectionHolder<List<ProjectPermission>> findProjectPermissionByParty(long partyId,
+			PagingAndSorting sorting, Filtering filtering) {
+
 		List<ProjectPermission> newResult = new ArrayList<ProjectPermission>();
-		
-		List<Object[]> result = aclService.retrieveClassAclGroupFromPartyId(partyId, PROJECT_CLASS_NAMES,sorting,filtering);
+
+		List<Object[]> result = aclService.retrieveClassAclGroupFromPartyId(partyId, PROJECT_CLASS_NAMES, sorting,
+				filtering);
 		int total = result.size();
-		
+
 		for (Object[] objects : result) {
 			GenericProject project = genericProjectFinder.findById((Long) objects[0]);
 			newResult.add(new ProjectPermission(project, (PermissionGroup) objects[1]));
 		}
-		
+
 		return new PagingBackedPagedCollectionHolder<List<ProjectPermission>>(sorting, total, newResult);
 	}
-	
+
 	@Override
 	public List<GenericProject> findProjectWithoutPermissionByParty(long partyId) {
 		List<Long> idList = aclService.findObjectWithoutPermissionByPartyId(partyId, PROJECT_CLASS_NAMES);
@@ -184,9 +186,18 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 			return null;
 		}
 		return genericProjectFinder.findAllByIds(idList);
-		
+
 	}
-	
+
+	@Override
+	public List<GenericProject> findProjectWithoutPermissionByParty(long partyId, Sorting defaultSorting) {
+		List<Long> idList = aclService.findObjectWithoutPermissionByPartyId(partyId, PROJECT_CLASS_NAMES);
+		if (idList == null || idList.isEmpty()) {
+			return null;
+		}
+		return genericProjectFinder.findAllByIds(idList, defaultSorting);
+	}
+
 	@Override
 	public void addNewPermissionToProject(long partyId, long projectId, String permissionName) {
 		ObjectIdentity projectRef = createProjectIdentity(projectId);
@@ -223,37 +234,39 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		ObjectIdentity clibraryRef = createCampaignLibraryIdentity(project);
 		aclService.removeAllResponsibilities(partyId, clibraryRef);
 	}
-	
-	@Override 
-	public void removeProjectPermissionForAllProjects(long partyId){
-		 aclService.removeAllResponsibilities(partyId);
+
+	@Override
+	public void removeProjectPermissionForAllProjects(long partyId) {
+		aclService.removeAllResponsibilities(partyId);
 	}
 
 	@Override
 	public List<PartyProjectPermissionsBean> findPartyPermissionsBeanByProject(long projectId) {
-		
-		Class<?> projectClass = genericProjectFinder.isProjectTemplate(projectId) ? ProjectTemplate.class : Project.class;
-		
+
+		Class<?> projectClass = genericProjectFinder.isProjectTemplate(projectId) ? ProjectTemplate.class
+				: Project.class;
+
 		return findPartyPermissionBeanByProjectOfGivenType(projectId, projectClass);
 
 	}
-	
+
 	@Override
 	public PagedCollectionHolder<List<PartyProjectPermissionsBean>> findPartyPermissionsBeanByProject(
 			PagingAndSorting sorting, Filtering filtering, long projectId) {
-	
-		Class<?> projectClass = genericProjectFinder.isProjectTemplate(projectId) ? ProjectTemplate.class : Project.class;
-	
+
+		Class<?> projectClass = genericProjectFinder.isProjectTemplate(projectId) ? ProjectTemplate.class
+				: Project.class;
+
 		return findPartyPermissionBeanByProjectOfGivenType(projectId, projectClass, sorting, filtering);
-		
+
 	}
-	
+
 	@Override
 	public List<Party> findPartyWithoutPermissionByProject(long projectId) {
 		List<Long> idList = aclService.findPartiesWithoutPermissionByObject(projectId, PROJECT_CLASS_NAMES);
 		return partyDao.findAllByIds(idList);
 	}
-	
+
 	/**
 	 * @see ProjectsPermissionManagementService#copyAssignedUsersFromTemplate(Project, ProjectTemplate)
 	 */
@@ -267,8 +280,9 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		return findPartyPermissionBeanByProjectOfGivenType(projectId, ProjectTemplate.class);
 	}
 
-	//clearly suboptimal, on the other hand this method is seldomely invoked
-	private List<PartyProjectPermissionsBean> findPartyPermissionBeanByProjectOfGivenType(long projectId, Class<?> projectType) {
+	// clearly suboptimal, on the other hand this method is seldomely invoked
+	private List<PartyProjectPermissionsBean> findPartyPermissionBeanByProjectOfGivenType(long projectId,
+			Class<?> projectType) {
 		List<PartyProjectPermissionsBean> newResult = new ArrayList<PartyProjectPermissionsBean>();
 
 		List<Object[]> result = aclService.retrievePartyAndAclGroupNameFromIdentityAndClass(projectId, projectType);
@@ -279,27 +293,28 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		return newResult;
 
 	}
-	
-	//clearly suboptimal, on the other hand this method is seldomely invoked
-	private PagedCollectionHolder<List<PartyProjectPermissionsBean>> findPartyPermissionBeanByProjectOfGivenType(long projectId, Class<?> projectType, PagingAndSorting sorting, Filtering filtering) {
-		
 
-		List<Object[]> result = aclService.retrievePartyAndAclGroupNameFromIdentityAndClass(projectId, projectType, sorting, filtering);
-		
+	// clearly suboptimal, on the other hand this method is seldomely invoked
+	private PagedCollectionHolder<List<PartyProjectPermissionsBean>> findPartyPermissionBeanByProjectOfGivenType(
+			long projectId, Class<?> projectType, PagingAndSorting sorting, Filtering filtering) {
+
+		List<Object[]> result = aclService.retrievePartyAndAclGroupNameFromIdentityAndClass(projectId, projectType,
+				sorting, filtering);
+
 		int total = result.size();
-		
+
 		int startIndex = sorting.getFirstItemIndex();
-		int lastIndex = Math.min(startIndex + sorting.getPageSize(), total );
-		
+		int lastIndex = Math.min(startIndex + sorting.getPageSize(), total);
+
 		result = result.subList(startIndex, lastIndex);
 
 		List<PartyProjectPermissionsBean> newResult = new ArrayList<PartyProjectPermissionsBean>(result.size());
-		
+
 		for (Object[] objects : result) {
 			Party party = partyDao.findById((Long) objects[0]);
 			newResult.add(new PartyProjectPermissionsBean(party, (PermissionGroup) objects[1]));
 		}
-		
+
 		return new PagingBackedPagedCollectionHolder<List<PartyProjectPermissionsBean>>(sorting, total, newResult);
 
 	}
@@ -328,34 +343,35 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		ObjectIdentity projectRef = new ObjectIdentityImpl(ProjectTemplate.class, templateId);
 		aclService.removeAllResponsibilities(projectRef);
 	}
-	
+
 	/**
-	 * @see  org.squashtest.tm.service.project.ProjectsPermissionManagementService#removeAllPermissionsFromObject(Class, long)
+	 * @see org.squashtest.tm.service.project.ProjectsPermissionManagementService#removeAllPermissionsFromObject(Class,
+	 *      long)
 	 */
 	@Override
-	public void removeAllPermissionsFromObject(Class<?> clazz, long id){
+	public void removeAllPermissionsFromObject(Class<?> clazz, long id) {
 		ObjectIdentity ref = new ObjectIdentityImpl(clazz, id);
 		aclService.removeAllResponsibilities(ref);
 	}
-	
+
 	@Override
-	public boolean isInPermissionGroup(String userLogin, Long projectId, String permissionGroup){
+	public boolean isInPermissionGroup(String userLogin, Long projectId, String permissionGroup) {
 		User user = userDao.findUserByLogin(userLogin);
-		return isInPermissionGroup(user.getId(),projectId,permissionGroup);
+		return isInPermissionGroup(user.getId(), projectId, permissionGroup);
 	}
-	
+
 	@Override
-	public boolean isInPermissionGroup(long partyId, Long projectId, String permissionGroup){		
+	public boolean isInPermissionGroup(long partyId, Long projectId, String permissionGroup) {
 		boolean isInGroup = false;
 		List<PartyProjectPermissionsBean> permissions = findPartyPermissionsBeanByProject(projectId);
-		for(PartyProjectPermissionsBean permission : permissions){
-			if(permission.getParty().getId() == partyId){
-				if(permission.getPermissionGroup().getQualifiedName().equals(permissionGroup)){
+		for (PartyProjectPermissionsBean permission : permissions) {
+			if (permission.getParty().getId() == partyId) {
+				if (permission.getPermissionGroup().getQualifiedName().equals(permissionGroup)) {
 					isInGroup = true;
 				}
 			}
 		}
-		
+
 		return isInGroup;
 	}
 }

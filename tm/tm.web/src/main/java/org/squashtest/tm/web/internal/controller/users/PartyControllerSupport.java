@@ -31,6 +31,7 @@ import javax.inject.Inject;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.osgi.extensions.annotation.ServiceReference;
+import org.squashtest.tm.core.foundation.collection.DefaultSorting;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -66,8 +67,8 @@ public abstract class PartyControllerSupport {
 	public void setProjectsPermissionManagementService(ProjectsPermissionManagementService permissionService) {
 		this.permissionService = permissionService;
 	}
-	
-	
+
+
 	protected List<PermissionGroupModel> getPermissionGroupModels(long partyId){
 		Locale locale = LocaleContextHolder.getLocale();
 
@@ -82,14 +83,14 @@ public abstract class PartyControllerSupport {
 
 			}
 		}
-		
+
 		return permissionGroupModelList;
 	}
-	
+
 
 	protected List<ProjectModel> getProjectModels(long partyId){
-		
-		List<GenericProject> projectList = permissionService.findProjectWithoutPermissionByParty(partyId);
+
+		List<GenericProject> projectList = permissionService.findProjectWithoutPermissionByParty(partyId, new DefaultSorting("name"));
 
 		List<ProjectModel> projectModelList = new ArrayList<ProjectModel>();
 		if (projectList != null) {
@@ -101,20 +102,20 @@ public abstract class PartyControllerSupport {
 		return projectModelList;
 	}
 
-	
-	protected Map<String, Object> createPermissionPopupModel(long partyId) {				
+
+	protected Map<String, Object> createPermissionPopupModel(long partyId) {
 
 		List<ProjectModel> projectModelList = getProjectModels(partyId);
 		List<PermissionGroupModel> permissionGroupModelList = getPermissionGroupModels(partyId);
-		
+
 		Map<String, Object> res = new HashMap<String, Object>();
-		
+
 		res.put("myprojectList", projectModelList);
 		res.put("permissionList", permissionGroupModelList);
 
 		return res;
 	}
-	
+
 
 	protected DataTableModel createPermissionTableModel(long userId, PagingAndSorting paging, Filtering filtering,
 			String secho) {
