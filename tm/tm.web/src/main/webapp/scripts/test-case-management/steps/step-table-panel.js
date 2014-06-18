@@ -395,7 +395,38 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		}
 
 		$("#test-steps-table-"+urls.testCaseId).squashTable(datatableSettings, squashSettings);
-		$("#test-steps-table-"+urls.testCaseId).squashTable().refresh();
+		
+		/*
+		 * 
+		* Commenting out the 'refresh' just below, that was added for enh. 2627. 
+		* It didn't work anyway.
+		* 
+		* Refreshing the table while it had defer loading would trigger a double 
+		* registration of drawCallback handlers (leading to bugs).
+		* 
+		* The requirement of 2627 says that the test case table needs to "remember" 
+		* the paging/sorting preference, saved for each test case.
+		* 
+		*  In technical terms this mean we need to modify test-case-steps.html. 
+		*  test-case-steps.html is an html template that represents the whole test steps tab
+		*  of a test case. It is loaded on demand via xhr and comes with a pre-populated 
+		*  step table (and iDeferLoading activated). 
+		*  
+		*  However the content of that table  is not paged/sorted.   
+		*  So to fulfill 2627 we need to do one of the following :
+		*  	
+		*	1/ no prepopulation of the table and remove the iDeferLoading. The table would 
+		*	then be loaded normally with the paging / sorting, and we would not either 
+		*	face double callbacks initialization. 
+		*	For the sake of performance, it would be appreciated if 
+		*	the table content was loaded only when requested and that no extra request is 
+		*	needed for the content of test-case-steps.html (ie inline it in the main
+		*	edit-test-case.jsp) 
+		*	
+		*	2/ the table is prepopulated with pre-sorted / paged content. This would require that  
+		*	the URL of test-case-steps.html accepts additional parameters for that purpose.
+		*/
+		//$("#test-steps-table-"+urls.testCaseId).squashTable().refresh();
 	}
 
 	// ************************************ toolbar utility functions

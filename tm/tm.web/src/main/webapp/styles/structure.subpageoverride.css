@@ -86,6 +86,10 @@
 	width : 99.5%;		
 }
 
+div.fragment-tabs {
+	top : 90px;	
+}
+
 .sub-page-content #information-content{
 	top :0;	
 }
