@@ -20,38 +20,39 @@
  */
 
 
-define(["jquery", 
-		"squash.basicwidgets", 
-		"contextual-content-handlers", 
-		"jquery.squash.fragmenttabs", 
-		"workspace.event-bus", 
-		"jqueryui", 
-		"jquery.squash.formdialog"], 
+define(["jquery",
+		"squash.basicwidgets",
+		"contextual-content-handlers",
+		"jquery.squash.fragmenttabs",
+		"workspace.event-bus",
+		"jqueryui",
+		"jquery.squash.formdialog"],
 		function($, basic, contentHandlers, Frag, eventBus){
-	
+	"use strict";
+
 	function initRenameDialog(settings){
-		
+
 		var identity = { resid : settings.testCaseId, restype : "test-cases"  },
 			url = settings.urls.testCaseUrl,
 			dialog = $("#rename-test-case-dialog");
-		
-		
+
+
 		dialog.formDialog();
-		
+
 		$("#rename-test-case-button").on('click', function(){
 			dialog.formDialog('open');
 		});
-		
+
 		dialog.on( "formdialogopen", function(event, ui) {
 			var hiddenRawName = $('#test-case-raw-name');
 			var name = $.trim(hiddenRawName.text());
-			$("#rename-test-case-input").val(name);			
+			$("#rename-test-case-input").val(name);
 		});
-		
+
 		dialog.on('formdialogconfirm', function(){
-			
+
 			var newName = $("#rename-test-case-input").val();
-			
+
 			$.ajax({
 				url : url,
 				type : "POST",
@@ -61,51 +62,51 @@ define(["jquery",
 				eventBus.trigger('node.rename', { identity : identity, newName : newName});
 				dialog.formDialog('close');
 			});
-			
+
 		});
-		
+
 		dialog.on('formdialogcancel', function(){
 			dialog.formDialog('close');
 		});
-				
+
 	}
-	
+
 	function initRenameListener(settings){
-		
-		var nameHandler = contentHandlers.getNameAndReferenceHandler();		
+
+		var nameHandler = contentHandlers.getNameAndReferenceHandler();
 		nameHandler.identity = { resid : settings.testCaseId, restype : "test-cases"  };
 		nameHandler.nameDisplay = "#test-case-name";
 		nameHandler.nameHidden = "#test-case-raw-name";
 		nameHandler.referenceHidden = "#test-case-raw-reference";
-			
+
 	}
-	
+
 	function initFragmentTab(){
-		
+
 		var fragConf = {
 			cookie : "testcase-tab-cookie"
 		};
-		Frag.init(fragConf);		
+		Frag.init(fragConf);
 	}
-	
+
 	function initButtons(settings){
 		$("#print-test-case-button").on('click', function(){
 			window.open(settings.urls.testCaseUrl+"?format=printable", "_blank");
-		});		
+		});
 	}
-	
-	
-	function init(settings){		
+
+
+	function init(settings){
 		basic.init();
-		initButtons();		
-		initRenameDialog(settings);		
+		initButtons(settings);
+		initRenameDialog(settings);
 		initRenameListener(settings);
-		initFragmentTab();	
+		initFragmentTab();
 	}
-	
-	
+
+
 	return {
 		init : init
 	};
-	
+
 });
