@@ -414,7 +414,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		*  
 		*  However the content of that table  is not paged/sorted.   
 		*  So to fulfill 2627 we need to do one of the following :
-		*  	
+		*  
 		*	1/ no prepopulation of the table and remove the iDeferLoading. The table would 
 		*	then be loaded normally with the paging / sorting, and we would not either 
 		*	face double callbacks initialization. 

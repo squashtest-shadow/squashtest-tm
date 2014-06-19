@@ -20,13 +20,29 @@
  */
 /* 
  * 
+ * Sorry if the license of Squash preceeds the original one, blame Maven for that.
+ * 
+ * 
+ *  // ========================================================= \\
+ *  ||															 ||
+ * 	||							SQUASH TM						 ||
+ * 	||															 ||
+ * 	\\ ========================================================= //
+ * 	
  * Customization of jquery.tableDnD.js by Denis Howlett, credits to his original
  * work.
  * 
  * The current extension add the support for multiline dnd, see the comments on 
- * 'adaptDragObject', 'makeDraggable' and 'mouseup' for details.
+ * 'adaptDragObject', 'makeDraggable' and 'mouseup' for details. 
  * 
- * Sorry if the license of Squash preceeds the original one, blame Maven for that.
+ * The code that was added or modified will have a head commentary 
+ * using the label right above ( a bit flashy but sure you wont miss it).
+ * That way if we update to a newer version we can spot easily what must 
+ * be ported to the new DnD code.
+ * 
+ * 
+ * Note : as of TM 1.10.0 this script needs to be called ONLY ONCE, at 
+ * table creation time (and not anymore once per table content refresht).
  * 
  */
 /**
@@ -107,6 +123,10 @@
 
 define(['jquery'], function(jQuery){
 	
+	// forbid multiple inclusions
+	if (!! jQuery.tableDnD){
+		return;
+	}
 
 jQuery.tableDnD = {
 	/** Keep hold of the current table being dragged */
@@ -117,6 +137,7 @@ jQuery.tableDnD = {
 	mouseOffset : null,
 	/** Remember the old value of Y so that we don't do too much processing */
 	oldY : 0,
+	//deltaY : 0,
 
 	/** Actually build the structure */
 	build : function(options) {
@@ -148,41 +169,61 @@ jQuery.tableDnD = {
 
 		// Now we need to capture the mouse up and mouse move event
 		// We can use bind so that we don't interfere with other event handlers
-		jQuery(document).on('mousemove', '.dataTable>tbody>tr', jQuery.tableDnD.mousemove)
-						.on('mouseup', '.dataTable>tbody>tr', jQuery.tableDnD.mouseup);
+		
+		/*
+		 *  // ========================================================= \\
+		 *  ||															 ||
+		 * 	||							SQUASH TM						 ||
+		 * 	||															 ||
+		 * 	\\ ========================================================= //
+		 * 
+		 * Also narrowed the selector, the original was too broad and prone to 
+		 * multiple registration. 
+		 * This effectively disables the dnd across multiple tables but we don't do that anyway.
+		 */
+		var $table = jQuery(this);
+		$table.on('mousemove', '>tbody>tr', jQuery.tableDnD.mousemove)
+				.on('mouseup', '>tbody>tr', jQuery.tableDnD.mouseup);
+				/*.on('mousewheel', '>tbody>tr', jQuery.tableDnD.handleMousewheel)*/
 
+
+		
 		// Don't break the chain
 		return this;
 	},
 
 
 	/*
-	 * 
-	 * MODIFICATIONS FOR SQUASH
+	 *  // ========================================================= \\
+	 *  ||															 ||
+	 * 	||							SQUASH TM						 ||
+	 * 	||															 ||
+	 * 	\\ ========================================================= //
 	 * 
 	 * Here is where happen most of the modifications :
 	 * 
-	 * <ol>
-	 * <li>the .dragoObject is now a jQuery variable, holding all rows having the
+	 * 
+	 * 1/ the .dragoObject is now a jQuery variable, holding all rows having the
 	 * class ui-state-row-selected
-	 * <li>
-	 * <li>jQuery.tableDnD.makeDraggable will call config.onDragStart with that new
+	 * 
+	 * 2/ jQuery.tableDnD.makeDraggable will call config.onDragStart with that new
 	 * .dragObject. It does so whether configured to use a draghandle or not (the
-	 * original plugin didn't). </li>
-	 * <li>it uses explicitly a logic css class "nodrop" to prevent dropping in the middle
-	 * of the selected lines</li>
-	 * <li>a method adaptDragObject was added to the plugin and aims to adapt the
+	 * original plugin didn't). 
+	 * 
+	 * 3/ It uses explicitly a logic css class "nodrop" to prevent dropping in the middle
+	 * of the selected lines
+	 * 
+	 * 4/ 1 method adaptDragObject was added to the plugin and aims to adapt the
 	 * interface of the new .dragObject (a jQuery object) to the old one 
 	 * (a regular javascript object), so that the rest of the plugin can use it normally.
-	 * </li>
-	 * </ol>
-	 */
-	/*
+	 * 
+	 * 
+	 * 
 	 * Note : the original plugin sometimes checks if the current line is equal to
 	 * .dragObject. That comparison now always fails safely.
-	 */
-
-	/*
+	 * 
+	 * 
+	 * 
 	 * Todo : possibly remove the makeDraggable part and just overwrite the
 	 * mousedown event handler on the tr's it attached to them
 	 * 
@@ -216,81 +257,61 @@ jQuery.tableDnD = {
 		allRows.parentNode = delegateParentNode;
 		return allRows;
 	},
+	
 
 	/**
 	 * This function makes all the rows on the table draggable apart from those
 	 * marked as "NoDrag"
 	 */
 	/*
-	 * MODIFICATIONS FOR SQUASH
+	 *  // ========================================================= \\
+	 *  ||															 ||
+	 * 	||							SQUASH TM						 ||
+	 * 	||															 ||
+	 * 	\\ ========================================================= //
 	 * 
-	 * look for parts labelled // ADDED CUSTOM PART 
+	 * Changed the event binding : instead of binding on each cells 
+	 * the same event handler we bind only one on the table using the 
+	 * '.on' jQuery event binder. 
 	 * 
+	 * Also rewritten a few things on the way. 
 	 */
 	makeDraggable : function(table) {
 
 		var config = table.tableDnDConfig;
+		var $table = jQuery(table);
+		var selector = "";
+		
 		if (table.tableDnDConfig.dragHandle) {
 			// We only need to add the event to the specified cells
-			var cells = jQuery("td." + table.tableDnDConfig.dragHandle, table);
-			cells.each(function() {
-				// The cell is bound to "this"
-				jQuery(this).mousedown(
-						function(ev) {
-
-							// ADDED CUSTOM PART
-							var allRows = $(".ui-state-row-selected", $(table))
-									.add(this.parentNode);
-							allRows.addClass('nodrop');
-							document.body.style.cursor = "n-resize";
-							// END ADDED CUSTOM PART
-
-							jQuery.tableDnD.dragObject = jQuery.tableDnD
-									.adaptDragObject(allRows);
-							jQuery.tableDnD.currentTable = table;
-
-							jQuery.tableDnD.mouseOffset = jQuery.tableDnD
-									.getMouseOffset(this, ev);
-							if (config.onDragStart) {
-								// Call the onDrop method if there is one
-								config.onDragStart(table, allRows);
-							}
-							return false;
-						});
-			});
-		} else {
-
-			// For backwards compatibility, we add the event to the whole row
-			var rows = jQuery("tr", table); // get all the rows as a wrapped set
-			rows.each(function() {
-				// Iterate through each row, the row is bound to "this"
-				var row = jQuery(this);
-				if (!row.hasClass("nodrag")) {
-					row.mousedown(
-							function(ev) {
-								if (ev.target.tagName == "TD") {
-
-									// ADDED CUSTOM PART
-									var allRows = $(".ui-state-row-selected",
-											$(table));
-									allRows.addClass('nodrop');
-									// END ADDED CUSTOM PART
-
-									jQuery.tableDnD.dragObject = jQuery.tableDnD
-											.adaptDragObject(allRows);
-									jQuery.tableDnD.currentTable = table;
-									jQuery.tableDnD.mouseOffset = jQuery.tableDnD
-											.getMouseOffset(this, ev);
-									if (config.onDragStart) {
-										// Call the onDrop method if there is one
-										config.onDragStart(table, allRows);
-									}
-									return false;
-								}
-							}).css("cursor", "move"); // Store the tableDnD object
-				}
-			});
+			var selector = "td." + table.tableDnDConfig.dragHandle;
 		}
+		else{
+			// For backwards compatibility, we add the event to the whole row
+			var selector =  "tr:not(.nodrag)>td";
+		}
+			
+		$table.on('mousedown', selector, function(ev){
+
+			var allRows = $table.find(".ui-state-row-selected").add(this.parentNode);
+			allRows.addClass('nodrop');
+			document.body.style.cursor = "n-resize";
+			
+			jQuery.tableDnD.dragObject = jQuery.tableDnD.adaptDragObject(allRows);
+			
+			jQuery.tableDnD.currentTable = table;
+
+			jQuery.tableDnD.mouseOffset = jQuery.tableDnD.getMouseOffset(this, ev);
+			
+			//jQuery.tableDnD.deltaY = 0;
+
+			if (config.onDragStart) {
+				// Call the onDrop method if there is one
+				config.onDragStart(table, allRows);
+			}
+			return false;
+		});
+		
 	},
 
 	updateTables : function() {
@@ -306,17 +327,24 @@ jQuery.tableDnD = {
 	 * Get the mouse coordinates from the event (allowing for browser
 	 * differences)
 	 */
+
 	mouseCoords : function(ev) {
+		var coords= null;
+		
 		if (ev.pageX || ev.pageY) {
-			return {
+			coords = {
 				x : ev.pageX,
 				y : ev.pageY
 			};
 		}
-		return {
-			x : ev.clientX + document.body.scrollLeft - document.body.clientLeft,
-			y : ev.clientY + document.body.scrollTop - document.body.clientTop
-		};
+		else{
+			coords = {
+				x : ev.clientX + document.body.scrollLeft - document.body.clientLeft,
+				y : ev.clientY + document.body.scrollTop - document.body.clientTop
+			};
+		}
+
+		return coords;
 	},
 
 	/**
@@ -435,21 +463,53 @@ jQuery.tableDnD = {
 
 		return false;
 	},
+	
+	/*
+	 *  experimental. deactivated because non functional yet.
+	 *  
+	 *  TODO : search for 'deltaY'-related code elsewhere and uncomment it
+	 *  the day we try again
+	 *  
+	 */ 
+	handleMousewheel : function(ev){
+		
+		var dnd = jQuery.tableDnD;
+		
+		if (dnd.dragObject === null || dnd.currentTable === null) {
+			return;
+		}
+		
+		var delta = (ev.originalEvent.deltaY) ? ev.originalEvent.deltaY : (- ev.originalEvent.wheelDelta); 
+		dnd.deltaY += delta;
+		var y = dnd.mouseCoords(ev.originalEvent).y;
+		var draggedRows = jQuery(dnd.dragObject);
+	
+		var insertRows = dnd.findDropTargetRow(draggedRows, y);
+
+		if (insertRows) {
+			draggedRows.insertBefore(insertRows);		
+		}
+		
+		
+	},
 
 	/**
 	 * We're only worried about the y position really, because we can only move
 	 * rows up and down
 	 */
 	findDropTargetRow : function(draggedRow, y) {
+		
 		var rows = jQuery.tableDnD.currentTable.rows;
 		for ( var i = 0; i < rows.length; i++) {
 			var row = rows[i];
-			var rowY = this.getPosition(row).y;
+			
+			var rowY = this.getPosition(row).y /*- jQuery.tableDnD.deltaY*/; 			
 			var rowHeight = parseInt(row.offsetHeight,10) / 2;
 			if (!row.offsetHeight) {
-				rowY = this.getPosition(row.firstChild).y;
+				rowY = this.getPosition(row.firstChild).y /*- jQuery.tableDnD.deltaY*/; 
 				rowHeight = parseInt(row.firstChild.offsetHeight,10) / 2;
 			}
+			
 			// Because we always have to insert before, we need to offset the
 			// height a bit
 			if ((y > rowY - rowHeight) && (y < (rowY + rowHeight))) {
@@ -458,6 +518,7 @@ jQuery.tableDnD = {
 				if (row == draggedRow) {
 					return null;
 				}
+				
 				var config = jQuery.tableDnD.currentTable.tableDnDConfig;
 				if (config.onAllowDrop) {
 					if (config.onAllowDrop(draggedRow, row)) {

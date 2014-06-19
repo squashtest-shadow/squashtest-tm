@@ -327,6 +327,8 @@ define(["jquery",
 	/**
 	 * Enables DnD on the given table.
 	 * 
+	 * As of TM 1.10.0, needs to be called once, at table creation time. Not anymore at each table content refresh. 
+	 * 
 	 * Note : we calculate the 'offset' because the first displayed element is not necessarily the first item of the
 	 * table. For instance, if we are displaying page 3 and drop our rows at the top of the table view, the drop index
 	 * is not 0 but (3*pagesize);
@@ -1328,6 +1330,9 @@ define(["jquery",
 			
 		this.squashSettings = squashEffective;
 		
+		// ---------- table drag and drop, if the configuration states there is ---------
+		
+		_enableTableDragAndDrop.call(this);
 		
 		// ---------- serverparams (1) : a good time to save the table selection --------
 		
@@ -1364,7 +1369,6 @@ define(["jquery",
 		aDrawCallbacks.push(_configureButtons);
 		aDrawCallbacks.push(_configureDeleteButtons);
 		aDrawCallbacks.push(_configureLinks);
-		aDrawCallbacks.push(_enableTableDragAndDrop);
 		aDrawCallbacks.push(_restoreTableSelection);
 		aDrawCallbacks.push(_applyFilteredStyle);
 		aDrawCallbacks.push(_configureTooltips);
