@@ -40,15 +40,10 @@ import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 @DynamicDao(entity = DenormalizedFieldValue.class, hasCustomImplementation = false)
 public interface DenormalizedFieldValueDao {
 
-	/**
-	 * 'nuff said.
-	 * 
-	 * @param newValue
-	 */
 	void persist(DenormalizedFieldValue newValue);
 
 	DenormalizedFieldValue findById(long denormalizedFieldHolderId);
-	
+
 	/**
 	 * Delete all the denormalized field values related to a DenormalizedFieldHolder, identified by its id and
 	 * DenormalizedFieldHolderType
@@ -83,15 +78,16 @@ public interface DenormalizedFieldValueDao {
 			@QueryParam("entityId") long denormalizedFieldHolderId,
 			@QueryParam("entityType") DenormalizedFieldHolderType denormalizedFieldHolderType,
 			@QueryParam("renderingLocation") RenderingLocation renderingLocation);
-	
-	
+
+
 	List<DenormalizedFieldValue> findDFVForEntities(@QueryParam("entityType") DenormalizedFieldHolderType type, @QueryParam("entityIds") Collection<Long> entities);
-	
+
 
 	List<DenormalizedFieldValue> findDFVForEntitiesAndLocations(
-								@QueryParam("entityType") DenormalizedFieldHolderType denormalizedFieldHolderType,
-								@QueryParam("entityIds") Collection<Long> entities, 
-								@QueryParam("locations") Collection<RenderingLocation> locations);
+			@QueryParam("entityType") DenormalizedFieldHolderType denormalizedFieldHolderType,
+			@QueryParam("entityIds") Collection<Long> entities,
+			@QueryParam("locations") Collection<RenderingLocation> locations);
 
+	public long countDenormalizedFields(@QueryParam("entityId") long entityId, @QueryParam("entityType") DenormalizedFieldHolderType entityType);
 
 }

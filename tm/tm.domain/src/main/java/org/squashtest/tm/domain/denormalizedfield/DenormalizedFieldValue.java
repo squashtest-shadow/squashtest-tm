@@ -61,7 +61,8 @@ import org.squashtest.tm.domain.customfield.RenderingLocation;
 		@NamedQuery(name = "DenormalizedFieldValue.findDFVForEntity", query = "from DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId = :entityId and dfv.denormalizedFieldHolderType = :entityType order by dfv.position"),
 		@NamedQuery(name = "DenormalizedFieldValue.findDFVForEntityAndRenderingLocation", query = "select dfv from DenormalizedFieldValue dfv join dfv.renderingLocations rl where dfv.denormalizedFieldHolderId = :entityId and dfv.denormalizedFieldHolderType = :entityType and rl = :renderingLocation order by dfv.position"),
 		@NamedQuery(name = "DenormalizedFieldValue.findDFVForEntities", query = "select dfv from DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId in (:entityIds) and dfv.denormalizedFieldHolderType = :entityType order by dfv.position"),
-		@NamedQuery(name = "DenormalizedFieldValue.findDFVForEntitiesAndLocations", query = "select dfv from DenormalizedFieldValue dfv join dfv.renderingLocations rl where dfv.denormalizedFieldHolderId in (:entityIds) and dfv.denormalizedFieldHolderType = :entityType and rl in (:locations) order by dfv.position") 
+		@NamedQuery(name = "DenormalizedFieldValue.findDFVForEntitiesAndLocations", query = "select dfv from DenormalizedFieldValue dfv join dfv.renderingLocations rl where dfv.denormalizedFieldHolderId in (:entityIds) and dfv.denormalizedFieldHolderType = :entityType and rl in (:locations) order by dfv.position"),
+		@NamedQuery(name = "DenormalizedFieldValue.countDenormalizedFields", query = "select count(dfv) from DenormalizedFieldValue dfv where dfv.denormalizedFieldHolderId = ?1 and dfv.denormalizedFieldHolderType = ?2")
 		})
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)

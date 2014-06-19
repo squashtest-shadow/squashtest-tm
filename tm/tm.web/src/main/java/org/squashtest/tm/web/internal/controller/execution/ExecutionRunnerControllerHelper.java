@@ -72,7 +72,7 @@ public class ExecutionRunnerControllerHelper {
 	private TestSuiteExecutionProcessingService testSuiteExecutionProcessingService;
 
 	@Inject
-	private ServiceAwareAttachmentTableModelHelper attachmentHelper;	
+	private ServiceAwareAttachmentTableModelHelper attachmentHelper;
 
 	@Inject
 	private MessageSource messageSource;
@@ -82,7 +82,7 @@ public class ExecutionRunnerControllerHelper {
 
 	@Inject
 	private CustomFieldValueFinderService customFieldValueFinderService;
-	
+
 	private ExecutionStep findStepAtIndex(long executionId, int stepIndex) {
 
 		int stepCount = executionProcessingService.findTotalNumberSteps(executionId);
@@ -116,7 +116,7 @@ public class ExecutionRunnerControllerHelper {
 		List<DenormalizedFieldValue> denormalizedFieldValues = Collections.emptyList();
 		List<CustomFieldValue> customFieldValues = Collections.emptyList();
 		Set<Attachment> attachments = Collections.emptySet();
-		
+
 		//TODO : check why we could want to process that page while part of the model is null (it should fail earlier when the DB cannot find this step)
 		if (executionStep != null) {
 			stepOrder = executionStep.getExecutionStepOrder();
@@ -135,7 +135,7 @@ public class ExecutionRunnerControllerHelper {
 		model.addAttribute("allowsUntestable", execution.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
 		model.addAttribute("allowsSettled", execution.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
 
-		
+
 		addCurrentStepUrl(execution.getId(), model);
 	}
 
@@ -162,7 +162,7 @@ public class ExecutionRunnerControllerHelper {
 		populatePopupMessages(state, locale);
 		populatePrologueStatus(executionId, state);
 		populateEntitiesInfos(executionId, state, contextPath);
-				
+
 		return state;
 	}
 
@@ -227,10 +227,10 @@ public class ExecutionRunnerControllerHelper {
 		state.setCurrentStepIndex(stepOrder); // +1 here : the interface uses 1-based counter
 		state.setCurrentStepStatus(step.getExecutionStatus());
 
-		CampaignLibrary lib = step.getProject().getCampaignLibrary();		
+		CampaignLibrary lib = step.getProject().getCampaignLibrary();
 		state.setAllowsSettled(lib.allowsStatus(ExecutionStatus.SETTLED));
 		state.setAllowsUntestable(lib.allowsStatus(ExecutionStatus.UNTESTABLE));
-		
+
 	}
 
 	private void populatePopupMessages(RunnerState state, Locale locale) {
@@ -260,6 +260,8 @@ public class ExecutionRunnerControllerHelper {
 	public void populateExecutionPreview(long executionId, boolean optimized, RunnerState runnerState, Model model) {
 		Execution execution = executionProcessingService.findExecution(executionId);
 		int totalSteps = executionProcessingService.findTotalNumberSteps(executionId);
+		boolean hasCustomFields = customFieldValueFinderService.hasCustomFields(execution);
+		boolean hasDenormFields = denormalizedFieldValueFinder.hasDenormalizedFields(execution);
 
 		runnerState.setOptimized(optimized);
 		runnerState.setPrologue(true);
@@ -268,6 +270,8 @@ public class ExecutionRunnerControllerHelper {
 		model.addAttribute("config", runnerState);
 		model.addAttribute("totalSteps", totalSteps);
 		model.addAttribute("attachments", attachmentHelper.findAttachments(execution));
+		model.addAttribute("hasCustomFields", hasCustomFields);
+		model.addAttribute("hasDenormFields", hasDenormFields);
 
 	}
 

@@ -358,7 +358,6 @@
 			</script>
 
 			<div id="execute-header">
-				<%--  I know, table as a layout. But damn. --%>
 				<table width="100%">
 					<tr>
 						<td class="centered"><button id="execute-stop-button">

@@ -52,6 +52,19 @@ public class HibernateDenormalizedFieldValueDaoIT  extends DbunitDaoSpecificatio
 	}
 	
 	@DataSet("HibernateDenormalizedFieldValueDaoIT.dfvs.xml")
+	def "should count all dfv for entity"(){
+		given: 
+		def entityId = 500L
+		def entityType = DenormalizedFieldHolderType.EXECUTION
+		
+		when : 
+		def result = dfvDao.countDenormalizedFields(entityId, entityType)
+		
+		then : 
+		result == 2
+	}
+
+		@DataSet("HibernateDenormalizedFieldValueDaoIT.dfvs.xml")
 	def "should find all dfv for entity and renderingLocation"(){
 		given:
 		def entityId = 6001L

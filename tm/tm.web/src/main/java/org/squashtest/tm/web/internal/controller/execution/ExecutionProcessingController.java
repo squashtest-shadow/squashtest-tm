@@ -37,20 +37,14 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
+import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.model.json.JsonStepInfo;
 
 @Controller
 @RequestMapping("/execute/{executionId}")
 public class ExecutionProcessingController {
-
-	/**
-	 * 
-	 */
 	private static final String OPTIMIZED = "optimized";
-	/**
-	 * Accept HTML header
-	 */
-	private static final String ACCEPT_HTML_HEADER = "Accept=text/html";
+	private static final String ACCEPT_HTML_HEADER = AcceptHeaders.CONTENT_HTTP;
 	/**
 	 * Step partial URL
 	 */
@@ -63,7 +57,7 @@ public class ExecutionProcessingController {
 
 	@Inject
 	private ExecutionProcessingService executionProcService;
-	
+
 
 
 	private void addCurrentStepUrl(long executionId, Model model) {
@@ -81,7 +75,7 @@ public class ExecutionProcessingController {
 	// ************************** getters for the main execution fragments **************************************
 
 	@RequestMapping(method = RequestMethod.GET, params = OPTIMIZED)
-	public String executeFirstRunnableStep(@PathVariable("executionId") long executionId,
+	public String executeFirstRunnableStep(@PathVariable long executionId,
 			@RequestParam(OPTIMIZED) boolean optimized, Model model) {
 
 		if (executionProcService.wasNeverRun(executionId)) {
@@ -94,7 +88,7 @@ public class ExecutionProcessingController {
 	}
 
 	@RequestMapping(value = "/step/prologue", method = RequestMethod.GET, params = OPTIMIZED)
-	public String getExecutionPrologue(@PathVariable("executionId") long executionId,
+	public String getExecutionPrologue(@PathVariable  long executionId,
 			@RequestParam(OPTIMIZED) boolean optimized, Model model) {
 
 		addCurrentStepUrl(executionId, model);
@@ -155,25 +149,23 @@ public class ExecutionProcessingController {
 		ExecutionStep executionStep = executionProcService.findStepAt(executionId, stepIndex);
 
 		return new JsonStepInfo(
-			executionStep.getLastExecutedOn(),
-			executionStep.getLastExecutedBy()
-		);
+				executionStep.getLastExecutedOn(),
+				executionStep.getLastExecutedBy()
+				);
 
 	}
 
 	@RequestMapping(value = "/step/{stepId}", method = RequestMethod.POST, params = { "id=execution-comment", VALUE })
 	@ResponseBody
-	public String updateComment(@RequestParam(VALUE) String newComment, @PathVariable("stepId") Long stepId) {
+	public String updateComment(@RequestParam(VALUE) String newComment, @PathVariable long stepId) {
 		executionProcService.setExecutionStepComment(stepId, newComment);
-		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace("ExecutionStep " + stepId.toString() + ": updated comment to " + newComment);
-		}
+		LOGGER.trace("ExecutionStep {}: updated comment to {}", stepId,  newComment);
 		return newComment;
 	}
 
 	@RequestMapping(value = "/step/{stepId}", method = RequestMethod.POST, params = "executionStatus")
 	@ResponseBody
-	public void updateExecutionMode(@RequestParam String executionStatus, @PathVariable("stepId") long stepId) {
+	public void updateExecutionMode(@RequestParam String executionStatus, @PathVariable long stepId) {
 		ExecutionStatus status = ExecutionStatus.valueOf(executionStatus);
 		executionProcService.changeExecutionStepStatus(stepId, status);
 	}

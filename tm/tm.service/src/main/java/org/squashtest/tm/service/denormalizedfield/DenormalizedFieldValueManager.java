@@ -44,7 +44,7 @@ public interface DenormalizedFieldValueManager {
 	 * @return a list of {@link DenormalizedFieldValue} ordered by position asc.
 	 */
 	List<DenormalizedFieldValue> findAllForEntity(DenormalizedFieldHolder denormalizedFieldHolder);
-	
+
 	/**
 	 * Will return all {@link DenormalizedFieldValue} attached to the given {@link DenormalizedFieldHolder} and having the given {@link RenderingLocation}, ordered by dfv.position asc.
 	 * 
@@ -53,11 +53,11 @@ public interface DenormalizedFieldValueManager {
 	 * @return
 	 */
 	List<DenormalizedFieldValue> findAllForEntityAndRenderingLocation(DenormalizedFieldHolder denormalizedFieldHolder, RenderingLocation renderingLocation);
-	
-	
+
+
 	/**
-	 * Will return all the {@link DenormalizedFieldValue} for all the supplied {@link DenormalizedFieldHolder}. If the collection of 
-	 * locations is null, then the result won't be filtered by location. If it is non null, then only the denormalized field values 
+	 * Will return all the {@link DenormalizedFieldValue} for all the supplied {@link DenormalizedFieldHolder}. If the collection of
+	 * locations is null, then the result won't be filtered by location. If it is non null, then only the denormalized field values
 	 * displayed in at least one of those locations wil be returned.
 	 * 
 	 * @param entities
@@ -65,9 +65,18 @@ public interface DenormalizedFieldValueManager {
 	 * @return
 	 */
 	List<DenormalizedFieldValue> findAllForEntities(Collection<DenormalizedFieldHolder> entities, Collection<RenderingLocation> nullOrlocations);
-	
-	
+
+
 	List<DenormalizedFieldValue> findAllForEntity(Long id, DenormalizedFieldHolderType entityType);
 
 	void changeValue(long id, String value);
+	/**
+	 * Tells whether the given bound entity has denormalized fields or not.
+	 * 
+	 * 
+	 * @param entity
+	 * @return
+	 */
+	boolean hasDenormalizedFields(DenormalizedFieldHolder entity);
+
 }

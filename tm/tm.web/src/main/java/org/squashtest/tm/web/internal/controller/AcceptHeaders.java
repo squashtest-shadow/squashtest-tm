@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller;
 
+import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.http.RequestHeaders;
 
 /**
@@ -30,10 +31,12 @@ public final class AcceptHeaders {
 	private AcceptHeaders() {
 		super();
 	}
-	
+
 	/**
 	 * clients either accepts application/json or text/javascript content type
 	 */
 	public static final String CONTENT_JSON = RequestHeaders.ACCEPT + "=application/json, text/javascript";
+	public static final String CONTENT_HTTP = RequestHeaders.ACCEPT + '=' + ContentTypes.TEXT_HTML;
+
 }
 

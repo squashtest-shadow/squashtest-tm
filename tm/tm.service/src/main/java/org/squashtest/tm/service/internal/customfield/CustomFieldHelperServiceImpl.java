@@ -54,8 +54,8 @@ public class CustomFieldHelperServiceImpl implements CustomFieldHelperService {
 
 	@Inject
 	private CustomFieldValueManagerService cufValuesService;
-	
-	@Inject 
+
+	@Inject
 	private DenormalizedFieldValueManager denormalizedFinder;
 
 	/*
@@ -95,7 +95,7 @@ public class CustomFieldHelperServiceImpl implements CustomFieldHelperService {
 		helper.setCufValuesService(cufValuesService);
 		return helper;
 	}
-	
+
 	@Override
 	public <X extends DenormalizedFieldHolder> DenormalizedFieldHelper<X> newDenormalizedHelper(X entity) {
 		DenormalizedFieldHelper<X> helper = new DenormalizedFieldHelper<X>(entity);
@@ -131,5 +131,6 @@ public class CustomFieldHelperServiceImpl implements CustomFieldHelperService {
 
 		return helper;
 	}
+
 
 }
