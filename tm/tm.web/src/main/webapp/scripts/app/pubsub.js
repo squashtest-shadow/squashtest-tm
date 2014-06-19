@@ -38,7 +38,7 @@ define([ "jquery" ], function($) {
 
 	window.publish = function() {
 		proxy.trigger.apply(proxy, arguments);
-		if (handledEvents.indexOf(arguments[0]) < 0) {
+		if ($.inArray(arguments[0],handledEvents)<0) {
 			// when event is triggered before subscription, we enqueue it so that it can be processed later
 			document.eventsQueue.push(arguments);
 		}
@@ -48,6 +48,7 @@ define([ "jquery" ], function($) {
 		proxy.on.apply(proxy, arguments);
 
 		$(document.eventsQueue).each(function(index) {
+			console.log("is "+this[0]+" = to "+event+ "?");
 			if (this[0] === event) {
 				proxy.trigger.apply(proxy, this);
 				document.eventsQueue.splice(index, 1);
