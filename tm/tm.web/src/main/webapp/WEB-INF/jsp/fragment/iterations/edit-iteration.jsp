@@ -104,6 +104,7 @@
 	<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 
+<f:message key="tabs.label.issues" var="tabIssueLabel"/>
 <script type="text/javascript">
 	squashtm = squashtm || {};
 	squashtm.page = squashtm.page || {};
@@ -339,7 +340,6 @@
 	<%------------------------------------------/automated suite overview --------------------------------------------%>
 	
 
- <f:message key="tabs.label.issues" var="tabIssueLabel"/>
 <script type="text/javascript">
 	publish("reload.iteration");
 	if (!squashtm.page.isFullPage) {
