@@ -971,6 +971,28 @@
                   </resources>
                 </configuration>
               </execution>
+
+              <execution>
+                <id>copy-raw-scripts</id>
+                <phase>process-resources</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>scripts</outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>src/main/webapp/scripts</directory>
+                      <filtering>true</filtering>
+                    </resource>
+                  </resources>
+                  <nonFilteredFileExtensions>
+                    <nonFilteredFileExtension>ico</nonFilteredFileExtension>
+                    <nonFilteredFileExtension>zip</nonFilteredFileExtension>
+                  </nonFilteredFileExtensions>
+                </configuration>
+              </execution>
+              
             </executions>
           </plugin>
         </plugins>

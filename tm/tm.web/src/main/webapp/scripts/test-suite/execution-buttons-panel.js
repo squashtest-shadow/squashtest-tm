@@ -106,14 +106,14 @@ define(["jquery", "../app/pubsub", "jquery.squash.buttonmenu"], function($, ps) 
 					console.log("confirmDialog");
 					$.ajax({
 						type : 'delete',
-						url : "${ deleteOnRestartUrl }"
+						url : $("#test-suite-execution-button").data("execs-url")
 					})
 					.then(function(){
 						return checkTestSuiteExecutionDoable();
 					})
 					.done(function(){
-						restartDialog.confirmDialog('close');
-						var mode = restartDialog.data('restart-mode');
+						$restartDialog.confirmDialog('close');
+						var mode = $restartDialog.data('restart-mode');
 						if (mode === 'classic'){
 							classicExecution();
 						} else {

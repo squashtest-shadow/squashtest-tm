@@ -45,7 +45,7 @@
 </c:if>
 
 
-<div id="test-suite-execution-button" class="btn-group" data-runner-url="${ runnerUrl }">
+<div id="test-suite-execution-button" class="btn-group" data-runner-url="${ runnerUrl }" data-execs-url="${ deleteOnRestartUrl }">
 
 	<c:if test="${ statisticsEntity.status == 'RUNNING' || statisticsEntity.status == 'READY'}">
 		<input type="button" id="start-resume-button" class="sq-btn run-menu" value="${startResumeLabel}"/>		
