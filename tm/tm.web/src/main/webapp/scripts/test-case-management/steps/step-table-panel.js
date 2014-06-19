@@ -19,26 +19,26 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
- * The initialization module takes settings, as you expect. Here is what the 
+ * The initialization module takes settings, as you expect. Here is what the
  * configuration object looks like :
- * 
+ *
  * {
- * 
- * 
+ *
+ *
  *  basic : {
  *      testCaseId : the id of the test case,
  *      projectId : the id of the project this test case belongs to
  *      rootContext : the root url
  *      testCaseUrl : the baseTestCaseUrl
  *  },
- * 
- * 
+ *
+ *
  *  permissions : {
  *      isWritable : says whether the table content or structure can be modified by the user
  *      isLinkable : says whether the access to the requirement/test-step association page is accessible
- *      isAttachable : says if you can attach attachments to the steps 
+ *      isAttachable : says if you can attach attachments to the steps
  *  },
- * 
+ *
  *  language : {
  *      errorTitle : the title of the error popup
  *      noStepSelected : the message when no steps where selected although some were needed
@@ -49,7 +49,7 @@
  *      infoTitle : the title for the popup that says close your widgets in edit mode
  *      popupMessage : the content of that popup
  *      btnExpand : the label of the expand button
- *      btnCollapse : the label of the collapse button  
+ *      btnCollapse : the label of the collapse button
  *      addStepTitle : title for the add step popup
  *      addStep : label for the add step button
  *      addAnotherStep :  label for the add another step button
@@ -57,17 +57,17 @@
  *      placeholder : the placeholder title
  *      submit : the submit button value
  *  }
- * 
+ *
  * }
- * 
- * 
- * 
+ *
+ *
+ *
  */
 
-define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "squash.translator", "workspace.event-bus", 
+define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "squash.translator", "workspace.event-bus",
          "./popups", 'workspace.storage', "jquery.squash.formdialog", "squashtable" ], function($, TableCollapser,
 		cufValuesManager, translator, eventBus, popups, storage) {
- 
+
 	// ************************* configuration functions
 	// ************************************
 
@@ -129,17 +129,17 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		var id = $(".test-steps-table")[0].id;
 		storage.set( 'DataTables_'+window.location.pathname+"_"+id, oData );
 	}
-		
+
 	function load_dt_view (oSettings, testCaseId) {
 		var id = $(".test-steps-table")[0].id;
 		return storage.get('DataTables_'+window.location.pathname+"_"+id);
 	}
-		
+
 	function reset_dt_view(testCaseId) {
 		var id = $(".test-steps-table")[0].id;
 		storage.remove('DataTables_'+window.location.pathname+"_"+id);
 	}
-		
+
 	function stepsTableDrawCallback() {
 
 		// rework the td css classes to inhibit some post processing on
@@ -179,7 +179,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		// permissions, one have to tune the css classes of some
 		// columns.
 		var editActionClass = "", editResultClass = "", deleteClass = "", dragClass = "", linkButtonClass = "", attachButtonClass = "";
-		
+
 		if (permissions.isWritable) {
 			editActionClass = "rich-edit-action";
 			editResultClass = "rich-edit-result";
@@ -195,7 +195,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 		var id = $(".test-steps-table")[0].id;
 		var savedData = storage.get('DataTables_'+window.location.pathname+"_"+id);
-				 
+
 		// create the settings
 		var datatableSettings = {
 			aaData : settings.basic.tableData,
@@ -285,7 +285,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 		var cookieName = "testcase-tab-cookie";
 		var cookie = $.cookie(cookieName);
-		
+
 		if(!!savedData & !!cookie){
 			datatableSettings.aaSorting = savedData.aaSorting;
 			datatableSettings.abVisCols = savedData.abVisCols;
@@ -299,7 +299,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		} else {
 			storage.remove('DataTables_'+window.location.pathname+"_"+id);
 		}
-		
+
 		// decorate the settings with the cuf values support
 		datatableSettings = cufTableHandler.decorateTableSettings(datatableSettings, settings.basic.cufDefinitions,
 				cufColumnPosition, permissions.isWritable);
@@ -376,7 +376,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 				richEditables : {
 					'rich-edit-action' : urls.editActionUrl,
-					'rich-edit-result' : urls.editResultUrl					
+					'rich-edit-result' : urls.editResultUrl
 				},
 
 				functions : {
@@ -395,44 +395,15 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		}
 
 		$("#test-steps-table-"+urls.testCaseId).squashTable(datatableSettings, squashSettings);
-		
-		/*
-		 * 
-		* Commenting out the 'refresh' just below, that was added for enh. 2627. 
-		* It didn't work anyway.
-		* 
-		* Refreshing the table while it had defer loading would trigger a double 
-		* registration of drawCallback handlers (leading to bugs).
-		* 
-		* The requirement of 2627 says that the test case table needs to "remember" 
-		* the paging/sorting preference, saved for each test case.
-		* 
-		*  In technical terms this mean we need to modify test-case-steps.html. 
-		*  test-case-steps.html is an html template that represents the whole test steps tab
-		*  of a test case. It is loaded on demand via xhr and comes with a pre-populated 
-		*  step table (and iDeferLoading activated). 
-		*  
-		*  However the content of that table  is not paged/sorted.   
-		*  So to fulfill 2627 we need to do one of the following :
-		*  
-		*	1/ no prepopulation of the table and remove the iDeferLoading. The table would 
-		*	then be loaded normally with the paging / sorting, and we would not either 
-		*	face double callbacks initialization. 
-		*	For the sake of performance, it would be appreciated if 
-		*	the table content was loaded only when requested and that no extra request is 
-		*	needed for the content of test-case-steps.html (ie inline it in the main
-		*	edit-test-case.jsp) 
-		*	
-		*	2/ the table is prepopulated with pre-sorted / paged content. This would require that  
-		*	the URL of test-case-steps.html accepts additional parameters for that purpose.
-		*/
+
+		// Commenting out the 'refresh' just below, see https://ci.squashtest.org/mantis/view.php?id=2627#c4959
 		//$("#test-steps-table-"+urls.testCaseId).squashTable().refresh();
 	}
 
 	// ************************************ toolbar utility functions
 	// *************************
 
-	
+
 	// *************************** add step popup
 	// ***************************
 
@@ -470,7 +441,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 	function initAddTestStepDialog(language, urls) {
 
-		
+
 		function postStep(data) {
 			return $.ajax({
 				url : urls.addStep,
@@ -542,7 +513,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 		var table = $("#test-steps-table-"+urls.testCaseId).squashTable();
 
-		
+
 		$("#copy-step").bind("click", function() {
 			var stepIds = table.getSelectedIds();
 			if (!stepIds.length) {
@@ -611,7 +582,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 			}
 		}
 	}
-	
+
 	function pasteSuccess (pastedCallSteps){
 		if(pastedCallSteps){
 			eventBus.trigger("testStepsTable.pastedCallSteps");
@@ -622,18 +593,18 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 	function initDeleteAllStepsButtons(language, urls) {
 
-	
+
 		$("#delete-all-steps-button").bind(
 				'click',function(){
 					$("#delete-test-step-dialog").formDialog('open');
 				});
 	}
-	
-	
-	
+
+
+
 	function initCallStepButton(urls) {
 
-	
+
 		$("#add-call-step-button").click(function() {
 			var url = document.URL;
 			$.cookie("call-step-manager-referer", url, {
@@ -697,7 +668,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 	function initCollapser(language, urls, isWritable, testCaseId) {
 
-	
+
 		var collapser;
 
 		var collapseButton = $("#collapse-steps-button");
@@ -765,14 +736,14 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 	function init(settings) {
 		$.squash.decorateButtons();
-		
+
 		var language = settings.language;
 		var urls = makeTableUrls(settings);
 		var permissions = settings.permissions;
 
 		// the js table
 		initTable(settings);
-		
+
 		//the popups
 		var conf = {};
 		conf.permissions = {};
@@ -782,7 +753,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		conf.testCaseId = settings.basic.testCaseId;
 		conf.stepsTablePanel = this;
 		popups.init(conf);
-		
+
 		// toolbar
 		if (permissions.isWritable) {
 			initTableToolbar(language, urls);
@@ -790,7 +761,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 		// table collapser
 		initCollapser(language, urls, permissions.isWritable,  settings.basic.testCaseId);
-		
+
 
 	}
 
