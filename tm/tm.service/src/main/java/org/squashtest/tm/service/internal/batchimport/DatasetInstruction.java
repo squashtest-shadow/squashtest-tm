@@ -46,7 +46,7 @@ public class DatasetInstruction extends Instruction<DatasetTarget> {
 	@Override
 	protected LogTrain executeUpdate(Facility facility) {
 		ParameterTarget parameterTarget = new ParameterTarget();
-		parameterTarget.setPath(datasetValue.getParameterOwnerPath());
+		setParameterOwnerPath(parameterTarget);
 		parameterTarget.setName(datasetValue.getParameterName());
 
 		return facility.failsafeUpdateParameterValue(getTarget(), parameterTarget, datasetValue.getValue(), true);
@@ -66,10 +66,19 @@ public class DatasetInstruction extends Instruction<DatasetTarget> {
 	@Override
 	protected LogTrain executeCreate(Facility facility) {
 		ParameterTarget parameterTarget = new ParameterTarget();
-		parameterTarget.setPath(datasetValue.getParameterOwnerPath());
+		setParameterOwnerPath(parameterTarget);
 		parameterTarget.setName(datasetValue.getParameterName());
 
 		return facility.failsafeUpdateParameterValue(getTarget(), parameterTarget, datasetValue.getValue(), false);
+	}
+
+
+	private void setParameterOwnerPath(ParameterTarget parameterTarget) {
+		String parameterOwnerPath = datasetValue.getParameterOwnerPath();
+		if(parameterOwnerPath == null){
+			parameterOwnerPath = getTarget().getTestCase().getPath();
+		}
+		parameterTarget.setPath(parameterOwnerPath);
 	}
 
 
