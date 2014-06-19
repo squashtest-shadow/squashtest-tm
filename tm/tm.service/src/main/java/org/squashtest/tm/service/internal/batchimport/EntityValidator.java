@@ -204,22 +204,33 @@ class EntityValidator {
 	}
 
 	LogTrain basicParameterChecks(ParameterTarget target) {
+		String[] fieldPathErrorArgs = new String[] { "TC_OWNER_PATH" }; // that variable is simple convenience for
+		// logging
+		return basicParameterChecks(target, fieldPathErrorArgs, Messages.ERROR_PARAMETER_OWNER_NOT_FOUND);
+	}
+	public LogTrain basicParameterValueChecks(ParameterTarget target) {
 
+		String[] fieldPathErrorArgs = new String[] { "TC_PARAMETER_OWNER_PATH" }; // that variable is simple convenience for
+		// logging
+		return basicParameterChecks(target, fieldPathErrorArgs, Messages.ERROR_DATASET_PARAM_OWNER_NOT_FOUND);
+
+	}
+
+	private LogTrain basicParameterChecks(ParameterTarget target, String[] fieldPathErrorArgs, String ownerNotFoundMessage) {
 		LogTrain logs = new LogTrain();
 		String[] fieldNameErrorArgs = new String[] { "TC_PARAM_NAME" }; // that variable is simple convenience for
 		// logging
-
 		TestCaseTarget testCase = target.getOwner();
 
 		// 1 - test case owner path must be supplied and and well formed
 		if (!testCase.isWellFormed()) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MALFORMED_PATH));
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MALFORMED_PATH, fieldPathErrorArgs));
 		}
 
 		// 2 - the test case must exist
 		TargetStatus tcStatus = getModel().getStatus(testCase);
 		if (tcStatus.status == TO_BE_DELETED || tcStatus.status == NOT_EXISTS) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PARAMETER_OWNER_NOT_FOUND));
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE,ownerNotFoundMessage ));
 		}
 
 		// 3 - the project actually exists
@@ -252,9 +263,7 @@ class EntityValidator {
 		}
 
 		return logs;
-
 	}
-
 	LogTrain basicDatasetCheck(DatasetTarget target) {
 
 		LogTrain logs = new LogTrain();
@@ -295,5 +304,7 @@ class EntityValidator {
 		return logs;
 
 	}
+
+
 
 }

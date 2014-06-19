@@ -507,7 +507,7 @@ public class ValidationFacility implements Facility, ModelProvider {
 		logs = entityValidator.basicDatasetCheck(dataset);
 
 		// 2 - is the parameter correctly identified ?
-		logs.append(entityValidator.basicParameterChecks(param));
+		logs.append(entityValidator.basicParameterValueChecks(param));
 
 		// in this context specifically we set the target explicitly as being the dataset, not the parameter
 		// (or the logs will be reported at the wrong place)
