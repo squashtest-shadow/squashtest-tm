@@ -48,7 +48,6 @@ define([ "jquery" ], function($) {
 		proxy.on.apply(proxy, arguments);
 
 		$(document.eventsQueue).each(function(index) {
-			console.log("is "+this[0]+" = to "+event+ "?");
 			if (this[0] === event) {
 				proxy.trigger.apply(proxy, this);
 				document.eventsQueue.splice(index, 1);
