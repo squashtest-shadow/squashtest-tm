@@ -19,26 +19,26 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.service.internal.batchimport;
+package org.squashtest.tm.service.internal.batchimport
 
-import org.junit.Test;
-import org.squashtest.tm.domain.testcase.Parameter;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.service.importer.ImportMode;
-import org.squashtest.tm.service.importer.ImportStatus;
-import org.squashtest.tm.service.internal.batchimport.DatasetInstruction;
-import org.squashtest.tm.service.internal.batchimport.DatasetTarget;
-import org.squashtest.tm.service.internal.batchimport.DatasetValue;
-import org.squashtest.tm.service.internal.batchimport.Facility;
-import org.squashtest.tm.service.internal.batchimport.LogTrain;
-import org.squashtest.tm.service.internal.batchimport.ParameterInstruction;
-import org.squashtest.tm.service.internal.batchimport.ParameterTarget;
-import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
-import org.squashtest.tm.service.internal.batchimport.TestCaseTarget;
-import org.squashtest.tm.service.internal.batchimport.excel.ImportModeCellCoercer;
+import org.junit.Test
+import org.squashtest.tm.domain.testcase.Parameter
+import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.service.importer.ImportMode
+import org.squashtest.tm.service.importer.ImportStatus
+import org.squashtest.tm.service.internal.batchimport.DatasetInstruction
+import org.squashtest.tm.service.internal.batchimport.DatasetTarget
+import org.squashtest.tm.service.internal.batchimport.DatasetValue
+import org.squashtest.tm.service.internal.batchimport.Facility
+import org.squashtest.tm.service.internal.batchimport.LogTrain
+import org.squashtest.tm.service.internal.batchimport.ParameterInstruction
+import org.squashtest.tm.service.internal.batchimport.ParameterTarget
+import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction
+import org.squashtest.tm.service.internal.batchimport.TestCaseTarget
+import org.squashtest.tm.service.internal.batchimport.excel.ImportModeCellCoercer
 
-import spock.lang.Specification;
-import spock.lang.Unroll;
+import spock.lang.Specification
+import spock.lang.Unroll
 
 /**
  * @author Gregory Fouquet
@@ -47,11 +47,15 @@ import spock.lang.Unroll;
 class DatasetInstructionTest extends Specification {
 	DatasetTarget target = Mock()
 	DatasetValue datasetValue = Mock()
+
 	DatasetInstruction instruction = new DatasetInstruction(target, datasetValue)
 	Facility f = Mock()
 
 	def "should create test case"() {
 		given:
+		TestCaseTarget tcTarget = Mock()
+		target.getTestCase() >> tcTarget
+		tcTarget.getPath() >> ""
 		instruction.mode = ImportMode.CREATE
 
 		when:
@@ -64,6 +68,9 @@ class DatasetInstructionTest extends Specification {
 	@Unroll
 	def "should update test case using mode #mode"() {
 		given:
+		TestCaseTarget tcTarget = Mock()
+		target.getTestCase() >> tcTarget
+		tcTarget.getPath() >> ""
 		instruction.mode = mode
 
 		when:
@@ -89,7 +96,7 @@ class DatasetInstructionTest extends Specification {
 
 	def "should not execute"() {
 		given:
-		instruction.addLogEntry(ImportStatus.FAILURE, "", null);
+		instruction.addLogEntry(ImportStatus.FAILURE, "", null)
 
 		when:
 		def lt = instruction.execute(f)
