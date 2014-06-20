@@ -244,7 +244,7 @@ jQuery.tableDnD = {
 				// note : remember that contains() is a $.fn extensions to cope with
 				// .is() of jQuery 1.5 (the one in jq 1.6 is way better)
 				if (this.children().contains(where)) {
-					jqElts.insertBefore(where);
+					jqElts.not(where).insertBefore(where);
 				}
 			}
 

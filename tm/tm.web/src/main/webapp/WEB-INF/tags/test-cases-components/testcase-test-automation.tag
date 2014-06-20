@@ -53,7 +53,7 @@
 	
 	<div class="display-table-cell">
      
-		<span id="ta-script-picker-span" style="width:255px"><c:out value="${scriptnameLabel}"/></span>
+		<span id="ta-script-picker-span" style="width:255px" class="cursor-pointer"><c:out value="${scriptnameLabel}"/></span>
 
 		<%--
 		The best would have been to declare a button here : 
