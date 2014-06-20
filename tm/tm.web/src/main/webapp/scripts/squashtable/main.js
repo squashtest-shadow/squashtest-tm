@@ -272,12 +272,12 @@ define(["jquery",
         "squash.KeyEventListener", 
         "squash.statusfactory",  
         "squash.configmanager",
+        "jquery.squash.oneshotdialog",
         "datatables", 
         "./squashtable.defaults", 
         "./squashtable.pagination", 
-        "./squashtable.dnd", 
-        "jquery.squash.oneshotdialog"
-        ], function($, KeyEventListener, statusfactory, confman){
+        "./squashtable.dnd"
+        ], function($, KeyEventListener, statusfactory, confman, oneshot){
 	
 	if (!! $.fn.squashTable ){
 		return ;
@@ -891,7 +891,7 @@ define(["jquery",
 					}
 				}
 			} else {
-				oneShotConfirm(conf.tooltip || "", conf.popupmessage || "", popconf.oklabel, popconf.cancellabel).done(
+				oneshot.show(conf.tooltip || "", conf.popupmessage || "").done(
 						function() {
 							var finalUrl = _resolvePlaceholders.call(self, conf.url, self.fnGetData(row));
 							var request;

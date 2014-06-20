@@ -21,14 +21,14 @@
 define(
 		[ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 				"jeditable.simpleJEditable", "jeditable.selectJEditable",
-				"app/util/StringUtil", "jquery.squash", "jqueryui",
-				"jquery.squash.togglepanel", "jeditable.selectJEditable",
+				"app/util/StringUtil", "jquery.squash.oneshotdialog" , "jquery.squash", "jqueryui",
+				"jquery.squash.togglepanel", 
 				"squashtable", "jquery.squash.oneshotdialog",
 				"jquery.squash.messagedialog", "jquery.squash.confirmdialog",
 				"jeditable.datepicker",
 				"datepicker/jquery.squash.datepicker-locales", 
 				"squashtest/jquery.squash.popuperror" ],
-		function($, NewCustomFieldOptionDialog, Backbone, _, SimpleJEditable,SelectJEditable, StringUtil) {
+		function($, NewCustomFieldOptionDialog, Backbone, _, SimpleJEditable,SelectJEditable, StringUtil, oneshot) {
 			var cfMod = squashtm.app.cfMod;
 			/*
 			 * Defines the controller for the custom fields table.
@@ -115,14 +115,14 @@ define(
 								var message = cfMod.confirmMandatoryMessage;
 								message = self.replacePlaceHolderByValue(0,
 										message, defaultValue);
-								oneShotConfirm(cfMod.confirmMandatoryTitle,
-										message, cfMod.confirmLabel,
-										cfMod.cancelLabel, 500).done(
-										function() {
+								oneshot.show(cfMod.confirmMandatoryTitle,
+										message, { width : '500px'} )
+										.done(function() {
 											self.sendOptional(checked);
-										}).fail(function() {
-									event.target.checked = true;
-								});
+										})
+										.fail(function() {
+											event.target.checked = true;
+										});
 							}
 						},
 

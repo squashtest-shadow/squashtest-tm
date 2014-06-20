@@ -216,10 +216,6 @@ requirejs.config({
 					deps : [ "jquery", "jqueryui" ],
 					exports : "jquerySquashConfirmDialog"
 				},
-				"jquery.squash.oneshotdialog" : {
-					deps : [ "jquery", "jqueryui" ],
-					exports : "jquerySquashOneShotConfirm"
-				},
 				"jquery.squash.jeditable" : {
 					deps : [ "jquery", "jeditable", "jeditable.ckeditor" ],
 					exports : "jquerySquashtmJeditable"

@@ -65,8 +65,9 @@
  */
 
 define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "squash.translator", "workspace.event-bus",
-         "./popups", 'workspace.storage', "jquery.squash.formdialog", "squashtable" ], function($, TableCollapser,
-		cufValuesManager, translator, eventBus, popups, storage) {
+         "./popups", 'workspace.storage', "jquery.squash.oneshotdialog", 
+         "jquery.squash.formdialog", "squashtable" ], function($, TableCollapser,
+		cufValuesManager, translator, eventBus, popups, storage, oneshot) {
 
 	// ************************* configuration functions
 	// ************************************
@@ -537,8 +538,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 					var currentProject = urls.projectId;
 
 					if (parseInt(cookieProject, 10) !== currentProject) {
-						oneShotConfirm(language.infoTitle, language.warnCopy, language.confirmlabel,
-								language.cancellabel).then(function() {
+						oneshot.show(language.infoTitle, language.warnCopy).then(function() {
 							performPaste(cookieIds); // see definition below
 						});
 					} else {

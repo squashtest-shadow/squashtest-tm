@@ -110,8 +110,8 @@
 				require(['jquery', 'squash.basicwidgets', 
 				         'iesupport/am-I-ie8',
 				         'execution-processing/ie8-no-close-on-enter',
-				         'page-components/step-information-panel', 'workspace.event-bus', 'app/util/ComponentUtil', 'jquery.squash'], 
-				         function($, basicwidg, isIE, noCloseOnEnter, infopanel, eventBus, ComponentUtil ) {
+				         'page-components/step-information-panel', 'workspace.event-bus', 'app/util/ComponentUtil', "jquery.squash.oneshotdialog" , 'jquery.squash'], 
+				         function($, basicwidg, isIE, noCloseOnEnter, infopanel, eventBus, ComponentUtil, oneshot ) {
 			
 				var isOer = ${ not empty hasNextTestCase };
 				var hasNextTestCase = ${ (not empty hasNextTestCase) and hasNextTestCase };
@@ -136,14 +136,14 @@
 				function testComplete() {	
 
 					if (!isOer) {
-						oneShotConfirm("<f:message key='popup.title.info' />",  "${ completedMessage }", "Ok", squashtm.message.cancel, 300).done(function() {
+						oneshot.show('popup.title.info',  "${ completedMessage }").done(function() {
 							window.close();
 						});
 					} else if (hasNextTestCase) {
 						$('#execute-next-test-case').click();
 					} else { 
 						// oer without next
-						oneShotConfirm("<f:message key='popup.title.info' />",  "${ endTestSuiteMessage }", "Ok", squashtm.message.cancel, 300).done(function() {
+						oneshot.show('popup.title.info',  "${ endTestSuiteMessage }").done(function() {
 							window.close();
 						});
 					}					

@@ -23,7 +23,8 @@
  * 
  */
 
-define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-broker', 'squash.translator', 'jstree'], function($, nodecopier, rulesbroker, translator){
+define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-broker', 'squash.translator', 
+        "jquery.squash.oneshotdialog", 'jstree'], function($, nodecopier, rulesbroker, translator, oneshot){
 	
 	
 	/* *******************************************************************************
@@ -208,8 +209,7 @@ define(['jquery', 'workspace.tree-node-copier', 'workspace.permissions-rules-bro
 		}
 		
 		if (isCrossProject) {
-			oneShotConfirm('Info', translator.get('message.warnCopyToDifferentLibrary'),
-					squashtm.message.confirm, squashtm.message.cancel)
+			oneshot.show('Info', 'message.warnCopyToDifferentLibrary')
 			.done(function() {
 				defer.resolve();
 			})

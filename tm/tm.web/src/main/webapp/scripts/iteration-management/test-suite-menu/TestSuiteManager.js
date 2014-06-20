@@ -23,7 +23,7 @@
  *
  */
 
-define([ 'jquery', 'jqueryui', 'jquery.squash.squashbutton' ], function($) {
+define([ 'jquery', 'jquery.squash.oneshotdialog', 'jqueryui', 'jquery.squash.squashbutton' ], function($, oneshot) {
 
 	function TestSuiteManagerControl(settings) {
 
@@ -87,8 +87,7 @@ define([ 'jquery', 'jqueryui', 'jquery.squash.squashbutton' ], function($) {
 
 		this.button.click(function() {
 			if (self.confirmMessage && self.confirmTitle) {
-				oneShotConfirm(self.confirmTitle, self.confirmMessage, squashtm.message.confirm,
-						squashtm.message.cancel).done(function() {
+				oneshot.show(self.confirmTitle, self.confirmMessage).done(function() {
 					self.action();
 				});
 			} else {

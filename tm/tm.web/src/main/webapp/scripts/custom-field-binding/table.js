@@ -214,14 +214,13 @@ define(
 
 					functions : {
 						dropHandler : function(moveObject) {
-							$.ajax(
-									{
-										url : settings.moveUrl + "/"+ moveObject.itemIds.join(',')+ "/position",
-										type : 'POST',
-										data : {
-											'newPosition' : moveObject.newIndex
-										}
-									}).success(function() {
+							$.ajax({
+								url : settings.moveUrl + "/"+ moveObject.itemIds.join(',')+ "/position",
+								type : 'POST',
+								data : {
+									'newPosition' : moveObject.newIndex
+								}
+							}).success(function() {
 								$(settings.selector).squashTable().refresh();
 							});
 						}

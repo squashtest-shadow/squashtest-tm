@@ -25,7 +25,7 @@
  * 
  */
 
-define([ 'jquery', 'squash.translator' ], function($, translator) {
+define([ 'jquery', 'squash.translator', "jquery.squash.oneshotdialog" ], function($, translator, oneshot) {
 
 	squashtm = squashtm || {};
 	squashtm.workspace = squashtm.workspace || {};
@@ -47,17 +47,7 @@ define([ 'jquery', 'squash.translator' ], function($, translator) {
 
 		// ***************** private methods *********************
 
-		this.message = function(messageName) {
-
-			if (this._messages === undefined) {
-
-				this._messages = translator.get({
-					warnCopyToDifferentLibrary : 'message.warnCopyToDifferentLibrary'
-				});
-
-			}
-			return this._messages[messageName];
-		};
+	
 
 		var reset = function() {
 			$.cookie('squash-copy-nodes', null);
@@ -158,8 +148,7 @@ define([ 'jquery', 'squash.translator' ], function($, translator) {
 			}
 
 			if (isCrossProject) {
-				oneShotConfirm('Info', this.message('warnCopyToDifferentLibrary'), squashtm.message.confirm,
-						squashtm.message.cancel).done(function() {
+				oneshot.show('Info', 'message.warnCopyToDifferentLibrary').done(function() {
 					defer.resolve();
 				}).fail(function() {
 					defer.reject();
