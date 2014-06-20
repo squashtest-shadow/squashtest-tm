@@ -45,6 +45,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.core.foundation.collection.Sorting;
+import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
@@ -90,7 +91,6 @@ TestCaseAdvancedSearchService {
 	@Inject
 	private Provider<TestCaseSearchExportCSVModelImpl> testCaseSearchExportCSVModelProvider;
 
-
 	private final static SortField[] DEFAULT_SORT_TESTCASES = new SortField[] {
 		new SortField("project.name", SortField.STRING, false),
 		new SortField("reference", SortField.STRING, false), new SortField("importance", SortField.STRING, false),
@@ -132,7 +132,6 @@ TestCaseAdvancedSearchService {
 		Query luceneQuery = buildLuceneQuery(qb, model, locale);
 
 		org.hibernate.Query hibQuery = ftSession.createFullTextQuery(luceneQuery, TestCase.class);
-
 		return hibQuery.list();
 
 	}
@@ -142,21 +141,22 @@ TestCaseAdvancedSearchService {
 		List<RequirementVersion> requirements = requirementSearchService.searchForRequirementVersions(model, locale);
 		List<TestCase> result = new ArrayList<TestCase>();
 		Set<TestCase> testCases = new HashSet<TestCase>();
-		//Get testcases from found requirements
+		// Get testcases from found requirements
 		for (RequirementVersion requirement : requirements) {
-			List<TestCase> verifiedTestCases = verifyingTestCaseManagerService.findAllByRequirementVersion(requirement.getId());
+			List<TestCase> verifiedTestCases = verifyingTestCaseManagerService.findAllByRequirementVersion(requirement
+					.getId());
 			testCases.addAll(verifiedTestCases);
 		}
-		//Get calling testcases
+
+		// Get calling testcases
+		Set<Long> callingTestCaseIds = new HashSet<Long>();
 		for (TestCase testcase : testCases) {
-			Set<Long> callingTestCaseIds = testCaseCallTreeFinder.getTestCaseCallers(testcase.getId());
-			for(Long callingTestCaseId : callingTestCaseIds){
-				testCases.add(testCaseDao.findById(callingTestCaseId));
-			}
+			callingTestCaseIds.addAll(testCaseCallTreeFinder.getTestCaseCallers(testcase.getId()));
 		}
-		for (TestCase testcase : testCases) {
-			result.add(testcase);
-		}
+		// add callees ids
+		callingTestCaseIds.addAll(IdentifiedUtil.extractIds(testCases));
+		// get all test cases
+		result.addAll(testCaseDao.findAllByIds(callingTestCaseIds));
 		return result;
 	}
 
@@ -181,8 +181,7 @@ TestCaseAdvancedSearchService {
 
 			if (LONG_SORTABLE_FIELDS.contains(fieldName)) {
 				sortFieldArray[i] = new SortField(fieldName, SortField.LONG, isReverse);
-			}
-			else {
+			} else {
 				sortFieldArray[i] = new SortField(fieldName, SortField.STRING, isReverse);
 			}
 		}
@@ -244,7 +243,6 @@ TestCaseAdvancedSearchService {
 		if (luceneQuery != null) {
 			Sort sort = getTestCaseSort(sorting);
 			org.hibernate.Query hibQuery = ftSession.createFullTextQuery(luceneQuery, TestCase.class).setSort(sort);
-
 			countAll = hibQuery.list().size();
 
 			result = hibQuery.setFirstResult(sorting.getFirstItemIndex()).setMaxResults(sorting.getPageSize()).list();
