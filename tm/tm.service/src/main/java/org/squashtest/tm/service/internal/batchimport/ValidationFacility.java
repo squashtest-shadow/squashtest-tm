@@ -130,9 +130,7 @@ public class ValidationFacility implements Facility, ModelProvider {
 
 	@Override
 	public LogTrain updateTestCase(TestCaseTarget target, TestCase testCase, Map<String, String> cufValues) {
-
 		LogTrain logs = new LogTrain();
-		String path = target.getPath();
 		String name = testCase.getName();
 
 		TargetStatus status = model.getStatus(target);
@@ -151,15 +149,8 @@ public class ValidationFacility implements Facility, ModelProvider {
 			// 3 - other checks
 			// 3-1 : check if the test case is renamed and would induce a potential name clash.
 			// arePathsAndNameConsistent() will tell us if the test case is renamed
-			if (!PathUtils.arePathsAndNameConsistents(path, name)) {
-				String newPath = PathUtils.rename(path, name);
-				TestCaseTarget newTarget = new TestCaseTarget(newPath);
-				TargetStatus newStatus = model.getStatus(newTarget);
-				if (newStatus.status != Existence.NOT_EXISTS) {
-					logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_TC_CANT_RENAME,
-							new String[] { path, newPath }));
-				}
-			}
+			checkPathForUpdate(target, name, logs);
+
 			// 3-2 : permissions. note about the following 'if' : the case where the project doesn't exist (and thus has
 			// no id) is already covered in the basic checks.
 			LogEntry hasntPermission = checkPermissionOnProject(PERM_WRITE, target, target);
@@ -175,6 +166,26 @@ public class ValidationFacility implements Facility, ModelProvider {
 
 		return logs;
 
+	}
+
+	private void checkPathForUpdate(TestCaseTarget target, String name, LogTrain logs) {
+		if (StringUtils.isBlank(name)) {
+			// no name means no rename means we're good -> bail out
+			return;
+		}
+
+		String path = target.getPath();
+
+		if (!PathUtils.arePathsAndNameConsistents(path, name)) {
+
+			String newPath = PathUtils.rename(path, name);
+			TestCaseTarget newTarget = new TestCaseTarget(newPath);
+			TargetStatus newStatus = model.getStatus(newTarget);
+			if (newStatus.status != Existence.NOT_EXISTS) {
+				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_TC_CANT_RENAME,
+						new String[] { path, newPath }));
+			}
+		}
 	}
 
 	/**

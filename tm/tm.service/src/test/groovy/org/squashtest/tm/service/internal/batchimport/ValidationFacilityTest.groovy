@@ -45,6 +45,7 @@ class ValidationFacilityTest extends Specification {
 	UserAccountService userAccount = Mock()
 	PermissionEvaluationService permissionEvaluation = Mock()
 	UserDao userDao = Mock()
+	TargetStatus status = Mock()
 
 	def setup() {
 		facility.model = model
@@ -53,8 +54,6 @@ class ValidationFacilityTest extends Specification {
 		facility.userDao = userDao
 		facility.entityValidator = entityValidator
 
-		TargetStatus status = Mock()
-		status.status >> Existence.NOT_EXISTS
 		model.getStatus(_) >> status
 		model.getTestCaseCufs(_) >> Collections.emptyList()
 		model.getProjectStatus(_) >> Mock(TargetStatus)
@@ -76,6 +75,9 @@ class ValidationFacilityTest extends Specification {
 		TestCase testCase = Mock()
 		testCase.name >> name
 
+		and:
+		status.status >> Existence.NOT_EXISTS
+
 		when:
 		LogTrain createLog = facility.createTestCase(target, testCase, Collections.emptyMap())
 
@@ -88,4 +90,55 @@ class ValidationFacilityTest extends Specification {
 		"/the/path/is/straight"	| ""
 	}
 
+	def "should not validate old test case with inconsistent path and name"() {
+		given:
+		LogTrain logTrain = new LogTrain();
+		entityValidator.updateTestCaseChecks(_, _) >> logTrain
+
+		and:
+		TestCaseTarget target = Mock()
+		target.path >> "/the/path/is/straight"
+
+		and:
+		TestCase testCase = Mock()
+		testCase.name >> "deviant"
+
+		and:
+		status.status >> Existence.EXISTS
+
+		when:
+		LogTrain createLog = facility.updateTestCase(target, testCase, Collections.emptyMap())
+
+		then:
+		createLog.criticalErrors
+	}
+
+	@Unroll
+	def "should validate old test case with without name '#name'"() {
+		given:
+		LogTrain logTrain = new LogTrain();
+		entityValidator.updateTestCaseChecks(_, _) >> logTrain
+
+		and:
+		TestCaseTarget target = Mock()
+		target.path >> path
+
+		and:
+		TestCase testCase = Mock()
+		testCase.name >> name
+
+		and:
+		status.status >> Existence.EXISTS
+
+		when:
+		LogTrain createLog = facility.updateTestCase(target, testCase, Collections.emptyMap())
+
+		then:
+		createLog.criticalErrors == fails
+
+		where:
+		path					| name		| fails
+		"/the/path/is/straight"	| ""		| false
+		"/the/path/is/straight"	| null		| false
+	}
 }
