@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
@@ -41,28 +42,40 @@ public class HibernateProjectDao extends HibernateEntityDao<Project> implements 
 	private SetQueryParametersCallback idParameter(final long id) {
 		return new SetIdParameter("projectId", id);
 	}
-	
+
 	private SetQueryParametersCallback idParameters(final List<Long> ids) {
 		return new SetProjectIdsParameterCallback(ids);
 	}
-	
+
 	@Override
 	public List<String> findUsersWhoCreatedTestCases(List<Long> projectIds){
-		 return executeListNamedQuery("Project.findAllUsersWhoCreatedTestCases", idParameters(projectIds));
+		if(projectIds.isEmpty()){
+			return Collections.emptyList();
+		}
+		return executeListNamedQuery("Project.findAllUsersWhoCreatedTestCases", idParameters(projectIds));
 	}
-	
+
 	@Override
 	public List<String> findUsersWhoModifiedTestCases(List<Long> projectIds){
-		 return executeListNamedQuery("Project.findAllUsersWhoModifiedTestCases", idParameters(projectIds));
+		if(projectIds.isEmpty()){
+			return Collections.emptyList();
+		}
+		return executeListNamedQuery("Project.findAllUsersWhoModifiedTestCases", idParameters(projectIds));
 	}
-	
+
 	@Override
 	public List<String> findUsersWhoCreatedRequirementVersions(List<Long> projectIds){
-		 return executeListNamedQuery("Project.findAllUsersWhoCreatedRequirementVersions", idParameters(projectIds));
+		if(projectIds.isEmpty()){
+			return Collections.emptyList();
+		}
+		return executeListNamedQuery("Project.findAllUsersWhoCreatedRequirementVersions", idParameters(projectIds));
 	}
-	
+
 	@Override
 	public List<String> findUsersWhoModifiedRequirementVersions(List<Long> projectIds){
-		 return executeListNamedQuery("Project.findAllUsersWhoModifiedRequirementVersions", idParameters(projectIds));
+		if(projectIds.isEmpty()){
+			return Collections.emptyList();
+		}
+		return executeListNamedQuery("Project.findAllUsersWhoModifiedRequirementVersions", idParameters(projectIds));
 	}
 }
