@@ -54,13 +54,13 @@ import org.squashtest.tm.exception.testcase.StepDoesNotBelongToTestCaseException
  * 
  */
 @NamedQueries({
-		@NamedQuery(name = "RequirementVersionCoverage.byRequirementVersionAndTestCase", query = "select rvc from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingTestCase tc where rv.id = :rvId and tc.id = :tcId"),
-		@NamedQuery(name = "RequirementVersionCoverage.byRequirementVersionAndTestCases", query = "select rvc from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingTestCase tc where rv.id = :rvId and tc.id in :tcIds"),
-		@NamedQuery(name = "RequirementVersionCoverage.byTestCaseAndRequirementVersions", query = "select rvc from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingTestCase tc where tc.id = :tcId and rv.id in :rvIds"),
-		@NamedQuery(name = "RequirementVersionCoverage.numberByTestCase", query = "select count(rvc) from RequirementVersionCoverage rvc join rvc.verifyingTestCase tc where tc.id = :tcId"),
-		@NamedQuery(name = "RequirementVersionCoverage.numberByTestCases", query = "select count(rvc) from RequirementVersionCoverage rvc join rvc.verifyingTestCase tc where tc.id in :tcIds"),
-		@NamedQuery(name = "RequirementVersionCoverage.numberDistinctVerifiedByTestCases", query = "select count(distinct rv) from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingTestCase tc where tc.id in :tcIds"),
-		@NamedQuery(name = "RequirementVersionCoverage.byRequirementVersionsAndTestStep", query = "select rvc from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingSteps step where step.id = :stepId and rv.id in :rvIds"), })
+	@NamedQuery(name = "RequirementVersionCoverage.byRequirementVersionAndTestCase", query = "select rvc from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingTestCase tc where rv.id = :rvId and tc.id = :tcId"),
+	@NamedQuery(name = "RequirementVersionCoverage.byRequirementVersionAndTestCases", query = "select rvc from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingTestCase tc where rv.id = :rvId and tc.id in :tcIds"),
+	@NamedQuery(name = "RequirementVersionCoverage.byTestCaseAndRequirementVersions", query = "select rvc from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingTestCase tc where tc.id = :tcId and rv.id in :rvIds"),
+	@NamedQuery(name = "RequirementVersionCoverage.numberByTestCase", query = "select count(rvc) from RequirementVersionCoverage rvc join rvc.verifyingTestCase tc where tc.id = :tcId"),
+	@NamedQuery(name = "RequirementVersionCoverage.numberByTestCases", query = "select count(rvc) from RequirementVersionCoverage rvc join rvc.verifyingTestCase tc where tc.id in :tcIds"),
+	@NamedQuery(name = "RequirementVersionCoverage.numberDistinctVerifiedByTestCases", query = "select count(distinct rv) from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingTestCase tc where tc.id in :tcIds"),
+	@NamedQuery(name = "RequirementVersionCoverage.byRequirementVersionsAndTestStep", query = "select rvc from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingSteps step where step.id = :stepId and rv.id in :rvIds"), })
 @Entity
 public class RequirementVersionCoverage implements Identified {
 	@Id
@@ -97,12 +97,12 @@ public class RequirementVersionCoverage implements Identified {
 	 * @param testCase
 	 */
 	public RequirementVersionCoverage(RequirementVersion requirementVersion, TestCase testCase) {
-		// check - these can throw exception (not so good a practice) so they **must** be performed before we change the passed args state 
+		// check - these can throw exception (not so good a practice) so they **must** be performed before we change the passed args state
 		requirementVersion.checkLinkable();
 		if (testCase != null) {
 			testCase.checkRequirementNotVerified(requirementVersion);
 		}
-		
+
 		// set
 		this.verifiedRequirementVersion = requirementVersion;
 		verifiedRequirementVersion.addRequirementCoverage(this);
@@ -206,7 +206,35 @@ public class RequirementVersionCoverage implements Identified {
 		return rvcCopy;
 	}
 
+	/**
+	 * <p>
+	 * Returns a copy of a RequirementVersionCoverage adapted to a given TestCase (
+	 * this TestCase is usually different from the owner of the RequirementVersionCoverage)
+	 * 
+	 * In short it means that the given TestCase will verify the target Requirement and if the
+	 * original TestCase had steps verifying it, the corresponding steps in the given TestCase
+	 * will too.
+	 * This method is primarily used in the use-case 'copy a test case with all its stuffs'.
+	 * </p>
+	 * 
+	 * <p>
+	 * 	In some case such copy is impossible because the requirement cannot be linked
+	 * 	because the target Requirement has a status 'OBSOLETE' (or other reasons if
+	 * 	more rules appears in the future).
+	 * 
+	 * 
+	 * 	In such case NULL will be returned. Be sure to check for NULL.
+	 * </p>
+	 * 
+	 * 
+	 * 
+	 * @param tcCopy
+	 * @return a copy of this RequirementVersionCoverage, or NULL if that was impossible.
+	 */
 	public RequirementVersionCoverage copyForTestCase(TestCase tcCopy) {
+		if (! this.verifiedRequirementVersion.isLinkable()){
+			return null;
+		}
 		// copy verified requirement
 		RequirementVersionCoverage rvcCopy = new RequirementVersionCoverage(this.verifiedRequirementVersion);
 		// set verifying test case

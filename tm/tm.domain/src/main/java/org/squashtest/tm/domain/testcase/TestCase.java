@@ -72,6 +72,7 @@ import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.exception.UnallowedTestAssociationException;
 import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
+import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException;
 import org.squashtest.tm.search.bridge.LevelEnumBridge;
 
 /**
@@ -613,7 +614,11 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	public List<RequirementVersionCoverage> createRequirementVersionCoveragesForCopy(TestCase copy) {
 		List<RequirementVersionCoverage> createdCoverages = new ArrayList<RequirementVersionCoverage>();
 		for (RequirementVersionCoverage coverage : this.requirementVersionCoverages) {
-			createdCoverages.add(coverage.copyForTestCase(copy));
+			RequirementVersionCoverage covCopy = coverage.copyForTestCase(copy);
+			if (covCopy != null){
+				createdCoverages.add(covCopy);
+			}
+
 		}
 		return createdCoverages;
 	}
