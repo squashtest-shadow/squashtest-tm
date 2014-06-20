@@ -37,10 +37,13 @@
 <f:message var="testAutomationPickerTitle" 	key="test-case.testautomation.popup.title" />
 <f:message var="testAutomationPickerOk" 	key="test-case.testautomation.popup.ok" />
 <f:message var="labelCancel" 				key="label.Cancel"/>
+<f:message var="labelConfirm"               key="label.Confirm"/>
+<f:message var="labelRemove"                key="label.Remove"/>
 <f:message var="deleteAutoTitle" 			key='title.confirmDeleteAutomatedTestLink'/>
 
-<c:set var="scriptnameLabel" value="${not canModify && empty testCase.automatedTest ? testNone : 
-									  not empty testCase.automatedTest ? testCase.automatedTest.fullLabel : 
+<c:set var="isTestSet" value="${not empty testCase.automatedTest}"/>
+<c:set var="scriptnameLabel" value="${not canModify && not isTestSet ? testNone : 
+									  isTestSet ? testCase.automatedTest.fullLabel : 
 									  ''}"/>
 
  			
@@ -49,17 +52,20 @@
 	<label class="display-table-cell"><f:message key="test-case.testautomation.section.label"/></label>
 	
 	<div class="display-table-cell">
-		<span id="ta-script-picker-span" style="display:block"><c:out value="${scriptnameLabel}"/></span>
-		
+     
+		<span id="ta-script-picker-span" style="width:255px"><c:out value="${scriptnameLabel}"/></span>
+
 		<%--
 		The best would have been to declare a button here : 
 		
 		<input id="ta-script-picker-button" type="button" value="${testPick}" class="not-displayed"/>
+        <input id="ta-script-remove-button" type="button" value="${labelRemove}" class="not-displayed"/>
 		
 		however for several reasons (for nicer rendering, limitations of jeditable), we must 
-		handle such button programatically. see 'test-automation/testcase-test-automation to see how it's 
+		handle such button programatically. see 'test-automation/testcase-test-automation.js to see how it's 
 		done.
 		--%>
+ 
 	</div>
 </div>
 
@@ -88,6 +94,22 @@
 		
 	</div>
 
+
+    <f:message var="removePopupTitle" key="dialog.unbind-ta-script.title"/>
+    <div id="ta-remove-popup" class="popup-dialog" title="${removePopupTitle}">
+    
+      <div class="std-margin-top std-margin-bottom"> 
+        <span><f:message key="dialog.unbind-ta-script.message "/></span>
+      </div>
+    
+      <div class="popup-dialog-buttonpane">
+        <input type="button" value="${labelConfirm}" data-def="mainbtn, evt=confirm"/>
+        <input type="button" value="${labelCancel}" data-def="evt=cancel"/>      
+      </div>
+    
+    </div>
+
 </div>
+
 </c:if>
 			

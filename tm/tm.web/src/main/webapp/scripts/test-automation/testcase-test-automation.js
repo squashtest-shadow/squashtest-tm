@@ -39,6 +39,7 @@ define([ "jquery", "workspace.event-bus", "squash.translator", "squash.configman
 	
 	var edObj = $.extend(true, {},$.editable.types.text);
 	var edFnButtons = $.editable.types.defaults.buttons;
+	var edFnElements = $.editable.types.text.element;
 	
 	edObj.buttons = function(settings, original){
 		//var form = this;
@@ -46,13 +47,27 @@ define([ "jquery", "workspace.event-bus", "squash.translator", "squash.configman
 		edFnButtons.call(this, settings, original);
 		
 		// now add our own button
-		var btn = $("<button/>",{
+		var btnChoose = $("<button/>",{
 			'text' : translator.get('label.dot.pick'),
 			'id' : 'ta-script-picker-button'
 		});
 		
-		this.append(btn);
-	}
+		var btnRemove = $("<button/>",{
+			'text' : translator.get('label.Remove'),
+			'id' : 'ta-script-remove-button'
+		});
+		
+		this.append(btnChoose)
+			.append(btnRemove);
+	};
+	
+	// this is overriden so as to enforce the width.
+	edObj.element = function(settings, original){
+		var input = edFnElements.call(this, settings, original);
+		input.css('width', '70%');
+		input.css('height', '16px');
+		return input;
+	} ; 
 	
 	$.editable.addInputType('ta-picker', edObj );
 	
@@ -69,17 +84,19 @@ define([ "jquery", "workspace.event-bus", "squash.translator", "squash.configman
 		
 		// else we must init the special edit in place and the popups
 		_initEditable(settings);
-		_initPopup(settings);
+		_initPickerPopup(settings);
+		_initRemovePopup(settings);
 		
 	}
 	
 	function _initEditable(settings){
 		
 		var elt = $("#ta-script-picker-span");
-
+		
 		var conf = confman.getStdJeditable();
 		conf.type = 'ta-picker';
 		conf.name = 'path';
+		conf.width = '70%';
 		
 		
 		// now make it editable
@@ -91,10 +108,31 @@ define([ "jquery", "workspace.event-bus", "squash.translator", "squash.configman
 			return false;//for some reason jeditable would trigger 'submit' if we let go
 		});
 
+		elt.on('click', '#ta-script-remove-button', function(){
+			$("#ta-remove-popup").formDialog('open');
+			return false;// see comment above
+		});
 		
 	}
 	
-	function _initPopup(settings){
+	function _initRemovePopup(settings){
+		var dialog = $("#ta-remove-popup");
+		
+		dialog.formDialog();
+		
+		dialog.on('formdialogconfirm', function(){
+			dialog.formDialog('close');
+			var form = $("#ta-script-picker-span>form"); 
+			form.find('input').val('');
+			form.submit();	
+		});
+		
+		dialog.on('formdialogcancel', function(){
+			dialog.formDialog('close');
+		});
+	}
+	
+	function _initPickerPopup(settings){
 		
 		var dialog = $("#ta-picker-popup");
 		
