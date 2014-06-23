@@ -19,41 +19,41 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
- * Documentation  : 
- * 
+ * Documentation  :
+ *
  * ======== structure ===========
- * 
- * Contrary to regular jQuery dialogs, the button pane is declared explicitely. Here is a sample formdialog, note 
+ *
+ * Contrary to regular jQuery dialogs, the button pane is declared explicitely. Here is a sample formdialog, note
  * the use of css classes and data-def :
- * 
+ *
  * <div id="mydialog" class="popup-dialog">
- * 
+ *
  *		<div>
- *			<p>this is my main content. Because it isn't a 'state' div (read below), it will always be displayed. 
+ *			<p>this is my main content. Because it isn't a 'state' div (read below), it will always be displayed.
  *				It is basically equivalent state=default
  *			</p>
- * 
+ *
  *			<textarea data-def="isrich">will be turned into rich editable</textarea>
- * 
+ *
  *			<textarea>will remain a regular textarea</textarea>
  *		</div>
- * 
+ *
  *		<div data-def="state=content-1">
  *			<p>either this is displayed</p>
  *		</div>
- * 
+ *
  *		<div data-def="state=content-2">
  *			<p>or that</p>
  *		</div>
  *
  *		<div data-def="error-pane">
  *			<span>
- *				Must always be a panel having data-def=error-pane, and 
- *				the first <span/> element will receive the error messages. 
+ *				Must always be a panel having data-def=error-pane, and
+ *				the first <span/> element will receive the error messages.
  *
- *				This will be jqueryfied as a jquery.squash.popupError. 
+ *				This will be jqueryfied as a jquery.squash.popupError.
  *				Also, it's optional : if this pane is undefined the formDialog
- *				will create one on the fly if needed whenever the method "showError" 
+ *				will create one on the fly if needed whenever the method "showError"
  *				is invoked.
  *			</span>
  *		</div>
@@ -64,49 +64,49 @@
  *			<input type="button" value="specific to content1"	data-def="state=content-1" />
  *			<input type="button" value="specific to content2"	data-def="state=content-2" />
  *		</div>
- * 
+ *
  *	</div>
- * 
- * 
+ *
+ *
  *	========== behaviour ================
- * 
+ *
  *	1/ the buttons aren't created like regular popup : the same dom objects are litteraly reused. This can help you
  *	with the logic of the popup. HOWEVER, they are moved around, which may lead to the loss of callbacks on those buttons
  *	if they were bound before the dialog was initialized.
- * 
+ *
  *	2/ the popup will be automatically destroyed and removed whenever the container it was initially declared in
  *	is removed. Not more 'is-contextual' bullshit !
- * 
+ *
  *	3/ all the inputs defined in this dialog will be cleaned up automatically whenever the dialog is opened again.
- * 
- *	4/ a popup can define several alternative content that are displayed one at a time, representing a state. 
- *	Displaying one will automatically hide the other alternatives. 
- *	Those elements are declared using data-def="state=<state-id>", or directly using class="popup-dialog-state-<state-id>". 
+ *
+ *	4/ a popup can define several alternative content that are displayed one at a time, representing a state.
+ *	Displaying one will automatically hide the other alternatives.
+ *	Those elements are declared using data-def="state=<state-id>", or directly using class="popup-dialog-state-<state-id>".
  *	See the API for details (setState()) and configuration for details.
- * 
+ *
  *	============= API ====================
- * 
+ *
  *	1/ cleanup : force the cleanup of the controls
- * 
+ *
  *	2/ setState(id) : will show anything configured 'state=<state id>' and hide the other ones.
  *
  *  3/ onOwnBtn(evtname, handler) : for inheritance purposes. This allows subclasses of this dialog
- *					to listen to their own button event defined using evt=<eventname> (see DOM configuration). 
- *  
- *  4/ showError(message) :  displays inside a jquery.squash.popupError widget 
- *		an error message. By default such error panel will be created if none is declared in the DOM. 
+ *					to listen to their own button event defined using evt=<eventname> (see DOM configuration).
+ *
+ *  4/ showError(message) :  displays inside a jquery.squash.popupError widget
+ *		an error message. By default such error panel will be created if none is declared in the DOM.
  *		You can also declare one in the DOM, that you can then css or structure as you wish, provided that :
  *		- it is tagged as a data-def="error-pane",
- *		- it contains at least a span. 
+ *		- it contains at least a span.
  *
  *	========= configuration ==============
- * 
+ *
  *	1/ basic : all basic options of jQuery dialog are valid here, EXCEPT for the buttons.
  *
  *
  *	2/ DOM conf : reads parts of the conf from the datatable, see the handlers at the end of the document for details.
- *	for now, supports : 
- * 
+ *	for now, supports :
+ *
  *	- isrich : for textarea. If set, will be turned into a ckeditor.
  *	- evt=<eventname> : for buttons. If set, clicking on that button will trigger <eventname> on the dialog.
  *	- state=<state id>[ <stat id> ...] : for any elements in the popup. Multiple elements can declare the same <state-id> and they'll
@@ -114,12 +114,12 @@
  *						to multiple state either by a space-separated list of states,  either declaring this 'state' clause multiple times.
  *
  *	- mainbtn[=<state-id>] : for buttons. If set, pressing <ENTER> inside the dialog will trigger 'click' on that button if the popup is in that
- *						current state. the <state-id> is optional : if left blank, the button will be triggered if the popup is in the default 
+ *						current state. the <state-id> is optional : if left blank, the button will be triggered if the popup is in the default
  *						state.
  *
- *	- error-pane : a div defined as an error-pane will be turned into a jquery.squash.popuperror. It will be used and shown when the method showError 
+ *	- error-pane : a div defined as an error-pane will be turned into a jquery.squash.popuperror. It will be used and shown when the method showError
  *					is invoked (see API), instead of the default one.
- * 
+ *
  */
 
 define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui', './jquery.squash.squashbutton', 'squashtest/jquery.squash.popuperror' ], function($, attrparser, confman) {
@@ -150,7 +150,7 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui',
 			this._triggerInternal(evtname);
 			return this;
 		},
-		
+
 		_triggerInternal : function(evtname){
 			var listeners = this.options._internalEvents[evtname];
 			if (listeners!==undefined){
@@ -159,7 +159,7 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui',
 				}
 			}
 		},
-		
+
 		onOwnBtn : function(evtname, handler){
 			var listeners = this.options._internalEvents[evtname];
 			if (listeners === undefined){
@@ -188,11 +188,11 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui',
 
 			this.options._state = (tobedisplayed.length === 0) ? "default" : state;
 		},
-		
+
 		getState : function(){
 			return this.options._state;
 		},
-		
+
 		showError : function(msg){
 			if (this.options._errorPane === undefined){
 				this._createErrorpane();
@@ -220,7 +220,7 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui',
 						event.preventDefault();
 						var state = self.options._state;
 						var btn = self.options._mainBtns[state];
-	
+
 						if (btn !== undefined) {
 							btn.click();
 						}
@@ -234,7 +234,7 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui',
 
 			// creates the widget
 			self._super();
-			
+
 			// extend the conf with the domconf on the root element
 			var def = this.element.data('def');
 			if (!!def){
@@ -259,7 +259,7 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui',
 			this.uiDialog.keydown(keyshortcuts);
 
 		},
-		
+
 		_createErrorpane : function(){
 			var errorpane = $("<div><span></span></div>");
 			this.uiDialog.find('.popup-dialog-buttonpane').before(errorpane);
@@ -276,15 +276,15 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui',
 		// due to a bug in IE9 the input type "select" is cleanedup separately from the others
 		cleanup : function() {
 			var elt = this.element;
-			
+
 			elt.find(':input,textarea').not('select').not(':input[type=radio]').each(function() {
 				$(this).val('');
 			});
-			
+
 			elt.find('select').each(function(){
 				$(this).find('option').first().prop('selected', true);
-			});			
-			
+			});
+
 			elt.find('.error-message').each(function(){
 				$(this).text('');
 			});
@@ -313,7 +313,6 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui',
 
 			// move the buttonpane back to the body.
 			this.element.append(buttonpane);
-
 		},
 
 		_setOption : function(key, value) {
@@ -394,7 +393,7 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui',
 				$elt.addClass('popup-dialog-state-' + values[i]);
 			}
 		},
-		
+
 		'error-pane' : function($elt, value){
 			$elt.popupError();
 			this.options._errorPane = $elt;

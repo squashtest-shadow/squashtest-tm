@@ -239,6 +239,15 @@ define(["jquery", "underscore", "handlebars", "../app/pubsub", "squash.statusfac
 				});
 
 				this.close();
+			},
+
+			_destroy: function() {
+				if (!!squashtm.context) {
+					squashtm.context.autosuiteOverview = undefined;
+				}
+				this._super();
+				console.log("autosuite overview dialog destroyed");
+
 			}
 		});
 
@@ -253,6 +262,7 @@ define(["jquery", "underscore", "handlebars", "../app/pubsub", "squash.statusfac
 
 			// note that we are storing the widget itself
 			squashtm.context.autosuiteOverview = dialog.data("autosuiteOverview");
+			console.log("inited auto-suite-overview");
 		}
 	}
 

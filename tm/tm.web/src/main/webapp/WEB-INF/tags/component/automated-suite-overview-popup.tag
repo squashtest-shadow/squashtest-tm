@@ -33,6 +33,7 @@
 <f:message var="closeLabel" key='label.Close' />
 <f:message var="okLabel" 	key='label.Ok' />
 <f:message var="cancelLabel" 	key='label.Cancel' />
+<div>
 <script id="exec-info-tpl" type="text/x-handlebars-template">
 {{#each execs}}
 	<tr id="execution-info-{{id}}" class="display-table-row {{oddity @index}}">
@@ -135,5 +136,5 @@
 <script type="text/javascript">
 publish("reload.auto-suite-overview-popup");
 </script>
-
+</div>
 <!-- *************************/POPUP*********************** -->
