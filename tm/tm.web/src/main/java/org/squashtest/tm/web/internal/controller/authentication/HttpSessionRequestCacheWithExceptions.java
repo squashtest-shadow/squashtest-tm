@@ -20,31 +20,37 @@
  */
 package org.squashtest.tm.web.internal.controller.authentication;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 
-public class LoginFormDiscardingHttpSessionRequestCache extends
-		HttpSessionRequestCache {
-	
-	private String loginFormUrl = "/login";
-	
-	public void setLoginFormUrl(String path){
-		this.loginFormUrl=path;
+public class HttpSessionRequestCacheWithExceptions extends
+HttpSessionRequestCache {
+
+	private Collection<String> exceptions = new ArrayList<String>(2);
+
+	public Collection<String> getExceptions() {
+		return exceptions;
 	}
-	
-	public String getLoginFormUrl(){
-		return loginFormUrl;
+
+	public void setExceptions(Collection<String> exceptions) {
+		this.exceptions = exceptions;
 	}
-	
+
 	@Override
 	public void saveRequest(HttpServletRequest request,
 			HttpServletResponse response) {
-		
+
 		String path = request.getServletPath();
-		if (path.equals(loginFormUrl)) {return;}
-		
+
+		if (exceptions.contains(path)){
+			return;
+		}
+
 		super.saveRequest(request, response);
 	}
 }

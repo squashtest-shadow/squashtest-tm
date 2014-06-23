@@ -103,9 +103,14 @@
   </beans:bean>
 
   <beans:bean id="httpSessionRequestCache"
-    class="org.squashtest.tm.web.internal.controller.authentication.LoginFormDiscardingHttpSessionRequestCache">
+    class="org.squashtest.tm.web.internal.controller.authentication.HttpSessionRequestCacheWithExceptions">
     <!-- beans:property name="justUseSavedRequestOnGet" value="true" /-->
-    <beans:property name="loginFormUrl" value="/login.jsp" />
+    <beans:property name="exceptions">
+    	<beans:list>
+    		<beans:value>/login.jsp</beans:value>
+    		<beans:value>/localization/filler</beans:value>
+    	</beans:list>
+    </beans:property>
   </beans:bean>
 
   <beans:bean id="accessDeniedHandler" class="org.squashtest.tm.web.internal.security.authentication.SquashAccessDeniedHandler">
