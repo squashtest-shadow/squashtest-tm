@@ -46,6 +46,7 @@ import org.squashtest.tm.domain.audit.Auditable;
 	@NamedQuery(name="testAutomationServer.findAllOrderedByName", query="from TestAutomationServer order by name"),
 	@NamedQuery(name="testAutomationServer.findById", query="from TestAutomationServer where id = :serverId"),
 	@NamedQuery(name="testAutomationServer.findByName", query="from TestAutomationServer where name = :serverName"),
+	@NamedQuery(name="testAutomationServer.findByUrlAndLogin", query="from TestAutomationServer where baseURL = :url and login = :login"),
 	@NamedQuery(name="testAutomationServer.findAllHostedProjects", query="select p from TestAutomationProject p join p.server s where s.id = :serverId"),
 	@NamedQuery(name="testAutomationServer.hasBoundProjects", query="select count(*) from TestAutomationProject where server.id = :serverId"),
 	@NamedQuery(name="testAutomationServer.countAll", query="select count(*) from TestAutomationServer"),

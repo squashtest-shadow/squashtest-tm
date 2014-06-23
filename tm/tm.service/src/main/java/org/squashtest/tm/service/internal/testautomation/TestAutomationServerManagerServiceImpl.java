@@ -26,6 +26,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +34,9 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.tm.exception.DomainException;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
+import org.squashtest.tm.exception.testautomation.UserAndServerDefinedAlreadyException;
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
 import org.squashtest.tm.service.internal.repository.TestAutomationServerDao;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
@@ -60,12 +63,21 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	 * @see TestAutomationServerManagerService#persist(TestAutomationServer)
 	 */
 	public void persist(TestAutomationServer server) {
-		TestAutomationServer alreadyExists = serverDao.findByName(server.getName());
-		if (alreadyExists == null) {
-			serverDao.persist(server);
-		} else {
+
+		// check 1 : is there another server with that name already ?
+		TestAutomationServer nameInUse = serverDao.findByName(server.getName());
+		if (nameInUse != null) {
 			throw new NameAlreadyInUseException(TestAutomationServer.class.getSimpleName(), server.getName());
 		}
+
+		// check 2 : is there another server with the same login/URL ?
+		TestAutomationServer userRegistered = serverDao.findByUrlAndLogin(server.getBaseURL(), server.getLogin());
+		if (userRegistered != null){
+			throw new UserAndServerDefinedAlreadyException(server.getLogin(), server.getBaseURL());
+		}
+
+		// else we can persist it.
+		serverDao.persist(server);
 	}
 
 	@Override
@@ -113,8 +125,11 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void changeURL(long serverId, URL url) {
+
 		TestAutomationServer server = serverDao.findById(serverId);
+		checkNoConflicts(server, url);
 		server.setBaseURL(url);
+
 	}
 
 	@Override
@@ -136,6 +151,7 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void changeLogin(long serverId, String login) {
 		TestAutomationServer server = serverDao.findById(serverId);
+		checkNoConflicts(server, login);
 		server.setLogin(login);
 	}
 
@@ -158,6 +174,24 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	public void changeManualSlaveSelection(long serverId, boolean manualSlaveSelection) {
 		TestAutomationServer server = serverDao.findById(serverId);
 		server.setManualSlaveSelection(manualSlaveSelection);
+	}
+
+
+
+	// ********************** private ************************
+
+	private void checkNoConflicts(TestAutomationServer server, URL newURL){
+		TestAutomationServer otherServer = serverDao.findByUrlAndLogin(newURL, server.getLogin());
+		if (otherServer != null){
+			throw new UserAndServerDefinedAlreadyException(server.getLogin(), server.getBaseURL(), "url");
+		}
+	}
+
+	private void checkNoConflicts(TestAutomationServer server, String newLogin){
+		TestAutomationServer otherServer = serverDao.findByUrlAndLogin(server.getBaseURL(), newLogin);
+		if (otherServer != null){
+			throw new UserAndServerDefinedAlreadyException(server.getLogin(), server.getBaseURL(), "login");
+		}
 	}
 
 }

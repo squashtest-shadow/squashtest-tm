@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -127,6 +128,15 @@ public class HibernateTestAutomationServerDao implements TestAutomationServerDao
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.getNamedQuery("testAutomationServer.findByName");
 		query.setParameter("serverName", serverName);
+		return (TestAutomationServer) query.uniqueResult();
+	}
+
+	@Override
+	public TestAutomationServer findByUrlAndLogin(URL url, String login) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.getNamedQuery("testAutomationServer.findByUrlAndLogin");
+		query.setParameter("url", url);
+		query.setParameter("login", login);
 		return (TestAutomationServer) query.uniqueResult();
 	}
 

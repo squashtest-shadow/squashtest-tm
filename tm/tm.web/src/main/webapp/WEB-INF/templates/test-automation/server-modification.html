@@ -122,12 +122,14 @@
                     <div class="display-table-cell">
                       <span id="ta-server-url" th:text="${server.baseURL}">http://localhost</span>
                       <a id="ta-server-url-link" target="blank" th:href="${server.baseURL}" th:text="'['+#{label.BrowseTo}+']'"></a>
+                      <span class="error-message url-error"></span>
                     </div>
                   </div>
 
                   <div class="display-table-row">
                     <label for="ta-server-login" th:text="#{label.Login}">Login</label>
                     <div id="ta-server-login" class="display-table-cell" th:text="${server.login}">username</div>
+                     <span class="error-message login-error"></span>
                   </div>
 
                   <div class="display-table-row">

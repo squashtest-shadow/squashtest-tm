@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import java.net.URL;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -84,6 +85,16 @@ public interface TestAutomationServerDao {
 	 */
 	TestAutomationServer findByName(String serverName);
 
+	/**
+	 * 
+	 * Find the {@linkplain TestAutomationServer} using its URL and the login used to log on it. There is indeed a
+	 * unique constraint on it (one can log on a given server only once with a given account).
+	 * 
+	 * @param url
+	 * @param login
+	 * @return
+	 */
+	TestAutomationServer findByUrlAndLogin(URL url, String login);
 
 	/**
 	 * Will delete the given {@linkplain TestAutomationServer} and dereference it from TM {@linkplain Project}s.
