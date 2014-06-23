@@ -69,13 +69,8 @@ public interface TestAutomationConnector {
 	 * @throws TestAutomationException
 	 *             for anything that doesn't fit the exceptions above.
 	 */
-	Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server)
-			throws ServerConnectionFailed,
-			AccessDenied,
-			UnreadableResponseException,
-			NotFoundException,
-			BadConfiguration,
-			TestAutomationException;
+	Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server) throws ServerConnectionFailed,
+	AccessDenied, UnreadableResponseException, NotFoundException, BadConfiguration, TestAutomationException;
 
 	/**
 	 * <p>
@@ -98,13 +93,8 @@ public interface TestAutomationConnector {
 	 * @throws TestAutomationException
 	 *             for anything that doesn't fit the exceptions above.
 	 */
-	Collection<AutomatedTest> listTestsInProject(TestAutomationProject project)
-			throws ServerConnectionFailed,
-			AccessDenied,
-			UnreadableResponseException,
-			NotFoundException,
-			BadConfiguration,
-			TestAutomationException;
+	Collection<AutomatedTest> listTestsInProject(TestAutomationProject project) throws ServerConnectionFailed,
+	AccessDenied, UnreadableResponseException, NotFoundException, BadConfiguration, TestAutomationException;
 
 	/**
 	 * <p>
@@ -136,8 +126,7 @@ public interface TestAutomationConnector {
 	 *             for anything that doesn't fit the exceptions above.
 	 */
 	void executeParameterizedTests(Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> tests,
-			String externalId,
-			TestAutomationCallbackService securedCallback);
+			String externalId, TestAutomationCallbackService securedCallback);
 
 	/**
 	 * <p>
@@ -150,4 +139,12 @@ public interface TestAutomationConnector {
 	 * @throws SE
 	 */
 	URL findTestAutomationProjectURL(TestAutomationProject testAutomationProject);
+
+	/**
+	 * Will say, depending on the tests ecosystems if the execution order of the given test list is guaranteed.
+	 * 
+	 * @param tests
+	 * @return true if the test list execution order is guaranteed.
+	 */
+	boolean testListIsOrderGuaranteed(Collection<AutomatedTest> tests);
 }

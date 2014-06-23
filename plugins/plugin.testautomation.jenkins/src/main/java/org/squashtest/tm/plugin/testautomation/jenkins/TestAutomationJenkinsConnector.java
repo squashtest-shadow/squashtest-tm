@@ -24,6 +24,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -83,7 +84,6 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 
 	private RequestExecutor requestExecutor = RequestExecutor.getInstance();
 
-
 	// ****************************** let's roll ****************************************
 
 	@Override
@@ -124,19 +124,18 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 
 	}
 
-
 	@Override
 	public Collection<AutomatedTest> listTestsInProject(TestAutomationProject project) throws ServerConnectionFailed,
 	AccessDenied, UnreadableResponseException, NotFoundException, BadConfiguration, TestAutomationException {
 
 		// first we try an optimistic approach
-		try{
+		try {
 			OptimisticTestList otl = new OptimisticTestList(clientProvider, project);
 			return otl.run();
 		}
 
 		// if the file isn't available we regenerate the file
-		catch(Exception ex){
+		catch (Exception ex) {
 
 			HttpClient client = clientProvider.getClientFor(project.getServer());
 
@@ -154,7 +153,6 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 		}
 
 	}
-
 
 	/**
 	 * @see org.squashtest.tm.service.testautomation.spi.TestAutomationConnector#executeParameterizedTests(java.util.Collection,
@@ -177,16 +175,11 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 
 	}
 
-
 	// ************************************ other private stuffs **************************
-
-
-
 
 	private String generateNewId() {
 		return Long.toString(System.currentTimeMillis());
 	}
-
 
 	private List<BuildDef> mapToJobDefs(
 			MultiValueMap<TestAutomationProject, Couple<AutomatedExecutionExtender, Map<String, Object>>> execsByProject) {
@@ -194,7 +187,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 
 		for (Entry<TestAutomationProject, List<Couple<AutomatedExecutionExtender, Map<String, Object>>>> entry : execsByProject
 				.entrySet()) {
-			if (entry.getValue().size()> 0){
+			if (entry.getValue().size() > 0) {
 				// fetch the name of the slave node if any
 				Couple<AutomatedExecutionExtender, Map<String, Object>> firstEntry = entry.getValue().get(0);
 
@@ -203,7 +196,6 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 		}
 		return jobDefs;
 	}
-
 
 	private MultiValueMap<TestAutomationProject, Couple<AutomatedExecutionExtender, Map<String, Object>>> reduceToParamdExecsByProject(
 			Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> parameterizedExecutions) {
@@ -215,7 +207,6 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 
 		return execsByProject;
 	}
-
 
 	/**
 	 * @see TestAutomationJenkinsConnector#findTestAutomationProjectURL(TestAutomationProject)
@@ -231,6 +222,24 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 		}
 	}
 
+	/**
+	 * @see TestAutomationJenkinsConnector#testListIsOrderGuaranteed(Collection)
+	 */
+	@Override
+	public boolean testListIsOrderGuaranteed(Collection<AutomatedTest> tests) {
+		if(tests.isEmpty()){
+			return true;
+		}
+		Iterator<AutomatedTest> iterator = tests.iterator();
+		String firstPath = iterator.next().getPath();
+		for(AutomatedTest test : tests){
+			String path = test.getPath();
+			if(!firstPath.equals(path)){
+				return false;
+			}
+		}
+		return true;
+	}
 
 	public class TestAutomationProjectMalformedURLException extends RuntimeException {
 
@@ -244,6 +253,5 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 		}
 
 	}
-
 
 }

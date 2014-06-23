@@ -74,6 +74,9 @@
         {{/each}}
       </ul>
     </div>
+    {{#unless orderGuaranteed}}
+      <p class="error-message" ><label class="error-message"><f:message key="label.warning"/></label><f:message key="message.orderNonGuaranteed"/></p>
+    {{/unless}}
   </fieldset>
 </p>
 {{/each}}

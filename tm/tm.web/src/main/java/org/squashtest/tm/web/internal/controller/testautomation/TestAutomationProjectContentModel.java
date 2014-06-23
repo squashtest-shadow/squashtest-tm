@@ -39,6 +39,7 @@ public class TestAutomationProjectContentModel {
 
 	private TestAutomationProjectModel project;
 	private AutomatedTestModel[] tests;
+	private boolean orderGuaranteed ;
 
 	public TestAutomationProjectModel getProject() {
 		return project;
@@ -56,16 +57,23 @@ public class TestAutomationProjectContentModel {
 		this.tests = tests;
 	}
 
+	public boolean isOrderGuaranteed() {
+		return orderGuaranteed;
+	}
+
+	public void setOrderGuaranteed(boolean orderGuaranteed) {
+		this.orderGuaranteed = orderGuaranteed;
+	}
+
 	public TestAutomationProjectContentModel(TestAutomationProjectContent content){
 		this.project = new TestAutomationProjectModel(content.getProject());
-
+		this.orderGuaranteed = content.isOrderGuaranteed();
 		Collection<AutomatedTestModel> tmodels = new ArrayList<AutomatedTestModel>(content.getTests().size());
 		for (AutomatedTest test : content.getTests()){
 			tmodels.add(new AutomatedTestModel(test));
 		}
 		tests = tmodels.toArray(new AutomatedTestModel[tmodels.size()]);
 	}
-
 
 
 	public static final class TestAutomationProjectModel{
@@ -81,9 +89,9 @@ public class TestAutomationProjectContentModel {
 			this.jobName = project.getJobName();
 			this.label = project.getLabel();
 			this.nodes = project.getSlaves()
-								.trim()
-								.replaceAll("\\s*;\\s*", ";")
-								.split(";");
+					.trim()
+					.replaceAll("\\s*;\\s*", ";")
+					.split(";");
 
 			if (project.getServer() != null){
 				this.server = new TestAutomationServerModel(project.getServer());

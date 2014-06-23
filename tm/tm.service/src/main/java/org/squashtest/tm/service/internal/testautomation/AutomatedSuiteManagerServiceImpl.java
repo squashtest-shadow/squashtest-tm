@@ -208,9 +208,10 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		Set<Entry> entries = testsByProjects.entrySet();
 		for (Entry e : entries){
 			TestAutomationProject project = (TestAutomationProject)e.getKey();
-			Collection tests = (Collection)e.getValue();
-
-			projectContents.add(new TestAutomationProjectContent(project, tests));
+			Collection<AutomatedTest> tests = (Collection)e.getValue();
+			TestAutomationConnector connector = connectorRegistry.getConnectorForKind(project.getServer().getKind());
+			boolean orderGuaranteed = connector.testListIsOrderGuaranteed(tests);
+			projectContents.add(new TestAutomationProjectContent(project, tests, orderGuaranteed));
 		}
 
 		return projectContents;

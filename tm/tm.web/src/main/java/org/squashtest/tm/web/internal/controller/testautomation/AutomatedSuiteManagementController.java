@@ -130,7 +130,7 @@ public class AutomatedSuiteManagementController {
 		for (TestAutomationProjectContent content : projectContents) {
 			models.add(new TestAutomationProjectContentModel(content));
 		}
-
+		AutomatedSuiteDetails toR = new AutomatedSuiteDetails(suite, models);
 		return new AutomatedSuiteDetails(suite, models);
 	}
 

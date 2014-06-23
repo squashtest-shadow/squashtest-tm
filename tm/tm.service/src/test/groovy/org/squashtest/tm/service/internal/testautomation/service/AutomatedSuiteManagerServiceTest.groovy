@@ -38,7 +38,7 @@ import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
-import org.squashtest.tm.service.internal.testautomation.AutomatedSuiteManagerServiceImpl;
+import org.squashtest.tm.service.internal.testautomation.AutomatedSuiteManagerServiceImpl
 import org.squashtest.tm.service.internal.testautomation.AutomatedTestManagerServiceImpl
 import org.squashtest.tm.service.internal.testautomation.FetchTestListFuture
 import org.squashtest.tm.service.internal.testautomation.FetchTestListTask
@@ -46,7 +46,7 @@ import org.squashtest.tm.service.internal.testautomation.TaParametersBuilder
 import org.squashtest.tm.service.internal.testautomation.TestAutomationConnectorRegistry
 import org.squashtest.tm.service.internal.testautomation.TestAutomationTaskExecutor
 import org.squashtest.tm.service.internal.testautomation.AutomatedSuiteManagerServiceImpl.ExtenderSorter
-import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent
 import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector
 import org.squashtest.tm.service.testautomation.spi.UnknownConnectorKind
@@ -56,8 +56,8 @@ import spock.lang.Specification
 class AutomatedSuiteManagerServiceTest extends Specification {
 
 
-	TestAutomationConnectorRegistry connectorRegistry;
-	AutomatedSuiteManagerServiceImpl service;
+	TestAutomationConnectorRegistry connectorRegistry
+	AutomatedSuiteManagerServiceImpl service
 	PermissionEvaluationService permService
 
 
@@ -164,7 +164,11 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 
 	def "should return a view on an AutomatedSuite as TestAutomationProjectContent[]"(){
 		given :
-		AutomatedSuite suite = mockAutomatedSuite();
+		AutomatedSuite suite = mockAutomatedSuite()
+		TestAutomationConnector jenConnector = Mock(TestAutomationConnector)
+		connectorRegistry.getConnectorForKind(_) >> jenConnector
+		jenConnector.testListIsOrderGuaranteed(_)>> true
+
 		when :
 		def res = service.sortByProject(suite)
 		then :
@@ -206,11 +210,11 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 
 	def mockAutomatedSuite(){
 
-		AutomatedSuite suite = new AutomatedSuite();
+		AutomatedSuite suite = new AutomatedSuite()
 		suite.id = "12345"
 
-		TestAutomationServer serverJenkins = new TestAutomationServer("thejenkins", new URL("http://jenkins-ta"), "jen", "kins", "jenkins");
-		TestAutomationServer serverQC = new TestAutomationServer("theQC", new URL("http://qc-ta"), "the", "QC", "qc");
+		TestAutomationServer serverJenkins = new TestAutomationServer("thejenkins", new URL("http://jenkins-ta"), "jen", "kins", "jenkins")
+		TestAutomationServer serverQC = new TestAutomationServer("theQC", new URL("http://qc-ta"), "the", "QC", "qc")
 
 		TestAutomationProject projectJ1 = new TestAutomationProject("project-jenkins-1", serverJenkins)
 		TestAutomationProject projectQC1 = new TestAutomationProject("project-qc-1", serverQC)
@@ -314,8 +318,8 @@ class ExtenderSorterTest extends Specification {
 		def sorter = new ExtenderSorter(suite, [])
 
 		then :
-		def col1 = sorter.getNextEntry();
-		def col2 = sorter.getNextEntry();
+		def col1 = sorter.getNextEntry()
+		def col2 = sorter.getNextEntry()
 
 		col1.key == "jenkins"
 		col2.key == "qc"
@@ -332,11 +336,11 @@ class ExtenderSorterTest extends Specification {
 	}
 
 	def makeSomeSuite() {
-		AutomatedSuite suite = new AutomatedSuite();
+		AutomatedSuite suite = new AutomatedSuite()
 		suite.id = "12345"
 
-		TestAutomationServer serverJenkins = new TestAutomationServer("thejenkins", new URL("http://jenkins-ta"), "jen", "kins", "jenkins");
-		TestAutomationServer serverQC = new TestAutomationServer("theQC", new URL("http://qc-ta"), "the", "QC", "qc");
+		TestAutomationServer serverJenkins = new TestAutomationServer("thejenkins", new URL("http://jenkins-ta"), "jen", "kins", "jenkins")
+		TestAutomationServer serverQC = new TestAutomationServer("theQC", new URL("http://qc-ta"), "the", "QC", "qc")
 
 		TestAutomationProject projectJ1 = new TestAutomationProject("project-jenkins-1", serverJenkins)
 		TestAutomationProject projectQC1 = new TestAutomationProject("project-qc-1", serverQC)
@@ -357,7 +361,7 @@ class ExtenderSorterTest extends Specification {
 			}
 		}
 
-		def allExts = [];
+		def allExts = []
 
 		allTests.each{
 			def ex = new AutomatedExecutionExtender()

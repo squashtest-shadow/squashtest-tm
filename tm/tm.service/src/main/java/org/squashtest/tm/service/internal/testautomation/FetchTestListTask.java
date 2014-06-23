@@ -49,7 +49,8 @@ public class FetchTestListTask implements TestAutomationConnectorTask<TestAutoma
 		TestAutomationConnector connector = connectorRegistry.getConnectorForKind(server.getKind());
 
 		Collection<AutomatedTest> allTests = connector.listTestsInProject(project);
-		return new TestAutomationProjectContent(project, allTests);
+		boolean orderGuaranteed = connector.testListIsOrderGuaranteed(allTests);
+		return new TestAutomationProjectContent(project, allTests, orderGuaranteed);
 	}
 
 	@Override

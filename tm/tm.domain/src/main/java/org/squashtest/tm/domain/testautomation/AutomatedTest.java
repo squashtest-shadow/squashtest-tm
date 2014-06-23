@@ -130,4 +130,6 @@ public class AutomatedTest {
 	public AutomatedTest newWithProject(TestAutomationProject newP){
 		return new AutomatedTest(name, newP);
 	}
+
+
 }

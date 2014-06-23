@@ -36,6 +36,8 @@ public class TestAutomationProjectContent {
 
 	private Exception knownProblem = null;
 
+	private boolean orderGuaranteed ;
+
 	public TestAutomationProject getProject() {
 		return project;
 	}
@@ -59,7 +61,12 @@ public class TestAutomationProjectContent {
 	public void setKnownProblem(Exception knownProblem) {
 		this.knownProblem = knownProblem;
 	}
-
+	public boolean isOrderGuaranteed() {
+		return orderGuaranteed;
+	}
+	public void setOrderGuaranteed(boolean orderGuaranteed) {
+		this.orderGuaranteed = orderGuaranteed;
+	}
 	public TestAutomationProjectContent(TestAutomationProject project) {
 		super();
 		this.project = project;
@@ -69,8 +76,8 @@ public class TestAutomationProjectContent {
 	public TestAutomationProjectContent(TestAutomationProject project, Exception knownProblem) {
 		super();
 		this.project = project;
-		this.knownProblem = knownProblem;
 		this.tests = Collections.emptyList();
+		this.knownProblem = knownProblem;
 	}
 
 	/**
@@ -78,9 +85,14 @@ public class TestAutomationProjectContent {
 	 * @param tests
 	 */
 	public TestAutomationProjectContent(TestAutomationProject project, Collection<AutomatedTest> tests) {
-		this.project = project;
-		this.tests = new ArrayList<AutomatedTest>();
+		this(project);
 		appendTests(tests);
+	}
+
+	public TestAutomationProjectContent(TestAutomationProject project, Collection<AutomatedTest> tests,
+			boolean orderGuaranteed) {
+		this(project, tests);
+		this.orderGuaranteed = orderGuaranteed;
 	}
 
 	/**

@@ -76,6 +76,7 @@ class AutomatedTestTest extends Specification {
 		test.rootFolderName == "folder/"
 	}
 
+
 	def "should say that test is not at the root"(){
 		expect :
 		test.atTheRoot == false
