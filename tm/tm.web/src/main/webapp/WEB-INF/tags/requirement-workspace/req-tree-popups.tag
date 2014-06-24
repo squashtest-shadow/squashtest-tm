@@ -279,7 +279,7 @@
 	</div>
 	
 	<div data-def="state=error-format">		
-		<span><f:message key="dialog.import.wrongfiles"/>xls, xlsx</span>	
+		<span><f:message key="dialog.import.wrongfile"/>xls, xlsx</span>	
 	</div>
 	
 	<div id="import-excel-dump" class="not-displayed dump"></div>
@@ -398,7 +398,7 @@
 	</div>
 	
 	<div data-def="state=error-format">		
-		<span><f:message key="dialog.import.wrongfiles"/>xls, xlsx</span>	
+		<span><f:message key="dialog.import.wrongfile"/>xls, xlsx</span>	
 	</div>
 	
 	<div id="import-links-dump" class="not-displayed dump"></div>	

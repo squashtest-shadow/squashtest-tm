@@ -358,7 +358,7 @@
 	</div>
 	
 	<div class="error-type" data-def="state=error-type">		
-		<span class="import-err-filetype-text" id="import-err-filetype-text-xls"><f:message key="dialog.import.wrongfiles"/><span id="import-err-filetype">xls, xlsx</span></span>	
+		<span class="import-err-filetype-text" id="import-err-filetype-text-xls"><f:message key="dialog.import.wrongfile"/><span id="import-err-filetype">xls, xlsx</span></span>	
 		<span class="import-err-filetype-text" id="import-err-filetype-text-zip" style="display: none;"><f:message key="dialog.import.wrongfile"/><span id="import-err-filetype">zip</span></span>	
 	</div>
 	<div class="error-format" data-def="state=error-format">
@@ -482,7 +482,7 @@
   
 	
 	<div  data-def="state=error-type">
-      <p><f:message key="message.import.error.format"/><ul><li><span><f:message key="dialog.import.wrongfiles"/>xls, xlsx</span></li></ul></p>
+      <p><f:message key="message.import.error.format"/><ul><li><span><f:message key="dialog.import.wrongfile"/>xls, xlsx</span></li></ul></p>
       <p><f:message key="message.import.error.format"/><ul><li><span><f:message key="dialog.import.wrongfile"/>zip</span></li></ul></p>
 	</div>
  
