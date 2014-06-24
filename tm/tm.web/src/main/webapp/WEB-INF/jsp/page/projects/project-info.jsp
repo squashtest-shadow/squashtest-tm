@@ -447,6 +447,11 @@ function renameProjectSuccess(data) {
 	$('#rename-project-dialog').dialog('close');
 }
 
+var squashtm = squashtm || {};
+squashtm.app = squashtm.app || {} ;	 
+squashtm.app.messages = squashtm.app.messages || {} ;	 
+squashtm.app.messages["message.notBlank"] =  "<f:message key='message.notBlank' />"; 
+
 require(["common"], function() {
 
 	require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.attributeparser", 

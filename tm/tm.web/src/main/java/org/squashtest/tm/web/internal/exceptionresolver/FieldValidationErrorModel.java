@@ -27,18 +27,30 @@ public final class FieldValidationErrorModel implements Serializable {
 
 	public final String objectName; // NOSONAR Field is immutable
 	public final String fieldName; // NOSONAR Field is immutable
-	public final String fieldValue; //NOSONAR Field is immutable
+	private String fieldValue;
 	public final String errorMessage; // NOSONAR Field is immutable
 
 	public FieldValidationErrorModel(String objectName, String fieldName, String errorMessage) {
-		this(objectName, fieldName, errorMessage, null);
-	}
-
-	public FieldValidationErrorModel(String objectName, String fieldName, String errorMessage, String fieldValue) {
 		super();
 		this.objectName = objectName;
 		this.fieldName = fieldName;
 		this.errorMessage = errorMessage;
+		this.fieldValue = null;
+	}
+
+	public FieldValidationErrorModel(String objectName, String fieldName, String errorMessage, String fieldValue) {
+		this(objectName, fieldName, errorMessage);
 		this.fieldValue = fieldValue;
+	}
+
+	public FieldValidationErrorModel(String objectName, String fieldName, String errorMessage , Object fieldValue) {
+		this(objectName, fieldName, errorMessage);
+		if(fieldValue != null){
+			this.fieldValue = fieldValue.toString();
+		}
+	}
+
+	public String getFieldValue() {
+		return fieldValue;
 	}
 }

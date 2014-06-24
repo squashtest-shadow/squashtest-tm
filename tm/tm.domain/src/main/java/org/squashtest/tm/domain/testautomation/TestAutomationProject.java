@@ -30,6 +30,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.validation.constraints.Size;
 
+import org.hibernate.validator.constraints.NotEmpty;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
@@ -60,6 +61,7 @@ public class TestAutomationProject {
 	private String jobName;
 
 	@Size(min = 0, max = 50)
+	@NotEmpty
 	private String label;
 
 	@ManyToOne

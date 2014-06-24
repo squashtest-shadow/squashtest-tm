@@ -29,7 +29,7 @@ import org.squashtest.tm.validation.constraint.HasDefaultAsRequired;
 /**
  * Handles {@link ConstraintViolation} from {@link HasDefaultAsRequired} constraints.
  * 
- * NOTE we can build something more elaborate / generic when we have other TYPE level constraints. 
+ * NOTE we can build something more elaborate / generic when we have other TYPE level constraints.
  * 
  * @author Gregory Fouquet
  * 
@@ -43,8 +43,8 @@ public class HasDefaultAsRequiredViolationHandler implements ConstraintViolation
 	@Override
 	public boolean handle(ConstraintViolation<?> violation, List<FieldValidationErrorModel> errors) {
 		if (violation.getConstraintDescriptor().getAnnotation() instanceof HasDefaultAsRequired) {
-			errors.add(new FieldValidationErrorModel("", "defaultValue", violation.getMessage()));
-			
+			errors.add(new FieldValidationErrorModel("", "defaultValue", violation.getMessage(), violation.getInvalidValue()));
+
 			return true;
 		}
 		return false;

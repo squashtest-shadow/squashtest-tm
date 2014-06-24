@@ -36,7 +36,7 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "app/lnf/Forms", 
 			var attrs = this.attributes, errors = null;
 			if (isBlank(attrs.label)) {
 				errors = errors || {};
-				errors.name = "message.notBlank";
+				errors.label = "message.notBlank";
 			}
 			return errors;
 		}

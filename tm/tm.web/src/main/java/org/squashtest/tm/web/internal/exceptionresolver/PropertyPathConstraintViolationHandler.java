@@ -39,8 +39,7 @@ class PropertyPathConstraintViolationHandler implements ConstraintViolationHandl
 	 */
 	@Override
 	public boolean handle(ConstraintViolation<?> violation, List<FieldValidationErrorModel> errors) {
-		errors.add(new FieldValidationErrorModel("", violation.getPropertyPath().toString(), violation.getMessage()));
-
+		errors.add(new FieldValidationErrorModel("", violation.getPropertyPath().toString(), violation.getMessage(), violation.getInvalidValue()));
 		return true;
 	}
 

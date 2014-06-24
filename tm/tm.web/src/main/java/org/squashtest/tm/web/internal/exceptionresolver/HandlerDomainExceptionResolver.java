@@ -38,21 +38,21 @@ import org.squashtest.tm.exception.DomainException;
 
 @Component
 public class HandlerDomainExceptionResolver extends
-		AbstractHandlerExceptionResolver {
-	
+AbstractHandlerExceptionResolver {
+
 	@Inject
 	private MessageSource messageSource;
 
-	
+
 	public HandlerDomainExceptionResolver() {
 		super();
 	}
-	
+
 
 	@Override
 	protected ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response, Object handler,
 			Exception ex) {
-		
+
 		if (exceptionIsHandled(ex) && ExceptionResolverUtils.clientAcceptsMIME(request, MimeType.APPLICATION_JSON)) {
 			response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
 
@@ -72,17 +72,17 @@ public class HandlerDomainExceptionResolver extends
 		if(!dex.getI18nKey().equals("")){
 			message = messageSource.getMessage(dex.getI18nKey(), dex.getI18nParams(), locale);
 		}
-		
-		ves.add(new FieldValidationErrorModel(dex.getObjectName(), dex.getField(), message));
+
+		ves.add(new FieldValidationErrorModel(dex.getObjectName(), dex.getField(), message, dex.getFieldValue()));
 
 		return ves;
 	}
 
-	
+
 	private boolean exceptionIsHandled(Exception ex) {
 		return ex instanceof DomainException;
 	}
 
-	
-	
+
+
 }
