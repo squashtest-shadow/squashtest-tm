@@ -145,16 +145,11 @@
             <br />
             <br />
             <!-- ============================================User Infos ======================================= -->
-            <div sq:togglePanel="opened">
-              <div>
-                <h3>
-                  <div>
-                    <div>
-                      <a th:text="#{user.info.panel.title}">Infos</a>
-                    </div>
-                  </div>
-                </h3>
-                <div id="user-info-panel" class="information-panel">
+            <div class="sq-tg expand">
+              <div class="tg-head">
+                <h3><a th:text="#{user.info.panel.title}">Infos</a></h3>
+              </div>
+              <div id="user-info-panel" class="information-panel tg-body">
                   <div class="display-table" id="user-infos-table">
                     <div class="display-table-row">
                       <label for="user-login" th:text="#{label.Login}">Login</label>
@@ -209,27 +204,21 @@
                     </div>
                   </div>
                 </div>
-              </div>
             </div>
             <!-- ============================================/User Infos ======================================= -->
             <!-- ============================================ Permissions ======================================= -->
-            <div sq:togglePanel="opened">
-              <div id="permissions">
-                <h3>
-                  <div>
-                    <div>
-                      <a th:text="#{user.project-rights.title.label}">Permissions</a>
-                    </div>
-                    <div>
-                      <button id="add-permission-button" th:title="${addButtonTitle}" title="add"
-                        class="sq-icon-btn btn-sm">
-                        <span class="ui-icon ui-icon-plus">+</span>
-                      </button>
-                    </div>
-                  </div>
-                </h3>
+            <div class="sq-tg expand">
+              <div id="permissions" class="tg-head">
+                <h3><a th:text="#{user.project-rights.title.label}">Permissions</a></h3>
+                <div class="tg-toolbar">
+                  <button id="add-permission-button" th:title="${addButtonTitle}" title="add"
+                    class="sq-icon-btn btn-sm">
+                    <span class="ui-icon ui-icon-plus">+</span>
+                  </button>
+                </div>
+              </div>
 
-                <div id="project-permission-panel">
+                <div id="project-permission-panel" class="tg-body">
                   <table id="permission-table"
                     th:attr="data-def='filter, pre-sort=1-asc, datakeys-id=project-id ,ajaxsource='+@{/administration/users/__${user.id}__/permissions}">
                     <thead>
@@ -257,28 +246,23 @@
                   </div>
                 </div>
               </div>
-            </div>
             <!-- ============================================/ Permissions ======================================= -->
             <!-- ============================================ Teams ======================================= -->
 
-            <div sq:togglePanel="opened">
-              <div id="teams">
-                <h3>
-                  <div>
-                    <div>
-                      <a th:text="#{label.teams}">Teams</a>
-                    </div>
-                    <div>
-                      <button id="add-team-button" class="sq-icon-btn btn-sm">
-                        <span class="ui-icon ui-icon-plus">+</span>
-                      </button>
-                      <input type="button" id="remove-teams-button" th:value="#{label.unsubscribeToTeams}"
-                        class="sq-btn btn-sm" />
-                    </div>
-                  </div>
-                </h3>
+            <div class="sq-tg  expand">
+              <div id="teams" class="tg-head">
+                <h3><a th:text="#{label.teams}">Teams</a></h3>
 
-                <div id="teams-panel">
+                <div class="tg-toolbar">
+                  <button id="add-team-button" class="sq-icon-btn btn-sm">
+                    <span class="ui-icon ui-icon-plus">+</span>
+                  </button>
+                  <input type="button" id="remove-teams-button" th:value="#{label.unsubscribeToTeams}"
+                    class="sq-btn btn-sm" />
+                </div>
+              </div>
+
+                <div id="teams-panel" class="tg-body">
                   <table id="teams-table"
                     th:attr="data-def='filter, pre-sort=1-asc, datakeys-id=team-id ,ajaxsource=' + @{/users/__${user.id}__/teams}">
                     <thead>
@@ -302,7 +286,6 @@
         </div>
       </div>
     </div>
-  </div>
   <!--    ====================================POPUPS======================================================  -->
 
   <div id="pass-pop-pane" class="not-displayed"></div>

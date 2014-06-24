@@ -27,6 +27,34 @@ import org.thymeleaf.dom.Element;
 import org.thymeleaf.dom.Node;
 import org.thymeleaf.processor.attr.AbstractChildrenModifierAttrProcessor;
 
+/**
+ * @author mpagnon
+ * 
+ */
+/**
+ * <p>This class was useful for stuffing the DOM with css classes back when we hadn't less yet.
+ * Now the preferred way to declare toggle panels is :</p>
+ * 
+ * <p>{@code <div class="sq-tg (expand|collapse)">} </p>
+ * <p>{@code <div class="tg-head">}</p>
+ * <p>{@code <h3>your title</h3>}</p>
+ * <p>{@code <div class="tg-toolbar">}</p>
+ * <p>{@code <input class="sq-btn" value="your input"/>}</p>
+ * <p>{@code </div>}</p>
+ * <p>{@code </div>}</p>
+ * <p>{@code <div class="tg-body">}</p>
+ * <p>{@code <span>your content</span>}</p>
+ * <p>{@code </div>}</p>
+ * <p>{@code </div>}</p>
+ * 
+ *
+ *<p> To my knowledge, as of 1.10.0 this processor isn't used anywhere in the core but it still might be used by plugins, that's why
+ *it had been deprecated instead of being outright ditched.</p>
+ * 
+ * @author bsiri
+ *
+ */
+@Deprecated
 public class SquashTogglePanelAttrProcessor extends AbstractChildrenModifierAttrProcessor {
 
 	/**

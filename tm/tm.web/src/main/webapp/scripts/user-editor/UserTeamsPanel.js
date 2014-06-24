@@ -25,15 +25,12 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 	var UserTeamsPanel = Backbone.View.extend({
 		el : "#teams",
 		initialize : function() {
-			this.makeTogglePanel();
 			this.configureTable();
 			this.configurePopups();
 			this.configureButtons();
 		},
 		events : {},
-		makeTogglePanel : function() {
-			this.$("#teams-panel").togglePanel();
-		},
+
 		configurePopups : function() {
 			this.configureRemoveTeamDialog();
 			this.configureNoTeamSelectedDialog();

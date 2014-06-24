@@ -25,7 +25,6 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 	var UserPermissionsPanel = Backbone.View.extend({
 		el : "#permissions",
 		initialize : function() {
-			this.makeTogglePanel();
 			this.configureTable();
 			this.configurePopups();
 			this.configureButtons();
@@ -53,9 +52,6 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "jquery.squa
 			});
 		},
 
-		makeTogglePanel : function() {
-			this.$("#project-permission-panel").togglePanel();
-		},
 		configureTable : function() {
 			$("#permission-table").squashTable({
 				"fnRowCallback" : function(nRow, data){

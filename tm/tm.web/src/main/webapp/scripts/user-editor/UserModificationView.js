@@ -28,7 +28,6 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/u
 		el : "#information-content",
 		initialize : function() {
 
-			this.configureTogglePanels();
 			this.configureEditables();
 			this.configureDeletionDialog();
 			this.configureActivation();
@@ -98,9 +97,7 @@ define([ "jquery", "backbone", "underscore", "jeditable.simpleJEditable", "app/u
 			$.squash.decorateButtons();
 		},
 
-		configureTogglePanels : function() {
-			this.$("#user-info-panel").togglePanel();
-		},
+		
 
 		configureEditables : function() {
 			this.makeSimpleJEditable("user-login");

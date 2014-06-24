@@ -126,65 +126,65 @@
           <div class="fragment-body unstyled">
             
             
-        <div sq:togglePanel="opened">
-		<div>
-			<h3 >
-				<div>
-					<div>
-						<a th:text="#{label.testStep.information}" >Informations</a>
-					</div>
-					<div> 
-						<input type="button" id="save-test-step-button" class="sq-btn" th:value="#{ label.save }" value="Save" th:if="(${testStepView.actionStep} or ${hasCUF}) and  ${writable}" ></input>
-        						</div>
-				</div>		
-			</h3>          
-              <div id="test-step-info-panel" class="information-panel" >
-                <div class="display-table" id="test-step-infos-table"  th:style="${testStepView.actionStep}? 'width:100%' : ''">
+          <div class="sq-tg expand">
+		    <div class="tg-head">
+              <h3><a th:text="#{label.testStep.information}" >Informations</a></h3>
+			  <div class="tg-toolbar"> 
+				<input type="button" id="save-test-step-button" class="sq-btn" th:value="#{ label.save }" value="Save" th:if="(${testStepView.actionStep} or ${hasCUF}) and  ${writable}" ></input>
+          	  </div>
+		    </div>		
+			        
+            <div id="test-step-info-panel" class="information-panel tg-body" >
+              <div class="display-table" id="test-step-infos-table"  th:style="${testStepView.actionStep}? 'width:100%' : ''">
                  <div class="display-table-row" >
                     <label for="test-step-id" >Id</label>
                     <div id="test-step-id" class="display-table-cell" th:utext="${testStepView.id} ">1</div>
-                  </div>
+                 </div>
 <!--    ================================CUSTOM FIELDS============================= -->
-					<div class="display-table-row control-group" th:if="${hasCUF}" 
+				<div class="display-table-row control-group" th:if="${hasCUF}" 
 						th:each="confBean : ${configuration.configurationBeans}">
-						<label class="display-table-cell" th:text="${confBean.fieldLabel}"
+					<label class="display-table-cell" th:text="${confBean.fieldLabel}"
 							th:for="'cuf-value-'+${confBean.fieldId}">quantité de café</label>
-<!-- EDITABLE-->	<div th:if="${writable}" class="display-table-cell controls" th:switch="${confBean.type}">
-							<input th:case="'checkbox'" type="checkbox" th:checked="${confBean.valueAsBoolean}"
+<!-- EDITABLE-->	
+                    <div th:if="${writable}" class="display-table-cell controls" th:switch="${confBean.type}">
+						<input th:case="'checkbox'" type="checkbox" th:checked="${confBean.valueAsBoolean}"
 								th:id="'cuf-value-'+${confBean.fieldId}" th:name="${confBean.fieldId}" class="cuf-value-control" />
-							<input type="text" th:case="'datepicker'"
+						<input type="text" th:case="'datepicker'"
 								th:id="'cuf-value-'+${confBean.fieldId}" th:name="${confBean.fieldId}" class="cuf-value-control"
 								th:value="${confBean.valueAsDate}? ${#dates.format(confBean.valueAsDate,'__#{squashtm.dateformatShort}__')} : #{squashtm.nodata}"/>
-							<select th:case="'select'"
+						<select th:case="'select'"
 								th:id="'cuf-value-'+${confBean.fieldId}" th:name="${confBean.fieldId}" class="cuf-value-control"></select>
-							<input th:case="*"
+						<input th:case="*"
 								th:id="'cuf-value-'+${confBean.fieldId}" th:name="${confBean.fieldId}" class="cuf-value-control"
 								th:value="${confBean.fieldValue}"/>
-							 <span class="help-inline">&nbsp;</span>
-						</div>
-<!-- NON EDITABLE-->	<div th:if="${!writable}" class="display-table-cell" th:switch="${confBean.type}">
-							<input th:case="'checkbox'" type="checkbox" th:checked="${confBean.valueAsBoolean}" disabled="disabled"
+						<span class="help-inline">&nbsp;</span>
+					</div>
+<!-- NON EDITABLE-->
+                    <div th:if="${!writable}" class="display-table-cell" th:switch="${confBean.type}">
+						<input th:case="'checkbox'" type="checkbox" th:checked="${confBean.valueAsBoolean}" disabled="disabled"
 								th:id="'cuf-value-'+${confBean.fieldId}" class="cuf-value" />
-							<span th:case="'datepicker'"
+						<span th:case="'datepicker'"
 								th:id="'cuf-value-'+${confBean.fieldId}" class="cuf-value"
 								th:text="${confBean.valueAsDate}? ${#dates.format(confBean.valueAsDate,'__#{squashtm.dateformatShort}__')} : #{squashtm.nodata}">12/12/2012</span>
-							<span th:case="*"
+						<span th:case="*"
 								th:id="'cuf-value-'+${confBean.fieldId}" class="cuf-value"
 								th:text="${confBean.fieldValue}">value</span>
-							</div>
 					</div>
+				</div>
 <!-- 	============================END CUSTOM FIELDS===============================  -->
-                  <div class="display-table-row control-group" th:if="${testStepView.actionStep}" th:switch="${writable}" >
-                    <label for="test-step-action" class="control-label" th:text="#{label.action}">Action</label>
-                   <div th:case="${true}"  class="display-table-cell controls"><textarea class="test-step-attr" name="action" id="test-step-action" sq:unsafe-html="${testStepView.actionStep.action} ">do this</textarea>
-                 	  <span  class="help-inline">&nbsp;</span></div>
-                 	<span th:case="${false}" class="display-table-cell" sq:unsafe-html="${testStepView.actionStep.action}">do this</span>
+
+                <div class="display-table-row control-group" th:if="${testStepView.actionStep}" th:switch="${writable}" >
+                  <label for="test-step-action" class="control-label" th:text="#{label.action}">Action</label>
+                  <div th:case="${true}"  class="display-table-cell controls"><textarea class="test-step-attr" name="action" id="test-step-action" sq:unsafe-html="${testStepView.actionStep.action} ">do this</textarea>
+               	    <span  class="help-inline">&nbsp;</span></div>
+               	    <span th:case="${false}" class="display-table-cell" sq:unsafe-html="${testStepView.actionStep.action}">do this</span>
                   </div>
                   <div class="display-table-row control-group" th:if="${testStepView.actionStep}" th:switch="${writable}">
                     <label for="test-step-expectedResult" class="control-label" th:text="#{label.expectedResult}">Expected result</label>
-                   <div th:case="${true}"  class="display-table-cell controls"><textarea class=" test-step-attr" name="expectedResult" id="test-step-expectedResult" sq:unsafe-html="${testStepView.actionStep.expectedResult}">see that</textarea>
-                  	 <span  class="help-inline">&nbsp;</span></div>
-                  	<span th:case="${false}" class="display-table-cell" sq:unsafe-html="${testStepView.actionStep.expectedResult}">do this</span>
+                    <div th:case="${true}"  class="display-table-cell controls"><textarea class=" test-step-attr" name="expectedResult" id="test-step-expectedResult" sq:unsafe-html="${testStepView.actionStep.expectedResult}">see that</textarea>
+                	     <span  class="help-inline">&nbsp;</span>
+                    </div>
+                	  <span th:case="${false}" class="display-table-cell" sq:unsafe-html="${testStepView.actionStep.expectedResult}">do this</span>
                   </div>
                   <div class="display-table-row" th:if="${testStepView.callStep}">
                     <label for="test-step-called-test-case" th:text="#{label.calledTestCase}">Called test case</label>
@@ -192,15 +192,15 @@
                   </div>
                   </div>
                 </div>
-                </div>
               </div>
+              
               <div th:if="${attachableEntity}" id="attachment-bloc-frag" th:include="attachment-bloc.frag :: attachment-bloc">ATTACHMENT-BLOC</div>
+             
               <div th:if="${requirementVerifier}" id="verified-requirements-bloc-frag" th:include="verified-requirements-bloc.frag :: verified-requirements-bloc">VERIFIED-REQUIREMENT-VERSIONS-BLOC</div>
             </div>
         </div>
       </div>
     </div>
   </div>
-
 </body>
 </html>
