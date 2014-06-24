@@ -68,18 +68,25 @@ define([ 'jquery', 'backbone', './NewTestAutomationServerDialogView', './NewTest
 		},
 		
 		configureRemoveTASDialog : function() {
-			this.confirmRemoveTASDialog = $("#remove-test-automation-server-confirm-dialog").formDialog();
-			this.confirmRemoveTASDialog.formDialog('setState','processing');
-			this.confirmRemoveTASDialog.on("formdialogopen", this.setConfirmRemoveDialogState);
-			this.confirmRemoveTASDialog.on("formdialogconfirm", $.proxy(this.removeTestAutomationServer, this));
-			this.confirmRemoveTASDialog.on("formdialogcancel", $.proxy(function() {
-				this.confirmRemoveTASDialog.formDialog('close');
-			}, this));
-			this.confirmRemoveTASDialog.on("formdialogclose", $.proxy(function() {
+			var self= this;
+			
+			var dialog = $("#remove-test-automation-server-confirm-dialog").formDialog();
+			dialog.formDialog('setState','processing');
+			dialog.on("formdialogopen", this.setConfirmRemoveDialogState);
+			dialog.on("formdialogconfirm", function(evt){
+				self.removeTestAutomationServer(evt);
+				dialog.formDialog('close');
+			});
+			dialog.on("formdialogcancel", function() {
+				dialog.formDialog('close');
+			});
+			dialog.on("formdialogclose", $.proxy(function() {
 				this.toDeleteIds = [];
 				this.table.deselectRows();
-				this.confirmRemoveTASDialog.formDialog('setState','processing');
+				dialog.formDialog('setState','processing');
 			}, this));
+			
+			this.confirmRemoveTASDialog = dialog;
 			
 		},
 		_setConfirmRemoveDialogState : function(event){
@@ -105,7 +112,8 @@ define([ 'jquery', 'backbone', './NewTestAutomationServerDialogView', './NewTest
 			
 		},
 		_removeTestAutomationServer : function(event) {
-			var table = this.table;
+			var self = this,
+				table = this.table;
 			var ids = table.getSelectedIds();
 			if (ids.length === 0) {
 				return;
@@ -113,7 +121,12 @@ define([ 'jquery', 'backbone', './NewTestAutomationServerDialogView', './NewTest
 			$.ajax({
 				url : squashtm.app.contextRoot + "test-automation-servers/" + ids.join(','),
 				type : 'delete'
-			}).then($.proxy(table.refresh, table)).fail(function(wtf){
+			})
+			.then(function(){
+				table.refresh();
+				self.confirmRemoveTASDialog.formDialog('close');
+			})
+			.fail(function(wtf){
 				try {
 					squashtm.notification.handleJsonResponseError(wtf);
 				} catch (wtf) {

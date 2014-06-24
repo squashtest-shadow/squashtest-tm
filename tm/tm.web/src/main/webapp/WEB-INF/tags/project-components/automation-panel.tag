@@ -138,7 +138,8 @@
 
  ================================================= --%>
 
-<div id="ta-server-confirm-popup" class="popup-dialog not-displayed" title="CONFIRM">
+
+<div id="ta-server-confirm-popup" class="popup-dialog not-displayed" title="${confirmLabel}">
 
   <!-- _____________CASE 1_______________ -->
   <div data-def="state=case1">
