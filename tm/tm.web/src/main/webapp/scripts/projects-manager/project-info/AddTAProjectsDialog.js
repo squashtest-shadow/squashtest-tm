@@ -204,7 +204,7 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "underscore", "ap
 						 var fve = validationErrorList[counter];
 						 if (fve.fieldName == "label"){
 							 var inputs = this.$el.find('.edit-state input').filter(function() { return this.value == fve.fieldValue; });
-							 if(inputs.length == 0){manageFatal = true;}
+							 if(inputs.length === 0){manageFatal = true;}
 							 Forms.input($(inputs[0])).setState("error", fve.errorMessage);
 						 }else{
 							 manageFatal = true;
