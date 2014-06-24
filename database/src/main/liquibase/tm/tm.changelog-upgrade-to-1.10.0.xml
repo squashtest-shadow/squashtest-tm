@@ -27,5 +27,5 @@
      xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
- 	<include file="tm.changelog-1.9.10.xml" relativeToChangelogFile="true" />
+ 	<include file="tm.changelog-1.10.0.xml" relativeToChangelogFile="true" />
 </databaseChangeLog> 

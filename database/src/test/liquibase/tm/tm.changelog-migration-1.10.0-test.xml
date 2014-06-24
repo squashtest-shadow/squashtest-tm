@@ -33,7 +33,7 @@
 
 	<!-- first, test the dataset -->
  
-	<changeSet id="tm-1.9.10.feat-3481-precond-01" author="bsiri">
+	<changeSet id="tm-1.10.0.feat-3481-precond-01" author="bsiri">
 		
 		
 		<preConditions>
@@ -69,13 +69,13 @@
 
 
 	<!-- ========================================INCLUDE CHANGELOG================================================ -->
-	 <include file="../../../main/liquibase/tm/tm.changelog-1.9.10.xml"
+	 <include file="../../../main/liquibase/tm/tm.changelog-1.10.0.xml"
 		relativeToChangelogFile="true" /> 
 	<!-- ========================================================================================================= -->
 	
 	<!-- first check : let's see if the data were cleaned as expected -->
  
-	<changeSet id="tm-1.9.10.feat-3481-test-01" author="bsiri">
+	<changeSet id="tm-1.10.0.feat-3481-test-01" author="bsiri">
 		<preConditions>
 		
 			<sqlCheck expectedResult="1">
@@ -151,7 +151,7 @@
 	
 	<!--  second check : let's see if the new table are correctly filled -->
 	
-	<changeSet id="tm-1.9.10.feat-3481-test-02" author="bsiri">
+	<changeSet id="tm-1.10.0.feat-3481-test-02" author="bsiri">
 		<preConditions>
 			
 			<sqlCheck expectedResult="1">
@@ -197,7 +197,7 @@
 		</preConditions>	
 	</changeSet>
 
-	<changeSet id="tm-1.9.10.feat-3481-test-3" author="flaurens">
+	<changeSet id="tm-1.10.0.feat-3481-test-3" author="flaurens">
 	<preConditions>
 		<sqlCheck expectedResult="16">
 			select count(suite_id) from AUTOMATED_EXECUTION_EXTENDER

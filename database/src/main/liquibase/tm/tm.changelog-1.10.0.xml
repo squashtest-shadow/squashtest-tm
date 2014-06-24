@@ -37,10 +37,10 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
-  <changeSet id="tm-1.9.10" author="bsiri">
+  <changeSet id="tm-1.10.0" author="bsiri">
     <comment>Update TM database version number</comment>
     <update tableName="CORE_CONFIG">
-      <column name="VALUE" value="1.9.10" />
+      <column name="VALUE" value="1.10.0" />
       <where>STR_KEY = 'squashtest.tm.database.version'</where>
     </update>
   </changeSet>
@@ -48,14 +48,14 @@
   
   		
 	
-	<changeSet id="tm-1.9.10.feature-3481-1" author="bsiri">
+	<changeSet id="tm-1.10.0.feature-3481-1" author="bsiri">
 		<comment>before the cleanup, we need to relax some constraints</comment>
 	
 		<dropNotNullConstraint tableName="AUTOMATED_EXECUTION_EXTENDER" columnName="TEST_ID" columnDataType="BIGINT"/>
 	
 	</changeSet>
   
-  	<changeSet id="tm-1.9.10.feature-3481-2" author="bsiri">
+  	<changeSet id="tm-1.10.0.feature-3481-2" author="bsiri">
   		<comment>cleaning up unused entities</comment>
   	
   		<!-- find the unused projects -->
@@ -124,7 +124,7 @@
   	
   	</changeSet>
 
-	<changeSet id="tm-1.9.10.feature-3481-3" author="bsiri">
+	<changeSet id="tm-1.10.0.feature-3481-3" author="bsiri">
 		<comment>The test automation servers are now 'auditable' (dates and authors of creation/modification are recorded) and has 
 		several other attributes</comment>
 		<addColumn tableName="TEST_AUTOMATION_SERVER">
@@ -172,7 +172,7 @@
 		
 	</changeSet>
 	
-	<changeSet id="tm-1.9.10.feature-3481-4" author="bsiri">
+	<changeSet id="tm-1.10.0.feature-3481-4" author="bsiri">
 		
 		<comment>
 			The associative table TM_TA_PROJECTS is totally re-purposed as TEST_AUTOMATION_PROJECT 
@@ -251,7 +251,7 @@
 	</changeSet>
 	
 	
-	<changeSet id="tm-1.9.10.feature-3481-5" author="bsiri">
+	<changeSet id="tm-1.10.0.feature-3481-5" author="bsiri">
 		<comment>A TM project is now hard-bound to a TA server</comment>
 		
 		<addColumn tableName="PROJECT">
@@ -266,7 +266,7 @@
 	</changeSet>
 
 	
-	<changeSet id="tm-1.9.10.feature-3481-6" author="bsiri">
+	<changeSet id="tm-1.10.0.feature-3481-6" author="bsiri">
 		<comment>migrating existing data to the new schema</comment>
 		<!-- 
 			sets the TA server bound to this project. Note : in the (extremely rare) case where a TM project
@@ -285,13 +285,13 @@
 		
 	</changeSet>
 
-  <changeSet id="tm-1.9.10.feature-3481-6" author="gfouquet">
+  <changeSet id="tm-1.10.0.feature-3481-6" author="gfouquet">
     <addColumn tableName="AUTOMATED_EXECUTION_EXTENDER">
       <column name="NODE_NAME" type="VARCHAR(50)" defaultValue="" remarks="Name of the node which ran the test"/>
     </addColumn>
   </changeSet>
 
-  <changeSet id="tm-1.9.10.feature-3481-7" author="flaurens">
+  <changeSet id="tm-1.10.0.feature-3481-7" author="flaurens">
     <addColumn tableName="AUTOMATED_EXECUTION_EXTENDER">
       <column name="EXECUTION_EXTENDER_ORDER" type="BIGINT" remarks="order of automated executions extenders within an automated suite">
       	<constraints nullable="true" />
@@ -299,7 +299,7 @@
     </addColumn>
   </changeSet>
   	
-    <changeSet id="tm-1.9.10.feature-3481-8" author="flaurens">
+    <changeSet id="tm-1.10.0.feature-3481-8" author="flaurens">
     <preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
       <dbms type="mysql" />
     </preConditions>
@@ -338,7 +338,7 @@
     </sql>
     </changeSet>
 
-    <changeSet id="tm-1.9.10.feature-3481-9" author="flaurens">
+    <changeSet id="tm-1.10.0.feature-3481-9" author="flaurens">
     <preConditions onError="CONTINUE" onFail="CONTINUE" onSqlOutput="TEST">
       <dbms type="h2" />
     </preConditions>
