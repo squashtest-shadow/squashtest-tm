@@ -114,8 +114,8 @@ public class ValidationFacility implements Facility, ModelProvider {
 			logs.addEntry(hasntPermission);
 		}
 
-		// 3-3 : name and path must be consistent
-		if (!PathUtils.arePathsAndNameConsistents(path, name)) {
+		// 3-3 : name and path must be consistent, only if the name is not empty
+		if (! StringUtils.isBlank(name) && !PathUtils.arePathsAndNameConsistents(path, name)) {
 			logs.addEntry(LogEntry.warning().forTarget(target)
 					.withMessage(Messages.ERROR_INCONSISTENT_PATH_AND_NAME, path, name == null ? "" : name).build());
 		}
