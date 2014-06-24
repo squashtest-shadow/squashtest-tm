@@ -53,7 +53,7 @@ public class TestCaseImportLogController {
 			HttpServletResponse response) {
 		File logFile = logHelper.fetchLogFile(filename);
 		response.setContentType("application/octet-stream");
-		response.setHeader("Content-Disposition", "attachment; filename=" + logHelper.logFilename(filename) + ".xls");
+		response.setHeader("Content-Disposition", "attachment; filename=" + logHelper.logFilename(filename));
 
 		FileSystemResource res = new FileSystemResource(logFile);
 
