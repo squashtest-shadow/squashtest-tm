@@ -94,7 +94,7 @@ class ExcelWorkbookParserTest extends Specification {
 		def testCaseDescs = (1..8).collect { "desc$it" }
 		def testCaseCreators = (1..8).collect { "creator$it" }
 		def testCaseCreateds = (1..8).collect { "2003-02-0$it" }
-		def testCaseActions = [CREATE, CREATE, UPDATE, UPDATE, DELETE, DELETE, UPDATE, null]
+		def testCaseActions = [CREATE, CREATE, UPDATE, UPDATE, DELETE, DELETE, UPDATE, UPDATE]
 
 		// TODO add tests on cufs
 		// TODO add error case on enums
@@ -121,7 +121,7 @@ class ExcelWorkbookParserTest extends Specification {
 		def stepNums = (1..8).collect { it + 9 } // indexes are 0-based while 1-based in xls
 		def stepActions = (1..8).collect { "action$it" }
 		def stepReactions = (1..8).collect { "result$it" }
-		def stepModes = [CREATE, CREATE, UPDATE, UPDATE, DELETE, DELETE, UPDATE, null]
+		def stepModes = [CREATE, CREATE, UPDATE, UPDATE, DELETE, DELETE, UPDATE, UPDATE]
 
 		then:
 		stepInstructions*.target.path == stepPaths
@@ -137,7 +137,7 @@ class ExcelWorkbookParserTest extends Specification {
 		def paramPaths = (1..8).collect { "owner/path/$it/parameters/null" }
 		def paramNames = (1..8).collect { "name$it" }
 		def paramDescs = (1..8).collect { "desc$it" }
-		def paramActions = [CREATE, CREATE, UPDATE, UPDATE, DELETE, DELETE, UPDATE, null]
+		def paramActions = [CREATE, CREATE, UPDATE, UPDATE, DELETE, DELETE, UPDATE, UPDATE]
 
 		then:
 		paramInstructions*.target.path == paramPaths
@@ -154,7 +154,7 @@ class ExcelWorkbookParserTest extends Specification {
 		def datasetNames = (1..8).collect { "name$it" }
 		def datasetParamNames = (1..8).collect { "paramName$it" }
 		def datasetValues = (1..8).collect { "value$it" }
-		def datasetActions = [CREATE, CREATE, UPDATE, UPDATE, DELETE, DELETE, UPDATE, null]
+		def datasetActions = [CREATE, CREATE, UPDATE, UPDATE, DELETE, DELETE, UPDATE, UPDATE]
 
 		then:
 		datasetInstructions*.target.path == datasetPaths

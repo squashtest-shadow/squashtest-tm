@@ -64,16 +64,15 @@ class WorksheetDef<COL extends TemplateColumn> {
 	 * @return {@code true} if the columnDef had already been stored
 	 */
 	private boolean addColumnDef(@NotNull StdColumnDef<COL> columnDef) {
-		return stdColumnDefs.put(columnDef.getType(), columnDef)!= null;
+		return stdColumnDefs.put(columnDef.getType(), columnDef) != null;
 	}
 
 	/**
 	 * Validates this {@link WorksheetDef}. Unrecoverable mismatches from template will throw an exception.
 	 * 
-	 * @returns {@link WorksheetFormatStatus}
-	 *            that holds the possible Column mismatches
+	 * @returns {@link WorksheetFormatStatus} that holds the possible Column mismatches
 	 */
-	WorksheetFormatStatus validate()  {
+	WorksheetFormatStatus validate() {
 
 		List<TemplateColumn> missingMandatoryColumnMismatch = new ArrayList<TemplateColumn>();
 
@@ -108,7 +107,7 @@ class WorksheetDef<COL extends TemplateColumn> {
 	 * @throws ColumnMismatchException
 	 */
 	@SuppressWarnings("unchecked")
-	ColumnDef addColumnDef(String header, int colIndex)throws ColumnMismatchException{
+	ColumnDef addColumnDef(String header, int colIndex) throws ColumnMismatchException {
 		ColumnDef res = null;
 
 		COL colType = (COL) TemplateColumnUtils.coerceFromHeader(worksheetType.columnTypesClass, header);
@@ -117,7 +116,6 @@ class WorksheetDef<COL extends TemplateColumn> {
 			LOGGER.trace("Column named '{}' will be added to metamodel as standard column {}", header, colType);
 			res = new StdColumnDef<COL>(colType, colIndex);
 			duplicate = addColumnDef((StdColumnDef<COL>) res);
-
 
 		} else if (isCustomFieldHeader(header)) {
 			LOGGER.trace("Column named '{}' will be added to metamodel as custom field", header);
@@ -130,7 +128,7 @@ class WorksheetDef<COL extends TemplateColumn> {
 			LOGGER.trace("Column named '{}' will be ignored", header);
 			// else unknown columns are ditched
 		}
-		if(duplicate){
+		if (duplicate) {
 			throw new ColumnMismatchException(ColumnMismatch.DUPLICATE, colType);
 		}
 
@@ -150,7 +148,11 @@ class WorksheetDef<COL extends TemplateColumn> {
 
 		for (Entry<COL, StdColumnDef<COL>> entry : stdColumnDefs.entrySet()) {
 			if (!isIgnored(entry.getKey())) {
-				res.add(entry.getValue());
+				if (entry.getKey().getHeader().equals("ACTION")) {
+					res.add(0, entry.getValue());
+				} else {
+					res.add(entry.getValue());
+				}
 			}
 		}
 

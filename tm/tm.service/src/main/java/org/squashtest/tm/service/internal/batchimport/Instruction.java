@@ -27,14 +27,12 @@ import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.importer.Target;
 
-
-
 public abstract class Instruction<T extends Target> {
 	private final T target;
 	protected final LogTrain logTrain;
 
 	private int line;
-	private ImportMode mode;
+	private ImportMode mode = ImportMode.getDefault();
 
 	protected Instruction(T target) {
 		this.logTrain = new LogTrain();
@@ -54,7 +52,9 @@ public abstract class Instruction<T extends Target> {
 	}
 
 	public void setMode(ImportMode mode) {
-		this.mode = mode;
+		if (mode != null) {
+			this.mode = mode;
+		}
 	}
 
 	public void addLogEntry(ImportStatus status, String messageKey, String impactKey, Object... messageArgs) {
@@ -85,7 +85,7 @@ public abstract class Instruction<T extends Target> {
 
 		LogTrain execLogTrain;
 
-		switch (mode == null ? UPDATE : mode) {
+		switch (mode) {
 		case CREATE:
 			execLogTrain = executeCreate(facility);
 			break;
@@ -99,7 +99,8 @@ public abstract class Instruction<T extends Target> {
 			break;
 
 		default:
-			throw new IllegalStateException("Unrecognized ImportMode " + mode + ". One must have forgotten to handle new modes");
+			throw new IllegalStateException("Unrecognized ImportMode " + mode
+					+ ". One must have forgotten to handle new modes");
 		}
 
 		logTrain.append(execLogTrain);

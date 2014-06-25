@@ -77,11 +77,14 @@ class ExcelWorkbookParserBuilder {
 	 * @throws TemplateMismatchException
 	 *             when the workbook does not match the expected template in an unrecoverable way.
 	 */
-	public ExcelWorkbookParser build() throws MaxFileSizeExceededException, SheetCorruptedException, TemplateMismatchException {
+	public ExcelWorkbookParser build() throws MaxFileSizeExceededException, SheetCorruptedException,
+	TemplateMismatchException {
 
-		/*if(xls.length() > maxSize){
-			throw new MaxFileSizeExceededException(xls.getName());
-		}*/
+		/*
+		 * if(xls.length() > maxSize){
+		 * throw new MaxFileSizeExceededException(xls.getName());
+		 * }
+		 */
 
 		InputStream is = null;
 		try {
@@ -156,7 +159,7 @@ class ExcelWorkbookParserBuilder {
 			WorksheetDef<?> wd = new WorksheetDef(sheetType);
 			wmd.addWorksheetDef(wd);
 			WorksheetFormatStatus workSheetFormatStatus = populateColumnDefs(wd, ws);
-			if(!workSheetFormatStatus.isFormatOk()){
+			if (!workSheetFormatStatus.isFormatOk()) {
 				worksheetKOStatuses.add(workSheetFormatStatus);
 			}
 		} else {
@@ -182,17 +185,18 @@ class ExcelWorkbookParserBuilder {
 		}
 		for (int iCell = 0; iCell < headerRow.getLastCellNum(); iCell++) {
 			Cell cell = headerRow.getCell(iCell);
-			try {
-				String header = cell.getStringCellValue();
-				wd.addColumnDef(header, iCell);
-			} catch (IllegalStateException e) {
-				// seems this cell aint a string cell...
-				LOGGER.trace(
-						"We expected a string cell, but it was not. Not an error case so we silently skip it. Exception message : {}",
-						e.getMessage());
-			}
-			catch (ColumnMismatchException cme){
-				worksheetFormatStatus.addMismatch(cme.getType(), cme.getColType());
+			if (cell != null) {
+				try {
+					String header = cell.getStringCellValue();
+					wd.addColumnDef(header, iCell);
+				} catch (IllegalStateException e) {
+					// seems this cell aint a string cell...
+					LOGGER.trace(
+							"We expected a string cell, but it was not. Not an error case so we silently skip it. Exception message : {}",
+							e.getMessage());
+				} catch (ColumnMismatchException cme) {
+					worksheetFormatStatus.addMismatch(cme.getType(), cme.getColType());
+				}
 			}
 		}
 		return worksheetFormatStatus;

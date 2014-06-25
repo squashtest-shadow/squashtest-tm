@@ -54,7 +54,7 @@ public final class ImportModeCellCoercer extends TypeBasedCellValueCoercer<Impor
 	 */
 	@Override
 	protected ImportMode coerceBlankCell(Cell cell) {
-		return ImportMode.UPDATE;
+		return ImportMode.getDefault();
 	}
 
 	/**

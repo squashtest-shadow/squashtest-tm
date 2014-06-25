@@ -24,4 +24,8 @@ public enum ImportMode {
 	CREATE,
 	UPDATE,
 	DELETE;
+
+	public static ImportMode getDefault(){
+		return UPDATE;
+	}
 }
