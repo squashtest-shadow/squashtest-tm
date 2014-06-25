@@ -33,3 +33,20 @@
 	<span class="ui-icon ui-icon-alert icon"></span><span><f:message key="error.generic.label" />&nbsp;
   (<a href="#" id="show-generic-error-details" class="cursor-pointer"><f:message key="error.generic.button.details.label" /></a>)</span>
 </div>
+
+
+<f:message var="errorTitle" key="popup.title.error"/>
+<f:message var="okLabel" key="label.Ok"/>
+<div id="generic-error-dialog" class="not-displayed popup-dialog" title="${errorTitle}">
+  <div>
+     <div class="display-table-row">
+        <div class="display-table-cell warning-cell">
+          <div class="generic-error-signal"></div>
+        </div>
+        <div class="generic-error-main display-table-cell" style="padding-top:20px">
+        
+        </div>
+      </div>
+  </div>
+  <input type="button" value="${okLabel}"/>  
+</div>

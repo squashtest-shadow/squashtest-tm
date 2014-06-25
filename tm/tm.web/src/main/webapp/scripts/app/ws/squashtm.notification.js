@@ -39,7 +39,7 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 			_widgetsInitialized = true;
 			$(".unstyled-notification-pane").addClass("notification-pane").removeClass("unstyled-notification-pane");
 			$(_spinner).addClass("not-processing").removeClass("processing");
-
+			$("#generic-error-dialog").messageDialog();
 		}
 	}
 
@@ -52,7 +52,7 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 
 		if (json !== null) {
 			if (!!json.actionValidationError) {
-				return $.squash.openMessage(_config.errorTitle, json.actionValidationError.message);
+				showError(json.actionValidationError.message);
 			} else if (!!json.fieldValidationErrors) {
 				/* IE8 requires low tech code */
 				var validationErrorList = json.fieldValidationErrors;
@@ -106,7 +106,7 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 	}
 
 	function handleGenericResponseError(request) {
-		var showError = function() {
+		var handle = function() {
 
 			var popup = window.open('about:blank', 'error_details',
 					'resizable=yes, scrollbars=yes, status=no, menubar=no, toolbar=no, dialog=yes, location=no');
@@ -117,7 +117,7 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 			}
 		};
 
-		$('#show-generic-error-details').unbind('click').click(showError);
+		$('#show-generic-error-details').unbind('click').click(handle);
 
 		$('#generic-error-notification-area').fadeIn('slow').delay(20000).fadeOut('slow');
 	}
@@ -126,8 +126,10 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 		$.squash.openMessage(_config.infoTitle, message);
 	}
 	
-	function displayError(message){
-		$.squash.openMessage(_config.errorTitle, message);
+	function showError(message){
+		var dialog = $("#generic-error-dialog"); 
+		dialog.find('.generic-error-main').html(message);
+		dialog.messageDialog('open');
 	}
 
 	function initSpinner() {
@@ -202,15 +204,15 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 		}
 	}
 	
-	function showXhrInDialog(jsonerror){
-		var msg = this.getErrorMessage(jsonerror);
+	function showXhrInDialog(xhr){
+		var msg = this.getErrorMessage(xhr);
 		this.showError(msg);
 	}
 	
 	squashtm.notification = {
 		init : init,
 		showInfo : displayInformationNotification,
-		showError : displayError,
+		showError : showError,
 		getErrorMessage : getErrorMessage,
 		handleJsonResponseError : handleJsonResponseError,
 		handleGenericResponseError : handleGenericResponseError,

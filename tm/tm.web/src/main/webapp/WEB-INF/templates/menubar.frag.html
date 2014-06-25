@@ -116,6 +116,22 @@ publish("load.projectFilter");
           <span class="ui-icon ui-icon-alert icon"></span><span th:text="#{error.generic.label}">WTF ?!</span> &nbsp;
           (<a  id="show-generic-error-details" th:class="'cursor-pointer'" class="cursor-pointer" th:text="#{error.generic.button.details.label}">Details</a>)
         </div>
+                
+        
+        <div id="generic-error-dialog" class="not-displayed popup-dialog" th:title="#{popup.title.error}">        
+          <div>
+             <div class="display-table-row">
+                <div class="display-table-cell warning-cell">
+                  <div class="generic-error-signal"></div>
+                </div>
+                <div class="generic-error-main display-table-cell" style="padding-top:20px">
+                
+                </div>
+              </div>
+          </div>        
+          <input type="button" th:value="#{label.Ok}"/>  
+        </div>
+        
 <script type="text/javascript" >
 publish("load.notification");
 </script>
