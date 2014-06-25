@@ -122,7 +122,7 @@
  *
  */
 
-define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui', './jquery.squash.squashbutton', 'squashtest/jquery.squash.popuperror' ], function($, attrparser, confman) {
+define([ 'jquery', "underscore", 'squash.attributeparser', 'squash.configmanager', 'jqueryui', './jquery.squash.squashbutton', 'squashtest/jquery.squash.popuperror' ], function($, _, attrparser, confman) {
 
 	if (($.squash !== undefined) && ($.squash.formDialog !== undefined)) {
 		// plugin already loaded
@@ -241,6 +241,10 @@ define([ 'jquery', 'squash.attributeparser', 'squash.configmanager', 'jqueryui',
 				var conf = attrparser.parse(def);
 				this.options = $.extend(conf, this.options);
 			}
+
+			// extend the conf with explicit data attributes
+			var datas = _.omit(this.element.data(), "def");
+			this.options = _.extend(this.options, datas);
 
 			// read and apply dom conf
 			this._readDomConf();

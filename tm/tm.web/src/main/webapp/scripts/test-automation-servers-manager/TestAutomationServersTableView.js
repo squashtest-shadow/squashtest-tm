@@ -18,8 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ 'jquery', 'backbone', './NewTestAutomationServerDialogView', './NewTestAutomationServerModel', 'app/util/ButtonUtil', 'squashtable',
-		'jqueryui', 'jquery.squash.formdialog' ], function($, Backbone, NewTestAutomationServerDialogView, NewTestAutomationServerModel, ButtonUtil) {
+define([ 'jquery', 'backbone', "underscore", './NewTestAutomationServerDialogView', './NewTestAutomationServerModel', 'app/util/ButtonUtil', 'squashtable',
+		'jqueryui', 'jquery.squash.formdialog' ], function($, Backbone, _, NewTestAutomationServerDialogView, NewTestAutomationServerModel, ButtonUtil) {
+	"use strict";
+
 	var tasTable = squashtm.app.tasTable;
 	/*
 	 * Defines the controller for the test automation server table.
@@ -28,14 +30,14 @@ define([ 'jquery', 'backbone', './NewTestAutomationServerDialogView', './NewTest
 		el : "#test-automation-server-table-pane",
 		initialize : function() {
 			var self = this;
-			this.removeTestAutomationServer = $.proxy(this._removeTestAutomationServer, this);
-			this.setConfirmRemoveDialogState = $.proxy(this._setConfirmRemoveDialogState, this);
-			
+
+			_.bindAll(this, "removeTestAutomationServer", "setConfirmRemoveDialogState");
+
 			// DOM initialized table
 			this.table = this.$("table");
 			this.table.squashTable(squashtm.datatable.defaults, {});
 			this.configureRemoveTASDialog();
-			
+
 		},
 
 		events : {
@@ -45,8 +47,12 @@ define([ 'jquery', 'backbone', './NewTestAutomationServerDialogView', './NewTest
 		showNewTestAutomationServerDialog : function(event) {
 			var self = this, showButton = event.target;
 
+			function refresh() {
+				self.table.squashTable().fnDraw();
+			}
+
 			function discard() {
-				self.newTasDialog.off("newtestautomationserver.cancel newtestautomationserver.confirm");
+				self.stopListening(self.newTasDialog);
 				self.newTasDialog.undelegateEvents();
 				self.newTasDialog = null;
 				ButtonUtil.enable($(showButton));
@@ -63,13 +69,14 @@ define([ 'jquery', 'backbone', './NewTestAutomationServerDialogView', './NewTest
 				model : new NewTestAutomationServerModel()
 			});
 
-			self.newTasDialog.on("newtestautomationserver.cancel", discard);
-			self.newTasDialog.on("newtestautomationserver.confirm", discardAndRefresh);
+			self.listenTo(self.newTasDialog, "newtestautomationserver.cancel", discard);
+			self.listenTo(self.newTasDialog, "newtestautomationserver.confirm", discardAndRefresh);
+			self.listenTo(self.newTasDialog, "newtestautomationserver.confirm-carry-on", refresh);
 		},
-		
+
 		configureRemoveTASDialog : function() {
 			var self= this;
-			
+
 			var dialog = $("#remove-test-automation-server-confirm-dialog").formDialog();
 			dialog.formDialog('setState','processing');
 			dialog.on("formdialogopen", this.setConfirmRemoveDialogState);
@@ -85,11 +92,11 @@ define([ 'jquery', 'backbone', './NewTestAutomationServerDialogView', './NewTest
 				this.table.deselectRows();
 				dialog.formDialog('setState','processing');
 			}, this));
-			
+
 			this.confirmRemoveTASDialog = dialog;
-			
+
 		},
-		_setConfirmRemoveDialogState : function(event){
+		setConfirmRemoveDialogState : function(event){
 			var self = this;
 			var table = self.table;
 			var ids = table.getSelectedIds();
@@ -109,9 +116,9 @@ define([ 'jquery', 'backbone', './NewTestAutomationServerDialogView', './NewTest
 					}
 				});
 			}
-			
+
 		},
-		_removeTestAutomationServer : function(event) {
+		removeTestAutomationServer : function(event) {
 			var self = this,
 				table = this.table;
 			var ids = table.getSelectedIds();

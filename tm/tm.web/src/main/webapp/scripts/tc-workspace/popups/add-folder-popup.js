@@ -19,44 +19,44 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(['jquery', 'tree', 'jquery.squash.formdialog'], function($, zetree){
-	
-	
+
+
 
 	function postNode(dialog, tree){
-		
+
 		var params = {
 			name : dialog.find('#add-folder-name').val(),
 			description : dialog.find('#add-folder-description').val()
 		};
-		
+
 		return tree.jstree('postNewNode', 'new-folder', params, false);
 	}
-	
-	
+
+
 	function init(){
-		
+
 		var dialog = $("#add-folder-dialog").formDialog();
 		var tree = zetree.get();
-		
-		
+
+
 		dialog.on('formdialogadd-close', function(){
 			postNode(dialog,tree).then(function(){
 				dialog.formDialog('close');
-			});			
+			});
 		});
-		
+
 		dialog.on('formdialogadd-another', function(){
 			postNode(dialog, tree).then(function(){
 				dialog.formDialog('cleanup');
-			}) ;		
+			}) ;
 		});
-		
+
 		dialog.on('formdialogcancel', function(){
 			dialog.formDialog('close');
 		});
-		
+
 	}
-	
+
 	return {
 		init : init
 	};

@@ -18,30 +18,52 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "handlebars", "app/lnf/Forms", "jquery.squash.confirmdialog", "jquery.ckeditor",
-		"datepicker/jquery.squash.datepicker-locales" ], function($, Backbone, Handlebars, Forms) {
+define([ "jquery", "underscore", "backbone", "handlebars", "app/lnf/Forms", "./NewTestAutomationServerModel", "jquery.squash.formdialog", "jquery.ckeditor",
+		"datepicker/jquery.squash.datepicker-locales" ], function($, _, Backbone, Handlebars, Forms, Model) {
+	"use strict";
+
 	/*
 	 * Defines the controller for the new test automation panel.
 	 */
 	var NewTestAutomationServerDialogView = Backbone.View.extend({
 		el : "#new-test-automation-server-popup",
 		initialize : function() {
-			var self = this;
-			var model = this.model;
+			_.bindAll(this, "onConfirm", "onConfirmAndCarryOn", "onCancel");
+
 			this.configureCKEs();
+
+			// tried the more convenient `this.listenTo` but it generates errors in jq event processing
+			this.$el.on("formdialogconfirm", this.onConfirm);
+			this.$el.on("formdialogcancel", this.onCancel);
+			this.$el.on("formdialogclose", this.onCancel);
+			this.$el.on("formdialogconfirm-carry-on", this.onConfirmAndCarryOn);
+
+			this.render();
+
+			this.$el.formDialog();
+			this.$el.formDialog("open");
+		},
+
+		render: function() {
+			Forms.form(this.$el).clearState();
+			var model = this.model;
+
 			this.$("input:text.strprop").each(function() {
-				var self = this;
-				self.value = model.get(self.name);
+				this.value = model.get(this.name);
 			});
-			this.$("input:checkbox[name='manualSlaveSelection']")[0].checked = model.get("manualSlaveSelection");
-
-			this.$el.confirmDialog({
-				autoOpen : true,
-				close : function() {
-					self.cancel.call(self);
-				}
+			this.$("input:password.strprop").each(function() {
+				this.value = model.get(this.name);
+			});
+			this.$("input:password.strprop").each(function() {
+				this.value = model.get(this.name);
+			});
+			this.$("input:checkbox.boolprop").each(function() {
+				$(this).prop("checked", model.get(this.name));
 			});
 
+			this.resetCKE();
+
+			return this;
 		},
 
 		events : {
@@ -52,7 +74,7 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms", "jquery.squash.con
 			// "change textarea" : "updateCKEModelAttr",
 			// did not work because of _CKE instances (cf method
 			// configureCKEs to see how manual binding is done.
-			"click input:checkbox[name='manualSlaveSelection']" : "changeManualSlaveSelection",
+			"click input:checkbox" : "changeBoolProp",
 			"confirmdialogcancel" : "cancel",
 			"confirmdialogvalidate" : "validate",
 			"confirmdialogconfirm" : "confirm",
@@ -63,27 +85,39 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms", "jquery.squash.con
 			this.model.set(textbox.name, textbox.value);
 		},
 
-		changeManualSlaveSelection : function(event) {
-			this.model.set("manualSlaveSelection", event.target.checked);
+		changeBoolProp : function(event) {
+			var cbox = event.target;
+			this.model.set(cbox.name, cbox.checked);
 		},
 
-		cancel : function(event) {
+		onCancel : function(event) {
 			this.cleanup();
 			this.trigger("newtestautomationserver.cancel");
 		},
 
-		confirm : function(event) {
-			this.cleanup();
-			this.trigger("newtestautomationserver.confirm");
+		onConfirm : function(event) {
+			if (this.validate(event)) {
+				this.cleanup();
+				this.trigger("newtestautomationserver.confirm");
+			}
+		},
+
+		onConfirmAndCarryOn : function(event) {
+			if (this.validate(event)) {
+				this.model = new Model();
+				this.render();
+				this.trigger("newtestautomationserver.confirm-carry-on");
+			}
 		},
 
 		validate : function(event) {
-			var res = true, validationErrors = this.model.validateAll();
+			var res = true;
+			var validationErrors = this.model.validateAll();
 
 			Forms.form(this.$el).clearState();
 
 			if (validationErrors !== null) {
-				for ( var key in validationErrors) {
+				for (var key in validationErrors) {
 					Forms.input(this.$("input[name='" + key + "']")).setState("error", validationErrors[key]);
 				}
 
@@ -104,7 +138,8 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms", "jquery.squash.con
 		cleanup : function() {
 			this.$el.addClass("not-displayed");
 			Forms.form(this.$el).clearState();
-			this.$el.confirmDialog("destroy");
+			this.$el.off("formdialogconfirm formdialogcancel formdialogclose formdialogconfirm-carry-on");
+			this.$el.formDialog("destroy");
 		},
 
 		configureCKEs : function() {
@@ -124,6 +159,13 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms", "jquery.squash.con
 			var attrName = attrInput.element.$.getAttribute("name");
 			var attrValue = attrInput.getData();
 			this.model.set(attrName, attrValue);
+		},
+		resetCKE: function() {
+			var self = this;
+			var textareas = this.$el.find("textarea");
+			textareas.each(function() {
+				CKEDITOR.instances[this.id].setData(self.model.get(this.name));
+			});
 		}
 
 	});

@@ -147,6 +147,7 @@
           <!-- ==================== add popup ==================== -->
           <div id="new-test-automation-server-popup" class="not-displayed popup-dialog form-horizontal"
             title="New Test Automation Server" th:title="#{title.newTestAutomationServer}">
+            <div>
             <div class="control-group">
               <label class="control-label" for="name" th:text="#{label.Name}">Name</label>
               <div class="controls">
@@ -183,7 +184,7 @@
             <div class="control-group">
               <div class="controls">
                 <label class="afterDisabled checkbox" for="manualSlaveSelection">
-                  <input name="manualSlaveSelection" class="strprop" value="" size="50" maxlength="255" type="checkbox" />
+                  <input name="manualSlaveSelection" class="boolprop" value="" type="checkbox" />
                   <span th:remove="tag" th:text="#{label.isManualSlaveSelection}">Is Manual Slave Selection</span>
                 </label>
                 <span class="help-inline">&nbsp;</span>
@@ -197,13 +198,13 @@
                 <span class="help-inline">&nbsp;</span>
               </div>
             </div>
-
-
-            <div class="popup-dialog-buttonpane">
-              <input class="confirm" type="button" value="OK" th:value="#{label.Ok}" />
-              <input class="cancel" type="button" value="Cancel" th:value="#{label.Cancel}" />
             </div>
 
+            <div class="popup-dialog-buttonpane">
+              <input class="sq-btn" type="button" value="add another" th:value="#{label.addAnother}" data-evt="confirm-carry-on" />
+              <input class="sq-btn" type="button" value="add" th:value="#{label.Add}" data-evt="confirm" />
+              <input class="sq-btn" type="button" value="Cancel" th:value="#{label.Cancel}" data-evt="cancel" />
+            </div>
           </div>
 
           <!-- ==================== remove popup ==================== -->
