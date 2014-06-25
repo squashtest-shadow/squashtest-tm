@@ -139,12 +139,18 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	public void setTimeoutMillis(int timeoutMillis) {
 		this.timeoutMillis = timeoutMillis;
 	}
-
+	/**
+	 * 
+	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#findById(java.lang.String)
+	 */
 	@Override
 	public AutomatedSuite findById(String id) {
 		return autoSuiteDao.findById(id);
 	}
-
+	/**
+	 * 
+	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#createFromIterationTestPlan(long)
+	 */
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'EXECUTE') or hasRole('ROLE_ADMIN')")
 	public AutomatedSuite createFromIterationTestPlan(long iterationId) {
@@ -152,7 +158,10 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		List<IterationTestPlanItem> items =  iteration.getTestPlans();
 		return createFromItems(items);
 	}
-
+	/**
+	 * 
+	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#createFromTestSuiteTestPlan(long)
+	 */
 	@Override
 	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'EXECUTE') or hasRole('ROLE_ADMIN')")
 	public AutomatedSuite createFromTestSuiteTestPlan(long testSuiteId) {
@@ -160,29 +169,25 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		List<IterationTestPlanItem> items =  suite.getTestPlan();
 		return createFromItems(items);
 	}
-
+	/**
+	 * 
+	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#sortByProject(java.lang.String)
+	 */
 	@Override
-	// security handled in the code
-	public AutomatedSuite createFromItemIds(List<Long> testPlanIds) {
-
-		List<IterationTestPlanItem> items = testPlanDao.findAllByIds(testPlanIds);
-
-		PermissionsUtils.checkPermission(permissionService, testPlanIds, EXECUTE, IterationTestPlanItem.class.getName());
-
-		return createFromItems(items);
-	}
-
-	@Override
-	// security delegated to sortByProject(AutomatedSuite)
 	public Collection<TestAutomationProjectContent> sortByProject(String autoSuiteId) {
+		// security delegated to sortByProject(AutomatedSuite)
 		AutomatedSuite suite = findById(autoSuiteId);
 		return sortByProject(suite);
 	}
+	/**
+	 * 
+	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#sortByProject(org.squashtest.tm.domain.testautomation.AutomatedSuite)
+	 */
 
-
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	// security handled by in the code
 	public Collection<TestAutomationProjectContent> sortByProject(AutomatedSuite suite) {
+		// security handled by in the code
 
 		List<AutomatedExecutionExtender> extenders = suite.getExecutionExtenders();
 
@@ -218,14 +223,21 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 	}
 
-
+	/**
+	 * 
+	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#delete(java.lang.String)
+	 */
 	@Override
 	// security delegated to delete(AutomatedSuite)
 	public void delete(String automatedSuiteId) {
 		AutomatedSuite suite = findById(automatedSuiteId);
 		delete(suite);
 	}
-
+	/**
+	 * 
+	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#delete(org.squashtest.tm.domain.testautomation.AutomatedSuite)
+	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	// security handled in the code
 	public void delete(AutomatedSuite suite) {
@@ -521,8 +533,32 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	private static final class ExecutionCollector implements Transformer{
 		@Override
 		public Object transform(Object input) {
-			return ((AutomatedExecutionExtender)input).getExecution();
+			return ((AutomatedExecutionExtender) input).getExecution();
 		}
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#createFromItemsAndIteration(java.util.List, long)
+	 */
+	@Override
+	public AutomatedSuite createFromItemsAndIteration(List<Long> testPlanIds, long iterationId) {
+		PermissionsUtils.checkPermission(permissionService, testPlanIds, EXECUTE, IterationTestPlanItem.class.getName());
+
+		List<IterationTestPlanItem> items = testPlanDao.findAllByIdsOrderedByIterationTestPlan(testPlanIds);
+
+		return createFromItems(items);
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#createFromItemsAndTestSuite(java.util.List, long)
+	 */
+	@Override
+	public AutomatedSuite createFromItemsAndTestSuite(List<Long> testPlanIds, long testSuiteId) {
+		PermissionsUtils.checkPermission(permissionService, testPlanIds, EXECUTE, IterationTestPlanItem.class.getName());
+
+		List<IterationTestPlanItem> items = testPlanDao.findAllByIdsOrderedBySuiteTestPlan(testPlanIds, testSuiteId);
+
+		return createFromItems(items);
 	}
 
 }

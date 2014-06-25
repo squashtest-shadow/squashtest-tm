@@ -303,21 +303,18 @@ public class HttpRequestFactory {
 		public URL get() {
 
 			CallbackURL callback = CallbackURL.getInstance();
+			String strURL = callback.getValue();
 
 			try {
 
-				String strURL = callback.getValue();
 				URL url = new URL(strURL);
 				return url;
 
 			} catch (MalformedURLException ex) {
 
 				BadConfiguration bc = new BadConfiguration(
-						"Test Automation configuration : The test could not be started because the service is not configured properly. "
-								+
-								"The url specified at property '" + callback.getConfPropertyName()
-								+ "' in configuration file 'tm.testautomation.conf.properties' is malformed. Please " +
-						"contact the administration team.");
+						"Test Automation configuration : The test could not be started because the service is not configured properly. The url '" + strURL + "' specified at property '" + callback.getConfPropertyName()
+						+ "' in configuration file 'tm.testautomation.conf.properties' is malformed. Please contact the administration team.");
 
 				bc.setPropertyName(callback.getConfPropertyName());
 

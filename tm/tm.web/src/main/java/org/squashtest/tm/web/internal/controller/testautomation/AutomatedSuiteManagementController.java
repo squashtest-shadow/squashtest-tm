@@ -53,24 +53,41 @@ public class AutomatedSuiteManagementController {
 	@Inject
 	private AutomatedSuiteManagerService service;
 
-	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "iterationId", produces = "application/json")
+	@RequestMapping(value = "/new", method = RequestMethod.POST, params = { "iterationId", "!testPlanItemsIds[]" }, produces = "application/json")
 	@ResponseBody
 	public AutomatedSuiteDetails createNewAutomatedSuiteForIteration(@RequestParam("iterationId") long iterationId) {
 		AutomatedSuite suite = service.createFromIterationTestPlan(iterationId);
 		return toProjectContentModel(suite);
 	}
 
-	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "testSuiteId", produces = "application/json")
+	@RequestMapping(value = "/new", method = RequestMethod.POST, params = { "testSuiteId", "!testPlanItemsIds[]" }, produces = "application/json")
 	@ResponseBody
 	public AutomatedSuiteDetails createNewAutomatedSuiteForTestSuite(@RequestParam("testSuiteId") long testSuiteId) {
 		AutomatedSuite suite = service.createFromTestSuiteTestPlan(testSuiteId);
 		return toProjectContentModel(suite);
 	}
 
-	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "testPlanItemsIds[]", produces = "application/json")
+	@RequestMapping(value = "/new", method = RequestMethod.POST, params = { "testPlanItemsIds[]", "iterationId" }, produces = "application/json")
 	@ResponseBody
-	public AutomatedSuiteDetails createNewAutomatedSuite(@RequestParam("testPlanItemsIds[]") List<Long> testPlanIds) {
-		AutomatedSuite suite = service.createFromItemIds(testPlanIds);
+	public AutomatedSuiteDetails createNewAutomatedSuiteForIterationItems(
+			@RequestParam("testPlanItemsIds[]") List<Long> testPlanIds, @RequestParam("iterationId") long iterationId) {
+		if (testPlanIds.isEmpty()) {
+			createNewAutomatedSuiteForIteration(iterationId);
+		}
+
+		AutomatedSuite suite = service.createFromItemsAndIteration(testPlanIds, iterationId);
+		return toProjectContentModel(suite);
+	}
+
+	@RequestMapping(value = "/new", method = RequestMethod.POST, params = { "testPlanItemsIds[]", "testSuiteId" }, produces = "application/json")
+	@ResponseBody
+	public AutomatedSuiteDetails createNewAutomatedSuiteForTestSuiteItems(
+			@RequestParam("testPlanItemsIds[]") List<Long> testPlanIds, @RequestParam("testSuiteId") long testSuiteId) {
+		if (testPlanIds.isEmpty()) {
+			createNewAutomatedSuiteForTestSuite(testSuiteId);
+		}
+
+		AutomatedSuite suite = service.createFromItemsAndTestSuite(testPlanIds, testSuiteId);
 		return toProjectContentModel(suite);
 	}
 

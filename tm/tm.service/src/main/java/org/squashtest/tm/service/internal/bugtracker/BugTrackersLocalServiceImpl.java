@@ -661,7 +661,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	@Override
 	public int findNumberOfIssueForItemTestPlanLastExecution(Long itemTestPlanId) {
 
-		IterationTestPlanItem itp = iterationTestPlanDao.findTestPlanItem(itemTestPlanId);
+		IterationTestPlanItem itp = iterationTestPlanDao.findById(itemTestPlanId);
 		Execution execution = itp.getLatestExecution();
 		if(execution == null){
 			return 0;

@@ -64,14 +64,11 @@ define([ "jquery", "squash.translator", "../app/pubsub", "jquery.squash.buttonme
 		var createUrl = $("#auto-exec-btns-panel").data("suites-url") + "/new";
 
 		var data = {};
+		var ent =  squashtm.page.identity.restype === "iterations" ? "iterationId" : "testSuiteId";
+		data[ent] = squashtm.page.identity.resid;
 
 		if (!!itemIds && itemIds.length > 0) {
 			data.testPlanItemsIds = itemIds;
-
-		} else {
-			var ent =  squashtm.page.identity.restype === "iterations" ? "iterationId" : "testSuiteId";
-			data[ent] = squashtm.page.identity.resid;
-
 		}
 
 		return $.ajax({

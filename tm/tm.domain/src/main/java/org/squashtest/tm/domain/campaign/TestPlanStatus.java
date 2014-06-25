@@ -23,7 +23,9 @@ package org.squashtest.tm.domain.campaign;
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 
 public enum TestPlanStatus implements Internationalizable {
-	DONE, READY, RUNNING;
+	DONE,
+	READY,
+	RUNNING;
 
 	private static final String I18N_KEY_ROOT = "label.testPlanStatus.";
 	/**

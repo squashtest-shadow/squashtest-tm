@@ -411,7 +411,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	public void assignUserToTestPlanItem(long testPlanItemId, long userId) {
 		User user = (userId == 0) ? null : userDao.findById(userId);
 
-		IterationTestPlanItem itp = iterationTestPlanDao.findTestPlanItem(testPlanItemId);
+		IterationTestPlanItem itp = iterationTestPlanDao.findById(testPlanItemId);
 		if (!itp.isTestCaseDeleted()) {
 			itp.setUser(user);
 		}
@@ -458,7 +458,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@PreAuthorize("hasPermission(#itemTestPlanId, 'org.squashtest.tm.domain.campaign.IterationTestPlanItem', 'READ') "
 			+ OR_HAS_ROLE_ADMIN)
 	public IterationTestPlanItem findTestPlanItem(long itemTestPlanId) {
-		return iterationTestPlanDao.findTestPlanItem(itemTestPlanId);
+		return iterationTestPlanDao.findById(itemTestPlanId);
 	}
 
 	@Override

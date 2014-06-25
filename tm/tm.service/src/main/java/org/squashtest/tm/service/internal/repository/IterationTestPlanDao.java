@@ -20,15 +20,34 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import java.util.Collection;
+import java.util.List;
+
+import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
+import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 
-public interface IterationTestPlanDao extends EntityDao<IterationTestPlanItem>{
+@DynamicDao(entity=IterationTestPlanItem.class, hasCustomImplementation=false)
+public interface IterationTestPlanDao {
+	void persist(IterationTestPlanItem item);
+
+	IterationTestPlanItem findById(long itemTestPlanId);
+
+	List<IterationTestPlanItem> findAllByIds(Collection<Long> ids);
 
 	/**
-	 * @param itemTestPlanId
+	 * Fetches the test plan items which match the given ids ordered according to their iteration's test plan.
+	 * @param testPlanIds
 	 * @return
 	 */
-	IterationTestPlanItem findTestPlanItem(long itemTestPlanId);
+	List<IterationTestPlanItem> findAllByIdsOrderedByIterationTestPlan(@QueryParam("testPlanIds") List<Long> testPlanIds);
 
-	
+	/**
+	 * Fetches the test plan items which match the given ids ordered according to the given test suite's test plan.
+	 * @param testPlanIds
+	 * @param testSuiteId
+	 * @return
+	 */
+	List<IterationTestPlanItem> findAllByIdsOrderedBySuiteTestPlan(@QueryParam("testPlanIds") List<Long> testPlanIds, @QueryParam("suiteId") long testSuiteId);
+
 }

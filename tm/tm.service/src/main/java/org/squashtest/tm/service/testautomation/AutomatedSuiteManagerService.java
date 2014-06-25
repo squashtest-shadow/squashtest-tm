@@ -60,16 +60,6 @@ public interface AutomatedSuiteManagerService {
 	 */
 	AutomatedSuite createFromTestSuiteTestPlan(long testSuiteId);
 
-	/**
-	 * Creates a new AutomatedSuite based on a collection of {@link IterationTestPlanItem}, given their ID. Only automated tests will
-	 * be included. The automated executions are ordered according to the order of the argument.
-	 * 
-	 * @param testPlanIds
-	 * @return
-	 */
-	AutomatedSuite createFromItemIds(List<Long> testPlanIds);
-
-
 	void delete(AutomatedSuite suite);
 
 
@@ -131,5 +121,27 @@ public interface AutomatedSuiteManagerService {
 	 * @return
 	 */
 	List<Execution> findExecutionsByAutomatedTestSuiteId(String automatedTestSuiteId);
+
+
+	/**
+	 * Creates a new AutomatedSuite based on a collection of {@link IterationTestPlanItem}, given their ID. Only automated tests will
+	 * be included. The automated executions are ordered according to the iteration's test plan.
+	 * 
+	 * @param testPlanIds
+	 * @param iterationId
+	 * @return
+	 */
+	AutomatedSuite createFromItemsAndIteration(List<Long> testPlanIds, long iterationId);
+
+
+	/**
+	 * Creates a new AutomatedSuite based on a collection of {@link IterationTestPlanItem}, given their ID. Only automated tests will
+	 * be included. The automated executions are ordered according to the test suite's test plan.
+	 * 
+	 * @param testPlanIds
+	 * @param testSuiteId
+	 * @return
+	 */
+	AutomatedSuite createFromItemsAndTestSuite(List<Long> testPlanIds, long testSuiteId);
 
 }

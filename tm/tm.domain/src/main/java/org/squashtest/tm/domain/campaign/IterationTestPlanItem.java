@@ -40,6 +40,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.Temporal;
@@ -61,7 +63,10 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.NotAutomatedException;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.security.annotation.InheritsAcls;
-
+@NamedQueries({
+	@NamedQuery(name="IterationTestPlanItem.findAllByIdsOrderedByIterationTestPlan", query="select tp from Iteration i join i.testPlans tp where tp.id in :testPlanIds order by index(tp)"),
+	@NamedQuery(name="IterationTestPlanItem.findAllByIdsOrderedBySuiteTestPlan", query="select tp from TestSuite ts join ts.testPlan tp where ts.id = :suiteId and tp.id in :testPlanIds order by index(tp)")
+})
 @Entity
 @Auditable
 @InheritsAcls(constrainedClass = Iteration.class, collectionName = "testPlans")
