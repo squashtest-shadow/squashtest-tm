@@ -78,8 +78,8 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 		if (instruction instanceof CustomFieldHolder) {
 			processCustomFieldColumns(row, instruction);
 		}
-		if(instruction instanceof TestCaseInstruction){
-			ignoreImportancetIfAuto((TestCaseInstruction)instruction);
+		if (instruction instanceof TestCaseInstruction) {
+			ignoreImportancetIfAuto((TestCaseInstruction) instruction);
 		}
 
 		return instruction;
@@ -87,7 +87,7 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 
 	private void ignoreImportancetIfAuto(TestCaseInstruction instruction) {
 		TestCase testCase = instruction.getTestCase();
-		if(testCase!= null && testCase.isImportanceAuto() != null && testCase.isImportanceAuto()){
+		if (testCase != null && testCase.isImportanceAuto() != null && testCase.isImportanceAuto()) {
 			testCase.setImportance(TestCaseImportance.defaultValue());
 		}
 	}
@@ -122,9 +122,8 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 
 		try {
 			value = getValue(row, colDef);
-
-		} catch (CannotCoerceException e) {
-			log(colDef, e, instruction);
+		} catch (CannotCoerceException cce) {
+			log(colDef, cce, instruction);
 
 		}
 
@@ -139,13 +138,15 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 		}
 	}
 
+
+
 	/**
 	 * @param colDef
 	 * @param e
 	 * @param instruction
 	 */
 	private void log(ColumnDef colDef, INST instruction) {
-		instruction.addLogEntry(ImportStatus.FAILURE, Messages.ERROR_FIELD_MANDATORY, colDef.getHeader());
+		instruction.addLogEntry(ImportStatus.FAILURE, Messages.ERROR_FIELD_MANDATORY, null, colDef.getHeader());
 
 	}
 
@@ -153,11 +154,17 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 	 * @param colDef
 	 * @param e
 	 */
-	private void log(ColumnDef colDef, CannotCoerceException e, INST instr) {
-		ImportStatus status = colDef.is(ColumnProcessingMode.MANDATORY) ? ImportStatus.FAILURE : ImportStatus.WARNING;
-		instr.addLogEntry(status, e.errorI18nKey, colDef.getHeader());
+	private void log(ColumnDef colDef, CannotCoerceException e, INST instruction) {
+		String impactKey = e.getImpactI18nKey();;
+		ImportStatus status = ImportStatus.WARNING;
+		if (colDef.is(ColumnProcessingMode.MANDATORY)) {
+			status = ImportStatus.FAILURE;
+			impactKey = null;
+		}
+		instruction.addLogEntry(status, e.errorI18nKey, impactKey, colDef.getHeader());
 
 	}
+
 
 	/**
 	 * Returns the asked cell
