@@ -178,6 +178,9 @@ div.dataTables_wrapper th.datatable-filterable.datatable-filtered{
 	cursor: default;
 }
 
-table#requirement-search-result-table tr.nonEditableRow td.editable{
+table#requirement-search-result-table tr.nonEditable td.editable{
     cursor: not-allowed;
+}
+table tr td.nonEditable{
+	cursor : not-allowed;
 }

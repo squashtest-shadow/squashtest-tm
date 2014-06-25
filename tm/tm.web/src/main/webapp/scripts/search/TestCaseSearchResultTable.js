@@ -29,6 +29,7 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 			this.associateType = associateType;
 			this.associateId = associateId;
 			this.addSelectEditableToImportance = $.proxy(this._addSelectEditableToImportance, this);
+			this.addTooltipToImportance = $.proxy(this._addTooltipToImportance, this);
 			this.addSelectEditableToNature = $.proxy(this._addSelectEditableToNature, this);
 			this.addSelectEditableToType = $.proxy(this._addSelectEditableToType, this);
 			this.addSelectEditableToStatus = $.proxy(this._addSelectEditableToStatus, this);
@@ -152,6 +153,11 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 							"mDataProp" : "editable",
 							"bVisible" : false,
 							"bSortable" : false
+						},{
+							"aTargets" : [ 18 ],
+							"mDataProp" : "test-case-weight-auto",
+							"bVisible" : false,
+							"bSortable" : false
 						} ],
 						"sDom" : 'ft<"dataTables_footer"lip>'
 					}, squashConf = {
@@ -266,7 +272,13 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 							"mDataProp" : "editable",
 							"bVisible" : false,
 							"bSortable" : false
-						} ],
+						},
+						{
+							"aTargets" : [ 18 ],
+							"mDataProp" : "test-case-weight-auto",
+							"bVisible" : false,
+							"bSortable" : false
+						}],
 						"sDom" : 'ft<"dataTables_footer"lip>'
 					}, squashConf = {
 						enableHover : true
@@ -298,6 +310,12 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 							return {"id": "test-case-importance"};
 						}
 					});
+		},
+		_addTooltipToImportance : function(row, data) {
+			var $impCell = $('.editable_importance', row);
+			$impCell.attr("title", squashtm.app.messages["label.weightAuto"]);
+			$impCell.addClass("nonEditable");
+		
 		},
 		
 		_addSelectEditableToNature : function(row, data) {
@@ -391,7 +409,11 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 			if(data["editable"]){
 				this.addSimpleEditableToReference(row,data);
 				this.addSimpleEditableToLabel(row,data);
-				this.addSelectEditableToImportance(row,data);
+				if(data["test-case-weight-auto"]){
+					this.addTooltipToImportance(row, data);
+				}else{
+					this.addSelectEditableToImportance(row,data);
+				}
 				this.addSelectEditableToNature(row,data);
 				this.addSelectEditableToStatus(row,data);
 				this.addSelectEditableToType(row,data);

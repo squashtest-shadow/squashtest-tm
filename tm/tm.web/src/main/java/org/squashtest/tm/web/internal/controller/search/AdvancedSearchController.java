@@ -615,6 +615,7 @@ public class AdvancedSearchController {
 			res.put("test-case-label", item.getName());
 			res.put("editable", isTestCaseEditable(item));
 			res.put("test-case-weight", formatImportance(item.getImportance(), locale));
+			res.put("test-case-weight-auto", item.getImportanceAuto());
 			res.put("test-case-nature", formatNature(item.getNature(), locale));
 			res.put("test-case-type", formatType(item.getType(), locale));
 			res.put("test-case-status", formatStatus(item.getStatus(), locale));

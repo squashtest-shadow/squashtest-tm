@@ -373,7 +373,7 @@ define([ "jquery", "backbone", "squash.translator","jeditable.simpleJEditable", 
 				this.addSelectEditableToCategory(row,data);
 				this.addSelectEditableToStatus(row,data);
 			}else{
-				$(row).addClass("nonEditableRow");
+				$(row).addClass("nonEditable");
 				$(row).attr('title', squashtm.app.requirementSearchResultConf.messages.nonEditableTooltip);
 			}
 			this.addInterfaceLevel2Link(row,data);
