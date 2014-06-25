@@ -233,14 +233,19 @@ define(
 						var tpiIds =  [];
 						var tpiId = data['entity-id'];
 						tpiIds.push(tpiId);
+
 						var url = squashtm.app.contextRoot + "/automated-suites/new";
+
+						var formParams = {};
+						var ent =  squashtm.page.identity.restype === "iterations" ? "iterationId" : "testSuiteId";
+						formParams[ent] = squashtm.page.identity.resid;
+						formParams.testPlanItemsIds = tpiIds;
+
 						$.ajax({
 							url : url,
 							dataType:'json',
 							type : 'post',
-							data : {
-								testPlanItemsIds : tpiIds
-							},
+							data : formParams,
 							contentType : "application/x-www-form-urlencoded;charset=UTF-8"
 						}).done(function(suite) {
 							squashtm.context.autosuiteOverview.start(suite);
