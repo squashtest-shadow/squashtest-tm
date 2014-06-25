@@ -30,5 +30,6 @@
 	<span><f:message key="squashtm.processing"/></span>
 </div>
 <div id="generic-error-notification-area" class="ui-state-error ui-corner-all ${ cssClass } not-displayed ">
-	<span class="ui-icon ui-icon-alert icon"></span><span><f:message key="error.generic.label" />&nbsp;(<a href="#" id="show-generic-error-details"><f:message key="error.generic.button.details.label" /></a>)</span>
+	<span class="ui-icon ui-icon-alert icon"></span><span><f:message key="error.generic.label" />&nbsp;
+  (<a href="#" id="show-generic-error-details" class="cursor-pointer"><f:message key="error.generic.button.details.label" /></a>)</span>
 </div>

@@ -125,12 +125,12 @@ public class TestCaseModificationController {
 	private static final String TEST_CASE_ = "test case "; // NOSONAR generated name
 
 	private final DatatableMapper<String> referencingTestCaseMapper = new NameBasedMapper(6)
-			.mapAttribute("project-name", NAME, Project.class)
-			.mapAttribute("tc-reference", "reference", TestCase.class)
-			.mapAttribute("tc-name", NAME, TestCase.class)
-			.mapAttribute("tc-mode", "executionMode", TestCase.class);
+	.mapAttribute("project-name", NAME, Project.class)
+	.mapAttribute("tc-reference", "reference", TestCase.class)
+	.mapAttribute("tc-name", NAME, TestCase.class)
+	.mapAttribute("tc-mode", "executionMode", TestCase.class);
 
-	
+
 	@Inject
 	private TestCaseModificationService testCaseModificationService;
 
@@ -179,10 +179,10 @@ public class TestCaseModificationController {
 
 	@Inject
 	private BugTrackersLocalService bugTrackersLocalService;
-	
+
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentHelper;
-	
+
 
 
 	/**
@@ -326,8 +326,9 @@ public class TestCaseModificationController {
 		LOGGER.info("TestCaseModificationController : renaming {} as {}", testCaseId, newName);
 
 		return newName;
+
 	}
-	
+
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-type", VALUE })
 	public String changeType(@PathVariable long testCaseId, @RequestParam(VALUE) TestCaseType type, Locale locale) {
@@ -352,8 +353,8 @@ public class TestCaseModificationController {
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
 		return new JsonEnumValue(testCase.getImportance().toString(), formatImportance(testCase.getImportance(), locale)) ;
 	}
-	
-	
+
+
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=test-case-prerequisite", VALUE })
 	@ResponseBody
@@ -432,7 +433,7 @@ public class TestCaseModificationController {
 	@ResponseBody
 	public JsonGeneralInfo refreshGeneralInfos(@PathVariable long testCaseId){
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
-		return new JsonGeneralInfo((AuditableMixin)testCase);		
+		return new JsonGeneralInfo((AuditableMixin)testCase);
 	}
 
 
@@ -449,13 +450,13 @@ public class TestCaseModificationController {
 		return getCallingTestCaseTableModel(testCaseId, paging, params.getsEcho());
 
 	}
-	
+
 	private DataTableModel getCallingTestCaseTableModel(long testCaseId, PagingAndSorting paging, String sEcho){
-		
+
 		PagedCollectionHolder<List<TestCase>> holder = testCaseModificationService.findCallingTestCases(testCaseId,
 				paging);
 
-		return new CallingTestCasesTableModelBuilder(internationalizationHelper).buildDataModel(holder, sEcho);		
+		return new CallingTestCasesTableModelBuilder(internationalizationHelper).buildDataModel(holder, sEcho);
 	}
 
 	private PagingAndSorting createPaging(final DataTableDrawParameters params, final DatatableMapper<?> dtMapper) {

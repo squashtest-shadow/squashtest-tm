@@ -27,8 +27,8 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 		translator, Forms) {
 
 	var _config = translator.get({
-		errorTitle : "popup.title.info",
-		infoTitle : "popup.title.error"
+		errorTitle : "popup.title.error",
+		infoTitle : "popup.title.info"
 	});
 
 	var _spinner = "#ajax-processing-indicator";
@@ -43,6 +43,7 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 		}
 	}
 
+	// TODO : see if we can factor some logic with getErrorMessage
 	function handleJsonResponseError(request) {
 		/*
 		 * this pukes an exception if not valid json. there's no other jQuery way to tell
@@ -124,6 +125,10 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 	function displayInformationNotification(message) {
 		$.squash.openMessage(_config.infoTitle, message);
 	}
+	
+	function displayError(message){
+		$.squash.openMessage(_config.errorTitle, message);
+	}
 
 	function initSpinner() {
 
@@ -134,8 +139,8 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 		 */
 		$doc.on('ajaxError', function(event, request, settings, ex) {
 
-			// nothing to notify if the request was aborted
-			if (request.status === 0) {
+			// nothing to notify if the request was aborted, or was treated elsewhere
+			if (request.status === 0 || request.errorIsHandled === true) {
 				return;
 			}
 
@@ -167,14 +172,16 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 		initSpinner();
 	}
 
+	
+	// TODO : see if we can factor some logic with handleJsonResponseError
 	function getErrorMessage(request, index) {
 		var json = $.parseJSON(request.responseText);
 
-		if (json !== null) {
-			if (json.actionValidationError !== null) {
+		if (!! json ) {
+			if (!! json.actionValidationError ) {
 				return json.actionValidationError.message;
 			} else {
-				if (json.fieldValidationErrors !== null) {
+				if (!! json.fieldValidationErrors) {
 					/* IE8 requires low tech code */
 					var validationErrorList = json.fieldValidationErrors;
 					if (validationErrorList.length > 0) {
@@ -194,14 +201,21 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 			handleGenericResponseError(xhr);
 		}
 	}
+	
+	function showXhrInDialog(jsonerror){
+		var msg = this.getErrorMessage(jsonerror);
+		this.showError(msg);
+	}
+	
 	squashtm.notification = {
 		init : init,
 		showInfo : displayInformationNotification,
+		showError : displayError,
 		getErrorMessage : getErrorMessage,
 		handleJsonResponseError : handleJsonResponseError,
 		handleGenericResponseError : handleGenericResponseError,
-		handleUnknownTypeError : handleUnknownTypeError
-
+		handleUnknownTypeError : handleUnknownTypeError,
+		showXhrInDialog : showXhrInDialog
 	};
 
 	return squashtm.notification;

@@ -18,7 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable","squashtable", "jqueryui", "jquery.squash.jeditable", "jquery.cookie" ], function($, Backbone, translator, SimpleJEditable) {
+define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable", "app/ws/squashtm.notification", "squashtable", "jqueryui", "jquery.squash.jeditable", "jquery.cookie" ], 
+		function($, Backbone, translator, SimpleJEditable, notification) {
 
 	var TestCaseSearchResultTable = Backbone.View.extend({
 		el : "#test-case-search-result-table",
@@ -393,12 +394,18 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 		_addSimpleEditableToLabel : function(row, data) {
 			var component = $('td.editable_label', row);
 			var url = squashtm.app.contextRoot + "/test-cases/" + data["test-case-id"];
+						
 			new SimpleJEditable({
 				targetUrl : url,
 				component : component,
 				jeditableSettings : {
 					"submitdata" : function(value, settings) {
 						return {"id": "test-case-newname"};
+					},
+					"onerror" : function(settings, self, xhr){	
+						xhr.errorIsHandled = true;
+						notification.showXhrInDialog(xhr);	
+						self.reset();
 					}
 				}
 			});
