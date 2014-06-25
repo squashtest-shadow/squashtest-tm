@@ -48,7 +48,10 @@ public final class RequestParams {
 	 * Dry-run some app-state-modifying request
 	 */
 	public static final String DRY_RUN = "dry-run";
-	
-	
+
+	public static final String ITERATION_ID = "iterationId";
+	public static final String TEST_SUITE_ID = "testSuiteId";
+	public static final String TEST_PLAN_ITEMS_IDS = "testPlanItemsIds[]";
+
 
 }
