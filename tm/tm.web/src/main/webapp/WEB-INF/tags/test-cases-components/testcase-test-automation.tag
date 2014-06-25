@@ -99,7 +99,7 @@
     <div id="ta-remove-popup" class="popup-dialog" title="${removePopupTitle}">
     
       <div class="std-margin-top std-margin-bottom"> 
-        <span><f:message key="dialog.unbind-ta-script.message "/></span>
+        <span><f:message key="dialog.unbind-ta-script.message"/></span>
       </div>
     
       <div class="popup-dialog-buttonpane">
