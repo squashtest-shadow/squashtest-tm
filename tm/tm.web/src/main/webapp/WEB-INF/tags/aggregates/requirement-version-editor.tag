@@ -406,7 +406,7 @@ var identity = { resid : ${requirementVersion.id}, restype : "requirements"  };
 			$("#rename-requirement-input").val(name);
 		});
 		
-		$("#verifying-test-case-button").button().click(function(){
+		$("#verifying-test-case-button").click(function(){
 			document.location.href="${ verifyingTCManagerUrl }" ;	
 		});
 		
