@@ -84,9 +84,7 @@
 		</c:otherwise>
 	</c:choose>
 	</c:if>
-    <script id="df-post-label" type="text/squash">
-      <f:message key="label.fromTestCase" />
-    </script>
+
 	<script type="text/javascript">
 	require(["common"], function() {
 		require(["jquery", "squash.basicwidgets", 
@@ -149,14 +147,12 @@
 			});
 	
             <c:if test="${not empty denormalizedFieldValues }">
-            var postLabel = " (" + $.trim($("#df-post-label").text()) +")";
-            
             $.get("${denormalizedFieldsValuesURL}?denormalizedFieldHolderId=${executionStep.boundEntityId}&denormalizedFieldHolderType=${executionStep.boundEntityType}")
               .success(function(data){
                 $("#dfv-information-table")
                   .append(data)
                   .find("label")
-                  .append(postLabel);
+                  .append(' (<f:message key="label.fromTestCase"/>)');
             });
             </c:if>
 			

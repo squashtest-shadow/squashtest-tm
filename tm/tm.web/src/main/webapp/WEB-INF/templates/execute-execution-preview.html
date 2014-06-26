@@ -71,7 +71,6 @@ documentation :
 <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
 <script th:remove="all" type="text/javascript" src="../../scripts/require.js"></script>
 <script th:remove="all" type="text/javascript" src="../../scripts/common.js"></script>
-<script id="df-post-label" type="text/squash" th:inline="text">[[#{label.fromTestCase}]]</script>
 </head>
 
 <body class="execute-html-body">
@@ -211,9 +210,9 @@ documentation :
     				var denormsUrl = /*[[@{/denormalized-fields/values(denormalizedFieldHolderId=${execution.boundEntityId},denormalizedFieldHolderType=${execution.boundEntityType})}]]*/ "";
         			$.get(denormsUrl)
         			.success(function(data) {
-      					var postLabel = " (" + $.trim($("#df-post-label").text()) +")";
+        				var postlabel = /*[[' ('+#{label.fromTestCase}+')']]*/ " (from test case)";
       					var $data = $(data)
-      					$data.find("label").append(postLabel);
+      					$data.find("label").append(postlabel);
         				$("#denorm-fields-pnl").replaceWith($data);
         			});
     			}

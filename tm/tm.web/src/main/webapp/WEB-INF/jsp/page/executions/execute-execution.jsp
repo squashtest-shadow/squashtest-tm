@@ -102,9 +102,7 @@
 		<body class="execute-html-body">
 			<f:message var="completedMessage" key="execute.alert.test.complete" />
 			<f:message var="endTestSuiteMessage" key="squashtm.action.exception.testsuite.end" />
-          <script id="df-post-label" type="text/squash">
-            <f:message key="label.fromTestCase" />
-          </script>
+
 			<script type="text/javascript">						
 			require(["common"], function() {
 				require(['jquery', 'squash.basicwidgets', 
@@ -315,8 +313,9 @@
 							}
 						});
 						
-						if (${ not empty testPlanItemUrl }) $('#execute-next-test-case-panel').removeClass('not-displayed');		
-						
+						<c:if test="${ not empty testPlanItemUrl }">
+						$('#execute-next-test-case-panel').removeClass('not-displayed');		
+						</c:if>
 						
 						$(window).unload( refreshParent );
 						
@@ -335,12 +334,10 @@
 	                    <c:if test="${not empty denormalizedFieldValues }">
 	                    $.get("${denormalizedFieldsValuesURL}?denormalizedFieldHolderId=${executionStep.boundEntityId}&denormalizedFieldHolderType=${executionStep.boundEntityType}")
 	                      .success(function(data){
-	                        var postLabel = " (" + $.trim($("#df-post-label").text()) +")";
-	                        
-	                        $("#dfv-information-table")
+	                       	 $("#dfv-information-table")
 	                          .append(data)
 	                          .find("label")
-	                          .append(postLabel);
+	                          .append(' (<f:message key="label.fromTestCase"/>)');
 	                      });
 	                    </c:if>
 	
