@@ -23,16 +23,18 @@ package org.squashtest.tm.service.internal.batchimport.excel;
 
 /**
  * @author Gregory Fouquet
- *
+ * 
  */
 public class CannotCoerceException extends RuntimeException {
 	private static final long serialVersionUID = 839887673080933124L;
 
 	public final String errorI18nKey; // NOSONAR immutable const
+	public final String impactI18nKey; // NOSONAR immutable const
 
 	public CannotCoerceException(Throwable cause, String errorI18nKey) {
 		super(cause);
 		this.errorI18nKey = errorI18nKey;
+		this.impactI18nKey = null;
 	}
 
 	/**
@@ -41,6 +43,13 @@ public class CannotCoerceException extends RuntimeException {
 	 */
 	public CannotCoerceException(String string, String errorI18nKey) {
 		this.errorI18nKey = errorI18nKey;
+		this.impactI18nKey = null;
+	}
+
+	public CannotCoerceException(Throwable cause, String errorI18nKey, String impactI18nKey) {
+		super(cause);
+		this.errorI18nKey = errorI18nKey;
+		this.impactI18nKey = impactI18nKey;
 	}
 
 	/**
@@ -50,4 +59,10 @@ public class CannotCoerceException extends RuntimeException {
 		return errorI18nKey;
 	}
 
+	/**
+	 * @return the impactI18nKey
+	 */
+	public String getImpactI18nKey() {
+		return impactI18nKey;
+	}
 }

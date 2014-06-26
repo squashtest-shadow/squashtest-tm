@@ -57,10 +57,11 @@ public abstract class Instruction<T extends Target> {
 		this.mode = mode;
 	}
 
-	public void addLogEntry(ImportStatus status, String messageKey, Object... messageArgs) {
+	public void addLogEntry(ImportStatus status, String messageKey, String impactKey, Object... messageArgs) {
 		LogEntry entry = new LogEntry(target, status, messageKey);
 		entry.setLine(line);
 		entry.setErrorArgs(messageArgs);
+		entry.setI18nImpact(impactKey);
 		logTrain.addEntry(entry);
 	}
 

@@ -56,7 +56,7 @@ CellValueCoercer<ENUM> {
 		try {
 			return (ENUM) Enum.valueOf(enumType, name);
 		} catch (IllegalArgumentException e) {
-			throw new CannotCoerceException(e, Messages.ERROR_UNPARSABLE_OPTION);
+			throw new CannotCoerceException(e, Messages.ERROR_UNPARSABLE_OPTION, Messages.IMPACT_DEFAULT_VALUE);
 		}
 	}
 

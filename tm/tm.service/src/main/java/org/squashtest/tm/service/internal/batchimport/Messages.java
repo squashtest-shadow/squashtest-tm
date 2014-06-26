@@ -64,6 +64,7 @@ public final class Messages {
 
 	public static final String IMPACT_MAX_SIZE = "message.import.log.impact.truncatedValue";
 	public static final String IMPACT_DEFAULT_VALUE = "message.import.log.impact.useDefaultValue";
+	public static final String IMPACT_USE_CURRENT_DATE ="message.import.log.impact.useCurrentDate";
 	public static final String IMPACT_NO_CHANGE = "message.import.log.impact.fieldNotChange";
 	public static final String IMPACT_TC_WITH_SUFFIX = "message.import.log.impact.tc.renamed";
 	public static final String IMPACT_TC_CREATED = "message.import.log.impact.tc.created";
@@ -73,6 +74,7 @@ public final class Messages {
 	public static final String IMPACT_DATASET_CREATED = "message.import.log.impact.dscreated";
 	public static final String IMPACT_CALL_AS_ACTION_STEP = "message.import.log.impact.callStepImportedAsActionStep";
 	public static final String IMPACT_USE_CURRENT_LOGIN = "message.import.log.impact.useCurrentLogin";
+	public static final String IMPACT_FIELD_NOT_CHANGED = "message.import.log.impact.fieldNotChange";
 	private Messages(){
 		super();
 	}
