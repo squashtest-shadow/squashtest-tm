@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.batchimport;
+package org.squashtest.tm.core.foundation.lang;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
  * @author bsiri
  * 
  */
-final class PathUtils {
+public final class PathUtils {
 
 	/**
 	 * a non terminal name is anything that ends with a (non included) slash and has non zero length. Escaped slashes
@@ -66,11 +66,11 @@ final class PathUtils {
 		super();
 	}
 
-	static boolean isPathWellFormed(String path) {
+	public static boolean isPathWellFormed(String path) {
 		return WELL_FORMED_PATH.matcher(path).matches();
 	}
 
-	static String extractProjectName(String path) {
+	public static String extractProjectName(String path) {
 		Matcher matcher = PROJECT_PATTERN.matcher(path);
 		if (matcher.matches()) {
 			return matcher.group(1);
@@ -79,7 +79,7 @@ final class PathUtils {
 		}
 	}
 
-	static List<String> extractProjectNames(List<String> pathes) {
+	public static List<String> extractProjectNames(List<String> pathes) {
 		Set<String> res = new HashSet<String>();
 		for (String p : pathes) {
 			Matcher matcher = PROJECT_PATTERN.matcher(p);
@@ -92,7 +92,7 @@ final class PathUtils {
 		return new ArrayList<String>(res);
 	}
 
-	static String extractTestCaseName(String path) {
+	public static String extractTestCaseName(String path) {
 		Matcher matcher = TEST_CASE_PATTERN.matcher(path);
 		if (matcher.matches()) {
 			return matcher.group(1);
@@ -102,7 +102,7 @@ final class PathUtils {
 		}
 	}
 
-	static boolean arePathsAndNameConsistents(String path, String name) {
+	public static boolean arePathsAndNameConsistents(String path, String name) {
 		try{
 			String pathName = extractTestCaseName(path);
 			return pathName.equals(name);
@@ -119,7 +119,7 @@ final class PathUtils {
 	 * @param name
 	 * @return
 	 */
-	static String rename(String path, String name) {
+	public static String rename(String path, String name) {
 		String oldname = extractTestCaseName(path);
 		String oldpatt = "\\Q" + oldname + "\\E$";
 		return path.replaceAll(oldpatt, name);
@@ -129,7 +129,7 @@ final class PathUtils {
 	 * a well formed path starts with a '/' and we remove it right away before splitting (or else a false positive empty
 	 * string would appear before it)
 	 */
-	static String[] splitPath(String path) {
+	public static String[] splitPath(String path) {
 		return path.substring(1).split(SPLIT);
 	}
 

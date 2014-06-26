@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.batchimport;
 import java.util.Arrays;
 
 import org.apache.commons.lang.StringUtils;
+import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.Target;
 

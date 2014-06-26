@@ -18,12 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.batchimport
+package org.squashtest.tm.core.foundation.lang
+
 
 import spock.lang.Specification;
 import spock.lang.Unroll;
 
-class UtilsTest extends Specification{
+class PathUtilsTest extends Specification{
 
 	@Unroll("should say that path '#path' is #textres valid because #why")
 	def "should say that the following pathes are valid"(){

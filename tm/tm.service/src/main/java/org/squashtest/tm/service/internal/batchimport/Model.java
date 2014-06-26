@@ -42,6 +42,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.type.LongType;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.NamedReference;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;

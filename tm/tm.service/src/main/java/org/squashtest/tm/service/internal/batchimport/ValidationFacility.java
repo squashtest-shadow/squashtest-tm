@@ -33,6 +33,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
