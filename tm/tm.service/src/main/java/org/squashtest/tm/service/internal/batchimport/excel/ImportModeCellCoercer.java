@@ -70,7 +70,7 @@ public final class ImportModeCellCoercer extends TypeBasedCellValueCoercer<Impor
 			try {
 				res = Enum.valueOf(ImportMode.class, val);
 			} catch (IllegalArgumentException e) {
-				throw new CannotCoerceException(e, Messages.ERROR_UNPARSABLE_OPTION);
+				throw new CannotCoerceException(e, Messages.ERROR_UNPARSABLE_OPTION, Messages.IMPACT_DEFAULT_ACTION);
 			}
 		}
 

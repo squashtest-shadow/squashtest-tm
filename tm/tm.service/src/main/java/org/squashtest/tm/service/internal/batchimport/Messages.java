@@ -75,6 +75,7 @@ public final class Messages {
 	public static final String IMPACT_CALL_AS_ACTION_STEP = "message.import.log.impact.callStepImportedAsActionStep";
 	public static final String IMPACT_USE_CURRENT_LOGIN = "message.import.log.impact.useCurrentLogin";
 	public static final String IMPACT_FIELD_NOT_CHANGED = "message.import.log.impact.fieldNotChange";
+	public static final String IMPACT_DEFAULT_ACTION = "message.import.log.impact.defaultAction";
 	private Messages(){
 		super();
 	}
