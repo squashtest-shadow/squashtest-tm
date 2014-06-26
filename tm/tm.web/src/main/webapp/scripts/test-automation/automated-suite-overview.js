@@ -216,9 +216,9 @@ define(["jquery", "underscore", "handlebars", "../app/pubsub", "squash.statusfac
 					progress = data.percentage;
 
 				// the progressbar
-				var executionTerminated = progress / 100 * executions.length;
+				var executionComplete = progress / 100 * executions.length;
 				$("#execution-auto-progress-bar").progressbar("value", progress);
-				$("#execution-auto-progress-amount").text(executionTerminated + "/" + executions.length);
+				$("#execution-auto-progress-amount").text(Math.round(executionComplete) + "/" + executions.length);
 
 				// the "table"
 				var htmlRows = this.options.executionRowTemplate({execs : executions});
