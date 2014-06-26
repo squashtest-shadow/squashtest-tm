@@ -358,17 +358,21 @@ define(
 									});
 
 									newautoexecBtn.click(function() {
-										var tpiIds =  [];
+
 										var tpiId = $(this).data('tpi-id');
-										tpiIds.push(tpiId);
+										
+										var formParams = {};
+										var idPrmName = squashtm.page.identity.restype === "iterations" ? "iterationId" : "testSuiteId";
+										formParams[idPrmName] = squashtm.page.identity.resid;
+										formParams.testPlanItemsIds = [ tpiId ];
+										
+										
 										var url = squashtm.app.contextRoot + "/automated-suites/new";
 										$.ajax({
 											url : url,
 											dataType:'json',
 											type : 'post',
-											data : {
-												testPlanItemsIds : tpiIds
-											},
+											data : formParams,
 											contentType : "application/x-www-form-urlencoded;charset=UTF-8"
 										}).done(function(suite) {
 											squashtm.context.autosuiteOverview.start(suite);
