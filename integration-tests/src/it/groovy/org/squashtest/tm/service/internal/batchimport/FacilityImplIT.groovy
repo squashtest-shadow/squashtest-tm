@@ -523,7 +523,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		where :
 		idx						|	humanmsg											|	msg							| status
 		null					|	"null index"										|	ERROR_STEPINDEX_EMPTY		| FAILURE
-		4						|	"excessive index"									|	ERROR_STEPINDEX_OVERFLOW	| FAILURE
+		4						|	"excessive index"									|	ERROR_STEP_NOT_EXISTS		| FAILURE
 		-1						|	"negative index"									|	ERROR_STEPINDEX_NEGATIVE	| FAILURE
 		1						|	"trying to update a call step with an action step"	|	ERROR_NOT_AN_ACTIONSTEP		| FAILURE
 	}
