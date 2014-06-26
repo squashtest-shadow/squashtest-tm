@@ -359,8 +359,6 @@ public class ValidationFacility implements Facility, ModelProvider {
 				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_STEPINDEX_EMPTY));
 			} else if (target.getIndex() < 0){
 				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_STEPINDEX_NEGATIVE));
-			} else if(!model.indexIsFirstAvailable(target)) {
-				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_STEPINDEX_OVERFLOW));
 			} else {
 				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_STEP_NOT_EXISTS));
 			}
