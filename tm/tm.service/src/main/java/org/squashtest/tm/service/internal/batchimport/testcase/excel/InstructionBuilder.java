@@ -155,11 +155,11 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 	 * @param e
 	 */
 	private void log(ColumnDef colDef, CannotCoerceException e, INST instruction) {
-		String impactKey = e.getImpactI18nKey();;
-		ImportStatus status = ImportStatus.WARNING;
-		if (colDef.is(ColumnProcessingMode.MANDATORY)) {
-			status = ImportStatus.FAILURE;
-			impactKey = null;
+		String impactKey = null;
+		ImportStatus status = ImportStatus.FAILURE;
+		if (!colDef.is(ColumnProcessingMode.MANDATORY)) {
+			status = ImportStatus.WARNING;
+			impactKey = e.getImpactI18nKey(instruction.getMode());
 		}
 		instruction.addLogEntry(status, e.errorI18nKey, impactKey, colDef.getHeader());
 

@@ -19,37 +19,37 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.squashtest.tm.service.internal.batchimport.testcase.excel;
+package org.squashtest.tm.service.internal.batchimport.testcase.excel
 
 
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.junit.After;
-import org.junit.Test;
-import org.squashtest.tm.core.foundation.lang.DateUtils;
-import org.squashtest.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.tm.domain.testcase.TestCaseNature;
-import org.squashtest.tm.domain.testcase.TestCaseStatus;
-import org.squashtest.tm.domain.testcase.TestCaseType;
-import org.squashtest.tm.service.importer.ImportMode;
-import org.squashtest.tm.service.importer.ImportStatus;
-import org.squashtest.tm.service.internal.batchimport.Facility;
-import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
-import org.squashtest.tm.service.internal.batchimport.TestCaseTarget;
-import org.squashtest.tm.service.internal.batchimport.excel.CannotCoerceException;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil
+import org.apache.poi.ss.usermodel.Cell
+import org.apache.poi.ss.usermodel.Row
+import org.junit.After
+import org.junit.Test
+import org.squashtest.tm.core.foundation.lang.DateUtils
+import org.squashtest.tm.domain.testcase.TestCaseImportance
+import org.squashtest.tm.domain.testcase.TestCaseNature
+import org.squashtest.tm.domain.testcase.TestCaseStatus
+import org.squashtest.tm.domain.testcase.TestCaseType
+import org.squashtest.tm.service.importer.ImportMode
+import org.squashtest.tm.service.importer.ImportStatus
+import org.squashtest.tm.service.internal.batchimport.Facility
+import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction
+import org.squashtest.tm.service.internal.batchimport.TestCaseTarget
+import org.squashtest.tm.service.internal.batchimport.excel.CannotCoerceException
 
-import spock.lang.Specification;
-import spock.lang.Unroll;
+import spock.lang.Specification
+import spock.lang.Unroll
 
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.*;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.*
 
 /**
  * @author Gregory Fouquet
  *
  */
 class TestCaseInstructionBuilderTest extends Specification {
-	WorksheetDef wd = Mock();
+	WorksheetDef wd = Mock()
 	Row row = Mock()
 	TestCaseInstructionBuilder builder
 	Cell pathCell = Mock()
@@ -251,8 +251,8 @@ class TestCaseInstructionBuilderTest extends Specification {
 
 		where:
 		col				| cellType					| cellValue		| propValue
-		ACTION			| Cell.CELL_TYPE_STRING		| "PROBLEM?"	| null
-		ACTION			| Cell.CELL_TYPE_FORMULA	| null			| null
+		ACTION			| Cell.CELL_TYPE_STRING		| "PROBLEM?"	| ImportMode.getDefault()
+		ACTION			| Cell.CELL_TYPE_FORMULA	| null			| ImportMode.getDefault()
 	}
 
 	@Unroll

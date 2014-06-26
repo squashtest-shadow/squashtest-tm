@@ -58,7 +58,7 @@ public final class OptionalDateCellCoercer extends TypeBasedCellValueCoercer<Dat
 		try {
 			return DateUtils.parseIso8601Date(cell.getStringCellValue());
 		} catch (ParseException e) {
-			throw new CannotCoerceException(e, Messages.ERROR_UNPARSABLE_DATE);
+			throw new CannotCoerceException(e, Messages.ERROR_UNPARSABLE_DATE, Messages.IMPACT_FIELD_NOT_CHANGED, Messages.IMPACT_USE_CURRENT_DATE);
 		}
 	}
 
@@ -70,7 +70,7 @@ public final class OptionalDateCellCoercer extends TypeBasedCellValueCoercer<Dat
 		try {
 			return cell.getDateCellValue();
 		} catch (IllegalArgumentException e) {
-			throw new CannotCoerceException(e, Messages.ERROR_UNPARSABLE_DATE);
+			throw new CannotCoerceException(e, Messages.ERROR_UNPARSABLE_DATE, Messages.IMPACT_FIELD_NOT_CHANGED, Messages.IMPACT_USE_CURRENT_DATE);
 		}
 	}
 
