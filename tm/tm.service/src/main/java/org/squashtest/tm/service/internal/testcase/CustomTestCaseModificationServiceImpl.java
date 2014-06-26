@@ -47,6 +47,7 @@ import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.core.foundation.lang.Couple;
+import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -63,6 +64,7 @@ import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.UnallowedTestAssociationException;
+import org.squashtest.tm.exception.testautomation.MalformedScriptPathException;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.library.NodeManagementService;
 import org.squashtest.tm.service.internal.repository.ActionTestStepDao;
@@ -505,10 +507,15 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 
 
-	// first element : project ID, second element : test name
+	// returns a tuple-2 with first element : project ID, second element : test name
 	private Couple<Long, String> extractAutomatedProjectAndTestName(Long testCaseId, String testPath){
 
-		// first, let's find which TA project it is. The first slash must be removed because it doesn't count.
+		// first we reject the operation if the script name is malformed
+		if (! PathUtils.isPathWellFormed(testPath)){
+			throw new MalformedScriptPathException();
+		}
+
+		// now it's clear to go, let's find which TA project it is. The first slash must be removed because it doesn't count.
 		String path = testPath.replaceFirst("^/", "");
 		int idxSlash = path.indexOf('/');
 
@@ -520,6 +527,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		TestAutomationProject tap = (TestAutomationProject) CollectionUtils.find(tmproject.getTestAutomationProjects(), new HasSuchLabel(projectLabel));
 
+		// if the project couldn't be found we must also reject the operation
 		if (tap == null){
 			throw new UnallowedTestAssociationException();
 		}
