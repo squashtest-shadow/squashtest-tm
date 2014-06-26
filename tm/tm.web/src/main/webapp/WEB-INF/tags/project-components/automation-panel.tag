@@ -213,8 +213,9 @@
       <f:message key="message.project.bindJob.noJobToBind" />
     </p>
   </div>
+  <f:message var="popupTMLabelLabel" key="label.taProjectTmLabel"/>
   <script id="default-item-tpl" type="text/x-handlebars-template" th:inline="text">
-	<tr class="listdiv-item control-group"> <td><input type="checkbox" value="{{name}}"/><td>{{name}}</td><td class="ta-project-tm-label controls"><label th:text="#{label.taProjectTmLabel}">Libellé dans Squash TM</label><input type="text" style="display: none;" value="{{name}}"/> <span class="help-inline">&nbsp;</span></td></tr>
+	<tr class="listdiv-item control-group"> <td><input type="checkbox" value="{{name}}"/><td>{{name}}</td><td class="ta-project-tm-label controls"><label >${popupTMLabelLabel}</label><input type="text" style="display: none;" value="{{name}}"/> <span class="help-inline">&nbsp;</span></td></tr>
   </script>
 
   <div class="ta-projectsadd-error">
