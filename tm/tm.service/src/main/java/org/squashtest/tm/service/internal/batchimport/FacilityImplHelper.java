@@ -135,7 +135,7 @@ final class FacilityImplHelper {
 	}
 
 	/**
-	 * Will trucate the input str if it is longer than the given cap value.
+	 * Will truncate the input str if it is longer than the given cap value.
 	 * 
 	 * @param str
 	 *            : the string to truncate

@@ -101,16 +101,16 @@ class EntityValidator {
 		}
 
 		// 4 - name has length between 0 and 255
-		if (name != null && name.length() > 255) {
+		if (name != null && name.length() > TestCase.MAX_NAME_SIZE) {
 			logs.addEntry(LogEntry.warning().forTarget(target).withMessage(Messages.ERROR_MAX_SIZE, TC_NAME.header)
 					.withImpact(Messages.IMPACT_MAX_SIZE).build());
 		}
 
 		// 5 - reference, if exists, has length between 0 and 50
 		String reference = testCase.getReference();
-		if (!StringUtils.isBlank(reference) && reference.length() > 50) {
+		if (!StringUtils.isBlank(reference) && reference.length() > TestCase.MAX_REF_SIZE) {
 			logs.addEntry(LogEntry.warning().forTarget(target)
-					.withMessage(Messages.ERROR_MAX_SIZE, TC_REFERENCE.header).build());
+					.withMessage(Messages.ERROR_MAX_SIZE, TC_REFERENCE.header).withImpact(Messages.IMPACT_MAX_SIZE).build());
 		}
 
 		return logs;
