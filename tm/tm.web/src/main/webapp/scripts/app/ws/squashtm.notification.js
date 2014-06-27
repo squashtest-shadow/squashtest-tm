@@ -33,6 +33,7 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 
 	var _spinner = "#ajax-processing-indicator";
 	var _widgetsInitialized = false;
+	var _spinnerInitialized = false;
 
 	function initWidgets() {
 		if (!_widgetsInitialized) {
@@ -42,6 +43,51 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 			$("#generic-error-dialog").messageDialog();
 		}
 	}
+
+	
+	function initSpinner() {
+
+		if (_spinnerInitialized){
+			return;
+		}
+		
+		_spinnerInitialized = true;
+		
+		var $doc = $(document);
+
+		/*
+		 * Does not work with narrowed down selectors. see http://bugs.jquery.com/ticket/6161
+		 */
+		$doc.on('ajaxError', function(event, request, settings, ex) {
+
+			// nothing to notify if the request was aborted, or was treated elsewhere
+			if (request.status === 0 || request.errorIsHandled === true) {
+				return;
+			}
+
+			// Check if we get an Unauthorized access response, then
+			// redirect to login page
+			else if (401 == request.status) {
+				window.parent.location.reload();
+			} else {
+				try {
+					handleJsonResponseError(request);
+				} catch (wtf) {
+					handleGenericResponseError(request);
+				}
+			}
+		});
+
+		$.ajaxPrefilter(function(options, _, jqXHR) {
+			$(_spinner).addClass("processing").removeClass("not-processing");
+
+			jqXHR.always(function() {
+				$(_spinner).removeClass("processing").addClass("not-processing");
+			});
+		});
+
+	}
+
 
 	// TODO : see if we can factor some logic with getErrorMessage
 	function handleJsonResponseError(request) {
@@ -75,6 +121,31 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 		}
 	}
 
+	
+	
+	// TODO : see if we can factor some logic with handleJsonResponseError
+	function getErrorMessage(request, index) {
+		var json = $.parseJSON(request.responseText);
+
+		if (!! json ) {
+			if (!! json.actionValidationError ) {
+				return json.actionValidationError.message;
+			} else {
+				if (!! json.fieldValidationErrors) {
+					/* IE8 requires low tech code */
+					var validationErrorList = json.fieldValidationErrors;
+					if (validationErrorList.length > 0) {
+						var ind = (index !== undefined) ? index : 0;
+						return validationErrorList[ind].errorMessage;
+					}
+				} else {
+					throw 'exception';
+				}
+			}
+		}
+	}
+	
+	
 	function showLegacyErrorMessage(fieldValidationError) {
 		var labelId = fieldValidationError.fieldName + '-error';
 		labelId = labelId.replace(".", "-").replace('[', '-').replace(']', '');// this is necessary because labelId is
@@ -132,70 +203,12 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 		dialog.messageDialog('open');
 	}
 
-	function initSpinner() {
-
-		var $doc = $(document);
-
-		/*
-		 * Does not work with narrowed down selectors. see http://bugs.jquery.com/ticket/6161
-		 */
-		$doc.on('ajaxError', function(event, request, settings, ex) {
-
-			// nothing to notify if the request was aborted, or was treated elsewhere
-			if (request.status === 0 || request.errorIsHandled === true) {
-				return;
-			}
-
-			// Check if we get an Unauthorized access response, then
-			// redirect to login page
-			else if (401 == request.status) {
-				window.parent.location.reload();
-			} else {
-				try {
-					handleJsonResponseError(request);
-				} catch (wtf) {
-					handleGenericResponseError(request);
-				}
-			}
-		});
-
-		$.ajaxPrefilter(function(options, _, jqXHR) {
-			$(_spinner).addClass("processing").removeClass("not-processing");
-
-			jqXHR.always(function() {
-				$(_spinner).removeClass("processing").addClass("not-processing");
-			});
-		});
-
-	}
-
 	function init() {
 		initWidgets();
 		initSpinner();
 	}
 
 	
-	// TODO : see if we can factor some logic with handleJsonResponseError
-	function getErrorMessage(request, index) {
-		var json = $.parseJSON(request.responseText);
-
-		if (!! json ) {
-			if (!! json.actionValidationError ) {
-				return json.actionValidationError.message;
-			} else {
-				if (!! json.fieldValidationErrors) {
-					/* IE8 requires low tech code */
-					var validationErrorList = json.fieldValidationErrors;
-					if (validationErrorList.length > 0) {
-						var ind = (index !== undefined) ? index : 0;
-						return validationErrorList[ind].errorMessage;
-					}
-				} else {
-					throw 'exception';
-				}
-			}
-		}
-	}
 	function handleUnknownTypeError(xhr) {
 		try {
 			handleJsonResponseError(xhr);

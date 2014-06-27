@@ -456,7 +456,7 @@ require(["common"], function() {
 
 	require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.attributeparser", 
 	         "project/ProjectToolbar", "jquery.squash.oneshotdialog",
-	         "squashtable", "jquery.squash.formdialog", "jquery.switchButton"], 
+	         "squashtable", "jquery.squash.formdialog", "jquery.switchButton", "app/ws/squashtm.workspace"], 
 	         function($, projectsManager, Frag, attrparser, ProjectToolbar, oneshot){
 
 

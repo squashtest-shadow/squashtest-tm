@@ -19,7 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(
-		[ "jquery", "backbone", "underscore", "jquery.squash.togglepanel", "jqueryui", "jquery.squash.formdialog" ],
+		[ "jquery", "backbone", "underscore", "jquery.squash.togglepanel", 
+		  "jqueryui", "jquery.squash.formdialog" ],
 		
 		function($, Backbone, _) {
 			var WizardPanelView = Backbone.View.extend({
@@ -61,7 +62,7 @@ define(
 					var rows = $();
 					
 					if (available.length === 0){
-						rows = rows.add(this.emptyrowTemplate());
+						rows = rows.add(this.emptyrowTemplate);
 					}
 					else{
 						for ( var j = 0; j < availableLength; j++) {
@@ -211,8 +212,6 @@ define(
 						contentType  : 'application/json'
 					}).done(function(){
 						dialog.formDialog('close');
-					}).fail(function(json){
-						squashtm.notification.handleJsonResponseError(json);
 					});
 					
 				});
@@ -237,7 +236,6 @@ define(
 							// we will handle potential exceptions locally
 							};
 							$.ajax(ajaxConf).fail(function(xhr) {
-								squashtm.notification.handleJsonResponseError(xhr);
 								self.remove(model, {
 									silent : true
 								});
