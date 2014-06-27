@@ -18,8 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "app/ws/squashtm.notification", "underscore", "app/lnf/Forms", "jquery.squash.formdialog",
-		"squashtest/jquery.squash.popuperror" ], function($, Backbone, WTF, _, Forms) {
+define([ "jquery", "backbone", "app/ws/squashtm.notification", "underscore", "app/lnf/Forms", "app/util/StringUtil",
+		"jquery.squash.formdialog", "squashtest/jquery.squash.popuperror" ], function($, Backbone, WTF, _, Forms,
+		StringUtil) {
 
 	// *************************************** BindPopup **********************************************
 
@@ -65,11 +66,13 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "underscore", "ap
 			var self = this;
 			// find checked
 			var checked = this.$el.find(".ta-project-bind-listdiv input:checkbox:checked");
+			// check there are checked values
 			if (checked.length === 0) {
 				var message = squashtm.app.messages["message.project.bindJob.noneChecked"];
 				this.showErrorMessage(message);
 				return;
 			}
+
 			// map checkbox values to tm label
 			var tmLabels = [];
 			var hasDuplicateTmLabel = false;
@@ -78,43 +81,48 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "underscore", "ap
 				var row = $item.parents("tr")[0];
 				var input = $(row).find("td.ta-project-tm-label input")[0];
 				var tmLabel = $(input).val();
-				// checks for duplicate tm labels
-				if (!hasDuplicateTmLabel) {
-					if (_.contains(tmLabels, tmLabel)) {
-						hasDuplicateTmLabel = true;
-					} else {
-						tmLabels.push(tmLabel);
-					}
-				}
+				tmLabels.push(tmLabel);
 				return {
 					jobName : $item.val(),
 					label : tmLabel
 				};
 			});
-			if (hasDuplicateTmLabel) {
+			// check for empty values
+			var emptyDatas =  _.filter(datas, function(data){ return StringUtil.isBlank(data.label); });
+			if (emptyDatas.length > 0) {
+				_.each(emptyDatas, function(data) {
+					var input = self.$el.find(".ta-project-bind-listdiv input:text#add-job-label-"+data.jobName);
+					Forms.input($(input)).setState("error", squashtm.app.messages["message.notBlank"]);
+				});
+				return;
+			}
+			// check for duplicate labels
+			var labels = _.pluck(datas, "label");
+			var uniqueLabels = _.uniq(labels);
+			if (labels.length > uniqueLabels.length) {
 				// show error message
 				var duplicateMessage = squashtm.app.messages["message.project.bindJob.duplicatelabels"];
 				this.showErrorMessage(duplicateMessage);
-			} else {
-				// send ajax
-				$.ajax({
-					url : self.projecUrl + "/test-automation-projects/new",
-					type : "post",
-					contentType : 'application/json',
-					dataType : 'json',
-					global : false,
-					data : JSON.stringify(datas)
-				}).done(function() {
-					self.trigger("bindTAProjectPopup.confirm.success");
-					self.updateProjectList = true;
-					self.$el.formDialog('close');
-				}).fail(function(xhr) {
-					self.trigger("bindTAProjectPopup.confirm.failure");
-					self.manageBindingError(xhr);
-
-				});
-
+				return;
 			}
+
+			// send ajax
+			$.ajax({
+				url : self.projecUrl + "/test-automation-projects/new",
+				type : "post",
+				contentType : 'application/json',
+				dataType : 'json',
+				global : false,
+				data : JSON.stringify(datas)
+			}).done(function() {
+				self.trigger("bindTAProjectPopup.confirm.success");
+				self.updateProjectList = true;
+				self.$el.formDialog('close');
+			}).fail(function(xhr) {
+				self.trigger("bindTAProjectPopup.confirm.failure");
+				self.manageBindingError(xhr);
+
+			});
 
 		},
 		cancel : function() {
@@ -179,10 +187,11 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "underscore", "ap
 				self.updateProjectList = true;
 			});
 			// refresh popup on edit project
-			this.listenTo(self.parentPanel.popups.editTAProjectPopup, "edittestautomationproject.confirm.success", function() {
-				self.updateProjectList = true;
-			});
-			
+			this.listenTo(self.parentPanel.popups.editTAProjectPopup, "edittestautomationproject.confirm.success",
+					function() {
+						self.updateProjectList = true;
+					});
+
 		},
 		_onChangeServerConfirmed : function(newSelectedServer) {
 			if (newSelectedServer == this.selectedServerId) {
@@ -192,31 +201,35 @@ define([ "jquery", "backbone", "app/ws/squashtm.notification", "underscore", "ap
 				this.updateProjectList = true;
 			}
 		},
-		_manageBindingError :function(request) {
-			var json =  $.parseJSON(request.responseText);
-			//handle specifically CompositeDomainException containing DuplicateTMLabelException
+		_manageBindingError : function(request) {
+			var json = $.parseJSON(request.responseText);
+			// handle specifically CompositeDomainException containing DuplicateTMLabelException
 			var manageFatal = false;
-			 if (!!json.fieldValidationErrors) {
-				 /* IE8 requires low tech code */
-				 var validationErrorList = json.fieldValidationErrors;
-				 if (validationErrorList.length > 0) {
-					 for ( var counter = 0; counter < validationErrorList.length; counter++) {
-						 var fve = validationErrorList[counter];
-						 if (fve.fieldName == "label"){
-							 var inputs = this.$el.find('.edit-state input').filter(function() { return this.value == fve.fieldValue; });
-							 if(inputs.length === 0){manageFatal = true;}
-							 Forms.input($(inputs[0])).setState("error", fve.errorMessage);
-						 }else{
-							 manageFatal = true;
-						 }
+			if (!!json.fieldValidationErrors) {
+				/* IE8 requires low tech code */
+				var validationErrorList = json.fieldValidationErrors;
+				if (validationErrorList.length > 0) {
+					for ( var counter = 0; counter < validationErrorList.length; counter++) {
+						var fve = validationErrorList[counter];
+						if (fve.fieldName == "label") {
+							var inputs = this.$el.find('.edit-state input').filter(function() {
+								return this.value == fve.fieldValue;
+							});
+							if (inputs.length === 0) {
+								manageFatal = true;
+							}
+							Forms.input($(inputs[0])).setState("error", fve.errorMessage);
+						} else {
+							manageFatal = true;
+						}
 					}
-				 }
-			 }else{
-				 manageFatal = true;
-			 }
-			 if(manageFatal){
-				 this.manageFatalError(response);
-			 }
+				}
+			} else {
+				manageFatal = true;
+			}
+			if (manageFatal) {
+				this.manageFatalError(response);
+			}
 		},
 		_manageFatalError : function(json) {
 			var message = "";
