@@ -149,10 +149,10 @@
                     <div id="cuf-label" class="display-table-cell" th:text="${customField.label}">Description</div>
 
                   </div>
-                  <div class="display-table-row">
-                    <label for="cuf-code" th:text="#{label.code}">Code</label>
-                    <div id="cuf-code" class="display-table-cell" th:text="${customField.code}">code</div>
-
+                  <div class="display-table-row controls control-group">
+                    <label for="cuf-code" class="control-label" th:text="#{label.code}">Code</label>
+                      <div id="cuf-code" class="display-table-cell" th:text="${customField.code}">code</div>
+                      <span class="help-inline">&nbsp;</span>
                   </div>
                   <div class="display-table-row">
                     <label for="inputType" th:text="#{label.inputType}">Input Type</label>
