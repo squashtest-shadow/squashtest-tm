@@ -388,9 +388,9 @@ public class CustomFieldController {
 		customFieldManager.changeOptionsPositions(customFieldId, newIndex, optionsLabels);
 	}
 
-	@RequestMapping(method = RequestMethod.DELETE)
+	@RequestMapping(value="/{customFieldId}", method = RequestMethod.DELETE)
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
-	public @ResponseBody void deleteCustomField(@PathVariable long customFieldId) {
+	public @ResponseBody void deleteCustomField(@PathVariable("customFieldId") long customFieldId) {
 		customFieldManager.deleteCustomField(customFieldId);
 	}
 }
