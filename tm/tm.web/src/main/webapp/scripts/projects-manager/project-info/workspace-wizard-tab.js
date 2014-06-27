@@ -133,6 +133,7 @@ define(
 							id : id
 						});
 						this.activateRow(tr);
+						tr.find(".wizard-configure").click();
 					} else {
 						this.collection.remove(id);
 						this.deactivateRow(tr);
