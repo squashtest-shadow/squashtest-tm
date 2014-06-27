@@ -190,7 +190,7 @@
 ================================================= --%>
 
 
-<f:message var="bindProjectPopup" key="project.testauto.projectsblock.add.popup.title" />
+<f:message var="bindProjectPopup" key="title.addJob" />
 <div id="ta-projects-bind-popup" title="${bindProjectPopup}" class="popup-dialog not-displayed">
 
   <div data-def="state=pleasewait">
@@ -200,7 +200,7 @@
   <div data-def="state=main" class="ta-projects-bind-maindiv">
     <p>
       <label>
-        <f:message key="project.testauto.projectsblock.add.popup.caption" />
+        <f:message key="message.selectJobs" />
       </label>
     </p>
     <table class="ta-project-bind-listdiv">

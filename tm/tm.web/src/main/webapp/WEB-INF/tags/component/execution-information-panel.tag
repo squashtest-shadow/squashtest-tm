@@ -92,7 +92,7 @@
   <c:if test="${auditableEntity.automated}">
     <c:set var="taDisassociated" value="${execution.automatedExecutionExtender.projectDisassociated}" />
     <c:set var="taNotOverYet" value="${execution.automatedExecutionExtender.notOverYet}" />
-    <c:set var="jobURL" value="${wu:getAutomatedJobURL(pageContext.servletContext, execution.id) }"/>
+    <c:set var="jobURL" value="${ wu:getAutomatedJobURL(pageContext.servletContext, execution.id) }"/>
     
     <f:message var="taNotOverYetLabel" key="url.resultNotAvailable" />
     <f:message var="taDisassociatedLabel" key="url.resultObsolete" />
