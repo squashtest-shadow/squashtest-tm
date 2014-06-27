@@ -23,18 +23,20 @@ package org.squashtest.tm.service.customField
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.domain.customfield.CustomField
+import org.squashtest.tm.exception.customfield.CodeAlreadyExistsException;
 import org.squashtest.tm.service.internal.customfield.CustomCustomFieldManagerServiceImpl
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao
 import org.squashtest.tm.service.internal.repository.CustomFieldDao
 
 import spock.lang.Specification
+import spock.lang.Unroll;
 
 class CustomCustomFieldManagerServiceImplTest extends Specification {
 
 	CustomCustomFieldManagerServiceImpl service = new CustomCustomFieldManagerServiceImpl();
 	CustomFieldDao customFieldDao = Mock()
 	CustomFieldBindingDao customFieldBindingDao = Mock();
-	
+
 	def setup() {
 		service.customFieldDao = customFieldDao
 		service.customFieldBindingDao = customFieldBindingDao
@@ -46,20 +48,20 @@ class CustomCustomFieldManagerServiceImplTest extends Specification {
 		List<Long> bindingIds = new ArrayList<Long>();
 		customFieldDao.findById(1L) >> cuf
 		customFieldBindingDao.findAllForCustomField(1L) >> bindingIds;
-			
+
 		when :
 		service.deleteCustomField(1L);
-		
+
 		then:
 		1* customFieldDao.remove(cuf)
 	}
-	
+
 	def "should find sorted "(){
 		given :
 		PagingAndSorting cs = Mock()
 		List<CustomField> customFields = Mock()
 		customFieldDao.findSortedCustomFields(cs)>> customFields
-		
+
 		and:
 		def counted = 3
 		customFieldDao.countCustomFields()>> counted
@@ -71,5 +73,54 @@ class CustomCustomFieldManagerServiceImplTest extends Specification {
 		result != null
 		1* customFieldDao.findSortedCustomFields(cs)
 		1* customFieldDao.countCustomFields()
+	}
+
+	def "should change code to available code"() {
+		given:
+		CustomField field = Mock()
+		field.code >> "CODE"
+		customFieldDao.findById(10L) >> field
+
+		and:
+		customFieldDao.findByCode("NEW CODE") >> null
+
+		when:
+		service.changeCode(10L, "NEW CODE");
+
+		then:
+		notThrown(CodeAlreadyExistsException)
+	}
+
+	def "should change code to previous code"() {
+		given:
+		CustomField field = Mock()
+		field.code >> "CODE"
+		customFieldDao.findById(10L) >> field
+
+		and:
+		customFieldDao.findByCode("CODE") >> field
+
+		when:
+		service.changeCode(10L, "CODE");
+
+		then:
+		notThrown(CodeAlreadyExistsException)
+	}
+
+	def "should not changed code to an assigned one"() {
+		given:
+		CustomField field = Mock()
+		field.code >> "CODE"
+		customFieldDao.findById(10L) >> field
+
+		and:
+		customFieldDao.findByCode("CLASHING CODE") >> Mock(CustomField)
+
+		when:
+		service.changeCode(10L, "CLASHING CODE");
+
+		then:
+		thrown(CodeAlreadyExistsException)
+
 	}
 }

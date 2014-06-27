@@ -48,12 +48,11 @@ import org.squashtest.tm.web.internal.model.jquery.FilterModel;
  * Warning : strongly tied to Spring
  * 
  * @author bsiri
- *
+ * 
  */
-public class WorkspaceHelper extends SimpleTagSupport{
+public class WorkspaceHelper extends SimpleTagSupport {
 
-
-	public static Collection<BugTracker> getVisibleBugtrackers(ServletContext context){
+	public static Collection<BugTracker> getVisibleBugtrackers(ServletContext context) {
 
 		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(context);
 
@@ -65,7 +64,7 @@ public class WorkspaceHelper extends SimpleTagSupport{
 		return bugtrackerService.findDistinctBugTrackersForProjects(projectsIds);
 	}
 
-	public static URL getAutomatedJobURL(ServletContext context, Long executionId){
+	public static URL getAutomatedJobURL(ServletContext context, Long executionId) {
 		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(context);
 
 		ExecutionModificationService exService = wac.getBean(ExecutionModificationService.class);
@@ -73,15 +72,14 @@ public class WorkspaceHelper extends SimpleTagSupport{
 
 		Execution exec = exService.findById(executionId);
 
-		if (exec.isAutomated() && ! exec.getAutomatedExecutionExtender().isProjectDisassociated()){
+		if (exec.isAutomated() && !exec.getAutomatedExecutionExtender().isProjectDisassociated()) {
 			return projFinder.findProjectURL(exec.getAutomatedExecutionExtender().getAutomatedProject());
-		}
-		else{
+		} else {
 			return null;
 		}
 	}
 
-	public static Collection<ExportPlugin> getExportPlugins(ServletContext context, String workspaceName){
+	public static Collection<ExportPlugin> getExportPlugins(ServletContext context, String workspaceName) {
 
 		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(context);
 		WorkspaceType workspace = WorkspaceType.valueOf(workspaceName);
@@ -90,7 +88,7 @@ public class WorkspaceHelper extends SimpleTagSupport{
 		return manager.findAllByWorkspace(workspace);
 	}
 
-	public static FilterModel getProjectFilter(ServletContext context){
+	public static FilterModel getProjectFilter(ServletContext context) {
 		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(context);
 		ProjectFilterModificationService service = wac.getBean(ProjectFilterModificationService.class);
 

@@ -135,6 +135,7 @@ public class TestCaseController {
 		List<Long> consolidatedIds = new ArrayList<Long>(testCaseIds.size() + folderIds.size());
 		consolidatedIds.addAll(testCaseIds);
 		consolidatedIds.addAll(folderIds);
+
 		return buildJsonTestCasesFromAncestorIds(consolidatedIds, locale);
 	}
 
@@ -164,9 +165,10 @@ public class TestCaseController {
 
 		// find their calling test case and their new 'isReqCoveredProperty'
 		Set<Long> newIsReqCoveredIdsAndCalling = new HashSet<Long>();
+
 		for (Long idChange : new HashSet<Long>(newIsReqCoveredById.keySet())) {
 			newIsReqCoveredIdsAndCalling.add(idChange);
-			
+
 			// in the meantime the calling nodes 'isReqCoveredProperty'
 			Set<Long> callingOpenedNodesIds = finder.findCallingTCids(idChange, openedNodesIds);
 			callingOpenedNodesIds.removeAll(newIsReqCoveredIdsAndCalling);
@@ -260,24 +262,28 @@ public class TestCaseController {
 		return result;
 	}
 
+	// TODO bind to /test-case-importances
 	@RequestMapping(value = "/importance-combo-data", method = RequestMethod.GET)
 	@ResponseBody
 	public String buildImportanceComboData(Locale locale) {
 		return importanceComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
 
+	// TODO bind to /test-case-statuses
 	@RequestMapping(value = "/status-combo-data", method = RequestMethod.GET)
 	@ResponseBody
 	public String buildStatusComboData(Locale locale) {
 		return statusComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
 
+	// TODO bind to /test-case-types
 	@RequestMapping(value = "/type-combo-data", method = RequestMethod.GET)
 	@ResponseBody
 	public String buildTypeComboData(Locale locale) {
 		return typeComboBuilderProvider.get().useLocale(locale).buildMarshalled();
 	}
 
+	// TODO bind to /test-case-natures
 	@RequestMapping(value = "/nature-combo-data", method = RequestMethod.GET)
 	@ResponseBody
 	public String buildNatureComboData(Locale locale) {

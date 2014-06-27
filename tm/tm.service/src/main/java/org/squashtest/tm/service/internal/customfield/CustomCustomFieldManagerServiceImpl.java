@@ -25,6 +25,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -59,13 +60,13 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 
 	@Inject
 	private CustomFieldBindingDao customFieldBindingDao;
-	
+
 	@Inject
 	private CustomFieldValueDao customFieldValueDao;
-	
+
 	@Inject
 	private CustomFieldBindingModificationService customFieldBindingModificationService;
-	
+
 	/**
 	 * @see org.squashtest.tm.service.customfield.CustomFieldFinderService#findSortedCustomFields(PagingAndSorting)
 	 */
@@ -99,17 +100,17 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void persist(CustomField newCustomField) {
-		checkDuplicateName(newCustomField); 
+		checkDuplicateName(newCustomField);
 		checkDuplicateCode(newCustomField);
 		customFieldDao.persist(newCustomField);
-		
+
 	}
 
 	private void checkDuplicateCode(CustomField newCustomField) {
 		CustomField codeDuplicate = customFieldDao.findByCode(newCustomField.getCode());
 		if (codeDuplicate != null) {
 			throw new CodeAlreadyExistsException(null, newCustomField.getCode(), CustomField.class);
-		}		
+		}
 	}
 
 	private void checkDuplicateName(CustomField newCustomField) {
@@ -148,7 +149,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 		customField.setOptional(optional);
 	}
 
-	
+
 	private void checkDefaultValueExists(CustomField customField) {
 		if (customField.getDefaultValue() == null || customField.getDefaultValue().equals("")) {
 			throw new DefaultValueRequiredException();
@@ -157,13 +158,13 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 
 	private void addDefaultValueToCustomFields(Long customFieldId,String defaulfValue){
 		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForCustomField(customFieldId);
-		for(CustomFieldBinding binding : bindings) { 
+		for(CustomFieldBinding binding : bindings) {
 			List<CustomFieldValue> values = customFieldValueDao.findAllCustomValuesOfBinding(binding.getId());
-			 for(CustomFieldValue value : values) {
-				 if(value.getValue() == null || value.getValue().equals("")) {
-					 value.setValue(defaulfValue);
-				 }
-			 }
+			for(CustomFieldValue value : values) {
+				if(value.getValue() == null || value.getValue().equals("")) {
+					value.setValue(defaulfValue);
+				}
+			}
 		}
 	}
 
@@ -176,7 +177,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 		SingleSelectField customField = customFieldDao.findSingleSelectFieldById(customFieldId);
 		customField.changeOptionLabel(optionLabel, newLabel);
 	}
-	
+
 	/**
 	 * @see org.squashtest.tm.service.customfield.CustomCustomFieldManagerService#changeOptionCode(Long, String,
 	 *      String)
@@ -229,18 +230,21 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	 */
 	@Override
 	public void changeCode(long customFieldId, String code) {
-		CustomField cuf = customFieldDao.findById(customFieldId);
-		checkDuplicateCode(cuf, code);
-		cuf.setCode(code);
-		
+		CustomField field = customFieldDao.findById(customFieldId);
+		checkDuplicateCode(field, code);
+		field.setCode(code);
 	}
 
-	private void checkDuplicateCode(CustomField cuf, String newCode) {		
+	private void checkDuplicateCode(CustomField field, String newCode) {
+		if (StringUtils.equals(field.getCode(), newCode)) {
+			return;
+		}
+
 		if(customFieldDao.findByCode(newCode) != null){
-			throw new CodeAlreadyExistsException(cuf.getCode(), newCode, CustomField.class);
+			throw new CodeAlreadyExistsException(field.getCode(), newCode, CustomField.class);
 		}
 	}
 
-	
+
 
 }
