@@ -429,7 +429,7 @@ public class ValidationFacility implements Facility, ModelProvider {
 		logs = entityValidator.basicTestStepChecks(target);
 
 		// 2 - can the user do it
-		LogEntry hasntPermission = checkPermissionOnProject(PERM_DELETE, target.getTestCase(), target);
+		LogEntry hasntPermission = checkPermissionOnProject(PERM_WRITE, target.getTestCase(), target);
 		if (hasntPermission != null) {
 			logs.addEntry(hasntPermission);
 		}
