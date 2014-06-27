@@ -42,7 +42,7 @@ public class NewTestAutomationServer extends TestAutomationServer {
 		res.setDescription(getDescription());
 		res.setLogin(getLogin());
 		res.setPassword(getPassword());
-
+		res.setManualSlaveSelection(isManualSlaveSelection());
 		return res;
 	}
 
