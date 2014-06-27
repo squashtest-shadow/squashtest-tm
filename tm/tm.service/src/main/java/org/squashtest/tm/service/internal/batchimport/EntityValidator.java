@@ -88,7 +88,7 @@ class EntityValidator {
 
 		// 1 - path must be supplied and and well formed
 		if (!target.isWellFormed()) {
-			logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_MALFORMED_PATH).build());
+			logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_MALFORMED_PATH, target.getPath()).build());
 		}
 
 		// 3 - the project actually exists
@@ -136,7 +136,7 @@ class EntityValidator {
 
 		// 1 - test case owner path must be supplied and and well formed
 		if (!testCase.isWellFormed()) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MALFORMED_PATH));
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MALFORMED_PATH, new String[]{testCase.getPath()}));
 		}
 
 		// 2 - the test case must exist
@@ -274,7 +274,7 @@ class EntityValidator {
 
 		// 1 - the test case must be valid
 		if (!testCase.isWellFormed()) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MALFORMED_PATH));
+			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MALFORMED_PATH, new String[]{testCase.getPath()}));
 		}
 
 		// 2 - the test case must exist
