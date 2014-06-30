@@ -102,14 +102,14 @@
       <label for="resulturl-link">
         <f:message key="label.resultURL" />
       </label>
-      <a id="resulturl-link" href="${execution.resultURL}">
+      <a id="resulturl-link" href="${execution.resultURL}" target="_blank">
         <%-- the following reads : if the project was dissociated display 'disassociated', else if it's still running display 'still running', else display the url --%>
         <c:out value="${taDisassociated ? taDisassociatedLabel : taNotOverYet ? taNotOverYetLabel : execution.resultURL}" />
        </a>
        </div>
        
        <div>
-       <label><f:message key="label.job.url"/></label><a href="${jobURL}"><c:out value="${jobURL}" default="${taDisassociatedLabel}" /></a>
+       <label><f:message key="label.job.url"/></label><a href="${jobURL}" target="_blank"><c:out value="${jobURL}" default="${taDisassociatedLabel}" /></a>
        </div>
     </div>
   </c:if>
