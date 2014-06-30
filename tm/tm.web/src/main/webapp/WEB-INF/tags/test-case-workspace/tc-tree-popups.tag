@@ -371,8 +371,7 @@
 		<input type="button" value="${confirmLabel}" data-def="evt=confirm, state=confirm, mainbtn=confirm"/>
 		<input type="button" value="${okLabel}"		 data-def="evt=ok, state=summary, mainbtn=summary"/>
 		<input type="button" value="${okLabel}"		 data-def="evt=okerrsize, state=error-size, mainbtn=error-size"/>
-		<input type="button" value="${okLabel}"		 data-def="evt=okerrformat, state=error-type, mainbtn=error-type"/>
-        <input type="button" value="${okLabel}"       data-def="evt=okerrformat, state=error-format, mainbtn=error-format"/>
+		<input type="button" value="${okLabel}"		 data-def="evt=okerrformat, state=error-type error-format, mainbtn=error-type error-format"/>
 		<input type="button" value="${cancelLabel}"  data-def="evt=cancel, state=parametrization confirm"/>
 		<input type="button" value="${cancelLabel}"  data-def="evt=cancel-progression, state=progression"/>
 	</div>

@@ -281,6 +281,12 @@
 	<div data-def="state=error-format">		
 		<span><f:message key="dialog.import.wrongfile"/>xls, xlsx</span>	
 	</div>
+  
+      
+    <div class="error-type" data-def="state=error-type">    
+      <span class="import-err-filetype-text" id="import-err-filetype-text-xls"><f:message key="dialog.import.wrongfile"/><span id="import-err-filetype">xls, xlsx</span></span> 
+    </div>
+  
 	
 	<div id="import-excel-dump" class="not-displayed dump"></div>
 
@@ -289,7 +295,7 @@
 		<input type="button" value="${confirmLabel}" data-def="evt=confirm, state=confirm, mainbtn=confirm"/>
 		<input type="button" value="${okLabel}"		 data-def="evt=ok, state=summary, mainbtn=summary"/>
 		<input type="button" value="${okLabel}"		 data-def="evt=okerrsize, state=error-size, mainbtn=error-size"/>
-		<input type="button" value="${okLabel}"		 data-def="evt=okerrformat, state=error-format, mainbtn=error-format"/>
+		<input type="button" value="${okLabel}"		 data-def="evt=okerrformat, state=error-format error-type, mainbtn=error-format error-type"/>
 		<input type="button" value="${cancelLabel}"  data-def="evt=cancel, state=parametrization confirm"/>
 		<input type="button" value="${cancelLabel}"  data-def="evt=cancel-progression, state=progression"/>
 	</div>
@@ -400,6 +406,11 @@
 	<div data-def="state=error-format">		
 		<span><f:message key="dialog.import.wrongfile"/>xls, xlsx</span>	
 	</div>
+  
+    
+    <div class="error-type" data-def="state=error-type">    
+      <span class="import-err-filetype-text" id="import-err-filetype-text-xls"><f:message key="dialog.import.wrongfile"/><span id="import-err-filetype">xls, xlsx</span></span> 
+    </div>
 	
 	<div id="import-links-dump" class="not-displayed dump"></div>	
 
@@ -408,7 +419,7 @@
 		<input type="button" value="${confirmLabel}" data-def="evt=confirm, state=confirm, mainbtn=confirm"/>
 		<input type="button" value="${okLabel}"		 data-def="evt=ok, state=summary, mainbtn=summary"/>
 		<input type="button" value="${okLabel}"		 data-def="evt=okerrsize, state=error-size, mainbtn=error-size"/>
-		<input type="button" value="${okLabel}"		 data-def="evt=okerrformat, state=error-format, mainbtn=error-format"/>
+		<input type="button" value="${okLabel}"		 data-def="evt=okerrformat, state=error-format error-type, mainbtn=error-format error-type"/>
 		<input type="button" value="${cancelLabel}"  data-def="evt=cancel, state=parametrization confirm"/>
 		<input type="button" value="${cancelLabel}"  data-def="evt=cancel-progression, state=progression"/>
 	</div>
