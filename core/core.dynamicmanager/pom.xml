@@ -4,7 +4,7 @@
   <parent>
     <artifactId>squashtest-csp-core</artifactId>
     <groupId>org.squashtest.tm</groupId>
-    <version>1.10.0.RC4-SNAPSHOT</version>
+    <version>1.10.0.RELEASE</version>
   </parent>
   <artifactId>core.dynamicmanager</artifactId>
   <name>core.dynamicmanager</name>
