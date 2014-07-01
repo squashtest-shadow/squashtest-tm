@@ -85,13 +85,73 @@ define(['jquery', 'jquery.squash.confirmdialog', 'jquery.squash.formdialog' ], f
 	}
 	
 	
+	function _initBatchRemove(conf){
+		
+		var dialog = $("#delete-multiple-test-cases-dialog");
+		
+		dialog.formDialog();
+		
+		dialog.on('formdialogopen', function(){
+			
+			// read the ids from the table selection
+			var ids = $("#test-cases-table").squashTable().getSelectedIds();
+			
+			if (ids.length === 0){	
+				// if empty, try to see if the delete buttons embedded in the table rows 
+				// left something for us
+				var _id = dialog.data('entity-id');
+				dialog.data('entity-id', null);
+				if (!! _id){
+					ids = [ _id ];
+				}
+			}
+			
+			if (ids.length === 0){
+				dialog.formDialog("setState", "empty-selec");
+			}
+			else{
+				this.selIds = ids;
+				dialog.formDialog("setState", "confirm-deletion");
+			}
+			
+		});
+		
+		
+		dialog.on('formdialogconfirm', function(){
+			var ids = this.selIds;
+			
+			var url = conf.urls.testplanUrl + ids.join(',');
+			
+			if (ids.length > 0){
+				$.ajax({
+					url : url, 
+					type : 'DELETE',
+					dataType : 'json'
+				})
+				.done(function(){
+					$("#test-cases-table").squashTable().refresh();
+					dialog.formDialog('close');
+				});
+			}
+		});
+		
+		dialog.on('formdialogcancel', function(){
+			dialog.formDialog('close');
+		});
+
+		
+	}
+	
 	return {
 		init : function(conf){
-			if (conf.permissions.editable){				
+			if (conf.features.editable){				
 				_initBatchAssignUsers(conf);
 			}
-			if (conf.permissions.reorderable){
+			if (conf.features.reorderable){
 				_initReorderTestPlan(conf);
+			}
+			if (conf.features.linkable){
+				_initBatchRemove(conf);
 			}
 		}
 	};

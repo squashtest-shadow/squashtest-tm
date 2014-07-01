@@ -67,8 +67,8 @@ define(['jquery', '../../test-plan-panel/sortmode', '../../test-plan-panel/filte
 			// assignee
 			$row.find('.assignee-combo').wrapInner('<span/>');
 
-			if (conf.permissions.editable){
-				var assignableUsers = conf.basic.assignableUsers;
+			if (conf.features.editable){
+				var assignableUsers = conf.data.assignableUsers;
 				var assigneeurl = conf.urls.testplanUrl + data['entity-id'];
 				var $assigneeelt = $row.find('.assignee-combo').children().first();
 				$assigneeelt.addClass('cursor-arrow');
@@ -109,7 +109,7 @@ define(['jquery', '../../test-plan-panel/sortmode', '../../test-plan-panel/filte
 
 		var squashSettings = {};
 
-		if (conf.permissions.reorderable){
+		if (conf.features.reorderable){
 			squashSettings.enableDnD = true;
 			squashSettings.functions = {
 				dropHandler : function(dropData){

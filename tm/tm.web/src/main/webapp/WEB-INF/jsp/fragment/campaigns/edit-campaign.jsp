@@ -27,12 +27,12 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="camp" tagdir="/WEB-INF/tags/campaigns-components"%>
-<%@ taglib prefix="pop" tagdir="/WEB-INF/tags/popup"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform" %>
 <%@ taglib prefix="dashboard" tagdir="/WEB-INF/tags/dashboard" %>
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json"%>
 
 <f:message var="squashlocale" key="squashtm.locale" />	
 <f:message var="iterationPlanningTitle" key="campaigns.planning.iterations.scheduled_dates"/>	
@@ -47,7 +47,6 @@
 <c:url var="campaignUrl" value="/campaigns/${campaign.id}" />
 <c:url var="campaignInfoUrl" value="/campaigns/${campaign.id}/general" />
 <c:url var="campaignPlanningUrl" value="/campaigns/${campaign.id}/planning"/>
-<c:url var="assignableUsersUrl" value="/campaigns/${campaign.id}/assignable-users" />
 <c:url var="campaignStatisticsUrl" value="/campaigns/${campaign.id}/dashboard-statistics" />
 <c:url var="campaignInfoStatisticsUrl" value="/campaigns/${campaign.id}/statistics"/>
 <c:url var="campaignStatisticsPrintUrl" value="/campaigns/${campaign.id}/dashboard"/>
@@ -103,7 +102,7 @@
 	<c:if test="${writable}">
   
       <f:message var="renameTitle" key="dialog.rename-campaign.title"/>
-      <div id="rename-campaign-dialog" class="popup-dialog not-displayed">
+      <div id="rename-campaign-dialog" class="popup-dialog not-displayed" title="${renameTitle}">
         
         <label><f:message key="dialog.rename.label"/></label>
         <input type="text" id="rename-campaign-name" maxlength="255" size="50"/>
@@ -291,120 +290,12 @@
 
 		<%--------------------------- Test plan section ------------------------------------%>
 
-		<div class="cf">
-			<f:message var="tooltipSortmode" key="tooltips.TestPlanSortMode" />
-			<f:message var="messageSortmode" key="message.TestPlanSortMode" />
-			<f:message var="associateLabel" key="label.Add" />
-			<f:message var="removeLabel" key="label.Remove" />
-			<f:message var="assignLabel" key="label.Assign" />
-			<f:message var="reorderLabel" key="label.Reorder" />
-			<f:message var="filterLabel" key="label.Filter" />
-            <f:message var="filterTooltip" key="tooltips.FilterTestPlan" />
-			<f:message var="reorderTooltip" key="tooltips.ReorderTestPlan" />
-			<f:message var="tooltipAddTPI" key="tooltips.AddTPIToTP" />
-			<f:message var="tooltipRemoveTPI" key="tooltips.RemoveTPIFromTP" />
-			<f:message var="tooltipAssign" key="tooltips.AssignUserToTPI" />
-
-			<c:if test="${ writable }">
-      <div class="left btn-toolbar">
-        <div class="btn-group">
-          <button id="filter-test-plan-button" class="sq-btn btn-sm" title="${filterTooltip}">
-            <span class="ui-icon ui-icon-refresh"></span>${filterLabel}
-          </button>
-          <button id="reorder-test-plan-button" class="sq-btn btn-sm" title="${reorderTooltip}">
-            <span class="ui-icon ui-icon-refresh"></span>${reorderLabel}
-          </button>
-          <span id="test-plan-sort-mode-message" class="not-displayed sort-mode-message small" title="${tooltipSortmode}">${messageSortmode}</span>
-        </div>
-      </div>
-			</c:if>
-			
-			<c:if test="${ linkable or writable }">
-      <div class="right btn-toolbar">
-        <c:if test="${  writable }">
-        <span class="btn-group">
-          <button id="assign-users-button" class="sq-btn btn-sm" title="${tooltipAssign}" >
-            <span class="ui-icon ui-icon-person"></span>${assignLabel}
-          </button>
-        </span>
-        </c:if>
-         <c:if test="${ linkable }">
-        <span class="btn-group">
-          <button id="add-test-case-button" class="sq-btn btn-sm" title="${tooltipAddTPI}">
-            <span class="ui-icon ui-icon-plusthick"></span>${associateLabel}
-          </button>
-          <button id="remove-test-case-button" class="sq-btn btn-sm" title="${tooltipRemoveTPI}">
-            <span class="ui-icon ui-icon-trash"></span>${removeLabel}
-          </button>
-        </span>
-        </c:if>
-      </div>
-			</c:if>
-		</div>
-		<div class="table-tab-wrap">
-			<camp:campaign-test-plan-table
-				assignableUsers="${assignableUsers}" 
-				modes="${modes}"
-				weights="${weights}"
-				batchRemoveButtonId="remove-test-case-button"
-				editable="${ linkable }" assignableUsersUrl="${assignableUsersUrl}"
+        <camp:campaign-test-plan-panel
+				editable="${ linkable }" 
 				reorderable="${linkable}" 
                 linkable="${linkable}" 
-				campaignUrl="${ campaignUrl }"
-				testCaseMultipleRemovalPopupId="delete-multiple-test-cases-dialog" 
 				campaign="${campaign}"/>
-		</div>
-
-
-		<%--------------------------- Deletion confirmation popup for Test plan section ------------------------------------%>
-
-		<pop:popup id="delete-multiple-test-cases-dialog"
-			openedBy="remove-test-case-button"
-			titleKey="dialog.remove-testcase-associations.title">
-			<jsp:attribute name="buttons">
-		<f:message var="label" key="label.Yes" />
-				'${ label }' : function(){
-						$("#delete-multiple-test-cases-dialog").data("answer","yes");
-						$("#delete-multiple-test-cases-dialog").dialog("close");
-				},
-				
-		<pop:cancel-button /> 
-	</jsp:attribute>
-			<jsp:attribute name="body">
-			<f:message var="emptyMessage"
-					key="message.EmptyTableSelection" />			
-		<script type="text/javascript">
-		require(["common"], function() {
-			require(["jquery"], function($) {
-				$("#delete-multiple-test-cases-dialog").bind( "dialogopen", function(event, ui){
-					var _id =  $("#delete-multiple-test-cases-dialog").data("entity-id");
-					
-					var ids = [];
-					
-					if(!_id){
-						ids = $( '#test-cases-table' ).squashTable().getSelectedIds();
-					} else {
-						ids.push(_id);
-					}
-				
-					$("#delete-multiple-test-cases-dialog").data("entity-id", null);
-					
-					if (ids.length == 0) {
-						$.squash.openMessage("<f:message key='popup.title.error' />", "${emptyMessage}");
-						$(this).dialog('close');
-					}
-					
-					 this.selIds = ids;
-				});
-				
-			});
-		});
-			</script>
-		<f:message key="dialog.remove-testcase-associations.message" />
-	</jsp:attribute>
-		</pop:popup>
-
-
+		
 	</div>
 
 	<%------------------------------ Attachments bloc ---------------------------------------------%>
@@ -431,10 +322,16 @@
 					campaignId : ${campaign.id},
 					campaignUrl : "${campaignUrl}",
 					bugtrackerUrl : "${btEntityUrl}",
-					cufValuesUrl : "${customFieldsValuesURL}"
+					cufValuesUrl : "${customFieldsValuesURL}",
+					assignableUsers : ${ json:serialize(assignableUsers)},
+					weights	: ${ json:serialize(weights)},
+					modes : ${ json:serialize(modes)}
 				},
 				features : {
-					isWritable : ${writable},
+					editable : ${writable},
+					reorderable : ${linkable},
+					linkable : ${linkable},
+					writable : ${writable},
 					hasBugtracker : ${campaign.project.bugtrackerConnected},
 					hasCUF : ${hasCUF}
 				}

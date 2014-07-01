@@ -21,16 +21,13 @@
 /*
  * accepts as basic configuration : 
  * {
- *	basic : {
+ *	data : {
  *		campaignId : the id of the campaign
  *	},
- *	permissions : {
+ *	features : {
  *		reorderable : can the test plan be reordered by the user ?
  *		editable : is the test plan editable by the user ?
  *		linkable : can one add more test cases to the test plan ?
- *	},
- *	messages : {
- *		allLabel : a label that means 'all' in the current locale
  *	}
  * 
  * }
@@ -46,17 +43,25 @@ define(['squash.translator', './table', './popups', 'app/util/ButtonUtil' ], fun
 	
 	function enhanceConfiguration(origconf){
 
-		var conf = $.extend({}, origconf);
+		var conf = $.extend(true, {}, origconf);
 		
 		var baseURL = squashtm.app.contextRoot;
 		
 		conf.messages = translator.get({
+			allLabel : "label.All",
 			automatedExecutionTooltip : "label.automatedExecution"
 		});
 		
 		conf.urls = {
-			testplanUrl : baseURL + '/campaigns/'+conf.basic.campaignId+'/test-plan/'
+			testplanUrl : baseURL + '/campaigns/'+conf.data.campaignId+'/test-plan/'
 		};
+		
+		// because of the filtermode in the table we have to alias some properties of the conf :
+		// 'data' -> 'basic',
+		// 'features' -> 'permissions'
+		
+		conf.basic = conf.data;
+		conf.permissions = conf.features;
 		
 		return conf;
 		
@@ -65,21 +70,26 @@ define(['squash.translator', './table', './popups', 'app/util/ButtonUtil' ], fun
 	function _bindButtons(conf){
 		
 		
-		if (conf.permissions.editable){
+		if (conf.features.editable){
 			$("#assign-users-button").on('click', function(){
 				$("#camp-test-plan-batch-assign").formDialog('open');
 			});
 		}
 		
-		if (conf.permissions.reorderable){
+		if (conf.features.reorderable){
 			$("#reorder-test-plan-button").on('click', function(){
 				$("#camp-test-plan-reorder-dialog").confirmDialog('open');
 			});
 		}	
 		
-		if (conf.permissions.linkable){
+		if (conf.features.linkable){
 			$("#add-test-case-button").on('click', function(){
 				document.location.href=conf.urls.testplanUrl + "/manager";
+			});
+			
+			
+			$("#remove-test-case-button").on('click', function(){
+				$("#delete-multiple-test-cases-dialog").formDialog('open');
 			});
 		}
 		

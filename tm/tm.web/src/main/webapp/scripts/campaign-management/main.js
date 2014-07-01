@@ -30,10 +30,16 @@
  *  bugtrackerUrl : the url to access the bugtracker for that entity,
  *  testCaseManagerUrl : the url to access the test case manager,
  *  cufValuesUrl : the url where to load the custom fields 
+ *  assignableUsers : a list of (jsonified) users,
+ *  weights	: a list of (jsonified) weights,
+ *  modes : a list of (jsonified) modes
  * }
  * 
  * features :{
- *  isWritable : boolean, says if the campaign can be modified,
+ *  writable : boolean, says if the campaign can be modified,
+ *  reorderable : can the test plan be reordered by the user ?
+ *	editable : is the test plan editable by the user ?
+ *	linkable : can one add more test cases to the test plan ?
  *  hasBugtracker : boolean, says if the campaign can access the bugtracker,
  *  hasCUF : boolean, says if the campaign has CUFs to load 
  * }
@@ -55,6 +61,10 @@ define([
 						resid : conf.data.campaignId,
 						restype : "campaigns"
 					}
+				},
+				dashboard : {
+					master : '#dashboard-master',
+					cacheKey : 'camp'+conf.data.campaignId
 				}
 			});
 			

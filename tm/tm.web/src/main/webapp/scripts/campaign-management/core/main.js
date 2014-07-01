@@ -29,7 +29,8 @@
  *  identity : {
  *		resid : equivalent to campaignId,
  *		restype : hardcoded to "campaigns", considering that we are in the campaign core init module
- *  }
+ *  },
+ *  dashboard : see the parameters for the dashboard. Here we define a master and a cache key 
  * 
  * }
  * }
@@ -37,15 +38,17 @@
  */
 define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs", 
         "bugtracker/bugtracker-panel", "workspace.event-bus",  "squash.translator",  
-        "dashboard/campaigns-dashboard/main", "../planning/main",
+        "dashboard/campaigns-dashboard/main", "../planning/main", "../test-plan-panel/main",
         "jqueryui", "jquery.squash.formdialog"], 
         function($, basicwidg, contentHandlers, Frag, bugtrackerPanel, eventBus, translator, 
-        dashboard, planning){
+        dashboard, planning, testplan){
 	
 	
 	function init(conf){
 		
 		basicwidg.init();
+
+		initTabs(conf);
 		
 		initCufs(conf);
 		
@@ -53,13 +56,16 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 		
 		initRenameDialog(conf);
 		
-		initTabs(conf);
-		
-		initBugtracker(conf);
 		
 		initPlanning(conf);
 		
 		initDashboard(conf);
+		
+		initTestplan(conf);
+		
+		
+		initBugtracker(conf);
+		
 	}
 	
 	function initCufs(conf){
@@ -98,13 +104,17 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 	}
 	
 	function initPlanning(conf){
-		if (conf.features.isWritable){
+		if (conf.features.writable){
 			planning.init(conf);
 		}
 	}
 	
 	function initDashboard(conf){
-		dashboard.init(conf);
+		dashboard.init(conf.dashboard);
+	}
+	
+	function initTestplan(conf){
+		testplan.init(conf);
 	}
 	
 	function initRenameDialog(conf){
@@ -130,8 +140,13 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 				data : { newName : newName}
 			})
 			.done(function(data){
+				dialog.formDialog('close');
 				eventBus.trigger('node.rename', { identity : conf.data.identity, newName : data.newName});
 			});
+		});
+		
+		dialog.on('formdialogcancel', function(){
+			dialog.formDialog('close');
 		});
 		
 		$("#rename-campaign-button").on('click', function(){

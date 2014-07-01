@@ -74,24 +74,24 @@ public class CampaignTestPlanManagerController {
 
 	@Inject
 	@Named("testCase.driveNodeBuilder")
-	private Provider<DriveNodeBuilder<TestCaseLibraryNode>> driveNodeBuilder; 
+	private Provider<DriveNodeBuilder<TestCaseLibraryNode>> driveNodeBuilder;
 
 	@Inject
-	private CampaignTestPlanManagerService testPlanManager;	
+	private CampaignTestPlanManagerService testPlanManager;
 
 	@Inject
 	private InternationalizationHelper messageSource;
-	
+
 
 
 	private final DatatableMapper<String> testPlanMapper = new NameBasedMapper()
-			.map		 ("entity-index", 	"index(CampaignTestPlanItem)")
-			.mapAttribute("project-name", 	"name", 			Project.class)
-			.mapAttribute("reference", 		"reference", 		TestCase.class)
-			.mapAttribute("tc-name", 		"name", 			TestCase.class)
-			.mapAttribute("assigned-user", 	"login", 			User.class)
-			.mapAttribute("importance",		"importance", 		TestCase.class)
-			.mapAttribute("exec-mode", 		"automatedTest", 	TestCase.class);
+	.map		 ("entity-index", 	"index(CampaignTestPlanItem)")
+	.mapAttribute("project-name", 	"name", 			Project.class)
+	.mapAttribute("reference", 		"reference", 		TestCase.class)
+	.mapAttribute("tc-name", 		"name", 			TestCase.class)
+	.mapAttribute("assigned-user", 	"login", 			User.class)
+	.mapAttribute("importance",		"importance", 		TestCase.class)
+	.mapAttribute("exec-mode", 		"automatedTest", 	TestCase.class);
 
 
 
@@ -108,7 +108,7 @@ public class CampaignTestPlanManagerController {
 		mav.addObject("linkableLibrariesModel", linkableLibrariesModel);
 		return mav;
 	}
-	
+
 
 	@RequestMapping(value = "campaigns/{campaignId}/test-plan/table", params = RequestParams.S_ECHO_PARAM)
 	public @ResponseBody
@@ -117,14 +117,14 @@ public class CampaignTestPlanManagerController {
 		DataTableMultiSorting sorter = new DataTableMultiSorting(params, testPlanMapper);
 
 		ColumnFiltering filter = new DataTableColumnFiltering(params);
-		
+
 		PagedCollectionHolder<List<IndexedCampaignTestPlanItem>> holder = testPlanManager.findTestPlan(campaignId, sorter, filter);
 
 		return new CampaignTestPlanTableModelHelper(messageSource, locale).buildDataModel(holder, 	params.getsEcho());
 	}
 
 
-	@RequestMapping(value = "/campaigns/{campaignId}/test-plan", method = RequestMethod.POST, 
+	@RequestMapping(value = "/campaigns/{campaignId}/test-plan", method = RequestMethod.POST,
 			params = TESTCASES_IDS_REQUEST_PARAM)
 	public @ResponseBody
 	void addTestCasesToCampaign(@RequestParam(TESTCASES_IDS_REQUEST_PARAM) List<Long> testCasesIds,
@@ -132,23 +132,17 @@ public class CampaignTestPlanManagerController {
 		testPlanManager.addTestCasesToCampaignTestPlan(testCasesIds, campaignId);
 	}
 
-	@RequestMapping(value = "/campaigns/{campaignId}/test-plan", method = RequestMethod.POST, 
-			params = {"action=remove", ITEMS_IDS_REQUEST_PARAM })
+	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/{testPlanIds}", method = RequestMethod.DELETE)
 	public @ResponseBody
 	void removeItemsFromTestPlan(@PathVariable("campaignId") long campaignId,
-			@RequestParam(ITEMS_IDS_REQUEST_PARAM) List<Long> itemsIds) {
+			@PathVariable("testPlanIds") List<Long> itemsIds) {
 		testPlanManager.removeTestPlanItems(campaignId, itemsIds);
 	}
 
-	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/{itemId}", method = RequestMethod.DELETE)
-	public @ResponseBody
-	void removeItemFromTestPlan(@PathVariable long campaignId, @PathVariable long itemId) {
-		testPlanManager.removeTestPlanItem(campaignId, itemId);
-	}
 
 	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries, String[] openedNodes) {
 		MultiMap expansionCandidates =  JsTreeHelper.mapIdsByType(openedNodes);
-		
+
 		JsTreeNodeListBuilder<TestCaseLibrary> listBuilder = new JsTreeNodeListBuilder<TestCaseLibrary>(
 				driveNodeBuilder.get());
 
@@ -162,25 +156,25 @@ public class CampaignTestPlanManagerController {
 		testPlanManager.assignUserToTestPlanItem(itemId, campaignId, userId);
 	}
 
-	
+
 	@RequestMapping(value = "/campaigns/{campaignId}/assignable-users", method = RequestMethod.GET)
 	public @ResponseBody List<TestPlanAssignableUser> getAssignUserForCampaignTestPlanItem(
 			@PathVariable("campaignId") long campaignId, final Locale locale) {
-		
+
 		List<User> usersList = testPlanManager.findAssignableUserForTestPlan(campaignId);
-		
+
 		String unassignedLabel = formatUnassigned(locale);
 		List<TestPlanAssignableUser> jsonUsers = new LinkedList<TestPlanAssignableUser>();
-		
+
 		jsonUsers.add(new TestPlanAssignableUser(User.NO_USER_ID.toString(), unassignedLabel ));
-		
+
 		for (User user : usersList){
 			jsonUsers.add(new TestPlanAssignableUser(user));
 		}
-		
+
 		return jsonUsers;
 	}
-	
+
 
 
 	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/{testPlanIds}", method = RequestMethod.POST, params = {"assignee"})
@@ -196,8 +190,8 @@ public class CampaignTestPlanManagerController {
 	public void moveTestPlanItems(@PathVariable("campaignId") long campaignId, @PathVariable("newIndex") int newIndex, @PathVariable("itemIds") List<Long> itemIds) {
 		testPlanManager.moveTestPlanItems(campaignId, newIndex, itemIds);
 	}
-	
-	
+
+
 	/**
 	 * Will reorder the test plan according to the current sorting instructions.
 	 * 
@@ -207,13 +201,13 @@ public class CampaignTestPlanManagerController {
 	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/order", method = RequestMethod.POST)
 	@ResponseBody
 	public void reorderTestPlan(@PathVariable("campaignId") long campaignId, DataTableDrawParameters parameters){
-		
+
 		PagingAndMultiSorting sorting = new DataTableMultiSorting(parameters, testPlanMapper);
 		testPlanManager.reorderTestPlan(campaignId, sorting);
 	}
-	
+
 	private String formatUnassigned(Locale locale){
 		return messageSource.internationalize("label.Unassigned", locale);
 	}
-	
+
 }
