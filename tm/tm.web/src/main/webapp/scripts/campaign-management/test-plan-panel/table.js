@@ -120,13 +120,13 @@ define(['jquery', '../../test-plan-panel/sortmode', '../../test-plan-panel/filte
 					});
 
 				}
-			}
+			};
 		}
 
 		return {
 			tconf : tableSettings,
 			sconf : squashSettings
-		}
+		};
 	}
 
 

@@ -141,7 +141,7 @@ define(['jquery', 'squash.attributeparser',	'handlebars', 'squash.configmanager'
 					type : 'datepicker',
 					placeholder : squashtm.message.placeholder,
 					datepicker  : confman.getStdDatepicker()
-				}
+				};
 				
 				// post to the model
 				var postFunction = function(value){
@@ -154,7 +154,7 @@ define(['jquery', 'squash.attributeparser',	'handlebars', 'squash.configmanager'
 					item[attribute] = date;
 					
 					return value;
-				}
+				};
 				
 
 
@@ -185,7 +185,7 @@ define(['jquery', 'squash.attributeparser',	'handlebars', 'squash.configmanager'
 				.done(function(){
 					self.options._savemodel = self.options.model;
 					self.close();
-				})
+				});
 			},
 			
 			reset : function(){

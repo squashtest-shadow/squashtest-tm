@@ -18,17 +18,55 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['./test-plan-panel/main', "dashboard/campaigns-dashboard/main", "./planning/main"  ], function(testPlanPanel, dashboard, planning) {
+
+
+/*
+ * Configuration : 
+ * 
+ * {
+ * data : {
+ *  campaignId : the campaign id,
+ *  campaignUrl : the campaignUrl,
+ *  bugtrackerUrl : the url to access the bugtracker for that entity,
+ *  testCaseManagerUrl : the url to access the test case manager,
+ *  cufValuesUrl : the url where to load the custom fields 
+ * }
+ * 
+ * features :{
+ *  isWritable : boolean, says if the campaign can be modified,
+ *  hasBugtracker : boolean, says if the campaign can access the bugtracker,
+ *  hasCUF : boolean, says if the campaign has CUFs to load 
+ * }
+ * }
+ */
+
+define([ 
+        "./core/main", './test-plan-panel/main', "dashboard/campaigns-dashboard/main", "./planning/main"], 
+		function(core, testPlanPanel, dashboard, planning) {
 	
 	return {
+		
+		// this one should init all, but you still can invoke the methods below
+		init : function(conf){
+			
+			var reconf = $.extend(true, {}, conf, {
+				data : {
+					identity : {
+						resid : conf.data.campaignId,
+						restype : "campaigns"
+					}
+				}
+			});
+			
+			core.init(reconf);
+		},		
+		
 		initTestPlanPanel : function(conf){
 			testPlanPanel.init(conf);
 		},
+		
 		initDashboardPanel : function(conf){
 			dashboard.init(conf);
-		},
-		initPlanning : function(conf){
-			planning.init(conf);
 		}
 	};
 });

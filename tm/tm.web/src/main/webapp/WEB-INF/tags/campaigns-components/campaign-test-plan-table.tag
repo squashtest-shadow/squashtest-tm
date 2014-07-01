@@ -24,6 +24,7 @@
 <%@ attribute name="batchRemoveButtonId" required="true" description="html id of button for batch removal of test cases" %>
 <%@ attribute name="editable" type="java.lang.Boolean" description="Right to edit content. Default to false." %>
 <%@ attribute name="reorderable" type="java.lang.Boolean" description="Right to reorder the test plan. Default to false." %>
+<%@ attribute name="linkable" type="java.lang.Boolean" description="Right to add test cases to the test plan. Default to false." %>
 <%@ attribute name="assignableUsersUrl" required="true" description="URL to manipulate user of the test-cases" %>
 <%@ attribute name="campaignUrl" required="true" description="the url to the campaign that hold all of these test cases" %>
 <%@ attribute name="testCaseMultipleRemovalPopupId" required="true" description="html id of the multiple test-case removal popup" %>
@@ -156,6 +157,7 @@
 					permissions : {
 						editable : ${editable},
 						reorderable : ${reorderable},
+						linkable : ${linkable}
 					},
 					messages : {
 						allLabel : '<f:message key="label.All"/>'

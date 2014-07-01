@@ -51,7 +51,6 @@
 <c:url var="campaignStatisticsUrl" value="/campaigns/${campaign.id}/dashboard-statistics" />
 <c:url var="campaignInfoStatisticsUrl" value="/campaigns/${campaign.id}/statistics"/>
 <c:url var="campaignStatisticsPrintUrl" value="/campaigns/${campaign.id}/dashboard"/>
-<c:url var="testCaseManagerUrl"	value="/campaigns/${campaign.id}/test-plan/manager" />
 <c:url var="workspaceUrl" value="/campaign-workspace/#" />
 <c:url var="btEntityUrl" value="/bugtracker/campaign/${campaign.id}" />
 <c:url var="customFieldsValuesURL" value="/custom-fields/values" />
@@ -85,6 +84,8 @@
 </authz:authorized>
 
 
+<f:message var="okLabel"        key="label.Ok"/>
+<f:message var="cancelLabel"    key="label.Cancel"/>
 
 <div
 	class="ui-widget-header ui-state-default ui-corner-all fragment-header">
@@ -100,44 +101,22 @@
 
 	<div class="unsnap"></div>
 	<c:if test="${writable}">
-		<pop:popup id="rename-campaign-dialog"
-			titleKey="dialog.rename-campaign.title" isContextual="true"
-			openedBy="rename-campaign-button">
-			<jsp:attribute name="buttons">
-			
-				<f:message var="label" key="dialog.rename-campaign.title" />
-				'${ label }': function() {
-					var url = "${ campaignUrl }";
-					$.ajax({
-						url : url,
-						dataType : 'json', 
-						type : 'post', 
-						data : { newName : $("#rename-campaign-name").val() }
-					}).done(renameCampaignSuccess);
-				},			
-				<pop:cancel-button />
-			</jsp:attribute>
-			<jsp:attribute name="body">
-				<script type="text/javascript">
-				require(["common"], function() {
-					require(["jquery"], function($) {
-					$("#rename-campaign-dialog").bind("dialogopen",
-						function(event, ui) {
-							var name = $.trim($('#campaign-name').text());
-							$("#rename-campaign-name").val(name);
-
-						}
-					);
-					});
-				});
-				</script>			
-				<label><f:message key="dialog.rename.label" />
-				</label>
-				<input type="text" id="rename-campaign-name" maxlength="255" size="50" />
-				<br />
-				<comp:error-message forField="name" />	
-			</jsp:attribute>
-		</pop:popup>
+  
+      <f:message var="renameTitle" key="dialog.rename-campaign.title"/>
+      <div id="rename-campaign-dialog" class="popup-dialog not-displayed">
+        
+        <label><f:message key="dialog.rename.label"/></label>
+        <input type="text" id="rename-campaign-name" maxlength="255" size="50"/>
+        <br/>
+        <comp:error-message forField="name" />
+      
+        <div class="popup-dialog-buttonpane">
+          <input type="button" class="button" value="${okLabel}" data-def="evt=confirm, mainbtn"/>
+          <input type="button" class="button" value="${cancelLabel}" data-def="evt=cancel"/>        
+        </div>
+      
+      </div>
+    
 	</c:if>
 </div>
 
@@ -189,19 +168,6 @@
 				componentId="campaign-description" />
 		</c:if>
 
-		<script type="text/javascript">
-		require([ "common" ], function () {
-			require([ "jquery", "domReady", "jqueryui" ], function ($, domReady) {
-				/* simple initialization for simple components */
-				domReady(function() {
-					$("#").button().click(function() {
-						$("#campaign-description").html('');
-						return false;
-					});
-				});
-			});
-		});
-		</script>
 
 		<comp:toggle-panel id="campaign-description-panel"
 			titleKey="label.Description"
@@ -324,25 +290,6 @@
 	<div id="tabs-2" class="table-tab">
 
 		<%--------------------------- Test plan section ------------------------------------%>
-		<script type="text/javascript">
-		require([ "common" ], function () {
-			require([ "jquery", "domReady", "jqueryui" ], function ($, domReady) {
-				/* simple initialization for simple components */
-				domReady(function() {
-					
-					$("#test-case-button").bind("click", function(){
-						document.location.href = "${testCaseManagerUrl}";						
-					});
-					
-					
-					<c:if test="${hasCUF}">
-					<%-- loading the custom field panel --%>
-					$("#campaign-custom-fields-content").load("${customFieldsValuesURL}?boundEntityId=${campaign.boundEntityId}&boundEntityType=${campaign.boundEntityType}");
-					</c:if>			    	
-				});
-			});
-		});
-		</script>
 
 		<div class="cf">
 			<f:message var="tooltipSortmode" key="tooltips.TestPlanSortMode" />
@@ -374,7 +321,7 @@
 			
 			<c:if test="${ linkable or writable }">
       <div class="right btn-toolbar">
-      <c:if test="${  writable }">
+        <c:if test="${  writable }">
         <span class="btn-group">
           <button id="assign-users-button" class="sq-btn btn-sm" title="${tooltipAssign}" >
             <span class="ui-icon ui-icon-person"></span>${assignLabel}
@@ -383,7 +330,7 @@
         </c:if>
          <c:if test="${ linkable }">
         <span class="btn-group">
-          <button id="test-case-button" class="sq-btn btn-sm" title="${tooltipAddTPI}">
+          <button id="add-test-case-button" class="sq-btn btn-sm" title="${tooltipAddTPI}">
             <span class="ui-icon ui-icon-plusthick"></span>${associateLabel}
           </button>
           <button id="remove-test-case-button" class="sq-btn btn-sm" title="${tooltipRemoveTPI}">
@@ -401,7 +348,8 @@
 				weights="${weights}"
 				batchRemoveButtonId="remove-test-case-button"
 				editable="${ linkable }" assignableUsersUrl="${assignableUsersUrl}"
-				reorderable="${linkable}"
+				reorderable="${linkable}" 
+                linkable="${linkable}" 
 				campaignUrl="${ campaignUrl }"
 				testCaseMultipleRemovalPopupId="delete-multiple-test-cases-dialog" 
 				campaign="${campaign}"/>
@@ -473,69 +421,28 @@
 </csst:jq-tab>
 
 
-
- <f:message key="tabs.label.issues" var="tabIssueLabel"/>
 <script type="text/javascript">
 
-	var identity = { resid : ${campaign.id}, restype : "campaigns"  };
-
-	
 	require(["common"], function(){
-			require(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs", 
-			         "bugtracker/bugtracker-panel", 'workspace.event-bus', "campaign-management",
-			         "jqueryui"], 
-					function($, basicwidg, contentHandlers, Frag, bugtrackerPanel, eventBus, campmanager){
-		$(function(){
-				
-				basicwidg.init();
-				
-				var nameHandler = contentHandlers.getSimpleNameHandler();
-				
-				nameHandler.identity = identity;
-				nameHandler.nameDisplay = "#campaign-name";
-				
-								
-				//****** tabs configuration ***********
-				
-				var fragConf = {
-					cookie : "iteration-tab-cookie",
-					activate : function(event, ui){
-						if (ui.newPanel.is('#campaign-dashboard')){
-							eventBus.trigger('dashboard.appear');
-						}
-					}
-				};
-				Frag.init(fragConf);
-				
-				<c:if test="${campaign.project.bugtrackerConnected}">
-				bugtrackerPanel.load({
-					url : "${btEntityUrl}",
-					label : "${tabIssueLabel}"
-				});
-				</c:if>
-				
-				// ********** planning **************
-				
-				<c:if test="${writable}">
-				campmanager.initPlanning({
-					campaignId : ${campaign.id}
-				});
-				</c:if>
-				
-				// ********** dashboard **************
-				
-				campmanager.initDashboardPanel({
-					master : '#dashboard-master',
-					cacheKey : 'camp${campaign.id}'
-				});		
-				
-			});
+		require(["campaign-management"], function(manager){
+			
+			var conf = {
+				data : {
+					campaignId : ${campaign.id},
+					campaignUrl : "${campaignUrl}",
+					bugtrackerUrl : "${btEntityUrl}",
+					cufValuesUrl : "${customFieldsValuesURL}"
+				},
+				features : {
+					isWritable : ${writable},
+					hasBugtracker : ${campaign.project.bugtrackerConnected},
+					hasCUF : ${hasCUF}
+				}
+			}
+			
+			manager.init(conf);
 		});
 	});
-	
-	function renameCampaignSuccess(data){
-		squashtm.workspace.eventBus.trigger('node.rename', { identity : identity, newName : data.newName});		
-	};					
 	
 </script>
 

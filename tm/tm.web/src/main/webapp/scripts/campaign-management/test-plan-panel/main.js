@@ -27,6 +27,7 @@
  *	permissions : {
  *		reorderable : can the test plan be reordered by the user ?
  *		editable : is the test plan editable by the user ?
+ *		linkable : can one add more test cases to the test plan ?
  *	},
  *	messages : {
  *		allLabel : a label that means 'all' in the current locale
@@ -75,6 +76,12 @@ define(['squash.translator', './table', './popups', 'app/util/ButtonUtil' ], fun
 				$("#camp-test-plan-reorder-dialog").confirmDialog('open');
 			});
 		}	
+		
+		if (conf.permissions.linkable){
+			$("#add-test-case-button").on('click', function(){
+				document.location.href=conf.urls.testplanUrl + "/manager";
+			});
+		}
 		
 		
 		$("#filter-test-plan-button").on('click', function(){
