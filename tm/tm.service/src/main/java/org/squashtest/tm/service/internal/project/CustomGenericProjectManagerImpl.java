@@ -530,10 +530,16 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	public Set<ExecutionStatus> enabledExecutionStatuses(long projectId) {
 		GenericProject project = genericProjectDao.findById(projectId);
 		checkManageProjectOrAdmin(project);
+
+
 		Set<ExecutionStatus> statuses = new HashSet<ExecutionStatus>();
 		statuses.addAll(Arrays.asList(ExecutionStatus.values()));
+
 		Set<ExecutionStatus> disabledStatuses = project.getCampaignLibrary().getDisabledStatuses();
+
 		statuses.removeAll(disabledStatuses);
+		statuses.removeAll(ExecutionStatus.TA_STATUSES_ONLY);
+
 		return statuses;
 	}
 

@@ -104,7 +104,14 @@ import org.squashtest.tm.domain.Level;
  * 
  * The status sets for manual and automated can still be compared to each other, but one have to normalize them first :
  * BLOCKED, FAILURE, SUCCESS, RUNNING, READY is considered as the Canonical status set. To this end, TA_ERROR and
- * TA_NOT_RUN is considered equal to BLOCKED, TA_NOT_RUN is considered as UNTESTABLE, and TA_WARNING is considered equal to SUCCESS.
+ * TA_NOT_RUN is considered equal to BLOCKED, TA_NOT_FOUND is considered as UNTESTABLE, and TA_WARNING is considered equal to SUCCESS.
+ */
+
+/*
+ * Feat 3481, 3482, 3483, 30/06/14 :
+ * 
+ *  Two more TA statuses : NOT_RUN(BLOCKED) and NOT_FOUND(UNTESTABLE)
+ * 
  */
 public enum ExecutionStatus implements Internationalizable, Level {
 
@@ -335,7 +342,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 			throw new UnsupportedOperationException(
-					"ExecutionStatus.TA_ERROR#resolveStatus(...) should never have been invoked. That exception cleary results from faulty logic. If you read this message please "
+					"ExecutionStatus.TA_NOT_RUN#resolveStatus(...) should never have been invoked. That exception cleary results from faulty logic. If you read this message please "
 							+ "report the issue at https://ci.squashtest.org/mantis/ Please put [ExecutionStatus - unsupported operation] as title for your report and explain what you did. Also please check that it hadn't been reported "
 							+ "already. Thanks for your help and happy Squash !");
 		}
@@ -359,7 +366,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 		@Override
 		protected ExecutionStatus resolveStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
 			throw new UnsupportedOperationException(
-					"ExecutionStatus.TA_ERROR#resolveStatus(...) should never have been invoked. That exception cleary results from faulty logic. If you read this message please "
+					"ExecutionStatus.TA_NOT_FOUND#resolveStatus(...) should never have been invoked. That exception cleary results from faulty logic. If you read this message please "
 							+ "report the issue at https://ci.squashtest.org/mantis/ Please put [ExecutionStatus - unsupported operation] as title for your report and explain what you did. Also please check that it hadn't been reported "
 							+ "already. Thanks for your help and happy Squash !");
 		}
@@ -391,13 +398,18 @@ public enum ExecutionStatus implements Internationalizable, Level {
 	// tests with non terminal statuses are considered not executed (used for setting iteration/campaign end dates
 	// automatically)
 	private static final Set<ExecutionStatus> NON_TERMINAL_STATUSES;
+
+	// those status are available to Squash TA Only, they will never be settable by a human user.
+	public static final Set<ExecutionStatus> TA_STATUSES_ONLY;
+
+	// status that aren't enabled by default for a project, but could be if the manager decided so.
 	public static final Set<ExecutionStatus> DEFAULT_DISABLED_STATUSES;
 
 	private final int level;
 
 	static {
 
-		Set<ExecutionStatus> set = new HashSet<ExecutionStatus>();
+		Set<ExecutionStatus> set = new HashSet<ExecutionStatus>(6);
 		set.add(BLOCKED);
 		set.add(FAILURE);
 		set.add(SUCCESS);
@@ -407,7 +419,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 
 		CANONICAL_STATUSES = Collections.unmodifiableSet(set);
 
-		Set<ExecutionStatus> terms = new HashSet<ExecutionStatus>();
+		Set<ExecutionStatus> terms = new HashSet<ExecutionStatus>(9);
 		terms.add(BLOCKED);
 		terms.add(FAILURE);
 		terms.add(SUCCESS);
@@ -420,20 +432,25 @@ public enum ExecutionStatus implements Internationalizable, Level {
 
 		TERMINAL_STATUSES = Collections.unmodifiableSet(terms);
 
-		Set<ExecutionStatus> nonTerms = new HashSet<ExecutionStatus>();
+		Set<ExecutionStatus> nonTerms = new HashSet<ExecutionStatus>(2);
 		nonTerms.add(RUNNING);
 		nonTerms.add(READY);
 
 		NON_TERMINAL_STATUSES = Collections.unmodifiableSet(nonTerms);
 
-		Set<ExecutionStatus> disabled = new HashSet<ExecutionStatus>();
-		for (ExecutionStatus status : values()) {
-			if (!status.defaultEnabled()) {
-				disabled.add(status);
-			}
-		}
+
+		Set<ExecutionStatus> disabled = new HashSet<ExecutionStatus>(1);
+		disabled.add(SETTLED);
 
 		DEFAULT_DISABLED_STATUSES = Collections.unmodifiableSet(disabled);
+
+		Set<ExecutionStatus> TAStatuses = new HashSet<ExecutionStatus>(4);
+		TAStatuses.add(ERROR);
+		TAStatuses.add(WARNING);
+		TAStatuses.add(NOT_FOUND);
+		TAStatuses.add(NOT_RUN);
+
+		TA_STATUSES_ONLY = Collections.unmodifiableSet(TAStatuses);
 
 	}
 
@@ -441,12 +458,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 		this.level = level;
 	}
 
-	// **************************** SURROGATES SPECIAL, INNER VALUES OF EXECUTION STATUS *******************
-	// the following methods exists to wrap 'null' values with semantic. We need to, because 'null' might mean
-	// different things depending on the context : 'is ambiguous' and 'needs computation'.
-	// some private static final Object isAmbiguous, needsComputation would have been nicer but impracticable here
-	// in the context of an enum.
-
+	@Deprecated // use DEFAULT_DISABLED_STATUSES instead
 	public boolean defaultEnabled() {
 		return true;
 	}
