@@ -72,7 +72,6 @@ import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.exception.UnallowedTestAssociationException;
 import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
-import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException;
 import org.squashtest.tm.search.bridge.LevelEnumBridge;
 
 /**
