@@ -20,13 +20,26 @@
  */
 package org.squashtest.tm.domain.denormalizedfield;
 
-public interface DenormalizedFieldVisitor {
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.Lob;
 
-	void visit(DenormalizedSingleSelectField selectField);
 
-	void visit(DenormalizedFieldValue standardValue);
+@Entity
+@DiscriminatorValue("RTF")
+public class DenormalizedRichValue extends DenormalizedFieldValue {
 
-	void visit(DenormalizedRichValue richValue);
+	@Lob
+	private String longValue;
+
+	@Override
+	public void setValue(String value){
+		this.longValue = value;
+	}
+
+	@Override
+	public String getValue(){
+		return longValue;
+	}
 
 }
-

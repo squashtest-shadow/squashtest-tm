@@ -74,11 +74,11 @@ public class CustomFieldBinding {
 	@JoinColumn(name = "BOUND_PROJECT_ID", updatable = false)
 	@NotNull
 	private GenericProject boundProject;
-	
-	
+
+
 	@Column
 	private int position=0;
-	
+
 
 	/**
 	 * @return the renderingLocations
@@ -86,7 +86,7 @@ public class CustomFieldBinding {
 	public Set<RenderingLocation> getRenderingLocations() {
 		return renderingLocations;
 	}
-	
+
 	public Set<RenderingLocation> copyRenderingLocations(){
 		Set<RenderingLocation> copy = new HashSet<RenderingLocation>(5);
 		copy.addAll(renderingLocations);
@@ -124,11 +124,11 @@ public class CustomFieldBinding {
 	public void setRenderingLocations(Set<RenderingLocation> renderingLocations) {
 		this.renderingLocations = renderingLocations;
 	}
-	
+
 	public void addRenderingLocation(RenderingLocation location){
 		this.renderingLocations.add(location);
 	}
-	
+
 	public void removeRenderingLocation(RenderingLocation location){
 		this.renderingLocations.remove(location);
 	}
@@ -140,25 +140,25 @@ public class CustomFieldBinding {
 	public void setPosition(int position) {
 		this.position = position;
 	}
-	
+
 	public CustomFieldValue createNewValue(){
-		CustomFieldValue value = new CustomFieldValue();
+		CustomFieldValue value = (customField.getInputType() == InputType.RICH_TEXT) ? new RichTextValue() : new CustomFieldValue();
 		value.setBinding(this);
 		value.setValue(customField.getDefaultValue());
 		return value;
 	}
 
-	
-	
+
+
 	// ******************* static inner classes, publicly available for once ******************
-	
+
 	/**
 	 * In case you wonder : NOT THREAD SAFE !
 	 * @author bsiri
 	 *
 	 */
 	public static class PositionAwareBindingList extends LinkedList<CustomFieldBinding>{
-				
+
 		/**
 		 * 
 		 */
@@ -167,24 +167,24 @@ public class CustomFieldBinding {
 		public PositionAwareBindingList(Collection<CustomFieldBinding> items){
 			super(items);
 		}
-		
+
 		public void reorderItems(List<Long> itemIds, int newIndex){
 			moveCarelessly(itemIds, newIndex);
 			reindex();
 		}
-		
+
 		private void moveCarelessly(List<Long> ids, int newIndex){
-			
+
 			Set<Long> targetIds = new HashSet<Long>(ids);
 			LinkedList<CustomFieldBinding> removed = new LinkedList<CustomFieldBinding>();
-			
+
 			ListIterator<CustomFieldBinding> iterator = this.listIterator();
-			
+
 			while (iterator.hasNext()){
-				
+
 				CustomFieldBinding binding = iterator.next();
 				Long id = binding.getId();
-				
+
 				//if the id matches, the current binding moves from the current list to the list of removed binding
 				//then remove the id from the target id set
 				if (targetIds.contains(id)){
@@ -192,21 +192,21 @@ public class CustomFieldBinding {
 					iterator.remove();
 					targetIds.remove(id);
 				}
-				
+
 			}
-			
+
 			//now we reinsert the removed entities to their new position
 			this.addAll(newIndex, removed);
 		}
-		
+
 		private void reindex(){
 			int position=1;
 			for (CustomFieldBinding binding : this){
 				binding.setPosition(position++);
 			}
 		}
-		
+
 	}
-	
-	
+
+
 }

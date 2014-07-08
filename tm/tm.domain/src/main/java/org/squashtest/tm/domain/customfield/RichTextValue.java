@@ -18,15 +18,35 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.denormalizedfield;
+package org.squashtest.tm.domain.customfield;
 
-public interface DenormalizedFieldVisitor {
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.Lob;
 
-	void visit(DenormalizedSingleSelectField selectField);
+import org.apache.commons.lang.StringUtils;
+import org.squashtest.tm.exception.customfield.MandatoryCufException;
 
-	void visit(DenormalizedFieldValue standardValue);
+@Entity
+@DiscriminatorValue("RTF")
+public class RichTextValue extends CustomFieldValue {
 
-	void visit(DenormalizedRichValue richValue);
+	@Lob
+	private String longValue;
+
+	@Override
+	public void setValue(String value){
+		CustomField field = getCustomField();
+		if (field != null && field.isOptional() && StringUtils.isBlank(value)){
+			throw new MandatoryCufException(this);
+		}
+
+		this.longValue = value;
+	}
+
+	@Override
+	public String getValue(){
+		return (longValue != null) ? longValue : "";
+	}
 
 }
-

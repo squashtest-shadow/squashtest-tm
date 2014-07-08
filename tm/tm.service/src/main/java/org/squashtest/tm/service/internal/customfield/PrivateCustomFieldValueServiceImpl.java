@@ -183,15 +183,15 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 			BoundEntity boundEntity = boundEntityDao.findBoundEntity(value);
 			if(boundEntity != null){
 				switch(boundEntity.getBoundEntityType()){
-					case TEST_CASE :
-						indexationService.reindexTestCase(boundEntity.getBoundEntityId());
-						break;
-					case REQUIREMENT_VERSION : 
-						indexationService.reindexRequirementVersion(boundEntity.getBoundEntityId());
-						break;
-					default:
-						break;
-				}			
+				case TEST_CASE :
+					indexationService.reindexTestCase(boundEntity.getBoundEntityId());
+					break;
+				case REQUIREMENT_VERSION :
+					indexationService.reindexRequirementVersion(boundEntity.getBoundEntityId());
+					break;
+				default:
+					break;
+				}
 			}
 		}
 		deleteCustomFieldValues(allValues);
@@ -326,6 +326,21 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		}
 	}
 
+	/**
+	 * @see org.squashtest.tm.service.customfield.CustomFieldValueFinderService#areValuesEditable(long,
+	 *      org.squashtest.tm.domain.customfield.BindableEntity)
+	 */
+	@Override
+	public boolean areValuesEditable(long boundEntityId, BindableEntity bindableEntity) {
+		return editableStrategy(bindableEntity).isEditable(boundEntityId, bindableEntity);
+	}
+
+
+	@Override
+	public List<CustomFieldValue> findAllForEntityAndRenderingLocation(BoundEntity boundEntity, RenderingLocation renderingLocation) {
+		return customFieldValueDao.findAllForEntityAndRenderingLocation(boundEntity.getBoundEntityId(), boundEntity.getBoundEntityType(), renderingLocation);
+	}
+
 	// *********************** private convenience methods ********************
 
 	private Map<BindableEntity, List<Long>> breakEntitiesIntoCompositeIds(
@@ -345,14 +360,6 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		return segregatedEntities;
 	}
 
-	/**
-	 * @see org.squashtest.tm.service.customfield.CustomFieldValueFinderService#areValuesEditable(long,
-	 *      org.squashtest.tm.domain.customfield.BindableEntity)
-	 */
-	@Override
-	public boolean areValuesEditable(long boundEntityId, BindableEntity bindableEntity) {
-		return editableStrategy(bindableEntity).isEditable(boundEntityId, bindableEntity);
-	}
 
 	/**
 	 * @param bindableEntity
@@ -367,8 +374,4 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		}
 	}
 
-	@Override
-	public List<CustomFieldValue> findAllForEntityAndRenderingLocation(BoundEntity boundEntity, RenderingLocation renderingLocation) {
-		return customFieldValueDao.findAllForEntityAndRenderingLocation(boundEntity.getBoundEntityId(), boundEntity.getBoundEntityType(), renderingLocation);
-	}
 }

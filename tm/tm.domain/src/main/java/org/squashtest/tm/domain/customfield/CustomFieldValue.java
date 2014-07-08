@@ -24,11 +24,16 @@ import java.text.ParseException;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.Size;
@@ -43,6 +48,9 @@ import org.squashtest.tm.exception.customfield.MandatoryCufException;
 import org.squashtest.tm.exception.customfield.WrongCufDateFormatException;
 
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "FIELD_TYPE", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorValue("CF")
 public class CustomFieldValue implements Identified {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomFieldValue.class);
 	public static final int MAX_SIZE = 255;

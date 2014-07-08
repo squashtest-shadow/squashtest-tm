@@ -23,7 +23,9 @@ package org.squashtest.tm.domain.customfield;
 public interface CustomFieldVisitor {
 
 	void visit(SingleSelectField selectField);
-	
+
 	void visit(CustomField standardValue);
-	
+
+	void visit(RichTextField richField);
+
 }
