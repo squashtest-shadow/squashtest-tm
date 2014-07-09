@@ -45,6 +45,11 @@ define(
 				input.editable(noPostFn, conf);
 
 			}
+			
+			function initCkeditor(input){
+				var conf = confman.getStdCkeditor();
+				input.ckeditor(function(){}, conf);
+			}
 
 			/*
 			 * settings : - url : the url where to fetch the creator panel -
@@ -70,13 +75,9 @@ define(
 					var pleaseWait = $('<tr class="cuf-wait" style="line-height:10px;"><td colspan="2" class="waiting-loading"></td></tr>');
 					var table = this.table;
 
-					table.find('.create-node-custom-field-row').remove(); // cleanup
-																			// of
-																			// the
-																			// previous
-																			// calls
-																			// (if
-																			// any)
+					// cleanup of the previous calls (if any)
+					table.find('.create-node-custom-field-row').remove(); 
+
 					table.append(pleaseWait);
 
 					var self = this;
@@ -104,6 +105,7 @@ define(
 				/* init the widgets used by the custom field values */
 				this.init = function() {
 					var table = this.table;
+					
 					var bindings = table.find(".create-node-custom-field");
 					if (bindings.length > 0) {
 						bindings.each(function() {
@@ -115,10 +117,14 @@ define(
 							if (inputType === "DATE_PICKER") {
 								initDatepicker(input);
 							}
+							else if (inputType === "RICH_TEXT"){
+								initCkeditor(input);
+							}
 						});
 
 						this.reset(table);
 					}
+					
 				};
 
 				/*
@@ -146,6 +152,30 @@ define(
 							}
 						});
 					}
+				};
+				
+				this.destroy = function(){
+					var table = this.table;
+					
+					var bindings = table.find(".create-node-custom-field");
+					if (bindings.length > 0) {
+						bindings.each(function() {
+
+							var input = $(this);
+							var inputType = input.data('input-type');
+
+							if (inputType === "DATE_PICKER") {
+								input.editable("destroy");
+							}
+							else if (inputType === "RICH_TEXT"){
+								var id = input.attr('id');
+								var inst = CKEDITOR.instances[id];
+								if (!!inst){
+									inst.destroy(true);
+								}
+							}
+						});
+					}			
 				};
 
 				/*

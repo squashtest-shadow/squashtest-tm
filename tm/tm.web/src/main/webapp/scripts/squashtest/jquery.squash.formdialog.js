@@ -292,6 +292,8 @@ define([ 'jquery', "underscore", 'squash.attributeparser', 'squash.configmanager
 			elt.find('.error-message').each(function(){
 				$(this).text('');
 			});
+			
+			this._trigger('cleanup');
 		},
 
 		_createButtons : function() {

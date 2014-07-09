@@ -127,7 +127,7 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 	/*
 	 * EXPERIMENTAL
 	 * @params
-	 * 	postfunction : function(value) => xhr : a function that just posts the data and returns the xhr object(required)
+	 *	postfunction : function(value) => xhr : a function that just posts the data and returns the xhr object(required)
 	 *	format : a string date format that datepicker understands (optional)
 	 *	locale : a locale, used for datepicker internationalization (optional);
 	 */
@@ -154,7 +154,7 @@ define([ "jquery", "squash.translator", "datepicker/jquery.squash.datepicker-loc
 		conf.datepicker = datepickerconf;
 		
 		return conf;
-	};
+	}
 
 	return {
 		getStdCkeditor : stdCkeditor,

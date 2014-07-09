@@ -350,7 +350,7 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 					})
 					.fail(function(){
 						$("#cuf-default-value").text(revert);
-					})
+					});
 					
 				};
 

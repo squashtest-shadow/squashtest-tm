@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require(["common"], function() {
-	require([ "app/ws/squashtm.workspace" ], function(ps, WS) {
+	require([ "app/ws/squashtm.workspace" ], function(WS) {
 			WS.init();
 	});
 });
